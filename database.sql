@@ -32,3 +32,26 @@ CREATE TABLE `sequence` (
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=343308 DEFAULT CHARSET=utf8$$
 
+delimiter $$
+
+CREATE TABLE `taxon_name` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `taxId` int(11) NOT NULL,
+  `name` varchar(256) DEFAULT NULL,
+  `nameClass` varchar(64) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8$$
+
+delimiter $$
+
+CREATE TABLE `taxon_node` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `taxId` int(11) NOT NULL,
+  `parentTaxId` int(11) DEFAULT NULL,
+  `rank` varchar(45) DEFAULT NULL,
+  `geneticCode` int(11) DEFAULT NULL,
+  `mitoCode` int(11) DEFAULT NULL,
+  `isTaxonHidden` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=227766 DEFAULT CHARSET=utf8$$
+

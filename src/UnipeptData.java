@@ -3,8 +3,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
 import java.util.Map;
+
+import org.ardverk.collection.PatriciaTrie;
+import org.ardverk.collection.StringKeyAnalyzer;
 
 public class UnipeptData {
 	// database stuff
@@ -42,9 +44,8 @@ public class UnipeptData {
 	}
 
 	private void initTrie() {
-		// index = new PatriciaTrie<String,
-		// Integer>(StringKeyAnalyzer.INSTANCE);
-		index = new HashMap<String, Integer>();
+		index = new PatriciaTrie<String, Integer>(StringKeyAnalyzer.INSTANCE);
+		// index = new HashMap<String, Integer>();
 	}
 
 	private void prepareStatements() {
@@ -126,7 +127,7 @@ public class UnipeptData {
 		return -1;
 	}
 
-	public void addData(String sequence, String organism, int position) {
+	public void addData(String sequence, String organism, int NCBItaxonId, int position) {
 		try {
 			addPeptide.setInt(1, getSequenceId(sequence));
 			addPeptide.setInt(2, getOrganismId(organism));

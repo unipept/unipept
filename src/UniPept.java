@@ -79,7 +79,6 @@ public class UniPept {
 						// need to iterate over rsi to get the information.
 						while (rsi.hasNext()) {
 							RichSequence rs = rsi.nextRichSequence();
-
 							// We only want the CDS features
 							FeatureHolder holder = rs.filter(new FeatureFilter.ByType("CDS"));
 							Iterator<Feature> featureIterator = holder.features();
@@ -96,9 +95,10 @@ public class UniPept {
 
 								// process every peptide
 								Iterator<Feature> peptideIterator = aaSequence.features();
+								Feature f;
 								while (peptideIterator.hasNext()) {
-									String seqString = peptideIterator.next().getSymbols()
-											.seqString();
+									f = peptideIterator.next();
+									String seqString = f.getSymbols().seqString();
 
 									// replace Isoleucine by Leucine
 									if (REPLACE_LEUCINE)
@@ -111,7 +111,9 @@ public class UniPept {
 									// add the peptide to the trie
 									if (seqString.length() >= MIN_PEPT_SIZE
 											&& seqString.length() <= MAX_PEPT_SIZE) {
-										data.addData(seqString, rs.getTaxon().getDisplayName(), 0);
+										data.addData(seqString, rs.getTaxon().getDisplayName(), rs
+												.getTaxon().getNCBITaxID(), f.getLocation()
+												.getMin());
 									}
 								}
 							}
