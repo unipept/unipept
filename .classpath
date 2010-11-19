@@ -20,5 +20,6 @@
 			<attribute name="javadoc_location" value="file:/Software/patricia-trie-0.2/api/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/Software/mysql-connector-java-5.1.13/mysql-connector-java-5.1.13-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

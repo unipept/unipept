@@ -1,0 +1,135 @@
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class UnipeptData {
+	private Connection connection;
+
+	private PreparedStatement containsSequence;
+	private PreparedStatement addSequence;
+	private PreparedStatement containsOrganism;
+	private PreparedStatement addOrganism;
+	private PreparedStatement addPeptide;
+
+	private String organismCacheString = "";
+	private int organismCacheInt;
+
+	public UnipeptData() {
+		try {
+			connection = Database.getConnection();
+			prepareStatements();
+		} catch (SQLException e) {
+			System.err.println("Database connection failed");
+			e.printStackTrace(System.err);
+		}
+	}
+
+	private void prepareStatements() {
+		try {
+			containsSequence = connection
+					.prepareStatement("SELECT id FROM sequence WHERE `sequence` = ?");
+			addSequence = connection
+					.prepareStatement("INSERT INTO sequence (`sequence`) VALUES (?)",
+							Statement.RETURN_GENERATED_KEYS);
+			containsOrganism = connection
+					.prepareStatement("SELECT id FROM organism WHERE `name` = ?");
+			addOrganism = connection.prepareStatement("INSERT INTO organism (`name`) VALUES (?)",
+					Statement.RETURN_GENERATED_KEYS);
+			addPeptide = connection
+					.prepareStatement("INSERT INTO peptide (`sequenceId`, `organismId`, `position`) VALUES (?,?,?)");
+		} catch (SQLException e) {
+			System.err.println("Error creating prepared statements");
+			e.printStackTrace();
+		}
+	}
+
+	private int getOrganismId(String name) {
+		if (organismCacheString.equals(name))
+			return organismCacheInt;
+		try {
+			organismCacheString = name;
+			containsOrganism.setString(1, name);
+			ResultSet res = containsOrganism.executeQuery();
+			if (res.next()) {// return id
+				organismCacheInt = res.getInt("id");
+				res.close();
+				return organismCacheInt;
+			} else {// first add sequence
+				res.close();
+				addOrganism.setString(1, name);
+				addOrganism.executeUpdate();
+				res = addOrganism.getGeneratedKeys();
+				res.next();
+				organismCacheInt = res.getInt(1);
+				res.close();
+				return organismCacheInt;
+			}
+		} catch (SQLException e) {
+			System.err.println("Error executing query");
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	private int getSequenceId(String sequence) {
+		try {
+			containsSequence.setString(1, sequence);
+			ResultSet res = containsSequence.executeQuery();
+			if (res.next()) {// return id
+				int id = res.getInt("id");
+				res.close();
+				return id;
+			} else {// first add sequence
+				res.close();
+				addSequence.setString(1, sequence);
+				addSequence.executeUpdate();
+				res = addSequence.getGeneratedKeys();
+				res.next();
+				int id = res.getInt(1);
+				res.close();
+				return id;
+			}
+		} catch (SQLException e) {
+			System.err.println("Error executing query");
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	public void addData(String sequence, String organism, int position) {
+		try {
+			addPeptide.setInt(1, getSequenceId(sequence));
+			addPeptide.setInt(2, getOrganismId(organism));
+			addPeptide.setInt(3, position);
+			addPeptide.executeUpdate();
+		} catch (SQLException e) {
+			System.err.println("Error executing query");
+			e.printStackTrace(System.err);
+		}
+
+	}
+
+	public void emptyAllTables() {
+		// TRUNCATE TABLE `adresboekje_studierichtingen_03-04`
+		Statement stmt;
+		try {
+			stmt = connection.createStatement();
+			try {
+				stmt.executeUpdate("TRUNCATE TABLE `peptide`");
+				stmt.executeUpdate("TRUNCATE TABLE `sequence`");
+				stmt.executeUpdate("TRUNCATE TABLE `organism`");
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				stmt.close();
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
+}

@@ -1,0 +1,8 @@
+5mix:
+DB size: 160MB
+peptide: 2220003
+sequence: 355287 
+
+zonder trie, default settings: 1u27m
+zonder trie, meer ram: 30m
+zonder trie, meer ram + java caching: 20m
