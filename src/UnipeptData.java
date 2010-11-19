@@ -3,8 +3,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UnipeptData {
+	// database stuff
 	private Connection connection;
 
 	private PreparedStatement containsSequence;
@@ -13,10 +16,20 @@ public class UnipeptData {
 	private PreparedStatement addOrganism;
 	private PreparedStatement addPeptide;
 
+	// simple cache gives 30% performance increase
 	private String organismCacheString = "";
 	private int organismCacheInt;
 
+	// use local key index
+	private final boolean localSequenceIndex;
+	private Map<String, Integer> index;
+
 	public UnipeptData() {
+		this(false);
+	}
+
+	public UnipeptData(boolean useLocalSequenceIndex) {
+		localSequenceIndex = useLocalSequenceIndex;
 		try {
 			connection = Database.getConnection();
 			prepareStatements();
@@ -24,6 +37,14 @@ public class UnipeptData {
 			System.err.println("Database connection failed");
 			e.printStackTrace(System.err);
 		}
+		if (localSequenceIndex)
+			initTrie();
+	}
+
+	private void initTrie() {
+		// index = new PatriciaTrie<String,
+		// Integer>(StringKeyAnalyzer.INSTANCE);
+		index = new HashMap<String, Integer>();
 	}
 
 	private void prepareStatements() {
@@ -74,6 +95,11 @@ public class UnipeptData {
 	}
 
 	private int getSequenceId(String sequence) {
+		if (localSequenceIndex) {
+			Integer i = index.get(sequence);
+			if (i != null)
+				return i;
+		}
 		try {
 			containsSequence.setString(1, sequence);
 			ResultSet res = containsSequence.executeQuery();
@@ -88,6 +114,8 @@ public class UnipeptData {
 				res = addSequence.getGeneratedKeys();
 				res.next();
 				int id = res.getInt(1);
+				if (localSequenceIndex)
+					index.put(sequence, id);
 				res.close();
 				return id;
 			}

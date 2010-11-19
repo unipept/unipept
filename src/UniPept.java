@@ -47,7 +47,7 @@ public class UniPept {
 		 */
 
 		// easy access to the database
-		UnipeptData data = new UnipeptData();
+		UnipeptData data = new UnipeptData(true);
 		data.emptyAllTables();
 
 		// digest settings

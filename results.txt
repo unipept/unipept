@@ -3,6 +3,8 @@ DB size: 160MB
 peptide: 2220003
 sequence: 355287 
 
-zonder trie, default settings: 1u27m
-zonder trie, meer ram: 30m
-zonder trie, meer ram + java caching: 20m
+default settings: 1u27m
+meer ram in innoDB settings: 30m
+meer ram, java organism cache: 20m
+ram, organism cache, sequence index: 15m
+
