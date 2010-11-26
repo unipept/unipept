@@ -1,3 +1,5 @@
+package tools;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -6,6 +8,7 @@ import java.sql.Timestamp;
 import java.util.Iterator;
 
 import org.biojava.bio.Annotation;
+import org.biojava.bio.BioException;
 import org.biojava.bio.proteomics.Digest;
 import org.biojava.bio.proteomics.Protease;
 import org.biojava.bio.proteomics.ProteaseManager;
@@ -18,7 +21,20 @@ import org.biojava.bio.seq.SequenceTools;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.RichSequenceIterator;
 
-public class UniPept {
+import storage.UnipeptData;
+
+/**
+ * This script parses genbank files, extracts the protein information and puts
+ * the peptides in the database.
+ * 
+ * BEFORE ADDING PEPTIDES TO THE DATABASE, ALL TABLES ARE TRANCATED.
+ * 
+ * The input is expected to be a file containing a list of genbank filenames.
+ * 
+ * @author Bart Mesuere
+ * 
+ */
+public class PeptideLoader {
 	// peptide settings
 	private static final int MIN_PEPT_SIZE = 8;
 	private static final int MAX_PEPT_SIZE = 50;
@@ -29,22 +45,19 @@ public class UniPept {
 	private static final int MAX_MESSED_CLEAVAGES = 0;
 
 	/**
+	 * This script parses genbank files, extracts the protein information and
+	 * puts the peptides in the database. The input is expected to be a file
+	 * containing a list of genbank filenames.
 	 * 
 	 * @param args
+	 *            the path to the input file
 	 */
 	public static void main(String[] args) {
 		// Process input
-		if (args.length != 2) {
-			System.out.println("Usage: java CreateNewTree input.txt output");
+		if (args.length != 1) {
+			System.out.println("Usage: java PeptideLoader input.txt");
 			System.exit(-1);
 		}
-
-		// stats
-		/*
-		 * try { System.setErr(new PrintStream(args[1] + ".err")); } catch
-		 * (FileNotFoundException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); }
-		 */
 
 		// easy access to the database
 		UnipeptData data = new UnipeptData(true);
@@ -75,8 +88,7 @@ public class UniPept {
 								genbankReader, null);
 
 						// Since a single file can contain more than a sequence,
-						// you
-						// need to iterate over rsi to get the information.
+						// you need to iterate over rsi to get the information.
 						while (rsi.hasNext()) {
 							RichSequence rs = rsi.nextRichSequence();
 							// We only want the CDS features
@@ -118,17 +130,21 @@ public class UniPept {
 								}
 							}
 						}
-					} catch (Exception e) {
+					} catch (BioException e) {
+						System.err.println(new Timestamp(System.currentTimeMillis())
+								+ " BioJava is not happy");
 						e.printStackTrace();
 					}
 				}
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
+				System.err.println(new Timestamp(System.currentTimeMillis())
+						+ " There was some problem reading file " + args[0]);
 				e1.printStackTrace();
 			}
 
 		} catch (FileNotFoundException e2) {
-			// TODO Auto-generated catch block
+			System.err.println(new Timestamp(System.currentTimeMillis()) + " The file " + args[0]
+					+ " could not be found");
 			e2.printStackTrace();
 		}
 	}

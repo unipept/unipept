@@ -1,23 +1,27 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
+package storage;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 
-public class TaxonLoader {
+/**
+ * Intermediate class to add Taxondata to the database
+ * 
+ * @author Bart Mesuere
+ * 
+ */
+public class TaxonData {
 	// database stuff
 	private Connection connection;
 	private PreparedStatement addNode;
 	private PreparedStatement addName;
 
-	// BioJava
-	private final String nodes;
-	private final String names;
-
-	public TaxonLoader(String nodes, String names) {
-		this.nodes = nodes;
-		this.names = names;
+	/**
+	 * Creates a new TaxonData object and gets a database connection
+	 */
+	public TaxonData() {
 		try {
 			connection = Database.getConnection();
 			prepareStatements();
@@ -27,6 +31,9 @@ public class TaxonLoader {
 		}
 	}
 
+	/**
+	 * creates all prepared statements used in this class.
+	 */
 	private void prepareStatements() {
 		try {
 			addNode = connection
@@ -39,7 +46,23 @@ public class TaxonLoader {
 		}
 	}
 
-	private void addNode(Integer taxId, Integer parentTaxId, String rank, Integer geneticCode,
+	/**
+	 * Adds a node to the database
+	 * 
+	 * @param taxId
+	 *            The taxonId
+	 * @param parentTaxId
+	 *            The taxonId of the parent
+	 * @param rank
+	 *            The taxon rank
+	 * @param geneticCode
+	 *            no idea
+	 * @param mitoCode
+	 *            no idea
+	 * @param isTaxonHidden
+	 *            no idea
+	 */
+	public void addNode(Integer taxId, Integer parentTaxId, String rank, Integer geneticCode,
 			Integer mitoCode, Boolean isTaxonHidden) {
 		try {
 			addNode.setInt(1, taxId);
@@ -56,7 +79,17 @@ public class TaxonLoader {
 
 	}
 
-	private void addName(Integer taxId, String name, String nameClass) {
+	/**
+	 * Adds a name to the database
+	 * 
+	 * @param taxId
+	 *            The taxon id
+	 * @param name
+	 *            The name of the organism
+	 * @param nameClass
+	 *            the type of name (e.g. synonym)
+	 */
+	public void addName(Integer taxId, String name, String nameClass) {
 		try {
 			addName.setInt(1, taxId);
 			addName.setString(2, name);
@@ -69,39 +102,10 @@ public class TaxonLoader {
 
 	}
 
-	private void startLoading() {
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(nodes));
-			String line;
-			while ((line = reader.readLine()) != null) {
-				String[] parts = line.split("\\|");
-				Integer taxId = Integer.valueOf(parts[0].trim());
-				String pti = parts[1].trim();
-				Integer parentTaxId = pti.length() > 0 ? new Integer(pti) : null;
-				String rank = parts[2].trim();
-				Integer geneticCode = new Integer(parts[6].trim());
-				Integer mitoCode = new Integer(parts[8].trim());
-				Boolean isTaxonHidden = Boolean.valueOf(parts[10].trim());
-				addNode(taxId, parentTaxId, rank, geneticCode, mitoCode, isTaxonHidden);
-			}
-
-			reader = new BufferedReader(new FileReader(names));
-			while ((line = reader.readLine()) != null) {
-				String[] parts = line.split("\\|");
-				Integer taxId = Integer.valueOf(parts[0].trim());
-				String name = parts[1].trim();
-				String nameClass = parts[3].trim();
-				addName(taxId, name, nameClass);
-			}
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
+	/**
+	 * Truncates all taxon_ tables
+	 */
 	public void emptyAllTables() {
-		// TRUNCATE TABLE `adresboekje_studierichtingen_03-04`
 		Statement stmt;
 		try {
 			stmt = connection.createStatement();
@@ -109,21 +113,17 @@ public class TaxonLoader {
 				stmt.executeUpdate("TRUNCATE TABLE `taxon_node`");
 				stmt.executeUpdate("TRUNCATE TABLE `taxon_name`");
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
+				System.err.println(new Timestamp(System.currentTimeMillis())
+						+ " Something went wrong truncating tables.");
 				e.printStackTrace();
 			} finally {
 				stmt.close();
 			}
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
+			System.err.println(new Timestamp(System.currentTimeMillis())
+					+ " Something went wrong creating a new statement.");
 			e1.printStackTrace();
 		}
-	}
-
-	public static void main(String[] args) {
-		TaxonLoader tl = new TaxonLoader(args[0], args[1]);
-		tl.emptyAllTables();
-		tl.startLoading();
 	}
 
 }

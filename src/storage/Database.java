@@ -1,8 +1,17 @@
+package storage;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class Database {
+/**
+ * Internal (package private) Database class. Sets up the connection.
+ * 
+ * @author Bart Mesuere
+ * 
+ */
+class Database {
+	// DB settings
 	private final static String DRIVER = "com.mysql.jdbc.Driver";
 
 	private final static String JDBC_URL = "jdbc:mysql://localhost/unipept";
@@ -10,8 +19,10 @@ public class Database {
 	private final static String PASSWORD = "unipept";
 
 	/**
-	 * The constructor creates a new connection object with the hardcoded URL,
-	 * username and password.
+	 * Creates a new Connection object with the hardcoded URL, username and
+	 * password.
+	 * 
+	 * TODO: make this a singleton
 	 * 
 	 * @throws SQLException
 	 */
