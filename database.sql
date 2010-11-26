@@ -7,9 +7,13 @@ delimiter $$
 CREATE TABLE `organism` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(512) NOT NULL,
+  `taxonId` int(11) DEFAULT NULL,
+  `speciesId` int(11) DEFAULT NULL,
+  `genusId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8$$
+
 
 delimiter $$
 

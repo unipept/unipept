@@ -17,6 +17,7 @@ public class UnipeptData {
 	private PreparedStatement containsOrganism;
 	private PreparedStatement addOrganism;
 	private PreparedStatement addPeptide;
+	private PreparedStatement getParent;
 
 	// simple cache gives 30% performance increase
 	private String organismCacheString = "";
@@ -57,17 +58,21 @@ public class UnipeptData {
 							Statement.RETURN_GENERATED_KEYS);
 			containsOrganism = connection
 					.prepareStatement("SELECT id FROM organism WHERE `name` = ?");
-			addOrganism = connection.prepareStatement("INSERT INTO organism (`name`) VALUES (?)",
-					Statement.RETURN_GENERATED_KEYS);
+			addOrganism = connection
+					.prepareStatement(
+							"INSERT INTO organism (`name`, `taxonId`, `speciesId`, `genusId`) VALUES (?,?,?,?)",
+							Statement.RETURN_GENERATED_KEYS);
 			addPeptide = connection
 					.prepareStatement("INSERT INTO peptide (`sequenceId`, `organismId`, `position`) VALUES (?,?,?)");
+			getParent = connection
+					.prepareStatement("SELECT `parentTaxId`, `rank` FROM taxon_node WHERE `taxId` = ?");
 		} catch (SQLException e) {
 			System.err.println("Error creating prepared statements");
 			e.printStackTrace();
 		}
 	}
 
-	private int getOrganismId(String name) {
+	private int getOrganismId(String name, int ncbiTaxonId) {
 		if (organismCacheString.equals(name))
 			return organismCacheInt;
 		try {
@@ -81,6 +86,9 @@ public class UnipeptData {
 			} else {// first add sequence
 				res.close();
 				addOrganism.setString(1, name);
+				addOrganism.setInt(2, ncbiTaxonId);
+				addOrganism.setInt(3, getSpeciesId(ncbiTaxonId));
+				addOrganism.setInt(4, getGenusId(ncbiTaxonId));
 				addOrganism.executeUpdate();
 				res = addOrganism.getGeneratedKeys();
 				res.next();
@@ -90,6 +98,34 @@ public class UnipeptData {
 			}
 		} catch (SQLException e) {
 			System.err.println("Error executing query");
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	private int getGenusId(int ncbiTaxonId) {
+		return getParentxId(ncbiTaxonId, "genus");
+	}
+
+	private int getSpeciesId(int ncbiTaxonId) {
+		return getParentxId(ncbiTaxonId, "species");
+	}
+
+	private int getParentxId(int ncbiTaxonId, String rank) {
+		try {
+			getParent.setInt(1, ncbiTaxonId);
+			ResultSet s = getParent.executeQuery();
+			s.next();
+			int parent = s.getInt("parentTaxId");
+			String r = s.getString("rank");
+			s.close();
+			if (rank.equals(r))
+				return ncbiTaxonId;
+			if (parent == 1)
+				return -1;
+			return getParentxId(parent, rank);
+		} catch (Exception e) {
+			System.err.println(ncbiTaxonId);
 			e.printStackTrace();
 		}
 		return -1;
@@ -127,10 +163,10 @@ public class UnipeptData {
 		return -1;
 	}
 
-	public void addData(String sequence, String organism, int NCBItaxonId, int position) {
+	public void addData(String sequence, String organism, int ncbiTaxonId, int position) {
 		try {
 			addPeptide.setInt(1, getSequenceId(sequence));
-			addPeptide.setInt(2, getOrganismId(organism));
+			addPeptide.setInt(2, getOrganismId(organism, ncbiTaxonId));
 			addPeptide.setInt(3, position);
 			addPeptide.executeUpdate();
 		} catch (SQLException e) {
