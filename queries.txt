@@ -1,0 +1,40 @@
+#1 histogram
+SELECT voorkomens, COUNT(*) AS aantal FROM
+	(SELECT sequenceId, COUNT(*) AS voorkomens FROM unipept.peptide GROUP BY sequenceId) AS filter
+GROUP BY voorkomens
+
+#2 histogram
+SELECT voorkomens, COUNT(*) as aantal FROM 
+  (SELECT sequenceId, COUNT(*) AS voorkomens FROM
+    (SELECT DISTINCT sequenceId, organismId FROM unipept.peptide) AS distinct_organism
+  GROUP BY sequenceId) AS filter
+GROUP BY voorkomens
+
+#3 histogram
+SELECT voorkomens, COUNT(*) as aantal FROM 
+  (SELECT sequenceId, COUNT(*) AS voorkomens FROM
+    (SELECT DISTINCT sequenceId, speciesId FROM unipept.peptide 
+    INNER JOIN unipept.organism ON (organism.id = peptide.organismId)) 
+    AS distinct_species
+  GROUP BY sequenceId) AS filter
+GROUP BY voorkomens
+
+#4 histogram
+SELECT voorkomens, COUNT(*) as aantal FROM 
+  (SELECT sequenceId, COUNT(*) AS voorkomens FROM
+    (SELECT DISTINCT sequenceId, genusId FROM unipept.peptide 
+    INNER JOIN unipept.organism ON (organism.id = peptide.organismId)) 
+    AS distinct_genus
+  GROUP BY sequenceId) AS filter
+GROUP BY voorkomens
+
+
+===========================================
+varia
+===========================================
+basis subquery voor unieke peptiden
+
+(SELECT DISTINCT sequenceId, organismId, speciesId FROM `unipept`.`peptide` 
+INNER JOIN unipept.organism ON (peptide.organismId=organism.id) 
+ORDER BY sequenceId)
+
