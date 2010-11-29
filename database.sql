@@ -7,12 +7,15 @@ delimiter $$
 CREATE TABLE `organism` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(512) NOT NULL,
-  `taxonId` int(11) DEFAULT NULL,
-  `speciesId` int(11) DEFAULT NULL,
-  `genusId` int(11) DEFAULT NULL,
+  `taxonId` int(11) NOT NULL,
+  `speciesId` int(11) NOT NULL,
+  `genusId` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8$$
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `index2` (`taxonId`),
+  KEY `index3` (`speciesId`),
+  KEY `index4` (`genusId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8$$
 
 
 delimiter $$
@@ -23,8 +26,9 @@ CREATE TABLE `peptide` (
   `organismId` int(11) NOT NULL,
   `position` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `index2` (`sequenceId`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2219697 DEFAULT CHARSET=utf8$$
+  KEY `index2` (`sequenceId`) USING BTREE,
+  KEY `index3` (`organismId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8$$
 
 delimiter $$
 
@@ -35,6 +39,7 @@ CREATE TABLE `sequence` (
   UNIQUE KEY `sequence_UNIQUE` (`sequence`) USING BTREE,
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=343308 DEFAULT CHARSET=utf8$$
+
 
 delimiter $$
 

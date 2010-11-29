@@ -32,6 +32,15 @@ GROUP BY voorkomens
 ===========================================
 varia
 ===========================================
+aantal genomen per species:
+SELECT speciesId, COUNT(*) AS aantal FROM unipept.organism GROUP BY speciesId
+
+aantal genomen per genus:
+SELECT genusId, COUNT(*) AS aantal FROM unipept.organism GROUP BY genusId
+
+aantal species per genus:
+
+
 basis subquery voor unieke peptiden
 
 (SELECT DISTINCT sequenceId, organismId, speciesId FROM `unipept`.`peptide` 
