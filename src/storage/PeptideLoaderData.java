@@ -17,7 +17,7 @@ import org.ardverk.collection.StringKeyAnalyzer;
  * @author Bart Mesuere
  * 
  */
-public class UnipeptData {
+public class PeptideLoaderData {
 	// database stuff
 	private Connection connection;
 
@@ -40,7 +40,7 @@ public class UnipeptData {
 	 * Default constructor disables local index. If you don't know what you're
 	 * doing, use this.
 	 */
-	public UnipeptData() {
+	public PeptideLoaderData() {
 		this(false);
 	}
 
@@ -51,7 +51,7 @@ public class UnipeptData {
 	 *            enables the use of a local sequence index to reduce database
 	 *            lookup and increase speed.
 	 */
-	public UnipeptData(boolean useLocalSequenceIndex) {
+	public PeptideLoaderData(boolean useLocalSequenceIndex) {
 		localSequenceIndex = useLocalSequenceIndex;
 		try {
 			connection = Database.getConnection();

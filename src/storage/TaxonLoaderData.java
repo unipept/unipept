@@ -12,7 +12,7 @@ import java.sql.Timestamp;
  * @author Bart Mesuere
  * 
  */
-public class TaxonData {
+public class TaxonLoaderData {
 	// database stuff
 	private Connection connection;
 	private PreparedStatement addNode;
@@ -21,7 +21,7 @@ public class TaxonData {
 	/**
 	 * Creates a new TaxonData object and gets a database connection
 	 */
-	public TaxonData() {
+	public TaxonLoaderData() {
 		try {
 			connection = Database.getConnection();
 			prepareStatements();

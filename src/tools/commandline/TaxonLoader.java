@@ -6,7 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Timestamp;
 
-import storage.TaxonData;
+import storage.TaxonLoaderData;
 
 /**
  * This script parses NCBI taxon node and name files and inserts them into the
@@ -21,7 +21,7 @@ import storage.TaxonData;
  */
 public class TaxonLoader {
 	// data
-	TaxonData data;
+	TaxonLoaderData data;
 
 	// BioJava
 	private final String nodes;
@@ -36,7 +36,7 @@ public class TaxonLoader {
 	 *            The path to the names.dmp file
 	 */
 	public TaxonLoader(String nodes, String names) {
-		data = new TaxonData();
+		data = new TaxonLoaderData();
 		data.emptyAllTables();
 		this.nodes = nodes;
 		this.names = names;

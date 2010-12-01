@@ -21,7 +21,7 @@ import org.biojava.bio.seq.SequenceTools;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.RichSequenceIterator;
 
-import storage.UnipeptData;
+import storage.PeptideLoaderData;
 
 /**
  * This script parses genbank files, extracts the protein information and puts
@@ -60,7 +60,7 @@ public class PeptideLoader {
 		}
 
 		// easy access to the database
-		UnipeptData data = new UnipeptData(true);
+		PeptideLoaderData data = new PeptideLoaderData(true);
 		data.emptyAllTables();
 
 		// digest settings
