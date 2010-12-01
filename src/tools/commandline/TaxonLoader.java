@@ -1,4 +1,4 @@
-package tools;
+package tools.commandline;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
