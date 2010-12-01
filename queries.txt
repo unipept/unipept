@@ -1,3 +1,17 @@
+voor elke sequentie hoeveel keer hij voorkomt
+SELECT query.sequenceId, query.speciesId, aantal_genomen_met_voorkomen, aantal_genomen, (aantal_genomen_met_voorkomen/aantal_genomen) AS procentueel FROM
+  (SELECT sequenceId, speciesId, COUNT(DISTINCT organismId) AS aantal_genomen_met_voorkomen 
+  FROM unipept.peptide 
+  INNER JOIN unipept.organism ON (organism.id = peptide.organismId)
+  GROUP BY sequenceId, speciesId) AS query
+INNER JOIN
+  (SELECT speciesId, COUNT(*) AS aantal_genomen FROM unipept.organism GROUP BY speciesId) AS aantallen
+ON (query.speciesId = aantallen.speciesId)
+
+===========================================
+histogrammen
+===========================================
+
 #1 histogram
 SELECT voorkomens, COUNT(*) AS aantal FROM
 	(SELECT sequenceId, COUNT(*) AS voorkomens FROM unipept.peptide GROUP BY sequenceId) AS filter
@@ -29,6 +43,7 @@ SELECT voorkomens, COUNT(*) as aantal FROM
 GROUP BY voorkomens
 
 
+
 ===========================================
 varia
 ===========================================
@@ -39,6 +54,16 @@ aantal genomen per genus:
 SELECT genusId, COUNT(*) AS aantal FROM unipept.organism GROUP BY genusId
 
 aantal species per genus:
+
+totaal aantal peptiden per species:
+SELECT speciesId, COUNT(*) AS aantal FROM unipept.peptide 
+INNER JOIN unipept.organism ON (peptide.organismId = organism.id) 
+GROUP BY speciesId;
+
+aantal verschillende peptiden per species:
+SELECT speciesId, COUNT(DISTINCT sequenceId) AS aantal FROM unipept.peptide 
+INNER JOIN unipept.organism ON (peptide.organismId = organism.id)
+GROUP BY speciesId
 
 
 basis subquery voor unieke peptiden
