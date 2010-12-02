@@ -12,7 +12,7 @@ import org.ardverk.collection.PatriciaTrie;
 import org.ardverk.collection.StringKeyAnalyzer;
 
 /**
- * Intermediate class to add Taxondata to the database
+ * Intermediate class to add PeptideData to the database
  * 
  * @author Bart Mesuere
  * 

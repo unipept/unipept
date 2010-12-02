@@ -48,8 +48,10 @@ CREATE TABLE `taxon_name` (
   `taxId` int(11) NOT NULL,
   `name` varchar(256) DEFAULT NULL,
   `nameClass` varchar(64) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `index2` (`taxId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8$$
+
 
 delimiter $$
 
