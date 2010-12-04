@@ -26,7 +26,7 @@ CREATE TABLE `peptide` (
   `organismId` int(11) NOT NULL,
   `position` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `index2` (`sequenceId`) USING BTREE,
+  KEY `index2` (`sequenceId`),
   KEY `index3` (`organismId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8$$
 
@@ -36,9 +36,9 @@ CREATE TABLE `sequence` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `sequence` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `sequence_UNIQUE` (`sequence`) USING BTREE,
+  UNIQUE KEY `sequence_UNIQUE` (`sequence`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=343308 DEFAULT CHARSET=utf8$$
+) ENGINE=InnoDB DEFAULT CHARSET=utf8$$
 
 
 delimiter $$
@@ -64,5 +64,5 @@ CREATE TABLE `taxon_node` (
   `mitoCode` int(11) DEFAULT NULL,
   `isTaxonHidden` bit(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=227766 DEFAULT CHARSET=utf8$$
+) ENGINE=InnoDB DEFAULT CHARSET=utf8$$
 
