@@ -23,6 +23,7 @@ import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.RichSequenceIterator;
 
 import storage.PeptideLoaderData;
+import biojava.WeakRichObjectBuilder;
 
 /**
  * This script parses genbank files, extracts the protein information and puts
@@ -50,6 +51,8 @@ public class PeptideLoader {
 	BufferedReader inputReader;
 	PeptideLoaderData data;
 
+	WeakRichObjectBuilder wrob = new WeakRichObjectBuilder();
+
 	public PeptideLoader(String datafile) {
 		// easy access to the database
 		data = new PeptideLoaderData(false);
@@ -62,6 +65,7 @@ public class PeptideLoader {
 			e2.printStackTrace();
 		}
 		RichObjectFactory.setLRUCacheSize(3);// cache problem?
+		RichObjectFactory.setRichObjectBuilder(wrob);
 	}
 
 	/**
@@ -140,6 +144,7 @@ public class PeptideLoader {
 								data.addData(seqString, rs.getTaxon().getDisplayName(), rs
 										.getTaxon().getNCBITaxID(), f.getLocation().getMin());
 							}
+
 						}
 					}
 				}
@@ -160,8 +165,35 @@ public class PeptideLoader {
 			System.err.println(new Timestamp(System.currentTimeMillis()) + " The file " + file
 					+ " could not be found");
 			e.printStackTrace();
+<<<<<<< HEAD:src/tools/commandline/PeptideLoader.java
 		}
 	}
+
+	/**
+	 * This script parses genbank files, extracts the protein information and
+	 * puts the peptides in the database. The input is expected to be a file
+	 * containing a list of genbank filenames.
+	 * 
+	 * @param args
+	 *            the path to the input file
+	 */
+	public static void main(String[] args) {
+		// Process input
+		if (args.length != 1) {
+			System.out.println("Usage: java PeptideLoader input.txt");
+			System.exit(-1);
+=======
+>>>>>>> 6c58cbf865bbdd1ba632986aa7adda5c4d3ad31b:src/tools/commandline/PeptideLoader.java
+		}
+
+		// create a new loader object
+		PeptideLoader loader = new PeptideLoader(args[0]);
+
+		// process input files line by line
+		loader.processData();
+	}
+<<<<<<< HEAD:src/tools/commandline/PeptideLoader.java
+=======
 
 	/**
 	 * This script parses genbank files, extracts the protein information and
@@ -184,4 +216,5 @@ public class PeptideLoader {
 		// process input files line by line
 		loader.processData();
 	}
+>>>>>>> 6c58cbf865bbdd1ba632986aa7adda5c4d3ad31b:src/tools/commandline/PeptideLoader.java
 }
