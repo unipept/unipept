@@ -52,8 +52,6 @@ public class PeptideLoader {
 	PeptideLoaderData data;
 
 	// mem leak fix
-	// ResettableSimpleRichObjectBuilder rsrob = new
-	// ResettableSimpleRichObjectBuilder();
 	WeakRichObjectBuilder wrob = new WeakRichObjectBuilder();
 
 	public PeptideLoader(String datafile) {
@@ -79,7 +77,6 @@ public class PeptideLoader {
 		try {
 			while ((input = inputReader.readLine()) != null) {
 				processFile(input);
-				// rsrob.reset();
 			}
 		} catch (IOException e1) {
 			System.err.println(new Timestamp(System.currentTimeMillis())
