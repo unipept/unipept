@@ -57,7 +57,7 @@ public class PeptideLoader {
 	public PeptideLoader(String datafile) {
 		// easy access to the database
 		data = new PeptideLoaderData(false);
-		data.emptyAllTables();
+		// data.emptyAllTables();
 		try {
 			inputReader = new BufferedReader(new FileReader(datafile));
 		} catch (FileNotFoundException e2) {

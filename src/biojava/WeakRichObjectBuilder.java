@@ -1,6 +1,3 @@
-/**
- * 
- */
 package biojava;
 
 import java.lang.reflect.Constructor;
@@ -13,7 +10,14 @@ import java.util.Set;
 
 import org.biojavax.RichObjectBuilder;
 
+import util.WeakValueMap;
+
 /**
+ * This is an exact copy of the SimpleRichObjectBuilder from BioJava 1.7.1 The
+ * only change is the use of WeakValueMaps instead of normal HashMaps. With this
+ * change, objects with no other strong reference can be removed by the garbage
+ * collector. This reduces the memory usage drastically.
+ * 
  * @author Bart Mesuere
  * 
  */

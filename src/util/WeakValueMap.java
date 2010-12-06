@@ -1,4 +1,4 @@
-package biojava;
+package util;
 
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
