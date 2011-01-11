@@ -1,6 +1,6 @@
 #!/bin/bash
 
-datadir="/home/bmesuere/data"
+datadir="data"
 
 # create directory for storing genome sequences
 genomedir="${datadir}/genomes"
