@@ -72,3 +72,24 @@ basis subquery voor unieke peptiden
 INNER JOIN unipept.organism ON (peptide.organismId=organism.id) 
 ORDER BY sequenceId)
 
+histogram voor aantal genomen binnen 1 species
+SELECT aantal AS aantal_voorkomens, count(*) AS aantal FROM 
+	(SELECT COUNT(DISTINCT organismId) AS aantal FROM `unipept`.`organism` 
+	INNER JOIN unipept.peptide ON (organism.id = peptide.organismId)
+	WHERE speciesId=1280
+	GROUP BY peptide.sequenceId) AS filter
+GROUP BY aantal
+
+aantal peptiden die binnen de species in alle genomen voorkomen maar niet er buiten
+SELECT COUNT(*) FROM
+  (SELECT peptide.sequenceId, COUNT(DISTINCT speciesId) AS aantal FROM 
+    (SELECT sequenceId, COUNT(DISTINCT organismId) AS aantal FROM `unipept`.`organism` 
+    INNER JOIN unipept.peptide ON (organism.id = peptide.organismId)
+    WHERE speciesId=1280
+    GROUP BY peptide.sequenceId HAVING aantal = 15) AS filter
+  INNER JOIN unipept.peptide
+  ON (filter.sequenceId = peptide.sequenceId)
+  INNER JOIN unipept.organism
+  ON (peptide.organismId = organism.id)
+  GROUP BY peptide.sequenceId HAVING aantal=1) AS bingo
+
