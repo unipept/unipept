@@ -1,1 +1,1 @@
-find data/genomes/bacteria/complete -type d -exec find {} -type f \; > data/all.txt
+find data/genomes/bacteria/complete -name '*.gbk' | sort > data/all.txt
