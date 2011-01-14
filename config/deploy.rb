@@ -1,3 +1,4 @@
+require 'bundler/capistrano'
 set :application, "unipept-web"
 set :repository,  "ssh://gitosis@zeus.ugent.be:2222/unipept-web.git"
 

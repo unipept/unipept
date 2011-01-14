@@ -23,4 +23,4 @@ production:
   pool: 5
   username: unipept
   password: unipept
-  socket: /tmp/mysql.sock
+  socket: /var/run/mysqld/mysqld.sock
