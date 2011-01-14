@@ -12,7 +12,7 @@ body {
 
 /* Container is the wrapper div */
 #container {
-	background: #FFF url(images/containerbg2.png) repeat-y;
+	background: #FFF url(../images/containerbg2.png) repeat-y;
 	width: 972px;
 	padding: 0 6px;
 	margin: 0 auto;
@@ -43,7 +43,7 @@ body {
 	width: 60%;
 }
 #user li.member {
-	background: url("images/ingelogd.gif") no-repeat left center ;
+	background: url("../images/ingelogd.gif") no-repeat left center ;
 	padding-left: 15px;
 }
 
@@ -84,7 +84,7 @@ body {
 
 
 #header {
-	background: url(images/sprieten_s.gif) no-repeat 0 0;
+	background: url(../images/sprieten_s.gif) no-repeat 0 0;
 	height: 48px;
 }
 
@@ -195,7 +195,7 @@ input, textarea {
 #mainnav ul li a:link,
 #mainnav ul li a:visited {
 	display: block;
-	background: #DCDFE4 url(images/plus.gif) no-repeat 7px 10px;
+	background: #DCDFE4 url(../images/plus.gif) no-repeat 7px 10px;
 	font-weight: 700;
 	padding: 5px 20px;
 	border-bottom: 1px solid white;
@@ -210,12 +210,12 @@ input, textarea {
 
 #mainnav ul li a:hover,
 #mainnav ul li a:active {
-	background: #EDEFF1 url(images/plus.gif) no-repeat 7px 10px;
+	background: #EDEFF1 url(../images/plus.gif) no-repeat 7px 10px;
 }
 
 #mainnav ul li.open a:link,
 #mainnav ul li.open a:visited {
-	background: #DCDFE4 url(images/min_blue.gif) no-repeat 7px 10px;
+	background: #DCDFE4 url(../images/min_blue.gif) no-repeat 7px 10px;
 }
 
 #mainnav ul li.open a:hover,
@@ -233,7 +233,7 @@ input, textarea {
 
 #mainnav ul li.open li a:link,
 #mainnav ul li.open li a:visited {
-	background: #F5F5F5 url(images/square.gif) no-repeat 7px 8px;
+	background: #F5F5F5 url(../images/square.gif) no-repeat 7px 8px;
 	font-weight: 300;
 	padding: 3px 20px;
 	margin: 0;
@@ -249,7 +249,7 @@ input, textarea {
 
 #mainnav ul li.open li.active a:link,
 #mainnav ul li.open li.active a:visited {
-	background: #FDB812 url(images/min.gif) no-repeat 7px 10px;
+	background: #FDB812 url(../images/min.gif) no-repeat 7px 10px;
 	border: none;
 	color: #FFF;
 	font-weight: 700;
@@ -258,12 +258,12 @@ input, textarea {
 #mainnav ul li.open li.open a:link,
 
 #mainnav ul li.open li.open a:visited {
-	background: #F5F5F5 url(images/min_blue.gif) no-repeat 7px 8px;
+	background: #F5F5F5 url(../images/min_blue.gif) no-repeat 7px 8px;
 }
 
 #mainnav ul li.open li.active a:link,
 #mainnav ul li.open li.active a:visited {
-	background: #FDB812 url(images/min.gif) no-repeat 7px 8px;
+	background: #FDB812 url(../images/min.gif) no-repeat 7px 8px;
 	border: none;
 	color: #FFF;
 }
@@ -272,7 +272,7 @@ input, textarea {
 
 #mainnav ul li.open li a.haschild:link,
 #mainnav ul li.open li a.haschild:visited {
-	background: #f5f5f5 url(images/plus.gif) no-repeat 7px 8px;
+	background: #f5f5f5 url(../images/plus.gif) no-repeat 7px 8px;
 	color: #369;
 }
 
@@ -283,7 +283,7 @@ input, textarea {
 #mainnav ul li.open li.open li a:link,
 #mainnav ul li.open li.open li a:visited {
 	padding: 3px 20px 3px 40px;
-	background: #F5F5F5 url(images/chevron-dubbel.gif) no-repeat 27px 9px;
+	background: #F5F5F5 url(../images/chevron-dubbel.gif) no-repeat 27px 9px;
 	border: none;
 	color: #369;
 	font-weight: normal;
@@ -296,7 +296,7 @@ input, textarea {
 
 #mainnav ul li.open li.open li.active a:link,
 #mainnav ul li.open li.open li.active a:visited {
-	background: #FDB812 url(images/chevron-dubbel-wit.gif) no-repeat 7px 9px;
+	background: #FDB812 url(../images/chevron-dubbel-wit.gif) no-repeat 7px 9px;
 	margin: 0 0 0 20px;
 	padding-left: 20px;
 	color: white;
@@ -407,7 +407,7 @@ h2.pagetitle {
 #content .sectiontitle a:link,
 #content .sectiontitle a:visited {
 	text-decoration: none;
-	background: url(images/chevron-dubbel.gif) no-repeat 0 0.5em;
+	background: url(../images/chevron-dubbel.gif) no-repeat 0 0.5em;
 	padding-left: 12px;
 	position: relative;
 	top: 0.6em;
@@ -568,7 +568,7 @@ table.datagrid td.date {
 	border-bottom: 1px solid #336699;
 }
 
-/* Remove borders around images */
+/* Remove borders around ../images */
 a img {
 	border: none !important;
 }
@@ -658,7 +658,7 @@ p.readmore {
 #content p.readmore a:link,
 #content p.readmore a:visited {
 	padding-left: 7px;
-	background: #FFF url(images/chevron.gif) no-repeat 0 5px;
+	background: #FFF url(../images/chevron.gif) no-repeat 0 5px;
 	text-decoration: none;
 }
 
@@ -714,7 +714,7 @@ p.readmore {
 	width: 178px;
 }
 .box-img {
-	background: transparent url(images/fancygradient.png) repeat-x left bottom;
+	background: transparent url(../images/fancygradient.png) repeat-x left bottom;
 }
 .box-img .caption {
 	padding: 0.5em;
@@ -722,7 +722,7 @@ p.readmore {
 .box dt,
 .facet dt {
 	font-size: 1.2em;
-	background: #EAECF0 url(images/facetbg.png) repeat-x;
+	background: #EAECF0 url(../images/facetbg.png) repeat-x;
 	color: #0870a1;
 	font-family: Arial, sans-serif;
 	padding: 0.4em 0.5em 0.2em 0.5em;
@@ -747,7 +747,7 @@ p.readmore {
 .facet ul li {
 	font-size: 1.1em;
 	padding: 1px 0 1px 1.5em;
-	background: url(images/chevron-dubbel.gif) no-repeat 4px 7px;
+	background: url(../images/chevron-dubbel.gif) no-repeat 4px 7px;
 }
 .box a:link,
 .box a:visited,
@@ -776,28 +776,28 @@ p.readmore {
 }
 
 .box a.pdf,.facet a.pdf {
-	background: #FFF url(images/pdf.gif) no-repeat right 50%;
+	background: #FFF url(../images/pdf.gif) no-repeat right 50%;
 }
 .box a.external,.facet a.external {
-	background: #FFF url(images/externesite.gif) no-repeat right 50%;
+	background: #FFF url(../images/externesite.gif) no-repeat right 50%;
 }
 .box a.doc,.facet a.doc {
-	background: #FFF url(images/doc.gif) no-repeat right 50%;
+	background: #FFF url(../images/doc.gif) no-repeat right 50%;
 }
 .box a.ppt,.facet a.ppt {
-	background: #FFF url(images/ppt.gif) no-repeat right 50%;
+	background: #FFF url(../images/ppt.gif) no-repeat right 50%;
 }
 .box a.xls,.facet a.xls {
-	background: #FFF url(images/xls.gif) no-repeat right 50%;
+	background: #FFF url(../images/xls.gif) no-repeat right 50%;
 }
 .box a.audio,.facet a.audio {
-	background: #FFF url(images/aud.gif) no-repeat right 50%;
+	background: #FFF url(../images/aud.gif) no-repeat right 50%;
 }
 .box a.video,.facet a.video {
-	background: #FFF url(images/vid.gif) no-repeat right 50%;
+	background: #FFF url(../images/vid.gif) no-repeat right 50%;
 }
 .box a.beveiligd,.facet a.beveiligd {
-	background: #FFF url(images/sleutel.gif) no-repeat right 50%;
+	background: #FFF url(../images/sleutel.gif) no-repeat right 50%;
 }
 
 #navigation dl.portlet {
@@ -824,7 +824,7 @@ p.readmore {
 }
 
 .clickthrough a {
-	background: url(images/chevron-dubbel.gif) no-repeat 0 0.5em;
+	background: url(../images/chevron-dubbel.gif) no-repeat 0 0.5em;
 	padding-left: 12px;
 }
 
@@ -900,7 +900,7 @@ a:active, #content a:active {
 }
 
 #footer {
-	background: #104b7d url(images/footerbg.png) repeat-y;
+	background: #104b7d url(../images/footerbg.png) repeat-y;
 	width: 972px;
 	padding: 0 6px;
 	height: 64px;
@@ -959,7 +959,7 @@ a:active, #content a:active {
 }
 
 #call-to-action {
-	background: #ecedf2 url(images/fancygradient.png) repeat-x;
+	background: #ecedf2 url(../images/fancygradient.png) repeat-x;
 	border: 1px solid #dcdfe4;
 	padding: 1em;
 }
@@ -970,13 +970,13 @@ ul.chevrons {
 }
 
 ul.chevrons li {
-	background: url(images/chevron-dubbel.gif) no-repeat 4px 6px;
+	background: url(../images/chevron-dubbel.gif) no-repeat 4px 6px;
 	padding: 0 0 0 1.5em;
 	margin-left: -30px;
 }
 
 a.advanced {
-	background: transparent url(images/sleutel.gif) no-repeat right 50%;
+	background: transparent url(../images/sleutel.gif) no-repeat right 50%;
 	padding-right: 25px;
 	line-height: normal;
 	padding-top: 0;
@@ -989,7 +989,7 @@ a.advanced {
 }
 
 a.shortcut {
-	background: #FFF url(images/shortcut.gif) no-repeat right 50%;
+	background: #FFF url(../images/shortcut.gif) no-repeat right 50%;
 }
 
 
@@ -1099,10 +1099,10 @@ span.anchor {
 	display: block;
 }
 span.anchor {
-	background-image: url("images/arrow.jpg");
+	background-image: url("../images/arrow.jpg");
 }
 span.top {
-	background-image: url("images/top.gif");
+	background-image: url("../images/top.gif");
 }
 
 /* Rechtse iconen */
@@ -1128,53 +1128,53 @@ span.beveiligd {
 }
 
 span.pdf {
-	background-image: url("images/pdf.gif");
+	background-image: url("../images/pdf.gif");
 }
 span.external {
-	background-image: url("images/externesite.gif");
+	background-image: url("../images/externesite.gif");
 }
 span.doc {
-	background-image: url("images/doc.gif");
+	background-image: url("../images/doc.gif");
 }
 span.ppt {
-	background-image: url("images/ppt.gif");
+	background-image: url("../images/ppt.gif");
 }
 span.xls {
-	background-image: url("images/xls.gif");
+	background-image: url("../images/xls.gif");
 }
 span.audio {
-	background-image: url("images/aud.gif");
+	background-image: url("../images/aud.gif");
 }
 span.video {
-	background-image: url("images/vid.gif");
+	background-image: url("../images/vid.gif");
 }
 span.beveiligd {
-	background-image: url("images/sleutel.gif");
+	background-image: url("../images/sleutel.gif");
 }
 
 dl a.pdf {
-	background: #FFF url("images/pdf.gif") no-repeat right 50%;
+	background: #FFF url("../images/pdf.gif") no-repeat right 50%;
 }
 dl a.external {
-	background: #FFF url("images/externesite.gif") no-repeat right 50%;
+	background: #FFF url("../images/externesite.gif") no-repeat right 50%;
 }
 dl a.doc {
-	background: #FFF url("images/doc.gif") no-repeat right 50%;
+	background: #FFF url("../images/doc.gif") no-repeat right 50%;
 }
 dl a.ppt {
-	background: #FFF url("images/ppt.gif") no-repeat right 50%;
+	background: #FFF url("../images/ppt.gif") no-repeat right 50%;
 }
 dl a.xls {
-	background: #FFF url("images/xls.gif") no-repeat right 50%;
+	background: #FFF url("../images/xls.gif") no-repeat right 50%;
 }
 dl a.audio {
-	background: #FFF url("images/aud.gif") no-repeat right 50%;
+	background: #FFF url("../images/aud.gif") no-repeat right 50%;
 }
 dl a.video {
-	background: #FFF url("images/vid.gif") no-repeat right 50%;
+	background: #FFF url("../images/vid.gif") no-repeat right 50%;
 }
 dl a.beveiligd {
-	background: #FFF url("images/sleutel.gif") no-repeat right 50%;
+	background: #FFF url("../images/sleutel.gif") no-repeat right 50%;
 }
 
 
@@ -1334,7 +1334,7 @@ p.listingBar {
 .top {
 	clear: both;
 	padding-left: 15px;
-	background: white url("images/top.gif") left center no-repeat;
+	background: white url("../images/top.gif") left center no-repeat;
 }
 
 #content .top a {
@@ -1368,7 +1368,7 @@ p.listingBar {
 
 #anchors ul li {
 	padding: 0 0 2px 15px;
-	background-image: url("images/arrow.jpg");
+	background-image: url("../images/arrow.jpg");
 	background-position: left center;
 	background-repeat: no-repeat;
 	display: block;
@@ -1385,7 +1385,7 @@ p.listingBar {
 	background-color: #FFFFFF;
 }
 
-/* spacing-left-with-image; used in actueeloverzicht_view to adjust 2nd item with images */
+/* spacing-left-with-image; used in actueeloverzicht_view to adjust 2nd item with ../images */
 
 .spacing-left-with-image {
 	position: relative;
@@ -1414,7 +1414,7 @@ p.listingBar {
 	border-collapse: collapse;
 	border-spacing: 0;
 	width: 100%;
-	background: transparent url('images/facetbg.png') repeat-x;
+	background: transparent url('../images/facetbg.png') repeat-x;
 }
 
 .ploneCalendar a {
@@ -1444,13 +1444,13 @@ p.listingBar {
 }
 
 .ploneCalendar #calendar-previous {
-	background-image: url('images/lt.gif');
+	background-image: url('../images/lt.gif');
 	background-repeat: no-repeat;
 	background-position: 50% 50%;
 }
 
 .ploneCalendar #calendar-next {
-	background-image: url('images/gt.gif');
+	background-image: url('../images/gt.gif');
 	background-repeat: no-repeat;
 	background-position: 50% 50%;
 }
@@ -2165,7 +2165,7 @@ p.rechts#som {
 	margin: 1px 0px 1em;
 }
 .portletHeader, dl.box dt {
-	background: #EAECF0 url(images/facetbg.png) repeat-x scroll 0px 0px;
+	background: #EAECF0 url(../images/facetbg.png) repeat-x scroll 0px 0px;
 	border-bottom: 0px;
 	border-left: 1px solid #DCDFE4;
 	border-right: 1px solid #DCDFE4;
@@ -2193,7 +2193,7 @@ p.rechts#som {
 	padding-top: 0px;
 }
 .box ul li, .portlet ul li, .facet ul li {
-	background: transparent url(images/chevron-dubbel.gif) no-repeat scroll 4px 7px;
+	background: transparent url(../images/chevron-dubbel.gif) no-repeat scroll 4px 7px;
 	font-size: 1.1em;
 	margin-bottom: 0px;
 	padding: 1px 0px 1px 1.5em;
