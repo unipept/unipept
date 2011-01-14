@@ -11,6 +11,7 @@ group :test do
   gem 'rspec'
   gem 'webrat'
 	gem 'spork'
+	gem 'be_valid_asset'
 end
 
 #default stuff
