@@ -9,6 +9,7 @@ set :deploy_to, "/home/bmesuere/rails"
 set :user, "bmesuere"
 set :use_sudo, false
 set :port, 4840
+set :deploy_via, :remote_cache
 
 role :web, "buruli.ugent.be"                          # Your HTTP server, Apache/etc
 role :app, "buruli.ugent.be"                          # This may be the same as your `Web` server
