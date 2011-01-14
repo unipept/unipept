@@ -1,0 +1,55 @@
+/**
+Global spacing resets on all elements are annoying and they always interfere with CMS styles.
+Keep default/previously-defined/CMS-defined margin/paddings and reset on specific elements only.
+**/
+
+/* pre, blockquote, address, ul, ol, li, , h1, h2, h3, h4, h5, h6, */
+
+ul,ol {
+	margin: 0;
+	padding: 0.8em 0;
+}
+#content ul,#content ol {
+	padding-left: 3em;
+}
+#language ul,#language ul li,
+#user ul,#user ul li,
+#utility ul,#utility ul li,
+#mainnav ul,#mainnav ul li,
+#footer ul,#footer ul li,
+body, form, p, dt, dd, dl, td, th ,tr {
+	margin: 0;
+	padding: 0;
+}
+
+ol, ul {
+	list-style: none;
+}
+
+img {
+	border: 0;
+}
+
+fieldset {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+input, select, textarea {
+	font-size: 100%;
+	vertical-align: middle;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+	empty-cells: show;
+}
+
+th {
+	text-align: left;
+}
+td {
+	vertical-align: top;
+}

@@ -1,0 +1,2200 @@
+/* Set height of html and body to max for the sticky footer */
+html, body {
+	height: 100%;
+}
+
+body {
+	background: #E9EBF0;
+	font-size: 62.5%;
+	font-family: Verdana, Arial, sans-serif;
+	line-height: 1.4em;
+}
+
+/* Container is the wrapper div */
+#container {
+	background: #FFF url(images/containerbg2.png) repeat-y;
+	width: 972px;
+	padding: 0 6px;
+	margin: 0 auto;
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	position: relative;
+}
+
+#main {
+	padding: 0 12px 36px;
+}
+
+/* Float structure, top to bottom */
+
+#topbar {
+	width: 100%;
+	padding: 0 0 5px;
+}
+
+#topbar a.advanced {
+	padding-right: 18px;
+}
+
+#user {
+	float: right;
+	padding: 5px 12px 0 0;
+	width: 60%;
+}
+#user li.member {
+	background: url("images/ingelogd.gif") no-repeat left center ;
+	padding-left: 15px;
+}
+
+#language {
+	float: left;
+	padding: 5px 0 0 12px;
+	width: 25%;
+}
+
+#topbar ul {
+	list-style: none;
+	float: left;
+}
+
+#user ul {
+	float: right;
+}
+
+#user ul li, #language ul li {
+	float: left;
+	padding-left: 0.5em;
+}
+
+#topbar li.selected a {
+	color: #AAA;
+	text-decoration: none;
+}
+
+#topbar ul li {
+	border-right: 1px solid #88a0b8;
+	padding: 0 5px;
+	font-size: 1.1em;
+}
+
+#topbar ul li.last-child {
+	border: none;
+}
+
+
+#header {
+	background: url(images/sprieten_s.gif) no-repeat 0 0;
+	height: 48px;
+}
+
+#headerleft {
+	float: left;
+	padding: 0 0 0 50px;
+	width: 30%;
+}
+
+#headerright {
+	float: right;
+	width: 70%;
+}
+#headerleft h1 {
+
+/*height: 68px;*/
+position: absolute;
+top: 15px;
+left: 59px;
+}
+
+#headerleft h1 a {
+	overflow: hidden;
+	display: block;
+	width: auto;
+	/*height: 100%;*/
+}
+
+#headerleft h2 {
+
+/*height: 68px;*/
+position: absolute;
+top: 17px;
+left: 250px;
+border: none;
+font-weight: bold;
+width: 300px;
+}
+
+#headerleft h2 a {
+	text-decoration: none;
+	color: white;
+}
+
+#breadcrumb {
+	line-height: 1.2;
+	width: 755px;
+	padding: 0 0 16px 205px;
+	font-size: 1.1em;
+}
+/*
+#breadcrumb p {
+padding: 0;
+}
+*/
+#utility {
+	padding-top: 5px;
+	float: right;
+	width: 242px;
+}
+
+#utility ul {
+	padding: 0.2em 1em 0 1em;
+	float: right;
+	list-style: none;
+}
+
+#utility ul li {
+	float: left;
+	padding: 0 0.5em;
+	border-right: 1px solid #88A0B8;
+	font-size: 1.1em;
+}
+
+#utility ul li.last-child {
+	border: none;
+	padding-right: 0;
+}
+
+#search {
+	padding: 4px 12px 0 0;
+	float: right;
+}
+
+input, textarea {
+	font-family: Verdana, Arial, sans-serif;
+}
+
+#search input {
+	font-size: 11px;
+	/* In pixels to prevent breakage when enlarging font in IE6 */
+}
+
+#navigationhome, #navigation {
+	float: left;
+	width: 180px;
+	padding-bottom: 2em;
+}
+
+#mainnav {
+	margin-bottom: 1.2em;
+}
+
+#mainnav ul {
+	list-style: none;
+}
+
+#mainnav ul li a:link,
+#mainnav ul li a:visited {
+	display: block;
+	background: #DCDFE4 url(images/plus.gif) no-repeat 7px 10px;
+	font-weight: 700;
+	padding: 5px 20px;
+	border-bottom: 1px solid white;
+	text-decoration: none;
+	font-size: 1.1em;
+	letter-spacing: -0.05em;
+}
+
+#mainnav ul li.open {
+	border: 1px solid #fdb812;
+}
+
+#mainnav ul li a:hover,
+#mainnav ul li a:active {
+	background: #EDEFF1 url(images/plus.gif) no-repeat 7px 10px;
+}
+
+#mainnav ul li.open a:link,
+#mainnav ul li.open a:visited {
+	background: #DCDFE4 url(images/min_blue.gif) no-repeat 7px 10px;
+}
+
+#mainnav ul li.open a:hover,
+#mainnav ul li.open a:active {
+	color: #369;
+}
+#mainnav ul li.active a:link,
+#mainnav ul li.active a:visited {
+	background-color: #FDB812;
+	color: #fff;
+}
+#mainnav ul li.open li.open {
+	border: none;
+}
+
+#mainnav ul li.open li a:link,
+#mainnav ul li.open li a:visited {
+	background: #F5F5F5 url(images/square.gif) no-repeat 7px 8px;
+	font-weight: 300;
+	padding: 3px 20px;
+	margin: 0;
+	color: #369;
+	border: none;
+	border-bottom: 1px solid #DCDFE4;
+}
+
+#mainnav ul li.open li a:hover,
+#mainnav ul li.open li a:active {
+	color: #69C;
+}
+
+#mainnav ul li.open li.active a:link,
+#mainnav ul li.open li.active a:visited {
+	background: #FDB812 url(images/min.gif) no-repeat 7px 10px;
+	border: none;
+	color: #FFF;
+	font-weight: 700;
+}
+
+#mainnav ul li.open li.open a:link,
+
+#mainnav ul li.open li.open a:visited {
+	background: #F5F5F5 url(images/min_blue.gif) no-repeat 7px 8px;
+}
+
+#mainnav ul li.open li.active a:link,
+#mainnav ul li.open li.active a:visited {
+	background: #FDB812 url(images/min.gif) no-repeat 7px 8px;
+	border: none;
+	color: #FFF;
+}
+
+
+
+#mainnav ul li.open li a.haschild:link,
+#mainnav ul li.open li a.haschild:visited {
+	background: #f5f5f5 url(images/plus.gif) no-repeat 7px 8px;
+	color: #369;
+}
+
+#mainnav li.open ul {
+	background: #F5F5F5;
+}
+
+#mainnav ul li.open li.open li a:link,
+#mainnav ul li.open li.open li a:visited {
+	padding: 3px 20px 3px 40px;
+	background: #F5F5F5 url(images/chevron-dubbel.gif) no-repeat 27px 9px;
+	border: none;
+	color: #369;
+	font-weight: normal;
+}
+
+#mainnav ul li.open li.open li a:hover,
+#mainnav ul li.open li.open li a:active {
+	color: #69C;
+}
+
+#mainnav ul li.open li.open li.active a:link,
+#mainnav ul li.open li.open li.active a:visited {
+	background: #FDB812 url(images/chevron-dubbel-wit.gif) no-repeat 7px 9px;
+	margin: 0 0 0 20px;
+	padding-left: 20px;
+	color: white;
+	font-weight: 700;
+}
+
+#mainnav ul li.open ul li.last-child a {
+	border: none;
+}
+
+#content {
+	float: left;
+	width: 564px;
+	overflow: hidden;
+	padding-top: 0;
+	padding-left: 12px;
+	padding-right: 12px;
+	padding-bottom: 4em;
+	font-size: 1.1em;
+}
+div.small {
+	width: 564px !important;
+}
+div.normal {
+	width: 742px !important;
+}
+div.wide {
+	width: 920px !important;
+}
+
+#spotlight {
+	border: 1px solid #CCC;
+	padding: 5px 12px 2px;
+	background: #FFF;
+	margin: 0 0 2.0em;
+}
+
+h1, h3, h4, h5, h6 {
+/*line-height: 1.2;*/
+}
+
+/* set font for headings */
+h1 {
+	font-size: 1.6em;
+	color: #369;
+	line-height: 1.2em;
+	margin-top: 0;
+	margin-bottom: 0.6em;
+	font-weight: bold;
+}
+h2 {
+	font-size: 1.4em;
+	color: #333;
+	margin-bottom: 0.4em;
+	margin-top: 0.6em;
+}
+h3 {
+	font-size: 1.1em;
+	color: #333;
+	margin-bottom: 0.3em;
+	margin-top: 0.5em;
+}
+
+h4,h5,h6 {
+	font-size: 1em
+}
+
+h2 {
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 1.4em;
+	font-weight: normal;
+	color: #0870A1;
+	/*padding: 0;*/
+	padding-bottom:0.3em;
+	padding-top: 0.5em;
+	border-bottom: 1px solid #CCC;
+	/*margin: 0.4em 0 1em;*/
+}
+
+h2.pagetitle {
+	font-size: 2.2em;
+	margin: 0 0 0.4em;
+	position: relative;
+	top: -0.2em;
+}
+
+.sectiontitle h2 {
+	float: left;
+	border: 0;
+	margin: 0.1em 0 0;
+}
+
+.sectiontitle span {
+	font-family: Arial, sans-serif;
+}
+
+.sectiontitle p {
+	padding: 0;
+	float: right;
+	margin: 0.6em 0 0;
+}
+
+.sectiontitle {
+	border-bottom: 1px solid #CCC;
+	margin: 0 0 0.5em;
+}
+
+#content .sectiontitle a:link,
+#content .sectiontitle a:visited {
+	text-decoration: none;
+	background: url(images/chevron-dubbel.gif) no-repeat 0 0.5em;
+	padding-left: 12px;
+	position: relative;
+	top: 0.6em;
+}
+
+#content .sectiontitle a:hover,
+#content .sectiontitle a:active {
+	background-color: #F4F5F7;
+}
+
+#call-to-action h2 {
+	margin: 0;
+	border-bottom: 0;
+	padding: 0 0 0.5em;
+}
+
+#spotlight h3 {
+	font-size: 1.2em;
+}
+
+.newsarticle h3 {
+	font-size: 1.1em;
+}
+a.ItemTitle,
+.newsarticle a,
+.newsarticle a:link {
+	text-decoration: none !important;
+}
+
+h3 {
+	color: #333;
+	font-size: 1.1em;
+}
+
+p.date {
+	color: #666;
+	font-size: 1em;
+	padding: 0 0 0.2em;
+	font-weight: normal !important;
+}
+
+p {
+/*font-size: 1.1em;*/ /* set it globally */
+padding: 0.5em 0 0.5em 0;
+}
+
+/* add class = right/left to img when you want to align it to the right/left */
+img.left {
+	float: left;
+	margin: 0 12px 12px 0;
+}
+img.right {
+	float: right;
+	margin: 0 0 12px 12px;
+}
+/* Image takes up the maximum amount of space it can take up */
+img.maxwidth {
+	width: 100%;
+}
+
+/* list lay-outs */
+ul {
+	list-style-type: square;
+}
+ul.disc {
+	list-style-type: disc;
+}
+ul.circle {
+	list-style-type: circle;
+}
+ol {
+	list-style-type: decimal;
+}
+ol.i {
+	list-style-type: lower-roman;
+}
+ol.II {
+	list-style-type: upper-roman;
+}
+ol.a {
+	list-style-type: lower-alpha;
+}
+ol.AA {
+	list-style-type: upper-alpha;
+}
+pre {
+	font-family: "Courier New", Courier, mono;
+	background-color: #ECEFF8;
+	border: 1px solid #ccc;
+	padding: 5px;
+	overflow: auto;
+	width: 95%;
+}
+
+
+#news, #call-to-action {
+	padding: 0 0 1.5em;
+}
+
+#calendar {
+	padding: 0 0 0.5em;
+}
+
+
+#content #calendar {
+	padding-top: 2px;
+}
+
+#newsarchive {
+/* padding-top: 24px;*/
+}
+
+#sidebar {
+	float: right;
+	width: 180px;
+	padding-bottom: 2em;
+}
+
+table.datagrid {
+	width: 100%;
+}
+
+.facet table.datagrid td.date {
+	padding-right: 5px;
+	width: 35px;
+	white-space: nowrap;
+}
+
+table.datagrid td {
+	border-bottom: 1px dotted #DCDFE4;
+	padding: 3px 10px 3px 0;
+	vertical-align: top;
+}
+
+table.datagrid tr.last-child td {
+	border: none;
+}
+
+table.datagrid td {
+	font-size: 1.1em;
+}
+
+table.datagrid td.date {
+	color: #777;
+	width: 7em;
+}
+
+/* Table class="listing" borders */
+#content table.listing thead {
+	border-bottom: 1px solid #336699;
+}
+
+#content table.listing tr td {
+	padding: 5px 0 5px 0;
+}
+
+#content table.listing {
+	border-bottom: 1px solid #336699;
+}
+
+/* Remove borders around images */
+a img {
+	border: none !important;
+}
+
+/* Simple column system */
+.columns .column {
+	float: left;
+}
+
+/* Two columns */
+.columns .column-12,
+.columns .column-24 {
+	width: 49.4%;
+}
+
+/* Three columns*/
+.columns .column-23 {
+	width: 66.5%;
+}
+.columns .column-13 {
+	width: 33.2%;
+}
+
+/* Four columns */
+.columns .column-14 {
+	width: 26.9%;
+}
+.columns .column-34 {
+	width: 72.9%;
+}
+
+/* Five columns */
+.columns .column-15 {
+	width: 19.9%;
+}
+.columns .column-25 {
+	width: 39.9%;
+}
+.columns .column-35 {
+	width: 59.9%;
+}
+.columns .column-45 {
+	width: 79.9%;
+}
+
+/* special columns */
+.columns .column-16 {
+	width: 15.9%;
+}
+.columns .column-56 {
+	width: 83.9%;
+}
+
+/* Spacing divs to fit inside colunns: gutter width and 1/2 gutter width */
+.columns .spacing-left {
+	margin-left: 12px;
+	position: relative;
+	top: -7px;
+}
+.columns .spacing-left-half {
+	margin-left: 6px;
+}
+.columns .spacing-right {
+	margin-right: 12px;
+}
+.columns .spacing-right-half {
+	margin-right: 6px;
+}
+
+.columns .spacing-left-half h3 {
+	margin-top: 0px;
+}
+
+.column-border-top {
+	margin: 1.5em 1.5em 0.0em 0.0em;
+	padding-top: 0.7em;
+	border-top: 1px dotted #DCDFE4;
+}
+
+/* Read more */
+p.readmore {
+	float: right;
+	text-align: right;
+	/*margin:10px 15px 0 0 !important;*/
+}
+
+#content p.readmore a:link,
+#content p.readmore a:visited {
+	padding-left: 7px;
+	background: #FFF url(images/chevron.gif) no-repeat 0 5px;
+	text-decoration: none;
+}
+
+#content p.readmore a:hover,
+#content p.readmore a:active {
+	background-color: #F4F5F7;
+}
+
+/* Breadcrumb */
+#breadcrumb {
+	color: #999;
+}
+.br-act {
+	color: #000;
+}
+
+/* Facet */
+
+
+/* Custom styles for SmartPortlets */
+
+#sidebar .box .row_item {
+	border-bottom: #CCCCCC thin dotted;
+	margin-bottom: 0em !important;
+}
+
+#sidebar .clickthrough {
+	padding-right: 5px;
+}
+
+.last_item {
+	border-bottom: none !important;
+}
+
+.box .row_title {
+	display: block;
+	clear: both;
+}
+
+
+.box .row_date {
+	font-weight: normal;
+	color: #888888;
+	padding-right: 8px;
+}
+
+.box,
+.facet,
+.box-img {
+	background: #FFF;
+	border: 1px solid #dcdfe4;
+	margin-bottom: 1.2em;
+	width: 178px;
+}
+.box-img {
+	background: transparent url(images/fancygradient.png) repeat-x left bottom;
+}
+.box-img .caption {
+	padding: 0.5em;
+}
+.box dt,
+.facet dt {
+	font-size: 1.2em;
+	background: #EAECF0 url(images/facetbg.png) repeat-x;
+	color: #0870a1;
+	font-family: Arial, sans-serif;
+	padding: 0.4em 0.5em 0.2em 0.5em;
+}
+
+.box dd,
+.facet dd {
+	padding: 4px 5px 2px 0.5em;
+}
+
+.box ul,
+.facet ul {
+	list-style-type: none;
+	color: #69C;
+	padding-top: 0;
+	padding-bottom: 2px;
+	padding-left: 0;
+	margin: 0;
+}
+
+.box ul li,
+.facet ul li {
+	font-size: 1.1em;
+	padding: 1px 0 1px 1.5em;
+	background: url(images/chevron-dubbel.gif) no-repeat 4px 7px;
+}
+.box a:link,
+.box a:visited,
+
+.facet li a:link,
+.facet li a:visited {
+	color: #369;
+	display: block;
+}
+.box li a:hover,
+.box li a:active,
+.facet li a:hover,
+.facet li a:active {
+	color: #69C;
+}
+.box p,
+.portlet p,
+.facet p {
+	margin-left: 0;
+	margin-right: 0
+}
+
+.box-img {
+	border: 1px solid #dcdfe4;
+	background-color: #fff;
+}
+
+.box a.pdf,.facet a.pdf {
+	background: #FFF url(images/pdf.gif) no-repeat right 50%;
+}
+.box a.external,.facet a.external {
+	background: #FFF url(images/externesite.gif) no-repeat right 50%;
+}
+.box a.doc,.facet a.doc {
+	background: #FFF url(images/doc.gif) no-repeat right 50%;
+}
+.box a.ppt,.facet a.ppt {
+	background: #FFF url(images/ppt.gif) no-repeat right 50%;
+}
+.box a.xls,.facet a.xls {
+	background: #FFF url(images/xls.gif) no-repeat right 50%;
+}
+.box a.audio,.facet a.audio {
+	background: #FFF url(images/aud.gif) no-repeat right 50%;
+}
+.box a.video,.facet a.video {
+	background: #FFF url(images/vid.gif) no-repeat right 50%;
+}
+.box a.beveiligd,.facet a.beveiligd {
+	background: #FFF url(images/sleutel.gif) no-repeat right 50%;
+}
+
+#navigation dl.portlet {
+	overflow: hidden !important;
+	width: 160px !important;
+	border: 0 !important;
+}
+
+#navigation dl.portlet dt {
+	display: none!important;
+}
+#navigation dl.portlet dd {
+	margin-left: 0 !important;
+	margin-right: 0 !important;
+}
+#navigation dl.portlet img {
+	border: 0
+}
+
+.clickthrough,
+.clickthrough a:link,
+.clickthrough a:visited {
+	color: #4B505F;
+}
+
+.clickthrough a {
+	background: url(images/chevron-dubbel.gif) no-repeat 0 0.5em;
+	padding-left: 12px;
+}
+
+.clickthrough a:hover,
+.clickthrough a:active {
+	background-color: #F4F5F7;
+}
+
+
+.clickthrough {
+	margin-top: 3px;
+	padding: 2px 0;
+	border-top: 1px solid #DCDFE4;
+}
+
+.clickthrough p {
+	text-align: right;
+	float: right;
+	padding: 0;
+	font-size: 1em;
+}
+
+.clickthrough span {
+	font-size: 1em;
+	line-height: 1.4;
+	font-family: Arial, sans-serif;
+	display: block;
+	float: left;
+	width: 1.2em;
+	text-align: center;
+}
+
+/* Default link styles */
+a:link {
+	color: #369;
+	text-decoration: none;
+}
+a:visited {
+	color: #369;
+	text-decoration: none;
+}
+#content a:link {
+	color: #369;
+	text-decoration: underline;
+}
+#content a:visited {
+	color: #369;
+	text-decoration: underline;
+}
+a:hover, #content a:hover {
+	color: #69C;
+}
+a:active, #content a:active {
+	color: #69C;
+}
+
+/* General purpose class to hide items */
+.hidden, div.hidden {
+	display: none;
+}
+
+/* Footer */
+
+#footerpush {
+	height: 64px;
+}
+
+#footer-wrap {
+	width: 100%;
+	height: 64px;
+	position: relative;
+	margin-top: -64px;
+}
+
+#footer {
+	background: #104b7d url(images/footerbg.png) repeat-y;
+	width: 972px;
+	padding: 0 6px;
+	height: 64px;
+	margin: 0 auto;
+}
+
+#footer ul#copyright .byline_author {
+	color: #FFFFFF;
+}
+
+#footer ul {
+	padding: 1em 0 0 0;
+	list-style: none;
+}
+
+#footer ul li {
+	float: left;
+	font-size: 1.1em;
+	padding: 0 5px;
+	padding-bottom: 3px;
+}
+
+#footer ul#copyright {
+	float: left;
+	color: #6086a7;
+	padding-left: 1em;
+}
+#footer ul#copyright li {
+	clear: left;
+}
+#footer ul#copyright a {
+	color: #6086a7;
+}
+
+#footer ul#copyright a:hover {
+	color: #FFF;
+}
+
+#footer ul#meta {
+	float: right;
+	padding-right: 1em;
+}
+
+#footer strong {
+	color: #FFF;
+}
+
+#footer a:link,
+#footer a:visited {
+	color: #DAE8F7;
+}
+
+#footer a:hover,
+#footer a:active {
+	color: #FFF;
+}
+
+#call-to-action {
+	background: #ecedf2 url(images/fancygradient.png) repeat-x;
+	border: 1px solid #dcdfe4;
+	padding: 1em;
+}
+
+ul.chevrons {
+	list-style: none;
+	padding: 0 0 0 0.5em;
+}
+
+ul.chevrons li {
+	background: url(images/chevron-dubbel.gif) no-repeat 4px 6px;
+	padding: 0 0 0 1.5em;
+	margin-left: -30px;
+}
+
+a.advanced {
+	background: transparent url(images/sleutel.gif) no-repeat right 50%;
+	padding-right: 25px;
+	line-height: normal;
+	padding-top: 0;
+	height: auto !important;
+	display: inline !important;
+}
+
+.facet a.advanced {
+	padding-right: 0;
+}
+
+a.shortcut {
+	background: #FFF url(images/shortcut.gif) no-repeat right 50%;
+}
+
+
+
+/* General purpose swap underlines class */
+.swapUnderline a:link, .swapUnderline a:visited {
+	text-decoration: none !important;
+}
+.swapUnderline a:hover, .swapUnderline a:active {
+	text-decoration: underline !important;
+}
+
+/* Clearfix (@see http://www.positioniseverything.net/easyclearing.html) */
+.clearfix:after, .section:after, #footer:after, #topbar:after, #topbar ul:after, #header:after, #main:after, .columns:after, .facet:after, .facet ul:after, .clickthrough:after, div.newsarticle:after, .sectiontitle:after, ul.gts:after, ul.gts li:after, #utility ul:after, #headerright:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+
+
+/**
+Styles ported from portal.css & portal_addenda.css
+**/
+.aboutListing {
+	font-size: 0.8em;
+	color: #666666;
+}
+
+/* Sitemap style */
+#portal-sitemap .subnav {
+	list-style-type: none;
+	display: inline;
+	padding: 0;
+}
+#portal-sitemap .subnav ul {
+	margin: 0;
+	margin-left: 2em;
+}
+
+/* .system-message and #error-handling are reST error indicators */
+
+.portalMessage,
+.portalWarningMessage,
+.portalStopMessage,
+.system-message,
+#error-handling {
+	background-color: white;
+	border: 1px solid red;
+	color: black;
+	font-size: 1em;
+	font-weight: bold;
+	margin: 1em 0em;
+	padding: 0.5em 1em 0.5em 3em;
+	vertical-align: middle;
+	background-image: url(info_icon.gif);
+	background-repeat: no-repeat;
+	background-position: 5px 50%;
+}
+
+.portalMessage a,
+.portalWarningMessage a,
+.portalStopMessage a {
+	color: black;
+}
+div.error {
+	background-color: #FFCCCC;
+	border: 1px solid red;
+	padding: 1em;
+	margin: 0 0 1em 0;
+	width: 95%;
+}
+
+/* -- Document actions taken from Plone's portal.css -- */
+.documentActions {
+	float: right;
+	margin: 0.4em 0 0 0.5em;
+	padding: 0;
+	text-align: right;
+}
+.documentActions ul {
+	margin: 1px 0 2px 0;
+	padding: 0;
+	display: block;
+}
+.documentActions li {
+	display: inline;
+	list-style: none;
+	list-style-image: none;
+	margin: 0;
+	padding: 0;
+}
+.documentActions a {
+	border: none !important;
+	text-decoration: none;
+}
+
+/* Linkse iconen */
+span.top,
+span.anchor {
+	margin: 0 0 3px 0;
+	line-height: 1.05em;
+	padding: 0 0 2px 15px;
+	background-position: left center;
+	background-repeat: no-repeat;
+	display: block;
+}
+span.anchor {
+	background-image: url("images/arrow.jpg");
+}
+span.top {
+	background-image: url("images/top.gif");
+}
+
+/* Rechtse iconen */
+span.pdf,
+span.external,
+span.doc,
+span.ppt,
+span.xls,
+span.audio,
+span.video {
+	margin: 0 0 3px 0;
+	line-height: 1.05em;
+	padding: 0 15px 2px 0;
+	background-position: right center;
+	background-repeat: no-repeat;
+}
+span.beveiligd {
+	margin: 0 0 3px 0;
+	line-height: 1.05em;
+	padding: 0 18px 2px 0;
+	background-position: right center;
+	background-repeat: no-repeat;
+}
+
+span.pdf {
+	background-image: url("images/pdf.gif");
+}
+span.external {
+	background-image: url("images/externesite.gif");
+}
+span.doc {
+	background-image: url("images/doc.gif");
+}
+span.ppt {
+	background-image: url("images/ppt.gif");
+}
+span.xls {
+	background-image: url("images/xls.gif");
+}
+span.audio {
+	background-image: url("images/aud.gif");
+}
+span.video {
+	background-image: url("images/vid.gif");
+}
+span.beveiligd {
+	background-image: url("images/sleutel.gif");
+}
+
+dl a.pdf {
+	background: #FFF url("images/pdf.gif") no-repeat right 50%;
+}
+dl a.external {
+	background: #FFF url("images/externesite.gif") no-repeat right 50%;
+}
+dl a.doc {
+	background: #FFF url("images/doc.gif") no-repeat right 50%;
+}
+dl a.ppt {
+	background: #FFF url("images/ppt.gif") no-repeat right 50%;
+}
+dl a.xls {
+	background: #FFF url("images/xls.gif") no-repeat right 50%;
+}
+dl a.audio {
+	background: #FFF url("images/aud.gif") no-repeat right 50%;
+}
+dl a.video {
+	background: #FFF url("images/vid.gif") no-repeat right 50%;
+}
+dl a.beveiligd {
+	background: #FFF url("images/sleutel.gif") no-repeat right 50%;
+}
+
+
+/* RSS portlet and smart portlet */
+.box .portletContent {
+	font-size: 0.85em;
+	padding: 3px 5px;
+}
+.box dd.odd {
+	background-color: #ECEFF8;
+}
+.box dd.even {
+	background-color: #FFFFFF;
+}
+
+div#sidebar dl,
+div#sidebar dl dt,
+div#sidebar dl dd {
+	margin-left: 0;
+}
+
+div#sidebar dl.portlet {
+	border-bottom: 0
+}
+div#sidebar dl.portlet dt {
+	display: none;
+}
+div#sidebar dl.portlet dl dt {
+	display: block
+}
+
+#leftnav dl.portlet {
+	overflow: hidden !important;
+	width: 160px !important;
+	border: 0 !important;
+}
+#leftnav dl.portlet dt {
+	display: none!important;
+}
+#leftnav dl.portlet dd {
+	margin-left: 0 !important;
+	margin-right: 0 !important;
+}
+
+#leftnav dl.portlet img {
+	border: 0
+}
+
+.fieldRequired {
+	color: #ccc;
+	font-size: 10px;
+}
+
+/* Match kupu captions met huisstijl captions */
+dl.captioned,
+dl.captioned dt {
+	padding: 0;
+}
+dl.captioned dd {
+	margin: 0;
+	padding: 3px 0;
+	font-size: 0.9em;
+	font-style: italic;
+	text-align: center;
+}
+dl.captioned {
+	border: 0;
+	width: auto;
+}
+
+/* Kupu image style (img+dl) */
+.image-left {
+	float: left;
+	margin-right: 8px;
+	margin-bottom: 3px;
+	margin-top: 3px;
+}
+.image-right {
+	float: right;
+	margin-left: 8px;
+	margin-bottom: 3px;
+	margin-top: 3px;
+}
+
+/* Album view classes */
+.photoAlbumEntry {
+	float: left;
+	height: 219px;
+	width: 143px;
+	margin: 0em;
+	padding: 0px 6px 0px 9px;
+	text-align: center;
+	background-image: url('http://www.ugent.be/polaroid-single.png');
+	background-repeat: no-repeat;
+}
+.photoAlbumEntry img {
+	border: 1px solid #ccc;
+	display: block;
+	margin: 0 auto;
+}
+.photoAlbumEntryWrapper {/*display: block;*/height: 130px;
+	width: 128px;
+	margin-bottom: 7px;
+}
+.photoAlbumEntry a {
+	display: block;
+	text-decoration: none;
+	font-size: 0.8em;
+	height: 169px;
+	width: 130px;
+	margin: 16px auto 0px;
+}
+.photoAlbumEntryTxt {
+	color: #369;
+	font-size: 0.8em;
+	padding: 5px 2px 5px 2px;
+	font-weight: bold;
+	height: 40px;
+}
+.photoAlbumFolder {
+	background-image: url('http://www.ugent.be/polaroid-multi.png');
+	background-repeat: no-repeat;
+}
+.photoAlbumEntryTitle {
+	display: block;
+	overflow: hidden;
+	width: 128px;
+	height: 3.6em;
+}
+p.listingBar {
+	padding-top: 10px;
+}
+
+/* author - "reacties op inhoud" */
+.author {
+	font-size: 1em;
+	color: #666;
+	font-style: italic;
+	margin: 2em 0;
+	padding: 0.5em;
+	border: 1px dotted #ccc;
+}
+.author {
+	color: #666;
+	font-style: italic;
+	margin: 2em 0;
+	padding: 0.5em;
+}
+
+/* "back-to-top links" */
+#topanchor {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 0;
+}
+.top {
+	clear: both;
+	padding-left: 15px;
+	background: white url("images/top.gif") left center no-repeat;
+}
+
+#content .top a {
+	text-decoration: none;
+}
+#content .top a:visited {
+	color: #369;
+	padding: 0;
+	background: 0 none;
+}
+#content .top a:hover {
+	color: #69C;
+}
+
+
+/* named anchors */
+#anchors {
+	margin: 10px 0 20px 0;
+	padding: 0;
+}
+#anchors ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+#anchors li {
+	margin: 0 0 5px 0;
+	padding: 0;
+	line-height: 1.05em;
+}
+
+#anchors ul li {
+	padding: 0 0 2px 15px;
+	background-image: url("images/arrow.jpg");
+	background-position: left center;
+	background-repeat: no-repeat;
+	display: block;
+}
+
+/* imageCaption */
+
+.imageCaption {
+	font-size: 0.8em;
+	color: #666666;
+	margin-top: 5px;
+	text-align: center;
+	width: 250px;
+	background-color: #FFFFFF;
+}
+
+/* spacing-left-with-image; used in actueeloverzicht_view to adjust 2nd item with images */
+
+.spacing-left-with-image {
+	position: relative;
+	top: -7px;
+}
+
+/* Aanpassingen voor Calendar portlet (van portlet.css) */
+
+.dayPopup {
+	background-color: #ffffe1;
+	border: 1px solid Black;
+	padding: 0.2em;
+	position: absolute;
+	visibility: hidden;
+	width: 12em;
+	z-index: 2;
+}
+
+.ploneCalendar .date {
+	font-weight: bold;
+}
+
+.ploneCalendar {
+	border: 1px solid #DCDFE4;
+	margin: 1px 0 1em 0;
+	border-collapse: collapse;
+	border-spacing: 0;
+	width: 100%;
+	background: transparent url('images/facetbg.png') repeat-x;
+}
+
+.ploneCalendar a {
+	text-decoration: none;
+	color: navy;
+}
+
+.ploneCalendar a:hover {
+	text-decoration: none;
+	color: #369;
+}
+
+.ploneCalendar th {
+	font-weight: bold;
+	text-align: center;
+	line-height: 1.6em;
+	height: 24px;
+	color: #369;
+}
+
+.ploneCalendar td {
+	background-color: transparent;
+	width: 14%;
+	text-align: right;
+	padding: 3px;
+	border-bottom: #DDDDDD thin dotted;
+}
+
+.ploneCalendar #calendar-previous {
+	background-image: url('images/lt.gif');
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
+}
+
+.ploneCalendar #calendar-next {
+	background-image: url('images/gt.gif');
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
+}
+.ploneCalendar .weekdays td {
+	background-color: #dee7ec;
+	border: 1px solid #8cacbb;
+	border-style: solid none;
+	text-align: center;
+	padding: 2px;
+}
+.ploneCalendar .event {
+	background-color: #dee7ec;
+	font-weight: bold;
+}
+.ploneCalendar .todayevent {
+	background-color: #dee7ec;
+	border: 2px solid #ffa500;
+	font-weight: bold;
+}
+.ploneCalendar .todaynoevent {
+	border-collapse: collapse;
+	border: 2px solid #ffa500;
+}
+
+.ploneCalendar #calendar-previous a,
+.ploneCalendar #calendar-next a {
+	display: block;
+	text-decoration: none;
+	overflow: hidden;
+	border: 0;
+	margin: 0;
+	padding: 0;
+	padding-top: 9px;
+	height: 0px !important;
+	height /**/: 9px;
+	cursor: pointer;
+}
+.ploneCalendar #calendar-next a {
+	padding-top: 9px;
+	height: 0px !important;
+	height /**/: 9px;
+}
+
+
+/* Event View skinning */
+
+.eventrec {
+	border: 1px solid #DCDFE4;
+	margin: 1em 0 1em 0;
+	border-spacing: 1em;
+	width: 95%;
+}
+
+.eventrec th {
+	padding: 3px 3px 3px 3px;
+	font-size: 11px;
+	width: 50%;
+	color: #003366;
+	font-family: Verdana,Helvetica,sans-serif;
+}
+
+.eventrec td {
+	padding: 3px 3px 3px 3px;
+	width: 50%;
+	font-family: Arial,Helvetica,san-serif;
+}
+
+.eventrec tr {
+	border-bottom: #DDDDDD thin dotted;
+}
+
+.eventrec td span {
+	font-style: italic;
+	/*padding:3px;*/
+}
+
+.eventrec td a span, .eventrec td span a {
+	font-style: normal;
+}
+
+.eventrec td span.link-mailto {
+	padding: 0;
+}
+
+/* Helper element to work with CSS floats */
+
+.visualClear {
+	display: block;
+	clear: both;
+}
+
+/* Some basic styling for plone forms */
+form fieldset {
+	padding: 1em;
+	border: 1px solid #DCDFE4;
+	margin: 1em 0;
+}
+form legend {
+	font-weight: bold;
+	font-size: 1.1em;
+}
+form .field {
+	margin-bottom: 1em;
+}
+form .formHelp {
+	color: #666;
+}
+/* ==== Forms ==== */
+form.bodyform {
+	margin: 0;
+	padding: 10px 0;
+	width: auto;
+}
+.bodyform fieldset {
+	border-color: #000;
+	border-width: 1px 0 0;
+	border-style: solid none none none;
+	padding: 10px;
+	margin: 0;
+	line-height: normal;
+}
+.bodyform fieldset legend {
+	font-size: 1.1em;
+	font-weight: bold;
+	color: #000;
+	margin: 0;
+	padding: 0 5px;
+}
+.bodyform input, .bodyform select, .bodyform textarea {
+	font-family: Verdana, Arial, sans-serif;
+	font-size: 100%;
+	color: #000;
+}
+.bodyform textarea {
+	overflow: auto;
+}
+.bodyform div {
+	display: block;
+	width: 450px;
+	margin: 5px 0 0;
+	padding: 1px 3px;
+}
+.bodyform div fieldset {
+	clear: none;
+	border: 1px solid #999;
+	margin: 0 0 0 142px;
+	padding: 8px;
+	width: 188px;
+}
+.bodyform div fieldset.wide {
+	clear: none;
+	border: 1px solid #999;
+	margin: 0 0 0 5px;
+	padding: 8px;
+	width: 300px;
+}
+.bodyform div fieldset legend {
+	font-size: 100%;
+	padding: 0 3px 0 9px;
+}
+.bodyform div label {
+	display: block;
+	float: left;
+	clear: left;
+	width: 130px;
+	padding: 3px 5px;
+	margin: 0 0 5px 0;
+	text-align: right;
+}
+.bodyform div label.labelCheckbox, .bodyform div label.labelRadio {
+	float: none;
+	display: block;
+	width: 188px;
+	padding: 0;
+	margin: 5px 0;
+	text-align: left;
+}
+.bodyform div label.labelCheckboxwide, .bodyform div label.labelRadiowide {
+	float: none;
+	display: block;
+	width: 300px;
+	padding: 0;
+	margin: 5px 0;
+	text-align: left;
+}
+.bodyform div input, .bodyform div select, .bodyform div textarea {
+	width: 255px;
+	padding: 1px 3px;
+	margin: 0;
+}
+.bodyform div input.wide, .bodyform div select.wide, .bodyform div textarea.wide {
+	width: 320px;
+	padding: 1px 3px;
+	margin: 0;
+}
+.bodyform input.inputCheckbox, .bodyform input.inputRadio {
+	display: inline;
+	height: 14px;
+	width: 14px;
+	border-width: 0;
+	padding: 0;
+}
+.bodyform input.inputText {
+}
+.bodyform textarea.inputTextarea {
+}
+.bodyform select.selectOne {
+}
+/* .bodyform select.selectOne {
+width: 100%;
+}
+*/
+.bodyform select.selectMultiple {
+}
+.bodyform div.submit {
+	width: 354px;
+	text-align: right;
+}
+.bodyform input.inputButton {
+	background-color: #ccc;
+	color: #000;
+	width: auto;
+	padding: 0 6px;
+	float: right;
+	margin: 0 0 0 5px;
+}
+.bodyform div small {
+	display: block;
+	margin: 0 0 5px 142px;
+	padding: 1px 3px;
+	font-size: 85%;
+}
+.bodyform div small.wide {
+	display: block;
+	margin: 0 0 5px 5px;
+	padding: 1px 3px;
+	font-size: 85%;
+}
+
+form.applicationform {
+	margin: 0;
+	padding: 10px 0;
+	width: auto;
+}
+.applicationform fieldset {
+	border-color: #000;
+	border-width: 1px 0 0;
+	border-style: solid none none none;
+	padding: 10px;
+	margin: 0;
+}
+.applicationform fieldset legend {
+	font-size: 1.1em;
+	font-weight: bold;
+	color: #000;
+	margin: 0;
+	padding: 0 5px;
+}
+.applicationform input, .bodyform select, .bodyform textarea {
+	font-family: Verdana, Arial, sans-serif;
+	font-size: 100%;
+	color: #000;
+}
+.applicationform textarea {
+	overflow: auto;
+}
+/* width: auto is same as no width indicated */
+.applicationform div {
+	display: block;
+	width: 800px;
+	margin: 5px 0 0 0px;
+	padding: 1px 3px;
+}
+/* different width */
+.applicationform div.narrow {
+	display: block;
+	width: 450px;
+	margin: 5px 0 0;
+	padding: 1px 3px;
+}
+.applicationform div fieldset {
+	clear: none;
+	border: 1px solid #999;
+	margin: 0 0 0 0;
+	padding: 8px;
+	width: auto;
+}
+.applicationform div fieldset.narrow {
+	clear: none;
+	border: 1px solid #999;
+	margin: 0 0 0 130px;
+	padding: 8px;
+	width: 225px;
+}
+.applicationform div fieldset legend {
+	font-size: 100%;
+	padding: 0 3px 0 9px;
+}
+/* width: auto is same as no width indicated */
+.applicationform div label {
+	display: block;
+	width: auto;
+	float: left;
+	padding: 3px 5px;
+	margin: 0 0 5px 0;
+	text-align: right;
+}
+/* different width */
+.applicationform div label.narrow {
+	display: block;
+	float: left;
+	width: 120px;
+	padding: 3px 5px;
+	margin: 0 0 5px 0;
+	text-align: right;
+}
+.applicationform div label.labelCheckbox, .applicationform div label.labelRadio {
+	float: none;
+	display: block;
+	padding: 0;
+	margin: 5px 0;
+	text-align: left;
+}
+.applicationform div input, .applicationform div select, .applicationform div textarea {
+	padding: 1px 3px;
+	margin: 0;
+}
+.applicationform div input.narrow , .applicationform div select.narrow, .applicationform div textarea.narrow {
+	width: 50px;
+	padding: 1px 3px;
+	margin: 0;
+}
+
+.applicationform input.inputCheckbox, .applicationform input.inputRadio {
+	display: inline;
+	height: 14px;
+	width: 14px;
+	border-width: 0;
+	padding: 0;
+}
+/*.applicationform input.inputText {
+width: 234px;
+}
+*/
+.applicationform input.inputText {
+	width: 384px;
+}
+.applicationform textarea.inputTextarea {
+}
+/*.applicationform select.selectOne {
+width: 244px;
+}
+*/
+.applicationform select.selectOne {
+	width: 394px;
+}
+.applicationform select.selectMultiple {
+}
+.applicationform div.submit {
+	text-align: right;
+}
+/* width: auto is same as no width indicated */
+.applicationform div.submit {
+	width: auto;
+	text-align: right;
+}
+/* different width */
+.applicationform div.submitnarrow {
+	width: 354px;
+	text-align: right;
+}
+.applicationform input.inputButton {
+	background-color: #ccc;
+	color: #000;
+	width: auto;
+	padding: 0 6px;
+	float: right;
+	margin: 0 0 0 5px;
+}
+.applicationform div small {
+	display: block;
+	margin: 0 0 5px 0;
+	padding: 1px 3px;
+	font-size: 85%;
+}
+
+.applicationform table tr td {
+	border-top: none;
+}
+.applicationform table tr.bottom td {
+	border-bottom: none;
+}
+.applicationform table.labelCheckbox label, .applicationform table.labelRadio label {
+	text-align: left;
+	width: auto;
+}
+
+/* tables */
+table {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+table tr td {
+	text-align: left;
+	border-top: 1px solid #369;
+	padding: 5px 5px 7px 8px;
+	background-color: #fff;
+	vertical-align: top;
+}
+table tr th {
+	text-align: left;
+	padding: 5px 5px 7px 8px;
+	background-color: #fff;
+	vertical-align: top;
+}
+table tr td.center {
+	text-align: center;
+}
+table tr.tabelheader th,
+table th.tabelheader,
+table tr.tabelheader td {
+	border-top: 0;
+	background-color: #369;
+	color: #fff;
+	font-weight: bold;
+	border-left: 1px solid #fff;
+}
+table tr.subheader td {
+	font-weight: bold;
+	background-color: #EDEFF1;
+	padding-top: 7px;
+	padding-bottom: 10px;
+	text-align: left;
+}
+table tr.legende td {
+	border-top: 0;
+	color: #369;
+	background-color: #FFF;
+	font-size: 0.85em;
+	text-align: left;
+}
+table tr.unityheader td {
+	padding-bottom: 4px;
+}
+table tr.unity td {
+	border-top: 0;
+}
+table tr td.unity-subheader {
+	font-style: italic;
+}
+table tr td.unity-indent {
+	padding-left: 16px;
+}
+table tr.bottom td {
+	border-bottom: 1px solid #369;
+	padding-bottom: 10px;
+}
+
+#newsarchive table tr td,
+#calendar table tr td {
+	border-top: 0;
+}
+
+/*zelf toegevoegde brol*/
+.klik {
+	cursor: pointer;
+}
+input, textarea {
+	font-family: Verdana, Tahoma, sans-serif;
+	font-size: 8pt;
+	color: black;
+	border: 1px solid black;
+	background-color: white;
+}
+checkbox, select, option, radio {
+	font-family: Verdana, Tahoma, sans-serif;
+	font-size: 8pt;
+	color: black;
+	/*background-color:#FFFFFF;*/
+}
+/*table tr.subsubheader td {
+font-weight: bold;
+background-color: #F2F5FE;
+padding-left: 30px;
+padding-top: 7px;
+padding-bottom: 10px;
+text-align: left;
+}
+*/
+table tr.selected td {
+	background-color: #fdb812;
+}
+/*#FFCC00*/
+table tr.deleted td {
+	background-color: #cccccc;
+}
+
+input.verdiep {
+	width: 20px;
+}
+input.prefix {
+	width: 40px;
+}
+input.pagina {
+	width: 25px;
+}
+input.adres {
+	width: 140px;
+}
+input.naam {
+	width: 110px;
+}
+input.inputCheckbox {
+	border: 0px;
+}
+img.page {
+	vertical-align: middle
+}
+.filter input {
+	width: 80px;
+}
+.langedatum {
+	width: 130px;
+}
+
+#content p.disclaimer {
+	text-align: justify;
+	margin-bottom: 1em;
+}
+
+/* autocomplete */
+#content .ul_james {
+	margin: 0;
+	padding: 0;
+	padding-left: 0px;
+	margin-left: -336px;
+	list-style-position: outside;
+	list-style: none;
+	border: 1px solid black;
+	border-top: 0px;
+	width: 261px !important;
+}
+#content div.items ul.ul_james {
+	margin: 0;
+	padding: 0;
+	padding-left: 0px;
+	margin-left: -343px;
+	list-style-position: outside;
+	list-style: none;
+	border: 1px solid black;
+	border-top: 0px;
+	width: 261px !important;
+}
+#content div.act ul.ul_james {
+	margin: 0;
+	padding: 0;
+	padding-left: 0px;
+	margin-left: -343px;
+	list-style-position: outside;
+	list-style: none;
+	border: 1px solid black;
+	border-top: 0px;
+	width: 261px !important;
+}
+
+.li_james {
+	cursor: pointer;
+	background-color: #ffffff;
+	padding-left: 3px;
+}
+
+.li_james_hovered {
+	background-color: #Ivory;
+}
+
+
+/*zelf*/
+
+
+td.img1, td.img2, td.id {
+	width: 20px;
+}
+tr.eigenrij td {
+	background-color: Ivory;
+}
+div#beforecontent h2 img {
+	margin-bottom: -3px;
+	padding-right: 5px;
+}
+form.bodyform div label.alt {
+	font-weight: bold;
+	clear: none;
+	text-align: left;
+	width: 300px;
+}
+div.breek {
+	clear: both;
+}
+form.bodyform div input {
+	padding-bottom: 2px;
+}
+h2.informatie img.navigatie {
+	margin-bottom: -3px;
+	margin-right: 5px;
+	float: right;
+}
+td.bedrag {
+	width: 90px;
+	text-align: right !important;
+	padding-right: 20px;
+}
+.positief {
+	color: green;
+}
+.negatief {
+	color: red;
+}
+tr.totaal {
+	font-weight: bold;
+}
+tr.eind {
+	font-size: 120%;
+}
+tr.dubbelelijn td {
+	padding: 0px;
+	height: 5px;
+}
+.rechts {
+	text-align: right;
+}
+td.honderd {
+	width: 100px;
+}
+label.echt {
+	width: 80px !important;
+}
+#telling input {
+	width: 30px;
+	text-align: right;
+}
+#telling table {
+	float: left;
+	width: 170px;
+}
+#telling .spacer {
+	float: left;
+	width: 105px;
+	height: 1px;
+}
+#telling td {
+	border: 0px;
+	padding: 0px;
+	width: 50px;
+	vertical-align: middle;
+}
+#telling td.stom {
+	width: 70px;
+}
+#telling tr.tabelheader td {
+	padding: 5px 5px 7px 8px;
+}
+form.passief tr.tabelheader td {
+	background-color: Darkgray;
+}
+#tellingLabel, #vereffenLabel {
+	width: 300px !important;
+	text-align: left;
+}
+#vereffen_div input {
+	width: 70px;
+	float: left;
+}
+#vereffen_div select {
+	width: 120px;
+	float: left;
+}
+#vereffen_div label.tussen {
+	width: 55px;
+	text-align: left;
+	clear: none;
+}
+#vereffen_schuld {
+	margin-left: 10px;
+	width: 25px !important;
+}
+.center {
+	width: 100%;
+	text-align: center;
+}
+p.rechts#som {
+	width: 200px;
+	float: right;
+	margin-right: 52px;
+	margin-top: -30px;
+}
+#paginering {
+	width: 300px;
+}
+
+//portlets
+.portlet, dl.box {
+	border-bottom: 1px solid #DCDFE4;
+	margin-bottom: 1.2em;
+	width: 180px;
+}
+.portlet {
+	background-color: white;
+	border-bottom: 1px solid #8CACBB;
+	margin: 1px 0px 1em;
+}
+.portletHeader, dl.box dt {
+	background: #EAECF0 url(images/facetbg.png) repeat-x scroll 0px 0px;
+	border-bottom: 0px;
+	border-left: 1px solid #DCDFE4;
+	border-right: 1px solid #DCDFE4;
+	border-top: 1px solid #DCDFE4;
+	color: #0870A1;
+	font-family: Arial, sans-serif;
+	font-size: 1.2em;
+	line-height: 1.1em;
+	padding: 0.4em 0.5em 0.3em;
+	text-transform: none;
+}
+.portletItem, dl.box dd {
+	border-left: 1px solid #DCDFE4;
+	border-right: 1px solid #DCDFE4;
+}
+.box dd, .facet dd, .portlet dd {
+	padding: 4px 5px 2px 0.5em;
+}
+.box ul, .portlet ul, .facet ul {
+	color: #69C;
+	list-style-type: none;
+	margin: 0px;
+	padding-bottom: 2px;
+	padding-left: 0px;
+	padding-top: 0px;
+}
+.box ul li, .portlet ul li, .facet ul li {
+	background: transparent url(images/chevron-dubbel.gif) no-repeat scroll 4px 7px;
+	font-size: 1.1em;
+	margin-bottom: 0px;
+	padding: 1px 0px 1px 1.5em;
+}
