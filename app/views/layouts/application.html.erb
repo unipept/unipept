@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'> 
+<html xmlns='http://www.w3.org/1999/xhtml'> 
 <head>
   <title>Unipept | <%=@title%></title>
   <%= stylesheet_link_tag :all %>
@@ -7,8 +7,67 @@
   <%= csrf_meta_tag %>
 </head>
 <body>
-
-<%= yield %>
-
+<div id='container'>
+	<div id='topbar'>
+		<div id='language'>
+			<ul class='swapUnderline'>
+				<li class='selected last-child'>NL
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div id='header'>
+		<div id='headerleft'>
+			<h1>
+				<a href='http://www.ugent.be' title='Universiteit Gent'><img src='css/images/universiteit_gent.gif' alt='Universiteit Gent'></a>
+			</h1>
+			<h2>
+				<a href='http://users.ugent.be/~bmesuere'>Bart Mesuere</a>
+			</h2>
+		</div>
+		<div id='headerright'>
+			<div id='utility'></div>
+		</div>
+	</div>
+	<div id='breadcrumb' class='swapUnderline'>
+		<span id='breadcrumbs-you-are-here'>U bent hier:</span> <a class='br-act' href='/index.php'>Home</a>
+	</div>
+	<div class='visualClear' id='clear-space-before-wrapper-table'>
+		<!-- -->
+	</div>
+	<div id='main'>
+		<div id='navigationhome'>
+			<div id='mainnav'>
+				<ul>
+					<li class=''>
+						<a href='#'>Home</a>
+					</li>
+				</ul>
+			</div>
+			<div class='visualClear'></div>
+		</div>
+		<div id='content' class='normal'>
+			<div class='documentActions'>
+				<ul>
+					<li>
+						<a href='javascript:this.print();'><img src='css/images/print_icon.gif' alt='Afdrukken' title='Afdrukken' id='icon-print' name="icon-print"></a>
+					</li>
+				</ul>
+			</div><%= yield %>
+		</div>
+	</div>
+</div>
+<div class='visualClear'></div>
+<div id='footer-wrap'>
+	<div id='footer'>
+		<ul id='copyright' class='swapUnderline'>
+			<li>
+				<span class='byline_author'>Reacties op de inhoud</span>: <a class='byline_author' href='mailto:bart.mesuere@UGent.be'>bart.mesuere@UGent.be</a>
+			</li>
+			<li>© 2010 Bart Mesuere
+			</li>
+		</ul>
+	</div>
+</div>
 </body>
 </html>
