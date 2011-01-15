@@ -8,3 +8,4 @@ doc/app
 *.swp
 *~
 ~.DS_Store
+*.log
