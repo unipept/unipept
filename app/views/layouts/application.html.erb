@@ -11,28 +11,20 @@
 	<%= render 'layouts/topbar' %>
 	<%= render 'layouts/header' %>
 	<div id='breadcrumb' class='swapUnderline'>
-		<span id='breadcrumbs-you-are-here'>You are here:</span> <a class='br-act' href='/index.php'>Home</a>
+		<span id='breadcrumbs-you-are-here'>You are here:</span> 
+		<%= link_to("Home", "#", :class => "br-act") %>
 	</div>
 	<div class='visualClear' id='clear-space-before-wrapper-table'>
 		<!-- -->
 	</div>
 	<div id='main'>
 		<%= render 'layouts/navigation' %>
-		<nav id='navigationhome'>
-			<div id='mainnav'>
-				<ul>
-					<li class=''>
-						<a href='#'>Home</a>
-					</li>
-				</ul>
-			</div>
-			<div class='visualClear'></div>
-		</nav>
 		<section id='content' class='normal'>
 			<div class='documentActions'>
 				<ul>
 					<li>
-						<a href='javascript:this.print();'><img src='/images/print_icon.gif' alt='Print' title='Print' id='icon-print' /></a>
+						<% img = image_tag("print_icon.gif", :alt => "Print", :title => "Print", :id => "icon-print") %>
+						<%= link_to(img, "javascript:this.print();") %>
 					</li>
 				</ul>
 			</div>
