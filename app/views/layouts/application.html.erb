@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'> 
-<html xmlns='http://www.w3.org/1999/xhtml'> 
+<!DOCTYPE html>
+<html>
 <head>
   <title><%=title%></title>
 	<%= stylesheet_link_tag 'reset',  :media => 'all' %>
@@ -19,7 +19,7 @@
 			</ul>
 		</div>
 	</div>
-	<div id='header'>
+	<header id='header'>
 		<div id='headerleft'>
 			<h1>
 				<a href='http://www.ugent.be' title='Ghent University'><img src='/images/universiteit_gent.gif' alt='Ghent University'/></a>
@@ -31,7 +31,7 @@
 		<div id='headerright'>
 			<div id='utility'></div>
 		</div>
-	</div>
+	</header>
 	<div id='breadcrumb' class='swapUnderline'>
 		<span id='breadcrumbs-you-are-here'>You are here:</span> <a class='br-act' href='/index.php'>Home</a>
 	</div>
@@ -39,7 +39,7 @@
 		<!-- -->
 	</div>
 	<div id='main'>
-		<div id='navigationhome'>
+		<nav id='navigationhome'>
 			<div id='mainnav'>
 				<ul>
 					<li class=''>
@@ -48,21 +48,22 @@
 				</ul>
 			</div>
 			<div class='visualClear'></div>
-		</div>
-		<div id='content' class='normal'>
+		</nav>
+		<section id='content' class='normal'>
 			<div class='documentActions'>
 				<ul>
 					<li>
-						<a href='javascript:this.print();'><img src='/images/print_icon.gif' alt='Print' title='Print' id='icon-print' name="icon-print"/></a>
+						<a href='javascript:this.print();'><img src='/images/print_icon.gif' alt='Print' title='Print' id='icon-print' /></a>
 					</li>
 				</ul>
-			</div><%= yield %>
-		</div>
+			</div>
+			<%= yield %>
+		</section>
 	</div>
 </div>
 <div class='visualClear'></div>
 <div id='footer-wrap'>
-	<div id='footer'>
+	<footer id='footer'>
 		<ul id='copyright' class='swapUnderline'>
 			<li>
 				<span class='byline_author'>Reactions on content</span>: <a class='byline_author' href='mailto:bart.mesuere@UGent.be'>bart.mesuere@UGent.be</a>
@@ -70,7 +71,7 @@
 			<li>© 2011 Bart Mesuere
 			</li>
 		</ul>
-	</div>
+	</footer>
 </div>
 </body>
 </html>
