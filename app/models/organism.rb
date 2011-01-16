@@ -10,4 +10,7 @@
 #
 
 class Organism < ActiveRecord::Base
+  attr_accessible nil
+  
+  has_many :peptides
 end

@@ -7,7 +7,9 @@
 #
 
 class Sequence < ActiveRecord::Base
-  attr_accessible :sequence
+  attr_accessible nil
+  
+  has_many :peptides
   
   validates :sequence,  :presence   => true,
                         :length     => { :within => 5..50 },
