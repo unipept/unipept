@@ -1,8 +1,10 @@
 UnipeptWeb::Application.routes.draw do
-  match '/contact', :to => 'pages#contact'
-  match '/about',   :to => 'pages#about'
+  resources :sequences
   
   root :to => 'pages#home'
+  
+  match '/contact', :to => 'pages#contact'
+  match '/about',   :to => 'pages#about'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

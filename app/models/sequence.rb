@@ -11,6 +11,6 @@ class Sequence < ActiveRecord::Base
   
   validates :sequence,  :presence   => true,
                         :length     => { :minimum => 5 , :maximum => 50},
-                        :format     => { :with => /\A[A-Z]*\z/ }
+                        :format     => { :with => /\A[A-Z]*\z/ },
                         :uniqueness => true
 end

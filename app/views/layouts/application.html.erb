@@ -29,12 +29,13 @@
 				</ul>
 			</div>
 			<%= yield %>
+			<%= debug(params) if Rails.env.development? %>
 		</section>
 	</div>
 </div>
 <div class='visualClear'></div>
 <div id='footer-wrap'>
 	<%= render 'layouts/footer' %>
-</div>
+</div>	
 </body>
 </html>
