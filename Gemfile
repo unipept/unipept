@@ -13,6 +13,7 @@ group :test do
   gem 'webrat'
 	gem 'spork'
 	gem 'be_valid_asset'
+	gem 'factory_girl_rails'
 end
 
 #default stuff
