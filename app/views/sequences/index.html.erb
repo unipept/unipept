@@ -1,0 +1,9 @@
+<h1>All sequences</h1>
+
+<ul class="sequences">
+  <% @sequences.each do |sequence| %>
+    <li>
+      <%= link_to sequence.sequence, sequence %>
+    </li>
+  <% end %>
+</ul>

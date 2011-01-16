@@ -10,4 +10,15 @@ class SequencesController < ApplicationController
       format.json { render :json => @sequence }
     end
   end
+  
+  def index
+    @title = "All sequences"
+    @sequences = Sequence.limit(100)
+    
+    respond_to do |format|
+      format.html # index.html.erb
+      format.xml  { render :xml => @sequences }
+      format.json { render :json => @sequences }
+    end
+  end
 end

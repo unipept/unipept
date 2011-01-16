@@ -1,5 +1,5 @@
 UnipeptWeb::Application.routes.draw do
-  resources :sequences, :only => [:show]
+  resources :sequences, :only => [:show, :index]
   
   root :to => 'pages#home'
   

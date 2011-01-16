@@ -28,6 +28,9 @@
 					</li>
 				</ul>
 			</div>
+			<% flash.each do |key, value| %>
+				<%= content_tag(:div, value, :class => "flash #{key}") %>
+			<% end %>
 			<%= yield %>
 			<%= debug(params) if Rails.env.development? %>
 		</section>
