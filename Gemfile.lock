@@ -28,6 +28,7 @@ GEM
       activemodel (= 3.0.3)
       activesupport (= 3.0.3)
     activesupport (3.0.3)
+    annotate-models (1.0.4)
     arel (2.0.6)
     be_valid_asset (1.1.1)
       rspec
@@ -91,6 +92,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  annotate-models
   be_valid_asset
   mysql
   rails (= 3.0.3)
