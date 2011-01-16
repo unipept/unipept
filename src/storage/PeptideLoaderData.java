@@ -79,20 +79,20 @@ public class PeptideLoaderData {
 	private void prepareStatements() {
 		try {
 			containsSequence = connection
-					.prepareStatement("SELECT id FROM sequence WHERE `sequence` = ?");
-			addSequence = connection
-					.prepareStatement("INSERT INTO sequence (`sequence`) VALUES (?)",
-							Statement.RETURN_GENERATED_KEYS);
+					.prepareStatement("SELECT id FROM sequences WHERE `sequence` = ?");
+			addSequence = connection.prepareStatement(
+					"INSERT INTO sequences (`sequence`) VALUES (?)",
+					Statement.RETURN_GENERATED_KEYS);
 			containsOrganism = connection
-					.prepareStatement("SELECT id FROM organism WHERE `name` = ?");
+					.prepareStatement("SELECT id FROM organisms WHERE `name` = ?");
 			addOrganism = connection
 					.prepareStatement(
-							"INSERT INTO organism (`name`, `taxonId`, `speciesId`, `genusId`) VALUES (?,?,?,?)",
+							"INSERT INTO organisms (`name`, `taxon_id`, `species_id`, `genus_id`) VALUES (?,?,?,?)",
 							Statement.RETURN_GENERATED_KEYS);
 			addPeptide = connection
-					.prepareStatement("INSERT INTO peptide (`sequenceId`, `organismId`, `position`) VALUES (?,?,?)");
+					.prepareStatement("INSERT INTO peptides (`sequence_id`, `organism_id`, `position`) VALUES (?,?,?)");
 			getParent = connection
-					.prepareStatement("SELECT `parentTaxId`, `rank` FROM taxon_node WHERE `taxId` = ?");
+					.prepareStatement("SELECT `parentTax_id`, `rank` FROM taxon_nodes WHERE `tax_id` = ?");
 		} catch (SQLException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis())
 					+ "Error creating prepared statements");
@@ -180,7 +180,7 @@ public class PeptideLoaderData {
 			getParent.setInt(1, ncbiTaxonId);// retrieve parent
 			ResultSet s = getParent.executeQuery();
 			s.next();
-			int parent = s.getInt("parentTaxId");
+			int parent = s.getInt("parentTax_id");
 			String r = s.getString("rank");
 			s.close();
 			if (rank.equals(r))// if rank matches, return the id
@@ -275,9 +275,9 @@ public class PeptideLoaderData {
 		try {
 			stmt = connection.createStatement();
 			try {
-				stmt.executeUpdate("TRUNCATE TABLE `peptide`");
-				stmt.executeUpdate("TRUNCATE TABLE `sequence`");
-				stmt.executeUpdate("TRUNCATE TABLE `organism`");
+				stmt.executeUpdate("TRUNCATE TABLE `peptides`");
+				stmt.executeUpdate("TRUNCATE TABLE `sequences`");
+				stmt.executeUpdate("TRUNCATE TABLE `organisms`");
 			} catch (SQLException e) {
 				System.err.println(new Timestamp(System.currentTimeMillis())
 						+ " Something went wrong truncating tables.");

@@ -37,9 +37,9 @@ public class TaxonLoaderData {
 	private void prepareStatements() {
 		try {
 			addNode = connection
-					.prepareStatement("INSERT INTO taxon_node (taxId, parentTaxId, rank, geneticCode, mitoCode, isTaxonHidden) VALUES (?,?,?,?,?,?)");
+					.prepareStatement("INSERT INTO taxon_nodes (tax_id, parentTax_id, rank, geneticCode, mitoCode, isTaxonHidden) VALUES (?,?,?,?,?,?)");
 			addName = connection
-					.prepareStatement("INSERT INTO taxon_name (taxId, name, nameClass) VALUES (?,?,?)");
+					.prepareStatement("INSERT INTO taxon_names (tax_id, name, nameClass) VALUES (?,?,?)");
 		} catch (SQLException e) {
 			System.err.println("Error creating prepared statements");
 			e.printStackTrace();
@@ -110,8 +110,8 @@ public class TaxonLoaderData {
 		try {
 			stmt = connection.createStatement();
 			try {
-				stmt.executeUpdate("TRUNCATE TABLE `taxon_node`");
-				stmt.executeUpdate("TRUNCATE TABLE `taxon_name`");
+				stmt.executeUpdate("TRUNCATE TABLE `taxon_nodes`");
+				stmt.executeUpdate("TRUNCATE TABLE `taxon_names`");
 			} catch (SQLException e) {
 				System.err.println(new Timestamp(System.currentTimeMillis())
 						+ " Something went wrong truncating tables.");
