@@ -13,12 +13,6 @@ class SequencesController < ApplicationController
   
   def index
     @title = "All sequences"
-    @sequences = Sequence.limit(100)
-    
-    respond_to do |format|
-      format.html # index.html.erb
-      format.xml  { render :xml => @sequences }
-      format.json { render :json => @sequences }
-    end
+    @sequences = Sequence.paginate(:page => params[:page])
   end
 end

@@ -1,9 +1,9 @@
 <h1>All sequences</h1>
 
+<%= will_paginate %>
+
 <ul class="sequences">
-  <% @sequences.each do |sequence| %>
-    <li>
-      <%= link_to sequence.sequence, sequence %>
-    </li>
-  <% end %>
+  <%= render @sequences %>
 </ul>
+
+<%= will_paginate %>
