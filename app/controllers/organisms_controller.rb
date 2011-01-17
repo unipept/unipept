@@ -2,7 +2,7 @@ class OrganismsController < ApplicationController
 
   def show
     @organism = Organism.find(params[:id])
-    @peptides = @organism.peptides.paginate(:page => params[:page])
+    @peptides = @organism.peptides.paginate(:page => params[:page], :include => :sequence)
     @title = @organism.name
     
     respond_to do |format|

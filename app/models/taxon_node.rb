@@ -12,4 +12,6 @@
 #
 
 class TaxonNode < ActiveRecord::Base
+  attr_accessible nil
+  
 end
