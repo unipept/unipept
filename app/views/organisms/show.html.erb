@@ -1,0 +1,9 @@
+<h1><%= @organism.name %></h1>
+<% unless @organism.peptides.empty? %>
+	<ul class="peptides" summary="sequence peptides">
+		<% @peptides.each do |peptide| %>
+			<%= render peptide.sequence %>
+		<% end %>
+	</ul>
+	<%= will_paginate @peptides %>
+<% end %>

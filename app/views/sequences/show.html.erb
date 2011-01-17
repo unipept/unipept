@@ -1,6 +1,8 @@
 <h1><%= @sequence.sequence %></h1>
 <% unless @sequence.peptides.empty? %>
 	<ul class="peptides" summary="sequence peptides">
-		<%= render @sequence.peptides %>
+		<% @sequence.peptides.each do |peptide| %>
+			<%= render peptide.organism %>
+		<% end %>
 	</ul>
 <% end %>
