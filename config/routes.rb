@@ -3,8 +3,6 @@ UnipeptWeb::Application.routes.draw do
   resources :sequences, :only => [:show, :index]
   resources :organisms, :only => [:show, :index]
   
-  match 's/:sequence' => 'Sequences#show'
-  
   root :to => 'pages#home'
   
   match '/contact', :to => 'pages#contact'

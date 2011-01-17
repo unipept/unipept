@@ -1,10 +1,10 @@
 class SequencesController < ApplicationController
 
   def show
-    if params[:sequence]
-      @sequence = Sequence.find_by_sequence(params[:sequence])
-    else
-      @sequence = Sequence.find(params[:id])
+    if params[:id].match(/\A[0-9]+\z/)
+      @sequence = Sequence.find_by_id(params[:id])
+    else  
+      @sequence = Sequence.find_by_sequence(params[:id])
     end
     @title = @sequence.sequence
     
