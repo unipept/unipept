@@ -4,7 +4,7 @@
 <% else %>
 	<span>
 		<%= pluralize(@sequence.peptides.count, "organism was", "organisms were") %>
-		  found for this sequence.
+		  found with this sequence.
 	</span>
 	<ul class="peptides">
 		<% @sequence.peptides.each do |peptide| %>
