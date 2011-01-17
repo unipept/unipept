@@ -1,1 +1,6 @@
 <h1><%= @sequence.sequence %></h1>
+<% unless @sequence.peptides.empty? %>
+	<ul class="peptides" summary="sequence peptides">
+		<%= render @sequence.peptides %>
+	</ul>
+<% end %>

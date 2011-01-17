@@ -2198,3 +2198,10 @@ p.rechts#som {
 	margin-bottom: 0px;
 	padding: 1px 0px 1px 1.5em;
 }
+
+#version{
+	float: right;
+	padding-right: 5px;
+	padding-top: 45px;
+	color: #6086A7;
+}

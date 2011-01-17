@@ -13,4 +13,10 @@ class Organism < ActiveRecord::Base
   attr_accessible nil
   
   has_many :peptides
+  
+  validates :name,  :presence   => true
+  validates :taxon_id,  :presence   => true
+  validates :species_id,  :presence   => true
+  validates :genus_id,  :presence   => true
+  
 end

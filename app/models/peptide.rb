@@ -13,4 +13,8 @@ class Peptide < ActiveRecord::Base
   
   belongs_to :organism
   belongs_to :sequence
+  
+  validates :sequence_id,  :presence   => true
+  validates :organism_id,  :presence   => true
+  validates :position,  :presence   => true
 end
