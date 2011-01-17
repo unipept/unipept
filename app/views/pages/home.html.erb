@@ -1,2 +1,7 @@
 <h1>Welcome</h1>
-<p>Welcome to unipept</p>
+<p>Welcome to Unipept. Try searching for a tryptic peptide:</p>
+<%= form_tag("/sequence/search", :method => "get") do %>
+	<%= label_tag(:q, "Search for:") %>
+	<%= search_field_tag(:q) %>
+  <%= submit_tag("Search") %>
+<% end %>

@@ -19,4 +19,8 @@ class SequencesController < ApplicationController
     @title = "All sequences"
     @sequences = Sequence.paginate(:page => params[:page])
   end
+  
+  def search
+    redirect_to Sequence.find_by_sequence(params[:q])
+  end
 end

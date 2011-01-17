@@ -1,4 +1,8 @@
 <h1><%= @organism.name %></h1>
+<p>
+	<span><strong>Species:</strong> <%= @organism.species_name.name %></span><br/>
+	<span><strong>Genus:</strong> <%= @organism.genus_name.name %></span><br/>
+</p>
 <% if @organism.peptides.empty? %>
 	<span>No peptides were found for this organism.</span>
 <% else %>
