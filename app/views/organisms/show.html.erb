@@ -1,5 +1,11 @@
 <h1><%= @organism.name %></h1>
-<% unless @organism.peptides.empty? %>
+<% if @organism.peptides.empty? %>
+	<span>No peptides were found for this organism.</span>
+<% else %>
+	<span>
+		<%= pluralize(@organism.peptides.count, "peptide was", "peptides were") %>
+		 found for this organism.
+	</span>
 	<ul class="peptides" summary="sequence peptides">
 		<% @peptides.each do |peptide| %>
 			<%= render peptide.sequence %>
