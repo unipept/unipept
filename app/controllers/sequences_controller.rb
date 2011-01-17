@@ -1,7 +1,11 @@
 class SequencesController < ApplicationController
 
   def show
-    @sequence = Sequence.find(params[:id])
+    if params[:sequence]
+      @sequence = Sequence.find_by_sequence(params[:sequence])
+    else
+      @sequence = Sequence.find(params[:id])
+    end
     @title = @sequence.sequence
     
     respond_to do |format|

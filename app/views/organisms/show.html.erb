@@ -6,7 +6,7 @@
 		<%= pluralize(@organism.peptides.count, "peptide was", "peptides were") %>
 		 found for this organism.
 	</span>
-	<ul class="peptides" summary="sequence peptides">
+	<ul class="peptides">
 		<% @peptides.each do |peptide| %>
 			<%= render peptide.sequence %>
 		<% end %>
