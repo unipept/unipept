@@ -141,7 +141,8 @@ public class PeptideLoader {
 
 							// add the peptide to the trie
 							if (seqString.length() >= MIN_PEPT_SIZE
-									&& seqString.length() <= MAX_PEPT_SIZE) {
+									&& seqString.length() <= MAX_PEPT_SIZE
+									&& !seqString.contains("*")) {
 								data.addData(seqString, rs.getTaxon().getDisplayName(), rs
 										.getTaxon().getNCBITaxID(), f.getLocation().getMin());
 							}
