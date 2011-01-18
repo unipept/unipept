@@ -39,7 +39,7 @@ public class TaxonLoaderData {
 			addNode = connection
 					.prepareStatement("INSERT INTO taxon_nodes (tax_id, parentTax_id, rank, geneticCode, mitoCode, isTaxonHidden) VALUES (?,?,?,?,?,?)");
 			addName = connection
-					.prepareStatement("INSERT INTO taxon_names (tax_id, name, nameClass) VALUES (?,?,?)");
+					.prepareStatement("INSERT INTO taxon_names (tax_id, name) VALUES (?,?)");
 		} catch (SQLException e) {
 			System.err.println("Error creating prepared statements");
 			e.printStackTrace();
@@ -89,11 +89,10 @@ public class TaxonLoaderData {
 	 * @param nameClass
 	 *            the type of name (e.g. synonym)
 	 */
-	public void addName(Integer taxId, String name, String nameClass) {
+	public void addName(Integer taxId, String name) {
 		try {
 			addName.setInt(1, taxId);
 			addName.setString(2, name);
-			addName.setString(3, nameClass);
 			addName.executeUpdate();
 		} catch (SQLException e) {
 			System.err.println("Error executing query");

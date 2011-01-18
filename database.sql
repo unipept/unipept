@@ -47,7 +47,6 @@ CREATE TABLE `taxon_names` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `tax_id` int(11) NOT NULL,
   `name` varchar(256) DEFAULT NULL,
-  `nameClass` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index2` (`tax_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8$$

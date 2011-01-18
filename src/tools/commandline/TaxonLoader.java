@@ -69,7 +69,8 @@ public class TaxonLoader {
 				Integer taxId = Integer.valueOf(parts[0].trim());
 				String name = parts[1].trim();
 				String nameClass = parts[3].trim();
-				data.addName(taxId, name, nameClass);
+				if (nameClass.equals("Scientific name"))
+					data.addName(taxId, name);
 			}
 
 		} catch (FileNotFoundException e) {
