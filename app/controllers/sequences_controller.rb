@@ -3,9 +3,9 @@ class SequencesController < ApplicationController
   def show
     #id or sequence?
     if params[:id].match(/\A[0-9]+\z/)
-      @sequence = Sequence.find_by_id(params[:id], :include => {:peptides => :organism})
+      @sequence = Sequence.find_by_id(params[:id])
     else  
-      @sequence = Sequence.find_by_sequence(params[:id], :include => {:peptides => :organism})
+      @sequence = Sequence.find_by_sequence(params[:id])
     end
     
     #error on nil
