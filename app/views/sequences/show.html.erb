@@ -1,14 +1,18 @@
 <h1><%= @sequence.sequence %></h1>
-<% if @organisms.empty? %>
+<% if @genera.empty? %>
 	<span>No results were found for this sequence.</span>
 <% else %>
 	<span>
-		The sequence <%= @sequence.sequence %> occurs in 
-		<%= pluralize(@organisms.count, "organism") %>, 
-		<%= pluralize(@species.count, "species") %> and 
-		<%= pluralize(@genera.count, "genus") %>.
+		The sequence <%= @sequence.sequence %> occurs in  
+		<%= pluralize(@number_of_species, "species") %> and 
+		<%= pluralize(@genera.count, "genus", "genera") %>.
 	</span>
-	<ul class="peptides">
-		<%= render @organisms %>
-	</ul>
+	<% @genera.each do |genus| %>
+		<h2><%= genus %></h2>
+		<ul>
+		<% @species[genus].each do |row| %>
+			<li><%= "#{row['species']}: #{row['genomes_with_sequence']}/#{row['number_of_genomes']}" %></li>
+		<% end %>
+		</ul>
+	<% end %>
 <% end %>
