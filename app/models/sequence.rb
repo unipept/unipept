@@ -16,4 +16,6 @@ class Sequence < ActiveRecord::Base
                         :format     => { :with => /\A[A-Z]*\z/ },
                         :uniqueness => true
                         
+  default_scope :order => 'id ASC'
+                        
 end
