@@ -14,10 +14,14 @@ class SequencesController < ApplicationController
       redirect_to sequences_path
     else
       @title = @sequence.sequence
+      peptides = @sequence.peptides
+      @organisms = peptides.map(&:organism).uniq
+      @species = @organisms.map(&:species_id).uniq
+      @genera = @organisms.map(&:genus_id).uniq
       respond_to do |format|
         format.html # show.html.erb
-        format.xml  { render :xml => @sequence }
-        format.json { render :json => @sequence }
+        format.xml  { render :xml => @organisms }
+        format.json { render :json => @organisms }
       end
     end
   end

@@ -1,14 +1,14 @@
 <h1><%= @sequence.sequence %></h1>
-<% if @sequence.peptides.empty? %>
-	<span>No organisms were found for this sequence.</span>
+<% if @organisms.empty? %>
+	<span>No results were found for this sequence.</span>
 <% else %>
 	<span>
-		<%= pluralize(@sequence.peptides.count, "organism was", "organisms were") %>
-		  found with this sequence.
+		The sequence <%= @sequence.sequence %> occurs in 
+		<%= pluralize(@organisms.count, "organism") %>, 
+		<%= pluralize(@species.count, "species") %> and 
+		<%= pluralize(@genera.count, "genus") %>.
 	</span>
 	<ul class="peptides">
-		<% @sequence.peptides.each do |peptide| %>
-			<%= render peptide.organism %>
-		<% end %>
+		<%= render @organisms %>
 	</ul>
 <% end %>
