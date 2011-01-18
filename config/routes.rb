@@ -9,7 +9,7 @@ UnipeptWeb::Application.routes.draw do
   
   root :to => 'pages#home'
   
-  match '/sequence/search', :to => 'sequences#search'
+  match '/search/sequence', :to => 'sequences#search', :as => 'sequence_search'
   
   match '/contact', :to => 'pages#contact'
   match '/about',   :to => 'pages#about'

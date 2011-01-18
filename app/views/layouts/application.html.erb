@@ -19,21 +19,13 @@
 	</div>
 	<div id='main'>
 		<%= render 'layouts/navigation' %>
-		<section id='content' class='normal'>
-			<div class='documentActions'>
-				<ul>
-					<li>
-						<% img = image_tag("print_icon.gif", :alt => "Print", :title => "Print", :id => "icon-print") %>
-						<%= link_to(img, "javascript:this.print();") %>
-					</li>
-				</ul>
-			</div>
+		<div id='content' class='normal'>
 			<% flash.each do |key, value| %>
 				<%= content_tag(:div, value, :class => "flash #{key}") %>
 			<% end %>
 			<%= yield %>
 			<%= debug(params) if Rails.env.development? %>
-		</section>
+		</div>
 	</div>
 </div>
 <div class='visualClear'></div>
