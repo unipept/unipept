@@ -48,6 +48,7 @@ public class TaxonLoader {
 	private void startLoading() {
 		try {
 			// parse the nodes file
+			System.out.println("loading " + nodes);
 			BufferedReader reader = new BufferedReader(new FileReader(nodes));
 			String line;
 			while ((line = reader.readLine()) != null) {
@@ -63,13 +64,14 @@ public class TaxonLoader {
 			}
 
 			// parse the names file
+			System.out.println("loading " + names);
 			reader = new BufferedReader(new FileReader(names));
 			while ((line = reader.readLine()) != null) {
 				String[] parts = line.split("\\|");
 				Integer taxId = Integer.valueOf(parts[0].trim());
 				String name = parts[1].trim();
 				String nameClass = parts[3].trim();
-				if (nameClass.equals("Scientific name"))
+				if (nameClass.equals("scientific name"))
 					data.addName(taxId, name);
 			}
 
