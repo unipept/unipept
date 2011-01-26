@@ -56,7 +56,7 @@ class SequencesController < ApplicationController
         if resultset.num_rows == 1
           @number_unique_found += 1
           hash = resultset.fetch_hash
-          hash["sequence"] = s
+          hash["sequence"] = sequence
           s = @matches[hash["species"]]
           if s.nil?
             @species << hash["species"]
