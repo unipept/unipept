@@ -1,0 +1,5 @@
+<%= form_tag(:sequence_multi_search, :method => "post") do %>
+	<%= label_tag(:q, "Search for") %>
+	<%= text_area(:q, "", :cols => 63, :rows => 5) %>
+  <%= submit_tag("Search") %>
+<% end %>

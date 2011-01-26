@@ -1,0 +1,6 @@
+<p>We matched <%= @number_found %> of the <%= pluralize(@number_searched_for, "peptide") %> of which <%= pluralize(@number_unique_found, "is", "are") %> unique to a single species.</p>
+<ul>
+<% @species.each do |s| %>
+	<li><%= s[0] %>: <%= s[1]["species"] %> (<%= s[1]["genomes_with_sequence"] %>/<%= s[1]["number_of_genomes"] %>)</li>
+<% end %>
+</ul>
