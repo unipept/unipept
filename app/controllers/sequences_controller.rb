@@ -42,10 +42,11 @@ class SequencesController < ApplicationController
   end
   
   def multi_search
-    data = params[:q][0].lines.map(&:strip).to_a
+    data = params[:q][0].lines.map(&:strip).to_a.uniq
     @number_searched_for = data.length
     @number_found = 0
     @number_unique_found = 0
+    @matches = Hash.new
     @species = Array.new
     data.each do |s|
       sequence = Sequence.find_by_sequence(s)
@@ -54,7 +55,15 @@ class SequencesController < ApplicationController
         resultset = sequence.occurrences
         if resultset.num_rows == 1
           @number_unique_found += 1
-          @species << [s, resultset.fetch_hash]
+          hash = resultset.fetch_hash
+          hash["sequence"] = s
+          s = @matches[hash["species"]]
+          if s.nil?
+            @species << hash["species"]
+            @matches[hash["species"]] = [hash]
+          else
+            @matches[hash["species"]] << hash
+          end
         end
       end
     end
