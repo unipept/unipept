@@ -2026,7 +2026,7 @@ img.page {
 }
 
 .li_james_hovered {
-	background-color: #Ivory;
+	background-color: #FFFFF0;
 }
 
 
@@ -2037,7 +2037,7 @@ td.img1, td.img2, td.id {
 	width: 20px;
 }
 tr.eigenrij td {
-	background-color: Ivory;
+	background-color: #FFFFF0;
 }
 div#beforecontent h2 img {
 	margin-bottom: -3px;
@@ -2116,7 +2116,7 @@ label.echt {
 	padding: 5px 5px 7px 8px;
 }
 form.passief tr.tabelheader td {
-	background-color: Darkgray;
+	background-color: #A9A9A9;
 }
 #tellingLabel, #vereffenLabel {
 	width: 300px !important;
@@ -2153,7 +2153,7 @@ p.rechts#som {
 	width: 300px;
 }
 
-//portlets
+/* portlets */
 .portlet, dl.box {
 	border-bottom: 1px solid #DCDFE4;
 	margin-bottom: 1.2em;
@@ -2204,4 +2204,8 @@ p.rechts#som {
 	padding-right: 5px;
 	padding-top: 45px;
 	color: #6086A7;
+}
+
+header, footer{
+	display: block;
 }

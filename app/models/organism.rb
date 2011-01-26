@@ -15,16 +15,13 @@ class Organism < ActiveRecord::Base
   has_many :peptides 
   belongs_to :scientific_name,  :foreign_key  => "taxon_id", 
                                 :primary_key  => "tax_id", 
-                                :class_name   => 'TaxonName', 
-                                :conditions   => ['nameClass = ?', 'scientific name']
+                                :class_name   => 'TaxonName'
   belongs_to :species_name,     :foreign_key  => "species_id", 
                                 :primary_key  => "tax_id", 
-                                :class_name   => 'TaxonName', 
-                                :conditions   => ['nameClass = ?', 'scientific name']
+                                :class_name   => 'TaxonName'
   belongs_to :genus_name,       :foreign_key  => "genus_id", 
                                 :primary_key  => "tax_id", 
-                                :class_name   => 'TaxonName', 
-                                :conditions   => ['nameClass = ?', 'scientific name']
+                                :class_name   => 'TaxonName'
   
   validates :name,  :presence   => true
   validates :taxon_id,  :presence   => true
