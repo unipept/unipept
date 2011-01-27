@@ -17,7 +17,8 @@ body, html {
 
 /* hide the following divs */
 div#utility, div#search, div#login, div#login-act, div#breadcrumb,
-div#mainnav, div#leftnav, div.facet, div.top, div#related, div.author {
+div#mainnav, div#leftnav, div.facet, div.top, div#related, div.author, 
+nav, header, footer, div#topbar{
 	display: none;
 }
 
