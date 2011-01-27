@@ -42,6 +42,7 @@ class SequencesController < ApplicationController
   end
   
   def multi_search
+    @title = "Results"
     data = params[:q][0].lines.map(&:strip).to_a.uniq
     @number_searched_for = data.length
     @number_found = 0
@@ -67,5 +68,6 @@ class SequencesController < ApplicationController
         end
       end
     end
+    @species.sort!
   end
 end
