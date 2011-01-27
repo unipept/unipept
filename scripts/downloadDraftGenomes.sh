@@ -17,7 +17,7 @@ cd "${bactdir_draft}"
 
 #for file in $(wget -qO - ftp://ftp.ncbi.nih.gov/genomes/Bacteria/lproks_2.txt | grep -v 'no sequence' | awk -F'\t' '$1!=""' | awk -F'\t' '{gsub(" sp.","",$4);gsub(" ","_",$4);gsub("-","_",$4);printf("%s_uid%s/%s\n",$4,$1,$8)}'fo$
 #for file in $(wget -qO - ftp://ftp.ncbi.nih.gov/genomes/Bacteria/lproks_2.txt | grep -v 'no sequence' | awk -F'\t' '$1!=""' | awk -F'\t' '{gsub(" sp.","",$4);gsub(" ","_",$4);gsub("-","_",$4);printf("%s_uid%s/%s\n",$4,$1,$8)}' $
-for file in $(wget -qO - ftp://ftp.ncbi.nih.gov/genomes/Bacteria/lproks_2.txt | grep -v 'no sequence' | awk -F'\t' '$1!=""' | awk -F'\t' '{gsub(" sp.","",$4);gsub(" ","_",$4);gsub("-","_",$4);printf("%s_uid%s/%s\n",$4,$1,$8)}' $
+for file in $(wget -qO - ftp://ftp.ncbi.nih.gov/genomes/Bacteria/lproks_2.txt | grep -v 'no sequence' | awk -F'\t' '$1!=""' | awk -F'\t' '{gsub(" sp.","",$4);gsub(" ","_",$4);gsub("-","_",$4);printf("%s_uid%s/%s\n",$4,$1,$8)}' 
 do
  dir=$(dirname $(echo $file))
  echo -n "processing ${dir} ... "
