@@ -43,7 +43,7 @@ class SequencesController < ApplicationController
   
   def multi_search
     @title = "Results"
-    data = params[:q][0].lines.map(&:strip).to_a.uniq
+    data = params[:q][0].lines.map(&:strip).map{|l| l.sub(/I/, 'L')}.to_a.uniq
     @number_searched_for = data.length
     @number_found = 0
     @number_unique_found = 0
