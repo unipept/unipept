@@ -54,10 +54,17 @@ public class PeptideLoader {
 	// mem leak fix
 	WeakRichObjectBuilder wrob = new WeakRichObjectBuilder();
 
-	public PeptideLoader(String datafile) {
+	public PeptideLoader() {
 		// easy access to the database
 		data = new PeptideLoaderData(false);
 		data.emptyAllTables();
+
+		// cache settings
+		RichObjectFactory.setLRUCacheSize(3);// cache problem?
+		RichObjectFactory.setRichObjectBuilder(wrob);
+	}
+
+	private void loadFile(String datafile) {
 		try {
 			inputReader = new BufferedReader(new FileReader(datafile));
 		} catch (FileNotFoundException e2) {
@@ -65,18 +72,16 @@ public class PeptideLoader {
 					+ " could not be found");
 			e2.printStackTrace();
 		}
-		RichObjectFactory.setLRUCacheSize(3);// cache problem?
-		RichObjectFactory.setRichObjectBuilder(wrob);
 	}
 
 	/**
 	 * reads the input file line by line
 	 */
-	public void processData() {
+	public void processData(boolean draft) {
 		String input = "";
 		try {
 			while ((input = inputReader.readLine()) != null) {
-				processFile(input);
+				processFile(input, draft);
 			}
 		} catch (IOException e1) {
 			System.err.println(new Timestamp(System.currentTimeMillis())
@@ -91,7 +96,7 @@ public class PeptideLoader {
 	 * @param file
 	 *            a genbank file
 	 */
-	private void processFile(String file) {
+	private void processFile(String file, boolean draft) {
 		System.err.println(new Timestamp(System.currentTimeMillis()) + " Reading " + file);
 
 		// digest settings
@@ -144,7 +149,7 @@ public class PeptideLoader {
 									&& seqString.length() <= MAX_PEPT_SIZE
 									&& !seqString.contains("*")) {
 								data.addData(seqString, rs.getTaxon().getDisplayName(), rs
-										.getTaxon().getNCBITaxID(), f.getLocation().getMin());
+										.getTaxon().getNCBITaxID(), f.getLocation().getMin(), draft);
 							}
 
 						}
@@ -180,15 +185,22 @@ public class PeptideLoader {
 	 */
 	public static void main(String[] args) {
 		// Process input
-		if (args.length != 1) {
-			System.out.println("Usage: java PeptideLoader input.txt");
+		if (args.length != 2) {
+			System.out.println("Usage: java PeptideLoader complete.txt draft.txt");
 			System.exit(-1);
 		}
 
 		// create a new loader object
-		PeptideLoader loader = new PeptideLoader(args[0]);
+		PeptideLoader loader = new PeptideLoader();
 
+		// load inputfile
+		loader.loadFile(args[0]);
 		// process input files line by line
-		loader.processData();
+		loader.processData(false);
+
+		// load inputfile
+		loader.loadFile(args[1]);
+		// process input files line by line
+		loader.processData(true);
 	}
 }

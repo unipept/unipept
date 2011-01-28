@@ -87,7 +87,7 @@ public class PeptideLoaderData {
 					.prepareStatement("SELECT id FROM organisms WHERE `name` = ?");
 			addOrganism = connection
 					.prepareStatement(
-							"INSERT INTO organisms (`name`, `taxon_id`, `species_id`, `genus_id`) VALUES (?,?,?,?)",
+							"INSERT INTO organisms (`name`, `taxon_id`, `species_id`, `genus_id`, `draft`) VALUES (?,?,?,?,?)",
 							Statement.RETURN_GENERATED_KEYS);
 			addPeptide = connection
 					.prepareStatement("INSERT INTO peptides (`sequence_id`, `organism_id`, `position`) VALUES (?,?,?)");
@@ -112,7 +112,7 @@ public class PeptideLoaderData {
 	 *            The taxonId of the organism
 	 * @return The database ID of the organism
 	 */
-	private int getOrganismId(String name, int ncbiTaxonId) {
+	private int getOrganismId(String name, int ncbiTaxonId, boolean draft) {
 		if (organismCacheString.equals(name))// cache
 			return organismCacheInt;
 		try {
@@ -129,6 +129,7 @@ public class PeptideLoaderData {
 				addOrganism.setInt(2, ncbiTaxonId);
 				addOrganism.setInt(3, getSpeciesId(ncbiTaxonId));
 				addOrganism.setInt(4, getGenusId(ncbiTaxonId));
+				addOrganism.setBoolean(5, draft);
 				addOrganism.executeUpdate();
 				res = addOrganism.getGeneratedKeys();
 				res.next();
@@ -253,10 +254,11 @@ public class PeptideLoaderData {
 	 *            The first position in de the genome of the protein containing
 	 *            this peptide
 	 */
-	public void addData(String sequence, String organism, int ncbiTaxonId, int position) {
+	public void addData(String sequence, String organism, int ncbiTaxonId, int position,
+			boolean draft) {
 		try {
 			addPeptide.setInt(1, getSequenceId(sequence));
-			addPeptide.setInt(2, getOrganismId(organism, ncbiTaxonId));
+			addPeptide.setInt(2, getOrganismId(organism, ncbiTaxonId, draft));
 			addPeptide.setInt(3, position);
 			addPeptide.executeUpdate();
 		} catch (SQLException e) {
