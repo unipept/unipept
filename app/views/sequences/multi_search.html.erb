@@ -1,6 +1,6 @@
 <p>We matched <%= @number_found %> of the <%= pluralize(@number_searched_for, "peptide") %> of which <%= pluralize(@number_unique_found, "is", "are") %> unique to a single species. <%= pluralize(@species.count, "distinct species was found", "distinct species were found") %>.</p>
 <% @species.each do |species| %>
-	<h2><%= species %></h2>
+	<h2><%= species %>  <%= link_to image_tag("externesite.gif", :alt => "Straininfo"), "http://www.straininfo.net/strains/search?taxon="+species, :target => "_blank" %></h2>
 	<ul>
 	<% @matches[species].each do |row| %>
 		<li><%= link_to row['sequence'].sequence, row['sequence']%>: <%= "#{row['genomes_with_sequence']}/#{row['number_of_genomes']}" %></li>
