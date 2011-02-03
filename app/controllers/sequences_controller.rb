@@ -51,7 +51,7 @@ class SequencesController < ApplicationController
     @species = Array.new
     data.each do |s|
       sequence = Sequence.find_by_sequence(s)
-      unless sequence.nil?
+      unless sequence.nil? || (params[:drafts] && sequence.peptides.map(&:organism).map(&:draft).count("\x00") == 0)
         @number_found += 1
         if(params[:drafts])
           resultset = sequence.occurrences(true)
