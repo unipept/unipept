@@ -53,7 +53,11 @@ class SequencesController < ApplicationController
       sequence = Sequence.find_by_sequence(s)
       unless sequence.nil?
         @number_found += 1
-        resultset = sequence.occurrences
+        if(params[:drafts])
+          resultset = sequence.occurrences(true)
+        else
+          resultset = sequence.occurrences(false)
+        end
         if resultset.num_rows == 1
           @number_unique_found += 1
           hash = resultset.fetch_hash
