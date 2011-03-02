@@ -45,25 +45,12 @@ CREATE TABLE `sequences` (
 
 delimiter $$
 
-CREATE TABLE `taxon_names` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `tax_id` int(11) NOT NULL,
-  `name` varchar(256) DEFAULT NULL,
+CREATE TABLE `taxons` (
+  `id` int(11) NOT NULL,
+  `name` varchar(256) NOT NULL,
+  `rank` varchar(16) DEFAULT NULL,
+  `parent_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `index2` (`tax_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8$$
-
-
-delimiter $$
-
-CREATE TABLE `taxon_nodes` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `tax_id` int(11) NOT NULL,
-  `parentTax_id` int(11) DEFAULT NULL,
-  `rank` varchar(45) DEFAULT NULL,
-  `geneticCode` int(11) DEFAULT NULL,
-  `mitoCode` int(11) DEFAULT NULL,
-  `isTaxonHidden` bit(1) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8$$
 
