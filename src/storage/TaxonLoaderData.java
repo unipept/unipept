@@ -15,8 +15,8 @@ import java.sql.Timestamp;
 public class TaxonLoaderData {
 	// database stuff
 	private Connection connection;
-	private PreparedStatement addNode;
 	private PreparedStatement addName;
+	private PreparedStatement addRank;
 
 	/**
 	 * Creates a new TaxonData object and gets a database connection
@@ -36,47 +36,14 @@ public class TaxonLoaderData {
 	 */
 	private void prepareStatements() {
 		try {
-			addNode = connection
-					.prepareStatement("INSERT INTO taxon_nodes (tax_id, parentTax_id, rank, geneticCode, mitoCode, isTaxonHidden) VALUES (?,?,?,?,?,?)");
-			addName = connection
-					.prepareStatement("INSERT INTO taxon_names (tax_id, name) VALUES (?,?)");
+			addName = connection.prepareStatement("INSERT INTO taxons (id, name) VALUES (?,?)");
+			addRank = connection
+					.prepareStatement("UPDATE taxons SET rank = ?, parent_id = ? WHERE id = ?");
+
 		} catch (SQLException e) {
 			System.err.println("Error creating prepared statements");
 			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * Adds a node to the database
-	 * 
-	 * @param taxId
-	 *            The taxonId
-	 * @param parentTaxId
-	 *            The taxonId of the parent
-	 * @param rank
-	 *            The taxon rank
-	 * @param geneticCode
-	 *            no idea
-	 * @param mitoCode
-	 *            no idea
-	 * @param isTaxonHidden
-	 *            no idea
-	 */
-	public void addNode(Integer taxId, Integer parentTaxId, String rank, Integer geneticCode,
-			Integer mitoCode, Boolean isTaxonHidden) {
-		try {
-			addNode.setInt(1, taxId);
-			addNode.setInt(2, parentTaxId);
-			addNode.setString(3, rank);
-			addNode.setInt(4, geneticCode);
-			addNode.setInt(5, mitoCode);
-			addNode.setBoolean(6, isTaxonHidden);
-			addNode.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println("Error executing query");
-			e.printStackTrace(System.err);
-		}
-
 	}
 
 	/**
@@ -102,15 +69,37 @@ public class TaxonLoaderData {
 	}
 
 	/**
-	 * Truncates all taxon_ tables
+	 * Adds rank information to a taxon database entry
+	 * 
+	 * @param id
+	 *            The id of the entry to which we want to add rank information
+	 * @param parentId
+	 *            The taxonId of the parent
+	 * @param rank
+	 *            The taxon rank
 	 */
-	public void emptyAllTables() {
+	public void addRank(int id, int parentId, String rank) {
+		try {
+			addRank.setString(1, rank);
+			addRank.setInt(2, parentId);
+			addRank.setInt(3, id);
+			addRank.executeUpdate();
+		} catch (SQLException e) {
+			System.err.println("Error executing query");
+			e.printStackTrace(System.err);
+		}
+
+	}
+
+	/**
+	 * Truncates the taxons table
+	 */
+	public void emptyTaxonTables() {
 		Statement stmt;
 		try {
 			stmt = connection.createStatement();
 			try {
-				stmt.executeUpdate("TRUNCATE TABLE `taxon_nodes`");
-				stmt.executeUpdate("TRUNCATE TABLE `taxon_names`");
+				stmt.executeUpdate("TRUNCATE TABLE `taxons`");
 			} catch (SQLException e) {
 				System.err.println(new Timestamp(System.currentTimeMillis())
 						+ " Something went wrong truncating tables.");

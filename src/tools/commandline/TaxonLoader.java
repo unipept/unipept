@@ -12,7 +12,7 @@ import storage.TaxonLoaderData;
  * This script parses NCBI taxon node and name files and inserts them into the
  * database.
  * 
- * BEFORE ADDING DATA TO THE DATABASE, ALL TABLES ARE TRANCATED.
+ * BEFORE ADDING DATA TO THE DATABASE, ALL TABLES ARE TRUNCATED.
  * 
  * The input is expected to be the NCBI names.dmp and nodes.dmp.
  * 
@@ -37,7 +37,7 @@ public class TaxonLoader {
 	 */
 	public TaxonLoader(String nodes, String names) {
 		data = new TaxonLoaderData();
-		data.emptyAllTables();
+		data.emptyTaxonTables();
 		this.nodes = nodes;
 		this.names = names;
 	}
@@ -47,25 +47,10 @@ public class TaxonLoader {
 	 */
 	private void startLoading() {
 		try {
-			// parse the nodes file
-			System.out.println("loading " + nodes);
-			BufferedReader reader = new BufferedReader(new FileReader(nodes));
-			String line;
-			while ((line = reader.readLine()) != null) {
-				String[] parts = line.split("\\|");
-				Integer taxId = Integer.valueOf(parts[0].trim());
-				String pti = parts[1].trim();
-				Integer parentTaxId = pti.length() > 0 ? new Integer(pti) : null;
-				String rank = parts[2].trim();
-				Integer geneticCode = new Integer(parts[6].trim());
-				Integer mitoCode = new Integer(parts[8].trim());
-				Boolean isTaxonHidden = Boolean.valueOf(parts[10].trim());
-				data.addNode(taxId, parentTaxId, rank, geneticCode, mitoCode, isTaxonHidden);
-			}
-
 			// parse the names file
 			System.out.println("loading " + names);
-			reader = new BufferedReader(new FileReader(names));
+			BufferedReader reader = new BufferedReader(new FileReader(names));
+			String line;
 			while ((line = reader.readLine()) != null) {
 				String[] parts = line.split("\\|");
 				Integer taxId = Integer.valueOf(parts[0].trim());
@@ -73,6 +58,17 @@ public class TaxonLoader {
 				String nameClass = parts[3].trim();
 				if (nameClass.equals("scientific name"))
 					data.addName(taxId, name);
+			}
+			// parse the nodes file
+			System.out.println("loading " + nodes);
+			reader = new BufferedReader(new FileReader(nodes));
+			while ((line = reader.readLine()) != null) {
+				String[] parts = line.split("\\|");
+				Integer taxId = Integer.valueOf(parts[0].trim());
+				String pti = parts[1].trim();
+				Integer parentTaxId = pti.length() > 0 ? new Integer(pti) : null;
+				String rank = parts[2].trim();
+				data.addRank(taxId, parentTaxId, rank);
 			}
 
 		} catch (FileNotFoundException e) {
