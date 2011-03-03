@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Iterator;
+import java.util.List;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.BioException;
@@ -182,6 +183,15 @@ public class PeptideLoader {
 		}
 	}
 
+	private void addLineage() {
+		// get the taxonIds
+		List<Integer> list = data.getUniqueTaxonIds();
+		for (Integer id : list) {
+			data.addLineage(id);
+		}
+
+	}
+
 	/**
 	 * This script parses genbank files, extracts the protein information and
 	 * puts the peptides in the database. The input is expected to be a file
@@ -209,5 +219,7 @@ public class PeptideLoader {
 		loader.loadFile(args[1]);
 		// process input files line by line
 		loader.processData(true);
+
+		loader.addLineage();
 	}
 }

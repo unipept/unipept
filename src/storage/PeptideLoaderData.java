@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.ardverk.collection.PatriciaTrie;
@@ -25,6 +27,9 @@ public class PeptideLoaderData {
 	private PreparedStatement addSequence;
 	private PreparedStatement addGenbankFile;
 	private PreparedStatement addPeptide;
+	private PreparedStatement addLineage;
+	private PreparedStatement getTaxon;
+
 	private PreparedStatement getParent;
 
 	// use local key index
@@ -84,6 +89,10 @@ public class PeptideLoaderData {
 							Statement.RETURN_GENERATED_KEYS);
 			addPeptide = connection
 					.prepareStatement("INSERT INTO peptides (`sequence_id`, `genbank_file_id`) VALUES (?,?)");
+			addLineage = connection
+					.prepareStatement("INSERT INTO lineages (`taxon_id`) VALUES (?)");
+			getTaxon = connection
+					.prepareStatement("SELECT rank, parent_id FROM taxons WHERE id = ?");
 			getParent = connection
 					.prepareStatement("SELECT `parent_id`, `rank` FROM taxons WHERE `id` = ?");
 		} catch (SQLException e) {
@@ -256,6 +265,89 @@ public class PeptideLoaderData {
 	}
 
 	/**
+	 * Returns a List containing all the taxonIds of which the database contains
+	 * a peptide
+	 * 
+	 * @return a list of taxonIds
+	 */
+	public List<Integer> getUniqueTaxonIds() {
+		List<Integer> result = new ArrayList<Integer>();
+		Statement stmt;
+		try {
+			stmt = connection.createStatement();
+			try {
+				ResultSet rs = stmt.executeQuery("SELECT DISTINCT taxon_id FROM genbank_files");
+				while (rs.next())
+					result.add(rs.getInt(1));
+				rs.close();
+			} catch (SQLException e) {
+				System.err.println(new Timestamp(System.currentTimeMillis())
+						+ " Something went wrong truncating tables.");
+				e.printStackTrace();
+			} finally {
+				stmt.close();
+			}
+		} catch (SQLException e1) {
+			System.err.println(new Timestamp(System.currentTimeMillis())
+					+ " Something went wrong creating a new statement.");
+			e1.printStackTrace();
+		}
+		return result;
+	}
+
+	/**
+	 * Adds the complete lineage to the database for the given taxonomic
+	 * element.
+	 * 
+	 * @param taxonId
+	 *            The taxonId of the organism
+	 */
+	public void addLineage(int taxonId) {
+		try {
+			addLineage.setInt(1, taxonId);
+			addLineage.execute();
+			updateLineage(taxonId, taxonId);
+		} catch (SQLException e) {
+			System.err.println(new Timestamp(System.currentTimeMillis())
+					+ " Something went wrong with the database");
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Updates the lineage record of the given taxonId with the information in
+	 * the Taxon record of parentId
+	 * 
+	 * @param taxonId
+	 *            The taxonId of the record that needs updating
+	 * @param parentId
+	 *            The taxonId of the record containing new information
+	 * @throws SQLException
+	 */
+	private void updateLineage(int taxonId, int parentId) throws SQLException {
+		// if the parent == 1, we're at the root
+		if (parentId != 1) {
+			// retrieve the parent info
+			getTaxon.setInt(1, parentId);
+			ResultSet rs = getTaxon.executeQuery();
+			if (rs.next()) {
+				String rank = rs.getString("rank");
+
+				// if we have a valid rank, update the lineage
+				if (!rank.equals("no rank")) {
+					rank.replace(' ', '_');
+					Statement stmt = connection.createStatement();
+					stmt.executeUpdate("UPDATE lineages SET `" + rank + "` = " + parentId
+							+ " WHERE `taxon_id` = " + taxonId);
+				}
+
+				// recursion if fun!
+				updateLineage(taxonId, rs.getInt("parent_id"));
+			}
+		}
+	}
+
+	/**
 	 * Truncates all peptide tables
 	 */
 	public void emptyAllTables() {
@@ -266,6 +358,7 @@ public class PeptideLoaderData {
 				stmt.executeUpdate("TRUNCATE TABLE `peptides`");
 				stmt.executeUpdate("TRUNCATE TABLE `sequences`");
 				stmt.executeUpdate("TRUNCATE TABLE `genbank_files`");
+				stmt.executeUpdate("TRUNCATE TABLE `lineages`");
 			} catch (SQLException e) {
 				System.err.println(new Timestamp(System.currentTimeMillis())
 						+ " Something went wrong truncating tables.");
