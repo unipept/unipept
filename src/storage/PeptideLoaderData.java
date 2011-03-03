@@ -23,14 +23,9 @@ public class PeptideLoaderData {
 
 	private PreparedStatement containsSequence;
 	private PreparedStatement addSequence;
-	private PreparedStatement containsOrganism;
-	private PreparedStatement addOrganism;
+	private PreparedStatement addGenbankFile;
 	private PreparedStatement addPeptide;
 	private PreparedStatement getParent;
-
-	// simple cache gives 30% performance increase
-	private String organismCacheString = "";
-	private int organismCacheInt;
 
 	// use local key index
 	private final boolean localSequenceIndex;
@@ -83,16 +78,14 @@ public class PeptideLoaderData {
 			addSequence = connection.prepareStatement(
 					"INSERT INTO sequences (`sequence`) VALUES (?)",
 					Statement.RETURN_GENERATED_KEYS);
-			containsOrganism = connection
-					.prepareStatement("SELECT id FROM organisms WHERE `name` = ?");
-			addOrganism = connection
+			addGenbankFile = connection
 					.prepareStatement(
-							"INSERT INTO organisms (`name`, `taxon_id`, `species_id`, `genus_id`, `draft`) VALUES (?,?,?,?,?)",
+							"INSERT INTO genbank_files (`project_id`, `accession_number`, `draft`, `taxon_id`, `hash`) VALUES (?,?,?,?,?)",
 							Statement.RETURN_GENERATED_KEYS);
 			addPeptide = connection
-					.prepareStatement("INSERT INTO peptides (`sequence_id`, `organism_id`, `position`) VALUES (?,?,?)");
+					.prepareStatement("INSERT INTO peptides (`sequence_id`, `genbank_file_id`) VALUES (?,?)");
 			getParent = connection
-					.prepareStatement("SELECT `parentTax_id`, `rank` FROM taxon_nodes WHERE `tax_id` = ?");
+					.prepareStatement("SELECT `parent_id`, `rank` FROM taxons WHERE `id` = ?");
 		} catch (SQLException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis())
 					+ "Error creating prepared statements");
@@ -101,42 +94,38 @@ public class PeptideLoaderData {
 	}
 
 	/**
-	 * Returns the database ID of the organism with given name and taxonId. If
-	 * the organism isn't in the database yet, the organism is inserted.
 	 * 
-	 * To increase performance, the last requested name and id are stored.
+	 * Inserts the file info of a Genbank file into the database and returns the
+	 * generated id.
 	 * 
-	 * @param name
-	 *            The name of the organism
-	 * @param ncbiTaxonId
-	 *            The taxonId of the organism
-	 * @return The database ID of the organism
+	 * @param projectId
+	 *            The project ID stored in the file
+	 * @param accessionNumber
+	 *            The accession number stored in the file
+	 * @param draft
+	 *            Is this a draft genome?
+	 * @param taxonId
+	 *            The taxonId of the organism of which the genome is contained
+	 *            within the file
+	 * @param hash
+	 *            The MD5 hash of the Genbank file. This is used to know if the
+	 *            file is updated.
+	 * @return The database ID of the Genbank file.
 	 */
-	private int getOrganismId(String name, int ncbiTaxonId, boolean draft) {
-		if (organismCacheString.equals(name))// cache
-			return organismCacheInt;
+	public int addGenbankFile(String projectId, String accessionNumber, boolean draft, int taxonId,
+			String hash) {
 		try {
-			organismCacheString = name;
-			containsOrganism.setString(1, name);
-			ResultSet res = containsOrganism.executeQuery();
-			if (res.next()) {// if in database
-				organismCacheInt = res.getInt("id");
-				res.close();
-				return organismCacheInt;
-			} else {// else, add to database
-				res.close();
-				addOrganism.setString(1, name);
-				addOrganism.setInt(2, ncbiTaxonId);
-				addOrganism.setInt(3, getSpeciesId(ncbiTaxonId));
-				addOrganism.setInt(4, getGenusId(ncbiTaxonId));
-				addOrganism.setBoolean(5, draft);
-				addOrganism.executeUpdate();
-				res = addOrganism.getGeneratedKeys();
-				res.next();
-				organismCacheInt = res.getInt(1);
-				res.close();
-				return organismCacheInt;
-			}
+			addGenbankFile.setString(1, projectId);
+			addGenbankFile.setString(2, accessionNumber);
+			addGenbankFile.setBoolean(3, draft);
+			addGenbankFile.setInt(4, taxonId);
+			addGenbankFile.setString(5, hash);
+			addGenbankFile.executeUpdate();
+			ResultSet res = addGenbankFile.getGeneratedKeys();
+			res.next();
+			int id = res.getInt(1);
+			res.close();
+			return id;
 		} catch (SQLException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis()) + "Error executing query");
 			e.printStackTrace();
@@ -151,6 +140,7 @@ public class PeptideLoaderData {
 	 *            the taxonId of the organism
 	 * @return the taxonId of the genus
 	 */
+	@Deprecated
 	private int getGenusId(int ncbiTaxonId) {
 		return getParentxId(ncbiTaxonId, "genus");
 	}
@@ -162,6 +152,7 @@ public class PeptideLoaderData {
 	 *            the taxonId of the organism
 	 * @return the taxonId of the species
 	 */
+	@Deprecated
 	private int getSpeciesId(int ncbiTaxonId) {
 		return getParentxId(ncbiTaxonId, "species");
 	}
@@ -176,6 +167,7 @@ public class PeptideLoaderData {
 	 *            the rank we wish to retrieve
 	 * @return the taxonId of the genus
 	 */
+	@Deprecated
 	private int getParentxId(int ncbiTaxonId, String rank) {
 		try {
 			getParent.setInt(1, ncbiTaxonId);// retrieve parent
@@ -246,20 +238,14 @@ public class PeptideLoaderData {
 	 * 
 	 * @param sequence
 	 *            The sequence of the peptide
-	 * @param organism
-	 *            The name of the organism
-	 * @param ncbiTaxonId
-	 *            The taxonId of the organism
-	 * @param position
-	 *            The first position in de the genome of the protein containing
-	 *            this peptide
+	 * @param genbankFileId
+	 *            The id of the Genbank file from which the peptide data was
+	 *            retrieved.
 	 */
-	public void addData(String sequence, String organism, int ncbiTaxonId, int position,
-			boolean draft) {
+	public void addData(String sequence, int genbankFileId) {
 		try {
 			addPeptide.setInt(1, getSequenceId(sequence));
-			addPeptide.setInt(2, getOrganismId(organism, ncbiTaxonId, draft));
-			addPeptide.setInt(3, position);
+			addPeptide.setInt(2, genbankFileId);
 			addPeptide.executeUpdate();
 		} catch (SQLException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis())
@@ -279,7 +265,7 @@ public class PeptideLoaderData {
 			try {
 				stmt.executeUpdate("TRUNCATE TABLE `peptides`");
 				stmt.executeUpdate("TRUNCATE TABLE `sequences`");
-				stmt.executeUpdate("TRUNCATE TABLE `organisms`");
+				stmt.executeUpdate("TRUNCATE TABLE `genbank_files`");
 			} catch (SQLException e) {
 				System.err.println(new Timestamp(System.currentTimeMillis())
 						+ " Something went wrong truncating tables.");

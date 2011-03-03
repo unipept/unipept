@@ -1,5 +1,4 @@
 delimiter $$
-
 CREATE DATABASE `unipept` /*!40100 DEFAULT CHARACTER SET utf8 */$$
 
 delimiter $$

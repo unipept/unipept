@@ -29,7 +29,7 @@ import biojava.WeakRichObjectBuilder;
  * This script parses genbank files, extracts the protein information and puts
  * the peptides in the database.
  * 
- * BEFORE ADDING PEPTIDES TO THE DATABASE, ALL TABLES ARE TRANCATED.
+ * BEFORE ADDING PEPTIDES TO THE DATABASE, ALL TABLES ARE TRUNCATED.
  * 
  * The input is expected to be a file containing a list of genbank filenames.
  * 
@@ -94,7 +94,9 @@ public class PeptideLoader {
 	 * Processes a given genbank file.
 	 * 
 	 * @param file
-	 *            a genbank file
+	 *            The path of the genbank file to read.
+	 * @param draft
+	 *            Is it a draft genome?
 	 */
 	private void processFile(String file, boolean draft) {
 		System.err.println(new Timestamp(System.currentTimeMillis()) + " Reading " + file);
@@ -115,6 +117,12 @@ public class PeptideLoader {
 				// you need to iterate over rsi to get the information.
 				while (rsi.hasNext()) {
 					RichSequence rs = rsi.nextRichSequence();
+					// Add the file info to the database
+					// TODO add MD5 hash
+					// TODO projectID!
+					int genbankFileId = data.addGenbankFile("projectId", rs.getAccession(), draft,
+							rs.getTaxon().getNCBITaxID(), "");
+
 					// We only want the CDS features
 					FeatureHolder holder = rs.filter(new FeatureFilter.ByType("CDS"));
 					Iterator<Feature> featureIterator = holder.features();
@@ -147,10 +155,8 @@ public class PeptideLoader {
 							// add the peptide to the trie
 							if (seqString.length() >= MIN_PEPT_SIZE
 									&& seqString.length() <= MAX_PEPT_SIZE
-									&& !seqString.contains("*")
-									&& !rs.getTaxon().getDisplayName().contains("uncultured")) {
-								data.addData(seqString, rs.getTaxon().getDisplayName(), rs
-										.getTaxon().getNCBITaxID(), f.getLocation().getMin(), draft);
+									&& !seqString.contains("*")) {
+								data.addData(seqString, genbankFileId);
 							}
 
 						}
