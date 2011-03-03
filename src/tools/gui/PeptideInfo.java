@@ -3,6 +3,7 @@ package tools.gui;
 import gui.PeptideInfoFrame;
 import storage.PeptideInfoData;
 
+@Deprecated
 public class PeptideInfo {
 
 	/**

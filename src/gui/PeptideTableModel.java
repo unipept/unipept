@@ -2,6 +2,7 @@ package gui;
 
 import javax.swing.table.AbstractTableModel;
 
+@Deprecated
 public class PeptideTableModel extends AbstractTableModel {
 	private String[] columnNames = { "species", "# genomes with peptide", "percentage" };
 	private String[][] data = new String[0][0];

@@ -15,6 +15,7 @@ import javax.swing.JTextArea;
 
 import storage.PeptideInfoData;
 
+@Deprecated
 public class PeptideInfoFrame extends JFrame {
 
 	private PeptideInfoData pid;

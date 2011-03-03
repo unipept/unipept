@@ -13,6 +13,7 @@ import java.util.ArrayList;
  * @author Bart Mesuere
  * 
  */
+@Deprecated
 public class PeptideInfoData {
 	// database stuff
 	private Connection connection;
