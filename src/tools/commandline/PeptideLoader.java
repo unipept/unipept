@@ -24,6 +24,7 @@ import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.RichSequenceIterator;
 
 import storage.PeptideLoaderData;
+import util.Md5Checksum;
 import biojava.WeakRichObjectBuilder;
 
 /**
@@ -58,7 +59,7 @@ public class PeptideLoader {
 	public PeptideLoader() {
 		// easy access to the database
 		data = new PeptideLoaderData(false);
-		data.emptyAllTables();
+		// data.emptyAllTables();
 
 		// cache settings
 		RichObjectFactory.setLRUCacheSize(3);// cache problem?
@@ -119,10 +120,9 @@ public class PeptideLoader {
 				while (rsi.hasNext()) {
 					RichSequence rs = rsi.nextRichSequence();
 					// Add the file info to the database
-					// TODO add MD5 hash
 					// TODO projectID!
 					int genbankFileId = data.addGenbankFile("projectId", rs.getAccession(), draft,
-							rs.getTaxon().getNCBITaxID(), "");
+							rs.getTaxon().getNCBITaxID(), Md5Checksum.getMD5Checksum(file));
 
 					// We only want the CDS features
 					FeatureHolder holder = rs.filter(new FeatureFilter.ByType("CDS"));
@@ -211,14 +211,14 @@ public class PeptideLoader {
 		PeptideLoader loader = new PeptideLoader();
 
 		// load inputfile
-		loader.loadFile(args[0]);
+		// loader.loadFile(args[0]);
 		// process input files line by line
-		loader.processData(false);
+		// loader.processData(false);
 
 		// load inputfile
-		loader.loadFile(args[1]);
+		// loader.loadFile(args[1]);
 		// process input files line by line
-		loader.processData(true);
+		// loader.processData(true);
 
 		loader.addLineage();
 	}
