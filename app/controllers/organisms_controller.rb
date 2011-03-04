@@ -1,12 +1,12 @@
 class OrganismsController < ApplicationController
 
   def show
-    @organism = Organism.find_by_id(params[:id])
+    @organism = Taxon.find_by_id(params[:id])
     if @organism.nil?
       flash[:error] = "No matches for #{params[:id]}"
       redirect_to organisms_path
     else
-      @peptides = @organism.peptides.paginate(:page => params[:page], :include => :sequence)
+      @genbank_files = GenbankFile.where("taxon_id = ?", params[:id])
       @title = @organism.name
     
       respond_to do |format|
@@ -19,6 +19,6 @@ class OrganismsController < ApplicationController
   
   def index
     @title = "All organisms"
-    @organisms = Organism.paginate(:page => params[:page])
+    @organisms = Taxon.with_genome.paginate(:page => params[:page])
   end
 end

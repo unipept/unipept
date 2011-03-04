@@ -2,19 +2,17 @@
 #
 # Table name: peptides
 #
-#  id          :integer(4)      not null, primary key
-#  sequence_id :integer(4)      not null
-#  organism_id :integer(4)      not null
-#  position    :integer(4)      not null
+#  id              :integer(4)      not null, primary key
+#  sequence_id     :integer(4)      not null
+#  genbank_file_id :integer(4)      not null
 #
 
 class Peptide < ActiveRecord::Base
   attr_accessible nil
   
-  belongs_to :organism
+  belongs_to :genbankFile
   belongs_to :sequence
   
   validates :sequence_id,  :presence   => true
-  validates :organism_id,  :presence   => true
-  validates :position,  :presence   => true
+  validates :genbank_file_id,  :presence   => true
 end

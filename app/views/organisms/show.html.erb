@@ -1,19 +1,14 @@
 <h1><%= @organism.name %></h1>
-<p>
-	<span><strong>Species:</strong> <%= @organism.species_name.name %></span><br/>
-	<span><strong>Genus:</strong> <%= @organism.genus_name.name %></span><br/>
-</p>
-<% if @organism.peptides.empty? %>
-	<span>No peptides were found for this organism.</span>
+<% if @genbank_files.count == 0 %>
+	<span>No genomes were found for this organism.</span>
 <% else %>
 	<span>
-		<%= pluralize(@organism.peptides.count, "peptide was", "peptides were") %>
+		<%= pluralize(@genbank_files.count, "genome was", "genomes were") %>
 		 found for this organism.
 	</span>
-	<ul class="peptides">
-		<% @peptides.each do |peptide| %>
-			<%= render peptide.sequence %>
+	<ul class="genbank_files">
+		<% @genbank_files.each do |genbank_file| %>
+			<li><%= genbank_file.accession_number %></li>
 		<% end %>
 	</ul>
-	<%= will_paginate @peptides %>
 <% end %>
