@@ -30,8 +30,6 @@ public class PeptideLoaderData {
 	private PreparedStatement addLineage;
 	private PreparedStatement getTaxon;
 
-	private PreparedStatement getParent;
-
 	// use local key index
 	private final boolean localSequenceIndex;
 	private Map<String, Integer> index;
@@ -93,8 +91,6 @@ public class PeptideLoaderData {
 					.prepareStatement("INSERT INTO lineages (`taxon_id`) VALUES (?)");
 			getTaxon = connection
 					.prepareStatement("SELECT rank, parent_id FROM taxons WHERE id = ?");
-			getParent = connection
-					.prepareStatement("SELECT `parent_id`, `rank` FROM taxons WHERE `id` = ?");
 		} catch (SQLException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis())
 					+ "Error creating prepared statements");
@@ -137,63 +133,6 @@ public class PeptideLoaderData {
 			return id;
 		} catch (SQLException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis()) + "Error executing query");
-			e.printStackTrace();
-		}
-		return -1;
-	}
-
-	/**
-	 * Returns the taxonId of the (parent)node with rank genus
-	 * 
-	 * @param ncbiTaxonId
-	 *            the taxonId of the organism
-	 * @return the taxonId of the genus
-	 */
-	@Deprecated
-	private int getGenusId(int ncbiTaxonId) {
-		return getParentxId(ncbiTaxonId, "genus");
-	}
-
-	/**
-	 * Returns the taxonId of the (parent)node with rank species
-	 * 
-	 * @param ncbiTaxonId
-	 *            the taxonId of the organism
-	 * @return the taxonId of the species
-	 */
-	@Deprecated
-	private int getSpeciesId(int ncbiTaxonId) {
-		return getParentxId(ncbiTaxonId, "species");
-	}
-
-	/**
-	 * Returns the taxonId of the (parent)node with rank x. This method is used
-	 * by getSpeciesId and getGenusId and is called recursively.
-	 * 
-	 * @param ncbiTaxonId
-	 *            the taxonId of the organism
-	 * @param rank
-	 *            the rank we wish to retrieve
-	 * @return the taxonId of the genus
-	 */
-	@Deprecated
-	private int getParentxId(int ncbiTaxonId, String rank) {
-		try {
-			getParent.setInt(1, ncbiTaxonId);// retrieve parent
-			ResultSet s = getParent.executeQuery();
-			s.next();
-			int parent = s.getInt("parentTax_id");
-			String r = s.getString("rank");
-			s.close();
-			if (rank.equals(r))// if rank matches, return the id
-				return ncbiTaxonId;
-			if (parent == 1)// if parent is 1, we're at the root of the tree,
-							// return -1
-				return -1;
-			return getParentxId(parent, rank);// recursive call
-		} catch (Exception e) {
-			System.err.println(new Timestamp(System.currentTimeMillis())
-					+ "Error retrieving parent of " + ncbiTaxonId);
 			e.printStackTrace();
 		}
 		return -1;
