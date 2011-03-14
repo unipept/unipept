@@ -8,10 +8,10 @@
 		<%= pluralize(@genera.count, "genus", "genera") %>.
 	</span>
 	<% @genera.each do |genus| %>
-		<h2><%= genus %></h2>
+		<h2><%= Taxon.find(genus).name %></h2>
 		<ul>
 		<% @species[genus].each do |row| %>
-			<li><%= "#{row['species']}: #{row['genomes_with_sequence']}/#{row['number_of_genomes']}" %></li>
+			<li><%= "#{Taxon.find(row['species']).name}: #{row['genomes_with_sequence']}/#{row['number_of_genomes']}" %></li>
 		<% end %>
 		</ul>
 	<% end %>

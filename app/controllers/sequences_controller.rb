@@ -28,7 +28,7 @@ class SequencesController < ApplicationController
           @species[row["genus"]] << row
         end
       end
-      @genera.sort!
+      #@genera.sort!
     end
   end
   

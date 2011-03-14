@@ -18,9 +18,39 @@ class Sequence < ActiveRecord::Base
                         
   def occurrences(drafts=true)
     if drafts
-      ActiveRecord::Base.connection.execute("SELECT genus.name AS genus, species.name AS species, query.genus_id, query.species_id AS species_id, genomes_with_sequence, number_of_genomes FROM (SELECT sequence_id, species_id, genus_id, COUNT(DISTINCT organism_id) AS genomes_with_sequence FROM unipept.peptides INNER JOIN unipept.organisms ON (organisms.id = peptides.organism_id) WHERE peptides.sequence_id = #{id} GROUP BY sequence_id, species_id) AS query INNER JOIN (SELECT species_id, COUNT(*) AS number_of_genomes FROM unipept.organisms GROUP BY species_id) AS numbers ON (query.species_id = numbers.species_id) INNER JOIN unipept.taxon_names AS species ON (query.species_id = species.tax_id) INNER JOIN unipept.taxon_names AS genus ON (query.genus_id = genus.tax_id)")
+      ActiveRecord::Base.connection.execute("
+      SELECT * FROM
+        (SELECT lineages.species, lineages.genus, COUNT(DISTINCT project_id) AS genomes_with_sequence
+        FROM unipept.peptides 
+        INNER JOIN unipept.genbank_files ON (genbank_files.id = peptides.genbank_file_id) 
+        INNER JOIN unipept.lineages ON (genbank_files.taxon_id = lineages.taxon_id)
+        WHERE peptides.sequence_id = #{id}
+        AND species IS NOT null
+        AND genus IS NOT null
+        GROUP BY sequence_id, species) AS query
+      NATURAL JOIN 
+        (SELECT species, COUNT(DISTINCT project_id) AS number_of_genomes
+        FROM unipept.genbank_files 
+        NATURAL JOIN lineages
+        GROUP BY species) AS numbers")
     else
-      ActiveRecord::Base.connection.execute("SELECT genus.name AS genus, species.name AS species, query.genus_id, query.species_id AS species_id, genomes_with_sequence, number_of_genomes FROM (SELECT sequence_id, species_id, genus_id, COUNT(DISTINCT organism_id) AS genomes_with_sequence FROM unipept.peptides INNER JOIN unipept.organisms ON (organisms.id = peptides.organism_id) WHERE peptides.sequence_id = #{id} AND draft = 0 GROUP BY sequence_id, species_id) AS query INNER JOIN (SELECT species_id, COUNT(*) AS number_of_genomes FROM unipept.organisms WHERE draft = 0 GROUP BY species_id) AS numbers ON (query.species_id = numbers.species_id) INNER JOIN unipept.taxon_names AS species ON (query.species_id = species.tax_id) INNER JOIN unipept.taxon_names AS genus ON (query.genus_id = genus.tax_id)")
+      ActiveRecord::Base.connection.execute("
+      SELECT * FROM
+        (SELECT lineages.species, lineages.genus, COUNT(DISTINCT project_id) AS genomes_with_sequence
+        FROM unipept.peptides 
+        INNER JOIN unipept.genbank_files ON (genbank_files.id = peptides.genbank_file_id) 
+        INNER JOIN unipept.lineages ON (genbank_files.taxon_id = lineages.taxon_id)
+        WHERE peptides.sequence_id = #{id}
+        AND draft = 0
+        AND species IS NOT null
+        AND genus IS NOT null
+        GROUP BY sequence_id, species) AS query
+      NATURAL JOIN 
+        (SELECT species, COUNT(DISTINCT project_id) AS number_of_genomes
+        FROM unipept.genbank_files 
+        NATURAL JOIN lineages
+        WHERE draft = 0
+        GROUP BY species) AS numbers")
     end
   end
                         
