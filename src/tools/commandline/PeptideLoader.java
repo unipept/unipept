@@ -1,12 +1,14 @@
 package tools.commandline;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.BioException;
@@ -59,7 +61,7 @@ public class PeptideLoader {
 	public PeptideLoader() {
 		// easy access to the database
 		data = new PeptideLoaderData(false);
-		// data.emptyAllTables();
+		data.emptyAllTables();
 
 		// cache settings
 		RichObjectFactory.setLRUCacheSize(3);// cache problem?
@@ -121,8 +123,8 @@ public class PeptideLoader {
 					RichSequence rs = rsi.nextRichSequence();
 					// Add the file info to the database
 					// TODO projectID!
-					int genbankFileId = data.addGenbankFile("projectId", rs.getAccession(), draft,
-							rs.getTaxon().getNCBITaxID(), Md5Checksum.getMD5Checksum(file));
+					int genbankFileId = data.addGenbankFile(getProjectId(file), rs.getAccession(),
+							draft, rs.getTaxon().getNCBITaxID(), Md5Checksum.getMD5Checksum(file));
 
 					// We only want the CDS features
 					FeatureHolder holder = rs.filter(new FeatureFilter.ByType("CDS"));
@@ -183,6 +185,32 @@ public class PeptideLoader {
 		}
 	}
 
+	/**
+	 * Extracts the project ID from a given Genbank file. Returns an empty
+	 * string if no projectId could be found.
+	 * 
+	 * @param fileName
+	 *            The filename of the Genbank file
+	 * @return the project ID
+	 */
+	private String getProjectId(String fileName) {
+		File file = new File(fileName);
+		try {
+			Scanner scanner = new Scanner(file);
+			while (scanner.hasNext()) {
+				String line = scanner.nextLine();
+				if (line.contains("DBLINK")) {
+					String[] list = line.split(":");
+					return list[list.length - 1].trim();
+				}
+			}
+		} catch (FileNotFoundException e) {
+			System.err.println("This file could not be found: " + file.getPath());
+			e.printStackTrace();
+		}
+		return "";
+	}
+
 	private void addLineage() {
 		// get the taxonIds
 		List<Integer> list = data.getUniqueTaxonIds();
@@ -211,14 +239,14 @@ public class PeptideLoader {
 		PeptideLoader loader = new PeptideLoader();
 
 		// load inputfile
-		// loader.loadFile(args[0]);
+		loader.loadFile(args[0]);
 		// process input files line by line
-		// loader.processData(false);
+		loader.processData(false);
 
 		// load inputfile
-		// loader.loadFile(args[1]);
+		loader.loadFile(args[1]);
 		// process input files line by line
-		// loader.processData(true);
+		loader.processData(true);
 
 		loader.addLineage();
 	}
