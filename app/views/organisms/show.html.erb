@@ -1,14 +1,14 @@
 <h1><%= @organism.name %></h1>
-<% if @genbank_files.count == 0 %>
+<% if @aantal == 0 %>
 	<span>No genomes were found for this organism.</span>
 <% else %>
 	<span>
-		<%= pluralize(@genbank_files.count, "genome was", "genomes were") %>
+		<%= pluralize(@aantal, "genome was", "genomes were") %>
 		 found for this organism.
 	</span>
 	<ul class="genbank_files">
 		<% @genbank_files.each do |genbank_file| %>
-			<li><%= genbank_file.accession_number %></li>
+			<li><%= genbank_file.project_id %></li>
 		<% end %>
 	</ul>
 <% end %>
