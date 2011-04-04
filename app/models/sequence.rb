@@ -53,5 +53,14 @@ class Sequence < ActiveRecord::Base
         GROUP BY species) AS numbers")
     end
   end
+  
+  def lineages
+    ActiveRecord::Base.connection.execute("
+    SELECT DISTINCT lineages.*
+    FROM unipept.peptides 
+    INNER JOIN unipept.genbank_files ON (genbank_files.id = peptides.genbank_file_id) 
+    INNER JOIN unipept.lineages ON (genbank_files.taxon_id = lineages.taxon_id)
+    WHERE peptides.sequence_id = #{id}")
+  end
                         
 end

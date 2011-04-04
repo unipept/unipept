@@ -41,12 +41,37 @@ class SequencesController < ApplicationController
     redirect_to "#{sequences_path}/#{params[:q]}"
   end
   
+  def search2
+    #id or sequence?
+    if params[:q].match(/\A[0-9]+\z/)
+      @sequence = Sequence.find_by_id(params[:q])
+    else  
+      @sequence = Sequence.find_by_sequence(params[:q])
+    end
+    
+    #error on nil
+    if @sequence.nil?
+      flash[:error] = "No matches for #{params[:q]}"
+      redirect_to sequences_path
+    else
+      @title = @sequence.sequence
+      
+      @grid = @sequence.lineages
+    end
+    
+  end
+  
   def multi_search
     @title = "Results"
+    
+    #remove duplicates, split missed cleavages, substitute I by L
     data = params[:q][0].gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/I/,'L').lines.map(&:strip).to_a.uniq
+    
     @number_searched_for = data.length
     @number_found = 0
     @number_unique_found = 0
+    
+    #build the resultset
     @matches = Hash.new
     @species = Array.new
     data.each do |s|

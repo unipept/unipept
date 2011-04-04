@@ -1,0 +1,10 @@
+<h1><%= @sequence.sequence %></h1>
+<table>
+<% @grid.each_hash do |row| %>
+	<tr>
+		<% row.each do |item| %>
+			<td><%=item %></td>
+		<% end %>
+	</tr>
+<% end %>
+</table>
