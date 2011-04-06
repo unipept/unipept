@@ -54,31 +54,6 @@ class SequencesController < ApplicationController
   end
   
   
-  # tries to show the LCA of the peptide in params[:q]
-  def search2
-    # id or sequence?
-    if params[:q].match(/\A[0-9]+\z/)
-      @sequence = Sequence.find_by_id(params[:q])
-    else  
-      @sequence = Sequence.find_by_sequence(params[:q])
-    end
-    
-    # error on nil
-    if @sequence.nil?
-      flash[:error] = "No matches for #{params[:q]}"
-      redirect_to sequences_path
-    else
-      @title = @sequence.sequence
-      
-      #try to determine the LCA
-      @lineages = @sequence.lineages
-      @lca_taxon = Lineage.calculate_lca_taxon(@lineages)
-      
-    end
-    
-  end
-  
-  
   # processes a list of sequences
   def multi_search
     @title = "Results"
