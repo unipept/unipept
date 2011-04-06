@@ -41,7 +41,7 @@ class Lineage < ActiveRecord::Base
                                   :primary_key  => "id", 
                                   :class_name   => 'Taxon'
 
-  belongs_to :superkingdom,       :foreign_key  => "superkingdom", 
+  belongs_to :superkingdom_t,       :foreign_key  => "superkingdom", 
                                   :primary_key  => "id", 
                                   :class_name   => 'Taxon'
   belongs_to :kingdom_t,          :foreign_key  => "kingdom", 
@@ -120,10 +120,94 @@ class Lineage < ActiveRecord::Base
                                   :primary_key  => "id", 
                                   :class_name   => 'Taxon'
   
-                                
+  
+  def self.calculate_lca_taxon(lineages)
+    return Taxon.find_by_id(Lineage.calculate_lca(lineages))
+  end
+  
   def self.calculate_lca(lineages)
-    lca = -1
-    return (lineages[0]).class_
+    lca = 1
+    
+    current = Lineage.calculate_lca_help(lineages, :superkingdom)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :kingdom)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :superphylum)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :phylum)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :subphylum)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :superclass)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :class_)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :subclass)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :infraclass)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :superorder)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :order)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :infraorder)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :parvorder)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :superfamily)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :family)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :subfamily)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :tribe)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :subtribe)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :genus)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :subgenus)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :species_group)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :species_subgroup)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :species)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :subspecies)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :varietas)
+    return lca if current == -1
+    lca = current if !current.nil?
+    current = Lineage.calculate_lca_help(lineages, :forma)
+    return lca if current == -1
+    lca = current if !current.nil?
+    
+    return lca
   end
   
   # there's a column 'class' in the database which screws
@@ -137,5 +221,12 @@ class Lineage < ActiveRecord::Base
   
   def class_
     return read_attribute(:class)
+  end
+  
+  private
+  def self.calculate_lca_help(lineages, rank)
+    current = lineages.map(&rank).uniq.compact
+    return -1 if current.length > 1
+    return current[0]
   end
 end

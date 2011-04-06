@@ -1,5 +1,5 @@
 <h1><%= @sequence.sequence %></h1>
-<%=@result %>
+The lowest common ancestor is <strong><%=@lca_taxon.name %></strong> of the level of <strong><%=@lca_taxon.rank%></strong>.
 <table>
 <% @lineages.each do |lineage| %>
 	<tr>

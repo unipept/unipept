@@ -67,7 +67,7 @@ class SequencesController < ApplicationController
       
       #try to determine the LCA
       @lineages = @sequence.lineages
-      @result = Lineage.calculate_lca(@lineages)
+      @lca_taxon = Lineage.calculate_lca_taxon(@lineages)
       
     end
     
