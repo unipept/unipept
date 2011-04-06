@@ -10,7 +10,7 @@
 class Peptide < ActiveRecord::Base
   attr_accessible nil
   
-  belongs_to :genbankFile
+  belongs_to :genbank_file
   belongs_to :sequence
   
   validates :sequence_id,  :presence   => true

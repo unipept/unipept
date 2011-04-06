@@ -90,13 +90,9 @@ class SequencesController < ApplicationController
     @species = Array.new
     data.each do |s|
       sequence = Sequence.find_by_sequence(s)
-      unless sequence.nil? || (!params[:drafts] && sequence.peptides.map(&:organism).map(&:draft).count("\x00") == 0)
+      unless sequence.nil? || (!params[:drafts] && sequence.peptides.map(&:genbank_file).map(&:draft).count("\x00") == 0)
         @number_found += 1
-        if(params[:drafts])
-          resultset = sequence.occurrences(true)
-        else
-          resultset = sequence.occurrences(false)
-        end
+        resultset = sequence.occurrences(params[:drafts])
         if resultset.num_rows == 1
           @number_unique_found += 1
           hash = resultset.fetch_hash
