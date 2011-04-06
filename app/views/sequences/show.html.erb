@@ -2,8 +2,13 @@
 <% if @genera.empty? %>
 	<span>No results were found for this sequence.</span>
 <% else %>
+  <span>
+    The lowest common ancestor of <%= @sequence.sequence %> 
+    is <strong><%=@lca_taxon.name %></strong> which has the rank 
+    of <strong><%=@lca_taxon.rank%></strong>.<br/>
+  </span>
 	<span>
-		The sequence <%= @sequence.sequence %> occurs in  
+		This sequence occurs in  
 		<%= pluralize(@number_of_species, "species") %> and 
 		<%= pluralize(@genera.count, "genus", "genera") %>.
 	</span>

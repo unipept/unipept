@@ -41,7 +41,7 @@ class Lineage < ActiveRecord::Base
                                   :primary_key  => "id", 
                                   :class_name   => 'Taxon'
 
-  belongs_to :superkingdom_t,       :foreign_key  => "superkingdom", 
+  belongs_to :superkingdom_t,     :foreign_key  => "superkingdom", 
                                   :primary_key  => "id", 
                                   :class_name   => 'Taxon'
   belongs_to :kingdom_t,          :foreign_key  => "kingdom", 
@@ -211,7 +211,7 @@ class Lineage < ActiveRecord::Base
   end
   
   # there's a column 'class' in the database which screws
-  # up the getters. This fixes that error.
+  # up the getters. This method fixes that error.
   class << self
     def instance_method_already_implemented?(method_name)
       return true if method_name == 'class'

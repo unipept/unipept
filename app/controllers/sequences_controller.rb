@@ -17,8 +17,13 @@ class SequencesController < ApplicationController
       redirect_to sequences_path
     else
       @title = @sequence.sequence
-      resultset = @sequence.occurrences
       
+      #try to determine the LCA
+      lineages = @sequence.lineages
+      @lca_taxon = Lineage.calculate_lca_taxon(lineages)
+      
+      #the genus and species level
+      resultset = @sequence.occurrences
       @number_of_species = resultset.num_rows
       @genera = Array.new
       @species = Hash.new
