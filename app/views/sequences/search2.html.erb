@@ -1,10 +1,9 @@
 <h1><%= @sequence.sequence %></h1>
+<%=@result %>
 <table>
-<% @grid.each_hash do |row| %>
+<% @lineages.each do |lineage| %>
 	<tr>
-		<% row.each do |item| %>
-			<td><%=item %></td>
-		<% end %>
+		<td><%=lineage.name.name%></td>
 	</tr>
 <% end %>
 </table>

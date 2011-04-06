@@ -55,7 +55,7 @@ class Sequence < ActiveRecord::Base
   end
   
   def lineages
-    ActiveRecord::Base.connection.execute("
+    Lineage.find_by_sql("
     SELECT DISTINCT lineages.*
     FROM unipept.peptides 
     INNER JOIN unipept.genbank_files ON (genbank_files.id = peptides.genbank_file_id) 

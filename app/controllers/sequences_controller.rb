@@ -1,14 +1,17 @@
 class SequencesController < ApplicationController
   
+  # shows information about a peptide
+  # the peptide should be in params[:id] and 
+  # can be a peptide id or the sequence itself
   def show
-    #id or sequence?
+    # id or sequence?
     if params[:id].match(/\A[0-9]+\z/)
       @sequence = Sequence.find_by_id(params[:id])
     else  
       @sequence = Sequence.find_by_sequence(params[:id])
     end
     
-    #error on nil
+    # error on nil
     if @sequence.nil?
       flash[:error] = "No matches for #{params[:id]}"
       redirect_to sequences_path
@@ -32,46 +35,57 @@ class SequencesController < ApplicationController
     end
   end
   
+  
+  # Lists all sequences
   def index
     @title = "All sequences"
     @sequences = Sequence.paginate(:page => params[:page])
   end
   
+  
+  # redirects to show
   def search
     redirect_to "#{sequences_path}/#{params[:q]}"
   end
   
+  
+  # tries to show the LCA of the peptide in params[:q]
   def search2
-    #id or sequence?
+    # id or sequence?
     if params[:q].match(/\A[0-9]+\z/)
       @sequence = Sequence.find_by_id(params[:q])
     else  
       @sequence = Sequence.find_by_sequence(params[:q])
     end
     
-    #error on nil
+    # error on nil
     if @sequence.nil?
       flash[:error] = "No matches for #{params[:q]}"
       redirect_to sequences_path
     else
       @title = @sequence.sequence
       
-      @grid = @sequence.lineages
+      #try to determine the LCA
+      @lineages = @sequence.lineages
+      @result = Lineage.calculate_lca(@lineages)
+      
     end
     
   end
   
+  
+  # processes a list of sequences
   def multi_search
     @title = "Results"
     
-    #remove duplicates, split missed cleavages, substitute I by L
+    # remove duplicates, split missed cleavages, substitute I by L
     data = params[:q][0].gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/I/,'L').lines.map(&:strip).to_a.uniq
     
     @number_searched_for = data.length
     @number_found = 0
     @number_unique_found = 0
     
-    #build the resultset
+    # build the resultset
     @matches = Hash.new
     @species = Array.new
     data.each do |s|
