@@ -1,5 +1,5 @@
 <h1><%= @sequence.sequence %></h1>
-<% if @genera.empty? %>
+<% if @lineages.empty? %>
 	<span>No results were found for this sequence.</span>
 <% else %>
   <span>
@@ -14,18 +14,5 @@
 			<%= @distinct_lineages[i] %>
 			<% i += 1 %>
 		<br/></span>
-	<% end %>
-	<span>
-		This sequence occurs in  
-		<%= pluralize(@number_of_species, "species") %> and 
-		<%= pluralize(@genera.count, "genus", "genera") %>.
-	</span>
-	<% @genera.each do |genus| %>
-		<h2><%= Taxon.find(genus).name %></h2>
-		<ul>
-		<% @species[genus].each do |row| %>
-			<li><%= "#{Taxon.find(row['species']).name}: #{row['genomes_with_sequence']}/#{row['number_of_genomes']}" %></li>
-		<% end %>
-		</ul>
 	<% end %>
 <% end %>

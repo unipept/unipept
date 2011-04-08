@@ -15,7 +15,8 @@ class Sequence < ActiveRecord::Base
                         :length     => { :within => 5..50 },
                         :format     => { :with => /\A[A-Z]*\z/ },
                         :uniqueness => true
-                        
+              
+  #deprecated          
   def occurrences(drafts=true)
     if drafts
       ActiveRecord::Base.connection.execute("

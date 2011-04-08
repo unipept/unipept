@@ -46,22 +46,6 @@ class SequencesController < ApplicationController
     		end
     		@distinct_lineages << l.join(", ")
     	end
-      
-      #the genus and species level
-      resultset = @sequence.occurrences
-      @number_of_species = resultset.num_rows
-      @genera = Array.new
-      @species = Hash.new
-      resultset.each_hash do |row|
-        g = @species[row["genus"]]
-        if g.nil?
-          @genera << row["genus"]
-          @species[row["genus"]] = [row]
-        else
-          @species[row["genus"]] << row
-        end
-      end
-      #@genera.sort!
     end
   end
   
