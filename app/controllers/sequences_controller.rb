@@ -19,11 +19,12 @@ class SequencesController < ApplicationController
       @title = @sequence.sequence
       
       #try to determine the LCA
-      lineages = @sequence.lineages
-      @lca_taxon = Lineage.calculate_lca_taxon(lineages)
-      common_lineage = Array.new
+      @lineages = @sequence.lineages
+      @lca_taxon = Lineage.calculate_lca_taxon(@lineages)
       
-      l = lineages[0]
+      #common lineage
+      common_lineage = Array.new
+      l = @lineages[0]
       found = false
       while l.has_next? && !found do
         t = Taxon.find_by_id(l.next)
@@ -32,8 +33,19 @@ class SequencesController < ApplicationController
           common_lineage << t
         end
       end
+      @common_lineage = common_lineage.map(&:name).join(", ")    
       
-      @common_lineage = common_lineage.map(&:name).join(", ") 
+      #distinct lineage 
+      @lineages.map{|lineage| lineage.set_iterator_position(l.get_iterator_position)}
+      @distinct_lineages = Array.new
+      for lineage in @lineages do
+        l = Array.new
+    		while lineage.has_next?
+    			rank = lineage.next
+    			l << Taxon.find_by_id(rank).name unless rank.nil?
+    		end
+    		@distinct_lineages << l.join(", ")
+    	end
       
       #the genus and species level
       resultset = @sequence.occurrences

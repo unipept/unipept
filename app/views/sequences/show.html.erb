@@ -8,6 +8,13 @@
     of <strong><%=@lca_taxon.rank%></strong>.<br/>
   </span>
 	<span>The common lineage of this sequence is: <%= @common_lineage %>. <br/></span>
+	<% i=0 %>
+	<% for lineage in @lineages do%>
+		<span><strong><%= lineage.name.name %></strong>:
+			<%= @distinct_lineages[i] %>
+			<% i += 1 %>
+		<br/></span>
+	<% end %>
 	<span>
 		This sequence occurs in  
 		<%= pluralize(@number_of_species, "species") %> and 

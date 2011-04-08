@@ -76,6 +76,10 @@ class Lineage < ActiveRecord::Base
     @iterator = position
   end
   
+  def get_iterator_position
+    return @iterator
+  end
+  
   def has_next?
     @iterator = 0 if @iterator.nil?
     return (ORDER.length > @iterator)
