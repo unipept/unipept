@@ -2209,3 +2209,9 @@ p.rechts#som {
 header, footer{
 	display: block;
 }
+
+/*javascript tree*/
+.node{
+	width: 100px !important;
+	padding-top: 0px !important;
+}

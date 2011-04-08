@@ -21,6 +21,8 @@ class SequencesController < ApplicationController
       #try to determine the LCA
       @lineages = @sequence.lineages
       @lca_taxon = Lineage.calculate_lca_taxon(@lineages)
+      @root = Node.new(0, "root")
+      last_node = @root
       
       #common lineage
       common_lineage = Array.new
@@ -31,6 +33,7 @@ class SequencesController < ApplicationController
         unless t.nil? then
           found = (@lca_taxon.id == t.id)
           common_lineage << t
+          last_node = last_node.add_child(Node.new(t.id, t.name))
         end
       end
       @common_lineage = common_lineage.map(&:name).join(", ")    
@@ -39,13 +42,21 @@ class SequencesController < ApplicationController
       @lineages.map{|lineage| lineage.set_iterator_position(l.get_iterator_position)}
       @distinct_lineages = Array.new
       for lineage in @lineages do
+        last_node_loop = last_node
         l = Array.new
     		while lineage.has_next?
     			rank = lineage.next
-    			l << Taxon.find_by_id(rank).name unless rank.nil?
+    			unless rank.nil? then
+    			  t = Taxon.find_by_id(rank)
+    			  l << t.name
+    			  node = Node.find_by_id(rank)
+    			  node = Node.new(t.id, t.name) if node.nil?
+    			  last_node_loop = last_node_loop.add_child(node);
+    			end
     		end
     		@distinct_lineages << l.join(", ")
     	end
+    	@root = @root.to_json
     end
   end
   
