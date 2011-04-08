@@ -119,94 +119,26 @@ class Lineage < ActiveRecord::Base
   belongs_to :forma_t,            :foreign_key  => "forma", 
                                   :primary_key  => "id", 
                                   :class_name   => 'Taxon'
+                                  
+  ORDER = [:superkingdom, :kingdom, :superphylum, :phylum, :subphylum, :superclass, 
+            :class_, :subclass, :infraclass, :superorder, :order, :infraorder, 
+            :parvorder, :superfamily, :family, :subfamily, :tribe, :subtribe, 
+            :genus, :subgenus, :species_group, :species_subgroup, :species, 
+            :subspecies, :varietas, :forma] 
   
-  
+  #returns the Taxon object of the lowest common ancestor
   def self.calculate_lca_taxon(lineages)
     return Taxon.find_by_id(Lineage.calculate_lca(lineages))
   end
   
+  #calculates the lowest common ancestor
   def self.calculate_lca(lineages)
-    lca = 1
-    
-    current = Lineage.calculate_lca_help(lineages, :superkingdom)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :kingdom)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :superphylum)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :phylum)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :subphylum)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :superclass)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :class_)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :subclass)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :infraclass)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :superorder)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :order)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :infraorder)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :parvorder)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :superfamily)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :family)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :subfamily)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :tribe)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :subtribe)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :genus)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :subgenus)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :species_group)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :species_subgroup)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :species)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :subspecies)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :varietas)
-    return lca if current == -1
-    lca = current if !current.nil?
-    current = Lineage.calculate_lca_help(lineages, :forma)
-    return lca if current == -1
-    lca = current if !current.nil?
-    
+    lca = 1 #default lca
+    for rank in ORDER do
+      current = lineages.map(&rank).uniq.compact
+      return lca if current.length > 1 #more than one distinct element
+      lca = current[0] if !current[0].nil? #save lca if this rank isn't nil
+    end
     return lca
   end
   
@@ -221,12 +153,5 @@ class Lineage < ActiveRecord::Base
   
   def class_
     return read_attribute(:class)
-  end
-  
-  private
-  def self.calculate_lca_help(lineages, rank)
-    current = lineages.map(&rank).uniq.compact
-    return -1 if current.length > 1
-    return current[0]
   end
 end
