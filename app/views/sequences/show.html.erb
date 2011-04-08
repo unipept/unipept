@@ -1,13 +1,13 @@
 <h1><%= @sequence.sequence %></h1>
 <% if @lineages.empty? %>
-	<span>No results were found for this sequence.</span>
+	<p>No results were found for this sequence.</p>
 <% else %>
-  <span>
+  <p>
     The lowest common ancestor of <%= @sequence.sequence %> 
     is <strong><%=@lca_taxon.name %></strong> which has the rank 
     of <strong><%=@lca_taxon.rank%></strong>.<br/>
-  </span>
-	<span>The common lineage of this sequence is: <%= @common_lineage %>. <br/></span>
+  </p>
+	<p>The common lineage of this sequence is: <%= @common_lineage %>. <br/></p>
 	<% i=0 %>
 	<% for lineage in @lineages do%>
 		<span><strong><%= lineage.name.name %></strong>:
