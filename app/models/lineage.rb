@@ -98,7 +98,7 @@ class Lineage < ActiveRecord::Base
     for rank in ORDER do
       current = lineages.map(&rank).uniq.compact
       return lca if current.length > 1 #more than one distinct element
-      lca = current[0] if !current[0].nil? #save lca if this rank isn't nil
+      lca = current[0] unless current[0].nil? #save lca if this rank isn't nil
     end
     return lca
   end

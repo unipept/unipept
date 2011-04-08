@@ -7,6 +7,7 @@
     is <strong><%=@lca_taxon.name %></strong> which has the rank 
     of <strong><%=@lca_taxon.rank%></strong>.<br/>
   </span>
+	<span>The common lineage of this sequence is: <%= @common_lineage %>. <br/></span>
 	<span>
 		This sequence occurs in  
 		<%= pluralize(@number_of_species, "species") %> and 
