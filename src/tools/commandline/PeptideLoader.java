@@ -230,7 +230,7 @@ public class PeptideLoader {
 	 */
 	public static void main(String[] args) {
 		// Process input
-		if (args.length != 2) {
+		if (args.length != 2 && args.length != 1) {
 			System.out.println("Usage: java PeptideLoader complete.txt draft.txt");
 			System.exit(-1);
 		}
@@ -238,15 +238,17 @@ public class PeptideLoader {
 		// create a new loader object
 		PeptideLoader loader = new PeptideLoader();
 
-		// load inputfile
-		loader.loadFile(args[0]);
-		// process input files line by line
-		loader.processData(false);
+		if (args.length == 2) {
+			// load inputfile
+			loader.loadFile(args[0]);
+			// process input files line by line
+			loader.processData(false);
 
-		// load inputfile
-		loader.loadFile(args[1]);
-		// process input files line by line
-		loader.processData(true);
+			// load inputfile
+			loader.loadFile(args[1]);
+			// process input files line by line
+			loader.processData(true);
+		}
 
 		loader.addLineage();
 	}
