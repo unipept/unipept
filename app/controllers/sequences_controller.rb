@@ -27,7 +27,7 @@ class SequencesController < ApplicationController
       #common lineage
       common_lineage = Array.new
       l = @lineages[0]
-      found = false
+      found = (@lca_taxon.name == "root")
       while l.has_next? && !found do
         t = Taxon.find_by_id(l.next)
         unless t.nil? then
