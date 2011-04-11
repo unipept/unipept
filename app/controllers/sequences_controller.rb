@@ -41,13 +41,16 @@ class SequencesController < ApplicationController
       #distinct lineage 
       @lineages.map{|lineage| lineage.set_iterator_position(l.get_iterator_position)}
       @distinct_lineages = Array.new
+      @debug = ""
       for lineage in @lineages do
+        @debug += "Placing " + lineage.name.name + ", last node is " + last_node.name + "<br/>"
         last_node_loop = last_node
         l = Array.new
     		while lineage.has_next?
     			rank = lineage.next
     			unless rank.nil? then
     			  t = Taxon.find_by_id(rank)
+    			  @debug += "Adding " + t.name + " to " + last_node_loop.name + " "
     			  l << t.name
     			  node = Node.find_by_id(rank)
     			  if node.nil?
@@ -55,7 +58,9 @@ class SequencesController < ApplicationController
     			    last_node_loop = last_node_loop.add_child(node);
   			    else
   			      last_node_loop = node;
+  			      @debug += "no readd"
 			      end
+			      @debug += "<br/>"
     			end
     		end
     		@distinct_lineages << l.join(", ")
