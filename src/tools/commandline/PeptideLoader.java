@@ -58,10 +58,11 @@ public class PeptideLoader {
 	// mem leak fix
 	WeakRichObjectBuilder wrob = new WeakRichObjectBuilder();
 
-	public PeptideLoader() {
+	public PeptideLoader(boolean emptyTheDatabase) {
 		// easy access to the database
 		data = new PeptideLoaderData(false);
-		data.emptyAllTables();
+		if (emptyTheDatabase)
+			data.emptyAllTables();
 
 		// cache settings
 		RichObjectFactory.setLRUCacheSize(3);// cache problem?
@@ -236,7 +237,7 @@ public class PeptideLoader {
 		}
 
 		// create a new loader object
-		PeptideLoader loader = new PeptideLoader();
+		PeptideLoader loader = new PeptideLoader(args.length == 2);
 
 		if (args.length == 2) {
 			// load inputfile
