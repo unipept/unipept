@@ -28,7 +28,7 @@ function init(data){
         //set distance between node and its children
         levelDistance: 50,
 		levelsToShow: 5,
-		offsetY:200,
+		offsetY: 170,
 		orientation: 'top',
         //enable panning
         Navigation: {

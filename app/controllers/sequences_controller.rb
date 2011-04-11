@@ -50,8 +50,12 @@ class SequencesController < ApplicationController
     			  t = Taxon.find_by_id(rank)
     			  l << t.name
     			  node = Node.find_by_id(rank)
-    			  node = Node.new(t.id, t.name) if node.nil?
-    			  last_node_loop = last_node_loop.add_child(node);
+    			  if node.nil?
+    			    node = Node.new(t.id, t.name) if node.nil?
+    			    last_node_loop = last_node_loop.add_child(node);
+  			    else
+  			      last_node_loop = node;
+			      end
     			end
     		end
     		@distinct_lineages << l.join(", ")
