@@ -43,7 +43,11 @@ class SequencesController < ApplicationController
       @distinct_lineages = Array.new
       @debug = ""
       for lineage in @lineages do
-        @debug += "Placing " + lineage.name.name + ", last node is " + last_node.name + "<br/>"
+        if lineage.name.nil?
+          @debug += "Placing " + lineage.taxon_id.to_s + ", last node is " + last_node.name + "<br/>" 
+        else
+          @debug += "Placing " + lineage.name.name + ", last node is " + last_node.name + "<br/>"
+        end
         last_node_loop = last_node
         l = Array.new
     		while lineage.has_next?
