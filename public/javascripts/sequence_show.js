@@ -27,9 +27,10 @@ function init(data){
         transition: $jit.Trans.Quart.easeInOut,
         //set distance between node and its children
         levelDistance: 50,
-		levelsToShow: 5,
-		offsetY: 170,
-		orientation: 'top',
+		levelsToShow: 3,
+		//offsetY: 170,
+		//orientation: 'top',
+		offsetX: 130,
         //enable panning
         Navigation: {
           enable:true,
