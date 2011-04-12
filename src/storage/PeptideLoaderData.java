@@ -28,6 +28,7 @@ public class PeptideLoaderData {
 	private PreparedStatement addGenbankFile;
 	private PreparedStatement addPeptide;
 	private PreparedStatement addLineage;
+	private PreparedStatement lineageExists;
 	private PreparedStatement getTaxon;
 
 	// use local key index
@@ -89,6 +90,8 @@ public class PeptideLoaderData {
 					.prepareStatement("INSERT INTO peptides (`sequence_id`, `genbank_file_id`) VALUES (?,?)");
 			addLineage = connection
 					.prepareStatement("INSERT INTO lineages (`taxon_id`) VALUES (?)");
+			lineageExists = connection
+					.prepareStatement("SELECT COUNT(*) AS aantal FROM lineages WHERE `taxon_id` = ?");
 			getTaxon = connection
 					.prepareStatement("SELECT rank, parent_id FROM taxons WHERE id = ?");
 		} catch (SQLException e) {
@@ -243,9 +246,13 @@ public class PeptideLoaderData {
 	 */
 	public void addLineage(int taxonId) {
 		try {
-			addLineage.setInt(1, taxonId);
-			addLineage.execute();
-			updateLineage(taxonId, taxonId);
+			lineageExists.setInt(1, taxonId);
+			ResultSet rs = lineageExists.executeQuery();
+			if (rs.next() && rs.getInt("aantal") == 0) {
+				addLineage.setInt(1, taxonId);
+				addLineage.execute();
+				updateLineage(taxonId, taxonId);
+			}
 		} catch (SQLException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis())
 					+ " Something went wrong with the database");
@@ -266,6 +273,9 @@ public class PeptideLoaderData {
 	private void updateLineage(int taxonId, int parentId) throws SQLException {
 		// if the parent == 1, we're at the root
 		if (parentId != 1) {
+			if (taxonId != parentId) {
+				addLineage(parentId);
+			}
 			// retrieve the parent info
 			getTaxon.setInt(1, parentId);
 			ResultSet rs = getTaxon.executeQuery();
@@ -297,6 +307,26 @@ public class PeptideLoaderData {
 				stmt.executeUpdate("TRUNCATE TABLE `peptides`");
 				stmt.executeUpdate("TRUNCATE TABLE `sequences`");
 				stmt.executeUpdate("TRUNCATE TABLE `genbank_files`");
+				stmt.executeUpdate("TRUNCATE TABLE `lineages`");
+			} catch (SQLException e) {
+				System.err.println(new Timestamp(System.currentTimeMillis())
+						+ " Something went wrong truncating tables.");
+				e.printStackTrace();
+			} finally {
+				stmt.close();
+			}
+		} catch (SQLException e1) {
+			System.err.println(new Timestamp(System.currentTimeMillis())
+					+ " Something went wrong creating a new statement.");
+			e1.printStackTrace();
+		}
+	}
+
+	public void emptyLineages() {
+		Statement stmt;
+		try {
+			stmt = connection.createStatement();
+			try {
 				stmt.executeUpdate("TRUNCATE TABLE `lineages`");
 			} catch (SQLException e) {
 				System.err.println(new Timestamp(System.currentTimeMillis())

@@ -52,8 +52,8 @@ public class PeptideLoader {
 	private static final int MAX_MESSED_CLEAVAGES = 0;
 
 	// Objects used
-	BufferedReader inputReader;
-	PeptideLoaderData data;
+	private BufferedReader inputReader;
+	private PeptideLoaderData data;
 
 	// mem leak fix
 	WeakRichObjectBuilder wrob = new WeakRichObjectBuilder();
@@ -213,6 +213,7 @@ public class PeptideLoader {
 	}
 
 	private void addLineage() {
+		data.emptyLineages();
 		// get the taxonIds
 		List<Integer> list = data.getUniqueTaxonIds();
 		for (Integer id : list) {
@@ -250,7 +251,6 @@ public class PeptideLoader {
 			// process input files line by line
 			loader.processData(true);
 		}
-
 		loader.addLineage();
 	}
 }
