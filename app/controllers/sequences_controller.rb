@@ -128,30 +128,17 @@ class SequencesController < ApplicationController
     
     @number_searched_for = data.length
     @number_found = 0
-    @number_unique_found = 0
     
     # build the resultset
     @matches = Hash.new
-    @species = Array.new
     data.each do |s|
       sequence = Sequence.find_by_sequence(s)
       unless sequence.nil? || (!params[:drafts] && sequence.peptides.map(&:genbank_file).map(&:draft).count("\x00") == 0)
         @number_found += 1
-        resultset = sequence.occurrences(params[:drafts])
-        if resultset.num_rows == 1
-          @number_unique_found += 1
-          hash = resultset.fetch_hash
-          hash["sequence"] = sequence
-          s = @matches[hash["species"]]
-          if s.nil?
-            @species << hash["species"]
-            @matches[hash["species"]] = [hash]
-          else
-            @matches[hash["species"]] << hash
-          end
-        end
+        lca = Lineage.calculate_lca_taxon(sequence.lineages)
+        @matches[lca] = 0 if @matches[lca].nil?
+        @matches[lca] += 1
       end
     end
-    @species.sort!
   end
 end
