@@ -1,5 +1,5 @@
 class Node
-  attr_accessor :id, :name, :children
+  attr_accessor :id, :name, :children, :data
   
   @@nodes = Array.new
   
@@ -7,6 +7,8 @@ class Node
     @id = id
     @name = name
     @children = Array.new
+    @data = Hash.new
+    @data[:$area] = 0
   end
   
   #returns the added child
@@ -15,6 +17,10 @@ class Node
     @children << child
     return child
   end 
+  
+  def add_count(count)
+    @data[:$area] += count
+  end
   
   def self.find_by_id(id)
     found = nil

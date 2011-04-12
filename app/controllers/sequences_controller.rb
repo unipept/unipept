@@ -50,7 +50,7 @@ class SequencesController < ApplicationController
     			  l << t.name
     			  node = Node.find_by_id(t.id)
     			  if node.nil?
-    			    node = Node.new(t.id, t.name) if node.nil?
+    			    node = Node.new(t.id, t.name)
     			    last_node_loop = last_node_loop.add_child(node);
   			    else
   			      last_node_loop = node;
@@ -135,10 +135,36 @@ class SequencesController < ApplicationController
       sequence = Sequence.find_by_sequence(s)
       unless sequence.nil? || (!params[:drafts] && sequence.peptides.map(&:genbank_file).map(&:draft).count("\x00") == 0)
         @number_found += 1
-        lca = Lineage.calculate_lca_taxon(sequence.lineages)
-        @matches[lca] = 0 if @matches[lca].nil?
-        @matches[lca] += 1
+        lca_t = Lineage.calculate_lca_taxon(sequence.lineages)
+        @matches[lca_t] = 0 if @matches[lca_t].nil?
+        @matches[lca_t] += 1
       end
+    end    
+    
+    #treemap stuff
+    @root = Node.new(0, "root")
+    @matches.each do |taxon, number|    
+      lca_l = Lineage.find_by_taxon_id(taxon.id)
+      last_node_loop = @root
+      while !lca_l.nil? && lca_l.has_next?
+        t = lca_l.next_t
+        unless t.nil?
+          node = Node.find_by_id(t.id)
+    		  if node.nil?
+    		    node = Node.new(t.id, t.name)
+    		    last_node_loop = last_node_loop.add_child(node);
+    	    else
+    	      last_node_loop = node;
+          end
+          node.add_count(number);
+        end
+      end
+    end
+  	#don't show the root when we don't need it
+  	if @root.children.count > 1
+  	  @root = @root.to_json
+	  else
+	    @root = @root.children[0].to_json
     end
   end
 end

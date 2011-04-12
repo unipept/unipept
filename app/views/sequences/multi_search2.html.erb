@@ -4,3 +4,12 @@
 	<li><%= taxon.name %> (<%= taxon.rank %>): <%= number %></li>
 <% end %>
 </ul>
+
+<div id="treeMap"></div>
+
+<!-- JIT Library File --> 
+<!--[if IE]><%= javascript_include_tag "jit/Extras/excanvas.js"%><![endif]-->
+<%= javascript_include_tag "jit/jit-yc.js", "multi_search.js" %>
+<script type="text/javascript">
+	window.onload=init(<%= raw(@root)%>);
+</script>
