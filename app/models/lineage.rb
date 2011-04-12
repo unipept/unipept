@@ -34,9 +34,7 @@
 
 class Lineage < ActiveRecord::Base
   attr_accessible nil
-  
-  #alias_attribute(:class, :class_)
-  
+    
   belongs_to :name,               :foreign_key  => "taxon_id",      :primary_key  => "id",  :class_name   => 'Taxon'
 
   belongs_to :superkingdom_t,     :foreign_key  => "superkingdom",  :primary_key  => "id",  :class_name   => 'Taxon'
@@ -70,7 +68,13 @@ class Lineage < ActiveRecord::Base
             :class_, :subclass, :infraclass, :superorder, :order, :infraorder, 
             :parvorder, :superfamily, :family, :subfamily, :tribe, :subtribe, 
             :genus, :subgenus, :species_group, :species_subgroup, :species, 
-            :subspecies, :varietas, :forma] 
+            :subspecies, :varietas, :forma]
+            
+  ORDER_T = [:superkingdom_t, :kingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, 
+            :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :infraorder_t, 
+            :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, 
+            :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, 
+            :subspecies_t, :varietas_t, :forma_t] 
               
   def set_iterator_position(position)
     @iterator = position
@@ -88,7 +92,14 @@ class Lineage < ActiveRecord::Base
   def next
     result = ORDER[@iterator]
     @iterator += 1
+    return self[result]
     return read_attribute(result)
+  end
+  
+  def next_t
+    result = ORDER_T[@iterator]
+    @iterator += 1
+    return self.send(result)
   end
   
   #returns the Taxon object of the lowest common ancestor

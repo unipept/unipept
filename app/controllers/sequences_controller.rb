@@ -29,7 +29,7 @@ class SequencesController < ApplicationController
       l = @lineages[0]
       found = (@lca_taxon.name == "root")
       while l.has_next? && !found do
-        t = Taxon.find_by_id(l.next)
+        t = l.next_t
         unless t.nil? then
           found = (@lca_taxon.id == t.id)
           common_lineage << t
@@ -51,12 +51,11 @@ class SequencesController < ApplicationController
         last_node_loop = last_node
         l = Array.new
     		while lineage.has_next?
-    			rank = lineage.next
-    			unless rank.nil? then
-    			  t = Taxon.find_by_id(rank)
+    			t = lineage.next_t
+    			unless t.nil? then
     			  @debug += "Adding " + t.name + " to " + last_node_loop.name + " "
     			  l << t.name
-    			  node = Node.find_by_id(rank)
+    			  node = Node.find_by_id(t.id)
     			  if node.nil?
     			    node = Node.new(t.id, t.name) if node.nil?
     			    last_node_loop = last_node_loop.add_child(node);
