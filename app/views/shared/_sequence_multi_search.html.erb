@@ -6,3 +6,12 @@
 	<%= label_tag(:drafts, "Include draft genomes")%>
   <%= submit_tag("Search") %>
 <% end %>
+
+<%= form_tag(:sequence_multi_search2, :method => "post") do %>
+	<%= label_tag(:q, "Test search for") %>
+	<%= text_area(:q, "", :cols => 63, :rows => 5) %>
+	<br/>
+	<%= check_box_tag(:drafts, "", :selected => true)%>
+	<%= label_tag(:drafts, "Include draft genomes")%>
+  <%= submit_tag("Search") %>
+<% end %>
