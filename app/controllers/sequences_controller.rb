@@ -69,7 +69,13 @@ class SequencesController < ApplicationController
     		end
     		@distinct_lineages << l.join(", ")
     	end
-    	@root = @root.to_json
+    	
+    	#don't show the root when we don't need it
+    	if @root.children.count > 1
+    	  @root = @root.to_json
+  	  else
+  	    @root = @root.children[0].to_json
+	    end
     end
   end
   
