@@ -16,29 +16,24 @@ var labelType, useGradients, nativeTextSupport, animate;
 })();
 
 function init(data){
-    //init Spacetree
-    //Create a new ST instance
+    //Create a new SpaceTree instance
     var st = new $jit.ST({
-        //id of viz container element
-        injectInto: 'infovis',
-        //set duration for the animation
-        duration: 800,
-        //set animation transition type
-        transition: $jit.Trans.Quart.easeInOut,
-        //set distance between node and its children
-        levelDistance: 50,
+        injectInto: 'infovis',					//id of viz container element
+        duration: 800,							//set duration for the animation
+        transition: $jit.Trans.Quart.easeInOut,	//set animation transition type
+        levelDistance: 50,						//set distance between node and its children
 		levelsToShow: 3,
 		//offsetY: 170,
 		//orientation: 'top',
 		offsetX: 130,
+		
         //enable panning
         Navigation: {
           enable:true,
           panning:true
         },
+
         //set node and edge styles
-        //set overridable=true for styling individual
-        //nodes or edges
         Node: {
             autoHeight: true,
             //autoWidth: true,
@@ -64,7 +59,7 @@ function init(data){
            		st.onClick(node.id);
             	//st.setRoot(node.id, 'animate');
             };
-            //set label styles
+            //set label styles => TODO: fix the labels with these settings instead of CSS
             var style = label.style;
             style.width = 60 + 'px';
             style.height = 17 + 'px';            
@@ -115,15 +110,9 @@ function init(data){
                 delete adj.data.$lineWidth;
             }
         }
-    });
-    //load json data
-    st.loadJSON(data);
-    //compute node positions and layout
-    st.compute();
-    //optional: make a translation of the tree
-    st.geom.translate(new $jit.Complex(-200, 0), "current");
-    //emulate a click on the root node.
-    st.onClick(st.root);
-    //end
-
+    });    
+    st.loadJSON(data);										//load json data
+    st.compute();											//compute node positions and layout
+    st.geom.translate(new $jit.Complex(-200, 0), "current");//optional: make a translation of the tree
+    st.onClick(st.root);									//emulate a click on the root node.
 }
