@@ -18,7 +18,7 @@ var labelType, useGradients, nativeTextSupport, animate;
 function init(data){
     //Create a new SpaceTree instance
     var st = new $jit.ST({
-        injectInto: 'infovis',					//id of viz container element
+        injectInto: 'lineageTree',				//id of viz container element
         duration: 800,							//set duration for the animation
         transition: $jit.Trans.Quart.easeInOut,	//set animation transition type
         levelDistance: 50,						//set distance between node and its children

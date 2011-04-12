@@ -18,12 +18,11 @@
 		<br/></span>
 	<% end %>
 	</p>
-	<div id="infovis" style="width: 742px; height: 500px;"></div>
-	<!--[if IE]><script language="javascript" type="text/javascript" src="/javascripts/jit/Extras/excanvas.js"></script><![endif]--> 
+	<div id="lineageTree" style="width: 742px; height: 500px;"></div>
 
 	<!-- JIT Library File --> 
-	<script type="text/javascript" src="/javascripts/jit/jit-yc.js"></script>
-	<script type="text/javascript" src="/javascripts/sequence_show.js"></script>
+	<!--[if IE]><%= javascript_include_tag "jit/Extras/excanvas.js"%><![endif]-->
+	<%= javascript_include_tag "jit/jit-yc.js", "sequence_show.js" %>
 	<script type="text/javascript">
 		window.onload=init(<%= raw(@root)%>);
 	</script>
