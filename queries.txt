@@ -92,4 +92,3 @@ SELECT COUNT(*) FROM
   INNER JOIN unipept.organism
   ON (peptide.organismId = organism.id)
   GROUP BY peptide.sequenceId HAVING aantal=1) AS bingo
-
