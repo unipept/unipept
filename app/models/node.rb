@@ -20,7 +20,7 @@ class Node
   
   def add_count(count)
     @data[:count] += count
-    @data[:$area] = Math.log2(@data[:count]+1)
+    @data[:$area] = Math.log10(@data[:count]+1)/Math.log10(2)
   end
   
   def self.find_by_id(id, root)
