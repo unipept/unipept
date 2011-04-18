@@ -9,6 +9,7 @@ class Node
     @children = Array.new
     @data = Hash.new
     @data[:$area] = 0
+    @data[:count] = 0
   end
   
   #returns the added child
@@ -19,7 +20,8 @@ class Node
   end 
   
   def add_count(count)
-    @data[:$area] += count
+    @data[:count] += count
+    @data[:$area] = Math.log2(@data[:count]+1)
   end
   
   def self.find_by_id(id)
