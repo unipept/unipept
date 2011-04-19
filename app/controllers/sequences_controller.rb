@@ -142,16 +142,16 @@ class SequencesController < ApplicationController
     end    
     
     #treemap stuff
-    @root = Node.new(0, "root")
+    @root = TreeMapNode.new(0, "root")
     @matches.each do |taxon, number|    
       lca_l = Lineage.find_by_taxon_id(taxon.id)
       last_node_loop = @root
       while !lca_l.nil? && lca_l.has_next?
         t = lca_l.next_t
         unless t.nil?
-          node = Node.find_by_id(t.id, @root)
+          node = TreeMapNode.find_by_id(t.id, @root)
     		  if node.nil?
-    		    node = Node.new(t.id, t.name)
+    		    node = TreeMapNode.new(t.id, t.name)
     		    last_node_loop = last_node_loop.add_child(node, @root);
     	    else
     	      last_node_loop = node;
