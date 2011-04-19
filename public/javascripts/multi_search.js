@@ -28,7 +28,7 @@ function init(data) {
         //enable animations
         animate: animate,
         //box offsets
-        offset: 1,
+        offset: 0,
         //constrained: true,
         //levelsToShow: 1,
         //Attach left and right click events
