@@ -21,6 +21,19 @@
 	<div id='main'>
 		<%= render 'layouts/navigation' %>
 		<div id='content' class='normal'>
+			<% if Rails.env.development? %>
+			<div id="spotlight" class="spotlight">
+				<div class="sectiontitle"><h2>Development server</h2></div>
+				<div class="columns">
+					<div class="column column-16"></div>
+				  <div class="column column-56">
+				    <div class="spacing-left">
+			      	<span><p>This is the development version of UniPept. Please use the website at <a href="http://nibbler.ugent.be">nibbler.ugent.be</a> for stable results.</p></span>	
+					  </div>	
+			    </div>
+				</div>
+			</div>
+			<% end %>
 			<% flash.each do |key, value| %>
 				<%= content_tag(:div, value, :class => "flash #{key}") %>
 			<% end %>
