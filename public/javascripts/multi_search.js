@@ -67,7 +67,10 @@ function init(data) {
         //Add the name of the node in the correponding label
         //This method is called once, on label creation.
         onCreateLabel: function(domElement, node) {
-            domElement.innerHTML = node.name + " (" + node.data.count + ")";
+			if(node.data.count != 0)
+            	domElement.innerHTML = node.name+ " (" + node.data.count + ")";
+			else
+				domElement.innerHTML = node.name;
             var style = domElement.style;
             style.display = '';
             style.border = '2px solid transparent';
