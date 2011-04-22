@@ -7,6 +7,7 @@ gem 'will_paginate', '3.0.pre2'
 group :development do
   gem 'rspec-rails'
 	gem 'annotate-models'
+	gem 'jquery-rails', '>= 0.2.6'
 end
 
 group :test do
