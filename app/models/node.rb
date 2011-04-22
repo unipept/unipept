@@ -28,6 +28,14 @@ class Node
   def nodes
     return @nodes
   end
+  
+  #methods to make the partials render
+  def self.model_name
+    return Node
+  end
+  def self.partial_path
+    return "nodes/node"
+  end
 end
 
 

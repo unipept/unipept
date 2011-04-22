@@ -1889,3 +1889,8 @@ header, footer{
 	text-align: center;
 	font-family: "Lucida Grande", Verdana;
 }
+#multisearch_list ul{
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 10px;
+}	

@@ -121,7 +121,7 @@ class SequencesController < ApplicationController
   
   # processes a list of sequences
   def multi_search2
-    @title = "Test results"
+    @title = "Results"
     
     # remove duplicates, split missed cleavages, substitute I by L
     data = params[:q][0].gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/I/,'L').lines.map(&:strip).to_a.uniq
@@ -159,12 +159,10 @@ class SequencesController < ApplicationController
           node.add_count(number);
         end
       end
+      node = TreeMapNode.find_by_id(taxon.id, @root)
+      node.data[:self_count] = number unless node.nil?
     end
   	#don't show the root when we don't need it
-  	if @root.children.count > 1
-  	  @root = @root.to_json
-	  else
-	    @root = @root.children[0].to_json
-    end
+  	@root = @root.children[0] if @root.children.count == 0
   end
 end

@@ -1,15 +1,20 @@
+<h1>Results</h1>
 <p>We matched <%= @number_found %> of the <%= pluralize(@number_searched_for, "peptide") %>.</p>
-<ul>
-<% @matches.each do |taxon, number| %>
-	<li><%= taxon.name %> (<%= taxon.rank %>): <%= number %></li>
-<% end %>
-</ul>
 
+<h2>Treemap</h2>
 <div id="treeMap"></div>
+
+<h2>List</h2>
+<div id="multisearch_list">
+	<ul>
+		<%= render @root %>
+	</ul>
+</div>
+
 
 <!-- JIT Library File --> 
 <!--[if IE]><%= javascript_include_tag "jit/Extras/excanvas.js"%><![endif]-->
 <%= javascript_include_tag "jit/jit-yc.js", "multi_search.js" %>
 <script type="text/javascript">
-	window.onload=init(<%= raw(@root)%>);
+	window.onload=init(<%= raw(@root.to_json)%>);
 </script>
