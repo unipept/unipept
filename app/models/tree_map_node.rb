@@ -18,7 +18,6 @@ class TreeMapNode < Node
   # returns the added child
   def add_child(child, root)
     child.data[:level] = @data[:level]+1 if @data[:level] < 9
-    #child.data[:$color] = "#" + child.data[:level].to_s * 6
     child.data[:$color] = GRADIENT[child.data[:level]]
     super(child, root)
   end
