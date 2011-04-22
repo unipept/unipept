@@ -133,7 +133,7 @@ class SequencesController < ApplicationController
     @matches = Hash.new
     data.each do |s|
       sequence = Sequence.find_by_sequence(s)
-      unless sequence.nil? || (!params[:drafts] && sequence.peptides.map(&:genbank_file).map(&:draft).count("\x00") == 0)
+      unless sequence.nil?
         @number_found += 1
         lca_t = Lineage.calculate_lca_taxon(sequence.lineages)
         @matches[lca_t] = 0 if @matches[lca_t].nil?
