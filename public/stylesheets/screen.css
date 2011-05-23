@@ -1900,3 +1900,7 @@ header, footer{
 #jstree ul{
 	padding-left: 0px;
 }
+#jstree a{
+	color: #000000 !important;
+	text-decoration: none !important;
+}
