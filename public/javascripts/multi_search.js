@@ -19,10 +19,15 @@ animate;
 })();
 
 function init(data) {
+	//treemap
+	initTreeMap(data);
+	
 	//jstree
 	initJsTree(data);
-	
-    //init TreeMap
+}
+
+function initTreeMap(data){
+	//init TreeMap
     var tm = new $jit.TM.Squarified({
         //where to inject the visualization
         injectInto: 'treeMap',
@@ -89,6 +94,7 @@ function init(data) {
     tm.refresh();
     //end
 }
+
 function initJsTree(data){
 	$("#jstree").jstree({
 		core : { /* core options go here */ },
