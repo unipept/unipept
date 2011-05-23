@@ -1888,6 +1888,8 @@ header, footer{
 	cursor: pointer;
 	text-align: center;
 	font-family: "Lucida Grande", Verdana;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 #multisearch_list ul{
 	padding-top: 0px;
