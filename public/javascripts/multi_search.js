@@ -99,7 +99,8 @@ function initJsTree(data){
 	$("#jstree").jstree({
 		core : { /* core options go here */ },
 		plugins : [ "themes", "json_data"],
-		json_data : {"data" : data}
+		json_data : {"data" : data},
+		themes : {"icons": false}
 	});
 	
 }
