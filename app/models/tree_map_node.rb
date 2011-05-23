@@ -1,4 +1,5 @@
 class TreeMapNode < Node
+  attr_accessor :state
   
   GRADIENT = ["#002F2F", "#003638", "#013d40", "#01444a", "#014a52", "#02505c", "#025563", "#025a6e", "#045f75", "#046380"]
   
@@ -12,6 +13,8 @@ class TreeMapNode < Node
     #color
     @data[:level] = 0
     @data[:$color] = GRADIENT[@data[:level]]
+    
+    fix_title_and_state
   end
   
   # adds a child to this node and updates the color of the child
@@ -26,5 +29,14 @@ class TreeMapNode < Node
   def add_count(count)
     @data[:count] += count
     @data[:$area] = Math.log10(@data[:count]+1)/Math.log10(2)
+    
+    fix_title_and_state
+  end
+  
+  def fix_title_and_state
+    @data[:title] = @name
+    @data[:title] += " ("+@data[:self_count].to_s+")" unless @data[:self_count].nil?
+    
+    @state = @data[:level] <= 3 ? "open" : "closed"
   end
 end

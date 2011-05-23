@@ -19,6 +19,9 @@ animate;
 })();
 
 function init(data) {
+	//jstree
+	initJsTree(data);
+	
     //init TreeMap
     var tm = new $jit.TM.Squarified({
         //where to inject the visualization
@@ -85,4 +88,12 @@ function init(data) {
     tm.loadJSON(data);
     tm.refresh();
     //end
+}
+function initJsTree(data){
+	$("#jstree").jstree({
+		core : { /* core options go here */ },
+		plugins : [ "themes", "json_data"],
+		json_data : {"data" : data}
+	});
+	
 }
