@@ -3,11 +3,11 @@ source 'http://rubygems.org'
 gem 'rails', '3.0.3'
 gem 'mysql'
 gem 'will_paginate', '3.0.pre2'
+gem 'jquery-rails', '>= 0.2.6'
 
 group :development do
   gem 'rspec-rails'
 	gem 'annotate-models'
-	gem 'jquery-rails', '>= 0.2.6'
 end
 
 group :test do
