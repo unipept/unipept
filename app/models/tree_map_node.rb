@@ -35,8 +35,12 @@ class TreeMapNode < Node
   
   def fix_title_and_state
     @data[:title] = @name
-    @data[:title] += " (" + (@data[:self_count].nil? ? "0" : @data[:self_count].to_s) + "/" + @data[:count].to_s + ")" unless @name == "root"
-    
+    if @children.length != 0
+      @data[:title] += " (" + (@data[:self_count].nil? ? "0" : @data[:self_count].to_s) + "/" + @data[:count].to_s + ")" unless @name == "root"
+    else
+      @data[:title] += " (" + @data[:count].to_s + ")" unless @name == "root"
+    end
+      
     @state = @data[:level] <= 3 ? "open" : "closed"
   end
 end
