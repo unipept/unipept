@@ -1896,7 +1896,12 @@ header, footer{
 	padding-bottom: 0px;
 	padding-left: 10px;
 }	
+.tip{
+	background-color: #ffffff;
+	padding: 2px;
+}
 
+/*jstree*/
 #jstree ul{
 	padding-left: 0px;
 }

@@ -19,15 +19,15 @@ animate;
 })();
 
 function init(data) {
-	//treemap
-	initTreeMap(data);
-	
-	//jstree
-	initJsTree(data);
+    //treemap
+    initTreeMap(data);
+
+    //jstree
+    initJsTree(data);
 }
 
-function initTreeMap(data){
-	//init TreeMap
+function initTreeMap(data) {
+    //init TreeMap
     var tm = new $jit.TM.Squarified({
         //where to inject the visualization
         injectInto: 'treeMap',
@@ -51,34 +51,34 @@ function initTreeMap(data){
         },
         duration: 1000,
         //Enable tips
-        /*Tips: {
-      enable: true,
-      //add positioning offsets
-      offsetX: 20,
-      offsetY: 20,
-      //implement the onShow method to
-      //add content to the tooltip when a node
-      //is hovered
-      onShow: function(tip, node, isLeaf, domElement) {
-        var html = "<div class=\"tip-title\">" + node.name 
-          + "</div><div class=\"tip-text\">";
-        var data = node.data;
-        if(data.playcount) {
-          html += "play count: " + data.playcount;
-        }
-        if(data.image) {
-          html += "<img src=\""+ data.image +"\" class=\"album\" />";
-        }
-        tip.innerHTML =  html; 
-      }  
-    },*/
+        Tips: {
+            enable: true,
+            //add positioning offsets
+            offsetX: 20,
+            offsetY: 20,
+            //implement the onShow method to
+            //add content to the tooltip when a node
+            //is hovered
+            onShow: function(tip, node, isLeaf, domElement) {
+				var title = "";
+				if (node.data.count != 0)
+	            	title = node.name + " (" + node.data.count + ")";
+	            else
+	            	title = node.name;
+                var html = "<div class=\"tip-title\">" + title
+                + "</div><div class=\"tip-text\"></div>";
+                var data = node.data;
+                tip.innerHTML = html;
+            }
+        },
+
         //Add the name of the node in the correponding label
         //This method is called once, on label creation.
         onCreateLabel: function(domElement, node) {
-			if(node.data.count != 0)
-            	domElement.innerHTML = node.name+ " (" + node.data.count + ")";
-			else
-				domElement.innerHTML = node.name;
+            if (node.data.count != 0)
+            	domElement.innerHTML = node.name + " (" + node.data.count + ")";
+            else
+            	domElement.innerHTML = node.name;
             var style = domElement.style;
             style.display = '';
             style.border = '2px solid transparent';
@@ -95,12 +95,18 @@ function initTreeMap(data){
     //end
 }
 
-function initJsTree(data){
-	$("#jstree").jstree({
-		core : { /* core options go here */ },
-		plugins : [ "themes", "json_data"],
-		json_data : {"data" : data},
-		themes : {"icons": false}
-	});
-	
+function initJsTree(data) {
+    $("#jstree").jstree({
+        core: {
+            /* core options go here */
+        },
+        plugins: ["themes", "json_data"],
+        json_data: {
+            "data": data
+        },
+        themes: {
+            "icons": false
+        }
+    });
+
 }
