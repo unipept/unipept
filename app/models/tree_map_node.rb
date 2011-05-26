@@ -1,5 +1,6 @@
 class TreeMapNode < Node
-  attr_accessor :state
+  #:metadata contains the sequences
+  attr_accessor :state, :metadata
   
   GRADIENT = ["#002F2F", "#003638", "#013d40", "#01444a", "#014a52", "#02505c", "#025563", "#025a6e", "#045f75", "#046380"]
   
@@ -9,6 +10,8 @@ class TreeMapNode < Node
     #area
     @data[:$area] = 0
     @data[:count] = 0
+    
+    @metadata = Array.new
     
     #color
     @data[:level] = 0
@@ -26,8 +29,10 @@ class TreeMapNode < Node
   end
   
   # adds a number to the count variable and recalculates the area
-  def add_count(count)
-    @data[:count] += count
+  def add_sequences(sequences)
+    @metadata.concat(sequences) 
+    
+    @data[:count] += sequences.length
     @data[:$area] = Math.log10(@data[:count]+1)/Math.log10(2)
     
     fix_title_and_state

@@ -1902,6 +1902,17 @@ header, footer{
 }
 
 /*jstree*/
+#jstree{
+	width: 392px;
+	float: left;
+}
+#jstree_data{
+	width: 346px;
+	float: left;
+	background: #BEEBFF;
+	border: 1px solid #99DEFD;
+	padding-left: 2px;
+}
 #jstree ul{
 	padding-left: 0px;
 }

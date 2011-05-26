@@ -96,17 +96,31 @@ function initTreeMap(data) {
 }
 
 function initJsTree(data) {
+	$("#jstree").bind("select_node.jstree", function(node, tree){
+		var peptides = $(tree.rslt.obj).data();
+		var margin = tree.rslt.obj.context.offsetTop - $("#jstree").offset().top;
+		var innertext = tree.rslt.obj.context.innerText.split("(")[0];
+		var list = $("#jstree_data").html("<h3>"+innertext+"</h3><ul></ul>").find("ul");
+		$("#jstree_data").animate({marginTop: margin}, 1000);
+		for(var peptide in peptides){
+			list.append("<li><a href='/sequences/"+peptides[peptide]+"' target='_blank'>"+peptides[peptide]+"</a></li>")
+		}
+	});
+	
     $("#jstree").jstree({
         core: {
             /* core options go here */
         },
-        plugins: ["themes", "json_data"],
+        plugins: ["themes", "json_data", "ui"],
         json_data: {
             "data": data
         },
         themes: {
             "icons": false
-        }
+        },
+		ui: {
+			"select_limit": 1
+		}
     });
 
 }

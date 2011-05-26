@@ -136,14 +136,14 @@ class SequencesController < ApplicationController
       unless sequence.nil?
         @number_found += 1
         lca_t = Lineage.calculate_lca_taxon(sequence.lineages)
-        @matches[lca_t] = 0 if @matches[lca_t].nil?
-        @matches[lca_t] += 1
+        @matches[lca_t] = Array.new if @matches[lca_t].nil?
+        @matches[lca_t] << sequence.sequence
       end
     end    
     
     #treemap stuff
     @root = TreeMapNode.new(0, "root")
-    @matches.each do |taxon, number|    
+    @matches.each do |taxon, sequences|    
       lca_l = Lineage.find_by_taxon_id(taxon.id)
       last_node_loop = @root
       while !lca_l.nil? && lca_l.has_next?
@@ -156,11 +156,11 @@ class SequencesController < ApplicationController
     	    else
     	      last_node_loop = node;
           end
-          node.add_count(number);
+          node.add_sequences(sequences);
         end
       end
       node = TreeMapNode.find_by_id(taxon.id, @root)
-      node.data[:self_count] = number unless node.nil?
+      node.data[:self_count] = sequences.length unless node.nil?
     end
   	#don't show the root when we don't need it
   	@root = @root.children[0] if @root.children.count == 0
