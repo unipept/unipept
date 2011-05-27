@@ -96,7 +96,10 @@ function initTreeMap(data) {
 }
 
 function initJsTree(data) {
+	//set themes dir
 	$.jstree._themes = "/javascripts/jstree/themes/";
+	
+	//add onSelect action
 	$("#jstree").bind("select_node.jstree", function(node, tree){
 		var peptides = $(tree.rslt.obj).data();
 		var margin = tree.rslt.obj.context.offsetTop - $("#jstree").offset().top;
@@ -108,11 +111,20 @@ function initJsTree(data) {
 		}
 	});
 	
+	//add search
+	$("#jstree_search").keyup(function(){
+		$("#jstree").jstree("search", ($(this).val()));
+	});
+	$('#jstree_search').click(function(){ $(this).keyup(); });
+	$('#jstree_search').change(function(){ $(this).keyup(); });
+	
+	
+	//create the tree
     $("#jstree").jstree({
         core: {
             /* core options go here */
         },
-        plugins: ["themes", "json_data", "ui"],
+        plugins: ["themes", "json_data", "ui", "search"],
         json_data: {
             "data": data
         },
@@ -121,7 +133,9 @@ function initJsTree(data) {
         },
 		ui: {
 			"select_limit": 1
+		},
+		search: {
+			"show_only_matches" : true
 		}
     });
-
 }
