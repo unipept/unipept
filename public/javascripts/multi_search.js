@@ -122,6 +122,10 @@ function initJsTree(data) {
     //add search
     $("#jstree_search").keyup(function() {
         $("#jstree").jstree("search", ($(this).val()));
+        $(".jstree-search").parent().find("li").show();
+        $("#jstree ul").each(function() {
+            $(this).children("li:visible").eq( - 1).addClass("jstree-last");
+        });
     });
     $('#jstree_search').click(function() {
         $(this).keyup();
