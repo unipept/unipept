@@ -119,10 +119,11 @@ function initJsTree(data) {
         }
     });
 
-	//fix leafs
-	$("#jstree").bind("loaded.jstree", function(event, data){
-		$("#jstree li").not(":has(li)").addClass("jstree-leaf");
-	});
+    //fix leafs
+    $("#jstree").bind("loaded.jstree",
+    function(event, data) {
+        $("#jstree li").not(":has(li)").addClass("jstree-leaf");
+    });
 
     //add search
     $("#jstree_search").keyup(function() {
@@ -139,11 +140,10 @@ function initJsTree(data) {
         $(this).keyup();
     });
 
-
     //create the tree
     $("#jstree").jstree({
         core: {
-            /* core options go here */
+            "animation": 300
         },
         plugins: ["themes", "json_data", "ui", "search"],
         json_data: {
