@@ -160,7 +160,7 @@ class SequencesController < ApplicationController
         end
       end
       node = TreeMapNode.find_by_id(taxon.id, @root)
-      node.data[:self_count] = sequences.length unless node.nil?
+      node.add_own_sequences(sequences) unless node.nil?
     end
   	#don't show the root when we don't need it
   	@root = @root.children[0] if @root.children.count == 0

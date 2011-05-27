@@ -11,7 +11,9 @@ class TreeMapNode < Node
     @data[:$area] = 0
     @data[:count] = 0
     
-    @metadata = Array.new
+    @metadata = Hash.new
+    @metadata[:all_sequences] = Array.new
+    
     @attr = Hash.new
     @attr[:title] = rank
     
@@ -32,12 +34,17 @@ class TreeMapNode < Node
   
   # adds a number to the count variable and recalculates the area
   def add_sequences(sequences)
-    @metadata.concat(sequences) 
+    @metadata[:all_sequences].concat(sequences) 
     
     @data[:count] += sequences.length
     @data[:$area] = Math.log10(@data[:count]+1)/Math.log10(2)
     
     fix_title_and_state
+  end
+  
+  def add_own_sequences(sequences)
+    @data[:self_count] = sequences.length
+    @metadata[:own_sequences] = sequences
   end
   
   def fix_title_and_state

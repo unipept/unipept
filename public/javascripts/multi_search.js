@@ -109,13 +109,25 @@ function initJsTree(data) {
         var peptides = $(tree.rslt.obj).data();
         var margin = tree.rslt.obj.context.offsetTop - $("#jstree").offset().top;
         var innertext = $(tree.rslt.obj).find("a").text().split("(")[0];
-        var list = $("#jstree_data").html("<h3>" + innertext + "</h3><ul></ul>").find("ul");
+        innertext += " (" + $(tree.rslt.obj).attr("title") + ")";
+        var infoPane = $("#jstree_data").html("<h3>" + innertext + "</h3>");
         $("#jstree_data").animate({
             marginTop: margin
         },
         1000);
-        for (var peptide in peptides) {
-            list.append("<li><a href='/sequences/" + peptides[peptide] + "' target='_blank'>" + peptides[peptide] + "</a></li>")
+        var ownSequences = peptides.own_sequences
+        if (ownSequences && ownSequences.length > 0) {
+            var list = infoPane.append("<h4>Sequences speficic to this level</h4><ul></ul>").find("ul").last();
+            for (var peptide in ownSequences) {
+                list.append("<li><a href='/sequences/" + ownSequences[peptide] + "' target='_blank'>" + ownSequences[peptide] + "</a></li>")
+            }
+        }
+        var allSequences = peptides.all_sequences
+        if (allSequences && allSequences.length > 0) {
+            var list = infoPane.append("<h4>Sequences speficic to this level or lower</h4><ul></ul>").find("ul").last();
+            for (var peptide in allSequences) {
+                list.append("<li><a href='/sequences/" + allSequences[peptide] + "' target='_blank'>" + allSequences[peptide] + "</a></li>")
+            }
         }
     });
 
