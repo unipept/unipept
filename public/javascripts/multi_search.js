@@ -99,7 +99,7 @@ function initJsTree(data) {
 	$("#jstree").bind("select_node.jstree", function(node, tree){
 		var peptides = $(tree.rslt.obj).data();
 		var margin = tree.rslt.obj.context.offsetTop - $("#jstree").offset().top;
-		var innertext = tree.rslt.obj.context.innerText.split("(")[0];
+		var innertext = $(tree.rslt.obj).find("a").text().split("(")[0];
 		var list = $("#jstree_data").html("<h3>"+innertext+"</h3><ul></ul>").find("ul");
 		$("#jstree_data").animate({marginTop: margin}, 1000);
 		for(var peptide in peptides){
