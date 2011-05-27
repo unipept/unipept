@@ -43,7 +43,11 @@ function initTreeMap(data) {
         Events: {
             enable: true,
             onClick: function(node) {
-                if (node) tm.enter(node);
+                if (node) {
+					tm.enter(node);
+					$("#jstree_search").val(node.name);
+					$("#jstree_search").change();
+				}
             },
             onRightClick: function() {
                 tm.out();
