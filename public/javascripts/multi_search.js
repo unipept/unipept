@@ -96,6 +96,7 @@ function initTreeMap(data) {
 }
 
 function initJsTree(data) {
+	$.jstree._themes = "/javascripts/jstree/themes/";
 	$("#jstree").bind("select_node.jstree", function(node, tree){
 		var peptides = $(tree.rslt.obj).data();
 		var margin = tree.rslt.obj.context.offsetTop - $("#jstree").offset().top;
