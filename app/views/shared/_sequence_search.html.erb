@@ -1,5 +1,5 @@
 <%= form_tag(:sequence_search, :method => "get") do %>
 	<%= label_tag(:q, "Search for") %>
-	<%= search_field_tag(:q, "", :size => 75) %>
+	<%= search_field_tag(:q, "", :size => 75, :placeholder => "SEQUENCE") %>
   <%= submit_tag("Search") %>
 <% end %>
