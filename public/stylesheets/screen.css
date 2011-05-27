@@ -1907,6 +1907,7 @@ header, footer{
 /*jstree*/
 #jstree{
 	width: 392px;
+	min-height: 10px;
 	float: left;
 }
 #jstree_data{
