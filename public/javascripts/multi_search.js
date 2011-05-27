@@ -119,6 +119,11 @@ function initJsTree(data) {
         }
     });
 
+	//fix leafs
+	$("#jstree").bind("loaded.jstree", function(event, data){
+		$("#jstree li").not(":has(li)").addClass("jstree-leaf");
+	});
+
     //add search
     $("#jstree_search").keyup(function() {
         $("#jstree").jstree("search", ($(this).val()));
