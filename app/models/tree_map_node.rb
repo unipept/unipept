@@ -1,10 +1,10 @@
 class TreeMapNode < Node
   #:metadata contains the sequences
-  attr_accessor :state, :metadata
+  attr_accessor :state, :metadata, :attr
   
   GRADIENT = ["#002F2F", "#003638", "#013d40", "#01444a", "#014a52", "#02505c", "#025563", "#025a6e", "#045f75", "#046380"]
   
-  def initialize(id, name)
+  def initialize(id, name, rank="")
     super(id, name)
     
     #area
@@ -12,6 +12,8 @@ class TreeMapNode < Node
     @data[:count] = 0
     
     @metadata = Array.new
+    @attr = Hash.new
+    @attr[:title] = rank
     
     #color
     @data[:level] = 0

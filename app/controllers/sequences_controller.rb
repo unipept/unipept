@@ -151,7 +151,7 @@ class SequencesController < ApplicationController
         unless t.nil?
           node = TreeMapNode.find_by_id(t.id, @root)
     		  if node.nil?
-    		    node = TreeMapNode.new(t.id, t.name)
+    		    node = TreeMapNode.new(t.id, t.name, t.rank)
     		    last_node_loop = last_node_loop.add_child(node, @root);
     	    else
     	      last_node_loop = node;
