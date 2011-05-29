@@ -1910,6 +1910,9 @@ header, footer{
 	min-height: 10px;
 	float: left;
 }
+.jstree-default.jstree-focused {
+	background: #FFF !important;
+}
 #jstree_data{
 	width: 346px;
 	float: left;
