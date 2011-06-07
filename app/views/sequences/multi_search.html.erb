@@ -1,0 +1,18 @@
+<h1>Results</h1>
+<p>We matched <%= @number_found %> of the <%= pluralize(@number_searched_for, "peptide") %>.</p>
+
+<h2>Treemap</h2>
+<div id="treeMap"></div>
+
+<h2>List</h2>
+<%= search_field_tag(:jstree_search, "", :size => 70, :placeholder => "search the tree...") %>
+<div id="jstree"></div>
+<div id="jstree_data"><p>Click a node to see the peptides.</p></div>
+
+
+<!-- JIT Library File --> 
+<!--[if IE]><%= javascript_include_tag "jit/Extras/excanvas.js"%><![endif]-->
+<%= javascript_include_tag "jit/jit-yc.js", "multi_search.js", "jstree/jquery.jstree" %>
+<script type="text/javascript">
+	window.onload=init(<%= raw(@root.to_json)%>);
+</script>
