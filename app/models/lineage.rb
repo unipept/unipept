@@ -111,7 +111,12 @@ class Lineage < ActiveRecord::Base
   def self.calculate_lca(lineages)
     lca = 1 #default lca
     for rank in ORDER do
-      current = lineages.map(&rank).uniq.compact
+      #nils enkel filteren bij species en genus
+      if rank == :species || rank == :genus
+        current = lineages.map(&rank).uniq.compact
+      else
+        current = lineages.map(&rank).uniq
+      end
       return lca if current.length > 1 #more than one distinct element
       lca = current[0] unless current[0].nil? #save lca if this rank isn't nil
     end
