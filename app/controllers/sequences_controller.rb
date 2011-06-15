@@ -4,7 +4,7 @@ class SequencesController < ApplicationController
   # the peptide should be in params[:id] and 
   # can be a peptide id or the sequence itself
   def show
-    # id or sequence?
+    # id or sequence and load the sequence
     if params[:id].match(/\A[0-9]+\z/)
       @sequence = Sequence.find_by_id(params[:id])
     else  
@@ -19,15 +19,16 @@ class SequencesController < ApplicationController
       @title = @sequence.sequence
       
       #try to determine the LCA
-      @lineages = @sequence.lineages
-      @lca_taxon = Lineage.calculate_lca_taxon(@lineages)
-      @root = Node.new(0, "root")
+      @lineages = @sequence.lineages #calculate lineages
+      @lca_taxon = Lineage.calculate_lca_taxon(@lineages) #calculate the LCA
+      @root = Node.new(0, "root") #start constructing the tree
       last_node = @root
       
       #common lineage
-      common_lineage = Array.new
+      common_lineage = Array.new #construct the common lineage in this array
       l = @lineages[0]
       found = (@lca_taxon.name == "root")
+      #this might go wrong in the case where the first lineage doesn't contain the LCA (eg. nil)
       while l.has_next? && !found do
         t = l.next_t
         unless t.nil? then
@@ -47,9 +48,9 @@ class SequencesController < ApplicationController
     		while lineage.has_next?
     			t = lineage.next_t
     			unless t.nil? then
-    			  l << t.name
+    			  l << t.name # add the taxon name to de lineage
     			  node = Node.find_by_id(t.id, @root)
-    			  if node.nil?
+    			  if node.nil? # if the node isn't create yet
     			    node = Node.new(t.id, t.name)
     			    last_node_loop = last_node_loop.add_child(node, @root);
   			    else
@@ -66,6 +67,21 @@ class SequencesController < ApplicationController
   	  else
   	    @root = @root.children[0].to_json
 	    end
+	    
+	    #Table stuff
+	    @table_lineages = Array.new
+	    @table_ranks = Array.new
+	    @table_lineages << @lineages.map{|lineage| lineage.name.name}
+	    @table_ranks << "Name"
+	    @lineages.map{|lineage| lineage.set_iterator_position(0)} #reset the iterator
+	    while @lineages[0].has_next?
+	      temp = @lineages.map{|lineage| lineage.next_t}
+	      if temp.compact.length > 0 # don't do anything if it only contains nils
+	        @table_lineages << temp
+	        @table_ranks << temp.compact[0].rank
+	      end
+      end
+	    @table_lineages = @table_lineages.transpose
     end
   end
   
