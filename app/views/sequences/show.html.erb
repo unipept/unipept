@@ -20,6 +20,7 @@
 	<% end %>
 	</p>
 	
+	<% colors = Hash.new %>
 	<h2>Table</h2>
 	<table><tbody>
 	<tr class="legende">
@@ -27,11 +28,18 @@
 			<td><%= rank %></td>
 		<% end %>
 	</tr>
+	<% i = -1 %>
 	<% for lineage in @table_lineages do%>
+		<% i += 1 %>
 		<tr>
 			<td><strong><%= lineage.delete_at(0) %></strong></td>
 			<% for rank in lineage do%>
-				<td class="klik" title="<%= rank.name %>"><%= rank.id %></td>
+			<% if !rank.nil? %>
+				<% colors.store(rank.id, "c"+(i%19).to_s) if !colors.has_key?(rank.id) %>
+				<td class="klik <%= colors[rank.id] %>" title="<%= rank.name %>"><%= rank.id %></td>
+			<% else %>
+				<td>null</td>
+			<% end %>
 			<% end %>
 		</tr>
 	<% end %>
