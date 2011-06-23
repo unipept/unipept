@@ -60,7 +60,7 @@ public class PeptideLoader {
 
 	public PeptideLoader(boolean emptyTheDatabase) {
 		// easy access to the database
-		data = new PeptideLoaderData(false);
+		data = new PeptideLoaderData();
 		if (emptyTheDatabase)
 			data.emptyAllTables();
 

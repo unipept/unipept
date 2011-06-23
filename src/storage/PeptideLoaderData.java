@@ -8,10 +8,6 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import org.ardverk.collection.PatriciaTrie;
-import org.ardverk.collection.StringKeyAnalyzer;
 
 /**
  * Intermediate class to add PeptideData to the database
@@ -31,27 +27,10 @@ public class PeptideLoaderData {
 	private PreparedStatement lineageExists;
 	private PreparedStatement getTaxon;
 
-	// use local key index
-	private final boolean localSequenceIndex;
-	private Map<String, Integer> index;
-
-	/**
-	 * Default constructor disables local index. If you don't know what you're
-	 * doing, use this.
-	 */
-	public PeptideLoaderData() {
-		this(false);
-	}
-
 	/**
 	 * Creates a new data object
-	 * 
-	 * @param useLocalSequenceIndex
-	 *            enables the use of a local sequence index to reduce database
-	 *            lookup and increase speed.
 	 */
-	public PeptideLoaderData(boolean useLocalSequenceIndex) {
-		localSequenceIndex = useLocalSequenceIndex;
+	public PeptideLoaderData() {
 		try {
 			connection = Database.getConnection();
 			prepareStatements();
@@ -60,16 +39,6 @@ public class PeptideLoaderData {
 					+ "Database connection failed");
 			e.printStackTrace();
 		}
-		if (localSequenceIndex)
-			initTrie();
-	}
-
-	/**
-	 * initializes the local sequence index
-	 */
-	private void initTrie() {
-		index = new PatriciaTrie<String, Integer>(StringKeyAnalyzer.INSTANCE);
-		// index = new HashMap<String, Integer>();
 	}
 
 	/**
@@ -151,12 +120,6 @@ public class PeptideLoaderData {
 	 * @return the database id of given sequence
 	 */
 	private int getSequenceId(String sequence) {
-		if (localSequenceIndex) {// if local index is enabled, try that one
-									// first
-			Integer i = index.get(sequence);
-			if (i != null)
-				return i;
-		}
 		try {
 			containsSequence.setString(1, sequence);
 			ResultSet res = containsSequence.executeQuery();
@@ -171,8 +134,6 @@ public class PeptideLoaderData {
 				res = addSequence.getGeneratedKeys();
 				res.next();
 				int id = res.getInt(1);
-				if (localSequenceIndex)
-					index.put(sequence, id);
 				res.close();
 				return id;
 			}
