@@ -22,4 +22,8 @@ class UniprotEntry < ActiveRecord::Base
   validates :taxon_id,  :presence   => true
   validates :type,  :presence   => true
   
+  set_inheritance_column do
+      original_inheritance_column + "_blablabla"
+    end
+  
 end

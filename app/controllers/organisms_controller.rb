@@ -7,8 +7,8 @@ class OrganismsController < ApplicationController
       flash[:error] = "No matches for #{params[:id]}"
       redirect_to organisms_path
     else
-      @genbank_files = GenbankFile.where("taxon_id = ?", params[:id]).group("project_id")
-      @aantal = @genbank_files.size.size # first size gives a count per project_id
+      @uniprot_entries = UniprotEntry.where("taxon_id = ?", params[:id]).group("uniprot_accession_number")
+      @aantal = @uniprot_entries.size.size # first size gives a count per project_id
       @title = @organism.name
     
       respond_to do |format|
