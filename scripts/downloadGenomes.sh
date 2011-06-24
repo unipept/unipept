@@ -3,21 +3,15 @@
 datadir="data"
 
 # create directory for storing genome sequences
-genomedir="${datadir}/genomes"
-bactdir="${genomedir}/bacteria"
-bactdir_complete="${bactdir}/complete"
+uniprotdir="${datadir}/uniprot"
 
-rm -r ${bactdir_complete}
-mkdir -p ${genomedir}
-mkdir -p ${bactdir}
-mkdir -p ${bactdir_complete}
+rm -r ${uniprotdir}
+mkdir -p ${uniprotdir}
 
-# download and unpack bacterial genomes
-cd "${bactdir_complete}"
-wget "ftp://ftp.ncbi.nih.gov/genomes/Bacteria/all.gbk.tar.gz"    # download genome sequences from NCBI (may take some time)
-tar xvzf all.gbk.tar.gz                                          # unpack genome sequences
-rm all.gbk.tar.gz
+# download and unpack data
+cd "${uniprotdir}"
+wget ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.xml.gz
+wget ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_trembl.xml.gz
 
-# create list of accession numbers
-cd ${genomedir}
-find ${genomedir} -name '*.gbk' | sed 's/\(.*\/\([^/.]*\).gbk\)/\2\t\1/' > acc.txt
+gunzip uniprot_sprot.xml.gz  
+gunzip uniprot_trembl.xml.gz 

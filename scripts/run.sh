@@ -1,1 +1,1 @@
-java -cp ".:bin:bin/:lib/mysql.jar" -Xmx1g tools/commandline/PeptideLoader data/complete.txt data/draft.txt
+java -cp ".:bin:bin/:lib/mysql.jar" -Xmx1g tools/commandline/PeptideLoader data/uniprot_sprot.xml data/uniprot_trembl.xml
