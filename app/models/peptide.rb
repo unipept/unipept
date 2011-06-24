@@ -2,9 +2,9 @@
 #
 # Table name: peptides
 #
-#  id              :integer(4)      not null, primary key
-#  sequence_id     :integer(4)      not null
-#  genbank_file_id :integer(4)      not null
+#  id               :integer(4)      not null, primary key
+#  sequence_id      :integer(4)      not null
+#  uniprot_entry_id :integer(4)      not null
 #
 
 class Peptide < ActiveRecord::Base

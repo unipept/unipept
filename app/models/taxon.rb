@@ -2,10 +2,10 @@
 #
 # Table name: taxons
 #
-#  id        :integer(4)      not null, primary key
+#  id        :integer(3)      not null, primary key
 #  name      :string(256)     not null
-#  rank      :string(16)
-#  parent_id :integer(4)
+#  rank      :string(0)
+#  parent_id :integer(3)
 #
 
 class Taxon < ActiveRecord::Base
