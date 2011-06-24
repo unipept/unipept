@@ -21,8 +21,8 @@ class Sequence < ActiveRecord::Base
     l = Lineage.find_by_sql("
     SELECT DISTINCT lineages.*
     FROM unipept.peptides 
-    INNER JOIN unipept.genbank_files ON (genbank_files.id = peptides.genbank_file_id) 
-    INNER JOIN unipept.lineages ON (genbank_files.taxon_id = lineages.taxon_id)
+    INNER JOIN unipept.uniprot_entries ON (uniprot_entries.id = peptides.uniprot_entry_id) 
+    INNER JOIN unipept.lineages ON (uniprot_entries.taxon_id = lineages.taxon_id)
     WHERE peptides.sequence_id = #{id}")
     #preload_associations(l, [:superkingdom_t]) if eager_load
     return l

@@ -11,6 +11,6 @@
 class Taxon < ActiveRecord::Base
   attr_accessible nil
   
-  scope :with_genome, select("DISTINCT taxons.*").joins("RIGHT JOIN genbank_files ON taxons.id = genbank_files.taxon_id")
+  scope :with_genome, select("DISTINCT taxons.*").joins("RIGHT JOIN uniprot_entries ON taxons.id = uniprot_entries.taxon_id")
   
 end
