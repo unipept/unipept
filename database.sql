@@ -11,7 +11,7 @@ USE `unipept` ;
 CREATE  TABLE IF NOT EXISTS `unipept`.`taxons` (
   `id` MEDIUMINT UNSIGNED NOT NULL ,
   `name` VARCHAR(256) NOT NULL ,
-  `rank` ENUM('no rank', 'superkingdom', 'kingdom', 'superphylum', 'phylum', 'subphylum', 'superclass', 'class', 'subclass', 'infraclass', 'superorder', 'order', 'suborder', 'infraorder', 'parvorder', 'superfamily', 'family', 'subfamily', 'tribe', 'subtribe', 'genus', 'subgenus', 'species_group', 'species_subgroup', 'species', 'subspecies', 'varietas', 'forma' ) NULL DEFAULT NULL ,
+  `rank` ENUM('no rank', 'superkingdom', 'kingdom', 'subkingdom', 'superphylum', 'phylum', 'subphylum', 'superclass', 'class', 'subclass', 'infraclass', 'superorder', 'order', 'suborder', 'infraorder', 'parvorder', 'superfamily', 'family', 'subfamily', 'tribe', 'subtribe', 'genus', 'subgenus', 'species group', 'species subgroup', 'species', 'subspecies', 'varietas', 'forma' ) NULL DEFAULT NULL ,
   `parent_id` MEDIUMINT UNSIGNED NULL DEFAULT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_taxon_taxon` (`parent_id` ASC) ,

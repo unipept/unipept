@@ -99,7 +99,9 @@ public class TaxonLoaderData {
 		try {
 			stmt = connection.createStatement();
 			try {
+				stmt.executeQuery("SET FOREIGN_KEY_CHECKS=0");
 				stmt.executeUpdate("TRUNCATE TABLE `taxons`");
+				stmt.executeQuery("SET FOREIGN_KEY_CHECKS=1");
 			} catch (SQLException e) {
 				System.err.println(new Timestamp(System.currentTimeMillis())
 						+ " Something went wrong truncating tables.");

@@ -7,7 +7,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import xml.UniprotEntry;
+
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 /**
  * Intermediate class to add PeptideData to the database
@@ -21,23 +27,27 @@ public class PeptideLoaderData {
 
 	private PreparedStatement containsSequence;
 	private PreparedStatement addSequence;
-	private PreparedStatement addGenbankFile;
+	private PreparedStatement addUniprotEntry;
 	private PreparedStatement addPeptide;
 	private PreparedStatement addLineage;
 	private PreparedStatement lineageExists;
 	private PreparedStatement getTaxon;
+
+	private Set<Integer> wrongTaxonIds;
 
 	/**
 	 * Creates a new data object
 	 */
 	public PeptideLoaderData() {
 		try {
+			wrongTaxonIds = new HashSet<Integer>();
 			connection = Database.getConnection();
 			prepareStatements();
 		} catch (SQLException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis())
 					+ "Database connection failed");
 			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 
@@ -51,12 +61,12 @@ public class PeptideLoaderData {
 			addSequence = connection.prepareStatement(
 					"INSERT INTO sequences (`sequence`) VALUES (?)",
 					Statement.RETURN_GENERATED_KEYS);
-			addGenbankFile = connection
+			addUniprotEntry = connection
 					.prepareStatement(
-							"INSERT INTO genbank_files (`project_id`, `accession_number`, `draft`, `taxon_id`, `hash`) VALUES (?,?,?,?,?)",
+							"INSERT INTO uniprot_entries (`uniprot_accession_number`, `version`, `taxon_id`, `type`) VALUES (?,?,?,?)",
 							Statement.RETURN_GENERATED_KEYS);
 			addPeptide = connection
-					.prepareStatement("INSERT INTO peptides (`sequence_id`, `genbank_file_id`) VALUES (?,?)");
+					.prepareStatement("INSERT INTO peptides (`sequence_id`, `uniprot_entry_id`) VALUES (?,?)");
 			addLineage = connection
 					.prepareStatement("INSERT INTO lineages (`taxon_id`) VALUES (?)");
 			lineageExists = connection
@@ -65,46 +75,55 @@ public class PeptideLoaderData {
 					.prepareStatement("SELECT rank, parent_id FROM taxons WHERE id = ?");
 		} catch (SQLException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis())
-					+ "Error creating prepared statements");
+					+ " Error creating prepared statements");
 			e.printStackTrace();
 		}
 	}
 
+	public void store(UniprotEntry entry) {
+		int uniprotEntryId = addUniprotEntry(entry.getUniprotAccessionNumber(), entry.getVersion(),
+				entry.getTaxonId(), entry.getType());
+		if (uniprotEntryId != -1) // failed to add entry
+			for (String sequence : entry.digest())
+				addData(sequence, uniprotEntryId);
+	}
+
 	/**
 	 * 
-	 * Inserts the file info of a Genbank file into the database and returns the
-	 * generated id.
+	 * Inserts the entry info of a uniprot entry into the database and returns
+	 * the generated id.
 	 * 
-	 * @param projectId
-	 *            The project ID stored in the file
-	 * @param accessionNumber
-	 *            The accession number stored in the file
-	 * @param draft
-	 *            Is this a draft genome?
+	 * @param uniprotAccessionNumber
+	 *            The accession number of the entry
+	 * @param version
+	 *            The version of the entry
 	 * @param taxonId
-	 *            The taxonId of the organism of which the genome is contained
-	 *            within the file
-	 * @param hash
-	 *            The MD5 hash of the Genbank file. This is used to know if the
-	 *            file is updated.
-	 * @return The database ID of the Genbank file.
+	 *            The taxonId of the organism of the entry
+	 * @param type
+	 *            The type of the entry. Can be swissprot or trembl
+	 * @return The database ID of the uniprot entry.
 	 */
-	public int addGenbankFile(String projectId, String accessionNumber, boolean draft, int taxonId,
-			String hash) {
+	public int addUniprotEntry(String uniprotAccessionNumber, int version, int taxonId, String type) {
 		try {
-			addGenbankFile.setString(1, projectId);
-			addGenbankFile.setString(2, accessionNumber);
-			addGenbankFile.setBoolean(3, draft);
-			addGenbankFile.setInt(4, taxonId);
-			addGenbankFile.setString(5, hash);
-			addGenbankFile.executeUpdate();
-			ResultSet res = addGenbankFile.getGeneratedKeys();
+			addUniprotEntry.setString(1, uniprotAccessionNumber);
+			addUniprotEntry.setInt(2, version);
+			addUniprotEntry.setInt(3, taxonId);
+			addUniprotEntry.setString(4, type);
+			addUniprotEntry.executeUpdate();
+			ResultSet res = addUniprotEntry.getGeneratedKeys();
 			res.next();
 			int id = res.getInt(1);
 			res.close();
 			return id;
+		} catch (MySQLIntegrityConstraintViolationException e) {
+			if (!wrongTaxonIds.contains(taxonId)) {
+				wrongTaxonIds.add(taxonId);
+				System.err.println(new Timestamp(System.currentTimeMillis()) + "" + taxonId
+						+ " added to the list of " + wrongTaxonIds.size() + " taxonIds.");
+			}
 		} catch (SQLException e) {
-			System.err.println(new Timestamp(System.currentTimeMillis()) + "Error executing query");
+			System.err.println(new Timestamp(System.currentTimeMillis())
+					+ " Error executing query with taxonId " + taxonId);
 			e.printStackTrace();
 		}
 		return -1;
@@ -150,18 +169,18 @@ public class PeptideLoaderData {
 	 * 
 	 * @param sequence
 	 *            The sequence of the peptide
-	 * @param genbankFileId
-	 *            The id of the Genbank file from which the peptide data was
+	 * @param uniprotEntryId
+	 *            The id of the uniprot entry from which the peptide data was
 	 *            retrieved.
 	 */
-	public void addData(String sequence, int genbankFileId) {
+	public void addData(String sequence, int uniprotEntryId) {
 		try {
 			addPeptide.setInt(1, getSequenceId(sequence));
-			addPeptide.setInt(2, genbankFileId);
+			addPeptide.setInt(2, uniprotEntryId);
 			addPeptide.executeUpdate();
 		} catch (SQLException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis())
-					+ "Error adding this peptide to the database: " + sequence);
+					+ " Error adding this peptide to the database: " + sequence);
 			e.printStackTrace();
 		}
 
@@ -265,10 +284,12 @@ public class PeptideLoaderData {
 		try {
 			stmt = connection.createStatement();
 			try {
+				stmt.executeQuery("SET FOREIGN_KEY_CHECKS=0");
 				stmt.executeUpdate("TRUNCATE TABLE `peptides`");
 				stmt.executeUpdate("TRUNCATE TABLE `sequences`");
-				stmt.executeUpdate("TRUNCATE TABLE `genbank_files`");
+				stmt.executeUpdate("TRUNCATE TABLE `uniprot_entries`");
 				stmt.executeUpdate("TRUNCATE TABLE `lineages`");
+				stmt.executeQuery("SET FOREIGN_KEY_CHECKS=1");
 			} catch (SQLException e) {
 				System.err.println(new Timestamp(System.currentTimeMillis())
 						+ " Something went wrong truncating tables.");
