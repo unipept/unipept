@@ -98,20 +98,26 @@ public class PeptideLoader {
 	 */
 	public static void main(String[] args) {
 		// Process input
-		if (args.length != 2) {
-			System.out.println("Usage: java PeptideLoader swissprot.xml trembl.xml");
+		if (args.length != 1 && args.length != 2) {
+			System.out.println("To load data: java PeptideLoader swissprot.xml trembl.xml");
+			System.out.println("To fix lineages: java PeptideLoader lineages");
 			System.exit(-1);
 		}
+		if (!args[0].equals("lineages")) {
+			// create a new loader object
+			PeptideLoader loader = new PeptideLoader(true);
 
-		// create a new loader object
-		PeptideLoader loader = new PeptideLoader(true);
+			// process the swissprot input file
+			loader.processFile(args[0], true);
 
-		// process the swissprot input file
-		loader.processFile(args[0], true);
+			// process the tremble input file
+			loader.processFile(args[1], false);
 
-		// process the tremble input file
-		loader.processFile(args[1], false);
-
-		loader.addLineage();
+			loader.addLineage();
+		} else {
+			// create a new loader object
+			PeptideLoader loader = new PeptideLoader(false);
+			loader.addLineage();
+		}
 	}
 }
