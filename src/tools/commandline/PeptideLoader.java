@@ -110,8 +110,8 @@ public class PeptideLoader {
 		loader.processFile(args[0], true);
 
 		// process the tremble input file
-		// loader.processFile(args[1], false);
+		loader.processFile(args[1], false);
 
-		// loader.addLineage();
+		loader.addLineage();
 	}
 }
