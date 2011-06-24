@@ -2,24 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="/Software/biojava-1.7.1-all/biojava-1.7.1/apps-1.7.1.jar"/>
-	<classpathentry kind="lib" path="/Software/biojava-1.7.1-all/biojava-1.7.1/biojava-1.7.1.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/Software/biojava-1.7.1-all/biojava-1.7.1/doc/biojava/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/Software/biojava-1.7.1-all/biojava-1.7.1/bytecode.jar"/>
-	<classpathentry kind="lib" path="/Software/biojava-1.7.1-all/biojava-1.7.1/commons-cli.jar"/>
-	<classpathentry kind="lib" path="/Software/biojava-1.7.1-all/biojava-1.7.1/commons-collections-2.1.jar"/>
-	<classpathentry kind="lib" path="/Software/biojava-1.7.1-all/biojava-1.7.1/commons-dbcp-1.1.jar"/>
-	<classpathentry kind="lib" path="/Software/biojava-1.7.1-all/biojava-1.7.1/commons-pool-1.1.jar"/>
-	<classpathentry kind="lib" path="/Software/biojava-1.7.1-all/biojava-1.7.1/jgrapht-jdk1.5.jar"/>
-	<classpathentry kind="lib" path="/Software/biojava-1.7.1-all/biojava-1.7.1/junit-4.4.jar"/>
-	<classpathentry kind="lib" path="/Software/patricia-trie-0.2/patricia-trie-0.2.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/Software/patricia-trie-0.2/api/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="/Software/mysql-connector-java-5.1.13/mysql-connector-java-5.1.13-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
