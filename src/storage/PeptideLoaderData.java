@@ -80,6 +80,12 @@ public class PeptideLoaderData {
 		}
 	}
 
+	/**
+	 * Stores a complete UniprotEntry in the database
+	 * 
+	 * @param entry
+	 *            the UniprotEntry to store
+	 */
 	public void store(UniprotEntry entry) {
 		int uniprotEntryId = addUniprotEntry(entry.getUniprotAccessionNumber(), entry.getVersion(),
 				entry.getTaxonId(), entry.getType());
@@ -118,12 +124,12 @@ public class PeptideLoaderData {
 		} catch (MySQLIntegrityConstraintViolationException e) {
 			if (!wrongTaxonIds.contains(taxonId)) {
 				wrongTaxonIds.add(taxonId);
-				System.err.println(new Timestamp(System.currentTimeMillis()) + "" + taxonId
+				System.err.println(new Timestamp(System.currentTimeMillis()) + " " + taxonId
 						+ " added to the list of " + wrongTaxonIds.size() + " taxonIds.");
 			}
 		} catch (SQLException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis())
-					+ " Error executing query with taxonId " + taxonId);
+					+ " Error executing query.");
 			e.printStackTrace();
 		}
 		return -1;
@@ -158,7 +164,7 @@ public class PeptideLoaderData {
 			}
 		} catch (SQLException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis())
-					+ "Error getting id of sequence " + sequence);
+					+ " Error getting id of sequence " + sequence);
 			e.printStackTrace();
 		}
 		return -1;
@@ -198,7 +204,7 @@ public class PeptideLoaderData {
 		try {
 			stmt = connection.createStatement();
 			try {
-				ResultSet rs = stmt.executeQuery("SELECT DISTINCT taxon_id FROM genbank_files");
+				ResultSet rs = stmt.executeQuery("SELECT DISTINCT taxon_id FROM uniprot_entries");
 				while (rs.next())
 					result.add(rs.getInt(1));
 				rs.close();

@@ -16,8 +16,8 @@ import storage.PeptideLoaderData;
 import xml.UniprotHandler;
 
 /**
- * This script parses genbank files, extracts the protein information and puts
- * the peptides in the database.
+ * This script parses uniprot xml files, extracts the protein information and
+ * puts the peptides in the database.
  * 
  * BEFORE ADDING PEPTIDES TO THE DATABASE, ALL TABLES ARE TRUNCATED.
  * 
