@@ -125,7 +125,7 @@ public class PeptideLoaderData {
 			if (!wrongTaxonIds.contains(taxonId)) {
 				wrongTaxonIds.add(taxonId);
 				System.err.println(new Timestamp(System.currentTimeMillis()) + " " + taxonId
-						+ " added to the list of " + wrongTaxonIds.size() + " taxonIds.");
+						+ " added to the list of " + wrongTaxonIds.size() + " invalid taxonIds.");
 			}
 		} catch (SQLException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis())

@@ -24,7 +24,7 @@ public class UniprotEntry {
 		if (isSwissprot)
 			type = "swissprot";
 		else
-			type = "tremble";
+			type = "trembl";
 	}
 
 	public String getUniprotAccessionNumber() {
