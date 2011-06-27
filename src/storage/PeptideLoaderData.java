@@ -239,6 +239,7 @@ public class PeptideLoaderData {
 				addLineage.execute();
 				updateLineage(taxonId, taxonId);
 			}
+			rs.close();
 		} catch (SQLException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis())
 					+ " Something went wrong with the database");
@@ -274,11 +275,13 @@ public class PeptideLoaderData {
 					Statement stmt = connection.createStatement();
 					stmt.executeUpdate("UPDATE lineages SET `" + rank + "` = " + parentId
 							+ " WHERE `taxon_id` = " + taxonId);
+					stmt.close();
 				}
 
 				// recursion if fun!
 				updateLineage(taxonId, rs.getInt("parent_id"));
 			}
+			rs.close();
 		}
 	}
 
