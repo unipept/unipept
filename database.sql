@@ -52,6 +52,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`lineages` (
   `taxon_id` MEDIUMINT UNSIGNED NOT NULL ,
   `superkingdom` MEDIUMINT UNSIGNED NULL DEFAULT NULL ,
   `kingdom` MEDIUMINT UNSIGNED NULL DEFAULT NULL ,
+  `subkingdom` MEDIUMINT UNSIGNED NULL ,
   `superphylum` MEDIUMINT UNSIGNED NULL DEFAULT NULL ,
   `phylum` MEDIUMINT UNSIGNED NULL DEFAULT NULL ,
   `subphylum` MEDIUMINT UNSIGNED NULL DEFAULT NULL ,
@@ -98,7 +99,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
   UNIQUE INDEX `uidx_sequence` (`sequence` ASC) )
 ENGINE = InnoDB
 AUTO_INCREMENT = 17232835
-DEFAULT CHARACTER SET = utf8;
+DEFAULT CHARACTER SET = ascii;
 
 
 -- -----------------------------------------------------
