@@ -65,8 +65,8 @@ public class UniprotEntry {
 
 	public List<String> digest() {
 		List<String> list = new ArrayList<String>();
-		String s = sequence.replaceAll("([RK])([^P])", "$1,$2");
-		String[] splitArray = s.split(",");
+		String[] splitArray = sequence.replaceAll("([RK])([^P])", "$1,$2")
+				.replaceAll("([RK])([^P,])", "$1,$2").split(",");
 		for (String seq : splitArray) {
 			if (seq.length() >= MIN_PEPT_SIZE && seq.length() <= MAX_PEPT_SIZE) {
 				if (REPLACE_LEUCINE)
