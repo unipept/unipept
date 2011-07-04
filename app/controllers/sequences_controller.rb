@@ -18,6 +18,8 @@ class SequencesController < ApplicationController
     else
       @title = @sequence.sequence
       
+      @entries = @sequence.peptides.map(&:uniprot_entry)
+      
       #try to determine the LCA
       @lineages = @sequence.lineages #calculate lineages
       @lca_taxon = Lineage.calculate_lca_taxon(@lineages) #calculate the LCA

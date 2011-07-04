@@ -51,6 +51,13 @@
 	<h2>External links</h2>
 	<ul>
 		<li> <%= link_to "Blast this peptide" , "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on&USER_FORMAT_DEFAULTS=on&PAGE=Proteins&PROGRAM=blastp&QUERY="+@sequence.sequence+"&GAPCOSTS=11%201&EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&DATABASE=nr&BLAST_PROGRAMS=blastp&MAX_NUM_SEQ=100&SHORT_QUERY_ADJUST=on&EXPECT=10&WORD_SIZE=3&MATRIX_NAME=BLOSUM62&COMPOSITION_BASED_STATISTICS=2&SHOW_OVERVIEW=on&SHOW_LINKOUT=on&ALIGNMENT_VIEW=Pairwise&MASK_CHAR=2&MASK_COLOR=1&GET_SEQUENCE=on&NEW_VIEW=on&NUM_OVERVIEW=100&DESCRIPTIONS=100&ALIGNMENTS=100&FORMAT_OBJECT=Alignment&FORMAT_TYPE=HTML&OLD_BLAST=false", :target => "_blank" %> <%= image_tag("externesite.gif", :alt => "Blast")%></li>
+		
+		<li> Open in uniprot: </li>
+		<ul>
+			<% for entry in @entries do %>
+			<li><%= link_to entry.name.name, "http://www.uniprot.org/uniprot/"+entry.uniprot_accession_number, :target => "_blank" %> <%= image_tag("externesite.gif", :alt => "Uniprot")%></li>
+			<% end %>
+		</ul>
 	</ul>
 
 	<!-- JIT Library File --> 
