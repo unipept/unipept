@@ -41,7 +41,6 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`uniprot_entries` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-AUTO_INCREMENT = 1136
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -98,7 +97,6 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
   PRIMARY KEY (`id`) ,
   UNIQUE INDEX `uidx_sequence` (`sequence` ASC) )
 ENGINE = InnoDB
-AUTO_INCREMENT = 17232835
 DEFAULT CHARACTER SET = ascii;
 
 
@@ -123,7 +121,6 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`peptides` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-AUTO_INCREMENT = 26402948
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -143,7 +140,8 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`uniprot_cross_references` (
     REFERENCES `unipept`.`uniprot_entries` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 
