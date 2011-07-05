@@ -40,9 +40,9 @@ public class ParseFix {
 	private void prepareStatements() {
 		try {
 			kSequences = connection
-					.prepareStatement("SELECT * FROM sequences WHERE `sequence` LIKE 'K%'");
+					.prepareStatement("SELECT * FROM sequences WHERE `sequence` LIKE 'K%' LIMIT 1000");
 			rSequences = connection
-					.prepareStatement("SELECT * FROM sequences WHERE `sequence` LIKE 'R%'");
+					.prepareStatement("SELECT * FROM sequences WHERE `sequence` LIKE 'R%' LIMIT 1000");
 			containsSequence = connection
 					.prepareStatement("SELECT id FROM sequences WHERE `sequence` = ?");
 			replacePeptide = connection
