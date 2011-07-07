@@ -16,8 +16,10 @@ public class UniprotHandler extends DefaultHandler {
 	private final PeptideLoaderData pld;
 
 	private UniprotEntry currentItem;
+	private UniprotDbRef dbRef;
 	private StringBuilder charData;
 	private int i;
+	private boolean inOrganism = false;
 
 	private Map<String, EndTagWorker> endTagWorkers;
 	private Map<String, StartTagWorker> startTagWorkers;
@@ -29,7 +31,7 @@ public class UniprotHandler extends DefaultHandler {
 		charData = new StringBuilder();
 		i = 0;
 
-		// set up workers
+		// set up end tag workers
 		endTagWorkers = new HashMap<String, EndTagWorker>();
 		endTagWorkers.put("entry", new EndTagWorker() {
 			@Override
@@ -50,7 +52,7 @@ public class UniprotHandler extends DefaultHandler {
 		endTagWorkers.put("organism", new EndTagWorker() {
 			@Override
 			public void handleTag(String data) {
-				startTagWorkers.remove("organism");
+				inOrganism = false;
 			}
 		});
 		endTagWorkers.put("sequence", new EndTagWorker() {
@@ -59,8 +61,17 @@ public class UniprotHandler extends DefaultHandler {
 				currentItem.setSequence(data);
 			}
 		});
+		endTagWorkers.put("dbReference", new EndTagWorker() {
+			@Override
+			public void handleTag(String data) {
+				if (!inOrganism && dbRef != null) {
+					currentItem.addDbRef(dbRef);
+					dbRef = null;
+				}
+			}
+		});
 
-		// set up workers
+		// set up start tag workers
 		startTagWorkers = new HashMap<String, StartTagWorker>();
 		startTagWorkers.put("entry", new StartTagWorker() {
 			@Override
@@ -72,13 +83,35 @@ public class UniprotHandler extends DefaultHandler {
 		startTagWorkers.put("organism", new StartTagWorker() {
 			@Override
 			public void handleTag(Attributes atts) {
-				startTagWorkers.put("dbReference", new StartTagWorker() {
-					@Override
-					public void handleTag(Attributes atts) {
-						if (atts.getValue("type").equals("NCBI Taxonomy"))
-							currentItem.setTaxonId(Integer.valueOf(atts.getValue("id")));
-					}
-				});
+				inOrganism = true;
+			}
+		});
+		startTagWorkers.put("dbReference", new StartTagWorker() {
+			@Override
+			public void handleTag(Attributes atts) {
+				if (inOrganism) {
+					if (atts.getValue("type").equals("NCBI Taxonomy"))
+						currentItem.setTaxonId(Integer.valueOf(atts.getValue("id")));
+				}
+				if (atts.getValue("type").equals("EMBL")) {
+					dbRef = new UniprotDbRef("EMBL");
+					dbRef.setSequenceId(atts.getValue("id"));
+				}
+				if (atts.getValue("type").equals("RefSeq")) {
+					dbRef = new UniprotDbRef("RefSeq");
+					dbRef.setProteinId(atts.getValue("id"));
+				}
+			}
+		});
+		startTagWorkers.put("property", new StartTagWorker() {
+			@Override
+			public void handleTag(Attributes atts) {
+				if (dbRef != null) {
+					if (atts.getValue("type").equals("protein sequence ID"))
+						dbRef.setProteinId(atts.getValue("value"));
+					if (atts.getValue("type").equals("nucleotide sequence ID"))
+						dbRef.setSequenceId(atts.getValue("value"));
+				}
 			}
 		});
 	}

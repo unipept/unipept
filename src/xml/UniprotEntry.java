@@ -19,12 +19,14 @@ public class UniprotEntry {
 	private int taxonId;
 	private String type;
 	private String sequence;
+	private List<UniprotDbRef> dbReferences;
 
 	public UniprotEntry(boolean isSwissprot) {
 		if (isSwissprot)
 			type = "swissprot";
 		else
 			type = "trembl";
+		dbReferences = new ArrayList<UniprotDbRef>();
 	}
 
 	public String getUniprotAccessionNumber() {
@@ -63,6 +65,10 @@ public class UniprotEntry {
 		this.sequence = sequence;
 	}
 
+	public void addDbRef(UniprotDbRef ref) {
+		dbReferences.add(ref);
+	}
+
 	public List<String> digest() {
 		List<String> list = new ArrayList<String>();
 		String[] splitArray = sequence.replaceAll("([RK])([^P])", "$1,$2")
@@ -75,6 +81,10 @@ public class UniprotEntry {
 			}
 		}
 		return list;
+	}
+
+	public List<UniprotDbRef> getReferences() {
+		return dbReferences;
 	}
 
 	@Override

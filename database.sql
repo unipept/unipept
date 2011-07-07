@@ -41,6 +41,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`uniprot_entries` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
+AUTO_INCREMENT = 1136
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -51,7 +52,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`lineages` (
   `taxon_id` MEDIUMINT UNSIGNED NOT NULL ,
   `superkingdom` MEDIUMINT UNSIGNED NULL DEFAULT NULL ,
   `kingdom` MEDIUMINT UNSIGNED NULL DEFAULT NULL ,
-  `subkingdom` MEDIUMINT UNSIGNED NULL DEFAULT NULL,
+  `subkingdom` MEDIUMINT UNSIGNED NULL ,
   `superphylum` MEDIUMINT UNSIGNED NULL DEFAULT NULL ,
   `phylum` MEDIUMINT UNSIGNED NULL DEFAULT NULL ,
   `subphylum` MEDIUMINT UNSIGNED NULL DEFAULT NULL ,
@@ -97,6 +98,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
   PRIMARY KEY (`id`) ,
   UNIQUE INDEX `uidx_sequence` (`sequence` ASC) )
 ENGINE = InnoDB
+AUTO_INCREMENT = 17232835
 DEFAULT CHARACTER SET = ascii;
 
 
@@ -121,6 +123,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`peptides` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
+AUTO_INCREMENT = 26402948
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -130,9 +133,9 @@ DEFAULT CHARACTER SET = utf8;
 CREATE  TABLE IF NOT EXISTS `unipept`.`uniprot_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `sequence_id` VARCHAR(15) NULL ,
+  `type` ENUM('RefSeq', 'EMBL') NOT NULL ,
   `protein_id` VARCHAR(15) NULL ,
-  `type` ENUM('refseq', 'EMBL') NOT NULL ,
+  `sequence_id` VARCHAR(15) NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_uniprot_cross_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
   CONSTRAINT `fk_uniprot_cross_reference_uniprot_entries`

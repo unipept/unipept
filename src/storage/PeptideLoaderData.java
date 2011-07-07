@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import xml.UniprotDbRef;
 import xml.UniprotEntry;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
@@ -30,6 +31,7 @@ public class PeptideLoaderData {
 	private PreparedStatement addUniprotEntry;
 	private PreparedStatement addPeptide;
 	private PreparedStatement addLineage;
+	private PreparedStatement addDbRef;
 	private PreparedStatement lineageExists;
 	private PreparedStatement getTaxon;
 
@@ -69,6 +71,8 @@ public class PeptideLoaderData {
 					.prepareStatement("INSERT INTO peptides (`sequence_id`, `uniprot_entry_id`) VALUES (?,?)");
 			addLineage = connection
 					.prepareStatement("INSERT INTO lineages (`taxon_id`) VALUES (?)");
+			addDbRef = connection
+					.prepareStatement("INSERT INTO uniprot_cross_references (`uniprot_entry_id`, `type`, `protein_id`, `sequence_id`) VALUES (?,?,?,?)");
 			lineageExists = connection
 					.prepareStatement("SELECT COUNT(*) AS aantal FROM lineages WHERE `taxon_id` = ?");
 			getTaxon = connection
@@ -89,9 +93,12 @@ public class PeptideLoaderData {
 	public void store(UniprotEntry entry) {
 		int uniprotEntryId = addUniprotEntry(entry.getUniprotAccessionNumber(), entry.getVersion(),
 				entry.getTaxonId(), entry.getType());
-		if (uniprotEntryId != -1) // failed to add entry
+		if (uniprotEntryId != -1) { // failed to add entry
 			for (String sequence : entry.digest())
 				addData(sequence, uniprotEntryId);
+			for (UniprotDbRef ref : entry.getReferences())
+				addDbRef(ref, uniprotEntryId);
+		}
 	}
 
 	/**
@@ -187,6 +194,28 @@ public class PeptideLoaderData {
 		} catch (SQLException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis())
 					+ " Error adding this peptide to the database: " + sequence);
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Adds a uniprot entry cross reference to the database
+	 * 
+	 * @param ref
+	 *            The uniprot cross reference to add
+	 * @param uniprotEntryId
+	 *            The uniprotEntry of the cross reference
+	 */
+	public void addDbRef(UniprotDbRef ref, int uniprotEntryId) {
+		try {
+			addDbRef.setInt(1, uniprotEntryId);
+			addDbRef.setString(2, ref.getType());
+			addDbRef.setString(3, ref.getProteinId());
+			addDbRef.setString(4, ref.getSequenceId());
+			addDbRef.executeUpdate();
+		} catch (SQLException e) {
+			System.err.println(new Timestamp(System.currentTimeMillis())
+					+ " Error adding this cross reference to the database.");
 			e.printStackTrace();
 		}
 
