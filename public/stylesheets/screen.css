@@ -1937,6 +1937,12 @@ header, footer{
 
 /* table colors */
 
+#sequence_table{
+	overflow: auto;
+	overflow-y: hidden;
+	-ms-overflow-y: hidden;
+}
+
 .c0{
 	background: #ffffff;
 }
