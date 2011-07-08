@@ -23,7 +23,7 @@ class SequencesController < ApplicationController
       #try to determine the LCA
       @lineages = @sequence.lineages #calculate lineages
       @lca_taxon = Lineage.calculate_lca_taxon(@lineages) #calculate the LCA
-      @root = Node.new(0, "root") #start constructing the tree
+      @root = Node.new(1, "root", "no rank") #start constructing the tree
       last_node = @root
       
       #common lineage
@@ -123,8 +123,9 @@ class SequencesController < ApplicationController
     end    
     
     #treemap stuff
-    @root = TreeMapNode.new(0, "root")
-    @matches.each do |taxon, sequences|    
+    @root = TreeMapNode.new(1, "root", "no rank")
+    @matches.each do |taxon, sequences|   
+      @root.add_sequences(sequences)
       lca_l = Lineage.find_by_taxon_id(taxon.id)
       last_node_loop = @root
       while !lca_l.nil? && lca_l.has_next?
@@ -133,14 +134,14 @@ class SequencesController < ApplicationController
           node = TreeMapNode.find_by_id(t.id, @root)
     		  if node.nil?
     		    node = TreeMapNode.new(t.id, t.name, t.rank)
-    		    last_node_loop = last_node_loop.add_child(node, @root);
+    		    last_node_loop = last_node_loop.add_child(node, @root)
     	    else
-    	      last_node_loop = node;
+    	      last_node_loop = node
           end
-          node.add_sequences(sequences);
+          node.add_sequences(sequences)
         end
       end
-      node = TreeMapNode.find_by_id(taxon.id, @root)
+      node = taxon.id == 1 ? @root : TreeMapNode.find_by_id(taxon.id, @root)
       node.add_own_sequences(sequences) unless node.nil?
     end
   	#don't show the root when we don't need it
