@@ -105,7 +105,7 @@ class SequencesController < ApplicationController
     @title = "Results"
     
     # remove duplicates, split missed cleavages, substitute I by L
-    data = params[:q][0].gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/I/,'L').lines.map(&:strip).to_a.uniq
+    data = params[:q][0].gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/I/,'L').lines.map(&:strip).to_a.select{|l| l.size >= 8 && l.size <= 50 }.uniq
     
     @number_searched_for = data.length
     @number_found = 0
