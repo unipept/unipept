@@ -26,7 +26,7 @@ function init(data) {
     initJsTree(data);
 }
 
-function initTreeMap(data) {
+function initTreeMap(jsonData) {
     //init TreeMap
     var tm = new $jit.TM.Squarified({
         //where to inject the visualization
@@ -34,7 +34,7 @@ function initTreeMap(data) {
         //parent box title heights
         titleHeight: 15,
         //enable animations
-        animate: animate,
+        animate: true,
         //box offsets
         offset: 0,
         //constrained: true,
@@ -50,10 +50,14 @@ function initTreeMap(data) {
                 }
             },
             onRightClick: function() {
-                tm.out();
-            }
+				//TODO: replace this if bug in JIT gets fixed
+				tm.out();
+            },
+			onMouseWheel: function(){
+				tm.out();
+			}
         },
-        duration: 1000,
+        duration: 500, //TODO: JIT bug
         //Enable tips
         Tips: {
             enable: true,
@@ -94,7 +98,7 @@ function initTreeMap(data) {
             };
         }
     });
-    tm.loadJSON(data);
+    tm.loadJSON(jsonData);
     tm.refresh();
     //end
 }
