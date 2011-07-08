@@ -39,7 +39,7 @@
 					<% colors.store(rank.id, "c"+(i%19).to_s) if !colors.has_key?(rank.id) %>
 					<td class="klik <%= colors[rank.id] %>" title="<%= rank.name %>"><%= rank.id %></td>
 				<% else %>
-					<td>null</td>
+					<td></td>
 				<% end %>
 				<% end %>
 			</tr>
