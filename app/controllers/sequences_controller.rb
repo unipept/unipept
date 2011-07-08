@@ -83,7 +83,7 @@ class SequencesController < ApplicationController
 	        @table_ranks << temp.compact[0].rank
 	      end
       end
-	    @table_lineages = @table_lineages.transpose
+	    @table_lineages = @table_lineages.transpose.sort_by!{ |k| k[1..-1].map!{|l| l || Taxon.find(1)} }
     end
   end
   
