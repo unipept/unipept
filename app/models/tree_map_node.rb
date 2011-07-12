@@ -2,7 +2,7 @@ class TreeMapNode < Node
   #:metadata contains the sequences
   attr_accessor :state, :metadata, :attr
   
-  GRADIENT = ["#382413", "#3A2D11", "#3F3A0F", "#3C420D", "#35470A", "#284907", "#30540C", "#3B6013", "#446B1B", "#517725", "#5B822E", "#799341", "#98A557", "#B5B56E", "#C6BD8B", "#D8CAA9"]
+  GRADIENT = ["#382413", "#3D3111", "#42420E", "#36440B", "#284907", "#33590E", "#406617", "#4D7522", "#5B822E", "#718E3B", "#879B4A", "#9DA85A", "#B0B26B", "#BFB97E", "#CCC192", "#D8CAA9"]
   
   def initialize(id, name, rank="")
     super(id, name)

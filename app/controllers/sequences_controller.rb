@@ -23,7 +23,7 @@ class SequencesController < ApplicationController
       #try to determine the LCA
       @lineages = @sequence.lineages #calculate lineages
       @lca_taxon = Lineage.calculate_lca_taxon(@lineages) #calculate the LCA
-      @root = Node.new(1, "root", "no rank") #start constructing the tree
+      @root = Node.new(1, "root") #start constructing the tree
       last_node = @root
       
       #common lineage
