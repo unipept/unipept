@@ -1,7 +1,7 @@
 /**
  * Unobtrusive scripting adapter for jQuery
  *
- * Requires jQuery 1.6.0 or later.
+ * Requires jQuery 1.4.4 or later.
  * https://github.com/rails/jquery-ujs
 
  * Uploading file using rails.js
@@ -116,8 +116,8 @@
         } else if (element.is('select')) {
           method = element.data('method');
           url = element.data('url');
-          data = element.serialize();
-          if (element.data('params')) data = data + "&" + element.data('params'); 
+					data = element.serialize();
+					if (element.data('params')) data = data + "&" + element.data('params'); 
         } else {
            method = element.data('method');
            url = element.attr('href');
@@ -255,7 +255,12 @@
     }
   };
 
-  $.ajaxPrefilter(function(options, originalOptions, xhr){ if ( !options.crossDomain ) { rails.CSRFProtection(xhr); }});
+  // ajaxPrefilter is a jQuery 1.5 feature
+  if ('ajaxPrefilter' in $) {
+    $.ajaxPrefilter(function(options, originalOptions, xhr){ if ( !options.crossDomain ) { rails.CSRFProtection(xhr); }});
+  } else {
+    $(document).ajaxSend(function(e, xhr, options){ if ( !options.crossDomain ) { rails.CSRFProtection(xhr); }});
+  }
 
   $(rails.linkClickSelector).live('click.rails', function(e) {
     var link = $(this);

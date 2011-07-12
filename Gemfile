@@ -8,6 +8,7 @@ gem 'jquery-rails', '>= 0.2.6'
 group :development do
   gem 'rspec-rails'
 	gem 'annotate-models'
+	gem "rake", "0.8.7"
 end
 
 group :test do
