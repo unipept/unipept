@@ -18,7 +18,7 @@ animate;
     animate = !(iStuff || !nativeCanvasSupport);
 })();
 
-function init(data) {
+function init(data, lcaId) {
     //Create a new SpaceTree instance
     var st = new $jit.ST({
         injectInto: 'lineageTree',
@@ -119,12 +119,17 @@ function init(data) {
             }
         }
     });
+	//load json data
     st.loadJSON(data);
-    //load json data
+    
+	//compute node positions and layout
     st.compute();
-    //compute node positions and layout
+    
+	//optional: make a translation of the tree
     st.geom.translate(new $jit.Complex( - 200, 0), "current");
-    //optional: make a translation of the tree
-    st.onClick(st.root);
-    //emulate a click on the root node.
+    
+	//emulate a click on the root node.
+    //st.onClick(st.root);
+	st.onClick(lcaId);
+    
 }
