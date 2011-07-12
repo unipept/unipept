@@ -36,7 +36,7 @@
 				<td><strong><%= lineage.delete_at(0) %></strong></td>
 				<% for rank in lineage do%>
 				<% if !rank.nil? %>
-					<% colors.store(rank.id, "c"+(i%19).to_s) if !colors.has_key?(rank.id) %>
+					<% colors.store(rank.id, "c"+(i%30).to_s) if !colors.has_key?(rank.id) %>
 					<td class="center klik <%= colors[rank.id] %>" title="<%= rank.name %>"><%= rank.id %></td>
 				<% else %>
 					<td></td>
