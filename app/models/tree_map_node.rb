@@ -2,7 +2,7 @@ class TreeMapNode < Node
   #:metadata contains the sequences
   attr_accessor :state, :metadata, :attr
   
-  GRADIENT = ["#002F2F", "#003638", "#013d40", "#01444a", "#014a52", "#02505c", "#025563", "#025a6e", "#045f75", "#046380"]
+  GRADIENT = ["#382413", "#3A2D11", "#3F3A0F", "#3C420D", "#35470A", "#284907", "#30540C", "#3B6013", "#446B1B", "#517725", "#5B822E", "#799341", "#98A557", "#B5B56E", "#C6BD8B", "#D8CAA9"]
   
   def initialize(id, name, rank="")
     super(id, name)
@@ -27,7 +27,7 @@ class TreeMapNode < Node
   # adds a child to this node and updates the color of the child
   # returns the added child
   def add_child(child, root)
-    child.data[:level] = @data[:level]+1 if @data[:level] < 9
+    child.data[:level] = @data[:level]+1 if @data[:level] < GRADIENT.size
     child.data[:$color] = GRADIENT[child.data[:level]]
     super(child, root)
   end
