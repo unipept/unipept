@@ -52,10 +52,10 @@ function initTreeMap(jsonData) {
             onRightClick: function() {
 				//TODO: replace this if bug in JIT gets fixed
 				tm.out();
-            },
+            }/*,
 			onMouseWheel: function(){
 				tm.out();
-			}
+			}*/
         },
         duration: 500, //TODO: JIT bug
         //Enable tips
