@@ -39,7 +39,7 @@ class SequencesController < ApplicationController
           last_node = last_node.add_child(Node.new(t.id, t.name), @root)
         end
       end
-      @common_lineage = common_lineage.map(&:name).join(", ")    
+      @common_lineage = common_lineage.map(&:name).join(" > ")    
       
       #distinct lineage 
       @lineages.map{|lineage| lineage.set_iterator_position(l.get_iterator_position)}
