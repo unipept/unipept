@@ -68,11 +68,7 @@ function initTreeMap(jsonData) {
             //add content to the tooltip when a node
             //is hovered
             onShow: function(tip, node, isLeaf, domElement) {
-                var title = "";
-                if (node.data.count != 0)
-                title = node.name + " (" + node.data.count + ")";
-                else
-                title = node.name;
+                var title = node.name + " (" + (!node.data.self_count ? "0" : node.data.self_count) + "/" + (!node.data.count ? "0" : node.data.count) + ")";
                 var html = "<div class=\"tip-title\">" + title
                 + "</div><div class=\"tip-text\"></div>";
                 var data = node.data;
@@ -83,10 +79,7 @@ function initTreeMap(jsonData) {
         //Add the name of the node in the correponding label
         //This method is called once, on label creation.
         onCreateLabel: function(domElement, node) {
-            if (node.data.count != 0)
-            domElement.innerHTML = node.name + " (" + node.data.count + ")";
-            else
-            domElement.innerHTML = node.name;
+            domElement.innerHTML = node.name + " (" + (!node.data.self_count ? "0" : node.data.self_count) + "/" + (!node.data.count ? "0" : node.data.count) + ")";
             var style = domElement.style;
             style.display = '';
             style.border = '2px solid transparent';
