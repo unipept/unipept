@@ -1,22 +1,21 @@
 var labelType,
-useGradients,
-nativeTextSupport,
-animate;
+	useGradients,
+	nativeTextSupport,
+	animate;
 
- (function() {
+(function () {
     var ua = navigator.userAgent,
-    iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
-    typeOfCanvas = typeof HTMLCanvasElement,
-    nativeCanvasSupport = (typeOfCanvas == 'object' || typeOfCanvas == 'function'),
-    textSupport = nativeCanvasSupport
-    && (typeof document.createElement('canvas').getContext('2d').fillText == 'function');
+		iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
+		typeOfCanvas = typeof HTMLCanvasElement,
+		nativeCanvasSupport = (typeOfCanvas === 'object' || typeOfCanvas === 'function'),
+		textSupport = nativeCanvasSupport && (typeof document.createElement('canvas').getContext('2d').fillText === 'function');
     //I'm setting this based on the fact that ExCanvas provides text support for IE
     //and that as of today iPhone/iPad current text support is lame
-    labelType = (!nativeCanvasSupport || (textSupport && !iStuff)) ? 'Native': 'HTML';
-    nativeTextSupport = labelType == 'Native';
+    labelType = (!nativeCanvasSupport || (textSupport && !iStuff)) ? 'Native' : 'HTML';
+    nativeTextSupport = labelType === 'Native';
     useGradients = nativeCanvasSupport;
     animate = !(iStuff || !nativeCanvasSupport);
-})();
+}());
 
 function init(data, lcaId) {
     //Create a new SpaceTree instance
@@ -60,17 +59,17 @@ function init(data, lcaId) {
         //This method is called on DOM label creation.
         //Use this method to add event handlers and styles to
         //your node.
-        onCreateLabel: function(label, node) {
+        onCreateLabel: function (label, node) {
             label.id = node.id;
             label.innerHTML = node.name;
-            label.onclick = function() {
+            label.onclick = function () {
                 st.onClick(node.id);
                 //st.setRoot(node.id, 'animate');
             };
             //set label styles => TODO: fix the labels with these settings instead of CSS
             var style = label.style;
-            style.width = 60 + 'px';
-            style.height = 17 + 'px';
+            style.width = '60px';
+            style.height = '17px';
             style.cursor = 'pointer';
             style.color = '#333';
             style.fontSize = '0.8em';
@@ -108,12 +107,11 @@ function init(data, lcaId) {
         //style properties before plotting it.
         //Edge data proprties prefixed with a dollar sign will
         //override the Edge global style properties.
-        onBeforePlotLine: function(adj) {
+        onBeforePlotLine: function (adj) {
             if (adj.nodeFrom.selected && adj.nodeTo.selected) {
                 adj.data.$color = "#eed";
                 adj.data.$lineWidth = 3;
-            }
-            else {
+            } else {
                 delete adj.data.$color;
                 delete adj.data.$lineWidth;
             }
@@ -126,7 +124,7 @@ function init(data, lcaId) {
     st.compute();
     
 	//optional: make a translation of the tree
-    st.geom.translate(new $jit.Complex( - 200, 0), "current");
+    st.geom.translate(new $jit.Complex(-200, 0), "current");
     
 	//emulate a click on the root node.
     //st.onClick(st.root);

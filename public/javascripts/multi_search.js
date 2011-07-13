@@ -1,22 +1,21 @@
 var labelType,
-useGradients,
-nativeTextSupport,
-animate;
+	useGradients,
+	nativeTextSupport,
+	animate;
 
- (function() {
+(function () {
     var ua = navigator.userAgent,
-    iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
-    typeOfCanvas = typeof HTMLCanvasElement,
-    nativeCanvasSupport = (typeOfCanvas == 'object' || typeOfCanvas == 'function'),
-    textSupport = nativeCanvasSupport
-    && (typeof document.createElement('canvas').getContext('2d').fillText == 'function');
+		iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
+		typeOfCanvas = typeof HTMLCanvasElement,
+		nativeCanvasSupport = (typeOfCanvas === 'object' || typeOfCanvas === 'function'),
+		textSupport = nativeCanvasSupport && (typeof document.createElement('canvas').getContext('2d').fillText === 'function');
     //I'm setting this based on the fact that ExCanvas provides text support for IE
     //and that as of today iPhone/iPad current text support is lame
-    labelType = (!nativeCanvasSupport || (textSupport && !iStuff)) ? 'Native': 'HTML';
-    nativeTextSupport = labelType == 'Native';
+    labelType = (!nativeCanvasSupport || (textSupport && !iStuff)) ? 'Native' : 'HTML';
+    nativeTextSupport = labelType === 'Native';
     useGradients = nativeCanvasSupport;
     animate = !(iStuff || !nativeCanvasSupport);
-})();
+}());
 
 function init(data) {
     //treemap
@@ -42,14 +41,14 @@ function initTreeMap(jsonData) {
         //Attach left and right click events
         Events: {
             enable: true,
-            onClick: function(node) {
+            onClick: function (node) {
                 if (node) {
                     tm.enter(node);
                     $("#jstree_search").val(node.name);
                     $("#jstree_search").change();
                 }
             },
-            onRightClick: function() {
+            onRightClick: function () {
 				//TODO: replace this if bug in JIT gets fixed
 				tm.out();
             }/*,
@@ -67,26 +66,22 @@ function initTreeMap(jsonData) {
             //implement the onShow method to
             //add content to the tooltip when a node
             //is hovered
-            onShow: function(tip, node, isLeaf, domElement) {
-                var title = node.name + " (" + (!node.data.self_count ? "0" : node.data.self_count) + "/" + (!node.data.count ? "0" : node.data.count) + ")";
-                var html = "<div class=\"tip-title\">" + title
-                + "</div><div class=\"tip-text\"></div>";
-                var data = node.data;
-                tip.innerHTML = html;
+            onShow: function (tip, node, isLeaf, domElement) {
+                tip.innerHTML = "<div class=\"tip-title\">" + node.name + " (" + (!node.data.self_count ? "0" : node.data.self_count) + "/" + (!node.data.count ? "0" : node.data.count) + ")" + "</div><div class=\"tip-text\"></div>";
             }
         },
 
         //Add the name of the node in the correponding label
         //This method is called once, on label creation.
-        onCreateLabel: function(domElement, node) {
+        onCreateLabel: function (domElement, node) {
             domElement.innerHTML = node.name + " (" + (!node.data.self_count ? "0" : node.data.self_count) + "/" + (!node.data.count ? "0" : node.data.count) + ")";
             var style = domElement.style;
             style.display = '';
             style.border = '2px solid transparent';
-            domElement.onmouseover = function() {
+            domElement.onmouseover = function () {
                 style.border = '2px solid #9FD4FF';
             };
-            domElement.onmouseout = function() {
+            domElement.onmouseout = function () {
                 style.border = '2px solid transparent';
             };
         }
@@ -102,50 +97,54 @@ function initJsTree(data) {
 
     //add onSelect action
     $("#jstree").bind("select_node.jstree",
-    function(node, tree) {
-        var peptides = $(tree.rslt.obj).data();
-        var margin = tree.rslt.obj.context.offsetTop - $("#jstree").offset().top;
-        var innertext = $(tree.rslt.obj).find("a").text().split("(")[0];
-        innertext += " (" + $(tree.rslt.obj).attr("title") + ")";
-        var infoPane = $("#jstree_data").html("<h3>" + innertext + "</h3>");
-        $("#jstree_data").animate({
-            marginTop: margin
-        },
-        1000);
-        var ownSequences = peptides.own_sequences
-        if (ownSequences && ownSequences.length > 0) {
-            var list = infoPane.append("<h4>Sequences speficic to this level</h4><ul></ul>").find("ul").last();
-            for (var peptide in ownSequences) {
-                list.append("<li><a href='/sequences/" + ownSequences[peptide] + "' target='_blank'>" + ownSequences[peptide] + "</a></li>")
-            }
-        }
-        var allSequences = peptides.all_sequences
-        if (allSequences && allSequences.length > 0) {
-            var list = infoPane.append("<h4>Sequences speficic to this level or lower</h4><ul></ul>").find("ul").last();
-            for (var peptide in allSequences) {
-                list.append("<li><a href='/sequences/" + allSequences[peptide] + "' target='_blank'>" + allSequences[peptide] + "</a></li>")
-            }
-        }
-    });
+		function (node, tree) {
+			var peptides = $(tree.rslt.obj).data(),
+				margin = tree.rslt.obj.context.offsetTop - $("#jstree").offset().top,
+				innertext = $(tree.rslt.obj).find("a").text().split("(")[0],
+				infopane,
+				ownSequences,
+				list,
+				peptide,
+				allSequences;
+			innertext += " (" + $(tree.rslt.obj).attr("title") + ")";
+			infoPane = $("#jstree_data").html("<h3>" + innertext + "</h3>");
+			$("#jstree_data").animate({
+				marginTop: margin
+			}, 1000);
+			ownSequences = peptides.own_sequences;
+			if (ownSequences && ownSequences.length > 0) {
+				list = infoPane.append("<h4>Sequences speficic to this level</h4><ul></ul>").find("ul").last();
+				for (peptide in ownSequences) {
+					list.append("<li><a href='/sequences/" + ownSequences[peptide] + "' target='_blank'>" + ownSequences[peptide] + "</a></li>");
+				}
+			}
+	        allSequences = peptides.all_sequences;
+	        if (allSequences && allSequences.length > 0) {
+	            list = infoPane.append("<h4>Sequences speficic to this level or lower</h4><ul></ul>").find("ul").last();
+	            for (peptide in allSequences) {
+	                list.append("<li><a href='/sequences/" + allSequences[peptide] + "' target='_blank'>" + allSequences[peptide] + "</a></li>");
+	            }
+	        }
+		});
 
     //fix leafs
     $("#jstree").bind("loaded.jstree",
-    function(event, data) {
-        $("#jstree li").not(":has(li)").addClass("jstree-leaf");
-    });
+		function (event, data) {
+			$("#jstree li").not(":has(li)").addClass("jstree-leaf");
+		});
 
     //add search
-    $("#jstree_search").keyup(function() {
+    $("#jstree_search").keyup(function () {
         $("#jstree").jstree("search", ($(this).val()));
         $(".jstree-search").parent().find("li").show();
-        $("#jstree ul").each(function() {
-            $(this).children("li:visible").eq( - 1).addClass("jstree-last");
+        $("#jstree ul").each(function () {
+            $(this).children("li:visible").eq(-1).addClass("jstree-last");
         });
     });
-    $('#jstree_search').click(function() {
+    $('#jstree_search').click(function () {
         $(this).keyup();
     });
-    $('#jstree_search').change(function() {
+    $('#jstree_search').change(function () {
         $(this).keyup();
     });
 
