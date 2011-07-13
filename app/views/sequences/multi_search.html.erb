@@ -11,7 +11,7 @@
 
 <div class="visualClear"><!-- --></div>
 <h2>Temp feature: mismatches</h2>
-<%= @misses.join("<br/>")  %>
+<%= raw(@misses.join("<br/>")) %>
 
 <!-- JIT Library File --> 
 <!--[if IE]><%= javascript_include_tag "jit/Extras/excanvas.js"%><![endif]-->
