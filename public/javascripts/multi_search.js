@@ -101,7 +101,7 @@ function initJsTree(data) {
 			var peptides = $(tree.rslt.obj).data(),
 				margin = tree.rslt.obj.context.offsetTop - $("#jstree").offset().top,
 				innertext = $(tree.rslt.obj).find("a").text().split("(")[0],
-				infopane,
+				infoPane,
 				ownSequences,
 				list,
 				peptide,
