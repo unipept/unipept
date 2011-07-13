@@ -112,6 +112,7 @@ class SequencesController < ApplicationController
     
     # build the resultset
     @matches = Hash.new
+    @misses = Array.new
     data.each do |s|
       sequence = Sequence.find_by_sequence(s)
       unless sequence.nil?
@@ -119,6 +120,8 @@ class SequencesController < ApplicationController
         lca_t = Lineage.calculate_lca_taxon(sequence.lineages)
         @matches[lca_t] = Array.new if @matches[lca_t].nil?
         @matches[lca_t] << sequence.sequence
+      else
+        @misses << s
       end
     end    
     
