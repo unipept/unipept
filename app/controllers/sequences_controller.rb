@@ -8,6 +8,7 @@ class SequencesController < ApplicationController
     if params[:id].match(/\A[0-9]+\z/)
       @sequence = Sequence.find_by_id(params[:id])
     else  
+      params[:id].gsub!(/I/,'L')
       @sequence = Sequence.find_by_sequence(params[:id])
     end
     
