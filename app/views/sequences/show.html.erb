@@ -9,16 +9,6 @@
     of <strong><%=@lca_taxon.rank%></strong>.<br/>
   </p>
 	<p>The common lineage of this sequence is: <%= @common_lineage=="" ? "nothing" : @common_lineage %>. <br/></p>
-	<!-- <p>Below this level:<br/>
-	<% i=0 %>
-	<% for lineage in @lineages do%>
-		<span><strong><%= lineage.name.name unless lineage.name.nil?%></strong>
-			<%= ":" unless  @distinct_lineages[i]=="" %>
-			<%= @distinct_lineages[i] %>
-			<% i += 1 %>
-		<br/></span>
-	<% end %>
-	</p>-->
 	
 	<div id="sequence_table">
 		<% colors = Hash.new %>
@@ -37,7 +27,7 @@
 				<% for rank in lineage do%>
 				<% if !rank.nil? %>
 					<% colors.store(rank.id, "c"+(i%30).to_s) if !colors.has_key?(rank.id) %>
-					<td class="center klik <%= colors[rank.id] %>" title="<%= rank.name %>"><%= rank.id %></td>
+					<td class="klik <%= colors[rank.id] %>" title="<%= rank.name %>"><%= rank.id %></td>
 				<% else %>
 					<td></td>
 				<% end %>

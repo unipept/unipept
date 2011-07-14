@@ -1941,6 +1941,9 @@ header, footer{
 	overflow: auto;
 	max-height: 500px;
 }
+#sequence_table .rank{
+	max-width: 80px;
+}
 
 .c0{
 	background: #ffffff;
