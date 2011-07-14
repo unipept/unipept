@@ -1939,8 +1939,7 @@ header, footer{
 
 #sequence_table{
 	overflow: auto;
-	overflow-y: hidden;
-	-ms-overflow-y: hidden;
+	max-height: 500px;
 }
 
 .c0{
