@@ -68,7 +68,7 @@ public class PeptideLoaderData {
 							"INSERT INTO uniprot_entries (`uniprot_accession_number`, `version`, `taxon_id`, `type`) VALUES (?,?,?,?)",
 							Statement.RETURN_GENERATED_KEYS);
 			addPeptide = connection
-					.prepareStatement("INSERT INTO peptides (`sequence_id`, `uniprot_entry_id`, `sequence_id`) VALUES (?,?,?)");
+					.prepareStatement("INSERT INTO peptides (`sequence_id`, `uniprot_entry_id`, `original_sequence_id`) VALUES (?,?,?)");
 			addLineage = connection
 					.prepareStatement("INSERT INTO lineages (`taxon_id`) VALUES (?)");
 			addDbRef = connection
