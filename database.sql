@@ -106,10 +106,12 @@ DEFAULT CHARACTER SET = ascii;
 CREATE  TABLE IF NOT EXISTS `unipept`.`peptides` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `sequence_id` INT UNSIGNED NOT NULL ,
+  `original_sequence_id` INT UNSIGNED NOT NULL ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_peptides_sequences` (`sequence_id` ASC) ,
   INDEX `fk_peptides_uniprot_entries` (`uniprot_entry_id` ASC) ,
+  INDEX `fk_peptides_original_sequences` (`original_sequence_id` ASC) ,
   CONSTRAINT `fk_peptides_sequences`
     FOREIGN KEY (`sequence_id` )
     REFERENCES `unipept`.`sequences` (`id` )
@@ -118,6 +120,11 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`peptides` (
   CONSTRAINT `fk_peptides_uniprot_entries`
     FOREIGN KEY (`uniprot_entry_id` )
     REFERENCES `unipept`.`uniprot_entries` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_peptides_original_sequences`
+    FOREIGN KEY (`original_sequence_id` )
+    REFERENCES `unipept`.`sequences` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
