@@ -12,7 +12,6 @@ public class UniprotEntry {
 	// peptide settings
 	private static final int MIN_PEPT_SIZE = 8;
 	private static final int MAX_PEPT_SIZE = 50;
-	private static final boolean REPLACE_LEUCINE = true;
 
 	private String uniprotAccessionNumber;
 	private int version;
@@ -75,8 +74,6 @@ public class UniprotEntry {
 				.replaceAll("([RK])([^P,])", "$1,$2").split(",");
 		for (String seq : splitArray) {
 			if (seq.length() >= MIN_PEPT_SIZE && seq.length() <= MAX_PEPT_SIZE) {
-				if (REPLACE_LEUCINE)
-					seq = seq.replace("I", "L");
 				list.add(seq);
 			}
 		}
