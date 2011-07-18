@@ -7,6 +7,7 @@ set :scm, :git
 
 task :dev do
   set :deploy_to, "/home/bmesuere/rails"
+  set :branch, "0.3"
   set :user, "bmesuere"
   set :use_sudo, false
   set :port, 4840

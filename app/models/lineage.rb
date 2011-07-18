@@ -2,34 +2,35 @@
 #
 # Table name: lineages
 #
-#  taxon_id         :integer(4)      not null
-#  superkingdom     :integer(4)
-#  kingdom          :integer(4)
-#  superphylum      :integer(4)
-#  phylum           :integer(4)
-#  subphylum        :integer(4)
-#  superclass       :integer(4)
-#  class_           :integer(4)
-#  subclass         :integer(4)
-#  infraclass       :integer(4)
-#  superorder       :integer(4)
-#  order            :integer(4)
-#  suborder         :integer(4)
-#  infraorder       :integer(4)
-#  parvorder        :integer(4)
-#  superfamily      :integer(4)
-#  family           :integer(4)
-#  subfamily        :integer(4)
-#  tribe            :integer(4)
-#  subtribe         :integer(4)
-#  genus            :integer(4)
-#  subgenus         :integer(4)
-#  species_group    :integer(4)
-#  species_subgroup :integer(4)
-#  species          :integer(4)
-#  subspecies       :integer(4)
-#  varietas         :integer(4)
-#  forma            :integer(4)
+#  taxon_id         :integer(3)      not null
+#  superkingdom     :integer(3)
+#  kingdom          :integer(3)
+#  subkingdom       :integer(3)
+#  superphylum      :integer(3)
+#  phylum           :integer(3)
+#  subphylum        :integer(3)
+#  superclass       :integer(3)
+#  class            :integer(3)
+#  subclass         :integer(3)
+#  infraclass       :integer(3)
+#  superorder       :integer(3)
+#  order            :integer(3)
+#  suborder         :integer(3)
+#  infraorder       :integer(3)
+#  parvorder        :integer(3)
+#  superfamily      :integer(3)
+#  family           :integer(3)
+#  subfamily        :integer(3)
+#  tribe            :integer(3)
+#  subtribe         :integer(3)
+#  genus            :integer(3)
+#  subgenus         :integer(3)
+#  species_group    :integer(3)
+#  species_subgroup :integer(3)
+#  species          :integer(3)
+#  subspecies       :integer(3)
+#  varietas         :integer(3)
+#  forma            :integer(3)
 #
 
 class Lineage < ActiveRecord::Base
@@ -39,6 +40,7 @@ class Lineage < ActiveRecord::Base
 
   belongs_to :superkingdom_t,     :foreign_key  => "superkingdom",  :primary_key  => "id",  :class_name   => 'Taxon'
   belongs_to :kingdom_t,          :foreign_key  => "kingdom",       :primary_key  => "id",  :class_name   => 'Taxon'
+  belongs_to :subkingdom_t,       :foreign_key  => "subkingdom",    :primary_key  => "id",  :class_name   => 'Taxon'
   belongs_to :superphylum_t,      :foreign_key  => "superphylum",   :primary_key  => "id",  :class_name   => 'Taxon'
   belongs_to :phylum_t,           :foreign_key  => "phylum",        :primary_key  => "id",  :class_name   => 'Taxon'
   belongs_to :subphylum_t,        :foreign_key  => "subphylum",     :primary_key  => "id",  :class_name   => 'Taxon'
@@ -64,17 +66,18 @@ class Lineage < ActiveRecord::Base
   belongs_to :varietas_t,         :foreign_key  => "varietas",      :primary_key  => "id",  :class_name   => 'Taxon'
   belongs_to :forma_t,            :foreign_key  => "forma",         :primary_key  => "id",  :class_name   => 'Taxon'
                                   
-  ORDER = [:superkingdom, :kingdom, :superphylum, :phylum, :subphylum, :superclass, 
-            :class_, :subclass, :infraclass, :superorder, :order, :infraorder, 
-            :parvorder, :superfamily, :family, :subfamily, :tribe, :subtribe, 
-            :genus, :subgenus, :species_group, :species_subgroup, :species, 
-            :subspecies, :varietas, :forma]
+  ORDER = [:superkingdom, :kingdom, :subkingdom, :superphylum, :phylum, :subphylum, 
+            :superclass, :class_, :subclass, :infraclass, :superorder, :order, 
+            :infraorder, :parvorder, :superfamily, :family, :subfamily, :tribe, 
+            :subtribe, :genus, :subgenus, :species_group, :species_subgroup, 
+            :species, :subspecies, :varietas, :forma]
             
-  ORDER_T = [:superkingdom_t, :kingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, 
-            :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :infraorder_t, 
-            :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, 
-            :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, 
-            :subspecies_t, :varietas_t, :forma_t] 
+  ORDER_T = [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, 
+            :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, 
+            :superorder_t, :order_t, :infraorder_t, :parvorder_t, :superfamily_t, 
+            :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, 
+            :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, 
+            :varietas_t, :forma_t] 
               
   def set_iterator_position(position)
     @iterator = position

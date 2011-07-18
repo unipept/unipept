@@ -6,7 +6,7 @@ class Node
     @name = name
     @children = Array.new
     @data = Hash.new
-    @nodes = Array.new if id == 0
+    @nodes = Array.new if id == 1
   end
   
   # returns the added child

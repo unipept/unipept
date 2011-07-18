@@ -10,7 +10,6 @@ UnipeptWeb::Application.routes.draw do
   match '/search/sequence', :to => 'sequences#search', :as => 'sequence_search'
   
   match '/search/sequences', :to => 'sequences#multi_search', :as => 'sequence_multi_search'
-  match '/search/sequences2', :to => 'sequences#multi_search2', :as => 'sequence_multi_search2'
 
     
   match '/contact', :to => 'pages#contact'
