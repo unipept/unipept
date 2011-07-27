@@ -171,7 +171,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `unipept`;
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('peptide_id', 0);
+INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('sequence_id', 0);
 INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('superkingdom', 0);
 INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('kingdom', 0);
 INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('subkingdom', 0);
