@@ -151,6 +151,16 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
+-- -----------------------------------------------------
+-- Table `unipept`.`counters`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `unipept`.`counters` (
+  `name` INT NOT NULL ,
+  `value` INT UNSIGNED NOT NULL DEFAULT 0 ,
+  PRIMARY KEY (`name`) )
+ENGINE = InnoDB;
+
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
