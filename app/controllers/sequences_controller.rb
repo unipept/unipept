@@ -109,9 +109,14 @@ class SequencesController < ApplicationController
       flash[:error] = "Your query was empty, please try again."
       redirect_to root_path
     else
+      equate_il = !params[:il].nil?
     
       # remove duplicates, split missed cleavages, substitute I by L
-      data = params[:q][0].gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/I/,'L').lines.map(&:strip).to_a.select{|l| l.size >= 8 && l.size <= 50 }.uniq
+      if equate_il
+        data = params[:q].gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/I/,'L').lines.map(&:strip).to_a.select{|l| l.size >= 8 && l.size <= 50 }.uniq
+      else
+        data = params[:q].gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/([KR])([^P\r])/,"\\1\n\\2").lines.map(&:strip).to_a.select{|l| l.size >= 8 && l.size <= 50 }.uniq
+      end
     
       @number_searched_for = data.length
       @number_found = 0
@@ -123,7 +128,7 @@ class SequencesController < ApplicationController
         sequence = Sequence.find_by_sequence(s)
         unless sequence.nil?
           @number_found += 1
-          lca_t = Lineage.calculate_lca_taxon(sequence.lineages)
+          lca_t = Lineage.calculate_lca_taxon(sequence.lineages(equate_il))
           @matches[lca_t] = Array.new if @matches[lca_t].nil?
           @matches[lca_t] << sequence.sequence
         else

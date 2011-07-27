@@ -1,6 +1,8 @@
 <%= form_tag(:sequence_multi_search, :method => "post") do %>
 	<%= label_tag(:q, "Search for") %>
-	<%= text_area(:q, "", :cols => 63, :rows => 5) %>
+	<%= text_area_tag(:q, nil, :cols => 63, :rows => 5) %>
 	<br/>
+	<%= check_box_tag(:il, 1, true) %>
+	<%= label_tag(:il, "equate I and L?") %>
   <%= submit_tag("Search") %>
 <% end %>
