@@ -7,6 +7,23 @@
 #
 
 class Counter < ActiveRecord::Base
-  attr_accessible nil
+  
+  set_primary_key :name
+  
+  def self.count(max=1000)
+    id = Counter.find_by_name("sequence_id")
+    while id.value < max
+      id.value += 1
+      sequence = Sequence.find_by_id(id.value)
+      lineages = sequence.lineages #calculate lineages
+      lca_taxon = Lineage.calculate_lca_taxon(lineages) #calculate the LCA
+      c = lca_taxon.name == "root" ? Counter.find_by_name("root") : Counter.find_by_name(lca_taxon.rank);
+      if !c.nil?
+        c.value += 1
+        c.save;
+      end
+      id.save;
+    end
+  end
   
 end
