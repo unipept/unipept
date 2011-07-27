@@ -16,11 +16,13 @@ class Counter < ActiveRecord::Base
       id.value += 1
       sequence = Sequence.find_by_id(id.value)
       lineages = sequence.lineages #calculate lineages
-      lca_taxon = Lineage.calculate_lca_taxon(lineages) #calculate the LCA
-      c = lca_taxon.name == "root" ? Counter.find_by_name("root") : Counter.find_by_name(lca_taxon.rank);
-      if !c.nil?
-        c.value += 1
-        c.save;
+      if lineages.size != 0;
+        lca_taxon = Lineage.calculate_lca_taxon(lineages) #calculate the LCA
+        c = lca_taxon.name == "root" ? Counter.find_by_name("root") : Counter.find_by_name(lca_taxon.rank);
+        if !c.nil?
+          c.value += 1
+          c.save;
+        end
       end
       id.save;
     end
