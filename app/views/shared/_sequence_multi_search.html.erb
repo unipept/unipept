@@ -2,7 +2,12 @@
 	<%= label_tag(:q, "Search for") %>
 	<%= text_area_tag(:q, nil, :cols => 63, :rows => 5) %>
 	<br/>
+	
 	<%= check_box_tag(:il, 1, true) %>
 	<%= label_tag(:il, "equate I and L?") %>
+	
+	<%= check_box_tag(:dupes, 1, true) %>
+	<%= label_tag(:il, "filter duplicate peptides?") %>
+	
   <%= submit_tag("Search") %>
 <% end %>
