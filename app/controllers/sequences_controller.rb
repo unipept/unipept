@@ -4,10 +4,10 @@ class SequencesController < ApplicationController
   # the peptide should be in params[:id] and 
   # can be a peptide id or the sequence itself
   def show
-    # id or sequence and load the sequence
+    # params[:id] contains the id
     if params[:id].match(/\A[0-9]+\z/)
       @sequence = Sequence.find_by_id(params[:id])
-    else  
+    else  #params[:id] contains the sequence
       params[:id].gsub!(/I/,'L')
       @sequence = Sequence.find_by_sequence(params[:id])
     end
@@ -19,9 +19,10 @@ class SequencesController < ApplicationController
     else
       @title = @sequence.sequence
       
+      # get the uniprot entries of every peptide
       @entries = @sequence.peptides.map(&:uniprot_entry)
       
-      #try to determine the LCA
+      # LCA calculation
       @lineages = @sequence.lineages #calculate lineages
       @lca_taxon = Lineage.calculate_lca_taxon(@lineages) #calculate the LCA
       @root = Node.new(1, "root") #start constructing the tree
@@ -74,6 +75,7 @@ class SequencesController < ApplicationController
 	    #Table stuff
 	    @table_lineages = Array.new
 	    @table_ranks = Array.new
+	    
 	    @table_lineages << @lineages.map{|lineage| lineage.name.name}
 	    @table_ranks << "Name"
 	    @lineages.map{|lineage| lineage.set_iterator_position(0)} #reset the iterator
@@ -84,6 +86,8 @@ class SequencesController < ApplicationController
 	        @table_ranks << temp.compact[0].rank
 	      end
       end
+      
+      # sort by id from left to right
 	    @table_lineages = @table_lineages.transpose.sort_by{ |k| k[1..-1].map!{|l| l || Taxon.find(1)} }
     end
   end
@@ -109,6 +113,7 @@ class SequencesController < ApplicationController
       flash[:error] = "Your query was empty, please try again."
       redirect_to root_path
     else
+      # set search parameters
       equate_il = !params[:il].nil?
       filter_duplicates = !params[:dupes].nil?
     
@@ -118,13 +123,14 @@ class SequencesController < ApplicationController
       data = data.lines.map(&:strip).to_a.select{|l| l.size >= 8 && l.size <= 50 }
       data = data.uniq if filter_duplicates
     
+      # set metrics
       @number_searched_for = data.length
       @number_found = 0
     
       # build the resultset
       @matches = Hash.new
       @misses = Array.new
-      data.each do |s|
+      data.each do |s| # for every sequence in query
         sequence = Sequence.find_by_sequence(s)
         unless sequence.nil?
           @number_found += 1
@@ -136,13 +142,13 @@ class SequencesController < ApplicationController
         end
       end    
     
-      #treemap stuff
+      # construct treemap nodes
       @root = TreeMapNode.new(1, "root", "no rank")
-      @matches.each do |taxon, sequences|   
+      @matches.each do |taxon, sequences| # for every match
         @root.add_sequences(sequences)
         lca_l = Lineage.find_by_taxon_id(taxon.id)
         last_node_loop = @root
-        while !lca_l.nil? && lca_l.has_next?
+        while !lca_l.nil? && lca_l.has_next? # process every rank in lineage
           t = lca_l.next_t
           unless t.nil?
             node = TreeMapNode.find_by_id(t.id, @root)
