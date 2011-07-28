@@ -76,7 +76,7 @@ public class PeptideLoaderData {
 			lineageExists = connection
 					.prepareStatement("SELECT COUNT(*) AS aantal FROM lineages WHERE `taxon_id` = ?");
 			getTaxon = connection
-					.prepareStatement("SELECT rank, parent_id FROM taxons WHERE id = ?");
+					.prepareStatement("SELECT rank, parent_id, valid FROM taxons WHERE id = ?");
 		} catch (SQLException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis())
 					+ " Error creating prepared statements");
@@ -303,8 +303,15 @@ public class PeptideLoaderData {
 				if (!rank.equals("no rank")) {
 					rank = rank.replace(' ', '_');
 					Statement stmt = connection.createStatement();
-					stmt.executeUpdate("UPDATE lineages SET `" + rank + "` = " + parentId
-							+ " WHERE `taxon_id` = " + taxonId);
+
+					if (rs.getBoolean("valid"))// normal case
+						stmt.executeUpdate("UPDATE lineages SET `" + rank + "` = " + parentId
+								+ " WHERE `taxon_id` = " + taxonId);
+					else
+						// invalid
+						stmt.executeUpdate("UPDATE lineages SET `" + rank + "` = "
+								+ (-1 * parentId) + " WHERE `taxon_id` = " + taxonId);
+
 					stmt.close();
 				}
 
