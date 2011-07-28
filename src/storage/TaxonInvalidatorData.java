@@ -58,15 +58,16 @@ public class TaxonInvalidatorData {
 	/**
 	 * Executes the given query to invalidate taxa
 	 * 
-	 * @param query
-	 *            The query to execute
+	 * @param whereClause
+	 *            The where clause that gets appended to
+	 *            "UPDATE taxons SET `valid` = 0 WHERE "
 	 */
-	public void invalidate(String query) {
+	public void invalidate(String whereClause) {
 		Statement stmt;
 		try {
 			stmt = connection.createStatement();
 			try {
-				stmt.executeQuery(query);
+				stmt.executeUpdate("UPDATE taxons SET `valid` = 0 WHERE " + whereClause);
 			} catch (SQLException e) {
 				System.err.println(new Timestamp(System.currentTimeMillis())
 						+ " Something went wrong invalidating taxa.");

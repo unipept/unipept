@@ -1,5 +1,7 @@
 package tools.commandline;
 
+import java.sql.Timestamp;
+
 import storage.TaxonInvalidatorData;
 
 /**
@@ -17,7 +19,20 @@ public class TaxonInvalidator {
 	 */
 	public TaxonInvalidator() {
 		data = new TaxonInvalidatorData();
+		System.out.println(new Timestamp(System.currentTimeMillis())
+				+ " Setting everything to valid...");
 		data.setAllValid();
+	}
+
+	/**
+	 * Invalidates invalid taxa.
+	 */
+	public void invalidate() {
+		System.out.println(new Timestamp(System.currentTimeMillis()) + " Invalidating...");
+		// data.invalidate("name LIKE \"% % %\" and rank = \"species\"");
+		data.invalidate("name like \"uncultured%\"");
+		data.invalidate("name like \"%sp.%\"");
+		data.invalidate("rank = \"genus\" and name LIKE \"% %\" and name NOT LIKE \"Candidatus %\"");
 	}
 
 	/**
@@ -28,5 +43,6 @@ public class TaxonInvalidator {
 	 */
 	public static void main(String[] args) {
 		TaxonInvalidator ti = new TaxonInvalidator();
+		ti.invalidate();
 	}
 }
