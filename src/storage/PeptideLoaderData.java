@@ -304,7 +304,7 @@ public class PeptideLoaderData {
 					rank = rank.replace(' ', '_');
 					Statement stmt = connection.createStatement();
 
-					if (rs.getBoolean("valid"))// normal case
+					if (rs.getBoolean("valid_taxon"))// normal case
 						stmt.executeUpdate("UPDATE lineages SET `" + rank + "` = " + parentId
 								+ " WHERE `taxon_id` = " + taxonId);
 					else
