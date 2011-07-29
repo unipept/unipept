@@ -76,7 +76,7 @@ public class PeptideLoaderData {
 			lineageExists = connection
 					.prepareStatement("SELECT COUNT(*) AS aantal FROM lineages WHERE `taxon_id` = ?");
 			getTaxon = connection
-					.prepareStatement("SELECT rank, parent_id, valid FROM taxons WHERE id = ?");
+					.prepareStatement("SELECT rank, parent_id, valid_taxon FROM taxons WHERE id = ?");
 		} catch (SQLException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis())
 					+ " Error creating prepared statements");

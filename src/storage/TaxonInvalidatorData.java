@@ -35,7 +35,8 @@ public class TaxonInvalidatorData {
 	 */
 	private void prepareStatements() {
 		try {
-			setAllValid = connection.prepareStatement("UPDATE taxons SET valid = 1 WHERE id > -1");
+			setAllValid = connection
+					.prepareStatement("UPDATE taxons SET valid_taxon = 1 WHERE id > -1");
 
 		} catch (SQLException e) {
 			System.err.println("Error creating prepared statements");
@@ -67,7 +68,7 @@ public class TaxonInvalidatorData {
 		try {
 			stmt = connection.createStatement();
 			try {
-				stmt.executeUpdate("UPDATE taxons SET `valid` = 0 WHERE " + whereClause);
+				stmt.executeUpdate("UPDATE taxons SET `valid_taxon` = 0 WHERE " + whereClause);
 			} catch (SQLException e) {
 				System.err.println(new Timestamp(System.currentTimeMillis())
 						+ " Something went wrong invalidating taxa.");

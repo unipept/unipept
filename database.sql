@@ -13,7 +13,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`taxons` (
   `name` VARCHAR(256) NOT NULL ,
   `rank` ENUM('no rank', 'superkingdom', 'kingdom', 'subkingdom', 'superphylum', 'phylum', 'subphylum', 'superclass', 'class', 'subclass', 'infraclass', 'superorder', 'order', 'suborder', 'infraorder', 'parvorder', 'superfamily', 'family', 'subfamily', 'tribe', 'subtribe', 'genus', 'subgenus', 'species group', 'species subgroup', 'species', 'subspecies', 'varietas', 'forma' ) NULL DEFAULT NULL ,
   `parent_id` MEDIUMINT UNSIGNED NULL DEFAULT NULL ,
-  `valid` BIT NOT NULL DEFAULT 1 ,
+  `valid_taxon` BIT NOT NULL DEFAULT 1 ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_taxon_taxon` (`parent_id` ASC) ,
   CONSTRAINT `fk_taxon_taxon`
