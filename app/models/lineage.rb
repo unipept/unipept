@@ -116,9 +116,9 @@ class Lineage < ActiveRecord::Base
     for rank in ORDER do
       #nils enkel filteren bij species en genus
       if rank == :species || rank == :genus
-        current = lineages.map(&rank).uniq.compact
+        current = lineages.map(&rank).find_all{|n| n.nil? || n > 0}.uniq.compact
       else
-        current = lineages.map(&rank).uniq
+        current = lineages.map(&rank).find_all{|n| n.nil? || n > 0}.uniq
       end
       return lca if current.length > 1 #more than one distinct element
       lca = current[0] unless current[0].nil? #save lca if this rank isn't nil
