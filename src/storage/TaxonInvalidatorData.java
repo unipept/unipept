@@ -2,6 +2,7 @@ package storage;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -63,12 +64,33 @@ public class TaxonInvalidatorData {
 	 *            The where clause that gets appended to
 	 *            "UPDATE taxons SET `valid` = 0 WHERE "
 	 */
-	public void invalidate(String whereClause) {
+	public void invalidate(String whereClause, boolean withChildren) {
 		Statement stmt;
 		try {
 			stmt = connection.createStatement();
 			try {
-				stmt.executeUpdate("UPDATE taxons SET `valid_taxon` = 0 WHERE " + whereClause);
+				if (withChildren) {
+					ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM taxons WHERE "
+							+ whereClause);
+					rs.next();
+					if (rs.getInt(1) > 0)
+						invalidate(
+								"parent_id IN (SELECT id FROM taxons WHERE " + whereClause + ")",
+								true);
+					rs.close();
+				}
+				System.out.println("SELECT id FROM taxons WHERE " + whereClause);
+				ResultSet rs = stmt.executeQuery("SELECT id FROM taxons WHERE " + whereClause);
+				String ids = "";
+				while (rs.next())
+					ids += rs.getString(1) + ", ";
+				rs.close();
+				if (ids.length() > 0) {
+					ids = ids.substring(0, ids.length() - 2);
+
+					stmt.executeUpdate("UPDATE taxons SET `valid_taxon` = 0 WHERE id IN (" + ids
+							+ ")");
+				}
 			} catch (SQLException e) {
 				System.err.println(new Timestamp(System.currentTimeMillis())
 						+ " Something went wrong invalidating taxa.");
@@ -82,5 +104,4 @@ public class TaxonInvalidatorData {
 			e1.printStackTrace();
 		}
 	}
-
 }
