@@ -109,7 +109,7 @@ class SequencesController < ApplicationController
   def multi_search
     @title = "Results"
     
-    if params[:q].nil? || params[:q].empty? || params[:q][0].empty?
+    if params[:q].nil? || params[:q].empty? 
       flash[:error] = "Your query was empty, please try again."
       redirect_to root_path
     else
