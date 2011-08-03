@@ -16,15 +16,22 @@ class Sequence < ActiveRecord::Base
                         :format     => { :with => /\A[A-Z]*\z/ },
                         :uniqueness => true
   
-  #def lineages(eager_load = false)
-  def lineages
-    l = Lineage.find_by_sql("
-    SELECT DISTINCT lineages.*
-    FROM unipept.peptides 
-    INNER JOIN unipept.uniprot_entries ON (uniprot_entries.id = peptides.uniprot_entry_id) 
-    INNER JOIN unipept.lineages ON (uniprot_entries.taxon_id = lineages.taxon_id)
-    WHERE peptides.sequence_id = #{id}")
-    #preload_associations(l, [:superkingdom_t]) if eager_load
+  def lineages(equate_il = true)
+    if equate_il
+      l = Lineage.find_by_sql("
+      SELECT DISTINCT lineages.*
+      FROM unipept.peptides 
+      INNER JOIN unipept.uniprot_entries ON (uniprot_entries.id = peptides.uniprot_entry_id) 
+      INNER JOIN unipept.lineages ON (uniprot_entries.taxon_id = lineages.taxon_id)
+      WHERE peptides.sequence_id = #{id}")
+    else
+      l = Lineage.find_by_sql("
+      SELECT DISTINCT lineages.*
+      FROM unipept.peptides 
+      INNER JOIN unipept.uniprot_entries ON (uniprot_entries.id = peptides.uniprot_entry_id) 
+      INNER JOIN unipept.lineages ON (uniprot_entries.taxon_id = lineages.taxon_id)
+      WHERE peptides.original_sequence_id = #{id}")
+    end
     return l
   end
                         
