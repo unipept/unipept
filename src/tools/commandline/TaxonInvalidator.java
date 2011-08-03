@@ -29,15 +29,18 @@ public class TaxonInvalidator {
 	 */
 	public void invalidate() {
 		System.out.println(new Timestamp(System.currentTimeMillis()) + " Invalidating...");
-		// bad names
-		data.invalidate("name like \"uncultured%\"", true);
-		data.invalidate("name like \"%unidentified%\"", true);
-		data.invalidate("name like \"%unclassified%\"", true);
-		data.invalidate("name like \"%unspecified%\"", true);
 
 		// "other sequences" & "environmental samples"
 		data.invalidate("id=28384", true);
 		data.invalidate("id=48479", true);
+
+		// bad names
+		data.invalidate("name LIKE \"%uncultured%\" AND valid_taxon = 1", true);
+		data.invalidate("name LIKE \"%unidentified%\" AND valid_taxon = 1", true);
+		data.invalidate("name LIKE \"%unclassified%\" AND valid_taxon = 1", true);
+		data.invalidate("name LIKE \"%unspecified%\" AND valid_taxon = 1", true);
+		data.invalidate("name LIKE \"%undetermined%\" AND valid_taxon = 1", true);
+		data.invalidate("name LIKE \"%sample%\" AND valid_taxon = 1", true);
 
 		// data.invalidate("rank = \"species\" AND name LIKE \"% % %\" AND name NOT LIKE \"Candidatus %\"");
 		// data.invalidate(
