@@ -12,7 +12,13 @@
       border-right-color: #999;
       border-bottom-color: #999;
     }
-    h1 { font-size: 100%; color: #f00; line-height: 1.5em; }
+    h1 { font-size: 100%; color: #f00; line-height: 1.5em; }		
+		.dialog img{
+			width: 25em;
+		}
+		a {
+			color: #333333;
+		}
   </style>
 </head>
 
@@ -20,7 +26,10 @@
   <!-- This file lives in public/500.html -->
   <div class="dialog">
     <h1>We're sorry, but something went wrong.</h1>
-    <p>We've been notified about this issue and we'll take a look at it shortly.</p>
+    <p>It seems like you found a bug!</p> 
+		<p>You could be nice and <a href="mailto:Bart.Mesuere@UGent.be">tell us everything about it</a> or do nothing and hope someone else reports it.</p>
+		<br/>
+		<img src="images/500.png" alt="500"/>
   </div>
 </body>
 </html>

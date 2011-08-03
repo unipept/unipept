@@ -96,7 +96,7 @@ class Lineage < ActiveRecord::Base
     result = ORDER[@iterator]
     @iterator += 1
     return self[result]
-    return read_attribute(result)
+    #return read_attribute(result) # what is this line doing here?
   end
   
   def next_t
@@ -115,6 +115,7 @@ class Lineage < ActiveRecord::Base
     lca = 1 #default lca
     for rank in ORDER do
       #nils enkel filteren bij species en genus
+      #TODO: remove the abs function in 0.4
       if rank == :species || rank == :genus
         current = lineages.map(&rank).find_all{|n| n.nil? || n > 0}.uniq.compact
       else
