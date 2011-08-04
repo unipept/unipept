@@ -69,27 +69,33 @@ public class TaxonInvalidatorData {
 		try {
 			stmt = connection.createStatement();
 			try {
-				if (withChildren) {
+				if (withChildren) {// if we have to invalidate the children
 					ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM taxons WHERE "
 							+ whereClause);
 					rs.next();
-					if (rs.getInt(1) > 0)
+					if (rs.getInt(1) > 0)// if there are any children
 						invalidate(
 								"parent_id IN (SELECT id FROM taxons WHERE " + whereClause + ")",
 								true);
 					rs.close();
 				}
-				System.out.println("SELECT id FROM taxons WHERE " + whereClause);
-				ResultSet rs = stmt.executeQuery("SELECT id FROM taxons WHERE " + whereClause);
-				String ids = "";
-				while (rs.next())
-					ids += rs.getString(1) + ", ";
-				rs.close();
-				if (ids.length() > 0) {
-					ids = ids.substring(0, ids.length() - 2);
+				if (whereClause.contains("WHERE")) {
+					System.out.println("SELECT id FROM taxons WHERE " + whereClause);
+					ResultSet rs = stmt.executeQuery("SELECT id FROM taxons WHERE " + whereClause);
+					String ids = "";
+					while (rs.next())
+						ids += rs.getString(1) + ", ";
+					rs.close();
+					if (ids.length() > 0) {
+						ids = ids.substring(0, ids.length() - 2);
 
-					stmt.executeUpdate("UPDATE taxons SET `valid_taxon` = 0 WHERE id IN (" + ids
-							+ ")");
+						stmt.executeUpdate("UPDATE taxons SET `valid_taxon` = 0 WHERE id IN ("
+								+ ids + ")");
+					}
+				} else {
+					System.out.println("UPDATE taxons SET `valid_taxon` = 0 WHERE " + whereClause);
+					stmt.executeUpdate("UPDATE taxons SET `valid_taxon` = 0 WHERE " + whereClause);
+
 				}
 			} catch (SQLException e) {
 				System.err.println(new Timestamp(System.currentTimeMillis())
