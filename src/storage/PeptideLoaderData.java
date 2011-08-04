@@ -334,6 +334,7 @@ public class PeptideLoaderData {
 				stmt.executeUpdate("TRUNCATE TABLE `peptides`");
 				stmt.executeUpdate("TRUNCATE TABLE `sequences`");
 				stmt.executeUpdate("TRUNCATE TABLE `uniprot_entries`");
+				stmt.executeUpdate("TRUNCATE TABLE `uniprot_cross_references`");
 				stmt.executeUpdate("TRUNCATE TABLE `lineages`");
 				stmt.executeQuery("SET FOREIGN_KEY_CHECKS=1");
 			} catch (SQLException e) {
