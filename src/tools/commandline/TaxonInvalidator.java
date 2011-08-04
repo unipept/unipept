@@ -42,6 +42,11 @@ public class TaxonInvalidator {
 		data.invalidate("name LIKE \"%undetermined%\" AND valid_taxon = 1", true);
 		data.invalidate("name LIKE \"%sample%\" AND valid_taxon = 1", true);
 
+		// elimination of the strain species
+		data.invalidate("name LIKE \"% sp.\" AND rank = \"species\" AND valid_taxon = 1", true);
+		data.invalidate("name RLIKE \" sp\\..*[0-9]\" AND rank = \"species\" AND valid_taxon = 1",
+				true);
+
 		// data.invalidate("rank = \"species\" AND name LIKE \"% % %\" AND name NOT LIKE \"Candidatus %\"");
 		// data.invalidate(
 		// "rank = \"genus\" AND name LIKE \"% %\" AND name NOT LIKE \"Candidatus %\"",
