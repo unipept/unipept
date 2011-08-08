@@ -17,12 +17,12 @@ var labelType,
     animate = !(iStuff || !nativeCanvasSupport);
 }());
 
-function init(data) {
+function init(data, equate_il) {
     //treemap
     initTreeMap(data);
 
     //jstree
-    initJsTree(data);
+    initJsTree(data, equate_il);
 }
 
 function initTreeMap(jsonData) {
@@ -91,7 +91,7 @@ function initTreeMap(jsonData) {
     //end
 }
 
-function initJsTree(data) {
+function initJsTree(data, equate_il) {
     //set themes dir
     $.jstree._themes = "/javascripts/jstree/themes/";
 
@@ -115,7 +115,7 @@ function initJsTree(data) {
 			if (ownSequences && ownSequences.length > 0) {
 				list = infoPane.append("<h4>Sequences speficic to this level</h4><ul></ul>").find("ul").last();
 				for (peptide in ownSequences) {
-					list.append("<li><a href='/sequences/" + ownSequences[peptide] + "' target='_blank'>" + ownSequences[peptide] + "</a></li>");
+					list.append("<li><a href='/sequences/" + ownSequences[peptide] + "/"+equate_il+"' target='_blank'>" + ownSequences[peptide] + "</a></li>");
 				}
 			}
 	        allSequences = peptides.all_sequences;

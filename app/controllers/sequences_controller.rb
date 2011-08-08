@@ -4,26 +4,33 @@ class SequencesController < ApplicationController
   # the peptide should be in params[:id] and 
   # can be a peptide id or the sequence itself
   def show
+    
+    equate_il = params[:equate_il].nil? || params[:equate_il] != "false" ? true : false
+    
     # params[:id] contains the id
     if params[:id].match(/\A[0-9]+\z/)
       @sequence = Sequence.find_by_id(params[:id])
     else  #params[:id] contains the sequence
-      params[:id].gsub!(/I/,'L')
+      params[:id].gsub!(/I/,'L') if equate_il
       @sequence = Sequence.find_by_sequence(params[:id])
     end
     
     # error on nil
-    if @sequence.nil? || @sequence.peptides.empty?
+    if @sequence.nil? || (@sequence.peptides.empty? && equate_il) || (@sequence.original_peptides.empty? && !equate_il)
       flash[:error] = "No matches for peptide #{params[:id]}"
       redirect_to sequences_path
     else
       @title = @sequence.sequence
       
       # get the uniprot entries of every peptide
-      @entries = @sequence.peptides.map(&:uniprot_entry)
+      if equate_il
+        @entries = @sequence.peptides.map(&:uniprot_entry)
+      else
+        @entries = @sequence.original_peptides.map(&:uniprot_entry)
+      end
       
       # LCA calculation
-      @lineages = @sequence.lineages #calculate lineages
+      @lineages = @sequence.lineages(equate_il) #calculate lineages
       @lca_taxon = Lineage.calculate_lca_taxon(@lineages) #calculate the LCA
       @root = Node.new(1, "root") #start constructing the tree
       last_node = @root
@@ -114,12 +121,12 @@ class SequencesController < ApplicationController
       redirect_to root_path
     else
       # set search parameters
-      equate_il = !params[:il].nil?
+      @equate_il = !params[:il].nil?
       filter_duplicates = !params[:dupes].nil?
     
       # remove duplicates, split missed cleavages, substitute I by L, ...
       data = params[:q].gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/([KR])([^P\r])/,"\\1\n\\2")
-      data = data.gsub(/I/,'L') if equate_il
+      data = data.gsub(/I/,'L') if @equate_il
       data = data.lines.map(&:strip).to_a.select{|l| l.size >= 8 && l.size <= 50 }
       data = data.uniq if filter_duplicates
     
@@ -134,7 +141,7 @@ class SequencesController < ApplicationController
         sequence = Sequence.find_by_sequence(s)
         unless sequence.nil?
           @number_found += 1
-          lca_t = Lineage.calculate_lca_taxon(sequence.lineages(equate_il))
+          lca_t = Lineage.calculate_lca_taxon(sequence.lineages(@equate_il))
           @matches[lca_t] = Array.new if @matches[lca_t].nil?
           @matches[lca_t] << sequence.sequence
         else
