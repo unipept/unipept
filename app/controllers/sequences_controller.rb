@@ -116,7 +116,7 @@ class SequencesController < ApplicationController
   def multi_search
     @title = "Results"
     
-    if params[:q].nil? || params[:q].empty? 
+    if params[:qs].nil? || params[:qs].empty? 
       flash[:error] = "Your query was empty, please try again."
       redirect_to root_path
     else
@@ -125,7 +125,7 @@ class SequencesController < ApplicationController
       filter_duplicates = !params[:dupes].nil?
     
       # remove duplicates, split missed cleavages, substitute I by L, ...
-      data = params[:q].gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/([KR])([^P\r])/,"\\1\n\\2")
+      data = params[:qs].gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/([KR])([^P\r])/,"\\1\n\\2")
       data = data.gsub(/I/,'L') if @equate_il
       data = data.lines.map(&:strip).to_a.select{|l| l.size >= 8 && l.size <= 50 }
       data = data.uniq if filter_duplicates
