@@ -95,7 +95,6 @@ public class TaxonInvalidatorData {
 				} else {
 					System.out.println("UPDATE taxons SET `valid_taxon` = 0 WHERE " + whereClause);
 					stmt.executeUpdate("UPDATE taxons SET `valid_taxon` = 0 WHERE " + whereClause);
-
 				}
 			} catch (SQLException e) {
 				System.err.println(new Timestamp(System.currentTimeMillis())
