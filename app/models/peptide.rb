@@ -13,6 +13,8 @@ class Peptide < ActiveRecord::Base
   
   belongs_to :uniprot_entry
   belongs_to :sequence
+  belongs_to :original_sequence, :foreign_key  => "original_sequence_id", :primary_key  => "id", :class_name   => 'Sequence'
+  
   
   validates :sequence_id,  :presence   => true
   validates :uniprot_entry_id,  :presence   => true
