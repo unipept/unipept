@@ -1,6 +1,6 @@
 <%= form_tag(:sequence_multi_search, :method => "post") do %>
-	<%= label_tag(:q, "Search for") %>
-	<%= text_area_tag(:q, nil, :cols => 63, :rows => 5) %>
+	<%= label_tag(:qs, "Search for") %>
+	<%= text_area_tag(:qs, nil, :cols => 63, :rows => 5) %>
 	<br/>
 	
 	<%= check_box_tag(:il, 1, true) %>

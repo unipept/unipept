@@ -5,3 +5,26 @@
 <h2>Peptide analysis</h2>
 <p>Analyze a list of peptides:</p>
 <%= render 'shared/sequence_multi_search' %>
+<h3>Sample data</h3>
+<p>ORNL - Jansson Study on Characterization of the Human Gut Microbial Metaproteome (<%= link_to "project website" , "http://compbio.ornl.gov/human_gut_microbial_metaproteome/", :target => "_blank" %> <%= image_tag("externesite.gif", :alt => "Blast")%>)</p>
+<ul>
+	<li><a href="#" id="s7">Load sample 7</a></li>
+	<li><a href="#" id="s8">Load sample 8</a></li>
+</ul>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("#s7").click(function(){
+			$.get('sampledata/sample7_peptides.txt', function(data) {
+			  $("#qs").val(data);
+			});
+			return false;
+		});
+		$("#s8").click(function(){
+			$.get('sampledata/sample8_peptides.txt', function(data) {
+			  $("#qs").val(data);
+			});
+			return false;
+		});
+	 });
+</script>
