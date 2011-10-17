@@ -46,7 +46,6 @@ class TreeMapNode < Node
     
     @data[:count] += sequences.length
     @data[:$area] = Math.log10(@data[:count]+1)/Math.log10(2)
-    @data[:$area] = @data[:$area]*@data[:$area]
     
     fix_title_and_state
   end
