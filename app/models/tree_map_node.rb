@@ -45,7 +45,7 @@ class TreeMapNode < Node
     @metadata[:all_sequences].concat(sequences) 
     
     @data[:count] += sequences.length
-    @data[:$area] = Math.log10(@data[:count]+1)/Math.log10(2)
+    @data[:$area] = Math.log10(@data[:count]+1)/Math.log10(1.5)
     
     fix_title_and_state
   end
