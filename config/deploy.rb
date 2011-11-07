@@ -13,9 +13,9 @@ task :dev do
   set :port, 4840
   set :deploy_via, :remote_cache
 
-  role :web, "buruli.ugent.be"                          # Your HTTP server, Apache/etc
-  role :app, "buruli.ugent.be"                          # This may be the same as your `Web` server
-  role :db,  "buruli.ugent.be", :primary => true # This is where Rails migrations will run
+  role :web, "scruffy.ugent.be"                          # Your HTTP server, Apache/etc
+  role :app, "scruffy.ugent.be"                          # This may be the same as your `Web` server
+  role :db,  "scruffy.ugent.be", :primary => true # This is where Rails migrations will run
 end
 
 task :prod do
