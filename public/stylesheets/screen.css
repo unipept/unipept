@@ -1867,6 +1867,21 @@ form.bodyform div input {
 header, footer{
 	display: block;
 }
+/*multisearch form*/
+textarea#qs{
+	margin-right: 5px;
+	margin-top: 5px;
+}
+#more_options_form fieldset{
+	margin: 0px;
+}
+div#search_button{
+	clear:both;
+	text-align:center;
+}
+#search_elements{
+	float:left;
+}
 
 /*javascript tree*/
 #lineageTree{

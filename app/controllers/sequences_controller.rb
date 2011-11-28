@@ -123,6 +123,7 @@ class SequencesController < ApplicationController
       # set search parameters
       @equate_il = !params[:il].nil?
       @filter_duplicates = !params[:dupes].nil?
+      @search_name = params[:search_name]
     
       # remove duplicates, split missed cleavages, substitute I by L, ...
       data = params[:qs].gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/([KR])([^P\r])/,"\\1\n\\2")

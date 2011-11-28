@@ -1,4 +1,8 @@
+<% if @search_name != "" %>
+<h1>Results of <%= @search_name %></h1>
+<% else %>
 <h1>Results</h1>
+<% end %>
 <p>We matched <%= @number_found %> of the <%= pluralize(@number_searched_for, "peptide") %>. 
 
 <% if @filter_duplicates %>

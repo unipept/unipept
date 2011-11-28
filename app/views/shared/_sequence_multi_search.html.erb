@@ -1,13 +1,36 @@
 <%= form_tag(:sequence_multi_search, :method => "post") do %>
+	<div id="search_elements">
 	<%= label_tag(:qs, "Search for") %>
-	<%= text_area_tag(:qs, nil, :cols => 63, :rows => 5) %>
-	<br/>
+	<%= text_area_tag(:qs, nil, :cols => 60, :rows => 6) %>
+	</div>
 	
+	<div id="more_options"><%= image_tag("plus.gif") %> <%= link_to("More options", "#") %></div>
+	<div id="more_options_form">
+	<fieldset>
+	<legend>Advanced search options</legend>
 	<%= check_box_tag(:il, 1, true) %>
-	<%= label_tag(:il, "equate I and L?") %>
-	
+	<%= label_tag(:il, "Equate I and L?") %>
+	<br/>
 	<%= check_box_tag(:dupes, 1, true) %>
-	<%= label_tag(:il, "filter duplicate peptides?") %>
-	
-  <%= submit_tag("Search") %>
+	<%= label_tag(:dupes, "Filter duplicate peptides?") %>
+	<br/>
+	<%= label_tag(:search_name, "Name this search") %>
+	<%= text_field_tag('search_name', nil, :placeholder => 'Sample B5')%>
+	</fieldset>
+	</div>
+	<div id="search_button">
+	<%= submit_tag("Search") %>
+	</div>
+  
 <% end %>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#more_options_form").hide();
+	$("#more_options a").click(function(){
+		$("#more_options_form").show("fast");
+		$("#more_options").hide("fast");
+		return false;
+	});
+ });
+</script>
