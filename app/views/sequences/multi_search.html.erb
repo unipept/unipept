@@ -1,5 +1,16 @@
 <h1>Results</h1>
-<p>We matched <%= @number_found %> of the <%= pluralize(@number_searched_for, "peptide") %>.</p>
+<p>We matched <%= @number_found %> of the <%= pluralize(@number_searched_for, "peptide") %>. 
+
+<% if @filter_duplicates %>
+While searching, we filtered duplicate peptides
+<% else %>
+While searching, we didn't filter duplicate peptides
+<% end %>
+<% if @equate_il %>
+ and equated I and L.</p>
+<% else %>
+ and didn't equate I and L</p>
+<% end %>
 
 <% if @number_found > 0 %>
 <h2>Treemap</h2>

@@ -122,13 +122,13 @@ class SequencesController < ApplicationController
     else
       # set search parameters
       @equate_il = !params[:il].nil?
-      filter_duplicates = !params[:dupes].nil?
+      @filter_duplicates = !params[:dupes].nil?
     
       # remove duplicates, split missed cleavages, substitute I by L, ...
       data = params[:qs].gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/([KR])([^P\r])/,"\\1\n\\2")
       data = data.gsub(/I/,'L') if @equate_il
       data = data.lines.map(&:strip).to_a.select{|l| l.size >= 8 && l.size <= 50 }
-      data = data.uniq if filter_duplicates
+      data = data.uniq if @filter_duplicates
     
       # set metrics
       @number_searched_for = data.length
