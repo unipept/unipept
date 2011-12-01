@@ -105,6 +105,19 @@ class Lineage < ActiveRecord::Base
     return self.send(result)
   end
   
+  #returns an array containing the lineage names in the right order
+  def to_a
+    array = []
+    for rank in ORDER_T do
+      array << self.send(rank)
+    end
+    return array.map{|x| x.nil? ? "" : x.name}
+  end
+  
+  def self.ranks
+    return ORDER
+  end
+  
   #returns the Taxon object of the lowest common ancestor
   def self.calculate_lca_taxon(lineages)
     return Taxon.find_by_id(Lineage.calculate_lca(lineages))

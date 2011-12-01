@@ -123,7 +123,10 @@ class SequencesController < ApplicationController
       # set search parameters
       @equate_il = !params[:il].nil?
       @filter_duplicates = !params[:dupes].nil?
+      export = !params[:export].nil?
       @search_name = params[:search_name]
+      
+      csv_string = CSV.generate_line ["peptide"].concat(Lineage.ranks) if export
     
       # remove duplicates, split missed cleavages, substitute I by L, ...
       data = params[:qs].gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/([KR])([^P\r])/,"\\1\n\\2")
@@ -155,6 +158,13 @@ class SequencesController < ApplicationController
       @matches.each do |taxon, sequences| # for every match
         @root.add_sequences(sequences)
         lca_l = Lineage.find_by_taxon_id(taxon.id)
+        
+        if export 
+          for sequence in sequences do
+            csv_string += CSV.generate_line [sequence].concat(lca_l.to_a)
+          end
+        end
+        
         last_node_loop = @root
         while !lca_l.nil? && lca_l.has_next? # process every rank in lineage
           t = lca_l.next_t
@@ -174,6 +184,9 @@ class SequencesController < ApplicationController
       end
     	#don't show the root when we don't need it
     	@root = @root.children[0] if @root.children.count == 0
+    	
+      send_data csv_string, :type => 'text/csv; charset=iso-8859-1; header=present', :disposition => "attachment; filename=export.csv" if export
+      
     end
   end
 end
