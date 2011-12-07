@@ -96,11 +96,18 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `sequence` VARCHAR(50) NOT NULL ,
   `lca` MEDIUMINT UNSIGNED NULL ,
+  `lca_il` MEDIUMINT UNSIGNED NULL ,
   PRIMARY KEY (`id`) ,
   UNIQUE INDEX `uidx_sequence` (`sequence` ASC) ,
   INDEX `fk_sequences_taxons` (`lca` ASC) ,
+  INDEX `fk_sequences_taxons_2` (`lca_il` ASC) ,
   CONSTRAINT `fk_sequences_taxons`
     FOREIGN KEY (`lca` )
+    REFERENCES `unipept`.`taxons` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sequences_taxons_2`
+    FOREIGN KEY (`lca_il` )
     REFERENCES `unipept`.`taxons` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
