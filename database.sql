@@ -95,8 +95,15 @@ DEFAULT CHARACTER SET = utf8;
 CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `sequence` VARCHAR(50) NOT NULL ,
+  `lca` MEDIUMINT UNSIGNED NULL ,
   PRIMARY KEY (`id`) ,
-  UNIQUE INDEX `uidx_sequence` (`sequence` ASC) )
+  UNIQUE INDEX `uidx_sequence` (`sequence` ASC) ,
+  INDEX `fk_sequences_taxons` (`lca` ASC) ,
+  CONSTRAINT `fk_sequences_taxons`
+    FOREIGN KEY (`lca` )
+    REFERENCES `unipept`.`taxons` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii;
 
