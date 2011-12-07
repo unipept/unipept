@@ -2,7 +2,7 @@
 #
 # Table name: counters
 #
-#  name  :string(31)      not null
+#  name  :string(31)      not null, primary key
 #  value :integer(4)      default(0), not null
 #
 

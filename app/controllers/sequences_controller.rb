@@ -126,6 +126,7 @@ class SequencesController < ApplicationController
       export = !params[:export].nil?
       @search_name = params[:search_name]
       
+      #export stuff
       csv_string = CSV.generate_line ["peptide"].concat(Lineage.ranks) if export
     
       # remove duplicates, split missed cleavages, substitute I by L, ...
@@ -159,6 +160,7 @@ class SequencesController < ApplicationController
         @root.add_sequences(sequences)
         lca_l = Lineage.find_by_taxon_id(taxon.id)
         
+        #export stuff
         if export 
           for sequence in sequences do
             csv_string += CSV.generate_line [sequence].concat(lca_l.to_a)

@@ -4,6 +4,7 @@
 #
 #  id       :integer(4)      not null, primary key
 #  sequence :string(50)      not null
+#  lca      :integer(3)
 #
 
 class Sequence < ActiveRecord::Base
