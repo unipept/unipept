@@ -185,7 +185,8 @@ class SequencesController < ApplicationController
     	#don't show the root when we don't need it
     	@root = @root.children[0] if @root.children.count == 0
     	
-      send_data csv_string, :type => 'text/csv; charset=iso-8859-1; header=present', :disposition => "attachment; filename=export.csv" if export
+    	filename = @search_name != "" ? @search_name : "export"
+      send_data csv_string, :type => 'text/csv; charset=iso-8859-1; header=present', :disposition => "attachment; filename="+filename+".csv" if export
       
     end
   end
