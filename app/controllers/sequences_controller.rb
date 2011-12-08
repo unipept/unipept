@@ -146,7 +146,7 @@ class SequencesController < ApplicationController
         sequence = Sequence.find_by_sequence(s)
         unless sequence.nil?
           @number_found += 1
-          lca_t = Lineage.calculate_lca_taxon(sequence.lineages(@equate_il))
+          lca_t = Taxon.find_by_id(sequence.calculate_lca(@equate_il))
           @matches[lca_t] = Array.new if @matches[lca_t].nil?
           @matches[lca_t] << sequence.sequence
         else

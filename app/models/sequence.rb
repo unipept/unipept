@@ -5,18 +5,13 @@
 #  id       :integer(4)      not null, primary key
 #  sequence :string(50)      not null
 #  lca      :integer(3)
+#  lca_il   :integer(3)
 #
 
 class Sequence < ActiveRecord::Base
-  attr_accessible nil
   
   has_many :peptides
   has_many :original_peptides, :foreign_key  => "original_sequence_id", :primary_key  => "id", :class_name   => 'Peptide'
-  
-  validates :sequence,  :presence   => true,
-                        :length     => { :within => 5..50 },
-                        :format     => { :with => /\A[A-Z]*\z/ },
-                        :uniqueness => true
   
   def lineages(equate_il = true)
     if equate_il
@@ -35,6 +30,22 @@ class Sequence < ActiveRecord::Base
       WHERE peptides.original_sequence_id = #{id}")
     end
     return l
+  end
+  
+  def calculate_lca(equate_il = true)
+    if equate_il
+      if lca_il.nil?
+        write_attribute(:lca_il, Lineage.calculate_lca(lineages(true)))
+        save
+      end
+      return lca_il
+    else
+      if lca.nil?
+        write_attribute(:lca, Lineage.calculate_lca(lineages(false)))
+        save
+      end
+      return lca
+    end
   end
                         
 end

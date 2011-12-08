@@ -124,11 +124,11 @@ class Lineage < ActiveRecord::Base
   end
   
   #calculates the lowest common ancestor
+  #you shouldn't call this method directly but the calculate_lca method on the sequence
   def self.calculate_lca(lineages)
     lca = 1 #default lca
     for rank in ORDER do
       #nils enkel filteren bij species en genus
-      #TODO: remove the abs function in 0.4
       if rank == :species || rank == :genus
         current = lineages.map(&rank).find_all{|n| n.nil? || n > 0}.uniq.compact
       else
