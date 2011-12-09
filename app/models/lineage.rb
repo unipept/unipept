@@ -126,6 +126,7 @@ class Lineage < ActiveRecord::Base
   #calculates the lowest common ancestor
   #you shouldn't call this method directly but the calculate_lca method on the sequence
   def self.calculate_lca(lineages)
+    return -1 if lineages.size == 0
     lca = 1 #default lca
     for rank in ORDER do
       #nils enkel filteren bij species en genus
