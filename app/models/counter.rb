@@ -16,7 +16,7 @@ class Counter < ActiveRecord::Base
       id.value += 1
       sequence = Sequence.find_by_id(id.value)
       lca = sequence.calculate_lca(true)
-      if lca != -1;
+      unless lca.nil?
         lca_taxon = Taxon.find_by_id(lca)
         c = lca_taxon.name == "root" ? Counter.find_by_name("root") : Counter.find_by_name(lca_taxon.rank);
         if !c.nil?
