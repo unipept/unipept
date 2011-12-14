@@ -35,15 +35,15 @@ class Sequence < ActiveRecord::Base
   def calculate_lca(equate_il = true)
     if equate_il
       if lca_il.nil?
-        lca_il = Lineage.calculate_lca(lineages(true))
-        write_attribute(:lca_il, lca_il) unless lca_il==-1
+        temp = Lineage.calculate_lca(lineages(true))
+        write_attribute(:lca_il, temp) unless temp==-1
         save
       end
       return lca_il
     else
       if lca.nil?
-        lca = Lineage.calculate_lca(lineages(false))
-        write_attribute(:lca, lca) unless lca==-1
+        temp = Lineage.calculate_lca(lineages(false))
+        write_attribute(:lca, temp) unless temp==-1
         save
       end
       return lca
