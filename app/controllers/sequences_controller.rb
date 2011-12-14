@@ -147,8 +147,10 @@ class SequencesController < ApplicationController
         unless sequence.nil?
           @number_found += 1
           lca_t = Taxon.find_by_id(sequence.calculate_lca(@equate_il))
-          @matches[lca_t] = Array.new if @matches[lca_t].nil?
-          @matches[lca_t] << sequence.sequence
+          unless lca_t.nil?
+            @matches[lca_t] = Array.new if @matches[lca_t].nil?
+            @matches[lca_t] << sequence.sequence
+          end
         else
           @misses << s
         end
