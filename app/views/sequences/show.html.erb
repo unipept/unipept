@@ -10,6 +10,9 @@
   </p>
 	<p>The common lineage of this sequence is: <%= @common_lineage=="" ? "nothing" : @common_lineage %>. <br/></p>
 	
+	<h2>Lineage</h2>
+	<div id="lineageTree"></div>
+	
 	<div id="sequence_table">
 		<% colors = Hash.new %>
 		<table>
@@ -36,9 +39,6 @@
 		<% end %>
 		</table>
 	</div>
-	
-	<h2>Lineage</h2>
-	<div id="lineageTree"></div>
 	
 	<h2>External links</h2>
 	<ul>
