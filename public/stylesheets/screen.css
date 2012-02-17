@@ -1918,6 +1918,9 @@ div#search_button{
 	background-color: #ffffff;
 	padding: 2px;
 }
+.tip-title{
+	text-align:center;
+}
 
 /*jstree*/
 #jstree{

@@ -64,7 +64,7 @@ function initTreeMap(jsonData) {
             //add content to the tooltip when a node
             //is hovered
             onShow: function (tip, node, isLeaf, domElement) {
-                tip.innerHTML = "<div class=\"tip-title\">" + node.name + " (" + (!node.data.self_count ? "0" : node.data.self_count) + "/" + (!node.data.count ? "0" : node.data.count) + ")" + "</div><div class=\"tip-text\"></div>";
+                tip.innerHTML = "<div class=\"tip-title\">" + node.name + " (" + (!node.data.self_count ? "0" : node.data.self_count) + "/" + (!node.data.count ? "0" : node.data.count) + ")" + "</div><div class=\"tip-text\">" + ( typeof node.data.piecharturl === "undefined" ? "" : "<img src='"+node.data.piecharturl+"'/>") + "</div>";
             }
         },
 

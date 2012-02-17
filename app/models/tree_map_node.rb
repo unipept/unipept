@@ -65,4 +65,14 @@ class TreeMapNode < Node
       
     @state = @data[:level] <= 3 ? "open" : "closed"
   end
+  
+  def add_piechart_data
+    unless @children.empty?
+      @data[:piecharturl] = "http://chart.apis.google.com/chart?chs=300x225&cht=p&chd=t:"
+      @data[:piecharturl] += @children.map{|c| c.data[:count].to_s}.join(",")
+      @data[:piecharturl] += "&chdl="
+      @data[:piecharturl] += @children.map{|c| c.name + " (" + c.data[:count].to_s + ")"}.join("|")
+      @children.map{|c| c.add_piechart_data}
+    end
+  end
 end
