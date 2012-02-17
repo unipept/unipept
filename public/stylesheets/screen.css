@@ -1949,7 +1949,9 @@ div#search_button{
 	color: #000000 !important;
 	text-decoration: none !important;
 }
-
+#jstree_search{
+	width: 350px;
+}
 /* table colors */
 
 #sequence_table{
