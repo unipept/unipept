@@ -73,7 +73,7 @@ class TreeMapNode < Node
       @data[:piecharturl] += "&chdl="
       @data[:piecharturl] += @children.map{|c| c.name + " (" + c.data[:count].to_s + ")"}.join("|")
       @data[:piecharturl] += "&chds=0,"
-      @data[:piecharturl] += @children.map{|c| c.data[:count]}.max
+      @data[:piecharturl] += @children.map{|c| c.data[:count]}.max.to_s
       @children.map{|c| c.add_piechart_data}
     end
   end
