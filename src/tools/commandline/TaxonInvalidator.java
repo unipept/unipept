@@ -37,7 +37,8 @@ public class TaxonInvalidator {
 		// bad names
 		data.invalidate("name LIKE \"%uncultured%\" AND valid_taxon = 1", true);
 		data.invalidate("name LIKE \"%unidentified%\" AND valid_taxon = 1", true);
-		data.invalidate("name LIKE \"%unclassified%\" AND valid_taxon = 1", true);
+		// data.invalidate("name LIKE \"%unclassified%\" AND valid_taxon = 1",
+		// false);
 		data.invalidate("name LIKE \"%unspecified%\" AND valid_taxon = 1", true);
 		data.invalidate("name LIKE \"%undetermined%\" AND valid_taxon = 1", true);
 		data.invalidate("name LIKE \"%sample%\" AND valid_taxon = 1", true);
