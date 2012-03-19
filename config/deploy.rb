@@ -1,6 +1,6 @@
 require 'bundler/capistrano'
 set :application, "unipept-web"
-set :repository,  "ssh://git@zoidberg.ugent.be:4840/unipept/unipept-web.git"
+set :repository,  "ssh://git@zoidberg.ugent.be:4840/unipept_web.git"
 
 set :scm, :git
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
