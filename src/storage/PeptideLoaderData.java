@@ -266,7 +266,6 @@ public class PeptideLoaderData {
 			ResultSet rs = lineageExists.executeQuery();
 			if (rs.next() && rs.getInt("aantal") == 0) {
 				addLineage.setInt(1, taxonId);
-				addLineage.execute();
 				updateLineage(taxonId, taxonId);
 			}
 			rs.close();
