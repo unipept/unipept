@@ -9,6 +9,7 @@ group :development do
   gem 'rspec-rails'
 	gem 'annotate-models'
 	gem "rake", "0.8.7"
+	gem 'sprockets', '2.1.2'
 end
 
 group :test do
@@ -16,7 +17,7 @@ group :test do
   gem 'webrat'
 	gem 'spork'
 	gem 'be_valid_asset'
-	gem 'factory_girl_rails'
+#	gem 'factory_girl_rails'
 end
 
 #default stuff

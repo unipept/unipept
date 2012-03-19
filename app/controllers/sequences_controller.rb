@@ -17,7 +17,10 @@ class SequencesController < ApplicationController
     
     # error on nil
     if @sequence.nil? || (@sequence.peptides.empty? && equate_il) || (@sequence.original_peptides.empty? && !equate_il)
-      flash[:error] = "No matches for peptide #{params[:id]}"
+      flash[:error] = "No matches for peptide #{params[:id]}. "
+      if params[:id][-1] != "K" && params[:id][-1] != "R"
+        flash[:error] += "Are you sure you entered a tryptic peptide?"
+      end
       redirect_to sequences_path
     else
       @title = @sequence.sequence
