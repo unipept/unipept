@@ -37,7 +37,10 @@ public class TaxonLoader {
 	 */
 	public TaxonLoader(String nodes, String names) {
 		data = new TaxonLoaderData();
+		System.out.println("truncate taxon tables");
 		data.emptyTaxonTables();
+		System.out.println("clearing LCA cache");
+		data.emptyLCACache();
 		this.nodes = nodes;
 		this.names = names;
 	}

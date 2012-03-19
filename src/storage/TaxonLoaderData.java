@@ -116,4 +116,27 @@ public class TaxonLoaderData {
 		}
 	}
 
+	/**
+	 * Empties the LCA cache
+	 */
+	public void emptyLCACache() {
+		Statement stmt;
+		try {
+			stmt = connection.createStatement();
+			try {
+				stmt.executeUpdate("UPDATE `sequences` SET lca_il=NULL, lca=NULL");
+			} catch (SQLException e) {
+				System.err.println(new Timestamp(System.currentTimeMillis())
+						+ " Something went wrong truncating tables.");
+				e.printStackTrace();
+			} finally {
+				stmt.close();
+			}
+		} catch (SQLException e1) {
+			System.err.println(new Timestamp(System.currentTimeMillis())
+					+ " Something went wrong creating a new statement.");
+			e1.printStackTrace();
+		}
+	}
+
 }
