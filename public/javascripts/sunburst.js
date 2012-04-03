@@ -1,51 +1,56 @@
-var w = 742,
-    h = w,
-    r = w / 2,
-    x = d3.scale.linear().range([0, 2 * Math.PI]),
-    y = d3.scale.pow().exponent(1.3).domain([0, 1]).range([0, r]),
-    p = 5,
-    duration = 1000;
+/*              setting things up                   */
+
+var w = 742,   // width
+    h = w,     // height
+    r = w / 2, // radius
+    x = d3.scale.linear().range([0, 2 * Math.PI]), // use full circle
+    y = d3.scale.pow().exponent(1.3).domain([0, 1]).range([0, r]), // higher levels get longer pieces
+    p = 5,     // padding
+    duration = 1000; // animation duration
 
 var div = d3.select("#sunburst");
 
 var vis = div.append("svg")
     .attr("width", w + p * 2)
     .attr("height", h + p * 2)
-  .append("g")
+    .append("g")
     .attr("transform", "translate(" + (r + p) + "," + (r + p) + ")");
 
-var partition = d3.layout.partition()
-    .sort(null)
-    .value(function(d) { return 5.8 - d.depth; });
+var partition = d3.layout.partition()               // creates a new partition layout
+    .sort(null)                                     // don't sort,  use tree traversal order
+    .value(function(d) { return 5.8 - d.depth; });  // use a hardcoded value
 
-var arc = d3.svg.arc()
+// calculate arcs out of partition coordinates
+var arc = d3.svg.arc()                              
     .startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x))); })
     .endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); })
     .innerRadius(function(d) { return Math.max(0, d.y ? y(d.y) : d.y); })
     .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
 
 d3.json("/wheel.json", function(json) {
-  var nodes = partition.nodes({children: json});
+  // run the partition layout
+  var nodes = partition.nodes({children: json}); 
 
   var path = vis.selectAll("path").data(nodes);
   path.enter().append("path")
       .attr("id", function(d, i) { return "path-" + i; })
       .attr("d", arc)
       .attr("fill-rule", "evenodd")
-      .style("fill", colour)
-      .on("click", click);
-
+      .style("fill", colour)    // call function for colour
+      .on("click", click);      // call function on click
+  
+  // put labels on the nodes
   var text = vis.selectAll("text").data(nodes);
   var textEnter = text.enter().append("text")
       .style("opacity", 1)
       .style("fill", function(d) {
-        return brightness(d3.rgb(colour(d))) < 125 ? "#eee" : "#000";
+        return brightness(d3.rgb(colour(d))) < 125 ? "#eee" : "#000"; // calculate text color
       })
       .attr("text-anchor", function(d) {
-        return x(d.x + d.dx / 2) > Math.PI ? "end" : "start";
+        return x(d.x + d.dx / 2) > Math.PI ? "end" : "start"; // start text at center or outer side?
       })
       .attr("dy", ".2em")
-      .attr("transform", function(d) {
+      .attr("transform", function(d) { // multi line text
         var multiline = (d.name || "").split(" ").length > 1,
             angle = x(d.x + d.dx / 2) * 180 / Math.PI - 90,
             rotate = angle + (multiline ? -.5 : 0);
