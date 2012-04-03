@@ -1,5 +1,3 @@
-/*              setting things up                   */
-
 var w = 742,   // width
     h = w,     // height
     r = w / 2, // radius
@@ -18,7 +16,8 @@ var vis = div.append("svg")
 
 var partition = d3.layout.partition()               // creates a new partition layout
     .sort(null)                                     // don't sort,  use tree traversal order
-    .value(function(d) { return 5.8 - d.depth; });  // use a hardcoded value
+    .value(function(d) { return d.data.$area; })
+    .children(function(d){return d.data.level < 3 ? d.kids : null;});
 
 // calculate arcs out of partition coordinates
 var arc = d3.svg.arc()                              
@@ -26,10 +25,10 @@ var arc = d3.svg.arc()
     .endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); })
     .innerRadius(function(d) { return Math.max(0, d.y ? y(d.y) : d.y); })
     .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
-
-d3.json("/wheel.json", function(json) {
+    
+function initSunburst(data){
   // run the partition layout
-  var nodes = partition.nodes({children: json}); 
+  var nodes = partition.nodes(data); 
 
   var path = vis.selectAll("path").data(nodes);
   path.enter().append("path")
@@ -94,8 +93,7 @@ d3.json("/wheel.json", function(json) {
         d3.select(this).style("visibility", isParentOf(d, e) ? null : "hidden");
       });
   }
-});
-
+}
 function isParentOf(p, c) {
   if (p === c) return true;
   if (p.children) {
@@ -107,15 +105,7 @@ function isParentOf(p, c) {
 }
 
 function colour(d) {
-  if (d.children) {
-    // There is a maximum of two children!
-    var colours = d.children.map(colour),
-        a = d3.hsl(colours[0]),
-        b = d3.hsl(colours[1]);
-    // L*a*b* might be better here...
-    return d3.hsl((a.h + b.h) / 2, a.s * 1.2, a.l / 1.2);
-  }
-  return d.colour || "#fff";
+  return d.data.$color || "#000";
 }
 
 // Interpolate the scales!
@@ -137,3 +127,4 @@ function maxY(d) {
 function brightness(rgb) {
   return rgb.r * .299 + rgb.g * .587 + rgb.b * .114;
 }
+

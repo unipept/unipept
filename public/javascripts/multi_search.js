@@ -17,7 +17,9 @@ var labelType,
     animate = !(iStuff || !nativeCanvasSupport);
 }());
 
-function init(data, equate_il) {
+function init(json, equate_il) {
+    var data = jQuery.extend(true, {}, json)
+
     //treemap
     initTreeMap(data);
 
