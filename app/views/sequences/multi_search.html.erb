@@ -17,6 +17,9 @@ While searching, we didn't filter duplicate peptides
 <% end %>
 
 <% if @number_found > 0 %>
+<h2>Sunburst</h2>
+<div id="sunburst"></div>
+
 <h2>Treemap</h2>
 <div id="treeMap"></div>
 
@@ -39,7 +42,8 @@ While searching, we didn't filter duplicate peptides
 <% if @number_found > 0 %>
 <!-- JIT Library File --> 
 <!--[if IE]><%= javascript_include_tag "jit/Extras/excanvas.js"%><![endif]-->
-<%= javascript_include_tag "jit/jit-yc.js", "multi_search.js", "jstree/jquery.jstree" %>
+<%= javascript_include_tag "jit/jit-yc.js", "jstree/jquery.jstree", "d3/d3.v2.min.js"%>
+<%= javascript_include_tag "multi_search.js", "sunburst.js" %>
 <script type="text/javascript">
 	window.onload=init(<%= raw(@root.to_json)%>, <%=@equate_il %>);
 </script>

@@ -1,4 +1,4 @@
-var w = 840,
+var w = 742,
     h = w,
     r = w / 2,
     x = d3.scale.linear().range([0, 2 * Math.PI]),
@@ -6,19 +6,13 @@ var w = 840,
     p = 5,
     duration = 1000;
 
-var div = d3.select("#vis");
-
-div.select("img").remove();
+var div = d3.select("#sunburst");
 
 var vis = div.append("svg")
     .attr("width", w + p * 2)
     .attr("height", h + p * 2)
   .append("g")
     .attr("transform", "translate(" + (r + p) + "," + (r + p) + ")");
-
-div.append("p")
-    .attr("id", "intro")
-    .text("Click to zoom!");
 
 var partition = d3.layout.partition()
     .sort(null)
@@ -30,7 +24,7 @@ var arc = d3.svg.arc()
     .innerRadius(function(d) { return Math.max(0, d.y ? y(d.y) : d.y); })
     .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
 
-d3.json("wheel.json", function(json) {
+d3.json("/wheel.json", function(json) {
   var nodes = partition.nodes({children: json});
 
   var path = vis.selectAll("path").data(nodes);

@@ -1892,6 +1892,11 @@ div#search_button{
 	width: 100px !important;
 	padding-top: 0px !important;
 }
+/*sunburst*/
+#sunburst{
+    height: 742px;
+    width: 742px;
+}
 /*treemap*/
 #treeMap{
 	background-color: #DCDFE4;
