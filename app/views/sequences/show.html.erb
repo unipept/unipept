@@ -30,7 +30,6 @@
 				<% for rank in lineage do%>
 				<% if !rank.nil? %>
 					<% colors.store(rank.id, "c"+(i%30).to_s) if !colors.has_key?(rank.id) %>
-					<!--<td class="klik <%= colors[rank.id] %>" title="<%= rank.name %>"><%= rank.id %></td>-->
 					<td class="klik <%= colors[rank.id] %>" title="<%= rank.name %>"><%= rank.name %></td>
 				<% else %>
 					<td></td>
