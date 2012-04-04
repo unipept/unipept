@@ -2,7 +2,7 @@ var w = 742,   // width
     h = w,     // height
     r = w / 2, // radius
     x = d3.scale.linear().range([0, 2 * Math.PI]), // use full circle
-    y = d3.scale.pow().exponent(1.3).domain([0, 1]).range([0, r]), // higher levels get longer pieces
+    y = d3.scale.pow().exponent(1.3).domain([0, 1]).range([0, r]), // higher levels get longer pieces, is exponent needed?
     p = 5,     // padding
     duration = 1000; // animation duration
 
@@ -12,18 +12,18 @@ var vis = div.append("svg")
     .attr("width", w + p * 2)
     .attr("height", h + p * 2)
     .append("g")
-    .attr("transform", "translate(" + (r + p) + "," + (r + p) + ")");
+    .attr("transform", "translate(" + (r + p) + "," + (r + p) + ")"); // set origin to radius center
 
 var partition = d3.layout.partition()               // creates a new partition layout
     .sort(null)                                     // don't sort,  use tree traversal order
-    .value(function(d) { return d.data.$area; })
-    .children(function(d){return d.data.level < 3 ? d.kids : null;});
+    .value(function(d) { return d.data.$area; })    // set the size of the pieces
+    .children(function(d){return d.data.level < 3 ? d.kids : null;}); //hack to only show 4 levels
 
 // calculate arcs out of partition coordinates
 var arc = d3.svg.arc()                              
-    .startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x))); })
-    .endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); })
-    .innerRadius(function(d) { return Math.max(0, d.y ? y(d.y) : d.y); })
+    .startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x))); }) // start between 0 and 2Pi
+    .endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); }) // stop between 0 and 2Pi
+    .innerRadius(function(d) { return Math.max(0, d.y ? y(d.y) : d.y); }) // prevent y-calculation on 0
     .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
     
 function initSunburst(data){
@@ -31,12 +31,12 @@ function initSunburst(data){
   var nodes = partition.nodes(data); 
 
   var path = vis.selectAll("path").data(nodes);
-  path.enter().append("path")
-      .attr("id", function(d, i) { return "path-" + i; })
-      .attr("d", arc)
-      .attr("fill-rule", "evenodd")
-      .style("fill", colour)    // call function for colour
-      .on("click", click);      // call function on click
+  path.enter().append("path")                               // for every node, draw an arc
+      .attr("id", function(d, i) { return "path-" + i; })   // id based on index
+      .attr("d", arc)                                       // path data
+      .attr("fill-rule", "evenodd")                         // fill rule
+      .style("fill", colour)                                // call function for colour
+      .on("click", click);                                  // call function on click
   
   // put labels on the nodes
   var text = vis.selectAll("text").data(nodes);
@@ -109,6 +109,7 @@ function colour(d) {
 }
 
 // Interpolate the scales!
+// Defines new scales based on the clicked item
 function arcTween(d) {
   var my = maxY(d),
       xd = d3.interpolate(x.domain(), [d.x, d.x + d.dx]),
@@ -119,6 +120,8 @@ function arcTween(d) {
   };
 }
 
+// calculate the max-y of the clicked item
+// level hack should be applied here
 function maxY(d) {
   return d.children ? Math.max.apply(Math, d.children.map(maxY)) : d.y + d.dy;
 }
