@@ -4,7 +4,9 @@ var w = 742,   // width
     x = d3.scale.linear().range([0, 2 * Math.PI]), // use full circle
     y = d3.scale.pow().exponent(1.3).domain([0, 1]).range([0, r]), // higher levels get longer pieces, is exponent needed?
     p = 5,     // padding
-    duration = 1000; // animation duration
+    duration = 1000, // animation duration
+    levels = 4, // levels to show
+    currentMaxLevel = 4;
 
 var div = d3.select("#sunburst");
 
@@ -17,14 +19,14 @@ var vis = div.append("svg")
 var partition = d3.layout.partition()               // creates a new partition layout
     .sort(null)                                     // don't sort,  use tree traversal order
     .value(function(d) { return d.data.$area; })    // set the size of the pieces
-    .children(function(d){return d.data.level < 3 ? d.kids : null;}); //hack to only show 4 levels
+    .children(function(d){return d.data.level < 7 ? d.kids : null;}); //hack to only show 4 levels
 
 // calculate arcs out of partition coordinates
 var arc = d3.svg.arc()                              
     .startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x))); }) // start between 0 and 2Pi
     .endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); }) // stop between 0 and 2Pi
-    .innerRadius(function(d) { return Math.max(0, d.y ? y(d.y) : d.y); }) // prevent y-calculation on 0
-    .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
+    .innerRadius(function(d) { return Math.max(0, Math.min(r,d.y ? y(d.y) : d.y)); }) // prevent y-calculation on 0
+    .outerRadius(function(d) { return Math.max(0, Math.min(r,y(d.y + d.dy))); });
     
 function initSunburst(data){
   // run the partition layout
@@ -65,11 +67,13 @@ function initSunburst(data){
       .text(function(d) { return d.depth ? d.name.split(" ")[1] || "" : ""; });
 
   function click(d) {
+    currentMaxLevel = d.depth + levels;
     path.transition()
       .duration(duration)
       .attrTween("d", arcTween(d));
 
     // Somewhat of a hack as we rely on arcTween updating the scales.
+    // http://bl.ocks.org/1846692 <- text scale
     text
       .style("visibility", function(e) {
         return isParentOf(d, e) ? null : d3.select(this).style("visibility");
@@ -95,6 +99,7 @@ function initSunburst(data){
   }
 }
 function isParentOf(p, c) {
+  if (c.depth >= currentMaxLevel) return false;
   if (p === c) return true;
   if (p.children) {
     return p.children.some(function(d) {
@@ -111,7 +116,7 @@ function colour(d) {
 // Interpolate the scales!
 // Defines new scales based on the clicked item
 function arcTween(d) {
-  var my = maxY(d),
+  var my = Math.min(maxY(d), d.y + levels * d.dy),
       xd = d3.interpolate(x.domain(), [d.x, d.x + d.dx]),
       yd = d3.interpolate(y.domain(), [d.y, my]),
       yr = d3.interpolate(y.range(), [d.y ? 20 : 0, r]);
@@ -121,7 +126,6 @@ function arcTween(d) {
 }
 
 // calculate the max-y of the clicked item
-// level hack should be applied here
 function maxY(d) {
   return d.children ? Math.max.apply(Math, d.children.map(maxY)) : d.y + d.dy;
 }
