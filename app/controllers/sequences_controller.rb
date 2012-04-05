@@ -11,8 +11,8 @@ class SequencesController < ApplicationController
     if params[:id].match(/\A[0-9]+\z/)
       @sequence = Sequence.find_by_id(params[:id])
     else  #params[:id] contains the sequence
-      params[:id].gsub!(/I/,'L') if equate_il
       params[:id].upcase!
+      params[:id].gsub!(/I/,'L') if equate_il
       @sequence = Sequence.find_by_sequence(params[:id])
     end
     
