@@ -12,6 +12,7 @@ class SequencesController < ApplicationController
       @sequence = Sequence.find_by_id(params[:id])
     else  #params[:id] contains the sequence
       params[:id].gsub!(/I/,'L') if equate_il
+      params[:id].upcase!
       @sequence = Sequence.find_by_sequence(params[:id])
     end
     
@@ -125,7 +126,7 @@ class SequencesController < ApplicationController
       filter_duplicates = !params[:dupes].nil?
     
       # remove duplicates, split missed cleavages, substitute I by L, ...
-      data = params[:qs].gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/([KR])([^P\r])/,"\\1\n\\2")
+      data = params[:qs].upcase.gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/([KR])([^P\r])/,"\\1\n\\2")
       data = data.gsub(/I/,'L') if @equate_il
       data = data.lines.map(&:strip).to_a.select{|l| l.size >= 8 && l.size <= 50 }
       data = data.uniq if filter_duplicates
