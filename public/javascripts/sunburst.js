@@ -42,6 +42,7 @@ function initSunburst(data){
   
   // put labels on the nodes
   var text = vis.selectAll("text").data(nodes);
+  
   var textEnter = text.enter().append("text")
       .style("opacity", 1)
       .style("fill", function(d) {
@@ -59,6 +60,8 @@ function initSunburst(data){
       .attr("dy", "1em")
       .text(function(d) { return d.depth ? d.name.split(" ")[1] || "" : ""; });
       
+  textEnter.style("font-size", function(d) {return Math.min(((r / levels) / this.getComputedTextLength() * 10), 10) + "px"; })
+      
   // set up start levels
   click(data);
 
@@ -69,7 +72,6 @@ function initSunburst(data){
       .attrTween("d", arcTween(d));
 
     // Somewhat of a hack as we rely on arcTween updating the scales.
-    // http://bl.ocks.org/1846692 <- text scale
     text
       .style("visibility", function(e) {
         return isParentOf(d, e) ? null : d3.select(this).style("visibility");
