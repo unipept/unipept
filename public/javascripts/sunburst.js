@@ -6,7 +6,10 @@ var w = 742,   // width
     p = 5,     // padding
     duration = 2000, // animation duration
     levels = 4, // levels to show
-    currentMaxLevel = 4; // don't change this
+    
+     // don't change these
+    currentMaxLevel = 4
+    colors=["#f9f0ab", "#e8e596", "#f0e2a3", "#ede487", "#efd580", "#f1cb82", "#f1c298", "#e8b598", "#d5dda1", "#c9d2b5", "#aec1ad", "#a7b8a8", "#b49a3d", "#b28647", "#a97d32", "#b68334", "#d6a680", "#dfad70", "#a2765d", "#9f6652", "#b9763f", "#bf6e5d", "#af643c", "#9b4c3f", "#72659d", "#8a6e9e", "#8f5c85", "#934b8b", "#9d4e87", "#92538c", "#8b6397", "#716084", "#2e6093", "#3a5988", "#4a5072", "#393e64", "#aaa1cc", "#e0b5c9", "#e098b0", "#ee82a2", "#ef91ac", "#eda994", "#eeb798", "#ecc099", "#f6d5aa", "#f0d48a", "#efd95f", "#eee469", "#dbdc7f", "#dfd961", "#ebe378", "#f5e351"];
 
 var div = d3.select("#sunburst");
 
@@ -109,8 +112,18 @@ function isParentOf(p, c) {
   return false;
 }
 
-function colour(d) {
-  return d.data.$color || "#000";
+function colour(d,i) {
+  if (d.children) {
+    var colours = d.children.map(colour),
+      a = d3.hsl(colours[0]),
+      b = d3.hsl(colours[1]);
+    // L*a*b* might be better here...
+    //return d3.hsl((a.h + b.h) / 2, a.s * 1.2, a.l / 1.2);
+    if(!colours[1])
+        return colours[0];
+    return d3.hsl((a.h + b.h) / 2, (a.s + b.s) / 2, (a.l + b.l) / 2);
+  }
+  return colors[d.id%52] || "#000";
 }
 
 // Interpolate the scales!
