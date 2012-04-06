@@ -118,12 +118,13 @@ function colour(d) {
     var colours = d.children.map(colour),
       a = d3.hsl(colours[0]),
       b = d3.hsl(colours[1]);
-    // L*a*b* might be better here...
-    //return d3.hsl((a.h + b.h) / 2, a.s * 1.2, a.l / 1.2);
+    // if we only have one child, return a slightly darker variant of the child color
     if(!colours[1])
-        return colours[0];
+        return d3.hsl(a.h, a.s, a.l*0.98);
+    // if we have 2 kids or more, take the average of the first two kids
     return d3.hsl((a.h + b.h) / 2, (a.s + b.s) / 2, (a.l + b.l) / 2);
   }
+  // if we don't have kids, pick a new color
   if(!d.color)
     d.color = getColor();
   return d.color;
