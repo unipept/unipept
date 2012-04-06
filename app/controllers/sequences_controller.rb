@@ -16,6 +16,7 @@ class SequencesController < ApplicationController
       unless params[:id].index(/([KR])([^P])/).nil?
         flash[:notice] = "The peptide you're looking for is not a tryptic peptide."
       end
+      
       @sequence = Sequence.find_by_sequence(params[:id])
     end
     
