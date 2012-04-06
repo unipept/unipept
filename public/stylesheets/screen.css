@@ -1057,11 +1057,40 @@ Styles ported from portal.css & portal_addenda.css
 	color: black;
 }
 div.error {
-	background-color: #FFCCCC;
-	border: 1px solid red;
-	padding: 1em;
-	margin: 0 0 1em 0;
-	width: 95%;
+	background: #FBE3E4;
+	color: #8A1F11;
+	border-top: 2px solid #FBC2C4;
+	border-bottom: 2px solid #FBC2C4;
+	text-align: center;
+	margin: 10px auto;
+	padding: 5px 20px;
+}
+div.notice {
+	background: #FFF6BF;
+	color: #514721;
+	border-top: 2px solid #FFD324;
+	border-bottom: 2px solid #FFD324;
+	text-align: center;
+	margin: 10px auto;
+	padding: 5px 20px;
+}
+div.info {
+	background: #D5EDF8;
+	color: #205791;
+	border-top: 2px solid #92CAE4;
+	border-bottom: 2px solid #92CAE4;
+	text-align: center;
+	margin: 10px auto;
+	padding: 5px 20px;
+}
+div.success {
+	background: #E6EFC2;
+	color: #264409;
+	border-top: 2px solid #C6D880;
+	border-bottom: 2px solid #C6D880;
+	text-align: center;
+	margin: 10px auto;
+	padding: 5px 20px;
 }
 
 /* -- Document actions taken from Plone's portal.css -- */
