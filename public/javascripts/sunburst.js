@@ -4,7 +4,7 @@ var w = 742,   // width
     x = d3.scale.linear().range([0, 2 * Math.PI]), // use full circle
     y = d3.scale.pow().exponent(1.3).domain([0, 1]).range([0, r]), // higher levels get longer pieces, is exponent needed?
     p = 5,     // padding
-    duration = 1000, // animation duration
+    duration = 2000, // animation duration
     levels = 4, // levels to show
     currentMaxLevel = 4;
 
