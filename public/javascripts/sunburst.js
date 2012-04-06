@@ -47,20 +47,13 @@ function initSunburst(data){
       .style("fill", function(d) {
         return brightness(d3.rgb(colour(d))) < 125 ? "#eee" : "#000"; // calculate text color
       })
-      .attr("text-anchor", function(d) {
-        return x(d.x + d.dx / 2) > Math.PI ? "end" : "start"; // start text at center or outer side?
-      })
       .attr("dy", ".2em")
-      .attr("transform", function(d) { // multi line text
-        var multiline = (d.name || "").split(" ").length > 1,
-            angle = x(d.x + d.dx / 2) * 180 / Math.PI - 90,
-            rotate = angle + (multiline ? -.5 : 0);
-        return "rotate(" + rotate + ")translate(" + (y(d.y) + p) + ")rotate(" + (angle > 90 ? -180 : 0) + ")";
-      })
       .on("click", click);
+      
   textEnter.append("tspan")
       .attr("x", 0)
       .text(function(d) { return d.depth ? d.name.split(" ")[0] : ""; });
+      
   textEnter.append("tspan")
       .attr("x", 0)
       .attr("dy", "1em")
@@ -101,6 +94,8 @@ function initSunburst(data){
       });
   }
 }
+
+//returns true is label must be drawn
 function isParentOf(p, c) {
   if (c.depth >= currentMaxLevel) return false;
   if (p === c) return true;
