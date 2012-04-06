@@ -65,6 +65,9 @@ function initSunburst(data){
       .attr("x", 0)
       .attr("dy", "1em")
       .text(function(d) { return d.depth ? d.name.split(" ")[1] || "" : ""; });
+      
+  // set up start levels
+  click(data);
 
   function click(d) {
     currentMaxLevel = d.depth + levels;
