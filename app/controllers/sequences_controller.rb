@@ -13,6 +13,9 @@ class SequencesController < ApplicationController
     else  #params[:id] contains the sequence
       params[:id].upcase!
       params[:id].gsub!(/I/,'L') if equate_il
+      unless params[:id].index(/([KR])([^P])/).nil?
+        flash[:notice] = "The peptide you're looking for is not a tryptic peptide."
+      end
       @sequence = Sequence.find_by_sequence(params[:id])
     end
     

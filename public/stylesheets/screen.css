@@ -1058,10 +1058,20 @@ Styles ported from portal.css & portal_addenda.css
 }
 div.error {
 	background-color: #FFCCCC;
-	border: 1px solid red;
-	padding: 1em;
-	margin: 0 0 1em 0;
-	width: 95%;
+	border-top: 2px solid red;
+	border-bottom: 2px solid red;
+	text-align: center;
+	margin: 10px auto;
+	padding: 5px 20px;
+}
+
+div.notice {
+	background: #FFF6BF;
+	border-top: 2px solid #FFD324;
+	border-bottom: 2px solid #FFD324;
+	text-align: center;
+	margin: 10px auto;
+	padding: 5px 20px;
 }
 
 /* -- Document actions taken from Plone's portal.css -- */
