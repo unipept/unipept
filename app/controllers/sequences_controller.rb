@@ -16,7 +16,7 @@ class SequencesController < ApplicationController
       unless params[:id].index(/([KR])([^P])/).nil?
         flash[:notice] = "The peptide you're looking for (#{params[:id]}) is not a tryptic peptide.";
         @sequence = params[:id].gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a.map{|l| Sequence.find_by_sequence(l)}.compact[0]
-        flash[:notice] += " We tried to split it, and searched for #{@sequence.sequence} instead." unless @sequence.nil?
+        flash[:notice] += "\n We tried to split it, and searched for #{@sequence.sequence} instead." unless @sequence.nil?
       else
         @sequence = Sequence.find_by_sequence(params[:id])
       end

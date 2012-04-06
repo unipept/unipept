@@ -51,7 +51,7 @@
 			<% end %>
 			
 			<% flash.each do |key, value| %>
-				<%= content_tag(:div, value, :class => "flash #{key}") %>
+				<%= content_tag(:div, value, :class => "flash #{key}").gsub(/\n/, "<br/>") %>
 			<% end %>
 			
 			<%= yield %>
