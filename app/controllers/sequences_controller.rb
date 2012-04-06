@@ -14,10 +14,13 @@ class SequencesController < ApplicationController
       params[:id].upcase!
       params[:id].gsub!(/I/,'L') if equate_il
       unless params[:id].index(/([KR])([^P])/).nil?
-        flash[:notice] = "The peptide you're looking for is not a tryptic peptide."
+        flash[:notice] = "The peptide you're looking for (#{params[:id]}) is not a tryptic peptide.";
+        @sequence = params[:id].gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a.map{|l| Sequence.find_by_sequence(l)}.compact[0]
+        flash[:notice] += " We tried to split it, and searched for #{@sequence.sequence} instead." unless @sequence.nil?
+      else
+        @sequence = Sequence.find_by_sequence(params[:id])
       end
       
-      @sequence = Sequence.find_by_sequence(params[:id])
     end
     
     # error on nil
