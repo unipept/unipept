@@ -46,7 +46,7 @@ While searching, we didn't filter duplicate peptides
 <%= javascript_include_tag "multi_search.js", "sunburst.js" %>
 <script type="text/javascript">
 	var data1 = <%= raw(@root.to_json)%>
-	var data2 = <%= raw(@root.to_json.gsub("children","kids"))%>
+	var data2 = <%= raw(@root.to_json.gsub("children","kids"))%> // TODO: fix me
 	window.onload=init(data1, <%=@equate_il %>);
 	initSunburst(data2);
 </script>
