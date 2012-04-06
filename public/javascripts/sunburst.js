@@ -29,8 +29,8 @@ var partition = d3.layout.partition()               // creates a new partition l
 var arc = d3.svg.arc()                              
     .startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x))); }) // start between 0 and 2Pi
     .endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); }) // stop between 0 and 2Pi
-    .innerRadius(function(d) { return Math.max(0, Math.min(r,d.y ? y(d.y) : d.y)); }) // prevent y-calculation on 0
-    .outerRadius(function(d) { return Math.max(0, Math.min(r,y(d.y + d.dy))); });
+    .innerRadius(function(d) { return Math.max(0, d.y ? y(d.y) : d.y); }) // prevent y-calculation on 0
+    .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
     
 function initSunburst(data){
   // run the partition layout
@@ -80,7 +80,12 @@ function initSunburst(data){
       currentMaxLevel = d.depth + levels;
       path.transition()
           .duration(duration)
-          .attrTween("d", arcTween(d));
+          .attrTween("d", arcTween(d))
+          .style("opacity", function(d){
+              if (d.depth >= currentMaxLevel)
+                  return 0.2;
+              return 1;
+          });
 
       // Somewhat of a hack as we rely on arcTween updating the scales.
       text
