@@ -69,95 +69,97 @@ function initSunburst(data){
       .attr("dy", "1em")
       .text(function(d) { return d.depth ? d.name.split(" ")[2] || "" : ""; });
       
-  textEnter.style("font-size", function(d) {return Math.min(((r / levels) / this.getComputedTextLength() * 10), 10) + "px"; })
+  textEnter.style("font-size", function(d) {
+      return Math.min(((r / levels) / this.getComputedTextLength() * 10), 10) + "px"; 
+  })
       
   // set up start levels
   click(data);
 
   function click(d) {
-    currentMaxLevel = d.depth + levels;
-    path.transition()
-      .duration(duration)
-      .attrTween("d", arcTween(d));
+      currentMaxLevel = d.depth + levels;
+      path.transition()
+          .duration(duration)
+          .attrTween("d", arcTween(d));
 
     // Somewhat of a hack as we rely on arcTween updating the scales.
     text
       .style("visibility", function(e) {
-        return isParentOf(d, e) ? null : d3.select(this).style("visibility");
+          return isParentOf(d, e) ? null : d3.select(this).style("visibility");
       })
       .transition().duration(duration)
       .attrTween("text-anchor", function(d) {
-        return function() {
-          return x(d.x + d.dx / 2) > Math.PI ? "end" : "start";
-        };
+          return function() {
+              return x(d.x + d.dx / 2) > Math.PI ? "end" : "start";
+          };
       })
       .attrTween("transform", function(d) {
-        var multiline = (d.name || "").split(" ").length > 1;
-        return function() {
-          var angle = x(d.x + d.dx / 2) * 180 / Math.PI - 90,
-              rotate = angle + (multiline ? -.5 : 0);
-          return "rotate(" + rotate + ")translate(" + (y(d.y) + p) + ")rotate(" + (angle > 90 ? -180 : 0) + ")";
-        };
+          var multiline = (d.name || "").split(" ").length > 1;
+          return function() {
+              var angle = x(d.x + d.dx / 2) * 180 / Math.PI - 90,
+                  rotate = angle + (multiline ? -.5 : 0);
+              return "rotate(" + rotate + ")translate(" + (y(d.y) + p) + ")rotate(" + (angle > 90 ? -180 : 0) + ")";
+          };
       })
       .style("opacity", function(e) { return isParentOf(d, e) ? 1 : 1e-6; })
       .each("end", function(e) {
-        d3.select(this).style("visibility", isParentOf(d, e) ? null : "hidden");
+          d3.select(this).style("visibility", isParentOf(d, e) ? null : "hidden");
       });
   }
 }
 
 //returns true is label must be drawn
 function isParentOf(p, c) {
-  if (c.depth >= currentMaxLevel) return false;
-  if (p === c) return true;
-  if (p.children) {
-    return p.children.some(function(d) {
-      return isParentOf(d, c);
-    });
-  }
-  return false;
+    if (c.depth >= currentMaxLevel) return false;
+    if (p === c) return true;
+    if (p.children) {
+        return p.children.some(function(d) {
+            return isParentOf(d, c);
+        });
+    }
+    return false;
 }
 
 function colour(d) {
-  if (d.children) {
-    var colours = d.children.map(colour),
-      a = d3.hsl(colours[0]),
-      b = d3.hsl(colours[1]);
-    // if we only have one child, return a slightly darker variant of the child color
-    if(!colours[1])
-        return d3.hsl(a.h, a.s, a.l*0.98);
-    // if we have 2 kids or more, take the average of the first two kids
-    return d3.hsl((a.h + b.h) / 2, (a.s + b.s) / 2, (a.l + b.l) / 2);
-  }
-  // if we don't have kids, pick a new color
-  if(!d.color)
-    d.color = getColor();
-  return d.color;
+    if (d.children) {
+        var colours = d.children.map(colour),
+            a = d3.hsl(colours[0]),
+            b = d3.hsl(colours[1]);
+        // if we only have one child, return a slightly darker variant of the child color
+        if(!colours[1]) 
+            return d3.hsl(a.h, a.s, a.l*0.98);
+        // if we have 2 kids or more, take the average of the first two kids
+        return d3.hsl((a.h + b.h) / 2, (a.s + b.s) / 2, (a.l + b.l) / 2);
+    }
+    // if we don't have kids, pick a new color
+    if(!d.color)
+        d.color = getColor();
+    return d.color;
 }
 
 // Interpolate the scales!
 // Defines new scales based on the clicked item
 function arcTween(d) {
-  var my = Math.min(maxY(d), d.y + levels * d.dy),
-      xd = d3.interpolate(x.domain(), [d.x, d.x + d.dx]),
-      yd = d3.interpolate(y.domain(), [d.y, my]),
-      yr = d3.interpolate(y.range(), [d.y ? 20 : 0, r]);
-  return function(d) {
-    return function(t) { x.domain(xd(t)); y.domain(yd(t)).range(yr(t)); return arc(d); };
-  };
+    var my = Math.min(maxY(d), d.y + levels * d.dy),
+        xd = d3.interpolate(x.domain(), [d.x, d.x + d.dx]),
+        yd = d3.interpolate(y.domain(), [d.y, my]),
+        yr = d3.interpolate(y.range(), [d.y ? 20 : 0, r]);
+    return function(d) {
+        return function(t) { x.domain(xd(t)); y.domain(yd(t)).range(yr(t)); return arc(d); };
+    };
 }
 
 // calculate the max-y of the clicked item
 function maxY(d) {
-  return d.children ? Math.max.apply(Math, d.children.map(maxY)) : d.y + d.dy;
+    return d.children ? Math.max.apply(Math, d.children.map(maxY)) : d.y + d.dy;
 }
 
 // http://www.w3.org/WAI/ER/WD-AERT/#color-contrast
 function brightness(rgb) {
-  return rgb.r * .299 + rgb.g * .587 + rgb.b * .114;
+    return rgb.r * .299 + rgb.g * .587 + rgb.b * .114;
 }
 
 function getColor(){
-    return colors[colorCounter++%52];
+    return colors[colorCounter++ % 52];
 }
 
