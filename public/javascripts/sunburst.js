@@ -64,6 +64,11 @@ function initSunburst(data){
       .attr("dy", "1em")
       .text(function(d) { return d.depth ? d.name.split(" ")[1] || "" : ""; });
       
+  textEnter.append("tspan")
+      .attr("x", 0)
+      .attr("dy", "1em")
+      .text(function(d) { return d.depth ? d.name.split(" ")[2] || "" : ""; });
+      
   textEnter.style("font-size", function(d) {return Math.min(((r / levels) / this.getComputedTextLength() * 10), 10) + "px"; })
       
   // set up start levels
