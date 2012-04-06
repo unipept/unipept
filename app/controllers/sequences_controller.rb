@@ -14,9 +14,9 @@ class SequencesController < ApplicationController
       params[:id].upcase!
       params[:id].gsub!(/I/,'L') if equate_il
       unless params[:id].index(/([KR])([^P])/).nil?
-        flash[:notice] = "The peptide you're looking for (#{params[:id]}) is not a tryptic peptide.";
+        flash.now[:notice] = "The peptide you're looking for (#{params[:id]}) is not a tryptic peptide.";
         @sequence = params[:id].gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a.map{|l| Sequence.find_by_sequence(l)}.compact[0]
-        flash[:notice] += "\n We tried to split it, and searched for #{@sequence.sequence} instead." unless @sequence.nil?
+        flash.now[:notice] += "\n We tried to split it, and searched for #{@sequence.sequence} instead." unless @sequence.nil?
       else
         @sequence = Sequence.find_by_sequence(params[:id])
       end
@@ -26,6 +26,7 @@ class SequencesController < ApplicationController
     # error on nil
     if @sequence.nil? || (@sequence.peptides.empty? && equate_il) || (@sequence.original_peptides.empty? && !equate_il)
       flash[:error] = "No matches for peptide #{params[:id]}"
+      flash[:notice] = flash.now[:notice]
       redirect_to sequences_path
     else
       @title = @sequence.sequence
