@@ -2,11 +2,11 @@ var w = 742,   // width
     h = w,     // height
     r = w / 2, // radius
     x = d3.scale.linear().range([0, 2 * Math.PI]), // use full circle
-    y = d3.scale.pow().exponent(1.3).domain([0, 1]).range([0, r]), // higher levels get longer pieces, is exponent needed?
+    y = d3.scale.linear().domain([0, 1]).range([0, r]),
     p = 5,     // padding
     duration = 2000, // animation duration
     levels = 4, // levels to show
-    currentMaxLevel = 4;
+    currentMaxLevel = 4; // don't change this
 
 var div = d3.select("#sunburst");
 
