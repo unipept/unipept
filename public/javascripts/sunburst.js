@@ -1,14 +1,14 @@
 var w = 742,   // width
     h = w,     // height
-    r = w / 2, // radius
-    x = d3.scale.linear().range([0, 2 * Math.PI]), // use full circle
-    y = d3.scale.linear().domain([0, 1]).range([0, r]),
+    r = w / 2, // radius   
     p = 5,     // padding
     duration = 2000, // animation duration
     levels = 4, // levels to show
     
-     // don't change these
-    currentMaxLevel = 4
+    // don't change these
+    x = d3.scale.linear().range([0, 2 * Math.PI]), // use full circle
+    y = d3.scale.linear().domain([0, 1]).range([0, r]),
+    currentMaxLevel = 4,
     colors=["#f9f0ab", "#e8e596", "#f0e2a3", "#ede487", "#efd580", "#f1cb82", "#f1c298", "#e8b598", "#d5dda1", "#c9d2b5", "#aec1ad", "#a7b8a8", "#b49a3d", "#b28647", "#a97d32", "#b68334", "#d6a680", "#dfad70", "#a2765d", "#9f6652", "#b9763f", "#bf6e5d", "#af643c", "#9b4c3f", "#72659d", "#8a6e9e", "#8f5c85", "#934b8b", "#9d4e87", "#92538c", "#8b6397", "#716084", "#2e6093", "#3a5988", "#4a5072", "#393e64", "#aaa1cc", "#e0b5c9", "#e098b0", "#ee82a2", "#ef91ac", "#eda994", "#eeb798", "#ecc099", "#f6d5aa", "#f0d48a", "#efd95f", "#eee469", "#dbdc7f", "#dfd961", "#ebe378", "#f5e351"],
     colorCounter = 0;
 
@@ -19,11 +19,18 @@ var vis = div.append("svg")
     .attr("height", h + p * 2)
     .append("g")
     .attr("transform", "translate(" + (r + p) + "," + (r + p) + ")"); // set origin to radius center
+    
+var tooltip = d3.select("body")
+	.append("div")
+	.attr("class", "tip")
+	.style("position", "absolute")
+	.style("z-index", "10")
+	.style("visibility", "hidden");
 
 var partition = d3.layout.partition()               // creates a new partition layout
     .sort(null)                                     // don't sort,  use tree traversal order
     .value(function(d) { return d.data.$area; })    // set the size of the pieces
-    .children(function(d){return d.kids;});
+    .children(function(d){return d.kids; });
 
 // calculate arcs out of partition coordinates
 var arc = d3.svg.arc()                              
@@ -42,7 +49,10 @@ function initSunburst(data){
       .attr("d", arc)                                       // path data
       .attr("fill-rule", "evenodd")                         // fill rule
       .style("fill", colour)                                // call function for colour
-      .on("click", click);                                  // call function on click
+      .on("click", click)                                   // call function on click
+      .on("mouseover", tooltipIn) 
+      .on("mousemove", tooltipMove)
+      .on("mouseout", tooltipOut);
   
   // put labels on the nodes
   var text = vis.selectAll("text").data(nodes);
@@ -53,7 +63,10 @@ function initSunburst(data){
         return brightness(d3.rgb(colour(d))) < 125 ? "#eee" : "#000"; // calculate text color
       })
       .attr("dy", ".2em")
-      .on("click", click);
+      .on("click", click)
+      .on("mouseover", tooltipIn) 
+      .on("mousemove", tooltipMove)
+      .on("mouseout", tooltipOut);
       
   textEnter.append("tspan")
       .attr("x", 0)
@@ -71,7 +84,7 @@ function initSunburst(data){
       
   textEnter.style("font-size", function(d) {
       return Math.min(((r / levels) / this.getComputedTextLength() * 10), 10) + "px"; 
-  })
+  });
       
   // set up start levels
   click(data);
@@ -113,7 +126,7 @@ function initSunburst(data){
       }
   }
 
-//returns true is label must be drawn
+// Returns true is label must be drawn
 function isParentOf(p, c) {
     if (c.depth >= currentMaxLevel) return false;
     if (p === c) return true;
@@ -125,6 +138,7 @@ function isParentOf(p, c) {
     return false;
 }
 
+// Calculates the color of an arc based on the color of his children
 function colour(d) {
     if (d.children) {
         var colours = d.children.map(colour),
@@ -164,7 +178,22 @@ function brightness(rgb) {
     return rgb.r * .299 + rgb.g * .587 + rgb.b * .114;
 }
 
+// color generation function
+// iterates over fixed list of colors
 function getColor(){
     return colors[colorCounter++ % 52];
 }
 
+// tooltip functions
+function tooltipIn(d){
+    tooltip.style("visibility", "visible")
+        .html(d.name + "<br/>" + 
+          (!d.data.self_count ? "0" : d.data.self_count) + " sequence(s) specific to this level<br/>" + 
+          (!d.data.count ? "0" : d.data.count) + " sequence(s) specific to this level or lower");
+}
+function tooltipMove(){
+    tooltip.style("top", (event.pageY-5)+"px").style("left",(event.pageX+12)+"px");
+}
+function tooltipOut(){
+    tooltip.style("visibility", "hidden");
+}
