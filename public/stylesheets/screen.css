@@ -2060,3 +2060,10 @@ div#search_button{
 .c29{
 	background: #92538c;
 }
+.tab{
+    display: inline-block;
+    width: 80px;
+}
+.tab.active{
+    font-weight: bold;
+}

@@ -1,3 +1,24 @@
+// Tabs
+$(function() {
+    $("#treeMap").hide();
+    $("#mapTitleTreemap").click(function () {
+        $("#mapTitleTreemap").addClass("active");
+        $("#mapTitleTreemap").removeClass("klik");
+        $("#mapTitleSunburst").removeClass("active");
+        $("#mapTitleSunburst").addClass("klik");
+        $("#treeMap").show();
+        $("#sunburst").hide();
+    });
+    $("#mapTitleSunburst").click(function () {
+        $("#mapTitleSunburst").addClass("active");
+        $("#mapTitleSunburst").removeClass("klik");
+        $("#mapTitleTreemap").removeClass("active");
+        $("#mapTitleTreemap").addClass("klik");
+        $("#sunburst").show();
+        $("#treeMap").hide();
+    });
+});
+
 var labelType,
 	useGradients,
 	nativeTextSupport,

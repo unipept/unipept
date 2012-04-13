@@ -17,16 +17,15 @@ While searching, we didn't filter duplicate peptides
 <% end %>
 
 <% if @number_found > 0 %>
-<h2>Sunburst</h2>
-<div id="sunburst"></div>
-
-<h2>Treemap</h2>
-<div id="treeMap"></div>
+	<h2 id="mapTitle" ><span id="mapTitleSunburst" class="tab active">Sunburst</span> <span id="mapTitleTreemap" class="tab klik">Treemap</span></h2>
+	<div id="sunburst"></div>
+	<div id="treeMap"></div>
 
 <h2>List</h2>
 <%= search_field_tag(:jstree_search, "", :size => 70, :placeholder => "search the tree...") %>
 <div id="jstree"></div>
 <div id="jstree_data"><p>Click a node to see the peptides.</p></div>
+
 <% end %>
 
 <% if @misses.size > 0 %>
