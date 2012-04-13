@@ -36,13 +36,14 @@
 			});
 			return false;
 		});
-<<<<<<< HEAD
 		$("#marine_sample").click(function(){
 			$.get('sampledata/marine_peptides.txt', function(data) {
-=======
+				$("#qs").val(data);
+			});
+			return false;
+		});
 		$("#delmotte").click(function(){
 			$.get('sampledata/delmotte_peptides.txt', function(data) {
->>>>>>> hotfix/extraData
 			  $("#qs").val(data);
 			});
 			return false;
