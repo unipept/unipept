@@ -43,11 +43,11 @@ While searching, we didn't filter duplicate peptides
 <!-- JIT Library File --> 
 <!--[if IE]><%= javascript_include_tag "jit/Extras/excanvas.js"%><![endif]-->
 <%= javascript_include_tag "jit/jit-yc.js", "jstree/jquery.jstree", "d3/d3.v2.min.js"%>
-<%= javascript_include_tag "multi_search.js", "sunburst.js" %>
+<%= javascript_include_tag "multi_search.js"%>
 <script type="text/javascript">
 	var data1 = <%= raw(@root.to_json)%>
 	var data2 = <%= raw(@root.to_json.gsub("children","kids"))%> // TODO: fix me
-	window.onload=init(data1, <%=@equate_il %>);
+	window.onload=init(data1, <%=@equate_il %>, data2);
 	initSunburst(data2);
 </script>
 <% end %>
