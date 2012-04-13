@@ -284,6 +284,11 @@ function initSunburst(data) {
     click(data);
 
     function click(d) {
+        // set js tree
+        $("#jstree_search").val(d.name);
+        $("#jstree_search").change();
+        
+        // perform animation
         currentMaxLevel = d.depth + levels;
         path.transition()
             .duration(duration)
