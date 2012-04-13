@@ -11,6 +11,12 @@
 	<li><a href="#" id="s7">Load sample 7</a></li>
 	<li><a href="#" id="s8">Load sample 8</a></li>
 </ul>
+
+<p>Community proteogenomics reveals insights into the physiology of phyllosphere bacteria (<%= link_to "article website" , "http://www.pnas.org/content/106/38/16428", :target => "_blank" %> <%= image_tag("externesite.gif", :alt => "Blast")%>)</p>
+<ul>
+	<li><a href="#" id="delmotte">Load phyllosphere dataset</a></li>
+</ul>
+
 <p>Morris et al. - Comparative metaproteomics reveals ocean-scale shifts in microbial nutrient utilization and energy transduction (<%= link_to "article website" , "http://www.nature.com/ismej/journal/v4/n5/full/ismej20104a.html", :target => "_blank" %> <%= image_tag("externesite.gif", :alt => "external website")%>)</p>
 <ul>
 	<li><a href="#" id="marine_sample">Load marine sample</a></li>
@@ -30,8 +36,13 @@
 			});
 			return false;
 		});
+<<<<<<< HEAD
 		$("#marine_sample").click(function(){
 			$.get('sampledata/marine_peptides.txt', function(data) {
+=======
+		$("#delmotte").click(function(){
+			$.get('sampledata/delmotte_peptides.txt', function(data) {
+>>>>>>> hotfix/extraData
 			  $("#qs").val(data);
 			});
 			return false;
