@@ -21,7 +21,7 @@ function init(data, equate_il, data2) {
     //var data = jQuery.extend(true, {}, json)
 
     // sunburst
-    initSunburst(data2)
+    initSunburst(data2);
 
     // treemap
     initTreeMap(data);
@@ -69,7 +69,7 @@ function initTreeMap(jsonData) {
             //add content to the tooltip when a node
             //is hovered
             onShow: function (tip, node, isLeaf, domElement) {
-                tip.innerHTML = "<div class=\"tip-title\">" + node.name + " (" + (!node.data.self_count ? "0" : node.data.self_count) + "/" + (!node.data.count ? "0" : node.data.count) + ")" + "</div><div class=\"tip-text\">" + ( typeof node.data.piecharturl === "undefined" ? "" : "<img src='"+node.data.piecharturl+"'/>") + "</div>";
+                tip.innerHTML = "<div class=\"tip-title\">" + node.name + " (" + (!node.data.self_count ? "0" : node.data.self_count) + "/" + (!node.data.count ? "0" : node.data.count) + ")" + "</div><div class=\"tip-text\">" + (typeof node.data.piecharturl === "undefined" ? "" : "<img src='" + node.data.piecharturl + "'/>") + "</div>";
             }
         },
 
@@ -117,7 +117,7 @@ function initJsTree(data, equate_il) {
 			if (ownSequences && ownSequences.length > 0) {
 				list = infoPane.append("<h4>Sequences specific to this level</h4><ul></ul>").find("ul").last();
 				for (peptide in ownSequences) {
-					list.append("<li><a href='/sequences/" + ownSequences[peptide] + "/"+equate_il+"' target='_blank'>" + ownSequences[peptide] + "</a></li>");
+					list.append("<li><a href='/sequences/" + ownSequences[peptide] + "/" + equate_il + "' target='_blank'>" + ownSequences[peptide] + "</a></li>");
 				}
 			}
 	        allSequences = peptides.all_sequences;
