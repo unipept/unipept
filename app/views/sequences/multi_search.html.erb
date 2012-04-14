@@ -3,17 +3,10 @@
 <% else %>
 <h1>Results</h1>
 <% end %>
-<p>We matched <%= @number_found %> of the <%= pluralize(@number_searched_for, "peptide") %>. 
+<p><%= @number_found %> out of <%= pluralize(@number_searched_for, "peptide") %> were matched. 
 
-<% if @filter_duplicates %>
-While searching, we filtered duplicate peptides
-<% else %>
-While searching, we didn't filter duplicate peptides
-<% end %>
-<% if @equate_il %>
- and equated I and L.</p>
-<% else %>
- and didn't equate I and L</p>
+<% if @filter_duplicates || @equate_il %>
+(<%= "peptides were deduplicated" if @filter_duplicates %><%= ", " if @filter_duplicates && @equate_il %><%= "I and L residues were equated" if @equate_il %>)
 <% end %>
 
 <% if @number_found > 0 %>
