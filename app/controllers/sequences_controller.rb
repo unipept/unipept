@@ -197,7 +197,7 @@ class SequencesController < ApplicationController
       end
     	#don't show the root when we don't need it
     	@root = @root.children[0] if @root.children.count == 0
-    	@root.add_piechart_data
+    	@root.add_piechart_data unless @root.nil?
     	
     	#more export stuff
     	filename = @search_name != "" ? @search_name : "export"
