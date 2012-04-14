@@ -93,7 +93,7 @@ class SequencesController < ApplicationController
 	    @table_ranks = Array.new
 	    
 	    @table_lineages << @lineages.map{|lineage| lineage.name.name}
-	    @table_ranks << "Name"
+	    @table_ranks << "Uniprot record"
 	    @lineages.map{|lineage| lineage.set_iterator_position(0)} #reset the iterator
 	    while @lineages[0].has_next?
 	      temp = @lineages.map{|lineage| lineage.next_t}
