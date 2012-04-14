@@ -13,7 +13,12 @@
 </ul>
 <p>Community proteogenomics reveals insights into the physiology of phyllosphere bacteria (<%= link_to "article website" , "http://www.pnas.org/content/106/38/16428", :target => "_blank" %> <%= image_tag("externesite.gif", :alt => "Blast")%>)</p>
 <ul>
-	<li><a href="#" id="delmotte">Load phyllosphere dataset</a></li>
+	<li><a href="#" id="delmotte_athaliana">Load Athaliana dataset</a></li>
+	<li><a href="#" id="delmotte_clover1a">Load Clover 1a dataset</a></li>
+	<li><a href="#" id="delmotte_clover1b">Load Clover 1b dataset</a></li>
+	<li><a href="#" id="delmotte_clover2">Load Clover 2 dataset</a></li>
+	<li><a href="#" id="delmotte_soybean1">Load Soybean 1 dataset</a></li>
+	<li><a href="#" id="delmotte_soybean2">Load Soybean 2 dataset</a></li>
 </ul>
 
 <script type="text/javascript">
@@ -30,8 +35,38 @@
 			});
 			return false;
 		});
-		$("#delmotte").click(function(){
-			$.get('sampledata/delmotte_peptides.txt', function(data) {
+		$("#delmotte_athaliana").click(function(){
+			$.get('sampledata/delmotte_athaliana.txt', function(data) {
+			  $("#qs").val(data);
+			});
+			return false;
+		});
+		$("#delmotte_clover1a").click(function(){
+			$.get('sampledata/delmotte_clover1a.txt', function(data) {
+			  $("#qs").val(data);
+			});
+			return false;
+		});
+		$("#delmotte_clover1b").click(function(){
+			$.get('sampledata/delmotte_clover1b.txt', function(data) {
+			  $("#qs").val(data);
+			});
+			return false;
+		});
+		$("#delmotte_clover2").click(function(){
+			$.get('sampledata/delmotte_clover2.txt', function(data) {
+			  $("#qs").val(data);
+			});
+			return false;
+		});
+		$("#delmotte_soybean1").click(function(){
+			$.get('sampledata/delmotte_soybean1.txt', function(data) {
+			  $("#qs").val(data);
+			});
+			return false;
+		});
+		$("#delmotte_soybean2").click(function(){
+			$.get('sampledata/delmotte_soybean2.txt', function(data) {
 			  $("#qs").val(data);
 			});
 			return false;
