@@ -14,7 +14,12 @@
 
 <p>Community proteogenomics reveals insights into the physiology of phyllosphere bacteria (<%= link_to "article website" , "http://www.pnas.org/content/106/38/16428", :target => "_blank" %> <%= image_tag("externesite.gif", :alt => "Blast")%>)</p>
 <ul>
-	<li><a href="#" id="delmotte">Load phyllosphere dataset</a></li>
+	<li><a href="#" id="delmotte_athaliana">Load Athaliana dataset</a></li>
+	<li><a href="#" id="delmotte_clover1a">Load Clover 1a dataset</a></li>
+	<li><a href="#" id="delmotte_clover1b">Load Clover 1b dataset</a></li>
+	<li><a href="#" id="delmotte_clover2">Load Clover 2 dataset</a></li>
+	<li><a href="#" id="delmotte_soybean1">Load Soybean 1 dataset</a></li>
+	<li><a href="#" id="delmotte_soybean2">Load Soybean 2 dataset</a></li>
 </ul>
 
 <p>Morris et al. - Comparative metaproteomics reveals ocean-scale shifts in microbial nutrient utilization and energy transduction (<%= link_to "article website" , "http://www.nature.com/ismej/journal/v4/n5/full/ismej20104a.html", :target => "_blank" %> <%= image_tag("externesite.gif", :alt => "external website")%>)</p>
@@ -36,15 +41,45 @@
 			});
 			return false;
 		});
-		$("#marine_sample").click(function(){
-			$.get('sampledata/marine_peptides.txt', function(data) {
-				$("#qs").val(data);
+		$("#delmotte_athaliana").click(function(){
+			$.get('sampledata/delmotte_athaliana.txt', function(data) {
+			  $("#qs").val(data);
 			});
 			return false;
 		});
-		$("#delmotte").click(function(){
-			$.get('sampledata/delmotte_peptides.txt', function(data) {
+		$("#delmotte_clover1a").click(function(){
+			$.get('sampledata/delmotte_clover1a.txt', function(data) {
 			  $("#qs").val(data);
+			});
+			return false;
+		});
+		$("#delmotte_clover1b").click(function(){
+			$.get('sampledata/delmotte_clover1b.txt', function(data) {
+			  $("#qs").val(data);
+			});
+			return false;
+		});
+		$("#delmotte_clover2").click(function(){
+			$.get('sampledata/delmotte_clover2.txt', function(data) {
+			  $("#qs").val(data);
+			});
+			return false;
+		});
+		$("#delmotte_soybean1").click(function(){
+			$.get('sampledata/delmotte_soybean1.txt', function(data) {
+			  $("#qs").val(data);
+			});
+			return false;
+		});
+		$("#delmotte_soybean2").click(function(){
+			$.get('sampledata/delmotte_soybean2.txt', function(data) {
+			  $("#qs").val(data);
+			});
+			return false;
+		});
+		$("#marine_sample").click(function(){
+			$.get('sampledata/marine_peptides.txt', function(data) {
+				$("#qs").val(data);
 			});
 			return false;
 		});
