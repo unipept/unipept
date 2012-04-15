@@ -28,7 +28,7 @@ class SequencesController < ApplicationController
       flash[:notice] = flash.now[:notice]
       redirect_to sequences_path
     else
-      @title = @sequence.sequence
+      @title = "Tryptic peptide identification of #{@sequence.sequence}"
       
       # get the uniprot entries of every peptide
       @entries = equate_il ? @sequence.peptides.map(&:uniprot_entry) : @sequence.original_peptides.map(&:uniprot_entry)
@@ -113,23 +113,25 @@ class SequencesController < ApplicationController
   
   # processes a list of sequences
   def multi_search
-    @title = "Results"
+    # set search parameters
+    @equate_il = !params[:il].nil?
+    filter_duplicates = !params[:dupes].nil?
+    export = !params[:export].nil?
+    search_name = params[:search_name]
+    query = params[:qs]
     
-    if params[:qs].nil? || params[:qs].empty? 
+    @title = "Multi-peptide analysis result"
+    @title += " of " + search_name unless search_name == ""
+  
+    if query.nil? || query.empty? 
       flash[:error] = "Your query was empty, please try again."
       redirect_to root_path
     else
-      # set search parameters
-      @equate_il = !params[:il].nil?
-      filter_duplicates = !params[:dupes].nil?
-      export = !params[:export].nil?
-      @search_name = params[:search_name]
-      
       #export stuff
       csv_string = CSV.generate_line ["peptide"].concat(Lineage.ranks) if export
     
       # remove duplicates, split missed cleavages, substitute I by L, ...
-      data = params[:qs].upcase.gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/([KR])([^P\r])/,"\\1\n\\2")
+      data = query.upcase.gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/([KR])([^P\r])/,"\\1\n\\2")
       data = data.gsub(/I/,'L') if @equate_il
       data = data.lines.map(&:strip).to_a.select{|l| l.size >= 8 && l.size <= 50 }
       data = data.uniq if filter_duplicates
@@ -200,7 +202,7 @@ class SequencesController < ApplicationController
     	@root.add_piechart_data unless @root.nil?
     	
     	#more export stuff
-    	filename = @search_name != "" ? @search_name : "export"
+    	filename = search_name != "" ? search_name : "export"
       send_data csv_string, :type => 'text/csv; charset=iso-8859-1; header=present', :disposition => "attachment; filename="+filename+".csv" if export
       
     end
