@@ -9,8 +9,12 @@
 	</ul>
 	
 	<h2>Lineage</h2>
+	<h3>Lineage tree</h3>
+	<p>This interactive tree bundles the complete taxonomic lineages of all UniProtKB records whose protein sequence contains <%= @sequence.sequence %>. You can click on nodes to expand them. Take into account that due to gaps in the hierarchical structure of the NCBI taxonomy, taxonomic levels are not always properly aligned in the tree view.</p>
 	<div id="lineageTree"></div>
 	
+	<h3>Lineage table</h3>
+	<p>This table shows the complete taxonomic lineages of all UniProtKB records whose protein sequence contains <%= @sequence.sequence %>. Each row represents the complete taxonomic lineage of a single UniProtKB record. The first column contains the name extracted from the UniProtKB record, follow by columns representing valid taxonomic ranks ordered from superkingdom on the left to forma on the right. Only ranks used in the complete lineages of the records in which the peptide was found are displayed as columns in the table. To ease the interpretation of the table, rows are ordered according to the taxonomic names in the taxonomic rank columns and cells containing the same taxonomic name are marked with the same color code per column.</p>
 	<div id="sequence_table">
 		<% colors = Hash.new %>
 		<table>
