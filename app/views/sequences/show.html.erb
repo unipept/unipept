@@ -1,14 +1,12 @@
-<h1><%= @sequence.sequence %></h1>
+<h1>Tryptic peptide identification of <%= @sequence.sequence %></h1>
 <h2>Information</h2>
 <% if @lineages.empty? %>
 	<p>No results were found for this sequence.</p>
 <% else %>
-  <p>
-    The lowest common ancestor of <%= @sequence.sequence %> 
-    is <strong><%=@lca_taxon.name %></strong> which has the rank 
-    of <strong><%=@lca_taxon.rank%></strong>.<br/>
-  </p>
-	<p>The common lineage of this sequence is: <%= @common_lineage=="" ? "nothing" : @common_lineage %>. <br/></p>
+  <ul>
+    <li>Lowest common ancestor: <strong><%=@lca_taxon.name %></strong> (<%=@lca_taxon.rank%>) <%= link_to "NCBI taxonomy", "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + @lca_taxon.id.to_s, :target => "_blank" %> <%= image_tag("externesite.gif", :alt => "Blast")%></li>
+		<li>Common lineage: <%= @common_lineage=="" ? "nothing" : @common_lineage %></li>
+	</ul>
 	
 	<h2>Lineage</h2>
 	<div id="lineageTree"></div>
