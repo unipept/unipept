@@ -7,8 +7,8 @@ class SequencesController < ApplicationController
     
     equate_il = params[:equate_il].nil? || params[:equate_il] != "false" ? true : false
     
-    # params[:id] contains the id
-    if params[:id].match(/\A[0-9]+\z/)
+    # process input
+    if params[:id].match(/\A[0-9]+\z/) # params[:id] contains the id
       @sequence = Sequence.find_by_id(params[:id])
     else  #params[:id] contains the sequence
       params[:id].upcase!
@@ -19,11 +19,10 @@ class SequencesController < ApplicationController
         flash.now[:notice] += "\n We tried to split it, and searched for #{@sequence.sequence} instead." unless @sequence.nil?
       else
         @sequence = Sequence.find_by_sequence(params[:id])
-      end
-      
+      end    
     end
     
-    # error on nil
+    # error on nil or empty sequence
     if @sequence.nil? || (@sequence.peptides.empty? && equate_il) || (@sequence.original_peptides.empty? && !equate_il)
       flash[:error] = "No matches for peptide #{params[:id]}"
       flash[:notice] = flash.now[:notice]
@@ -45,7 +44,7 @@ class SequencesController < ApplicationController
       last_node = @root
       
       #common lineage
-      common_lineage = Array.new #construct the common lineage in this array
+      @common_lineage = Array.new #construct the common lineage in this array
       l = @lineages[0]
       found = (@lca_taxon.name == "root")
       #this might go wrong in the case where the first lineage doesn't contain the LCA (eg. nil)
@@ -53,11 +52,10 @@ class SequencesController < ApplicationController
         t = l.next_t
         unless t.nil? then
           found = (@lca_taxon.id == t.id)
-          common_lineage << t
+          @common_lineage << t
           last_node = last_node.add_child(Node.new(t.id, t.name), @root)
         end
       end
-      @common_lineage = common_lineage.map(&:name).join(" > ")    
       
       #distinct lineage 
       @lineages.map{|lineage| lineage.set_iterator_position(l.get_iterator_position)}

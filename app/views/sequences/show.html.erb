@@ -4,8 +4,8 @@
 	<p>No results were found for this sequence.</p>
 <% else %>
   <ul>
-    <li>Lowest common ancestor: <strong><%=@lca_taxon.name %></strong> (<%=@lca_taxon.rank%>) <%= link_to "NCBI taxonomy", "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + @lca_taxon.id.to_s, :target => "_blank" %> <%= image_tag("externesite.gif", :alt => "Blast")%></li>
-		<li>Common lineage: <%= @common_lineage=="" ? "nothing" : @common_lineage %></li>
+    <li>Lowest common ancestor: <%= link_to @lca_taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + @lca_taxon.id.to_s, :target => "_blank" %> (<%=@lca_taxon.rank%>)</li>
+		<li>Common lineage: <%= raw @common_lineage.length==0 ? "nothing" : @common_lineage.map{|t| link_to t.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + t.id.to_s, :target => "_blank" }.join(" > ") %></li>
 	</ul>
 	
 	<h2>Lineage</h2>
