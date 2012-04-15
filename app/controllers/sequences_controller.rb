@@ -155,7 +155,9 @@ class SequencesController < ApplicationController
         else
           @misses << s
         end
-      end    
+      end  
+      
+      @misses.sort! 
       
       @intro_text = "#{@number_found} out of #{number_searched_for} #{"peptide".send(number_searched_for != 1 ? :pluralize : :to_s)}  were matched"
       if filter_duplicates || @equate_il 
