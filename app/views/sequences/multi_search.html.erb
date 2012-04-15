@@ -1,13 +1,6 @@
-<% if @search_name != "" %>
-<h1>Results of <%= @search_name %></h1>
-<% else %>
-<h1>Results</h1>
-<% end %>
-<p><%= @number_found %> out of <%= pluralize(@number_searched_for, "peptide") %> were matched. 
+<h1>Multi-peptide analysis result<%= " of " + @search_name unless @search_name == "" %></h1>
 
-<% if @filter_duplicates || @equate_il %>
-(<%= "peptides were deduplicated" if @filter_duplicates %><%= ", " if @filter_duplicates && @equate_il %><%= "I and L residues were equated" if @equate_il %>)
-<% end %>
+<p><%= @intro_text %></p>
 
 <% if @number_found > 0 %>
 <h2>Treemap</h2>

@@ -121,7 +121,7 @@ class SequencesController < ApplicationController
     else
       # set search parameters
       @equate_il = !params[:il].nil?
-      @filter_duplicates = !params[:dupes].nil?
+      filter_duplicates = !params[:dupes].nil?
       export = !params[:export].nil?
       @search_name = params[:search_name]
       
@@ -132,10 +132,10 @@ class SequencesController < ApplicationController
       data = params[:qs].upcase.gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/([KR])([^P\r])/,"\\1\n\\2")
       data = data.gsub(/I/,'L') if @equate_il
       data = data.lines.map(&:strip).to_a.select{|l| l.size >= 8 && l.size <= 50 }
-      data = data.uniq if @filter_duplicates
+      data = data.uniq if filter_duplicates
     
       # set metrics
-      @number_searched_for = data.length
+      number_searched_for = data.length
       @number_found = 0
     
       # build the resultset
@@ -154,6 +154,16 @@ class SequencesController < ApplicationController
           @misses << s
         end
       end    
+      
+      @intro_text = "#{@number_found} out of #{number_searched_for} #{"peptide".send(number_searched_for != 1 ? :pluralize : :to_s)}  were matched"
+      if filter_duplicates || @equate_il 
+        @intro_text += " ("
+        @intro_text += "peptides were deduplicated" if filter_duplicates
+        @intro_text += ", " if filter_duplicates && @equate_il 
+        @intro_text += "I and L residues were equated" if @equate_il
+        @intro_text += ")"
+      end
+      @intro_text += "."
     
       # construct treemap nodes
       @root = TreeMapNode.new(1, "root", "no rank")
