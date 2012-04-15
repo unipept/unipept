@@ -31,11 +31,7 @@ class SequencesController < ApplicationController
       @title = @sequence.sequence
       
       # get the uniprot entries of every peptide
-      if equate_il
-        @entries = @sequence.peptides.map(&:uniprot_entry)
-      else
-        @entries = @sequence.original_peptides.map(&:uniprot_entry)
-      end
+      @entries = equate_il ? @sequence.peptides.map(&:uniprot_entry) : @sequence.original_peptides.map(&:uniprot_entry)
       
       # LCA calculation
       @lineages = @sequence.lineages(equate_il) #calculate lineages
@@ -80,11 +76,7 @@ class SequencesController < ApplicationController
     	end
     	
     	#don't show the root when we don't need it
-    	if @root.children.count > 1
-    	  @root = @root.to_json
-  	  else
-  	    @root = @root.children[0].to_json
-	    end
+    	@root = @root.children.count > 1 ? @root.to_json : @root.children[0].to_json
 	    
 	    #Table stuff
 	    @table_lineages = Array.new
