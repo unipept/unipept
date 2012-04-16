@@ -49,7 +49,9 @@
 		<li> Open in uniprot: 
 			<ul>
 				<% for entry in @entries do %>
+				<% unless entry.name.nil? %>
 				<li><%= link_to entry.name.name, "http://www.uniprot.org/uniprot/"+entry.uniprot_accession_number, :target => "_blank" %> <%= image_tag("externesite.gif", :alt => "Uniprot")%></li>
+				<% end %>
 				<% end %>
 			</ul>
 		</li>
