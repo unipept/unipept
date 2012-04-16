@@ -79,6 +79,7 @@ public class PeptideLoader {
 	}
 
 	private void addLineage() {
+		System.err.println(new Timestamp(System.currentTimeMillis()) + " Adding lineages...");
 		data.emptyLineages();
 		// get the taxonIds
 		List<Integer> list = data.getUniqueTaxonIds();
