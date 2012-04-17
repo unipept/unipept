@@ -87,7 +87,7 @@ public class PeptideLoader {
 				+ list.size() + " lineages");
 		int i = 1;
 		for (Integer id : list) {
-			if (++i % 100 == 0)
+			if (++i % 100000 == 0)
 				System.err.println(new Timestamp(System.currentTimeMillis()) + " " + i + " done");
 			data.addLineage(id);
 		}
