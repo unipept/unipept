@@ -84,10 +84,10 @@ public class PeptideLoader {
 		// get the taxonIds
 		List<Integer> list = data.getUniqueTaxonIds();
 		System.err.println(new Timestamp(System.currentTimeMillis()) + " Recalculating "
-				+ list.size() + "lineages");
+				+ list.size() + " lineages");
 		int i = 1;
 		for (Integer id : list) {
-			if (i++ % 100000 == 0)
+			if (++i % 100 == 0)
 				System.err.println(new Timestamp(System.currentTimeMillis()) + " " + i + " done");
 			data.addLineage(id);
 		}
