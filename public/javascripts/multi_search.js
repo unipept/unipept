@@ -75,6 +75,8 @@ function initTreeMap(jsonData) {
             var style = domElement.style;
             style.display = '';
             style.border = '2px solid transparent';
+            if(node.data.level > 6)
+                style.color = 'black';
             domElement.onmouseover = function () {
                 style.border = '2px solid #9FD4FF';
             };
