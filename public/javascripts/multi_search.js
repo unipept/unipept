@@ -51,12 +51,9 @@ function initTreeMap(jsonData) {
             onRightClick: function () {
 				//TODO: replace this if bug in JIT gets fixed
 				tm.out();
-            }/*,
-			onMouseWheel: function(){
-				tm.out();
-			}*/
+            }
         },
-        duration: 500, //TODO: JIT bug
+        duration: 500,
         //Enable tips
         Tips: {
             enable: true,
@@ -67,7 +64,7 @@ function initTreeMap(jsonData) {
             //add content to the tooltip when a node
             //is hovered
             onShow: function (tip, node, isLeaf, domElement) {
-                tip.innerHTML = "<div class=\"tip-title\">" + node.name + " (" + (!node.data.self_count ? "0" : node.data.self_count) + "/" + (!node.data.count ? "0" : node.data.count) + ")" + "</div><div class=\"tip-text\"></div>";
+                tip.innerHTML = "<div class=\"tip-title\">" + node.name + " (" + (!node.data.self_count ? "0" : node.data.self_count) + "/" + (!node.data.count ? "0" : node.data.count) + ")" + "</div><div class=\"tip-text\">" + ( typeof node.data.piecharturl === "undefined" ? "" : "<img src='"+node.data.piecharturl+"'/>") + "</div>";
             }
         },
 
@@ -78,6 +75,8 @@ function initTreeMap(jsonData) {
             var style = domElement.style;
             style.display = '';
             style.border = '2px solid transparent';
+            if(node.data.level > 6)
+                style.color = 'black';
             domElement.onmouseover = function () {
                 style.border = '2px solid #9FD4FF';
             };
@@ -113,14 +112,14 @@ function initJsTree(data, equate_il) {
 			}, 1000);
 			ownSequences = peptides.own_sequences;
 			if (ownSequences && ownSequences.length > 0) {
-				list = infoPane.append("<h4>Sequences speficic to this level</h4><ul></ul>").find("ul").last();
+				list = infoPane.append("<h4>Peptides specific for this taxon</h4><ul></ul>").find("ul").last();
 				for (peptide in ownSequences) {
 					list.append("<li><a href='/sequences/" + ownSequences[peptide] + "/"+equate_il+"' target='_blank'>" + ownSequences[peptide] + "</a></li>");
 				}
 			}
 	        allSequences = peptides.all_sequences;
 	        if (allSequences && allSequences.length > 0) {
-	            list = infoPane.append("<h4>Sequences speficic to this level or lower</h4><ul></ul>").find("ul").last();
+	            list = infoPane.append("<h4>Peptides specific to this taxon or one of its subtaxa</h4><ul></ul>").find("ul").last();
 	            for (peptide in allSequences) {
 	                list.append("<li><a href='/sequences/" + allSequences[peptide] + "' target='_blank'>" + allSequences[peptide] + "</a></li>");
 	            }

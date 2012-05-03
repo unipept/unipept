@@ -6,12 +6,12 @@ class TreeMapNode < Node
                   "subkingdom",   "#3B6013",  "superphylum",    "#406617",  "phylum",           "#446B1B",
                   "subphylum",    "#49701F",  "superclass",     "#517725",  "class",            "#557C29",
                   "subclass",     "#5B822E",  "infraclass",     "#6A8937",  "superorder",       "#799341",
-                  "order",        "#899B4C",  "infraorder",     "#98A557",  "parvorder",        "#A7AD62",
-                  "superfamily",  "#B5B56E",  "family",         "#BFBA7C",  "subfamily",        "#C6BD8B",
-                  "tribe",        "#D1C59A",  "subtribe",       "#D8CAA9",  "genus",            "#DDCDB1",
-                  "subgenus",     "#E0CEB8",  "species group",  "#E5D3C3",  "species subgroup", "#E8D6C9",
+                  "order",        "#899B4C",  "infraorder",     "#A7AD62",  "parvorder",        "#B5B56E",
+                  "superfamily",  "#BFBA7C",  "family",         "#C6BD8B",  "subfamily",        "#D1C59A",
+                  "tribe",        "#D8CAA9",  "subtribe",       "#DDCDB1",  "genus",            "#E0CEB8",
+                  "subgenus",     "#E5D3C3",  "species group",  "#E8D6C9",  "species subgroup", "#E8D6C9",
                   "species",      "#EDDCD3",  "subspecies",     "#EFE0DA",  "varietas",         "#F4E7E3",
-                  "forma",        "#F7EEED"]
+                  "forma",        "#F7EEED",  "suborder",       "#98A557",]
   
   def initialize(id, name, rank="root")
     super(id, name)
@@ -64,5 +64,17 @@ class TreeMapNode < Node
     end
       
     @state = @data[:level] <= 3 ? "open" : "closed"
+  end
+  
+  def add_piechart_data
+    unless @children.empty?
+      @data[:piecharturl] = "http://chart.apis.google.com/chart?chs=300x225&cht=p&chd=t:"
+      @data[:piecharturl] += @children.map{|c| c.data[:count].to_s}.join(",")
+      @data[:piecharturl] += "&chdl="
+      @data[:piecharturl] += @children.map{|c| c.name + " (" + c.data[:count].to_s + ")"}.join("|")
+      @data[:piecharturl] += "&chds=0,"
+      @data[:piecharturl] += @children.map{|c| c.data[:count]}.max.to_s
+      @children.map{|c| c.add_piechart_data}
+    end
   end
 end

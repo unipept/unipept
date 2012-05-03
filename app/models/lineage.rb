@@ -50,6 +50,7 @@ class Lineage < ActiveRecord::Base
   belongs_to :infraclass_t,       :foreign_key  => "infraclass",    :primary_key  => "id",  :class_name   => 'Taxon'
   belongs_to :superorder_t,       :foreign_key  => "superorder",    :primary_key  => "id",  :class_name   => 'Taxon'
   belongs_to :order_t,            :foreign_key  => "order",         :primary_key  => "id",  :class_name   => 'Taxon'
+  belongs_to :suborder_t,         :foreign_key  => "suborder",      :primary_key  => "id",  :class_name   => 'Taxon'
   belongs_to :infraorder_t,       :foreign_key  => "infraorder",    :primary_key  => "id",  :class_name   => 'Taxon'
   belongs_to :parvorder_t,        :foreign_key  => "parvorder",     :primary_key  => "id",  :class_name   => 'Taxon'
   belongs_to :superfamily_t,      :foreign_key  => "superfamily",   :primary_key  => "id",  :class_name   => 'Taxon'
@@ -67,14 +68,14 @@ class Lineage < ActiveRecord::Base
   belongs_to :forma_t,            :foreign_key  => "forma",         :primary_key  => "id",  :class_name   => 'Taxon'
                                   
   ORDER = [:superkingdom, :kingdom, :subkingdom, :superphylum, :phylum, :subphylum, 
-            :superclass, :class_, :subclass, :infraclass, :superorder, :order, 
+            :superclass, :class_, :subclass, :infraclass, :superorder, :order, :suborder,
             :infraorder, :parvorder, :superfamily, :family, :subfamily, :tribe, 
             :subtribe, :genus, :subgenus, :species_group, :species_subgroup, 
             :species, :subspecies, :varietas, :forma]
             
   ORDER_T = [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, 
             :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, 
-            :superorder_t, :order_t, :infraorder_t, :parvorder_t, :superfamily_t, 
+            :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, 
             :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, 
             :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, 
             :varietas_t, :forma_t] 
@@ -105,21 +106,35 @@ class Lineage < ActiveRecord::Base
     return self.send(result)
   end
   
+  #returns an array containing the lineage names in the right order
+  def to_a
+    array = []
+    for rank in ORDER_T do
+      array << self.send(rank)
+    end
+    return array.map{|x| x.nil? ? "" : x.name}
+  end
+  
+  def self.ranks
+    return ORDER
+  end
+  
   #returns the Taxon object of the lowest common ancestor
   def self.calculate_lca_taxon(lineages)
     return Taxon.find_by_id(Lineage.calculate_lca(lineages))
   end
   
   #calculates the lowest common ancestor
+  #you shouldn't call this method directly but the calculate_lca method on the sequence
   def self.calculate_lca(lineages)
+    return -1 if lineages.size == 0
     lca = 1 #default lca
     for rank in ORDER do
       #nils enkel filteren bij species en genus
-      #TODO: remove the abs function in 0.4
       if rank == :species || rank == :genus
-        current = lineages.map(&rank).map{|n| n.abs unless n.nil?}.uniq.compact
+        current = lineages.map(&rank).find_all{|n| n.nil? || n > 0}.uniq.compact
       else
-        current = lineages.map(&rank).map{|n| n.abs unless n.nil?}.uniq
+        current = lineages.map(&rank).find_all{|n| n.nil? || n > 0}.uniq
       end
       return lca if current.length > 1 #more than one distinct element
       lca = current[0] unless current[0].nil? #save lca if this rank isn't nil
