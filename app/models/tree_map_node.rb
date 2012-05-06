@@ -66,6 +66,7 @@ class TreeMapNode < Node
     @state = @data[:level] <= 3 ? "open" : "closed"
   end
   
+  # Adds a URL to every node linking to a piechart of their children
   def add_piechart_data
     unless @children.empty?
       @data[:piecharturl] = "http://chart.apis.google.com/chart?chs=300x225&cht=p&chd=t:"
@@ -76,5 +77,12 @@ class TreeMapNode < Node
       @data[:piecharturl] += @children.map{|c| c.data[:count]}.max.to_s
       @children.map{|c| c.add_piechart_data}
     end
+  end
+  
+  # Sorts the peptides lists alphabetically
+  def sort_peptides
+    @metadata[:all_sequences].sort! unless @metadata[:all_sequences].nil?
+    @metadata[:own_sequences].sort! unless @metadata[:own_sequences].nil?
+    @children.map{|c| c.sort_peptides} unless @children.empty?
   end
 end
