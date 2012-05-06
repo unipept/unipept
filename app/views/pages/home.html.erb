@@ -3,9 +3,9 @@
 The Unipept web application supports biodiversity analysis of large and complex metaproteome samples. Its underlying index structure is designed to quickly retrieve all occurrences of a tryptic peptide in UniProtKB records. Taxon-specificity of the tryptic peptide is successively derived from these occurrences using a novel lowest common ancestor approach that is robust against taxonomic misarrangements, misidentifications and inaccuracies. Not taking into account this identification noise would otherwise result in drastic loss of information. This application consists of two basic functionalities: a peptide-based taxonomic identification and a multi-peptide dynamic diversity treemap analysis.
 </p>
 
-<h2>Single peptide identification</h2>
+<h2>Single peptide analysis</h2>
 <p>
-With single peptide identification, you can submit a single <em>tryptic peptide</em> that can be <em>8 to 50 residues long</em>. The application will respond with a list of all UniProtKB records wherein the peptide was found along with a complete taxonomic lineage derived from the NCBI taxonomy. These lineages are presented as a comprehensible table and using an interactive tree view.
+With single peptide analysis, you can submit a single <em>tryptic peptide</em> that can be <em>8 to 50 residues long</em>. The application will respond with a list of all UniProtKB records wherein the peptide was found along with a complete taxonomic lineage derived from the NCBI taxonomy. These lineages are presented as a comprehensible table and using an interactive tree view.
 </p>
 <p>Try searching for a tryptic peptide:</p>
 <%= render 'shared/sequence_search' %>

@@ -28,7 +28,7 @@ class SequencesController < ApplicationController
       flash[:notice] = flash.now[:notice]
       redirect_to sequences_path
     else
-      @title = "Tryptic peptide identification of #{@sequence.sequence}"
+      @title = "Tryptic peptide analysis of #{@sequence.sequence}"
       
       # get the uniprot entries of every peptide
       @entries = equate_il ? @sequence.peptides.map(&:uniprot_entry) : @sequence.original_peptides.map(&:uniprot_entry)
