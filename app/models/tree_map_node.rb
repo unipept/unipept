@@ -79,10 +79,11 @@ class TreeMapNode < Node
     end
   end
   
-  # Sorts the peptides lists alphabetically
-  def sort_peptides
+  # Sorts the peptides lists and children alphabetically
+  def sort_peptides_and_children
+    @children.sort_by!(&:name) unless @children.empty?
     @metadata[:all_sequences].sort! unless @metadata[:all_sequences].nil?
     @metadata[:own_sequences].sort! unless @metadata[:own_sequences].nil?
-    @children.map{|c| c.sort_peptides} unless @children.empty?
+    @children.map{|c| c.sort_peptides_and_children} unless @children.empty?
   end
 end
