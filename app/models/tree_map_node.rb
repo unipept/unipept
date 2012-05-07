@@ -84,10 +84,11 @@ class TreeMapNode < Node
     hash.delete("metadata")
     hash.delete("state")
     hash.delete("nodes")
-    hash.delete("title")
+    hash["data"].delete("title")
     hash["data"].delete("piecharturl")
     hash["data"].delete("level")
     hash["data"].delete("$color")
+    hash["data"].delete("$area")
   end
   
   # cleans a hash of redundant data for sunburst

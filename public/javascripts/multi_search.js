@@ -219,7 +219,7 @@ var tooltip = d3.select("body")
 
 var partition = d3.layout.partition()               // creates a new partition layout
     .sort(null)                                     // don't sort,  use tree traversal order
-    .value(function (d) { return d.data.$area; })    // set the size of the pieces
+    .value(function (d) { return d.data.self_count; })    // set the size of the pieces
     .children(function (d) {return d.kids; });
 
 // calculate arcs out of partition coordinates
