@@ -3,13 +3,21 @@
 <p><%= @intro_text %></p>
 
 <% if @number_found > 0 %>
-<h2>Treemap</h2>
-<div id="treeMap"></div>
+	<div class="subnav-bar">
+	    <ul class="subnav">
+	      <li><a href="#" id="mapTitleSunburst" class="selected">Sunburst</a></li>
+	      <li><a href="#" id="mapTitleTreemap" >Treemap</a></li>
+	    </ul>
+	</div>
+
+	<div id="sunburst"></div>
+	<div id="treeMap"></div>
 
 <h2>Hierarchical outline</h2>
 <%= search_field_tag(:jstree_search, "", :size => 70, :placeholder => "search the tree...") %>
 <div id="jstree"></div>
 <div id="jstree_data"><p>Click a node to see the peptides.</p></div>
+
 <% end %>
 
 <% if @misses.size > 0 %>
@@ -26,8 +34,12 @@
 <% if @number_found > 0 %>
 <!-- JIT Library File --> 
 <!--[if IE]><%= javascript_include_tag "jit/Extras/excanvas.js"%><![endif]-->
-<%= javascript_include_tag "jit/jit-yc.js", "multi_search.js", "jstree/jquery.jstree" %>
+<%= javascript_include_tag "jit/jit-yc.js", "jstree/jquery.jstree", "d3/d3.v2.min.js"%>
+<%= javascript_include_tag "multi_search.js"%>
 <script type="text/javascript">
-	window.onload=init(<%= raw(@root.to_json)%>, <%=@equate_il %>);
+	var data1 = <%= raw(@treemap_json)%>
+	var data2 = <%= raw(@sunburst_json)%>
+	window.onload=init(data1, <%=@equate_il %>, data2);
+	initSunburst(data2);
 </script>
 <% end %>

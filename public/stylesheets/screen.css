@@ -1921,6 +1921,11 @@ div#search_button{
 	width: 100px !important;
 	padding-top: 0px !important;
 }
+/*sunburst*/
+#sunburst{
+    height: 742px;
+    width: 742px;
+}
 /*treemap*/
 #treeMap{
 	background-color: #DCDFE4;
@@ -2083,4 +2088,45 @@ div#search_button{
 }
 .c29{
 	background: #92538c;
+}
+
+/* tabs (from github) */
+.subnav-bar {
+    margin: 10px 0;
+    border-bottom: 1px solid #DDD;
+}
+.subnav-bar ul.subnav {
+    font-size: 14px;
+    padding: 0px !important;
+}
+.subnav-bar ul.subnav li {
+    display: inline-block;
+    vertical-align: top;
+    cursor: pointer;
+}
+.subnav-bar ul.subnav li:first-child a.selected {
+    padding-left: 12px;
+}
+.subnav-bar ul.subnav li:first-child a {
+    padding-left: 2px;
+}
+.subnav-bar ul.subnav li a.selected {
+    color: #333 !important;
+    font-weight: bold;
+    border-left: 1px solid #DDD;
+    border-top: 1px solid #DDD;
+    border-right: 1px solid #DDD;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    background-color: white;
+}
+.subnav-bar ul.subnav li a {
+    color: #666 !important;
+    text-decoration: none !important;
+    padding: 8px 12px;
+    display: inline-block;
+    border-left: 1px solid transparent;
+    border-top: 1px solid transparent;
+    border-right: 1px solid transparent;
+    margin-bottom: -1px;
 }

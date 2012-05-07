@@ -86,4 +86,22 @@ class TreeMapNode < Node
     @metadata[:own_sequences].sort! unless @metadata[:own_sequences].nil?
     @children.map{|c| c.sort_peptides_and_children} unless @children.empty?
   end
+
+  # cleans a hash of redundant data for sunburst
+  def self.clean_sunburst!(hash)
+    hash["children"].map{|c| TreeMapNode.clean_sunburst!(c)}
+    hash.delete("metadata")
+    hash.delete("state")
+    hash.delete("nodes")
+    hash["data"].delete("title")
+    hash["data"].delete("piecharturl")
+    hash["data"].delete("level")
+    hash["data"].delete("$color")
+    hash["data"].delete("$area")
+  end
+  
+  # cleans a hash of redundant data for sunburst
+  def self.clean_treemap!(hash)
+    hash.delete("nodes")
+  end
 end

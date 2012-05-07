@@ -119,15 +119,15 @@ function init(data, lcaId) {
     });
 	//load json data
     st.loadJSON(data);
-    
+
 	//compute node positions and layout
     st.compute();
-    
+
 	//optional: make a translation of the tree
     st.geom.translate(new $jit.Complex(-200, 0), "current");
-    
+
 	//emulate a click on the root node.
     //st.onClick(st.root);
 	st.onClick(lcaId);
-    
+
 }
