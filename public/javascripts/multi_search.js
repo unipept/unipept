@@ -42,15 +42,24 @@ function init(data, equate_il, data2) {
     try{
         initSunburst(data2);
     }
+    catch(err){
+        console.error("Sunburst failed to load");
+    }
 
     // treemap
     try{
         initTreeMap(data);
     }
+    catch(err){
+        console.error("Treemap failed to load");
+    }
 
     // jstree
     try{
         initJsTree(data, equate_il);
+    }  
+    catch(err){
+        console.error("JsTree failed to load");
     }
 }
 
