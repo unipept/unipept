@@ -319,7 +319,7 @@ function initSunburst(data) {
         path.transition()
             .duration(duration)
             .attrTween("d", arcTween(d))
-            .style("opacity", function (d) {
+            .attr("fill-opacity", function (d) {
                 if (d.depth >= currentMaxLevel) {
                     return 0.2;
                 }
