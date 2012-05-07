@@ -6,12 +6,14 @@ $(function() {
         $("#mapTitleSunburst").removeClass("selected");
         $("#treeMap").show();
         $("#sunburst").hide();
+        return false;
     });
     $("#mapTitleSunburst").click(function () {
         $("#mapTitleSunburst").addClass("selected");
         $("#mapTitleTreemap").removeClass("selected");
         $("#sunburst").show();
         $("#treeMap").hide();
+        return false;
     });
 });
 
