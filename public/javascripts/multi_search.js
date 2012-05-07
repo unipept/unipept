@@ -36,7 +36,7 @@ var labelType,
     animate = !(iStuff || !nativeCanvasSupport);
 }());
 
-function init(data, equate_il, data2) {
+function init(data, data2, equate_il) {
 
     // sunburst
     try{

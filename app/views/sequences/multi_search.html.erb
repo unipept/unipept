@@ -39,7 +39,6 @@
 <script type="text/javascript">
 	var data1 = <%= raw(@treemap_json)%>
 	var data2 = <%= raw(@sunburst_json)%>
-	window.onload=init(data1, <%=@equate_il %>, data2);
-	initSunburst(data2);
+	$(function () {init(data1, data2, <%=@equate_il %>);});
 </script>
 <% end %>
