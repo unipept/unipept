@@ -397,7 +397,7 @@ function tooltipIn(d) {
             (!d.data.count ? "0" : d.data.count) + " sequence(s) specific to this level or lower");
 }
 function tooltipMove() {
-    tooltip.style("top", (event.pageY - 5) + "px").style("left", (event.pageX + 12) + "px");
+    tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 12) + "px");
 }
 function tooltipOut() {
     tooltip.style("visibility", "hidden");
