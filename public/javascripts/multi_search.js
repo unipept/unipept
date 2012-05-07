@@ -43,7 +43,7 @@ function init(data, equate_il, data2) {
         initSunburst(data2);
     }
     catch(err){
-        console.error("Sunburst failed to load");
+        error("Sunburst failed to load");
     }
 
     // treemap
@@ -51,7 +51,7 @@ function init(data, equate_il, data2) {
         initTreeMap(data);
     }
     catch(err){
-        console.error("Treemap failed to load");
+        error("Treemap failed to load");
     }
 
     // jstree
@@ -59,7 +59,13 @@ function init(data, equate_il, data2) {
         initJsTree(data, equate_il);
     }  
     catch(err){
-        console.error("JsTree failed to load");
+        error("JsTree failed to load");
+    }
+}
+
+function error(msg) {
+    if (typeof console != "undefined") { 
+        console.error(msg);
     }
 }
 
