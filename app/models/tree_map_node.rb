@@ -77,4 +77,21 @@ class TreeMapNode < Node
       @children.map{|c| c.add_piechart_data}
     end
   end
+  
+  # cleans a hash of redundant data for sunburst
+  def self.clean_sunburst!(hash)
+    hash["children"].map{|c| TreeMapNode.clean_sunburst!(c)}
+    hash.delete("metadata")
+    hash.delete("state")
+    hash.delete("nodes")
+    hash.delete("title")
+    hash["data"].delete("piecharturl")
+    hash["data"].delete("level")
+    hash["data"].delete("$color")
+  end
+  
+  # cleans a hash of redundant data for sunburst
+  def self.clean_treemap!(hash)
+    hash.delete("nodes")
+  end
 end

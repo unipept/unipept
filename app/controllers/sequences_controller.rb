@@ -193,6 +193,17 @@ class SequencesController < ApplicationController
     	@root = @root.children[0] if @root.children.count == 0
     	@root.add_piechart_data
     	
+    	@sunburst_json = @root.to_json
+    	sunburst_hash = ActiveSupport::JSON.decode(@sunburst_json)
+    	TreeMapNode.clean_sunburst!(sunburst_hash)
+    	@sunburst_json = sunburst_hash.to_json.gsub("children","kids")
+    	
+    	@treemap_json = @root.to_json
+    	treemap_hash = ActiveSupport::JSON.decode(@treemap_json)
+    	TreeMapNode.clean_treemap!(treemap_hash)
+    	@treemap_json = treemap_hash.to_json
+    	
+    	
     	#more export stuff
     	filename = @search_name != "" ? @search_name : "export"
       send_data csv_string, :type => 'text/csv; charset=iso-8859-1; header=present', :disposition => "attachment; filename="+filename+".csv" if export

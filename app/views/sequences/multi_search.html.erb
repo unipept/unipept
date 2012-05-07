@@ -50,8 +50,8 @@ While searching, we didn't filter duplicate peptides
 <%= javascript_include_tag "jit/jit-yc.js", "jstree/jquery.jstree", "d3/d3.v2.min.js"%>
 <%= javascript_include_tag "multi_search.js"%>
 <script type="text/javascript">
-	var data1 = <%= raw(@root.to_json)%>
-	var data2 = <%= raw(@root.to_json.gsub("children","kids"))%> // TODO: fix me
+	var data1 = <%= raw(@treemap_json)%>
+	var data2 = <%= raw(@sunburst_json)%>
 	window.onload=init(data1, <%=@equate_il %>, data2);
 	initSunburst(data2);
 </script>

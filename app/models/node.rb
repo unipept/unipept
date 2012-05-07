@@ -37,5 +37,3 @@ class Node
     return "nodes/node"
   end
 end
-
-
