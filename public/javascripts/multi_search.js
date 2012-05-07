@@ -37,16 +37,21 @@ var labelType,
 }());
 
 function init(data, equate_il, data2) {
-    //var data = jQuery.extend(true, {}, json)
 
     // sunburst
-    initSunburst(data2);
+    try{
+        initSunburst(data2);
+    }
 
     // treemap
-    initTreeMap(data);
+    try{
+        initTreeMap(data);
+    }
 
     // jstree
-    initJsTree(data, equate_il);
+    try{
+        initJsTree(data, equate_il);
+    }
 }
 
 function initTreeMap(jsonData) {
