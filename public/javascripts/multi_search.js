@@ -394,9 +394,11 @@ function getColor() {
 // tooltip functions
 function tooltipIn(d) {
     tooltip.style("visibility", "visible")
-        .html(d.name + "<br/>" +
-            (!d.data.self_count ? "0" : d.data.self_count) + " sequence(s) specific to this level<br/>" +
-            (!d.data.count ? "0" : d.data.count) + " sequence(s) specific to this level or lower");
+        .html("<b>" + d.name + "</b> (" + d.attr.title + ")<br/>" +
+            (!d.data.self_count ? "0" : d.data.self_count) + 
+            (d.data.self_count && d.data.self_count == 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
+            (!d.data.count ? "0" : d.data.count) + 
+            (d.data.count && d.data.count == 1 ? " sequence" : " sequences") + " specific to this level or lower");
 }
 function tooltipMove() {
     tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 12) + "px");
