@@ -119,7 +119,14 @@ function initTreeMap(jsonData) {
             var style = domElement.style;
             style.display = '';
             style.border = '2px solid transparent';
-            style.color = brightness(d3.rgb(node.data.$color)) < 125 ? "#eee" : "#000";
+            
+            try{
+                style.color = brightness(d3.rgb(node.data.$color)) < 125 ? "#eee" : "#000";
+            }
+            catch(err){
+                error("Failed to set treemap color based on bgcolor");
+            }
+            
             domElement.onmouseover = function () {
                 style.border = '2px solid #9FD4FF';
             };
