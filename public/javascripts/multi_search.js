@@ -2,18 +2,14 @@
 $(function() {
     $("#treeMap").hide();
     $("#mapTitleTreemap").click(function () {
-        $("#mapTitleTreemap").addClass("active");
-        $("#mapTitleTreemap").removeClass("klik");
-        $("#mapTitleSunburst").removeClass("active");
-        $("#mapTitleSunburst").addClass("klik");
+        $("#mapTitleTreemap").addClass("selected");
+        $("#mapTitleSunburst").removeClass("selected");
         $("#treeMap").show();
         $("#sunburst").hide();
     });
     $("#mapTitleSunburst").click(function () {
-        $("#mapTitleSunburst").addClass("active");
-        $("#mapTitleSunburst").removeClass("klik");
-        $("#mapTitleTreemap").removeClass("active");
-        $("#mapTitleTreemap").addClass("klik");
+        $("#mapTitleSunburst").addClass("selected");
+        $("#mapTitleTreemap").removeClass("selected");
         $("#sunburst").show();
         $("#treeMap").hide();
     });

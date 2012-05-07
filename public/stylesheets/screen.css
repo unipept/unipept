@@ -2060,10 +2060,44 @@ div#search_button{
 .c29{
 	background: #92538c;
 }
-.tab{
-    display: inline-block;
-    width: 80px;
+
+/* tabs (from github) */
+.subnav-bar {
+    margin: 10px 0;
+    border-bottom: 1px solid #DDD;
 }
-.tab.active{
+.subnav-bar ul.subnav {
+    font-size: 14px;
+    padding: 0px !important;
+}
+.subnav-bar ul.subnav li {
+    display: inline-block;
+    vertical-align: top;
+    cursor: pointer;
+}
+.subnav-bar ul.subnav li:first-child a.selected {
+    padding-left: 12px;
+}
+.subnav-bar ul.subnav li:first-child a {
+    padding-left: 2px;
+}
+.subnav-bar ul.subnav li a.selected {
+    color: #333 !important;
     font-weight: bold;
+    border-left: 1px solid #DDD;
+    border-top: 1px solid #DDD;
+    border-right: 1px solid #DDD;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    background-color: white;
+}
+.subnav-bar ul.subnav li a {
+    color: #666 !important;
+    text-decoration: none !important;
+    padding: 8px 12px;
+    display: inline-block;
+    border-left: 1px solid transparent;
+    border-top: 1px solid transparent;
+    border-right: 1px solid transparent;
+    margin-bottom: -1px;
 }

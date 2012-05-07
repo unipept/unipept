@@ -17,7 +17,13 @@ While searching, we didn't filter duplicate peptides
 <% end %>
 
 <% if @number_found > 0 %>
-	<h2 id="mapTitle" ><span id="mapTitleSunburst" class="tab active">Sunburst</span> <span id="mapTitleTreemap" class="tab klik">Treemap</span></h2>
+	<div class="subnav-bar">
+	    <ul class="subnav">
+	      <li><a href="#" id="mapTitleSunburst" class="selected">Sunburst</a></li>
+	      <li><a href="#" id="mapTitleTreemap" >Treemap</a></li>
+	    </ul>
+	</div>
+
 	<div id="sunburst"></div>
 	<div id="treeMap"></div>
 
