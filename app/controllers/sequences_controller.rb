@@ -206,12 +206,12 @@ class SequencesController < ApplicationController
     	
     	@sunburst_json = @root.to_json
     	sunburst_hash = ActiveSupport::JSON.decode(@sunburst_json)
-    	TreeMapNode.clean_sunburst!(sunburst_hash)
+    	TreeMapNode.clean_sunburst!(sunburst_hash) unless sunburst_hash.nil?
     	@sunburst_json = sunburst_hash.to_json.gsub("children","kids")
     	
     	@treemap_json = @root.to_json
     	treemap_hash = ActiveSupport::JSON.decode(@treemap_json)
-    	TreeMapNode.clean_treemap!(treemap_hash)
+    	TreeMapNode.clean_treemap!(treemap_hash) unless treemap_hash.nil?
     	@treemap_json = treemap_hash.to_json
     	
     	
