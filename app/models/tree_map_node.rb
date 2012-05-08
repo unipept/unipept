@@ -89,7 +89,7 @@ class TreeMapNode < Node
 
   # cleans a hash of redundant data for sunburst
   def self.clean_sunburst!(hash)
-    hash["children"].map{|c| TreeMapNode.clean_sunburst!(c)}
+    hash["children"].map{|c| TreeMapNode.clean_sunburst!(c)} unless hash["children"].nil?
     hash.delete("metadata")
     hash.delete("state")
     hash.delete("nodes")
