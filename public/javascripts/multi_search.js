@@ -1,6 +1,5 @@
 // Tabs
 $(function() {
-    $("#treeMap").hide();
     $("#mapTitleTreemap").click(function () {
         $("#mapTitleTreemap").addClass("selected");
         $("#mapTitleSunburst").removeClass("selected");
@@ -49,6 +48,7 @@ function init(data, data2, equate_il) {
     // treemap
     try{
         initTreeMap(data);
+        $("#treeMap").hide();
     }
     catch(err){
         error("Treemap failed to load");
