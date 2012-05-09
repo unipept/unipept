@@ -237,6 +237,7 @@ var div = d3.select("#sunburst");
 var vis = div.append("svg")
     .attr("width", w + p * 2)
     .attr("height", h + p * 2)
+    .attr("overflow", "hidden")
     .append("g")
     .attr("transform", "translate(" + (r + p) + "," + (r + p) + ")"); // set origin to radius center
 
