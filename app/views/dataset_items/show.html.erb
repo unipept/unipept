@@ -1,0 +1,25 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Name:</b>
+  <%= @dataset_item.name %>
+</p>
+
+<p>
+  <b>Path:</b>
+  <%= @dataset_item.path %>
+</p>
+
+<p>
+  <b>Order:</b>
+  <%= @dataset_item.order %>
+</p>
+
+<p>
+  <b>Dataset:</b>
+  <%= @dataset_item.dataset_id %>
+</p>
+
+
+<%= link_to 'Edit', edit_dataset_item_path(@dataset_item) %> |
+<%= link_to 'Back', dataset_items_path %>

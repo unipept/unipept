@@ -1,0 +1,29 @@
+<h1>Listing dataset_items</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Path</th>
+    <th>Order</th>
+    <th>Dataset</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @dataset_items.each do |dataset_item| %>
+  <tr>
+    <td><%= dataset_item.name %></td>
+    <td><%= dataset_item.path %></td>
+    <td><%= dataset_item.order %></td>
+    <td><%= dataset_item.dataset_id %></td>
+    <td><%= link_to 'Show', dataset_item %></td>
+    <td><%= link_to 'Edit', edit_dataset_item_path(dataset_item) %></td>
+    <td><%= link_to 'Destroy', dataset_item, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Dataset item', new_dataset_item_path %>
