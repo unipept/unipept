@@ -25,6 +25,7 @@ class TreeMapNode < Node
     
     @attr = Hash.new
     @attr[:title] = rank
+    @data[:rank] = rank
     
     #color
     @data[:level] = 0
@@ -98,6 +99,7 @@ class TreeMapNode < Node
     hash["data"].delete("level")
     hash["data"].delete("$color")
     hash["data"].delete("$area")
+    hash["data"].delete("rank")
   end
   
   # cleans a hash of redundant data for sunburst
