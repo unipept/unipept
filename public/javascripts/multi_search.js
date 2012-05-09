@@ -258,7 +258,7 @@ var arc = d3.svg.arc()
     .startAngle(function (d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x))); }) // start between 0 and 2Pi
     .endAngle(function (d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); }) // stop between 0 and 2Pi
     .innerRadius(function (d) { return Math.max(0, d.y ? y(d.y) : d.y); }) // prevent y-calculation on 0
-    .outerRadius(function (d) { return Math.max(0, y(d.y + d.dy)); });
+    .outerRadius(function (d) { return Math.max(0, y(d.y + d.dy)) + 1; });
 
 function initSunburst(data) {
     // run the partition layout
