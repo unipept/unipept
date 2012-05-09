@@ -308,7 +308,7 @@ function initSunburst(data) {
     });
 
     // set up start levels
-    click(data);
+    setTimeout(click(data), 1000);
 
     function click(d) {
         // set js tree
