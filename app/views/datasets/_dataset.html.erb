@@ -11,6 +11,10 @@
 
 <ul>
 <% for item in dataset.dataset_items %>
-	<li><%= item.name%></li>
+	<% if load %>
+	<li><span class="name"><%= item.name %></span> (<%= link_to "Load dataset", item.path, :class => "datasetLink" %>)</li>
+	<% else %>	
+	<li><%= item.name %></li>
+	<% end %>
 <% end %>
 </ul>

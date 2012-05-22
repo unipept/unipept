@@ -2,7 +2,7 @@ class DatasetsController < ApplicationController
   # GET /datasets
   # GET /datasets.xml
   def index
-    @datasets = Dataset.all
+    @datasets = Dataset.includes(:dataset_items).all
 
     respond_to do |format|
       format.html # index.html.erb
