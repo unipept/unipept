@@ -39,6 +39,12 @@ module UnipeptWeb
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
     
+    # CAS
+    config.rubycas.cas_base_url = "https://login.ugent.be/"
+    config.rubycas.validate_url = "https://login.ugent.be/samlValidate"
+    config.rubycas.logger = Rails.logger
+    config.rubycas.enable_single_sign_out = true
+    
     ### Part of a Spork hack. See http://bit.ly/arY19y
     if Rails.env.test?
       initializer :after => :initialize_dependency_mechanism do
