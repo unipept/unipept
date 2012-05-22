@@ -1,29 +1,5 @@
-<h1>Listing datasets</h1>
+<h1>Datasets</h1>
 
-<table>
-  <tr>
-    <th>Environment</th>
-    <th>Reference</th>
-    <th>Url</th>
-    <th>Project website</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-
-<% @datasets.each do |dataset| %>
-  <tr>
-    <td><%= dataset.environment %></td>
-    <td><%= dataset.reference %></td>
-    <td><%= dataset.url %></td>
-    <td><%= dataset.project_website %></td>
-    <td><%= link_to 'Show', dataset %></td>
-    <td><%= link_to 'Edit', edit_dataset_path(dataset) %></td>
-    <td><%= link_to 'Destroy', dataset, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
-</table>
-
-<br />
+<%= render @datasets %>
 
 <%= link_to 'New Dataset', new_dataset_path %>

@@ -1,31 +1,4 @@
-<p id="notice"><%= notice %></p>
-
-<p>
-  <b>Environment:</b>
-  <%= @dataset.environment %>
-</p>
-
-<p>
-  <b>Reference:</b>
-  <%= @dataset.reference %>
-</p>
-
-<p>
-  <b>Url:</b>
-  <%= @dataset.url %>
-</p>
-
-<p>
-  <b>Project website:</b>
-  <%= @dataset.project_website %>
-</p>
-
-<ol>
-<% for item in @dataset.dataset_items %>
-	<li><%= item.name%></li>
-<% end %>
-</ol>
-
+<%= render @dataset %>
 
 <%= link_to 'Edit', edit_dataset_path(@dataset) %> |
 <%= link_to 'Back', datasets_path %>
