@@ -27,6 +27,10 @@
     <%= f.label :project_website %><br />
     <%= f.text_field :project_website %>
   </div>
+	<% f.fields_for :dataset_items do |builder| %>
+		<%= render 'dataset_item_fields', :f => builder %>
+	<% end %>
+	<p><%= link_to_add_fields "Add item", f, :dataset_items %></p>
   <div class="actions">
     <%= f.submit %>
   </div>

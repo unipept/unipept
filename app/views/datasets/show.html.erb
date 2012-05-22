@@ -20,6 +20,12 @@
   <%= @dataset.project_website %>
 </p>
 
+<ol>
+<% for item in @dataset.dataset_items %>
+	<li><%= item.name%></li>
+<% end %>
+</ol>
+
 
 <%= link_to 'Edit', edit_dataset_path(@dataset) %> |
 <%= link_to 'Back', datasets_path %>
