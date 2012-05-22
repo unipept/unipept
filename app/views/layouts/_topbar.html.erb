@@ -5,4 +5,16 @@
 			</li>
 		</ul>
 	</div>
+	<% if session[:unipept] %>
+	<div id="user">
+		<ul class="swapUnderline">
+	  	<li class="member"><span class="visualCaseSensitive">bmesuere</span></li>
+			<li class="last-child visualIcon actionicon-user-internal_search">
+				<a href="/cas/logout" class="visualIconPadding">Sign out</a>
+			</li>
+	  </ul>
+	</div>
+	<% else %>
+	<div id='user'><ul class='swapUnderline'><li class='last-child'><a class='Logintext advanced' href='/cas/auth'> Sign in</a></li></ul> </div>
+	<% end %>
 </div>
