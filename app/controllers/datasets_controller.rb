@@ -1,4 +1,6 @@
 class DatasetsController < ApplicationController
+  before_filter :authorize, :only => [:new, :edit, :create, :update, :destroy]
+  
   # GET /datasets
   # GET /datasets.xml
   def index
@@ -44,7 +46,7 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
       if @dataset.save
-        format.html { redirect_to(@dataset, :flash => { :info => 'Dataset was successfully created.' }) }
+        format.html { redirect_to(@dataset, :flash => { :success => 'Dataset was successfully created.' }) }
         format.xml  { render :xml => @dataset, :status => :created, :location => @dataset }
       else
         format.html { render :action => "new" }
@@ -60,7 +62,7 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
       if @dataset.update_attributes(params[:dataset])
-        format.html { redirect_to(@dataset, :flash => { :info => 'Dataset was successfully updated.' }) }
+        format.html { redirect_to(@dataset, :flash => { :success => 'Dataset was successfully updated.' }) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }

@@ -30,9 +30,9 @@ class CasController < ApplicationController
     session[:cas_last_valid_ticket] = nil
     
     # check if the logged in user is an administrator.
-    if session[cas_user] != "bmesuere"
+    if session[:cas_user] != "bmesuere"
       flash[:error] = "Sorry, you are not an administrator"
-      session[cas_user] = nil
+      session[:cas_user] = nil
     end
     
     # if the redirect parameter is set, redirect to this page after auth
