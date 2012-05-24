@@ -3,12 +3,9 @@ class CasController < ApplicationController
   before_filter RubyCAS::Filter, :only => :verify
 
   def auth
+    # if the redirect parameter is set, redirect to this page after auth
     if params[:redirect]
       session[:post_cas_redirect] = params[:redirect]
-    end
-
-    if request.referer =~ /ugent.be/
-      session[:unipept] = true
     end
 
     redirect_to cas_verify_path
@@ -31,7 +28,14 @@ class CasController < ApplicationController
 
     # Don't save the ticket, it contains a singleton somewhere that can't be marshalled
     session[:cas_last_valid_ticket] = nil
-
+    
+    # check if the logged in user is an administrator.
+    if session[cas_user] != "bmesuere"
+      flash[:error] = "Sorry, you are not an administrator"
+      session[cas_user] = nil
+    end
+    
+    # if the redirect parameter is set, redirect to this page after auth
     if session[:post_cas_redirect]
       redirect_to session[:post_cas_redirect]
     else
