@@ -108,7 +108,8 @@ class SequencesController < ApplicationController
   
   # redirects to show
   def search
-    redirect_to "#{sequences_path}/#{params[:q]}"
+    il = params[:il] == 1 ? true : false
+    redirect_to "#{sequences_path}/#{params[:q]}/#{il}"
   end
   
   # processes a list of sequences
