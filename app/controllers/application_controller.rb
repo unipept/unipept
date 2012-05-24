@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   protected
   
   def authorize
-    if session[:cas_user] != "bmesuere"
+    unless session[:admin]
       flash[:error] = "Please log in to use this feature"
       redirect_to root_url
     end 

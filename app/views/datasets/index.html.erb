@@ -2,4 +2,4 @@
 
 <%= render @datasets, :load => false %>
 
-<%= link_to 'New Dataset', new_dataset_path %>
+<%= link_to 'New Dataset', new_dataset_path if session[:admin] %>

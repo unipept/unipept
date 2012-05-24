@@ -1,6 +1,11 @@
 <p>
   <b>Environment:</b>
-  <%= dataset.environment %> <br/>
+  <%= dataset.environment %> 
+	<% if session[:admin] && !load %>
+		<%= link_to 'Edit', edit_dataset_path(dataset) %> |
+		<%= link_to 'Delete', dataset, :confirm => 'Are you sure?', :method => :delete %>
+	<% end %>
+	<br/>
 
   <b>Reference:</b>
   <%= dataset.reference %> (<%= link_to "link", dataset.url, :target => "_blank" %>). 

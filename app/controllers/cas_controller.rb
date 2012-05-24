@@ -31,6 +31,7 @@ class CasController < ApplicationController
     
     # check if the logged in user is an administrator.
     if session[:cas_user] != "bmesuere"
+      session[:admin] = true
       flash[:error] = "Sorry, you are not an administrator"
       session[:cas_user] = nil
     end
