@@ -26,6 +26,7 @@ class TreeMapNode < Node
     @attr = Hash.new
     @attr[:title] = rank
     @data[:rank] = rank
+    @metadata[:id] = id
     
     #color
     @data[:level] = 0

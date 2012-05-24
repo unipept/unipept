@@ -154,7 +154,7 @@ function initJsTree(data, equate_il) {
 		function (node, tree) {
 			var peptides = $(tree.rslt.obj).data(),
 				margin = tree.rslt.obj.context.offsetTop - $("#jstree").offset().top,
-				innertext = $(tree.rslt.obj).find("a").text().split("(")[0],
+				innertext = "<a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + peptides.id + "' target='_blank'>" + $.trim($(tree.rslt.obj).find("a").text().split("(")[0]) + "</a>",
 				infoPane,
 				ownSequences,
 				list,
