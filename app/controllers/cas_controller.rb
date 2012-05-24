@@ -31,9 +31,10 @@ class CasController < ApplicationController
     
     # check if the logged in user is an administrator.
     if session[:cas_user] != "bmesuere"
-      session[:admin] = true
       flash[:error] = "Sorry, you are not an administrator"
       session[:cas_user] = nil
+    else
+      session[:admin] = true
     end
     
     # if the redirect parameter is set, redirect to this page after auth
@@ -44,6 +45,7 @@ class CasController < ApplicationController
     end
   end
 
+  # redirects to the cas single signout and wipes the session
   def logout
     RubyCAS::Filter.logout(self, root_url)
   end
