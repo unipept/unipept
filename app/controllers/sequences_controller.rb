@@ -171,7 +171,7 @@ class SequencesController < ApplicationController
       @intro_text += "."
     
       # construct treemap nodes
-      @root = TreeMapNode.new(1, "root", "no rank")
+      @root = TreeMapNode.new(1, "organism", "no rank")
       @matches.each do |taxon, sequences| # for every match
         @root.add_sequences(sequences)
         lca_l = Lineage.find_by_taxon_id(taxon.id)
