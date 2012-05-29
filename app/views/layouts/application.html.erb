@@ -39,16 +39,33 @@
 			
 			<% if Rails.env.development? %>
 			<div id="spotlight" class="spotlight">
-				<div class="sectiontitle"><h2>Development server</h2></div>
-				<div class="columns">
-				  <div class="column">
-				    <div class="spacing-left">
+			  <div class="sectiontitle"><h2>Development server</h2></div>
+			  <div class="columns">
+			    <div class="column">
+			      <div class="spacing-left">
 			      	<p><span>This is the development version of UniPept. Please use the website at <a href="http://unipept.ugent.be">unipept.ugent.be</a> for more stable results.</span></p>	
-					  </div>	
+			      </div>	
 			    </div>
-				</div>
+			  </div>
 			</div>
 			<% end %>
+			
+			<% unless @motd.nil? %>
+			<div id="spotlight" class="spotlight">
+			  <div class="sectiontitle"><h2>Message of the Day</h2></div>
+			  <div class="columns">
+			    <div class="column">
+			      <div class="spacing-left">
+			      	<p><span><%= @motd %></span></p>	
+			      </div>	
+			    </div>
+			  </div>
+			</div>
+			<% end %>
+			
+			<!--[if lt IE 9]> 
+			<div class='error'>The browser you are using is not supported on this website. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.</div>
+			<![endif]-->
 			
 			<% flash.each do |key, value| %>
 				<%= content_tag(:div, value, :class => "flash #{key}").gsub(/\n/, "<br/>") %>

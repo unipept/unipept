@@ -2,8 +2,16 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.0.3'
 gem 'mysql'
+
+#pagination
 gem 'will_paginate', '3.0.pre2'
+
+#jquery
 gem 'jquery-rails', '>= 0.2.6'
+
+# cas auth #
+gem 'rubycas-client', git: 'git://github.com/Javache/rubycas-client.git', branch: 'master'
+gem 'rubycas-client-rails', :git => 'git://github.com/Javache/rubycas-client-rails.git'
 
 group :development do
   gem 'rspec-rails'

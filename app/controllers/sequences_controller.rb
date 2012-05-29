@@ -28,7 +28,7 @@ class SequencesController < ApplicationController
       flash[:notice] = flash.now[:notice]
       redirect_to sequences_path
     else
-      @title = "Tryptic peptide identification of #{@sequence.sequence}"
+      @title = "Tryptic peptide analysis of #{@sequence.sequence}"
       
       # get the uniprot entries of every peptide
       @entries = equate_il ? @sequence.peptides.map(&:uniprot_entry) : @sequence.original_peptides.map(&:uniprot_entry)
@@ -108,7 +108,8 @@ class SequencesController < ApplicationController
   
   # redirects to show
   def search
-    redirect_to "#{sequences_path}/#{params[:q]}"
+    il = params[:il] == 1 ? true : false
+    redirect_to "#{sequences_path}/#{params[:q]}/#{il}"
   end
   
   # processes a list of sequences
@@ -170,7 +171,7 @@ class SequencesController < ApplicationController
       @intro_text += "."
     
       # construct treemap nodes
-      @root = TreeMapNode.new(1, "root", "no rank")
+      @root = TreeMapNode.new(1, "organism", "no rank")
       @matches.each do |taxon, sequences| # for every match
         @root.add_sequences(sequences)
         lca_l = Lineage.find_by_taxon_id(taxon.id)
@@ -202,6 +203,18 @@ class SequencesController < ApplicationController
     	#don't show the root when we don't need it
     	@root = @root.children[0] if @root.children.count == 0
     	@root.add_piechart_data unless @root.nil?
+    	@root.sort_peptides_and_children unless @root.nil?
+    	
+    	@sunburst_json = @root.to_json
+    	sunburst_hash = ActiveSupport::JSON.decode(@sunburst_json)
+    	TreeMapNode.clean_sunburst!(sunburst_hash) unless sunburst_hash.nil?
+    	@sunburst_json = sunburst_hash.to_json.gsub("children","kids")
+    	
+    	@treemap_json = @root.to_json
+    	treemap_hash = ActiveSupport::JSON.decode(@treemap_json)
+    	TreeMapNode.clean_treemap!(treemap_hash) unless treemap_hash.nil?
+    	@treemap_json = treemap_hash.to_json
+    	
     	
     	#more export stuff
     	filename = search_name != "" ? search_name : "export"
