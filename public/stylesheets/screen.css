@@ -2130,3 +2130,27 @@ div#search_button{
     border-right: 1px solid transparent;
     margin-bottom: -1px;
 }
+h2.ghead{
+    margin: 1em 0;
+    font-weight: bold;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: 13px Helvetica,arial,freesans,clean,sans-serif;
+    line-height: 1.4;
+    color: #333;
+}
+h2.ghead::after {
+    content: ".";
+    height: 0;
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+span.dir{
+    font-size: 12px;
+    font-weight: normal;
+    color: #555;
+    line-height: 100%;
+    float: right;
+}

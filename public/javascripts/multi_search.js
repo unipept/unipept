@@ -3,15 +3,15 @@ $(function() {
     $("#mapTitleTreemap").click(function () {
         $("#mapTitleTreemap").addClass("selected");
         $("#mapTitleSunburst").removeClass("selected");
-        $("#treeMap").show();
-        $("#sunburst").hide();
+        $("#treeMapWrapper").show();
+        $("#sunburstWrapper").hide();
         return false;
     });
     $("#mapTitleSunburst").click(function () {
         $("#mapTitleSunburst").addClass("selected");
         $("#mapTitleTreemap").removeClass("selected");
-        $("#sunburst").show();
-        $("#treeMap").hide();
+        $("#sunburstWrapper").show();
+        $("#treeMapWrapper").hide();
         return false;
     });
 });
@@ -48,7 +48,7 @@ function init(data, data2, equate_il) {
     // treemap
     try{
         initTreeMap(data);
-        $("#treeMap").hide();
+        $("#treeMapWrapper").hide();
     }
     catch(err){
         error("Treemap failed to load");
@@ -223,7 +223,7 @@ function initJsTree(data, equate_il) {
     });
 }
 
-var w = 742,   // width
+var w = 732,   // width
     h = w,     // height
     r = w / 2, // radius   
     p = 5,     // padding

@@ -9,9 +9,15 @@
 	      <li><a href="#" id="mapTitleTreemap" >Treemap</a></li>
 	    </ul>
 	</div>
-
-	<div id="sunburst"></div>
-	<div id="treeMap"></div>
+	<div id="sunburstWrapper">
+		<h2 class="ghead"><span class="dir">Click a slice to zoom in and the center node to zoom out</span></h2>
+		<div id="sunburst"></div>
+	</div>
+	
+	<div id="treeMapWrapper">
+		<h2 class="ghead"><span class="dir">Click a square to zoom in and right click to zoom out</span></h2>
+		<div id="treeMap"></div>
+	</div>
 
 <h2>Hierarchical outline</h2>
 <%= search_field_tag(:jstree_search, "", :size => 70, :placeholder => "search the tree...") %>
