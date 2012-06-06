@@ -286,6 +286,7 @@ header, footer{
 #headerright {
 	float: right;
 	width: 70%;
+	height: 31px;
 }
 #utility {
 	padding-top: 5px;
@@ -306,6 +307,28 @@ header, footer{
 #utility ul li.last-child {
 	border: none;
 	padding-right: 0;
+}
+#subbar{	
+	clear:both;
+	float: none;
+    background: #E9E9E9;
+	margin-left: 200px;
+    margin-bottom: 10px;
+	overflow: hidden;
+	height: 24px;
+    font-size: 110%;
+    line-height:1.2;
+}
+#subbar ul{
+    list-style:none outside none;
+    padding-top:6px;
+    padding-left: 15px;
+}
+#subbar ul li {
+    float:left;
+    font-size:1.1em;
+    margin-right: 1.7em;
+    font-weight: bold;
 }
 
 /* breadcrumb */
