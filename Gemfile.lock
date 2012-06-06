@@ -1,3 +1,19 @@
+GIT
+  remote: git://github.com/Javache/rubycas-client-rails.git
+  revision: e6e2ea8b50dfd8e7a623b0ffbb0a3e98eca98f2f
+  specs:
+    rubycas-client-rails (0.0.1)
+      rails (>= 3.0.0)
+      rubycas-client (>= 2.1.0)
+
+GIT
+  remote: git://github.com/Javache/rubycas-client.git
+  revision: c0cb725e947d6473abf93e22971ec3925daa9bda
+  branch: master
+  specs:
+    rubycas-client (2.1.0)
+      activesupport
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -111,6 +127,8 @@ DEPENDENCIES
   rake (= 0.8.7)
   rspec
   rspec-rails
+  rubycas-client!
+  rubycas-client-rails!
   spork
   sprockets (= 2.1.2)
   webrat

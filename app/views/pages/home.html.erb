@@ -1,40 +1,37 @@
 <h1>Welcome</h1>
-<h2>Peptide identification</h2>
+<p class="intro">
+The Unipept web application supports biodiversity analysis of large and complex metaproteome samples. Its underlying index structure is designed to quickly retrieve all occurrences of a tryptic peptide in UniProtKB records. Taxon-specificity of the tryptic peptide is successively derived from these occurrences using a novel lowest common ancestor approach that is robust against taxonomic misarrangements, misidentifications and inaccuracies. Not taking into account this identification noise would otherwise result in drastic loss of information. This application consists of two basic functionalities: a peptide-based taxonomic identification and a multi-peptide dynamic diversity treemap analysis.
+</p>
+
+<h2>Single peptide analysis</h2>
+<p>
+With single peptide analysis, you can submit a single <em>tryptic peptide</em> that can be <em>8 to 50 residues long</em>. The application will respond with a list of all UniProtKB records wherein the peptide was found along with a complete taxonomic lineage derived from the NCBI taxonomy. These lineages are presented as a comprehensible table and using an interactive tree view.
+</p>
 <p>Try searching for a tryptic peptide:</p>
 <%= render 'shared/sequence_search' %>
-<h2>Multi peptide analysis</h2>
+
+<h2>Multi-peptide analysis</h2>
+<p>
+Multi-peptide analysis helps you analyze lists of tryptic peptides, e.g. extracted from an environmental sample using shotgun tandem mass spectrometric methods. You can submit a list of peptides of which the lowest common ancestors (LCA) will be calculated. These LCAs will be bundled and displayed in an interactive treemap giving you insight into the biodiversity of your sample.
+</p>
+<p>
+Advanced options lets you filter duplicate peptides, equate isoleucine and leucine or export the results to an Microsoft Excel compatible file.
+</p>
 <p>Analyze a list of peptides:</p>
 <%= render 'shared/sequence_multi_search' %>
+
 <h3>Sample data</h3>
-<p>ORNL - Jansson Study on Characterization of the Human Gut Microbial Metaproteome (<%= link_to "project website" , "http://compbio.ornl.gov/human_gut_microbial_metaproteome/", :target => "_blank" %> <%= image_tag("externesite.gif", :alt => "external website")%>)</p>
-<ul>
-	<li><a href="#" id="s7">Load sample 7</a></li>
-	<li><a href="#" id="s8">Load sample 8</a></li>
-</ul>
-<p>Morris et al. - Comparative metaproteomics reveals ocean-scale shifts in microbial nutrient utilization and energy transduction (<%= link_to "article website" , "http://www.nature.com/ismej/journal/v4/n5/full/ismej20104a.html", :target => "_blank" %> <%= image_tag("externesite.gif", :alt => "external website")%>)</p>
-<ul>
-	<li><a href="#" id="marine_sample">Load marine sample</a></li>
-</ul>
+<%= render @datasets, :load => true %>
 
 <script type="text/javascript">
 	$(document).ready(function(){
-		$("#s7").click(function(){
-			$.get('sampledata/sample7_peptides.txt', function(data) {
+		$(".datasetLink").click(function(){
+			$.get($(this).attr("href"), function(data) {
 			  $("#qs").val(data);
 			});
+			$("#more_options a").click();
+			$("#search_name").val($(this).parent().find("span.name").text());
 			return false;
 		});
-		$("#s8").click(function(){
-			$.get('sampledata/sample8_peptides.txt', function(data) {
-			  $("#qs").val(data);
-			});
-			return false;
-		});
-		$("#marine_sample").click(function(){
-			$.get('sampledata/marine_peptides.txt', function(data) {
-			  $("#qs").val(data);
-			});
-			return false;
-		});
-	 });
+	});
 </script>

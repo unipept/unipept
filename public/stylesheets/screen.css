@@ -1057,11 +1057,40 @@ Styles ported from portal.css & portal_addenda.css
 	color: black;
 }
 div.error {
-	background-color: #FFCCCC;
-	border: 1px solid red;
-	padding: 1em;
-	margin: 0 0 1em 0;
-	width: 95%;
+	background: #FBE3E4;
+	color: #8A1F11;
+	border-top: 2px solid #FBC2C4;
+	border-bottom: 2px solid #FBC2C4;
+	text-align: center;
+	margin: 10px auto;
+	padding: 5px 20px;
+}
+div.notice {
+	background: #FFF6BF;
+	color: #514721;
+	border-top: 2px solid #FFD324;
+	border-bottom: 2px solid #FFD324;
+	text-align: center;
+	margin: 10px auto;
+	padding: 5px 20px;
+}
+div.info {
+	background: #D5EDF8;
+	color: #205791;
+	border-top: 2px solid #92CAE4;
+	border-bottom: 2px solid #92CAE4;
+	text-align: center;
+	margin: 10px auto;
+	padding: 5px 20px;
+}
+div.success {
+	background: #E6EFC2;
+	color: #264409;
+	border-top: 2px solid #C6D880;
+	border-bottom: 2px solid #C6D880;
+	text-align: center;
+	margin: 10px auto;
+	padding: 5px 20px;
 }
 
 /* -- Document actions taken from Plone's portal.css -- */
@@ -1892,6 +1921,11 @@ div#search_button{
 	width: 100px !important;
 	padding-top: 0px !important;
 }
+/*sunburst*/
+#sunburst{
+    height: 742px;
+    width: 742px;
+}
 /*treemap*/
 #treeMap{
 	background-color: #DCDFE4;
@@ -2054,4 +2088,69 @@ div#search_button{
 }
 .c29{
 	background: #92538c;
+}
+
+/* tabs (from github) */
+.subnav-bar {
+    margin: 10px 0;
+    border-bottom: 1px solid #DDD;
+}
+.subnav-bar ul.subnav {
+    font-size: 14px;
+    padding: 0px !important;
+}
+.subnav-bar ul.subnav li {
+    display: inline-block;
+    vertical-align: top;
+    cursor: pointer;
+}
+.subnav-bar ul.subnav li:first-child a.selected {
+    padding-left: 12px;
+}
+.subnav-bar ul.subnav li:first-child a {
+    padding-left: 2px;
+}
+.subnav-bar ul.subnav li a.selected {
+    color: #333 !important;
+    font-weight: bold;
+    border-left: 1px solid #DDD;
+    border-top: 1px solid #DDD;
+    border-right: 1px solid #DDD;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    background-color: white;
+}
+.subnav-bar ul.subnav li a {
+    color: #666 !important;
+    text-decoration: none !important;
+    padding: 8px 12px;
+    display: inline-block;
+    border-left: 1px solid transparent;
+    border-top: 1px solid transparent;
+    border-right: 1px solid transparent;
+    margin-bottom: -1px;
+}
+h2.ghead{
+    margin: 1em 0;
+    font-weight: bold;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: 13px Helvetica,arial,freesans,clean,sans-serif;
+    line-height: 1.4;
+    color: #333;
+}
+h2.ghead::after {
+    content: ".";
+    height: 0;
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+span.dir{
+    font-size: 12px;
+    font-weight: normal;
+    color: #555;
+    line-height: 100%;
+    float: right;
 }

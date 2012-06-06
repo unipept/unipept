@@ -1,5 +1,7 @@
 <%= form_tag(:sequence_search, :method => "get") do %>
 	<%= label_tag(:q, "Search for") %>
 	<%= search_field_tag(:q, "", :size => 75, :placeholder => "SEQUENCE") %>
+	<%= check_box_tag(:il, 1, true) %>
+	<%= label_tag(:il, "Equate I and L?") %>
   <%= submit_tag("Search") %>
 <% end %>

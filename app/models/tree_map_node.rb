@@ -25,6 +25,8 @@ class TreeMapNode < Node
     
     @attr = Hash.new
     @attr[:title] = rank
+    @data[:rank] = rank
+    @metadata[:id] = id
     
     #color
     @data[:level] = 0
@@ -66,6 +68,7 @@ class TreeMapNode < Node
     @state = @data[:level] <= 3 ? "open" : "closed"
   end
   
+  # Adds a URL to every node linking to a piechart of their children
   def add_piechart_data
     unless @children.empty?
       @data[:piecharturl] = "http://chart.apis.google.com/chart?chs=300x225&cht=p&chd=t:"
@@ -76,5 +79,32 @@ class TreeMapNode < Node
       @data[:piecharturl] += @children.map{|c| c.data[:count]}.max.to_s
       @children.map{|c| c.add_piechart_data}
     end
+  end
+  
+  # Sorts the peptides lists and children alphabetically
+  def sort_peptides_and_children
+    @children.sort_by!(&:name) unless @children.empty?
+    @metadata[:all_sequences].sort! unless @metadata[:all_sequences].nil?
+    @metadata[:own_sequences].sort! unless @metadata[:own_sequences].nil?
+    @children.map{|c| c.sort_peptides_and_children} unless @children.empty?
+  end
+
+  # cleans a hash of redundant data for sunburst
+  def self.clean_sunburst!(hash)
+    hash["children"].map{|c| TreeMapNode.clean_sunburst!(c)} unless hash["children"].nil?
+    hash.delete("metadata")
+    hash.delete("state")
+    hash.delete("nodes")
+    hash["data"].delete("title")
+    hash["data"].delete("piecharturl")
+    hash["data"].delete("level")
+    hash["data"].delete("$color")
+    hash["data"].delete("$area")
+    hash["data"].delete("rank")
+  end
+  
+  # cleans a hash of redundant data for sunburst
+  def self.clean_treemap!(hash)
+    hash.delete("nodes")
   end
 end

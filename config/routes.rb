@@ -1,21 +1,25 @@
 UnipeptWeb::Application.routes.draw do
 
-  resources :sequences, :only => [:show, :index] do
-    
+  resources :datasets
+  resources :dataset_items
+  resources :sequences, :only => [:show, :index] do   
   end
   resources :organisms, :only => [:show, :index]
   
   root :to => 'pages#home'
   
   match '/search/sequence', :to => 'sequences#search', :as => 'sequence_search'
-  
   match '/search/sequences', :to => 'sequences#multi_search', :as => 'sequence_multi_search'
-	
 	match 'sequences/:id/:equate_il', :to => 'sequences#show'
 
     
   match '/contact', :to => 'pages#contact'
   match '/about',   :to => 'pages#about'
+  
+  # verbosity is needed to add namespace to controller
+  get "cas/auth", :to => "cas#auth"
+  get "cas/logout", :to => "cas#logout"
+  match "cas/verify", :to => "cas#verify"
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
