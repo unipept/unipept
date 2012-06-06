@@ -7,7 +7,7 @@ body {
 }
 body {
 	background: #E9EBF0;
-	font-size: 62.5%;
+	font-size: 70%;
 	font-family: Helvetica,arial,freesans,clean,sans-serif;
 	line-height: 1.4em;
 }
@@ -25,7 +25,6 @@ h2 {
 	font-size: 1.4em;
 	margin-bottom: 0.4em;
 	margin-top: 0.6em;
-	font-family: Helvetica, Arial, sans-serif;
 	font-weight: normal;
 	color: #0870A1;
 	padding-bottom:0.3em;
@@ -321,7 +320,7 @@ header, footer{
 }
 #subbar ul{
     list-style:none outside none;
-    padding-top:6px;
+    padding-top:4px;
     padding-left: 15px;
 }
 #subbar ul li {
@@ -345,7 +344,7 @@ header, footer{
 }
 
 /* left navigation */
-#navigationhome,
+/*#navigationhome,
 #navigation {
 	float: left;
 	width: 180px;
@@ -452,7 +451,7 @@ header, footer{
 }
 #mainnav ul li.open ul li.last-child a {
 	border: none;
-}
+}*/
 
 /* content */
 #content {
@@ -661,7 +660,6 @@ div#search_button{
 
 /* single peptide page */
 #lineageTree{
-	width: 742px; 
 	height: 500px;
 }
 #lineageTree .node{
@@ -705,9 +703,9 @@ div#search_button{
 .c29{background: #92538c;}
 
 /* multi peptide page */
-#sunburst{
-    height: 742px;
-    width: 742px;
+#sunburst svg{
+    margin: 0 auto;
+    display: block;
 }
 #treeMap{
 	background-color: #DCDFE4;
