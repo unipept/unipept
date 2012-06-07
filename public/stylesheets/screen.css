@@ -94,8 +94,19 @@ a img {
 /* Some basic forms */
 form fieldset {
 	padding: 1em;
-	border: 1px solid #DCDFE4;
 	margin: 1em 0;
+	border: 1px solid #CCC;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border linear 0.2s,box-shadow linear 0.2s;
+    -moz-transition: border linear 0.2s,box-shadow linear 0.2s;
+    -ms-transition: border linear 0.2s,box-shadow linear 0.2s;
+    -o-transition: border linear 0.2s,box-shadow linear 0.2s;
+    transition: border linear 0.2s,box-shadow linear 0.2s;
 }
 form legend {
 	font-weight: bold;
@@ -103,16 +114,24 @@ form legend {
 }
 input, 
 textarea {
-	font-size: 8pt;
-	color: black;
-	border: 1px solid black;
-	background-color: white;
-}
-checkbox, 
-select, 
-option, 
-radio {
-	font-size: 8pt;
+    padding: 4px;
+    margin-bottom: 9px;
+    font-size: 13px;
+    line-height: 18px;
+    color: #555;
+    background-color: white;
+    border: 1px solid #CCC;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border linear 0.2s,box-shadow linear 0.2s;
+    -moz-transition: border linear 0.2s,box-shadow linear 0.2s;
+    -ms-transition: border linear 0.2s,box-shadow linear 0.2s;
+    -o-transition: border linear 0.2s,box-shadow linear 0.2s;
+    transition: border linear 0.2s,box-shadow linear 0.2s;
 }
 
 /* tables */
@@ -720,6 +739,9 @@ div.success {
 /* PAGE SPECIFIC STYLES */
 
 /* multisearch form */
+#search_elements{
+    height:150px;
+}
 textarea#qs{
 	margin-right: 5px;
 	margin-top: 5px;
