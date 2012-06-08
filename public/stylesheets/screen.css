@@ -629,6 +629,7 @@ a.advanced {
 .klik {
 	cursor: pointer;
 }
+
 .btn.primary{
     border: 1px solid transparent;
     color: white;
@@ -709,6 +710,25 @@ a.advanced {
     -webkit-transition: all 0s;
 }
 
+.split{
+    overflow: hidden;
+}
+.split-left{
+    width: 450px;
+    float: left;
+    padding-right: 9px;
+    border-right: 1px solid #CCC;
+    padding-bottom: 100%;
+    margin-bottom: -100%;
+}
+.split-right{
+    width: 450px;
+    float: left;
+    padding-left: 9px;
+    padding-bottom: 100%;
+    margin-bottom: -100%;
+}
+
 /* message styles */
 div.error {
 	background: #FBE3E4;
@@ -766,6 +786,13 @@ div#search_button{
 }
 #search_elements{
 	float:left;
+}
+
+/* single search form */
+input#q{
+    width: 365px;
+    -webkit-appearance: textfield;
+    box-sizing: content-box;
 }
 
 /* single peptide page */

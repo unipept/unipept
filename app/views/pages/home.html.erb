@@ -4,11 +4,18 @@ The Unipept web application supports biodiversity analysis of large and complex 
 </p>
 
 <h2>Single peptide analysis</h2>
+<div class="split">
+<div class="split-left">
 <p>
 With single peptide analysis, you can submit a single <em>tryptic peptide</em> that can be <em>8 to 50 residues long</em>. The application will respond with a list of all UniProtKB records wherein the peptide was found along with a complete taxonomic lineage derived from the NCBI taxonomy. These lineages are presented as a comprehensible table and using an interactive tree view.
 </p>
+</div>
+<div class="split-right">
 <p>Try searching for a tryptic peptide:</p>
 <%= render 'shared/sequence_search' %>
+</div>
+<div class="visualClear"></div>
+</div>
 
 <h2>Multi-peptide analysis</h2>
 <p>
