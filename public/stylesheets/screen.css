@@ -348,6 +348,9 @@ header, footer{
 	overflow: hidden;
 	height: 24px;
     line-height:1.2;
+    -webkit-border-bottom-left-radius: 3px;
+    -moz-border-bottom-left-radius: 3px;
+    border-bottom-left-radius: 3px;
 }
 #subbar ul{
     list-style:none outside none;
