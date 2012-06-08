@@ -248,7 +248,7 @@ header, footer{
 #topbar ul li {
 	border-right: 1px solid #88a0b8;
 	padding: 0 5px;
-	font-size: 10px;
+	font-size: 12px;
 }
 #topbar ul li.last-child {
 	border: none;
@@ -555,6 +555,7 @@ div.wide {
 	padding: 0 6px;
 	height: 64px;
 	margin: 0 auto;
+	font-size: 11px;
 }
 #footer ul#copyright .byline_author {
 	color: #FFFFFF;
