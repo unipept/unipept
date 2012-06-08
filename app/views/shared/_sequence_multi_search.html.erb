@@ -1,7 +1,6 @@
 <%= form_tag(:sequence_multi_search, :method => "post") do %>
 	<div id="search_elements">
-	<%= label_tag(:qs, "Search for") %>
-	<%= text_area_tag(:qs, nil, :cols => 60, :rows => 7) %>
+	<%= text_area_tag(:qs, nil, :rows => 7) %>
 	</div>
 	
 	<div id="more_options"><%= image_tag("plus.gif") %> <%= link_to("More options", "#") %></div>

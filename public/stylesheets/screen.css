@@ -770,15 +770,11 @@ div.success {
 /* PAGE SPECIFIC STYLES */
 
 /* multisearch form */
-#search_elements{
-    height:150px;
-}
 textarea#qs{
-	margin-right: 5px;
-	margin-top: 5px;
+	width: 438px;
 }
 #more_options_form fieldset{
-	margin: 0px;
+	margin: 0 0 5px 0;
 }
 div#search_button{
 	clear:both;
