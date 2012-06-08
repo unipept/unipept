@@ -111,6 +111,7 @@ input,
 textarea {
     padding: 4px;
     margin-bottom: 9px;
+    font-family: Helvetica,arial,freesans,clean,sans-serif;
     font-size: 13px;
     line-height: 18px;
     color: #555;
