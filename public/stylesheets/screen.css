@@ -780,6 +780,9 @@ div.success {
 textarea#qs{
 	width: 438px;
 }
+#more_options_form{
+    clear:both;
+}
 #more_options_form fieldset{
 	margin: 0 0 5px 0;
 }
