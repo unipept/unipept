@@ -377,116 +377,6 @@ header, footer{
 	padding: 0 12px 12px 12px;
 }
 
-/* left navigation */
-/*#navigationhome,
-#navigation {
-	float: left;
-	width: 180px;
-	padding-bottom: 2em;
-}
-#mainnav {
-	margin-bottom: 1.2em;
-}
-#mainnav ul {
-	list-style: none;
-}
-#mainnav ul li a:link,
-#mainnav ul li a:visited {
-	display: block;
-	background: #DCDFE4 url(../images/plus.gif) no-repeat 7px 10px;
-	font-weight: 700;
-	padding: 5px 20px;
-	border-bottom: 1px solid white;
-	text-decoration: none;
-	font-size: 1.1em;
-	letter-spacing: -0.05em;
-}
-#mainnav ul li.open {
-	border: 1px solid #fdb812;
-}
-#mainnav ul li a:hover,
-#mainnav ul li a:active {
-	background: #EDEFF1 url(../images/plus.gif) no-repeat 7px 10px;
-}
-#mainnav ul li.open a:link,
-#mainnav ul li.open a:visited {
-	background: #DCDFE4 url(../images/min_blue.gif) no-repeat 7px 10px;
-}
-#mainnav ul li.open a:hover,
-#mainnav ul li.open a:active {
-	color: #369;
-}
-#mainnav ul li.active a:link,
-#mainnav ul li.active a:visited {
-	background-color: #FDB812;
-	color: #fff;
-}
-#mainnav ul li.open li.open {
-	border: none;
-}
-#mainnav ul li.open li a:link,
-#mainnav ul li.open li a:visited {
-	background: #F5F5F5 url(../images/square.gif) no-repeat 7px 8px;
-	font-weight: 300;
-	padding: 3px 20px;
-	margin: 0;
-	color: #369;
-	border: none;
-	border-bottom: 1px solid #DCDFE4;
-}
-#mainnav ul li.open li a:hover,
-#mainnav ul li.open li a:active {
-	color: #69C;
-}
-#mainnav ul li.open li.active a:link,
-#mainnav ul li.open li.active a:visited {
-	background: #FDB812 url(../images/min.gif) no-repeat 7px 10px;
-	border: none;
-	color: #FFF;
-	font-weight: 700;
-}
-#mainnav ul li.open li.open a:link,
-#mainnav ul li.open li.open a:visited {
-	background: #F5F5F5 url(../images/min_blue.gif) no-repeat 7px 8px;
-}
-#mainnav ul li.open li.active a:link,
-#mainnav ul li.open li.active a:visited {
-	background: #FDB812 url(../images/min.gif) no-repeat 7px 8px;
-	border: none;
-	color: #FFF;
-}
-#mainnav ul li.open li a.haschild:link,
-#mainnav ul li.open li a.haschild:visited {
-	background: #f5f5f5 url(../images/plus.gif) no-repeat 7px 8px;
-	color: #369;
-}
-#mainnav li.open ul {
-	background: #F5F5F5;
-}
-#mainnav ul li.open li.open li a:link,
-#mainnav ul li.open li.open li a:visited {
-	padding: 3px 20px 3px 40px;
-	background: #F5F5F5 url(../images/chevron-dubbel.gif) no-repeat 27px 9px;
-	border: none;
-	color: #369;
-	font-weight: normal;
-}
-#mainnav ul li.open li.open li a:hover,
-#mainnav ul li.open li.open li a:active {
-	color: #69C;
-}
-#mainnav ul li.open li.open li.active a:link,
-#mainnav ul li.open li.open li.active a:visited {
-	background: #FDB812 url(../images/chevron-dubbel-wit.gif) no-repeat 7px 9px;
-	margin: 0 0 0 20px;
-	padding-left: 20px;
-	color: white;
-	font-weight: 700;
-}
-#mainnav ul li.open ul li.last-child a {
-	border: none;
-}*/
-
 /* content */
 #content {
 	float: left;
@@ -789,9 +679,6 @@ textarea#qs{
 div#search_button{
 	clear:both;
 	text-align:center;
-}
-#search_elements{
-	float:left;
 }
 
 /* single search form */
