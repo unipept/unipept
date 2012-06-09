@@ -317,7 +317,10 @@ function initSunburst(data) {
 
     function click(d) {
         // set js tree
-        $("#jstree_search").val(d.name);
+        if(d.name == "organism")
+            $("#jstree_search").val("");
+        else
+            $("#jstree_search").val(d.name);
         $("#jstree_search").change();
         
         // perform animation

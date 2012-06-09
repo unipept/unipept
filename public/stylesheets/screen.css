@@ -148,6 +148,10 @@ select:focus{
     -moz-box-shadow:none;
     box-shadow:none
 }
+input[type="search"]{
+    -webkit-appearance: textfield;
+    box-sizing: content-box;
+}
 
 /* tables */
 table {
@@ -776,25 +780,41 @@ input#q{
 
 /*jstree*/
 #jstree{
-	width: 392px;
+	width: 450px;
 	min-height: 10px;
 	float: left;
 }
 .jstree-default.jstree-focused {
 	background: #FFF !important;
 }
+.jstree-default.jstree-hover {
+	background: #ECEFF8 !important;
+}
+.jstree-default .jstree-clicked {
+    background: #ECEFF8 !important;
+    border: 1px solid #ccc !important;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
 #jstree_data{
-	width: 346px;
-	float: left;
-	background: #BEEBFF;
-	border: 1px solid #99DEFD;
-	padding-left: 2px;
+	width: 450px;
+	float: right;
+	padding: 5px;
+	background: #ECEFF8;
+	border: 1px solid #ccc;
+	-webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
 }
 #jstree_data h3{
 	margin-bottom: 5px;
 }
 #jstree_data h4{
 	margin: 8px 5px 0px 5px;
+}
+#jstree_data a{
+	text-decoration: none !important;
 }
 #jstree ul{
 	padding-left: 0px;
@@ -804,7 +824,10 @@ input#q{
 	text-decoration: none !important;
 }
 #jstree_search{
-	width: 350px;
+	width: 430px;
+}
+ul.mismatches a{
+    text-decoration: none !important;
 }
 
 /* tabs (from github) */
