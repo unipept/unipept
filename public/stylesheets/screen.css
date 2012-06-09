@@ -802,8 +802,19 @@ input#q{
     -moz-border-radius: 3px;
     border-radius: 3px;
 }
+#jstree_data::before {
+    content: "";
+    display: block;
+    height: 0;
+    width: 0;
+    margin-left: -15px;
+    border: 10px solid #DDD;
+    border-width: 10px 10px 10px 0;
+    border-color: transparent #DDD transparent transparent;
+    position: absolute;
+}
 #jstree_data h3{
-	margin-bottom: 5px;
+	margin: 3px 0 5px 0;
 }
 #jstree_data h4{
 	margin: 8px 5px 0px 5px;
