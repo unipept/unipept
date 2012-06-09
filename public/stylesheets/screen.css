@@ -764,6 +764,10 @@ input#q{
 .tip{
 	background-color: #ffffff;
 	padding: 2px;
+	border: 1px solid #ccc;
+	-webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
 }
 .tip-title{
 	text-align:center;
