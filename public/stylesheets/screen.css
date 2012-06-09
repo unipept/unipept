@@ -29,7 +29,7 @@ h2 {
 	color: #0870A1;
 	padding-bottom:0.3em;
 	padding-top: 0.5em;
-	border-bottom: 1px solid #CCC;
+	border-bottom: 1px solid #DDD;
 }
 h3 {
 	font-size: 14px;
@@ -56,7 +56,7 @@ ol {
 pre {
 	font-family: "Courier New", Courier, mono;
 	background-color: #ECEFF8;
-	border: 1px solid #ccc;
+	border: 1px solid #DDD;
 	padding: 5px;
 	overflow: auto;
 	width: 95%;
@@ -95,7 +95,7 @@ a img {
 form fieldset {
 	padding: 1em;
 	margin: 1em 0;
-	border: 1px solid #CCC;
+	border: 1px solid #DDD;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
@@ -113,7 +113,7 @@ textarea {
     line-height: 18px;
     color: #555;
     background-color: white;
-    border: 1px solid #CCC;
+    border: 1px solid #DDD;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
@@ -400,7 +400,7 @@ div.wide {
 	padding: 5px 12px 2px;
 	background: #FFF;
 	margin: 0 0 2.0em;
-	border: 1px solid #CCC;
+	border: 1px solid #DDD;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
@@ -416,7 +416,7 @@ div.wide {
 	margin: 0.6em 0 0;
 }
 .sectiontitle {
-	border-bottom: 1px solid #CCC;
+	border-bottom: 1px solid #DDD;
 	margin: 0 0 0.5em;
 }
 .columns .column {
@@ -621,7 +621,7 @@ a.advanced {
 }
 .split-left {
     padding-right: 9px;
-    border-right: 1px solid #CCC;
+    border-right: 1px solid #DDD;
 }
 .split-right {
     padding-left: 9px;
@@ -764,7 +764,7 @@ input#q{
 .tip{
 	background-color: #ffffff;
 	padding: 2px;
-	border: 1px solid #ccc;
+	border: 1px solid #DDD;
 	-webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
@@ -787,7 +787,7 @@ input#q{
 }
 .jstree-default .jstree-clicked {
     background: #ECEFF8 !important;
-    border: 1px solid #ccc !important;
+    border: 1px solid #DDD !important;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
@@ -797,7 +797,7 @@ input#q{
 	float: right;
 	padding: 5px;
 	background: #ECEFF8;
-	border: 1px solid #ccc;
+	border: 1px solid #DDD;
 	-webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
@@ -808,8 +808,14 @@ input#q{
 #jstree_data h4{
 	margin: 8px 5px 0px 5px;
 }
+#jstree_data h3 a{
+    color: #666 !important;
+}
 #jstree_data a{
 	text-decoration: none !important;
+}
+#jstree_data a:hover{
+    text-decoration: underline !important;
 }
 #jstree ul{
 	padding-left: 0px;
