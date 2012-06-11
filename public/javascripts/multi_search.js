@@ -438,7 +438,7 @@ function tooltipIn(d, i) {
                 (d.data.self_count && d.data.self_count == 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
                 (!d.data.count ? "0" : d.data.count) + 
                 (d.data.count && d.data.count == 1 ? " sequence" : " sequences") + " specific to this level or lower");
-        vis.selectAll("#path-" + i).transition().duration(200).style("opacity","0.9");
+        //vis.selectAll("#path-" + i).transition().duration(200).style("opacity","0.9");
     }
 }
 function tooltipMove() {
@@ -446,5 +446,5 @@ function tooltipMove() {
 }
 function tooltipOut(d, i) {
     tooltip.style("visibility", "hidden");
-    vis.selectAll("#path-" + i).transition().duration(200).style("opacity","1");
+    //vis.selectAll("#path-" + i).transition().duration(200).style("opacity","1");
 }
