@@ -286,7 +286,6 @@ function initSunburst(data) {
     var text = vis.selectAll("text").data(nodes);
 
     var textEnter = text.enter().append("text")
-        .style("opacity", 1)
         .style("fill", function (d) {
             return brightness(d3.rgb(colour(d))) < 125 ? "#eee" : "#000"; // calculate text color
         })
@@ -356,7 +355,7 @@ function initSunburst(data) {
                     return "rotate(" + rotate + ")translate(" + (y(d.y) + p) + ")rotate(" + (angle > 90 ? -180 : 0) + ")";
                 };
             })
-            .style("opacity", function (e) { return isParentOf(d, e) ? 1 : 1e-6; })
+            .style("fill-opacity", function (e) { return isParentOf(d, e) ? 1 : 1e-6; })
             .each("end", function (e) {
                 d3.select(this).style("visibility", isParentOf(d, e) ? null : "hidden");
             });
@@ -438,7 +437,7 @@ function tooltipIn(d, i) {
                 (d.data.self_count && d.data.self_count == 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
                 (!d.data.count ? "0" : d.data.count) + 
                 (d.data.count && d.data.count == 1 ? " sequence" : " sequences") + " specific to this level or lower");
-        //vis.selectAll("#path-" + i).transition().duration(200).style("opacity","0.9");
+        //vis.selectAll("#path-" + i).transition().duration(200).style("fill-opacity","0.9");
     }
 }
 function tooltipMove() {
@@ -446,5 +445,5 @@ function tooltipMove() {
 }
 function tooltipOut(d, i) {
     tooltip.style("visibility", "hidden");
-    //vis.selectAll("#path-" + i).transition().duration(200).style("opacity","1");
+    //vis.selectAll("#path-" + i).transition().duration(200).style("fill-opacity","1");
 }
