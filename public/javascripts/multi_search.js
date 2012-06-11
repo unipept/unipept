@@ -42,7 +42,8 @@ function init(data, data2, equate_il) {
         initSunburst(data2);
     }
     catch(err){
-        error("Sunburst failed to load");
+        error("Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
+        error (err);
     }
 
     // treemap
@@ -51,7 +52,7 @@ function init(data, data2, equate_il) {
         $("#treeMapWrapper").hide();
     }
     catch(err){
-        error("Treemap failed to load");
+        error("Loading the Treemap visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
 
     // jstree
@@ -59,7 +60,7 @@ function init(data, data2, equate_il) {
         initJsTree(data, equate_il);
     }  
     catch(err){
-        error("JsTree failed to load");
+        error("Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
 }
 
@@ -67,6 +68,7 @@ function error(msg) {
     if (typeof console != "undefined") { 
         console.error(msg);
     }
+    $("#messages").append("<div class='error'>" + msg + "</div>");
 }
 
 function initTreeMap(jsonData) {
@@ -313,7 +315,7 @@ function initSunburst(data) {
     });
 
     // set up start levels
-    setTimeout(click(data), 1000);
+    setTimeout(function () {click(data); }, 1000);
 
     function click(d) {
         // set js tree
