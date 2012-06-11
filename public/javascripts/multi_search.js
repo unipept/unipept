@@ -428,7 +428,7 @@ function getColor() {
 }
 
 // tooltip functions
-function tooltipIn(d) {
+function tooltipIn(d, i) {
     if (d.depth < currentMaxLevel) {
         tooltip.style("visibility", "visible")
             .html("<b>" + d.name + "</b> (" + d.attr.title + ")<br/>" +
@@ -436,11 +436,13 @@ function tooltipIn(d) {
                 (d.data.self_count && d.data.self_count == 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
                 (!d.data.count ? "0" : d.data.count) + 
                 (d.data.count && d.data.count == 1 ? " sequence" : " sequences") + " specific to this level or lower");
+        vis.selectAll("#path-" + i).transition().duration(200).style("opacity","0.9");
     }
 }
 function tooltipMove() {
     tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 12) + "px");
 }
-function tooltipOut() {
+function tooltipOut(d, i) {
     tooltip.style("visibility", "hidden");
+    vis.selectAll("#path-" + i).transition().duration(200).style("opacity","1");
 }
