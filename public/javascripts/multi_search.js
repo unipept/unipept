@@ -229,7 +229,7 @@ var w = 732,   // width
     h = w,     // height
     r = w / 2, // radius   
     p = 5,     // padding
-    duration = 2000, // animation duration
+    duration = 1000, // animation duration
     levels = 4, // levels to show
 
     // don't change these
