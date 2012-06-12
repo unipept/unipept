@@ -8,11 +8,11 @@
 	<br/>
 
   <b>Reference:</b>
-  <%= dataset.reference %> (<%= link_to "link", dataset.url, :target => "_blank" %>). 
+  <%= dataset.reference %> <%= link_to image_tag("externesite.gif", :alt => "Article website", :title => "Article website"), dataset.url, :target => "_blank" %>. 
 	<%= link_to "Project website", dataset.project_website, :target => "_blank" %>
-</p>
 
 <% if load %>
+	<br/>
 	Load dataset 
 	<span>
 	<%= select("dataset", dataset.id, dataset.dataset_items.map {|item| [item.name,item.path]}) %>
@@ -25,4 +25,4 @@
 	<% end %>
 	</ul>
 <% end %>
-
+</p>
