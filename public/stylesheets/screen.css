@@ -104,6 +104,7 @@ form legend {
 	font-weight: bold;
 	font-size: 1.1em;
 }
+select,
 input, 
 textarea {
     padding: 4px;

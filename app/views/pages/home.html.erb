@@ -38,12 +38,12 @@ Advanced options lets you filter duplicate peptides, equate isoleucine and leuci
 
 <script type="text/javascript">
 	$(document).ready(function(){
-		$(".datasetLink").click(function(){
-			$.get($(this).attr("href"), function(data) {
+		$(".load-dataset").click(function(){
+			$.get($(this).parent().find("select").val(), function(data) {
 			  $("#qs").val(data);
 			});
 			$("#more_options a").click();
-			$("#search_name").val($(this).parent().find("span.name").text());
+			$("#search_name").val($(this).parent().find("select option:selected").text());
 			return false;
 		});
 	});
