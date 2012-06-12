@@ -441,7 +441,7 @@ function tooltipIn(d, i) {
     }
 }
 function tooltipMove() {
-    tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 12) + "px");
+    tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 15) + "px");
 }
 function tooltipOut(d, i) {
     tooltip.style("visibility", "hidden");
