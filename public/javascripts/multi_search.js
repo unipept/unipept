@@ -42,7 +42,8 @@ function init(data, data2, equate_il) {
         initSunburst(data2);
     }
     catch(err){
-        error("Sunburst failed to load");
+        error("Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
+        error (err);
     }
 
     // treemap
@@ -51,7 +52,7 @@ function init(data, data2, equate_il) {
         $("#treeMapWrapper").hide();
     }
     catch(err){
-        error("Treemap failed to load");
+        error("Loading the Treemap visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
 
     // jstree
@@ -59,7 +60,7 @@ function init(data, data2, equate_il) {
         initJsTree(data, equate_il);
     }  
     catch(err){
-        error("JsTree failed to load");
+        error("Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
 }
 
@@ -67,6 +68,7 @@ function error(msg) {
     if (typeof console != "undefined") { 
         console.error(msg);
     }
+    $("#messages").append("<div class='error'>" + msg + "</div>");
 }
 
 function initTreeMap(jsonData) {
@@ -153,7 +155,7 @@ function initJsTree(data, equate_il) {
     $("#jstree").bind("select_node.jstree",
 		function (node, tree) {
 			var peptides = $(tree.rslt.obj).data(),
-				margin = tree.rslt.obj.context.offsetTop - $("#jstree").offset().top,
+				margin = tree.rslt.obj.context.offsetTop - $("#jstree").offset().top - 9,
 				innertext = "<a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + peptides.id + "' target='_blank'>" + $.trim($(tree.rslt.obj).find("a").text().split("(")[0]) + "</a>",
 				infoPane,
 				ownSequences,
@@ -227,7 +229,7 @@ var w = 732,   // width
     h = w,     // height
     r = w / 2, // radius   
     p = 5,     // padding
-    duration = 2000, // animation duration
+    duration = 1000, // animation duration
     levels = 4, // levels to show
 
     // don't change these
@@ -284,7 +286,6 @@ function initSunburst(data) {
     var text = vis.selectAll("text").data(nodes);
 
     var textEnter = text.enter().append("text")
-        .style("opacity", 1)
         .style("fill", function (d) {
             return brightness(d3.rgb(colour(d))) < 125 ? "#eee" : "#000"; // calculate text color
         })
@@ -313,11 +314,14 @@ function initSunburst(data) {
     });
 
     // set up start levels
-    setTimeout(click(data), 1000);
+    setTimeout(function () {click(data); }, 1000);
 
     function click(d) {
         // set js tree
-        $("#jstree_search").val(d.name);
+        if(d.name == "organism")
+            $("#jstree_search").val("");
+        else
+            $("#jstree_search").val(d.name);
         $("#jstree_search").change();
         
         // perform animation
@@ -351,7 +355,7 @@ function initSunburst(data) {
                     return "rotate(" + rotate + ")translate(" + (y(d.y) + p) + ")rotate(" + (angle > 90 ? -180 : 0) + ")";
                 };
             })
-            .style("opacity", function (e) { return isParentOf(d, e) ? 1 : 1e-6; })
+            .style("fill-opacity", function (e) { return isParentOf(d, e) ? 1 : 1e-6; })
             .each("end", function (e) {
                 d3.select(this).style("visibility", isParentOf(d, e) ? null : "hidden");
             });
@@ -425,7 +429,7 @@ function getColor() {
 }
 
 // tooltip functions
-function tooltipIn(d) {
+function tooltipIn(d, i) {
     if (d.depth < currentMaxLevel) {
         tooltip.style("visibility", "visible")
             .html("<b>" + d.name + "</b> (" + d.attr.title + ")<br/>" +
@@ -433,11 +437,13 @@ function tooltipIn(d) {
                 (d.data.self_count && d.data.self_count == 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
                 (!d.data.count ? "0" : d.data.count) + 
                 (d.data.count && d.data.count == 1 ? " sequence" : " sequences") + " specific to this level or lower");
+        //vis.selectAll("#path-" + i).transition().duration(200).style("fill-opacity","0.9");
     }
 }
 function tooltipMove() {
-    tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 12) + "px");
+    tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 15) + "px");
 }
-function tooltipOut() {
+function tooltipOut(d, i) {
     tooltip.style("visibility", "hidden");
+    //vis.selectAll("#path-" + i).transition().duration(200).style("fill-opacity","1");
 }

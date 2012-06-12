@@ -4,33 +4,46 @@ The Unipept web application supports biodiversity analysis of large and complex 
 </p>
 
 <h2>Single peptide analysis</h2>
+<div class="split">
+<div class="split-left">
 <p>
 With single peptide analysis, you can submit a single <em>tryptic peptide</em> that can be <em>8 to 50 residues long</em>. The application will respond with a list of all UniProtKB records wherein the peptide was found along with a complete taxonomic lineage derived from the NCBI taxonomy. These lineages are presented as a comprehensible table and using an interactive tree view.
 </p>
-<p>Try searching for a tryptic peptide:</p>
+</div>
+<div class="split-right">
+<h3>Try searching for a tryptic peptide</h3>
 <%= render 'shared/sequence_search' %>
+</div>
+<div class="visualClear"></div>
+</div>
 
 <h2>Multi-peptide analysis</h2>
+<div class="split">
+<div class="split-left">
 <p>
 Multi-peptide analysis helps you analyze lists of tryptic peptides, e.g. extracted from an environmental sample using shotgun tandem mass spectrometric methods. You can submit a list of peptides of which the lowest common ancestors (LCA) will be calculated. These LCAs will be bundled and displayed in an interactive treemap giving you insight into the biodiversity of your sample.
 </p>
 <p>
 Advanced options lets you filter duplicate peptides, equate isoleucine and leucine or export the results to an Microsoft Excel compatible file.
 </p>
-<p>Analyze a list of peptides:</p>
-<%= render 'shared/sequence_multi_search' %>
-
 <h3>Sample data</h3>
 <%= render @datasets, :load => true %>
+</div>
+<div class="split-right">
+<h3>Analyze a list of peptides</h3>
+<%= render 'shared/sequence_multi_search' %>
+</div>
+<div class="visualClear"></div>
+</div>
 
 <script type="text/javascript">
 	$(document).ready(function(){
-		$(".datasetLink").click(function(){
-			$.get($(this).attr("href"), function(data) {
+		$(".load-dataset").click(function(){
+			$.get($(this).parent().find("select").val(), function(data) {
 			  $("#qs").val(data);
 			});
 			$("#more_options a").click();
-			$("#search_name").val($(this).parent().find("span.name").text());
+			$("#search_name").val($(this).parent().find("select option:selected").text());
 			return false;
 		});
 	});
