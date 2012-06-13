@@ -128,7 +128,11 @@ function init_sequence_show(data, lcaId) {
     st.geom.translate(new $jit.Complex(-200, 0), "current");
 
 	//emulate a click on the root node.
-    st.onClick(st.root);
-	st.onClick(lcaId);
+	try{ 
+    	st.onClick(lcaId);
+	}
+	catch(err){
+        st.onClick(st.root);
+    }
 
 }
