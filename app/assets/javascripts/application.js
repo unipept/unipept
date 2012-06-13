@@ -2,7 +2,7 @@
 //= require jquery_ujs
 //= require_self
 //= require_tree .
-//= require misc_vendor
+//= require vendor
 
 function remove_fields(link) {
   $(link).prev("input[type=hidden]").val("1");
