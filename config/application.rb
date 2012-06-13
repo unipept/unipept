@@ -48,8 +48,7 @@ module UnipeptWeb
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1'
     
-    config.assets.precompile += ['multi_search.js', 'sequence_show.js', 'print.css']
-    config.assets.precompile += ['d3/d3.v2.min.js', 'jit/jit-yc.js', 'jit/Extras/exconvas.js', 'jstree/jquery.jstree.js']
+    config.assets.precompile += ['print.css']
         
     # CAS
     config.rubycas.cas_base_url = "https://login.ugent.be/"
