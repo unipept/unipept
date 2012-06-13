@@ -4,7 +4,7 @@ gem 'rails', '3.0.3'
 gem 'mysql'
 
 #pagination
-gem 'will_paginate', '3.0.pre2'
+gem 'will_paginate', '3.0'
 
 #jquery
 gem 'jquery-rails', '>= 0.2.6'
