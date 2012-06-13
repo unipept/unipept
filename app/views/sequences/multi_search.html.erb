@@ -41,7 +41,7 @@
 <% if @number_found > 0 %>
 <!-- JIT Library File --> 
 <!--[if IE]><%= javascript_include_tag "jit/Extras/excanvas.js"%><![endif]-->
-<%= javascript_include_tag "jit/jit-yc.js", "jstree/jquery.jstree", "d3/d3.v2.min.js"%>
+<%= javascript_include_tag "jit/jit-yc.js", "jstree/jquery.jstree.js", "d3/d3.v2.min.js"%>
 <%= javascript_include_tag "multi_search.js"%>
 <script type="text/javascript">
 	var data1 = <%= raw(@treemap_json)%>

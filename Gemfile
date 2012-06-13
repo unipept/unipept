@@ -3,13 +3,13 @@ source 'http://rubygems.org'
 gem 'rails', '3.1.6'
 gem 'mysql'
 
-#pagination
+# pagination
 gem 'will_paginate', '3.0'
 
-#jquery
-gem 'jquery-rails', '>= 0.2.6'
+# jquery
+gem 'jquery-rails'
 
-# cas auth #
+# cas auth
 gem 'rubycas-client', git: 'git://github.com/Javache/rubycas-client.git', branch: 'master'
 gem 'rubycas-client-rails', :git => 'git://github.com/Javache/rubycas-client-rails.git'
 
@@ -26,6 +26,14 @@ group :test do
 	gem 'spork'
 	gem 'be_valid_asset'
 #	gem 'factory_girl_rails'
+end
+
+# Gems used only for assets and not required
+# in production environments by default.
+group :assets do
+  gem 'sass-rails', "3.1.4"
+  gem 'coffee-rails', "~> 3.1.0"
+  gem 'uglifier'
 end
 
 #default stuff

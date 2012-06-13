@@ -43,7 +43,6 @@ function init(data, data2, equate_il) {
     }
     catch(err){
         error("Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
-        error (err);
     }
 
     // treemap
@@ -149,7 +148,7 @@ function initTreeMap(jsonData) {
 
 function initJsTree(data, equate_il) {
     //set themes dir
-    $.jstree._themes = "/javascripts/jstree/themes/";
+    $.jstree._themes = "/jstree/themes/";
 
     //add onSelect action
     $("#jstree").bind("select_node.jstree",
