@@ -206,12 +206,12 @@ class SequencesController < ApplicationController
     	@root.sort_peptides_and_children unless @root.nil?
     	
     	@sunburst_json = @root.to_json
-    	sunburst_hash = ActiveSupport::JSON.decode(@sunburst_json)
+    	sunburst_hash = JSON.parse(@sunburst_json, :max_nesting => false)
     	TreeMapNode.clean_sunburst!(sunburst_hash) unless sunburst_hash.nil?
     	@sunburst_json = sunburst_hash.to_json.gsub("children","kids")
     	
     	@treemap_json = @root.to_json
-    	treemap_hash = ActiveSupport::JSON.decode(@treemap_json)
+    	treemap_hash = JSON.parse(@treemap_json, :max_nesting => false)
     	TreeMapNode.clean_treemap!(treemap_hash) unless treemap_hash.nil?
     	@treemap_json = treemap_hash.to_json
     	

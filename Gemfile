@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.0.10'
+gem 'rails', '3.1.6'
 gem 'mysql'
 
 #pagination
@@ -17,7 +17,7 @@ group :development do
   gem 'rspec-rails'
 	gem 'annotate-models'
 	gem "rake"
-	gem 'sprockets', '2.1.2'
+	gem 'sprockets'
 end
 
 group :test do
