@@ -48,7 +48,7 @@ module UnipeptWeb
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1'
     
-    config.assets.precompile += ['print.css']
+    config.assets.precompile += ['print.css', 'jit/Extras/excanvas.js']
         
     # CAS
     config.rubycas.cas_base_url = "https://login.ugent.be/"

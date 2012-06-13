@@ -59,9 +59,8 @@
 
 	<!-- JIT Library File --> 
 	<!--[if IE]><%= javascript_include_tag "jit/Extras/excanvas.js"%><![endif]-->
-	<%= javascript_include_tag "jit/jit-yc.js", "sequence_show.js" %>
 	<script type="text/javascript">
-		window.onload=init(<%= raw(@root)%>, <%= @lca_taxon.id %>);
+		window.onload=init_sequence_show(<%= raw(@root)%>, <%= @lca_taxon.id %>);
 	</script>
 
 <% end %>
