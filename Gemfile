@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.0.3'
+gem 'rails', '3.0.10'
 gem 'mysql'
 
 #pagination
@@ -16,7 +16,7 @@ gem 'rubycas-client-rails', :git => 'git://github.com/Javache/rubycas-client-rai
 group :development do
   gem 'rspec-rails'
 	gem 'annotate-models'
-	gem "rake", "0.8.7"
+	gem "rake"
 	gem 'sprockets', '2.1.2'
 end
 
