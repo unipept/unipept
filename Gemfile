@@ -13,6 +13,8 @@ gem 'jquery-rails'
 gem 'rubycas-client', git: 'git://github.com/Javache/rubycas-client.git', branch: 'master'
 gem 'rubycas-client-rails', :git => 'git://github.com/Javache/rubycas-client-rails.git'
 
+gem 'therubyracer'
+
 group :development do
   gem 'rspec-rails'
 	gem 'annotate-models'
