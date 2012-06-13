@@ -27,8 +27,7 @@ UnipeptWeb::Application.configure do
   # Use a different cache store in production
   # config.cache_store = :mem_cache_store
 
-  # Disable Rails's static asset server
-  # In production, Apache or nginx will already do this
+  # Enable Rails's static asset server
   config.serve_static_assets = true
 
   # Enable serving of images, stylesheets, and javascripts from an asset server
@@ -51,7 +50,7 @@ UnipeptWeb::Application.configure do
   config.assets.compress = true
 
   # Don't fallback to assets pipeline if a precompiled asset is missed
-  config.assets.compile = true
+  config.assets.compile = false
 
   # Generate digests for assets URLs
   config.assets.digest = true
