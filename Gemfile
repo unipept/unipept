@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.1.6'
+gem 'rails', '3.2.6'
 gem 'mysql'
 
 # pagination
@@ -10,8 +10,8 @@ gem 'will_paginate', '3.0'
 gem 'jquery-rails'
 
 # cas auth
-gem 'rubycas-client', git: 'git://github.com/Javache/rubycas-client.git', branch: 'master'
-gem 'rubycas-client-rails', :git => 'git://github.com/Javache/rubycas-client-rails.git'
+gem 'rubycas-client', git: 'git://github.com/bmesuere/rubycas-client.git', branch: 'master'
+gem 'rubycas-client-rails', :git => 'git://github.com/bmesuere/rubycas-client-rails.git'
 
 gem 'therubyracer'
 
@@ -33,9 +33,9 @@ end
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
-  gem 'sass-rails', "3.1.4"
-  gem 'coffee-rails', "~> 3.1.0"
-  gem 'uglifier'
+  gem 'sass-rails', "3.2.5"
+  gem 'coffee-rails', "3.2.2"
+  gem 'uglifier', "1.2.4"
 end
 
 #default stuff
