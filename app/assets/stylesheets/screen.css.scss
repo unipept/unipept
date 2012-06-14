@@ -678,6 +678,7 @@ div#search_button{
 /* single search form */
 input#q{
 	width: 365px;
+	text-transform: uppercase;
 	-webkit-appearance: textfield;
 	box-sizing: content-box;
 }
