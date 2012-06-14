@@ -208,6 +208,18 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`dataset_items` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `unipept`.`posts`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `unipept`.`posts` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `title` VARCHAR(100) NOT NULL ,
+  `content` TEXT NOT NULL ,
+  `date` DATE NOT NULL ,
+  PRIMARY KEY (`id`) )
+ENGINE = InnoDB;
+
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
