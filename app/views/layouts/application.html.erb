@@ -69,7 +69,7 @@
 			<![endif]-->
 			
 			<% flash.each do |key, value| %>
-				<%= content_tag(:div, value, :class => "flash #{key}").gsub(/\n/, "<br/>") %>
+				<%= content_tag(:div, value, :class => "flash #{key}") unless value.nil?%>
 			<% end %>
 			</div>
 			
