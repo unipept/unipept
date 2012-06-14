@@ -6,7 +6,7 @@
 #  name        :string(256)     not null
 #  rank        :string(0)
 #  parent_id   :integer(3)
-#  valid_taxon :(1)             default("b'1'"), not null
+#  valid_taxon :binary(1)       default("b'1'"), not null
 #
 
 class Taxon < ActiveRecord::Base
