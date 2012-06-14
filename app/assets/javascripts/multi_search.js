@@ -42,7 +42,7 @@ function init_multi(data, data2, equate_il) {
         initSunburst(data2);
     }
     catch(err){
-        error("Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
+        error("Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.", true);
     }
 
     // treemap
@@ -51,7 +51,7 @@ function init_multi(data, data2, equate_il) {
         $("#treeMapWrapper").hide();
     }
     catch(err){
-        error("Loading the Treemap visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
+        error("Loading the Treemap visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.", true);
     }
 
     // jstree
@@ -59,15 +59,17 @@ function init_multi(data, data2, equate_il) {
         initJsTree(data, equate_il);
     }  
     catch(err){
-        error("Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
+        error("Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.", true);
     }
 }
 
-function error(msg) {
+function error(msg, userVisible) {
     if (typeof console != "undefined") { 
         console.error(msg);
     }
-    $("#messages").append("<div class='error'>" + msg + "</div>");
+    if(userVisible){
+        $("#messages").append("<div class='error'>" + msg + "</div>");
+    }
 }
 
 function initTreeMap(jsonData) {
@@ -130,7 +132,8 @@ function initTreeMap(jsonData) {
                 style.color = brightness(d3.rgb(node.data.$color)) < 125 ? "#eee" : "#000";
             }
             catch(err){
-                error("Failed to set treemap color based on bgcolor");
+                error("Failed to set treemap color based on bgcolor", false);
+                style.color = "#000";
             }
             
             domElement.onmouseover = function () {
