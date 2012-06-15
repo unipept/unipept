@@ -1,19 +1,4 @@
-<p id="notice"><%= notice %></p>
-
-<p>
-  <b>Title:</b>
-  <%= @post.title %>
-</p>
-
-<p>
-  <b>Date:</b>
-  <%= @post.date %>
-</p>
-
-<p>
-  <b>Content:</b>
-  <%= @post.content %>
-</p>
+<%= render @post %>
 
 
 <%= link_to 'Edit', edit_post_path(@post) %> |

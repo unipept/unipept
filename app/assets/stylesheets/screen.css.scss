@@ -772,7 +772,7 @@ input#q{
 	text-align:center;
 }
 
-/*jstree*/
+/* jstree */
 #jstree{
 	width: 450px;
 	min-height: 10px;
@@ -904,4 +904,11 @@ span.dir{
 	color: #555;
 	line-height: 100%;
 	float: right;
+}
+
+/* news */
+h3 span.posted-on{
+    font-size: x-small;
+    font-weight: normal;
+    color: #ccc;
 }
