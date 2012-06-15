@@ -1,0 +1,3 @@
+$('#posts').append('<%= j render(@posts) %>');
+$('.pagination').replaceWith('<%= j will_paginate(@posts) %>');
+if($(".next_page.disabled").length == 1) $(".pagination").remove();

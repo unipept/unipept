@@ -1,11 +1,15 @@
 <h1>News</h1>
 
-<%= render @posts %>
-
-<br />
+<div id="posts">
+	<%= render @posts %>
+</div>
 
 <%= will_paginate @posts %>
 
 <br/>
 
 <%= link_to 'New Post', new_post_path %>
+
+<script type="text/javascript">
+	$(function () {initPosts();});
+</script>
