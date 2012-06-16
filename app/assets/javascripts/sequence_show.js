@@ -132,7 +132,7 @@ function init_sequence_show(data, lcaId) {
     	st.onClick(lcaId);
 	}
 	catch(err){
-        st.onClick(st.root);
+        error(err, "Oops, something went wrong while loading the lineage tree.");
     }
 
 }
