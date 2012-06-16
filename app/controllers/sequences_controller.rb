@@ -41,7 +41,8 @@ class SequencesController < ApplicationController
       
       #common lineage
       @common_lineage = Array.new #construct the common lineage in this array
-      l = @lineages[0]
+      l = @lineages.select{|lineage| lineage[@lca_taxon.rank] == @lca_taxon.id}.first
+      l = @lineages.first if l.nil?
       found = (@lca_taxon.name == "root")
       #this might go wrong in the case where the first lineage doesn't contain the LCA (eg. nil)
       while l.has_next? && !found do
