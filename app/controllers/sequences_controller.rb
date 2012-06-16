@@ -9,16 +9,16 @@ class SequencesController < ApplicationController
     
     # process input
     if params[:id].match(/\A[0-9]+\z/) # params[:id] contains the id
-      @sequence = Sequence.find_by_id(params[:id])
+      @sequence = Sequence.find_by_id(params[:id], :include => {:peptides => :uniprot_entry})
     else  #params[:id] contains the sequence
       params[:id].upcase!
       params[:id].gsub!(/I/,'L') if equate_il
       unless params[:id].index(/([KR])([^P])/).nil?
         flash.now[:notice] = "The peptide you're looking for (#{params[:id]}) is not a tryptic peptide. ";
-        @sequence = params[:id].gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a.map{|l| Sequence.find_by_sequence(l)}.compact[0]
+        @sequence = params[:id].gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a.map{|l| Sequence.find_by_sequence(l, :include => {:peptides => :uniprot_entry})}.compact.first
         flash.now[:notice] += "We tried to split it, and searched for #{@sequence.sequence} instead. " unless @sequence.nil?
       else
-        @sequence = Sequence.find_by_sequence(params[:id])
+        @sequence = Sequence.find_by_sequence(params[:id], :include => {:peptides => :uniprot_entry})
       end    
     end
     
