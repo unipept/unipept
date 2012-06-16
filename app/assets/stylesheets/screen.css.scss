@@ -620,6 +620,9 @@ a.advanced {
 .split-left {
 	padding-right: 9px;
 	border-right: 1px solid #DDD;
+}    
+.split-left.no-border {
+    border: 0;
 }
 .split-right {
 	padding-left: 9px;
@@ -911,4 +914,11 @@ h3 span.posted-on{
     font-size: x-small;
     font-weight: normal;
     color: #ccc;
+}
+p.readmore {
+    float: right;
+    text-align: right;
+}
+.spotlight.news{
+    margin: 0 !important;
 }

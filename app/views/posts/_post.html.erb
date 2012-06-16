@@ -3,9 +3,7 @@
   <span class="posted-on"> posted on <%= post.date %></span>
 </h3>
 
-<p>
-  <%= post.content.html_safe %>
-</p>
+<%= post.content.html_safe %>
 
 <% if session[:admin] %>
 	<%= link_to 'Edit', edit_post_path(post) %> |
