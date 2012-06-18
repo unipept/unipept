@@ -145,22 +145,19 @@ class SequencesController < ApplicationController
     
       # build the resultset
       @matches = Hash.new
-      @misses = Array.new
-      data.each do |s| # for every sequence in query
-        sequence = Sequence.find_by_sequence(s)
-        unless sequence.nil?
-          lca_t = Taxon.find_by_id(sequence.calculate_lca(@equate_il))
-          unless lca_t.nil?
-            @number_found += 1
-            @matches[lca_t] = Array.new if @matches[lca_t].nil?
-            @matches[lca_t] << sequence.sequence
-          end
-        else
-          @misses << s
+      @misses = data
+      sequences = Sequence.find_all_by_sequence(data)
+      sequences.each do |sequence| # for every sequence in query
+        lca_t = Taxon.find_by_id(sequence.calculate_lca(@equate_il))
+        unless lca_t.nil?
+          @number_found += 1
+          @matches[lca_t] = Array.new if @matches[lca_t].nil?
+          @matches[lca_t] << sequence.sequence
         end
+        @misses.delete(sequence.sequence)
       end  
       
-      @misses.sort! 
+      @misses = @misses.sort! 
       
       @intro_text = "#{@number_found} out of #{number_searched_for} #{"peptide".send(number_searched_for != 1 ? :pluralize : :to_s)}  were matched"
       if filter_duplicates || @equate_il 
