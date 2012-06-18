@@ -3,7 +3,7 @@
 <head>
   <title><%=title%></title>
   <%= render 'layouts/stylesheets' %>
-  <%= javascript_include_tag :defaults %>
+  <%= javascript_include_tag "application" %>
   <%= csrf_meta_tag %>
 	<link rel="shortcut icon" href="/favicon.ico" />
 	
@@ -34,21 +34,8 @@
 		<!-- -->
 	</div>
 	<div id='main'>
-		<%= render 'layouts/navigation' %>
-		<div id='content' class='normal'>
-			
-			<% if Rails.env.development? %>
-			<div id="spotlight" class="spotlight">
-			  <div class="sectiontitle"><h2>Development server</h2></div>
-			  <div class="columns">
-			    <div class="column">
-			      <div class="spacing-left">
-			      	<p><span>This is the development version of UniPept. Please use the website at <a href="http://unipept.ugent.be">unipept.ugent.be</a> for more stable results.</span></p>	
-			      </div>	
-			    </div>
-			  </div>
-			</div>
-			<% end %>
+		<% #render 'layouts/navigation' %>
+		<div id='content' class='wide'>
 			
 			<% unless @motd.nil? %>
 			<div id="spotlight" class="spotlight">
@@ -63,13 +50,21 @@
 			</div>
 			<% end %>
 			
+			<div id="messages">
 			<!--[if lt IE 9]> 
 			<div class='error'>The browser you are using is not supported on this website. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.</div>
 			<![endif]-->
 			
-			<% flash.each do |key, value| %>
-				<%= content_tag(:div, value, :class => "flash #{key}").gsub(/\n/, "<br/>") %>
+			<% if Rails.env.development? %>
+			<div class="info">
+			  <b>Development server: </b><span>This is the development version of UniPept. Please use the website at <a href="http://unipept.ugent.be">Unipept.UGent.be</a> for more stable results.</span>
+			</div>
 			<% end %>
+			
+			<% flash.each do |key, value| %>
+				<%= content_tag(:div, value, :class => "flash #{key}") unless value.nil?%>
+			<% end %>
+			</div>
 			
 			<%= yield %>
 			

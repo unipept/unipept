@@ -1,4 +1,6 @@
 require 'bundler/capistrano'
+load 'deploy/assets'
+
 set :application, "unipept-web"
 set :repository,  "ssh://git@github.ugent.be/bmesuere/unipept.git"
 

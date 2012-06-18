@@ -32,7 +32,7 @@
 				<% for rank in lineage do%>
 				<% if !rank.nil? %>
 					<% colors.store(rank.id, "c"+(i%30).to_s) if !colors.has_key?(rank.id) %>
-					<td class="klik <%= colors[rank.id] %>" title="<%= rank.name %>"><%= rank.name %></td>
+					<td class="klik <%= colors[rank.id] %>"><%= rank.name %></td>
 				<% else %>
 					<td></td>
 				<% end %>
@@ -59,9 +59,8 @@
 
 	<!-- JIT Library File --> 
 	<!--[if IE]><%= javascript_include_tag "jit/Extras/excanvas.js"%><![endif]-->
-	<%= javascript_include_tag "jit/jit-yc.js", "sequence_show.js" %>
 	<script type="text/javascript">
-		window.onload=init(<%= raw(@root)%>, <%= @lca_taxon.id %>);
+		window.onload=init_sequence_show(<%= raw(@root)%>, <%= @lca_taxon.id %>);
 	</script>
 
 <% end %>

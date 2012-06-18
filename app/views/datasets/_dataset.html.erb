@@ -8,16 +8,21 @@
 	<br/>
 
   <b>Reference:</b>
-  <%= dataset.reference %> (<%= link_to "link", dataset.url, :target => "_blank" %>). 
+  <%= dataset.reference %> <%= link_to image_tag("externesite.gif", :alt => "Article website", :title => "Article website"), dataset.url, :target => "_blank" %>. 
 	<%= link_to "Project website", dataset.project_website, :target => "_blank" %>
-</p>
 
-<ul>
-<% for item in dataset.dataset_items %>
-	<% if load %>
-	<li><span class="name"><%= item.name %></span> (<%= link_to "Load dataset", item.path, :class => "datasetLink" %>)</li>
-	<% else %>	
-	<li><%= item.name %></li>
+<% if load %>
+	<br/>
+	Load dataset 
+	<span>
+	<%= select("dataset", dataset.id, dataset.dataset_items.map {|item| [item.name,item.path]}) %>
+	<%= submit_tag("Load", { :type => "button", :class => "load-dataset btn" }) %>
+	</span>
+<% else %>
+	<ul>
+	<% for item in dataset.dataset_items %>
+		<li><%= item.name %></li>
 	<% end %>
+	</ul>
 <% end %>
-</ul>
+</p>

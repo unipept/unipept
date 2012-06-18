@@ -1,7 +1,6 @@
 <%= form_tag(:sequence_multi_search, :method => "post") do %>
 	<div id="search_elements">
-	<%= label_tag(:qs, "Search for") %>
-	<%= text_area_tag(:qs, nil, :cols => 60, :rows => 7) %>
+	<%= text_area_tag(:qs, nil, :rows => 7, :spellcheck => "false") %>
 	</div>
 	
 	<div id="more_options"><%= image_tag("plus.gif") %> <%= link_to("More options", "#") %></div>
@@ -22,7 +21,8 @@
 	</fieldset>
 	</div>
 	<div id="search_button">
-	<%= submit_tag("Search") %>
+	<%= submit_tag("Search", :class => "primary btn") %>
+	<%= submit_tag("Start Over", { :name => 'reset', :id => 'reset_button', :type => "reset", :class => "btn" }) %>
 	</div>
   
 <% end %>
@@ -31,7 +31,7 @@
 $(document).ready(function(){
 	$("#more_options_form").hide();
 	$("#more_options a").click(function(){
-		$("#more_options_form").show("fast");
+		$("#more_options_form").slideDown("slow");
 		$("#more_options").hide("fast");
 		return false;
 	});

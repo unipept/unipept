@@ -1,5 +1,7 @@
 UnipeptWeb::Application.routes.draw do
 
+  resources :posts
+
   resources :datasets
   resources :dataset_items
   resources :sequences, :only => [:show, :index] do   

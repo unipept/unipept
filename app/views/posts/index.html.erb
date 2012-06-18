@@ -1,0 +1,15 @@
+<h1>News</h1>
+
+<div id="posts">
+	<%= render @posts %>
+</div>
+
+<%= will_paginate @posts %>
+
+<br/>
+
+<%= link_to 'New Post', new_post_path if session[:admin] %>
+
+<script type="text/javascript">
+	$(function () {initPosts();});
+</script>

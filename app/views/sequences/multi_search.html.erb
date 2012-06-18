@@ -20,9 +20,10 @@
 	</div>
 
 <h2>Hierarchical outline</h2>
-<%= search_field_tag(:jstree_search, "", :size => 70, :placeholder => "search the tree...") %>
+<%= search_field_tag(:jstree_search, "", :placeholder => "search for an organism...") %>
+<div class="visualClear"></div>
 <div id="jstree"></div>
-<div id="jstree_data"><p>Click a node to see the peptides.</p></div>
+<div id="jstree_data"><p>Click on a node in the tree to see the peptides associated with that organism.</p></div>
 
 <% end %>
 
@@ -30,7 +31,7 @@
 <div class="visualClear"><!-- --></div>
 <h2>Mismatches</h2>
 <p>We didn't manage to find some of your peptides. You can BLAST them by clicking the links below.</p>
-<ul>
+<ul class="mismatches">
 	<% for @seq in @misses do %>
 	<li><%= link_to @seq , "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on&USER_FORMAT_DEFAULTS=on&PAGE=Proteins&PROGRAM=blastp&QUERY="+@seq+"&GAPCOSTS=11%201&EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&DATABASE=nr&BLAST_PROGRAMS=blastp&MAX_NUM_SEQ=100&SHORT_QUERY_ADJUST=on&EXPECT=10&WORD_SIZE=3&MATRIX_NAME=BLOSUM62&COMPOSITION_BASED_STATISTICS=2&SHOW_OVERVIEW=on&SHOW_LINKOUT=on&ALIGNMENT_VIEW=Pairwise&MASK_CHAR=2&MASK_COLOR=1&GET_SEQUENCE=on&NEW_VIEW=on&NUM_OVERVIEW=100&DESCRIPTIONS=100&ALIGNMENTS=100&FORMAT_OBJECT=Alignment&FORMAT_TYPE=HTML&OLD_BLAST=false", :target => "_blank" %> <%= image_tag("externesite.gif", :alt => "Blast")%></li>
 	<% end %>
@@ -38,13 +39,10 @@
 <% end %>
 
 <% if @number_found > 0 %>
-<!-- JIT Library File --> 
 <!--[if IE]><%= javascript_include_tag "jit/Extras/excanvas.js"%><![endif]-->
-<%= javascript_include_tag "jit/jit-yc.js", "jstree/jquery.jstree", "d3/d3.v2.min.js"%>
-<%= javascript_include_tag "multi_search.js"%>
 <script type="text/javascript">
 	var data1 = <%= raw(@treemap_json)%>
 	var data2 = <%= raw(@sunburst_json)%>
-	$(function () {init(data1, data2, <%=@equate_il %>);});
+	$(function () {init_multi(data1, data2, <%=@equate_il %>);});
 </script>
 <% end %>

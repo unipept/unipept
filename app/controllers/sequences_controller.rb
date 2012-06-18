@@ -14,9 +14,9 @@ class SequencesController < ApplicationController
       params[:id].upcase!
       params[:id].gsub!(/I/,'L') if equate_il
       unless params[:id].index(/([KR])([^P])/).nil?
-        flash.now[:notice] = "The peptide you're looking for (#{params[:id]}) is not a tryptic peptide.";
+        flash.now[:notice] = "The peptide you're looking for (#{params[:id]}) is not a tryptic peptide. ";
         @sequence = params[:id].gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a.map{|l| Sequence.find_by_sequence(l)}.compact[0]
-        flash.now[:notice] += "\n We tried to split it, and searched for #{@sequence.sequence} instead." unless @sequence.nil?
+        flash.now[:notice] += "We tried to split it, and searched for #{@sequence.sequence} instead. " unless @sequence.nil?
       else
         @sequence = Sequence.find_by_sequence(params[:id])
       end    
@@ -41,7 +41,8 @@ class SequencesController < ApplicationController
       
       #common lineage
       @common_lineage = Array.new #construct the common lineage in this array
-      l = @lineages[0]
+      l = @lineages.select{|lineage| lineage[@lca_taxon.rank] == @lca_taxon.id}.first
+      l = @lineages.first if l.nil?
       found = (@lca_taxon.name == "root")
       #this might go wrong in the case where the first lineage doesn't contain the LCA (eg. nil)
       while l.has_next? && !found do
@@ -108,7 +109,7 @@ class SequencesController < ApplicationController
   
   # redirects to show
   def search
-    il = params[:il] == 1 ? true : false
+    il = params[:il_s] == 1 ? true : false
     redirect_to "#{sequences_path}/#{params[:q]}/#{il}"
   end
   
@@ -206,12 +207,12 @@ class SequencesController < ApplicationController
     	@root.sort_peptides_and_children unless @root.nil?
     	
     	@sunburst_json = @root.to_json
-    	sunburst_hash = ActiveSupport::JSON.decode(@sunburst_json)
+    	sunburst_hash = JSON.parse(@sunburst_json, :max_nesting => false)
     	TreeMapNode.clean_sunburst!(sunburst_hash) unless sunburst_hash.nil?
     	@sunburst_json = sunburst_hash.to_json.gsub("children","kids")
     	
     	@treemap_json = @root.to_json
-    	treemap_hash = ActiveSupport::JSON.decode(@treemap_json)
+    	treemap_hash = JSON.parse(@treemap_json, :max_nesting => false)
     	TreeMapNode.clean_treemap!(treemap_hash) unless treemap_hash.nil?
     	@treemap_json = treemap_hash.to_json
     	

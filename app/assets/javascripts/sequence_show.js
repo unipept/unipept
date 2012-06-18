@@ -1,23 +1,23 @@
-var labelType,
-	useGradients,
-	nativeTextSupport,
-	animate;
+function init_sequence_show(data, lcaId) {
+    var labelType,
+    	useGradients,
+    	nativeTextSupport,
+    	animate;
 
-(function () {
-    var ua = navigator.userAgent,
-		iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
-		typeOfCanvas = typeof HTMLCanvasElement,
-		nativeCanvasSupport = (typeOfCanvas === 'object' || typeOfCanvas === 'function'),
-		textSupport = nativeCanvasSupport && (typeof document.createElement('canvas').getContext('2d').fillText === 'function');
-    //I'm setting this based on the fact that ExCanvas provides text support for IE
-    //and that as of today iPhone/iPad current text support is lame
-    labelType = (!nativeCanvasSupport || (textSupport && !iStuff)) ? 'Native' : 'HTML';
-    nativeTextSupport = labelType === 'Native';
-    useGradients = nativeCanvasSupport;
-    animate = !(iStuff || !nativeCanvasSupport);
-}());
-
-function init(data, lcaId) {
+    (function () {
+        var ua = navigator.userAgent,
+    		iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
+    		typeOfCanvas = typeof HTMLCanvasElement,
+    		nativeCanvasSupport = (typeOfCanvas === 'object' || typeOfCanvas === 'function'),
+    		textSupport = nativeCanvasSupport && (typeof document.createElement('canvas').getContext('2d').fillText === 'function');
+        //I'm setting this based on the fact that ExCanvas provides text support for IE
+        //and that as of today iPhone/iPad current text support is lame
+        labelType = (!nativeCanvasSupport || (textSupport && !iStuff)) ? 'Native' : 'HTML';
+        nativeTextSupport = labelType === 'Native';
+        useGradients = nativeCanvasSupport;
+        animate = !(iStuff || !nativeCanvasSupport);
+    }());
+    
     //Create a new SpaceTree instance
     var st = new $jit.ST({
         injectInto: 'lineageTree',
@@ -28,10 +28,10 @@ function init(data, lcaId) {
         //set animation transition type
         levelDistance: 50,
         //set distance between node and its children
-        levelsToShow: 3,
+        levelsToShow: 4,
         //offsetY: 170,
         //orientation: 'top',
-        offsetX: 130,
+        offsetX: 350,
 
         //enable panning
         Navigation: {
@@ -53,6 +53,7 @@ function init(data, lcaId) {
 
         Edge: {
             type: 'bezier',
+            color: '#DCDFE4',
             overridable: true
         },
 
@@ -82,32 +83,32 @@ function init(data, lcaId) {
         //style properties before plotting it.
         //The data properties prefixed with a dollar
         //sign will override the global node style properties.
-        /*onBeforePlotNode: function(node){
+        onBeforePlotNode: function(node){
             //add some color to the nodes in the path between the
             //root node and the selected node.
             if (node.selected) {
-                node.data.$color = "#ff7";
+                node.data.$color = "#bbb";
             }
             else {
                 delete node.data.$color;
                 //if the node belongs to the last plotted level
-                if(!node.anySubnode("exist")) {
+                /*if(!node.anySubnode("exist")) {
                     //count children number
                     var count = 0;
                     node.eachSubnode(function(n) { count++; });
                     //assign a node color based on
                     //how many children it has
                     node.data.$color = ['#aaa', '#baa', '#caa', '#daa', '#eaa', '#faa'][count];                    
-                }
+                }*/
             }
-        },*/
+        },
 
         //This method is called right before plotting
         //an edge. It's useful for changing an individual edge
         //style properties before plotting it.
         //Edge data proprties prefixed with a dollar sign will
         //override the Edge global style properties.
-        onBeforePlotLine: function (adj) {
+        /*onBeforePlotLine: function (adj) {
             if (adj.nodeFrom.selected && adj.nodeTo.selected) {
                 adj.data.$color = "#eed";
                 adj.data.$lineWidth = 3;
@@ -115,7 +116,7 @@ function init(data, lcaId) {
                 delete adj.data.$color;
                 delete adj.data.$lineWidth;
             }
-        }
+        }*/
     });
 	//load json data
     st.loadJSON(data);
@@ -127,7 +128,11 @@ function init(data, lcaId) {
     st.geom.translate(new $jit.Complex(-200, 0), "current");
 
 	//emulate a click on the root node.
-    //st.onClick(st.root);
-	st.onClick(lcaId);
+	try{ 
+    	st.onClick(lcaId);
+	}
+	catch(err){
+        error(err, "Oops, something went wrong while loading the lineage tree.");
+    }
 
 }

@@ -10,3 +10,5 @@ doc/app
 *~
 ~.DS_Store
 *.log
+.sass-cache/
+public/assets
