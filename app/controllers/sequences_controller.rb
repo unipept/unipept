@@ -9,7 +9,7 @@ class SequencesController < ApplicationController
     
     # process input
     if params[:id].match(/\A[0-9]+\z/) # params[:id] contains the id
-      @sequence = Sequence.find_by_id(params[:id], :include => {:peptides => :uniprot_entry})
+      @sequence = Sequence.find_by_id(params[:id], :include => {:peptides => {:uniprot_entry => :name}})
     else  #params[:id] contains the sequence
       params[:id].upcase!
       params[:id].gsub!(/I/,'L') if equate_il
@@ -18,7 +18,7 @@ class SequencesController < ApplicationController
         @sequence = params[:id].gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a.map{|l| Sequence.find_by_sequence(l, :include => {:peptides => :uniprot_entry})}.compact.first
         flash.now[:notice] += "We tried to split it, and searched for #{@sequence.sequence} instead. " unless @sequence.nil?
       else
-        @sequence = Sequence.find_by_sequence(params[:id], :include => {:peptides => :uniprot_entry})
+        @sequence = Sequence.find_by_sequence(params[:id], :include => {:peptides => {:uniprot_entry => :name}})
       end    
     end
     
@@ -95,7 +95,8 @@ class SequencesController < ApplicationController
       end
       
       # sort by id from left to right
-	    @table_lineages = @table_lineages.transpose.sort_by{ |k| k[1..-1].map!{|l| l || Taxon.find(1)} }
+      root_taxon = Taxon.find(1)
+	    @table_lineages = @table_lineages.transpose.sort_by{ |k| k[1..-1].map!{|l| l || root_taxon} }
     end
   end
   

@@ -25,17 +25,17 @@ class Sequence < ActiveRecord::Base
                   :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, 
                   :varietas_t, :forma_t)
       else
-        l = Lineage.select("lineages.*").joins(:uniprot_entries => :peptides).where("peptides.sequence_id = ?", id).uniq.includes(:name,  
+        l = Lineage.select("lineages.*").joins(:uniprot_entries => :peptides).where("peptides.sequence_id = ?", id).uniq
+      end
+    else
+      if eager
+        l = Lineage.select("lineages.*").joins(:uniprot_entries => :peptides).where("peptides.original_sequence_id = ?", id).uniq.includes(:name,  
                   :superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, 
                   :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, 
                   :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, 
                   :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, 
                   :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, 
                   :varietas_t, :forma_t)
-      end
-    else
-      if eager
-        l = Lineage.select("lineages.*").joins(:uniprot_entries => :peptides).where("peptides.original_sequence_id = ?", id).uniq
       else
         l = Lineage.select("lineages.*").joins(:uniprot_entries => :peptides).where("peptides.original_sequence_id = ?", id).uniq
       end
