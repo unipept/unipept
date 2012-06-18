@@ -146,9 +146,14 @@ class SequencesController < ApplicationController
       # build the resultset
       @matches = Hash.new
       @misses = data
-      sequences = Sequence.find_all_by_sequence(data)
+      if @equate_il
+        sequences = Sequence.find_all_by_sequence(data, :include => {:lca_il_t => :lineage})
+      else
+        sequences = Sequence.find_all_by_sequence(data, :include => {:lca_t => :lineage})
+      end
       sequences.each do |sequence| # for every sequence in query
-        lca_t = Taxon.find_by_id(sequence.calculate_lca(@equate_il))
+        #lca_t = Taxon.find_by_id(sequence.calculate_lca(@equate_il))
+        lca_t = sequence.calculate_lca(@equate_il, true)
         unless lca_t.nil?
           @number_found += 1
           @matches[lca_t] = Array.new if @matches[lca_t].nil?
@@ -173,7 +178,7 @@ class SequencesController < ApplicationController
       @root = TreeMapNode.new(1, "organism", "no rank")
       @matches.each do |taxon, sequences| # for every match
         @root.add_sequences(sequences)
-        lca_l = Lineage.find_by_taxon_id(taxon.id)
+        lca_l = taxon.lineage
         
         #export stuff
         if export 
