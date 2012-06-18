@@ -34,7 +34,7 @@ class SequencesController < ApplicationController
       @entries = equate_il ? @sequence.peptides.map(&:uniprot_entry) : @sequence.original_peptides.map(&:uniprot_entry)
       
       # LCA calculation
-      @lineages = @sequence.lineages(equate_il) #calculate lineages
+      @lineages = @sequence.lineages(equate_il, true) #calculate lineages
       @lca_taxon = Lineage.calculate_lca_taxon(@lineages) #calculate the LCA
       @root = Node.new(1, "root") #start constructing the tree
       last_node = @root
