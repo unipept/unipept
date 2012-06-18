@@ -9,16 +9,16 @@ class SequencesController < ApplicationController
     
     # process input
     if params[:id].match(/\A[0-9]+\z/) # params[:id] contains the id
-      @sequence = Sequence.find_by_id(params[:id])
+      @sequence = Sequence.find_by_id(params[:id], :include => {:peptides => {:uniprot_entry => :name}})
     else  #params[:id] contains the sequence
       params[:id].upcase!
       params[:id].gsub!(/I/,'L') if equate_il
       unless params[:id].index(/([KR])([^P])/).nil?
         flash.now[:notice] = "The peptide you're looking for (#{params[:id]}) is not a tryptic peptide. ";
-        @sequence = params[:id].gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a.map{|l| Sequence.find_by_sequence(l)}.compact[0]
+        @sequence = params[:id].gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a.map{|l| Sequence.find_by_sequence(l, :include => {:peptides => :uniprot_entry})}.compact.first
         flash.now[:notice] += "We tried to split it, and searched for #{@sequence.sequence} instead. " unless @sequence.nil?
       else
-        @sequence = Sequence.find_by_sequence(params[:id])
+        @sequence = Sequence.find_by_sequence(params[:id], :include => {:peptides => {:uniprot_entry => :name}})
       end    
     end
     
@@ -34,7 +34,7 @@ class SequencesController < ApplicationController
       @entries = equate_il ? @sequence.peptides.map(&:uniprot_entry) : @sequence.original_peptides.map(&:uniprot_entry)
       
       # LCA calculation
-      @lineages = @sequence.lineages(equate_il) #calculate lineages
+      @lineages = @sequence.lineages(equate_il, true) #calculate lineages
       @lca_taxon = Lineage.calculate_lca_taxon(@lineages) #calculate the LCA
       @root = Node.new(1, "root") #start constructing the tree
       last_node = @root
@@ -95,7 +95,8 @@ class SequencesController < ApplicationController
       end
       
       # sort by id from left to right
-	    @table_lineages = @table_lineages.transpose.sort_by{ |k| k[1..-1].map!{|l| l || Taxon.find(1)} }
+      root_taxon = Taxon.find(1)
+	    @table_lineages = @table_lineages.transpose.sort_by{ |k| k[1..-1].map!{|l| l || root_taxon} }
     end
   end
   
@@ -144,22 +145,24 @@ class SequencesController < ApplicationController
     
       # build the resultset
       @matches = Hash.new
-      @misses = Array.new
-      data.each do |s| # for every sequence in query
-        sequence = Sequence.find_by_sequence(s)
-        unless sequence.nil?
-          lca_t = Taxon.find_by_id(sequence.calculate_lca(@equate_il))
-          unless lca_t.nil?
-            @number_found += 1
-            @matches[lca_t] = Array.new if @matches[lca_t].nil?
-            @matches[lca_t] << sequence.sequence
-          end
-        else
-          @misses << s
+      @misses = data
+      if @equate_il
+        sequences = Sequence.find_all_by_sequence(data, :include => {:lca_il_t => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}})
+      else
+        sequences = Sequence.find_all_by_sequence(data, :include => {:lca_t => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}})
+      end
+      sequences.each do |sequence| # for every sequence in query
+        #lca_t = Taxon.find_by_id(sequence.calculate_lca(@equate_il))
+        lca_t = sequence.calculate_lca(@equate_il, true)
+        unless lca_t.nil?
+          @number_found += 1
+          @matches[lca_t] = Array.new if @matches[lca_t].nil?
+          @matches[lca_t] << sequence.sequence
         end
+        @misses.delete(sequence.sequence)
       end  
       
-      @misses.sort! 
+      @misses = @misses.sort! 
       
       @intro_text = "#{@number_found} out of #{number_searched_for} #{"peptide".send(number_searched_for != 1 ? :pluralize : :to_s)}  were matched"
       if filter_duplicates || @equate_il 
@@ -175,7 +178,7 @@ class SequencesController < ApplicationController
       @root = TreeMapNode.new(1, "organism", "no rank")
       @matches.each do |taxon, sequences| # for every match
         @root.add_sequences(sequences)
-        lca_l = Lineage.find_by_taxon_id(taxon.id)
+        lca_l = taxon.lineage
         
         #export stuff
         if export 
