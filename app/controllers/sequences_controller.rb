@@ -1,5 +1,4 @@
 class SequencesController < ApplicationController
-  require "yajl/json_gem"
   require 'oj'
   
   # shows information about a peptide
