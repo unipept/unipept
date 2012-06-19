@@ -141,6 +141,7 @@ GEM
       rack (>= 1.0)
       rack-test (>= 0.5.3)
     will_paginate (3.0.0)
+    yajl-ruby (1.1.0)
 
 PLATFORMS
   ruby
@@ -164,3 +165,4 @@ DEPENDENCIES
   uglifier (= 1.2.4)
   webrat
   will_paginate (= 3.0)
+  yajl-ruby

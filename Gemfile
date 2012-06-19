@@ -13,7 +13,11 @@ gem 'jquery-rails'
 gem 'rubycas-client', git: 'git://github.com/bmesuere/rubycas-client.git', branch: 'master'
 gem 'rubycas-client-rails', :git => 'git://github.com/bmesuere/rubycas-client-rails.git'
 
+#needed for asset creation
 gem 'therubyracer'
+
+#faster json
+gem 'yajl-ruby'
 
 group :development do
   gem 'rspec-rails'

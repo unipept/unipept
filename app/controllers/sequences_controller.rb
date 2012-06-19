@@ -1,4 +1,5 @@
 class SequencesController < ApplicationController
+  require "yajl/json_gem"
   
   # shows information about a peptide
   # the peptide should be in params[:id] and 
@@ -77,7 +78,7 @@ class SequencesController < ApplicationController
     	end
     	
     	#don't show the root when we don't need it
-    	@root = @root.children.count > 1 ? @root.to_json : @root.children[0].to_json
+	    @root = @root.children.count > 1 ? Yajl::Encoder.encode(@root) : Yajl::Encoder.encode(@root.children[0])
 	    
 	    #Table stuff
 	    @table_lineages = Array.new
@@ -209,15 +210,15 @@ class SequencesController < ApplicationController
     	@root.add_piechart_data unless @root.nil?
     	@root.sort_peptides_and_children unless @root.nil?
     	
-    	@sunburst_json = @root.to_json
-    	sunburst_hash = JSON.parse(@sunburst_json, :max_nesting => false)
+    	@sunburst_json = Yajl::Encoder.encode(@root)
+    	sunburst_hash = Yajl::Parser.parse(@sunburst_json)
     	TreeMapNode.clean_sunburst!(sunburst_hash) unless sunburst_hash.nil?
-    	@sunburst_json = sunburst_hash.to_json.gsub("children","kids")
+    	@sunburst_json = Yajl::Encoder.encode(sunburst_hash).gsub("children","kids")
     	
-    	@treemap_json = @root.to_json
-    	treemap_hash = JSON.parse(@treemap_json, :max_nesting => false)
+    	@treemap_json = Yajl::Encoder.encode(@root)
+    	treemap_hash = Yajl::Parser.parse(@treemap_json)
     	TreeMapNode.clean_treemap!(treemap_hash) unless treemap_hash.nil?
-    	@treemap_json = treemap_hash.to_json
+    	@treemap_json = Yajl::Encoder.encode(treemap_hash)
     	
     	
     	#more export stuff
