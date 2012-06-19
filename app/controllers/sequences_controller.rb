@@ -1,5 +1,6 @@
 class SequencesController < ApplicationController
   require "yajl/json_gem"
+  require 'oj'
   
   # shows information about a peptide
   # the peptide should be in params[:id] and 
@@ -78,7 +79,7 @@ class SequencesController < ApplicationController
     	end
     	
     	#don't show the root when we don't need it
-	    @root = @root.children.count > 1 ? Yajl::Encoder.encode(@root) : Yajl::Encoder.encode(@root.children[0])
+	    @root = @root.children.count > 1 ? Oj.dump(@root) : Oj.dump(@root.children[0])
 	    
 	    #Table stuff
 	    @table_lineages = Array.new
@@ -205,20 +206,20 @@ class SequencesController < ApplicationController
         node = taxon.id == 1 ? @root : TreeMapNode.find_by_id(taxon.id, @root)
         node.add_own_sequences(sequences) unless node.nil?
       end
+
     	#don't show the root when we don't need it
     	@root = @root.children[0] if @root.children.count == 0
     	@root.add_piechart_data unless @root.nil?
     	@root.sort_peptides_and_children unless @root.nil?
-    	
-    	@sunburst_json = Yajl::Encoder.encode(@root)
-    	sunburst_hash = Yajl::Parser.parse(@sunburst_json)
+    	    	
+    	root_json = Oj.dump(@root).gsub('"^o":"TreeMapNode",', "")
+    	sunburst_hash = Oj.load(String.new(root_json))
     	TreeMapNode.clean_sunburst!(sunburst_hash) unless sunburst_hash.nil?
-    	@sunburst_json = Yajl::Encoder.encode(sunburst_hash).gsub("children","kids")
+    	@sunburst_json = Oj.dump(sunburst_hash).gsub("children","kids")
     	
-    	@treemap_json = Yajl::Encoder.encode(@root)
-    	treemap_hash = Yajl::Parser.parse(@treemap_json)
+    	treemap_hash = Oj.load(root_json)
     	TreeMapNode.clean_treemap!(treemap_hash) unless treemap_hash.nil?
-    	@treemap_json = Yajl::Encoder.encode(treemap_hash)
+    	@treemap_json = Oj.dump(treemap_hash)
     	
     	
     	#more export stuff

@@ -17,7 +17,7 @@ gem 'rubycas-client-rails', :git => 'git://github.com/bmesuere/rubycas-client-ra
 gem 'therubyracer'
 
 #faster json
-gem 'yajl-ruby'
+gem 'oj'
 
 group :development do
   gem 'rspec-rails'
