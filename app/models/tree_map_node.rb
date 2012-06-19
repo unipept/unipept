@@ -62,12 +62,12 @@ class TreeMapNode < Node
   # Adds a URL to every node linking to a piechart of their children
   def add_piechart_data
     unless @children.empty?
-      @data[:piecharturl] = "http://chart.apis.google.com/chart?chs=300x225&cht=p&chd=t:"
-      @data[:piecharturl] += @children.map{|c| c.data[:count].to_s}.join(",")
-      @data[:piecharturl] += "&chdl="
-      @data[:piecharturl] += @children.map{|c| c.name + " (" + c.data[:count].to_s + ")"}.join("|")
-      @data[:piecharturl] += "&chds=0,"
-      @data[:piecharturl] += @children.map{|c| c.data[:count]}.max.to_s
+      @data["piecharturl"] = "http://chart.apis.google.com/chart?chs=300x225&cht=p&chd=t:"
+      @data["piecharturl"] += @children.map{|c| c.data["count"].to_s}.join(",")
+      @data["piecharturl"] += "&chdl="
+      @data["piecharturl"] += @children.map{|c| c.name + " (" + c.data["count"].to_s + ")"}.join("|")
+      @data["piecharturl"] += "&chds=0,"
+      @data["piecharturl"] += @children.map{|c| c.data["count"]}.max.to_s
       @children.map{|c| c.add_piechart_data}
     end
   end
