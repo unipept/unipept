@@ -23,8 +23,7 @@
 	
 </head>
 <body>
-<div id='container'>
-	<%= render 'layouts/topbar' %>
+<div class='container'>
 	<%= render 'layouts/header' %>
 	<div id='breadcrumb' class='swapUnderline'>
 		<!--<span id='breadcrumbs-you-are-here'>You are here:</span> 
@@ -34,7 +33,6 @@
 		<!-- -->
 	</div>
 	<div id='main'>
-		<% #render 'layouts/navigation' %>
 		<div id='content' class='wide'>
 			
 			<% unless @motd.nil? %>

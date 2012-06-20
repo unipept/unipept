@@ -1,10 +1,6 @@
 @import "twitter/bootstrap/bootstrap";
-body { 
-	padding-top: 60px;
-	padding-left: 20px;
-}
 
-@import "twitter/bootstrap/responsive";
+//@import "twitter/bootstrap/responsive";
 
 // Set the correct sprite paths
 @iconSpritePath: asset-path('twitter/bootstrap/glyphicons-halflings.png');
@@ -31,3 +27,79 @@ body {
 //
 // Example:
 // @linkColor: #ff0000;
+
+body {
+    background-color: @grayLighter;
+}
+.container{
+    background-color: @white;
+    .box-shadow(~"1px 0 10px gray, -1px 0 10px gray");
+}
+
+/* top bar */
+#topbar {
+    .clearfix();
+    padding: 5px;
+}
+#user {
+	float: right;
+}
+#subbar ul,
+#utility ul,
+#user ul {
+	list-style: none outside none;
+}
+#utility ul li,
+#user ul li {
+	float:left;
+	padding: 0 5px;
+}
+#utility ul li.separator,
+#user ul li.separator{
+    border-right: 1px solid @grayLight;
+}
+
+/* header */
+#header {
+	background: asset-url("sprieten_s.gif") no-repeat 0 0;
+	.clearfix();
+}
+#headerleft h1 {
+	position: relative;
+	top: -10px;
+	left: 53px;
+	float: left;
+}
+#headerleft h2 {
+    float: left;
+    margin-left: 125px;
+    margin-top: -3px;
+    padding: 0;
+    height: 15px;
+}
+#headerleft h2 a {
+	text-decoration: none;
+	color: white;
+}
+#headerright {
+	float: right;
+    overflow: hidden;
+}
+#utility {
+    margin-top: -2px;
+}
+#subbar{	
+	background: #E9E9E9;
+	margin-left: 200px;
+	margin-top: -46px;
+	height: 24px;
+	-webkit-border-bottom-left-radius: 3px;
+	-moz-border-bottom-left-radius: 3px;
+	border-bottom-left-radius: 3px;
+}
+#subbar ul li {
+	float:left;
+	margin-right: 1.7em;
+	padding: 3px;
+	font-weight: bold;
+}
