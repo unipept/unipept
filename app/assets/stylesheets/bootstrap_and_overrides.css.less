@@ -27,15 +27,24 @@
 //
 // Example:
 // @linkColor: #ff0000;
-
+html,
 body {
     background-color: @grayLighter;
+	height: 100%;
 }
-.container{
+.container {
     background-color: @white;
     .box-shadow(~"1px 0 10px gray, -1px 0 10px gray");
 }
-
+.container.main {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+}
+.container.footer-wrap {
+	margin-top: -64px;
+	.box-shadow(0 0);
+}
 /* top bar */
 #topbar {
     .clearfix();
@@ -62,6 +71,7 @@ body {
 /* header */
 #header {
 	background: asset-url("sprieten_s.gif") no-repeat 0 0;
+	height: 32px;
 	.clearfix();
 }
 #headerleft h1 {
@@ -91,7 +101,7 @@ body {
 #subbar{	
 	background: #E9E9E9;
 	margin-left: 200px;
-	margin-top: -46px;
+	margin-top: -10px;
 	height: 24px;
 	-webkit-border-bottom-left-radius: 3px;
 	-moz-border-bottom-left-radius: 3px;
@@ -102,4 +112,34 @@ body {
 	margin-right: 1.7em;
 	padding: 3px;
 	font-weight: bold;
+}
+
+/* footer */
+#footerpush {
+	height: 64px;
+}
+footer {
+	background: #104b7d;
+	padding-left: 6px;
+	height: 64px;
+}
+footer .copyright a,
+footer .copyright .byline_author {
+	color: @white;
+}
+footer p.copyright{
+    padding-top: 13px;
+}
+footer p {
+	color: #6086a7;
+	padding-left: 13px;
+	margin-bottom: 3px;
+}
+#version{
+	padding:0;
+	margin:0;
+	line-height:0;
+	float: right;
+	padding-right: 5px;
+	color: #6086A7;
 }
