@@ -26,6 +26,7 @@
 <div class='container main'>
 	<%= render 'layouts/header' %>
 	
+	<div class='content'>
 	<!-- message of the day -->		
 	<% unless @motd.nil? %>
 		<div id="spotlight" class="spotlight">
@@ -56,11 +57,11 @@
 			<%= content_tag(:div, value, :class => "flash #{key}") unless value.nil?%>
 		<% end %>
 	</div>
-	
 	<!-- actual page content -->
 	<%= yield %>
 	
 	<%= debug(params) if Rails.env.development? %>
+	</div>
 	<div id="footerpush"></div>
 </div>
 <div class="container footer-wrap">

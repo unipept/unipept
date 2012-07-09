@@ -45,6 +45,9 @@ body {
 	margin-top: -64px;
 	.box-shadow(0 0);
 }
+.content {
+    padding: 0 12px 12px 12px;
+}
 /* top bar */
 #topbar {
     .clearfix();
@@ -142,4 +145,26 @@ footer p {
 	float: right;
 	padding-right: 5px;
 	color: #6086A7;
+}
+
+/*** GP SYLES ***/
+.split{
+	overflow: hidden;
+}
+.split-left,
+.split-right {
+	width: 448px;
+	float: left;
+	padding-bottom: 100%;
+	margin-bottom: -100%;
+}
+.split-left {
+	padding-right: 9px;
+	border-right: 1px solid #DDD;
+}    
+.split-left.no-border {
+    border: 0;
+}
+.split-right {
+	padding-left: 9px;
 }
