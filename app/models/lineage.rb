@@ -35,6 +35,8 @@
 
 class Lineage < ActiveRecord::Base
   attr_accessible nil
+  
+  has_many :uniprot_entries,      :foreign_key  => "taxon_id",      :primary_key  => "taxon_id", :class_name   => 'UniprotEntry'
     
   belongs_to :name,               :foreign_key  => "taxon_id",      :primary_key  => "id",  :class_name   => 'Taxon'
 

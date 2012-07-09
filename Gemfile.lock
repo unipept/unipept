@@ -76,6 +76,7 @@ GEM
     multi_json (1.3.6)
     mysql2 (0.3.11)
     nokogiri (1.5.4)
+    oj (1.2.9)
     polyglot (0.3.3)
     rack (1.4.1)
     rack-cache (1.2)
@@ -151,6 +152,7 @@ DEPENDENCIES
   coffee-rails (= 3.2.2)
   jquery-rails
   mysql2
+  oj
   rails (= 3.2.6)
   rake
   rspec
