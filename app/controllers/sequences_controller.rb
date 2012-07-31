@@ -111,7 +111,7 @@ class SequencesController < ApplicationController
   
   # redirects to show
   def search
-    il = params[:il_s] == 1 ? true : false
+    il = (params[:il_s] == 1 || params[:il_s] == "1") ? true : false
     redirect_to "#{sequences_path}/#{params[:q]}/#{il}"
   end
   
