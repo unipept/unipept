@@ -21,8 +21,8 @@
 	</fieldset>
 	</div>
 	<div id="search_button">
-	<%= submit_tag("Search", :class => "primary btn") %>
-	<%= submit_tag("Start Over", { :name => 'reset', :id => 'reset_button', :type => "reset", :class => "btn" }) %>
+	<%= button_tag(raw("<i class='icon-search icon-white'></i> Search"), :type => "submit", :class => "btn btn-primary") %>
+	<%= button_tag("Start Over", { :name => 'reset', :id => 'reset_button', :type => "reset", :class => "btn" }) %>
 	</div>
   
 <% end %>
