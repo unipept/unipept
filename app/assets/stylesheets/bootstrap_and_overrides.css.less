@@ -27,11 +27,36 @@
 //
 // Example:
 // @linkColor: #ff0000;
+
+@hairlinegray: #dddddd;
+
 html,
 body {
     background-color: @grayLighter;
 	height: 100%;
 }
+h1 {
+    font-size: 24px;
+    line-height: @baseLineHeight * 1.5;
+}
+.content h2 {
+    border-bottom: 1px solid @hairlinegray;
+    margin-bottom: 5px;
+    font-size: 18px;
+    line-height: @baseLineHeight * 1.5;
+    font-weight: normal;
+    color: #0870A1;
+    small {
+        font-size: 14px;
+    }
+}
+h3 {
+    font-size: 16px;
+    small {
+        font-size: 12px;
+    }
+}
+
 .container {
     background-color: @white;
     .box-shadow(~"1px 0 10px gray, -1px 0 10px gray");
@@ -160,11 +185,27 @@ footer p {
 }
 .split-left {
 	padding-right: 9px;
-	border-right: 1px solid #DDD;
+	border-right: 1px solid @hairlinegray;
 }    
 .split-left.no-border {
     border: 0;
 }
 .split-right {
 	padding-left: 9px;
+}
+
+.visualClear {
+	display: block;
+	clear: both;
+}
+
+/*** news on homepage ***/
+#news{
+    padding: 5px 12px 2px;
+    margin: 0 0 2.0em;
+    border: 1px solid @hairlinegray;
+    .border-radius(3px);
+}
+#news div{
+    margin-left: 10px;
 }

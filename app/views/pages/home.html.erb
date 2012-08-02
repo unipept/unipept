@@ -1,28 +1,24 @@
 <h1>Welcome</h1>
 
 <div class="split">
-<div class="split-left no-border">
-<p class="intro">
+	
+	<div class="split-left no-border">
+		<p class="intro">
 The Unipept web application supports biodiversity analysis of large and complex metaproteome samples. Its underlying index structure is designed to quickly retrieve all occurrences of a tryptic peptide in UniProtKB records. Taxon-specificity of the tryptic peptide is successively derived from these occurrences using a novel lowest common ancestor approach that is robust against taxonomic misarrangements, misidentifications and inaccuracies. Not taking into account this identification noise would otherwise result in drastic loss of information. This application consists of two basic functionalities: a peptide-based taxonomic identification and a multi-peptide dynamic diversity treemap analysis.
-</p>
-</div>
-<div class="split-right">
-
-<div id="spotlight" class="spotlight news">
-  <div class="sectiontitle"><h2>News</h2></div>
-  <div class="columns">
-    <div class="column">
-      <div class="spacing-left">
-      	<%= render @post %>
-				<p class="readmore"><%= link_to '> more news', posts_path %></p>
-      </div>	
-    </div>
-  </div>
-</div>
-
-
-</div>
-<div class="visualClear"></div>
+		</p>
+	</div>
+	
+	<div class="split-right">
+		<div id="news">
+		  <h2>News</h2>
+		  <div>
+		    <%= render @post %>
+		    <p class="pull-right"><%= link_to '> more news', posts_path %></p>
+		  </div>
+			<div class="visualClear"></div>
+		</div>
+	</div>
+	<div class="visualClear"></div>
 </div>
 
 
