@@ -1,12 +1,11 @@
-<%= form_tag(:sequence_multi_search, :method => "post") do %>
+<%= form_tag(:sequence_multi_search, :method => "post", :class => "form-inline") do %>
 	<div id="search_elements">
 	<%= text_area_tag(:qs, nil, :rows => 7, :spellcheck => "false") %>
 	</div>
 	
-	<div id="more_options"><%= image_tag("plus.gif") %> <%= link_to("More options", "#") %></div>
+	<div id="more_options"><i class="icon-plus-sign"></i> <%= link_to("More options", "#") %></div>
 	<div id="more_options_form">
-	<fieldset>
-	<legend>Advanced search options</legend>
+	<h4>Advanced search options</h4>
 	<%= check_box_tag(:il, 1, true) %>
 	<%= label_tag(:il, "Equate I and L?") %>
 	<br/>
@@ -18,11 +17,10 @@
 	<br/>
 	<%= label_tag(:search_name, "Name this search") %>
 	<%= text_field_tag('search_name', nil, :placeholder => 'e.g. Sample B5')%>
-	</fieldset>
 	</div>
 	<div id="search_button">
 	<%= button_tag(raw("<i class='icon-search icon-white'></i> Search"), :type => "submit", :class => "btn btn-primary") %>
-	<%= button_tag("Start Over", { :name => 'reset', :id => 'reset_button', :type => "reset", :class => "btn" }) %>
+	<%= button_tag(raw("<i class='icon-repeat'></i> Start Over"), { :name => 'reset', :id => 'reset_button', :type => "reset", :class => "btn" }) %>
 	</div>
   
 <% end %>
