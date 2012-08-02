@@ -5,7 +5,7 @@
 
 <%= post.content.html_safe %>
 
-<% if !session[:admin] %>
+<% if session[:admin] %>
 	<br/>
 	<%= link_to 'Edit', edit_post_path(post) %> |
 	<%= link_to 'Delete', post, :confirm => 'Are you sure?', :method => :delete %>
