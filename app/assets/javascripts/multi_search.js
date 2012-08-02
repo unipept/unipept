@@ -1,23 +1,4 @@
 function init_multi(data, data2, equate_il) {
-    
-    // Tabs
-    $(function() {
-        $("#mapTitleTreemap").click(function () {
-            $("#mapTitleTreemap").addClass("selected");
-            $("#mapTitleSunburst").removeClass("selected");
-            $("#treeMapWrapper").show();
-            $("#sunburstWrapper").hide();
-            return false;
-        });
-        $("#mapTitleSunburst").click(function () {
-            $("#mapTitleSunburst").addClass("selected");
-            $("#mapTitleTreemap").removeClass("selected");
-            $("#sunburstWrapper").show();
-            $("#treeMapWrapper").hide();
-            return false;
-        });
-    });
-
     var labelType,
     	useGradients,
     	nativeTextSupport,
