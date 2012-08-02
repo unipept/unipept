@@ -2,8 +2,8 @@
   <b>Environment:</b>
   <%= dataset.environment %> 
 	<% if session[:admin] && !load %>
-		<%= link_to 'Edit', edit_dataset_path(dataset) %> |
-		<%= link_to 'Delete', dataset, :confirm => 'Are you sure?', :method => :delete %>
+		<%= link_to raw("<i class='icon-pencil'></i> Edit"), edit_dataset_path(dataset), :class => 'btn btn-mini' %>
+		<%= link_to raw("<i class='icon-trash icon-white'></i> Delete"), dataset, :confirm => 'Are you sure?', :method => :delete, :class => 'btn btn-mini btn-danger' %>
 	<% end %>
 	<br/>
 

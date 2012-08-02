@@ -8,7 +8,7 @@
 
 <br/>
 
-<%= link_to 'New Post', new_post_path if session[:admin] %>
+<%= link_to 'New Post', new_post_path, :class => "btn btn-primary" if session[:admin] %>
 
 <script type="text/javascript">
 	$(function () {initPosts();});
