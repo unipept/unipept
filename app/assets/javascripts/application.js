@@ -14,7 +14,7 @@ function remove_fields(link) {
 // function used to add field in the datasets form
 function add_fields(link, association, content) {
   var new_id = new Date().getTime();
-  var regexp = new RegExp("new_" + association, "g")
+  var regexp = new RegExp("new_" + association, "g");
   $(link).parent().before(content.replace(regexp, new_id));
 }
 
@@ -27,6 +27,6 @@ function error(error, userMessage) {
         console.error(error);
     }
     if(userMessage){
-        $("#messages").append("<div class='error'>" + userMessage + "</div>");
+        $("#messages").append("<div class='alert alert-error'><strong>Oh snap!</strong> " + userMessage + "</div>");
     }
 }
