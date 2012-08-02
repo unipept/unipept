@@ -29,7 +29,7 @@ function init_multi(data, data2, equate_il) {
     // treemap
     try{
         initTreeMap(data);
-        $("#treeMapWrapper").hide();
+       $("#treeMapWrapper").removeClass("active");
     }
     catch(err){
         error(err, "Loading the Treemap visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
