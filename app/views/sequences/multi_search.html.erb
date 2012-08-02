@@ -20,7 +20,9 @@
 	</div>
 
 <h2>Hierarchical outline</h2>
-<%= search_field_tag(:jstree_search, "", :placeholder => "search for an organism...") %>
+<div class="input-append">
+<%= search_field_tag(:jstree_search, "", :placeholder => "search for an organism...") %><span class="add-on"><i class="icon-search"></i></span>
+</div>
 <div class="visualClear"></div>
 <div id="jstree"></div>
 <div id="jstree_data"><p>Click on a node in the tree to see the peptides associated with that organism.</p></div>
