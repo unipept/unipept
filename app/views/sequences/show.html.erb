@@ -17,13 +17,14 @@
 	<p>This table shows the complete taxonomic lineages of all UniProtKB records whose protein sequence contains <%= @sequence.sequence %>. Each row represents the complete taxonomic lineage of a single UniProtKB record. The first column contains the name extracted from the UniProtKB record, follow by columns representing valid taxonomic ranks ordered from superkingdom on the left to forma on the right. Only ranks used in the complete lineages of the records in which the peptide was found are displayed as columns in the table. To ease the interpretation of the table, rows are ordered according to the taxonomic names in the taxonomic rank columns and cells containing the same taxonomic name are marked with the same color code per column.</p>
 	<div id="sequence_table">
 		<% colors = Hash.new %>
-		<table>
-		<tr class="tabelheader"><td colspan="<%= @table_ranks.size %>">Lineage table</td></tr>
-		<tr class="legende">
+		<table class="table-no-hover table-condensed">
+		<thead>
+		<tr>
 			<% for rank in @table_ranks do%>
-				<td><%= rank %></td>
+				<th><%= rank %></th>
 			<% end %>
 		</tr>
+		</thead>
 		<% i = -1 %>
 		<% for lineage in @table_lineages do%>
 			<% i += 1 %>
@@ -44,13 +45,13 @@
 	
 	<h2>External links</h2>
 	<ul>
-		<li> <%= link_to "Blast this peptide" , "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on&USER_FORMAT_DEFAULTS=on&PAGE=Proteins&PROGRAM=blastp&QUERY="+@sequence.sequence+"&GAPCOSTS=11%201&EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&DATABASE=nr&BLAST_PROGRAMS=blastp&MAX_NUM_SEQ=100&SHORT_QUERY_ADJUST=on&EXPECT=10&WORD_SIZE=3&MATRIX_NAME=BLOSUM62&COMPOSITION_BASED_STATISTICS=2&SHOW_OVERVIEW=on&SHOW_LINKOUT=on&ALIGNMENT_VIEW=Pairwise&MASK_CHAR=2&MASK_COLOR=1&GET_SEQUENCE=on&NEW_VIEW=on&NUM_OVERVIEW=100&DESCRIPTIONS=100&ALIGNMENTS=100&FORMAT_OBJECT=Alignment&FORMAT_TYPE=HTML&OLD_BLAST=false", :target => "_blank" %> <%= image_tag("externesite.gif", :alt => "Blast")%></li>
+		<li> <%= link_to "Blast this peptide" , "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on&USER_FORMAT_DEFAULTS=on&PAGE=Proteins&PROGRAM=blastp&QUERY="+@sequence.sequence+"&GAPCOSTS=11%201&EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&DATABASE=nr&BLAST_PROGRAMS=blastp&MAX_NUM_SEQ=100&SHORT_QUERY_ADJUST=on&EXPECT=10&WORD_SIZE=3&MATRIX_NAME=BLOSUM62&COMPOSITION_BASED_STATISTICS=2&SHOW_OVERVIEW=on&SHOW_LINKOUT=on&ALIGNMENT_VIEW=Pairwise&MASK_CHAR=2&MASK_COLOR=1&GET_SEQUENCE=on&NEW_VIEW=on&NUM_OVERVIEW=100&DESCRIPTIONS=100&ALIGNMENTS=100&FORMAT_OBJECT=Alignment&FORMAT_TYPE=HTML&OLD_BLAST=false", :target => "_blank" %> <i class="icon-share-alt"></i></li>
 		
 		<li> Open in uniprot: 
 			<ul>
 				<% for entry in @entries do %>
 				<% unless entry.name.nil? %>
-				<li><%= link_to entry.name.name, "http://www.uniprot.org/uniprot/"+entry.uniprot_accession_number, :target => "_blank" %> <%= image_tag("externesite.gif", :alt => "Uniprot")%></li>
+				<li><%= link_to entry.name.name, "http://www.uniprot.org/uniprot/"+entry.uniprot_accession_number, :target => "_blank" %> <i class="icon-share-alt"></i></li>
 				<% end %>
 				<% end %>
 			</ul>
