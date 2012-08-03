@@ -17,13 +17,14 @@
 	<p>This table shows the complete taxonomic lineages of all UniProtKB records whose protein sequence contains <%= @sequence.sequence %>. Each row represents the complete taxonomic lineage of a single UniProtKB record. The first column contains the name extracted from the UniProtKB record, follow by columns representing valid taxonomic ranks ordered from superkingdom on the left to forma on the right. Only ranks used in the complete lineages of the records in which the peptide was found are displayed as columns in the table. To ease the interpretation of the table, rows are ordered according to the taxonomic names in the taxonomic rank columns and cells containing the same taxonomic name are marked with the same color code per column.</p>
 	<div id="sequence_table">
 		<% colors = Hash.new %>
-		<table>
-		<tr class="tabelheader"><td colspan="<%= @table_ranks.size %>">Lineage table</td></tr>
-		<tr class="legende">
+		<table class="table-no-hover table-condensed">
+		<thead>
+		<tr>
 			<% for rank in @table_ranks do%>
-				<td><%= rank %></td>
+				<th><%= rank %></th>
 			<% end %>
 		</tr>
+		</thead>
 		<% i = -1 %>
 		<% for lineage in @table_lineages do%>
 			<% i += 1 %>
