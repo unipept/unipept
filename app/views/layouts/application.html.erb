@@ -29,15 +29,8 @@
 	<div class='content'>
 	<!-- message of the day -->		
 	<% unless @motd.nil? %>
-		<div id="spotlight" class="spotlight">
-		  <div class="sectiontitle"><h2>Message of the Day</h2></div>
-		  <div class="columns">
-		    <div class="column">
-		      <div class="spacing-left">
-		      	<p><span><%= @motd %></span></p>	
-		      </div>	
-		    </div>
-		  </div>
+		<div class="alert alert-info">
+	  	<strong>Message of the Day: </strong><%= @motd %>
 		</div>
 	<% end %>
 	
