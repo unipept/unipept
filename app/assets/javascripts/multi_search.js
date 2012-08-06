@@ -42,6 +42,17 @@ function init_multi(data, data2, equate_il) {
     catch(err){
         error(err, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
+    
+    // set up the fullscreen stuff
+    if (fullScreenApi.supportsFullScreen){
+        $("#viz-tabs").after("<button id='zoom-btn' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
+    	$("#zoom-btn").click(function (){
+    	    if($(".tab-content .active").attr('id') == "sunburstWrapper")
+                window.fullScreenApi.requestFullScreen($("#sunburst").get(0));
+            else
+                window.fullScreenApi.requestFullScreen($("#treeMap").get(0));
+    	});
+    }
 }
 
 function initTreeMap(jsonData) {
@@ -118,6 +129,10 @@ function initTreeMap(jsonData) {
     });
     tm.loadJSON(jsonData);
     tm.refresh();
+    
+    //move the tooltip div to allow full screen tooltips
+    $("#_tooltip").appendTo("#treeMap");
+    
     //end
 }
 
@@ -290,14 +305,6 @@ function initSunburst(data) {
     // set up start levels
     setTimeout(function () {click(data); }, 1000);
     
-    // set up the fullscreen stuff
-    if (fullScreenApi.supportsFullScreen){
-        $("#viz-tabs").after("<button id='zoom-btn' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
-    	$("#zoom-btn").click(function (){
-            window.fullScreenApi.requestFullScreen($("#sunburst").get(0));
-    	});
-    }
-
     function click(d) {
         // set js tree
         if(d.name == "organism")
