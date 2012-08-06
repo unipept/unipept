@@ -382,20 +382,20 @@ span.dir{
 .jstree-default.jstree-focused {
 	background: #FFF !important;
 }
-.jstree-default.jstree-hover {
-	background: #ECEFF8 !important;
+.jstree-default .jstree-hovered {
+	background: @grayLighter !important;
 }
 .jstree-default .jstree-clicked {
-	background: #ECEFF8 !important;
-	border: 1px solid @hairlinegray !important;
+	background: @grayLighter !important;
+	border: 1px solid #cccccc !important;
 	.border-radius(3px);
 }
 #jstree_data{
 	width: 450px;
 	float: right;
 	padding: 5px;
-	background: #ECEFF8;
-	border: 1px solid @hairlinegray;
+	background: @grayLighter;
+	border: 1px solid #cccccc;
 	.border-radius(3px);
 }
 #jstree_data::before {
@@ -404,9 +404,9 @@ span.dir{
 	height: 0;
 	width: 0;
 	margin-left: -15px;
-	border: 10px solid @hairlinegray;
+	border: 10px solid #cccccc;
 	border-width: 10px 10px 10px 0;
-	border-color: transparent @hairlinegray transparent transparent;
+	border-color: transparent #cccccc transparent transparent;
 	position: absolute;
 }
 #jstree_data h3{
