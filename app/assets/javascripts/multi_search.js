@@ -223,7 +223,7 @@ function initSunburst(data) {
         .append("g")
         .attr("transform", "translate(" + (r + p) + "," + (r + p) + ")"); // set origin to radius center
 
-    var tooltip = d3.select("body")
+    var tooltip = d3.select("#sunburst")
     	.append("div")
     	.attr("class", "tip")
     	.style("position", "absolute")
@@ -289,6 +289,14 @@ function initSunburst(data) {
 
     // set up start levels
     setTimeout(function () {click(data); }, 1000);
+    
+    // set up the fullscreen stuff
+    if (fullScreenApi.supportsFullScreen){
+        $("#viz-tabs").after("<button id='zoom-btn' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
+    	$("#zoom-btn").click(function (){
+            window.fullScreenApi.requestFullScreen($("#sunburst").get(0));
+    	});
+    }
 
     function click(d) {
         // set js tree
