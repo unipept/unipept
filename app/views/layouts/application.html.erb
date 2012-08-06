@@ -10,7 +10,8 @@
 	<script type="text/javascript">
 
 	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-22900446-1']);
+	  <%= "_gaq.push(['_setAccount', 'UA-22900446-1']);" if Rails.env.production? %>
+	  <%= "_gaq.push(['_setAccount', 'UA-22900446-2']);" if Rails.env.development? %>
 	  _gaq.push(['_trackPageview']);
 
 	  (function() {
