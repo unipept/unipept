@@ -56,6 +56,13 @@ function init_multi(data, data2, equate_il) {
     }
     function resizeFullScreen(){
         if($(".tab-content .active").attr('id') == "sunburstWrapper"){
+                setTimeout(function (){
+                    var size = 740;
+                    if(window.fullScreenApi.isFullScreen())
+                        size = Math.min($(window).height(), $(window).width());
+                    $("#sunburst svg").attr("width", size);
+                    $("#sunburst svg").attr("height", size);
+                }, 1000);
         }
         else{
             window.tm.canvas.resize($("#treeMap").width(), $("#treeMap").height());
@@ -225,7 +232,7 @@ function initJsTree(data, equate_il) {
 }
 
 function initSunburst(data) {
-    var w = 732,   // width
+    var w = 730,   // width
         h = w,     // height
         r = w / 2, // radius   
         p = 5,     // padding
@@ -242,6 +249,7 @@ function initSunburst(data) {
     var div = d3.select("#sunburst");
 
     var vis = div.append("svg")
+        .attr("viewBox", "0 0 740 740")
         .attr("width", w + p * 2)
         .attr("height", h + p * 2)
         .attr("overflow", "hidden")
