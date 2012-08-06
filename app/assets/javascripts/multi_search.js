@@ -52,6 +52,14 @@ function init_multi(data, data2, equate_il) {
             else
                 window.fullScreenApi.requestFullScreen($("#treeMap").get(0));
     	});
+    	$(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange',resizeFullScreen);
+    }
+    function resizeFullScreen(){
+        if($(".tab-content .active").attr('id') == "sunburstWrapper"){
+        }
+        else{
+            window.tm.canvas.resize($("#treeMap").width(), $("#treeMap").height());
+        }
     }
 }
 
@@ -132,6 +140,8 @@ function initTreeMap(jsonData) {
     
     //move the tooltip div to allow full screen tooltips
     $("#_tooltip").appendTo("#treeMap");
+    
+    window.tm = tm;
     
     //end
 }
