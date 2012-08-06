@@ -433,7 +433,12 @@ function initSunburst(data) {
         }
     }
     function tooltipMove() {
-        tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 15) + "px");
+        if(window.fullScreenApi.isFullScreen()){
+            tooltip.style("top", (d3.event.clientY - 5) + "px").style("left", (d3.event.clientX + 15) + "px");
+        }
+        else{
+            tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 15) + "px");
+        }
     }
     function tooltipOut(d, i) {
         tooltip.style("visibility", "hidden");
