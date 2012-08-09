@@ -45,7 +45,7 @@ function init_multi(data, data2, equate_il) {
     
     // set up the fullscreen stuff
     if (fullScreenApi.supportsFullScreen){
-        $("#viz-tabs").after("<button id='zoom-btn' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
+        $("#buttons").prepend("<button id='zoom-btn' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
     	$("#zoom-btn").click(function (){
     	    if($(".tab-content .active").attr('id') == "sunburstWrapper")
                 window.fullScreenApi.requestFullScreen($("#sunburst").get(0));
@@ -68,6 +68,18 @@ function init_multi(data, data2, equate_il) {
             window.tm.canvas.resize($("#treeMap").width(), $("#treeMap").height());
         }
     }
+    
+    // set up save image stuff
+       $("#buttons").prepend("<button id='save-btn' class='btn btn-mini'><i class='icon-download'></i> Save as image</button>");
+   	$("#save-btn").click(function (){
+   	    $(".debug_dump").hide();
+   	    if($(".tab-content .active").attr('id') == "sunburstWrapper"){
+            error("", "Sorry, exporting the sunburst visualization isn't currently supported.");
+        }
+        else{
+            html2canvas($("#treeMap"), {onrendered : function (canvas){window.open(canvas.toDataURL(), '_blank');}});       
+        }     
+   	});
 }
 
 function initTreeMap(jsonData) {
