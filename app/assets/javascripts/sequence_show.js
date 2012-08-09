@@ -160,5 +160,11 @@ function init_sequence_show(data, lcaId) {
         }, 1000);
        
     }
+    
+    // set up save image stuff
+    $("#lineageTree").before("<button id='save-btn-lineage' class='btn btn-mini'><i class='icon-download'></i> Save tree as image</button>");
+	$("#save-btn-lineage").click(function (){
+        html2canvas($("#lineageTree"), {onrendered : function (canvas){window.open(canvas.toDataURL(), '_blank');}});
+	});
 
 }
