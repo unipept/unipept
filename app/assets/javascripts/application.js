@@ -42,7 +42,9 @@ function error(error, userMessage) {
         console.error(error);
     }
     if(userMessage){
-        $("#messages").append("<div class='alert alert-error'><strong>Oh snap!</strong> " + userMessage + "</div>");
+        var msg = $("<div class='alert alert-error' style='display: none;'><strong>Oh snap!</strong> " + userMessage + "</div>");
+        $("#messages").append(msg);
+        msg.show("normal");
     }
 }
 
