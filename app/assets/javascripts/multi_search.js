@@ -331,7 +331,7 @@ function initSunburst(data) {
         .text(function (d) { return d.depth ? d.name.split(" ")[2] || "" : ""; });
 
     textEnter.style("font-size", function (d) {
-        return Math.min(((r / levels) / this.getComputedTextLength() * 12), 12) + "px";
+        return Math.min(((r / levels) / this.getComputedTextLength() * 10)+1, 12) + "px";
     });
 
     // set up start levels
