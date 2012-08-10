@@ -74,7 +74,8 @@ function init_multi(data, data2, equate_il) {
    	$("#save-btn").click(function (){
    	    $(".debug_dump").hide();
    	    if($(".tab-content .active").attr('id') == "sunburstWrapper"){
-            error("", "Sorry, exporting the sunburst visualization isn't currently supported.");
+   	        var svg = $("#sunburst svg").wrap("<div></div>").parent().html();
+            $.post("/convert", { image: svg }, function (data){window.open(data, '_blank');});
         }
         else{
             html2canvas($("#treeMap"), {onrendered : function (canvas){window.open(canvas.toDataURL(), '_blank');}});       
@@ -308,6 +309,7 @@ function initSunburst(data) {
         .style("fill", function (d) {
             return brightness(d3.rgb(colour(d))) < 125 ? "#eee" : "#000"; // calculate text color
         })
+        .style("font-family", "font-family: Helvetica, 'Super Sans', sans-serif")
         .attr("dy", ".2em")
         .on("click", click)
         .on("mouseover", tooltipIn)
@@ -329,7 +331,7 @@ function initSunburst(data) {
         .text(function (d) { return d.depth ? d.name.split(" ")[2] || "" : ""; });
 
     textEnter.style("font-size", function (d) {
-        return Math.min(((r / levels) / this.getComputedTextLength() * 10), 10) + "px";
+        return Math.min(((r / levels) / this.getComputedTextLength() * 12), 12) + "px";
     });
 
     // set up start levels
