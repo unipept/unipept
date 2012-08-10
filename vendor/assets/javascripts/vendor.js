@@ -9,7 +9,3 @@
 
 //  export lineage tree and treemap to png
 //= require html2canvas/html2canvas.js
-
-//  export sunburst to png
-//= require canvg/canvg.js
-//= require canvg/rgbcolor.js
