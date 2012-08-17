@@ -34,6 +34,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`uniprot_entries` (
   `version` SMALLINT UNSIGNED NOT NULL ,
   `taxon_id` MEDIUMINT UNSIGNED NOT NULL ,
   `type` ENUM('swissprot', 'trembl') NOT NULL ,
+  `protein` TEXT NOT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_uniprot_entries_taxons` (`taxon_id` ASC) ,
   CONSTRAINT `fk_uniprot_entries_taxons`
@@ -123,6 +124,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`peptides` (
   `sequence_id` INT UNSIGNED NOT NULL ,
   `original_sequence_id` INT UNSIGNED NOT NULL ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
+  `position` SMALLINT UNSIGNED NOT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_peptides_sequences` (`sequence_id` ASC) ,
   INDEX `fk_peptides_uniprot_entries` (`uniprot_entry_id` ASC) ,
