@@ -68,14 +68,16 @@ public class UniprotEntry {
 		dbReferences.add(ref);
 	}
 
-	public List<String> digest() {
-		List<String> list = new ArrayList<String>();
+	public List<Pair> digest() {
+		List<Pair> list = new ArrayList<Pair>();
+		int position = 0;
 		String[] splitArray = sequence.replaceAll("([RK])([^P])", "$1,$2")
 				.replaceAll("([RK])([^P,])", "$1,$2").split(",");
 		for (String seq : splitArray) {
 			if (seq.length() >= MIN_PEPT_SIZE && seq.length() <= MAX_PEPT_SIZE) {
-				list.add(seq);
+				list.add(new Pair(seq, position));
 			}
+			position += seq.length();
 		}
 		return list;
 	}
@@ -88,5 +90,23 @@ public class UniprotEntry {
 	public String toString() {
 		return uniprotAccessionNumber + ", " + version + ", " + taxonId + ", " + type + ", "
 				+ sequence;
+	}
+
+	public class Pair {
+		private String sequence;
+		private int position;
+
+		public Pair(String sequence, int position) {
+			this.sequence = sequence;
+			this.position = position;
+		}
+
+		public String getSequence() {
+			return sequence;
+		}
+
+		public int getPosition() {
+			return position;
+		}
 	}
 }

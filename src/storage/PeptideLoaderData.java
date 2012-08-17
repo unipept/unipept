@@ -13,6 +13,7 @@ import java.util.Set;
 
 import xml.UniprotDbRef;
 import xml.UniprotEntry;
+import xml.UniprotEntry.Pair;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
@@ -65,10 +66,10 @@ public class PeptideLoaderData {
 					Statement.RETURN_GENERATED_KEYS);
 			addUniprotEntry = connection
 					.prepareStatement(
-							"INSERT INTO uniprot_entries (`uniprot_accession_number`, `version`, `taxon_id`, `type`) VALUES (?,?,?,?)",
+							"INSERT INTO uniprot_entries (`uniprot_accession_number`, `version`, `taxon_id`, `type`, `protein`) VALUES (?,?,?,?,?)",
 							Statement.RETURN_GENERATED_KEYS);
 			addPeptide = connection
-					.prepareStatement("INSERT INTO peptides (`sequence_id`, `uniprot_entry_id`, `original_sequence_id`) VALUES (?,?,?)");
+					.prepareStatement("INSERT INTO peptides (`sequence_id`, `uniprot_entry_id`, `original_sequence_id`, `position`) VALUES (?,?,?,?)");
 			addLineage = connection
 					.prepareStatement("INSERT INTO lineages (`taxon_id`) VALUES (?)");
 			addDbRef = connection
@@ -92,10 +93,11 @@ public class PeptideLoaderData {
 	 */
 	public void store(UniprotEntry entry) {
 		int uniprotEntryId = addUniprotEntry(entry.getUniprotAccessionNumber(), entry.getVersion(),
-				entry.getTaxonId(), entry.getType());
+				entry.getTaxonId(), entry.getType(), entry.getSequence());
 		if (uniprotEntryId != -1) { // failed to add entry
-			for (String sequence : entry.digest())
-				addData(sequence.replace("I", "L"), uniprotEntryId, sequence);
+			for (Pair p : entry.digest())
+				addData(p.getSequence().replace("I", "L"), uniprotEntryId, p.getSequence(),
+						p.getPosition());
 			for (UniprotDbRef ref : entry.getReferences())
 				addDbRef(ref, uniprotEntryId);
 		}
@@ -114,14 +116,18 @@ public class PeptideLoaderData {
 	 *            The taxonId of the organism of the entry
 	 * @param type
 	 *            The type of the entry. Can be swissprot or trembl
+	 * @param sequence
+	 *            The full sequence of the peptide.
 	 * @return The database ID of the uniprot entry.
 	 */
-	public int addUniprotEntry(String uniprotAccessionNumber, int version, int taxonId, String type) {
+	public int addUniprotEntry(String uniprotAccessionNumber, int version, int taxonId,
+			String type, String sequence) {
 		try {
 			addUniprotEntry.setString(1, uniprotAccessionNumber);
 			addUniprotEntry.setInt(2, version);
 			addUniprotEntry.setInt(3, taxonId);
 			addUniprotEntry.setString(4, type);
+			addUniprotEntry.setString(5, sequence);
 			addUniprotEntry.executeUpdate();
 			ResultSet res = addUniprotEntry.getGeneratedKeys();
 			res.next();
@@ -185,12 +191,15 @@ public class PeptideLoaderData {
 	 * @param uniprotEntryId
 	 *            The id of the uniprot entry from which the peptide data was
 	 *            retrieved.
+	 * @param position
+	 *            The starting position of the sequence in the full protein
 	 */
-	public void addData(String sequence, int uniprotEntryId, String originalSequence) {
+	public void addData(String sequence, int uniprotEntryId, String originalSequence, int position) {
 		try {
 			addPeptide.setInt(1, getSequenceId(sequence));
 			addPeptide.setInt(2, uniprotEntryId);
 			addPeptide.setInt(3, getSequenceId(originalSequence));
+			addPeptide.setInt(4, position);
 			addPeptide.executeUpdate();
 		} catch (SQLException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis())
