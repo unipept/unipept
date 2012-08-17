@@ -10,7 +10,7 @@ import java.util.List;
 public class UniprotEntry {
 
 	// peptide settings
-	private static final int MIN_PEPT_SIZE = 8;
+	private static final int MIN_PEPT_SIZE = 1;
 	private static final int MAX_PEPT_SIZE = 50;
 
 	private String uniprotAccessionNumber;
