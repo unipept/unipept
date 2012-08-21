@@ -164,7 +164,12 @@ function init_sequence_show(data, lcaId) {
     // set up save image stuff
     $("#buttons-single").prepend("<button id='save-btn-lineage' class='btn btn-mini'><i class='icon-download'></i> Save tree as image</button>");
 	$("#save-btn-lineage").click(function (){
-        html2canvas($("#lineageTree"), {onrendered : function (canvas){window.open(canvas.toDataURL(), '_blank');}});
+        html2canvas($("#lineageTree"), {
+            onrendered : function (canvas){
+                $("#save-as-modal .modal-body").html("<img src='" + canvas.toDataURL() + "' />");
+                $("#save-as-modal").modal();
+            }
+        });
 	});
 
 }
