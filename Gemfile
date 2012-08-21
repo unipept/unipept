@@ -10,7 +10,7 @@ gem 'will_paginate', '3.0'
 gem 'jquery-rails'
 
 # cas auth
-gem 'rubycas-client', git: 'git://github.com/bmesuere/rubycas-client.git', branch: 'master'
+gem 'rubycas-client', :git => 'git://github.com/bmesuere/rubycas-client.git', :branch => 'master'
 gem 'rubycas-client-rails', :git => 'git://github.com/bmesuere/rubycas-client-rails.git'
 
 # needed for asset creation
@@ -42,7 +42,7 @@ end
 group :assets do
   gem 'sass-rails', "3.2.5"
   gem 'coffee-rails', "3.2.2"
-  gem 'uglifier', "1.2.4"
+  gem 'uglifier', "1.2.7"
   gem 'twitter-bootstrap-rails'
 end
 
