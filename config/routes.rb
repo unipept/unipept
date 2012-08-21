@@ -18,6 +18,8 @@ UnipeptWeb::Application.routes.draw do
   match '/contact', :to => 'pages#contact'
   match '/about',   :to => 'pages#about'
   
+  match "/convert", :to => "imagemagick#convert"
+  
   # verbosity is needed to add namespace to controller
   get "cas/auth", :to => "cas#auth"
   get "cas/logout", :to => "cas#logout"

@@ -8,6 +8,8 @@
 	  <li><a href="#treeMapWrapper" data-toggle="tab">Treemap</a></li>
 	</ul>
 	
+	<div id="buttons"></div>
+	
 	<div class="tab-content multi-search">
 		<div class="tab-pane active" id="sunburstWrapper">
 			<h2 class="ghead"><span class="dir">Click a slice to zoom in and the center node to zoom out</span></h2>
@@ -48,3 +50,12 @@
 	$(function () {init_multi(data1, data2, <%=@equate_il %>);});
 </script>
 <% end %>
+
+<div id='save-as-modal' class='modal hide fade'>
+	<div class='modal-header'>
+		<button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button>
+		<h3>Right click the image to save to disk</h3>
+	</div>
+	<div class='modal-body'></div>
+	<!--<div class="modal-footer">If you use this figure in a publication, please cite us.</div>-->
+</div>
