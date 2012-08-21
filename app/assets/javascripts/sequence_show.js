@@ -137,7 +137,7 @@ function init_sequence_show(data, lcaId) {
     
     // set up the fullscreen stuff
     if (fullScreenApi.supportsFullScreen){
-        $("#lineageTree").before("<button id='zoom-btn-lineage' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
+        $("#buttons-single").prepend("<button id='zoom-btn-lineage' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
     	$("#zoom-btn-lineage").click(function (){
             window.fullScreenApi.requestFullScreen($("#lineageTree").get(0));
     	});
@@ -160,5 +160,16 @@ function init_sequence_show(data, lcaId) {
         }, 1000);
        
     }
+    
+    // set up save image stuff
+    $("#buttons-single").prepend("<button id='save-btn-lineage' class='btn btn-mini'><i class='icon-download'></i> Save tree as image</button>");
+	$("#save-btn-lineage").click(function (){
+        html2canvas($("#lineageTree"), {
+            onrendered : function (canvas){
+                $("#save-as-modal .modal-body").html("<img src='" + canvas.toDataURL() + "' />");
+                $("#save-as-modal").modal();
+            }
+        });
+	});
 
 }

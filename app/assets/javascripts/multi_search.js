@@ -27,7 +27,7 @@ function init_multi(data, data2, equate_il) {
     
     // set up the fullscreen stuff
     if (fullScreenApi.supportsFullScreen){
-        $("#viz-tabs").after("<button id='zoom-btn' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
+        $("#buttons").prepend("<button id='zoom-btn' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
     	$("#zoom-btn").click(function (){
     	    if($(".tab-content .active").attr('id') == "sunburstWrapper")
                 window.fullScreenApi.requestFullScreen($("#sunburst").get(0));
@@ -50,6 +50,27 @@ function init_multi(data, data2, equate_il) {
             window.tm.canvas.resize($("#treeMap").width(), $("#treeMap").height());
         }
     }
+    
+    // set up save image stuff
+       $("#buttons").prepend("<button id='save-btn' class='btn btn-mini'><i class='icon-download'></i> Save as image</button>");
+   	$("#save-btn").click(function (){
+   	    $(".debug_dump").hide();
+   	    if($(".tab-content .active").attr('id') == "sunburstWrapper"){
+   	        var svg = $("#sunburst svg").wrap("<div></div>").parent().html();
+            $.post("/convert", { image: svg }, function (data){
+                $("#save-as-modal .modal-body").html("<img src='" + data + "' />");
+                $("#save-as-modal").modal();
+            });
+        }
+        else{
+            html2canvas($("#treeMap"), {
+                onrendered : function (canvas){
+                    $("#save-as-modal .modal-body").html("<img src='" + canvas.toDataURL() + "' />");
+                    $("#save-as-modal").modal();
+                }
+            }); 
+        }
+   	});
 }
 
 function initTreeMap(jsonData) {
@@ -278,6 +299,7 @@ function initSunburst(data) {
         .style("fill", function (d) {
             return brightness(d3.rgb(colour(d))) < 125 ? "#eee" : "#000"; // calculate text color
         })
+        .style("font-family", "font-family: Helvetica, 'Super Sans', sans-serif")
         .attr("dy", ".2em")
         .on("click", click)
         .on("mouseover", tooltipIn)
@@ -299,7 +321,7 @@ function initSunburst(data) {
         .text(function (d) { return d.depth ? d.name.split(" ")[2] || "" : ""; });
 
     textEnter.style("font-size", function (d) {
-        return Math.min(((r / levels) / this.getComputedTextLength() * 10), 10) + "px";
+        return Math.min(((r / levels) / this.getComputedTextLength() * 10)+1, 12) + "px";
     });
 
     // set up start levels
