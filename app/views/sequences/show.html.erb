@@ -62,7 +62,7 @@
 	<!-- JIT Library File --> 
 	<!--[if IE]><%= javascript_include_tag "jit/Extras/excanvas.js"%><![endif]-->
 	<script type="text/javascript">
-		window.onload=init_sequence_show(<%= raw(@root)%>, <%= @lca_taxon.id %>);
+		$(function () {init_sequence_show(<%= raw(@root)%>, <%= @lca_taxon.id %>);});
 	</script>
 <% end %>
 
