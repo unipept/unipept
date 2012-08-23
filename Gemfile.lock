@@ -140,11 +140,10 @@ GEM
     treetop (1.4.10)
       polyglot
       polyglot (>= 0.3.1)
-    twitter-bootstrap-rails (2.1.1)
+    twitter-bootstrap-rails (2.1.2)
       actionpack (>= 3.1)
-      less-rails (~> 2.2.2)
+      less-rails (~> 2.2.3)
       railties (>= 3.1)
-      therubyracer (>= 0.10.1)
     tzinfo (0.3.33)
     uglifier (1.2.7)
       execjs (>= 0.3.0)
