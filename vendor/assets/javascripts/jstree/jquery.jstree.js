@@ -3407,12 +3407,16 @@
  * DOES NOT WORK WITH JSON PROGRESSIVE RENDER
  */
 (function ($) {
-	$.expr[':'].jstree_contains = function(a,i,m){
-		return (a.textContent || a.innerText || "").toLowerCase().indexOf(m[3].toLowerCase())>=0;
-	};
-	$.expr[':'].jstree_title_contains = function(a,i,m) {
-		return (a.getAttribute("title") || "").toLowerCase().indexOf(m[3].toLowerCase())>=0;
-	};
+    $.expr[':'].jstree_contains = jQuery.expr.createPseudo(function (arg) {
+        return function( elem ) {
+            return (elem.textContent || elem.innerText || "").toLowerCase().indexOf(arg.toLowerCase())>=0;
+        };
+    });
+    $.expr[':'].jstree_title_contains = jQuery.expr.createPseudo(function (arg) {
+        return function( elem ) {
+            return (elem.getAttribute("title") || "").toLowerCase().indexOf(arg.toLowerCase())>=0;
+        };
+    });
 	$.jstree.plugin("search", {
 		__init : function () {
 			this.data.search.str = "";
