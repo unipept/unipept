@@ -2,7 +2,7 @@ class TreeMapNode < Node
   #:metadata contains the sequences
   attr_accessor :state, :metadata, :attr
   
-  GRADIENT = Hash["no rank", "#933b19", "superkingdom", "#97411a", "kingdom", "#9b481b", "subkingdom", "#9f4e1d", "superphylum", "#a3551e", "phylum", "#a75c1f", "subphylum", "#ab6321", "superclass", "#ae6a22", "class", "#b27224", "subclass", "#b67925", "infraclass", "#ba8126", "superorder", "#bd8928", "order", "#c19129", "suborder", "#c5992b", "infraorder", "#c8a22d", "parvorder", "#ccaa2e", "superfamily", "#cfb230", "family", "#d0b935", "subfamily", "#d0bf3a", "tribe", "#d0c53f", "subtribe", "#d1ca44", "genus", "#d1cf48", "subgenus", "#cfd24d", "species group", "#cbd252", "species subgroup", "#c8d356", "species", "#c5d35b", "subspecies", "#c2d460", "varietas", "#bfd464", "forma", "#bdd569"]
+  GRADIENT = Hash["no rank", "#242a42", "superkingdom", "#26314a", "kingdom", "#283851", "subkingdom", "#294059", "superphylum", "#2b4760", "phylum", "#2d4f67", "subphylum", "#2f576d", "superclass", "#315e74", "class", "#35667a", "subclass", "#386e7f", "infraclass", "#3d7685", "superorder", "#427e8a", "order", "#48868e", "suborder", "#4f8e93", "infraorder", "#579697", "parvorder", "#5f9e9a", "superfamily", "#68a69e", "family", "#72aea1", "subfamily", "#7db6a5", "tribe", "#88bea8", "subtribe", "#93c5ab", "genus", "#9fcdae", "subgenus", "#abd4b2", "species group", "#b8dcb5", "species subgroup", "#c5e3b9", "species", "#d3eabd", "subspecies", "#e1f1c2", "varietas", "#eff8c7", "forma", "#fdffcc"]
   
   def initialize(id, name, rank="root")
     super(id, name)
