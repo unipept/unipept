@@ -328,12 +328,17 @@ function initSunburst(data) {
     setTimeout(function () {click(data); }, 1000);
     
     function click(d) {
-        // set js tree
-        if(d.name == "organism")
-            $("#jstree_search").val("");
-        else
-            $("#jstree_search").val(d.name);
-        $("#jstree_search").change();
+        // set jstree
+        try{
+            if(d.name == "organism")
+                $("#jstree_search").val("");
+            else
+                $("#jstree_search").val(d.name);
+            $("#jstree_search").change();
+        }
+        catch(err){
+            error(err);
+        }
         
         // perform animation
         currentMaxLevel = d.depth + levels;
