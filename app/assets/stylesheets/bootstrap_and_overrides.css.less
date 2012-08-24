@@ -29,15 +29,25 @@
 // @linkColor: #ff0000;
 
 @hairlinegray: #dddddd;
+@baseFontSize: 13px;
+@baseLineHeight: 18px;
 
 html,
 body {
     background-color: @grayLighter;
 	height: 100%;
 }
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+}
 h1 {
     font-size: 24px;
     line-height: @baseLineHeight * 1.5;
+}
+h2{
+    font-size: 24px;
+    line-height: 36px;
 }
 .content h2 {
     border-bottom: 1px solid @hairlinegray;
@@ -52,9 +62,13 @@ h1 {
 }
 h3 {
     font-size: 16px;
+    line-height: 27px;
     small {
         font-size: 12px;
     }
+}
+h4 {
+    font-size: 12px;
 }
 
 .container {
