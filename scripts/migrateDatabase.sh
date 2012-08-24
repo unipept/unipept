@@ -2,7 +2,7 @@
 ssh -p 4840 bmesuere@nibbler.ugent.be "mysqldump -u unipept -p --opt unipept | gzip - > dump.old.sql.gz"
 
 #dump new database
-ssh -p 4840 bmesuere@scruffy.ugent.be "mysqldump -u unipept -p --opt unipept | gzip - > dump.sql.gz"
+ssh -p 4840 bmesuere@scruffy.ugent.be "mysqldump -u unipept -p --ignore-table=unipept.posts --opt unipept | gzip - > dump.sql.gz"
 
 #transfer new db to local pc
 scp -P 4840 bmesuere@scruffy.ugent.be:dump.sql.gz .
