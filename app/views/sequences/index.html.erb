@@ -1,10 +1,9 @@
 <h1>All sequences</h1>
 <%= render 'shared/sequence_search' %>
-<br/>
-<%= will_paginate %>
+<%= page_navigation_links @sequences %>
 
 <ul class="sequences">
   <%= render @sequences %>
 </ul>
 
-<%= will_paginate %>
+<%= page_navigation_links @sequences %>

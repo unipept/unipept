@@ -101,7 +101,7 @@ function init_sequence_show(data, lcaId) {
                     node.data.$color = ['#aaa', '#baa', '#caa', '#daa', '#eaa', '#faa'][count];                    
                 }*/
             }
-        },
+        }
 
         //This method is called right before plotting
         //an edge. It's useful for changing an individual edge
@@ -132,7 +132,44 @@ function init_sequence_show(data, lcaId) {
     	st.onClick(lcaId);
 	}
 	catch(err){
-        error(err, "Oops, something went wrong while loading the lineage tree.");
+        error(err, "Something went wrong while loading the lineage tree.");
     }
+    
+    // set up the fullscreen stuff
+    if (fullScreenApi.supportsFullScreen){
+        $("#buttons-single").prepend("<button id='zoom-btn-lineage' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
+    	$("#zoom-btn-lineage").click(function (){
+            window.fullScreenApi.requestFullScreen($("#lineageTree").get(0));
+    	});
+    	$(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange',resizeFullScreen);
+    }
+    function resizeFullScreen(){       
+        setTimeout(function (){
+            var height = 500;
+            if(window.fullScreenApi.isFullScreen()){
+                height = $(window).height();
+                $("#lineageTree").height(height);
+                st.config.levelsToShow = 50;
+            }
+            else{
+                $("#lineageTree").height(500);
+                st.config.levelsToShow = 4;
+            }
+            st.canvas.resize($("#lineageTree").width(), height);
+            st.refresh();
+        }, 1000);
+       
+    }
+    
+    // set up save image stuff
+    $("#buttons-single").prepend("<button id='save-btn-lineage' class='btn btn-mini'><i class='icon-download'></i> Save tree as image</button>");
+	$("#save-btn-lineage").click(function (){
+        html2canvas($("#lineageTree"), {
+            onrendered : function (canvas){
+                $("#save-as-modal .modal-body").html("<img src='" + canvas.toDataURL() + "' />");
+                $("#save-as-modal").modal();
+            }
+        });
+	});
 
 }

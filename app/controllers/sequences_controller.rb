@@ -125,7 +125,7 @@ class SequencesController < ApplicationController
     query = params[:qs]
     
     @title = "Multi-peptide analysis result"
-    @title += " of " + search_name unless search_name == ""
+    @title += " of " + search_name unless search_name.nil? || search_name == ""
   
     if query.nil? || query.empty? 
       flash[:error] = "Your query was empty, please try again."

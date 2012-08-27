@@ -12,26 +12,26 @@
   <% end %>
 
   <div class="field">
-    <%= f.label :environment %><br />
+    <%= f.label :environment %>
     <%= f.text_field :environment %>
   </div>
   <div class="field">
-    <%= f.label :reference %><br />
+    <%= f.label :reference %>
     <%= f.text_area :reference, :rows => 3 %>
   </div>
   <div class="field">
-    <%= f.label :url %><br />
+    <%= f.label :url %>
     <%= f.text_field :url %>
   </div>
   <div class="field">
-    <%= f.label :project_website %><br />
+    <%= f.label :project_website %>
     <%= f.text_field :project_website %>
   </div>
 	<%= f.fields_for :dataset_items do |builder| %>
 		<%= render 'dataset_item_fields', :f => builder %>
 	<% end %>
-	<p><%= link_to_add_fields "Add item", f, :dataset_items %></p>
+	<p><i class='icon-plus'></i> <%= link_to_add_fields "add item", f, :dataset_items %></p>
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit :class => "btn-primary btn" %>
   </div>
 <% end %>

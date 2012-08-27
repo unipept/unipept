@@ -1,41 +1,4 @@
 function init_multi(data, data2, equate_il) {
-    
-    // Tabs
-    $(function() {
-        $("#mapTitleTreemap").click(function () {
-            $("#mapTitleTreemap").addClass("selected");
-            $("#mapTitleSunburst").removeClass("selected");
-            $("#treeMapWrapper").show();
-            $("#sunburstWrapper").hide();
-            return false;
-        });
-        $("#mapTitleSunburst").click(function () {
-            $("#mapTitleSunburst").addClass("selected");
-            $("#mapTitleTreemap").removeClass("selected");
-            $("#sunburstWrapper").show();
-            $("#treeMapWrapper").hide();
-            return false;
-        });
-    });
-
-    var labelType,
-    	useGradients,
-    	nativeTextSupport,
-    	animate;
-
-    (function () {
-        var ua = navigator.userAgent,
-    		iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
-    		typeOfCanvas = typeof HTMLCanvasElement,
-    		nativeCanvasSupport = (typeOfCanvas === 'object' || typeOfCanvas === 'function'),
-    		textSupport = nativeCanvasSupport && (typeof document.createElement('canvas').getContext('2d').fillText === 'function');
-        //I'm setting this based on the fact that ExCanvas provides text support for IE
-        //and that as of today iPhone/iPad current text support is lame
-        labelType = (!nativeCanvasSupport || (textSupport && !iStuff)) ? 'Native' : 'HTML';
-        nativeTextSupport = labelType === 'Native';
-        useGradients = nativeCanvasSupport;
-        animate = !(iStuff || !nativeCanvasSupport);
-    }());
 
     // sunburst
     try{
@@ -48,7 +11,7 @@ function init_multi(data, data2, equate_il) {
     // treemap
     try{
         initTreeMap(data);
-        $("#treeMapWrapper").hide();
+       $("#treeMapWrapper").removeClass("active");
     }
     catch(err){
         error(err, "Loading the Treemap visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
@@ -61,6 +24,53 @@ function init_multi(data, data2, equate_il) {
     catch(err){
         error(err, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
+    
+    // set up the fullscreen stuff
+    if (fullScreenApi.supportsFullScreen){
+        $("#buttons").prepend("<button id='zoom-btn' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
+    	$("#zoom-btn").click(function (){
+    	    if($(".tab-content .active").attr('id') == "sunburstWrapper")
+                window.fullScreenApi.requestFullScreen($("#sunburst").get(0));
+            else
+                window.fullScreenApi.requestFullScreen($("#treeMap").get(0));
+    	});
+    	$(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange',resizeFullScreen);
+    }
+    function resizeFullScreen(){
+        if($(".tab-content .active").attr('id') == "sunburstWrapper"){
+                setTimeout(function (){
+                    var size = 740;
+                    if(window.fullScreenApi.isFullScreen())
+                        size = Math.min($(window).height(), $(window).width());
+                    $("#sunburst svg").attr("width", size);
+                    $("#sunburst svg").attr("height", size);
+                }, 1000);
+        }
+        else{
+            window.tm.canvas.resize($("#treeMap").width(), $("#treeMap").height());
+        }
+    }
+    
+    // set up save image stuff
+       $("#buttons").prepend("<button id='save-btn' class='btn btn-mini'><i class='icon-download'></i> Save as image</button>");
+   	$("#save-btn").click(function (){
+   	    $(".debug_dump").hide();
+   	    if($(".tab-content .active").attr('id') == "sunburstWrapper"){
+   	        var svg = $("#sunburst svg").wrap("<div></div>").parent().html();
+            $.post("/convert", { image: svg }, function (data){
+                $("#save-as-modal .modal-body").html("<img src='" + data + "' />");
+                $("#save-as-modal").modal();
+            });
+        }
+        else{
+            html2canvas($("#treeMap"), {
+                onrendered : function (canvas){
+                    $("#save-as-modal .modal-body").html("<img src='" + canvas.toDataURL() + "' />");
+                    $("#save-as-modal").modal();
+                }
+            }); 
+        }
+   	});
 }
 
 function initTreeMap(jsonData) {
@@ -137,6 +147,12 @@ function initTreeMap(jsonData) {
     });
     tm.loadJSON(jsonData);
     tm.refresh();
+    
+    //move the tooltip div to allow full screen tooltips
+    $("#_tooltip").appendTo("#treeMap");
+    
+    window.tm = tm;
+    
     //end
 }
 
@@ -219,7 +235,7 @@ function initJsTree(data, equate_il) {
 }
 
 function initSunburst(data) {
-    var w = 732,   // width
+    var w = 730,   // width
         h = w,     // height
         r = w / 2, // radius   
         p = 5,     // padding
@@ -236,13 +252,14 @@ function initSunburst(data) {
     var div = d3.select("#sunburst");
 
     var vis = div.append("svg")
+        .attr("viewBox", "0 0 740 740")
         .attr("width", w + p * 2)
         .attr("height", h + p * 2)
         .attr("overflow", "hidden")
         .append("g")
         .attr("transform", "translate(" + (r + p) + "," + (r + p) + ")"); // set origin to radius center
 
-    var tooltip = d3.select("body")
+    var tooltip = d3.select("#sunburst")
     	.append("div")
     	.attr("class", "tip")
     	.style("position", "absolute")
@@ -282,6 +299,7 @@ function initSunburst(data) {
         .style("fill", function (d) {
             return brightness(d3.rgb(colour(d))) < 125 ? "#eee" : "#000"; // calculate text color
         })
+        .style("font-family", "font-family: Helvetica, 'Super Sans', sans-serif")
         .attr("dy", ".2em")
         .on("click", click)
         .on("mouseover", tooltipIn)
@@ -303,19 +321,24 @@ function initSunburst(data) {
         .text(function (d) { return d.depth ? d.name.split(" ")[2] || "" : ""; });
 
     textEnter.style("font-size", function (d) {
-        return Math.min(((r / levels) / this.getComputedTextLength() * 10), 10) + "px";
+        return Math.min(((r / levels) / this.getComputedTextLength() * 10)+1, 12) + "px";
     });
 
     // set up start levels
     setTimeout(function () {click(data); }, 1000);
-
+    
     function click(d) {
-        // set js tree
-        if(d.name == "organism")
-            $("#jstree_search").val("");
-        else
-            $("#jstree_search").val(d.name);
-        $("#jstree_search").change();
+        // set jstree
+        try{
+            if(d.name == "organism")
+                $("#jstree_search").val("");
+            else
+                $("#jstree_search").val(d.name);
+            $("#jstree_search").change();
+        }
+        catch(err){
+            error(err);
+        }
         
         // perform animation
         currentMaxLevel = d.depth + levels;
@@ -427,7 +450,12 @@ function initSunburst(data) {
         }
     }
     function tooltipMove() {
-        tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 15) + "px");
+        if(window.fullScreenApi.isFullScreen()){
+            tooltip.style("top", (d3.event.clientY - 5) + "px").style("left", (d3.event.clientX + 15) + "px");
+        }
+        else{
+            tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 15) + "px");
+        }
     }
     function tooltipOut(d, i) {
         tooltip.style("visibility", "hidden");
