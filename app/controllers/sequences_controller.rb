@@ -6,26 +6,29 @@ class SequencesController < ApplicationController
   # can be a peptide id or the sequence itself
   def show
     
+    # process parameters
+    #should we equate I and L?
     equate_il = ( params[:equate_il].nil? || params[:equate_il] != "false" )
+    # the sequence or id of the peptide
+    seq = params[:id].upcase!
     
     # process input
     if params[:id].match(/\A[0-9]+\z/) # params[:id] contains the id
-      @sequence = Sequence.find_by_id(params[:id], :include => {:peptides => {:uniprot_entry => :name}})
-    else  #params[:id] contains the sequence
-      params[:id].upcase!
-      params[:id].gsub!(/I/,'L') if equate_il
-      unless params[:id].index(/([KR])([^P])/).nil?
-        flash.now[:notice] = "The peptide you're looking for (#{params[:id]}) is not a tryptic peptide. ";
-        @sequence = params[:id].gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a.map{|l| Sequence.find_by_sequence(l, :include => {:peptides => :uniprot_entry})}.compact.first
+      @sequence = Sequence.find_by_id(seq, :include => {:peptides => {:uniprot_entry => :name}})
+    else  #seq contains the sequence
+      seq.gsub!(/I/,'L') if equate_il
+      unless seq.index(/([KR])([^P])/).nil?
+        flash.now[:notice] = "The peptide you're looking for (#{seq}) is not a tryptic peptide. ";
+        @sequence = seq.gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a.map{|l| Sequence.find_by_sequence(l, :include => {:peptides => :uniprot_entry})}.compact.first
         flash.now[:notice] += "We tried to split it, and searched for #{@sequence.sequence} instead. " unless @sequence.nil?
       else
-        @sequence = Sequence.find_by_sequence(params[:id], :include => {:peptides => {:uniprot_entry => :name}})
+        @sequence = Sequence.find_by_sequence(seq, :include => {:peptides => {:uniprot_entry => :name}})
       end    
     end
     
     # error on nil or empty sequence
     if @sequence.nil? || (@sequence.peptides.empty? && equate_il) || (@sequence.original_peptides.empty? && !equate_il)
-      flash[:error] = "No matches for peptide #{params[:id]}"
+      flash[:error] = "No matches for peptide #{seq}"
       flash[:notice] = flash.now[:notice]
       redirect_to sequences_path
     else
