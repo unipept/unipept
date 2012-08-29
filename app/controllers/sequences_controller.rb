@@ -6,7 +6,7 @@ class SequencesController < ApplicationController
   # can be a peptide id or the sequence itself
   def show
     
-    equate_il = params[:equate_il].nil? || params[:equate_il] != "false" ? true : false
+    equate_il = ( params[:equate_il].nil? || params[:equate_il] != "false" )
     
     # process input
     if params[:id].match(/\A[0-9]+\z/) # params[:id] contains the id
@@ -111,7 +111,7 @@ class SequencesController < ApplicationController
   
   # redirects to show
   def search
-    il = (params[:il_s] == 1 || params[:il_s] == "1") ? true : false
+    il = ( params[:il_s] == 1 || params[:il_s] == "1" )
     redirect_to "#{sequences_path}/#{params[:q]}/#{il}"
   end
   
