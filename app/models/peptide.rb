@@ -6,6 +6,7 @@
 #  sequence_id          :integer(4)      not null
 #  original_sequence_id :integer(4)      not null
 #  uniprot_entry_id     :integer(4)      not null
+#  position             :integer(2)      not null
 #
 
 class Peptide < ActiveRecord::Base

@@ -7,6 +7,7 @@
 #  version                  :integer(2)      not null
 #  taxon_id                 :integer(3)      not null
 #  type                     :string(0)       not null
+#  protein                  :text            default(""), not null
 #
 
 class UniprotEntry < ActiveRecord::Base
@@ -18,7 +19,7 @@ class UniprotEntry < ActiveRecord::Base
                                 :class_name   => 'Taxon'
                                 
   belongs_to :lineage,          :foreign_key  => "taxon_id", 
-                                :primary_key  => "id", 
+                                :primary_key  => "taxon_id", 
                                 :class_name   => 'Lineage'
   
   validates :uniprot_accession_number,  :presence   => true
