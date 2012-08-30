@@ -7,6 +7,7 @@
 #  version                  :integer(2)      not null
 #  taxon_id                 :integer(3)      not null
 #  type                     :string(0)       not null
+#  protein                  :text            default(""), not null
 #
 
 class UniprotEntry < ActiveRecord::Base
