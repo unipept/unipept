@@ -5,103 +5,161 @@ class SequencesController < ApplicationController
   # the peptide should be in params[:id] and 
   # can be a peptide id or the sequence itself
   def show
-    
     # process parameters
-    #should we equate I and L?
+    # should we equate I and L?
     equate_il = ( params[:equate_il].nil? || params[:equate_il] != "false" )
     # the sequence or id of the peptide
-    seq = params[:id].upcase!
+    seq = params[:id].upcase
     
-    # process input
-    if params[:id].match(/\A[0-9]+\z/) # params[:id] contains the id
-      @sequence = Sequence.find_by_id(seq, :include => {:peptides => {:uniprot_entry => :name}})
-    else  #seq contains the sequence
+    
+    # process the input, convert seq to a valid @sequence
+    # seq contains the id of the sequence
+    if seq.match(/\A[0-9]+\z/) 
+      sequence = Sequence.find_by_id(seq, :include => {:peptides => {:uniprot_entry => :name}})  
+    # seq contains the sequence
+    else
       seq.gsub!(/I/,'L') if equate_il
-      unless seq.index(/([KR])([^P])/).nil?
-        flash.now[:notice] = "The peptide you're looking for (#{seq}) is not a tryptic peptide. ";
-        @sequence = seq.gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a.map{|l| Sequence.find_by_sequence(l, :include => {:peptides => :uniprot_entry})}.compact.first
-        flash.now[:notice] += "We tried to split it, and searched for #{@sequence.sequence} instead. " unless @sequence.nil?
-      else
-        @sequence = Sequence.find_by_sequence(seq, :include => {:peptides => {:uniprot_entry => :name}})
-      end    
+      raise SequenceTooShortError if seq.length < 5
+      # try finding it in the database
+      sequence = Sequence.find_by_sequence(seq, :include => {:peptides => {:uniprot_entry => :name}})
     end
     
-    # error on nil or empty sequence
-    if @sequence.nil? || (@sequence.peptides.empty? && equate_il) || (@sequence.original_peptides.empty? && !equate_il)
-      flash[:error] = "No matches for peptide #{seq}"
-      flash[:notice] = flash.now[:notice]
-      redirect_to sequences_path
+    # we didn't find the sequence in the database
+    # don't panic, we still got a few aces up our sleeve
+    if sequence.nil?
+      # check if it's splitable
+      raise NoMatchesFoundError.new(seq) if seq.index(/([KR])([^P])/).nil?
+      
+      # split it
+      sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
+      if equate_il
+        long_sequences = sequences.select{|s| s.length >= 5}.map{|s| Sequence.find_by_sequence(s, :include => {:peptides => {:uniprot_entry => [:name, :lineage]}})}
+      else
+        long_sequences = sequences.select{|s| s.length >= 5}.map{|s| Sequence.find_by_sequence(s, :include => {:original_peptides => {:uniprot_entry => [:name, :lineage]}})}
+      end
+      
+      # check if it has a match for every sequence and at least one long part
+      raise NoMatchesFoundError.new(seq) if long_sequences.include? nil
+      raise SequenceTooShortError if long_sequences.size == 0
+      
+      # ok, we're done
+      @sequence_string = seq
+      multi = true
+      
+    # we did find something in the database, but will it blend?
     else
-      @title = "Tryptic peptide analysis of #{@sequence.sequence}"
+      # check if we have some peptides to work with
+      if (sequence.peptides.empty? && equate_il) || (sequence.original_peptides.empty? && !equate_il)
+        raise NoMatchesFoundError.new(sequence.sequence)
+      end
+      @sequence_string = sequence.sequence
+    end
+    
+    @title = "Tryptic peptide analysis of #{@sequence_string}"
+    
+    # get the uniprot entries of every peptide
+    # only used for the open in uniprot links
+    if multi
+      # calculate possible uniprot entries
+      if equate_il
+        temp_entries = long_sequences.map{|s| s.peptides.map(&:uniprot_entry)}
+      else
+        temp_entries = long_sequences.map{|s| s.original_peptides.map(&:uniprot_entry)}
+      end
       
-      # get the uniprot entries of every peptide
-      @entries = equate_il ? @sequence.peptides.map(&:uniprot_entry) : @sequence.original_peptides.map(&:uniprot_entry)
+      # take the intersection of all sets
+      @entries = temp_entries[0]
+      for i in 1..(temp_entries.size-1) do
+        @entries = @entries & temp_entries[i]
+      end
       
-      # LCA calculation
-      @lineages = @sequence.lineages(equate_il, true) #calculate lineages
-      @lca_taxon = Lineage.calculate_lca_taxon(@lineages) #calculate the LCA
-      @root = Node.new(1, "root") #start constructing the tree
-      last_node = @root
-      
-      #common lineage
-      @common_lineage = Array.new #construct the common lineage in this array
-      l = @lineages.select{|lineage| lineage[@lca_taxon.rank] == @lca_taxon.id}.first
-      l = @lineages.first if l.nil?
-      found = (@lca_taxon.name == "root")
-      #this might go wrong in the case where the first lineage doesn't contain the LCA (eg. nil)
-      while l.has_next? && !found do
-        t = l.next_t
+      # check if the protein contains the startsequence
+      if equate_il
+        @entries.select!{|e| e.protein.gsub(/I/,'L').include? seq}
+      else
+        @entries.select!{|e| e.protein.include? seq}
+      end
+      raise NoMatchesFoundError.new(seq) if @entries.size == 0 
+    else
+      @entries = equate_il ? sequence.peptides.map(&:uniprot_entry) : sequence.original_peptides.map(&:uniprot_entry)
+    end
+    
+    
+    # LCA calculation
+    if multi
+      @lineages = @entries.map(&:lineage).uniq
+    else
+      @lineages = sequence.lineages(equate_il, true)
+    end
+    @lca_taxon = Lineage.calculate_lca_taxon(@lineages) #calculate the LCA
+    @root = Node.new(1, "root") #start constructing the tree
+    last_node = @root
+    
+    #common lineage
+    @common_lineage = Array.new #construct the common lineage in this array
+    l = @lineages.select{|lineage| lineage[@lca_taxon.rank] == @lca_taxon.id}.first
+    l = @lineages.first if l.nil?
+    found = (@lca_taxon.name == "root")
+    #this might go wrong in the case where the first lineage doesn't contain the LCA (eg. nil)
+    while l.has_next? && !found do
+      t = l.next_t
+      unless t.nil? then
+        found = (@lca_taxon.id == t.id)
+        @common_lineage << t
+        last_node = last_node.add_child(Node.new(t.id, t.name), @root)
+      end
+    end
+    
+    #distinct lineage 
+    @lineages.map{|lineage| lineage.set_iterator_position(l.get_iterator_position)}
+    @distinct_lineages = Array.new
+    for lineage in @lineages do
+      last_node_loop = last_node
+      l = Array.new
+      while lineage.has_next?
+        t = lineage.next_t
         unless t.nil? then
-          found = (@lca_taxon.id == t.id)
-          @common_lineage << t
-          last_node = last_node.add_child(Node.new(t.id, t.name), @root)
+          l << t.name # add the taxon name to de lineage
+          node = Node.find_by_id(t.id, @root)
+          if node.nil? # if the node isn't create yet
+            node = Node.new(t.id, t.name)
+            last_node_loop = last_node_loop.add_child(node, @root);
+          else
+            last_node_loop = node;
+          end
         end
       end
-      
-      #distinct lineage 
-      @lineages.map{|lineage| lineage.set_iterator_position(l.get_iterator_position)}
-      @distinct_lineages = Array.new
-      for lineage in @lineages do
-        last_node_loop = last_node
-        l = Array.new
-    		while lineage.has_next?
-    			t = lineage.next_t
-    			unless t.nil? then
-    			  l << t.name # add the taxon name to de lineage
-    			  node = Node.find_by_id(t.id, @root)
-    			  if node.nil? # if the node isn't create yet
-    			    node = Node.new(t.id, t.name)
-    			    last_node_loop = last_node_loop.add_child(node, @root);
-  			    else
-  			      last_node_loop = node;
-			      end
-    			end
-    		end
-    		@distinct_lineages << l.join(", ")
-    	end
-    	
-    	#don't show the root when we don't need it
-	    @root = @root.children.count > 1 ? Oj.dump(@root) : Oj.dump(@root.children[0])
-	    
-	    #Table stuff
-	    @table_lineages = Array.new
-	    @table_ranks = Array.new
-	    
-	    @table_lineages << @lineages.map{|lineage| lineage.name.name}
-	    @table_ranks << "UniProtKB record"
-	    @lineages.map{|lineage| lineage.set_iterator_position(0)} #reset the iterator
-	    while @lineages[0].has_next?
-	      temp = @lineages.map{|lineage| lineage.next_t}
-	      if temp.compact.length > 0 # don't do anything if it only contains nils
-	        @table_lineages << temp
-	        @table_ranks << temp.compact[0].rank
-	      end
-      end
-      
-      # sort by id from left to right
-      root_taxon = Taxon.find(1)
-	    @table_lineages = @table_lineages.transpose.sort_by{ |k| k[1..-1].map!{|l| l || root_taxon} }
+      @distinct_lineages << l.join(", ")
     end
+    
+    #don't show the root when we don't need it
+    @root = @root.children.count > 1 ? Oj.dump(@root) : Oj.dump(@root.children[0])
+    
+    #Table stuff
+    @table_lineages = Array.new
+    @table_ranks = Array.new
+    
+    @table_lineages << @lineages.map{|lineage| lineage.name.name}
+    @table_ranks << "UniProtKB record"
+    @lineages.map{|lineage| lineage.set_iterator_position(0)} #reset the iterator
+    while @lineages[0].has_next?
+      temp = @lineages.map{|lineage| lineage.next_t}
+      if temp.compact.length > 0 # don't do anything if it only contains nils
+        @table_lineages << temp
+        @table_ranks << temp.compact[0].rank
+      end
+    end
+    
+    # sort by id from left to right
+    root_taxon = Taxon.find(1)
+    @table_lineages = @table_lineages.transpose.sort_by{ |k| k[1..-1].map!{|l| l || root_taxon} }
+  
+  rescue SequenceTooShortError
+    flash[:error] = "The sequence you searched for is too short."
+    redirect_to sequences_path
+  rescue NoMatchesFoundError => e
+      flash[:error] = "No matches for peptide #{e.message}"
+      redirect_to sequences_path
   end
   
   
@@ -231,3 +289,7 @@ class SequencesController < ApplicationController
     end
   end
 end
+
+#some errors
+class SequenceTooShortError < StandardError; end
+class NoMatchesFoundError < StandardError; end

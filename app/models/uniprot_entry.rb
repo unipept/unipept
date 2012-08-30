@@ -18,7 +18,7 @@ class UniprotEntry < ActiveRecord::Base
                                 :class_name   => 'Taxon'
                                 
   belongs_to :lineage,          :foreign_key  => "taxon_id", 
-                                :primary_key  => "id", 
+                                :primary_key  => "taxon_id", 
                                 :class_name   => 'Lineage'
   
   validates :uniprot_accession_number,  :presence   => true
