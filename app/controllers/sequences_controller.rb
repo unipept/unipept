@@ -98,6 +98,9 @@ class SequencesController < ApplicationController
       # sort by id from left to right
       root_taxon = Taxon.find(1)
 	    @table_lineages = @table_lineages.transpose.sort_by{ |k| k[1..-1].map!{|l| l || root_taxon} }
+	    
+	    #sort entries
+	    @entries.sort_by!{|e| e.name.name}
     end
   end
   
