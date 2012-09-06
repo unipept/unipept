@@ -85,7 +85,7 @@ class SequencesController < ApplicationController
 	    @table_ranks = Array.new
 	    
 	    @table_lineages << @lineages.map{|lineage| lineage.name.name}
-	    @table_ranks << "UniProtKB record"
+	    @table_ranks << "Organism"
 	    @lineages.map{|lineage| lineage.set_iterator_position(0)} #reset the iterator
 	    while @lineages[0].has_next?
 	      temp = @lineages.map{|lineage| lineage.next_t}
@@ -98,6 +98,9 @@ class SequencesController < ApplicationController
       # sort by id from left to right
       root_taxon = Taxon.find(1)
 	    @table_lineages = @table_lineages.transpose.sort_by{ |k| k[1..-1].map!{|l| l || root_taxon} }
+	    
+	    #sort entries
+	    @entries.sort_by!{|e| e.name.name}
     end
   end
   
