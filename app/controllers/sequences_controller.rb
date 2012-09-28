@@ -31,7 +31,7 @@ class SequencesController < ApplicationController
       raise NoMatchesFoundError.new(seq) if seq.index(/([KR])([^P])/).nil?
       
       # split it
-      sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
+      sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
       if equate_il
         long_sequences = sequences.select{|s| s.length >= 5}.map{|s| Sequence.find_by_sequence(s, :include => {:peptides => {:uniprot_entry => [:name, :lineage]}})}
       else
@@ -195,10 +195,9 @@ class SequencesController < ApplicationController
       #export stuff
       csv_string = CSV.generate_line ["peptide"].concat(Lineage.ranks) if export
     
-      # remove duplicates, split missed cleavages, substitute I by L, ...
-      data = query.upcase.gsub(/([KR])([^P\r])/,"\\1\n\\2").gsub(/([KR])([^P\r])/,"\\1\n\\2")
-      data = data.gsub(/I/,'L') if @equate_il
-      data = data.lines.map(&:strip).to_a.select{|l| l.size >= 8 && l.size <= 50 }
+      # remove duplicates, filter shorts, substitute I by L, ...
+      data = query.upcase.gsub(/I/,'L') if @equate_il
+      data = data.lines.map(&:strip).to_a.select{|l| l.size >= 5}
       data = data.uniq if filter_duplicates
     
       # set metrics
@@ -214,7 +213,6 @@ class SequencesController < ApplicationController
         sequences = Sequence.find_all_by_sequence(data, :include => {:lca_t => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}})
       end
       sequences.each do |sequence| # for every sequence in query
-        #lca_t = Taxon.find_by_id(sequence.calculate_lca(@equate_il))
         lca_t = sequence.calculate_lca(@equate_il, true)
         unless lca_t.nil?
           @number_found += 1
@@ -223,6 +221,54 @@ class SequencesController < ApplicationController
         end
         @misses.delete(sequence.sequence)
       end  
+      
+      # handle the misses
+      for seq in @misses
+        sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
+        if @equate_il
+          long_sequences = sequences.select{|s| s.length >= 5}.map{|s| Sequence.find_by_sequence(s, :include => {:peptides => {:uniprot_entry => [:name, :lineage]}})}
+        else
+          long_sequences = sequences.select{|s| s.length >= 5}.map{|s| Sequence.find_by_sequence(s, :include => {:original_peptides => {:uniprot_entry => [:name, :lineage]}})}
+        end
+        
+        # jump the loop
+        next if long_sequences.include? nil
+        next if long_sequences.size == 0
+        
+        # calculate possible uniprot entries
+        if @equate_il
+          temp_entries = long_sequences.map{|s| s.peptides.map(&:uniprot_entry)}
+        else
+          temp_entries = long_sequences.map{|s| s.original_peptides.map(&:uniprot_entry)}
+        end
+
+        # take the intersection of all sets
+        entries = temp_entries[0]
+        for i in 1..(temp_entries.size-1) do
+          entries = entries & temp_entries[i]
+        end
+
+        # check if the protein contains the startsequence
+        if @equate_il
+          entries.select!{|e| e.protein.gsub(/I/,'L').include? seq}
+        else
+          entries.select!{|e| e.protein.include? seq}
+        end
+        
+        # skip if nothing left
+        next if entries.size == 0
+        
+        seq_lins = entries.map(&:lineage).uniq
+        lca_t = Lineage.calculate_lca_taxon(seq_lins) #calculate the LCA
+        
+        unless lca_t.nil?
+          @number_found += 1
+          @matches[lca_t] = Array.new if @matches[lca_t].nil?
+          @matches[lca_t] << seq
+        end
+        @misses.delete(seq)
+        
+      end
       
       @misses.sort! 
       
