@@ -210,6 +210,8 @@ class SequencesController < ApplicationController
       # build the resultset
       @matches = Hash.new
       @misses = data
+      logger.debug misses.size
+      logger.debug misses
       if @equate_il
         sequences = Sequence.find_all_by_sequence(data, :include => {:lca_il_t => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}})
       else
@@ -226,6 +228,8 @@ class SequencesController < ApplicationController
       end  
       
       # handle the misses
+      logger.debug misses.size
+      logger.debug misses
       for seq in @misses
         logger.debug seq
         sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
