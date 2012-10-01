@@ -210,8 +210,6 @@ class SequencesController < ApplicationController
       # build the resultset
       @matches = Hash.new
       @misses = data
-      logger.debug @misses.size
-      logger.debug @misses
       if @equate_il
         sequences = Sequence.find_all_by_sequence(data, :include => {:lca_il_t => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}})
       else
@@ -228,17 +226,12 @@ class SequencesController < ApplicationController
       end  
       
       # handle the misses
-      logger.debug @misses.size
-      logger.debug @misses
       iter = Array.new(@misses)
       for seq in iter
-        logger.debug seq
         sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
-        logger.debug sequences.to_s if seq=="AEAHLKAGAR"
         next if sequences.size == 1
         if @equate_il
           long_sequences = sequences.select{|s| s.length >= 5}.map{|s| Sequence.find_by_sequence(s, :include => {:peptides => {:uniprot_entry => [:name, :lineage]}})}
-          logger.debug long_sequences.to_s if seq=="AEAHLKAGAR"
         else
           long_sequences = sequences.select{|s| s.length >= 5}.map{|s| Sequence.find_by_sequence(s, :include => {:original_peptides => {:uniprot_entry => [:name, :lineage]}})}
         end
@@ -250,7 +243,6 @@ class SequencesController < ApplicationController
         # calculate possible uniprot entries
         if @equate_il
           temp_entries = long_sequences.map{|s| s.peptides.map(&:uniprot_entry)}
-          logger.debug temp_entries.to_s if seq=="AEAHLKAGAR"
         else
           temp_entries = long_sequences.map{|s| s.original_peptides.map(&:uniprot_entry)}
         end
@@ -260,12 +252,10 @@ class SequencesController < ApplicationController
         for i in 1..(temp_entries.size-1) do
           entries = entries & temp_entries[i]
         end
-        logger.debug entries.to_s if seq=="AEAHLKAGAR"
 
         # check if the protein contains the startsequence
         if @equate_il
           entries.select!{|e| e.protein.gsub(/I/,'L').include? seq}
-          logger.debug entries.to_s if seq=="AEAHLKAGAR"
         else
           entries.select!{|e| e.protein.include? seq}
         end
@@ -274,9 +264,7 @@ class SequencesController < ApplicationController
         next if entries.size == 0
         
         seq_lins = entries.map(&:lineage).uniq
-        logger.debug seq_lins.to_s if seq=="AEAHLKAGAR"
         lca_t = Lineage.calculate_lca_taxon(seq_lins) #calculate the LCA
-        logger.debug lca_t.to_s if seq=="AEAHLKAGAR"
         
         unless lca_t.nil?
           @number_found += 1
