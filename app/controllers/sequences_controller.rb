@@ -227,6 +227,7 @@ class SequencesController < ApplicationController
       
       # handle the misses
       for seq in @misses
+        logger.debug seq
         sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
         logger.debug sequences.to_s if seq=="AEAHLKAGAR"
         next if sequences.size == 1
