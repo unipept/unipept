@@ -15,7 +15,7 @@ class Counter < ActiveRecord::Base
     while id.value < max
       id.value += 1
       sequence = Sequence.find_by_id(id.value)
-      if !sequence.nil? && sequence.sequence.length >= 5
+      if !sequence.nil?
         lca = sequence.calculate_lca(true)
         unless lca.nil?
           lca_taxon = Taxon.find_by_id(lca)
@@ -25,10 +25,6 @@ class Counter < ActiveRecord::Base
             c.save;
           end
         end
-      else
-        Peptide.delete_all("sequence_id = #{id.value}")
-        Peptide.delete_all("original_sequence_id = #{id.value}")
-        Sequence.delete(id.value)
       end
       id.save;
     end
