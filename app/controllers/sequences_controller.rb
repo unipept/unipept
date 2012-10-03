@@ -199,7 +199,8 @@ class SequencesController < ApplicationController
       csv_string = CSV.generate_line ["peptide"].concat(Lineage.ranks) if export
     
       # remove duplicates, filter shorts, substitute I by L, ...
-      data = query.upcase.gsub(/I/,'L') if @equate_il
+      data = query.upcase
+      data = data.gsub(/I/,'L') if @equate_il
       data = data.lines.map(&:strip).to_a.select{|l| l.size >= 5}
       data = data.uniq if filter_duplicates
     
