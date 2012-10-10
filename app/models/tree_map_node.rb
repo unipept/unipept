@@ -72,10 +72,6 @@ class TreeMapNode < Node
     end
   end
   
-  def wut
-    logger.info "testje"
-  end
-  
   # Sorts the peptides lists and children alphabetically
   def sort_peptides_and_children
     @children.sort_by!(&:name) unless @children.empty?

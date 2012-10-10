@@ -184,6 +184,7 @@ class SequencesController < ApplicationController
     # set search parameters
     @equate_il = !params[:il].nil?
     filter_duplicates = !params[:dupes].nil?
+    handle_missed = !params[:missed].nil?
     export = !params[:export].nil?
     search_name = params[:search_name]
     query = params[:qs]
@@ -227,55 +228,56 @@ class SequencesController < ApplicationController
       end  
       
       # handle the misses
-      iter = Array.new(@misses)
-      for seq in iter
-        sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
-        next if sequences.size == 1
-        if @equate_il
-          long_sequences = sequences.select{|s| s.length >= 5}.map{|s| Sequence.find_by_sequence(s, :include => {:peptides => {:uniprot_entry => [:name, :lineage]}})}
-        else
-          long_sequences = sequences.select{|s| s.length >= 5}.map{|s| Sequence.find_by_sequence(s, :include => {:original_peptides => {:uniprot_entry => [:name, :lineage]}})}
-        end
+      if handle_missed
+        iter = Array.new(@misses)
+        for seq in iter
+          sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
+          next if sequences.size == 1
+          if @equate_il
+            long_sequences = sequences.select{|s| s.length >= 5}.map{|s| Sequence.find_by_sequence(s, :include => {:peptides => {:uniprot_entry => [:name, :lineage]}})}
+          else
+            long_sequences = sequences.select{|s| s.length >= 5}.map{|s| Sequence.find_by_sequence(s, :include => {:original_peptides => {:uniprot_entry => [:name, :lineage]}})}
+          end
         
-        # jump the loop
-        next if long_sequences.include? nil
-        next if long_sequences.size == 0
+          # jump the loop
+          next if long_sequences.include? nil
+          next if long_sequences.size == 0
         
-        # calculate possible uniprot entries
-        if @equate_il
-          temp_entries = long_sequences.map{|s| s.peptides.map(&:uniprot_entry)}
-        else
-          temp_entries = long_sequences.map{|s| s.original_peptides.map(&:uniprot_entry)}
-        end
+          # calculate possible uniprot entries
+          if @equate_il
+            temp_entries = long_sequences.map{|s| s.peptides.map(&:uniprot_entry)}
+          else
+            temp_entries = long_sequences.map{|s| s.original_peptides.map(&:uniprot_entry)}
+          end
 
-        # take the intersection of all sets
-        entries = temp_entries[0]
-        for i in 1..(temp_entries.size-1) do
-          entries = entries & temp_entries[i]
-        end
+          # take the intersection of all sets
+          entries = temp_entries[0]
+          for i in 1..(temp_entries.size-1) do
+            entries = entries & temp_entries[i]
+          end
 
-        # check if the protein contains the startsequence
-        if @equate_il
-          entries.select!{|e| e.protein.gsub(/I/,'L').include? seq}
-        else
-          entries.select!{|e| e.protein.include? seq}
+          # check if the protein contains the startsequence
+          if @equate_il
+            entries.select!{|e| e.protein.gsub(/I/,'L').include? seq}
+          else
+            entries.select!{|e| e.protein.include? seq}
+          end
+        
+          # skip if nothing left
+          next if entries.size == 0
+        
+          seq_lins = entries.map(&:lineage).uniq
+          lca_t = Lineage.calculate_lca_taxon(seq_lins) #calculate the LCA
+        
+          unless lca_t.nil?
+            @number_found += 1
+            @matches[lca_t] = Array.new if @matches[lca_t].nil?
+            @matches[lca_t] << seq
+          end
+          @misses.delete(seq)
+        
         end
-        
-        # skip if nothing left
-        next if entries.size == 0
-        
-        seq_lins = entries.map(&:lineage).uniq
-        lca_t = Lineage.calculate_lca_taxon(seq_lins) #calculate the LCA
-        
-        unless lca_t.nil?
-          @number_found += 1
-          @matches[lca_t] = Array.new if @matches[lca_t].nil?
-          @matches[lca_t] << seq
-        end
-        @misses.delete(seq)
-        
       end
-      
       @misses.sort! 
       
       @intro_text = "#{@number_found} out of #{number_searched_for} #{"peptide".send(number_searched_for != 1 ? :pluralize : :to_s)}  were matched"
