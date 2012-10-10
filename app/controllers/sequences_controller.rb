@@ -202,6 +202,7 @@ class SequencesController < ApplicationController
       # remove duplicates, filter shorts, substitute I by L, ...
       data = query.upcase
       data = data.gsub(/I/,'L') if @equate_il
+      data = data.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2") unless handle_missed
       data = data.lines.map(&:strip).to_a.select{|l| l.size >= 5}
       data = data.uniq if filter_duplicates
     
@@ -286,6 +287,8 @@ class SequencesController < ApplicationController
         @intro_text += "peptides were deduplicated" if filter_duplicates
         @intro_text += ", " if filter_duplicates && @equate_il 
         @intro_text += "I and L residues were equated" if @equate_il
+        @intro_text += ", " if filter_duplicates || @equate_il
+        @intro_text += handle_missed ? "advanced missed cleavage handling" : "simple missed cleavage handling"
         @intro_text += ")"
       end
       @intro_text += "."
