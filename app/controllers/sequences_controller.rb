@@ -234,10 +234,11 @@ class SequencesController < ApplicationController
         for seq in iter
           sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
           next if sequences.size == 1
+          sequences = sequences.select{|s| s.length >= 7}.length >=1 ? sequences.select{|s| s.length >= 7} : sequences.select{|s| s.length >= 5}
           if @equate_il
-            long_sequences = sequences.select{|s| s.length >= 5}.map{|s| Sequence.find_by_sequence(s, :include => {:peptides => {:uniprot_entry => :lineage}})}
+            long_sequences = sequences.map{|s| Sequence.find_by_sequence(s, :include => {:peptides => {:uniprot_entry => :lineage}})}
           else
-            long_sequences = sequences.select{|s| s.length >= 5}.map{|s| Sequence.find_by_sequence(s, :include => {:original_peptides => {:uniprot_entry => :lineage}})}
+            long_sequences = sequences.map{|s| Sequence.find_by_sequence(s, :include => {:original_peptides => {:uniprot_entry => :lineage}})}
           end
         
           # jump the loop
