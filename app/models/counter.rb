@@ -15,13 +15,15 @@ class Counter < ActiveRecord::Base
     while id.value < max
       id.value += 1
       sequence = Sequence.find_by_id(id.value)
-      lca = sequence.calculate_lca(true)
-      unless lca.nil?
-        lca_taxon = Taxon.find_by_id(lca)
-        c = lca_taxon.name == "root" ? Counter.find_by_name("root") : Counter.find_by_name(lca_taxon.rank);
-        if !c.nil?
-          c.value += 1
-          c.save;
+      if !sequence.nil?
+        lca = sequence.calculate_lca(true)
+        unless lca.nil?
+          lca_taxon = Taxon.find_by_id(lca)
+          c = lca_taxon.name == "root" ? Counter.find_by_name("root") : Counter.find_by_name(lca_taxon.rank);
+          if !c.nil?
+            c.value += 1
+            c.save;
+          end
         end
       end
       id.save;

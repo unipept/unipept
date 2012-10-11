@@ -35,7 +35,7 @@ module ApplicationHelper
       end
 
       def gap
-        tag :li, link(super, '#'), :class => 'disabled'
+        tag :li, link("&hellip;", '#'), :class => 'disabled'
       end
 
       def previous_or_next_page(page, text, classname)

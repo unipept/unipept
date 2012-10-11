@@ -22,6 +22,7 @@ end
 
 task :prod do
   set :deploy_to, "/home/bmesuere/rails"
+  set :branch, "master"
   set :user, "bmesuere"
   set :use_sudo, false
   set :port, 4840

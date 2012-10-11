@@ -7,10 +7,13 @@
 	<div id="more_options_form">
 	<h4>Advanced search options</h4>
 	<%= check_box_tag(:il, 1, true) %>
-	<%= label_tag(:il, "Equate I and L?") %>
+	<%= label_tag(:il, "Equate I and L") %>
 	<br/>
 	<%= check_box_tag(:dupes, 1, true) %>
-	<%= label_tag(:dupes, "Filter duplicate peptides?") %>
+	<%= label_tag(:dupes, "Filter duplicate peptides") %>
+	<br/>
+	<%= check_box_tag(:missed, 1, false) %>
+	<%= label_tag(:missed, "Advanced missed cleavage handling") %>
 	<br/>
 	<%= check_box_tag(:export, 1, false) %>
 	<%= label_tag(:export, "Export to CSV") %>
