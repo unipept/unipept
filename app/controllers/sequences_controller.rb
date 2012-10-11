@@ -235,9 +235,9 @@ class SequencesController < ApplicationController
           sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
           next if sequences.size == 1
           if @equate_il
-            long_sequences = sequences.select{|s| s.length >= 5}.map{|s| Sequence.find_by_sequence(s, :include => {:peptides => {:uniprot_entry => [:name, :lineage]}})}
+            long_sequences = sequences.select{|s| s.length >= 5}.map{|s| Sequence.find_by_sequence(s, :include => {:peptides => {:uniprot_entry => :lineage}})}
           else
-            long_sequences = sequences.select{|s| s.length >= 5}.map{|s| Sequence.find_by_sequence(s, :include => {:original_peptides => {:uniprot_entry => [:name, :lineage]}})}
+            long_sequences = sequences.select{|s| s.length >= 5}.map{|s| Sequence.find_by_sequence(s, :include => {:original_peptides => {:uniprot_entry => :lineage}})}
           end
         
           # jump the loop
