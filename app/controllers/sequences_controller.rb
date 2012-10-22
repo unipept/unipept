@@ -62,9 +62,9 @@ class SequencesController < ApplicationController
     if multi
       # calculate possible uniprot entries
       if equate_il
-        temp_entries = long_sequences.map{|s| s.peptides.map(&:uniprot_entry)}
+        temp_entries = long_sequences.map{|s| s.peptides.map(&:uniprot_entry).to_set}
       else
-        temp_entries = long_sequences.map{|s| s.original_peptides.map(&:uniprot_entry)}
+        temp_entries = long_sequences.map{|s| s.original_peptides.map(&:uniprot_entry).to_set}
       end
       
       # take the intersection of all sets
@@ -155,7 +155,7 @@ class SequencesController < ApplicationController
     @table_lineages = @table_lineages.transpose.sort_by{ |k| k[1..-1].map!{|l| l || root_taxon} }
     	
     #sort entries
-    @entries.sort_by!{|e| e.name.name}
+    @entries = @entries.to_a.sort_by{|e| e.name.name}
     
   rescue SequenceTooShortError
     flash[:error] = "The sequence you searched for is too short."
@@ -214,7 +214,7 @@ class SequencesController < ApplicationController
     
       # build the resultset
       @matches = Hash.new
-      @misses = data
+      @misses = data.to_set
       if @equate_il
         sequences = Sequence.find_all_by_sequence(data, :include => {:lca_il_t => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}})
       else
@@ -235,7 +235,7 @@ class SequencesController < ApplicationController
       
       # handle the misses
       if handle_missed
-        iter = Array.new(@misses)
+        iter = @misses.to_a
         for seq in iter
           sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
           next if sequences.size == 1
@@ -260,9 +260,9 @@ class SequencesController < ApplicationController
         
           # calculate possible uniprot entries
           if @equate_il
-            temp_entries = long_sequences.map{|s| s.peptides.map(&:uniprot_entry)}
+            temp_entries = long_sequences.map{|s| s.peptides.map(&:uniprot_entry).to_set}
           else
-            temp_entries = long_sequences.map{|s| s.original_peptides.map(&:uniprot_entry)}
+            temp_entries = long_sequences.map{|s| s.original_peptides.map(&:uniprot_entry).to_set}
           end
 
           # take the intersection of all sets
@@ -286,7 +286,7 @@ class SequencesController < ApplicationController
         
           unless lca_t.nil?
             num_of_seq = filter_duplicates ? 1 : data_counts[seq]
-            @number_found += number_of_seq
+            @number_found += num_of_seq
             @matches[lca_t] = Array.new if @matches[lca_t].nil?
             num_of_seq.times do
               @matches[lca_t] << seq
@@ -296,7 +296,7 @@ class SequencesController < ApplicationController
         
         end
       end
-      @misses.sort! 
+      @misses = @misses.to_a.sort 
       
       @intro_text = "#{@number_found} out of #{number_searched_for} #{"peptide".send(number_searched_for != 1 ? :pluralize : :to_s)}  were matched"
       if filter_duplicates || @equate_il 
