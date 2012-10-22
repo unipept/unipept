@@ -204,10 +204,12 @@ class SequencesController < ApplicationController
       data = data.gsub(/I/,'L') if @equate_il
       data = data.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2") unless handle_missed
       data = data.lines.map(&:strip).to_a.select{|l| l.size >= 5}
-      data = data.uniq if filter_duplicates
+      data_counts = Hash[data.group_by{|k| k}.map{|k,v| [k, v.length]}]
+      number_searched_for = data.length
+      data = data_counts.keys
     
       # set metrics
-      number_searched_for = data.length
+      number_searched_for = data.length if filter_duplicates
       @number_found = 0
     
       # build the resultset
@@ -221,9 +223,12 @@ class SequencesController < ApplicationController
       sequences.each do |sequence| # for every sequence in query
         lca_t = sequence.calculate_lca(@equate_il, true)
         unless lca_t.nil?
-          @number_found += 1
+          num_of_seq = filter_duplicates ? 1 : data_counts[sequence.sequence]
+          @number_found += num_of_seq
           @matches[lca_t] = Array.new if @matches[lca_t].nil?
-          @matches[lca_t] << sequence.sequence
+          num_of_seq.times do
+            @matches[lca_t] << sequence.sequence
+          end
         end
         @misses.delete(sequence.sequence)
       end  
@@ -280,9 +285,12 @@ class SequencesController < ApplicationController
           lca_t = Lineage.calculate_lca_taxon(seq_lins) #calculate the LCA
         
           unless lca_t.nil?
-            @number_found += 1
+            num_of_seq = filter_duplicates ? 1 : data_counts[seq]
+            @number_found += number_of_seq
             @matches[lca_t] = Array.new if @matches[lca_t].nil?
-            @matches[lca_t] << seq
+            num_of_seq.times do
+              @matches[lca_t] << seq
+            end
           end
           @misses.delete(seq)
         
