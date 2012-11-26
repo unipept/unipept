@@ -22,6 +22,9 @@ gem 'oj'
 # imagemagick bindings
 gem 'rmagick'
 
+# new relic stuff
+gem 'newrelic_rpm'
+
 group :development do
   gem 'rspec-rails'
 	gem 'annotate-models'

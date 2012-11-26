@@ -81,6 +81,7 @@ GEM
     mime-types (1.19)
     multi_json (1.3.6)
     mysql2 (0.3.11)
+    newrelic_rpm (3.4.0)
     nokogiri (1.5.5)
     oj (1.3.4)
     polyglot (0.3.3)
@@ -163,6 +164,7 @@ DEPENDENCIES
   coffee-rails (= 3.2.2)
   jquery-rails
   mysql2
+  newrelic_rpm
   oj
   rails (= 3.2.6)
   rake
