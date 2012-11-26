@@ -1,4 +1,5 @@
 require 'bundler/capistrano'
+require 'new_relic/recipes'
 load 'deploy/assets'
 
 set :application, "unipept-web"
@@ -31,6 +32,10 @@ task :prod do
   role :web, "nibbler.ugent.be"                          # Your HTTP server, Apache/etc
   role :app, "nibbler.ugent.be"                          # This may be the same as your `Web` server
   role :db,  "nibbler.ugent.be", :primary => true # This is where Rails migrations will run
+  
+  # We need to run this after our collector mongrels are up and running
+  # This goes out even if the deploy fails, sadly 
+  after "deploy:update", "newrelic:notice_deployment"
 end
 
 # If you are using Passenger mod_rails uncomment this:
