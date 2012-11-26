@@ -39,13 +39,12 @@ class TreeMapNode < Node
     
     @data["count"] += sequences.length
     @data["$area"] = Math.log10(@data["count"]+1)/Math.log10(2)
-    
-    fix_title_and_state
   end
   
   def add_own_sequences(sequences)
     @data["self_count"] = sequences.length
     @metadata["own_sequences"] = sequences
+    
   end
   
   def fix_title_and_state
@@ -60,7 +59,9 @@ class TreeMapNode < Node
   end
   
   # Adds a URL to every node linking to a piechart of their children
+  # also fixes the title, this is somewhat of hack
   def add_piechart_data
+    fix_title_and_state
     unless @children.empty?
       @data["piecharturl"] = "http://chart.apis.google.com/chart?chs=300x225&cht=p&chd=t:"
       @data["piecharturl"] += @children.map{|c| c.data["count"].to_s}.join(",")
