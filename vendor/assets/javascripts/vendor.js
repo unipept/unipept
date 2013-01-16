@@ -1,6 +1,6 @@
 //  sunburst
-//  2.10.0
-//= require d3/d3.v2.min.js
+//  3.0
+//= require d3/d3.v3.min.js
 
 //  tree on multi search page
 //  1.0.0 rc3
