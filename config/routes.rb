@@ -17,6 +17,7 @@ UnipeptWeb::Application.routes.draw do
     
   match '/contact', :to => 'pages#contact'
   match '/about',   :to => 'pages#about'
+  match '/admin',   :to => 'pages#admin'
   
   match "/convert", :to => "imagemagick#convert"
   
