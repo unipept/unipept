@@ -2,8 +2,8 @@
 	<div class="field">
 	  <%= f.label :name %>
 	  <%= f.text_field :name %>
-		<%= f.label :path %>
-		<%= f.text_field :path %>
+		<%= f.label :data %>
+		<%= f.text_area :data , :rows => 3 %>
 		<i class="icon-minus"></i> <%= link_to_remove_fields "remove item", f %>
 	</div>
 </div>
