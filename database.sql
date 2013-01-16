@@ -185,8 +185,8 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`datasets` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `environment` VARCHAR(160) NULL ,
   `reference` VARCHAR(500) NULL ,
-  `url` VARCHAR(200) NULL ,
   `project_website` VARCHAR(200) NULL ,
+  `data` TEXT NOT NULL ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
