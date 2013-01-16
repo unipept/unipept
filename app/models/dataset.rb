@@ -5,8 +5,8 @@
 #  id              :integer(4)      not null, primary key
 #  environment     :string(160)
 #  reference       :string(500)
-#  url             :string(200)
 #  project_website :string(200)
+#  data            :text            default(""), not null
 #
 
 class Dataset < ActiveRecord::Base
