@@ -5,7 +5,7 @@
 #  id         :integer(4)      not null, primary key
 #  dataset_id :integer(4)
 #  name       :string(160)
-#  path       :string(160)
+#  data       :text            default(""), not null
 #  order      :integer(4)
 #
 

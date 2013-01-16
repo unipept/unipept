@@ -15,7 +15,7 @@
 	<br/>
 	Load dataset 
 	<span class="form-inline">
-	<%= select("dataset", dataset.id, dataset.dataset_items.map {|item| [item.name,item.path]}) %>
+	<%= select("dataset", dataset.id, dataset.dataset_items.map {|item| [item.name,dataset_item_path(item)]}) %>
 	<%= button_tag(raw("Load"), { :type => "button", :class => "load-dataset btn" }) %>
 	</span>
 <% else %>
