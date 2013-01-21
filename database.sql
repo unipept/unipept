@@ -159,6 +159,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`uniprot_cross_references` (
   `sequence_id` VARCHAR(15) NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_uniprot_cross_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
+  INDEX `idx_sequence_id` (`sequence_id` ASC) ,
   CONSTRAINT `fk_uniprot_cross_reference_uniprot_entries`
     FOREIGN KEY (`uniprot_entry_id` )
     REFERENCES `unipept`.`uniprot_entries` (`id` )
@@ -185,8 +186,8 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`datasets` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `environment` VARCHAR(160) NULL ,
   `reference` VARCHAR(500) NULL ,
+  `url` VARCHAR(200)  NULL ,
   `project_website` VARCHAR(200) NULL ,
-  `data` TEXT NOT NULL ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
@@ -198,7 +199,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`dataset_items` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `dataset_id` INT NULL ,
   `name` VARCHAR(160) NULL ,
-  `path` VARCHAR(160) NULL ,
+  `data` TEXT NOT NULL ,
   `order` INT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_dataset_items_datasets` (`dataset_id` ASC) ,
@@ -219,6 +220,19 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`posts` (
   `content` TEXT NOT NULL ,
   `date` DATE NOT NULL ,
   PRIMARY KEY (`id`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`genomes`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `unipept`.`genomes` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `bioproject_id` INT NOT NULL ,
+  `insdc` VARCHAR(15) NOT NULL ,
+  `status` VARCHAR(45) NOT NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `idx_insdc` (`insdc` ASC) )
 ENGINE = InnoDB;
 
 
