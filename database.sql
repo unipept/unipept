@@ -229,10 +229,10 @@ ENGINE = InnoDB;
 CREATE  TABLE IF NOT EXISTS `unipept`.`genomes` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `bioproject_id` INT NOT NULL ,
-  `insdc` VARCHAR(15) NOT NULL ,
+  `refseq_id` VARCHAR(15) NOT NULL ,
   `status` VARCHAR(45) NOT NULL ,
   PRIMARY KEY (`id`) ,
-  INDEX `idx_insdc` (`insdc` ASC) )
+  INDEX `idx_refseq_id` (`refseq_id` ASC) )
 ENGINE = InnoDB;
 
 
