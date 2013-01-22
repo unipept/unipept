@@ -468,20 +468,26 @@ span.dir{
 #jstree_search{
 	width: 400px;
 }
+
 #pancore_graph .axis path,
 #pancore_graph .axis line {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
 }
-
-#pancore_graph .bar.pan{
+#pancore_graph .dot.pan{
   fill: steelblue;
 }
-#pancore_graph .bar.core{
+#pancore_graph .dot.core{
   fill: #ff7f0e;
 }
-
-#pancore_graph .x.axis path {
-  display: none;
+#pancore_graph .line.pan{
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none
+}
+#pancore_graph .line.core{
+    stroke: #ff7f0e;
+    stroke-width: 2;
+    fill: none
 }

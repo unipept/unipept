@@ -11,10 +11,11 @@ function init_pancore(genomes, pans, cores) {
         height = 500 - margin.top - margin.bottom;
 
     var x = d3.scale.ordinal()
-        .rangeRoundBands([0, width], .1);
+        //.rangeRoundBands([0, width], .1);
+        .rangePoints([0, width], 1);
 
     var y = d3.scale.linear()
-        .range([height, 0]).nice();
+        .range([height, 0]);
 
     var xAxis = d3.svg.axis()
         .scale(x)
@@ -23,6 +24,16 @@ function init_pancore(genomes, pans, cores) {
     var yAxis = d3.svg.axis()
         .scale(y)
         .orient("left");
+    
+    var panLine = d3.svg.line()
+        .interpolate("linear")
+        .x(function(d) { return x(d.name); })
+        .y(function(d) { return y(d.pan); });
+    
+    var coreLine = d3.svg.line()
+        .interpolate("linear")
+        .x(function(d) { return x(d.name); })
+        .y(function(d) { return y(d.core); });
 
     var svg = d3.select("#pancore_graph").append("svg")
         .attr("width", width + margin.left + margin.right)
@@ -40,10 +51,8 @@ function init_pancore(genomes, pans, cores) {
     
     svg.selectAll(".x.axis text")
         .attr("transform", function(d) {
-            //return "rotate(-45)translate(" + this.getBBox().height/2 + "," + this.getBBox().width/-2 + ")";
-            return "rotate(-45)translate(-" + this.getBBox().width/2 + ",0)";
-            //return "rotate(-45)translate(0,0)";
-           });
+            return "translate(-" + (this.getBBox().width/2 - 3) + "," + (this.getBBox().width/2 - 8) + ")rotate(-45)";
+        });
 
     svg.append("g")
         .attr("class", "y axis")
@@ -55,22 +64,47 @@ function init_pancore(genomes, pans, cores) {
         .style("text-anchor", "end")
         .text("Number of peptides");
 
-    svg.selectAll(".bar.pan")
+   /* svg.selectAll(".bar.pan")
         .data(data)
       .enter().append("rect")
         .attr("class", "bar pan")
         .attr("x", function(d) { return x(d.name); })
         .attr("width", x.rangeBand())
         .attr("y", function(d) { return y(d.pan); })
-        .attr("height", function(d) { return height - y(d.pan); });
+        .attr("height", function(d) { return height - y(d.pan); });*/
       
-    svg.selectAll(".bar.core")
+ /*   svg.selectAll(".bar.core")
         .data(data)
       .enter().append("rect")
         .attr("class", "bar core")
         .attr("x", function(d) { return x(d.name); })
         .attr("width", x.rangeBand())
         .attr("y", function(d) { return y(d.core); })
-        .attr("height", function(d) { return height - y(d.core); });
+        .attr("height", function(d) { return height - y(d.core); });*/
 
+    svg.append("path")
+        .datum(data)
+        .attr("class", "line pan")
+        .attr("d", panLine);
+        
+    svg.append("path")
+        .datum(data)
+        .attr("class", "line core")
+        .attr("d", coreLine);
+
+    svg.selectAll(".dot.pan")
+        .data(data)
+      .enter().append("circle")
+        .attr("class", "dot pan")
+        .attr("r", 5)
+        .attr("cx", function(d) { return x(d.name); })
+        .attr("cy", function(d) { return y(d.pan); });
+
+    svg.selectAll(".dot.core")
+        .data(data)
+      .enter().append("circle")
+        .attr("class", "dot core")
+        .attr("r", 5)
+        .attr("cx", function(d) { return x(d.name); })
+        .attr("cy", function(d) { return y(d.core); });
 }
