@@ -14,6 +14,8 @@ class UniprotEntry < ActiveRecord::Base
   attr_accessible nil
   
   has_many :peptides 
+  has_many :uniprot_cross_references
+  
   belongs_to :name,             :foreign_key  => "taxon_id", 
                                 :primary_key  => "id", 
                                 :class_name   => 'Taxon'
