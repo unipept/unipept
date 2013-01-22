@@ -208,7 +208,8 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`dataset_items` (
     REFERENCES `unipept`.`datasets` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
@@ -220,7 +221,8 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`posts` (
   `content` TEXT NOT NULL ,
   `date` DATE NOT NULL ,
   PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
@@ -233,7 +235,8 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`genomes` (
   `status` VARCHAR(45) NOT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `idx_refseq_id` (`refseq_id` ASC) )
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 
