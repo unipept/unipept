@@ -34,6 +34,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`uniprot_entries` (
   `version` SMALLINT UNSIGNED NOT NULL ,
   `taxon_id` MEDIUMINT UNSIGNED NOT NULL ,
   `type` ENUM('swissprot', 'trembl') NOT NULL ,
+  `protein` TEXT NOT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_uniprot_entries_taxons` (`taxon_id` ASC) ,
   CONSTRAINT `fk_uniprot_entries_taxons`
@@ -123,6 +124,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`peptides` (
   `sequence_id` INT UNSIGNED NOT NULL ,
   `original_sequence_id` INT UNSIGNED NOT NULL ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
+  `position` SMALLINT UNSIGNED NOT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_peptides_sequences` (`sequence_id` ASC) ,
   INDEX `fk_peptides_uniprot_entries` (`uniprot_entry_id` ASC) ,
@@ -157,6 +159,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`uniprot_cross_references` (
   `sequence_id` VARCHAR(15) NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_uniprot_cross_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
+  INDEX `idx_sequence_id` (`sequence_id` ASC) ,
   CONSTRAINT `fk_uniprot_cross_reference_uniprot_entries`
     FOREIGN KEY (`uniprot_entry_id` )
     REFERENCES `unipept`.`uniprot_entries` (`id` )
@@ -173,6 +176,63 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`counters` (
   `name` VARCHAR(31) NOT NULL ,
   `value` INT UNSIGNED NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`name`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`datasets`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `unipept`.`datasets` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `environment` VARCHAR(160) NULL ,
+  `reference` VARCHAR(500) NULL ,
+  `url` VARCHAR(200)  NULL ,
+  `project_website` VARCHAR(200) NULL ,
+  PRIMARY KEY (`id`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`dataset_items`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `unipept`.`dataset_items` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `dataset_id` INT NULL ,
+  `name` VARCHAR(160) NULL ,
+  `data` TEXT NOT NULL ,
+  `order` INT NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_dataset_items_datasets` (`dataset_id` ASC) ,
+  CONSTRAINT `fk_dataset_items_datasets`
+    FOREIGN KEY (`dataset_id` )
+    REFERENCES `unipept`.`datasets` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`posts`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `unipept`.`posts` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `title` VARCHAR(100) NOT NULL ,
+  `content` TEXT NOT NULL ,
+  `date` DATE NOT NULL ,
+  PRIMARY KEY (`id`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`genomes`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `unipept`.`genomes` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `bioproject_id` INT NOT NULL ,
+  `refseq_id` VARCHAR(15) NOT NULL ,
+  `status` VARCHAR(45) NOT NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `idx_refseq_id` (`refseq_id` ASC) )
 ENGINE = InnoDB;
 
 
