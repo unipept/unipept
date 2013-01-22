@@ -7,7 +7,7 @@ class PancoreproteomeController < ApplicationController
     pan = Set.new
     core = nil
     @genomes.each do|g|
-      result = ActiveRecord::Base.connection.select_all("SELECT DISTINCT original_sequence_id FROM peptides LEFT JOIN  uniprot_cross_references ON peptides.uniprot_entry_id = uniprot_cross_references.uniprot_entry_id WHERE uniprot_cross_references.sequence_id = '#{g}'").to_set
+      result = ActiveRecord::Base.connection.select_all("SELECT original_sequence_id FROM peptides LEFT JOIN  uniprot_cross_references ON peptides.uniprot_entry_id = uniprot_cross_references.uniprot_entry_id WHERE uniprot_cross_references.sequence_id = '#{g}'").to_set
       pan |= result
       if core.nil?
         core = result
