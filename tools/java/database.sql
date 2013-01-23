@@ -149,18 +149,36 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `unipept`.`uniprot_cross_references`
+-- Table `unipept`.`embl_cross_references`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `unipept`.`uniprot_cross_references` (
+CREATE  TABLE IF NOT EXISTS `unipept`.`embl_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `type` ENUM('RefSeq', 'EMBL') NOT NULL ,
   `protein_id` VARCHAR(15) NULL ,
   `sequence_id` VARCHAR(15) NULL ,
   PRIMARY KEY (`id`) ,
-  INDEX `fk_uniprot_cross_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
-  INDEX `idx_sequence_id` (`sequence_id` ASC) ,
+  INDEX `fk_embl_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
   CONSTRAINT `fk_uniprot_cross_reference_uniprot_entries`
+    FOREIGN KEY (`uniprot_entry_id` )
+    REFERENCES `unipept`.`uniprot_entries` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`refseq_cross_references`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `unipept`.`refseq_cross_references` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `uniprot_entry_id` INT UNSIGNED NOT NULL ,
+  `protein_id` VARCHAR(15) NULL ,
+  `sequence_id` VARCHAR(15) NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_refseq_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
+  INDEX `idx_sequence_id` (`sequence_id` ASC) ,
+  CONSTRAINT `fk_uniprot_cross_reference_uniprot_entries0`
     FOREIGN KEY (`uniprot_entry_id` )
     REFERENCES `unipept`.`uniprot_entries` (`id` )
     ON DELETE NO ACTION
