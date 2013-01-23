@@ -8,13 +8,23 @@ class PancoreproteomeController < ApplicationController
     pan = Set.new
     core = nil
     @genomes.each do|g|
-      result = ActiveRecord::Base.connection.select_all("SELECT original_sequence_id FROM peptides LEFT JOIN  refseq_cross_references ON peptides.uniprot_entry_id = refseq_cross_references.uniprot_entry_id WHERE refseq_cross_references.sequence_id = '#{g}'").to_set
+      start = Time.now
+      result = ActiveRecord::Base.connection.select_all("SELECT original_sequence_id FROM peptides LEFT JOIN  refseq_cross_references ON peptides.uniprot_entry_id = refseq_cross_references.uniprot_entry_id WHERE refseq_cross_references.sequence_id = '#{g}'")
+      logger.debug "query: " + (Time.now - start).to_s
+      start = Time.now
+      result = result.to_set
+      logger.debug "to_set: " + (Time.now - start).to_s
+      start = Time.now
       pan |= result
+      logger.debug "pan: " + (Time.now - start).to_s
+      start = Time.now
       if core.nil?
         core = result
       else
         core &= result
       end
+      logger.debug "core: " + (Time.now - start).to_s
+      start = Time.now
       @cores << core.size
       @pans << pan.size
     end
