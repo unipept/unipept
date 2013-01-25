@@ -185,7 +185,6 @@ function init_pancore(genomes, pans, cores) {
 		
 		// show tooltip
 		tooltip
-			.style("top", (d3.event.pageY + 15) + "px").style("left", (d3.event.pageX + 15) + "px")
 			.style("visibility", "visible")
             .html("<b>" + d.name + "</b><br/>" + 
 			"<span style='color: " + panColor + ";'>&#9632;</span> pan: <b>" + d3.format(",")(data[i].pan) + "</b><br/>" +
@@ -199,6 +198,6 @@ function init_pancore(genomes, pans, cores) {
 		tooltip.style("visibility", "hidden");
     }
 	function mouseMove(d, i) {
-		tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 15) + "px");
+		tooltip.style("top", (d3.event.pageY + 15) + "px").style("left", (d3.event.pageX + 15) + "px");
 	}
 }
