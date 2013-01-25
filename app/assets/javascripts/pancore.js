@@ -135,11 +135,12 @@ function init_pancore(genomes, pans, cores) {
         .attr("width", mouseOverWidth)
         .attr("y", "0")
         .attr("height", height)
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseout);
+        .on("mouseover", mouseOver)
+        .on("mouseout", mouseOut)
+        .on("mousemove", mouseMove);
         
     // mouseover functions
-    function mouseover(d, i) {
+    function mouseOver(d, i) {
         // add dropshadow to the dot
         svg.selectAll(".dot._" + i)
             .attr("filter", "url(#dropshadow)");
@@ -190,11 +191,14 @@ function init_pancore(genomes, pans, cores) {
 			"<span style='color: " + panColor + ";'>&#9632;</span> pan: <b>" + d3.format(",")(data[i].pan) + "</b><br/>" +
 			"<span style='color: " + coreColor + ";'>&#9632;</span> core: <b>" + d3.format(",")(data[i].core) + "</b>");
     }
-    function mouseout(d, i) {
+    function mouseOut(d, i) {
         svg.selectAll(".dot._" + i)
             .attr("filter", "");
         svg.selectAll(".hairline").remove();    
         svg.selectAll(".axisline").remove();
 		tooltip.style("visibility", "hidden");
     }
+	function mouseMove(d, i) {
+		tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 15) + "px");
+	}
 }
