@@ -6,6 +6,11 @@ function init_pancore(genomes, pans, cores) {
         data[i]["pan"] = pans[i];
         data[i]["core"] = cores[i];
     }
+
+	// colors
+	var panColor = "steelblue";
+	var coreColor = "#ff7f0e";
+	
     var margin = {top: 20, right: 20, bottom: 170, left: 60},
         width = 920 - margin.left - margin.right,
         height = 600 - margin.top - margin.bottom;
@@ -35,11 +40,20 @@ function init_pancore(genomes, pans, cores) {
         .x(function(d) { return x(d.name); })
         .y(function(d) { return y(d.core); });
 
-    var svg = d3.select("#pancore_graph").append("svg")
+    var svg = d3.select("#pancore_graph")
+	  .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
       .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var tooltip = d3.select("#pancore_graph")
+      .append("div")
+    	.attr("class", "tip")
+    	.style("position", "absolute")
+    	.style("z-index", "10")
+		.html ("test")
+    	.style("visibility", "hidden");
     
     //dropshadow filter
     var temp = svg.append("svg:defs")
@@ -110,7 +124,7 @@ function init_pancore(genomes, pans, cores) {
         .attr("r", 5)
         .attr("cx", function(d) { return x(d.name); })
         .attr("cy", function(d) { return y(d.pan); })
-        .attr("fill", "steelblue")
+        .attr("fill", panColor)
         .on("mouseover", mouseover)
         .on("mouseout", mouseout);
 
@@ -121,7 +135,7 @@ function init_pancore(genomes, pans, cores) {
         .attr("r", 5)
         .attr("cx", function(d) { return x(d.name); })
         .attr("cy", function(d) { return y(d.core); })
-        .attr("fill", "#ff7f0e")
+        .attr("fill", coreColor)
         .on("mouseover", mouseover)
         .on("mouseout", mouseout);
         
@@ -156,7 +170,7 @@ function init_pancore(genomes, pans, cores) {
             .attr("x2", "-6")
             .attr("y1", function(d) { return y(data[i].pan); }) 
             .attr("y2", function(d) { return y(data[i].pan); })
-            .attr("stroke", "steelblue")
+            .attr("stroke", panColor)
             .attr("stroke-width", "2")
             .attr("shape-rendering", "crispEdges");
         svg.insert("line")
@@ -165,14 +179,23 @@ function init_pancore(genomes, pans, cores) {
             .attr("x2", "-6")
             .attr("y1", function(d) { return y(data[i].core); })
             .attr("y2", function(d) { return y(data[i].core); })
-            .attr("stroke", "#ff7f0e")
+            .attr("stroke", coreColor)
             .attr("stroke-width", "2")
             .attr("shape-rendering", "crispEdges");
+		
+		// show tooltip
+		tooltip
+			.style("top", (d3.event.pageY + 15) + "px").style("left", (d3.event.pageX + 15) + "px")
+			.style("visibility", "visible")
+            .html("<b>" + d.name + "</b><br/>" + 
+			"<span style='color: " + panColor + ";'>&#9632;</span> pan: <b>" + data[i].pan + "</b><br/>" +
+			"<span style='color: " + coreColor + ";'>&#9632;</span> core: <b>" + data[i].core + "</b>");
     }
     function mouseout(d, i) {
         svg.selectAll(".dot._" + i)
             .attr("filter", "");
         svg.selectAll(".hairline").remove();    
         svg.selectAll(".axisline").remove();
+		tooltip.style("visibility", "hidden");
     }
 }
