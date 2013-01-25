@@ -96,6 +96,24 @@ function init_pancore(genomes, pans, cores) {
         .attr("dy", ".71em")
         .style("text-anchor", "end")
         .text("Number of peptides");
+
+	// add legend
+	var legend = svg.selectAll(".legend")
+	      .data([{"name": "pan proteome", "color": panColor}, {"name": "core proteome", "color": coreColor}])
+	    .enter().append("g")
+	      .attr("class", "legend")
+	      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+	  legend.append("rect")
+	      .attr("x", 30)
+	      .attr("width", 8)
+	      .attr("height", 8)
+	      .style("fill", function(d) { return d.color; });
+	  legend.append("text")
+	      .attr("x", 40)
+	      .attr("y", 4)
+	      .attr("dy", ".35em")
+	      .style("text-anchor", "start")
+	      .text(function(d) { return d.name; });
 	
 	// draw the lines
     svg.append("path")
