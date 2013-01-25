@@ -40,6 +40,18 @@ function init_pancore(genomes, pans, cores) {
         .attr("height", height + margin.top + margin.bottom)
       .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    
+    //dropshadow filter
+    var temp = svg.append("svg:defs")
+        .append("svg:filter")
+            .attr("id", "dropshadow");
+    temp.append("svg:feGaussianBlur")
+            .attr("in", "SourceAlpha")
+            .attr("stdDeviation", 1);
+    temp = temp.append("svg:feMerge");
+    temp.append("svg:feMergeNode");
+    temp.append("svg:feMergeNode")
+            .attr("in", "SourceGraphic");
 
     x.domain(data.map(function(d) { return d.name; }));
     y.domain([0, d3.max(data, function(d) { return d.pan; })]);
@@ -98,7 +110,10 @@ function init_pancore(genomes, pans, cores) {
         .attr("class", "dot pan")
         .attr("r", 5)
         .attr("cx", function(d) { return x(d.name); })
-        .attr("cy", function(d) { return y(d.pan); });
+        .attr("cy", function(d) { return y(d.pan); })
+        .attr("fill", "steelblue")
+        .on("mouseover", mouseover)
+        .on("mouseout", mouseout);
 
     svg.selectAll(".dot.core")
         .data(data)
@@ -106,5 +121,28 @@ function init_pancore(genomes, pans, cores) {
         .attr("class", "dot core")
         .attr("r", 5)
         .attr("cx", function(d) { return x(d.name); })
-        .attr("cy", function(d) { return y(d.core); });
+        .attr("cy", function(d) { return y(d.core); })
+        .attr("fill", "#ff7f0e")
+        .on("mouseover", mouseover)
+        .on("mouseout", mouseout);
+        
+    // mouseover functions
+    function mouseover(d, i) {
+        var cy = d3.select(this)
+            .attr("filter", "url(#dropshadow)")
+            .attr("cy");
+        svg.insert("line", ".dot")
+            .attr("class", "hairline")
+            .attr("x1", x(data[Math.max(0, i-1)].name))
+            .attr("x2", x(data[Math.min(data.length - 1, i+1)].name))
+            .attr("y1", cy)
+            .attr("y2", cy)
+            .attr("stroke", "#cccccc")
+            .attr("shape-rendering", "crispEdges");
+    }
+    function mouseout(d, i) {
+        d3.select(this)
+            .attr("filter", "");
+        svg.selectAll(".hairline").remove();
+    }
 }
