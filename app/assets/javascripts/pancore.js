@@ -107,7 +107,7 @@ function init_pancore(genomes, pans, cores) {
     svg.selectAll(".dot.pan")
         .data(data)
       .enter().append("circle")
-        .attr("class", "dot pan")
+        .attr("class", function(d, i) { return "dot pan _" + i; })
         .attr("r", 5)
         .attr("cx", function(d) { return x(d.name); })
         .attr("cy", function(d) { return y(d.pan); })
@@ -118,7 +118,7 @@ function init_pancore(genomes, pans, cores) {
     svg.selectAll(".dot.core")
         .data(data)
       .enter().append("circle")
-        .attr("class", "dot core")
+        .attr("class", function(d, i) { return "dot core _" + i; })
         .attr("r", 5)
         .attr("cx", function(d) { return x(d.name); })
         .attr("cy", function(d) { return y(d.core); })
@@ -128,21 +128,52 @@ function init_pancore(genomes, pans, cores) {
         
     // mouseover functions
     function mouseover(d, i) {
-        var cy = d3.select(this)
-            .attr("filter", "url(#dropshadow)")
-            .attr("cy");
+        // add dropshadow to the dot
+        svg.selectAll(".dot._" + i)
+            .attr("filter", "url(#dropshadow)");
+            
+        // add gray hairlines
         svg.insert("line", ".dot")
             .attr("class", "hairline")
             .attr("x1", x(data[Math.max(0, i-1)].name))
             .attr("x2", x(data[Math.min(data.length - 1, i+1)].name))
-            .attr("y1", cy)
-            .attr("y2", cy)
+            .attr("y1", function(d) { return y(data[i].core); })
+            .attr("y2", function(d) { return y(data[i].core); })
             .attr("stroke", "#cccccc")
+            .attr("shape-rendering", "crispEdges");
+        svg.insert("line", ".dot")
+            .attr("class", "hairline")
+            .attr("x1", x(data[Math.max(0, i-1)].name))
+            .attr("x2", x(data[Math.min(data.length - 1, i+1)].name))
+            .attr("y1", function(d) { return y(data[i].pan); })
+            .attr("y2", function(d) { return y(data[i].pan); })
+            .attr("stroke", "#cccccc")
+            .attr("shape-rendering", "crispEdges");
+            
+        // add axis marks
+        svg.insert("line")
+            .attr("class", "axisline")
+            .attr("x1", "6")
+            .attr("x2", "-6")
+            .attr("y1", function(d) { return y(data[i].pan); }) 
+            .attr("y2", function(d) { return y(data[i].pan); })
+            .attr("stroke", "steelblue")
+            .attr("stroke-width", "2")
+            .attr("shape-rendering", "crispEdges");
+        svg.insert("line")
+            .attr("class", "axisline")
+            .attr("x1", "6")
+            .attr("x2", "-6")
+            .attr("y1", function(d) { return y(data[i].core); })
+            .attr("y2", function(d) { return y(data[i].core); })
+            .attr("stroke", "#ff7f0e")
+            .attr("stroke-width", "2")
             .attr("shape-rendering", "crispEdges");
     }
     function mouseout(d, i) {
-        d3.select(this)
+        svg.selectAll(".dot._" + i)
             .attr("filter", "");
-        svg.selectAll(".hairline").remove();
+        svg.selectAll(".hairline").remove();    
+        svg.selectAll(".axisline").remove();
     }
 }
