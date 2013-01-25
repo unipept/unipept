@@ -6,9 +6,9 @@ function init_pancore(genomes, pans, cores) {
         data[i]["pan"] = pans[i];
         data[i]["core"] = cores[i];
     }
-    var margin = {top: 20, right: 20, bottom: 70, left: 60},
+    var margin = {top: 20, right: 20, bottom: 170, left: 60},
         width = 920 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+        height = 600 - margin.top - margin.bottom;
 
     var x = d3.scale.ordinal()
         //.rangeRoundBands([0, width], .1);
@@ -62,9 +62,8 @@ function init_pancore(genomes, pans, cores) {
         .call(xAxis);
     
     svg.selectAll(".x.axis text")
-        .attr("transform", function(d) {
-            return "translate(-" + (this.getBBox().width/2 - 3) + "," + (this.getBBox().width/2 - 8) + ")rotate(-45)";
-        });
+		.style("text-anchor", "end")
+        .attr("transform", "translate(-5,0)rotate(-45)");
 
     svg.append("g")
         .attr("class", "y axis")

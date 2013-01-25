@@ -3,6 +3,7 @@
 # Table name: genomes
 #
 #  id            :integer(4)      not null, primary key
+#  name          :string(120)     not null
 #  bioproject_id :integer(4)      not null
 #  refseq_id     :string(15)      not null
 #  status        :string(45)      not null
