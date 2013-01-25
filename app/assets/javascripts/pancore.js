@@ -11,35 +11,39 @@ function init_pancore(genomes, pans, cores) {
 	var panColor = "steelblue";
 	var coreColor = "#ff7f0e";
 	
+	// size
     var margin = {top: 20, right: 20, bottom: 170, left: 60},
         width = 920 - margin.left - margin.right,
         height = 600 - margin.top - margin.bottom;
-
+	
+	// scales
     var x = d3.scale.ordinal()
-        //.rangeRoundBands([0, width], .1);
         .rangePoints([0, width], 1);
-
     var y = d3.scale.linear()
         .range([height, 0]);
 
+	// mouse over width
+	var mouseOverWidth = (width / data.length) / 2;
+
+	// axes
     var xAxis = d3.svg.axis()
         .scale(x)
         .orient("bottom");
-
     var yAxis = d3.svg.axis()
         .scale(y)
         .orient("left");
     
+	// graph lines helpers
     var panLine = d3.svg.line()
         .interpolate("linear")
         .x(function(d) { return x(d.name); })
-        .y(function(d) { return y(d.pan); });
-    
+        .y(function(d) { return y(d.pan); }); 
     var coreLine = d3.svg.line()
         .interpolate("linear")
         .x(function(d) { return x(d.name); })
         .y(function(d) { return y(d.core); });
 
+	// create the svg
     var svg = d3.select("#pancore_graph")
 	  .append("svg")
         .attr("width", width + margin.left + margin.right)
@@ -47,6 +51,7 @@ function init_pancore(genomes, pans, cores) {
       .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+	// create the tooltip
     var tooltip = d3.select("#pancore_graph")
       .append("div")
     	.attr("class", "tip")
@@ -67,18 +72,21 @@ function init_pancore(genomes, pans, cores) {
     temp.append("svg:feMergeNode")
             .attr("in", "SourceGraphic");
 
+	// set the domains
     x.domain(data.map(function(d) { return d.name; }));
     y.domain([0, d3.max(data, function(d) { return d.pan; })]);
 
+	// add the x-axis
     svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis);
-    
+    // rotate the x-axis labels
     svg.selectAll(".x.axis text")
 		.style("text-anchor", "end")
         .attr("transform", "translate(-5,0)rotate(-45)");
-
+	
+	// add the y-axis
     svg.append("g")
         .attr("class", "y axis")
         .call(yAxis)
@@ -88,35 +96,18 @@ function init_pancore(genomes, pans, cores) {
         .attr("dy", ".71em")
         .style("text-anchor", "end")
         .text("Number of peptides");
-
-   /* svg.selectAll(".bar.pan")
-        .data(data)
-      .enter().append("rect")
-        .attr("class", "bar pan")
-        .attr("x", function(d) { return x(d.name); })
-        .attr("width", x.rangeBand())
-        .attr("y", function(d) { return y(d.pan); })
-        .attr("height", function(d) { return height - y(d.pan); });*/
-      
- /*   svg.selectAll(".bar.core")
-        .data(data)
-      .enter().append("rect")
-        .attr("class", "bar core")
-        .attr("x", function(d) { return x(d.name); })
-        .attr("width", x.rangeBand())
-        .attr("y", function(d) { return y(d.core); })
-        .attr("height", function(d) { return height - y(d.core); });*/
-
+	
+	// draw the lines
     svg.append("path")
         .datum(data)
         .attr("class", "line pan")
-        .attr("d", panLine);
-        
+        .attr("d", panLine);       
     svg.append("path")
         .datum(data)
         .attr("class", "line core")
         .attr("d", coreLine);
-
+		
+	// draw the dots
     svg.selectAll(".dot.pan")
         .data(data)
       .enter().append("circle")
@@ -124,10 +115,7 @@ function init_pancore(genomes, pans, cores) {
         .attr("r", 5)
         .attr("cx", function(d) { return x(d.name); })
         .attr("cy", function(d) { return y(d.pan); })
-        .attr("fill", panColor)
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseout);
-
+        .attr("fill", panColor);
     svg.selectAll(".dot.core")
         .data(data)
       .enter().append("circle")
@@ -135,7 +123,18 @@ function init_pancore(genomes, pans, cores) {
         .attr("r", 5)
         .attr("cx", function(d) { return x(d.name); })
         .attr("cy", function(d) { return y(d.core); })
-        .attr("fill", coreColor)
+        .attr("fill", coreColor);
+
+	// mouseover rects
+	svg.selectAll(".bar")
+		.data(data)
+	.enter().append("rect")
+        .attr("class", "bar pan")
+		.style("fill-opacity", "0")
+        .attr("x", function(d) { return x(d.name) - mouseOverWidth / 2; })
+        .attr("width", mouseOverWidth)
+        .attr("y", "0")
+        .attr("height", height)
         .on("mouseover", mouseover)
         .on("mouseout", mouseout);
         
