@@ -15,7 +15,6 @@ class PancoreproteomeController < ApplicationController
       
       # group them by bioproject_id
       refseqs.group_by{|r| r[0]}.each do |k,v|
-        logger.debug v
         @genomes << v[0][1]
         result = Set.new
         v.each do |r|
