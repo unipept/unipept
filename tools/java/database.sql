@@ -248,6 +248,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `unipept`.`genomes` (
   `id` INT NOT NULL AUTO_INCREMENT ,
+  `name` VARCHAR(120) NOT NULL ,
   `bioproject_id` INT NOT NULL ,
   `refseq_id` VARCHAR(15) NOT NULL ,
   `status` VARCHAR(45) NOT NULL ,
