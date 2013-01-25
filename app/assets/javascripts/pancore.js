@@ -187,8 +187,8 @@ function init_pancore(genomes, pans, cores) {
 			.style("top", (d3.event.pageY + 15) + "px").style("left", (d3.event.pageX + 15) + "px")
 			.style("visibility", "visible")
             .html("<b>" + d.name + "</b><br/>" + 
-			"<span style='color: " + panColor + ";'>&#9632;</span> pan: <b>" + data[i].pan + "</b><br/>" +
-			"<span style='color: " + coreColor + ";'>&#9632;</span> core: <b>" + data[i].core + "</b>");
+			"<span style='color: " + panColor + ";'>&#9632;</span> pan: <b>" + d3.format(",")(data[i].pan) + "</b><br/>" +
+			"<span style='color: " + coreColor + ";'>&#9632;</span> core: <b>" + d3.format(",")(data[i].core) + "</b>");
     }
     function mouseout(d, i) {
         svg.selectAll(".dot._" + i)
