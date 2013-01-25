@@ -2,16 +2,25 @@ class PancoreproteomeController < ApplicationController
   
   def analyze
     if params[:species_id]
-      refseqs = ActiveRecord::Base.connection.select_rows("select distinct straight_join bioproject_id, name, sequence_id from lineages left join uniprot_entries on lineages.taxon_id = uniprot_entries.taxon_id  left join refseq_cross_references on uniprot_entry_id = uniprot_entries.id  left join genomes on sequence_id = genomes.refseq_id  where species = #{params[:species_id]} and refseq_id IS NOT NULL")
+      # return vars
       @cores = Array.new
       @pans = Array.new
       @genomes = Array.new
+      
+      # get all distinct refseq_ids
+      refseqs = ActiveRecord::Base.connection.select_rows("select distinct straight_join bioproject_id, name, sequence_id from lineages left join uniprot_entries on lineages.taxon_id = uniprot_entries.taxon_id  left join refseq_cross_references on uniprot_entry_id = uniprot_entries.id  left join genomes on sequence_id = genomes.refseq_id  where species = #{params[:species_id]} and refseq_id IS NOT NULL")
+      
       pan = Set.new
       core = nil
-      refseqs.each do|r|
-        logger.debug r
-        @genomes << r[1]
-        result = ActiveRecord::Base.connection.select_values("SELECT original_sequence_id FROM peptides LEFT JOIN  refseq_cross_references ON peptides.uniprot_entry_id = refseq_cross_references.uniprot_entry_id WHERE refseq_cross_references.sequence_id = '#{r[2]}'").to_set
+      
+      # group them by bioproject_id
+      refseqs.group_by{|r| r[0]}.each do |k,v|
+        logger.debug v
+        @genomes << v[0][1]
+        result = Set.new
+        v.each do |r|
+          result |= ActiveRecord::Base.connection.select_values("SELECT original_sequence_id FROM peptides LEFT JOIN  refseq_cross_references ON peptides.uniprot_entry_id = refseq_cross_references.uniprot_entry_id WHERE refseq_cross_references.sequence_id = '#{r[2]}'").to_set
+        end
         pan |= result
         if core.nil?
           core = result
