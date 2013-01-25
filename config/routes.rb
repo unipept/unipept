@@ -14,7 +14,7 @@ UnipeptWeb::Application.routes.draw do
   match '/search/sequences', :to => 'sequences#multi_search', :as => 'sequence_multi_search'
 	match '/sequences/:id/:equate_il', :to => 'sequences#show'
 	
-	match '/pancore(/:species_id)', :to => 'pancoreproteome#analyze'
+	match '/pancore(/:species_id)', :to => 'pancoreproteome#analyze', :as => 'pancore_analyze'
     
   match '/contact', :to => 'pages#contact'
   match '/about',   :to => 'pages#about'

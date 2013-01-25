@@ -1,6 +1,7 @@
 class PancoreproteomeController < ApplicationController
   
   def analyze
+    @species = Genome.get_genome_species()
     if params[:species_id]
       # return vars
       @cores = Array.new
