@@ -6,9 +6,33 @@
 <% end %>
 <h2>Chart</h2>
 <div id="pancore_graph"></div>
+
+<h2>Similarity matrix</h2>
+<div id="sim_matrix"></div>
+
 <script type="text/javascript">
 	var genomes = <%= raw @genomes %>
 	var pans = <%= raw @pans %> 
 	var cores = <%= raw @cores %>
-	$(function () {init_pancore(genomes, pans, cores);});
+	var sims = <%= raw @sims %>
+	$(function () {
+		init_pancore(genomes, pans, cores);
+		init_sim_matrix(genomes, sims);
+	});
 </script>
+
+<style>
+
+.background {
+  fill: #eee;
+}
+
+line {
+  stroke: #fff;
+}
+
+text.active {
+  fill: red;
+}
+
+</style>
