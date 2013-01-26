@@ -4,8 +4,8 @@ function init_sim_matrix(genomes, data){
 	    height = 500;
 
 	var x = d3.scale.ordinal().rangeBands([0, width]),
-	    z = d3.scale.linear().domain([0, 0.1]).clamp(true),
-	    c = d3.scale.category10().domain(d3.range(10));
+	    z = d3.scale.linear().domain([0, 1]).clamp(true);
+	    //c = d3.scale.category10().domain(d3.range(10));
 
 	var svg = d3.select("#sim_matrix").append("svg")
 	    .attr("width", width + margin.left + margin.right)
