@@ -48,7 +48,8 @@ function init_sim_matrix(genomes, data){
 	svg.append("rect")
 	    .attr("class", "background")
 	    .attr("width", width)
-	    .attr("height", height);
+	    .attr("height", height)
+		.attr("fill", "#eeeeee");
 
 	var row = svg.selectAll(".row")
 	    .data(data)
@@ -59,7 +60,8 @@ function init_sim_matrix(genomes, data){
 	    .each(row);
 
 	row.append("line")
-	    .attr("x2", width);
+	    .attr("x2", width)
+		.attr("stroke", "#ffffff");
 
 	row.append("text")
 	    .attr("x", -6)
@@ -75,7 +77,8 @@ function init_sim_matrix(genomes, data){
 	    .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
 
 	column.append("line")
-	    .attr("x1", -width);
+	    .attr("x1", -width)
+		.attr("stroke", "#ffffff");
 
 	column.append("text")
 	    .attr("x", 6)
