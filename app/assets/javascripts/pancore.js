@@ -23,7 +23,7 @@ function init_pancore(genomes, pans, cores) {
         .range([height, 0]);
 
 	// mouse over width
-	var mouseOverWidth = (width / data.length) / 2;
+	var mouseOverWidth = (width / data.length) / 1.5;
 
 	// axes
     var xAxis = d3.svg.axis()
