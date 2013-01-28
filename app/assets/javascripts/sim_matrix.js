@@ -5,7 +5,6 @@ function init_sim_matrix(genomes, data, order){
 
 	var x = d3.scale.ordinal().rangeBands([0, width]),
 	    z = d3.scale.linear().domain([0, 1]).clamp(true);
-	    //c = d3.scale.category10().domain(d3.range(10));
 
 	var svg = d3.select("#sim_matrix").append("svg")
 	    .attr("width", width + margin.left + margin.right)
@@ -42,7 +41,7 @@ function init_sim_matrix(genomes, data, order){
 	};*/
 
 	// The default sort order.
-	x.domain(order);
+	x.domain(d3.range(genomes.length));
 
 	svg.append("rect")
 	    .attr("class", "background")
@@ -96,7 +95,6 @@ function init_sim_matrix(genomes, data, order){
 	      .attr("height", x.rangeBand())
 	      .style("fill-opacity", function(d) { return z(d); })
 		  .style("fill", "steelblue");
-	      //.style("fill", function(d) { return nodes[d.x].group == nodes[d.y].group ? c(nodes[d.x].group) : null; })
 	      //.on("mouseover", mouseover)
 	      //.on("mouseout", mouseout);
 	}
@@ -115,8 +113,8 @@ function init_sim_matrix(genomes, data, order){
 	  order(this.value);
 	});*/
 
-	/*function order(value) {
-	  x.domain(orders[value]);
+	function reorder(newOrder) {
+	  x.domain(newOrder);
 
 	  var t = svg.transition().duration(2500);
 
@@ -124,16 +122,15 @@ function init_sim_matrix(genomes, data, order){
 	      .delay(function(d, i) { return x(i) * 4; })
 	      .attr("transform", function(d, i) { return "translate(0," + x(i) + ")"; })
 	    .selectAll(".cell")
-	      .delay(function(d) { return x(d.x) * 4; })
-	      .attr("x", function(d) { return x(d.x); });
+	      .delay(function(d, i) { return x(i) * 4; })
+	      .attr("x", function(d, i) { return x(i); });
 
 	  t.selectAll(".column")
 	      .delay(function(d, i) { return x(i) * 4; })
 	      .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
-	}*/
+	}
 
-/*	var timeout = setTimeout(function() {
-	  order("group");
-	  d3.select("#order").property("selectedIndex", 2).node().focus();
-	}, 5000);*/
+	var timeout = setTimeout(function() {
+	  reorder(order);
+	}, 5000);
 }
