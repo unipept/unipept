@@ -1,4 +1,4 @@
-function init_sim_matrix(genomes, data){
+function init_sim_matrix(genomes, data, order){
 	var margin = {top: 200, right: 0, bottom: 10, left: 200},
 	    width = 500,
 	    height = 500;
@@ -10,7 +10,6 @@ function init_sim_matrix(genomes, data){
 	var svg = d3.select("#sim_matrix").append("svg")
 	    .attr("width", width + margin.left + margin.right)
 	    .attr("height", height + margin.top + margin.bottom)
-	    //.style("margin-left", -margin.left + "px")
 	  .append("g")
 	    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -43,7 +42,7 @@ function init_sim_matrix(genomes, data){
 	};*/
 
 	// The default sort order.
-	x.domain(genomes);
+	x.domain(order);
 
 	svg.append("rect")
 	    .attr("class", "background")
@@ -55,8 +54,7 @@ function init_sim_matrix(genomes, data){
 	    .data(data)
 	  .enter().append("g")
 	    .attr("class", "row")
-	    .attr("transform", function(d, i) { 
-		return "translate(0," + x(i) + ")"; })
+	    .attr("transform", function(d, i) { return "translate(0," + x(i) + ")"; })
 	    .each(row);
 
 	row.append("line")
