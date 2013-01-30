@@ -187,7 +187,7 @@ function initJsTree(data, equate_il) {
 	        if (allSequences && allSequences.length > 0) {
 	            list = infoPane.append("<h4>Peptides specific to this taxon or one of its subtaxa</h4><ul></ul>").find("ul").last();
 	            for (peptide in allSequences) {
-	                list.append("<li><a href='/sequences/" + allSequences[peptide] + "' target='_blank'>" + allSequences[peptide] + "</a></li>");
+	                list.append("<li><a href='/sequences/" + allSequences[peptide] + "/" + equate_il + "' target='_blank'>" + allSequences[peptide] + "</a></li>");
 	            }
 	        }
 		});
