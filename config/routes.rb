@@ -13,6 +13,8 @@ UnipeptWeb::Application.routes.draw do
   match '/search/sequence', :to => 'sequences#search', :as => 'sequence_search'
   match '/search/sequences', :to => 'sequences#multi_search', :as => 'sequence_multi_search'
 	match 'sequences/:id/:equate_il', :to => 'sequences#show'
+	
+	match '/pride/:id', :to => 'datasets#pride'
 
     
   match '/contact', :to => 'pages#contact'

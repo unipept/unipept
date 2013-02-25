@@ -25,6 +25,9 @@ gem 'rmagick'
 # new relic stuff
 gem 'newrelic_rpm'
 
+# do HTTP requests
+gem 'httparty'
+
 group :development do
   gem 'rspec-rails'
 	gem 'annotate-models'
