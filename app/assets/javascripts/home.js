@@ -1,9 +1,14 @@
 function initHome() {
 	// load a dataset from the local database
     $(".load-dataset").click(function(){
+		var url = $(this).parent().find("select").val(),
+			name = $(this).parent().find("select option:selected").text();
+		
+		_gaq.push(['_trackEvent', 'Datasets', 'Load', 'Database - ' + name]);
+		
 		$("#more_options a").click();
-		$("#search_name").val($(this).parent().find("select option:selected").text());
-		$.get($(this).parent().find("select").val(), function(data) {
+		$("#search_name").val(name);
+		$.get(url, function(data) {
 		  $("#qs").val(data);
 			$('html, body').animate({
 				scrollTop: $("#search_elements").parent().parent().offset().top
