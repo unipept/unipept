@@ -33,10 +33,15 @@ function initHome() {
 		$("#more_options a").click();
 		$("#qs").val("Please wait while we load the dataset...");
 		$("#qs").attr('disabled', 'disabled');
+		
+		var startTimer = new Date().getTime();
 
 		$.get(url)
 		  .done(
 			function (data) {
+				var loadTime = new Date().getTime() - startTimer;
+				_gaq.push(['_trackEvent', 'Datasets', 'Loaded', name, loadTime]);
+
 				$("#search_name").val(name);
 			  	$("#qs").val(data);
 				$("#qs").attr('disabled', false);
@@ -49,6 +54,8 @@ function initHome() {
 		  )
 		  .fail(
 			function (jqXHR, textStatus, errorType) {
+				_gaq.push(['_trackEvent', 'Datasets', 'Failed', name, textStatus]);
+
 			  	$("#qs").val("");
 				$("#qs").attr('disabled', false);
 		  		error(textStatus, "Something went wrong while loading the datasets.");
