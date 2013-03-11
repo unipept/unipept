@@ -17,7 +17,7 @@ function init_sequence_show(data, lcaId) {
         useGradients = nativeCanvasSupport;
         animate = !(iStuff || !nativeCanvasSupport);
     }());
-    
+
     //Create a new SpaceTree instance
     var st = new $jit.ST({
         injectInto: 'lineageTree',
@@ -83,7 +83,7 @@ function init_sequence_show(data, lcaId) {
         //style properties before plotting it.
         //The data properties prefixed with a dollar
         //sign will override the global node style properties.
-        onBeforePlotNode: function(node){
+        onBeforePlotNode: function (node) {
             //add some color to the nodes in the path between the
             //root node and the selected node.
             if (node.selected) {
@@ -128,44 +128,50 @@ function init_sequence_show(data, lcaId) {
     st.geom.translate(new $jit.Complex(-200, 0), "current");
 
 	//emulate a click on the root node.
-	try{ 
+	try {
     	st.onClick(lcaId);
 	}
-	catch(err){
+	catch (err) {
         error(err, "Something went wrong while loading the lineage tree.");
     }
-    
+
     // set up the fullscreen stuff
-    if (fullScreenApi.supportsFullScreen){
+    if (fullScreenApi.supportsFullScreen) {
         $("#buttons-single").prepend("<button id='zoom-btn-lineage' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
-    	$("#zoom-btn-lineage").click(function (){
+    	$("#zoom-btn-lineage").click(function () {
+			// GA event tracking
+			_gaq.push(['_trackEvent', 'Single Peptide', 'Full Screen']);
+
             window.fullScreenApi.requestFullScreen($("#lineageTree").get(0));
     	});
     	$(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange',resizeFullScreen);
     }
-    function resizeFullScreen(){       
-        setTimeout(function (){
+    function resizeFullScreen() {       
+        setTimeout(function () {
             var height = 500;
-            if(window.fullScreenApi.isFullScreen()){
+            if (window.fullScreenApi.isFullScreen()) {
                 height = $(window).height();
                 $("#lineageTree").height(height);
                 st.config.levelsToShow = 50;
             }
-            else{
+            else {
                 $("#lineageTree").height(500);
                 st.config.levelsToShow = 4;
             }
             st.canvas.resize($("#lineageTree").width(), height);
             st.refresh();
         }, 1000);
-       
+
     }
-    
+
     // set up save image stuff
     $("#buttons-single").prepend("<button id='save-btn-lineage' class='btn btn-mini'><i class='icon-download'></i> Save tree as image</button>");
-	$("#save-btn-lineage").click(function (){
+	$("#save-btn-lineage").click(function () {
+		// GA event tracking
+		_gaq.push(['_trackEvent', 'Single Peptide', 'Save Image']);
+
         html2canvas($("#lineageTree"), {
-            onrendered : function (canvas){
+            onrendered : function (canvas) {
                 $("#save-as-modal .modal-body").html("<img src='" + canvas.toDataURL() + "' />");
                 $("#save-as-modal").modal();
             }
