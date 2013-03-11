@@ -1,4 +1,4 @@
-function initHome() {
+function initDatasets() {
 	// load a dataset from the local database
     $(".load-dataset").click(function () {
 		// set the vars

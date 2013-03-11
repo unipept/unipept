@@ -1,5 +1,16 @@
 <h1>Datasets</h1>
+<div class="split">
+	<div class="split-left">
+		<h3>Sample data</h3>
+		<%= render @datasets, :load => true, :edit => true %>
+		<%= link_to 'New Dataset', new_dataset_path, :class => "btn btn-primary" if session[:admin] %>
+	</div>
+	<div class="split-right">
+		<%= render 'shared/sequence_multi_search' %>
+	</div>
+</div>
 
-<%= render @datasets, :load => false %>
 
-<%= link_to 'New Dataset', new_dataset_path, :class => "btn btn-primary" if session[:admin] %>
+<script type="text/javascript">
+	$(document).ready(initDatasets);
+</script>
