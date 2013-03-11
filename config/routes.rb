@@ -1,28 +1,39 @@
 UnipeptWeb::Application.routes.draw do
+  # home page
+  root :to => 'pages#home'
 
+  # simple resources
   resources :posts
-
-  resources :datasets
   resources :dataset_items
-  resources :sequences, :only => [:show, :index] do   
-  end
+  resources :sequences, :only => [:show, :index]
   resources :organisms, :only => [:show, :index]
   
-  root :to => 'pages#home'
-  
+  # datasets 
+  # match 'datasets/database/:id' => 'datasets#database'
+  # match 'datasets/pride/:id' => 'datasets#pride'
+  resources :datasets do
+    collection do
+      match 'database/:id' => 'datasets#preload', :defaults => { :type => 'database' }
+      match 'pride/:id' => 'datasets#preload', :defaults => { :type => 'pride' }
+    end
+  end
+
+  # search
   match '/search/sequence', :to => 'sequences#search', :as => 'sequence_search'
   match '/search/sequences', :to => 'sequences#multi_search', :as => 'sequence_multi_search'
 	match 'sequences/:id/:equate_il', :to => 'sequences#show'
 	
-	match '/pride/:id', :to => 'datasets#pride'
-
-    
+  # simple pages
   match '/contact', :to => 'pages#contact'
   match '/about',   :to => 'pages#about'
   match '/admin',   :to => 'pages#admin'
   
+  # generate png from svg
   match "/convert", :to => "imagemagick#convert"
   
+  # load pride dataset from webservice
+  match '/pride/:id', :to => 'pride#load'
+	
   # verbosity is needed to add namespace to controller
   get "cas/auth", :to => "cas#auth"
   get "cas/logout", :to => "cas#logout"

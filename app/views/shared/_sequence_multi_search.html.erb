@@ -27,18 +27,3 @@
 	</div>
   
 <% end %>
-
-<script type="text/javascript">
-$(document).ready(function(){
-	$("#more_options_form").hide();
-	$("#more_options a").click(function () {
-		$("#more_options_form").slideDown("slow");
-		$("#more_options").hide("fast");
-		return false;
-	});
-	$("#export").change(function () {
-			// GA event tracking
-			_gaq.push(['_trackEvent', 'Multi Peptide', 'Export']);
-	});
- });
-</script>
