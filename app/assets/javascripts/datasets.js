@@ -12,6 +12,7 @@ function initDatasets() {
 	
 	// load a dataset from the local database
     $(".load-dataset").click(function () {
+		$(this).button('loading');
 		// set the vars
 		var url = $(this).parent().find("select").val(),
 			name = $(this).parent().find("select option:selected").text();
@@ -20,12 +21,14 @@ function initDatasets() {
 		_gaq.push(['_trackEvent', 'Datasets', 'Load', 'Database - ' + name]);
 
 		// load the datasets
-		loadDataset(url, name);
+		loadDataset(url, name, $(this));
 		return false;
 	});
 
 	// load a PRIDE dataset
 	$(".load-pride").click(function () {
+		$(this).button('loading');
+		
 		// set the vars
 		var experiment = $("#pride_exp_id").val(),
 			url = "/pride/" + experiment,
@@ -35,11 +38,11 @@ function initDatasets() {
 		_gaq.push(['_trackEvent', 'Datasets', 'Load', 'Pride - ' + experiment]);
 
 		// load the datasets
-		loadDataset(url, name);
+		loadDataset(url, name, $(this));
 		return false;
 	});
 
-	function loadDataset(url, name) {
+	function loadDataset(url, name, button) {
 		// expand the search options and prepare the form
 		$("#more_options a").click();
 		$("#qs").val("Please wait while we load the dataset...");
@@ -50,6 +53,8 @@ function initDatasets() {
 		$.get(url)
 		  .done(
 			function (data) {
+				button.button('reset');
+
 				var loadTime = new Date().getTime() - startTimer;
 				_gaq.push(['_trackEvent', 'Datasets', 'Loaded', name, loadTime]);
 
@@ -65,6 +70,8 @@ function initDatasets() {
 		  )
 		  .fail(
 			function (jqXHR, textStatus, errorType) {
+				button.button('reset');
+
 				_gaq.push(['_trackEvent', 'Datasets', 'Failed', name, textStatus]);
 
 			  	$("#qs").val("");
