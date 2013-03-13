@@ -129,6 +129,8 @@ function init_sequence_show(data, lcaId) {
 
 	//emulate a click on the root node.
 	try {
+		if (lcaId == 1)
+			lcaId = data.id;
     	st.onClick(lcaId);
 	}
 	catch (err) {
