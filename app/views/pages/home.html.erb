@@ -45,13 +45,27 @@ Multi-peptide analysis helps you analyze lists of tryptic peptides, e.g. extract
 <p>
 Advanced options lets you filter duplicate peptides, equate isoleucine and leucine or export the results to an Microsoft Excel compatible file. If  advanced missed cleavage handling is left unchecked, Unipept will perform an in silico digest on the list of peptides. The resulting subpeptides will be handled individually. When the box is checked, the results of subpeptides will be combined. Enabling advanced missed cleavage handling has a serious performance impact! 
 </p>
-<h3>PRIDE data</h3>
-<span class="form-inline">
-<%= text_field_tag('pride_exp_id', nil, :placeholder => 'PRIDE experiment id')%>	
-<%= button_tag(raw("Load PRIDE data"), { :type => "button", :class => "load-pride btn" }) %>
-</span>
-<h3>Sample data</h3>
-<%= render @datasets, :load => true %>
+<div class="tabbable">
+	<ul class="nav nav-tabs">
+		<li class="active"><a href="#database" data-toggle="tab">Sample data</a></li>
+		<li><a href="#pride" data-toggle="tab">PRIDE</a></li>
+	</ul>
+	<div class="tab-content">
+		<div class="tab-pane active" id="database">
+			<h3>Sample data</h3>
+			<%= render @datasets, :load => true %>
+		</div>
+		<div class="tab-pane" id="pride">
+			<h3>PRIDE data</h3>
+			<p>You can enter a <a href="http://www.ebi.ac.uk/pride/" target="_blank">PRIDE</a> experiment id (e.g. 8500) in the field below to load the dataset into the search form on the right.</p>
+			<span class="form-inline">
+			<%= text_field_tag('pride_exp_id', nil, :placeholder => 'PRIDE experiment id')%>	
+			<%= button_tag(raw("Load PRIDE dataset"), { :type => "button", :class => "load-pride btn" }) %>
+			</span>
+			<br/><br/><br/>
+		</div>
+	</div>
+</div>
 </div>
 <div class="split-right">
 <h3>Analyze a list of peptides</h3>
