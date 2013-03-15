@@ -181,6 +181,9 @@ class SequencesController < ApplicationController
   
   # processes a list of sequences
   def multi_search
+    # save parameters
+    @p = params
+    
     # set search parameters
     @equate_il = !params[:il].nil?
     filter_duplicates = !params[:dupes].nil?

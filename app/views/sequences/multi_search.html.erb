@@ -2,6 +2,16 @@
 
 <p><%= @intro_text %></p>
 
+<%= form_tag(:sequence_multi_search, :method => "post", :class => "form-inline") do %>
+	<%= hidden_field_tag(:qs, @p[:qs]) %>
+	<%= hidden_field_tag(:il, @p[:il]) %>
+	<%= hidden_field_tag(:dupes, @p[:dupes]) %>
+	<%= hidden_field_tag(:missed, @p[:missed]) %>
+	<%= hidden_field_tag(:export, 1) %>
+	<%= hidden_field_tag(:search_name, @p[:search_name])%>
+	<%= button_tag(raw("<i class='icon-download-alt icon-white'></i> Download these results"), :type => "submit", :class => "btn btn-primary") %>
+<% end %>
+
 <% if @number_found > 0 %>
 	<ul class="nav nav-tabs" id="viz-tabs">
 		<li class="active"><a href="#sunburstWrapper" data-toggle="tab">Sunburst</a></li>
@@ -45,8 +55,9 @@
 <% if @number_found > 0 %>
 <!--[if IE]><%= javascript_include_tag "jit/Extras/excanvas.js"%><![endif]-->
 <script type="text/javascript">
-	var data1 = <%= raw(@treemap_json)%>
-	var data2 = <%= raw(@sunburst_json)%>
+	var data1 = <%= raw(@treemap_json)%>;
+	var data2 = <%= raw(@sunburst_json)%>;
+	
 	$(function () {init_multi(data1, data2, <%=@equate_il %>);});
 </script>
 <% end %>
