@@ -4,7 +4,7 @@
 #
 #  id          :integer(3)      not null, primary key
 #  name        :string(256)     not null
-#  rank        :string(0)
+#  rank        :string(16)
 #  parent_id   :integer(3)
 #  valid_taxon :binary(1)       default("b'1'"), not null
 #

@@ -36,5 +36,6 @@
 		<li><%= link_to("Datasets", datasets_path) %></li>
 		<li><%= link_to("About", about_path) %></li>
 		<li><%= link_to("Contact", contact_path) %></li>
+		<% if session[:admin] %><li><%= link_to("Admin", admin_path) %></li><% end %>
 	</ul>
 </nav>

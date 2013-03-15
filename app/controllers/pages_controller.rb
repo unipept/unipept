@@ -1,4 +1,5 @@
 class PagesController < ApplicationController
+  before_filter :authorize, :only => [:admin]
   
   def home
     @title = "Home"
@@ -12,5 +13,9 @@ class PagesController < ApplicationController
 
   def contact
     @title = "Contact"
+  end
+  
+  def admin
+    @title = "Admin"
   end
 end

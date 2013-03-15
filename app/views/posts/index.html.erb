@@ -1,14 +1,13 @@
 <h1>News</h1>
 
+<%= link_to 'New Post', new_post_path, :class => "btn btn-primary" if session[:admin] %>
+<br/><br/>
+
 <div id="posts">
-	<%= render @posts %>
+	<%= render @posts, :well => true %>
 </div>
 
 <%= will_paginate @posts %>
-
-<br/>
-
-<%= link_to 'New Post', new_post_path, :class => "btn btn-primary" if session[:admin] %>
 
 <script type="text/javascript">
 	$(function () {initPosts();});

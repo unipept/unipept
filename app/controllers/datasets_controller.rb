@@ -1,4 +1,6 @@
 class DatasetsController < ApplicationController
+  require 'httparty'
+  
   before_filter :authorize, :only => [:new, :edit, :create, :update, :destroy]
   
   # GET /datasets
@@ -81,5 +83,11 @@ class DatasetsController < ApplicationController
       format.html { redirect_to(datasets_url) }
       format.xml  { head :ok }
     end
+  end
+  
+  def preload
+    @title = "Load dataset"
+    @type = params[:type]
+    @id = params[:id]
   end
 end

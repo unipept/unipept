@@ -38,6 +38,7 @@ function add_fields(link, association, content) {
  * second parameter is optional message to display to the user
  */
 function error(error, userMessage) {
+    qbaka.report(error);
     if (typeof console != "undefined") { 
         console.error(error);
     }

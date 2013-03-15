@@ -1,74 +1,93 @@
 function init_multi(data, data2, equate_il) {
+	
+	$("#downloadDataset").click(function () {
+		$("#downloadDataset").button('loading');
+		return true;
+	});
 
     // sunburst
-    try{
+    try {
         initSunburst(data2);
     }
-    catch(err){
+    catch (err) {
         error(err, "Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
 
     // treemap
-    try{
+    try {
         initTreeMap(data);
        $("#treeMapWrapper").removeClass("active");
     }
-    catch(err){
+    catch (err) {
         error(err, "Loading the Treemap visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
 
     // jstree
-    try{
+    try {
         initJsTree(data, equate_il);
-    }  
-    catch(err){
+    }
+    catch (err) {
         error(err, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
-    
+
     // set up the fullscreen stuff
-    if (fullScreenApi.supportsFullScreen){
+    if (fullScreenApi.supportsFullScreen) {
         $("#buttons").prepend("<button id='zoom-btn' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
-    	$("#zoom-btn").click(function (){
-    	    if($(".tab-content .active").attr('id') == "sunburstWrapper")
+    	$("#zoom-btn").click(function () {
+    	    if ($(".tab-content .active").attr('id') == "sunburstWrapper") {
+				// GA event tracking
+				_gaq.push(['_trackEvent', 'Multi Peptide', 'Full Screen', 'Sunburst']);
                 window.fullScreenApi.requestFullScreen($("#sunburst").get(0));
-            else
+			}
+            else {
+				// GA event tracking
+				_gaq.push(['_trackEvent', 'Multi Peptide', 'Full Screen', 'Treemap']);
                 window.fullScreenApi.requestFullScreen($("#treeMap").get(0));
+			}
     	});
-    	$(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange',resizeFullScreen);
+    	$(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange', resizeFullScreen);
     }
-    function resizeFullScreen(){
-        if($(".tab-content .active").attr('id') == "sunburstWrapper"){
-                setTimeout(function (){
+
+    function resizeFullScreen() {
+        if ($(".tab-content .active").attr('id') == "sunburstWrapper") {
+                setTimeout(function () {
                     var size = 740;
-                    if(window.fullScreenApi.isFullScreen())
+                    if (window.fullScreenApi.isFullScreen()) {
                         size = Math.min($(window).height(), $(window).width());
+					}
                     $("#sunburst svg").attr("width", size);
                     $("#sunburst svg").attr("height", size);
                 }, 1000);
         }
-        else{
+        else {
             window.tm.canvas.resize($("#treeMap").width(), $("#treeMap").height());
         }
     }
-    
+
     // set up save image stuff
        $("#buttons").prepend("<button id='save-btn' class='btn btn-mini'><i class='icon-download'></i> Save as image</button>");
-   	$("#save-btn").click(function (){
+   	$("#save-btn").click(function () {
    	    $(".debug_dump").hide();
-   	    if($(".tab-content .active").attr('id') == "sunburstWrapper"){
+   	    if ($(".tab-content .active").attr('id') == "sunburstWrapper") {
+			// GA event tracking
+			_gaq.push(['_trackEvent', 'Multi Peptide', 'Save Image', 'Sunburst']);
+
    	        var svg = $("#sunburst svg").wrap("<div></div>").parent().html();
-            $.post("/convert", { image: svg }, function (data){
+            $.post("/convert", { image: svg }, function (data) {
                 $("#save-as-modal .modal-body").html("<img src='" + data + "' />");
                 $("#save-as-modal").modal();
             });
         }
-        else{
+        else {
+			// GA event tracking
+			_gaq.push(['_trackEvent', 'Multi Peptide', 'Save Image', 'Treemap']);
+
             html2canvas($("#treeMap"), {
-                onrendered : function (canvas){
+                onrendered : function (canvas) {
                     $("#save-as-modal .modal-body").html("<img src='" + canvas.toDataURL() + "' />");
                     $("#save-as-modal").modal();
                 }
-            }); 
+            });
         }
    	});
 }
@@ -91,12 +110,16 @@ function initTreeMap(jsonData) {
             enable: true,
             onClick: function (node) {
                 if (node) {
+					// GA event tracking
+					_gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Treemap', 'In']);
                     tm.enter(node);
                     $("#jstree_search").val(node.name);
                     $("#jstree_search").change();
                 }
             },
             onRightClick: function () {
+				// GA event tracking
+				_gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Treemap', 'Out']);
 				//TODO: replace this if bug in JIT gets fixed
 				tm.out();
             }
@@ -129,10 +152,10 @@ function initTreeMap(jsonData) {
             style.display = '';
             style.border = '2px solid transparent';
             
-            try{
+            try {
                 style.color = brightness(d3.rgb(node.data.$color)) < 125 ? "#eee" : "#000";
             }
-            catch(err){
+            catch (err) {
                 error(err, false);
                 style.color = "#000";
             }
@@ -157,12 +180,15 @@ function initTreeMap(jsonData) {
 }
 
 function initJsTree(data, equate_il) {
-    //set themes dir
+    // set themes dir
     $.jstree._themes = "/jstree/themes/";
 
-    //add onSelect action
+    // add onSelect action
     $("#jstree").bind("select_node.jstree",
 		function (node, tree) {
+			// GA event tracking
+			_gaq.push(['_trackEvent', 'Multi Peptide', 'JsTree', 'Peptides']);
+
 			var peptides = $(tree.rslt.obj).data(),
 				margin = tree.rslt.obj.context.offsetTop - $("#jstree").offset().top - 9,
 				innertext = "<a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + peptides.id + "' target='_blank'>" + $.trim($(tree.rslt.obj).find("a").text().split("(")[0]) + "</a>",
@@ -328,7 +354,10 @@ function initSunburst(data) {
     setTimeout(function () {click(data); }, 1000);
     
     function click(d) {
-        // set jstree
+		// GA event tracking
+		_gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Sunburst']);		
+
+// set jstree
         try{
             if(d.name == "organism")
                 $("#jstree_search").val("");

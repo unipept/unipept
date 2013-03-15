@@ -6,7 +6,7 @@
 #  uniprot_accession_number :string(8)       not null
 #  version                  :integer(2)      not null
 #  taxon_id                 :integer(3)      not null
-#  type                     :string(0)       not null
+#  type                     :string(9)       not null
 #  protein                  :text            default(""), not null
 #
 

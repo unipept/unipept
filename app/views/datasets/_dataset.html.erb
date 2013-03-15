@@ -1,7 +1,10 @@
+<% edit = false unless defined? edit %>
+<% load = false unless defined? load %>
+
 <p>
   <b>Environment:</b>
   <%= dataset.environment %> 
-	<% if session[:admin] && !load %>
+	<% if session[:admin] && edit %>
 		<%= link_to raw("<i class='icon-pencil'></i> Edit"), edit_dataset_path(dataset), :class => 'btn btn-mini' %>
 		<%= link_to raw("<i class='icon-trash icon-white'></i> Delete"), dataset, :confirm => 'Are you sure?', :method => :delete, :class => 'btn btn-mini btn-danger' %>
 	<% end %>
@@ -15,8 +18,8 @@
 	<br/>
 	Load dataset 
 	<span class="form-inline">
-	<%= select("dataset", dataset.id, dataset.dataset_items.map {|item| [item.name,item.path]}) %>
-	<%= button_tag(raw("Load"), { :type => "button", :class => "load-dataset btn" }) %>
+	<%= select("dataset", dataset.id, dataset.dataset_items.map {|item| [item.name,dataset_item_path(item)]}) %>
+	<%= button_tag(raw("Load"), { :type => "button", :class => "load-dataset btn", :"data-loading-text" => "Loading..." }) %>
 	</span>
 <% else %>
 	<ul>
