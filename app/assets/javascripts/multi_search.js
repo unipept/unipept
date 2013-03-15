@@ -1,4 +1,9 @@
 function init_multi(data, data2, equate_il) {
+	
+	$("#downloadDataset").click(function () {
+		$("#downloadDataset").button('loading');
+		return true;
+	});
 
     // sunburst
     try {
