@@ -9,7 +9,7 @@
 	<%= hidden_field_tag(:missed, @p[:missed]) %>
 	<%= hidden_field_tag(:export, 1) %>
 	<%= hidden_field_tag(:search_name, @p[:search_name])%>
-	<%= button_tag(raw("<i class='icon-download-alt icon-white'></i> Download these results"), :type => "submit", :class => "btn btn-primary") %>
+	<%= button_tag(raw("<i class='icon-download icon-white'></i> Download these results"), :type => "submit", :class => "btn btn-primary") %>
 <% end %>
 
 <% if @number_found > 0 %>
