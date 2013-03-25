@@ -1,6 +1,9 @@
 function init_multi(data, data2, equate_il) {
 	
 	$("#downloadDataset").click(function () {
+		// GA event tracking
+		_gaq.push(['_trackEvent', 'Multi Peptide', 'Export']);
+		
 		$("#downloadDataset").button('loading');
 		return true;
 	});
