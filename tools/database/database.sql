@@ -199,7 +199,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`dataset_items` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `dataset_id` INT NULL ,
   `name` VARCHAR(160) NULL ,
-  `data` TEXT NOT NULL ,
+  `data` MEDIUMTEXT NOT NULL ,
   `order` INT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_dataset_items_datasets` (`dataset_id` ASC) ,
