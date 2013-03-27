@@ -39,10 +39,10 @@ function add_fields(link, association, content) {
  */
 function error(error, userMessage) {
     qbaka.report(error);
-    if (typeof console != "undefined") { 
+    if (typeof console != "undefined") {
         console.error(error);
     }
-    if(userMessage){
+    if (userMessage) {
         var msg = $("<div class='alert alert-error' style='display: none;'><strong>Oh snap!</strong> " + userMessage + "</div>");
         $("#messages").append(msg);
         msg.show("normal");
@@ -102,13 +102,13 @@ function info(message) {
                  default:
                      return document[this.prefix + 'FullScreen'];
              }
-         }
+         };
          fullScreenApi.requestFullScreen = function(el) {
              return (this.prefix === '') ? el.requestFullScreen() : el[this.prefix + 'RequestFullScreen']();
-         }
+         };
          fullScreenApi.cancelFullScreen = function(el) {
              return (this.prefix === '') ? document.cancelFullScreen() : document[this.prefix + 'CancelFullScreen']();
-         }
+         };
      }
 
      // jQuery plugin
