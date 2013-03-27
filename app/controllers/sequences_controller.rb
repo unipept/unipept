@@ -7,7 +7,7 @@ class SequencesController < ApplicationController
   def show
     # process parameters
     # should we equate I and L?
-    equate_il = ( params[:equate_il].nil? || params[:equate_il] != "false" )
+    equate_il = (params[:equate_il] == "equateIL")
     # the sequence or id of the peptide
     seq = params[:id].upcase
 
@@ -175,9 +175,9 @@ class SequencesController < ApplicationController
 
   # redirects to show
   def search
-    il = ( params[:il_s] == 1 || params[:il_s] == "1" )
-    redirect_to "#{sequences_path}/#{params[:q]}/#{il}"
+    redirect_to "#{sequences_path}/#{params[:q]}/#{params[:il_s]}"
   end
+
 
   # processes a list of sequences
   def multi_search

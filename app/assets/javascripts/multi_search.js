@@ -183,6 +183,8 @@ function initJsTree(data, equate_il) {
     // set themes dir
     $.jstree._themes = "/jstree/themes/";
 
+    equate_il = equate_il ? "equateIL" : "";
+
     // add onSelect action
     $("#jstree").bind("select_node.jstree",
         function (node, tree) {
