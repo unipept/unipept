@@ -1,8 +1,8 @@
 class SequencesController < ApplicationController
   require 'oj'
-  
+
   # shows information about a peptide
-  # the peptide should be in params[:id] and 
+  # the peptide should be in params[:id] and
   # can be a peptide id or the sequence itself
   def show
     # process parameters
@@ -10,12 +10,12 @@ class SequencesController < ApplicationController
     equate_il = ( params[:equate_il].nil? || params[:equate_il] != "false" )
     # the sequence or id of the peptide
     seq = params[:id].upcase
-    
-    
+
+
     # process the input, convert seq to a valid @sequence
     # seq contains the id of the sequence
-    if seq.match(/\A[0-9]+\z/) 
-      sequence = Sequence.find_by_id(seq, :include => {:peptides => {:uniprot_entry => :name}})  
+    if seq.match(/\A[0-9]+\z/)
+      sequence = Sequence.find_by_id(seq, :include => {:peptides => {:uniprot_entry => :name}})
     # seq contains the sequence
     else
       seq.gsub!(/I/,'L') if equate_il
@@ -23,13 +23,13 @@ class SequencesController < ApplicationController
       # try finding it in the database
       sequence = Sequence.find_by_sequence(seq, :include => {:peptides => {:uniprot_entry => :name}})
     end
-    
+
     # we didn't find the sequence in the database
     # don't panic, we still got a few aces up our sleeve
     if sequence.nil?
       # check if it's splitable
       raise NoMatchesFoundError.new(seq) if seq.index(/([KR])([^P])/).nil?
-      
+
       # split it
       sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
       if equate_il
@@ -37,15 +37,15 @@ class SequencesController < ApplicationController
       else
         long_sequences = sequences.select{|s| s.length >= 5}.map{|s| Sequence.find_by_sequence(s, :include => {:original_peptides => {:uniprot_entry => [:name, :lineage]}})}
       end
-      
+
       # check if it has a match for every sequence and at least one long part
       raise NoMatchesFoundError.new(seq) if long_sequences.include? nil
       raise SequenceTooShortError if long_sequences.size == 0
-      
+
       # ok, we're done
       @sequence_string = seq
       multi = true
-      
+
     # we did find something in the database, but will it blend?
     else
       # check if we have some peptides to work with
@@ -54,9 +54,9 @@ class SequencesController < ApplicationController
       end
       @sequence_string = sequence.sequence
     end
-    
+
     @title = "Tryptic peptide analysis of #{@sequence_string}"
-    
+
     # get the uniprot entries of every peptide
     # only used for the open in uniprot links
     if multi
@@ -66,25 +66,25 @@ class SequencesController < ApplicationController
       else
         temp_entries = long_sequences.map{|s| s.original_peptides.map(&:uniprot_entry).to_set}
       end
-      
+
       # take the intersection of all sets
       @entries = temp_entries[0]
       for i in 1..(temp_entries.size-1) do
         @entries = @entries & temp_entries[i]
       end
-      
+
       # check if the protein contains the startsequence
       if equate_il
         @entries.select!{|e| e.protein.gsub(/I/,'L').include? seq}
       else
         @entries.select!{|e| e.protein.include? seq}
       end
-      raise NoMatchesFoundError.new(seq) if @entries.size == 0 
+      raise NoMatchesFoundError.new(seq) if @entries.size == 0
     else
       @entries = equate_il ? sequence.peptides.map(&:uniprot_entry) : sequence.original_peptides.map(&:uniprot_entry)
     end
-    
-    
+
+
     # LCA calculation
     if multi
       @lineages = @entries.map(&:lineage).uniq
@@ -94,7 +94,7 @@ class SequencesController < ApplicationController
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) #calculate the LCA
     @root = Node.new(1, "root") #start constructing the tree
     last_node = @root
-    
+
     #common lineage
     @common_lineage = Array.new #construct the common lineage in this array
     l = @lineages.select{|lineage| lineage[@lca_taxon.rank] == @lca_taxon.id}.first
@@ -109,8 +109,8 @@ class SequencesController < ApplicationController
         last_node = last_node.add_child(Node.new(t.id, t.name), @root)
       end
     end
-    
-    #distinct lineage 
+
+    #distinct lineage
     @lineages.map{|lineage| lineage.set_iterator_position(l.get_iterator_position)}
     @distinct_lineages = Array.new
     for lineage in @lineages do
@@ -131,14 +131,14 @@ class SequencesController < ApplicationController
       end
       @distinct_lineages << l.join(", ")
     end
-    
+
     #don't show the root when we don't need it
     @root = @root.children.count > 1 ? Oj.dump(@root) : Oj.dump(@root.children[0])
-    
+
     #Table stuff
     @table_lineages = Array.new
     @table_ranks = Array.new
-    
+
     @table_lineages << @lineages.map{|lineage| lineage.name.name}
     @table_ranks << "organism"
     @lineages.map{|lineage| lineage.set_iterator_position(0)} #reset the iterator
@@ -149,14 +149,14 @@ class SequencesController < ApplicationController
         @table_ranks << temp.compact[0].rank
       end
     end
-    
+
     # sort by id from left to right
     root_taxon = Taxon.find(1)
     @table_lineages = @table_lineages.transpose.sort_by{ |k| k[1..-1].map!{|l| l || root_taxon} }
-    	
+
     #sort entries
     @entries = @entries.to_a.sort_by{|e| e.name.name}
-    
+
   rescue SequenceTooShortError
     flash[:error] = "The sequence you searched for is too short."
     redirect_to sequences_path
@@ -164,26 +164,26 @@ class SequencesController < ApplicationController
       flash[:error] = "No matches for peptide #{e.message}"
       redirect_to sequences_path
   end
-  
-  
+
+
   # Lists all sequences
   def index
     @title = "All sequences"
     @sequences = Sequence.paginate(:page => params[:page])
   end
-  
-  
+
+
   # redirects to show
   def search
     il = ( params[:il_s] == 1 || params[:il_s] == "1" )
     redirect_to "#{sequences_path}/#{params[:q]}/#{il}"
   end
-  
+
   # processes a list of sequences
   def multi_search
     # save parameters
     @p = params
-    
+
     # set search parameters
     @equate_il = !params[:il].nil?
     filter_duplicates = !params[:dupes].nil?
@@ -191,17 +191,17 @@ class SequencesController < ApplicationController
     export = !params[:export].nil?
     search_name = params[:search_name]
     query = params[:qs]
-    
+
     @title = "Multi-peptide analysis result"
     @title += " of " + search_name unless search_name.nil? || search_name == ""
-  
-    if query.nil? || query.empty? 
+
+    if query.nil? || query.empty?
       flash[:error] = "Your query was empty, please try again."
       redirect_to root_path
     else
       #export stuff
       csv_string = CSV.generate_line ["peptide"].concat(Lineage.ranks) if export
-    
+
       # remove duplicates, filter shorts, substitute I by L, ...
       data = query.upcase
       data = data.gsub(/I/,'L') if @equate_il
@@ -210,11 +210,11 @@ class SequencesController < ApplicationController
       data_counts = Hash[data.group_by{|k| k}.map{|k,v| [k, v.length]}]
       number_searched_for = data.length
       data = data_counts.keys
-    
+
       # set metrics
       number_searched_for = data.length if filter_duplicates
       @number_found = 0
-    
+
       # build the resultset
       @matches = Hash.new
       @misses = data.to_set
@@ -234,8 +234,8 @@ class SequencesController < ApplicationController
           end
         end
         @misses.delete(sequence.sequence)
-      end  
-      
+      end
+
       # handle the misses
       if handle_missed
         iter = @misses.to_a
@@ -250,17 +250,17 @@ class SequencesController < ApplicationController
           elsif sequences.select{|s| s.length >= 6}.length >=1
             sequences = sequences.select{|s| s.length >= 6}
           end
-          
+
           if @equate_il
             long_sequences = sequences.map{|s| Sequence.find_by_sequence(s, :include => {:peptides => {:uniprot_entry => :lineage}})}
           else
             long_sequences = sequences.map{|s| Sequence.find_by_sequence(s, :include => {:original_peptides => {:uniprot_entry => :lineage}})}
           end
-        
+
           # jump the loop
           next if long_sequences.include? nil
           next if long_sequences.size == 0
-        
+
           # calculate possible uniprot entries
           if @equate_il
             temp_entries = long_sequences.map{|s| s.peptides.map(&:uniprot_entry).to_set}
@@ -280,13 +280,13 @@ class SequencesController < ApplicationController
           else
             entries.select!{|e| e.protein.include? seq}
           end
-        
+
           # skip if nothing left
           next if entries.size == 0
-        
+
           seq_lins = entries.map(&:lineage).uniq
           lca_t = Lineage.calculate_lca_taxon(seq_lins) #calculate the LCA
-        
+
           unless lca_t.nil?
             num_of_seq = filter_duplicates ? 1 : data_counts[seq]
             @number_found += num_of_seq
@@ -296,46 +296,46 @@ class SequencesController < ApplicationController
             end
           end
           @misses.delete(seq)
-        
+
         end
       end
-      @misses = @misses.to_a.sort 
-      
+      @misses = @misses.to_a.sort
+
       @intro_text = "#{@number_found} out of #{number_searched_for} #{"peptide".send(number_searched_for != 1 ? :pluralize : :to_s)}  were matched"
-      if filter_duplicates || @equate_il 
+      if filter_duplicates || @equate_il
         @intro_text += " ("
         @intro_text += "peptides were deduplicated" if filter_duplicates
-        @intro_text += ", " if filter_duplicates && @equate_il 
+        @intro_text += ", " if filter_duplicates && @equate_il
         @intro_text += "I and L residues were equated" if @equate_il
         @intro_text += ", " if filter_duplicates || @equate_il
         @intro_text += handle_missed ? "advanced missed cleavage handling" : "simple missed cleavage handling"
         @intro_text += ")"
       end
       @intro_text += "."
-    
+
       # construct treemap nodes
       @root = TreeMapNode.new(1, "organism", "no rank")
       @matches.each do |taxon, sequences| # for every match
         @root.add_sequences(sequences)
         lca_l = taxon.lineage
-        
+
         #export stuff
-        if export 
+        if export
           for sequence in sequences do
             csv_string += CSV.generate_line [sequence].concat(lca_l.to_a)
           end
         end
-        
+
         last_node_loop = @root
         while !lca_l.nil? && lca_l.has_next? # process every rank in lineage
           t = lca_l.next_t
           unless t.nil?
             node = TreeMapNode.find_by_id(t.id, @root)
-      		  if node.nil?
-      		    node = TreeMapNode.new(t.id, t.name, t.rank)
-      		    last_node_loop = last_node_loop.add_child(node, @root)
-      	    else
-      	      last_node_loop = node
+            if node.nil?
+              node = TreeMapNode.new(t.id, t.name, t.rank)
+              last_node_loop = last_node_loop.add_child(node, @root)
+            else
+              last_node_loop = node
             end
             node.add_sequences(sequences)
           end
@@ -344,25 +344,25 @@ class SequencesController < ApplicationController
         node.add_own_sequences(sequences) unless node.nil?
       end
 
-    	#don't show the root when we don't need it
-    	@root = @root.children[0] if @root.children.count == 0
-    	@root.add_piechart_data unless @root.nil?
-    	@root.sort_peptides_and_children unless @root.nil?
-    	    	
-    	root_json = Oj.dump(@root).gsub('"^o":"TreeMapNode",', "")
-    	sunburst_hash = Oj.load(String.new(root_json))
-    	TreeMapNode.clean_sunburst!(sunburst_hash) unless sunburst_hash.nil?
-    	@sunburst_json = Oj.dump(sunburst_hash).gsub("children","kids")
-    	
-    	treemap_hash = Oj.load(root_json)
-    	TreeMapNode.clean_treemap!(treemap_hash) unless treemap_hash.nil?
-    	@treemap_json = Oj.dump(treemap_hash)
-    	
-    	
-    	#more export stuff
-    	filename = search_name != "" ? search_name : "export"
+      #don't show the root when we don't need it
+      @root = @root.children[0] if @root.children.count == 0
+      @root.add_piechart_data unless @root.nil?
+      @root.sort_peptides_and_children unless @root.nil?
+
+      root_json = Oj.dump(@root).gsub('"^o":"TreeMapNode",', "")
+      sunburst_hash = Oj.load(String.new(root_json))
+      TreeMapNode.clean_sunburst!(sunburst_hash) unless sunburst_hash.nil?
+      @sunburst_json = Oj.dump(sunburst_hash).gsub("children","kids")
+
+      treemap_hash = Oj.load(root_json)
+      TreeMapNode.clean_treemap!(treemap_hash) unless treemap_hash.nil?
+      @treemap_json = Oj.dump(treemap_hash)
+
+
+      #more export stuff
+      filename = search_name != "" ? search_name : "export"
       send_data csv_string, :type => 'text/csv; charset=iso-8859-1; header=present', :disposition => "attachment; filename="+filename+".csv" if export
-      
+
     end
   end
 end
