@@ -1,6 +1,9 @@
 <h1><%= @title %></h1>
 
 <p><%= @intro_text %></p>
+<% if @prideUrl %>
+  <p>This dataset was loaded from PRIDE. <%= link_to "View in PRIDE" , @prideURL, :target => "_blank" %> <i class='icon-share-alt'></i></p>
+<% end %>
 
 <%= form_tag(:sequence_multi_search, :method => "post", :class => "form-inline") do %>
 	<%= hidden_field_tag(:qs, @p[:qs]) %>

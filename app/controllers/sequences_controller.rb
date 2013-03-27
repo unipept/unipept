@@ -194,6 +194,9 @@ class SequencesController < ApplicationController
 
     @title = "Multi-peptide analysis result"
     @title += " of " + search_name unless search_name.nil? || search_name == ""
+    if search_name.include? "Pride experiment"
+      @prideURL = "http://www.ebi.ac.uk/pride/experiment.do?experimentAccessionNumber=#{search_name[/[0-9]*$/]}"
+    end
 
     if query.nil? || query.empty?
       flash[:error] = "Your query was empty, please try again."
