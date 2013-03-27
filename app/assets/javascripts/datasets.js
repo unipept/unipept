@@ -27,12 +27,18 @@ function initDatasets() {
 
 	// load a PRIDE dataset
 	$(".load-pride").click(function () {
-		$(this).button('loading');
 		
 		// set the vars
 		var experiment = $("#pride_exp_id").val(),
 			url = "/pride/" + experiment,
 			name = "PRIDE experiment " + experiment;
+		
+		if(experiment == "") {
+		    info("Please enter a PRIDE id");
+		    return false;
+		}
+		
+        $(this).button('loading');
 
 		// GA event tracking
 		_gaq.push(['_trackEvent', 'Datasets', 'Load', 'Pride - ' + experiment]);

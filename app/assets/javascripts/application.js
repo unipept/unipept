@@ -49,6 +49,14 @@ function error(error, userMessage) {
     }
 }
 
+/* display the message variable in an info alert
+ */
+function info(message) {
+	var msg = $("<div class='alert alert-info' style='display: none;'><strong>Heads up!</strong> " + message + "</div>");
+    $("#messages").append(msg);
+    msg.show("normal");
+}
+
 /*
  * add an object called fullScreenApi until the fullscreen API gets finalized
  * from: http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugin/
