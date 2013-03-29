@@ -66,14 +66,14 @@ class Sequence < ActiveRecord::Base
     file = File.open(input, 'r')
     slice_size = 1000
     data = file.readlines.each_slice(slice_size).to_a
-    num_of_slices = data.size / slice_size
+    num_of_slices = data.size
     current_slice = 0
 
     File.open(output, 'w') { |file| file.write(CSV.generate_line ["peptide"].concat(Lineage.ranks)) }
 
     for slice in data do
       csv_string = ""
-      File.open("public/progress", 'w') { |file| file.write("batch process#" + (current_slice * 100 / num_of_slices).to_s) }
+      File.open("public/progress", 'w') { |file| file.write("batch process#" + (current_slice * 100.0 / num_of_slices).to_s) }
 
       query = slice.join("\n")
       data = query.upcase.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
