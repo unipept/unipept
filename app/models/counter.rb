@@ -13,7 +13,7 @@ class Counter < ActiveRecord::Base
   def self.count(max=1000, equate_il=true)
     id = Counter.find_by_name("sequence_id")
     while id.value < max
-      if id.value % 1000000 == 0
+      if id.value % 100000 == 0
         File.open("public/progress", 'w') { |file| file.write("Counter#" + ActionController::Base.helpers.number_with_precision((id.value * 100.0 / max), :precision => 2) ) }
       end
       id.value += 1
