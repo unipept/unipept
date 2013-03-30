@@ -73,7 +73,7 @@ class Sequence < ActiveRecord::Base
 
     for slice in data do
       csv_string = ""
-      File.open("public/progress", 'w') { |file| file.write("batch process#" + (current_slice * 100.0 / num_of_slices).to_s) }
+      File.open("public/progress", 'w') { |file| file.write("batch process#" + ActionController::Base.helpers.number_with_precision((current_slice * 100.0 / num_of_slices), :precision => 2) ) }
 
       query = slice.join("\n")
       data = query.upcase.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
