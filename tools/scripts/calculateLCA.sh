@@ -3,8 +3,8 @@
 # Script invoked with no command-line args?
 if [ $# -eq "0" ]    
 then
-  echo "Usage: `basename $0` [-e] stopId equateIL"
-  echo "-e resets all counters in the database"
+  echo "Usage: `basename $0` [-r] stopId equateIL"
+  echo "-r resets all counters in the database"
   exit
 fi
 
@@ -17,6 +17,7 @@ while getopts ":e" opt; do
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
+	    exit
       ;;
   esac
 done
