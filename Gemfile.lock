@@ -81,6 +81,9 @@ GEM
       treetop (~> 1.4.8)
     mime-types (1.22)
     minitest (4.7.0)
+    minitest-rails (0.9.1)
+      minitest (~> 4.7)
+      rails (>= 3.0)
     multi_json (1.7.2)
     multi_xml (0.5.3)
     mysql2 (0.3.11)
@@ -153,7 +156,7 @@ DEPENDENCIES
   httparty
   jquery-rails
   less-rails
-  minitest
+  minitest-rails
   mysql2
   newrelic_rpm
   oj

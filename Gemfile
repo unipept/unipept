@@ -35,10 +35,11 @@ group :development do
 end
 
 group :test do
-  gem 'minitest'
-
-  # Pretty printed test output
   gem 'turn'
+end
+
+group :test, :development do
+  gem 'minitest-rails'
 end
 
 # Gems used only for assets and not required
