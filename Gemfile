@@ -34,13 +34,11 @@ group :development do
   gem 'sprockets'
 end
 
-group :development, :test do
-  gem 'rspec'
-  gem 'rspec-rails'
-#  gem 'webrat'
-#  gem 'spork'
-#  gem 'be_valid_asset'
-#  gem 'factory_girl_rails'
+group :test do
+  gem 'minitest'
+
+  # Pretty printed test output
+  gem 'turn'
 end
 
 # Gems used only for assets and not required
