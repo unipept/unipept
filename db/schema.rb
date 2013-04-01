@@ -123,7 +123,7 @@ ActiveRecord::Schema.define(:version => 0) do
     t.string  "name",        :limit => 256,                     :null => false
     t.string  "rank",        :limit => 16
     t.integer "parent_id",   :limit => 3
-    t.binary  "valid_taxon", :limit => 1,   :default => "b'1'", :null => false
+    t.binary  "valid_taxon", :limit => 1,                       :null => false
   end
 
   add_index "taxons", ["parent_id"], :name => "fk_taxon_taxon"
