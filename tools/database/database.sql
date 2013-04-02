@@ -149,24 +149,21 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `unipept`.`uniprot_cross_references`
+-- Table `unipept`.`embl_cross_references`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `unipept`.`uniprot_cross_references` (
+CREATE  TABLE IF NOT EXISTS `unipept`.`embl_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `type` ENUM('RefSeq', 'EMBL') NOT NULL ,
   `protein_id` VARCHAR(15) NULL ,
   `sequence_id` VARCHAR(15) NULL ,
   PRIMARY KEY (`id`) ,
-  INDEX `fk_uniprot_cross_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
-  INDEX `idx_sequence_id` (`sequence_id` ASC) ,
+  INDEX `fk_embl_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
   CONSTRAINT `fk_uniprot_cross_reference_uniprot_entries`
     FOREIGN KEY (`uniprot_entry_id` )
     REFERENCES `unipept`.`uniprot_entries` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -199,7 +196,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`dataset_items` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `dataset_id` INT NULL ,
   `name` VARCHAR(160) NULL ,
-  `data` MEDIUMTEXT NOT NULL ,
+  `data` TEXT NOT NULL ,
   `order` INT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_dataset_items_datasets` (`dataset_id` ASC) ,
@@ -228,11 +225,48 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `unipept`.`genomes` (
   `id` INT NOT NULL AUTO_INCREMENT ,
+  `name` VARCHAR(120) NOT NULL ,
   `bioproject_id` INT NOT NULL ,
   `refseq_id` VARCHAR(15) NOT NULL ,
   `status` VARCHAR(45) NOT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `idx_refseq_id` (`refseq_id` ASC) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`refseq_cross_references`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `unipept`.`refseq_cross_references` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `uniprot_entry_id` INT UNSIGNED NOT NULL ,
+  `protein_id` VARCHAR(15) NULL ,
+  `sequence_id` VARCHAR(15) NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_refseq_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
+  INDEX `idx_sequence_id` (`sequence_id` ASC) ,
+  CONSTRAINT `fk_refseq_cross_reference_uniprot_entries`
+    FOREIGN KEY (`uniprot_entry_id` )
+    REFERENCES `unipept`.`uniprot_entries` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`go_cross_references`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `unipept`.`go_cross_references` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `uniprot_entry_id` INT UNSIGNED NOT NULL ,
+  `go_id` VARCHAR(15) NOT NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_go_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
+  CONSTRAINT `fk_go_cross_reference_uniprot_entries`
+    FOREIGN KEY (`uniprot_entry_id` )
+    REFERENCES `unipept`.`uniprot_entries` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
