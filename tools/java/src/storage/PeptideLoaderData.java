@@ -32,7 +32,8 @@ public class PeptideLoaderData {
 	private PreparedStatement addUniprotEntry;
 	private PreparedStatement addPeptide;
 	private PreparedStatement addLineage;
-	private PreparedStatement addDbRef;
+	private PreparedStatement addRefseqRef;
+	private PreparedStatement addEMBLRef;
 	private PreparedStatement lineageExists;
 	private PreparedStatement getTaxon;
 
@@ -72,8 +73,10 @@ public class PeptideLoaderData {
 					.prepareStatement("INSERT INTO peptides (`sequence_id`, `uniprot_entry_id`, `original_sequence_id`, `position`) VALUES (?,?,?,?)");
 			addLineage = connection
 					.prepareStatement("INSERT INTO lineages (`taxon_id`) VALUES (?)");
-			addDbRef = connection
-					.prepareStatement("INSERT INTO uniprot_cross_references (`uniprot_entry_id`, `type`, `protein_id`, `sequence_id`) VALUES (?,?,?,?)");
+			addRefseqRef = connection
+					.prepareStatement("INSERT INTO refseq_cross_references (`uniprot_entry_id`, `protein_id`, `sequence_id`) VALUES (?,?,?)");
+			addEMBLRef = connection
+					.prepareStatement("INSERT INTO embl_cross_references (`uniprot_entry_id`, `protein_id`, `sequence_id`) VALUES (?,?,?)");
 			lineageExists = connection
 					.prepareStatement("SELECT COUNT(*) AS aantal FROM lineages WHERE `taxon_id` = ?");
 			getTaxon = connection
@@ -218,11 +221,15 @@ public class PeptideLoaderData {
 	 */
 	public void addDbRef(UniprotDbRef ref, int uniprotEntryId) {
 		try {
-			addDbRef.setInt(1, uniprotEntryId);
-			addDbRef.setString(2, ref.getType());
-			addDbRef.setString(3, ref.getProteinId());
-			addDbRef.setString(4, ref.getSequenceId());
-			addDbRef.executeUpdate();
+			PreparedStatement ps;
+			if (ref.getType() == "EMBL")
+				ps = addEMBLRef;
+			else
+				ps = addRefseqRef;
+			ps.setInt(1, uniprotEntryId);
+			ps.setString(2, ref.getProteinId());
+			ps.setString(3, ref.getSequenceId());
+			ps.executeUpdate();
 		} catch (SQLException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis())
 					+ " Error adding this cross reference to the database.");
@@ -343,7 +350,8 @@ public class PeptideLoaderData {
 				stmt.executeUpdate("TRUNCATE TABLE `peptides`");
 				stmt.executeUpdate("TRUNCATE TABLE `sequences`");
 				stmt.executeUpdate("TRUNCATE TABLE `uniprot_entries`");
-				stmt.executeUpdate("TRUNCATE TABLE `uniprot_cross_references`");
+				stmt.executeUpdate("TRUNCATE TABLE `refseq_cross_references`");
+				stmt.executeUpdate("TRUNCATE TABLE `embl_cross_references`");
 				stmt.executeUpdate("TRUNCATE TABLE `lineages`");
 				stmt.executeQuery("SET FOREIGN_KEY_CHECKS=1");
 			} catch (SQLException e) {
