@@ -18,6 +18,7 @@ public class UniprotHandler extends DefaultHandler {
 	private UniprotEntry currentItem;
 	private UniprotDbRef dbRef;
 	private UniprotGORef goRef;
+	private UniprotECRef ecRef;
 	private StringBuilder charData;
 	private int i;
 	private boolean inOrganism = false;
@@ -79,6 +80,9 @@ public class UniprotHandler extends DefaultHandler {
 					} else if (goRef != null) {
 						currentItem.addGORef(goRef);
 						goRef = null;
+					} else if (ecRef != null) {
+						currentItem.addECRef(ecRef);
+						ecRef = null;
 					}
 				}
 			}
@@ -115,13 +119,13 @@ public class UniprotHandler extends DefaultHandler {
 					if (atts.getValue("type").equals("EMBL")) {
 						dbRef = new UniprotDbRef("EMBL");
 						dbRef.setSequenceId(atts.getValue("id"));
-					}
-					if (atts.getValue("type").equals("RefSeq")) {
+					} else if (atts.getValue("type").equals("RefSeq")) {
 						dbRef = new UniprotDbRef("RefSeq");
 						dbRef.setProteinId(atts.getValue("id"));
-					}
-					if (atts.getValue("type").equals("GO")) {
+					} else if (atts.getValue("type").equals("GO")) {
 						goRef = new UniprotGORef(atts.getValue("id"));
+					} else if (atts.getValue("type").equals("EC")) {
+						ecRef = new UniprotECRef(atts.getValue("id"));
 					}
 				}
 			}
@@ -132,7 +136,7 @@ public class UniprotHandler extends DefaultHandler {
 				if (dbRef != null) {
 					if (atts.getValue("type").equals("protein sequence ID"))
 						dbRef.setProteinId(atts.getValue("value"));
-					if (atts.getValue("type").equals("nucleotide sequence ID"))
+					else if (atts.getValue("type").equals("nucleotide sequence ID"))
 						dbRef.setSequenceId(atts.getValue("value"));
 				}
 			}
