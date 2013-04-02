@@ -15,3 +15,5 @@ wget ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/c
 
 gunzip uniprot_sprot.xml.gz  
 gunzip uniprot_trembl.xml.gz 
+
+cd ../..
