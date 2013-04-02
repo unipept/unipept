@@ -17,6 +17,7 @@ public class UniprotHandler extends DefaultHandler {
 
 	private UniprotEntry currentItem;
 	private UniprotDbRef dbRef;
+	private UniprotGORef goRef;
 	private StringBuilder charData;
 	private int i;
 	private boolean inOrganism = false;
@@ -71,9 +72,14 @@ public class UniprotHandler extends DefaultHandler {
 		endTagWorkers.put("dbReference", new EndTagWorker() {
 			@Override
 			public void handleTag(String data) {
-				if (!inOrganism && dbRef != null) {
-					currentItem.addDbRef(dbRef);
-					dbRef = null;
+				if (!inOrganism) {
+					if (dbRef != null) {
+						currentItem.addDbRef(dbRef);
+						dbRef = null;
+					} else if (goRef != null) {
+						currentItem.addGORef(goRef);
+						goRef = null;
+					}
 				}
 			}
 		});
@@ -105,8 +111,7 @@ public class UniprotHandler extends DefaultHandler {
 				if (inOrganism) {
 					if (atts.getValue("type").equals("NCBI Taxonomy"))
 						currentItem.setTaxonId(Integer.valueOf(atts.getValue("id")));
-				}
-				if (!inEvidence) {
+				} else if (!inEvidence) {
 					if (atts.getValue("type").equals("EMBL")) {
 						dbRef = new UniprotDbRef("EMBL");
 						dbRef.setSequenceId(atts.getValue("id"));
@@ -114,6 +119,9 @@ public class UniprotHandler extends DefaultHandler {
 					if (atts.getValue("type").equals("RefSeq")) {
 						dbRef = new UniprotDbRef("RefSeq");
 						dbRef.setProteinId(atts.getValue("id"));
+					}
+					if (atts.getValue("type").equals("GO")) {
+						goRef = new UniprotGORef(atts.getValue("id"));
 					}
 				}
 			}

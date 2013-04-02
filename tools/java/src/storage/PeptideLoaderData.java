@@ -101,7 +101,7 @@ public class PeptideLoaderData {
 			for (Pair p : entry.digest())
 				addData(p.getSequence().replace("I", "L"), uniprotEntryId, p.getSequence(),
 						p.getPosition());
-			for (UniprotDbRef ref : entry.getReferences())
+			for (UniprotDbRef ref : entry.getDbReferences())
 				addDbRef(ref, uniprotEntryId);
 		}
 	}
