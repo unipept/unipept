@@ -120,10 +120,10 @@ ActiveRecord::Schema.define(:version => 0) do
   add_index "sequences", ["sequence"], :name => "uidx_sequence", :unique => true
 
   create_table "taxons", :force => true do |t|
-    t.string  "name",        :limit => 256,                     :null => false
+    t.string  "name",        :limit => 256,                   :null => false
     t.string  "rank",        :limit => 16
     t.integer "parent_id",   :limit => 3
-    t.binary  "valid_taxon", :limit => 1,                       :null => false
+    t.boolean "valid_taxon",                :default => true, :null => false
   end
 
   add_index "taxons", ["parent_id"], :name => "fk_taxon_taxon"
