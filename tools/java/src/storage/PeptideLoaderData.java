@@ -222,7 +222,7 @@ public class PeptideLoaderData {
 	public void addDbRef(UniprotDbRef ref, int uniprotEntryId) {
 		try {
 			PreparedStatement ps;
-			if (ref.getType() == "EMBL")
+			if (ref.getType().equals("EMBL"))
 				ps = addEMBLRef;
 			else
 				ps = addRefseqRef;
