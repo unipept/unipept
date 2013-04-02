@@ -21,10 +21,8 @@ class PagesController < ApplicationController
     # progressbar stuff
     file = Rails.root.join("public", "progress")
     if FileTest.exists?(file)
-      content = File.read(file)
-      content = content.gsub(/#/,"\n").lines.to_a
-      @progress_name = content[0]
-      @progress_percentage = content[1]
+      file = File.open(file, 'r')
+      @progress = file.readlines.to_a.map{ |line| line.strip.gsub(/#/,"\n").lines.to_a }
     end
   end
 end

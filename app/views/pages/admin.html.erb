@@ -1,12 +1,14 @@
 <h1>Admin Dashboard</h1>
 
-<% unless @progress_name.nil? %>
+<% unless @progress.nil? %>
+<% for p in @progress do %>
 <p>
-<%= @progress_name %> is <%= @progress_percentage %>% done.
+<%= p[0] %> is <%= p[1] %>% done.
 <div class="progress progress-striped active">
-  <div class="bar" style="width: <%= @progress_percentage %>%;"></div>
+  <div class="bar" style="width: <%= p[1] %>%;"></div>
 </div>
 </p>
+<% end %>
 <% end %>
 
 <h2>Admin links</h2>
