@@ -8,7 +8,7 @@
 
 class Counter < ActiveRecord::Base
   
-  set_primary_key :name
+  self.primary_key = :name
   
   def self.count(max=1000, equate_il=true)
     id = Counter.find_by_name("sequence_id")
