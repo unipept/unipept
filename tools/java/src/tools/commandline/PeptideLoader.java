@@ -13,6 +13,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.SAXException;
 
 import storage.PeptideLoaderData;
+import tools.ProgressWriter;
 import xml.UniprotHandler;
 
 /**
@@ -113,13 +114,23 @@ public class PeptideLoader {
 			// create a new loader object
 			PeptideLoader loader = new PeptideLoader(true);
 
+			ProgressWriter.addProgress("Build database - load uniprot", 100);
+			ProgressWriter.updateProgress("Build database - load uniprot", 45);
+
 			// process the swissprot input file
+			ProgressWriter.addProgress("Swiss-Prot", 536489);
 			loader.processFile(args[0], true);
+			ProgressWriter.removeProgress("Swiss-Prot");
+			ProgressWriter.updateProgress("Build database - load uniprot", 70);
 
 			// process the tremble input file
+			ProgressWriter.addProgress("TrEMBL", 22660469);
 			loader.processFile(args[1], false);
+			ProgressWriter.removeProgress("TrEMBL");
+			ProgressWriter.updateProgress("Build database - load uniprot", 90);
 
 			loader.addLineage();
+			ProgressWriter.removeProgress("PeptideLoader");
 		} else {
 			// create a new loader object
 			PeptideLoader loader = new PeptideLoader(false);

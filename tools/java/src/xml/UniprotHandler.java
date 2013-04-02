@@ -9,6 +9,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import storage.PeptideLoaderData;
+import tools.ProgressWriter;
 
 public class UniprotHandler extends DefaultHandler {
 
@@ -27,9 +28,9 @@ public class UniprotHandler extends DefaultHandler {
 	private Map<String, EndTagWorker> endTagWorkers;
 	private Map<String, StartTagWorker> startTagWorkers;
 
-	public UniprotHandler(boolean isSwissprot, PeptideLoaderData peptideLoaderData) {
+	public UniprotHandler(boolean swissprot, PeptideLoaderData peptideLoaderData) {
 		super();
-		this.isSwissprot = isSwissprot;
+		this.isSwissprot = swissprot;
 		this.pld = peptideLoaderData;
 		charData = new StringBuilder();
 		i = 0;
@@ -41,9 +42,15 @@ public class UniprotHandler extends DefaultHandler {
 			public void handleTag(String data) {
 				pld.store(currentItem);
 				i++;
-				if (i % 100000 == 0)
+				if (i % 100000 == 0) {
 					System.out.println(new Timestamp(System.currentTimeMillis()) + " Entry " + i
 							+ " added");
+					if (isSwissprot)
+						ProgressWriter.updateProgress("Swiss-Prot", i);
+					else
+						ProgressWriter.updateProgress("TrEMBL", i);
+
+				}
 			}
 		});
 		endTagWorkers.put("accession", new EndTagWorker() {
