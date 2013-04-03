@@ -42,7 +42,7 @@ public class UniprotHandler extends DefaultHandler {
 			public void handleTag(String data) {
 				pld.store(currentItem);
 				i++;
-				if (i % 100000 == 0) {
+				if (i % 10000 == 0) {
 					System.out.println(new Timestamp(System.currentTimeMillis()) + " Entry " + i
 							+ " added");
 					if (isSwissprot)

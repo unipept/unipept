@@ -32,7 +32,7 @@ public class ProgressWriter {
 		try {
 			out = new PrintWriter(FILE);
 			for (String key : MAX.keySet()) {
-				out.println(key + "#" + (100 * CURRENT.get(key) / MAX.get(key)));
+				out.println(key + "#" + (100.0 * CURRENT.get(key) / MAX.get(key)));
 			}
 			out.close();
 		} catch (FileNotFoundException e) {
