@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #backup old database
 ssh -p 4840 bmesuere@nibbler.ugent.be "mysqldump -u unipept -p --opt unipept | gzip - > dump.old.sql.gz"
 

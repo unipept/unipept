@@ -1,10 +1,13 @@
 #!/bin/bash
 
-datadir="data"
+# set up dirs
+datadir="../data"
+currentdir=`pwd`
 
 # create directory for storing genome sequences
 uniprotdir="${datadir}/uniprot"
 
+# remove old data
 rm -rf ${uniprotdir}
 mkdir -p ${uniprotdir}
 
@@ -13,7 +16,7 @@ cd "${uniprotdir}"
 wget ftp://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.xml.gz
 wget ftp://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/complete/uniprot_trembl.xml.gz
 
-gunzip uniprot_sprot.xml.gz  
-gunzip uniprot_trembl.xml.gz 
+gunzip uniprot_sprot.xml.gz
+gunzip uniprot_trembl.xml.gz
 
-cd ../..
+cd ${currentdir}

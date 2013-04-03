@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 # Script invoked with no command-line args?
 if [ $# -eq "0" ]    
