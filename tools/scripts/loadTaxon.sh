@@ -1,6 +1,6 @@
+rm -rf data/taxon
 mkdir -p data/taxon
 cd data/taxon
-rm *
 wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip
 unzip taxdmp.zip
 cd ../..

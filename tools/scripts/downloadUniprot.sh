@@ -5,7 +5,7 @@ datadir="data"
 # create directory for storing genome sequences
 uniprotdir="${datadir}/uniprot"
 
-rm -r ${uniprotdir}
+rm -rf ${uniprotdir}
 mkdir -p ${uniprotdir}
 
 # download and unpack data
