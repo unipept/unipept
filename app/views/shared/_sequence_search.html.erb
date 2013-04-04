@@ -2,6 +2,6 @@
 	<%= search_field_tag(:q, "", :placeholder => "SEQUENCE") %>
 	<%= button_tag(raw("<i class='icon-search icon-white'></i> Search"), :type => "submit", :class => "btn btn-primary") %>
 	<br/>
-	<%= check_box_tag(:il_s, 1, true) %>
+	<%= check_box_tag(:il_s, "equateIL", true) %>
 	<%= label_tag(:il_s, "Equate I and L?") %>
 <% end %>

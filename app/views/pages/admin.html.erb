@@ -1,4 +1,17 @@
 <h1>Admin Dashboard</h1>
+
+<% unless @progress.nil? %>
+<% for p in @progress do %>
+<p>
+<%= p[0] %> is <%= p[1] %>% done.
+<div class="progress progress-striped active">
+  <div class="bar" style="width: <%= p[1] %>%;"></div>
+</div>
+</p>
+<% end %>
+<% end %>
+
+<h2>Admin links</h2>
 <ul>
 <li><a href="http://analytics.google.com">Google Analytics</a></li>
 <li><a href="https://www.google.com/webmasters/tools/home?hl=en">Google Webmaster Tools</a></li>

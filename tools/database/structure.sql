@@ -163,8 +163,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`embl_cross_references` (
     REFERENCES `unipept`.`uniprot_entries` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -258,44 +257,60 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
+-- -----------------------------------------------------
+-- Table `unipept`.`refseq_cross_references`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `unipept`.`refseq_cross_references` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `uniprot_entry_id` INT UNSIGNED NOT NULL ,
+  `protein_id` VARCHAR(15) NULL ,
+  `sequence_id` VARCHAR(15) NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_refseq_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
+  INDEX `idx_sequence_id` (`sequence_id` ASC) ,
+  CONSTRAINT `fk_refseq_cross_reference_uniprot_entries`
+    FOREIGN KEY (`uniprot_entry_id` )
+    REFERENCES `unipept`.`uniprot_entries` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`go_cross_references`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `unipept`.`go_cross_references` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `uniprot_entry_id` INT UNSIGNED NOT NULL ,
+  `go_id` VARCHAR(15) NOT NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_go_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
+  CONSTRAINT `fk_go_cross_reference_uniprot_entries`
+    FOREIGN KEY (`uniprot_entry_id` )
+    REFERENCES `unipept`.`uniprot_entries` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`ec_cross_references`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `unipept`.`ec_cross_references` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `uniprot_entry_id` INT UNSIGNED NOT NULL ,
+  `ec_id` VARCHAR(15) NOT NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_ec_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
+  CONSTRAINT `fk_ec_cross_reference_uniprot_entries`
+    FOREIGN KEY (`uniprot_entry_id` )
+    REFERENCES `unipept`.`uniprot_entries` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
-
--- -----------------------------------------------------
--- Data for table `unipept`.`counters`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `unipept`;
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('sequence_id', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('superkingdom', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('kingdom', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('subkingdom', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('superphylum', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('phylum', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('subphylum', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('superclass', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('class', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('subclass', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('infraclass', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('superorder', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('order', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('suborder', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('infraorder', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('parvorder', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('superfamily', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('family', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('subfamily', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('tribe', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('subtribe', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('genus', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('subgenus', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('species group', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('species subgroup', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('species', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('subspecies', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('varietas', 0);
-INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('forma', 0);
-
-COMMIT;

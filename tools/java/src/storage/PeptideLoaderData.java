@@ -12,8 +12,10 @@ import java.util.List;
 import java.util.Set;
 
 import xml.UniprotDbRef;
+import xml.UniprotECRef;
 import xml.UniprotEntry;
 import xml.UniprotEntry.Pair;
+import xml.UniprotGORef;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
@@ -32,7 +34,10 @@ public class PeptideLoaderData {
 	private PreparedStatement addUniprotEntry;
 	private PreparedStatement addPeptide;
 	private PreparedStatement addLineage;
-	private PreparedStatement addDbRef;
+	private PreparedStatement addRefseqRef;
+	private PreparedStatement addEMBLRef;
+	private PreparedStatement addGORef;
+	private PreparedStatement addECRef;
 	private PreparedStatement lineageExists;
 	private PreparedStatement getTaxon;
 
@@ -72,8 +77,14 @@ public class PeptideLoaderData {
 					.prepareStatement("INSERT INTO peptides (`sequence_id`, `uniprot_entry_id`, `original_sequence_id`, `position`) VALUES (?,?,?,?)");
 			addLineage = connection
 					.prepareStatement("INSERT INTO lineages (`taxon_id`) VALUES (?)");
-			addDbRef = connection
-					.prepareStatement("INSERT INTO uniprot_cross_references (`uniprot_entry_id`, `type`, `protein_id`, `sequence_id`) VALUES (?,?,?,?)");
+			addRefseqRef = connection
+					.prepareStatement("INSERT INTO refseq_cross_references (`uniprot_entry_id`, `protein_id`, `sequence_id`) VALUES (?,?,?)");
+			addEMBLRef = connection
+					.prepareStatement("INSERT INTO embl_cross_references (`uniprot_entry_id`, `protein_id`, `sequence_id`) VALUES (?,?,?)");
+			addGORef = connection
+					.prepareStatement("INSERT INTO go_cross_references (`uniprot_entry_id`, `go_id`) VALUES (?,?)");
+			addECRef = connection
+					.prepareStatement("INSERT INTO ec_cross_references (`uniprot_entry_id`, `ec_id`) VALUES (?,?)");
 			lineageExists = connection
 					.prepareStatement("SELECT COUNT(*) AS aantal FROM lineages WHERE `taxon_id` = ?");
 			getTaxon = connection
@@ -98,8 +109,12 @@ public class PeptideLoaderData {
 			for (Pair p : entry.digest())
 				addData(p.getSequence().replace("I", "L"), uniprotEntryId, p.getSequence(),
 						p.getPosition());
-			for (UniprotDbRef ref : entry.getReferences())
+			for (UniprotDbRef ref : entry.getDbReferences())
 				addDbRef(ref, uniprotEntryId);
+			for (UniprotGORef ref : entry.getGOReferences())
+				addGORef(ref, uniprotEntryId);
+			for (UniprotECRef ref : entry.getECReferences())
+				addECRef(ref, uniprotEntryId);
 		}
 	}
 
@@ -218,14 +233,60 @@ public class PeptideLoaderData {
 	 */
 	public void addDbRef(UniprotDbRef ref, int uniprotEntryId) {
 		try {
-			addDbRef.setInt(1, uniprotEntryId);
-			addDbRef.setString(2, ref.getType());
-			addDbRef.setString(3, ref.getProteinId());
-			addDbRef.setString(4, ref.getSequenceId());
-			addDbRef.executeUpdate();
+			PreparedStatement ps;
+			if (ref.getType().equals("EMBL"))
+				ps = addEMBLRef;
+			else
+				ps = addRefseqRef;
+			ps.setInt(1, uniprotEntryId);
+			ps.setString(2, ref.getProteinId());
+			ps.setString(3, ref.getSequenceId());
+			ps.executeUpdate();
 		} catch (SQLException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis())
 					+ " Error adding this cross reference to the database.");
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * Adds a uniprot entry GO reference to the database
+	 * 
+	 * @param ref
+	 *            The uniprot GO reference to add
+	 * @param uniprotEntryId
+	 *            The uniprotEntry of the cross reference
+	 */
+	public void addGORef(UniprotGORef ref, int uniprotEntryId) {
+		try {
+			addGORef.setInt(1, uniprotEntryId);
+			addGORef.setString(2, ref.getId());
+			addGORef.executeUpdate();
+		} catch (SQLException e) {
+			System.err.println(new Timestamp(System.currentTimeMillis())
+					+ " Error adding this GO reference to the database.");
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * Adds a uniprot entry EC reference to the database
+	 * 
+	 * @param ref
+	 *            The uniprot EC reference to add
+	 * @param uniprotEntryId
+	 *            The uniprotEntry of the cross reference
+	 */
+	public void addECRef(UniprotECRef ref, int uniprotEntryId) {
+		try {
+			addECRef.setInt(1, uniprotEntryId);
+			addECRef.setString(2, ref.getId());
+			addECRef.executeUpdate();
+		} catch (SQLException e) {
+			System.err.println(new Timestamp(System.currentTimeMillis())
+					+ " Error adding this EC reference to the database.");
 			e.printStackTrace();
 		}
 
@@ -343,7 +404,10 @@ public class PeptideLoaderData {
 				stmt.executeUpdate("TRUNCATE TABLE `peptides`");
 				stmt.executeUpdate("TRUNCATE TABLE `sequences`");
 				stmt.executeUpdate("TRUNCATE TABLE `uniprot_entries`");
-				stmt.executeUpdate("TRUNCATE TABLE `uniprot_cross_references`");
+				stmt.executeUpdate("TRUNCATE TABLE `refseq_cross_references`");
+				stmt.executeUpdate("TRUNCATE TABLE `embl_cross_references`");
+				stmt.executeUpdate("TRUNCATE TABLE `ec_cross_references`");
+				stmt.executeUpdate("TRUNCATE TABLE `go_cross_references`");
 				stmt.executeUpdate("TRUNCATE TABLE `lineages`");
 				stmt.executeQuery("SET FOREIGN_KEY_CHECKS=1");
 			} catch (SQLException e) {

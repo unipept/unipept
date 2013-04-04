@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.11'
+gem 'rails', '3.2.13'
 gem 'mysql2'
 
 # pagination
@@ -24,6 +24,9 @@ gem 'rmagick'
 
 # new relic stuff
 gem 'newrelic_rpm'
+
+# do HTTP requests
+gem 'httparty'
 
 group :development do
   gem 'rspec-rails'

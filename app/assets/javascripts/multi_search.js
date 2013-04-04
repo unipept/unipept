@@ -1,76 +1,95 @@
 function init_multi(data, data2, equate_il) {
 
+    $("#downloadDataset").click(function () {
+        // GA event tracking
+        _gaq.push(['_trackEvent', 'Multi Peptide', 'Export']);
+
+        $("#downloadDataset").button('loading');
+        return true;
+    });
+
     // sunburst
-    try{
+    try {
         initSunburst(data2);
-    }
-    catch(err){
+    } catch (err) {
         error(err, "Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
 
     // treemap
-    try{
+    try {
         initTreeMap(data);
-       $("#treeMapWrapper").removeClass("active");
-    }
-    catch(err){
+        $("#treeMapWrapper").removeClass("active");
+    } catch (err) {
         error(err, "Loading the Treemap visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
 
     // jstree
-    try{
+    try {
         initJsTree(data, equate_il);
-    }  
-    catch(err){
+    } catch (err) {
         error(err, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
-    
+
     // set up the fullscreen stuff
-    if (fullScreenApi.supportsFullScreen){
+    if (fullScreenApi.supportsFullScreen) {
         $("#buttons").prepend("<button id='zoom-btn' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
-    	$("#zoom-btn").click(function (){
-    	    if($(".tab-content .active").attr('id') == "sunburstWrapper")
+        $("#zoom-btn").click(function () {
+            if ($(".tab-content .active").attr('id') == "sunburstWrapper") {
+                // GA event tracking
+                _gaq.push(['_trackEvent', 'Multi Peptide', 'Full Screen', 'Sunburst']);
                 window.fullScreenApi.requestFullScreen($("#sunburst").get(0));
-            else
+            }
+            else {
+                // GA event tracking
+                _gaq.push(['_trackEvent', 'Multi Peptide', 'Full Screen', 'Treemap']);
                 window.fullScreenApi.requestFullScreen($("#treeMap").get(0));
-    	});
-    	$(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange',resizeFullScreen);
+            }
+        });
+        $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange', resizeFullScreen);
     }
-    function resizeFullScreen(){
-        if($(".tab-content .active").attr('id') == "sunburstWrapper"){
-                setTimeout(function (){
-                    var size = 740;
-                    if(window.fullScreenApi.isFullScreen())
-                        size = Math.min($(window).height(), $(window).width());
-                    $("#sunburst svg").attr("width", size);
-                    $("#sunburst svg").attr("height", size);
-                }, 1000);
+
+    function resizeFullScreen() {
+        if ($(".tab-content .active").attr('id') == "sunburstWrapper") {
+            setTimeout(function () {
+                var size = 740;
+                if (window.fullScreenApi.isFullScreen()) {
+                    size = Math.min($(window).height(), $(window).width());
+                }
+                $("#sunburst svg").attr("width", size);
+                $("#sunburst svg").attr("height", size);
+            }, 1000);
         }
-        else{
+        else {
             window.tm.canvas.resize($("#treeMap").width(), $("#treeMap").height());
         }
     }
-    
+
     // set up save image stuff
        $("#buttons").prepend("<button id='save-btn' class='btn btn-mini'><i class='icon-download'></i> Save as image</button>");
-   	$("#save-btn").click(function (){
-   	    $(".debug_dump").hide();
-   	    if($(".tab-content .active").attr('id') == "sunburstWrapper"){
-   	        var svg = $("#sunburst svg").wrap("<div></div>").parent().html();
-            $.post("/convert", { image: svg }, function (data){
+       $("#save-btn").click(function () {
+           $(".debug_dump").hide();
+           if ($(".tab-content .active").attr('id') == "sunburstWrapper") {
+            // GA event tracking
+            _gaq.push(['_trackEvent', 'Multi Peptide', 'Save Image', 'Sunburst']);
+
+               var svg = $("#sunburst svg").wrap("<div></div>").parent().html();
+            $.post("/convert", { image: svg }, function (data) {
                 $("#save-as-modal .modal-body").html("<img src='" + data + "' />");
                 $("#save-as-modal").modal();
             });
         }
-        else{
+        else {
+            // GA event tracking
+            _gaq.push(['_trackEvent', 'Multi Peptide', 'Save Image', 'Treemap']);
+
             html2canvas($("#treeMap"), {
-                onrendered : function (canvas){
+                onrendered : function (canvas) {
                     $("#save-as-modal .modal-body").html("<img src='" + canvas.toDataURL() + "' />");
                     $("#save-as-modal").modal();
                 }
-            }); 
+            });
         }
-   	});
+       });
 }
 
 function initTreeMap(jsonData) {
@@ -91,14 +110,18 @@ function initTreeMap(jsonData) {
             enable: true,
             onClick: function (node) {
                 if (node) {
+                    // GA event tracking
+                    _gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Treemap', 'In']);
                     tm.enter(node);
                     $("#jstree_search").val(node.name);
                     $("#jstree_search").change();
                 }
             },
             onRightClick: function () {
-				//TODO: replace this if bug in JIT gets fixed
-				tm.out();
+                // GA event tracking
+                _gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Treemap', 'Out']);
+                //TODO: replace this if bug in JIT gets fixed
+                tm.out();
             }
         },
         duration: 500,
@@ -113,9 +136,9 @@ function initTreeMap(jsonData) {
             //is hovered
             onShow: function (tip, node, isLeaf, domElement) {
                 tip.innerHTML = "<div class='tip-title'><b>" + node.name + "</b> (" + node.data.rank + ")</div><div class='tip-text'>" +
-                    (!node.data.self_count ? "0" : node.data.self_count) + 
+                    (!node.data.self_count ? "0" : node.data.self_count) +
                     (node.data.self_count && node.data.self_count == 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
-                    (!node.data.count ? "0" : node.data.count) + 
+                    (!node.data.count ? "0" : node.data.count) +
                     (node.data.count && node.data.count == 1 ? " sequence" : " sequences") + " specific to this level or lower<br/>" +
                     (typeof node.data.piecharturl === "undefined" ? "" : "<img src='" + node.data.piecharturl + "'/>") + "</div>";
             }
@@ -128,15 +151,15 @@ function initTreeMap(jsonData) {
             var style = domElement.style;
             style.display = '';
             style.border = '2px solid transparent';
-            
-            try{
+
+            try {
                 style.color = brightness(d3.rgb(node.data.$color)) < 125 ? "#eee" : "#000";
             }
-            catch(err){
+            catch (err) {
                 error(err, false);
                 style.color = "#000";
             }
-            
+
             domElement.onmouseover = function () {
                 style.border = '2px solid #9FD4FF';
             };
@@ -147,56 +170,61 @@ function initTreeMap(jsonData) {
     });
     tm.loadJSON(jsonData);
     tm.refresh();
-    
+
     //move the tooltip div to allow full screen tooltips
     $("#_tooltip").appendTo("#treeMap");
-    
+
     window.tm = tm;
-    
+
     //end
 }
 
 function initJsTree(data, equate_il) {
-    //set themes dir
+    // set themes dir
     $.jstree._themes = "/jstree/themes/";
 
-    //add onSelect action
+    equate_il = equate_il ? "equateIL" : "";
+
+    // add onSelect action
     $("#jstree").bind("select_node.jstree",
-		function (node, tree) {
-			var peptides = $(tree.rslt.obj).data(),
-				margin = tree.rslt.obj.context.offsetTop - $("#jstree").offset().top - 9,
-				innertext = "<a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + peptides.id + "' target='_blank'>" + $.trim($(tree.rslt.obj).find("a").text().split("(")[0]) + "</a>",
-				infoPane,
-				ownSequences,
-				list,
-				peptide,
-				allSequences;
-			innertext += " (" + $(tree.rslt.obj).attr("title") + ")";
-			infoPane = $("#jstree_data").html("<h3>" + innertext + "</h3>");
-			$("#jstree_data").animate({
-				marginTop: margin
-			}, 1000);
-			ownSequences = peptides.own_sequences;
-			if (ownSequences && ownSequences.length > 0) {
-				list = infoPane.append("<h4>Peptides specific for this taxon</h4><ul></ul>").find("ul").last();
-				for (peptide in ownSequences) {
-					list.append("<li><a href='/sequences/" + ownSequences[peptide] + "/" + equate_il + "' target='_blank'>" + ownSequences[peptide] + "</a></li>");
-				}
-			}
-	        allSequences = peptides.all_sequences;
-	        if (allSequences && allSequences.length > 0) {
-	            list = infoPane.append("<h4>Peptides specific to this taxon or one of its subtaxa</h4><ul></ul>").find("ul").last();
-	            for (peptide in allSequences) {
-	                list.append("<li><a href='/sequences/" + allSequences[peptide] + "' target='_blank'>" + allSequences[peptide] + "</a></li>");
-	            }
-	        }
-		});
+        function (node, tree) {
+            // GA event tracking
+            _gaq.push(['_trackEvent', 'Multi Peptide', 'JsTree', 'Peptides']);
+
+            var peptides = $(tree.rslt.obj).data(),
+                margin = tree.rslt.obj.context.offsetTop - $("#jstree").offset().top - 9,
+                innertext = "<a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + peptides.id + "' target='_blank'>" + $.trim($(tree.rslt.obj).find("a").text().split("(")[0]) + "</a>",
+                infoPane,
+                ownSequences,
+                list,
+                peptide,
+                allSequences;
+            innertext += " (" + $(tree.rslt.obj).attr("title") + ")";
+            infoPane = $("#jstree_data").html("<h3>" + innertext + "</h3>");
+            $("#jstree_data").animate({
+                marginTop: margin
+            }, 1000);
+            ownSequences = peptides.own_sequences;
+            if (ownSequences && ownSequences.length > 0) {
+                list = infoPane.append("<h4>Peptides specific for this taxon</h4><ul></ul>").find("ul").last();
+                for (peptide in ownSequences) {
+                    list.append("<li><a href='/sequences/" + ownSequences[peptide] + "/" + equate_il + "' target='_blank'>" + ownSequences[peptide] + "</a></li>");
+                }
+            }
+            allSequences = peptides.all_sequences;
+            if (allSequences && allSequences.length > 0) {
+                list = infoPane.append("<h4>Peptides specific to this taxon or one of its subtaxa</h4><ul></ul>").find("ul").last();
+                for (peptide in allSequences) {
+                    list.append("<li><a href='/sequences/" + allSequences[peptide] + "/" + equate_il + "' target='_blank'>" + allSequences[peptide] + "</a></li>");
+                }
+            }
+        });
 
     //fix leafs
     $("#jstree").bind("loaded.jstree",
-		function (event, data) {
-			$("#jstree li").not(":has(li)").addClass("jstree-leaf");
-		});
+        function (event, data) {
+            $("#jstree li").not(":has(li)").addClass("jstree-leaf");
+        });
 
     //add search
     $("#jstree_search").keyup(function () {
@@ -237,7 +265,7 @@ function initJsTree(data, equate_il) {
 function initSunburst(data) {
     var w = 730,   // width
         h = w,     // height
-        r = w / 2, // radius   
+        r = w / 2, // radius
         p = 5,     // padding
         duration = 1000, // animation duration
         levels = 4, // levels to show
@@ -260,11 +288,11 @@ function initSunburst(data) {
         .attr("transform", "translate(" + (r + p) + "," + (r + p) + ")"); // set origin to radius center
 
     var tooltip = d3.select("#sunburst")
-    	.append("div")
-    	.attr("class", "tip")
-    	.style("position", "absolute")
-    	.style("z-index", "10")
-    	.style("visibility", "hidden");
+        .append("div")
+        .attr("class", "tip")
+        .style("position", "absolute")
+        .style("z-index", "10")
+        .style("visibility", "hidden");
 
     var partition = d3.layout.partition()               // creates a new partition layout
         .sort(null)                                     // don't sort,  use tree traversal order
@@ -277,7 +305,7 @@ function initSunburst(data) {
         .endAngle(function (d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); }) // stop between 0 and 2Pi
         .innerRadius(function (d) { return Math.max(0, d.y ? y(d.y) : d.y); }) // prevent y-calculation on 0
         .outerRadius(function (d) { return Math.max(0, y(d.y + d.dy)) + 1; });
-        
+
     // run the partition layout
     var nodes = partition.nodes(data);
 
@@ -326,8 +354,11 @@ function initSunburst(data) {
 
     // set up start levels
     setTimeout(function () {click(data); }, 1000);
-    
+
     function click(d) {
+        // GA event tracking
+        _gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Sunburst']);
+
         // set jstree
         try{
             if(d.name == "organism")
@@ -335,11 +366,10 @@ function initSunburst(data) {
             else
                 $("#jstree_search").val(d.name);
             $("#jstree_search").change();
-        }
-        catch(err){
+        } catch(err) {
             error(err);
         }
-        
+
         // perform animation
         currentMaxLevel = d.depth + levels;
         path.transition()
@@ -442,18 +472,18 @@ function initSunburst(data) {
         if (d.depth < currentMaxLevel) {
             tooltip.style("visibility", "visible")
                 .html("<b>" + d.name + "</b> (" + d.attr.title + ")<br/>" +
-                    (!d.data.self_count ? "0" : d.data.self_count) + 
+                    (!d.data.self_count ? "0" : d.data.self_count) +
                     (d.data.self_count && d.data.self_count == 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
-                    (!d.data.count ? "0" : d.data.count) + 
+                    (!d.data.count ? "0" : d.data.count) +
                     (d.data.count && d.data.count == 1 ? " sequence" : " sequences") + " specific to this level or lower");
             //vis.selectAll("#path-" + i).transition().duration(200).style("fill-opacity","0.9");
         }
     }
     function tooltipMove() {
-        if(window.fullScreenApi.isFullScreen()){
+        if (window.fullScreenApi.isFullScreen()) {
             tooltip.style("top", (d3.event.clientY - 5) + "px").style("left", (d3.event.clientX + 15) + "px");
         }
-        else{
+        else {
             tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 15) + "px");
         }
     }

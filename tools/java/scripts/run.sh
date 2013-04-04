@@ -1,1 +1,0 @@
-java -cp ".:bin:bin/:lib/mysql.jar" -Xmx1g tools/commandline/PeptideLoader data/uniprot/uniprot_sprot.xml data/uniprot/uniprot_trembl.xml

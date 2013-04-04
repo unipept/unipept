@@ -1,3 +1,8 @@
+<% well = false unless defined? well %>
+<% if well %>
+<div class="well well-small">
+<% end %>
+
 <h3>
   <%= post.title %>
   <small> posted on <%= post.date %></small>
@@ -9,3 +14,6 @@
 
 <%= post.content.html_safe %>
 
+<% if well %>
+</div>
+<% end %>

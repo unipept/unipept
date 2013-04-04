@@ -9,6 +9,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import storage.PeptideLoaderData;
+import tools.ProgressWriter;
 
 public class UniprotHandler extends DefaultHandler {
 
@@ -17,16 +18,19 @@ public class UniprotHandler extends DefaultHandler {
 
 	private UniprotEntry currentItem;
 	private UniprotDbRef dbRef;
+	private UniprotGORef goRef;
+	private UniprotECRef ecRef;
 	private StringBuilder charData;
 	private int i;
 	private boolean inOrganism = false;
+	private boolean inEvidence = false;
 
 	private Map<String, EndTagWorker> endTagWorkers;
 	private Map<String, StartTagWorker> startTagWorkers;
 
-	public UniprotHandler(boolean isSwissprot, PeptideLoaderData peptideLoaderData) {
+	public UniprotHandler(boolean swissprot, PeptideLoaderData peptideLoaderData) {
 		super();
-		this.isSwissprot = isSwissprot;
+		this.isSwissprot = swissprot;
 		this.pld = peptideLoaderData;
 		charData = new StringBuilder();
 		i = 0;
@@ -38,9 +42,15 @@ public class UniprotHandler extends DefaultHandler {
 			public void handleTag(String data) {
 				pld.store(currentItem);
 				i++;
-				if (i % 100000 == 0)
+				if (i % 10000 == 0) {
 					System.out.println(new Timestamp(System.currentTimeMillis()) + " Entry " + i
 							+ " added");
+					if (isSwissprot)
+						ProgressWriter.updateProgress("Swiss-Prot", i);
+					else
+						ProgressWriter.updateProgress("TrEMBL", i);
+
+				}
 			}
 		});
 		endTagWorkers.put("accession", new EndTagWorker() {
@@ -55,6 +65,12 @@ public class UniprotHandler extends DefaultHandler {
 				inOrganism = false;
 			}
 		});
+		endTagWorkers.put("evidence", new EndTagWorker() {
+			@Override
+			public void handleTag(String data) {
+				inEvidence = false;
+			}
+		});
 		endTagWorkers.put("sequence", new EndTagWorker() {
 			@Override
 			public void handleTag(String data) {
@@ -64,9 +80,17 @@ public class UniprotHandler extends DefaultHandler {
 		endTagWorkers.put("dbReference", new EndTagWorker() {
 			@Override
 			public void handleTag(String data) {
-				if (!inOrganism && dbRef != null) {
-					currentItem.addDbRef(dbRef);
-					dbRef = null;
+				if (!inOrganism) {
+					if (dbRef != null) {
+						currentItem.addDbRef(dbRef);
+						dbRef = null;
+					} else if (goRef != null) {
+						currentItem.addGORef(goRef);
+						goRef = null;
+					} else if (ecRef != null) {
+						currentItem.addECRef(ecRef);
+						ecRef = null;
+					}
 				}
 			}
 		});
@@ -86,20 +110,30 @@ public class UniprotHandler extends DefaultHandler {
 				inOrganism = true;
 			}
 		});
+		startTagWorkers.put("evidence", new StartTagWorker() {
+			@Override
+			public void handleTag(Attributes atts) {
+				inEvidence = true;
+			}
+		});
 		startTagWorkers.put("dbReference", new StartTagWorker() {
 			@Override
 			public void handleTag(Attributes atts) {
 				if (inOrganism) {
 					if (atts.getValue("type").equals("NCBI Taxonomy"))
 						currentItem.setTaxonId(Integer.valueOf(atts.getValue("id")));
-				}
-				if (atts.getValue("type").equals("EMBL")) {
-					dbRef = new UniprotDbRef("EMBL");
-					dbRef.setSequenceId(atts.getValue("id"));
-				}
-				if (atts.getValue("type").equals("RefSeq")) {
-					dbRef = new UniprotDbRef("RefSeq");
-					dbRef.setProteinId(atts.getValue("id"));
+				} else if (!inEvidence) {
+					if (atts.getValue("type").equals("EMBL")) {
+						dbRef = new UniprotDbRef("EMBL");
+						dbRef.setSequenceId(atts.getValue("id"));
+					} else if (atts.getValue("type").equals("RefSeq")) {
+						dbRef = new UniprotDbRef("RefSeq");
+						dbRef.setProteinId(atts.getValue("id"));
+					} else if (atts.getValue("type").equals("Go")) {
+						goRef = new UniprotGORef(atts.getValue("id"));
+					} else if (atts.getValue("type").equals("EC")) {
+						ecRef = new UniprotECRef(atts.getValue("id"));
+					}
 				}
 			}
 		});
@@ -109,7 +143,7 @@ public class UniprotHandler extends DefaultHandler {
 				if (dbRef != null) {
 					if (atts.getValue("type").equals("protein sequence ID"))
 						dbRef.setProteinId(atts.getValue("value"));
-					if (atts.getValue("type").equals("nucleotide sequence ID"))
+					else if (atts.getValue("type").equals("nucleotide sequence ID"))
 						dbRef.setSequenceId(atts.getValue("value"));
 				}
 			}

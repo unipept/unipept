@@ -1,5 +1,41 @@
-<h1>Datasets</h1>
+<h1>Load Datasets</h1>
 
-<%= render @datasets, :load => false %>
+<div class="split">
+	
+	<div class="split-left">	
+		<p>Unipept has some built-in datasets to help you test drive the application. Click a load button next to one of the datasets to automatically fill the form with test data.</p>
+		<div class="tabbable">
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#database" data-toggle="tab">Sample data</a></li>
+				<li><a href="#pride" data-toggle="tab">PRIDE</a></li>
+			</ul>
+			<div class="tab-content">
+				<div class="tab-pane active" id="database">
+					<h3>Sample data</h3>
+					<%= render @datasets, :load => true, :edit => true %>
+					<%= link_to 'New Dataset', new_dataset_path, :class => "btn btn-primary" if session[:admin] %>
+				</div>
+				<div class="tab-pane" id="pride">
+					<h3>PRIDE data</h3>
+					<p>You can enter a <a href="http://www.ebi.ac.uk/pride/" target="_blank">PRIDE</a> experiment id (e.g. 8500) in the field below to load the dataset into the search form on the right.</p>
+					<span class="form-inline">
+						<%= text_field_tag('pride_exp_id', nil, :placeholder => 'PRIDE experiment id')%>	
+						<%= button_tag(raw("Load PRIDE dataset"), { :type => "button", :class => "load-pride btn" , :"data-loading-text" => "Loading..."}) %>
+					</span>
+					<br/><br/><br/>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="split-right">
+		<%= render 'shared/sequence_multi_search' %>
+	</div>
+	
+	<div class="visualClear"></div>
+</div>
 
-<%= link_to 'New Dataset', new_dataset_path, :class => "btn btn-primary" if session[:admin] %>
+
+<script type="text/javascript">
+	$(document).ready(initDatasets);
+</script>

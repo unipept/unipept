@@ -4,5 +4,4 @@ class DatasetItemsController < ApplicationController
     item = DatasetItem.find(params[:id])    
     render :text => item.data
   end
-  
 end
