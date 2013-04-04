@@ -100,6 +100,18 @@ function init_pancore(genomes, pans, cores) {
             .html("test")
             .style("visibility", "hidden");
 
+        // create the dropshadow filter
+        var temp = svg.append("svg:defs")
+            .append("svg:filter")
+                .attr("id", "dropshadow");
+        temp.append("svg:feGaussianBlur")
+                .attr("in", "SourceAlpha")
+                .attr("stdDeviation", 1);
+        temp = temp.append("svg:feMerge");
+        temp.append("svg:feMergeNode");
+        temp.append("svg:feMergeNode")
+                .attr("in", "SourceGraphic");
+
         // add the x-axis
         svg.append("g")
             .attr("class", "x axis")
@@ -123,31 +135,57 @@ function init_pancore(genomes, pans, cores) {
 
         // add legend
         var legend = svg.selectAll(".legend")
-              .data([{"name": "pan proteome", "color": panColor}, {"name": "core proteome", "color": coreColor}])
-            .enter().append("g")
-              .attr("class", "legend")
-              .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; });
-          legend.append("rect")
-              .attr("x", 30)
-              .attr("width", 8)
-              .attr("height", 8)
-              .style("fill", function (d) { return d.color; });
-          legend.append("text")
-              .attr("x", 40)
-              .attr("y", 4)
-              .attr("dy", ".35em")
-              .style("text-anchor", "start")
-              .text(function (d) { return d.name; });
+            .data([{"name": "pan proteome", "color": panColor}, {"name": "core proteome", "color": coreColor}])
+          .enter().append("g")
+            .attr("class", "legend")
+            .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; });
+        legend.append("rect")
+            .attr("x", 30)
+            .attr("width", 8)
+            .attr("height", 8)
+            .style("fill", function (d) { return d.color; });
+        legend.append("text")
+            .attr("x", 40)
+            .attr("y", 4)
+            .attr("dy", ".35em")
+            .style("text-anchor", "start")
+            .text(function (d) { return d.name; });
 
-          // draw the lines
-          svg.append("path")
-              .datum(visData)
-              .attr("class", "line pan")
-              .attr("d", panLine);
-          svg.append("path")
-              .datum(visData)
-              .attr("class", "line core")
-              .attr("d", coreLine);
+        // draw the lines
+        svg.append("path")
+          .datum(visData)
+          .attr("class", "line pan")
+          .attr("d", panLine);
+        svg.append("path")
+          .datum(visData)
+          .attr("class", "line core")
+          .attr("d", coreLine);
+
+        // add gray hairlines
+        svg.insert("line", ".dot")
+            .attr("class", "hairline pan")
+            .attr("stroke", "#cccccc")
+            .attr("shape-rendering", "crispEdges")
+            .style("visibility", "hidden");
+        svg.insert("line", ".dot")
+            .attr("class", "hairline core")
+            .attr("stroke", "#cccccc")
+            .attr("shape-rendering", "crispEdges")
+            .style("visibility", "hidden");
+
+        // add axis marks
+        svg.insert("line")
+            .attr("class", "axisline pan")
+            .attr("stroke", panColor)
+            .attr("stroke-width", "2")
+            .attr("shape-rendering", "crispEdges")
+            .style("visibility", "hidden");
+        svg.insert("line")
+            .attr("class", "axisline core")
+            .attr("stroke", coreColor)
+            .attr("stroke-width", "2")
+            .attr("shape-rendering", "crispEdges")
+            .style("visibility", "hidden");
     }
 
     // updates the D3 graph
@@ -186,95 +224,64 @@ function init_pancore(genomes, pans, cores) {
         svg.select(".line.pan").transition().attr("d", panLine);
         svg.select(".line.core").transition().attr("d", coreLine);
 
-    }
-
-    function dontDoThis() {
-    // mouse over width
-    var mouseOverWidth = (width / visData.length) / 1.5;
-
-    //dropshadow filter
-    var temp = svg.append("svg:defs")
-        .append("svg:filter")
-            .attr("id", "dropshadow");
-    temp.append("svg:feGaussianBlur")
-            .attr("in", "SourceAlpha")
-            .attr("stdDeviation", 1);
-    temp = temp.append("svg:feMerge");
-    temp.append("svg:feMergeNode");
-    temp.append("svg:feMergeNode")
-            .attr("in", "SourceGraphic");
-
-    // mouseover rects
-    svg.selectAll(".bar")
-        .data(visData)
-    .enter().append("rect")
-        .attr("class", "bar pan")
-        .style("fill-opacity", "0")
-        .attr("x", function (d) { return x(d.name) - mouseOverWidth / 2; })
-        .attr("width", mouseOverWidth)
-        .attr("y", "0")
-        .attr("height", height)
-        .on("mouseover", mouseOver)
-        .on("mouseout", mouseOut)
-        .on("mousemove", mouseMove);
+        // update the mouseover rects
+        var mouseOverWidth = (width / visData.length) / 1.5;
+        var bars = svg.selectAll(".bar")
+            .data(visData);
+        bars.enter().append("rect")
+            .attr("class", "bar")
+            .style("fill-opacity", "0")
+            .attr("height", height)
+            .on("mouseover", mouseOver)
+            .on("mouseout", mouseOut)
+            .on("mousemove", mouseMove);
+        bars.transition()
+            .attr("x", function (d) { return x(d.name) - mouseOverWidth / 2; })
+            .attr("width", mouseOverWidth)
+            .attr("y", "0");
     }
 
     // mouseover functions
     function mouseOver(d, i) {
         // add dropshadow to the dot
-        svg.selectAll(".dot._" + i)
-            .attr("filter", "url(#dropshadow)");
+        svg.selectAll(".dot._" + i).attr("filter", "url(#dropshadow)");
 
-        // add gray hairlines
-        svg.insert("line", ".dot")
-            .attr("class", "hairline")
+        svg.select(".hairline.core")
+            .style("visibility", "visible")
             .attr("x1", x(visData[Math.max(0, i - 1)].name))
             .attr("x2", x(visData[Math.min(visData.length - 1, i + 1)].name))
-            .attr("y1", function (d) { return y(visData[i].core); })
-            .attr("y2", function (d) { return y(visData[i].core); })
-            .attr("stroke", "#cccccc")
-            .attr("shape-rendering", "crispEdges");
-        svg.insert("line", ".dot")
-            .attr("class", "hairline")
+            .attr("y1", y(d.core))
+            .attr("y2", y(d.core));
+        svg.select(".hairline.pan")
+            .style("visibility", "visible")
             .attr("x1", x(visData[Math.max(0, i - 1)].name))
             .attr("x2", x(visData[Math.min(visData.length - 1, i + 1)].name))
-            .attr("y1", function (d) { return y(visData[i].pan); })
-            .attr("y2", function (d) { return y(visData[i].pan); })
-            .attr("stroke", "#cccccc")
-            .attr("shape-rendering", "crispEdges");
-
-        // add axis marks
-        svg.insert("line")
-            .attr("class", "axisline")
+            .attr("y1", y(d.pan))
+            .attr("y2", y(d.pan));
+        svg.select(".axisline.pan")
+            .style("visibility", "visible")
             .attr("x1", "6")
             .attr("x2", "-6")
-            .attr("y1", function (d) { return y(visData[i].pan); })
-            .attr("y2", function (d) { return y(visData[i].pan); })
-            .attr("stroke", panColor)
-            .attr("stroke-width", "2")
-            .attr("shape-rendering", "crispEdges");
-        svg.insert("line")
-            .attr("class", "axisline")
+            .attr("y1", y(d.pan))
+            .attr("y2", y(d.pan));
+        svg.select(".axisline.core")
+            .style("visibility", "visible")
             .attr("x1", "6")
             .attr("x2", "-6")
-            .attr("y1", function (d) { return y(visData[i].core); })
-            .attr("y2", function (d) { return y(visData[i].core); })
-            .attr("stroke", coreColor)
-            .attr("stroke-width", "2")
-            .attr("shape-rendering", "crispEdges");
+            .attr("y1", y(d.core))
+            .attr("y2", y(d.core));
 
         // show tooltip
         tooltip
             .style("visibility", "visible")
             .html("<b>" + d.name + "</b><br/>" +
-            "<span style='color: " + panColor + ";'>&#9632;</span> pan: <b>" + d3.format(",")(visData[i].pan) + "</b><br/>" +
-            "<span style='color: " + coreColor + ";'>&#9632;</span> core: <b>" + d3.format(",")(visData[i].core) + "</b>");
+            "<span style='color: " + panColor + ";'>&#9632;</span> pan: <b>" + d3.format(",")(d.pan) + "</b><br/>" +
+            "<span style='color: " + coreColor + ";'>&#9632;</span> core: <b>" + d3.format(",")(d.core) + "</b>");
     }
     function mouseOut(d, i) {
-        svg.selectAll(".dot._" + i)
-            .attr("filter", "");
-        svg.selectAll(".hairline").remove();
-        svg.selectAll(".axisline").remove();
+        svg.selectAll(".dot._" + i).attr("filter", "");
+        svg.selectAll(".hairline").style("visibility", "hidden");
+        svg.selectAll(".axisline").style("visibility", "hidden");
         tooltip.style("visibility", "hidden");
     }
     function mouseMove(d, i) {
