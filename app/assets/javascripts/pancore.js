@@ -83,6 +83,9 @@ function init_pancore(genomes, pans, cores) {
 
     // redraws the full D3 graph
     function redrawGraph() {
+        // erase everything
+        $("#pancore_graph").html("");
+
         // create the svg
         svg = d3.select("#pancore_graph")
           .append("svg")
@@ -105,12 +108,12 @@ function init_pancore(genomes, pans, cores) {
             .append("svg:filter")
                 .attr("id", "dropshadow");
         temp.append("svg:feGaussianBlur")
-                .attr("in", "SourceAlpha")
-                .attr("stdDeviation", 1);
+            .attr("in", "SourceAlpha")
+            .attr("stdDeviation", 1);
         temp = temp.append("svg:feMerge");
         temp.append("svg:feMergeNode");
         temp.append("svg:feMergeNode")
-                .attr("in", "SourceGraphic");
+            .attr("in", "SourceGraphic");
 
         // add the x-axis
         svg.append("g")
@@ -153,13 +156,13 @@ function init_pancore(genomes, pans, cores) {
 
         // draw the lines
         svg.append("path")
-          .datum(visData)
-          .attr("class", "line pan")
-          .attr("d", panLine);
+            .datum(visData)
+            .attr("class", "line pan")
+            .attr("d", panLine);
         svg.append("path")
-          .datum(visData)
-          .attr("class", "line core")
-          .attr("d", coreLine);
+            .datum(visData)
+            .attr("class", "line core")
+            .attr("d", coreLine);
 
         // add gray hairlines
         svg.insert("line", ".dot")
@@ -178,12 +181,16 @@ function init_pancore(genomes, pans, cores) {
             .attr("class", "axisline pan")
             .attr("stroke", panColor)
             .attr("stroke-width", "2")
+            .attr("x1", "6")
+            .attr("x2", "-6")
             .attr("shape-rendering", "crispEdges")
             .style("visibility", "hidden");
         svg.insert("line")
             .attr("class", "axisline core")
             .attr("stroke", coreColor)
             .attr("stroke-width", "2")
+            .attr("x1", "6")
+            .attr("x2", "-6")
             .attr("shape-rendering", "crispEdges")
             .style("visibility", "hidden");
     }
@@ -260,14 +267,10 @@ function init_pancore(genomes, pans, cores) {
             .attr("y2", y(d.pan));
         svg.select(".axisline.pan")
             .style("visibility", "visible")
-            .attr("x1", "6")
-            .attr("x2", "-6")
             .attr("y1", y(d.pan))
             .attr("y2", y(d.pan));
         svg.select(".axisline.core")
             .style("visibility", "visible")
-            .attr("x1", "6")
-            .attr("x2", "-6")
             .attr("y1", y(d.core))
             .attr("y2", y(d.core));
 
