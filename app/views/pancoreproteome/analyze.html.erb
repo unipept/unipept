@@ -21,13 +21,11 @@
 <div id="sim_matrix"></div>
 
 <script type="text/javascript">
-	var genomes = <%= raw @genomes %>
-	var pans = <%= raw @pans %> 
-	var cores = <%= raw @cores %>
-	var sims = <%= raw @sims %>
-	var order = <%= raw @order %>
-	$(function () {
-		init_pancore(genomes, pans, cores);
-		init_sim_matrix(genomes, sims, order);
-	});
+  var genomes = <%= raw @genomes %>
+  var sims = <%= raw @sims %>
+  var order = <%= raw @order %>
+  $(function () {
+    init_pancore();
+    init_sim_matrix(genomes, sims, order);
+  });
 </script>

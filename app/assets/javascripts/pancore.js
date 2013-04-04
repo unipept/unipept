@@ -1,4 +1,4 @@
-function init_pancore(genomes, pans, cores) {
+function init_pancore() {
     // set up vars
     var data = {},
         visData = [],
@@ -6,26 +6,25 @@ function init_pancore(genomes, pans, cores) {
         core = new JS.Set();
 
     // D3 vars
-    // elements
     var svg,
         tooltip;
 
-    // colors
+    // Colors
     var panColor = "steelblue",
         coreColor = "#ff7f0e";
 
-    // size
+    // Size
     var margin = {top: 20, right: 20, bottom: 170, left: 60},
         width = 920 - margin.left - margin.right,
         height = 600 - margin.top - margin.bottom;
 
-    // scales
+    // Scales
     var x = d3.scale.ordinal()
         .rangePoints([0, width], 1),
         y = d3.scale.linear()
         .range([height, 0]);
 
-    // axes
+    // Axes
     var xAxis = d3.svg.axis()
         .scale(x)
         .orient("bottom"),
@@ -33,7 +32,7 @@ function init_pancore(genomes, pans, cores) {
         .scale(y)
         .orient("left");
 
-    // graph lines helpers
+    // Graph lines helpers
     var panLine = d3.svg.line()
         .interpolate("linear")
         .x(function (d) { return x(d.name); })
@@ -52,7 +51,7 @@ function init_pancore(genomes, pans, cores) {
         return false;
     });
 
-    // draw the graph
+    // Draw the graph
     redrawGraph();
 
     // Adds new dataset to the data array
@@ -74,14 +73,16 @@ function init_pancore(genomes, pans, cores) {
         updateGraph();
     }
 
-    // resets the data array
+    // Resets the data array
     function clearAllData() {
         data = {};
         pan = new JS.Set();
         core = new JS.Set();
+
+        redrawGraph();
     }
 
-    // redraws the full D3 graph
+    // Redraws the full D3 graph
     function redrawGraph() {
         // erase everything
         $("#pancore_graph").html("");
@@ -195,7 +196,7 @@ function init_pancore(genomes, pans, cores) {
             .style("visibility", "hidden");
     }
 
-    // updates the D3 graph
+    // Updates the D3 graph
     function updateGraph() {
         // set the domains
         x.domain(visData.map(function (d) { return d.name; }));
@@ -248,7 +249,7 @@ function init_pancore(genomes, pans, cores) {
             .attr("y", "0");
     }
 
-    // mouseover functions
+    // Mouse event functions
     function mouseOver(d, i) {
         // add dropshadow to the dot
         svg.selectAll(".dot._" + i).attr("filter", "url(#dropshadow)");
