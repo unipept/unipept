@@ -92,4 +92,11 @@ class PancoreproteomeController < ApplicationController
       @order = [3, 8, 5, 4, 10, 9, 11, 2, 7, 0, 6, 1]
     end
   end
+  
+  def sequence_ids
+    set = RefseqCrossReference.get_species_ids(params[:sequence_id])
+    respond_to do |format|
+      format.json { render json: set }
+    end
+  end
 end
