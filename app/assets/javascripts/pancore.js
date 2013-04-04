@@ -6,6 +6,10 @@ function init_pancore(genomes, pans, cores) {
         core = new JS.Set();
 
     // D3 vars
+    // elements
+    var svg,
+        tooltip;
+
     // colors
     var panColor = "steelblue",
         coreColor = "#ff7f0e";
@@ -38,6 +42,9 @@ function init_pancore(genomes, pans, cores) {
         return false;
     });
 
+    // draw the graph
+    redrawGraph();
+
     // Adds new dataset to the data array
     function addData(name, set) {
         // Store data for later use
@@ -53,6 +60,8 @@ function init_pancore(genomes, pans, cores) {
         temp.pan = pan.length;
         temp.core = core.length;
         visData.push(temp);
+
+        updateGraph();
     }
 
     // resets the data array
@@ -62,13 +71,100 @@ function init_pancore(genomes, pans, cores) {
         core = new JS.Set();
     }
 
-    for (var i = 0; i < genomes.length; i++) {
-        visData[i] = {};
-        visData[i].name = genomes[i];
-        visData[i].pan = pans[i];
-        visData[i].core = cores[i];
+    // redraws the full D3 graph
+    function redrawGraph() {
+        // create the svg
+        svg = d3.select("#pancore_graph")
+          .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        // create the tooltip
+        tooltip = d3.select("#pancore_graph")
+          .append("div")
+            .attr("class", "tip")
+            .style("position", "absolute")
+            .style("z-index", "10")
+            .html("test")
+            .style("visibility", "hidden");
+
+        // add the x-axis
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis);
+        // rotate the x-axis labels
+        svg.selectAll(".x.axis text")
+            .style("text-anchor", "end")
+            .attr("transform", "translate(-5,0)rotate(-45)");
+
+        // add the y-axis
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+          .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("Number of peptides");
+
+        // add legend
+        var legend = svg.selectAll(".legend")
+              .data([{"name": "pan proteome", "color": panColor}, {"name": "core proteome", "color": coreColor}])
+            .enter().append("g")
+              .attr("class", "legend")
+              .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; });
+          legend.append("rect")
+              .attr("x", 30)
+              .attr("width", 8)
+              .attr("height", 8)
+              .style("fill", function (d) { return d.color; });
+          legend.append("text")
+              .attr("x", 40)
+              .attr("y", 4)
+              .attr("dy", ".35em")
+              .style("text-anchor", "start")
+              .text(function (d) { return d.name; });
     }
 
+    // updates the D3 graph
+    function updateGraph() {
+        // set the domains
+        x.domain(visData.map(function (d) { return d.name; }));
+        y.domain([0, d3.max(visData, function (d) { return d.pan; })]);
+
+        // update the axes
+        svg.select(".x.axis").transition().call(xAxis);
+        svg.select(".y.axis").transition().call(yAxis);
+
+        // draw the dots
+        var panDots = svg.selectAll(".dot.pan")
+            .data(visData);
+        panDots.enter().append("circle")
+            .attr("class", function (d, i) { return "dot pan _" + i; })
+            .attr("r", 5)
+            .attr("fill", panColor)
+            .attr("cx", width);
+        panDots.transition()
+            .attr("cx", function (d) { return x(d.name); })
+            .attr("cy", function (d) { return y(d.pan); });
+        var coreDots = svg.selectAll(".dot.core")
+            .data(visData);
+        coreDots.enter().append("circle")
+            .attr("class", function (d, i) { return "dot core _" + i; })
+            .attr("r", 5)
+            .attr("fill", coreColor)
+            .attr("cx", width);
+        coreDots.transition()
+            .attr("cx", function (d) { return x(d.name); })
+            .attr("cy", function (d) { return y(d.core); });
+
+    }
+
+    function dontDoThis() {
     // mouse over width
     var mouseOverWidth = (width / visData.length) / 1.5;
     // graph lines helpers
@@ -80,23 +176,6 @@ function init_pancore(genomes, pans, cores) {
         .interpolate("linear")
         .x(function (d) { return x(d.name); })
         .y(function (d) { return y(d.core); });
-
-    // create the svg
-    var svg = d3.select("#pancore_graph")
-      .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    // create the tooltip
-    var tooltip = d3.select("#pancore_graph")
-      .append("div")
-        .attr("class", "tip")
-        .style("position", "absolute")
-        .style("z-index", "10")
-        .html("test")
-        .style("visibility", "hidden");
 
     //dropshadow filter
     var temp = svg.append("svg:defs")
@@ -110,49 +189,6 @@ function init_pancore(genomes, pans, cores) {
     temp.append("svg:feMergeNode")
             .attr("in", "SourceGraphic");
 
-    // set the domains
-    x.domain(visData.map(function (d) { return d.name; }));
-    y.domain([0, d3.max(visData, function (d) { return d.pan; })]);
-
-    // add the x-axis
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
-    // rotate the x-axis labels
-    svg.selectAll(".x.axis text")
-        .style("text-anchor", "end")
-        .attr("transform", "translate(-5,0)rotate(-45)");
-
-    // add the y-axis
-    svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis)
-      .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", ".71em")
-        .style("text-anchor", "end")
-        .text("Number of peptides");
-
-    // add legend
-    var legend = svg.selectAll(".legend")
-          .data([{"name": "pan proteome", "color": panColor}, {"name": "core proteome", "color": coreColor}])
-        .enter().append("g")
-          .attr("class", "legend")
-          .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; });
-      legend.append("rect")
-          .attr("x", 30)
-          .attr("width", 8)
-          .attr("height", 8)
-          .style("fill", function (d) { return d.color; });
-      legend.append("text")
-          .attr("x", 40)
-          .attr("y", 4)
-          .attr("dy", ".35em")
-          .style("text-anchor", "start")
-          .text(function (d) { return d.name; });
-
     // draw the lines
     svg.append("path")
         .datum(visData)
@@ -162,24 +198,6 @@ function init_pancore(genomes, pans, cores) {
         .datum(visData)
         .attr("class", "line core")
         .attr("d", coreLine);
-
-    // draw the dots
-    svg.selectAll(".dot.pan")
-        .data(visData)
-      .enter().append("circle")
-        .attr("class", function (d, i) { return "dot pan _" + i; })
-        .attr("r", 5)
-        .attr("cx", function (d) { return x(d.name); })
-        .attr("cy", function (d) { return y(d.pan); })
-        .attr("fill", panColor);
-    svg.selectAll(".dot.core")
-        .data(visData)
-      .enter().append("circle")
-        .attr("class", function (d, i) { return "dot core _" + i; })
-        .attr("r", 5)
-        .attr("cx", function (d) { return x(d.name); })
-        .attr("cy", function (d) { return y(d.core); })
-        .attr("fill", coreColor);
 
     // mouseover rects
     svg.selectAll(".bar")
@@ -194,6 +212,7 @@ function init_pancore(genomes, pans, cores) {
         .on("mouseover", mouseOver)
         .on("mouseout", mouseOut)
         .on("mousemove", mouseMove);
+    }
 
     // mouseover functions
     function mouseOver(d, i) {
