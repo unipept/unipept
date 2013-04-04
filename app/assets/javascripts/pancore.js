@@ -33,6 +33,16 @@ function init_pancore(genomes, pans, cores) {
         .scale(y)
         .orient("left");
 
+    // graph lines helpers
+    var panLine = d3.svg.line()
+        .interpolate("linear")
+        .x(function (d) { return x(d.name); })
+        .y(function (d) { return y(d.pan); });
+    var coreLine = d3.svg.line()
+        .interpolate("linear")
+        .x(function (d) { return x(d.name); })
+        .y(function (d) { return y(d.core); });
+
     // Add handlers to the form
     $("#load_sequences").click(function () {
         var id = $("#sequence_id").val();
@@ -128,6 +138,16 @@ function init_pancore(genomes, pans, cores) {
               .attr("dy", ".35em")
               .style("text-anchor", "start")
               .text(function (d) { return d.name; });
+
+          // draw the lines
+          svg.append("path")
+              .datum(visData)
+              .attr("class", "line pan")
+              .attr("d", panLine);
+          svg.append("path")
+              .datum(visData)
+              .attr("class", "line core")
+              .attr("d", coreLine);
     }
 
     // updates the D3 graph
@@ -162,20 +182,15 @@ function init_pancore(genomes, pans, cores) {
             .attr("cx", function (d) { return x(d.name); })
             .attr("cy", function (d) { return y(d.core); });
 
+        // update the lines
+        svg.select(".line.pan").transition().attr("d", panLine);
+        svg.select(".line.core").transition().attr("d", coreLine);
+
     }
 
     function dontDoThis() {
     // mouse over width
     var mouseOverWidth = (width / visData.length) / 1.5;
-    // graph lines helpers
-    var panLine = d3.svg.line()
-        .interpolate("linear")
-        .x(function (d) { return x(d.name); })
-        .y(function (d) { return y(d.pan); });
-    var coreLine = d3.svg.line()
-        .interpolate("linear")
-        .x(function (d) { return x(d.name); })
-        .y(function (d) { return y(d.core); });
 
     //dropshadow filter
     var temp = svg.append("svg:defs")
@@ -188,16 +203,6 @@ function init_pancore(genomes, pans, cores) {
     temp.append("svg:feMergeNode");
     temp.append("svg:feMergeNode")
             .attr("in", "SourceGraphic");
-
-    // draw the lines
-    svg.append("path")
-        .datum(visData)
-        .attr("class", "line pan")
-        .attr("d", panLine);
-    svg.append("path")
-        .datum(visData)
-        .attr("class", "line core")
-        .attr("d", coreLine);
 
     // mouseover rects
     svg.selectAll(".bar")
