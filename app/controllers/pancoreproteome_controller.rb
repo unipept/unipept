@@ -22,7 +22,7 @@ class PancoreproteomeController < ApplicationController
         @genomes << v[0][1]
         result = Set.new
         v.each do |r|
-          result |= ActiveRecord::Base.connection.select_values("SELECT original_sequence_id FROM peptides LEFT JOIN  refseq_cross_references ON peptides.uniprot_entry_id = refseq_cross_references.uniprot_entry_id WHERE refseq_cross_references.sequence_id = '#{r[2]}'").to_set
+          result |= RefseqCrossReference.get_species_ids(r[2])
         end
         sequences[v[0][1]] = result
         pan |= result
