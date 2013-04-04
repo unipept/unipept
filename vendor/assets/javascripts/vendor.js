@@ -1,5 +1,5 @@
 //  sunburst
-//  3.0
+//  3.1.0
 //= require d3/d3.v3.min.js
 
 //  tree on multi search page
@@ -13,3 +13,8 @@
 //  export lineage tree and treemap to png
 //  0.34
 //= require html2canvas/html2canvas.js
+
+// pancore
+// 3.0
+// created with "jsbuild JS.Set"
+//= require jsclass/set.js
