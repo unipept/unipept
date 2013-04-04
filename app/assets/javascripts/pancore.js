@@ -1,10 +1,23 @@
 function init_pancore(genomes, pans, cores) {
-    var data = new Array();
+  // set up vars
+  var data = {};
+
+  // add handlers to the form
+  $("#load_sequences").click(function () {
+    var id = $("#sequence_id").val();
+    $.getJSON("/pancore/sequences/" + id + ".json", function (json_data) {
+      data[id] = new JS.Set(json_data);
+      console.log(data);
+    });
+    return false;
+  });
+  
+    var data2 = new Array();
     for(i = 0; i < genomes.length; i++){
-        data[i] = new Array();
-        data[i]["name"] = genomes[i];
-        data[i]["pan"] = pans[i];
-        data[i]["core"] = cores[i];
+        data2[i] = new Array();
+        data2[i]["name"] = genomes[i];
+        data2[i]["pan"] = pans[i];
+        data2[i]["core"] = cores[i];
     }
 
 	// colors
@@ -23,7 +36,7 @@ function init_pancore(genomes, pans, cores) {
         .range([height, 0]);
 
 	// mouse over width
-	var mouseOverWidth = (width / data.length) / 1.5;
+	var mouseOverWidth = (width / data2.length) / 1.5;
 
 	// axes
     var xAxis = d3.svg.axis()
@@ -73,8 +86,8 @@ function init_pancore(genomes, pans, cores) {
             .attr("in", "SourceGraphic");
 
 	// set the domains
-    x.domain(data.map(function(d) { return d.name; }));
-    y.domain([0, d3.max(data, function(d) { return d.pan; })]);
+    x.domain(data2.map(function(d) { return d.name; }));
+    y.domain([0, d3.max(data2, function(d) { return d.pan; })]);
 
 	// add the x-axis
     svg.append("g")
@@ -117,17 +130,17 @@ function init_pancore(genomes, pans, cores) {
 	
 	// draw the lines
     svg.append("path")
-        .datum(data)
+        .datum(data2)
         .attr("class", "line pan")
         .attr("d", panLine);       
     svg.append("path")
-        .datum(data)
+        .datum(data2)
         .attr("class", "line core")
         .attr("d", coreLine);
 		
 	// draw the dots
     svg.selectAll(".dot.pan")
-        .data(data)
+        .data(data2)
       .enter().append("circle")
         .attr("class", function(d, i) { return "dot pan _" + i; })
         .attr("r", 5)
@@ -135,7 +148,7 @@ function init_pancore(genomes, pans, cores) {
         .attr("cy", function(d) { return y(d.pan); })
         .attr("fill", panColor);
     svg.selectAll(".dot.core")
-        .data(data)
+        .data(data2)
       .enter().append("circle")
         .attr("class", function(d, i) { return "dot core _" + i; })
         .attr("r", 5)
@@ -145,7 +158,7 @@ function init_pancore(genomes, pans, cores) {
 
 	// mouseover rects
 	svg.selectAll(".bar")
-		.data(data)
+		.data(data2)
 	.enter().append("rect")
         .attr("class", "bar pan")
 		.style("fill-opacity", "0")
@@ -166,18 +179,18 @@ function init_pancore(genomes, pans, cores) {
         // add gray hairlines
         svg.insert("line", ".dot")
             .attr("class", "hairline")
-            .attr("x1", x(data[Math.max(0, i-1)].name))
-            .attr("x2", x(data[Math.min(data.length - 1, i+1)].name))
-            .attr("y1", function(d) { return y(data[i].core); })
-            .attr("y2", function(d) { return y(data[i].core); })
+            .attr("x1", x(data2[Math.max(0, i-1)].name))
+            .attr("x2", x(data2[Math.min(data2.length - 1, i+1)].name))
+            .attr("y1", function(d) { return y(data2[i].core); })
+            .attr("y2", function(d) { return y(data2[i].core); })
             .attr("stroke", "#cccccc")
             .attr("shape-rendering", "crispEdges");
         svg.insert("line", ".dot")
             .attr("class", "hairline")
-            .attr("x1", x(data[Math.max(0, i-1)].name))
-            .attr("x2", x(data[Math.min(data.length - 1, i+1)].name))
-            .attr("y1", function(d) { return y(data[i].pan); })
-            .attr("y2", function(d) { return y(data[i].pan); })
+            .attr("x1", x(data2[Math.max(0, i-1)].name))
+            .attr("x2", x(data2[Math.min(data2.length - 1, i+1)].name))
+            .attr("y1", function(d) { return y(data2[i].pan); })
+            .attr("y2", function(d) { return y(data2[i].pan); })
             .attr("stroke", "#cccccc")
             .attr("shape-rendering", "crispEdges");
             
@@ -186,8 +199,8 @@ function init_pancore(genomes, pans, cores) {
             .attr("class", "axisline")
             .attr("x1", "6")
             .attr("x2", "-6")
-            .attr("y1", function(d) { return y(data[i].pan); }) 
-            .attr("y2", function(d) { return y(data[i].pan); })
+            .attr("y1", function(d) { return y(data2[i].pan); }) 
+            .attr("y2", function(d) { return y(data2[i].pan); })
             .attr("stroke", panColor)
             .attr("stroke-width", "2")
             .attr("shape-rendering", "crispEdges");
@@ -195,8 +208,8 @@ function init_pancore(genomes, pans, cores) {
             .attr("class", "axisline")
             .attr("x1", "6")
             .attr("x2", "-6")
-            .attr("y1", function(d) { return y(data[i].core); })
-            .attr("y2", function(d) { return y(data[i].core); })
+            .attr("y1", function(d) { return y(data2[i].core); })
+            .attr("y2", function(d) { return y(data2[i].core); })
             .attr("stroke", coreColor)
             .attr("stroke-width", "2")
             .attr("shape-rendering", "crispEdges");
@@ -205,8 +218,8 @@ function init_pancore(genomes, pans, cores) {
 		tooltip
 			.style("visibility", "visible")
             .html("<b>" + d.name + "</b><br/>" + 
-			"<span style='color: " + panColor + ";'>&#9632;</span> pan: <b>" + d3.format(",")(data[i].pan) + "</b><br/>" +
-			"<span style='color: " + coreColor + ";'>&#9632;</span> core: <b>" + d3.format(",")(data[i].core) + "</b>");
+			"<span style='color: " + panColor + ";'>&#9632;</span> pan: <b>" + d3.format(",")(data2[i].pan) + "</b><br/>" +
+			"<span style='color: " + coreColor + ";'>&#9632;</span> core: <b>" + d3.format(",")(data2[i].core) + "</b>");
     }
     function mouseOut(d, i) {
         svg.selectAll(".dot._" + i)

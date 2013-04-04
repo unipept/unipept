@@ -4,6 +4,16 @@
 <%= select_tag(:species_id, options_for_select(@species, params[:species_id])) %>
 <%= button_tag(raw("<i class='icon-search icon-white'></i> Load proteome"), :type => "submit", :class => "btn btn-primary") %>
 <% end %>
+
+<%= form_tag(nil, :class => "form-inline") do %>
+<%= text_field_tag(:sequence_id, nil, :placeholder => 'e.g. NC_003909.8') %>
+<%= button_tag(raw("Load"), { :type => "button", :class => "btn btn-primary", :id => "load_sequences"}) %>
+<% end %>
+<ul>
+  <li>NC_003909.8</li>
+  <li>NC_004722.1</li>
+</ul>
+
 <h2>Chart</h2>
 <div id="pancore_graph"></div>
 
