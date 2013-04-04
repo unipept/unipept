@@ -1,17 +1,42 @@
 function init_pancore(genomes, pans, cores) {
-  // set up vars
-  var data = {};
+    // set up vars
+    var data = {},
+        pan = new JS.Set(),
+        core = new JS.Set();
 
-  // add handlers to the form
-  $("#load_sequences").click(function () {
-    var id = $("#sequence_id").val();
-    $.getJSON("/pancore/sequences/" + id + ".json", function (json_data) {
-      data[id] = new JS.Set(json_data);
-      console.log(data);
+    // Add handlers to the form
+    $("#load_sequences").click(function () {
+        var id = $("#sequence_id").val();
+        $.getJSON("/pancore/sequences/" + id + ".json", function (json_data) {
+            addData(id, new JS.Set(json_data));
+        });
+        return false;
     });
-    return false;
-  });
-  
+
+    // Adds new dataset to the data array
+    function addData(name, set) {
+        // Store data for later use
+        data[name] = set;
+
+        // Calculate pan and core
+        core = pan.isEmpty() ? set : core.intersection(set);
+        pan = pan.union(set);
+
+        // Add to the main data array
+        var temp = {};
+        temp.name = name;
+        temp.pan = pan.length;
+        temp.core = core.length;
+        data2.push(temp);
+    }
+
+    // resets the data array
+    function clearAllData() {
+        data = {};
+        pan = new JS.Set();
+        core = new JS.Set();
+    }
+
     var data2 = new Array();
     for(i = 0; i < genomes.length; i++){
         data2[i] = new Array();
