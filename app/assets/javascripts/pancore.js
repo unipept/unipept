@@ -9,6 +9,11 @@ function init_pancore() {
     var svg,
         tooltip;
 
+    // animation stuff
+    var transitionDuration = 250,
+        mayStartAnimation = true,
+        dataQueue = [];
+
     // Colors
     var panColor = "steelblue",
         coreColor = "#ff7f0e";
@@ -83,9 +88,8 @@ function init_pancore() {
         temp.name = name;
         temp.pan = pan.length;
         temp.core = core.length;
-        visData.push(temp);
-
-        updateGraph();
+        dataQueue.push(temp);
+        tryUpdateGraph();
     }
 
     // Resets the data array
@@ -95,6 +99,17 @@ function init_pancore() {
         core = new JS.Set();
 
         updateGraph();
+    }
+    
+    function tryUpdateGraph(){
+        if (mayStartAnimation) {
+            mayStartAnimation = false;
+            visData.push(dataQueue.shift());
+            updateGraph();
+            setTimeout(function () { mayStartAnimation = true; }, transitionDuration);
+        } else {
+            setTimeout(tryUpdateGraph, transitionDuration);
+        }
     }
 
     // Redraws the full D3 graph
@@ -218,8 +233,8 @@ function init_pancore() {
         y.domain([0, d3.max(visData, function (d) { return d.pan; })]);
 
         // update the axes
-        svg.select(".x.axis").transition().call(xAxis);
-        svg.select(".y.axis").transition().call(yAxis);
+        svg.select(".x.axis").transition().duration(transitionDuration).call(xAxis);
+        svg.select(".y.axis").transition().duration(transitionDuration).call(yAxis);
 
         // draw the dots
         var panDots = svg.selectAll(".dot.pan")
@@ -230,6 +245,7 @@ function init_pancore() {
             .attr("fill", panColor)
             .attr("cx", width);
         panDots.transition()
+            .duration(transitionDuration)
             .attr("cx", function (d) { return x(d.name); })
             .attr("cy", function (d) { return y(d.pan); });
         var coreDots = svg.selectAll(".dot.core")
@@ -240,12 +256,13 @@ function init_pancore() {
             .attr("fill", coreColor)
             .attr("cx", width);
         coreDots.transition()
+            .duration(transitionDuration)
             .attr("cx", function (d) { return x(d.name); })
             .attr("cy", function (d) { return y(d.core); });
 
         // update the lines
-        svg.select(".line.pan").transition().attr("d", panLine);
-        svg.select(".line.core").transition().attr("d", coreLine);
+        svg.select(".line.pan").transition().duration(transitionDuration).attr("d", panLine);
+        svg.select(".line.core").transition().duration(transitionDuration).attr("d", coreLine);
 
         // update the mouseover rects
         var mouseOverWidth = (width / visData.length) / 1.5;
@@ -259,6 +276,7 @@ function init_pancore() {
             .on("mouseout", mouseOut)
             .on("mousemove", mouseMove);
         bars.transition()
+            .duration(transitionDuration)
             .attr("x", function (d) { return x(d.name) - mouseOverWidth / 2; })
             .attr("width", mouseOverWidth)
             .attr("y", "0");
