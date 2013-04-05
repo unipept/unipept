@@ -68,7 +68,7 @@ function init_pancore() {
     redrawGraph();
 
     // Load sample data
-    $("#species_id").val(1396);
+    $("#species_id").val(470);
     $("#load_proteome").click();
 
     // Loads peptides, based on refseq_id
@@ -281,13 +281,20 @@ function init_pancore() {
         // update the lines
         if (visData.length > 0) {
             svg.select(".line.pan").datum(visData)
+                .style("visibility", "visible")
                 .transition()
                     .duration(transitionDuration)
                     .attr("d", panLine);
             svg.select(".line.core").datum(visData)
+                .style("visibility", "visible")
                 .transition()
                     .duration(transitionDuration)
                     .attr("d", coreLine);
+        } else {
+            svg.select(".line.pan")
+                .style("visibility", "hidden");
+            svg.select(".line.core")
+                .style("visibility", "hidden")
         }
 
         // update the mouseover rects
