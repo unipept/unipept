@@ -10,7 +10,7 @@ function init_pancore() {
         tooltip;
 
     // animation stuff
-    var transitionDuration = 250,
+    var transitionDuration = 500,
         mayStartAnimation = true,
         dataQueue = [],
         toLoad;
@@ -66,7 +66,11 @@ function init_pancore() {
 
     // Draw the graph
     redrawGraph();
-    
+
+    // Load sample data
+    $("#species_id").val(1396);
+    $("#load_proteome").click();
+
     // Loads peptides, based on refseq_id
     function loadData(name, refseq_id) {
         $.getJSON("/pancore/sequences/" + refseq_id + ".json", function (json_data) {
@@ -266,7 +270,8 @@ function init_pancore() {
             .attr("class", function (d, i) { return "dot core _" + i; })
             .attr("r", 5)
             .attr("fill", coreColor)
-            .attr("cx", width);
+            .attr("cx", width)
+            .attr("cy", y(0));
         coreDots.transition()
             .duration(transitionDuration)
             .attr("cx", function (d) { return x(d.name); })
