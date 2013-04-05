@@ -47,12 +47,7 @@ function init_pancore() {
         .x(function (d) { return x(d.name); })
         .y(function (d) { return y(d.core); });
 
-    // Add handlers to the forms
-    $("#load_sequences").click(function () {
-        var id = $("#refseq_id").val();
-        loadData(id, id);
-        return false;
-    });
+    // Add handler to the form
     $("#load_proteome").click(function () {
         clearAllData();
         var id = $("#species_id").val();
