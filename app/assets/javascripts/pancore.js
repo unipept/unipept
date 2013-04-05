@@ -101,7 +101,9 @@ function init_pancore() {
 
         updateGraph();
     }
-    
+
+    // Adds the next datapoint to the animation after the current
+    // animation is done.
     function tryUpdateGraph(){
         if (mayStartAnimation) {
             mayStartAnimation = false;
@@ -152,10 +154,6 @@ function init_pancore() {
             .attr("class", "x axis")
             .attr("transform", "translate(0," + height + ")")
             .call(xAxis);
-        // rotate the x-axis labels
-        svg.selectAll(".x.axis text")
-            .style("text-anchor", "end")
-            .attr("transform", "translate(-5,0)rotate(-45)");
 
         // add the y-axis
         svg.append("g")
@@ -236,6 +234,12 @@ function init_pancore() {
         // update the axes
         svg.select(".x.axis").transition().duration(transitionDuration).call(xAxis);
         svg.select(".y.axis").transition().duration(transitionDuration).call(yAxis);
+        // rotate the x-axis labels
+        svg.selectAll(".x.axis text")
+            .transition()
+            .duration(transitionDuration)
+            .style("text-anchor", "end")
+            .attr("transform", "translate(-5,0)rotate(-45)");
 
         // draw the dots
         var panDots = svg.selectAll(".dot.pan")
