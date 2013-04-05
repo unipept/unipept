@@ -6,7 +6,7 @@
 <% end %>
 
 <%= form_tag(nil, :class => "form-inline") do %>
-<%= text_field_tag(:sequence_id, nil, :placeholder => 'e.g. NC_003909.8') %>
+<%= text_field_tag(:refseq_id, nil, :placeholder => 'e.g. NC_003909.8') %>
 <%= button_tag(raw("Load"), { :type => "button", :class => "btn btn-primary", :id => "load_sequences"}) %>
 <% end %>
 <ul>

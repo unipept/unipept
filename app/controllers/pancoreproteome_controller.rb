@@ -10,7 +10,7 @@ class PancoreproteomeController < ApplicationController
       @sims = Array.new
       
       # get all distinct refseq_ids
-      refseqs = ActiveRecord::Base.connection.select_rows("select distinct straight_join bioproject_id, name, sequence_id from lineages left join uniprot_entries on lineages.taxon_id = uniprot_entries.taxon_id  left join refseq_cross_references on uniprot_entry_id = uniprot_entries.id  left join genomes on sequence_id = genomes.refseq_id  where species = #{params[:species_id]} and refseq_id IS NOT NULL")
+      refseqs = Genome.get_by_species_id(1396).map{|g| [g.bioproject_id, g.name, g.refseq_id]}  
       
       # vars used in the loop
       pan = Set.new
@@ -22,7 +22,7 @@ class PancoreproteomeController < ApplicationController
         @genomes << v[0][1]
         result = Set.new
         v.each do |r|
-          result |= RefseqCrossReference.get_species_ids(r[2])
+          result |= RefseqCrossReference.get_sequence_ids(r[2])
         end
         sequences[v[0][1]] = result
         pan |= result
@@ -92,11 +92,20 @@ class PancoreproteomeController < ApplicationController
       @order = [3, 8, 5, 4, 10, 9, 11, 2, 7, 0, 6, 1]
     end
   end
-  
+
+  # Returns a list of all sequence_ids for a given refseq_id
   def sequence_ids
-    set = RefseqCrossReference.get_species_ids(params[:sequence_id])
+    set = RefseqCrossReference.get_sequence_ids(params[:refseq_id])
     respond_to do |format|
       format.json { render json: set }
+    end
+  end
+
+  # Returns a list of genomes for a given species_id
+  def genomes
+    genomes = Genome.get_by_species_id(params[:species_id])
+    respond_to do |format|
+      format.json { render json: genomes }
     end
   end
 end

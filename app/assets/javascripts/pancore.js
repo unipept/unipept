@@ -44,7 +44,7 @@ function init_pancore() {
 
     // Add handlers to the form
     $("#load_sequences").click(function () {
-        var id = $("#sequence_id").val();
+        var id = $("#refseq_id").val();
         $.getJSON("/pancore/sequences/" + id + ".json", function (json_data) {
             addData(id, new JS.Set(json_data));
         });
