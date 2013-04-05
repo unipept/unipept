@@ -12,7 +12,8 @@ function init_pancore() {
     // animation stuff
     var transitionDuration = 250,
         mayStartAnimation = true,
-        dataQueue = [];
+        dataQueue = [],
+        toLoad;
 
     // Colors
     var panColor = "steelblue",
@@ -49,9 +50,13 @@ function init_pancore() {
 
     // Add handler to the form
     $("#load_proteome").click(function () {
+        // Disable the load button
+        $(this).button('loading');
+
         clearAllData();
         var id = $("#species_id").val();
         $.getJSON("/pancore/genomes/" + id + ".json", function (genomes) {
+            toLoad = genomes.length;
             for (var i in genomes) {
                 loadData(genomes[i].name, genomes[i].refseq_id);
             }
@@ -101,6 +106,12 @@ function init_pancore() {
     // animation is done.
     function tryUpdateGraph(){
         if (mayStartAnimation) {
+            toLoad--;
+            if (toLoad == 0) {
+                // Not a big fan of this.
+                // This button has nothing to do with this function
+                $("#load_proteome").button('reset');
+            }
             mayStartAnimation = false;
             visData.push(dataQueue.shift());
             updateGraph();
