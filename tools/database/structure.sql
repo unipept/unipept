@@ -248,13 +248,13 @@ DEFAULT CHARACTER SET = utf8;
 CREATE  TABLE IF NOT EXISTS `unipept`.`genomes` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(120) NOT NULL ,
-  `bioproject_id` INT NOT NULL ,
+  `bioproject_id` VARCHAR(15) NOT NULL ,
   `refseq_id` VARCHAR(15) NOT NULL ,
   `status` VARCHAR(45) NOT NULL ,
   PRIMARY KEY (`id`) ,
-  INDEX `idx_refseq_id` (`refseq_id` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+  INDEX `idx_refseq_id` (`refseq_id` ASC) ,
+  INDEX `idx_bioproject_id` (`bioproject_id` ASC) )
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------

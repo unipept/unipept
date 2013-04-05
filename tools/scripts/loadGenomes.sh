@@ -9,8 +9,8 @@ rm -f prokaryotes.txt
 rm -f prokaryotes.sql
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/GENOME_REPORTS/prokaryotes.txt
 touch prokaryotes.sql
-IFS='	'
-cat prokaryotes.txt | cut -f1 -f3 -f8 -f18 | egrep -v -- "-|#" | sed "s/'//g" |
+IFS=$(echo -e "\t")
+cat prokaryotes.txt | cut -f1 -f3 -f9 -f19 | egrep -v -- "-|#" | sed "s/'//g" |
 while read -a line; do
     IFS=',' read -a sequences <<< "${line[2]}"
     for element in "${sequences[@]}"
