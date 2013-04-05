@@ -54,7 +54,7 @@ function init_pancore() {
         return false;
     });
     $("#load_proteome").click(function () {
-        //clearAllData();
+        clearAllData();
         var id = $("#species_id").val();
         $.getJSON("/pancore/genomes/" + id + ".json", function (genomes) {
             for (var i in genomes) {
@@ -95,6 +95,7 @@ function init_pancore() {
     // Resets the data array
     function clearAllData() {
         data = {};
+        visData = [];
         pan = new JS.Set();
         core = new JS.Set();
 
@@ -248,6 +249,7 @@ function init_pancore() {
             .duration(transitionDuration)
             .attr("cx", function (d) { return x(d.name); })
             .attr("cy", function (d) { return y(d.pan); });
+        panDots.exit().remove();
         var coreDots = svg.selectAll(".dot.core")
             .data(visData);
         coreDots.enter().append("circle")
@@ -259,10 +261,19 @@ function init_pancore() {
             .duration(transitionDuration)
             .attr("cx", function (d) { return x(d.name); })
             .attr("cy", function (d) { return y(d.core); });
+        coreDots.exit().remove();
 
         // update the lines
-        svg.select(".line.pan").transition().duration(transitionDuration).attr("d", panLine);
-        svg.select(".line.core").transition().duration(transitionDuration).attr("d", coreLine);
+        if (visData.length > 0) {
+            svg.select(".line.pan").datum(visData)
+                .transition()
+                    .duration(transitionDuration)
+                    .attr("d", panLine);
+            svg.select(".line.core").datum(visData)
+                .transition()
+                    .duration(transitionDuration)
+                    .attr("d", coreLine);
+        }
 
         // update the mouseover rects
         var mouseOverWidth = (width / visData.length) / 1.5;
@@ -280,6 +291,7 @@ function init_pancore() {
             .attr("x", function (d) { return x(d.name) - mouseOverWidth / 2; })
             .attr("width", mouseOverWidth)
             .attr("y", "0");
+        bars.exit().remove();
     }
 
     // Mouse event functions
