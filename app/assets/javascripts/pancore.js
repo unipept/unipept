@@ -42,17 +42,32 @@ function init_pancore() {
         .x(function (d) { return x(d.name); })
         .y(function (d) { return y(d.core); });
 
-    // Add handlers to the form
+    // Add handlers to the forms
     $("#load_sequences").click(function () {
         var id = $("#refseq_id").val();
-        $.getJSON("/pancore/sequences/" + id + ".json", function (json_data) {
-            addData(id, new JS.Set(json_data));
+        loadData(id, id);
+        return false;
+    });
+    $("#load_proteome").click(function () {
+        //clearAllData();
+        var id = $("#species_id").val();
+        $.getJSON("/pancore/genomes/" + id + ".json", function (genomes) {
+            for (var i in genomes) {
+                loadData(genomes[i].name, genomes[i].refseq_id);
+            }
         });
         return false;
     });
 
     // Draw the graph
     redrawGraph();
+    
+    // Loads peptides, based on refseq_id
+    function loadData(name, refseq_id) {
+        $.getJSON("/pancore/sequences/" + refseq_id + ".json", function (json_data) {
+            addData(name, new JS.Set(json_data));
+        });
+    }
 
     // Adds new dataset to the data array
     function addData(name, set) {
@@ -79,7 +94,7 @@ function init_pancore() {
         pan = new JS.Set();
         core = new JS.Set();
 
-        redrawGraph();
+        updateGraph();
     }
 
     // Redraws the full D3 graph

@@ -27,7 +27,7 @@ UnipeptWeb::Application.routes.draw do
   # pancore
   match '/pancore/sequences/:refseq_id.:format', :to => 'pancoreproteome#sequence_ids', :constraints => { :refseq_id => /[0-z\._]+/ }
   match '/pancore/genomes/:species_id.:format', :to => 'pancoreproteome#genomes'
-  match '/pancore(/:species_id)', :to => 'pancoreproteome#analyze', :as => 'pancore_analyze'
+  match '/pancore', :to => 'pancoreproteome#analyze', :as => 'pancore_analyze'
 
   # simple pages
   match '/contact', :to => 'pages#contact'
