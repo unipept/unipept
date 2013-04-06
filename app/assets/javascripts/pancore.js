@@ -52,9 +52,9 @@ function init_pancore() {
         .y(function (d) { return y(d.core); });
 
     // Add handler to the worker
-    worker.onmessage = function(e) {
-      console.log("Received: " + e.data);
-    }
+    worker.addEventListener('message', function(e) {
+      console.log(e);
+    }, false);
 
     // Add handler to the form
     $("#load_proteome").click(function () {
@@ -72,8 +72,8 @@ function init_pancore() {
         return false;
     });
 
-    // Start the worker
-    worker.postMessage();
+    // Send something to the worker
+    sendToWorker("test", "message");
 
     // Draw the graph
     redrawGraph();
@@ -81,6 +81,10 @@ function init_pancore() {
     // Load sample data
     $("#species_id").val(470);
     //$("#load_proteome").click();
+
+    function sendToWorker(command, message) {
+        worker.postMessage({'cmd': command, 'msg': message});
+    }
 
     // Loads peptides, based on refseq_id
     function loadData(name, refseq_id) {
