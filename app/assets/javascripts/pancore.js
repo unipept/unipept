@@ -53,7 +53,17 @@ function init_pancore() {
 
     // Add handler to the worker
     worker.addEventListener('message', function(e) {
-      console.log(e);
+        var data = e.data;
+        switch (data.type) {
+            case 'print':
+                console.log(data.msg);
+                break;
+            case 'error':
+                console.log(data.msg);
+                break;
+            default:
+                console.log(data.msg);
+        };
     }, false);
 
     // Add handler to the form
@@ -73,7 +83,7 @@ function init_pancore() {
     });
 
     // Send something to the worker
-    sendToWorker("test", "message");
+    sendToWorker("log", "message");
 
     // Draw the graph
     redrawGraph();
@@ -82,6 +92,7 @@ function init_pancore() {
     $("#species_id").val(470);
     //$("#load_proteome").click();
 
+    // Sends a command and message to the worker
     function sendToWorker(command, message) {
         worker.postMessage({'cmd': command, 'msg': message});
     }
