@@ -1,9 +1,12 @@
 function init_pancore() {
-    // set up vars
+    // Data and workers
     var data = {},
         visData = [],
         pan = new JS.Set(),
-        core = new JS.Set();
+        core = new JS.Set(),
+        //workerBlob = new Blob([$('#worker1').textContent]),
+        //worker = new Worker(window.URL.createObjectURL(workerBlob));
+        worker = new Worker("worker.js");
 
     // D3 vars
     var svg,
@@ -48,6 +51,11 @@ function init_pancore() {
         .x(function (d) { return x(d.name); })
         .y(function (d) { return y(d.core); });
 
+    // Add handler to the worker
+    worker.onmessage = function(e) {
+      console.log("Received: " + e.data);
+    }
+
     // Add handler to the form
     $("#load_proteome").click(function () {
         // Disable the load button
@@ -64,12 +72,15 @@ function init_pancore() {
         return false;
     });
 
+    // Start the worker
+    worker.postMessage();
+
     // Draw the graph
     redrawGraph();
 
     // Load sample data
     $("#species_id").val(470);
-    $("#load_proteome").click();
+    //$("#load_proteome").click();
 
     // Loads peptides, based on refseq_id
     function loadData(name, refseq_id) {
