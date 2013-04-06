@@ -6,7 +6,7 @@ function init_pancore() {
         core = new JS.Set(),
         //workerBlob = new Blob([$('#worker1').textContent]),
         //worker = new Worker(window.URL.createObjectURL(workerBlob));
-        worker = new Worker("worker.js");
+        worker = new Worker("javascripts/worker.js");
 
     // D3 vars
     var svg,
@@ -61,6 +61,9 @@ function init_pancore() {
             case 'error':
                 console.log(data.msg);
                 break;
+            case 'addData':
+                addData(data.msg);
+                break;
             default:
                 console.log(data.msg);
         };
@@ -82,9 +85,6 @@ function init_pancore() {
         return false;
     });
 
-    // Send something to the worker
-    sendToWorker("log", "message");
-
     // Draw the graph
     redrawGraph();
 
@@ -99,26 +99,13 @@ function init_pancore() {
 
     // Loads peptides, based on refseq_id
     function loadData(name, refseq_id) {
-        $.getJSON("/pancore/sequences/" + refseq_id + ".json", function (json_data) {
-            addData(name, new JS.Set(json_data));
-        });
+        // offload this to the worker
+        sendToWorker("loadData", {"name": name, "refseq_id": refseq_id});
     }
 
     // Adds new dataset to the data array
-    function addData(name, set) {
-        // Store data for later use
-        data[name] = set;
-
-        // Calculate pan and core
-        core = pan.isEmpty() ? set : core.intersection(set);
-        pan = pan.union(set);
-
-        // Add to the main data array
-        var temp = {};
-        temp.name = name;
-        temp.pan = pan.length;
-        temp.core = core.length;
-        dataQueue.push(temp);
+    function addData(data) {
+        dataQueue.push(data);
         tryUpdateGraph();
     }
 
