@@ -105,7 +105,7 @@ class PancoreproteomeController < ApplicationController
   def sequence_ids
     set = RefseqCrossReference.get_sequence_ids(params[:refseq_id])
     respond_to do |format|
-      format.json { render json: set }
+      format.json { render json: Oj.dump(set, mode: :compat) }
     end
   end
 
@@ -113,7 +113,7 @@ class PancoreproteomeController < ApplicationController
   def genomes
     genomes = Genome.get_by_species_id(params[:species_id])
     respond_to do |format|
-      format.json { render json: genomes }
+      format.json { render json: Oj.dump(genomes, mode: :compat) }
     end
   end
 end

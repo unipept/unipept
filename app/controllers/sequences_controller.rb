@@ -352,7 +352,7 @@ class SequencesController < ApplicationController
       @root.add_piechart_data unless @root.nil?
       @root.sort_peptides_and_children unless @root.nil?
 
-      root_json = Oj.dump(@root).gsub('"^o":"TreeMapNode",', "")
+      root_json = Oj.dump(@root, mode: :compat)
       sunburst_hash = Oj.load(String.new(root_json))
       TreeMapNode.clean_sunburst!(sunburst_hash) unless sunburst_hash.nil?
       @sunburst_json = Oj.dump(sunburst_hash).gsub("children","kids")
