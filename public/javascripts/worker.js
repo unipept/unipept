@@ -19,6 +19,9 @@ self.addEventListener('message', function (e) {
     case 'loadData':
         loadData(data.msg.name, data.msg.refseq_id);
         break;
+    case 'clearAllData':
+        clearAllData();
+        break;
     default:
         sendToHost("error", data.msg);
     }
@@ -51,6 +54,13 @@ function addData(name, set) {
     temp.pan = pan.length;
     temp.core = core.length;
     sendToHost("addData", temp);
+}
+
+// Resets the data vars
+function clearAllData() {
+    data = {};
+    pan = new JS.Set();
+    core = new JS.Set();
 }
 
 function getJSON(url, callback) {

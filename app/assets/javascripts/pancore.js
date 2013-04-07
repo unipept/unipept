@@ -1,9 +1,6 @@
 function init_pancore() {
     // Data and workers
-    var data = {},
-        visData = [],
-        pan = new JS.Set(),
-        core = new JS.Set(),
+    var visData = [],
         //workerBlob = new Blob([$('#worker1').textContent]),
         //worker = new Worker(window.URL.createObjectURL(workerBlob));
         worker = new Worker("javascripts/worker.js");
@@ -52,21 +49,21 @@ function init_pancore() {
         .y(function (d) { return y(d.core); });
 
     // Add handler to the worker
-    worker.addEventListener('message', function(e) {
+    worker.addEventListener('message', function (e) {
         var data = e.data;
         switch (data.type) {
-            case 'print':
-                console.log(data.msg);
-                break;
-            case 'error':
-                console.log(data.msg);
-                break;
-            case 'addData':
-                addData(data.msg);
-                break;
-            default:
-                console.log(data.msg);
-        };
+        case 'print':
+            console.log(data.msg);
+            break;
+        case 'error':
+            console.log(data.msg);
+            break;
+        case 'addData':
+            addData(data.msg);
+            break;
+        default:
+            console.log(data.msg);
+        }
     }, false);
 
     // Add handler to the form
@@ -90,7 +87,7 @@ function init_pancore() {
 
     // Load sample data
     $("#species_id").val(470);
-    //$("#load_proteome").click();
+    $("#load_proteome").click();
 
     // Sends a command and message to the worker
     function sendToWorker(command, message) {
@@ -111,10 +108,8 @@ function init_pancore() {
 
     // Resets the data array
     function clearAllData() {
-        data = {};
+        sendToWorker("clearAllData", "");
         visData = [];
-        pan = new JS.Set();
-        core = new JS.Set();
 
         updateGraph();
     }
@@ -307,7 +302,7 @@ function init_pancore() {
             svg.select(".line.pan")
                 .style("visibility", "hidden");
             svg.select(".line.core")
-                .style("visibility", "hidden")
+                .style("visibility", "hidden");
         }
 
         // update the mouseover rects
