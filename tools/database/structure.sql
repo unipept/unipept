@@ -81,6 +81,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`lineages` (
   `forma` MEDIUMINT NULL DEFAULT NULL ,
   PRIMARY KEY (`taxon_id`) ,
   INDEX `fk_lineages_taxons` (`taxon_id` ASC) ,
+  INDEX `idx_species` (`species` ASC) ,
   CONSTRAINT `fk_lineages_taxons`
     FOREIGN KEY (`taxon_id` )
     REFERENCES `unipept`.`taxons` (`id` )
