@@ -3,7 +3,7 @@ function init_pancore() {
     var visData = [],
         //workerBlob = new Blob([$('#worker1').textContent]),
         //worker = new Worker(window.URL.createObjectURL(workerBlob));
-        worker = new Worker("javascripts/worker.js");
+        worker = new Worker("assets/workers/pancore_worker.js");
 
     // D3 vars
     var svg,

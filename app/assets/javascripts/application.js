@@ -2,7 +2,7 @@
 //= require jquery_ujs
 //= require twitter/bootstrap
 //= require_self
-//= require_tree .
+//= require_directory .
 //= require vendor
 
 // add support for animate with color values

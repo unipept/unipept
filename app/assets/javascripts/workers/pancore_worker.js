@@ -2,7 +2,7 @@
 // because its type is javascript/worker.
 
 // import the set implementation 
-importScripts('set.js');
+importScripts('../jsclass/set.js');
 
 // vars
 var data = {},
