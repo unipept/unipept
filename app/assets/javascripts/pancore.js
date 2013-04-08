@@ -48,7 +48,7 @@ function init_pancore() {
         .x(function (d) { return x(d.name); })
         .y(function (d) { return y(d.core); });
 
-    // Add handler to the worker
+    // Add eventhandlers to the worker
     worker.addEventListener('message', function (e) {
         var data = e.data;
         switch (data.type) {
@@ -56,7 +56,11 @@ function init_pancore() {
             console.log(data.msg);
             break;
         case 'error':
-            console.log(data.msg);
+            if (data.msg.msg != "") {
+                error(data.msg.error, data.msg.msg);
+            } else {
+                error(data.msg.error);
+            }
             break;
         case 'addData':
             addData(data.msg);
@@ -64,6 +68,9 @@ function init_pancore() {
         default:
             console.log(data.msg);
         }
+    }, false);
+    worker.addEventListener('error', function (e) {
+        error(e);
     }, false);
 
     // Add handler to the form
