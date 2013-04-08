@@ -8,26 +8,12 @@
 <h2>Chart</h2>
 <div id="pancore_graph"></div>
 
-<h2>Similarity matrix</h2>
-<div id="sim_matrix"></div>
-
-<script id="worker1" type="javascript/worker">
-// This script won't be parsed by JS engines
-// because its type is javascript/worker.
-
-// Paste worker code here
-</script>
-
 <script type="text/javascript">
-  var genomes = <%= raw @genomes %>
-  var sims = <%= raw @sims %>
-  var order = <%= raw @order %>
   $(function () {
     if (typeof(Worker)!=="undefined") {
       init_pancore();
     } else {
       error(null, "Sorry, this page uses Web Workers, an advanced JavaScript technology that's not supported by your browser. Try using an up to date version of Google Chrome, Firefox or Internet Explorer 10.")
     }
-    init_sim_matrix(genomes, sims, order);
   });
 </script>
