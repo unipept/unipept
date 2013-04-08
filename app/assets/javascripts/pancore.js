@@ -1,8 +1,6 @@
 function init_pancore() {
     // Data and workers
     var visData = [],
-        //workerBlob = new Blob([$('#worker1').textContent]),
-        //worker = new Worker(window.URL.createObjectURL(workerBlob));
         worker = new Worker("assets/workers/pancore_worker.js");
 
     // D3 vars
@@ -79,12 +77,16 @@ function init_pancore() {
         $(this).button('loading');
 
         clearAllData();
-        var id = $("#species_id").val();
-        $.getJSON("/pancore/genomes/" + id + ".json", function (genomes) {
+        var id = $("#species_id").val(),
+            url = "/pancore/genomes/" + id + ".json";
+        $.getJSON(url, function (genomes) {
             toLoad = genomes.length;
             for (var i in genomes) {
                 loadData(genomes[i].name, genomes[i].refseq_id);
             }
+        })
+        .fail(function () {
+            error("request error for " + url, "It seems like something went wrong while we loaded the data");
         });
         return false;
     });

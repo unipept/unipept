@@ -1,6 +1,3 @@
-// This script won't be parsed by JS engines
-// because its type is javascript/worker.
-
 // import the set implementation 
 importScripts('../jsclass/set.js');
 
@@ -63,13 +60,22 @@ function clearAllData() {
     core = new JS.Set();
 }
 
+// Provide an error function with the same signature as in the host
+function error(error, message) {
+    sendToHost("error", {"error" : error, "msg" : message});
+}
+
 function getJSON(url, callback) {
     var req = new XMLHttpRequest();
     req.open('GET', url, true);
     req.onreadystatechange = function () {
         if (req.readyState === 4) {
-            var data = JSON.parse(req.responseText);
-            callback(data);
+            if (req.status === 200) {
+                var data = JSON.parse(req.responseText);
+                callback(data);
+            } else {
+                error("request error for " + url, "It seems like something went wrong while we loaded the data");
+            }
         }
     };
     req.send(null);
