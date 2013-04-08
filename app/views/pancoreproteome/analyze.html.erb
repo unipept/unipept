@@ -23,7 +23,11 @@
   var sims = <%= raw @sims %>
   var order = <%= raw @order %>
   $(function () {
-    init_pancore();
+    if (typeof(Worker)!=="undefined") {
+      init_pancore();
+    } else {
+      error(null, "Sorry, this page uses Web Workers, an advanced JavaScript technology that's not supported by your browser. Try using an up to date version of Google Chrome, Firefox or Internet Explorer 10.")
+    }
     init_sim_matrix(genomes, sims, order);
   });
 </script>
