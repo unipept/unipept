@@ -86,6 +86,7 @@ function init_pancore() {
         var id = $("#species_id").val(),
             url = "/pancore/genomes/" + id + ".json";
         $.getJSON(url, function (genomes) {
+            clearTable();
             toLoad = genomes.length;
             for (var i = 0; i < genomes.length ; i++) {
                 tableData[genomes[i].name] = {"genome" : genomes[i].name, "status" : "Loading...", "position" : 100 + i};
@@ -148,7 +149,7 @@ function init_pancore() {
         tableData = {};
 
         updateGraph();
-        updateTable();
+        clearTable();
     }
 
     // Adds the next datapoint to the animation after the current
@@ -174,6 +175,10 @@ function init_pancore() {
         }
     }
 
+    // Clear the table 
+    function clearTable() {
+        $("#genomes_table tbody").html("");
+    }
     // Updates the table
     function updateTable() {
         var tr = d3.select("#genomes_table tbody").selectAll("tr")
@@ -182,15 +187,16 @@ function init_pancore() {
         tr.exit().remove();
         tr.sort(function (a, b) { return a.position - b.position; });
 
-        var td = tr.selectAll("td")
+        var td = tr.selectAll("td.data")
             .data(function (d) { 
                 return d3.entries(d).filter(function (entry) {
                     return entry.key != "position";
                 });
             });
-        td.enter().append("td");
+        td.enter()
+            .append("td");
         td.text(function (d) { return d.value; })
-            .attr("class", function (d) {return d.key; })
+            .attr("class", function (d) {return "data " + d.key; })
             .attr("colspan", "1");
         td.exit().remove();
     }
