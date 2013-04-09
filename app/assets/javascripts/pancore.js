@@ -84,8 +84,8 @@ function init_pancore() {
             url = "/pancore/genomes/" + id + ".json";
         $.getJSON(url, function (genomes) {
             toLoad = genomes.length;
-            for (var i in genomes) {
-                tableData[genomes[i].name] = {"genome" : genomes[i].name, "status" : "Loading..."};
+            for (var i = 0; i < genomes.length ; i++) {
+                tableData[genomes[i].name] = {"genome" : genomes[i].name, "status" : "Loading...", "position" : 100 + i};
                 loadData(genomes[i].name, genomes[i].refseq_id);
             }
             updateTable();
@@ -124,7 +124,7 @@ function init_pancore() {
     function clearAllData() {
         sendToWorker("clearAllData", "");
         visData = [];
-        tableData = [];
+        tableData = {};
 
         updateGraph();
         updateTable();
@@ -144,6 +144,7 @@ function init_pancore() {
             var data = dataQueue.shift();
             visData.push(data);
             tableData[data.name].status = "Done";
+            tableData[data.name].position = visData.length - 1;
             updateGraph();
             updateTable();
             setTimeout(function () { mayStartAnimation = true; }, transitionDuration);
@@ -158,6 +159,7 @@ function init_pancore() {
             .data(d3.values(tableData));
         tr.enter().append("tr");
         tr.exit().remove();
+        tr.sort(function (a, b) { return a.position - b.position; });
 
         var td = tr.selectAll("td")
             .data(function (d) { return [d.genome, d.status]; });
