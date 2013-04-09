@@ -96,6 +96,9 @@ function init_pancore() {
         return false;
     });
 
+    // Make table sortable
+    $("#genomes_table tbody").sortable();
+
     // Draw the graph
     redrawGraph();
 
@@ -162,9 +165,14 @@ function init_pancore() {
         tr.sort(function (a, b) { return a.position - b.position; });
 
         var td = tr.selectAll("td")
-            .data(function (d) { return [d.genome, d.status]; });
+            .data(function (d) { 
+                return d3.entries(d).filter(function (entry) {
+                    return entry.key != "position";
+                });
+            });
         td.enter().append("td");
-        td.text(function (d) { return d; })
+        td.text(function (d) { return d.value; })
+            .attr("class", function (d) {return d.key; })
             .attr("colspan", "1");
         td.exit().remove();
     }
