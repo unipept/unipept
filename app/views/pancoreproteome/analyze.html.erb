@@ -1,9 +1,32 @@
 <h1>Pan and core proteome</h1>
-<br/>
-<%= form_tag(:pancore_analyze, :method => "get", :class => "form-inline") do %>
-<%= select_tag(:species_id, options_for_select(@species, params[:species_id])) %>
-<%= button_tag(raw("Load"), :type => "button", :class => "btn btn-primary", :id => "load_proteome", :"data-loading-text" => "Loading...") %>
-<% end %>
+<div class="split">
+  <div class="split-left">
+    <p class="intro">
+      Select a species for which you want to analyze the proteome and click the load button.
+    </p>
+    <%= form_tag(:pancore_analyze, :method => "get", :class => "form-inline") do %>
+    <%= select_tag(:species_id, options_for_select(@species, params[:species_id])) %>
+    <%= button_tag(raw("Load"), :type => "button", :class => "btn btn-primary", :id => "load_proteome", :"data-loading-text" => "Loading...") %>
+    <% end %>
+  </div>
+
+  <div class="split-right">
+    <table class="table table-condensed" id="genomes_table">
+      <thead>
+        <tr>
+          <th>Genome</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="2">Please select a species to analyze.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="visualClear"></div>
+  </div>
+</div>
 
 <h2>Chart</h2>
 <div id="pancore_graph"></div>

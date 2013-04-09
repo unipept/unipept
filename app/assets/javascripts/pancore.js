@@ -1,6 +1,7 @@
 function init_pancore() {
     // Data and workers
     var visData = [],
+        tableData = {},
         worker = new Worker("assets/workers/pancore_worker.js");
 
     // D3 vars
@@ -77,13 +78,17 @@ function init_pancore() {
         $(this).button('loading');
 
         clearAllData();
+        showMessageInTable("Please wait while we load the genomes for this species.");
+
         var id = $("#species_id").val(),
             url = "/pancore/genomes/" + id + ".json";
         $.getJSON(url, function (genomes) {
             toLoad = genomes.length;
             for (var i in genomes) {
+                tableData[genomes[i].name] = {"genome" : genomes[i].name, "status" : "Loading..."};
                 loadData(genomes[i].name, genomes[i].refseq_id);
             }
+            updateTable();
         })
         .fail(function () {
             error("request error for " + url, "It seems like something went wrong while we loaded the data");
@@ -119,27 +124,52 @@ function init_pancore() {
     function clearAllData() {
         sendToWorker("clearAllData", "");
         visData = [];
+        tableData = [];
 
         updateGraph();
+        updateTable();
     }
 
     // Adds the next datapoint to the animation after the current
     // animation is done.
-    function tryUpdateGraph(){
+    function tryUpdateGraph() {
         if (mayStartAnimation) {
             toLoad--;
-            if (toLoad == 0) {
+            if (toLoad === 0) {
                 // Not a big fan of this.
                 // This button has nothing to do with this function
                 $("#load_proteome").button('reset');
             }
             mayStartAnimation = false;
-            visData.push(dataQueue.shift());
+            var data = dataQueue.shift();
+            visData.push(data);
+            tableData[data.name].status = "Done";
             updateGraph();
+            updateTable();
             setTimeout(function () { mayStartAnimation = true; }, transitionDuration);
         } else {
             setTimeout(tryUpdateGraph, transitionDuration);
         }
+    }
+
+    // Updates the table
+    function updateTable() {
+        var tr = d3.select("#genomes_table tbody").selectAll("tr")
+            .data(d3.values(tableData));
+        tr.enter().append("tr");
+        tr.exit().remove();
+
+        var td = tr.selectAll("td")
+            .data(function (d) { return [d.genome, d.status]; });
+        td.enter().append("td");
+        td.text(function (d) { return d; })
+            .attr("colspan", "1");
+        td.exit().remove();
+    }
+
+    // Displays a message in the table
+    function showMessageInTable(msg) {
+        $("#genomes_table tbody").html("<tr><td colspan='2'>" + msg + "</td></tr>");
     }
 
     // Redraws the full D3 graph
