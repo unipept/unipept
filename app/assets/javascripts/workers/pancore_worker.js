@@ -19,6 +19,9 @@ self.addEventListener('message', function (e) {
     case 'clearAllData':
         clearAllData();
         break;
+    case 'recalculatePanCore':
+        recalculatePanCore(data.msg);
+        break;
     default:
         sendToHost("error", data.msg);
     }
@@ -51,6 +54,24 @@ function addData(name, set) {
     temp.pan = pan.length;
     temp.core = core.length;
     sendToHost("addData", temp);
+}
+
+function recalculatePanCore(order) {
+    var response = [];
+    pan = new JS.Set();
+    core = new JS.Set();
+    for (var i = 0; i < order.length; i++) {
+        set = data[order[i]];
+        core = pan.isEmpty() ? set : core.intersection(set);
+        pan = pan.union(set);
+        
+        var temp = {};
+        temp.name = order[i];
+        temp.pan = pan.length;
+        temp.core = core.length;
+        response.push(temp);
+    }
+    sendToHost("setVisData", response);
 }
 
 // Resets the data vars

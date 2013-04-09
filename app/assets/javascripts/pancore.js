@@ -64,6 +64,9 @@ function init_pancore() {
         case 'addData':
             addData(data.msg);
             break;
+        case 'setVisData':
+            setVisData(data.msg);
+            break;
         default:
             console.log(data.msg);
         }
@@ -99,9 +102,12 @@ function init_pancore() {
     // Make table sortable
     $("#genomes_table tbody").sortable({
        stop: function (event, ui) { 
-           $("#genomes_table tbody tr .genome").each(function (index) {
-               tableData[$(this).text()].position = index;
+           var order = [];
+           $("#genomes_table tbody tr .genome").each(function (i) {
+               tableData[$(this).text()].position = i;
+               order[i] = $(this).text();
            });
+           sendToWorker("recalculatePanCore", order);
        }
     });
 
@@ -127,6 +133,12 @@ function init_pancore() {
     function addData(data) {
         dataQueue.push(data);
         tryUpdateGraph();
+    }
+
+    // Sets new pancore data
+    function setVisData(data) {
+        visData = data;
+        updateGraph();
     }
 
     // Resets the data array
