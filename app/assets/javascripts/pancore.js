@@ -97,7 +97,13 @@ function init_pancore() {
     });
 
     // Make table sortable
-    $("#genomes_table tbody").sortable();
+    $("#genomes_table tbody").sortable({
+       stop: function (event, ui) { 
+           $("#genomes_table tbody tr .genome").each(function (index) {
+               tableData[$(this).text()].position = index;
+           });
+       }
+    });
 
     // Draw the graph
     redrawGraph();
