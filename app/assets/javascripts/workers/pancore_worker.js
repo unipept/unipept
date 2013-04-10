@@ -1,10 +1,12 @@
 // import the set implementation 
-importScripts('../jsclass/set.js');
+//importScripts('../jsclass/set.js');
 
 // vars
 var data = {},
-    pan = new JS.Set(),
-    core = new JS.Set(),
+    //pan = new JS.Set(),
+    //core = new JS.Set(),
+    pan = [],
+    core = [],
     pans = [],
     cores = [];
 
@@ -37,7 +39,8 @@ function sendToHost(type, message) {
 // Loads peptides, based on refseq_id
 function loadData(name, refseq_id) {
     getJSON("/pancore/sequences/" + refseq_id + ".json", function (json_data) {
-        addData(name, new JS.Set(json_data));
+        //addData(name, new JS.Set(json_data));
+        addData(name, json_data);
     });
 }
 
@@ -47,8 +50,10 @@ function addData(name, set) {
     data[name] = set;
 
     // Calculate pan and core
-    core = pan.isEmpty() ? set : core.intersection(set);
-    pan = pan.union(set);
+    //core = pan.isEmpty() ? set : core.intersection(set);
+    //pan = pan.union(set);
+    core = pan.length === 0 ? set : intersection(core, set);
+    pan = union(pan, set);
     pans.push(pan);
     cores.push(core);
 
@@ -69,8 +74,10 @@ function recalculatePanCore(order, start, stop) {
             cores[i] = set;
             pans[i] = set;
         } else {
-            cores[i] = cores[i - 1].intersection(set);
-            pans[i] = pans[i - 1].union(set);
+            //cores[i] = cores[i - 1].intersection(set);
+            //pans[i] = pans[i - 1].union(set);
+            cores[i] = intersection(cores[i - 1], set);
+            pans[i] = union(pans[i - 1], set);
         }
     }
     var response = [];
@@ -87,8 +94,10 @@ function recalculatePanCore(order, start, stop) {
 // Resets the data vars
 function clearAllData() {
     data = {};
-    pan = new JS.Set();
-    core = new JS.Set();
+    //pan = new JS.Set();
+    //core = new JS.Set();
+    pan = [];
+    core = [];
     pans = [];
     cores = [];
 }
@@ -112,4 +121,50 @@ function getJSON(url, callback) {
         }
     };
     req.send(null);
+}
+
+// union and intersection for sorted arrays
+function union(a, b){
+    var r = [],
+        i = 0,
+        j = 0;
+    while (i < a.length && j < b.length) {
+        if (a[i] < b[j]) {
+            r.push(a[i]);
+            i++;
+        } else if (a[i] > b[j]) {
+            r.push(b[j]);
+            j++;
+        } else {
+            r.push(a[i]);
+            i++;
+            j++;
+        }
+    }
+    while (i < a.length) {
+        r.push(a[i]);
+        i++;
+    }
+    while (j < b.length) {
+        r.push(b[j]);
+        j++;
+    }
+    return r;
+}
+function intersection(a, b){
+    var r = [],
+        i = 0,
+        j = 0;
+    while (i < a.length && j < b.length) {
+        if (a[i] < b[j]) {
+            i++;
+        } else if (a[i] > b[j]) {
+            j++;
+        } else {
+            r.push(a[i]);
+            i++;
+            j++;
+        }
+    }
+    return r;
 }
