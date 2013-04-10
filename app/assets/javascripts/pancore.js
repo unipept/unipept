@@ -1,4 +1,7 @@
 function init_pancore() {
+    // var time
+    var time;
+
     // Data and workers
     var visData = [],
         tableData = {},
@@ -119,6 +122,7 @@ function init_pancore() {
             });
             start++;
             updateTable();
+            time = new Date().getTime();
             sendToWorker("recalculatePanCore", {"order" : order, "start" : start, "stop" : stop});
        }
     });
@@ -149,6 +153,7 @@ function init_pancore() {
 
     // Sets new pancore data
     function setVisData(data) {
+        console.log(new Date().getTime() - time);
         visData = data;
         for (var i in tableData) {
             tableData[i].status = "Done";
