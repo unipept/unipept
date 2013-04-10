@@ -102,16 +102,24 @@ function init_pancore() {
 
     // Make table sortable
     $("#genomes_table tbody").sortable({
-       stop: function (event, ui) { 
-           var order = [];
-           $("#genomes_table tbody tr .genome").each(function (i) {
-               var name = $(this).text();
-               tableData[name].position = i;
-               tableData[name].status = "Processing...";
-               order[i] = name;
-           });
-           updateTable();
-           sendToWorker("recalculatePanCore", order);
+        stop: function (event, ui) { 
+            var order = [],
+                start = -1,
+                stop = 0;
+            $("#genomes_table tbody tr .genome").each(function (i) {
+                var name = $(this).text();
+                if (tableData[name].position === i && stop === 0) {
+                    start = i;
+                } else if (tableData[name].position !== i) {
+                    stop = i;
+                    tableData[name].position = i;
+                    tableData[name].status = "Processing...";
+                }
+                order[i] = name;
+            });
+            start++;
+            updateTable();
+            sendToWorker("recalculatePanCore", {"order" : order, "start" : start, "stop" : stop});
        }
     });
 

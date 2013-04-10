@@ -22,7 +22,7 @@ self.addEventListener('message', function (e) {
         clearAllData();
         break;
     case 'recalculatePanCore':
-        recalculatePanCore(data.msg);
+        recalculatePanCore(data.msg.order, data.msg.start, data.msg.stop);
         break;
     default:
         sendToHost("error", data.msg);
@@ -52,7 +52,7 @@ function addData(name, set) {
     pans.push(pan);
     cores.push(core);
 
-    // return the results to the host
+    // Return the results to the host
     var temp = {};
     temp.name = name;
     temp.pan = pan.length;
@@ -60,19 +60,25 @@ function addData(name, set) {
     sendToHost("addData", temp);
 }
 
-function recalculatePanCore(order) {
+// Recalculates the pan and core data based on a
+// given order, from start till stop
+function recalculatePanCore(order, start, stop) {
+    for (var i = start; i <= stop; i++) {
+        var set = data[order[i]];
+        if (i === 0) {
+            cores[i] = set;
+            pans[i] = set;
+        } else {
+            cores[i] = cores[i - 1].intersection(set);
+            pans[i] = pans[i - 1].union(set);
+        }
+    }
     var response = [];
-    pan = new JS.Set();
-    core = new JS.Set();
     for (var i = 0; i < order.length; i++) {
-        set = data[order[i]];
-        core = pan.isEmpty() ? set : core.intersection(set);
-        pan = pan.union(set);
-        
         var temp = {};
         temp.name = order[i];
-        temp.pan = pan.length;
-        temp.core = core.length;
+        temp.pan = pans[i].length;
+        temp.core = cores[i].length;
         response.push(temp);
     }
     sendToHost("setVisData", response);
