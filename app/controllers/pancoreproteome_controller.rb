@@ -93,9 +93,9 @@ class PancoreproteomeController < ApplicationController
 
   # Returns a list of all sequence_ids for a given refseq_id
   def sequence_ids
-    set = RefseqCrossReference.get_sequence_ids(params[:refseq_id])
+    resp = RefseqCrossReference.get_sequence_ids(params[:refseq_id]).to_a.sort!
     respond_to do |format|
-      format.json { render json: Oj.dump(set, mode: :compat) }
+      format.json { render json: Oj.dump(resp, mode: :compat) }
     end
   end
 
