@@ -4,7 +4,9 @@ importScripts('../jsclass/set.js');
 // vars
 var data = {},
     pan = new JS.Set(),
-    core = new JS.Set();
+    core = new JS.Set(),
+    pans = [],
+    cores = [];
 
 // Add an event handler to the worker
 self.addEventListener('message', function (e) {
@@ -47,6 +49,8 @@ function addData(name, set) {
     // Calculate pan and core
     core = pan.isEmpty() ? set : core.intersection(set);
     pan = pan.union(set);
+    pans.push(pan);
+    cores.push(core);
 
     // return the results to the host
     var temp = {};
@@ -79,6 +83,8 @@ function clearAllData() {
     data = {};
     pan = new JS.Set();
     core = new JS.Set();
+    pans = [];
+    cores = [];
 }
 
 // Provide an error function with the same signature as in the host
