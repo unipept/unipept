@@ -105,9 +105,12 @@ function init_pancore() {
        stop: function (event, ui) { 
            var order = [];
            $("#genomes_table tbody tr .genome").each(function (i) {
-               tableData[$(this).text()].position = i;
-               order[i] = $(this).text();
+               var name = $(this).text();
+               tableData[name].position = i;
+               tableData[name].status = "Processing...";
+               order[i] = name;
            });
+           updateTable();
            sendToWorker("recalculatePanCore", order);
        }
     });
@@ -139,7 +142,11 @@ function init_pancore() {
     // Sets new pancore data
     function setVisData(data) {
         visData = data;
+        for (var i in tableData) {
+            tableData[i].status = "Done";
+        }
         updateGraph();
+        updateTable();
     }
 
     // Resets the data array
