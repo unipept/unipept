@@ -77,11 +77,8 @@ function init_pancore() {
 
     // Add handler to the form
     $("#load_proteome").click(function () {
-        // Disable the load button
-        $(this).button('loading');
-
+        setLoading(true);
         clearAllData();
-        showMessageInTable("Please wait while we load the genomes for this species.");
 
         var id = $("#species_id").val(),
             url = "/pancore/genomes/" + id + ".json";
@@ -93,6 +90,7 @@ function init_pancore() {
                 loadData(genomes[i].name, genomes[i].refseq_id);
             }
             updateTable();
+            setTableMessage("refresh", "Please wait while we load the data for these genomes.");
         })
         .fail(function () {
             error("request error for " + url, "It seems like something went wrong while we loaded the data");
@@ -142,6 +140,17 @@ function init_pancore() {
         sendToWorker("loadData", {"name": name, "refseq_id": refseq_id});
     }
 
+    // Gets called when the data is (done) loading
+    function setLoading(loading){
+        if (loading) {
+            $("#load_proteome").button('loading');
+            setTableMessage("refresh", "Please wait while we load the genomes for this species.");
+        } else {
+            $("#load_proteome").button('reset');
+            setTableMessage("chevron-down", "Drag rows to reorder them in the chart.");
+        }
+    }
+
     // Adds new dataset to the data array
     function addData(data) {
         dataQueue.push(data);
@@ -174,9 +183,7 @@ function init_pancore() {
         if (mayStartAnimation) {
             toLoad--;
             if (toLoad === 0) {
-                // Not a big fan of this.
-                // This button has nothing to do with this function
-                $("#load_proteome").button('reset');
+                setLoading(false);
             }
             mayStartAnimation = false;
             var data = dataQueue.shift();
@@ -189,6 +196,11 @@ function init_pancore() {
         } else {
             setTimeout(tryUpdateGraph, transitionDuration);
         }
+    }
+
+    // Displays a message above the table
+    function setTableMessage(icon, msg) {
+        $("#table-message").html("<i class='icon-" + icon + "'></i> " + msg);
     }
 
     // Clear the table 
@@ -218,11 +230,6 @@ function init_pancore() {
             .attr("class", function (d) {return "data " + d.key; })
             .attr("colspan", "1");
         td.exit().remove();
-    }
-
-    // Displays a message in the table
-    function showMessageInTable(msg) {
-        $("#genomes_table tbody").html("<tr><td colspan='3'>" + msg + "</td></tr>");
     }
 
     // Redraws the full D3 graph
