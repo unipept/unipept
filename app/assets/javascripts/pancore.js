@@ -102,6 +102,7 @@ function init_pancore() {
 
     // Make table sortable
     $("#genomes_table tbody").sortable({
+        cursor: 'url(/closedhand.cur) 7 5, move',
         stop: function (event, ui) { 
             var order = [],
                 start = -1,
@@ -198,7 +199,10 @@ function init_pancore() {
     function updateTable() {
         var tr = d3.select("#genomes_table tbody").selectAll("tr")
             .data(d3.values(tableData));
-        tr.enter().append("tr");
+        tr.enter()
+            .append("tr")
+            .append("td")
+                .html("<i class='icon-resize-vertical'></i>");
         tr.exit().remove();
         tr.sort(function (a, b) { return a.position - b.position; });
 
@@ -218,7 +222,7 @@ function init_pancore() {
 
     // Displays a message in the table
     function showMessageInTable(msg) {
-        $("#genomes_table tbody").html("<tr><td colspan='2'>" + msg + "</td></tr>");
+        $("#genomes_table tbody").html("<tr><td colspan='3'>" + msg + "</td></tr>");
     }
 
     // Redraws the full D3 graph
