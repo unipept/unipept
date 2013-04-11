@@ -145,9 +145,11 @@ function init_pancore() {
         if (loading) {
             $("#load_proteome").button('loading');
             setTableMessage("refresh", "Please wait while we load the genomes for this species.");
+            $("#genomes_table tbody").sortable("option", "disabled", true);
         } else {
             $("#load_proteome").button('reset');
             setTableMessage("chevron-down", "Drag rows to reorder them in the chart.");
+            $("#genomes_table tbody").sortable("option", "disabled", false);
         }
     }
 
