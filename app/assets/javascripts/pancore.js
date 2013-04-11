@@ -385,7 +385,7 @@ function init_pancore() {
 
         // draw the dots
         var panDots = svg.selectAll(".dot.pan")
-            .data(visData);
+            .data(visData, function (d) {return d.name; });
         panDots.enter().append("circle")
             .attr("class", function (d, i) { return "dot pan _" + i; })
             .attr("r", 5)
@@ -395,9 +395,12 @@ function init_pancore() {
             .duration(transitionDuration)
             .attr("cx", function (d) { return x(d.name); })
             .attr("cy", function (d) { return y(d.pan); });
-        panDots.exit().remove();
+        panDots.exit()
+            .transition()
+                .attr("cy", height)
+            .remove();
         var coreDots = svg.selectAll(".dot.core")
-            .data(visData);
+            .data(visData, function (d) {return d.name; });
         coreDots.enter().append("circle")
             .attr("class", function (d, i) { return "dot core _" + i; })
             .attr("r", 5)
@@ -408,7 +411,10 @@ function init_pancore() {
             .duration(transitionDuration)
             .attr("cx", function (d) { return x(d.name); })
             .attr("cy", function (d) { return y(d.core); });
-        coreDots.exit().remove();
+        coreDots.exit()
+            .transition()
+                .attr("cy", height)
+            .remove();
 
         // update the lines
         if (visData.length > 0) {
