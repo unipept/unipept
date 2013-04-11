@@ -10,10 +10,13 @@ self.addEventListener('message', function (e) {
     var data = e.data;
     switch (data.cmd) {
     case 'log':
-        sendToHost("print", data.msg);
+        sendToHost("log", data.msg);
         break;
     case 'loadData':
         loadData(data.msg.name, data.msg.refseq_id);
+        break;
+    case 'removeData':
+        removeData(data.msg.name, data.msg.order, data.msg.start);
         break;
     case 'clearAllData':
         clearAllData();
@@ -55,6 +58,15 @@ function addData(name, set) {
     temp.pan = pan.length;
     temp.core = core.length;
     sendToHost("addData", temp);
+}
+
+// Removes a genomes from the data
+function removeData(name, order, start) {
+    var l = pans.length;
+    delete data[name];
+    pans.splice(l - 1, 1);
+    cores.splice(l - 1, 1);
+    recalculatePanCore(order, start, l - 2);
 }
 
 // Recalculates the pan and core data based on a
@@ -113,7 +125,7 @@ function getJSON(url, callback) {
 }
 
 // union and intersection for sorted arrays
-function union(a, b){
+function union(a, b) {
     var r = [],
         i = 0,
         j = 0;
@@ -140,7 +152,7 @@ function union(a, b){
     }
     return r;
 }
-function intersection(a, b){
+function intersection(a, b) {
     var r = [],
         i = 0,
         j = 0;

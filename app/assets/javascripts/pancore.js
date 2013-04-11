@@ -51,7 +51,7 @@ function init_pancore() {
     worker.addEventListener('message', function (e) {
         var data = e.data;
         switch (data.type) {
-        case 'print':
+        case 'log':
             console.log(data.msg);
             break;
         case 'error':
@@ -99,30 +99,16 @@ function init_pancore() {
     });
 
     // Make table sortable
-    $("#genomes_table").disableSelection(); 
+    $("#genomes_table").disableSelection();
     $("#genomes_table tbody").sortable({
         axis: 'y',
         containment: '.split-right',
         cursor: 'url(/closedhand.cur) 7 5, move',
-        stop: function (event, ui) { 
-            var order = [],
-                start = -1,
-                stop = 0;
-            $("#genomes_table tbody tr .genome").each(function (i) {
-                var name = $(this).text();
-                if (tableData[name].position === i && stop === 0) {
-                    start = i;
-                } else if (tableData[name].position !== i) {
-                    stop = i;
-                    tableData[name].position = i;
-                    tableData[name].status = "Processing...";
-                }
-                order[i] = name;
-            });
-            start++;
+        stop: function () {
+            var r = calculateTablePositions();
             updateTable();
-            sendToWorker("recalculatePanCore", {"order" : order, "start" : start, "stop" : stop});
-       }
+            sendToWorker("recalculatePanCore", {"order" : r.order, "start" : r.start, "stop" : r.stop});
+        }
     });
 
     // Draw the graph
@@ -144,7 +130,7 @@ function init_pancore() {
     }
 
     // Gets called when the data is (done) loading
-    function setLoading(loading){
+    function setLoading(loading) {
         if (loading) {
             $("#load_proteome").button('loading');
             setTableMessage("refresh", "Please wait while we load the genomes for this species.");
@@ -160,6 +146,15 @@ function init_pancore() {
     function addData(data) {
         dataQueue.push(data);
         tryUpdateGraph();
+    }
+
+    // Removes a genomes from the data array
+    function removeData(genome) {
+        var name = genome.genome;
+        delete tableData[name];
+        updateTable();
+        var r = calculateTablePositions();
+        sendToWorker("removeData", {"name" : name, "order" : r.order, "start" : r.start});
     }
 
     // Sets new pancore data
@@ -208,25 +203,46 @@ function init_pancore() {
         $("#table-message").html("<i class='icon-" + icon + "'></i> " + msg);
     }
 
+    // Sets the position property in the tableData
+    // returns a list with the order of the genomes
+    function calculateTablePositions() {
+        var order = [],
+            start = -1,
+            stop = 0;
+        $("#genomes_table tbody tr .genome").each(function (i) {
+            var name = $(this).text();
+            if (tableData[name].position === i && stop === 0) {
+                start = i;
+            } else if (tableData[name].position !== i) {
+                stop = i;
+                tableData[name].position = i;
+                tableData[name].status = "Processing...";
+            }
+            order[i] = name;
+        });
+        start++;
+        return {"order" : order, "start" : start, "stop" : stop};
+    }
+
     // Clear the table 
     function clearTable() {
         $("#genomes_table tbody").html("");
     }
     // Updates the table
     function updateTable() {
+        // Add rows
         var tr = d3.select("#genomes_table tbody").selectAll("tr")
-            .data(d3.values(tableData));
-        tr.enter()
-            .append("tr")
-            .append("td")
-                .html("<i class='icon-resize-vertical'></i>");
+            .data(d3.values(tableData), function (d) {return d.genome; });
+        var newRows = tr.enter().append("tr");
         tr.exit().remove();
         tr.sort(function (a, b) { return a.position - b.position; });
 
+        // Add cells
+        newRows.append("td").html("<i class='icon-resize-vertical'></i>");
         var td = tr.selectAll("td.data")
-            .data(function (d) { 
+            .data(function (d) {
                 return d3.entries(d).filter(function (entry) {
-                    return entry.key != "position";
+                    return entry.key !== "position";
                 });
             });
         td.enter()
@@ -234,7 +250,11 @@ function init_pancore() {
         td.text(function (d) { return d.value; })
             .attr("class", function (d) {return "data " + d.key; })
             .attr("colspan", "1");
-        td.exit().remove();
+        newRows.append("td")
+            .append("a")
+            .html("<i class='icon-trash'></i>")
+            .attr("class", "btn btn-mini")
+            .on("click", removeData);
     }
 
     // Redraws the full D3 graph
