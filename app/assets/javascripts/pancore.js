@@ -2,7 +2,7 @@ function init_pancore() {
     // Data and workers
     var visData = [],
         tableData = {},
-        worker = new Worker("assets/workers/pancore_worker.js");
+        worker = new Worker("/assets/workers/pancore_worker.js");
 
     // D3 vars
     var svg,
