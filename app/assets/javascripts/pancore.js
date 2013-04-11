@@ -99,7 +99,10 @@ function init_pancore() {
     });
 
     // Make table sortable
+    $("#genomes_table").disableSelection(); 
     $("#genomes_table tbody").sortable({
+        axis: 'y',
+        containment: '.split-right',
         cursor: 'url(/closedhand.cur) 7 5, move',
         stop: function (event, ui) { 
             var order = [],

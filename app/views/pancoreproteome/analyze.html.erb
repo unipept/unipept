@@ -6,7 +6,7 @@
     </p>
     <%= form_tag(:pancore_analyze, :method => "get", :class => "form-inline") do %>
     <%= select_tag(:species_id, options_for_select(@species, params[:species_id])) %>
-    <%= button_tag(raw("Load"), :type => "button", :class => "btn btn-primary", :id => "load_proteome", :"data-loading-text" => "Loading...") %>
+    <%= button_tag(raw("Load species <i class='icon-chevron-right icon-white'></i>"), :type => "button", :class => "btn btn-primary", :id => "load_proteome", :"data-loading-text" => "Loading...") %>
     <% end %>
   </div>
 
@@ -15,7 +15,7 @@
     <table class="table table-condensed" id="genomes_table">
       <thead>
         <tr>
-          <th></th>
+          <th class="handle"></th>
           <th class="genome">Genome</th>
           <th class="status">Status</th>
         </tr>
