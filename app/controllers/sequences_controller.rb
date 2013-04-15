@@ -157,6 +157,11 @@ class SequencesController < ApplicationController
     #sort entries
     @entries = @entries.to_a.sort_by{|e| e.name.name}
 
+    respond_to do |format|
+      format.html # show.html.erb
+      format.json { render json: Oj.dump(@entries.map(&:uniprot_accession_number), mode: :compat) }
+    end
+
   rescue SequenceTooShortError
     flash[:error] = "The sequence you searched for is too short."
     redirect_to sequences_path
