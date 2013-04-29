@@ -159,7 +159,7 @@ class SequencesController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.json { render json: Oj.dump(@entries.map(&:uniprot_accession_number), mode: :compat) }
+      format.json { render json: Oj.dump(@entries, mode: :compat) }
     end
 
   rescue SequenceTooShortError
