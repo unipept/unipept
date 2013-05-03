@@ -159,7 +159,9 @@ class SequencesController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.json { render json: Oj.dump(@entries, mode: :compat) }
+      format.json { render :json => @entries.to_json(:only => :uniprot_accession_number, :include => [{:ec_cross_references => {:only => :ec_id}}, {:go_cross_references => {:only => :go_id}}]) }
+      # TODO: switch to OJ for higher performance
+      # format.json { render json: Oj.dump(@entries, :include => :name, :mode => :compat) }
     end
 
   rescue SequenceTooShortError
