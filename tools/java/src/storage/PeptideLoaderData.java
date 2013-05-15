@@ -34,6 +34,7 @@ public class PeptideLoaderData {
 	private PreparedStatement addUniprotEntry;
 	private PreparedStatement addPeptide;
 	private PreparedStatement addLineage;
+	private PreparedStatement addInvalidLineage;
 	private PreparedStatement addRefseqRef;
 	private PreparedStatement addEMBLRef;
 	private PreparedStatement addGORef;
@@ -77,6 +78,8 @@ public class PeptideLoaderData {
 					.prepareStatement("INSERT INTO peptides (`sequence_id`, `uniprot_entry_id`, `original_sequence_id`, `position`) VALUES (?,?,?,?)");
 			addLineage = connection
 					.prepareStatement("INSERT INTO lineages (`taxon_id`) VALUES (?)");
+			addInvalidLineage = connection
+					.prepareStatement("INSERT INTO lineages (`taxon_id`, `superkingdom`, `kingdom`, `subkingdom`, `superphylum`, `phylum`, `subphylum`,`superclass`, `class`, `subclass`, `infraclass`, `superorder`, `order`, `suborder`, `infraorder`, `parvorder`, `superfamily`, `family`, `subfamily`, `tribe`, `subtribe`, `genus`, `subgenus`, `species_group`, `species_subgroup`, `species`, `subspecies`, `varietas`, `forma`) VALUES (?, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)");
 			addRefseqRef = connection
 					.prepareStatement("INSERT INTO refseq_cross_references (`uniprot_entry_id`, `protein_id`, `sequence_id`) VALUES (?,?,?)");
 			addEMBLRef = connection
@@ -335,8 +338,16 @@ public class PeptideLoaderData {
 			lineageExists.setInt(1, taxonId);
 			ResultSet rs = lineageExists.executeQuery();
 			if (rs.next() && rs.getInt("aantal") == 0) {
-				addLineage.setInt(1, taxonId);
-				addLineage.executeUpdate();
+				getTaxon.setInt(1, taxonId);
+				rs = getTaxon.executeQuery();
+				rs.next();
+				if (rs.getBoolean("valid_taxon")) {
+					addLineage.setInt(1, taxonId);
+					addLineage.executeUpdate();
+				} else {
+					addInvalidLineage.setInt(1, taxonId);
+					addInvalidLineage.executeUpdate();
+				}
 				updateLineage(taxonId, taxonId);
 			}
 			rs.close();
