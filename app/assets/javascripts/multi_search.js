@@ -201,9 +201,11 @@ function initJsTree(data, equate_il) {
                 allSequences;
             innertext += " (" + $(tree.rslt.obj).attr("title") + ")";
             infoPane = $("#jstree_data").html("<h3>" + innertext + "</h3>");
-            $("#jstree_data").animate({
+            /*$("#jstree_data").animate({
                 marginTop: margin
-            }, 1000);
+            }, 1000);*/
+            $("#jstree_data").css("-webkit-transform", "translateY(" + margin + "px)");
+            $("#jstree_data").css("transform", "translateY(" + margin + "px)");
             ownSequences = peptides.own_sequences;
             if (ownSequences && ownSequences.length > 0) {
                 list = infoPane.append("<h4>Peptides specific for this taxon</h4><ul></ul>").find("ul").last();
