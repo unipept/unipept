@@ -114,6 +114,7 @@ function initTreeMap(jsonData) {
                     _gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Treemap', 'In']);
                     tm.enter(node);
                     $("#jstree_search").val(node.name);
+                    $("#jstree_search").animateHighlight(null, 2000);
                     $("#jstree_search").change();
                 }
             },
@@ -362,8 +363,10 @@ function initSunburst(data) {
         try{
             if(d.name == "organism")
                 $("#jstree_search").val("");
-            else
+            else {
                 $("#jstree_search").val(d.name);
+                $("#jstree_search").animateHighlight(null, 2000);
+            }
             $("#jstree_search").change();
         } catch(err) {
             error(err);
