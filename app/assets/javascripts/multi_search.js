@@ -1,7 +1,7 @@
 function init_multi(data, data2, equate_il) {
 
     $("#downloadDataset").click(function () {
-        // GA event tracking
+        // Track the download button
         _gaq.push(['_trackEvent', 'Multi Peptide', 'Export']);
 
         $("#downloadDataset").button('loading');
@@ -34,12 +34,11 @@ function init_multi(data, data2, equate_il) {
     if (fullScreenApi.supportsFullScreen) {
         $("#buttons").prepend("<button id='zoom-btn' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
         $("#zoom-btn").click(function () {
-            if ($(".tab-content .active").attr('id') == "sunburstWrapper") {
+            if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
                 // GA event tracking
                 _gaq.push(['_trackEvent', 'Multi Peptide', 'Full Screen', 'Sunburst']);
                 window.fullScreenApi.requestFullScreen($("#sunburst").get(0));
-            }
-            else {
+            } else {
                 // GA event tracking
                 _gaq.push(['_trackEvent', 'Multi Peptide', 'Full Screen', 'Treemap']);
                 window.fullScreenApi.requestFullScreen($("#treeMap").get(0));
@@ -49,7 +48,7 @@ function init_multi(data, data2, equate_il) {
     }
 
     function resizeFullScreen() {
-        if ($(".tab-content .active").attr('id') == "sunburstWrapper") {
+        if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
             setTimeout(function () {
                 var size = 740;
                 if (window.fullScreenApi.isFullScreen()) {
@@ -58,28 +57,26 @@ function init_multi(data, data2, equate_il) {
                 $("#sunburst svg").attr("width", size);
                 $("#sunburst svg").attr("height", size);
             }, 1000);
-        }
-        else {
+        } else {
             window.tm.canvas.resize($("#treeMap").width(), $("#treeMap").height());
         }
     }
 
     // set up save image stuff
-       $("#buttons").prepend("<button id='save-btn' class='btn btn-mini'><i class='icon-download'></i> Save as image</button>");
-       $("#save-btn").click(function () {
-           $(".debug_dump").hide();
-           if ($(".tab-content .active").attr('id') == "sunburstWrapper") {
-            // GA event tracking
+    $("#buttons").prepend("<button id='save-btn' class='btn btn-mini'><i class='icon-download'></i> Save as image</button>");
+    $("#save-btn").click(function () {
+        $(".debug_dump").hide();
+        if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
+            // Track save image
             _gaq.push(['_trackEvent', 'Multi Peptide', 'Save Image', 'Sunburst']);
 
-               var svg = $("#sunburst svg").wrap("<div></div>").parent().html();
+            var svg = $("#sunburst svg").wrap("<div></div>").parent().html();
             $.post("/convert", { image: svg }, function (data) {
                 $("#save-as-modal .modal-body").html("<img src='" + data + "' />");
                 $("#save-as-modal").modal();
             });
-        }
-        else {
-            // GA event tracking
+        } else {
+            // Track save image
             _gaq.push(['_trackEvent', 'Multi Peptide', 'Save Image', 'Treemap']);
 
             html2canvas($("#treeMap"), {
@@ -89,23 +86,23 @@ function init_multi(data, data2, equate_il) {
                 }
             });
         }
-       });
+    });
 }
 
 function initTreeMap(jsonData) {
-    //init TreeMap
+    // init TreeMap
     var tm = new $jit.TM.Squarified({
-        //where to inject the visualization
+        // where to inject the visualization
         injectInto: 'treeMap',
-        //parent box title heights
+        // parent box title heights
         titleHeight: 15,
-        //enable animations
+        // enable animations
         animate: true,
-        //box offsets
+        // box offsets
         offset: 0,
-        //constrained: true,
-        //levelsToShow: 1,
-        //Attach left and right click events
+        // constrained: true,
+        // levelsToShow: 1,
+        // Attach left and right click events
         Events: {
             enable: true,
             onClick: function (node) {
@@ -121,32 +118,31 @@ function initTreeMap(jsonData) {
             onRightClick: function () {
                 // GA event tracking
                 _gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Treemap', 'Out']);
-                //TODO: replace this if bug in JIT gets fixed
+                // TODO: replace this if bug in JIT gets fixed
                 tm.out();
             }
         },
         duration: 500,
-        //Enable tips
+        // Enable tips
         Tips: {
             enable: true,
-            //add positioning offsets
+            // add positioning offsets
             offsetX: 20,
             offsetY: 20,
-            //implement the onShow method to
-            //add content to the tooltip when a node
-            //is hovered
+            // implement the onShow method to add content 
+            // to the tooltip when a node is hovered
             onShow: function (tip, node, isLeaf, domElement) {
                 tip.innerHTML = "<div class='tip-title'><b>" + node.name + "</b> (" + node.data.rank + ")</div><div class='tip-text'>" +
                     (!node.data.self_count ? "0" : node.data.self_count) +
-                    (node.data.self_count && node.data.self_count == 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
+                    (node.data.self_count && node.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
                     (!node.data.count ? "0" : node.data.count) +
-                    (node.data.count && node.data.count == 1 ? " sequence" : " sequences") + " specific to this level or lower<br/>" +
-                    (typeof node.data.piecharturl === "undefined" ? "" : "<img src='" + node.data.piecharturl + "'/>") + "</div>";
+                    (node.data.count && node.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower<br/>" +
+                    (typeof node.data.piecharturl == "undefined" ? "" : "<img src='" + node.data.piecharturl + "'/>") + "</div>";
             }
         },
 
-        //Add the name of the node in the correponding label
-        //This method is called once, on label creation.
+        // Add the name of the node in the correponding label
+        // This method is called once, on label creation.
         onCreateLabel: function (domElement, node) {
             domElement.innerHTML = node.name + " (" + (!node.data.self_count ? "0" : node.data.self_count) + "/" + (!node.data.count ? "0" : node.data.count) + ")";
             var style = domElement.style;
@@ -155,8 +151,7 @@ function initTreeMap(jsonData) {
 
             try {
                 style.color = brightness(d3.rgb(node.data.$color)) < 125 ? "#eee" : "#000";
-            }
-            catch (err) {
+            } catch (err) {
                 error(err, false);
                 style.color = "#000";
             }
@@ -172,12 +167,10 @@ function initTreeMap(jsonData) {
     tm.loadJSON(jsonData);
     tm.refresh();
 
-    //move the tooltip div to allow full screen tooltips
+    // move the tooltip div to allow full screen tooltips
     $("#_tooltip").appendTo("#treeMap");
 
     window.tm = tm;
-
-    //end
 }
 
 function initJsTree(data, equate_il) {
@@ -192,9 +185,9 @@ function initJsTree(data, equate_il) {
             // GA event tracking
             _gaq.push(['_trackEvent', 'Multi Peptide', 'JsTree', 'Peptides']);
 
-            var peptides = $(tree.rslt.obj).data(),
-                margin = tree.rslt.obj.context.offsetTop - $("#jstree").offset().top - 9,
-                innertext = "<a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + peptides.id + "' target='_blank'>" + $.trim($(tree.rslt.obj).find("a").text().split("(")[0]) + "</a>",
+            var peptides  = $(tree.rslt.obj).data(),
+                margin    = tree.rslt.obj.context.offsetTop - $("#jstree").offset().top - 9,
+                innertext = "<a href='http:// www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + peptides.id + "' target='_blank'>" + $.trim($(tree.rslt.obj).find("a").text().split("(")[0]) + "</a>",
                 infoPane,
                 ownSequences,
                 list,
@@ -220,13 +213,12 @@ function initJsTree(data, equate_il) {
             }
         });
 
-    //fix leafs
-    $("#jstree").bind("loaded.jstree",
-        function (event, data) {
-            $("#jstree li").not(":has(li)").addClass("jstree-leaf");
-        });
+    // fix leafs
+    $("#jstree").bind("loaded.jstree", function (event, data) {
+        $("#jstree li").not(":has(li)").addClass("jstree-leaf");
+    });
 
-    //add search
+    // add search
     $("#jstree_search").keyup(function () {
         $("#jstree").jstree("search", ($(this).val()));
         $(".jstree-search").parent().find("li").show();
@@ -241,7 +233,7 @@ function initJsTree(data, equate_il) {
         $(this).keyup();
     });
 
-    //create the tree
+    // create the tree
     $("#jstree").jstree({
         core: {
             "animation": 300
@@ -349,7 +341,7 @@ function initSunburst(data) {
         .text(function (d) { return d.depth ? d.name.split(" ")[2] || "" : ""; });
 
     textEnter.style("font-size", function (d) {
-        return Math.min(((r / levels) / this.getComputedTextLength() * 10)+1, 12) + "px";
+        return Math.min(((r / levels) / this.getComputedTextLength() * 10) + 1, 12) + "px";
     });
 
     // set up start levels
@@ -360,15 +352,15 @@ function initSunburst(data) {
         _gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Sunburst']);
 
         // set jstree
-        try{
-            if(d.name == "organism")
+        try {
+            if (d.name === "organism") {
                 $("#jstree_search").val("");
-            else {
+            } else {
                 $("#jstree_search").val(d.name);
                 $("#jstree_search").animateHighlight(null, 2000);
             }
             $("#jstree_search").change();
-        } catch(err) {
+        } catch (err) {
             error(err);
         }
 
@@ -475,26 +467,25 @@ function initSunburst(data) {
             tooltip.style("visibility", "visible")
                 .html("<b>" + d.name + "</b> (" + d.attr.title + ")<br/>" +
                     (!d.data.self_count ? "0" : d.data.self_count) +
-                    (d.data.self_count && d.data.self_count == 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
+                    (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
                     (!d.data.count ? "0" : d.data.count) +
-                    (d.data.count && d.data.count == 1 ? " sequence" : " sequences") + " specific to this level or lower");
-            //vis.selectAll("#path-" + i).transition().duration(200).style("fill-opacity","0.9");
+                    (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower");
+            // vis.selectAll("#path-" + i).transition().duration(200).style("fill-opacity","0.9");
         }
     }
     function tooltipMove() {
         if (window.fullScreenApi.isFullScreen()) {
             tooltip.style("top", (d3.event.clientY - 5) + "px").style("left", (d3.event.clientX + 15) + "px");
-        }
-        else {
+        } else {
             tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 15) + "px");
         }
     }
     function tooltipOut(d, i) {
         tooltip.style("visibility", "hidden");
-        //vis.selectAll("#path-" + i).transition().duration(200).style("fill-opacity","1");
+        // vis.selectAll("#path-" + i).transition().duration(200).style("fill-opacity","1");
     }
 }
-// http://www.w3.org/WAI/ER/WD-AERT/#color-contrast
+// http:// www.w3.org/WAI/ER/WD-AERT/#color-contrast
 function brightness(rgb) {
     return rgb.r * 0.299 + rgb.g * 0.587 + rgb.b * 0.114;
 }
