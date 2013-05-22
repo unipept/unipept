@@ -80,13 +80,15 @@ class TreeMapNode < Node
   def add_piechart_data
     fix_title_and_state
     unless @children.empty?
-      @data["piecharturl"] = "http://chart.apis.google.com/chart?chs=300x225&cht=p&chd=t:"
-      @data["piecharturl"] += @children.map{|c| c.data["count"].to_s}.join(",")
-      @data["piecharturl"] += "&chdl="
-      @data["piecharturl"] += @children.map{|c| c.name + " (" + c.data["count"].to_s + ")"}.join("|")
-      @data["piecharturl"] += "&chds=0,"
-      @data["piecharturl"] += @children.map{|c| c.data["count"]}.max.to_s
       @children.map{|c| c.add_piechart_data}
+      if @children.size > 1
+        @data["piecharturl"] = "http://chart.apis.google.com/chart?chs=300x225&cht=p&chd=t:"
+        @data["piecharturl"] += @children.map{|c| c.data["count"].to_s}.join(",")
+        @data["piecharturl"] += "&chdl="
+        @data["piecharturl"] += @children.map{|c| c.name + " (" + c.data["count"].to_s + ")"}.join("|")
+        @data["piecharturl"] += "&chds=0,"
+        @data["piecharturl"] += @children.map{|c| c.data["count"]}.max.to_s
+      end
     end
   end
 
