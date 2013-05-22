@@ -166,10 +166,10 @@ class SequencesController < ApplicationController
 
   rescue SequenceTooShortError
     flash[:error] = "The sequence you searched for is too short."
-    redirect_to sequences_path
+    redirect_to search_single_url
   rescue NoMatchesFoundError => e
       flash[:error] = "No matches for peptide #{e.message}"
-      redirect_to sequences_path
+      redirect_to search_single_url
   end
 
 
