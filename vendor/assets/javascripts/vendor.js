@@ -11,5 +11,5 @@
 //= require jit/jit-yc.js
 
 //  export lineage tree and treemap to png
-//  0.34
+//  0.4
 //= require html2canvas/html2canvas.js
