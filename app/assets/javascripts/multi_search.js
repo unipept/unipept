@@ -320,11 +320,8 @@ function initSunburst(data) {
             return brightness(d3.rgb(colour(d))) < 125 ? "#eee" : "#000"; // calculate text color
         })
         .style("font-family", "font-family: Helvetica, 'Super Sans', sans-serif")
-        .attr("dy", ".2em")
-        .on("click", click)
-        .on("mouseover", tooltipIn)
-        .on("mousemove", tooltipMove)
-        .on("mouseout", tooltipOut);
+        .style("pointer-events", "none") // don't invoke mouse events
+        .attr("dy", ".2em");
 
     textEnter.append("tspan")
         .attr("x", 0)
