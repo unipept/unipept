@@ -77,8 +77,8 @@ function initDatasets() {
                     $('html, body').animate({
                         scrollTop: $("#search_elements").parent().parent().offset().top
                     }, 1000);
-                    $("#qs").animateHighlight(null, 2000);
-                    $("#search_name").animateHighlight(null, 2000);
+                    highlight("#qs");
+                    highlight("#search_name");
                 }
             )
             .fail( // something went wrong
@@ -139,8 +139,8 @@ function initPreload(type, id) {
                     $("#qs").val(data);
 
                     // highlight what happend to the user
-                    $("#qs").animateHighlight(null, 2000);
-                    $("#search_name").animateHighlight(null, 2000);
+                    highlight("#qs");
+                    highlight("#search_name");
                 }
             )
             .fail( // something went wrong

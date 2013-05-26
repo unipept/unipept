@@ -472,6 +472,6 @@ function jsTreeSearch(searchTerm, duration) {
     }
     var timeout = duration || 0;
     $("#jstree_search").val(searchTerm);
-    $("#jstree_search").animateHighlight(null, 2000);
+    highlight("#jstree_search");
     setTimeout(function () { $("#jstree_search").change(); }, timeout);
 }
