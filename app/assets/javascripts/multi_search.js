@@ -110,7 +110,7 @@ function initTreeMap(jsonData) {
                     // GA event tracking
                     _gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Treemap', 'In']);
                     tm.enter(node);
-                    jsTreeSearch(node.name);
+                    jsTreeSearch(node.name, 500);
                 }
             },
             onRightClick: function () {
@@ -146,7 +146,7 @@ function initTreeMap(jsonData) {
             var style = domElement.style;
             style.display = '';
             style.border = '2px solid transparent';
-            style.color = getReadableColorFor(node.data.$color)
+            style.color = getReadableColorFor(node.data.$color);
 
             domElement.onmouseover = function () {
                 style.border = '2px solid #9FD4FF';
@@ -338,8 +338,8 @@ function initSunburst(data) {
         // GA event tracking
         _gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Sunburst']);
 
-        // set jstree
-        jsTreeSearch(d.name);
+        // set jstree, but only after the animation
+        jsTreeSearch(d.name, duration);
 
         // perform animation
         currentMaxLevel = d.depth + levels;
@@ -465,12 +465,13 @@ function initSunburst(data) {
 
 // Enters the given string in the search box
 // Highlights the field
-// filters the jstree
-function jsTreeSearch(searchTerm) {
+// filters the jstree after the given number of ms
+function jsTreeSearch(searchTerm, duration) {
     if (searchTerm === "organism") {
         searchTerm = "";
     }
+    var timeout = duration || 0;
     $("#jstree_search").val(searchTerm);
     $("#jstree_search").animateHighlight(null, 2000);
-    $("#jstree_search").change();
+    setTimeout(function () { $("#jstree_search").change(); }, timeout);
 }
