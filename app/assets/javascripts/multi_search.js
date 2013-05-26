@@ -110,9 +110,7 @@ function initTreeMap(jsonData) {
                     // GA event tracking
                     _gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Treemap', 'In']);
                     tm.enter(node);
-                    $("#jstree_search").val(node.name);
-                    $("#jstree_search").animateHighlight(null, 2000);
-                    $("#jstree_search").change();
+                    jsTreeSearch(node.name);
                 }
             },
             onRightClick: function () {
@@ -341,17 +339,7 @@ function initSunburst(data) {
         _gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Sunburst']);
 
         // set jstree
-        try {
-            if (d.name === "organism") {
-                $("#jstree_search").val("");
-            } else {
-                $("#jstree_search").val(d.name);
-                $("#jstree_search").animateHighlight(null, 2000);
-            }
-            $("#jstree_search").change();
-        } catch (err) {
-            error(err);
-        }
+        jsTreeSearch(d.name);
 
         // perform animation
         currentMaxLevel = d.depth + levels;
@@ -473,4 +461,16 @@ function initSunburst(data) {
         tooltip.style("visibility", "hidden");
         // vis.selectAll("#path-" + i).transition().duration(200).style("fill-opacity","1");
     }
+}
+
+// Enters the given string in the search box
+// Highlights the field
+// filters the jstree
+function jsTreeSearch(searchTerm) {
+    if (searchTerm === "organism") {
+        searchTerm = "";
+    }
+    $("#jstree_search").val(searchTerm);
+    $("#jstree_search").animateHighlight(null, 2000);
+    $("#jstree_search").change();
 }
