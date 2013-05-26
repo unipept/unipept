@@ -20,6 +20,27 @@ $.fn.animateHighlight = function(highlightColor, duration) {
     this.stop().css("background-color", highlightBg).animate({backgroundColor: originalBg}, animateMs);
 };
 
+/*
+ * Returns the brightness of an rgb-color
+ * from: http:// www.w3.org/WAI/ER/WD-AERT/#color-contrast
+ */
+function brightness(rgb) {
+    return rgb.r * 0.299 + rgb.g * 0.587 + rgb.b * 0.114;
+}
+
+/*
+ * Returns the readable text color based on the brightness of a given backgroud color
+ */
+function getReadableColorFor(color) {
+    var textColor;
+    try {
+        textColor = brightness(d3.rgb(color)) < 125 ? "#eee" : "#000";
+    } catch (err) {
+        textColor = "#000";
+    }
+    return textColor;
+}
+
 // function used to remove fields in the datasets form
 function remove_fields(link) {
     $(link).prev("input[type=hidden]").val("1");

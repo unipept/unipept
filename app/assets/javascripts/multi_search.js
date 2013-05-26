@@ -148,13 +148,7 @@ function initTreeMap(jsonData) {
             var style = domElement.style;
             style.display = '';
             style.border = '2px solid transparent';
-
-            try {
-                style.color = brightness(d3.rgb(node.data.$color)) < 125 ? "#eee" : "#000";
-            } catch (err) {
-                error(err, false);
-                style.color = "#000";
-            }
+            style.color = getReadableColorFor(node.data.$color)
 
             domElement.onmouseover = function () {
                 style.border = '2px solid #9FD4FF';
@@ -316,9 +310,7 @@ function initSunburst(data) {
     var text = vis.selectAll("text").data(nodes);
 
     var textEnter = text.enter().append("text")
-        .style("fill", function (d) {
-            return brightness(d3.rgb(colour(d))) < 125 ? "#eee" : "#000"; // calculate text color
-        })
+        .style("fill", function (d) { return getReadableColorFor(colour(d)); })
         .style("font-family", "font-family: Helvetica, 'Super Sans', sans-serif")
         .style("pointer-events", "none") // don't invoke mouse events
         .attr("dy", ".2em");
@@ -481,8 +473,4 @@ function initSunburst(data) {
         tooltip.style("visibility", "hidden");
         // vis.selectAll("#path-" + i).transition().duration(200).style("fill-opacity","1");
     }
-}
-// http:// www.w3.org/WAI/ER/WD-AERT/#color-contrast
-function brightness(rgb) {
-    return rgb.r * 0.299 + rgb.g * 0.587 + rgb.b * 0.114;
 }
