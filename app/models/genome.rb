@@ -19,7 +19,7 @@ class Genome < ActiveRecord::Base
     return connection.select_all("SELECT taxons.name, taxons.id, count(*) AS num 
     FROM genomes 
     LEFT JOIN taxons ON (genomes.species_id = taxons.id) 
-    WHERE species_id IS NOT NULL 
+    WHERE taxons.id IS NOT NULL 
     GROUP BY species_id 
     HAVING num > 1 
     ORDER BY name")
