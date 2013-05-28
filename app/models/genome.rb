@@ -29,4 +29,20 @@ class Genome < ActiveRecord::Base
       LEFT JOIN genomes ON sequence_id = genomes.refseq_id  
       WHERE species = '#{species_id}' AND refseq_id IS NOT NULL")
   end
+
+  # fills in the species_id and genus_id columns
+  def self.precompute_species_and_genera
+    Genome.all.each do |genome|
+      lineage = Lineage.find_by_sql("SELECT DISTINCT lineages.* 
+            FROM lineages 
+            LEFT JOIN uniprot_entries ON lineages.taxon_id = uniprot_entries.taxon_id 
+            LEFT JOIN refseq_cross_references ON uniprot_entry_id = uniprot_entries.id
+            WHERE sequence_id = '#{genome.refseq_id}'").first
+      unless lineage.nil?
+        genome.species_id = lineage.species
+        genome.genus_id = lineage.genus
+        genome.save
+      end
+    end
+  end
 end
