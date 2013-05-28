@@ -7,6 +7,8 @@
 #  bioproject_id :string(15)      not null
 #  refseq_id     :string(15)      not null
 #  status        :string(45)      not null
+#  species_id    :integer(3)
+#  genus_id      :integer(3)
 #
 
 class Genome < ActiveRecord::Base
