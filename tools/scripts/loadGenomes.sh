@@ -11,7 +11,7 @@ rm -f prokaryotes.sql
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/GENOME_REPORTS/prokaryotes.txt
 echo "TRUNCATE TABLE genomes;" > prokaryotes.sql
 IFS=$(echo -e "\t")
-cat prokaryotes.txt | cut -f1 -f3 -f9 -f19 | egrep -v -- "-|#" | sed "s/'//g" |
+cat prokaryotes.txt | cut -f1,3,9,19 | egrep -v -- "-|#" | sed "s/'//g" |
 while read -a line; do
     IFS=',' read -a sequences <<< "${line[2]}"
     for element in "${sequences[@]}"
@@ -20,10 +20,10 @@ while read -a line; do
     done
 done
 
-cd "${currentdir}"
-
 # load the file into the database
-mysql -u unipept -punipept unipept < ../data/prokaryotes.sql
+mysql -u unipept -punipept unipept < "prokaryotes.sql"
+
+cd "${currentdir}"
 
 # populate the species and genus id's
 rails runner "Genome.precompute_species_and_genera"
