@@ -22,12 +22,7 @@ class Genome < ActiveRecord::Base
 
   # returns a set of genome objects for a given species_id
   def self.get_by_species_id(species_id)
-    Genome.find_by_sql("SELECT DISTINCT STRAIGHT_JOIN genomes.* 
-      FROM lineages 
-      LEFT JOIN uniprot_entries ON lineages.taxon_id = uniprot_entries.taxon_id 
-      LEFT JOIN refseq_cross_references ON uniprot_entry_id = uniprot_entries.id  
-      LEFT JOIN genomes ON sequence_id = genomes.refseq_id  
-      WHERE species = '#{species_id}' AND refseq_id IS NOT NULL")
+    Genome.where("species_id = ?", species_id)
   end
 
   # fills in the species_id and genus_id columns
