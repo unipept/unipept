@@ -88,7 +88,7 @@ class PancoreproteomeController < ApplicationController
   end
 
   def analyze
-    @species = Genome.get_genome_species()
+    @species = Genome.get_genome_species().map{|g| [g["name"], g["id"]]}
   end
 
   # Returns a list of all sequence_ids for a given refseq_id
