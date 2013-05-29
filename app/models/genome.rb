@@ -31,7 +31,7 @@ class Genome < ActiveRecord::Base
 
   # returns a set of genome objects for a given species_id
   def self.get_by_species_id(species_id)
-    Genome.where("species_id = ?", species_id)
+    Genome.select("bioproject_id, name").where("species_id = ?", species_id).group("bioproject_id")
   end
 
   # fills in the species_id and genus_id columns

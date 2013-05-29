@@ -256,7 +256,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`genomes` (
   PRIMARY KEY (`id`) ,
   INDEX `idx_refseq_id` (`refseq_id` ASC) ,
   INDEX `idx_bioproject_id` (`bioproject_id` ASC) ,
-  INDEX `idx_species_id` (`species_id` ASC) ,
+  INDEX `idx_species_id_bioproject_id` (`species_id` ASC, `bioproject_id` ASC) ,
   INDEX `idx_genus_id` (`genus_id` ASC) )
 ENGINE = InnoDB;
 
