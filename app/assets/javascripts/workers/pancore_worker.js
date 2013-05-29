@@ -13,10 +13,10 @@ self.addEventListener('message', function (e) {
         sendToHost("log", data.msg);
         break;
     case 'loadData':
-        loadData(data.msg.name, data.msg.bioproject_id);
+        loadData(data.msg.bioproject_id);
         break;
     case 'removeData':
-        removeData(data.msg.name, data.msg.order, data.msg.start);
+        removeData(data.msg.bioproject_id, data.msg.order, data.msg.start);
         break;
     case 'clearAllData':
         clearAllData();
@@ -34,17 +34,17 @@ function sendToHost(type, message) {
     self.postMessage({'type': type, 'msg': message});
 }
 
-// Loads peptides, based on refseq_id
-function loadData(name, bioproject_id) {
+// Loads peptides, based on bioproject_id
+function loadData(bioproject_id) {
     getJSON("/pancore/sequences/" + bioproject_id + ".json", function (json_data) {
-        addData(name, json_data);
+        addData(bioproject_id, json_data);
     });
 }
 
 // Adds new dataset to the data array
-function addData(name, set) {
+function addData(bioproject_id, set) {
     // Store data for later use
-    data[name] = set;
+    data[bioproject_id] = set;
 
     // Calculate pan and core
     core = pan.length === 0 ? set : intersection(core, set);
@@ -54,16 +54,16 @@ function addData(name, set) {
 
     // Return the results to the host
     var temp = {};
-    temp.name = name;
+    temp.bioproject_id = bioproject_id;
     temp.pan = pan.length;
     temp.core = core.length;
     sendToHost("addData", temp);
 }
 
 // Removes a genomes from the data
-function removeData(name, order, start) {
+function removeData(bioproject_id, order, start) {
     var l = pans.length;
-    delete data[name];
+    delete data[bioproject_id];
     pans.splice(l - 1, 1);
     cores.splice(l - 1, 1);
     recalculatePanCore(order, start, l - 2);
@@ -85,7 +85,7 @@ function recalculatePanCore(order, start, stop) {
     var response = [];
     for (var i = 0; i < order.length; i++) {
         var temp = {};
-        temp.name = order[i];
+        temp.bioproject_id = order[i];
         temp.pan = pans[i].length;
         temp.core = cores[i].length;
         response.push(temp);

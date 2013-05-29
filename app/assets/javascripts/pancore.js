@@ -32,6 +32,7 @@ function init_pancore() {
     // Axes
     var xAxis = d3.svg.axis()
         .scale(x)
+        .tickFormat(function (d) { return tableData[d].name; })
         .orient("bottom"),
         yAxis = d3.svg.axis()
         .scale(y)
@@ -40,11 +41,11 @@ function init_pancore() {
     // Graph lines helpers
     var panLine = d3.svg.line()
         .interpolate("linear")
-        .x(function (d) { return x(d.name); })
+        .x(function (d) { return x(d.bioproject_id); })
         .y(function (d) { return y(d.pan); });
     var coreLine = d3.svg.line()
         .interpolate("linear")
-        .x(function (d) { return x(d.name); })
+        .x(function (d) { return x(d.bioproject_id); })
         .y(function (d) { return y(d.core); });
 
     // Add eventhandlers to the worker
@@ -86,8 +87,8 @@ function init_pancore() {
             clearTable();
             toLoad = genomes.length;
             for (var i = 0; i < genomes.length ; i++) {
-                tableData[genomes[i].name] = {"genome" : genomes[i].name, "status" : "Loading...", "position" : 100 + i};
-                loadData(genomes[i].name, genomes[i].bioproject_id);
+                tableData[genomes[i].bioproject_id] = {"bioproject_id" : genomes[i].bioproject_id, "name" : genomes[i].name, "status" : "Loading...", "position" : 100 + i};
+                loadData(genomes[i].bioproject_id);
             }
             updateTable();
             setTableMessage("refresh", "Please wait while we load the data for these genomes.");
@@ -124,9 +125,9 @@ function init_pancore() {
     }
 
     // Loads peptides, based on bioproject_id
-    function loadData(name, bioproject_id) {
+    function loadData(bioproject_id) {
         // offload this to the worker
-        sendToWorker("loadData", {"name": name, "bioproject_id": bioproject_id});
+        sendToWorker("loadData", {"bioproject_id": bioproject_id});
     }
 
     // Gets called when the data is (done) loading
@@ -150,11 +151,11 @@ function init_pancore() {
 
     // Removes a genomes from the data array
     function removeData(genome) {
-        var name = genome.genome;
-        delete tableData[name];
+        var id = genome.bioproject_id;
+        delete tableData[id];
         updateTable();
         var r = calculateTablePositions();
-        sendToWorker("removeData", {"name" : name, "order" : r.order, "start" : r.start});
+        sendToWorker("removeData", {"bioproject_id" : id, "order" : r.order, "start" : r.start});
     }
 
     // Sets new pancore data
@@ -188,8 +189,8 @@ function init_pancore() {
             mayStartAnimation = false;
             var data = dataQueue.shift();
             visData.push(data);
-            tableData[data.name].status = "Done";
-            tableData[data.name].position = visData.length - 1;
+            tableData[data.bioproject_id].status = "Done";
+            tableData[data.bioproject_id].position = visData.length - 1;
             updateGraph();
             updateTable();
             setTimeout(function () { mayStartAnimation = true; }, transitionDuration);
@@ -209,16 +210,17 @@ function init_pancore() {
         var order = [],
             start = -1,
             stop = 0;
-        $("#genomes_table tbody tr .genome").each(function (i) {
-            var name = $(this).text();
-            if (tableData[name].position === i && stop === 0) {
+            
+        d3.selectAll("#genomes_table tbody tr").each(function (d, i) {
+            var bioproject_id = d.bioproject_id;
+            if (tableData[bioproject_id].position === i && stop === 0) {
                 start = i;
-            } else if (tableData[name].position !== i) {
+            } else if (tableData[bioproject_id].position !== i) {
                 stop = i;
-                tableData[name].position = i;
-                tableData[name].status = "Processing...";
+                tableData[bioproject_id].position = i;
+                tableData[bioproject_id].status = "Processing...";
             }
-            order[i] = name;
+            order[i] = bioproject_id;
         });
         start++;
         return {"order" : order, "start" : start, "stop" : stop};
@@ -232,7 +234,7 @@ function init_pancore() {
     function updateTable() {
         // Add rows
         var tr = d3.select("#genomes_table tbody").selectAll("tr")
-            .data(d3.values(tableData), function (d) {return d.genome; });
+            .data(d3.values(tableData), function (d) {return d.bioproject_id; });
         var newRows = tr.enter().append("tr");
         tr.exit().remove();
         tr.sort(function (a, b) { return a.position - b.position; });
@@ -242,7 +244,7 @@ function init_pancore() {
         var td = tr.selectAll("td.data")
             .data(function (d) {
                 return d3.entries(d).filter(function (entry) {
-                    return entry.key !== "position";
+                    return entry.key !== "position" && entry.key !== "bioproject_id" ;
                 });
             });
         td.enter()
@@ -276,7 +278,6 @@ function init_pancore() {
             .attr("class", "tip")
             .style("position", "absolute")
             .style("z-index", "10")
-            .html("test")
             .style("visibility", "hidden");
 
         // create the dropshadow filter
@@ -370,7 +371,7 @@ function init_pancore() {
     // Updates the D3 graph
     function updateGraph() {
         // set the domains
-        x.domain(visData.map(function (d) { return d.name; }));
+        x.domain(visData.map(function (d) { return d.bioproject_id; }));
         y.domain([0, d3.max(visData, function (d) { return d.pan; })]);
 
         // update the axes
@@ -385,7 +386,7 @@ function init_pancore() {
 
         // draw the dots
         var panDots = svg.selectAll(".dot.pan")
-            .data(visData, function (d) {return d.name; });
+            .data(visData, function (d) {return d.bioproject_id; });
         panDots.enter().append("circle")
             .attr("class", function (d, i) { return "dot pan _" + i; })
             .attr("r", 5)
@@ -393,14 +394,14 @@ function init_pancore() {
             .attr("cx", width);
         panDots.transition()
             .duration(transitionDuration)
-            .attr("cx", function (d) { return x(d.name); })
+            .attr("cx", function (d) { return x(d.bioproject_id); })
             .attr("cy", function (d) { return y(d.pan); });
         panDots.exit()
             .transition()
                 .attr("cy", height)
             .remove();
         var coreDots = svg.selectAll(".dot.core")
-            .data(visData, function (d) {return d.name; });
+            .data(visData, function (d) {return d.bioproject_id; });
         coreDots.enter().append("circle")
             .attr("class", function (d, i) { return "dot core _" + i; })
             .attr("r", 5)
@@ -409,7 +410,7 @@ function init_pancore() {
             .attr("cy", y(0));
         coreDots.transition()
             .duration(transitionDuration)
-            .attr("cx", function (d) { return x(d.name); })
+            .attr("cx", function (d) { return x(d.bioproject_id); })
             .attr("cy", function (d) { return y(d.core); });
         coreDots.exit()
             .transition()
@@ -438,7 +439,7 @@ function init_pancore() {
         // update the mouseover rects
         var mouseOverWidth = (width / visData.length) / 1.5;
         var bars = svg.selectAll(".bar")
-            .data(visData);
+            .data(visData, function (d) {return d.bioproject_id; });
         bars.enter().append("rect")
             .attr("class", "bar")
             .style("fill-opacity", "0")
@@ -448,7 +449,7 @@ function init_pancore() {
             .on("mousemove", mouseMove);
         bars.transition()
             .duration(transitionDuration)
-            .attr("x", function (d) { return x(d.name) - mouseOverWidth / 2; })
+            .attr("x", function (d) { return x(d.bioproject_id) - mouseOverWidth / 2; })
             .attr("width", mouseOverWidth)
             .attr("y", "0");
         bars.exit().remove();
@@ -461,14 +462,14 @@ function init_pancore() {
 
         svg.select(".hairline.core")
             .style("visibility", "visible")
-            .attr("x1", x(visData[Math.max(0, i - 1)].name))
-            .attr("x2", x(visData[Math.min(visData.length - 1, i + 1)].name))
+            .attr("x1", x(visData[Math.max(0, i - 1)].bioproject_id))
+            .attr("x2", x(visData[Math.min(visData.length - 1, i + 1)].bioproject_id))
             .attr("y1", y(d.core))
             .attr("y2", y(d.core));
         svg.select(".hairline.pan")
             .style("visibility", "visible")
-            .attr("x1", x(visData[Math.max(0, i - 1)].name))
-            .attr("x2", x(visData[Math.min(visData.length - 1, i + 1)].name))
+            .attr("x1", x(visData[Math.max(0, i - 1)].bioproject_id))
+            .attr("x2", x(visData[Math.min(visData.length - 1, i + 1)].bioproject_id))
             .attr("y1", y(d.pan))
             .attr("y2", y(d.pan));
         svg.select(".axisline.pan")
@@ -483,7 +484,7 @@ function init_pancore() {
         // show tooltip
         tooltip
             .style("visibility", "visible")
-            .html("<b>" + d.name + "</b><br/>" +
+            .html("<b>" + tableData[d.bioproject_id].name + "</b><br/>" +
             "<span style='color: " + panColor + ";'>&#9632;</span> pan: <b>" + d3.format(",")(d.pan) + "</b><br/>" +
             "<span style='color: " + coreColor + ";'>&#9632;</span> core: <b>" + d3.format(",")(d.core) + "</b>");
     }
