@@ -9,7 +9,7 @@ cd "${datadir}"
 rm -f prokaryotes.txt
 rm -f prokaryotes.sql
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/GENOME_REPORTS/prokaryotes.txt
-echo "TRUNCATE TABLE genomes;" > prokaryotes.sql
+echo "TRUNCATE TABLE genomes; TRUNCATE TABLE genome_caches" > prokaryotes.sql
 IFS=$(echo -e "\t")
 cat prokaryotes.txt | cut -f1,4,9,19 | egrep -v -- "-|#" | sed "s/'//g" |
 while read -a line; do

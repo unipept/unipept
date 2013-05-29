@@ -7,5 +7,5 @@
 #
 
 class GenomeCache < ActiveRecord::Base
-  attr_accessible nil
+  attr_accessible :bioproject_id, :json_sequences
 end

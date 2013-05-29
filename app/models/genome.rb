@@ -25,10 +25,6 @@ class Genome < ActiveRecord::Base
     ORDER BY name")
   end
 
-  def self.get_by_bioproject_id(bioproject_id)
-    Genome.where("bioproject_id = ?", bioproject_id)
-  end
-
   # returns a set of genome objects for a given species_id
   def self.get_by_species_id(species_id)
     Genome.select("bioproject_id, name").where("species_id = ?", species_id).group("bioproject_id")

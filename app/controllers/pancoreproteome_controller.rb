@@ -93,13 +93,17 @@ class PancoreproteomeController < ApplicationController
 
   # Returns a list of all sequence_ids for a given bioproject_id
   def sequence_ids
-    response = Set.new
-    Genome.get_by_bioproject_id(params[:bioproject_id]).each do |genome|
-      response.merge(RefseqCrossReference.get_sequence_ids(genome.refseq_id))
+    cache = GenomeCache.find_by_bioproject_id(params[:bioproject_id])
+    if cache.nil?
+      result_set = Set.new
+      Genome.find_all_by_bioproject_id(params[:bioproject_id]).each do |genome|
+        result_set.merge(RefseqCrossReference.get_sequence_ids(genome.refseq_id))
+      end
+      json = Oj.dump(result_set.to_a.sort!, mode: :compat)
+      cache = GenomeCache.create(bioproject_id: params[:bioproject_id], json_sequences: json)
     end
-    resp = response.to_a.sort!
     respond_to do |format|
-      format.json { render json: Oj.dump(resp, mode: :compat) }
+      format.json { render json: cache.json_sequences }
     end
   end
 
