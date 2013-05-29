@@ -216,7 +216,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`dataset_items` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `dataset_id` INT NULL ,
   `name` VARCHAR(160) NULL ,
-  `data` TEXT NOT NULL ,
+  `data` MEDIUMTEXT NOT NULL ,
   `order` INT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_dataset_items_datasets` (`dataset_id` ASC) ,
@@ -313,6 +313,15 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`ec_cross_references` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+
+-- -----------------------------------------------------
+-- Table `unipept`.`genome_caches`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `unipept`.`genome_caches` (
+  `bioproject_id` INT NOT NULL ,
+  `json_sequences` MEDIUMTEXT NOT NULL ,
+  PRIMARY KEY (`bioproject_id`) )
+ENGINE = InnoDB;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
