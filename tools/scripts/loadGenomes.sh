@@ -9,7 +9,7 @@ cd "${datadir}"
 rm -f prokaryotes.txt
 rm -f prokaryotes.sql
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/GENOME_REPORTS/prokaryotes.txt
-echo "TRUNCATE TABLE genomes; TRUNCATE TABLE genome_caches" > prokaryotes.sql
+echo "TRUNCATE TABLE genomes; TRUNCATE TABLE genome_caches;" > prokaryotes.sql
 IFS=$(echo -e "\t")
 cat prokaryotes.txt | cut -f1,4,9,19 | egrep -v -- "-|#" | sed "s/'//g" |
 while read -a line; do
@@ -21,9 +21,14 @@ while read -a line; do
 done
 
 # load the file into the database
+echo "loading the database"
 mysql -u unipept -punipept unipept < "prokaryotes.sql"
 
 cd "${currentdir}"
 
-# populate the species and genus id's
+# precompute some stuff
+echo "precomputing the species and genera"
 rails runner "Genome.precompute_species_and_genera"
+
+echo "precomputing the genome caches"
+rails runner "Genome.precompute_genome_caches"

@@ -45,4 +45,11 @@ class Genome < ActiveRecord::Base
       end
     end
   end
+
+  # fills the genome_cache table
+  def self.precompute_genome_caches
+    Genome.all.each do |genome|
+      GenomeCache.get_by_bioproject_id(genome.bioproject_id)
+    end
+  end
 end
