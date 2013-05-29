@@ -388,7 +388,7 @@ function init_pancore() {
         var panDots = svg.selectAll(".dot.pan")
             .data(visData, function (d) {return d.bioproject_id; });
         panDots.enter().append("circle")
-            .attr("class", function (d, i) { return "dot pan _" + i; })
+            .attr("class", function (d) { return "dot pan _" + d.bioproject_id; })
             .attr("r", 5)
             .attr("fill", panColor)
             .attr("cx", width);
@@ -403,7 +403,7 @@ function init_pancore() {
         var coreDots = svg.selectAll(".dot.core")
             .data(visData, function (d) {return d.bioproject_id; });
         coreDots.enter().append("circle")
-            .attr("class", function (d, i) { return "dot core _" + i; })
+            .attr("class", function (d) { return "dot core _" + d.bioproject_id; })
             .attr("r", 5)
             .attr("fill", coreColor)
             .attr("cx", width)
@@ -456,20 +456,22 @@ function init_pancore() {
     }
 
     // Mouse event functions
-    function mouseOver(d, i) {
+    function mouseOver(d) {
         // add dropshadow to the dot
-        svg.selectAll(".dot._" + i).attr("filter", "url(#dropshadow)");
+        svg.selectAll(".dot._" + d.bioproject_id).attr("filter", "url(#dropshadow)");
+
+        var genome = tableData[d.bioproject_id];
 
         svg.select(".hairline.core")
             .style("visibility", "visible")
-            .attr("x1", x(visData[Math.max(0, i - 1)].bioproject_id))
-            .attr("x2", x(visData[Math.min(visData.length - 1, i + 1)].bioproject_id))
+            .attr("x1", x(visData[Math.max(0, genome.position - 1)].bioproject_id))
+            .attr("x2", x(visData[Math.min(visData.length - 1, genome.position + 1)].bioproject_id))
             .attr("y1", y(d.core))
             .attr("y2", y(d.core));
         svg.select(".hairline.pan")
             .style("visibility", "visible")
-            .attr("x1", x(visData[Math.max(0, i - 1)].bioproject_id))
-            .attr("x2", x(visData[Math.min(visData.length - 1, i + 1)].bioproject_id))
+            .attr("x1", x(visData[Math.max(0, genome.position - 1)].bioproject_id))
+            .attr("x2", x(visData[Math.min(visData.length - 1, genome.position + 1)].bioproject_id))
             .attr("y1", y(d.pan))
             .attr("y2", y(d.pan));
         svg.select(".axisline.pan")
@@ -484,17 +486,17 @@ function init_pancore() {
         // show tooltip
         tooltip
             .style("visibility", "visible")
-            .html("<b>" + tableData[d.bioproject_id].name + "</b><br/>" +
+            .html("<b>" + genome.name + "</b><br/>" +
             "<span style='color: " + panColor + ";'>&#9632;</span> pan: <b>" + d3.format(",")(d.pan) + "</b><br/>" +
             "<span style='color: " + coreColor + ";'>&#9632;</span> core: <b>" + d3.format(",")(d.core) + "</b>");
     }
-    function mouseOut(d, i) {
-        svg.selectAll(".dot._" + i).attr("filter", "");
+    function mouseOut(d) {
+        svg.selectAll(".dot._" + d.bioproject_id).attr("filter", "");
         svg.selectAll(".hairline").style("visibility", "hidden");
         svg.selectAll(".axisline").style("visibility", "hidden");
         tooltip.style("visibility", "hidden");
     }
-    function mouseMove(d, i) {
+    function mouseMove(d) {
         tooltip.style("top", (d3.event.pageY + 15) + "px").style("left", (d3.event.pageX + 15) + "px");
     }
 }
