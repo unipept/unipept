@@ -91,9 +91,13 @@ class PancoreproteomeController < ApplicationController
     @species = Genome.get_genome_species().map{|g| [g["name"], g["id"]]}
   end
 
-  # Returns a list of all sequence_ids for a given refseq_id
+  # Returns a list of all sequence_ids for a given bioproject_id
   def sequence_ids
-    resp = RefseqCrossReference.get_sequence_ids(params[:refseq_id]).to_a.sort!
+    response = Set.new
+    Genome.get_by_bioproject_id(params[:bioproject_id]).each do |genome|
+      response.merge(RefseqCrossReference.get_sequence_ids(genome.refseq_id))
+    end
+    resp = response.to_a.sort!
     respond_to do |format|
       format.json { render json: Oj.dump(resp, mode: :compat) }
     end

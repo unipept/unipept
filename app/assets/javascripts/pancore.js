@@ -87,7 +87,7 @@ function init_pancore() {
             toLoad = genomes.length;
             for (var i = 0; i < genomes.length ; i++) {
                 tableData[genomes[i].name] = {"genome" : genomes[i].name, "status" : "Loading...", "position" : 100 + i};
-                loadData(genomes[i].name, genomes[i].refseq_id);
+                loadData(genomes[i].name, genomes[i].bioproject_id);
             }
             updateTable();
             setTableMessage("refresh", "Please wait while we load the data for these genomes.");
@@ -123,10 +123,10 @@ function init_pancore() {
         worker.postMessage({'cmd': command, 'msg': message});
     }
 
-    // Loads peptides, based on refseq_id
-    function loadData(name, refseq_id) {
+    // Loads peptides, based on bioproject_id
+    function loadData(name, bioproject_id) {
         // offload this to the worker
-        sendToWorker("loadData", {"name": name, "refseq_id": refseq_id});
+        sendToWorker("loadData", {"name": name, "bioproject_id": bioproject_id});
     }
 
     // Gets called when the data is (done) loading

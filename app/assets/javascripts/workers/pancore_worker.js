@@ -13,7 +13,7 @@ self.addEventListener('message', function (e) {
         sendToHost("log", data.msg);
         break;
     case 'loadData':
-        loadData(data.msg.name, data.msg.refseq_id);
+        loadData(data.msg.name, data.msg.bioproject_id);
         break;
     case 'removeData':
         removeData(data.msg.name, data.msg.order, data.msg.start);
@@ -35,8 +35,8 @@ function sendToHost(type, message) {
 }
 
 // Loads peptides, based on refseq_id
-function loadData(name, refseq_id) {
-    getJSON("/pancore/sequences/" + refseq_id + ".json", function (json_data) {
+function loadData(name, bioproject_id) {
+    getJSON("/pancore/sequences/" + bioproject_id + ".json", function (json_data) {
         addData(name, json_data);
     });
 }
