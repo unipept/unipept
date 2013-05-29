@@ -11,7 +11,7 @@ rm -f prokaryotes.sql
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/GENOME_REPORTS/prokaryotes.txt
 echo "TRUNCATE TABLE genomes;" > prokaryotes.sql
 IFS=$(echo -e "\t")
-cat prokaryotes.txt | cut -f1,3,9,19 | egrep -v -- "-|#" | sed "s/'//g" |
+cat prokaryotes.txt | cut -f1,4,9,19 | egrep -v -- "-|#" | sed "s/'//g" |
 while read -a line; do
     IFS=',' read -a sequences <<< "${line[2]}"
     for element in "${sequences[@]}"
