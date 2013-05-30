@@ -319,7 +319,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `unipept`.`genome_caches` (
   `bioproject_id` INT NOT NULL ,
-  `json_sequences` MEDIUMTEXT NOT NULL ,
+  `json_sequences` MEDIUMTEXT CHARACTER SET 'ascii' COLLATE 'ascii_general_ci' NOT NULL ,
   PRIMARY KEY (`bioproject_id`) )
 ENGINE = InnoDB;
 
