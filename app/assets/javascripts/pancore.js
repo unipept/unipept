@@ -181,18 +181,28 @@ function init_pancore() {
     // Adds the next datapoint to the animation after the current
     // animation is done.
     function tryUpdateGraph() {
+        if (toLoad === 0) {
+            return;
+        }
         if (mayStartAnimation) {
-            toLoad--;
-            if (toLoad === 0) {
-                setLoading(false);
-            }
             mayStartAnimation = false;
-            var data = dataQueue.shift();
-            visData.push(data);
-            tableData[data.bioproject_id].status = "Done";
-            tableData[data.bioproject_id].position = visData.length - 1;
-            updateGraph();
-            updateTable();
+            var data,
+                addedSomething = false;
+            while (dataQueue.length > 0) {
+                addedSomething = true;
+                data = dataQueue.shift();
+                visData.push(data);
+                tableData[data.bioproject_id].status = "Done";
+                tableData[data.bioproject_id].position = visData.length - 1;
+                toLoad--;
+            }
+            if (addedSomething) {
+                if (toLoad === 0) {
+                    setLoading(false);
+                }
+                updateGraph();
+                updateTable();
+            }
             setTimeout(function () { mayStartAnimation = true; }, transitionDuration);
         } else {
             setTimeout(tryUpdateGraph, transitionDuration);
