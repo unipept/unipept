@@ -6,6 +6,7 @@ class ImagemagickController < ApplicationController
      img = Magick::Image.from_blob(params[:image]){ self.format = 'SVG' }.first
      img.format = "png"
      image = Base64.encode64(img.to_blob);
+     logger.debug image
      render :text => "data:image/png;base64,#{image}"
   end
   

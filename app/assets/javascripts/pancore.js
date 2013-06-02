@@ -112,6 +112,19 @@ function init_pancore() {
         }
     });
 
+    // set up save image stuff
+    $("#buttons-pancore").prepend("<button id='save-btn' class='btn btn-mini'><i class='icon-download'></i> Save as image</button>");
+    $("#save-btn").click(function () {
+        // GA event tracking
+        _gaq.push(['_trackEvent', 'Pancore', 'Save Image']);
+
+        var svg = $("#pancore_graph svg").wrap("<div></div>").parent().html();
+        $.post("/convert", { image: svg }, function (data) {
+            $("#save-as-modal .modal-body").html("<img src='" + data + "' />");
+            $("#save-as-modal").modal();
+        });
+    });
+
     // Draw the graph
     redrawGraph();
 
@@ -319,6 +332,11 @@ function init_pancore() {
             .style("text-anchor", "end")
             .text("Number of peptides");
 
+        svg.selectAll(".axis line, .axis path")
+            .style("fill", "none")
+            .style("stroke", "#000")
+            .style("shape-rendering", "crispEdges");
+
         // add legend
         var legend = svg.selectAll(".legend")
             .data([{"name": "pan proteome", "color": panColor}, {"name": "core proteome", "color": coreColor}])
@@ -341,10 +359,16 @@ function init_pancore() {
         svg.append("path")
             .datum(visData)
             .attr("class", "line pan")
+            .style("stroke", panColor)
+            .style("stroke-width", 2)
+            .style("fill", "none")
             .attr("d", panLine);
         svg.append("path")
             .datum(visData)
             .attr("class", "line core")
+            .style("stroke", coreColor)
+            .style("stroke-width", 2)
+            .style("fill", "none")
             .attr("d", coreLine);
 
         // add gray hairlines
@@ -401,6 +425,10 @@ function init_pancore() {
         // update the axes
         svg.select(".x.axis").transition().duration(transitionDuration).call(xAxis);
         svg.select(".y.axis").transition().duration(transitionDuration).call(yAxis);
+        svg.selectAll(".axis line, .axis path")
+            .style("fill", "none")
+            .style("stroke", "#000")
+            .style("shape-rendering", "crispEdges");
         // rotate the x-axis labels
         svg.selectAll(".x.axis text")
             .transition()
