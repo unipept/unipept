@@ -380,6 +380,20 @@ function init_pancore() {
 
     // Updates the D3 graph
     function updateGraph() {
+        // Prepare for line transition
+        var oldPanDatum = svg.select(".line.pan").datum(),
+            oldCoreDatum = svg.select(".line.core").datum();
+        if (oldPanDatum.length < visData.length && oldPanDatum.length > 0) {
+            var i = 0,
+                diff = visData.length - oldPanDatum.length;
+            for (; i < diff; i++) {
+                oldPanDatum.push(oldPanDatum[oldPanDatum.length - 1]);
+                oldCoreDatum.push(oldCoreDatum[oldCoreDatum.length - 1]);
+            }
+            svg.select(".line.pan").attr("d", panLine);
+            svg.select(".line.core").attr("d", coreLine);
+        }
+
         // set the domains
         x.domain(visData.map(function (d) { return d.bioproject_id; }));
         y.domain([0, d3.max(visData, function (d) { return d.pan; })]);
@@ -428,13 +442,14 @@ function init_pancore() {
             .remove();
 
         // update the lines
+        var dataCopy = visData.slice(0);
         if (visData.length > 0) {
-            svg.select(".line.pan").datum(visData)
+            svg.select(".line.pan").datum(dataCopy)
                 .style("visibility", "visible")
                 .transition()
                     .duration(transitionDuration)
                     .attr("d", panLine);
-            svg.select(".line.core").datum(visData)
+            svg.select(".line.core").datum(dataCopy)
                 .style("visibility", "visible")
                 .transition()
                     .duration(transitionDuration)
