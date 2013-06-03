@@ -459,9 +459,9 @@ function init_pancore() {
             .style("shape-rendering", "crispEdges");
         // rotate the x-axis labels
         svg.selectAll(".x.axis text")
+            .style("text-anchor", "end")
             .transition()
             .duration(transitionDuration)
-            .style("text-anchor", "end")
             .attr("transform", "translate(-5,0)rotate(-45)");
 
         // draw the dots
