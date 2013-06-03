@@ -375,6 +375,7 @@ function init_pancore() {
             .attr("x", 30)
             .attr("width", 8)
             .attr("height", 8)
+            .style("shape-rendering", "crispEdges")
             .style("fill", function (d) { return d.color; });
         legend.append("text")
             .attr("x", 40)
