@@ -320,6 +320,7 @@ function init_pancore() {
             .attr("viewBox", "0 0 " + fullWidth + " " + fullHeight)
             .attr("width", fullWidth)
             .attr("height", fullHeight)
+            .style("font-family", "'Helvetica Neue', Helvetica, Arial, sans-serif")
           .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 

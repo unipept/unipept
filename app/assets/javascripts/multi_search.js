@@ -284,6 +284,7 @@ function initSunburst(data) {
         .attr("width", w + p * 2)
         .attr("height", h + p * 2)
         .attr("overflow", "hidden")
+        .style("font-family", "'Helvetica Neue', Helvetica, Arial, sans-serif")
         .append("g")
         .attr("transform", "translate(" + (r + p) + "," + (r + p) + ")"); // set origin to radius center
 
