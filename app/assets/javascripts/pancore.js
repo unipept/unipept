@@ -20,8 +20,10 @@ function init_pancore() {
 
     // Size
     var margin = {top: 20, right: 20, bottom: 170, left: 60},
-        width = 920 - margin.left - margin.right,
-        height = 600 - margin.top - margin.bottom;
+        fullWidth = 920,
+        fullHeight = 600,
+        width = fullWidth - margin.left - margin.right,
+        height = fullHeight - margin.top - margin.bottom;
 
     // Scales
     var x = d3.scale.ordinal()
@@ -112,10 +114,35 @@ function init_pancore() {
         }
     });
 
+    // set up the fullscreen stuff
+    if (fullScreenApi.supportsFullScreen) {
+        $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
+        $("#zoom-btn").click(function () {
+            // track full screen
+            _gaq.push(['_trackEvent', 'Pancore', 'Full Screen']);
+            window.fullScreenApi.requestFullScreen($("#pancore_graph").get(0));
+            
+        });
+        $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange', resizeFullScreen);
+    }
+
+    function resizeFullScreen() {
+        setTimeout(function () {
+            var w = fullWidth,
+                h = fullHeight;
+            if (window.fullScreenApi.isFullScreen()) {
+                w = $(window).width();
+                h = $(window).height();
+            }
+            $("#pancore_graph svg").attr("width", w);
+            $("#pancore_graph svg").attr("height", h);
+        }, 100);
+    }
+
     // set up save image stuff
     $("#buttons-pancore").prepend("<button id='save-btn' class='btn btn-mini'><i class='icon-download'></i> Save as image</button>");
     $("#save-btn").click(function () {
-        // GA event tracking
+        // track save image event
         _gaq.push(['_trackEvent', 'Pancore', 'Save Image']);
 
         var svg = $("#pancore_graph svg").wrap("<div></div>").parent().html();
@@ -290,8 +317,9 @@ function init_pancore() {
         // create the svg
         svg = d3.select("#pancore_graph")
           .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
+            .attr("viewBox", "0 0 " + fullWidth + " " + fullHeight)
+            .attr("width", fullWidth)
+            .attr("height", fullHeight)
           .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -550,6 +578,10 @@ function init_pancore() {
         tooltip.style("visibility", "hidden");
     }
     function mouseMove(d) {
-        tooltip.style("top", (d3.event.pageY + 15) + "px").style("left", (d3.event.pageX + 15) + "px");
+        if (window.fullScreenApi.isFullScreen()) {
+            tooltip.style("top", (d3.event.clientY + 15) + "px").style("left", (d3.event.clientX + 15) + "px");
+        } else {
+            tooltip.style("top", (d3.event.pageY + 15) + "px").style("left", (d3.event.pageX + 15) + "px");
+        }
     }
 }
