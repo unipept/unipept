@@ -629,13 +629,18 @@ function init_pancore() {
     }
     function drag(d) {
         dragging[d.bioproject_id] = Math.min(width, Math.max(0, this.__origin__ += d3.event.dx));
+        var oldData = visData.slice(0);
         visData.sort(function (a, b) { return position(a) - position(b); });
-        x.domain(visData.map(function (d) { return d.bioproject_id; }));
-        svg.selectAll(".bar").attr("x", function (d) { return x(d.bioproject_id) - mouseOverWidth / 2; });
-        svg.selectAll(".dot").attr("cx", function (d) { return x(d.bioproject_id); });
+        // If some position is swapped, redraw some stuff
+        if (isChanged(oldData, visData)) {
+            x.domain(visData.map(function (d) { return d.bioproject_id; }));
+            svg.selectAll(".bar").attr("x", function (d) { return x(d.bioproject_id) - mouseOverWidth / 2; });
+            svg.selectAll(".dot").attr("cx", function (d) { return x(d.bioproject_id); });
+            svg.select(".x.axis").call(xAxis).selectAll("text").style("text-anchor", "end");
+        }
+        // Update the position of the drag box and dots
         d3.select(this).attr("x", dragging[d.bioproject_id] - mouseOverWidth / 2);
         svg.selectAll(".dot._" + d.bioproject_id).attr("cx", dragging[d.bioproject_id]);
-        svg.select(".x.axis").call(xAxis).selectAll("text").style("text-anchor", "end");
     }
     function dragEnd(d) {
         delete this.__origin__;
@@ -645,17 +650,22 @@ function init_pancore() {
         var r = calculateTablePositionsFromGraph();
         updateTable();
         sendToWorker("recalculatePanCore", {"order" : r.order, "start" : r.start, "stop" : r.stop});
-        mouseOver(d); // Show the tooltip when done dragging
-        /*d3.select(this).transition()
-            .duration(transitionDuration)
-            .attr("x", x(d.bioproject_id) - mouseOverWidth / 2);
-        d3.selectAll(".dot._" + d.bioproject_id).transition()
-            .duration(transitionDuration)
-            .attr("cx", x(d.bioproject_id));*/
     }
 
+    // Drag helper functions
     function position(d) {
         var v = dragging[d.bioproject_id];
         return v == null ? x(d.bioproject_id) : v;
+    }
+    function isChanged(oldData, newData) {
+        if (oldData.length != newData.length) {
+            return true;
+        }
+        for (var i = 0; i < oldData.length; i++) {
+            if (oldData[i].bioproject_id != newData[i].bioproject_id) {
+                return true;
+            }
+        }
+        return false;
     }
 }
