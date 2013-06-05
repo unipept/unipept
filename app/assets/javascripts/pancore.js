@@ -258,12 +258,13 @@ function init_pancore() {
     }
 
     // Sets the position property in the tableData
+    // based on the row position in the table
     // returns a list with the order of the genomes
     function calculateTablePositions() {
         var order = [],
             start = -1,
             stop = 0;
-            
+
         d3.selectAll("#genomes_table tbody tr").each(function (d, i) {
             var bioproject_id = d.bioproject_id;
             if (tableData[bioproject_id].position === i && stop === 0) {
@@ -275,6 +276,28 @@ function init_pancore() {
             }
             order[i] = bioproject_id;
         });
+        start++;
+        return {"order" : order, "start" : start, "stop" : stop};
+    }
+
+    // Sets the position property in the tableData
+    // based on the position in the graph
+    // returns a list with the order of the genomes
+    function calculateTablePositionsFromGraph() {
+        var order = [],
+            start = -1,
+            stop = 0;
+        for (var i = 0; i < visData.length; i++) {
+            var bioproject_id = visData[i].bioproject_id;
+            if (tableData[bioproject_id].position === i && stop === 0) {
+                start = i;
+            } else if (tableData[bioproject_id].position !== i) {
+                stop = i;
+                tableData[bioproject_id].position = i;
+                tableData[bioproject_id].status = "Processing...";
+            }
+            order[i] = bioproject_id;
+        }
         start++;
         return {"order" : order, "start" : start, "stop" : stop};
     }
@@ -619,6 +642,9 @@ function init_pancore() {
         delete dragging[d.bioproject_id];
         updateGraph();
         isDragging = false;
+        var r = calculateTablePositionsFromGraph();
+        updateTable();
+        sendToWorker("recalculatePanCore", {"order" : r.order, "start" : r.start, "stop" : r.stop});
         mouseOver(d); // Show the tooltip when done dragging
         /*d3.select(this).transition()
             .duration(transitionDuration)
