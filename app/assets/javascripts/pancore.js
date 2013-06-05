@@ -6,7 +6,9 @@ function init_pancore() {
 
     // D3 vars
     var svg,
-        tooltip;
+        tooltip,
+        mouseOverWidth,
+        dragging = {};
 
     // animation stuff
     var transitionDuration = 500,
@@ -520,21 +522,25 @@ function init_pancore() {
         }
 
         // update the mouseover rects
-        var mouseOverWidth = (width / visData.length) / 1.5;
+        mouseOverWidth = (width / visData.length) / 1.5;
         var bars = svg.selectAll(".bar")
             .data(visData, function (d) {return d.bioproject_id; });
         bars.enter().append("rect")
             .attr("class", "bar")
-            .style("fill-opacity", "0")
-            .attr("height", height)
+            .attr("height", fullHeight)
+            .attr("y", 0)
+            .style("fill-opacity", 0)
             .on("mouseover", mouseOver)
             .on("mouseout", mouseOut)
-            .on("mousemove", mouseMove);
+            .on("mousemove", mouseMove)
+            .call(d3.behavior.drag()
+                .on("dragstart", dragStart)
+                .on("drag", drag)
+                .on("dragend", dragEnd));
         bars.transition()
             .duration(transitionDuration)
             .attr("x", function (d) { return x(d.bioproject_id) - mouseOverWidth / 2; })
-            .attr("width", mouseOverWidth)
-            .attr("y", "0");
+            .attr("width", mouseOverWidth);
         bars.exit().remove();
     }
 
@@ -585,5 +591,34 @@ function init_pancore() {
         } else {
             tooltip.style("top", (d3.event.pageY + 15) + "px").style("left", (d3.event.pageX + 15) + "px");
         }
+    }
+    function dragStart(d) {
+        dragging[d.bioproject_id] = this.__origin__ = x(d.bioproject_id);
+    }
+    function drag(d) {
+        dragging[d.bioproject_id] = Math.min(width, Math.max(0, this.__origin__ += d3.event.dx));
+        visData.sort(function (a, b) { return position(a) - position(b); });
+        x.domain(visData.map(function (d) { return d.bioproject_id; }));
+        svg.selectAll(".bar").attr("x", function (d) { return x(d.bioproject_id) - mouseOverWidth / 2; });
+        svg.selectAll(".dot").attr("cx", function (d) { return x(d.bioproject_id); });
+        d3.select(this).attr("x", dragging[d.bioproject_id] - mouseOverWidth / 2);
+        svg.selectAll(".dot._" + d.bioproject_id).attr("cx", dragging[d.bioproject_id]);
+        svg.select(".x.axis").call(xAxis).selectAll("text").style("text-anchor", "end");
+    }
+    function dragEnd(d) {
+        delete this.__origin__;
+        delete dragging[d.bioproject_id];
+        updateGraph();
+        /*d3.select(this).transition()
+            .duration(transitionDuration)
+            .attr("x", x(d.bioproject_id) - mouseOverWidth / 2);
+        d3.selectAll(".dot._" + d.bioproject_id).transition()
+            .duration(transitionDuration)
+            .attr("cx", x(d.bioproject_id));*/
+    }
+
+    function position(d) {
+        var v = dragging[d.bioproject_id];
+        return v === null ? x(d.bioproject_id) : v;
     }
 }
