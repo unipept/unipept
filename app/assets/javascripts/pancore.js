@@ -553,7 +553,7 @@ function init_pancore() {
             .data(visData, function (d) {return d.bioproject_id; });
         bars.enter().append("rect")
             .attr("class", "bar")
-            .attr("height", fullHeight)
+            .attr("height", height)
             .attr("y", 0)
             .style("fill-opacity", 0)
             .on("mouseover", mouseOver)
