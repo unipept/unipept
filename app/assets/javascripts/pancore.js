@@ -635,8 +635,13 @@ function init_pancore() {
         if (isChanged(oldData, visData)) {
             x.domain(visData.map(function (d) { return d.bioproject_id; }));
             svg.selectAll(".bar").attr("x", function (d) { return x(d.bioproject_id) - mouseOverWidth / 2; });
-            svg.selectAll(".dot").attr("cx", function (d) { return x(d.bioproject_id); });
-            svg.select(".x.axis").call(xAxis).selectAll("text").style("text-anchor", "end");
+            svg.selectAll(".dot:not(._" + d.bioproject_id + ")").transition()
+                .duration(transitionDuration)
+                .attr("cx", function (d) { return x(d.bioproject_id); });
+            svg.select(".x.axis").transition()
+                .duration(transitionDuration)
+                .call(xAxis)
+                .selectAll("text").style("text-anchor", "end");
         }
         // Update the position of the drag box and dots
         d3.select(this).attr("x", dragging[d.bioproject_id] - mouseOverWidth / 2);
