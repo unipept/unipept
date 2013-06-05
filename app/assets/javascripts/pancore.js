@@ -626,6 +626,7 @@ function init_pancore() {
     function dragStart(d) {
         isDragging = true;
         dragging[d.bioproject_id] = this.__origin__ = x(d.bioproject_id);
+        svg.selectAll(".bar").style("cursor", "url(/closedhand.cur) 7 5, move");
     }
     function drag(d) {
         dragging[d.bioproject_id] = Math.min(width, Math.max(0, this.__origin__ += d3.event.dx));
@@ -650,11 +651,12 @@ function init_pancore() {
     function dragEnd(d) {
         delete this.__origin__;
         delete dragging[d.bioproject_id];
+        svg.selectAll(".bar").style("cursor", "url(/openhand.cur) 7 5, move");
         updateGraph();
-        isDragging = false;
         var r = calculateTablePositionsFromGraph();
         updateTable();
         sendToWorker("recalculatePanCore", {"order" : r.order, "start" : r.start, "stop" : r.stop});
+        isDragging = false;
     }
 
     // Drag helper functions
