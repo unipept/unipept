@@ -532,11 +532,13 @@ function init_pancore() {
                 .style("visibility", "visible")
                 .transition()
                     .duration(transitionDuration)
+                    .style("stroke", panColor)
                     .attr("d", panLine);
             svg.select(".line.core").datum(dataCopy)
                 .style("visibility", "visible")
                 .transition()
                     .duration(transitionDuration)
+                    .style("stroke", coreColor)
                     .attr("d", coreLine);
         } else {
             svg.select(".line.pan")
@@ -643,6 +645,9 @@ function init_pancore() {
                 .duration(transitionDuration)
                 .call(xAxis)
                 .selectAll("text").style("text-anchor", "end");
+            svg.selectAll(".line").transition()
+                .duration(transitionDuration)
+                .style("stroke", "#cccccc");
         }
         // Update the position of the drag box and dots
         d3.select(this).attr("x", dragging[d.bioproject_id] - mouseOverWidth / 2);
