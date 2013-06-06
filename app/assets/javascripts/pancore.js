@@ -517,12 +517,13 @@ function init_pancore() {
         svg.selectAll(".x.axis text")
             .style("text-anchor", "end")
             .transition()
-            .duration(transitionDuration)
-            .attr("transform", "translate(-5,0)rotate(-45)");
+                .duration(transitionDuration)
+                .attr("transform", "translate(-5,0)rotate(-45)");
+        svg.selectAll(".tick").attr("class", function (d) { return "tick major _" + d; });
 
         // draw the dots
         var panDots = svg.selectAll(".dot.pan")
-            .data(visData, function (d) {return d.bioproject_id; });
+            .data(visData, function (d) { return d.bioproject_id; });
         panDots.enter().append("circle")
             .attr("class", function (d) { return "dot pan _" + d.bioproject_id; })
             .attr("r", 5)
@@ -662,6 +663,7 @@ function init_pancore() {
         isDragging = true;
         dragging[d.bioproject_id] = this.__origin__ = x(d.bioproject_id);
         svg.selectAll(".bar").style("cursor", "url(/closedhand.cur) 7 5, move");
+        svg.selectAll(".tick._" + d.bioproject_id + " text").style("font-weight", "bold");
         svg.select("#trash").transition().duration(transitionDuration).attr("transform", "translate(-84 0)");
     }
     function drag(d) {
@@ -691,6 +693,7 @@ function init_pancore() {
         delete this.__origin__;
         delete dragging[d.bioproject_id];
         svg.selectAll(".bar").style("cursor", "url(/openhand.cur) 7 5, move");
+        svg.selectAll(".tick._" + d.bioproject_id + " text").style("font-weight", "normal");
         svg.select("#trash").transition()
             .delay(onTrash ? transitionDuration : 0)
             .duration(transitionDuration)
