@@ -465,11 +465,20 @@ function init_pancore() {
                 .on("mouseover", trashMouseOver)
                 .on("mouseout", trashMouseOut)
             .insert("g")
-                .attr("transform", "translate(" + fullWidth + " " + (height - 46)/ 2 + ")")
-            .insert("g")
-                .attr("transform", "translate(-430 -597)");
+                .attr("transform", "translate(" + (fullWidth + 30) + " " + (height - 46)/ 2 + ")");
+        trash.append("circle")
+                .attr("r", 30)
+                .attr("stroke", "#cccccc")
+                .attr("stroke-width", 3)
+                .attr("fill", "white")
+                .attr("cx", -40)
+                .attr("cy", 23);
+        trash = trash.insert("g")
+                .attr("transform", "translate(-430 -597)")
+                .style("pointer-events", "none");
         trash.insert("path").attr("d", "M408.302,604.218h-7.95c0.002-0.055,0.009-0.109,0.009-0.166v-1.6c0-2.91-2.384-5.293-5.294-5.293h-8.824    c-2.912,0-5.294,2.383-5.294,5.293v1.6c0,0.057,0.007,0.111,0.009,0.166h-7.95c-1.456,0-2.646,1.191-2.646,2.646v2.646    c0,1.457,1.19,2.648,2.646,2.648h0.883v-1.766h33.529v1.766h0.883c1.455,0,2.646-1.191,2.646-2.648v-2.646    C410.948,605.409,409.757,604.218,408.302,604.218z M385.333,601.571h10.588v2.646h-10.588V601.571z");
         trash.insert("path").attr("d", "M375.654,613.042v26.469c0,1.457,1.19,2.648,2.647,2.648h24.705c1.456,0,2.647-1.191,2.647-2.648v-26.469    H375.654z M384.478,636.423c0,0.486-0.397,0.883-0.882,0.883h-1.765c-0.486,0-0.883-0.396-0.883-0.883v-17.646    c0-0.484,0.396-0.883,0.883-0.883h1.765c0.484,0,0.882,0.398,0.882,0.883V636.423z M392.419,636.423    c0,0.486-0.398,0.883-0.882,0.883h-1.766c-0.485,0-0.882-0.396-0.882-0.883v-17.646c0-0.484,0.396-0.883,0.882-0.883h1.766    c0.483,0,0.882,0.398,0.882,0.883V636.423z M400.36,636.423c0,0.486-0.398,0.883-0.883,0.883h-1.765    c-0.485,0-0.882-0.396-0.882-0.883v-17.646c0-0.484,0.396-0.883,0.882-0.883h1.765c0.484,0,0.883,0.398,0.883,0.883V636.423z");
+        trash.node().parentNode
     }
 
     // Updates the D3 graph
@@ -646,7 +655,7 @@ function init_pancore() {
         isDragging = true;
         dragging[d.bioproject_id] = this.__origin__ = x(d.bioproject_id);
         svg.selectAll(".bar").style("cursor", "url(/closedhand.cur) 7 5, move");
-        svg.select("#trash").transition().duration(transitionDuration).attr("transform", "translate(-41 0)");
+        svg.select("#trash").transition().duration(transitionDuration).attr("transform", "translate(-82 0)");
     }
     function drag(d) {
         dragging[d.bioproject_id] = Math.min(width, Math.max(0, this.__origin__ += d3.event.dx));
@@ -679,6 +688,9 @@ function init_pancore() {
             .duration(transitionDuration)
             .attr("transform", "translate(0 0)")
             .attr("fill", "#cccccc");
+        svg.select("#trash circle").transition()
+            .duration(transitionDuration)
+            .attr("stroke", "#cccccc");
         if (onTrash) {
             removeData(d);
         } else {
@@ -709,12 +721,18 @@ function init_pancore() {
         onTrash = true;
         svg.select("#trash").transition()
             .duration(transitionDuration)
-            .attr("fill", "#555555");
+            .attr("fill", "#333333");
+        svg.select("#trash circle").transition()
+            .duration(transitionDuration)
+            .attr("stroke", "#d6616b");
     }
     function trashMouseOut() {
         onTrash = false;
         svg.select("#trash").transition()
             .duration(transitionDuration)
             .attr("fill", "#cccccc");
+        svg.select("#trash circle").transition()
+            .duration(transitionDuration)
+            .attr("stroke", "#cccccc");
     }
 }
