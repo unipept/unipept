@@ -677,8 +677,8 @@ function init_pancore() {
                 .attr("cx", function (d) { return x(d.bioproject_id); });
             svg.select(".x.axis").transition()
                 .duration(transitionDuration)
-                .call(xAxis)
-                .selectAll("text").style("text-anchor", "end");
+                .call(xAxis);
+            svg.selectAll(".x.axis text").style("text-anchor", "end");
             svg.selectAll(".line").transition()
                 .duration(transitionDuration)
                 .style("stroke", "#cccccc");
