@@ -128,7 +128,6 @@ function init_pancore() {
             // track full screen
             _gaq.push(['_trackEvent', 'Pancore', 'Full Screen']);
             window.fullScreenApi.requestFullScreen($("#pancore_graph").get(0));
-            
         });
         $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange', resizeFullScreen);
     }
@@ -324,7 +323,7 @@ function init_pancore() {
         var td = tr.selectAll("td.data")
             .data(function (d) {
                 return d3.entries(d).filter(function (entry) {
-                    return entry.key !== "position" && entry.key !== "bioproject_id" ;
+                    return entry.key !== "position" && entry.key !== "bioproject_id";
                 });
             });
         td.enter()
@@ -468,7 +467,7 @@ function init_pancore() {
             .on("mouseover", trashMouseOver)
             .on("mouseout", trashMouseOut)
         .insert("g")
-            .attr("transform", "translate(" + (fullWidth + 30) + " " + (height - 46)/ 2 + ")");
+            .attr("transform", "translate(" + (fullWidth + 30) + " " + (height - 46) / 2 + ")");
         trash.append("circle")
             .attr("r", 30)
             .attr("stroke", "#cccccc")
