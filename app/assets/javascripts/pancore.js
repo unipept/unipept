@@ -7,20 +7,23 @@ function init_pancore() {
     // D3 vars
     var svg,
         tooltip,
-        mouseOverWidth,
-        dragging = {},
+        mouseOverWidth;
+
+    // drag vars
+    var dragging = {},
         isDragging = false,
-        onTrash = false;
+        onTrash = false,
+        dragId;
 
-    // animation stuff
+    // animation and style stuff
     var transitionDuration = 500,
-        mayStartAnimation = true,
-        dataQueue = [],
-        toLoad;
-
-    // Colors
-    var panColor = "steelblue",
+        panColor = "steelblue",
         coreColor = "#ff7f0e";
+
+    // load vars
+    var dataQueue = [],
+        toLoad,
+        mayStartAnimation = true;
 
     // Size
     var margin = {top: 20, right: 40, bottom: 170, left: 60},
@@ -661,6 +664,7 @@ function init_pancore() {
     }
     function dragStart(d) {
         isDragging = true;
+        dragId = d.bioproject_id;
         dragging[d.bioproject_id] = this.__origin__ = x(d.bioproject_id);
         svg.selectAll(".bar").style("cursor", "url(/closedhand.cur) 7 5, move");
         svg.selectAll(".tick._" + d.bioproject_id + " text").style("font-weight", "bold");
@@ -732,11 +736,14 @@ function init_pancore() {
     function trashMouseOver() {
         onTrash = true;
         svg.select("#trash").transition()
-            .duration(transitionDuration)
+            .duration(transitionDuration / 2)
             .attr("fill", "#333333");
         svg.select("#trash circle").transition()
-            .duration(transitionDuration)
+            .duration(transitionDuration / 2)
             .attr("stroke", "#d6616b");
+        svg.selectAll(".dot._" + dragId).transition()
+            .duration(transitionDuration / 2)
+            .attr("fill", "#d6616b");
     }
     function trashMouseOut() {
         onTrash = false;
@@ -746,5 +753,11 @@ function init_pancore() {
         svg.select("#trash circle").transition()
             .duration(transitionDuration)
             .attr("stroke", "#cccccc");
+        svg.selectAll(".dot.pan._" + dragId).transition()
+            .duration(transitionDuration)
+            .attr("fill", panColor);
+        svg.selectAll(".dot.core._" + dragId).transition()
+            .duration(transitionDuration)
+            .attr("fill", coreColor);
     }
 }
