@@ -23,7 +23,7 @@ UnipeptWeb::Application.routes.draw do
   match '/search/sequences', :to => 'sequences#multi_search', :as => 'sequence_multi_search'
 
   match '/sequences/:id/:equate_il', :to => 'sequences#show'
-
+  match '/search/single', :to => 'search#single'
   # pancore
   match '/pancore/sequences/:bioproject_id.:format', :to => 'pancoreproteome#sequence_ids', :constraints => { :bioproject_id => /[0-z\._]+/ }
   match '/pancore/genomes/:species_id.:format', :to => 'pancoreproteome#genomes'

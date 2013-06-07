@@ -251,6 +251,22 @@ footer p {
     border-top: 2px solid @tableBorder;
   }
 }
+/*** highlight an element ***/
+.flash{
+  animation: flash 2s ease-out;
+  animation-iteration-count: 1;
+
+  -webkit-animation: flash 2s ease-out;
+  -webkit-animation-iteration-count: 1;
+}
+@keyframes flash {
+    0% {background-color:#FFFF9C;}     
+    100% {background-color:none;}
+}
+@-webkit-keyframes flash {
+    0% {background-color:#FFFF9C;}     
+    100% {background-color:none;}
+}
 
 /*** news on homepage ***/
 #news{
@@ -415,7 +431,6 @@ span.dir{
 .tip-title{
 	text-align:center;
 }
-
 /* jstree */
 #jstree{
 	width: 450px;
@@ -440,6 +455,7 @@ span.dir{
 	background: @grayLighter;
 	border: 1px solid #cccccc;
 	.border-radius(3px);
+	.transition(all 1s ease-in-out);
 }
 #jstree_data::before {
 	content: "";

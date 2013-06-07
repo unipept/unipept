@@ -6,20 +6,33 @@
 //= require_directory .
 //= require vendor
 
-// add support for animate with color values
-(function(d){d.each(["backgroundColor","borderBottomColor","borderLeftColor","borderRightColor","borderTopColor","color","outlineColor"],function(f,e){d.fx.step[e]=function(g){if(!g.colorInit){g.start=c(g.elem,e);g.end=b(g.end);g.colorInit=true}g.elem.style[e]="rgb("+[Math.max(Math.min(parseInt((g.pos*(g.end[0]-g.start[0]))+g.start[0]),255),0),Math.max(Math.min(parseInt((g.pos*(g.end[1]-g.start[1]))+g.start[1]),255),0),Math.max(Math.min(parseInt((g.pos*(g.end[2]-g.start[2]))+g.start[2]),255),0)].join(",")+")"}});function b(f){var e;if(f&&f.constructor==Array&&f.length==3){return f}if(e=/rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/.exec(f)){return[parseInt(e[1]),parseInt(e[2]),parseInt(e[3])]}if(e=/rgb\(\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*\)/.exec(f)){return[parseFloat(e[1])*2.55,parseFloat(e[2])*2.55,parseFloat(e[3])*2.55]}if(e=/#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/.exec(f)){return[parseInt(e[1],16),parseInt(e[2],16),parseInt(e[3],16)]}if(e=/#([a-fA-F0-9])([a-fA-F0-9])([a-fA-F0-9])/.exec(f)){return[parseInt(e[1]+e[1],16),parseInt(e[2]+e[2],16),parseInt(e[3]+e[3],16)]}if(e=/rgba\(0, 0, 0, 0\)/.exec(f)){return a.transparent}return a[d.trim(f).toLowerCase()]}function c(g,e){var f;do{f=d.css(g,e);if(f!=""&&f!="transparent"||d.nodeName(g,"body")){break}e="backgroundColor"}while(g=g.parentNode);return b(f)}var a={transparent:[255,255,255]}})(jQuery);
+// highlights the background color 
+// of the given element for 2 seconds
+function highlight(element) {
+    $(element).addClass("flash");
+    setTimeout(function () { $(element).removeClass("flash"); }, 2000);
+}
 
 /*
- * extend the jquery object to add a highlight effect method
- * usage: $("div").animateHighlight("#dd0000", 1000);
- * from: http://stackoverflow.com/questions/275931/how-do-you-make-an-element-flash-in-jquery
+ * Returns the brightness of an rgb-color
+ * from: http:// www.w3.org/WAI/ER/WD-AERT/#color-contrast
  */
-$.fn.animateHighlight = function (highlightColor, duration) {
-    var highlightBg = highlightColor || "#FFFF9C";
-    var animateMs = duration || 1500;
-    var originalBg = this.css("backgroundColor");
-    this.stop().css("background-color", highlightBg).animate({backgroundColor: originalBg}, animateMs);
-};
+function brightness(rgb) {
+    return rgb.r * 0.299 + rgb.g * 0.587 + rgb.b * 0.114;
+}
+
+/*
+ * Returns the readable text color based on the brightness of a given backgroud color
+ */
+function getReadableColorFor(color) {
+    var textColor;
+    try {
+        textColor = brightness(d3.rgb(color)) < 125 ? "#eee" : "#000";
+    } catch (err) {
+        textColor = "#000";
+    }
+    return textColor;
+}
 
 // function used to remove fields in the datasets form
 function remove_fields(link) {
