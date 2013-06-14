@@ -55,13 +55,5 @@ module UnipeptWeb
     config.rubycas.validate_url = "https://login.ugent.be/samlValidate"
     config.rubycas.logger = Rails.logger
     config.rubycas.enable_single_sign_out = true
-    
-    ### Part of a Spork hack. See http://bit.ly/arY19y
-    if Rails.env.test?
-      initializer :after => :initialize_dependency_mechanism do
-        # Work around initializer in railties/lib/rails/application/bootstrap.rb
-        ActiveSupport::Dependencies.mechanism = :load
-      end
-    end
   end
 end

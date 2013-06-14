@@ -29,18 +29,17 @@ gem 'newrelic_rpm'
 gem 'httparty'
 
 group :development do
-  gem 'rspec-rails'
-	gem 'annotate-models'
-	gem "rake"
-	gem 'sprockets'
+  gem 'annotate-models'
+  gem "rake"
+  gem 'sprockets'
 end
 
 group :test do
-  gem 'rspec'
-  gem 'webrat'
-	gem 'spork'
-	gem 'be_valid_asset'
-#	gem 'factory_girl_rails'
+  gem 'turn'
+end
+
+group :test, :development do
+  gem 'minitest-rails'
 end
 
 # Gems used only for assets and not required
