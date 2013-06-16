@@ -340,15 +340,16 @@ public class PeptideLoaderData {
 			if (rs.next() && rs.getInt("aantal") == 0) {
 				getTaxon.setInt(1, taxonId);
 				rs = getTaxon.executeQuery();
-				rs.next();
-				if (rs.getBoolean("valid_taxon")) {
-					addLineage.setInt(1, taxonId);
-					addLineage.executeUpdate();
-				} else {
-					addInvalidLineage.setInt(1, taxonId);
-					addInvalidLineage.executeUpdate();
+				if (rs.next()) {
+					if (rs.getBoolean("valid_taxon")) {
+						addLineage.setInt(1, taxonId);
+						addLineage.executeUpdate();
+					} else {
+						addInvalidLineage.setInt(1, taxonId);
+						addInvalidLineage.executeUpdate();
+					}
+					updateLineage(taxonId, taxonId);
 				}
-				updateLineage(taxonId, taxonId);
 			}
 			rs.close();
 		} catch (SQLException e) {
