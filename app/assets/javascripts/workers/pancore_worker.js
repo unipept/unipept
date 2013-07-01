@@ -65,7 +65,8 @@ function addData(bioproject_id, set) {
 
 // Retrieves the unique sequences
 function getUniqueSequences() {
-    getJSONByPost("/pancore/unique_sequences/", "sequences=[1,2,3]", function (json_data) {
+    var r = cores[0];
+    getJSONByPost("/pancore/unique_sequences/", "sequences=[" + r + "]", function (json_data) {
         sendToHost("log", json_data);
     });
 }
