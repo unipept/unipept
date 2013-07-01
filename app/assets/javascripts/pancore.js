@@ -18,8 +18,9 @@ function init_pancore() {
 
     // animation and style stuff
     var transitionDuration = 500,
-        panColor = "steelblue",
-        coreColor = "#ff7f0e";
+        panColor = "#1f77b4",     // blue
+        coreColor = "#ff7f0e",    // orange
+        unicoreColor = "#2ca02c"; // green
 
     // load vars
     var dataQueue = [],
@@ -557,6 +558,25 @@ function init_pancore() {
             .attr("cx", function (d) { return x(d.bioproject_id); })
             .attr("cy", function (d) { return y(d.core); });
         coreDots.exit()
+            .transition()
+                .attr("cy", height / 2)
+                .attr("cx", width)
+            .remove();
+        var unicoreDots = svg.selectAll(".dot.unicore")
+            .data(visData.filter(function (entry) {
+                    return entry.unicore != null;
+                }), function (d) {return d.bioproject_id; });
+        unicoreDots.enter().append("circle")
+            .attr("class", function (d) { return "dot unicore _" + d.bioproject_id; })
+            .attr("r", 5)
+            .attr("fill", unicoreColor)
+            .attr("cx", width)
+            .attr("cy", y(0));
+        unicoreDots.transition()
+            .duration(transitionDuration)
+            .attr("cx", function (d) { return x(d.bioproject_id); })
+            .attr("cy", function (d) { return y(d.unicore); });
+        unicoreDots.exit()
             .transition()
                 .attr("cy", height / 2)
                 .attr("cx", width)
