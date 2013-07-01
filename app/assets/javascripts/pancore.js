@@ -657,7 +657,8 @@ function init_pancore() {
             if (d.unicore != null) {
                 svg.select(".axisline.unicore")
                     .attr("y1", y(d.unicore))
-                    .attr("y2", y(d.unicore));
+                    .attr("y2", y(d.unicore))
+                    .style("visibility", "visible");
             }
 
             // show tooltip
