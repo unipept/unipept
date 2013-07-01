@@ -111,7 +111,7 @@ function recalculatePanCore(newOrder, start, stop) {
 function calculateUnicore(ud) {
     unicoreData = ud;
     unicores[0] = unicoreData;
-    for (var i = 1; i <= order.length; i++) {
+    for (var i = 1; i < order.length; i++) {
         var set = data[order[i]];
         unicores[i] = intersection(unicores[i - 1], set);
     }
