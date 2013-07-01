@@ -111,6 +111,6 @@ class PancoreproteomeController < ApplicationController
   def get_unique_sequences
     sequences = JSON(params[:sequences])
     lca = params[:lca]
-    render json: Oj.dump(sequences, mode: :compat)
+    render json: Oj.dump(sequences.reverse, mode: :compat)
   end
 end

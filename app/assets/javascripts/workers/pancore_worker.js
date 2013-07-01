@@ -24,6 +24,9 @@ self.addEventListener('message', function (e) {
     case 'recalculatePanCore':
         recalculatePanCore(data.msg.order, data.msg.start, data.msg.stop);
         break;
+    case 'getUniqueSequences':
+        getUniqueSequences();
+        break;
     default:
         sendToHost("error", data.msg);
     }
@@ -58,6 +61,13 @@ function addData(bioproject_id, set) {
     temp.pan = pan.length;
     temp.core = core.length;
     sendToHost("addData", temp);
+}
+
+// Retrieves the unique sequences
+function getUniqueSequences() {
+    getJSONByPost("/pancore/unique_sequences/", "sequences=[1,2,3]", function (json_data) {
+        sendToHost("log", json_data);
+    });
 }
 
 // Removes a genomes from the data
@@ -122,6 +132,24 @@ function getJSON(url, callback) {
         }
     };
     req.send(null);
+}
+
+// Wrapper around xhr json request
+function getJSONByPost(url, data, callback) {
+    var req = new XMLHttpRequest();
+    req.open('POST', url, true);
+    req.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+    req.onreadystatechange = function () {
+        if (req.readyState === 4) {
+            if (req.status === 200) {
+                var data = JSON.parse(req.responseText);
+                callback(data);
+            } else {
+                error("request error for " + url, "It seems like something went wrong while we loaded the data");
+            }
+        }
+    };
+    req.send(data);
 }
 
 // union and intersection for sorted arrays

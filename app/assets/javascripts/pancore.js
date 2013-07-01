@@ -165,6 +165,9 @@ function init_pancore() {
     $("#species_id").val(470);
     $("#load_proteome").click();
 
+    // REMOVE THIS LINE
+    sendToWorker("getUniqueSequences");
+
     // Sends a command and message to the worker
     function sendToWorker(command, message) {
         worker.postMessage({'cmd': command, 'msg': message});
