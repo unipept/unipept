@@ -81,6 +81,7 @@ function removeData(bioproject_id, newOrder, start) {
     delete data[bioproject_id];
     pans.splice(l - 1, 1);
     cores.splice(l - 1, 1);
+    unicores.splice(l - 1, 1);
     recalculatePanCore(newOrder, start, l - 2);
 }
 

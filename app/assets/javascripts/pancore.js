@@ -784,5 +784,8 @@ function init_pancore() {
         svg.selectAll(".dot.core._" + dragId).transition()
             .duration(transitionDuration)
             .attr("fill", coreColor);
+        svg.selectAll(".dot.unicore._" + dragId).transition()
+            .duration(transitionDuration)
+            .attr("fill", unicoreColor);
     }
 }
