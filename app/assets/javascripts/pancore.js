@@ -630,7 +630,8 @@ function init_pancore() {
             .attr("width", mouseOverWidth);
         bars.exit().remove();
 
-        // Put the trash on top
+        // Put the handlebars trash on top
+        $(".bar").parent().append($(".bar"));
         $("#trash").parent().append($("#trash"));
     }
 
@@ -664,11 +665,13 @@ function init_pancore() {
                 .attr("y2", y(d.core));
 
             // show tooltip
-            tooltip
-                .style("visibility", "visible")
-                .html("<b>" + genome.name + "</b><br/>" +
-                "<span style='color: " + panColor + ";'>&#9632;</span> pan: <b>" + d3.format(",")(d.pan) + "</b><br/>" +
-                "<span style='color: " + coreColor + ";'>&#9632;</span> core: <b>" + d3.format(",")(d.core) + "</b>");
+            var tooltipHtml = "<b>" + genome.name + "</b><br/>" +
+            "<span style='color: " + panColor + ";'>&#9632;</span> pan peptides: <b>" + d3.format(",")(d.pan) + "</b><br/>" +
+            "<span style='color: " + coreColor + ";'>&#9632;</span> core peptides: <b>" + d3.format(",")(d.core) + "</b>";
+            if (d.unicore != null) {
+                tooltipHtml += "<br/><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptides: <b>" + d3.format(",")(d.unicore) + "</b>";
+            }
+            tooltip.html(tooltipHtml).style("visibility", "visible");
         }
     }
     function mouseOut(d) {
