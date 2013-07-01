@@ -2,6 +2,7 @@
 var data = {},
     unicoreData = [],
     order = [],
+    lca = 0,
     pan = [],
     core = [],
     pans = [],
@@ -68,8 +69,9 @@ function addData(bioproject_id, set) {
 }
 
 // Retrieves the unique sequences
-function getUniqueSequences(lca) {
-    var r = cores[0];
+function getUniqueSequences(l) {
+    lca = l
+    var r = data[order[0]];
     getJSONByPost("/pancore/unique_sequences/", "lca=" + lca + "&sequences=[" + r + "]", calculateUnicore);
 }
 
@@ -94,6 +96,9 @@ function recalculatePanCore(newOrder, start, stop) {
         } else {
             cores[i] = intersection(cores[i - 1], set);
             pans[i] = union(pans[i - 1], set);
+            if (start !== 0) {
+                unicores[i] = intersection(unicores[i - 1], set);
+            }
         }
     }
     var response = [];
@@ -102,9 +107,15 @@ function recalculatePanCore(newOrder, start, stop) {
         temp.bioproject_id = order[i];
         temp.pan = pans[i].length;
         temp.core = cores[i].length;
+        if (start !== 0) {
+            temp.unicore = unicores[i].length;
+        }
         response.push(temp);
     }
     sendToHost("setVisData", response);
+    if (start === 0) {
+        getUniqueSequences(lca);
+    }
 }
 
 // Calculates the unique peptides data
@@ -132,6 +143,7 @@ function clearAllData() {
     data = {};
     unicoreData = [];
     order = [];
+    lca = 0;
     pan = [];
     core = [];
     pans = [];
