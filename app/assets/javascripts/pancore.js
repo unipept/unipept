@@ -1,8 +1,26 @@
 function init_pancore() {
+    // constants
+    // animation and style stuff
+    var transitionDuration = 500,
+    panColor = "#1f77b4",     // blue
+    coreColor = "#ff7f0e",    // orange
+    unicoreColor = "#2ca02c"; // green
+
+    // Size
+    var margin = {top: 20, right: 40, bottom: 170, left: 60},
+        fullWidth = 930,
+        fullHeight = 600,
+        width = fullWidth - margin.left - margin.right,
+        height = fullHeight - margin.top - margin.bottom;
+
+    // variables
     // Data and workers
     var visData = [],
         tableData = {},
-        speciesId,
+        legendData = [{"name": "pan proteome", "color": panColor}, 
+            {"name": "core proteome", "color": coreColor},
+            {"name": "unique peptides", "color": unicoreColor}],
+        currentSpeciesId,
         worker = new Worker("/assets/workers/pancore_worker.js");
 
     // D3 vars
@@ -16,23 +34,10 @@ function init_pancore() {
         onTrash = false,
         dragId;
 
-    // animation and style stuff
-    var transitionDuration = 500,
-        panColor = "#1f77b4",     // blue
-        coreColor = "#ff7f0e",    // orange
-        unicoreColor = "#2ca02c"; // green
-
     // load vars
     var dataQueue = [],
         toLoad,
         mayStartAnimation = true;
-
-    // Size
-    var margin = {top: 20, right: 40, bottom: 170, left: 60},
-        fullWidth = 930,
-        fullHeight = 600,
-        width = fullWidth - margin.left - margin.right,
-        height = fullHeight - margin.top - margin.bottom;
 
     // Scales
     var x = d3.scale.ordinal()
@@ -92,8 +97,8 @@ function init_pancore() {
         setLoading(true);
         clearAllData();
 
-        speciesId = $("#species_id").val();
-        var url = "/pancore/genomes/" + speciesId + ".json";
+        currentSpeciesId = $("#species_id").val();
+        var url = "/pancore/genomes/" + currentSpeciesId + ".json";
         $.getJSON(url, function (genomes) {
             clearTable();
             toLoad = genomes.length;
@@ -190,7 +195,7 @@ function init_pancore() {
             $("#genomes_table tbody").sortable("option", "disabled", false);
 
             // REMOVE THIS LINE
-            sendToWorker("getUniqueSequences", {"lca" : speciesId});
+            sendToWorker("getUniqueSequences", {"lca" : currentSpeciesId});
         }
     }
 
@@ -402,7 +407,7 @@ function init_pancore() {
 
         // add legend
         var legend = svg.selectAll(".legend")
-            .data([{"name": "pan proteome", "color": panColor}, {"name": "core proteome", "color": coreColor}])
+            .data(legendData)
           .enter().append("g")
             .attr("class", "legend")
             .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; });
@@ -414,8 +419,7 @@ function init_pancore() {
             .style("fill", function (d) { return d.color; });
         legend.append("text")
             .attr("x", 40)
-            .attr("y", 4)
-            .attr("dy", ".35em")
+            .attr("y", 8)
             .style("text-anchor", "start")
             .text(function (d) { return d.name; });
 
