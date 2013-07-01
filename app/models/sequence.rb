@@ -121,4 +121,9 @@ class Sequence < ActiveRecord::Base
     end
     File.open("public/progress", 'w') { |file| file.write("batch process#100") }
   end
+
+  # Filters a list of sequences for a given lca
+  def self.filter_unique_peptides(sequences, lca)
+    connection.select_values(Sequence.select(:id).where(:id => sequences, :lca => lca).to_sql).to_a.sort!
+  end
 end

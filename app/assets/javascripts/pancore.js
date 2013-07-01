@@ -2,6 +2,7 @@ function init_pancore() {
     // Data and workers
     var visData = [],
         tableData = {},
+        speciesId,
         worker = new Worker("/assets/workers/pancore_worker.js");
 
     // D3 vars
@@ -90,8 +91,8 @@ function init_pancore() {
         setLoading(true);
         clearAllData();
 
-        var id = $("#species_id").val(),
-            url = "/pancore/genomes/" + id + ".json";
+        speciesId = $("#species_id").val();
+        var url = "/pancore/genomes/" + speciesId + ".json";
         $.getJSON(url, function (genomes) {
             clearTable();
             toLoad = genomes.length;
@@ -188,7 +189,7 @@ function init_pancore() {
             $("#genomes_table tbody").sortable("option", "disabled", false);
 
             // REMOVE THIS LINE
-            sendToWorker("getUniqueSequences");
+            sendToWorker("getUniqueSequences", {"lca" : speciesId});
         }
     }
 

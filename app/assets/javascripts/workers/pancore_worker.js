@@ -25,7 +25,7 @@ self.addEventListener('message', function (e) {
         recalculatePanCore(data.msg.order, data.msg.start, data.msg.stop);
         break;
     case 'getUniqueSequences':
-        getUniqueSequences();
+        getUniqueSequences(data.msg.lca);
         break;
     default:
         sendToHost("error", data.msg);
@@ -64,9 +64,9 @@ function addData(bioproject_id, set) {
 }
 
 // Retrieves the unique sequences
-function getUniqueSequences() {
+function getUniqueSequences(lca) {
     var r = cores[0];
-    getJSONByPost("/pancore/unique_sequences/", "sequences=[" + r + "]", function (json_data) {
+    getJSONByPost("/pancore/unique_sequences/", "lca=" + lca + "&sequences=[" + r + "]", function (json_data) {
         sendToHost("log", json_data);
     });
 }
