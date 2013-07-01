@@ -107,4 +107,10 @@ class PancoreproteomeController < ApplicationController
     end
   end
 
+  # Returns a filtered list of unique sequence id's for a given LCA
+  def get_unique_sequences
+    sequences = JSON(params[:sequences])
+    lca = params[:lca]
+    render json: Oj.dump(sequences, mode: :compat)
+  end
 end
