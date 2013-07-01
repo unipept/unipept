@@ -92,7 +92,7 @@ class PancoreproteomeController < ApplicationController
   end
 
   # Returns a list of all sequence_ids for a given bioproject_id
-  def sequence_ids
+  def get_sequence_ids_for_bioproject
     cache = GenomeCache.get_by_bioproject_id(params[:bioproject_id])
     respond_to do |format|
       format.json { render json: cache.json_sequences }
@@ -100,10 +100,11 @@ class PancoreproteomeController < ApplicationController
   end
 
   # Returns a list of genomes for a given species_id
-  def genomes
+  def get_genomes_of_species
     genomes = Genome.get_by_species_id(params[:species_id])
     respond_to do |format|
       format.json { render json: Oj.dump(genomes, mode: :compat) }
     end
   end
+
 end
