@@ -1,9 +1,12 @@
 // vars
 var data = {},
+    unicoreData = [],
+    order = [],
     pan = [],
     core = [],
     pans = [],
-    cores = [];
+    cores = [],
+    unicores = [];
 
 // Add an event handler to the worker
 self.addEventListener('message', function (e) {
@@ -48,6 +51,7 @@ function loadData(bioproject_id) {
 function addData(bioproject_id, set) {
     // Store data for later use
     data[bioproject_id] = set;
+    order.push(bioproject_id);
 
     // Calculate pan and core
     core = pan.length === 0 ? set : intersection(core, set);
@@ -66,23 +70,22 @@ function addData(bioproject_id, set) {
 // Retrieves the unique sequences
 function getUniqueSequences(lca) {
     var r = cores[0];
-    getJSONByPost("/pancore/unique_sequences/", "lca=" + lca + "&sequences=[" + r + "]", function (json_data) {
-        sendToHost("log", json_data);
-    });
+    getJSONByPost("/pancore/unique_sequences/", "lca=" + lca + "&sequences=[" + r + "]", calculateUnicore);
 }
 
 // Removes a genomes from the data
-function removeData(bioproject_id, order, start) {
+function removeData(bioproject_id, newOrder, start) {
     var l = pans.length;
     delete data[bioproject_id];
     pans.splice(l - 1, 1);
     cores.splice(l - 1, 1);
-    recalculatePanCore(order, start, l - 2);
+    recalculatePanCore(newOrder, start, l - 2);
 }
 
 // Recalculates the pan and core data based on a
 // given order, from start till stop
-function recalculatePanCore(order, start, stop) {
+function recalculatePanCore(newOrder, start, stop) {
+    order = newOrder;
     for (var i = start; i <= stop; i++) {
         var set = data[order[i]];
         if (i === 0) {
@@ -104,13 +107,36 @@ function recalculatePanCore(order, start, stop) {
     sendToHost("setVisData", response);
 }
 
+// Calculates the unique peptides data
+function calculateUnicore(ud) {
+    unicoreData = ud;
+    unicores[0] = unicoreData;
+    for (var i = 1; i <= order.length; i++) {
+        var set = data[order[i]];
+        unicores[i] = intersection(unicores[i - 1], set);
+    }
+    var response = [];
+    for (var i = 0; i < order.length; i++) {
+        var temp = {};
+        temp.bioproject_id = order[i];
+        temp.pan = pans[i].length;
+        temp.core = cores[i].length;
+        temp.unicore = unicores[i].length;
+        response.push(temp);
+    }
+    sendToHost("setVisData", response);
+}
+
 // Resets the data vars
 function clearAllData() {
     data = {};
+    unicoreData = [];
+    order = [];
     pan = [];
     core = [];
     pans = [];
     cores = [];
+    unicores = [];
 }
 
 // Provide an error function with the same signature as in the host
