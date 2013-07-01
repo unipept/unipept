@@ -63,6 +63,10 @@ function init_pancore() {
         .interpolate("linear")
         .x(function (d) { return x(d.bioproject_id); })
         .y(function (d) { return y(d.core); });
+    var unicoreLine = d3.svg.line()
+        .interpolate("linear")
+        .x(function (d) { return x(d.bioproject_id); })
+        .y(function (d) { return y(d.unicore); });
 
     // Add eventhandlers to the worker
     worker.addEventListener('message', function (e) {
@@ -438,6 +442,13 @@ function init_pancore() {
             .style("stroke-width", 2)
             .style("fill", "none")
             .attr("d", coreLine);
+        svg.append("path")
+            .datum(visData)
+            .attr("class", "line unicore")
+            .style("stroke", unicoreColor)
+            .style("stroke-width", 2)
+            .style("fill", "none")
+            .attr("d", unicoreLine);
 
         // add gray hairlines
         svg.insert("line", ".dot")
@@ -602,10 +613,18 @@ function init_pancore() {
                     .style("stroke", coreColor)
                     .attr("d", coreLine);
         } else {
-            svg.select(".line.pan")
-                .style("visibility", "hidden");
-            svg.select(".line.core")
-                .style("visibility", "hidden");
+            svg.select(".line.pan").style("visibility", "hidden");
+            svg.select(".line.core").style("visibility", "hidden");
+        }
+        if (visData.length > 0 && visData[0].unicore != null) {
+            svg.select(".line.unicore").datum(dataCopy)
+                .style("visibility", "visible")
+                .transition()
+                    .duration(transitionDuration)
+                    .style("stroke", unicoreColor)
+                    .attr("d", unicoreLine);
+        } else {
+            svg.select(".line.unicore").style("visibility", "hidden");
         }
 
         // update the mouseover rects
