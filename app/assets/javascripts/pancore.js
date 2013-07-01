@@ -450,18 +450,6 @@ function init_pancore() {
             .style("fill", "none")
             .attr("d", unicoreLine);
 
-        // add gray hairlines
-        svg.insert("line", ".dot")
-            .attr("class", "hairline pan")
-            .attr("stroke", "#cccccc")
-            .attr("shape-rendering", "crispEdges")
-            .style("visibility", "hidden");
-        svg.insert("line", ".dot")
-            .attr("class", "hairline core")
-            .attr("stroke", "#cccccc")
-            .attr("shape-rendering", "crispEdges")
-            .style("visibility", "hidden");
-
         // add axis marks
         svg.insert("line")
             .attr("class", "axisline pan")
@@ -662,18 +650,6 @@ function init_pancore() {
 
             var genome = tableData[d.bioproject_id];
 
-            svg.select(".hairline.core")
-                .style("visibility", "visible")
-                .attr("x1", x(visData[Math.max(0, genome.position - 1)].bioproject_id))
-                .attr("x2", x(visData[Math.min(visData.length - 1, genome.position + 1)].bioproject_id))
-                .attr("y1", y(d.core))
-                .attr("y2", y(d.core));
-            svg.select(".hairline.pan")
-                .style("visibility", "visible")
-                .attr("x1", x(visData[Math.max(0, genome.position - 1)].bioproject_id))
-                .attr("x2", x(visData[Math.min(visData.length - 1, genome.position + 1)].bioproject_id))
-                .attr("y1", y(d.pan))
-                .attr("y2", y(d.pan));
             svg.select(".axisline.pan")
                 .style("visibility", "visible")
                 .attr("y1", y(d.pan))
@@ -695,7 +671,6 @@ function init_pancore() {
     }
     function mouseOut(d) {
         svg.selectAll(".dot._" + d.bioproject_id).attr("filter", "");
-        svg.selectAll(".hairline").style("visibility", "hidden");
         svg.selectAll(".axisline").style("visibility", "hidden");
         tooltip.style("visibility", "hidden");
     }
