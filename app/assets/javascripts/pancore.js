@@ -432,36 +432,32 @@ function init_pancore() {
             .datum(visData)
             .attr("class", "line pan")
             .style("stroke", panColor)
-            .style("stroke-width", 2)
-            .style("fill", "none")
             .attr("d", panLine);
         svg.append("path")
             .datum(visData)
             .attr("class", "line core")
             .style("stroke", coreColor)
-            .style("stroke-width", 2)
-            .style("fill", "none")
             .attr("d", coreLine);
         svg.append("path")
             .datum(visData)
             .attr("class", "line unicore")
             .style("stroke", unicoreColor)
-            .style("stroke-width", 2)
-            .style("fill", "none")
             .attr("d", unicoreLine);
+        svg.selectAll("path.line")    
+            .style("stroke-width", 2)
+            .style("fill", "none");
 
         // add axis marks
         svg.insert("line")
             .attr("class", "axisline pan")
-            .attr("stroke", panColor)
-            .attr("stroke-width", "2")
-            .attr("x1", "6")
-            .attr("x2", "-6")
-            .attr("shape-rendering", "crispEdges")
-            .style("visibility", "hidden");
+            .attr("stroke", panColor);
         svg.insert("line")
             .attr("class", "axisline core")
-            .attr("stroke", coreColor)
+            .attr("stroke", coreColor);
+        svg.insert("line")
+            .attr("class", "axisline unicore")
+            .attr("stroke", unicoreColor);
+        svg.selectAll("line.axisline")
             .attr("stroke-width", "2")
             .attr("x1", "6")
             .attr("x2", "-6")
@@ -651,13 +647,18 @@ function init_pancore() {
             var genome = tableData[d.bioproject_id];
 
             svg.select(".axisline.pan")
-                .style("visibility", "visible")
                 .attr("y1", y(d.pan))
-                .attr("y2", y(d.pan));
+                .attr("y2", y(d.pan))
+                .style("visibility", "visible");
             svg.select(".axisline.core")
-                .style("visibility", "visible")
                 .attr("y1", y(d.core))
-                .attr("y2", y(d.core));
+                .attr("y2", y(d.core))
+                .style("visibility", "visible");
+            if (d.unicore != null) {
+                svg.select(".axisline.unicore")
+                    .attr("y1", y(d.unicore))
+                    .attr("y2", y(d.unicore));
+            }
 
             // show tooltip
             var tooltipHtml = "<b>" + genome.name + "</b><br/>" +
