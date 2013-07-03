@@ -97,12 +97,20 @@ function init_pancore() {
     }, false);
 
     // Add handler to the form
-    $("#load_proteome").click(function () {
+    $("#load_species_proteome, #load_genus_proteome").click(function () {
+        var rank;
         setLoading(true);
         clearAllData();
+        
+        if(this.id == "load_species_proteome"){
+            currentSpeciesId = $("#species_id").val();
+            rank = "species";
+        } else {
+            currentSpeciesId = $("#genus_id").val();
+            rank = "genus";
+        }
 
-        currentSpeciesId = $("#species_id").val();
-        var url = "/pancore/genomes/" + currentSpeciesId + ".json";
+        var url = "/pancore/genomes/" + rank + "/" + currentSpeciesId + ".json";
         $.getJSON(url, function (genomes) {
             clearTable();
             toLoad = genomes.length;
@@ -174,7 +182,7 @@ function init_pancore() {
 
     // Load sample data
     $("#species_id").val(470);
-    $("#load_proteome").click();
+    $("#load_species_proteome").click();
 
     // Sends a command and message to the worker
     function sendToWorker(command, message) {
@@ -190,11 +198,11 @@ function init_pancore() {
     // Gets called when the data is (done) loading
     function setLoading(loading) {
         if (loading) {
-            $("#load_proteome").button('loading');
+            $("#load_species_proteome, #load_genus_proteome").button('loading');
             setTableMessage("refresh", "Please wait while we load the genomes for this species.");
             $("#genomes_table tbody").sortable("option", "disabled", true);
         } else {
-            $("#load_proteome").button('reset');
+            $("#load_species_proteome, #load_genus_proteome").button('reset');
             setTableMessage("chevron-down", "Drag rows to reorder them in the chart.");
             $("#genomes_table tbody").sortable("option", "disabled", false);
 

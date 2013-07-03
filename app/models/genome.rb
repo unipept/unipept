@@ -25,9 +25,25 @@ class Genome < ActiveRecord::Base
     ORDER BY name")
   end
 
+  def self.get_genome_genera()
+    # order by uses filesort since there's no index on taxon name
+    return connection.select_all("SELECT taxons.name, taxons.id, count(*) AS num 
+    FROM genomes 
+    LEFT JOIN taxons ON (genomes.genus_id = taxons.id) 
+    WHERE taxons.id IS NOT NULL 
+    GROUP BY genus_id 
+    HAVING num > 1 
+    ORDER BY name")
+  end
+
   # returns a set of genome objects for a given species_id
   def self.get_by_species_id(species_id)
     Genome.select("bioproject_id, name").where("species_id = ?", species_id).group("bioproject_id")
+  end
+
+  # returns a set of genome objects for a given genus_id
+  def self.get_by_genus_id(genus_id)
+    Genome.select("bioproject_id, name").where("genus_id = ?", genus_id).group("bioproject_id")
   end
 
   # fills in the species_id and genus_id columns

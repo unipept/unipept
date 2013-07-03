@@ -89,6 +89,7 @@ class PancoreproteomeController < ApplicationController
 
   def analyze
     @species = Genome.get_genome_species().map{|g| [g["name"], g["id"]]}
+    @genera = Genome.get_genome_genera().map{|g| [g["name"], g["id"]]}
   end
 
   # Returns a list of all sequence_ids for a given bioproject_id
@@ -99,9 +100,9 @@ class PancoreproteomeController < ApplicationController
     end
   end
 
-  # Returns a list of genomes for a given species_id
-  def get_genomes_of_species
-    genomes = Genome.get_by_species_id(params[:species_id])
+  # Returns a list of genomes for a given species_id or genus_id
+  def get_genomes
+    genomes = params[:genus_id].nil? ? Genome.get_by_species_id(params[:species_id]) : Genome.get_by_genus_id(params[:genus_id])
     respond_to do |format|
       format.json { render json: Oj.dump(genomes, mode: :compat) }
     end
