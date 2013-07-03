@@ -649,8 +649,9 @@ function init_pancore() {
     // Mouse event functions
     function mouseOver(d) {
         if (!isDragging) {
-            // add dropshadow to the dot
+            // add dropshadow to the dot and axis text
             svg.selectAll(".dot._" + d.bioproject_id).attr("filter", "url(#dropshadow)");
+            svg.selectAll(".tick._" + d.bioproject_id + " text").style("font-weight", "bold");
 
             var genome = tableData[d.bioproject_id];
 
@@ -680,14 +681,18 @@ function init_pancore() {
         }
     }
     function mouseOut(d) {
-        svg.selectAll(".dot._" + d.bioproject_id).attr("filter", "");
+        if (!isDragging) {
+            svg.selectAll(".dot._" + d.bioproject_id).attr("filter", "");
+            svg.selectAll(".tick._" + d.bioproject_id + " text").style("font-weight", "normal");
+        }
         svg.selectAll(".axisline").style("visibility", "hidden");
         tooltip.style("visibility", "hidden");
     }
     function mouseMove(d) {
-        // Hide the tooltip while dragging
+        // Hide the tooltip and axislines while dragging
         if (isDragging) {
-            mouseOut(d);
+            svg.selectAll(".axisline").style("visibility", "hidden");
+            tooltip.style("visibility", "hidden");
         } else {
             if (window.fullScreenApi.isFullScreen()) {
                 tooltip.style("top", (d3.event.clientY + 15) + "px").style("left", (d3.event.clientX + 15) + "px");
@@ -701,7 +706,6 @@ function init_pancore() {
         dragId = d.bioproject_id;
         dragging[d.bioproject_id] = this.__origin__ = x(d.bioproject_id);
         svg.selectAll(".bar").style("cursor", "url(/closedhand.cur) 7 5, move");
-        svg.selectAll(".tick._" + d.bioproject_id + " text").style("font-weight", "bold");
         svg.select("#trash").transition().duration(transitionDuration).attr("transform", "translate(-84 0)");
     }
     function drag(d) {
@@ -731,7 +735,6 @@ function init_pancore() {
         delete this.__origin__;
         delete dragging[d.bioproject_id];
         svg.selectAll(".bar").style("cursor", "url(/openhand.cur) 7 5, move");
-        svg.selectAll(".tick._" + d.bioproject_id + " text").style("font-weight", "normal");
         svg.select("#trash").transition()
             .delay(onTrash ? transitionDuration : 0)
             .duration(transitionDuration)
