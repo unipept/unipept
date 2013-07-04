@@ -3,8 +3,6 @@ var data = {},
     unicoreData = [],
     order = [],
     lca = 0,
-    pan = [],
-    core = [],
     pans = [],
     cores = [],
     unicores = [];
@@ -55,8 +53,8 @@ function addData(bioproject_id, set) {
     order.push(bioproject_id);
 
     // Calculate pan and core
-    core = pan.length === 0 ? set : intersection(core, set);
-    pan = union(pan, set);
+    var core = cores.length === 0 ? set : intersection(cores[cores.length - 1], set);
+    var pan = pans.length === 0 ? set : union(pans[pans.length - 1], set);
     pans.push(pan);
     cores.push(core);
 
@@ -70,7 +68,7 @@ function addData(bioproject_id, set) {
 
 // Retrieves the unique sequences
 function getUniqueSequences(l) {
-    lca = l
+    lca = l;
     var r = data[order[0]];
     getJSONByPost("/pancore/unique_sequences/", "lca=" + lca + "&sequences=[" + r + "]", calculateUnicore);
 }
@@ -145,8 +143,6 @@ function clearAllData() {
     unicoreData = [];
     order = [];
     lca = 0;
-    pan = [];
-    core = [];
     pans = [];
     cores = [];
     unicores = [];
