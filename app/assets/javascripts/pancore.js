@@ -207,7 +207,7 @@ function init_pancore() {
             $("#genomes_table tbody").sortable("option", "disabled", false);
 
             // REMOVE THIS LINE
-            sendToWorker("getUniqueSequences", {"lca" : currentSpeciesId});
+            sendToWorker("getUniqueSequences", {"lca" : currentSpeciesId, "type" : "uniprot"});
         }
     }
 

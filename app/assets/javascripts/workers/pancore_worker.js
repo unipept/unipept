@@ -1,11 +1,13 @@
 // vars
 var data = {},
     unicoreData = [],
+    unicore2Data = [],
     order = [],
     lca = 0,
     pans = [],
     cores = [],
-    unicores = [];
+    unicores = []
+    unicores2 = [];
 
 // Add an event handler to the worker
 self.addEventListener('message', function (e) {
@@ -27,7 +29,7 @@ self.addEventListener('message', function (e) {
         recalculatePanCore(data.msg.order, data.msg.start, data.msg.stop);
         break;
     case 'getUniqueSequences':
-        getUniqueSequences(data.msg.lca);
+        getUniqueSequences(data.msg.lca, data.msg.type);
         break;
     default:
         sendToHost("error", data.msg);
@@ -67,10 +69,10 @@ function addData(bioproject_id, set) {
 }
 
 // Retrieves the unique sequences
-function getUniqueSequences(l) {
+function getUniqueSequences(l, type) {
     lca = l;
     var r = data[order[0]];
-    getJSONByPost("/pancore/unique_sequences/", "lca=" + lca + "&sequences=[" + r + "]", calculateUnicore);
+    getJSONByPost("/pancore/unique_sequences/", "type=" + type + "&lca=" + lca + "&sequences=[" + r + "]", function (d) {calculateUnicore(d, type); });
 }
 
 // Removes a genomes from the data
@@ -97,6 +99,7 @@ function recalculatePanCore(newOrder, start, stop) {
             pans[i] = union(pans[i - 1], set);
             if (start !== 0) {
                 unicores[i] = intersection(unicores[i - 1], set);
+                unicores2[i] = intersection(unicores2[i - 1], set);
             }
         }
     }
@@ -108,22 +111,33 @@ function recalculatePanCore(newOrder, start, stop) {
         temp.core = cores[i].length;
         if (start !== 0) {
             temp.unicore = unicores[i].length;
+            temp.unicore2 = unicores2[i].length;
         }
         response.push(temp);
     }
     sendToHost("setVisData", response);
     if (start === 0) {
-        getUniqueSequences(lca);
+        unicores = [];
+        unicores2 = [];
+        getUniqueSequences(lca, "uniprot");
+        getUniqueSequences(lca, "genomes");
     }
 }
 
 // Calculates the unique peptides data
-function calculateUnicore(ud) {
-    unicoreData = ud;
-    unicores[0] = unicoreData;
+function calculateUnicore(ud, type) {
+    if (type === "uniprot") {
+        unicoreData = ud;
+        unicores[0] = unicoreData;
+        var u = unicores;
+    } else {
+        unicore2Data = ud;
+        unicores2[0] = unicore2Data;
+        var u = unicores2;
+    }
     for (var i = 1; i < order.length; i++) {
         var set = data[order[i]];
-        unicores[i] = intersection(unicores[i - 1], set);
+        u[i] = intersection(u[i - 1], set);
     }
     var response = [];
     for (var i = 0; i < order.length; i++) {
@@ -131,7 +145,8 @@ function calculateUnicore(ud) {
         temp.bioproject_id = order[i];
         temp.pan = pans[i].length;
         temp.core = cores[i].length;
-        temp.unicore = unicores[i].length;
+        if (unicores.length > 0) temp.unicore = unicores[i].length;
+        if (unicores2.length > 0) temp.unicore2 = unicores2[i].length;
         response.push(temp);
     }
     sendToHost("setVisData", response);
@@ -141,11 +156,13 @@ function calculateUnicore(ud) {
 function clearAllData() {
     data = {};
     unicoreData = [];
+    unicore2Data = [];
     order = [];
     lca = 0;
     pans = [];
     cores = [];
     unicores = [];
+    unicores2 = [];
 }
 
 // Provide an error function with the same signature as in the host
