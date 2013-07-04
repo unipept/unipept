@@ -120,7 +120,7 @@ function recalculatePanCore(newOrder, start, stop) {
         unicores = [];
         unicores2 = [];
         getUniqueSequences(lca, "uniprot");
-        getUniqueSequences(lca, "genomes");
+        getUniqueSequences(lca, "genome");
     }
 }
 

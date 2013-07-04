@@ -129,7 +129,7 @@ class Sequence < ActiveRecord::Base
 
   # Filters a list of sequences for a given lca
   def self.filter_unique_genome_peptides(sequences, species_id)
-    a = connection.select_values("SELECT DISTINCT peptides.original_sequence_id FROM genomes 
+    a = connection.select_values("SELECT peptides.original_sequence_id FROM genomes 
     LEFT JOIN refseq_cross_references ON genomes.refseq_id = refseq_cross_references.sequence_id
     LEFT JOIN peptides ON refseq_cross_references.uniprot_entry_id = peptides.uniprot_entry_id
     WHERE peptides.original_sequence_id IN (#{sequences.join(",")})
