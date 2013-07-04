@@ -112,7 +112,7 @@ class PancoreproteomeController < ApplicationController
   def get_unique_sequences
     sequences = JSON(params[:sequences])
     lca = params[:lca]
-    result = Sequence.filter_unique_peptides(sequences, lca)
+    result = Sequence.filter_unique_uniprot_peptides(sequences, lca)
     render json: Oj.dump(result, mode: :compat)
   end
 end

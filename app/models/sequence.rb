@@ -123,7 +123,17 @@ class Sequence < ActiveRecord::Base
   end
 
   # Filters a list of sequences for a given lca
-  def self.filter_unique_peptides(sequences, lca)
+  def self.filter_unique_uniprot_peptides(sequences, lca)
     connection.select_values(Sequence.select(:id).where(:id => sequences, :lca => lca).to_sql).to_a.sort!
+  end
+
+  # Filters a list of sequences for a given lca
+  def self.filter_unique_genome_peptides(sequences, species_id)
+    a = connection.select_values("SELECT DISTINCT peptides.original_sequence_id FROM genomes 
+    LEFT JOIN refseq_cross_references ON genomes.refseq_id = refseq_cross_references.sequence_id
+    LEFT JOIN peptides ON refseq_cross_references.uniprot_entry_id = peptides.uniprot_entry_id
+    WHERE peptides.original_sequence_id IN (#{sequences.join(",")})
+    AND species_id != #{species_id}").to_a
+    return sequences - a
   end
 end
