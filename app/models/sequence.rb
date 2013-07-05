@@ -129,10 +129,16 @@ class Sequence < ActiveRecord::Base
 
   # Filters a list of sequences for a given lca
   def self.filter_unique_genome_peptides(sequences, species_id)
-    a = connection.select_values("SELECT original_sequence_id FROM peptides 
-    WHERE original_sequence_id IN (#{sequences.join(",")}) 
-    AND uniprot_entry_id IN
-    (SELECT uniprot_entry_id FROM genomes LEFT JOIN refseq_cross_references ON genomes.refseq_id = refseq_cross_references.sequence_id WHERE species_id != #{species_id})").to_a
-    return sequences - a
+    #a = connection.select_values("SELECT original_sequence_id FROM peptides 
+    #left join refseq_cross_references on peptides.uniprot_entry_id = refseq_cross_references.uniprot_entry_id
+    #WHERE original_sequence_id IN (#{sequences.join(",")}) 
+    #AND refseq_cross_references.sequence_id IN
+    #(SELECT refseq_id FROM genomes WHERE species_id != #{species_id})").to_a
+    result = sequences
+    GenomeCache.find_by_sql("SELECT DISTINCT genome_caches.* from genome_caches LEFT JOIN genomes ON genome_caches.bioproject_id = genomes.bioproject_id WHERE species_id != #{species_id}").each do |genome|
+      genome = JSON(genome.json_sequences)
+      result = result - genome
+    end
+    return result
   end
 end
