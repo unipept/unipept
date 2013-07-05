@@ -137,7 +137,25 @@ class Sequence < ActiveRecord::Base
     result = sequences
     GenomeCache.find_by_sql("SELECT DISTINCT genome_caches.* from genome_caches LEFT JOIN genomes ON genome_caches.bioproject_id = genomes.bioproject_id WHERE species_id != #{species_id}").each do |genome|
       genome = JSON(genome.json_sequences)
-      result = result - genome
+      r = []
+      i = 0
+      j = 0
+      while i < result.length && j < genome.length do
+        if result[i] > genome[j]
+          j += 1
+        elsif result[i] < genome[j]
+          r << result[i]
+          i += 1
+        else
+          i += 1
+          j += 1
+        end
+      end
+      while i < result.length do
+        r << result[i]
+        i += 1
+      end
+      result = r
     end
     return result
   end
