@@ -245,11 +245,13 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`genomes` (
   `status` VARCHAR(20) NOT NULL ,
   `species_id` MEDIUMINT NULL ,
   `genus_id` MEDIUMINT NULL ,
+  `taxon_id` MEDIUMINT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `idx_refseq_id` (`refseq_id` ASC) ,
   INDEX `idx_bioproject_id` (`bioproject_id` ASC) ,
   INDEX `idx_species_id_bioproject_id` (`species_id` ASC, `bioproject_id` ASC) ,
-  INDEX `idx_genus_id` (`genus_id` ASC) )
+  INDEX `idx_genus_id` (`genus_id` ASC) ),
+  INDEX `idx_taxon_id` (`taxon_id` ASC) )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
 COLLATE = ascii_general_ci;

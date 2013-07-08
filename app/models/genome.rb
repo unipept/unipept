@@ -57,6 +57,7 @@ class Genome < ActiveRecord::Base
       unless lineage.nil?
         genome.species_id = lineage.species
         genome.genus_id = lineage.genus
+        genome.taxon_id = lineage.taxon_id
         genome.save
       end
     end
