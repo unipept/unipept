@@ -13,7 +13,9 @@
 
 class Genome < ActiveRecord::Base
   attr_accessible nil
-  
+
+  belongs_to :lineage, :foreign_key  => "taxon_id", :primary_key  => "taxon_id",  :class_name   => 'Lineage'
+
   def self.get_genome_species()
     # order by uses filesort since there's no index on taxon name
     return connection.select_all("SELECT taxons.name, taxons.id, count(*) AS num 

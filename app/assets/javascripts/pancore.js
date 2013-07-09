@@ -1,3 +1,45 @@
+function init_selection_tree(data) {
+    data = d3.nest()
+        .key(function (d) { return d.lineage.class_; })
+        .key(function (d) { return d.lineage.order; })
+        .key(function (d) { return d.lineage.genus; })
+        .key(function (d) { return d.lineage.species; })
+        .entries(data);
+    var tree = d3.select("#treeView");
+    tree = tree.append("ul").append("li").attr("class", "root not").html("&emsp;").append("ul");
+    var items = tree.selectAll("li").data(data)
+        .enter()
+        .append("li")
+            .html(function (d) { 
+                return "<span>" + d.key + "</span>"; })
+        .append("ul");
+    var items = items.selectAll("li").data(function (d) { return d.values; })
+        .enter()
+        .append("li")
+            .html(function (d) { return "<span>" + d.key + "</span>"; })
+        .append("ul");
+    var items = items.selectAll("li").data(function (d) { return d.values; })
+        .enter()
+        .append("li")
+            .html(function (d) { return "<span>" + d.key + "</span>"; })
+        .append("ul");
+    var items = items.selectAll("li").data(function (d) { return d.values; })
+        .enter()
+        .append("li")
+            .html(function (d) { return "<span>" + d.key + "</span>"; })
+        .append("ul");
+    var items = items.selectAll("li").data(function (d) { return d.values; })
+        .enter()
+        .append("li")
+            .attr("class", "not")
+            .text(function (d) { return d.name; });
+
+    $("#treeView li:not(.not)").addClass("collapsibleListOpen");
+    $("#treeView li:not(.not)").click(function () {
+        $(this).toggleClass("collapsibleListOpen collapsibleListClosed");
+        return false;
+    });
+}
 function init_pancore() {
     // constants
     // animation and style stuff
