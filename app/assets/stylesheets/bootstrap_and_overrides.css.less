@@ -522,46 +522,49 @@ span.dir{
 /*** treeview ***/
 
 #treeView{
-  -moz-user-select:none;
-  position:relative;
+    -moz-user-select:none;
+    position:relative;
 }
 #treeView ul{
-  margin:-5px 0 0 -1.5em;
-  padding:0 0 0 1.5em;
+    margin:-5px 0 0 -1.5em;
+    padding:0 0 0 1.5em;
 }
 #treeView ul ul{
-  background:url('list-item-contents.png') repeat-y left;
+    background:url('list-item-contents.png') repeat-y left;
 }
 #treeView li:last-child > ul{
-  background-image:none;
+    background-image:none;
 }
 #treeView li{
-  margin:0;
-  padding:0;
-  padding-top: 5px;
-  background:asset-url('list-item-root.png') no-repeat top left;
-  list-style-position:inside;
-  list-style-image:asset-url('button.png');
-  cursor:auto;
+    margin:0;
+    padding:0;
+    padding-top: 5px;
+    background:asset-url('list-item-root.png') no-repeat top left;
+    list-style-position:inside;
+    list-style-image:asset-url('button.png');
+    cursor:auto;
 }
 #treeView li.collapsibleListOpen{
-  list-style-image:asset-url('button-open.png');
-  cursor:pointer;
+    list-style-image:asset-url('button-open.png');
+    cursor:pointer;
 }
 #treeView li.collapsibleListClosed{
-  list-style-image:asset-url('button-closed.png');
-  cursor:pointer;
+    list-style-image:asset-url('button-closed.png');
+    cursor:pointer;
 }
 #treeView li.collapsibleListClosed ul{
-  display: none;
+    display: none;
 }
 #treeView li li{
-  background-image:asset-url('list-item.png');
-  padding-left:1.5em;
+    background-image:asset-url('list-item.png');
+    padding-left:1.5em;
 }
 #treeView li:last-child{
-  background-image:asset-url('list-item-last.png');
+    background-image:asset-url('list-item-last.png');
 }
 #treeView li.root{
-  background-image:none;
+    background-image:none;
+}
+#treeView li.unmatch{
+    display: none;
 }

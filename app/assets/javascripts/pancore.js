@@ -6,38 +6,53 @@ function init_selection_tree(data, taxa) {
         .key(function (d) { return d.lineage.species; })
         .entries(data);
     var tree = d3.select("#treeView");
-    tree = tree.append("ul").append("li").attr("class", "root not").html("&emsp;").append("ul");
+    tree = tree.append("ul").append("li").attr("class", "root not").html("<i>root</i>").append("ul");
     var items = tree.selectAll("li").data(data)
         .enter()
         .append("li")
-            .html(function (d) { 
-                return "<span>" + taxa[d.key] + "</span>"; })
+            .html(function (d) { return "<span>" + taxa[d.key] + "</span>"; })
+            .attr("data", function (d) { return taxa[d.key]; })
         .append("ul");
     var items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
         .append("li")
             .html(function (d) { return "<span>" + taxa[d.key] + "</span>"; })
+            .attr("data", function (d) { return taxa[d.key]; })
         .append("ul");
     var items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
         .append("li")
             .html(function (d) { return "<span>" + taxa[d.key] + "</span>"; })
+            .attr("data", function (d) { return taxa[d.key]; })
         .append("ul");
     var items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
         .append("li")
             .html(function (d) { return "<span>" + taxa[d.key] + "</span>"; })
+            .attr("data", function (d) { return taxa[d.key]; })
         .append("ul");
     var items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
         .append("li")
             .attr("class", "not")
+            .attr("data", function (d) { return d.name; })
             .text(function (d) { return d.name; });
-
+    $("#treeView").disableSelection();
     $("#treeView li:not(.not)").addClass("collapsibleListOpen");
     $("#treeView li:not(.not)").click(function () {
         $(this).toggleClass("collapsibleListOpen collapsibleListClosed");
         return false;
+    });
+    $("#treeSearch").keyup(function () {
+        var text = $(this).val();
+        delay(function () {
+            $("#treeView li").removeClass("match unmatch");
+            if (text !== "") {
+                $("#treeView li[data*='" + text + "']").addClass("match");
+                $("#treeView li.match").parents("li").addClass("match");
+                $("#treeView li:not(.match):not(.root)").addClass("unmatch");
+            }
+        }, 500);
     });
 }
 function init_pancore() {

@@ -40,7 +40,11 @@
     <div class="visualClear"></div>
   </div>
 </div>  
-<div id="treeView"></div>
+<div id="treeView">
+  <div class="input-append">
+  <%= search_field_tag(:treeSearch, "", :placeholder => "type to filter the tree") %><span class="add-on"><i class="icon-search"></i></span>
+  </div>
+</div>
 
 <script type="text/javascript">
   $(function () {
