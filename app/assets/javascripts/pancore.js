@@ -1,4 +1,4 @@
-function init_selection_tree(data) {
+function init_selection_tree(data, taxa) {
     data = d3.nest()
         .key(function (d) { return d.lineage.class_; })
         .key(function (d) { return d.lineage.order; })
@@ -11,22 +11,22 @@ function init_selection_tree(data) {
         .enter()
         .append("li")
             .html(function (d) { 
-                return "<span>" + d.key + "</span>"; })
+                return "<span>" + taxa[d.key] + "</span>"; })
         .append("ul");
     var items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
         .append("li")
-            .html(function (d) { return "<span>" + d.key + "</span>"; })
+            .html(function (d) { return "<span>" + taxa[d.key] + "</span>"; })
         .append("ul");
     var items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
         .append("li")
-            .html(function (d) { return "<span>" + d.key + "</span>"; })
+            .html(function (d) { return "<span>" + taxa[d.key] + "</span>"; })
         .append("ul");
     var items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
         .append("li")
-            .html(function (d) { return "<span>" + d.key + "</span>"; })
+            .html(function (d) { return "<span>" + taxa[d.key] + "</span>"; })
         .append("ul");
     var items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
