@@ -74,6 +74,18 @@ function info(message) {
 }
 
 /*
+ * Function to delay some other function until it isn't
+ * called for "ms" ms
+ */
+var delay = (function () {
+  var timer = 0;
+  return function (callback, ms) {
+    clearTimeout(timer);
+    timer = setTimeout(callback, ms);
+  };
+})();
+
+/*
  * add an object called fullScreenApi until the fullscreen API gets finalized
  * from: http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugin/
  */
