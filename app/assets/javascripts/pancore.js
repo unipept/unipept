@@ -208,6 +208,16 @@ function init_pancore() {
 
     // Make table sortable
     $("#genomes_table").disableSelection();
+    $("#genomes_table").droppable({
+        activeClass: "acceptDrop",
+        hoverClass: "willDrop",
+        tolerance: "pointer",
+        drop: function( event, ui ) {
+            ui.helper.find(".data.name").each(function () {
+                console.log($(this).text());
+            });
+        }
+    });
     $("#genomes_table tbody").sortable({
         axis: 'y',
         containment: '.split-right',
