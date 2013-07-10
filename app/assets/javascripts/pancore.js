@@ -13,28 +13,28 @@ function init_selection_tree(data, taxa) {
             .html(function (d) { return "<span>" + taxa[d.key] + "</span>"; })
             .attr("data", function (d) { return taxa[d.key]; })
         .append("ul");
-    var items = items.selectAll("li").data(function (d) { return d.values; })
+    items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
         .append("li")
             .html(function (d) { return "<span>" + taxa[d.key] + "</span>"; })
             .attr("data", function (d) { return taxa[d.key]; })
         .append("ul");
-    var items = items.selectAll("li").data(function (d) { return d.values; })
+    items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
         .append("li")
             .html(function (d) { return "<span>" + taxa[d.key] + "</span>"; })
             .attr("data", function (d) { return taxa[d.key]; })
         .append("ul");
-    var items = items.selectAll("li").data(function (d) { return d.values; })
+    items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
         .append("li")
             .html(function (d) { return "<span>" + taxa[d.key] + "</span>"; })
             .attr("data", function (d) { return taxa[d.key]; })
         .append("ul");
-    var items = items.selectAll("li").data(function (d) { return d.values; })
+    items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
         .append("li")
-            .attr("class", "not")
+            .attr("class", "not leaf")
             .attr("data", function (d) { return d.name; })
             .text(function (d) { return d.name; });
     $("#treeView").disableSelection();
@@ -53,6 +53,22 @@ function init_selection_tree(data, taxa) {
                 $("#treeView li:not(.match):not(.root)").addClass("unmatch");
             }
         }, 500);
+    });
+    $("#treeView li").draggable({
+        appendTo: "#genomes_table tbody",
+        addClasses: false,
+        helper: function (event) {
+            var returnString = "<tbody>";
+            if ($(this).hasClass("leaf")) {
+                returnString += "<tr><td><i class='icon-resize-vertical'></i></td><td class='data name'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
+            } else {
+                $(this).find(".leaf").each(function () { 
+                    returnString += "<tr><td><i class='icon-resize-vertical'></i></td><td class='data name'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
+                });
+            }
+            returnString += "</tbody>";
+            return $(returnString);
+        }
     });
 }
 function init_pancore() {
