@@ -91,13 +91,13 @@ class PancoreproteomeController < ApplicationController
     @species = Genome.get_genome_species().map{|g| [g["name"], g["id"]]}
     @genera = Genome.get_genome_genera().map{|g| [g["name"], g["id"]]}
     @genomes = Genome.includes(:lineage).joins(:lineage)
-
+  
     @taxa = Set.new
     @taxa.merge(@genomes.map{|g| g.lineage.species})
     @taxa.merge(@genomes.map{|g| g.lineage.genus})
     @taxa.merge(@genomes.map{|g| g.lineage.order})
     @taxa.merge(@genomes.map{|g| g.lineage.class_})
-    @taxa = Hash[Taxon.select([:id, :name]).find(@taxa.to_a).map{|t| [t.id, t.name]}]
+    @taxa = Hash[Taxon.select([:id, :name]).where(:id => @taxa.to_a).map{|t| [t.id, t.name]}]
 
     @taxa = Oj.dump(@taxa, mode: :compat)
     @genomes = @genomes.to_json(:only => :name, :include => {:lineage => {:only => [:species, :genus, :order], :methods => :class_}})
