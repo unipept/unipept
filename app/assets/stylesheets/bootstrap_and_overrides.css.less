@@ -549,6 +549,9 @@ span.dir{
     list-style-position:inside;
     list-style-image:asset-url('button.png');
     cursor:auto;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 #treeView li.collapsibleListOpen{
     list-style-image:asset-url('button-open.png');
@@ -570,7 +573,15 @@ span.dir{
 }
 #treeView li.root{
     background-image:none;
+    list-style-type: none;
+    list-style-image: none;
 }
 #treeView li.unmatch{
     display: none;
+}
+#treeSearchDiv {
+    margin-bottom: 5px;
+}
+#treeSearch {
+    width: 400px;
 }

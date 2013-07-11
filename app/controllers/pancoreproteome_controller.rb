@@ -89,7 +89,6 @@ class PancoreproteomeController < ApplicationController
 
   def analyze
     @species = Genome.get_genome_species().map{|g| [g["name"], g["id"]]}
-    @genera = Genome.get_genome_genera().map{|g| [g["name"], g["id"]]}
     @genomes = Genome.includes(:lineage).joins(:lineage)
   
     @taxa = Set.new
@@ -101,7 +100,6 @@ class PancoreproteomeController < ApplicationController
 
     @taxa = Oj.dump(@taxa, mode: :compat)
     @genomes = @genomes.to_json(:only => :name, :include => {:lineage => {:only => [:species, :genus, :order], :methods => :class_}})
-    #@genomes = Oj.dump(Genome.includes(:lineage).joins(:lineage), :include => :lineage)
   end
 
   # Returns a list of all sequence_ids for a given bioproject_id
