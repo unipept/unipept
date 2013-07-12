@@ -42,6 +42,7 @@ function init_selection_tree(data, taxa) {
             .attr("class", "not leaf")
             .attr("title", "Organism")
             .attr("data", function (d) { return d.name; })
+            .attr("bioproject_id", function (d) { return d.bioproject_id; })
             .text(function (d) { return d.name; });
     $("#treeView").disableSelection();
     $("#treeView li:not(.not)").addClass("collapsibleListOpen");
@@ -66,10 +67,10 @@ function init_selection_tree(data, taxa) {
         helper: function (event) {
             var returnString = "<tbody>";
             if ($(this).hasClass("leaf")) {
-                returnString += "<tr><td><i class='icon-resize-vertical'></i></td><td class='data name'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
+                returnString += "<tr><td><i class='icon-resize-vertical'></i></td><td class='data name' bioproject_id='" + $(this).attr("bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
             } else {
                 $(this).find(".leaf").each(function () { 
-                    returnString += "<tr><td><i class='icon-resize-vertical'></i></td><td class='data name'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
+                    returnString += "<tr><td><i class='icon-resize-vertical'></i></td><td class='data name' bioproject_id='" + $(this).attr("bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
                 });
             }
             returnString += "</tbody>";
@@ -190,13 +191,8 @@ function init_pancore() {
         var url = "/pancore/genomes/species/" + currentSpeciesId + ".json";
         $.getJSON(url, function (genomes) {
             clearTable();
-            toLoad = genomes.length;
-            for (var i = 0; i < genomes.length ; i++) {
-                tableData[genomes[i].bioproject_id] = {"bioproject_id" : genomes[i].bioproject_id, "name" : genomes[i].name, "status" : "Loading...", "position" : 100 + i};
-                loadData(genomes[i].bioproject_id);
-            }
-            updateTable();
-            setTableMessage("refresh", "Please wait while we load the data for these genomes.");
+            toLoad = 0;
+            addGenomes(genomes);
         })
         .fail(function () {
             error("request error for " + url, "It seems like something went wrong while we loaded the data");
@@ -211,9 +207,11 @@ function init_pancore() {
         hoverClass: "willDrop",
         tolerance: "pointer",
         drop: function( event, ui ) {
+            var g = []
             ui.helper.find(".data.name").each(function () {
-                console.log($(this).text());
+                g.push({name : $(this).text(), bioproject_id : parseInt($(this).attr("bioproject_id"), 10)});
             });
+            addGenomes(g);
         }
     });
     $("#genomes_table tbody").sortable({
@@ -274,6 +272,17 @@ function init_pancore() {
     // Sends a command and message to the worker
     function sendToWorker(command, message) {
         worker.postMessage({'cmd': command, 'msg': message});
+    }
+
+    // Add the genomes with these bioproject_ids
+    function addGenomes(genomes) {
+        toLoad += genomes.length;
+        for (var i = 0; i < genomes.length ; i++) {
+            tableData[genomes[i].bioproject_id] = {"bioproject_id" : genomes[i].bioproject_id, "name" : genomes[i].name, "status" : "Loading...", "position" : 100 + i};
+            loadData(genomes[i].bioproject_id);
+        }
+        updateTable();
+        setTableMessage("refresh", "Please wait while we load the data for these genomes.");
     }
 
     // Loads peptides, based on bioproject_id
@@ -422,9 +431,9 @@ function init_pancore() {
     // Updates the table
     function updateTable() {
         // Add rows
-        var tr = d3.select("#genomes_table tbody").selectAll("tr")
-            .data(d3.values(tableData), function (d) {return d.bioproject_id; });
-        var newRows = tr.enter().append("tr");
+        var tr = d3.select("#genomes_table tbody").selectAll("tr.added")
+            .data(d3.values(tableData), function (d) { return d.bioproject_id; });
+        var newRows = tr.enter().append("tr").attr("class", "added");
         tr.exit().remove();
         tr.sort(function (a, b) { return a.position - b.position; });
 
