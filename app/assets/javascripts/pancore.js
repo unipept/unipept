@@ -202,7 +202,7 @@ function init_pancore() {
 
     // Make table sortable
     $("#genomes_table").disableSelection();
-    $("#genomes_table").droppable({
+    $("#genomes_table, #pancore_graph").droppable({
         activeClass: "acceptDrop",
         hoverClass: "willDrop",
         tolerance: "pointer",
