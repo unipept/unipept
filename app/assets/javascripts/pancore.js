@@ -206,6 +206,7 @@ function init_pancore() {
         activeClass: "acceptDrop",
         hoverClass: "willDrop",
         tolerance: "pointer",
+        accept: "li",
         drop: function( event, ui ) {
             var g = []
             ui.helper.find(".data.name").each(function () {
