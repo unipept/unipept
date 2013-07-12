@@ -89,7 +89,7 @@ class PancoreproteomeController < ApplicationController
 
   def analyze
     @species = Genome.get_genome_species().map{|g| [g["name"], g["id"]]}
-    @genomes = Genome.includes(:lineage).joins(:lineage)
+    @genomes = Genome.includes(:lineage).joins(:lineage).group(:bioproject_id)
   
     @taxa = Set.new
     @taxa.merge(@genomes.map{|g| g.lineage.species})
@@ -99,7 +99,7 @@ class PancoreproteomeController < ApplicationController
     @taxa = Hash[Taxon.select([:id, :name]).where(:id => @taxa.to_a).map{|t| [t.id, t.name]}]
 
     @taxa = Oj.dump(@taxa, mode: :compat)
-    @genomes = @genomes.to_json(:only => :name, :include => {:lineage => {:only => [:species, :genus, :order], :methods => :class_}})
+    @genomes = @genomes.to_json(:only => [:name, :bioproject_id], :include => {:lineage => {:only => [:species, :genus, :order], :methods => :class_}})
   end
 
   # Returns a list of all sequence_ids for a given bioproject_id
