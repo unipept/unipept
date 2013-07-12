@@ -88,18 +88,18 @@ class PancoreproteomeController < ApplicationController
   end
 
   def analyze
-    @species = Genome.get_genome_species().map{|g| [g["name"], g["id"]]}
-    @genomes = Genome.includes(:lineage).joins(:lineage).group(:bioproject_id)
-  
+    @species = Genome.get_genome_species().map{|g| [g["name"], g["id"]]} 
+    @genomes = Genome.joins(:lineage).select("genomes.name, genomes.bioproject_id, lineages.species as species_id, lineages.genus as genus_id, lineages.order as order_id, lineages.class as class_id").uniq
+
     @taxa = Set.new
-    @taxa.merge(@genomes.map{|g| g.lineage.species})
-    @taxa.merge(@genomes.map{|g| g.lineage.genus})
-    @taxa.merge(@genomes.map{|g| g.lineage.order})
-    @taxa.merge(@genomes.map{|g| g.lineage.class_})
+    @taxa.merge(@genomes.map{|g| g.species_id})
+    @taxa.merge(@genomes.map{|g| g.genus_id})
+    @taxa.merge(@genomes.map{|g| g.order_id})
+    @taxa.merge(@genomes.map{|g| g.class_id})
     @taxa = Hash[Taxon.select([:id, :name]).where(:id => @taxa.to_a).map{|t| [t.id, t.name]}]
 
     @taxa = Oj.dump(@taxa, mode: :compat)
-    @genomes = @genomes.to_json(:only => [:name, :bioproject_id], :include => {:lineage => {:only => [:species, :genus, :order], :methods => :class_}})
+    @genomes = Oj.dump(@genomes, mode: :compat)
   end
 
   # Returns a list of all sequence_ids for a given bioproject_id

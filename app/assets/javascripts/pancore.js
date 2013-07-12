@@ -1,9 +1,9 @@
 function init_selection_tree(data, taxa) {
     data = d3.nest()
-        .key(function (d) { return d.lineage.class_; })
-        .key(function (d) { return d.lineage.order; })
-        .key(function (d) { return d.lineage.genus; })
-        .key(function (d) { return d.lineage.species; })
+        .key(function (d) { return d.class_id; })
+        .key(function (d) { return d.order_id; })
+        .key(function (d) { return d.genus_id; })
+        .key(function (d) { return d.species_id; })
         .entries(data);
     var tree = d3.select("#treeView");
     tree = tree.append("ul").append("li").attr("class", "root not").append("ul");
