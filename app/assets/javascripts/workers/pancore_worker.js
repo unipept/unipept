@@ -98,8 +98,8 @@ function recalculatePanCore(newOrder, start, stop) {
             cores[i] = intersection(cores[i - 1], set);
             pans[i] = union(pans[i - 1], set);
             if (start !== 0) {
-                unicores[i] = intersection(unicores[i - 1], set);
-                unicores2[i] = intersection(unicores2[i - 1], set);
+                //unicores[i] = intersection(unicores[i - 1], set);
+                //unicores2[i] = intersection(unicores2[i - 1], set);
             }
         }
     }
@@ -110,8 +110,8 @@ function recalculatePanCore(newOrder, start, stop) {
         temp.pan = pans[i].length;
         temp.core = cores[i].length;
         if (start !== 0) {
-            temp.unicore = unicores[i].length;
-            temp.unicore2 = unicores2[i].length;
+            //temp.unicore = unicores[i].length;
+            //temp.unicore2 = unicores2[i].length;
         }
         response.push(temp);
     }
@@ -119,8 +119,8 @@ function recalculatePanCore(newOrder, start, stop) {
     if (start === 0) {
         unicores = [];
         unicores2 = [];
-        getUniqueSequences(lca, "uniprot");
-        getUniqueSequences(lca, "genome");
+        //getUniqueSequences(lca, "uniprot");
+        //getUniqueSequences(lca, "genome");
     }
 }
 
