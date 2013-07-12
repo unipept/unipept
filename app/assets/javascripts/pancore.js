@@ -279,8 +279,13 @@ function init_pancore() {
     function addGenomes(genomes) {
         toLoad += genomes.length;
         for (var i = 0; i < genomes.length ; i++) {
-            tableData[genomes[i].bioproject_id] = {"bioproject_id" : genomes[i].bioproject_id, "name" : genomes[i].name, "status" : "Loading...", "position" : 100 + i};
-            loadData(genomes[i].bioproject_id);
+            // only add new genomes
+            if (tableData[genomes[i].bioproject_id] === undefined) {
+                tableData[genomes[i].bioproject_id] = {"bioproject_id" : genomes[i].bioproject_id, "name" : genomes[i].name, "status" : "Loading...", "position" : 100 + i};
+                loadData(genomes[i].bioproject_id);
+            } else {
+                toLoad -= 1;
+            }
         }
         updateTable();
         setTableMessage("refresh", "Please wait while we load the data for these genomes.");
