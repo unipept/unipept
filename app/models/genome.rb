@@ -19,47 +19,29 @@ class Genome < ActiveRecord::Base
   def self.get_genome_species()
     # order by uses filesort since there's no index on taxon name
     return connection.select_all("SELECT taxons.name, taxons.id, count(*) AS num 
-    FROM genomes 
-    LEFT JOIN taxons ON (genomes.species_id = taxons.id) 
-    WHERE taxons.id IS NOT NULL 
-    GROUP BY species_id 
-    HAVING num > 1 
-    ORDER BY name")
-  end
-
-  def self.get_genome_genera()
-    # order by uses filesort since there's no index on taxon name
-    return connection.select_all("SELECT taxons.name, taxons.id, count(*) AS num 
-    FROM genomes 
-    LEFT JOIN taxons ON (genomes.genus_id = taxons.id) 
-    WHERE taxons.id IS NOT NULL 
-    GROUP BY genus_id 
-    HAVING num > 1 
-    ORDER BY name")
+     FROM genomes 
+     INNER JOIN lineages ON (genomes.taxon_id = lineages.taxon_id)
+     LEFT JOIN taxons ON (lineages.species = taxons.id) 
+     WHERE taxons.id IS NOT NULL 
+     GROUP BY taxons.id 
+     HAVING num > 1 
+     ORDER BY name")
   end
 
   # returns a set of genome objects for a given species_id
   def self.get_by_species_id(species_id)
-    Genome.select("bioproject_id, name").where("species_id = ?", species_id).group("bioproject_id")
-  end
-
-  # returns a set of genome objects for a given genus_id
-  def self.get_by_genus_id(genus_id)
-    Genome.select("bioproject_id, name").where("genus_id = ?", genus_id).group("bioproject_id")
+    Genome.select("bioproject_id, name").joins(:lineage).where("lineages.species = ?", species_id).group("bioproject_id")
   end
 
   # fills in the species_id and genus_id columns
-  def self.precompute_species_and_genera
+  def self.precompute_taxa
     Genome.all.each do |genome|
-      lineage = Lineage.find_by_sql("SELECT DISTINCT lineages.* 
-            FROM lineages 
-            LEFT JOIN uniprot_entries ON lineages.taxon_id = uniprot_entries.taxon_id 
+      ue = UniprotEntry.find_by_sql("SELECT DISTINCT uniprot_entries.* 
+            FROM uniprot_entries
             LEFT JOIN refseq_cross_references ON uniprot_entry_id = uniprot_entries.id
             WHERE sequence_id = '#{genome.refseq_id}'").first
-      unless lineage.nil?
-        genome.species_id = lineage.species
-        genome.genus_id = lineage.genus
-        genome.taxon_id = lineage.taxon_id
+      unless ue.nil?
+        genome.taxon_id = ue.taxon_id
         genome.save
       end
     end

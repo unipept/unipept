@@ -88,7 +88,9 @@ class PancoreproteomeController < ApplicationController
   end
 
   def analyze
+    start = Time.now
     @species = Genome.get_genome_species().map{|g| [g["name"], g["id"]]} 
+    logger.debug (Time.now  - start).to_s
     @genomes = Genome.joins(:lineage).select("genomes.name, genomes.bioproject_id, lineages.species as species_id, lineages.genus as genus_id, lineages.order as order_id, lineages.class as class_id").uniq
 
     @taxa = Set.new
@@ -112,7 +114,7 @@ class PancoreproteomeController < ApplicationController
 
   # Returns a list of genomes for a given species_id or genus_id
   def get_genomes
-    genomes = params[:genus_id].nil? ? Genome.get_by_species_id(params[:species_id]) : Genome.get_by_genus_id(params[:genus_id])
+    genomes = Genome.get_by_species_id(params[:species_id])
     respond_to do |format|
       format.json { render json: Oj.dump(genomes, mode: :compat) }
     end

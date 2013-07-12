@@ -28,7 +28,6 @@ UnipeptWeb::Application.routes.draw do
   # pancore
   match '/pancore/sequences/:bioproject_id.:format', :to => 'pancoreproteome#get_sequence_ids_for_bioproject', :constraints => { :bioproject_id => /[0-z\._]+/ }
   match '/pancore/genomes/species/:species_id.:format', :to => 'pancoreproteome#get_genomes'
-  match '/pancore/genomes/genus/:genus_id.:format', :to => 'pancoreproteome#get_genomes'
   match '/pancore/unique_sequences', :to => 'pancoreproteome#get_unique_sequences'
   match '/pancore', :to => 'pancoreproteome#analyze', :as => 'pancore_analyze'
 

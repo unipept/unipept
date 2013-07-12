@@ -139,7 +139,7 @@ class Sequence < ActiveRecord::Base
     
     bp_id = Set.new
     result = sequences
-    GenomeCache.find_by_sql("SELECT genome_caches.* from genome_caches LEFT JOIN genomes ON genome_caches.bioproject_id = genomes.bioproject_id WHERE species_id != #{species_id}").each do |genome|
+    GenomeCache.find_by_sql("SELECT genome_caches.* from genome_caches LEFT JOIN genomes ON genome_caches.bioproject_id = genomes.bioproject_id LEFT JOIN lineages ON genomes.taxon_id = lineages.taxon_id WHERE lineages.species != #{species_id}").each do |genome|
       if bp_id.include?(genome.bioproject_id)
         next
       else

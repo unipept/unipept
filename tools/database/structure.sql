@@ -82,6 +82,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`lineages` (
   `varietas` MEDIUMINT NULL DEFAULT NULL ,
   `forma` MEDIUMINT NULL DEFAULT NULL ,
   PRIMARY KEY (`taxon_id`) ,
+  INDEX `idx_species` (`species` ASC) ,
   INDEX `fk_lineages_taxons` (`taxon_id` ASC) ,
   CONSTRAINT `fk_lineages_taxons`
     FOREIGN KEY (`taxon_id` )
@@ -243,14 +244,10 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`genomes` (
   `bioproject_id` INT UNSIGNED NOT NULL ,
   `refseq_id` VARCHAR(15) NOT NULL ,
   `status` VARCHAR(20) NOT NULL ,
-  `species_id` MEDIUMINT NULL ,
-  `genus_id` MEDIUMINT NULL ,
   `taxon_id` MEDIUMINT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `idx_refseq_id` (`refseq_id` ASC) ,
   INDEX `idx_bioproject_id` (`bioproject_id` ASC) ,
-  INDEX `idx_species_id_bioproject_id` (`species_id` ASC, `bioproject_id` ASC) ,
-  INDEX `idx_genus_id` (`genus_id` ASC) ),
   INDEX `idx_taxon_id` (`taxon_id` ASC) )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii

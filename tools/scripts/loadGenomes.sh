@@ -28,7 +28,7 @@ cd "${currentdir}"
 
 # precompute some stuff
 echo "precomputing the species and genera"
-rails runner "Genome.precompute_species_and_genera"
+rails runner "Genome.precompute_taxa"
 
 echo "precomputing the genome caches"
 rails runner "Genome.precompute_genome_caches"
