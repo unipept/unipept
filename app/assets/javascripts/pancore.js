@@ -40,8 +40,8 @@ function init_selection_tree(data, taxa) {
         .enter()
         .append("li")
             .attr("class", "not leaf")
-            .attr("title", "Organism")
-            .attr("data", function (d) { return d.name; })
+            .attr("title", function (d) { return "bioproject id: " + d.bioproject_id; })
+            .attr("data", function (d) { return d.name + " " + d.bioproject_id; })
             .attr("bioproject_id", function (d) { return d.bioproject_id; })
             .text(function (d) { return d.name; });
     $("#treeView").disableSelection();
