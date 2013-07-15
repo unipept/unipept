@@ -212,7 +212,11 @@ function init_pancore() {
             ui.helper.find(".data.name").each(function () {
                 g.push({name : $(this).text(), bioproject_id : parseInt($(this).attr("bioproject_id"), 10)});
             });
-            addGenomes(g);
+            if (g.length > 70) {
+                alert("Oops, you're trying to add way too many genomes.");
+            } else {
+                addGenomes(g);
+            }
         }
     });
     $("#genomes_table tbody").sortable({
