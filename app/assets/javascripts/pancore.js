@@ -5,36 +5,39 @@ function init_selection_tree(data, taxa) {
         .key(function (d) { return d.genus_id; }).sortKeys(function (a,b) { return d3.ascending(taxa[a], taxa[b]); })
         .key(function (d) { return d.species_id; }).sortKeys(function (a,b) { return d3.ascending(taxa[a], taxa[b]); })
         .entries(data);
+    calculateNumOfChildren(data);
+    delete(data.children);
     var tree = d3.select("#treeView");
     tree = tree.append("ul").append("li").attr("class", "root not").append("ul");
     $("li.root").prepend($("#treeSearchDiv"));
     var items = tree.selectAll("li").data(data)
         .enter()
         .append("li")
-            .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.values.length + ")</span>"; })
+            .html(function (d) { return taxa[d.key] + " (" + d.children + ")"; })
             .attr("title", "Class")
             .attr("data", function (d) { return taxa[d.key]; })
         .append("ul");
     items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
         .append("li")
-            .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.values.length + ")</span>"; })
+            .html(function (d) { return taxa[d.key] + " (" + d.children + ")"; })
             .attr("title", "Order")
             .attr("data", function (d) { return taxa[d.key]; })
         .append("ul");
     items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
         .append("li")
-            .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.values.length + ")</span>"; })
+            .html(function (d) { return taxa[d.key] + " (" + d.children + ")"; })
             .attr("title", "Genus")
             .attr("data", function (d) { return taxa[d.key]; })
         .append("ul");
     items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
         .append("li")
-            .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.values.length + ")</span>"; })
+            .html(function (d) { return taxa[d.key] + " (" + d.children + ")"; })
             .attr("title", "Species")
             .attr("data", function (d) { return taxa[d.key]; })
+            .attr("numOfChildren", function (d) { return d.values.length; })
         .append("ul");
     items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
@@ -77,6 +80,21 @@ function init_selection_tree(data, taxa) {
             return $(returnString);
         }
     });
+
+    function calculateNumOfChildren(list) {
+        var r = 0;
+        for (var i = 0; i < list.length; i++) {
+            var d = list[i];
+            if (d.values !== undefined) {
+                d.children = calculateNumOfChildren(d.values);
+            } else {
+                d.children = 1;
+            }
+            r += d.children;
+        }
+        list.children = r;
+        return r;
+    }
 }
 function init_pancore() {
     // constants
