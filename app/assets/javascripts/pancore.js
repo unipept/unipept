@@ -41,7 +41,7 @@ function init_selection_tree(data, taxa) {
         .append("li")
             .attr("class", "not leaf")
             .attr("title", function (d) { return "bioproject id: " + d.bioproject_id; })
-            .attr("data", function (d) { return d.name + " " + d.bioproject_id; })
+            .attr("data", function (d) { return d.name.toLowerCase() + " " + d.bioproject_id; })
             .attr("bioproject_id", function (d) { return d.bioproject_id; })
             .text(function (d) { return d.name; });
     $("#treeView").disableSelection();
@@ -51,7 +51,7 @@ function init_selection_tree(data, taxa) {
         return false;
     });
     $("#treeSearch").keyup(function () {
-        var text = $(this).val();
+        var text = $(this).val().toLowerCase();
         delay(function () {
             $("#treeView li").removeClass("match unmatch");
             if (text !== "") {
