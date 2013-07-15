@@ -15,6 +15,7 @@ function init_selection_tree(data, taxa) {
         .append("li")
             .html(function (d) { return taxa[d.key] + " (" + d.children + ")"; })
             .attr("title", "Class")
+            .attr("class", "collapsibleListOpen")
             .attr("data", function (d) { return taxa[d.key]; })
         .append("ul");
     items = items.selectAll("li").data(function (d) { return d.values; })
@@ -22,6 +23,7 @@ function init_selection_tree(data, taxa) {
         .append("li")
             .html(function (d) { return taxa[d.key] + " (" + d.children + ")"; })
             .attr("title", "Order")
+            .attr("class", "collapsibleListClosed")
             .attr("data", function (d) { return taxa[d.key]; })
         .append("ul");
     items = items.selectAll("li").data(function (d) { return d.values; })
@@ -29,6 +31,7 @@ function init_selection_tree(data, taxa) {
         .append("li")
             .html(function (d) { return taxa[d.key] + " (" + d.children + ")"; })
             .attr("title", "Genus")
+            .attr("class", "collapsibleListOpen")
             .attr("data", function (d) { return taxa[d.key]; })
         .append("ul");
     items = items.selectAll("li").data(function (d) { return d.values; })
@@ -36,6 +39,7 @@ function init_selection_tree(data, taxa) {
         .append("li")
             .html(function (d) { return taxa[d.key] + " (" + d.children + ")"; })
             .attr("title", "Species")
+            .attr("class", "collapsibleListOpen")
             .attr("data", function (d) { return taxa[d.key]; })
             .attr("numOfChildren", function (d) { return d.values.length; })
         .append("ul");
@@ -48,7 +52,6 @@ function init_selection_tree(data, taxa) {
             .attr("bioproject_id", function (d) { return d.bioproject_id; })
             .text(function (d) { return d.name; });
     $("#treeView").disableSelection();
-    $("#treeView li:not(.not)").addClass("collapsibleListOpen");
     $("#treeView li:not(.not)").click(function () {
         $(this).toggleClass("collapsibleListOpen collapsibleListClosed");
         return false;
@@ -59,7 +62,7 @@ function init_selection_tree(data, taxa) {
             $("#treeView li").removeClass("match unmatch");
             if (text !== "") {
                 $("#treeView li[data*='" + text + "']").addClass("match");
-                $("#treeView li.match").parents("li").addClass("match");
+                $("#treeView li.match").parents("li").addClass("match").addClass("collapsibleListOpen").removeClass("collapsibleListClosed");
                 $("#treeView li:not(.match):not(.root)").addClass("unmatch");
             }
         }, 500);
