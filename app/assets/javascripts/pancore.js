@@ -200,6 +200,9 @@ function init_pancore() {
         return false;
     });
 
+    // remove all
+    $("#remove-all").click(clearAllData);
+
     // Make table sortable
     $("#genomes_table").disableSelection();
     $("#genomes_table, #pancore_graph").droppable({
@@ -464,6 +467,7 @@ function init_pancore() {
             .append("a")
             .html("<i class='icon-trash'></i>")
             .attr("class", "btn btn-mini")
+            .attr("title", "remove genome")
             .on("click", removeData);
     }
 
