@@ -514,8 +514,20 @@ span.dir{
     margin: 5px;
     width: auto;
 }
+#genomes_table tr.ui-sortable-helper{
+    background-color: rgba(255, 255, 255, 0.8);
+}
 #genomes_table_div{
     .transition(margin-top 0.5s ease-in-out);
+}
+#genomes_table tfoot{
+    display: none;
+}
+#genomes_table tfoot th{
+    text-align: center;
+}
+#genomes_table.acceptDrop tfoot{
+    display: table-row-group;
 }
 #genomes_table.acceptDrop{
     background-color: #eeeeee;
