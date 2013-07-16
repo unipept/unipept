@@ -548,7 +548,7 @@ span.dir{
     background:asset-url('list-item-root.png') no-repeat top left;
     list-style-position:inside;
     list-style-image:asset-url('button.png');
-    cursor:auto;
+    cursor: auto;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -592,4 +592,10 @@ span.dir{
 }
 #treeSearch {
     width: 400px;
+}
+#treeView li span {
+    cursor: url(/openhand.cur) 7 5, pointer;
+}
+tbody.dragging tr{
+    cursor: url(/closedhand.cur) 7 5, pointer !important;
 }

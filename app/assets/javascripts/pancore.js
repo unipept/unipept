@@ -13,7 +13,7 @@ function init_selection_tree(data, taxa) {
     var items = tree.selectAll("li").data(data)
         .enter()
         .append("li")
-            .html(function (d) { return taxa[d.key] + " (" + d.children + ")"; })
+            .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
             .attr("title", "Class")
             .attr("class", "collapsibleListOpen")
             .attr("data", function (d) { return taxa[d.key]; })
@@ -21,7 +21,7 @@ function init_selection_tree(data, taxa) {
     items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
         .append("li")
-            .html(function (d) { return taxa[d.key] + " (" + d.children + ")"; })
+            .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
             .attr("title", "Order")
             .attr("class", "collapsibleListClosed")
             .attr("data", function (d) { return taxa[d.key]; })
@@ -29,7 +29,7 @@ function init_selection_tree(data, taxa) {
     items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
         .append("li")
-            .html(function (d) { return taxa[d.key] + " (" + d.children + ")"; })
+            .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
             .attr("title", "Genus")
             .attr("class", "collapsibleListOpen")
             .attr("data", function (d) { return taxa[d.key]; })
@@ -37,7 +37,7 @@ function init_selection_tree(data, taxa) {
     items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
         .append("li")
-            .html(function (d) { return taxa[d.key] + " (" + d.children + ")"; })
+            .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
             .attr("title", "Species")
             .attr("class", "collapsibleListOpen")
             .attr("data", function (d) { return taxa[d.key]; })
@@ -50,7 +50,7 @@ function init_selection_tree(data, taxa) {
             .attr("title", function (d) { return "bioproject id: " + d.bioproject_id; })
             .attr("data", function (d) { return d.name.toLowerCase() + " " + d.bioproject_id; })
             .attr("bioproject_id", function (d) { return d.bioproject_id; })
-            .text(function (d) { return d.name; });
+            .html(function (d) { return "<span>" + d.name + "</span>"; });
     $("#treeView").disableSelection();
     $("#treeView li:not(.not)").click(function () {
         $(this).toggleClass("collapsibleListOpen collapsibleListClosed");
@@ -71,7 +71,7 @@ function init_selection_tree(data, taxa) {
         appendTo: "#genomes_table tbody",
         addClasses: false,
         helper: function (event) {
-            var returnString = "<tbody>";
+            var returnString = "<tbody class='dragging'>";
             if ($(this).hasClass("leaf")) {
                 returnString += "<tr><td><i class='icon-resize-vertical'></i></td><td class='data name' bioproject_id='" + $(this).attr("bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
             } else {
