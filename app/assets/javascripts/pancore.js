@@ -18,7 +18,7 @@ function init_selection_tree(data, taxa) {
             .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
             .attr("title", "Class")
             .attr("class", "collapsibleListOpen")
-            .attr("data", function (d) { return taxa[d.key]; })
+            .attr("data-search", function (d) { return taxa[d.key]; })
         .append("ul");
     items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
@@ -26,7 +26,7 @@ function init_selection_tree(data, taxa) {
             .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
             .attr("title", "Order")
             .attr("class", "collapsibleListClosed")
-            .attr("data", function (d) { return taxa[d.key]; })
+            .attr("data-search", function (d) { return taxa[d.key]; })
         .append("ul");
     items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
@@ -34,7 +34,7 @@ function init_selection_tree(data, taxa) {
             .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
             .attr("title", "Genus")
             .attr("class", "collapsibleListOpen")
-            .attr("data", function (d) { return taxa[d.key]; })
+            .attr("data-search", function (d) { return taxa[d.key]; })
         .append("ul");
     items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
@@ -42,16 +42,15 @@ function init_selection_tree(data, taxa) {
             .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
             .attr("title", "Species")
             .attr("class", "collapsibleListOpen")
-            .attr("data", function (d) { return taxa[d.key]; })
-            .attr("numOfChildren", function (d) { return d.values.length; })
+            .attr("data-search", function (d) { return taxa[d.key]; })
         .append("ul");
     items = items.selectAll("li").data(function (d) { return d.values; })
         .enter()
         .append("li")
             .attr("class", "not leaf")
             .attr("title", function (d) { return "bioproject id: " + d.bioproject_id; })
-            .attr("data", function (d) { return d.name.toLowerCase() + " " + d.bioproject_id; })
-            .attr("bioproject_id", function (d) { return d.bioproject_id; })
+            .attr("data-search", function (d) { return d.name.toLowerCase() + " " + d.bioproject_id; })
+            .attr("data-bioproject_id", function (d) { return d.bioproject_id; })
             .html(function (d) { return "<span>" + d.name + "</span>"; });
     $("#treeView").disableSelection();
     $("#treeView li:not(.not)").click(function () {
@@ -63,7 +62,7 @@ function init_selection_tree(data, taxa) {
         delay(function () {
             $("#treeView li").removeClass("match unmatch");
             if (text !== "") {
-                $("#treeView li[data*='" + text + "']").addClass("match");
+                $("#treeView li[data-search*='" + text + "']").addClass("match");
                 $("#treeView li.match").parents("li").addClass("match").addClass("collapsibleListOpen").removeClass("collapsibleListClosed");
                 $("#treeView li:not(.match):not(.root)").addClass("unmatch");
             }
@@ -76,10 +75,10 @@ function init_selection_tree(data, taxa) {
         helper: function (event) {
             var returnString = "<tbody class='dragging'>";
             if ($(this).hasClass("leaf")) {
-                returnString += "<tr><td><i class='icon-resize-vertical'></i></td><td class='data name' bioproject_id='" + $(this).attr("bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
+                returnString += "<tr><td><i class='icon-resize-vertical'></i></td><td class='data name' data-bioproject_id='" + $(this).attr("data-bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
             } else {
                 $(this).find(".leaf").each(function () { 
-                    returnString += "<tr><td><i class='icon-resize-vertical'></i></td><td class='data name' bioproject_id='" + $(this).attr("bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
+                    returnString += "<tr><td><i class='icon-resize-vertical'></i></td><td class='data name' data-bioproject_id='" + $(this).attr("data-bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
                 });
             }
             returnString += "</tbody>";
@@ -256,7 +255,7 @@ function init_pancore() {
         drop: function( event, ui ) {
             var g = []
             ui.helper.find(".data.name").each(function () {
-                g.push({name : $(this).text(), bioproject_id : parseInt($(this).attr("bioproject_id"), 10)});
+                g.push({name : $(this).text(), bioproject_id : parseInt($(this).attr("data-bioproject_id"), 10)});
             });
             if (g.length > 70) {
                 alert("Oops, you're trying to add way too many genomes.");
