@@ -869,6 +869,8 @@ function init_pancore() {
 
             // show tooltip
             var tooltipHtml = "<b>" + genome.name + "</b><br/>" +
+            "&#9632; bioproject id: <b>" + d.bioproject_id + "</b><br/>" +
+            "&#9632; peptides: <b>" + d3.format(",")(d.peptides) + "</b><br/>" +
             "<span style='color: " + panColor + ";'>&#9632;</span> pan peptides: <b>" + d3.format(",")(d.pan) + "</b><br/>" +
             "<span style='color: " + coreColor + ";'>&#9632;</span> core peptides: <b>" + d3.format(",")(d.core) + "</b>";
             if (d.unicore != null) {

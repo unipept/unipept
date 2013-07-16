@@ -65,6 +65,7 @@ function addData(bioproject_id, set) {
     temp.bioproject_id = bioproject_id;
     temp.pan = pan.length;
     temp.core = core.length;
+    temp.peptides = set.length;
     sendToHost("addData", temp);
 }
 
@@ -109,6 +110,7 @@ function recalculatePanCore(newOrder, start, stop) {
         temp.bioproject_id = order[i];
         temp.pan = pans[i].length;
         temp.core = cores[i].length;
+        temp.peptides = data[order[i]].length;
         if (start !== 0) {
             //temp.unicore = unicores[i].length;
             //temp.unicore2 = unicores2[i].length;
