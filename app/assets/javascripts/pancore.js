@@ -2,10 +2,10 @@ function init_selection_tree(data, taxa) {
     var moving = false,
         moving2 = false;
     data = d3.nest()
-        .key(function (d) { return d.class_id; }).sortKeys(function (a,b) { return d3.ascending(taxa[a], taxa[b]); })
-        .key(function (d) { return d.order_id; }).sortKeys(function (a,b) { return d3.ascending(taxa[a], taxa[b]); })
-        .key(function (d) { return d.genus_id; }).sortKeys(function (a,b) { return d3.ascending(taxa[a], taxa[b]); })
-        .key(function (d) { return d.species_id; }).sortKeys(function (a,b) { return d3.ascending(taxa[a], taxa[b]); })
+        .key(function (d) { return d.class_id; }).sortKeys(function (a, b) { return d3.ascending(taxa[a], taxa[b]); })
+        .key(function (d) { return d.order_id; }).sortKeys(function (a, b) { return d3.ascending(taxa[a], taxa[b]); })
+        .key(function (d) { return d.genus_id; }).sortKeys(function (a, b) { return d3.ascending(taxa[a], taxa[b]); })
+        .key(function (d) { return d.species_id; }).sortKeys(function (a, b) { return d3.ascending(taxa[a], taxa[b]); })
         .entries(data);
     calculateNumOfChildren(data);
     delete(data.children);
@@ -77,7 +77,7 @@ function init_selection_tree(data, taxa) {
             if ($(this).hasClass("leaf")) {
                 returnString += "<tr><td><i class='icon-resize-vertical'></i></td><td class='data name' data-bioproject_id='" + $(this).attr("data-bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
             } else {
-                $(this).find(".leaf").each(function () { 
+                $(this).find(".leaf").each(function () {
                     returnString += "<tr><td><i class='icon-resize-vertical'></i></td><td class='data name' data-bioproject_id='" + $(this).attr("data-bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
                 });
             }
@@ -106,9 +106,11 @@ function init_selection_tree(data, taxa) {
     });
 
     function calculateNumOfChildren(list) {
-        var r = 0;
-        for (var i = 0; i < list.length; i++) {
-            var d = list[i];
+        var r = 0,
+            i,
+            d;
+        for (i = 0; i < list.length; i++) {
+            d = list[i];
             if (d.values !== undefined) {
                 d.children = calculateNumOfChildren(d.values);
             } else {
@@ -124,10 +126,10 @@ function init_pancore() {
     // constants
     // animation and style stuff
     var transitionDuration = 500,
-    panColor = "#1f77b4",     // blue
-    coreColor = "#ff7f0e",    // orange
-    unicoreColor = "#2ca02c", // green
-    unicore2Color = "#98df8a";// light green
+        panColor = "#1f77b4",     // blue
+        coreColor = "#ff7f0e",    // orange
+        unicoreColor = "#2ca02c", // green
+        unicore2Color = "#98df8a";// light green
 
     // Size
     var margin = {top: 20, right: 40, bottom: 170, left: 60},
@@ -140,7 +142,7 @@ function init_pancore() {
     // Data and workers
     var visData = [],
         tableData = {},
-        legendData = [{"name": "pan proteome", "color": panColor}, 
+        legendData = [{"name": "pan proteome", "color": panColor},
             {"name": "core proteome", "color": coreColor},
             {"name": "unique uniprot peptides", "color": unicoreColor},
             {"name": "unique genome peptides", "color": unicore2Color}],
@@ -226,7 +228,6 @@ function init_pancore() {
 
     // Add handler to the form
     $("#load_species_proteome").click(function () {
-        var rank;
         setLoading(true);
         clearAllData();
         currentSpeciesId = $("#species_id").val();
@@ -252,8 +253,8 @@ function init_pancore() {
         hoverClass: "willDrop",
         tolerance: "pointer",
         accept: "li",
-        drop: function( event, ui ) {
-            var g = []
+        drop: function (event, ui) {
+            var g = [];
             ui.helper.find(".data.name").each(function () {
                 g.push({name : $(this).text(), bioproject_id : parseInt($(this).attr("data-bioproject_id"), 10)});
             });
@@ -326,8 +327,9 @@ function init_pancore() {
 
     // Add the genomes with these bioproject_ids
     function addGenomes(genomes) {
+        var i;
         toLoad += genomes.length;
-        for (var i = 0; i < genomes.length ; i++) {
+        for (i = 0; i < genomes.length; i++) {
             // only add new genomes
             if (tableData[genomes[i].bioproject_id] === undefined) {
                 tableData[genomes[i].bioproject_id] = {"bioproject_id" : genomes[i].bioproject_id, "name" : genomes[i].name, "status" : "Loading...", "position" : 100 + i};
@@ -380,8 +382,9 @@ function init_pancore() {
 
     // Sets new pancore data
     function setVisData(data) {
+        var i;
         visData = data;
-        for (var i in tableData) {
+        for (i in tableData) {
             tableData[i].status = "Done";
         }
         updateGraph();
@@ -463,8 +466,9 @@ function init_pancore() {
     function calculateTablePositionsFromGraph() {
         var order = [],
             start = -1,
-            stop = 0;
-        for (var i = 0; i < visData.length; i++) {
+            stop = 0,
+            i;
+        for (i = 0; i < visData.length; i++) {
             var bioproject_id = visData[i].bioproject_id;
             if (tableData[bioproject_id].position === i && stop === 0) {
                 start = i;
@@ -610,7 +614,7 @@ function init_pancore() {
             .attr("class", "line unicore2")
             .style("stroke", unicore2Color)
             .attr("d", unicore2Line);
-        svg.selectAll("path.line")    
+        svg.selectAll("path.line")
             .style("stroke-width", 2)
             .style("fill", "none");
 
@@ -668,9 +672,9 @@ function init_pancore() {
         var oldPanDatum = svg.select(".line.pan").datum(),
             oldCoreDatum = svg.select(".line.core").datum();
         if (oldPanDatum.length < visData.length && oldPanDatum.length > 0) {
-            var i = 0,
+            var i,
                 diff = visData.length - oldPanDatum.length;
-            for (; i < diff; i++) {
+            for (i = 0; i < diff; i++) {
                 oldPanDatum.push(oldPanDatum[oldPanDatum.length - 1]);
                 oldCoreDatum.push(oldCoreDatum[oldCoreDatum.length - 1]);
             }
@@ -733,8 +737,8 @@ function init_pancore() {
             .remove();
         var unicoreDots = svg.selectAll(".dot.unicore")
             .data(visData.filter(function (entry) {
-                    return entry.unicore != null;
-                }), function (d) {return d.bioproject_id; });
+                return entry.unicore != null;
+            }), function (d) {return d.bioproject_id; });
         unicoreDots.enter().append("circle")
             .attr("class", function (d) { return "dot unicore _" + d.bioproject_id; })
             .attr("r", 5)
@@ -752,8 +756,8 @@ function init_pancore() {
             .remove();
         var unicore2Dots = svg.selectAll(".dot.unicore2")
             .data(visData.filter(function (entry) {
-                    return entry.unicore2 != null;
-                }), function (d) {return d.bioproject_id; });
+                return entry.unicore2 != null;
+            }), function (d) {return d.bioproject_id; });
         unicore2Dots.enter().append("circle")
             .attr("class", function (d) { return "dot unicore2 _" + d.bioproject_id; })
             .attr("r", 5)
@@ -962,10 +966,11 @@ function init_pancore() {
         return v == null ? x(d.bioproject_id) : v;
     }
     function isChanged(oldData, newData) {
+        var i;
         if (oldData.length != newData.length) {
             return true;
         }
-        for (var i = 0; i < oldData.length; i++) {
+        for (i = 0; i < oldData.length; i++) {
             if (oldData[i].bioproject_id != newData[i].bioproject_id) {
                 return true;
             }

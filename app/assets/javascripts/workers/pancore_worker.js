@@ -6,7 +6,7 @@ var data = {},
     lca = 0,
     pans = [],
     cores = [],
-    unicores = []
+    unicores = [],
     unicores2 = [];
 
 // Add an event handler to the worker
@@ -50,18 +50,21 @@ function loadData(bioproject_id) {
 
 // Adds new dataset to the data array
 function addData(bioproject_id, set) {
+    var core,
+        pan,
+        temp;
     // Store data for later use
     data[bioproject_id] = set;
     order.push(bioproject_id);
 
     // Calculate pan and core
-    var core = cores.length === 0 ? set : intersection(cores[cores.length - 1], set);
-    var pan = pans.length === 0 ? set : union(pans[pans.length - 1], set);
+    core = cores.length === 0 ? set : intersection(cores[cores.length - 1], set);
+    pan = pans.length === 0 ? set : union(pans[pans.length - 1], set);
     pans.push(pan);
     cores.push(core);
 
     // Return the results to the host
-    var temp = {};
+    temp = {};
     temp.bioproject_id = bioproject_id;
     temp.pan = pan.length;
     temp.core = core.length;
@@ -89,9 +92,13 @@ function removeData(bioproject_id, newOrder, start) {
 // Recalculates the pan and core data based on a
 // given order, from start till stop
 function recalculatePanCore(newOrder, start, stop) {
+    var i = 0,
+        set,
+        temp,
+        response = [];
     order = newOrder;
-    for (var i = start; i <= stop; i++) {
-        var set = data[order[i]];
+    for (i = start; i <= stop; i++) {
+        set = data[order[i]];
         if (i === 0) {
             cores[i] = set;
             pans[i] = set;
@@ -104,9 +111,8 @@ function recalculatePanCore(newOrder, start, stop) {
             }
         }
     }
-    var response = [];
-    for (var i = 0; i < order.length; i++) {
-        var temp = {};
+    for (i = 0; i < order.length; i++) {
+        temp = {};
         temp.bioproject_id = order[i];
         temp.pan = pans[i].length;
         temp.core = cores[i].length;
@@ -128,22 +134,27 @@ function recalculatePanCore(newOrder, start, stop) {
 
 // Calculates the unique peptides data
 function calculateUnicore(ud, type) {
+    var u,
+        i,
+        response,
+        temp,
+        set;
     if (type === "uniprot") {
         unicoreData = ud;
         unicores[0] = unicoreData;
-        var u = unicores;
+        u = unicores;
     } else {
         unicore2Data = ud;
         unicores2[0] = unicore2Data;
-        var u = unicores2;
+        u = unicores2;
     }
-    for (var i = 1; i < order.length; i++) {
-        var set = data[order[i]];
+    for (i = 1; i < order.length; i++) {
+        set = data[order[i]];
         u[i] = intersection(u[i - 1], set);
     }
-    var response = [];
-    for (var i = 0; i < order.length; i++) {
-        var temp = {};
+    response = [];
+    for (i = 0; i < order.length; i++) {
+        temp = {};
         temp.bioproject_id = order[i];
         temp.pan = pans[i].length;
         temp.core = cores[i].length;
@@ -193,7 +204,7 @@ function getJSON(url, callback) {
 function getJSONByPost(url, data, callback) {
     var req = new XMLHttpRequest();
     req.open('POST', url, true);
-    req.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     req.onreadystatechange = function () {
         if (req.readyState === 4) {
             if (req.status === 200) {
