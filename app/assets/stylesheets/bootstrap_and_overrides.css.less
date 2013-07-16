@@ -502,10 +502,10 @@ span.dir{
     width: 16px;
 }
 #genomes_table .name{
-    width: 280px;
+    width: 275px;
 }
 #genomes_table .status{
-    width: 70px;
+    width: 75px;
 }
 #genomes_table .action{
     width: 30px;
@@ -513,6 +513,9 @@ span.dir{
 #genomes_table{
     margin: 5px;
     width: auto;
+}
+#genomes_table_div{
+    .transition(margin-top 0.5s ease-in-out);
 }
 #genomes_table.acceptDrop{
     background-color: #eeeeee;
@@ -605,4 +608,5 @@ span.dir{
 }
 tbody.dragging tr{
     cursor: url(/closedhand.cur) 7 5, pointer !important;
+    background-color: rgba(255, 255, 255, 0.8);
 }

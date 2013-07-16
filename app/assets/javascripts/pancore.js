@@ -1,4 +1,6 @@
 function init_selection_tree(data, taxa) {
+    var moving = false,
+        moving2 = false;
     data = d3.nest()
         .key(function (d) { return d.class_id; }).sortKeys(function (a,b) { return d3.ascending(taxa[a], taxa[b]); })
         .key(function (d) { return d.order_id; }).sortKeys(function (a,b) { return d3.ascending(taxa[a], taxa[b]); })
@@ -70,6 +72,7 @@ function init_selection_tree(data, taxa) {
     $("#treeView li").draggable({
         appendTo: "#genomes_table tbody",
         addClasses: false,
+        refreshPositions: true,
         helper: function (event) {
             var returnString = "<tbody class='dragging'>";
             if ($(this).hasClass("leaf")) {
@@ -81,6 +84,25 @@ function init_selection_tree(data, taxa) {
             }
             returnString += "</tbody>";
             return $(returnString);
+        },
+        start: function (event, ui) {
+            var pos = Math.max(0, window.pageYOffset - $("#table-message").offset().top);
+            $("#genomes_table_div").css("margin-top", pos + "px");
+            $(event.target).draggable('option', 'refreshPositions', true);
+            moving = true;
+            moving2 = true;
+            setTimeout(function () {moving = false; }, 800);
+        },
+        stop: function (event, ui) {
+            setTimeout(function () {$("#genomes_table_div").css("margin-top", "0px"); }, 1000);
+        },
+        drag: function (event, ui) {
+            if (!moving2) {
+                $(event.target).draggable('option', 'refreshPositions', false);
+            }
+            if (!moving) {
+                moving2 = false;
+            }
         }
     });
 
@@ -490,6 +512,7 @@ function init_pancore() {
             .attr("class", "btn btn-mini")
             .attr("title", "remove genome")
             .on("click", removeData);
+        newRows.each(function () { highlight(this); });
     }
 
     // Redraws the full D3 graph
