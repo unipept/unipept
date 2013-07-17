@@ -32,7 +32,7 @@ self.addEventListener('message', function (e) {
         getUniqueSequences(data.msg.lca, data.msg.type);
         break;
     case 'autoSort':
-        autoSort("");
+        autoSort(data.msg.type);
         break;
     default:
         sendToHost("error", data.msg);
@@ -134,20 +134,34 @@ function recalculatePanCore(newOrder, start, stop) {
 
 function autoSort(type) {
     var i,
+        sortFunction,
         sortableArray = [],
         newOrder = [];
-    for (i in data) {
-        sortableArray.push({bioproject_id : data[i].bioproject_id, name : data[i].name});
+    // Set up sort function based on type
+    switch (type) {
+        case 'name':
+            sortFunction = function (a, b) {
+                if (a.name < b.name) {
+                    return -1;
+                }
+                if (b.name < a.name) {
+                    return 1;
+                }
+                return 0;
+            }
+            break;
+        case 'size':
+            sortFunction = function (a, b) {
+                return a.size < b.size;
+            }
+            break;
+        default:
+            sendToHost("error", type);
     }
-    sortableArray.sort(function (a, b) {
-        if (a.name < b.name) {
-            return -1;
-        }
-        if (b.name < a.name) {
-            return 1;
-        }
-        return 0;
-    });
+    for (i in data) {
+        sortableArray.push({bioproject_id : data[i].bioproject_id, name : data[i].name, size : data[i].peptides});
+    }
+    sortableArray.sort(sortFunction);
     for (i = 0; i < sortableArray.length; i++) {
         newOrder.push(sortableArray[i].bioproject_id);
     }

@@ -249,13 +249,14 @@ function init_pancore() {
     $("#remove-all").click(clearAllData);
 
     // autosort button
-    $("#autosort").click(function () {
+    $("#autosort ul a").click(function () {
         var i;
-        sendToWorker("autoSort", "");
+        sendToWorker("autoSort", {type : $(this).attr("data-type")});
         for (i in tableData) {
             tableData[i].status = "Processing...";
         }
         updateTable();
+        return false;
     });
 
     // Make table sortable
