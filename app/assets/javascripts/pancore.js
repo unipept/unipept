@@ -245,8 +245,18 @@ function init_pancore() {
         return false;
     });
 
-    // remove all
+    // remove all button
     $("#remove-all").click(clearAllData);
+
+    // autosort button
+    $("#autosort").click(function () {
+        var i;
+        sendToWorker("autoSort", "");
+        for (i in tableData) {
+            tableData[i].status = "Processing...";
+        }
+        updateTable();
+    });
 
     // Make table sortable
     $("#genomes_table").disableSelection();
