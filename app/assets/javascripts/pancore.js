@@ -52,7 +52,7 @@ function init_selection_tree(data, taxa) {
             .attr("data-search", function (d) { return d.name.toLowerCase() + " " + d.bioproject_id; })
             .attr("data-bioproject_id", function (d) { return d.bioproject_id; })
             .html(function (d) { return "<span>" + d.name + "</span>"; });
-    $("#treeView").disableSelection();
+    $("#treeView li.root ul").disableSelection();
     $("#treeView li:not(.not)").click(function () {
         $(this).toggleClass("collapsibleListOpen collapsibleListClosed");
         return false;
