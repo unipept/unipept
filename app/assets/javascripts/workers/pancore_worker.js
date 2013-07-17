@@ -17,7 +17,7 @@ self.addEventListener('message', function (e) {
         sendToHost("log", data.msg);
         break;
     case 'loadData':
-        loadData(data.msg.bioproject_id);
+        loadData(data.msg.bioproject_id, data.msg.name);
         break;
     case 'removeData':
         removeData(data.msg.bioproject_id, data.msg.order, data.msg.start);
@@ -42,19 +42,23 @@ function sendToHost(type, message) {
 }
 
 // Loads peptides, based on bioproject_id
-function loadData(bioproject_id) {
+function loadData(bioproject_id, name) {
     getJSON("/pancore/sequences/" + bioproject_id + ".json", function (json_data) {
-        addData(bioproject_id, json_data);
+        addData(bioproject_id, name, json_data);
     });
 }
 
 // Adds new dataset to the data array
-function addData(bioproject_id, set) {
+function addData(bioproject_id, name, set) {
     var core,
         pan,
         temp;
     // Store data for later use
-    data[bioproject_id] = set;
+    data[bioproject_id] = {};
+    data[bioproject_id].bioproject_id = bioproject_id;
+    data[bioproject_id].name = name;
+    data[bioproject_id].peptide_list = set;
+    data[bioproject_id].peptides = set.length;
     order.push(bioproject_id);
 
     // Calculate pan and core
@@ -75,7 +79,7 @@ function addData(bioproject_id, set) {
 // Retrieves the unique sequences
 function getUniqueSequences(l, type) {
     lca = l;
-    var r = data[order[0]];
+    var r = data[order[0]].peptide_list;
     getJSONByPost("/pancore/unique_sequences/", "type=" + type + "&lca=" + lca + "&sequences=[" + r + "]", function (d) {calculateUnicore(d, type); });
 }
 
@@ -98,7 +102,7 @@ function recalculatePanCore(newOrder, start, stop) {
         response = [];
     order = newOrder;
     for (i = start; i <= stop; i++) {
-        set = data[order[i]];
+        set = data[order[i]].peptide_list;
         if (i === 0) {
             cores[i] = set;
             pans[i] = set;
@@ -116,7 +120,7 @@ function recalculatePanCore(newOrder, start, stop) {
         temp.bioproject_id = order[i];
         temp.pan = pans[i].length;
         temp.core = cores[i].length;
-        temp.peptides = data[order[i]].length;
+        temp.peptides = data[order[i]].peptides;
         if (start !== 0) {
             //temp.unicore = unicores[i].length;
             //temp.unicore2 = unicores2[i].length;
@@ -133,7 +137,7 @@ function recalculatePanCore(newOrder, start, stop) {
 }
 
 // Calculates the unique peptides data
-function calculateUnicore(ud, type) {
+/*function calculateUnicore(ud, type) {
     var u,
         i,
         response,
@@ -163,7 +167,7 @@ function calculateUnicore(ud, type) {
         response.push(temp);
     }
     sendToHost("setVisData", response);
-}
+}*/
 
 // Resets the data vars
 function clearAllData() {

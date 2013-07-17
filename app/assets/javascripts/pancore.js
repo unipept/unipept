@@ -335,7 +335,7 @@ function init_pancore() {
             // only add new genomes
             if (tableData[genomes[i].bioproject_id] === undefined) {
                 tableData[genomes[i].bioproject_id] = {"bioproject_id" : genomes[i].bioproject_id, "name" : genomes[i].name, "status" : "Loading...", "position" : 100 + i};
-                loadData(genomes[i].bioproject_id);
+                loadData(genomes[i].bioproject_id, genomes[i].name);
             } else {
                 toLoad -= 1;
             }
@@ -345,9 +345,9 @@ function init_pancore() {
     }
 
     // Loads peptides, based on bioproject_id
-    function loadData(bioproject_id) {
+    function loadData(bioproject_id, name) {
         // offload this to the worker
-        sendToWorker("loadData", {"bioproject_id": bioproject_id});
+        sendToWorker("loadData", {"bioproject_id" : bioproject_id, "name" : name});
     }
 
     // Gets called when the data is (done) loading
