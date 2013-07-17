@@ -31,6 +31,9 @@ self.addEventListener('message', function (e) {
     case 'getUniqueSequences':
         getUniqueSequences(data.msg.lca, data.msg.type);
         break;
+    case 'autoSort':
+        autoSort("");
+        break;
     default:
         sendToHost("error", data.msg);
     }
@@ -74,13 +77,6 @@ function addData(bioproject_id, name, set) {
     temp.core = core.length;
     temp.peptides = set.length;
     sendToHost("addData", temp);
-}
-
-// Retrieves the unique sequences
-function getUniqueSequences(l, type) {
-    lca = l;
-    var r = data[order[0]].peptide_list;
-    getJSONByPost("/pancore/unique_sequences/", "type=" + type + "&lca=" + lca + "&sequences=[" + r + "]", function (d) {calculateUnicore(d, type); });
 }
 
 // Removes a genomes from the data
@@ -134,6 +130,35 @@ function recalculatePanCore(newOrder, start, stop) {
         //getUniqueSequences(lca, "uniprot");
         //getUniqueSequences(lca, "genome");
     }
+}
+
+function autoSort(type) {
+    var i,
+        sortableArray = [],
+        newOrder = [];
+    for (i in data) {
+        sortableArray.push({bioproject_id : data[i].bioproject_id, name : data[i].name});
+    }
+    sortableArray.sort(function (a, b) {
+        if (a.name < b.name) {
+            return -1;
+        }
+        if (b.name < a.name) {
+            return 1;
+        }
+        return 0;
+    });
+    for (i = 0; i < sortableArray.length; i++) {
+        newOrder.push(sortableArray[i].bioproject_id);
+    }
+    recalculatePanCore(newOrder, 0, newOrder.length - 1);
+}
+
+// Retrieves the unique sequences
+function getUniqueSequences(l, type) {
+    lca = l;
+    var r = data[order[0]].peptide_list;
+    getJSONByPost("/pancore/unique_sequences/", "type=" + type + "&lca=" + lca + "&sequences=[" + r + "]", function (d) {calculateUnicore(d, type); });
 }
 
 // Calculates the unique peptides data

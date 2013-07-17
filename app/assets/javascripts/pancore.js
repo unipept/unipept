@@ -384,10 +384,15 @@ function init_pancore() {
 
     // Sets new pancore data
     function setVisData(data) {
-        var i;
+        var i,
+            bioproject_id;
         visData = data;
-        for (i in tableData) {
-            tableData[i].status = "Done";
+        for (i = 0; i < visData.length; i++) {
+            bioproject_id = visData[i].bioproject_id;
+            if (typeof tableData[bioproject_id] !== undefined) {
+                tableData[bioproject_id].status = "Done";
+                tableData[bioproject_id].position = i;
+            }
         }
         updateGraph();
         updateTable();
