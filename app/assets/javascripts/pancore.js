@@ -53,8 +53,10 @@ function init_selection_tree(data, taxa) {
             .attr("data-bioproject_id", function (d) { return d.bioproject_id; })
             .html(function (d) { return "<span>" + d.name + "</span>"; });
     $("#treeView li.root ul").disableSelection();
-    $("#treeView li:not(.not)").click(function () {
-        $(this).toggleClass("collapsibleListOpen collapsibleListClosed");
+    $("#treeView li").click(function () {
+        if (!$(this).hasClass("not")) {
+            $(this).toggleClass("collapsibleListOpen collapsibleListClosed");
+        }
         return false;
     });
     $("#treeSearch").keyup(function () {
