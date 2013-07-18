@@ -249,6 +249,16 @@ function init_pancore() {
     $("#remove-all").click(clearAllData);
 
     // autosort button
+    $("#autosort").mouseenter(function () {
+        if (!$("#autosort").hasClass("open")) {
+            $("#autosort-button").dropdown("toggle");
+        }
+    });
+    $("#autosort").mouseleave(function () {
+        if ($("#autosort").hasClass("open")) {
+            $("#autosort-button").dropdown("toggle");
+        }
+    });
     $("#autosort ul a").click(function () {
         var i;
         sendToWorker("autoSort", {type : $(this).attr("data-type")});
@@ -256,6 +266,7 @@ function init_pancore() {
             tableData[i].status = "Processing...";
         }
         updateTable();
+        $("#autosort").mouseleave();
         return false;
     });
 
