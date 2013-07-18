@@ -1,6 +1,5 @@
 require 'bundler/capistrano'
 require 'new_relic/recipes'
-load 'deploy/assets'
 
 set :application, "unipept-web"
 set :repository,  "ssh://git@github.ugent.be/bmesuere/unipept.git"
@@ -23,7 +22,7 @@ end
 
 task :dev do
   set :deploy_to, "/home/bmesuere/rails"
-  set :branch, "developm"
+  set :branch, "develop"
   set :user, "bmesuere"
   set :use_sudo, false
   set :port, 4840
@@ -35,6 +34,7 @@ task :dev do
 end
 
 task :prod do
+  load 'deploy/assets'
   set :deploy_to, "/home/bmesuere/rails"
   set :branch, "master"
   set :user, "bmesuere"
