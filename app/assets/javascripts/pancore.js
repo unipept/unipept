@@ -856,10 +856,9 @@ function init_pancore() {
         mouseOverWidth = (width / visData.length) / 1.5;
         var bars = svg.selectAll(".bar")
             .data(visData, function (d) {return d.bioproject_id; });
-        bars.enter().append("rect")
+            
+        bars.enter().append("polygon")
             .attr("class", "bar")
-            .attr("height", height)
-            .attr("y", 0)
             .style("fill-opacity", 0)
             .on("mouseover", mouseOver)
             .on("mouseout", mouseOut)
@@ -870,8 +869,16 @@ function init_pancore() {
                 .on("dragend", dragEnd));
         bars.transition()
             .duration(transitionDuration)
-            .attr("x", function (d) { return x(d.bioproject_id) - mouseOverWidth / 2; })
-            .attr("width", mouseOverWidth);
+            .attr("points", function (d) {
+                var ret = "";
+                ret += (x(d.bioproject_id) - mouseOverWidth / 2) + ", " + (height + 15) + " ";
+                ret += (x(d.bioproject_id) - mouseOverWidth / 2) + ", 0 ";
+                ret += (x(d.bioproject_id) + mouseOverWidth / 2) + ", 0 ";
+                ret += (x(d.bioproject_id) + mouseOverWidth / 2) + ", " + (height + 15) + " ";
+                ret += (x(d.bioproject_id) + mouseOverWidth / 2 - 0.9 * margin.bottom) + ", " + (height + margin.bottom) + " ";
+                ret += (x(d.bioproject_id) - mouseOverWidth / 2 - 0.9 * margin.bottom) + ", " + (height + margin.bottom) + " ";
+                return ret;
+            });
         bars.exit().remove();
 
         // Put the handlebars trash on top
