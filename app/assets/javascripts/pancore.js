@@ -269,6 +269,7 @@ function init_pancore() {
         $("#autosort").mouseleave();
         return false;
     });
+    $("#autosort ul a").tooltip({placement : "right", container : "body"});
 
     // Make table sortable
     $("#genomes_table").disableSelection();
