@@ -135,7 +135,13 @@ function recalculatePanCore(newOrder, start, stop) {
 function autoSort(type) {
     var i,
         sortFunction,
+        tempPanCore,
+        optId,
+        optVal,
+        temp,
+        easySort = true,
         sortableArray = [],
+        tempOrder = [],
         newOrder = [];
     // Set up sort function based on type
     switch (type) {
@@ -148,20 +154,63 @@ function autoSort(type) {
                     return 1;
                 }
                 return 0;
-            }
+            };
             break;
         case 'size':
             sortFunction = function (a, b) {
                 return a.size < b.size;
-            }
+            };
             break;
         default:
-            sendToHost("error", type);
+            easySort = false;
     }
+    // Prepare the array to sort
     for (i in data) {
         sortableArray.push({bioproject_id : data[i].bioproject_id, name : data[i].name, size : data[i].peptides});
     }
-    sortableArray.sort(sortFunction);
+    // Do the actual sorting
+    if (easySort) {
+        sortableArray.sort(sortFunction);
+    } else {
+        tempPanCore = data[order[0]].peptide_list;
+        for (i = 0; i < sortableArray.length; i++) {
+            if (sortableArray[i].bioproject_id === order[0]) {
+                tempOrder.push(sortableArray[i]);
+                delete sortableArray[i];
+                break;
+            }
+        }
+        while (tempOrder.length < sortableArray.length) {
+            optId = -1;
+            optVal = 0;
+            for (i = 0; i < sortableArray.length; i++) {
+                if (sortableArray[i] !== undefined) {
+                    if (type === "minpan") {
+                        temp = union(tempPanCore, data[sortableArray[i].bioproject_id].peptide_list);
+                        if (optId === -1 || temp.length < optVal) {
+                            optId = i;
+                            optVal = temp.length;
+                        }
+                    } else if (type === "maxcore") {
+                        temp = intersection(tempPanCore, data[sortableArray[i].bioproject_id].peptide_list);
+                        if (optId === -1 || temp.length > optVal) {
+                            optId = i;
+                            optVal = temp.length;
+                        }
+                    }
+                }
+            }
+            if (type === "minpan") {
+                tempPanCore = union(tempPanCore, data[sortableArray[optId].bioproject_id].peptide_list);
+            } else if (type === "maxcore") {
+                tempPanCore = intersection(tempPanCore, data[sortableArray[optId].bioproject_id].peptide_list);
+            }
+            tempOrder.push(sortableArray[optId]);
+            delete sortableArray[optId];
+        }
+        sortableArray = tempOrder;
+    }
+    // Prepare to return the result
     for (i = 0; i < sortableArray.length; i++) {
         newOrder.push(sortableArray[i].bioproject_id);
     }
