@@ -369,6 +369,9 @@ function init_pancore() {
         }
         updateTable();
         setTableMessage("refresh", "Please wait while we load the data for these genomes.");
+        if (toLoad === 0) {
+            setLoading(false);
+        }
     }
 
     // Loads peptides, based on bioproject_id
