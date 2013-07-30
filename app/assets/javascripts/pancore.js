@@ -389,7 +389,7 @@ function init_pancore() {
             $("#load_species_proteome").button('reset');
             $("#load_species_proteome_dropdown").removeClass('disabled');
             $("#load_species_proteome_dropdown").removeAttr("disabled");
-            setTableMessage("chevron-down", "Drag rows to reorder them in the chart.");
+            setTableMessage("info-sign", "You can drag rows to reorder them or use one of the autosort options.");
             $("#genomes_table tbody").sortable("option", "disabled", false);
 
             // REMOVE THIS LINE

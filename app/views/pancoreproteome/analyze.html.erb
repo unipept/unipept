@@ -1,5 +1,5 @@
 <h1>Pan and core proteome</h1>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas nunc felis, sodales vel scelerisque nec, viverra sit amet elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent a ligula ut erat pharetra hendrerit. Vivamus ac mauris massa, a rutrum felis. Mauris placerat massa ut neque lacinia sed consectetur nisi mattis. Aenean arcu nunc, eleifend eu tincidunt sit amet, congue a augue. Sed sed eleifend nisi. Vestibulum ac eros vel velit fringilla aliquam. Pellentesque ipsum leo, suscipit quis fermentum mollis, adipiscing nec libero. Phasellus sed est libero. In hac habitasse platea dictumst. Donec id orci dui, ut rhoncus libero. Fusce consequat risus in felis luctus iaculis porttitor dui luctus. Ut lobortis neque eget neque fermentum quis lacinia felis rutrum.</p>
+<p>This application lets you analyze the pan and core-proteome of a set of genomes. Analogous to the pan and core-genome, it is calculated by taking the union and intersection of the set of tryptic peptides from each genome. Additionally, a more restrictive version of the core-proteome is calculated by only including peptides that are unique for the selected genomes. You can easily reorder the genomes by dragging them to the desired position or by using one of the automatic sort options.</p>
 
 <div id="buttons-pancore"></div>
 
@@ -8,7 +8,7 @@
 <div class="split">
   <div class="split-left">
     <p class="intro">
-      Select a species for which you want to analyze the proteome and click the load button.
+      To analyze some genomes, select a species from the list and click the load button or drag a node from the tree to the table on the right.
     </p>
     <%= form_tag(:pancore_analyze, :method => "get", :class => "form-inline") do %>
     <%= select_tag(:species_id, options_for_select(@species, params[:species_id])) %>
