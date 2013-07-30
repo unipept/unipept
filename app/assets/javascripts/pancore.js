@@ -875,8 +875,8 @@ function init_pancore() {
                 ret += (x(d.bioproject_id) - mouseOverWidth / 2) + ", 0 ";
                 ret += (x(d.bioproject_id) + mouseOverWidth / 2) + ", 0 ";
                 ret += (x(d.bioproject_id) + mouseOverWidth / 2) + ", " + (height + 15) + " ";
-                ret += (x(d.bioproject_id) + mouseOverWidth / 2 - 0.9 * margin.bottom) + ", " + (height + margin.bottom) + " ";
-                ret += (x(d.bioproject_id) - mouseOverWidth / 2 - 0.9 * margin.bottom) + ", " + (height + margin.bottom) + " ";
+                ret += (x(d.bioproject_id) + mouseOverWidth / 2 - (margin.bottom - 15)) + ", " + (height + margin.bottom) + " ";
+                ret += (x(d.bioproject_id) - mouseOverWidth / 2 - (margin.bottom -15)) + ", " + (height + margin.bottom) + " ";
                 return ret;
             });
         bars.exit().remove();
