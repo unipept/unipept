@@ -229,9 +229,11 @@ function init_pancore() {
     }, false);
 
     // Add handler to the form
-    $("#load_species_proteome").click(function () {
+    $("#load_species_proteome, #load_species_proteome_link, #add_species_proteome_link").click(function () {
         setLoading(true);
-        clearAllData();
+        if ($(this).attr("id") !== "add_species_proteome_link") {
+            clearAllData();
+        }
         currentSpeciesId = $("#species_id").val();
         var url = "/pancore/genomes/species/" + currentSpeciesId + ".json";
         $.getJSON(url, function (genomes) {
@@ -242,8 +244,10 @@ function init_pancore() {
         .fail(function () {
             error("request error for " + url, "It seems like something went wrong while we loaded the data");
         });
+        $("#load_species_group").removeClass("open");
         return false;
     });
+    $("#load_species_group ul a").tooltip({placement : "right", container : "body"});
 
     // remove all button
     $("#remove-all").click(clearAllData);
@@ -377,10 +381,14 @@ function init_pancore() {
     function setLoading(loading) {
         if (loading) {
             $("#load_species_proteome").button('loading');
+            $("#load_species_proteome_dropdown").addClass('disabled');
+            $("#load_species_proteome_dropdown").attr("disabled", 'disabled');
             setTableMessage("refresh", "Please wait while we load the genomes for this species.");
             $("#genomes_table tbody").sortable("option", "disabled", true);
         } else {
             $("#load_species_proteome").button('reset');
+            $("#load_species_proteome_dropdown").removeClass('disabled');
+            $("#load_species_proteome_dropdown").removeAttr("disabled");
             setTableMessage("chevron-down", "Drag rows to reorder them in the chart.");
             $("#genomes_table tbody").sortable("option", "disabled", false);
 
