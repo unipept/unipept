@@ -135,7 +135,8 @@ function recalculatePanCore(newOrder, start, stop) {
 function autoSort(type) {
     var i,
         sortFunction,
-        tempPanCore,
+        tempPan,
+        tempCore,
         optId,
         optVal,
         temp,
@@ -172,7 +173,8 @@ function autoSort(type) {
     if (easySort) {
         sortableArray.sort(sortFunction);
     } else {
-        tempPanCore = data[order[0]].peptide_list;
+        tempPan = data[order[0]].peptide_list;
+        tempCore = data[order[0]].peptide_list;
         for (i = 0; i < sortableArray.length; i++) {
             if (sortableArray[i].bioproject_id === order[0]) {
                 tempOrder.push(sortableArray[i]);
@@ -186,24 +188,33 @@ function autoSort(type) {
             for (i = 0; i < sortableArray.length; i++) {
                 if (sortableArray[i] !== undefined) {
                     if (type === "minpan") {
-                        temp = union(tempPanCore, data[sortableArray[i].bioproject_id].peptide_list);
+                        temp = union(tempPan, data[sortableArray[i].bioproject_id].peptide_list);
                         if (optId === -1 || temp.length < optVal) {
                             optId = i;
                             optVal = temp.length;
                         }
                     } else if (type === "maxcore") {
-                        temp = intersection(tempPanCore, data[sortableArray[i].bioproject_id].peptide_list);
+                        temp = intersection(tempCore, data[sortableArray[i].bioproject_id].peptide_list);
                         if (optId === -1 || temp.length > optVal) {
                             optId = i;
                             optVal = temp.length;
+                        }
+                    } else if (type === "optimal") {
+                        temp = union(tempPan, data[sortableArray[i].bioproject_id].peptide_list).length - intersection(tempCore, data[sortableArray[i].bioproject_id].peptide_list).length;
+                        if (optId === -1 || temp < optVal) {
+                            optId = i;
+                            optVal = temp;
                         }
                     }
                 }
             }
             if (type === "minpan") {
-                tempPanCore = union(tempPanCore, data[sortableArray[optId].bioproject_id].peptide_list);
+                tempPan = union(tempPan, data[sortableArray[optId].bioproject_id].peptide_list);
             } else if (type === "maxcore") {
-                tempPanCore = intersection(tempPanCore, data[sortableArray[optId].bioproject_id].peptide_list);
+                tempCore = intersection(tempCore, data[sortableArray[optId].bioproject_id].peptide_list);
+            } else if (type === "optimal") {
+                tempPan = union(tempPan, data[sortableArray[optId].bioproject_id].peptide_list);
+                tempCore = intersection(tempCore, data[sortableArray[optId].bioproject_id].peptide_list);
             }
             tempOrder.push(sortableArray[optId]);
             delete sortableArray[optId];
