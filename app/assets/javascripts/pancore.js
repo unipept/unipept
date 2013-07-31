@@ -156,11 +156,14 @@ function init_pancore() {
         tooltip,
         mouseOverWidth;
 
-    // drag vars
+    // drag and click vars
     var dragging = {},
         isDragging = false,
+        hasDragged = false,
         onTrash = false,
-        dragId;
+        dragId,
+        isClicked = false,
+        clickId;
 
     // load vars
     var dataQueue = [],
@@ -562,7 +565,8 @@ function init_pancore() {
     // Redraws the full D3 graph
     function redrawGraph() {
         // erase everything
-        $("#pancore_graph").html("");
+        $("#pancore_graph svg").remove();
+        $("#pancore_graph div.tip").remove();
 
         // create the svg
         svg = d3.select("#pancore_graph")
@@ -571,6 +575,7 @@ function init_pancore() {
             .attr("width", fullWidth)
             .attr("height", fullHeight)
             .style("font-family", "'Helvetica Neue', Helvetica, Arial, sans-serif")
+          .on("click", removePopoversAndHighlights)
           .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -866,6 +871,7 @@ function init_pancore() {
             .on("mouseover", mouseOver)
             .on("mouseout", mouseOut)
             .on("mousemove", mouseMove)
+            .on("click", mouseClick)
             .call(d3.behavior.drag()
                 .on("dragstart", dragStart)
                 .on("drag", drag)
@@ -890,79 +896,65 @@ function init_pancore() {
     }
 
     // Mouse event functions
-    function mouseOver(d) {
-        if (!isDragging) {
-            // add dropshadow to the dot and axis text
-            svg.selectAll(".dot._" + d.bioproject_id).attr("filter", "url(#dropshadow)");
-            svg.selectAll(".tick._" + d.bioproject_id + " text").style("font-weight", "bold");
-
-            var genome = tableData[d.bioproject_id];
-
-            svg.select(".axisline.pan")
-                .attr("y1", y(d.pan))
-                .attr("y2", y(d.pan))
-                .style("visibility", "visible");
-            svg.select(".axisline.core")
-                .attr("y1", y(d.core))
-                .attr("y2", y(d.core))
-                .style("visibility", "visible");
-            if (d.unicore != null) {
-                svg.select(".axisline.unicore")
-                    .attr("y1", y(d.unicore))
-                    .attr("y2", y(d.unicore))
-                    .style("visibility", "visible");
-            }
-            if (d.unicore2 != null) {
-                svg.select(".axisline.unicore2")
-                    .attr("y1", y(d.unicore2))
-                    .attr("y2", y(d.unicore2))
-                    .style("visibility", "visible");
-            }
-
-            // show tooltip
-            var tooltipHtml = "<b>" + genome.name + "</b><br/>" +
-            "&#9632; bioproject id: <b>" + d.bioproject_id + "</b><br/>" +
-            "&#9632; peptides: <b>" + d3.format(",")(d.peptides) + "</b><br/>" +
-            "<span style='color: " + panColor + ";'>&#9632;</span> pan peptides: <b>" + d3.format(",")(d.pan) + "</b><br/>" +
-            "<span style='color: " + coreColor + ";'>&#9632;</span> core peptides: <b>" + d3.format(",")(d.core) + "</b>";
-            if (d.unicore != null) {
-                tooltipHtml += "<br/><span style='color: " + unicoreColor + ";'>&#9632;</span> unique uniprot peptides: <b>" + d3.format(",")(d.unicore) + "</b>";
-            }
-            if (d.unicore2 != null) {
-                tooltipHtml += "<br/><span style='color: " + unicore2Color + ";'>&#9632;</span> unique genome peptides: <b>" + d3.format(",")(d.unicore2) + "</b>";
-            }
-            tooltip.html(tooltipHtml).style("visibility", "visible");
+    function mouseClick(d) {
+        d3.event.stopPropagation();
+        var target = $(d3.event.target);
+        if (isClicked && clickId === d.bioproject_id) {
+            removePopoversAndHighlights();
+        } else {
+            removePopoversAndHighlights();
+            removeTooltip();
+            addHighlight(d);
+            target.popover({
+                html: true,
+                trigger: "manual",
+                position: "right", 
+                container: "#popovers",
+                title: tableData[d.bioproject_id].name,
+                content: getTooltipContent(d)});
+            target.popover("show");
+            // highlight new node
+            isClicked = true;
+            clickId = d.bioproject_id;
         }
+    }
+    function mouseOver(d) {
+        if (isDragging) return;
+        if (isClicked && clickId === d.bioproject_id) return;
+        addHighlight(d);
+        var tooltipHtml = "<b>" + tableData[d.bioproject_id].name + "</b><br/>" + getTooltipContent(d);
+        tooltip.html(tooltipHtml).style("visibility", "visible");
     }
     function mouseOut(d) {
-        if (!isDragging) {
-            svg.selectAll(".dot._" + d.bioproject_id).attr("filter", "");
-            svg.selectAll(".tick._" + d.bioproject_id + " text").style("font-weight", "normal");
-        }
-        svg.selectAll(".axisline").style("visibility", "hidden");
-        tooltip.style("visibility", "hidden");
+        if (isDragging) return;
+        if (isClicked && clickId === d.bioproject_id) return;
+        removeHighlight(d.bioproject_id);
     }
     function mouseMove(d) {
-        // Hide the tooltip and axislines while dragging
-        if (isDragging) {
-            svg.selectAll(".axisline").style("visibility", "hidden");
-            tooltip.style("visibility", "hidden");
+        if (isDragging) return;
+        if (window.fullScreenApi.isFullScreen()) {
+            tooltip.style("top", (d3.event.clientY + 15) + "px").style("left", (d3.event.clientX + 15) + "px");
         } else {
-            if (window.fullScreenApi.isFullScreen()) {
-                tooltip.style("top", (d3.event.clientY + 15) + "px").style("left", (d3.event.clientX + 15) + "px");
-            } else {
-                tooltip.style("top", (d3.event.pageY + 15) + "px").style("left", (d3.event.pageX + 15) + "px");
-            }
+            tooltip.style("top", (d3.event.pageY + 15) + "px").style("left", (d3.event.pageX + 15) + "px");
         }
     }
     function dragStart(d) {
         isDragging = true;
+        hasDragged = false;
         dragId = d.bioproject_id;
         dragging[d.bioproject_id] = this.__origin__ = x(d.bioproject_id);
         svg.selectAll(".bar").style("cursor", "url(/closedhand.cur) 7 5, move");
         svg.select("#trash").transition().duration(transitionDuration).attr("transform", "translate(-84 0)");
     }
     function drag(d) {
+        hasDragged = true;
+        if (isClicked) {
+            removePopovers();
+            if (clickId !== d.bioproject_id) {
+                removeHighlight(clickId);
+            }
+        }
+        removeTooltip();
         dragging[d.bioproject_id] = Math.min(width, Math.max(0, this.__origin__ += d3.event.dx));
         var oldData = visData.slice(0);
         visData.sort(function (a, b) { return position(a) - position(b); });
@@ -1001,14 +993,80 @@ function init_pancore() {
         if (onTrash) {
             removeData(d);
         } else {
-            updateGraph();
+            // If we always update the graph, the click event never registers
+            // in Chrome due to DOM reordering of the bars.
+            if (hasDragged) {
+                updateGraph();
+            }
             var r = calculateTablePositionsFromGraph();
             updateTable();
             sendToWorker("recalculatePanCore", {"order" : r.order, "start" : r.start, "stop" : r.stop});
         }
         isDragging = false;
     }
-    // Drag helper functions
+    // mouse event helper functions
+    function removePopoversAndHighlights() {
+        removePopovers();
+        removeAllHighlights();
+    }
+    function removePopovers() {
+        $("#popovers").html("");
+        isClicked = false;
+    }
+    function addHighlight(d) {
+        // add dropshadow to the dot and axis text
+        svg.selectAll(".dot._" + d.bioproject_id).attr("filter", "url(#dropshadow)");
+        svg.selectAll(".tick._" + d.bioproject_id + " text").style("font-weight", "bold");
+
+        svg.select(".axisline.pan")
+            .attr("y1", y(d.pan))
+            .attr("y2", y(d.pan))
+            .style("visibility", "visible");
+        svg.select(".axisline.core")
+            .attr("y1", y(d.core))
+            .attr("y2", y(d.core))
+            .style("visibility", "visible");
+        if (d.unicore != null) {
+            svg.select(".axisline.unicore")
+                .attr("y1", y(d.unicore))
+                .attr("y2", y(d.unicore))
+                .style("visibility", "visible");
+        }
+        if (d.unicore2 != null) {
+            svg.select(".axisline.unicore2")
+                .attr("y1", y(d.unicore2))
+                .attr("y2", y(d.unicore2))
+                .style("visibility", "visible");
+        }
+    }
+    function removeHighlight(bioproject_id) {
+        svg.selectAll(".dot._" + bioproject_id).attr("filter", "");
+        svg.selectAll(".tick._" + bioproject_id + " text").style("font-weight", "normal");
+        svg.selectAll(".axisline").style("visibility", "hidden");
+        tooltip.style("visibility", "hidden");
+    }
+    function removeAllHighlights() {
+        svg.selectAll(".dot").attr("filter", "");
+        svg.selectAll(".tick text").style("font-weight", "normal");
+        svg.selectAll(".axisline").style("visibility", "hidden");
+        tooltip.style("visibility", "hidden");
+    }
+    function removeTooltip() {
+        tooltip.style("visibility", "hidden");
+    }
+    function getTooltipContent(d) {
+        var tooltipHtml = "&#9632; bioproject id: <b>" + d.bioproject_id + "</b><br/>" +
+        "&#9632; peptides: <b>" + d3.format(",")(d.peptides) + "</b><br/>" +
+        "<span style='color: " + panColor + ";'>&#9632;</span> pan peptides: <b>" + d3.format(",")(d.pan) + "</b><br/>" +
+        "<span style='color: " + coreColor + ";'>&#9632;</span> core peptides: <b>" + d3.format(",")(d.core) + "</b>";
+        if (d.unicore != null) {
+            tooltipHtml += "<br/><span style='color: " + unicoreColor + ";'>&#9632;</span> unique uniprot peptides: <b>" + d3.format(",")(d.unicore) + "</b>";
+        }
+        if (d.unicore2 != null) {
+            tooltipHtml += "<br/><span style='color: " + unicore2Color + ";'>&#9632;</span> unique genome peptides: <b>" + d3.format(",")(d.unicore2) + "</b>";
+        }
+        return tooltipHtml;
+    }
     function position(d) {
         var v = dragging[d.bioproject_id];
         return v == null ? x(d.bioproject_id) : v;
