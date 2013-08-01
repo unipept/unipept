@@ -257,7 +257,7 @@ function calculateUnicore(ud, type) {
             u = unicores2;
         }*/
     for (i = 1; i < order.length; i++) {
-        set = data[order[i]];
+        set = data[order[i]].peptide_list;
         u[i] = intersection(u[i - 1], set);
     }
     recalculatePanCore(order, 1, -1);
