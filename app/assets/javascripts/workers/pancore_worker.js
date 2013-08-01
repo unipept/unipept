@@ -265,6 +265,7 @@ function calculateUnicore(ud, type) {
 
 // Resets the data vars
 function clearAllData() {
+    unicorePresent = false;
     data = {};
     unicoreData = [];
     unicore2Data = [];
