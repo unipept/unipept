@@ -1,14 +1,12 @@
 // vars
 var data = {},
     unicoreData = [],
-    //unicore2Data = [],
     order = [],
     lca = 0,
     pans = [],
     cores = [],
     unicores = [];
     unicorePresent = false;
-    //unicores2 = [];
 
 // Add an event handler to the worker
 self.addEventListener('message', function (e) {
@@ -95,7 +93,10 @@ function removeData(bioproject_id, newOrder, start) {
     pans.splice(l - 1, 1);
     cores.splice(l - 1, 1);
     unicores.splice(l - 1, 1);
+    unicorePresent = false;
+    unicores = [];
     recalculatePanCore(newOrder, start, l - 2);
+    getUniqueSequences("uniprot");
 }
 
 // Recalculates the pan and core data based on a
@@ -121,7 +122,6 @@ function recalculatePanCore(newOrder, start, stop) {
             pans[i] = union(pans[i - 1], set);
             if (unicorePresent) {
                 unicores[i] = intersection(unicores[i - 1], set);
-                //unicores2[i] = intersection(unicores2[i - 1], set);
             }
         }
     }
@@ -133,7 +133,6 @@ function recalculatePanCore(newOrder, start, stop) {
         temp.peptides = data[order[i]].peptides;
         if (unicorePresent) {
             temp.unicore = unicores[i].length;
-            //temp.unicore2 = unicores2[i].length;
         }
         response.push(temp);
     }
@@ -274,7 +273,6 @@ function clearAllData() {
     pans = [];
     cores = [];
     unicores = [];
-    unicores2 = [];
 }
 
 // Provide an error function with the same signature as in the host
