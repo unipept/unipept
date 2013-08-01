@@ -531,6 +531,8 @@ function init_pancore() {
     }
     // Updates the table
     function updateTable() {
+        removePopovers();
+
         // Add rows
         var tr = d3.select("#genomes_table tbody").selectAll("tr.added")
             .data(d3.values(tableData), function (d) { return d.bioproject_id; });
@@ -995,10 +997,10 @@ function init_pancore() {
             // in Chrome due to DOM reordering of the bars.
             if (hasDragged) {
                 updateGraph();
+                var r = calculateTablePositionsFromGraph();
+                updateTable();
+                sendToWorker("recalculatePanCore", {"order" : r.order, "start" : r.start, "stop" : r.stop});
             }
-            var r = calculateTablePositionsFromGraph();
-            updateTable();
-            sendToWorker("recalculatePanCore", {"order" : r.order, "start" : r.start, "stop" : r.stop});
         }
         isDragging = false;
     }
