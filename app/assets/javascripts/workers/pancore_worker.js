@@ -1,13 +1,14 @@
 // vars
 var data = {},
     unicoreData = [],
-    unicore2Data = [],
+    //unicore2Data = [],
     order = [],
     lca = 0,
     pans = [],
     cores = [],
-    unicores = [],
-    unicores2 = [];
+    unicores = [];
+    unicorePresent = false;
+    //unicores2 = [];
 
 // Add an event handler to the worker
 self.addEventListener('message', function (e) {
@@ -29,7 +30,7 @@ self.addEventListener('message', function (e) {
         recalculatePanCore(data.msg.order, data.msg.start, data.msg.stop);
         break;
     case 'getUniqueSequences':
-        getUniqueSequences(data.msg.lca, data.msg.type);
+        getUniqueSequences(data.msg.type);
         break;
     case 'autoSort':
         autoSort(data.msg.type);
@@ -55,6 +56,7 @@ function loadData(bioproject_id, name) {
 function addData(bioproject_id, name, set) {
     var core,
         pan,
+        unicore,
         temp;
     // Store data for later use
     data[bioproject_id] = {};
@@ -69,6 +71,10 @@ function addData(bioproject_id, name, set) {
     pan = pans.length === 0 ? set : union(pans[pans.length - 1], set);
     pans.push(pan);
     cores.push(core);
+    if (unicorePresent) {
+        unicore = intersection(unicores[unicores.length - 1], set);
+        unicores.push(unicore);
+    }
 
     // Return the results to the host
     temp = {};
@@ -76,6 +82,9 @@ function addData(bioproject_id, name, set) {
     temp.pan = pan.length;
     temp.core = core.length;
     temp.peptides = set.length;
+    if (unicorePresent) {
+        temp.unicore = unicore.length;
+    }
     sendToHost("addData", temp);
 }
 
@@ -96,6 +105,11 @@ function recalculatePanCore(newOrder, start, stop) {
         set,
         temp,
         response = [];
+    if (start === 0) {
+        unicorePresent = false;
+        unicores = [];
+        getUniqueSequences("uniprot");
+    }
     order = newOrder;
     for (i = start; i <= stop; i++) {
         set = data[order[i]].peptide_list;
@@ -105,8 +119,8 @@ function recalculatePanCore(newOrder, start, stop) {
         } else {
             cores[i] = intersection(cores[i - 1], set);
             pans[i] = union(pans[i - 1], set);
-            if (start !== 0) {
-                //unicores[i] = intersection(unicores[i - 1], set);
+            if (unicorePresent) {
+                unicores[i] = intersection(unicores[i - 1], set);
                 //unicores2[i] = intersection(unicores2[i - 1], set);
             }
         }
@@ -117,19 +131,13 @@ function recalculatePanCore(newOrder, start, stop) {
         temp.pan = pans[i].length;
         temp.core = cores[i].length;
         temp.peptides = data[order[i]].peptides;
-        if (start !== 0) {
-            //temp.unicore = unicores[i].length;
+        if (unicorePresent) {
+            temp.unicore = unicores[i].length;
             //temp.unicore2 = unicores2[i].length;
         }
         response.push(temp);
     }
     sendToHost("setVisData", response);
-    if (start === 0) {
-        unicores = [];
-        unicores2 = [];
-        //getUniqueSequences(lca, "uniprot");
-        //getUniqueSequences(lca, "genome");
-    }
 }
 
 function autoSort(type) {
@@ -229,44 +237,32 @@ function autoSort(type) {
 }
 
 // Retrieves the unique sequences
-function getUniqueSequences(l, type) {
-    lca = l;
+function getUniqueSequences(type) {
     var r = data[order[0]].peptide_list;
-    getJSONByPost("/pancore/unique_sequences/", "type=" + type + "&lca=" + lca + "&sequences=[" + r + "]", function (d) {calculateUnicore(d, type); });
+    getJSONByPost("/pancore/unique_sequences/", "type=" + type + "&bioprojects=" + order + "&sequences=[" + r + "]", function (d) {calculateUnicore(d, type); });
 }
 
 // Calculates the unique peptides data
-/*function calculateUnicore(ud, type) {
+function calculateUnicore(ud, type) {
     var u,
         i,
-        response,
-        temp,
         set;
+    unicorePresent = true;
     if (type === "uniprot") {
         unicoreData = ud;
         unicores[0] = unicoreData;
         u = unicores;
-    } else {
-        unicore2Data = ud;
-        unicores2[0] = unicore2Data;
-        u = unicores2;
-    }
+    } /*    else {
+            unicore2Data = ud;
+            unicores2[0] = unicore2Data;
+            u = unicores2;
+        }*/
     for (i = 1; i < order.length; i++) {
         set = data[order[i]];
         u[i] = intersection(u[i - 1], set);
     }
-    response = [];
-    for (i = 0; i < order.length; i++) {
-        temp = {};
-        temp.bioproject_id = order[i];
-        temp.pan = pans[i].length;
-        temp.core = cores[i].length;
-        if (unicores.length > 0) temp.unicore = unicores[i].length;
-        if (unicores2.length > 0) temp.unicore2 = unicores2[i].length;
-        response.push(temp);
-    }
-    sendToHost("setVisData", response);
-}*/
+    recalculatePanCore(order, 1, -1);
+}
 
 // Resets the data vars
 function clearAllData() {

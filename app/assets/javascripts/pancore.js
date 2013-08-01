@@ -146,9 +146,8 @@ function init_pancore() {
         tableData = {},
         legendData = [{"name": "pan proteome", "color": panColor},
             {"name": "core proteome", "color": coreColor},
-            {"name": "unique uniprot peptides", "color": unicoreColor},
-            {"name": "unique genome peptides", "color": unicore2Color}],
-        currentSpeciesId,
+            {"name": "unique peptides", "color": unicoreColor},
+            /*{"name": "unique genome peptides", "color": unicore2Color}*/],
         worker = new Worker("/assets/workers/pancore_worker.js");
 
     // D3 vars
@@ -237,8 +236,7 @@ function init_pancore() {
         if ($(this).attr("id") !== "add_species_proteome_link") {
             clearAllData();
         }
-        currentSpeciesId = $("#species_id").val();
-        var url = "/pancore/genomes/species/" + currentSpeciesId + ".json";
+        var url = "/pancore/genomes/species/" + $("#species_id").val() + ".json";
         $.getJSON(url, function (genomes) {
             clearTable();
             toLoad = 0;
@@ -390,16 +388,16 @@ function init_pancore() {
             $("#load_species_proteome_dropdown").addClass('disabled');
             $("#load_species_proteome_dropdown").attr("disabled", 'disabled');
             setTableMessage("refresh", "Please wait while we load the genomes for this species.");
-            $("#genomes_table tbody").sortable("option", "disabled", true);
+            $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", true);
         } else {
             $("#load_species_proteome").button('reset');
             $("#load_species_proteome_dropdown").removeClass('disabled');
             $("#load_species_proteome_dropdown").removeAttr("disabled");
             setTableMessage("info-sign", "You can drag rows to reorder them or use one of the autosort options.");
-            $("#genomes_table tbody").sortable("option", "disabled", false);
+            $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", false);
 
             // REMOVE THIS LINE
-            //sendToWorker("getUniqueSequences", {"lca" : currentSpeciesId, "type" : "uniprot"});
+            sendToWorker("getUniqueSequences", {"type" : "uniprot"});
             //sendToWorker("getUniqueSequences", {"lca" : currentSpeciesId, "type" : "genome"});
         }
     }
@@ -1060,7 +1058,7 @@ function init_pancore() {
         "<span style='color: " + panColor + ";'>&#9632;</span> pan peptides: <b>" + d3.format(",")(d.pan) + "</b><br/>" +
         "<span style='color: " + coreColor + ";'>&#9632;</span> core peptides: <b>" + d3.format(",")(d.core) + "</b>";
         if (d.unicore != null) {
-            tooltipHtml += "<br/><span style='color: " + unicoreColor + ";'>&#9632;</span> unique uniprot peptides: <b>" + d3.format(",")(d.unicore) + "</b>";
+            tooltipHtml += "<br/><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptides: <b>" + d3.format(",")(d.unicore) + "</b>";
         }
         if (d.unicore2 != null) {
             tooltipHtml += "<br/><span style='color: " + unicore2Color + ";'>&#9632;</span> unique genome peptides: <b>" + d3.format(",")(d.unicore2) + "</b>";

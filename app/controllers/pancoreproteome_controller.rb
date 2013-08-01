@@ -123,7 +123,7 @@ class PancoreproteomeController < ApplicationController
   # Returns a filtered list of unique sequence id's for a given LCA
   def get_unique_sequences
     sequences = JSON(params[:sequences])
-    lca = params[:lca]
+    lca = Lineage.calculate_lca(Lineage.find_by_sql("SELECT lineages.* from genomes LEFT JOIN lineages ON genomes.taxon_id = lineages.taxon_id WHERE bioproject_id IN (#{params[:bioprojects]})"))
     result = params[:type] == "genome" ? Sequence.filter_unique_genome_peptides(sequences, lca) : Sequence.filter_unique_uniprot_peptides(sequences, lca)
     render json: Oj.dump(result, mode: :compat)
   end
