@@ -222,6 +222,9 @@ function init_pancore() {
         case 'setVisData':
             setVisData(data.msg);
             break;
+        case 'sequencesDownloaded':
+            returnPopoverSequences(data.msg);
+            break;
         default:
             console.log(data.msg);
         }
@@ -911,8 +914,9 @@ function init_pancore() {
                 position: "right", 
                 container: "#popovers",
                 title: tableData[d.bioproject_id].name,
-                content: getTooltipContent(d)});
+                content: getPopoverContent(d)});
             target.popover("show");
+            addPopoverBehaviour();
             // highlight new node
             isClicked = true;
             clickId = d.bioproject_id;
@@ -1066,6 +1070,38 @@ function init_pancore() {
             tooltipHtml += "<br/><span style='color: " + unicore2Color + ";'>&#9632;</span> unique genome peptides: <b>" + d3.format(",")(d.unicore2) + "</b>";
         }
         return tooltipHtml;
+    }
+    function getPopoverContent(d) {
+        var content = getTooltipContent(d);
+        content += "<div class='btn-group'>" +
+          "<a class='btn dropdown-toggle' data-toggle='dropdown'>" +
+            "Download peptides " +
+            "<span class='caret'></span>" +
+          "</a>" +
+          "<ul class='dropdown-menu download-peptides'>" +
+            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='peptides'>All peptides</a></li>" +
+            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='pan'>Pan peptides</a></li>" +
+            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='core'>Core peptides</a></li>" +
+            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='unicore'>Unique peptides</a></li>" +
+          "</ul>" +
+        "</div>";
+
+        return content;
+    }
+    function addPopoverBehaviour() {
+        $("ul.download-peptides a").click(function () {
+            var type = $(this).attr("data-type");
+            var bioproject_id = $(this).attr("data-bioproject_id");
+            sendToWorker("getSequences", {"type" : type, "bioproject_id" : bioproject_id});
+            return false;
+        });
+    }
+    function returnPopoverSequences(sequences) {
+        $("#pancore_graph form.download").remove();
+        $("#pancore_graph").append("<form class='download' method='post' action='download'></form>");
+        $("#pancore_graph form.download").append("<input type='hidden' name='filename' value='sequences.txt'/>");
+        $("#pancore_graph form.download").append("<input type='hidden' name='data' value='" + sequences + "'/>");
+        $("#pancore_graph form.download").submit();
     }
     function position(d) {
         var v = dragging[d.bioproject_id];

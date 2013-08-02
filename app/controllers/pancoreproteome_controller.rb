@@ -127,4 +127,10 @@ class PancoreproteomeController < ApplicationController
     result = params[:type] == "genome" ? Sequence.filter_unique_genome_peptides(sequences, lca) : Sequence.filter_unique_uniprot_peptides(sequences, lca)
     render json: Oj.dump(result, mode: :compat)
   end
+
+  # returns a list of sequences
+  def get_sequences
+    ids = JSON(params[:sequence_ids])
+    render json: Oj.dump(Sequence.list_sequences(ids).join("\n"), mode: :compat)
+  end
 end

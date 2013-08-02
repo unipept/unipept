@@ -33,8 +33,11 @@ self.addEventListener('message', function (e) {
     case 'autoSort':
         autoSort(data.msg.type);
         break;
+    case "getSequences":
+        getSequences(data.msg.type, data.msg.bioproject_id);
+        break;
     default:
-        sendToHost("error", data.msg);
+        error(data.msg);
     }
 }, false);
 
@@ -139,6 +142,7 @@ function recalculatePanCore(newOrder, start, stop) {
     sendToHost("setVisData", response);
 }
 
+// Sorts the genomes in a given order
 function autoSort(type) {
     var i,
         sortFunction,
@@ -239,8 +243,8 @@ function autoSort(type) {
 
 // Retrieves the unique sequences
 function getUniqueSequences(type) {
-    var r = data[order[0]].peptide_list;
-    getJSONByPost("/pancore/unique_sequences/", "type=" + type + "&bioprojects=" + order + "&sequences=[" + r + "]", function (d) {calculateUnicore(d, type); });
+    var s = data[order[0]].peptide_list;
+    getJSONByPost("/pancore/unique_sequences/", "type=" + type + "&bioprojects=" + order + "&sequences=[" + s + "]", function (d) {calculateUnicore(d, type); });
 }
 
 // Calculates the unique peptides data
@@ -269,6 +273,45 @@ function clearAllData() {
     pans = [];
     cores = [];
     unicores = [];
+}
+
+// Sends a list sequences to the client
+function getSequences(type, bioproject_id) {
+    var ids,
+        ord = getOrderByBioprojectId(bioproject_id);
+    switch (type) {
+    case 'peptides':
+        ids = data[bioproject_id].peptide_list;
+        break;
+    case 'pan':
+        ids = pans[ord];
+        break;
+    case 'core':
+        ids = cores[ord];
+        break;
+    case 'unicore':
+        ids = unicores[ord];
+        break;
+    default:
+        error("Unknown type: " + type);
+    }
+    getJSONByPost("/pancore/full_sequences/", "sequence_ids=[" + ids + "]", function (d) {
+        sendToHost("sequencesDownloaded", d);
+    });
+}
+
+// These functions are not accessible from the host
+
+// Returns the rank of a give bioproject_id for the current order
+function getOrderByBioprojectId(bioproject_id) {
+    var i;
+    for (i = 0; i < order.length; i++) {
+        if (order[i] == bioproject_id) {
+            return i;
+        }
+    }
+    error("unknown bioprojectId: " + bioproject_id);
+    return 0;
 }
 
 // Provide an error function with the same signature as in the host

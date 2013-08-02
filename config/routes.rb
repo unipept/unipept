@@ -29,6 +29,7 @@ UnipeptWeb::Application.routes.draw do
   match '/pancore/sequences/:bioproject_id.:format', :to => 'pancoreproteome#get_sequence_ids_for_bioproject', :constraints => { :bioproject_id => /[0-z\._]+/ }
   match '/pancore/genomes/species/:species_id.:format', :to => 'pancoreproteome#get_genomes'
   match '/pancore/unique_sequences', :to => 'pancoreproteome#get_unique_sequences'
+  match '/pancore/full_sequences', :to => 'pancoreproteome#get_sequences'
   match '/pancore', :to => 'pancoreproteome#analyze', :as => 'pancore_analyze'
 
   # simple pages
@@ -38,6 +39,9 @@ UnipeptWeb::Application.routes.draw do
 
   # generate png from svg
   match "/convert", :to => "imagemagick#convert"
+
+  # downloads a file
+  match "/download", :to => "download#download"
 
   # load pride dataset from webservice
   match '/pride/:id', :to => 'pride#load'
