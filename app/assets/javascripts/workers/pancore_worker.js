@@ -5,7 +5,7 @@ var data = {},
     lca = 0,
     pans = [],
     cores = [],
-    unicores = [];
+    unicores = [],
     unicorePresent = false;
 
 // Add an event handler to the worker
@@ -106,12 +106,12 @@ function recalculatePanCore(newOrder, start, stop) {
         set,
         temp,
         response = [];
+    order = newOrder;
     if (start === 0) {
         unicorePresent = false;
         unicores = [];
         getUniqueSequences("uniprot");
     }
-    order = newOrder;
     for (i = start; i <= stop; i++) {
         set = data[order[i]].peptide_list;
         if (i === 0) {
@@ -243,22 +243,16 @@ function getUniqueSequences(type) {
 
 // Calculates the unique peptides data
 function calculateUnicore(ud, type) {
-    var u,
-        i,
-        set;
+    var i;
     unicorePresent = true;
     if (type === "uniprot") {
         unicoreData = ud;
         unicores[0] = unicoreData;
-        u = unicores;
-    } /*    else {
-            unicore2Data = ud;
-            unicores2[0] = unicore2Data;
-            u = unicores2;
-        }*/
+    } else {
+        sendToHost("log", "unknown type: " + type);
+    }
     for (i = 1; i < order.length; i++) {
-        set = data[order[i]].peptide_list;
-        u[i] = intersection(u[i - 1], set);
+        unicores[i] = intersection(unicores[i - 1], data[order[i]].peptide_list);
     }
     recalculatePanCore(order, 1, -1);
 }
@@ -268,7 +262,6 @@ function clearAllData() {
     unicorePresent = false;
     data = {};
     unicoreData = [];
-    unicore2Data = [];
     order = [];
     lca = 0;
     pans = [];
