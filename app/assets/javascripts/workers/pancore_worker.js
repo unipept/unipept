@@ -150,7 +150,8 @@ function autoSort(type) {
         easySort = true,
         sortableArray = [],
         tempOrder = [],
-        newOrder = [];
+        newOrder = [],
+        start;
     // Set up sort function based on type
     switch (type) {
         case 'name':
@@ -232,7 +233,8 @@ function autoSort(type) {
     for (i = 0; i < sortableArray.length; i++) {
         newOrder.push(sortableArray[i].bioproject_id);
     }
-    recalculatePanCore(newOrder, 0, newOrder.length - 1);
+    start = newOrder[0] === order[0] ? 1 : 0;
+    recalculatePanCore(newOrder, start, newOrder.length - 1);
 }
 
 // Retrieves the unique sequences
