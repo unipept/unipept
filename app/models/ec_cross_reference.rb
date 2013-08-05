@@ -17,11 +17,20 @@ class EcCrossReference < ActiveRecord::Base
   # the input is an array of ec numbers represented as strings.
   def self.calculate_lca(ecs)
     lca = ""
+    done = false
     splits = ecs.map{|e| e.split(".")}
     for level in (0..3).to_a do
-      current = splits.map{|r| r[level]}.uniq
-      return lca.chop if current.length > 1 #more than one distinct element
-      lca += current[0] + "."
+      if done
+        lca += "-."
+      else
+        current = splits.map{|r| r[level] == "-" ? nil : r[level]}.uniq.compact
+        if current.length == 1
+          lca += current[0] + "."
+        else
+          lca += "-."
+          done = true
+        end
+      end
     end
     return lca.chop
   end
