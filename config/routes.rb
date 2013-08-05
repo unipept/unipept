@@ -28,7 +28,8 @@ UnipeptWeb::Application.routes.draw do
   get '/sequences/:id/:equate_il', :to => 'sequences#show', :as => 'sequence_show'
   get '/search/single', :to => 'search#single'
 
-  get '/sequences/ec/:sequence', :to => 'sequences#ec'
+  match '/sequences/ec/:sequence', via: [:get, :post], :to => 'sequences#ec'
+  match '/search/sequences/ec', via: [:get, :post], :to => 'sequences#ec_multi_search', :as => 'sequence_ec_multi_search'
 
   # pancore
   match '/peptidome/sequences/:assembly_id.:format', via: [:get, :post], :to => 'peptidome#get_sequence_ids_for_assembly', :constraints => { :assembly_id => /[0-z\._]+/ }
@@ -40,7 +41,6 @@ UnipeptWeb::Application.routes.draw do
   get '/pancore', :to => 'peptidome#analyze'
   get '/peptidefinder', :to => 'peptidome#analyze', :as => 'peptide_finder', defaults: { tab: 'peptidefinder' }
   get '/peptidomeclustering', :to => 'peptidome#analyze', :as => 'peptidome_clustering', defaults: { tab: 'peptidomeclustering' }
-
 
   # simple pages
   get '/about',   :to => 'pages#about'

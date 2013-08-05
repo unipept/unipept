@@ -307,6 +307,16 @@ class SequencesController < ApplicationController
     @ecs = @sequence.peptides.map{|p| p.uniprot_entry.ec_cross_references.map{|e| e.ec_id}.flatten}.flatten
     @lca = EcCrossReference.calculate_lca(@ecs)
   end
+
+  def ec_multi_search
+    data = params[:ecqs]
+    data = data.upcase
+    data = data.lines.map(&:strip).to_a.select{|l| l.size >= 5}
+
+    @sequences = Sequence.find_all_by_sequence(data, :include => {:peptides => {:uniprot_entry => [:name, :ec_cross_references]}})
+    @results = @sequences.map{|s| EcCrossReference.calculate_lca(s.peptides.map{|p| p.uniprot_entry.ec_cross_references.map{|e| e.ec_id}.flatten}.flatten)}
+    @results = @results.group_by(&:to_s).map{|k,v| [k, v.length]}.sort
+  end
 end
 
 class EmptyQueryError < StandardError; end
