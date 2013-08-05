@@ -305,6 +305,7 @@ class SequencesController < ApplicationController
     seq = params[:sequence].upcase
     @sequence = Sequence.find_by_sequence(seq, :include => {:peptides => {:uniprot_entry => [:name, :ec_cross_references]}})
     @ecs = @sequence.peptides.map{|p| p.uniprot_entry.ec_cross_references.map{|e| e.ec_id}.flatten}.flatten
+    @lca = EcCrossReference.calculate_lca(@ecs)
   end
 end
 
