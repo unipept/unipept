@@ -16,6 +16,7 @@ class EcCrossReference < ActiveRecord::Base
   # adds some sort of LCA calculation for EC numbers.
   # the input is an array of ec numbers represented as strings.
   def self.calculate_lca(ecs)
+    return nil if ecs.empty?
     lca = ""
     done = false
     splits = ecs.map{|e| e.split(".")}
