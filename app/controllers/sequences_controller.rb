@@ -316,6 +316,7 @@ class SequencesController < ApplicationController
     @sequences = Sequence.find_all_by_sequence(data, :include => {:peptides => {:uniprot_entry => [:name, :ec_cross_references]}})
     @results = @sequences.map{|s| EcCrossReference.calculate_lca(s.peptides.map{|p| p.uniprot_entry.ec_cross_references.map{|e| e.ec_id}.flatten}.flatten)}
     @results = @results.group_by(&:to_s).map{|k,v| [k, v.length]}.sort
+    @results[0][0] = "No EC number" if @results[0][0].empty?
   end
 end
 
