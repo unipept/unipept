@@ -913,7 +913,7 @@ function init_pancore() {
                 trigger: "manual",
                 position: "right", 
                 container: "#popovers",
-                title: tableData[d.bioproject_id].name,
+                title: tableData[d.bioproject_id].name + " (bioproject " + d.bioproject_id + ")",
                 content: getPopoverContent(d)});
             target.popover("show");
             addPopoverBehaviour();
@@ -1059,8 +1059,7 @@ function init_pancore() {
         tooltip.style("visibility", "hidden");
     }
     function getTooltipContent(d) {
-        var tooltipHtml = "&#9632; bioproject id: <b>" + d.bioproject_id + "</b><br/>" +
-        "&#9632; peptides: <b>" + d3.format(",")(d.peptides) + "</b><br/>" +
+        var tooltipHtml = "&#9632; peptides: <b>" + d3.format(",")(d.peptides) + "</b><br/>" +
         "<span style='color: " + panColor + ";'>&#9632;</span> pan peptides: <b>" + d3.format(",")(d.pan) + "</b><br/>" +
         "<span style='color: " + coreColor + ";'>&#9632;</span> core peptides: <b>" + d3.format(",")(d.core) + "</b>";
         if (d.unicore != null) {
