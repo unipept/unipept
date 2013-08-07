@@ -1013,7 +1013,7 @@ function init_pancore() {
     }
     function addHighlight(d) {
         // add dropshadow to the dot and axis text
-        svg.selectAll(".dot._" + d.bioproject_id).attr("filter", "url(#dropshadow)");
+        svg.selectAll(".dot._" + d.bioproject_id).attr("filter", "url(#dropshadow)").attr("r", 6);
         svg.selectAll(".tick._" + d.bioproject_id + " text").style("font-weight", "bold");
 
         svg.select(".axisline.pan")
@@ -1038,13 +1038,13 @@ function init_pancore() {
         }
     }
     function removeHighlight(bioproject_id) {
-        svg.selectAll(".dot._" + bioproject_id).attr("filter", "");
+        svg.selectAll(".dot._" + bioproject_id).attr("filter", "").attr("r", 5);
         svg.selectAll(".tick._" + bioproject_id + " text").style("font-weight", "normal");
         svg.selectAll(".axisline").style("visibility", "hidden");
         tooltip.style("visibility", "hidden");
     }
     function removeAllHighlights() {
-        svg.selectAll(".dot").attr("filter", "");
+        svg.selectAll(".dot").attr("filter", "").attr("r", 5);
         svg.selectAll(".tick text").style("font-weight", "normal");
         svg.selectAll(".axisline").style("visibility", "hidden");
         tooltip.style("visibility", "hidden");
@@ -1069,7 +1069,7 @@ function init_pancore() {
         content += "<br/><div class='btn-group' id='download-peptides'>" +
           "<a class='btn dropdown-toggle' id='download-peptides-toggle' data-toggle='dropdown' data-loading-text='Loading peptides'>" +
             "<i class='icon-download'></i> " +
-            "Download peptides " +
+            "download peptides " +
             "<span class='caret'></span>" +
           "</a>" +
           "<ul class='dropdown-menu'>" +
