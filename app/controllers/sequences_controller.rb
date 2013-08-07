@@ -155,7 +155,7 @@ class SequencesController < ApplicationController
     @table_lineages = @table_lineages.transpose.sort_by{ |k| k[1..-1].map!{|l| l || root_taxon} }
 
     #sort entries
-    @entries = @entries.to_a.sort_by{|e| e.name.name}
+    @entries = @entries.to_a.sort_by{|e| e.name.nil? ? "" : e.name.name}
 
     respond_to do |format|
       format.html # show.html.erb
