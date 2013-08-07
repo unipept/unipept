@@ -1,4 +1,4 @@
-class PancoreproteomeController < ApplicationController
+class PancorepeptidomeController < ApplicationController
 
   # This method isn't used anymore
   def old_analyze

@@ -1,5 +1,5 @@
-<h1>Pan and core proteome</h1>
-<p>This application lets you analyze the pan and core-proteome of a set of genomes. Analogous to the pan and core-genome, it is calculated by taking the union and intersection of the set of tryptic peptides from each genome. Additionally, a more restrictive version of the core-proteome is calculated by only including peptides that are unique for the selected genomes. You can easily reorder the genomes by dragging them to the desired position or by using one of the automatic sort options.</p>
+<h1>Pan and core peptidome</h1>
+<p>This application lets you analyze the pan and core-peptidome of a set of genomes. Analogous to the pan and core-genome, it is calculated by taking the union and intersection of the set of tryptic peptides from each genome. Additionally, a more restrictive version of the core-peptidome is calculated by only including peptides that are unique for the selected genomes. You can easily reorder the genomes by dragging them to the desired position or by using one of the automatic sort options.</p>
 
 <div id="buttons-pancore"></div>
 
@@ -15,13 +15,13 @@
     <%= form_tag(:pancore_analyze, :method => "get", :class => "form-inline") do %>
     <%= select_tag(:species_id, options_for_select(@species, params[:species_id])) %>
     <div class="btn-group" id="load_species_group">
-      <button class="btn btn-primary" id="load_species_proteome" data-loading-text="Loading...">Load Species</button>
-      <button class="btn btn-primary dropdown-toggle" id="load_species_proteome_dropdown" data-toggle="dropdown">
+      <button class="btn btn-primary" id="load_species_peptidome" data-loading-text="Loading...">Load Species</button>
+      <button class="btn btn-primary dropdown-toggle" id="load_species_peptidome_dropdown" data-toggle="dropdown">
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu">
-        <li><a href="#" id="load_species_proteome_link" data-toggle="tooltip" title="Replaces the current genomes by the ones from the species you selected.">Load Species</a></li>
-        <li><a href="#" id="add_species_proteome_link" data-toggle="tooltip" title="Adds the genomes from the species you selected to the list.">Add Species</a></li>
+        <li><a href="#" id="load_species_peptidome_link" data-toggle="tooltip" title="Replaces the current genomes by the ones from the species you selected.">Load Species</a></li>
+        <li><a href="#" id="add_species_peptidome_link" data-toggle="tooltip" title="Adds the genomes from the species you selected to the list.">Add Species</a></li>
       </ul>
     </div>
     <% end %>
