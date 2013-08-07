@@ -280,7 +280,7 @@ function getSequences(type, bioproject_id) {
     var ids,
         ord = getOrderByBioprojectId(bioproject_id);
     switch (type) {
-    case 'peptides':
+    case 'all':
         ids = data[bioproject_id].peptide_list;
         break;
     case 'pan':
@@ -289,14 +289,14 @@ function getSequences(type, bioproject_id) {
     case 'core':
         ids = cores[ord];
         break;
-    case 'unicore':
+    case 'unique':
         ids = unicores[ord];
         break;
     default:
         error("Unknown type: " + type);
     }
     getJSONByPost("/pancore/full_sequences/", "sequence_ids=[" + ids + "]", function (d) {
-        sendToHost("sequencesDownloaded", d);
+        sendToHost("sequencesDownloaded", {sequences : d, type : type});
     });
 }
 
