@@ -77,10 +77,10 @@ function init_selection_tree(data, taxa) {
         helper: function (event) {
             var returnString = "<tbody class='dragging'>";
             if ($(this).hasClass("leaf")) {
-                returnString += "<tr><td><i class='icon-resize-vertical'></i></td><td class='data name' data-bioproject_id='" + $(this).attr("data-bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
+                returnString += "<tr><td class='handle'><i class='icon-resize-vertical'></i></td><td class='data name' data-bioproject_id='" + $(this).attr("data-bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
             } else {
                 $(this).find(".leaf").each(function () {
-                    returnString += "<tr><td><i class='icon-resize-vertical'></i></td><td class='data name' data-bioproject_id='" + $(this).attr("data-bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
+                    returnString += "<tr><td class='handle'><i class='icon-resize-vertical'></i></td><td class='data name' data-bioproject_id='" + $(this).attr("data-bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
                 });
             }
             returnString += "</tbody>";
@@ -536,7 +536,7 @@ function init_pancore() {
         tr.sort(function (a, b) { return a.position - b.position; });
 
         // Add cells
-        newRows.append("td").html("<i class='icon-resize-vertical'></i>");
+        newRows.append("td").attr("class", "handle").html("<i class='icon-resize-vertical'></i>");
         var td = tr.selectAll("td.data")
             .data(function (d) {
                 return d3.entries(d).filter(function (entry) {
