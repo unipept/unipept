@@ -1068,14 +1068,15 @@ function init_pancore() {
         var content = getTooltipContent(d);
         content += "<br/><div class='btn-group' id='download-peptides'>" +
           "<a class='btn dropdown-toggle' id='download-peptides-toggle' data-toggle='dropdown' data-loading-text='Loading peptides'>" +
+            "<i class='icon-download'></i> " +
             "Download peptides " +
             "<span class='caret'></span>" +
           "</a>" +
           "<ul class='dropdown-menu'>" +
-            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='all'>All peptides</a></li>" +
-            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='pan'>Pan peptides</a></li>" +
-            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='core'>Core peptides</a></li>" +
-            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='unique'>Unique peptides</a></li>" +
+            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='all'>genome peptides</a></li>" +
+            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='pan'><span style='color: " + panColor + ";'>&#9632;</span> pan peptides</a></li>" +
+            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='core'><span style='color: " + coreColor + ";'>&#9632;</span> core peptides</a></li>" +
+            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='unique'><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptides</a></li>" +
           "</ul>" +
         "</div>";
 
