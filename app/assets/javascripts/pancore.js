@@ -1082,6 +1082,8 @@ function init_pancore() {
         return content;
     }
     function addPopoverBehaviour() {
+        $(".popover").prepend("<button type='button' class='close' style='margin-right: 5px'>&times;</button>");
+        $(".close").click(removePopoversAndHighlights);
         $("#download-peptides").mouseenter(function () {
             if (!$("#download-peptides").hasClass("open")) {
                 $("#download-peptides-toggle").dropdown("toggle");
