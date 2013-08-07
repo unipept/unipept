@@ -939,6 +939,7 @@ function init_pancore() {
         hasDragged = false;
         dragId = d.bioproject_id;
         dragging[d.bioproject_id] = this.__origin__ = x(d.bioproject_id);
+        d3.select("body").style("cursor", "url(/closedhand.cur) 7 5, move");
         svg.selectAll(".bar").style("cursor", "url(/closedhand.cur) 7 5, move");
         svg.select("#trash").transition().duration(transitionDuration).attr("transform", "translate(-84 0)");
     }
@@ -976,6 +977,7 @@ function init_pancore() {
     function dragEnd(d) {
         delete this.__origin__;
         delete dragging[d.bioproject_id];
+        d3.select("body").style("cursor", "auto");
         svg.selectAll(".bar").style("cursor", "url(/openhand.cur) 7 5, move");
         svg.select("#trash").transition()
             .delay(onTrash ? transitionDuration : 0)
