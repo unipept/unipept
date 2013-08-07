@@ -1073,12 +1073,12 @@ function init_pancore() {
     }
     function getPopoverContent(d) {
         var content = getTooltipContent(d);
-        content += "<div class='btn-group'>" +
-          "<a class='btn dropdown-toggle' data-toggle='dropdown'>" +
+        content += "<div class='btn-group' id='download-peptides'>" +
+          "<a class='btn dropdown-toggle' id='download-peptides-toggle' data-toggle='dropdown'>" +
             "Download peptides " +
             "<span class='caret'></span>" +
           "</a>" +
-          "<ul class='dropdown-menu download-peptides'>" +
+          "<ul class='dropdown-menu'>" +
             "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='peptides'>All peptides</a></li>" +
             "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='pan'>Pan peptides</a></li>" +
             "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='core'>Core peptides</a></li>" +
@@ -1089,10 +1089,21 @@ function init_pancore() {
         return content;
     }
     function addPopoverBehaviour() {
-        $("ul.download-peptides a").click(function () {
+        $("#download-peptides").mouseenter(function () {
+            if (!$("#download-peptides").hasClass("open")) {
+                $("#download-peptides-toggle").dropdown("toggle");
+            }
+        });
+        $("#download-peptides").mouseleave(function () {
+            if ($("#download-peptides").hasClass("open")) {
+                $("#download-peptides-toggle").dropdown("toggle");
+            }
+        });
+        $("#download-peptides ul a").click(function () {
             var type = $(this).attr("data-type");
             var bioproject_id = $(this).attr("data-bioproject_id");
             sendToWorker("getSequences", {"type" : type, "bioproject_id" : bioproject_id});
+            $("#download-peptides").mouseleave();
             return false;
         });
     }
