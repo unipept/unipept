@@ -234,11 +234,8 @@ function init_pancore() {
     }, false);
 
     // Add handler to the form
-    $("#load_species_peptidome, #load_species_peptidome_link, #add_species_peptidome_link").click(function () {
+    $("#add_species_peptidome").click(function () {
         setLoading(true);
-        if ($(this).attr("id") !== "add_species_peptidome_link") {
-            clearAllData();
-        }
         var url = "/pancore/genomes/species/" + $("#species_id").val() + ".json";
         $.getJSON(url, function (genomes) {
             clearTable();
@@ -248,7 +245,6 @@ function init_pancore() {
         .fail(function () {
             error("request error for " + url, "It seems like something went wrong while we loaded the data");
         });
-        $("#load_species_group").removeClass("open");
         return false;
     });
     $("#load_species_group ul a").tooltip({placement : "right", container : "body"});
@@ -351,7 +347,7 @@ function init_pancore() {
 
     // Load sample data
     $("#species_id").val(470);
-    $("#load_species_peptidome").click();
+    $("#add_species_peptidome").click();
 
     // Sends a command and message to the worker
     function sendToWorker(command, message) {
@@ -387,15 +383,11 @@ function init_pancore() {
     // Gets called when the data is (done) loading
     function setLoading(loading) {
         if (loading) {
-            $("#load_species_peptidome").button('loading');
-            $("#load_species_peptidome_dropdown").addClass('disabled');
-            $("#load_species_peptidome_dropdown").attr("disabled", 'disabled');
+            $("#add_species_peptidome").button('loading');
             setTableMessage("refresh", "Please wait while we load the genomes for this species.");
             $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", true);
         } else {
-            $("#load_species_peptidome").button('reset');
-            $("#load_species_peptidome_dropdown").removeClass('disabled');
-            $("#load_species_peptidome_dropdown").removeAttr("disabled");
+            $("#add_species_peptidome").button('reset');
             setTableMessage("info-sign", "You can drag rows to reorder them or use one of the autosort options.");
             $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", false);
 
