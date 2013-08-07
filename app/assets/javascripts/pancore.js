@@ -1113,8 +1113,8 @@ function init_pancore() {
         $("#pancore_graph").append("<form class='download' method='post' action='download'></form>");
         $("#pancore_graph form.download").append("<input type='hidden' name='filename' value='" + type + "-sequences.txt'/>");
         $("#pancore_graph form.download").append("<input type='hidden' name='data' value='" + sequences + "'/>");
-        $("#download-peptides-toggle").button('reset');
         $("#pancore_graph form.download").submit();
+        $("#download-peptides-toggle").button('reset');
     }
     function position(d) {
         var v = dragging[d.bioproject_id];
