@@ -11,20 +11,21 @@ rm -f enzyme.sql
 wget ftp://ftp.expasy.org/databases/enzyme/enzyme.dat
 echo "TRUNCATE TABLE ec_numbers;" > enzyme.sql
 awk 'BEGIN {
-	FS = "   "
+  FS = "   "
 }
 /^ID/{
-	# print previous
-	printf("INSERT INTO ec_numbers (id, name) VALUES (\"%s\", \"%s\");\n", id, name)
-	name = ""
-	id = $2
+  if (id != "") {
+    printf("INSERT INTO ec_numbers (number, name) VALUES (\"%s\", \"%s\");\n", id, name)
+  }
+  name = ""
+  id = $2
 }
 /^DE/{
-	gsub(/.$/, "", $2)
-	name = name $2
+  gsub(/.$/, "", $2)
+  name = name $2
 }
 END {
-  printf("INSERT INTO ec_numbers (id, name) VALUES (\"%s\", \"%s\");\n", id, name)
+  printf("INSERT INTO ec_numbers (number, name) VALUES (\"%s\", \"%s\");\n", id, name)
 }' enzyme.dat >> enzyme.sql
 
 # load the file into the database
