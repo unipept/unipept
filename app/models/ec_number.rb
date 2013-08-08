@@ -9,4 +9,15 @@
 
 class EcNumber < ActiveRecord::Base
   
+  def self.fetch_kegg_data
+    EcNumber.all.each do |ec|
+      response = HTTParty.get("http://www.genome.jp/dbget-bin/get_linkdb?-t+pathway+ec:#{ec.number}").body
+      for line in response.lines do
+        if line.include? "kegg-bin/show_pathway"
+          pathway = line.gsub(/^.*">(.*)<\/a>.*$/, '\1').strip
+          KeggPathwayMapping.create(:ec_number_id => ec.id, :kegg_pathway_id => pathway)
+        end
+      end
+    end
+  end
 end
