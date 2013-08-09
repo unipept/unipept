@@ -7,7 +7,7 @@ Pathways found: <%= @pathways.length %> </br>
   <h3>EC numbers</h3>
   <ul>
   <% for @ec in @grouped_ecs do %>
-    <li><a target="_blank" href="http://enzyme.expasy.org/EC/<%= @ec[0] %>"><%= @ec[0] %>: <%= @ec[1] %></li>
+    <li><a target="_blank" href="http://enzyme.expasy.org/EC/<%= @ec[0] %>"><%=  @ec[0] %></a> <%= @ec[1].nil? ? @ec[0] : @ec[1].name %>: <%= @ec[2] %></li>
   <% end %>
   </ul>
 </div>

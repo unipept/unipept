@@ -320,8 +320,9 @@ class SequencesController < ApplicationController
     @ecs = @sequences.map{|s| EcCrossReference.calculate_lca(s.peptides.map{|p| p.uniprot_entry.ec_cross_references.map{|e| e.ec_id}.flatten}.flatten)}
 
     # group them
-    @grouped_ecs = @ecs.group_by(&:to_s).map{|k,v| [k, v.length]}.sort
+    @grouped_ecs = @ecs.group_by(&:to_s).map{|k,v| [k, EcNumber.find_by_number(k), v.length]}.sort
     @grouped_ecs[0][0] = "No EC number" if @grouped_ecs[0][0].empty?
+    @grouped_ecs = @grouped_ecs.sort_by{|e| e[2]}.reverse!
 
     # map ecs to pathways
     @pathways = EcNumber.find_all_by_number(@ecs.uniq, :include => :kegg_pathway_mappings).map(&:kegg_pathway_mappings).flatten!
