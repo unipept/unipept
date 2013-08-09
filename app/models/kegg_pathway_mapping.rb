@@ -9,4 +9,6 @@
 
 class KeggPathwayMapping < ActiveRecord::Base
 
+  belongs_to :ec_number
+
 end

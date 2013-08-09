@@ -1,6 +1,23 @@
-Peptides matched: <%= @sequences.length %>
-<ul>
-<% for @ec in @results do %>
-<li><%= @ec[0] %>: <%= @ec[1] %></li>
-<% end %>
-</ul>
+Peptides matched: <%= @sequences.length %> </br>
+EC numbers found: <%= @grouped_ecs.length %> </br>
+Pathways found: <%= @pathways.length %> </br>
+
+<div class="split">
+<div class="split-left">
+  <h3>EC numbers</h3>
+  <ul>
+  <% for @ec in @grouped_ecs do %>
+    <li><%= @ec[0] %>: <%= @ec[1] %></li>
+  <% end %>
+  </ul>
+</div>
+<div class="split-right">
+  <h3>Pathways</h3>
+  <ul>
+    <% for @pathway in @pathways do %>
+      <li><a href="http://www.genome.jp/kegg-bin/show_pathway?<%= @pathway[0] %>"><%= @pathway[0] %></a>: <%= @pathway[1] %></li>
+    <% end %>
+  </ul>
+</div>
+<div class="visualClear"></div>
+</div>

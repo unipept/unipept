@@ -8,7 +8,8 @@
 #
 
 class EcNumber < ActiveRecord::Base
-  
+  has_many :kegg_pathway_mappings
+
   def self.fetch_kegg_data
     EcNumber.all.each do |ec|
       response = HTTParty.get("http://www.genome.jp/dbget-bin/get_linkdb?-t+pathway+ec:#{ec.number}").body

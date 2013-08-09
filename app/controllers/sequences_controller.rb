@@ -313,10 +313,19 @@ class SequencesController < ApplicationController
     data = data.upcase
     data = data.lines.map(&:strip).to_a.select{|l| l.size >= 5}
 
+    # fetch sequences
     @sequences = Sequence.find_all_by_sequence(data, :include => {:peptides => {:uniprot_entry => [:name, :ec_cross_references]}})
-    @results = @sequences.map{|s| EcCrossReference.calculate_lca(s.peptides.map{|p| p.uniprot_entry.ec_cross_references.map{|e| e.ec_id}.flatten}.flatten)}
-    @results = @results.group_by(&:to_s).map{|k,v| [k, v.length]}.sort
-    @results[0][0] = "No EC number" if @results[0][0].empty?
+
+    # fetch ec numbers associated with sequences
+    @ecs = @sequences.map{|s| EcCrossReference.calculate_lca(s.peptides.map{|p| p.uniprot_entry.ec_cross_references.map{|e| e.ec_id}.flatten}.flatten)}
+
+    # group them
+    @grouped_ecs = @ecs.group_by(&:to_s).map{|k,v| [k, v.length]}.sort
+    @grouped_ecs[0][0] = "No EC number" if @grouped_ecs[0][0].empty?
+
+    # map ecs to pathways
+    @pathways = EcNumber.find_all_by_number(@ecs.uniq, :include => :kegg_pathway_mappings).map(&:kegg_pathway_mappings).flatten!
+    @pathways = @pathways.group_by(&:kegg_pathway_id).map{|k,v| [k, v.length]}.sort_by{|p| p[1]}.reverse!
   end
 end
 
