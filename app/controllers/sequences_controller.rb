@@ -325,7 +325,7 @@ class SequencesController < ApplicationController
 
     # map ecs to pathways
     @pathways = EcNumber.find_all_by_number(@ecs.uniq, :include => :kegg_pathway_mappings).map(&:kegg_pathway_mappings).flatten!
-    @pathways = @pathways.group_by(&:kegg_pathway_id).map{|k,v| [k, v.length]}.sort_by{|p| p[1]}.reverse!
+    @pathways = @pathways.group_by(&:kegg_pathway_id).map{|k,v| [k, v.map{|p| p.ec_number.number}]}.sort_by{|p| p[1].length}.reverse!
   end
 end
 
