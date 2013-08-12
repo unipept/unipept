@@ -1,3 +1,18 @@
-EC numbers only in sample 1: <%= @sample1 %> </br>
-EC numbers only in sample 2: <%= @sample2 %> </br>
-EC numbers in both samples: <%= @both %> </br>
+<div class="split">
+<div class="split-left">
+  <h3>EC numbers</h3>
+  <b>EC numbers only in sample 1:</b> <%= @sample1 %> </br>
+  <b>EC numbers only in sample 2:</b> <%= @sample2 %> </br>
+  <b>EC numbers in both samples:</b> <%= @both %> </br>
+</div>
+<div class="split-right">
+  <h3>Pathways</h3>
+  pathway: #ec numbers (#sample 1, #sample 2, #both)
+  <ul>
+    <% for @pathway in @pathways do %>
+      <li><a target="_blank" href="http://www.genome.jp/kegg-bin/show_pathway?scale=1.0&map=<%= @pathway[0] %>&multi_query=<%= @pathway[2].map{|i| i.to_s + "+%232ca02c%0D%0A"}.join %><%= @pathway[3].map{|i| i.to_s + "+%23d62728%0D%0A"}.join %><%= @pathway[4].map{|i| i.to_s + "+%23ff7f0e%0D%0A"}.join %>"><%= @pathway[0] %></a>: <%= @pathway[1].length %> (<%= @pathway[2].length %>, <%= @pathway[3].length %>, <%= @pathway[4].length %>)</li>
+    <% end %>
+  </ul>
+</div>
+<div class="visualClear"></div>
+</div>

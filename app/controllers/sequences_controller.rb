@@ -343,9 +343,18 @@ class SequencesController < ApplicationController
       data2 = Sequence.find_all_by_sequence(data2, :include => {:peptides => {:uniprot_entry => [:name, :ec_cross_references]}})
       data2 = data2.map{|s| EcCrossReference.calculate_lca(s.peptides.map{|p| p.uniprot_entry.ec_cross_references.map{|e| e.ec_id}.flatten}.flatten)}
 
-      @sample1 = (data1 - data2).uniq.compact.sort
-      @sample2 = (data2 - data1).uniq.compact.sort
-      @both = (data1 & data2).uniq.compact.sort
+      @sample1 = (data1 - data2).to_set
+      @sample2 = (data2 - data1).to_set
+      @both = (data1 & data2).to_set
+      all_ecs = (data1 + data2).uniq
+
+      # add pathways to the mix
+      @pathways = EcNumber.find_all_by_number(all_ecs, :include => :kegg_pathway_mappings).map(&:kegg_pathway_mappings).flatten!
+      @pathways = @pathways.group_by(&:kegg_pathway_id).map{|k,v| numbers = v.map{|p| p.ec_number.number}; [k, numbers, @sample1 & numbers, @sample2 & numbers, @both & numbers]}.sort_by{|p| p[1].length}.reverse!
+
+      @sample1 = @sample1.to_a.compact.sort
+      @sample2 = @sample2.to_a.compact.sort
+      @both = @both.to_a.compact.sort
   end
 end
 
