@@ -1,0 +1,11 @@
+<%= form_tag(:sequence_ec_compare_search, :method => "post", :class => "form-inline") do %>
+  <div id="search_elements">
+  <%= text_area_tag(:ecqs1, nil, :rows => 7, :spellcheck => "false") %>
+  <%= text_area_tag(:ecqs2, nil, :rows => 7, :spellcheck => "false") %>
+  </div>
+  <div id="search_button">
+  <%= button_tag(raw("<i class='icon-search icon-white'></i> Compare"), :type => "submit", :class => "btn btn-primary") %>
+  <%= button_tag(raw("<i class='icon-repeat'></i> Start Over"), { :name => 'reset', :id => 'reset_button', :type => "reset", :class => "btn" }) %>
+  </div>
+
+<% end %>

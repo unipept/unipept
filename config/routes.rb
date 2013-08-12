@@ -30,6 +30,7 @@ UnipeptWeb::Application.routes.draw do
 
   match '/sequences/ec/:sequence', via: [:get, :post], :to => 'sequences#ec'
   match '/search/sequences/ec', via: [:get, :post], :to => 'sequences#ec_multi_search', :as => 'sequence_ec_multi_search'
+  match '/search/sequences/compare/ec', via: [:get, :post], :to => 'sequences#ec_compare_search', :as => 'sequence_ec_compare_search'
 
   # pancore
   match '/peptidome/sequences/:assembly_id.:format', via: [:get, :post], :to => 'peptidome#get_sequence_ids_for_assembly', :constraints => { :assembly_id => /[0-z\._]+/ }

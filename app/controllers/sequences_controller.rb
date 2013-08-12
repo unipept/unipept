@@ -320,13 +320,32 @@ class SequencesController < ApplicationController
     @ecs = @sequences.map{|s| EcCrossReference.calculate_lca(s.peptides.map{|p| p.uniprot_entry.ec_cross_references.map{|e| e.ec_id}.flatten}.flatten)}
 
     # group them
-    @grouped_ecs = @ecs.group_by(&:to_s).map{|k,v| [k, EcNumber.find_by_number(k), v.length]}.sort
+    @grouped_ecs = @ecs.group_by(&:to_s).map{|k,v| [k, EcNumber.find_by_number(k), v.length]}.sort_by{|e| e[2]}.reverse!
     @grouped_ecs[0][0] = "No EC number" if @grouped_ecs[0][0].empty?
-    @grouped_ecs = @grouped_ecs.sort_by{|e| e[2]}.reverse!
 
     # map ecs to pathways
     @pathways = EcNumber.find_all_by_number(@ecs.uniq, :include => :kegg_pathway_mappings).map(&:kegg_pathway_mappings).flatten!
     @pathways = @pathways.group_by(&:kegg_pathway_id).map{|k,v| [k, v.map{|p| p.ec_number.number}]}.sort_by{|p| p[1].length}.reverse!
+  end
+
+  def ec_compare_search
+      # prepare data
+      data1 = params[:ecqs1]
+      data1 = data1.upcase
+      data1 = data1.lines.map(&:strip).to_a.select{|l| l.size >= 5}
+      data2 = params[:ecqs2]
+      data2 = data2.upcase
+      data2 = data2.lines.map(&:strip).to_a.select{|l| l.size >= 5}
+
+      # fetch data from database
+      data1 = Sequence.find_all_by_sequence(data1, :include => {:peptides => {:uniprot_entry => [:name, :ec_cross_references]}})
+      data1 = data1.map{|s| EcCrossReference.calculate_lca(s.peptides.map{|p| p.uniprot_entry.ec_cross_references.map{|e| e.ec_id}.flatten}.flatten)}
+      data2 = Sequence.find_all_by_sequence(data2, :include => {:peptides => {:uniprot_entry => [:name, :ec_cross_references]}})
+      data2 = data2.map{|s| EcCrossReference.calculate_lca(s.peptides.map{|p| p.uniprot_entry.ec_cross_references.map{|e| e.ec_id}.flatten}.flatten)}
+
+      @sample1 = (data1 - data2).uniq.compact.sort
+      @sample2 = (data2 - data1).uniq.compact.sort
+      @both = (data1 & data2).uniq.compact.sort
   end
 end
 
