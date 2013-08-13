@@ -287,9 +287,7 @@ function init_pancore() {
             ui.helper.find(".data.name").each(function () {
                 g.push({name : $(this).text(), bioproject_id : parseInt($(this).attr("data-bioproject_id"), 10)});
             });
-            if (g.length > 70) {
-                alert("Oops, you're trying to add way too many genomes.");
-            } else {
+            if (g.length < 70 || confirm("You're trying to add a lot of genomes (" + g.length + "). Are you sure you want to continue?")) {
                 addGenomes(g);
             }
         }
