@@ -417,7 +417,7 @@ function init_pancore() {
         visData = data;
         for (i = 0; i < visData.length; i++) {
             bioproject_id = visData[i].bioproject_id;
-            if (typeof tableData[bioproject_id] !== undefined) {
+            if (typeof tableData[bioproject_id] !== "undefined") {
                 tableData[bioproject_id].status = "Done";
                 tableData[bioproject_id].position = i;
             }
