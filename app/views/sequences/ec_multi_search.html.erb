@@ -15,7 +15,7 @@ Pathways found: <%= @pathways.length %> </br>
   <h3>Pathways</h3>
   <ul>
     <% for @pathway in @pathways do %>
-      <li><a target="_blank" href="http://www.genome.jp/kegg-bin/show_pathway?scale=1.0&map=<%= @pathway[0] %>&multi_query=<%= @pathway[1].map{|i| i.to_s + "+%23fffe00%0D%0A"}.join %>"><%= @pathway[0] %></a>: <%= @pathway[1].length %></li>
+      <li><a target="_blank" href="http://www.genome.jp/kegg-bin/show_pathway?scale=1.0&map=<%= @pathway[0].long_id %>&multi_query=<%= @pathway[1].map{|i| i.to_s + "+%23fffe00%0D%0A"}.join %>"><%= @pathway[0].long_id %></a> <%= @pathway[0].name %>: <%= @pathway[1].length %></li>
     <% end %>
   </ul>
 </div>

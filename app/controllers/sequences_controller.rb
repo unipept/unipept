@@ -324,8 +324,8 @@ class SequencesController < ApplicationController
     @grouped_ecs[0][0] = "No EC number" if @grouped_ecs[0][0].empty?
 
     # map ecs to pathways
-    @pathways = EcNumber.find_all_by_number(@ecs.uniq, :include => :kegg_pathway_mappings).map(&:kegg_pathway_mappings).flatten!
-    @pathways = @pathways.group_by(&:kegg_pathway_id).map{|k,v| [k, v.map{|p| p.ec_number.number}]}.sort_by{|p| p[1].length}.reverse!
+    @pathways = EcNumber.find_all_by_number(@ecs.uniq, :include => {:kegg_pathway_mappings => :kegg_pathway}).map(&:kegg_pathway_mappings).flatten!
+    @pathways = @pathways.group_by(&:kegg_pathway).map{|k,v| [k, v.map{|p| p.ec_number.number}]}.sort_by{|p| p[1].length}.reverse!
   end
 
   def ec_compare_search
@@ -349,8 +349,8 @@ class SequencesController < ApplicationController
       all_ecs = (data1 + data2).uniq
 
       # add pathways to the mix
-      @pathways = EcNumber.find_all_by_number(all_ecs, :include => :kegg_pathway_mappings).map(&:kegg_pathway_mappings).flatten!
-      @pathways = @pathways.group_by(&:kegg_pathway_id).map{|k,v| numbers = v.map{|p| p.ec_number.number}; [k, numbers, @sample1 & numbers, @sample2 & numbers, @both & numbers]}.map{|p| p << 1000 * ([0, (p[2].length - 2.0) / p[1].length].max ** 2 + [0, (p[3].length - 2.0) / p[1].length].max ** 2) + p[2].length + p[3].length + p[1].length}.sort_by{|p| p[5]}.reverse!
+      @pathways = EcNumber.find_all_by_number(all_ecs, :include => {:kegg_pathway_mappings => :kegg_pathway}).map(&:kegg_pathway_mappings).flatten!
+      @pathways = @pathways.group_by(&:kegg_pathway).map{|k,v| numbers = v.map{|p| p.ec_number.number}; [k, numbers, @sample1 & numbers, @sample2 & numbers, @both & numbers]}.map{|p| p << 1000 * ([0, (p[2].length - 2.0) / p[1].length].max ** 2 + [0, (p[3].length - 2.0) / p[1].length].max ** 2) + p[2].length + p[3].length + p[1].length}.sort_by{|p| p[5]}.reverse!
 
       @sample1 = @sample1.to_a.compact.sort
       @sample2 = @sample2.to_a.compact.sort
