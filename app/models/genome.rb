@@ -33,7 +33,7 @@ class Genome < ActiveRecord::Base
     Genome.select("bioproject_id, name").joins(:lineage).where("lineages.species = ?", species_id).group("bioproject_id")
   end
 
-  # fills in the species_id and genus_id columns
+  # fills in the taxon_id column
   def self.precompute_taxa
     Genome.all.each do |genome|
       ue = UniprotEntry.find_by_sql("SELECT DISTINCT uniprot_entries.* 
