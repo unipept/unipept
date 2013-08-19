@@ -16,7 +16,9 @@ class EcNumber < ActiveRecord::Base
       for line in response.lines do
         if line.include? "kegg-bin/show_pathway"
           pathway = line.gsub(/^.*">(.*)<\/a>.*$/, '\1').strip
-          KeggPathwayMapping.create(:ec_number_id => ec.id, :kegg_pathway_id => pathway)
+          pathway_name = line.gsub(/^.*<\/a>   *([^ ].*)$/, '\1').strip
+          kp = KeggPathway.find_or_create_by_long_id_and_name(pathway, pathway_name)
+          KeggPathwayMapping.create(:ec_number_id => ec.id, :kegg_pathway_id => kp.id)
         end
       end
     end
