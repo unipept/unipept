@@ -906,6 +906,7 @@ function init_pancore() {
                 title: tableData[d.bioproject_id].name + " (bioproject " + d.bioproject_id + ")",
                 content: getPopoverContent(d)});
             target.popover("show");
+            target.attr("class", "bar pop");
             addPopoverBehaviour();
             // highlight new node
             isClicked = true;
@@ -1006,7 +1007,8 @@ function init_pancore() {
         removeAllHighlights();
     }
     function removePopovers() {
-        $("#popovers").html("");
+        $(".bar.pop").popover("destroy");
+        $(".bar.pop").attr("class", "bar");
         isClicked = false;
     }
     function addHighlight(d) {
