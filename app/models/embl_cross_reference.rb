@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: refseq_cross_references
+# Table name: embl_cross_references
 #
 #  id               :integer(4)      not null, primary key
 #  uniprot_entry_id :integer(4)      not null
@@ -8,16 +8,16 @@
 #  sequence_id      :string(15)
 #
 
-class RefseqCrossReference < ActiveRecord::Base
+class EmblCrossReference < ActiveRecord::Base
   attr_accessible nil
 
   belongs_to :uniprot_entry
 
   # Returns a set af sequence_ids for a given refseq_id
-  def self.get_sequence_ids(refseq_id)
+  def self.get_sequence_ids(insdc_id)
     return connection.select_values("SELECT original_sequence_id 
       FROM peptides 
-      LEFT JOIN  refseq_cross_references ON peptides.uniprot_entry_id = refseq_cross_references.uniprot_entry_id 
-      WHERE refseq_cross_references.sequence_id = '#{refseq_id}'").to_set
+      LEFT JOIN  embl_cross_references ON peptides.uniprot_entry_id = embl_cross_references.uniprot_entry_id 
+      WHERE embl_cross_references.sequence_id = '#{insdc_id}'").to_set
   end
 end

@@ -163,6 +163,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`embl_cross_references` (
   `sequence_id` VARCHAR(15) NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_embl_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
+  INDEX `idx_sequence_id` (`sequence_id` ASC) ,
   CONSTRAINT `fk_uniprot_cross_reference_uniprot_entries`
     FOREIGN KEY (`uniprot_entry_id` )
     REFERENCES `unipept`.`uniprot_entries` (`id` )
@@ -242,11 +243,11 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`genomes` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(100) NOT NULL ,
   `bioproject_id` INT UNSIGNED NOT NULL ,
-  `refseq_id` VARCHAR(15) NOT NULL ,
+  `insdc_id` VARCHAR(15) NOT NULL ,
   `status` VARCHAR(20) NOT NULL ,
   `taxon_id` MEDIUMINT NULL ,
   PRIMARY KEY (`id`) ,
-  INDEX `idx_refseq_id` (`refseq_id` ASC) ,
+  INDEX `idx_insdc_id` (`insdc_id` ASC) ,
   INDEX `idx_bioproject_id` (`bioproject_id` ASC) ,
   INDEX `idx_taxon_id` (`taxon_id` ASC) )
 ENGINE = InnoDB
@@ -264,7 +265,6 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`refseq_cross_references` (
   `sequence_id` VARCHAR(15) NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_refseq_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
-  INDEX `idx_sequence_id` (`sequence_id` ASC) ,
   CONSTRAINT `fk_refseq_cross_reference_uniprot_entries`
     FOREIGN KEY (`uniprot_entry_id` )
     REFERENCES `unipept`.`uniprot_entries` (`id` )

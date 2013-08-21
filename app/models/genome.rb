@@ -5,7 +5,7 @@
 #  id            :integer(4)      not null, primary key
 #  name          :string(120)     not null
 #  bioproject_id :integer(4)      not null
-#  refseq_id     :string(15)      not null
+#  insdc_id     :string(15)      not null
 #  status        :string(20)      not null
 #  species_id    :integer(3)
 #  genus_id      :integer(3)
@@ -38,8 +38,8 @@ class Genome < ActiveRecord::Base
     Genome.all.each do |genome|
       ue = UniprotEntry.find_by_sql("SELECT DISTINCT uniprot_entries.* 
             FROM uniprot_entries
-            LEFT JOIN refseq_cross_references ON uniprot_entry_id = uniprot_entries.id
-            WHERE sequence_id = '#{genome.refseq_id}'").first
+            LEFT JOIN embl_cross_references ON uniprot_entry_id = uniprot_entries.id
+            WHERE sequence_id = '#{genome.insdc_id}'").first
       unless ue.nil?
         genome.taxon_id = ue.taxon_id
         genome.save
