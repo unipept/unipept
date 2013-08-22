@@ -22,7 +22,8 @@ class Genome < ActiveRecord::Base
      FROM genomes 
      INNER JOIN lineages ON (genomes.taxon_id = lineages.taxon_id)
      LEFT JOIN taxons ON (lineages.species = taxons.id) 
-     WHERE taxons.id IS NOT NULL 
+     WHERE taxons.id IS NOT NULL
+     AND status = 'Complete' 
      GROUP BY taxons.id 
      HAVING num > 1 
      ORDER BY name")
@@ -30,7 +31,7 @@ class Genome < ActiveRecord::Base
 
   # returns a set of genome objects for a given species_id
   def self.get_by_species_id(species_id)
-    Genome.select("bioproject_id, name").joins(:lineage).where("lineages.species = ?", species_id).group("bioproject_id")
+    Genome.select("bioproject_id, name").joins(:lineage).where("genomes.status = 'Complete' AND lineages.species = ?", species_id).group("bioproject_id")
   end
 
   # fills in the taxon_id column
