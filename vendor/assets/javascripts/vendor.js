@@ -1,5 +1,5 @@
-//  sunburst
-//  3.1.10
+//  sunburst and pancore
+//  3.3.4
 //= require d3/d3.v3.min.js
 
 //  tree on multi search page
