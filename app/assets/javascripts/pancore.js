@@ -154,6 +154,7 @@ function init_pancore() {
 
     // D3 vars
     var svg,
+        graphData,
         tooltip,
         mouseOverWidth;
 
@@ -611,6 +612,8 @@ function init_pancore() {
             .style("text-anchor", "end")
             .text("Number of peptides");
 
+        graphData = svg.append("g").attr("class", "graphData");
+
         svg.selectAll(".axis line, .axis path")
             .style("fill", "none")
             .style("stroke", "#000")
@@ -635,27 +638,27 @@ function init_pancore() {
             .text(function (d) { return d.name; });
 
         // draw the lines
-        svg.append("path")
+        graphData.append("path")
             .datum(visData)
             .attr("class", "line pan")
             .style("stroke", panColor)
             .attr("d", panLine);
-        svg.append("path")
+        graphData.append("path")
             .datum(visData)
             .attr("class", "line core")
             .style("stroke", coreColor)
             .attr("d", coreLine);
-        svg.append("path")
+        graphData.append("path")
             .datum(visData)
             .attr("class", "line unicore")
             .style("stroke", unicoreColor)
             .attr("d", unicoreLine);
-        svg.append("path")
+        graphData.append("path")
             .datum(visData)
             .attr("class", "line unicore2")
             .style("stroke", unicore2Color)
             .attr("d", unicore2Line);
-        svg.selectAll("path.line")
+        graphData.selectAll("path.line")
             .style("stroke-width", 2)
             .style("fill", "none");
 
@@ -746,7 +749,7 @@ function init_pancore() {
         svg.selectAll(".tick").attr("class", function (d) { return "tick major _" + d; });
 
         // draw the dots
-        var genomeDots = svg.selectAll(".dot.genome")
+        var genomeDots = graphData.selectAll(".dot.genome")
             .data(visData, function (d) { return d.bioproject_id; });
         genomeDots.enter().append("circle")
             .attr("class", function (d) { return "dot genome _" + d.bioproject_id; })
@@ -762,7 +765,7 @@ function init_pancore() {
                 .attr("cy", height / 2)
                 .attr("cx", width)
             .remove();
-        var panDots = svg.selectAll(".dot.pan")
+        var panDots = graphData.selectAll(".dot.pan")
             .data(visData, function (d) { return d.bioproject_id; });
         panDots.enter().append("circle")
             .attr("class", function (d) { return "dot pan _" + d.bioproject_id; })
@@ -778,7 +781,7 @@ function init_pancore() {
                 .attr("cy", height / 2)
                 .attr("cx", width)
             .remove();
-        var coreDots = svg.selectAll(".dot.core")
+        var coreDots = graphData.selectAll(".dot.core")
             .data(visData, function (d) {return d.bioproject_id; });
         coreDots.enter().append("circle")
             .attr("class", function (d) { return "dot core _" + d.bioproject_id; })
@@ -795,7 +798,7 @@ function init_pancore() {
                 .attr("cy", height / 2)
                 .attr("cx", width)
             .remove();
-        var unicoreDots = svg.selectAll(".dot.unicore")
+        var unicoreDots = graphData.selectAll(".dot.unicore")
             .data(visData.filter(function (entry) {
                 return entry.unicore != null;
             }), function (d) {return d.bioproject_id; });
@@ -814,7 +817,7 @@ function init_pancore() {
                 .attr("cy", height / 2)
                 .attr("cx", width)
             .remove();
-        var unicore2Dots = svg.selectAll(".dot.unicore2")
+        var unicore2Dots = graphData.selectAll(".dot.unicore2")
             .data(visData.filter(function (entry) {
                 return entry.unicore2 != null;
             }), function (d) {return d.bioproject_id; });
@@ -837,46 +840,46 @@ function init_pancore() {
         // update the lines
         var dataCopy = visData.slice(0);
         if (visData.length > 0) {
-            svg.select(".line.pan").datum(dataCopy)
+            graphData.select(".line.pan").datum(dataCopy)
                 .style("visibility", "visible")
                 .transition()
                     .duration(transitionDuration)
                     .style("stroke", panColor)
                     .attr("d", panLine);
-            svg.select(".line.core").datum(dataCopy)
+            graphData.select(".line.core").datum(dataCopy)
                 .style("visibility", "visible")
                 .transition()
                     .duration(transitionDuration)
                     .style("stroke", coreColor)
                     .attr("d", coreLine);
         } else {
-            svg.select(".line.pan").style("visibility", "hidden");
-            svg.select(".line.core").style("visibility", "hidden");
+            graphData.select(".line.pan").style("visibility", "hidden");
+            graphData.select(".line.core").style("visibility", "hidden");
         }
         if (visData.length > 0 && visData[0].unicore != null) {
-            svg.select(".line.unicore").datum(dataCopy)
+            graphData.select(".line.unicore").datum(dataCopy)
                 .style("visibility", "visible")
                 .transition()
                     .duration(transitionDuration)
                     .style("stroke", unicoreColor)
                     .attr("d", unicoreLine);
         } else {
-            svg.select(".line.unicore").style("visibility", "hidden");
+            graphData.select(".line.unicore").style("visibility", "hidden");
         }
         if (visData.length > 0 && visData[0].unicore2 != null) {
-            svg.select(".line.unicore2").datum(dataCopy)
+            graphData.select(".line.unicore2").datum(dataCopy)
                 .style("visibility", "visible")
                 .transition()
                     .duration(transitionDuration)
                     .style("stroke", unicore2Color)
                     .attr("d", unicore2Line);
         } else {
-            svg.select(".line.unicore2").style("visibility", "hidden");
+            graphData.select(".line.unicore2").style("visibility", "hidden");
         }
 
         // update the mouseover rects
         mouseOverWidth = (width / visData.length) / 1.5;
-        var bars = svg.selectAll(".bar")
+        var bars = graphData.selectAll(".bar")
             .data(visData, function (d) {return d.bioproject_id; });
             
         bars.enter().append("polygon")
@@ -904,9 +907,8 @@ function init_pancore() {
             });
         bars.exit().remove();
 
-        // Put the handlebars trash on top
+        // Put the handlebars on top
         $(".bar").parent().append($(".bar"));
-        $("#trash").parent().append($("#trash"));
     }
 
     // Mouse event functions
