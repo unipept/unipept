@@ -171,7 +171,7 @@ function autoSort(type) {
             break;
         case 'size':
             sortFunction = function (a, b) {
-                return a.size < b.size;
+                return b.size - a.size;
             };
             break;
         default:
