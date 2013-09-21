@@ -146,8 +146,8 @@ function init_pancore() {
     var visData = [],
         tableData = {},
         legendData = [{"name": "genome size", "color": genomeColor},
-            {"name": "pan proteome", "color": panColor},
-            {"name": "core proteome", "color": coreColor},
+            {"name": "pan peptidome", "color": panColor},
+            {"name": "core peptidome", "color": coreColor},
             {"name": "unique peptides", "color": unicoreColor},
             /*{"name": "unique genome peptides", "color": unicore2Color}*/],
         worker = new Worker("/assets/workers/pancore_worker.js");
