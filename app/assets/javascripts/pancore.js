@@ -433,7 +433,7 @@ function init_pancore() {
         sendToWorker("clearAllData", "");
         visData = [];
         tableData = {};
-
+        removePopoversAndHighlights();
         updateGraph();
         clearTable();
     }
