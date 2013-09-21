@@ -145,10 +145,10 @@ function init_pancore() {
     // Data and workers
     var visData = [],
         tableData = {},
-        legendData = [{"name": "genome size", "color": genomeColor},
-            {"name": "pan peptidome", "color": panColor},
-            {"name": "core peptidome", "color": coreColor},
-            {"name": "unique peptides", "color": unicoreColor},
+        legendData = [{"name": "genome size", "color": genomeColor, "toggle": "showGenome"},
+            {"name": "pan peptidome", "color": panColor, "toggle": "showPan"},
+            {"name": "core peptidome", "color": coreColor, "toggle": "showCore"},
+            {"name": "unique peptides", "color": unicoreColor, "toggle": "showUnicore"},
             /*{"name": "unique genome peptides", "color": unicore2Color}*/],
         worker = new Worker("/assets/workers/pancore_worker.js");
 
@@ -166,6 +166,14 @@ function init_pancore() {
         dragId,
         isClicked = false,
         clickId;
+
+    // Toggles
+    var toggles = {};
+    toggles.showGenome = true;
+    toggles.showPan = true;
+    toggles.showCore = true;
+    toggles.showUnicore = true;
+    toggles.showUnicore2 = false;
 
     // load vars
     var dataQueue = [],
@@ -612,19 +620,21 @@ function init_pancore() {
             .style("text-anchor", "end")
             .text("Number of peptides");
 
-        graphData = svg.append("g").attr("class", "graphData");
-
         svg.selectAll(".axis line, .axis path")
             .style("fill", "none")
             .style("stroke", "#000")
             .style("shape-rendering", "crispEdges");
+
+        // container used for dots, paths and bars
+        graphData = svg.append("g").attr("class", "graphData");
 
         // add legend
         var legend = svg.selectAll(".legend")
             .data(legendData)
           .enter().append("g")
             .attr("class", "legend")
-            .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; });
+            .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; })
+            .on("click", legendClick);
         legend.append("rect")
             .attr("x", 30)
             .attr("width", 8)
@@ -759,7 +769,8 @@ function init_pancore() {
         genomeDots.transition()
             .duration(transitionDuration)
             .attr("cx", function (d) { return x(d.bioproject_id); })
-            .attr("cy", function (d) { return y(d.peptides); });
+            .attr("cy", function (d) { return y(d.peptides); })
+            .attr("opacity", toggles.showGenome ? 1 : 0);
         genomeDots.exit()
             .transition()
                 .attr("cy", height / 2)
@@ -775,7 +786,8 @@ function init_pancore() {
         panDots.transition()
             .duration(transitionDuration)
             .attr("cx", function (d) { return x(d.bioproject_id); })
-            .attr("cy", function (d) { return y(d.pan); });
+            .attr("cy", function (d) { return y(d.pan); })
+            .attr("opacity", toggles.showPan ? 1 : 0);
         panDots.exit()
             .transition()
                 .attr("cy", height / 2)
@@ -792,7 +804,8 @@ function init_pancore() {
         coreDots.transition()
             .duration(transitionDuration)
             .attr("cx", function (d) { return x(d.bioproject_id); })
-            .attr("cy", function (d) { return y(d.core); });
+            .attr("cy", function (d) { return y(d.core); })
+            .attr("opacity", toggles.showCore ? 1 : 0);
         coreDots.exit()
             .transition()
                 .attr("cy", height / 2)
@@ -811,7 +824,8 @@ function init_pancore() {
         unicoreDots.transition()
             .duration(transitionDuration)
             .attr("cx", function (d) { return x(d.bioproject_id); })
-            .attr("cy", function (d) { return y(d.unicore); });
+            .attr("cy", function (d) { return y(d.unicore); })
+            .attr("opacity", toggles.showUnicore ? 1 : 0);
         unicoreDots.exit()
             .transition()
                 .attr("cy", height / 2)
@@ -830,7 +844,8 @@ function init_pancore() {
         unicore2Dots.transition()
             .duration(transitionDuration)
             .attr("cx", function (d) { return x(d.bioproject_id); })
-            .attr("cy", function (d) { return y(d.unicore2); });
+            .attr("cy", function (d) { return y(d.unicore2); })
+            .attr("opacity", toggles.showUnicore2 ? 1 : 0);
         unicore2Dots.exit()
             .transition()
                 .attr("cy", height / 2)
@@ -845,12 +860,14 @@ function init_pancore() {
                 .transition()
                     .duration(transitionDuration)
                     .style("stroke", panColor)
+                    .attr("opacity", toggles.showPan ? 1 : 0)
                     .attr("d", panLine);
             graphData.select(".line.core").datum(dataCopy)
                 .style("visibility", "visible")
                 .transition()
                     .duration(transitionDuration)
                     .style("stroke", coreColor)
+                    .attr("opacity", toggles.showCore ? 1 : 0)
                     .attr("d", coreLine);
         } else {
             graphData.select(".line.pan").style("visibility", "hidden");
@@ -862,6 +879,7 @@ function init_pancore() {
                 .transition()
                     .duration(transitionDuration)
                     .style("stroke", unicoreColor)
+                    .attr("opacity", toggles.showUnicore ? 1 : 0)
                     .attr("d", unicoreLine);
         } else {
             graphData.select(".line.unicore").style("visibility", "hidden");
@@ -872,6 +890,7 @@ function init_pancore() {
                 .transition()
                     .duration(transitionDuration)
                     .style("stroke", unicore2Color)
+                    .attr("opacity", toggles.showUnicore2 ? 1 : 0)
                     .attr("d", unicore2Line);
         } else {
             graphData.select(".line.unicore2").style("visibility", "hidden");
@@ -1023,6 +1042,10 @@ function init_pancore() {
             }
         }
         isDragging = false;
+    }
+    function legendClick(d) {
+        toggles[d.toggle] = !toggles[d.toggle];
+        updateGraph();
     }
     // mouse event helper functions
     function removePopoversAndHighlights() {
