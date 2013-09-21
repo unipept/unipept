@@ -661,6 +661,9 @@ function init_pancore() {
 
         // add axis marks
         svg.insert("line")
+            .attr("class", "axisline genome")
+            .attr("stroke", genomeColor);
+        svg.insert("line")
             .attr("class", "axisline pan")
             .attr("stroke", panColor);
         svg.insert("line")
@@ -1034,6 +1037,10 @@ function init_pancore() {
         svg.selectAll(".dot._" + d.bioproject_id).attr("filter", "url(#dropshadow)").attr("r", 6);
         svg.selectAll(".tick._" + d.bioproject_id + " text").style("font-weight", "bold");
 
+        svg.select(".axisline.genome")
+            .attr("y1", y(d.peptides))
+            .attr("y2", y(d.peptides))
+            .style("visibility", "visible");
         svg.select(".axisline.pan")
             .attr("y1", y(d.pan))
             .attr("y2", y(d.pan))
