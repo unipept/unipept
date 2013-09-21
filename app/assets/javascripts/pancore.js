@@ -128,6 +128,7 @@ function init_pancore() {
     // constants
     // animation and style stuff
     var transitionDuration = 500,
+        genomeColor = "#d9d9d9",  // gray
         panColor = "#1f77b4",     // blue
         coreColor = "#ff7f0e",    // orange
         unicoreColor = "#2ca02c", // green
@@ -144,7 +145,8 @@ function init_pancore() {
     // Data and workers
     var visData = [],
         tableData = {},
-        legendData = [{"name": "pan proteome", "color": panColor},
+        legendData = [{"name": "genome size", "color": genomeColor},
+            {"name": "pan proteome", "color": panColor},
             {"name": "core proteome", "color": coreColor},
             {"name": "unique peptides", "color": unicoreColor},
             /*{"name": "unique genome peptides", "color": unicore2Color}*/],
@@ -741,6 +743,22 @@ function init_pancore() {
         svg.selectAll(".tick").attr("class", function (d) { return "tick major _" + d; });
 
         // draw the dots
+        var genomeDots = svg.selectAll(".dot.genome")
+            .data(visData, function (d) { return d.bioproject_id; });
+        genomeDots.enter().append("circle")
+            .attr("class", function (d) { return "dot genome _" + d.bioproject_id; })
+            .attr("r", 5)
+            .attr("fill", genomeColor)
+            .attr("cx", width);
+        genomeDots.transition()
+            .duration(transitionDuration)
+            .attr("cx", function (d) { return x(d.bioproject_id); })
+            .attr("cy", function (d) { return y(d.peptides); });
+        genomeDots.exit()
+            .transition()
+                .attr("cy", height / 2)
+                .attr("cx", width)
+            .remove();
         var panDots = svg.selectAll(".dot.pan")
             .data(visData, function (d) { return d.bioproject_id; });
         panDots.enter().append("circle")
@@ -1053,7 +1071,7 @@ function init_pancore() {
         tooltip.style("visibility", "hidden");
     }
     function getTooltipContent(d) {
-        var tooltipHtml = "peptides in this genome: <b>" + d3.format(",")(d.peptides) + "</b><br/>" +
+        var tooltipHtml = "<span style='color: " + genomeColor + ";'>&#9632;</span> genome size: <b>" + d3.format(",")(d.peptides) + "</b><br/>" +
         "<span style='color: " + panColor + ";'>&#9632;</span> pan peptides: <b>" + d3.format(",")(d.pan) + "</b><br/>" +
         "<span style='color: " + coreColor + ";'>&#9632;</span> core peptides: <b>" + d3.format(",")(d.core) + "</b>";
         if (d.unicore != null) {
@@ -1148,6 +1166,9 @@ function init_pancore() {
         svg.select("#trash circle").transition()
             .duration(transitionDuration)
             .attr("stroke", "#cccccc");
+        svg.selectAll(".dot.genome._" + dragId).transition()
+            .duration(transitionDuration)
+            .attr("fill", genomeColor);
         svg.selectAll(".dot.pan._" + dragId).transition()
             .duration(transitionDuration)
             .attr("fill", panColor);
