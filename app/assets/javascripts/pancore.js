@@ -1123,7 +1123,7 @@ function init_pancore() {
             "<span class='caret'></span>" +
           "</a>" +
           "<ul class='dropdown-menu'>" +
-            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='all'>genome peptides</a></li>" +
+            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='all'><span style='color: " + genomeColor + ";'>&#9632;</span> genome peptides</a></li>" +
             "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='pan'><span style='color: " + panColor + ";'>&#9632;</span> pan peptides</a></li>" +
             "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='core'><span style='color: " + coreColor + ";'>&#9632;</span> core peptides</a></li>" +
             "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='unique'><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptides</a></li>" +
