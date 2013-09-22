@@ -416,6 +416,7 @@ function init_pancore() {
 
     // Removes a genomes from the data array
     function removeData(genome) {
+        if (genome.status !== "Done") return;
         var id = genome.bioproject_id;
         delete tableData[id];
         updateTable();
@@ -564,12 +565,14 @@ function init_pancore() {
             .attr("class", function (d) {return "data " + d.key; })
             .attr("colspan", "1");
         newRows.append("td")
+            .attr("class", "button")
             .append("a")
             .html("<i class='icon-trash'></i>")
             .attr("class", "btn btn-mini")
             .attr("title", "remove genome")
             .on("click", removeData);
         newRows.each(function () { highlight(this); });
+        tr.selectAll("td.button a.btn").classed("disabled", function (d) {return d.status !== "Done"; });
     }
 
     // Redraws the full D3 graph
