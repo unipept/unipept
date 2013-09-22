@@ -446,6 +446,7 @@ function init_pancore() {
         rank++;
         sendToWorker("clearAllData", "");
         toLoad = 0;
+        setLoading(false);
         dataQueue = [];
         visData = [];
         tableData = {};
