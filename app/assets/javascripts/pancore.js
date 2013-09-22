@@ -1186,6 +1186,7 @@ function init_pancore() {
     }
     function trashMouseOver() {
         onTrash = true;
+        if (!isDragging) return;
         svg.select("#trash").transition()
             .duration(transitionDuration / 2)
             .attr("fill", "#333333");
@@ -1198,6 +1199,7 @@ function init_pancore() {
     }
     function trashMouseOut() {
         onTrash = false;
+        if (!isDragging) return;
         svg.select("#trash").transition()
             .duration(transitionDuration)
             .attr("fill", "#cccccc");
