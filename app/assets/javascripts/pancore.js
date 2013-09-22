@@ -178,7 +178,8 @@ function init_pancore() {
     // load vars
     var dataQueue = [],
         toLoad,
-        mayStartAnimation = true;
+        mayStartAnimation = true,
+        rank = 0;
 
     // Scales
     var x = d3.scale.ordinal()
@@ -228,7 +229,7 @@ function init_pancore() {
             }
             break;
         case 'addData':
-            addData(data.msg);
+            addData(data.msg.data, data.msg.rank);
             break;
         case 'setVisData':
             setVisData(data.msg);
@@ -407,7 +408,8 @@ function init_pancore() {
     }
 
     // Adds new dataset to the data array
-    function addData(data) {
+    function addData(data, request_rank) {
+        if (rank !== request_rank) return;
         dataQueue.push(data);
         tryUpdateGraph();
     }
@@ -439,7 +441,10 @@ function init_pancore() {
 
     // Resets the data array
     function clearAllData() {
+        rank++;
         sendToWorker("clearAllData", "");
+        toLoad = 0;
+        dataQueue = [];
         visData = [];
         tableData = {};
         removePopoversAndHighlights();

@@ -6,7 +6,8 @@ var data = {},
     pans = [],
     cores = [],
     unicores = [],
-    unicorePresent = false;
+    unicorePresent = false,
+    rank = 0;
 
 // Add an event handler to the worker
 self.addEventListener('message', function (e) {
@@ -48,17 +49,19 @@ function sendToHost(type, message) {
 
 // Loads peptides, based on bioproject_id
 function loadData(bioproject_id, name) {
+    request_rank = rank;
     getJSON("/pancore/sequences/" + bioproject_id + ".json", function (json_data) {
-        addData(bioproject_id, name, json_data);
+        addData(bioproject_id, name, json_data, request_rank);
     });
 }
 
 // Adds new dataset to the data array
-function addData(bioproject_id, name, set) {
+function addData(bioproject_id, name, set, request_rank) {
     var core,
         pan,
         unicore,
         temp;
+    if (request_rank !== rank) return;
     // Store data for later use
     data[bioproject_id] = {};
     data[bioproject_id].bioproject_id = bioproject_id;
@@ -86,7 +89,7 @@ function addData(bioproject_id, name, set) {
     if (unicorePresent) {
         temp.unicore = unicore.length;
     }
-    sendToHost("addData", temp);
+    sendToHost("addData", {data: temp, rank: request_rank});
 }
 
 // Removes a genomes from the data
@@ -273,6 +276,7 @@ function clearAllData() {
     pans = [];
     cores = [];
     unicores = [];
+    rank++;
 }
 
 // Sends a list sequences to the client
