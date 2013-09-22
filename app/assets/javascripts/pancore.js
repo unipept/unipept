@@ -652,6 +652,7 @@ function init_pancore() {
             .attr("y", 8)
             .style("text-anchor", "start")
             .text(function (d) { return d.name; });
+        $(".legend").disableSelection();
 
         // draw the lines
         graphData.append("path")
