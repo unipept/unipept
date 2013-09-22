@@ -142,7 +142,7 @@ function recalculatePanCore(newOrder, start, stop) {
         }
         response.push(temp);
     }
-    sendToHost("setVisData", response);
+    sendToHost("setVisData", {data : response, rank : rank});
 }
 
 // Sorts the genomes in a given order

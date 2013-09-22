@@ -232,7 +232,7 @@ function init_pancore() {
             addData(data.msg.data, data.msg.rank);
             break;
         case 'setVisData':
-            setVisData(data.msg);
+            setVisData(data.msg.data, data.msg.rank);
             break;
         case 'sequencesDownloaded':
             returnPopoverSequences(data.msg.sequences, data.msg.type);
@@ -424,9 +424,10 @@ function init_pancore() {
     }
 
     // Sets new pancore data
-    function setVisData(data) {
+    function setVisData(data, request_rank) {
         var i,
             bioproject_id;
+        if (rank !== request_rank) return;
         visData = data;
         for (i = 0; i < visData.length; i++) {
             bioproject_id = visData[i].bioproject_id;
