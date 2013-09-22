@@ -246,8 +246,10 @@ function autoSort(type) {
 
 // Retrieves the unique sequences
 function getUniqueSequences(type) {
-    var s = data[order[0]].peptide_list;
-    getJSONByPost("/pancore/unique_sequences/", "type=" + type + "&bioprojects=" + order + "&sequences=[" + s + "]", function (d) {calculateUnicore(d, type); });
+    if (order.length > 0) {
+        var s = data[order[0]].peptide_list;
+        getJSONByPost("/pancore/unique_sequences/", "type=" + type + "&bioprojects=" + order + "&sequences=[" + s + "]", function (d) {calculateUnicore(d, type); });
+    }
 }
 
 // Calculates the unique peptides data
