@@ -752,7 +752,7 @@ function init_pancore() {
 
         // set the domains
         x.domain(visData.map(function (d) { return d.bioproject_id; }));
-        y.domain([0, d3.max(getVisibleDatapoints())]);
+        y.domain([0, getMaxVisibleDatapoint()]);
 
         // update the axes
         svg.select(".x.axis").transition().duration(transitionDuration).call(xAxis);
@@ -1228,16 +1228,31 @@ function init_pancore() {
             .attr("fill", unicore2Color);
     }
     // general helper functions
-    function getVisibleDatapoints(){
-        var ret = [],
-            i ;
-        for (i = 0; i < visData.length; i++) {    
-            if (toggles.showGenome) ret.push(visData[i].peptides);
-            if (toggles.showPan) ret.push(visData[i].pan);
-            if (toggles.showCore) ret.push(visData[i].core);
-            if (toggles.showUnicore) ret.push(visData[i].unicore);
-            if (toggles.showUnicore2) ret.push(visData[i].unicore2);
+    function getMaxVisibleDatapoint() {
+        var max = 0;
+        if (visData.length === 0) {
+            return 0;
         }
-        return ret;
+        if (toggles.showPan) {
+            return visData[visData.length - 1].pan;
+        }
+        if (toggles.showGenome) {
+            for (i = 0; i < visData.length; i++) {
+                if (visData[i].peptides > max) {
+                    max = visData[i].peptides;
+                }
+            }
+            return max * 1.3;
+        }
+        if (toggles.showCore) {
+            return visData[0].core * 1.3;
+        }
+        if (toggles.showUnicore2) {
+            return visData[0].unicore2 * 1.3;
+        }
+        if (toggles.showUnicore) {
+            return visData[0].unicore * 1.3;
+        }
+        return 0;
     }
 }
