@@ -416,7 +416,8 @@ function init_pancore() {
 
     // Removes a genomes from the data array
     function removeData(genome) {
-        if (genome.status !== "Done") return;
+        var g = tableData[genome.bioproject_id];
+        if (g.status !== "Done") return;
         var id = genome.bioproject_id;
         delete tableData[id];
         updateTable();
