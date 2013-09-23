@@ -1115,13 +1115,15 @@ function init_pancore() {
         tooltip.style("visibility", "hidden");
     }
     function getTooltipContent(d) {
-        var tooltipHtml = "<span style='color: " + genomeColor + ";'>&#9632;</span> genome size: <b>" + d3.format(",")(d.peptides) + "</b><br/>" +
-        "<span style='color: " + panColor + ";'>&#9632;</span> pan peptides: <b>" + d3.format(",")(d.pan) + "</b><br/>" +
-        "<span style='color: " + coreColor + ";'>&#9632;</span> core peptides: <b>" + d3.format(",")(d.core) + "</b>";
-        if (d.unicore != null) {
+        var tooltipHtml = "<span style='color: " + genomeColor + ";'>&#9632;</span> genome size: <b>" + d3.format(",")(d.peptides) + "</b><br/>";
+        if (toggles.showPan)
+            tooltipHtml += "<span style='color: " + panColor + ";'>&#9632;</span> pan peptides: <b>" + d3.format(",")(d.pan) + "</b><br/>";
+        if (toggles.showCore)
+            tooltipHtml += "<span style='color: " + coreColor + ";'>&#9632;</span> core peptides: <b>" + d3.format(",")(d.core) + "</b>";
+        if (d.unicore != null && toggles.showUnicore) {
             tooltipHtml += "<br/><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptides: <b>" + d3.format(",")(d.unicore) + "</b>";
         }
-        if (d.unicore2 != null) {
+        if (d.unicore2 != null && toggles.showUnicore2) {
             tooltipHtml += "<br/><span style='color: " + unicore2Color + ";'>&#9632;</span> unique genome peptides: <b>" + d3.format(",")(d.unicore2) + "</b>";
         }
         return tooltipHtml;
