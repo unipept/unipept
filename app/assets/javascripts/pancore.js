@@ -1074,25 +1074,31 @@ function init_pancore() {
         svg.selectAll(".dot._" + d.bioproject_id).attr("filter", "url(#dropshadow)").attr("r", 6);
         svg.selectAll(".tick._" + d.bioproject_id + " text").style("font-weight", "bold");
 
-        svg.select(".axisline.genome")
-            .attr("y1", y(d.peptides))
-            .attr("y2", y(d.peptides))
-            .style("visibility", "visible");
-        svg.select(".axisline.pan")
-            .attr("y1", y(d.pan))
-            .attr("y2", y(d.pan))
-            .style("visibility", "visible");
-        svg.select(".axisline.core")
-            .attr("y1", y(d.core))
-            .attr("y2", y(d.core))
-            .style("visibility", "visible");
-        if (d.unicore != null) {
+        if (toggles.showGenome) {
+            svg.select(".axisline.genome")
+                .attr("y1", y(d.peptides))
+                .attr("y2", y(d.peptides))
+                .style("visibility", "visible");
+        }
+        if (toggles.showPan) {
+            svg.select(".axisline.pan")
+                .attr("y1", y(d.pan))
+                .attr("y2", y(d.pan))
+                .style("visibility", "visible");
+        }
+        if (toggles.showCore) {
+            svg.select(".axisline.core")
+                .attr("y1", y(d.core))
+                .attr("y2", y(d.core))
+                .style("visibility", "visible");
+        }
+        if (d.unicore != null && toggles.showUnicore) {
             svg.select(".axisline.unicore")
                 .attr("y1", y(d.unicore))
                 .attr("y2", y(d.unicore))
                 .style("visibility", "visible");
         }
-        if (d.unicore2 != null) {
+        if (d.unicore2 != null && toggles.showUnicore2) {
             svg.select(".axisline.unicore2")
                 .attr("y1", y(d.unicore2))
                 .attr("y2", y(d.unicore2))
