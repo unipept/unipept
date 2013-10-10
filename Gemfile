@@ -1,6 +1,7 @@
 source 'http://rubygems.org'
 
 gem 'rails', '3.2.13'
+
 gem 'mysql2'
 
 # pagination
@@ -30,7 +31,7 @@ gem 'httparty'
 
 group :development do
   gem 'rspec-rails'
-	gem 'annotate-models'
+	gem 'annotate'
 	gem "rake"
 	gem 'sprockets'
 end
@@ -64,7 +65,7 @@ end
 # gem 'unicorn'
 
 # Deploy with Capistrano
-# gem 'capistrano'
+gem 'capistrano', '2.15.4'
 
 # To use debugger (ruby-debug for Ruby 1.8.7+, ruby-debug19 for Ruby 1.9.2+)
 # gem 'ruby-debug'
