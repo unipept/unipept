@@ -50,7 +50,7 @@ GEM
     be_valid_asset (1.2.3)
       rspec
     builder (3.0.4)
-    capistrano (2.15.4)
+    capistrano (2.15.5)
       highline
       net-scp (>= 1.0.0)
       net-sftp (>= 2.0.0)
@@ -185,7 +185,7 @@ PLATFORMS
 DEPENDENCIES
   annotate
   be_valid_asset
-  capistrano (= 2.15.4)
+  capistrano (= 2.15.5)
   coffee-rails
   httparty
   jquery-rails
