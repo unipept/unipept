@@ -44,11 +44,18 @@ GEM
     activesupport (3.2.13)
       i18n (= 0.6.1)
       multi_json (~> 1.0)
-    annotate-models (1.0.4)
+    annotate (2.5.0)
+      rake
     arel (3.0.2)
     be_valid_asset (1.2.3)
       rspec
     builder (3.0.4)
+    capistrano (2.15.4)
+      highline
+      net-scp (>= 1.0.0)
+      net-sftp (>= 2.0.0)
+      net-ssh (>= 2.0.14)
+      net-ssh-gateway (>= 1.1.0)
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
       railties (~> 3.2.0)
@@ -61,6 +68,7 @@ GEM
     erubis (2.7.0)
     execjs (1.4.0)
       multi_json (~> 1.0)
+    highline (1.6.19)
     hike (1.2.1)
     httparty (0.10.2)
       multi_json (~> 1.0)
@@ -76,7 +84,7 @@ GEM
     less-rails (2.2.6)
       actionpack (>= 3.1)
       less (~> 2.2.0)
-    libv8 (3.11.8.13)
+    libv8 (3.16.14.3)
     mail (2.5.3)
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
@@ -85,6 +93,13 @@ GEM
     multi_json (1.7.2)
     multi_xml (0.5.3)
     mysql2 (0.3.11)
+    net-scp (1.1.2)
+      net-ssh (>= 2.6.5)
+    net-sftp (2.1.2)
+      net-ssh (>= 2.6.5)
+    net-ssh (2.7.0)
+    net-ssh-gateway (1.2.0)
+      net-ssh (>= 2.6.5)
     newrelic_rpm (3.5.5.38)
     nokogiri (1.5.6)
     oj (2.0.1)
@@ -114,7 +129,7 @@ GEM
     rake (10.0.4)
     rdoc (3.12.2)
       json (~> 1.4)
-    ref (1.0.2)
+    ref (1.0.5)
     rmagick (2.13.2)
     rspec (2.12.0)
       rspec-core (~> 2.12.0)
@@ -142,8 +157,8 @@ GEM
       multi_json (~> 1.0)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
-    therubyracer (0.11.2)
-      libv8 (~> 3.11.8.12)
+    therubyracer (0.12.0)
+      libv8 (~> 3.16.14.0)
       ref
     thor (0.18.1)
     tilt (1.3.6)
@@ -168,8 +183,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  annotate-models
+  annotate
   be_valid_asset
+  capistrano (= 2.15.4)
   coffee-rails
   httparty
   jquery-rails
