@@ -65,7 +65,7 @@ end
 # gem 'unicorn'
 
 # Deploy with Capistrano
-gem 'capistrano', '2.15.4'
+gem 'capistrano', '2.15.5'
 
 # To use debugger (ruby-debug for Ruby 1.8.7+, ruby-debug19 for Ruby 1.9.2+)
 # gem 'ruby-debug'
