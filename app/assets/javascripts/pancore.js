@@ -1,6 +1,17 @@
+/**
+ * Creates the selectable taxonomy tree using nested unordered lists
+ *
+ * data is an array of around 2500 objects with this format:
+ * {"bioproject_id":57587,"class_id":29547,"genus_id":194,"name":"Campylobacter jejuni","order_id":213849,"species_id":197}
+ *
+ * taxa is a list (object) of key-value pairs mapping taxon id's to taxon names
+ */
 function init_selection_tree(data, taxa) {
+    // Status vars used while dragging to determine if the droptarget needs to be recalculated
     var moving = false,
         moving2 = false;
+
+    // Uses a "group by" operator on the data array to create a nested array
     data = d3.nest()
         .key(function (d) { return d.class_id; }).sortKeys(function (a, b) { return d3.ascending(taxa[a], taxa[b]); })
         .key(function (d) { return d.order_id; }).sortKeys(function (a, b) { return d3.ascending(taxa[a], taxa[b]); })
@@ -9,6 +20,8 @@ function init_selection_tree(data, taxa) {
         .entries(data);
     calculateNumOfChildren(data);
     delete(data.children);
+
+    // Add the nested unordered lists to the page based on the data array
     var tree = d3.select("#treeView");
     tree = tree.append("ul").append("li").attr("class", "root not").append("ul");
     $("li.root").prepend($("#treeSearchDiv"));
@@ -52,13 +65,19 @@ function init_selection_tree(data, taxa) {
             .attr("data-search", function (d) { return d.name.toLowerCase() + " " + d.bioproject_id; })
             .attr("data-bioproject_id", function (d) { return d.bioproject_id; })
             .html(function (d) { return "<span>" + d.name + "</span>"; });
+
+    // Prevent accidental text selection
     $("#treeView li.root ul").disableSelection();
+
+    // Expand or collapse a node when clicked
     $("#treeView li").click(function () {
         if (!$(this).hasClass("not")) {
             $(this).toggleClass("collapsibleListOpen collapsibleListClosed");
         }
         return false;
     });
+
+    // Filter the tree 500ms after the last key press
     $("#treeSearch").keyup(function () {
         var text = $(this).val().toLowerCase();
         delay(function () {
@@ -70,10 +89,13 @@ function init_selection_tree(data, taxa) {
             }
         }, 500);
     });
+
+    // Make the nodes draggable using JQuery UI
     $("#treeView li").draggable({
         appendTo: "#genomes_table tbody",
         addClasses: false,
         refreshPositions: true,
+        // Mimic the style of the table on the right
         helper: function (event) {
             var returnString = "<tbody class='dragging'>";
             if ($(this).hasClass("leaf")) {
@@ -86,6 +108,7 @@ function init_selection_tree(data, taxa) {
             returnString += "</tbody>";
             return $(returnString);
         },
+        // table on the right slides into view on drag start
         start: function (event, ui) {
             var pos = Math.max(0, window.pageYOffset - $("#table-message").offset().top);
             $("#genomes_table_div").css("margin-top", pos + "px");
@@ -94,9 +117,13 @@ function init_selection_tree(data, taxa) {
             moving2 = true;
             setTimeout(function () {moving = false; }, 800);
         },
+        // table on the right slides back to original position 1s after drag stop
         stop: function (event, ui) {
             setTimeout(function () {$("#genomes_table_div").css("margin-top", "0px"); }, 1000);
         },
+        // Because the drop target slides in, we have to recalculate the position
+        // of the target while dragging. This is computationally expensive, so we
+        // stop recalculating once we know the target stays in place
         drag: function (event, ui) {
             if (!moving2) {
                 $(event.target).draggable('option', 'refreshPositions', false);
@@ -107,6 +134,7 @@ function init_selection_tree(data, taxa) {
         }
     });
 
+    // calculates the number of leafs under every node in the given list
     function calculateNumOfChildren(list) {
         var r = 0,
             i,
