@@ -9,7 +9,7 @@ set :scm, :git
 
 task :feat do
   set :deploy_to, "/home/bmesuere/rails"
-  set :branch, "feature/pancore"
+  set :branch, "feature/thesis"
   set :user, "bmesuere"
   set :use_sudo, false
   set :port, 4840
