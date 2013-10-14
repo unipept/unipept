@@ -152,9 +152,14 @@ function init_selection_tree(data, taxa) {
         return r;
     }
 }
+
+/**
+ * Initializes the main graph and drop-target-table
+ */
 function init_pancore() {
-    // constants
-    // animation and style stuff
+    // GLOBALS AND DEFAULTS
+
+    // Animation and style stuff
     var transitionDuration = 500,
         genomeColor = "#d9d9d9",  // gray
         panColor = "#1f77b4",     // blue
@@ -162,23 +167,24 @@ function init_pancore() {
         unicoreColor = "#2ca02c", // green
         unicore2Color = "#98df8a";// light green
 
-    // Size
+    // Sizes
     var margin = {top: 20, right: 40, bottom: 170, left: 60},
         fullWidth = 930,
         fullHeight = 600,
         width = fullWidth - margin.left - margin.right,
         height = fullHeight - margin.top - margin.bottom;
 
-    // variables
-    // Data and workers
+    // Data vars
     var visData = [],
         tableData = {},
         legendData = [{"name": "genome size", "color": genomeColor, "toggle": "showGenome"},
             {"name": "pan peptidome", "color": panColor, "toggle": "showPan"},
             {"name": "core peptidome", "color": coreColor, "toggle": "showCore"},
-            {"name": "unique peptides", "color": unicoreColor, "toggle": "showUnicore"},
-            /*{"name": "unique genome peptides", "color": unicore2Color}*/],
-        worker = new Worker("/assets/workers/pancore_worker.js");
+            {"name": "unique peptides", "color": unicoreColor, "toggle": "showUnicore"}
+            /*{"name": "unique genome peptides", "color": unicore2Color}*/];
+
+    // the Javascript Worker for background data processing
+    var worker = new Worker("/assets/workers/pancore_worker.js");
 
     // D3 vars
     var svg,
@@ -186,7 +192,7 @@ function init_pancore() {
         tooltip,
         mouseOverWidth;
 
-    // drag and click vars
+    // Drag and click vars
     var dragging = {},
         isDragging = false,
         hasDragged = false,
@@ -203,7 +209,7 @@ function init_pancore() {
     toggles.showUnicore = true;
     toggles.showUnicore2 = false;
 
-    // load vars
+    // Load vars
     var dataQueue = [],
         toLoad,
         mayStartAnimation = true,
@@ -273,9 +279,10 @@ function init_pancore() {
         error(e);
     }, false);
 
-    // Add handler to the form
+    // Add handler to the "add species"-form
     $("#add_species_peptidome").click(function () {
         setLoading(true);
+        // Get all bioproject id's for the selected species id
         var url = "/pancore/genomes/species/" + $("#species_id").val() + ".json";
         $.getJSON(url, function (genomes) {
             clearTable();
@@ -287,12 +294,11 @@ function init_pancore() {
         });
         return false;
     });
-    $("#load_species_group ul a").tooltip({placement : "right", container : "body"});
 
-    // remove all button
+    // Add handler to the "remove all"-button
     $("#remove-all").click(clearAllData);
 
-    // autosort button
+    // Add handler to the autosort-button
     $("#autosort").mouseenter(function () {
         if (!$("#autosort").hasClass("open")) {
             $("#autosort-button").dropdown("toggle");
@@ -315,7 +321,7 @@ function init_pancore() {
     });
     $("#autosort ul a").tooltip({placement : "right", container : "body"});
 
-    // Make table sortable
+    // Make table sortable and droppable (JQuery UI)
     $("#genomes_table").disableSelection();
     $("#genomes_table, #pancore_graph").droppable({
         activeClass: "acceptDrop",
@@ -343,7 +349,7 @@ function init_pancore() {
         }
     });
 
-    // set up the fullscreen stuff
+    // Set up the fullscreen stuff
     if (fullScreenApi.supportsFullScreen) {
         $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
         $("#zoom-btn").click(function () {
@@ -354,6 +360,7 @@ function init_pancore() {
         $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange', resizeFullScreen);
     }
 
+    // Scale the SVG on fullscreen enter and exit
     function resizeFullScreen() {
         setTimeout(function () {
             var w = fullWidth,
@@ -367,13 +374,14 @@ function init_pancore() {
         }, 100);
     }
 
-    // set up save image stuff
+    // Set up save image stuff
     $("#buttons-pancore").prepend("<button id='save-btn' class='btn btn-mini'><i class='icon-download'></i> Save as image</button>");
     $("#save-btn").click(function () {
         // track save image event
         _gaq.push(['_trackEvent', 'Pancore', 'Save Image']);
 
         var svg = $("#pancore_graph svg").wrap("<div></div>").parent().html();
+        // Send the SVG code to the server for png conversion
         $.post("/convert", { image: svg }, function (data) {
             $("#save-as-modal .modal-body").html("<img src='" + data + "' />");
             $("#save-as-modal").modal();
@@ -392,7 +400,10 @@ function init_pancore() {
         worker.postMessage({'cmd': command, 'msg': message});
     }
 
-    // Add the genomes with these bioproject_ids
+    // Initial method for adding genomes to the graph
+    // genomes should be an array of bioproject id's
+    // the table is updated to represent the loading status
+    // the command is given to the worker to download the peptide id's
     function addGenomes(genomes) {
         var i;
         toLoad += genomes.length;
@@ -419,6 +430,7 @@ function init_pancore() {
     }
 
     // Gets called when the data is (done) loading
+    // enables/disables some buttons and actions (e.g. reordering)
     function setLoading(loading) {
         if (loading) {
             $("#add_species_peptidome").button('loading');
@@ -435,14 +447,18 @@ function init_pancore() {
         }
     }
 
-    // Adds new dataset to the data array
+    // Gets called when the worker is done loading a new genome
+    // the calculated data gets added the update queue if the request_rank matches
     function addData(data, request_rank) {
+        // If the rank doesn't match, this is old data
         if (rank !== request_rank) return;
         dataQueue.push(data);
         tryUpdateGraph();
     }
 
-    // Removes a genomes from the data array
+    // Removes a genomes from the visualization:
+    // - Removes it from the table
+    // - Instructs the worker to recalculate the graph
     function removeData(genome) {
         var g = tableData[genome.bioproject_id];
         if (g.status !== "Done") return;
@@ -453,7 +469,7 @@ function init_pancore() {
         sendToWorker("removeData", {"bioproject_id" : id, "order" : r.order, "start" : r.start});
     }
 
-    // Sets new pancore data
+    // Replaces all the visualized data and updates graph and table
     function setVisData(data, request_rank) {
         var i,
             bioproject_id;
@@ -470,7 +486,10 @@ function init_pancore() {
         updateTable();
     }
 
-    // Resets the data array
+    // Resets everything:
+    // - instructs the worker to flush all data
+    // - clear all data vars
+    // - update graph and table
     function clearAllData() {
         rank++;
         sendToWorker("clearAllData", "");
@@ -484,12 +503,12 @@ function init_pancore() {
         clearTable();
     }
 
-    // Adds the next datapoint to the animation after the current
-    // animation is done.
+    // Update the graph with data from the update queue when the previous animation is done.
     function tryUpdateGraph() {
         if (toLoad === 0) {
             return;
         }
+        // Only update when the previous animation is done
         if (mayStartAnimation) {
             mayStartAnimation = false;
             var data,
@@ -910,6 +929,8 @@ function init_pancore() {
                     .attr("opacity", toggles.showCore ? 1 : 0)
                     .attr("d", coreLine);
         } else {
+            // hide the lines when there's no data
+            // drawing them with no data results in JS errors
             graphData.select(".line.pan").style("visibility", "hidden");
             graphData.select(".line.core").style("visibility", "hidden");
         }
@@ -940,7 +961,7 @@ function init_pancore() {
         mouseOverWidth = (width / visData.length) / 1.5;
         var bars = graphData.selectAll(".bar")
             .data(visData, function (d) {return d.bioproject_id; });
-            
+
         bars.enter().append("polygon")
             .attr("class", "bar")
             .style("fill-opacity", 0)
@@ -970,7 +991,9 @@ function init_pancore() {
         $(".bar").parent().append($(".bar"));
     }
 
-    // Mouse event functions
+    // MOUSE EVENT FUNCTIONS
+
+    // Shows the popover and highlights the clicked node
     function mouseClick(d) {
         d3.event.stopPropagation();
         var target = $(d3.event.target);
@@ -983,7 +1006,7 @@ function init_pancore() {
             target.popover({
                 html: true,
                 trigger: "manual",
-                position: "right", 
+                position: "right",
                 container: "#popovers",
                 title: tableData[d.bioproject_id].name + " (bioproject " + d.bioproject_id + ")",
                 content: getPopoverContent(d)});
@@ -995,6 +1018,7 @@ function init_pancore() {
             clickId = d.bioproject_id;
         }
     }
+    // Shows the tooltip
     function mouseOver(d) {
         if (isDragging) return;
         if (isClicked && clickId === d.bioproject_id) return;
@@ -1002,11 +1026,13 @@ function init_pancore() {
         var tooltipHtml = "<b>" + tableData[d.bioproject_id].name + "</b><br/>" + getTooltipContent(d);
         tooltip.html(tooltipHtml).style("visibility", "visible");
     }
+    // Hides the tooltip
     function mouseOut(d) {
         if (isDragging) return;
         if (isClicked && clickId === d.bioproject_id) return;
         removeHighlight(d.bioproject_id);
     }
+    // Updates the position of the tooltip
     function mouseMove(d) {
         if (isDragging) return;
         if (window.fullScreenApi.isFullScreen()) {
@@ -1015,6 +1041,7 @@ function init_pancore() {
             tooltip.style("top", (d3.event.pageY + 15) + "px").style("left", (d3.event.pageX + 15) + "px");
         }
     }
+    // Let the dragging begin!
     function dragStart(d) {
         isDragging = true;
         hasDragged = false;
@@ -1024,6 +1051,7 @@ function init_pancore() {
         svg.selectAll(".bar").style("cursor", "url(/closedhand.cur) 7 5, move");
         svg.select("#trash").transition().duration(transitionDuration).attr("transform", "translate(-84 0)");
     }
+    // Switches the position the nodes when it needs to
     function drag(d) {
         hasDragged = true;
         if (isClicked) {
@@ -1055,6 +1083,8 @@ function init_pancore() {
         d3.select(this).attr("x", dragging[d.bioproject_id] - mouseOverWidth / 2);
         svg.selectAll(".dot._" + d.bioproject_id).attr("cx", dragging[d.bioproject_id]);
     }
+    // Recalculates the position of all genomes and update the graph or 
+    // removes the genome when dropped on the trash can
     function dragEnd(d) {
         delete this.__origin__;
         delete dragging[d.bioproject_id];
@@ -1087,7 +1117,9 @@ function init_pancore() {
         toggles[d.toggle] = !toggles[d.toggle];
         updateGraph();
     }
-    // mouse event helper functions
+
+    // MOUSE EVENT HELPER FUNCTIONS
+
     function removePopoversAndHighlights() {
         removePopovers();
         removeAllHighlights();
@@ -1264,9 +1296,12 @@ function init_pancore() {
             .duration(transitionDuration)
             .attr("fill", unicore2Color);
     }
-    // general helper functions
+
+    // GENERAL HELPER FUNCTIONS
+
     function getMaxVisibleDatapoint() {
-        var max = 0;
+        var max = 0,
+            i;
         if (visData.length === 0) {
             return 0;
         }
