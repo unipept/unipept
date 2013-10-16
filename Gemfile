@@ -20,7 +20,7 @@ gem 'therubyracer'
 gem 'oj'
 
 # imagemagick bindings
-gem 'rmagick'
+gem 'rmagick', '2.13.2'
 
 # new relic stuff
 gem 'newrelic_rpm'

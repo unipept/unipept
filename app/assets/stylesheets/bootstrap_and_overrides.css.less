@@ -486,3 +486,152 @@ span.dir{
 #jstree_search{
 	width: 400px;
 }
+
+/*** pancore page ***/
+#buttons-pancore{
+    float: right;
+    margin-top: -20px;
+}
+#buttons-pancore button{
+    margin-left: 5px;
+}
+#pancore_graph{
+    background-color: white;
+}
+#genomes_table .handle{
+    width: 30px;
+}
+#genomes_table .name{
+    width: 275px;
+}
+#genomes_table .status{
+    width: 75px;
+}
+#genomes_table .action{
+    width: 30px;
+}
+#genomes_table{
+    margin: 5px;
+    width: auto;
+}
+#genomes_table tr.ui-sortable-helper{
+    background-color: rgba(255, 255, 255, 0.8);
+}
+#genomes_table_div{
+    .transition(margin-top 0.5s ease-in-out);
+}
+#genomes_table tfoot{
+    display: none;
+}
+#genomes_table tfoot th{
+    text-align: center;
+}
+#genomes_table.acceptDrop tfoot{
+    display: table-row-group;
+}
+#genomes_table.acceptDrop{
+    background-color: #eeeeee;
+    border: 5px dashed #cccccc;
+    border-collapse: separate;
+    margin: 0px;
+}
+#genomes_table.willDrop{
+    background-color: #dff0d8;
+    cursor: copy;
+}
+#autosort .dropdown-menu{
+    margin-top: 0px;
+}
+#genomes_table tbody tr:not(.ui-sortable-helper){
+    cursor: url(/openhand.cur) 7 5, pointer;
+}
+#pancore_graph .bar{
+    cursor: url(/openhand.cur) 7 5, pointer;
+}
+#pancore_graph #trash{
+    cursor: url(/closedhand.cur) 7 5, pointer;
+}
+#download-peptides .dropdown-menu{
+    margin-top: 0px;
+}
+#download-peptides #download-peptides-toggle{
+    margin-bottom: 2px;
+}
+.legend {
+    cursor: pointer;
+}
+/*** treeview ***/
+
+#treeView{
+    -moz-user-select:none;
+    position:relative;
+}
+#treeView ul{
+    margin:-5px 0 0 -1.5em;
+    padding:0 0 0 1.5em;
+}
+#treeView ul ul{
+    background:url('list-item-contents.png') repeat-y left;
+}
+#treeView li:last-child > ul{
+    background-image:none;
+}
+#treeView li{
+    margin:0;
+    padding:0;
+    padding-top: 5px;
+    background:asset-url('list-item-root.png') no-repeat top left;
+    list-style-position:inside;
+    list-style-image:asset-url('button.png');
+    cursor: auto;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+#treeView li.collapsibleListOpen{
+    list-style-image:asset-url('button-open.png');
+    cursor:pointer;
+}
+#treeView li.collapsibleListClosed{
+    list-style-image:asset-url('button-closed.png');
+    cursor:pointer;
+}
+#treeView li.collapsibleListClosed ul{
+    display: none;
+}
+#treeView li li{
+    background-image:asset-url('list-item.png');
+    padding-left:1.5em;
+}
+#treeView li:last-child{
+    background-image:asset-url('list-item-last.png');
+}
+#treeView li.root{
+    background-image:none;
+    list-style-type: none;
+    list-style-image: none;
+}
+#treeView li.unmatch{
+    display: none;
+}
+#treeView li.leaf{
+    background-image:asset-url('list-item-leaf.png');
+    list-style-type: none;
+    list-style-image: none;
+}
+#treeView li.leaf:last-child{
+    background-image:asset-url('list-item-last-leaf.png');
+}
+#treeSearchDiv {
+    margin-bottom: 5px;
+}
+#treeSearch {
+    width: 400px;
+}
+#treeView li span {
+    cursor: url(/openhand.cur) 7 5, pointer;
+}
+tbody.dragging tr{
+    cursor: url(/closedhand.cur) 7 5, pointer !important;
+    background-color: rgba(255, 255, 255, 0.8);
+}

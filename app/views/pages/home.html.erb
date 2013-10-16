@@ -1,24 +1,25 @@
 <h1>Welcome</h1>
 
 <div class="split">
-	
-	<div class="split-left no-border">
-		<p class="intro">
+  
+  <div class="split-left no-border">
+    <p class="intro">
 The Unipept web application supports biodiversity analysis of large and complex metaproteome samples. Its underlying index structure is designed to quickly retrieve all occurrences of a tryptic peptide in UniProtKB records. Taxon-specificity of the tryptic peptide is successively derived from these occurrences using a novel lowest common ancestor approach that is robust against taxonomic misarrangements, misidentifications and inaccuracies. Not taking into account this identification noise would otherwise result in drastic loss of information. This application consists of two basic functionalities: a peptide-based taxonomic identification and a multi-peptide dynamic diversity treemap analysis.
-		</p>
-	</div>
-	
-	<div class="split-right">
-		<div id="news">
-		  <h2>News</h2>
-		  <div>
-		    <%= render @post, :well => false %>
-		    <p class="pull-right"><%= link_to '> more news', posts_path %></p>
-		  </div>
-			<div class="visualClear"></div>
-		</div>
-	</div>
-	<div class="visualClear"></div>
+    </p>
+  </div>
+  <% unless @post.nil? %>
+  <div class="split-right">
+    <div id="news">
+      <h2>News</h2>
+      <div>
+        <%= render @post, :well => false %>
+        <p class="pull-right"><%= link_to '> more news', posts_path %></p>
+      </div>
+      <div class="visualClear"></div>
+    </div>
+  </div>
+  <% end %>
+  <div class="visualClear"></div>
 </div>
 
 
@@ -47,25 +48,25 @@ Advanced options lets you filter duplicate peptides, equate isoleucine and leuci
 </p>
 <p>Unipept has some built-in datasets to help you test drive the application. Click a load button next to one of the datasets to automatically fill the form with test data.</p>
 <div class="tabbable">
-	<ul class="nav nav-tabs">
-		<li class="active"><a href="#database" data-toggle="tab">Sample data</a></li>
-		<li><a href="#pride" data-toggle="tab">PRIDE</a></li>
-	</ul>
-	<div class="tab-content">
-		<div class="tab-pane active" id="database">
-			<h3>Sample data</h3>
-			<%= render @datasets, :load => true %>
-		</div>
-		<div class="tab-pane" id="pride">
-			<h3>PRIDE data</h3>
-			<p>You can enter a <a href="http://www.ebi.ac.uk/pride/" target="_blank">PRIDE</a> experiment id (e.g. 8500) in the field below to load the dataset into the search form on the right.</p>
-			<span class="form-inline">
-			<%= text_field_tag('pride_exp_id', nil, :placeholder => 'PRIDE experiment id')%>	
-			<%= button_tag(raw("Load PRIDE dataset"), { :type => "button", :class => "load-pride btn" , :"data-loading-text" => "Loading..."}) %>
-			</span>
-			<br/><br/><br/>
-		</div>
-	</div>
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#database" data-toggle="tab">Sample data</a></li>
+    <li><a href="#pride" data-toggle="tab">PRIDE</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="database">
+      <h3>Sample data</h3>
+      <%= render @datasets, :load => true %>
+    </div>
+    <div class="tab-pane" id="pride">
+      <h3>PRIDE data</h3>
+      <p>You can enter a <a href="http://www.ebi.ac.uk/pride/" target="_blank">PRIDE</a> experiment id (e.g. 8500) in the field below to load the dataset into the search form on the right.</p>
+      <span class="form-inline">
+      <%= text_field_tag('pride_exp_id', nil, :placeholder => 'PRIDE experiment id')%>  
+      <%= button_tag(raw("Load PRIDE dataset"), { :type => "button", :class => "load-pride btn" , :"data-loading-text" => "Loading..."}) %>
+      </span>
+      <br/><br/><br/>
+    </div>
+  </div>
 </div>
 </div>
 <div class="split-right">
@@ -76,5 +77,5 @@ Advanced options lets you filter duplicate peptides, equate isoleucine and leuci
 </div>
 
 <script type="text/javascript">
-	$(document).ready(initDatasets);
+  $(document).ready(initDatasets);
 </script>

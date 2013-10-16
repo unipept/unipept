@@ -3,7 +3,7 @@
 # Table name: taxons
 #
 #  id          :integer(3)      not null, primary key
-#  name        :string(256)     not null
+#  name        :string(120)     not null
 #  rank        :string(16)
 #  parent_id   :integer(3)
 #  valid_taxon :boolean(1)      default(TRUE), not null
