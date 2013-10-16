@@ -181,7 +181,8 @@ function init_pancore() {
             {"name": "pan peptidome", "color": panColor, "toggle": "showPan"},
             {"name": "core peptidome", "color": coreColor, "toggle": "showCore"},
             {"name": "unique peptides", "color": unicoreColor, "toggle": "showUnicore"}
-            /*{"name": "unique genome peptides", "color": unicore2Color}*/];
+            /*{"name": "unique genome peptides", "color": unicore2Color}*/],
+        lca = "";
 
     // the Javascript Worker for background data processing
     var worker = new Worker("/assets/workers/pancore_worker.js");
@@ -266,7 +267,7 @@ function init_pancore() {
             addData(data.msg.data, data.msg.rank);
             break;
         case 'setVisData':
-            setVisData(data.msg.data, data.msg.rank);
+            setVisData(data.msg.data, data.msg.lca, data.msg.rank);
             break;
         case 'sequencesDownloaded':
             returnPopoverSequences(data.msg.sequences, data.msg.type);
@@ -470,11 +471,12 @@ function init_pancore() {
     }
 
     // Replaces all the visualized data and updates graph and table
-    function setVisData(data, request_rank) {
+    function setVisData(data, l, request_rank) {
         var i,
             bioproject_id;
         if (rank !== request_rank) return;
         visData = data;
+        lca = l;
         for (i = 0; i < visData.length; i++) {
             bioproject_id = visData[i].bioproject_id;
             if (typeof tableData[bioproject_id] !== "undefined") {
@@ -498,6 +500,7 @@ function init_pancore() {
         dataQueue = [];
         visData = [];
         tableData = {};
+        lca = "";
         removePopoversAndHighlights();
         updateGraph();
         clearTable();
@@ -588,10 +591,17 @@ function init_pancore() {
     // Clear the table 
     function clearTable() {
         $("#genomes_table tbody").html("");
+        updateTable();
     }
     // Updates the table
     function updateTable() {
         removePopovers();
+
+        var text = "Genome";
+        if (lca !== "") {
+            text += " (LCA: " + lca + ")";
+        }
+        $("th.name").text(text);
 
         // Add rows
         var tr = d3.select("#genomes_table tbody").selectAll("tr.added")
