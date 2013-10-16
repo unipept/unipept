@@ -25,9 +25,7 @@
 <h2>Single peptide analysis</h2>
 <div class="split">
   <div class="split-left">
-    <p>
-      With single peptide analysis, you can submit a single <em>tryptic peptide</em> that can be <em>5 to 50 residues long</em>. The application will respond with a list of all UniProtKB records wherein the peptide was found along with a complete taxonomic lineage derived from the NCBI taxonomy. These lineages are presented as a comprehensible table and using an interactive tree view.
-    </p>
+    <%= render 'shared/single_search_intro' %>
   </div>
 
   <div class="split-right">
@@ -40,15 +38,7 @@
 <h2>Multi-peptide analysis</h2>
 <div class="split">
   <div class="split-left">
-    <p>
-      Multi-peptide analysis helps you analyze lists of tryptic peptides, e.g. extracted from an environmental sample using shotgun tandem mass spectrometric methods. You can submit a list of peptides of which the lowest common ancestors (LCA) will be calculated. These LCAs will be bundled and displayed in an interactive treemap giving you insight into the biodiversity of your sample.
-    </p>
-    <p>
-      Advanced options lets you filter duplicate peptides, equate isoleucine and leucine or export the results to an Microsoft Excel compatible file. If  advanced missed cleavage handling is left unchecked, Unipept will perform an in silico digest on the list of peptides. The resulting subpeptides will be handled individually. When the box is checked, the results of subpeptides will be combined. Enabling advanced missed cleavage handling has a serious performance impact! 
-    </p>
-    <p>
-      Unipept has some built-in datasets to help you test drive the application. Click a load button next to one of the datasets to automatically fill the form with test data.
-    </p>
+    <%= render 'shared/multi_search_intro' %>
     <%= render 'shared/load_datasets_form' %>
   </div>
 
