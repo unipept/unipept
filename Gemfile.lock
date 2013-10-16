@@ -115,7 +115,7 @@ GEM
     rdoc (3.12.2)
       json (~> 1.4)
     ref (1.0.2)
-    rmagick (2.13.1)
+    rmagick (2.13.2)
     rspec (2.12.0)
       rspec-core (~> 2.12.0)
       rspec-expectations (~> 2.12.0)
@@ -179,7 +179,7 @@ DEPENDENCIES
   oj
   rails (= 3.2.13)
   rake
-  rmagick
+  rmagick (= 2.13.2)
   rspec
   rspec-rails
   rubycas-client!

@@ -197,7 +197,7 @@ function initJsTree(data, equate_il) {
                 }
             }
             allSequences = peptides.all_sequences;
-            if (allSequences && allSequences.length > 0) {
+            if (allSequences && allSequences.length > 0 && allSequences.length !== (ownSequences ? ownSequences.length : 0)) {
                 list = infoPane.append("<h4>Peptides specific to this taxon or one of its subtaxa</h4><ul></ul>").find("ul").last();
                 for (peptide in allSequences) {
                     list.append("<li><a href='/sequences/" + allSequences[peptide] + "/" + equate_il + "' target='_blank'>" + allSequences[peptide] + "</a></li>");
@@ -268,6 +268,7 @@ function initSunburst(data) {
         .attr("width", w + p * 2)
         .attr("height", h + p * 2)
         .attr("overflow", "hidden")
+        .style("font-family", "'Helvetica Neue', Helvetica, Arial, sans-serif")
         .append("g")
         .attr("transform", "translate(" + (r + p) + "," + (r + p) + ")"); // set origin to radius center
 

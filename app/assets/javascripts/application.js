@@ -1,8 +1,9 @@
 //= require jquery
+//= require jquery-ui
 //= require jquery_ujs
 //= require twitter/bootstrap
 //= require_self
-//= require_tree .
+//= require_directory .
 //= require vendor
 
 // highlights the background color 
@@ -51,9 +52,11 @@ function add_fields(link, association, content) {
  * second parameter is optional message to display to the user
  */
 function error(error, userMessage) {
-    qbaka.report(error);
-    if (typeof console != "undefined") {
-        console.error(error);
+    if (error !== null) {
+        qbaka.report(error);
+        if (typeof console != "undefined") {
+            console.error(error);
+        }
     }
     if (userMessage) {
         var msg = $("<div class='alert alert-error' style='display: none;'><strong>Oh snap!</strong> " + userMessage + "</div>");
@@ -65,77 +68,87 @@ function error(error, userMessage) {
 /* display the message variable in an info alert
  */
 function info(message) {
-	var msg = $("<div class='alert alert-info' style='display: none;'><strong>Heads up!</strong> " + message + "</div>");
+    var msg = $("<div class='alert alert-info' style='display: none;'><strong>Heads up!</strong> " + message + "</div>");
     $("#messages").append(msg);
     msg.show("normal");
 }
 
 /*
+ * Function to delay some other function until it isn't
+ * called for "ms" ms
+ */
+var delay = (function () {
+    var timer = 0;
+    return function (callback, ms) {
+        clearTimeout(timer);
+        timer = setTimeout(callback, ms);
+    };
+})();
+
+/*
  * add an object called fullScreenApi until the fullscreen API gets finalized
  * from: http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugin/
  */
- (function() {
-     var
-         fullScreenApi = {
-             supportsFullScreen: false,
-             isFullScreen: function() { return false; },
-             requestFullScreen: function() {},
-             cancelFullScreen: function() {},
-             fullScreenEventName: '',
-             prefix: ''
-         },
-         browserPrefixes = 'webkit moz o ms khtml'.split(' ');
+(function () {
+    var fullScreenApi = {
+            supportsFullScreen: false,
+            isFullScreen: function () { return false; },
+            requestFullScreen: function () {},
+            cancelFullScreen: function () {},
+            fullScreenEventName: '',
+            prefix: ''
+        },
+        browserPrefixes = 'webkit moz o ms khtml'.split(' '),
+        i;
 
-     // check for native support
-     if (typeof document.cancelFullScreen != 'undefined') {
-         fullScreenApi.supportsFullScreen = true;
-     } else {
-         // check for fullscreen support by vendor prefix
-         for (var i = 0, il = browserPrefixes.length; i < il; i++ ) {
-             fullScreenApi.prefix = browserPrefixes[i];
+    // check for native support
+    if (typeof document.cancelFullScreen != 'undefined') {
+        fullScreenApi.supportsFullScreen = true;
+    } else {
+        // check for fullscreen support by vendor prefix
+        for (i = 0, il = browserPrefixes.length; i < il; i++) {
+            fullScreenApi.prefix = browserPrefixes[i];
 
-             if (typeof document[fullScreenApi.prefix + 'CancelFullScreen' ] != 'undefined' ) {
-                 fullScreenApi.supportsFullScreen = true;
+            if (typeof document[fullScreenApi.prefix + 'CancelFullScreen'] != 'undefined') {
+                fullScreenApi.supportsFullScreen = true;
+                break;
+            }
+        }
+    }
 
-                 break;
-             }
-         }
-     }
+    // update methods to do something useful
+    if (fullScreenApi.supportsFullScreen) {
+        fullScreenApi.fullScreenEventName = fullScreenApi.prefix + 'fullscreenchange';
 
-     // update methods to do something useful
-     if (fullScreenApi.supportsFullScreen) {
-         fullScreenApi.fullScreenEventName = fullScreenApi.prefix + 'fullscreenchange';
+        fullScreenApi.isFullScreen = function () {
+            switch (this.prefix) {
+                case '':
+                    return document.fullScreen;
+                case 'webkit':
+                    return document.webkitIsFullScreen;
+                default:
+                    return document[this.prefix + 'FullScreen'];
+            }
+        };
+        fullScreenApi.requestFullScreen = function (el) {
+            return (this.prefix === '') ? el.requestFullScreen() : el[this.prefix + 'RequestFullScreen']();
+        };
+        fullScreenApi.cancelFullScreen = function (el) {
+            return (this.prefix === '') ? document.cancelFullScreen() : document[this.prefix + 'CancelFullScreen']();
+        };
+    }
 
-         fullScreenApi.isFullScreen = function() {
-             switch (this.prefix) {
-                 case '':
-                     return document.fullScreen;
-                 case 'webkit':
-                     return document.webkitIsFullScreen;
-                 default:
-                     return document[this.prefix + 'FullScreen'];
-             }
-         };
-         fullScreenApi.requestFullScreen = function(el) {
-             return (this.prefix === '') ? el.requestFullScreen() : el[this.prefix + 'RequestFullScreen']();
-         };
-         fullScreenApi.cancelFullScreen = function(el) {
-             return (this.prefix === '') ? document.cancelFullScreen() : document[this.prefix + 'CancelFullScreen']();
-         };
-     }
+    // jQuery plugin
+    if (typeof jQuery != 'undefined') {
+        jQuery.fn.requestFullScreen = function () {
+            return this.each(function () {
+                if (fullScreenApi.supportsFullScreen) {
+                    fullScreenApi.requestFullScreen(this);
+                }
+            });
+        };
+    }
 
-     // jQuery plugin
-     if (typeof jQuery != 'undefined') {
-         jQuery.fn.requestFullScreen = function() {
-
-             return this.each(function() {
-                 if (fullScreenApi.supportsFullScreen) {
-                     fullScreenApi.requestFullScreen(this);
-                 }
-             });
-         };
-     }
-
-     // export api
-     window.fullScreenApi = fullScreenApi;
- })();
+    // export api
+    window.fullScreenApi = fullScreenApi;
+})();

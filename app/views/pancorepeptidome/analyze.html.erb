@@ -1,0 +1,78 @@
+<h1>Unique peptide finder</h1>
+<p>This application lets you find unique peptides for a species of your choice, based on the data of the completed refseq genomes. These peptides can be downloaded and used for targeted proteomics experiments.</p>
+<p>When you add a genome to the set (e.g. by dragging one from the tree to the graph of table), the union and intersection of the peptides of that genome and the ones already added are calculated. The size of the union (pan peptidome) is represented by the blue dots and the size of the intersection (core peptidome) is represented by the orange dots. Additionally, a more restrictive version of the core peptidome is calculated (green dots) by only including peptides that are unique for the selected genomes. These unique peptides have the same Lowest Common Ancestor (LCA) as the LCA of the selected genomes.</p>
+<p>You can easily reorder the genomes by dragging them to the desired position or by using one of the automatic sort options. By clicking on one of the datapoints on the graph, you can download a list of peptides.</p>
+
+<div id="buttons-pancore"></div>
+
+<div id="pancore_graph">
+  <div id="popovers"></div>
+</div>
+
+<div class="split">
+  <div class="split-left">
+    <p class="intro">
+      To analyze some genomes, select a species from the list and click the load button or drag a node from the tree to the table on the right.
+    </p>
+    <%= form_tag(:pancore_analyze, :method => "get", :class => "form-inline") do %>
+    <%= select_tag(:species_id, options_for_select(@species, params[:species_id])) %>
+    <%= button_tag(raw("Add species <i class='icon-chevron-right icon-white'></i>"), :type => "button", :class => "btn btn-primary", :id => "add_species_peptidome", :"data-loading-text" => "Loading...") %>
+    <% end %>
+    <div id="treeView">
+      <div class="input-append" id="treeSearchDiv">
+      <%= search_field_tag(:treeSearch, "", :placeholder => "type to filter the tree by name or bioproject id") %><span class="add-on"><i class="icon-search"></i></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="split-right">
+    <span id="table-message"><i class="icon-chevron-left"></i> Select a species to analyze and click the load button.</span>
+    <div id="genomes_table_div">
+      <div style="overflow: hidden; height: 0px; width: 0px;">&nbsp;</div>
+      <table class="table table-condensed" id="genomes_table">
+        <thead>
+          <tr>
+            <th class="handle">
+              <div class="btn-group" id="autosort">
+                <a class="btn btn-mini btn-primary dropdown-toggle" data-toggle="dropdown" id="autosort-button">
+                  <i class="icon-random icon-white"></i>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a data-type="name" data-toggle="tooltip" title="Sorts the genomes alphabetically from A-Z." href="#">Sort by name</a></li>
+                  <li><a data-type="size" data-toggle="tooltip" title="Sorts the genomes by the number of peptides from high to low." href="#">Sort by genome size</a></li>
+                  <li><a data-type="minpan" data-toggle="tooltip" title="Heuristically minimizes the pan line. Starts from the current first node." href="#">Minimize the pan</a></li>
+                  <li><a data-type="maxcore" data-toggle="tooltip" title="Heuristically maximizes the core line. Starts from the current first node." href="#">Maximize the core</a></li>
+                  <li><a data-type="optimal" data-toggle="tooltip" title="Heuristically minimizes the distance between the pan and core line. Starts from the current first node." href="#">Optimize pan and core</a></li>
+                </ul>
+              </div>
+            </th>
+            <th class="name">Genome</th>
+            <th class="status">Status</th>
+            <th class="action"><a id="remove-all" class="btn btn-mini btn-danger" title="remove all genomes"><i class="icon-trash icon-white"></i></a></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr><th colspan=4><i class="icon-plus"></i> Drop genomes here</th></tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="visualClear"></div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $(function () {
+    if (typeof(Worker)!=="undefined") {
+      init_pancore();
+      init_selection_tree(<%= raw(@genomes) %>, <%= raw(@taxa) %>);
+    } else {
+      error(null, "Sorry, this page uses Web Workers, an advanced JavaScript technology that's not supported by your browser. Try using an up to date version of Google Chrome, Firefox or Internet Explorer 10.")
+    }
+  });
+</script>
+
+<%= render 'shared/save_image_modal' %>

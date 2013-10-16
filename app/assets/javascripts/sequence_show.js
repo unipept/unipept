@@ -138,6 +138,9 @@ function init_sequence_show(data, lcaId) {
         error(err, "Something went wrong while loading the lineage tree.");
     }
 
+    // disable the text selection of tree nodes
+    $("#lineageTree").disableSelection();
+
     // set up the fullscreen stuff
     if (fullScreenApi.supportsFullScreen) {
         $("#buttons-single").prepend("<button id='zoom-btn-lineage' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");

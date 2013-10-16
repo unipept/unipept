@@ -121,4 +121,56 @@ class Sequence < ActiveRecord::Base
     end
     File.open("public/progress", 'w') { |file| file.write("batch process#100") }
   end
+
+  # Returns an array of sequences strings based on a list of sequence id's
+  def self.list_sequences(ids)
+    connection.select_values(Sequence.select(:sequence).where(:id => ids).to_sql).to_a
+  end
+
+  # Filters a list of sequences for a given lca
+  def self.filter_unique_uniprot_peptides(sequences, lca)
+    connection.select_values(Sequence.select(:id).where(:id => sequences, :lca => lca).to_sql).to_a.sort!
+  end
+
+  # Filters a list of sequences for a given lca
+  def self.filter_unique_genome_peptides(sequences, species_id)
+    # alternative query
+    # was slower in tests
+    #a = connection.select_values("SELECT original_sequence_id FROM peptides 
+    #left join refseq_cross_references on peptides.uniprot_entry_id = refseq_cross_references.uniprot_entry_id
+    #WHERE original_sequence_id IN (#{sequences.join(",")}) 
+    #AND refseq_cross_references.sequence_id IN
+    #(SELECT refseq_id FROM genomes WHERE species_id != #{species_id})").to_a
+    
+    bp_id = Set.new
+    result = sequences
+    GenomeCache.find_by_sql("SELECT genome_caches.* from genome_caches LEFT JOIN genomes ON genome_caches.bioproject_id = genomes.bioproject_id LEFT JOIN lineages ON genomes.taxon_id = lineages.taxon_id WHERE lineages.species != #{species_id}").each do |genome|
+      if bp_id.include?(genome.bioproject_id)
+        next
+      else
+        bp_id.add(genome.bioproject_id)
+      end
+      genome = Oj.load(genome.json_sequences)
+      r = []
+      i = 0
+      j = 0
+      while i < result.length && j < genome.length do
+        if result[i] > genome[j]
+          j += 1
+        elsif result[i] < genome[j]
+          r << result[i]
+          i += 1
+        else
+          i += 1
+          j += 1
+        end
+      end
+      while i < result.length do
+        r << result[i]
+        i += 1
+      end
+      result = r
+    end
+    return result
+  end
 end
