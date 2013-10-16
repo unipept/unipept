@@ -237,6 +237,9 @@ function init_pancore() {
         case 'sequencesDownloaded':
             returnPopoverSequences(data.msg.sequences, data.msg.type);
             break;
+        case 'sim_matrix':
+            showMatrix(data.msg.genomes, data.msg.sim_matrix, data.msg.order);
+            break;
         default:
             console.log(data.msg);
         }
@@ -362,6 +365,18 @@ function init_pancore() {
     // Sends a command and message to the worker
     function sendToWorker(command, message) {
         worker.postMessage({'cmd': command, 'msg': message});
+    }
+
+    // setup similarity matrix buttons etc
+    $("#sim_matrix_buttons").prepend("<button id='calculate-matrix-btn' class='btn btn-mini'><i class='icon-refresh'></i>Calculate Similarity Matrix</button>");
+    $("#calculate-matrix-btn").click(function () {
+        sendToWorker('calculateSimilarity', '');
+    });
+
+    function showMatrix(genomes, data, order) {
+        $('#sim_matrix').empty();
+        init_sim_matrix(genomes, data, order);
+
     }
 
     // Add the genomes with these bioproject_ids

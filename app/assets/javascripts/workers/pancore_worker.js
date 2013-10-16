@@ -37,6 +37,9 @@ self.addEventListener('message', function (e) {
     case "getSequences":
         getSequences(data.msg.type, data.msg.bioproject_id);
         break;
+    case "calculateSimilarity":
+        calculateSimilarity();
+        break;
     default:
         error(data.msg);
     }
@@ -358,6 +361,33 @@ function getJSONByPost(url, data, callback) {
         }
     };
     req.send(data);
+}
+
+function genomeSimilarity(peptide_list1, peptide_list2) {
+    return intersection(peptide_list1, peptide_list2).length / union(peptide_list1, peptide_list2).length;
+}
+
+function calculateSimilarity() {
+    // 0,0 is the topleft coordinate
+    var x = 0;
+    var y = 0;
+    var sim_matrix = [];
+    for (x = 0; x < order.length; x++) {
+        sim_matrix[x] = [];
+    }
+
+    for (x = 0; x < order.length; x++) {
+        var bioproject_id = order[x];
+        var compare_list = data[bioproject_id].peptide_list;
+
+        // only need to calculate upper part of matrix
+        for (y = 0 ; y < x; y ++) {
+            var peptide_list = data[order[y]].peptide_list;
+            sim_matrix[x][y] = genomeSimilarity(compare_list, peptide_list);
+        }
+    }
+    sendToHost('sim_matrix', {'genomes': order, 'sim_matrix': sim_matrix, 'order': order});
+    return sim_matrix;
 }
 
 // union and intersection for sorted arrays
