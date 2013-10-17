@@ -7,7 +7,8 @@ var data = {},
     cores = [],
     unicores = [],
     unicorePresent = false,
-    rank = 0;
+    rank = 0,
+    sim_matrix = [];
 
 // Add an event handler to the worker
 self.addEventListener('message', function (e) {
@@ -371,13 +372,15 @@ function calculateSimilarity() {
     // 0,0 is the topleft coordinate
     var x = 0;
     var y = 0;
-    var sim_matrix = [];
+    var names = [];
+    sim_matrix = [];
     for (x = 0; x < order.length; x++) {
         sim_matrix[x] = [];
     }
 
     for (x = 0; x < order.length; x++) {
         var bioproject_id = order[x];
+        names.push(data[bioproject_id].name);
         var compare_list = data[bioproject_id].peptide_list;
 
         // only need to calculate upper part of matrix
@@ -386,8 +389,32 @@ function calculateSimilarity() {
             sim_matrix[x][y] = genomeSimilarity(compare_list, peptide_list);
         }
     }
-    sendToHost('sim_matrix', {'genomes': order, 'sim_matrix': sim_matrix, 'order': order});
+    sendToHost('sim_matrix', {'genomes': names, 'sim_matrix': sim_matrix, 'order': order});
     return sim_matrix;
+}
+function clusterMatrix() {
+    // find highest similarity
+    var x = 0, y = 0, largest = 0;
+    var i = 0, j = 0;
+    for (i = 0 ; i < sim_matrix.length; i++) {
+        for (j = 0; j < i; j++) {
+            if (sim_matrix[i][j] > largest) {
+                x = i;
+                y = j;
+                largest = sim_matrix[i][j];
+            }
+        }
+    }
+
+    // combine the 2 most similar into 1
+    var new_genome = averageGenome(data[order[x]].peptide_list, data[order[y]].peptide_list);
+    // remove the old ones from order (slice(0) creates a clone)
+    var new_order = order.slice(0)
+    new_order.splice(x,1);
+    new_order.splice(y,1);
+    
+    // Start again with the new matrix
+
 }
 
 // union and intersection for sorted arrays
