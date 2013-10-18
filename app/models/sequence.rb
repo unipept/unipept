@@ -95,15 +95,15 @@ class Sequence < ActiveRecord::Base
       File.open("public/progress", 'w') { |file| file.write("batch process#" + ActionController::Base.helpers.number_with_precision((current_slice * 100.0 / num_of_slices), :precision => 2) ) }
 
       query = slice.join("\n")
-      data = query.upcase.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
+      data = query.upcase.gsub(/I/,'L').gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
       data_counts = Hash[data.group_by{|k| k}.map{|k,v| [k, v.length]}]
       data = data_counts.keys
 
       # build the resultset
       matches = Hash.new
-      sequences = Sequence.find_all_by_sequence(data, :include => {:lca_t => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}})
+      sequences = Sequence.find_all_by_sequence(data, :include => {:lca_il_t => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}})
       sequences.each do |sequence| # for every sequence in query
-        lca_t = sequence.calculate_lca(false, true)
+        lca_t = sequence.calculate_lca(true, true)
         unless lca_t.nil?
           matches[lca_t] = Array.new if matches[lca_t].nil?
           matches[lca_t] << sequence.sequence
@@ -136,12 +136,12 @@ class Sequence < ActiveRecord::Base
   def self.filter_unique_genome_peptides(sequences, species_id)
     # alternative query
     # was slower in tests
-    #a = connection.select_values("SELECT original_sequence_id FROM peptides 
+    #a = connection.select_values("SELECT original_sequence_id FROM peptides
     #left join refseq_cross_references on peptides.uniprot_entry_id = refseq_cross_references.uniprot_entry_id
-    #WHERE original_sequence_id IN (#{sequences.join(",")}) 
+    #WHERE original_sequence_id IN (#{sequences.join(",")})
     #AND refseq_cross_references.sequence_id IN
     #(SELECT refseq_id FROM genomes WHERE species_id != #{species_id})").to_a
-    
+
     bp_id = Set.new
     result = sequences
     GenomeCache.find_by_sql("SELECT genome_caches.* from genome_caches LEFT JOIN genomes ON genome_caches.bioproject_id = genomes.bioproject_id LEFT JOIN lineages ON genomes.taxon_id = lineages.taxon_id WHERE lineages.species != #{species_id}").each do |genome|
