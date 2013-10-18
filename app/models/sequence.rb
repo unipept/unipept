@@ -175,12 +175,12 @@ class Sequence < ActiveRecord::Base
           # skip if nothing left
           next if entries.size == 0
 
-          seq_lins = entries.map(&:lineage).uniq
+          seq_lins = entries.map(&:lineage).uniq.compact
           lca_t = Lineage.calculate_lca_taxon(seq_lins) #calculate the LCA
 
           unless lca_t.nil?
             num_of_seq = filter_duplicates ? 1 : data_counts[seq]
-            matches[lca_t] = Array.new if @matches[lca_t].nil?
+            matches[lca_t] = Array.new if matches[lca_t].nil?
             num_of_seq.times do
               matches[lca_t] << seq
             end
