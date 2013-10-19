@@ -81,11 +81,7 @@ class Sequence < ActiveRecord::Base
   end
 
   # Processes the input file and writes the results in csv format to the output file
-  def self.batch_process(input, output = "output.csv")
-    equate_il = false
-    filter_duplicates = true
-    handle_missed = false
-
+  def self.batch_process(input, output = "output.csv", equate_il = true, filter_duplicates = true, handle_missed = false)
     file = File.open(input, 'r')
     slice_size = 1000
     data = file.readlines.each_slice(slice_size).to_a
