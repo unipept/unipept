@@ -14,8 +14,17 @@
 @hairlinegray: #dddddd;
 
 // Overrides
-@baseFontSize: 13px;
+@font-size-base: 13px;
 @baseLineHeight: 18px;
+@line-height-base: 1.3846153846;
+
+// Disable responsiveness
+.container {
+    max-width: none !important;
+    width: 940px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
 
 html, body {
     background-color: @gray-lighter;
@@ -132,6 +141,9 @@ h4 {
     -webkit-border-bottom-left-radius: 3px;
     -moz-border-bottom-left-radius: 3px;
     border-bottom-left-radius: 3px;
+}
+#subbar ul {
+    padding-left: 25px;
 }
 #subbar ul li {
     float:left;
