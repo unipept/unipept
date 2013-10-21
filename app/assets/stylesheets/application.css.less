@@ -1,6 +1,4 @@
-/*
-*= require vendor
-*/
+@import "vendor.less";
 
 // Your custom LESS stylesheets goes here
 //
@@ -8,21 +6,19 @@
 // you may use and inherit here
 //
 // If you'd like to override bootstrap's own variables, you can do so here as well
-// See http://twitter.github.com/bootstrap/customize.html#variables for their names and documentation
+// See http://getbootstrap.com/customize/#less-variables for their names and documentation
 //
 // Example:
 // @linkColor: #ff0000;
 
 @hairlinegray: #dddddd;
+
+// Overrides
 @baseFontSize: 13px;
 @baseLineHeight: 18px;
 
-@grayLighter: #eeeeee;
-@grayLight: #999999;
-@white: #ffffff;
-
 html, body {
-    background-color: @grayLighter;
+    background-color: @gray-lighter;
     height: 100%;
 }
 
@@ -60,8 +56,8 @@ h4 {
 }
 
 .container {
-    background-color: @white;
-    //.box-shadow(~"1px 0 10px gray, -1px 0 10px gray");
+    background-color: #ffffff;
+    .box-shadow(~"1px 0 10px gray, -1px 0 10px gray");
 }
 .container.main {
     min-height: 100%;
@@ -70,14 +66,14 @@ h4 {
 }
 .container.footer-wrap {
     margin-top: -64px;
-    //.box-shadow(0 0);
+    .box-shadow(0 0);
 }
 .content {
     padding: 15px 12px 12px 12px;
 }
 /* top bar */
 #topbar {
-    //.clearfix();
+    .clearfix();
     padding: 5px;
 }
 #user {
@@ -95,14 +91,14 @@ h4 {
 }
 #utility ul li.separator,
 #user ul li.separator {
-    border-right: 1px solid @grayLight;
+    border-right: 1px solid @gray-light;
 }
 
 /* header */
 #header {
     background: asset-url("sprieten_s.gif") no-repeat 0 0;
     height: 32px;
-    //.clearfix();
+    .clearfix();
 }
 #headerleft h1 {
     position: relative;
@@ -155,7 +151,7 @@ footer {
 }
 footer .copyright a,
 footer .copyright .byline_author {
-    color: @white;
+    color: #ffffff;
 }
 footer p.copyright {
     padding-top: 13px;
@@ -212,7 +208,7 @@ footer p {
     line-height: @baseLineHeight;
     text-align: left;
     vertical-align: top;
-    //border-top: 1px solid @tableBorder;
+    border-top: 1px solid @table-border-color;
   }
   th {
     font-weight: bold;
@@ -232,7 +228,7 @@ footer p {
   }
   // Account for multiple tbody instances
   tbody + tbody {
-    //border-top: 2px solid @tableBorder;
+    border-top: 2px solid @table-border-color;
   }
 }
 /*** highlight an element ***/
@@ -257,7 +253,7 @@ footer p {
     padding: 5px 12px 2px;
     margin: 0 0 2.0em;
     border: 1px solid @hairlinegray;
-    //.border-radius(3px);
+    border-radius: 3px;
 }
 #news div {
     margin-left: 10px;
@@ -410,7 +406,7 @@ span.dir {
     background-color: #ffffff;
     padding: 2px;
     border: 1px solid @hairlinegray;
-    //.border-radius(3px);
+    border-radius: 3px;
 }
 .tip-title {
     text-align:center;
@@ -425,21 +421,21 @@ span.dir {
     background: #FFF !important;
 }
 .jstree-default .jstree-hovered {
-    background: @grayLighter !important;
+    background: @gray-lighter !important;
 }
 .jstree-default .jstree-clicked {
-    background: @grayLighter !important;
+    background: @gray-lighter !important;
     border: 1px solid #cccccc !important;
-    //.border-radius(3px);
+    border-radius: 3px;
 }
 #jstree_data {
     width: 450px;
     float: right;
     padding: 5px;
-    background: @grayLighter;
+    background: @gray-lighter;
     border: 1px solid #cccccc;
-    //.border-radius(3px);
-    //.transition(all 1s ease-in-out);
+    border-radius: 3px;
+    .transition(all 1s ease-in-out);
 }
 #jstree_data::before {
     content: "";
@@ -502,7 +498,7 @@ span.dir {
     background-color: rgba(255, 255, 255, 0.8);
 }
 #genomes_table_div {
-    //.transition(margin-top 0.5s ease-in-out);
+    .transition(margin-top 0.5s ease-in-out);
 }
 #genomes_table tfoot {
     display: none;
