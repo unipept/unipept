@@ -1,3 +1,7 @@
+// all pages
+// 3.0.0
+//= require bootstrap/bootstrap.min.js
+
 //  sunburst and pancore
 //  3.3.8
 //= require d3/d3.v3.min.js
