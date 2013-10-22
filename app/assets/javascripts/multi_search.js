@@ -32,7 +32,7 @@ function init_multi(data, data2, equate_il) {
 
     // set up the fullscreen stuff
     if (fullScreenApi.supportsFullScreen) {
-        $("#buttons").prepend("<button id='zoom-btn' class='btn btn-mini'><i class='glyphicon glyphicon-resize-full'></i> Enter full screen</button>");
+        $("#buttons").prepend("<button id='zoom-btn' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-resize-full'></i> Enter full screen</button>");
         $("#zoom-btn").click(function () {
             if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
                 // GA event tracking
@@ -63,7 +63,7 @@ function init_multi(data, data2, equate_il) {
     }
 
     // set up save image stuff
-    $("#buttons").prepend("<button id='save-btn' class='btn btn-mini'><i class='glyphicon glyphicon-download'></i> Save as image</button>");
+    $("#buttons").prepend("<button id='save-btn' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save as image</button>");
     $("#save-btn").click(function () {
         $(".debug_dump").hide();
         if ($(".tab-content .active").attr('id') === "sunburstWrapper") {

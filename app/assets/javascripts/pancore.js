@@ -352,7 +352,7 @@ function init_pancore() {
 
     // Set up the fullscreen stuff
     if (fullScreenApi.supportsFullScreen) {
-        $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-mini'><i class='glyphicon glyphicon-resize-full'></i> Enter full screen</button>");
+        $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-resize-full'></i> Enter full screen</button>");
         $("#zoom-btn").click(function () {
             // track full screen
             _gaq.push(['_trackEvent', 'Pancore', 'Full Screen']);
@@ -376,7 +376,7 @@ function init_pancore() {
     }
 
     // Set up save image stuff
-    $("#buttons-pancore").prepend("<button id='save-btn' class='btn btn-mini'><i class='glyphicon glyphicon-download'></i> Save as image</button>");
+    $("#buttons-pancore").prepend("<button id='save-btn' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save as image</button>");
     $("#save-btn").click(function () {
         // track save image event
         _gaq.push(['_trackEvent', 'Pancore', 'Save Image']);
@@ -627,7 +627,7 @@ function init_pancore() {
             .attr("class", "button")
             .append("a")
             .html("<i class='glyphicon glyphicon-trash'></i>")
-            .attr("class", "btn btn-mini")
+            .attr("class", "btn btn-default btn-xs")
             .attr("title", "remove genome")
             .on("click", removeData);
         newRows.each(function () { highlight(this); });
@@ -1207,7 +1207,7 @@ function init_pancore() {
     function getPopoverContent(d) {
         var content = getTooltipContent(d);
         content += "<br/><div class='btn-group' id='download-peptides'>" +
-          "<a class='btn dropdown-toggle' id='download-peptides-toggle' data-toggle='dropdown' data-loading-text='Loading peptides'>" +
+          "<a class='btn btn-default dropdown-toggle' id='download-peptides-toggle' data-toggle='dropdown' data-loading-text='Loading peptides'>" +
             "<i class='glyphicon glyphicon-download'></i> " +
             "download peptides " +
             "<span class='caret'></span>" +
