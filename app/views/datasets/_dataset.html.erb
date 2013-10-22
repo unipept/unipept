@@ -5,13 +5,13 @@
   <b>Environment:</b>
   <%= dataset.environment %> 
 	<% if session[:admin] && edit %>
-		<%= link_to raw("<i class='icon-pencil'></i> Edit"), edit_dataset_path(dataset), :class => 'btn btn-mini' %>
-		<%= link_to raw("<i class='icon-trash icon-white'></i> Delete"), dataset, :confirm => 'Are you sure?', :method => :delete, :class => 'btn btn-mini btn-danger' %>
+		<%= link_to raw("<i class='glyphicon glyphicon-pencil'></i> Edit"), edit_dataset_path(dataset), :class => 'btn btn-mini' %>
+		<%= link_to raw("<i class='glyphicon glyphicon-trash'></i> Delete"), dataset, :confirm => 'Are you sure?', :method => :delete, :class => 'btn btn-mini btn-danger' %>
 	<% end %>
 	<br/>
 
   <b>Reference:</b>
-  <%= dataset.reference %> <%= link_to raw("<i class='icon-share-alt'></i>"), dataset.url, :target => "_blank", :title => "Article website" %>. 
+  <%= dataset.reference %> <%= link_to raw("<i class='glyphicon glyphicon-share-alt'></i>"), dataset.url, :target => "_blank", :title => "Article website" %>. 
 	<%= link_to "Project website", dataset.project_website, :target => "_blank" %>
 
 <% if load %>
