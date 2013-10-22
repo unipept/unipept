@@ -19,8 +19,8 @@
     <%= button_tag(raw("Add species <i class='glyphicon glyphicon-chevron-right'></i>"), :type => "button", :class => "btn btn-primary", :id => "add_species_peptidome", :"data-loading-text" => "Loading...") %>
     <% end %>
     <div id="treeView">
-      <div class="input-append" id="treeSearchDiv">
-      <%= search_field_tag(:treeSearch, "", :placeholder => "type to filter the tree by name or bioproject id") %><span class="add-on"><i class="glyphicon glyphicon-search"></i></span>
+      <div class="input-group" id="treeSearchDiv">
+      <%= search_field_tag(:treeSearch, "", :placeholder => "type to filter the tree by name or bioproject id") %><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
       </div>
     </div>
   </div>
