@@ -2,7 +2,7 @@
 var data = {},
     unicoreData = [],
     order = [],
-    lca = 0,
+    lca = "",
     pans = [],
     cores = [],
     unicores = [],
@@ -146,7 +146,7 @@ function recalculatePanCore(newOrder, start, stop) {
         }
         response.push(temp);
     }
-    sendToHost("setVisData", {data : response, rank : rank});
+    sendToHost("setVisData", {data : response, lca : lca, rank : rank});
 }
 
 // Sorts the genomes in a given order
@@ -252,7 +252,10 @@ function autoSort(type) {
 function getUniqueSequences(type) {
     if (order.length > 0) {
         var s = data[order[0]].peptide_list;
-        getJSONByPost("/pancore/unique_sequences/", "type=" + type + "&bioprojects=" + order + "&sequences=[" + s + "]", function (d) {calculateUnicore(d, type); });
+        getJSONByPost("/pancore/unique_sequences/", "type=" + type + "&bioprojects=" + order + "&sequences=[" + s + "]", function (d) {
+            lca = d[0];
+            calculateUnicore(d[1], type);
+        });
     }
 }
 
@@ -278,7 +281,7 @@ function clearAllData() {
     data = {};
     unicoreData = [];
     order = [];
-    lca = 0;
+    lca = "";
     pans = [];
     cores = [];
     unicores = [];

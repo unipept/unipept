@@ -42,12 +42,12 @@ task :prod do
   set :port, 4840
   set :deploy_via, :remote_cache
 
-  role :web, "nibbler.ugent.be"                          # Your HTTP server, Apache/etc
-  role :app, "nibbler.ugent.be"                          # This may be the same as your `Web` server
-  role :db,  "nibbler.ugent.be", :primary => true # This is where Rails migrations will run
-  
+  role :web, "sherlock.ugent.be"                          # Your HTTP server, Apache/etc
+  role :app, "sherlock.ugent.be"                          # This may be the same as your `Web` server
+  role :db,  "sherlock.ugent.be", :primary => true # This is where Rails migrations will run
+
   # We need to run this after our collector mongrels are up and running
-  # This goes out even if the deploy fails, sadly 
+  # This goes out even if the deploy fails, sadly
   after "deploy:update", "newrelic:notice_deployment"
 end
 

@@ -1,6 +1,17 @@
+/**
+ * Creates the selectable taxonomy tree using nested unordered lists
+ *
+ * data is an array of around 2500 objects with this format:
+ * {"bioproject_id":57587,"class_id":29547,"genus_id":194,"name":"Campylobacter jejuni","order_id":213849,"species_id":197}
+ *
+ * taxa is a list (object) of key-value pairs mapping taxon id's to taxon names
+ */
 function init_selection_tree(data, taxa) {
+    // Status vars used while dragging to determine if the droptarget needs to be recalculated
     var moving = false,
         moving2 = false;
+
+    // Uses a "group by" operator on the data array to create a nested array
     data = d3.nest()
         .key(function (d) { return d.class_id; }).sortKeys(function (a, b) { return d3.ascending(taxa[a], taxa[b]); })
         .key(function (d) { return d.order_id; }).sortKeys(function (a, b) { return d3.ascending(taxa[a], taxa[b]); })
@@ -9,6 +20,8 @@ function init_selection_tree(data, taxa) {
         .entries(data);
     calculateNumOfChildren(data);
     delete(data.children);
+
+    // Add the nested unordered lists to the page based on the data array
     var tree = d3.select("#treeView");
     tree = tree.append("ul").append("li").attr("class", "root not").append("ul");
     $("li.root").prepend($("#treeSearchDiv"));
@@ -52,13 +65,19 @@ function init_selection_tree(data, taxa) {
             .attr("data-search", function (d) { return d.name.toLowerCase() + " " + d.bioproject_id; })
             .attr("data-bioproject_id", function (d) { return d.bioproject_id; })
             .html(function (d) { return "<span>" + d.name + "</span>"; });
+
+    // Prevent accidental text selection
     $("#treeView li.root ul").disableSelection();
+
+    // Expand or collapse a node when clicked
     $("#treeView li").click(function () {
         if (!$(this).hasClass("not")) {
             $(this).toggleClass("collapsibleListOpen collapsibleListClosed");
         }
         return false;
     });
+
+    // Filter the tree 500ms after the last key press
     $("#treeSearch").keyup(function () {
         var text = $(this).val().toLowerCase();
         delay(function () {
@@ -70,10 +89,13 @@ function init_selection_tree(data, taxa) {
             }
         }, 500);
     });
+
+    // Make the nodes draggable using JQuery UI
     $("#treeView li").draggable({
         appendTo: "#genomes_table tbody",
         addClasses: false,
         refreshPositions: true,
+        // Mimic the style of the table on the right
         helper: function (event) {
             var returnString = "<tbody class='dragging'>";
             if ($(this).hasClass("leaf")) {
@@ -86,6 +108,7 @@ function init_selection_tree(data, taxa) {
             returnString += "</tbody>";
             return $(returnString);
         },
+        // table on the right slides into view on drag start
         start: function (event, ui) {
             var pos = Math.max(0, window.pageYOffset - $("#table-message").offset().top);
             $("#genomes_table_div").css("margin-top", pos + "px");
@@ -94,9 +117,13 @@ function init_selection_tree(data, taxa) {
             moving2 = true;
             setTimeout(function () {moving = false; }, 800);
         },
+        // table on the right slides back to original position 1s after drag stop
         stop: function (event, ui) {
             setTimeout(function () {$("#genomes_table_div").css("margin-top", "0px"); }, 1000);
         },
+        // Because the drop target slides in, we have to recalculate the position
+        // of the target while dragging. This is computationally expensive, so we
+        // stop recalculating once we know the target stays in place
         drag: function (event, ui) {
             if (!moving2) {
                 $(event.target).draggable('option', 'refreshPositions', false);
@@ -107,6 +134,7 @@ function init_selection_tree(data, taxa) {
         }
     });
 
+    // calculates the number of leafs under every node in the given list
     function calculateNumOfChildren(list) {
         var r = 0,
             i,
@@ -124,9 +152,14 @@ function init_selection_tree(data, taxa) {
         return r;
     }
 }
+
+/**
+ * Initializes the main graph and drop-target-table
+ */
 function init_pancore() {
-    // constants
-    // animation and style stuff
+    // GLOBALS AND DEFAULTS
+
+    // Animation and style stuff
     var transitionDuration = 500,
         genomeColor = "#d9d9d9",  // gray
         panColor = "#1f77b4",     // blue
@@ -134,23 +167,25 @@ function init_pancore() {
         unicoreColor = "#2ca02c", // green
         unicore2Color = "#98df8a";// light green
 
-    // Size
+    // Sizes
     var margin = {top: 20, right: 40, bottom: 170, left: 60},
         fullWidth = 930,
         fullHeight = 600,
         width = fullWidth - margin.left - margin.right,
         height = fullHeight - margin.top - margin.bottom;
 
-    // variables
-    // Data and workers
+    // Data vars
     var visData = [],
         tableData = {},
         legendData = [{"name": "genome size", "color": genomeColor, "toggle": "showGenome"},
             {"name": "pan peptidome", "color": panColor, "toggle": "showPan"},
             {"name": "core peptidome", "color": coreColor, "toggle": "showCore"},
-            {"name": "unique peptides", "color": unicoreColor, "toggle": "showUnicore"},
+            {"name": "unique peptides", "color": unicoreColor, "toggle": "showUnicore"}
             /*{"name": "unique genome peptides", "color": unicore2Color}*/],
-        worker = new Worker("/assets/workers/pancore_worker.js");
+        lca = "";
+
+    // the Javascript Worker for background data processing
+    var worker = new Worker("/assets/workers/pancore_worker.js");
 
     // D3 vars
     var svg,
@@ -158,7 +193,7 @@ function init_pancore() {
         tooltip,
         mouseOverWidth;
 
-    // drag and click vars
+    // Drag and click vars
     var dragging = {},
         isDragging = false,
         hasDragged = false,
@@ -175,7 +210,7 @@ function init_pancore() {
     toggles.showUnicore = true;
     toggles.showUnicore2 = false;
 
-    // load vars
+    // Load vars
     var dataQueue = [],
         toLoad,
         mayStartAnimation = true,
@@ -232,7 +267,7 @@ function init_pancore() {
             addData(data.msg.data, data.msg.rank);
             break;
         case 'setVisData':
-            setVisData(data.msg.data, data.msg.rank);
+            setVisData(data.msg.data, data.msg.lca, data.msg.rank);
             break;
         case 'sequencesDownloaded':
             returnPopoverSequences(data.msg.sequences, data.msg.type);
@@ -248,9 +283,10 @@ function init_pancore() {
         error(e);
     }, false);
 
-    // Add handler to the form
+    // Add handler to the "add species"-form
     $("#add_species_peptidome").click(function () {
         setLoading(true);
+        // Get all bioproject id's for the selected species id
         var url = "/pancore/genomes/species/" + $("#species_id").val() + ".json";
         $.getJSON(url, function (genomes) {
             clearTable();
@@ -262,12 +298,11 @@ function init_pancore() {
         });
         return false;
     });
-    $("#load_species_group ul a").tooltip({placement : "right", container : "body"});
 
-    // remove all button
+    // Add handler to the "remove all"-button
     $("#remove-all").click(clearAllData);
 
-    // autosort button
+    // Add handler to the autosort-button
     $("#autosort").mouseenter(function () {
         if (!$("#autosort").hasClass("open")) {
             $("#autosort-button").dropdown("toggle");
@@ -290,7 +325,7 @@ function init_pancore() {
     });
     $("#autosort ul a").tooltip({placement : "right", container : "body"});
 
-    // Make table sortable
+    // Make table sortable and droppable (JQuery UI)
     $("#genomes_table").disableSelection();
     $("#genomes_table, #pancore_graph").droppable({
         activeClass: "acceptDrop",
@@ -318,7 +353,7 @@ function init_pancore() {
         }
     });
 
-    // set up the fullscreen stuff
+    // Set up the fullscreen stuff
     if (fullScreenApi.supportsFullScreen) {
         $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
         $("#zoom-btn").click(function () {
@@ -329,6 +364,7 @@ function init_pancore() {
         $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange', resizeFullScreen);
     }
 
+    // Scale the SVG on fullscreen enter and exit
     function resizeFullScreen() {
         setTimeout(function () {
             var w = fullWidth,
@@ -342,13 +378,14 @@ function init_pancore() {
         }, 100);
     }
 
-    // set up save image stuff
+    // Set up save image stuff
     $("#buttons-pancore").prepend("<button id='save-btn' class='btn btn-mini'><i class='icon-download'></i> Save as image</button>");
     $("#save-btn").click(function () {
         // track save image event
         _gaq.push(['_trackEvent', 'Pancore', 'Save Image']);
 
         var svg = $("#pancore_graph svg").wrap("<div></div>").parent().html();
+        // Send the SVG code to the server for png conversion
         $.post("/convert", { image: svg }, function (data) {
             $("#save-as-modal .modal-body").html("<img src='" + data + "' />");
             $("#save-as-modal").modal();
@@ -380,6 +417,10 @@ function init_pancore() {
     }
 
     // Add the genomes with these bioproject_ids
+    // Initial method for adding genomes to the graph
+    // genomes should be an array of bioproject id's
+    // the table is updated to represent the loading status
+    // the command is given to the worker to download the peptide id's
     function addGenomes(genomes) {
         var i;
         toLoad += genomes.length;
@@ -406,6 +447,7 @@ function init_pancore() {
     }
 
     // Gets called when the data is (done) loading
+    // enables/disables some buttons and actions (e.g. reordering)
     function setLoading(loading) {
         if (loading) {
             $("#add_species_peptidome").button('loading');
@@ -422,14 +464,18 @@ function init_pancore() {
         }
     }
 
-    // Adds new dataset to the data array
+    // Gets called when the worker is done loading a new genome
+    // the calculated data gets added the update queue if the request_rank matches
     function addData(data, request_rank) {
+        // If the rank doesn't match, this is old data
         if (rank !== request_rank) return;
         dataQueue.push(data);
         tryUpdateGraph();
     }
 
-    // Removes a genomes from the data array
+    // Removes a genomes from the visualization:
+    // - Removes it from the table
+    // - Instructs the worker to recalculate the graph
     function removeData(genome) {
         var g = tableData[genome.bioproject_id];
         if (g.status !== "Done") return;
@@ -440,12 +486,13 @@ function init_pancore() {
         sendToWorker("removeData", {"bioproject_id" : id, "order" : r.order, "start" : r.start});
     }
 
-    // Sets new pancore data
-    function setVisData(data, request_rank) {
+    // Replaces all the visualized data and updates graph and table
+    function setVisData(data, l, request_rank) {
         var i,
             bioproject_id;
         if (rank !== request_rank) return;
         visData = data;
+        lca = l;
         for (i = 0; i < visData.length; i++) {
             bioproject_id = visData[i].bioproject_id;
             if (typeof tableData[bioproject_id] !== "undefined") {
@@ -457,7 +504,10 @@ function init_pancore() {
         updateTable();
     }
 
-    // Resets the data array
+    // Resets everything:
+    // - instructs the worker to flush all data
+    // - clear all data vars
+    // - update graph and table
     function clearAllData() {
         rank++;
         sendToWorker("clearAllData", "");
@@ -466,17 +516,18 @@ function init_pancore() {
         dataQueue = [];
         visData = [];
         tableData = {};
+        lca = "";
         removePopoversAndHighlights();
         updateGraph();
         clearTable();
     }
 
-    // Adds the next datapoint to the animation after the current
-    // animation is done.
+    // Update the graph with data from the update queue when the previous animation is done.
     function tryUpdateGraph() {
         if (toLoad === 0) {
             return;
         }
+        // Only update when the previous animation is done
         if (mayStartAnimation) {
             mayStartAnimation = false;
             var data,
@@ -556,10 +607,17 @@ function init_pancore() {
     // Clear the table 
     function clearTable() {
         $("#genomes_table tbody").html("");
+        updateTable();
     }
     // Updates the table
     function updateTable() {
         removePopovers();
+
+        var text = "Genome";
+        if (lca !== "") {
+            text += " (LCA: " + lca + ")";
+        }
+        $("th.name").text(text);
 
         // Add rows
         var tr = d3.select("#genomes_table tbody").selectAll("tr.added")
@@ -897,6 +955,8 @@ function init_pancore() {
                     .attr("opacity", toggles.showCore ? 1 : 0)
                     .attr("d", coreLine);
         } else {
+            // hide the lines when there's no data
+            // drawing them with no data results in JS errors
             graphData.select(".line.pan").style("visibility", "hidden");
             graphData.select(".line.core").style("visibility", "hidden");
         }
@@ -927,7 +987,7 @@ function init_pancore() {
         mouseOverWidth = (width / visData.length) / 1.5;
         var bars = graphData.selectAll(".bar")
             .data(visData, function (d) {return d.bioproject_id; });
-            
+
         bars.enter().append("polygon")
             .attr("class", "bar")
             .style("fill-opacity", 0)
@@ -957,7 +1017,9 @@ function init_pancore() {
         $(".bar").parent().append($(".bar"));
     }
 
-    // Mouse event functions
+    // MOUSE EVENT FUNCTIONS
+
+    // Shows the popover and highlights the clicked node
     function mouseClick(d) {
         d3.event.stopPropagation();
         var target = $(d3.event.target);
@@ -970,7 +1032,7 @@ function init_pancore() {
             target.popover({
                 html: true,
                 trigger: "manual",
-                position: "right", 
+                position: "right",
                 container: "#popovers",
                 title: tableData[d.bioproject_id].name + " (bioproject " + d.bioproject_id + ")",
                 content: getPopoverContent(d)});
@@ -982,6 +1044,7 @@ function init_pancore() {
             clickId = d.bioproject_id;
         }
     }
+    // Shows the tooltip
     function mouseOver(d) {
         if (isDragging) return;
         if (isClicked && clickId === d.bioproject_id) return;
@@ -989,11 +1052,13 @@ function init_pancore() {
         var tooltipHtml = "<b>" + tableData[d.bioproject_id].name + "</b><br/>" + getTooltipContent(d);
         tooltip.html(tooltipHtml).style("visibility", "visible");
     }
+    // Hides the tooltip
     function mouseOut(d) {
         if (isDragging) return;
         if (isClicked && clickId === d.bioproject_id) return;
         removeHighlight(d.bioproject_id);
     }
+    // Updates the position of the tooltip
     function mouseMove(d) {
         if (isDragging) return;
         if (window.fullScreenApi.isFullScreen()) {
@@ -1002,6 +1067,7 @@ function init_pancore() {
             tooltip.style("top", (d3.event.pageY + 15) + "px").style("left", (d3.event.pageX + 15) + "px");
         }
     }
+    // Let the dragging begin!
     function dragStart(d) {
         isDragging = true;
         hasDragged = false;
@@ -1011,6 +1077,7 @@ function init_pancore() {
         svg.selectAll(".bar").style("cursor", "url(/closedhand.cur) 7 5, move");
         svg.select("#trash").transition().duration(transitionDuration).attr("transform", "translate(-84 0)");
     }
+    // Switches the position the nodes when it needs to
     function drag(d) {
         hasDragged = true;
         if (isClicked) {
@@ -1042,6 +1109,8 @@ function init_pancore() {
         d3.select(this).attr("x", dragging[d.bioproject_id] - mouseOverWidth / 2);
         svg.selectAll(".dot._" + d.bioproject_id).attr("cx", dragging[d.bioproject_id]);
     }
+    // Recalculates the position of all genomes and update the graph or 
+    // removes the genome when dropped on the trash can
     function dragEnd(d) {
         delete this.__origin__;
         delete dragging[d.bioproject_id];
@@ -1074,7 +1143,9 @@ function init_pancore() {
         toggles[d.toggle] = !toggles[d.toggle];
         updateGraph();
     }
-    // mouse event helper functions
+
+    // MOUSE EVENT HELPER FUNCTIONS
+
     function removePopoversAndHighlights() {
         removePopovers();
         removeAllHighlights();
@@ -1251,9 +1322,12 @@ function init_pancore() {
             .duration(transitionDuration)
             .attr("fill", unicore2Color);
     }
-    // general helper functions
+
+    // GENERAL HELPER FUNCTIONS
+
     function getMaxVisibleDatapoint() {
-        var max = 0;
+        var max = 0,
+            i;
         if (visData.length === 0) {
             return 0;
         }
