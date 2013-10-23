@@ -416,7 +416,6 @@ function init_pancore() {
 
     }
 
-    // Add the genomes with these bioproject_ids
     // Initial method for adding genomes to the graph
     // genomes should be an array of bioproject id's
     // the table is updated to represent the loading status
