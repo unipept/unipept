@@ -387,36 +387,57 @@ function calculateSimilarity() {
         var compare_list = data[bioproject_id].peptide_list;
 
         // only need to calculate upper part of matrix
-        for (y = 0 ; y < x; y ++) {
+        for (y = 0 ; y < order.length; y ++) {
             var peptide_list = data[order[y]].peptide_list;
             sim_matrix[x][y] = genomeSimilarity(compare_list, peptide_list);
         }
     }
     sendToHost('sim_matrix', {'genomes': names, 'sim_matrix': sim_matrix, 'order': order});
+    clusterMatrix();
     return sim_matrix;
 }
+
 function clusterMatrix() {
+    var result = clusterMatrixRec(sim_matrix, []);
+    sendToHost('log', result);
+}
+
+function clusterMatrixRec(matrix, cluster) {
+    // Lame recursion check
+    if(cluster.length == matrix.length - 1) {
+        return cluster;
+    }
+
     // find highest similarity
     var x = 0, y = 0, largest = 0;
     var i = 0, j = 0;
-    for (i = 0 ; i < sim_matrix.length; i++) {
-        for (j = 0; j < i; j++) {
-            if (sim_matrix[i][j] > largest) {
+    for (i = 0 ; i < matrix.length; i++) {
+        for (j = 0; j < matrix[i].length; j++) {
+            if (matrix[i][j] > largest && i != j) {
                 x = i;
                 y = j;
-                largest = sim_matrix[i][j];
+                largest = matrix[i][j];
             }
         }
     }
 
-    // combine the 2 most similar into 1
-    var new_genome = averageGenome(data[order[x]].peptide_list, data[order[y]].peptide_list);
-    // remove the old ones from order (slice(0) creates a clone)
-    var new_order = order.slice(0)
-    new_order.splice(x,1);
-    new_order.splice(y,1);
-    
-    // Start again with the new matrix
+    cluster.push({'x': x, 'y': y, 'value': largest});
+
+    // update sim matrix with average values
+    for (j = 0 ; j < matrix[x].length; j++) {
+        if ( j != y && j != x ) {
+            matrix[x][j] = (matrix[x][j] + matrix[y][j]) / 2;
+            matrix[j][x] = (matrix[x][j] + matrix[y][j]) / 2;
+        }
+    }
+
+    // set the value of comparison with y to zero
+    for (j = 0 ; j < matrix.length; j++) {
+        matrix[j][y] = 0;
+        matrix[y][j] = 0;
+    }
+
+    return clusterMatrixRec(matrix, cluster);
 
 }
 
