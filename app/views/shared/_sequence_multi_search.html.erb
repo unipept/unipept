@@ -1,8 +1,8 @@
 <%= form_tag(:sequence_multi_search, :method => "post", :class => "form-inline") do %>
 	<div id="search_elements">
-	<%= text_area_tag(:qs, nil, :rows => 7, :spellcheck => "false") %>
+	<%= text_area_tag(:qs, nil, :rows => 7, :spellcheck => "false", :class => "form-control") %>
 	</div>
-	
+
 	<div id="more_options"><i class="glyphicon glyphicon-plus"></i> <%= link_to("More options", "#") %></div>
 	<div id="more_options_form">
 	<h4>Advanced search options</h4>
@@ -19,11 +19,11 @@
 	<%= label_tag(:export, "Export to CSV") %>
 	<br/>
 	<%= label_tag(:search_name, "Name this search") %>
-	<%= text_field_tag('search_name', nil, :placeholder => 'e.g. Sample B5')%>
+	<%= text_field_tag('search_name', nil, :placeholder => 'e.g. Sample B5', :class => "form-control")%>
 	</div>
 	<div id="search_button">
 	<%= button_tag(raw("<i class='glyphicon glyphicon-search'></i> Search"), :type => "submit", :class => "btn btn-primary") %>
 	<%= button_tag(raw("<i class='glyphicon glyphicon-repeat'></i> Start Over"), { :name => 'reset', :id => 'reset_button', :type => "reset", :class => "btn btn-default" }) %>
 	</div>
-  
+
 <% end %>

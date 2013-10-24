@@ -15,12 +15,12 @@
       To analyze some genomes, select a species from the list and click the load button or drag a node from the tree to the table on the right.
     </p>
     <%= form_tag(:pancore_analyze, :method => "get", :class => "form-inline") do %>
-    <%= select_tag(:species_id, options_for_select(@species, params[:species_id])) %>
+    <%= select_tag(:species_id, options_for_select(@species, params[:species_id]), :class => "form-control") %>
     <%= button_tag(raw("Add species <i class='glyphicon glyphicon-chevron-right'></i>"), :type => "button", :class => "btn btn-primary", :id => "add_species_peptidome", :"data-loading-text" => "Loading...") %>
     <% end %>
     <div id="treeView">
       <div class="input-group" id="treeSearchDiv">
-      <%= search_field_tag(:treeSearch, "", :placeholder => "type to filter the tree by name or bioproject id") %><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+      <%= search_field_tag(:treeSearch, "", :placeholder => "type to filter the tree by name or bioproject id", :class => "form-control") %><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
       </div>
     </div>
   </div>

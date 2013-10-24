@@ -1,5 +1,5 @@
 <%= form_tag(:sequence_search, :method => "get", :class => "form-inline") do %>
-	<%= search_field_tag(:q, "", :placeholder => "SEQUENCE") %>
+	<%= search_field_tag(:q, "", :placeholder => "SEQUENCE", :class => "form-control") %>
 	<%= button_tag(raw("<i class='glyphicon glyphicon-search'></i> Search"), :type => "submit", :class => "btn btn-primary") %>
 	<br/>
 	<%= check_box_tag(:il_s, "equateIL", true) %>
