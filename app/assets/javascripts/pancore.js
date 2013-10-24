@@ -391,10 +391,15 @@ function init_pancore() {
     // Set up save image stuff
     $("#buttons-pancore").prepend("<button id='save-btn' class='btn btn-mini'><i class='icon-download'></i> Save as image</button>");
     $("#save-btn").click(function () {
-        // track save image event
-        _gaq.push(['_trackEvent', 'Pancore', 'Save Image']);
-
-        var svg = $("#pancore_graph svg").wrap("<div></div>").parent().html();
+        var svg = "";
+        if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
+            // track save image event
+            _gaq.push(['_trackEvent', 'Pancore', 'Save Image', 'graph']);
+            svg = $("#pancore_graph svg").wrap("<div></div>").parent().html();
+        } else {
+            _gaq.push(['_trackEvent', 'Pancore', 'Save Image', 'sim matrix']);
+            svg = $("#sim_matrix svg").wrap("<div></div>").parent().html();
+        }
         // Send the SVG code to the server for png conversion
         $.post("/convert", { image: svg }, function (data) {
             $("#save-as-modal .modal-body").html("<img src='" + data + "' />");
