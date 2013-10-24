@@ -1,9 +1,9 @@
 <li>
-	<%= node.name %>
-	<% if !node.data[:self_count].nil? %> 
+    <%= node.name %>
+    <% if !node.data[:self_count].nil? %> 
  (<%= node.data[:self_count] %>)
-	<% end %>
+    <% end %>
 </li>
 <ul>
-	<%=render node.children%>
+    <%=render node.children%>
 </ul>

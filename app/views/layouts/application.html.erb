@@ -1,76 +1,76 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<!-- qbaka JS error tracking -->
-	<script type="text/javascript">
-	(function(a,c){a.__qbaka_eh=a.onerror;a.__qbaka_reports=[];a.onerror=function(){a.__qbaka_reports.push(arguments);if(a.__qbaka_eh)try{a.__qbaka_eh.apply(a,arguments)}catch(b){}};a.onerror.qbaka=1;a.qbaka={report:function(){},customParams:{},set:function(a,b){qbaka.customParams[a]=b},exec:function(a){try{a()}catch(b){qbaka.reportException(b)}},reportException:function(){}};var b=c.createElement("script"),e=c.getElementsByTagName("script")[0],d=function(){e.parentNode.insertBefore(b,e)};b.id="qbaka";b.type="text/javascript";b.async=!0;b.src="//cdn.qbaka.net/reporting.js";"[object Opera]"==a.opera?c.addEventListener("DOMContentLoaded",d):d();qbaka.key="0e5f1e8109932544527398eeabe4ccdd"})(window,document);qbaka.options={autoStacktrace:1,trackEvents:1};
-	</script>
-	
-	
+    <!-- qbaka JS error tracking -->
+    <script type="text/javascript">
+    (function(a,c){a.__qbaka_eh=a.onerror;a.__qbaka_reports=[];a.onerror=function(){a.__qbaka_reports.push(arguments);if(a.__qbaka_eh)try{a.__qbaka_eh.apply(a,arguments)}catch(b){}};a.onerror.qbaka=1;a.qbaka={report:function(){},customParams:{},set:function(a,b){qbaka.customParams[a]=b},exec:function(a){try{a()}catch(b){qbaka.reportException(b)}},reportException:function(){}};var b=c.createElement("script"),e=c.getElementsByTagName("script")[0],d=function(){e.parentNode.insertBefore(b,e)};b.id="qbaka";b.type="text/javascript";b.async=!0;b.src="//cdn.qbaka.net/reporting.js";"[object Opera]"==a.opera?c.addEventListener("DOMContentLoaded",d):d();qbaka.key="0e5f1e8109932544527398eeabe4ccdd"})(window,document);qbaka.options={autoStacktrace:1,trackEvents:1};
+    </script>
+    
+    
   <title><%=title%></title>
   <%= render 'layouts/stylesheets' %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tag %>
-	<link rel="shortcut icon" href="/favicon.ico" />
-	
-	<!-- Google Analytics -->
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  <%= raw "_gaq.push(['_setAccount', 'UA-22900446-1']);" if Rails.env.production? %>
-	  <%= raw "_gaq.push(['_setAccount', 'UA-22900446-2']);" if Rails.env.development? %>
-	  _gaq.push(['_trackPageview']);
+    <link rel="shortcut icon" href="/favicon.ico" />
+    
+    <!-- Google Analytics -->
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      <%= raw "_gaq.push(['_setAccount', 'UA-22900446-1']);" if Rails.env.production? %>
+      <%= raw "_gaq.push(['_setAccount', 'UA-22900446-2']);" if Rails.env.development? %>
+      _gaq.push(['_trackPageview']);
 
-	  (function() {
-	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-		
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+        
 </head>
 <body>
 <div class='container main'>
-	<%= render 'layouts/header' %>
-	
-	<div class='content'>
-	<!-- message of the day -->		
-	<% unless @motd.nil? %>
-		<div class="alert alert-info">
-	  	<strong>Message of the Day: </strong><%= @motd %>
-		</div>
-	<% end %>
-	
-	<!-- flash messages -->
-	<div id="messages">
-		<!--[if lt IE 9]> 
-		<div class='alert alert-error'><strong>Oh snap!</strong> The browser you are using is not supported by this website. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.</div>
-		<![endif]-->
-	
-		<% if Rails.env.development? %>
-			<div class="alert alert-info">
-			  <strong>Development server: </strong>This is the development version of UniPept. Please use the website at <a href="http://unipept.ugent.be">Unipept.UGent.be</a> for more stable results.
-			</div>
-		<% end %>
-	
-		<% flash.each do |key, value| %>
-			<% unless value.nil? %>
-				<%= content_tag(:div, raw("<strong>Heads up!</strong> ")+value, :class => "alert alert-info") if key == :notice %>
-				<%= content_tag(:div, raw("<strong>Oh snap!</strong> ")+value, :class => "alert alert-error") if key == :error %>
-				<%= content_tag(:div, raw("<strong>Holy guacamole!</strong> ")+value, :class => "alert") if key == :alert %>
-				<%= content_tag(:div, raw("<strong>Great!</strong> ")+value, :class => "alert alert-success") if key == :success %>
-			<% end %>
-		<% end %>
-	</div>
-	<!-- actual page content -->
-	<%= yield %>
-	
-	<div class="visualClear"><!-- --></div>
-	<%= debug(params) if Rails.env.development? %>
-	</div>
-	<div id="footerpush"></div>
+    <%= render 'layouts/header' %>
+    
+    <div class='content'>
+    <!-- message of the day -->		
+    <% unless @motd.nil? %>
+        <div class="alert alert-info">
+      	<strong>Message of the Day: </strong><%= @motd %>
+        </div>
+    <% end %>
+    
+    <!-- flash messages -->
+    <div id="messages">
+        <!--[if lt IE 9]> 
+        <div class='alert alert-error'><strong>Oh snap!</strong> The browser you are using is not supported by this website. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.</div>
+        <![endif]-->
+    
+        <% if Rails.env.development? %>
+            <div class="alert alert-info">
+              <strong>Development server: </strong>This is the development version of UniPept. Please use the website at <a href="http://unipept.ugent.be">Unipept.UGent.be</a> for more stable results.
+            </div>
+        <% end %>
+    
+        <% flash.each do |key, value| %>
+            <% unless value.nil? %>
+                <%= content_tag(:div, raw("<strong>Heads up!</strong> ")+value, :class => "alert alert-info") if key == :notice %>
+                <%= content_tag(:div, raw("<strong>Oh snap!</strong> ")+value, :class => "alert alert-error") if key == :error %>
+                <%= content_tag(:div, raw("<strong>Holy guacamole!</strong> ")+value, :class => "alert") if key == :alert %>
+                <%= content_tag(:div, raw("<strong>Great!</strong> ")+value, :class => "alert alert-success") if key == :success %>
+            <% end %>
+        <% end %>
+    </div>
+    <!-- actual page content -->
+    <%= yield %>
+    
+    <div class="visualClear"><!-- --></div>
+    <%= debug(params) if Rails.env.development? %>
+    </div>
+    <div id="footerpush"></div>
 </div>
 <div class="container footer-wrap">
-	<%= render 'layouts/footer' %>
+    <%= render 'layouts/footer' %>
 </div>
 </body>
 </html>

@@ -27,10 +27,10 @@
     <%= f.label :project_website %>
     <%= f.text_field :project_website %>
   </div>
-	<%= f.fields_for :dataset_items do |builder| %>
-		<%= render 'dataset_item_fields', :f => builder %>
-	<% end %>
-	<p><i class='glyphicon glyphicon-plus'></i> <%= link_to_add_fields "add item", f, :dataset_items %></p>
+    <%= f.fields_for :dataset_items do |builder| %>
+        <%= render 'dataset_item_fields', :f => builder %>
+    <% end %>
+    <p><i class='glyphicon glyphicon-plus'></i> <%= link_to_add_fields "add item", f, :dataset_items %></p>
   <div class="actions">
     <%= f.submit :class => "btn-primary btn" %>
   </div>

@@ -6,10 +6,10 @@
 <h3>
   <%= post.title %>
   <small> posted on <%= post.date %></small>
-	<% if session[:admin] %>
-		<%= link_to raw("<i class='glyphicon glyphicon-pencil'></i> Edit"), edit_post_path(post), :class => 'btn btn-default btn-xs' %>
-		<%= link_to raw("<i class='glyphicon glyphicon-trash'></i> Delete"), post, :confirm => 'Are you sure?', :method => :delete, :class => 'btn btn-xs btn-danger' %>
-	<% end %>
+    <% if session[:admin] %>
+        <%= link_to raw("<i class='glyphicon glyphicon-pencil'></i> Edit"), edit_post_path(post), :class => 'btn btn-default btn-xs' %>
+        <%= link_to raw("<i class='glyphicon glyphicon-trash'></i> Delete"), post, :confirm => 'Are you sure?', :method => :delete, :class => 'btn btn-xs btn-danger' %>
+    <% end %>
 </h3>
 
 <%= post.content.html_safe %>
