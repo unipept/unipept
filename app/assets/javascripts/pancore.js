@@ -357,25 +357,35 @@ function init_pancore() {
     if (fullScreenApi.supportsFullScreen) {
         $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
         $("#zoom-btn").click(function () {
-            // track full screen
-            _gaq.push(['_trackEvent', 'Pancore', 'Full Screen']);
-            window.fullScreenApi.requestFullScreen($("#pancore_graph").get(0));
+            if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
+                // GA event tracking
+                _gaq.push(['_trackEvent', 'Pancore', 'Full Screen', 'graph']);
+                window.fullScreenApi.requestFullScreen($("#pancore_graph_wrapper").get(0));
+            } else {
+                // GA event tracking
+                _gaq.push(['_trackEvent', 'Pancore', 'Full Screen', 'simmatrix']);
+                window.fullScreenApi.requestFullScreen($("#sim_matrix_wrapper").get(0));
+            }
         });
         $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange', resizeFullScreen);
     }
 
     // Scale the SVG on fullscreen enter and exit
     function resizeFullScreen() {
-        setTimeout(function () {
-            var w = fullWidth,
-                h = fullHeight;
-            if (window.fullScreenApi.isFullScreen()) {
-                w = $(window).width();
-                h = $(window).height();
-            }
-            $("#pancore_graph svg").attr("width", w);
-            $("#pancore_graph svg").attr("height", h);
-        }, 100);
+        if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
+            setTimeout(function () {
+                var w = fullWidth,
+                    h = fullHeight;
+                if (window.fullScreenApi.isFullScreen()) {
+                    w = $(window).width();
+                    h = $(window).height();
+                }
+                $("#pancore_graph svg").attr("width", w);
+                $("#pancore_graph svg").attr("height", h);
+            }, 100);
+        } else {
+            // TODO: add handling code for sim matrix
+        }
     }
 
     // Set up save image stuff
@@ -603,7 +613,7 @@ function init_pancore() {
         return {"order" : order, "start" : start, "stop" : stop};
     }
 
-    // Clear the table 
+    // Clear the table
     function clearTable() {
         $("#genomes_table tbody").html("");
         updateTable();
@@ -1108,7 +1118,7 @@ function init_pancore() {
         d3.select(this).attr("x", dragging[d.bioproject_id] - mouseOverWidth / 2);
         svg.selectAll(".dot._" + d.bioproject_id).attr("cx", dragging[d.bioproject_id]);
     }
-    // Recalculates the position of all genomes and update the graph or 
+    // Recalculates the position of all genomes and update the graph or
     // removes the genome when dropped on the trash can
     function dragEnd(d) {
         delete this.__origin__;
