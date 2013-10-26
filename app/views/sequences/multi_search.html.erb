@@ -1,27 +1,30 @@
 <h1><%= @title %></h1>
-
-<p><%= @intro_text %></p>
-<% if @prideUrl %>
-  <p>This dataset was loaded from PRIDE. <%= link_to "View in PRIDE" , @prideURL, :target => "_blank" %> <i class='glyphicon glyphicon-share-alt'></i></p>
-<% end %>
-
-<%= form_tag(:sequence_multi_search, :method => "post", :class => "form-inline") do %>
-    <%= hidden_field_tag(:qs, @p[:qs]) %>
-    <%= hidden_field_tag(:il, @p[:il]) %>
-    <%= hidden_field_tag(:dupes, @p[:dupes]) %>
-    <%= hidden_field_tag(:missed, @p[:missed]) %>
-    <%= hidden_field_tag(:export, 1) %>
-    <%= hidden_field_tag(:search_name, @p[:search_name])%>
-    <%= button_tag(raw("<i class='glyphicon glyphicon-download'></i> Download these results"), :type => "submit", :class => "btn btn-primary", :"data-loading-text" => raw("<i class='glyphicon glyphicon-time'></i> Please wait..."), :id => "downloadDataset" ) %>
-<% end %>
+<div class="row">
+    <div class="col-xs-9">
+        <p><%= @intro_text %></p>
+        <% if @prideUrl %>
+          <p>This dataset was loaded from PRIDE. <%= link_to "View in PRIDE" , @prideURL, :target => "_blank" %> <i class='glyphicon glyphicon-share-alt'></i></p>
+        <% end %>
+    </div>
+    <div class="col-xs-3 text-right">
+        <%= form_tag(:sequence_multi_search, :method => "post", :class => "form-inline") do %>
+            <%= hidden_field_tag(:qs, @p[:qs]) %>
+            <%= hidden_field_tag(:il, @p[:il]) %>
+            <%= hidden_field_tag(:dupes, @p[:dupes]) %>
+            <%= hidden_field_tag(:missed, @p[:missed]) %>
+            <%= hidden_field_tag(:export, 1) %>
+            <%= hidden_field_tag(:search_name, @p[:search_name])%>
+            <%= button_tag(raw("<i class='glyphicon glyphicon-download'></i> Download these results"), :type => "submit", :class => "btn btn-primary", :"data-loading-text" => raw("<i class='glyphicon glyphicon-time'></i> Please wait..."), :id => "downloadDataset" ) %>
+        <% end %>
+    </div>
+</div>
 
 <% if @number_found > 0 %>
+    <div id="buttons"></div>
     <ul class="nav nav-tabs" id="viz-tabs">
         <li class="active"><a href="#sunburstWrapper" data-toggle="tab">Sunburst</a></li>
       <li><a href="#treeMapWrapper" data-toggle="tab">Treemap</a></li>
     </ul>
-
-    <div id="buttons"></div>
 
     <div class="tab-content multi-search">
         <div class="tab-pane active" id="sunburstWrapper">
@@ -35,8 +38,9 @@
     </div>
 
 <h2>Hierarchical outline</h2>
-<div class="input-group">
-<%= search_field_tag(:jstree_search, "", :placeholder => "search for an organism...", :class => "form-control") %><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+<div class="input-group" id="jstree_search_group">
+    <%= search_field_tag(:jstree_search, "", :placeholder => "search for an organism...", :class => "form-control") %>
+    <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
 </div>
 <div class="visualClear"></div>
 <div id="jstree"></div>
