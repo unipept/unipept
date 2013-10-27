@@ -254,51 +254,32 @@ function initJsTree(data, equate_il) {
 }
 
 function initTree(data, equate_il) {
+    var tree,
+        item,
+        i;
 
     // Add the nested unordered lists to the page based on the data array
-    var tree = d3.select("#treeView");
+    tree = d3.select("#treeView");
     tree = tree.append("ul").append("li").attr("class", "root not").append("ul");
     //$("li.root").prepend($("#treeSearchDiv"));
-    var items = tree.selectAll("li").data(data.children)
+    items = tree.selectAll("li").data(data.children)
         .enter()
         .append("li")
             .html(function (d) { return "<span>" + d.name + "</span>"; })
             .attr("title", function (d) { return d.attr.title })
             .attr("class", "collapsibleListOpen")
-            .attr("data-search", function (d) { return d.name })
+            .attr("data-search", function (d) { return d.name.toLowerCase(); })
         .append("ul");
-    /*items = items.selectAll("li").data(function (d) { return d.children; })
-        .enter()
-        .append("li")
-            .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
-            .attr("title", "Order")
-            .attr("class", "collapsibleListClosed")
-            .attr("data-search", function (d) { return taxa[d.key]; })
-        .append("ul");
-    items = items.selectAll("li").data(function (d) { return d.children; })
-        .enter()
-        .append("li")
-            .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
-            .attr("title", "Genus")
-            .attr("class", "collapsibleListOpen")
-            .attr("data-search", function (d) { return taxa[d.key]; })
-        .append("ul");
-    items = items.selectAll("li").data(function (d) { return d.children; })
-        .enter()
-        .append("li")
-            .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
-            .attr("title", "Species")
-            .attr("class", "collapsibleListOpen")
-            .attr("data-search", function (d) { return taxa[d.key]; })
-        .append("ul");
-    items = items.selectAll("li").data(function (d) { return d.children; })
-        .enter()
-        .append("li")
-            .attr("class", "not leaf")
-            .attr("title", function (d) { return "bioproject id: " + d.bioproject_id; })
-            .attr("data-search", function (d) { return d.name.toLowerCase() + " " + d.bioproject_id; })
-            .attr("data-bioproject_id", function (d) { return d.bioproject_id; })
-            .html(function (d) { return "<span>" + d.name + "</span>"; });*/
+    for (i = 0; i < 27; i++) {
+        items = items.selectAll("li").data(function (d) { return d.children; })
+            .enter()
+            .append("li")
+                .html(function (d) { return "<span>" + d.name + "</span>"; })
+                .attr("title", function (d) { return d.attr.title })
+                .attr("class", function (d) { return d.children.length ? "collapsibleListOpen" : "not leaf"; })
+                .attr("data-search", function (d) { return d.name.toLowerCase(); })
+            .append("ul");
+    }
 
     // Prevent accidental text selection
     $("#treeView li.root ul").disableSelection();
