@@ -247,6 +247,9 @@ function initJsTree(data, equate_il) {
 }
 
 function initSunburst(data) {
+    // add empty slices
+    data.kids = addEmptyChildren(data.kids, data.data.self_count);
+
     var w = 730,   // width
         h = w,     // height
         r = w / 2, // radius
@@ -282,7 +285,7 @@ function initSunburst(data) {
     var partition = d3.layout.partition()               // creates a new partition layout
         .sort(null)                                     // don't sort,  use tree traversal order
         .value(function (d) { return d.data.self_count; })    // set the size of the pieces
-        .children(function (d) {return d.kids; });
+        .children(function (d) { return d.kids; });
 
     // calculate arcs out of partition coordinates
     var arc = d3.svg.arc()
@@ -461,6 +464,19 @@ function initSunburst(data) {
     function tooltipOut(d, i) {
         tooltip.style("visibility", "hidden");
         // vis.selectAll("#path-" + i).transition().duration(200).style("fill-opacity","1");
+    }
+
+    function addEmptyChildren(kids, count) {
+        var i;
+        for (i = 0; i < kids.length; i++) {
+            if (typeof kids[i].kids !== "undefined") {
+                kids[i].kids = addEmptyChildren(kids[i].kids, kids[i].data.self_count);
+            }
+        }
+        if (count !== 0) {
+            kids.push({id: -1, name: "empty", data: {count: count, self_count: count}});
+        }
+        return kids;
     }
 }
 
