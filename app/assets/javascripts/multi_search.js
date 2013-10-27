@@ -217,9 +217,8 @@ function initTree(data, equate_il) {
         _gaq.push(['_trackEvent', 'Multi Peptide', 'tree', 'Peptides']);
 
         var d         = d3.select(this.parentElement).datum(),
-            peptides  = d.metadata,
             margin    = this.offsetTop - 9,
-            innertext = "<a href='http:// www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + peptides.id + "' target='_blank'>" + d.name + "</a>",
+            innertext = "<a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + d.data.taxon_id + "' target='_blank'>" + d.name + "</a>",
             infoPane,
             ownSequences,
             list,
@@ -232,14 +231,14 @@ function initTree(data, equate_il) {
         infoPane = $("#tree_data").html("<h3>" + innertext + "</h3>");
         $("#tree_data").css("-webkit-transform", "translateY(" + margin + "px)");
         $("#tree_data").css("transform", "translateY(" + margin + "px)");
-        ownSequences = peptides.own_sequences;
+        ownSequences = d.data.own_sequences;
         if (ownSequences && ownSequences.length > 0) {
             list = infoPane.append("<h4>Peptides specific for this taxon</h4><ul></ul>").find("ul").last();
             for (peptide in ownSequences) {
                 list.append("<li><a href='/sequences/" + ownSequences[peptide] + "/" + equate_il + "' target='_blank'>" + ownSequences[peptide] + "</a></li>");
             }
         }
-        allSequences = peptides.all_sequences;
+        allSequences = d.data.all_sequences;
         if (allSequences && allSequences.length > 0 && allSequences.length !== (ownSequences ? ownSequences.length : 0)) {
             list = infoPane.append("<h4>Peptides specific to this taxon or one of its subtaxa</h4><ul></ul>").find("ul").last();
             for (peptide in allSequences) {
@@ -476,7 +475,7 @@ function initSunburst(data) {
     function tooltipIn(d, i) {
         if (d.depth < currentMaxLevel && d.name !== "empty") {
             tooltip.style("visibility", "visible")
-                .html("<b>" + d.name + "</b> (" + d.attr.title + ")<br/>" +
+                .html("<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" +
                     (!d.data.self_count ? "0" : d.data.self_count) +
                     (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
                     (!d.data.count ? "0" : d.data.count) +
