@@ -559,21 +559,21 @@ span.dir{
 }
 /*** treeview ***/
 
-#treeView{
+.treeView{
     -moz-user-select:none;
     position:relative;
 }
-#treeView ul{
+.treeView ul{
     margin:-5px 0 0 -1.5em;
     padding:0 0 0 1.5em;
 }
-#treeView ul ul{
+.treeView ul ul{
     background:url('list-item-contents.png') repeat-y left;
 }
-#treeView li:last-child > ul{
+.treeView li:last-child > ul{
     background-image:none;
 }
-#treeView li{
+.treeView li{
     margin:0;
     padding:0;
     padding-top: 5px;
@@ -585,38 +585,38 @@ span.dir{
     text-overflow: ellipsis;
     overflow: hidden;
 }
-#treeView li.collapsibleListOpen{
+.treeView li.collapsibleListOpen{
     list-style-image:asset-url('button-open.png');
     cursor:pointer;
 }
-#treeView li.collapsibleListClosed{
+.treeView li.collapsibleListClosed{
     list-style-image:asset-url('button-closed.png');
     cursor:pointer;
 }
-#treeView li.collapsibleListClosed ul{
+.treeView li.collapsibleListClosed ul{
     display: none;
 }
-#treeView li li{
+.treeView li li{
     background-image:asset-url('list-item.png');
     padding-left:1.5em;
 }
-#treeView li:last-child{
+.treeView li:last-child{
     background-image:asset-url('list-item-last.png');
 }
-#treeView li.root{
+.treeView li.root{
     background-image:none;
     list-style-type: none;
     list-style-image: none;
 }
-#treeView li.unmatch{
+.treeView li.unmatch{
     display: none;
 }
-#treeView li.leaf{
+.treeView li.leaf{
     background-image:asset-url('list-item-leaf.png');
     list-style-type: none;
     list-style-image: none;
 }
-#treeView li.leaf:last-child{
+.treeView li.leaf:last-child{
     background-image:asset-url('list-item-last-leaf.png');
 }
 #treeSearchDiv {
@@ -625,7 +625,7 @@ span.dir{
 #treeSearch {
     width: 400px;
 }
-#treeView li span {
+.treeView.pancore li span {
     cursor: url(/openhand.cur) 7 5, pointer;
 }
 tbody.dragging tr{
