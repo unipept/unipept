@@ -1,9 +1,19 @@
-<div class="fields">
-    <div class="field">
-      <%= f.label :name %>
-      <%= f.text_field :name %>
-        <%= f.label :data %>
-        <%= f.text_area :data , :rows => 3 %>
-        <i class="glyphicon glyphicon-minus"></i> <%= link_to_remove_fields "remove item", f %>
+<div class="fields col-md-offset-2">
+    <div class="field form-group">
+        <%= f.label :name, :class => "col-xs-1 control-label" %>
+        <div class="col-xs-6">
+            <%= f.text_field :name, :class => "form-control" %>
+        </div>
+    </div>
+    <div class="field form-group">
+        <%= f.label :data, :class => "col-xs-1 control-label" %>
+        <div class="col-xs-6">
+            <%= f.text_area :data , :rows => 3, :class => "form-control" %>
+        </div>
+    </div>
+    <div class="field form-group">
+        <div class="col-xs-6 col-md-offset-1">
+            <i class="glyphicon glyphicon-minus"></i> <%= link_to_remove_fields "remove item", f %>
+        </div>
     </div>
 </div>
