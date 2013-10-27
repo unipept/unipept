@@ -25,7 +25,7 @@ function init_multi(data, data2, equate_il) {
 
     // jstree
     try {
-        initJsTree(data, equate_il);
+        //initJsTree(data, equate_il);
     } catch (err) {
         error(err, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
@@ -254,7 +254,8 @@ function initJsTree(data, equate_il) {
 }
 
 function initTree(data, equate_il) {
-    var tree,
+    var equate_il = equate_il ? "equateIL" : "",
+        tree,
         item,
         i;
 
@@ -292,7 +293,36 @@ function initTree(data, equate_il) {
         return false;
     });
     $("#treeView li span").click(function () {
-        // add event handler right here
+        // GA event tracking
+        _gaq.push(['_trackEvent', 'Multi Peptide', 'JsTree', 'Peptides']);
+
+        var d         = d3.select(this.parentElement).datum(),
+            peptides  = d.metadata,
+            margin    = this.offsetTop - 9,
+            innertext = "<a href='http:// www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + peptides.id + "' target='_blank'>" + d.name + "</a>",
+            infoPane,
+            ownSequences,
+            list,
+            peptide,
+            allSequences;
+        innertext += " (" + d.data.rank + ")";
+        infoPane = $("#tree_data").html("<h3>" + innertext + "</h3>");
+        $("#tree_data").css("-webkit-transform", "translateY(" + margin + "px)");
+        $("#tree_data").css("transform", "translateY(" + margin + "px)");
+        ownSequences = peptides.own_sequences;
+        if (ownSequences && ownSequences.length > 0) {
+            list = infoPane.append("<h4>Peptides specific for this taxon</h4><ul></ul>").find("ul").last();
+            for (peptide in ownSequences) {
+                list.append("<li><a href='/sequences/" + ownSequences[peptide] + "/" + equate_il + "' target='_blank'>" + ownSequences[peptide] + "</a></li>");
+            }
+        }
+        allSequences = peptides.all_sequences;
+        if (allSequences && allSequences.length > 0 && allSequences.length !== (ownSequences ? ownSequences.length : 0)) {
+            list = infoPane.append("<h4>Peptides specific to this taxon or one of its subtaxa</h4><ul></ul>").find("ul").last();
+            for (peptide in allSequences) {
+                list.append("<li><a href='/sequences/" + allSequences[peptide] + "/" + equate_il + "' target='_blank'>" + allSequences[peptide] + "</a></li>");
+            }
+        }
         return false;
     });
 
