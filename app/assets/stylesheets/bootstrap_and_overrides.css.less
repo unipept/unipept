@@ -431,22 +431,11 @@ span.dir{
 .tip-title{
 	text-align:center;
 }
-/* jstree */
+/* tree */
 #treeView{
 	width: 450px;
 	min-height: 10px;
 	float: left;
-}
-.jstree-default.jstree-focused {
-	background: #FFF !important;
-}
-.jstree-default .jstree-hovered {
-	background: @grayLighter !important;
-}
-.jstree-default .jstree-clicked {
-	background: @grayLighter !important;
-	border: 1px solid #cccccc !important;
-	.border-radius(3px);
 }
 #tree_data{
 	width: 450px;
@@ -619,14 +608,22 @@ span.dir{
 .treeView li.leaf:last-child{
     background-image:asset-url('list-item-last-leaf.png');
 }
+.treeView span.clicked {
+    background: @grayLighter !important;
+    border: 1px solid #cccccc !important;
+    .border-radius(3px);
+}
+.treeView.pancore li span {
+    cursor: url(/openhand.cur) 7 5, pointer !important;
+}
+.treeView li.leaf span {
+    cursor: pointer;
+}
 #treeSearchDiv {
     margin-bottom: 5px;
 }
 #treeSearch {
     width: 400px;
-}
-.treeView.pancore li span {
-    cursor: url(/openhand.cur) 7 5, pointer;
 }
 tbody.dragging tr{
     cursor: url(/closedhand.cur) 7 5, pointer !important;

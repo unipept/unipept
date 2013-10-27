@@ -217,6 +217,9 @@ function initTree(data, equate_il) {
             list,
             peptide,
             allSequences;
+
+        $("span.clicked").removeClass("clicked");
+        $(this).addClass("clicked");
         innertext += " (" + d.data.rank + ")";
         infoPane = $("#tree_data").html("<h3>" + innertext + "</h3>");
         $("#tree_data").css("-webkit-transform", "translateY(" + margin + "px)");
@@ -237,7 +240,6 @@ function initTree(data, equate_il) {
         }
         return false;
     });
-
 
     // add search
     $("#tree_search").keyup(function () {
