@@ -319,17 +319,17 @@ function initSunburst(data) {
 
     textEnter.append("tspan")
         .attr("x", 0)
-        .text(function (d) { return d.depth ? d.name.split(" ")[0] : ""; });
+        .text(function (d) { return d.depth && d.name !== "empty" ? d.name.split(" ")[0] : ""; });
 
     textEnter.append("tspan")
         .attr("x", 0)
         .attr("dy", "1em")
-        .text(function (d) { return d.depth ? d.name.split(" ")[1] || "" : ""; });
+        .text(function (d) { return d.depth && d.name !== "empty" ? d.name.split(" ")[1] || "" : ""; });
 
     textEnter.append("tspan")
         .attr("x", 0)
         .attr("dy", "1em")
-        .text(function (d) { return d.depth ? d.name.split(" ")[2] || "" : ""; });
+        .text(function (d) { return d.depth && d.name !== "empty" ? d.name.split(" ")[2] || "" : ""; });
 
     textEnter.style("font-size", function (d) {
         return Math.min(((r / levels) / this.getComputedTextLength() * 10) + 1, 12) + "px";
@@ -339,6 +339,9 @@ function initSunburst(data) {
     setTimeout(function () {click(data); }, 1000);
 
     function click(d) {
+        if (d.name === "empty") {
+            return;
+        }
         // GA event tracking
         _gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Sunburst']);
 
@@ -448,7 +451,7 @@ function initSunburst(data) {
 
     // tooltip functions
     function tooltipIn(d, i) {
-        if (d.depth < currentMaxLevel) {
+        if (d.depth < currentMaxLevel && d.name !== "empty") {
             tooltip.style("visibility", "visible")
                 .html("<b>" + d.name + "</b> (" + d.attr.title + ")<br/>" +
                     (!d.data.self_count ? "0" : d.data.self_count) +
@@ -478,7 +481,7 @@ function initSunburst(data) {
             }
         }
         if (kids.length > 0 && count !== 0 && count !== undefined) {
-            kids.push({id: -1, name: "empty", data: {count: count, self_count: count}, attr: {title: "empty"}});
+            kids.push({id: -1, name: "empty", data: {count: count, self_count: count}});
         }
         return kids;
     }
