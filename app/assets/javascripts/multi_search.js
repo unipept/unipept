@@ -400,12 +400,16 @@ function initSunburst(data) {
 
     // Calculates the color of an arc based on the color of his children
     function colour(d) {
+        if ( d.name === "empty") {
+            return "white";
+        }
         if (d.children) {
             var colours = d.children.map(colour),
                 a = d3.hsl(colours[0]),
-                b = d3.hsl(colours[1]);
+                b = d3.hsl(colours[1]),
+                singleChild = d.children.length === 1 || d.children[1].name === "empty";
             // if we only have one child, return a slightly darker variant of the child color
-            if (!colours[1]) {
+            if (singleChild) {
                 return d3.hsl(a.h, a.s, a.l * 0.98);
             }
             // if we have 2 kids or more, take the average of the first two kids
@@ -473,8 +477,8 @@ function initSunburst(data) {
                 kids[i].kids = addEmptyChildren(kids[i].kids, kids[i].data.self_count);
             }
         }
-        if (count !== 0) {
-            kids.push({id: -1, name: "empty", data: {count: count, self_count: count}});
+        if (kids.length > 0 && count !== 0 && count !== undefined) {
+            kids.push({id: -1, name: "empty", data: {count: count, self_count: count}, attr: {title: "empty"}});
         }
         return kids;
     }
