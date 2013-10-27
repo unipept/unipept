@@ -23,13 +23,6 @@ function init_multi(data, data2, equate_il) {
         error(err, "Loading the Treemap visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
 
-    // jstree
-    try {
-        //initJsTree(data, equate_il);
-    } catch (err) {
-        error(err, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
-    }
-
     // tree
     try {
         initTree(data, equate_il);
@@ -170,87 +163,6 @@ function initTreeMap(jsonData) {
     $("#_tooltip").appendTo("#treeMap");
 
     window.tm = tm;
-}
-
-function initJsTree(data, equate_il) {
-    // set themes dir
-    $.jstree._themes = "/jstree/themes/";
-
-    equate_il = equate_il ? "equateIL" : "";
-
-    // add onSelect action
-    $("#jstree").bind("select_node.jstree",
-        function (node, tree) {
-            // GA event tracking
-            _gaq.push(['_trackEvent', 'Multi Peptide', 'JsTree', 'Peptides']);
-
-            var peptides  = $(tree.rslt.obj).data(),
-                margin    = tree.rslt.obj.context.offsetTop - $("#jstree").offset().top - 9,
-                innertext = "<a href='http:// www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + peptides.id + "' target='_blank'>" + $.trim($(tree.rslt.obj).find("a").text().split("(")[0]) + "</a>",
-                infoPane,
-                ownSequences,
-                list,
-                peptide,
-                allSequences;
-            innertext += " (" + $(tree.rslt.obj).attr("title") + ")";
-            infoPane = $("#jstree_data").html("<h3>" + innertext + "</h3>");
-            $("#jstree_data").css("-webkit-transform", "translateY(" + margin + "px)");
-            $("#jstree_data").css("transform", "translateY(" + margin + "px)");
-            ownSequences = peptides.own_sequences;
-            if (ownSequences && ownSequences.length > 0) {
-                list = infoPane.append("<h4>Peptides specific for this taxon</h4><ul></ul>").find("ul").last();
-                for (peptide in ownSequences) {
-                    list.append("<li><a href='/sequences/" + ownSequences[peptide] + "/" + equate_il + "' target='_blank'>" + ownSequences[peptide] + "</a></li>");
-                }
-            }
-            allSequences = peptides.all_sequences;
-            if (allSequences && allSequences.length > 0 && allSequences.length !== (ownSequences ? ownSequences.length : 0)) {
-                list = infoPane.append("<h4>Peptides specific to this taxon or one of its subtaxa</h4><ul></ul>").find("ul").last();
-                for (peptide in allSequences) {
-                    list.append("<li><a href='/sequences/" + allSequences[peptide] + "/" + equate_il + "' target='_blank'>" + allSequences[peptide] + "</a></li>");
-                }
-            }
-        });
-
-    // fix leafs
-    $("#jstree").bind("loaded.jstree", function (event, data) {
-        $("#jstree li").not(":has(li)").addClass("jstree-leaf");
-    });
-
-    // add search
-    $("#jstree_search").keyup(function () {
-        $("#jstree").jstree("search", ($(this).val()));
-        $(".jstree-search").parent().find("li").show();
-        $("#jstree ul").each(function () {
-            $(this).children("li:visible").eq(-1).addClass("jstree-last");
-        });
-    });
-    $('#jstree_search').click(function () {
-        $(this).keyup();
-    });
-    $('#jstree_search').change(function () {
-        $(this).keyup();
-    });
-
-    // create the tree
-    $("#jstree").jstree({
-        core: {
-            "animation": 300
-        },
-        plugins: ["themes", "json_data", "ui", "search"],
-        json_data: {
-            "data": data
-        },
-        themes: {
-            "icons": false
-        },
-        ui: {
-            "select_limit": 1
-        },
-        search: {
-            "show_only_matches": true
-        }
-    });
 }
 
 function initTree(data, equate_il) {
