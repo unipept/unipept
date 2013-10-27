@@ -20,14 +20,14 @@
 		<li class="active"><a href="#sunburstWrapper" data-toggle="tab">Sunburst</a></li>
 	  <li><a href="#treeMapWrapper" data-toggle="tab">Treemap</a></li>
 	</ul>
-	
+
 	<div id="buttons"></div>
-	
+
 	<div class="tab-content multi-search">
 		<div class="tab-pane active" id="sunburstWrapper">
 			<h2 class="ghead"><span class="dir">Click a slice to zoom in and the center node to zoom out</span></h2>
 			<div id="sunburst"></div>
-		</div>	
+		</div>
 		<div class="tab-pane active" id="treeMapWrapper">
 			<h2 class="ghead"><span class="dir">Click a square to zoom in and right click to zoom out</span></h2>
 			<div id="treeMap"></div>
@@ -35,6 +35,7 @@
 	</div>
 
 <h2>Hierarchical outline</h2>
+<div id="treeView"></div>
 <div class="input-append">
 <%= search_field_tag(:jstree_search, "", :placeholder => "search for an organism...") %><span class="add-on"><i class="icon-search"></i></span>
 </div>
@@ -60,7 +61,7 @@
 <script type="text/javascript">
 	var data1 = <%= raw(@treemap_json)%>;
 	var data2 = <%= raw(@sunburst_json)%>;
-	
+
 	$(function () {init_multi(data1, data2, <%=@equate_il %>);});
 </script>
 <% end %>

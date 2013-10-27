@@ -30,6 +30,13 @@ function init_multi(data, data2, equate_il) {
         error(err, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
 
+    // tree
+    try {
+        initTree(data, equate_il);
+    } catch (err) {
+        error(err, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
+    }
+
     // set up the fullscreen stuff
     if (fullScreenApi.supportsFullScreen) {
         $("#buttons").prepend("<button id='zoom-btn' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
@@ -244,6 +251,78 @@ function initJsTree(data, equate_il) {
             "show_only_matches": true
         }
     });
+}
+
+function initTree(data, equate_il) {
+
+    // Add the nested unordered lists to the page based on the data array
+    var tree = d3.select("#treeView");
+    tree = tree.append("ul").append("li").attr("class", "root not").append("ul");
+    //$("li.root").prepend($("#treeSearchDiv"));
+    var items = tree.selectAll("li").data(data.children)
+        .enter()
+        .append("li")
+            .html(function (d) { return "<span>" + d.name + "</span>"; })
+            .attr("title", function (d) { return d.attr.title })
+            .attr("class", "collapsibleListOpen")
+            .attr("data-search", function (d) { return d.name })
+        .append("ul");
+    /*items = items.selectAll("li").data(function (d) { return d.children; })
+        .enter()
+        .append("li")
+            .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
+            .attr("title", "Order")
+            .attr("class", "collapsibleListClosed")
+            .attr("data-search", function (d) { return taxa[d.key]; })
+        .append("ul");
+    items = items.selectAll("li").data(function (d) { return d.children; })
+        .enter()
+        .append("li")
+            .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
+            .attr("title", "Genus")
+            .attr("class", "collapsibleListOpen")
+            .attr("data-search", function (d) { return taxa[d.key]; })
+        .append("ul");
+    items = items.selectAll("li").data(function (d) { return d.children; })
+        .enter()
+        .append("li")
+            .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
+            .attr("title", "Species")
+            .attr("class", "collapsibleListOpen")
+            .attr("data-search", function (d) { return taxa[d.key]; })
+        .append("ul");
+    items = items.selectAll("li").data(function (d) { return d.children; })
+        .enter()
+        .append("li")
+            .attr("class", "not leaf")
+            .attr("title", function (d) { return "bioproject id: " + d.bioproject_id; })
+            .attr("data-search", function (d) { return d.name.toLowerCase() + " " + d.bioproject_id; })
+            .attr("data-bioproject_id", function (d) { return d.bioproject_id; })
+            .html(function (d) { return "<span>" + d.name + "</span>"; });*/
+
+    // Prevent accidental text selection
+    $("#treeView li.root ul").disableSelection();
+
+    // Expand or collapse a node when clicked
+    $("#treeView li").click(function () {
+        if (!$(this).hasClass("not")) {
+            $(this).toggleClass("collapsibleListOpen collapsibleListClosed");
+        }
+        return false;
+    });
+
+    // Filter the tree 500ms after the last key press
+    /*$("#treeSearch").keyup(function () {
+        var text = $(this).val().toLowerCase();
+        delay(function () {
+            $("#treeView li").removeClass("match unmatch");
+            if (text !== "") {
+                $("#treeView li[data-search*='" + text + "']").addClass("match");
+                $("#treeView li.match").parents("li").addClass("match").addClass("collapsibleListOpen").removeClass("collapsibleListClosed");
+                $("#treeView li:not(.match):not(.root)").addClass("unmatch");
+            }
+        }, 500);
+    });*/
 }
 
 function initSunburst(data) {
