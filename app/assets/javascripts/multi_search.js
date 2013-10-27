@@ -127,7 +127,7 @@ function initTreeMap(jsonData) {
             // add positioning offsets
             offsetX: 20,
             offsetY: 20,
-            // implement the onShow method to add content 
+            // implement the onShow method to add content
             // to the tooltip when a node is hovered
             onShow: function (tip, node, isLeaf, domElement) {
                 tip.innerHTML = "<div class='tip-title'><b>" + node.name + "</b> (" + node.data.rank + ")</div><div class='tip-text'>" +
