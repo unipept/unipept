@@ -326,8 +326,9 @@ function initTree(data, equate_il) {
         return false;
     });
 
-    // Filter the tree 500ms after the last key press
-    /*$("#treeSearch").keyup(function () {
+
+    // add search
+    $("#tree_search").keyup(function () {
         var text = $(this).val().toLowerCase();
         delay(function () {
             $("#treeView li").removeClass("match unmatch");
@@ -337,7 +338,13 @@ function initTree(data, equate_il) {
                 $("#treeView li:not(.match):not(.root)").addClass("unmatch");
             }
         }, 500);
-    });*/
+    });
+    $('#tree_search').click(function () {
+        $(this).keyup();
+    });
+    $('#tree_search').change(function () {
+        $(this).keyup();
+    });
 }
 
 function initSunburst(data) {
