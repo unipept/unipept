@@ -127,7 +127,7 @@ function initTreeMap(jsonData) {
             // add positioning offsets
             offsetX: 20,
             offsetY: 20,
-            // implement the onShow method to add content 
+            // implement the onShow method to add content
             // to the tooltip when a node is hovered
             onShow: function (tip, node, isLeaf, domElement) {
                 tip.innerHTML = "<div class='tip-title'><b>" + node.name + "</b> (" + node.data.rank + ")</div><div class='tip-text'>" +
@@ -247,6 +247,9 @@ function initJsTree(data, equate_il) {
 }
 
 function initSunburst(data) {
+    // add empty slices
+    data.kids = addEmptyChildren(data.kids, data.data.self_count);
+
     var w = 730,   // width
         h = w,     // height
         r = w / 2, // radius
@@ -282,7 +285,7 @@ function initSunburst(data) {
     var partition = d3.layout.partition()               // creates a new partition layout
         .sort(null)                                     // don't sort,  use tree traversal order
         .value(function (d) { return d.data.self_count; })    // set the size of the pieces
-        .children(function (d) {return d.kids; });
+        .children(function (d) { return d.kids; });
 
     // calculate arcs out of partition coordinates
     var arc = d3.svg.arc()
@@ -316,17 +319,17 @@ function initSunburst(data) {
 
     textEnter.append("tspan")
         .attr("x", 0)
-        .text(function (d) { return d.depth ? d.name.split(" ")[0] : ""; });
+        .text(function (d) { return d.depth && d.name !== "empty" ? d.name.split(" ")[0] : ""; });
 
     textEnter.append("tspan")
         .attr("x", 0)
         .attr("dy", "1em")
-        .text(function (d) { return d.depth ? d.name.split(" ")[1] || "" : ""; });
+        .text(function (d) { return d.depth && d.name !== "empty" ? d.name.split(" ")[1] || "" : ""; });
 
     textEnter.append("tspan")
         .attr("x", 0)
         .attr("dy", "1em")
-        .text(function (d) { return d.depth ? d.name.split(" ")[2] || "" : ""; });
+        .text(function (d) { return d.depth && d.name !== "empty" ? d.name.split(" ")[2] || "" : ""; });
 
     textEnter.style("font-size", function (d) {
         return Math.min(((r / levels) / this.getComputedTextLength() * 10) + 1, 12) + "px";
@@ -336,6 +339,9 @@ function initSunburst(data) {
     setTimeout(function () {click(data); }, 1000);
 
     function click(d) {
+        if (d.name === "empty") {
+            return;
+        }
         // GA event tracking
         _gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Sunburst']);
 
@@ -397,12 +403,16 @@ function initSunburst(data) {
 
     // Calculates the color of an arc based on the color of his children
     function colour(d) {
+        if ( d.name === "empty") {
+            return "white";
+        }
         if (d.children) {
             var colours = d.children.map(colour),
                 a = d3.hsl(colours[0]),
-                b = d3.hsl(colours[1]);
+                b = d3.hsl(colours[1]),
+                singleChild = d.children.length === 1 || d.children[1].name === "empty";
             // if we only have one child, return a slightly darker variant of the child color
-            if (!colours[1]) {
+            if (singleChild) {
                 return d3.hsl(a.h, a.s, a.l * 0.98);
             }
             // if we have 2 kids or more, take the average of the first two kids
@@ -441,7 +451,7 @@ function initSunburst(data) {
 
     // tooltip functions
     function tooltipIn(d, i) {
-        if (d.depth < currentMaxLevel) {
+        if (d.depth < currentMaxLevel && d.name !== "empty") {
             tooltip.style("visibility", "visible")
                 .html("<b>" + d.name + "</b> (" + d.attr.title + ")<br/>" +
                     (!d.data.self_count ? "0" : d.data.self_count) +
@@ -461,6 +471,19 @@ function initSunburst(data) {
     function tooltipOut(d, i) {
         tooltip.style("visibility", "hidden");
         // vis.selectAll("#path-" + i).transition().duration(200).style("fill-opacity","1");
+    }
+
+    function addEmptyChildren(kids, count) {
+        var i;
+        for (i = 0; i < kids.length; i++) {
+            if (typeof kids[i].kids !== "undefined") {
+                kids[i].kids = addEmptyChildren(kids[i].kids, kids[i].data.self_count);
+            }
+        }
+        if (kids.length > 0 && count !== 0 && count !== undefined) {
+            kids.push({id: -1, name: "empty", data: {count: count, self_count: count}});
+        }
+        return kids;
     }
 }
 
