@@ -189,7 +189,15 @@ function initTree(data, equate_il) {
             .append("li")
                 .html(function (d) { return "<span>" + d.data.title + "</span>"; })
                 .attr("title", function (d) { return d.data.rank; })
-                .attr("class", function (d) { return d.children.length ? "collapsibleListOpen" : "not leaf"; })
+                .attr("class", function (d) {
+                    if (!d.children.length) {
+                        return "not leaf";
+                    } else if (i < 3) {
+                        return "collapsibleListOpen";
+                    } else {
+                        return "collapsibleListClosed";
+                    }
+                })
                 .attr("data-search", function (d) { return d.name.toLowerCase(); })
             .append("ul");
     }
