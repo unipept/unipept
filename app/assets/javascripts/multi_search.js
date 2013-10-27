@@ -262,20 +262,20 @@ function initTree(data, equate_il) {
     tree = d3.select("#treeView");
     tree = tree.append("ul").append("li").attr("class", "root not").append("ul");
     //$("li.root").prepend($("#treeSearchDiv"));
-    items = tree.selectAll("li").data(data.children)
+    items = tree.selectAll("li").data([data])
         .enter()
         .append("li")
-            .html(function (d) { return "<span>" + d.name + "</span>"; })
-            .attr("title", function (d) { return d.attr.title })
+            .html(function (d) { return "<span>" + d.data.title + "</span>"; })
+            .attr("title", function (d) { return d.data.rank; })
             .attr("class", "collapsibleListOpen")
             .attr("data-search", function (d) { return d.name.toLowerCase(); })
         .append("ul");
-    for (i = 0; i < 27; i++) {
+    for (i = 0; i < 28; i++) {
         items = items.selectAll("li").data(function (d) { return d.children; })
             .enter()
             .append("li")
-                .html(function (d) { return "<span>" + d.name + "</span>"; })
-                .attr("title", function (d) { return d.attr.title })
+                .html(function (d) { return "<span>" + d.data.title + "</span>"; })
+                .attr("title", function (d) { return d.data.rank; })
                 .attr("class", function (d) { return d.children.length ? "collapsibleListOpen" : "not leaf"; })
                 .attr("data-search", function (d) { return d.name.toLowerCase(); })
             .append("ul");
