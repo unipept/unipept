@@ -110,7 +110,7 @@ function initTreeMap(jsonData) {
                     // GA event tracking
                     _gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Treemap', 'In']);
                     tm.enter(node);
-                    jsTreeSearch(node.name, 500);
+                    treeSearch(node.name, 500);
                 }
             },
             onRightClick: function () {
@@ -206,7 +206,7 @@ function initTree(data, equate_il) {
     });
     $("#treeView li span").click(function () {
         // GA event tracking
-        _gaq.push(['_trackEvent', 'Multi Peptide', 'JsTree', 'Peptides']);
+        _gaq.push(['_trackEvent', 'Multi Peptide', 'tree', 'Peptides']);
 
         var d         = d3.select(this.parentElement).datum(),
             peptides  = d.metadata,
@@ -358,8 +358,8 @@ function initSunburst(data) {
         // GA event tracking
         _gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Sunburst']);
 
-        // set jstree, but only after the animation
-        jsTreeSearch(d.name, duration);
+        // set tree, but only after the animation
+        treeSearch(d.name, duration);
 
         // perform animation
         currentMaxLevel = d.depth + levels;
@@ -502,13 +502,13 @@ function initSunburst(data) {
 
 // Enters the given string in the search box
 // Highlights the field
-// filters the jstree after the given number of ms
-function jsTreeSearch(searchTerm, duration) {
+// filters the tree after the given number of ms
+function treeSearch(searchTerm, duration) {
     if (searchTerm === "organism") {
         searchTerm = "";
     }
     var timeout = duration || 0;
-    $("#jstree_search").val(searchTerm);
-    highlight("#jstree_search");
-    setTimeout(function () { $("#jstree_search").change(); }, timeout);
+    $("#tree_search").val(searchTerm);
+    highlight("#tree_search");
+    setTimeout(function () { $("#tree_search").change(); }, timeout);
 }
