@@ -291,6 +291,10 @@ function initTree(data, equate_il) {
         }
         return false;
     });
+    $("#treeView li span").click(function () {
+        // add event handler right here
+        return false;
+    });
 
     // Filter the tree 500ms after the last key press
     /*$("#treeSearch").keyup(function () {
