@@ -99,10 +99,10 @@ function init_selection_tree(data, taxa) {
         helper: function (event) {
             var returnString = "<tbody class='dragging'>";
             if ($(this).hasClass("leaf")) {
-                returnString += "<tr><td class='handle'><i class='icon-resize-vertical'></i></td><td class='data name' data-bioproject_id='" + $(this).attr("data-bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
+                returnString += "<tr><td class='handle'><i class='glyphicon glyphicon-resize-vertical'></i></td><td class='data name' data-bioproject_id='" + $(this).attr("data-bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
             } else {
                 $(this).find(".leaf").each(function () {
-                    returnString += "<tr><td class='handle'><i class='icon-resize-vertical'></i></td><td class='data name' data-bioproject_id='" + $(this).attr("data-bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
+                    returnString += "<tr><td class='handle'><i class='glyphicon glyphicon-resize-vertical'></i></td><td class='data name' data-bioproject_id='" + $(this).attr("data-bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
                 });
             }
             returnString += "</tbody>";
@@ -352,7 +352,7 @@ function init_pancore() {
 
     // Set up the fullscreen stuff
     if (fullScreenApi.supportsFullScreen) {
-        $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
+        $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-resize-full'></i> Enter full screen</button>");
         $("#zoom-btn").click(function () {
             // track full screen
             _gaq.push(['_trackEvent', 'Pancore', 'Full Screen']);
@@ -376,7 +376,7 @@ function init_pancore() {
     }
 
     // Set up save image stuff
-    $("#buttons-pancore").prepend("<button id='save-btn' class='btn btn-mini'><i class='icon-download'></i> Save as image</button>");
+    $("#buttons-pancore").prepend("<button id='save-btn' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save as image</button>");
     $("#save-btn").click(function () {
         // track save image event
         _gaq.push(['_trackEvent', 'Pancore', 'Save Image']);
@@ -539,7 +539,7 @@ function init_pancore() {
 
     // Displays a message above the table
     function setTableMessage(icon, msg) {
-        $("#table-message").html("<i class='icon-" + icon + "'></i> " + msg);
+        $("#table-message").html("<i class='glyphicon glyphicon-" + icon + "'></i> " + msg);
     }
 
     // Sets the position property in the tableData
@@ -611,7 +611,7 @@ function init_pancore() {
         tr.sort(function (a, b) { return a.position - b.position; });
 
         // Add cells
-        newRows.append("td").attr("class", "handle").html("<i class='icon-resize-vertical'></i>");
+        newRows.append("td").attr("class", "handle").html("<i class='glyphicon glyphicon-resize-vertical'></i>");
         var td = tr.selectAll("td.data")
             .data(function (d) {
                 return d3.entries(d).filter(function (entry) {
@@ -626,8 +626,8 @@ function init_pancore() {
         newRows.append("td")
             .attr("class", "button")
             .append("a")
-            .html("<i class='icon-trash'></i>")
-            .attr("class", "btn btn-mini")
+            .html("<i class='glyphicon glyphicon-trash'></i>")
+            .attr("class", "btn btn-default btn-xs")
             .attr("title", "remove genome")
             .on("click", removeData);
         newRows.each(function () { highlight(this); });
@@ -1207,8 +1207,8 @@ function init_pancore() {
     function getPopoverContent(d) {
         var content = getTooltipContent(d);
         content += "<br/><div class='btn-group' id='download-peptides'>" +
-          "<a class='btn dropdown-toggle' id='download-peptides-toggle' data-toggle='dropdown' data-loading-text='Loading peptides'>" +
-            "<i class='icon-download'></i> " +
+          "<a class='btn btn-default dropdown-toggle' id='download-peptides-toggle' data-toggle='dropdown' data-loading-text='Loading peptides'>" +
+            "<i class='glyphicon glyphicon-download'></i> " +
             "download peptides " +
             "<span class='caret'></span>" +
           "</a>" +
