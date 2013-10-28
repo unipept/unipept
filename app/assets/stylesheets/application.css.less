@@ -516,9 +516,14 @@ span.dir {
 /*** treeview ***/
 
 .treeView {
-    -moz-user-select:none;
-    position:relative;
-    margin-top: 10px;
+    -moz-user-select: none;
+    position: relative;
+    margin-top: 5px;
+    float: left;
+}
+.treeView.pancore {
+    width: 440px;
+    min-height: 10px;
 }
 .treeView ul {
     margin:-5px 0 0 -1.5em;
@@ -576,15 +581,9 @@ span.dir {
     background-image:asset-url('list-item-last-leaf.png');
 }
 .treeView span.clicked {
-    background: @grayLighter !important;
+    background: @gray-lighter !important;
     border: 1px solid #cccccc !important;
-    .border-radius(3px);
-}
-.treeView.pancore {
-    margin-top: -4px;
-    width: 440px;
-    min-height: 10px;
-    float: left;
+    border-radius: 3px;
 }
 .treeView.pancore li span {
     cursor: url(/openhand.cur) 7 5, pointer !important;
@@ -594,9 +593,6 @@ span.dir {
 }
 #treeSearchDiv {
     margin-bottom: 5px;
-}
-#treeSearch {
-    width: 400px;
 }
 tbody.dragging tr {
     cursor: url(/closedhand.cur) 7 5, pointer !important;
