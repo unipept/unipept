@@ -396,6 +396,11 @@ function init_pancore() {
     $("#species_id").val(470);
     $("#add_species_peptidome").click();
 
+    // IE10 message
+    if ($.browser.msie && $.browser.version === 10) {
+        info("You're using Internet Explorer 10. Everything should work as expected, but for an optimal experience, please use a recent version of Mozilla Firefox or Google Chrome.");
+    }
+
     // Sends a command and message to the worker
     function sendToWorker(command, message) {
         worker.postMessage({'cmd': command, 'msg': message});
