@@ -402,24 +402,8 @@ span.dir {
 .tip-title {
     text-align:center;
 }
-/* jstree */
-#jstree {
-    width: 450px;
-    min-height: 10px;
-    float: left;
-}
-.jstree-default.jstree-focused {
-    background: #FFF !important;
-}
-.jstree-default .jstree-hovered {
-    background: @gray-lighter !important;
-}
-.jstree-default .jstree-clicked {
-    background: @gray-lighter !important;
-    border: 1px solid #cccccc !important;
-    border-radius: 3px;
-}
-#jstree_data {
+/* tree */
+#tree_data {
     width: 450px;
     float: right;
     padding: 5px;
@@ -428,7 +412,7 @@ span.dir {
     border-radius: 3px;
     .transition(all 1s ease-in-out);
 }
-#jstree_data::before {
+#tree_data::before {
     content: "";
     display: block;
     height: 0;
@@ -439,22 +423,19 @@ span.dir {
     border-color: transparent #cccccc transparent transparent;
     position: absolute;
 }
-#jstree_data h3 {
+#tree_data h3 {
     margin: 3px 0 5px 0;
 }
-#jstree_data h4 {
+#tree_data h4 {
     margin: 8px 5px 0px 5px;
 }
-#jstree_data h3 a {
+#tree_data h3 a {
     color: #666 !important;
 }
-#jstree ul {
+#tree ul {
     padding-left: 0px;
 }
-#jstree a {
-    color: #000000 !important;
-}
-#jstree_search_group {
+#tree_search_group {
     width: 440px;
 }
 
@@ -534,22 +515,22 @@ span.dir {
 }
 /*** treeview ***/
 
-#treeView {
+.treeView {
     -moz-user-select:none;
     position:relative;
     margin-top: 10px;
 }
-#treeView ul {
+.treeView ul {
     margin:-5px 0 0 -1.5em;
     padding:0 0 0 1.5em;
 }
-#treeView ul ul {
+.treeView ul ul {
     background:url('list-item-contents.png') repeat-y left;
 }
-#treeView li:last-child > ul {
+.treeView li:last-child > ul {
     background-image:none;
 }
-#treeView li {
+.treeView li {
     margin:0;
     padding:0;
     padding-top: 5px;
@@ -559,50 +540,63 @@ span.dir {
     cursor: auto;
     white-space: nowrap;
     text-overflow: ellipsis;
-    overflow: hidden;
 }
-#treeView li.collapsibleListOpen {
+.treeView li.collapsibleListOpen {
     list-style-image:asset-url('button-open.png');
     cursor:pointer;
 }
-#treeView li.collapsibleListClosed {
+.treeView li.collapsibleListClosed {
     list-style-image:asset-url('button-closed.png');
     cursor:pointer;
 }
-#treeView li.collapsibleListClosed ul {
+.treeView li.collapsibleListClosed ul {
     display: none;
 }
-#treeView li li {
+.treeView li li {
     background-image:asset-url('list-item.png');
     padding-left:1.5em;
 }
-#treeView li:last-child {
+.treeView li:last-child {
     background-image:asset-url('list-item-last.png');
 }
-#treeView li.root {
+.treeView li.root {
     background-image:none;
     list-style-type: none;
     list-style-image: none;
 }
-#treeView li.unmatch {
+.treeView li.unmatch {
     display: none;
 }
-#treeView li.leaf {
+.treeView li.leaf {
     background-image:asset-url('list-item-leaf.png');
     list-style-type: none;
     list-style-image: none;
 }
-#treeView li.leaf:last-child {
+.treeView li.leaf:last-child {
     background-image:asset-url('list-item-last-leaf.png');
+}
+.treeView span.clicked {
+    background: @grayLighter !important;
+    border: 1px solid #cccccc !important;
+    .border-radius(3px);
+}
+.treeView.pancore {
+    margin-top: -4px;
+    width: 440px;
+    min-height: 10px;
+    float: left;
+}
+.treeView.pancore li span {
+    cursor: url(/openhand.cur) 7 5, pointer !important;
+}
+.treeView li.leaf span {
+    cursor: pointer;
 }
 #treeSearchDiv {
     margin-bottom: 5px;
 }
 #treeSearch {
     width: 400px;
-}
-#treeView li span {
-    cursor: url(/openhand.cur) 7 5, pointer;
 }
 tbody.dragging tr {
     cursor: url(/closedhand.cur) 7 5, pointer !important;

@@ -39,12 +39,12 @@
 
 <h2>Hierarchical outline</h2>
 <div class="input-group" id="jstree_search_group">
-    <%= search_field_tag(:jstree_search, "", :placeholder => "search for an organism...", :class => "form-control") %>
+    <%= search_field_tag(:tree_search, "", :placeholder => "search for an organism...", :class => "form-control") %>
     <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
 </div>
 <div class="visualClear"></div>
-<div id="jstree"></div>
-<div id="jstree_data"><p>Click on a node in the tree to see the peptides associated with that organism.</p></div>
+<div id="treeView" class="treeView pancore"></div>
+<div id="tree_data"><p>Click on a node in the tree to see the peptides associated with that organism.</p></div>
 
 <% end %>
 
