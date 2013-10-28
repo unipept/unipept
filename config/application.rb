@@ -50,6 +50,8 @@ module UnipeptWeb
 
     config.assets.precompile += ['workers/pancore_worker.js', 'jit/Extras/excanvas.js']
 
+    config.assets.paths << "#{Rails}/vendor/assets/fonts"
+
     # CAS
     config.rubycas.cas_base_url = "https://login.ugent.be/"
     config.rubycas.validate_url = "https://login.ugent.be/samlValidate"
