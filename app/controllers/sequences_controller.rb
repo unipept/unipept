@@ -294,7 +294,7 @@ class SequencesController < ApplicationController
           # skip if nothing left
           next if entries.size == 0
 
-          seq_lins = entries.map(&:lineage).uniq
+          seq_lins = entries.map(&:lineage).uniq.compact
           lca_t = Lineage.calculate_lca_taxon(seq_lins) #calculate the LCA
 
           unless lca_t.nil?
