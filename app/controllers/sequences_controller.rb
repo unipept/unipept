@@ -193,9 +193,9 @@ class SequencesController < ApplicationController
 
     # set search parameters
     @equate_il = !params[:il].nil?
-    filter_duplicates = !params[:dupes].nil?
-    handle_missed = !params[:missed].nil?
-    export = !params[:export].nil?
+    filter_duplicates = !params[:dupes].nil? && params[:dupes] == "1"
+    handle_missed = !params[:missed].nil? && params[:missed] == "1"
+    export = !params[:export].nil? && params[:export] == "1"
     search_name = params[:search_name]
     query = params[:qs]
 
