@@ -1,86 +1,83 @@
 function init_multi(data, data2, equate_il) {
-	
-	$("#downloadDataset").click(function () {
-		$("#downloadDataset").button('loading');
-		return true;
-	});
+
+    $("#downloadDataset").click(function () {
+        // Track the download button
+        _gaq.push(['_trackEvent', 'Multi Peptide', 'Export']);
+
+        $("#downloadDataset").button('loading');
+        return true;
+    });
 
     // sunburst
     try {
         initSunburst(data2);
-    }
-    catch (err) {
+    } catch (err) {
         error(err, "Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
 
     // treemap
     try {
         initTreeMap(data);
-       $("#treeMapWrapper").removeClass("active");
-    }
-    catch (err) {
+        $("#treeMapWrapper").removeClass("active");
+    } catch (err) {
         error(err, "Loading the Treemap visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
 
     // jstree
     try {
         initJsTree(data, equate_il);
-    }
-    catch (err) {
+    } catch (err) {
         error(err, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
 
     // set up the fullscreen stuff
     if (fullScreenApi.supportsFullScreen) {
         $("#buttons").prepend("<button id='zoom-btn' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
-    	$("#zoom-btn").click(function () {
-    	    if ($(".tab-content .active").attr('id') == "sunburstWrapper") {
-				// GA event tracking
-				_gaq.push(['_trackEvent', 'Multi Peptide', 'Full Screen', 'Sunburst']);
+        $("#zoom-btn").click(function () {
+            if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
+                // GA event tracking
+                _gaq.push(['_trackEvent', 'Multi Peptide', 'Full Screen', 'Sunburst']);
                 window.fullScreenApi.requestFullScreen($("#sunburst").get(0));
-			}
-            else {
-				// GA event tracking
-				_gaq.push(['_trackEvent', 'Multi Peptide', 'Full Screen', 'Treemap']);
+            } else {
+                // GA event tracking
+                _gaq.push(['_trackEvent', 'Multi Peptide', 'Full Screen', 'Treemap']);
                 window.fullScreenApi.requestFullScreen($("#treeMap").get(0));
-			}
-    	});
-    	$(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange', resizeFullScreen);
+            }
+        });
+        $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange', resizeFullScreen);
     }
 
     function resizeFullScreen() {
-        if ($(".tab-content .active").attr('id') == "sunburstWrapper") {
-                setTimeout(function () {
-                    var size = 740;
-                    if (window.fullScreenApi.isFullScreen()) {
-                        size = Math.min($(window).height(), $(window).width());
-					}
-                    $("#sunburst svg").attr("width", size);
-                    $("#sunburst svg").attr("height", size);
-                }, 1000);
-        }
-        else {
+        if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
+            setTimeout(function () {
+                var size = 740;
+                if (window.fullScreenApi.isFullScreen()) {
+                    size = Math.min($(window).height(), $(window).width());
+                }
+                $("#sunburst svg").attr("width", size);
+                $("#sunburst svg").attr("height", size);
+            }, 1000);
+        } else {
             window.tm.canvas.resize($("#treeMap").width(), $("#treeMap").height());
         }
     }
 
     // set up save image stuff
-       $("#buttons").prepend("<button id='save-btn' class='btn btn-mini'><i class='icon-download'></i> Save as image</button>");
-   	$("#save-btn").click(function () {
-   	    $(".debug_dump").hide();
-   	    if ($(".tab-content .active").attr('id') == "sunburstWrapper") {
-			// GA event tracking
-			_gaq.push(['_trackEvent', 'Multi Peptide', 'Save Image', 'Sunburst']);
+    $("#buttons").prepend("<button id='save-btn' class='btn btn-mini'><i class='icon-download'></i> Save as image</button>");
+    $("#save-btn").click(function () {
+        $(".debug_dump").hide();
+        if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
+            // Track save image
+            _gaq.push(['_trackEvent', 'Multi Peptide', 'Save Image', 'Sunburst']);
 
-   	        var svg = $("#sunburst svg").wrap("<div></div>").parent().html();
+            var svg = $("#sunburst svg").wrap("<div></div>").parent().html();
             $.post("/convert", { image: svg }, function (data) {
                 $("#save-as-modal .modal-body").html("<img src='" + data + "' />");
                 $("#save-as-modal").modal();
             });
-        }
-        else {
-			// GA event tracking
-			_gaq.push(['_trackEvent', 'Multi Peptide', 'Save Image', 'Treemap']);
+        } else {
+            // Track save image
+            _gaq.push(['_trackEvent', 'Multi Peptide', 'Save Image', 'Treemap']);
 
             html2canvas($("#treeMap"), {
                 onrendered : function (canvas) {
@@ -89,77 +86,68 @@ function init_multi(data, data2, equate_il) {
                 }
             });
         }
-   	});
+    });
 }
 
 function initTreeMap(jsonData) {
-    //init TreeMap
+    // init TreeMap
     var tm = new $jit.TM.Squarified({
-        //where to inject the visualization
+        // where to inject the visualization
         injectInto: 'treeMap',
-        //parent box title heights
+        // parent box title heights
         titleHeight: 15,
-        //enable animations
+        // enable animations
         animate: true,
-        //box offsets
+        // box offsets
         offset: 0,
-        //constrained: true,
-        //levelsToShow: 1,
-        //Attach left and right click events
+        // constrained: true,
+        // levelsToShow: 1,
+        // Attach left and right click events
         Events: {
             enable: true,
             onClick: function (node) {
                 if (node) {
-					// GA event tracking
-					_gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Treemap', 'In']);
+                    // GA event tracking
+                    _gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Treemap', 'In']);
                     tm.enter(node);
-                    $("#jstree_search").val(node.name);
-                    $("#jstree_search").change();
+                    jsTreeSearch(node.name, 500);
                 }
             },
             onRightClick: function () {
-				// GA event tracking
-				_gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Treemap', 'Out']);
-				//TODO: replace this if bug in JIT gets fixed
-				tm.out();
+                // GA event tracking
+                _gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Treemap', 'Out']);
+                // TODO: replace this if bug in JIT gets fixed
+                tm.out();
             }
         },
         duration: 500,
-        //Enable tips
+        // Enable tips
         Tips: {
             enable: true,
-            //add positioning offsets
+            // add positioning offsets
             offsetX: 20,
             offsetY: 20,
-            //implement the onShow method to
-            //add content to the tooltip when a node
-            //is hovered
+            // implement the onShow method to add content
+            // to the tooltip when a node is hovered
             onShow: function (tip, node, isLeaf, domElement) {
                 tip.innerHTML = "<div class='tip-title'><b>" + node.name + "</b> (" + node.data.rank + ")</div><div class='tip-text'>" +
-                    (!node.data.self_count ? "0" : node.data.self_count) + 
-                    (node.data.self_count && node.data.self_count == 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
-                    (!node.data.count ? "0" : node.data.count) + 
-                    (node.data.count && node.data.count == 1 ? " sequence" : " sequences") + " specific to this level or lower<br/>" +
-                    (typeof node.data.piecharturl === "undefined" ? "" : "<img src='" + node.data.piecharturl + "'/>") + "</div>";
+                    (!node.data.self_count ? "0" : node.data.self_count) +
+                    (node.data.self_count && node.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
+                    (!node.data.count ? "0" : node.data.count) +
+                    (node.data.count && node.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower<br/>" +
+                    (typeof node.data.piecharturl == "undefined" ? "" : "<img src='" + node.data.piecharturl + "'/>") + "</div>";
             }
         },
 
-        //Add the name of the node in the correponding label
-        //This method is called once, on label creation.
+        // Add the name of the node in the correponding label
+        // This method is called once, on label creation.
         onCreateLabel: function (domElement, node) {
             domElement.innerHTML = node.name + " (" + (!node.data.self_count ? "0" : node.data.self_count) + "/" + (!node.data.count ? "0" : node.data.count) + ")";
             var style = domElement.style;
             style.display = '';
             style.border = '2px solid transparent';
-            
-            try {
-                style.color = brightness(d3.rgb(node.data.$color)) < 125 ? "#eee" : "#000";
-            }
-            catch (err) {
-                error(err, false);
-                style.color = "#000";
-            }
-            
+            style.color = getReadableColorFor(node.data.$color);
+
             domElement.onmouseover = function () {
                 style.border = '2px solid #9FD4FF';
             };
@@ -170,61 +158,59 @@ function initTreeMap(jsonData) {
     });
     tm.loadJSON(jsonData);
     tm.refresh();
-    
-    //move the tooltip div to allow full screen tooltips
+
+    // move the tooltip div to allow full screen tooltips
     $("#_tooltip").appendTo("#treeMap");
-    
+
     window.tm = tm;
-    
-    //end
 }
 
 function initJsTree(data, equate_il) {
     // set themes dir
     $.jstree._themes = "/jstree/themes/";
 
+    equate_il = equate_il ? "equateIL" : "";
+
     // add onSelect action
     $("#jstree").bind("select_node.jstree",
-		function (node, tree) {
-			// GA event tracking
-			_gaq.push(['_trackEvent', 'Multi Peptide', 'JsTree', 'Peptides']);
+        function (node, tree) {
+            // GA event tracking
+            _gaq.push(['_trackEvent', 'Multi Peptide', 'JsTree', 'Peptides']);
 
-			var peptides = $(tree.rslt.obj).data(),
-				margin = tree.rslt.obj.context.offsetTop - $("#jstree").offset().top - 9,
-				innertext = "<a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + peptides.id + "' target='_blank'>" + $.trim($(tree.rslt.obj).find("a").text().split("(")[0]) + "</a>",
-				infoPane,
-				ownSequences,
-				list,
-				peptide,
-				allSequences;
-			innertext += " (" + $(tree.rslt.obj).attr("title") + ")";
-			infoPane = $("#jstree_data").html("<h3>" + innertext + "</h3>");
-			$("#jstree_data").animate({
-				marginTop: margin
-			}, 1000);
-			ownSequences = peptides.own_sequences;
-			if (ownSequences && ownSequences.length > 0) {
-				list = infoPane.append("<h4>Peptides specific for this taxon</h4><ul></ul>").find("ul").last();
-				for (peptide in ownSequences) {
-					list.append("<li><a href='/sequences/" + ownSequences[peptide] + "/" + equate_il + "' target='_blank'>" + ownSequences[peptide] + "</a></li>");
-				}
-			}
-	        allSequences = peptides.all_sequences;
-	        if (allSequences && allSequences.length > 0) {
-	            list = infoPane.append("<h4>Peptides specific to this taxon or one of its subtaxa</h4><ul></ul>").find("ul").last();
-	            for (peptide in allSequences) {
-	                list.append("<li><a href='/sequences/" + allSequences[peptide] + "/" + equate_il + "' target='_blank'>" + allSequences[peptide] + "</a></li>");
-	            }
-	        }
-		});
+            var peptides  = $(tree.rslt.obj).data(),
+                margin    = tree.rslt.obj.context.offsetTop - $("#jstree").offset().top - 9,
+                innertext = "<a href='http:// www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + peptides.id + "' target='_blank'>" + $.trim($(tree.rslt.obj).find("a").text().split("(")[0]) + "</a>",
+                infoPane,
+                ownSequences,
+                list,
+                peptide,
+                allSequences;
+            innertext += " (" + $(tree.rslt.obj).attr("title") + ")";
+            infoPane = $("#jstree_data").html("<h3>" + innertext + "</h3>");
+            $("#jstree_data").css("-webkit-transform", "translateY(" + margin + "px)");
+            $("#jstree_data").css("transform", "translateY(" + margin + "px)");
+            ownSequences = peptides.own_sequences;
+            if (ownSequences && ownSequences.length > 0) {
+                list = infoPane.append("<h4>Peptides specific for this taxon</h4><ul></ul>").find("ul").last();
+                for (peptide in ownSequences) {
+                    list.append("<li><a href='/sequences/" + ownSequences[peptide] + "/" + equate_il + "' target='_blank'>" + ownSequences[peptide] + "</a></li>");
+                }
+            }
+            allSequences = peptides.all_sequences;
+            if (allSequences && allSequences.length > 0 && allSequences.length !== (ownSequences ? ownSequences.length : 0)) {
+                list = infoPane.append("<h4>Peptides specific to this taxon or one of its subtaxa</h4><ul></ul>").find("ul").last();
+                for (peptide in allSequences) {
+                    list.append("<li><a href='/sequences/" + allSequences[peptide] + "/" + equate_il + "' target='_blank'>" + allSequences[peptide] + "</a></li>");
+                }
+            }
+        });
 
-    //fix leafs
-    $("#jstree").bind("loaded.jstree",
-		function (event, data) {
-			$("#jstree li").not(":has(li)").addClass("jstree-leaf");
-		});
+    // fix leafs
+    $("#jstree").bind("loaded.jstree", function (event, data) {
+        $("#jstree li").not(":has(li)").addClass("jstree-leaf");
+    });
 
-    //add search
+    // add search
     $("#jstree_search").keyup(function () {
         $("#jstree").jstree("search", ($(this).val()));
         $(".jstree-search").parent().find("li").show();
@@ -239,7 +225,7 @@ function initJsTree(data, equate_il) {
         $(this).keyup();
     });
 
-    //create the tree
+    // create the tree
     $("#jstree").jstree({
         core: {
             "animation": 300
@@ -261,9 +247,12 @@ function initJsTree(data, equate_il) {
 }
 
 function initSunburst(data) {
+    // add empty slices
+    data.kids = addEmptyChildren(data.kids, data.data.self_count);
+
     var w = 730,   // width
         h = w,     // height
-        r = w / 2, // radius   
+        r = w / 2, // radius
         p = 5,     // padding
         duration = 1000, // animation duration
         levels = 4, // levels to show
@@ -282,20 +271,21 @@ function initSunburst(data) {
         .attr("width", w + p * 2)
         .attr("height", h + p * 2)
         .attr("overflow", "hidden")
+        .style("font-family", "'Helvetica Neue', Helvetica, Arial, sans-serif")
         .append("g")
         .attr("transform", "translate(" + (r + p) + "," + (r + p) + ")"); // set origin to radius center
 
     var tooltip = d3.select("#sunburst")
-    	.append("div")
-    	.attr("class", "tip")
-    	.style("position", "absolute")
-    	.style("z-index", "10")
-    	.style("visibility", "hidden");
+        .append("div")
+        .attr("class", "tip")
+        .style("position", "absolute")
+        .style("z-index", "10")
+        .style("visibility", "hidden");
 
     var partition = d3.layout.partition()               // creates a new partition layout
         .sort(null)                                     // don't sort,  use tree traversal order
         .value(function (d) { return d.data.self_count; })    // set the size of the pieces
-        .children(function (d) {return d.kids; });
+        .children(function (d) { return d.kids; });
 
     // calculate arcs out of partition coordinates
     var arc = d3.svg.arc()
@@ -303,7 +293,7 @@ function initSunburst(data) {
         .endAngle(function (d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); }) // stop between 0 and 2Pi
         .innerRadius(function (d) { return Math.max(0, d.y ? y(d.y) : d.y); }) // prevent y-calculation on 0
         .outerRadius(function (d) { return Math.max(0, y(d.y + d.dy)) + 1; });
-        
+
     // run the partition layout
     var nodes = partition.nodes(data);
 
@@ -322,53 +312,42 @@ function initSunburst(data) {
     var text = vis.selectAll("text").data(nodes);
 
     var textEnter = text.enter().append("text")
-        .style("fill", function (d) {
-            return brightness(d3.rgb(colour(d))) < 125 ? "#eee" : "#000"; // calculate text color
-        })
+        .style("fill", function (d) { return getReadableColorFor(colour(d)); })
         .style("font-family", "font-family: Helvetica, 'Super Sans', sans-serif")
-        .attr("dy", ".2em")
-        .on("click", click)
-        .on("mouseover", tooltipIn)
-        .on("mousemove", tooltipMove)
-        .on("mouseout", tooltipOut);
+        .style("pointer-events", "none") // don't invoke mouse events
+        .attr("dy", ".2em");
 
     textEnter.append("tspan")
         .attr("x", 0)
-        .text(function (d) { return d.depth ? d.name.split(" ")[0] : ""; });
-
-    textEnter.append("tspan")
-        .attr("x", 0)
-        .attr("dy", "1em")
-        .text(function (d) { return d.depth ? d.name.split(" ")[1] || "" : ""; });
+        .text(function (d) { return d.depth && d.name !== "empty" ? d.name.split(" ")[0] : ""; });
 
     textEnter.append("tspan")
         .attr("x", 0)
         .attr("dy", "1em")
-        .text(function (d) { return d.depth ? d.name.split(" ")[2] || "" : ""; });
+        .text(function (d) { return d.depth && d.name !== "empty" ? d.name.split(" ")[1] || "" : ""; });
+
+    textEnter.append("tspan")
+        .attr("x", 0)
+        .attr("dy", "1em")
+        .text(function (d) { return d.depth && d.name !== "empty" ? d.name.split(" ")[2] || "" : ""; });
 
     textEnter.style("font-size", function (d) {
-        return Math.min(((r / levels) / this.getComputedTextLength() * 10)+1, 12) + "px";
+        return Math.min(((r / levels) / this.getComputedTextLength() * 10) + 1, 12) + "px";
     });
 
     // set up start levels
     setTimeout(function () {click(data); }, 1000);
-    
-    function click(d) {
-		// GA event tracking
-		_gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Sunburst']);		
 
-// set jstree
-        try{
-            if(d.name == "organism")
-                $("#jstree_search").val("");
-            else
-                $("#jstree_search").val(d.name);
-            $("#jstree_search").change();
+    function click(d) {
+        if (d.name === "empty") {
+            return;
         }
-        catch(err){
-            error(err);
-        }
-        
+        // GA event tracking
+        _gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Sunburst']);
+
+        // set jstree, but only after the animation
+        jsTreeSearch(d.name, duration);
+
         // perform animation
         currentMaxLevel = d.depth + levels;
         path.transition()
@@ -424,12 +403,16 @@ function initSunburst(data) {
 
     // Calculates the color of an arc based on the color of his children
     function colour(d) {
+        if ( d.name === "empty") {
+            return "white";
+        }
         if (d.children) {
             var colours = d.children.map(colour),
                 a = d3.hsl(colours[0]),
-                b = d3.hsl(colours[1]);
+                b = d3.hsl(colours[1]),
+                singleChild = d.children.length === 1 || d.children[1].name === "empty";
             // if we only have one child, return a slightly darker variant of the child color
-            if (!colours[1]) {
+            if (singleChild) {
                 return d3.hsl(a.h, a.s, a.l * 0.98);
             }
             // if we have 2 kids or more, take the average of the first two kids
@@ -468,30 +451,51 @@ function initSunburst(data) {
 
     // tooltip functions
     function tooltipIn(d, i) {
-        if (d.depth < currentMaxLevel) {
+        if (d.depth < currentMaxLevel && d.name !== "empty") {
             tooltip.style("visibility", "visible")
                 .html("<b>" + d.name + "</b> (" + d.attr.title + ")<br/>" +
-                    (!d.data.self_count ? "0" : d.data.self_count) + 
-                    (d.data.self_count && d.data.self_count == 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
-                    (!d.data.count ? "0" : d.data.count) + 
-                    (d.data.count && d.data.count == 1 ? " sequence" : " sequences") + " specific to this level or lower");
-            //vis.selectAll("#path-" + i).transition().duration(200).style("fill-opacity","0.9");
+                    (!d.data.self_count ? "0" : d.data.self_count) +
+                    (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
+                    (!d.data.count ? "0" : d.data.count) +
+                    (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower");
+            // vis.selectAll("#path-" + i).transition().duration(200).style("fill-opacity","0.9");
         }
     }
     function tooltipMove() {
-        if(window.fullScreenApi.isFullScreen()){
+        if (window.fullScreenApi.isFullScreen()) {
             tooltip.style("top", (d3.event.clientY - 5) + "px").style("left", (d3.event.clientX + 15) + "px");
-        }
-        else{
+        } else {
             tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 15) + "px");
         }
     }
     function tooltipOut(d, i) {
         tooltip.style("visibility", "hidden");
-        //vis.selectAll("#path-" + i).transition().duration(200).style("fill-opacity","1");
+        // vis.selectAll("#path-" + i).transition().duration(200).style("fill-opacity","1");
+    }
+
+    function addEmptyChildren(kids, count) {
+        var i;
+        for (i = 0; i < kids.length; i++) {
+            if (typeof kids[i].kids !== "undefined") {
+                kids[i].kids = addEmptyChildren(kids[i].kids, kids[i].data.self_count);
+            }
+        }
+        if (kids.length > 0 && count !== 0 && count !== undefined) {
+            kids.push({id: -1, name: "empty", data: {count: count, self_count: count}});
+        }
+        return kids;
     }
 }
-// http://www.w3.org/WAI/ER/WD-AERT/#color-contrast
-function brightness(rgb) {
-    return rgb.r * 0.299 + rgb.g * 0.587 + rgb.b * 0.114;
+
+// Enters the given string in the search box
+// Highlights the field
+// filters the jstree after the given number of ms
+function jsTreeSearch(searchTerm, duration) {
+    if (searchTerm === "organism") {
+        searchTerm = "";
+    }
+    var timeout = duration || 0;
+    $("#jstree_search").val(searchTerm);
+    highlight("#jstree_search");
+    setTimeout(function () { $("#jstree_search").change(); }, timeout);
 }

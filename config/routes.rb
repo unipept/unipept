@@ -7,8 +7,8 @@ UnipeptWeb::Application.routes.draw do
   resources :dataset_items
   resources :sequences, :only => [:show, :index]
   resources :organisms, :only => [:show, :index]
-  
-  # datasets 
+
+  # datasets
   # match 'datasets/database/:id' => 'datasets#database'
   # match 'datasets/pride/:id' => 'datasets#pride'
   resources :datasets do
@@ -21,19 +21,31 @@ UnipeptWeb::Application.routes.draw do
   # search
   match '/search/sequence', :to => 'sequences#search', :as => 'sequence_search'
   match '/search/sequences', :to => 'sequences#multi_search', :as => 'sequence_multi_search'
-	match 'sequences/:id/:equate_il', :to => 'sequences#show'
-	
+
+  match '/sequences/:id/:equate_il', :to => 'sequences#show'
+  match '/search/single', :to => 'search#single'
+
+  # pancore
+  match '/pancore/sequences/:bioproject_id.:format', :to => 'pancorepeptidome#get_sequence_ids_for_bioproject', :constraints => { :bioproject_id => /[0-z\._]+/ }
+  match '/pancore/genomes/species/:species_id.:format', :to => 'pancorepeptidome#get_genomes'
+  match '/pancore/unique_sequences', :to => 'pancorepeptidome#get_unique_sequences'
+  match '/pancore/full_sequences', :to => 'pancorepeptidome#get_sequences'
+  match '/pancore', :to => 'pancorepeptidome#analyze', :as => 'pancore_analyze'
+
   # simple pages
   match '/contact', :to => 'pages#contact'
   match '/about',   :to => 'pages#about'
   match '/admin',   :to => 'pages#admin'
-  
+
   # generate png from svg
   match "/convert", :to => "imagemagick#convert"
-  
+
+  # downloads a file
+  match "/download", :to => "download#download"
+
   # load pride dataset from webservice
   match '/pride/:id', :to => 'pride#load'
-	
+
   # verbosity is needed to add namespace to controller
   get "cas/auth", :to => "cas#auth"
   get "cas/logout", :to => "cas#logout"

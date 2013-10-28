@@ -34,6 +34,8 @@ public class TaxonInvalidator {
 		data.invalidate("id=28384", true);
 		data.invalidate("id=48479", true);
 
+		data.invalidate("name LIKE \"%metagenome\"", true);
+
 		// bad names
 		data.invalidate("name LIKE \"%uncultured%\" AND valid_taxon = 1", true);
 		data.invalidate("name LIKE \"%unidentified%\" AND valid_taxon = 1", true);

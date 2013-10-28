@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.11'
+gem 'rails', '3.2.13'
 gem 'mysql2'
 
 # pagination
@@ -20,7 +20,7 @@ gem 'therubyracer'
 gem 'oj'
 
 # imagemagick bindings
-gem 'rmagick'
+gem 'rmagick', '2.13.2'
 
 # new relic stuff
 gem 'newrelic_rpm'

@@ -12,3 +12,4 @@ doc/app
 *.log
 .sass-cache/
 public/assets
+*.mwb.bak

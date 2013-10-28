@@ -19,6 +19,8 @@ public class UniprotEntry {
 	private String type;
 	private String sequence;
 	private List<UniprotDbRef> dbReferences;
+	private List<UniprotGORef> goReferences;
+	private List<UniprotECRef> ecReferences;
 
 	public UniprotEntry(boolean isSwissprot) {
 		if (isSwissprot)
@@ -26,6 +28,8 @@ public class UniprotEntry {
 		else
 			type = "trembl";
 		dbReferences = new ArrayList<UniprotDbRef>();
+		goReferences = new ArrayList<UniprotGORef>();
+		ecReferences = new ArrayList<UniprotECRef>();
 	}
 
 	public String getUniprotAccessionNumber() {
@@ -68,6 +72,14 @@ public class UniprotEntry {
 		dbReferences.add(ref);
 	}
 
+	public void addGORef(UniprotGORef ref) {
+		goReferences.add(ref);
+	}
+
+	public void addECRef(UniprotECRef ref) {
+		ecReferences.add(ref);
+	}
+
 	public List<Pair> digest() {
 		List<Pair> list = new ArrayList<Pair>();
 		int position = 0;
@@ -82,8 +94,16 @@ public class UniprotEntry {
 		return list;
 	}
 
-	public List<UniprotDbRef> getReferences() {
+	public List<UniprotDbRef> getDbReferences() {
 		return dbReferences;
+	}
+
+	public List<UniprotGORef> getGOReferences() {
+		return goReferences;
+	}
+
+	public List<UniprotECRef> getECReferences() {
+		return ecReferences;
 	}
 
 	@Override
