@@ -425,7 +425,7 @@ function init_pancore() {
     }
 
     // setup similarity matrix buttons etc
-    $("#sim_matrix_buttons").prepend("<button id='calculate-matrix-btn' class='btn btn-mini'><i class='icon-refresh'></i>Calculate Similarity Matrix</button>");
+    $("#sim_matrix_buttons").prepend("<button id='calculate-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Calculate Similarity Matrix</button>");
     $("#calculate-matrix-btn").click(function () {
         sendToWorker('calculateSimilarity', '');
     });
