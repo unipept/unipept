@@ -23,7 +23,7 @@ end
 task :prod do
   load 'deploy/assets'
   set :deploy_to, "/home/bmesuere/rails"
-  set :branch, "develop"
+  set :branch, "master"
   set :user, "bmesuere"
   set :use_sudo, false
   set :port, 4840
