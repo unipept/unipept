@@ -2,12 +2,12 @@
   <% if session[:cas_user] %>
   <div id="user">
     <ul>
-      <li class="separator"><i class="icon-user"></i> <%= session[:cas_user] %></li>
+      <li class="separator"><i class="glyphicon glyphicon-user"></i> <%= session[:cas_user] %></li>
       <li><a href="/cas/logout">Sign out</a></li>
     </ul>
   </div>
   <% else %>
-  <div id='user'><ul><li><i class="icon-lock"></i> <a href='/cas/auth'>Sign in</a></li></ul></div>
+  <div id='user'><ul><li><i class="glyphicon glyphicon-lock"></i> <a href='/cas/auth'>Sign in</a></li></ul></div>
   <% end %>
 </div>
 

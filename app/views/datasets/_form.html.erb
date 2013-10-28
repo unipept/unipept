@@ -1,37 +1,51 @@
-<%= form_for(@dataset) do |f| %>
-  <% if @dataset.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@dataset.errors.count, "error") %> prohibited this dataset from being saved:</h2>
-
-      <ul>
-      <% @dataset.errors.full_messages.each do |msg| %>
+<%= form_for(@dataset, :html => {:class => "form-horizontal"}) do |f| %>
+<% if @dataset.errors.any? %>
+<div id="error_explanation">
+    <h2><%= pluralize(@dataset.errors.count, "error") %> prohibited this dataset from being saved:</h2>
+    <ul>
+        <% @dataset.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
+        <% end %>
+    </ul>
+</div>
+<% end %>
 
-  <div class="field">
-    <%= f.label :environment %>
-    <%= f.text_field :environment %>
-  </div>
-  <div class="field">
-    <%= f.label :reference %>
-    <%= f.text_area :reference, :rows => 3 %>
-  </div>
-  <div class="field">
-    <%= f.label :url %>
-    <%= f.text_field :url %>
-  </div>
-  <div class="field">
-    <%= f.label :project_website %>
-    <%= f.text_field :project_website %>
-  </div>
-	<%= f.fields_for :dataset_items do |builder| %>
-		<%= render 'dataset_item_fields', :f => builder %>
-	<% end %>
-	<p><i class='icon-plus'></i> <%= link_to_add_fields "add item", f, :dataset_items %></p>
-  <div class="actions">
-    <%= f.submit :class => "btn-primary btn" %>
-  </div>
+<div class="form-group">
+    <%= f.label :environment, :class => "col-xs-2 control-label"  %>
+    <div class="col-xs-6">
+        <%= f.text_field :environment, :class => "form-control" %>
+    </div>
+</div>
+<div class="form-group">
+    <%= f.label :reference, :class => "col-xs-2 control-label"  %>
+    <div class="col-xs-6">
+        <%= f.text_area :reference, :rows => 3, :class => "form-control" %>
+    </div>
+</div>
+<div class="form-group">
+    <%= f.label :url, :class => "col-xs-2 control-label"  %>
+    <div class="col-xs-6">
+        <%= f.text_field :url, :class => "form-control" %>
+    </div>
+</div>
+<div class="form-group">
+    <%= f.label :project_website, :class => "col-xs-2 control-label"  %>
+    <div class="col-xs-6">
+        <%= f.text_field :project_website, :class => "form-control" %>
+    </div>
+</div>
+
+<%= f.fields_for :dataset_items do |builder| %>
+<%= render 'dataset_item_fields', :f => builder %>
+<% end %>
+<div class="form-group">
+    <div class="col-xs-6 col-md-offset-2">
+        <p><i class='glyphicon glyphicon-plus'></i> <%= link_to_add_fields "add item", f, :dataset_items %></p>
+    </div>
+</div>
+<div class="form-group">
+    <div class="col-xs-6 col-md-offset-2">
+        <%= f.submit :class => "btn-primary btn" %>
+    </div>
+</div>
 <% end %>
