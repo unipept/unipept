@@ -18,7 +18,7 @@
     <%= select_tag(:species_id, options_for_select(@species, params[:species_id])) %>
     <%= button_tag(raw("Add species <i class='icon-chevron-right icon-white'></i>"), :type => "button", :class => "btn btn-primary", :id => "add_species_peptidome", :"data-loading-text" => "Loading...") %>
     <% end %>
-    <div id="treeView">
+    <div id="treeView" class="treeView pancore">
       <div class="input-append" id="treeSearchDiv">
       <%= search_field_tag(:treeSearch, "", :placeholder => "type to filter the tree by name or bioproject id") %><span class="add-on"><i class="icon-search"></i></span>
       </div>
