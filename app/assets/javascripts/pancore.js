@@ -588,7 +588,7 @@ function init_pancore() {
         return {"order" : order, "start" : start, "stop" : stop};
     }
 
-    // Clear the table 
+    // Clear the table
     function clearTable() {
         $("#genomes_table tbody").html("");
         updateTable();
@@ -646,6 +646,7 @@ function init_pancore() {
             .attr("viewBox", "0 0 " + fullWidth + " " + fullHeight)
             .attr("width", fullWidth)
             .attr("height", fullHeight)
+            .attr("overflow", "hidden")
             .style("font-family", "'Helvetica Neue', Helvetica, Arial, sans-serif")
           .on("click", removePopoversAndHighlights)
           .append("g")
@@ -1093,7 +1094,7 @@ function init_pancore() {
         d3.select(this).attr("x", dragging[d.bioproject_id] - mouseOverWidth / 2);
         svg.selectAll(".dot._" + d.bioproject_id).attr("cx", dragging[d.bioproject_id]);
     }
-    // Recalculates the position of all genomes and update the graph or 
+    // Recalculates the position of all genomes and update the graph or
     // removes the genome when dropped on the trash can
     function dragEnd(d) {
         delete this.__origin__;
