@@ -3,7 +3,7 @@
 //= require bootstrap/bootstrap.min.js
 
 //  sunburst and pancore
-//  3.3.8
+//  3.3.9
 //= require d3/d3.v3.min.js
 
 //  lineage tree and treemap
