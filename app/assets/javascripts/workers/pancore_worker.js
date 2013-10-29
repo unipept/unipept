@@ -41,6 +41,9 @@ self.addEventListener('message', function (e) {
     case "calculateSimilarity":
         calculateSimilarity();
         break;
+    case "newDataAdded":
+        addNewMatrixdata();
+        break;
     default:
         error(data.msg);
     }
@@ -393,7 +396,28 @@ function calculateSimilarity() {
         }
     }
     sendToHost('sim_matrix', {'genomes': names, 'sim_matrix': sim_matrix, 'order': order});
-    clusterMatrix();
+    return sim_matrix;
+}
+
+function addNewMatrixdata() {
+    var initial_length = sim_matrix.length;
+    var x = 0;
+    var names = [];
+    for (x = initial_length; x < order.length; x++) {
+        sim_matrix[x] = [];
+    }
+
+    for (x = 0; x < order.length; x++) {
+        var bioproject_id = order[x];
+        names.push(data[bioproject_id].name);
+    }
+
+    for (x = initial_length; x < order.length; x++) {
+        for (y = 0 ; y < order.length; y ++) {
+            sim_matrix[x][y] = 0;
+        }
+    }
+    sendToHost('sim_matrix', {'genomes': names, 'sim_matrix': sim_matrix, 'order': order});
     return sim_matrix;
 }
 

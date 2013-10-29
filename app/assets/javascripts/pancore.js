@@ -490,6 +490,7 @@ function init_pancore() {
         if (rank !== request_rank) return;
         dataQueue.push(data);
         tryUpdateGraph();
+        tryUpdateMatrix();
     }
 
     // Removes a genomes from the visualization:
@@ -539,6 +540,10 @@ function init_pancore() {
         removePopoversAndHighlights();
         updateGraph();
         clearTable();
+    }
+
+    function tryUpdateMatrix() {
+        sendToWorker('newDataAdded');
     }
 
     // Update the graph with data from the update queue when the previous animation is done.
