@@ -430,6 +430,11 @@ function init_pancore() {
         sendToWorker('calculateSimilarity', '');
     });
 
+    $("#sim_matrix_buttons").prepend("<button id='cluster-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Cluster Similarity Matrix</button>");
+    $("#cluster-matrix-btn").click(function () {
+        sendToWorker('clusterMatrix', '');
+    });
+
     function showMatrix(genomes, data, order) {
         $('#sim_matrix').empty();
         init_sim_matrix(genomes, data, order);

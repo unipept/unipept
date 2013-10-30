@@ -41,6 +41,9 @@ self.addEventListener('message', function (e) {
     case "calculateSimilarity":
         calculateSimilarity();
         break;
+    case "clusterMatrix":
+        clusterMatrix();
+        break;
     case "newDataAdded":
         addNewMatrixdata();
         break;
@@ -422,14 +425,32 @@ function addNewMatrixdata() {
 }
 
 function clusterMatrix() {
-    var result = clusterMatrixRec(sim_matrix, []);
-    sendToHost('log', result);
+    // Create a deep copy and call our recursive cluster function
+    var matrix_deep_copy = [];
+    var i = 0, j = 0;
+    for (i = 0; i < sim_matrix.length; i++) {
+        matrix_deep_copy[i] = [];
+        for (j = 0; j < sim_matrix[i].length; j++) {
+            matrix_deep_copy[i][j] = sim_matrix[i][j];
+        }
+    }
+    var result = clusterMatrixRec(matrix_deep_copy, {}, []);
+
+    var result_order = result['order'];
+    var first = result_order.splice(-1,1)[0];
+    var new_order = [first.x,first.y];
+
+    for (i = result_order.length - 1; i >= 0; i--) {
+        var index = new_order.indexOf(result_order[i]['x']);
+        new_order.splice(index, 0, result_order[i]['y']);
+    }
+    sendToHost('log', new_order);
 }
 
-function clusterMatrixRec(matrix, cluster) {
+function clusterMatrixRec(matrix, cluster, order) {
     // Lame recursion check
-    if(cluster.length == matrix.length - 1) {
-        return cluster;
+    if(order.length == matrix.length - 1) {
+        return {'order': order, 'cluster': cluster};
     }
 
     // find highest similarity
@@ -445,7 +466,13 @@ function clusterMatrixRec(matrix, cluster) {
         }
     }
 
-    cluster.push({'x': x, 'y': y, 'value': largest});
+    if(cluster[x]) {
+        cluster[x].push(y);
+    } else {
+        cluster[x] = [y];
+    }
+
+    order.push({'x': x, 'y': y, 'value': largest});
 
     // update sim matrix with average values
     for (j = 0 ; j < matrix[x].length; j++) {
@@ -461,7 +488,7 @@ function clusterMatrixRec(matrix, cluster) {
         matrix[y][j] = 0;
     }
 
-    return clusterMatrixRec(matrix, cluster);
+    return clusterMatrixRec(matrix, cluster, order);
 
 }
 
