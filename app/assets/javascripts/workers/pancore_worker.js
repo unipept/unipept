@@ -444,7 +444,7 @@ function clusterMatrix() {
         var index = new_order.indexOf(result_order[i]['x']);
         new_order.splice(index, 0, result_order[i]['y']);
     }
-    sendToHost('log', new_order);
+    sendToHost('newOrder', new_order);
 }
 
 function clusterMatrixRec(matrix, cluster, order) {
