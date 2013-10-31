@@ -113,6 +113,7 @@ function removeData(bioproject_id, newOrder, start) {
     unicores = [];
     recalculatePanCore(newOrder, start, l - 2);
     getUniqueSequences("uniprot");
+    calculateSimilarity();
 }
 
 // Recalculates the pan and core data based on a
