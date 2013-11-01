@@ -1,12 +1,11 @@
 //= require jquery
 //= require jquery-ui
 //= require jquery_ujs
-//= require twitter/bootstrap
 //= require_self
 //= require_directory .
 //= require vendor
 
-// highlights the background color 
+// highlights the background color
 // of the given element for 2 seconds
 function highlight(element) {
     $(element).addClass("flash");
@@ -44,7 +43,7 @@ function remove_fields(link) {
 function add_fields(link, association, content) {
     var new_id = new Date().getTime();
     var regexp = new RegExp("new_" + association, "g");
-    $(link).parent().before(content.replace(regexp, new_id));
+    $(link).parent().parent().before(content.replace(regexp, new_id));
 }
 
 /* function for error handling.

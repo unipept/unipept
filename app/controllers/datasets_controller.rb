@@ -1,11 +1,12 @@
 class DatasetsController < ApplicationController
   require 'httparty'
-  
+
   before_filter :authorize, :only => [:new, :edit, :create, :update, :destroy]
-  
+
   # GET /datasets
   # GET /datasets.xml
   def index
+    @title = "Multi-peptide Analysis"
     @datasets = Dataset.includes(:dataset_items).all
 
     respond_to do |format|
@@ -84,7 +85,7 @@ class DatasetsController < ApplicationController
       format.xml  { head :ok }
     end
   end
-  
+
   def preload
     @title = "Load dataset"
     @type = params[:type]

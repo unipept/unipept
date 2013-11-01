@@ -1,10 +1,10 @@
-//  sunburst and pancore
-//  3.3.5
-//= require d3/d3.v3.min.js
+// all pages
+// 3.0.1
+//= require bootstrap/bootstrap.min.js
 
-//  tree on multi search page
-//  1.0.0 rc3
-//= require jstree/jquery.jstree.js
+//  sunburst and pancore
+//  3.3.9
+//= require d3/d3.v3.min.js
 
 //  lineage tree and treemap
 //  2.0.1

@@ -7,7 +7,8 @@ var data = {},
     cores = [],
     unicores = [],
     unicorePresent = false,
-    rank = 0;
+    rank = 0,
+    sim_matrix = [];
 
 // Add an event handler to the worker
 self.addEventListener('message', function (e) {
@@ -29,13 +30,22 @@ self.addEventListener('message', function (e) {
         recalculatePanCore(data.msg.order, data.msg.start, data.msg.stop);
         break;
     case 'getUniqueSequences':
-        getUniqueSequences(data.msg.type);
+        getUniqueSequences();
         break;
     case 'autoSort':
         autoSort(data.msg.type);
         break;
     case "getSequences":
         getSequences(data.msg.type, data.msg.bioproject_id);
+        break;
+    case "calculateSimilarity":
+        calculateSimilarity();
+        break;
+    case "clusterMatrix":
+        clusterMatrix();
+        break;
+    case "newDataAdded":
+        addNewMatrixdata();
         break;
     default:
         error(data.msg);
@@ -102,7 +112,8 @@ function removeData(bioproject_id, newOrder, start) {
     unicorePresent = false;
     unicores = [];
     recalculatePanCore(newOrder, start, l - 2);
-    getUniqueSequences("uniprot");
+    getUniqueSequences();
+    calculateSimilarity();
 }
 
 // Recalculates the pan and core data based on a
@@ -116,7 +127,7 @@ function recalculatePanCore(newOrder, start, stop) {
     if (start === 0) {
         unicorePresent = false;
         unicores = [];
-        getUniqueSequences("uniprot");
+        getUniqueSequences();
     }
     for (i = start; i <= stop; i++) {
         set = data[order[i]].peptide_list;
@@ -142,7 +153,7 @@ function recalculatePanCore(newOrder, start, stop) {
         }
         response.push(temp);
     }
-    sendToHost("setVisData", {data : response, lca : lca, rank : rank});
+    sendToHost("setPancoreData", {data : response, lca : lca, rank : rank});
 }
 
 // Sorts the genomes in a given order
@@ -245,26 +256,22 @@ function autoSort(type) {
 }
 
 // Retrieves the unique sequences
-function getUniqueSequences(type) {
+function getUniqueSequences() {
     if (order.length > 0) {
         var s = data[order[0]].peptide_list;
-        getJSONByPost("/pancore/unique_sequences/", "type=" + type + "&bioprojects=" + order + "&sequences=[" + s + "]", function (d) {
+        getJSONByPost("/pancore/unique_sequences/", "type=uniprot&bioprojects=" + order + "&sequences=[" + s + "]", function (d) {
             lca = d[0];
-            calculateUnicore(d[1], type);
+            calculateUnicore(d[1]);
         });
     }
 }
 
 // Calculates the unique peptides data
-function calculateUnicore(ud, type) {
+function calculateUnicore(ud) {
     var i;
     unicorePresent = true;
-    if (type === "uniprot") {
-        unicoreData = ud;
-        unicores[0] = unicoreData;
-    } else {
-        sendToHost("log", "unknown type: " + type);
-    }
+    unicoreData = ud;
+    unicores[0] = unicoreData;
     for (i = 1; i < order.length; i++) {
         unicores[i] = intersection(unicores[i - 1], data[order[i]].peptide_list);
     }
@@ -361,6 +368,125 @@ function getJSONByPost(url, data, callback) {
         }
     };
     req.send(data);
+}
+
+function genomeSimilarity(peptide_list1, peptide_list2) {
+    return intersection(peptide_list1, peptide_list2).length / union(peptide_list1, peptide_list2).length;
+}
+
+function calculateSimilarity() {
+    // 0,0 is the topleft coordinate
+    var x = 0;
+    var y = 0;
+    var names = [];
+    sim_matrix = [];
+    for (x = 0; x < order.length; x++) {
+        sim_matrix[x] = [];
+    }
+
+    for (x = 0; x < order.length; x++) {
+        var bioproject_id = order[x];
+        names.push(data[bioproject_id].name);
+        var compare_list = data[bioproject_id].peptide_list;
+
+        // only need to calculate upper part of matrix
+        for (y = 0 ; y < order.length; y ++) {
+            var peptide_list = data[order[y]].peptide_list;
+            sim_matrix[x][y] = genomeSimilarity(compare_list, peptide_list);
+        }
+    }
+    sendToHost('sim_matrix', {'genomes': names, 'sim_matrix': sim_matrix, 'order': order});
+    return sim_matrix;
+}
+
+function addNewMatrixdata() {
+    var initial_length = sim_matrix.length;
+    var x = 0;
+    var names = [];
+    for (x = initial_length; x < order.length; x++) {
+        sim_matrix[x] = [];
+    }
+
+    for (x = 0; x < order.length; x++) {
+        var bioproject_id = order[x];
+        names.push(data[bioproject_id].name);
+    }
+
+    for (x = initial_length; x < order.length; x++) {
+        for (y = 0 ; y < order.length; y ++) {
+            sim_matrix[x][y] = 0;
+        }
+    }
+    sendToHost('sim_matrix', {'genomes': names, 'sim_matrix': sim_matrix, 'order': order});
+    return sim_matrix;
+}
+
+function clusterMatrix() {
+    // Create a deep copy and call our recursive cluster function
+    var matrix_deep_copy = [];
+    var i = 0, j = 0;
+    for (i = 0; i < sim_matrix.length; i++) {
+        matrix_deep_copy[i] = [];
+        for (j = 0; j < sim_matrix[i].length; j++) {
+            matrix_deep_copy[i][j] = sim_matrix[i][j];
+        }
+    }
+    var result = clusterMatrixRec(matrix_deep_copy, {}, []);
+
+    var result_order = result['order'];
+    var first = result_order.splice(-1,1)[0];
+    var new_order = [first.x,first.y];
+
+    for (i = result_order.length - 1; i >= 0; i--) {
+        var index = new_order.indexOf(result_order[i]['x']);
+        new_order.splice(index, 0, result_order[i]['y']);
+    }
+    sendToHost('newOrder', new_order);
+}
+
+function clusterMatrixRec(matrix, cluster, order) {
+    // Lame recursion check
+    if(order.length == matrix.length - 1) {
+        return {'order': order, 'cluster': cluster};
+    }
+
+    // find highest similarity
+    var x = 0, y = 0, largest = 0;
+    var i = 0, j = 0;
+    for (i = 0 ; i < matrix.length; i++) {
+        for (j = 0; j < matrix[i].length; j++) {
+            if (matrix[i][j] > largest && i != j) {
+                x = i;
+                y = j;
+                largest = matrix[i][j];
+            }
+        }
+    }
+
+    if(cluster[x]) {
+        cluster[x].push(y);
+    } else {
+        cluster[x] = [y];
+    }
+
+    order.push({'x': x, 'y': y, 'value': largest});
+
+    // update sim matrix with average values
+    for (j = 0 ; j < matrix[x].length; j++) {
+        if ( j != y && j != x ) {
+            matrix[x][j] = (matrix[x][j] + matrix[y][j]) / 2;
+            matrix[j][x] = (matrix[x][j] + matrix[y][j]) / 2;
+        }
+    }
+
+    // set the value of comparison with y to zero
+    for (j = 0 ; j < matrix.length; j++) {
+        matrix[j][y] = 0;
+        matrix[y][j] = 0;
+    }
+
+    return clusterMatrixRec(matrix, cluster, order);
+
 }
 
 // union and intersection for sorted arrays

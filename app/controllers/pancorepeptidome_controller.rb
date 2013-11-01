@@ -1,9 +1,9 @@
 class PancorepeptidomeController < ApplicationController
 
   def analyze
-    start = Time.now
-    @species = Genome.get_genome_species().map{|g| [g["name"], g["id"]]} 
-    logger.debug (Time.now  - start).to_s
+    @title = "Unique Peptide Finder"
+
+    @species = Genome.get_genome_species().map{|g| [g["name"], g["id"]]}
     @genomes = Genome.joins(:lineage).select("genomes.name, genomes.bioproject_id, lineages.species as species_id, lineages.genus as genus_id, lineages.order as order_id, lineages.class as class_id").where("status = 'Complete'").uniq
 
     @taxa = Set.new

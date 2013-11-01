@@ -4,11 +4,11 @@
 <br/><br/>
 
 <div id="posts">
-	<%= render @posts, :well => true %>
+    <%= render @posts, :well => true %>
 </div>
 
 <%= will_paginate @posts %>
 
 <script type="text/javascript">
-	$(function () {initPosts();});
+    $(function () {initPosts();});
 </script>

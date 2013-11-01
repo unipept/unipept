@@ -1,6 +1,7 @@
 source 'http://rubygems.org'
 
 gem 'rails', '3.2.13'
+
 gem 'mysql2'
 
 # pagination
@@ -22,15 +23,12 @@ gem 'oj'
 # imagemagick bindings
 gem 'rmagick', '2.13.2'
 
-# new relic stuff
-gem 'newrelic_rpm'
-
 # do HTTP requests
 gem 'httparty'
 
 group :development do
   gem 'rspec-rails'
-	gem 'annotate-models'
+	gem 'annotate'
 	gem "rake"
 	gem 'sprockets'
 end
@@ -49,7 +47,6 @@ group :assets do
   gem 'sass-rails'
   gem 'coffee-rails'
   gem 'uglifier'
-  gem 'twitter-bootstrap-rails'
   gem 'less-rails'
 end
 
@@ -64,7 +61,7 @@ end
 # gem 'unicorn'
 
 # Deploy with Capistrano
-# gem 'capistrano'
+gem 'capistrano', '2.15.5'
 
 # To use debugger (ruby-debug for Ruby 1.8.7+, ruby-debug19 for Ruby 1.9.2+)
 # gem 'ruby-debug'

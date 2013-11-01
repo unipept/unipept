@@ -4,7 +4,9 @@ development:
   pool: 5
   username: unipept
   password: unipept
-  socket: /tmp/mysql.sock
+  # setup local port forwarding for this to work
+  host: 127.0.0.1
+  port: 3306
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -23,4 +25,4 @@ production:
   pool: 5
   username: unipept
   password: unipept
-  socket: /var/run/mysqld/mysqld.sock
+  socket: /tmp/mysql.sock
