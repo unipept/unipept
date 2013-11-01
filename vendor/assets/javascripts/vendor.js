@@ -1,5 +1,5 @@
 // all pages
-// 3.0.0
+// 3.0.1
 //= require bootstrap/bootstrap.min.js
 
 //  sunburst and pancore
