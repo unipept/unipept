@@ -154,58 +154,20 @@ function init_selection_tree(data, taxa) {
 }
 
 /**
- * Initializes the main graph and drop-target-table
+ * Initializes the main graph, the similarity matrix and drop-target-table
  */
-function init_pancore() {
-    // GLOBALS AND DEFAULTS
+function init_graphs() {
+    // *** GLOBAL VARS ***
 
     // Animation and style stuff
     var transitionDuration = 500,
-        genomeColor = "#d9d9d9",  // gray
-        panColor = "#1f77b4",     // blue
-        coreColor = "#ff7f0e",    // orange
-        unicoreColor = "#2ca02c"; // green
-
-    // Sizes
-    var margin = {top: 20, right: 40, bottom: 170, left: 60},
         fullWidth = 930,
-        fullHeight = 600,
-        width = fullWidth - margin.left - margin.right,
-        height = fullHeight - margin.top - margin.bottom;
+        fullHeight = 600;
 
     // Data vars
-    var visData = [],
+    var pancoreData = [],
         tableData = {},
-        legendData = [{"name": "genome size", "color": genomeColor, "toggle": "showGenome"},
-            {"name": "pan peptidome", "color": panColor, "toggle": "showPan"},
-            {"name": "core peptidome", "color": coreColor, "toggle": "showCore"},
-            {"name": "unique peptides", "color": unicoreColor, "toggle": "showUnicore"}],
         lca = "";
-
-    // the Javascript Worker for background data processing
-    var worker = new Worker("/assets/workers/pancore_worker.js");
-
-    // D3 vars
-    var svg,
-        graphData,
-        tooltip,
-        mouseOverWidth;
-
-    // Drag and click vars
-    var dragging = {},
-        isDragging = false,
-        hasDragged = false,
-        onTrash = false,
-        dragId,
-        isClicked = false,
-        clickId;
-
-    // Toggles
-    var toggles = {};
-    toggles.showGenome = true;
-    toggles.showPan = true;
-    toggles.showCore = true;
-    toggles.showUnicore = true;
 
     // Load vars
     var dataQueue = [],
@@ -213,34 +175,73 @@ function init_pancore() {
         mayStartAnimation = true,
         rank = 0;
 
+    // the Javascript Worker for background data processing
+    var worker = new Worker("/assets/workers/pancore_worker.js");
+
+    // *** PANCORE VARS ***
+    var genomeColor = "#d9d9d9",  // gray
+        panColor = "#1f77b4",     // blue
+        coreColor = "#ff7f0e",    // orange
+        unicoreColor = "#2ca02c", // green
+        legendData = [{"name": "genome size", "color": genomeColor, "toggle": "showGenome"},
+            {"name": "pan peptidome", "color": panColor, "toggle": "showPan"},
+            {"name": "core peptidome", "color": coreColor, "toggle": "showCore"},
+            {"name": "unique peptides", "color": unicoreColor, "toggle": "showUnicore"}];
+
+    // Sizes
+    var pancoreMargin = {top: 20, right: 40, bottom: 170, left: 60},
+        pancoreWidth = fullWidth - pancoreMargin.left - pancoreMargin.right,
+        pancoreHeight = fullHeight - pancoreMargin.top - pancoreMargin.bottom,
+        pancoreMouseOverWidth;
+
+    // D3 vars
+    var pancoreSvg,
+        pancoreGraphArea,
+        pancoreTooltip;
+
+    // Drag and click vars
+    var pancoreMouse = {};
+    pancoreMouse.dragging = {};
+    pancoreMouse.isDragging = false;
+    pancoreMouse. hasDragged = false;
+    pancoreMouse.onTrash = false;
+    pancoreMouse.dragId;
+    pancoreMouse.isClicked = false;
+    pancoreMouse.clickId;
+
+    // toggles
+    var pancoreToggles = {};
+    pancoreToggles.showGenome = true;
+    pancoreToggles.showPan = true;
+    pancoreToggles.showCore = true;
+    pancoreToggles.showUnicore = true;
+
     // Scales
-    var x = d3.scale.ordinal()
-        .rangePoints([0, width], 1),
-        y = d3.scale.linear()
-        .range([height, 0]);
+    var pancoreX = d3.scale.ordinal().rangePoints([0, pancoreWidth], 1),
+        pancoreY = d3.scale.linear().range([pancoreHeight, 0]);
 
     // Axes
     var xAxis = d3.svg.axis()
-        .scale(x)
+        .scale(pancoreX)
         .tickFormat(function (d) { return tableData[d].name; })
         .orient("bottom"),
         yAxis = d3.svg.axis()
-        .scale(y)
+        .scale(pancoreY)
         .orient("left");
 
     // Graph lines helpers
     var panLine = d3.svg.line()
         .interpolate("linear")
-        .x(function (d) { return x(d.bioproject_id); })
-        .y(function (d) { return y(d.pan); });
+        .x(function (d) { return pancoreX(d.bioproject_id); })
+        .y(function (d) { return pancoreY(d.pan); });
     var coreLine = d3.svg.line()
         .interpolate("linear")
-        .x(function (d) { return x(d.bioproject_id); })
-        .y(function (d) { return y(d.core); });
+        .x(function (d) { return pancoreX(d.bioproject_id); })
+        .y(function (d) { return pancoreY(d.core); });
     var unicoreLine = d3.svg.line()
         .interpolate("linear")
-        .x(function (d) { return x(d.bioproject_id); })
-        .y(function (d) { return y(d.unicore); });
+        .x(function (d) { return pancoreX(d.bioproject_id); })
+        .y(function (d) { return pancoreY(d.unicore); });
 
     // Add eventhandlers to the worker
     worker.addEventListener('message', function (e) {
@@ -259,8 +260,8 @@ function init_pancore() {
         case 'addData':
             addData(data.msg.data, data.msg.rank);
             break;
-        case 'setVisData':
-            setVisData(data.msg.data, data.msg.lca, data.msg.rank);
+        case 'setPancoreData':
+            setpancoreData(data.msg.data, data.msg.lca, data.msg.rank);
             break;
         case 'sequencesDownloaded':
             returnPopoverSequences(data.msg.sequences, data.msg.type);
@@ -507,14 +508,14 @@ function init_pancore() {
     }
 
     // Replaces all the visualized data and updates graph and table
-    function setVisData(data, l, request_rank) {
+    function setpancoreData(data, l, request_rank) {
         var i,
             bioproject_id;
         if (rank !== request_rank) return;
-        visData = data;
+        pancoreData = data;
         lca = l;
-        for (i = 0; i < visData.length; i++) {
-            bioproject_id = visData[i].bioproject_id;
+        for (i = 0; i < pancoreData.length; i++) {
+            bioproject_id = pancoreData[i].bioproject_id;
             if (typeof tableData[bioproject_id] !== "undefined") {
                 tableData[bioproject_id].status = "Done";
                 tableData[bioproject_id].position = i;
@@ -534,7 +535,7 @@ function init_pancore() {
         toLoad = 0;
         setLoading(false);
         dataQueue = [];
-        visData = [];
+        pancoreData = [];
         tableData = {};
         lca = "";
         removePopoversAndHighlights();
@@ -559,9 +560,9 @@ function init_pancore() {
             while (dataQueue.length > 0) {
                 addedSomething = true;
                 data = dataQueue.shift();
-                visData.push(data);
+                pancoreData.push(data);
                 tableData[data.bioproject_id].status = "Done";
-                tableData[data.bioproject_id].position = visData.length - 1;
+                tableData[data.bioproject_id].position = pancoreData.length - 1;
                 toLoad--;
             }
             if (addedSomething) {
@@ -613,8 +614,8 @@ function init_pancore() {
             start = -1,
             stop = 0,
             i;
-        for (i = 0; i < visData.length; i++) {
-            var bioproject_id = visData[i].bioproject_id;
+        for (i = 0; i < pancoreData.length; i++) {
+            var bioproject_id = pancoreData[i].bioproject_id;
             if (tableData[bioproject_id].position === i && stop === 0) {
                 start = i;
             } else if (tableData[bioproject_id].position !== i) {
@@ -681,7 +682,7 @@ function init_pancore() {
         $("#pancore_graph div.tip").remove();
 
         // create the svg
-        svg = d3.select("#pancore_graph")
+        pancoreSvg = d3.select("#pancore_graph")
           .append("svg")
             .attr("viewBox", "0 0 " + fullWidth + " " + fullHeight)
             .attr("width", fullWidth)
@@ -690,10 +691,10 @@ function init_pancore() {
             .style("font-family", "'Helvetica Neue', Helvetica, Arial, sans-serif")
           .on("click", removePopoversAndHighlights)
           .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            .attr("transform", "translate(" + pancoreMargin.left + "," + pancoreMargin.top + ")");
 
         // create the tooltip
-        tooltip = d3.select("#pancore_graph")
+        pancoreTooltip = d3.select("#pancore_graph")
           .append("div")
             .attr("class", "tip")
             .style("position", "absolute")
@@ -701,7 +702,7 @@ function init_pancore() {
             .style("visibility", "hidden");
 
         // create the dropshadow filter
-        var temp = svg.append("svg:defs")
+        var temp = pancoreSvg.append("svg:defs")
             .append("svg:filter")
                 .attr("id", "dropshadow");
         temp.append("svg:feGaussianBlur")
@@ -713,13 +714,13 @@ function init_pancore() {
             .attr("in", "SourceGraphic");
 
         // add the x-axis
-        svg.append("g")
+        pancoreSvg.append("g")
             .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
+            .attr("transform", "translate(0," + pancoreHeight + ")")
             .call(xAxis);
 
         // add the y-axis
-        svg.append("g")
+        pancoreSvg.append("g")
             .attr("class", "y axis")
             .call(yAxis)
           .append("text")
@@ -729,16 +730,16 @@ function init_pancore() {
             .style("text-anchor", "end")
             .text("Number of peptides");
 
-        svg.selectAll(".axis line, .axis path")
+        pancoreSvg.selectAll(".axis line, .axis path")
             .style("fill", "none")
             .style("stroke", "#000")
             .style("shape-rendering", "crispEdges");
 
         // container used for dots, paths and bars
-        graphData = svg.append("g").attr("class", "graphData");
+        pancoreGraphArea = pancoreSvg.append("g").attr("class", "pancoreGraphArea");
 
         // add legend
-        var legend = svg.selectAll(".legend")
+        var legend = pancoreSvg.selectAll(".legend")
             .data(legendData)
           .enter().append("g")
             .attr("class", "legend")
@@ -758,39 +759,39 @@ function init_pancore() {
         $(".legend").disableSelection();
 
         // draw the lines
-        graphData.append("path")
-            .datum(visData)
+        pancoreGraphArea.append("path")
+            .datum(pancoreData)
             .attr("class", "line pan")
             .style("stroke", panColor)
             .attr("d", panLine);
-        graphData.append("path")
-            .datum(visData)
+        pancoreGraphArea.append("path")
+            .datum(pancoreData)
             .attr("class", "line core")
             .style("stroke", coreColor)
             .attr("d", coreLine);
-        graphData.append("path")
-            .datum(visData)
+        pancoreGraphArea.append("path")
+            .datum(pancoreData)
             .attr("class", "line unicore")
             .style("stroke", unicoreColor)
             .attr("d", unicoreLine);
-        graphData.selectAll("path.line")
+        pancoreGraphArea.selectAll("path.line")
             .style("stroke-width", 2)
             .style("fill", "none");
 
         // add axis marks
-        svg.insert("line")
+        pancoreSvg.insert("line")
             .attr("class", "axisline genome")
             .attr("stroke", genomeColor);
-        svg.insert("line")
+        pancoreSvg.insert("line")
             .attr("class", "axisline pan")
             .attr("stroke", panColor);
-        svg.insert("line")
+        pancoreSvg.insert("line")
             .attr("class", "axisline core")
             .attr("stroke", coreColor);
-        svg.insert("line")
+        pancoreSvg.insert("line")
             .attr("class", "axisline unicore")
             .attr("stroke", unicoreColor);
-        svg.selectAll("line.axisline")
+        pancoreSvg.selectAll("line.axisline")
             .attr("stroke-width", "2")
             .attr("x1", "6")
             .attr("x2", "-6")
@@ -798,13 +799,13 @@ function init_pancore() {
             .style("visibility", "hidden");
 
         // trash bin
-        var trash = svg.insert("g")
+        var trash = pancoreSvg.insert("g")
             .attr("id", "trash")
             .attr("fill", "#cccccc")
             .on("mouseover", trashMouseOver)
             .on("mouseout", trashMouseOut)
         .insert("g")
-            .attr("transform", "translate(" + (fullWidth + 30) + " " + (height - 46) / 2 + ")");
+            .attr("transform", "translate(" + (fullWidth + 30) + " " + (pancoreHeight - 46) / 2 + ")");
         trash.append("circle")
             .attr("r", 30)
             .attr("stroke", "#cccccc")
@@ -813,7 +814,7 @@ function init_pancore() {
             .attr("cx", -40)
             .attr("cy", 23);
         trash.append("rect")
-            .attr("height", height)
+            .attr("height", pancoreHeight)
             .attr("width", 32)
             .attr("y", -182)
             .attr("x", -40)
@@ -828,151 +829,151 @@ function init_pancore() {
     // Updates the D3 graph
     function updateGraph() {
         // Prepare for line transition
-        var oldPanDatum = svg.select(".line.pan").datum(),
-            oldCoreDatum = svg.select(".line.core").datum();
-        if (oldPanDatum.length < visData.length && oldPanDatum.length > 0) {
+        var oldPanDatum = pancoreSvg.select(".line.pan").datum(),
+            oldCoreDatum = pancoreSvg.select(".line.core").datum();
+        if (oldPanDatum.length < pancoreData.length && oldPanDatum.length > 0) {
             var i,
-                diff = visData.length - oldPanDatum.length;
+                diff = pancoreData.length - oldPanDatum.length;
             for (i = 0; i < diff; i++) {
                 oldPanDatum.push(oldPanDatum[oldPanDatum.length - 1]);
                 oldCoreDatum.push(oldCoreDatum[oldCoreDatum.length - 1]);
             }
-            svg.select(".line.pan").attr("d", panLine);
-            svg.select(".line.core").attr("d", coreLine);
+            pancoreSvg.select(".line.pan").attr("d", panLine);
+            pancoreSvg.select(".line.core").attr("d", coreLine);
         }
 
         // set the domains
-        x.domain(visData.map(function (d) { return d.bioproject_id; }));
-        y.domain([0, getMaxVisibleDatapoint()]);
+        pancoreX.domain(pancoreData.map(function (d) { return d.bioproject_id; }));
+        pancoreY.domain([0, getMaxVisibleDatapoint()]);
 
         // update the axes
-        svg.select(".x.axis").transition().duration(transitionDuration).call(xAxis);
-        svg.select(".y.axis").transition().duration(transitionDuration).call(yAxis);
-        svg.selectAll(".axis line, .axis path")
+        pancoreSvg.select(".x.axis").transition().duration(transitionDuration).call(xAxis);
+        pancoreSvg.select(".y.axis").transition().duration(transitionDuration).call(yAxis);
+        pancoreSvg.selectAll(".axis line, .axis path")
             .style("fill", "none")
             .style("stroke", "#000")
             .style("shape-rendering", "crispEdges");
         // rotate the x-axis labels
-        svg.selectAll(".x.axis text")
+        pancoreSvg.selectAll(".x.axis text")
             .style("text-anchor", "end")
             .transition()
                 .duration(transitionDuration)
                 .attr("transform", "translate(-5,0)rotate(-45)");
-        svg.selectAll(".tick").attr("class", function (d) { return "tick major _" + d; });
+        pancoreSvg.selectAll(".tick").attr("class", function (d) { return "tick major _" + d; });
 
         // draw the dots
-        var genomeDots = graphData.selectAll(".dot.genome")
-            .data(visData, function (d) { return d.bioproject_id; });
+        var genomeDots = pancoreGraphArea.selectAll(".dot.genome")
+            .data(pancoreData, function (d) { return d.bioproject_id; });
         genomeDots.enter().append("circle")
             .attr("class", function (d) { return "dot genome _" + d.bioproject_id; })
             .attr("r", 5)
             .attr("fill", genomeColor)
-            .attr("cx", width);
+            .attr("cx", pancoreWidth);
         genomeDots.transition()
             .duration(transitionDuration)
-            .attr("cx", function (d) { return x(d.bioproject_id); })
-            .attr("cy", function (d) { return y(d.peptides); })
-            .attr("opacity", toggles.showGenome ? 1 : 0);
+            .attr("cx", function (d) { return pancoreX(d.bioproject_id); })
+            .attr("cy", function (d) { return pancoreY(d.peptides); })
+            .attr("opacity", pancoreToggles.showGenome ? 1 : 0);
         genomeDots.exit()
             .transition()
-                .attr("cy", height / 2)
-                .attr("cx", width)
+                .attr("cy", pancoreHeight / 2)
+                .attr("cx", pancoreWidth)
             .remove();
-        var panDots = graphData.selectAll(".dot.pan")
-            .data(visData, function (d) { return d.bioproject_id; });
+        var panDots = pancoreGraphArea.selectAll(".dot.pan")
+            .data(pancoreData, function (d) { return d.bioproject_id; });
         panDots.enter().append("circle")
             .attr("class", function (d) { return "dot pan _" + d.bioproject_id; })
             .attr("r", 5)
             .attr("fill", panColor)
-            .attr("cx", width);
+            .attr("cx", pancoreWidth);
         panDots.transition()
             .duration(transitionDuration)
-            .attr("cx", function (d) { return x(d.bioproject_id); })
-            .attr("cy", function (d) { return y(d.pan); })
-            .attr("opacity", toggles.showPan ? 1 : 0);
+            .attr("cx", function (d) { return pancoreX(d.bioproject_id); })
+            .attr("cy", function (d) { return pancoreY(d.pan); })
+            .attr("opacity", pancoreToggles.showPan ? 1 : 0);
         panDots.exit()
             .transition()
-                .attr("cy", height / 2)
-                .attr("cx", width)
+                .attr("cy", pancoreHeight / 2)
+                .attr("cx", pancoreWidth)
             .remove();
-        var coreDots = graphData.selectAll(".dot.core")
-            .data(visData, function (d) {return d.bioproject_id; });
+        var coreDots = pancoreGraphArea.selectAll(".dot.core")
+            .data(pancoreData, function (d) {return d.bioproject_id; });
         coreDots.enter().append("circle")
             .attr("class", function (d) { return "dot core _" + d.bioproject_id; })
             .attr("r", 5)
             .attr("fill", coreColor)
-            .attr("cx", width)
-            .attr("cy", y(0));
+            .attr("cx", pancoreWidth)
+            .attr("cy", pancoreY(0));
         coreDots.transition()
             .duration(transitionDuration)
-            .attr("cx", function (d) { return x(d.bioproject_id); })
-            .attr("cy", function (d) { return y(d.core); })
-            .attr("opacity", toggles.showCore ? 1 : 0);
+            .attr("cx", function (d) { return pancoreX(d.bioproject_id); })
+            .attr("cy", function (d) { return pancoreY(d.core); })
+            .attr("opacity", pancoreToggles.showCore ? 1 : 0);
         coreDots.exit()
             .transition()
-                .attr("cy", height / 2)
-                .attr("cx", width)
+                .attr("cy", pancoreHeight / 2)
+                .attr("cx", pancoreWidth)
             .remove();
-        var unicoreDots = graphData.selectAll(".dot.unicore")
-            .data(visData.filter(function (entry) {
+        var unicoreDots = pancoreGraphArea.selectAll(".dot.unicore")
+            .data(pancoreData.filter(function (entry) {
                 return entry.unicore != null;
             }), function (d) {return d.bioproject_id; });
         unicoreDots.enter().append("circle")
             .attr("class", function (d) { return "dot unicore _" + d.bioproject_id; })
             .attr("r", 5)
             .attr("fill", unicoreColor)
-            .attr("cx", width)
-            .attr("cy", y(0));
+            .attr("cx", pancoreWidth)
+            .attr("cy", pancoreY(0));
         unicoreDots.transition()
             .duration(transitionDuration)
-            .attr("cx", function (d) { return x(d.bioproject_id); })
-            .attr("cy", function (d) { return y(d.unicore); })
-            .attr("opacity", toggles.showUnicore ? 1 : 0);
+            .attr("cx", function (d) { return pancoreX(d.bioproject_id); })
+            .attr("cy", function (d) { return pancoreY(d.unicore); })
+            .attr("opacity", pancoreToggles.showUnicore ? 1 : 0);
         unicoreDots.exit()
             .transition()
-                .attr("cy", height / 2)
-                .attr("cx", width)
+                .attr("cy", pancoreHeight / 2)
+                .attr("cx", pancoreWidth)
             .remove();
 
         // update the lines
-        var dataCopy = visData.slice(0);
-        if (visData.length > 0) {
-            graphData.select(".line.pan").datum(dataCopy)
+        var dataCopy = pancoreData.slice(0);
+        if (pancoreData.length > 0) {
+            pancoreGraphArea.select(".line.pan").datum(dataCopy)
                 .style("visibility", "visible")
                 .transition()
                     .duration(transitionDuration)
                     .style("stroke", panColor)
-                    .attr("opacity", toggles.showPan ? 1 : 0)
+                    .attr("opacity", pancoreToggles.showPan ? 1 : 0)
                     .attr("d", panLine);
-            graphData.select(".line.core").datum(dataCopy)
+            pancoreGraphArea.select(".line.core").datum(dataCopy)
                 .style("visibility", "visible")
                 .transition()
                     .duration(transitionDuration)
                     .style("stroke", coreColor)
-                    .attr("opacity", toggles.showCore ? 1 : 0)
+                    .attr("opacity", pancoreToggles.showCore ? 1 : 0)
                     .attr("d", coreLine);
         } else {
             // hide the lines when there's no data
             // drawing them with no data results in JS errors
-            graphData.select(".line.pan").style("visibility", "hidden");
-            graphData.select(".line.core").style("visibility", "hidden");
+            pancoreGraphArea.select(".line.pan").style("visibility", "hidden");
+            pancoreGraphArea.select(".line.core").style("visibility", "hidden");
         }
-        if (visData.length > 0 && visData[0].unicore != null) {
-            graphData.select(".line.unicore").datum(dataCopy)
+        if (pancoreData.length > 0 && pancoreData[0].unicore != null) {
+            pancoreGraphArea.select(".line.unicore").datum(dataCopy)
                 .style("visibility", "visible")
                 .transition()
                     .duration(transitionDuration)
                     .style("stroke", unicoreColor)
-                    .attr("opacity", toggles.showUnicore ? 1 : 0)
+                    .attr("opacity", pancoreToggles.showUnicore ? 1 : 0)
                     .attr("d", unicoreLine);
         } else {
-            graphData.select(".line.unicore").style("visibility", "hidden");
+            pancoreGraphArea.select(".line.unicore").style("visibility", "hidden");
         }
 
         // update the mouseover rects
-        mouseOverWidth = (width / visData.length) / 1.5;
-        var bars = graphData.selectAll(".bar")
-            .data(visData, function (d) {return d.bioproject_id; });
+        pancoreMouseOverWidth = (pancoreWidth / pancoreData.length) / 1.5;
+        var bars = pancoreGraphArea.selectAll(".bar")
+            .data(pancoreData, function (d) {return d.bioproject_id; });
 
         bars.enter().append("polygon")
             .attr("class", "bar")
@@ -989,12 +990,12 @@ function init_pancore() {
             .duration(transitionDuration)
             .attr("points", function (d) {
                 var ret = "";
-                ret += (x(d.bioproject_id) - mouseOverWidth / 2) + ", " + (height + 15) + " ";
-                ret += (x(d.bioproject_id) - mouseOverWidth / 2) + ", 0 ";
-                ret += (x(d.bioproject_id) + mouseOverWidth / 2) + ", 0 ";
-                ret += (x(d.bioproject_id) + mouseOverWidth / 2) + ", " + (height + 15) + " ";
-                ret += (x(d.bioproject_id) + mouseOverWidth / 2 - (margin.bottom - 15)) + ", " + (height + margin.bottom) + " ";
-                ret += (x(d.bioproject_id) - mouseOverWidth / 2 - (margin.bottom -15)) + ", " + (height + margin.bottom) + " ";
+                ret += (pancoreX(d.bioproject_id) - pancoreMouseOverWidth / 2) + ", " + (pancoreHeight + 15) + " ";
+                ret += (pancoreX(d.bioproject_id) - pancoreMouseOverWidth / 2) + ", 0 ";
+                ret += (pancoreX(d.bioproject_id) + pancoreMouseOverWidth / 2) + ", 0 ";
+                ret += (pancoreX(d.bioproject_id) + pancoreMouseOverWidth / 2) + ", " + (pancoreHeight + 15) + " ";
+                ret += (pancoreX(d.bioproject_id) + pancoreMouseOverWidth / 2 - (pancoreMargin.bottom - 15)) + ", " + (pancoreHeight + pancoreMargin.bottom) + " ";
+                ret += (pancoreX(d.bioproject_id) - pancoreMouseOverWidth / 2 - (pancoreMargin.bottom -15)) + ", " + (pancoreHeight + pancoreMargin.bottom) + " ";
                 return ret;
             });
         bars.exit().remove();
@@ -1009,7 +1010,7 @@ function init_pancore() {
     function mouseClick(d) {
         d3.event.stopPropagation();
         var target = $(d3.event.target);
-        if (isClicked && clickId === d.bioproject_id) {
+        if (pancoreMouse.isClicked && pancoreMouse.clickId === d.bioproject_id) {
             removePopoversAndHighlights();
         } else {
             removePopoversAndHighlights();
@@ -1026,107 +1027,107 @@ function init_pancore() {
             target.attr("class", "bar pop");
             addPopoverBehaviour();
             // highlight new node
-            isClicked = true;
-            clickId = d.bioproject_id;
+            pancoreMouse.isClicked = true;
+            pancoreMouse.clickId = d.bioproject_id;
         }
     }
     // Shows the tooltip
     function mouseOver(d) {
-        if (isDragging) return;
-        if (isClicked && clickId === d.bioproject_id) return;
+        if (pancoreMouse.isDragging) return;
+        if (pancoreMouse.isClicked && pancoreMouse.clickId === d.bioproject_id) return;
         addHighlight(d);
         var tooltipHtml = "<b>" + tableData[d.bioproject_id].name + "</b><br/>" + getTooltipContent(d);
-        tooltip.html(tooltipHtml).style("visibility", "visible");
+        pancoreTooltip.html(tooltipHtml).style("visibility", "visible");
     }
     // Hides the tooltip
     function mouseOut(d) {
-        if (isDragging) return;
-        if (isClicked && clickId === d.bioproject_id) return;
+        if (pancoreMouse.isDragging) return;
+        if (pancoreMouse.isClicked && pancoreMouse.clickId === d.bioproject_id) return;
         removeHighlight(d.bioproject_id);
     }
     // Updates the position of the tooltip
     function mouseMove(d) {
-        if (isDragging) return;
+        if (pancoreMouse.isDragging) return;
         if (window.fullScreenApi.isFullScreen()) {
-            tooltip.style("top", (d3.event.clientY + 15) + "px").style("left", (d3.event.clientX + 15) + "px");
+            pancoreTooltip.style("top", (d3.event.clientY + 15) + "px").style("left", (d3.event.clientX + 15) + "px");
         } else {
-            tooltip.style("top", (d3.event.pageY + 15) + "px").style("left", (d3.event.pageX + 15) + "px");
+            pancoreTooltip.style("top", (d3.event.pageY + 15) + "px").style("left", (d3.event.pageX + 15) + "px");
         }
     }
     // Let the dragging begin!
     function dragStart(d) {
-        isDragging = true;
-        hasDragged = false;
-        dragId = d.bioproject_id;
-        dragging[d.bioproject_id] = this.__origin__ = x(d.bioproject_id);
+        pancoreMouse.isDragging = true;
+        pancoreMouse. hasDragged = false;
+        pancoreMouse.dragId = d.bioproject_id;
+        pancoreMouse.dragging[d.bioproject_id] = this.__origin__ = pancoreX(d.bioproject_id);
         d3.select("body").style("cursor", "url(/closedhand.cur) 7 5, move");
-        svg.selectAll(".bar").style("cursor", "url(/closedhand.cur) 7 5, move");
-        svg.select("#trash").transition().duration(transitionDuration).attr("transform", "translate(-84 0)");
+        pancoreSvg.selectAll(".bar").style("cursor", "url(/closedhand.cur) 7 5, move");
+        pancoreSvg.select("#trash").transition().duration(transitionDuration).attr("transform", "translate(-84 0)");
     }
     // Switches the position the nodes when it needs to
     function drag(d) {
-        hasDragged = true;
-        if (isClicked) {
+        pancoreMouse. hasDragged = true;
+        if (pancoreMouse.isClicked) {
             removePopovers();
-            if (clickId !== d.bioproject_id) {
-                removeHighlight(clickId);
+            if (pancoreMouse.clickId !== d.bioproject_id) {
+                removeHighlight(pancoreMouse.clickId);
             }
         }
         removeTooltip();
-        dragging[d.bioproject_id] = Math.min(width, Math.max(0, this.__origin__ += d3.event.dx));
-        var oldData = visData.slice(0);
-        visData.sort(function (a, b) { return position(a) - position(b); });
+        pancoreMouse.dragging[d.bioproject_id] = Math.min(pancoreWidth, Math.max(0, this.__origin__ += d3.event.dx));
+        var oldData = pancoreData.slice(0);
+        pancoreData.sort(function (a, b) { return position(a) - position(b); });
         // If some position is swapped, redraw some stuff
-        if (isChanged(oldData, visData)) {
-            x.domain(visData.map(function (d) { return d.bioproject_id; }));
-            svg.selectAll(".bar").attr("x", function (d) { return x(d.bioproject_id) - mouseOverWidth / 2; });
-            svg.selectAll(".dot:not(._" + d.bioproject_id + ")").transition()
+        if (isChanged(oldData, pancoreData)) {
+            pancoreX.domain(pancoreData.map(function (d) { return d.bioproject_id; }));
+            pancoreSvg.selectAll(".bar").attr("x", function (d) { return pancoreX(d.bioproject_id) - pancoreMouseOverWidth / 2; });
+            pancoreSvg.selectAll(".dot:not(._" + d.bioproject_id + ")").transition()
                 .duration(transitionDuration)
-                .attr("cx", function (d) { return x(d.bioproject_id); });
-            svg.select(".x.axis").transition()
+                .attr("cx", function (d) { return pancoreX(d.bioproject_id); });
+            pancoreSvg.select(".x.axis").transition()
                 .duration(transitionDuration)
                 .call(xAxis);
-            svg.selectAll(".x.axis text").style("text-anchor", "end");
-            svg.selectAll(".line").transition()
+            pancoreSvg.selectAll(".x.axis text").style("text-anchor", "end");
+            pancoreSvg.selectAll(".line").transition()
                 .duration(transitionDuration)
                 .style("stroke", "#cccccc");
         }
         // Update the position of the drag box and dots
-        d3.select(this).attr("x", dragging[d.bioproject_id] - mouseOverWidth / 2);
-        svg.selectAll(".dot._" + d.bioproject_id).attr("cx", dragging[d.bioproject_id]);
+        d3.select(this).attr("x", pancoreMouse.dragging[d.bioproject_id] - pancoreMouseOverWidth / 2);
+        pancoreSvg.selectAll(".dot._" + d.bioproject_id).attr("cx", pancoreMouse.dragging[d.bioproject_id]);
     }
     // Recalculates the position of all genomes and update the graph or
     // removes the genome when dropped on the trash can
     function dragEnd(d) {
         delete this.__origin__;
-        delete dragging[d.bioproject_id];
+        delete pancoreMouse.dragging[d.bioproject_id];
         d3.select("body").style("cursor", "auto");
-        svg.selectAll(".bar").style("cursor", "url(/openhand.cur) 7 5, move");
-        svg.select("#trash").transition()
-            .delay(onTrash ? transitionDuration : 0)
+        pancoreSvg.selectAll(".bar").style("cursor", "url(/openhand.cur) 7 5, move");
+        pancoreSvg.select("#trash").transition()
+            .delay(pancoreMouse.onTrash ? transitionDuration : 0)
             .duration(transitionDuration)
             .attr("transform", "translate(0 0)")
             .attr("fill", "#cccccc");
-        svg.select("#trash circle").transition()
-            .delay(onTrash ? transitionDuration : 0)
+        pancoreSvg.select("#trash circle").transition()
+            .delay(pancoreMouse.onTrash ? transitionDuration : 0)
             .duration(transitionDuration)
             .attr("stroke", "#cccccc");
-        if (onTrash) {
+        if (pancoreMouse.onTrash) {
             removeData(d);
         } else {
             // If we always update the graph, the click event never registers
             // in Chrome due to DOM reordering of the bars.
-            if (hasDragged) {
+            if (pancoreMouse. hasDragged) {
                 updateGraph();
                 var r = calculateTablePositionsFromGraph();
                 updateTable();
                 sendToWorker("recalculatePanCore", {"order" : r.order, "start" : r.start, "stop" : r.stop});
             }
         }
-        isDragging = false;
+        pancoreMouse.isDragging = false;
     }
     function legendClick(d) {
-        toggles[d.toggle] = !toggles[d.toggle];
+        pancoreToggles[d.toggle] = !pancoreToggles[d.toggle];
         updateGraph();
     }
 
@@ -1139,60 +1140,60 @@ function init_pancore() {
     function removePopovers() {
         $(".bar.pop").popover("destroy");
         $(".bar.pop").attr("class", "bar");
-        isClicked = false;
+        pancoreMouse.isClicked = false;
     }
     function addHighlight(d) {
         // add dropshadow to the dot and axis text
-        svg.selectAll(".dot._" + d.bioproject_id).attr("filter", "url(#dropshadow)").attr("r", 6);
-        svg.selectAll(".tick._" + d.bioproject_id + " text").style("font-weight", "bold");
+        pancoreSvg.selectAll(".dot._" + d.bioproject_id).attr("filter", "url(#dropshadow)").attr("r", 6);
+        pancoreSvg.selectAll(".tick._" + d.bioproject_id + " text").style("font-weight", "bold");
 
-        if (toggles.showGenome) {
-            svg.select(".axisline.genome")
-                .attr("y1", y(d.peptides))
-                .attr("y2", y(d.peptides))
+        if (pancoreToggles.showGenome) {
+            pancoreSvg.select(".axisline.genome")
+                .attr("y1", pancoreY(d.peptides))
+                .attr("y2", pancoreY(d.peptides))
                 .style("visibility", "visible");
         }
-        if (toggles.showPan) {
-            svg.select(".axisline.pan")
-                .attr("y1", y(d.pan))
-                .attr("y2", y(d.pan))
+        if (pancoreToggles.showPan) {
+            pancoreSvg.select(".axisline.pan")
+                .attr("y1", pancoreY(d.pan))
+                .attr("y2", pancoreY(d.pan))
                 .style("visibility", "visible");
         }
-        if (toggles.showCore) {
-            svg.select(".axisline.core")
-                .attr("y1", y(d.core))
-                .attr("y2", y(d.core))
+        if (pancoreToggles.showCore) {
+            pancoreSvg.select(".axisline.core")
+                .attr("y1", pancoreY(d.core))
+                .attr("y2", pancoreY(d.core))
                 .style("visibility", "visible");
         }
-        if (d.unicore != null && toggles.showUnicore) {
-            svg.select(".axisline.unicore")
-                .attr("y1", y(d.unicore))
-                .attr("y2", y(d.unicore))
+        if (d.unicore != null && pancoreToggles.showUnicore) {
+            pancoreSvg.select(".axisline.unicore")
+                .attr("y1", pancoreY(d.unicore))
+                .attr("y2", pancoreY(d.unicore))
                 .style("visibility", "visible");
         }
     }
     function removeHighlight(bioproject_id) {
-        svg.selectAll(".dot._" + bioproject_id).attr("filter", "").attr("r", 5);
-        svg.selectAll(".tick._" + bioproject_id + " text").style("font-weight", "normal");
-        svg.selectAll(".axisline").style("visibility", "hidden");
-        tooltip.style("visibility", "hidden");
+        pancoreSvg.selectAll(".dot._" + bioproject_id).attr("filter", "").attr("r", 5);
+        pancoreSvg.selectAll(".tick._" + bioproject_id + " text").style("font-weight", "normal");
+        pancoreSvg.selectAll(".axisline").style("visibility", "hidden");
+        pancoreTooltip.style("visibility", "hidden");
     }
     function removeAllHighlights() {
-        svg.selectAll(".dot").attr("filter", "").attr("r", 5);
-        svg.selectAll(".tick text").style("font-weight", "normal");
-        svg.selectAll(".axisline").style("visibility", "hidden");
-        tooltip.style("visibility", "hidden");
+        pancoreSvg.selectAll(".dot").attr("filter", "").attr("r", 5);
+        pancoreSvg.selectAll(".tick text").style("font-weight", "normal");
+        pancoreSvg.selectAll(".axisline").style("visibility", "hidden");
+        pancoreTooltip.style("visibility", "hidden");
     }
     function removeTooltip() {
-        tooltip.style("visibility", "hidden");
+        pancoreTooltip.style("visibility", "hidden");
     }
     function getTooltipContent(d) {
         var tooltipHtml = "<span style='color: " + genomeColor + ";'>&#9632;</span> genome size: <b>" + d3.format(",")(d.peptides) + "</b><br/>";
-        if (toggles.showPan)
+        if (pancoreToggles.showPan)
             tooltipHtml += "<span style='color: " + panColor + ";'>&#9632;</span> pan peptides: <b>" + d3.format(",")(d.pan) + "</b><br/>";
-        if (toggles.showCore)
+        if (pancoreToggles.showCore)
             tooltipHtml += "<span style='color: " + coreColor + ";'>&#9632;</span> core peptides: <b>" + d3.format(",")(d.core) + "</b>";
-        if (d.unicore != null && toggles.showUnicore) {
+        if (d.unicore != null && pancoreToggles.showUnicore) {
             tooltipHtml += "<br/><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptides: <b>" + d3.format(",")(d.unicore) + "</b>";
         }
         return tooltipHtml;
@@ -1246,8 +1247,8 @@ function init_pancore() {
         $("#download-peptides-toggle").button('reset');
     }
     function position(d) {
-        var v = dragging[d.bioproject_id];
-        return v == null ? x(d.bioproject_id) : v;
+        var v = pancoreMouse.dragging[d.bioproject_id];
+        return v == null ? pancoreX(d.bioproject_id) : v;
     }
     function isChanged(oldData, newData) {
         var i;
@@ -1262,37 +1263,37 @@ function init_pancore() {
         return false;
     }
     function trashMouseOver() {
-        onTrash = true;
-        if (!isDragging) return;
-        svg.select("#trash").transition()
+        pancoreMouse.onTrash = true;
+        if (!pancoreMouse.isDragging) return;
+        pancoreSvg.select("#trash").transition()
             .duration(transitionDuration / 2)
             .attr("fill", "#333333");
-        svg.select("#trash circle").transition()
+        pancoreSvg.select("#trash circle").transition()
             .duration(transitionDuration / 2)
             .attr("stroke", "#d6616b");
-        svg.selectAll(".dot._" + dragId).transition()
+        pancoreSvg.selectAll(".dot._" + pancoreMouse.dragId).transition()
             .duration(transitionDuration / 2)
             .attr("fill", "#d6616b");
     }
     function trashMouseOut() {
-        onTrash = false;
-        if (!isDragging) return;
-        svg.select("#trash").transition()
+        pancoreMouse.onTrash = false;
+        if (!pancoreMouse.isDragging) return;
+        pancoreSvg.select("#trash").transition()
             .duration(transitionDuration)
             .attr("fill", "#cccccc");
-        svg.select("#trash circle").transition()
+        pancoreSvg.select("#trash circle").transition()
             .duration(transitionDuration)
             .attr("stroke", "#cccccc");
-        svg.selectAll(".dot.genome._" + dragId).transition()
+        pancoreSvg.selectAll(".dot.genome._" + pancoreMouse.dragId).transition()
             .duration(transitionDuration)
             .attr("fill", genomeColor);
-        svg.selectAll(".dot.pan._" + dragId).transition()
+        pancoreSvg.selectAll(".dot.pan._" + pancoreMouse.dragId).transition()
             .duration(transitionDuration)
             .attr("fill", panColor);
-        svg.selectAll(".dot.core._" + dragId).transition()
+        pancoreSvg.selectAll(".dot.core._" + pancoreMouse.dragId).transition()
             .duration(transitionDuration)
             .attr("fill", coreColor);
-        svg.selectAll(".dot.unicore._" + dragId).transition()
+        pancoreSvg.selectAll(".dot.unicore._" + pancoreMouse.dragId).transition()
             .duration(transitionDuration)
             .attr("fill", unicoreColor);
     }
@@ -1302,25 +1303,25 @@ function init_pancore() {
     function getMaxVisibleDatapoint() {
         var max = 0,
             i;
-        if (visData.length === 0) {
+        if (pancoreData.length === 0) {
             return 0;
         }
-        if (toggles.showPan) {
-            return visData[visData.length - 1].pan;
+        if (pancoreToggles.showPan) {
+            return pancoreData[pancoreData.length - 1].pan;
         }
-        if (toggles.showGenome) {
-            for (i = 0; i < visData.length; i++) {
-                if (visData[i].peptides > max) {
-                    max = visData[i].peptides;
+        if (pancoreToggles.showGenome) {
+            for (i = 0; i < pancoreData.length; i++) {
+                if (pancoreData[i].peptides > max) {
+                    max = pancoreData[i].peptides;
                 }
             }
             return max * 1.3;
         }
-        if (toggles.showCore) {
-            return visData[0].core * 1.3;
+        if (pancoreToggles.showCore) {
+            return pancoreData[0].core * 1.3;
         }
-        if (toggles.showUnicore) {
-            return visData[0].unicore * 1.3;
+        if (pancoreToggles.showUnicore) {
+            return pancoreData[0].unicore * 1.3;
         }
         return 0;
     }
