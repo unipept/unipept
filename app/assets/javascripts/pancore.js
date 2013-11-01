@@ -19,7 +19,7 @@ function init_selection_tree(data, taxa) {
         .key(function (d) { return d.species_id; }).sortKeys(function (a, b) { return d3.ascending(taxa[a], taxa[b]); })
         .entries(data);
     calculateNumOfChildren(data);
-    delete(data.children);
+    delete data.children;
 
     // Add the nested unordered lists to the page based on the data array
     var tree = d3.select("#treeView");
@@ -203,7 +203,7 @@ function init_graphs() {
     var pancoreMouse = {};
     pancoreMouse.dragging = {};
     pancoreMouse.isDragging = false;
-    pancoreMouse. hasDragged = false;
+    pancoreMouse.hasDragged = false;
     pancoreMouse.onTrash = false;
     pancoreMouse.dragId;
     pancoreMouse.isClicked = false;
@@ -261,7 +261,7 @@ function init_graphs() {
             addData(data.msg.data, data.msg.rank);
             break;
         case 'setPancoreData':
-            setpancoreData(data.msg.data, data.msg.lca, data.msg.rank);
+            setPancoreData(data.msg.data, data.msg.lca, data.msg.rank);
             break;
         case 'sequencesDownloaded':
             returnPopoverSequences(data.msg.sequences, data.msg.type);
@@ -270,7 +270,7 @@ function init_graphs() {
             showMatrix(data.msg.genomes, data.msg.sim_matrix, data.msg.order);
             break;
         case 'newOrder':
-            reorder(data.msg);
+            reorderMatrix(data.msg);
             break;
         default:
             console.log(data.msg);
@@ -405,7 +405,7 @@ function init_graphs() {
     });
 
     // Draw the graph
-    redrawGraph();
+    redrawPancore();
 
     // Load sample data
     $("#species_id").val(470);
@@ -434,11 +434,10 @@ function init_graphs() {
 
     function showMatrix(genomes, data, order) {
         $('#sim_matrix').empty();
-        init_sim_matrix(genomes, data, order);
-
+        redrawMatrix(genomes, data, order);
     }
 
-    // Initial method for adding genomes to the graph
+    // Initial method for adding genomes
     // genomes should be an array of bioproject id's
     // the table is updated to represent the loading status
     // the command is given to the worker to download the peptide id's
@@ -508,7 +507,7 @@ function init_graphs() {
     }
 
     // Replaces all the visualized data and updates graph and table
-    function setpancoreData(data, l, request_rank) {
+    function setPancoreData(data, l, request_rank) {
         var i,
             bioproject_id;
         if (rank !== request_rank) return;
@@ -521,7 +520,7 @@ function init_graphs() {
                 tableData[bioproject_id].position = i;
             }
         }
-        updateGraph();
+        updatePancore();
         updateTable();
     }
 
@@ -539,7 +538,7 @@ function init_graphs() {
         tableData = {};
         lca = "";
         removePopoversAndHighlights();
-        updateGraph();
+        updatePancore();
         clearTable();
     }
 
@@ -569,7 +568,7 @@ function init_graphs() {
                 if (toLoad === 0) {
                     setLoading(false);
                 }
-                updateGraph();
+                updatePancore();
                 updateTable();
             }
             setTimeout(function () { mayStartAnimation = true; }, transitionDuration);
@@ -676,7 +675,7 @@ function init_graphs() {
     }
 
     // Redraws the full D3 graph
-    function redrawGraph() {
+    function redrawPancore() {
         // erase everything
         $("#pancore_graph svg").remove();
         $("#pancore_graph div.tip").remove();
@@ -827,7 +826,7 @@ function init_graphs() {
     }
 
     // Updates the D3 graph
-    function updateGraph() {
+    function updatePancore() {
         // Prepare for line transition
         var oldPanDatum = pancoreSvg.select(".line.pan").datum(),
             oldCoreDatum = pancoreSvg.select(".line.core").datum();
@@ -1057,7 +1056,7 @@ function init_graphs() {
     // Let the dragging begin!
     function dragStart(d) {
         pancoreMouse.isDragging = true;
-        pancoreMouse. hasDragged = false;
+        pancoreMouse.hasDragged = false;
         pancoreMouse.dragId = d.bioproject_id;
         pancoreMouse.dragging[d.bioproject_id] = this.__origin__ = pancoreX(d.bioproject_id);
         d3.select("body").style("cursor", "url(/closedhand.cur) 7 5, move");
@@ -1066,7 +1065,7 @@ function init_graphs() {
     }
     // Switches the position the nodes when it needs to
     function drag(d) {
-        pancoreMouse. hasDragged = true;
+        pancoreMouse.hasDragged = true;
         if (pancoreMouse.isClicked) {
             removePopovers();
             if (pancoreMouse.clickId !== d.bioproject_id) {
@@ -1117,8 +1116,8 @@ function init_graphs() {
         } else {
             // If we always update the graph, the click event never registers
             // in Chrome due to DOM reordering of the bars.
-            if (pancoreMouse. hasDragged) {
-                updateGraph();
+            if (pancoreMouse.hasDragged) {
+                updatePancore();
                 var r = calculateTablePositionsFromGraph();
                 updateTable();
                 sendToWorker("recalculatePanCore", {"order" : r.order, "start" : r.start, "stop" : r.stop});
@@ -1128,7 +1127,7 @@ function init_graphs() {
     }
     function legendClick(d) {
         pancoreToggles[d.toggle] = !pancoreToggles[d.toggle];
-        updateGraph();
+        updatePancore();
     }
 
     // MOUSE EVENT HELPER FUNCTIONS
@@ -1326,7 +1325,7 @@ function init_graphs() {
         return 0;
     }
 
-    function reorder(newOrder) {
+    function reorderMatrix(newOrder) {
         var width = 500;
 
         var svg = d3.select("#sim_matrix");
@@ -1348,7 +1347,7 @@ function init_graphs() {
             .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
     }
 
-    function init_sim_matrix(genomes, data, order){
+    function redrawMatrix(genomes, data, order){
         var margin = {top: 200, right: 0, bottom: 10, left: 200},
             width = 500,
             height = 500;
