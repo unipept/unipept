@@ -164,8 +164,7 @@ function init_pancore() {
         genomeColor = "#d9d9d9",  // gray
         panColor = "#1f77b4",     // blue
         coreColor = "#ff7f0e",    // orange
-        unicoreColor = "#2ca02c", // green
-        unicore2Color = "#98df8a";// light green
+        unicoreColor = "#2ca02c"; // green
 
     // Sizes
     var margin = {top: 20, right: 40, bottom: 170, left: 60},
@@ -180,8 +179,7 @@ function init_pancore() {
         legendData = [{"name": "genome size", "color": genomeColor, "toggle": "showGenome"},
             {"name": "pan peptidome", "color": panColor, "toggle": "showPan"},
             {"name": "core peptidome", "color": coreColor, "toggle": "showCore"},
-            {"name": "unique peptides", "color": unicoreColor, "toggle": "showUnicore"}
-            /*{"name": "unique genome peptides", "color": unicore2Color}*/],
+            {"name": "unique peptides", "color": unicoreColor, "toggle": "showUnicore"}],
         lca = "";
 
     // the Javascript Worker for background data processing
@@ -208,7 +206,6 @@ function init_pancore() {
     toggles.showPan = true;
     toggles.showCore = true;
     toggles.showUnicore = true;
-    toggles.showUnicore2 = false;
 
     // Load vars
     var dataQueue = [],
@@ -244,10 +241,6 @@ function init_pancore() {
         .interpolate("linear")
         .x(function (d) { return x(d.bioproject_id); })
         .y(function (d) { return y(d.unicore); });
-    var unicore2Line = d3.svg.line()
-        .interpolate("linear")
-        .x(function (d) { return x(d.bioproject_id); })
-        .y(function (d) { return y(d.unicore2); });
 
     // Add eventhandlers to the worker
     worker.addEventListener('message', function (e) {
@@ -486,8 +479,7 @@ function init_pancore() {
             $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", false);
 
             // REMOVE THIS LINE
-            sendToWorker("getUniqueSequences", {"type" : "uniprot"});
-            //sendToWorker("getUniqueSequences", {"lca" : currentSpeciesId, "type" : "genome"});
+            sendToWorker("getUniqueSequences");
         }
     }
 
@@ -781,11 +773,6 @@ function init_pancore() {
             .attr("class", "line unicore")
             .style("stroke", unicoreColor)
             .attr("d", unicoreLine);
-        graphData.append("path")
-            .datum(visData)
-            .attr("class", "line unicore2")
-            .style("stroke", unicore2Color)
-            .attr("d", unicore2Line);
         graphData.selectAll("path.line")
             .style("stroke-width", 2)
             .style("fill", "none");
@@ -803,9 +790,6 @@ function init_pancore() {
         svg.insert("line")
             .attr("class", "axisline unicore")
             .attr("stroke", unicoreColor);
-        svg.insert("line")
-            .attr("class", "axisline unicore2")
-            .attr("stroke", unicore2Color);
         svg.selectAll("line.axisline")
             .attr("stroke-width", "2")
             .attr("x1", "6")
@@ -949,26 +933,6 @@ function init_pancore() {
                 .attr("cy", height / 2)
                 .attr("cx", width)
             .remove();
-        var unicore2Dots = graphData.selectAll(".dot.unicore2")
-            .data(visData.filter(function (entry) {
-                return entry.unicore2 != null;
-            }), function (d) {return d.bioproject_id; });
-        unicore2Dots.enter().append("circle")
-            .attr("class", function (d) { return "dot unicore2 _" + d.bioproject_id; })
-            .attr("r", 5)
-            .attr("fill", unicore2Color)
-            .attr("cx", width)
-            .attr("cy", y(0));
-        unicore2Dots.transition()
-            .duration(transitionDuration)
-            .attr("cx", function (d) { return x(d.bioproject_id); })
-            .attr("cy", function (d) { return y(d.unicore2); })
-            .attr("opacity", toggles.showUnicore2 ? 1 : 0);
-        unicore2Dots.exit()
-            .transition()
-                .attr("cy", height / 2)
-                .attr("cx", width)
-            .remove();
 
         // update the lines
         var dataCopy = visData.slice(0);
@@ -1003,17 +967,6 @@ function init_pancore() {
                     .attr("d", unicoreLine);
         } else {
             graphData.select(".line.unicore").style("visibility", "hidden");
-        }
-        if (visData.length > 0 && visData[0].unicore2 != null) {
-            graphData.select(".line.unicore2").datum(dataCopy)
-                .style("visibility", "visible")
-                .transition()
-                    .duration(transitionDuration)
-                    .style("stroke", unicore2Color)
-                    .attr("opacity", toggles.showUnicore2 ? 1 : 0)
-                    .attr("d", unicore2Line);
-        } else {
-            graphData.select(".line.unicore2").style("visibility", "hidden");
         }
 
         // update the mouseover rects
@@ -1217,12 +1170,6 @@ function init_pancore() {
                 .attr("y2", y(d.unicore))
                 .style("visibility", "visible");
         }
-        if (d.unicore2 != null && toggles.showUnicore2) {
-            svg.select(".axisline.unicore2")
-                .attr("y1", y(d.unicore2))
-                .attr("y2", y(d.unicore2))
-                .style("visibility", "visible");
-        }
     }
     function removeHighlight(bioproject_id) {
         svg.selectAll(".dot._" + bioproject_id).attr("filter", "").attr("r", 5);
@@ -1247,9 +1194,6 @@ function init_pancore() {
             tooltipHtml += "<span style='color: " + coreColor + ";'>&#9632;</span> core peptides: <b>" + d3.format(",")(d.core) + "</b>";
         if (d.unicore != null && toggles.showUnicore) {
             tooltipHtml += "<br/><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptides: <b>" + d3.format(",")(d.unicore) + "</b>";
-        }
-        if (d.unicore2 != null && toggles.showUnicore2) {
-            tooltipHtml += "<br/><span style='color: " + unicore2Color + ";'>&#9632;</span> unique genome peptides: <b>" + d3.format(",")(d.unicore2) + "</b>";
         }
         return tooltipHtml;
     }
@@ -1351,9 +1295,6 @@ function init_pancore() {
         svg.selectAll(".dot.unicore._" + dragId).transition()
             .duration(transitionDuration)
             .attr("fill", unicoreColor);
-        svg.selectAll(".dot.unicore2._" + dragId).transition()
-            .duration(transitionDuration)
-            .attr("fill", unicore2Color);
     }
 
     // GENERAL HELPER FUNCTIONS
@@ -1377,9 +1318,6 @@ function init_pancore() {
         }
         if (toggles.showCore) {
             return visData[0].core * 1.3;
-        }
-        if (toggles.showUnicore2) {
-            return visData[0].unicore2 * 1.3;
         }
         if (toggles.showUnicore) {
             return visData[0].unicore * 1.3;

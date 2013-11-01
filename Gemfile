@@ -23,9 +23,6 @@ gem 'oj'
 # imagemagick bindings
 gem 'rmagick', '2.13.2'
 
-# new relic stuff
-gem 'newrelic_rpm'
-
 # do HTTP requests
 gem 'httparty'
 

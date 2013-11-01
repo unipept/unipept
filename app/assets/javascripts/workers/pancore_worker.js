@@ -30,7 +30,7 @@ self.addEventListener('message', function (e) {
         recalculatePanCore(data.msg.order, data.msg.start, data.msg.stop);
         break;
     case 'getUniqueSequences':
-        getUniqueSequences(data.msg.type);
+        getUniqueSequences();
         break;
     case 'autoSort':
         autoSort(data.msg.type);
@@ -112,7 +112,7 @@ function removeData(bioproject_id, newOrder, start) {
     unicorePresent = false;
     unicores = [];
     recalculatePanCore(newOrder, start, l - 2);
-    getUniqueSequences("uniprot");
+    getUniqueSequences();
     calculateSimilarity();
 }
 
@@ -127,7 +127,7 @@ function recalculatePanCore(newOrder, start, stop) {
     if (start === 0) {
         unicorePresent = false;
         unicores = [];
-        getUniqueSequences("uniprot");
+        getUniqueSequences();
     }
     for (i = start; i <= stop; i++) {
         set = data[order[i]].peptide_list;
@@ -256,26 +256,22 @@ function autoSort(type) {
 }
 
 // Retrieves the unique sequences
-function getUniqueSequences(type) {
+function getUniqueSequences() {
     if (order.length > 0) {
         var s = data[order[0]].peptide_list;
-        getJSONByPost("/pancore/unique_sequences/", "type=" + type + "&bioprojects=" + order + "&sequences=[" + s + "]", function (d) {
+        getJSONByPost("/pancore/unique_sequences/", "type=uniprot&bioprojects=" + order + "&sequences=[" + s + "]", function (d) {
             lca = d[0];
-            calculateUnicore(d[1], type);
+            calculateUnicore(d[1]);
         });
     }
 }
 
 // Calculates the unique peptides data
-function calculateUnicore(ud, type) {
+function calculateUnicore(ud) {
     var i;
     unicorePresent = true;
-    if (type === "uniprot") {
-        unicoreData = ud;
-        unicores[0] = unicoreData;
-    } else {
-        sendToHost("log", "unknown type: " + type);
-    }
+    unicoreData = ud;
+    unicores[0] = unicoreData;
     for (i = 1; i < order.length; i++) {
         unicores[i] = intersection(unicores[i - 1], data[order[i]].peptide_list);
     }
