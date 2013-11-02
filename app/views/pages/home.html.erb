@@ -24,7 +24,7 @@
     <div class="col-xs-4">
         <a href="<%= search_single_path %>">
             <div class="thumbnail">
-                <img src="/assets/home_feature_single.png" alt="Single Peptide Analysis">
+                <img src="<%= asset_path('home_feature_single.png') %>" alt="Single Peptide Analysis">
                 <div class="caption title">
                     <h3>Single Peptide Analysis</h3>
                 </div>
@@ -37,7 +37,7 @@
     <div class="col-xs-4">
         <a href="<%= datasets_path %>">
             <div class="thumbnail">
-                <object data="/assets/home_feature_multi.svg" type="image/svg+xml"></object>
+                <object data="<%= asset_path('home_feature_multi.svg') %>" type="image/svg+xml"></object>
                 <div class="click-catcher"></div>
                 <div class="caption title">
                     <h3>Multi-peptide Analysis</h3>
@@ -51,7 +51,7 @@
     <div class="col-xs-4">
         <a href="<%= pancore_analyze_path %>">
             <div class="thumbnail">
-                <object data="/assets/home_feature_pancore.svg" type="image/svg+xml"></object>
+                <object data="<%= asset_path('home_feature_pancore.svg') %>" type="image/svg+xml"></object>
                 <div class="click-catcher"></div>
                 <div class="caption title">
                     <h3>Unique Peptide Finder</h3>
