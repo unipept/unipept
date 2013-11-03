@@ -4,7 +4,16 @@ function init_multi(data, data2, equate_il) {
         // Track the download button
         _gaq.push(['_trackEvent', 'Multi Peptide', 'Export']);
 
+        var nonce = Math.random();
+        $("#nonce").val(nonce);
         $("#downloadDataset").button('loading');
+        var downloadTimer = setInterval(function () {
+            var parts = document.cookie.split("nonce=");
+            if (parts.length == 2 && parts.pop().split(";").shift() == nonce) {
+                $("#downloadDataset").button('reset');
+                clearInterval(downloadTimer);
+            }
+        }, 1000);
         return true;
     });
 
