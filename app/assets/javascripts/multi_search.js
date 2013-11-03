@@ -8,8 +8,7 @@ function init_multi(data, data2, equate_il) {
         $("#nonce").val(nonce);
         $("#downloadDataset").button('loading');
         var downloadTimer = setInterval(function () {
-            var parts = document.cookie.split("nonce=");
-            if (parts.length == 2 && parts.pop().split(";").shift() == nonce) {
+            if (document.cookie.indexOf(nonce) != -1) {
                 $("#downloadDataset").button('reset');
                 clearInterval(downloadTimer);
             }
