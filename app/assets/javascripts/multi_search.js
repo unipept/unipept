@@ -297,6 +297,8 @@ function initSunburst(data) {
     var div = d3.select("#sunburst");
 
     var vis = div.append("svg")
+        .attr("version", "1.1")
+        .attr("xmlns", "http://www.w3.org/2000/svg")
         .attr("viewBox", "0 0 740 740")
         .attr("width", w + p * 2)
         .attr("height", h + p * 2)

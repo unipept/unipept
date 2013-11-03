@@ -640,6 +640,8 @@ function init_pancore() {
         // create the svg
         svg = d3.select("#pancore_graph")
           .append("svg")
+            .attr("version", "1.1")
+            .attr("xmlns", "http://www.w3.org/2000/svg")
             .attr("viewBox", "0 0 " + fullWidth + " " + fullHeight)
             .attr("width", fullWidth)
             .attr("height", fullHeight)
