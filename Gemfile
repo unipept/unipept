@@ -8,7 +8,7 @@ gem 'mysql2'
 gem 'will_paginate', '3.0'
 
 # jquery
-gem 'jquery-rails'
+gem 'jquery-rails', "~> 2.3.0"
 
 # cas auth
 gem 'rubycas-client', :git => 'git://github.com/bmesuere/rubycas-client.git', :branch => 'master'
