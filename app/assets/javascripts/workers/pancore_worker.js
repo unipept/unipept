@@ -105,6 +105,7 @@ function addData(bioproject_id, name, set, request_rank) {
 // Removes a genomes from the data
 function removeData(bioproject_id, newOrder, start) {
     var l = pans.length;
+    var i = order.indexOf(bioproject_id);
     delete data[bioproject_id];
     pans.splice(l - 1, 1);
     cores.splice(l - 1, 1);
@@ -113,7 +114,23 @@ function removeData(bioproject_id, newOrder, start) {
     unicores = [];
     recalculatePanCore(newOrder, start, l - 2);
     getUniqueSequences();
-    calculateSimilarity();
+
+
+    // Update the matrix without calculating everything again
+    // TODO: move this into a generic method
+    var names = [];
+
+    for (x = 0; x < newOrder.length; x++) {
+        var bioproject_id = newOrder[x];
+        names.push(data[bioproject_id].name);
+    }
+
+    var length = sim_matrix.length;
+    for(var x = 0; x < length; x++) {
+        sim_matrix[x].splice(i, 1);
+    }
+    sim_matrix.splice(i, 1);
+    sendToHost('sim_matrix', {'genomes': names, 'sim_matrix': sim_matrix, 'order': newOrder});
 }
 
 // Recalculates the pan and core data based on a
