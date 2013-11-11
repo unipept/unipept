@@ -1040,26 +1040,7 @@ function init_pancore() {
         }
         removeTooltip();
         dragging[d.bioproject_id] = Math.min(width, Math.max(0, this.__origin__ += d3.event.dx));
-        var oldData = visData.slice(0);
-        visData.sort(function (a, b) { return position(a) - position(b); });
-        // If some position is swapped, redraw some stuff
-        if (isChanged(oldData, visData)) {
-            x.domain(visData.map(function (d) { return d.bioproject_id; }));
-            svg.selectAll(".bar").attr("x", function (d) { return x(d.bioproject_id) - mouseOverWidth / 2; });
-            svg.selectAll(".dot:not(._" + d.bioproject_id + ")").transition()
-                .duration(transitionDuration)
-                .attr("cx", function (d) { return x(d.bioproject_id); });
-            svg.select(".x.axis").transition()
-                .duration(transitionDuration)
-                .call(xAxis);
-            svg.selectAll(".x.axis text").style("text-anchor", "end");
-            svg.selectAll(".line").transition()
-                .duration(transitionDuration)
-                .style("stroke", "#cccccc");
-        }
-        // Update the position of the drag box and dots
-        d3.select(this).attr("x", dragging[d.bioproject_id] - mouseOverWidth / 2);
-        svg.selectAll(".dot._" + d.bioproject_id).attr("cx", dragging[d.bioproject_id]);
+        requestAnimFrame(moveDrag);
     }
     // Recalculates the position of all genomes and update the graph or
     // removes the genome when dropped on the trash can
@@ -1267,6 +1248,29 @@ function init_pancore() {
     function moveTooltip() {
         tooltip.style("-webkit-transform", "translate3d(" + tooltipX + "px, " + tooltipY + "px, 0)");
         tooltip.style("transform", "translate3d(" + tooltipX + "px, " + tooltipY + "px, 0)");
+    }
+
+    function moveDrag() {
+        var oldData = visData.slice(0);
+        visData.sort(function (a, b) { return position(a) - position(b); });
+        // If some position is swapped, redraw some stuff
+        if (isChanged(oldData, visData)) {
+            x.domain(visData.map(function (d) { return d.bioproject_id; }));
+            svg.selectAll(".bar").attr("x", function (d) { return x(d.bioproject_id) - mouseOverWidth / 2; });
+            svg.selectAll(".dot:not(._" + dragId + ")").transition()
+                .duration(transitionDuration)
+                .attr("cx", function (d) { return x(d.bioproject_id); });
+            svg.select(".x.axis").transition()
+                .duration(transitionDuration)
+                .call(xAxis);
+            svg.selectAll(".x.axis text").style("text-anchor", "end");
+            svg.selectAll(".line").transition()
+                .duration(transitionDuration)
+                .style("stroke", "#cccccc");
+        }
+        // Update the position of the drag box and dots
+        svg.selectAll(".bar._" + dragId).attr("x", dragging[dragId] - mouseOverWidth / 2);
+        svg.selectAll(".dot._" + dragId).attr("cx", dragging[dragId]);
     }
 
     // GENERAL HELPER FUNCTIONS
