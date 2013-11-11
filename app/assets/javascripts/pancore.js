@@ -654,6 +654,8 @@ function init_pancore() {
           .append("div")
             .attr("class", "tip")
             .style("position", "absolute")
+            .style("top", "0px")
+            .style("left", "0px")
             .style("z-index", "10")
             .style("visibility", "hidden");
 
@@ -1005,9 +1007,11 @@ function init_pancore() {
     function mouseMove(d) {
         if (isDragging) return;
         if (window.fullScreenApi.isFullScreen()) {
-            tooltip.style("top", (d3.event.clientY + 15) + "px").style("left", (d3.event.clientX + 15) + "px");
+            tooltip.style("-webkit-transform", "translate3d(" + (d3.event.clientX + 15) + "px, " + (d3.event.clientY + 15) + "px, 0)");
+            tooltip.style("webkit-transform", "translate3d(" + (d3.event.clientX + 15) + "px, " + (d3.event.clientY + 15) + "px, 0)");
         } else {
-            tooltip.style("top", (d3.event.pageY + 15) + "px").style("left", (d3.event.pageX + 15) + "px");
+            tooltip.style("-webkit-transform", "translate3d(" + (d3.event.pageX + 15) + "px, " + (d3.event.pageY + 15) + "px, 0)");
+            tooltip.style("webkit-transform", "translate3d(" + (d3.event.pageX + 15) + "px, " + (d3.event.pageY + 15) + "px, 0)");
         }
     }
     // Let the dragging begin!
