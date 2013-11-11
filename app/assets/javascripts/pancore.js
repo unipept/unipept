@@ -242,6 +242,10 @@ function init_pancore() {
         .x(function (d) { return x(d.bioproject_id); })
         .y(function (d) { return y(d.unicore); });
 
+    // Stores tooltip position till next frame
+    var tooltipX = 0,
+        tooltipY = 0;
+
     // Add eventhandlers to the worker
     worker.addEventListener('message', function (e) {
         var data = e.data;
@@ -1007,12 +1011,13 @@ function init_pancore() {
     function mouseMove(d) {
         if (isDragging) return;
         if (window.fullScreenApi.isFullScreen()) {
-            tooltip.style("-webkit-transform", "translate3d(" + (d3.event.clientX + 15) + "px, " + (d3.event.clientY + 15) + "px, 0)");
-            tooltip.style("webkit-transform", "translate3d(" + (d3.event.clientX + 15) + "px, " + (d3.event.clientY + 15) + "px, 0)");
+            tooltipX = d3.event.clientX + 15;
+            tooltipY = d3.event.clientY + 15;
         } else {
-            tooltip.style("-webkit-transform", "translate3d(" + (d3.event.pageX + 15) + "px, " + (d3.event.pageY + 15) + "px, 0)");
-            tooltip.style("webkit-transform", "translate3d(" + (d3.event.pageX + 15) + "px, " + (d3.event.pageY + 15) + "px, 0)");
+            tooltipX = d3.event.pageX + 15;
+            tooltipY = d3.event.pageY + 15;
         }
+        requestAnimFrame(moveTooltip);
     }
     // Let the dragging begin!
     function dragStart(d) {
@@ -1256,6 +1261,12 @@ function init_pancore() {
         svg.selectAll(".dot.unicore._" + dragId).transition()
             .duration(transitionDuration)
             .attr("fill", unicoreColor);
+    }
+
+    // Request Animation Frame functions
+    function moveTooltip() {
+        tooltip.style("-webkit-transform", "translate3d(" + tooltipX + "px, " + tooltipY + "px, 0)");
+        tooltip.style("transform", "translate3d(" + tooltipX + "px, " + tooltipY + "px, 0)");
     }
 
     // GENERAL HELPER FUNCTIONS
