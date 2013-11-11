@@ -439,6 +439,11 @@ function addNewMatrixdata() {
 }
 
 function clusterMatrix() {
+    // Check if we already calculated the similarity
+    if (! (sim_matrix[0][0] > 0)) {
+        calculateSimilarity();
+    }
+
     // Create a deep copy and call our recursive cluster function
     var matrix_deep_copy = [];
     var i = 0, j = 0;
