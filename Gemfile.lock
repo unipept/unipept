@@ -69,8 +69,8 @@ GEM
     execjs (2.0.2)
     highline (1.6.20)
     hike (1.2.3)
-    httparty (0.12.0)
-      json (~> 1.8)
+    httparty (0.10.2)
+      multi_json (~> 1.0)
       multi_xml (>= 0.5.2)
     i18n (0.6.1)
     journey (1.0.4)
@@ -182,7 +182,7 @@ DEPENDENCIES
   be_valid_asset
   capistrano (= 2.15.5)
   coffee-rails
-  httparty
+  httparty (= 0.10.2)
   jquery-rails (~> 2.3.0)
   less-rails
   mysql2

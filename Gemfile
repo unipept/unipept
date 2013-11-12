@@ -24,7 +24,7 @@ gem 'oj'
 gem 'rmagick', '2.13.2'
 
 # do HTTP requests
-gem 'httparty'
+gem 'httparty', '0.10.2'
 
 group :development do
   gem 'rspec-rails'
