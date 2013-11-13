@@ -467,31 +467,34 @@ function clusterMatrix() {
     sendToHost('newOrder', new_order);
 
     // constuct newick format of tree
-    var tree = [first.x, first.y];
+    var tree = [first.x, first.y, first.value];
 
     for (i = result_order.length - 1; i >= 0; i--) {
         var next = result_order[i];
         // find next.x recursively
-        findAndReplace(tree, next.x, next.y);
+        findAndReplace(tree, next.x, next.y, next.value);
     }
     sendToHost('log', JSON.stringify(tree));
+    sendToHost('log', arrayToNewick(tree));
     sendToHost('sim_graph', arrayToNewick(tree));
 }
 
 function arrayToNewick(array) {
-    return JSON.stringify(array).replace(/\[/g, '(').replace(/\]/g, ')');
+    /* TODO: someday i will write this in a good way */
+    var string = JSON.stringify(array).replace(/\[/g, '(').replace(/\]/g, ')');
+    return string.replace(/,([0-9]*\.?[0-9]*)\)/g, "):$1");
 }
 
-function findAndReplace(tree, x, y) {
+function findAndReplace(tree, x, y, val) {
     var index = tree.indexOf(x);
     if (index == -1) {
         for (var j = 0; j < tree.length; j ++) {
             if( tree[j] instanceof Array) {
-                findAndReplace(tree[j], x, y);
+                findAndReplace(tree[j], x, y, val);
             }
         }
     } else {
-        tree[index] = [x, y];
+        tree[index] = [x, y, val];
     }
 }
 
