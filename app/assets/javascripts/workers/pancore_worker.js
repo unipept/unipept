@@ -520,7 +520,7 @@ function clusterMatrixRec(matrix, cluster, order) {
     }
 
     // find highest similarity
-    var x = 0, y = 0, largest = 0;
+    var x = 0, y = 0, largest = -1;
     var i = 0, j = 0;
     for (i = 0 ; i < matrix.length; i++) {
         for (j = 0; j < matrix[i].length; j++) {
@@ -550,8 +550,8 @@ function clusterMatrixRec(matrix, cluster, order) {
 
     // set the value of comparison with y to zero
     for (j = 0 ; j < matrix.length; j++) {
-        matrix[j][y] = 0;
-        matrix[y][j] = 0;
+        matrix[j][y] = -1;
+        matrix[y][j] = -1;
     }
 
     return clusterMatrixRec(matrix, cluster, order);
