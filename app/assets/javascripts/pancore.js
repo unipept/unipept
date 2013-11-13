@@ -1331,7 +1331,7 @@ function init_graphs() {
     function drawTree(newick) {
         var parsed = Newick.parse(newick);
         console.log(parsed);
-        d3.phylogram.build('#sim_graph', parsed, {width: 300, height: 300, skipLabels:true, skipBranchLengthScaling:true});
+        d3.phylogram.build('#sim_graph', parsed, {width: 150, height: 500, skipLabels:true, skipBranchLengthScaling:true});
     }
 
 
