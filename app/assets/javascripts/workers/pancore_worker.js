@@ -479,16 +479,31 @@ function clusterMatrix() {
     sendToHost('sim_graph', arrayToNewick(tree));
 }
 
+
+function addDistance(array) {
+    var distance = array.splice(-1,1);
+    for(var i = 0; i < array.length ; i ++) {
+        var val = array[i];
+        if (val instanceof Array) {
+            addDistance(val);
+        } else {
+            array[i] = "" + array[i] + ":" + distance;
+        }
+    }
+    array.push(distance[0]);
+}
 function arrayToNewick(array) {
     /* TODO: someday i will write this in a good way */
-    var string = JSON.stringify(array).replace(/\[/g, '(').replace(/\]/g, ')');
-    return string.replace(/,([0-9]*\.?[0-9]*)\)/g, "):$1");
+    addDistance(array);
+    var string = JSON.stringify(array).replace(/\[/g, '(').replace(/\]/g, ')').replace(/\"/g, '');
+    string = string.replace(/,([0-9]\.[0-9]*)\)/g, '):$1');
+    return string + ';';
 }
 
 function findAndReplace(tree, x, y, val) {
     var index = tree.indexOf(x);
     if (index == -1) {
-        for (var j = 0; j < tree.length; j ++) {
+        for (var j = 0; j < tree.length - 1; j ++) {
             if( tree[j] instanceof Array) {
                 findAndReplace(tree[j], x, y, val);
             }
