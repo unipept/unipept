@@ -475,6 +475,11 @@ function clusterMatrix() {
         findAndReplace(tree, next.x, next.y);
     }
     sendToHost('log', JSON.stringify(tree));
+    sendToHost('sim_graph', arrayToNewick(tree));
+}
+
+function arrayToNewick(array) {
+    return JSON.stringify(array).replace(/\[/g, '(').replace(/\]/g, ')');
 }
 
 function findAndReplace(tree, x, y) {
