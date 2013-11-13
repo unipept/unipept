@@ -1,5 +1,7 @@
 //= require jquery
-//= require jquery-ui
+//= require jquery.ui.draggable
+//= require jquery.ui.droppable
+//= require jquery.ui.sortable
 //= require jquery_ujs
 //= require_self
 //= require_directory .

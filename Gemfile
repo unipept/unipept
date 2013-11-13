@@ -9,6 +9,7 @@ gem 'will_paginate', '3.0'
 
 # jquery
 gem 'jquery-rails', "~> 2.3.0"
+gem "jquery-ui-rails", "4.0.2"
 
 # cas auth
 gem 'rubycas-client', :git => 'git://github.com/bmesuere/rubycas-client.git', :branch => 'master'
@@ -24,7 +25,7 @@ gem 'oj'
 gem 'rmagick', '2.13.2'
 
 # do HTTP requests
-gem 'httparty'
+gem 'httparty', '0.10.2'
 
 group :development do
   gem 'rspec-rails'

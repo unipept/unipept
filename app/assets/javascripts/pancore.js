@@ -412,11 +412,9 @@ function init_graphs() {
     $("#add_species_peptidome").click();
 
     // IE10 message
-    /*
-    if ($.browser.msie && $.browser.version === 10) {
+    if (navigator.appVersion.indexOf("MSIE 10") != -1) {
         info("You're using Internet Explorer 10. Everything should work as expected, but for an optimal experience, please use a recent version of Mozilla Firefox or Google Chrome.");
     }
-    */
 
     // Sends a command and message to the worker
     function sendToWorker(command, message) {
