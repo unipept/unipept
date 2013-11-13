@@ -501,7 +501,10 @@ function arrayToNewick(array) {
 }
 
 function findAndReplace(tree, x, y, val) {
-    var index = tree.indexOf(x);
+    var index = -1;
+    do {
+        index = tree.indexOf(x, index + 1);
+    } while (index % 3 === 2)
     if (index == -1) {
         for (var j = 0; j < tree.length - 1; j ++) {
             if( tree[j] instanceof Array) {
