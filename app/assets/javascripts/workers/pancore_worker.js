@@ -456,6 +456,7 @@ function clusterMatrix() {
     var result = clusterMatrixRec(matrix_deep_copy, {}, []);
 
     var result_order = result['order'];
+    sendToHost('log', result_order);
     var first = result_order.splice(-1,1)[0];
     var new_order = [first.x,first.y];
 
@@ -464,6 +465,29 @@ function clusterMatrix() {
         new_order.splice(index, 0, result_order[i]['y']);
     }
     sendToHost('newOrder', new_order);
+
+    // constuct newick format of tree
+    var tree = [first.x, first.y];
+
+    for (i = result_order.length - 1; i >= 0; i--) {
+        var next = result_order[i];
+        // find next.x recursively
+        findAndReplace(tree, next.x, next.y);
+    }
+    sendToHost('log', JSON.stringify(tree));
+}
+
+function findAndReplace(tree, x, y) {
+    var index = tree.indexOf(x);
+    if (index == -1) {
+        for (var j = 0; j < tree.length; j ++) {
+            if( tree[j] instanceof Array) {
+                findAndReplace(tree[j], x, y);
+            }
+        }
+    } else {
+        tree[index] = [x, y];
+    }
 }
 
 function clusterMatrixRec(matrix, cluster, order) {
