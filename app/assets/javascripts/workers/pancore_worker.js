@@ -496,7 +496,7 @@ function arrayToNewick(array) {
     /* TODO: someday i will write this in a good way */
     addDistance(array);
     var string = JSON.stringify(array).replace(/\[/g, '(').replace(/\]/g, ')').replace(/\"/g, '');
-    string = string.replace(/,([0-9]\.[0-9]*)\)/g, '):$1');
+    string = string.replace(/,([.0-9]*)\)/g, '):$1');
     return string + ';';
 }
 
