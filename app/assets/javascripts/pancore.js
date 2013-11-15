@@ -764,6 +764,7 @@ function init_pancore() {
         var trash = svg.insert("g")
             .attr("id", "trash")
             .attr("fill", "#cccccc")
+            .style("opacity", "0")
             .on("mouseover", trashMouseOver)
             .on("mouseout", trashMouseOut)
         .insert("g")
@@ -1027,7 +1028,10 @@ function init_pancore() {
         dragging[d.bioproject_id] = this.__origin__ = x(d.bioproject_id);
         d3.select("body").style("cursor", "url(/closedhand.cur) 7 5, move");
         svg.selectAll(".bar").style("cursor", "url(/closedhand.cur) 7 5, move");
-        svg.select("#trash").transition().duration(transitionDuration).attr("transform", "translate(-84 0)");
+        svg.select("#trash").transition()
+            .duration(transitionDuration)
+            .attr("transform", "translate(-84 0)")
+            .style("opacity", "1");
     }
     // Switches the position the nodes when it needs to
     function drag(d) {
@@ -1053,6 +1057,7 @@ function init_pancore() {
             .delay(onTrash ? transitionDuration : 0)
             .duration(transitionDuration)
             .attr("transform", "translate(0 0)")
+            .style("opacity", "0")
             .attr("fill", "#cccccc");
         svg.select("#trash circle").transition()
             .delay(onTrash ? transitionDuration : 0)
