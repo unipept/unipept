@@ -50,10 +50,11 @@ function add_fields(link, association, content) {
  * first parameter is the error that gets logged to the console
  * second parameter is optional message to display to the user
  */
-function error(error, userMessage) {
-    if (error !== null) {
+function error(errorMessage, userMessage) {
+    if (errorMessage !== null) {
+        _gaq.push(['_trackEvent', 'Error', errorMessage]);
         if (typeof console != "undefined") {
-            console.error(error);
+            console.error(errorMessage);
         }
     }
     if (userMessage) {
