@@ -52,7 +52,7 @@ function add_fields(link, association, content) {
  */
 function error(errorMessage, userMessage) {
     if (errorMessage !== null) {
-        _gaq.push(['_trackEvent', 'Error', errorMessage]);
+        logErrorToGoogle(errorMessage);
         if (typeof console != "undefined") {
             console.error(errorMessage);
         }
@@ -70,6 +70,13 @@ function info(message) {
     var msg = $("<div class='alert alert-info' style='display: none;'><strong>Heads up!</strong> " + message + "</div>");
     $("#messages").append(msg);
     msg.show("normal");
+}
+
+/*
+ * Logs a message as exception to Google Analytics
+ */
+function logErrorToGoogle(errorMessage) {
+    _gaq.push(['_trackEvent', 'Global', "Exception", errorMessage]);
 }
 
 /*
@@ -164,3 +171,15 @@ window.requestAnimFrame = (function(){
                 window.setTimeout(callback, 1000 / 60);
             };
 })();
+
+/*
+ * Catches all errors, displays them in console and
+ * logs them to Google Analytics
+ */
+window.onerror = function(message, file, line) {
+    var e = file + '(' + line + '): ' + message;
+    if (typeof console != "undefined") {
+        console.error(e);
+    }
+    logErrorToGoogle(e);
+};
