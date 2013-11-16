@@ -135,7 +135,7 @@ function init_sequence_show(data, lcaId) {
         st.onClick(lcaId);
     }
     catch (err) {
-        error(err, "Something went wrong while loading the lineage tree.");
+        error(err.message, "Something went wrong while loading the lineage tree.");
     }
 
     // disable the text selection of tree nodes
