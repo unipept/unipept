@@ -5,15 +5,15 @@ module ApplicationHelper
     if @title.nil?
       base_title
     else
-      "#{base_title} | #{@title}"
+      "#{@title} | #{base_title}"
     end
   end
-  
+
   # helper to add remove links to forms
   def link_to_remove_fields(name, f)
     f.hidden_field(:_destroy) + link_to_function(name, "remove_fields(this)")
   end
-  
+
   #helper to add add links to forms
   def link_to_add_fields(name, f, association)
     new_object = f.object.class.reflect_on_association(association).klass.new
@@ -22,7 +22,7 @@ module ApplicationHelper
     end
     link_to_function(name, "add_fields(this, \"#{association}\", \"#{escape_javascript(fields)}\")")
   end
-  
+
   class BootstrapLinkRenderer < ::WillPaginate::ActionView::LinkRenderer
       protected
 
@@ -41,9 +41,9 @@ module ApplicationHelper
       def previous_or_next_page(page, text, classname)
         tag :li, link(text, page || '#'), :class => [classname[0..3], classname, ('disabled' unless page)].join(' ')
       end
-    end
+  end
 
-    def page_navigation_links(pages)
+  def page_navigation_links(pages)
       will_paginate(pages, :class => 'pagination', :inner_window => 2, :outer_window => 0, :renderer => BootstrapLinkRenderer, :previous_label => '&larr;'.html_safe, :next_label => '&rarr;'.html_safe)
-    end
+  end
 end
