@@ -52,7 +52,6 @@ function add_fields(link, association, content) {
  */
 function error(error, userMessage) {
     if (error !== null) {
-        qbaka.report(error);
         if (typeof console != "undefined") {
             console.error(error);
         }
