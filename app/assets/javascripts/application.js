@@ -50,15 +50,15 @@ function add_fields(link, association, content) {
  * first parameter is the error that gets logged to the console
  * second parameter is optional message to display to the user
  */
-function error(error, userMessage) {
-    if (error !== null) {
-        qbaka.report(error);
+function error(errorMessage, userMessage) {
+    if (errorMessage !== null) {
+        logErrorToGoogle(errorMessage);
         if (typeof console != "undefined") {
-            console.error(error);
+            console.error(errorMessage);
         }
     }
     if (userMessage) {
-        var msg = $("<div class='alert alert-error' style='display: none;'><strong>Oh snap!</strong> " + userMessage + "</div>");
+        var msg = $("<div class='alert alert-danger' style='display: none;'><strong>Oh snap!</strong> " + userMessage + "</div>");
         $("#messages").append(msg);
         msg.show("normal");
     }
@@ -70,6 +70,13 @@ function info(message) {
     var msg = $("<div class='alert alert-info' style='display: none;'><strong>Heads up!</strong> " + message + "</div>");
     $("#messages").append(msg);
     msg.show("normal");
+}
+
+/*
+ * Logs a message as exception to Google Analytics
+ */
+function logErrorToGoogle(errorMessage) {
+    _gaq.push(['_trackEvent', 'Global', "Exception", errorMessage]);
 }
 
 /*
@@ -164,3 +171,15 @@ window.requestAnimFrame = (function(){
                 window.setTimeout(callback, 1000 / 60);
             };
 })();
+
+/*
+ * Catches all errors, displays them in console and
+ * logs them to Google Analytics
+ */
+window.onerror = function(message, file, line) {
+    var e = file + '(' + line + '): ' + message;
+    if (typeof console != "undefined") {
+        console.error(e);
+    }
+    logErrorToGoogle(e);
+};
