@@ -172,6 +172,13 @@ if (!d3) { throw "d3 wasn't included!"};
     return yscale
   }
 
+  function leafName(node) {
+      if (node.name !== "") {
+          return node.name;
+      } else {
+          return leafName(node.children[0]);
+      }
+  }
 
   d3.phylogram.build = function(selector, nodes, options, order) {
     options = options || {}
@@ -182,9 +189,7 @@ if (!d3) { throw "d3 wasn't included!"};
     var tree = options.tree || d3.layout.cluster()
       .size([h, w])
       .separation(function (a, b) { return 1; })
-      .sort(function(a, b) {
-          return order[a.name] -order[b.name];
-      })
+      .sort(function(a, b) { return order[leafName(a)] - order[leafName(b)]; })
       .children(options.children || function(node) {
         return node.branchset
       });

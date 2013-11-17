@@ -477,8 +477,6 @@ function clusterMatrix() {
     for (i = 0; i < new_order.length; i++) {
         treeOrder[new_order[i]] = i;
     }
-    sendToHost('log', new_order);
-    sendToHost('log', treeOrder);
     sendToHost('sim_graph', {'data': arrayToNewick(tree), 'order': treeOrder});
 }
 
