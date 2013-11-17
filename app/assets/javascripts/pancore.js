@@ -1332,7 +1332,7 @@ function init_graphs() {
         var parsed = Newick.parse(newick);
         console.log(parsed);
         $("#sim_graph").html("");
-        d3.phylogram.build('#sim_graph', parsed, {width: 180, height: 500, skipLabels:true, skipBranchLengthScaling:true});
+        d3.phylogram.build('#sim_graph', parsed, {width: 100, height: 500});
     }
 
 
