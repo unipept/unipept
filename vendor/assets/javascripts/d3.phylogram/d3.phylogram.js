@@ -260,7 +260,7 @@ if (!d3) { throw "d3 wasn't included!"};
           .attr("text-anchor", 'end')
           .attr('font-size', '8px')
           .attr('fill', '#ccc')
-          .text(function(d) { return d.data.length; });
+          .text(function(d) { return d.length; });
 
       vis.selectAll('g.leaf.node').append("svg:text")
         .attr("dx", 8)
@@ -269,7 +269,7 @@ if (!d3) { throw "d3 wasn't included!"};
         .attr('font-family', 'Helvetica Neue, Helvetica, sans-serif')
         .attr('font-size', '10px')
         .attr('fill', 'black')
-        .text(function(d) { return d.data.name + ' ('+d.data.length+')'; });
+        .text(function(d) { return d.name + ' ('+d.length+')'; });
     }
 
     return {tree: tree, vis: vis}
@@ -315,7 +315,7 @@ if (!d3) { throw "d3 wasn't included!"};
         .attr('font-family', 'Helvetica Neue, Helvetica, sans-serif')
         .attr('font-size', '10px')
         .attr('fill', 'black')
-        .text(function(d) { return d.data.name; });
+        .text(function(d) { return d.name; });
 
       vis.selectAll('g.inner.node text')
         .attr("dx", function(d) { return d.x < 180 ? -6 : 6; })
