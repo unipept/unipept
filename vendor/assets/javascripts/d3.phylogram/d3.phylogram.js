@@ -173,7 +173,7 @@ if (!d3) { throw "d3 wasn't included!"};
   }
 
 
-  d3.phylogram.build = function(selector, nodes, options) {
+  d3.phylogram.build = function(selector, nodes, options, order) {
     options = options || {}
     var w = options.width || d3.select(selector).style('width') || d3.select(selector).attr('width'),
         h = options.height || d3.select(selector).style('height') || d3.select(selector).attr('height'),
@@ -181,8 +181,10 @@ if (!d3) { throw "d3 wasn't included!"};
         h = parseInt(h);
     var tree = options.tree || d3.layout.cluster()
       .size([h, w])
-      .separation(function (a,b) { return 1; })
-      .sort(function(node) { return node.children ? node.children.length : -1; })
+      .separation(function (a, b) { return 1; })
+      .sort(function(a, b) {
+          return order[a.name] -order[b.name];
+      })
       .children(options.children || function(node) {
         return node.branchset
       });

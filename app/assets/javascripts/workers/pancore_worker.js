@@ -456,7 +456,6 @@ function clusterMatrix() {
     var result = clusterMatrixRec(matrix_deep_copy, {}, []);
 
     var result_order = result['order'];
-    sendToHost('log', result_order);
     var first = result_order.splice(-1,1)[0];
     var new_order = [first.x,first.y];
 
@@ -468,15 +467,19 @@ function clusterMatrix() {
 
     // constuct newick format of tree
     var tree = [first.x, first.y, first.value];
+    var treeOrder = [];
 
     for (i = result_order.length - 1; i >= 0; i--) {
         var next = result_order[i];
         // find next.x recursively
         findAndReplace(tree, next.x, next.y, next.value);
     }
-    sendToHost('log', JSON.stringify(tree));
-    sendToHost('log', arrayToNewick(tree));
-    sendToHost('sim_graph', arrayToNewick(tree));
+    for (i = 0; i < new_order.length; i++) {
+        treeOrder[new_order[i]] = i;
+    }
+    sendToHost('log', new_order);
+    sendToHost('log', treeOrder);
+    sendToHost('sim_graph', {'data': arrayToNewick(tree), 'order': treeOrder});
 }
 
 
