@@ -156,8 +156,8 @@ if (!d3) { throw "d3 wasn't included!"};
       }
     }
     visitPreOrder(nodes[0], function(node) {
-      if( node.data) {
-          node.rootDist = (node.parent ? node.parent.rootDist : 0) + (node.data.length || 0)
+      if( node) {
+          node.rootDist = (node.parent ? node.parent.rootDist : 0) + (node.length || 0)
       } else {
           node.rootDist = (node.parent ? node.parent.rootDist : 0)
       }
