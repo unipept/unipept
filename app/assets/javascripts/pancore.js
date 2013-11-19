@@ -1201,11 +1201,7 @@ function init_pancore() {
         });
     }
     function returnPopoverSequences(sequences, type) {
-        $("#pancore_graph form.download").remove();
-        $("#pancore_graph").append("<form class='download' method='post' action='download'></form>");
-        $("#pancore_graph form.download").append("<input type='hidden' name='filename' value='" + type + "-sequences.txt'/>");
-        $("#pancore_graph form.download").append("<input type='hidden' name='data' value='" + sequences + "'/>");
-        $("#pancore_graph form.download").submit();
+        downloadData(sequences, type + '-sequences.txt');
         $("#download-peptides-toggle").button('reset');
     }
     function position(d) {
