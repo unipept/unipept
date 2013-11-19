@@ -85,7 +85,6 @@ GEM
     multi_json (1.8.2)
     multi_xml (0.5.3)
     mysql2 (0.3.11)
-    newrelic_rpm (3.5.5.38)
     nokogiri (1.5.6)
     oj (2.0.1)
     polyglot (0.3.3)
@@ -171,7 +170,6 @@ DEPENDENCIES
   jquery-rails
   less-rails
   mysql2
-  newrelic_rpm
   oj
   rails (= 3.2.13)
   rake
