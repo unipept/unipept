@@ -178,7 +178,7 @@ function init_sequence_show(data, lcaId) {
 
         html2canvas($("#lineageTree"), {
             onrendered : function (canvas) {
-                $("#save-as-modal .modal-body").html("<img src='" + canvas.toDataURL() + "' />");
+                $("#save-as-modal .modal-body .image").html("<img src='" + canvas.toDataURL() + "' />");
                 $("#save-as-modal").modal();
             }
         });

@@ -377,7 +377,7 @@ function init_pancore() {
         var svg = $("#pancore_graph svg").wrap("<div></div>").parent().html();
         // Send the SVG code to the server for png conversion
         $.post("/convert", { image: svg }, function (data) {
-            $("#save-as-modal .modal-body").html("<img src='" + data + "' />");
+            $("#save-as-modal .modal-body .image").html("<img src='" + data + "' />");
             $("#save-as-modal").modal();
         });
     });

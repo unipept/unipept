@@ -80,7 +80,7 @@ function init_multi(data, data2, equate_il) {
 
             var svg = $("#sunburst svg").wrap("<div></div>").parent().html();
             $.post("/convert", { image: svg }, function (data) {
-                $("#save-as-modal .modal-body").html("<img src='" + data + "' />");
+                $("#save-as-modal .modal-body .image").html("<img src='" + data + "' />");
                 $("#save-as-modal").modal();
             });
         } else {
@@ -89,7 +89,7 @@ function init_multi(data, data2, equate_il) {
 
             html2canvas($("#treeMap"), {
                 onrendered : function (canvas) {
-                    $("#save-as-modal .modal-body").html("<img src='" + canvas.toDataURL() + "' />");
+                    $("#save-as-modal .modal-body .image").html("<img src='" + canvas.toDataURL() + "' />");
                     $("#save-as-modal").modal();
                 }
             });
