@@ -46,6 +46,15 @@ function add_fields(link, association, content) {
     $(link).parent().parent().before(content.replace(regexp, new_id));
 }
 
+function downloadData(data, filename) {
+    $("form.download").remove();
+    $("body").append("<form class='download' method='post' action='download'></form>");
+    $("form.download").append("<input type='hidden' name='filename' value='" + filename + "'/>");
+    $("form.download").append("<input type='hidden' name='data' class='data'/>");
+    $("form.download .data").val(data);
+    $("form.download").submit();
+}
+
 /* function for error handling.
  * first parameter is the error that gets logged to the console
  * second parameter is optional message to display to the user

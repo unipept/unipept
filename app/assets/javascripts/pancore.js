@@ -380,6 +380,10 @@ function init_pancore() {
             $("#save-as-modal .modal-body .image").html("<img src='" + data + "' />");
             $("#save-as-modal").modal();
         });
+        $("#save-as-modal .modal-body .buttons").html("<button id='download-svg' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download SVG</button>");
+        $("#download-svg").click(function () {
+            downloadData(svg, "unipept.svg");
+        });
     });
 
     // Draw the graph
