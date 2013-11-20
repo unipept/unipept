@@ -511,7 +511,8 @@ function findAndReplace(tree, x, y, val) {
             }
         }
     } else {
-        tree[index] = [x, y, val];
+        // val - tree[2] is the distance calculation to the previous top
+        tree[index] = [x, y, val - tree[2]];
     }
 }
 
