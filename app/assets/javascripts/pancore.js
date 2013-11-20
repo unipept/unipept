@@ -435,6 +435,18 @@ function init_graphs() {
         sendToWorker('clusterMatrix', '');
     });
 
+    // Only cluster when the initial data has loaded
+    function clusterIfReady() {
+        if( toLoad === 0 ) {
+            sendToWorker('clusterMatrix', '');
+        } else {
+            setTimeout(clusterIfReady, 200);
+        }
+    }
+
+    // On click of tab, cluster matrix
+    $("a[href='#sim_matrix_wrapper']").click(clusterIfReady);
+
     function showMatrix(genomes, data, order) {
         $('#sim_matrix').empty();
         redrawMatrix(genomes, data, order);
