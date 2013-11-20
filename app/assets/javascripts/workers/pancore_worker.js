@@ -507,12 +507,11 @@ function findAndReplace(tree, x, y, val) {
     if (index == -1) {
         for (var j = 0; j < tree.length - 1; j ++) {
             if( tree[j] instanceof Array) {
-                findAndReplace(tree[j], x, y, val);
+                findAndReplace(tree[j], x, y, val - tree[2]);
             }
         }
     } else {
-        // val - tree[2] is the distance calculation to the previous top
-        tree[index] = [x, y, val - tree[2]];
+        tree[index] = [x, y, val];
     }
 }
 
