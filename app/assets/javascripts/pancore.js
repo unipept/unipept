@@ -374,7 +374,7 @@ function init_pancore() {
         // track save image event
         _gaq.push(['_trackEvent', 'Pancore', 'Save Image']);
 
-        triggerDownloadModal("#pancore_graph svg", "unique_peptides");
+        triggerDownloadModal("#pancore_graph svg", null, "unique_peptides");
     });
 
     // Draw the graph

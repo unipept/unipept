@@ -56,16 +56,31 @@ function add_fields(link, association, content) {
  * @param <String> svgSelector The DOM selector of the SVG
  * @param <String> baseFileName The requested file name
  */
-function triggerDownloadModal(svgSelector, baseFileName) {
-    var svg = $(svgSelector).wrap("<div></div>").parent().html();
+function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
+    var $buttons = $("#save-as-modal .buttons"),
+        svg;
 
-    // Send the SVG code to the server for png conversion
-    $.post("/convert", { image: svg }, function (data) {
-        $("#save-as-modal .image").html("<img src='" + data + "' />");
-        $("#save-as-modal").modal();
-    });
-    $("#save-as-modal .buttons").html("<button id='download-svg' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as SVG</button>"
-        + "<button id='download-png' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as PNG</button>");
+    $buttons.html("");
+    if (svgSelector) {
+        svg = $(svgSelector).wrap("<div></div>").parent().html();
+
+        // Send the SVG code to the server for png conversion
+        $.post("/convert", { image: svg }, function (data) {
+            $("#save-as-modal .image").html("<img src='" + data + "' />");
+            $("#save-as-modal").modal();
+        });
+
+        $buttons.append("<button id='download-svg' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as SVG</button>");
+    }
+    if (canvasSelector) {
+        html2canvas($(canvasSelector), {
+            onrendered : function (canvas) {
+                $("#save-as-modal .image").html("<img src='" + canvas.toDataURL() + "' />");
+                $("#save-as-modal").modal();
+            }
+        });
+    }
+    $buttons.append("<button id='download-png' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as PNG</button>");
 
     $("#download-svg").click(function () {
          downloadDataByForm(svg, baseFileName + ".svg");

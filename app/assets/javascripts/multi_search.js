@@ -78,17 +78,12 @@ function init_multi(data, data2, equate_il) {
             // Track save image
             _gaq.push(['_trackEvent', 'Multi Peptide', 'Save Image', 'Sunburst']);
 
-            triggerDownloadModal("#sunburst svg", "unipept_sunburst");
+            triggerDownloadModal("#sunburst svg", null, "unipept_sunburst");
         } else {
             // Track save image
             _gaq.push(['_trackEvent', 'Multi Peptide', 'Save Image', 'Treemap']);
 
-            html2canvas($("#treeMap"), {
-                onrendered : function (canvas) {
-                    $("#save-as-modal .modal-body .image").html("<img src='" + canvas.toDataURL() + "' />");
-                    $("#save-as-modal").modal();
-                }
-            });
+            triggerDownloadModal(null, "#treeMap", "unipept_treemap");
         }
     });
 }
