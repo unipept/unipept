@@ -1437,7 +1437,7 @@ function init_graphs() {
               .attr("x", function(d, i) { return x(i); })
               .attr("width", x.rangeBand())
               .attr("height", x.rangeBand())
-              .style("fill-opacity", function(d) { return z(d); })
+              .style("fill-opacity", function(d) { return z(d * d); })
               .style("fill", "steelblue");
               //.on("mouseover", mouseover)
               //.on("mouseout", mouseout);
