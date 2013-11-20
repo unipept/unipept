@@ -446,12 +446,9 @@ function clusterMatrix() {
 
     // Create a deep copy and call our recursive cluster function
     var matrix_deep_copy = [];
-    var i = 0, j = 0;
+    var i = 0;
     for (i = 0; i < sim_matrix.length; i++) {
-        matrix_deep_copy[i] = [];
-        for (j = 0; j < sim_matrix[i].length; j++) {
-            matrix_deep_copy[i][j] = sim_matrix[i][j];
-        }
+        matrix_deep_copy[i] = sim_matrix[i].slice(0);
     }
     var result = clusterMatrixRec(matrix_deep_copy, {}, []);
 
