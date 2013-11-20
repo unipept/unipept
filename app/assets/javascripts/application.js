@@ -85,7 +85,7 @@ function triggerDownloadModal(svgSelector, baseFileName) {
 function downloadDataByForm(data, fileName) {
     var $downloadForm;
     $("form.download").remove();
-    $("body").append("<form class='download' method='post' action='download'></form>");
+    $("body").append("<form class='download' method='post' action='/download'></form>");
     $downloadForm = $("form.download").append("<input type='hidden' name='filename' value='" + fileName + "'/>");
     $downloadForm.append("<input type='hidden' name='data' class='data'/>");
     $downloadForm.find(".data").val(data);

@@ -78,11 +78,7 @@ function init_multi(data, data2, equate_il) {
             // Track save image
             _gaq.push(['_trackEvent', 'Multi Peptide', 'Save Image', 'Sunburst']);
 
-            var svg = $("#sunburst svg").wrap("<div></div>").parent().html();
-            $.post("/convert", { image: svg }, function (data) {
-                $("#save-as-modal .modal-body .image").html("<img src='" + data + "' />");
-                $("#save-as-modal").modal();
-            });
+            triggerDownloadModal("#sunburst svg", "unipept_sunburst");
         } else {
             // Track save image
             _gaq.push(['_trackEvent', 'Multi Peptide', 'Save Image', 'Treemap']);
