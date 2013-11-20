@@ -48,12 +48,15 @@ function add_fields(link, association, content) {
 
 /**
  * Triggers the image export modal.
- * Sends the SVG-code to the server to convert it to a png.
- * The server return a data URL containing the PNG data.
+ *
+ * If an svgSelector is present, sends the SVG-code to the server to convert
+ * it to a PNG. The server return a data URL containing the PNG data.
+ * In an canvasSelector is present, uses html2canvas to convert it to a PNG.
  * A modal dialog is shown containing the image and buttons
- * to download the image as SVG or PNG.
+ * to download the image as PNG and SVG if present.
  *
  * @param <String> svgSelector The DOM selector of the SVG
+ * @param <String> canvasSelector The DOM selector of the canvas
  * @param <String> baseFileName The requested file name
  */
 function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
