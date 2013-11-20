@@ -371,24 +371,10 @@ function init_pancore() {
     // Set up save image stuff
     $("#buttons-pancore").prepend("<button id='save-btn' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save as image</button>");
     $("#save-btn").click(function () {
-        var svg = $("#pancore_graph svg").wrap("<div></div>").parent().html();
         // track save image event
         _gaq.push(['_trackEvent', 'Pancore', 'Save Image']);
 
-        var svg = $("#pancore_graph svg").wrap("<div></div>").parent().html();
-        // Send the SVG code to the server for png conversion
-        $.post("/convert", { image: svg }, function (data) {
-            $("#save-as-modal .modal-body .image").html("<img src='" + data + "' />");
-            $("#save-as-modal").modal();
-        });
-        $("#save-as-modal .modal-body .buttons").html("<button id='download-svg' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as SVG</button>"
-            + "<button id='download-png' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as PNG</button>");
-        $("#download-svg").click(function () {
-             downloadDataByForm(svg, "unipept.svg");
-        });
-        $("#download-png").click(function () {
-            downloadDataByLink($("#save-as-modal .modal-body .image img").attr("src"), "unipept.png");
-        });
+        triggerDownloadModal("#pancore_graph svg", "unique_peptides");
     });
 
     // Draw the graph

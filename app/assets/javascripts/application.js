@@ -47,6 +47,35 @@ function add_fields(link, association, content) {
 }
 
 /**
+ * Triggers the image export modal.
+ * Sends the SVG-code to the server to convert it to a png.
+ * The server return a data URL containing the PNG data.
+ * A modal dialog is shown containing the image and buttons
+ * to download the image as SVG or PNG.
+ *
+ * @param <String> svgSelector The DOM selector of the SVG
+ * @param <String> baseFileName The requested file name
+ */
+function triggerDownloadModal(svgSelector, baseFileName) {
+    var svg = $(svgSelector).wrap("<div></div>").parent().html();
+
+    // Send the SVG code to the server for png conversion
+    $.post("/convert", { image: svg }, function (data) {
+        $("#save-as-modal .image").html("<img src='" + data + "' />");
+        $("#save-as-modal").modal();
+    });
+    $("#save-as-modal .buttons").html("<button id='download-svg' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as SVG</button>"
+        + "<button id='download-png' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as PNG</button>");
+
+    $("#download-svg").click(function () {
+         downloadDataByForm(svg, baseFileName + ".svg");
+    });
+    $("#download-png").click(function () {
+        downloadDataByLink($("#save-as-modal .image img").attr("src"), baseFileName + ".png");
+    });
+}
+
+/**
  * Triggers a file download in the browser using a hidden
  * form and a server round trip.
  *
