@@ -371,6 +371,7 @@ function init_pancore() {
     // Set up save image stuff
     $("#buttons-pancore").prepend("<button id='save-btn' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save as image</button>");
     $("#save-btn").click(function () {
+        var svg = $("#pancore_graph svg").wrap("<div></div>").parent().html();
         // track save image event
         _gaq.push(['_trackEvent', 'Pancore', 'Save Image']);
 
@@ -380,9 +381,13 @@ function init_pancore() {
             $("#save-as-modal .modal-body .image").html("<img src='" + data + "' />");
             $("#save-as-modal").modal();
         });
-        $("#save-as-modal .modal-body .buttons").html("<button id='download-svg' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download SVG</button>");
+        $("#save-as-modal .modal-body .buttons").html("<button id='download-svg' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as SVG</button>"
+            + "<button id='download-png' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as PNG</button>");
         $("#download-svg").click(function () {
-            downloadData(svg, "unipept.svg");
+             downloadDataByForm(svg, "unipept.svg");
+        });
+        $("#download-png").click(function () {
+            downloadDataByLink($("#save-as-modal .modal-body .image img").attr("src"), "unipept.png");
         });
     });
 
@@ -1201,7 +1206,7 @@ function init_pancore() {
         });
     }
     function returnPopoverSequences(sequences, type) {
-        downloadData(sequences, type + '-sequences.txt');
+         downloadDataByForm(sequences, type + '-sequences.txt');
         $("#download-peptides-toggle").button('reset');
     }
     function position(d) {

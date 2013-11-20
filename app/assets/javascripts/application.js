@@ -46,13 +46,39 @@ function add_fields(link, association, content) {
     $(link).parent().parent().before(content.replace(regexp, new_id));
 }
 
-function downloadData(data, filename) {
+/**
+ * Triggers a file download in the browser using a hidden
+ * form and a server round trip.
+ *
+ * @param <String> data The text you want in the file
+ * @param <String> filename The requested file name
+ */
+function downloadDataByForm(data, fileName) {
+    var $downloadForm;
     $("form.download").remove();
     $("body").append("<form class='download' method='post' action='download'></form>");
-    $("form.download").append("<input type='hidden' name='filename' value='" + filename + "'/>");
-    $("form.download").append("<input type='hidden' name='data' class='data'/>");
-    $("form.download .data").val(data);
-    $("form.download").submit();
+    $downloadForm = $("form.download").append("<input type='hidden' name='filename' value='" + fileName + "'/>");
+    $downloadForm.append("<input type='hidden' name='data' class='data'/>");
+    $downloadForm.find(".data").val(data);
+    $downloadForm.submit();
+}
+
+/**
+ * Triggers a file download in the browser using a hidden
+ * link and a data url.
+ *
+ * The download attribute doesn't work in IE and Safari:
+ * http://caniuse.com/#feat=download
+ *
+ * @param <String> dataURL The dataURL of the data
+ * @param <String> filename The requested file name
+ */
+function downloadDataByLink(dataURL, fileName) {
+    var $downloadLink;
+    $("a.downloadLink").remove();
+    $("body").append("<a class='downloadLink' style='display:none;' download='" + fileName + "' target='_blank'/>");
+    $downloadLink = $("a.downloadLink").attr("href", dataURL);
+    $downloadLink[0].click();
 }
 
 /* function for error handling.
