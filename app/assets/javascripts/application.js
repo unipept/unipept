@@ -61,36 +61,46 @@ function add_fields(link, association, content) {
  */
 function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
     var $buttons = $("#save-as-modal .buttons"),
+        $image = $("#save-as-modal .image"),
         svg;
 
-    $buttons.html("");
+    // Reset the modal and show it
+    $buttons.html("<h3>Please wait while we create your image</h3>");
+    $image.html("<h3>Loading preview...</h3>" +
+        "<div class='progress progress-striped active'>" +
+        "<div class='progress-bar'  style='width: 65%'></div></div>");
+    $("#save-as-modal").modal();
+
+    // Generate the image
     if (svgSelector) {
-        svg = $(svgSelector).wrap("<div></div>").parent().html();
-
         // Send the SVG code to the server for png conversion
-        $.post("/convert", { image: svg }, function (data) {
-            $("#save-as-modal .image").html("<img src='" + data + "' />");
-            $("#save-as-modal").modal();
-        });
-
-        $buttons.append("<button id='download-svg' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as SVG</button>");
+        svg = $(svgSelector).wrap("<div></div>").parent().html();
+        $.post("/convert", { image: svg }, showImage);
     }
     if (canvasSelector) {
+        // Use html2canvas to convert canvas to dataURL
         html2canvas($(canvasSelector), {
             onrendered : function (canvas) {
-                $("#save-as-modal .image").html("<img src='" + canvas.toDataURL() + "' />");
-                $("#save-as-modal").modal();
+                showImage(canvas.toDataURL());
             }
         });
     }
-    $buttons.append("<button id='download-png' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as PNG</button>");
 
-    $("#download-svg").click(function () {
-         downloadDataByForm(svg, baseFileName + ".svg");
-    });
-    $("#download-png").click(function () {
-        downloadDataByLink($("#save-as-modal .image img").attr("src"), baseFileName + ".png");
-    });
+    // Show the image and add buttons
+    function showImage(dataURL) {
+        $image.html("<img src='" + dataURL + "' />");
+        $buttons.html("");
+        if (svgSelector) {
+            $buttons.append("<button id='download-svg' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as SVG</button>");
+            $("#download-svg").click(function () {
+                 downloadDataByForm(svg, baseFileName + ".svg");
+            });
+        }
+        $buttons.append("<button id='download-png' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as PNG</button>");
+        $("#download-png").click(function () {
+            downloadDataByLink($("#save-as-modal .image img").attr("src"), baseFileName + ".png");
+        });
+    }
 }
 
 /**
