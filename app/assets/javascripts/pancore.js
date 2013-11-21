@@ -369,12 +369,17 @@ function init_pancore() {
     }
 
     // Set up save image stuff
-    $("#buttons-pancore").prepend("<button id='save-btn' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save as image</button>");
-    $("#save-btn").click(function () {
+    $("#buttons-pancore").prepend("<button id='save-img' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save image</button>");
+    $("#save-img").click(function clickSaveImage() {
         // track save image event
         _gaq.push(['_trackEvent', 'Pancore', 'Save Image']);
-
         triggerDownloadModal("#pancore_graph svg", null, "unique_peptides");
+    });
+    $("#buttons-pancore").prepend("<button id='save-data' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save data</button>");
+    $("#save-data").click(function clickSaveData() {
+        // track save data event
+        _gaq.push(['_trackEvent', 'Pancore', 'Save Data']);
+        exportData();
     });
 
     // Draw the graph
@@ -1082,6 +1087,27 @@ function init_pancore() {
     function legendClick(d) {
         toggles[d.toggle] = !toggles[d.toggle];
         updateGraph();
+    }
+
+    /**
+     * Invokes a file download containing all data currently shown
+     * in the graph (i.e. each datapoint) in csv format.
+     */
+    function exportData() {
+        var exportString = "name,bioproject_id,genome_peptides,core_peptides,pan_peptides,unique_peptides\n",
+            i,
+            tempArray;
+        for (i = 0; i < visData.length; i++) {
+            tempArray = [];
+            tempArray.push(tableData[visData[i].bioproject_id].name);
+            tempArray.push(visData[i].bioproject_id);
+            tempArray.push(visData[i].peptides);
+            tempArray.push(visData[i].core);
+            tempArray.push(visData[i].pan);
+            tempArray.push(visData[i].unicore);
+            exportString += tempArray.join(",") + "\n";
+        }
+        downloadDataByForm(exportString, "unique_peptides.csv");
     }
 
     // MOUSE EVENT HELPER FUNCTIONS
