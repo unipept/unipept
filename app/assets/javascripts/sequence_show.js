@@ -176,12 +176,7 @@ function init_sequence_show(data, lcaId) {
         // GA event tracking
         _gaq.push(['_trackEvent', 'Single Peptide', 'Save Image']);
 
-        html2canvas($("#lineageTree"), {
-            onrendered : function (canvas) {
-                $("#save-as-modal .modal-body").html("<img src='" + canvas.toDataURL() + "' />");
-                $("#save-as-modal").modal();
-            }
-        });
+        triggerDownloadModal(null, "#lineageTree", "unipept_lineage");
     });
 
 }

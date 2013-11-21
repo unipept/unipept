@@ -393,22 +393,23 @@ function init_graphs() {
     }
 
     // Set up save image stuff
-    $("#buttons-pancore").prepend("<button id='save-btn' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save as image</button>");
-    $("#save-btn").click(function () {
-        var svg = "";
+    $("#buttons-pancore").prepend("<button id='save-img' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save image</button>");
+    $("#save-img").click(function clickSaveImage() {
         if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
             // track save image event
             _gaq.push(['_trackEvent', 'Pancore', 'Save Image', 'graph']);
-            svg = $("#pancore_graph svg").wrap("<div></div>").parent().html();
+            triggerDownloadModal("#pancore_graph svg", null, "unique_peptides_graph");
         } else {
+            // track save image event
             _gaq.push(['_trackEvent', 'Pancore', 'Save Image', 'sim matrix']);
-            svg = $("#sim_matrix svg").wrap("<div></div>").parent().html();
+            triggerDownloadModal("#sim_matrix svg", null, "unique_peptides_matrix");
         }
-        // Send the SVG code to the server for png conversion
-        $.post("/convert", { image: svg }, function (data) {
-            $("#save-as-modal .modal-body").html("<img src='" + data + "' />");
-            $("#save-as-modal").modal();
-        });
+    });
+    $("#buttons-pancore").prepend("<button id='save-data' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save data</button>");
+    $("#save-data").click(function clickSaveData() {
+        // track save data event
+        _gaq.push(['_trackEvent', 'Pancore', 'Save Data']);
+        exportData();
     });
 
     // Draw the graph
@@ -702,6 +703,8 @@ function init_graphs() {
         // create the svg
         pancoreSvg = d3.select("#pancore_graph")
           .append("svg")
+            .attr("version", "1.1")
+            .attr("xmlns", "http://www.w3.org/2000/svg")
             .attr("viewBox", "0 0 " + fullWidth + " " + fullHeight)
             .attr("width", fullWidth)
             .attr("height", fullHeight)
@@ -1140,6 +1143,27 @@ function init_graphs() {
         updatePancore();
     }
 
+    /**
+     * Invokes a file download containing all data currently shown
+     * in the graph (i.e. each datapoint) in csv format.
+     */
+    function exportData() {
+        var exportString = "name,bioproject_id,genome_peptides,core_peptides,pan_peptides,unique_peptides\n",
+            i,
+            tempArray;
+        for (i = 0; i < pancoreData.length; i++) {
+            tempArray = [];
+            tempArray.push(tableData[pancoreData[i].bioproject_id].name);
+            tempArray.push(pancoreData[i].bioproject_id);
+            tempArray.push(pancoreData[i].peptides);
+            tempArray.push(pancoreData[i].core);
+            tempArray.push(pancoreData[i].pan);
+            tempArray.push(pancoreData[i].unicore);
+            exportString += tempArray.join(",") + "\n";
+        }
+        downloadDataByForm(exportString, "unique_peptides.csv");
+    }
+
     // MOUSE EVENT HELPER FUNCTIONS
 
     function removePopoversAndHighlights() {
@@ -1248,12 +1272,9 @@ function init_graphs() {
         });
     }
     function returnPopoverSequences(sequences, type) {
-        $("#pancore_graph form.download").remove();
-        $("#pancore_graph").append("<form class='download' method='post' action='download'></form>");
-        $("#pancore_graph form.download").append("<input type='hidden' name='filename' value='" + type + "-sequences.txt'/>");
-        $("#pancore_graph form.download").append("<input type='hidden' name='data' value='" + sequences + "'/>");
-        $("#pancore_graph form.download").submit();
-        $("#download-peptides-toggle").button('reset');
+        downloadDataByForm(sequences, type + '-sequences.txt', function enableButton() {
+            $("#download-peptides-toggle").button('reset');
+        });
     }
     function position(d) {
         var v = pancoreMouse.dragging[d.bioproject_id];

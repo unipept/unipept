@@ -4,7 +4,15 @@ function init_multi(data, data2, equate_il) {
         // Track the download button
         _gaq.push(['_trackEvent', 'Multi Peptide', 'Export']);
 
+        var nonce = Math.random();
+        $("#nonce").val(nonce);
         $("#downloadDataset").button('loading');
+        var downloadTimer = setInterval(function () {
+            if (document.cookie.indexOf(nonce) != -1) {
+                $("#downloadDataset").button('reset');
+                clearInterval(downloadTimer);
+            }
+        }, 1000);
         return true;
     });
 
@@ -70,21 +78,12 @@ function init_multi(data, data2, equate_il) {
             // Track save image
             _gaq.push(['_trackEvent', 'Multi Peptide', 'Save Image', 'Sunburst']);
 
-            var svg = $("#sunburst svg").wrap("<div></div>").parent().html();
-            $.post("/convert", { image: svg }, function (data) {
-                $("#save-as-modal .modal-body").html("<img src='" + data + "' />");
-                $("#save-as-modal").modal();
-            });
+            triggerDownloadModal("#sunburst svg", null, "unipept_sunburst");
         } else {
             // Track save image
             _gaq.push(['_trackEvent', 'Multi Peptide', 'Save Image', 'Treemap']);
 
-            html2canvas($("#treeMap"), {
-                onrendered : function (canvas) {
-                    $("#save-as-modal .modal-body").html("<img src='" + canvas.toDataURL() + "' />");
-                    $("#save-as-modal").modal();
-                }
-            });
+            triggerDownloadModal(null, "#treeMap", "unipept_treemap");
         }
     });
 }
@@ -289,6 +288,8 @@ function initSunburst(data) {
     var div = d3.select("#sunburst");
 
     var vis = div.append("svg")
+        .attr("version", "1.1")
+        .attr("xmlns", "http://www.w3.org/2000/svg")
         .attr("viewBox", "0 0 740 740")
         .attr("width", w + p * 2)
         .attr("height", h + p * 2)
