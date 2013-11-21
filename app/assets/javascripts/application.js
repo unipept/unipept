@@ -46,6 +46,112 @@ function add_fields(link, association, content) {
     $(link).parent().parent().before(content.replace(regexp, new_id));
 }
 
+/**
+ * Triggers the image export modal.
+ *
+ * If an svgSelector is present, sends the SVG-code to the server to convert
+ * it to a PNG. The server return a data URL containing the PNG data.
+ * In an canvasSelector is present, uses html2canvas to convert it to a PNG.
+ * A modal dialog is shown containing the image and buttons
+ * to download the image as PNG and SVG if present.
+ *
+ * @param <String> svgSelector The DOM selector of the SVG
+ * @param <String> canvasSelector The DOM selector of the canvas
+ * @param <String> baseFileName The requested file name
+ */
+function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
+    var $buttons = $("#save-as-modal .buttons"),
+        $image = $("#save-as-modal .image"),
+        svg;
+
+    // Reset the modal and show it
+    $buttons.html("<h3>Please wait while we create your image</h3>");
+    $image.html("<h3>Loading preview...</h3>" +
+        "<div class='progress progress-striped active'>" +
+        "<div class='progress-bar'  style='width: 65%'></div></div>");
+    $("#save-as-modal").modal();
+
+    // Generate the image
+    if (svgSelector) {
+        // Send the SVG code to the server for png conversion
+        svg = $(svgSelector).wrap("<div></div>").parent().html();
+        $.post("/convert", { image: svg }, showImage);
+    }
+    if (canvasSelector) {
+        // Use html2canvas to convert canvas to dataURL
+        html2canvas($(canvasSelector), {
+            onrendered : function (canvas) {
+                showImage(canvas.toDataURL());
+            }
+        });
+    }
+
+    // Show the image and add buttons
+    function showImage(dataURL) {
+        $image.html("<img src='" + dataURL + "' />");
+        $buttons.html("");
+        if (svgSelector) {
+            $buttons.append("<button id='download-svg' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as SVG</button>");
+            $("#download-svg").click(function () {
+                 downloadDataByForm(svg, baseFileName + ".svg");
+            });
+        }
+        $buttons.append("<button id='download-png' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as PNG</button>");
+        $("#download-png").click(function () {
+            downloadDataByLink($("#save-as-modal .image img").attr("src"), baseFileName + ".png");
+        });
+    }
+}
+
+/**
+ * Triggers a file download in the browser using a hidden
+ * form and a server round trip. Fires an optional callback
+ * when the file starts downloading
+ *
+ * @param <String> data The text you want in the file
+ * @param <String> filename The requested file name
+ * @param <Function> callback Optional callback that gets
+ *          fired when the file starts downloading
+ */
+function downloadDataByForm(data, fileName, callback) {
+    var nonce = Math.random(),
+        downloadTimer,
+        $downloadForm;
+    $("form.download").remove();
+    $("body").append("<form class='download' method='post' action='/download'></form>");
+    $downloadForm = $("form.download").append("<input type='hidden' name='filename' value='" + fileName + "'/>");
+    $downloadForm.append("<input type='hidden' name='data' class='data'/>");
+    $downloadForm.append("<input type='hidden' name='nonce' value='" + nonce + "'/>");
+    $downloadForm.find(".data").val(data);
+    $downloadForm.submit();
+    if (callback) {
+        downloadTimer = setInterval(function checkCookie() {
+            if (document.cookie.indexOf(nonce) != -1) {
+                callback();
+                clearInterval(downloadTimer);
+            }
+        }, 100);
+    }
+}
+
+/**
+ * Triggers a file download in the browser using a hidden
+ * link and a data url.
+ *
+ * The download attribute doesn't work in IE and Safari:
+ * http://caniuse.com/#feat=download
+ *
+ * @param <String> dataURL The dataURL of the data
+ * @param <String> filename The requested file name
+ */
+function downloadDataByLink(dataURL, fileName) {
+    var $downloadLink;
+    $("a.downloadLink").remove();
+    $("body").append("<a class='downloadLink' style='display:none;' download='" + fileName + "' target='_blank'/>");
+    $downloadLink = $("a.downloadLink").attr("href", dataURL);
+    $downloadLink[0].click();
+}
+
 /* function for error handling.
  * first parameter is the error that gets logged to the console
  * second parameter is optional message to display to the user
