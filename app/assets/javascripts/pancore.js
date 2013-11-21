@@ -378,12 +378,7 @@ function init_pancore() {
         // track save image event
         _gaq.push(['_trackEvent', 'Pancore', 'Save Image']);
 
-        var svg = $("#pancore_graph svg").wrap("<div></div>").parent().html();
-        // Send the SVG code to the server for png conversion
-        $.post("/convert", { image: svg }, function (data) {
-            $("#save-as-modal .modal-body").html("<img src='" + data + "' />");
-            $("#save-as-modal").modal();
-        });
+        triggerDownloadModal("#pancore_graph svg", null, "unique_peptides");
     });
 
     // Draw the graph
@@ -644,6 +639,8 @@ function init_pancore() {
         // create the svg
         svg = d3.select("#pancore_graph")
           .append("svg")
+            .attr("version", "1.1")
+            .attr("xmlns", "http://www.w3.org/2000/svg")
             .attr("viewBox", "0 0 " + fullWidth + " " + fullHeight)
             .attr("width", fullWidth)
             .attr("height", fullHeight)
@@ -1190,12 +1187,9 @@ function init_pancore() {
         });
     }
     function returnPopoverSequences(sequences, type) {
-        $("#pancore_graph form.download").remove();
-        $("#pancore_graph").append("<form class='download' method='post' action='download'></form>");
-        $("#pancore_graph form.download").append("<input type='hidden' name='filename' value='" + type + "-sequences.txt'/>");
-        $("#pancore_graph form.download").append("<input type='hidden' name='data' value='" + sequences + "'/>");
-        $("#pancore_graph form.download").submit();
-        $("#download-peptides-toggle").button('reset');
+        downloadDataByForm(sequences, type + '-sequences.txt', function enableButton() {
+            $("#download-peptides-toggle").button('reset');
+        });
     }
     function position(d) {
         var v = dragging[d.bioproject_id];
