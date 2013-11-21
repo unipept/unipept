@@ -105,19 +105,33 @@ function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
 
 /**
  * Triggers a file download in the browser using a hidden
- * form and a server round trip.
+ * form and a server round trip. Fires an optional callback
+ * when the file starts downloading
  *
  * @param <String> data The text you want in the file
  * @param <String> filename The requested file name
+ * @param <Function> callback Optional callback that gets
+ *          fired when the file starts downloading
  */
-function downloadDataByForm(data, fileName) {
-    var $downloadForm;
+function downloadDataByForm(data, fileName, callback) {
+    var nonce = Math.random(),
+        downloadTimer,
+        $downloadForm;
     $("form.download").remove();
     $("body").append("<form class='download' method='post' action='/download'></form>");
     $downloadForm = $("form.download").append("<input type='hidden' name='filename' value='" + fileName + "'/>");
     $downloadForm.append("<input type='hidden' name='data' class='data'/>");
+    $downloadForm.append("<input type='hidden' name='nonce' value='" + nonce + "'/>");
     $downloadForm.find(".data").val(data);
     $downloadForm.submit();
+    if (callback) {
+        downloadTimer = setInterval(function checkCookie() {
+            if (document.cookie.indexOf(nonce) != -1) {
+                callback();
+                clearInterval(downloadTimer);
+            }
+        }, 100);
+    }
 }
 
 /**
