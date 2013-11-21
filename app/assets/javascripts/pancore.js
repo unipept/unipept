@@ -243,6 +243,10 @@ function init_graphs() {
         .x(function (d) { return pancoreX(d.bioproject_id); })
         .y(function (d) { return pancoreY(d.unicore); });
 
+    // Stores tooltip position till next frame
+    var tooltipX = 0,
+        tooltipY = 0;
+
     // Add eventhandlers to the worker
     worker.addEventListener('message', function (e) {
         var data = e.data;
@@ -712,6 +716,8 @@ function init_graphs() {
           .append("div")
             .attr("class", "tip")
             .style("position", "absolute")
+            .style("top", "0px")
+            .style("left", "0px")
             .style("z-index", "10")
             .style("visibility", "hidden");
 
@@ -816,6 +822,7 @@ function init_graphs() {
         var trash = pancoreSvg.insert("g")
             .attr("id", "trash")
             .attr("fill", "#cccccc")
+            .style("opacity", "0")
             .on("mouseover", trashMouseOver)
             .on("mouseout", trashMouseOut)
         .insert("g")
@@ -1063,10 +1070,13 @@ function init_graphs() {
     function mouseMove(d) {
         if (pancoreMouse.isDragging) return;
         if (window.fullScreenApi.isFullScreen()) {
-            pancoreTooltip.style("top", (d3.event.clientY + 15) + "px").style("left", (d3.event.clientX + 15) + "px");
+            tooltipX = d3.event.clientX + 15;
+            tooltipY = d3.event.clientY + 15;
         } else {
-            pancoreTooltip.style("top", (d3.event.pageY + 15) + "px").style("left", (d3.event.pageX + 15) + "px");
+            tooltipX = d3.event.pageX + 15;
+            tooltipY = d3.event.pageY + 15;
         }
+        requestAnimFrame(moveTooltip);
     }
     // Let the dragging begin!
     function dragStart(d) {
@@ -1076,7 +1086,10 @@ function init_graphs() {
         pancoreMouse.dragging[d.bioproject_id] = this.__origin__ = pancoreX(d.bioproject_id);
         d3.select("body").style("cursor", "url(/closedhand.cur) 7 5, move");
         pancoreSvg.selectAll(".bar").style("cursor", "url(/closedhand.cur) 7 5, move");
-        pancoreSvg.select("#trash").transition().duration(transitionDuration).attr("transform", "translate(-84 0)");
+        pancoreSvg.select("#trash").transition()
+            .duration(transitionDuration)
+            .attr("transform", "translate(-84 0)")
+            .style("opacity", "1");
     }
     // Switches the position the nodes when it needs to
     function drag(d) {
@@ -1089,26 +1102,7 @@ function init_graphs() {
         }
         removeTooltip();
         pancoreMouse.dragging[d.bioproject_id] = Math.min(pancoreWidth, Math.max(0, this.__origin__ += d3.event.dx));
-        var oldData = pancoreData.slice(0);
-        pancoreData.sort(function (a, b) { return position(a) - position(b); });
-        // If some position is swapped, redraw some stuff
-        if (isChanged(oldData, pancoreData)) {
-            pancoreX.domain(pancoreData.map(function (d) { return d.bioproject_id; }));
-            pancoreSvg.selectAll(".bar").attr("x", function (d) { return pancoreX(d.bioproject_id) - pancoreMouseOverWidth / 2; });
-            pancoreSvg.selectAll(".dot:not(._" + d.bioproject_id + ")").transition()
-                .duration(transitionDuration)
-                .attr("cx", function (d) { return pancoreX(d.bioproject_id); });
-            pancoreSvg.select(".x.axis").transition()
-                .duration(transitionDuration)
-                .call(xAxis);
-            pancoreSvg.selectAll(".x.axis text").style("text-anchor", "end");
-            pancoreSvg.selectAll(".line").transition()
-                .duration(transitionDuration)
-                .style("stroke", "#cccccc");
-        }
-        // Update the position of the drag box and dots
-        d3.select(this).attr("x", pancoreMouse.dragging[d.bioproject_id] - pancoreMouseOverWidth / 2);
-        pancoreSvg.selectAll(".dot._" + d.bioproject_id).attr("cx", pancoreMouse.dragging[d.bioproject_id]);
+        requestAnimFrame(moveDrag);
     }
     // Recalculates the position of all genomes and update the graph or
     // removes the genome when dropped on the trash can
@@ -1121,6 +1115,7 @@ function init_graphs() {
             .delay(pancoreMouse.onTrash ? transitionDuration : 0)
             .duration(transitionDuration)
             .attr("transform", "translate(0 0)")
+            .style("opacity", "0")
             .attr("fill", "#cccccc");
         pancoreSvg.select("#trash circle").transition()
             .delay(pancoreMouse.onTrash ? transitionDuration : 0)
@@ -1310,6 +1305,35 @@ function init_graphs() {
         pancoreSvg.selectAll(".dot.unicore._" + pancoreMouse.dragId).transition()
             .duration(transitionDuration)
             .attr("fill", unicoreColor);
+    }
+
+    // Request Animation Frame functions
+    function moveTooltip() {
+        pancoreTooltip.style("-webkit-transform", "translate3d(" + tooltipX + "px, " + tooltipY + "px, 0)");
+        pancoreTooltip.style("transform", "translate3d(" + tooltipX + "px, " + tooltipY + "px, 0)");
+    }
+
+    function moveDrag() {
+        var oldData = pancoreData.slice(0);
+        pancoreData.sort(function (a, b) { return position(a) - position(b); });
+        // If some position is swapped, redraw some stuff
+        if (isChanged(oldData, pancoreData)) {
+            pancoreX.domain(pancoreData.map(function (d) { return d.bioproject_id; }));
+            pancoreSvg.selectAll(".bar").attr("x", function (d) { return pancoreX(d.bioproject_id) - pancoreMouseOverWidth / 2; });
+            pancoreSvg.selectAll(".dot:not(._" + pancoreMouse.dragId + ")").transition()
+                .duration(transitionDuration)
+                .attr("cx", function (d) { return pancoreX(d.bioproject_id); });
+            pancoreSvg.select(".x.axis").transition()
+                .duration(transitionDuration)
+                .call(xAxis);
+            pancoreSvg.selectAll(".x.axis text").style("text-anchor", "end");
+            pancoreSvg.selectAll(".line").transition()
+                .duration(transitionDuration)
+                .style("stroke", "#cccccc");
+        }
+        // Update the position of the drag box and dots
+        pancoreSvg.selectAll(".bar._" + pancoreMouse.dragId).attr("x", pancoreMouse.dragging[pancoreMouse.dragId] - pancoreMouseOverWidth / 2);
+        pancoreSvg.selectAll(".dot._" + pancoreMouse.dragId).attr("cx", pancoreMouse.dragging[pancoreMouse.dragId]);
     }
 
     // GENERAL HELPER FUNCTIONS

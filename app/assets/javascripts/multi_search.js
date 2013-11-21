@@ -12,7 +12,7 @@ function init_multi(data, data2, equate_il) {
     try {
         initSunburst(data2);
     } catch (err) {
-        error(err, "Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
+        error(err.message, "Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
 
     // treemap
@@ -20,14 +20,14 @@ function init_multi(data, data2, equate_il) {
         initTreeMap(data);
         $("#treeMapWrapper").removeClass("active");
     } catch (err) {
-        error(err, "Loading the Treemap visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
+        error(err.message, "Loading the Treemap visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
 
     // tree
     try {
         initTree(data, equate_il);
     } catch (err) {
-        error(err, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
+        error(err.message, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
 
     // set up the fullscreen stuff
