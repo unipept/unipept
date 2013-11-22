@@ -13,7 +13,7 @@ var constructSelectionTree = function constructSelectionTree(args) {
     /*************** Private variables ***************/
 
     var that = {},
-        data = args.data
+        data = args.data,
         taxa = args.taxa;
 
     // Status vars used while dragging to determine if the
@@ -31,7 +31,7 @@ var constructSelectionTree = function constructSelectionTree(args) {
     calculateNumOfChildren(data);
     delete data.children;
 
-    /*************** Private functions ***************/
+    /*************** Private methods ***************/
 
     /**
      * Calculates the number of leafs under every node in the given list by
@@ -64,16 +64,30 @@ var constructSelectionTree = function constructSelectionTree(args) {
         }
         list.children = result;
         return result;
-    };
+    }
 
-    /*************** Public functions ***************/
+    /*************** Public methods ***************/
 
-    that.drawTree = function drawTree() {
-        // Add the nested unordered lists to the page based on the data array
-        var tree = d3.select("#treeView");
-        tree = tree.append("ul").append("li").attr("class", "root not").append("ul");
-        $("li.root").prepend($("#treeSearchDiv"));
-        var items = tree.selectAll("li").data(data)
+    /**
+     * Adds the collapsible selection tree to the page at the given selector
+     * and adds the dragging behaviour.
+     *
+     * @param <String> selector Selector of an (empty) div where to add the tree
+     */
+    that.drawTree = function drawTree(selector) {
+        var $tree = $(selector),
+            tree,
+            items;
+
+        // Add the root
+        tree = d3.select(selector)
+            .append("ul")
+            .append("li")
+                .attr("class", "root not")
+            .append("ul");
+
+        // Add the lower nodes
+        items = tree.selectAll("li").data(data)
             .enter()
             .append("li")
                 .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
@@ -115,10 +129,13 @@ var constructSelectionTree = function constructSelectionTree(args) {
                 .html(function (d) { return "<span>" + d.name + "</span>"; });
 
         // Prevent accidental text selection
-        $("#treeView li.root ul").disableSelection();
+        $tree.find("li.root ul").disableSelection();
+
+        // Add the search div as root
+        $tree.find("li.root").prepend($("#treeSearchDiv"));
 
         // Expand or collapse a node when clicked
-        $("#treeView li").click(function () {
+        $tree.find("li").click(function toggleExpand() {
             if (!$(this).hasClass("not")) {
                 $(this).toggleClass("collapsibleListOpen collapsibleListClosed");
             }
@@ -126,38 +143,47 @@ var constructSelectionTree = function constructSelectionTree(args) {
         });
 
         // Filter the tree 500ms after the last key press
-        $("#treeSearch").keyup(function () {
+        $("#treeSearch").keyup(function keyUpped() {
             var text = $(this).val().toLowerCase();
-            delay(function () {
+            delay(function search() {
                 $("#treeView li").removeClass("match unmatch");
                 if (text !== "") {
-                    $("#treeView li[data-search*='" + text + "']").addClass("match");
-                    $("#treeView li.match").parents("li").addClass("match").addClass("collapsibleListOpen").removeClass("collapsibleListClosed");
-                    $("#treeView li:not(.match):not(.root)").addClass("unmatch");
+                    $tree.find("li[data-search*='" + text + "']").addClass("match");
+                    $tree.find("li.match").parents("li")
+                        .addClass("match")
+                        .addClass("collapsibleListOpen")
+                        .removeClass("collapsibleListClosed");
+                    $tree.find("li:not(.match):not(.root)").addClass("unmatch");
                 }
             }, 500);
         });
 
         // Make the nodes draggable using JQuery UI
-        $("#treeView li").draggable({
+        $tree.find("li").draggable({
             appendTo: "#genomes_table tbody",
             addClasses: false,
             refreshPositions: true,
             // Mimic the style of the table on the right
-            helper: function (event) {
+            helper: function help(event) {
                 var returnString = "<tbody class='dragging'>";
                 if ($(this).hasClass("leaf")) {
-                    returnString += "<tr><td class='handle'><i class='glyphicon glyphicon-resize-vertical'></i></td><td class='data name' data-bioproject_id='" + $(this).attr("data-bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
+                    returnString += "<tr><td class='handle'><i class='glyphicon glyphicon-resize-vertical'></i></td><td class='data name' data-bioproject_id='"
+                        + $(this).attr("data-bioproject_id") + "'>"
+                        + $(this).text()
+                        + "</td><td class='data status'></td><td></td></tr>";
                 } else {
                     $(this).find(".leaf").each(function () {
-                        returnString += "<tr><td class='handle'><i class='glyphicon glyphicon-resize-vertical'></i></td><td class='data name' data-bioproject_id='" + $(this).attr("data-bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
+                        returnString += "<tr><td class='handle'><i class='glyphicon glyphicon-resize-vertical'></i></td><td class='data name' data-bioproject_id='"
+                            + $(this).attr("data-bioproject_id") + "'>"
+                            + $(this).text()
+                            + "</td><td class='data status'></td><td></td></tr>";
                     });
                 }
                 returnString += "</tbody>";
                 return $(returnString);
             },
-            // table on the right slides into view on drag start
-            start: function (event, ui) {
+            // Table on the right slides into view on drag start
+            start: function startDragging(event, ui) {
                 var pos = Math.max(0, window.pageYOffset - $("#table-message").offset().top);
                 $("#genomes_table_div").css("margin-top", pos + "px");
                 $(event.target).draggable('option', 'refreshPositions', true);
@@ -165,14 +191,16 @@ var constructSelectionTree = function constructSelectionTree(args) {
                 moving2 = true;
                 setTimeout(function () {moving = false; }, 800);
             },
-            // table on the right slides back to original position 1s after drag stop
-            stop: function (event, ui) {
+            // Table on the right slides back to original position 1s after
+            // drag stop
+            stop: function stopDragging(event, ui) {
                 setTimeout(function () {$("#genomes_table_div").css("margin-top", "0px"); }, 1000);
             },
-            // Because the drop target slides in, we have to recalculate the position
-            // of the target while dragging. This is computationally expensive, so we
-            // stop recalculating once we know the target stays in place
-            drag: function (event, ui) {
+            // Because the drop target slides in, we have to recalculate the
+            // position of the target while dragging. This is computationally
+            // expensive, so we stop recalculating once we know the target
+            // stays in place
+            drag: function whileDragging(event, ui) {
                 if (!moving2) {
                     $(event.target).draggable('option', 'refreshPositions', false);
                 }
@@ -181,7 +209,7 @@ var constructSelectionTree = function constructSelectionTree(args) {
                 }
             }
         });
-    }
+    };
 
     return that;
 };
