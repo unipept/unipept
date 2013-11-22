@@ -40,6 +40,7 @@ sed "s/.input.output.grouped.merged//g" files.txt > output.txt ; cat merge.txt >
 # cumulative
 head -1 test.txt > header.txt
 gsed -i "1d" test.txt
+# manually remove any name with [ or ] in it
 tail -r test.txt > test.txt.reverse
 awk -f cumulative.awk test.txt.reverse | tail -r > test.txt.sum
 cat header.txt test.txt.sum > sum.txt
