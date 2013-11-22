@@ -1,10 +1,5 @@
 /**
  * Creates the selectable taxonomy tree using nested unordered lists
- *
- * data is an array of around 2500 objects with this format:
- * {"bioproject_id":57587,"class_id":29547,"genus_id":194,"name":"Campylobacter jejuni","order_id":213849,"species_id":197}
- *
- * taxa is a list (object) of key-value pairs mapping taxon id's to taxon names
  */
 function init_selection_tree(data, taxa) {
     var tree = constructSelectionTree({data : data, taxa : taxa});
