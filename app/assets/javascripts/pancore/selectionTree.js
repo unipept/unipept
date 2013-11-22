@@ -151,7 +151,7 @@ var constructSelectionTree = function constructSelectionTree(args) {
         $tree.find("li.root ul").disableSelection();
 
         // Add the search div as root
-        $tree.find("li.root").prepend($(treeSearchDiv));
+        $tree.find("li.root").prepend($(treeSearchSelector));
 
         // Expand or collapse a node when clicked
         $tree.find("li").click(function toggleExpand() {
