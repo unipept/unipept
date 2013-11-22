@@ -82,15 +82,24 @@ var constructSelectionTree = function constructSelectionTree(args) {
      * Adds the collapsible selection tree to the page at the given selector
      * and adds the dragging behaviour.
      *
-     * @param <String> selector Selector of an (empty) div where to add the tree
+     * @param <String> selectors.tree Selector of div where we want
+     *          to add the tree
+     * @param <String> selectors.tableDiv Selector of the div containing
+     *          the genomes table
+     * @param <String> selectors.treeSearch Selector of the div containing
+     *          the tree search field
      */
-    that.drawTree = function drawTree(selector) {
-        var $tree = $(selector),
+    that.drawTree = function drawTree(selectors) {
+        var treeSelector = selectors.tree,
+            tableDivSelector = selectors.tableDiv,
+            treeSearchSelector = selectors.treeSearch,
+            $tree = $(treeSelector),
+            $tableDiv = $(tableDivSelector),
             tree,
             items;
 
         // Add the root
-        tree = d3.select(selector)
+        tree = d3.select(treeSelector)
             .append("ul")
             .append("li")
                 .attr("class", "root not")
@@ -142,7 +151,7 @@ var constructSelectionTree = function constructSelectionTree(args) {
         $tree.find("li.root ul").disableSelection();
 
         // Add the search div as root
-        $tree.find("li.root").prepend($("#treeSearchDiv"));
+        $tree.find("li.root").prepend($(treeSearchDiv));
 
         // Expand or collapse a node when clicked
         $tree.find("li").click(function toggleExpand() {
@@ -153,10 +162,10 @@ var constructSelectionTree = function constructSelectionTree(args) {
         });
 
         // Filter the tree 500ms after the last key press
-        $("#treeSearch").keyup(function keyUpped() {
+        $(treeSearchSelector + " input").keyup(function keyUpped() {
             var text = $(this).val().toLowerCase();
             delay(function search() {
-                $("#treeView li").removeClass("match unmatch");
+                $tree.find("li").removeClass("match unmatch");
                 if (text !== "") {
                     $tree.find("li[data-search*='" + text + "']").addClass("match");
                     $tree.find("li.match").parents("li")
@@ -170,7 +179,7 @@ var constructSelectionTree = function constructSelectionTree(args) {
 
         // Make the nodes draggable using JQuery UI
         $tree.find("li").draggable({
-            appendTo: "#genomes_table tbody",
+            appendTo: tableDivSelector + " tbody",
             addClasses: false,
             refreshPositions: true,
             // Mimic the style of the table on the right
@@ -194,8 +203,8 @@ var constructSelectionTree = function constructSelectionTree(args) {
             },
             // Table on the right slides into view on drag start
             start: function startDragging(event, ui) {
-                var pos = Math.max(0, window.pageYOffset - $("#table-message").offset().top);
-                $("#genomes_table_div").css("margin-top", pos + "px");
+                var pos = Math.max(0, window.pageYOffset - $tableDiv.offset().top - 16);
+                $tableDiv.css("margin-top", pos + "px");
                 $(event.target).draggable('option', 'refreshPositions', true);
                 moving = true;
                 moving2 = true;
@@ -204,7 +213,7 @@ var constructSelectionTree = function constructSelectionTree(args) {
             // Table on the right slides back to original position 1s after
             // drag stop
             stop: function stopDragging(event, ui) {
-                setTimeout(function () {$("#genomes_table_div").css("margin-top", "0px"); }, 1000);
+                setTimeout(function () {$tableDiv.css("margin-top", "0px"); }, 1000);
             },
             // Because the drop target slides in, we have to recalculate the
             // position of the target while dragging. This is computationally
