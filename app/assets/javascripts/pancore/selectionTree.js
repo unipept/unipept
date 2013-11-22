@@ -14,7 +14,8 @@ var constructSelectionTree = function constructSelectionTree(args) {
 
     var that = {},
         data = args.data,
-        taxa = args.taxa;
+        taxa = args.taxa,
+        titles = ["Class", "Order", "Genus", "Species"];
 
     // Status vars used while dragging to determine if the
     // droptarget needs to be recalculated
@@ -96,7 +97,8 @@ var constructSelectionTree = function constructSelectionTree(args) {
             $tree = $(treeSelector),
             $tableDiv = $(tableDivSelector),
             tree,
-            items;
+            items,
+            i;
 
         // Add the root
         tree = d3.select(treeSelector)
@@ -114,30 +116,16 @@ var constructSelectionTree = function constructSelectionTree(args) {
                 .attr("class", "collapsibleListOpen")
                 .attr("data-search", function (d) { return taxa[d.key]; })
             .append("ul");
-        items = items.selectAll("li").data(function (d) { return d.values; })
-            .enter()
-            .append("li")
-                .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
-                .attr("title", "Order")
-                .attr("class", "collapsibleListClosed")
-                .attr("data-search", function (d) { return taxa[d.key]; })
-            .append("ul");
-        items = items.selectAll("li").data(function (d) { return d.values; })
-            .enter()
-            .append("li")
-                .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
-                .attr("title", "Genus")
-                .attr("class", "collapsibleListOpen")
-                .attr("data-search", function (d) { return taxa[d.key]; })
-            .append("ul");
-        items = items.selectAll("li").data(function (d) { return d.values; })
-            .enter()
-            .append("li")
-                .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
-                .attr("title", "Species")
-                .attr("class", "collapsibleListOpen")
-                .attr("data-search", function (d) { return taxa[d.key]; })
-            .append("ul");
+        for (i = 1; i < 4; i++) {
+            items = items.selectAll("li").data(function (d) { return d.values; })
+                .enter()
+                .append("li")
+                    .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
+                    .attr("title", titles[i])
+                    .attr("class", "collapsibleListOpen")
+                    .attr("data-search", function (d) { return taxa[d.key]; })
+                .append("ul");
+        }
         items = items.selectAll("li").data(function (d) { return d.values; })
             .enter()
             .append("li")

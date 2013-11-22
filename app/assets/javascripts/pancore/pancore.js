@@ -8,7 +8,7 @@
  */
 function init_selection_tree(data, taxa) {
     var tree = constructSelectionTree({data : data, taxa : taxa});
-    tree.drawTree({tree : "#treeView", tableDiv : "#", treeSearch : "#treeSearchDiv"});
+    tree.drawTree({tree : "#treeView", tableDiv : "#genomes-table-div", treeSearch : "#treeSearchDiv"});
 }
 
 /**
