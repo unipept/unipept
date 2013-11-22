@@ -21,17 +21,27 @@ var constructSelectionTree = function constructSelectionTree(args) {
     var moving = false,
         moving2 = false;
 
-    // Uses a "group by" operator on the data array to create a nested array
-    data = d3.nest()
-        .key(function (d) { return d.class_id; }).sortKeys(function (a, b) { return d3.ascending(taxa[a], taxa[b]); })
-        .key(function (d) { return d.order_id; }).sortKeys(function (a, b) { return d3.ascending(taxa[a], taxa[b]); })
-        .key(function (d) { return d.genus_id; }).sortKeys(function (a, b) { return d3.ascending(taxa[a], taxa[b]); })
-        .key(function (d) { return d.species_id; }).sortKeys(function (a, b) { return d3.ascending(taxa[a], taxa[b]); })
-        .entries(data);
-    calculateNumOfChildren(data);
-    delete data.children;
-
     /*************** Private methods ***************/
+
+    /**
+     * Initializes the data variables and calculates the children property
+     * of all nodes in the data
+     */
+    function init() {
+        // Uses a "group by" operator on the data array to create a nested array
+        data = d3.nest()
+            .key(function (d) { return d.class_id; })
+                .sortKeys(function (a, b) { return d3.ascending(taxa[a], taxa[b]); })
+            .key(function (d) { return d.order_id; })
+                .sortKeys(function (a, b) { return d3.ascending(taxa[a], taxa[b]); })
+            .key(function (d) { return d.genus_id; })
+                .sortKeys(function (a, b) { return d3.ascending(taxa[a], taxa[b]); })
+            .key(function (d) { return d.species_id; })
+                .sortKeys(function (a, b) { return d3.ascending(taxa[a], taxa[b]); })
+            .entries(data);
+        calculateNumOfChildren(data);
+        delete data.children;
+    }
 
     /**
      * Calculates the number of leafs under every node in the given list by
@@ -210,6 +220,9 @@ var constructSelectionTree = function constructSelectionTree(args) {
             }
         });
     };
+
+    // initialize the object
+    init();
 
     return that;
 };
