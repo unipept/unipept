@@ -212,7 +212,7 @@ var constructSelectionTree = function constructSelectionTree(args) {
             },
             // Table on the right slides into view on drag start
             start: function startDragging(event, ui) {
-                var pos = Math.max(0, window.pageYOffset - $tableDiv.offset().top - 16);
+                var pos = Math.max(0, window.pageYOffset - $tableDiv.offset().top + 16);
                 $tableDiv.css("margin-top", pos + "px");
                 $(event.target).draggable('option', 'refreshPositions', true);
                 moving = true;
