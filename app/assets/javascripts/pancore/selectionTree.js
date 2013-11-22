@@ -77,6 +77,53 @@ var constructSelectionTree = function constructSelectionTree(args) {
         return result;
     }
 
+    /**
+     * Filters the tree for a given search string if this method isn't call
+     * for a second time in the next 500ms
+     *
+     * @param <String> searchString The string we want to search for
+     * @param <jQuery> $tree jQuery object of the tree we want to filter
+     */
+    function search(searchString, $tree) {
+        var text = searchString.toLowerCase();
+        delay(function doSearch() {
+            $tree.find("li").removeClass("match unmatch");
+            if (text !== "") {
+                $tree.find("li[data-search*='" + text + "']").addClass("match");
+                $tree.find("li.match").parents("li")
+                    .addClass("match")
+                    .addClass("collapsibleListOpen")
+                    .removeClass("collapsibleListClosed");
+                $tree.find("li:not(.match):not(.root)").addClass("unmatch");
+            }
+        }, 500);
+    }
+
+    /**
+     * Drag helper. Constructs html-code that gets added to the page and
+     * 'follows' the cursor while dragging. Mimics the design of the table.
+     *
+     * @param <jQuery> $node jQuery object of the dom element were dragging
+     */
+    function help($node) {
+        var returnString = "<tbody class='dragging'>";
+        if ($node.hasClass("leaf")) {
+            returnString += "<tr><td class='handle'><i class='glyphicon glyphicon-resize-vertical'></i></td><td class='data name' data-bioproject_id='"
+                + $node.attr("data-bioproject_id") + "'>"
+                + $node.text()
+                + "</td><td class='data status'></td><td></td></tr>";
+        } else {
+            $node.find(".leaf").each(function () {
+                returnString += "<tr><td class='handle'><i class='glyphicon glyphicon-resize-vertical'></i></td><td class='data name' data-bioproject_id='"
+                    + $node.attr("data-bioproject_id") + "'>"
+                    + $node.text()
+                    + "</td><td class='data status'></td><td></td></tr>";
+            });
+        }
+        returnString += "</tbody>";
+        return $(returnString);
+    }
+
     /*************** Public methods ***************/
 
     /**
@@ -151,18 +198,7 @@ var constructSelectionTree = function constructSelectionTree(args) {
 
         // Filter the tree 500ms after the last key press
         $(treeSearchSelector + " input").keyup(function keyUpped() {
-            var text = $(this).val().toLowerCase();
-            delay(function search() {
-                $tree.find("li").removeClass("match unmatch");
-                if (text !== "") {
-                    $tree.find("li[data-search*='" + text + "']").addClass("match");
-                    $tree.find("li.match").parents("li")
-                        .addClass("match")
-                        .addClass("collapsibleListOpen")
-                        .removeClass("collapsibleListClosed");
-                    $tree.find("li:not(.match):not(.root)").addClass("unmatch");
-                }
-            }, 500);
+            search($(this).val(), $tree);
         });
 
         // Make the nodes draggable using JQuery UI
@@ -171,23 +207,8 @@ var constructSelectionTree = function constructSelectionTree(args) {
             addClasses: false,
             refreshPositions: true,
             // Mimic the style of the table on the right
-            helper: function help(event) {
-                var returnString = "<tbody class='dragging'>";
-                if ($(this).hasClass("leaf")) {
-                    returnString += "<tr><td class='handle'><i class='glyphicon glyphicon-resize-vertical'></i></td><td class='data name' data-bioproject_id='"
-                        + $(this).attr("data-bioproject_id") + "'>"
-                        + $(this).text()
-                        + "</td><td class='data status'></td><td></td></tr>";
-                } else {
-                    $(this).find(".leaf").each(function () {
-                        returnString += "<tr><td class='handle'><i class='glyphicon glyphicon-resize-vertical'></i></td><td class='data name' data-bioproject_id='"
-                            + $(this).attr("data-bioproject_id") + "'>"
-                            + $(this).text()
-                            + "</td><td class='data status'></td><td></td></tr>";
-                    });
-                }
-                returnString += "</tbody>";
-                return $(returnString);
+            helper: function startHelping(event) {
+                return help($(this));
             },
             // Table on the right slides into view on drag start
             start: function startDragging(event, ui) {
