@@ -115,8 +115,8 @@ var constructSelectionTree = function constructSelectionTree(args) {
         } else {
             $node.find(".leaf").each(function () {
                 returnString += "<tr><td class='handle'><i class='glyphicon glyphicon-resize-vertical'></i></td><td class='data name' data-bioproject_id='"
-                    + $node.attr("data-bioproject_id") + "'>"
-                    + $node.text()
+                    + $(this).attr("data-bioproject_id") + "'>"
+                    + $(this).text()
                     + "</td><td class='data status'></td><td></td></tr>";
             });
         }
@@ -203,7 +203,7 @@ var constructSelectionTree = function constructSelectionTree(args) {
 
         // Make the nodes draggable using JQuery UI
         $tree.find("li").draggable({
-            appendTo: tableDivSelector + " tbody",
+            appendTo: tableDivSelector + " table",
             addClasses: false,
             refreshPositions: true,
             // Mimic the style of the table on the right
