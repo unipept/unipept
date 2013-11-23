@@ -603,58 +603,6 @@ function init_graphs() {
 
     // MOUSE EVENT HELPER FUNCTIONS
 
-
-    function getTooltipContent(d) {
-        var tooltipHtml = "<span style='color: " + genomeColor + ";'>&#9632;</span> genome size: <b>" + d3.format(",")(d.peptides) + "</b><br/>";
-        if (pancoreToggles.showPan)
-            tooltipHtml += "<span style='color: " + panColor + ";'>&#9632;</span> pan peptides: <b>" + d3.format(",")(d.pan) + "</b><br/>";
-        if (pancoreToggles.showCore)
-            tooltipHtml += "<span style='color: " + coreColor + ";'>&#9632;</span> core peptides: <b>" + d3.format(",")(d.core) + "</b>";
-        if (d.unicore != null && pancoreToggles.showUnicore) {
-            tooltipHtml += "<br/><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptides: <b>" + d3.format(",")(d.unicore) + "</b>";
-        }
-        return tooltipHtml;
-    }
-    function getPopoverContent(d) {
-        var content = getTooltipContent(d);
-        content += "<br/><div class='btn-group' id='download-peptides'>" +
-          "<a class='btn btn-default dropdown-toggle' id='download-peptides-toggle' data-toggle='dropdown' data-loading-text='Loading peptides'>" +
-            "<i class='glyphicon glyphicon-download'></i> " +
-            "download peptides " +
-            "<span class='caret'></span>" +
-          "</a>" +
-          "<ul class='dropdown-menu'>" +
-            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='all'><span style='color: " + genomeColor + ";'>&#9632;</span> genome peptides</a></li>" +
-            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='pan'><span style='color: " + panColor + ";'>&#9632;</span> pan peptides</a></li>" +
-            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='core'><span style='color: " + coreColor + ";'>&#9632;</span> core peptides</a></li>" +
-            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='unique'><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptides</a></li>" +
-          "</ul>" +
-        "</div>";
-
-        return content;
-    }
-    function addPopoverBehaviour() {
-        $(".popover").prepend("<button type='button' class='close' style='margin-right: 5px'>&times;</button>");
-        $(".close").click(removePopoversAndHighlights);
-        $("#download-peptides").mouseenter(function () {
-            if (!$("#download-peptides").hasClass("open")) {
-                $("#download-peptides-toggle").dropdown("toggle");
-            }
-        });
-        $("#download-peptides").mouseleave(function () {
-            if ($("#download-peptides").hasClass("open")) {
-                $("#download-peptides-toggle").dropdown("toggle");
-            }
-        });
-        $("#download-peptides ul a").click(function () {
-            var type = $(this).attr("data-type");
-            var bioproject_id = $(this).attr("data-bioproject_id");
-            sendToWorker("getSequences", {"type" : type, "bioproject_id" : bioproject_id});
-            $("#download-peptides").mouseleave();
-            $("#download-peptides-toggle").button('loading');
-            return false;
-        });
-    }
     function returnPopoverSequences(sequences, type) {
         downloadDataByForm(sequences, type + '-sequences.txt', function enableButton() {
             $("#download-peptides-toggle").button('reset');

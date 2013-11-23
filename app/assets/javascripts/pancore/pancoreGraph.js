@@ -121,11 +121,11 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             while (dataQueue.length > 0) {
                 data = dataQueue.shift();
                 graphData.push(data);
+                // TODO: let the table change its own data
                 genomes[data.bioproject_id].position = graphData.length - 1;
             }
             mayStartAnimation = false;
             that.update();
-            // TODO: notify master that order was changed
             setTimeout(function () { mayStartAnimation = true; }, transitionDuration);
         } else {
             setTimeout(tryUpdateGraph, transitionDuration);
@@ -164,6 +164,76 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         return 0;
     }
 
+    /**
+     * Constructs the content of a tooltip for a given genome. Takes into
+     * account which lines are visible on the graph
+     *
+     * @param <Genome> d The genome of which we want a tooltip
+     */
+    function getTooltipContent(d) {
+        var tooltipHtml = "<span style='color: " + genomeColor + ";'>&#9632;</span> genome size: <b>" + d3.format(",")(d.peptides) + "</b><br/>";
+        if (toggles.showPan)
+            tooltipHtml += "<span style='color: " + panColor + ";'>&#9632;</span> pan peptides: <b>" + d3.format(",")(d.pan) + "</b><br/>";
+        if (toggles.showCore)
+            tooltipHtml += "<span style='color: " + coreColor + ";'>&#9632;</span> core peptides: <b>" + d3.format(",")(d.core) + "</b>";
+        if (d.unicore != null && toggles.showUnicore) {
+            tooltipHtml += "<br/><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptides: <b>" + d3.format(",")(d.unicore) + "</b>";
+        }
+        return tooltipHtml;
+    }
+
+    /**
+     * Constructs the content of a popover for a given genome. Takes into
+     * account which lines are visible on the graph.
+     *
+     * @param <Genome> d The genome of which we want a popover
+     */
+    function getPopoverContent(d) {
+        var content = getTooltipContent(d);
+        content += "<br/><div class='btn-group' id='download-peptides'>" +
+          "<a class='btn btn-default dropdown-toggle' id='download-peptides-toggle' data-toggle='dropdown' data-loading-text='Loading peptides'>" +
+            "<i class='glyphicon glyphicon-download'></i> " +
+            "download peptides " +
+            "<span class='caret'></span>" +
+          "</a>" +
+          "<ul class='dropdown-menu'>" +
+            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='all'><span style='color: " + genomeColor + ";'>&#9632;</span> genome peptides</a></li>" +
+            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='pan'><span style='color: " + panColor + ";'>&#9632;</span> pan peptides</a></li>" +
+            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='core'><span style='color: " + coreColor + ";'>&#9632;</span> core peptides</a></li>" +
+            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='unique'><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptides</a></li>" +
+          "</ul>" +
+        "</div>";
+
+        return content;
+    }
+
+    /**
+     * Adds actions the currently shown popover
+     */
+    function addPopoverBehaviour() {
+        $(".popover").prepend("<button type='button' class='close' style='margin-right: 5px'>&times;</button>");
+        $(".close").click(that.removePopoversAndHighlights);
+        $("#download-peptides").mouseenter(function () {
+            if (!$("#download-peptides").hasClass("open")) {
+                $("#download-peptides-toggle").dropdown("toggle");
+            }
+        });
+        $("#download-peptides").mouseleave(function () {
+            if ($("#download-peptides").hasClass("open")) {
+                $("#download-peptides-toggle").dropdown("toggle");
+            }
+        });
+        //TODO add to separate method
+        $("#download-peptides ul a").click(function () {
+            var type = $(this).attr("data-type");
+            var bioproject_id = $(this).attr("data-bioproject_id");
+            //TODO sendToWorker("getSequences", {"type" : type, "bioproject_id" : bioproject_id});
+            $("#download-peptides").mouseleave();
+            $("#download-peptides-toggle").button('loading');
+            return false;
+        });
+    }
+
 
     /*************** Public methods ***************/
 
@@ -195,7 +265,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .attr("height", fullHeight)
             .attr("overflow", "hidden")
             .style("font-family", "'Helvetica Neue', Helvetica, Arial, sans-serif")
-          .on("click", function removePHs() { that.removePopoversAndHighlights(); })
+          .on("click", that.removePopoversAndHighlights)
           .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -520,7 +590,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      */
     that.removePopoversAndHighlights = function removePopoversAndHighlights() {
         that.removePopovers();
-        that.removeAllHighlights();
+        that.removeHighlights();
     };
 
     /**
