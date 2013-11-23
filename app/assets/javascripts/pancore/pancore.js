@@ -10,8 +10,10 @@ function init_selection_tree(data, taxa) {
  * Initializes the main graph, the similarity matrix and drop-target-table
  */
 function init_graphs() {
-
-    var graphData = [],
+    // *** GLOBAL VARS ***
+    var toLoad,
+        rank = 0,
+        graphData = [],
         genomes = {},
         lca = "";
 
@@ -22,17 +24,6 @@ function init_graphs() {
         genomes : genomes
     });
     graph.redraw();
-
-    // *** GLOBAL VARS ***
-
-    // Data vars
-
-
-    // Load vars
-    var dataQueue = [],
-        toLoad,
-        mayStartAnimation = true,
-        rank = 0;
 
     // the Javascript Worker for background data processing
     var worker = new Worker("/assets/workers/pancore_worker.js");
@@ -93,60 +84,6 @@ function init_graphs() {
         return false;
     });
 
-    // Add handler to the "remove all"-button
-    $("#remove-all").click(clearAllData);
-
-    // Add handler to the autosort-button
-    $("#autosort").mouseenter(function () {
-        if (!$("#autosort").hasClass("open")) {
-            $("#autosort-button").dropdown("toggle");
-        }
-    });
-    $("#autosort").mouseleave(function () {
-        if ($("#autosort").hasClass("open")) {
-            $("#autosort-button").dropdown("toggle");
-        }
-    });
-    $("#autosort ul a").click(function () {
-        var i;
-        sendToWorker("autoSort", {type : $(this).attr("data-type")});
-        for (i in genomes) {
-            genomes[i].status = "Processing...";
-        }
-        updateTable();
-        $("#autosort").mouseleave();
-        return false;
-    });
-    $("#autosort ul a").tooltip({placement : "right", container : "body"});
-
-    // Make table sortable and droppable (JQuery UI)
-    $("#genomes_table").disableSelection();
-    $("#genomes_table, #pancore_graph").droppable({
-        activeClass: "acceptDrop",
-        hoverClass: "willDrop",
-        tolerance: "pointer",
-        accept: "li",
-        drop: function (event, ui) {
-            var g = [];
-            ui.helper.find(".data.name").each(function () {
-                g.push({name : $(this).text(), bioproject_id : parseInt($(this).attr("data-bioproject_id"), 10)});
-            });
-            if (g.length < 70 || confirm("You're trying to add a lot of genomes (" + g.length + "). Are you sure you want to continue?")) {
-                addGenomes(g);
-            }
-        }
-    });
-    $("#genomes_table tbody").sortable({
-        axis: 'y',
-        containment: '.split-right',
-        cursor: 'url(/closedhand.cur) 7 5, move',
-        stop: function () {
-            var r = calculateTablePositions();
-            updateTable();
-            sendToWorker("recalculatePanCore", {"order" : r.order, "start" : r.start, "stop" : r.stop});
-        }
-    });
-
     // Set up the fullscreen stuff
     if (fullScreenApi.supportsFullScreen) {
         $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-resize-full'></i> Enter full screen</button>");
@@ -182,6 +119,63 @@ function init_graphs() {
         }
     }
 
+    // TODO move to table object
+    // Add handler to the autosort-button
+    $("#autosort").mouseenter(function () {
+        if (!$("#autosort").hasClass("open")) {
+            $("#autosort-button").dropdown("toggle");
+        }
+    });
+    $("#autosort").mouseleave(function () {
+        if ($("#autosort").hasClass("open")) {
+            $("#autosort-button").dropdown("toggle");
+        }
+    });
+    $("#autosort ul a").click(function () {
+        var i;
+        sendToWorker("autoSort", {type : $(this).attr("data-type")});
+        for (i in genomes) {
+            genomes[i].status = "Processing...";
+        }
+        updateTable();
+        $("#autosort").mouseleave();
+        return false;
+    });
+    $("#autosort ul a").tooltip({placement : "right", container : "body"});
+
+    // TODO move to table object
+    // Make table sortable and droppable (JQuery UI)
+    $("#genomes_table").disableSelection();
+    $("#genomes_table, #pancore_graph").droppable({
+        activeClass: "acceptDrop",
+        hoverClass: "willDrop",
+        tolerance: "pointer",
+        accept: "li",
+        drop: function (event, ui) {
+            var g = [];
+            ui.helper.find(".data.name").each(function () {
+                g.push({name : $(this).text(), bioproject_id : parseInt($(this).attr("data-bioproject_id"), 10)});
+            });
+            if (g.length < 70 || confirm("You're trying to add a lot of genomes (" + g.length + "). Are you sure you want to continue?")) {
+                addGenomes(g);
+            }
+        }
+    });
+    $("#genomes_table tbody").sortable({
+        axis: 'y',
+        containment: '.split-right',
+        cursor: 'url(/closedhand.cur) 7 5, move',
+        stop: function () {
+            var r = calculateTablePositions();
+            updateTable();
+            sendToWorker("recalculatePanCore", {"order" : r.order, "start" : r.start, "stop" : r.stop});
+        }
+    });
+
+    // TODO move to table object
+    // Add handler to the "remove all"-button
+    $("#remove-all").click(clearAllData);
+
     // Set up save image stuff
     $("#buttons-pancore").prepend("<button id='save-img' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save image</button>");
     $("#save-img").click(function clickSaveImage() {
@@ -216,17 +210,18 @@ function init_graphs() {
         worker.postMessage({'cmd': command, 'msg': message});
     }
 
+    // TODO move to matrix object
     // setup similarity matrix buttons etc
     $("#sim_matrix_buttons").prepend("<button id='calculate-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Calculate Similarity Matrix</button>");
     $("#calculate-matrix-btn").click(function () {
         sendToWorker('calculateSimilarity', '');
     });
-
     $("#sim_matrix_buttons").prepend("<button id='cluster-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Cluster Similarity Matrix</button>");
     $("#cluster-matrix-btn").click(function () {
         sendToWorker('clusterMatrix', '');
     });
 
+    // TODO move to matrix object
     // Only cluster when the initial data has loaded
     function clusterIfReady() {
         if( toLoad === 0 ) {
@@ -235,10 +230,8 @@ function init_graphs() {
             setTimeout(clusterIfReady, 200);
         }
     }
-
     // On click of tab, cluster matrix
     $("a[href='#sim_matrix_wrapper']").click(clusterIfReady);
-
     function showMatrix(g, data, order) {
         $('#sim_matrix').empty();
         redrawMatrix(g, data, order);
@@ -350,7 +343,7 @@ function init_graphs() {
         sendToWorker("clearAllData", "");
         toLoad = 0;
         setLoading(false);
-        dataQueue = [];
+        //TODO reset dataQueue of pancoreGraph dataQueue = [];
         graphData = [];
         genomes = {};
         lca = "";
@@ -363,13 +356,12 @@ function init_graphs() {
         sendToWorker('newDataAdded');
     }
 
-
-
     // Displays a message above the table
     function setTableMessage(icon, msg) {
         $("#table-message").html("<i class='glyphicon glyphicon-" + icon + "'></i> " + msg);
     }
 
+    // TODO move to table object
     // Sets the position property in the genomes
     // based on the row position in the table
     // returns a list with the order of the genomes
@@ -416,6 +408,7 @@ function init_graphs() {
         return {"order" : order, "start" : start, "stop" : stop};
     }
 
+    // TODO move to table object
     // Clear the table
     function clearTable() {
         $("#genomes_table tbody").html("");
@@ -462,11 +455,7 @@ function init_graphs() {
         tr.selectAll("td.button a.btn").classed("disabled", function (d) {return d.status !== "Done"; });
     }
 
-
-
-
-    // MOUSE EVENT FUNCTIONS
-
+    // TODO move to graph object
     // Let the dragging begin!
     function dragStart(d) {
         pancoreMouse.isDragging = true;
@@ -524,6 +513,7 @@ function init_graphs() {
         }
         pancoreMouse.isDragging = false;
     }
+    // handles a click on the legend
     function legendClick(d) {
         pancoreToggles[d.toggle] = !pancoreToggles[d.toggle];
         updatePancore();
@@ -550,13 +540,13 @@ function init_graphs() {
         downloadDataByForm(exportString, "unique_peptides.csv");
     }
 
-    // MOUSE EVENT HELPER FUNCTIONS
-
     function returnPopoverSequences(sequences, type) {
         downloadDataByForm(sequences, type + '-sequences.txt', function enableButton() {
             $("#download-peptides-toggle").button('reset');
         });
     }
+
+    // TODO move to graph object
     function position(d) {
         var v = pancoreMouse.dragging[d.bioproject_id];
         return v == null ? pancoreX(d.bioproject_id) : v;
@@ -608,13 +598,7 @@ function init_graphs() {
             .duration(transitionDuration)
             .attr("fill", unicoreColor);
     }
-
     // Request Animation Frame functions
-    function moveTooltip() {
-        pancoreTooltip.style("-webkit-transform", "translate3d(" + tooltipX + "px, " + tooltipY + "px, 0)");
-        pancoreTooltip.style("transform", "translate3d(" + tooltipX + "px, " + tooltipY + "px, 0)");
-    }
-
     function moveDrag() {
         var oldData = graphData.slice(0);
         graphData.sort(function (a, b) { return position(a) - position(b); });
@@ -638,9 +622,7 @@ function init_graphs() {
         pancoreSvg.selectAll(".dot._" + pancoreMouse.dragId).attr("cx", pancoreMouse.dragging[pancoreMouse.dragId]);
     }
 
-    // GENERAL HELPER FUNCTIONS
-
-
+    // TODO move to phylotree object
     function drawTree(newick, order) {
         var parsed = Newick.parse(newick);
         console.log(parsed);
@@ -648,7 +630,7 @@ function init_graphs() {
         d3.phylogram.build('#sim_graph', parsed, {width: 100, height: 500}, order);
     }
 
-
+    // TODO move to matrix object
     function reorderMatrix(newOrder) {
         var width = 500;
 
@@ -670,7 +652,6 @@ function init_graphs() {
             .delay(function(d, i) { return x(i) * 4; })
             .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
     }
-
     function redrawMatrix(g, data, order){
         var margin = {top: 200, right: 0, bottom: 10, left: 200},
             width = 500,

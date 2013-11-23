@@ -268,7 +268,7 @@ var delay = (function () {
     window.fullScreenApi = fullScreenApi;
 })();
 
-/*
+/**
  * requestAnimationFrame shim
  * source: http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
  */
@@ -281,7 +281,7 @@ window.requestAnimFrame = (function(){
             };
 })();
 
-/*
+/**
  * Catches all errors, displays them in console and
  * logs them to Google Analytics
  */
