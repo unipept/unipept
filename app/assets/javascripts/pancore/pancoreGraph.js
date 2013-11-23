@@ -36,8 +36,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     var mouse = {
         dragging : {},
         isDragging : false,
-        hasDragged : false,
-        isClicked : false
+        hasDragged : false
         //dragId,
         //clickId,
     },
@@ -172,10 +171,12 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      */
     function getTooltipContent(d) {
         var tooltipHtml = "<span style='color: " + genomeColor + ";'>&#9632;</span> genome size: <b>" + d3.format(",")(d.peptides) + "</b><br/>";
-        if (toggles.showPan)
+        if (toggles.showPan) {
             tooltipHtml += "<span style='color: " + panColor + ";'>&#9632;</span> pan peptides: <b>" + d3.format(",")(d.pan) + "</b><br/>";
-        if (toggles.showCore)
+        }
+        if (toggles.showCore) {
             tooltipHtml += "<span style='color: " + coreColor + ";'>&#9632;</span> core peptides: <b>" + d3.format(",")(d.core) + "</b>";
+        }
         if (d.unicore != null && toggles.showUnicore) {
             tooltipHtml += "<br/><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptides: <b>" + d3.format(",")(d.unicore) + "</b>";
         }
@@ -232,6 +233,85 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             $("#download-peptides-toggle").button('loading');
             return false;
         });
+    }
+
+    /**
+     * Shows a popover and highlights the clicked node, unless we clicked the
+     * previously clicked node. In that case, we remove the popover and
+     * highlight.
+     *
+     * @param <Genome> d The genome of the clicked node
+     */
+    function invokePopover(d) {
+        var target = $(d3.event.target);
+        d3.event.stopPropagation();
+        if (mouse.clickId === d.bioproject_id) {
+            that.removePopoversAndHighlights();
+        } else {
+            that.removePopoversAndHighlights();
+            that.removeTooltip();
+            that.addHighlight(d);
+            target.popover({
+                html: true,
+                trigger: "manual",
+                position: "right",
+                container: "#popovers",
+                title: genomes[d.bioproject_id].name + " (bioproject " + d.bioproject_id + ")",
+                content: getPopoverContent(d)});
+            target.popover("show");
+            target.attr("class", "bar pop");
+            addPopoverBehaviour();
+            mouse.clickId = d.bioproject_id;
+        }
+    }
+
+    /**
+     * Shows a tooltip with information about the node and highlights the dots
+     *
+     * @param <Genome> d The genome we mouse over
+     */
+    function invokeTooltipAndHighlight(d) {
+        if (mouse.isDragging) return;
+        if (mouse.clickId === d.bioproject_id) return;
+        var tooltipHtml = "<b>" + genomes[d.bioproject_id].name + "</b><br/>" + getTooltipContent(d);
+        tooltip.html(tooltipHtml).style("visibility", "visible");
+        that.addHighlight(d);
+    }
+
+    /**
+     * Hides the highlight
+     *
+     * @param <Genome> d The genome we stop mouseing over
+     */
+    function abolishTooltipAndHighlight(d) {
+        if (mouse.isDragging) return;
+        if (mouse.clickId === d.bioproject_id) return;
+        that.removeHighlight(d.bioproject_id);
+    }
+
+    /**
+     * Update the position of the tooltip on the next frame
+     *
+     * @param <Genome> d The genome we mouse over
+     */
+    function moveTooltip(d) {
+        if (mouse.isDragging) return;
+        if (window.fullScreenApi.isFullScreen()) {
+            tooltipX = d3.event.clientX + 15;
+            tooltipY = d3.event.clientY + 15;
+        } else {
+            tooltipX = d3.event.pageX + 15;
+            tooltipY = d3.event.pageY + 15;
+        }
+        requestAnimFrame(afMoveTooltip);
+    }
+
+    /**
+     * Changes the position of the tooltip with a CSS transform
+     */
+    function afMoveTooltip() {
+        tooltip.style("-webkit-transform", "translate3d(" + tooltipX + "px, " + tooltipY + "px, 0)");
+        tooltip.style("transform", "translate3d(" + tooltipX + "px, " + tooltipY + "px, 0)");
     }
 
 
@@ -559,11 +639,11 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         bars.enter().append("polygon")
             .attr("class", "bar")
             .style("fill-opacity", 0)
-            /*TODO .on("mouseover", mouseOver)
-            .on("mouseout", mouseOut)
-            .on("mousemove", mouseMove)
-            .on("click", mouseClick)
-            .call(d3.behavior.drag()
+            .on("mouseover", invokeTooltipAndHighlight)
+            .on("mouseout", abolishTooltipAndHighlight)
+            .on("mousemove", moveTooltip)
+            .on("click", invokePopover)
+            /*TODO.call(d3.behavior.drag()
                 .on("dragstart", dragStart)
                 .on("drag", drag)
                 .on("dragend", dragEnd))*/;
@@ -599,7 +679,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     that.removePopovers = function removePopovers() {
         $(".bar.pop").popover("destroy");
         $(".bar.pop").attr("class", "bar");
-        mouse.isClicked = false;
+        delete mouse.clickId;
     };
 
     /**

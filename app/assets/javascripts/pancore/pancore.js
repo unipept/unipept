@@ -467,57 +467,6 @@ function init_graphs() {
 
     // MOUSE EVENT FUNCTIONS
 
-    // Shows the popover and highlights the clicked node
-    function mouseClick(d) {
-        d3.event.stopPropagation();
-        var target = $(d3.event.target);
-        if (pancoreMouse.isClicked && pancoreMouse.clickId === d.bioproject_id) {
-            removePopoversAndHighlights();
-        } else {
-            removePopoversAndHighlights();
-            removeTooltip();
-            addHighlight(d);
-            target.popover({
-                html: true,
-                trigger: "manual",
-                position: "right",
-                container: "#popovers",
-                title: genomes[d.bioproject_id].name + " (bioproject " + d.bioproject_id + ")",
-                content: getPopoverContent(d)});
-            target.popover("show");
-            target.attr("class", "bar pop");
-            addPopoverBehaviour();
-            // highlight new node
-            pancoreMouse.isClicked = true;
-            pancoreMouse.clickId = d.bioproject_id;
-        }
-    }
-    // Shows the tooltip
-    function mouseOver(d) {
-        if (pancoreMouse.isDragging) return;
-        if (pancoreMouse.isClicked && pancoreMouse.clickId === d.bioproject_id) return;
-        addHighlight(d);
-        var tooltipHtml = "<b>" + genomes[d.bioproject_id].name + "</b><br/>" + getTooltipContent(d);
-        pancoreTooltip.html(tooltipHtml).style("visibility", "visible");
-    }
-    // Hides the tooltip
-    function mouseOut(d) {
-        if (pancoreMouse.isDragging) return;
-        if (pancoreMouse.isClicked && pancoreMouse.clickId === d.bioproject_id) return;
-        removeHighlight(d.bioproject_id);
-    }
-    // Updates the position of the tooltip
-    function mouseMove(d) {
-        if (pancoreMouse.isDragging) return;
-        if (window.fullScreenApi.isFullScreen()) {
-            tooltipX = d3.event.clientX + 15;
-            tooltipY = d3.event.clientY + 15;
-        } else {
-            tooltipX = d3.event.pageX + 15;
-            tooltipY = d3.event.pageY + 15;
-        }
-        requestAnimFrame(moveTooltip);
-    }
     // Let the dragging begin!
     function dragStart(d) {
         pancoreMouse.isDragging = true;
