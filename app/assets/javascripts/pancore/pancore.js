@@ -337,7 +337,7 @@ function init_graphs() {
                 genomes[bioproject_id].position = i;
             }
         }
-        updatePancore();
+        //updatePancore();
         updateTable();
     }
 
@@ -603,60 +603,7 @@ function init_graphs() {
 
     // MOUSE EVENT HELPER FUNCTIONS
 
-    function removePopoversAndHighlights() {
-        removePopovers();
-        removeAllHighlights();
-    }
-    function removePopovers() {
-        $(".bar.pop").popover("destroy");
-        $(".bar.pop").attr("class", "bar");
-        pancoreMouse.isClicked = false;
-    }
-    function addHighlight(d) {
-        // add dropshadow to the dot and axis text
-        pancoreSvg.selectAll(".dot._" + d.bioproject_id).attr("filter", "url(#dropshadow)").attr("r", 6);
-        pancoreSvg.selectAll(".tick._" + d.bioproject_id + " text").style("font-weight", "bold");
 
-        if (pancoreToggles.showGenome) {
-            pancoreSvg.select(".axisline.genome")
-                .attr("y1", pancoreY(d.peptides))
-                .attr("y2", pancoreY(d.peptides))
-                .style("visibility", "visible");
-        }
-        if (pancoreToggles.showPan) {
-            pancoreSvg.select(".axisline.pan")
-                .attr("y1", pancoreY(d.pan))
-                .attr("y2", pancoreY(d.pan))
-                .style("visibility", "visible");
-        }
-        if (pancoreToggles.showCore) {
-            pancoreSvg.select(".axisline.core")
-                .attr("y1", pancoreY(d.core))
-                .attr("y2", pancoreY(d.core))
-                .style("visibility", "visible");
-        }
-        if (d.unicore != null && pancoreToggles.showUnicore) {
-            pancoreSvg.select(".axisline.unicore")
-                .attr("y1", pancoreY(d.unicore))
-                .attr("y2", pancoreY(d.unicore))
-                .style("visibility", "visible");
-        }
-    }
-    function removeHighlight(bioproject_id) {
-        pancoreSvg.selectAll(".dot._" + bioproject_id).attr("filter", "").attr("r", 5);
-        pancoreSvg.selectAll(".tick._" + bioproject_id + " text").style("font-weight", "normal");
-        pancoreSvg.selectAll(".axisline").style("visibility", "hidden");
-        pancoreTooltip.style("visibility", "hidden");
-    }
-    function removeAllHighlights() {
-        pancoreSvg.selectAll(".dot").attr("filter", "").attr("r", 5);
-        pancoreSvg.selectAll(".tick text").style("font-weight", "normal");
-        pancoreSvg.selectAll(".axisline").style("visibility", "hidden");
-        pancoreTooltip.style("visibility", "hidden");
-    }
-    function removeTooltip() {
-        pancoreTooltip.style("visibility", "hidden");
-    }
     function getTooltipContent(d) {
         var tooltipHtml = "<span style='color: " + genomeColor + ";'>&#9632;</span> genome size: <b>" + d3.format(",")(d.peptides) + "</b><br/>";
         if (pancoreToggles.showPan)

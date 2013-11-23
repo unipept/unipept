@@ -195,7 +195,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .attr("height", fullHeight)
             .attr("overflow", "hidden")
             .style("font-family", "'Helvetica Neue', Helvetica, Arial, sans-serif")
-          //TODO .on("click", removePopoversAndHighlights)
+          .on("click", function removePHs() { that.removePopoversAndHighlights(); })
           .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -515,6 +515,88 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         $(".bar").parent().append($(".bar"));
     };
 
+    /**
+     * Removes all popovers and highlights from the graph
+     */
+    that.removePopoversAndHighlights = function removePopoversAndHighlights() {
+        that.removePopovers();
+        that.removeAllHighlights();
+    };
+
+    /**
+     * Removes all popovers
+     */
+    that.removePopovers = function removePopovers() {
+        $(".bar.pop").popover("destroy");
+        $(".bar.pop").attr("class", "bar");
+        mouse.isClicked = false;
+    };
+
+    /**
+     * Removes all highlights
+     */
+    that.removeHighlights = function removeHighlights() {
+        svg.selectAll(".dot").attr("filter", "").attr("r", 5);
+        svg.selectAll(".tick text").style("font-weight", "normal");
+        svg.selectAll(".axisline").style("visibility", "hidden");
+        tooltip.style("visibility", "hidden");
+    };
+
+    /**
+     * Remove the tooltip
+     */
+    that.removeTooltip = function removeTooltip() {
+        tooltip.style("visibility", "hidden");
+    };
+
+    /**
+     * Remove the highlight with the given bioproject_id
+     *
+     * @param <Number> bioproject_id The bioproject_id of the highlight we want
+     *           to remove
+     */
+    that.removeHighlight = function removeHighlight(bioproject_id) {
+        svg.selectAll(".dot._" + bioproject_id).attr("filter", "").attr("r", 5);
+        svg.selectAll(".tick._" + bioproject_id + " text").style("font-weight", "normal");
+        svg.selectAll(".axisline").style("visibility", "hidden");
+        tooltip.style("visibility", "hidden");
+    };
+
+    /**
+     * Add a highlight to the element corresponding with d
+     *
+     * @param <Genome> d The genome we want to add the data to
+     */
+    that.addHighlight = function addHighlight(d) {
+        // add dropshadow to the dot and axis text
+        svg.selectAll(".dot._" + d.bioproject_id).attr("filter", "url(#dropshadow)").attr("r", 6);
+        svg.selectAll(".tick._" + d.bioproject_id + " text").style("font-weight", "bold");
+
+        if (toggles.showGenome) {
+            svg.select(".axisline.genome")
+                .attr("y1", yScale(d.peptides))
+                .attr("y2", yScale(d.peptides))
+                .style("visibility", "visible");
+        }
+        if (toggles.showPan) {
+            svg.select(".axisline.pan")
+                .attr("y1", yScale(d.pan))
+                .attr("y2", yScale(d.pan))
+                .style("visibility", "visible");
+        }
+        if (toggles.showCore) {
+            svg.select(".axisline.core")
+                .attr("y1", yScale(d.core))
+                .attr("y2", yScale(d.core))
+                .style("visibility", "visible");
+        }
+        if (d.unicore != null && toggles.showUnicore) {
+            svg.select(".axisline.unicore")
+                .attr("y1", yScale(d.unicore))
+                .attr("y2", yScale(d.unicore))
+                .style("visibility", "visible");
+        }
+    };
 
     // initialize the object
     init();
