@@ -10,12 +10,14 @@ function init_selection_tree(data, taxa) {
  * Initializes the main graph, the similarity matrix and drop-target-table
  */
 function init_graphs() {
-    // *** GLOBAL VARS ***
 
-    // Animation and style stuff
-    var transitionDuration = 500,
-        fullWidth = 930,
-        fullHeight = 600;
+    var graph = constructPancoreGraph({
+        transitionDuration : 500,
+        width : 930,
+        height : 600
+    });
+
+    // *** GLOBAL VARS ***
 
     // Data vars
     var pancoreData = [],
@@ -30,75 +32,6 @@ function init_graphs() {
 
     // the Javascript Worker for background data processing
     var worker = new Worker("/assets/workers/pancore_worker.js");
-
-    // *** PANCORE VARS ***
-    var genomeColor = "#d9d9d9",  // gray
-        panColor = "#1f77b4",     // blue
-        coreColor = "#ff7f0e",    // orange
-        unicoreColor = "#2ca02c", // green
-        legendData = [{"name": "genome size", "color": genomeColor, "toggle": "showGenome"},
-            {"name": "pan peptidome", "color": panColor, "toggle": "showPan"},
-            {"name": "core peptidome", "color": coreColor, "toggle": "showCore"},
-            {"name": "unique peptides", "color": unicoreColor, "toggle": "showUnicore"}];
-
-    // Sizes
-    var pancoreMargin = {top: 20, right: 40, bottom: 170, left: 60},
-        pancoreWidth = fullWidth - pancoreMargin.left - pancoreMargin.right,
-        pancoreHeight = fullHeight - pancoreMargin.top - pancoreMargin.bottom,
-        pancoreMouseOverWidth;
-
-    // D3 vars
-    var pancoreSvg,
-        pancoreGraphArea,
-        pancoreTooltip;
-
-    // Drag and click vars
-    var pancoreMouse = {};
-    pancoreMouse.dragging = {};
-    pancoreMouse.isDragging = false;
-    pancoreMouse.hasDragged = false;
-    pancoreMouse.onTrash = false;
-    pancoreMouse.dragId;
-    pancoreMouse.isClicked = false;
-    pancoreMouse.clickId;
-
-    // toggles
-    var pancoreToggles = {};
-    pancoreToggles.showGenome = true;
-    pancoreToggles.showPan = true;
-    pancoreToggles.showCore = true;
-    pancoreToggles.showUnicore = true;
-
-    // Scales
-    var pancoreX = d3.scale.ordinal().rangePoints([0, pancoreWidth], 1),
-        pancoreY = d3.scale.linear().range([pancoreHeight, 0]);
-
-    // Axes
-    var xAxis = d3.svg.axis()
-        .scale(pancoreX)
-        .tickFormat(function (d) { return tableData[d].name; })
-        .orient("bottom"),
-        yAxis = d3.svg.axis()
-        .scale(pancoreY)
-        .orient("left");
-
-    // Graph lines helpers
-    var panLine = d3.svg.line()
-        .interpolate("linear")
-        .x(function (d) { return pancoreX(d.bioproject_id); })
-        .y(function (d) { return pancoreY(d.pan); });
-    var coreLine = d3.svg.line()
-        .interpolate("linear")
-        .x(function (d) { return pancoreX(d.bioproject_id); })
-        .y(function (d) { return pancoreY(d.core); });
-    var unicoreLine = d3.svg.line()
-        .interpolate("linear")
-        .x(function (d) { return pancoreX(d.bioproject_id); })
-        .y(function (d) { return pancoreY(d.unicore); });
-
-    // Stores tooltip position till next frame
-    var tooltipX = 0,
-        tooltipY = 0;
 
     // Add eventhandlers to the worker
     worker.addEventListener('message', function (e) {
