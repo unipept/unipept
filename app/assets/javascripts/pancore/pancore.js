@@ -11,19 +11,22 @@ function init_selection_tree(data, taxa) {
  */
 function init_graphs() {
 
+    var graphData = [],
+        genomes = {},
+        lca = "";
+
     var graph = constructPancoreGraph({
         transitionDuration : 500,
         width : 930,
-        height : 600
+        height : 600,
+        genomes : genomes
     });
     graph.redraw();
 
     // *** GLOBAL VARS ***
 
     // Data vars
-    var pancoreData = [],
-        tableData = {},
-        lca = "";
+
 
     // Load vars
     var dataQueue = [],
@@ -107,8 +110,8 @@ function init_graphs() {
     $("#autosort ul a").click(function () {
         var i;
         sendToWorker("autoSort", {type : $(this).attr("data-type")});
-        for (i in tableData) {
-            tableData[i].status = "Processing...";
+        for (i in genomes) {
+            genomes[i].status = "Processing...";
         }
         updateTable();
         $("#autosort").mouseleave();
@@ -236,23 +239,27 @@ function init_graphs() {
     // On click of tab, cluster matrix
     $("a[href='#sim_matrix_wrapper']").click(clusterIfReady);
 
-    function showMatrix(genomes, data, order) {
+    function showMatrix(g, data, order) {
         $('#sim_matrix').empty();
-        redrawMatrix(genomes, data, order);
+        redrawMatrix(g, data, order);
     }
 
     // Initial method for adding genomes
     // genomes should be an array of bioproject id's
     // the table is updated to represent the loading status
     // the command is given to the worker to download the peptide id's
-    function addGenomes(genomes) {
+    function addGenomes(g) {
         var i;
-        toLoad += genomes.length;
-        for (i = 0; i < genomes.length; i++) {
+        toLoad += g.length;
+        for (i = 0; i < g.length; i++) {
             // only add new genomes
-            if (tableData[genomes[i].bioproject_id] === undefined) {
-                tableData[genomes[i].bioproject_id] = {"bioproject_id" : genomes[i].bioproject_id, "name" : genomes[i].name, "status" : "Loading...", "position" : 100 + i};
-                loadData(genomes[i].bioproject_id, genomes[i].name);
+            if (genomes[g[i].bioproject_id] === undefined) {
+                genomes[g[i].bioproject_id] = {
+                    "bioproject_id" : g[i].bioproject_id,
+                    "name" : g[i].name,
+                    "status" : "Loading...",
+                    "position" : 100 + i};
+                loadData(g[i].bioproject_id, g[i].name);
             } else {
                 toLoad -= 1;
             }
@@ -289,22 +296,28 @@ function init_graphs() {
 
     // Gets called when the worker is done loading a new genome
     // the calculated data gets added the update queue if the request_rank matches
-    function addData(data, request_rank) {
+    function addData(genome, request_rank) {
         // If the rank doesn't match, this is old data
         if (rank !== request_rank) return;
-        dataQueue.push(data);
-        tryUpdateGraph();
+        toLoad--;
+        genomes[genome.bioproject_id].status = "Done";
+        updateTable();
+        graph.addToDataQueue(genome);
+        dataQueue.push(genome);
         tryUpdateMatrix();
+        if (toLoad === 0) {
+            setLoading(false);
+        }
     }
 
     // Removes a genomes from the visualization:
     // - Removes it from the table
     // - Instructs the worker to recalculate the graph
     function removeData(genome) {
-        var g = tableData[genome.bioproject_id];
+        var g = genomes[genome.bioproject_id];
         if (g.status !== "Done") return;
         var id = genome.bioproject_id;
-        delete tableData[id];
+        delete genomes[id];
         updateTable();
         var r = calculateTablePositions();
         sendToWorker("removeData", {"bioproject_id" : id, "order" : r.order, "start" : r.start});
@@ -315,13 +328,13 @@ function init_graphs() {
         var i,
             bioproject_id;
         if (rank !== request_rank) return;
-        pancoreData = data;
+        graphData = data;
         lca = l;
-        for (i = 0; i < pancoreData.length; i++) {
-            bioproject_id = pancoreData[i].bioproject_id;
-            if (typeof tableData[bioproject_id] !== "undefined") {
-                tableData[bioproject_id].status = "Done";
-                tableData[bioproject_id].position = i;
+        for (i = 0; i < graphData.length; i++) {
+            bioproject_id = graphData[i].bioproject_id;
+            if (typeof genomes[bioproject_id] !== "undefined") {
+                genomes[bioproject_id].status = "Done";
+                genomes[bioproject_id].position = i;
             }
         }
         updatePancore();
@@ -338,8 +351,8 @@ function init_graphs() {
         toLoad = 0;
         setLoading(false);
         dataQueue = [];
-        pancoreData = [];
-        tableData = {};
+        graphData = [];
+        genomes = {};
         lca = "";
         removePopoversAndHighlights();
         updatePancore();
@@ -350,43 +363,14 @@ function init_graphs() {
         sendToWorker('newDataAdded');
     }
 
-    // Update the graph with data from the update queue when the previous animation is done.
-    function tryUpdateGraph() {
-        if (toLoad === 0) {
-            return;
-        }
-        // Only update when the previous animation is done
-        if (mayStartAnimation) {
-            mayStartAnimation = false;
-            var data,
-                addedSomething = false;
-            while (dataQueue.length > 0) {
-                addedSomething = true;
-                data = dataQueue.shift();
-                pancoreData.push(data);
-                tableData[data.bioproject_id].status = "Done";
-                tableData[data.bioproject_id].position = pancoreData.length - 1;
-                toLoad--;
-            }
-            if (addedSomething) {
-                if (toLoad === 0) {
-                    setLoading(false);
-                }
-                updatePancore();
-                updateTable();
-            }
-            setTimeout(function () { mayStartAnimation = true; }, transitionDuration);
-        } else {
-            setTimeout(tryUpdateGraph, transitionDuration);
-        }
-    }
+
 
     // Displays a message above the table
     function setTableMessage(icon, msg) {
         $("#table-message").html("<i class='glyphicon glyphicon-" + icon + "'></i> " + msg);
     }
 
-    // Sets the position property in the tableData
+    // Sets the position property in the genomes
     // based on the row position in the table
     // returns a list with the order of the genomes
     function calculateTablePositions() {
@@ -396,12 +380,12 @@ function init_graphs() {
 
         d3.selectAll("#genomes_table tbody tr").each(function (d, i) {
             var bioproject_id = d.bioproject_id;
-            if (tableData[bioproject_id].position === i && stop === 0) {
+            if (genomes[bioproject_id].position === i && stop === 0) {
                 start = i;
-            } else if (tableData[bioproject_id].position !== i) {
+            } else if (genomes[bioproject_id].position !== i) {
                 stop = i;
-                tableData[bioproject_id].position = i;
-                tableData[bioproject_id].status = "Processing...";
+                genomes[bioproject_id].position = i;
+                genomes[bioproject_id].status = "Processing...";
             }
             order[i] = bioproject_id;
         });
@@ -409,7 +393,7 @@ function init_graphs() {
         return {"order" : order, "start" : start, "stop" : stop};
     }
 
-    // Sets the position property in the tableData
+    // Sets the position property in the genomes
     // based on the position in the graph
     // returns a list with the order of the genomes
     function calculateTablePositionsFromGraph() {
@@ -417,14 +401,14 @@ function init_graphs() {
             start = -1,
             stop = 0,
             i;
-        for (i = 0; i < pancoreData.length; i++) {
-            var bioproject_id = pancoreData[i].bioproject_id;
-            if (tableData[bioproject_id].position === i && stop === 0) {
+        for (i = 0; i < graphData.length; i++) {
+            var bioproject_id = graphData[i].bioproject_id;
+            if (genomes[bioproject_id].position === i && stop === 0) {
                 start = i;
-            } else if (tableData[bioproject_id].position !== i) {
+            } else if (genomes[bioproject_id].position !== i) {
                 stop = i;
-                tableData[bioproject_id].position = i;
-                tableData[bioproject_id].status = "Processing...";
+                genomes[bioproject_id].position = i;
+                genomes[bioproject_id].status = "Processing...";
             }
             order[i] = bioproject_id;
         }
@@ -439,7 +423,7 @@ function init_graphs() {
     }
     // Updates the table
     function updateTable() {
-        removePopovers();
+        //removePopovers();
 
         var text = "Genome";
         if (lca !== "") {
@@ -449,7 +433,7 @@ function init_graphs() {
 
         // Add rows
         var tr = d3.select("#genomes_table tbody").selectAll("tr.added")
-            .data(d3.values(tableData), function (d) { return d.bioproject_id; });
+            .data(d3.values(genomes), function (d) { return d.bioproject_id; });
         var newRows = tr.enter().append("tr").attr("class", "added");
         tr.exit().remove();
         tr.sort(function (a, b) { return a.position - b.position; });
@@ -498,7 +482,7 @@ function init_graphs() {
                 trigger: "manual",
                 position: "right",
                 container: "#popovers",
-                title: tableData[d.bioproject_id].name + " (bioproject " + d.bioproject_id + ")",
+                title: genomes[d.bioproject_id].name + " (bioproject " + d.bioproject_id + ")",
                 content: getPopoverContent(d)});
             target.popover("show");
             target.attr("class", "bar pop");
@@ -513,7 +497,7 @@ function init_graphs() {
         if (pancoreMouse.isDragging) return;
         if (pancoreMouse.isClicked && pancoreMouse.clickId === d.bioproject_id) return;
         addHighlight(d);
-        var tooltipHtml = "<b>" + tableData[d.bioproject_id].name + "</b><br/>" + getTooltipContent(d);
+        var tooltipHtml = "<b>" + genomes[d.bioproject_id].name + "</b><br/>" + getTooltipContent(d);
         pancoreTooltip.html(tooltipHtml).style("visibility", "visible");
     }
     // Hides the tooltip
@@ -604,14 +588,14 @@ function init_graphs() {
         var exportString = "name,bioproject_id,genome_peptides,core_peptides,pan_peptides,unique_peptides\n",
             i,
             tempArray;
-        for (i = 0; i < pancoreData.length; i++) {
+        for (i = 0; i < graphData.length; i++) {
             tempArray = [];
-            tempArray.push(tableData[pancoreData[i].bioproject_id].name);
-            tempArray.push(pancoreData[i].bioproject_id);
-            tempArray.push(pancoreData[i].peptides);
-            tempArray.push(pancoreData[i].core);
-            tempArray.push(pancoreData[i].pan);
-            tempArray.push(pancoreData[i].unicore);
+            tempArray.push(genomes[graphData[i].bioproject_id].name);
+            tempArray.push(graphData[i].bioproject_id);
+            tempArray.push(graphData[i].peptides);
+            tempArray.push(graphData[i].core);
+            tempArray.push(graphData[i].pan);
+            tempArray.push(graphData[i].unicore);
             exportString += tempArray.join(",") + "\n";
         }
         downloadDataByForm(exportString, "unique_peptides.csv");
@@ -788,11 +772,11 @@ function init_graphs() {
     }
 
     function moveDrag() {
-        var oldData = pancoreData.slice(0);
-        pancoreData.sort(function (a, b) { return position(a) - position(b); });
+        var oldData = graphData.slice(0);
+        graphData.sort(function (a, b) { return position(a) - position(b); });
         // If some position is swapped, redraw some stuff
-        if (isChanged(oldData, pancoreData)) {
-            pancoreX.domain(pancoreData.map(function (d) { return d.bioproject_id; }));
+        if (isChanged(oldData, graphData)) {
+            pancoreX.domain(graphData.map(function (d) { return d.bioproject_id; }));
             pancoreSvg.selectAll(".bar").attr("x", function (d) { return pancoreX(d.bioproject_id) - pancoreMouseOverWidth / 2; });
             pancoreSvg.selectAll(".dot:not(._" + pancoreMouse.dragId + ")").transition()
                 .duration(transitionDuration)
@@ -812,31 +796,6 @@ function init_graphs() {
 
     // GENERAL HELPER FUNCTIONS
 
-    function getMaxVisibleDatapoint() {
-        var max = 0,
-            i;
-        if (pancoreData.length === 0) {
-            return 0;
-        }
-        if (pancoreToggles.showPan) {
-            return pancoreData[pancoreData.length - 1].pan;
-        }
-        if (pancoreToggles.showGenome) {
-            for (i = 0; i < pancoreData.length; i++) {
-                if (pancoreData[i].peptides > max) {
-                    max = pancoreData[i].peptides;
-                }
-            }
-            return max * 1.3;
-        }
-        if (pancoreToggles.showCore) {
-            return pancoreData[0].core * 1.3;
-        }
-        if (pancoreToggles.showUnicore) {
-            return pancoreData[0].unicore * 1.3;
-        }
-        return 0;
-    }
 
     function drawTree(newick, order) {
         var parsed = Newick.parse(newick);
@@ -868,7 +827,7 @@ function init_graphs() {
             .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
     }
 
-    function redrawMatrix(genomes, data, order){
+    function redrawMatrix(g, data, order){
         var margin = {top: 200, right: 0, bottom: 10, left: 200},
             width = 500,
             height = 500;
@@ -883,7 +842,7 @@ function init_graphs() {
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         // The default sort order.
-        x.domain(d3.range(genomes.length));
+        x.domain(d3.range(g.length));
 
         svg.append("rect")
             .attr("class", "background")
@@ -907,7 +866,7 @@ function init_graphs() {
             .attr("y", x.rangeBand() / 2)
             .attr("dy", ".32em")
             .attr("text-anchor", "end")
-            .text(function(d, i) { return genomes[i]; });
+            .text(function(d, i) { return g[i]; });
 
         var column = svg.selectAll(".column")
             .data(data)
@@ -924,7 +883,7 @@ function init_graphs() {
             .attr("y", x.rangeBand() / 2)
             .attr("dy", ".32em")
             .attr("text-anchor", "start")
-            .text(function(d, i) { return genomes[i]; });
+            .text(function(d, i) { return g[i]; });
 
         function row(row) {
           var cell = d3.select(this).selectAll(".cell")

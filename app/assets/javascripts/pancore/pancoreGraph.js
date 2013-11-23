@@ -4,6 +4,7 @@
  * @param <Number> args.transitionDuration Duration of transitions in ms
  * @param <Number> args.width Width of the graph
  * @param <Number> args.height Height of the graph
+ * @param <Hash> args.genomes Hash of genomes (by bioproject_id)
  */
 var constructPancoreGraph = function constructPancoreGraph(args) {
     /*************** Private variables ***************/
@@ -26,8 +27,9 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         mouseOverWidth;
 
     // Data
-    var genomes = {},
-        graphData = {},
+    var genomes = args.genomes,
+        graphData = [],
+        dataQueue = [],
         legendData;
 
     // Drag and click
@@ -66,6 +68,9 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         coreLine,
         unicoreLine;
 
+    // Is it safe to run a graph update?
+    var mayStartAnimation = true;
+
     /*************** Private methods ***************/
 
     /**
@@ -102,7 +107,75 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .y(function (d) { return yScale(d.unicore); });
     }
 
+    /**
+     * Update the graph with data from the dataQueue when
+     * the previous animation is done.
+     */
+    function tryUpdateGraph() {
+        if (dataQueue.length === 0) return;
+
+        var data;
+
+        // Only update when the previous animation is done
+        if (mayStartAnimation) {
+            while (dataQueue.length > 0) {
+                data = dataQueue.shift();
+                graphData.push(data);
+                genomes[data.bioproject_id].position = graphData.length - 1;
+            }
+            mayStartAnimation = false;
+            that.update();
+            // TODO: notify master that order was changed
+            setTimeout(function () { mayStartAnimation = true; }, transitionDuration);
+        } else {
+            setTimeout(tryUpdateGraph, transitionDuration);
+        }
+    }
+
+    /**
+     * Returns the value of the highest datapoint that's visible on the graph.
+     * This is used to calculate the range of the y-axis.
+     * The value is multiplied by 1.3 if it would occur in the top-left-corner
+     * of the graph to prevent overlap with the legend.
+     */
+    function getMaxVisibleDatapoint() {
+        var max = 0,
+            i;
+        if (graphData.length === 0) {
+            return 0;
+        }
+        if (toggles.showPan) {
+            return graphData[graphData.length - 1].pan;
+        }
+        if (toggles.showGenome) {
+            for (i = 0; i < graphData.length; i++) {
+                if (graphData[i].peptides > max) {
+                    max = graphData[i].peptides;
+                }
+            }
+            return max * 1.3;
+        }
+        if (toggles.showCore) {
+            return graphData[0].core * 1.3;
+        }
+        if (toggles.showUnicore) {
+            return graphData[0].unicore * 1.3;
+        }
+        return 0;
+    }
+
+
     /*************** Public methods ***************/
+
+    /**
+     * Add data about a single genome to the graph
+     *
+     * @param <Hash> genome All data needed to visualise a genome on the graph
+     */
+    that.addToDataQueue = function addToDataQueue(genome) {
+        dataQueue.push(genome);
+        tryUpdateGraph();
+    };
 
     /**
      * Redraws the entire pancore graph
@@ -122,7 +195,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .attr("height", fullHeight)
             .attr("overflow", "hidden")
             .style("font-family", "'Helvetica Neue', Helvetica, Arial, sans-serif")
-          //.on("click", removePopoversAndHighlights)
+          //TODO .on("click", removePopoversAndHighlights)
           .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -178,8 +251,8 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .data(legendData)
           .enter().append("g")
             .attr("class", "legend")
-            .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; })
-            //.on("click", legendClick);
+            .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; });
+            //TODO .on("click", legendClick);
         legend.append("rect")
             .attr("x", 30)
             .attr("width", 8)
@@ -238,8 +311,8 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .attr("id", "trash")
             .attr("fill", "#cccccc")
             .style("opacity", "0")
-            //.on("mouseover", trashMouseOver)
-            //.on("mouseout", trashMouseOut)
+            //TODO .on("mouseover", trashMouseOver)
+            //TODO .on("mouseout", trashMouseOut)
         .insert("g")
             .attr("transform", "translate(" + (fullWidth + 30) + " " + (height - 46) / 2 + ")");
         trash.append("circle")
@@ -416,7 +489,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         bars.enter().append("polygon")
             .attr("class", "bar")
             .style("fill-opacity", 0)
-            /*.on("mouseover", mouseOver)
+            /*TODO .on("mouseover", mouseOver)
             .on("mouseout", mouseOut)
             .on("mousemove", mouseMove)
             .on("click", mouseClick)
