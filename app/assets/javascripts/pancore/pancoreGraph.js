@@ -307,11 +307,154 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     }
 
     /**
+     * Let the dragging begin!
+     *
+     * @param <Genome> d The genome we started dragging
+     */
+    function dragStart(d) {
+        mouse.isDragging = true;
+        mouse.hasDragged = false;
+        mouse.dragId = d.bioproject_id;
+        mouse.dragging[d.bioproject_id] = this.__origin__ = xScale(d.bioproject_id);
+        d3.select("body").style("cursor", "url(/closedhand.cur) 7 5, move");
+        svg.selectAll(".bar").style("cursor", "url(/closedhand.cur) 7 5, move");
+        svg.select("#trash").transition()
+            .duration(transitionDuration)
+            .attr("transform", "translate(-84 0)")
+            .style("opacity", "1");
+    }
+
+    /**
+     * Gets called on each drag event. Stores the new mouse position, but
+     * only does the heavy lifting once per frame
+     *
+     * @param <Genome> d The genome we're dragging
+     */
+    function drag(d) {
+        mouse.hasDragged = true;
+        if (mouse.clickId) {
+            removePopovers();
+            if (mouse.clickId !== d.bioproject_id) {
+                removeHighlight(mouse.clickId);
+            }
+        }
+        that.removeTooltip();
+        mouse.dragging[d.bioproject_id] = Math.min(width, Math.max(0, this.__origin__ += d3.event.dx));
+        requestAnimFrame(afMoveDrag);
+    }
+
+    /**
+     * Gets called when we stop dragging
+     * Recalculates the position of all genomes and updates the graph or
+     * removes the genome when dropped on the trash can
+     *
+     * @param <Genome> d The genome we stopped dragging
+     */
+    function dragEnd(d) {
+        delete this.__origin__;
+        delete mouse.dragging[d.bioproject_id];
+        d3.select("body").style("cursor", "auto");
+        svg.selectAll(".bar").style("cursor", "url(/openhand.cur) 7 5, move");
+        svg.select("#trash").transition()
+            .delay(mouse.onTrash ? transitionDuration : 0)
+            .duration(transitionDuration)
+            .attr("transform", "translate(0 0)")
+            .style("opacity", "0")
+            .attr("fill", "#cccccc");
+        svg.select("#trash circle").transition()
+            .delay(mouse.onTrash ? transitionDuration : 0)
+            .duration(transitionDuration)
+            .attr("stroke", "#cccccc");
+        if (mouse.onTrash) {
+            //TODO removeData(d);
+        } else {
+            // If we always update the graph, the click event never registers
+            // in Chrome due to DOM reordering of the bars.
+            if (mouse.hasDragged) {
+                that.update();
+                // If we swapped genomes, update the table to the graph
+                //TODO var r = calculateTablePositionsFromGraph();
+                //TODO updateTable();
+                //TODO sendToWorker("recalculatePanCore", {"order" : r.order, "start" : r.start, "stop" : r.stop});
+            }
+        }
+        mouse.isDragging = false;
+    }
+
+    /**
+     * Gets called when we a label of the legend gets clicked
+     *
+     * @param <Genome> d The label we clicked
+     */
+    function legendClick(d) {
+        toggles[d.toggle] = !toggles[d.toggle];
+        that.update();
+    }
+
+    /**
+     * Returns the actual position of a genome in the graph
+     *
+     * @param <Genome> d The genome we want to know the position of
+     * @return <Number> The x-position of the genome
+     */
+    function position(d) {
+        var v = mouse.dragging[d.bioproject_id];
+        return v == null ? xScale(d.bioproject_id) : v;
+    }
+
+    /**
+     * Checks if 2 arrays are the same. Returns true if something has changed
+     *
+     * @param <Array> oldData the first array
+     * @param <Array> newData the second array
+     * @return <Boolean> Returns true if the arrays aren't the same
+     */
+    function hasChanged(oldData, newData) {
+        var i;
+        if (oldData.length !== newData.length) {
+            return true;
+        }
+        for (i = 0; i < oldData.length; i++) {
+            if (oldData[i].bioproject_id !== newData[i].bioproject_id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Changes the position of the tooltip with a CSS transform
      */
     function afMoveTooltip() {
         tooltip.style("-webkit-transform", "translate3d(" + tooltipX + "px, " + tooltipY + "px, 0)");
         tooltip.style("transform", "translate3d(" + tooltipX + "px, " + tooltipY + "px, 0)");
+    }
+
+    /**
+     * Swiches the position of 2 genomes while dragging. Gets only called once
+     * per frame because of the heavy computations.
+     */
+    function afMoveDrag() {
+        var oldData = graphData.slice(0);
+        graphData.sort(function (a, b) { return position(a) - position(b); });
+        // If some position is swapped, redraw some stuff
+        if (hasChanged(oldData, graphData)) {
+            xScale.domain(graphData.map(function (d) { return d.bioproject_id; }));
+            svg.selectAll(".bar").attr("x", function (d) { return xScale(d.bioproject_id) - mouseOverWidth / 2; });
+            svg.selectAll(".dot:not(._" + mouse.dragId + ")").transition()
+                .duration(transitionDuration)
+                .attr("cx", function (d) { return xScale(d.bioproject_id); });
+            svg.select(".x.axis").transition()
+                .duration(transitionDuration)
+                .call(xAxis);
+            svg.selectAll(".x.axis text").style("text-anchor", "end");
+            svg.selectAll(".line").transition()
+                .duration(transitionDuration)
+                .style("stroke", "#cccccc");
+        }
+        // Update the position of the drag box and dots
+        svg.selectAll(".bar._" + mouse.dragId).attr("x", mouse.dragging[mouse.dragId] - mouseOverWidth / 2);
+        svg.selectAll(".dot._" + mouse.dragId).attr("cx", mouse.dragging[mouse.dragId]);
     }
 
 
@@ -401,8 +544,8 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .data(legendData)
           .enter().append("g")
             .attr("class", "legend")
-            .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; });
-            //TODO .on("click", legendClick);
+            .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; })
+            .on("click", legendClick);
         legend.append("rect")
             .attr("x", 30)
             .attr("width", 8)
@@ -643,10 +786,10 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .on("mouseout", abolishTooltipAndHighlight)
             .on("mousemove", moveTooltip)
             .on("click", invokePopover)
-            /*TODO.call(d3.behavior.drag()
+            .call(d3.behavior.drag()
                 .on("dragstart", dragStart)
                 .on("drag", drag)
-                .on("dragend", dragEnd))*/;
+                .on("dragend", dragEnd));
         bars.transition()
             .duration(transitionDuration)
             .attr("points", function (d) {

@@ -296,7 +296,6 @@ function init_graphs() {
         genomes[genome.bioproject_id].status = "Done";
         updateTable();
         graph.addToDataQueue(genome);
-        dataQueue.push(genome);
         tryUpdateMatrix();
         if (toLoad === 0) {
             setLoading(false);
@@ -455,70 +454,6 @@ function init_graphs() {
         tr.selectAll("td.button a.btn").classed("disabled", function (d) {return d.status !== "Done"; });
     }
 
-    // TODO move to graph object
-    // Let the dragging begin!
-    function dragStart(d) {
-        pancoreMouse.isDragging = true;
-        pancoreMouse.hasDragged = false;
-        pancoreMouse.dragId = d.bioproject_id;
-        pancoreMouse.dragging[d.bioproject_id] = this.__origin__ = pancoreX(d.bioproject_id);
-        d3.select("body").style("cursor", "url(/closedhand.cur) 7 5, move");
-        pancoreSvg.selectAll(".bar").style("cursor", "url(/closedhand.cur) 7 5, move");
-        pancoreSvg.select("#trash").transition()
-            .duration(transitionDuration)
-            .attr("transform", "translate(-84 0)")
-            .style("opacity", "1");
-    }
-    // Switches the position the nodes when it needs to
-    function drag(d) {
-        pancoreMouse.hasDragged = true;
-        if (pancoreMouse.isClicked) {
-            removePopovers();
-            if (pancoreMouse.clickId !== d.bioproject_id) {
-                removeHighlight(pancoreMouse.clickId);
-            }
-        }
-        removeTooltip();
-        pancoreMouse.dragging[d.bioproject_id] = Math.min(pancoreWidth, Math.max(0, this.__origin__ += d3.event.dx));
-        requestAnimFrame(moveDrag);
-    }
-    // Recalculates the position of all genomes and update the graph or
-    // removes the genome when dropped on the trash can
-    function dragEnd(d) {
-        delete this.__origin__;
-        delete pancoreMouse.dragging[d.bioproject_id];
-        d3.select("body").style("cursor", "auto");
-        pancoreSvg.selectAll(".bar").style("cursor", "url(/openhand.cur) 7 5, move");
-        pancoreSvg.select("#trash").transition()
-            .delay(pancoreMouse.onTrash ? transitionDuration : 0)
-            .duration(transitionDuration)
-            .attr("transform", "translate(0 0)")
-            .style("opacity", "0")
-            .attr("fill", "#cccccc");
-        pancoreSvg.select("#trash circle").transition()
-            .delay(pancoreMouse.onTrash ? transitionDuration : 0)
-            .duration(transitionDuration)
-            .attr("stroke", "#cccccc");
-        if (pancoreMouse.onTrash) {
-            removeData(d);
-        } else {
-            // If we always update the graph, the click event never registers
-            // in Chrome due to DOM reordering of the bars.
-            if (pancoreMouse.hasDragged) {
-                updatePancore();
-                var r = calculateTablePositionsFromGraph();
-                updateTable();
-                sendToWorker("recalculatePanCore", {"order" : r.order, "start" : r.start, "stop" : r.stop});
-            }
-        }
-        pancoreMouse.isDragging = false;
-    }
-    // handles a click on the legend
-    function legendClick(d) {
-        pancoreToggles[d.toggle] = !pancoreToggles[d.toggle];
-        updatePancore();
-    }
-
     /**
      * Invokes a file download containing all data currently shown
      * in the graph (i.e. each datapoint) in csv format.
@@ -547,22 +482,6 @@ function init_graphs() {
     }
 
     // TODO move to graph object
-    function position(d) {
-        var v = pancoreMouse.dragging[d.bioproject_id];
-        return v == null ? pancoreX(d.bioproject_id) : v;
-    }
-    function isChanged(oldData, newData) {
-        var i;
-        if (oldData.length != newData.length) {
-            return true;
-        }
-        for (i = 0; i < oldData.length; i++) {
-            if (oldData[i].bioproject_id != newData[i].bioproject_id) {
-                return true;
-            }
-        }
-        return false;
-    }
     function trashMouseOver() {
         pancoreMouse.onTrash = true;
         if (!pancoreMouse.isDragging) return;
@@ -597,29 +516,6 @@ function init_graphs() {
         pancoreSvg.selectAll(".dot.unicore._" + pancoreMouse.dragId).transition()
             .duration(transitionDuration)
             .attr("fill", unicoreColor);
-    }
-    // Request Animation Frame functions
-    function moveDrag() {
-        var oldData = graphData.slice(0);
-        graphData.sort(function (a, b) { return position(a) - position(b); });
-        // If some position is swapped, redraw some stuff
-        if (isChanged(oldData, graphData)) {
-            pancoreX.domain(graphData.map(function (d) { return d.bioproject_id; }));
-            pancoreSvg.selectAll(".bar").attr("x", function (d) { return pancoreX(d.bioproject_id) - pancoreMouseOverWidth / 2; });
-            pancoreSvg.selectAll(".dot:not(._" + pancoreMouse.dragId + ")").transition()
-                .duration(transitionDuration)
-                .attr("cx", function (d) { return pancoreX(d.bioproject_id); });
-            pancoreSvg.select(".x.axis").transition()
-                .duration(transitionDuration)
-                .call(xAxis);
-            pancoreSvg.selectAll(".x.axis text").style("text-anchor", "end");
-            pancoreSvg.selectAll(".line").transition()
-                .duration(transitionDuration)
-                .style("stroke", "#cccccc");
-        }
-        // Update the position of the drag box and dots
-        pancoreSvg.selectAll(".bar._" + pancoreMouse.dragId).attr("x", pancoreMouse.dragging[pancoreMouse.dragId] - pancoreMouseOverWidth / 2);
-        pancoreSvg.selectAll(".dot._" + pancoreMouse.dragId).attr("cx", pancoreMouse.dragging[pancoreMouse.dragId]);
     }
 
     // TODO move to phylotree object
