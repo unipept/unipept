@@ -382,6 +382,49 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     }
 
     /**
+     * Gets called when the mouse hovers over the trash can
+     */
+    function trashMouseOver() {
+        mouse.onTrash = true;
+        if (!mouse.isDragging) return;
+        svg.select("#trash").transition()
+            .duration(transitionDuration / 2)
+            .attr("fill", "#333333");
+        svg.select("#trash circle").transition()
+            .duration(transitionDuration / 2)
+            .attr("stroke", "#d6616b");
+        svg.selectAll(".dot._" + mouse.dragId).transition()
+            .duration(transitionDuration / 2)
+            .attr("fill", "#d6616b");
+    }
+
+    /**
+     * Gets called when the mouse leave the trash can
+     */
+    function trashMouseOut() {
+        mouse.onTrash = false;
+        if (!mouse.isDragging) return;
+        svg.select("#trash").transition()
+            .duration(transitionDuration)
+            .attr("fill", "#cccccc");
+        svg.select("#trash circle").transition()
+            .duration(transitionDuration)
+            .attr("stroke", "#cccccc");
+        svg.selectAll(".dot.genome._" + mouse.dragId).transition()
+            .duration(transitionDuration)
+            .attr("fill", genomeColor);
+        svg.selectAll(".dot.pan._" + mouse.dragId).transition()
+            .duration(transitionDuration)
+            .attr("fill", panColor);
+        svg.selectAll(".dot.core._" + mouse.dragId).transition()
+            .duration(transitionDuration)
+            .attr("fill", coreColor);
+        svg.selectAll(".dot.unicore._" + mouse.dragId).transition()
+            .duration(transitionDuration)
+            .attr("fill", unicoreColor);
+    }
+
+    /**
      * Gets called when we a label of the legend gets clicked
      *
      * @param <Genome> d The label we clicked
@@ -604,8 +647,8 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .attr("id", "trash")
             .attr("fill", "#cccccc")
             .style("opacity", "0")
-            //TODO .on("mouseover", trashMouseOver)
-            //TODO .on("mouseout", trashMouseOut)
+            .on("mouseover", trashMouseOver)
+            .on("mouseout", trashMouseOut)
         .insert("g")
             .attr("transform", "translate(" + (fullWidth + 30) + " " + (height - 46) / 2 + ")");
         trash.append("circle")

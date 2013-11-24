@@ -10,7 +10,6 @@ function init_selection_tree(data, taxa) {
  * Initializes the main graph, the similarity matrix and drop-target-table
  */
 function init_graphs() {
-    // *** GLOBAL VARS ***
     var toLoad,
         rank = 0,
         graphData = [],
@@ -479,43 +478,6 @@ function init_graphs() {
         downloadDataByForm(sequences, type + '-sequences.txt', function enableButton() {
             $("#download-peptides-toggle").button('reset');
         });
-    }
-
-    // TODO move to graph object
-    function trashMouseOver() {
-        pancoreMouse.onTrash = true;
-        if (!pancoreMouse.isDragging) return;
-        pancoreSvg.select("#trash").transition()
-            .duration(transitionDuration / 2)
-            .attr("fill", "#333333");
-        pancoreSvg.select("#trash circle").transition()
-            .duration(transitionDuration / 2)
-            .attr("stroke", "#d6616b");
-        pancoreSvg.selectAll(".dot._" + pancoreMouse.dragId).transition()
-            .duration(transitionDuration / 2)
-            .attr("fill", "#d6616b");
-    }
-    function trashMouseOut() {
-        pancoreMouse.onTrash = false;
-        if (!pancoreMouse.isDragging) return;
-        pancoreSvg.select("#trash").transition()
-            .duration(transitionDuration)
-            .attr("fill", "#cccccc");
-        pancoreSvg.select("#trash circle").transition()
-            .duration(transitionDuration)
-            .attr("stroke", "#cccccc");
-        pancoreSvg.selectAll(".dot.genome._" + pancoreMouse.dragId).transition()
-            .duration(transitionDuration)
-            .attr("fill", genomeColor);
-        pancoreSvg.selectAll(".dot.pan._" + pancoreMouse.dragId).transition()
-            .duration(transitionDuration)
-            .attr("fill", panColor);
-        pancoreSvg.selectAll(".dot.core._" + pancoreMouse.dragId).transition()
-            .duration(transitionDuration)
-            .attr("fill", coreColor);
-        pancoreSvg.selectAll(".dot.unicore._" + pancoreMouse.dragId).transition()
-            .duration(transitionDuration)
-            .attr("fill", unicoreColor);
     }
 
     // TODO move to phylotree object
