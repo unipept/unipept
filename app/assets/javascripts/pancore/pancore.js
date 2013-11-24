@@ -24,6 +24,10 @@ function init_graphs() {
     });
     graph.redraw();
 
+    var table = constructGenomeTable({
+        genome : genomes
+    });
+
     // the Javascript Worker for background data processing
     var worker = new Worker("/assets/workers/pancore_worker.js");
 
@@ -73,7 +77,8 @@ function init_graphs() {
         // Get all bioproject id's for the selected species id
         var url = "/pancore/genomes/species/" + $("#species_id").val() + ".json";
         $.getJSON(url, function (genomes) {
-            clearTable();
+            //TODO
+            table.clear();
             toLoad = 0;
             addGenomes(genomes);
         })
@@ -136,7 +141,7 @@ function init_graphs() {
         for (i in genomes) {
             genomes[i].status = "Processing...";
         }
-        updateTable();
+        table.update();
         $("#autosort").mouseleave();
         return false;
     });
@@ -166,7 +171,7 @@ function init_graphs() {
         cursor: 'url(/closedhand.cur) 7 5, move',
         stop: function () {
             var r = calculateTablePositions();
-            updateTable();
+            table.update();
             sendToWorker("recalculatePanCore", {"order" : r.order, "start" : r.start, "stop" : r.stop});
         }
     });
@@ -256,7 +261,7 @@ function init_graphs() {
                 toLoad -= 1;
             }
         }
-        updateTable();
+        table.update();
         setTableMessage("refresh", "Please wait while we load the data for these genomes.");
         if (toLoad === 0) {
             setLoading(false);
@@ -293,7 +298,7 @@ function init_graphs() {
         if (rank !== request_rank) return;
         toLoad--;
         genomes[genome.bioproject_id].status = "Done";
-        updateTable();
+        table.update();
         graph.addToDataQueue(genome);
         tryUpdateMatrix();
         if (toLoad === 0) {
@@ -309,7 +314,7 @@ function init_graphs() {
         if (g.status !== "Done") return;
         var id = genome.bioproject_id;
         delete genomes[id];
-        updateTable();
+        table.update();
         var r = calculateTablePositions();
         sendToWorker("removeData", {"bioproject_id" : id, "order" : r.order, "start" : r.start});
     }
@@ -329,7 +334,7 @@ function init_graphs() {
             }
         }
         //updatePancore();
-        updateTable();
+        table.update();
     }
 
     // Resets everything:
@@ -347,7 +352,7 @@ function init_graphs() {
         lca = "";
         removePopoversAndHighlights();
         updatePancore();
-        clearTable();
+        table.clear();
     }
 
     function tryUpdateMatrix() {
@@ -404,53 +409,6 @@ function init_graphs() {
         }
         start++;
         return {"order" : order, "start" : start, "stop" : stop};
-    }
-
-    // TODO move to table object
-    // Clear the table
-    function clearTable() {
-        $("#genomes_table tbody").html("");
-        updateTable();
-    }
-    // Updates the table
-    function updateTable() {
-        //removePopovers();
-
-        var text = "Genome";
-        if (lca !== "") {
-            text += " (LCA: " + lca + ")";
-        }
-        $("th.name").text(text);
-
-        // Add rows
-        var tr = d3.select("#genomes_table tbody").selectAll("tr.added")
-            .data(d3.values(genomes), function (d) { return d.bioproject_id; });
-        var newRows = tr.enter().append("tr").attr("class", "added");
-        tr.exit().remove();
-        tr.sort(function (a, b) { return a.position - b.position; });
-
-        // Add cells
-        newRows.append("td").attr("class", "handle").html("<i class='glyphicon glyphicon-resize-vertical'></i>");
-        var td = tr.selectAll("td.data")
-            .data(function (d) {
-                return d3.entries(d).filter(function (entry) {
-                    return entry.key !== "position" && entry.key !== "bioproject_id";
-                });
-            });
-        td.enter()
-            .append("td");
-        td.text(function (d) { return d.value; })
-            .attr("class", function (d) {return "data " + d.key; })
-            .attr("colspan", "1");
-        newRows.append("td")
-            .attr("class", "button")
-            .append("a")
-            .html("<i class='glyphicon glyphicon-trash'></i>")
-            .attr("class", "btn btn-default btn-xs")
-            .attr("title", "remove genome")
-            .on("click", removeData);
-        newRows.each(function () { highlight(this); });
-        tr.selectAll("td.button a.btn").classed("disabled", function (d) {return d.status !== "Done"; });
     }
 
     /**
