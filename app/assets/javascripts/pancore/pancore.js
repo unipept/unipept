@@ -1,4 +1,34 @@
 /**
+ * Blabla
+ *
+ * @param <Array> args.bla blabla
+ */
+var constructPancore = function constructPancore(args) {
+    /*************** Private variables ***************/
+
+    var that = {};
+
+    /*************** Private methods ***************/
+
+    /**
+     * Initializes pan core
+     */
+    function init() {
+
+    }
+
+    /*************** Public methods ***************/
+
+
+    // initialize the object
+    init();
+
+    return that;
+};
+
+
+
+/**
  * Creates the selectable taxonomy tree using nested unordered lists
  */
 function init_selection_tree(data, taxa) {
