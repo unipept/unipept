@@ -19,6 +19,61 @@ var constructGenomeTable = function constructGenomeTable(args) {
      */
     function init() {
 
+        // Add handler to the autosort-button
+        $("#autosort").mouseenter(function () {
+            if (!$("#autosort").hasClass("open")) {
+                $("#autosort-button").dropdown("toggle");
+            }
+        });
+        $("#autosort").mouseleave(function () {
+            if ($("#autosort").hasClass("open")) {
+                $("#autosort-button").dropdown("toggle");
+            }
+        });
+        $("#autosort ul a").click(function () {
+            // TODO move to function
+            var i;
+            sendToWorker("autoSort", {type : $(this).attr("data-type")});
+            for (i in genomes) {
+                genomes[i].status = "Processing...";
+            }
+            table.update();
+            $("#autosort").mouseleave();
+            return false;
+        });
+        $("#autosort ul a").tooltip({placement : "right", container : "body"});
+
+        // Make table sortable and droppable (JQuery UI)
+        $("#genomes_table").disableSelection();
+        $("#genomes_table, #pancore_graph").droppable({
+            activeClass: "acceptDrop",
+            hoverClass: "willDrop",
+            tolerance: "pointer",
+            accept: "li",
+            drop: function (event, ui) {
+                var g = [];
+                ui.helper.find(".data.name").each(function () {
+                    g.push({name : $(this).text(), bioproject_id : parseInt($(this).attr("data-bioproject_id"), 10)});
+                });
+                if (g.length < 70 || confirm("You're trying to add a lot of genomes (" + g.length + "). Are you sure you want to continue?")) {
+                    addGenomes(g);
+                }
+            }
+        });
+        $("#genomes_table tbody").sortable({
+            axis: 'y',
+            containment: '.split-right',
+            cursor: 'url(/closedhand.cur) 7 5, move',
+            stop: function () {
+                var r = calculateTablePositions();
+                table.update();
+                sendToWorker("recalculatePanCore", {"order" : r.order, "start" : r.start, "stop" : r.stop});
+            }
+        });
+
+        // Add handler to the "remove all"-button
+        //TODO $("#remove-all").click(clearAllData);
+
     }
 
     /*************** Public methods ***************/
@@ -79,6 +134,16 @@ var constructGenomeTable = function constructGenomeTable(args) {
         tr.selectAll("td.button a.btn").classed("disabled", function (d) {return d.status !== "Done"; });
     };
 
+    /**
+     * Displays a message above the table
+     *
+     * @param <String> icon The name of the glyphicon you want to show in front
+     *          of your message
+     * @param <String> msg The message you want to set
+     */
+    that.setTableMessage = function setTableMessage(icon, msg) {
+        $("#table-message").html("<i class='glyphicon glyphicon-" + icon + "'></i> " + msg);
+    };
 
     // initialize the object
     init();

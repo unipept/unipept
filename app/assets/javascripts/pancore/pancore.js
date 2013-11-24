@@ -25,7 +25,7 @@ function init_graphs() {
     graph.redraw();
 
     var table = constructGenomeTable({
-        genome : genomes
+        genomes : genomes
     });
 
     // the Javascript Worker for background data processing
@@ -123,63 +123,6 @@ function init_graphs() {
         }
     }
 
-    // TODO move to table object
-    // Add handler to the autosort-button
-    $("#autosort").mouseenter(function () {
-        if (!$("#autosort").hasClass("open")) {
-            $("#autosort-button").dropdown("toggle");
-        }
-    });
-    $("#autosort").mouseleave(function () {
-        if ($("#autosort").hasClass("open")) {
-            $("#autosort-button").dropdown("toggle");
-        }
-    });
-    $("#autosort ul a").click(function () {
-        var i;
-        sendToWorker("autoSort", {type : $(this).attr("data-type")});
-        for (i in genomes) {
-            genomes[i].status = "Processing...";
-        }
-        table.update();
-        $("#autosort").mouseleave();
-        return false;
-    });
-    $("#autosort ul a").tooltip({placement : "right", container : "body"});
-
-    // TODO move to table object
-    // Make table sortable and droppable (JQuery UI)
-    $("#genomes_table").disableSelection();
-    $("#genomes_table, #pancore_graph").droppable({
-        activeClass: "acceptDrop",
-        hoverClass: "willDrop",
-        tolerance: "pointer",
-        accept: "li",
-        drop: function (event, ui) {
-            var g = [];
-            ui.helper.find(".data.name").each(function () {
-                g.push({name : $(this).text(), bioproject_id : parseInt($(this).attr("data-bioproject_id"), 10)});
-            });
-            if (g.length < 70 || confirm("You're trying to add a lot of genomes (" + g.length + "). Are you sure you want to continue?")) {
-                addGenomes(g);
-            }
-        }
-    });
-    $("#genomes_table tbody").sortable({
-        axis: 'y',
-        containment: '.split-right',
-        cursor: 'url(/closedhand.cur) 7 5, move',
-        stop: function () {
-            var r = calculateTablePositions();
-            table.update();
-            sendToWorker("recalculatePanCore", {"order" : r.order, "start" : r.start, "stop" : r.stop});
-        }
-    });
-
-    // TODO move to table object
-    // Add handler to the "remove all"-button
-    $("#remove-all").click(clearAllData);
-
     // Set up save image stuff
     $("#buttons-pancore").prepend("<button id='save-img' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save image</button>");
     $("#save-img").click(function clickSaveImage() {
@@ -214,33 +157,6 @@ function init_graphs() {
         worker.postMessage({'cmd': command, 'msg': message});
     }
 
-    // TODO move to matrix object
-    // setup similarity matrix buttons etc
-    $("#sim_matrix_buttons").prepend("<button id='calculate-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Calculate Similarity Matrix</button>");
-    $("#calculate-matrix-btn").click(function () {
-        sendToWorker('calculateSimilarity', '');
-    });
-    $("#sim_matrix_buttons").prepend("<button id='cluster-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Cluster Similarity Matrix</button>");
-    $("#cluster-matrix-btn").click(function () {
-        sendToWorker('clusterMatrix', '');
-    });
-
-    // TODO move to matrix object
-    // Only cluster when the initial data has loaded
-    function clusterIfReady() {
-        if( toLoad === 0 ) {
-            sendToWorker('clusterMatrix', '');
-        } else {
-            setTimeout(clusterIfReady, 200);
-        }
-    }
-    // On click of tab, cluster matrix
-    $("a[href='#sim_matrix_wrapper']").click(clusterIfReady);
-    function showMatrix(g, data, order) {
-        $('#sim_matrix').empty();
-        redrawMatrix(g, data, order);
-    }
-
     // Initial method for adding genomes
     // genomes should be an array of bioproject id's
     // the table is updated to represent the loading status
@@ -262,7 +178,7 @@ function init_graphs() {
             }
         }
         table.update();
-        setTableMessage("refresh", "Please wait while we load the data for these genomes.");
+        table.setTableMessage("refresh", "Please wait while we load the data for these genomes.");
         if (toLoad === 0) {
             setLoading(false);
         }
@@ -279,11 +195,11 @@ function init_graphs() {
     function setLoading(loading) {
         if (loading) {
             $("#add_species_peptidome").button('loading');
-            setTableMessage("refresh", "Please wait while we load the genomes for this species.");
+            table.setTableMessage("refresh", "Please wait while we load the genomes for this species.");
             $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", true);
         } else {
             $("#add_species_peptidome").button('reset');
-            setTableMessage("info-sign", "You can drag rows to reorder them or use one of the autosort options.");
+            table.setTableMessage("info-sign", "You can drag rows to reorder them or use one of the autosort options.");
             $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", false);
 
             // REMOVE THIS LINE
@@ -353,15 +269,6 @@ function init_graphs() {
         removePopoversAndHighlights();
         updatePancore();
         table.clear();
-    }
-
-    function tryUpdateMatrix() {
-        sendToWorker('newDataAdded');
-    }
-
-    // Displays a message above the table
-    function setTableMessage(icon, msg) {
-        $("#table-message").html("<i class='glyphicon glyphicon-" + icon + "'></i> " + msg);
     }
 
     // TODO move to table object
@@ -540,5 +447,34 @@ function init_graphs() {
               //.on("mouseover", mouseover)
               //.on("mouseout", mouseout);
         }
+    }
+    function tryUpdateMatrix() {
+        sendToWorker('newDataAdded');
+    }
+    // TODO move to matrix object
+    // setup similarity matrix buttons etc
+    $("#sim_matrix_buttons").prepend("<button id='calculate-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Calculate Similarity Matrix</button>");
+    $("#calculate-matrix-btn").click(function () {
+        sendToWorker('calculateSimilarity', '');
+    });
+    $("#sim_matrix_buttons").prepend("<button id='cluster-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Cluster Similarity Matrix</button>");
+    $("#cluster-matrix-btn").click(function () {
+        sendToWorker('clusterMatrix', '');
+    });
+
+    // TODO move to matrix object
+    // Only cluster when the initial data has loaded
+    function clusterIfReady() {
+        if( toLoad === 0 ) {
+            sendToWorker('clusterMatrix', '');
+        } else {
+            setTimeout(clusterIfReady, 200);
+        }
+    }
+    // On click of tab, cluster matrix
+    $("a[href='#sim_matrix_wrapper']").click(clusterIfReady);
+    function showMatrix(g, data, order) {
+        $('#sim_matrix').empty();
+        redrawMatrix(g, data, order);
     }
 }
