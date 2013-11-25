@@ -15,6 +15,9 @@ var constructPancore = function constructPancore(args) {
 
     var that = {},
         genomes = {},
+        isLoading = false,
+        toLoad = 0,
+        rank = 0,
         tree,
         graph,
         table,
@@ -45,7 +48,8 @@ var constructPancore = function constructPancore(args) {
 
         // Constructs the table
         table = constructGenomeTable({
-            genomes : genomes
+            genomes : genomes,
+            pancore : that
         });
 
         // Create the Javascript Worker for background data processing
@@ -75,15 +79,10 @@ var constructPancore = function constructPancore(args) {
         // Add handler to the "add species"-form
         $("#add_species_peptidome").click(function () {
             var url;
-            // TODO rewrite
-            setLoading(true);
             // Get all bioproject id's for the selected species id
             url = "/pancore/genomes/species/" + $("#species_id").val() + ".json";
             $.getJSON(url, function (genomes) {
-                //TODO
-                table.clear();
-                toLoad = 0;
-                addGenomes(genomes);
+                that.addGenomes(genomes);
             })
             .fail(function () {
                 error("request error for " + url, "It seems like something went wrong while we loaded the data");
@@ -135,6 +134,27 @@ var constructPancore = function constructPancore(args) {
     }
 
     /**
+     * Gets called to handle the change from and to full screen mode.
+     * Mostly just scales the SVG
+     */
+    function resizeFullScreen() {
+        if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
+            setTimeout(function () {
+                var w = fullWidth,
+                    h = fullHeight;
+                if (window.fullScreenApi.isFullScreen()) {
+                    w = $(window).width();
+                    h = $(window).height();
+                }
+                $("#pancore_graph svg").attr("width", w);
+                $("#pancore_graph svg").attr("height", h);
+            }, 100);
+        } else {
+            // TODO: add handling code for sim matrix
+        }
+    }
+
+    /**
      * Handles message events for the worker
      *
      * @param <Event> e The event we want to handle
@@ -148,8 +168,8 @@ var constructPancore = function constructPancore(args) {
         case 'error':
             error(data.msg.error, data.msg.msg);
             break;
-        case 'addData':
-            addData(data.msg.data, data.msg.rank);
+        case 'processLoadedGenome':
+            processLoadedGenome(data.msg.data, data.msg.rank);
             break;
         case 'setPancoreData':
             setPancoreData(data.msg.data, data.msg.lca, data.msg.rank);
@@ -172,86 +192,55 @@ var constructPancore = function constructPancore(args) {
     }
 
     /**
-     * Gets called to handle the change from and to full screen mode.
-     * Mostly scales the SVG
+     * Sends a command and message to the worker
      */
-    function resizeFullScreen() {
-        if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
-            setTimeout(function () {
-                var w = fullWidth,
-                    h = fullHeight;
-                if (window.fullScreenApi.isFullScreen()) {
-                    w = $(window).width();
-                    h = $(window).height();
-                }
-                $("#pancore_graph svg").attr("width", w);
-                $("#pancore_graph svg").attr("height", h);
-            }, 100);
-        } else {
-            // TODO: add handling code for sim matrix
-        }
-    }
-
-    /*************** Public methods ***************/
-
-
-    // initialize the object
-    init();
-
-    return that;
-};
-
-
-/**
- * Initializes the main graph, the similarity matrix and drop-target-table
- */
-function init_graphs() {
-    var toLoad,
-        rank = 0,
-        graphData = [],
-        lca = "";
-
-    // Sends a command and message to the worker
     function sendToWorker(command, message) {
         worker.postMessage({'cmd': command, 'msg': message});
     }
 
-    // Initial method for adding genomes
-    // genomes should be an array of bioproject id's
-    // the table is updated to represent the loading status
-    // the command is given to the worker to download the peptide id's
-    function addGenomes(g) {
-        var i;
-        toLoad += g.length;
-        for (i = 0; i < g.length; i++) {
-            // only add new genomes
-            if (genomes[g[i].bioproject_id] === undefined) {
-                genomes[g[i].bioproject_id] = {
-                    "bioproject_id" : g[i].bioproject_id,
-                    "name" : g[i].name,
-                    "status" : "Loading...",
-                    "position" : 100 + i};
-                loadData(g[i].bioproject_id, g[i].name);
-            } else {
-                toLoad -= 1;
-            }
-        }
-        table.update();
-        table.setTableMessage("refresh", "Please wait while we load the data for these genomes.");
-        if (toLoad === 0) {
-            setLoading(false);
-        }
-    }
-
-    // Loads peptides, based on bioproject_id
+    /**
+     * Asks the worker to load a genome
+     *
+     * @param <Number> bioproject_id The id of the genome we want to load
+     * @param <String> name The name of the genome we want to load
+     */
     function loadData(bioproject_id, name) {
-        // offload this to the worker
         sendToWorker("loadData", {"bioproject_id" : bioproject_id, "name" : name});
     }
 
-    // Gets called when the data is (done) loading
-    // enables/disables some buttons and actions (e.g. reordering)
+    /**
+     * Gets called when the worker is done loading a new genome the calculated
+     * data gets added the update queue if the request_rank matches
+     *
+     * @param <Genome> genome The data that's loaded
+     * @param <Number> requestRank The rank of the original request
+     */
+    function processLoadedGenome(genome, requestRank) {
+        // If the rank doesn't match, this is old data
+        if (rank !== requestRank) return;
+        toLoad--;
+        // TODO do this the right way
+        genomes[genome.bioproject_id].status = "Done";
+        table.update();
+
+        graph.addToDataQueue(genome);
+
+        //TODO tryUpdateMatrix();
+
+        setLoading(toLoad !== 0);
+    }
+
+    /**
+     * Gets called when the data is (done) loading
+     * Enables/disables some buttons and actions (e.g. reordering)
+     *
+     * @param <Boolean> loading The new(?) loading status
+     */
     function setLoading(loading) {
+        // TODO let the table handle the enabling or disabling
+        // don't do anything if the state hasn't changed
+        if (isLoading === loading) return;
+        isLoading = loading;
         if (loading) {
             $("#add_species_peptidome").button('loading');
             table.setTableMessage("refresh", "Please wait while we load the genomes for this species.");
@@ -266,20 +255,45 @@ function init_graphs() {
         }
     }
 
-    // Gets called when the worker is done loading a new genome
-    // the calculated data gets added the update queue if the request_rank matches
-    function addData(genome, request_rank) {
-        // If the rank doesn't match, this is old data
-        if (rank !== request_rank) return;
-        toLoad--;
-        genomes[genome.bioproject_id].status = "Done";
-        table.update();
-        graph.addToDataQueue(genome);
-        tryUpdateMatrix();
-        if (toLoad === 0) {
-            setLoading(false);
+    /*************** Public methods ***************/
+
+    /**
+     * Gives the order to add genomes to the visualisation.
+     *
+     * @param <Array> g Array of bioproject_id's of the genomes we want to add
+     */
+    that.addGenomes = function addGenomes(g) {
+        var i;
+        for (i = 0; i < g.length; i++) {
+            // only add new genomes
+            if (genomes[g[i].bioproject_id] === undefined) {
+                toLoad++;
+                // TODO move to table method
+                genomes[g[i].bioproject_id] = {
+                    "bioproject_id" : g[i].bioproject_id,
+                    "name" : g[i].name,
+                    "status" : "Loading...",
+                    "position" : 100 + i};
+                loadData(g[i].bioproject_id, g[i].name);
+            }
         }
-    }
+        setLoading(toLoad !== 0);
+    };
+
+
+    // initialize the object
+    init();
+
+    return that;
+};
+
+
+/**
+ * Initializes the main graph, the similarity matrix and drop-target-table
+ */
+function init_graphs() {
+    var graphData = [],
+        lca = "";
 
     // Removes a genomes from the visualization:
     // - Removes it from the table

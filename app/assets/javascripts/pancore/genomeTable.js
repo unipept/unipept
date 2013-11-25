@@ -4,12 +4,14 @@
  * remove individual genomes, remove all genome.
  *
  * @param <Hash> args.genomes Hash of genomes (by bioproject_id)
+ * @param <Pancore> args.pancore Pancore object
  */
 var constructGenomeTable = function constructGenomeTable(args) {
     /*************** Private variables ***************/
 
     var that = {},
         genomes = args.genomes,
+        pancore = args.pancore,
         lca;
 
     /*************** Private methods ***************/
@@ -56,7 +58,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
                     g.push({name : $(this).text(), bioproject_id : parseInt($(this).attr("data-bioproject_id"), 10)});
                 });
                 if (g.length < 70 || confirm("You're trying to add a lot of genomes (" + g.length + "). Are you sure you want to continue?")) {
-                    addGenomes(g);
+                    pancore.addGenomes(g);
                 }
             }
         });

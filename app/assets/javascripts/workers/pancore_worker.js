@@ -99,7 +99,7 @@ function addData(bioproject_id, name, set, request_rank) {
     if (unicorePresent) {
         temp.unicore = unicore.length;
     }
-    sendToHost("addData", {data: temp, rank: request_rank});
+    sendToHost("processLoadedGenome", {data: temp, rank: request_rank});
 }
 
 // Removes a genomes from the data
