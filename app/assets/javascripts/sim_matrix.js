@@ -2,7 +2,7 @@
  * TODO: document
  *    @param <Array> genomes 
  */
-var constructSimMatrix = function constructSimMatrix(genomes, matrix, order) {
+var constructSimMatrix = function constructSimMatrix(genomes, matrix, order, tableData) {
     /*************** Private variables ***************/
     /* UI variables */
     var margin = {top: 200, right: 0, bottom: 10, left: 200},
@@ -18,7 +18,7 @@ var constructSimMatrix = function constructSimMatrix(genomes, matrix, order) {
 
     /* Constructor fields */
     var genomes = genomes,
-        data = {},
+        data = tableData,
         order = order,
         matrix = matrix,
         worker;
@@ -54,6 +54,9 @@ var constructSimMatrix = function constructSimMatrix(genomes, matrix, order) {
             case 'RowCalculated':
                 rowCalculated(data.msg.row, data.msg.data);
                 break;
+            case 'log':
+                console.log(data.msg);
+                break;
             }
         });
     }
@@ -62,6 +65,7 @@ var constructSimMatrix = function constructSimMatrix(genomes, matrix, order) {
     function rowCalculated(row_index, row) {
         // TODO: animations!
         matrix[row_index] = row;
+        setTimeout(that.reDraw, 50);
     }
 
     /**
@@ -71,7 +75,29 @@ var constructSimMatrix = function constructSimMatrix(genomes, matrix, order) {
      */
     function init() {
         setupWorker();
+        that.reDraw();
+    }
 
+    /*************** Public methods ***************/
+
+    /* reOrder the matrix based on the new order */
+    that.reOrder = function (newOrder) {
+        x.domain(newOrder);
+        var t = svg.transition().duration(2500);
+
+        t.selectAll(".row")
+            .delay(function(d, i) { return x(i) * 4; })
+            .attr("transform", function(d, i) { return "translate(0," + x(i) + ")"; })
+            .selectAll(".cell")
+            .delay(function(d, i) { return x(i) * 4; })
+            .attr("x", function(d, i) { return x(i); });
+
+        t.selectAll(".column")
+            .delay(function(d, i) { return x(i) * 4; })
+            .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
+    }
+
+    that.reDraw = function () {
         svg = d3.select("#sim_matrix").append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
@@ -123,46 +149,13 @@ var constructSimMatrix = function constructSimMatrix(genomes, matrix, order) {
             .text(function(d, i) { return genomes[i]; });
     }
 
-    /*************** Public methods ***************/
-
-    /* reOrder the matrix based on the new order */
-    that.reOrder = function(newOrder) {
-        x.domain(newOrder);
-        var t = svg.transition().duration(2500);
-
-        t.selectAll(".row")
-            .delay(function(d, i) { return x(i) * 4; })
-            .attr("transform", function(d, i) { return "translate(0," + x(i) + ")"; })
-            .selectAll(".cell")
-            .delay(function(d, i) { return x(i) * 4; })
-            .attr("x", function(d, i) { return x(i); });
-
-        t.selectAll(".column")
-            .delay(function(d, i) { return x(i) * 4; })
-            .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
-    }
-
     /* calculate similarity */
-    that.calculateSimilarity = function() {
-        // 0,0 is the topleft coordinate
-        var x = 0, y = 0;
-        var names = [];
-        sim_matrix = [];
-        for (x = 0; x < order.length; x++) {
-            sim_matrix[x] = data[order[x]].peptide_list
+    that.calculateSimilarity = function () {
+        var list = [];
+        for (var i = 0; i < order.length; i++) {
+            list[i] = data[order[i]]
         }
-
-        for (x = 0; x < order.length; x++) {
-            var bioproject_id = order[x];
-            names.push(data[bioproject_id].name);
-            var compare_list = data[bioproject_id].peptide_list;
-
-            // only need to calculate upper part of matrix
-            for (y = 0 ; y < order.length; y ++) {
-                var peptide_list = data[order[y]].peptide_list;
-                sim_matrix[x][y] = genomeSimilarity(compare_list, peptide_list);
-            }
-        }
+        sendToWorker('CalculateSimilarity', list);
     }
 
     // initialize the object

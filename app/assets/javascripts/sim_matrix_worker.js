@@ -5,6 +5,7 @@ function calculateSimilarity(list_of_peptide_info) {
     for (var x = 0; x < list_of_peptide_info.length; x++) {
         var new_row = [],
             compare_list = list_of_peptide_info[x];
+        
         for (y = 0 ; y < list_of_peptide_info.length; y ++) {
             var peptide_list = list_of_peptide_info[y];
             new_row[y] = genomeSimilarity(compare_list, peptide_list);
@@ -22,6 +23,7 @@ self.addEventListener('message', function (e) {
     var data = e.data;
     switch (data.cmd) {
     case 'CalculateSimilarity':
+        sendToHost('log', data);
         calculateSimilarity(data.msg);
         break;
     }

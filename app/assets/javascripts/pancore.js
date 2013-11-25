@@ -167,6 +167,7 @@ function init_graphs() {
     // Data vars
     var pancoreData = [],
         tableData = {},
+        peptideData = {},
         lca = "";
 
     // Load vars
@@ -432,7 +433,8 @@ function init_graphs() {
     // setup similarity matrix buttons etc
     $("#sim_matrix_buttons").prepend("<button id='calculate-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Calculate Similarity Matrix</button>");
     $("#calculate-matrix-btn").click(function () {
-        sendToWorker('calculateSimilarity', '');
+        matrix.calculateSimilarity();
+        //sendToWorker('calculateSimilarity', '');
     });
 
     $("#sim_matrix_buttons").prepend("<button id='cluster-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Cluster Similarity Matrix</button>");
@@ -457,7 +459,7 @@ function init_graphs() {
 
     function showMatrix(genomes, data, order) {
         $('#sim_matrix').empty();
-        matrix = constructSimMatrix(genomes, data, order);
+        matrix = new constructSimMatrix(genomes, data, order, peptideData);
     }
 
     // Initial method for adding genomes
@@ -524,6 +526,7 @@ function init_graphs() {
         if (g.status !== "Done") return;
         var id = genome.bioproject_id;
         delete tableData[id];
+        delete peptideData[id];
         updateTable();
         var r = calculateTablePositions();
         sendToWorker("removeData", {"bioproject_id" : id, "order" : r.order, "start" : r.start});
@@ -559,6 +562,7 @@ function init_graphs() {
         dataQueue = [];
         pancoreData = [];
         tableData = {};
+        peptideData = {};
         lca = "";
         removePopoversAndHighlights();
         updatePancore();
@@ -585,6 +589,7 @@ function init_graphs() {
                 pancoreData.push(data);
                 tableData[data.bioproject_id].status = "Done";
                 tableData[data.bioproject_id].position = pancoreData.length - 1;
+                peptideData[data.bioproject_id] = data.peptide_list;
                 toLoad--;
             }
             if (addedSomething) {
