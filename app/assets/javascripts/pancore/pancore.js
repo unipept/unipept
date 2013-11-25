@@ -46,6 +46,7 @@ var constructPancore = function constructPancore(args) {
 
         // Constructs the graph
         graph = constructPancoreGraph({
+            pancore : that,
             table : table,
             transitionDuration : 500,
             width : 930,
@@ -131,7 +132,7 @@ var constructPancore = function constructPancore(args) {
         $("#buttons-pancore").prepend("<button id='save-data' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save data</button>");
         $("#save-data").click(function clickSaveData() {
             _gaq.push(['_trackEvent', 'Pancore', 'Save Data']);
-            exportData();
+            that.exportCsvData();
         });
     }
 
@@ -176,8 +177,8 @@ var constructPancore = function constructPancore(args) {
         case 'processPancoreData':
             processPancoreData(data.msg.data, data.msg.lca, data.msg.rank);
             break;
-        case 'sequencesDownloaded':
-            returnPopoverSequences(data.msg.sequences, data.msg.type);
+        case 'processDownloadedSequences':
+            processDownloadedSequences(data.msg.sequences, data.msg.type);
             break;
         case 'sim_matrix':
             showMatrix(data.msg.genomes, data.msg.sim_matrix, data.msg.order);
@@ -244,6 +245,19 @@ var constructPancore = function constructPancore(args) {
 
         graph.setData(data);
         lca = l;
+    }
+
+    /**
+     * Takes the downloaded sequences from the worker and pushes them to the
+     * user via a file download.
+     *
+     * @param <String> sequences The list of sequences
+     * @param <String> type The type of the sequences
+     */
+    function processDownloadedSequences(sequences, type) {
+        downloadDataByForm(sequences, type + '-sequences.txt', function enableButton() {
+            $("#download-peptides-toggle").button('reset');
+        });
     }
 
     /**
@@ -319,6 +333,27 @@ var constructPancore = function constructPancore(args) {
         sendToWorker("recalculatePanCore", orderData);
     };
 
+    /**
+     * Invokes a file download containing all data currently shown
+     * in the graph (i.e. each datapoint) in csv format.
+     */
+    that.exportCsvData = function exportCsvData() {
+        downloadDataByForm(graph.getDataAsCsv(), "unique_peptides.csv");
+    };
+
+    /**
+     * Requests a set of sequences to the worker
+     *
+     * @param <Number> bioprojectId The id of the genome we want data from
+     * @para <String> type The type of sequences we want
+     */
+    that.requestSequences = function requestSequences(bioprojectId, type) {
+        sendToWorker("getSequences", {
+            "bioproject_id" : bioprojectId,
+            "type" : type
+        });
+    };
+
 
     // initialize the object
     init();
@@ -327,10 +362,7 @@ var constructPancore = function constructPancore(args) {
 };
 
 
-/**
- * Initializes the main graph, the similarity matrix and drop-target-table
- */
-function init_graphs() {
+function removeMe() {
     var graphData = [],
         lca = "";
 
@@ -373,33 +405,6 @@ function init_graphs() {
         }
         start++;
         return {"order" : order, "start" : start, "stop" : stop};
-    }
-
-    /**
-     * Invokes a file download containing all data currently shown
-     * in the graph (i.e. each datapoint) in csv format.
-     */
-    function exportData() {
-        var exportString = "name,bioproject_id,genome_peptides,core_peptides,pan_peptides,unique_peptides\n",
-            i,
-            tempArray;
-        for (i = 0; i < graphData.length; i++) {
-            tempArray = [];
-            tempArray.push(genomes[graphData[i].bioproject_id].name);
-            tempArray.push(graphData[i].bioproject_id);
-            tempArray.push(graphData[i].peptides);
-            tempArray.push(graphData[i].core);
-            tempArray.push(graphData[i].pan);
-            tempArray.push(graphData[i].unicore);
-            exportString += tempArray.join(",") + "\n";
-        }
-        downloadDataByForm(exportString, "unique_peptides.csv");
-    }
-
-    function returnPopoverSequences(sequences, type) {
-        downloadDataByForm(sequences, type + '-sequences.txt', function enableButton() {
-            $("#download-peptides-toggle").button('reset');
-        });
     }
 
     // TODO move to phylotree object

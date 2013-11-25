@@ -1,6 +1,7 @@
 /**
  * Creates a pancoreGraph object that includes the graph visualisation
  *
+ * @param <Pancore> args.pancore Pancore object
  * @param <GenomeTable> args.table GenomeTable object
  * @param <Number> args.transitionDuration Duration of transitions in ms
  * @param <Number> args.width Width of the graph
@@ -12,6 +13,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     /*************** Private variables ***************/
 
     var that = {},
+        pancore = args.pancore,
         table = args.table,
         transitionDuration = args.transitionDuration,
         fullWidth = args.width,
@@ -227,15 +229,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
                 $("#download-peptides-toggle").dropdown("toggle");
             }
         });
-        //TODO add to separate method
-        $("#download-peptides ul a").click(function () {
-            var type = $(this).attr("data-type");
-            var bioproject_id = $(this).attr("data-bioproject_id");
-            //TODO sendToWorker("getSequences", {"type" : type, "bioproject_id" : bioproject_id});
-            $("#download-peptides").mouseleave();
-            $("#download-peptides-toggle").button('loading');
-            return false;
-        });
+        $("#download-peptides ul a").click(downloadSequenceHandler);
     }
 
     /**
@@ -469,6 +463,18 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     }
 
     /**
+     * Gets called when the users clicks on the button to download sequences
+     */
+    function downloadSequenceHandler() {
+        var type = $(this).attr("data-type");
+        var bioprojectId = $(this).attr("data-bioproject_id");
+        pancore.requestSequences(bioprojectId, type);
+        $("#download-peptides").mouseleave();
+        $("#download-peptides-toggle").button('loading');
+        return false;
+    }
+
+    /**
      * Changes the position of the tooltip with a CSS transform
      */
     function afMoveTooltip() {
@@ -530,6 +536,28 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             table.setGenomePosition(data[i].bioproject_id, i, false);
         }
         table.update();
+    };
+
+    /**
+     * Returns the data in the graph in CSV format
+     *
+     * @return <String> exportString The data in CSV format
+     */
+    that.getDataAsCsv = function getDataAsCsv() {
+        var exportString = "name,bioproject_id,genome_peptides,core_peptides,pan_peptides,unique_peptides\n",
+            i,
+            tempArray;
+        for (i = 0; i < graphData.length; i++) {
+            tempArray = [];
+            tempArray.push(genomes[graphData[i].bioproject_id].name);
+            tempArray.push(graphData[i].bioproject_id);
+            tempArray.push(graphData[i].peptides);
+            tempArray.push(graphData[i].core);
+            tempArray.push(graphData[i].pan);
+            tempArray.push(graphData[i].unicore);
+            exportString += tempArray.join(",") + "\n";
+        }
+        return exportString;
     };
 
     /**

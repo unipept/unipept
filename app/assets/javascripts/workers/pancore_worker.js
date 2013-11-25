@@ -329,7 +329,7 @@ function getSequences(type, bioproject_id) {
         error("Unknown type: " + type);
     }
     getJSONByPost("/pancore/full_sequences/", "sequence_ids=[" + ids + "]", function (d) {
-        sendToHost("sequencesDownloaded", {sequences : d, type : type});
+        sendToHost("processDownloadedSequences", {sequences : d, type : type});
     });
 }
 
