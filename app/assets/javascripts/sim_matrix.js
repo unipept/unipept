@@ -6,6 +6,7 @@ var constructSimMatrix = function constructSimMatrix() {
     /*************** Private variables ***************/
     /* UI variables */
     var margin = {top: 200, right: 0, bottom: 10, left: 200},
+        matrix_padding = 0.03,
         width = 500,
         height = 500;
 
@@ -13,7 +14,7 @@ var constructSimMatrix = function constructSimMatrix() {
     var svg;
 
     /* Scales */
-    var x = d3.scale.ordinal().rangeBands([0, width]),
+    var x = d3.scale.ordinal().rangeBands([0, width], matrix_padding),
         z = d3.scale.linear().domain([0, 1]).clamp(true);
 
     /* Constructor fields */
@@ -79,17 +80,6 @@ var constructSimMatrix = function constructSimMatrix() {
     function init() {
         setupWorker();
 
-        svg = d3.select("#sim_matrix").append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-          .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-        svg.append("rect")
-            .attr("class", "background")
-            .attr("width", width)
-            .attr("height", height)
-            .attr("fill", "#eeeeee");
     }
 
     /*************** Public methods ***************/
@@ -113,6 +103,19 @@ var constructSimMatrix = function constructSimMatrix() {
 
     that.reDraw = function () {
         /* TODO: instead of appending, this needs more selectAll I think */
+        if (! svg) {
+            svg = d3.select("#sim_matrix").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")      
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            svg.append("rect")
+                .attr("class", "background")
+                .attr("width", width)
+                .attr("height", height)
+                .attr("fill", "#eeeeee"); 
+        }
         // The default sort order.
         x.domain(d3.range(genomes.length));
 
