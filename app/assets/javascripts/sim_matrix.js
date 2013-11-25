@@ -75,6 +75,18 @@ var constructSimMatrix = function constructSimMatrix() {
      */
     function init() {
         setupWorker();
+
+        svg = d3.select("#sim_matrix").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        svg.append("rect")
+            .attr("class", "background")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("fill", "#eeeeee");
     }
 
     /*************** Public methods ***************/
@@ -97,20 +109,10 @@ var constructSimMatrix = function constructSimMatrix() {
     }
 
     that.reDraw = function () {
-        svg = d3.select("#sim_matrix").append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-          .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+        /* TODO: instead of appending, this needs more selectAll I think */
         // The default sort order.
         x.domain(d3.range(genomes.length));
-
-        svg.append("rect")
-            .attr("class", "background")
-            .attr("width", width)
-            .attr("height", height)
-            .attr("fill", "#eeeeee");
 
         var row = svg.selectAll(".row")
             .data(matrix)

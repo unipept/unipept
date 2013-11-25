@@ -458,8 +458,8 @@ function init_graphs() {
 
 
     function showMatrix(genomes, data, order) {
-        $('#sim_matrix').empty();
-        matrix.reDraw();
+        //$('#sim_matrix').empty();
+        //matrix.reDraw();
     }
 
     // Initial method for adding genomes
