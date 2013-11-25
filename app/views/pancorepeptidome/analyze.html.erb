@@ -82,8 +82,10 @@
 <script type="text/javascript">
   $(function () {
     if (typeof(Worker)!=="undefined") {
-      init_graphs();
-      init_selection_tree(<%= raw(@genomes) %>, <%= raw(@taxa) %>);
+        constructPancore({
+            data : <%= raw(@genomes) %>,
+            taxa : <%= raw(@taxa) %>
+        });
     } else {
       error(null, "Sorry, this page uses Web Workers, an advanced JavaScript technology that's not supported by your browser. Try using an up to date version of Google Chrome, Firefox or Internet Explorer 10.")
     }

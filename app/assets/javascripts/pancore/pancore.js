@@ -1,79 +1,152 @@
 /**
- * Blabla
+ * Constructs a Pancore object that handles all JavaScript on the Unique
+ * Peptide Finder page.
  *
- * @param <Array> args.bla blabla
+ * @param <Array> args.data The data array used to construct the selection tree
+ *          has around 2500 objects with this format:
+ *          {"bioproject_id":57587,"class_id":29547,"genus_id":194,
+ *          "name":"Campylobacter jejuni","order_id":213849,"species_id":197}
+ * @param <Hash> args.taxa is a list of key-value pairs mapping
+ *          taxon id's to taxon names used for the selection tree.
+ * @return <Pancore> that The constructed Pancore object
  */
 var constructPancore = function constructPancore(args) {
     /*************** Private variables ***************/
 
-    var that = {};
+    var that = {},
+        genomes = {},
+        tree,
+        graph,
+        table,
+        worker;
 
     /*************** Private methods ***************/
 
     /**
-     * Initializes pan core
+     * Initializes pancore
      */
     function init() {
+        // Construct the selection tree
+        tree = constructSelectionTree({data : args.data, taxa : args.taxa});
+        tree.drawTree({
+            tree : "#treeView",
+            tableDiv : "#genomes-table-div",
+            treeSearch : "#treeSearchDiv"
+        });
 
+        // Constructs the graph
+        graph = constructPancoreGraph({
+            transitionDuration : 500,
+            width : 930,
+            height : 600,
+            genomes : genomes
+        });
+        graph.redraw();
+
+        // Constructs the table
+        table = constructGenomeTable({
+            genomes : genomes
+        });
+
+        // Create the Javascript Worker for background data processing
+        worker = new Worker("/assets/workers/pancore_worker.js");
+        worker.addEventListener('message', handleWorkerMessage, false);
+        worker.addEventListener('error', error, false);
+
+        // Initialize the rest of the page
+        initSpeciesForm();
+        initFullScreen();
+        initSaveImage();
+
+        // IE10 message
+        if (navigator.appVersion.indexOf("MSIE 10") != -1) {
+            info("You're using Internet Explorer 10. Everything should work as expected, but for an optimal experience, please use a recent version of Mozilla Firefox or Google Chrome.");
+        }
+
+        // Ready for take off
+        $("#species_id").val(470);
+        $("#add_species_peptidome").click();
     }
 
-    /*************** Public methods ***************/
+    /**
+     * Initializes the add species button
+     */
+    function initSpeciesForm() {
+        // Add handler to the "add species"-form
+        $("#add_species_peptidome").click(function () {
+            var url;
+            // TODO rewrite
+            setLoading(true);
+            // Get all bioproject id's for the selected species id
+            url = "/pancore/genomes/species/" + $("#species_id").val() + ".json";
+            $.getJSON(url, function (genomes) {
+                //TODO
+                table.clear();
+                toLoad = 0;
+                addGenomes(genomes);
+            })
+            .fail(function () {
+                error("request error for " + url, "It seems like something went wrong while we loaded the data");
+            });
+            return false;
+        });
+    }
 
+    /**
+     * Initializes the full screen stuff
+     */
+    function initFullScreen() {
+        if (fullScreenApi.supportsFullScreen) {
+            $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-resize-full'></i> Enter full screen</button>");
+            $("#zoom-btn").click(function () {
+                if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
+                    // GA event tracking
+                    _gaq.push(['_trackEvent', 'Pancore', 'Full Screen', 'graph']);
+                    window.fullScreenApi.requestFullScreen($("#pancore_graph_wrapper").get(0));
+                } else {
+                    // GA event tracking
+                    _gaq.push(['_trackEvent', 'Pancore', 'Full Screen', 'simmatrix']);
+                    window.fullScreenApi.requestFullScreen($("#sim_matrix_wrapper").get(0));
+                }
+            });
+            $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange', resizeFullScreen);
+        }
+    }
 
-    // initialize the object
-    init();
+    /**
+     * Initializes the save image stuff
+     */
+    function initSaveImage() {
+        $("#buttons-pancore").prepend("<button id='save-img' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save image</button>");
+        $("#save-img").click(function clickSaveImage() {
+            if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
+                _gaq.push(['_trackEvent', 'Pancore', 'Save Image', 'graph']);
+                triggerDownloadModal("#pancore_graph svg", null, "unique_peptides_graph");
+            } else {
+                _gaq.push(['_trackEvent', 'Pancore', 'Save Image', 'sim matrix']);
+                triggerDownloadModal("#sim_matrix svg", null, "unique_peptides_matrix");
+            }
+        });
+        $("#buttons-pancore").prepend("<button id='save-data' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save data</button>");
+        $("#save-data").click(function clickSaveData() {
+            _gaq.push(['_trackEvent', 'Pancore', 'Save Data']);
+            exportData();
+        });
+    }
 
-    return that;
-};
-
-
-
-/**
- * Creates the selectable taxonomy tree using nested unordered lists
- */
-function init_selection_tree(data, taxa) {
-    var tree = constructSelectionTree({data : data, taxa : taxa});
-    tree.drawTree({tree : "#treeView", tableDiv : "#genomes-table-div", treeSearch : "#treeSearchDiv"});
-}
-
-/**
- * Initializes the main graph, the similarity matrix and drop-target-table
- */
-function init_graphs() {
-    var toLoad,
-        rank = 0,
-        graphData = [],
-        genomes = {},
-        lca = "";
-
-    var graph = constructPancoreGraph({
-        transitionDuration : 500,
-        width : 930,
-        height : 600,
-        genomes : genomes
-    });
-    graph.redraw();
-
-    var table = constructGenomeTable({
-        genomes : genomes
-    });
-
-    // the Javascript Worker for background data processing
-    var worker = new Worker("/assets/workers/pancore_worker.js");
-
-    // Add eventhandlers to the worker
-    worker.addEventListener('message', function (e) {
+    /**
+     * Handles message events for the worker
+     *
+     * @param <Event> e The event we want to handle
+     */
+    function handleWorkerMessage(e) {
         var data = e.data;
         switch (data.type) {
         case 'log':
             console.log(data.msg);
             break;
         case 'error':
-            if (data.msg.msg != "") {
-                error(data.msg.error, data.msg.msg);
-            } else {
-                error(data.msg.error);
-            }
+            error(data.msg.error, data.msg.msg);
             break;
         case 'addData':
             addData(data.msg.data, data.msg.rank);
@@ -96,46 +169,12 @@ function init_graphs() {
         default:
             console.log(data.msg);
         }
-    }, false);
-    worker.addEventListener('error', function (e) {
-        error(e);
-    }, false);
-
-    // Add handler to the "add species"-form
-    $("#add_species_peptidome").click(function () {
-        setLoading(true);
-        // Get all bioproject id's for the selected species id
-        var url = "/pancore/genomes/species/" + $("#species_id").val() + ".json";
-        $.getJSON(url, function (genomes) {
-            //TODO
-            table.clear();
-            toLoad = 0;
-            addGenomes(genomes);
-        })
-        .fail(function () {
-            error("request error for " + url, "It seems like something went wrong while we loaded the data");
-        });
-        return false;
-    });
-
-    // Set up the fullscreen stuff
-    if (fullScreenApi.supportsFullScreen) {
-        $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-resize-full'></i> Enter full screen</button>");
-        $("#zoom-btn").click(function () {
-            if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
-                // GA event tracking
-                _gaq.push(['_trackEvent', 'Pancore', 'Full Screen', 'graph']);
-                window.fullScreenApi.requestFullScreen($("#pancore_graph_wrapper").get(0));
-            } else {
-                // GA event tracking
-                _gaq.push(['_trackEvent', 'Pancore', 'Full Screen', 'simmatrix']);
-                window.fullScreenApi.requestFullScreen($("#sim_matrix_wrapper").get(0));
-            }
-        });
-        $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange', resizeFullScreen);
     }
 
-    // Scale the SVG on fullscreen enter and exit
+    /**
+     * Gets called to handle the change from and to full screen mode.
+     * Mostly scales the SVG
+     */
     function resizeFullScreen() {
         if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
             setTimeout(function () {
@@ -153,34 +192,24 @@ function init_graphs() {
         }
     }
 
-    // Set up save image stuff
-    $("#buttons-pancore").prepend("<button id='save-img' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save image</button>");
-    $("#save-img").click(function clickSaveImage() {
-        if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
-            // track save image event
-            _gaq.push(['_trackEvent', 'Pancore', 'Save Image', 'graph']);
-            triggerDownloadModal("#pancore_graph svg", null, "unique_peptides_graph");
-        } else {
-            // track save image event
-            _gaq.push(['_trackEvent', 'Pancore', 'Save Image', 'sim matrix']);
-            triggerDownloadModal("#sim_matrix svg", null, "unique_peptides_matrix");
-        }
-    });
-    $("#buttons-pancore").prepend("<button id='save-data' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save data</button>");
-    $("#save-data").click(function clickSaveData() {
-        // track save data event
-        _gaq.push(['_trackEvent', 'Pancore', 'Save Data']);
-        exportData();
-    });
+    /*************** Public methods ***************/
 
-    // Load sample data
-    $("#species_id").val(470);
-    $("#add_species_peptidome").click();
 
-    // IE10 message
-    if (navigator.appVersion.indexOf("MSIE 10") != -1) {
-        info("You're using Internet Explorer 10. Everything should work as expected, but for an optimal experience, please use a recent version of Mozilla Firefox or Google Chrome.");
-    }
+    // initialize the object
+    init();
+
+    return that;
+};
+
+
+/**
+ * Initializes the main graph, the similarity matrix and drop-target-table
+ */
+function init_graphs() {
+    var toLoad,
+        rank = 0,
+        graphData = [],
+        lca = "";
 
     // Sends a command and message to the worker
     function sendToWorker(command, message) {

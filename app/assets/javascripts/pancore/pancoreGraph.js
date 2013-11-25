@@ -5,6 +5,7 @@
  * @param <Number> args.width Width of the graph
  * @param <Number> args.height Height of the graph
  * @param <Hash> args.genomes Hash of genomes (by bioproject_id)
+ * @return <PancoreGraph> that The constructed PancoreGraph object
  */
 var constructPancoreGraph = function constructPancoreGraph(args) {
     /*************** Private variables ***************/
