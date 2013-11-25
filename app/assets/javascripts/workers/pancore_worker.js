@@ -170,7 +170,7 @@ function recalculatePanCore(newOrder, start, stop) {
         }
         response.push(temp);
     }
-    sendToHost("setPancoreData", {data : response, lca : lca, rank : rank});
+    sendToHost("processPancoreData", {data : response, lca : lca, rank : rank});
 }
 
 // Sorts the genomes in a given order

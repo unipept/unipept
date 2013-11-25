@@ -20,7 +20,17 @@ var constructGenomeTable = function constructGenomeTable(args) {
      * Initializes the table
      */
     function init() {
+        initAutoSort();
+        initDropAndSort();
 
+        // Add handler to the "remove all"-button
+        //TODO $("#remove-all").click(clearAllData);
+    }
+
+    /**
+     * Initializes auto sort
+     */
+    function initAutoSort() {
         // Add handler to the autosort-button
         $("#autosort").mouseenter(function () {
             if (!$("#autosort").hasClass("open")) {
@@ -39,13 +49,17 @@ var constructGenomeTable = function constructGenomeTable(args) {
             for (i in genomes) {
                 genomes[i].status = "Processing...";
             }
-            table.update();
+            that.update();
             $("#autosort").mouseleave();
             return false;
         });
         $("#autosort ul a").tooltip({placement : "right", container : "body"});
+    }
 
-        // Make table sortable and droppable (JQuery UI)
+    /**
+     * Initializes dragable and sortable
+     */
+    function initDropAndSort() {
         $("#genomes_table").disableSelection();
         $("#genomes_table, #pancore_graph").droppable({
             activeClass: "acceptDrop",
@@ -67,15 +81,37 @@ var constructGenomeTable = function constructGenomeTable(args) {
             containment: '.split-right',
             cursor: 'url(/closedhand.cur) 7 5, move',
             stop: function () {
-                var r = calculateTablePositions();
-                table.update();
-                sendToWorker("recalculatePanCore", {"order" : r.order, "start" : r.start, "stop" : r.stop});
+                pancore.updateOrder(calculateTablePositions());
+                that.update();
             }
         });
+    }
 
-        // Add handler to the "remove all"-button
-        //TODO $("#remove-all").click(clearAllData);
+    /**
+     * Sets the position property of the genomes based on the row positions
+     * in the table and returns a list with the new order
+     *
+     * @return <Hash> A hash with the new order and the start en stop positions
+     *          where something was changed
+     */
+    function calculateTablePositions() {
+        var order = [],
+            start = -1,
+            stop = 0;
 
+        d3.selectAll("#genomes_table tbody tr").each(function (d, i) {
+            var bioproject_id = d.bioproject_id;
+            if (genomes[bioproject_id].position === i && stop === 0) {
+                start = i;
+            } else if (genomes[bioproject_id].position !== i) {
+                stop = i;
+                genomes[bioproject_id].position = i;
+                genomes[bioproject_id].status = "Processing...";
+            }
+            order[i] = bioproject_id;
+        });
+        start++;
+        return {"order" : order, "start" : start, "stop" : stop};
     }
 
     /*************** Public methods ***************/
@@ -89,6 +125,55 @@ var constructGenomeTable = function constructGenomeTable(args) {
     };
 
     /**
+     * Removes the genome with the given bioproject_id
+     *
+     * @param <Number> bioprojectId The id of the genome we want to remove
+     * @return
+     */
+    that.removeGenome = function removeGenome(bioprojectId) {
+        // Only remove data that's already loaded
+        if (genomes[bioprojectId].status !== "Done") return;
+
+        delete genomes[bioprojectId];
+        that.update();
+        var r = calculateTablePositions();
+        return {"bioproject_id" : bioprojectId,
+            "order" : r.order,
+            "start" : r.start
+        };
+    };
+
+    /**
+     * Sets the status of a genome in the table
+     * @param <Number> bioprojectId The id of the genome of which we want to
+     *          change the status
+     * @param <String> status the new status
+     * @param <Boolean> updateTable If true, update the table on the web page.
+     *          Should be set to false in case of batch update
+     */
+    that.setGenomeStatus = function setGenomeStatus(bioprojectId, status, updateTable) {
+        genomes[bioprojectId].status = status;
+        if (updateTable) {
+            that.update();
+        }
+    };
+
+    /**
+     * Sets the order of a genome in the table
+     * @param <Number> bioprojectId The id of the genome of which we want to
+     *          change the status
+     * @param <Number> position the new position
+     * @param <Boolean> updateTable If true, update the table on the web page.
+     *          Should be set to false in case of batch update
+     */
+    that.setGenomePosition = function setGenomePosition(bioprojectId, position, updateTable) {
+        genomes[bioprojectId].position = position;
+        if (updateTable) {
+            that.update();
+        }
+    };
+
+    /**
      * Updates the table
      */
     that.update = function update() {
@@ -96,8 +181,6 @@ var constructGenomeTable = function constructGenomeTable(args) {
         tr,
         newRows,
         td;
-        // TODO remove in pancore should take care of this
-        //removePopovers();
 
         text = "Genome";
         if (lca !== "") {
@@ -130,8 +213,8 @@ var constructGenomeTable = function constructGenomeTable(args) {
             .append("a")
             .html("<i class='glyphicon glyphicon-trash'></i>")
             .attr("class", "btn btn-default btn-xs")
-            .attr("title", "remove genome");
-            //TODO .on("click", removeData);
+            .attr("title", "remove genome")
+            .on("click", pancore.removeGenome);
         newRows.each(function () { highlight(this); });
         tr.selectAll("td.button a.btn").classed("disabled", function (d) {return d.status !== "Done"; });
     };

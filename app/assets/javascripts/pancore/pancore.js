@@ -18,6 +18,7 @@ var constructPancore = function constructPancore(args) {
         isLoading = false,
         toLoad = 0,
         rank = 0,
+        lca = "",
         tree,
         graph,
         table,
@@ -37,20 +38,21 @@ var constructPancore = function constructPancore(args) {
             treeSearch : "#treeSearchDiv"
         });
 
+        // Constructs the table
+        table = constructGenomeTable({
+            genomes : genomes,
+            pancore : that
+        });
+
         // Constructs the graph
         graph = constructPancoreGraph({
+            table : table,
             transitionDuration : 500,
             width : 930,
             height : 600,
             genomes : genomes
         });
         graph.redraw();
-
-        // Constructs the table
-        table = constructGenomeTable({
-            genomes : genomes,
-            pancore : that
-        });
 
         // Create the Javascript Worker for background data processing
         worker = new Worker("/assets/workers/pancore_worker.js");
@@ -63,7 +65,7 @@ var constructPancore = function constructPancore(args) {
         initSaveImage();
 
         // IE10 message
-        if (navigator.appVersion.indexOf("MSIE 10") != -1) {
+        if (navigator.appVersion.indexOf("MSIE 10") !== -1) {
             info("You're using Internet Explorer 10. Everything should work as expected, but for an optimal experience, please use a recent version of Mozilla Firefox or Google Chrome.");
         }
 
@@ -171,8 +173,8 @@ var constructPancore = function constructPancore(args) {
         case 'processLoadedGenome':
             processLoadedGenome(data.msg.data, data.msg.rank);
             break;
-        case 'setPancoreData':
-            setPancoreData(data.msg.data, data.msg.lca, data.msg.rank);
+        case 'processPancoreData':
+            processPancoreData(data.msg.data, data.msg.lca, data.msg.rank);
             break;
         case 'sequencesDownloaded':
             returnPopoverSequences(data.msg.sequences, data.msg.type);
@@ -231,6 +233,20 @@ var constructPancore = function constructPancore(args) {
     }
 
     /**
+     * Replaces all the data in the pancore graph
+     *
+     * @param <Array> data Array of pancoreGraph data
+     * @param <String> l The lowest common ancestor of the loaded genomes
+     * @param <Number> requestRank The rank at the time of the request
+     */
+    function processPancoreData(data, l, requestRank) {
+        if (rank !== requestRank) return;
+
+        graph.setData(data);
+        lca = l;
+    }
+
+    /**
      * Gets called when the data is (done) loading
      * Enables/disables some buttons and actions (e.g. reordering)
      *
@@ -251,7 +267,7 @@ var constructPancore = function constructPancore(args) {
             $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", false);
 
             // REMOVE THIS LINE
-            sendToWorker("getUniqueSequences");
+            //TODO sendToWorker("getUniqueSequences");
         }
     }
 
@@ -280,6 +296,29 @@ var constructPancore = function constructPancore(args) {
         setLoading(toLoad !== 0);
     };
 
+    /**
+     * Removes a genomes from the visualization:
+     * - Removes it from the table
+     * - Instructs the worker to recalculate the graph
+     *
+     * @param <Genome> genome The genome we want to remove
+     */
+    that.removeGenome = function removeGenome(genome) {
+        var removeData = table.removeGenome(genome.bioproject_id);
+        sendToWorker("removeData", removeData);
+    };
+
+    /**
+     * Requests the worker to recalculate all data based on a new order
+     *
+     * @param <Array> orderData.order The new order
+     * @param <Number> orderData.start The position from where there's a change
+     * @param <Number> orderData.stop The position till where there's a change
+     */
+    that.updateOrder = function updateOrder(orderData) {
+        sendToWorker("recalculatePanCore", orderData);
+    };
+
 
     // initialize the object
     init();
@@ -294,37 +333,6 @@ var constructPancore = function constructPancore(args) {
 function init_graphs() {
     var graphData = [],
         lca = "";
-
-    // Removes a genomes from the visualization:
-    // - Removes it from the table
-    // - Instructs the worker to recalculate the graph
-    function removeData(genome) {
-        var g = genomes[genome.bioproject_id];
-        if (g.status !== "Done") return;
-        var id = genome.bioproject_id;
-        delete genomes[id];
-        table.update();
-        var r = calculateTablePositions();
-        sendToWorker("removeData", {"bioproject_id" : id, "order" : r.order, "start" : r.start});
-    }
-
-    // Replaces all the visualized data and updates graph and table
-    function setPancoreData(data, l, request_rank) {
-        var i,
-            bioproject_id;
-        if (rank !== request_rank) return;
-        graphData = data;
-        lca = l;
-        for (i = 0; i < graphData.length; i++) {
-            bioproject_id = graphData[i].bioproject_id;
-            if (typeof genomes[bioproject_id] !== "undefined") {
-                genomes[bioproject_id].status = "Done";
-                genomes[bioproject_id].position = i;
-            }
-        }
-        //updatePancore();
-        table.update();
-    }
 
     // Resets everything:
     // - instructs the worker to flush all data
@@ -342,30 +350,6 @@ function init_graphs() {
         removePopoversAndHighlights();
         updatePancore();
         table.clear();
-    }
-
-    // TODO move to table object
-    // Sets the position property in the genomes
-    // based on the row position in the table
-    // returns a list with the order of the genomes
-    function calculateTablePositions() {
-        var order = [],
-            start = -1,
-            stop = 0;
-
-        d3.selectAll("#genomes_table tbody tr").each(function (d, i) {
-            var bioproject_id = d.bioproject_id;
-            if (genomes[bioproject_id].position === i && stop === 0) {
-                start = i;
-            } else if (genomes[bioproject_id].position !== i) {
-                stop = i;
-                genomes[bioproject_id].position = i;
-                genomes[bioproject_id].status = "Processing...";
-            }
-            order[i] = bioproject_id;
-        });
-        start++;
-        return {"order" : order, "start" : start, "stop" : stop};
     }
 
     // Sets the position property in the genomes

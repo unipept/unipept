@@ -1,6 +1,7 @@
 /**
  * Creates a pancoreGraph object that includes the graph visualisation
  *
+ * @param <GenomeTable> args.table GenomeTable object
  * @param <Number> args.transitionDuration Duration of transitions in ms
  * @param <Number> args.width Width of the graph
  * @param <Number> args.height Height of the graph
@@ -11,6 +12,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     /*************** Private variables ***************/
 
     var that = {},
+        table = args.table,
         transitionDuration = args.transitionDuration,
         fullWidth = args.width,
         fullHeight = args.height;
@@ -121,11 +123,11 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             while (dataQueue.length > 0) {
                 data = dataQueue.shift();
                 graphData.push(data);
-                // TODO: let the table change its own data
-                genomes[data.bioproject_id].position = graphData.length - 1;
+                table.setGenomePosition(data.bioproject_id, graphData.length - 1, false);
             }
             mayStartAnimation = false;
             that.update();
+            table.update();
             setTimeout(function () { mayStartAnimation = true; }, transitionDuration);
         } else {
             setTimeout(tryUpdateGraph, transitionDuration);
@@ -512,6 +514,22 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     that.addToDataQueue = function addToDataQueue(genome) {
         dataQueue.push(genome);
         tryUpdateGraph();
+    };
+
+    /**
+     * Sets new graph data
+     *
+     * @param <Array> data Array of pancoreGraph data
+     */
+    that.setData = function setData(data) {
+        var i;
+        graphData = data;
+        that.update();
+        for (i = 0; i < data.length; i++) {
+            table.setGenomeStatus(data[i].bioproject_id, "Done", false);
+            table.setGenomePosition(data[i].bioproject_id, i, false);
+        }
+        table.update();
     };
 
     /**
