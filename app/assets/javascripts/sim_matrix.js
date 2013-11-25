@@ -65,7 +65,7 @@ var constructSimMatrix = function constructSimMatrix(genomes, matrix, order, tab
     function rowCalculated(row_index, row) {
         // TODO: animations!
         matrix[row_index] = row;
-        setTimeout(that.reDraw, 50);
+        that.reDraw();
     }
 
     /**
