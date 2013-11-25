@@ -167,7 +167,6 @@ function init_graphs() {
     // Data vars
     var pancoreData = [],
         tableData = {},
-        peptideData = {},
         lca = "";
 
     // Load vars
@@ -178,6 +177,9 @@ function init_graphs() {
 
     // the Javascript Worker for background data processing
     var worker = new Worker("/assets/workers/pancore_worker.js");
+
+    /* will be refactored soon, is for testing now */
+    var matrix = new constructSimMatrix();
 
     // *** PANCORE VARS ***
     var genomeColor = "#d9d9d9",  // gray
@@ -454,12 +456,10 @@ function init_graphs() {
     // On click of tab, cluster matrix
     //$("a[href='#sim_matrix_wrapper']").click(clusterIfReady);
 
-    /* will be refactored soon, is for testing now */
-    var matrix;
 
     function showMatrix(genomes, data, order) {
         $('#sim_matrix').empty();
-        matrix = new constructSimMatrix(genomes, data, order, peptideData);
+        matrix.reDraw();
     }
 
     // Initial method for adding genomes
@@ -526,7 +526,6 @@ function init_graphs() {
         if (g.status !== "Done") return;
         var id = genome.bioproject_id;
         delete tableData[id];
-        delete peptideData[id];
         updateTable();
         var r = calculateTablePositions();
         sendToWorker("removeData", {"bioproject_id" : id, "order" : r.order, "start" : r.start});
@@ -562,7 +561,6 @@ function init_graphs() {
         dataQueue = [];
         pancoreData = [];
         tableData = {};
-        peptideData = {};
         lca = "";
         removePopoversAndHighlights();
         updatePancore();
@@ -589,7 +587,7 @@ function init_graphs() {
                 pancoreData.push(data);
                 tableData[data.bioproject_id].status = "Done";
                 tableData[data.bioproject_id].position = pancoreData.length - 1;
-                peptideData[data.bioproject_id] = data.peptide_list;
+                matrix.addPeptide(data.bioproject_id, data.peptide_list, data.name);
                 toLoad--;
             }
             if (addedSomething) {

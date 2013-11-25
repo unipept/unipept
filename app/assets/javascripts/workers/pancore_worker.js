@@ -95,6 +95,7 @@ function addData(bioproject_id, name, set, request_rank) {
     temp.bioproject_id = bioproject_id;
     temp.pan = pan.length;
     temp.peptide_list = set;
+    temp.name = name;
     temp.core = core.length;
     temp.peptides = set.length;
     if (unicorePresent) {

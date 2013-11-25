@@ -2,7 +2,7 @@
  * TODO: document
  *    @param <Array> genomes 
  */
-var constructSimMatrix = function constructSimMatrix(genomes, matrix, order, tableData) {
+var constructSimMatrix = function constructSimMatrix() {
     /*************** Private variables ***************/
     /* UI variables */
     var margin = {top: 200, right: 0, bottom: 10, left: 200},
@@ -17,10 +17,10 @@ var constructSimMatrix = function constructSimMatrix(genomes, matrix, order, tab
         z = d3.scale.linear().domain([0, 1]).clamp(true);
 
     /* Constructor fields */
-    var genomes = genomes,
-        data = tableData,
-        order = order,
-        matrix = matrix,
+    var genomes = [],
+        data = {},
+        order = [],
+        matrix = [],
         worker;
     
     var that = {};
@@ -75,7 +75,6 @@ var constructSimMatrix = function constructSimMatrix(genomes, matrix, order, tab
      */
     function init() {
         setupWorker();
-        that.reDraw();
     }
 
     /*************** Public methods ***************/
@@ -153,9 +152,22 @@ var constructSimMatrix = function constructSimMatrix(genomes, matrix, order, tab
     that.calculateSimilarity = function () {
         var list = [];
         for (var i = 0; i < order.length; i++) {
-            list[i] = data[order[i]]
+            list[i] = data[order[i]].peptide_list
         }
         sendToWorker('CalculateSimilarity', list);
+    }
+
+    /* add data to the matrix */
+    that.addPeptide = function(id, peptide_list, name) {
+        /* todo: recalculate, mark as dirty */
+        data[id] = {'peptide_list': peptide_list, 'name': name};
+        order.push(id);
+        genomes.push(name);
+    }
+
+    /* remote data to the matrix */
+    that.removePeptide = function(id) {
+        delete data[id];
     }
 
     // initialize the object
