@@ -54,6 +54,9 @@ var constructSimMatrix = function constructSimMatrix() {
             case 'RowCalculated':
                 rowCalculated(data.msg.row, data.msg.data);
                 break;
+            case 'NewOrder':
+                that.reOrder(data.msg);
+                break;
             case 'log':
                 console.log(data.msg);
                 break;
@@ -109,7 +112,6 @@ var constructSimMatrix = function constructSimMatrix() {
     }
 
     that.reDraw = function () {
-
         /* TODO: instead of appending, this needs more selectAll I think */
         // The default sort order.
         x.domain(d3.range(genomes.length));
@@ -159,6 +161,12 @@ var constructSimMatrix = function constructSimMatrix() {
         sendToWorker('CalculateSimilarity', list);
     }
 
+    that.clusterMatrix = function () {
+        sendToWorker('ClusterMatrix', matrix);
+    }
+
+    /* TODO: removing / adding is not complete yet */
+
     /* add data to the matrix */
     that.addPeptide = function(id, peptide_list, name) {
         /* todo: recalculate, mark as dirty */
@@ -167,7 +175,7 @@ var constructSimMatrix = function constructSimMatrix() {
         genomes.push(name);
     }
 
-    /* remote data to the matrix */
+    /* remove data from the matrix */
     that.removePeptide = function(id) {
         delete data[id];
     }

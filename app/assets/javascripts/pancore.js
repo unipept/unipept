@@ -441,7 +441,8 @@ function init_graphs() {
 
     $("#sim_matrix_buttons").prepend("<button id='cluster-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Cluster Similarity Matrix</button>");
     $("#cluster-matrix-btn").click(function () {
-        sendToWorker('clusterMatrix', '');
+        matrix.clusterMatrix();
+        //sendToWorker('clusterMatrix', '');
     });
 
     // Only cluster when the initial data has loaded
