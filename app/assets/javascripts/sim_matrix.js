@@ -2,7 +2,7 @@
  * TODO: document
  *    @param <Array> genomes 
  */
-var constructSimMatrix = function constructSimMatrix(genomes, data, order) {
+var constructSimMatrix = function constructSimMatrix(genomes, matrix, order) {
     /*************** Private variables ***************/
     /* UI variables */
     var margin = {top: 200, right: 0, bottom: 10, left: 200},
@@ -18,9 +18,11 @@ var constructSimMatrix = function constructSimMatrix(genomes, data, order) {
 
     /* Constructor fields */
     var genomes = genomes,
-        data = data,
-        order = order;
-
+        data = {},
+        order = order,
+        matrix = matrix,
+        worker;
+    
     var that = {};
 
     /*************** Private methods ***************/
@@ -39,12 +41,37 @@ var constructSimMatrix = function constructSimMatrix(genomes, data, order) {
             .style("fill", "steelblue");
     }
 
+    function sendToWorker(command, message) {
+        worker.postMessage({'cmd': command, 'msg': message});
+    }
+
+    function setupWorker() {
+        /* setup worker */
+        worker = new Worker('/assets/sim_matrix_worker.js');
+        worker.addEventListener('message', function (e) {
+            var data = e.data;
+            switch (data.type) {
+            case 'RowCalculated':
+                rowCalculated(data.msg.row, data.msg.data);
+                break;
+            }
+        });
+    }
+
+    /* receive a calculated row from the worker */
+    function rowCalculated(row_index, row) {
+        // TODO: animations!
+        matrix[row_index] = row;
+    }
+
     /**
      *
      * initializes the Matrix
      *
      */
     function init() {
+        setupWorker();
+
         svg = d3.select("#sim_matrix").append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
@@ -61,7 +88,7 @@ var constructSimMatrix = function constructSimMatrix(genomes, data, order) {
             .attr("fill", "#eeeeee");
 
         var row = svg.selectAll(".row")
-            .data(data)
+            .data(matrix)
           .enter().append("g")
             .attr("class", "row")
             .attr("transform", function(d, i) { return "translate(0," + x(i) + ")"; })
@@ -79,7 +106,7 @@ var constructSimMatrix = function constructSimMatrix(genomes, data, order) {
             .text(function(d, i) { return genomes[i]; });
 
         var column = svg.selectAll(".column")
-            .data(data)
+            .data(matrix)
           .enter().append("g")
             .attr("class", "column")
             .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
@@ -115,6 +142,28 @@ var constructSimMatrix = function constructSimMatrix(genomes, data, order) {
             .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
     }
 
+    /* calculate similarity */
+    that.calculateSimilarity = function() {
+        // 0,0 is the topleft coordinate
+        var x = 0, y = 0;
+        var names = [];
+        sim_matrix = [];
+        for (x = 0; x < order.length; x++) {
+            sim_matrix[x] = data[order[x]].peptide_list
+        }
+
+        for (x = 0; x < order.length; x++) {
+            var bioproject_id = order[x];
+            names.push(data[bioproject_id].name);
+            var compare_list = data[bioproject_id].peptide_list;
+
+            // only need to calculate upper part of matrix
+            for (y = 0 ; y < order.length; y ++) {
+                var peptide_list = data[order[y]].peptide_list;
+                sim_matrix[x][y] = genomeSimilarity(compare_list, peptide_list);
+            }
+        }
+    }
 
     // initialize the object
     init();
