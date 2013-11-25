@@ -106,7 +106,8 @@ h4 {
 
 /* header */
 #header {
-    background: asset-url("sprieten_s.gif") no-repeat 0 0;
+    background: asset-url("sprieten.png") no-repeat 0 0;
+    background-size: 940px 32px;
     height: 32px;
     .clearfix();
 }
@@ -137,7 +138,7 @@ h4 {
 #subbar {
     background: #E9E9E9;
     margin-left: 200px;
-    margin-top: -10px;
+    margin-top: -8.5px;
     height: 24px;
     -webkit-border-bottom-left-radius: 3px;
     -moz-border-bottom-left-radius: 3px;
@@ -209,8 +210,15 @@ footer p {
     display: block;
     clear: both;
 }
-#save-as-modal img{
+#save-as-modal img {
     width: 100%;
+}
+#save-as-modal .modal-footer {
+    margin-top: 0px;
+}
+#save-as-modal .buttons button {
+    margin-left: 20px;
+    margin-right: 20px;
 }
 
 /*** highlight an element ***/
@@ -240,7 +248,41 @@ footer p {
 #news div {
     margin-left: 10px;
 }
-
+dl.changelog dt {
+    width: 70px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+dl.changelog dd {
+    margin-left: 85px;
+    margin-top: 1px;
+}
+.features .thumbnail:hover {
+    border-color: @link-color;
+    cursor: pointer;
+}
+.features a:hover {
+    text-decoration: none;
+}
+.features object {
+    margin-bottom: -4px;
+}
+.features div.title {
+    color: white;
+    padding-top: 20px;
+    position: relative;
+    top: -56px;
+    margin-bottom: -56px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.0001) 0, rgba(0, 0, 0, 0.6) 50%);
+}
+.features .click-catcher {
+    width: 275px;
+    height: 275px;
+    position: relative;
+    top: -275px;
+    margin-bottom: -275px;
+}
 /*** forms on homepage ***/
 input#q {
     width: 340px;
@@ -451,8 +493,6 @@ span.dir {
 }
 #pancore_graph {
     background-color: white;
-    height: 605px;
-    margin-top: -10px;
 }
 #genomes_table .handle {
     width: 30px;
@@ -519,6 +559,15 @@ span.dir {
 .tab-content {
     overflow: hidden;
 }
+#species_id {
+    width: 315px;
+}
+#add_species_peptidome {
+    width: 119px;
+}
+#pancore_graph div.tip {
+    .translate3d(0, 0, 0);
+}
 
 /*** sim matrix ***/
 #sim_matrix_buttons {
@@ -539,7 +588,7 @@ span.dir {
     float: left;
 }
 .treeView.pancore {
-    width: 440px;
+    width: 438px;
     min-height: 10px;
 }
 .treeView ul {

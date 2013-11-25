@@ -370,8 +370,11 @@ class SequencesController < ApplicationController
 
 
       #more export stuff
-      filename = search_name != "" ? search_name : "export"
-      send_data csv_string, :type => 'text/csv; charset=iso-8859-1; header=present', :disposition => "attachment; filename="+filename+".csv" if export
+      if export
+        cookies['nonce'] = params[:nonce]
+        filename = search_name != "" ? search_name : "export"
+        send_data csv_string, :type => 'text/csv; charset=iso-8859-1; header=present', :disposition => "attachment; filename="+filename+".csv"
+      end
 
     end
   end

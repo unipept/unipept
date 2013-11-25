@@ -243,6 +243,10 @@ function init_graphs() {
         .x(function (d) { return pancoreX(d.bioproject_id); })
         .y(function (d) { return pancoreY(d.unicore); });
 
+    // Stores tooltip position till next frame
+    var tooltipX = 0,
+        tooltipY = 0;
+
     // Add eventhandlers to the worker
     worker.addEventListener('message', function (e) {
         var data = e.data;
@@ -389,22 +393,23 @@ function init_graphs() {
     }
 
     // Set up save image stuff
-    $("#buttons-pancore").prepend("<button id='save-btn' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save as image</button>");
-    $("#save-btn").click(function () {
-        var svg = "";
+    $("#buttons-pancore").prepend("<button id='save-img' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save image</button>");
+    $("#save-img").click(function clickSaveImage() {
         if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
             // track save image event
             _gaq.push(['_trackEvent', 'Pancore', 'Save Image', 'graph']);
-            svg = $("#pancore_graph svg").wrap("<div></div>").parent().html();
+            triggerDownloadModal("#pancore_graph svg", null, "unique_peptides_graph");
         } else {
+            // track save image event
             _gaq.push(['_trackEvent', 'Pancore', 'Save Image', 'sim matrix']);
-            svg = $("#sim_matrix svg").wrap("<div></div>").parent().html();
+            triggerDownloadModal("#sim_matrix svg", null, "unique_peptides_matrix");
         }
-        // Send the SVG code to the server for png conversion
-        $.post("/convert", { image: svg }, function (data) {
-            $("#save-as-modal .modal-body").html("<img src='" + data + "' />");
-            $("#save-as-modal").modal();
-        });
+    });
+    $("#buttons-pancore").prepend("<button id='save-data' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save data</button>");
+    $("#save-data").click(function clickSaveData() {
+        // track save data event
+        _gaq.push(['_trackEvent', 'Pancore', 'Save Data']);
+        exportData();
     });
 
     // Draw the graph
@@ -701,6 +706,8 @@ function init_graphs() {
         // create the svg
         pancoreSvg = d3.select("#pancore_graph")
           .append("svg")
+            .attr("version", "1.1")
+            .attr("xmlns", "http://www.w3.org/2000/svg")
             .attr("viewBox", "0 0 " + fullWidth + " " + fullHeight)
             .attr("width", fullWidth)
             .attr("height", fullHeight)
@@ -715,6 +722,8 @@ function init_graphs() {
           .append("div")
             .attr("class", "tip")
             .style("position", "absolute")
+            .style("top", "0px")
+            .style("left", "0px")
             .style("z-index", "10")
             .style("visibility", "hidden");
 
@@ -819,6 +828,7 @@ function init_graphs() {
         var trash = pancoreSvg.insert("g")
             .attr("id", "trash")
             .attr("fill", "#cccccc")
+            .style("opacity", "0")
             .on("mouseover", trashMouseOver)
             .on("mouseout", trashMouseOut)
         .insert("g")
@@ -1066,10 +1076,13 @@ function init_graphs() {
     function mouseMove(d) {
         if (pancoreMouse.isDragging) return;
         if (window.fullScreenApi.isFullScreen()) {
-            pancoreTooltip.style("top", (d3.event.clientY + 15) + "px").style("left", (d3.event.clientX + 15) + "px");
+            tooltipX = d3.event.clientX + 15;
+            tooltipY = d3.event.clientY + 15;
         } else {
-            pancoreTooltip.style("top", (d3.event.pageY + 15) + "px").style("left", (d3.event.pageX + 15) + "px");
+            tooltipX = d3.event.pageX + 15;
+            tooltipY = d3.event.pageY + 15;
         }
+        requestAnimFrame(moveTooltip);
     }
     // Let the dragging begin!
     function dragStart(d) {
@@ -1079,7 +1092,10 @@ function init_graphs() {
         pancoreMouse.dragging[d.bioproject_id] = this.__origin__ = pancoreX(d.bioproject_id);
         d3.select("body").style("cursor", "url(/closedhand.cur) 7 5, move");
         pancoreSvg.selectAll(".bar").style("cursor", "url(/closedhand.cur) 7 5, move");
-        pancoreSvg.select("#trash").transition().duration(transitionDuration).attr("transform", "translate(-84 0)");
+        pancoreSvg.select("#trash").transition()
+            .duration(transitionDuration)
+            .attr("transform", "translate(-84 0)")
+            .style("opacity", "1");
     }
     // Switches the position the nodes when it needs to
     function drag(d) {
@@ -1092,26 +1108,7 @@ function init_graphs() {
         }
         removeTooltip();
         pancoreMouse.dragging[d.bioproject_id] = Math.min(pancoreWidth, Math.max(0, this.__origin__ += d3.event.dx));
-        var oldData = pancoreData.slice(0);
-        pancoreData.sort(function (a, b) { return position(a) - position(b); });
-        // If some position is swapped, redraw some stuff
-        if (isChanged(oldData, pancoreData)) {
-            pancoreX.domain(pancoreData.map(function (d) { return d.bioproject_id; }));
-            pancoreSvg.selectAll(".bar").attr("x", function (d) { return pancoreX(d.bioproject_id) - pancoreMouseOverWidth / 2; });
-            pancoreSvg.selectAll(".dot:not(._" + d.bioproject_id + ")").transition()
-                .duration(transitionDuration)
-                .attr("cx", function (d) { return pancoreX(d.bioproject_id); });
-            pancoreSvg.select(".x.axis").transition()
-                .duration(transitionDuration)
-                .call(xAxis);
-            pancoreSvg.selectAll(".x.axis text").style("text-anchor", "end");
-            pancoreSvg.selectAll(".line").transition()
-                .duration(transitionDuration)
-                .style("stroke", "#cccccc");
-        }
-        // Update the position of the drag box and dots
-        d3.select(this).attr("x", pancoreMouse.dragging[d.bioproject_id] - pancoreMouseOverWidth / 2);
-        pancoreSvg.selectAll(".dot._" + d.bioproject_id).attr("cx", pancoreMouse.dragging[d.bioproject_id]);
+        requestAnimFrame(moveDrag);
     }
     // Recalculates the position of all genomes and update the graph or
     // removes the genome when dropped on the trash can
@@ -1124,6 +1121,7 @@ function init_graphs() {
             .delay(pancoreMouse.onTrash ? transitionDuration : 0)
             .duration(transitionDuration)
             .attr("transform", "translate(0 0)")
+            .style("opacity", "0")
             .attr("fill", "#cccccc");
         pancoreSvg.select("#trash circle").transition()
             .delay(pancoreMouse.onTrash ? transitionDuration : 0)
@@ -1146,6 +1144,27 @@ function init_graphs() {
     function legendClick(d) {
         pancoreToggles[d.toggle] = !pancoreToggles[d.toggle];
         updatePancore();
+    }
+
+    /**
+     * Invokes a file download containing all data currently shown
+     * in the graph (i.e. each datapoint) in csv format.
+     */
+    function exportData() {
+        var exportString = "name,bioproject_id,genome_peptides,core_peptides,pan_peptides,unique_peptides\n",
+            i,
+            tempArray;
+        for (i = 0; i < pancoreData.length; i++) {
+            tempArray = [];
+            tempArray.push(tableData[pancoreData[i].bioproject_id].name);
+            tempArray.push(pancoreData[i].bioproject_id);
+            tempArray.push(pancoreData[i].peptides);
+            tempArray.push(pancoreData[i].core);
+            tempArray.push(pancoreData[i].pan);
+            tempArray.push(pancoreData[i].unicore);
+            exportString += tempArray.join(",") + "\n";
+        }
+        downloadDataByForm(exportString, "unique_peptides.csv");
     }
 
     // MOUSE EVENT HELPER FUNCTIONS
@@ -1256,12 +1275,9 @@ function init_graphs() {
         });
     }
     function returnPopoverSequences(sequences, type) {
-        $("#pancore_graph form.download").remove();
-        $("#pancore_graph").append("<form class='download' method='post' action='download'></form>");
-        $("#pancore_graph form.download").append("<input type='hidden' name='filename' value='" + type + "-sequences.txt'/>");
-        $("#pancore_graph form.download").append("<input type='hidden' name='data' value='" + sequences + "'/>");
-        $("#pancore_graph form.download").submit();
-        $("#download-peptides-toggle").button('reset');
+        downloadDataByForm(sequences, type + '-sequences.txt', function enableButton() {
+            $("#download-peptides-toggle").button('reset');
+        });
     }
     function position(d) {
         var v = pancoreMouse.dragging[d.bioproject_id];
@@ -1313,6 +1329,35 @@ function init_graphs() {
         pancoreSvg.selectAll(".dot.unicore._" + pancoreMouse.dragId).transition()
             .duration(transitionDuration)
             .attr("fill", unicoreColor);
+    }
+
+    // Request Animation Frame functions
+    function moveTooltip() {
+        pancoreTooltip.style("-webkit-transform", "translate3d(" + tooltipX + "px, " + tooltipY + "px, 0)");
+        pancoreTooltip.style("transform", "translate3d(" + tooltipX + "px, " + tooltipY + "px, 0)");
+    }
+
+    function moveDrag() {
+        var oldData = pancoreData.slice(0);
+        pancoreData.sort(function (a, b) { return position(a) - position(b); });
+        // If some position is swapped, redraw some stuff
+        if (isChanged(oldData, pancoreData)) {
+            pancoreX.domain(pancoreData.map(function (d) { return d.bioproject_id; }));
+            pancoreSvg.selectAll(".bar").attr("x", function (d) { return pancoreX(d.bioproject_id) - pancoreMouseOverWidth / 2; });
+            pancoreSvg.selectAll(".dot:not(._" + pancoreMouse.dragId + ")").transition()
+                .duration(transitionDuration)
+                .attr("cx", function (d) { return pancoreX(d.bioproject_id); });
+            pancoreSvg.select(".x.axis").transition()
+                .duration(transitionDuration)
+                .call(xAxis);
+            pancoreSvg.selectAll(".x.axis text").style("text-anchor", "end");
+            pancoreSvg.selectAll(".line").transition()
+                .duration(transitionDuration)
+                .style("stroke", "#cccccc");
+        }
+        // Update the position of the drag box and dots
+        pancoreSvg.selectAll(".bar._" + pancoreMouse.dragId).attr("x", pancoreMouse.dragging[pancoreMouse.dragId] - pancoreMouseOverWidth / 2);
+        pancoreSvg.selectAll(".dot._" + pancoreMouse.dragId).attr("cx", pancoreMouse.dragging[pancoreMouse.dragId]);
     }
 
     // GENERAL HELPER FUNCTIONS
