@@ -204,6 +204,7 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         delete names[id];
         var index = order.indexOf(id);
         order.splice(index, 1);
+        that.reDraw();
     }
 
     // initialize the object
