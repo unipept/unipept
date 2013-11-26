@@ -68,11 +68,6 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         });
     }
 
-
-    function rowAdded(row) {
-        matrix.push(row);
-    }
-
     /* receive a new row from the worker */
     function rowUpdated(row_index, row) {
         // TODO: animations!
