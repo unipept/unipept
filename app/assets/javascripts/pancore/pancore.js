@@ -207,6 +207,7 @@ var constructPancore = function constructPancore(args) {
      * @param <String> name The name of the genome we want to load
      */
     function loadData(bioproject_id, name) {
+        matrix.addGenome(bioproject_id, name);
         sendToWorker("loadData", {"bioproject_id" : bioproject_id, "name" : name});
     }
 
@@ -227,7 +228,6 @@ var constructPancore = function constructPancore(args) {
 
         graph.addToDataQueue(genome);
 
-        matrix.addGenome(genome.bioproject_id, genome.name);
 
         //TODO tryUpdateMatrix();
 
@@ -416,19 +416,7 @@ function removeMe() {
         d3.phylogram.build('#sim_graph', parsed, {width: 100, height: 500}, order);
     }
 
-    function tryUpdateMatrix() {
-        sendToWorker('newDataAdded');
-    }
-    // TODO move to matrix object
     // setup similarity matrix buttons etc
-    $("#sim_matrix_buttons").prepend("<button id='calculate-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Calculate Similarity Matrix</button>");
-    $("#calculate-matrix-btn").click(function () {
-        sendToWorker('calculateSimilarity', '');
-    });
-    $("#sim_matrix_buttons").prepend("<button id='cluster-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Cluster Similarity Matrix</button>");
-    $("#cluster-matrix-btn").click(function () {
-        sendToWorker('clusterMatrix', '');
-    });
 
     // TODO move to matrix object
     // Only cluster when the initial data has loaded

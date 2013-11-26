@@ -7,7 +7,8 @@ var data = {},
     cores = [],
     unicores = [],
     unicorePresent = false,
-    rank = 0;
+    rank = 0,
+    matrix;
 
 // Add an event handler to the worker
 self.addEventListener('message', function (e) {
@@ -38,7 +39,7 @@ self.addEventListener('message', function (e) {
         getSequences(data.msg.type, data.msg.bioproject_id);
         break;
     case "calculateSimilarity":
-        calculateSimilarity();
+        matrix.calculateSimilarity();
         break;
     case "clusterMatrix":
         clusterMatrix();
@@ -80,7 +81,7 @@ var matrixBackend = function matrixBackend(data) {
         var length = matrix.length;
         for (var x = 0; x < length; x ++) {
             // add -1 to the end
-            matrix[x].splice(-1, 0, -1);
+            matrix[x].push(-1);
             updateRow(x);
         }
 
@@ -89,8 +90,7 @@ var matrixBackend = function matrixBackend(data) {
             new_row.push(-1);
         }
         matrix.push(new_row);
-
-        updateRow(order.length - 1);
+        updateRow(matrix.length - 1);
     }
 
     that.removeGenome = function (genome_id) {
@@ -107,7 +107,18 @@ var matrixBackend = function matrixBackend(data) {
     }
 
     that.calculateSimilarity = function () {
+        for (var x = 0; x < order.length; x++) {
+            var new_row = [],
+                compare_list = data[order[x]].peptide_list;
 
+            for (y = 0 ; y < order.length; y ++) {
+                var peptide_list = data[order[y]].peptide_list;
+                new_row[y] = genomeSimilarity(compare_list, peptide_list);
+            }
+            matrix[x] = new_row;
+            updateRow(x);
+        }
+        needsRecalculating = false;
     }
 
     that.clusterMatrix = function () {
@@ -116,8 +127,7 @@ var matrixBackend = function matrixBackend(data) {
 
     return that;
 }
-
-var matrix = matrixBackend(data);
+matrix = matrixBackend(data);
 
 
 // Sends a response type and message to the host

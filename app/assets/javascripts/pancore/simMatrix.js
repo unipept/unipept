@@ -32,6 +32,7 @@ var constructSimMatrix = function constructSimMatrix(worker) {
             .attr("width", x.rangeBand())
             .attr("height", x.rangeBand())
             .style("fill-opacity", function(d) { return z(d * d); })
+            .style("fill", function(d) { return (d != -1) ? "steelblue" : "red" })
           .enter().append("rect")
             .attr("class", "cell")
             .attr("x", function(d, i) { return x(i); })
@@ -43,7 +44,7 @@ var constructSimMatrix = function constructSimMatrix(worker) {
 
     /* TODO: can this be abstracted? */
     function sendToWorker(type, message) {
-        worker.postMessage({'type': type, 'msg': message});
+        worker.postMessage({'cmd': type, 'msg': message});
     }
 
     function setupWorker() {
@@ -67,13 +68,19 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         });
     }
 
+
+    function rowAdded(row) {
+        matrix.push(row);
+    }
+
     /* receive a new row from the worker */
     function rowUpdated(row_index, row) {
         // TODO: animations!
         matrix[row_index] = row;
+        that.reDraw();
     }
     /* a row was removed, better fix the UI */
-    function rowRemoved(row_index, row) {
+    function rowRemoved(row_index) {
         // TODO: animations!
         matrix.splice(row_index, 1);
     }
@@ -85,6 +92,14 @@ var constructSimMatrix = function constructSimMatrix(worker) {
      */
     function init() {
         setupWorker();
+        $("#sim_matrix_buttons").prepend("<button id='calculate-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Calculate Similarity Matrix</button>");
+        $("#calculate-matrix-btn").click(function () {
+            that.calculateSimilarity();
+        });
+        $("#sim_matrix_buttons").prepend("<button id='cluster-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Cluster Similarity Matrix</button>");
+        $("#cluster-matrix-btn").click(function () {
+            that.clusterMatrix();
+        });
     }
 
     /*************** Public methods ***************/
@@ -173,11 +188,11 @@ var constructSimMatrix = function constructSimMatrix(worker) {
     /* calculate similarity */
     that.calculateSimilarity = function () {
         /* TODO: keep track of what is already calculated */
-        sendToWorker('CalculateSimilarity');
+        sendToWorker('calculateSimilarity');
     }
 
     that.clusterMatrix = function () {
-        sendToWorker('ClusterMatrix');
+        sendToWorker('clusterMatrix');
     }
 
     /* TODO: removing / adding is not complete yet */
