@@ -324,6 +324,21 @@ var constructPancore = function constructPancore(args) {
     };
 
     /**
+     * Resets everything:
+     * - instructs the worker to flush all data
+     * - clear all data vars
+     * - update graph and table
+     */
+    that.clearAllData = function clearAllData() {
+        rank++;
+        sendToWorker("clearAllData", "");
+        lca = "";
+        setLoading(false);
+        table.clearAllData();
+        graph.clearAllData();
+    };
+
+    /**
      * Requests the worker to recalculate all data based on a new order
      *
      * @param <Array> orderData.order The new order
@@ -364,26 +379,6 @@ var constructPancore = function constructPancore(args) {
 
 
 function removeMe() {
-    var graphData = [],
-        lca = "";
-
-    // Resets everything:
-    // - instructs the worker to flush all data
-    // - clear all data vars
-    // - update graph and table
-    function clearAllData() {
-        rank++;
-        sendToWorker("clearAllData", "");
-        toLoad = 0;
-        setLoading(false);
-        //TODO reset dataQueue of pancoreGraph dataQueue = [];
-        graphData = [];
-        genomes = {};
-        lca = "";
-        removePopoversAndHighlights();
-        updatePancore();
-        table.clear();
-    }
 
     // Sets the position property in the genomes
     // based on the position in the graph
