@@ -52,13 +52,13 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         worker.addEventListener('message', function (e) {
             var data = e.data;
             switch (data.type) {
-            case 'RowUpdated':
+            case 'rowUpdated':
                 rowUpdated(data.msg.row, data.msg.data);
                 break;
-            case 'RowRemoved':
+            case 'rowRemoved':
                 rowRemoved(data.msg.row);
                 break;
-            case 'NewOrder':
+            case 'newOrder':
                 that.reOrder(data.msg);
                 break;
             case 'log':

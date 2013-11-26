@@ -42,7 +42,7 @@ self.addEventListener('message', function (e) {
         matrix.calculateSimilarity();
         break;
     case "clusterMatrix":
-        clusterMatrix();
+        matrix.clusterMatrix();
         break;
     case "newDataAdded":
         addNewMatrixdata();
@@ -67,11 +67,11 @@ var matrixBackend = function matrixBackend(data) {
     var that = {};
 
     function updateRow(index) {
-        sendToHost('RowUpdated', {'row': index, 'data': matrix[index]});
+        sendToHost('rowUpdated', {'row': index, 'data': matrix[index]});
     }
 
     function rowRemoved(index) {
-        sendToHost('RowRemoved', {'row': index});
+        sendToHost('rowRemoved', {'row': index});
     }
 
     that.addGenome = function (genome_id) {
@@ -121,7 +121,77 @@ var matrixBackend = function matrixBackend(data) {
         needsRecalculating = false;
     }
 
+
+    that.reOrder = function (new_order) {
+        sendToHost('newOrder', new_order);
+    }
+
+
     that.clusterMatrix = function () {
+        while(needsRecalculating) {
+            that.calculateSimilarity();
+        }
+
+        // Create a deep copy and call our recursive cluster function
+        var matrix_deep_copy = [];
+        for (var i = 0; i < matrix.length; i++) {
+            matrix_deep_copy[i] = matrix[i].slice(0);
+        }
+        var result = clusterMatrixRec(matrix_deep_copy, {}, []);
+
+        var result_order = result['order'];
+        var first = result_order.splice(-1,1)[0];
+        var new_order = [first.x,first.y];
+
+        for (i = result_order.length - 1; i >= 0; i--) {
+            var index = new_order.indexOf(result_order[i]['x']);
+            new_order.splice(index, 0, result_order[i]['y']);
+        }
+        that.reOrder(new_order);
+    }
+
+    function clusterMatrixRec(matrix, cluster, order) {
+        // Lame recursion check
+        if(order.length == matrix.length - 1) {
+            return {'order': order, 'cluster': cluster};
+        }
+
+        // find highest similarity
+        var x = 0, y = 0, largest = -1;
+        var i = 0, j = 0;
+        for (i = 0 ; i < matrix.length; i++) {
+            for (j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] > largest && i != j) {
+                    x = i;
+                    y = j;
+                    largest = matrix[i][j];
+                }
+            }
+        }
+
+        if(cluster[x]) {
+            cluster[x].push(y);
+        } else {
+            cluster[x] = [y];
+        }
+
+        order.push({'x': x, 'y': y, 'value': largest});
+
+        // update sim matrix with average values
+        for (j = 0 ; j < matrix[x].length; j++) {
+            if ( j != y && j != x ) {
+                matrix[x][j] = (matrix[x][j] + matrix[y][j]) / 2;
+                matrix[j][x] = (matrix[x][j] + matrix[y][j]) / 2;
+            }
+        }
+
+        // set the value of comparison with y to zero
+        for (j = 0 ; j < matrix.length; j++) {
+            matrix[j][y] = -1;
+            matrix[y][j] = -1;
+        }
+
+        return clusterMatrixRec(matrix, cluster, order);
 
     }
 
@@ -528,6 +598,7 @@ function clusterMatrix() {
     }
     sendToHost('newOrder', new_order);
 
+    /* TODO: move this into matrixBackend */
     // constuct newick format of tree
     var tree = [first.x, first.y, first.value];
     var treeOrder = [];
@@ -580,50 +651,6 @@ function findAndReplace(tree, x, y, val) {
     }
 }
 
-function clusterMatrixRec(matrix, cluster, order) {
-    // Lame recursion check
-    if(order.length == matrix.length - 1) {
-        return {'order': order, 'cluster': cluster};
-    }
-
-    // find highest similarity
-    var x = 0, y = 0, largest = -1;
-    var i = 0, j = 0;
-    for (i = 0 ; i < matrix.length; i++) {
-        for (j = 0; j < matrix[i].length; j++) {
-            if (matrix[i][j] > largest && i != j) {
-                x = i;
-                y = j;
-                largest = matrix[i][j];
-            }
-        }
-    }
-
-    if(cluster[x]) {
-        cluster[x].push(y);
-    } else {
-        cluster[x] = [y];
-    }
-
-    order.push({'x': x, 'y': y, 'value': largest});
-
-    // update sim matrix with average values
-    for (j = 0 ; j < matrix[x].length; j++) {
-        if ( j != y && j != x ) {
-            matrix[x][j] = (matrix[x][j] + matrix[y][j]) / 2;
-            matrix[j][x] = (matrix[x][j] + matrix[y][j]) / 2;
-        }
-    }
-
-    // set the value of comparison with y to zero
-    for (j = 0 ; j < matrix.length; j++) {
-        matrix[j][y] = -1;
-        matrix[y][j] = -1;
-    }
-
-    return clusterMatrixRec(matrix, cluster, order);
-
-}
 
 // union and intersection for sorted arrays
 function union(a, b) {
