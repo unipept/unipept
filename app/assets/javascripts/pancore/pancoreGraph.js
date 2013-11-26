@@ -332,9 +332,9 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     function drag(d) {
         mouse.hasDragged = true;
         if (mouse.clickId) {
-            removePopovers();
+            that.removePopovers();
             if (mouse.clickId !== d.bioproject_id) {
-                removeHighlight(mouse.clickId);
+                that.removeHighlight(mouse.clickId);
             }
         }
         that.removeTooltip();
@@ -365,7 +365,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .duration(transitionDuration)
             .attr("stroke", "#cccccc");
         if (mouse.onTrash) {
-            //TODO removeData(d);
+            pancore.removeGenome(d);
         } else {
             // If we always update the graph, the click event never registers
             // in Chrome due to DOM reordering of the bars.
