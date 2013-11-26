@@ -23,8 +23,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
         initAutoSort();
         initDropAndSort();
 
-        // Add handler to the "remove all"-button
-        //TODO $("#remove-all").click(clearAllData);
+        $("#remove-all").click(pancore.clearAllData);
     }
 
     /**
@@ -141,6 +140,16 @@ var constructGenomeTable = function constructGenomeTable(args) {
             "order" : r.order,
             "start" : r.start
         };
+    };
+
+    /**
+     * Resets the table and all data associated with it
+     */
+    that.clearAllData = function clearAllData() {
+        for (i in genomes) {
+            delete genomes[i];
+        }
+        that.clear();
     };
 
     /**

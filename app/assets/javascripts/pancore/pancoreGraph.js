@@ -1,6 +1,8 @@
 /**
  * Creates a pancoreGraph object that includes the graph visualisation
  *
+ * TODO: clicking a genome is very laggy
+ *
  * @param <Pancore> args.pancore Pancore object
  * @param <GenomeTable> args.table GenomeTable object
  * @param <Number> args.transitionDuration Duration of transitions in ms
@@ -91,7 +93,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
 
         xAxis = d3.svg.axis()
             .scale(xScale)
-            .tickFormat(function (d) { return genomes[d].name || ""; })
+            .tickFormat(function (d) { return (genomes[d] && genomes[d].name) || ""; })
             .orient("bottom");
         yAxis = d3.svg.axis()
             .scale(yScale)
@@ -539,6 +541,16 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     };
 
     /**
+     * Resets the visualisation
+     */
+    that.clearAllData = function clearAllData() {
+        graphData = [];
+        dataQueue = [];
+        toLoad = 0;
+        that.redraw();
+    };
+
+    /**
      * Returns the data in the graph in CSV format
      *
      * @return <String> exportString The data in CSV format
@@ -567,6 +579,10 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         // erase everything
         $("#pancore_graph svg").remove();
         $("#pancore_graph div.tip").remove();
+
+        // reset domain
+        xScale.domain([]);
+        yScale.domain([]);
 
         // create the svg
         svg = d3.select("#pancore_graph")
