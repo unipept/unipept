@@ -124,6 +124,15 @@ var constructGenomeTable = function constructGenomeTable(args) {
     };
 
     /**
+     * Adds the given genome to the table
+     *
+     * @param <Genome> genome The genome we want to add
+     */
+    that.addGenome = function addGenome(genome) {
+        genomes[genome.bioproject_id] = genome;
+    };
+
+    /**
      * Removes the genome with the given bioproject_id
      *
      * @param <Number> bioprojectId The id of the genome we want to remove
@@ -195,7 +204,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
             genomes[order[i]].position = i;
         }
         that.update();
-    }
+    };
 
     /**
      * Updates the table
@@ -252,6 +261,22 @@ var constructGenomeTable = function constructGenomeTable(args) {
      */
     that.setTableMessage = function setTableMessage(icon, msg) {
         $("#table-message").html("<i class='glyphicon glyphicon-" + icon + "'></i> " + msg);
+    };
+
+    /**
+     * Enables or disables the dragging of the tables and updates the message
+     * above the table.
+     *
+     * @param <Boolean> enabled True if we want to enable the table
+     */
+    that.setEnabled = function setEnabled(enabled) {
+        if (enabled) {
+            that.setTableMessage("info-sign", "You can drag rows to reorder them or use one of the autosort options.");
+            $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", false);
+        } else {
+            that.setTableMessage("refresh", "Please wait while we load the genomes for this species.");
+            $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", true);
+        }
     };
 
     // initialize the object

@@ -222,13 +222,9 @@ var constructPancore = function constructPancore(args) {
         // If the rank doesn't match, this is old data
         if (rank !== requestRank) return;
         toLoad--;
-        // TODO do this the right way
-        genomes[genome.bioproject_id].status = "Done";
-        table.update();
+        table.setGenomeStatus(genome.bioproject_id, "Done", false);
 
         graph.addToDataQueue(genome);
-
-
         //TODO tryUpdateMatrix();
 
         setLoading(toLoad !== 0);
@@ -268,18 +264,15 @@ var constructPancore = function constructPancore(args) {
      * @param <Boolean> loading The new(?) loading status
      */
     function setLoading(loading) {
-        // TODO let the table handle the enabling or disabling
         // don't do anything if the state hasn't changed
         if (isLoading === loading) return;
         isLoading = loading;
         if (loading) {
             $("#add_species_peptidome").button('loading');
-            table.setTableMessage("refresh", "Please wait while we load the genomes for this species.");
-            $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", true);
+            table.setEnabled(false);
         } else {
             $("#add_species_peptidome").button('reset');
-            table.setTableMessage("info-sign", "You can drag rows to reorder them or use one of the autosort options.");
-            $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", false);
+            table.setEnabled(true);
 
             // REMOVE THIS LINE
             //TODO sendToWorker("getUniqueSequences");
@@ -299,12 +292,12 @@ var constructPancore = function constructPancore(args) {
             // only add new genomes
             if (genomes[g[i].bioproject_id] === undefined) {
                 toLoad++;
-                // TODO move to table method
-                genomes[g[i].bioproject_id] = {
+                table.addGenome({
                     "bioproject_id" : g[i].bioproject_id,
                     "name" : g[i].name,
                     "status" : "Loading...",
-                    "position" : 100 + i};
+                    "position" : 100 + i
+                });
                 loadData(g[i].bioproject_id, g[i].name);
             }
         }
