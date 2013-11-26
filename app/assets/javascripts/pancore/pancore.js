@@ -21,6 +21,7 @@ var constructPancore = function constructPancore(args) {
         lca = "",
         tree,
         graph,
+        matrix,
         table,
         worker;
 
@@ -55,10 +56,14 @@ var constructPancore = function constructPancore(args) {
         });
         graph.redraw();
 
+
         // Create the Javascript Worker for background data processing
         worker = new Worker("/assets/workers/pancore_worker.js");
         worker.addEventListener('message', handleWorkerMessage, false);
         worker.addEventListener('error', error, false);
+
+        // Constructs the matrix
+        matrix = constructSimMatrix(worker);
 
         // Initialize the rest of the page
         initSpeciesForm();
@@ -180,17 +185,11 @@ var constructPancore = function constructPancore(args) {
         case 'processDownloadedSequences':
             processDownloadedSequences(data.msg.sequences, data.msg.type);
             break;
-        case 'sim_matrix':
-            showMatrix(data.msg.genomes, data.msg.sim_matrix, data.msg.order);
-            break;
-        case 'newOrder':
-            reorderMatrix(data.msg);
-            break;
         case 'sim_graph':
             drawTree(data.msg.data, data.msg.order);
             break;
         default:
-            console.log(data.msg);
+        //    console.log(data.msg);
         }
     }
 
@@ -208,6 +207,7 @@ var constructPancore = function constructPancore(args) {
      * @param <String> name The name of the genome we want to load
      */
     function loadData(bioproject_id, name) {
+        matrix.addGenome(bioproject_id, name);
         sendToWorker("loadData", {"bioproject_id" : bioproject_id, "name" : name});
     }
 
@@ -227,6 +227,7 @@ var constructPancore = function constructPancore(args) {
         table.update();
 
         graph.addToDataQueue(genome);
+
 
         //TODO tryUpdateMatrix();
 
@@ -410,114 +411,7 @@ function removeMe() {
         d3.phylogram.build('#sim_graph', parsed, {width: 100, height: 500}, order);
     }
 
-    // TODO move to matrix object
-    function reorderMatrix(newOrder) {
-        var width = 500;
-
-        var svg = d3.select("#sim_matrix");
-
-        var x = d3.scale.ordinal().rangeBands([0, width]);
-        x.domain(newOrder);
-
-        var t = svg.transition().duration(2500);
-
-        t.selectAll(".row")
-            .delay(function(d, i) { return x(i) * 4; })
-            .attr("transform", function(d, i) { return "translate(0," + x(i) + ")"; })
-            .selectAll(".cell")
-            .delay(function(d, i) { return x(i) * 4; })
-            .attr("x", function(d, i) { return x(i); });
-
-        t.selectAll(".column")
-            .delay(function(d, i) { return x(i) * 4; })
-            .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
-    }
-    function redrawMatrix(g, data, order){
-        var margin = {top: 200, right: 0, bottom: 10, left: 200},
-            width = 500,
-            height = 500;
-
-        var x = d3.scale.ordinal().rangeBands([0, width]),
-            z = d3.scale.linear().domain([0, 1]).clamp(true);
-
-        var svg = d3.select("#sim_matrix").append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-          .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-        // The default sort order.
-        x.domain(d3.range(g.length));
-
-        svg.append("rect")
-            .attr("class", "background")
-            .attr("width", width)
-            .attr("height", height)
-            .attr("fill", "#eeeeee");
-
-        var row = svg.selectAll(".row")
-            .data(data)
-          .enter().append("g")
-            .attr("class", "row")
-            .attr("transform", function(d, i) { return "translate(0," + x(i) + ")"; })
-            .each(row);
-
-        row.append("line")
-            .attr("x2", width)
-            .attr("stroke", "#ffffff");
-
-        row.append("text")
-            .attr("x", -6)
-            .attr("y", x.rangeBand() / 2)
-            .attr("dy", ".32em")
-            .attr("text-anchor", "end")
-            .text(function(d, i) { return g[i]; });
-
-        var column = svg.selectAll(".column")
-            .data(data)
-          .enter().append("g")
-            .attr("class", "column")
-            .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
-
-        column.append("line")
-            .attr("x1", -width)
-            .attr("stroke", "#ffffff");
-
-        column.append("text")
-            .attr("x", 6)
-            .attr("y", x.rangeBand() / 2)
-            .attr("dy", ".32em")
-            .attr("text-anchor", "start")
-            .text(function(d, i) { return g[i]; });
-
-        function row(row) {
-          var cell = d3.select(this).selectAll(".cell")
-              //.data(row.filter(function(d) { return d.z; }))
-              .data(row)
-            .enter().append("rect")
-              .attr("class", "cell")
-              .attr("x", function(d, i) { return x(i); })
-              .attr("width", x.rangeBand())
-              .attr("height", x.rangeBand())
-              .style("fill-opacity", function(d) { return z(d * d); })
-              .style("fill", "steelblue");
-              //.on("mouseover", mouseover)
-              //.on("mouseout", mouseout);
-        }
-    }
-    function tryUpdateMatrix() {
-        sendToWorker('newDataAdded');
-    }
-    // TODO move to matrix object
     // setup similarity matrix buttons etc
-    $("#sim_matrix_buttons").prepend("<button id='calculate-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Calculate Similarity Matrix</button>");
-    $("#calculate-matrix-btn").click(function () {
-        sendToWorker('calculateSimilarity', '');
-    });
-    $("#sim_matrix_buttons").prepend("<button id='cluster-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Cluster Similarity Matrix</button>");
-    $("#cluster-matrix-btn").click(function () {
-        sendToWorker('clusterMatrix', '');
-    });
 
     // TODO move to matrix object
     // Only cluster when the initial data has loaded
