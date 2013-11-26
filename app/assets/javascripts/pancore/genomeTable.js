@@ -154,6 +154,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
 
     /**
      * Sets the status of a genome in the table
+     *
      * @param <Number> bioprojectId The id of the genome of which we want to
      *          change the status
      * @param <String> status the new status
@@ -169,6 +170,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
 
     /**
      * Sets the order of a genome in the table
+     *
      * @param <Number> bioprojectId The id of the genome of which we want to
      *          change the status
      * @param <Number> position the new position
@@ -181,6 +183,19 @@ var constructGenomeTable = function constructGenomeTable(args) {
             that.update();
         }
     };
+
+    /**
+     * Changes the order of the table based on the given order
+     *
+     * @param <Array> order the new order we want to set
+     */
+    that.setOrder = function setOrder(order) {
+        var i;
+        for (i = 0; i < order.length; i++) {
+            genomes[order[i]].position = i;
+        }
+        that.update();
+    }
 
     /**
      * Updates the table

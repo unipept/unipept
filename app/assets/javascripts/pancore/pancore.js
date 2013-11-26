@@ -347,6 +347,7 @@ var constructPancore = function constructPancore(args) {
      */
     that.updateOrder = function updateOrder(orderData) {
         sendToWorker("recalculatePanCore", orderData);
+        table.setOrder(orderData.order);
     };
 
     /**
@@ -380,29 +381,6 @@ var constructPancore = function constructPancore(args) {
 
 function removeMe() {
 
-    // Sets the position property in the genomes
-    // based on the position in the graph
-    // returns a list with the order of the genomes
-    function calculateTablePositionsFromGraph() {
-        var order = [],
-            start = -1,
-            stop = 0,
-            i;
-        for (i = 0; i < graphData.length; i++) {
-            var bioproject_id = graphData[i].bioproject_id;
-            if (genomes[bioproject_id].position === i && stop === 0) {
-                start = i;
-            } else if (genomes[bioproject_id].position !== i) {
-                stop = i;
-                genomes[bioproject_id].position = i;
-                genomes[bioproject_id].status = "Processing...";
-            }
-            order[i] = bioproject_id;
-        }
-        start++;
-        return {"order" : order, "start" : start, "stop" : stop};
-    }
-
     // TODO move to phylotree object
     function drawTree(newick, order) {
         var parsed = Newick.parse(newick);
@@ -410,8 +388,6 @@ function removeMe() {
         $("#sim_graph").html("");
         d3.phylogram.build('#sim_graph', parsed, {width: 100, height: 500}, order);
     }
-
-    // setup similarity matrix buttons etc
 
     // TODO move to matrix object
     // Only cluster when the initial data has loaded

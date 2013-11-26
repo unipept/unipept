@@ -372,9 +372,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             if (mouse.hasDragged) {
                 that.update();
                 // If we swapped genomes, update the table to the graph
-                //TODO var r = calculateTablePositionsFromGraph();
-                //TODO updateTable();
-                //TODO sendToWorker("recalculatePanCore", {"order" : r.order, "start" : r.start, "stop" : r.stop});
+                pancore.updateOrder(calculateNewPositions());
             }
         }
         mouse.isDragging = false;
@@ -442,6 +440,32 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     function position(d) {
         var v = mouse.dragging[d.bioproject_id];
         return v == null ? xScale(d.bioproject_id) : v;
+    }
+
+    /**
+     * Calculates the order of the genomes based on the graph.
+     *
+     * @return <Hash> Contains the new order and the positions from and till it
+     *          was changed
+     */
+    function calculateNewPositions() {
+        var order = [],
+            start = -1,
+            stop = 0,
+            i,
+            bioprojectId;
+        for (i = 0; i < graphData.length; i++) {
+            bioprojectId = graphData[i].bioproject_id;
+            if (genomes[bioprojectId].position === i && stop === 0) {
+                start = i;
+            } else if (genomes[bioprojectId].position !== i) {
+                stop = i;
+                table.setGenomeStatus(bioprojectId, "Processing...", false);
+            }
+            order[i] = bioprojectId;
+        }
+        start++;
+        return {"order" : order, "start" : start, "stop" : stop};
     }
 
     /**
