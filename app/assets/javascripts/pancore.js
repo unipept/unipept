@@ -274,7 +274,7 @@ function init_graphs() {
             returnPopoverSequences(data.msg.sequences, data.msg.type);
             break;
         case 'sim_matrix':
-            showMatrix(data.msg.genomes, data.msg.sim_matrix, data.msg.order);
+            //showMatrix(data.msg.genomes, data.msg.sim_matrix, data.msg.order);
             break;
         case 'newOrder':
             reorderMatrix(data.msg);
@@ -436,32 +436,26 @@ function init_graphs() {
     $("#sim_matrix_buttons").prepend("<button id='calculate-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Calculate Similarity Matrix</button>");
     $("#calculate-matrix-btn").click(function () {
         matrix.calculateSimilarity();
-        //sendToWorker('calculateSimilarity', '');
     });
 
     $("#sim_matrix_buttons").prepend("<button id='cluster-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Cluster Similarity Matrix</button>");
     $("#cluster-matrix-btn").click(function () {
         matrix.clusterMatrix();
-        //sendToWorker('clusterMatrix', '');
     });
 
-    // Only cluster when the initial data has loaded
-    function clusterIfReady() {
+    // Only calculate when the initial data has loaded
+    function calculateIfReady() {
         if( toLoad === 0 ) {
-            sendToWorker('clusterMatrix', '');
+            matrix.calculateSimilarity();
         } else {
-            setTimeout(clusterIfReady, 200);
+            setTimeout(calculateIfReady, 200);
         }
     }
 
     // On click of tab, cluster matrix
-    //$("a[href='#sim_matrix_wrapper']").click(clusterIfReady);
+    $("a[href='#sim_matrix_wrapper']").click(calculateIfReady);
 
 
-    function showMatrix(genomes, data, order) {
-        //$('#sim_matrix').empty();
-        //matrix.reDraw();
-    }
 
     // Initial method for adding genomes
     // genomes should be an array of bioproject id's
@@ -527,6 +521,7 @@ function init_graphs() {
         if (g.status !== "Done") return;
         var id = genome.bioproject_id;
         delete tableData[id];
+        matrix.removePeptide(id);
         updateTable();
         var r = calculateTablePositions();
         sendToWorker("removeData", {"bioproject_id" : id, "order" : r.order, "start" : r.start});

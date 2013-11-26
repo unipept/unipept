@@ -33,7 +33,11 @@ var constructSimMatrix = function constructSimMatrix() {
         var cell = d3.select(this).selectAll(".cell")
             //.data(row.filter(function(d) { return d.z; }))
             .data(row)
-            .enter().append("rect")
+            .attr("x", function(d, i) { return x(i); })
+            .attr("width", x.rangeBand())
+            .attr("height", x.rangeBand())
+            .style("fill-opacity", function(d) { return z(d * d); })
+          .enter().append("rect")
             .attr("class", "cell")
             .attr("x", function(d, i) { return x(i); })
             .attr("width", x.rangeBand())
@@ -117,42 +121,52 @@ var constructSimMatrix = function constructSimMatrix() {
                 .attr("fill", "#eeeeee"); 
         }
         // The default sort order.
-        x.domain(d3.range(genomes.length));
+        x.domain(d3.range(order.length));
 
         var row = svg.selectAll(".row")
             .data(matrix)
-          .enter().append("g")
+
+        row.attr("transform", function(d, i) { return "translate(0," + x(i) + ")"; })
+            .each(rowF);
+
+        row.selectAll("text").attr('y', x.rangeBand() / 2);
+
+        row_enter = row.enter().append("g")
             .attr("class", "row")
             .attr("transform", function(d, i) { return "translate(0," + x(i) + ")"; })
             .each(rowF);
 
-        row.append("line")
+        row_enter.append("line")
             .attr("x2", width)
             .attr("stroke", "#ffffff");
 
-        row.append("text")
+        row_enter.append("text")
             .attr("x", -6)
             .attr("y", x.rangeBand() / 2)
             .attr("dy", ".32em")
             .attr("text-anchor", "end")
-            .text(function(d, i) { return genomes[i]; });
+            .text(function(d, i) { return data[order[i]].name; });
 
         var column = svg.selectAll(".column")
             .data(matrix)
-          .enter().append("g")
+            .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; })
+            .attr("y", x.rangeBand() / 2);
+
+        column_enter = column.enter().append("g")
             .attr("class", "column")
             .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
 
-        column.append("line")
+        column_enter.append("line")
             .attr("x1", -width)
             .attr("stroke", "#ffffff");
 
-        column.append("text")
+        column_enter.append("text")
             .attr("x", 6)
             .attr("y", x.rangeBand() / 2)
             .attr("dy", ".32em")
             .attr("text-anchor", "start")
-            .text(function(d, i) { return genomes[i]; });
+            .text(function(d, i) { return data[order[i]].name; });
+
     }
 
     /* calculate similarity */
@@ -175,12 +189,14 @@ var constructSimMatrix = function constructSimMatrix() {
         /* todo: recalculate, mark as dirty */
         data[id] = {'peptide_list': peptide_list, 'name': name};
         order.push(id);
-        genomes.push(name);
     }
 
     /* remove data from the matrix */
     that.removePeptide = function(id) {
+        console.log("removing: " + data[id].name);
         delete data[id];
+        var index = order.indexOf(id);
+        order.splice(index, 1);
     }
 
     // initialize the object
