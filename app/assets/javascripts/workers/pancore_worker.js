@@ -30,7 +30,7 @@ self.addEventListener('message', function (e) {
         recalculatePanCore(data.msg.order, data.msg.start, data.msg.stop);
         break;
     case 'getUniqueSequences':
-        getUniqueSequences();
+        getUniqueSequences(data.msg.order);
         break;
     case 'autoSort':
         autoSort(data.msg.type);
@@ -262,7 +262,7 @@ function removeData(bioproject_id, newOrder, start) {
     unicorePresent = false;
     unicores = [];
     recalculatePanCore(newOrder, start, l - 2);
-    getUniqueSequences();
+    getUniqueSequences(newOrder);
 
     matrix.removeGenome(bioproject_id);
 
@@ -279,7 +279,7 @@ function recalculatePanCore(newOrder, start, stop) {
     if (start === 0) {
         unicorePresent = false;
         unicores = [];
-        getUniqueSequences();
+        getUniqueSequences(order);
     }
     for (i = start; i <= stop; i++) {
         set = data[order[i]].peptide_list;
@@ -408,7 +408,8 @@ function autoSort(type) {
 }
 
 // Retrieves the unique sequences
-function getUniqueSequences() {
+function getUniqueSequences(newOrder) {
+    order = newOrder;
     if (order.length > 0) {
         var s = data[order[0]].peptide_list;
         getJSONByPost("/pancore/unique_sequences/", "type=uniprot&bioprojects=" + order + "&sequences=[" + s + "]", function (d) {

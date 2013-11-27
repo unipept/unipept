@@ -212,6 +212,20 @@ var constructGenomeTable = function constructGenomeTable(args) {
     };
 
     /**
+     * Returns the order of the genomes in the table as an array of
+     * bioproject id's
+     *
+     * @return <Array> order An array containing the bioproject id's
+     */
+    that.getOrder = function getOrder() {
+      var order = [];
+      d3.selectAll("#genomes_table tbody tr").each(function (d, i) {
+          order[i] = d.bioproject_id;
+      });
+      return order;
+    };
+
+    /**
      * Updates the table
      */
     that.update = function update() {

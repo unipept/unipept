@@ -189,7 +189,7 @@ var constructPancore = function constructPancore(args) {
             drawTree(data.msg.data, data.msg.order);
             break;
         default:
-        //    console.log(data.msg);
+            console.log(data.msg);
         }
     }
 
@@ -225,7 +225,6 @@ var constructPancore = function constructPancore(args) {
         table.setGenomeStatus(genome.bioproject_id, "Done", false);
 
         graph.addToDataQueue(genome);
-        //TODO tryUpdateMatrix();
 
         setLoading(toLoad !== 0);
     }
@@ -275,7 +274,8 @@ var constructPancore = function constructPancore(args) {
             table.setEnabled(true);
 
             // REMOVE THIS LINE
-            //TODO sendToWorker("getUniqueSequences");
+            // dirty hack
+            setTimeout(function () { sendToWorker("getUniqueSequences", {order : table.getOrder() });}, 1000);
         }
     }
 
