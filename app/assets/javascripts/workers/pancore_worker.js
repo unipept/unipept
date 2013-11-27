@@ -8,7 +8,7 @@ var data = {},
     unicores = [],
     unicorePresent = false,
     rank = 0,
-    sim_matrix = [];
+    matrix;
 
 // Add an event handler to the worker
 self.addEventListener('message', function (e) {
@@ -30,7 +30,7 @@ self.addEventListener('message', function (e) {
         recalculatePanCore(data.msg.order, data.msg.start, data.msg.stop);
         break;
     case 'getUniqueSequences':
-        getUniqueSequences();
+        getUniqueSequences(data.msg.order);
         break;
     case 'autoSort':
         autoSort(data.msg.type);
@@ -39,10 +39,10 @@ self.addEventListener('message', function (e) {
         getSequences(data.msg.type, data.msg.bioproject_id);
         break;
     case "calculateSimilarity":
-        calculateSimilarity();
+        matrix.calculateSimilarity();
         break;
     case "clusterMatrix":
-        clusterMatrix();
+        matrix.clusterMatrix();
         break;
     case "newDataAdded":
         addNewMatrixdata();
@@ -51,6 +51,154 @@ self.addEventListener('message', function (e) {
         error(data.msg);
     }
 }, false);
+
+
+/* Write a small class to contain all the variables for the matrix */
+var matrixBackend = function matrixBackend(data) {
+    var matrix = [],
+        order  = [];
+
+    /* this is a reference to the data, read-only! */
+    var data = data;
+
+    /* variable to keep track of dirty state */
+    var needsRecalculating = false;
+
+    var that = {};
+
+    function updateRow(index) {
+        sendToHost('rowUpdated', {'row': index, 'data': matrix[index]});
+    }
+
+    function rowRemoved(index) {
+        sendToHost('rowRemoved', {'row': index});
+    }
+
+    that.addGenome = function (genome_id) {
+        needsRecalculating = true;
+        order.push(genome_id);
+
+        var length = matrix.length;
+        for (var x = 0; x < length; x ++) {
+            // add -1 to the end
+            matrix[x].push(-1);
+            updateRow(x);
+        }
+
+        var new_row = []
+        for (var x = 0; x < order.length; x ++) {
+            new_row.push(-1);
+        }
+        matrix.push(new_row);
+        updateRow(matrix.length - 1);
+    }
+
+    that.removeGenome = function (genome_id) {
+        var index = order.indexOf(genome_id);
+        order.splice(index, 1);
+
+        matrix.splice(index, 1);
+        for (var x = 0; x < matrix.length; x ++) {
+            // add -1 to the end
+            matrix[x].splice(index, 1);
+            updateRow(x);
+        }
+        rowRemoved(index);
+    }
+
+    that.calculateSimilarity = function () {
+        for (var x = 0; x < order.length; x++) {
+            var new_row = [],
+                compare_list = data[order[x]].peptide_list;
+
+            for (y = 0 ; y < order.length; y ++) {
+                var peptide_list = data[order[y]].peptide_list;
+                new_row[y] = genomeSimilarity(compare_list, peptide_list);
+            }
+            matrix[x] = new_row;
+            updateRow(x);
+        }
+        needsRecalculating = false;
+    }
+
+
+    that.reOrder = function (new_order) {
+        sendToHost('newOrder', new_order);
+    }
+
+
+    that.clusterMatrix = function () {
+        while(needsRecalculating) {
+            that.calculateSimilarity();
+        }
+
+        // Create a deep copy and call our recursive cluster function
+        var matrix_deep_copy = [];
+        for (var i = 0; i < matrix.length; i++) {
+            matrix_deep_copy[i] = matrix[i].slice(0);
+        }
+        var result = clusterMatrixRec(matrix_deep_copy, {}, []);
+
+        var result_order = result['order'];
+        var first = result_order.splice(-1,1)[0];
+        var new_order = [first.x,first.y];
+
+        for (i = result_order.length - 1; i >= 0; i--) {
+            var index = new_order.indexOf(result_order[i]['x']);
+            new_order.splice(index, 0, result_order[i]['y']);
+        }
+        that.reOrder(new_order);
+    }
+
+    function clusterMatrixRec(matrix, cluster, order) {
+        // Lame recursion check
+        if(order.length == matrix.length - 1) {
+            return {'order': order, 'cluster': cluster};
+        }
+
+        // find highest similarity
+        var x = 0, y = 0, largest = -1;
+        var i = 0, j = 0;
+        for (i = 0 ; i < matrix.length; i++) {
+            for (j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] > largest && i != j) {
+                    x = i;
+                    y = j;
+                    largest = matrix[i][j];
+                }
+            }
+        }
+
+        if(cluster[x]) {
+            cluster[x].push(y);
+        } else {
+            cluster[x] = [y];
+        }
+
+        order.push({'x': x, 'y': y, 'value': largest});
+
+        // update sim matrix with average values
+        for (j = 0 ; j < matrix[x].length; j++) {
+            if ( j != y && j != x ) {
+                matrix[x][j] = (matrix[x][j] + matrix[y][j]) / 2;
+                matrix[j][x] = (matrix[x][j] + matrix[y][j]) / 2;
+            }
+        }
+
+        // set the value of comparison with y to zero
+        for (j = 0 ; j < matrix.length; j++) {
+            matrix[j][y] = -1;
+            matrix[y][j] = -1;
+        }
+
+        return clusterMatrixRec(matrix, cluster, order);
+
+    }
+
+    return that;
+}
+matrix = matrixBackend(data);
+
 
 // Sends a response type and message to the host
 function sendToHost(type, message) {
@@ -78,7 +226,6 @@ function addData(bioproject_id, name, set, request_rank) {
     data[bioproject_id].name = name;
     data[bioproject_id].peptide_list = set;
     data[bioproject_id].peptides = set.length;
-    order.push(bioproject_id);
 
     // Calculate pan and core
     core = cores.length === 0 ? set : intersection(cores[cores.length - 1], set);
@@ -90,6 +237,8 @@ function addData(bioproject_id, name, set, request_rank) {
         unicores.push(unicore);
     }
 
+    matrix.addGenome(bioproject_id);
+
     // Return the results to the host
     temp = {};
     temp.bioproject_id = bioproject_id;
@@ -97,17 +246,17 @@ function addData(bioproject_id, name, set, request_rank) {
     temp.peptide_list = set;
     temp.name = name;
     temp.core = core.length;
+    temp.name = name;
     temp.peptides = set.length;
     if (unicorePresent) {
         temp.unicore = unicore.length;
     }
-    sendToHost("addData", {data: temp, rank: request_rank});
+    sendToHost("processLoadedGenome", {data: temp, rank: request_rank});
 }
 
 // Removes a genomes from the data
 function removeData(bioproject_id, newOrder, start) {
     var l = pans.length;
-    var i = order.indexOf(bioproject_id);
     delete data[bioproject_id];
     pans.splice(l - 1, 1);
     cores.splice(l - 1, 1);
@@ -115,24 +264,10 @@ function removeData(bioproject_id, newOrder, start) {
     unicorePresent = false;
     unicores = [];
     recalculatePanCore(newOrder, start, l - 2);
-    getUniqueSequences();
+    getUniqueSequences(newOrder);
 
+    matrix.removeGenome(bioproject_id);
 
-    // Update the matrix without calculating everything again
-    // TODO: move this into a generic method
-    var names = [];
-
-    for (x = 0; x < newOrder.length; x++) {
-        var bioproject_id = newOrder[x];
-        names.push(data[bioproject_id].name);
-    }
-
-    var length = sim_matrix.length;
-    for(var x = 0; x < length; x++) {
-        sim_matrix[x].splice(i, 1);
-    }
-    sim_matrix.splice(i, 1);
-    sendToHost('sim_matrix', {'genomes': names, 'sim_matrix': sim_matrix, 'order': newOrder});
 }
 
 // Recalculates the pan and core data based on a
@@ -146,7 +281,7 @@ function recalculatePanCore(newOrder, start, stop) {
     if (start === 0) {
         unicorePresent = false;
         unicores = [];
-        getUniqueSequences();
+        getUniqueSequences(order);
     }
     for (i = start; i <= stop; i++) {
         set = data[order[i]].peptide_list;
@@ -172,7 +307,7 @@ function recalculatePanCore(newOrder, start, stop) {
         }
         response.push(temp);
     }
-    sendToHost("setPancoreData", {data : response, lca : lca, rank : rank});
+    sendToHost("processPancoreData", {data : response, lca : lca, rank : rank});
 }
 
 // Sorts the genomes in a given order
@@ -275,7 +410,8 @@ function autoSort(type) {
 }
 
 // Retrieves the unique sequences
-function getUniqueSequences() {
+function getUniqueSequences(newOrder) {
+    order = newOrder;
     if (order.length > 0) {
         var s = data[order[0]].peptide_list;
         getJSONByPost("/pancore/unique_sequences/", "type=uniprot&bioprojects=" + order + "&sequences=[" + s + "]", function (d) {
@@ -331,7 +467,7 @@ function getSequences(type, bioproject_id) {
         error("Unknown type: " + type);
     }
     getJSONByPost("/pancore/full_sequences/", "sequence_ids=[" + ids + "]", function (d) {
-        sendToHost("sequencesDownloaded", {sequences : d, type : type});
+        sendToHost("processDownloadedSequences", {sequences : d, type : type});
     });
 }
 
@@ -465,6 +601,7 @@ function clusterMatrix() {
     }
     sendToHost('newOrder', new_order);
 
+    /* TODO: move this into matrixBackend */
     // constuct newick format of tree
     var tree = [first.x, first.y, first.value];
     var treeOrder = [];
@@ -517,50 +654,6 @@ function findAndReplace(tree, x, y, val) {
     }
 }
 
-function clusterMatrixRec(matrix, cluster, order) {
-    // Lame recursion check
-    if(order.length == matrix.length - 1) {
-        return {'order': order, 'cluster': cluster};
-    }
-
-    // find highest similarity
-    var x = 0, y = 0, largest = -1;
-    var i = 0, j = 0;
-    for (i = 0 ; i < matrix.length; i++) {
-        for (j = 0; j < matrix[i].length; j++) {
-            if (matrix[i][j] > largest && i != j) {
-                x = i;
-                y = j;
-                largest = matrix[i][j];
-            }
-        }
-    }
-
-    if(cluster[x]) {
-        cluster[x].push(y);
-    } else {
-        cluster[x] = [y];
-    }
-
-    order.push({'x': x, 'y': y, 'value': largest});
-
-    // update sim matrix with average values
-    for (j = 0 ; j < matrix[x].length; j++) {
-        if ( j != y && j != x ) {
-            matrix[x][j] = (matrix[x][j] + matrix[y][j]) / 2;
-            matrix[j][x] = (matrix[x][j] + matrix[y][j]) / 2;
-        }
-    }
-
-    // set the value of comparison with y to zero
-    for (j = 0 ; j < matrix.length; j++) {
-        matrix[j][y] = -1;
-        matrix[y][j] = -1;
-    }
-
-    return clusterMatrixRec(matrix, cluster, order);
-
-}
 
 // union and intersection for sorted arrays
 function union(a, b) {
