@@ -1,8 +1,6 @@
 /**
  * Creates a pancoreGraph object that includes the graph visualisation
  *
- * TODO: clicking a genome is very laggy
- *
  * @param <Pancore> args.pancore Pancore object
  * @param <GenomeTable> args.table GenomeTable object
  * @param <Number> args.transitionDuration Duration of transitions in ms
@@ -315,7 +313,9 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         mouse.hasDragged = false;
         mouse.dragId = d.bioproject_id;
         mouse.dragging[d.bioproject_id] = this.__origin__ = xScale(d.bioproject_id);
-        d3.select("body").style("cursor", "url(/closedhand.cur) 7 5, move");
+        // FIXME This is disabled since it takes 1 second to recalculate the
+        // styles in chrome. Cursor now only changes after moving at least 1px
+        //d3.select("body").style("cursor", "url(/closedhand.cur) 7 5, move");
         svg.selectAll(".bar").style("cursor", "url(/closedhand.cur) 7 5, move");
         svg.select("#trash").transition()
             .duration(transitionDuration)
