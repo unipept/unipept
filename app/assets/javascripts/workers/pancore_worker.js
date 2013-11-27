@@ -38,7 +38,7 @@ self.addEventListener('message', function (e) {
     case "getSequences":
         getSequences(data.msg.type, data.msg.bioproject_id);
         break;
-    case "calculateSimilarity":
+        /*case "calculateSimilarity":
         matrix.calculateSimilarity();
         break;
     case "clusterMatrix":
@@ -46,7 +46,7 @@ self.addEventListener('message', function (e) {
         break;
     case "newDataAdded":
         addNewMatrixdata();
-        break;
+        break;*/
     default:
         error(data.msg);
     }
@@ -197,7 +197,7 @@ var matrixBackend = function matrixBackend(data) {
 
     return that;
 }
-matrix = matrixBackend(data);
+//matrix = matrixBackend(data);
 
 
 // Sends a response type and message to the host
@@ -237,7 +237,7 @@ function addData(bioproject_id, name, set, request_rank) {
         unicores.push(unicore);
     }
 
-    matrix.addGenome(bioproject_id);
+    //matrix.addGenome(bioproject_id);
 
     // Return the results to the host
     temp = {};
@@ -266,7 +266,7 @@ function removeData(bioproject_id, newOrder, start) {
     recalculatePanCore(newOrder, start, l - 2);
     getUniqueSequences(newOrder);
 
-    matrix.removeGenome(bioproject_id);
+    //matrix.removeGenome(bioproject_id);
 
 }
 

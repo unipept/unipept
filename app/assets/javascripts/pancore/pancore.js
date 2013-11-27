@@ -63,7 +63,7 @@ var constructPancore = function constructPancore(args) {
         worker.addEventListener('error', error, false);
 
         // Constructs the matrix
-        matrix = constructSimMatrix(worker);
+        //matrix = constructSimMatrix(worker);
 
         // Initialize the rest of the page
         initSpeciesForm();
@@ -207,7 +207,7 @@ var constructPancore = function constructPancore(args) {
      * @param <String> name The name of the genome we want to load
      */
     function loadData(bioproject_id, name) {
-        matrix.addGenome(bioproject_id, name);
+        //matrix.addGenome(bioproject_id, name);
         sendToWorker("loadData", {"bioproject_id" : bioproject_id, "name" : name});
     }
 
