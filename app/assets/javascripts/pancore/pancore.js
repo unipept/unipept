@@ -378,31 +378,3 @@ var constructPancore = function constructPancore(args) {
 
     return that;
 };
-
-
-function removeMe() {
-
-    // TODO move to phylotree object
-    function drawTree(newick, order) {
-        var parsed = Newick.parse(newick);
-        console.log(parsed);
-        $("#sim_graph").html("");
-        d3.phylogram.build('#sim_graph', parsed, {width: 100, height: 500}, order);
-    }
-
-    // TODO move to matrix object
-    // Only cluster when the initial data has loaded
-    function clusterIfReady() {
-        if( toLoad === 0 ) {
-            sendToWorker('clusterMatrix', '');
-        } else {
-            setTimeout(clusterIfReady, 200);
-        }
-    }
-    // On click of tab, cluster matrix
-    $("a[href='#sim_matrix_wrapper']").click(clusterIfReady);
-    function showMatrix(g, data, order) {
-        $('#sim_matrix').empty();
-        redrawMatrix(g, data, order);
-    }
-}
