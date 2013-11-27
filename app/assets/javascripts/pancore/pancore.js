@@ -355,7 +355,7 @@ var constructPancore = function constructPancore(args) {
      * Requests a set of sequences to the worker
      *
      * @param <Number> bioprojectId The id of the genome we want data from
-     * @para <String> type The type of sequences we want
+     * @param <String> type The type of sequences we want
      */
     that.requestSequences = function requestSequences(bioprojectId, type) {
         sendToWorker("getSequences", {
@@ -364,6 +364,14 @@ var constructPancore = function constructPancore(args) {
         });
     };
 
+    /**
+     * Send the autoSort command to the worker
+     *
+     * @param <String> type The type of sort we want to run
+     */
+    that.autoSort = function autoSort(type){
+        sendToWorker("autoSort", {type : type});
+    }
 
     // initialize the object
     init();

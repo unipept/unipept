@@ -41,17 +41,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
                 $("#autosort-button").dropdown("toggle");
             }
         });
-        $("#autosort ul a").click(function () {
-            // TODO move to function
-            var i;
-            sendToWorker("autoSort", {type : $(this).attr("data-type")});
-            for (i in genomes) {
-                genomes[i].status = "Processing...";
-            }
-            that.update();
-            $("#autosort").mouseleave();
-            return false;
-        });
+        $("#autosort ul a").click(runAutosort);
         $("#autosort ul a").tooltip({placement : "right", container : "body"});
     }
 
@@ -111,6 +101,21 @@ var constructGenomeTable = function constructGenomeTable(args) {
         });
         start++;
         return {"order" : order, "start" : start, "stop" : stop};
+    }
+
+    /**
+     * This function gets executed when the user clicks one of the autosort
+     * links.
+     */
+    function runAutosort() {
+        var i;
+        pancore.autoSort($(this).attr("data-type"));
+        for (i in genomes) {
+            genomes[i].status = "Processing...";
+        }
+        that.update();
+        $("#autosort").mouseleave();
+        return false;
     }
 
     /*************** Public methods ***************/
