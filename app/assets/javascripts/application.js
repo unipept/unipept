@@ -1,8 +1,11 @@
 //= require jquery
-//= require jquery-ui
+//= require jquery.ui.draggable
+//= require jquery.ui.droppable
+//= require jquery.ui.sortable
 //= require jquery_ujs
 //= require_self
 //= require_directory .
+//= require_directory ./pancore
 //= require vendor
 
 // highlights the background color
@@ -265,7 +268,7 @@ var delay = (function () {
     window.fullScreenApi = fullScreenApi;
 })();
 
-/*
+/**
  * requestAnimationFrame shim
  * source: http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
  */
@@ -278,7 +281,7 @@ window.requestAnimFrame = (function(){
             };
 })();
 
-/*
+/**
  * Catches all errors, displays them in console and
  * logs them to Google Analytics
  */

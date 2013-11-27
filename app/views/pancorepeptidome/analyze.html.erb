@@ -5,9 +5,24 @@
 
 <div id="buttons-pancore"></div>
 
-<div id="pancore_graph">
-  <div id="popovers"></div>
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#pancore_graph_wrapper" data-toggle="tab">Graph</a></li>
+  <li><a href="#sim_matrix_wrapper" data-toggle="tab">Similarity Matrix</a></li>
+</ul>
+
+<div class="tab-content">
+  <div class="tab-pane active" id="pancore_graph_wrapper">
+    <div id="pancore_graph">
+      <div id="popovers"></div>
+    </div>
+  </div>
+  <div class="tab-pane" id="sim_matrix_wrapper">
+    <div id="sim_matrix_buttons"></div>
+    <div id="sim_matrix"></div>
+    <div id="sim_graph"></div>
+  </div>
 </div>
+
 
 <div class="split">
   <div class="split-left">
@@ -27,7 +42,7 @@
 
   <div class="split-right">
     <span id="table-message"><i class="glyphicon glyphicon-chevron-left"></i> Select a species to analyze and click the load button.</span>
-    <div id="genomes_table_div">
+    <div id="genomes-table-div">
       <div style="overflow: hidden; height: 0px; width: 0px;">&nbsp;</div>
       <table class="table table-condensed" id="genomes_table">
         <thead>
@@ -52,8 +67,6 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-          </tr>
         </tbody>
         <tfoot>
           <tr><th colspan=4><i class="glyphicon glyphicon-plus"></i> Drop genomes here</th></tr>
@@ -67,8 +80,10 @@
 <script type="text/javascript">
   $(function () {
     if (typeof(Worker)!=="undefined") {
-      init_pancore();
-      init_selection_tree(<%= raw(@genomes) %>, <%= raw(@taxa) %>);
+        constructPancore({
+            data : <%= raw(@genomes) %>,
+            taxa : <%= raw(@taxa) %>
+        });
     } else {
       error(null, "Sorry, this page uses Web Workers, an advanced JavaScript technology that's not supported by your browser. Try using an up to date version of Google Chrome, Firefox or Internet Explorer 10.")
     }

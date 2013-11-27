@@ -13,3 +13,9 @@
 //  export lineage tree and treemap to png
 //  0.4.1
 //= require html2canvas/html2canvas.js
+
+//  d3.phylogram
+//= require d3.phylogram/d3.phylogram.js
+
+//  newick.js
+//= require newick/newick.js
