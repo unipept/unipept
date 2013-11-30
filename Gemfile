@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.15'
+gem 'rails', '4.0.1'
 
 gem 'mysql2', '0.3.14'
 
@@ -40,15 +40,6 @@ group :test do
 	gem 'spork'
 	gem 'be_valid_asset'
 #	gem 'factory_girl_rails'
-end
-
-# Gems used only for assets and not required
-# in production environments by default.
-group :assets do
-  gem 'sass-rails'
-  gem 'coffee-rails'
-  gem 'uglifier'
-  gem 'less-rails'
 end
 
 #default stuff
