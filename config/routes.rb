@@ -28,7 +28,7 @@ UnipeptWeb::Application.routes.draw do
   # pancore
   get '/pancore/sequences/:bioproject_id.:format', :to => 'pancorepeptidome#get_sequence_ids_for_bioproject', :constraints => { :bioproject_id => /[0-z\._]+/ }
   get '/pancore/genomes/species/:species_id.:format', :to => 'pancorepeptidome#get_genomes'
-  get '/pancore/unique_sequences', :to => 'pancorepeptidome#get_unique_sequences'
+  post '/pancore/unique_sequences', :to => 'pancorepeptidome#get_unique_sequences'
   get '/pancore/full_sequences', :to => 'pancorepeptidome#get_sequences'
   get '/pancore', :to => 'pancorepeptidome#analyze'
   get '/peptidefinder', :to => 'pancorepeptidome#analyze', :as => 'pancore_analyze'
