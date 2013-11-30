@@ -30,6 +30,10 @@ gem 'rmagick', '2.13.2'
 # do HTTP requests
 gem 'httparty', '0.10.2'
 
+# The dynamic stylesheet language for the Rails asset pipeline.
+# Allows other gems to extend Less load path.
+gem "less-rails", "~> 2.4.2"
+
 group :development do
   gem 'rspec-rails'
 	gem 'annotate'

@@ -54,6 +54,7 @@ GEM
       net-sftp (>= 2.0.0)
       net-ssh (>= 2.0.14)
       net-ssh-gateway (>= 1.1.0)
+    commonjs (0.2.7)
     diff-lcs (1.2.4)
     erubis (2.7.0)
     highline (1.6.20)
@@ -68,6 +69,11 @@ GEM
     jquery-ui-rails (4.0.2)
       jquery-rails
       railties (>= 3.1.0)
+    less (2.4.0)
+      commonjs (~> 0.2.7)
+    less-rails (2.4.2)
+      actionpack (>= 3.1)
+      less (~> 2.4.0)
     libv8 (3.16.14.3)
     mail (2.5.4)
       mime-types (~> 1.16)
@@ -160,6 +166,7 @@ DEPENDENCIES
   httparty (= 0.10.2)
   jquery-rails (~> 2.3.0)
   jquery-ui-rails (= 4.0.2)
+  less-rails (~> 2.4.2)
   mysql2 (= 0.3.14)
   oj
   protected_attributes (~> 1.0.5)
