@@ -34,6 +34,10 @@ gem 'httparty', '0.10.2'
 # Allows other gems to extend Less load path.
 gem "less-rails", "~> 2.4.2"
 
+# Uglifier minifies JavaScript files by wrapping UglifyJS to be accessible
+# in Ruby
+gem "uglifier", "~> 2.3.1"
+
 group :development do
   gem 'rspec-rails'
 	gem 'annotate'

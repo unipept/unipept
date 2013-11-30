@@ -57,6 +57,7 @@ GEM
     commonjs (0.2.7)
     diff-lcs (1.2.4)
     erubis (2.7.0)
+    execjs (2.0.2)
     highline (1.6.20)
     hike (1.2.3)
     httparty (0.10.2)
@@ -69,6 +70,7 @@ GEM
     jquery-ui-rails (4.0.2)
       jquery-rails
       railties (>= 3.1.0)
+    json (1.8.1)
     less (2.4.0)
       commonjs (~> 0.2.7)
     less-rails (2.4.2)
@@ -150,6 +152,9 @@ GEM
       polyglot
       polyglot (>= 0.3.1)
     tzinfo (0.3.38)
+    uglifier (2.3.1)
+      execjs (>= 0.3.0)
+      json (>= 1.8.0)
     webrat (0.7.3)
       nokogiri (>= 1.2.0)
       rack (>= 1.0)
@@ -180,5 +185,6 @@ DEPENDENCIES
   spork
   sprockets
   therubyracer
+  uglifier (~> 2.3.1)
   webrat
   will_paginate (~> 3.0.5)
