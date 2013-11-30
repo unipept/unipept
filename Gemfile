@@ -2,6 +2,9 @@ source 'http://rubygems.org'
 
 gem 'rails', '4.0.1'
 
+# Protect attributes from mass assignment
+gem "protected_attributes", "~> 1.0.5"
+
 gem 'mysql2', '0.3.14'
 
 # pagination
