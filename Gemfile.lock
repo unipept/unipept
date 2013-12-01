@@ -177,7 +177,7 @@ DEPENDENCIES
   protected_attributes (~> 1.0.5)
   rails (= 4.0.1)
   rake
-  rmagick (= 2.13.2)
+  rmagick (~> 2.13.2)
   rspec
   rspec-rails
   rubycas-client!

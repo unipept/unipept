@@ -25,7 +25,7 @@ gem 'therubyracer'
 gem 'oj'
 
 # imagemagick bindings
-gem 'rmagick', '2.13.2'
+gem "rmagick", "~> 2.13.2"
 
 # do HTTP requests
 gem "httparty", "~> 0.12.0"
