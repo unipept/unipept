@@ -6,7 +6,7 @@
   <%= dataset.environment %>
     <% if session[:admin] && edit %>
         <%= link_to raw("<i class='glyphicon glyphicon-pencil'></i> Edit"), edit_dataset_path(dataset), :class => 'btn btn-default btn-xs' %>
-        <%= link_to raw("<i class='glyphicon glyphicon-trash'></i> Delete"), dataset, :confirm => 'Are you sure?', :method => :delete, :class => 'btn btn-xs btn-danger' %>
+        <%= link_to raw("<i class='glyphicon glyphicon-trash'></i> Delete"), dataset, data: {confirm: 'Are you sure?'}, :method => :delete, :class => 'btn btn-xs btn-danger' %>
     <% end %>
     <br/>
 
