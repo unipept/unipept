@@ -2,10 +2,10 @@ source 'http://rubygems.org'
 
 gem 'rails', '4.0.1'
 
+gem 'mysql2', '0.3.14'
+
 # Protect attributes from mass assignment
 gem "protected_attributes", "~> 1.0.5"
-
-gem 'mysql2', '0.3.14'
 
 # pagination
 gem 'will_paginate', "~> 3.0.5"
@@ -28,7 +28,7 @@ gem 'oj'
 gem 'rmagick', '2.13.2'
 
 # do HTTP requests
-gem 'httparty', '0.10.2'
+gem "httparty", "~> 0.12.0"
 
 # The dynamic stylesheet language for the Rails asset pipeline.
 # Allows other gems to extend Less load path.
