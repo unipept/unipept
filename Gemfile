@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 gem 'rails', '4.0.1'
 
-gem 'mysql2', '0.3.14'
+gem 'mysql2', '~> 0.3.14'
 
 # Protect attributes from mass assignment
 gem "protected_attributes", "~> 1.0.5"
@@ -11,7 +11,7 @@ gem "protected_attributes", "~> 1.0.5"
 gem 'will_paginate', "~> 3.0.5"
 
 # jquery
-gem 'jquery-rails', "~> 2.3.0"
+gem 'jquery-rails', "~> 3.0.4"
 gem "jquery-ui-rails", "4.0.2"
 
 # cas auth
