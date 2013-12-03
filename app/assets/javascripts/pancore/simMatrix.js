@@ -16,8 +16,11 @@ var constructSimMatrix = function constructSimMatrix(worker) {
     /* Constructor fields */
     var names = [],
         order = [],
+        treeOrder = [],
         matrix = [],
+        newick,
         worker = worker;
+
     var tabSelector = $('a[href="#sim_matrix_wrapper"]');
 
     var that = {};
@@ -43,6 +46,14 @@ var constructSimMatrix = function constructSimMatrix(worker) {
             .style("fill", function(d) { return (d != -1) ? "steelblue" : "red" });
     }
 
+    /* add popover to all cells */
+    function popOverF(row, j) {
+        d3.select(this).selectAll(".cell")
+            .each(function(d, i) {
+                $(this).popover('destroy');
+                $(this).popover({title: names[order[i]].name + " vs " + names[order[j]].name, content: d, trigger: 'hover', placement: 'top', container: 'body'});
+            });
+    }
     /* TODO: can this be abstracted? */
     function sendToWorker(type, message) {
         worker.postMessage({'cmd': type, 'msg': message});
@@ -58,6 +69,9 @@ var constructSimMatrix = function constructSimMatrix(worker) {
                 break;
             case 'matrixData':
                 receiveMatrix(data.msg);
+                break;
+            case 'newick':
+                that.drawTree(data.msg);
                 break;
             case 'log':
                 console.log(data.msg);
@@ -97,6 +111,7 @@ var constructSimMatrix = function constructSimMatrix(worker) {
 
     /* reOrder the matrix based on the new order */
     that.reOrder = function (newOrder) {
+        treeOrder = newOrder;
         x.domain(newOrder);
         var t = svg.transition().duration(2500);
 
@@ -182,17 +197,16 @@ var constructSimMatrix = function constructSimMatrix(worker) {
             .text(function(d, i) { return names[order[i]].name; });
 
         row.each(popOverF);
-    }
-
-
-    function popOverF(row, j) {
-        d3.select(this).selectAll(".cell")
-            .each(function(d, i) {
-                $(this).popover('destroy');
-                $(this).popover({title: names[order[i]].name + " vs " + names[order[j]].name, content: d, trigger: 'hover', placement: 'top', container:"body"});
-            });
 
     }
+
+    that.drawTree = function (n) {
+        newick = n;
+        var parsed = Newick.parse(n);
+        $("#sim_graph").html("");
+        d3.phylogram.build('#sim_graph', parsed, {width: 100, height: 500}, treeOrder);
+    }
+
     /* calculate similarity */
     that.calculateSimilarity = function () {
         sendToWorker('calculateSimilarity');

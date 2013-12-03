@@ -171,6 +171,8 @@ var matrixBackend = function matrixBackend(data) {
         for (i = 0; i < new_order.length; i++) {
             treeOrder[new_order[i]] = i;
         }
+
+        sendToHost('newick', arrayToNewick(tree));
     }
 
     function clusterMatrixRec(matrix, cluster, order) {
@@ -669,11 +671,11 @@ function findAndReplace(tree, x, y, val) {
     if (index == -1) {
         for (var j = 0; j < tree.length - 1; j ++) {
             if( tree[j] instanceof Array) {
-                findAndReplace(tree[j], x, y, val - tree[2]);
+                findAndReplace(tree[j], x, y, val);
             }
         }
     } else {
-        tree[index] = [x, y, val];
+        tree[index] = [x, y, val - tree[tree.length - 1]];
     }
 }
 
