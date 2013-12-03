@@ -18,6 +18,7 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         order = [],
         treeOrder = [],
         matrix = [],
+        clustered = false,
         newick,
         worker = worker;
 
@@ -83,7 +84,6 @@ var constructSimMatrix = function constructSimMatrix(worker) {
     /* receive the new matrix from the worker */
     function receiveMatrix(m) {
         matrix = m;
-        console.log("received matrix");
         that.reDraw();
     }
 
@@ -125,11 +125,12 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         t.selectAll(".column")
             .delay(function(d, i) { return x(i) * 4; })
             .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
+        clustered = true;
     }
 
     that.reDraw = function () {
         // Check if we are currently active pane
-        if (! tabSelector.parent().hasClass("active")) {
+        if (! that.activeTab() ) {
             return;
         }
 
@@ -147,8 +148,11 @@ var constructSimMatrix = function constructSimMatrix(worker) {
                 .attr("height", height)
                 .attr("fill", "#eeeeee");
         }
-        // The default sort order.
-        x.domain(d3.range(order.length));
+
+        if (!clustered) {
+            // The default sort order.
+            x.domain(d3.range(order.length));
+        }
 
         var row = svg.selectAll(".row")
             .data(matrix)
@@ -232,6 +236,12 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         }
         matrix.push(new_row);
 
+
+        clustered = false;
+        if( that.activeTab() ) {
+            that.clusterMatrix();
+        }
+
         that.reDraw();
     }
 
@@ -246,7 +256,12 @@ var constructSimMatrix = function constructSimMatrix(worker) {
             // add -1 to the end
             matrix[x].splice(index, 1);
         }
+        clustered = false;
         that.reDraw();
+    }
+
+    that.activeTab = function () {
+        return tabSelector.parent().hasClass("active");
     }
 
     // initialize the object
