@@ -192,8 +192,18 @@ var constructSimMatrix = function constructSimMatrix(worker) {
             .attr("text-anchor", "start")
             .text(function(d, i) { return names[order[i]].name; });
 
+        row.each(popOverF);
     }
 
+
+    function popOverF(row, j) {
+        d3.select(this).selectAll(".cell")
+            .each(function(d, i) {
+                $(this).popover('destroy');
+                $(this).popover({title: names[order[i]].name + " vs " + names[order[j]].name, content: d, trigger: 'hover', placement: 'top', container:"body"});
+            });
+
+    }
     /* calculate similarity */
     that.calculateSimilarity = function () {
         sendToWorker('calculateSimilarity');
