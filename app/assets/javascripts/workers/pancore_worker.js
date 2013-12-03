@@ -44,8 +44,8 @@ self.addEventListener('message', function (e) {
     case "clusterMatrix":
         matrix.clusterMatrix();
         break;
-    case "newDataAdded":
-        addNewMatrixdata();
+    case "getMatrix":
+        matrix.sendToHost();
         break;
     default:
         error(data.msg);
@@ -66,13 +66,6 @@ var matrixBackend = function matrixBackend(data) {
 
     var that = {};
 
-    function updateRow(index) {
-        sendToHost('rowUpdated', {'row': index, 'data': matrix[index]});
-    }
-
-    function rowRemoved(index) {
-        sendToHost('rowRemoved', {'row': index});
-    }
 
     that.addGenome = function (genome_id) {
         needsRecalculating = true;
@@ -82,7 +75,6 @@ var matrixBackend = function matrixBackend(data) {
         for (var x = 0; x < length; x ++) {
             // add -1 to the end
             matrix[x].push(-1);
-            updateRow(x);
         }
 
         var new_row = []
@@ -90,7 +82,6 @@ var matrixBackend = function matrixBackend(data) {
             new_row.push(-1);
         }
         matrix.push(new_row);
-        updateRow(matrix.length - 1);
     }
 
     that.removeGenome = function (genome_id) {
@@ -101,9 +92,7 @@ var matrixBackend = function matrixBackend(data) {
         for (var x = 0; x < matrix.length; x ++) {
             // add -1 to the end
             matrix[x].splice(index, 1);
-            updateRow(x);
         }
-        rowRemoved(index);
     }
 
     that.calculateSimilarity = function () {
@@ -116,16 +105,18 @@ var matrixBackend = function matrixBackend(data) {
                 new_row[y] = genomeSimilarity(compare_list, peptide_list);
             }
             matrix[x] = new_row;
-            updateRow(x);
         }
         needsRecalculating = false;
+        that.sendToHost();
     }
-
 
     that.reOrder = function (new_order) {
         sendToHost('newOrder', new_order);
     }
 
+    that.sendToHost = function () {
+        sendToHost('matrixData', matrix);
+    }
 
     that.clusterMatrix = function () {
         while(needsRecalculating) {

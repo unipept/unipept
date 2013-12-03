@@ -6,22 +6,28 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         width = 500,
         height = 500;
 
-    /* variable to contain our d3 selector */
-    var svg;
+    /* variable to contain our d3 selectors */
+    var svg,
+        tooltip;
 
     /* Scales */
     var x = d3.scale.ordinal().rangeBands([0, width], matrix_padding),
         z = d3.scale.linear().domain([0, 1]).clamp(true);
+
+    /* colors */
+    var genomeColor = "#d9d9d9"; // gray
 
     /* Constructor fields */
     var names = [],
         order = [],
         matrix = [],
         worker = worker;
+    var tabSelector = $('a[href="#sim_matrix_wrapper"]');
 
     var that = {};
 
     /*************** Private methods ***************/
+
 
     /* generate a row */
     function rowF(row) {
@@ -61,6 +67,9 @@ var constructSimMatrix = function constructSimMatrix(worker) {
             case 'newOrder':
                 that.reOrder(data.msg);
                 break;
+            case 'matrixData':
+                receiveMatrix(data.msg);
+                break;
             case 'log':
                 console.log(data.msg);
                 break;
@@ -68,16 +77,11 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         });
     }
 
-    /* receive a new row from the worker */
-    function rowUpdated(row_index, row) {
-        // TODO: animations!
-        matrix[row_index] = row;
+    /* receive the new matrix from the worker */
+    function receiveMatrix(m) {
+        matrix = m;
+        console.log("received matrix");
         that.reDraw();
-    }
-    /* a row was removed, better fix the UI */
-    function rowRemoved(row_index) {
-        // TODO: animations!
-        matrix.splice(row_index, 1);
     }
 
     /**
@@ -87,6 +91,9 @@ var constructSimMatrix = function constructSimMatrix(worker) {
      */
     function init() {
         setupWorker();
+        tabSelector.on('shown.bs.tab', function () {
+            that.reDraw();
+        });
         $("#sim_matrix_buttons").prepend("<button id='calculate-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Calculate Similarity Matrix</button>");
         $("#calculate-matrix-btn").click(function () {
             that.calculateSimilarity();
@@ -117,6 +124,11 @@ var constructSimMatrix = function constructSimMatrix(worker) {
     }
 
     that.reDraw = function () {
+        // Check if we are currently active pane
+        if (! tabSelector.parent().hasClass("active")) {
+            return;
+        }
+
         /* TODO: instead of appending, this needs more selectAll I think */
         if (! svg) {
             svg = d3.select("#sim_matrix").append("svg")
@@ -163,6 +175,8 @@ var constructSimMatrix = function constructSimMatrix(worker) {
             .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; })
             .attr("y", x.rangeBand() / 2);
 
+        column.selectAll("text").attr('y', x.rangeBand() / 2);
+
         column_enter = column.enter().append("g")
             .attr("class", "column")
             .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
@@ -182,7 +196,6 @@ var constructSimMatrix = function constructSimMatrix(worker) {
 
     /* calculate similarity */
     that.calculateSimilarity = function () {
-        /* TODO: keep track of what is already calculated */
         sendToWorker('calculateSimilarity');
     }
 
@@ -190,12 +203,22 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         sendToWorker('clusterMatrix');
     }
 
-    /* TODO: removing / adding is not complete yet */
-
     /* add data to the matrix */
     that.addGenome = function(id, name) {
         names[id] = {'name': name};
         order.push(id);
+        var length = matrix.length;
+        for (var x = 0; x < length; x ++) {
+            // add -1 to the end
+            matrix[x].push(-1);
+        }
+
+        var new_row = []
+        for (var x = 0; x < order.length; x ++) {
+            new_row.push(-1);
+        }
+        matrix.push(new_row);
+
         that.reDraw();
     }
 
@@ -204,6 +227,12 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         delete names[id];
         var index = order.indexOf(id);
         order.splice(index, 1);
+
+        matrix.splice(index, 1);
+        for (var x = 0; x < matrix.length; x ++) {
+            // add -1 to the end
+            matrix[x].splice(index, 1);
+        }
         that.reDraw();
     }
 

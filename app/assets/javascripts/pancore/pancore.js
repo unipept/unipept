@@ -207,7 +207,6 @@ var constructPancore = function constructPancore(args) {
      * @param <String> name The name of the genome we want to load
      */
     function loadData(bioproject_id, name) {
-        matrix.addGenome(bioproject_id, name);
         sendToWorker("loadData", {"bioproject_id" : bioproject_id, "name" : name});
     }
 
@@ -225,6 +224,7 @@ var constructPancore = function constructPancore(args) {
         table.setGenomeStatus(genome.bioproject_id, "Done", false);
 
         graph.addToDataQueue(genome);
+        matrix.addGenome(genome.bioproject_id, genome.name);
 
         setLoading(toLoad !== 0);
     }
