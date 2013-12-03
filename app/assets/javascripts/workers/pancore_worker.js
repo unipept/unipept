@@ -56,6 +56,7 @@ self.addEventListener('message', function (e) {
 /* Write a small class to contain all the variables for the matrix */
 var matrixBackend = function matrixBackend(data) {
     var matrix = [],
+        indicesToCalculate = [],
         order  = [];
 
     /* this is a reference to the data, read-only! */
@@ -82,6 +83,7 @@ var matrixBackend = function matrixBackend(data) {
             new_row.push(-1);
         }
         matrix.push(new_row);
+        indicesToCalculate.push(length);
     }
 
     that.removeGenome = function (genome_id) {
@@ -93,21 +95,39 @@ var matrixBackend = function matrixBackend(data) {
             // add -1 to the end
             matrix[x].splice(index, 1);
         }
+
+        /* shift indices to the left when we remove genomes, and remove index if necessary */
+        var toRemove = -1;
+        for (var x = 0; x < indicesToCalculate.length; x ++) {
+            var val = indicesToCalculate[x];
+            if (val == index) {
+                // we need to remove this
+                toRemove = x;
+            } else if (val > index) {
+                indicesToCalculate[x] -= 1;
+            }
+        }
+        if (toRemove != -1) {
+            indicesToCalculate.splice(toRemove,1);
+        }
     }
 
     that.calculateSimilarity = function () {
-        for (var x = 0; x < order.length; x++) {
+        for (var x = 0; x < indicesToCalculate.length; x++) {
             var new_row = [],
-                compare_list = data[order[x]].peptide_list;
+                index = indicesToCalculate[x],
+                compare_list = data[order[index]].peptide_list;
 
             for (y = 0 ; y < order.length; y ++) {
                 var peptide_list = data[order[y]].peptide_list;
-                new_row[y] = genomeSimilarity(compare_list, peptide_list);
+                var sim = genomeSimilarity(compare_list, peptide_list);
+                matrix[index][y] = sim;
+                matrix[y][index] = sim;
             }
-            matrix[x] = new_row;
         }
         needsRecalculating = false;
         that.sendToHost();
+        indicesToCalculate = [];
     }
 
     that.reOrder = function (new_order) {
@@ -139,6 +159,18 @@ var matrixBackend = function matrixBackend(data) {
             new_order.splice(index, 0, result_order[i]['y']);
         }
         that.reOrder(new_order);
+
+        var tree = [first.x, first.y, first.value];
+        var treeOrder = [];
+
+        for (i = result_order.length - 1; i >= 0; i--) {
+            var next = result_order[i];
+            // find next.x recursively
+            findAndReplace(tree, next.x, next.y, next.value);
+        }
+        for (i = 0; i < new_order.length; i++) {
+            treeOrder[new_order[i]] = i;
+        }
     }
 
     function clusterMatrixRec(matrix, cluster, order) {

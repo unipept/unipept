@@ -7,15 +7,11 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         height = 500;
 
     /* variable to contain our d3 selectors */
-    var svg,
-        tooltip;
+    var svg;
 
     /* Scales */
     var x = d3.scale.ordinal().rangeBands([0, width], matrix_padding),
         z = d3.scale.linear().domain([0, 1]).clamp(true);
-
-    /* colors */
-    var genomeColor = "#d9d9d9"; // gray
 
     /* Constructor fields */
     var names = [],
@@ -27,7 +23,6 @@ var constructSimMatrix = function constructSimMatrix(worker) {
     var that = {};
 
     /*************** Private methods ***************/
-
 
     /* generate a row */
     function rowF(row) {
