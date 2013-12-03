@@ -53,12 +53,6 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         worker.addEventListener('message', function (e) {
             var data = e.data;
             switch (data.type) {
-            case 'rowUpdated':
-                rowUpdated(data.msg.row, data.msg.data);
-                break;
-            case 'rowRemoved':
-                rowRemoved(data.msg.row);
-                break;
             case 'newOrder':
                 that.reOrder(data.msg);
                 break;
