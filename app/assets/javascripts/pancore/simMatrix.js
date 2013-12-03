@@ -19,6 +19,7 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         treeOrder = [],
         matrix = [],
         clustered = false,
+        updated = false,
         newick,
         worker = worker;
 
@@ -84,6 +85,7 @@ var constructSimMatrix = function constructSimMatrix(worker) {
     /* receive the new matrix from the worker */
     function receiveMatrix(m) {
         matrix = m;
+        updated = true;
         that.reDraw();
     }
 
@@ -126,13 +128,16 @@ var constructSimMatrix = function constructSimMatrix(worker) {
             .delay(function(d, i) { return x(i) * 4; })
             .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
         clustered = true;
+        updated = true;
     }
 
     that.reDraw = function () {
         // Check if we are currently active pane
-        if (! that.activeTab() ) {
+        if (! that.activeTab() || ! updated ) {
             return;
         }
+
+        updated = false;
 
         /* TODO: instead of appending, this needs more selectAll I think */
         if (! svg) {
@@ -238,6 +243,7 @@ var constructSimMatrix = function constructSimMatrix(worker) {
 
 
         clustered = false;
+        updated = true;
         if( that.activeTab() ) {
             that.clusterMatrix();
         }
@@ -257,6 +263,7 @@ var constructSimMatrix = function constructSimMatrix(worker) {
             matrix[x].splice(index, 1);
         }
         clustered = false;
+        updated = true;
         that.reDraw();
     }
 
