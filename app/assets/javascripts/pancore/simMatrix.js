@@ -245,7 +245,7 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         clustered = false;
         updated = true;
         if( that.activeTab() ) {
-            that.clusterMatrix();
+            that.calculateSimilarity();
         }
 
         that.reDraw();
