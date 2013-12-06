@@ -23,7 +23,8 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         newick,
         worker = worker;
 
-    var tabSelector = $('a[href="#sim_matrix_wrapper"]');
+    var tabSelector = $('a[href="#sim_matrix_wrapper"]'),
+        clusterBtn;
 
     var that = {};
 
@@ -115,14 +116,12 @@ var constructSimMatrix = function constructSimMatrix(worker) {
     function init() {
         setupWorker();
         tabSelector.on('shown.bs.tab', function () {
+            that.calculateSimilarity();
             that.reDraw();
         });
-        $("#sim_matrix_buttons").prepend("<button id='calculate-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Calculate Similarity Matrix</button>");
-        $("#calculate-matrix-btn").click(function () {
-            that.calculateSimilarity();
-        });
         $("#sim_matrix_buttons").prepend("<button id='cluster-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Cluster Similarity Matrix</button>");
-        $("#cluster-matrix-btn").click(function () {
+        clusterBtn = $("#cluster-matrix-btn");
+        clusterBtn.click(function () {
             that.clusterMatrix();
         });
     }
@@ -145,7 +144,7 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         t.selectAll(".column")
             .delay(function(d, i) { return x(i) * 4; })
             .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
-        clustered = true;
+        that.setClustered(true);
         updated = true;
     }
 
@@ -218,6 +217,11 @@ var constructSimMatrix = function constructSimMatrix(worker) {
 
     }
 
+    that.setClustered = function (c) {
+        clustered = c;
+        clusterBtn.attr('disabled', clustered);
+    }
+
     that.drawTree = function (n) {
         newick = n;
         var parsed = Newick.parse(n);
@@ -227,7 +231,9 @@ var constructSimMatrix = function constructSimMatrix(worker) {
 
     /* calculate similarity */
     that.calculateSimilarity = function () {
-        sendToWorker('calculateSimilarity');
+        if (updated) {
+            sendToWorker('calculateSimilarity');
+        }
     }
 
     that.clusterMatrix = function () {
@@ -251,7 +257,7 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         matrix.push(new_row);
 
 
-        clustered = false;
+        that.setClustered(false);
         updated = true;
         if( that.activeTab() ) {
             that.calculateSimilarity();
@@ -271,7 +277,7 @@ var constructSimMatrix = function constructSimMatrix(worker) {
             // add -1 to the end
             matrix[x].splice(index, 1);
         }
-        clustered = false;
+        that.setClustered(false);
         updated = true;
         that.reDraw();
     }
