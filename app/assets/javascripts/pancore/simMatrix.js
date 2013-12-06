@@ -38,14 +38,14 @@ var constructSimMatrix = function constructSimMatrix(worker) {
             .attr("width", x.rangeBand())
             .attr("height", x.rangeBand())
             .style("fill-opacity", function(d) { return z(d * d); })
-            .style("fill", function(d) { return (d != -1) ? "steelblue" : "red" })
+            .style("fill", function(d) { return (d != -1) ? "steelblue" : "white" })
           .enter().append("rect")
             .attr("class", "cell")
             .attr("x", function(d, i) { return x(i); })
             .attr("width", x.rangeBand())
             .attr("height", x.rangeBand())
             .style("fill-opacity", function(d) { return z(d * d); })
-            .style("fill", function(d) { return (d != -1) ? "steelblue" : "red" });
+            .style("fill", function(d) { return (d != -1) ? "steelblue" : "white" });
     }
 
     /* add popover to all cells */
