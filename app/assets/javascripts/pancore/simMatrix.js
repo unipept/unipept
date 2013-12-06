@@ -53,7 +53,8 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         d3.select(this).selectAll(".cell")
             .each(function(d, i) {
                 $(this).popover('destroy');
-                $(this).popover({title: names[order[i]].name + " vs " + names[order[j]].name, content: d, trigger: 'hover', placement: 'top', container: 'body'});
+                content = d >= 0 ? d3.format(".2%")(d) + " peptidome similarity" : "Not calculated";
+                $(this).popover({title: names[order[i]].name + " vs " + names[order[j]].name, content: content, trigger: 'hover', placement: 'top', container: 'body'});
             });
     }
     /* TODO: can this be abstracted? */
