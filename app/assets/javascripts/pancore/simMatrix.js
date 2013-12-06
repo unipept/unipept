@@ -52,9 +52,26 @@ var constructSimMatrix = function constructSimMatrix(worker) {
     function popOverF(row, j) {
         d3.select(this).selectAll(".cell")
             .each(function(d, i) {
+                var content = d >= 0 ? d3.format(".2%")(d) + " peptidome similarity" : "Not calculated";
+                var clicked = false;
                 $(this).popover('destroy');
-                content = d >= 0 ? d3.format(".2%")(d) + " peptidome similarity" : "Not calculated";
-                $(this).popover({title: names[order[i]].name + "<br />" + names[order[j]].name, content: content, trigger: 'hover', placement: 'top', container: 'body', html: true});
+                $(this).popover({title: names[order[i]].name + "<br />" + names[order[j]].name, content: content, trigger: 'manual', placement: 'top', container: 'body', html: true});
+                $(this).hover(function() {
+                    if(!clicked) {
+                        $(this).popover('show');
+                    }
+                }, function () {
+                    if(!clicked) {
+                        $(this).popover('hide');
+                    }
+                });
+
+                $(this).click(function() {
+                    if(clicked) {
+                        $(this).popover('hide');
+                    }
+                    clicked = !clicked;
+                });
             });
     }
     /* TODO: can this be abstracted? */
