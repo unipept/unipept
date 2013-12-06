@@ -554,24 +554,26 @@ function genomeSimilarity(peptide_list1, peptide_list2) {
     return intersection(peptide_list1, peptide_list2).length / union(peptide_list1, peptide_list2).length;
 }
 
-function addDistance(array) {
-    var distance = array.splice(-1,1);
-    for(var i = 0; i < array.length ; i ++) {
-        var val = array[i];
-        if (val instanceof Array) {
-            addDistance(val);
+function arrayToNewick(array, prevD) {
+    // default to zero
+    if(typeof(prevD) === 'undefined') prevD = 0;
+
+    var string = "(";
+    var distance = array[array.length - 1];
+
+    for (var i = 0; i < array.length - 1; i++) {
+        if(array[i] instanceof Array) {
+            string += arrayToNewick(array[i], distance);
         } else {
-            array[i] = "" + array[i] + ":" + distance;
+            string += array[i] + ":" + (1 - distance);
+        }
+        if (i != array.length - 2) {
+            string += ", ";
         }
     }
-    array.push(distance[0]);
-}
-function arrayToNewick(array) {
-    /* TODO: someday i will write this in a good way */
-    addDistance(array);
-    var string = JSON.stringify(array).replace(/\[/g, '(').replace(/\]/g, ')').replace(/\"/g, '');
-    string = string.replace(/,([.0-9]*)\)/g, '):$1');
-    return string + ';';
+    string += "):" + (distance - prevD);
+    if(typeof(prevD) === 'undefined') string += ';';
+    return string;
 }
 
 function findAndReplace(tree, x, y, val) {
@@ -586,7 +588,7 @@ function findAndReplace(tree, x, y, val) {
             }
         }
     } else {
-        tree[index] = [x, y, val - tree[tree.length - 1]];
+        tree[index] = [x, y, val];
     }
 }
 
