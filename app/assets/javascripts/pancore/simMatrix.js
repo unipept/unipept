@@ -220,6 +220,11 @@ var constructSimMatrix = function constructSimMatrix(worker) {
     that.setClustered = function (c) {
         clustered = c;
         clusterBtn.attr('disabled', clustered);
+        if(!c) {
+            $('#sim_graph').fadeTo('normal', 0.2);
+        } else {
+            $('#sim_graph').fadeTo('fast', 1);
+        }
     }
 
     that.drawTree = function (n) {
