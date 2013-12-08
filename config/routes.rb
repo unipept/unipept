@@ -13,44 +13,44 @@ UnipeptWeb::Application.routes.draw do
   # match 'datasets/pride/:id' => 'datasets#pride'
   resources :datasets do
     collection do
-      match 'database/:id' => 'datasets#preload', :defaults => { :type => 'database' }
-      match 'pride/:id' => 'datasets#preload', :defaults => { :type => 'pride' }
+      get 'database/:id' => 'datasets#preload', :defaults => { :type => 'database' }
+      get 'pride/:id' => 'datasets#preload', :defaults => { :type => 'pride' }
     end
   end
 
   # search
-  match '/search/sequence', :to => 'sequences#search', :as => 'sequence_search'
-  match '/search/sequences', :to => 'sequences#multi_search', :as => 'sequence_multi_search'
+  get '/search/sequence', :to => 'sequences#search', :as => 'sequence_search'
+  post '/search/sequences', :to => 'sequences#multi_search', :as => 'sequence_multi_search'
 
-  match '/sequences/:id/:equate_il', :to => 'sequences#show'
-  match '/search/single', :to => 'search#single'
+  get '/sequences/:id/:equate_il', :to => 'sequences#show'
+  get '/search/single', :to => 'search#single'
 
   # pancore
-  match '/pancore/sequences/:bioproject_id.:format', :to => 'pancorepeptidome#get_sequence_ids_for_bioproject', :constraints => { :bioproject_id => /[0-z\._]+/ }
-  match '/pancore/genomes/species/:species_id.:format', :to => 'pancorepeptidome#get_genomes'
-  match '/pancore/unique_sequences', :to => 'pancorepeptidome#get_unique_sequences'
-  match '/pancore/full_sequences', :to => 'pancorepeptidome#get_sequences'
-  match '/pancore', :to => 'pancorepeptidome#analyze'
-  match '/peptidefinder', :to => 'pancorepeptidome#analyze', :as => 'pancore_analyze'
+  get '/pancore/sequences/:bioproject_id.:format', :to => 'pancorepeptidome#get_sequence_ids_for_bioproject', :constraints => { :bioproject_id => /[0-z\._]+/ }
+  get '/pancore/genomes/species/:species_id.:format', :to => 'pancorepeptidome#get_genomes'
+  post '/pancore/unique_sequences', :to => 'pancorepeptidome#get_unique_sequences'
+  get '/pancore/full_sequences', :to => 'pancorepeptidome#get_sequences'
+  get '/pancore', :to => 'pancorepeptidome#analyze'
+  get '/peptidefinder', :to => 'pancorepeptidome#analyze', :as => 'pancore_analyze'
 
   # simple pages
-  match '/contact', :to => 'pages#contact'
-  match '/about',   :to => 'pages#about'
-  match '/admin',   :to => 'pages#admin'
+  get '/contact', :to => 'pages#contact'
+  get '/about',   :to => 'pages#about'
+  get '/admin',   :to => 'pages#admin'
 
   # generate png from svg
-  match "/convert", :to => "imagemagick#convert"
+  post "/convert", :to => "imagemagick#convert"
 
   # downloads a file
-  match "/download", :to => "download#download"
+  post "/download", :to => "download#download"
 
   # load pride dataset from webservice
-  match '/pride/:id', :to => 'pride#load'
+  get '/pride/:id', :to => 'pride#load'
 
   # verbosity is needed to add namespace to controller
   get "cas/auth", :to => "cas#auth"
   get "cas/logout", :to => "cas#logout"
-  match "cas/verify", :to => "cas#verify"
+  get "cas/verify", :to => "cas#verify"
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
