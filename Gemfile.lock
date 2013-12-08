@@ -91,12 +91,9 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.25)
-    mini_portile (0.5.2)
     multi_json (1.8.2)
     multi_xml (0.5.3)
-    multi_xml (0.5.5)
-    mysql2 (0.3.11)
-    mysql2 (0.3.13)
+    mysql2 (0.3.14)
     net-scp (1.1.2)
       net-ssh (>= 2.6.5)
     net-sftp (2.1.2)
@@ -105,10 +102,7 @@ GEM
     net-ssh-gateway (1.2.0)
       net-ssh (>= 2.6.5)
     nokogiri (1.5.6)
-    nokogiri (1.6.0)
-      mini_portile (~> 0.5.0)
     oj (2.0.1)
-    oj (2.1.7)
     polyglot (0.3.3)
     rack (1.4.5)
     rack-cache (1.2)
@@ -193,7 +187,7 @@ DEPENDENCIES
   jquery-rails (~> 2.3.0)
   jquery-ui-rails (= 4.0.2)
   less-rails
-  mysql2
+  mysql2 (= 0.3.14)
   oj
   rails (= 3.2.13)
   rake
