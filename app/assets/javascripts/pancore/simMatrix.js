@@ -131,6 +131,7 @@ var constructSimMatrix = function constructSimMatrix(worker) {
     /* reOrder the matrix based on the new order */
     that.reOrder = function (newOrder) {
         treeOrder = newOrder;
+        console.log(treeOrder);
         x.domain(newOrder);
         var t = svg.transition().duration(2500);
 

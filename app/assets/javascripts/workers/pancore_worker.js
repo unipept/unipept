@@ -67,6 +67,21 @@ var matrixBackend = function matrixBackend(data) {
 
     var that = {};
 
+    function flattenAndRemoveDistance (array) {
+        var result = [];
+        for ( var i = 0; i < array.length - 1; i ++) {
+            if (array[i] instanceof Array) {
+                var recurse = flattenAndRemoveDistance(array[i]);
+                for( var j = 0; j < recurse.length; j ++ ) {
+                    result.push(recurse[j]);
+                }
+            } else {
+                result.push(array[i]);
+            }
+        }
+        return result;
+    }
+
 
     that.addGenome = function (genome_id) {
         needsRecalculating = true;
@@ -152,13 +167,7 @@ var matrixBackend = function matrixBackend(data) {
 
         var result_order = result['order'];
         var first = result_order.splice(-1,1)[0];
-        var new_order = [first.x,first.y];
 
-        for (i = result_order.length - 1; i >= 0; i--) {
-            var index = new_order.indexOf(result_order[i]['x']);
-            new_order.splice(index, 0, result_order[i]['y']);
-        }
-        that.reOrder(new_order);
 
         var tree = [first.x, first.y, first.value];
         var treeOrder = [];
@@ -168,9 +177,7 @@ var matrixBackend = function matrixBackend(data) {
             // find next.x recursively
             findAndReplace(tree, next.x, next.y, next.value);
         }
-        for (i = 0; i < new_order.length; i++) {
-            treeOrder[new_order[i]] = i;
-        }
+        that.reOrder(flattenAndRemoveDistance(tree));
 
         sendToHost('newick', arrayToNewick(tree));
     }

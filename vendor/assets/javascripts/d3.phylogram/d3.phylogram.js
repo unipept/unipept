@@ -189,7 +189,6 @@ if (!d3) { throw "d3 wasn't included!"};
     var tree = options.tree || d3.layout.cluster()
       .size([h, w])
       .separation(function (a, b) { return 1; })
-      .sort(function(a, b) { return order[leafName(a)] - order[leafName(b)]; })
       .children(options.children || function(node) {
         return node.branchset
       });
