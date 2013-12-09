@@ -102,7 +102,14 @@ var constructSimMatrix = function constructSimMatrix(w) {
 
     /* receive the new matrix from the worker */
     function receiveMatrix(m) {
-        matrix = m;
+        if (m.index === 'all') {
+            matrix = m.data;
+        } else {
+            matrix[m.index] = m.data;
+            for(var i = 0; i < order.length; i ++) {
+                matrix[i][m.index] = m.data[i];
+            }
+        }
         updated = true;
         that.reDraw();
     }

@@ -128,6 +128,12 @@ var matrixBackend = function matrixBackend(data) {
     }
 
     that.calculateSimilarity = function () {
+        // Be a bit clever with sending data
+        var sendAfter = false;
+        if(indicesToCalculate.length > 3) {
+            sendAfter = true;
+        }
+
         for (var x = 0; x < indicesToCalculate.length; x++) {
             var new_row = [],
                 index = indicesToCalculate[x],
@@ -139,9 +145,16 @@ var matrixBackend = function matrixBackend(data) {
                 matrix[index][y] = sim;
                 matrix[y][index] = sim;
             }
+            if (!sendAfter) {
+                that.sendRow(index, matrix[index]);
+            }
         }
+
+        if (sendAfter) {
+            that.sendMatrix(matrix);
+        }
+
         needsRecalculating = false;
-        that.sendToHost();
         indicesToCalculate = [];
     }
 
@@ -149,8 +162,12 @@ var matrixBackend = function matrixBackend(data) {
         sendToHost('newOrder', new_order);
     }
 
-    that.sendToHost = function () {
-        sendToHost('matrixData', matrix);
+    that.sendMatrix = function (m) {
+        sendToHost('matrixData', {'index':'all', 'data': m});
+    }
+
+    that.sendRow = function (index, row) {
+        sendToHost('matrixData', {'index':index, 'data': row});
     }
 
     that.clusterMatrix = function () {
