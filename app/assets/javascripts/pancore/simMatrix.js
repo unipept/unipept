@@ -1,7 +1,7 @@
 var constructSimMatrix = function constructSimMatrix(worker) {
     /*************** Private variables ***************/
     /* UI variables */
-    var margin = {top: 10, right: 200, bottom: 10, left: 0},
+    var margin = {top: 20, right: 0, bottom: 10, left: 200},
         matrix_padding = 0.03,
         width = 500,
         height = 500;
@@ -194,10 +194,10 @@ var constructSimMatrix = function constructSimMatrix(worker) {
             .attr("stroke", "#ffffff");
 
         row_enter.append("text")
-            .attr("x", width + 6)
+            .attr("x", -6)
             .attr("y", x.rangeBand() / 2)
             .attr("dy", ".32em")
-            .attr("text-anchor", "start")
+            .attr("text-anchor", "end")
             .text(function(d, i) { return names[order[i]].name; });
 
         var column = svg.selectAll(".column")
@@ -231,7 +231,7 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         newick = n;
         var parsed = Newick.parse(n);
         $("#sim_graph").html("");
-        d3.phylogram.build('#sim_graph', parsed, {width: 100, height: 500}, treeOrder);
+        d3.phylogram.build('#sim_graph', parsed, {width: 120, height: 500, skipLabels: true}, treeOrder);
     }
 
     /* calculate similarity */
