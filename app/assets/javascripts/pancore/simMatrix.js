@@ -1,4 +1,4 @@
-var constructSimMatrix = function constructSimMatrix(worker) {
+var constructSimMatrix = function constructSimMatrix(w) {
     /*************** Private variables ***************/
     /* UI variables */
     var margin = {top: 20, right: 0, bottom: 10, left: 200},
@@ -21,7 +21,7 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         clustered = false,
         updated = false,
         newick,
-        worker = worker;
+        worker = w;
 
     var tabSelector = $('a[href="#sim_matrix_wrapper"]'),
         clusterBtn;
@@ -33,7 +33,6 @@ var constructSimMatrix = function constructSimMatrix(worker) {
     /* generate a row */
     function rowF(row) {
         var cell = d3.select(this).selectAll(".cell")
-            //.data(row.filter(function(d) { return d.z; }))
             .data(row)
             .attr("x", function(d, i) { return x(i); })
             .attr("width", x.rangeBand())
