@@ -148,16 +148,18 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         updated = true;
     }
 
-    that.reDraw = function () {
+    that.reDraw = function (removed) {
         // Check if we are currently active pane
         if (! that.activeTab() || ! updated ) {
             return;
         }
 
         updated = false;
+        if (removed) {
+            $("#sim_matrix").html('');
+        }
 
-        /* TODO: instead of appending, this needs more selectAll I think */
-        if (! svg) {
+        if (! svg || removed) {
             svg = d3.select("#sim_matrix").append("svg")
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
@@ -284,7 +286,7 @@ var constructSimMatrix = function constructSimMatrix(worker) {
         }
         that.setClustered(false);
         updated = true;
-        that.reDraw();
+        that.reDraw(true);
     }
 
     that.activeTab = function () {
