@@ -185,8 +185,8 @@ var constructPancore = function constructPancore(args) {
         case 'processDownloadedSequences':
             processDownloadedSequences(data.msg.sequences, data.msg.type);
             break;
-        case 'sim_graph':
-            drawTree(data.msg.data, data.msg.order);
+        case 'newOrder':
+            table.warnOrderMatrixChanged(data.msg);
             break;
         default:
             console.log(data.msg);

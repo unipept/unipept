@@ -211,6 +211,20 @@ var constructGenomeTable = function constructGenomeTable(args) {
         that.update();
     };
 
+    that.warnOrderMatrixChanged = function warnOrderMatrixChanged(order) {
+        $('#reorder-header').removeClass('hidden');
+        $('#reorder-header > td > a').click(function() {
+            var previousOrder = that.getOrder();
+            var newOrder = [];
+            for (var i = 0; i < order.length; i ++) {
+                newOrder.push(previousOrder[order[i]]);
+            }
+
+            that.setOrder(newOrder);
+            $('#reorder-header').addClass('hidden');
+        });
+    }
+
     /**
      * Returns the order of the genomes in the table as an array of
      * bioproject id's
