@@ -125,11 +125,14 @@ var constructSimMatrix = function constructSimMatrix(w) {
             that.calculateSimilarity();
             that.reDraw();
         });
-        $("#sim_matrix_buttons").prepend("<button id='cluster-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Cluster Similarity Matrix</button>");
         clusterBtn = $("#cluster-matrix-btn");
         clusterBtn.click(function () {
             that.clusterMatrix();
         });
+
+        // dummy newick value chosen randomly
+        var dummyNewick = "((((A:0.2,B:0.2):0.1,C:0.3):0.4,(F:0.4,,D:0.4):0.3):0.3,E:1.0)";
+        that.drawTree(dummyNewick);
     }
 
     /*************** Public methods ***************/
@@ -238,11 +241,12 @@ var constructSimMatrix = function constructSimMatrix(w) {
 
     that.setClustered = function (c) {
         clustered = c;
-        clusterBtn.attr('disabled', clustered);
         if(!c) {
             $('#sim_graph').fadeTo('normal', 0.2);
+            clusterBtn.show();
         } else {
             $('#sim_graph').fadeTo('fast', 1);
+            clusterBtn.hide();
         }
     }
 
