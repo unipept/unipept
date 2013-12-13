@@ -52,10 +52,17 @@ var constructSimMatrix = function constructSimMatrix(w) {
     function popOverF(row, j) {
         d3.select(this).selectAll(".cell")
             .each(function(d, i) {
+                var first = names[order[i]];
+                var second = names[order[j]];
                 var content = d >= 0 ? d3.format(".2%")(d) + " peptidome similarity" : "Not calculated";
+                if (d >= 0) {
+                    content += "<div><table class='table table-condensed'><tr><th></th><th>Core Peptides</th><th>Pan Peptides</th></tr>";
+                    content += "<tr><td>" + first.name + "</td><td>" + first.core + "</td><td>" + first.pan + "</td></tr>";
+                    content += "<tr><td>" + second.name + "</td><td>" + second.core + "</td><td>" + second.pan + "</td></tr></table></div>";
+                }
                 var clicked = false;
                 $(this).popover('destroy');
-                $(this).popover({title: names[order[i]].name + "<br />" + names[order[j]].name, content: content, trigger: 'manual', placement: 'top', container: 'body', html: true});
+                $(this).popover({title: first.name + "<br />" + second.name, content: content, trigger: 'manual', placement: 'top', container: 'body', html: true});
                 $(this).hover(function() {
                     if(!clicked) {
                         $(this).popover('show');
@@ -269,8 +276,8 @@ var constructSimMatrix = function constructSimMatrix(w) {
     }
 
     /* add data to the matrix */
-    that.addGenome = function(id, name) {
-        names[id] = {'name': name};
+    that.addGenome = function(id, name, core, pan) {
+        names[id] = {'name': name, 'core': core, 'pan': pan};
         order.push(id);
         var length = matrix.length;
         for (var x = 0; x < length; x ++) {
