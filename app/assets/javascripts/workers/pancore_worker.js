@@ -493,6 +493,7 @@ function clearAllData() {
     cores = [];
     unicores = [];
     rank++;
+    matrix = matrixBackend(data);
 }
 
 // Sends a list sequences to the client

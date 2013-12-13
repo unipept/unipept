@@ -226,6 +226,16 @@ var constructSimMatrix = function constructSimMatrix(w) {
 
     }
 
+    that.clearAllData = function() {
+        that.setClustered(false);
+        matrix = [];
+        order = [];
+        names = [];
+        treeOrder = [];
+        newick = "";
+        that.reDraw(true);
+    }
+
     that.setClustered = function (c) {
         clustered = c;
         clusterBtn.attr('disabled', clustered);

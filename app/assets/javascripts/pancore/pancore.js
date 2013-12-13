@@ -331,6 +331,7 @@ var constructPancore = function constructPancore(args) {
         setLoading(false);
         table.clearAllData();
         graph.clearAllData();
+        matrix.clearAllData();
     };
 
     /**
