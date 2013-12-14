@@ -149,7 +149,7 @@ var constructSimMatrix = function constructSimMatrix(w) {
         treeOrder = newOrder;
         console.log(treeOrder);
         x.domain(newOrder);
-        var t = svg.transition().duration(2500);
+        var t = svg.transition().duration(1000);
 
         t.selectAll(".row")
             .delay(function(d, i) { return x(i) * 4; })
