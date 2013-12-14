@@ -261,7 +261,7 @@ var constructSimMatrix = function constructSimMatrix(w) {
         newick = n;
         var parsed = Newick.parse(n);
         $("#sim_graph").html("");
-        d3.phylogram.build('#sim_graph', parsed, {width: 120, height: 500, skipLabels: true}, treeOrder);
+        d3.phylogram.build('#sim_graph', parsed, {width: 180, height: 500, skipLabels: true}, treeOrder);
     }
 
     /* calculate similarity */

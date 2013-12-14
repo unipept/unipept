@@ -194,7 +194,7 @@ if (!d3) { throw "d3 wasn't included!"};
       });
     var diagonal = options.diagonal || d3.phylogram.rightAngleDiagonal();
     var vis = options.vis || d3.select(selector).append("svg:svg")
-        .attr("width", w + 80/*+ 300*/)
+        .attr("width", w + 30/*+ 300*/)
         .attr("height", h + 30)
       .append("svg:g")
         .attr("transform", "translate(20, 20)");
