@@ -238,7 +238,7 @@ if (!d3) { throw "d3 wasn't included!"};
         .attr("d", diagonal)
         .attr("fill", "none")
         .attr("stroke", "#aaa")
-        .attr("stroke-width", "4px");
+        .attr("stroke-width", "2px");
 
     var node = vis.selectAll("g.node")
         .data(nodes)
