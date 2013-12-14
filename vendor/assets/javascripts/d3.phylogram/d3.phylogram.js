@@ -132,16 +132,16 @@ if (!d3) { throw "d3 wasn't included!"};
   d3.phylogram.styleTreeNodes = function(vis) {
     vis.selectAll('g.leaf.node')
       .append("svg:circle")
-        .attr("r", 4.5)
-        .attr('stroke',  'yellowGreen')
-        .attr('fill', 'greenYellow')
+        .attr("r", 4)
+        .attr('stroke',  '#ccc')
+        .attr('fill', '#ccc')
         .attr('stroke-width', '2px');
 
     vis.selectAll('g.root.node')
       .append('svg:circle')
-        .attr("r", 4.5)
+        .attr("r", 4)
         .attr('fill', 'steelblue')
-        .attr('stroke', '#369')
+        .attr('stroke', 'steelblue')
         .attr('stroke-width', '2px');
   }
 
@@ -227,7 +227,7 @@ if (!d3) { throw "d3 wasn't included!"};
           .attr("dy", -3)
           .attr("text-anchor", "middle")
           .attr('font-size', '8px')
-          .attr('fill', '#ccc')
+          .attr('fill', '#ddd')
           .text(function(d) { return Math.round(d*100) / 100; });
     }
 
@@ -237,7 +237,7 @@ if (!d3) { throw "d3 wasn't included!"};
         .attr("class", "link")
         .attr("d", diagonal)
         .attr("fill", "none")
-        .attr("stroke", "#aaa")
+        .attr("stroke", "#ccc")
         .attr("stroke-width", "2px");
 
     var node = vis.selectAll("g.node")
