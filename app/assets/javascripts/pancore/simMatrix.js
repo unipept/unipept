@@ -317,12 +317,6 @@ var constructSimMatrix = function constructSimMatrix(w) {
         }
         matrix.push(new_row);
 
-        // update domain
-        var domain = x.domain();
-        domain.push(order.length -1);
-        x.domain(domain);
-        console.log(x.domain());
-
         that.setClustered(false);
         updated = true;
         if( that.activeTab() ) {
@@ -334,7 +328,6 @@ var constructSimMatrix = function constructSimMatrix(w) {
 
     /* remove data from the matrix */
     that.removeGenome = function(id) {
-        var newDomain = [];
         delete names[id];
         var index = order.indexOf(id);
         order.splice(index, 1);
@@ -344,23 +337,6 @@ var constructSimMatrix = function constructSimMatrix(w) {
             // add -1 to the end
             matrix[i].splice(index, 1);
         }
-
-        var domain = x.domain();
-
-        for (var i = 0; i < order.length + 1; i++) {
-            if( i != index) {
-                var val = domain[i];
-                if(val > domain[index]) {
-                    val -= 1;
-                }
-                newDomain.push(val);
-            }
-
-        }
-
-        // update domain
-        x.domain(newDomain);
-        console.log(x.domain());
 
         that.setClustered(false);
         updated = true;

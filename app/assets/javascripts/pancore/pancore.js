@@ -225,6 +225,7 @@ var constructPancore = function constructPancore(args) {
 
         graph.addToDataQueue(genome);
         matrix.addGenome(genome.bioproject_id, genome.name, genome.core, genome.pan);
+        matrix.updateOrder(table.getOrder());
 
         setLoading(toLoad !== 0);
     }
@@ -314,6 +315,7 @@ var constructPancore = function constructPancore(args) {
     that.removeGenome = function removeGenome(genome) {
         var removeData = table.removeGenome(genome.bioproject_id);
         matrix.removeGenome(genome.bioproject_id);
+        matrix.updateOrder(table.getOrder());
 
         sendToWorker("removeData", removeData);
     };
