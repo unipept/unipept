@@ -55,10 +55,11 @@ var constructSimMatrix = function constructSimMatrix(w) {
                 var first = names[order[i]];
                 var second = names[order[j]];
                 var content = d >= 0 ? d3.format(".2%")(d) + " peptidome similarity" : "Not calculated";
+                var table = "";
                 if (d >= 0) {
-                    content += "<div><table class='table table-condensed'><tr><th></th><th>Core Peptides</th><th>Pan Peptides</th></tr>";
-                    content += "<tr><td>" + first.name + "</td><td>" + first.core + "</td><td>" + first.pan + "</td></tr>";
-                    content += "<tr><td>" + second.name + "</td><td>" + second.core + "</td><td>" + second.pan + "</td></tr></table></div>";
+                    table += "<table class='table'><thead><tr><th></th><th>Core Peptides</th><th>Pan Peptides</th></tr></thead>";
+                    table += "<tr><td>" + first.name + "</td><td>" + first.core + "</td><td>" + first.pan + "</td></tr>";
+                    table += "<tr><td>" + second.name + "</td><td>" + second.core + "</td><td>" + second.pan + "</td></tr></table>";
                 }
                 var clicked = false;
                 $(this).popover('destroy');
@@ -67,6 +68,7 @@ var constructSimMatrix = function constructSimMatrix(w) {
                     if(!clicked) {
                         $(this).popover('show');
                     }
+                    $('#matrix-popover-table').html(table);
                 }, function () {
                     if(!clicked) {
                         $(this).popover('hide');
@@ -135,6 +137,10 @@ var constructSimMatrix = function constructSimMatrix(w) {
         clusterBtn = $("#cluster-matrix-btn");
         clusterBtn.click(function () {
             that.clusterMatrix();
+        });
+
+        $('#sim_matrix').mouseout(function() {
+            $('#matrix-popover-table').html('');
         });
 
         // dummy newick value chosen randomly
