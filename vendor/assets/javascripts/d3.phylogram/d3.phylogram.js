@@ -164,7 +164,7 @@ if (!d3) { throw "d3 wasn't included!"};
     })
     var rootDists = nodes.map(function(n) { return n.rootDist; });
     var yscale = d3.scale.linear()
-      .domain([0, d3.max(rootDists)])
+      .domain([d3.min(rootDists) - 0.1, d3.max(rootDists)])
       .range([0, w]);
     visitPreOrder(nodes[0], function(node) {
       node.y = yscale(node.rootDist)
