@@ -1,7 +1,7 @@
 var constructSimMatrix = function constructSimMatrix(w) {
     /*************** Private variables ***************/
     /* UI variables */
-    var margin = {top: 20, right: 0, bottom: 10, left: 200},
+    var margin = {top: 200, right: 0, bottom: 10, left: 200},
         matrix_padding = 0.03,
         width = 500,
         height = 500;
@@ -224,9 +224,18 @@ var constructSimMatrix = function constructSimMatrix(w) {
             .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; })
             .attr("y", x.rangeBand() / 2);
 
+        column.selectAll("text").attr('y', x.rangeBand() / 2);
+
         column_enter = column.enter().append("g")
             .attr("class", "column")
             .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
+
+        column_enter.append("text")
+            .attr("x", 6)
+            .attr("y", x.rangeBand() / 2)
+            .attr("dy", ".32em")
+            .attr("text-anchor", "start")
+            .text(function(d, i) { return names[order[i]].name; });
 
         column_enter.append("line")
             .attr("x1", -width)
