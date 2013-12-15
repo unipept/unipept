@@ -143,6 +143,8 @@ var constructSimMatrix = function constructSimMatrix(w) {
             $('#matrix-popover-table').html('');
         });
 
+        x.domain([]);
+
         // dummy newick value chosen randomly
         var dummyNewick = "((((A:0.2,B:0.2):0.1,C:0.3):0.4,(F:0.4,,D:0.4):0.3):0.3,E:1.0)";
         that.drawTree(dummyNewick);
@@ -153,7 +155,6 @@ var constructSimMatrix = function constructSimMatrix(w) {
     /* reOrder the matrix based on the new order */
     that.reOrder = function (newOrder) {
         treeOrder = newOrder;
-        console.log(treeOrder);
         x.domain(newOrder);
         var t = svg.transition().duration(1000);
 
@@ -171,9 +172,21 @@ var constructSimMatrix = function constructSimMatrix(w) {
         updated = true;
     }
 
+    that.updateOrder = function(orderData) {
+        var newDomain = [];
+        for( var i = 0; i < order.length; i++ ) {
+            newDomain.push(order.indexOf(orderData[i]));
+        }
+        x.domain(newDomain);
+
+        that.setClustered(false);
+        updated = true;
+        that.reDraw();
+    }
+
     that.reDraw = function (removed) {
         // Check if we are currently active pane
-        if (! that.activeTab() || ! updated ) {
+        if (!that.activeTab() || !updated ) {
             return;
         }
 
@@ -194,11 +207,7 @@ var constructSimMatrix = function constructSimMatrix(w) {
                 .attr("width", width)
                 .attr("height", height)
                 .attr("fill", "#eeeeee");
-        }
 
-        if (!clustered) {
-            // The default sort order.
-            x.domain(d3.range(order.length));
         }
 
         var row = svg.selectAll(".row")
@@ -252,12 +261,14 @@ var constructSimMatrix = function constructSimMatrix(w) {
     }
 
     that.clearAllData = function() {
+        updated = true;
         that.setClustered(false);
         matrix = [];
         order = [];
         names = [];
         treeOrder = [];
         newick = "";
+        x.domain([]);
         that.reDraw(true);
     }
 
@@ -295,17 +306,22 @@ var constructSimMatrix = function constructSimMatrix(w) {
         names[id] = {'name': name, 'core': core, 'pan': pan};
         order.push(id);
         var length = matrix.length;
-        for (var x = 0; x < length; x ++) {
+        for (var i = 0; i < length; i ++) {
             // add -1 to the end
-            matrix[x].push(-1);
+            matrix[i].push(-1);
         }
 
         var new_row = []
-        for (var x = 0; x < order.length; x ++) {
+        for (var i = 0; i < order.length; i ++) {
             new_row.push(-1);
         }
         matrix.push(new_row);
 
+        // update domain
+        var domain = x.domain();
+        domain.push(order.length -1);
+        x.domain(domain);
+        console.log(x.domain());
 
         that.setClustered(false);
         updated = true;
@@ -318,15 +334,34 @@ var constructSimMatrix = function constructSimMatrix(w) {
 
     /* remove data from the matrix */
     that.removeGenome = function(id) {
+        var newDomain = [];
         delete names[id];
         var index = order.indexOf(id);
         order.splice(index, 1);
 
         matrix.splice(index, 1);
-        for (var x = 0; x < matrix.length; x ++) {
+        for (var i = 0; i < matrix.length; i ++) {
             // add -1 to the end
-            matrix[x].splice(index, 1);
+            matrix[i].splice(index, 1);
         }
+
+        var domain = x.domain();
+
+        for (var i = 0; i < order.length + 1; i++) {
+            if( i != index) {
+                var val = domain[i];
+                if(val > domain[index]) {
+                    val -= 1;
+                }
+                newDomain.push(val);
+            }
+
+        }
+
+        // update domain
+        x.domain(newDomain);
+        console.log(x.domain());
+
         that.setClustered(false);
         updated = true;
         that.reDraw(true);

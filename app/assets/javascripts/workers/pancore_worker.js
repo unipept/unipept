@@ -455,7 +455,7 @@ function autoSort(type) {
         newOrder.push(sortableArray[i].bioproject_id);
     }
     start = newOrder[0] === order[0] ? 1 : 0;
-    recalculatePanCore(newOrder, start, newOrder.length - 1);
+    sendToHost('autoSorted', {order: newOrder, start: start, end: order.length -1 });
 }
 
 // Retrieves the unique sequences

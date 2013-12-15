@@ -185,8 +185,8 @@ var constructPancore = function constructPancore(args) {
         case 'processDownloadedSequences':
             processDownloadedSequences(data.msg.sequences, data.msg.type);
             break;
-        case 'newOrder':
-            table.warnOrderMatrixChanged(data.msg);
+        case 'autoSorted':
+            that.updateOrder(data.msg);
             break;
         default:
             console.log(data.msg);
@@ -344,6 +344,7 @@ var constructPancore = function constructPancore(args) {
     that.updateOrder = function updateOrder(orderData) {
         sendToWorker("recalculatePanCore", orderData);
         table.setOrder(orderData.order);
+        matrix.updateOrder(orderData.order);
     };
 
     /**
