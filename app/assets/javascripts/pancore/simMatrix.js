@@ -1,4 +1,4 @@
-var constructSimMatrix = function constructSimMatrix(w) {
+var constructSimMatrix = function constructSimMatrix(w, table) {
     /*************** Private variables ***************/
     /* UI variables */
     var margin = {top: 200, right: 0, bottom: 10, left: 200},
@@ -16,6 +16,7 @@ var constructSimMatrix = function constructSimMatrix(w) {
     /* Constructor fields */
     var names = [],
         order = [],
+        oldDomain = [],
         treeOrder = [],
         matrix = [],
         clustered = false,
@@ -145,8 +146,25 @@ var constructSimMatrix = function constructSimMatrix(w) {
 
         x.domain([]);
 
+        $('#decluster-matrix').click(function () {
+            x.domain(oldDomain);
+            updated = true;
+            that.setClustered(false);
+            that.reDraw();
+        });
+
+        $('#use-cluster-order').click(function () {
+            var clusterOrder = [];
+            var domain = x.domain();
+            for (var i = 0; i < order.length; i ++) {
+                clusterOrder.push(order[domain[i]]);
+            }
+            sendToWorker("recalculatePanCore", {'order': clusterOrder, start: 0, end: clusterOrder.length - 1});
+            table.setOrder(clusterOrder);
+            $('#reorder-header').addClass('hidden');
+        });
         // dummy newick value chosen randomly
-        var dummyNewick = "((((A:0.2,B:0.2):0.1,C:0.3):0.4,(F:0.4,,D:0.4):0.3):0.3,E:1.0)";
+        var dummyNewick = "((((A:0.2,B:0.2):0.1,C:0.3):0.4,(F:0.4,D:0.4):0.3):0.3,E:1.0)";
         that.drawTree(dummyNewick);
     }
 
@@ -155,6 +173,7 @@ var constructSimMatrix = function constructSimMatrix(w) {
     /* reOrder the matrix based on the new order */
     that.reOrder = function (newOrder) {
         treeOrder = newOrder;
+        oldDomain = x.domain().slice(0);
         x.domain(newOrder);
         var t = svg.transition().duration(1000);
 
@@ -277,9 +296,11 @@ var constructSimMatrix = function constructSimMatrix(w) {
         if(!c) {
             $('#sim_graph').fadeTo('normal', 0.2);
             clusterBtn.show();
+            $('#reorder-header').addClass('hidden');
         } else {
             $('#sim_graph').fadeTo('fast', 1);
             clusterBtn.hide();
+            $('#reorder-header').removeClass('hidden');
         }
     }
 

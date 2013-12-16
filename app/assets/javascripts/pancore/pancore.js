@@ -63,7 +63,7 @@ var constructPancore = function constructPancore(args) {
         worker.addEventListener('error', error, false);
 
         // Constructs the matrix
-        matrix = constructSimMatrix(worker);
+        matrix = constructSimMatrix(worker, table);
 
         // Initialize the rest of the page
         initSpeciesForm();
