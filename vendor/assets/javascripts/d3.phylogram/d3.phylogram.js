@@ -130,13 +130,6 @@ if (!d3) { throw "d3 wasn't included!"};
   }
 
   d3.phylogram.styleTreeNodes = function(vis) {
-    vis.selectAll('g.leaf.node')
-      .append("svg:circle")
-        .attr("r", 4)
-        .attr('stroke',  '#ccc')
-        .attr('fill', '#ccc')
-        .attr('stroke-width', '2px');
-
     vis.selectAll('g.root.node')
       .append('svg:circle')
         .attr("r", 4)
@@ -216,7 +209,7 @@ if (!d3) { throw "d3 wasn't included!"};
           .attr('y2', h)
           .attr('x1', yscale)
           .attr('x2', yscale)
-          .attr("stroke", "#ddd");
+          .attr("stroke", "#ccc");
 
       vis.selectAll("text.rule")
           .data(yscale.ticks(10))
@@ -237,7 +230,7 @@ if (!d3) { throw "d3 wasn't included!"};
         .attr("class", "link")
         .attr("d", diagonal)
         .attr("fill", "none")
-        .attr("stroke", "#ccc")
+        .attr("stroke", "#000")
         .attr("stroke-width", "2px");
 
     var node = vis.selectAll("g.node")
