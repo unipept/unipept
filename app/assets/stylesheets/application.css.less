@@ -558,6 +558,7 @@ span.dir {
 }
 .tab-content {
     overflow: hidden;
+    position: relative;
 }
 #species_id {
     width: 315px;
@@ -575,7 +576,6 @@ span.dir {
 }
 #sim_graph{
     float: left;
-    margin-top: 180px;
 }
 
 #cluster-div {
@@ -590,14 +590,18 @@ span.dir {
     position: absolute;
     top: 50%;
     left: 25%;
-    margin-top: 180px;
 }
-
 
 #matrix-popover-table {
     position: absolute;
     width: 400px;
-    padding: 20px;
+    top: 520px;
+}
+
+#matrix-popover-table table tbody tr td:first-child {
+    min-width: 200px;
+    max-width: 200px;
+    width: 200px;
 }
 
 /*** treeview ***/
