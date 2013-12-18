@@ -18,7 +18,7 @@ gawk '{print > $1".input";close($1);}' transpose_input.txt
 for f in *.input; do gsed -i "s/\t/\n/g" $f; gsed -i "1d" $f; done
 
 # Run this on the server
-for f in *.input; do ./backend/scripts/batchSearch.sh $f $f".output"; done
+for f in *.input; do ./backend/scripts/batchSearch.sh $f $f true false true".output"; done
 mkdir output
 mv *.output output
 tar -zcvf output.tar.gz output
