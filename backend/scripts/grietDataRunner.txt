@@ -9,14 +9,20 @@
 # with that column
 
 # First transpose in excel and paste in new document.
+# You can use Paste Special Transpose in Excel to do the transformation.
+# A fairly recent version of Excel is needed because of the low maximum
+# number of columns in older versions.
 # Split the input into separate files.
 # The filename is the name of the experiment.
-awk '{print > $1".input";close($1);}' transpose_input.txt
+gawk '{print > $1".input";close($1);}' transpose_input.txt
 for f in *.input; do gsed -i "s/\t/\n/g" $f; gsed -i "1d" $f; done
 
 # Run this on the server
-for f in *.input; do ./tools/scripts/batchSearch.sh $f $f".output"; done
-tar -zcvf output.tar.gz griet
+for f in *.input; do ./backend/scripts/batchSearch.sh $f $f".output"; done
+mkdir output
+mv *.output output
+tar -zcvf output.tar.gz output
+mv output.tar.gz public
 
 # Run this on the client
 # Count the number of occurences per taxon
@@ -38,6 +44,7 @@ sed "s/.input.output.grouped.merged//g" files.txt > output.txt ; cat merge.txt >
 
 
 # cumulative
+cp output.txt test.txt
 head -1 test.txt > header.txt
 gsed -i "1d" test.txt
 # manually remove any name with [ or ] in it
