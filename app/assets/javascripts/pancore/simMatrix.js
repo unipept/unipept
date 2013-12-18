@@ -186,7 +186,7 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
 
         t.selectAll(".column")
             .delay(function(d, i) { return x(i) * 2; })
-            .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
+            .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(90)"; });
         that.setClustered(true);
         updated = true;
     }
