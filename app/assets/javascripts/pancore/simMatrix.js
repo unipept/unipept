@@ -368,6 +368,24 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
         return tabSelector.parent().hasClass("active");
     }
 
+    that.getDataAsCsv = function () {
+        var csvString = ",",
+            tempArray = [];
+
+        for(var i = 0; i < order.length; i ++) {
+            tempArray.push('"' + names[order[i]].name + '"');
+        }
+        csvString += tempArray.join(',') + "\n";
+
+        for(var i = 0; i < order.length; i ++) {
+            tempArray = [];
+            tempArray.push('"' + names[order[i]].name + '"');
+            tempArray.push.apply(tempArray, matrix[i]);
+            csvString += tempArray.join(',') + "\n";
+        }
+
+        return csvString;
+    }
     // initialize the object
     init();
 

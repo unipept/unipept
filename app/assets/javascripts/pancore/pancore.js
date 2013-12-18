@@ -136,8 +136,13 @@ var constructPancore = function constructPancore(args) {
         });
         $("#buttons-pancore").prepend("<button id='save-data' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save data</button>");
         $("#save-data").click(function clickSaveData() {
-            _gaq.push(['_trackEvent', 'Pancore', 'Save Data']);
-            that.exportCsvData();
+            if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
+                _gaq.push(['_trackEvent', 'Pancore', 'Save Data', 'graph']);
+                that.exportCsvData(graph, 'unique_peptides.csv');
+            } else {
+                _gaq.push(['_trackEvent', 'Pancore', 'Save Data', 'sim matrix']);
+                that.exportCsvData(matrix, 'similarity_graph.csv');
+            }
         });
     }
 
@@ -353,8 +358,8 @@ var constructPancore = function constructPancore(args) {
      * Invokes a file download containing all data currently shown
      * in the graph (i.e. each datapoint) in csv format.
      */
-    that.exportCsvData = function exportCsvData() {
-        downloadDataByForm(graph.getDataAsCsv(), "unique_peptides.csv");
+    that.exportCsvData = function exportCsvData(object, filename) {
+        downloadDataByForm(object.getDataAsCsv(), filename);
     };
 
     /**
