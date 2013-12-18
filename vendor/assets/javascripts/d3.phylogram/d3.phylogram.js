@@ -215,11 +215,12 @@ if (!d3) { throw "d3 wasn't included!"};
           .data(yscale.ticks(10))
         .enter().append("svg:text")
           .attr("class", "rule")
-          .attr("x", yscale)
-          .attr("y", 0)
-          .attr("dy", -3)
-          .attr("text-anchor", "middle")
+          .attr("x", 2)
+          .attr("y", yscale)
+          .attr("dy", 2)
+          .attr("text-anchor", "start")
           .attr('font-size', '8px')
+          .attr('transform', 'rotate(-90)')
           .attr('fill', '#ddd')
           .text(function(d) { return Math.round(d*100) / 100; });
     }
@@ -230,7 +231,7 @@ if (!d3) { throw "d3 wasn't included!"};
         .attr("class", "link")
         .attr("d", diagonal)
         .attr("fill", "none")
-        .attr("stroke", "#000")
+        .attr("stroke", "#333")
         .attr("stroke-width", "2px");
 
     var node = vis.selectAll("g.node")
