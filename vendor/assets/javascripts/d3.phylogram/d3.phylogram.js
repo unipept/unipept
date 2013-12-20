@@ -157,7 +157,7 @@ if (!d3) { throw "d3 wasn't included!"};
     })
     var rootDists = nodes.map(function(n) { return n.rootDist; });
     var yscale = d3.scale.linear()
-      .domain([d3.min(rootDists) - 0.1, d3.max(rootDists)])
+      .domain([d3.min(rootDists), d3.max(rootDists)])
       .range([0, w]);
     visitPreOrder(nodes[0], function(node) {
       node.y = yscale(node.rootDist)
@@ -203,7 +203,7 @@ if (!d3) { throw "d3 wasn't included!"};
 
     if (!options.skipTicks) {
       vis.selectAll('line')
-          .data(yscale.ticks(10))
+          .data(yscale.ticks(5))
         .enter().append('svg:line')
           .attr('y1', 0)
           .attr('y2', h)
@@ -212,7 +212,7 @@ if (!d3) { throw "d3 wasn't included!"};
           .attr("stroke", "#ccc");
 
       vis.selectAll("text.rule")
-          .data(yscale.ticks(10))
+          .data(yscale.ticks(5))
         .enter().append("svg:text")
           .attr("class", "rule")
           .attr("x", 2)
