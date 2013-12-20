@@ -915,7 +915,10 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .on("mouseover", invokeTooltipAndHighlight)
             .on("mouseout", abolishTooltipAndHighlight)
             .on("mousemove", moveTooltip)
-            .on("click", invokePopover)
+            .on("click", function checkClickEvent(d) {
+                if (d3.event.defaultPrevented) return;
+                invokePopover(d);
+            })
             .call(d3.behavior.drag()
                 .on("dragstart", dragStart)
                 .on("drag", drag)
