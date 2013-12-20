@@ -13,7 +13,7 @@ unzip taxdmp.zip
 
 cd "${currentdir}"
 
-java -cp "tools/java:tools/java/bin:tools/java/bin/:tools/java/lib/mysql.jar" -Xmx512m tools/commandline/TaxonLoader "${datadir}/nodes.dmp" "${datadir}/names.dmp"
+java -cp "backend/java:backend/java/bin:backend/java/bin/:backend/java/lib/mysql.jar" -Xmx512m backend/commandline/TaxonLoader "${datadir}/nodes.dmp" "${datadir}/names.dmp"
 
 # this creates the lineages. if you plan to invalidate some taxa, comment this
-#java -cp ".:bin:bin/:lib/mysql.jar" -Xmx512m tools/commandline/PeptideLoader load
+#java -cp ".:bin:bin/:lib/mysql.jar" -Xmx512m backend/commandline/PeptideLoader load
