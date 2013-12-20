@@ -1,9 +1,15 @@
 <h1>About Unipept</h1>
-<p>The Unipept web application supports biodiversity analysis of large and complex metaproteome samples. Its underlying index structure is designed to quickly retrieve all occurrences of a tryptic peptide in UniProtKB records. Taxon-specificity of the tryptic peptide is successively derived from these occurrences using a novel lowest common ancestor approach that is robust against taxonomic misarrangements, misidentifications and inaccuracies. Not taking into account this identification noise would otherwise result in drastic loss of information. This application consists of two basic functionalities: a peptide-based taxonomic identification and a multi-peptide dynamic diversity treemap analysis.</p>
+<div class="row">
+    <div class="col-xs-8">
+        <p>The Unipept web application supports biodiversity analysis of large and complex metaproteome samples. Its underlying index structure is designed to quickly retrieve all occurrences of a tryptic peptide in UniProtKB records. Taxon-specificity of the tryptic peptide is successively derived from these occurrences using a novel lowest common ancestor approach that is robust against taxonomic misarrangements, misidentifications and inaccuracies. Not taking into account this identification noise would otherwise result in drastic loss of information. This application consists of two basic functionalities: a peptide-based taxonomic identification and a multi-peptide dynamic diversity treemap analysis.</p>
+        <p>More information about unipept can be found in <a href="http://dx.doi.org/10.1021/pr300576s">Unipept: tryptic peptide-based biodiversity analysis of metaproteome samples</a></p>
 
-<p>More information about unipept can be found in <a href="http://dx.doi.org/10.1021/pr300576s">Unipept: tryptic peptide-based biodiversity analysis of metaproteome samples</a></p>
-
-<div class="well">If you use Unipept for your research, please cite Mesuere et al. (2012) J. Proteome Res. <a href="http://dx.doi.org/10.1021/pr300576s" target="_blank">doi:10.1021/pr300576s</a></div>
+        <div class="well">If you use Unipept for your research, please cite: <br> Mesuere et al. (2012) J. Proteome Res. <a href="http://dx.doi.org/10.1021/pr300576s" target="_blank">doi:10.1021/pr300576s</a></div>
+    </div>
+    <div class="col-xs-4">
+        <object data="<%= asset_path('home_feature_multi.svg') %>" type="image/svg+xml"></object>
+    </div>
+</div>
 
 <h2>Technology</h2>
 <p>Unipept makes use of several Open Source projects:</p>
@@ -12,4 +18,12 @@
     <li><a href="http://twitter.github.com/bootstrap/">Twitter bootstrap</a>: front-end framework</li>
     <li><a href="http://d3js.org/">D3.js</a>: JavaScript library for manipulating documents based on data</li>
     <li><a href="http://philogb.github.com/jit/">JavaScript InfoVis Toolkit</a>: toolkit for creating interactive data visualizations for the Web</li>
+</ul>
+
+<h2>Citations</h2>
+<p>People citing Unipept:</p>
+<ul>
+    <li>Seifert, Jana, et al. "Bioinformatic progress and applications in metaproteogenomics for bridging the gap between genomic sequences and metabolic functions in microbial communities." Proteomics (2013). <a href="http://dx.doi.org/10.1002/pmic.201200566" target="_blank">doi:10.1002/pmic.201200566</a></li>
+    <li>Kolmeder, Carolin A., and Willem M. de Vos. "Metaproteomics of Our Microbiome–Developing Insight in Function and Activity in Man and Model Systems." Journal of proteomics (2013). <a href="http://dx.doi.org/10.1016/j.jprot.2013.05.018" target="_blank">doi:10.1016/j.jprot.2013.05.018</a></li>
+    <li>Tanca, Alessandro, et al. "Evaluating the Impact of Different Sequence Databases on Metaproteome Analysis: Insights from a Lab-Assembled Microbial Mixture." PLOS ONE 8.12 (2013): e82981. <a href="http://dx.doi.org/10.1371/journal.pone.0082981" target="_blank">doi:10.1371/journal.pone.0082981</a></li>
 </ul>
