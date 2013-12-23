@@ -1,0 +1,669 @@
+@import "vendor.less";
+
+// Your custom LESS stylesheets goes here
+//
+// Since bootstrap was imported above you have access to its mixins which
+// you may use and inherit here
+//
+// If you'd like to override bootstrap's own variables, you can do so here as well
+// See http://getbootstrap.com/customize/#less-variables for their names and documentation
+//
+// Example:
+// @linkColor: #ff0000;
+
+@hairlinegray: #dddddd;
+
+// Overrides
+@font-size-base: 13px;
+@baseLineHeight: 18px;
+@line-height-base: 1.3846153846;
+@icon-font-path: "/assets/bootstrap/";
+
+// Disable responsiveness
+.container {
+    max-width: none !important;
+    width: 940px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+html, body {
+    background-color: @gray-lighter;
+    height: 100%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+}
+h1 {
+    font-size: 24px;
+    line-height: @baseLineHeight * 1.5;
+}
+h2 {
+    font-size: 24px;
+    line-height: 36px;
+}
+.content h2 {
+    border-bottom: 1px solid @hairlinegray;
+    margin-bottom: 5px;
+    font-size: 18px;
+    line-height: @baseLineHeight * 1.5;
+    font-weight: normal;
+    color: #0870A1;
+    small {
+        font-size: 14px;
+    }
+}
+h3 {
+    font-size: 16px;
+    line-height: 27px;
+    small {
+        font-size: 12px;
+    }
+}
+h4 {
+    font-size: 14px;
+}
+
+.container {
+    background-color: #ffffff;
+    .box-shadow(~"1px 0 10px gray, -1px 0 10px gray");
+}
+.container.main {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+}
+.container.footer-wrap {
+    margin-top: -64px;
+    .box-shadow(0 0);
+}
+.content {
+    padding: 15px 12px 12px 12px;
+}
+/* top bar */
+#topbar {
+    .clearfix();
+    padding: 5px;
+}
+#user {
+    float: right;
+}
+#subbar ul,
+#utility ul,
+#user ul {
+    list-style: none outside none;
+}
+#utility ul li,
+#user ul li {
+    float:left;
+    padding: 0 5px;
+}
+#utility ul li.separator,
+#user ul li.separator {
+    border-right: 1px solid @gray-light;
+}
+
+/* header */
+#header {
+    background: asset-url("sprieten.png") no-repeat 0 0;
+    background-size: 940px 32px;
+    height: 32px;
+    .clearfix();
+}
+#headerleft h1 {
+    position: relative;
+    top: -10px;
+    left: 53px;
+    float: left;
+}
+#headerleft h2 {
+    float: left;
+    margin-left: 125px;
+    margin-top: -3px;
+    padding: 0;
+    height: 15px;
+}
+#headerleft h2 a {
+    text-decoration: none;
+    color: white;
+}
+#headerright {
+    float: right;
+    overflow: hidden;
+}
+#utility {
+    margin-top: -2px;
+}
+#subbar {
+    background: #E9E9E9;
+    margin-left: 200px;
+    margin-top: -8.5px;
+    height: 24px;
+    -webkit-border-bottom-left-radius: 3px;
+    -moz-border-bottom-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+#subbar ul {
+    padding-left: 25px;
+}
+#subbar ul li {
+    float:left;
+    margin-right: 1.7em;
+    padding: 3px;
+    font-weight: bold;
+}
+
+/* footer */
+#footerpush {
+    height: 64px;
+}
+footer {
+    background: #104b7d;
+    padding-left: 6px;
+    height: 64px;
+}
+footer .copyright a,
+footer .copyright .byline_author {
+    color: #ffffff;
+}
+footer p.copyright {
+    padding-top: 13px;
+}
+footer p {
+    color: #6086a7;
+    padding-left: 13px;
+    margin-bottom: 3px;
+}
+#version {
+    padding:0;
+    margin:0;
+    line-height:0;
+    float: right;
+    padding-right: 5px;
+    color: #6086A7;
+}
+
+/*** GP SYLES ***/
+.split {
+    overflow: hidden;
+}
+.split-left,
+.split-right {
+    width: 448px;
+    float: left;
+    padding-bottom: 100%;
+    margin-bottom: -100%;
+}
+.split-left {
+    padding-right: 9px;
+    border-right: 1px solid @hairlinegray;
+}
+.split-left.no-border {
+    border: 0;
+}
+.split-right {
+    padding-left: 9px;
+}
+
+.visualClear {
+    display: block;
+    clear: both;
+}
+#save-as-modal img {
+    width: 100%;
+}
+#save-as-modal .modal-footer {
+    margin-top: 0px;
+}
+#save-as-modal .buttons button {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+/*** highlight an element ***/
+.flash {
+  animation: flash 2s ease-out;
+  animation-iteration-count: 1;
+
+  -webkit-animation: flash 2s ease-out;
+  -webkit-animation-iteration-count: 1;
+}
+@keyframes flash {
+    0% {background-color:#FFFF9C;}
+    100% {background-color:none;}
+}
+@-webkit-keyframes flash {
+    0% {background-color:#FFFF9C;}
+    100% {background-color:none;}
+}
+
+/*** news on homepage ***/
+#news {
+    padding: 5px 12px 2px;
+    margin: 0 0 2.0em;
+    border: 1px solid @hairlinegray;
+    border-radius: 3px;
+}
+#news div {
+    margin-left: 10px;
+}
+dl.changelog dt {
+    width: 70px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+dl.changelog dd {
+    margin-left: 85px;
+    margin-top: 1px;
+}
+.features .thumbnail:hover {
+    border-color: @link-color;
+    cursor: pointer;
+}
+.features a:hover {
+    text-decoration: none;
+}
+.features object {
+    margin-bottom: -3px;
+}
+.features div.title {
+    color: white;
+    padding-top: 20px;
+    position: relative;
+    top: -55px;
+    margin-bottom: -55px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    #gradient.vertical(rgba(0, 0, 0, 0.0001), rgba(0, 0, 0, 0.6), 0, 50%);
+}
+.features .click-catcher {
+    width: 275px;
+    height: 275px;
+    position: relative;
+    top: -275px;
+    margin-bottom: -275px;
+}
+/*** forms on homepage ***/
+input#q {
+    width: 340px;
+    text-transform: uppercase;
+}
+div#search_button {
+    margin-top: 5px;
+    clear: both;
+    text-align: center;
+}
+textarea#qs {
+    text-transform: uppercase;
+}
+div#more_options_form {
+    padding-top: 5px;
+}
+select.dataset {
+    width: 330px !important;
+}
+input#pride_exp_id {
+    width: 280px;
+}
+/*** single peptide page ***/
+/* single peptide page */
+#buttons-single {
+    float: right;
+    margin-top: -20px;
+}
+#buttons-single button {
+    margin-left: 5px;
+}
+#lineageTree {
+    height: 500px;
+    width: 100%;
+    background-color: white;
+}
+#lineageTree .node {
+    width: 100px !important;
+    padding-top: 0px !important;
+}
+#sequence_table {
+    overflow: auto;
+    max-height: 500px;
+}
+.c0 {background: #f9f0ab;}
+.c1 {background: #e8e596;}
+.c2 {background: #f0e2a3;}
+.c3 {background: #ede487;}
+.c4 {background: #efd580;}
+.c5 {background: #f1cb82;}
+.c6 {background: #f1c298;}
+.c7 {background: #e8b598;}
+.c8 {background: #d5dda1;}
+.c9 {background: #c9d2b5;}
+.c10 {background: #aec1ad;}
+.c11 {background: #a7b8a8;}
+.c12 {background: #b49a3d;}
+.c13 {background: #b28647;}
+.c14 {background: #a97d32;}
+.c15 {background: #b68334;}
+.c16 {background: #d6a680;}
+.c17 {background: #dfad70;}
+.c18 {background: #a2765d;}
+.c19 {background: #9f6652;}
+.c20 {background: #b9763f;}
+.c21 {background: #bf6e5d;}
+.c22 {background: #af643c;}
+.c23 {background: #9b4c3f;}
+.c24 {background: #72659d;}
+.c25 {background: #8a6e9e;}
+.c26 {background: #8f5c85;}
+.c27 {background: #934b8b;}
+.c28 {background: #9d4e87;}
+.c29 {background: #92538c;}
+#sequence_table td {
+    font-size:10px;
+    line-height:1.1em;
+}
+#sequence_table th {
+    font-size:10px;
+    color: #369;
+    font-weight: bold;
+}
+.jit-autoadjust-label {
+    left: -100px;
+}
+
+/*** multi search result page ***/
+/* multi peptide page */
+#buttons {
+    float: right;
+    margin-top: 10px;
+}
+#buttons button {
+    margin-left: 5px;
+}
+#sunburst {
+    width: 100%;
+    background-color: white;
+}
+#sunburst svg {
+    margin: 0 auto;
+    display: block;
+}
+.tab-content.multi-search {
+    overflow: visible;
+}
+h2.ghead {
+    margin-bottom: 8px;
+    margin-top: 3px;
+    font-weight: bold;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: 13px Helvetica,arial,freesans,clean,sans-serif;
+    line-height: 1.4;
+    color: #333;
+}
+h2.ghead::after {
+    content: ".";
+    height: 0;
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+span.dir {
+    font-size: 12px;
+    font-weight: normal;
+    color: #555;
+    line-height: 100%;
+    float: right;
+}
+#treeMap {
+    background-color: #DCDFE4;
+    width: 100%;
+    height: 600px;
+}
+#treeMap .node {
+    color: #fff;
+    font-size: 9px;
+    overflow: hidden;
+    cursor: pointer;
+    text-align: center;
+    font-family: "Lucida Grande", Verdana;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+#multisearch_list ul {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 10px;
+}
+.tip {
+    background-color: #ffffff;
+    padding: 2px;
+    border: 1px solid @hairlinegray;
+    border-radius: 3px;
+}
+.tip-title {
+    text-align:center;
+}
+/* tree */
+#tree_data {
+    width: 450px;
+    float: right;
+    padding: 5px;
+    background: @gray-lighter;
+    border: 1px solid #cccccc;
+    border-radius: 3px;
+    .transition(all 1s ease-in-out);
+}
+#tree_data::before {
+    content: "";
+    display: block;
+    height: 0;
+    width: 0;
+    margin-left: -15px;
+    border: 10px solid #cccccc;
+    border-width: 10px 10px 10px 0;
+    border-color: transparent #cccccc transparent transparent;
+    position: absolute;
+}
+#tree_data h3 {
+    margin: 3px 0 5px 0;
+}
+#tree_data h4 {
+    margin: 8px 5px 0px 5px;
+}
+#tree_data h3 a {
+    color: #666 !important;
+}
+#tree ul {
+    padding-left: 0px;
+}
+#tree_search_group {
+    width: 440px;
+}
+#outline-mismatch-tabs {
+    margin-top: 10px;
+    margin-bottom: 8px;
+}
+/*** pancore page ***/
+#buttons-pancore {
+    float: right;
+}
+#buttons-pancore button {
+    margin-left: 5px;
+}
+#pancore_graph {
+    background-color: white;
+}
+#genomes_table .handle {
+    width: 30px;
+}
+#genomes_table .name {
+    width: 275px;
+}
+#genomes_table .status {
+    width: 75px;
+}
+#genomes_table .action {
+    width: 30px;
+}
+#genomes_table {
+    margin: 5px;
+    width: auto;
+}
+#genomes_table tr.ui-sortable-helper {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+#genomes-table-div {
+    .transition(margin-top 0.5s ease-in-out);
+}
+#genomes_table tfoot {
+    display: none;
+}
+#genomes_table tfoot th {
+    text-align: center;
+}
+#genomes_table.acceptDrop tfoot {
+    display: table-row-group;
+}
+#genomes_table.acceptDrop {
+    background-color: #eeeeee;
+    border: 5px dashed #cccccc;
+    border-collapse: separate;
+    margin: 0px;
+}
+#genomes_table.willDrop {
+    background-color: #dff0d8;
+    cursor: copy;
+}
+#autosort .dropdown-menu {
+    margin-top: 0px;
+}
+#genomes_table tbody tr:not(.ui-sortable-helper) {
+    cursor: url(/openhand.cur) 7 5, pointer;
+}
+#pancore_graph .bar {
+    cursor: url(/openhand.cur) 7 5, pointer;
+}
+#pancore_graph #trash {
+    cursor: url(/closedhand.cur) 7 5, pointer;
+}
+#download-peptides .dropdown-menu {
+    margin-top: 0px;
+}
+#download-peptides {
+    margin-top: 5px;
+}
+#download-peptides #download-peptides-toggle {
+    margin-bottom: 2px;
+}
+.legend {
+    cursor: pointer;
+}
+.tab-content {
+    overflow: hidden;
+}
+#species_id {
+    width: 315px;
+}
+#add_species_peptidome {
+    width: 119px;
+}
+#pancore_graph div.tip {
+    .translate3d(0, 0, 0);
+}
+
+/*** sim matrix ***/
+#sim_matrix_buttons {
+    margin-top: 5px;
+}
+#sim_matrix{
+    float: right;
+}
+#sim_graph{
+    margin-top: 180px;
+    float: left
+}
+/*** treeview ***/
+.treeView {
+    -moz-user-select: none;
+    position: relative;
+    margin-top: 5px;
+    float: left;
+}
+.treeView.pancore {
+    width: 438px;
+    min-height: 10px;
+}
+.treeView ul {
+    margin:-5px 0 0 -1.5em;
+    padding:0 0 0 1.5em;
+}
+.treeView ul ul {
+    background:url('list-item-contents.png') repeat-y left;
+}
+.treeView li:last-child > ul {
+    background-image:none;
+}
+.treeView li {
+    margin:0;
+    padding:0;
+    padding-top: 5px;
+    background:asset-url('list-item-root.png') no-repeat top left;
+    list-style-position:inside;
+    list-style-image:asset-url('button.png');
+    cursor: auto;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.treeView li.collapsibleListOpen {
+    list-style-image:asset-url('button-open.png');
+    cursor:pointer;
+}
+.treeView li.collapsibleListClosed {
+    list-style-image:asset-url('button-closed.png');
+    cursor:pointer;
+}
+.treeView li.collapsibleListClosed ul {
+    display: none;
+}
+.treeView li li {
+    background-image:asset-url('list-item.png');
+    padding-left:1.5em;
+}
+.treeView li:last-child {
+    background-image:asset-url('list-item-last.png');
+}
+.treeView li.root {
+    background-image:none;
+    list-style-type: none;
+    list-style-image: none;
+}
+.treeView li.unmatch {
+    display: none;
+}
+.treeView li.leaf {
+    background-image:asset-url('list-item-leaf.png');
+    list-style-type: none;
+    list-style-image: none;
+}
+.treeView li.leaf:last-child {
+    background-image:asset-url('list-item-last-leaf.png');
+}
+.treeView span.clicked {
+    background: @gray-lighter !important;
+    border: 1px solid #cccccc !important;
+    border-radius: 3px;
+}
+.treeView.pancore li span {
+    cursor: url(/openhand.cur) 7 5, pointer !important;
+}
+.treeView li.leaf span {
+    cursor: pointer;
+}
+#treeSearchDiv {
+    margin-bottom: 5px;
+}
+tbody.dragging tr {
+    cursor: url(/closedhand.cur) 7 5, pointer !important;
+    background-color: rgba(255, 255, 255, 0.8);
+}

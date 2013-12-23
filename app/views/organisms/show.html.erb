@@ -1,14 +1,14 @@
 <h1><%= @organism.name %></h1>
 <% if @aantal == 0 %>
-	<span>No genomes were found for this organism.</span>
+    <span>No genomes were found for this organism.</span>
 <% else %>
-	<span>
-		<%= pluralize(@aantal, "gene was", "genes were") %>
-		 found for this organism.
-	</span>
-	<ul class="uniprot_entries">
-		<% @uniprot_entries.each do |uniprot_entry| %>
-			<li><%= uniprot_entry.uniprot_accession_number %></li>
-		<% end %>
-	</ul>
+    <span>
+        <%= pluralize(@aantal, "gene was", "genes were") %>
+         found for this organism.
+    </span>
+    <ul class="uniprot_entries">
+        <% @uniprot_entries.each do |uniprot_entry| %>
+            <li><%= uniprot_entry.uniprot_accession_number %></li>
+        <% end %>
+    </ul>
 <% end %>

@@ -1,73 +1,65 @@
 <h1>Welcome</h1>
 
-<div class="split">
-  <div class="split-left no-border">
-    <p class="intro">
-      The Unipept web application supports biodiversity analysis of large and complex metaproteome samples. Its underlying index structure is designed to quickly retrieve all occurrences of a tryptic peptide in UniProtKB records. Taxon-specificity of the tryptic peptide is successively derived from these occurrences using a novel lowest common ancestor approach that is robust against taxonomic misarrangements, misidentifications and inaccuracies. Not taking into account this identification noise would otherwise result in drastic loss of information. This application consists of two basic functionalities: a peptide-based taxonomic identification and a multi-peptide dynamic diversity treemap analysis.
-    </p>
-  </div>
-  <% unless @post.nil? %>
-  <div class="split-right">
-    <div id="news">
-      <h2>News</h2>
-      <div>
-        <%= render @post, :well => false %>
-        <p class="pull-right"><%= link_to '> more news', posts_path %></p>
-      </div>
-      <div class="visualClear"></div>
+<div class="row">
+    <div class="col-xs-6">
+        <p class="intro">
+            The Unipept web application supports biodiversity analysis of large and complex metaproteome samples. Its underlying index structure is designed to quickly retrieve all occurrences of a tryptic peptide in UniProtKB records. Taxon-specificity of the tryptic peptide is successively derived from these occurrences using a novel lowest common ancestor approach that is robust against taxonomic misarrangements, misidentifications and inaccuracies. Not taking into account this identification noise would otherwise result in drastic loss of information. This application consists of two basic functionalities: a peptide-based taxonomic identification and a multi-peptide dynamic diversity treemap analysis.
+        </p>
     </div>
-  </div>
-  <% end %>
-  <div class="visualClear"></div>
+    <% unless @post.nil? %>
+    <div class="col-xs-6">
+        <div id="news">
+            <h2>News</h2>
+            <div>
+                <%= render @post, :well => false %>
+                <p class="pull-right"><%= link_to '> more news', posts_path %></p>
+            </div>
+            <div class="visualClear"></div>
+        </div>
+    </div>
+    <% end %>
 </div>
 
-
-<h2>Unique peptide finder</h2>
-<div class="split">
-  <div class="split-left">
-    <p>
-        <span class="label label-success">New</span> The unique peptide finder lets you find unique peptides for a species of your choice, based on the data of the completed refseq genomes. These peptides can be downloaded and used for targeted proteomics experiments.
-    </p>
-  </div>
-
-  <div class="split-right">
-    <p class="text-center">
-        <br>
-        <%= link_to("Open the unique peptide finder", pancore_analyze_path, class: "btn btn-primary btn-large") %>
-    </p>
-  </div>
-  <div class="visualClear"></div>
+<div class="row features">
+    <div class="col-xs-4">
+        <a href="<%= search_single_path %>">
+            <div class="thumbnail">
+                <img src="<%= asset_path('home_feature_single.png') %>" alt="Single Peptide Analysis" width="275" height="275">
+                <div class="caption title">
+                    <h3>Single Peptide Analysis</h3>
+                </div>
+                <div class="caption">
+                    <p>With single peptide analysis, you can submit a single tryptic peptide that can be 5 to 50 residues long. The application will respond with a list of all UniProtKB records wherein the peptide was found along with a complete taxonomic lineage derived from the NCBI taxonomy. These lineages are presented as a comprehensible table and using an interactive tree view.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-xs-4">
+        <a href="<%= datasets_path %>">
+            <div class="thumbnail">
+                <object data="<%= asset_path('home_feature_multi.svg') %>" type="image/svg+xml"></object>
+                <div class="click-catcher"></div>
+                <div class="caption title">
+                    <h3>Multi-peptide Analysis</h3>
+                </div>
+                <div class="caption">
+                    <p>Multi-peptide analysis helps you analyze lists of tryptic peptides, e.g. extracted from an environmental sample using shotgun tandem mass spectrometric methods. Of these peptides, the lowest common ancestors (LCA) will be calculated. These LCAs will be bundled and displayed in an interactive treemap giving you insight into the biodiversity of your sample.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-xs-4">
+        <a href="<%= pancore_analyze_path %>">
+            <div class="thumbnail">
+                <object data="<%= asset_path('home_feature_pancore.svg') %>" type="image/svg+xml"></object>
+                <div class="click-catcher"></div>
+                <div class="caption title">
+                    <h3>Unique Peptide Finder</h3>
+                </div>
+                <div class="caption">
+                    <p><span class="label label-success">New</span> The unique peptide finder is an interactive web application that lets you find unique tryptic peptides for a species or genus of your choice. The userfriendly application is powered by Uniprot and the completed refseq genomes and lets you download lists of unique peptides, which can be used for targeted proteomics experiments.</p>
+                </div>
+            </div>
+        </a>
+    </div>
 </div>
-
-
-<h2>Single peptide analysis</h2>
-<div class="split">
-  <div class="split-left">
-    <%= render 'shared/single_search_intro' %>
-  </div>
-
-  <div class="split-right">
-    <h3>Try searching for a tryptic peptide</h3>
-    <%= render 'shared/sequence_search' %>
-  </div>
-  <div class="visualClear"></div>
-</div>
-
-
-<h2>Multi-peptide analysis</h2>
-<div class="split">
-  <div class="split-left">
-    <%= render 'shared/multi_search_intro' %>
-    <%= render 'shared/load_datasets_form' %>
-  </div>
-
-  <div class="split-right">
-    <h3>Analyze a list of peptides</h3>
-    <%= render 'shared/sequence_multi_search' %>
-  </div>
-  <div class="visualClear"></div>
-</div>
-
-<script type="text/javascript">
-  $(document).ready(initDatasets);
-</script>

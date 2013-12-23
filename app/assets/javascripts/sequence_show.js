@@ -135,7 +135,7 @@ function init_sequence_show(data, lcaId) {
         st.onClick(lcaId);
     }
     catch (err) {
-        error(err, "Something went wrong while loading the lineage tree.");
+        error(err.message, "Something went wrong while loading the lineage tree.");
     }
 
     // disable the text selection of tree nodes
@@ -143,7 +143,7 @@ function init_sequence_show(data, lcaId) {
 
     // set up the fullscreen stuff
     if (fullScreenApi.supportsFullScreen) {
-        $("#buttons-single").prepend("<button id='zoom-btn-lineage' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
+        $("#buttons-single").prepend("<button id='zoom-btn-lineage' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-resize-full'></i> Enter full screen</button>");
         $("#zoom-btn-lineage").click(function () {
             // GA event tracking
             _gaq.push(['_trackEvent', 'Single Peptide', 'Full Screen']);
@@ -171,17 +171,12 @@ function init_sequence_show(data, lcaId) {
     }
 
     // set up save image stuff
-    $("#buttons-single").prepend("<button id='save-btn-lineage' class='btn btn-mini'><i class='icon-download'></i> Save tree as image</button>");
+    $("#buttons-single").prepend("<button id='save-btn-lineage' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save tree as image</button>");
     $("#save-btn-lineage").click(function () {
         // GA event tracking
         _gaq.push(['_trackEvent', 'Single Peptide', 'Save Image']);
 
-        html2canvas($("#lineageTree"), {
-            onrendered : function (canvas) {
-                $("#save-as-modal .modal-body").html("<img src='" + canvas.toDataURL() + "' />");
-                $("#save-as-modal").modal();
-            }
-        });
+        triggerDownloadModal(null, "#lineageTree", "unipept_lineage");
     });
 
 }
