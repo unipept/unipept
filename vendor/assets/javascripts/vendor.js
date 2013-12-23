@@ -1,9 +1,9 @@
-// all pages
-// 3.0.1
+//  all pages
+//  3.0.3
 //= require bootstrap/bootstrap.min.js
 
-//  sunburst and pancore
-//  3.3.9
+//  sunburst, pancore and tree
+//  3.3.13
 //= require d3/d3.v3.min.js
 
 //  lineage tree and treemap

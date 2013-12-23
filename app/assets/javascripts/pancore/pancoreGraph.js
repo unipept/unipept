@@ -81,10 +81,10 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * Initializes the graph
      */
     function init() {
-        legendData = [{"name": "genome size", "color": genomeColor, "toggle": "showGenome"},
+        legendData = [{"name": "genome peptidome", "color": genomeColor, "toggle": "showGenome"},
             {"name": "pan peptidome", "color": panColor, "toggle": "showPan"},
             {"name": "core peptidome", "color": coreColor, "toggle": "showCore"},
-            {"name": "unique peptides", "color": unicoreColor, "toggle": "showUnicore"}];
+            {"name": "unique peptidome", "color": unicoreColor, "toggle": "showUnicore"}];
 
         xScale = d3.scale.ordinal().rangePoints([0, width], 1);
         yScale = d3.scale.linear().range([height, 0]);
@@ -175,15 +175,15 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * @param <Genome> d The genome of which we want a tooltip
      */
     function getTooltipContent(d) {
-        var tooltipHtml = "<span style='color: " + genomeColor + ";'>&#9632;</span> genome size: <b>" + d3.format(",")(d.peptides) + "</b><br/>";
+        var tooltipHtml = "<span style='color: " + genomeColor + ";'>&#9632;</span> genome peptidome size: <b>" + d3.format(",")(d.peptides) + "</b><br/>";
         if (toggles.showPan) {
-            tooltipHtml += "<span style='color: " + panColor + ";'>&#9632;</span> pan peptides: <b>" + d3.format(",")(d.pan) + "</b><br/>";
+            tooltipHtml += "<span style='color: " + panColor + ";'>&#9632;</span> pan peptidome size: <b>" + d3.format(",")(d.pan) + "</b><br/>";
         }
         if (toggles.showCore) {
-            tooltipHtml += "<span style='color: " + coreColor + ";'>&#9632;</span> core peptides: <b>" + d3.format(",")(d.core) + "</b>";
+            tooltipHtml += "<span style='color: " + coreColor + ";'>&#9632;</span> core peptidome size: <b>" + d3.format(",")(d.core) + "</b>";
         }
         if (d.unicore != null && toggles.showUnicore) {
-            tooltipHtml += "<br/><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptides: <b>" + d3.format(",")(d.unicore) + "</b>";
+            tooltipHtml += "<br/><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptidome size: <b>" + d3.format(",")(d.unicore) + "</b>";
         }
         return tooltipHtml;
     }
@@ -915,7 +915,10 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .on("mouseover", invokeTooltipAndHighlight)
             .on("mouseout", abolishTooltipAndHighlight)
             .on("mousemove", moveTooltip)
-            .on("click", invokePopover)
+            .on("click", function checkClickEvent(d) {
+                if (d3.event.defaultPrevented) return;
+                invokePopover(d);
+            })
             .call(d3.behavior.drag()
                 .on("dragstart", dragStart)
                 .on("drag", drag)

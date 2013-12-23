@@ -1,6 +1,6 @@
 #!/bin/bash
 # compiles all java files
 
-rm -rf tools/java/bin
-mkdir tools/java/bin
-javac -cp "tools/java/lib/mysql.jar" -d tools/java/bin/ tools/java/src/*/*.java tools/java/src/*/*/*.java
+rm -rf backend/java/bin
+mkdir backend/java/bin
+javac -cp "backend/java/lib/mysql.jar" -d backend/java/bin/ backend/java/src/*/*.java backend/java/src/*/*/*.java

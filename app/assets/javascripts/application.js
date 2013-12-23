@@ -96,7 +96,7 @@ function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
         if (svgSelector) {
             $buttons.append("<button id='download-svg' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as SVG</button>");
             $("#download-svg").click(function () {
-                 downloadDataByForm(svg, baseFileName + ".svg");
+                downloadDataByForm(svg, baseFileName + ".svg");
             });
         }
         $buttons.append("<button id='download-png' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as PNG</button>");

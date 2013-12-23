@@ -265,16 +265,16 @@ dl.changelog dd {
     text-decoration: none;
 }
 .features object {
-    margin-bottom: -4px;
+    margin-bottom: -3px;
 }
 .features div.title {
     color: white;
     padding-top: 20px;
     position: relative;
-    top: -56px;
-    margin-bottom: -56px;
+    top: -55px;
+    margin-bottom: -55px;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.0001) 0, rgba(0, 0, 0, 0.6) 50%);
+    #gradient.vertical(rgba(0, 0, 0, 0.0001), rgba(0, 0, 0, 0.6), 0, 50%);
 }
 .features .click-catcher {
     width: 275px;
@@ -300,7 +300,7 @@ div#more_options_form {
     padding-top: 5px;
 }
 select.dataset {
-    width: 330px;
+    width: 330px !important;
 }
 input#pride_exp_id {
     width: 280px;
@@ -549,6 +549,9 @@ span.dir {
 }
 #download-peptides .dropdown-menu {
     margin-top: 0px;
+}
+#download-peptides {
+    margin-top: 5px;
 }
 #download-peptides #download-peptides-toggle {
     margin-bottom: 2px;
