@@ -212,6 +212,16 @@ var constructGenomeTable = function constructGenomeTable(args) {
     };
 
     /**
+     * Changes the lca
+     *
+     * @param <String> l the new lca we want to set
+     */
+    that.setLca = function setLca(l) {
+        lca = l;
+        that.update();
+    };
+
+    /**
      * Returns the order of the genomes in the table as an array of
      * bioproject id's
      *
