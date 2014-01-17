@@ -235,6 +235,7 @@ var constructPancore = function constructPancore(args) {
         if (rank !== requestRank) return;
 
         graph.setData(data);
+        table.setLca(l);
         lca = l;
     }
 
