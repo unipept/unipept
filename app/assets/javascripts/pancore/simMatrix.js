@@ -150,7 +150,7 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
         });
         // dummy newick value chosen randomly
         var dummyNewick = "((((A:0.2,B:0.2):0.1,C:0.3):0.4,(F:0.4,D:0.4):0.3):0.3,E:1.0)";
-        that.drawTree(dummyNewick);
+        that.drawTree(dummyNewick, 500);
     }
 
     /*************** Public methods ***************/
@@ -160,6 +160,9 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
         treeOrder = newOrder;
         oldDomain = x.domain().slice(0);
         x.domain(newOrder);
+
+        var min_width = d3.min([width, 50 * matrix.length]);
+        x.rangeBands([0, min_width]);
 
         that.setClustered(true);
 
@@ -216,6 +219,13 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
 
         }
 
+        /* allow for smaller scale matrices */
+        var min_width = d3.min([width, 50 * matrix.length]);
+        d3.select(".background")
+            .attr("width", min_width)
+            .attr("height", min_width);
+        x.rangeBands([0, min_width]);
+
         var row = svg.selectAll(".row")
             .data(matrix)
 
@@ -245,14 +255,16 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
             .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(90)"; })
             .attr("y", x.rangeBand() / 2);
 
-        column.selectAll("text").attr('y', - x.rangeBand() / 2);
+        column.selectAll("text")
+            .attr("x", min_width + 6)
+            .attr('y', - x.rangeBand() / 2);
 
         column_enter = column.enter().append("g")
             .attr("class", "column")
             .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(90)"; });
 
         column_enter.append("text")
-            .attr("x", 506)
+            .attr("x", min_width + 6)
             .attr("y", - x.rangeBand() / 2)
             .attr("dy", ".32em")
             .attr("text-anchor", "start")
@@ -295,11 +307,18 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
 
     }
 
-    that.drawTree = function (n) {
+    that.drawTree = function (n, height) {
         newick = n;
         var parsed = Newick.parse(n);
         $("#sim_graph").html("");
-        d3.phylogram.build('#sim_graph', parsed, {width: 180, height: 500, skipLabels: true}, treeOrder);
+        var min_height;
+        if (height === undefined) {
+            min_height = d3.min([500, 50 * matrix.length]);
+        } else {
+            min_height = height;
+        }
+
+        d3.phylogram.build('#sim_graph', parsed, {width: 180, height: min_height, skipLabels: true}, treeOrder);
     }
 
     /* calculate similarity */
