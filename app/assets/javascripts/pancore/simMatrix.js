@@ -25,6 +25,7 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
         worker = w;
 
     var tabSelector = $('a[href="#sim_matrix_wrapper"]'),
+        graphSelector = $('#sim_graph'),
         clusterBtn;
 
     var that = {};
@@ -159,6 +160,9 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
         treeOrder = newOrder;
         oldDomain = x.domain().slice(0);
         x.domain(newOrder);
+
+        that.setClustered(true);
+
         var t = svg.transition().duration(1000);
 
         t.selectAll(".row")
@@ -171,7 +175,6 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
         t.selectAll(".column")
             .delay(function(d, i) { return x(i) * 2; })
             .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(90)"; });
-        that.setClustered(true);
         updated = true;
     }
 
@@ -276,16 +279,20 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
     }
 
     that.setClustered = function (c) {
-        clustered = c;
-        if(!c) {
-            $('#sim_graph').fadeTo('normal', 0.2);
-            clusterBtn.show();
-            $('#reorder-header').addClass('hidden');
-        } else {
-            $('#sim_graph').fadeTo('fast', 1);
-            clusterBtn.hide();
-            $('#reorder-header').removeClass('hidden');
+        /* check if value differs, if we don't do this we call fadeTo too many times" */
+        if(c != clustered) {
+            if(!c) {
+                graphSelector.fadeTo('normal', 0.2);
+                clusterBtn.show();
+                $('#reorder-header').addClass('hidden');
+            } else {
+                graphSelector.fadeTo('fast', 1);
+                clusterBtn.hide();
+                $('#reorder-header').removeClass('hidden');
+            }
+            clustered = c;
         }
+
     }
 
     that.drawTree = function (n) {
