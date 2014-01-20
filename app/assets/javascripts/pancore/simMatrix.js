@@ -55,32 +55,16 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
             .each(function(d, i) {
                 var first = names[order[i]];
                 var second = names[order[j]];
-                var content = d >= 0 ? d3.format(".2%")(d) + " peptidome similarity" : "Not calculated";
+                var content = d >= 0 ? d3.format(".2%")(d) : "Not calculated";
                 var table = "";
                 if (d >= 0) {
-                    table += "<table class='table'><thead><tr><th></th><th>Core Peptides</th><th>Pan Peptides</th></tr></thead>";
-                    table += "<tr><td>" + first.name + "</td><td>" + first.core + "</td><td>" + first.pan + "</td></tr>";
-                    table += "<tr><td>" + second.name + "</td><td>" + second.core + "</td><td>" + second.pan + "</td></tr></table>";
+                    table += "<table class='table'><thead><tr><th></th><th>" + first.name + "</th><th>" + second.name + "</th></tr></thead>";
+                    table += "<tr><td>Core Peptides</td><td>" + first.core + "</td><td>" + second.core+ "</td></tr>";
+                    table += "<tr><td>Pan Peptides</td><td>" + first.pan + "</td><td>" + second.pan + "</td></tr>";
+                    table += "<tr><td>Peptidome Similarity</td><td colspan='2' align='center'>" + content + "</td></tr></table>";
                 }
-                var clicked = false;
-                $(this).popover('destroy');
-                $(this).popover({title: first.name + "<br />" + second.name, content: content, trigger: 'manual', placement: 'top', container: 'body', html: true});
                 $(this).hover(function() {
-                    if(!clicked) {
-                        $(this).popover('show');
-                    }
                     $('#matrix-popover-table').html(table);
-                }, function () {
-                    if(!clicked) {
-                        $(this).popover('hide');
-                    }
-                });
-
-                $(this).click(function() {
-                    if(clicked) {
-                        $(this).popover('hide');
-                    }
-                    clicked = !clicked;
                 });
             });
     }
