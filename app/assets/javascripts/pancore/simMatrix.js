@@ -2,7 +2,6 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
     /*************** Private variables ***************/
     /* UI variables */
     var margin = {top: 20, right: 0, bottom: 200, left: 200},
-        matrix_padding = 0.03,
         width = 500,
         height = 500;
 
@@ -10,7 +9,7 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
     var svg;
 
     /* Scales */
-    var x = d3.scale.ordinal().rangeBands([0, width], matrix_padding),
+    var x = d3.scale.ordinal().rangeBands([0, width]),
         z = d3.scale.linear().domain([0, 1]).clamp(true);
 
     /* Constructor fields */
