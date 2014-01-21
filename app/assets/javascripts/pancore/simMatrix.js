@@ -88,6 +88,9 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
             case 'newick':
                 that.drawTree(data.msg);
                 break;
+            case 'reorderTable':
+                reorderTable();
+                break;
             case 'log':
                 console.log(data.msg);
                 break;
@@ -115,6 +118,17 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
         var min_width = d3.min([width, 50 * matrix.length]);
         x.rangeBands([0, min_width]);
         return min_width;
+    }
+
+    function reorderTable() {
+        var clusterOrder = [];
+        var domain = x.domain();
+        for (var i = 0; i < order.length; i ++) {
+            clusterOrder.push(order[domain[i]]);
+        }
+        sendToWorker("recalculatePanCore", {'order': clusterOrder, start: 0, end: clusterOrder.length - 1});
+        table.setOrder(clusterOrder);
+        $('#reorder-header').addClass('hidden');
     }
 
     /**
@@ -146,16 +160,8 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
             that.reDraw();
         });
 
-        $('#use-cluster-order').click(function () {
-            var clusterOrder = [];
-            var domain = x.domain();
-            for (var i = 0; i < order.length; i ++) {
-                clusterOrder.push(order[domain[i]]);
-            }
-            sendToWorker("recalculatePanCore", {'order': clusterOrder, start: 0, end: clusterOrder.length - 1});
-            table.setOrder(clusterOrder);
-            $('#reorder-header').addClass('hidden');
-        });
+        $('#use-cluster-order').click(reorderTable);
+
         // dummy newick value chosen randomly
         var dummyNewick = "((((A:0.2,B:0.2):0.1,C:0.3):0.4,(F:0.4,D:0.4):0.3):0.3,E:1.0)";
         that.drawTree(dummyNewick, 500);

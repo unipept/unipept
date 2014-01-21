@@ -194,9 +194,11 @@ var matrixBackend = function matrixBackend(data) {
             // find next.x recursively
             findAndReplace(tree, next.x, next.y, next.value);
         }
-        that.reOrder(flattenAndRemoveDistance(tree));
+        var clusterOrder = flattenAndRemoveDistance(tree);
+        that.reOrder(clusterOrder);
 
         sendToHost('newick', arrayToNewick(tree));
+        return clusterOrder;
     }
 
     function clusterMatrixRec(matrix, cluster, order) {
@@ -391,6 +393,10 @@ function autoSort(type) {
                 return b.size - a.size;
             };
             break;
+        case 'clustered':
+            matrix.clusterMatrix();
+            sendToHost('reorderTable');
+            return;
         default:
             easySort = false;
     }
