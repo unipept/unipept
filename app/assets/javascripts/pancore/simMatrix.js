@@ -304,6 +304,7 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
 
     that.setClustered = function (c) {
         /* check if value differs, if we don't do this we call fadeTo too many times" */
+        var minWidth = setMinWidth();
         if(c != clustered) {
             if(!c) {
                 graphSelector.fadeTo('normal', 0.2);
@@ -313,7 +314,8 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
                 graphSelector.fadeTo('fast', 1);
                 clusterBtn.hide();
                 $('#reorder-header').removeClass('hidden');
-                $('#cluster-div').css('height', setMinWidth() + 30 + "px");
+                $('#cluster-div').css('height', minWidth + 30 + "px");
+                $('#matrix-popover-table').css('top', minWidth + 20 + 'px');
             }
             clustered = c;
         }
