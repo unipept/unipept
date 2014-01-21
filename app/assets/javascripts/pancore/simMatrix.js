@@ -19,7 +19,7 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
         oldDomain = [],
         treeOrder = [],
         matrix = [],
-        clustered = false,
+        clustered = undefined,
         updated = false,
         newick,
         worker = w;
@@ -109,6 +109,14 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
         that.reDraw();
     }
 
+
+    /* calculate height needed for matrix */
+    function setMinWidth() {
+        var min_width = d3.min([width, 50 * matrix.length]);
+        x.rangeBands([0, min_width]);
+        return min_width;
+    }
+
     /**
      *
      * initializes the Matrix
@@ -161,8 +169,7 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
         oldDomain = x.domain().slice(0);
         x.domain(newOrder);
 
-        var min_width = d3.min([width, 50 * matrix.length]);
-        x.rangeBands([0, min_width]);
+        setMinWidth();
 
         that.setClustered(true);
 
@@ -220,11 +227,10 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
         }
 
         /* allow for smaller scale matrices */
-        var min_width = d3.min([width, 50 * matrix.length]);
+        var min_width = setMinWidth();
         d3.select(".background")
             .attr("width", min_width)
             .attr("height", min_width);
-        x.rangeBands([0, min_width]);
 
         var row = svg.selectAll(".row")
             .data(matrix)
@@ -301,6 +307,7 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
                 graphSelector.fadeTo('fast', 1);
                 clusterBtn.hide();
                 $('#reorder-header').removeClass('hidden');
+                $('#cluster-div').css('height', setMinWidth() + 30 + "px");
             }
             clustered = c;
         }
