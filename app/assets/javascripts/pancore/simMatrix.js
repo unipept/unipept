@@ -250,10 +250,6 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
             .attr("transform", function(d, i) { return "translate(0," + x(i) + ")"; })
             .each(rowF);
 
-        row_enter.append("line")
-            .attr("x2", width)
-            .attr("stroke", "#ffffff");
-
         row_enter.append("text")
             .attr("x", -6)
             .attr("y", x.rangeBand() / 2)
@@ -280,10 +276,6 @@ var constructSimMatrix = function constructSimMatrix(w, table) {
             .attr("dy", ".32em")
             .attr("text-anchor", "start")
             .text(function(d, i) { return names[order[i]].name; });
-
-        column_enter.append("line")
-            .attr("x1", width)
-            .attr("stroke", "#ffffff");
 
         row.each(popOverF);
 
