@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+
+require 'cri'
+require 'faraday'
+
+root_cmd = Cri::Command.define do
+  name        'unipept'
+  flag   :h,  :help,  'show help for this command' do |value, cmd|
+    puts cmd.help
+    exit 0
+  end
+end
+
+single_search = Cri::Command.define do
+  name        'single'
+  usage       'single [options]'
+  aliases     :s
+  summary     'Single Peptide Search'
+  description 'Search Unipept for the given peptide and return taxons'
+
+  flag :h, :help, 'show help for this command' do |value, cmd|
+    puts cmd.help
+    exit 0
+  end
+
+  flag :e, :equate, "equate I and L"
+
+  run do |opts, args, cmd|
+    peptide = STDIN.read.chomp
+    # TODO: make this configurable
+    puts Faraday.get("http://localhost:3000/api/v1/single.json", sequence: peptide, equate_il: opts[:equate]).body
+  end
+end
+
+root_cmd.add_command(single_search)
+root_cmd.run(ARGV)
