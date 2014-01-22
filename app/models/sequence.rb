@@ -16,6 +16,15 @@ class Sequence < ActiveRecord::Base
   belongs_to :lca_t, :foreign_key  => "lca", :primary_key  => "id",  :class_name   => 'Taxon'
   belongs_to :lca_il_t, :foreign_key  => "lca_il", :primary_key  => "id",  :class_name   => 'Taxon'
 
+  # search for a single sequence, include information through join tables
+  def self.single_search(sequence, equate_il = true)
+    raise SequenceTooShortError if sequence.length < 5
+    sequence.gsub!(/I/,'L') if equate_il
+    # this solves the N+1 query problem
+    self.includes(peptides: {uniprot_entry: :name}).
+      find_by_sequence(sequence)
+  end
+
   # SELECT DISTINCT lineages.* FROM unipept.peptides INNER JOIN unipept.uniprot_entries ON (uniprot_entries.id = peptides.uniprot_entry_id) INNER JOIN unipept.lineages ON (uniprot_entries.taxon_id = lineages.taxon_id) WHERE peptides.sequence_id = #{id}
   def lineages(equate_il = true, eager = false)
     if equate_il
