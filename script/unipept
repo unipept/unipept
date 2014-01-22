@@ -62,8 +62,14 @@ root_cmd.define_command('single') do
 
   run do |opts, args, cmd|
     peptide = STDIN.read.chomp
-    # TODO: make this configurable
-    puts Faraday.get("http://localhost:3000/api/v1/single.json", sequence: peptide, equate_il: opts[:equate]).body
+
+    host = Configuration.new['host']
+    if host.nil?
+      puts "WARNING: no host has been set, you can set the host with `unipept config host http://host.com/`"
+      exit 1
+    end
+
+    puts Faraday.get("#{host}/api/v1/single.json", sequence: peptide, equate_il: opts[:equate]).body
   end
 end
 
