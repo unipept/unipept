@@ -65,7 +65,7 @@ root_cmd.define_command('single') do
 
     host = Configuration.new['host']
     if host.nil?
-      puts "WARNING: no host has been set, you can set the host with `unipept config host http://host.com/`"
+      puts "WARNING: no host has been set, you can set the host with `unipept config host http://localhost:3000/`"
       exit 1
     end
 
