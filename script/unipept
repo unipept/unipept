@@ -2,9 +2,54 @@
 
 require 'cri'
 require 'faraday'
+require 'yaml'
+
+class Configuration
+
+  attr_reader :config
+  attr_reader :file_name
+
+  def initialize
+    @file_name = File.join(Dir.home, ".unipeptrc")
+    if !File.exists? file_name
+      @config = {}
+    else
+      @config = YAML.load_file file_name
+    end
+  end
+
+  def save
+    File.open(file_name, 'w') { |f| f.write config.to_yaml }
+  end
+
+  def [](*args)
+    config.[](*args)
+  end
+
+  def []=(*args)
+    config.[]=(*args)
+  end
+
+end
 
 root_cmd = Cri::Command.new_basic_root.modify do
   name 'unipept'
+  flag :v, :verbose, "verbose mode"
+end
+
+root_cmd.define_command('config') do
+  usage 'config attr [value]'
+
+  run do |opts, args, cmd|
+    config = Configuration.new
+    if args.size > 1
+      config[args.first] = args[1]
+      config.save
+    elsif args.size == 1
+      puts config[args.first]
+    end
+  end
+
 end
 
 root_cmd.define_command('single') do
