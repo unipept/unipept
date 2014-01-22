@@ -51,6 +51,11 @@ UnipeptWeb::Application.routes.draw do
   # load pride dataset from webservice
   get '/pride/:id', :to => 'pride#load'
 
+  # API namespace
+  namespace :api, path: 'api/v1' do
+    get 'single' => "api#single"
+  end
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
