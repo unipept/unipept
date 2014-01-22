@@ -32,6 +32,28 @@ class Configuration
 
 end
 
+class ApiRunner < Cri::CommandRunner
+
+  def initialize(args, opts, cmd)
+    super
+    host = Configuration.new['host']
+    if host.nil?
+      puts "WARNING: no host has been set, you can set the host with `unipept config host http://localhost:3000/`"
+      exit 1
+    end
+    @url = "#{host}/api/v1/#{mapping[cmd.name]}.json"
+  end
+
+  def mapping
+    {'single' => 'single', 'lca' => 'lca'}
+  end
+
+  def run
+    peptide = STDIN.read.chomp
+    puts Faraday.get(@url, sequence: peptide, equate_il: options[:equate]).body
+  end
+end
+
 root_cmd = Cri::Command.new_basic_root.modify do
   name 'unipept'
   flag :v, :verbose, "verbose mode"
@@ -60,17 +82,18 @@ root_cmd.define_command('single') do
 
   flag :e, :equate, "equate I and L"
 
-  run do |opts, args, cmd|
-    peptide = STDIN.read.chomp
 
-    host = Configuration.new['host']
-    if host.nil?
-      puts "WARNING: no host has been set, you can set the host with `unipept config host http://localhost:3000/`"
-      exit 1
-    end
-
-    puts Faraday.get("#{host}/api/v1/single.json", sequence: peptide, equate_il: opts[:equate]).body
-  end
+  runner ApiRunner
 end
 
+root_cmd.define_command('lca') do
+  usage       'lca [options]'
+  aliases     :s
+  summary     'Give lowest common ancestor for given peptide'
+  description 'Search Unipept for the given peptide and return the lowest common ancestor'
+
+  flag :e, :equate, "equate I and L"
+
+  runner ApiRunner
+end
 root_cmd.run(ARGV)
