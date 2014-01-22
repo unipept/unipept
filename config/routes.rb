@@ -52,6 +52,11 @@ UnipeptWeb::Application.routes.draw do
   get "cas/logout", :to => "cas#logout"
   match "cas/verify", :to => "cas#verify"
 
+  # API namespace
+  namespace :api, path: 'api/v1' do
+    get 'single' => "api#single"
+  end
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
