@@ -2,7 +2,7 @@ class Api::ApiController < ApplicationController
 
   respond_to :json
 
-  before_filter :set_params
+  before_filter :set_params, only: [:single, :lca]
 
   def set_params
     @sequence = params[:sequence].upcase
@@ -26,6 +26,12 @@ class Api::ApiController < ApplicationController
     end
 
     respond_with(:api, taxon)
+  end
+
+  def calculate_lca
+    @sequences = params[:sequences].map(&:upcase)
+
+    respond_with(:api, @sequences)
   end
 
 end
