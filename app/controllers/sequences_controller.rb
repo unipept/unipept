@@ -24,19 +24,7 @@ class SequencesController < ApplicationController
     # don't panic, we still got a few aces up our sleeve
     if sequence.nil?
       # check if it's splitable
-      raise NoMatchesFoundError.new(seq) if seq.index(/([KR])([^P])/).nil?
-
-      # split it
-      sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
-      if equate_il
-        long_sequences = sequences.select{|s| s.length >= 5}.map{|s| Sequence.find_by_sequence(s, :include => {:peptides => {:uniprot_entry => [:name, :lineage]}})}
-      else
-        long_sequences = sequences.select{|s| s.length >= 5}.map{|s| Sequence.find_by_sequence(s, :include => {:original_peptides => {:uniprot_entry => [:name, :lineage]}})}
-      end
-
-      # check if it has a match for every sequence and at least one long part
-      raise NoMatchesFoundError.new(seq) if long_sequences.include? nil
-      raise SequenceTooShortError if long_sequences.size == 0
+      long_sequences = Sequence.multi_search(seq, equate_il)
 
       # ok, we're done
       @sequence_string = seq
