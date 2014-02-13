@@ -57,6 +57,8 @@ end
 root_cmd = Cri::Command.new_basic_root.modify do
   name 'unipept'
   flag :v, :verbose, "verbose mode"
+  option :i, :input, "input file"
+  option :o, :output, "output file"
 end
 
 root_cmd.define_command('config') do
@@ -81,7 +83,6 @@ root_cmd.define_command('single') do
   description 'Search Unipept for the given peptide and return taxons'
 
   flag :e, :equate, "equate I and L"
-
 
   runner ApiRunner
 end
