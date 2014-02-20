@@ -49,8 +49,20 @@ class ApiRunner < Cri::CommandRunner
   end
 
   def run
-    peptide = STDIN.read.chomp
-    puts Faraday.get(@url, sequence: peptide, equate_il: options[:equate]).body
+    if options[:input]
+      peptide = File.readlines(options[:input])
+    else
+      peptide = STDIN.read.chomp
+    end
+
+    result = Faraday.get(@url, sequence: peptide, equate_il: options[:equate]).body
+    if options[:output]
+      File.open(options[:output], 'w') do |f|
+        f.write result
+      end
+    else
+      puts result
+    end
   end
 end
 
