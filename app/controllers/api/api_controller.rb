@@ -28,10 +28,16 @@ class Api::ApiController < ApplicationController
     respond_with(:api, taxon)
   end
 
-  def calculate_lca
-    @sequences = params[:sequences].map(&:upcase)
+  def lca_multi
+    equate_il = params[:equate_il] == true
+    sequences = params[:sequences].map {|s| Sequence.single_search(s, equate_il) }
+    if equate_il
+      taxons = Taxon.find(sequences.map(&:lca_il))
+    else
+      taxons = Taxon.find(sequences.map(&:lca))
+    end
 
-    respond_with(:api, @sequences)
+    respond_with(:api, taxons)
   end
 
 end

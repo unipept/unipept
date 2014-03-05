@@ -56,6 +56,7 @@ UnipeptWeb::Application.routes.draw do
   namespace :api, path: 'api/v1' do
     get 'single' => "api#single"
     get 'lca' => "api#lca"
+    get 'lca_multi' => "api#lca"
   end
 
   # The priority is based upon order of creation:
