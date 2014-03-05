@@ -50,12 +50,13 @@ class ApiRunner < Cri::CommandRunner
 
   def run
     if options[:input]
-      peptide = File.readlines(options[:input])
+      peptides = File.readlines(options[:input])
     else
-      peptide = STDIN.read.chomp
+      peptides = STDIN.readlines
     end
 
-    result = Faraday.get(@url, sequence: peptide, equate_il: options[:equate]).body
+    result = Faraday.get(@url, sequences: peptides, equate_il: options[:equate]).body
+
     if options[:output]
       File.open(options[:output], 'w') do |f|
         f.write result
@@ -109,4 +110,6 @@ root_cmd.define_command('lca') do
 
   runner ApiRunner
 end
+
+
 root_cmd.run(ARGV)
