@@ -70,8 +70,8 @@ end
 root_cmd = Cri::Command.new_basic_root.modify do
   name 'unipept'
   flag :v, :verbose, "verbose mode"
-  option :i, :input, "input file"
-  option :o, :output, "output file"
+  option :i, :input, "input file", argument: :required
+  option :o, :output, "output file", argument: :required
 end
 
 root_cmd.define_command('config') do
