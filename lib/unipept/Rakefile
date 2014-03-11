@@ -23,9 +23,8 @@ Jeweler::Tasks.new do |gem|
   gem.email = "willemstoon@gmail.com"
   gem.authors = ["Toon Willems"]
   # dependencies defined in Gemfile
-  gem.add_dependency 'faraday'
-  gem.add_dependency 'cri'
-
+  gem.add_dependency 'faraday', '~> 0.9'
+  gem.add_dependency 'cri', '~> 2.5'
 end
 Jeweler::RubygemsDotOrgTasks.new
 
