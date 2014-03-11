@@ -282,3 +282,7 @@ class Sequence < ActiveRecord::Base
     return result
   end
 end
+
+#some errors
+class SequenceTooShortError < StandardError; end
+class NoMatchesFoundError < StandardError; end

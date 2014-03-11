@@ -363,7 +363,3 @@ class SequencesController < ApplicationController
     end
   end
 end
-
-#some errors
-class SequenceTooShortError < StandardError; end
-class NoMatchesFoundError < StandardError; end
