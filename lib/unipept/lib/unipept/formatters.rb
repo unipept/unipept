@@ -2,7 +2,7 @@ module Unipept
   class Formatter
 
     def self.formatters
-      @formatters ||= {}
+      @@formatters ||= {}
     end
 
     def self.new_for_format(format)
