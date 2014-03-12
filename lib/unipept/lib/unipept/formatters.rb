@@ -13,6 +13,10 @@ module Unipept
       self.formatters[format.to_s] = self
     end
 
+    def self.available
+      self.formatters.keys
+    end
+
     def initialize
     end
 
