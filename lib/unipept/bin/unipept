@@ -3,6 +3,7 @@
 require 'cri'
 require 'faraday'
 require 'yaml'
+require 'json'
 
 require_relative '../lib/unipept'
 
@@ -30,7 +31,7 @@ class ApiRunner < Cri::CommandRunner
       peptides = STDIN.readlines
     end
 
-    result = Faraday.get(@url, sequences: peptides, equate_il: options[:equate]).body
+    result = JSON[Faraday.get(@url, sequences: peptides, equate_il: options[:equate]).body]
     result = formatter.format(result)
 
     if options[:output]
