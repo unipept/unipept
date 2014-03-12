@@ -27,7 +27,7 @@ module Unipept
   end
 
 
-  class CSVFormatter
+  class CSVFormatter < Formatter
     require 'csv'
 
     register :csv
