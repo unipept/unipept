@@ -13,17 +13,14 @@ module Unipept
       self.formatters[format.to_s] = self
     end
 
-    attr_reader :data
-
-    # JSON formatted data goes in, something other comes out
     def initialize
     end
 
+    # JSON formatted data goes in, something other comes out
     def format(data)
       data
     end
   end
-
 
   class CSVFormatter < Formatter
     require 'csv'

@@ -31,6 +31,7 @@ class ApiRunner < Cri::CommandRunner
     end
 
     result = Faraday.get(@url, sequences: peptides, equate_il: options[:equate]).body
+    result = formatter.format(result)
 
     if options[:output]
       File.open(options[:output], 'w') do |f|
