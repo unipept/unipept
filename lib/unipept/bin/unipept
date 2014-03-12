@@ -4,39 +4,13 @@ require 'cri'
 require 'faraday'
 require 'yaml'
 
-class Configuration
-
-  attr_reader :config
-  attr_reader :file_name
-
-  def initialize
-    @file_name = File.join(Dir.home, ".unipeptrc")
-    if !File.exists? file_name
-      @config = {}
-    else
-      @config = YAML.load_file file_name
-    end
-  end
-
-  def save
-    File.open(file_name, 'w') { |f| f.write config.to_yaml }
-  end
-
-  def [](*args)
-    config.[](*args)
-  end
-
-  def []=(*args)
-    config.[]=(*args)
-  end
-
-end
+require_relative '../lib/unipept'
 
 class ApiRunner < Cri::CommandRunner
 
   def initialize(args, opts, cmd)
     super
-    host = Configuration.new['host']
+    host = Unipept::Configuration.new['host']
     if host.nil?
       puts "WARNING: no host has been set, you can set the host with `unipept config host http://localhost:3000/`"
       exit 1
@@ -78,7 +52,7 @@ root_cmd.define_command('config') do
   usage 'config attr [value]'
 
   run do |opts, args, cmd|
-    config = Configuration.new
+    config = Unipept::Configuration.new
     if args.size > 1
       config[args.first] = args[1]
       config.save
