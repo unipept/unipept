@@ -12,7 +12,7 @@ class ApiRunner < Cri::CommandRunner
   def initialize(args, opts, cmd)
     super
     host = Unipept::Configuration.new['host']
-    if host.nil?
+    if host.nil? || host.empty?
       puts "WARNING: no host has been set, you can set the host with `unipept config host http://localhost:3000/`"
       exit 1
     end
@@ -31,7 +31,9 @@ class ApiRunner < Cri::CommandRunner
       peptides = STDIN.readlines
     end
 
-    result = JSON[Faraday.get(@url, sequences: peptides, equate_il: options[:equate], filter: options[:select].split(',')).body]
+    filter = options[:select].split(',') rescue ""
+
+    result = JSON[Faraday.get(@url, sequences: peptides, equate_il: options[:equate], filter: filter).body]
     result = formatter.format(result)
 
     if options[:output]
