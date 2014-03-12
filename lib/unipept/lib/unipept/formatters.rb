@@ -3,8 +3,8 @@ module Unipept
 
     class << self
       attr_accessor :formatters
-      @formatters = {}
     end
+    self.formatters = {}
 
     def self.new_for_format(format)
       formatters[format].new rescue new
