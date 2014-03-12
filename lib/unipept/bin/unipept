@@ -31,7 +31,7 @@ class ApiRunner < Cri::CommandRunner
       peptides = STDIN.readlines
     end
 
-    result = JSON[Faraday.get(@url, sequences: peptides, equate_il: options[:equate]).body]
+    result = JSON[Faraday.get(@url, sequences: peptides, equate_il: options[:equate], filter: options[:select].split(',')).body]
     result = formatter.format(result)
 
     if options[:output]
@@ -74,17 +74,19 @@ root_cmd.define_command('single') do
   description 'Search Unipept for the given peptide and return taxons'
 
   flag :e, :equate, "equate I and L"
+  option :s, :select, "select the attributes", argument: :required
 
   runner ApiRunner
 end
 
 root_cmd.define_command('lca') do
   usage       'lca [options]'
-  aliases     :s
+  aliases     :l
   summary     'Give lowest common ancestor for given peptide'
   description 'Search Unipept for the given peptide and return the lowest common ancestor'
 
   flag :e, :equate, "equate I and L"
+  option :s, :select, "select the attributes", argument: :required
 
   runner ApiRunner
 end
