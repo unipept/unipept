@@ -1,18 +1,16 @@
 module Unipept
   class Formatter
 
-    class << self
-      attr_accessor :formatters
+    def self.formatters
+      @formatters ||= {}
     end
-    self.formatters = {}
 
     def self.new_for_format(format)
       formatters[format].new rescue new
     end
 
     def self.register(format)
-      puts self
-      formatters[format.to_s] = self
+      self.formatters[format.to_s] = self
     end
 
     attr_reader :data
