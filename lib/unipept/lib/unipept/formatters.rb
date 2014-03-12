@@ -49,4 +49,17 @@ module Unipept
       end
     end
   end
+
+  class XMLFormatter < Formatter
+    require 'to_xml'
+
+    register :xml
+
+    def format(data)
+      data.to_xml
+    end
+
+  end
+
+
 end

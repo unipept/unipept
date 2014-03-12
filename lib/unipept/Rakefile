@@ -25,6 +25,7 @@ Jeweler::Tasks.new do |gem|
   # dependencies defined in Gemfile
   gem.add_dependency 'faraday', '~> 0.9'
   gem.add_dependency 'cri', '~> 2.5'
+  gem.add_dependency 'to_xml', '~> 0.1'
 end
 Jeweler::RubygemsDotOrgTasks.new
 
