@@ -32,22 +32,21 @@ module Unipept
     register :csv
 
     def format(data)
-      csv = []
-      first = data.first
-      if first.kind_of? Array
-        first = first.first
-      end
-      csv << first.keys.map(&:to_s)
+      CSV.generate do |csv|
+        first = data.first
+        if first.kind_of? Array
+          first = first.first
+        end
+        csv << first.keys.map(&:to_s)
 
-      data.each do |o|
-        if o.kind_of? Array
-          o.each {|h| csv << h.values }
-        else
-          csv << o.values
+        data.each do |o|
+          if o.kind_of? Array
+            o.each {|h| csv << h.values }
+          else
+            csv << o.values
+          end
         end
       end
-
-      csv
     end
   end
 end
