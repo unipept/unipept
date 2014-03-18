@@ -69,8 +69,8 @@ root_cmd.define_command('config') do
 
 end
 
-root_cmd.define_command('single') do
-  usage       'single [options]'
+root_cmd.define_command('pepttotaxa') do
+  usage       'pepttotaxa [options]'
   aliases     :s
   summary     'Single Peptide Search'
   description 'Search Unipept for the given peptide and return taxons'
@@ -81,8 +81,8 @@ root_cmd.define_command('single') do
   runner ApiRunner
 end
 
-root_cmd.define_command('lca') do
-  usage       'lca [options]'
+root_cmd.define_command('pepttolca') do
+  usage       'pepttolca [options]'
   aliases     :l
   summary     'Give lowest common ancestor for given peptide'
   description 'Search Unipept for the given peptide and return the lowest common ancestor'
