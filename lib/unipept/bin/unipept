@@ -20,7 +20,7 @@ class ApiRunner < Cri::CommandRunner
   end
 
   def mapping
-    {'single' => 'single', 'lca' => 'lca'}
+    {'pepttotaxa' => 'single', 'pepttolca' => 'lca'}
   end
 
   def run
@@ -33,7 +33,7 @@ class ApiRunner < Cri::CommandRunner
 
     filter = options[:select].split(',') rescue ""
 
-    result = JSON[Faraday.get(@url, sequences: peptides, equate_il: options[:equate], filter: filter).body]
+    result = JSON[Faraday.get(@url, :sequences => peptides, :equate_il => options[:equate]).body]
     result = formatter.format(result)
 
     if options[:output]
@@ -49,9 +49,9 @@ end
 root_cmd = Cri::Command.new_basic_root.modify do
   name 'unipept'
   flag :v, :verbose, "verbose mode"
-  option :i, :input, "input file", argument: :required
-  option :o, :output, "output file", argument: :required
-  option :f, :format, "output format (Available: #{Unipept::Formatter.available.join "," })", argument: :required
+  option :i, :input, "input file", :argument => :required
+  option :o, :output, "output file", :argument => :required
+  option :f, :format, "output format (Available: #{Unipept::Formatter.available.join "," })", :argument => :required
 end
 
 root_cmd.define_command('config') do
@@ -76,7 +76,7 @@ root_cmd.define_command('pepttotaxa') do
   description 'Search Unipept for the given peptide and return taxons'
 
   flag :e, :equate, "equate I and L"
-  option :s, :select, "select the attributes", argument: :required
+  option :s, :select, "select the attributes", :argument => :required
 
   runner ApiRunner
 end
@@ -88,7 +88,7 @@ root_cmd.define_command('pepttolca') do
   description 'Search Unipept for the given peptide and return the lowest common ancestor'
 
   flag :e, :equate, "equate I and L"
-  option :s, :select, "select the attributes", argument: :required
+  option :s, :select, "select the attributes", :argument => :required
 
   runner ApiRunner
 end
