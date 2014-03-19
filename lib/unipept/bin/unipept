@@ -20,7 +20,7 @@ class ApiRunner < Cri::CommandRunner
   end
 
   def mapping
-    {'pepttotaxa' => 'single', 'pepttolca' => 'lca'}
+    {'pept2taxa' => 'single', 'pept2lca' => 'lca'}
   end
 
   def run
@@ -72,7 +72,7 @@ root_cmd.define_command('config') do
 
 end
 
-root_cmd.define_command('pepttotaxa') do
+root_cmd.define_command('pept2taxa') do
   usage       'pepttotaxa [options]'
   aliases     :s
   summary     'Single Peptide Search'
@@ -84,7 +84,7 @@ root_cmd.define_command('pepttotaxa') do
   runner ApiRunner
 end
 
-root_cmd.define_command('pepttolca') do
+root_cmd.define_command('pept2lca') do
   usage       'pepttolca [options]'
   aliases     :l
   summary     'Give lowest common ancestor for given peptide'
