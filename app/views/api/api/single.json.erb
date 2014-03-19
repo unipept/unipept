@@ -1,0 +1,10 @@
+<%=
+  @peptides.map do |p|
+    {
+      id: p.id,
+      taxon_name: p.name,
+      parent_taxon_id: p.parent_id,
+      taxon_rank: p.rank,
+    }
+  end.to_json.html_safe
+%>
