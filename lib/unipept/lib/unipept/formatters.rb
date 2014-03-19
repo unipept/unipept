@@ -6,7 +6,11 @@ module Unipept
     end
 
     def self.new_for_format(format)
-      formatters[format].new rescue new
+      begin
+        formatters[format].new
+      rescue
+        formatters[self.default].new
+      end
     end
 
     def self.register(format)
@@ -17,7 +21,8 @@ module Unipept
       self.formatters.keys
     end
 
-    def initialize
+    def self.default
+      'json'
     end
 
     # JSON formatted data goes in, something other comes out
@@ -26,6 +31,15 @@ module Unipept
     end
   end
 
+  class JSONFormatter < Formatter
+    require 'json'
+    register :json
+
+    def format(data)
+      data.to_json
+    end
+
+  end
   class CSVFormatter < Formatter
     require 'csv'
 
