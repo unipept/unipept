@@ -31,9 +31,12 @@ class ApiRunner < Cri::CommandRunner
       peptides = STDIN.readlines
     end
 
-    filter = options[:select].split(',') rescue ""
+    filter = options[:select].split(',') rescue nil
 
     result = JSON[Faraday.get(@url, :sequences => peptides, :equate_il => options[:equate]).body]
+
+    result.map! {|r| r.select! {|k,v| filter.include? k } } if filter
+
     result = formatter.format(result)
 
     if options[:output]
