@@ -7,6 +7,7 @@ class Api::ApiController < ApplicationController
   def set_params
     @sequences = params[:sequences].map(&:chomp)
     @equate_il = (!params[:equate_il].blank? && params[:equate_il] == 'true')
+    @full_lineage = (!params[:full_lineage].blank? && params[:full_lineage] == 'true')
   end
 
   def single
@@ -22,7 +23,7 @@ class Api::ApiController < ApplicationController
     sequences = @sequences.map {|s| Sequence.single_search(s.upcase, @equate_il) }
 
     name = @equate_il ? :lca_il : :lca
-    @taxons = Taxon.find(sequences.map(&name))
+    @taxons = Taxon.includes(:lineage).find(sequences.map(&name))
 
     respond_with(:api, @taxons)
   end
