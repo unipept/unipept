@@ -1,5 +1,5 @@
 <%=
-  @peptides.map do |p|
+  @peptides.map do |p, u|
     lineage_info = Hash[Lineage::ORDER.zip(p.lineage.to_a)]
     lineage_info.reject! { |k,v| v.blank? } unless @full_lineage
     {
@@ -7,6 +7,7 @@
       taxon_name: p.name,
       parent_taxon_id: p.parent_id,
       taxon_rank: p.rank,
+      uniprot_id: u,
     }.merge(lineage_info)
   end.to_json.html_safe
 %>
