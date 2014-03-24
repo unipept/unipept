@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+require 'cri'
+
+root_cmd = Cri::Command.new_basic_root.modify do
+  name 'prot2pept'
+  required :p, :pattern, "cleavage pattern to split input protein (default: I)"
+  run do |opts, args, cmd|
+    pattern = opts.get(:pattern, "I")
+    puts $stdin.readlines.map { |prot| prot.split(pattern) }
+  end
+end
+
+
