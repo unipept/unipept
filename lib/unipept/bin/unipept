@@ -39,7 +39,8 @@ class ApiRunner < Cri::CommandRunner
     result = []
     peptides.each_slice(10) do |sub_division|
 
-      sub_result = JSON[Faraday.get(@url, :sequences => sub_division, :equate_il => options[:equate]).body]
+      sub_result = JSON[Faraday.get(@url, :sequences => sub_division, :equate_il => options[:equate],
+                                   :full_lineage => options[:lineage]).body]
 
       sub_result.map! {|r| r.select! {|k,v| filter.include? k } } if filter
 
@@ -90,6 +91,7 @@ root_cmd.define_command('pept2taxa') do
 
   flag :e, :equate, "equate I and L"
   option :s, :select, "select the attributes", :argument => :required
+  option :l, :lineage, "Show full lineage"
 
   runner ApiRunner
 end
@@ -102,6 +104,7 @@ root_cmd.define_command('pept2lca') do
 
   flag :e, :equate, "equate I and L"
   option :s, :select, "select the attributes", :argument => :required
+  option :l, :lineage, "Show full lineage"
 
   runner ApiRunner
 end
