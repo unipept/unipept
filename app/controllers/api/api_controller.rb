@@ -14,7 +14,7 @@ class Api::ApiController < ApplicationController
     sequences = @sequences.map { |s| Sequence.single_search(s.upcase, @equate_il) }
     peptides = sequences.reject(&:nil?).map { |s| s.peptides.map(&:uniprot_entry).map(&:taxon_id) }
 
-    @peptides = Taxon.find(peptides)
+    @peptides = Taxon.includes(:lineage).find(peptides)
 
     respond_with(:api, @peptides)
   end
