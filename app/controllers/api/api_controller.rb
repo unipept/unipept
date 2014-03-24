@@ -12,9 +12,9 @@ class Api::ApiController < ApplicationController
 
   def single
     sequences = @sequences.map { |s| Sequence.single_search(s.upcase, @equate_il) }
-    peptides = sequences.reject(&:nil?).map { |s| s.peptides.map(&:uniprot_entry).map(&:taxon_id) }
+    entries = sequences.reject(&:nil?).map { |s| s.peptides.map(&:uniprot_entry) }.flatten
 
-    @peptides = Taxon.includes(:lineage).find(peptides)
+    @peptides = Taxon.includes(:lineage).find(entries.map(&:taxon_id)).zip(entries.map(&:uniprot_accession_number))
 
     respond_with(:api, @peptides)
   end

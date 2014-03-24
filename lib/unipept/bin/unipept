@@ -49,6 +49,14 @@ class ApiRunner < Cri::CommandRunner
       progress.progress += sub_division.size
     end
 
+    if options[:xml]
+      result.first.each do |pept|
+        File.open(pept['taxon_name'].gsub(" ","-").gsub("/","_") + ".xml", "w") do |file|
+          file.write Faraday.get("http://uniprot.org/uniprot/#{pept['uniprot_id']}.xml").body
+        end
+      end
+    end
+
     result = formatter.format(result)
     if options[:output]
       File.open(options[:output], 'w') do |f|
@@ -92,6 +100,7 @@ root_cmd.define_command('pept2taxa') do
   flag :e, :equate, "equate I and L"
   option :s, :select, "select the attributes", :argument => :required
   option :l, :lineage, "Show full lineage"
+  option :x, :xml, "Download uniprot records as xml"
 
   runner ApiRunner
 end

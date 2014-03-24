@@ -16,7 +16,6 @@ class Taxon < ActiveRecord::Base
 
   scope :with_genome, select("DISTINCT taxons.*").joins("RIGHT JOIN uniprot_entries ON taxons.id = uniprot_entries.taxon_id")
 
-
   #sorting order
   def <=>(o)
     return -1 if o.nil?
