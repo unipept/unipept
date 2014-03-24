@@ -34,7 +34,7 @@ class ApiRunner < Cri::CommandRunner
 
     filter = options[:select].split(',') rescue nil
 
-    progress = ProgressBar.create(total: peptides.size)
+    progress = ProgressBar.create(total: peptides.size, output: $stderr)
 
     result = []
     peptides.each_slice(10) do |sub_division|
