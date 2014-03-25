@@ -15,7 +15,7 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://guides.rubygems.org/specification-reference/ for more options
   gem.name = "unipept"
-  gem.executables = ['unipept', 'prot2pept', 'peptfilter']
+  gem.executables = ['unipept', 'prot2pept', 'peptfilter', 'uniprot2prot']
   gem.homepage = "http://github.ugent.be/bmesuere/unipept/"
   gem.license = "MIT"
   gem.summary = %Q{CLI interface to unipept}

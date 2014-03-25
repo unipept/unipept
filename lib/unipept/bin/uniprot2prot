@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+require 'faraday'
+ARGV.each do |arg|
+  resp = Faraday.get("http://www.uniprot.org/uniprot/#{arg}.fasta")
+  if resp.success?
+    puts resp.body.lines[1..-1].map(&:chomp).join("")
+  end
+end
