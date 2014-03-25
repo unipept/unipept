@@ -9,6 +9,7 @@ root_cmd = Cri::Command.new_basic_root.modify do
     minlen = opts.fetch(:minlen, "5").to_i
     maxlen = opts.fetch(:maxlen, "50").to_i
     filtered = $stdin.readlines.select do |pept|
+      pept = pept.chomp
       pept.length >= minlen &&
       pept.length <= maxlen
     end
