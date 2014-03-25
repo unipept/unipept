@@ -1,7 +1,13 @@
 <%=
   @result.map do |k,p|
-    lineage_info = Hash[Lineage::ORDER.zip(p.lineage.to_a)]
-    lineage_info.reject! { |k,v| v.blank? } unless @full_lineage
+    lineage = p.lineage
+    ids = Lineage::ORDER_T.map {|o| lineage.send(o).try(:id) }
+
+    names = Lineage::ORDER.map {|s| "#{s}_name"}
+    lineage_info = Hash[names.zip(lineage.to_a)]
+
+    names = Lineage::ORDER.map {|s| "#{s}_id"}
+    lineage_ids = Hash[names.zip(ids)]
     res = { sequence: k,
       taxon_id: p.id,
       taxon_name: p.name,
@@ -9,7 +15,8 @@
       taxon_rank: p.rank,
     }
     if @full_lineage
-      res.merge(lineage_info)
+      res.merge!(lineage_info)
+      res.merge!(lineage_ids)
     else
       res
     end
