@@ -11,21 +11,27 @@ class Api::ApiController < ApplicationController
   end
 
   def single
-    sequences = @sequences.map { |s| Sequence.single_search(s.upcase, @equate_il) }
-    entries = sequences.reject(&:nil?).map { |s| s.peptides.map(&:uniprot_entry) }.flatten
+    @result = {}
+    @sequences.map do |s|
+      peptides = Sequence.single_search(s.upcase, @equate_il)
+      entries = peptides.peptides.map(&:uniprot_entry)
 
-    @peptides = Taxon.includes(:lineage).find(entries.map(&:taxon_id)).zip(entries.map(&:uniprot_accession_number))
+      @result[s] = Taxon.includes(:lineage).find(entries.map(&:taxon_id)).zip(entries.map(&:uniprot_accession_number))
+    end
 
-    respond_with(:api, @peptides)
+
+    respond_with(@result)
   end
 
   def lca
-    sequences = @sequences.map {|s| Sequence.single_search(s.upcase, @equate_il) }
+    @result = {}
+    @sequences.map do |s|
+      sequence = Sequence.single_search(s.upcase, @equate_il)
+      name = @equate_il ? :lca_il : :lca
+      @result[s] = Taxon.includes(:lineage).find(sequence.send(name))
+    end
 
-    name = @equate_il ? :lca_il : :lca
-    @taxons = Taxon.includes(:lineage).find(sequences.map(&name))
-
-    respond_with(:api, @taxons)
+    respond_with(@result)
   end
 
 end

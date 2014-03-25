@@ -1,8 +1,9 @@
 <%=
-  @taxons.map do |p|
+  @result.map do |k,p|
+
     lineage_info = Hash[Lineage::ORDER.zip(p.lineage.to_a)]
     lineage_info.reject! { |k,v| v.blank? } unless @full_lineage
-    {
+    { sequence: k,
       id: p.id,
       taxon_name: p.name,
       parent_taxon_id: p.parent_id,
