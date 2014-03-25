@@ -1,13 +1,12 @@
 <%=
   @result.map do |k, v|
-    v.map do |p, u|
+    v.map do |p|
       lineage_info = Hash[Lineage::ORDER.zip(p.lineage.to_a)]
       res = { sequence: k,
-        id: p.id,
+        taxon_id: p.id,
         taxon_name: p.name,
-        parent_taxon_id: p.parent_id,
+        taxon_parent_id: p.parent_id,
         taxon_rank: p.rank,
-        uniprot_id: u,
       }
       if @full_lineage
         res.merge(lineage_info)

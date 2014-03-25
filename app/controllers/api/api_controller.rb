@@ -16,9 +16,8 @@ class Api::ApiController < ApplicationController
       peptides = Sequence.single_search(s.upcase, @equate_il)
       entries = peptides.peptides.map(&:uniprot_entry)
 
-      @result[s] = Taxon.includes(:lineage).find(entries.map(&:taxon_id)).zip(entries.map(&:uniprot_accession_number))
+      @result[s] = Taxon.includes(:lineage).find(entries.map(&:taxon_id))
     end
-
 
     respond_with(@result)
   end
