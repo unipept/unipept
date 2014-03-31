@@ -5,6 +5,7 @@ require 'faraday'
 require 'ruby-progressbar'
 require 'yaml'
 require 'json'
+require 'fileutils'
 
 require_relative '../lib/unipept'
 
@@ -62,7 +63,7 @@ class ApiRunner < Cri::CommandRunner
       progress.progress += sub_division.size
     end
 
-    download_xml
+    download_xml(result)
 
     result = formatter.format(result)
     if options[:output]
@@ -74,7 +75,7 @@ class ApiRunner < Cri::CommandRunner
     end
   end
 
-  def download_xml
+  def download_xml(result)
     if options[:xml]
       File.open(options[:xml] + ".xml", "wb") do |f|
         f.write Faraday.get("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=#{result.first.map{|h| h['taxon_id'] }.join(",")}&retmode=xml").body
@@ -98,6 +99,29 @@ class Taxa2lca < ApiRunner
 
   def url_options(sub_part)
     {:taxon_ids => sub_part}
+  end
+
+end
+
+class Pept2pro < ApiRunner
+
+  def mapping
+    {"pept2pro" => "pept2pro"}
+  end
+
+  def url_options(sub_part)
+    {:sequences => sub_part}
+  end
+
+  def download_xml(result)
+    if options[:xml]
+      FileUtils.mkdir_p(options[:xml])
+      result.first.each do |prot|
+        File.open(options[:xml] + "/#{prot['uniprot_id']}.xml", "wb") do |f|
+          f.write Faraday.get("http://www.uniprot.org/uniprot/#{prot['uniprot_id']}.xml").body
+        end
+      end
+    end
   end
 
 end
@@ -161,6 +185,18 @@ root_cmd.define_command('taxa2lca') do
   option :s, :select, "select the attributes", :argument => :required
 
   runner Taxa2lca
+end
+
+root_cmd.define_command('pept2pro') do
+  usage       'pept2pro [options]'
+  aliases     :p
+  summary     'Give protein information for given peptides'
+  description 'Search Unipept for the given peptides and return the lowest common ancestor'
+
+  option :s, :select, "select the attributes", :argument => :required
+  option :x, :xml, "download uniprot record in specified directory", :argument => :required
+
+  runner Pept2pro
 end
 
 root_cmd.run(ARGV)
