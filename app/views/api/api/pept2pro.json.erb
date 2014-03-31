@@ -1,15 +1,9 @@
 <%=
   @result.map do |k, v|
-    v.map do |p|
-      res = { sequence: k,
+    v.map do |u|
+      { sequence: k,
         uniprot_id: u.uniprot_accession_number,
       }
-      if @full_lineage
-        res.merge!(lineage_info)
-        res.merge!(lineage_ids)
-      else
-        res
-      end
     end
   end.flatten.to_json.html_safe
 %>

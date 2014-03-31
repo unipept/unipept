@@ -2,7 +2,7 @@ class Api::ApiController < ApplicationController
 
   respond_to :json
 
-  before_filter :set_params, only: [:single, :lca, :pept2pro]
+  before_filter :set_params, only: [:single, :lca]
 
   def set_params
     @sequences = params[:sequences].map(&:chomp)
@@ -47,6 +47,8 @@ class Api::ApiController < ApplicationController
 
   def pept2pro
     @result = {}
+    @sequences = params[:sequences].map(&:chomp)
+
     @sequences.map do |s|
       peptides = Sequence.single_search(s.upcase, @equate_il)
       @result[s] =  peptides.peptides.map(&:uniprot_entry) if peptides
