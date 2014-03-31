@@ -2,7 +2,7 @@ class Api::ApiController < ApplicationController
 
   respond_to :json
 
-  before_filter :set_params, only: [:single, :lca]
+  before_filter :set_params, only: [:single, :lca, :pept2pro]
 
   def set_params
     @sequences = params[:sequences].map(&:chomp)
@@ -36,7 +36,23 @@ class Api::ApiController < ApplicationController
   end
 
   def taxa2lca
+    @taxon_ids = params[:taxon_ids].map(&:chomp)
+    @equate_il = (!params[:equate_il].blank? && params[:equate_il] == 'true')
 
+    name = @equate_il ? :lca_il : :lca
+    @result = Taxon.includes(:lineage).find(@taxon_ids)
+
+    respond_with(@result)
+  end
+
+  def pept2pro
+    @result = {}
+    @sequences.map do |s|
+      peptides = Sequence.single_search(s.upcase, @equate_il)
+      @result[s] =  peptides.peptides.map(&:uniprot_entry) if peptides
+    end
+
+    respond_with(@result)
   end
 
 end
