@@ -51,10 +51,8 @@ class ApiRunner < Cri::CommandRunner
     end
 
     if options[:xml]
-      result.first.each do |pept|
-        File.open(pept['taxon_name'].gsub(" ","-").gsub("/","_") + ".xml", "w") do |file|
-          file.write Faraday.get("http://uniprot.org/uniprot/#{pept['uniprot_id']}.xml").body
-        end
+      File.open(options[:xml] + ".xml", "wb") do |f|
+        f.write Faraday.get("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=#{result.first.map{|h| h['taxon_id'] }.join(",")}&retmode=xml").body
       end
     end
 
@@ -109,7 +107,7 @@ root_cmd.define_command('pept2taxa') do
   flag :e, :equate, "equate I and L"
   option :s, :select, "select the attributes", :argument => :required
   option :l, :lineage, "Show full lineage"
-  option :x, :xml, "Download uniprot records as xml"
+  option :x, :xml, "Download taxonomy from NCBI as xml (specify output filename)", :argument => :required
 
   runner ApiRunner
 end
