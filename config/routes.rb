@@ -58,7 +58,7 @@ UnipeptWeb::Application.routes.draw do
     get 'lca' => "api#lca"
     get 'taxa2lca' => 'api#taxa2lca'
     get 'pept2pro' => 'api#pept2pro'
-  nend
+  end
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

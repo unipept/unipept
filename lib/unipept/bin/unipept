@@ -8,6 +8,7 @@ require 'json'
 
 require_relative '../lib/unipept'
 
+
 class ApiRunner < Cri::CommandRunner
 
   def initialize(args, opts, cmd)
@@ -24,13 +25,25 @@ class ApiRunner < Cri::CommandRunner
     {'pept2taxa' => 'single', 'pept2lca' => 'lca'}
   end
 
-  def run
-    formatter = Unipept::Formatter.new_for_format(options[:format])
+  def read_input
     if options[:input]
       peptides = File.readlines(options[:input])
     else
       peptides = STDIN.readlines
     end
+
+    peptides
+  end
+
+  def url_options(sub_part)
+    {:sequences => sub_part,
+     :equate_il => options[:equate],
+     :full_lineage => options[:lineage]}
+  end
+
+  def run
+    formatter = Unipept::Formatter.new_for_format(options[:format])
+    peptides = read_input
 
     filter = options[:select] rescue nil
     filter = glob_to_regex(filter) if filter
@@ -40,8 +53,7 @@ class ApiRunner < Cri::CommandRunner
     result = []
     peptides.each_slice(10) do |sub_division|
 
-      sub_result = JSON[Faraday.get(@url, :sequences => sub_division, :equate_il => options[:equate],
-                                   :full_lineage => options[:lineage]).body]
+      sub_result = JSON[Faraday.get(@url, url_options(sub_division)).body]
 
       sub_result.map! {|r| r.select! {|k,v| filter.match k } } if filter
 
@@ -50,11 +62,7 @@ class ApiRunner < Cri::CommandRunner
       progress.progress += sub_division.size
     end
 
-    if options[:xml]
-      File.open(options[:xml] + ".xml", "wb") do |f|
-        f.write Faraday.get("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=#{result.first.map{|h| h['taxon_id'] }.join(",")}&retmode=xml").body
-      end
-    end
+    download_xml
 
     result = formatter.format(result)
     if options[:output]
@@ -64,7 +72,14 @@ class ApiRunner < Cri::CommandRunner
     else
       puts result
     end
+  end
 
+  def download_xml
+    if options[:xml]
+      File.open(options[:xml] + ".xml", "wb") do |f|
+        f.write Faraday.get("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=#{result.first.map{|h| h['taxon_id'] }.join(",")}&retmode=xml").body
+      end
+    end
   end
 
   private
@@ -73,6 +88,18 @@ class ApiRunner < Cri::CommandRunner
     # only implement * -> . for now
     Regexp.new glob_string.gsub("*", ".*")
   end
+end
+
+class Taxa2lca < ApiRunner
+
+  def mapping
+    {"taxa2lca" => "taxa2lca"}
+  end
+
+  def url_options(sub_part)
+    {:taxon_ids => sub_part}
+  end
+
 end
 
 root_cmd = Cri::Command.new_basic_root.modify do
@@ -125,5 +152,15 @@ root_cmd.define_command('pept2lca') do
   runner ApiRunner
 end
 
+root_cmd.define_command('taxa2lca') do
+  usage       'taxa2lca [options]'
+  aliases     :t
+  summary     'Give lowest common ancestor for taxon ids'
+  description 'Search Unipept for the given taxon ids and return the lowest common ancestor'
+
+  option :s, :select, "select the attributes", :argument => :required
+
+  runner Taxa2lca
+end
 
 root_cmd.run(ARGV)
