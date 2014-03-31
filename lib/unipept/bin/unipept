@@ -32,7 +32,8 @@ class ApiRunner < Cri::CommandRunner
       peptides = STDIN.readlines
     end
 
-    filter = options[:select].split(',') rescue nil
+    filter = options[:select] rescue nil
+    filter = glob_to_regex(filter) if filter
 
     progress = ProgressBar.create(total: peptides.size, output: $stderr)
 
@@ -42,7 +43,7 @@ class ApiRunner < Cri::CommandRunner
       sub_result = JSON[Faraday.get(@url, :sequences => sub_division, :equate_il => options[:equate],
                                    :full_lineage => options[:lineage]).body]
 
-      sub_result.map! {|r| r.select! {|k,v| filter.include? k } } if filter
+      sub_result.map! {|r| r.select! {|k,v| filter.match k } } if filter
 
       result << sub_result
 
@@ -65,6 +66,14 @@ class ApiRunner < Cri::CommandRunner
     else
       puts result
     end
+
+  end
+
+  private
+
+  def glob_to_regex(glob_string)
+    # only implement * -> . for now
+    Regexp.new glob_string.gsub("*", ".*")
   end
 end
 
