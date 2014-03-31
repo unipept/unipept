@@ -35,4 +35,8 @@ class Api::ApiController < ApplicationController
     respond_with(@result)
   end
 
+  def taxa2lca
+
+  end
+
 end
