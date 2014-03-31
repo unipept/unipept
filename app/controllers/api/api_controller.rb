@@ -14,9 +14,11 @@ class Api::ApiController < ApplicationController
     @result = {}
     @sequences.map do |s|
       peptides = Sequence.single_search(s.upcase, @equate_il)
-      entries = peptides.peptides.map(&:uniprot_entry)
+      if peptides
+        entries = peptides.peptides.map(&:uniprot_entry)
 
-      @result[s] = Taxon.includes(:lineage).find(entries.map(&:taxon_id))
+        @result[s] = Taxon.includes(:lineage).find(entries.map(&:taxon_id))
+      end
     end
 
     respond_with(@result)
@@ -27,7 +29,7 @@ class Api::ApiController < ApplicationController
     @sequences.map do |s|
       sequence = Sequence.single_search(s.upcase, @equate_il)
       name = @equate_il ? :lca_il : :lca
-      @result[s] = Taxon.includes(:lineage).find(sequence.send(name))
+      @result[s] = Taxon.includes(:lineage).find(sequence.send(name)) if sequence
     end
 
     respond_with(@result)
