@@ -98,7 +98,7 @@ class Taxa2lca < ApiRunner
   end
 
   def url_options(sub_part)
-    {:taxon_ids => sub_part}
+    {:taxon_ids => sub_part, :full_lineage => options[:lineage]}
   end
 
 end
@@ -183,6 +183,7 @@ root_cmd.define_command('taxa2lca') do
   description 'Search Unipept for the given taxon ids and return the lowest common ancestor'
 
   option :s, :select, "select the attributes", :argument => :required
+  option :l, :lineage, "Show full lineage"
 
   runner Taxa2lca
 end
