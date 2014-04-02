@@ -65,7 +65,27 @@ module Unipept
   end
 
   class XMLFormatter < Formatter
-    require 'to_xml'
+
+    # Monkey patch (do as to_xml, but saner)
+
+    class ::Object
+      def to_xml(name = nil)
+        name ? %{<#{name}>#{self.to_s}</#{name}>} : self.to_s
+      end
+    end
+
+    class ::Array
+      def to_xml( array_name = :array, item_name = :item )
+        %|<#{array_name} size="#{self.size}">|+map{|n|n.to_xml( :item )}.join+"</#{array_name}>"
+      end
+    end
+
+    class ::Hash
+      def to_xml( name = nil )
+        data = to_a.map{|k,v|v.to_xml(k)}.join
+        name ? "<#{name}>#{data}</#{name}>" : data
+      end
+    end
 
     register :xml
 
