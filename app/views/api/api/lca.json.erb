@@ -1,13 +1,15 @@
 <%=
   @result.map do |k,p|
-    lineage = p.lineage
-    ids = Lineage::ORDER_T.map {|o| lineage.send(o).try(:id) }
+    if @full_lineage
+      lineage = p.lineage
+      ids = Lineage::ORDER.map {|o| lineage.try(o)}
 
-    names = Lineage::ORDER.map {|s| "#{s}_name"}
-    lineage_info = Hash[names.zip(lineage.to_a)]
+      names = Lineage::ORDER.map {|s| "#{s}_name"}
+      lineage_info = Hash[names.zip(lineage.to_a)]
 
-    names = Lineage::ORDER.map {|s| "#{s}_id"}
-    lineage_ids = Hash[names.zip(ids)]
+      names = Lineage::ORDER.map {|s| "#{s}_id"}
+      lineage_ids = Hash[names.zip(ids)]
+    end
     res = { sequence: k,
       taxon_id: p.id,
       taxon_name: p.name,

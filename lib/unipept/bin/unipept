@@ -52,7 +52,7 @@ class ApiRunner < Cri::CommandRunner
     progress = ProgressBar.create(total: peptides.size, output: $stderr)
 
     result = []
-    peptides.each_slice(10) do |sub_division|
+    peptides.each_slice(50) do |sub_division|
 
       sub_result = JSON[Faraday.get(@url, url_options(sub_division)).body]
 
