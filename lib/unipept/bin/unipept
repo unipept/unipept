@@ -56,6 +56,8 @@ class ApiRunner < Cri::CommandRunner
 
       sub_result = JSON[Faraday.get(@url, url_options(sub_division)).body]
 
+      sub_result = [sub_result] if not sub_result.kind_of? Array
+
       sub_result.map! {|r| r.select! {|k,v| filter.match k } } if filter
 
       result << sub_result
