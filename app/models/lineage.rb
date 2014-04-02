@@ -82,6 +82,8 @@ class Lineage < ActiveRecord::Base
             :species_group_t, :species_subgroup_t, :species_t, :subspecies_t,
             :varietas_t, :forma_t]
 
+  scope :with_names, -> { includes(ORDER_T) }
+
   def set_iterator_position(position)
     @iterator = position
   end
