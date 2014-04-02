@@ -110,7 +110,7 @@ class Pept2pro < ApiRunner
   end
 
   def url_options(sub_part)
-    {:sequences => sub_part}
+    {:sequences => sub_part, :equate_il => options[:equate]}
   end
 
   def download_xml(result)
@@ -194,6 +194,7 @@ root_cmd.define_command('pept2pro') do
   summary     'Give protein information for given peptides'
   description 'Search Unipept for the given peptides and return the lowest common ancestor'
 
+  flag :e, :equate, "equate I and L"
   option :s, :select, "select the attributes", :argument => :required
   option :x, :xml, "download uniprot record in specified directory", :argument => :required
 
