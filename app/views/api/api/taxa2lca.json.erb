@@ -1,6 +1,8 @@
 <%=
-  @result.map do |p|
+  p = @result
+  if @full_lineage
     lineage = p.lineage
+
     ids = Lineage::ORDER_T.map {|o| lineage.send(o).try(:id) }
 
     names = Lineage::ORDER.map {|s| "#{s}_name"}
@@ -8,17 +10,18 @@
 
     names = Lineage::ORDER.map {|s| "#{s}_id"}
     lineage_ids = Hash[names.zip(ids)]
-    res = {
-      taxon_id: p.id,
-      taxon_name: p.name,
-      taxon_parent_id: p.parent_id,
-      taxon_rank: p.rank,
-    }
-    if @full_lineage
-      res.merge!(lineage_info)
-      res.merge!(lineage_ids)
-    else
-      res
-    end
-  end.flatten.to_json.html_safe
+  end
+  res = {
+    taxon_id: p.id,
+    taxon_name: p.name,
+    taxon_parent_id: p.parent_id,
+    taxon_rank: p.rank,
+  }
+  if @full_lineage
+    res.merge!(lineage_info)
+    res.merge!(lineage_ids)
+  else
+    res
+  end
+  res.to_json.html_safe
 %>

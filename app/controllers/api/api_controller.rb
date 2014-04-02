@@ -38,9 +38,11 @@ class Api::ApiController < ApplicationController
   def taxa2lca
     @taxon_ids = params[:taxon_ids].map(&:chomp)
     @equate_il = (!params[:equate_il].blank? && params[:equate_il] == 'true')
+    @full_lineage = (!params[:full_lineage].blank? && params[:full_lineage] == 'true')
 
     name = @equate_il ? :lca_il : :lca
-    @result = Taxon.includes(:lineage).find(@taxon_ids)
+    lineages = Taxon.includes(:lineage).find(@taxon_ids).map(&:lineage)
+    @result = Lineage.calculate_lca_taxon(lineages)
 
     respond_with(@result)
   end
