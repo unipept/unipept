@@ -14,10 +14,10 @@ class Api::ApiController < ApplicationController
     @result = {}
     rel_name = @equate_il ? :lca_il_t : :lca_t
     @sequences.each {|s| s.gsub!(/I/,'L') } if @equate_il
-    sequences = Sequence.find_all_by_sequence(@sequences, :include => { rel_name => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}})
+    sequences = Sequence.includes(peptides: {uniprot_entry: :name}).find_all_by_sequence(@sequences, :include => { rel_name => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}})
     sequences.each do |s|
       entries = s.peptides.map(&:uniprot_entry)
-      @result[s] = Taxon.includes(:lineage).where(id: entries.map(&:taxon_id))
+      @result[s.sequence] = Taxon.includes(:lineage).where(id: entries.map(&:taxon_id))
     end
 
     respond_with(@result)
@@ -52,9 +52,9 @@ class Api::ApiController < ApplicationController
     @result = {}
     rel_name = @equate_il ? :lca_il_t : :lca_t
     @sequences.each {|s| s.gsub!(/I/,'L') } if @equate_il
-    sequences = Sequence.find_all_by_sequence(@sequences, :include => { rel_name => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}})
+    sequences = Sequence.includes(peptides: {uniprot_entry: :name}).find_all_by_sequence(@sequences, :include => { rel_name => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}})
     sequences.each do |s|
-      @result[s] = s.peptides.map(&:uniprot_entry) if s
+      @result[s.sequence] = s.peptides.map(&:uniprot_entry) if s
     end
 
     respond_with(@result)
