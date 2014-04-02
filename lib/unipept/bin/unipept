@@ -36,6 +36,10 @@ class ApiRunner < Cri::CommandRunner
     peptides
   end
 
+  def batch_size
+    1000
+  end
+
   def url_options(sub_part)
     {:sequences => sub_part,
      :equate_il => options[:equate],
@@ -52,9 +56,9 @@ class ApiRunner < Cri::CommandRunner
     progress = ProgressBar.create(total: peptides.size, output: $stderr)
 
     result = []
-    peptides.each_slice(50) do |sub_division|
+    peptides.each_slice(self.batch_size) do |sub_division|
 
-      sub_result = JSON[Faraday.get(@url, url_options(sub_division)).body]
+      sub_result = JSON[Faraday.post(@url, url_options(sub_division)).body]
 
       sub_result = [sub_result] if not sub_result.kind_of? Array
 
@@ -102,6 +106,12 @@ class Taxa2lca < ApiRunner
   def url_options(sub_part)
     {:taxon_ids => sub_part, :full_lineage => options[:lineage]}
   end
+
+  def batch_size
+    100000
+  end
+
+
 
 end
 
