@@ -35,9 +35,9 @@
 
 class Lineage < ActiveRecord::Base
   attr_accessible nil
-  
+
   has_many :uniprot_entries,      :foreign_key  => "taxon_id",      :primary_key  => "taxon_id", :class_name   => 'UniprotEntry'
-    
+
   belongs_to :name,               :foreign_key  => "taxon_id",      :primary_key  => "id",  :class_name   => 'Taxon'
 
   belongs_to :superkingdom_t,     :foreign_key  => "superkingdom",  :primary_key  => "id",  :class_name   => 'Taxon'
@@ -68,46 +68,46 @@ class Lineage < ActiveRecord::Base
   belongs_to :subspecies_t,       :foreign_key  => "subspecies",    :primary_key  => "id",  :class_name   => 'Taxon'
   belongs_to :varietas_t,         :foreign_key  => "varietas",      :primary_key  => "id",  :class_name   => 'Taxon'
   belongs_to :forma_t,            :foreign_key  => "forma",         :primary_key  => "id",  :class_name   => 'Taxon'
-                                  
-  ORDER = [:superkingdom, :kingdom, :subkingdom, :superphylum, :phylum, :subphylum, 
+
+  ORDER = [:superkingdom, :kingdom, :subkingdom, :superphylum, :phylum, :subphylum,
             :superclass, :class_, :subclass, :infraclass, :superorder, :order, :suborder,
-            :infraorder, :parvorder, :superfamily, :family, :subfamily, :tribe, 
-            :subtribe, :genus, :subgenus, :species_group, :species_subgroup, 
+            :infraorder, :parvorder, :superfamily, :family, :subfamily, :tribe,
+            :subtribe, :genus, :subgenus, :species_group, :species_subgroup,
             :species, :subspecies, :varietas, :forma]
-            
-  ORDER_T = [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, 
-            :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, 
-            :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, 
-            :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, 
-            :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, 
-            :varietas_t, :forma_t] 
-              
+
+  ORDER_T = [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t,
+            :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t,
+            :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t,
+            :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t,
+            :species_group_t, :species_subgroup_t, :species_t, :subspecies_t,
+            :varietas_t, :forma_t]
+
   def set_iterator_position(position)
     @iterator = position
   end
-  
+
   def get_iterator_position
     return @iterator
   end
-  
+
   def has_next?
     @iterator = 0 if @iterator.nil?
     return (ORDER.length > @iterator)
   end
-  
+
   def next
     result = ORDER[@iterator]
     @iterator += 1
     return self[result]
     #return read_attribute(result) # what is this line doing here?
   end
-  
+
   def next_t
     result = ORDER_T[@iterator]
     @iterator += 1
     return self.send(result)
   end
-  
+
   #returns an array containing the lineage names in the right order
   def to_a
     array = []
@@ -116,16 +116,16 @@ class Lineage < ActiveRecord::Base
     end
     return array.map{|x| x.nil? ? "" : x.name}
   end
-  
+
   def self.ranks
     return ORDER
   end
-  
+
   #returns the Taxon object of the lowest common ancestor
   def self.calculate_lca_taxon(lineages)
     return Taxon.find_by_id(Lineage.calculate_lca(lineages))
   end
-  
+
   #calculates the lowest common ancestor
   #you shouldn't call this method directly but the calculate_lca method on the sequence
   def self.calculate_lca(lineages)
@@ -143,14 +143,14 @@ class Lineage < ActiveRecord::Base
     end
     return lca
   end
-  
+
   # there's a column 'class' in the database which screws
   # up the getters. This method fixes that error.
   def self.instance_method_already_implemented?(method_name)
     return true if method_name == 'class'
     super
   end
-  
+
   def class_
     return read_attribute(:class)
   end
