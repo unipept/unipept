@@ -11,17 +11,24 @@ class Api::ApiController < ApplicationController
 
     rel_name = @equate_il ? :lca_il_t : :lca_t
     @sequences.each {|s| s.gsub!(/I/,'L') } if @equate_il
-    @sequences = Sequence.includes(:peptides => {:uniprot_entry => :name}).
-      find_all_by_sequence(@sequences, :include => { rel_name => :lineage })
+    @sequences = Sequence.joins(:peptides => {:uniprot_entry => :name}).
+      where(sequence: @sequences)
   end
 
   def single
     @result = {}
-    @sequences.each do |s|
-      entries = s.peptides.map(&:uniprot_entry)
-      @result[s.sequence] = Taxon.includes(:lineage).where(id: entries.map(&:taxon_id))
+    lookup = Hash.new { |h,k| h[k] = Array.new }
+    @sequences.order(:taxon_id).select([:sequence, :taxon_id]).each do |e|
+      lookup[e.taxon_id.to_i] << e.sequence
+      @result[e.sequence] = []
     end
 
+    ids = @sequences.pluck(:taxon_id)
+    Taxon.includes(:lineage).where(id: ids).find_in_batches do |group|
+      group.each do |t|
+        lookup[t.id].each {|s| @result[s] << t}
+      end
+    end
     respond_with(@result)
   end
 
