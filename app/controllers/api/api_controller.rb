@@ -17,10 +17,10 @@ class Api::ApiController < ApplicationController
 
   def single
     @result = {}
-    lookup = Hash.new { |h,k| h[k] = Array.new }
+    lookup = Hash.new { |h,k| h[k] = Set.new }
     @sequences.order(:taxon_id).select([:sequence, :taxon_id]).each do |e|
       lookup[e.taxon_id.to_i] << e.sequence
-      @result[e.sequence] = []
+      @result[e.sequence] = Set.new
     end
 
     ids = @sequences.order(:taxon_id).pluck("DISTINCT taxon_id")
