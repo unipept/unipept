@@ -3,6 +3,7 @@ require 'cri'
 
 root_cmd = Cri::Command.new_basic_root.modify do
   name 'peptfilter'
+  flag :i, :unique, "only output unique peptides"
   required :l, :minlen, "minimum length (default: 5)"
   required :u, :maxlen, "minimum length (default: 50)"
   required :a, :lacks, "a string whose letters represent amino acids that may not occur in the peptide"
@@ -10,8 +11,8 @@ root_cmd = Cri::Command.new_basic_root.modify do
   run do |opts, args, cmd|
     minlen = opts.fetch(:minlen, "5").to_i
     maxlen = opts.fetch(:maxlen, "50").to_i
-    lacks = opts.fetch(:lacks, "").split
-    contains = opts.fetch(:contains, "").split
+    lacks = opts.fetch(:lacks, "").chars.to_a
+    contains = opts.fetch(:contains, "").chars.to_a
     filtered = $stdin.readlines.select do |pept|
       pept = pept.chomp
       length_ok = pept.length >= minlen && pept.length <= maxlen
@@ -20,7 +21,11 @@ root_cmd = Cri::Command.new_basic_root.modify do
 
       length_ok && lacks_ok && contains_ok
     end
-    puts filtered
+    if opts[:unique]
+      puts filtered.uniq
+    else
+      puts filtered
+    end
   end
 end
 
