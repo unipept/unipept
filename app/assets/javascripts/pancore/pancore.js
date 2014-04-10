@@ -63,7 +63,11 @@ var constructPancore = function constructPancore(args) {
         worker.addEventListener('error', error, false);
 
         // Constructs the matrix
-        matrix = constructSimMatrix({table : table, worker : worker});
+        matrix = constructSimMatrix({
+            pancore : that,
+            table : table,
+            worker : worker
+        });
 
         // Initialize the rest of the page
         initSpeciesForm();
@@ -187,6 +191,19 @@ var constructPancore = function constructPancore(args) {
             break;
         case 'autoSorted':
             that.updateOrder(data.msg);
+            break;
+        // SimMaxtrix commands
+        case 'newOrder':
+            matrix.reorder(data.msg);
+            break;
+        case 'matrixData':
+            matrix.receiveMatrix(data.msg);
+            break;
+        case 'newick':
+            matrix.drawTree(data.msg);
+            break;
+        case 'reorderTable':
+            matrix.reorderTable();
             break;
         default:
             console.log(data.msg);

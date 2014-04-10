@@ -2,6 +2,7 @@
  * Creates a SimMatrix object that includes the similarity matrix and
  * phylogenetic tree.
  *
+ * @param <Pancore> args.pancore The Pancore object
  * @param <Worker> args.worker The Worker object processing the data
  * @param <GenomeTable> args.table The GenomeTable object
  */
@@ -9,7 +10,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
     /*************** Private variables ***************/
 
     // Parameters
-    var worker = args.worker,
+    var pancore = args.pancore,
+        worker = args.worker,
         table = args.table;
 
     // UI variables
@@ -17,11 +19,9 @@ var constructSimMatrix = function constructSimMatrix(args) {
         width = 500,
         height = 500;
 
-    // variable to contain our d3 selectors
-    var svg;
-
-    // Scales
-    var x = d3.scale.ordinal().rangeBands([0, width]),
+    // D3 vars
+    var svg,
+        x = d3.scale.ordinal().rangeBands([0, width]),
         z = d3.scale.linear().domain([0, 1]).clamp(true);
 
     // Constructor fields
@@ -31,10 +31,10 @@ var constructSimMatrix = function constructSimMatrix(args) {
         treeOrder = [],
         matrix = [],
         clustered = undefined,
-        updated = false,
+        dirty = false,
         newick;
 
-    var $tabSelector = $('a[href="#sim_matrix_wrapper"]'),
+    var $matrixTab = $('a[href="#sim_matrix_wrapper"]'),
         $graphSelector = $('#sim_graph'),
         $clusterBtn;
 
@@ -46,8 +46,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * Initializes the SimMatrix
      */
     function init() {
-        setupWorker();
-        $tabSelector.on('shown.bs.tab', function tabSwitchAction() {
+        $matrixTab.on('shown.bs.tab', function tabSwitchAction() {
             that.calculateSimilarity();
             that.redraw();
         });
@@ -64,12 +63,12 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         $('#decluster-matrix').click(function declusterAction() {
             x.domain(oldDomain);
-            updated = true;
-            that.setClustered(false);
-            that.redraw();
+            dirty = true;
+            setClustered(false);
+            that.update();
         });
 
-        $('#use-cluster-order').click(reorderTable);
+        $('#use-cluster-order').click(that.reorderTable);
 
         // Dummy newick value chosen randomly
         var dummyNewick = "((((A:0.2,B:0.2):0.1,C:0.3):0.4,(F:0.4,D:0.4):0.3):0.3,E:1.0)";
@@ -123,41 +122,57 @@ var constructSimMatrix = function constructSimMatrix(args) {
             });
     }
 
+    /**
+     * Call this method to indicate that the current view is or isn't clustered.
+     * This will enable or disable the clustering buttons.
+     *
+     * @param <Boolean> c is the matrix currently clustered?
+     */
+    function setClustered(c) {
+        // Check if value differs, if we don't do this we call fadeTo too many times
+        var minWidth = setMinWidth();
+        if (c !== clustered) {
+            if (!c) {
+                $graphSelector.fadeTo('normal', 0.2);
+                $clusterBtn.show();
+                $('#reorder-header').addClass('hidden');
+            } else {
+                $graphSelector.fadeTo('fast', 1);
+                $clusterBtn.hide();
+                $('#reorder-header').removeClass('hidden');
+                $('#cluster-div').css('height', minWidth + 30 + "px");
+                $('#matrix-popover-table').css('top', minWidth + 20 + 'px');
+            }
+            clustered = c;
+        }
+
+    }
+
     /* TODO: can this be abstracted? */
     function sendToWorker(type, message) {
         worker.postMessage({'cmd': type, 'msg': message});
     }
 
-    function setupWorker() {
-        /* setup worker */
-        worker.addEventListener('message', function (e) {
-            var data = e.data;
-            switch (data.type) {
-            case 'newOrder':
-                that.reorder(data.msg);
-                break;
-            case 'matrixData':
-                receiveMatrix(data.msg);
-                break;
-            case 'newick':
-                that.drawTree(data.msg);
-                break;
-            case 'reorderTable':
-                reorderTable();
-                break;
-            case 'log':
-                console.log(data.msg);
-                break;
-            }
-        });
+    /**
+     * Calculate the effective width needed for matrix
+     * TODO: this shouldn't be here
+     */
+    function setMinWidth() {
+        var minWidth = d3.min([width, 50 * matrix.length]);
+        x.rangeBands([0, minWidth]);
+        return minWidth;
     }
+
+    /*************** Public methods ***************/
 
     /**
      * Receive the new matrix from the worker
      *
+     * TODO: make private
+     *
      * @param <?> m TODO
      */
-    function receiveMatrix(m) {
+    that.receiveMatrix = function receiveMatrix(m) {
         var i;
 
         if (m.index === 'all') {
@@ -168,23 +183,16 @@ var constructSimMatrix = function constructSimMatrix(args) {
                 matrix[i][m.index] = m.data[i];
             }
         }
-        updated = true;
+        dirty = true;
         that.redraw();
-    }
-
-    /**
-     * Calculate height needed for matrix
-     */
-    function setMinWidth() {
-        var min_width = d3.min([width, 50 * matrix.length]);
-        x.rangeBands([0, min_width]);
-        return min_width;
-    }
+    };
 
     /**
      * TODO
+     *
+     * TODO make private
      */
-    function reorderTable() {
+    that.reorderTable = function reorderTable() {
         var clusterOrder = [],
             domain = x.domain(),
             i;
@@ -194,9 +202,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         sendToWorker("recalculatePanCore", {'order': clusterOrder, start: 0, end: clusterOrder.length - 1});
         table.setOrder(clusterOrder);
         $('#reorder-header').addClass('hidden');
-    }
-
-    /*************** Public methods ***************/
+    };
 
     /**
      * Reorder the matrix based on the new order
@@ -210,7 +216,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         setMinWidth();
 
-        that.setClustered(true);
+        setClustered(true);
 
         var t = svg.transition().duration(1000);
 
@@ -224,7 +230,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         t.selectAll(".column")
             .delay(function (d, i) { return x(i) * 2; })
             .attr("transform", function (d, i) { return "translate(" + x(i) + ")rotate(90)"; });
-        updated = true;
+        dirty = true;
     };
 
     /**
@@ -240,47 +246,56 @@ var constructSimMatrix = function constructSimMatrix(args) {
         }
         x.domain(newDomain);
 
-        that.setClustered(false);
-        updated = true;
-        that.redraw();
+        setClustered(false);
+        dirty = true;
+        that.update();
     };
 
     /**
-     * TODO
-     *
-     * @param <?> removed TODO
+     * Redraws the entire matrix
      */
-    that.redraw = function redraw(removed) {
+    that.redraw = function redraw() {
         // Check if we are currently active pane
-        if (!that.activeTab() || !updated) {
+        if (!that.isActiveTab()) {
             return;
         }
 
-        updated = false;
-        if (removed) {
-            $("#sim_matrix").html('');
+        dirty = true;
+
+        $("#sim_matrix").html('');
+        svg = d3.select("#sim_matrix").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        svg.append("rect")
+            .attr("class", "background")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("fill", "#eeeeee");
+
+        that.update();
+    };
+
+    /**
+     * Updates the SimMatrix
+     */
+    that.update = function update() {
+        // Check if we are currently active pane and dirty
+        if (!that.isActiveTab()) {
+            return;
+        }
+        if (!dirty) {
+            return;
         }
 
-        if (!svg || removed) {
-            svg = d3.select("#sim_matrix").append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-                .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-            svg.append("rect")
-                .attr("class", "background")
-                .attr("width", width)
-                .attr("height", height)
-                .attr("fill", "#eeeeee");
-
-        }
-
-        /* allow for smaller scale matrices */
-        var min_width = setMinWidth();
+        // allow for smaller scale matrices
+        // TODO: remove me
+        var minWidth = setMinWidth();
         d3.select(".background")
-            .attr("width", min_width)
-            .attr("height", min_width);
+            .attr("width", minWidth)
+            .attr("height", minWidth);
 
         var row = svg.selectAll(".row")
             .data(matrix);
@@ -308,7 +323,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
             .attr("y", x.rangeBand() / 2);
 
         column.selectAll("text")
-            .attr("x", min_width + 6)
+            .attr("x", minWidth + 6)
             .attr('y', -x.rangeBand() / 2);
 
         column_enter = column.enter().append("g")
@@ -316,53 +331,30 @@ var constructSimMatrix = function constructSimMatrix(args) {
             .attr("transform", function (d, i) { return "translate(" + x(i) + ")rotate(90)"; });
 
         column_enter.append("text")
-            .attr("x", min_width + 6)
+            .attr("x", minWidth + 6)
             .attr("y", -x.rangeBand() / 2)
             .attr("dy", ".32em")
             .attr("text-anchor", "start")
             .text(function (d, i) { return names[order[i]].name; });
 
         row.each(popOverF);
-    };
+
+        dirty = false;
+    }
 
     /**
      * TODO
      */
     that.clearAllData = function clearAllData() {
-        updated = true;
-        that.setClustered(false);
+        dirty = true;
+        setClustered(false);
         matrix = [];
         order = [];
         names = [];
         treeOrder = [];
         newick = "";
         x.domain([]);
-        that.redraw(true);
-    };
-
-    /**
-     * TODO
-     *
-     * @param <?> c TODO
-     */
-    that.setClustered = function setClustered(c) {
-        /* check if value differs, if we don't do this we call fadeTo too many times" */
-        var minWidth = setMinWidth();
-        if (c != clustered) {
-            if (!c) {
-                $graphSelector.fadeTo('normal', 0.2);
-                $clusterBtn.show();
-                $('#reorder-header').addClass('hidden');
-            } else {
-                $graphSelector.fadeTo('fast', 1);
-                $clusterBtn.hide();
-                $('#reorder-header').removeClass('hidden');
-                $('#cluster-div').css('height', minWidth + 30 + "px");
-                $('#matrix-popover-table').css('top', minWidth + 20 + 'px');
-            }
-            clustered = c;
-        }
-
+        that.redraw();
     };
 
     /**
@@ -389,7 +381,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * Calculate similarity
      */
     that.calculateSimilarity = function calculateSimilarity() {
-        if (updated) {
+        if (dirty) {
             sendToWorker('calculateSimilarity');
         }
     };
@@ -402,38 +394,41 @@ var constructSimMatrix = function constructSimMatrix(args) {
     };
 
     /**
-     * Add data to the matrix
+     * Adds a genome to the matrix.
      *
-     * @param <?> id TODO
-     * @param <?> name TODO
-     * @param <?> core TODO
-     * @param <?> pan TODO
+     * TODO: I don't think pan and core are usefull. They are only used in the
+     * table.
+     *
+     * @param <Number> id The id of the genome
+     * @param <String> name The name of the genome
+     * @param <Number> core The number of peptides in the core
+     * @param <Number> pan The number of peptides in the pan
      */
     that.addGenome = function addGenome(id, name, core, pan) {
-        var length,
+        var newRow = [],
             i;
 
+        // add the data to the lists
         names[id] = {'name': name, 'core': core, 'pan': pan};
         order.push(id);
-        length = matrix.length;
-        for (i = 0; i < length; i++) {
+
+        // add a new column and row to the matrix
+        for (i = 0; i < matrix.length; i++) {
             // add -1 to the end
             matrix[i].push(-1);
         }
-
-        var new_row = [];
         for (i = 0; i < order.length; i++) {
-            new_row.push(-1);
+            newRow.push(-1);
         }
-        matrix.push(new_row);
+        matrix.push(newRow);
 
-        that.setClustered(false);
-        updated = true;
-        if (that.activeTab()) {
+        setClustered(false);
+        dirty = true;
+        if (that.isActiveTab()) {
             that.calculateSimilarity();
         }
 
-        that.redraw();
+        that.update();
     };
 
     /**
@@ -453,16 +448,16 @@ var constructSimMatrix = function constructSimMatrix(args) {
             matrix[i].splice(index, 1);
         }
 
-        that.setClustered(false);
-        updated = true;
-        that.redraw(true);
+        setClustered(false);
+        dirty = true;
+        that.update();
     };
 
     /**
      * TODO
      */
-    that.activeTab = function activeTab() {
-        return $tabSelector.parent().hasClass("active");
+    that.isActiveTab = function isActiveTab() {
+        return $matrixTab.parent().hasClass("active");
     };
 
     /**
