@@ -18,12 +18,16 @@ class Api::ApiController < ApplicationController
   def single
     @result = {}
     lookup = Hash.new { |h,k| h[k] = Set.new }
+    ids = []
     @sequences.pluck_all(:sequence, :taxon_id).each do |e|
-      lookup[e['taxon_id']] << e['sequence']
-      @result[e['sequence']] = Set.new
+      taxon_id = e['taxon_id']
+      sequence = e['sequence']
+      lookup[taxon_id] << sequence
+      ids.append(taxon_id)
+      @result[sequence] = Set.new
     end
 
-    ids = @sequences.order(:taxon_id).pluck("DISTINCT taxon_id")
+    ids = ids.uniq.sort
     if @full_lineage
       query = Taxon.includes(lineage: Lineage::ORDER_T)
     else
@@ -42,11 +46,14 @@ class Api::ApiController < ApplicationController
   def lca
     @result = {}
     lookup = Hash.new { |h,k| h[k] = Set.new }
+    ids = []
     @sequences.pluck_all(:sequence, :lca_il).each do |e|
-      lookup[e['lca_il']] << e['sequence']
+      lca_il = e['lca_il']
+      ids.append lca_il
+      lookup[lca_il] << e['sequence']
     end
 
-    ids = @sequences.order(:lca_il).pluck("DISTINCT lca_il")
+    ids = ids.uniq.sort
     if @full_lineage
       query = Taxon.includes(lineage: Lineage::ORDER_T)
     else
@@ -63,7 +70,7 @@ class Api::ApiController < ApplicationController
   end
 
   def taxa2lca
-    @taxon_ids = params[:taxon_ids].map(&:chomp)
+    @taxon_ids = params[:taxon_ids].map(&:chomp).uniq.sort
     @equate_il = (!params[:equate_il].blank? && params[:equate_il] == 'true')
     @full_lineage = (!params[:full_lineage].blank? && params[:full_lineage] == 'true')
 
@@ -78,11 +85,13 @@ class Api::ApiController < ApplicationController
     @result = Hash.new { |h,k| h[k] = Set.new }
     lookup = Hash.new { |h,k| h[k] = Set.new }
 
+    ids = []
     @sequences.pluck_all(:sequence, "uniprot_entries.id").each do |e|
+      ids.append e['id']
       lookup[e['id']] << e['sequence']
     end
 
-    ids = @sequences.order("uniprot_entries.id").pluck("DISTINCT uniprot_entries.id")
+    ids = ids.uniq.sort
     ids.each do |t|
       lookup[t.to_i].each { |s| @result[s] << t }
     end
