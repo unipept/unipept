@@ -24,7 +24,13 @@ class Api::ApiController < ApplicationController
     end
 
     ids = @sequences.order(:taxon_id).pluck("DISTINCT taxon_id")
-    Taxon.includes(:lineage).where(id: ids).find_in_batches do |group|
+    if @full_lineage
+      query = Taxon.includes(lineage: Lineage::ORDER_T)
+    else
+      query = Taxon
+    end
+
+    query.where(id: ids).find_in_batches do |group|
       group.each do |t|
         lookup[t.id].each {|s| @result[s] << t}
       end
