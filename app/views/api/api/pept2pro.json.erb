@@ -2,7 +2,7 @@
   @result.map do |k, v|
     v.map do |u|
       { sequence: k,
-        uniprot_id: u.uniprot_accession_number,
+        uniprot_id: u,
       }
     end
   end.flatten.to_json.html_safe

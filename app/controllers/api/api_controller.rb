@@ -75,9 +75,15 @@ class Api::ApiController < ApplicationController
   end
 
   def pept2pro
-    @result = {}
-    @sequences.each do |s|
-      @result[s.sequence] = s.peptides.map(&:uniprot_entry) if s
+    @result = Hash.new { |h,k| h[k] = Set.new }
+    lookup = Hash.new { |h,k| h[k] = Set.new }
+
+    @sequences.order("uniprot_entries.id").select([:sequence, "uniprot_entries.id as uniprot_id"]).each do |e|
+      lookup[e.uniprot_id.to_i] << e.sequence
+    end
+    ids = @sequences.order("uniprot_entries.id").pluck("DISTINCT uniprot_entries.id")
+    ids.each do |t|
+      lookup[t].each { |s| @result[s] << t }
     end
 
     respond_with(@result)
