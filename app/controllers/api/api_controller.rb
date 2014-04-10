@@ -41,9 +41,22 @@ class Api::ApiController < ApplicationController
 
   def lca
     @result = {}
-    @sequences.each do |s|
-      taxon = s.calculate_lca(@equate_il, true)
-      @result[s.sequence] = taxon if taxon
+    lookup = Hash.new { |h,k| h[k] = Set.new }
+    @sequences.order(:lca_il).select([:sequence, :lca_il]).each do |e|
+      lookup[e.lca_il.to_i] << e.sequence
+    end
+
+    ids = @sequences.order(:lca_il).pluck("DISTINCT lca_il")
+    if @full_lineage
+      query = Taxon.includes(lineage: Lineage::ORDER_T)
+    else
+      query = Taxon
+    end
+
+    query.where(id: ids).find_in_batches do |group|
+      group.each do |t|
+        lookup[t.id].each { |s| @result[s] = t }
+      end
     end
 
     respond_with(@result)
