@@ -11,7 +11,7 @@ class Api::ApiController < ApplicationController
 
     rel_name = @equate_il ? :lca_il_t : :lca_t
     @sequences.each {|s| s.gsub!(/I/,'L') } if @equate_il
-    @sequences = Sequence.joins(:peptides => {:uniprot_entry => :name}).
+    @sequences = Sequence.joins(:peptides => :uniprot_entry).
       where(sequence: @sequences)
   end
 
