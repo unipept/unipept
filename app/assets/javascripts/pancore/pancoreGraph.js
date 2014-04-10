@@ -605,8 +605,8 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         $("#pancore_graph div.tip").remove();
 
         // reset domain
-        xScale.domain([]);
-        yScale.domain([]);
+        xScale.domain([0, 1]);
+        yScale.domain([0, 1]);
 
         // create the svg
         svg = d3.select("#pancore_graph")
