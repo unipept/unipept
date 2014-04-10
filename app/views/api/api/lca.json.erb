@@ -1,5 +1,5 @@
 <%=
-  @result.map do |k,p|
+  Oj.dump(@result.map do |k,p|
     if @full_lineage
       lineage = p.lineage
       ids = Lineage::ORDER.map {|o| lineage.try(o)}
@@ -22,5 +22,5 @@
     else
       res
     end
-  end.to_json.html_safe
+  end).html_safe
 %>

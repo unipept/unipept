@@ -23,5 +23,5 @@
   else
     res
   end
-  res.to_json.html_safe
+  Oj.dump(res).html_safe
 %>
