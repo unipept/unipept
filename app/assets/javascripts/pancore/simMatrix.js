@@ -76,28 +76,6 @@ var constructSimMatrix = function constructSimMatrix(args) {
     }
 
     /**
-     * Generate a row
-     *
-     * @param <?> row TODO
-     */
-    function rowF(row) {
-        var cell = d3.select(this).selectAll(".cell")
-            .data(row)
-            .attr("x", function (d, i) { return x(i); })
-            .attr("width", x.rangeBand())
-            .attr("height", x.rangeBand())
-            .style("fill-opacity", function (d) { return z(d * d); })
-            .style("fill", function (d) { return (d != -1) ? "steelblue" : "white"; })
-          .enter().append("rect")
-            .attr("class", "cell")
-            .attr("x", function (d, i) { return x(i); })
-            .attr("width", x.rangeBand())
-            .attr("height", x.rangeBand())
-            .style("fill-opacity", function (d) { return z(d * d); })
-            .style("fill", function (d) { return (d != -1) ? "steelblue" : "white"; });
-    }
-
-    /**
      * Add popover to all cells
      *
      * @param <?> row TODO
@@ -297,47 +275,70 @@ var constructSimMatrix = function constructSimMatrix(args) {
             .attr("width", minWidth)
             .attr("height", minWidth);
 
-        var row = svg.selectAll(".row")
+        var rows = svg.selectAll(".row")
             .data(matrix);
 
-        row.attr("transform", function (d, i) { return "translate(0," + x(i) + ")"; })
-            .each(rowF);
+        rows.enter()
+            .append("g")
+                .attr("class", "row")
+            .append("text")
+                .attr("x", -6)
+                .attr("y", x.rangeBand() / 2)
+                .attr("dy", ".32em")
+                .attr("text-anchor", "end")
+                .text(function (d, i) { return names[order[i]].name; });
 
-        row.selectAll("text").attr('y', x.rangeBand() / 2);
+        rows.each(function (d) {
+            var cells = d3.select(this).selectAll(".cell")
+                .data(d);
+            cells.enter().append("rect")
+                .attr("class", "cell")
+                .attr("x", 0)
+                .attr("width", 0)
+                .attr("height", 0)
+                .style("fill-opacity", 0)
+                .style("fill", "white");
 
-        row_enter = row.enter().append("g")
-            .attr("class", "row")
-            .attr("transform", function (d, i) { return "translate(0," + x(i) + ")"; })
-            .each(rowF);
+            cells.transition()
+                .attr("x", function (d, i) { return x(i); })
+                .attr("width", x.rangeBand())
+                .attr("height", x.rangeBand())
+                .style("fill-opacity", function (d) { return z(d * d); })
+                .style("fill", function (d) { return (d != -1) ? "steelblue" : "white"; });
 
-        row_enter.append("text")
-            .attr("x", -6)
-            .attr("y", x.rangeBand() / 2)
-            .attr("dy", ".32em")
-            .attr("text-anchor", "end")
-            .text(function (d, i) { return names[order[i]].name; });
+            cells.exit().remove();
+        });
 
-        var column = svg.selectAll(".column")
-            .data(matrix)
-            .attr("transform", function (d, i) { return "translate(" + x(i) + ")rotate(90)"; })
-            .attr("y", x.rangeBand() / 2);
+        rows.transition()
+            .attr("transform", function (d, i) { return "translate(0," + x(i) + ")"; });
 
-        column.selectAll("text")
-            .attr("x", minWidth + 6)
-            .attr('y', -x.rangeBand() / 2);
+        rows.selectAll("text")
+            .transition()
+                .attr('y', x.rangeBand() / 2);
 
-        column_enter = column.enter().append("g")
-            .attr("class", "column")
+        rows.exit().remove();
+
+        var columns = svg.selectAll(".column")
+            .data(matrix);
+
+        columns.enter().append("g")
+                .attr("class", "column")
+            .append("text")
+                .attr("x", minWidth + 6)
+                .attr("y", -x.rangeBand() / 2)
+                .attr("dy", ".32em")
+                .attr("text-anchor", "start")
+                .text(function (d, i) { return names[order[i]].name; });
+
+        columns.transition()
             .attr("transform", function (d, i) { return "translate(" + x(i) + ")rotate(90)"; });
 
-        column_enter.append("text")
-            .attr("x", minWidth + 6)
-            .attr("y", -x.rangeBand() / 2)
-            .attr("dy", ".32em")
-            .attr("text-anchor", "start")
-            .text(function (d, i) { return names[order[i]].name; });
+        columns.selectAll("text")
+            .transition()
+                .attr("x", minWidth + 6)
+                .attr('y', -x.rangeBand() / 2);
 
-        row.each(popOverF);
+        rows.each(popOverF);
 
         dirty = false;
     }
