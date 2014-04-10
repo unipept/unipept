@@ -162,7 +162,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
             }
         }
         dirty = true;
-        that.redraw();
+        that.update();
     };
 
     /**
@@ -276,7 +276,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
             .attr("height", minWidth);
 
         var rows = svg.selectAll(".row")
-            .data(matrix);
+            .data(matrix, function (d, i) { return order[i];});
 
         rows.enter()
             .append("g")
@@ -290,7 +290,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         rows.each(function (d) {
             var cells = d3.select(this).selectAll(".cell")
-                .data(d);
+                .data(d, function (d, i) { return order[i];});
             cells.enter().append("rect")
                 .attr("class", "cell")
                 .attr("x", 0)
@@ -337,6 +337,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
             .transition()
                 .attr("x", minWidth + 6)
                 .attr('y', -x.rangeBand() / 2);
+
+        columns.exit().remove();
 
         rows.each(popOverF);
 
