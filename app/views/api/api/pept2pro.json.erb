@@ -1,9 +1,9 @@
 <%=
-  @result.map do |k, v|
+  Oj.dump(@result.map do |k, v|
     v.map do |u|
       { sequence: k,
         uniprot_id: u,
       }
     end
-  end.flatten.to_json.html_safe
+  end.flatten).html_safe
 %>
