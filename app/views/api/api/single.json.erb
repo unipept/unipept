@@ -3,7 +3,7 @@
     v.map do |p|
       if @full_lineage
         lineage = p.lineage
-        ids = Lineage::ORDER.map {|o| lineage.try(o) }
+        ids = Lineage::ORDER_T.map {|o| lineage.send(o).try(:id) }
 
         names = Lineage::ORDER.map {|s| "#{s}_name"}
         lineage_info = Hash[names.zip(lineage.to_a)]
