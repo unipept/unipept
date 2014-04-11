@@ -57,11 +57,8 @@ self.addEventListener('message', function (e) {
 var matrixBackend = function matrixBackend(data) {
     var matrix = [],
         idsToCalculate = [],
-        matrixOrder  = []
+        matrixOrder  = [],
         matrixObject = {};
-
-    // this is a reference to the data, read-only!
-    var data = data;
 
     // variable to keep track of dirty state
     var dirty = false;
@@ -87,12 +84,14 @@ var matrixBackend = function matrixBackend(data) {
     /**
      * TODO ?
      */
-    function flattenAndRemoveDistance (array) {
-        var result = [];
-        for ( var i = 0; i < array.length - 1; i ++) {
+    function flattenAndRemoveDistance(array) {
+        var result = [],
+            i,
+            j;
+        for (i = 0; i < array.length - 1; i++) {
             if (array[i] instanceof Array) {
                 var recurse = flattenAndRemoveDistance(array[i]);
-                for( var j = 0; j < recurse.length; j ++ ) {
+                for (j = 0; j < recurse.length; j++) {
                     result.push(recurse[j]);
                 }
             } else {
@@ -118,36 +117,37 @@ var matrixBackend = function matrixBackend(data) {
             matrixObject[id][genomeId] = -1;
             matrixObject[genomeId][id] = -1;
         }
-    }
+    };
 
     /**
      * TODO
      */
     that.removeGenome = function (genome_id) {
-        var index = matrixOrder.indexOf(genome_id);
+        var index = matrixOrder.indexOf(genome_id),
+            x;
         matrixOrder.splice(index, 1);
 
         matrix.splice(index, 1);
-        for (var x = 0; x < matrix.length; x ++) {
+        for (x = 0; x < matrix.length; x++) {
             // add -1 to the end
             matrix[x].splice(index, 1);
         }
 
         /* shift indices to the left when we remove genomes, and remove index if necessary */
         var toRemove = -1;
-        for (var x = 0; x < idsToCalculate.length; x ++) {
+        for (x = 0; x < idsToCalculate.length; x++) {
             var val = idsToCalculate[x];
-            if (val == index) {
+            if (val === index) {
                 // we need to remove this
                 toRemove = x;
             } else if (val > index) {
                 idsToCalculate[x] -= 1;
             }
         }
-        if (toRemove != -1) {
-            idsToCalculate.splice(toRemove,1);
+        if (toRemove !== -1) {
+            idsToCalculate.splice(toRemove, 1);
         }
-    }
+    };
 
     /**
      * Calculates all uncalculated cells in the similarity matrix
@@ -161,7 +161,7 @@ var matrixBackend = function matrixBackend(data) {
             similarity;
 
         // Be a bit clever with sending data
-        if(idsToCalculate.length > 3) {
+        if (idsToCalculate.length > 3) {
             sendFullMatrix = true;
         }
 
@@ -189,20 +189,20 @@ var matrixBackend = function matrixBackend(data) {
 
         dirty = false;
         idsToCalculate = [];
-    }
+    };
 
     that.reOrder = function (new_order) {
         sendToHost('newOrder', new_order);
-    }
+    };
 
     /**
      * Sends the full similarity matrix to the client
      *
      * @param <SimObject> m The full similarity matrix to send
      */
-    that.sendMatrix = function (m) {
+    that.sendMatrix = function sendMatrix(m) {
         sendToHost('processSimilarityData', {'fullMatrix' : true, 'data': m});
-    }
+    };
 
     /**
      * Sends a single row of similarities to the client
@@ -210,28 +210,29 @@ var matrixBackend = function matrixBackend(data) {
      * @param <Number> row The id of the row
      * @param <SimObject> row A single row of the similarity matrix
      */
-    that.sendRow = function (id, row) {
+    that.sendRow = function sendRow(id, row) {
         sendToHost('processSimilarityData', {'fullMatrix' : false, 'data' : {'id' : id, 'row' : row}});
-    }
+    };
 
     that.clusterMatrix = function () {
-        while(dirty) {
+        var i;
+
+        while (dirty) {
             that.calculateSimilarity();
         }
 
         // Create a deep copy and call our recursive cluster function
         var matrix_deep_copy = [];
-        for (var i = 0; i < matrix.length; i++) {
+        for (i = 0; i < matrix.length; i++) {
             matrix_deep_copy[i] = matrix[i].slice(0);
         }
         var result = clusterMatrixRec(matrix_deep_copy, {}, []);
 
-        var result_order = result['order'];
-        var first = result_order.splice(-1,1)[0];
+        var result_order = result.order;
+        var first = result_order.splice(-1, 1)[0];
 
 
         var tree = [first.x, first.y, first.value];
-        var treeOrder = [];
 
         for (i = result_order.length - 1; i >= 0; i--) {
             var next = result_order[i];
@@ -243,20 +244,20 @@ var matrixBackend = function matrixBackend(data) {
 
         sendToHost('newick', arrayToNewick(tree));
         return clusterOrder;
-    }
+    };
 
     function clusterMatrixRec(matrix, cluster, order) {
         // Lame recursion check
-        if(order.length == matrix.length - 1) {
+        if (order.length === matrix.length - 1) {
             return {'order': order, 'cluster': cluster};
         }
 
         // find highest similarity
         var x = 0, y = 0, largest = -1;
         var i = 0, j = 0;
-        for (i = 0 ; i < matrix.length; i++) {
+        for (i = 0; i < matrix.length; i++) {
             for (j = 0; j < matrix[i].length; j++) {
-                if (matrix[i][j] > largest && i != j) {
+                if (matrix[i][j] > largest && i !== j) {
                     x = i;
                     y = j;
                     largest = matrix[i][j];
@@ -264,7 +265,7 @@ var matrixBackend = function matrixBackend(data) {
             }
         }
 
-        if(cluster[x]) {
+        if (cluster[x]) {
             cluster[x].push(y);
         } else {
             cluster[x] = [y];
@@ -273,15 +274,15 @@ var matrixBackend = function matrixBackend(data) {
         order.push({'x': x, 'y': y, 'value': largest});
 
         // update sim matrix with average values
-        for (j = 0 ; j < matrix[x].length; j++) {
-            if ( j != y && j != x ) {
+        for (j = 0; j < matrix[x].length; j++) {
+            if (j !== y && j !== x) {
                 matrix[x][j] = (matrix[x][j] + matrix[y][j]) / 2;
                 matrix[j][x] = (matrix[x][j] + matrix[y][j]) / 2;
             }
         }
 
         // set the value of comparison with y to zero
-        for (j = 0 ; j < matrix.length; j++) {
+        for (j = 0; j < matrix.length; j++) {
             matrix[j][y] = -1;
             matrix[y][j] = -1;
         }
@@ -291,7 +292,7 @@ var matrixBackend = function matrixBackend(data) {
     }
 
     return that;
-}
+};
 matrix = matrixBackend(data);
 
 
@@ -313,9 +314,9 @@ function sendToHost(type, message) {
  * @param <String> name The name of the organism
  */
 function loadData(bioproject_id, name) {
-    request_rank = rank;
+    var requestRank = rank;
     getJSON("/pancore/sequences/" + bioproject_id + ".json", function (json_data) {
-        addData(bioproject_id, name, json_data, request_rank);
+        addData(bioproject_id, name, json_data, requestRank);
     });
 }
 
