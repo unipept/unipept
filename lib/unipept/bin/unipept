@@ -58,7 +58,12 @@ class ApiRunner < Cri::CommandRunner
     result = []
     peptides.each_slice(self.batch_size) do |sub_division|
 
-      sub_result = JSON[Faraday.post(@url, url_options(sub_division)).body]
+      begin
+        sub_result = JSON[Faraday.post(@url, url_options(sub_division)).body]
+      rescue
+        puts "API endpoint gave an error, exiting."
+        exit 1
+      end
 
       sub_result = [sub_result] if not sub_result.kind_of? Array
 
@@ -69,7 +74,11 @@ class ApiRunner < Cri::CommandRunner
       progress.progress += sub_division.size
     end
 
-    download_xml(result)
+    begin
+      download_xml(result)
+    rescue
+      puts "Something went wrong while downloading xml information! please check the output"
+    end
 
     result = formatter.format(result)
     if options[:output]
