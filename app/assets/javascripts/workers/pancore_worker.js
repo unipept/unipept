@@ -108,12 +108,13 @@ var matrixBackend = function matrixBackend(data) {
      * @param <Number> genomeId The id of the genome to add
      */
     that.addGenome = function addGenome(genomeId) {
+        var id;
         dirty = true;
         matrixOrder.push(genomeId);
         idsToCalculate.push(genomeId);
 
         matrixObject[genomeId] = {};
-        for (var id in matrixObject) {
+        for (id in matrixObject) {
             matrixObject[id][genomeId] = -1;
             matrixObject[genomeId][id] = -1;
         }
@@ -153,7 +154,6 @@ var matrixBackend = function matrixBackend(data) {
      */
     that.calculateSimilarity = function calculateSimilarity() {
         var sendFullMatrix = false,
-            index,
             x,
             id,
             peptides,
@@ -178,16 +178,13 @@ var matrixBackend = function matrixBackend(data) {
                 matrixObject[id2][id] = similarity;
             }
 
-            // TODO fix
             if (!sendFullMatrix) {
-                that.sendRow(index, matrix[index]);
+                that.sendRow(id, matrixObject[id]);
             }
         }
 
         if (sendFullMatrix) {
-            // TODO remove
-            matrix = matrixObjectToArray();
-            that.sendMatrix(matrix);
+            that.sendMatrix(matrixObject);
         }
 
         dirty = false;
@@ -198,12 +195,23 @@ var matrixBackend = function matrixBackend(data) {
         sendToHost('newOrder', new_order);
     }
 
+    /**
+     * Sends the full similarity matrix to the client
+     *
+     * @param <SimObject> m The full similarity matrix to send
+     */
     that.sendMatrix = function (m) {
-        sendToHost('processSimilarityData', {'index':'all', 'data': m});
+        sendToHost('processSimilarityData', {'fullMatrix' : true, 'data': m});
     }
 
-    that.sendRow = function (index, row) {
-        sendToHost('processSimilarityData', {'index':index, 'data': row});
+    /**
+     * Sends a single row of similarities to the client
+     *
+     * @param <Number> row The id of the row
+     * @param <SimObject> row A single row of the similarity matrix
+     */
+    that.sendRow = function (id, row) {
+        sendToHost('processSimilarityData', {'fullMatrix' : false, 'data' : {'id' : id, 'row' : row}});
     }
 
     that.clusterMatrix = function () {

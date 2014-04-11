@@ -31,6 +31,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         oldDomain = [],
         treeOrder = [],
         matrix = [],
+        matrixObject = {},
         clustered = undefined,
         dirty = false,
         newick;
@@ -142,7 +143,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         }
     }
 
-    /* TODO: can this be abstracted? */
+    // TODO: make this obsolete
     function sendToWorker(type, message) {
         worker.postMessage({'cmd': type, 'msg': message});
     }
@@ -152,7 +153,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * TODO: this shouldn't be here
      */
     function setMinWidth() {
-        var minWidth = d3.min([width, 50 * matrix.length]);
+        var minWidth = d3.min([width, 50 * order.length]);
         x.rangeBands([0, minWidth]);
         return minWidth;
     }
@@ -160,21 +161,27 @@ var constructSimMatrix = function constructSimMatrix(args) {
     /*************** Public methods ***************/
 
     /**
-     * Receive the new matrix from the worker
+     * Receive new similarity data from the worker
      *
-     * @param <array> simData new similarity data from the worker
+     * @param <Boolean> fullMatrix Is this a full matrix, or just a single row?
+     * @param <SimObject> data New similarity data from the worker
      */
-    that.addSimilarityData = function addSimilarityData(simData) {
-        var i;
+    that.addSimilarityData = function addSimilarityData(fullMatrix, data) {
+        var id,
+            id2,
+            row;
 
-        if (simData.index === 'all') {
-            matrix = simData.data;
+        if (fullMatrix) {
+            matrixObject = data;
         } else {
-            matrix[simData.index] = simData.data;
-            for (i = 0; i < order.length; i++) {
-                matrix[i][simData.index] = simData.data[i];
+            id = data.id;
+            row = data.row;
+            for (id2 in matrixObject) {
+                matrixObject[id2][id] = row[id2];
             }
+            matrixObject[id] = row;
         }
+
         dirty = true;
         that.update();
     };
@@ -282,6 +289,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
             return;
         }
 
+        var dataArray = d3.entries(matrixObject);
         x.domain(order);
 
         // allow for smaller scale matrices
@@ -292,7 +300,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
             .attr("height", minWidth);
 
         var rows = svg.selectAll(".row")
-            .data(matrix, function (d, i) { return order[i];});
+            .data(dataArray, function (d) { return d.key;});
 
         rows.enter()
             .append("g")
@@ -302,11 +310,11 @@ var constructSimMatrix = function constructSimMatrix(args) {
                 .attr("y", x.rangeBand() / 2)
                 .attr("dy", ".32em")
                 .attr("text-anchor", "end")
-                .text(function (d, i) { return names[order[i]].name; });
+                .text(function (d) { return names[d.key].name; });
 
         rows.each(function (d) {
             var cells = d3.select(this).selectAll(".cell")
-                .data(d, function (d, i) { return order[i];});
+                .data(d3.entries(d.value), function (d) { return d.key;});
             cells.enter().append("rect")
                 .attr("class", "cell")
                 .attr("x", 0)
@@ -317,18 +325,18 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
             cells.transition()
                 .duration(transitionDuration)
-                .attr("x", function (d, i) { return x(order[i]); })
+                .attr("x", function (d) { return x(d.key); })
                 .attr("width", x.rangeBand())
                 .attr("height", x.rangeBand())
-                .style("fill-opacity", function (d) { return z(d * d); })
-                .style("fill", function (d) { return (d != -1) ? "steelblue" : "white"; });
+                .style("fill-opacity", function (d) { return z(d.value * d.value); })
+                .style("fill", function (d) { return (d.value != -1) ? "steelblue" : "white"; });
 
             cells.exit().remove();
         });
 
         rows.transition()
             .duration(transitionDuration)
-            .attr("transform", function (d, i) { return "translate(0," + x(order[i]) + ")"; });
+            .attr("transform", function (d) { return "translate(0," + x(d.key) + ")"; });
 
         rows.selectAll("text")
             .transition()
@@ -338,7 +346,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         rows.exit().remove();
 
         var columns = svg.selectAll(".column")
-            .data(matrix);
+            .data(dataArray, function (d) { return d.key;});
 
         columns.enter().append("g")
                 .attr("class", "column")
@@ -347,11 +355,11 @@ var constructSimMatrix = function constructSimMatrix(args) {
                 .attr("y", -x.rangeBand() / 2)
                 .attr("dy", ".32em")
                 .attr("text-anchor", "start")
-                .text(function (d, i) { return names[order[i]].name; });
+                .text(function (d) { return names[d.key].name; });
 
         columns.transition()
             .duration(transitionDuration)
-            .attr("transform", function (d, i) { return "translate(" + x(order[i]) + ")rotate(90)"; });
+            .attr("transform", function (d) { return "translate(" + x(d.key) + ")rotate(90)"; });
 
         columns.selectAll("text")
             .transition()
@@ -373,6 +381,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         dirty = true;
         setClustered(false);
         matrix = [];
+        matrixObject = {};
         order = [];
         names = [];
         treeOrder = [];
@@ -420,21 +429,17 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * @param <Number> pan The number of peptides in the pan
      */
     that.addGenome = function addGenome(id, name, core, pan) {
-        var newRow = [],
-            i;
+        var i;
 
         // add the data to the lists
         names[id] = {'name': name, 'core': core, 'pan': pan};
         order.push(id);
 
-        // add a new column and row to the matrix
-        for (i = 0; i < matrix.length; i++) {
-            matrix[i].push(-1);
+        matrixObject[id] = {};
+        for (i in matrixObject) {
+            matrixObject[id][i] = -1;
+            matrixObject[i][id] = -1;
         }
-        for (i = 0; i < order.length; i++) {
-            newRow.push(-1);
-        }
-        matrix.push(newRow);
 
         setClustered(false);
         dirty = true;

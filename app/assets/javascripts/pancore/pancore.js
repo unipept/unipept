@@ -276,10 +276,12 @@ var constructPancore = function constructPancore(args) {
     /**
      * Handles the arrival of new similarity data.
      *
-     * @param <Array> simData An array with new similarity data
+     * @param <Boolean> simData.fullMatrix Is this the full matrix?
+     * @param <SimObject> simData.data A single row or full matrix of similarity
+     *      data!
      */
     function processSimilarityData(simData) {
-        matrix.addSimilarityData(simData);
+        matrix.addSimilarityData(simData.fullMatrix, simData.data);
     }
 
     /**
