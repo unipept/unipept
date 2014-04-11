@@ -270,6 +270,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
             return;
         }
 
+        x.domain(order);
+
         // allow for smaller scale matrices
         // TODO: remove me
         var minWidth = setMinWidth();
@@ -303,7 +305,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
             cells.transition()
                 .duration(transitionDuration)
-                .attr("x", function (d, i) { return x(i); })
+                .attr("x", function (d, i) { return x(order[i]); })
                 .attr("width", x.rangeBand())
                 .attr("height", x.rangeBand())
                 .style("fill-opacity", function (d) { return z(d * d); })
@@ -314,12 +316,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         rows.transition()
             .duration(transitionDuration)
-            .attr("transform", function (d, i) {
-                //TODO: fix domain and remove me
-                var t = x(i);
-                t = t === undefined ? 0 : t;
-                return "translate(0," + t + ")";
-            });
+            .attr("transform", function (d, i) { return "translate(0," + x(order[i]) + ")"; });
 
         rows.selectAll("text")
             .transition()
@@ -342,12 +339,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         columns.transition()
             .duration(transitionDuration)
-            .attr("transform", function (d, i) {
-                //TODO: fix domain and remove me
-                var t = x(i);
-                t = t === undefined ? 0 : t;
-                return "translate(" + t + ")rotate(90)";
-            });
+            .attr("transform", function (d, i) { return "translate(" + x(order[i]) + ")rotate(90)"; });
 
         columns.selectAll("text")
             .transition()
@@ -417,7 +409,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * Adds a genome to the matrix.
      *
      * TODO: I don't think pan and core are usefull. They are only used in the
-     * table.
+     * table. Size should be useful
      *
      * @param <Number> id The id of the genome
      * @param <String> name The name of the genome
@@ -434,7 +426,6 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         // add a new column and row to the matrix
         for (i = 0; i < matrix.length; i++) {
-            // add -1 to the end
             matrix[i].push(-1);
         }
         for (i = 0; i < order.length; i++) {
@@ -446,9 +437,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
         dirty = true;
         if (that.isActiveTab()) {
             that.calculateSimilarity();
+            that.update();
         }
-
-        that.update();
     };
 
     /**
