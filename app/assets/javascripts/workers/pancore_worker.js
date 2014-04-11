@@ -120,32 +120,21 @@ var matrixBackend = function matrixBackend(data) {
     };
 
     /**
-     * TODO
+     * Removes a genome from the matrix object
+     *
+     * @param <Number> genomeId The id of the genome to remove
      */
-    that.removeGenome = function (genome_id) {
-        var index = matrixOrder.indexOf(genome_id),
-            x;
-        matrixOrder.splice(index, 1);
+    that.removeGenome = function (genomeId) {
+        var x;
 
-        matrix.splice(index, 1);
-        for (x = 0; x < matrix.length; x++) {
-            // add -1 to the end
-            matrix[x].splice(index, 1);
+        matrixOrder.splice(matrixOrder.indexOf(genomeId), 1);
+        x = idsToCalculate.indexOf(genomeId);
+        if (x !== -1) {
+            idsToCalculate.splice(x, 1);
         }
-
-        /* shift indices to the left when we remove genomes, and remove index if necessary */
-        var toRemove = -1;
-        for (x = 0; x < idsToCalculate.length; x++) {
-            var val = idsToCalculate[x];
-            if (val === index) {
-                // we need to remove this
-                toRemove = x;
-            } else if (val > index) {
-                idsToCalculate[x] -= 1;
-            }
-        }
-        if (toRemove !== -1) {
-            idsToCalculate.splice(toRemove, 1);
+        delete matrixObject[genomeId];
+        for (x in matrixObject) {
+            delete matrixObject[x][genomeId];
         }
     };
 
@@ -373,8 +362,15 @@ function addData(bioproject_id, name, set, request_rank) {
     sendToHost("processLoadedGenome", {data: temp, rank: request_rank});
 }
 
-// Removes a genomes from the data
+/**
+ * Removes a genome from the data
+ *
+ * @param <Number> bioproject_id The id of the genome to remove
+ * @param <Array> newOrder The new order of the genomes
+ * @param <Number start The id where the change of order starts
+ */
 function removeData(bioproject_id, newOrder, start) {
+    // Remove stuff
     var l = pans.length;
     delete data[bioproject_id];
     pans.splice(l - 1, 1);
@@ -382,11 +378,11 @@ function removeData(bioproject_id, newOrder, start) {
     unicores.splice(l - 1, 1);
     unicorePresent = false;
     unicores = [];
+
+    // Recalculate stuff
     recalculatePanCore(newOrder, start, l - 2);
     getUniqueSequences(newOrder);
-
     matrix.removeGenome(bioproject_id);
-
 }
 
 // Recalculates the pan and core data based on a

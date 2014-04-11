@@ -452,19 +452,17 @@ var constructSimMatrix = function constructSimMatrix(args) {
     /**
      * Remove data from the matrix
      *
-     * @param <?> id TODO
+     * @param <Number> id The bioprojectId of the genome to remove
      */
     that.removeGenome = function removeGenome(id) {
-        delete names[id];
-        var index = order.indexOf(id),
-            i;
-        order.splice(index, 1);
+        var id2;
 
-        matrix.splice(index, 1);
-        for (i = 0; i < matrix.length; i++) {
-            // add -1 to the end
-            matrix[i].splice(index, 1);
+        delete names[id];
+        delete matrixObject[id];
+        for (id2 in matrixObject) {
+            delete matrixObject[id2][id];
         }
+        order.splice(order.indexOf(id), 1);
 
         setClustered(false);
         dirty = true;

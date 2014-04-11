@@ -342,7 +342,6 @@ var constructPancore = function constructPancore(args) {
     that.removeGenome = function removeGenome(genome) {
         var removeData = table.removeGenome(genome.bioproject_id);
         matrix.removeGenome(genome.bioproject_id);
-        matrix.updateOrder(table.getOrder());
 
         sendToWorker("removeData", removeData);
     };
