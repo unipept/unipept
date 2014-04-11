@@ -21,6 +21,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
     // D3 vars
     var svg,
+        transitionDuration = 1000,
         x = d3.scale.ordinal().rangeBands([0, width]),
         z = d3.scale.linear().domain([0, 1]).clamp(true);
 
@@ -59,7 +60,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
             $('#matrix-popover-table').html('');
         });
 
-        x.domain([]);
+        x.domain([0, 1]);
 
         $('#decluster-matrix').click(function declusterAction() {
             x.domain(oldDomain);
@@ -108,6 +109,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
      */
     function setClustered(c) {
         // Check if value differs, if we don't do this we call fadeTo too many times
+        // TODO: remove this min width thing
         var minWidth = setMinWidth();
         if (c !== clustered) {
             if (!c) {
@@ -196,7 +198,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         setClustered(true);
 
-        var t = svg.transition().duration(1000);
+        var t = svg.transition().duration(transitionDuration);
 
         t.selectAll(".row")
             .delay(function (d, i) { return x(i) * 2; })
@@ -300,6 +302,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
                 .style("fill", "white");
 
             cells.transition()
+                .duration(transitionDuration)
                 .attr("x", function (d, i) { return x(i); })
                 .attr("width", x.rangeBand())
                 .attr("height", x.rangeBand())
@@ -310,10 +313,17 @@ var constructSimMatrix = function constructSimMatrix(args) {
         });
 
         rows.transition()
-            .attr("transform", function (d, i) { return "translate(0," + x(i) + ")"; });
+            .duration(transitionDuration)
+            .attr("transform", function (d, i) {
+                //TODO: fix domain and remove me
+                var t = x(i);
+                t = t === undefined ? 0 : t;
+                return "translate(0," + t + ")";
+            });
 
         rows.selectAll("text")
             .transition()
+                .duration(transitionDuration)
                 .attr('y', x.rangeBand() / 2);
 
         rows.exit().remove();
@@ -331,10 +341,17 @@ var constructSimMatrix = function constructSimMatrix(args) {
                 .text(function (d, i) { return names[order[i]].name; });
 
         columns.transition()
-            .attr("transform", function (d, i) { return "translate(" + x(i) + ")rotate(90)"; });
+            .duration(transitionDuration)
+            .attr("transform", function (d, i) {
+                //TODO: fix domain and remove me
+                var t = x(i);
+                t = t === undefined ? 0 : t;
+                return "translate(" + t + ")rotate(90)";
+            });
 
         columns.selectAll("text")
             .transition()
+                .duration(transitionDuration)
                 .attr("x", minWidth + 6)
                 .attr('y', -x.rangeBand() / 2);
 
