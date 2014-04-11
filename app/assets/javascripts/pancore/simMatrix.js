@@ -47,21 +47,19 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * Initializes the SimMatrix
      */
     function init() {
+        // calculate similarity and redraw on tab switch
         $matrixTab.on('shown.bs.tab', function tabSwitchAction() {
-            that.calculateSimilarity();
+            calculateSimilarity();
             that.redraw();
         });
+
+        // cluster matrix button
         $clusterBtn = $("#cluster-matrix-btn");
         $clusterBtn.click(function clusterButtonAction() {
             that.clusterMatrix();
         });
 
-        $('#sim_matrix').mouseout(function mouseOutAction() {
-            $('#matrix-popover-table').html('');
-        });
-
-        x.domain([0, 1]);
-
+        // decluster matrix button
         $('#decluster-matrix').click(function declusterAction() {
             x.domain(oldDomain);
             dirty = true;
@@ -70,6 +68,12 @@ var constructSimMatrix = function constructSimMatrix(args) {
         });
 
         $('#use-cluster-order').click(that.reorderTable);
+
+        $('#sim_matrix').mouseout(function mouseOutAction() {
+            $('#matrix-popover-table').html('');
+        });
+
+        x.domain([0, 1]);
 
         // Dummy newick value chosen randomly
         var dummyNewick = "((((A:0.2,B:0.2):0.1,C:0.3):0.4,(F:0.4,D:0.4):0.3):0.3,E:1.0)";
@@ -128,6 +132,16 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
     }
 
+
+    /**
+     * Requests a similarity calculation to the webserver if dirty
+     */
+    function calculateSimilarity() {
+        if (dirty) {
+            pancore.requestSimilarityCalculation();
+        }
+    }
+
     /* TODO: can this be abstracted? */
     function sendToWorker(type, message) {
         worker.postMessage({'cmd': type, 'msg': message});
@@ -148,19 +162,17 @@ var constructSimMatrix = function constructSimMatrix(args) {
     /**
      * Receive the new matrix from the worker
      *
-     * TODO: make private
-     *
-     * @param <?> m TODO
+     * @param <array> simData new similarity data from the worker
      */
-    that.receiveMatrix = function receiveMatrix(m) {
+    that.addSimilarityData = function addSimilarityData(simData) {
         var i;
 
-        if (m.index === 'all') {
-            matrix = m.data;
+        if (simData.index === 'all') {
+            matrix = simData.data;
         } else {
-            matrix[m.index] = m.data;
+            matrix[simData.index] = simData.data;
             for (i = 0; i < order.length; i++) {
-                matrix[i][m.index] = m.data[i];
+                matrix[i][simData.index] = simData.data[i];
             }
         }
         dirty = true;
@@ -390,15 +402,6 @@ var constructSimMatrix = function constructSimMatrix(args) {
     };
 
     /**
-     * Calculate similarity
-     */
-    that.calculateSimilarity = function calculateSimilarity() {
-        if (dirty) {
-            sendToWorker('calculateSimilarity');
-        }
-    };
-
-    /**
      * TODO
      */
     that.clusterMatrix = function clusterMatrix() {
@@ -436,7 +439,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         setClustered(false);
         dirty = true;
         if (that.isActiveTab()) {
-            that.calculateSimilarity();
+            calculateSimilarity();
             that.update();
         }
     };

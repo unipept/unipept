@@ -192,12 +192,12 @@ var constructPancore = function constructPancore(args) {
         case 'autoSorted':
             that.updateOrder(data.msg);
             break;
+        case 'processSimilarityData':
+            processSimilarityData(data.msg);
+            break;
         // SimMaxtrix commands
         case 'newOrder':
             matrix.reorder(data.msg);
-            break;
-        case 'matrixData':
-            matrix.receiveMatrix(data.msg);
             break;
         case 'newick':
             matrix.drawTree(data.msg);
@@ -242,7 +242,6 @@ var constructPancore = function constructPancore(args) {
 
         graph.addToDataQueue(genome);
         matrix.addGenome(genome.bioproject_id, genome.name, genome.core, genome.pan);
-        matrix.updateOrder(table.getOrder());
 
         setLoading(toLoad !== 0);
     }
@@ -272,6 +271,15 @@ var constructPancore = function constructPancore(args) {
         downloadDataByForm(sequences, type + '-sequences.txt', function enableButton() {
             $("#download-peptides-toggle").button('reset');
         });
+    }
+
+    /**
+     * Handles the arrival of new similarity data.
+     *
+     * @param <Array> simData An array with new similarity data
+     */
+    function processSimilarityData(simData) {
+        matrix.addSimilarityData(simData);
     }
 
     /**
@@ -386,6 +394,13 @@ var constructPancore = function constructPancore(args) {
             "type" : type
         });
     };
+
+    /**
+     * Requests a similarity calculation to the webserver
+     */
+    that.requestSimilarityCalculation = function requestSimilarityCalculation() {
+        sendToWorker("calculateSimilarity");
+    }
 
     /**
      * Send the autoSort command to the worker

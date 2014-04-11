@@ -56,17 +56,37 @@ self.addEventListener('message', function (e) {
 /* Write a small class to contain all the variables for the matrix */
 var matrixBackend = function matrixBackend(data) {
     var matrix = [],
-        indicesToCalculate = [],
-        order  = [];
+        idsToCalculate = [],
+        matrixOrder  = []
+        matrixObject = {};
 
-    /* this is a reference to the data, read-only! */
+    // this is a reference to the data, read-only!
     var data = data;
 
-    /* variable to keep track of dirty state */
-    var needsRecalculating = false;
+    // variable to keep track of dirty state
+    var dirty = false;
 
     var that = {};
 
+    /**
+     * Converts the object representation of the matrix to a normal array
+     */
+    function matrixObjectToArray() {
+        var returnMatrix = [],
+            i,
+            j;
+        for (i = 0; i < matrixOrder.length; i++) {
+            returnMatrix[i] = [];
+            for (j = 0; j < matrixOrder.length; j++) {
+                returnMatrix[i][j] = matrixObject[matrixOrder[i]][matrixOrder[j]];
+            }
+        }
+        return returnMatrix;
+    }
+
+    /**
+     * TODO ?
+     */
     function flattenAndRemoveDistance (array) {
         var result = [];
         for ( var i = 0; i < array.length - 1; i ++) {
@@ -82,28 +102,29 @@ var matrixBackend = function matrixBackend(data) {
         return result;
     }
 
+    /**
+     * Adds a genome to the matrix object
+     *
+     * @param <Number> genomeId The id of the genome to add
+     */
+    that.addGenome = function addGenome(genomeId) {
+        dirty = true;
+        matrixOrder.push(genomeId);
+        idsToCalculate.push(genomeId);
 
-    that.addGenome = function (genome_id) {
-        needsRecalculating = true;
-        order.push(genome_id);
-
-        var length = matrix.length;
-        for (var x = 0; x < length; x ++) {
-            // add -1 to the end
-            matrix[x].push(-1);
+        matrixObject[genomeId] = {};
+        for (var id in matrixObject) {
+            matrixObject[id][genomeId] = -1;
+            matrixObject[genomeId][id] = -1;
         }
-
-        var new_row = []
-        for (var x = 0; x < order.length; x ++) {
-            new_row.push(-1);
-        }
-        matrix.push(new_row);
-        indicesToCalculate.push(length);
     }
 
+    /**
+     * TODO
+     */
     that.removeGenome = function (genome_id) {
-        var index = order.indexOf(genome_id);
-        order.splice(index, 1);
+        var index = matrixOrder.indexOf(genome_id);
+        matrixOrder.splice(index, 1);
 
         matrix.splice(index, 1);
         for (var x = 0; x < matrix.length; x ++) {
@@ -113,49 +134,64 @@ var matrixBackend = function matrixBackend(data) {
 
         /* shift indices to the left when we remove genomes, and remove index if necessary */
         var toRemove = -1;
-        for (var x = 0; x < indicesToCalculate.length; x ++) {
-            var val = indicesToCalculate[x];
+        for (var x = 0; x < idsToCalculate.length; x ++) {
+            var val = idsToCalculate[x];
             if (val == index) {
                 // we need to remove this
                 toRemove = x;
             } else if (val > index) {
-                indicesToCalculate[x] -= 1;
+                idsToCalculate[x] -= 1;
             }
         }
         if (toRemove != -1) {
-            indicesToCalculate.splice(toRemove,1);
+            idsToCalculate.splice(toRemove,1);
         }
     }
 
-    that.calculateSimilarity = function () {
+    /**
+     * Calculates all uncalculated cells in the similarity matrix
+     */
+    that.calculateSimilarity = function calculateSimilarity() {
+        var sendFullMatrix = false,
+            index,
+            x,
+            id,
+            peptides,
+            id2,
+            similarity;
+
         // Be a bit clever with sending data
-        var sendAfter = false;
-        if(indicesToCalculate.length > 3) {
-            sendAfter = true;
+        if(idsToCalculate.length > 3) {
+            sendFullMatrix = true;
         }
 
-        for (var x = 0; x < indicesToCalculate.length; x++) {
-            var new_row = [],
-                index = indicesToCalculate[x],
-                compare_list = data[order[index]].peptide_list;
+        // TODO for now, always send full matrix
+        sendFullMatrix = true;
 
-            for (y = 0 ; y < order.length; y ++) {
-                var peptide_list = data[order[y]].peptide_list;
-                var sim = genomeSimilarity(compare_list, peptide_list);
-                matrix[index][y] = sim;
-                matrix[y][index] = sim;
+        for (x = 0; x < idsToCalculate.length; x++) {
+            id = idsToCalculate[x];
+            peptides = data[id].peptide_list;
+
+            for (id2 in matrixObject) {
+                similarity = genomeSimilarity(peptides, data[id2].peptide_list);
+                matrixObject[id][id2] = similarity;
+                matrixObject[id2][id] = similarity;
             }
-            if (!sendAfter) {
+
+            // TODO fix
+            if (!sendFullMatrix) {
                 that.sendRow(index, matrix[index]);
             }
         }
 
-        if (sendAfter) {
+        if (sendFullMatrix) {
+            // TODO remove
+            matrix = matrixObjectToArray();
             that.sendMatrix(matrix);
         }
 
-        needsRecalculating = false;
-        indicesToCalculate = [];
+        dirty = false;
+        idsToCalculate = [];
     }
 
     that.reOrder = function (new_order) {
@@ -163,15 +199,15 @@ var matrixBackend = function matrixBackend(data) {
     }
 
     that.sendMatrix = function (m) {
-        sendToHost('matrixData', {'index':'all', 'data': m});
+        sendToHost('processSimilarityData', {'index':'all', 'data': m});
     }
 
     that.sendRow = function (index, row) {
-        sendToHost('matrixData', {'index':index, 'data': row});
+        sendToHost('processSimilarityData', {'index':index, 'data': row});
     }
 
     that.clusterMatrix = function () {
-        while(needsRecalculating) {
+        while(dirty) {
             that.calculateSimilarity();
         }
 
@@ -251,12 +287,23 @@ var matrixBackend = function matrixBackend(data) {
 matrix = matrixBackend(data);
 
 
-// Sends a response type and message to the host
+/**
+ * Sends a response type and message to the host
+ *
+ * @param <String> type The type of the message
+ * @param <String> message A string or Object in JSON
+ */
 function sendToHost(type, message) {
     self.postMessage({'type': type, 'msg': message});
 }
 
-// Loads peptides, based on bioproject_id
+/**
+ * Requests the sequence id's for a given bioproject id. Calls the addData
+ * function when done.
+ *
+ * @param <Number> bioproject_id The bioprojectId of the sequences we want
+ * @param <String> name The name of the organism
+ */
 function loadData(bioproject_id, name) {
     request_rank = rank;
     getJSON("/pancore/sequences/" + bioproject_id + ".json", function (json_data) {
@@ -264,13 +311,25 @@ function loadData(bioproject_id, name) {
     });
 }
 
-// Adds new dataset to the data array
+/**
+ * Processes a list of sequence_id's, received from the webserver and adds it
+ * to the data array.
+ *
+ * @param <Number> bioproject_id The bioprojectId of the organism
+ * @param <String> name The name of the organism
+ * @param <Array> set The ordered array of sequence_id, contains no duplicates
+ * @param <Number> request_rank The rank of the request. Used to discard old
+ *      requests
+ */
 function addData(bioproject_id, name, set, request_rank) {
     var core,
         pan,
         unicore,
         temp;
+
+    // Discard old data
     if (request_rank !== rank) return;
+
     // Store data for later use
     data[bioproject_id] = {};
     data[bioproject_id].bioproject_id = bioproject_id;
@@ -527,7 +586,7 @@ function getSequences(type, bioproject_id) {
     });
 }
 
-// These functions are not accessible from the host
+/************ These functions are not accessible from the host ****************/
 
 // Returns the rank of a give bioproject_id for the current order
 function getOrderByBioprojectId(bioproject_id) {
