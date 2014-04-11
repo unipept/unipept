@@ -444,8 +444,10 @@ var constructSimMatrix = function constructSimMatrix(args) {
         setClustered(false);
         dirty = true;
         if (that.isActiveTab()) {
-            calculateSimilarity();
-            that.update();
+            delay(function () {
+                calculateSimilarity();
+                that.update();
+            }, 1000);
         }
     };
 
