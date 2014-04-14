@@ -28,7 +28,6 @@ var constructSimMatrix = function constructSimMatrix(args) {
         order = [],
         oldDomain = [],
         treeOrder = [],
-        matrix = [],
         matrixObject = {},
         clustered = undefined,
         dirty = false,
@@ -340,7 +339,6 @@ var constructSimMatrix = function constructSimMatrix(args) {
     that.clearAllData = function clearAllData() {
         dirty = true;
         that.setClustered(false);
-        matrix = [];
         matrixObject = {};
         order = [];
         names = [];
@@ -362,7 +360,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         $("#sim_graph").html("");
         var min_height;
         if (height === undefined) {
-            min_height = d3.min([500, 50 * matrix.length]);
+            min_height = d3.min([500, 50 * order.length]);
         } else {
             min_height = height;
         }
