@@ -3,7 +3,6 @@
  * phylogenetic tree.
  *
  * @param <Pancore> args.pancore The Pancore object
- * @param <Worker> args.worker The Worker object processing the data
  * @param <GenomeTable> args.table The GenomeTable object
  */
 var constructSimMatrix = function constructSimMatrix(args) {
@@ -11,7 +10,6 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
     // Parameters
     var pancore = args.pancore,
-        worker = args.worker,
         table = args.table;
 
     // UI variables
@@ -64,7 +62,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         $('#decluster-matrix').click(function declusterAction() {
             x.domain(oldDomain);
             dirty = true;
-            setClustered(false);
+            that.setClustered(false);
             that.update();
         });
 
@@ -83,6 +81,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
     /**
      * Add popover to all cells
+     * TODO
      *
      * @param <?> row TODO
      * @param <?> j TODO
@@ -107,45 +106,12 @@ var constructSimMatrix = function constructSimMatrix(args) {
     }
 
     /**
-     * Call this method to indicate that the current view is or isn't clustered.
-     * This will enable or disable the clustering buttons.
-     *
-     * @param <Boolean> c is the matrix currently clustered?
-     */
-    function setClustered(c) {
-        // Check if value differs, if we don't do this we call fadeTo too many times
-        // TODO: remove this min width thing
-        var minWidth = setMinWidth();
-        if (c !== clustered) {
-            if (!c) {
-                $graphSelector.fadeTo('normal', 0.2);
-                $clusterBtn.show();
-                $('#reorder-header').addClass('hidden');
-            } else {
-                $graphSelector.fadeTo('fast', 1);
-                $clusterBtn.hide();
-                $('#reorder-header').removeClass('hidden');
-                $('#cluster-div').css('height', minWidth + 30 + "px");
-                $('#matrix-popover-table').css('top', minWidth + 20 + 'px');
-            }
-            clustered = c;
-        }
-
-    }
-
-
-    /**
      * Requests a similarity calculation to the webserver if dirty
      */
     function calculateSimilarity() {
         if (dirty) {
             pancore.requestSimilarityCalculation();
         }
-    }
-
-    // TODO: make this obsolete
-    function sendToWorker(type, message) {
-        worker.postMessage({'cmd': type, 'msg': message});
     }
 
     /**
@@ -161,10 +127,10 @@ var constructSimMatrix = function constructSimMatrix(args) {
     /*************** Public methods ***************/
 
     /**
-     * Receive new similarity data from the worker
+     * Process new similarity data
      *
      * @param <Boolean> fullMatrix Is this a full matrix, or just a single row?
-     * @param <SimObject> data New similarity data from the worker
+     * @param <SimObject> data New similarity data
      */
     that.addSimilarityData = function addSimilarityData(fullMatrix, data) {
         var id,
@@ -215,7 +181,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         setMinWidth();
 
-        setClustered(true);
+        that.setClustered(true);
 
         var t = svg.transition().duration(transitionDuration);
 
@@ -239,7 +205,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
      */
     that.setOrder = function setOrder(orderData) {
         order = orderData;
-        setClustered(false);
+        that.setClustered(false);
         dirty = true;
         that.update();
     };
@@ -373,7 +339,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
      */
     that.clearAllData = function clearAllData() {
         dirty = true;
-        setClustered(false);
+        that.setClustered(false);
         matrix = [];
         matrixObject = {};
         order = [];
@@ -405,10 +371,10 @@ var constructSimMatrix = function constructSimMatrix(args) {
     };
 
     /**
-     * TODO
+     * Requests the clustering of the matrix to the pancore object
      */
     that.clusterMatrix = function clusterMatrix() {
-        sendToWorker('clusterMatrix');
+        pancore.requestClustering();
     };
 
     /**
@@ -435,7 +401,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
             matrixObject[i][id] = -1;
         }
 
-        setClustered(false);
+        that.setClustered(false);
         dirty = true;
         if (that.isActiveTab()) {
             delay(function () {
@@ -460,9 +426,35 @@ var constructSimMatrix = function constructSimMatrix(args) {
         }
         order.splice(order.indexOf(id), 1);
 
-        setClustered(false);
+        that.setClustered(false);
         dirty = true;
         that.update();
+    };
+
+    /**
+     * Call this method to indicate that the current view is or isn't clustered.
+     * This will enable or disable the clustering buttons.
+     *
+     * @param <Boolean> c is the matrix currently clustered?
+     */
+    that.setClustered = function setClustered(c) {
+        // Check if value differs, if we don't do this we call fadeTo too many times
+        // TODO: remove this min width thing
+        var minWidth = setMinWidth();
+        if (c !== clustered) {
+            if (!c) {
+                $graphSelector.fadeTo('normal', 0.2);
+                $clusterBtn.show();
+                $('#reorder-header').addClass('hidden');
+            } else {
+                $graphSelector.fadeTo('fast', 1);
+                $clusterBtn.hide();
+                $('#reorder-header').removeClass('hidden');
+                $('#cluster-div').css('height', minWidth + 30 + "px");
+                $('#matrix-popover-table').css('top', minWidth + 20 + 'px');
+            }
+            clustered = c;
+        }
     };
 
     /**

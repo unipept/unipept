@@ -65,8 +65,7 @@ var constructPancore = function constructPancore(args) {
         // Constructs the matrix
         matrix = constructSimMatrix({
             pancore : that,
-            table : table,
-            worker : worker
+            table : table
         });
 
         // Initialize the rest of the page
@@ -189,6 +188,9 @@ var constructPancore = function constructPancore(args) {
         case 'processDownloadedSequences':
             processDownloadedSequences(data.msg.sequences, data.msg.type);
             break;
+        case 'processClusteredMatrix':
+            processClusteredMatrix(data.msg.order, data.msg.newick);
+            break;
         case 'autoSorted':
             that.updateOrder(data.msg);
             break;
@@ -196,12 +198,7 @@ var constructPancore = function constructPancore(args) {
             processSimilarityData(data.msg);
             break;
         // SimMaxtrix commands
-        case 'newOrder':
-            matrix.reorder(data.msg);
-            break;
-        case 'newick':
-            matrix.drawTree(data.msg);
-            break;
+        // TODO remove
         case 'reorderTable':
             matrix.reorderTable();
             break;
@@ -282,6 +279,18 @@ var constructPancore = function constructPancore(args) {
      */
     function processSimilarityData(simData) {
         matrix.addSimilarityData(simData.fullMatrix, simData.data);
+    }
+
+    /**
+     * Handles the arrival of new clustered data.
+     *
+     * @param <Array> order A list with the new order of the genomes
+     * @param <String> newick The clustered tree in newick tree format
+     */
+    function processClusteredMatrix(order, newick) {
+        matrix.setOrder(order);
+        matrix.drawTree(newick);
+        matrix.setClustered(true);
     }
 
     /**
@@ -401,6 +410,13 @@ var constructPancore = function constructPancore(args) {
      */
     that.requestSimilarityCalculation = function requestSimilarityCalculation() {
         sendToWorker("calculateSimilarity");
+    }
+
+    /**
+     * Requests the clustering of the data
+     */
+    that.requestClustering = function requestClustering() {
+        sendToWorker("clusterMatrix");
     }
 
     /**

@@ -55,8 +55,7 @@ self.addEventListener('message', function (e) {
 
 /* Write a small class to contain all the variables for the matrix */
 var matrixBackend = function matrixBackend(data) {
-    var matrix = [],
-        idsToCalculate = [],
+    var idsToCalculate = [],
         matrixOrder  = [],
         matrixObject = {};
 
@@ -64,6 +63,8 @@ var matrixBackend = function matrixBackend(data) {
     var dirty = false;
 
     var that = {};
+
+    /**************************** Private methods *****************************/
 
     /**
      * Converts the object representation of the matrix to a normal array
@@ -82,24 +83,78 @@ var matrixBackend = function matrixBackend(data) {
     }
 
     /**
-     * TODO ?
+     * Searches in tree for an occurance of x to replace that occurance by the
+     * triplet [x, y, val]
+     *
+     * @param <Array> tree A hierarchical array representing the tree
+     * @param <Number> x The first value
+     * @param <Number> y The second value
+     * @param <Number> val The similarity between x and y
      */
-    function flattenAndRemoveDistance(array) {
+    function findAndReplace(tree, x, y, val) {
+        var index;
+        if (tree instanceof Array) {
+            index = tree.indexOf(x);
+            if (index === -1 || index === 2) {
+                findAndReplace(tree[0], x, y, val);
+                findAndReplace(tree[1], x, y, val);
+            } else {
+                tree[index] = [x, y, val];
+            }
+        }
+    }
+
+    /**
+     * Flattens a hierarchical array based on the first 2 elements. Always
+     * removes the last element. Converts the id's to bioproject id's.
+     *
+     * @param <Array> array The array to flatten
+     */
+    function treeToOrder(array) {
         var result = [],
             i,
             j;
         for (i = 0; i < array.length - 1; i++) {
             if (array[i] instanceof Array) {
-                var recurse = flattenAndRemoveDistance(array[i]);
-                for (j = 0; j < recurse.length; j++) {
-                    result.push(recurse[j]);
-                }
+                result = result.concat(treeToOrder(array[i]));
             } else {
-                result.push(array[i]);
+                result.push(matrixOrder[array[i]]);
             }
         }
         return result;
     }
+
+    /**
+     * Recursively converts the clustered similarities to a valid newick string
+     *
+     * @param <Array> array The clustered similarities
+     * @param <Number> prevDist The previous distance
+     */
+    function arrayToNewick(array, prevDist) {
+        // default to zero
+        if(typeof(prevDist) === 'undefined') {
+            prevDist = 0;
+        }
+
+        var string = "(",
+            distance = array[array.length - 1],
+            i;
+
+        for (i = 0; i < array.length - 1; i++) {
+            if(array[i] instanceof Array) {
+                string += arrayToNewick(array[i], distance);
+            } else {
+                string += matrixOrder[array[i]] + ":" + (1 - distance);
+            }
+            if (i != array.length - 2) {
+                string += ", ";
+            }
+        }
+        string += "):" + (distance - prevDist);
+        return string;
+    }
+
+    /***************************** Public methods *****************************/
 
     /**
      * Adds a genome to the matrix object
@@ -124,7 +179,7 @@ var matrixBackend = function matrixBackend(data) {
      *
      * @param <Number> genomeId The id of the genome to remove
      */
-    that.removeGenome = function (genomeId) {
+    that.removeGenome = function removeGenome(genomeId) {
         var x;
 
         matrixOrder.splice(matrixOrder.indexOf(genomeId), 1);
@@ -180,10 +235,6 @@ var matrixBackend = function matrixBackend(data) {
         idsToCalculate = [];
     };
 
-    that.reOrder = function (new_order) {
-        sendToHost('newOrder', new_order);
-    };
-
     /**
      * Sends the full similarity matrix to the client
      *
@@ -203,47 +254,66 @@ var matrixBackend = function matrixBackend(data) {
         sendToHost('processSimilarityData', {'fullMatrix' : false, 'data' : {'id' : id, 'row' : row}});
     };
 
-    that.clusterMatrix = function () {
-        var i;
+    /**
+     * Clusters the similarity data
+     */
+    that.clusterMatrix = function clusterMatrix() {
+        var i,
+            matrixArray,
+            result,
+            resultOrder,
+            first,
+            tree,
+            next;
 
-        while (dirty) {
+        if (dirty) {
             that.calculateSimilarity();
         }
 
-        // Create a deep copy and call our recursive cluster function
-        var matrix_deep_copy = [];
-        for (i = 0; i < matrix.length; i++) {
-            matrix_deep_copy[i] = matrix[i].slice(0);
-        }
-        var result = clusterMatrixRec(matrix_deep_copy, {}, []);
+        // Create an array representation of the similarities object
+        matrixArray = matrixObjectToArray();
 
-        var result_order = result.order;
-        var first = result_order.splice(-1, 1)[0];
+        // Cluster the matrix
+        result = clusterMatrixRecursively(matrixArray, {}, []);
+        resultOrder = result.order;
 
-
-        var tree = [first.x, first.y, first.value];
-
-        for (i = result_order.length - 1; i >= 0; i--) {
-            var next = result_order[i];
-            // find next.x recursively
+        // Start building the tree
+        first = resultOrder.splice(-1, 1)[0];
+        tree = [first.x, first.y, first.value];
+        for (i = resultOrder.length - 1; i >= 0; i--) {
+            next = resultOrder[i];
+            // Find next.x recursively
             findAndReplace(tree, next.x, next.y, next.value);
         }
-        var clusterOrder = flattenAndRemoveDistance(tree);
-        that.reOrder(clusterOrder);
 
-        sendToHost('newick', arrayToNewick(tree));
-        return clusterOrder;
+        sendToHost('processClusteredMatrix', {
+            order : treeToOrder(tree),
+            newick : arrayToNewick(tree)
+        });
     };
 
-    function clusterMatrixRec(matrix, cluster, order) {
-        // Lame recursion check
+    /**
+     * Clusters the matrix recursively
+     *
+     * @param <Array> matrix The array representation of the similarities
+     * @param <Map> cluster A mapping of which rows were combined in previous
+     *      steps
+     * @param <Array> order A list of objects containing the combined rows and
+     *      their similarities
+     */
+    function clusterMatrixRecursively(matrix, cluster, order) {
+        var x = 0,
+            y = 0,
+            largest = -1,
+            i,
+            j;
+
+        // Are we done?
         if (order.length === matrix.length - 1) {
             return {'order': order, 'cluster': cluster};
         }
 
         // find highest similarity
-        var x = 0, y = 0, largest = -1;
-        var i = 0, j = 0;
         for (i = 0; i < matrix.length; i++) {
             for (j = 0; j < matrix[i].length; j++) {
                 if (matrix[i][j] > largest && i !== j) {
@@ -254,30 +324,28 @@ var matrixBackend = function matrixBackend(data) {
             }
         }
 
-        if (cluster[x]) {
-            cluster[x].push(y);
-        } else {
-            cluster[x] = [y];
+        if (!cluster[x]) {
+            cluster[x] = [];
         }
+        cluster[x].push(y);
 
         order.push({'x': x, 'y': y, 'value': largest});
 
-        // update sim matrix with average values
-        for (j = 0; j < matrix[x].length; j++) {
+        // Update sim matrix with average values
+        for (j = 0; j < matrix.length; j++) {
             if (j !== y && j !== x) {
                 matrix[x][j] = (matrix[x][j] + matrix[y][j]) / 2;
                 matrix[j][x] = (matrix[x][j] + matrix[y][j]) / 2;
             }
         }
 
-        // set the value of comparison with y to zero
+        // Set the value of comparison with y to zero
         for (j = 0; j < matrix.length; j++) {
-            matrix[j][y] = -1;
             matrix[y][j] = -1;
+            matrix[j][y] = -1;
         }
 
-        return clusterMatrixRec(matrix, cluster, order);
-
+        return clusterMatrixRecursively(matrix, cluster, order);
     }
 
     return that;
@@ -458,8 +526,9 @@ function autoSort(type) {
             };
             break;
         case 'clustered':
-            matrix.clusterMatrix();
-            sendToHost('reorderTable');
+            // TODO
+            // matrix.clusterMatrix();
+            // sendToHost('reorderTable');
             return;
         default:
             easySort = false;
@@ -648,45 +717,6 @@ function getJSONByPost(url, data, callback) {
 function genomeSimilarity(peptide_list1, peptide_list2) {
     return intersection(peptide_list1, peptide_list2).length / union(peptide_list1, peptide_list2).length;
 }
-
-function arrayToNewick(array, prevD) {
-    // default to zero
-    if(typeof(prevD) === 'undefined') prevD = 0;
-
-    var string = "(";
-    var distance = array[array.length - 1];
-
-    for (var i = 0; i < array.length - 1; i++) {
-        if(array[i] instanceof Array) {
-            string += arrayToNewick(array[i], distance);
-        } else {
-            string += array[i] + ":" + (1 - distance);
-        }
-        if (i != array.length - 2) {
-            string += ", ";
-        }
-    }
-    string += "):" + (distance - prevD);
-    if(typeof(prevD) === 'undefined') string += ';';
-    return string;
-}
-
-function findAndReplace(tree, x, y, val) {
-    var index = -1;
-    do {
-        index = tree.indexOf(x, index + 1);
-    } while (index % 3 === 2)
-    if (index == -1) {
-        for (var j = 0; j < tree.length - 1; j ++) {
-            if( tree[j] instanceof Array) {
-                findAndReplace(tree[j], x, y, val);
-            }
-        }
-    } else {
-        tree[index] = [x, y, val];
-    }
-}
-
 
 // union and intersection for sorted arrays
 function union(a, b) {
