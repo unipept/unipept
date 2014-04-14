@@ -233,18 +233,12 @@ var constructSimMatrix = function constructSimMatrix(args) {
     };
 
     /**
-     * TODO
+     * Changes the order of the table based on the given order
      *
-     * @param <?> orderData TODO
+     * @param <Array> orderData The new order we want to set
      */
-    that.updateOrder = function updateOrder(orderData) {
-        var newDomain = [],
-            i;
-        for (i = 0; i < order.length; i++) {
-            newDomain.push(order.indexOf(orderData[i]));
-        }
-        x.domain(newDomain);
-
+    that.setOrder = function setOrder(orderData) {
+        order = orderData;
         setClustered(false);
         dirty = true;
         that.update();

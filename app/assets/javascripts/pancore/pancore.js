@@ -372,7 +372,7 @@ var constructPancore = function constructPancore(args) {
     that.updateOrder = function updateOrder(orderData) {
         sendToWorker("recalculatePanCore", orderData);
         table.setOrder(orderData.order);
-        matrix.updateOrder(orderData.order);
+        matrix.setOrder(orderData.order);
     };
 
     /**
