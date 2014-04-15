@@ -197,11 +197,6 @@ var constructPancore = function constructPancore(args) {
         case 'processSimilarityData':
             processSimilarityData(data.msg);
             break;
-        // SimMaxtrix commands
-        // TODO remove
-        case 'reorderTable':
-            matrix.reorderTable();
-            break;
         default:
             console.log(data.msg);
         }

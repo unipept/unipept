@@ -26,7 +26,6 @@ var constructSimMatrix = function constructSimMatrix(args) {
     // Constructor fields
     var names = [],
         order = [],
-        oldDomain = [],
         treeOrder = [],
         matrixObject = {},
         clustered = undefined,
@@ -53,19 +52,18 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         // cluster matrix button
         $clusterBtn = $("#cluster-matrix-btn");
-        $clusterBtn.click(function clusterButtonAction() {
-            that.clusterMatrix();
-        });
+        $clusterBtn.click(that.clusterMatrix);
 
         // decluster matrix button
         $('#decluster-matrix').click(function declusterAction() {
-            x.domain(oldDomain);
+            // TODO: fix domain
+            //x.domain(oldDomain);
             dirty = true;
             that.setClustered(false);
             that.update();
         });
 
-        $('#use-cluster-order').click(that.reorderTable);
+        $('#use-cluster-order').click(that.useClusterOrder);
 
         $('#sim_matrix').mouseout(function mouseOutAction() {
             $('#matrix-popover-table').html('');
@@ -152,49 +150,15 @@ var constructSimMatrix = function constructSimMatrix(args) {
     };
 
     /**
-     * TODO
-     *
-     * TODO make private
+     * Use the clusterd order as the order for the table and the graph
      */
-    that.reorderTable = function reorderTable() {
-        var clusterOrder = [],
-            domain = x.domain(),
-            i;
-        for (i = 0; i < order.length; i++) {
-            clusterOrder.push(order[domain[i]]);
-        }
-        sendToWorker("recalculatePanCore", {'order': clusterOrder, start: 0, end: clusterOrder.length - 1});
-        table.setOrder(clusterOrder);
+    that.useClusterOrder = function useClusterOrder() {
+        pancore.updateOrder({
+            order : order,
+            start : 0,
+            stop : order.length - 1
+        });
         $('#reorder-header').addClass('hidden');
-    };
-
-    /**
-     * Reorder the matrix based on the new order
-     *
-     * @param <?> newOrder TODO
-     */
-    that.reorder = function reorder(newOrder) {
-        treeOrder = newOrder;
-        oldDomain = x.domain().slice(0);
-        x.domain(newOrder);
-
-        setMinWidth();
-
-        that.setClustered(true);
-
-        var t = svg.transition().duration(transitionDuration);
-
-        t.selectAll(".row")
-            .delay(function (d, i) { return x(i) * 2; })
-            .attr("transform", function (d, i) { return "translate(0," + x(i) + ")"; })
-            .selectAll(".cell")
-            .delay(function (d, i) { return x(i) * 2; })
-            .attr("x", function (d, i) { return x(i); });
-
-        t.selectAll(".column")
-            .delay(function (d, i) { return x(i) * 2; })
-            .attr("transform", function (d, i) { return "translate(" + x(i) + ")rotate(90)"; });
-        dirty = true;
     };
 
     /**
