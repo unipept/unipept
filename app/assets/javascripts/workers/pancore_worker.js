@@ -112,8 +112,7 @@ var matrixBackend = function matrixBackend(data) {
      */
     function treeToOrder(array) {
         var result = [],
-            i,
-            j;
+            i;
         for (i = 0; i < array.length - 1; i++) {
             if (array[i] instanceof Array) {
                 result = result.concat(treeToOrder(array[i]));
@@ -132,7 +131,7 @@ var matrixBackend = function matrixBackend(data) {
      */
     function arrayToNewick(array, prevDist) {
         // default to zero
-        if(typeof(prevDist) === 'undefined') {
+        if (prevDist === undefined) {
             prevDist = 0;
         }
 
@@ -141,12 +140,12 @@ var matrixBackend = function matrixBackend(data) {
             i;
 
         for (i = 0; i < array.length - 1; i++) {
-            if(array[i] instanceof Array) {
+            if (array[i] instanceof Array) {
                 string += arrayToNewick(array[i], distance);
             } else {
                 string += matrixOrder[array[i]] + ":" + (1 - distance);
             }
-            if (i != array.length - 2) {
+            if (i !== array.length - 2) {
                 string += ", ";
             }
         }

@@ -27,8 +27,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
     var names = [],
         order = [],
         matrixObject = {},
-        clustered = undefined,
         dirty = false,
+        clustered,
         newick;
 
     var $matrixTab = $('a[href="#sim_matrix_wrapper"]'),
@@ -215,7 +215,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
             .attr("height", minWidth);
 
         var rows = svg.selectAll(".row")
-            .data(dataArray, function (d) { return d.key;});
+            .data(dataArray, function (d) { return d.key; });
 
         rows.enter()
             .append("g")
@@ -229,7 +229,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         rows.each(function (d) {
             var cells = d3.select(this).selectAll(".cell")
-                .data(d3.entries(d.value), function (d) { return d.key;});
+                .data(d3.entries(d.value), function (d) { return d.key; });
             cells.enter().append("rect")
                 .attr("class", "cell")
                 .attr("x", 0)
@@ -244,7 +244,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
                 .attr("width", x.rangeBand())
                 .attr("height", x.rangeBand())
                 .style("fill-opacity", function (d) { return z(d.value * d.value); })
-                .style("fill", function (d) { return (d.value != -1) ? "steelblue" : "white"; });
+                .style("fill", function (d) { return (d.value !== -1) ? "steelblue" : "white"; });
 
             cells.exit().remove();
         });
@@ -261,7 +261,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         rows.exit().remove();
 
         var columns = svg.selectAll(".column")
-            .data(dataArray, function (d) { return d.key;});
+            .data(dataArray, function (d) { return d.key; });
 
         columns.enter().append("g")
                 .attr("class", "column")
@@ -287,7 +287,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         rows.each(popOverF);
 
         dirty = false;
-    }
+    };
 
     /**
      * Resets the state of the matrix

@@ -160,6 +160,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
      * Resets the table and all data associated with it
      */
     that.clearAllData = function clearAllData() {
+        var i;
         for (i in genomes) {
             delete genomes[i];
         }
