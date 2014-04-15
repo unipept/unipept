@@ -233,7 +233,7 @@ var constructPancore = function constructPancore(args) {
         table.setGenomeStatus(genome.bioproject_id, "Done", false);
 
         graph.addToDataQueue(genome);
-        matrix.addGenome(genome.bioproject_id, genome.name, genome.core, genome.pan);
+        matrix.addGenome(genome.bioproject_id, genome.name, genome.peptides);
 
         setLoading(toLoad !== 0);
     }

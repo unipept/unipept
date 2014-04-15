@@ -21,12 +21,13 @@ var constructSimMatrix = function constructSimMatrix(args) {
     var svg,
         transitionDuration = 1000,
         x = d3.scale.ordinal().rangeBands([0, width]),
-        z = d3.scale.linear().domain([0, 1]).clamp(true);
+        z = d3.scale.linear().domain([0, 1]).clamp(true),
+        tooltip;
 
     // Constructor fields
-    var names = [],
+    var metadata = {},
         order = [],
-        matrixObject = {},
+        similarities = {},
         dirty = false,
         clustered,
         newick;
@@ -69,29 +70,31 @@ var constructSimMatrix = function constructSimMatrix(args) {
     }
 
     /**
-     * Add popover to all cells
-     * TODO
+     * Shows the info panel with info about the similarities
      *
-     * @param <?> row TODO
-     * @param <?> j TODO
+     * @param <Number> d.key The bioprojectid associated with the square
      */
-    function popOverF(row, j) {
-        d3.select(this).selectAll(".cell")
-            .each(function (d, i) {
-                var first = names[order[i]];
-                var second = names[order[j]];
-                var content = d >= 0 ? d3.format(".2%")(d) : "Not calculated";
-                var table = "";
-                if (d >= 0) {
-                    table += "<table class='table'><thead><tr><th></th><th>" + first.name + "</th><th>" + second.name + "</th></tr></thead>";
-                    table += "<tr><td>Core Peptides</td><td>" + first.core + "</td><td>" + second.core + "</td></tr>";
-                    table += "<tr><td>Pan Peptides</td><td>" + first.pan + "</td><td>" + second.pan + "</td></tr>";
-                    table += "<tr><td>Peptidome Similarity</td><td colspan='2' align='center'>" + content + "</td></tr></table>";
-                }
-                $(this).hover(function () {
-                    $('#matrix-popover-table').html(table);
-                });
-            });
+    function showInfoPanel(d) {
+        var col = d.key,
+            row = d3.select(this.parentNode).datum().key,
+            pos = $(this).position(),
+            tooltipHtml = "<table class='table'>";
+        tooltipHtml += "<thead><tr><th>Name</th><th>Genome size</th></tr></thead><tbody>";
+        tooltipHtml += "<tr><td>" + metadata[row].name + "</td><td>" + d3.format(",")(metadata[row].size) + " peptides</td></tr>";
+        tooltipHtml += "<tr><td>" + metadata[col].name + "</td><td>" + d3.format(",")(metadata[col].size) + " peptides</td></tr>";
+        tooltipHtml += "<tr><td colspan='2'><strong>Similarity</strong>: " + d3.format(",.2%")(similarities[row][col]) + "</td></tr>"
+        tooltipHtml += "</tbody></table>";
+        tooltip.html(tooltipHtml)
+            .style("top", (pos.top + x.rangeBand() + 15) + "px")
+            .style("left", (pos.left + 15) + "px")
+            .style("visibility", "visible");
+    }
+
+    /**
+     * Hides the info panel
+     */
+    function hideInfoPanel() {
+        tooltip.style("visibility", "hidden");
     }
 
     /**
@@ -101,16 +104,6 @@ var constructSimMatrix = function constructSimMatrix(args) {
         if (dirty) {
             pancore.requestSimilarityCalculation();
         }
-    }
-
-    /**
-     * Calculate the effective width needed for matrix
-     * TODO: this shouldn't be here
-     */
-    function setMinWidth() {
-        var minWidth = d3.min([width, 50 * order.length]);
-        x.rangeBands([0, minWidth]);
-        return minWidth;
     }
 
     /*************** Public methods ***************/
@@ -127,14 +120,14 @@ var constructSimMatrix = function constructSimMatrix(args) {
             row;
 
         if (fullMatrix) {
-            matrixObject = data;
+            similarities = data;
         } else {
             id = data.id;
             row = data.row;
-            for (id2 in matrixObject) {
-                matrixObject[id2][id] = row[id2];
+            for (id2 in similarities) {
+                similarities[id2][id] = row[id2];
             }
-            matrixObject[id] = row;
+            similarities[id] = row;
         }
 
         dirty = true;
@@ -146,9 +139,9 @@ var constructSimMatrix = function constructSimMatrix(args) {
      */
     that.useClusterOrder = function useClusterOrder() {
         pancore.updateOrder({
-            order : order,
-            start : 0,
-            stop : order.length - 1
+            'order' : order,
+            'start' : 0,
+            'stop' : order.length - 1
         });
         $('#reorder-header').addClass('hidden');
     };
@@ -189,6 +182,16 @@ var constructSimMatrix = function constructSimMatrix(args) {
             .attr("height", height)
             .attr("fill", "#eeeeee");
 
+        // create the tooltip
+        tooltip = d3.select("#sim_matrix")
+          .append("div")
+            .attr("class", "tip")
+            .style("position", "absolute")
+            .style("top", "0px")
+            .style("left", "0px")
+            .style("z-index", "10")
+            .style("visibility", "hidden");
+
         that.update();
     };
 
@@ -204,12 +207,13 @@ var constructSimMatrix = function constructSimMatrix(args) {
             return;
         }
 
-        var dataArray = d3.entries(matrixObject);
+        var dataArray = d3.entries(similarities);
         x.domain(order);
 
-        // allow for smaller scale matrices
-        // TODO: remove me
-        var minWidth = setMinWidth();
+        // 50px is the max size of a square
+        var minWidth = d3.min([width, 50 * order.length]);
+        x.rangeBands([0, minWidth]);
+        $('#cluster-div').css('height', minWidth + 30 + "px");
         d3.select(".background")
             .attr("width", minWidth)
             .attr("height", minWidth);
@@ -225,7 +229,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
                 .attr("y", x.rangeBand() / 2)
                 .attr("dy", ".32em")
                 .attr("text-anchor", "end")
-                .text(function (d) { return names[d.key].name; });
+                .text(function (d) { return metadata[d.key].name; });
 
         rows.each(function (d) {
             var cells = d3.select(this).selectAll(".cell")
@@ -236,7 +240,9 @@ var constructSimMatrix = function constructSimMatrix(args) {
                 .attr("width", 0)
                 .attr("height", 0)
                 .style("fill-opacity", 0)
-                .style("fill", "white");
+                .style("fill", "white")
+                .on("mouseover", showInfoPanel)
+                .on("mouseout", hideInfoPanel);
 
             cells.transition()
                 .duration(transitionDuration)
@@ -270,7 +276,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
                 .attr("y", -x.rangeBand() / 2)
                 .attr("dy", ".32em")
                 .attr("text-anchor", "start")
-                .text(function (d) { return names[d.key].name; });
+                .text(function (d) { return metadata[d.key].name; });
 
         columns.transition()
             .duration(transitionDuration)
@@ -284,8 +290,6 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         columns.exit().remove();
 
-        rows.each(popOverF);
-
         dirty = false;
     };
 
@@ -295,9 +299,9 @@ var constructSimMatrix = function constructSimMatrix(args) {
     that.clearAllData = function clearAllData() {
         dirty = true;
         that.setClustered(false);
-        matrixObject = {};
+        similarities = {};
         order = [];
-        names = [];
+        metadata = {};
         newick = "";
         that.redraw();
     };
@@ -327,25 +331,22 @@ var constructSimMatrix = function constructSimMatrix(args) {
     /**
      * Adds a genome to the matrix.
      *
-     * TODO: I don't think pan and core are usefull. They are only used in the
-     * table. Size should be useful
-     *
      * @param <Number> id The id of the genome
      * @param <String> name The name of the genome
-     * @param <Number> core The number of peptides in the core
+     * @param <Number> size The number of peptides in the genome
      * @param <Number> pan The number of peptides in the pan
      */
-    that.addGenome = function addGenome(id, name, core, pan) {
+    that.addGenome = function addGenome(id, name, size) {
         var i;
 
         // add the data to the lists
-        names[id] = {'name': name, 'core': core, 'pan': pan};
+        metadata[id] = {'name': name, 'size': size};
         order.push(id);
 
-        matrixObject[id] = {};
-        for (i in matrixObject) {
-            matrixObject[id][i] = -1;
-            matrixObject[i][id] = -1;
+        similarities[id] = {};
+        for (i in similarities) {
+            similarities[id][i] = -1;
+            similarities[i][id] = -1;
         }
 
         that.setClustered(false);
@@ -366,10 +367,10 @@ var constructSimMatrix = function constructSimMatrix(args) {
     that.removeGenome = function removeGenome(id) {
         var id2;
 
-        delete names[id];
-        delete matrixObject[id];
-        for (id2 in matrixObject) {
-            delete matrixObject[id2][id];
+        delete metadata[id];
+        delete similarities[id];
+        for (id2 in similarities) {
+            delete similarities[id2][id];
         }
         order.splice(order.indexOf(id), 1);
 
@@ -386,8 +387,6 @@ var constructSimMatrix = function constructSimMatrix(args) {
      */
     that.setClustered = function setClustered(c) {
         // Check if value differs, if we don't do this we call fadeTo too many times
-        // TODO: remove this min width thing
-        var minWidth = setMinWidth();
         if (c !== clustered) {
             if (!c) {
                 $graphSelector.fadeTo('normal', 0.2);
@@ -397,8 +396,6 @@ var constructSimMatrix = function constructSimMatrix(args) {
                 $graphSelector.fadeTo('fast', 1);
                 $clusterBtn.hide();
                 $('#reorder-header').removeClass('hidden');
-                $('#cluster-div').css('height', minWidth + 30 + "px");
-                $('#matrix-popover-table').css('top', minWidth + 20 + 'px');
             }
             clustered = c;
         }
@@ -420,13 +417,13 @@ var constructSimMatrix = function constructSimMatrix(args) {
             i;
 
         for (i = 0; i < order.length; i++) {
-            tempArray.push('"' + names[order[i]].name + '"');
+            tempArray.push('"' + metadata[order[i]].name + '"');
         }
         csvString += tempArray.join(',') + "\n";
 
         for (i = 0; i < order.length; i++) {
             tempArray = [];
-            tempArray.push('"' + names[order[i]].name + '"');
+            tempArray.push('"' + metadata[order[i]].name + '"');
             tempArray.push.apply(tempArray, matrix[i]);
             csvString += tempArray.join(',') + "\n";
         }
