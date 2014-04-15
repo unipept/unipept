@@ -26,7 +26,6 @@ var constructSimMatrix = function constructSimMatrix(args) {
     // Constructor fields
     var names = [],
         order = [],
-        treeOrder = [],
         matrixObject = {},
         clustered = undefined,
         dirty = false,
@@ -34,7 +33,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
     var $matrixTab = $('a[href="#sim_matrix_wrapper"]'),
         $graphSelector = $('#sim_graph'),
-        $clusterBtn;
+        $clusterBtn = $("#cluster-matrix-btn");
 
     var that = {};
 
@@ -51,16 +50,11 @@ var constructSimMatrix = function constructSimMatrix(args) {
         });
 
         // cluster matrix button
-        $clusterBtn = $("#cluster-matrix-btn");
         $clusterBtn.click(that.clusterMatrix);
 
         // decluster matrix button
         $('#decluster-matrix').click(function declusterAction() {
-            // TODO: fix domain
-            //x.domain(oldDomain);
-            dirty = true;
-            that.setClustered(false);
-            that.update();
+            that.setOrder(table.getOrder());
         });
 
         $('#use-cluster-order').click(that.useClusterOrder);
@@ -68,8 +62,6 @@ var constructSimMatrix = function constructSimMatrix(args) {
         $('#sim_matrix').mouseout(function mouseOutAction() {
             $('#matrix-popover-table').html('');
         });
-
-        x.domain([0, 1]);
 
         // Dummy newick value chosen randomly
         var dummyNewick = "((((A:0.2,B:0.2):0.1,C:0.3):0.4,(F:0.4,D:0.4):0.3):0.3,E:1.0)";
@@ -298,7 +290,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
     }
 
     /**
-     * TODO
+     * Resets the state of the matrix
      */
     that.clearAllData = function clearAllData() {
         dirty = true;
@@ -306,30 +298,23 @@ var constructSimMatrix = function constructSimMatrix(args) {
         matrixObject = {};
         order = [];
         names = [];
-        treeOrder = [];
         newick = "";
-        x.domain([]);
         that.redraw();
     };
 
     /**
-     * TODO
+     * Draws a phylogenetic tree based on a newick string
      *
-     * @param <?> n TODO
-     * @param <?> height TODO
+     * @param <String> n The tree in newick format
+     * @param <Number> height Optional height of the tree
      */
     that.drawTree = function drawTree(n, height) {
         newick = n;
-        var parsed = Newick.parse(n);
         $("#sim_graph").html("");
-        var min_height;
         if (height === undefined) {
-            min_height = d3.min([500, 50 * order.length]);
-        } else {
-            min_height = height;
+            height = d3.min([500, 50 * order.length]);
         }
-
-        d3.phylogram.build('#sim_graph', parsed, {width: 180, height: min_height, skipLabels: true}, treeOrder);
+        d3.phylogram.build('#sim_graph', Newick.parse(n), {width: 180, height: height, skipLabels: true});
     };
 
     /**
@@ -420,7 +405,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
     };
 
     /**
-     * TODO
+     * Returns true if the matrix tab is currently visible to the user
      */
     that.isActiveTab = function isActiveTab() {
         return $matrixTab.parent().hasClass("active");
