@@ -221,10 +221,10 @@ var constructSimMatrix = function constructSimMatrix(args) {
         var rows = svg.selectAll(".row")
             .data(dataArray, function (d) { return d.key; });
 
-        rows.enter()
+        var rowsEnter = rows.enter()
             .append("g")
-                .attr("class", "row")
-            .append("text")
+                .attr("class", "row");
+        rowsEnter.append("text")
                 .attr("x", -6)
                 .attr("y", x.rangeBand() / 2)
                 .attr("dy", ".32em")
@@ -255,6 +255,11 @@ var constructSimMatrix = function constructSimMatrix(args) {
             cells.exit().remove();
         });
 
+        // draw grid lines on top of the cells
+        rowsEnter.append("line")
+            .attr("x2", width)
+            .attr("stroke", "#ffffff");
+
         rows.transition()
             .duration(transitionDuration)
             .attr("transform", function (d) { return "translate(0," + x(d.key) + ")"; });
@@ -269,14 +274,17 @@ var constructSimMatrix = function constructSimMatrix(args) {
         var columns = svg.selectAll(".column")
             .data(dataArray, function (d) { return d.key; });
 
-        columns.enter().append("g")
-                .attr("class", "column")
-            .append("text")
-                .attr("x", minWidth + 6)
-                .attr("y", -x.rangeBand() / 2)
-                .attr("dy", ".32em")
-                .attr("text-anchor", "start")
-                .text(function (d) { return metadata[d.key].abbreviation; });
+        var colsEnter = columns.enter().append("g")
+            .attr("class", "column");
+        colsEnter.append("text")
+            .attr("x", minWidth + 6)
+            .attr("y", -x.rangeBand() / 2)
+            .attr("dy", ".32em")
+            .attr("text-anchor", "start")
+            .text(function (d) { return metadata[d.key].abbreviation; });
+        colsEnter.append("line")
+            .attr("x1", width)
+            .attr("stroke", "#ffffff");
 
         columns.transition()
             .duration(transitionDuration)
