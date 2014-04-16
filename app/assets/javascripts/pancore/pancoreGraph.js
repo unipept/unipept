@@ -539,6 +539,22 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     /*************** Public methods ***************/
 
     /**
+     * Handles the transition from and to fullscreen mode
+     *
+     * @param <Boolean> isFullscreen Is the page in full screen mode?
+     */
+    that.handleFullScreen = function handleFullScreen(isFullscreen) {
+        var w = fullWidth,
+            h = fullHeight;
+        if (isFullscreen) {
+            w = $(window).width();
+            h = $(window).height();
+        }
+        $("#pancore_graph svg").attr("width", w);
+        $("#pancore_graph svg").attr("height", h);
+    };
+
+    /**
      * Add data about a single genome to the graph
      *
      * @param <Hash> genome All data needed to visualise a genome on the graph

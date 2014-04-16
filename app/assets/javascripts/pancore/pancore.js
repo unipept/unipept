@@ -149,20 +149,14 @@ var constructPancore = function constructPancore(args) {
      * Mostly just scales the SVG
      */
     function resizeFullScreen() {
-        if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
-            setTimeout(function () {
-                var w = fullWidth,
-                    h = fullHeight;
-                if (window.fullScreenApi.isFullScreen()) {
-                    w = $(window).width();
-                    h = $(window).height();
-                }
-                $("#pancore_graph svg").attr("width", w);
-                $("#pancore_graph svg").attr("height", h);
-            }, 100);
-        } else {
-            // TODO: add handling code for sim matrix
-        }
+        setTimeout(function handleFullScreen() {
+            var fullscreen = window.fullScreenApi.isFullScreen();
+            if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
+                graph.handleFullScreen(fullscreen);
+            } else {
+                matrix.handleFullScreen(fullscreen);
+            }
+        });
     }
 
     /**

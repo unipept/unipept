@@ -15,7 +15,9 @@ var constructSimMatrix = function constructSimMatrix(args) {
     // UI variables
     var margin = {top: 20, right: 0, bottom: 200, left: 200},
         width = 500,
-        height = 500;
+        height = 500,
+        fullWidth = width + margin.left + margin.right,
+        fullHeight = height + margin.top + margin.bottom;
 
     // D3 vars
     var svg,
@@ -107,6 +109,22 @@ var constructSimMatrix = function constructSimMatrix(args) {
     /*************** Public methods ***************/
 
     /**
+     * Handles the transition from and to fullscreen mode
+     *
+     * @param <Boolean> isFullscreen Is the page in full screen mode?
+     */
+    that.handleFullScreen = function handleFullScreen(isFullscreen) {
+        var w = fullWidth,
+            h = fullHeight;
+        if (isFullscreen) {
+            w = $(window).width();
+            h = $(window).height();
+        }
+        $("#sim_matrix svg").attr("width", w);
+        $("#sim_matrix svg").attr("height", h);
+    };
+
+    /**
      * Process new similarity data
      *
      * @param <Boolean> fullMatrix Is this a full matrix, or just a single row?
@@ -174,8 +192,11 @@ var constructSimMatrix = function constructSimMatrix(args) {
         $("#matrix-tip").remove();
 
         svg = d3.select("#sim_matrix").append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
+            .attr("version", "1.1")
+            .attr("xmlns", "http://www.w3.org/2000/svg")
+            .attr("viewBox", "0 0 " + fullWidth + " " + fullHeight)
+            .attr("width", fullWidth)
+            .attr("height", fullHeight)
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
