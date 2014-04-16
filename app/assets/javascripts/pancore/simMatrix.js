@@ -75,7 +75,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
     function showInfoPanel(d) {
         var col = d.key,
             row = d3.select(this.parentNode).datum().key,
-            pos = $(this).position(),
+            pos = $(this).offset(),
             tooltipHtml = "<table class='table'>";
         tooltipHtml += "<thead><tr><th>Name</th><th>Genome size</th></tr></thead><tbody>";
         tooltipHtml += "<tr><td>" + metadata[row].name + "</td><td>" + d3.format(",")(metadata[row].size) + " peptides</td></tr>";
@@ -83,8 +83,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
         tooltipHtml += "<tr><td colspan='2'><strong>Similarity</strong>: " + d3.format(",.2%")(similarities[row][col]) + "</td></tr>"
         tooltipHtml += "</tbody></table>";
         tooltip.html(tooltipHtml)
-            .style("top", (pos.top + x.rangeBand() + 15) + "px")
-            .style("left", (pos.left + 15) + "px")
+            .style("top", (pos.top + x.rangeBand() + 5) + "px")
+            .style("left", (pos.left + x.rangeBand() + 5) + "px")
             .style("visibility", "visible");
     }
 
@@ -183,7 +183,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
             .attr("fill", "#eeeeee");
 
         // create the tooltip
-        tooltip = d3.select("#sim_matrix")
+        tooltip = d3.select("body")
           .append("div")
             .attr("class", "tip")
             .style("position", "absolute")
