@@ -229,7 +229,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
                 .attr("y", x.rangeBand() / 2)
                 .attr("dy", ".32em")
                 .attr("text-anchor", "end")
-                .text(function (d) { return metadata[d.key].name; });
+                .text(function (d) { return metadata[d.key].abbreviation; });
 
         rows.each(function (d) {
             var cells = d3.select(this).selectAll(".cell")
@@ -276,7 +276,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
                 .attr("y", -x.rangeBand() / 2)
                 .attr("dy", ".32em")
                 .attr("text-anchor", "start")
-                .text(function (d) { return metadata[d.key].name; });
+                .text(function (d) { return metadata[d.key].abbreviation; });
 
         columns.transition()
             .duration(transitionDuration)
@@ -337,10 +337,19 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * @param <Number> pan The number of peptides in the pan
      */
     that.addGenome = function addGenome(id, name, size) {
-        var i;
+        var abbreviation,
+            i;
+
+        abbreviation = name.split(" ");
+        abbreviation[0] = abbreviation[0].substr(0,1) + ".";
+        abbreviation = abbreviation.join(" ");
 
         // add the data to the lists
-        metadata[id] = {'name': name, 'size': size};
+        metadata[id] = {
+            'name' : name,
+            'size' : size,
+            'abbreviation' : abbreviation
+        };
         order.push(id);
 
         similarities[id] = {};
