@@ -46,6 +46,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * Initializes the SimMatrix
      */
     function init() {
+        init_phylogram();
+
         // calculate similarity and update on tab switch
         $matrixTab.on('shown.bs.tab', function tabSwitchAction() {
             calculateSimilarity();

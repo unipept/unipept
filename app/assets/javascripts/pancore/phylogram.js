@@ -44,8 +44,7 @@
     d3.phylogram.rightAngleDiagonal for radial layouts.
 */
 
-if (!d3) { throw "d3 wasn't included!"};
-(function() {
+function init_phylogram() {
   d3.phylogram = {}
   d3.phylogram.rightAngleDiagonal = function() {
     var projection = function(d) { return [d.y, d.x]; }
@@ -325,4 +324,4 @@ if (!d3) { throw "d3 wasn't included!"};
 
     return {tree: tree, vis: vis}
   }
-}());
+};
