@@ -545,13 +545,16 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      */
     that.handleFullScreen = function handleFullScreen(isFullscreen) {
         var w = fullWidth,
-            h = fullHeight;
+            h = fullHeight,
+            destination = "body";
         if (isFullscreen) {
             w = $(window).width();
             h = $(window).height();
+            destination = "#pancore_graph";
         }
         $("#pancore_graph svg").attr("width", w);
         $("#pancore_graph svg").attr("height", h);
+        $("#graph-tip").appendTo(destination);
     };
 
     /**
