@@ -91,7 +91,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
 
         xAxis = d3.svg.axis()
             .scale(xScale)
-            .tickFormat(function (d) { return (genomes[d] && genomes[d].name) || ""; })
+            .tickFormat(function (d) { return (genomes[d] && genomes[d].abbreviation) || ""; })
             .orient("bottom");
         yAxis = d3.svg.axis()
             .scale(yScale)

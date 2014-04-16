@@ -227,13 +227,19 @@ var constructPancore = function constructPancore(args) {
      * @param <Number> requestRank The rank of the original request
      */
     function processLoadedGenome(genome, requestRank) {
+        var abbrev;
+
         // If the rank doesn't match, this is old data
         if (rank !== requestRank) return;
         toLoad--;
         table.setGenomeStatus(genome.bioproject_id, "Done", false);
 
+        abbrev = genome.name.split(" ");
+        abbrev[0] = abbrev[0].substr(0,1) + ".";
+        genome.abbreviation = abbrev.join(" ");
+
         graph.addToDataQueue(genome);
-        matrix.addGenome(genome.bioproject_id, genome.name, genome.peptides);
+        matrix.addGenome(genome);
 
         setLoading(toLoad !== 0);
     }
@@ -319,16 +325,21 @@ var constructPancore = function constructPancore(args) {
      * @param <Array> g Array of bioproject_id's of the genomes we want to add
      */
     that.addGenomes = function addGenomes(g) {
-        var i;
+        var i,
+            abbrev;
         for (i = 0; i < g.length; i++) {
             // only add new genomes
             if (genomes[g[i].bioproject_id] === undefined) {
                 toLoad++;
+                abbrev = g[i].name.split(" ");
+                abbrev[0] = abbrev[0].substr(0,1) + ".";
+                abbrev = abbrev.join(" ");
                 table.addGenome({
                     "bioproject_id" : g[i].bioproject_id,
                     "name" : g[i].name,
                     "status" : "Loading...",
-                    "position" : 100 + i
+                    "position" : 100 + i,
+                    "abbreviation" : abbrev
                 });
                 loadData(g[i].bioproject_id, g[i].name);
             }

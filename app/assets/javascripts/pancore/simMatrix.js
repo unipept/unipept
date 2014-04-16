@@ -331,18 +331,14 @@ var constructSimMatrix = function constructSimMatrix(args) {
     /**
      * Adds a genome to the matrix.
      *
-     * @param <Number> id The id of the genome
-     * @param <String> name The name of the genome
-     * @param <Number> size The number of peptides in the genome
-     * @param <Number> pan The number of peptides in the pan
+     * @param <Genome> genome The genome object we want to add
      */
-    that.addGenome = function addGenome(id, name, size) {
-        var abbreviation,
+    that.addGenome = function addGenome(genome) {
+        var id = genome.bioproject_id,
+            name = genome.name,
+            size = genome.peptides,
+            abbreviation = genome.abbreviation,
             i;
-
-        abbreviation = name.split(" ");
-        abbreviation[0] = abbreviation[0].substr(0,1) + ".";
-        abbreviation = abbreviation.join(" ");
 
         // add the data to the lists
         metadata[id] = {

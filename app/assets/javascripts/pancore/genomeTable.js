@@ -253,7 +253,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
         td = tr.selectAll("td.data")
             .data(function (d) {
                 return d3.entries(d).filter(function (entry) {
-                    return entry.key !== "position" && entry.key !== "bioproject_id";
+                    return entry.key === "name" || entry.key === "status";
                 });
             });
         td.enter()
