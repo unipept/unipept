@@ -13,7 +13,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         table = args.table;
 
     // UI variables
-    var margin = {top: 20, right: 0, bottom: 200, left: 200},
+    var margin = {top: 20, right: 0, bottom: 200, left: 220},
         width = 500,
         height = 500,
         treeWidth = 180,
@@ -83,6 +83,10 @@ var constructSimMatrix = function constructSimMatrix(args) {
             row = d3.select(this.parentNode).datum().key,
             pos = $(this).offset(),
             tooltipHtml = "<table class='table'>";
+
+        if(window.fullScreenApi.isFullScreen()) {
+            pos.top -= $("#sim_matrix").offset().top;
+        }
         tooltipHtml += "<thead><tr><th>Name</th><th>Genome size</th></tr></thead><tbody>";
         tooltipHtml += "<tr><td>" + metadata[row].name + "</td><td>" + d3.format(",")(metadata[row].size) + " peptides</td></tr>";
         tooltipHtml += "<tr><td>" + metadata[col].name + "</td><td>" + d3.format(",")(metadata[col].size) + " peptides</td></tr>";
@@ -119,13 +123,16 @@ var constructSimMatrix = function constructSimMatrix(args) {
      */
     that.handleFullScreen = function handleFullScreen(isFullscreen) {
         var w = fullWidth,
-            h = fullHeight;
+            h = fullHeight,
+            destination = "body";
         if (isFullscreen) {
             w = $(window).width();
             h = $(window).height();
+            destination = "#sim_matrix";
         }
         $("#sim_matrix svg").attr("width", w);
         $("#sim_matrix svg").attr("height", h);
+        $("#matrix-tip").appendTo(destination);
     };
 
     /**
