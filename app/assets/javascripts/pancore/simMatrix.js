@@ -225,10 +225,10 @@ var constructSimMatrix = function constructSimMatrix(args) {
         var rows = svg.selectAll(".row")
             .data(dataArray, function (d) { return d.key; });
 
-        var rowsEnter = rows.enter()
+        rows.enter()
             .append("g")
-                .attr("class", "row");
-        rowsEnter.append("text")
+                .attr("class", "row")
+            .append("text")
                 .attr("x", -6)
                 .attr("y", x.rangeBand() / 2)
                 .attr("dy", ".32em")
@@ -245,6 +245,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
                 .attr("height", 0)
                 .style("fill-opacity", 0)
                 .style("fill", "white")
+                .attr("stroke", "white")
                 .on("mouseover", showInfoPanel)
                 .on("mouseout", hideInfoPanel);
 
@@ -258,11 +259,6 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
             cells.exit().remove();
         });
-
-        // draw grid lines on top of the cells
-        rowsEnter.append("line")
-            .attr("x2", width)
-            .attr("stroke", "#ffffff");
 
         rows.transition()
             .duration(transitionDuration)
@@ -278,17 +274,14 @@ var constructSimMatrix = function constructSimMatrix(args) {
         var columns = svg.selectAll(".column")
             .data(dataArray, function (d) { return d.key; });
 
-        var colsEnter = columns.enter().append("g")
-            .attr("class", "column");
-        colsEnter.append("text")
-            .attr("x", minWidth + 6)
-            .attr("y", -x.rangeBand() / 2)
-            .attr("dy", ".32em")
-            .attr("text-anchor", "start")
-            .text(function (d) { return metadata[d.key].abbreviation; });
-        colsEnter.append("line")
-            .attr("x1", width)
-            .attr("stroke", "#ffffff");
+        columns.enter().append("g")
+                .attr("class", "column")
+            .append("text")
+                .attr("x", minWidth + 6)
+                .attr("y", -x.rangeBand() / 2)
+                .attr("dy", ".32em")
+                .attr("text-anchor", "start")
+                .text(function (d) { return metadata[d.key].abbreviation; });
 
         columns.transition()
             .duration(transitionDuration)
