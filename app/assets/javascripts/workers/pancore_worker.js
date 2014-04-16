@@ -258,12 +258,15 @@ var matrixBackend = function matrixBackend(data) {
      */
     that.getClusteredOrder = function getClusteredOrder() {
         return treeToOrder(that.calculateTree());
-    }
+    };
 
     /**
      * Clusters the genomes based on similarity
      */
     that.clusterMatrix = function clusterMatrix() {
+        if (matrixOrder.length === 0) {
+            return;
+        }
         var tree = that.calculateTree();
         sendToHost('processClusteredMatrix', {
             order : treeToOrder(tree),
@@ -509,6 +512,10 @@ function recalculatePanCore(newOrder, start, stop) {
 
 // Sorts the genomes in a given order
 function autoSort(type) {
+    if (order.length === 0) {
+        return;
+    }
+
     var i,
         sortFunction,
         tempPan,
