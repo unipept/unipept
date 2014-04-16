@@ -602,7 +602,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     that.redraw = function redraw() {
         // erase everything
         $("#pancore_graph svg").remove();
-        $("#pancore_graph div.tip").remove();
+        $("#graph-tip").remove();
 
         // reset domain
         xScale.domain([0, 1]);
@@ -623,9 +623,10 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         // create the tooltip
-        tooltip = d3.select("#pancore_graph")
+        tooltip = d3.select("body")
           .append("div")
             .attr("class", "tip")
+            .attr("id", "graph-tip")
             .style("position", "absolute")
             .style("top", "0px")
             .style("left", "0px")

@@ -169,7 +169,10 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         dirty = true;
 
+        // Remove all the stuff
         $("#sim_matrix").html('');
+        $("#matrix-tip").remove();
+
         svg = d3.select("#sim_matrix").append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
@@ -186,6 +189,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         tooltip = d3.select("body")
           .append("div")
             .attr("class", "tip")
+            .attr("id", "matrix-tip")
             .style("position", "absolute")
             .style("top", "0px")
             .style("left", "0px")
