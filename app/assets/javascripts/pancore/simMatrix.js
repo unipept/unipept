@@ -16,11 +16,14 @@ var constructSimMatrix = function constructSimMatrix(args) {
     var margin = {top: 20, right: 0, bottom: 200, left: 200},
         width = 500,
         height = 500,
-        fullWidth = width + margin.left + margin.right,
+        treeWidth = 180,
+        fullWidth = treeWidth + width + margin.left + margin.right,
         fullHeight = height + margin.top + margin.bottom;
 
     // D3 vars
     var svg,
+        matrixSvg,
+        treeSvg,
         transitionDuration = 1000,
         x = d3.scale.ordinal().rangeBands([0, width]),
         z = d3.scale.linear().domain([0, 1]).clamp(true),
@@ -35,7 +38,6 @@ var constructSimMatrix = function constructSimMatrix(args) {
         newick;
 
     var $matrixTab = $('a[href="#sim_matrix_wrapper"]'),
-        $graphSelector = $('#sim_graph'),
         $clusterBtn = $("#cluster-matrix-btn");
 
     var that = {};
@@ -64,11 +66,11 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         $('#use-cluster-order').click(that.useClusterOrder);
 
+        that.redraw(true);
+
         // Dummy newick value chosen randomly
         var dummyNewick = "((((A:0.2,B:0.2):0.1,C:0.3):0.4,(F:0.4,D:0.4):0.3):0.3,E:1.0)";
         that.drawTree(dummyNewick, 500);
-
-        that.redraw(true);
     }
 
     /**
@@ -198,11 +200,14 @@ var constructSimMatrix = function constructSimMatrix(args) {
             .attr("xmlns", "http://www.w3.org/2000/svg")
             .attr("viewBox", "0 0 " + fullWidth + " " + fullHeight)
             .attr("width", fullWidth)
-            .attr("height", fullHeight)
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            .attr("height", fullHeight);
+        treeSvg = svg.append("g")
+            .attr("id", "tree-svg")
+            .attr("transform", "translate(20," + margin.top + ")");
+        matrixSvg = svg.append("g")
+            .attr("transform", "translate(" + (treeWidth + margin.left) + "," + margin.top + ")");
 
-        svg.append("rect")
+        matrixSvg.append("rect")
             .attr("class", "background")
             .attr("width", width)
             .attr("height", height)
@@ -245,7 +250,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
             .attr("width", minWidth)
             .attr("height", minWidth);
 
-        var rows = svg.selectAll(".row")
+        var rows = matrixSvg.selectAll(".row")
             .data(dataArray, function (d) { return d.key; });
 
         rows.enter()
@@ -294,7 +299,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         rows.exit().remove();
 
-        var columns = svg.selectAll(".column")
+        var columns = matrixSvg.selectAll(".column")
             .data(dataArray, function (d) { return d.key; });
 
         columns.enter().append("g")
@@ -342,11 +347,11 @@ var constructSimMatrix = function constructSimMatrix(args) {
      */
     that.drawTree = function drawTree(n, height) {
         newick = n;
-        $("#sim_graph").html("");
+        $("#tree-svg").html("");
         if (height === undefined) {
             height = d3.min([500, 50 * order.length]);
         }
-        d3.phylogram.build('#sim_graph', Newick.parse(n), {width: 180, height: height, skipLabels: true});
+        d3.phylogram.build('#sim_graph', Newick.parse(n), {width: 180, height: height, skipLabels: true, vis: treeSvg});
     };
 
     /**
@@ -422,11 +427,9 @@ var constructSimMatrix = function constructSimMatrix(args) {
         // Check if value differs, if we don't do this we call fadeTo too many times
         if (c !== clustered) {
             if (!c) {
-                $graphSelector.fadeTo('normal', 0.2);
                 $clusterBtn.show();
                 $('#reorder-header').addClass('hidden');
             } else {
-                $graphSelector.fadeTo('fast', 1);
                 $clusterBtn.hide();
                 $('#reorder-header').removeClass('hidden');
             }
