@@ -44,10 +44,10 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * Initializes the SimMatrix
      */
     function init() {
-        // calculate similarity and redraw on tab switch
+        // calculate similarity and update on tab switch
         $matrixTab.on('shown.bs.tab', function tabSwitchAction() {
             calculateSimilarity();
-            that.redraw();
+            that.update();
         });
 
         // cluster matrix button
@@ -60,13 +60,11 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         $('#use-cluster-order').click(that.useClusterOrder);
 
-        $('#sim_matrix').mouseout(function mouseOutAction() {
-            $('#matrix-popover-table').html('');
-        });
-
         // Dummy newick value chosen randomly
         var dummyNewick = "((((A:0.2,B:0.2):0.1,C:0.3):0.4,(F:0.4,D:0.4):0.3):0.3,E:1.0)";
         that.drawTree(dummyNewick, 500);
+
+        that.redraw(true);
     }
 
     /**
@@ -160,10 +158,12 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
     /**
      * Redraws the entire matrix
+     *
+     * @param <Boolean> force Force the redraw, even if it's not the active tab
      */
-    that.redraw = function redraw() {
+    that.redraw = function redraw(force) {
         // Check if we are currently active pane
-        if (!that.isActiveTab()) {
+        if (!force && !that.isActiveTab()) {
             return;
         }
 
