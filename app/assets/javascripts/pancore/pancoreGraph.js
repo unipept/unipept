@@ -51,7 +51,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
 
     // toggles
     var toggles = {
-        showGenomes : true,
+        showGenome : true,
         showPan : true,
         showCore : true,
         showUnicore : true
