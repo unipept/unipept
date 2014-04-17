@@ -201,7 +201,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         dirty = true;
 
         // Remove all the stuff
-        $("#sim_matrix").html('');
+        $("#sim_matrix").empty();
         $("#matrix-tip").remove();
 
         svg = d3.select("#sim_matrix").append("svg")
@@ -367,7 +367,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
      */
     that.drawTree = function drawTree(n, height) {
         newick = n;
-        $("#tree-svg").html("");
+        $("#tree-svg").empty();
         if (height === undefined) {
             height = d3.min([500, 50 * order.length]);
         }

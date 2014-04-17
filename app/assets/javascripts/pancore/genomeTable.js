@@ -124,7 +124,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
      * Redraws the table
      */
     that.clear = function clear() {
-        $("#genomes_table tbody").html("");
+        $("#genomes_table tbody").empty();
         that.update();
     };
 
