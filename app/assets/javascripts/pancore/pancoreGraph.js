@@ -253,7 +253,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
                 trigger: "manual",
                 position: "right",
                 container: "#popovers",
-                title: genomes[d.bioproject_id].name + " (bioproject " + d.bioproject_id + ")",
+                title: genomes[d.bioproject_id].name + " (bioproject <a href='http://www.ncbi.nlm.nih.gov/bioproject/?term=" + d.bioproject_id + "' target='_blank' title='open bioproject page'>" + d.bioproject_id + "</a>)",
                 content: getPopoverContent(d)});
             target.popover("show");
             target.attr("class", "bar pop");
