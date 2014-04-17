@@ -127,11 +127,25 @@ var constructPancore = function constructPancore(args) {
      * Initializes the save image stuff
      */
     function initSaveImage() {
+        // The save image stuff
         $("#buttons-pancore").prepend("<button id='save-img' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save image</button>");
         $("#save-img").click(function clickSaveImage() {
-            _gaq.push(['_trackEvent', 'Pancore', 'Save Image', 'graph']);
-            triggerDownloadModal("#pancore_graph svg", null, "unique_peptides_graph");
+            var selector,
+                tracking,
+                filename;
+            if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
+                selector = "#pancore_graph svg";
+                tracking = "graph";
+                filename = "unique_peptides_graph";
+            } else {
+                selector = "#sim_matrix svg";
+                tracking = "sim matrix";
+                filename = "similarity_matrix";
+            }
+            _gaq.push(['_trackEvent', 'Pancore', 'Save Image', tracking]);
+            triggerDownloadModal(selector, null, filename);
         });
+
         $("#buttons-pancore").prepend("<button id='save-data' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save data</button>");
         $("#save-data").click(function clickSaveData() {
             if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
