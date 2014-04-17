@@ -24,6 +24,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
     var svg,
         matrixSvg,
         treeSvg,
+        blur,
         transitionDuration = 1000,
         x = d3.scale.ordinal().rangeBands([0, width]),
         z = d3.scale.linear().domain([0, 1]).clamp(true),
@@ -71,6 +72,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         // Dummy newick value chosen randomly
         var dummyNewick = "((((A:0.2,B:0.2):0.1,C:0.3):0.4,(F:0.4,D:0.4):0.3):0.3,E:1.0)";
         that.drawTree(dummyNewick, 500);
+        that.setClustered(false);
     }
 
     /**
@@ -174,7 +176,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
     };
 
     /**
-     * Changes the order of the table based on the given order
+     * Changes the order of the genomes
      *
      * @param <Array> orderData The new order we want to set
      */
@@ -210,9 +212,20 @@ var constructSimMatrix = function constructSimMatrix(args) {
             .attr("height", fullHeight);
         treeSvg = svg.append("g")
             .attr("id", "tree-svg")
-            .attr("transform", "translate(20," + margin.top + ")");
+            .attr("transform", "translate(20," + margin.top + ")")
+            .attr("filter", "url(#blur)");
         matrixSvg = svg.append("g")
             .attr("transform", "translate(" + (treeWidth + margin.left) + "," + margin.top + ")");
+
+        // Add the blur effect definition
+        blur = svg.append("defs")
+            .append("filter")
+                .attr("id", "blur")
+                .attr("x", 0)
+                .attr("y", 0)
+            .append("feGaussianBlur")
+                .attr("in", "SourceGraphic")
+                .attr("stdDeviation", 5);
 
         matrixSvg.append("rect")
             .attr("class", "background")
@@ -431,14 +444,15 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * @param <Boolean> c is the matrix currently clustered?
      */
     that.setClustered = function setClustered(c) {
-        // Check if value differs, if we don't do this we call fadeTo too many times
         if (c !== clustered) {
             if (!c) {
                 $clusterBtn.show();
                 $('#reorder-header').addClass('hidden');
+                blur.transition().duration(transitionDuration).attr("stdDeviation", 5);
             } else {
                 $clusterBtn.hide();
                 $('#reorder-header').removeClass('hidden');
+                blur.transition().duration(transitionDuration).attr("stdDeviation", 0);
             }
             clustered = c;
         }
