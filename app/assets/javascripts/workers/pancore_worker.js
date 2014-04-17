@@ -507,6 +507,7 @@ function recalculatePanCore(newOrder, start, stop) {
         }
         response.push(temp);
     }
+
     sendToHost("processPancoreData", {data : response, lca : lca, rank : rank});
 }
 
@@ -618,7 +619,7 @@ function autoSort(type) {
         }
     }
     start = newOrder[0] === order[0] ? 1 : 0;
-    sendToHost('autoSorted', {order: newOrder, start: start, end: newOrder.length -1 });
+    sendToHost('autoSorted', {order: newOrder, start: start, stop: newOrder.length -1 });
 }
 
 // Retrieves the unique sequences
