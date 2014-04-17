@@ -267,6 +267,8 @@ var constructGenomeTable = function constructGenomeTable(args) {
                     } else if (d.value === "Loading") {
                         return "<i class='glyphicon glyphicon-download-alt'></i>";
                     }
+                } else {
+                    return d.value + " <a href='http://www.ncbi.nlm.nih.gov/bioproject/?term=" + d3.select(this.parentNode).datum().bioproject_id + "' target='_blank' title='open bioproject page'><i class='glyphicon glyphicon-share-alt'></i></a>";
                 }
                 return d.value;
             })
