@@ -452,12 +452,13 @@ var constructSimMatrix = function constructSimMatrix(args) {
     };
 
     /**
-     * TODO
+     * Converts this object to a CSV string
      */
     that.getDataAsCsv = function getDataAsCsv() {
         var csvString = ",",
             tempArray = [],
-            i;
+            i,
+            j;
 
         for (i = 0; i < order.length; i++) {
             tempArray.push('"' + metadata[order[i]].name + '"');
@@ -467,7 +468,9 @@ var constructSimMatrix = function constructSimMatrix(args) {
         for (i = 0; i < order.length; i++) {
             tempArray = [];
             tempArray.push('"' + metadata[order[i]].name + '"');
-            tempArray.push.apply(tempArray, matrix[i]);
+            for (j = 0; j < order.length; j++) {
+                tempArray.push(similarities[order[i]][order[j]]);
+            }
             csvString += tempArray.join(',') + "\n";
         }
 

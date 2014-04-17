@@ -148,13 +148,20 @@ var constructPancore = function constructPancore(args) {
 
         $("#buttons-pancore").prepend("<button id='save-data' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save data</button>");
         $("#save-data").click(function clickSaveData() {
+            var selector,
+                tracking,
+                filename;
             if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
-                _gaq.push(['_trackEvent', 'Pancore', 'Save Data', 'graph']);
-                that.exportCsvData(graph, 'unique_peptides.csv');
+                selector = graph;
+                tracking = "graph";
+                filename = "unique_peptides.csv";
             } else {
-                _gaq.push(['_trackEvent', 'Pancore', 'Save Data', 'sim matrix']);
-                that.exportCsvData(matrix, 'similarity_graph.csv');
+                selector = matrix;
+                tracking = "sim matrix";
+                filename = "similarity_matrix.csv";
             }
+            _gaq.push(['_trackEvent', 'Pancore', 'Save Data', tracking]);
+            that.exportCsvData(selector, filename);
         });
     }
 
