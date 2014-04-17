@@ -95,7 +95,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
             } else if (genomes[bioproject_id].position !== i) {
                 stop = i;
                 genomes[bioproject_id].position = i;
-                genomes[bioproject_id].status = "Processing...";
+                genomes[bioproject_id].status = "Processing";
             }
             order[i] = bioproject_id;
         });
@@ -111,7 +111,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
         var i;
         pancore.autoSort($(this).attr("data-type"));
         for (i in genomes) {
-            genomes[i].status = "Processing...";
+            genomes[i].status = "Processing";
         }
         that.update();
         $("#autosort").mouseleave();
@@ -258,7 +258,18 @@ var constructGenomeTable = function constructGenomeTable(args) {
             });
         td.enter()
             .append("td");
-        td.text(function (d) { return d.value; })
+        td.html(function (d) {
+                if (d.key === "status") {
+                    if (d.value === "Done") {
+                        return "";
+                    } else if (d.value === "Processing") {
+                        return "<i class='glyphicon glyphicon-refresh'></i>";
+                    } else if (d.value === "Loading") {
+                        return "<i class='glyphicon glyphicon-download-alt'></i>";
+                    }
+                }
+                return d.value;
+            })
             .attr("class", function (d) {return "data " + d.key; })
             .attr("colspan", "1");
         newRows.append("td")

@@ -352,7 +352,7 @@ var constructPancore = function constructPancore(args) {
                 table.addGenome({
                     "bioproject_id" : g[i].bioproject_id,
                     "name" : g[i].name,
-                    "status" : "Loading...",
+                    "status" : "Loading",
                     "position" : 100 + i,
                     "abbreviation" : abbrev
                 });
