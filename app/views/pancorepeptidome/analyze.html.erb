@@ -5,18 +5,18 @@
 
 <div id="buttons-pancore"></div>
 
-<ul class="nav nav-tabs">
-  <li class="active"><a href="#pancore_graph_wrapper" data-toggle="tab">Unique Peptide Finder</a></li>
-  <li><a href="#sim_matrix_wrapper" data-toggle="tab">Peptidome Clustering</a></li>
+<ul id="tabs" class="nav nav-tabs">
+  <li class="<%= @tab == "peptidefinder" ? "active" : ""%>"><a href="#pancore_graph_wrapper" data-toggle="tab">Unique Peptide Finder</a></li>
+  <li class="<%= @tab == "peptidomeclustering" ? "active" : ""%>"><a href="#sim_matrix_wrapper" data-toggle="tab">Peptidome Clustering</a></li>
 </ul>
 
 <div class="tab-content">
-  <div class="tab-pane active" id="pancore_graph_wrapper">
+  <div class="tab-pane <%= @tab == "peptidefinder" ? "active" : ""%>" id="pancore_graph_wrapper">
     <div id="pancore_graph">
       <div id="popovers"></div>
     </div>
   </div>
-  <div class="tab-pane" id="sim_matrix_wrapper">
+  <div class="tab-pane <%= @tab == "peptidomeclustering" ? "active" : ""%>" id="sim_matrix_wrapper">
     <div id="sim_matrix"></div>
     <button id='cluster-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Cluster</button>
   </div>
