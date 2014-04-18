@@ -491,6 +491,39 @@ var constructSimMatrix = function constructSimMatrix(args) {
         return csvString;
     };
 
+    /**
+     * Invokes a modal dialog giving the option to download the tree in newick
+     * format, or the similarity data in csv format.
+     */
+    that.handleSaveData = function handleSaveData() {
+        $("#downloadModal").remove();
+        $("body").append("<div id='downloadModal' class='modal fade' tabindex='-1' role='dialog'>" +
+          "<div class='modal-dialog modal-sm'>" +
+            "<div class='modal-content'>" +
+              "<div class='modal-header'>" +
+                "<button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button>" +
+                "<h3 class='modal-title' id='mySmallModalLabel'>Download peptidome clustering data</h3>" +
+              "</div>" +
+              "<div class='modal-body'>" +
+                "<p>You can download the underlying data of the phylogenetic tree in <a href='http://en.wikipedia.org/wiki/Newick_format' target='_blank'>Newick format</a>" +
+                " and the similarities of the matrix in CSV-format.</p>" +
+                "<div class='buttons text-center'>" +
+                  "<button id='download-newick' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download newick</button>" +
+                  "<button id='download-csv' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download similarities</button>" +
+                "</div>" +
+              "</div>" +
+            "</div>" +
+          "</div>" +
+        "</div>");
+        $("#download-csv").click(function (){
+            downloadDataByForm(that.getDataAsCsv(), "similarity_data.csv");
+        });
+        $("#download-newick").click(function (){
+            downloadDataByForm(newick, "phylogenetic_tree_newick.txt");
+        });
+        $modal = $("#downloadModal").modal();
+    };
+
     // Initialize the object
     init();
 

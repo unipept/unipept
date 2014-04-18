@@ -143,7 +143,7 @@ var matrixBackend = function matrixBackend(data) {
             if (array[i] instanceof Array) {
                 string += arrayToNewick(array[i], distance);
             } else {
-                string += matrixOrder[array[i]] + ":" + (1 - distance);
+                string += filterNewickName(data[matrixOrder[array[i]]].name) + ":" + (1 - distance);
             }
             if (i !== array.length - 2) {
                 string += ", ";
@@ -270,7 +270,7 @@ var matrixBackend = function matrixBackend(data) {
         var tree = that.calculateTree();
         sendToHost('processClusteredMatrix', {
             order : treeToOrder(tree),
-            newick : arrayToNewick(tree)
+            newick : arrayToNewick(tree) + ";"
         });
     };
 
@@ -741,6 +741,15 @@ function getJSONByPost(url, data, callback) {
 
 function genomeSimilarity(peptide_list1, peptide_list2) {
     return intersection(peptide_list1, peptide_list2).length / union(peptide_list1, peptide_list2).length;
+}
+
+/**
+ * Removes [,;:] from a string and replaces spaces by underscores
+ *
+ * @param <String> name The string we want to filter
+ */
+function filterNewickName(name) {
+    return name.replace(/ /g, "_").replace(/[,;:]/g, "");
 }
 
 // union and intersection for sorted arrays

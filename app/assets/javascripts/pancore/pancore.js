@@ -146,22 +146,20 @@ var constructPancore = function constructPancore(args) {
             triggerDownloadModal(selector, null, filename);
         });
 
-        $("#buttons-pancore").prepend("<button id='save-data' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save data</button>");
+        $("#buttons-pancore").prepend("<button id='save-data' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Download data</button>");
         $("#save-data").click(function clickSaveData() {
-            var selector,
+            var activeObject,
                 tracking,
                 filename;
             if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
-                selector = graph;
+                activeObject = graph;
                 tracking = "graph";
-                filename = "unique_peptides.csv";
             } else {
-                selector = matrix;
+                activeObject = matrix;
                 tracking = "sim matrix";
-                filename = "similarity_matrix.csv";
             }
             _gaq.push(['_trackEvent', 'Pancore', 'Save Data', tracking]);
-            that.exportCsvData(selector, filename);
+            activeObject.handleSaveData();
         });
     }
 
@@ -403,14 +401,6 @@ var constructPancore = function constructPancore(args) {
         sendToWorker("recalculatePanCore", orderData);
         table.setOrder(orderData.order);
         matrix.setOrder(orderData.order);
-    };
-
-    /**
-     * Invokes a file download containing all data currently shown
-     * in the graph (i.e. each datapoint) in csv format.
-     */
-    that.exportCsvData = function exportCsvData(object, filename) {
-        downloadDataByForm(object.getDataAsCsv(), filename);
     };
 
     /**

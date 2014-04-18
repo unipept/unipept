@@ -616,6 +616,14 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     };
 
     /**
+     * Invokes a file download containing all data currently shown
+     * in the graph (i.e. each datapoint) in csv format.
+     */
+    that.handleSaveData = function handleSaveData() {
+        downloadDataByForm(that.getDataAsCsv(), "pan_core_peptidome.csv");
+    };
+
+    /**
      * Redraws the entire pancore graph
      */
     that.redraw = function redraw() {
