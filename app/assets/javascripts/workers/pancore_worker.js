@@ -196,7 +196,8 @@ var matrixBackend = function matrixBackend(data) {
      * Calculates all uncalculated cells in the similarity matrix
      */
     that.calculateSimilarity = function calculateSimilarity() {
-        var sendFullMatrix = false,
+        var sendFullMatrix = true,
+            dataQueue = {},
             x,
             id,
             peptides,
@@ -205,11 +206,8 @@ var matrixBackend = function matrixBackend(data) {
 
         // Be a bit clever with sending data
         if (idsToCalculate.length > 3) {
-            sendFullMatrix = true;
+            sendFullMatrix = false;
         }
-
-        // TODO for now, always send full matrix
-        sendFullMatrix = true;
 
         for (x = 0; x < idsToCalculate.length; x++) {
             id = idsToCalculate[x];
@@ -222,7 +220,11 @@ var matrixBackend = function matrixBackend(data) {
             }
 
             if (!sendFullMatrix) {
-                that.sendRow(id, matrixObject[id]);
+                dataQueue[id] = matrixObject[id];
+                if (x % 3 === 2 || x === idsToCalculate.length - 1) {
+                    that.sendRows(dataQueue);
+                    dataQueue = {};
+                }
             }
         }
 
@@ -246,11 +248,10 @@ var matrixBackend = function matrixBackend(data) {
     /**
      * Sends a single row of similarities to the client
      *
-     * @param <Number> row The id of the row
-     * @param <SimObject> row A single row of the similarity matrix
+     * @param <Map> dataQueue The list of id to data mappings
      */
-    that.sendRow = function sendRow(id, row) {
-        sendToHost('processSimilarityData', {'fullMatrix' : false, 'data' : {'id' : id, 'row' : row}});
+    that.sendRows = function sendRows(dataQueue) {
+        sendToHost('processSimilarityData', {'fullMatrix' : false, 'data' : dataQueue});
     };
 
     /**

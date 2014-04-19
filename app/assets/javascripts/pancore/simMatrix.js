@@ -151,12 +151,13 @@ var constructSimMatrix = function constructSimMatrix(args) {
         if (fullMatrix) {
             similarities = data;
         } else {
-            id = data.id;
-            row = data.row;
-            for (id2 in similarities) {
-                similarities[id2][id] = row[id2];
+            for (id in data) {
+                row = data[id];
+                for (id2 in similarities) {
+                    similarities[id2][id] = row[id2];
+                }
+                similarities[id] = row;
             }
-            similarities[id] = row;
         }
 
         dirty = true;
