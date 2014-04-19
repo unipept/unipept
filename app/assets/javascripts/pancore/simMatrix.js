@@ -38,8 +38,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         clustered,
         newick;
 
-    var $matrixTab = $('a[href="#sim_matrix_wrapper"]'),
-        $clusterBtn = $("#cluster-matrix-btn");
+    var $matrixTab = $('a[href="#sim_matrix_wrapper"]');
 
     var that = {};
 
@@ -56,9 +55,6 @@ var constructSimMatrix = function constructSimMatrix(args) {
             calculateSimilarity();
             that.update();
         });
-
-        // cluster matrix button
-        $clusterBtn.click(that.clusterMatrix);
 
         // decluster matrix button
         $('#decluster-matrix').click(function declusterAction() {
@@ -221,6 +217,25 @@ var constructSimMatrix = function constructSimMatrix(args) {
             .attr("filter", "url(#blur)");
         matrixSvg = svg.append("g")
             .attr("transform", "translate(" + (treeWidth + margin.left) + "," + margin.top + ")");
+        buttonSvg = svg.append("g")
+            .attr("id", "button-svg")
+            .attr("transform", "translate(20," + margin.top + ")")
+            .style("cursor", "pointer")
+            .on("click", that.clusterMatrix);
+
+        buttonSvg.append("rect")
+            .attr("width", treeWidth)
+            .attr("height", height)
+            .attr("fill", "white")
+            .attr("stroke", "none")
+            .attr("fill-opacity", 0);
+        var buttonText = buttonSvg.append("text")
+            .attr("text-anchor", "middle")
+            .attr("y", height / 2)
+            .style("font-weight", "bold")
+            .style("font-size", "16pt");
+        buttonText.append("tspan").text("click to").attr("x", treeWidth / 2);
+        buttonText.append("tspan").text("cluster matrix").attr("dy", 30).attr("x", treeWidth / 2);
 
         // Add the blur effect definition
         blur = svg.append("defs")
@@ -452,11 +467,11 @@ var constructSimMatrix = function constructSimMatrix(args) {
     that.setClustered = function setClustered(c) {
         if (c !== clustered) {
             if (!c) {
-                $clusterBtn.show();
+                buttonSvg.style("visibility", "visible");
                 $('#reorder-header').addClass('hidden');
                 blur.transition().duration(transitionDuration).attr("stdDeviation", 5);
             } else {
-                $clusterBtn.hide();
+                buttonSvg.style("visibility", "hidden");
                 $('#reorder-header').removeClass('hidden');
                 blur.transition().duration(transitionDuration).attr("stdDeviation", 0);
             }
