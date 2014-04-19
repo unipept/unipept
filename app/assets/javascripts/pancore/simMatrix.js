@@ -529,8 +529,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
                 "<p>You can download the underlying data of the phylogenetic tree in <a href='http://en.wikipedia.org/wiki/Newick_format' target='_blank'>Newick format</a>" +
                 " and the similarities of the matrix in CSV-format.</p>" +
                 "<div class='buttons text-center'>" +
-                  "<button id='download-newick' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download newick</button>" +
-                  "<button id='download-csv' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download similarities</button>" +
+                  "<button id='download-newick' class='btn btn-primary'><span class='glyphicon glyphicon-download'></span> Download newick</button>" +
+                  "<button id='download-csv' class='btn btn-primary'><span class='glyphicon glyphicon-download'></span> Download similarities</button>" +
                 "</div>" +
               "</div>" +
             "</div>" +

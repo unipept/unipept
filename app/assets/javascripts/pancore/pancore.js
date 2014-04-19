@@ -107,7 +107,7 @@ var constructPancore = function constructPancore(args) {
      */
     function initFullScreen() {
         if (fullScreenApi.supportsFullScreen) {
-            $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-resize-full'></i> Enter full screen</button>");
+            $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-resize-full'></span> Enter full screen</button>");
             $("#zoom-btn").click(function () {
                 if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
                     // GA event tracking
@@ -128,7 +128,7 @@ var constructPancore = function constructPancore(args) {
      */
     function initSaveImage() {
         // The save image stuff
-        $("#buttons-pancore").prepend("<button id='save-img' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save image</button>");
+        $("#buttons-pancore").prepend("<button id='save-img' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-download'></span> Save image</button>");
         $("#save-img").click(function clickSaveImage() {
             var selector,
                 tracking,
@@ -146,7 +146,7 @@ var constructPancore = function constructPancore(args) {
             triggerDownloadModal(selector, null, filename);
         });
 
-        $("#buttons-pancore").prepend("<button id='save-data' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Download data</button>");
+        $("#buttons-pancore").prepend("<button id='save-data' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-download'></span> Download data</button>");
         $("#save-data").click(function clickSaveData() {
             var activeObject,
                 tracking,

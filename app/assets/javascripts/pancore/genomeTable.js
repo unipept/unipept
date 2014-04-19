@@ -249,7 +249,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
         tr.sort(function (a, b) { return a.position - b.position; });
 
         // Add cells
-        newRows.append("td").attr("class", "handle").html("<i class='glyphicon glyphicon-resize-vertical'></i>");
+        newRows.append("td").attr("class", "handle").html("<span class='glyphicon glyphicon-resize-vertical'></span>");
         td = tr.selectAll("td.data")
             .data(function (d) {
                 return d3.entries(d).filter(function (entry) {
@@ -263,12 +263,12 @@ var constructGenomeTable = function constructGenomeTable(args) {
                     if (d.value === "Done") {
                         return "";
                     } else if (d.value === "Processing") {
-                        return "<i class='glyphicon glyphicon-refresh'></i>";
+                        return "<span class='glyphicon glyphicon-refresh'></span>";
                     } else if (d.value === "Loading") {
-                        return "<i class='glyphicon glyphicon-download-alt'></i>";
+                        return "<span class='glyphicon glyphicon-cloud-download'></span>";
                     }
                 } else {
-                    return d.value + " <a href='http://www.ncbi.nlm.nih.gov/bioproject/?term=" + d3.select(this.parentNode).datum().bioproject_id + "' target='_blank' title='open bioproject page'><i class='glyphicon glyphicon-share-alt'></i></a>";
+                    return d.value + " <a href='http://www.ncbi.nlm.nih.gov/bioproject/?term=" + d3.select(this.parentNode).datum().bioproject_id + "' target='_blank' title='open bioproject page'><span class='glyphicon glyphicon-share-alt'></span></a>";
                 }
                 return d.value;
             })
@@ -277,7 +277,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
         newRows.append("td")
             .attr("class", "button")
             .append("a")
-            .html("<i class='glyphicon glyphicon-trash'></i>")
+            .html("<span class='glyphicon glyphicon-trash'></span>")
             .attr("class", "btn btn-default btn-xs")
             .attr("title", "remove genome")
             .on("click", pancore.removeGenome);
@@ -293,7 +293,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
      * @param <String> msg The message you want to set
      */
     that.setTableMessage = function setTableMessage(icon, msg) {
-        $("#table-message").html("<i class='glyphicon glyphicon-" + icon + "'></i> " + msg);
+        $("#table-message").html("<span class='glyphicon glyphicon-" + icon + "'></span> " + msg);
     };
 
     /**

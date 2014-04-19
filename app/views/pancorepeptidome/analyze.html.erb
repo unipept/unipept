@@ -29,17 +29,17 @@
     </p>
     <%= form_tag(:pancore_analyze, :method => "get", :class => "form-inline") do %>
         <div class="form-group"><%= select_tag(:species_id, options_for_select(@species, params[:species_id]), :class => "form-control") %></div>
-        <div class="form-group"><%= button_tag(raw("Add species <i class='glyphicon glyphicon-chevron-right'></i>"), :type => "button", :class => "btn btn-primary", :id => "add_species_peptidome", :"data-loading-text" => "Loading...") %></div>
+        <div class="form-group"><%= button_tag(raw("Add species <span class='glyphicon glyphicon-chevron-right'></span>"), :type => "button", :class => "btn btn-primary", :id => "add_species_peptidome", :"data-loading-text" => "Loading...") %></div>
     <% end %>
     <div id="treeView" class="treeView pancore">
       <div class="input-group" id="treeSearchDiv">
-      <%= search_field_tag(:treeSearch, "", :placeholder => "type to filter the tree by name or bioproject id", :class => "form-control") %><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+      <%= search_field_tag(:treeSearch, "", :placeholder => "type to filter the tree by name or bioproject id", :class => "form-control") %><span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
       </div>
     </div>
   </div>
 
   <div class="split-right">
-    <span id="table-message"><i class="glyphicon glyphicon-chevron-left"></i> Select a species to analyze and click the load button.</span>
+    <span id="table-message"><span class="glyphicon glyphicon-chevron-left"></span> Select a species to analyze and click the load button.</span>
     <div id="genomes-table-div">
       <div style="overflow: hidden; height: 0px; width: 0px;">&nbsp;</div>
       <table class="table table-condensed" id="genomes_table">
@@ -62,7 +62,7 @@
             </th>
             <th class="name">Genome</th>
             <th class="status"></th>
-            <th class="action"><a id="remove-all" class="btn btn-xs btn-danger" title="remove all genomes"><i class="glyphicon glyphicon-trash"></i></a></th>
+            <th class="action"><a id="remove-all" class="btn btn-xs btn-danger" title="remove all genomes"><span class="glyphicon glyphicon-trash"></span></a></th>
           </tr>
           <tr id="reorder-header" class="hidden warning">
               <td colspan="4" align="center">
@@ -75,7 +75,7 @@
         <tbody>
         </tbody>
         <tfoot>
-          <tr><th colspan=4><i class="glyphicon glyphicon-plus"></i> Drop genomes here</th></tr>
+          <tr><th colspan=4><span class="glyphicon glyphicon-plus"></span> Drop genomes here</th></tr>
         </tfoot>
       </table>
     </div>

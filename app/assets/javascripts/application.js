@@ -94,12 +94,12 @@ function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
         $image.html("<img src='" + dataURL + "' />");
         $buttons.empty();
         if (svgSelector) {
-            $buttons.append("<button id='download-svg' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as SVG</button>");
+            $buttons.append("<button id='download-svg' class='btn btn-primary'><span class='glyphicon glyphicon-download'></span> Download as SVG</button>");
             $("#download-svg").click(function () {
                 downloadDataByForm(svg, baseFileName + ".svg");
             });
         }
-        $buttons.append("<button id='download-png' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as PNG</button>");
+        $buttons.append("<button id='download-png' class='btn btn-primary'><span class='glyphicon glyphicon-download'></span> Download as PNG</button>");
         $("#download-png").click(function () {
             downloadDataByLink($("#save-as-modal .image img").attr("src"), baseFileName + ".png");
         });

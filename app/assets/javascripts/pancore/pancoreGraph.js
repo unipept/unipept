@@ -198,7 +198,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         var content = getTooltipContent(d);
         content += "<br/><div class='btn-group' id='download-peptides'>" +
           "<a class='btn btn-default dropdown-toggle' id='download-peptides-toggle' data-toggle='dropdown' data-loading-text='Loading peptides'>" +
-            "<i class='glyphicon glyphicon-download'></i> " +
+            "<span class='glyphicon glyphicon-download'></span> " +
             "download peptides " +
             "<span class='caret'></span>" +
           "</a>" +
