@@ -68,8 +68,12 @@ var constructSimMatrix = function constructSimMatrix(args) {
         $('#use-cluster-order').click(that.useClusterOrder);
 
         that.redraw(true);
+    }
 
-        // Dummy newick value chosen randomly
+    /**
+     * Draws a dummy newick tree
+     */
+    function drawDummyTree() {
         var dummyNewick = "((((A:0.2,B:0.2):0.1,C:0.3):0.4,(F:0.4,D:0.4):0.3):0.3,E:1.0)";
         that.drawTree(dummyNewick, 500);
         that.setClustered(false);
@@ -245,6 +249,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
             .style("z-index", "10")
             .style("visibility", "hidden");
 
+        drawDummyTree();
         that.update();
     };
 
