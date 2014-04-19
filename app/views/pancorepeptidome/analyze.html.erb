@@ -48,7 +48,7 @@
             <th class="handle">
               <div class="btn-group" id="autosort">
                 <a class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" id="autosort-button">
-                  <i class="glyphicon glyphicon-random"></i>
+                  <span class="glyphicon glyphicon-random"></span>
                 </a>
                 <ul class="dropdown-menu">
                   <li><a data-type="name" data-toggle="tooltip" title="Sorts the genomes alphabetically from A-Z." href="#">Sort by name</a></li>
@@ -64,10 +64,11 @@
             <th class="status"></th>
             <th class="action"><a id="remove-all" class="btn btn-xs btn-danger" title="remove all genomes"><i class="glyphicon glyphicon-trash"></i></a></th>
           </tr>
-          <tr id="reorder-header" class="hidden">
+          <tr id="reorder-header" class="hidden warning">
               <td colspan="4" align="center">
-                  <a id='use-cluster-order' class="btn btn-danger btn-xs">Use clustered order <i class="glyphicon glyphicon-random"></i></a>
-                  <a id='decluster-matrix' class="btn btn-danger btn-xs">decluster matrix <i class="glyphicon glyphicon-random"></i></a>
+                  The order of the genomes in this table currently doesn't correspond with the order in the similarity matrix<br>
+                  <a id='use-cluster-order' class="btn btn-primary btn-xs" title="reorder the table to correspond with the clustered order"><span class="glyphicon glyphicon-random"></span> Use clustered order</a>
+                  <a id='decluster-matrix' class="btn btn-default btn-xs" title="decluster the matrix and keep using the order of the table">Undo clustering</a>
               </td>
           <tr>
         </thead>
