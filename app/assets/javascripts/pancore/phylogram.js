@@ -304,7 +304,6 @@ function init_phylogram() {
     })
     vis.selectAll('g.node')
       .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
-
     if (!options.skipLabels) {
       vis.selectAll('g.leaf.node text')
         .attr("dx", function(d) { return d.x < 180 ? 8 : -8; })
