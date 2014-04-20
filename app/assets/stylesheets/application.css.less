@@ -19,11 +19,6 @@
 @line-height-base: 1.3846153846;
 @icon-font-path: "/assets/bootstrap/";
 
-// tab popup fix
-.tab-content {
-  overflow: initial !important;
-}
-
 // Disable responsiveness
 .container {
     max-width: none !important;
@@ -565,7 +560,6 @@ span.dir {
     cursor: pointer;
 }
 .tab-content {
-    overflow: hidden;
     position: relative;
 }
 #species_id {
@@ -576,6 +570,21 @@ span.dir {
 }
 #pancore_graph div.tip {
     .translate3d(0, 0, 0);
+}
+.tab-help {
+  background-color: @nav-link-hover-bg;
+  min-height: 200px;
+  width: 916px;
+  z-index: 100;
+  position: absolute;
+  border: 1px solid @nav-tabs-active-link-hover-border-color;
+  border-top: 0px;
+  padding: 10px;
+  display: none;
+  .border-bottom-radius(4px);
+}
+.nav-tabs>li.active>a:hover {
+  background-color: @nav-link-hover-bg !important;
 }
 
 /*** sim matrix ***/

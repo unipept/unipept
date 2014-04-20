@@ -10,13 +10,18 @@
   <li class="<%= @tab == "peptidomeclustering" ? "active" : ""%>"><a href="#sim_matrix_wrapper" data-toggle="tab">Peptidome Clustering</a></li>
 </ul>
 
+<div class="tab-help" id="tab-help">
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sit amet enim neque. Phasellus in molestie mi. Suspendisse ac orci tellus. Fusce fermentum bibendum leo, porttitor tempor libero feugiat a. Suspendisse justo quam, egestas sed urna quis, tempus accumsan augue. Suspendisse in tincidunt nisi, ut pharetra massa. Nulla quis nisi porta, hendrerit sem at, pellentesque ligula. Suspendisse nec mollis velit, sit amet consectetur risus. Aenean congue non justo id molestie. Etiam gravida purus eros, sodales pretium quam ultrices quis.</p>
+  <p>Nullam massa arcu, viverra ac ante ac, placerat pharetra massa. Maecenas tincidunt fringilla feugiat. Fusce lacus quam, sollicitudin sit amet sollicitudin vitae, congue id dolor. Suspendisse erat odio, posuere sit amet mi at, accumsan mattis leo. Sed gravida felis accumsan fringilla gravida. Vivamus at sapien quis enim varius imperdiet bibendum ut tellus. Nam sit amet quam nisi. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam ut sem dolor.</p>
+</div>
+
 <div class="tab-content">
-  <div class="tab-pane <%= @tab == "peptidefinder" ? "active" : ""%>" id="pancore_graph_wrapper">
+  <div class="tab-pane fade <%= @tab == "peptidefinder" ? "in active" : ""%>" id="pancore_graph_wrapper">
     <div id="pancore_graph">
       <div id="popovers"></div>
     </div>
   </div>
-  <div class="tab-pane <%= @tab == "peptidomeclustering" ? "active" : ""%>" id="sim_matrix_wrapper">
+  <div class="tab-pane fade <%= @tab == "peptidomeclustering" ? "in active" : ""%>" id="sim_matrix_wrapper">
     <div id="sim_matrix"></div>
   </div>
 </div>

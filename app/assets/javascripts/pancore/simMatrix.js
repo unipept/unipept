@@ -50,6 +50,14 @@ var constructSimMatrix = function constructSimMatrix(args) {
     function init() {
         init_phylogram();
 
+        // tab help
+        $("#tabs li").on("mouseover", function () {
+            $("#tab-help").stop(true, true).fadeIn(200);
+        });
+        $("#tabs li").on("mouseout", function () {
+            $("#tab-help").stop(true, true).fadeOut(200);
+        });
+
         // calculate similarity and update on tab switch
         $matrixTab.on('shown.bs.tab', function tabSwitchAction() {
             calculateSimilarity();
