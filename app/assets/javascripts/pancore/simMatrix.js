@@ -51,10 +51,10 @@ var constructSimMatrix = function constructSimMatrix(args) {
         init_phylogram();
 
         // tab help
-        $("#tabs li").on("mouseover", function () {
+        $("#tabs li a").on("mouseover", function () {
             $("#tab-help").stop(true, true).fadeIn(200);
         });
-        $("#tabs li").on("mouseout", function () {
+        $("#tabs li a").on("mouseout", function () {
             $("#tab-help").stop(true, true).fadeOut(200);
         });
 
