@@ -131,6 +131,22 @@ var constructSimMatrix = function constructSimMatrix(args) {
         }
     }
 
+    /**
+     * Returns true if the two order arrays are the same
+     */
+    function sameOrder(order1, order2) {
+        var i = order1.length;
+        if (i != order2.length) {
+            return false;
+        }
+        while (i--) {
+            if (order1[i] !== order2[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /*************** Public methods ***************/
 
     /**
@@ -197,10 +213,12 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * @param <Array> orderData The new order we want to set
      */
     that.setOrder = function setOrder(orderData) {
-        order = orderData;
-        that.setClustered(false);
-        dirty = true;
-        that.update();
+        if (!sameOrder(order, orderData)) {
+            order = orderData;
+            that.setClustered(false);
+            dirty = true;
+            that.update();
+        }
     };
 
     /**
