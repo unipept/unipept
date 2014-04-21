@@ -52,7 +52,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         // tab help
         $("#tabs li a").on("mouseover", function () {
-            if ($(this).attr("id") == "unique-peptide-finder-tab") {
+            if ($(this).attr("id") === "unique-peptide-finder-tab") {
                 $("#unique-peptide-finder-help").show();
                 $("#peptidome-clustering-help").hide();
             } else {
@@ -101,13 +101,13 @@ var constructSimMatrix = function constructSimMatrix(args) {
             pos = $(this).offset(),
             tooltipHtml = "<table class='table'>";
 
-        if(window.fullScreenApi.isFullScreen()) {
+        if (window.fullScreenApi.isFullScreen()) {
             pos.top -= $("#sim_matrix").offset().top;
         }
         tooltipHtml += "<thead><tr><th>Name</th><th>Genome size</th></tr></thead><tbody>";
         tooltipHtml += "<tr><td>" + metadata[row].name + "</td><td>" + d3.format(",")(metadata[row].size) + " peptides</td></tr>";
         tooltipHtml += "<tr><td>" + metadata[col].name + "</td><td>" + d3.format(",")(metadata[col].size) + " peptides</td></tr>";
-        tooltipHtml += "<tr><td colspan='2'><strong>Similarity</strong>: " + d3.format(",.2%")(similarities[row][col]) + "</td></tr>"
+        tooltipHtml += "<tr><td colspan='2'><strong>Similarity</strong>: " + d3.format(",.2%")(similarities[row][col]) + "</td></tr>";
         tooltipHtml += "</tbody></table>";
         tooltip.html(tooltipHtml)
             .style("top", (pos.top + x.rangeBand() + 5) + "px")
@@ -136,7 +136,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
      */
     function sameOrder(order1, order2) {
         var i = order1.length;
-        if (i != order2.length) {
+        if (i !== order2.length) {
             return false;
         }
         while (i--) {
@@ -569,10 +569,10 @@ var constructSimMatrix = function constructSimMatrix(args) {
             "</div>" +
           "</div>" +
         "</div>");
-        $("#download-csv").click(function (){
+        $("#download-csv").click(function () {
             downloadDataByForm(that.getDataAsCsv(), "similarity_data.csv");
         });
-        $("#download-newick").click(function (){
+        $("#download-newick").click(function () {
             downloadDataByForm(newick, "phylogenetic_tree_newick.txt");
         });
         $modal = $("#downloadModal").modal();
