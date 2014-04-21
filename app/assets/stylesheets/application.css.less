@@ -491,17 +491,17 @@ span.dir {
 #buttons-pancore button {
     margin-left: 5px;
 }
-#pancore_graph {
+#pancore_graph, #sim_matrix {
     background-color: white;
 }
 #genomes_table .handle {
     width: 30px;
 }
 #genomes_table .name {
-    width: 275px;
+    width: 325px;
 }
 #genomes_table .status {
-    width: 75px;
+    width: 30px;
 }
 #genomes_table .action {
     width: 30px;
@@ -560,7 +560,7 @@ span.dir {
     cursor: pointer;
 }
 .tab-content {
-    overflow: hidden;
+    position: relative;
 }
 #species_id {
     width: 315px;
@@ -571,18 +571,32 @@ span.dir {
 #pancore_graph div.tip {
     .translate3d(0, 0, 0);
 }
+.tab-help {
+  background-color: @nav-link-hover-bg;
+  min-height: 200px;
+  width: 916px;
+  z-index: 100;
+  position: absolute;
+  border: 1px solid @nav-tabs-active-link-hover-border-color;
+  border-top: 0px;
+  padding: 10px;
+  display: none;
+  .border-bottom-radius(4px);
+}
+.tab-help .help-icon {
+  font-size: 50pt;
+  margin-bottom: 0px;
+}
+.nav-tabs>li.active>a:hover {
+  background-color: @nav-link-hover-bg !important;
+}
 
 /*** sim matrix ***/
-#sim_matrix_buttons {
-    margin-top: 5px;
+#downloadModal .buttons button {
+    margin-left: 10px;
+    margin-right: 10px;
 }
-#sim_matrix{
-    float: right;
-}
-#sim_graph{
-    margin-top: 180px;
-    float: left
-}
+
 /*** treeview ***/
 .treeView {
     -moz-user-select: none;
