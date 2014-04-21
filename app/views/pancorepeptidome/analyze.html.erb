@@ -1,7 +1,5 @@
 <h1>Peptidome Analysis</h1>
-<p>This application lets you find unique peptides for a species of your choice, based on the data of the completed refseq genomes. These peptides can be downloaded and used for targeted proteomics experiments.</p>
-<p>When you add a genome to the set (e.g., by dragging one from the tree to the graph or table), the union and intersection of the peptides of that genome and the ones already added are calculated. The size of the union (pan peptidome) is represented by the blue dots and the size of the intersection (core peptidome) is represented by the orange dots. Additionally, a more restrictive version of the core peptidome is calculated (green dots) by only including peptides that are unique for the selected genomes. These unique peptides have the same Lowest Common Ancestor (LCA) as the LCA of the selected genomes.</p>
-<p>You can easily reorder the genomes by dragging them to the desired position or by using one of the automatic sort options. By clicking on one of the data points on the graph, you can download a list of peptides.</p>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu lacus fringilla, laoreet tellus tempus, consequat sapien. Phasellus ultrices lacus non nulla semper, non posuere nunc sollicitudin. Praesent ut enim vel diam eleifend rutrum sed eget augue. Duis aliquet sed magna in dictum. Sed aliquam sagittis risus, ac ornare turpis. Curabitur enim ligula, porttitor eget tincidunt eget, scelerisque quis odio. Suspendisse at lacinia ligula, hendrerit feugiat eros. Vestibulum placerat consequat magna molestie consequat. Nam lobortis libero erat, ut pulvinar arcu ultrices at. In volutpat leo in fermentum ullamcorper.</p>
 
 <div id="buttons-pancore"></div>
 
@@ -11,8 +9,25 @@
 </ul>
 
 <div class="tab-help" id="tab-help">
-  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sit amet enim neque. Phasellus in molestie mi. Suspendisse ac orci tellus. Fusce fermentum bibendum leo, porttitor tempor libero feugiat a. Suspendisse justo quam, egestas sed urna quis, tempus accumsan augue. Suspendisse in tincidunt nisi, ut pharetra massa. Nulla quis nisi porta, hendrerit sem at, pellentesque ligula. Suspendisse nec mollis velit, sit amet consectetur risus. Aenean congue non justo id molestie. Etiam gravida purus eros, sodales pretium quam ultrices quis.</p>
-  <p>Nullam massa arcu, viverra ac ante ac, placerat pharetra massa. Maecenas tincidunt fringilla feugiat. Fusce lacus quam, sollicitudin sit amet sollicitudin vitae, congue id dolor. Suspendisse erat odio, posuere sit amet mi at, accumsan mattis leo. Sed gravida felis accumsan fringilla gravida. Vivamus at sapien quis enim varius imperdiet bibendum ut tellus. Nam sit amet quam nisi. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam ut sem dolor.</p>
+  <p>Find unique peptides for a species of your choice, based on the data of the completed refseq genomes. These peptides can be downloaded and used for targeted proteomics experiments.</p>
+  <p>When you add a genome to the set, the union and intersection of the peptides of that genome and the ones already added are calculated. The size of the union (pan peptidome) is represented by blue dots and the size of the intersection (core peptidome) by orange dots. Additionally, a more restrictive version of the core peptidome is calculated (green dots) by only including peptides that are unique for the selected genomes. These unique peptides have the same Lowest Common Ancestor (LCA) as the LCA of the selected genomes.</p>
+  <div class="row features">
+    <div class="col-xs-4">
+      <p class="text-center help-icon"><span class="glyphicon glyphicon-plus-sign"></span></p>
+      <h3>1. Add genomes</h3>
+      <p>You can add genomes by selecting a species from the drop-down list and clicking the 'Add species' button, or by dragging individual genomes from the tree on the left to the table on the right.</p>
+    </div>
+    <div class="col-xs-4">
+      <p class="text-center help-icon"><span class="glyphicon glyphicon-random"></span></p>
+      <h3>2. Reorder</h3>
+      <p>You can easily reorder the genomes by dragging them to the desired position on the graph or table. Alternatively, you can use one of the automatic sort options.</p>
+    </div>
+    <div class="col-xs-4">
+      <p class="text-center help-icon"><span class="glyphicon glyphicon-download"></span></p>
+      <h3>3. Download unique peptides</h3>
+      <p>You can download a list of peptides present in all of the selected genomes but nowhere outside of this taxonomic group, by clicking on the rightmost datapoint in de graph. Next, use the 'Download peptides' button and select 'Unique peptides'.</p>
+    </div>
+  </div>
 </div>
 
 <div class="tab-content">
@@ -25,7 +40,6 @@
     <div id="sim_matrix"></div>
   </div>
 </div>
-
 
 <div class="split">
   <div class="split-left">
