@@ -52,6 +52,13 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         // tab help
         $("#tabs li a").on("mouseover", function () {
+            if ($(this).attr("id") == "unique-peptide-finder-tab") {
+                $("#unique-peptide-finder-help").show();
+                $("#peptidome-clustering-help").hide();
+            } else {
+                $("#peptidome-clustering-help").show();
+                $("#unique-peptide-finder-help").hide();
+            }
             $("#tab-help").stop(true, true).fadeIn(200);
         });
         $("#tabs li a").on("mouseout", function () {
