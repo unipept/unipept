@@ -30,8 +30,9 @@ UnipeptWeb::Application.routes.draw do
   match '/pancore/genomes/species/:species_id.:format', :to => 'pancorepeptidome#get_genomes'
   match '/pancore/unique_sequences', :to => 'pancorepeptidome#get_unique_sequences'
   match '/pancore/full_sequences', :to => 'pancorepeptidome#get_sequences'
-  match '/pancore', :to => 'pancorepeptidome#analyze'
-  match '/peptidefinder', :to => 'pancorepeptidome#analyze', :as => 'pancore_analyze'
+  match '/pancore', :to => 'pancorepeptidome#analyze', :as => 'pancore_analyze'
+  match '/peptidefinder', :to => 'pancorepeptidome#analyze', :as => 'peptide_finder', defaults: { tab: 'peptidefinder' }
+  match '/peptidomeclustering', :to => 'pancorepeptidome#analyze', :as => 'peptidome_clustering', defaults: { tab: 'peptidomeclustering' }
 
   # simple pages
   match '/contact', :to => 'pages#contact'

@@ -44,8 +44,7 @@
     d3.phylogram.rightAngleDiagonal for radial layouts.
 */
 
-if (!d3) { throw "d3 wasn't included!"};
-(function() {
+function init_phylogram() {
   d3.phylogram = {}
   d3.phylogram.rightAngleDiagonal = function() {
     var projection = function(d) { return [d.y, d.x]; }
@@ -130,18 +129,11 @@ if (!d3) { throw "d3 wasn't included!"};
   }
 
   d3.phylogram.styleTreeNodes = function(vis) {
-    vis.selectAll('g.leaf.node')
-      .append("svg:circle")
-        .attr("r", 4.5)
-        .attr('stroke',  'yellowGreen')
-        .attr('fill', 'greenYellow')
-        .attr('stroke-width', '2px');
-
     vis.selectAll('g.root.node')
       .append('svg:circle')
-        .attr("r", 4.5)
+        .attr("r", 4)
         .attr('fill', 'steelblue')
-        .attr('stroke', '#369')
+        .attr('stroke', 'steelblue')
         .attr('stroke-width', '2px');
   }
 
@@ -164,7 +156,7 @@ if (!d3) { throw "d3 wasn't included!"};
     })
     var rootDists = nodes.map(function(n) { return n.rootDist; });
     var yscale = d3.scale.linear()
-      .domain([0, d3.max(rootDists)])
+      .domain([d3.min(rootDists), d3.max(rootDists)])
       .range([0, w]);
     visitPreOrder(nodes[0], function(node) {
       node.y = yscale(node.rootDist)
@@ -180,7 +172,7 @@ if (!d3) { throw "d3 wasn't included!"};
       }
   }
 
-  d3.phylogram.build = function(selector, nodes, options, order) {
+  d3.phylogram.build = function(selector, nodes, options) {
     options = options || {}
     var w = options.width || d3.select(selector).style('width') || d3.select(selector).attr('width'),
         h = options.height || d3.select(selector).style('height') || d3.select(selector).attr('height'),
@@ -189,13 +181,12 @@ if (!d3) { throw "d3 wasn't included!"};
     var tree = options.tree || d3.layout.cluster()
       .size([h, w])
       .separation(function (a, b) { return 1; })
-      .sort(function(a, b) { return order[leafName(a)] - order[leafName(b)]; })
       .children(options.children || function(node) {
         return node.branchset
       });
     var diagonal = options.diagonal || d3.phylogram.rightAngleDiagonal();
     var vis = options.vis || d3.select(selector).append("svg:svg")
-        .attr("width", w + 80/*+ 300*/)
+        .attr("width", w + 30)
         .attr("height", h + 30)
       .append("svg:g")
         .attr("transform", "translate(20, 20)");
@@ -211,24 +202,25 @@ if (!d3) { throw "d3 wasn't included!"};
 
     if (!options.skipTicks) {
       vis.selectAll('line')
-          .data(yscale.ticks(10))
+          .data(yscale.ticks(5))
         .enter().append('svg:line')
           .attr('y1', 0)
           .attr('y2', h)
           .attr('x1', yscale)
           .attr('x2', yscale)
-          .attr("stroke", "#ddd");
+          .attr("stroke", "#ccc");
 
       vis.selectAll("text.rule")
-          .data(yscale.ticks(10))
+          .data(yscale.ticks(5))
         .enter().append("svg:text")
           .attr("class", "rule")
-          .attr("x", yscale)
-          .attr("y", 0)
-          .attr("dy", -3)
-          .attr("text-anchor", "middle")
+          .attr("x", 2)
+          .attr("y", yscale)
+          .attr("dy", 2)
+          .attr("text-anchor", "start")
           .attr('font-size', '8px')
-          .attr('fill', '#ccc')
+          .attr('transform', 'rotate(-90)')
+          .attr('fill', '#ddd')
           .text(function(d) { return Math.round(d*100) / 100; });
     }
 
@@ -238,8 +230,8 @@ if (!d3) { throw "d3 wasn't included!"};
         .attr("class", "link")
         .attr("d", diagonal)
         .attr("fill", "none")
-        .attr("stroke", "#aaa")
-        .attr("stroke-width", "4px");
+        .attr("stroke", "#333")
+        .attr("stroke-width", "2px");
 
     var node = vis.selectAll("g.node")
         .data(nodes)
@@ -312,7 +304,6 @@ if (!d3) { throw "d3 wasn't included!"};
     })
     vis.selectAll('g.node')
       .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
-
     if (!options.skipLabels) {
       vis.selectAll('g.leaf.node text')
         .attr("dx", function(d) { return d.x < 180 ? 8 : -8; })
@@ -332,4 +323,4 @@ if (!d3) { throw "d3 wasn't included!"};
 
     return {tree: tree, vis: vis}
   }
-}());
+};

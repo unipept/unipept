@@ -51,7 +51,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
 
     // toggles
     var toggles = {
-        showGenomes : true,
+        showGenome : true,
         showPan : true,
         showCore : true,
         showUnicore : true
@@ -91,7 +91,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
 
         xAxis = d3.svg.axis()
             .scale(xScale)
-            .tickFormat(function (d) { return (genomes[d] && genomes[d].name) || ""; })
+            .tickFormat(function (d) { return (genomes[d] && genomes[d].abbreviation) || ""; })
             .orient("bottom");
         yAxis = d3.svg.axis()
             .scale(yScale)
@@ -198,7 +198,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         var content = getTooltipContent(d);
         content += "<br/><div class='btn-group' id='download-peptides'>" +
           "<a class='btn btn-default dropdown-toggle' id='download-peptides-toggle' data-toggle='dropdown' data-loading-text='Loading peptides'>" +
-            "<i class='glyphicon glyphicon-download'></i> " +
+            "<span class='glyphicon glyphicon-download'></span> " +
             "download peptides " +
             "<span class='caret'></span>" +
           "</a>" +
@@ -253,7 +253,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
                 trigger: "manual",
                 position: "right",
                 container: "#popovers",
-                title: genomes[d.bioproject_id].name + " (bioproject " + d.bioproject_id + ")",
+                title: genomes[d.bioproject_id].name + " (bioproject <a href='http://www.ncbi.nlm.nih.gov/bioproject/?term=" + d.bioproject_id + "' target='_blank' title='open bioproject page'>" + d.bioproject_id + "</a>)",
                 content: getPopoverContent(d)});
             target.popover("show");
             target.attr("class", "bar pop");
@@ -539,6 +539,25 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     /*************** Public methods ***************/
 
     /**
+     * Handles the transition from and to fullscreen mode
+     *
+     * @param <Boolean> isFullscreen Is the page in full screen mode?
+     */
+    that.handleFullScreen = function handleFullScreen(isFullscreen) {
+        var w = fullWidth,
+            h = fullHeight,
+            destination = "body";
+        if (isFullscreen) {
+            w = $(window).width();
+            h = $(window).height();
+            destination = "#pancore_graph";
+        }
+        $("#pancore_graph svg").attr("width", w);
+        $("#pancore_graph svg").attr("height", h);
+        $("#graph-tip").appendTo(destination);
+    };
+
+    /**
      * Add data about a single genome to the graph
      *
      * @param <Hash> genome All data needed to visualise a genome on the graph
@@ -597,16 +616,24 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     };
 
     /**
+     * Invokes a file download containing all data currently shown
+     * in the graph (i.e. each datapoint) in csv format.
+     */
+    that.handleSaveData = function handleSaveData() {
+        downloadDataByForm(that.getDataAsCsv(), "pan_core_peptidome.csv");
+    };
+
+    /**
      * Redraws the entire pancore graph
      */
     that.redraw = function redraw() {
         // erase everything
         $("#pancore_graph svg").remove();
-        $("#pancore_graph div.tip").remove();
+        $("#graph-tip").remove();
 
         // reset domain
-        xScale.domain([]);
-        yScale.domain([]);
+        xScale.domain([0, 1]);
+        yScale.domain([0, 1]);
 
         // create the svg
         svg = d3.select("#pancore_graph")
@@ -623,9 +650,10 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         // create the tooltip
-        tooltip = d3.select("#pancore_graph")
+        tooltip = d3.select("body")
           .append("div")
             .attr("class", "tip")
+            .attr("id", "graph-tip")
             .style("position", "absolute")
             .style("top", "0px")
             .style("left", "0px")
