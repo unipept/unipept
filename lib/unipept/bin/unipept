@@ -44,7 +44,7 @@ class ApiRunner < Cri::CommandRunner
   end
 
   def batch_size
-    10
+    1000
   end
 
   def url_options(sub_part)
@@ -199,7 +199,7 @@ root_cmd.define_command('pept2taxa') do
   description 'Search Unipept for the given peptide and return taxons'
 
   flag :e, :equate, "equate I and L"
-  option :s, :select, "select the attributes", :argument => :required
+  option :s, :select, "select the attributes", :argument => :required, :multiple => true
   option :l, :lineage, "Show full lineage"
   option :x, :xml, "Download taxonomy from NCBI as xml (specify output filename)", :argument => :required
 
@@ -213,7 +213,7 @@ root_cmd.define_command('pept2lca') do
   description 'Search Unipept for the given peptide and return the lowest common ancestor'
 
   flag :e, :equate, "equate I and L"
-  option :s, :select, "select the attributes", :argument => :required
+  option :s, :select, "select the attributes", :argument => :required, :multiple => true
   option :l, :lineage, "Show full lineage"
 
   runner ApiRunner
@@ -225,7 +225,7 @@ root_cmd.define_command('taxa2lca') do
   summary     'Give lowest common ancestor for taxon ids'
   description 'Search Unipept for the given taxon ids and return the lowest common ancestor'
 
-  option :s, :select, "select the attributes", :argument => :required
+  option :s, :select, "select the attributes", :argument => :required, :multiple => true
   option :l, :lineage, "Show full lineage"
 
   runner Taxa2lca
@@ -238,7 +238,7 @@ root_cmd.define_command('pept2pro') do
   description 'Search Unipept for the given peptides and return the lowest common ancestor'
 
   flag :e, :equate, "equate I and L"
-  option :s, :select, "select the attributes", :argument => :required
+  option :s, :select, "select the attributes", :argument => :required, :multiple => true
   option :x, :xml, "download uniprot record in specified directory", :argument => :required
 
   runner Pept2pro
