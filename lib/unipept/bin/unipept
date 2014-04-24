@@ -147,7 +147,7 @@ class Taxa2lca < ApiRunner
   end
 
   def batch_size
-    Float::INFINITY
+    100_000_000_000
   end
 
 end
