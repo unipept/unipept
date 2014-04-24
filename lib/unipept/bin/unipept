@@ -57,7 +57,7 @@ class ApiRunner < Cri::CommandRunner
     formatter = Unipept::Formatter.new_for_format(options[:format])
     peptides = read_input
 
-    filter_list = options[:select] rescue []
+    filter_list = options[:select] ? options[:select] : []
     filter_list = filter_list.map {|f| glob_to_regex(f) }
     output = STDOUT.tty? ? STDOUT : STDERR
     self.progress = ProgressBar.create(total: peptides.size, output: output)
