@@ -22,7 +22,7 @@ module Unipept
     end
 
     def self.default
-      'json'
+      'csv'
     end
 
     # JSON formatted data goes in, something other comes out
