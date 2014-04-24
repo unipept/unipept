@@ -19,6 +19,10 @@ class ApiRunner < Cri::CommandRunner
       puts "WARNING: no host has been set, you can set the host with `unipept config host http://localhost:3000/`"
       exit 1
     end
+    if !host.start_with? "http://"
+      host = "http://#{host}"
+    end
+
     @url = "#{host}/api/v1/#{mapping[cmd.name]}.json"
   end
 
