@@ -59,8 +59,9 @@ class ApiRunner < Cri::CommandRunner
 
     filter = options[:select] rescue nil
     filter = glob_to_regex(filter) if filter
+    output = STDOUT.tty? ? STDOUT : STDERR
+    self.progress = ProgressBar.create(total: peptides.size, output: output)
 
-    self.progress = ProgressBar.create(total: peptides.size, output: $stderr)
     printed_header = false
     result = []
 
@@ -72,7 +73,6 @@ class ApiRunner < Cri::CommandRunner
         exit 1
       end
 
-      progress.progress += sub_division.size
 
       sub_result = [sub_result] if not sub_result.kind_of? Array
 
@@ -86,7 +86,7 @@ class ApiRunner < Cri::CommandRunner
       end
 
       write_to_output formatter.format(sub_result)
-
+      progress.progress += sub_division.size
     end
 
     begin
@@ -97,14 +97,17 @@ class ApiRunner < Cri::CommandRunner
 
   end
 
-
   def write_to_output(string)
       if options[:output]
         File.open(options[:output], 'a') do |f|
           f.write string
         end
       else
-        progress.log string
+        if STDOUT.tty?
+          progress.log string
+        else
+          puts string
+        end
       end
 
   end
