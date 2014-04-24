@@ -48,9 +48,17 @@ class ApiRunner < Cri::CommandRunner
   end
 
   def url_options(sub_part)
+    filter = options[:select] ? options[:select] : []
+    if filter.empty?
+      names = true
+    else
+      names = filter.any? {|f| /.*name.*/.match f}
+    end
     {:sequences => sub_part,
      :equate_il => options[:equate],
-     :full_lineage => options[:lineage]}
+     :full_lineage => options[:lineage],
+     :names => names,
+    }
   end
 
   def run

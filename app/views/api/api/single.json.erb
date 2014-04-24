@@ -3,10 +3,12 @@
     v.map do |p|
       if @full_lineage
         lineage = p.lineage
-        ids = Lineage::ORDER_T.map {|o| lineage.send(o).try(:id) }
+        ids = Lineage::ORDER.map {|o| lineage.try(o) }
 
-        names = Lineage::ORDER.map {|s| "#{s}_name"}
-        lineage_info = Hash[names.zip(lineage.to_a)]
+        if @names
+          names = Lineage::ORDER.map {|s| "#{s}_name"}
+          lineage_info = Hash[names.zip(lineage.to_a)]
+        end
 
         names = Lineage::ORDER.map {|s| "#{s}_id"}
         lineage_ids = Hash[names.zip(ids)]
@@ -18,7 +20,7 @@
         taxon_rank: p.rank,
       }
       if @full_lineage
-        res.merge!(lineage_info)
+        res.merge!(lineage_info) if @names
         res.merge!(lineage_ids)
       else
         res

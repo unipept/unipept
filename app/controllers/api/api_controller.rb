@@ -3,16 +3,31 @@ class Api::ApiController < ApplicationController
   respond_to :json
 
   before_filter :set_params, only: [:single, :lca, :pept2pro]
+  before_filter :set_query, only: [:single, :lca]
 
   def set_params
     @sequences = params[:sequences].map(&:chomp)
     @equate_il = (!params[:equate_il].blank? && params[:equate_il] == 'true')
     @full_lineage = (!params[:full_lineage].blank? && params[:full_lineage] == 'true')
+    @names = (!params[:names].blank? && params[:names] == 'true')
 
     rel_name = @equate_il ? :lca_il_t : :lca_t
     @sequences.each {|s| s.gsub!(/I/,'L') } if @equate_il
     @sequences = Sequence.joins(:peptides => :uniprot_entry).
       where(sequence: @sequences)
+  end
+
+  def set_query
+    if @full_lineage
+      if @names
+        @query = Taxon.includes(lineage: Lineage::ORDER_T)
+      else
+        @query = Taxon.includes(:lineage)
+      end
+    else
+      @query = Taxon
+    end
+
   end
 
   def single
@@ -28,13 +43,8 @@ class Api::ApiController < ApplicationController
     end
 
     ids = ids.uniq.sort
-    if @full_lineage
-      query = Taxon.includes(lineage: Lineage::ORDER_T)
-    else
-      query = Taxon
-    end
 
-    query.where(id: ids).find_in_batches do |group|
+    @query.where(id: ids).find_in_batches do |group|
       group.each do |t|
         lookup[t.id].each {|s| @result[s] << t}
       end
@@ -54,13 +64,8 @@ class Api::ApiController < ApplicationController
     end
 
     ids = ids.uniq.sort
-    if @full_lineage
-      query = Taxon.includes(lineage: Lineage::ORDER_T)
-    else
-      query = Taxon
-    end
 
-    query.where(id: ids).find_in_batches do |group|
+    @query.where(id: ids).find_in_batches do |group|
       group.each do |t|
         lookup[t.id].each { |s| @result[s] = t }
       end
