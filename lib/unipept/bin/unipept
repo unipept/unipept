@@ -57,8 +57,8 @@ class ApiRunner < Cri::CommandRunner
     formatter = Unipept::Formatter.new_for_format(options[:format])
     peptides = read_input
 
-    filter = options[:select] rescue nil
-    filter = glob_to_regex(filter) if filter
+    filter_list = options[:select] rescue []
+    filter_list = filter_list.map {|f| glob_to_regex(f) }
     output = STDOUT.tty? ? STDOUT : STDERR
     self.progress = ProgressBar.create(total: peptides.size, output: output)
 
@@ -69,14 +69,13 @@ class ApiRunner < Cri::CommandRunner
       begin
         sub_result = JSON[Faraday.post(@url, url_options(sub_division)).body]
       rescue
-        puts "API endpoint gave an error, exiting."
+        STDERR.puts "API endpoint gave an error, exiting."
         exit 1
       end
 
-
       sub_result = [sub_result] if not sub_result.kind_of? Array
 
-      sub_result.map! {|r| r.select! {|k,v| filter.match k } } if filter
+      sub_result.map! {|r| r.select! {|k,v| filter_list.any? {|f| f.match k } } } if ! filter_list.empty?
 
       result << sub_result
 
@@ -92,7 +91,7 @@ class ApiRunner < Cri::CommandRunner
     begin
       download_xml(result)
     rescue
-      puts "Something went wrong while downloading xml information! please check the output"
+      STDERR.puts "Something went wrong while downloading xml information! please check the output"
     end
 
   end
@@ -115,7 +114,6 @@ class ApiRunner < Cri::CommandRunner
 
   def download_xml(result)
     if options[:xml]
-      puts "Downloading xml..."
       File.open(options[:xml] + ".xml", "wb") do |f|
         f.write Faraday.get("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=#{result.first.map{|h| h['taxon_id'] }.join(",")}&retmode=xml").body
       end
