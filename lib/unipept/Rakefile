@@ -24,7 +24,7 @@ Jeweler::Tasks.new do |gem|
   gem.authors = ["Toon Willems"]
   # dependencies defined in Gemfile
   gem.add_dependency 'faraday', '~> 0.9'
-  gem.add_dependency 'cri', '~> 2.5'
+  gem.add_dependency 'cri', '~> 2.6'
   gem.add_dependency 'ruby-progressbar', '~> 1.4'
 end
 Jeweler::RubygemsDotOrgTasks.new
