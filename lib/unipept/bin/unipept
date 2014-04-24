@@ -12,6 +12,8 @@ require_relative '../lib/unipept'
 
 class ApiRunner < Cri::CommandRunner
 
+  attr_accessor :progress
+
   def initialize(args, opts, cmd)
     super
     host = Unipept::Configuration.new['host']
@@ -25,6 +27,7 @@ class ApiRunner < Cri::CommandRunner
 
     @url = "#{host}/api/v1/#{mapping[cmd.name]}.json"
   end
+
 
   def mapping
     {'pept2taxa' => 'single', 'pept2lca' => 'lca'}
@@ -41,7 +44,7 @@ class ApiRunner < Cri::CommandRunner
   end
 
   def batch_size
-    1000
+    10
   end
 
   def url_options(sub_part)
@@ -57,11 +60,11 @@ class ApiRunner < Cri::CommandRunner
     filter = options[:select] rescue nil
     filter = glob_to_regex(filter) if filter
 
-    progress = ProgressBar.create(total: peptides.size, output: $stderr)
-
+    self.progress = ProgressBar.create(total: peptides.size, output: $stderr)
+    printed_header = false
     result = []
-    peptides.each_slice(self.batch_size) do |sub_division|
 
+    peptides.each_slice(self.batch_size) do |sub_division|
       begin
         sub_result = JSON[Faraday.post(@url, url_options(sub_division)).body]
       rescue
@@ -69,13 +72,21 @@ class ApiRunner < Cri::CommandRunner
         exit 1
       end
 
+      progress.progress += sub_division.size
+
       sub_result = [sub_result] if not sub_result.kind_of? Array
 
       sub_result.map! {|r| r.select! {|k,v| filter.match k } } if filter
 
       result << sub_result
 
-      progress.progress += sub_division.size
+      if ! printed_header
+        write_to_output formatter.header(sub_result)
+        printed_header = true
+      end
+
+      write_to_output formatter.format(sub_result)
+
     end
 
     begin
@@ -84,18 +95,24 @@ class ApiRunner < Cri::CommandRunner
       puts "Something went wrong while downloading xml information! please check the output"
     end
 
-    result = formatter.format(result)
-    if options[:output]
-      File.open(options[:output], 'w') do |f|
-        f.write result
-      end
-    else
-      puts result
-    end
   end
+
+
+  def write_to_output(string)
+      if options[:output]
+        File.open(options[:output], 'a') do |f|
+          f.write string
+        end
+      else
+        progress.log string
+      end
+
+  end
+
 
   def download_xml(result)
     if options[:xml]
+      puts "Downloading xml..."
       File.open(options[:xml] + ".xml", "wb") do |f|
         f.write Faraday.get("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=#{result.first.map{|h| h['taxon_id'] }.join(",")}&retmode=xml").body
       end
@@ -121,10 +138,8 @@ class Taxa2lca < ApiRunner
   end
 
   def batch_size
-    100000
+    Float::INFINITY
   end
-
-
 
 end
 

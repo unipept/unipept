@@ -25,6 +25,10 @@ module Unipept
       'csv'
     end
 
+    def header(sample_data)
+      ""
+    end
+
     # JSON formatted data goes in, something other comes out
     def format(data)
       data
@@ -45,14 +49,18 @@ module Unipept
 
     register :csv
 
-    def format(data)
+    def header(data)
       CSV.generate do |csv|
         first = data.first
         if first.kind_of? Array
           first = first.first
         end
         csv << first.keys.map(&:to_s)
+      end
+    end
 
+    def format(data)
+      CSV.generate do |csv|
         data.each do |o|
           if o.kind_of? Array
             o.each {|h| csv << h.values }
