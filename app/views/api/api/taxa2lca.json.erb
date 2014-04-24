@@ -12,10 +12,10 @@
     lineage_ids = Hash[names.zip(ids)]
   end
   res = {
-    taxon_id: p.id,
-    taxon_name: p.name,
-    taxon_parent_id: p.parent_id,
-    taxon_rank: p.rank,
+      "taxon_id" => p.id,
+      "taxon_name" => p.name,
+      "taxon_parent_id" => p.parent_id,
+      "taxon_rank" => p.rank,
   }
   if @full_lineage
     res.merge!(lineage_info)
