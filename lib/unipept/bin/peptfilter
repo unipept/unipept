@@ -16,8 +16,8 @@ root_cmd = Cri::Command.new_basic_root.modify do
     filtered = $stdin.readlines.select do |pept|
       pept = pept.chomp
       length_ok = pept.length >= minlen && pept.length <= maxlen
-      lacks_ok = (pept.chars & lacks).size == 0
-      contains_ok = (pept.chars & contains).size == contains.size
+      lacks_ok = (pept.chars.to_a & lacks).size == 0
+      contains_ok = (pept.chars.to_a & contains).size == contains.size
 
       length_ok && lacks_ok && contains_ok
     end
