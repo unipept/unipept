@@ -3,6 +3,6 @@ require 'faraday'
 ARGV.each do |arg|
   resp = Faraday.get("http://www.uniprot.org/uniprot/#{arg}.fasta")
   if resp.success?
-    puts resp.body.lines[1..-1].map(&:chomp).join("")
+    puts resp.body.lines.map(&:chomp)[1..-1].join("")
   end
 end
