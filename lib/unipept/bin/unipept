@@ -73,7 +73,7 @@ class ApiRunner < Cri::CommandRunner
     printed_header = false
     result = []
 
-    peptides.each_slice(self.batch_size) do |sub_division|
+    peptide_iterator(peptides) do |sub_division|
       begin
         sub_result = JSON[Faraday.post(@url, url_options(sub_division)).body]
       rescue
@@ -105,18 +105,17 @@ class ApiRunner < Cri::CommandRunner
   end
 
   def write_to_output(string)
-      if options[:output]
-        File.open(options[:output], 'a') do |f|
-          f.write string
-        end
-      else
-        if STDOUT.tty?
-          progress.log string
-        else
-          puts string
-        end
+    if options[:output]
+      File.open(options[:output], 'a') do |f|
+        f.write string
       end
-
+    else
+      if STDOUT.tty?
+        progress.log string
+      else
+        puts string
+      end
+    end
   end
 
 
@@ -126,6 +125,10 @@ class ApiRunner < Cri::CommandRunner
         f.write Faraday.get("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=#{result.first.map{|h| h['taxon_id'] }.join(",")}&retmode=xml").body
       end
     end
+  end
+
+  def peptide_iterator(peptides, &block)
+    peptides.each_slice(batch_size, &block)
   end
 
   private
@@ -146,8 +149,12 @@ class Taxa2lca < ApiRunner
     {:taxon_ids => sub_part, :full_lineage => options[:lineage]}
   end
 
+  def peptide_iterator(peptides, &block)
+    block.call(peptides)
+  end
+
   def batch_size
-    100_000_000_000
+    raise "NOT NEEDED FOR TAXA2LCA"
   end
 
 end
