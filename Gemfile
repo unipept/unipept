@@ -1,14 +1,17 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.13'
+gem 'rails', '4.0.1'
 
-gem 'mysql2', '0.3.14'
+gem 'mysql2', '~> 0.3.14'
+
+# Protect attributes from mass assignment
+gem "protected_attributes", "~> 1.0.5"
 
 # pagination
-gem 'will_paginate', '3.0'
+gem 'will_paginate', "~> 3.0.5"
 
 # jquery
-gem 'jquery-rails', "~> 2.3.0"
+gem 'jquery-rails', "~> 3.0.4"
 gem "jquery-ui-rails", "4.0.2"
 
 # cas auth
@@ -22,10 +25,18 @@ gem 'therubyracer'
 gem 'oj'
 
 # imagemagick bindings
-gem 'rmagick', '2.13.2'
+gem "rmagick", "~> 2.13.2"
 
 # do HTTP requests
-gem 'httparty', '0.10.2'
+gem "httparty", "~> 0.12.0"
+
+# The dynamic stylesheet language for the Rails asset pipeline.
+# Allows other gems to extend Less load path.
+gem "less-rails", "~> 2.4.2"
+
+# Uglifier minifies JavaScript files by wrapping UglifyJS to be accessible
+# in Ruby
+gem "uglifier", "~> 2.3.1"
 
 group :development do
   gem 'rspec-rails'
@@ -40,15 +51,6 @@ group :test do
 	gem 'spork'
 	gem 'be_valid_asset'
 #	gem 'factory_girl_rails'
-end
-
-# Gems used only for assets and not required
-# in production environments by default.
-group :assets do
-  gem 'sass-rails'
-  gem 'coffee-rails'
-  gem 'uglifier'
-  gem 'less-rails'
 end
 
 #default stuff

@@ -10,5 +10,7 @@
 #
 
 class DatasetItem < ActiveRecord::Base
+  attr_accessible :name, :data
+
   belongs_to :dataset
 end
