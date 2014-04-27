@@ -21,7 +21,7 @@ self.addEventListener('message', function (e) {
         loadData(data.msg.bioproject_id, data.msg.name);
         break;
     case 'loadUserData':
-        loadUserData(data.msg.ids);
+        loadUserData(data.msg.id, data.msg.name, data.msg.ids);
         break;
     case 'removeData':
         removeData(data.msg.bioproject_id, data.msg.order, data.msg.start);
@@ -401,10 +401,12 @@ function loadData(bioproject_id, name) {
 /**
  * Integrates a user-uploaded genome into the visualisation
  *
+ * @params <Number> id An id
+ * @params <String> name The name of the genome
  * @params <Array> ids A list of internal peptide id's
  */
-function loadUserData(ids) {
-    addData("test", "test", ids, rank);
+function loadUserData(id, name, ids) {
+    addData(id, name, ids, rank);
 }
 
 /**

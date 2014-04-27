@@ -248,15 +248,29 @@ var constructPancore = function constructPancore(args) {
     function convertPeptidesToInts(peptides) {
         // TODO add slice
         $.post( "/pancore/convert_peptides", { 'peptides': peptides }, function (data) {
+            data.sort(function(a,b){return a-b});
+            // Store
+            var genomes,
+                name,
+                id;
+            if(!localStorage.genomeList) {
+                genomes = [];
+            } else {
+                genomes = JSON.parse(localStorage.genomeList);
+            }
+            name = "user " + genomes.length;
+            id = "user_" + genomes.length;
+            genomes.push(name);
+            localStorage[name] = JSON.stringify(data);
+            localStorage.genomeList = JSON.stringify(genomes);
             table.addGenome({
-                "bioproject_id" : "test",
-                "name" : "test",
+                "bioproject_id" : id,
+                "name" : name,
                 "status" : "Loading",
                 "position" : 100,
-                "abbreviation" : "test"
+                "abbreviation" : name
             });
-            data.sort(function(a,b){return a-b});
-            sendToWorker("loadUserData", {"ids": data})
+            sendToWorker("loadUserData", {"ids": data, "name": name, "id": id})
         }, "json");
     }
 
