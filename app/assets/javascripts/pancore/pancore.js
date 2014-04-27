@@ -188,10 +188,31 @@ var constructPancore = function constructPancore(args) {
         var file = evt.target.files[0],
             reader = new FileReader();
         reader.onload = function (e) {
-            console.log(e);
-            console.log(reader.result);
+            parseFasta(reader.result);
         };
         reader.readAsText(file);
+    }
+
+    /**
+     * Parses fastastring into an array of sequences
+     */
+    function parseFasta(fasta) {
+        var lines = fasta.match(/[^\r\n]+/g),
+            entries = [],
+            line,
+            entry,
+            i;
+        for (i = 0; i < lines.length; i++) {
+            line = lines[i];
+            if (line.charAt(0) === ">" || i === lines.length - 1) {
+                entries.push(entry);
+                entry = "";
+            } else {
+                entry = entry + lines[i];
+            }
+        }
+        console.log(entries);
+        console.log("done, " + lines.length + " lines read");
     }
 
     /**
