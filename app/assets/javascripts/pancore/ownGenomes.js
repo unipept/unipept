@@ -39,28 +39,47 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         });
 
         // add pop-over behaviour
-        $ownGenomesButton.on("shown.bs.popover", function () {
-            // enable the tooltips
-            $("#ownGenomeName").tooltip({placement : "right", trigger : "hover", container : "body"});
-            $("#ownGenomeFile").parents(".input-group").tooltip({placement : "right", trigger : "hover", container : "body"});
-
-            // enable file chooser
-            $("#ownGenomeFile").on('change', function() {
-                var $input = $(this)
-                    numFiles = $input.get(0).files ? $input.get(0).files.length : 1,
-                    label = $input.val().replace(/\\/g, '/').replace(/.*\//, ''),
-                    log = numFiles > 1 ? numFiles + ' files selected' : label;
-                $input.parents('.input-group').find(':text').val(log);
-            });
-
-            // hook up the button
-            $("#processOwnGenomeButton").click(function () {
-                console.log("click!");
-            });
-        })
+        $ownGenomesButton.on("shown.bs.popover", initPopoverBehaviour)
 
         // set visible
         $ownGenomesDiv.removeClass("hide");
+    }
+
+    /**
+     * Add the behaviour to the add genomes popover
+     */
+    function initPopoverBehaviour() {
+        // enable the tooltips
+        $("#ownGenomeName").tooltip({placement : "right", trigger : "hover", container : "body"});
+        $("#ownGenomeFile").parents(".input-group").tooltip({placement : "right", trigger : "hover", container : "body"});
+
+        // enable file chooser
+        $("#ownGenomeFile").on('change', function() {
+            var $input = $(this)
+                numFiles = $input.get(0).files ? $input.get(0).files.length : 1,
+                label = $input.val().replace(/\\/g, '/').replace(/.*\//, ''),
+                log = numFiles > 1 ? numFiles + ' files selected' : label;
+            $input.parents('.input-group').find(':text').val(log);
+        });
+
+        // hook up the button
+        $("#processOwnGenomeButton").click(function () {
+            $(this).attr("disabled", "disabled");
+            handleAddOwnGenome();
+        });
+    }
+
+    /**
+     * Handles the addOwnGenome event
+     */
+    function handleAddOwnGenome() {
+        var file = $("#ownGenomeFile").prop("files")[0],
+            reader = new FileReader();
+        reader.onload = function (e) {
+            //convertPeptidesToInts(digest(parseFasta(reader.result)));
+            console.log("done reading");
+        };
+        reader.readAsText(file);
     }
 
     /**

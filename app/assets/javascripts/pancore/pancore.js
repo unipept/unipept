@@ -184,18 +184,6 @@ var constructPancore = function constructPancore(args) {
     }
 
     /**
-     * Handles the selection of a file
-     */
-    function handleFileSelect(evt) {
-        var file = evt.target.files[0],
-            reader = new FileReader();
-        reader.onload = function (e) {
-            convertPeptidesToInts(digest(parseFasta(reader.result)));
-        };
-        reader.readAsText(file);
-    }
-
-    /**
      * Parses a fasta-string into an array of sequences
      *
      * @param <String> fasta A multiline string containing one or more fasta
