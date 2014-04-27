@@ -50,9 +50,15 @@ class PancorepeptidomeController < ApplicationController
     render json: Oj.dump([lca, result], mode: :compat)
   end
 
-  # returns a list of sequences
+  # Returns a list of sequences
   def get_sequences
     ids = JSON(params[:sequence_ids])
     render json: Oj.dump(Sequence.list_sequences(ids).join("\n"), mode: :compat)
+  end
+
+  # Converts a list of peptides to id's
+  def convert_peptides
+    ids = Sequence.where(sequence: params[:peptides]).pluck(:id)
+    render json: Oj.dump(ids, mode: :compat)
   end
 end

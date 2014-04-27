@@ -188,7 +188,7 @@ var constructPancore = function constructPancore(args) {
         var file = evt.target.files[0],
             reader = new FileReader();
         reader.onload = function (e) {
-            digest(parseFasta(reader.result));
+            convertPeptidesToInts(digest(parseFasta(reader.result)));
         };
         reader.readAsText(file);
     }
@@ -238,6 +238,18 @@ var constructPancore = function constructPancore(args) {
             }
         }
         return peptides;
+    }
+
+    /**
+     * Queries the database to convert the peptides to integers
+     *
+     * @param <Array> peptides A list with peptides
+     */
+    function convertPeptidesToInts(peptides) {
+        // TODO add slice
+        $.post( "/pancore/convert_peptides", { 'peptides': peptides }, function (data) {
+            console.log(data);
+        }, "json");
     }
 
     /**
