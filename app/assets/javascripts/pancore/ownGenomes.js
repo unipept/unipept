@@ -8,7 +8,8 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
     /*************** Private variables ***************/
 
     var that = {},
-        pancore = args.pancore;
+        pancore = args.pancoren,
+        worker;
 
     // Data vars
     var genomes;
@@ -25,6 +26,14 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
      */
     function init() {
         genomes = localStorage.genomeList ? JSON.parse(localStorage.genomeList) : [];
+
+        // init worker
+        // Create the Javascript Worker for background data processing
+        worker = new Worker("/assets/workers/owngenome_worker.js");
+        worker.addEventListener('message', handleWorkerMessage, false);
+        worker.addEventListener('error', error, false);
+
+        // init gui
         redrawList();
 
         // init popover
@@ -43,6 +52,29 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
 
         // set visible
         $ownGenomesDiv.removeClass("hide");
+    }
+
+    /**
+     * Handles message events from the worker
+     *
+     * @param <Event> e The event we want to handle
+     */
+    function handleWorkerMessage(e) {
+        var data = e.data;
+        switch (data.type) {
+        case 'log':
+            console.log(data.msg);
+            break;
+        default:
+            console.log(data.msg);
+        }
+    }
+
+    /**
+     * Sends a command and message to the worker
+     */
+    function sendToWorker(command, message) {
+        worker.postMessage({'cmd': command, 'msg': message});
     }
 
     /**

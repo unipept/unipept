@@ -265,7 +265,7 @@ var constructPancore = function constructPancore(args) {
     }
 
     /**
-     * Handles message events for the worker
+     * Handles message events from the worker
      *
      * @param <Event> e The event we want to handle
      */
