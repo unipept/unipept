@@ -248,7 +248,15 @@ var constructPancore = function constructPancore(args) {
     function convertPeptidesToInts(peptides) {
         // TODO add slice
         $.post( "/pancore/convert_peptides", { 'peptides': peptides }, function (data) {
-            console.log(data);
+            table.addGenome({
+                "bioproject_id" : "test",
+                "name" : "test",
+                "status" : "Loading",
+                "position" : 100,
+                "abbreviation" : "test"
+            });
+            data.sort(function(a,b){return a-b});
+            sendToWorker("loadUserData", {"ids": data})
         }, "json");
     }
 

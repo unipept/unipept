@@ -65,7 +65,6 @@
 <hr>
 <div class="split">
   <div class="split-left">
-    <input type="file" id="file" name="file" />
     <p class="intro">
       To add all genomes from a species, select one from the drop-down and click the load button.
     </p>
@@ -73,6 +72,11 @@
         <div class="form-group"><%= select_tag(:species_id, options_for_select(@species, params[:species_id]), :class => "form-control") %></div>
         <div class="form-group"><%= button_tag(raw("Add species <span class='glyphicon glyphicon-chevron-right'></span>"), :type => "button", :class => "btn btn-primary", :id => "add_species_peptidome", :"data-loading-text" => "Loading...") %></div>
     <% end %>
+    <p class="intro">
+      <br>
+      To add your own genome, select a fasta file.
+    </p>
+    <input type="file" id="file" name="file" />
     <p class="intro">
       <br>
        To add individual genomes, drag a node from the tree to the table on the right.

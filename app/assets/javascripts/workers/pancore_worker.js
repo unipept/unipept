@@ -20,6 +20,9 @@ self.addEventListener('message', function (e) {
     case 'loadData':
         loadData(data.msg.bioproject_id, data.msg.name);
         break;
+    case 'loadUserData':
+        loadUserData(data.msg.ids);
+        break;
     case 'removeData':
         removeData(data.msg.bioproject_id, data.msg.order, data.msg.start);
         break;
@@ -393,6 +396,15 @@ function loadData(bioproject_id, name) {
     getJSON("/pancore/sequences/" + bioproject_id + ".json", function (json_data) {
         addData(bioproject_id, name, json_data, requestRank);
     });
+}
+
+/**
+ * Integrates a user-uploaded genome into the visualisation
+ *
+ * @params <Array> ids A list of internal peptide id's
+ */
+function loadUserData(ids) {
+    addData("test", "test", ids, rank);
 }
 
 /**
