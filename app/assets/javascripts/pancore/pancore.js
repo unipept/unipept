@@ -23,6 +23,7 @@ var constructPancore = function constructPancore(args) {
         graph,
         matrix,
         table,
+        ownGenomes,
         worker;
 
     /*************** Private methods ***************/
@@ -56,7 +57,6 @@ var constructPancore = function constructPancore(args) {
         });
         graph.redraw();
 
-
         // Create the Javascript Worker for background data processing
         worker = new Worker("/assets/workers/pancore_worker.js");
         worker.addEventListener('message', handleWorkerMessage, false);
@@ -68,8 +68,10 @@ var constructPancore = function constructPancore(args) {
             table : table
         });
 
-        // Initialize the file selector
-        $("#file").on('change', handleFileSelect);
+        // Constructs the ownGenomes feature
+        if (window.File && window.FileReader && window.FileList) {
+            ownGenomes = constructOwnGenomes({pancore : that});
+        }
 
         // Initialize the rest of the page
         initSpeciesForm();
