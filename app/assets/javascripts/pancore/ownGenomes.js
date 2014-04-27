@@ -38,6 +38,12 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
             }
         });
 
+        // enable the tooltips
+        $ownGenomesButton.on("shown.bs.popover", function () {
+            $("#ownGenomeName").tooltip({placement : "right", trigger : "hover", container : "body"});
+            $("#ownGenomeFile").parents(".input-group").tooltip({placement : "right", trigger : "hover", container : "body"});
+        })
+
         // enable file chooser
         $("#ownGenomeFile").on('change', function() {
             var $input = $(this)
@@ -46,10 +52,6 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
                 log = numFiles > 1 ? numFiles + ' files selected' : label;
             $input.parents('.input-group').find(':text').val(log);
         });
-
-        // enable the tooltips
-        $("#ownGenomeName").tooltip({placement : "right", trigger : "hover", container : "body"});
-        $("#ownGenomeFile").parents(".input-group").tooltip({placement : "right", trigger : "hover", container : "body"});
 
         // hook up the button
         $("#processOwnGenomeButton").click(function () {
