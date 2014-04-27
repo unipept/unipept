@@ -68,6 +68,9 @@ var constructPancore = function constructPancore(args) {
             table : table
         });
 
+        // Initialize the file selector
+        $("#file").on('change', handleFileSelect);
+
         // Initialize the rest of the page
         initSpeciesForm();
         initFullScreen();
@@ -176,6 +179,19 @@ var constructPancore = function constructPancore(args) {
                 matrix.handleFullScreen(fullscreen);
             }
         });
+    }
+
+    /**
+     * Handles the selection of a file
+     */
+    function handleFileSelect(evt) {
+        var file = evt.target.files[0],
+            reader = new FileReader();
+        reader.onload = function (e) {
+            console.log(e);
+            console.log(reader.result);
+        };
+        reader.readAsText(file);
     }
 
     /**
