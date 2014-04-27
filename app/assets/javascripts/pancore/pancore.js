@@ -188,19 +188,22 @@ var constructPancore = function constructPancore(args) {
         var file = evt.target.files[0],
             reader = new FileReader();
         reader.onload = function (e) {
-            parseFasta(reader.result);
+            digest(parseFasta(reader.result));
         };
         reader.readAsText(file);
     }
 
     /**
-     * Parses fastastring into an array of sequences
+     * Parses a fasta-string into an array of sequences
+     *
+     * @param <String> fasta A multiline string containing one or more fasta
+     *      entries
      */
     function parseFasta(fasta) {
         var lines = fasta.match(/[^\r\n]+/g),
             entries = [],
-            line,
-            entry,
+            line = "",
+            entry = "",
             i;
         for (i = 0; i < lines.length; i++) {
             line = lines[i];
@@ -211,8 +214,30 @@ var constructPancore = function constructPancore(args) {
                 entry = entry + lines[i];
             }
         }
-        console.log(entries);
-        console.log("done, " + lines.length + " lines read");
+        return entries;
+    }
+
+    /**
+     * Performs an in silico trypsin digest on a list of proteins
+     *
+     * @param <Array> proteins A list with proteins
+     */
+    function digest(proteins) {
+        var peptides = [],
+            digest,
+            i,
+            j;
+        for (i = 0; i < proteins.length; i++) {
+            digest = proteins[i].replace(/([KR])([^P])/g,"$1+$2")
+                .replace(/([KR])([^P+])/g,"$1+$2")
+                .split("+");
+            for (j = 0; j < digest.length; j++) {
+                if (digest[j].length >=5) {
+                    peptides.push(digest[j]);
+                }
+            }
+        }
+        return peptides;
     }
 
     /**
