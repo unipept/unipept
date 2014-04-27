@@ -38,25 +38,26 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
             }
         });
 
-        // enable the tooltips
+        // add pop-over behaviour
         $ownGenomesButton.on("shown.bs.popover", function () {
+            // enable the tooltips
             $("#ownGenomeName").tooltip({placement : "right", trigger : "hover", container : "body"});
             $("#ownGenomeFile").parents(".input-group").tooltip({placement : "right", trigger : "hover", container : "body"});
+
+            // enable file chooser
+            $("#ownGenomeFile").on('change', function() {
+                var $input = $(this)
+                    numFiles = $input.get(0).files ? $input.get(0).files.length : 1,
+                    label = $input.val().replace(/\\/g, '/').replace(/.*\//, ''),
+                    log = numFiles > 1 ? numFiles + ' files selected' : label;
+                $input.parents('.input-group').find(':text').val(log);
+            });
+
+            // hook up the button
+            $("#processOwnGenomeButton").click(function () {
+                console.log("click!");
+            });
         })
-
-        // enable file chooser
-        $("#ownGenomeFile").on('change', function() {
-            var $input = $(this)
-                numFiles = $input.get(0).files ? $input.get(0).files.length : 1,
-                label = $input.val().replace(/\\/g, '/').replace(/.*\//, ''),
-                log = numFiles > 1 ? numFiles + ' files selected' : label;
-            $input.parents('.input-group').find(':text').val(log);
-        });
-
-        // hook up the button
-        $("#processOwnGenomeButton").click(function () {
-            console.log("click!");
-        });
 
         // set visible
         $ownGenomesDiv.removeClass("hide");
