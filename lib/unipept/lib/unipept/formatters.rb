@@ -55,7 +55,7 @@ module Unipept
         if first.kind_of? Array
           first = first.first
         end
-        csv << first.keys.map(&:to_s)
+        csv << first.keys.map(&:to_s) if first
       end
     end
 
