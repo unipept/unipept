@@ -159,10 +159,10 @@ class Taxa2lca < ApiRunner
 
 end
 
-class Pept2pro < ApiRunner
+class Pept2prot < ApiRunner
 
   def mapping
-    {"pept2pro" => "pept2pro"}
+    {"pept2prot" => "pept2pro"}
   end
 
   def url_options(sub_part)
@@ -244,8 +244,8 @@ root_cmd.define_command('taxa2lca') do
   runner Taxa2lca
 end
 
-root_cmd.define_command('pept2pro') do
-  usage       'pept2pro [options]'
+root_cmd.define_command('pept2prot') do
+  usage       'pept2prot [options]'
   aliases     :p
   summary     'Give protein information for given peptides'
   description 'Search Unipept for the given peptides and return the lowest common ancestor'
@@ -254,7 +254,7 @@ root_cmd.define_command('pept2pro') do
   option :s, :select, "select the attributes", :argument => :required, :multiple => true
   option :x, :xml, "download uniprot record in specified directory", :argument => :required
 
-  runner Pept2pro
+  runner Pept2prot
 end
 
 root_cmd.run(ARGV)
