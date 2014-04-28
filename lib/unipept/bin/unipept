@@ -206,7 +206,7 @@ root_cmd.define_command('config') do
 end
 
 root_cmd.define_command('pept2taxa') do
-  usage       'pepttotaxa [options]'
+  usage       'pept2taxa [options]'
   aliases     :s
   summary     'Single Peptide Search'
   description 'Search Unipept for the given peptide and return taxons'
@@ -220,7 +220,7 @@ root_cmd.define_command('pept2taxa') do
 end
 
 root_cmd.define_command('pept2lca') do
-  usage       'pepttolca [options]'
+  usage       'pept2lca [options]'
   aliases     :l
   summary     'Give lowest common ancestor for given peptide'
   description 'Search Unipept for the given peptide and return the lowest common ancestor'
