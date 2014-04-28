@@ -30,7 +30,7 @@ function sendToHost(type, message) {
  */
 function processFile(file) {
     var peptides = digest(parseFasta(file));
-    sendToHost("log", peptides);
+    var ids = convertPeptidesToInts(peptides);
 }
 
 
@@ -87,30 +87,23 @@ function digest(proteins) {
  * @param <Array> peptides A list with peptides
  */
 function convertPeptidesToInts(peptides) {
-    // TODO add slice
-    /*$.post( "/pancore/convert_peptides", { 'peptides': peptides }, function (data) {
-        data.sort(function(a,b){return a-b});
-        // Store
-        var genomes,
-            name,
-            id;
-        if(!localStorage.genomeList) {
-            genomes = [];
+    var sliceSize = 1000,
+        ids = [],
+        req = new XMLHttpRequest(),
+        i,
+        slice;
+
+    for (i = 0; i < peptides.length; i += sliceSize) {
+        slice = peptides.slice(i, i + sliceSize);
+        req.open('POST', "/pancore/convert_peptides", false);
+        req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        req.send("peptides=" + JSON.stringify(slice));
+        if (req.status === 200) {
+            slice = JSON.parse(req.responseText);
+            ids = ids.concat(slice);
         } else {
-            genomes = JSON.parse(localStorage.genomeList);
+            error("request error for " + url, "It seems like something went wrong while we loaded the data");
         }
-        name = "user " + genomes.length;
-        id = "user_" + genomes.length;
-        genomes.push(name);
-        localStorage[name] = JSON.stringify(data);
-        localStorage.genomeList = JSON.stringify(genomes);
-        table.addGenome({
-            "bioproject_id" : id,
-            "name" : name,
-            "status" : "Loading",
-            "position" : 100,
-            "abbreviation" : name
-        });
-        //sendToWorker("loadUserData", {"ids": data, "name": name, "id": id});
-    }, "json");*/
+    }
+    return peptides.sort(function(a,b){return a-b});
 }

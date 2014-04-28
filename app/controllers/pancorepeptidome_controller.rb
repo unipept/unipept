@@ -58,7 +58,8 @@ class PancorepeptidomeController < ApplicationController
 
   # Converts a list of peptides to id's
   def convert_peptides
-    ids = Sequence.where(sequence: params[:peptides]).pluck(:id)
+    peptides = JSON(params[:peptides])
+    ids = Sequence.where(sequence: peptides).pluck(:id)
     render json: Oj.dump(ids, mode: :compat)
   end
 end
