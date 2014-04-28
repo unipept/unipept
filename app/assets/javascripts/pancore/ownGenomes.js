@@ -8,7 +8,7 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
     /*************** Private variables ***************/
 
     var that = {},
-        pancore = args.pancoren,
+        pancore = args.pancore,
         worker;
 
     // Data vars
@@ -108,8 +108,7 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         var file = $("#ownGenomeFile").prop("files")[0],
             reader = new FileReader();
         reader.onload = function (e) {
-            //convertPeptidesToInts(digest(parseFasta(reader.result)));
-            console.log("done reading");
+            sendToWorker("processFile", {file : reader.result});
         };
         reader.readAsText(file);
     }
