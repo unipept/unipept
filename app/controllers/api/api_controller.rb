@@ -88,17 +88,10 @@ class Api::ApiController < ApplicationController
 
   def pept2pro
     @result = Hash.new { |h,k| h[k] = Set.new }
-    lookup = Hash.new { |h,k| h[k] = Set.new }
 
     ids = []
-    @sequences.pluck_all(:sequence, "uniprot_entries.id").each do |e|
-      ids.append e['id']
-      lookup[e['id']] << e['sequence']
-    end
-
-    ids = ids.uniq.sort
-    ids.each do |t|
-      lookup[t.to_i].each { |s| @result[s] << t }
+    @sequences.pluck_all(:sequence, "uniprot_entries.uniprot_accession_number").each do |e|
+      @result[e['sequence']] << e['uniprot_accession_number']
     end
 
     respond_with(@result)
