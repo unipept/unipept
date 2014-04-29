@@ -80,7 +80,7 @@ class Api::ApiController < ApplicationController
     @full_lineage = (!params[:full_lineage].blank? && params[:full_lineage] == 'true')
 
     name = @equate_il ? :lca_il : :lca
-    lineages = Taxon.includes(lineage: Lineage::ORDER_T).find(@taxon_ids).map(&:lineage)
+    lineages = Lineage.includes(Lineage::ORDER_T).where(taxon_id: @taxon_ids)
     @result = Lineage.calculate_lca_taxon(lineages)
 
     respond_with(@result)
