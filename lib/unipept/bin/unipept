@@ -2,7 +2,6 @@
 
 require 'cri'
 require 'faraday'
-require 'ruby-progressbar'
 require 'yaml'
 require 'json'
 require 'fileutils'
@@ -11,8 +10,6 @@ require_relative '../lib/unipept'
 
 
 class ApiRunner < Cri::CommandRunner
-
-  attr_accessor :progress
 
   def initialize(args, opts, cmd)
     super
@@ -33,14 +30,12 @@ class ApiRunner < Cri::CommandRunner
     {'pept2taxa' => 'single', 'pept2lca' => 'lca'}
   end
 
-  def read_input
+  def input_iterator
     if options[:input]
-      peptides = File.readlines(options[:input])
+       File.readlines(options[:input]).each
     else
-      peptides = STDIN.readlines
+      STDIN.each_line
     end
-
-    peptides
   end
 
   def batch_size
@@ -63,12 +58,11 @@ class ApiRunner < Cri::CommandRunner
 
   def run
     formatter = Unipept::Formatter.new_for_format(options[:format])
-    peptides = read_input
+    peptides = input_iterator
 
     filter_list = options[:select] ? options[:select] : []
     filter_list = filter_list.map {|f| glob_to_regex(f) }
     output = STDOUT.tty? ? STDOUT : STDERR
-    self.progress = ProgressBar.create(total: peptides.size, output: output)
 
     printed_header = false
     result = []
@@ -93,7 +87,6 @@ class ApiRunner < Cri::CommandRunner
       end
 
       write_to_output formatter.format(sub_result)
-      progress.progress += sub_division.size
     end
 
     begin
@@ -110,11 +103,7 @@ class ApiRunner < Cri::CommandRunner
         f.write string
       end
     else
-      if STDOUT.tty?
-        progress.log string
-      else
-        puts string
-      end
+      puts string
     end
   end
 
@@ -150,7 +139,7 @@ class Taxa2lca < ApiRunner
   end
 
   def peptide_iterator(peptides, &block)
-    block.call(peptides)
+    block.call(peptides.to_a)
   end
 
   def batch_size
