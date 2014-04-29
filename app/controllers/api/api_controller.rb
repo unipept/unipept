@@ -13,8 +13,6 @@ class Api::ApiController < ApplicationController
 
     rel_name = @equate_il ? :lca_il_t : :lca_t
     @sequences.each {|s| s.gsub!(/I/,'L') } if @equate_il
-    @sequences = Sequence.joins(:peptides => :uniprot_entry).
-      where(sequence: @sequences)
   end
 
   def set_query
@@ -31,6 +29,8 @@ class Api::ApiController < ApplicationController
   end
 
   def single
+    @sequences = Sequence.joins(:peptides => :uniprot_entry).
+      where(sequence: @sequences)
     @result = {}
     lookup = Hash.new { |h,k| h[k] = Set.new }
     ids = []
@@ -57,6 +57,7 @@ class Api::ApiController < ApplicationController
     @result = {}
     lookup = Hash.new { |h,k| h[k] = Set.new }
     ids = []
+    @sequences = Sequence.where(sequence: @sequences)
     @sequences.pluck_all(:sequence, :lca_il).each do |e|
       lca_il = e['lca_il']
       ids.append lca_il
@@ -90,6 +91,9 @@ class Api::ApiController < ApplicationController
     @result = Hash.new { |h,k| h[k] = Set.new }
 
     ids = []
+    @sequences = Sequence.joins(:peptides => :uniprot_entry).
+      where(sequence: @sequences)
+
     @sequences.pluck_all(:sequence, "uniprot_entries.uniprot_accession_number").each do |e|
       @result[e['sequence']] << e['uniprot_accession_number']
     end
