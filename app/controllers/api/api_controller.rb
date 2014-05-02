@@ -42,7 +42,7 @@ class Api::ApiController < ApplicationController
       @result[sequence] = Set.new
     end
 
-    ids = ids.uniq.sort
+    ids = ids.uniq.sort rescue []
 
     @query.where(id: ids).find_in_batches do |group|
       group.each do |t|
@@ -64,7 +64,7 @@ class Api::ApiController < ApplicationController
       lookup[lca_il] << e['sequence']
     end
 
-    ids = ids.uniq.sort{|a,b| a && b ? a <=> b : a ? -1 : 1 }
+    ids = ids.uniq.sort rescue []
 
     @query.where(id: ids).find_in_batches do |group|
       group.each do |t|
@@ -90,7 +90,6 @@ class Api::ApiController < ApplicationController
   def pept2pro
     @result = Hash.new { |h,k| h[k] = Set.new }
 
-    ids = []
     @sequences = Sequence.joins(:peptides => :uniprot_entry).
       where(sequence: @sequences)
 
