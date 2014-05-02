@@ -42,7 +42,7 @@ class Api::ApiController < ApplicationController
       @result[sequence] = Set.new
     end
 
-    ids = ids.uniq.sort rescue []
+    ids = ids.uniq.reject(&:nil?).sort
 
     @query.where(id: ids).find_in_batches do |group|
       group.each do |t|
@@ -64,7 +64,7 @@ class Api::ApiController < ApplicationController
       lookup[lca_il] << e['sequence']
     end
 
-    ids = ids.uniq.sort rescue []
+    ids = ids.uniq.reject(&:nil?).sort
 
     @query.where(id: ids).find_in_batches do |group|
       group.each do |t|
