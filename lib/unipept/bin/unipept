@@ -183,10 +183,16 @@ end
 
 root_cmd = Cri::Command.new_basic_root.modify do
   name 'unipept'
-  flag :v, :verbose, "verbose mode"
+  flag :v, :version, "print version"
   option :i, :input, "input file", :argument => :required
   option :o, :output, "output file", :argument => :required
   option :f, :format, "output format (available: #{Unipept::Formatter.available.join "," }) (default: #{Unipept::Formatter.default})", :argument => :required
+
+  run do |opts, args, cmd|
+    if opts[:version]
+      puts File.read("VERSION")
+    end
+  end
 end
 
 root_cmd.define_command('config') do
