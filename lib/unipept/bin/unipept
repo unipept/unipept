@@ -8,6 +8,12 @@ require 'fileutils'
 
 require_relative '../lib/unipept'
 
+$interupted = false
+
+trap "INT" do
+  puts "Interupted, exiting..."
+  $interupted = true
+end
 
 class ApiRunner < Cri::CommandRunner
 
@@ -68,6 +74,10 @@ class ApiRunner < Cri::CommandRunner
     result = []
 
     peptide_iterator(peptides) do |sub_division|
+      if $interupted
+        $stdin.close
+        exit 1
+      end
       begin
         sub_result = JSON[Faraday.post(@url, url_options(sub_division)).body]
       rescue

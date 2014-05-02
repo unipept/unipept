@@ -1,12 +1,19 @@
 #!/usr/bin/env ruby
 require 'cri'
 
+trap "INT" do
+  $interupted = true
+end
+Signal.trap("PIPE", "EXIT")
 root_cmd = Cri::Command.new_basic_root.modify do
   name 'prot2pept'
   required :p, :pattern, "cleavage pattern to split input protein (default: ([KR])([^P]))"
   run do |opts, args, cmd|
     pattern = opts.fetch(:pattern, "([KR])([^P])")
-    $stdin.each_line { |prot| puts prot.gsub(/#{pattern}/,"\\1\n\\2").gsub(/#{pattern}/, "\\1\n\\2").split("\n").reject(&:empty?) }
+    $stdin.each_line do |prot|
+      break if $interupted
+      puts prot.gsub(/#{pattern}/,"\\1\n\\2").gsub(/#{pattern}/, "\\1\n\\2").split("\n").reject(&:empty?)
+    end
   end
 end
 

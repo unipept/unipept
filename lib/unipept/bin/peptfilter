@@ -1,6 +1,10 @@
 #!/usr/bin/env ruby
 require 'cri'
 
+trap "INT" do
+  $interupted = true
+end
+Signal.trap("PIPE", "EXIT")
 root_cmd = Cri::Command.new_basic_root.modify do
   name 'peptfilter'
   flag :i, :unique, "only output unique peptides"
@@ -14,6 +18,7 @@ root_cmd = Cri::Command.new_basic_root.modify do
     lacks = opts.fetch(:lacks, "").chars.to_a
     contains = opts.fetch(:contains, "").chars.to_a
     $stdin.each_line do |pept|
+      break if $interupted
       pept = pept.chomp
       length_ok = pept.length >= minlen && pept.length <= maxlen
       lacks_ok = (pept.chars.to_a & lacks).size == 0
