@@ -190,7 +190,7 @@ root_cmd = Cri::Command.new_basic_root.modify do
 
   run do |opts, args, cmd|
     if opts[:version]
-      puts File.read("VERSION")
+      puts File.read(File.join(File.dirname(__FILE__), "..", "VERSION"))
     end
   end
 end
