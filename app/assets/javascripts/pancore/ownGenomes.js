@@ -12,7 +12,8 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         worker;
 
     // Data vars
-    var genomes;
+    var genomes,
+        genomeList;
 
     // Page elements
     var $ownGenomesDiv = $("#ownGenomes"),
@@ -25,7 +26,8 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
      * Initializes the table
      */
     function init() {
-        genomes = localStorage.genomeList ? JSON.parse(localStorage.genomeList) : [];
+        genomes = localStorage.genomes ? JSON.parse(localStorage.genomes) : {};
+        genomeList = localStorage.genomeList ? JSON.parse(localStorage.genomeList) : [];
 
         // init worker
         // Create the Javascript Worker for background data processing
@@ -140,8 +142,8 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
      */
     function processConvertedGenome(ids, name) {
         // generate an id
-        // TODO
-        addGenome("", name, ids);
+        var id = "u" + new Date().getTime();
+        addGenome(id, name, ids);
 
         // reset the form
         $("#processOwnGenomeButton").parents("form").trigger('reset');
@@ -157,11 +159,13 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
      */
     function addGenome(id, name, ids) {
         // update local list
-        genomes.push(name);
+        genomeList.push(id);
+        genomes[id] = {id : id, name : name, dateAdded : Date()};
 
         // update local storage
-        localStorage.genomeList = JSON.stringify(genomes);
-        localStorage[name] = JSON.stringify(ids);
+        localStorage.genomeList = JSON.stringify(genomeList);
+        localStorage.genomes = JSON.stringify(genomes);
+        localStorage["genome_" + id] = JSON.stringify(ids);
 
         // update the list
         redrawList();
@@ -171,11 +175,13 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
      * Redraws a list with all added genomes
      */
     function redrawList() {
-        var i;
+        var i,
+            g;
 
         $ownGenomesList.empty();
-        for (i = 0; i < genomes.length; i++) {
-            $ownGenomesList.append("<li>" + genomes[i] + "</li>");
+        for (i = 0; i < genomeList.length; i++) {
+            g = genomes[genomeList[i]];
+            $ownGenomesList.append("<li>" + g.name + " (" + g.id + ")</li>");
         }
     }
 
