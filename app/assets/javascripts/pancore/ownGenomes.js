@@ -66,7 +66,7 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
             console.log(data.msg);
             break;
         case 'processConvertedGenome':
-            processConvertedGenome(data.msg.ids);
+            processConvertedGenome(data.msg.ids, data.msg.name);
             break;
         default:
             console.log(data.msg);
@@ -133,14 +133,38 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
     }
 
     /**
-     * Processes the converted genome. Adds it to the list and local storage.
-     * Cleans up the popover.
+     * Processes the converted genome, cleans up the popover.
      *
-     * @params <Array> ids A sorted array with integer id's
+     * @param <Array> ids A sorted array with integer id's
+     * @param <String> name The name of the genome
      */
-    function processConvertedGenome(ids) {
+    function processConvertedGenome(ids, name) {
+        // generate an id
+        // TODO
+        addGenome("", name, ids);
+
+        // reset the form
         $("#processOwnGenomeButton").parents("form").trigger('reset');
         $("#processOwnGenomeButton").removeAttr("disabled");
+    }
+
+    /**
+     * Add a genome to the list of myGenomes in local storage
+     *
+     * @param <String> id A random id
+     * @param <String> name The genome name
+     * @param <Array> ids A list of ints
+     */
+    function addGenome(id, name, ids) {
+        // update local list
+        genomes.push(name);
+
+        // update local storage
+        localStorage.genomeList = JSON.stringify(genomes);
+        localStorage[name] = JSON.stringify(ids);
+
+        // update the list
+        redrawList();
     }
 
     /**
