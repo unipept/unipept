@@ -65,6 +65,9 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         case 'log':
             console.log(data.msg);
             break;
+        case 'processConvertedGenome':
+            processConvertedGenome(data.msg.ids);
+            break;
         default:
             console.log(data.msg);
         }
@@ -111,6 +114,17 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
             sendToWorker("processFile", {file : reader.result});
         };
         reader.readAsText(file);
+    }
+
+    /**
+     * Processes the converted genome. Adds it to the list and local storage.
+     * Cleans up the popover.
+     *
+     * @params <Array> ids A sorted array with integer id's
+     */
+    function processConvertedGenome(ids) {
+        $("#processOwnGenomeButton").parents("form").trigger('reset');
+        $("#processOwnGenomeButton").removeAttr("disabled");
     }
 
     /**

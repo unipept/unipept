@@ -31,6 +31,7 @@ function sendToHost(type, message) {
 function processFile(file) {
     var peptides = digest(parseFasta(file));
     var ids = convertPeptidesToInts(peptides);
+    sendToHost("processConvertedGenome", {"ids" : ids});
 }
 
 
@@ -104,6 +105,7 @@ function convertPeptidesToInts(peptides) {
         } else {
             error("request error for " + url, "It seems like something went wrong while we loaded the data");
         }
+        //sendToHost("log", ((i +  sliceSize) / peptides.length) + "%");
     }
-    return peptides.sort(function(a,b){return a-b});
+    return ids.sort(function(a,b){return a-b});
 }
