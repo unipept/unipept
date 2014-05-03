@@ -70,6 +70,9 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         case 'processConvertedGenome':
             processConvertedGenome(data.msg.ids, data.msg.name);
             break;
+        case 'processProgress':
+            processProgress(data.msg.progress);
+            break;
         default:
             console.log(data.msg);
         }
@@ -115,6 +118,10 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
             }
             if (name && file) {
                 $(this).attr("disabled", "disabled");
+                $(this).addClass("hide");
+                processProgress(0);
+                $("#ownGenomeProgress").removeClass("hide");
+
                 handleAddOwnGenome(name, file);
             }
         });
@@ -148,6 +155,17 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         // reset the form
         $("#processOwnGenomeButton").parents("form").trigger('reset');
         $("#processOwnGenomeButton").removeAttr("disabled");
+        $("#processOwnGenomeButton").removeClass("hide");
+        $("#ownGenomeProgress").addClass("hide");
+    }
+
+    /**
+     * Updates the progress bar with a new value
+     *
+     * @param <Number> percentage Value between 0 and 1 indicating the progress
+     */
+    function processProgress(percentage) {
+        $("#ownGenomeProgress .progress-bar").css("width", (percentage * 100) + "%");
     }
 
     /**
