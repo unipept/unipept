@@ -99,19 +99,35 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
 
         // hook up the button
         $("#processOwnGenomeButton").click(function () {
-            $(this).attr("disabled", "disabled");
-            handleAddOwnGenome();
+            var name = $("#ownGenomeName").val(),
+                file = $("#ownGenomeFile").prop("files")[0];
+            if (!name) {
+                $("#ownGenomeName").parents(".form-group").addClass("has-error");
+            } else {
+                $("#ownGenomeName").parents(".form-group").removeClass("has-error");
+            }
+            if (!file) {
+                $("#ownGenomeFile").parents(".form-group").addClass("has-error");
+            } else {
+                $("#ownGenomeFile").parents(".form-group").removeClass("has-error");
+            }
+            if (name && file) {
+                $(this).attr("disabled", "disabled");
+                handleAddOwnGenome(name, file);
+            }
         });
     }
 
     /**
      * Handles the addOwnGenome event
+     *
+     * @param <String> name The name of the genome
+     * @param <File> file A file object
      */
-    function handleAddOwnGenome() {
-        var file = $("#ownGenomeFile").prop("files")[0],
-            reader = new FileReader();
+    function handleAddOwnGenome(name, file) {
+        var reader = new FileReader();
         reader.onload = function (e) {
-            sendToWorker("processFile", {file : reader.result});
+            sendToWorker("processFile", {file : reader.result, name : name});
         };
         reader.readAsText(file);
     }
