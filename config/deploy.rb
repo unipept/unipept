@@ -1,7 +1,7 @@
 set :application, "unipept-web"
 set :repo_url,  "ssh://git@github.ugent.be/bmesuere/unipept.git"
 
-set :deploy_to, "/home/bmesuere/rails"
+set :deploy_to, "/home/bmesuere/test-deploy"
 
 # set :deploy_to, '/var/www/my_app'
 # set :format, :pretty
@@ -19,7 +19,8 @@ namespace :deploy do
   desc 'Restart application'
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
-    execte :touch, release_path.join('tmp','restart.txt'
+      execte :touch, release_path.join('tmp','restart.txt')
+    end
   end
 
 end
