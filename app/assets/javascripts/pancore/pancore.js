@@ -71,6 +71,8 @@ var constructPancore = function constructPancore(args) {
         // Constructs the ownGenomes feature
         if (window.File && window.FileReader && window.FileList) {
             ownGenomes = constructOwnGenomes({pancore : that});
+        } else {
+            $("#own-genome-error").removeClass("hide");
         }
 
         // Initialize the rest of the page
