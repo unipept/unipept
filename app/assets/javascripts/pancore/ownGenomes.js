@@ -46,8 +46,8 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
             },
             content: function() {
               return $("#owngenomes-popover-content").html();
-            }/*,
-            container: "body"*/
+            },
+            container: "body"
         });
 
         // enable remove all button
@@ -94,11 +94,11 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
      */
     function initPopoverBehaviour() {
         // enable the tooltips
-        $("#ownGenomeName").tooltip({placement : "right", trigger : "hover", container : "body"});
-        $("#ownGenomeFile").parents(".input-group").tooltip({placement : "right", trigger : "hover", container : "body"});
+        $(".popover-content #ownGenomeName").tooltip({placement : "right", trigger : "hover", container : "body"});
+        $(".popover-content #ownGenomeFile").parents(".input-group").tooltip({placement : "right", trigger : "hover", container : "body"});
 
         // enable file chooser
-        $("#ownGenomeFile").on('change', function() {
+        $(".popover-content #ownGenomeFile").on('change', function() {
             var $input = $(this)
                 numFiles = $input.get(0).files ? $input.get(0).files.length : 1,
                 label = $input.val().replace(/\\/g, '/').replace(/.*\//, ''),
@@ -107,24 +107,24 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         });
 
         // hook up the button
-        $("#processOwnGenomeButton").click(function () {
-            var name = $("#ownGenomeName").val(),
-                file = $("#ownGenomeFile").prop("files")[0];
+        $(".popover-content #processOwnGenomeButton").click(function () {
+            var name = $(".popover-content #ownGenomeName").val(),
+                file = $(".popover-content #ownGenomeFile").prop("files")[0];
             if (!name) {
-                $("#ownGenomeName").parents(".form-group").addClass("has-error");
+                $(".popover-content #ownGenomeName").parents(".form-group").addClass("has-error");
             } else {
-                $("#ownGenomeName").parents(".form-group").removeClass("has-error");
+                $(".popover-content #ownGenomeName").parents(".form-group").removeClass("has-error");
             }
             if (!file) {
-                $("#ownGenomeFile").parents(".form-group").addClass("has-error");
+                $(".popover-content #ownGenomeFile").parents(".form-group").addClass("has-error");
             } else {
-                $("#ownGenomeFile").parents(".form-group").removeClass("has-error");
+                $(".popover-content #ownGenomeFile").parents(".form-group").removeClass("has-error");
             }
             if (name && file) {
                 $(this).attr("disabled", "disabled");
                 $(this).addClass("hide");
                 processProgress(0);
-                $("#ownGenomeProgress").removeClass("hide");
+                $(".popover-content #ownGenomeProgress").removeClass("hide");
 
                 handleAddOwnGenome(name, file);
             }
@@ -157,10 +157,10 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         addGenome(id, name, ids);
 
         // reset the form
-        $("#processOwnGenomeButton").parents("form").trigger('reset');
-        $("#processOwnGenomeButton").removeAttr("disabled");
-        $("#processOwnGenomeButton").removeClass("hide");
-        $("#ownGenomeProgress").addClass("hide");
+        $(".popover-content #processOwnGenomeButton").parents("form").trigger('reset');
+        $(".popover-content #processOwnGenomeButton").removeAttr("disabled");
+        $(".popover-content #processOwnGenomeButton").removeClass("hide");
+        $(".popover-content #ownGenomeProgress").addClass("hide");
     }
 
     /**
@@ -169,7 +169,7 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
      * @param <Number> percentage Value between 0 and 1 indicating the progress
      */
     function processProgress(percentage) {
-        $("#ownGenomeProgress .progress-bar").css("width", (percentage * 100) + "%");
+        $(".popover-content #ownGenomeProgress .progress-bar").css("width", (percentage * 100) + "%");
     }
 
     /**
