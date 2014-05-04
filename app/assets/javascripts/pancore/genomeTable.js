@@ -278,7 +278,12 @@ var constructGenomeTable = function constructGenomeTable(args) {
                         return "<span class='glyphicon glyphicon-cloud-download'></span>";
                     }
                 } else {
-                    return d.value + " <a href='http://www.ncbi.nlm.nih.gov/bioproject/?term=" + d3.select(this.parentNode).datum().bioproject_id + "' target='_blank' title='open bioproject page'><span class='glyphicon glyphicon-share-alt'></span></a>";
+                    var id = d3.select(this.parentNode).datum().bioproject_id;
+                    if (("" + id).charAt(0) !== "u") {
+                        return d.value + " <a href='http://www.ncbi.nlm.nih.gov/bioproject/?term=" + d3.select(this.parentNode).datum().bioproject_id + "' target='_blank' title='open bioproject page'><span class='glyphicon glyphicon-share-alt'></span></a>";
+                    } else {
+                        return d.value + " <span class='glyphicon glyphicon-home' title='local genome'></span>";
+                    }
                 }
                 return d.value;
             })
