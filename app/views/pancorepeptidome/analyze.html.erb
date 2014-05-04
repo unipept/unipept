@@ -65,55 +65,67 @@
 <hr>
 <div class="split">
   <div class="split-left">
-    <p class="intro">
-      To add all genomes from a species, select one from the drop-down and click the load button.
-    </p>
-    <%= form_tag(:pancore_analyze, :method => "get", :class => "form-inline") do %>
-        <div class="form-group"><%= select_tag(:species_id, options_for_select(@species, params[:species_id]), :class => "form-control") %></div>
-        <div class="form-group"><%= button_tag(raw("Add species <span class='glyphicon glyphicon-chevron-right'></span>"), :type => "button", :class => "btn btn-primary", :id => "add_species_peptidome", :"data-loading-text" => "Loading...") %></div>
-    <% end %>
-    <div id="ownGenomes" class="hide">
-      <p class="intro">
-        <br>Own genomes
-      </p>
-      <ul id='ownGenomesList'></ul>
-      <button type="button" id='addOwnGenomeButton' class='btn btn-primary'><span class='glyphicon glyphicon-plus'></span> Add your own genome</button>
-      <div id="owngenomes-popover-head" class="hide">Add your own genome</div>
-      <div id="owngenomes-popover-content" class="hide">
-        <form>
-        <div class="form-group">
-          <label for="ownGenomeName" class="control-label">Name</label>
-          <input type="text" id="ownGenomeName" class="form-control" placeholder="name" data-toggle="tooltip" title="Enter a name. The one of the organism would be a good choice.">
-        </div>
-        <div class="form-group">
-          <label for="ownGenomeFile" class="control-label">FASTA file</label>
-          <div class="input-group"  data-toggle="tooltip" title="Select a FASTA file containing one or more protein sequences.">
-            <span class="input-group-btn">
-              <span class="btn btn-default btn-file">
-                Browse… <input type="file" id="ownGenomeFile">
-              </span>
-            </span>
-            <input type="text" class="form-control" readonly="">
+    <ul id="tabs" class="nav nav-tabs">
+      <li class="active"><a href="#refseq-genomes" id="refseq-genomes-tab" data-toggle="tab">Refseq genomes</a></li>
+      <li><a href="#my-genomes" id="my-genomes-tab" data-toggle="tab">My genomes</a></li>
+    </ul>
+
+    <div class="tab-content" id="genome-tabs">
+      <div class="tab-pane fade in active" id="refseq-genomes">
+        <p class="intro">
+          To add all genomes from a species, select one from the drop-down and click the load button.
+        </p>
+        <%= form_tag(:pancore_analyze, :method => "get", :class => "form-inline") do %>
+            <div class="form-group"><%= select_tag(:species_id, options_for_select(@species, params[:species_id]), :class => "form-control") %></div>
+            <div class="form-group"><%= button_tag(raw("Add species <span class='glyphicon glyphicon-chevron-right'></span>"), :type => "button", :class => "btn btn-primary", :id => "add_species_peptidome", :"data-loading-text" => "Loading...") %></div>
+        <% end %>
+
+        <p class="intro">
+          <br>
+           To add individual genomes, drag a node from the tree to the table on the right.
+        </p>
+        <div id="treeView" class="treeView pancore">
+          <div class="input-group" id="treeSearchDiv">
+          <%= search_field_tag(:treeSearch, "", :placeholder => "type to filter the tree by name or bioproject id", :class => "form-control") %><span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
           </div>
         </div>
-        <div class="form-group text-center">
-          <button type="button" id="processOwnGenomeButton" class="btn btn-primary form-control">Process FASTA file</button>
-        </div>
-        <div id="ownGenomeProgress" class="progress progress-striped active hide">
-          <div class="progress-bar"  role="progressbar" style="width: 45%">
-          </div>
-        </div>
-        <small><span class="glyphicon glyphicon-info-sign"></span> The genomes you add will only be visible in your browser. Nothing will be stored on the Unipept servers.</small>
-      </form>
       </div>
-    </div>
-    <p class="intro">
-      <br>
-       To add individual genomes, drag a node from the tree to the table on the right.
-    </p>
-    <div id="treeView" class="treeView pancore">
-      <div class="input-group" id="treeSearchDiv">
-      <%= search_field_tag(:treeSearch, "", :placeholder => "type to filter the tree by name or bioproject id", :class => "form-control") %><span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+      <div class="tab-pane fade" id="my-genomes">
+        <div id="ownGenomes" class="hide">
+          <p class="intro">
+            <br>Own genomes
+          </p>
+          <ul id='ownGenomesList'></ul>
+          <button type="button" id='addOwnGenomeButton' class='btn btn-primary'><span class='glyphicon glyphicon-plus'></span> Add your own genome</button>
+          <div id="owngenomes-popover-head" class="hide">Add your own genome</div>
+          <div id="owngenomes-popover-content" class="hide">
+            <form>
+            <div class="form-group">
+              <label for="ownGenomeName" class="control-label">Name</label>
+              <input type="text" id="ownGenomeName" class="form-control" placeholder="name" data-toggle="tooltip" title="Enter a name. The one of the organism would be a good choice.">
+            </div>
+            <div class="form-group">
+              <label for="ownGenomeFile" class="control-label">FASTA file</label>
+              <div class="input-group"  data-toggle="tooltip" title="Select a FASTA file containing one or more protein sequences.">
+                <span class="input-group-btn">
+                  <span class="btn btn-default btn-file">
+                    Browse… <input type="file" id="ownGenomeFile">
+                  </span>
+                </span>
+                <input type="text" class="form-control" readonly="">
+              </div>
+            </div>
+            <div class="form-group text-center">
+              <button type="button" id="processOwnGenomeButton" class="btn btn-primary form-control">Process FASTA file</button>
+            </div>
+            <div id="ownGenomeProgress" class="progress progress-striped active hide">
+              <div class="progress-bar"  role="progressbar" style="width: 45%">
+              </div>
+            </div>
+            <small><span class="glyphicon glyphicon-info-sign"></span> The genomes you add will only be visible in your browser. Nothing will be stored on the Unipept servers.</small>
+          </form>
+          </div>
+        </div>
       </div>
     </div>
   </div>
