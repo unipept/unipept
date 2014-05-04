@@ -308,7 +308,6 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
      * @param <jQuery> $node jQuery object of the dom element were dragging
      */
     function dragHelp($node) {
-        console.log($node);
         var returnString = "<tbody class='dragging'>"
             + "<tr><td class='handle'><span class='glyphicon glyphicon-resize-vertical'></span></td><td class='data name' data-bioproject_id='"
             + $node.data("genomeid") + "'>"

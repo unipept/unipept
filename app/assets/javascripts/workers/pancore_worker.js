@@ -643,7 +643,7 @@ function getUniqueSequences(newOrder) {
     order = newOrder;
     if (order.length > 0) {
         var s = data[order[0]].peptide_list;
-        getJSONByPost("/pancore/unique_sequences/", "type=uniprot&bioprojects=" + order + "&sequences=[" + s + "]", function (d) {
+        getJSONByPost("/pancore/unique_sequences/", "type=uniprot&bioprojects=" + filterIds(order) + "&sequences=[" + s + "]", function (d) {
             lca = d[0];
             calculateUnicore(d[1]);
         });
@@ -766,6 +766,22 @@ function genomeSimilarity(peptide_list1, peptide_list2) {
  */
 function filterNewickName(name) {
     return name.replace(/ /g, "_").replace(/[,;:]/g, "");
+}
+
+/**
+ * Returns a new array containing only real bioproject ids
+ *
+ * @param <Array> a A list of ids.
+ */
+function filterIds(a) {
+    var r = [],
+        i;
+    for (i = 0; i < a.length; i++) {
+        if (!isNaN(+a[i])) {
+            r.push(a[i]);
+        }
+    }
+    return r;
 }
 
 // union and intersection for sorted arrays
