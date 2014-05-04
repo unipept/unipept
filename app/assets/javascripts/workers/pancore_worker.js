@@ -406,6 +406,7 @@ function loadData(bioproject_id, name) {
  * @params <Array> ids A list of internal peptide id's
  */
 function loadUserData(id, name, ids) {
+    ids = JSON.parse(ids);
     addData(id, name, ids, rank);
 }
 

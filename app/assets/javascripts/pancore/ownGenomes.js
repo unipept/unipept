@@ -321,9 +321,18 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
     /*************** Public methods ***************/
 
     /**
-     * Does something
+     * Retrieves the list of peptide ids from the local storage for a given id
+     *
+     * @param <String> id The id of the genome
+     * @param <Boolean> asString Return it as a JSON string, not as an object
      */
-    that.doSomething = function doSomething() {
+    that.getIds = function getIds(id, asString) {
+        var ids = localStorage["genome_" + id];
+        if (asString) {
+            return ids;
+        } else {
+            return JSON.parse(ids);
+        }
     };
 
     // initialize the object

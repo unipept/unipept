@@ -232,11 +232,16 @@ var constructPancore = function constructPancore(args) {
     /**
      * Asks the worker to load a genome
      *
-     * @param <Number> bioproject_id The id of the genome we want to load
+     * @param <String> bioproject_id The id of the genome we want to load
      * @param <String> name The name of the genome we want to load
      */
     function loadData(bioproject_id, name) {
-        sendToWorker("loadData", {"bioproject_id" : bioproject_id, "name" : name});
+        if ((bioproject_id + "").charAt(0) === "u") {
+            var ids = ownGenomes.getIds(bioproject_id, true);
+            sendToWorker("loadUserData", {"id" : bioproject_id, "name" : name, "ids" : ids});
+        } else {
+            sendToWorker("loadData", {"bioproject_id" : bioproject_id, "name" : name});
+        }
     }
 
     /**
