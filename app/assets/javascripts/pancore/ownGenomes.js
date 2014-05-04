@@ -16,9 +16,9 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         genomeList;
 
     // Page elements
-    var $ownGenomesDiv = $("#ownGenomes"),
-        $ownGenomesList = $("#ownGenomesList"),
-        $ownGenomesButton = $("#addOwnGenomeButton");
+    var $myGenomesDiv = $("#ownGenomes"),
+        $myGenomesTable = $("#my-genomes-table tbody"),
+        $myGenomesButton = $("#addOwnGenomeButton");
 
     /*************** Private methods ***************/
 
@@ -36,10 +36,10 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         worker.addEventListener('error', error, false);
 
         // init gui
-        redrawList();
+        redrawTable();
 
         // init popover
-        $ownGenomesButton.popover({
+        $myGenomesButton.popover({
             html : true,
             title: function() {
               return $("#owngenomes-popover-head").html();
@@ -50,10 +50,10 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         });
 
         // add pop-over behaviour
-        $ownGenomesButton.on("shown.bs.popover", initPopoverBehaviour)
+        $myGenomesButton.on("shown.bs.popover", initPopoverBehaviour)
 
         // set visible
-        $ownGenomesDiv.removeClass("hide");
+        $myGenomesDiv.removeClass("hide");
     }
 
     /**
@@ -186,20 +186,20 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         localStorage["genome_" + id] = JSON.stringify(ids);
 
         // update the list
-        redrawList();
+        redrawTable();
     }
 
     /**
-     * Redraws a list with all added genomes
+     * Redraws the table with all added genomes
      */
-    function redrawList() {
+    function redrawTable() {
         var i,
             g;
 
-        $ownGenomesList.empty();
+        $myGenomesTable.empty();
         for (i = 0; i < genomeList.length; i++) {
             g = genomes[genomeList[i]];
-            $ownGenomesList.append("<li>" + g.name + " (" + g.id + ")</li>");
+            $myGenomesTable.append("<tr><td><span class='glyphicon glyphicon-move'></span></td><td>" + g.name + "</td><td></td><td class='button'><a class='btn btn-default btn-xs' title='remove genome'><span class='glyphicon glyphicon-trash'></span></a></td></<tr>");
         }
     }
 

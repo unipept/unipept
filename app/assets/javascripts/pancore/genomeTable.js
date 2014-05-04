@@ -249,7 +249,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
         if (lca !== "") {
             text += " (LCA: " + lca + ")";
         }
-        $("th.name").text(text);
+        $("#genomes_table th.name").text(text);
 
         // Add rows
         tr = d3.select("#genomes_table tbody").selectAll("tr.added")
