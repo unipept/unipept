@@ -41,14 +41,13 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         // init popover
         $myGenomesButton.popover({
             html : true,
-            placement : "auto right",
             title: function() {
               return $("#owngenomes-popover-head").html();
             },
             content: function() {
               return $("#owngenomes-popover-content").html();
-            },
-            container: "body"
+            }/*,
+            container: "body"*/
         });
 
         // enable remove all button
@@ -243,16 +242,80 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
 
         $myGenomesTable.empty();
         if (genomeList.length == 0) {
-            $myGenomesTable.append("<tr><td colspan='4' class='info'><span class='glyphicon glyphicon-chevron-up'></span> Click the plus-button to add your own genomes.</td></tr>");
+            $myGenomesTable.append("<tr class='info'><td colspan='4' class='info'><span class='glyphicon glyphicon-chevron-up'></span> Click the plus-button to add your own genomes.</td></tr>");
         } else {
             for (i = 0; i < genomeList.length; i++) {
                 g = genomes[genomeList[i]];
-                $myGenomesTable.append("<tr data-genomeid='" + g.id + "'><td><span class='glyphicon glyphicon-move'></span></td><td>" + g.name + "</td><td></td><td class='button'><a class='btn btn-default btn-xs remove-my-genome' title='remove genome'><span class='glyphicon glyphicon-trash'></span></a></td></<tr>");
+                $myGenomesTable.append("<tr data-genomeid='" + g.id + "'><td><span class='glyphicon glyphicon-move'></span></td><td class='name'>" + g.name + "</td><td></td><td class='button'><a class='btn btn-default btn-xs remove-my-genome' title='remove genome'><span class='glyphicon glyphicon-trash'></span></a></td></<tr>");
             }
             $(".remove-my-genome").click(function () {
                 removeGenome($(this).parents("tr").data("genomeid"));
             });
+
+            initDrag();
         }
+    }
+
+    /**
+     * Initializes the draggin from the my genomes table
+     */
+    function initDrag() {
+        var $tableDiv = $("#genomes-table-div"),
+            moving,
+            moving2;
+        // Make the nodes draggable using JQuery UI
+        $myGenomesTable.find("tr").draggable({
+            appendTo: "#genomes-table-div table",
+            addClasses: false,
+            refreshPositions: true,
+            // Mimic the style of the table on the right
+            helper: function startHelping(event) {
+                return dragHelp($(this));
+            },
+            // Table on the right slides into view on drag start
+            start: function startDragging(event, ui) {
+                var pos = Math.max(0, window.pageYOffset - $tableDiv.offset().top + 16);
+                $tableDiv.css("margin-top", pos + "px");
+                $(event.target).draggable('option', 'refreshPositions', true);
+                moving = true;
+                moving2 = true;
+                setTimeout(function () {moving = false; }, 800);
+            },
+            // Table on the right slides back to original position 1s after
+            // drag stop
+            stop: function stopDragging(event, ui) {
+                setTimeout(function () {$tableDiv.css("margin-top", "0px"); }, 1000);
+            },
+            // Because the drop target slides in, we have to recalculate the
+            // position of the target while dragging. This is computationally
+            // expensive, so we stop recalculating once we know the target
+            // stays in place
+            drag: function whileDragging(event, ui) {
+                if (!moving2) {
+                    $(event.target).draggable('option', 'refreshPositions', false);
+                }
+                if (!moving) {
+                    moving2 = false;
+                }
+            }
+        });
+    }
+
+    /**
+     * Drag helper. Constructs html-code that gets added to the page and
+     * 'follows' the cursor while dragging. Mimics the design of the table.
+     *
+     * @param <jQuery> $node jQuery object of the dom element were dragging
+     */
+    function dragHelp($node) {
+        console.log($node);
+        var returnString = "<tbody class='dragging'>"
+            + "<tr><td class='handle'><span class='glyphicon glyphicon-resize-vertical'></span></td><td class='data name' data-bioproject_id='"
+            + $node.data("genomeid") + "'>"
+            + $node.find(".name").text()
+            + "</td><td class='data status'></td><td></td></tr>"
+            + "</tbody>";
+        return $(returnString);
     }
 
     /*************** Public methods ***************/
