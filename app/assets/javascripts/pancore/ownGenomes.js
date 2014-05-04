@@ -49,6 +49,9 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
             }
         });
 
+        // enable remove all button
+        $("#remove-my-genomes").click(removeAllGenomes);
+
         // add pop-over behaviour
         $myGenomesButton.on("shown.bs.popover", initPopoverBehaviour)
 
@@ -203,6 +206,27 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         localStorage.genomeList = JSON.stringify(genomeList);
         localStorage.genomes = JSON.stringify(genomes);
         delete localStorage["genome_" + id];
+
+        // update the list
+        redrawTable();
+    }
+
+    /**
+     * removes all the genomes from the my genome list
+     */
+    function removeAllGenomes() {
+        var i;
+        for (i = 0; i < genomeList.length; i++) {
+            delete localStorage["genome_" + genomeList[i]];
+        }
+
+        // update local list
+        genomeList = [];
+        genomes = {};
+
+        // update local storage
+        localStorage.genomeList = JSON.stringify(genomeList);
+        localStorage.genomes = JSON.stringify(genomes);
 
         // update the list
         redrawTable();
