@@ -4,7 +4,7 @@ set :repo_url,  "ssh://git@github.ugent.be/bmesuere/unipept.git"
 set :deploy_to, "/home/bmesuere/test-deploy"
 
 # set :linked_files, %w{config/database.yml}
-set :linked_dirs, %w{bin log tmp tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
+set :linked_dirs, %w{bin log tmp vendor/bundle public/system}
 
 namespace :deploy do
 
