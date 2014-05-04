@@ -254,6 +254,8 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
 
             initDrag();
         }
+
+        $("#my-genomes-tab .badge").text(genomeList.length);
     }
 
     /**
