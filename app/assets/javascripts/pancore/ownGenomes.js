@@ -41,12 +41,14 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         // init popover
         $myGenomesButton.popover({
             html : true,
+            placement : "auto right",
             title: function() {
               return $("#owngenomes-popover-head").html();
             },
             content: function() {
               return $("#owngenomes-popover-content").html();
-            }
+            },
+            container: "body"
         });
 
         // enable remove all button

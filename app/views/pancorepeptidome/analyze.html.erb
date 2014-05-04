@@ -98,8 +98,10 @@
           <table class="table table-condensed" id="my-genomes-table">
             <thead>
               <tr>
-                <th class="handle"></th>
-                <th class="name">My genome</th>
+                <th class="handle">
+                  <button type="button" id='addOwnGenomeButton' class='btn btn-primary btn-xs' data-toggle="button"><span class='glyphicon glyphicon-plus'></span></button>
+                </th>
+                <th class="name">My genomes</th>
                 <th class="status"></th>
                 <th class="action"><a id="remove-my-genomes" class="btn btn-xs btn-danger" title="remove all my genomes"><span class="glyphicon glyphicon-trash"></span></a></th>
               </tr>
@@ -107,7 +109,6 @@
             <tbody>
             </tbody>
           </table>
-          <button type="button" id='addOwnGenomeButton' class='btn btn-primary'><span class='glyphicon glyphicon-plus'></span> Add your own genome</button>
           <div id="owngenomes-popover-head" class="hide">Add your own genome</div>
           <div id="owngenomes-popover-content" class="hide">
             <form>
