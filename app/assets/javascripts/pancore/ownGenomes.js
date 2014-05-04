@@ -240,13 +240,17 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
             g;
 
         $myGenomesTable.empty();
-        for (i = 0; i < genomeList.length; i++) {
-            g = genomes[genomeList[i]];
-            $myGenomesTable.append("<tr data-genomeid='" + g.id + "'><td><span class='glyphicon glyphicon-move'></span></td><td>" + g.name + "</td><td></td><td class='button'><a class='btn btn-default btn-xs remove-my-genome' title='remove genome'><span class='glyphicon glyphicon-trash'></span></a></td></<tr>");
+        if (genomeList.length == 0) {
+            $myGenomesTable.append("<tr><td colspan='4' class='info'><span class='glyphicon glyphicon-chevron-up'></span> Click the plus-button to add your own genomes.</td></tr>");
+        } else {
+            for (i = 0; i < genomeList.length; i++) {
+                g = genomes[genomeList[i]];
+                $myGenomesTable.append("<tr data-genomeid='" + g.id + "'><td><span class='glyphicon glyphicon-move'></span></td><td>" + g.name + "</td><td></td><td class='button'><a class='btn btn-default btn-xs remove-my-genome' title='remove genome'><span class='glyphicon glyphicon-trash'></span></a></td></<tr>");
+            }
+            $(".remove-my-genome").click(function () {
+                removeGenome($(this).parents("tr").data("genomeid"));
+            });
         }
-        $(".remove-my-genome").click(function () {
-            removeGenome($(this).parents("tr").data("genomeid"));
-        });
     }
 
     /*************** Public methods ***************/
