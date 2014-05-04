@@ -190,6 +190,25 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
     }
 
     /**
+     * Removes a genome from the my genome list
+     *
+     * @param <String> id The id to remove
+     */
+    function removeGenome(id) {
+        // update local list
+        genomeList.splice(genomeList.indexOf(id), 1);
+        delete genomes[id];
+
+        // update local storage
+        localStorage.genomeList = JSON.stringify(genomeList);
+        localStorage.genomes = JSON.stringify(genomes);
+        delete localStorage["genome_" + id];
+
+        // update the list
+        redrawTable();
+    }
+
+    /**
      * Redraws the table with all added genomes
      */
     function redrawTable() {
@@ -199,8 +218,11 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         $myGenomesTable.empty();
         for (i = 0; i < genomeList.length; i++) {
             g = genomes[genomeList[i]];
-            $myGenomesTable.append("<tr><td><span class='glyphicon glyphicon-move'></span></td><td>" + g.name + "</td><td></td><td class='button'><a class='btn btn-default btn-xs' title='remove genome'><span class='glyphicon glyphicon-trash'></span></a></td></<tr>");
+            $myGenomesTable.append("<tr data-genomeid='" + g.id + "'><td><span class='glyphicon glyphicon-move'></span></td><td>" + g.name + "</td><td></td><td class='button'><a class='btn btn-default btn-xs remove-my-genome' title='remove genome'><span class='glyphicon glyphicon-trash'></span></a></td></<tr>");
         }
+        $(".remove-my-genome").click(function () {
+            removeGenome($(this).parents("tr").data("genomeid"));
+        });
     }
 
     /*************** Public methods ***************/
