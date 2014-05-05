@@ -18,7 +18,8 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
     // Page elements
     var $myGenomesDiv = $("#ownGenomes"),
         $myGenomesTable = $("#my-genomes-table tbody"),
-        $myGenomesButton = $("#addOwnGenomeButton");
+        $myGenomesButton = $("#addOwnGenomeButton"),
+        $popover;
 
     /*************** Private methods ***************/
 
@@ -41,6 +42,7 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         // init popover
         $myGenomesButton.popover({
             html : true,
+            trigger : "manual",
             title: function () {
                 return $("#owngenomes-popover-head").html();
             },
@@ -48,6 +50,15 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
                 return $("#owngenomes-popover-content").html();
             },
             container: "body"
+        });
+
+        // enable add own genome button
+        $myGenomesButton.click(function () {
+            if (!$popover) {
+                $myGenomesButton.popover("show");
+            } else {
+                $popover.toggleClass("hide");
+            }
         });
 
         // enable remove all button
@@ -96,6 +107,9 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
      * Add the behaviour to the add genomes popover
      */
     function initPopoverBehaviour() {
+        // hide the popover
+        $popover = $(".popover-content #ownGenomeName").parents(".popover");
+
         // enable the tooltips
         $(".popover-content #ownGenomeName").tooltip({placement : "right", trigger : "hover", container : "body"});
         $(".popover-content #ownGenomeFile").parents(".input-group").tooltip({placement : "right", trigger : "hover", container : "body"});
@@ -164,6 +178,11 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         $(".popover-content #processOwnGenomeButton").removeAttr("disabled");
         $(".popover-content #processOwnGenomeButton").removeClass("hide");
         $(".popover-content #ownGenomeProgress").addClass("hide");
+
+        // hide the popover
+        if (!$popover.hasClass("hide")) {
+            $myGenomesButton.click();
+        }
     }
 
     /**
