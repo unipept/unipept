@@ -56,6 +56,9 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         // add pop-over behaviour
         $myGenomesButton.on("shown.bs.popover", initPopoverBehaviour);
 
+        // help
+        $("#my-genomes-help").tooltip({placement : "right", container : "body"});
+
         // set visible
         $myGenomesDiv.removeClass("hide");
     }
