@@ -106,7 +106,7 @@ class ApiRunner < Cri::CommandRunner
             end
             write_to_output formatter.format(sub_result)
           else
-            path = File.expand_path(File.join(Dir.home, "unipept.log")
+            path = File.expand_path(File.join(Dir.home, "unipept.log"))
             File.open(path, "w") do
               f.write resp.response_body
             end
