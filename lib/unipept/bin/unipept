@@ -107,7 +107,7 @@ class ApiRunner < Cri::CommandRunner
             write_to_output formatter.format(sub_result)
           else
             path = File.expand_path(File.join(Dir.home, "unipept.log"))
-            File.open(path, "w") do
+            File.open(path, "w") do |f|
               f.write resp.response_body
             end
             $stderr.puts "API request failed! log can be found in #{path}"
