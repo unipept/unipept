@@ -6,12 +6,15 @@ class Api::ApiController < ApplicationController
   before_filter :set_query, only: [:single, :lca]
 
   def set_params
-    @sequences = params[:sequences].map(&:chomp)
+    @sequences = params[:sequences]
+    if @sequences === Hash
+      @sequences = @sequences.values
+    end
+
     @equate_il = (!params[:equate_il].blank? && params[:equate_il] == 'true')
     @full_lineage = (!params[:full_lineage].blank? && params[:full_lineage] == 'true')
     @names = (!params[:names].blank? && params[:names] == 'true')
 
-    rel_name = @equate_il ? :lca_il_t : :lca_t
     @sequences.each {|s| s.gsub!(/I/,'L') } if @equate_il
   end
 
