@@ -245,7 +245,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
         newRows,
         td;
 
-        text = "Genome";
+        text = "Genomes";
         if (lca !== "") {
             text += " (LCA: " + lca + ")";
         }
