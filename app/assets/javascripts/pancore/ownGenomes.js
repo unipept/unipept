@@ -41,11 +41,11 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         // init popover
         $myGenomesButton.popover({
             html : true,
-            title: function() {
-              return $("#owngenomes-popover-head").html();
+            title: function () {
+                return $("#owngenomes-popover-head").html();
             },
-            content: function() {
-              return $("#owngenomes-popover-content").html();
+            content: function () {
+                return $("#owngenomes-popover-content").html();
             },
             container: "body"
         });
@@ -54,7 +54,7 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         $("#remove-my-genomes").click(removeAllGenomes);
 
         // add pop-over behaviour
-        $myGenomesButton.on("shown.bs.popover", initPopoverBehaviour)
+        $myGenomesButton.on("shown.bs.popover", initPopoverBehaviour);
 
         // set visible
         $myGenomesDiv.removeClass("hide");
@@ -98,8 +98,8 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         $(".popover-content #ownGenomeFile").parents(".input-group").tooltip({placement : "right", trigger : "hover", container : "body"});
 
         // enable file chooser
-        $(".popover-content #ownGenomeFile").on('change', function() {
-            var $input = $(this)
+        $(".popover-content #ownGenomeFile").on('change', function () {
+            var $input = $(this),
                 numFiles = $input.get(0).files ? $input.get(0).files.length : 1,
                 label = $input.val().replace(/\\/g, '/').replace(/.*\//, ''),
                 log = numFiles > 1 ? numFiles + ' files selected' : label;
@@ -241,7 +241,7 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
             g;
 
         $myGenomesTable.empty();
-        if (genomeList.length == 0) {
+        if (genomeList.length === 0) {
             $myGenomesTable.append("<tr class='info'><td colspan='4' class='info'><span class='glyphicon glyphicon-chevron-up'></span> Click the plus-button to add your own genomes.</td></tr>");
         } else {
             for (i = 0; i < genomeList.length; i++) {
@@ -310,12 +310,12 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
      * @param <jQuery> $node jQuery object of the dom element were dragging
      */
     function dragHelp($node) {
-        var returnString = "<tbody class='dragging'>"
-            + "<tr><td class='handle'><span class='glyphicon glyphicon-resize-vertical'></span></td><td class='data name' data-bioproject_id='"
-            + $node.data("genomeid") + "'>"
-            + $node.find(".name").text()
-            + "</td><td class='data status'></td><td></td></tr>"
-            + "</tbody>";
+        var returnString = "<tbody class='dragging'>" +
+            "<tr><td class='handle'><span class='glyphicon glyphicon-resize-vertical'></span></td><td class='data name' data-bioproject_id='" +
+            $node.data("genomeid") + "'>" +
+            $node.find(".name").text() +
+            "</td><td class='data status'></td><td></td></tr>" +
+            "</tbody>";
         return $(returnString);
     }
 
