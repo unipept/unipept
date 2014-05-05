@@ -1,7 +1,7 @@
 set :application, "unipept-web"
 set :repo_url,  "ssh://git@github.ugent.be/bmesuere/unipept.git"
 
-set :deploy_to, "/home/bmesuere/test-deploy"
+set :deploy_to, "/home/bmesuere/rails"
 
 # set :linked_files, %w{config/database.yml}
 set :linked_dirs, %w{bin log tmp tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
