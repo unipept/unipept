@@ -124,6 +124,9 @@ class ApiRunner < Cri::CommandRunner
 
     end
 
+    hydra.run
+
+
     begin
       download_xml(result)
     rescue
