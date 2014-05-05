@@ -14,7 +14,7 @@ class Taxon < ActiveRecord::Base
 
   belongs_to :lineage, :foreign_key  => "id", :primary_key  => "taxon_id", :class_name   => 'Lineage'
 
-  scope :with_genome, select("DISTINCT taxons.*").joins("RIGHT JOIN uniprot_entries ON taxons.id = uniprot_entries.taxon_id")
+  scope :with_genome, -> { select("DISTINCT taxons.*").joins("RIGHT JOIN uniprot_entries ON taxons.id = uniprot_entries.taxon_id") }
 
   #sorting order
   def <=>(o)
