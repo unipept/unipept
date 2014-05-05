@@ -1,7 +1,7 @@
 #!usr/bin/env ruby
 
 require 'cri'
-require 'faraday'
+require 'typhoeus'
 require 'yaml'
 require 'json'
 require 'fileutils'
@@ -45,7 +45,7 @@ class ApiRunner < Cri::CommandRunner
   end
 
   def batch_size
-    10
+    100
   end
 
   def url_options(sub_part)
@@ -73,30 +73,55 @@ class ApiRunner < Cri::CommandRunner
     printed_header = false
     result = []
 
+    hydra = Typhoeus::Hydra.new(max_concurrency: 20)
+    num_req = 0
+
     peptide_iterator(peptides) do |sub_division|
       if $interupted
         $stdin.close
         exit 1
       end
-      begin
-        sub_result = JSON[Faraday.post(@url, url_options(sub_division)).body]
-      rescue
-        STDERR.puts "API endpoint gave an error, exiting."
-        exit 1
+
+      request = Typhoeus::Request.new(
+        @url,
+        method: :post,
+        body: url_options(sub_division)
+      )
+      request.on_complete do |resp|
+        if resp.timed_out?
+          $stderr.puts "request timed out, continuing anyway, but results might be incomplete"
+        else
+          if resp.succes?
+            # if JSON parsing goes wrong
+            sub_result = JSON[resp.response_body] rescue []
+            sub_result = [sub_result] if not sub_result.kind_of? Array
+
+            sub_result.map! {|r| r.select! {|k,v| filter_list.any? {|f| f.match k } } } if ! filter_list.empty?
+
+            result << sub_result
+
+            if ! printed_header
+              write_to_output formatter.header(sub_result)
+              printed_header = true
+            end
+            write_to_output formatter.format(sub_result)
+          else
+            path = File.expand_path(File.join(Dir.home, "unipept.log")
+            File.open(path, "w") do
+              f.write resp.response_body
+            end
+            $stderr.puts "API request failed! log can be found in #{path}"
+          end
+        end
+      end
+      hydra.queue request
+
+      num_req += 1
+      if num_req == 20
+        hydra.run
+        num_req = 0
       end
 
-      sub_result = [sub_result] if not sub_result.kind_of? Array
-
-      sub_result.map! {|r| r.select! {|k,v| filter_list.any? {|f| f.match k } } } if ! filter_list.empty?
-
-      result << sub_result
-
-      if ! printed_header
-        write_to_output formatter.header(sub_result)
-        printed_header = true
-      end
-
-      write_to_output formatter.format(sub_result)
     end
 
     begin
