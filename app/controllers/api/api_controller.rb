@@ -10,13 +10,14 @@ class Api::ApiController < ApplicationController
     if @sequences.kind_of? Hash
       @sequences = @sequences.values
     end
+    @sequences.map! &:chomp
 
     @equate_il = (!params[:equate_il].blank? && params[:equate_il] == 'true')
     @full_lineage = (!params[:full_lineage].blank? && params[:full_lineage] == 'true')
     @names = (!params[:names].blank? && params[:names] == 'true')
     logger.debug @equate_il
 
-    @sequences.map! {|s| s.chomp.gsub(/I/,'L') } if @equate_il
+    @sequences.each {|s| s.gsub!(/I/,'L') } if @equate_il
   end
 
   def set_query
