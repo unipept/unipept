@@ -15,7 +15,6 @@ class Api::ApiController < ApplicationController
     @equate_il = (!params[:equate_il].blank? && params[:equate_il] == 'true')
     @full_lineage = (!params[:full_lineage].blank? && params[:full_lineage] == 'true')
     @names = (!params[:names].blank? && params[:names] == 'true')
-    logger.debug @equate_il
 
     @sequences.each {|s| s.gsub!(/I/,'L') } if @equate_il
   end
