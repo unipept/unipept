@@ -4,17 +4,26 @@ set :repo_url,  "ssh://git@github.ugent.be/bmesuere/unipept.git"
 set :deploy_to, "/home/bmesuere/rails"
 
 # set :linked_files, %w{config/database.yml}
-set :linked_dirs, %w{bin log tmp tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
+set :linked_dirs, %w{bin log tmp vendor/bundle public/system}
 
 namespace :deploy do
 
   desc 'Restart application'
-  task :passenger do
+  task :restart do
     on roles(:web) do
       execute :touch, release_path.join('tmp','restart.txt')
     end
   end
 
-  after :publishing, :passenger
+  after :restart, :clear_cache do
+    on roles(:web), in: :groups, limit: 3, wait: 10 do
+      # Here we can do anything such as:
+      # within release_path do
+      #   execute :rake, 'cache:clear'
+      # end
+    end
+  end
+
+  after :finishing, 'deploy:cleanup'
 
 end

@@ -4,6 +4,9 @@ log/*.log
 tmp/**/*
 tmp/*
 !tmp/sessions
+!tmp/pids
+!tmp/cache
+!tmp/sockets
 doc/api
 doc/app
 *.swp
