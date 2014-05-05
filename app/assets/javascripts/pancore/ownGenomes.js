@@ -246,7 +246,7 @@ var constructOwnGenomes = function constructOwnGenomes(args) {
         } else {
             for (i = 0; i < genomeList.length; i++) {
                 g = genomes[genomeList[i]];
-                $myGenomesTable.append("<tr data-genomeid='" + g.id + "'><td><span class='glyphicon glyphicon-move'></span></td><td class='name'>" + g.name + "</td><td></td><td class='button'><a class='btn btn-default btn-xs remove-my-genome' title='remove genome'><span class='glyphicon glyphicon-trash'></span></a></td></<tr>");
+                $myGenomesTable.append("<tr class='own' data-genomeid='" + g.id + "'><td><span class='glyphicon glyphicon-move'></span></td><td class='name'>" + g.name + "</td><td></td><td class='button'><a class='btn btn-default btn-xs remove-my-genome' title='remove genome'><span class='glyphicon glyphicon-trash'></span></a></td></<tr>");
             }
             $(".remove-my-genome").click(function () {
                 removeGenome($(this).parents("tr").data("genomeid"));

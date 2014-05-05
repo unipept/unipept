@@ -54,7 +54,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
             activeClass: "acceptDrop",
             hoverClass: "willDrop",
             tolerance: "pointer",
-            accept: "li,tr",
+            accept: "li,tr.own",
             drop: function (event, ui) {
                 var g = [];
                 ui.helper.find(".data.name").each(function () {
