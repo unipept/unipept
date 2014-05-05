@@ -7,15 +7,16 @@ class Api::ApiController < ApplicationController
 
   def set_params
     @sequences = params[:sequences]
-    if @sequences === Hash
+    if @sequences.kind_of? Hash
       @sequences = @sequences.values
     end
 
     @equate_il = (!params[:equate_il].blank? && params[:equate_il] == 'true')
     @full_lineage = (!params[:full_lineage].blank? && params[:full_lineage] == 'true')
     @names = (!params[:names].blank? && params[:names] == 'true')
+    logger.debug @equate_il
 
-    @sequences.each {|s| s.gsub!(/I/,'L') } if @equate_il
+    @sequences.map! {|s| s.chomp.gsub(/I/,'L') } if @equate_il
   end
 
   def set_query
@@ -37,9 +38,7 @@ class Api::ApiController < ApplicationController
     @result = {}
     lookup = Hash.new { |h,k| h[k] = Set.new }
     ids = []
-    @sequences.pluck_all(:sequence, :taxon_id).each do |e|
-      taxon_id = e['taxon_id']
-      sequence = e['sequence']
+    @sequences.pluck(:sequence, :taxon_id).each do |sequence,taxon_id|
       lookup[taxon_id] << sequence
       ids.append(taxon_id)
       @result[sequence] = Set.new
@@ -61,10 +60,9 @@ class Api::ApiController < ApplicationController
     lookup = Hash.new { |h,k| h[k] = Set.new }
     ids = []
     @sequences = Sequence.where(sequence: @sequences)
-    @sequences.pluck_all(:sequence, :lca_il).each do |e|
-      lca_il = e['lca_il']
+    @sequences.pluck(:sequence, :lca_il).each do |sequence, lca_il|
       ids.append lca_il
-      lookup[lca_il] << e['sequence']
+      lookup[lca_il] << sequence
     end
 
     ids = ids.uniq.reject(&:nil?).sort
@@ -96,8 +94,8 @@ class Api::ApiController < ApplicationController
     @sequences = Sequence.joins(:peptides => :uniprot_entry).
       where(sequence: @sequences)
 
-    @sequences.pluck_all(:sequence, "uniprot_entries.uniprot_accession_number").each do |e|
-      @result[e['sequence']] << e['uniprot_accession_number']
+    @sequences.pluck(:sequence, "uniprot_entries.uniprot_accession_number").each do |sequence, uniprot_id|
+      @result[Sequence] << uniprot_id
     end
 
     respond_with(@result)
