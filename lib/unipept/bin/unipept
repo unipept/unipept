@@ -91,7 +91,7 @@ class ApiRunner < Cri::CommandRunner
         if resp.timed_out?
           $stderr.puts "request timed out, continuing anyway, but results might be incomplete"
         else
-          if resp.succes?
+          if resp.success?
             # if JSON parsing goes wrong
             sub_result = JSON[resp.response_body] rescue []
             sub_result = [sub_result] if not sub_result.kind_of? Array
