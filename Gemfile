@@ -64,8 +64,12 @@ end
 # gem 'unicorn'
 
 # Deploy with Capistrano
-gem 'capistrano', '2.15.5'
-
+gem 'capistrano', '~> 3.0.0'
+group :development do
+  gem 'capistrano-rails',   '~> 1.1', require: false
+  gem 'capistrano-bundler', '~> 1.1', require: false
+  gem 'capistrano-rvm', require: false
+end
 # To use debugger (ruby-debug for Ruby 1.8.7+, ruby-debug19 for Ruby 1.9.2+)
 # gem 'ruby-debug'
 # gem 'ruby-debug19'
