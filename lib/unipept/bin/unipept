@@ -117,7 +117,7 @@ class ApiRunner < Cri::CommandRunner
       hydra.queue request
 
       num_req += 1
-      if num_req == 20
+      if num_req == 200
         hydra.run
         num_req = 0
       end
@@ -205,6 +205,10 @@ class Pept2prot < ApiRunner
         end
       end
     end
+  end
+
+  def batch_size
+    10
   end
 
 end

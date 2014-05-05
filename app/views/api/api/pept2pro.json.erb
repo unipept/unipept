@@ -2,7 +2,8 @@
   Oj.dump(@result.map do |k, v|
     v.map do |u|
       { "sequence" => k,
-        "uniprot_id" => u,
+        "uniprot_accession_number" => u.uniprot_accession_number,
+        "taxon_id" => u.taxon_id,
       }
     end
   end.flatten).html_safe

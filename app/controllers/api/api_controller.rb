@@ -89,14 +89,29 @@ class Api::ApiController < ApplicationController
   end
 
   def pept2pro
-    @result = Hash.new { |h,k| h[k] = Set.new }
+    @result = Hash.new
+    lookup = Hash.new { |h,k| h[k] = Set.new }
 
     @sequences = Sequence.joins(:peptides => :uniprot_entry).
       where(sequence: @sequences)
 
-    @sequences.pluck(:sequence, "uniprot_entries.uniprot_accession_number").each do |sequence, uniprot_id|
-      @result[Sequence] << uniprot_id
+    ids = []
+    @sequences.pluck(:sequence, "uniprot_entries.id").each do |sequence, uniprot_id|
+      ids.append uniprot_id
+      lookup[uniprot_id] << sequence
+      @result[sequence] = Set.new
     end
+
+    ids = ids.uniq.reject(&:nil?).sort
+    # this does not work for now, incorrect setup of relations
+    UniprotEntry. #includes(:refseq_cross_references, :ec_cross_references, :go_cross_references).
+      where(id: ids).find_in_batches do |group|
+
+      group.each do |uni|
+        lookup[uni.id].each {|s| @result[s] << uni}
+      end
+    end
+
 
     respond_with(@result)
   end
