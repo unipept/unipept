@@ -77,7 +77,11 @@ class Api::ApiController < ApplicationController
   end
 
   def taxa2lca
-    @taxon_ids = params[:taxon_ids].map(&:chomp).uniq.sort
+    taxon_ids = params[:taxon_ids]
+    if taxon_ids.kind_of? Hash
+      taxon_ids = taxon_ids.values
+    end
+    @taxon_ids = taxon_ids.map(&:chomp).uniq.sort
     @equate_il = (!params[:equate_il].blank? && params[:equate_il] == 'true')
     @full_lineage = (!params[:full_lineage].blank? && params[:full_lineage] == 'true')
 
