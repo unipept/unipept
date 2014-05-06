@@ -197,7 +197,7 @@ class Pept2prot < ApiRunner
   end
 
   def url_options(sub_part)
-    {:sequences => sub_part, :equate_il => options[:equate]}
+    {:sequences => sub_part, :equate_il => options[:equate], :extra => options[:all]}
   end
 
   def download_xml(result)
@@ -294,6 +294,7 @@ root_cmd.define_command('pept2prot') do
   flag :e, :equate, "equate I and L"
   option :s, :select, "select the attributes", :argument => :required, :multiple => true
   option :x, :xml, "download uniprot record in specified directory", :argument => :required
+  flag :a, :all, "include all information. WARNING: will take much longer!"
 
   runner Pept2prot
 end

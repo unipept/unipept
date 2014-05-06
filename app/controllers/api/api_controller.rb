@@ -117,7 +117,7 @@ class Api::ApiController < ApplicationController
 
       ids = ids.uniq.reject(&:nil?).sort
       # this does not work for now, incorrect setup of relations
-      UniprotEntry. #includes(:refseq_cross_references, :ec_cross_references, :go_cross_references).
+      UniprotEntry.includes(:ec_cross_references, :go_cross_references).
         where(id: ids).find_in_batches do |group|
 
         group.each do |uni|
