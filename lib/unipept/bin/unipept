@@ -100,11 +100,14 @@ class ApiRunner < Cri::CommandRunner
 
             result << sub_result
 
-            if ! printed_header
-              write_to_output formatter.header(sub_result)
-              printed_header = true
+            # wait till it's our turn to write
+            BatchOrder.instance.wait(num_req) do
+              if ! printed_header
+                write_to_output formatter.header(sub_result)
+                printed_header = true
+              end
+              write_to_output formatter.format(sub_result)
             end
-            write_to_output formatter.format(sub_result)
           else
             path = File.expand_path(File.join(Dir.home, "unipept.log"))
             File.open(path, "w") do |f|
@@ -117,9 +120,8 @@ class ApiRunner < Cri::CommandRunner
       hydra.queue request
 
       num_req += 1
-      if num_req == 200
+      if num_req % 200 == 0
         hydra.run
-        num_req = 0
       end
 
     end
