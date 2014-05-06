@@ -78,7 +78,7 @@ class ApiRunner < Cri::CommandRunner
     hydra = Typhoeus::Hydra.new(max_concurrency: 20)
     num_req = 0
 
-    peptide_iterator(peptides) do |sub_division|
+    peptide_iterator(peptides).with_index do |sub_division, i|
       if $interupted
         $stdin.close
         exit 1
@@ -103,7 +103,7 @@ class ApiRunner < Cri::CommandRunner
             result << sub_result
 
             # wait till it's our turn to write
-            batch_order.wait(num_req) do
+            batch_order.wait(i) do
               if ! printed_header
                 write_to_output formatter.header(sub_result)
                 printed_header = true

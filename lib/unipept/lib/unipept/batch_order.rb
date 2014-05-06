@@ -2,6 +2,8 @@ module Unipept
 
   class BatchOrder
 
+    attr_reader :order
+
     def initialize
       @order = {}
       @current = 0
