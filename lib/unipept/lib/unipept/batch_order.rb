@@ -2,7 +2,7 @@ module Unipept
 
   class BatchOrder
 
-    include 'singleton'
+    include Singleton
 
     def initialize
       @order = {}
