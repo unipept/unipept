@@ -1,10 +1,21 @@
 <%=
-  Oj.dump(@result.map do |k, v|
-    v.map do |u|
-      { "sequence" => k,
-        "uniprot_accession_number" => u.uniprot_accession_number,
-        "taxon_id" => u.taxon_id,
-      }
-    end
-  end.flatten).html_safe
+  if @extra_info
+    Oj.dump(@result.map do |k, v|
+      v.map do |u|
+        { "sequence" => k,
+          "uniprot_accession_number" => u.uniprot_accession_number,
+          "taxon_id" => u.taxon_id,
+        }
+      end
+    end.flatten).html_safe
+  else
+    Oj.dump(@result.map do |k, v|
+      v.map do |uni,tax|
+        { "sequence" => k,
+          "uniprot_accession_number" => uni,
+          "taxon_id" => tax,
+        }
+      end
+    end.flatten).html_safe
+  end
 %>

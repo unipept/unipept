@@ -93,29 +93,37 @@ class Api::ApiController < ApplicationController
   end
 
   def pept2pro
-    @result = Hash.new
+    @extra_info = (!params[:extra].blank? && params[:extra] == 'true')
     lookup = Hash.new { |h,k| h[k] = Set.new }
 
     @sequences = Sequence.joins(:peptides => :uniprot_entry).
       where(sequence: @sequences)
 
-    ids = []
-    @sequences.pluck(:sequence, "uniprot_entries.id").each do |sequence, uniprot_id|
-      ids.append uniprot_id
-      lookup[uniprot_id] << sequence
-      @result[sequence] = Set.new
-    end
+    if @extra_info
+      @result = Hash.new
+      # Perform joins and load objects (expensive)
+      ids = []
+      @sequences.pluck(:sequence, "uniprot_entries.id").each do |sequence, uniprot_id|
+        ids.append uniprot_id
+        lookup[uniprot_id] << sequence
+        @result[sequence] = Set.new
+      end
 
-    ids = ids.uniq.reject(&:nil?).sort
-    # this does not work for now, incorrect setup of relations
-    UniprotEntry. #includes(:refseq_cross_references, :ec_cross_references, :go_cross_references).
-      where(id: ids).find_in_batches do |group|
+      ids = ids.uniq.reject(&:nil?).sort
+      # this does not work for now, incorrect setup of relations
+      UniprotEntry. #includes(:refseq_cross_references, :ec_cross_references, :go_cross_references).
+        where(id: ids).find_in_batches do |group|
 
-      group.each do |uni|
-        lookup[uni.id].each {|s| @result[s] << uni}
+        group.each do |uni|
+          lookup[uni.id].each {|s| @result[s] << uni}
+        end
+      end
+    else
+      @result = Hash.new { |h,k| h[k] = Set.new }
+      @sequences.pluck(:sequence, "uniprot_entries.uniprot_accession_number", "uniprot_entries.taxon_id").each do |sequence, uniprot_id, taxon_id|
+        @result[sequence] << [uniprot_id, taxon_id]
       end
     end
-
 
     respond_with(@result)
   end
