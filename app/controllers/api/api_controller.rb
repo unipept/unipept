@@ -5,20 +5,20 @@ class Api::ApiController < ApplicationController
   before_filter :set_params, only: [:single, :lca, :pept2pro]
   before_filter :set_query, only: [:single, :lca]
 
+
   def set_params
     @sequences = params[:sequences]
     if @sequences.kind_of? Hash
       @sequences = @sequences.values
     end
     @sequences.map! &:chomp
+    @input_order = @sequences.dup
 
     @equate_il = (!params[:equate_il].blank? && params[:equate_il] == 'true')
     @full_lineage = (!params[:full_lineage].blank? && params[:full_lineage] == 'true')
     @names = (!params[:names].blank? && params[:names] == 'true')
 
-    @sequences.each {|s| s.gsub!(/I/,'L') } if @equate_il
-    @input_order = @sequences.dup
-    logger.debug @input_order
+    @sequences = @sequences.map {|s| s.gsub(/I/,'L') } if @equate_il
   end
 
   def set_query
@@ -54,6 +54,8 @@ class Api::ApiController < ApplicationController
       end
     end
 
+    filter_input_order
+
     respond_with(@result)
   end
 
@@ -74,6 +76,8 @@ class Api::ApiController < ApplicationController
         lookup[t.id].each { |s| @result[s] = t }
       end
     end
+
+    filter_input_order
 
     respond_with(@result)
   end
@@ -127,7 +131,16 @@ class Api::ApiController < ApplicationController
       end
     end
 
+    filter_input_order
+
     respond_with(@result)
+  end
+
+  def filter_input_order
+    @input_order.select! do |s|
+      key = @equate_il ? s.gsub(/I/,'L') : s
+      @result.has_key? key
+    end
   end
 
 end
