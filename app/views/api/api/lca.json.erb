@@ -1,28 +1,30 @@
 <%=
-  Oj.dump(@result.map do |k,p|
-    if @full_lineage
-      lineage = p.lineage
-      ids = Lineage::ORDER.map {|o| lineage.try(o)}
+  Oj.dump(
+    @input_order.map do |k|
+      p = @result[k]
+      if @full_lineage
+        lineage = p.lineage
+        ids = Lineage::ORDER.map {|o| lineage.try(o)}
 
-      if @names
-        names = Lineage::ORDER.map {|s| "#{s}_name"}
-        lineage_info = Hash[names.zip(lineage.to_a)]
+        if @names
+          names = Lineage::ORDER.map {|s| "#{s}_name"}
+          lineage_info = Hash[names.zip(lineage.to_a)]
+        end
+
+        names = Lineage::ORDER.map {|s| "#{s}_id"}
+        lineage_ids = Hash[names.zip(ids)]
       end
-
-      names = Lineage::ORDER.map {|s| "#{s}_id"}
-      lineage_ids = Hash[names.zip(ids)]
-    end
-    res = { "sequence" => k,
-            "taxon_id" => p.id,
-            "taxon_name" => p.name,
-            "taxon_parent_id" => p.parent_id,
-            "taxon_rank" => p.rank,
-    }
-    if @full_lineage
-      res.merge!(lineage_info) if @names
-      res.merge!(lineage_ids)
-    else
-      res
-    end
+      res = { "sequence" => k,
+              "taxon_id" => p.id,
+              "taxon_name" => p.name,
+              "taxon_parent_id" => p.parent_id,
+              "taxon_rank" => p.rank,
+      }
+      if @full_lineage
+        res.merge!(lineage_info) if @names
+        res.merge!(lineage_ids)
+      else
+        res
+      end
   end).html_safe
 %>

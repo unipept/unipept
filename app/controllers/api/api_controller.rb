@@ -17,6 +17,8 @@ class Api::ApiController < ApplicationController
     @names = (!params[:names].blank? && params[:names] == 'true')
 
     @sequences.each {|s| s.gsub!(/I/,'L') } if @equate_il
+    @input_order = @sequences.dup
+    logger.debug @input_order
   end
 
   def set_query

@@ -1,6 +1,8 @@
 <%=
   if @extra_info
-    Oj.dump(@result.map do |k, v|
+    Oj.dump(
+      @input_order.map do |k|
+      v = @result[k]
       v.map do |u|
         { "sequence" => k,
           "uniprot_accession_number" => u.uniprot_accession_number,
@@ -9,7 +11,9 @@
       end
     end.flatten).html_safe
   else
-    Oj.dump(@result.map do |k, v|
+    Oj.dump(
+      @input_order.map do |k|
+      v = @result[k]
       v.map do |uni,tax|
         { "sequence" => k,
           "uniprot_accession_number" => uni,
