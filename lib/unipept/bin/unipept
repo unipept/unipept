@@ -70,6 +70,8 @@ class ApiRunner < Cri::CommandRunner
     filter_list = filter_list.map {|f| glob_to_regex(f) }
     output = STDOUT.tty? ? STDOUT : STDERR
 
+    batch_order = Unipept::BatchOrder.new
+
     printed_header = false
     result = []
 
@@ -101,7 +103,7 @@ class ApiRunner < Cri::CommandRunner
             result << sub_result
 
             # wait till it's our turn to write
-            BatchOrder.instance.wait(num_req) do
+            batch_order.wait(num_req) do
               if ! printed_header
                 write_to_output formatter.header(sub_result)
                 printed_header = true

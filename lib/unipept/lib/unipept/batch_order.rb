@@ -2,8 +2,6 @@ module Unipept
 
   class BatchOrder
 
-    include Singleton
-
     def initialize
       @order = {}
       @current = 0
