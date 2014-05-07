@@ -78,7 +78,7 @@ class ApiRunner < Cri::CommandRunner
     hydra = Typhoeus::Hydra.new(max_concurrency: 20)
     num_req = 0
 
-    peptide_iterator(peptides).with_index do |sub_division, i|
+    peptide_iterator(peptides) do |sub_division, i|
       if $interupted
         $stdin.close
         exit 1
@@ -159,7 +159,7 @@ class ApiRunner < Cri::CommandRunner
   end
 
   def peptide_iterator(peptides, &block)
-    peptides.each_slice(batch_size, &block)
+    peptides.each_slice(batch_size).with_index(&block)
   end
 
   private
@@ -181,7 +181,7 @@ class Taxa2lca < ApiRunner
   end
 
   def peptide_iterator(peptides, &block)
-    block.call(peptides.to_a)
+    block.call(peptides.to_a, 0)
   end
 
   def batch_size
