@@ -20,6 +20,9 @@ self.addEventListener('message', function (e) {
     case 'loadData':
         loadData(data.msg.bioproject_id, data.msg.name);
         break;
+    case 'loadUserData':
+        loadUserData(data.msg.id, data.msg.name, data.msg.ids);
+        break;
     case 'removeData':
         removeData(data.msg.bioproject_id, data.msg.order, data.msg.start);
         break;
@@ -396,6 +399,18 @@ function loadData(bioproject_id, name) {
 }
 
 /**
+ * Integrates a user-uploaded genome into the visualisation
+ *
+ * @params <Number> id An id
+ * @params <String> name The name of the genome
+ * @params <Array> ids A list of internal peptide id's
+ */
+function loadUserData(id, name, ids) {
+    ids = JSON.parse(ids);
+    addData(id, name, ids, rank);
+}
+
+/**
  * Processes a list of sequence_id's, received from the webserver and adds it
  * to the data array.
  *
@@ -628,7 +643,7 @@ function getUniqueSequences(newOrder) {
     order = newOrder;
     if (order.length > 0) {
         var s = data[order[0]].peptide_list;
-        getJSONByPost("/pancore/unique_sequences/", "type=uniprot&bioprojects=" + order + "&sequences=[" + s + "]", function (d) {
+        getJSONByPost("/pancore/unique_sequences/", "type=uniprot&bioprojects=" + filterIds(order) + "&sequences=[" + s + "]", function (d) {
             lca = d[0];
             calculateUnicore(d[1]);
         });
@@ -751,6 +766,22 @@ function genomeSimilarity(peptide_list1, peptide_list2) {
  */
 function filterNewickName(name) {
     return name.replace(/ /g, "_").replace(/[,;:]/g, "");
+}
+
+/**
+ * Returns a new array containing only real bioproject ids
+ *
+ * @param <Array> a A list of ids.
+ */
+function filterIds(a) {
+    var r = [],
+        i;
+    for (i = 0; i < a.length; i++) {
+        if (!isNaN(+a[i])) {
+            r.push(a[i]);
+        }
+    }
+    return r;
 }
 
 // union and intersection for sorted arrays

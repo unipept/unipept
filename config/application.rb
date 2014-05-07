@@ -47,7 +47,7 @@ module UnipeptWeb
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1'
 
-    config.assets.precompile += ['workers/pancore_worker.js', 'jit/Extras/excanvas.js']
+    config.assets.precompile += ['workers/pancore_worker.js', 'workers/mygenome_worker.js', 'jit/Extras/excanvas.js']
 
     config.assets.paths << "#{Rails}/vendor/assets/fonts"
 
