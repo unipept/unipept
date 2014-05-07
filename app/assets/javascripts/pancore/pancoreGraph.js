@@ -245,6 +245,12 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         if (mouse.clickId === d.bioproject_id) {
             that.removePopoversAndHighlights();
         } else {
+            var title = genomes[d.bioproject_id].name;
+            if (("" + d.bioproject_id).charAt(0) === "u") {
+                title = "<span class='glyphicon glyphicon-home' title='local genome'></span> " + title;
+            } else {
+                title += " (bioproject <a href='http://www.ncbi.nlm.nih.gov/bioproject/?term=" + d.bioproject_id + "' target='_blank' title='open bioproject page'>" + d.bioproject_id + "</a>)";
+            }
             that.removePopoversAndHighlights();
             that.removeTooltip();
             that.addHighlight(d);
@@ -253,7 +259,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
                 trigger: "manual",
                 position: "right",
                 container: "#popovers",
-                title: genomes[d.bioproject_id].name + " (bioproject <a href='http://www.ncbi.nlm.nih.gov/bioproject/?term=" + d.bioproject_id + "' target='_blank' title='open bioproject page'>" + d.bioproject_id + "</a>)",
+                title: title,
                 content: getPopoverContent(d)});
             target.popover("show");
             target.attr("class", "bar pop");

@@ -27,6 +27,27 @@
     padding-right: 0px;
 }
 
+// Fancy file upload button
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 999px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
 html, body {
     background-color: @gray-lighter;
     height: 100%;
@@ -485,6 +506,29 @@ span.dir {
     margin-bottom: 8px;
 }
 /*** pancore page ***/
+#genome-tabs {
+    margin-top: 5px;
+}
+/*** my genome ***/
+#myGenomeProgress {
+    height: 30px;
+}
+#my-genomes-table .handle {
+    width: 30px;
+}
+#my-genomes-table .name {
+    width: 325px;
+}
+#my-genomes-table .status {
+    width: 30px;
+}
+#my-genomes-table .action {
+    width: 30px;
+}
+#my-genomes-table tbody tr:not(.info) {
+    cursor: url(/openhand.cur) 7 5, pointer;
+}
+
 #buttons-pancore {
     float: right;
 }
@@ -587,8 +631,11 @@ span.dir {
   font-size: 50pt;
   margin-bottom: 0px;
 }
-.nav-tabs>li.active>a:hover {
+#tabs>li.active>a:hover {
   background-color: @nav-link-hover-bg !important;
+}
+.nav-tabs .badge {
+    padding: 2px 7px;
 }
 
 /*** sim matrix ***/

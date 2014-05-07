@@ -23,6 +23,7 @@ var constructPancore = function constructPancore(args) {
         graph,
         matrix,
         table,
+        myGenomes,
         worker;
 
     /*************** Private methods ***************/
@@ -56,7 +57,6 @@ var constructPancore = function constructPancore(args) {
         });
         graph.redraw();
 
-
         // Create the Javascript Worker for background data processing
         worker = new Worker("/assets/workers/pancore_worker.js");
         worker.addEventListener('message', handleWorkerMessage, false);
@@ -67,6 +67,13 @@ var constructPancore = function constructPancore(args) {
             pancore : that,
             table : table
         });
+
+        // Constructs the myGenomes feature
+        if (window.File && window.FileReader && window.FileList) {
+            myGenomes = constructMyGenomes({pancore : that});
+        } else {
+            $("#my-genome-error").removeClass("hide");
+        }
 
         // Initialize the rest of the page
         initSpeciesForm();
@@ -179,7 +186,7 @@ var constructPancore = function constructPancore(args) {
     }
 
     /**
-     * Handles message events for the worker
+     * Handles message events from the worker
      *
      * @param <Event> e The event we want to handle
      */
@@ -225,11 +232,16 @@ var constructPancore = function constructPancore(args) {
     /**
      * Asks the worker to load a genome
      *
-     * @param <Number> bioproject_id The id of the genome we want to load
+     * @param <String> bioproject_id The id of the genome we want to load
      * @param <String> name The name of the genome we want to load
      */
     function loadData(bioproject_id, name) {
-        sendToWorker("loadData", {"bioproject_id" : bioproject_id, "name" : name});
+        if ((bioproject_id + "").charAt(0) === "u") {
+            var ids = myGenomes.getIds(bioproject_id, true);
+            sendToWorker("loadUserData", {"id" : bioproject_id, "name" : name, "ids" : ids});
+        } else {
+            sendToWorker("loadData", {"bioproject_id" : bioproject_id, "name" : name});
+        }
     }
 
     /**

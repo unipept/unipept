@@ -50,15 +50,15 @@ var constructGenomeTable = function constructGenomeTable(args) {
      */
     function initDropAndSort() {
         $("#genomes_table").disableSelection();
-        $("#genomes_table, #pancore_graph").droppable({
+        $("#genomes_table, #pancore_graph, #sim_matrix").droppable({
             activeClass: "acceptDrop",
             hoverClass: "willDrop",
             tolerance: "pointer",
-            accept: "li",
+            accept: "li,tr.own",
             drop: function (event, ui) {
                 var g = [];
                 ui.helper.find(".data.name").each(function () {
-                    g.push({name : $(this).text(), bioproject_id : parseInt($(this).attr("data-bioproject_id"), 10)});
+                    g.push({name : $(this).text(), bioproject_id : $(this).data("bioproject_id")});
                 });
                 if (g.length < 70 || confirm("You're trying to add a lot of genomes (" + g.length + "). Are you sure you want to continue?")) {
                     pancore.addGenomes(g);
@@ -245,11 +245,11 @@ var constructGenomeTable = function constructGenomeTable(args) {
         newRows,
         td;
 
-        text = "Genome";
+        text = "Genomes";
         if (lca !== "") {
             text += " (LCA: " + lca + ")";
         }
-        $("th.name").text(text);
+        $("#genomes_table th.name").text(text);
 
         // Add rows
         tr = d3.select("#genomes_table tbody").selectAll("tr.added")
@@ -278,7 +278,12 @@ var constructGenomeTable = function constructGenomeTable(args) {
                         return "<span class='glyphicon glyphicon-cloud-download'></span>";
                     }
                 } else {
-                    return d.value + " <a href='http://www.ncbi.nlm.nih.gov/bioproject/?term=" + d3.select(this.parentNode).datum().bioproject_id + "' target='_blank' title='open bioproject page'><span class='glyphicon glyphicon-share-alt'></span></a>";
+                    var id = d3.select(this.parentNode).datum().bioproject_id;
+                    if (("" + id).charAt(0) !== "u") {
+                        return d.value + " <a href='http://www.ncbi.nlm.nih.gov/bioproject/?term=" + d3.select(this.parentNode).datum().bioproject_id + "' target='_blank' title='open bioproject page'><span class='glyphicon glyphicon-share-alt'></span></a>";
+                    } else {
+                        return d.value + " <span class='glyphicon glyphicon-home' title='local genome'></span>";
+                    }
                 }
                 return d.value;
             })
