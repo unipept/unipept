@@ -93,15 +93,15 @@
         </div>
       </div>
       <div class="tab-pane fade" id="my-genomes">
-        <div class="alert alert-danger hide" id="own-genome-error">
+        <div class="alert alert-danger hide" id="my-genome-error">
               <strong>Oh snap!</strong> Sorry, your browser doesn't seem to support the File API. Everything should work find in Firefox or Google Chrome.
             </div>
-        <div id="ownGenomes" class="hide">
+        <div id="myGenomes" class="hide">
           <table class="table table-condensed" id="my-genomes-table">
             <thead>
               <tr>
                 <th class="handle">
-                  <button type="button" id='addOwnGenomeButton' class='btn btn-primary btn-xs' data-toggle="button"><span class='glyphicon glyphicon-plus'></span></button>
+                  <button type="button" id='addMyGenomeButton' class='btn btn-primary btn-xs' data-toggle="button"><span class='glyphicon glyphicon-plus'></span></button>
                 </th>
                 <th class="name">My genomes <span id="my-genomes-help" class='glyphicon glyphicon-info-sign' title='You can easily add non-RefSeq genomes yourself! Just select a FASTA-file containing one or more proteins for processing and it will be stored in your browser. After adding them to My genomes, you can simply drag them to the table on the right as you would with other genomes.'></span></th>
                 <th class="status"></th>
@@ -111,28 +111,28 @@
             <tbody>
             </tbody>
           </table>
-          <div id="owngenomes-popover-head" class="hide">Add your own genome</div>
-          <div id="owngenomes-popover-content" class="hide">
+          <div id="mygenomes-popover-head" class="hide">Add your own genome</div>
+          <div id="mygenomes-popover-content" class="hide">
             <form>
             <div class="form-group">
-              <label for="ownGenomeName" class="control-label">Name</label>
-              <input type="text" id="ownGenomeName" class="form-control" placeholder="name" data-toggle="tooltip" title="Enter a name. The one of the organism would be a good choice.">
+              <label for="myGenomeName" class="control-label">Name</label>
+              <input type="text" id="myGenomeName" class="form-control" placeholder="name" data-toggle="tooltip" title="Enter a name. The one of the organism would be a good choice.">
             </div>
             <div class="form-group">
-              <label for="ownGenomeFile" class="control-label">FASTA file</label>
+              <label for="myGenomeFile" class="control-label">FASTA file</label>
               <div class="input-group"  data-toggle="tooltip" title="Select a FASTA file containing one or more protein sequences.">
                 <span class="input-group-btn">
                   <span class="btn btn-default btn-file">
-                    Browse… <input type="file" id="ownGenomeFile">
+                    Browse… <input type="file" id="myGenomeFile">
                   </span>
                 </span>
                 <input type="text" class="form-control" readonly="">
               </div>
             </div>
             <div class="form-group text-center">
-              <button type="button" id="processOwnGenomeButton" class="btn btn-primary form-control">Process FASTA file</button>
+              <button type="button" id="processMyGenomeButton" class="btn btn-primary form-control">Process FASTA file</button>
             </div>
-            <div id="ownGenomeProgress" class="progress progress-striped active hide">
+            <div id="myGenomeProgress" class="progress progress-striped active hide">
               <div class="progress-bar"  role="progressbar" style="width: 45%">
               </div>
             </div>

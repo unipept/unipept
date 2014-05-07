@@ -23,7 +23,7 @@ var constructPancore = function constructPancore(args) {
         graph,
         matrix,
         table,
-        ownGenomes,
+        myGenomes,
         worker;
 
     /*************** Private methods ***************/
@@ -68,11 +68,11 @@ var constructPancore = function constructPancore(args) {
             table : table
         });
 
-        // Constructs the ownGenomes feature
+        // Constructs the myGenomes feature
         if (window.File && window.FileReader && window.FileList) {
-            ownGenomes = constructOwnGenomes({pancore : that});
+            myGenomes = constructMyGenomes({pancore : that});
         } else {
-            $("#own-genome-error").removeClass("hide");
+            $("#my-genome-error").removeClass("hide");
         }
 
         // Initialize the rest of the page
@@ -237,7 +237,7 @@ var constructPancore = function constructPancore(args) {
      */
     function loadData(bioproject_id, name) {
         if ((bioproject_id + "").charAt(0) === "u") {
-            var ids = ownGenomes.getIds(bioproject_id, true);
+            var ids = myGenomes.getIds(bioproject_id, true);
             sendToWorker("loadUserData", {"id" : bioproject_id, "name" : name, "ids" : ids});
         } else {
             sendToWorker("loadData", {"bioproject_id" : bioproject_id, "name" : name});
