@@ -52,7 +52,7 @@ function init_multi(data, data2, equate_il) {
                 window.fullScreenApi.requestFullScreen($("#treeMap").get(0));
             }
         });
-        $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange', resizeFullScreen);
+        $(document).bind(fullScreenApi.fullScreenEventName, resizeFullScreen);
     }
 
     function resizeFullScreen() {

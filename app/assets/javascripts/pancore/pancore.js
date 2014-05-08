@@ -126,7 +126,7 @@ var constructPancore = function constructPancore(args) {
                     window.fullScreenApi.requestFullScreen($("#sim_matrix_wrapper").get(0));
                 }
             });
-            $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange', resizeFullScreen);
+            $(document).bind(fullScreenApi.fullScreenEventName, resizeFullScreen);
         }
     }
 

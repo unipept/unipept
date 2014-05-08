@@ -150,7 +150,7 @@ function init_sequence_show(data, lcaId) {
 
             window.fullScreenApi.requestFullScreen($("#lineageTree").get(0));
         });
-        $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange', resizeFullScreen);
+        $(document).bind(fullScreenApi.fullScreenEventName, resizeFullScreen);
     }
     function resizeFullScreen() {
         setTimeout(function () {
