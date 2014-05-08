@@ -15,13 +15,13 @@ class SequencesController < ApplicationController
     # process the input, convert seq to a valid @sequence
     # seq contains the id of the sequence
     if seq.match(/\A[0-9]+\z/)
-      sequence = Sequence.find_by_id(seq, :include => {:peptides => {:uniprot_entry => :name}})
+      sequence = Sequence.includes({:peptides => {:uniprot_entry => :name}}).find_by_id(seq)
     # seq contains the sequence
     else
       seq.gsub!(/I/,'L') if equate_il
       raise SequenceTooShortError if seq.length < 5
       # try finding it in the database
-      sequence = Sequence.find_by_sequence(seq, :include => {:peptides => {:uniprot_entry => :name}})
+      sequence = Sequence.includes({:peptides => {:uniprot_entry => :name}}).find_by_sequence(seq)
     end
 
     # we didn't find the sequence in the database
