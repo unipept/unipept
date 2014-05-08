@@ -58,12 +58,15 @@ function init_multi(data, data2, equate_il) {
     function resizeFullScreen() {
         if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
             setTimeout(function () {
-                var size = 740;
+                var size = 740,
+                    destination = "body";
                 if (window.fullScreenApi.isFullScreen()) {
                     size = Math.min($(window).height(), $(window).width());
+                    destination = "#sunburst";
                 }
                 $("#sunburst svg").attr("width", size);
                 $("#sunburst svg").attr("height", size);
+                $("#sunburst-tooltip").appendTo(destination);
             }, 1000);
         } else {
             window.tm.canvas.resize($("#treeMap").width(), $("#treeMap").height());
@@ -299,8 +302,9 @@ function initSunburst(data) {
         .append("g")
         .attr("transform", "translate(" + (r + p) + "," + (r + p) + ")"); // set origin to radius center
 
-    var tooltip = d3.select("#sunburst")
+    var tooltip = d3.select("body")
         .append("div")
+        .attr("id", "sunburst-tooltip")
         .attr("class", "tip")
         .style("position", "absolute")
         .style("z-index", "10")
