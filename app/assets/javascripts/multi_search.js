@@ -8,7 +8,7 @@ function init_multi(data, data2, equate_il) {
         $("#nonce").val(nonce);
         $("#downloadDataset").button('loading');
         var downloadTimer = setInterval(function () {
-            if (document.cookie.indexOf(nonce) != -1) {
+            if (document.cookie.indexOf(nonce) !== -1) {
                 $("#downloadDataset").button('reset');
                 clearInterval(downloadTimer);
             }
@@ -253,8 +253,9 @@ function initTree(data, equate_il) {
         delay(function () {
             $("#treeView li").removeClass("match unmatch");
             if (text !== "") {
-                $("#treeView li[data-search*='" + text + "']").addClass("match");
-                $("#treeView li.match").parents("li").addClass("match").addClass("collapsibleListOpen").removeClass("collapsibleListClosed");
+                var $matches = $("#treeView li[data-search*='" + text + "']").addClass("match");
+                $matches.find("li").addClass("match");
+                $matches.parents("li").addClass("match").addClass("collapsibleListOpen").removeClass("collapsibleListClosed");
                 $("#treeView li:not(.match):not(.root)").addClass("unmatch");
             }
         }, 500);
