@@ -1,18 +1,18 @@
 source 'http://rubygems.org'
 
-gem 'rails', '4.0.1'
+gem 'rails', '4.1.1'
 
-gem 'mysql2', '~> 0.3.14'
+gem 'mysql2'
 
 # Protect attributes from mass assignment
-gem "protected_attributes", "~> 1.0.5"
+gem "protected_attributes"
 
 # pagination
-gem 'will_paginate', "~> 3.0.5"
+gem 'will_paginate'
 
 # jquery
-gem 'jquery-rails', "~> 3.0.4"
-gem "jquery-ui-rails", "4.0.2"
+gem 'jquery-rails'
+gem "jquery-ui-rails"
 
 # cas auth
 gem 'rubycas-client', :git => 'git://github.com/bmesuere/rubycas-client.git', :branch => 'master'
@@ -25,18 +25,18 @@ gem 'therubyracer'
 gem 'oj'
 
 # imagemagick bindings
-gem "rmagick", "~> 2.13.2"
+gem "rmagick"
 
 # do HTTP requests
-gem "httparty", "~> 0.12.0"
+gem "httparty"
 
 # The dynamic stylesheet language for the Rails asset pipeline.
 # Allows other gems to extend Less load path.
-gem "less-rails", "~> 2.4.2"
+gem "less-rails"
 
 # Uglifier minifies JavaScript files by wrapping UglifyJS to be accessible
 # in Ruby
-gem "uglifier", "~> 2.3.1"
+gem "uglifier"
 
 group :development do
   gem 'rspec-rails'
@@ -64,7 +64,7 @@ end
 # gem 'unicorn'
 
 # Deploy with Capistrano
-gem 'capistrano', '~> 3.0.0'
+gem 'capistrano', '~> 3.0'
 group :development do
   gem 'capistrano-rails',   '~> 1.1', require: false
   gem 'capistrano-bundler', '~> 1.1', require: false
