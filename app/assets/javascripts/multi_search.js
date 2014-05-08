@@ -69,7 +69,13 @@ function init_multi(data, data2, equate_il) {
                 $("#sunburst-tooltip").appendTo(destination);
             }, 1000);
         } else {
+            var destination = "body";
+            if (window.fullScreenApi.isFullScreen()) {
+                destination = "#treeMap";
+            }
+            $("#_tooltip").appendTo(destination);
             window.tm.canvas.resize($("#treeMap").width(), $("#treeMap").height());
+
         }
     }
 
@@ -160,9 +166,6 @@ function initTreeMap(jsonData) {
     });
     tm.loadJSON(jsonData);
     tm.refresh();
-
-    // move the tooltip div to allow full screen tooltips
-    $("#_tooltip").appendTo("#treeMap");
 
     window.tm = tm;
 }
