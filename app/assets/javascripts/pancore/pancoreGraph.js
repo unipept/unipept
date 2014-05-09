@@ -710,17 +710,24 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .attr("class", "legend")
             .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; })
             .on("click", legendClick);
-        legend.append("rect")
+        var legendRects = legend.append("rect")
             .attr("x", 30)
-            .attr("width", 8)
-            .attr("height", 8)
-            .style("shape-rendering", "crispEdges")
+            .attr("rx", 3)
+            .attr("ry", 3)
             .style("fill", function (d) { return d.color; });
-        legend.append("text")
-            .attr("x", 40)
-            .attr("y", 8)
+        var legendTexts = legend.append("text")
+            .attr("x", 33)
+            .attr("y", 11)
             .style("text-anchor", "start")
+            .style("fill", "white")
             .text(function (d) { return d.name; });
+        legendRects.each(function () {
+            var box = $(this).parent().find("text")[0].getBBox();
+            d3.select(this)
+                .attr("width", Math.ceil(box.width) + 6)
+                .attr("height", Math.ceil(box.height));
+        });
+
         $(".legend").disableSelection();
 
         // draw the lines
@@ -813,6 +820,26 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         // set the domains
         xScale.domain(graphData.map(function (d) { return d.bioproject_id; }));
         yScale.domain([0, getMaxVisibleDatapoint()]);
+
+        // update the legend
+        svg.selectAll(".legend rect").transition()
+            .duration(transitionDuration)
+            .style("fill", function (d) {
+                if (toggles[d.toggle]) {
+                    return d.color;
+                } else {
+                    return "white";
+                }
+            });
+        svg.selectAll(".legend text").transition()
+            .duration(transitionDuration)
+            .style("fill", function (d) {
+                if (toggles[d.toggle]) {
+                    return "white";
+                } else {
+                    return d.color;
+                }
+            });
 
         // update the axes
         svg.select(".x.axis").transition().duration(transitionDuration).call(xAxis);
