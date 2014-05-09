@@ -813,6 +813,8 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * Updates the pancore graph
      */
     that.update = function update() {
+        that.removePopoversAndHighlights();
+
         // Prepare for line transition
         var oldPanDatum = svg.select(".line.pan").datum(),
             oldCoreDatum = svg.select(".line.core").datum();
