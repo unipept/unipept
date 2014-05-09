@@ -4,6 +4,7 @@ class Api::ApiController < ApplicationController
 
   before_filter :set_params, only: [:single, :lca, :pept2pro]
   before_filter :set_query, only: [:single, :lca]
+  before_filter :set_sequences, only: [:single, :pept2pro]
 
 
   def set_params
@@ -31,12 +32,15 @@ class Api::ApiController < ApplicationController
     else
       @query = Taxon
     end
+  end
 
+  def set_sequences
+    rel_name = @equate_il ? :peptides : :original_peptides
+    @sequences = Sequence.joins(rel_name => :uniprot_entry).
+      where(sequence: @sequences)
   end
 
   def single
-    @sequences = Sequence.joins(:peptides => :uniprot_entry).
-      where(sequence: @sequences)
     @result = {}
     lookup = Hash.new { |h,k| h[k] = Set.new }
     ids = []
@@ -101,9 +105,6 @@ class Api::ApiController < ApplicationController
   def pept2pro
     @extra_info = (!params[:extra].blank? && params[:extra] == 'true')
     lookup = Hash.new { |h,k| h[k] = Set.new }
-
-    @sequences = Sequence.joins(:peptides => :uniprot_entry).
-      where(sequence: @sequences)
 
     if @extra_info
       @result = Hash.new
