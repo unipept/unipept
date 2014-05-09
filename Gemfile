@@ -12,7 +12,7 @@ gem 'will_paginate'
 
 # jquery
 gem 'jquery-rails'
-gem "jquery-ui-rails"
+gem "jquery-ui-rails", "4.0.2"
 
 # cas auth
 gem 'rubycas-client', :git => 'git://github.com/bmesuere/rubycas-client.git', :branch => 'master'
