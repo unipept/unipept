@@ -38,7 +38,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         clustered,
         newick;
 
-    var $matrixTab = $('a[href="#sim_matrix_wrapper"]');
+    var $matrixTab = $('#peptidome-clustering-tab');
 
     var that = {};
 

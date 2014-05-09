@@ -109,6 +109,11 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .interpolate("linear")
             .x(function (d) { return xScale(d.bioproject_id); })
             .y(function (d) { return yScale(d.unicore); });
+
+        // calculate similarity and update on tab switch
+        $('#unique-peptide-finder-tab').on('shown.bs.tab', function tabSwitchAction() {
+            that.update();
+        });
     }
 
     /**
@@ -722,7 +727,12 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .style("fill", "white")
             .text(function (d) { return d.name; });
         legendRects.each(function () {
-            var box = $(this).parent().find("text")[0].getBBox();
+            var box;
+            try {
+                box = $(this).parent().find("text")[0].getBBox();
+            } catch (err) {
+                box = {width: 100, height: 15};
+            }
             d3.select(this)
                 .attr("width", Math.ceil(box.width) + 6)
                 .attr("height", Math.ceil(box.height));
@@ -822,6 +832,17 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         yScale.domain([0, getMaxVisibleDatapoint()]);
 
         // update the legend
+        svg.selectAll(".legend rect").each(function () {
+            var box;
+            try {
+                box = $(this).parent().find("text")[0].getBBox();
+            } catch (err) {
+                box = {width: 100, height: 15};
+            }
+            d3.select(this)
+                .attr("width", Math.ceil(box.width) + 6)
+                .attr("height", Math.ceil(box.height));
+        });
         svg.selectAll(".legend rect").transition()
             .duration(transitionDuration)
             .style("fill", function (d) {
