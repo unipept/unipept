@@ -55,10 +55,10 @@ UnipeptWeb::Application.routes.draw do
 
   # API namespace
   namespace :api, path: 'api/v1' do
-    post 'single' => "api#single"
-    post 'lca' => "api#lca"
-    post 'taxa2lca' => 'api#taxa2lca'
-    post 'pept2pro' => 'api#pept2pro'
+    match 'single' => "api#single", via: [:get, :post]
+    match 'lca' => "api#lca", via: [:get, :post]
+    match 'taxa2lca' => 'api#taxa2lca', via: [:get, :post]
+    match 'pept2pro' => 'api#pept2pro', via: [:get, :post]
   end
 
   # The priority is based upon order of creation:
