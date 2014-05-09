@@ -201,7 +201,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      */
     function getPopoverContent(d) {
         var content = getTooltipContent(d);
-        content += "<br/><div class='btn-group' id='download-peptides'>" +
+        content += "<div class='popover-buttons' ><br/><div class='btn-group' id='download-peptides'>" +
           "<a class='btn btn-default dropdown-toggle' id='download-peptides-toggle' data-toggle='dropdown' data-loading-text='Loading peptides'>" +
             "<span class='glyphicon glyphicon-download'></span> " +
             "download peptides " +
@@ -213,6 +213,8 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='core'><span style='color: " + coreColor + ";'>&#9632;</span> core peptides</a></li>" +
             "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='unique'><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptides</a></li>" +
           "</ul>" +
+        "</div>" +
+        "<span class='pull-right'><a class='btn btn-danger' title='remove genome' id='popover-remove-genome'data-bioproject_id='" + d.bioproject_id + "'><span class='glyphicon glyphicon-trash'></span></a></span>" +
         "</div>";
 
         return content;
@@ -235,6 +237,10 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             }
         });
         $("#download-peptides ul a").click(downloadSequenceHandler);
+        $("#popover-remove-genome").click(function () {
+            console.log(genomes[$(this).data("bioproject_id")]);
+            pancore.removeGenome(genomes[$(this).data("bioproject_id")]);
+        })
     }
 
     /**
