@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 require 'faraday'
+Signal.trap("PIPE", "EXIT")
+Signal.trap("INT", "EXIT")
 ARGV.each do |arg|
   resp = Faraday.get("http://www.uniprot.org/uniprot/#{arg}.fasta")
   if resp.success?

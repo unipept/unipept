@@ -8,13 +8,8 @@ require 'fileutils'
 
 require_relative '../lib/unipept'
 
-$interupted = false
-
-trap "INT" do
-  puts "Interupted, exiting..."
-  $interupted = true
-end
-
+Signal.trap("PIPE", "EXIT")
+Signal.trap("INT", "EXIT")
 class ApiRunner < Cri::CommandRunner
 
   def initialize(args, opts, cmd)
@@ -79,11 +74,6 @@ class ApiRunner < Cri::CommandRunner
     num_req = 0
 
     peptide_iterator(peptides) do |sub_division, i|
-      if $interupted
-        $stdin.close
-        exit 1
-      end
-
       request = Typhoeus::Request.new(
         @url,
         method: :post,
