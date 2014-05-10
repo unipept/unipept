@@ -238,7 +238,6 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         });
         $("#download-peptides ul a").click(downloadSequenceHandler);
         $("#popover-remove-genome").click(function () {
-            console.log(genomes[$(this).data("bioproject_id")]);
             pancore.removeGenome(genomes[$(this).data("bioproject_id")]);
         })
     }
@@ -267,6 +266,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             that.addHighlight(d);
             target.popover({
                 html: true,
+                animation: false,
                 trigger: "manual",
                 position: "right",
                 container: "#popovers",
