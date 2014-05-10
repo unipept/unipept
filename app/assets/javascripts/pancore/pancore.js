@@ -293,7 +293,6 @@ var constructPancore = function constructPancore(args) {
      */
     function processDownloadedSequences(sequences, type) {
         downloadDataByForm(sequences, type + '-sequences.txt', function enableButton() {
-            console.log("run!");
             $("#download-peptides-toggle").button('reset');
         });
     }
