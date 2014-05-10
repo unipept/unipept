@@ -36,9 +36,8 @@ class Api::ApiController < ApplicationController
 
   def set_sequences
     rel_name = @equate_il ? :peptides : :original_peptides
-    sequence_query = @equate_il ? :sequence : :original_sequence
     @sequences = Sequence.joins(rel_name => :uniprot_entry).
-      where(sequence_query => @sequences)
+      where(sequence: @sequences)
   end
 
   def single
@@ -68,8 +67,7 @@ class Api::ApiController < ApplicationController
     @result = {}
     lookup = Hash.new { |h,k| h[k] = Set.new }
     ids = []
-    sequence_query = @equate_il ? :sequence : :original_sequence
-    @sequences = Sequence.where(sequence_query => @sequences)
+    @sequences = Sequence.where(sequence: @sequences)
     @sequences.pluck(:sequence, :lca_il).each do |sequence, lca_il|
       ids.append lca_il
       lookup[lca_il] << sequence
