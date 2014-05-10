@@ -68,7 +68,8 @@ class Api::ApiController < ApplicationController
     lookup = Hash.new { |h,k| h[k] = Set.new }
     ids = []
     @sequences = Sequence.where(sequence: @sequences)
-    @sequences.pluck(:sequence, :lca_il).each do |sequence, lca_il|
+    lca_field = @equate_il ? :lca_il : :lca
+    @sequences.pluck(:sequence, lca_field).each do |sequence, lca_il|
       ids.append lca_il
       lookup[lca_il] << sequence
     end
