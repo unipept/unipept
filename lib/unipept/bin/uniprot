@@ -1,10 +1,29 @@
 #!/usr/bin/env ruby
 require 'faraday'
+require 'cri'
+
 Signal.trap("PIPE", "EXIT")
 Signal.trap("INT", "EXIT")
-ARGV.each do |arg|
+
+def get_uniprot_entry(arg)
   resp = Faraday.get("http://www.uniprot.org/uniprot/#{arg}.fasta")
   if resp.success?
     puts resp.body.lines.map(&:chomp)[1..-1].join("")
   end
 end
+root_cmd = Cri::Command.new_basic_root.modify do
+  name 'uniprot'
+
+  run do |opts, args, cmd|
+    if args.empty?
+      STDIN.each_line do |pept|
+        get_uniprot_entry(pept)
+      end
+    else
+      args.each do |pept|
+        get_uniprot_entry(pept)
+      end
+    end
+  end
+end
+root_cmd.run(ARGV)
