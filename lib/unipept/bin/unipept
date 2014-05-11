@@ -94,11 +94,13 @@ class ApiRunner < Cri::CommandRunner
 
             # wait till it's our turn to write
             batch_order.wait(i) do
-              if ! printed_header
-                write_to_output formatter.header(sub_result)
-                printed_header = true
+              if ! sub_result.empty?
+                if ! printed_header
+                  write_to_output formatter.header(sub_result)
+                  printed_header = true
+                end
+                write_to_output formatter.format(sub_result)
               end
-              write_to_output formatter.format(sub_result)
             end
           else
             path = File.expand_path(File.join(Dir.home, "unipept.log"))
