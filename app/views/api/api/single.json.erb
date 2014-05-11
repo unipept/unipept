@@ -7,14 +7,16 @@
         if @full_lineage
           lineage = p.lineage
           ids = Lineage::ORDER.map {|o| lineage.try(o) }
+          id_names = Lineage::ORDER.map {|s| "#{s}_id"}
 
           if @names
             names = Lineage::ORDER.map {|s| "#{s}_name"}
-            lineage_info = Hash[names.zip(lineage.to_a)]
+            a = names.zip(lineage.to_a)
+            b = id_names.zip(ids)
+            lineage_info = Hash[a.zip(b).flatten(1)]
+          else
+            lineage_info = Hash[id_names.zip(ids)]
           end
-
-          names = Lineage::ORDER.map {|s| "#{s}_id"}
-          lineage_ids = Hash[names.zip(ids)]
         end
         res = { "sequence" => k,
                 "taxon_id" => p.id,
@@ -23,8 +25,7 @@
                 "taxon_rank" => p.rank,
         }
         if @full_lineage
-          res.merge!(lineage_info) if @names
-          res.merge!(lineage_ids)
+          res.merge!(lineage_info)
         else
           res
         end
