@@ -98,7 +98,7 @@ var constructPancore = function constructPancore(args) {
         $("#add_species_peptidome").click(function () {
             var url;
             // Get all bioproject id's for the selected species id
-            url = "/pancore/genomes/species/" + $("#species_id").val() + ".json";
+            url = "/peptidome/genomes/species/" + $("#species_id").val() + ".json";
             $.getJSON(url, function (genomes) {
                 that.addGenomes(genomes);
             })

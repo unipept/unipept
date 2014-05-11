@@ -96,7 +96,7 @@ function convertPeptidesToInts(peptides) {
 
     for (i = 0; i < peptides.length; i += sliceSize) {
         slice = peptides.slice(i, i + sliceSize);
-        req.open('POST', "/pancore/convert_peptides", false);
+        req.open('POST', "/peptidome/convert_peptides", false);
         req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         req.send("peptides=" + JSON.stringify(slice));
         if (req.status === 200) {

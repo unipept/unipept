@@ -5,7 +5,7 @@
 //= require jquery_ujs
 //= require_self
 //= require_directory .
-//= require_directory ./pancore
+//= require_directory ./peptidome
 //= require vendor
 
 // highlights the background color

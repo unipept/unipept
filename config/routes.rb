@@ -26,14 +26,14 @@ UnipeptWeb::Application.routes.draw do
   get '/search/single', :to => 'search#single'
 
   # pancore
-  match '/pancore/sequences/:bioproject_id.:format', via: [:get, :post], :to => 'pancorepeptidome#get_sequence_ids_for_bioproject', :constraints => { :bioproject_id => /[0-z\._]+/ }
-  match '/pancore/genomes/species/:species_id.:format', via: [:get, :post], :to => 'pancorepeptidome#get_genomes'
-  match '/pancore/unique_sequences', via: [:get, :post], :to => 'pancorepeptidome#get_unique_sequences'
-  match '/pancore/full_sequences', via: [:get, :post], :to => 'pancorepeptidome#get_sequences'
-  match '/pancore/convert_peptides', via: [:get, :post], :to => 'pancorepeptidome#convert_peptides'
-  get '/pancore', :to => 'pancorepeptidome#analyze', :as => 'pancore_analyze'
-  get '/peptidefinder', :to => 'pancorepeptidome#analyze', :as => 'peptide_finder', defaults: { tab: 'peptidefinder' }
-  get '/peptidomeclustering', :to => 'pancorepeptidome#analyze', :as => 'peptidome_clustering', defaults: { tab: 'peptidomeclustering' }
+  match '/peptidome/sequences/:bioproject_id.:format', via: [:get, :post], :to => 'peptidome#get_sequence_ids_for_bioproject', :constraints => { :bioproject_id => /[0-z\._]+/ }
+  match '/peptidome/genomes/species/:species_id.:format', via: [:get, :post], :to => 'peptidome#get_genomes'
+  match '/peptidome/unique_sequences', via: [:get, :post], :to => 'peptidome#get_unique_sequences'
+  match '/peptidome/full_sequences', via: [:get, :post], :to => 'peptidome#get_sequences'
+  match '/peptidome/convert_peptides', via: [:get, :post], :to => 'peptidome#convert_peptides'
+  get '/peptidome', :to => 'peptidome#analyze', :as => 'pancore_analyze'
+  get '/peptidefinder', :to => 'peptidome#analyze', :as => 'peptide_finder', defaults: { tab: 'peptidefinder' }
+  get '/peptidomeclustering', :to => 'peptidome#analyze', :as => 'peptidome_clustering', defaults: { tab: 'peptidomeclustering' }
 
   # simple pages
   get '/contact', :to => 'pages#contact'

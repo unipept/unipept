@@ -393,7 +393,7 @@ function sendToHost(type, message) {
  */
 function loadData(bioproject_id, name) {
     var requestRank = rank;
-    getJSON("/pancore/sequences/" + bioproject_id + ".json", function (json_data) {
+    getJSON("/peptidome/sequences/" + bioproject_id + ".json", function (json_data) {
         addData(bioproject_id, name, json_data, requestRank);
     });
 }
@@ -643,7 +643,7 @@ function getUniqueSequences(newOrder) {
     order = newOrder;
     if (order.length > 0) {
         var s = data[order[0]].peptide_list;
-        getJSONByPost("/pancore/unique_sequences/", "type=uniprot&bioprojects=" + filterIds(order) + "&sequences=[" + s + "]", function (d) {
+        getJSONByPost("/peptidome/unique_sequences/", "type=uniprot&bioprojects=" + filterIds(order) + "&sequences=[" + s + "]", function (d) {
             lca = d[0];
             calculateUnicore(d[1]);
         });
@@ -696,7 +696,7 @@ function getSequences(type, bioproject_id) {
     default:
         error("Unknown type: " + type);
     }
-    getJSONByPost("/pancore/full_sequences/", "sequence_ids=[" + ids + "]", function (d) {
+    getJSONByPost("/peptidome/full_sequences/", "sequence_ids=[" + ids + "]", function (d) {
         sendToHost("processDownloadedSequences", {sequences : d, type : type});
     });
 }

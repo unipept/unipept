@@ -1,4 +1,4 @@
-class PancorepeptidomeController < ApplicationController
+class PeptidomeController < ApplicationController
 
   def analyze
     @tab = params[:tab]
