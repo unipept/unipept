@@ -76,6 +76,7 @@ var constructPancore = function constructPancore(args) {
         }
 
         // Initialize the rest of the page
+        initHelp();
         initSpeciesForm();
         initFullScreen();
         initSaveImage();
@@ -88,6 +89,14 @@ var constructPancore = function constructPancore(args) {
         // Ready for take off
         $("#species_id").val(470);
         $("#add_species_peptidome").click();
+    }
+
+    /**
+     * Initializes the help popups
+     */
+    function initHelp() {
+        $("#add-by-species-help").tooltip({placement : "right", container : "body"});
+        $("#add-by-genome-help").tooltip({placement : "right", container : "body"});
     }
 
     /**
