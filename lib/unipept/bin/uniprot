@@ -11,19 +11,13 @@ def get_uniprot_entry(arg)
     puts resp.body.lines.map(&:chomp)[1..-1].join("")
   end
 end
-root_cmd = Cri::Command.new_basic_root.modify do
-  name 'uniprot'
 
-  run do |opts, args, cmd|
-    if args.empty?
-      STDIN.each_line do |pept|
-        get_uniprot_entry(pept)
-      end
-    else
-      args.each do |pept|
-        get_uniprot_entry(pept)
-      end
-    end
+if ARGV.empty?
+  STDIN.each_line do |pept|
+    get_uniprot_entry(pept.chomp)
+  end
+else
+  ARGV.each do |pept|
+    get_uniprot_entry(pept)
   end
 end
-root_cmd.run(ARGV)
