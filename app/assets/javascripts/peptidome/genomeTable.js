@@ -319,7 +319,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
      */
     that.setEnabled = function setEnabled(enabled) {
         if (enabled) {
-            that.setTableMessage("info-sign", "You can drag rows to reorder them or use one of the autosort options.");
+            that.setTableMessage("info-sign", "Drag rows to reorder them or use one of the autosort options.");
             $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", false);
         } else {
             that.setTableMessage("refresh", "Please wait while we load the genomes for this species.");

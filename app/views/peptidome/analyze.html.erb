@@ -1,5 +1,5 @@
 <h1>Peptidome Analysis</h1>
-<p>The peptidome analysis uses the tryptic peptide information in the Unipept database. By indexing the INSDC cross-references in the Uniprot database, a mapping could be made between the tryptic peptides and the completed refseq genomes. The complete set of tryptic peptides corresponding with a genome is what we call the peptidome.</p>
+<p>The (tryptic) peptidome is the complete set of (tryptic) peptides encoded in the genome of an organism. Unipept provides fast and flexible analysis tools for identifying the unique peptidome of a given taxon and clustering whole-genomes based on their peptidome content.</p>
 
 <div id="buttons-pancore"></div>
 
@@ -10,8 +10,8 @@
 
 <div class="tab-help" id="tab-help">
   <div id="unique-peptide-finder-help">
-    <p>Find unique peptides for a species of your choice, based on the data of the completed refseq genomes. These peptides can be downloaded and used for targeted proteomics experiments.</p>
-    <p>When you add a genome to the set, the union and intersection of the peptides of that genome and the ones already added are calculated. The size of the union (pan peptidome) is represented by blue dots and the size of the intersection (core peptidome) by orange dots. Additionally, a more restrictive version of the core peptidome is calculated (green dots) by only including peptides that are unique for the selected genomes. These unique peptides have the same Lowest Common Ancestor (LCA) as the LCA of the selected genomes.</p>
+    <p>Find unique peptides for a species of your choice, based on the data of the completed refseq genomes. Unique tryptic peptides are found in all selected genomes and in none of the Uniprot records belonging to taxa outside those of the selected genomes. These taxon-specific peptides can be downloaded and used for targeted proteomics experiments.</p>
+    <p>Incremental unions and intersections are computed for the peptidomes of all selected whole-genome sequences. The size of the incremental unions (pan peptidome) is shown in blue and the size of the incremental intersections (core peptidome) in orange. The size of the unique peptidome, a subset of the core peptidome that is unique to the lowest common ancestor (LCA) of the selected whole-genome sequences, is shown in green. The size of the individual peptidomes — expressed as the total number of tryptic peptides — is shown in grey. Individual data sets can be shown/hidden by clicking their name in the graph legend.</p>
     <div class="row features">
       <div class="col-xs-4">
         <p class="text-center help-icon"><span class="glyphicon glyphicon-plus-sign"></span></p>
@@ -31,7 +31,7 @@
     </div>
   </div>
   <div id="peptidome-clustering-help">
-    <p>Find similarities between a selection of genomes and view the results in a similarity matrix or a phylogenetic tree.</p>
+    <p>Find similarities between a selection of genomes and view the results in a similarity matrix or a phylogenetic tree. UPGMA is used to cluster the genomes based on their peptidome content. Pairwise similarities are computed as the ratio of the size of the insersection to the size of the union of both peptidomes.</p>
     <div class="row features">
       <div class="col-xs-4">
         <p class="text-center help-icon"><span class="glyphicon glyphicon-plus-sign"></span></p>
@@ -41,12 +41,12 @@
       <div class="col-xs-4">
         <p class="text-center help-icon"><span class="glyphicon glyphicon-th"></span></p>
         <h3>2. Cluster</h3>
-        <p>You can easily cluster the genomes by clicking the blurred phylogenetic tree next to the similarity matrix.</p>
+        <p>You can easily cluster the genomes by clicking the blurred phylogenetic tree next to the similarity matrix. A phylogenetic tree will be draw by using UPGMA on the pairwise similarities.</p>
       </div>
       <div class="col-xs-4">
         <p class="text-center help-icon"><span class="glyphicon glyphicon-download"></span></p>
         <h3>3. Download results</h3>
-        <p>You can download the similarity data by clicking the 'Download data' button in the top-right corner. The similarities between the genomes are offered as a Microsoft Excel-compatible CSV file, the phylogenetic tree in the newick format.</p>
+        <p>You can download the similarity data by clicking the 'Download data' button in the top-right corner. The pairwise similarities between the genomes are offered as a Microsoft Excel-compatible CSV file, the UPGMA tree in the newick format.</p>
       </div>
     </div>
   </div>
@@ -155,7 +155,7 @@
                 <ul class="dropdown-menu">
                   <li><a data-type="name" data-toggle="tooltip" title="Sorts the genomes alphabetically from A-Z." href="#">Sort by name</a></li>
                   <li><a data-type="size" data-toggle="tooltip" title="Sorts the genomes by the number of peptides from high to low." href="#">Sort by genome size</a></li>
-                  <li><a data-type="clustered" data-toggle="tooltip" title="Clusters the genomes by similarity and uses that order." href="#">Sort by similarity</a></li>
+                  <li><a data-type="clustered" data-toggle="tooltip" title="Clusters the genomes by similarity and uses that order." href="#">Order by similarity</a></li>
                   <li><a data-type="minpan" data-toggle="tooltip" title="Heuristically minimizes the pan line. Starts from the current first node." href="#">Minimize the pan</a></li>
                   <li><a data-type="maxcore" data-toggle="tooltip" title="Heuristically maximizes the core line. Starts from the current first node." href="#">Maximize the core</a></li>
                   <li><a data-type="optimal" data-toggle="tooltip" title="Heuristically minimizes the distance between the pan and core line. Starts from the current first node." href="#">Optimize pan and core</a></li>
