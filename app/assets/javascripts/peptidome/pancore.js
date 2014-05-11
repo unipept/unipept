@@ -470,6 +470,11 @@ var constructPancore = function constructPancore(args) {
             return name;
         }
 
+        // If the second part is "sp.", return the full name
+        if (split[1] === "sp.") {
+            return name;
+        }
+
         // Don't abbreviate if my genome and length < 30
         if (("" + id).charAt(0) === "u" && name.length < 30) {
             return name;
