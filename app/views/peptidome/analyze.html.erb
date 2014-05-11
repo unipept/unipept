@@ -73,19 +73,14 @@
 
     <div class="tab-content" id="genome-tabs">
       <div class="tab-pane fade in active" id="refseq-genomes">
-        <p class="intro">
-          <span class="glyphicon glyphicon-info-sign"></span> Select a species and click 'Add species' to add all genomes from a single species.
-        </p>
-        <%= form_tag(:pancore_analyze, :method => "get", :class => "form-inline") do %>
+        <h5>Add by species <span class="glyphicon glyphicon-info-sign"></span></h5>
+        <%= form_tag(:pancore_analyze, :method => "get", :class => "form-inline", :id => "add-by-species-form") do %>
             <div class="form-group"><%= select_tag(:species_id, options_for_select(@species, params[:species_id]), :class => "form-control") %></div>
             <div class="form-group"><%= button_tag(raw("Add species <span class='glyphicon glyphicon-chevron-right'></span>"), :type => "button", :class => "btn btn-primary", :id => "add_species_peptidome", :"data-loading-text" => "Loading...") %></div>
         <% end %>
 
         <hr>
-        <p class="intro">
-          <span class="glyphicon glyphicon-info-sign"></span>
-          Drag a tree node to the table to add them to the visualisation.
-        </p>
+        <h5>Add by genome <span class="glyphicon glyphicon-info-sign"></span></h5>
         <div id="treeView" class="treeView pancore">
           <div class="input-group" id="treeSearchDiv">
           <%= search_field_tag(:treeSearch, "", :placeholder => "type to filter the tree by name or bioproject id", :class => "form-control") %><span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
