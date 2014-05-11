@@ -6,7 +6,7 @@
       v = @result[seq_index]
       v.map do |u|
         { "sequence" => k,
-          "uniprot_accession_number" => u.uniprot_accession_number,
+          "uniprot_id" => u.uniprot_accession_number,
           "taxon_id" => u.taxon_id,
           "ec_references" => u.ec_cross_references.pluck(:id).join(" "),
           "go_references" => u.go_cross_references.pluck(:id).join(" "),
@@ -20,7 +20,7 @@
       v = @result[seq_index]
       v.map do |uni,tax|
         { "sequence" => k,
-          "uniprot_accession_number" => uni,
+          "uniprot_id" => uni,
           "taxon_id" => tax,
         }
       end
