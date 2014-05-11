@@ -145,7 +145,7 @@ class ApiRunner < Cri::CommandRunner
   def download_xml(result)
     if options[:xml]
       File.open(options[:xml] + ".xml", "wb") do |f|
-        f.write Faraday.get("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=#{result.first.map{|h| h['taxon_id'] }.join(",")}&retmode=xml").body
+        f.write Typhoeus.get("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=#{result.first.map{|h| h['taxon_id'] }.join(",")}&retmode=xml").response_body
       end
     end
   end
@@ -197,7 +197,7 @@ class Pept2prot < ApiRunner
       FileUtils.mkdir_p(options[:xml])
       result.first.each do |prot|
         File.open(options[:xml] + "/#{prot['uniprot_id']}.xml", "wb") do |f|
-          f.write Faraday.get("http://www.uniprot.org/uniprot/#{prot['uniprot_id']}.xml").body
+          f.write Typhoeus.get("http://www.uniprot.org/uniprot/#{prot['uniprot_id']}.xml").response_body
         end
       end
     end
