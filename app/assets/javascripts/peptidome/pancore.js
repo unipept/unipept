@@ -252,16 +252,12 @@ var constructPancore = function constructPancore(args) {
      * @param <Number> requestRank The rank of the original request
      */
     function processLoadedGenome(genome, requestRank) {
-        var abbrev;
-
         // If the rank doesn't match, this is old data
         if (rank !== requestRank) return;
         toLoad--;
         table.setGenomeStatus(genome.bioproject_id, "Done", false);
 
-        abbrev = genome.name.split(" ");
-        abbrev[0] = abbrev[0].substr(0,1) + ".";
-        genome.abbreviation = abbrev.join(" ");
+        genome.abbreviation = that.abbreviate(genome.name, genome.bioproject_id);
 
         graph.addToDataQueue(genome);
         matrix.addGenome(genome);
@@ -357,9 +353,7 @@ var constructPancore = function constructPancore(args) {
             // only add new genomes
             if (genomes[g[i].bioproject_id] === undefined) {
                 toLoad++;
-                abbrev = g[i].name.split(" ");
-                abbrev[0] = abbrev[0].substr(0,1) + ".";
-                abbrev = abbrev.join(" ");
+                abbrev = that.abbreviate(g[i].name, g[i].bioproject_id);
                 table.addGenome({
                     "bioproject_id" : g[i].bioproject_id,
                     "name" : g[i].name,
@@ -450,6 +444,56 @@ var constructPancore = function constructPancore(args) {
      */
     that.autoSort = function autoSort(type){
         sendToWorker("autoSort", {type : type});
+    }
+
+    /**
+     * Abbreviates an organism name
+     *
+     * @param <String> name The name of the organism
+     * @param <String> id The id of the genome
+     */
+    that.abbreviate = function abbreviate(name, id) {
+        var split = name.split(" "),
+            i;
+
+        // Don't abbreviate single words
+        if (split.size == 1) {
+            return name;
+        }
+
+        // Don't abbreviate if my genome and length < 30
+        if (("" + id).charAt(0) === "u" && name.length < 30) {
+            return name;
+        }
+
+        // Take first letter of first word
+        split[0] = split[0].substr(0,1) + ".";
+
+        // Abbreviate common words
+        for (i = 1; i < split.length; i++) {
+            switch (split[i]) {
+            case 'pathovar':
+                split[i] = "pv."
+                break;
+            case 'serovar':
+                split[i] = "sv."
+                break;
+            case 'species':
+                split[i] = "sp."
+                break;
+            case 'genomovar':
+                split[i] = "gv."
+                break;
+            case 'subspecies':
+                split[i] = "subsp."
+                break;
+            case 'strain':
+                split[i] = "str."
+                break;
+            }
+        }
+
+        return split.join(" ");
     }
 
     // initialize the object
