@@ -8,6 +8,7 @@
         { "sequence" => k,
           "uniprot_id" => u.uniprot_accession_number,
           "taxon_id" => u.taxon_id,
+          "taxon_name" => u.name.name,
           "ec_references" => u.ec_cross_references.pluck(:id).join(" "),
           "go_references" => u.go_cross_references.pluck(:id).join(" "),
         }
