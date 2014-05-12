@@ -46,7 +46,7 @@ class Api::ApiController < ApplicationController
   end
 
 
-  def single
+  def pept2taxa
     @result = {}
     lookup = Hash.new { |h,k| h[k] = Set.new }
     ids = []
@@ -69,7 +69,7 @@ class Api::ApiController < ApplicationController
     respond_with(@result)
   end
 
-  def lca
+  def pept2lca
     @result = {}
     lookup = Hash.new { |h,k| h[k] = Set.new }
     ids = []
@@ -106,7 +106,7 @@ class Api::ApiController < ApplicationController
     respond_with(@result)
   end
 
-  def pept2pro
+  def pept2prot
     lookup = Hash.new { |h,k| h[k] = Set.new }
 
     if @extra_info

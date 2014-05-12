@@ -53,10 +53,10 @@ UnipeptWeb::Application.routes.draw do
 
   # API namespace
   namespace :api, path: 'api/v1' do
-    match 'single' => "api#single", via: [:get, :post]
-    match 'lca' => "api#lca", via: [:get, :post]
+    match 'pept2taxa' => "api#pept2taxa", via: [:get, :post]
+    match 'pept2lca' => "api#pept2lca", via: [:get, :post]
     match 'taxa2lca' => 'api#taxa2lca', via: [:get, :post]
-    match 'pept2pro' => 'api#pept2pro', via: [:get, :post]
+    match 'pept2prot' => 'api#pept2prot', via: [:get, :post]
     match 'messages' => 'api#messages', via: [:get, :post]
   end
 
