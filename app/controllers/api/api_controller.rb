@@ -99,6 +99,7 @@ class Api::ApiController < ApplicationController
     # handle case where 1 is provided
     if @taxon_ids.include? "1"
       @result = Taxon.find(1)
+      @full_lineage = false
     else
       lineages = Lineage.includes(Lineage::ORDER_T).where(taxon_id: @taxon_ids)
       @result = Lineage.calculate_lca_taxon(lineages)
