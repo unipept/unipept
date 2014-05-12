@@ -30,7 +30,7 @@ class ApiRunner < Cri::CommandRunner
 
 
   def mapping
-    {'pept2taxa' => 'single', 'pept2lca' => 'lca'}
+    {'pept2taxa' => 'pept2taxa', 'pept2lca' => 'pept2lca'}
   end
 
   def input_iterator
@@ -197,7 +197,7 @@ end
 class Pept2prot < ApiRunner
 
   def mapping
-    {"pept2prot" => "pept2pro"}
+    {"pept2prot" => "pept2prot"}
   end
 
   def download_xml(result)
