@@ -6,9 +6,9 @@ import storage.TaxonInvalidatorData;
 
 /**
  * This script invalidates NCBI taxon data
- * 
+ *
  * @author Bart Mesuere
- * 
+ *
  */
 public class TaxonInvalidator {
 	// data
@@ -34,7 +34,10 @@ public class TaxonInvalidator {
 		data.invalidate("id=28384", true);
 		data.invalidate("id=48479", true);
 
-		data.invalidate("name LIKE \"%metagenome\"", true);
+        data.invalidate("name LIKE \"%metagenome\"", true);
+        data.invalidate("name LIKE \"%enrichment culture%\"", true);
+        data.invalidate("name LIKE \"%mixed culture%\"", true);
+        data.invalidate("name LIKE \"%library\"", true);
 
 		// bad names
 		data.invalidate("name LIKE \"%uncultured%\" AND valid_taxon = 1", true);
@@ -59,7 +62,7 @@ public class TaxonInvalidator {
 
 	/**
 	 * This script invalidates NCBI taxon data
-	 * 
+	 *
 	 * @param args
 	 *            not used
 	 */
