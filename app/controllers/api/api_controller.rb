@@ -2,28 +2,27 @@ class Api::ApiController < ApplicationController
 
   respond_to :json
 
-  before_filter :set_params, only: [:single, :lca, :pept2pro]
+  before_filter :set_params, only: [:single, :lca, :pept2pro, :taxa2lca]
   before_filter :set_query, only: [:single, :lca]
   before_filter :set_sequences, only: [:single, :pept2pro]
 
-
   def set_params
-    @sequences = params[:sequences]
-    if @sequences.kind_of? Hash
-      @sequences = @sequences.values
+    @input = params[:input]
+    if @input.kind_of? Hash
+      @input = @input.values
     end
-    @sequences.map! &:chomp
-    @input_order = @sequences.dup
+    @input.map! &:chomp
+    @input_order = @input.dup
 
     @equate_il = (!params[:equate_il].blank? && params[:equate_il] == 'true')
-    @full_lineage = (!params[:full_lineage].blank? && params[:full_lineage] == 'true')
+    @extra_info = (!params[:extra].blank? && params[:extra] == 'true')
     @names = (!params[:names].blank? && params[:names] == 'true')
 
-    @sequences = @sequences.map {|s| s.gsub(/I/,'L') } if @equate_il
+    @input = @input.map {|s| s.gsub(/I/,'L') } if @equate_il
   end
 
   def set_query
-    if @full_lineage
+    if @extra_info
       if @names
         @query = Taxon.includes(lineage: Lineage::ORDER_T)
       else
@@ -37,8 +36,15 @@ class Api::ApiController < ApplicationController
   def set_sequences
     rel_name = @equate_il ? :peptides : :original_peptides
     @sequences = Sequence.joins(rel_name => :uniprot_entry).
-      where(sequence: @sequences)
+      where(sequence: @input)
   end
+
+
+  def messages
+    version = params[:version]
+    render text: "Unipept 0.4.0 is released!"
+  end
+
 
   def single
     @result = {}
@@ -67,7 +73,7 @@ class Api::ApiController < ApplicationController
     @result = {}
     lookup = Hash.new { |h,k| h[k] = Set.new }
     ids = []
-    @sequences = Sequence.where(sequence: @sequences)
+    @sequences = Sequence.where(sequence: @input)
     lca_field = @equate_il ? :lca_il : :lca
     @sequences.pluck(:sequence, lca_field).each do |sequence, lca_il|
       ids.append lca_il
@@ -88,20 +94,12 @@ class Api::ApiController < ApplicationController
   end
 
   def taxa2lca
-    taxon_ids = params[:taxon_ids]
-    if taxon_ids.kind_of? Hash
-      taxon_ids = taxon_ids.values
-    end
-    @taxon_ids = taxon_ids.map(&:chomp).uniq.sort
-    @equate_il = (!params[:equate_il].blank? && params[:equate_il] == 'true')
-    @full_lineage = (!params[:full_lineage].blank? && params[:full_lineage] == 'true')
-
     # handle case where 1 is provided
-    if @taxon_ids.include? "1"
+    if @input.include? "1"
       @result = Taxon.find(1)
-      @full_lineage = false
+      @extra_info = false
     else
-      lineages = Lineage.includes(Lineage::ORDER_T).where(taxon_id: @taxon_ids)
+      lineages = Lineage.includes(Lineage::ORDER_T).where(taxon_id: @input)
       @result = Lineage.calculate_lca_taxon(lineages)
     end
 
@@ -109,7 +107,6 @@ class Api::ApiController < ApplicationController
   end
 
   def pept2pro
-    @extra_info = (!params[:extra].blank? && params[:extra] == 'true')
     lookup = Hash.new { |h,k| h[k] = Set.new }
 
     if @extra_info
