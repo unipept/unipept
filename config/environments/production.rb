@@ -57,3 +57,9 @@ UnipeptWeb::Application.configure do
   # Generate digests for assets URLs
   config.assets.digest = true
 end
+UnipeptWeb::Application.config.middleware.use ExceptionNotification::Rack,
+  :email => {
+    :email_prefix => "[Unipept] ",
+    :sender_address => %{"notifier" <unipept@ugent.be>},
+    :exception_recipients => %w{bart.mesuere@ugent.be, toon.willems@ugent.be}
+  }
