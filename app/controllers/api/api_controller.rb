@@ -96,9 +96,13 @@ class Api::ApiController < ApplicationController
     @equate_il = (!params[:equate_il].blank? && params[:equate_il] == 'true')
     @full_lineage = (!params[:full_lineage].blank? && params[:full_lineage] == 'true')
 
-    name = @equate_il ? :lca_il : :lca
-    lineages = Lineage.includes(Lineage::ORDER_T).where(taxon_id: @taxon_ids)
-    @result = Lineage.calculate_lca_taxon(lineages)
+    # handle case where 1 is provided
+    if @taxon_ids.include? "1"
+      @result = Taxon.find(1)
+    else
+      lineages = Lineage.includes(Lineage::ORDER_T).where(taxon_id: @taxon_ids)
+      @result = Lineage.calculate_lca_taxon(lineages)
+    end
 
     respond_with(@result)
   end
@@ -118,7 +122,6 @@ class Api::ApiController < ApplicationController
       end
 
       ids = ids.uniq.reject(&:nil?).sort
-      # this does not work for now, incorrect setup of relations
       UniprotEntry.includes(:name,:ec_cross_references, :go_cross_references).
         where(id: ids).find_in_batches do |group|
 
