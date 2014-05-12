@@ -63,9 +63,9 @@ module Unipept
       CSV.generate do |csv|
         data.each do |o|
           if o.kind_of? Array
-            o.each {|h| csv << h.values }
+            o.each {|h| csv << h.values.map { |v| v == ""  ? nil : v }}
           else
-            csv << o.values
+            csv << o.values.map { |v| v == "" ? nil : v }
           end
         end
       end
