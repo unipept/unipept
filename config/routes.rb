@@ -59,6 +59,7 @@ UnipeptWeb::Application.routes.draw do
     match 'lca' => "api#lca", via: [:get, :post]
     match 'taxa2lca' => 'api#taxa2lca', via: [:get, :post]
     match 'pept2pro' => 'api#pept2pro', via: [:get, :post]
+    match 'messages' => 'api#messages', via: [:get, :post]
   end
 
   # The priority is based upon order of creation:

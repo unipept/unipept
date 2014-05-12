@@ -14,7 +14,8 @@ class ApiRunner < Cri::CommandRunner
 
   def initialize(args, opts, cmd)
     super
-    host = Unipept::Configuration.new['host']
+    @configuration = Unipept::Configuration.new
+    host = @configuration['host']
     if host.nil? || host.empty?
       puts "WARNING: no host has been set, you can set the host with `unipept config host http://localhost:3000/`"
       exit 1
@@ -24,6 +25,7 @@ class ApiRunner < Cri::CommandRunner
     end
 
     @url = "#{host}/api/v1/#{mapping[cmd.name]}.json"
+    @message_url = "#{host}/api/v1/messages.json"
   end
 
 
@@ -50,14 +52,28 @@ class ApiRunner < Cri::CommandRunner
     else
       names = filter.any? {|f| /.*name.*/.match f}
     end
-    {:sequences => sub_part,
+    {:input => sub_part,
      :equate_il => options[:equate],
-     :full_lineage => options[:lineage],
+     :extra => options[:extra],
      :names => names,
     }
   end
 
+  def get_server_message
+    return if options[:quiet]
+    last_fetched = @configuration['last_fetch_date']
+    if last_fetched.nil? || (last_fetched + 60 * 60 * 24) < Time.now
+      version = File.read(File.join(File.dirname(__FILE__), "..", "VERSION"))
+      puts Typhoeus.get(@message_url, params: {version: version}).body
+
+      @configuration['last_fetch_date'] = Time.now
+      @configuration.save
+    end
+  end
+
   def run
+    get_server_message
+
     formatter = Unipept::Formatter.new_for_format(options[:format])
     peptides = input_iterator
 
@@ -168,10 +184,6 @@ class Taxa2lca < ApiRunner
     {"taxa2lca" => "taxa2lca"}
   end
 
-  def url_options(sub_part)
-    {:taxon_ids => sub_part, :full_lineage => options[:lineage]}
-  end
-
   def peptide_iterator(peptides, &block)
     block.call(peptides.to_a, 0)
   end
@@ -186,10 +198,6 @@ class Pept2prot < ApiRunner
 
   def mapping
     {"pept2prot" => "pept2pro"}
-  end
-
-  def url_options(sub_part)
-    {:sequences => sub_part, :equate_il => options[:equate], :extra => options[:all]}
   end
 
   def download_xml(result)
@@ -212,6 +220,7 @@ end
 root_cmd = Cri::Command.new_basic_root.modify do
   name 'unipept'
   flag :v, :version, "print version"
+  flag :q, :quiet, "don't show update messages"
   option :i, :input, "input file", :argument => :required
   option :o, :output, "output file", :argument => :required
   option :f, :format, "output format (available: #{Unipept::Formatter.available.join "," }) (default: #{Unipept::Formatter.default})", :argument => :required
@@ -246,7 +255,7 @@ root_cmd.define_command('pept2taxa') do
 
   flag :e, :equate, "equate I and L"
   option :s, :select, "select the attributes", :argument => :required, :multiple => true
-  option :l, :lineage, "Show full lineage"
+  option :a, :extra, "Show full lineage"
   option :x, :xml, "Download taxonomy from NCBI as xml (specify output filename)", :argument => :required
 
   runner ApiRunner
@@ -260,7 +269,7 @@ root_cmd.define_command('pept2lca') do
 
   flag :e, :equate, "equate I and L"
   option :s, :select, "select the attributes", :argument => :required, :multiple => true
-  option :l, :lineage, "Show full lineage"
+  option :a, :extra, "Show full lineage"
 
   runner ApiRunner
 end
@@ -272,7 +281,7 @@ root_cmd.define_command('taxa2lca') do
   description 'Search Unipept for the given taxon ids and return the lowest common ancestor'
 
   option :s, :select, "select the attributes", :argument => :required, :multiple => true
-  option :l, :lineage, "Show full lineage"
+  option :a, :extra, "Show full lineage"
 
   runner Taxa2lca
 end
@@ -286,7 +295,7 @@ root_cmd.define_command('pept2prot') do
   flag :e, :equate, "equate I and L"
   option :s, :select, "select the attributes", :argument => :required, :multiple => true
   option :x, :xml, "download uniprot record in specified directory", :argument => :required
-  flag :a, :all, "include all information. WARNING: will take much longer!"
+  flag :a, :extra, "include all information. WARNING: will take much longer!"
 
   runner Pept2prot
 end

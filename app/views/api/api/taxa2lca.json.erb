@@ -1,25 +1,13 @@
 <%=
   p = @result
-  if @full_lineage
-    lineage = p.lineage
-
-    ids = Lineage::ORDER_T.map {|o| lineage.send(o).try(:id) }
-
-    names = Lineage::ORDER.map {|s| "#{s}_name"}
-    lineage_info = Hash[names.zip(lineage.to_a)]
-
-    names = Lineage::ORDER.map {|s| "#{s}_id"}
-    lineage_ids = Hash[names.zip(ids)]
-  end
   res = {
       "taxon_id" => p.id,
       "taxon_name" => p.name,
       "taxon_parent_id" => p.parent_id,
       "taxon_rank" => p.rank,
   }
-  if @full_lineage
-    res.merge!(lineage_info)
-    res.merge!(lineage_ids)
+  if @extra_info
+    res.merge!(lineage_info(p.lineage, @names))
   else
     res
   end
