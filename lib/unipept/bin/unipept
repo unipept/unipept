@@ -61,6 +61,7 @@ class ApiRunner < Cri::CommandRunner
 
   def get_server_message
     return if options[:quiet]
+    return unless STDOUT.tty?
     last_fetched = @configuration['last_fetch_date']
     if last_fetched.nil? || (last_fetched + 60 * 60 * 24) < Time.now
       version = File.read(File.join(File.dirname(__FILE__), "..", "VERSION"))
