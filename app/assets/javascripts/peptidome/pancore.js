@@ -481,7 +481,7 @@ var constructPancore = function constructPancore(args) {
         }
 
         if (split[0] === "Candidatus") {
-            split[0] = "Ca."
+            split[0] = "Ca.";
         } else {
             // Take first letter of first word
             split[0] = split[0].substr(0,1) + ".";
@@ -491,22 +491,22 @@ var constructPancore = function constructPancore(args) {
         for (i = 1; i < split.length; i++) {
             switch (split[i]) {
             case 'pathovar':
-                split[i] = "pv."
+                split[i] = "pv.";
                 break;
             case 'serovar':
-                split[i] = "sv."
+                split[i] = "sv.";
                 break;
             case 'species':
-                split[i] = "sp."
+                split[i] = "sp.";
                 break;
             case 'genomovar':
-                split[i] = "gv."
+                split[i] = "gv.";
                 break;
             case 'subspecies':
-                split[i] = "subsp."
+                split[i] = "subsp.";
                 break;
             case 'strain':
-                split[i] = "str."
+                split[i] = "str.";
                 break;
             }
         }
