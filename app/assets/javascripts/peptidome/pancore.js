@@ -480,8 +480,12 @@ var constructPancore = function constructPancore(args) {
             return name;
         }
 
-        // Take first letter of first word
-        split[0] = split[0].substr(0,1) + ".";
+        if (split[0] === "Candidatus") {
+            split[0] = "Ca."
+        } else {
+            // Take first letter of first word
+            split[0] = split[0].substr(0,1) + ".";
+        }
 
         // Abbreviate common words
         for (i = 1; i < split.length; i++) {
