@@ -1,5 +1,9 @@
 UnipeptWeb::Application.routes.draw do
+  # cas auth
   devise_for :users
+
+  # api docs
+  apipie
 
   # home page
   root :to => 'pages#home'
