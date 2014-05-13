@@ -278,7 +278,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
                 .attr("y", 0)
             .append("feGaussianBlur")
                 .attr("in", "SourceGraphic")
-                .attr("stdDeviation", 5);
+        // TODO: reset to 5
+                .attr("stdDeviation", 0);
 
         matrixSvg.append("rect")
             .attr("class", "background")
@@ -502,7 +503,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
             if (!c) {
                 buttonSvg.style("visibility", "visible");
                 $('#reorder-header').addClass('hidden');
-                blur.transition().duration(transitionDuration).attr("stdDeviation", 5);
+// TODO re-enable                //blur.transition().duration(transitionDuration).attr("stdDeviation", 5);
             } else {
                 buttonSvg.style("visibility", "hidden");
                 $('#reorder-header').removeClass('hidden');

@@ -321,7 +321,8 @@ var constructPancore = function constructPancore(args) {
      */
     function processClusteredMatrix(order, newick) {
         matrix.setOrder(order);
-        matrix.drawTree(newick);
+        // TODO re-enable
+        //matrix.drawTree(newick);
         matrix.setClustered(true);
     }
 
