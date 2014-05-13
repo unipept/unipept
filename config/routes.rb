@@ -1,4 +1,5 @@
 UnipeptWeb::Application.routes.draw do
+  apipie
   # home page
   root :to => 'pages#home'
 

@@ -44,6 +44,9 @@ GEM
     annotate (2.6.3)
       activerecord (>= 2.3.0)
       rake (>= 0.8.7)
+    apipie-rails (0.2.0)
+      json
+      rails (>= 3.0.10)
     arel (4.0.2)
     be_valid_asset (1.2.3)
       rspec
@@ -168,6 +171,7 @@ PLATFORMS
 
 DEPENDENCIES
   annotate
+  apipie-rails
   be_valid_asset
   capistrano (= 2.15.5)
   httparty (~> 0.12.0)
