@@ -63,6 +63,9 @@ end
 # Use unicorn as the web server
 # gem 'unicorn'
 
+# Exception emails
+gem 'exception_notification'
+
 # Deploy with Capistrano
 gem 'capistrano', '~> 3.0'
 group :development do
