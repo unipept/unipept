@@ -2,9 +2,9 @@ class Api::ApiController < ApplicationController
 
   respond_to :json
 
-  before_filter :set_params, only: [:single, :lca, :pept2pro, :taxa2lca]
-  before_filter :set_query, only: [:single, :lca]
-  before_filter :set_sequences, only: [:single, :pept2pro]
+  before_filter :set_params, only: [:pept2taxa, :pept2lca, :pept2prot, :taxa2lca]
+  before_filter :set_query, only: [:pept2taxa, :pept2lca]
+  before_filter :set_sequences, only: [:pept2taxa, :pept2prot]
 
   def set_params
     @input = params[:input]
