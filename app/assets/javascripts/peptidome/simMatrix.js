@@ -282,8 +282,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         matrixSvg.append("rect")
             .attr("class", "background")
-            .attr("width", width)
-            .attr("height", height)
+            .attr("width", 0)
+            .attr("height", 0)
             .attr("fill", "#eeeeee");
 
         // create the tooltip
