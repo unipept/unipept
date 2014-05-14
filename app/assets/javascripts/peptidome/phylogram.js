@@ -91,10 +91,10 @@ function init_phylogram() {
     d3.phylogram.styleTreeNodes = function (vis) {
         vis.selectAll('g.root.node')
             .append('svg:circle')
-            .attr("r", 4)
+            .attr("r", 3)
             .attr('fill', 'steelblue')
             .attr('stroke', 'steelblue')
-            .attr('stroke-width', '2px');
+            .attr('stroke-width', '3px');
     };
 
     function scaleBranchLengths(nodes, w) {
@@ -284,9 +284,20 @@ function init_phylogram() {
         // hook up the nodes
         vis.selectAll('g.inner.node')
             .append('svg:circle')
-            .attr("r", 6)
-            .style("fill-opacity", 0)
+            .attr("r", 3)
+            .attr('fill', 'black');
+        vis.selectAll("g.inner.node, g.root.node")
             .style("cursor", "pointer")
+            .on("mouseover", function () {
+                d3.select(this).select("circle")
+                    .transition()
+                    .attr("r", 7);
+            })
+            .on("mouseout", function () {
+                d3.select(this).select("circle")
+                    .transition()
+                    .attr("r", 3);
+            })
             .on("click", swap);
 
         // swap 2 branches
