@@ -293,6 +293,7 @@ function init_phylogram() {
                 d.branchset[1] = temp;
             }
             treeNodes = tree(nodes);
+            yscale = scaleBranchLengths(treeNodes, w);
             link.data(tree.links(treeNodes), function (d) {return "" + d.source.name + d.target.name;})
                 .transition()
                 .attr("d", diagonal);
