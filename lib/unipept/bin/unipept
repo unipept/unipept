@@ -28,7 +28,6 @@ class ApiRunner < Cri::CommandRunner
     @message_url = "#{host}/api/v1/messages.json"
   end
 
-
   def mapping
     {'pept2taxa' => 'pept2taxa', 'pept2lca' => 'pept2lca'}
   end
@@ -94,7 +93,8 @@ class ApiRunner < Cri::CommandRunner
       request = Typhoeus::Request.new(
         @url,
         method: :post,
-        body: url_options(sub_division)
+        body: url_options(sub_division),
+        accept_encoding: "gzip"
       )
       request.on_complete do |resp|
         if resp.timed_out?
@@ -107,7 +107,9 @@ class ApiRunner < Cri::CommandRunner
 
             sub_result.map! {|r| r.select! {|k,v| filter_list.any? {|f| f.match k } } } if ! filter_list.empty?
 
-            result << sub_result
+            if options[:xml]
+              result << sub_result
+            end
 
             # wait till it's our turn to write
             batch_order.wait(i) do
@@ -138,7 +140,6 @@ class ApiRunner < Cri::CommandRunner
     end
 
     hydra.run
-
 
     begin
       download_xml(result)
