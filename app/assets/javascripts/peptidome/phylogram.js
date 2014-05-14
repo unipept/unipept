@@ -137,6 +137,19 @@ function init_phylogram() {
     }
 
     /**
+     * Recursively generates names for nodes without one
+     */
+    function attachNames(node) {
+        var i;
+        for (i = 0; node.branchset && i < node.branchset.length; i++) {
+            attachNames(node.branchset[i]);
+        }
+        if (node.name === "") {
+            node.name = Math.random();
+        }
+    }
+
+    /**
      * Creates a phylogram.
      * Arguments:
      *   selector: selector of an element that will contain the SVG
@@ -165,6 +178,7 @@ function init_phylogram() {
      *     Make a dendrogram instead of a phylogram.
      */
     d3.phylogram.build = function (selector, nodes, options) {
+        attachNames(nodes);
         options = options || {};
         var w = options.width || d3.select(selector).style('width') || d3.select(selector).attr('width'),
             h = options.height || d3.select(selector).style('height') || d3.select(selector).attr('height');
@@ -182,14 +196,14 @@ function init_phylogram() {
             .attr("height", h + 30)
           .append("svg:g")
             .attr("transform", "translate(20, 20)");
-        var nodes = tree(nodes);
+        var treeNodes = tree(nodes);
 
         if (options.skipBranchLengthScaling) {
             var yscale = d3.scale.linear()
                 .domain([0, w])
                 .range([0, w]);
         } else {
-            var yscale = scaleBranchLengths(nodes, w);
+            var yscale = scaleBranchLengths(treeNodes, w);
         }
 
         if (!options.skipTicks) {
@@ -217,7 +231,7 @@ function init_phylogram() {
         }
 
         var link = vis.selectAll("path.link")
-            .data(tree.links(nodes))
+            .data(tree.links(treeNodes), function (d) {return "" + d.source.name + d.target.name;})
           .enter().append("svg:path")
             .attr("class", "link")
             .attr("d", diagonal)
@@ -226,7 +240,7 @@ function init_phylogram() {
             .attr("stroke-width", "2px");
 
         var node = vis.selectAll("g.node")
-            .data(nodes)
+            .data(treeNodes, function (d) {return d.name;})
           .enter().append("svg:g")
             .attr("class", function (n) {
                 if (n.children) {
@@ -263,11 +277,31 @@ function init_phylogram() {
               .text(function (d) { return d.name + ' ('+d.length+')'; });
         }
 
+        // hook up the nodes
+        vis.selectAll('g.inner.node')
+            .append('svg:circle')
+            .attr("r", 6)
+            .style("fill-opacity", 0)
+            .style("cursor", "pointer")
+            .on("click", swap);
+
+        // swap 2 branches
+        function swap(d) {
+            if (d.branchset.length === 2) {
+                var temp = d.branchset[0];
+                d.branchset[0] = d.branchset[1];
+                d.branchset[1] = temp;
+            }
+            treeNodes = tree(nodes);
+            link.data(tree.links(treeNodes), function (d) {return "" + d.source.name + d.target.name;})
+                .transition()
+                .attr("d", diagonal);
+            node.data(treeNodes, function (d) {return d.name;})
+                .transition()
+                .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; });
+        }
+
         return {tree: tree, vis: vis};
-    };
-
-    d3.phylogram.update = function () {
-
     };
 
     /**

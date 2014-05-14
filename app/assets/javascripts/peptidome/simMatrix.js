@@ -250,8 +250,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
             .attr("filter", "url(#blur)");
         matrixSvg = svg.append("g")
             .attr("transform", "translate(" + (treeWidth + margin.left) + "," + margin.top + ")");
-        buttonSvg = svg.append("g")
-            .attr("id", "button-svg")
+        buttonSvg = svg.append("g");
+        /*    .attr("id", "button-svg")
             .attr("transform", "translate(20," + margin.top + ")")
             .style("cursor", "pointer")
             .on("click", that.clusterMatrix);
@@ -268,7 +268,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
             .style("font-weight", "bold")
             .style("font-size", "16pt");
         buttonText.append("tspan").text("click to").attr("x", treeWidth / 2);
-        buttonText.append("tspan").text("cluster matrix").attr("dy", 30).attr("x", treeWidth / 2);
+        buttonText.append("tspan").text("cluster matrix").attr("dy", 30).attr("x", treeWidth / 2);*/
 
         // Add the blur effect definition
         blur = svg.append("defs")
