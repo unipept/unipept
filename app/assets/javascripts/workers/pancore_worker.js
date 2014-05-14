@@ -766,7 +766,7 @@ function genomeSimilarity(peptide_list1, peptide_list2) {
  * @param <Genome> genome The genome we want to convert
  */
 function generateNewickName(genome) {
-    return genome.name.replace(/ /g, "_").replace(/[,;:]/g, "") + "-" + genome.bioproject_id;
+    return genome.name.replace(/ /g, "_").replace(/[,;:-]/g, "_") + "-" + genome.bioproject_id;
 }
 
 /**

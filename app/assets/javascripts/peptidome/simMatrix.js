@@ -425,7 +425,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         if (height === undefined) {
             height = d3.min([500, 50 * order.length]);
         }
-        d3.phylogram.build('#sim_graph', Newick.parse(n), {width: 180, height: height, skipLabels: true, vis: treeSvg});
+        d3.phylogram.build('#sim_graph', Newick.parse(n), that, {width: 180, height: height, skipLabels: true, vis: treeSvg, duration: transitionDuration});
     };
 
     /**

@@ -154,6 +154,7 @@ function init_phylogram() {
      * Arguments:
      *   selector: selector of an element that will contain the SVG
      *   nodes: JS object of nodes
+     *   matrix: the matrix object
      *
      * Options:
      *   width
@@ -176,14 +177,17 @@ function init_phylogram() {
      *     Skip the tick rule.
      *   skipBranchLengthScaling
      *     Make a dendrogram instead of a phylogram.
+     *   duration
+     *     The duration of the animation
      */
-    d3.phylogram.build = function (selector, nodes, options) {
+    d3.phylogram.build = function (selector, nodes, matrix, options) {
         attachNames(nodes);
         options = options || {};
         var w = options.width || d3.select(selector).style('width') || d3.select(selector).attr('width'),
             h = options.height || d3.select(selector).style('height') || d3.select(selector).attr('height');
         w = parseInt(w, 10);
         h = parseInt(h, 10);
+        var duration = options.duration || 1000;
         var tree = options.tree || d3.layout.cluster()
             .size([h, w])
             .separation(function (a, b) { return 1; })
@@ -292,18 +296,37 @@ function init_phylogram() {
                 d.branchset[0] = d.branchset[1];
                 d.branchset[1] = temp;
             }
+            matrix.setOrder(getGenomeOrder(nodes));
+            matrix.setClustered(true);
             treeNodes = tree(nodes);
             yscale = scaleBranchLengths(treeNodes, w);
             link.data(tree.links(treeNodes), function (d) {return "" + d.source.name + d.target.name;})
                 .transition()
+                .duration(duration)
                 .attr("d", diagonal);
             node.data(treeNodes, function (d) {return d.name;})
                 .transition()
+                .duration(duration)
                 .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; });
         }
 
         return {tree: tree, vis: vis};
     };
+
+    /**
+     * Recursively compiles a list with bioproject_id's in the order of the tree
+     */
+    function getGenomeOrder(node, order){
+        var order = order || [],
+            i;
+        for (i = 0; node.branchset && i < node.branchset.length; i++) {
+            getGenomeOrder(node.branchset[i], order);
+        }
+        if (node.bioproject_id) {
+            order.push(node.bioproject_id);
+        }
+        return order;
+    }
 
     /**
      * Creates a radial dendrogram.

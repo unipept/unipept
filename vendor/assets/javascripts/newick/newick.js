@@ -91,7 +91,12 @@
             } else {
                 temp = token.split("-");
                 tree.name = temp[0];
-                tree.bioproject_id = temp[1];
+                if (temp[1].charAt(0) === "u") {
+                    tree.bioproject_id = temp[1];
+                } else {
+                    tree.bioproject_id = +temp[1];
+                }
+
             }
           } else if (x == ':') {
             tree.length = parseFloat(token);
