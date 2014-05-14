@@ -321,6 +321,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
         x.rangeBands([0, minWidth]);
         $('#cluster-div').css('height', minWidth + 30 + "px");
         d3.select(".background")
+            .transition()
+            .duration(transitionDuration)
             .attr("width", minWidth)
             .attr("height", minWidth);
 
