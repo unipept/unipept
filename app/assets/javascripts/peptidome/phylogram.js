@@ -120,6 +120,7 @@ function init_phylogram() {
         var rootDists = nodes.map(function (n) { return n.rootDist; });
         var yscale = d3.scale.linear()
             .domain([d3.min(rootDists), d3.max(rootDists)])
+            .nice(5)
             .range([0, w]);
 
         visitPreOrder(nodes[0], function (node) {
