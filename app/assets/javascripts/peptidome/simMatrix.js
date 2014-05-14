@@ -13,10 +13,10 @@ var constructSimMatrix = function constructSimMatrix(args) {
         table = args.table;
 
     // UI variables
-    var margin = {top: 20, right: 0, bottom: 200, left: 220},
+    var margin = {top: 20, right: 200, bottom: 200, left: 20},
         width = 500,
         height = 500,
-        treeWidth = 180,
+        treeWidth = 200,
         fullWidth = treeWidth + width + margin.left + margin.right,
         fullHeight = height + margin.top + margin.bottom;
 
@@ -331,10 +331,10 @@ var constructSimMatrix = function constructSimMatrix(args) {
             .append("g")
                 .attr("class", "row")
             .append("text")
-                .attr("x", -6)
+                .attr("x", minWidth + 6)
                 .attr("y", x.rangeBand() / 2)
                 .attr("dy", ".32em")
-                .attr("text-anchor", "end")
+                .attr("text-anchor", "begin")
                 .text(function (d) { return metadata[d.key].abbreviation; });
 
         rows.each(function (d) {
@@ -369,6 +369,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         rows.selectAll("text")
             .transition()
                 .duration(transitionDuration)
+                .attr("x", minWidth + 6)
                 .attr('y', x.rangeBand() / 2);
 
         rows.exit().remove();
