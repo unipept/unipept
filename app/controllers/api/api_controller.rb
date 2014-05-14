@@ -7,8 +7,8 @@ class Api::ApiController < ApplicationController
 
   respond_to :json
 
-  before_filter :set_params, only: [:pept2taxa, :pept2lca, :pept2prot, :taxa2lca]
-  before_filter :set_query, only: [:pept2taxa, :pept2lca]
+  before_filter :set_params, only: [:pept2taxa, :pept2lca, :pept2prot, :taxa2lca, :taxonomy]
+  before_filter :set_query, only: [:pept2taxa, :pept2lca, :taxonomy]
   before_filter :set_sequences, only: [:pept2taxa, :pept2prot]
 
   def set_params
@@ -194,6 +194,11 @@ class Api::ApiController < ApplicationController
 
     filter_input_order
 
+    respond_with(@result)
+  end
+
+  def taxonomy
+    @result = @query.where(id: @input)
     respond_with(@result)
   end
 
