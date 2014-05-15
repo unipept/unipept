@@ -146,7 +146,7 @@ var matrixBackend = function matrixBackend(data) {
             if (array[i] instanceof Array) {
                 string += arrayToNewick(array[i], distance);
             } else {
-                string += filterNewickName(data[matrixOrder[array[i]]].name) + ":" + (1 - distance);
+                string += generateNewickName(data[matrixOrder[array[i]]]) + ":" + (1 - distance);
             }
             if (i !== array.length - 2) {
                 string += ", ";
@@ -760,12 +760,13 @@ function genomeSimilarity(peptide_list1, peptide_list2) {
 }
 
 /**
- * Removes [,;:] from a string and replaces spaces by underscores
+ * Removes [,;:] from a string and replaces spaces by underscores. Also adds
+ * the bioprojectid.
  *
- * @param <String> name The string we want to filter
+ * @param <Genome> genome The genome we want to convert
  */
-function filterNewickName(name) {
-    return name.replace(/ /g, "_").replace(/[,;:]/g, "");
+function generateNewickName(genome) {
+    return genome.name.replace(/ /g, "_").replace(/[,;:-]/g, "_") + "-" + genome.bioproject_id;
 }
 
 /**
