@@ -28,15 +28,15 @@ class CasController < ApplicationController
 
     # Don't save the ticket, it contains a singleton somewhere that can't be marshalled
     session[:cas_last_valid_ticket] = nil
-    
+
     # check if the logged in user is an administrator.
-    unless session[:cas_user] == "bmesuere" || session[:cas_user] == "pdawyndt"
+    unless session[:cas_user] == "bmesuere" || session[:cas_user] == "pdawyndt" || session[:cas_user] == "tvwillem"
       flash[:error] = "Sorry, you are not an administrator"
       session[:cas_user] = nil
     else
       session[:admin] = true
     end
-    
+
     # if the redirect parameter is set, redirect to this page after auth
     if session[:post_cas_redirect]
       redirect_to session[:post_cas_redirect]
