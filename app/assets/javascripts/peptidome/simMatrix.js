@@ -13,10 +13,10 @@ var constructSimMatrix = function constructSimMatrix(args) {
         table = args.table;
 
     // UI variables
-    var margin = {top: 20, right: 0, bottom: 200, left: 220},
+    var margin = {top: 20, right: 200, bottom: 200, left: 20},
         width = 500,
         height = 500,
-        treeWidth = 180,
+        treeWidth = 200,
         fullWidth = treeWidth + width + margin.left + margin.right,
         fullHeight = height + margin.top + margin.bottom;
 
@@ -282,8 +282,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         matrixSvg.append("rect")
             .attr("class", "background")
-            .attr("width", width)
-            .attr("height", height)
+            .attr("width", 0)
+            .attr("height", 0)
             .attr("fill", "#eeeeee");
 
         // create the tooltip
@@ -321,6 +321,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
         x.rangeBands([0, minWidth]);
         $('#cluster-div').css('height', minWidth + 30 + "px");
         d3.select(".background")
+            .transition()
+            .duration(transitionDuration)
             .attr("width", minWidth)
             .attr("height", minWidth);
 
@@ -331,10 +333,10 @@ var constructSimMatrix = function constructSimMatrix(args) {
             .append("g")
                 .attr("class", "row")
             .append("text")
-                .attr("x", -6)
+                .attr("x", minWidth + 6)
                 .attr("y", x.rangeBand() / 2)
                 .attr("dy", ".32em")
-                .attr("text-anchor", "end")
+                .attr("text-anchor", "begin")
                 .text(function (d) { return metadata[d.key].abbreviation; });
 
         rows.each(function (d) {
@@ -369,6 +371,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         rows.selectAll("text")
             .transition()
                 .duration(transitionDuration)
+                .attr("x", minWidth + 6)
                 .attr('y', x.rangeBand() / 2);
 
         rows.exit().remove();
@@ -425,7 +428,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         if (height === undefined) {
             height = d3.min([500, 50 * order.length]);
         }
-        d3.phylogram.build('#sim_graph', Newick.parse(n), {width: 180, height: height, skipLabels: true, vis: treeSvg});
+        d3.phylogram.build('#sim_graph', Newick.parse(n), that, {width: 180, height: height, skipLabels: true, vis: treeSvg, duration: transitionDuration});
     };
 
     /**
