@@ -162,6 +162,7 @@ GEM
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
       term-ansicolor
+    stathat (0.1.7)
     term-ansicolor (1.3.0)
       tins (~> 1.0)
     therubyracer (0.12.1)
@@ -215,6 +216,7 @@ DEPENDENCIES
   rspec-rails
   spork
   sprockets
+  stathat
   therubyracer
   uglifier
   webrat

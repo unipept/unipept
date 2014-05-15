@@ -52,6 +52,9 @@ group :development do
   gem 'capistrano-rvm', require: false
 end
 
+# API stats
+gem "stathat"
+
 group :development do
   gem 'rspec-rails'
 	gem 'annotate'
