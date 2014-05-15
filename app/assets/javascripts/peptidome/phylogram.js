@@ -98,9 +98,9 @@ function init_phylogram() {
     };
 
     function scaleBranchLengths(nodes, w) {
-        var i;
         // Visit all nodes and adjust y pos width distance metric
         var visitPreOrder = function (root, callback) {
+            var i;
             callback(root);
             if (root.children) {
                 for (i = root.children.length - 1; i >= 0; i--) {
