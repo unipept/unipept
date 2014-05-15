@@ -11,6 +11,8 @@ class Api::ApiController < ApplicationController
   before_filter :set_query, only: [:pept2taxa, :pept2lca, :taxonomy]
   before_filter :set_sequences, only: [:pept2taxa, :pept2prot]
 
+  before_filter :log, only: [:pept2taxa, :pept2lca, :pept2prot, :taxa2lca, :taxonomy]
+
   def set_params
     @input = params[:input]
     if @input.kind_of? Hash
@@ -44,10 +46,13 @@ class Api::ApiController < ApplicationController
       where(sequence: @input)
   end
 
-
   def messages
     version = params[:version]
     render text: "Unipept 0.4.0 is released!"
+  end
+
+  def log
+    StatHat::API.ez_post_count('API - ' + action_name, 'unipept@ugent.be', 1)
   end
 
 
