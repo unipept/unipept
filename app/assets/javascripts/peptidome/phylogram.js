@@ -245,7 +245,7 @@ function init_phylogram() {
             .attr("stroke-width", "2px");
 
         var node = vis.selectAll("g.node")
-            .data(treeNodes, function (d) {return d.name;})
+            .data(treeNodes, function (d) {return d.bioproject_id ? d.bioproject_id : d.name;})
           .enter().append("svg:g")
             .attr("class", function (n) {
                 if (n.children) {
@@ -316,7 +316,7 @@ function init_phylogram() {
                 .transition()
                 .duration(duration)
                 .attr("d", diagonal);
-            node.data(treeNodes, function (d) {return d.name;})
+            node.data(treeNodes, function (d) {return d.bioproject_id ? d.bioproject_id : d.name;})
                 .transition()
                 .duration(duration)
                 .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; });
