@@ -38,6 +38,9 @@ gem "less-rails", "~> 2.4.2"
 # in Ruby
 gem "uglifier", "~> 2.3.1"
 
+# API stats
+gem "stathat"
+
 group :development do
   gem 'rspec-rails'
 	gem 'annotate'

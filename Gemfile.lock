@@ -147,6 +147,7 @@ GEM
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (~> 2.8)
+    stathat (0.1.7)
     therubyracer (0.12.1)
       libv8 (~> 3.16.14.0)
       ref
@@ -190,6 +191,7 @@ DEPENDENCIES
   rubycas-client-rails!
   spork
   sprockets
+  stathat
   therubyracer
   uglifier (~> 2.3.1)
   webrat
