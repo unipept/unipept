@@ -47,10 +47,15 @@ class ApiRunner < Cri::CommandRunner
   end
 
   def input_iterator
-    if options[:input]
-       File.readlines(options[:input]).each
+    # Argument over file input over stdin
+    if !arguments.empty?
+      arguments.each
     else
-      STDIN.each_line
+      if options[:input]
+        IO.foreach(options[:input])
+      else
+        STDIN.each_line
+      end
     end
   end
 
