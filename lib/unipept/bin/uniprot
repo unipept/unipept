@@ -1,23 +1,29 @@
 #!/usr/bin/env ruby
-require 'faraday'
+require 'typhoeus'
 require 'cri'
 
 Signal.trap("PIPE", "EXIT")
 Signal.trap("INT", "EXIT")
 
-def get_uniprot_entry(arg)
-  resp = Faraday.get("http://www.uniprot.org/uniprot/#{arg}.fasta")
+def get_uniprot_entry(arg, fasta = false)
+  resp = Typhoeus.get("http://www.uniprot.org/uniprot/#{arg}.fasta")
   if resp.success?
-    puts resp.body.lines.map(&:chomp)[1..-1].join("")
+    if fasta
+      puts resp.response_body
+    else
+      puts resp.response_body.lines.map(&:chomp)[1..-1].join("")
+    end
   end
 end
 
+fasta = ARGV.delete "--fasta"
+
 if ARGV.empty?
   STDIN.each_line do |pept|
-    get_uniprot_entry(pept.chomp)
+    get_uniprot_entry(pept.chomp, fasta)
   end
 else
   ARGV.each do |pept|
-    get_uniprot_entry(pept)
+    get_uniprot_entry(pept, fasta)
   end
 end
