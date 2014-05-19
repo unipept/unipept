@@ -182,7 +182,25 @@ module Unipept
     end
 
     def peptide_iterator(peptides, &block)
-      peptides.each_slice(batch_size).with_index(&block)
+      if peptides.first.start_with? '>'
+        # FASTA MODE ENGAGED
+        peptides.each_slice(batch_size).with_index do |sub,i|
+          fasta_mapper = {}
+          j = 0
+          while j < sub.size
+            if sub[j].start_with? '>'
+              fasta_header = sub.delete_at j
+            else
+              fasta_mapper[sub[j]] = fasta_header
+            end
+            j += 1
+          end
+          block.call(sub, i, fasta_mapper)
+        end
+
+      else
+        peptides.each_slice(batch_size).with_index(&block)
+      end
     end
 
     private
