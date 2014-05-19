@@ -15,7 +15,22 @@ class ApiRunner < Cri::CommandRunner
   def initialize(args, opts, cmd)
     super
     @configuration = Unipept::Configuration.new
-    host = @configuration['host']
+
+    set_configuration
+
+    @url = "#{@host}/api/v1/#{mapping[cmd.name]}.json"
+    @message_url = "#{@host}/api/v1/messages.json"
+  end
+
+  def set_configuration
+    # find host in opts first
+    if options[:'config-host']
+      host = options[:'config-host']
+    else
+      host = @configuration['host']
+    end
+
+    # No host has been set?
     if host.nil? || host.empty?
       puts "WARNING: no host has been set, you can set the host with `unipept config host http://localhost:3000/`"
       exit 1
@@ -24,8 +39,7 @@ class ApiRunner < Cri::CommandRunner
       host = "http://#{host}"
     end
 
-    @url = "#{host}/api/v1/#{mapping[cmd.name]}.json"
-    @message_url = "#{host}/api/v1/messages.json"
+    @host = host
   end
 
   def mapping
@@ -231,6 +245,9 @@ root_cmd = Cri::Command.new_basic_root.modify do
   option :i, :input, "input file", :argument => :required
   option :o, :output, "output file", :argument => :required
   option :f, :format, "output format (available: #{Unipept::Formatter.available.join "," }) (default: #{Unipept::Formatter.default})", :argument => :required
+
+  # Configuration options
+  option nil, "config-host", "Override host setting", argument: :required
 
   run do |opts, args, cmd|
     if opts[:version]
