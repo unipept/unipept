@@ -94,10 +94,10 @@ module Unipept
       printed_header = false
       result = []
 
-      hydra = Typhoeus::Hydra.new(max_concurrency: 20)
+      hydra = Typhoeus::Hydra.new(max_concurrency: 10)
       num_req = 0
 
-      peptide_iterator(peptides) do |sub_division, i|
+      peptide_iterator(peptides) do |sub_division, i, fasta_mapper|
         request = Typhoeus::Request.new(
           @url,
           method: :post,
@@ -123,10 +123,10 @@ module Unipept
               batch_order.wait(i) do
                 if ! sub_result.empty?
                   if ! printed_header
-                    write_to_output formatter.header(sub_result)
+                    write_to_output formatter.header(sub_result, fasta_mapper)
                     printed_header = true
                   end
-                  write_to_output formatter.format(sub_result)
+                  write_to_output formatter.format(sub_result, fasta_mapper)
                 end
               end
             else
@@ -182,19 +182,23 @@ module Unipept
     end
 
     def peptide_iterator(peptides, &block)
-      if peptides.first.start_with? '>'
+      first = peptides.first
+      if first.start_with? '>'
         # FASTA MODE ENGAGED
+        fasta_header = first
         peptides.each_slice(batch_size).with_index do |sub,i|
           fasta_mapper = {}
+          sub.map! {|s| s.chomp}
           j = 0
           while j < sub.size
             if sub[j].start_with? '>'
-              fasta_header = sub.delete_at j
+              fasta_header = sub[j]
             else
               fasta_mapper[sub[j]] = fasta_header
             end
             j += 1
           end
+          sub -= fasta_mapper.values.uniq
           block.call(sub, i, fasta_mapper)
         end
 

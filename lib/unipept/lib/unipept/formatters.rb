@@ -30,7 +30,7 @@ module Unipept
     end
 
     # JSON formatted data goes in, something other comes out
-    def format(data)
+    def format(data, fasta_mapper = nil)
       data
     end
   end
@@ -49,23 +49,40 @@ module Unipept
 
     register :csv
 
-    def header(data)
+    def header(data, fasta_mapper = nil)
       CSV.generate do |csv|
         first = data.first
         if first.kind_of? Array
           first = first.first
         end
-        csv << first.keys.map(&:to_s) if first
+        if fasta_mapper
+          csv << (['fasta_header'] + first.keys).map(&:to_s) if first
+        else
+          csv << first.keys.map(&:to_s) if first
+        end
+
       end
     end
 
-    def format(data)
+    def format(data, fasta_mapper = nil)
       CSV.generate do |csv|
         data.each do |o|
           if o.kind_of? Array
-            o.each {|h| csv << h.values.map { |v| v == ""  ? nil : v }}
+            o.each do |h|
+              if fasta_mapper
+                extra_key = [fasta_mapper[h.values.first]]
+                csv << (extra_key + h.values).map { |v| v == ""  ? nil : v }
+              else
+                csv << h.values.map { |v| v == ""  ? nil : v }
+              end
+            end
           else
-            csv << o.values.map { |v| v == "" ? nil : v }
+            if fasta_mapper
+              extra_key = [fasta_mapper[o.values.first]]
+              csv << (extra_key + o.values).map { |v| v == ""  ? nil : v }
+            else
+              csv << o.values.map { |v| v == ""  ? nil : v }
+            end
           end
         end
       end
