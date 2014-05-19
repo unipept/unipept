@@ -122,11 +122,7 @@ class ApiRunner < Cri::CommandRunner
               end
             end
           else
-            path = File.expand_path(File.join(Dir.home, "unipept.log"))
-            File.open(path, "w") do |f|
-              f.write resp.response_body
-            end
-            $stderr.puts "API request failed! log can be found in #{path}"
+            save_error(resp.response_body)
           end
         end
       end
@@ -147,6 +143,15 @@ class ApiRunner < Cri::CommandRunner
       STDERR.puts "Something went wrong while downloading xml information! please check the output"
     end
 
+  end
+
+  def save_error(message)
+    path = File.expand_path(File.join(Dir.home, ".unipept", "unipept-#{Time.now.strftime("%F-%T")}.log"))
+    FileUtils.mkdir_p File.dirname(path)
+    File.open(path, "w") do |f|
+      f.write message
+    end
+    $stderr.puts "API request failed! log can be found in #{path}"
   end
 
   def write_to_output(string)
