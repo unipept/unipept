@@ -182,7 +182,7 @@ module Unipept
     end
 
     def peptide_iterator(peptides, &block)
-      first = peptides.first
+      first = peptides.next
       if first.start_with? '>'
         # FASTA MODE ENGAGED
         fasta_header = first
@@ -201,9 +201,14 @@ module Unipept
           sub -= fasta_mapper.values.uniq
           block.call(sub, i, fasta_mapper)
         end
-
       else
-        peptides.each_slice(batch_size).with_index(&block)
+        # shame we have to be this explicit, but it appears to be the only way
+        Enumerator.new do |y|
+          y << first
+          loop do
+            y << peptides.next
+          end
+        end.each_slice(batch_size).with_index(&block)
       end
     end
 
