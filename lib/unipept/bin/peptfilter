@@ -16,6 +16,11 @@ root_cmd = Cri::Command.new_basic_root.modify do
     lacks = opts.fetch(:lacks, "").chars.to_a
     contains = opts.fetch(:contains, "").chars.to_a
     $stdin.each_line do |pept|
+      # FASTA headers
+      if pept.start_with? '>'
+        puts pept
+        next
+      end
       pept = pept.chomp
       length_ok = pept.length >= minlen && pept.length <= maxlen
       lacks_ok = (pept.chars.to_a & lacks).size == 0
