@@ -16,10 +16,11 @@ gem "jquery-ui-rails", "4.0.2"
 
 # auth
 gem 'devise'
+gem 'devise_cas_authenticatable'
 
 # cas auth
-gem 'rubycas-client', :git => 'git://github.com/bmesuere/rubycas-client.git', :branch => 'master'
-gem 'rubycas-client-rails', :git => 'git://github.com/bmesuere/rubycas-client-rails.git'
+#gem 'rubycas-client', :git => 'git://github.com/bmesuere/rubycas-client.git', :branch => 'master'
+#gem 'rubycas-client-rails', :git => 'git://github.com/bmesuere/rubycas-client-rails.git'
 
 # needed for asset creation
 gem 'therubyracer'
