@@ -47,6 +47,7 @@ GEM
       activerecord (>= 2.3.0)
       rake (>= 0.8.7)
     arel (5.0.1.20140414130214)
+    bcrypt (3.1.7)
     be_valid_asset (1.2.3)
       rspec
     builder (3.2.2)
@@ -64,6 +65,12 @@ GEM
       capistrano (~> 3.0)
       sshkit (~> 1.2)
     commonjs (0.2.7)
+    devise (3.2.4)
+      bcrypt (~> 3.0)
+      orm_adapter (~> 0.1)
+      railties (>= 3.2.6, < 5)
+      thread_safe (~> 0.1)
+      warden (~> 1.2.3)
     diff-lcs (1.2.5)
     erubis (2.7.0)
     exception_notification (4.0.1)
@@ -103,6 +110,7 @@ GEM
     nokogiri (1.6.1)
       mini_portile (~> 0.5.0)
     oj (2.9.0)
+    orm_adapter (0.5.0)
     polyglot (0.3.4)
     protected_attributes (1.0.7)
       activemodel (>= 4.0.1, < 5.0)
@@ -174,6 +182,8 @@ GEM
     uglifier (2.5.0)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
+    warden (1.2.3)
+      rack (>= 1.0)
     webrat (0.7.3)
       nokogiri (>= 1.2.0)
       rack (>= 1.0)
@@ -190,6 +200,7 @@ DEPENDENCIES
   capistrano-bundler (~> 1.1)
   capistrano-rails (~> 1.1)
   capistrano-rvm
+  devise
   exception_notification
   httparty
   jquery-rails

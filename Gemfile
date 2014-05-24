@@ -14,6 +14,9 @@ gem 'will_paginate'
 gem 'jquery-rails'
 gem "jquery-ui-rails", "4.0.2"
 
+# auth
+gem 'devise'
+
 # cas auth
 gem 'rubycas-client', :git => 'git://github.com/bmesuere/rubycas-client.git', :branch => 'master'
 gem 'rubycas-client-rails', :git => 'git://github.com/bmesuere/rubycas-client-rails.git'
