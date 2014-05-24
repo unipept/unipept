@@ -4,9 +4,10 @@ Devise.setup do |config|
   # The secret key used by Devise. Devise uses this key to generate
   # random tokens. Changing this key will render invalid all existing
   # confirmation, reset password and unlock tokens in the database.
-  # config.secret_key = '3553f37f722b9fbdbf297dc8d4a170f8fe7171b52939808ec4239a54f90322167b66cb0e26c1b0b5ea2606aa155bac132df4330581e0aa9b8c0ae49083bbedc7'
+  config.secret_key = 'cfad0db2bfbbe209b0cc1c2eef818e62a164a711de036a1e91760c8fa79003823c7e6d8c808821ef1e6b2d67952e5bd5366933e0362e59c444b24bda1494f9ab'
 
   config.cas_base_url = "https://login.ugent.be"
+  config.cas_enable_single_sign_out = true
 
   # ==> Mailer Configuration
   # Configure the e-mail address which will be shown in Devise::Mailer,
