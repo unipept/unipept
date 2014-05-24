@@ -185,7 +185,7 @@ module Unipept
       first = peptides.next
       if first.start_with? '>'
         # FASTA MODE ENGAGED
-        fasta_header = first
+        fasta_header = first.chomp
         peptides.each_slice(batch_size).with_index do |sub,i|
           fasta_mapper = {}
           sub.map! {|s| s.chomp}
