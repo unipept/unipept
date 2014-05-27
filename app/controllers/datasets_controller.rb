@@ -1,7 +1,7 @@
 class DatasetsController < ApplicationController
   require 'httparty'
 
-  before_filter :authorize, :only => [:new, :edit, :create, :update, :destroy]
+   before_action :authorize, :only => [:new, :edit, :create, :update, :destroy]
 
   # GET /datasets
   # GET /datasets.xml

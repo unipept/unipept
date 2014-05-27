@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
-  before_filter :set_motd
+   before_action :set_motd
   before_action :authenticate_user!, :only => [:authorize]
 
   def set_motd
