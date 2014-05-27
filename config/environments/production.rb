@@ -61,8 +61,12 @@ UnipeptWeb::Application.configure do
 end
 
 UnipeptWeb::Application.config.middleware.use ExceptionNotification::Rack,
-  :email => {
+:throttle => {
+  :notifier => "email",
+  :notifier_options => {
     :email_prefix => "[Unipept] ",
-    :sender_address => %{"notifier" <unipept@ugent.be>},
+    :sender_address => %{"Unipept" <unipept@ugent.be>},
     :exception_recipients => %w{bart.mesuere@ugent.be, toon.willems@ugent.be}
-  }
+  },
+  :per_hour => 1
+}

@@ -1,8 +1,8 @@
 GIT
   remote: git://github.com/bmesuere/exception_notification.git
-  revision: 3c763197298856b6c196f3b8118cd7a03b2400be
+  revision: 8ee5ae59b0bfbfac5147703719551b9d81a1528d
   specs:
-    exception_notification (4.1.0.rc1)
+    exception_notification (4.1.0.rc2)
       actionmailer (>= 3.0.4)
       activesupport (>= 3.0.4)
 
@@ -98,7 +98,7 @@ GEM
       treetop (~> 1.4.8)
     mime-types (1.25.1)
     mini_portile (0.5.3)
-    minitest (5.3.3)
+    minitest (5.3.4)
     multi_json (1.10.0)
     multi_xml (0.5.5)
     mysql2 (0.3.15)
@@ -174,7 +174,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    tzinfo (1.1.0)
+    tzinfo (1.2.0)
       thread_safe (~> 0.1)
     uglifier (2.5.0)
       execjs (>= 0.3.0)
