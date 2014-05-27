@@ -325,6 +325,17 @@ DEFAULT CHARACTER SET = ascii
 COLLATE = ascii_general_ci;
 
 
+-- -----------------------------------------------------
+-- Table `unipept`.`users`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`users` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(8) NOT NULL,
+  `admin` TINYINT NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
