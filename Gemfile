@@ -64,7 +64,7 @@ end
 # gem 'unicorn'
 
 # Exception emails
-gem 'exception_notification'
+gem 'exception_notification', :git => 'git://github.com/bmesuere/exception_notification.git'
 
 # Deploy with Capistrano
 gem 'capistrano', '~> 3.0'
