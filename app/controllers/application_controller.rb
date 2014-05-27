@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
   before_filter :set_motd
-  #before_action authenticate_user!, :only => [:authorize]
+  before_action :authenticate_user!, :only => [:authorize]
 
   def set_motd
     file = Rails.root.join("public", "motd")
@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def authorize
-    unless session[:admin]
+    unless user_signed_in? && current_user.is_admin?
       flash[:error] = "Please log in to use this feature"
       redirect_to root_url
     end
