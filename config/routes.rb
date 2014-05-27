@@ -1,4 +1,6 @@
 UnipeptWeb::Application.routes.draw do
+  devise_for :users
+
   # home page
   root :to => 'pages#home'
 
