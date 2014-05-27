@@ -7,7 +7,7 @@
     </ul>
   </div>
   <% else %>
-  <div id='user'><ul><li><span class="glyphicon glyphicon-lock"></span> <a href='/cas/auth'>Sign in</a></li></ul></div>
+  <div id='user'><ul><li><span class="glyphicon glyphicon-lock"></span> <%= link_to("Sign in", new_user_session_path) %></li></ul></div>
   <% end %>
 </div>
 
