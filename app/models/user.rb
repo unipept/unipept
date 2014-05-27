@@ -3,7 +3,7 @@ class User < ActiveRecord::Base
 
   attr_accessible :username
 
-  def is_admin
-    return true
+  def is_admin?
+    return admin == 1
   end
 end
