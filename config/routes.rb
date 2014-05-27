@@ -1,4 +1,6 @@
 UnipeptWeb::Application.routes.draw do
+  devise_for :users
+
   # home page
   root :to => 'pages#home'
 
@@ -48,11 +50,6 @@ UnipeptWeb::Application.routes.draw do
 
   # load pride dataset from webservice
   get '/pride/:id', :to => 'pride#load'
-
-  # verbosity is needed to add namespace to controller
-  get "cas/auth", :to => "cas#auth"
-  get "cas/logout", :to => "cas#logout"
-  get "cas/verify", :to => "cas#verify"
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

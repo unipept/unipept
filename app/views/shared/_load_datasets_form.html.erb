@@ -7,7 +7,7 @@
     <div class="tab-pane active" id="database">
       <h3>Sample data</h3>
       <%= render @datasets, :load => true, :edit => true %>
-      <%= link_to 'New Dataset', new_dataset_path, :class => "btn btn-primary" if session[:admin] %>
+      <%= link_to 'New Dataset', new_dataset_path, :class => "btn btn-primary" if user_signed_in? && current_user.is_admin? %>
     </div>
     <div class="tab-pane" id="pride">
       <h3>PRIDE data</h3>
