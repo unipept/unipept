@@ -333,7 +333,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`users` (
   `username` VARCHAR(8) NOT NULL,
   `admin` TINYINT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB
+ENGINE = InnoDB;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
