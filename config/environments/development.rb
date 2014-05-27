@@ -15,6 +15,8 @@ UnipeptWeb::Application.configure do
   # Don't care if the mailer can't send
   config.action_mailer.raise_delivery_errors = false
 
+  config.action_mailer.delivery_method = :sendmail
+
   # Print deprecation notices to the Rails logger
   config.active_support.deprecation = :log
 
@@ -34,10 +36,19 @@ UnipeptWeb::Application.configure do
   # with SQLite, MySQL, and PostgreSQL)
   #config.active_record.auto_explain_threshold_in_seconds = 30
 end
+
 UnipeptWeb::Application.config.middleware.use ExceptionNotification::Rack,
   :email => {
     :email_prefix => "[Unipept] ",
     :sender_address => %{"notifier" <unipept@ugent.be>},
     :exception_recipients => %w{bart.mesuere@ugent.be, toon.willems@ugent.be}
+  },
+  :throttle => {
+    :notifier => "email",
+    :notifier_options => {
+      :email_prefix => "[Unipept-throttle] ",
+      :sender_address => %{"notifier" <unipept@ugent.be>},
+      :exception_recipients => %w{bart.mesuere@ugent.be, toon.willems@ugent.be}
+    },
+    :per_hour => 1
   }
-
