@@ -34,3 +34,14 @@ INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('varietas', 0);
 INSERT INTO `unipept`.`counters` (`name`, `value`) VALUES ('forma', 0);
 
 COMMIT;
+
+-- -----------------------------------------------------
+-- Data for table `unipept`.`users`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `unipept`;
+INSERT INTO `unipept`.`users` (`id`, `username`, `admin`) VALUES (1, 'bmesuere', 1);
+INSERT INTO `unipept`.`users` (`id`, `username`, `admin`) VALUES (2, 'pdawyndt', 1);
+
+COMMIT;
+
