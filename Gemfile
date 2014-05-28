@@ -38,6 +38,17 @@ gem "less-rails"
 # in Ruby
 gem "uglifier"
 
+# Exception emails
+gem 'exception_notification', :git => 'git://github.com/unipept/exception_notification.git'
+
+# Deploy with Capistrano
+gem 'capistrano', '~> 3.0'
+group :development do
+  gem 'capistrano-rails',   '~> 1.1', require: false
+  gem 'capistrano-bundler', '~> 1.1', require: false
+  gem 'capistrano-rvm', require: false
+end
+
 group :development do
   gem 'rspec-rails'
 	gem 'annotate'
@@ -63,16 +74,6 @@ end
 # Use unicorn as the web server
 # gem 'unicorn'
 
-# Exception emails
-gem 'exception_notification', :git => 'git://github.com/bmesuere/exception_notification.git'
-
-# Deploy with Capistrano
-gem 'capistrano', '~> 3.0'
-group :development do
-  gem 'capistrano-rails',   '~> 1.1', require: false
-  gem 'capistrano-bundler', '~> 1.1', require: false
-  gem 'capistrano-rvm', require: false
-end
 # To use debugger (ruby-debug for Ruby 1.8.7+, ruby-debug19 for Ruby 1.9.2+)
 # gem 'ruby-debug'
 # gem 'ruby-debug19'
