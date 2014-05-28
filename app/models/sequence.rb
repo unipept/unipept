@@ -16,6 +16,40 @@ class Sequence < ActiveRecord::Base
   belongs_to :lca_t, :foreign_key  => "lca", :primary_key  => "id",  :class_name   => 'Taxon'
   belongs_to :lca_il_t, :foreign_key  => "lca_il", :primary_key  => "id",  :class_name   => 'Taxon'
 
+  def self.relation_name(equate_il)
+    equate_il ? :peptides : :original_peptides
+  end
+
+  # search for a single sequence, include information through join tables
+  def self.single_search(sequence, equate_il = true)
+    raise SequenceTooShortError if sequence.length < 5
+    sequence.gsub!(/I/,'L') if equate_il
+    # this solves the N+1 query problem
+    self.includes(peptides: {uniprot_entry: :name}).
+      find_by_sequence(sequence)
+  end
+
+
+  # try to find multiple matches
+  def self.multi_search(sequence, equate_il = true)
+    # sanity check
+    raise NoMatchesFoundError.new(sequence) if sequence.index(/([KR])([^P])/).nil?
+
+    # Split in silico (use little trick to fix overlap)
+    sequences = sequence.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
+
+
+    # build query
+    query = self.includes(relation_name(equate_il) => {:uniprot_entry => [:name, :lineage]})
+    long_sequences = sequences.select{|s| s.length >= 5}.map{|s| query.find_by_sequence(s) }
+
+    # check if it has a match for every sequence and at least one long part
+    raise NoMatchesFoundError.new(sequence) if long_sequences.include? nil
+    raise SequenceTooShortError if long_sequences.size == 0
+
+    long_sequences
+  end
+
   # SELECT DISTINCT lineages.* FROM unipept.peptides INNER JOIN unipept.uniprot_entries ON (uniprot_entries.id = peptides.uniprot_entry_id) INNER JOIN unipept.lineages ON (uniprot_entries.taxon_id = lineages.taxon_id) WHERE peptides.sequence_id = #{id}
   def lineages(equate_il = true, eager = false)
     if equate_il
@@ -100,7 +134,6 @@ class Sequence < ActiveRecord::Base
       data = data.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2") unless handle_missed
       data = data.lines.map(&:strip).to_a.select{|l| l.size >= 5}
       data_counts = Hash[data.group_by{|k| k}.map{|k,v| [k, v.length]}]
-      number_searched_for = data.length
       data = data_counts.keys
 
       # build the resultset
@@ -199,12 +232,12 @@ class Sequence < ActiveRecord::Base
 
   # Returns an array of sequences strings based on a list of sequence id's
   def self.list_sequences(ids)
-    connection.select_values(Sequence.select(:sequence).where(:id => ids).to_sql).to_a
+    Sequence.where(id: ids).pluck(:sequence)
   end
 
   # Filters a list of sequences for a given lca
   def self.filter_unique_uniprot_peptides(sequences, lca)
-    connection.select_values(Sequence.select(:id).where(:id => sequences, :lca => lca).to_sql).to_a.sort!
+    Sequence.where(id: sequences, lca: lca).order(:id).pluck(:id)
   end
 
   # Filters a list of sequences for a given lca
@@ -249,3 +282,7 @@ class Sequence < ActiveRecord::Base
     return result
   end
 end
+
+#some errors
+class SequenceTooShortError < StandardError; end
+class NoMatchesFoundError < StandardError; end
