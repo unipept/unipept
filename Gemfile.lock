@@ -1,5 +1,5 @@
 GIT
-  remote: git://github.com/bmesuere/exception_notification.git
+  remote: git://github.com/unipept/exception_notification.git
   revision: 8ee5ae59b0bfbfac5147703719551b9d81a1528d
   specs:
     exception_notification (4.1.0.rc2)
