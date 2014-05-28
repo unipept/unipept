@@ -197,12 +197,13 @@ class Api::ApiController < ApplicationController
     end
 
     filter_input_order
-
     respond_with(@result)
   end
 
   def taxonomy
     @result = @query.where(id: @input)
+
+    filter_input_order
     respond_with(@result)
   end
 
