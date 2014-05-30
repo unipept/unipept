@@ -63,7 +63,7 @@ class SequencesController < ApplicationController
     #distinct lineage
     @lineages.map{|lineage| lineage.set_iterator_position(l.get_iterator_position)}
     @distinct_lineages = Array.new
-    for lineage in @lineages do
+    @lineages.each do |lineage|
       last_node_loop = last_node
       l = Array.new
       while lineage.has_next?
@@ -201,7 +201,7 @@ class SequencesController < ApplicationController
       # handle the misses
       if handle_missed
         iter = @misses.to_a
-        for seq in iter
+        iter.each do |seq|
           sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
           next if sequences.size == 1
           sequences = sequences.select{|s| s.length >= 5}
@@ -270,7 +270,7 @@ class SequencesController < ApplicationController
 
         #export stuff
         if export
-          for sequence in sequences do
+          sequences.each do |sequence|
             csv_string += CSV.generate_line [sequence].concat(lca_l.to_a)
           end
         end
