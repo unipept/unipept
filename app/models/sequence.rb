@@ -23,10 +23,10 @@ class Sequence < ActiveRecord::Base
   # search for a single sequence, include information through join tables
   def self.single_search(sequence, equate_il = true)
     raise SequenceTooShortError if sequence.length < 5
-    sequence.gsub!(/I/,'L') if equate_il
+    sequence = sequence.gsub(/I/,'L') if equate_il
     # this solves the N+1 query problem
-    self.includes(peptides: {uniprot_entry: :name}).
-      find_by_sequence(sequence)
+    self.includes(relation_name(equate_il) => {uniprot_entry: :name})
+      .find_by_sequence(sequence)
   end
 
 
@@ -35,9 +35,10 @@ class Sequence < ActiveRecord::Base
     # sanity check
     raise NoMatchesFoundError.new(sequence) if sequence.index(/([KR])([^P])/).nil?
 
+    sequence = sequence.gsub(/I/,'L') if equate_il
+
     # Split in silico (use little trick to fix overlap)
     sequences = sequence.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
-
 
     # build query
     query = self.includes(relation_name(equate_il) => {:uniprot_entry => [:name, :lineage]})

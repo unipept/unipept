@@ -12,38 +12,28 @@ class SequencesController < ApplicationController
     seq = params[:id].upcase
 
     # process the input, convert seq to a valid @sequence
-    # seq contains the id of the sequence
     if seq.match(/\A[0-9]+\z/)
       sequence = Sequence.includes({:peptides => {:uniprot_entry => :name}}).find_by_id(seq)
-    # seq contains the sequence
+      @original_sequence = sequence.sequence
     else
       sequence = Sequence.single_search(seq, equate_il)
+      @original_sequence = seq
     end
 
-    # we didn't find the sequence in the database
-    # don't panic, we still got a few aces up our sleeve
-    if sequence.nil?
-      # check if it's splitable
-      long_sequences = Sequence.multi_search(seq, equate_il)
-
-      # ok, we're done
-      @sequence_string = seq
-      multi = true
-
-    # we did find something in the database, but will it blend?
-    else
-      # check if we have some peptides to work with
-      if (sequence.peptides.empty? && equate_il) || (sequence.original_peptides.empty? && !equate_il)
-        raise NoMatchesFoundError.new(sequence.sequence)
-      end
-      @sequence_string = sequence.sequence
-    end
-
-    @title = "Tryptic peptide analysis of #{@sequence_string}"
+    # quit if it doensn't contain any peptides
+    raise NoMatchesFoundError.new(sequence.sequence) if !sequence.nil? && sequence.peptides.empty? && equate_il
+    raise NoMatchesFoundError.new(sequence.sequence) if !sequence.nil? && sequence.original_peptides.empty? && !equate_il
 
     # get the uniprot entries of every peptide
     # only used for the open in uniprot links
-    if multi
+    # and calculate the LCA
+    unless sequence.nil?
+      @entries = equate_il ? sequence.peptides.map(&:uniprot_entry) : sequence.original_peptides.map(&:uniprot_entry)
+      @lineages = sequence.lineages(equate_il, true)
+    else
+      # we didn't find the sequence in the database, so let's try to split it
+      long_sequences = Sequence.multi_search(seq, equate_il)
+
       # calculate possible uniprot entries
       if equate_il
         temp_entries = long_sequences.map{|s| s.peptides.map(&:uniprot_entry).to_set}
@@ -52,29 +42,18 @@ class SequencesController < ApplicationController
       end
 
       # take the intersection of all sets
-      @entries = temp_entries[0]
-      for i in 1..(temp_entries.size-1) do
-        @entries = @entries & temp_entries[i]
-      end
+      @entries = temp_entries.reduce(:&)
 
       # check if the protein contains the startsequence
       if equate_il
-        @entries.select!{|e| e.protein.gsub(/I/,'L').include? seq}
+        @entries.select!{|e| e.protein.gsub(/I/,'L').include? seq.gsub(/I/,'L')}
       else
         @entries.select!{|e| e.protein.include? seq}
       end
       raise NoMatchesFoundError.new(seq) if @entries.size == 0
-    else
-      @entries = equate_il ? sequence.peptides.map(&:uniprot_entry) : sequence.original_peptides.map(&:uniprot_entry)
-    end
-
-
-    # LCA calculation
-    if multi
       @lineages = @entries.map(&:lineage).uniq
-    else
-      @lineages = sequence.lineages(equate_il, true)
     end
+
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) #calculate the LCA
     @root = Node.new(1, "root") #start constructing the tree
     last_node = @root
@@ -87,7 +66,7 @@ class SequencesController < ApplicationController
     #this might go wrong in the case where the first lineage doesn't contain the LCA (eg. nil)
     while l.has_next? && !found do
       t = l.next_t
-      unless t.nil? then
+      unless t.nil?
         found = (@lca_taxon.id == t.id)
         @common_lineage << t
         last_node = last_node.add_child(Node.new(t.id, t.name), @root)
@@ -102,7 +81,7 @@ class SequencesController < ApplicationController
       l = Array.new
       while lineage.has_next?
         t = lineage.next_t
-        unless t.nil? then
+        unless t.nil?
           l << t.name # add the taxon name to de lineage
           node = Node.find_by_id(t.id, @root)
           if node.nil? # if the node isn't create yet
@@ -140,6 +119,8 @@ class SequencesController < ApplicationController
 
     #sort entries
     @entries = @entries.to_a.sort_by{|e| e.name.nil? ? "" : e.name.name}
+
+    @title = "Tryptic peptide analysis of #{@original_sequence}"
 
     respond_to do |format|
       format.html # show.html.erb
