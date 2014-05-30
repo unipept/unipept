@@ -2,8 +2,8 @@
 #
 # Table name: genome_caches
 #
-#  bioproject_id  :integer(4)      not null, primary key
-#  json_sequences :text(16777215)  default(""), not null
+#  bioproject_id  :integer          not null, primary key
+#  json_sequences :text(16777215)   not null
 #
 
 class GenomeCache < ActiveRecord::Base

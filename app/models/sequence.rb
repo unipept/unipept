@@ -2,10 +2,10 @@
 #
 # Table name: sequences
 #
-#  id       :integer(4)      not null, primary key
-#  sequence :string(50)      not null
-#  lca      :integer(3)
-#  lca_il   :integer(3)
+#  id       :integer          not null, primary key
+#  sequence :string(50)       not null
+#  lca      :integer
+#  lca_il   :integer
 #
 
 class Sequence < ActiveRecord::Base

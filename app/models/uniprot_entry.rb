@@ -2,12 +2,12 @@
 #
 # Table name: uniprot_entries
 #
-#  id                       :integer(4)      not null, primary key
-#  uniprot_accession_number :string(8)       not null
-#  version                  :integer(2)      not null
-#  taxon_id                 :integer(3)      not null
-#  type                     :string(9)       not null
-#  protein                  :text            default(""), not null
+#  id                       :integer          not null, primary key
+#  uniprot_accession_number :string(8)        not null
+#  version                  :integer          not null
+#  taxon_id                 :integer          not null
+#  type                     :string(9)        not null
+#  protein                  :text             not null
 #
 
 class UniprotEntry < ActiveRecord::Base

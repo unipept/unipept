@@ -2,8 +2,8 @@
 #
 # Table name: embl_cross_references
 #
-#  id               :integer(4)      not null, primary key
-#  uniprot_entry_id :integer(4)      not null
+#  id               :integer          not null, primary key
+#  uniprot_entry_id :integer          not null
 #  protein_id       :string(15)
 #  sequence_id      :string(15)
 #

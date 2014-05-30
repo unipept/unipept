@@ -2,35 +2,35 @@
 #
 # Table name: lineages
 #
-#  taxon_id         :integer(3)      not null, primary key
-#  superkingdom     :integer(3)
-#  kingdom          :integer(3)
-#  subkingdom       :integer(3)
-#  superphylum      :integer(3)
-#  phylum           :integer(3)
-#  subphylum        :integer(3)
-#  superclass       :integer(3)
-#  class            :integer(3)
-#  subclass         :integer(3)
-#  infraclass       :integer(3)
-#  superorder       :integer(3)
-#  order            :integer(3)
-#  suborder         :integer(3)
-#  infraorder       :integer(3)
-#  parvorder        :integer(3)
-#  superfamily      :integer(3)
-#  family           :integer(3)
-#  subfamily        :integer(3)
-#  tribe            :integer(3)
-#  subtribe         :integer(3)
-#  genus            :integer(3)
-#  subgenus         :integer(3)
-#  species_group    :integer(3)
-#  species_subgroup :integer(3)
-#  species          :integer(3)
-#  subspecies       :integer(3)
-#  varietas         :integer(3)
-#  forma            :integer(3)
+#  taxon_id         :integer          not null, primary key
+#  superkingdom     :integer
+#  kingdom          :integer
+#  subkingdom       :integer
+#  superphylum      :integer
+#  phylum           :integer
+#  subphylum        :integer
+#  superclass       :integer
+#  class            :integer
+#  subclass         :integer
+#  infraclass       :integer
+#  superorder       :integer
+#  order            :integer
+#  suborder         :integer
+#  infraorder       :integer
+#  parvorder        :integer
+#  superfamily      :integer
+#  family           :integer
+#  subfamily        :integer
+#  tribe            :integer
+#  subtribe         :integer
+#  genus            :integer
+#  subgenus         :integer
+#  species_group    :integer
+#  species_subgroup :integer
+#  species          :integer
+#  subspecies       :integer
+#  varietas         :integer
+#  forma            :integer
 #
 
 class Lineage < ActiveRecord::Base

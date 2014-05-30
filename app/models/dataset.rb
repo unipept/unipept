@@ -2,7 +2,7 @@
 #
 # Table name: datasets
 #
-#  id              :integer(4)      not null, primary key
+#  id              :integer          not null, primary key
 #  environment     :string(160)
 #  reference       :string(500)
 #  url             :string(200)
