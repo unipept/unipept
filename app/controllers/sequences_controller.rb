@@ -37,11 +37,7 @@ class SequencesController < ApplicationController
       # take the intersection of all sets
       @entries = temp_entries.reduce(:&)
       # check if the protein contains the startsequence
-      if equate_il
-        @entries.select!{|e| e.protein.gsub(/I/,'L').include? seq.gsub(/I/,'L')}
-      else
-        @entries.select!{|e| e.protein.include? seq}
-      end
+      @entries.select!{|e| e.protein_contains?(seq, equate_il)}
 
       raise NoMatchesFoundError.new(seq) if @entries.size == 0
       @lineages = @entries.map(&:lineage).uniq
@@ -233,13 +229,8 @@ class SequencesController < ApplicationController
           temp_entries = long_sequences.map{|s| s.peptides(@equate_il).map(&:uniprot_entry).to_set}
           # take the intersection of all sets
           entries = temp_entries.reduce(:&)
-
           # check if the protein contains the startsequence
-          if @equate_il
-            entries.select!{|e| e.protein.gsub(/I/,'L').include? seq}
-          else
-            entries.select!{|e| e.protein.include? seq}
-          end
+          entries.select!{|e| e.protein_contains?(seq, equate_il)}
 
           # skip if nothing left
           next if entries.size == 0

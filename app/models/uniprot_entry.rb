@@ -33,4 +33,12 @@ class UniprotEntry < ActiveRecord::Base
 
   self.inheritance_column = "type_id"
 
+  def protein_contains?(sequence, equate_il)
+    if equate_il
+      protein.gsub(/I/,'L').include? sequence.gsub(/I/,'L')
+    else
+      protein.include? sequence
+    end
+  end
+
 end
