@@ -20,11 +20,12 @@ class Sequence < ActiveRecord::Base
     equate_il ? :peptides : :original_peptides
   end
 
-  def self.peptides(equate_il = true)
+  alias_method :generated_peptides, :peptides
+  def peptides(equate_il = true)
     if equate_il
-      super()
+      self.generated_peptides
     else
-      original_peptides
+      self.original_peptides
     end
   end
 
