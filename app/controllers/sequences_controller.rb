@@ -49,11 +49,9 @@ class SequencesController < ApplicationController
 
     #common lineage
     @common_lineage = Array.new #construct the common lineage in this array
-    l = @lineages.select{|lineage| lineage[@lca_taxon.rank] == @lca_taxon.id}.first
-    l = @lineages.first if l.nil?
+    l = @lca_taxon.lineage
     found = (@lca_taxon.name == "root")
-    #this might go wrong in the case where the first lineage doesn't contain the LCA (eg. nil)
-    while l.has_next? && !found do
+    while !found && l.has_next? do
       t = l.next_t
       unless t.nil?
         found = (@lca_taxon.id == t.id)
@@ -118,10 +116,10 @@ class SequencesController < ApplicationController
       # format.json { render json: Oj.dump(@entries, :include => :name, :mode => :compat) }
     end
 
-  rescue SequenceTooShortError
-    flash[:error] = "The sequence you searched for is too short."
-    redirect_to search_single_url
-  rescue NoMatchesFoundError => e
+    rescue SequenceTooShortError
+      flash[:error] = "The sequence you searched for is too short."
+      redirect_to search_single_url
+    rescue NoMatchesFoundError => e
       flash[:error] = "No matches for peptide #{e.message}"
       redirect_to search_single_url
   end
