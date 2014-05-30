@@ -20,6 +20,14 @@ class Sequence < ActiveRecord::Base
     equate_il ? :peptides : :original_peptides
   end
 
+  def self.peptides(equate_il = true)
+    if equate_il
+      super()
+    else
+      original_peptides
+    end
+  end
+
   # search for a single sequence, include information through join tables
   def self.single_search(sequence, equate_il = true)
     raise SequenceTooShortError if sequence.length < 5

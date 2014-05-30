@@ -21,35 +21,28 @@ class SequencesController < ApplicationController
     end
 
     # quit if it doensn't contain any peptides
-    raise NoMatchesFoundError.new(sequence.sequence) if !sequence.nil? && sequence.peptides.empty? && equate_il
-    raise NoMatchesFoundError.new(sequence.sequence) if !sequence.nil? && sequence.original_peptides.empty? && !equate_il
+    raise NoMatchesFoundError.new(sequence.sequence) if !sequence.nil? && sequence.peptides(equate_il).empty?
 
     # get the uniprot entries of every peptide
     # only used for the open in uniprot links
     # and calculate the LCA
     unless sequence.nil?
-      @entries = equate_il ? sequence.peptides.map(&:uniprot_entry) : sequence.original_peptides.map(&:uniprot_entry)
+      @entries = sequence.peptides(equate_il).map(&:uniprot_entry)
       @lineages = sequence.lineages(equate_il, true)
     else
       # we didn't find the sequence in the database, so let's try to split it
       long_sequences = Sequence.multi_search(seq, equate_il)
-
       # calculate possible uniprot entries
-      if equate_il
-        temp_entries = long_sequences.map{|s| s.peptides.map(&:uniprot_entry).to_set}
-      else
-        temp_entries = long_sequences.map{|s| s.original_peptides.map(&:uniprot_entry).to_set}
-      end
-
+      temp_entries = long_sequences.map{|s| s.peptides(equate_il).map(&:uniprot_entry).to_set}
       # take the intersection of all sets
       @entries = temp_entries.reduce(:&)
-
       # check if the protein contains the startsequence
       if equate_il
         @entries.select!{|e| e.protein.gsub(/I/,'L').include? seq.gsub(/I/,'L')}
       else
         @entries.select!{|e| e.protein.include? seq}
       end
+
       raise NoMatchesFoundError.new(seq) if @entries.size == 0
       @lineages = @entries.map(&:lineage).uniq
     end
@@ -237,17 +230,9 @@ class SequencesController < ApplicationController
           next if long_sequences.size == 0
 
           # calculate possible uniprot entries
-          if @equate_il
-            temp_entries = long_sequences.map{|s| s.peptides.map(&:uniprot_entry).to_set}
-          else
-            temp_entries = long_sequences.map{|s| s.original_peptides.map(&:uniprot_entry).to_set}
-          end
-
+          temp_entries = long_sequences.map{|s| s.peptides(@equate_il).map(&:uniprot_entry).to_set}
           # take the intersection of all sets
-          entries = temp_entries[0]
-          for i in 1..(temp_entries.size-1) do
-            entries = entries & temp_entries[i]
-          end
+          entries = temp_entries.reduce(:&)
 
           # check if the protein contains the startsequence
           if @equate_il
