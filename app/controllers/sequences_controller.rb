@@ -191,7 +191,7 @@ class SequencesController < ApplicationController
         sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
         next if sequences.size == 1
         # heuristic optimization to evade short sequences with lots of matches
-        min_length = [8, sequences.max { |s| s.length }.length].min
+        min_length = [8, sequences.max_by { |s| s.length }.length].min
         sequences = sequences.select {|s| s.length >= min_length}
 
         long_sequences = sequences.map{|s| Sequence.includes({Sequence.peptides_relation_name(@equate_il) => {:uniprot_entry => :lineage}}).find_by_sequence(s)}
