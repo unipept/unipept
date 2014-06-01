@@ -62,7 +62,6 @@ class SequencesController < ApplicationController
 
     #distinct lineage
     @lineages.map{|lineage| lineage.set_iterator_position(l.get_iterator_position)}
-    @distinct_lineages = Array.new
     @lineages.each do |lineage|
       last_node_loop = last_node
       l = Array.new
@@ -79,7 +78,6 @@ class SequencesController < ApplicationController
           end
         end
       end
-      @distinct_lineages << l.join(", ")
     end
 
     #don't show the root when we don't need it
