@@ -211,9 +211,9 @@ class SequencesController < ApplicationController
         end
 
         if @equate_il
-          long_sequences = sequences.map{|s| Sequence.find_by_sequence(s, :include => {:peptides => {:uniprot_entry => :lineage}})}
+          long_sequences = sequences.map{|s| Sequence.includes({:peptides => {:uniprot_entry => :lineage}}).find_by_sequence(s)}
         else
-          long_sequences = sequences.map{|s| Sequence.find_by_sequence(s, :include => {:original_peptides => {:uniprot_entry => :lineage}})}
+          long_sequences = sequences.map{|s| Sequence.includes({:original_peptides => {:uniprot_entry => :lineage}}).find_by_sequence(s)}
         end
 
         # jump the loop
@@ -225,7 +225,7 @@ class SequencesController < ApplicationController
         # take the intersection of all sets
         entries = temp_entries.reduce(:&)
         # check if the protein contains the startsequence
-        entries.select!{|e| e.protein_contains?(seq, equate_il)}
+        entries.select!{|e| e.protein_contains?(seq, @equate_il)}
 
         # skip if nothing left
         next if entries.size == 0
