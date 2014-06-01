@@ -151,13 +151,6 @@ class SequencesController < ApplicationController
     search_name = params[:search_name]
     query = params[:qs]
 
-    # set title
-    @title = "Multi-peptide analysis result"
-    @title += " of " + search_name unless search_name.nil? || search_name == ""
-    if search_name.include? "Pride experiment"
-      @prideURL = "http://www.ebi.ac.uk/pride/experiment.do?experimentAccessionNumber=#{search_name[/[0-9]*$/]}"
-    end
-
     # quit if the query was empty
     raise EmptyQueryError.new if query.nil? || query.empty?
 
@@ -229,10 +222,16 @@ class SequencesController < ApplicationController
           end
         end
         @misses.delete(seq)
-
       end
     end
-    @misses = @misses.to_a.sort
+
+    # prepare for output
+    # set title
+    @title = "Multi-peptide analysis result"
+    @title += " of " + search_name unless search_name.nil? || search_name == ""
+    if search_name.include? "Pride experiment"
+      @prideURL = "http://www.ebi.ac.uk/pride/experiment.do?experimentAccessionNumber=#{search_name[/[0-9]*$/]}"
+    end
 
     @intro_text = "#{@number_found} out of #{number_searched_for} #{"peptide".send(number_searched_for != 1 ? :pluralize : :to_s)}  were matched"
     if filter_duplicates || @equate_il
@@ -245,6 +244,8 @@ class SequencesController < ApplicationController
       @intro_text += ")"
     end
     @intro_text += "."
+
+    @misses = @misses.to_a.sort
 
     # construct treemap nodes
     @root = TreeMapNode.new(1, "organism", "no rank")
