@@ -201,14 +201,9 @@ class SequencesController < ApplicationController
       iter.each do |seq|
         sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
         next if sequences.size == 1
-        sequences = sequences.select{|s| s.length >= 5}
-        if sequences.select{|s| s.length >= 8}.any?
-          sequences = sequences.select{|s| s.length >= 8}
-        elsif sequences.select{|s| s.length >= 7}.any?
-          sequences = sequences.select{|s| s.length >= 7}
-        elsif sequences.select{|s| s.length >= 6}.any?
-          sequences = sequences.select{|s| s.length >= 6}
-        end
+        # heuristic optimization to evade short sequences with lots of matches
+        min_length = [8, sequences.max { |s| s.length }.length].min
+        sequences = sequences.select {|s| s.length >= min_length}
 
         if @equate_il
           long_sequences = sequences.map{|s| Sequence.includes({:peptides => {:uniprot_entry => :lineage}}).find_by_sequence(s)}
@@ -216,7 +211,7 @@ class SequencesController < ApplicationController
           long_sequences = sequences.map{|s| Sequence.includes({:original_peptides => {:uniprot_entry => :lineage}}).find_by_sequence(s)}
         end
 
-        # jump the loop
+        # jump the loop if we don't have any matches
         next if long_sequences.include? nil
         next if long_sequences.size == 0
 
