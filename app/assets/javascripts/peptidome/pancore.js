@@ -112,7 +112,7 @@ var constructPancore = function constructPancore(args) {
                 that.addGenomes(genomes);
             })
             .fail(function () {
-                error("request error for " + url, "It seems like something went wrong while we loaded the data");
+                groupErrors("request error for " + url, "It seems like something went wrong while we loaded the data. Are you still conected to the internet? You might want to reload this page.");
             });
             return false;
         });
@@ -206,7 +206,7 @@ var constructPancore = function constructPancore(args) {
             console.log(data.msg);
             break;
         case 'error':
-            error(data.msg.error, data.msg.msg);
+            groupErrors(data.msg.error, data.msg.msg);
             break;
         case 'processLoadedGenome':
             processLoadedGenome(data.msg.data, data.msg.rank);
@@ -346,6 +346,18 @@ var constructPancore = function constructPancore(args) {
             // dirty hack
             setTimeout(function () { sendToWorker("getUniqueSequences", {order : table.getOrder() });}, 1000);
         }
+    }
+
+    /**
+     * Prevents multiple errors from showing up at once
+     *
+     * @param <String> errorMsg The real error message
+     * @param <String> userMsg A message to display to the user
+     */
+    function groupErrors(errorMsg, userMsg) {
+        delay(function () {
+            error(errorMsg, userMsg);
+        }, 1000);
     }
 
     /*************** Public methods ***************/

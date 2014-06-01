@@ -730,7 +730,7 @@ function getJSON(url, callback) {
                 var data = JSON.parse(req.responseText);
                 callback(data);
             } else {
-                error("request error for " + url, "It seems like something went wrong while we loaded the data");
+                error("request error for " + url, "It seems like something went wrong while we loaded the data. Are you still conected to the internet? You might want to reload this page.");
             }
         }
     };
@@ -748,7 +748,7 @@ function getJSONByPost(url, data, callback) {
                 var data = JSON.parse(req.responseText);
                 callback(data);
             } else {
-                error("request error for " + url, "It seems like something went wrong while we loaded the data");
+                error("request error for " + url, "It seems like something went wrong while we loaded the data. Are you still conected to the internet? You might want to reload this page.");
             }
         }
     };
