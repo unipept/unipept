@@ -161,9 +161,6 @@ class SequencesController < ApplicationController
     # quit if the query was empty
     raise EmptyQueryError.new if query.nil? || query.empty?
 
-    #export stuff
-    csv_string = CSV.generate_line ["peptide"].concat(Lineage.ranks) if export
-
     # remove duplicates, filter shorts, substitute I by L, ...
     data = query.upcase
     data = data.gsub(/I/,'L') if @equate_il
@@ -307,9 +304,8 @@ class SequencesController < ApplicationController
     TreeMapNode.clean_treemap!(treemap_hash) unless treemap_hash.nil?
     @treemap_json = Oj.dump(treemap_hash)
 
-
-    #more export stuff
     if export
+      csv_string = CSV.generate_line ["peptide"].concat(Lineage.ranks) + csv_string
       cookies['nonce'] = params[:nonce]
       filename = search_name != "" ? search_name : "export"
       send_data csv_string, :type => 'text/csv; charset=iso-8859-1; header=present', :disposition => "attachment; filename="+filename+".csv"
