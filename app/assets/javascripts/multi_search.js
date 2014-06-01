@@ -344,6 +344,7 @@ function initSunburst(data) {
 
     var textEnter = text.enter().append("text")
         .style("fill", function (d) { return getReadableColorFor(colour(d)); })
+        .style("fill-opacity", 0)
         .style("font-family", "font-family: Helvetica, 'Super Sans', sans-serif")
         .style("pointer-events", "none") // don't invoke mouse events
         .attr("dy", ".2em");
