@@ -157,164 +157,167 @@ class SequencesController < ApplicationController
       @prideURL = "http://www.ebi.ac.uk/pride/experiment.do?experimentAccessionNumber=#{search_name[/[0-9]*$/]}"
     end
 
-    if query.nil? || query.empty?
-      flash[:error] = "Your query was empty, please try again."
-      redirect_to root_path
+    # quit if the query was empty
+    raise EmptyQueryError.new if query.nil? || query.empty?
+
+    #export stuff
+    csv_string = CSV.generate_line ["peptide"].concat(Lineage.ranks) if export
+
+    # remove duplicates, filter shorts, substitute I by L, ...
+    data = query.upcase
+    data = data.gsub(/I/,'L') if @equate_il
+    data = data.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2") unless handle_missed
+    data = data.lines.map(&:strip).to_a.select{|l| l.size >= 5}
+    data_counts = Hash[data.group_by{|k| k}.map{|k,v| [k, v.length]}]
+    number_searched_for = data.length
+    data = data_counts.keys
+
+    # set metrics
+    number_searched_for = data.length if filter_duplicates
+    @number_found = 0
+
+    # build the resultset
+    @matches = Hash.new
+    @misses = data.to_set
+    if @equate_il
+      sequences = Sequence.includes({:lca_il_t => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}}).where(sequence: data)
     else
-      #export stuff
-      csv_string = CSV.generate_line ["peptide"].concat(Lineage.ranks) if export
-
-      # remove duplicates, filter shorts, substitute I by L, ...
-      data = query.upcase
-      data = data.gsub(/I/,'L') if @equate_il
-      data = data.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2") unless handle_missed
-      data = data.lines.map(&:strip).to_a.select{|l| l.size >= 5}
-      data_counts = Hash[data.group_by{|k| k}.map{|k,v| [k, v.length]}]
-      number_searched_for = data.length
-      data = data_counts.keys
-
-      # set metrics
-      number_searched_for = data.length if filter_duplicates
-      @number_found = 0
-
-      # build the resultset
-      @matches = Hash.new
-      @misses = data.to_set
-      if @equate_il
-        sequences = Sequence.includes({:lca_il_t => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}}).where(sequence: data)
-      else
-        sequences = Sequence.includes({:lca_t => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}}).where(sequence: data)
+      sequences = Sequence.includes({:lca_t => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}}).where(sequence: data)
+    end
+    sequences.each do |sequence| # for every sequence in query
+      lca_t = sequence.calculate_lca(@equate_il, true)
+      unless lca_t.nil?
+        num_of_seq = filter_duplicates ? 1 : data_counts[sequence.sequence]
+        @number_found += num_of_seq
+        @matches[lca_t] = Array.new if @matches[lca_t].nil?
+        num_of_seq.times do
+          @matches[lca_t] << sequence.sequence
+        end
       end
-      sequences.each do |sequence| # for every sequence in query
-        lca_t = sequence.calculate_lca(@equate_il, true)
+      @misses.delete(sequence.sequence)
+    end
+
+    # handle the misses
+    if handle_missed
+      iter = @misses.to_a
+      iter.each do |seq|
+        sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
+        next if sequences.size == 1
+        sequences = sequences.select{|s| s.length >= 5}
+        if sequences.select{|s| s.length >= 8}.length >=1
+          sequences = sequences.select{|s| s.length >= 8}
+        elsif sequences.select{|s| s.length >= 7}.length >=1
+          sequences = sequences.select{|s| s.length >= 7}
+        elsif sequences.select{|s| s.length >= 6}.length >=1
+          sequences = sequences.select{|s| s.length >= 6}
+        end
+
+        if @equate_il
+          long_sequences = sequences.map{|s| Sequence.find_by_sequence(s, :include => {:peptides => {:uniprot_entry => :lineage}})}
+        else
+          long_sequences = sequences.map{|s| Sequence.find_by_sequence(s, :include => {:original_peptides => {:uniprot_entry => :lineage}})}
+        end
+
+        # jump the loop
+        next if long_sequences.include? nil
+        next if long_sequences.size == 0
+
+        # calculate possible uniprot entries
+        temp_entries = long_sequences.map{|s| s.peptides(@equate_il).map(&:uniprot_entry).to_set}
+        # take the intersection of all sets
+        entries = temp_entries.reduce(:&)
+        # check if the protein contains the startsequence
+        entries.select!{|e| e.protein_contains?(seq, equate_il)}
+
+        # skip if nothing left
+        next if entries.size == 0
+
+        seq_lins = entries.map(&:lineage).uniq.compact
+        lca_t = Lineage.calculate_lca_taxon(seq_lins) #calculate the LCA
+
         unless lca_t.nil?
-          num_of_seq = filter_duplicates ? 1 : data_counts[sequence.sequence]
+          num_of_seq = filter_duplicates ? 1 : data_counts[seq]
           @number_found += num_of_seq
           @matches[lca_t] = Array.new if @matches[lca_t].nil?
           num_of_seq.times do
-            @matches[lca_t] << sequence.sequence
+            @matches[lca_t] << seq
           end
         end
-        @misses.delete(sequence.sequence)
+        @misses.delete(seq)
+
       end
-
-      # handle the misses
-      if handle_missed
-        iter = @misses.to_a
-        iter.each do |seq|
-          sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
-          next if sequences.size == 1
-          sequences = sequences.select{|s| s.length >= 5}
-          if sequences.select{|s| s.length >= 8}.length >=1
-            sequences = sequences.select{|s| s.length >= 8}
-          elsif sequences.select{|s| s.length >= 7}.length >=1
-            sequences = sequences.select{|s| s.length >= 7}
-          elsif sequences.select{|s| s.length >= 6}.length >=1
-            sequences = sequences.select{|s| s.length >= 6}
-          end
-
-          if @equate_il
-            long_sequences = sequences.map{|s| Sequence.find_by_sequence(s, :include => {:peptides => {:uniprot_entry => :lineage}})}
-          else
-            long_sequences = sequences.map{|s| Sequence.find_by_sequence(s, :include => {:original_peptides => {:uniprot_entry => :lineage}})}
-          end
-
-          # jump the loop
-          next if long_sequences.include? nil
-          next if long_sequences.size == 0
-
-          # calculate possible uniprot entries
-          temp_entries = long_sequences.map{|s| s.peptides(@equate_il).map(&:uniprot_entry).to_set}
-          # take the intersection of all sets
-          entries = temp_entries.reduce(:&)
-          # check if the protein contains the startsequence
-          entries.select!{|e| e.protein_contains?(seq, equate_il)}
-
-          # skip if nothing left
-          next if entries.size == 0
-
-          seq_lins = entries.map(&:lineage).uniq.compact
-          lca_t = Lineage.calculate_lca_taxon(seq_lins) #calculate the LCA
-
-          unless lca_t.nil?
-            num_of_seq = filter_duplicates ? 1 : data_counts[seq]
-            @number_found += num_of_seq
-            @matches[lca_t] = Array.new if @matches[lca_t].nil?
-            num_of_seq.times do
-              @matches[lca_t] << seq
-            end
-          end
-          @misses.delete(seq)
-
-        end
-      end
-      @misses = @misses.to_a.sort
-
-      @intro_text = "#{@number_found} out of #{number_searched_for} #{"peptide".send(number_searched_for != 1 ? :pluralize : :to_s)}  were matched"
-      if filter_duplicates || @equate_il
-        @intro_text += " ("
-        @intro_text += "peptides were deduplicated" if filter_duplicates
-        @intro_text += ", " if filter_duplicates && @equate_il
-        @intro_text += "I and L residues were equated" if @equate_il
-        @intro_text += ", " if filter_duplicates || @equate_il
-        @intro_text += handle_missed ? "advanced missed cleavage handling" : "simple missed cleavage handling"
-        @intro_text += ")"
-      end
-      @intro_text += "."
-
-      # construct treemap nodes
-      @root = TreeMapNode.new(1, "organism", "no rank")
-      @matches.each do |taxon, sequences| # for every match
-        @root.add_sequences(sequences)
-        lca_l = taxon.lineage
-
-        #export stuff
-        if export
-          sequences.each do |sequence|
-            csv_string += CSV.generate_line [sequence].concat(lca_l.to_a)
-          end
-        end
-
-        last_node_loop = @root
-        while !lca_l.nil? && lca_l.has_next? # process every rank in lineage
-          t = lca_l.next_t
-          unless t.nil?
-            node = TreeMapNode.find_by_id(t.id, @root)
-            if node.nil?
-              node = TreeMapNode.new(t.id, t.name, t.rank)
-              last_node_loop = last_node_loop.add_child(node, @root)
-            else
-              last_node_loop = node
-            end
-            node.add_sequences(sequences)
-          end
-        end
-        node = taxon.id == 1 ? @root : TreeMapNode.find_by_id(taxon.id, @root)
-        node.add_own_sequences(sequences) unless node.nil?
-      end
-
-      #don't show the root when we don't need it
-      @root = @root.children[0] if @root.children.count == 0
-      @root.add_piechart_data unless @root.nil?
-      @root.sort_peptides_and_children unless @root.nil?
-
-      root_json = Oj.dump(@root, mode: :compat)
-      sunburst_hash = Oj.load(String.new(root_json))
-      TreeMapNode.clean_sunburst!(sunburst_hash) unless sunburst_hash.nil?
-      @sunburst_json = Oj.dump(sunburst_hash).gsub("children","kids")
-
-      treemap_hash = Oj.load(root_json)
-      TreeMapNode.clean_treemap!(treemap_hash) unless treemap_hash.nil?
-      @treemap_json = Oj.dump(treemap_hash)
-
-
-      #more export stuff
-      if export
-        cookies['nonce'] = params[:nonce]
-        filename = search_name != "" ? search_name : "export"
-        send_data csv_string, :type => 'text/csv; charset=iso-8859-1; header=present', :disposition => "attachment; filename="+filename+".csv"
-      end
-
     end
+    @misses = @misses.to_a.sort
+
+    @intro_text = "#{@number_found} out of #{number_searched_for} #{"peptide".send(number_searched_for != 1 ? :pluralize : :to_s)}  were matched"
+    if filter_duplicates || @equate_il
+      @intro_text += " ("
+      @intro_text += "peptides were deduplicated" if filter_duplicates
+      @intro_text += ", " if filter_duplicates && @equate_il
+      @intro_text += "I and L residues were equated" if @equate_il
+      @intro_text += ", " if filter_duplicates || @equate_il
+      @intro_text += handle_missed ? "advanced missed cleavage handling" : "simple missed cleavage handling"
+      @intro_text += ")"
+    end
+    @intro_text += "."
+
+    # construct treemap nodes
+    @root = TreeMapNode.new(1, "organism", "no rank")
+    @matches.each do |taxon, sequences| # for every match
+      @root.add_sequences(sequences)
+      lca_l = taxon.lineage
+
+      #export stuff
+      if export
+        sequences.each do |sequence|
+          csv_string += CSV.generate_line [sequence].concat(lca_l.to_a)
+        end
+      end
+
+      last_node_loop = @root
+      while !lca_l.nil? && lca_l.has_next? # process every rank in lineage
+        t = lca_l.next_t
+        unless t.nil?
+          node = TreeMapNode.find_by_id(t.id, @root)
+          if node.nil?
+            node = TreeMapNode.new(t.id, t.name, t.rank)
+            last_node_loop = last_node_loop.add_child(node, @root)
+          else
+            last_node_loop = node
+          end
+          node.add_sequences(sequences)
+        end
+      end
+      node = taxon.id == 1 ? @root : TreeMapNode.find_by_id(taxon.id, @root)
+      node.add_own_sequences(sequences) unless node.nil?
+    end
+
+    #don't show the root when we don't need it
+    @root = @root.children[0] if @root.children.count == 0
+    @root.add_piechart_data unless @root.nil?
+    @root.sort_peptides_and_children unless @root.nil?
+
+    root_json = Oj.dump(@root, mode: :compat)
+    sunburst_hash = Oj.load(String.new(root_json))
+    TreeMapNode.clean_sunburst!(sunburst_hash) unless sunburst_hash.nil?
+    @sunburst_json = Oj.dump(sunburst_hash).gsub("children","kids")
+
+    treemap_hash = Oj.load(root_json)
+    TreeMapNode.clean_treemap!(treemap_hash) unless treemap_hash.nil?
+    @treemap_json = Oj.dump(treemap_hash)
+
+
+    #more export stuff
+    if export
+      cookies['nonce'] = params[:nonce]
+      filename = search_name != "" ? search_name : "export"
+      send_data csv_string, :type => 'text/csv; charset=iso-8859-1; header=present', :disposition => "attachment; filename="+filename+".csv"
+    end
+
+    rescue EmptyQueryError
+      flash[:error] = "Your query was empty, please try again."
+      redirect_to datasets_path
   end
 end
+
+class EmptyQueryError < StandardError; end
