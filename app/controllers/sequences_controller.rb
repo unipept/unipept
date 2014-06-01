@@ -169,18 +169,19 @@ class SequencesController < ApplicationController
     # build the resultset
     @matches = Hash.new
     @misses = data.to_set
-    sequences = Sequence.includes({Sequence.lca_t_relation_name(@equate_il) => {:lineage => Lineage::ORDER_T}}).where(sequence: data)
-    sequences.each do |sequence| # for every sequence in query
-      lca_t = sequence.calculate_lca(@equate_il, true)
-      unless lca_t.nil?
-        num_of_seq = filter_duplicates ? 1 : data_counts[sequence.sequence]
-        @number_found += num_of_seq
-        @matches[lca_t] = Array.new if @matches[lca_t].nil?
-        num_of_seq.times do
-          @matches[lca_t] << sequence_mapping[sequence.sequence]
+    data.each_slice(1000) do |data_slice|
+      Sequence.includes({Sequence.lca_t_relation_name(@equate_il) => {:lineage => Lineage::ORDER_T}}).where(sequence: data_slice).each do |sequence|
+        lca_t = sequence.calculate_lca(@equate_il, true)
+        unless lca_t.nil?
+          num_of_seq = filter_duplicates ? 1 : data_counts[sequence.sequence]
+          @number_found += num_of_seq
+          @matches[lca_t] = Array.new if @matches[lca_t].nil?
+          num_of_seq.times do
+            @matches[lca_t] << sequence_mapping[sequence.sequence]
+          end
         end
+        @misses.delete(sequence.sequence)
       end
-      @misses.delete(sequence.sequence)
     end
 
     # handle the misses
