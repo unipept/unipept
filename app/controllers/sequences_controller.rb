@@ -224,12 +224,9 @@ class SequencesController < ApplicationController
     end
 
     # prepare for output
-    # set title
     @title = "Multi-peptide analysis result"
     @title += " of " + search_name unless search_name.nil? || search_name == ""
-    if search_name.include? "Pride experiment"
-      @prideURL = "http://www.ebi.ac.uk/pride/experiment.do?experimentAccessionNumber=#{search_name[/[0-9]*$/]}"
-    end
+    @prideURL = "http://www.ebi.ac.uk/pride/experiment.do?experimentAccessionNumber=#{search_name[/[0-9]*$/]}" if search_name.include? "Pride experiment"
 
     @intro_text = "#{@number_found} out of #{number_searched_for} #{"peptide".send(number_searched_for != 1 ? :pluralize : :to_s)}  were matched"
     if filter_duplicates || @equate_il
@@ -247,13 +244,13 @@ class SequencesController < ApplicationController
 
     # construct treemap nodes
     @root = TreeMapNode.new(1, "organism", "no rank")
-    @matches.each do |taxon, sequences| # for every match
-      @root.add_sequences(sequences)
+    @matches.each do |taxon, seqs| # for every match
+      @root.add_sequences(seqs)
       lca_l = taxon.lineage
 
       #export stuff
       if export
-        sequences.each do |sequence|
+        seqs.each do |sequence|
           csv_string += CSV.generate_line [sequence].concat(lca_l.to_a)
         end
       end
@@ -269,11 +266,11 @@ class SequencesController < ApplicationController
           else
             last_node_loop = node
           end
-          node.add_sequences(sequences)
+          node.add_sequences(seqs)
         end
       end
       node = taxon.id == 1 ? @root : TreeMapNode.find_by_id(taxon.id, @root)
-      node.add_own_sequences(sequences) unless node.nil?
+      node.add_own_sequences(seqs) unless node.nil?
     end
 
     #don't show the root when we don't need it
