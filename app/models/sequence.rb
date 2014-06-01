@@ -16,8 +16,13 @@ class Sequence < ActiveRecord::Base
   belongs_to :lca_t, :foreign_key  => "lca", :primary_key  => "id",  :class_name   => 'Taxon'
   belongs_to :lca_il_t, :foreign_key  => "lca_il", :primary_key  => "id",  :class_name   => 'Taxon'
 
-  def self.relation_name(equate_il)
+
+  def self.peptides_relation_name(equate_il)
     equate_il ? :peptides : :original_peptides
+  end
+
+  def self.lca_t_relation_name(equate_il)
+    equate_il ? :lca_il_t : :lca_t
   end
 
   alias_method :generated_peptides, :peptides
@@ -34,7 +39,7 @@ class Sequence < ActiveRecord::Base
     raise SequenceTooShortError if sequence.length < 5
     sequence = sequence.gsub(/I/,'L') if equate_il
     # this solves the N+1 query problem
-    self.includes(relation_name(equate_il) => {uniprot_entry: :name})
+    self.includes(peptides_relation_name(equate_il) => {uniprot_entry: :name})
       .find_by_sequence(sequence)
   end
 
@@ -50,7 +55,7 @@ class Sequence < ActiveRecord::Base
     sequences = sequence.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
 
     # build query
-    query = self.includes(relation_name(equate_il) => {:uniprot_entry => [:name, :lineage]})
+    query = self.includes(peptides_relation_name(equate_il) => {:uniprot_entry => [:name, :lineage]})
     long_sequences = sequences.select{|s| s.length >= 5}.map{|s| query.find_by_sequence(s) }
 
     # check if it has a match for every sequence and at least one long part

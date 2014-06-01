@@ -177,11 +177,7 @@ class SequencesController < ApplicationController
     # build the resultset
     @matches = Hash.new
     @misses = data.to_set
-    if @equate_il
-      sequences = Sequence.includes({:lca_il_t => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}}).where(sequence: data)
-    else
-      sequences = Sequence.includes({:lca_t => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}}).where(sequence: data)
-    end
+    sequences = Sequence.includes({Sequence.lca_t_relation_name(@equate_il) => {:lineage => Lineage::ORDER_T}}).where(sequence: data)
     sequences.each do |sequence| # for every sequence in query
       lca_t = sequence.calculate_lca(@equate_il, true)
       unless lca_t.nil?
@@ -205,11 +201,7 @@ class SequencesController < ApplicationController
         min_length = [8, sequences.max { |s| s.length }.length].min
         sequences = sequences.select {|s| s.length >= min_length}
 
-        if @equate_il
-          long_sequences = sequences.map{|s| Sequence.includes({:peptides => {:uniprot_entry => :lineage}}).find_by_sequence(s)}
-        else
-          long_sequences = sequences.map{|s| Sequence.includes({:original_peptides => {:uniprot_entry => :lineage}}).find_by_sequence(s)}
-        end
+        long_sequences = sequences.map{|s| Sequence.includes({Sequence.peptides_relation_name(@equate_il) => {:uniprot_entry => :lineage}}).find_by_sequence(s)}
 
         # jump the loop if we don't have any matches
         next if long_sequences.include? nil
