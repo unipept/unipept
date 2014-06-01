@@ -102,7 +102,7 @@ class SequencesController < ApplicationController
 
     # sort by id from left to right
     root_taxon = Taxon.find(1)
-    @table_lineages = @table_lineages.transpose.sort_by{ |k| k[1..-1].map!{|l| l || root_taxon} }
+    @table_lineages = @table_lineages.transpose.sort_by{ |k| k[1..-1].map!{|lin| lin || root_taxon} }
 
     #sort entries
     @entries = @entries.to_a.sort_by{|e| e.name.nil? ? "" : e.name.name}
@@ -151,6 +151,7 @@ class SequencesController < ApplicationController
     search_name = params[:search_name]
     query = params[:qs]
 
+    # set title
     @title = "Multi-peptide analysis result"
     @title += " of " + search_name unless search_name.nil? || search_name == ""
     if search_name.include? "Pride experiment"
@@ -204,11 +205,11 @@ class SequencesController < ApplicationController
         sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
         next if sequences.size == 1
         sequences = sequences.select{|s| s.length >= 5}
-        if sequences.select{|s| s.length >= 8}.length >=1
+        if sequences.select{|s| s.length >= 8}.any?
           sequences = sequences.select{|s| s.length >= 8}
-        elsif sequences.select{|s| s.length >= 7}.length >=1
+        elsif sequences.select{|s| s.length >= 7}.any?
           sequences = sequences.select{|s| s.length >= 7}
-        elsif sequences.select{|s| s.length >= 6}.length >=1
+        elsif sequences.select{|s| s.length >= 6}.any?
           sequences = sequences.select{|s| s.length >= 6}
         end
 
