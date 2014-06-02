@@ -39,6 +39,9 @@ UnipeptWeb::Application.configure do
   # enable google analytics
   config.unipept_analytics = true
   config.unipept_analytics_key = "UA-22900446-2"
+
+  # if authentication is disabled, a guest user will always be signed in
+  config.unipept_enable_auth = true
 end
 
 UnipeptWeb::Application.config.middleware.use ExceptionNotification::Rack,
