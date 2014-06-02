@@ -46,16 +46,21 @@ UnipeptWeb::Application.configure do
   # enable API logging
   config.unipept_API_logging = true
   config.unipept_stathat_key = "unipept@ugent.be"
+
+  # enable error emails
+  config.unipept_error_mails = true
+  config.unipept_error_mails_addresses = ["bart.mesuere@ugent.be"]
 end
 
-UnipeptWeb::Application.config.middleware.use ExceptionNotification::Rack,
+if Rails.application.config.unipept_error_mails
+  UnipeptWeb::Application.config.middleware.use ExceptionNotification::Rack,
   :throttle => {
     :notifier => "email",
     :notifier_options => {
       :email_prefix => "[Unipept-dev] ",
       :sender_address => %{"Unipept" <unipept@ugent.be>},
-      #:exception_recipients => %w{bart.mesuere@ugent.be, toon.willems@ugent.be}
-      :exception_recipients => %w{bart.mesuere@ugent.be}
+      :exception_recipients => Rails.application.config.unipept_error_mails_addresses
     },
     :per_hour => 1
   }
+end
