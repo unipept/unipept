@@ -35,6 +35,10 @@ UnipeptWeb::Application.configure do
   # Log the query plan for queries taking more than this (works
   # with SQLite, MySQL, and PostgreSQL)
   #config.active_record.auto_explain_threshold_in_seconds = 30
+
+  # enable google analytics
+  config.unipept_analytics = true
+  config.unipept_analytics_key = "UA-22900446-2"
 end
 
 UnipeptWeb::Application.config.middleware.use ExceptionNotification::Rack,

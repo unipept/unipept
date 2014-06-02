@@ -9,11 +9,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <link rel="shortcut icon" href="/favicon.ico" />
 
+    <% if Rails.application.config.unipept_analytics %>
     <!-- Google Analytics -->
     <script type="text/javascript">
         var _gaq = _gaq || [];
-        <%= raw "_gaq.push(['_setAccount', 'UA-22900446-1']);" if Rails.env.production? %>
-        <%= raw "_gaq.push(['_setAccount', 'UA-22900446-2']);" if Rails.env.development? %>
+        _gaq.push(['_setAccount', '<%= Rails.application.config.unipept_analytics_key %>']);
         _gaq.push(['_trackPageview']);
 
         (function() {
@@ -22,6 +22,7 @@
             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
         })();
     </script>
+    <% end %>
 
 </head>
 <body>

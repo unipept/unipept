@@ -58,6 +58,10 @@ UnipeptWeb::Application.configure do
 
   # Generate digests for assets URLs
   config.assets.digest = true
+
+  # enable google analytics
+  config.unipept.analytics = true
+  config.unipept.analytics_key = "UA-22900446-1"
 end
 
 UnipeptWeb::Application.config.middleware.use ExceptionNotification::Rack,
