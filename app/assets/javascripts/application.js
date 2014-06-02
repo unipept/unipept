@@ -185,7 +185,22 @@ function info(message) {
  * Logs a message as exception to Google Analytics
  */
 function logErrorToGoogle(errorMessage) {
-    _gaq.push(['_trackEvent', 'Global', "Exception", errorMessage]);
+    logToGoogle("Global", "Exception", errorMessage);
+}
+
+/*
+ * Logs data to Google Analytics
+ */
+function logToGoogle(page, action, name, value) {
+    if (typeof(_gaq) !== "undefined") {
+        if (name === undefined) {
+            _gaq.push(['_trackEvent', page, action]);
+        } else if (value === undefined) {
+            _gaq.push(['_trackEvent', page, action, name]);
+        } else {
+            _gaq.push(['_trackEvent', page, action, name, value]);
+        }
+    }
 }
 
 /*
