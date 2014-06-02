@@ -2,7 +2,7 @@ function init_multi(data, data2, equate_il) {
 
     $("#downloadDataset").click(function () {
         // Track the download button
-        _gaq.push(['_trackEvent', 'Multi Peptide', 'Export']);
+        logToGoogle("Multi Peptide", "Export");
 
         var nonce = Math.random();
         $("#nonce").val(nonce);
@@ -43,12 +43,10 @@ function init_multi(data, data2, equate_il) {
         $("#buttons").prepend("<button id='zoom-btn' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-resize-full'></span> Enter full screen</button>");
         $("#zoom-btn").click(function () {
             if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
-                // GA event tracking
-                _gaq.push(['_trackEvent', 'Multi Peptide', 'Full Screen', 'Sunburst']);
+                logToGoogle("Multi Peptide", "Full Screen", "Sunburst");
                 window.fullScreenApi.requestFullScreen($("#sunburst").get(0));
             } else {
-                // GA event tracking
-                _gaq.push(['_trackEvent', 'Multi Peptide', 'Full Screen', 'Treemap']);
+                logToGoogle("Multi Peptide", "Full Screen", "Treemap");
                 window.fullScreenApi.requestFullScreen($("#treeMap").get(0));
             }
         });
@@ -85,12 +83,12 @@ function init_multi(data, data2, equate_il) {
         $(".debug_dump").hide();
         if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
             // Track save image
-            _gaq.push(['_trackEvent', 'Multi Peptide', 'Save Image', 'Sunburst']);
+            logToGoogle("Multi Peptide", "Save Image", "Sunburst");
 
             triggerDownloadModal("#sunburst svg", null, "unipept_sunburst");
         } else {
             // Track save image
-            _gaq.push(['_trackEvent', 'Multi Peptide', 'Save Image', 'Treemap']);
+            logToGoogle("Multi Peptide", "Save Image", "Treemap");
 
             triggerDownloadModal(null, "#treeMap", "unipept_treemap");
         }
@@ -115,15 +113,13 @@ function initTreeMap(jsonData) {
             enable: true,
             onClick: function (node) {
                 if (node) {
-                    // GA event tracking
-                    _gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Treemap', 'In']);
+                    logToGoogle("Multi Peptide", "Zoom", "Treemap", "In");
                     tm.enter(node);
                     treeSearch(node.name, 500);
                 }
             },
             onRightClick: function () {
-                // GA event tracking
-                _gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Treemap', 'Out']);
+                    logToGoogle("Multi Peptide", "Zoom", "Treemap", "Out");
                 // TODO: replace this if bug in JIT gets fixed
                 tm.out();
             }
@@ -218,8 +214,7 @@ function initTree(data, equate_il) {
         return false;
     });
     $("#treeView li span").click(function () {
-        // GA event tracking
-        _gaq.push(['_trackEvent', 'Multi Peptide', 'tree', 'Peptides']);
+        logToGoogle("Multi Peptide", "tree", "Peptides");
 
         var d         = d3.select(this.parentElement).datum(),
             margin    = this.offsetTop - 9,
@@ -374,8 +369,7 @@ function initSunburst(data) {
         if (d.name === "empty") {
             return;
         }
-        // GA event tracking
-        _gaq.push(['_trackEvent', 'Multi Peptide', 'Zoom', 'Sunburst']);
+        logToGoogle("Multi Peptide", "Zoom", "Sunburst");
 
         // set tree, but only after the animation
         treeSearch(d.name, duration);
