@@ -42,6 +42,10 @@ UnipeptWeb::Application.configure do
 
   # if authentication is disabled, a guest user will always be signed in
   config.unipept_enable_auth = true
+
+  # enable API logging
+  config.unipept_API_logging = true
+  config.unipept_stathat_key = "unipept@ugent.be"
 end
 
 UnipeptWeb::Application.config.middleware.use ExceptionNotification::Rack,

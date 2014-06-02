@@ -52,7 +52,9 @@ class Api::ApiController < ApplicationController
   end
 
   def log
-    StatHat::API.ez_post_count('API - ' + action_name, 'unipept@ugent.be', 1)
+    if Rails.application.config.unipept_API_logging
+      StatHat::API.ez_post_count('API - ' + action_name, Rails.application.config.unipept_stathat_key, 1)
+    end
   end
 
 
