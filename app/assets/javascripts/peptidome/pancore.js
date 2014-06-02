@@ -126,12 +126,10 @@ var constructPancore = function constructPancore(args) {
             $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-resize-full'></span> Enter full screen</button>");
             $("#zoom-btn").click(function () {
                 if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
-                    // GA event tracking
-                    _gaq.push(['_trackEvent', 'Pancore', 'Full Screen', 'graph']);
+                    logToGoogle("Pancore", "Full Screen", "graph");
                     window.fullScreenApi.requestFullScreen($("#pancore_graph_wrapper").get(0));
                 } else {
-                    // GA event tracking
-                    _gaq.push(['_trackEvent', 'Pancore', 'Full Screen', 'simmatrix']);
+                    logToGoogle("Pancore", "Full Screen", "simmatrix");
                     window.fullScreenApi.requestFullScreen($("#sim_matrix_wrapper").get(0));
                 }
             });
@@ -158,7 +156,7 @@ var constructPancore = function constructPancore(args) {
                 tracking = "sim matrix";
                 filename = "similarity_matrix";
             }
-            _gaq.push(['_trackEvent', 'Pancore', 'Save Image', tracking]);
+            logToGoogle("Pancore", "Save Image", tracking);
             triggerDownloadModal(selector, null, filename);
         });
 
@@ -174,7 +172,7 @@ var constructPancore = function constructPancore(args) {
                 activeObject = matrix;
                 tracking = "sim matrix";
             }
-            _gaq.push(['_trackEvent', 'Pancore', 'Save Data', tracking]);
+            logToGoogle("Pancore", "save Data", tracking);
             activeObject.handleSaveData();
         });
     }

@@ -58,15 +58,32 @@ UnipeptWeb::Application.configure do
 
   # Generate digests for assets URLs
   config.assets.digest = true
+
+  # enable google analytics
+  config.unipept_analytics = true
+  config.unipept_analytics_key = "UA-22900446-1"
+
+  # if authentication is disabled, a guest user will always be signed in
+  config.unipept_enable_auth = true
+
+  # enable API logging
+  config.unipept_API_logging = true
+  config.unipept_stathat_key = "unipept@ugent.be"
+
+  # enable error emails
+  config.unipept_error_mails = true
+  config.unipept_error_mails_addresses = ["bart.mesuere@ugent.be"]
 end
 
-UnipeptWeb::Application.config.middleware.use ExceptionNotification::Rack,
-:throttle => {
-  :notifier => "email",
-  :notifier_options => {
-    :email_prefix => "[Unipept] ",
-    :sender_address => %{"Unipept" <unipept@ugent.be>},
-    :exception_recipients => %w{bart.mesuere@ugent.be, toon.willems@ugent.be}
-  },
-  :per_hour => 1
-}
+if Rails.application.config.unipept_error_mails
+  UnipeptWeb::Application.config.middleware.use ExceptionNotification::Rack,
+  :throttle => {
+    :notifier => "email",
+    :notifier_options => {
+      :email_prefix => "[Unipept] ",
+      :sender_address => %{"Unipept" <unipept@ugent.be>},
+      :exception_recipients => Rails.application.config.unipept_error_mails_addresses
+    },
+    :per_hour => 1
+  }
+end
