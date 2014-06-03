@@ -215,6 +215,48 @@ var delay = (function () {
     };
 })();
 
+/**
+ * Hash function for strings from
+ * http://stackoverflow.com/a/15710692/865696
+ */
+function stringHash(s){
+  return s.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);
+}
+
+/**
+ * Array reduce polyfill from
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce#Polyfill
+ */
+(function () {
+    if ( 'function' !== typeof Array.prototype.reduce ) {
+        Array.prototype.reduce = function( callback /*, initialValue*/ ) {
+            'use strict';
+            if ( null === this || 'undefined' === typeof this ) {
+                throw new TypeError('Array.prototype.reduce called on null or undefined' );
+            }
+            if ( 'function' !== typeof callback ) {
+                throw new TypeError( callback + ' is not a function' );
+            }
+            var t = Object( this ), len = t.length >>> 0, k = 0, value;
+            if ( arguments.length >= 2 ) {
+                value = arguments[1];
+            } else {
+                while ( k < len && ! k in t ) k++;
+                if ( k >= len ) {
+                    throw new TypeError('Reduce of empty array with no initial value');
+                }
+                value = t[ k++ ];
+            }
+            for ( ; k < len ; k++ ) {
+                if ( k in t ) {
+                    value = callback( value, t[k], k, t );
+                }
+            }
+            return value;
+        };
+    }
+})();
+
 /*
  * add an object called fullScreenApi until the fullscreen API gets finalized
  * from: http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugin/
