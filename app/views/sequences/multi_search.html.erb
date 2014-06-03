@@ -28,7 +28,17 @@
     </ul>
     <div class="tab-content multi-search">
         <div class="tab-pane active" id="sunburstWrapper">
-            <h2 class="ghead"><span class="dir">Click a slice to zoom in and the center node to zoom out</span></h2>
+            <h2 class="ghead">
+              <span class="dir">
+                <div class="btn-group" id="colorswap">
+                  <a class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" id="colorswap-button"><i class="glyphicon glyphicon-cog"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-right dropdown-menu-form">
+                    <li title="Enabling this will assign fixed colors to taxa making it easier to compare samples."><div class="checkbox"><label class="checkbox"><input type="checkbox">Use fixed colors</label></div></li>
+                  </ul>
+                </div>
+              </span>
+              <span class="dir">Click a slice to zoom in and the center node to zoom out</span>
+            </h2>
             <div id="sunburst"></div>
         </div>
         <div class="tab-pane active" id="treeMapWrapper">
