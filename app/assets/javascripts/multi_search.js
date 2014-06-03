@@ -368,6 +368,17 @@ function initSunburst(data) {
     setTimeout(function () {click(data); }, 1000);
 
     // hook up the swap colors checkbox
+    $("#colorswap").mouseenter(function () {
+        if (!$("#colorswap").hasClass("open")) {
+            $("#colorswap-button").dropdown("toggle");
+        }
+    });
+    $("#colorswap").mouseleave(function () {
+        if ($("#colorswap").hasClass("open")) {
+            $("#colorswap-button").dropdown("toggle");
+        }
+    });
+    $("#colorswap li").tooltip({placement : "right", container : "body"});
     $("#colorswap-checkbox").change(function (){
         useFixedColors = $(this).is(':checked');
         redrawColors();
