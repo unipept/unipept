@@ -340,9 +340,7 @@ var constructPancore = function constructPancore(args) {
             $("#add_species_peptidome").button('reset');
             table.setEnabled(true);
 
-            // REMOVE THIS LINE
-            // dirty hack
-            setTimeout(function () { sendToWorker("getUniqueSequences", {order : table.getOrder() });}, 1000);
+            setTimeout(function () { sendToWorker("getUniqueSequences", {order : table.getOrder(), force : false });}, 1000);
         }
     }
 

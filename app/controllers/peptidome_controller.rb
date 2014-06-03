@@ -62,4 +62,11 @@ class PeptidomeController < ApplicationController
     ids = Sequence.where(sequence: peptides).pluck(:id)
     render json: Oj.dump(ids, mode: :compat)
   end
+
+  # Calculates the LCA of a list of bioproject id's
+  def get_lca
+    lca = Lineage.calculate_lca(Lineage.find_by_sql("SELECT lineages.* from genomes LEFT JOIN lineages ON genomes.taxon_id = lineages.taxon_id WHERE bioproject_id IN (#{params[:bioprojects]}) AND genomes.taxon_id is not null"))
+    lca = Taxon.find_by_id(lca)
+    render json: Oj.dump(lca, mode: :compat)
+  end
 end

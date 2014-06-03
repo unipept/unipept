@@ -33,7 +33,7 @@ self.addEventListener('message', function (e) {
         recalculatePanCore(data.msg.order, data.msg.start, data.msg.stop);
         break;
     case 'getUniqueSequences':
-        getUniqueSequences(data.msg.order);
+        getUniqueSequences(data.msg.order, data.msg.force);
         break;
     case 'autoSort':
         autoSort(data.msg.type);
@@ -482,7 +482,7 @@ function removeData(bioproject_id, newOrder, start) {
 
     // Recalculate stuff
     recalculatePanCore(newOrder, start, l - 2);
-    getUniqueSequences(newOrder);
+    getUniqueSequences(newOrder, false);
     matrix.removeGenome(bioproject_id);
 }
 
@@ -639,15 +639,31 @@ function autoSort(type) {
 }
 
 // Retrieves the unique sequences
-function getUniqueSequences(newOrder) {
+function getUniqueSequences(newOrder, force) {
+    force = typeof force !== 'undefined' ? force : true;
     order = newOrder;
     if (order.length > 0) {
-        var s = data[order[0]].peptide_list;
-        getJSONByPost("/peptidome/unique_sequences/", "type=uniprot&bioprojects=" + filterIds(order) + "&sequences=[" + s + "]", function (d) {
-            lca = d[0];
-            calculateUnicore(d[1]);
-        });
+        if (force) {
+            reallyGetUniqueSequences(data[order[0]].peptide_list);
+        } else {
+            getJSONByPost("/peptidome/get_lca/", "bioprojects=" + filterIds(order), function (d) {
+                // only fetch sequences when there's a new lca
+                if (lca !== d.name) {
+                    reallyGetUniqueSequences(data[order[0]].peptide_list);
+                } else {
+                    calculateUnicore(unicoreData);
+                }
+            });
+        }
     }
+}
+
+// fetch the sequences
+function reallyGetUniqueSequences(s) {
+    getJSONByPost("/peptidome/unique_sequences/", "type=uniprot&bioprojects=" + filterIds(order) + "&sequences=[" + s + "]", function (d) {
+        lca = d[0];
+        calculateUnicore(d[1]);
+    });
 }
 
 // Calculates the unique peptides data
