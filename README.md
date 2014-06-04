@@ -25,7 +25,9 @@ We will probably use [docker](https://www.docker.io/) for this, and release a re
 
 ## Who made this app?
 
-Unipept is a research project of the computational biology group at Ghent University.
+Unipept is a research project of the computational biology group at Ghent University. If you use this application, please cite:
+Mesuere et al. (2012) J. Proteome Res. doi:10.1021/pr300576s
+
 The following people contributed to this project:
 * Bart Mesuere ([@bmesuere](https://github.com/bmesuere)): PhD student and lead developer
 * Peter Dawyndt ([@pdawyndt](https://github.com/pdawyndt)): Group leader and PhD supervisor
