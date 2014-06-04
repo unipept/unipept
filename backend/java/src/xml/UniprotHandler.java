@@ -1,7 +1,9 @@
 package xml;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.xml.sax.Attributes;
@@ -14,7 +16,6 @@ import tools.ProgressWriter;
 public class UniprotHandler extends DefaultHandler {
 
 	private final boolean isSwissprot;
-	private final PeptideLoaderData pld;
 
 	private UniprotEntry currentItem;
 	private UniprotDbRef dbRef;
@@ -24,23 +25,25 @@ public class UniprotHandler extends DefaultHandler {
 	private int i;
 	private boolean inOrganism = false;
 	private boolean inEvidence = false;
+	private List<UniprotObserver> subscribers;
 
 	private Map<String, EndTagWorker> endTagWorkers;
 	private Map<String, StartTagWorker> startTagWorkers;
 
-	public UniprotHandler(boolean swissprot, PeptideLoaderData peptideLoaderData) {
+	public UniprotHandler(boolean swissprot) {
 		super();
 		this.isSwissprot = swissprot;
-		this.pld = peptideLoaderData;
 		charData = new StringBuilder();
+		subscribers = new ArrayList<UniprotObserver>();
 		i = 0;
+
 
 		// set up end tag workers
 		endTagWorkers = new HashMap<String, EndTagWorker>();
 		endTagWorkers.put("entry", new EndTagWorker() {
 			@Override
 			public void handleTag(String data) {
-				pld.store(currentItem);
+				emitEntry(currentItem);
 				i++;
 				if (i % 10000 == 0) {
 					System.out.println(new Timestamp(System.currentTimeMillis()) + " Entry " + i
@@ -182,5 +185,15 @@ public class UniprotHandler extends DefaultHandler {
 
 	private interface EndTagWorker {
 		void handleTag(String data);
+	}
+	
+	public void subscribe(UniprotObserver o) {
+		subscribers.add(o);
+	}
+	
+	private void emitEntry(UniprotEntry entry) {
+		for (UniprotObserver o : subscribers) {
+			o.handleEntry(entry);
+		}
 	}
 }

@@ -66,7 +66,8 @@ public class PeptideLoader {
 
 		try {
 			InputStream in = new FileInputStream(file);
-			UniprotHandler handler = new UniprotHandler(isSwissprot, data);
+			UniprotHandler handler = new UniprotHandler(isSwissprot);
+			handler.subscribe(data);
 			xmlParser.parse(in, handler);
 		} catch (SAXException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis())

@@ -16,6 +16,7 @@ import xml.UniprotECRef;
 import xml.UniprotEntry;
 import xml.UniprotEntry.Pair;
 import xml.UniprotGORef;
+import xml.UniprotObserver;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
@@ -25,7 +26,7 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
  * @author Bart Mesuere
  * 
  */
-public class PeptideLoaderData {
+public class PeptideLoaderData implements UniprotObserver {
 	// database stuff
 	private Connection connection;
 
@@ -455,5 +456,8 @@ public class PeptideLoaderData {
 			e1.printStackTrace();
 		}
 	}
-
+	
+	public void handleEntry(UniprotEntry entry) {
+		store(entry);
+	}
 }
