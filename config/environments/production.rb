@@ -60,19 +60,19 @@ UnipeptWeb::Application.configure do
   config.assets.digest = true
 
   # enable google analytics
-  config.unipept_analytics = true
-  config.unipept_analytics_key = "UA-22900446-1"
+  config.unipept_analytics = false
+  config.unipept_analytics_key = ""
 
   # if authentication is disabled, a guest user will always be signed in
-  config.unipept_enable_auth = true
+  config.unipept_enable_auth = false
 
   # enable API logging
-  config.unipept_API_logging = true
-  config.unipept_stathat_key = "unipept@ugent.be"
+  config.unipept_API_logging = false
+  config.unipept_stathat_key = ""
 
   # enable error emails
-  config.unipept_error_mails = true
-  config.unipept_error_mails_addresses = ["bart.mesuere@ugent.be"]
+  config.unipept_error_mails = false
+  config.unipept_error_mails_addresses = [""]
 end
 
 if Rails.application.config.unipept_error_mails
