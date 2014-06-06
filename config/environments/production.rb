@@ -5,6 +5,8 @@ UnipeptWeb::Application.configure do
   # Code is not reloaded between requests
   config.cache_classes = true
 
+  config.eager_load = true
+
   # Full error reports are disabled and caching is turned on
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
@@ -34,7 +36,9 @@ UnipeptWeb::Application.configure do
   # config.action_controller.asset_host = "http://assets.example.com"
 
   # Disable delivery errors, bad email addresses will be ignored
-  # config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = false
+
+  config.action_mailer.delivery_method = :sendmail
 
   # Enable threaded mode
   # config.threadsafe!
@@ -45,7 +49,7 @@ UnipeptWeb::Application.configure do
 
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
-  
+
   # Compress JavaScripts and CSS
   config.assets.compress = true
 
@@ -54,4 +58,32 @@ UnipeptWeb::Application.configure do
 
   # Generate digests for assets URLs
   config.assets.digest = true
+
+  # enable google analytics
+  config.unipept_analytics = true
+  config.unipept_analytics_key = "UA-22900446-1"
+
+  # if authentication is disabled, a guest user will always be signed in
+  config.unipept_enable_auth = true
+
+  # enable API logging
+  config.unipept_API_logging = true
+  config.unipept_stathat_key = "unipept@ugent.be"
+
+  # enable error emails
+  config.unipept_error_mails = true
+  config.unipept_error_mails_addresses = ["bart.mesuere@ugent.be"]
+end
+
+if Rails.application.config.unipept_error_mails
+  UnipeptWeb::Application.config.middleware.use ExceptionNotification::Rack,
+  :throttle => {
+    :notifier => "email",
+    :notifier_options => {
+      :email_prefix => "[Unipept] ",
+      :sender_address => %{"Unipept" <unipept@ugent.be>},
+      :exception_recipients => Rails.application.config.unipept_error_mails_addresses
+    },
+    :per_hour => 1
+  }
 end

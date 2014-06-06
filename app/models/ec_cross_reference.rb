@@ -2,9 +2,9 @@
 #
 # Table name: ec_cross_references
 #
-#  id               :integer(4)      not null, primary key
-#  uniprot_entry_id :integer(4)      not null
-#  ec_id            :string(12)      not null
+#  id               :integer          not null, primary key
+#  uniprot_entry_id :integer          not null
+#  ec_id            :string(12)       not null
 #
 
 class EcCrossReference < ActiveRecord::Base

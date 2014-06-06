@@ -2,13 +2,12 @@
 #
 # Table name: genomes
 #
-#  id            :integer(4)      not null, primary key
-#  name          :string(120)     not null
-#  bioproject_id :integer(4)      not null
-#  insdc_id     :string(15)      not null
-#  status        :string(20)      not null
-#  species_id    :integer(3)
-#  genus_id      :integer(3)
+#  id            :integer          not null, primary key
+#  name          :string(120)      not null
+#  bioproject_id :integer          not null
+#  insdc_id      :string(15)       not null
+#  status        :string(20)       not null
+#  taxon_id      :integer
 #
 
 class Genome < ActiveRecord::Base

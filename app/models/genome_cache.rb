@@ -2,8 +2,8 @@
 #
 # Table name: genome_caches
 #
-#  bioproject_id  :integer(4)      not null, primary key
-#  json_sequences :text(16777215)  default(""), not null
+#  bioproject_id  :integer          not null, primary key
+#  json_sequences :text(16777215)   not null
 #
 
 class GenomeCache < ActiveRecord::Base
@@ -15,7 +15,7 @@ class GenomeCache < ActiveRecord::Base
     cache = GenomeCache.find_by_bioproject_id(bioproject_id)
     if cache.nil?
       result_set = Set.new
-      Genome.find_all_by_bioproject_id(bioproject_id).each do |genome|
+      Genome.where(bioproject_id: bioproject_id).each do |genome|
         result_set.merge(EmblCrossReference.get_sequence_ids(genome.insdc_id))
       end
       json = Oj.dump(result_set.to_a.sort!, mode: :compat)

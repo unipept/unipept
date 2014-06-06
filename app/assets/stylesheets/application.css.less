@@ -27,6 +27,27 @@
     padding-right: 0px;
 }
 
+// Fancy file upload button
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 999px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
 html, body {
     background-color: @gray-lighter;
     height: 100%;
@@ -252,10 +273,16 @@ dl.changelog dt {
     width: 70px;
     text-transform: uppercase;
     margin-bottom: 5px;
+    float: left;
+    clear: left;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 dl.changelog dd {
     margin-left: 85px;
-    margin-top: 1px;
+    margin-top: 5px;
 }
 .features .thumbnail:hover {
     border-color: @link-color;
@@ -414,6 +441,25 @@ span.dir {
     color: #555;
     line-height: 100%;
     float: right;
+    margin-left: 5px;
+}
+#sunburst-info {
+    margin-top: 5px;
+}
+.dropdown-menu-form div.checkbox {
+    margin-bottom: 0px;
+    margin-top: 5px;
+    margin-left: 10px;
+}
+.dropdown-menu-form div.checkbox label{
+    padding-left: 0px;
+}
+.dropdown-menu-form div.checkbox input[type="checkbox"]{
+    margin-top: 0px;
+}
+#colorswap .dropdown-menu {
+    margin-top: 0px;
+    min-width: 135px;
 }
 #treeMap {
     background-color: #DCDFE4;
@@ -485,23 +531,51 @@ span.dir {
     margin-bottom: 8px;
 }
 /*** pancore page ***/
+#genome-tabs {
+    margin-top: 5px;
+}
+/*** my genome ***/
+#myGenomeProgress {
+    height: 30px;
+}
+#my-genomes-table .handle {
+    width: 30px;
+}
+#my-genomes-table .name {
+    width: 325px;
+}
+#my-genomes-table .status {
+    width: 30px;
+}
+#my-genomes-table .action {
+    width: 30px;
+}
+#my-genomes-table tbody tr:not(.info) {
+    cursor: pointer;
+    cursor: url(/openhand.cur), pointer;
+    cursor: url(/openhand.cur) 7 5, pointer;
+}
+
+#add-by-species-form {
+    padding-top: 5px;
+}
 #buttons-pancore {
     float: right;
 }
 #buttons-pancore button {
     margin-left: 5px;
 }
-#pancore_graph {
+#pancore_graph, #sim_matrix {
     background-color: white;
 }
 #genomes_table .handle {
     width: 30px;
 }
 #genomes_table .name {
-    width: 275px;
+    width: 325px;
 }
 #genomes_table .status {
-    width: 75px;
+    width: 30px;
 }
 #genomes_table .action {
     width: 30px;
@@ -539,19 +613,26 @@ span.dir {
     margin-top: 0px;
 }
 #genomes_table tbody tr:not(.ui-sortable-helper) {
+    cursor: pointer;
+    cursor: url(/openhand.cur), pointer;
     cursor: url(/openhand.cur) 7 5, pointer;
 }
 #pancore_graph .bar {
+    cursor: pointer;
+    cursor: url(/openhand.cur), pointer;
     cursor: url(/openhand.cur) 7 5, pointer;
 }
 #pancore_graph #trash {
+    cursor: pointer;
+    cursor: url(/closedhand.cur), pointer;
     cursor: url(/closedhand.cur) 7 5, pointer;
+}
+.popover-buttons {
+    margin-top: 5px;
+    min-width: 220px;
 }
 #download-peptides .dropdown-menu {
     margin-top: 0px;
-}
-#download-peptides {
-    margin-top: 5px;
 }
 #download-peptides #download-peptides-toggle {
     margin-bottom: 2px;
@@ -560,7 +641,7 @@ span.dir {
     cursor: pointer;
 }
 .tab-content {
-    overflow: hidden;
+    position: relative;
 }
 #species_id {
     width: 315px;
@@ -571,18 +652,35 @@ span.dir {
 #pancore_graph div.tip {
     .translate3d(0, 0, 0);
 }
+.tab-help {
+  background-color: @nav-link-hover-bg;
+  min-height: 200px;
+  width: 916px;
+  z-index: 100;
+  position: absolute;
+  border: 1px solid @nav-tabs-active-link-hover-border-color;
+  border-top: 0px;
+  padding: 10px;
+  display: none;
+  .border-bottom-radius(4px);
+}
+.tab-help .help-icon {
+  font-size: 50pt;
+  margin-bottom: 0px;
+}
+#tabs>li.active>a:hover {
+  background-color: @nav-link-hover-bg !important;
+}
+.nav-tabs .badge {
+    padding: 2px 7px;
+}
 
 /*** sim matrix ***/
-#sim_matrix_buttons {
-    margin-top: 5px;
+#downloadModal .buttons button {
+    margin-left: 10px;
+    margin-right: 10px;
 }
-#sim_matrix{
-    float: right;
-}
-#sim_graph{
-    margin-top: 180px;
-    float: left
-}
+
 /*** treeview ***/
 .treeView {
     -moz-user-select: none;
@@ -655,6 +753,8 @@ span.dir {
     border-radius: 3px;
 }
 .treeView.pancore li span {
+    cursor: pointer !important;
+    cursor: url(/openhand.cur), pointer !important;
     cursor: url(/openhand.cur) 7 5, pointer !important;
 }
 .treeView li.leaf span {
@@ -664,6 +764,14 @@ span.dir {
     margin-bottom: 5px;
 }
 tbody.dragging tr {
+    cursor: pointer !important;
+    cursor: url(/closedhand.cur), pointer !important;
     cursor: url(/closedhand.cur) 7 5, pointer !important;
     background-color: rgba(255, 255, 255, 0.8);
+}
+
+#api-stats {
+    border: none;
+    width: 100%;
+    height: 600px;
 }

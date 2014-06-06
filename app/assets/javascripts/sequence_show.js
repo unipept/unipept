@@ -143,14 +143,13 @@ function init_sequence_show(data, lcaId) {
 
     // set up the fullscreen stuff
     if (fullScreenApi.supportsFullScreen) {
-        $("#buttons-single").prepend("<button id='zoom-btn-lineage' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-resize-full'></i> Enter full screen</button>");
+        $("#buttons-single").prepend("<button id='zoom-btn-lineage' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-resize-full'></span> Enter full screen</button>");
         $("#zoom-btn-lineage").click(function () {
-            // GA event tracking
-            _gaq.push(['_trackEvent', 'Single Peptide', 'Full Screen']);
+            logToGoogle("Single Peptide", "Full Screen");
 
             window.fullScreenApi.requestFullScreen($("#lineageTree").get(0));
         });
-        $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange', resizeFullScreen);
+        $(document).bind(fullScreenApi.fullScreenEventName, resizeFullScreen);
     }
     function resizeFullScreen() {
         setTimeout(function () {
@@ -171,10 +170,9 @@ function init_sequence_show(data, lcaId) {
     }
 
     // set up save image stuff
-    $("#buttons-single").prepend("<button id='save-btn-lineage' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save tree as image</button>");
+    $("#buttons-single").prepend("<button id='save-btn-lineage' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-download'></span> Save tree as image</button>");
     $("#save-btn-lineage").click(function () {
-        // GA event tracking
-        _gaq.push(['_trackEvent', 'Single Peptide', 'Save Image']);
+        logToGoogle("Single Peptide", "Save Image");
 
         triggerDownloadModal(null, "#lineageTree", "unipept_lineage");
     });

@@ -1,0 +1,30 @@
+<%=
+  if @extra_info
+    Oj.dump(
+      @input_order.map do |k|
+      seq_index = @equate_il ? k.gsub(/I/,'L') : k
+      v = @result[seq_index]
+      v.map do |u|
+        { "sequence" => k,
+          "uniprot_id" => u.uniprot_accession_number,
+          "taxon_id" => u.taxon_id,
+          "taxon_name" => u.name.try(:name),
+          "ec_references" => u.ec_cross_references.pluck(:id).join(" "),
+          "go_references" => u.go_cross_references.pluck(:id).join(" "),
+        }
+      end
+    end.flatten).html_safe
+  else
+    Oj.dump(
+      @input_order.map do |k|
+      seq_index = @equate_il ? k.gsub(/I/,'L') : k
+      v = @result[seq_index]
+      v.map do |uni,tax|
+        { "sequence" => k,
+          "uniprot_id" => uni,
+          "taxon_id" => tax,
+        }
+      end
+    end.flatten).html_safe
+  end
+%>

@@ -50,15 +50,15 @@ var constructGenomeTable = function constructGenomeTable(args) {
      */
     function initDropAndSort() {
         $("#genomes_table").disableSelection();
-        $("#genomes_table, #pancore_graph").droppable({
+        $("#genomes_table, #pancore_graph, #sim_matrix").droppable({
             activeClass: "acceptDrop",
             hoverClass: "willDrop",
             tolerance: "pointer",
-            accept: "li",
+            accept: "li,tr.own",
             drop: function (event, ui) {
                 var g = [];
                 ui.helper.find(".data.name").each(function () {
-                    g.push({name : $(this).text(), bioproject_id : parseInt($(this).attr("data-bioproject_id"), 10)});
+                    g.push({name : $(this).text(), bioproject_id : $(this).data("bioproject_id")});
                 });
                 if (g.length < 70 || confirm("You're trying to add a lot of genomes (" + g.length + "). Are you sure you want to continue?")) {
                     pancore.addGenomes(g);
@@ -95,7 +95,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
             } else if (genomes[bioproject_id].position !== i) {
                 stop = i;
                 genomes[bioproject_id].position = i;
-                genomes[bioproject_id].status = "Processing...";
+                genomes[bioproject_id].status = "Processing";
             }
             order[i] = bioproject_id;
         });
@@ -111,7 +111,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
         var i;
         pancore.autoSort($(this).attr("data-type"));
         for (i in genomes) {
-            genomes[i].status = "Processing...";
+            genomes[i].status = "Processing";
         }
         that.update();
         $("#autosort").mouseleave();
@@ -124,7 +124,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
      * Redraws the table
      */
     that.clear = function clear() {
-        $("#genomes_table tbody").html("");
+        $("#genomes_table tbody").empty();
         that.update();
     };
 
@@ -160,6 +160,8 @@ var constructGenomeTable = function constructGenomeTable(args) {
      * Resets the table and all data associated with it
      */
     that.clearAllData = function clearAllData() {
+        lca = "";
+        var i;
         for (i in genomes) {
             delete genomes[i];
         }
@@ -244,11 +246,11 @@ var constructGenomeTable = function constructGenomeTable(args) {
         newRows,
         td;
 
-        text = "Genome";
+        text = "Genomes";
         if (lca !== "") {
             text += " (LCA: " + lca + ")";
         }
-        $("th.name").text(text);
+        $("#genomes_table th.name").text(text);
 
         // Add rows
         tr = d3.select("#genomes_table tbody").selectAll("tr.added")
@@ -258,22 +260,40 @@ var constructGenomeTable = function constructGenomeTable(args) {
         tr.sort(function (a, b) { return a.position - b.position; });
 
         // Add cells
-        newRows.append("td").attr("class", "handle").html("<i class='glyphicon glyphicon-resize-vertical'></i>");
+        newRows.append("td").attr("class", "handle").html("<span class='glyphicon glyphicon-resize-vertical'></span>");
         td = tr.selectAll("td.data")
             .data(function (d) {
                 return d3.entries(d).filter(function (entry) {
-                    return entry.key !== "position" && entry.key !== "bioproject_id";
+                    return entry.key === "name" || entry.key === "status";
                 });
             });
         td.enter()
             .append("td");
-        td.text(function (d) { return d.value; })
+        td.html(function (d) {
+                if (d.key === "status") {
+                    if (d.value === "Done") {
+                        return "";
+                    } else if (d.value === "Processing") {
+                        return "<span class='glyphicon glyphicon-refresh'></span>";
+                    } else if (d.value === "Loading") {
+                        return "<span class='glyphicon glyphicon-cloud-download'></span>";
+                    }
+                } else {
+                    var id = d3.select(this.parentNode).datum().bioproject_id;
+                    if (("" + id).charAt(0) !== "u") {
+                        return d.value + " <a href='http://www.ncbi.nlm.nih.gov/bioproject/?term=" + d3.select(this.parentNode).datum().bioproject_id + "' target='_blank' title='open bioproject page'><span class='glyphicon glyphicon-share-alt'></span></a>";
+                    } else {
+                        return d.value + " <span class='glyphicon glyphicon-home' title='local genome'></span>";
+                    }
+                }
+                return d.value;
+            })
             .attr("class", function (d) {return "data " + d.key; })
             .attr("colspan", "1");
         newRows.append("td")
             .attr("class", "button")
             .append("a")
-            .html("<i class='glyphicon glyphicon-trash'></i>")
+            .html("<span class='glyphicon glyphicon-trash'></span>")
             .attr("class", "btn btn-default btn-xs")
             .attr("title", "remove genome")
             .on("click", pancore.removeGenome);
@@ -289,7 +309,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
      * @param <String> msg The message you want to set
      */
     that.setTableMessage = function setTableMessage(icon, msg) {
-        $("#table-message").html("<i class='glyphicon glyphicon-" + icon + "'></i> " + msg);
+        $("#table-message").html("<span class='glyphicon glyphicon-" + icon + "'></span> " + msg);
     };
 
     /**
@@ -300,7 +320,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
      */
     that.setEnabled = function setEnabled(enabled) {
         if (enabled) {
-            that.setTableMessage("info-sign", "You can drag rows to reorder them or use one of the autosort options.");
+            that.setTableMessage("info-sign", "Drag rows to reorder them or use one of the autosort options.");
             $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", false);
         } else {
             that.setTableMessage("refresh", "Please wait while we load the genomes for this species.");

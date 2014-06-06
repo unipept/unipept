@@ -1,19 +1,22 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.13'
+gem 'rails', '4.1.1'
 
-gem 'mysql2', '0.3.14'
+gem 'mysql2'
+
+# Protect attributes from mass assignment
+gem "protected_attributes"
 
 # pagination
-gem 'will_paginate', '3.0'
+gem 'will_paginate'
 
 # jquery
-gem 'jquery-rails', "~> 2.3.0"
+gem 'jquery-rails'
 gem "jquery-ui-rails", "4.0.2"
 
 # cas auth
-gem 'rubycas-client', :git => 'git://github.com/bmesuere/rubycas-client.git', :branch => 'master'
-gem 'rubycas-client-rails', :git => 'git://github.com/bmesuere/rubycas-client-rails.git'
+gem 'devise'
+gem 'devise_cas_authenticatable'
 
 # needed for asset creation
 gem 'therubyracer'
@@ -22,10 +25,35 @@ gem 'therubyracer'
 gem 'oj'
 
 # imagemagick bindings
-gem 'rmagick', '2.13.2'
+gem "rmagick"
 
 # do HTTP requests
-gem 'httparty', '0.10.2'
+gem "httparty"
+
+# The dynamic stylesheet language for the Rails asset pipeline.
+# Allows other gems to extend Less load path.
+gem "less-rails"
+
+# Uglifier minifies JavaScript files by wrapping UglifyJS to be accessible
+# in Ruby
+gem "uglifier"
+
+# Exception emails
+gem 'exception_notification', :git => 'git://github.com/unipept/exception_notification.git'
+
+# Deploy with Capistrano
+gem 'capistrano', '~> 3.0'
+
+gem 'apipie-rails'
+
+group :development do
+  gem 'capistrano-rails',   '~> 1.1', require: false
+  gem 'capistrano-bundler', '~> 1.1', require: false
+  gem 'capistrano-rvm', require: false
+end
+
+# API stats
+gem "stathat"
 
 group :development do
   gem 'rspec-rails'
@@ -42,15 +70,6 @@ group :test do
 #	gem 'factory_girl_rails'
 end
 
-# Gems used only for assets and not required
-# in production environments by default.
-group :assets do
-  gem 'sass-rails'
-  gem 'coffee-rails'
-  gem 'uglifier'
-  gem 'less-rails'
-end
-
 #default stuff
 
 # Bundle edge Rails instead:
@@ -60,9 +79,6 @@ end
 
 # Use unicorn as the web server
 # gem 'unicorn'
-
-# Deploy with Capistrano
-gem 'capistrano', '2.15.5'
 
 # To use debugger (ruby-debug for Ruby 1.8.7+, ruby-debug19 for Ruby 1.9.2+)
 # gem 'ruby-debug'

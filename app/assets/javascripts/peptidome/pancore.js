@@ -23,6 +23,7 @@ var constructPancore = function constructPancore(args) {
         graph,
         matrix,
         table,
+        myGenomes,
         worker;
 
     /*************** Private methods ***************/
@@ -56,16 +57,26 @@ var constructPancore = function constructPancore(args) {
         });
         graph.redraw();
 
-
         // Create the Javascript Worker for background data processing
         worker = new Worker("/assets/workers/pancore_worker.js");
         worker.addEventListener('message', handleWorkerMessage, false);
         worker.addEventListener('error', error, false);
 
         // Constructs the matrix
-        //matrix = constructSimMatrix(worker);
+        matrix = constructSimMatrix({
+            pancore : that,
+            table : table
+        });
+
+        // Constructs the myGenomes feature
+        if (window.File && window.FileReader && window.FileList) {
+            myGenomes = constructMyGenomes({pancore : that});
+        } else {
+            $("#my-genome-error").removeClass("hide");
+        }
 
         // Initialize the rest of the page
+        initHelp();
         initSpeciesForm();
         initFullScreen();
         initSaveImage();
@@ -81,6 +92,14 @@ var constructPancore = function constructPancore(args) {
     }
 
     /**
+     * Initializes the help popups
+     */
+    function initHelp() {
+        $("#add-by-species-help").tooltip({placement : "right", container : "body"});
+        $("#add-by-genome-help").tooltip({placement : "right", container : "body"});
+    }
+
+    /**
      * Initializes the add species button
      */
     function initSpeciesForm() {
@@ -88,12 +107,12 @@ var constructPancore = function constructPancore(args) {
         $("#add_species_peptidome").click(function () {
             var url;
             // Get all bioproject id's for the selected species id
-            url = "/pancore/genomes/species/" + $("#species_id").val() + ".json";
+            url = "/peptidome/genomes/species/" + $("#species_id").val() + ".json";
             $.getJSON(url, function (genomes) {
                 that.addGenomes(genomes);
             })
             .fail(function () {
-                error("request error for " + url, "It seems like something went wrong while we loaded the data");
+                groupErrors("request error for " + url, "It seems like something went wrong while we loaded the data. Are you still conected to the internet? You might want to reload this page.");
             });
             return false;
         });
@@ -104,19 +123,17 @@ var constructPancore = function constructPancore(args) {
      */
     function initFullScreen() {
         if (fullScreenApi.supportsFullScreen) {
-            $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-resize-full'></i> Enter full screen</button>");
+            $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-resize-full'></span> Enter full screen</button>");
             $("#zoom-btn").click(function () {
                 if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
-                    // GA event tracking
-                    _gaq.push(['_trackEvent', 'Pancore', 'Full Screen', 'graph']);
+                    logToGoogle("Pancore", "Full Screen", "graph");
                     window.fullScreenApi.requestFullScreen($("#pancore_graph_wrapper").get(0));
                 } else {
-                    // GA event tracking
-                    _gaq.push(['_trackEvent', 'Pancore', 'Full Screen', 'simmatrix']);
+                    logToGoogle("Pancore", "Full Screen", "simmatrix");
                     window.fullScreenApi.requestFullScreen($("#sim_matrix_wrapper").get(0));
                 }
             });
-            $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange', resizeFullScreen);
+            $(document).bind(fullScreenApi.fullScreenEventName, resizeFullScreen);
         }
     }
 
@@ -124,15 +141,39 @@ var constructPancore = function constructPancore(args) {
      * Initializes the save image stuff
      */
     function initSaveImage() {
-        $("#buttons-pancore").prepend("<button id='save-img' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save image</button>");
+        // The save image stuff
+        $("#buttons-pancore").prepend("<button id='save-img' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-download'></span> Save image</button>");
         $("#save-img").click(function clickSaveImage() {
-            _gaq.push(['_trackEvent', 'Pancore', 'Save Image', 'graph']);
-            triggerDownloadModal("#pancore_graph svg", null, "unique_peptides_graph");
+            var selector,
+                tracking,
+                filename;
+            if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
+                selector = "#pancore_graph svg";
+                tracking = "graph";
+                filename = "unique_peptides_graph";
+            } else {
+                selector = "#sim_matrix svg";
+                tracking = "sim matrix";
+                filename = "similarity_matrix";
+            }
+            logToGoogle("Pancore", "Save Image", tracking);
+            triggerDownloadModal(selector, null, filename);
         });
-        $("#buttons-pancore").prepend("<button id='save-data' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save data</button>");
+
+        $("#buttons-pancore").prepend("<button id='save-data' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-download'></span> Download data</button>");
         $("#save-data").click(function clickSaveData() {
-            _gaq.push(['_trackEvent', 'Pancore', 'Save Data']);
-            that.exportCsvData();
+            var activeObject,
+                tracking,
+                filename;
+            if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
+                activeObject = graph;
+                tracking = "graph";
+            } else {
+                activeObject = matrix;
+                tracking = "sim matrix";
+            }
+            logToGoogle("Pancore", "save Data", tracking);
+            activeObject.handleSaveData();
         });
     }
 
@@ -141,24 +182,18 @@ var constructPancore = function constructPancore(args) {
      * Mostly just scales the SVG
      */
     function resizeFullScreen() {
-        if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
-            setTimeout(function () {
-                var w = fullWidth,
-                    h = fullHeight;
-                if (window.fullScreenApi.isFullScreen()) {
-                    w = $(window).width();
-                    h = $(window).height();
-                }
-                $("#pancore_graph svg").attr("width", w);
-                $("#pancore_graph svg").attr("height", h);
-            }, 100);
-        } else {
-            // TODO: add handling code for sim matrix
-        }
+        setTimeout(function handleFullScreen() {
+            var fullscreen = window.fullScreenApi.isFullScreen();
+            if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
+                graph.handleFullScreen(fullscreen);
+            } else {
+                matrix.handleFullScreen(fullscreen);
+            }
+        });
     }
 
     /**
-     * Handles message events for the worker
+     * Handles message events from the worker
      *
      * @param <Event> e The event we want to handle
      */
@@ -169,7 +204,7 @@ var constructPancore = function constructPancore(args) {
             console.log(data.msg);
             break;
         case 'error':
-            error(data.msg.error, data.msg.msg);
+            groupErrors(data.msg.error, data.msg.msg);
             break;
         case 'processLoadedGenome':
             processLoadedGenome(data.msg.data, data.msg.rank);
@@ -180,8 +215,14 @@ var constructPancore = function constructPancore(args) {
         case 'processDownloadedSequences':
             processDownloadedSequences(data.msg.sequences, data.msg.type);
             break;
-        case 'sim_graph':
-            drawTree(data.msg.data, data.msg.order);
+        case 'processClusteredMatrix':
+            processClusteredMatrix(data.msg.order, data.msg.newick);
+            break;
+        case 'autoSorted':
+            that.updateOrder(data.msg);
+            break;
+        case 'processSimilarityData':
+            processSimilarityData(data.msg);
             break;
         default:
             console.log(data.msg);
@@ -198,12 +239,16 @@ var constructPancore = function constructPancore(args) {
     /**
      * Asks the worker to load a genome
      *
-     * @param <Number> bioproject_id The id of the genome we want to load
+     * @param <String> bioproject_id The id of the genome we want to load
      * @param <String> name The name of the genome we want to load
      */
     function loadData(bioproject_id, name) {
-        //matrix.addGenome(bioproject_id, name);
-        sendToWorker("loadData", {"bioproject_id" : bioproject_id, "name" : name});
+        if ((bioproject_id + "").charAt(0) === "u") {
+            var ids = myGenomes.getIds(bioproject_id, true);
+            sendToWorker("loadUserData", {"id" : bioproject_id, "name" : name, "ids" : ids});
+        } else {
+            sendToWorker("loadData", {"bioproject_id" : bioproject_id, "name" : name});
+        }
     }
 
     /**
@@ -219,7 +264,10 @@ var constructPancore = function constructPancore(args) {
         toLoad--;
         table.setGenomeStatus(genome.bioproject_id, "Done", false);
 
+        genome.abbreviation = that.abbreviate(genome.name, genome.bioproject_id);
+
         graph.addToDataQueue(genome);
+        matrix.addGenome(genome);
 
         setLoading(toLoad !== 0);
     }
@@ -253,6 +301,29 @@ var constructPancore = function constructPancore(args) {
     }
 
     /**
+     * Handles the arrival of new similarity data.
+     *
+     * @param <Boolean> simData.fullMatrix Is this the full matrix?
+     * @param <SimObject> simData.data A single row or full matrix of similarity
+     *      data!
+     */
+    function processSimilarityData(simData) {
+        matrix.addSimilarityData(simData.fullMatrix, simData.data);
+    }
+
+    /**
+     * Handles the arrival of new clustered data.
+     *
+     * @param <Array> order A list with the new order of the genomes
+     * @param <String> newick The clustered tree in newick tree format
+     */
+    function processClusteredMatrix(order, newick) {
+        matrix.setOrder(order);
+        matrix.drawTree(newick);
+        matrix.setClustered(true);
+    }
+
+    /**
      * Gets called when the data is (done) loading
      * Enables/disables some buttons and actions (e.g. reordering)
      *
@@ -269,10 +340,20 @@ var constructPancore = function constructPancore(args) {
             $("#add_species_peptidome").button('reset');
             table.setEnabled(true);
 
-            // REMOVE THIS LINE
-            // dirty hack
-            setTimeout(function () { sendToWorker("getUniqueSequences", {order : table.getOrder() });}, 1000);
+            setTimeout(function () { sendToWorker("getUniqueSequences", {order : table.getOrder(), force : false });}, 1000);
         }
+    }
+
+    /**
+     * Prevents multiple errors from showing up at once
+     *
+     * @param <String> errorMsg The real error message
+     * @param <String> userMsg A message to display to the user
+     */
+    function groupErrors(errorMsg, userMsg) {
+        delay(function () {
+            error(errorMsg, userMsg);
+        }, 1000);
     }
 
     /*************** Public methods ***************/
@@ -283,16 +364,19 @@ var constructPancore = function constructPancore(args) {
      * @param <Array> g Array of bioproject_id's of the genomes we want to add
      */
     that.addGenomes = function addGenomes(g) {
-        var i;
+        var i,
+            abbrev;
         for (i = 0; i < g.length; i++) {
             // only add new genomes
             if (genomes[g[i].bioproject_id] === undefined) {
                 toLoad++;
+                abbrev = that.abbreviate(g[i].name, g[i].bioproject_id);
                 table.addGenome({
                     "bioproject_id" : g[i].bioproject_id,
                     "name" : g[i].name,
-                    "status" : "Loading...",
-                    "position" : 100 + i
+                    "status" : "Loading",
+                    "position" : 100 + i,
+                    "abbreviation" : abbrev
                 });
                 loadData(g[i].bioproject_id, g[i].name);
             }
@@ -309,6 +393,8 @@ var constructPancore = function constructPancore(args) {
      */
     that.removeGenome = function removeGenome(genome) {
         var removeData = table.removeGenome(genome.bioproject_id);
+        matrix.removeGenome(genome.bioproject_id);
+
         sendToWorker("removeData", removeData);
     };
 
@@ -325,6 +411,7 @@ var constructPancore = function constructPancore(args) {
         setLoading(false);
         table.clearAllData();
         graph.clearAllData();
+        matrix.clearAllData();
     };
 
     /**
@@ -337,14 +424,7 @@ var constructPancore = function constructPancore(args) {
     that.updateOrder = function updateOrder(orderData) {
         sendToWorker("recalculatePanCore", orderData);
         table.setOrder(orderData.order);
-    };
-
-    /**
-     * Invokes a file download containing all data currently shown
-     * in the graph (i.e. each datapoint) in csv format.
-     */
-    that.exportCsvData = function exportCsvData() {
-        downloadDataByForm(graph.getDataAsCsv(), "unique_peptides.csv");
+        matrix.setOrder(orderData.order);
     };
 
     /**
@@ -361,12 +441,85 @@ var constructPancore = function constructPancore(args) {
     };
 
     /**
+     * Requests a similarity calculation to the webserver
+     */
+    that.requestSimilarityCalculation = function requestSimilarityCalculation() {
+        sendToWorker("calculateSimilarity");
+    }
+
+    /**
+     * Requests the clustering of the data
+     */
+    that.requestClustering = function requestClustering() {
+        sendToWorker("clusterMatrix");
+    }
+
+    /**
      * Send the autoSort command to the worker
      *
      * @param <String> type The type of sort we want to run
      */
     that.autoSort = function autoSort(type){
         sendToWorker("autoSort", {type : type});
+    }
+
+    /**
+     * Abbreviates an organism name
+     *
+     * @param <String> name The name of the organism
+     * @param <String> id The id of the genome
+     */
+    that.abbreviate = function abbreviate(name, id) {
+        var split = name.split(" "),
+            i;
+
+        // Don't abbreviate single words
+        if (split.size == 1) {
+            return name;
+        }
+
+        // If the second part is "sp.", return the full name
+        if (split[1] === "sp.") {
+            return name;
+        }
+
+        // Don't abbreviate if my genome and length < 30
+        if (("" + id).charAt(0) === "u" && name.length < 30) {
+            return name;
+        }
+
+        if (split[0] === "Candidatus") {
+            split[0] = "Ca.";
+        } else {
+            // Take first letter of first word
+            split[0] = split[0].substr(0,1) + ".";
+        }
+
+        // Abbreviate common words
+        for (i = 1; i < split.length; i++) {
+            switch (split[i]) {
+            case 'pathovar':
+                split[i] = "pv.";
+                break;
+            case 'serovar':
+                split[i] = "sv.";
+                break;
+            case 'species':
+                split[i] = "sp.";
+                break;
+            case 'genomovar':
+                split[i] = "gv.";
+                break;
+            case 'subspecies':
+                split[i] = "subsp.";
+                break;
+            case 'strain':
+                split[i] = "str.";
+                break;
+            }
+        }
+
+        return split.join(" ");
     }
 
     // initialize the object

@@ -6,9 +6,9 @@
 <h3>
   <%= post.title %>
   <small> posted on <%= post.date %></small>
-    <% if session[:admin] %>
-        <%= link_to raw("<i class='glyphicon glyphicon-pencil'></i> Edit"), edit_post_path(post), :class => 'btn btn-default btn-xs' %>
-        <%= link_to raw("<i class='glyphicon glyphicon-trash'></i> Delete"), post, :confirm => 'Are you sure?', :method => :delete, :class => 'btn btn-xs btn-danger' %>
+    <% if user_signed_in? && current_user.is_admin? %>
+        <%= link_to raw("<span class='glyphicon glyphicon-pencil'></span> Edit"), edit_post_path(post), :class => 'btn btn-default btn-xs' %>
+        <%= link_to raw("<span class='glyphicon glyphicon-trash'></span> Delete"), post, data: {confirm: 'Are you sure?'}, :method => :delete, :class => 'btn btn-xs btn-danger' %>
     <% end %>
 </h3>
 

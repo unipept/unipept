@@ -1,0 +1,15 @@
+<%=
+  p = @result
+  res = {
+      "taxon_id" => p.id,
+      "taxon_name" => p.name,
+      "taxon_parent_id" => p.parent_id,
+      "taxon_rank" => p.rank,
+  }
+  if @extra_info
+    res.merge!(lineage_info(p.lineage, @names))
+  else
+    res
+  end
+  Oj.dump(res).html_safe
+%>

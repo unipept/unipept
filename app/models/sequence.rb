@@ -2,10 +2,10 @@
 #
 # Table name: sequences
 #
-#  id       :integer(4)      not null, primary key
-#  sequence :string(50)      not null
-#  lca      :integer(3)
-#  lca_il   :integer(3)
+#  id       :integer          not null, primary key
+#  sequence :string(50)       not null
+#  lca      :integer
+#  lca_il   :integer
 #
 
 class Sequence < ActiveRecord::Base
@@ -16,11 +16,60 @@ class Sequence < ActiveRecord::Base
   belongs_to :lca_t, :foreign_key  => "lca", :primary_key  => "id",  :class_name   => 'Taxon'
   belongs_to :lca_il_t, :foreign_key  => "lca_il", :primary_key  => "id",  :class_name   => 'Taxon'
 
+
+  def self.peptides_relation_name(equate_il)
+    equate_il ? :peptides : :original_peptides
+  end
+
+  def self.lca_t_relation_name(equate_il)
+    equate_il ? :lca_il_t : :lca_t
+  end
+
+  alias_method :generated_peptides, :peptides
+  def peptides(equate_il = true)
+    if equate_il
+      self.generated_peptides
+    else
+      self.original_peptides
+    end
+  end
+
+  # search for a single sequence, include information through join tables
+  def self.single_search(sequence, equate_il = true)
+    raise SequenceTooShortError if sequence.length < 5
+    sequence = sequence.gsub(/I/,'L') if equate_il
+    # this solves the N+1 query problem
+    self.includes(peptides_relation_name(equate_il) => {uniprot_entry: :name})
+      .find_by_sequence(sequence)
+  end
+
+
+  # try to find multiple matches
+  def self.multi_search(sequence, equate_il = true)
+    # sanity check
+    raise NoMatchesFoundError.new(sequence) if sequence.index(/([KR])([^P])/).nil?
+
+    sequence = sequence.gsub(/I/,'L') if equate_il
+
+    # Split in silico (use little trick to fix overlap)
+    sequences = sequence.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
+
+    # build query
+    query = self.includes(peptides_relation_name(equate_il) => {:uniprot_entry => [:name, :lineage]})
+    long_sequences = sequences.select{|s| s.length >= 5}.map{|s| query.find_by_sequence(s) }
+
+    # check if it has a match for every sequence and at least one long part
+    raise NoMatchesFoundError.new(sequence) if long_sequences.include? nil
+    raise SequenceTooShortError if long_sequences.size == 0
+
+    long_sequences
+  end
+
   # SELECT DISTINCT lineages.* FROM unipept.peptides INNER JOIN unipept.uniprot_entries ON (uniprot_entries.id = peptides.uniprot_entry_id) INNER JOIN unipept.lineages ON (uniprot_entries.taxon_id = lineages.taxon_id) WHERE peptides.sequence_id = #{id}
   def lineages(equate_il = true, eager = false)
     if equate_il
       if eager
-        l = Lineage.select("lineages.*").joins(:uniprot_entries => :peptides).where("peptides.sequence_id = ?", id).uniq.includes(:name,
+        l = Lineage.joins(:uniprot_entries => :peptides).where("peptides.sequence_id = ?", id).uniq.includes(:name,
                   :superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t,
                   :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t,
                   :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t,
@@ -28,13 +77,13 @@ class Sequence < ActiveRecord::Base
                   :species_group_t, :species_subgroup_t, :species_t, :subspecies_t,
                   :varietas_t, :forma_t)
       else
-        l = Lineage.select("lineages.*").joins(:uniprot_entries => :peptides).where("peptides.sequence_id = ?", id).uniq
+        l = Lineage.joins(:uniprot_entries => :peptides).where("peptides.sequence_id = ?", id).uniq
       end
     else
       if eager
-        l = Lineage.select("lineages.*").joins(:uniprot_entries => :peptides).where("peptides.original_sequence_id = ?", id).uniq.includes(:name, :superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t)
+        l = Lineage.joins(:uniprot_entries => :peptides).where("peptides.original_sequence_id = ?", id).uniq.includes(:name, :superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t)
       else
-        l = Lineage.select("lineages.*").joins(:uniprot_entries => :peptides).where("peptides.original_sequence_id = ?", id).uniq
+        l = Lineage.joins(:uniprot_entries => :peptides).where("peptides.original_sequence_id = ?", id).uniq
       end
     end
     return l
@@ -100,16 +149,15 @@ class Sequence < ActiveRecord::Base
       data = data.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2") unless handle_missed
       data = data.lines.map(&:strip).to_a.select{|l| l.size >= 5}
       data_counts = Hash[data.group_by{|k| k}.map{|k,v| [k, v.length]}]
-      number_searched_for = data.length
       data = data_counts.keys
 
       # build the resultset
       matches = Hash.new
       misses = data.to_set
       if equate_il
-        sequences = Sequence.find_all_by_sequence(data, :include => {:lca_il_t => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}})
+        sequences = Sequence.includes({:lca_il_t => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}}).where(sequence: data)
       else
-        sequences = Sequence.find_all_by_sequence(data, :include => {:lca_t => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}})
+        sequences = Sequence.includes({:lca_t => {:lineage => [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t, :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t, :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t, :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t, :species_group_t, :species_subgroup_t, :species_t, :subspecies_t, :varietas_t, :forma_t]}}).where(sequence: data)
       end
       sequences.each do |sequence| # for every sequence in query
         lca_t = sequence.calculate_lca(equate_il, true)
@@ -199,12 +247,12 @@ class Sequence < ActiveRecord::Base
 
   # Returns an array of sequences strings based on a list of sequence id's
   def self.list_sequences(ids)
-    connection.select_values(Sequence.select(:sequence).where(:id => ids).to_sql).to_a
+    Sequence.where(id: ids).pluck(:sequence)
   end
 
   # Filters a list of sequences for a given lca
   def self.filter_unique_uniprot_peptides(sequences, lca)
-    connection.select_values(Sequence.select(:id).where(:id => sequences, :lca => lca).to_sql).to_a.sort!
+    Sequence.where(id: sequences, lca: lca).order(:id).pluck(:id)
   end
 
   # Filters a list of sequences for a given lca
@@ -249,3 +297,7 @@ class Sequence < ActiveRecord::Base
     return result
   end
 end
+
+#some errors
+class SequenceTooShortError < StandardError; end
+class NoMatchesFoundError < StandardError; end

@@ -9,7 +9,7 @@ function initDatasets() {
 
     // track the use of the export checkbox
     $("#export").change(function () {
-        _gaq.push(['_trackEvent', 'Multi Peptide', 'Export']);
+        logToGoogle("Multi Peptide", "Export");
     });
 
     // load a dataset from the local database
@@ -19,8 +19,7 @@ function initDatasets() {
         var url = $(this).parent().find("select").val(),
             name = $(this).parent().find("select option:selected").text();
 
-        // GA event tracking
-        _gaq.push(['_trackEvent', 'Datasets', 'Load', 'Database - ' + name]);
+        logToGoogle("Datasets", "Load", "Database - " + name);
 
         // load the datasets
         loadDataset(url, name, $(this));
@@ -41,8 +40,7 @@ function initDatasets() {
 
         $(this).button('loading');
 
-        // GA event tracking
-        _gaq.push(['_trackEvent', 'Datasets', 'Load', 'Pride - ' + experiment]);
+        logToGoogle("Datasets", "Load", "Pride - " + name);
 
         // load the datasets
         loadDataset(url, name, $(this));
@@ -63,7 +61,7 @@ function initDatasets() {
                 function (data) {
                     // track the load times
                     var loadTime = new Date().getTime() - startTimer;
-                    _gaq.push(['_trackEvent', 'Datasets', 'Loaded', name, loadTime]);
+                    logToGoogle("Datasets", "Loaded", name, loadTime);
 
                     // enable the form elements
                     $("#qs").attr('disabled', false);
@@ -84,7 +82,7 @@ function initDatasets() {
             .fail( // something went wrong
                 function (jqXHR, textStatus, errorType) {
                     // track is something goes wrong
-                    _gaq.push(['_trackEvent', 'Datasets', 'Failed', name, textStatus]);
+                    logToGoogle("Datasets", "Failed", name, textStatus);
 
                     // reset the form elements
                     $("#qs").val("");
@@ -129,7 +127,7 @@ function initPreload(type, id) {
                 function (data) {
                     // track the load times
                     var loadTime = new Date().getTime() - startTimer;
-                    _gaq.push(['_trackEvent', 'Datasets', 'Loaded', name, loadTime]);
+                    logToGoogle("Datasets", "Loaded", name, loadTime);
 
                     // enable the form elements
                     $("#qs").attr('disabled', false);
@@ -146,7 +144,7 @@ function initPreload(type, id) {
             .fail( // something went wrong
                 function (jqXHR, textStatus, errorType) {
                     // track is something is wrong
-                    _gaq.push(['_trackEvent', 'Datasets', 'Failed', name, textStatus]);
+                    logToGoogle("Datasets", "Failed", name, textStatus);
 
                     // reset the form elements
                     $("#qs").val("");

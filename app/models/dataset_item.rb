@@ -2,13 +2,15 @@
 #
 # Table name: dataset_items
 #
-#  id         :integer(4)      not null, primary key
-#  dataset_id :integer(4)
+#  id         :integer          not null, primary key
+#  dataset_id :integer
 #  name       :string(160)
-#  data       :text(16777215)  default(""), not null
-#  order      :integer(4)
+#  data       :text(16777215)   not null
+#  order      :integer
 #
 
 class DatasetItem < ActiveRecord::Base
+  attr_accessible :name, :data
+
   belongs_to :dataset
 end

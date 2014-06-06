@@ -51,7 +51,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
 
     // toggles
     var toggles = {
-        showGenomes : true,
+        showGenome : true,
         showPan : true,
         showCore : true,
         showUnicore : true
@@ -91,7 +91,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
 
         xAxis = d3.svg.axis()
             .scale(xScale)
-            .tickFormat(function (d) { return (genomes[d] && genomes[d].name) || ""; })
+            .tickFormat(function (d) { return (genomes[d] && genomes[d].abbreviation) || ""; })
             .orient("bottom");
         yAxis = d3.svg.axis()
             .scale(yScale)
@@ -109,6 +109,11 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .interpolate("linear")
             .x(function (d) { return xScale(d.bioproject_id); })
             .y(function (d) { return yScale(d.unicore); });
+
+        // calculate similarity and update on tab switch
+        $('#unique-peptide-finder-tab').on('shown.bs.tab', function tabSwitchAction() {
+            that.update();
+        });
     }
 
     /**
@@ -196,9 +201,9 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      */
     function getPopoverContent(d) {
         var content = getTooltipContent(d);
-        content += "<br/><div class='btn-group' id='download-peptides'>" +
+        content += "<div class='popover-buttons' ><br/><div class='btn-group' id='download-peptides'>" +
           "<a class='btn btn-default dropdown-toggle' id='download-peptides-toggle' data-toggle='dropdown' data-loading-text='Loading peptides'>" +
-            "<i class='glyphicon glyphicon-download'></i> " +
+            "<span class='glyphicon glyphicon-download'></span> " +
             "download peptides " +
             "<span class='caret'></span>" +
           "</a>" +
@@ -208,6 +213,8 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='core'><span style='color: " + coreColor + ";'>&#9632;</span> core peptides</a></li>" +
             "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='unique'><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptides</a></li>" +
           "</ul>" +
+        "</div>" +
+        "<span class='pull-right'><a class='btn btn-danger' title='remove genome' id='popover-remove-genome'data-bioproject_id='" + d.bioproject_id + "'><span class='glyphicon glyphicon-trash'></span></a></span>" +
         "</div>";
 
         return content;
@@ -230,6 +237,9 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             }
         });
         $("#download-peptides ul a").click(downloadSequenceHandler);
+        $("#popover-remove-genome").click(function () {
+            pancore.removeGenome(genomes[$(this).data("bioproject_id")]);
+        })
     }
 
     /**
@@ -245,15 +255,22 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         if (mouse.clickId === d.bioproject_id) {
             that.removePopoversAndHighlights();
         } else {
+            var title = genomes[d.bioproject_id].name;
+            if (("" + d.bioproject_id).charAt(0) === "u") {
+                title = "<span class='glyphicon glyphicon-home' title='local genome'></span> " + title;
+            } else {
+                title += " (bioproject <a href='http://www.ncbi.nlm.nih.gov/bioproject/?term=" + d.bioproject_id + "' target='_blank' title='open bioproject page'>" + d.bioproject_id + "</a>)";
+            }
             that.removePopoversAndHighlights();
             that.removeTooltip();
             that.addHighlight(d);
             target.popover({
                 html: true,
+                animation: false,
                 trigger: "manual",
                 position: "right",
                 container: "#popovers",
-                title: genomes[d.bioproject_id].name + " (bioproject " + d.bioproject_id + ")",
+                title: title,
                 content: getPopoverContent(d)});
             target.popover("show");
             target.attr("class", "bar pop");
@@ -539,6 +556,25 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     /*************** Public methods ***************/
 
     /**
+     * Handles the transition from and to fullscreen mode
+     *
+     * @param <Boolean> isFullscreen Is the page in full screen mode?
+     */
+    that.handleFullScreen = function handleFullScreen(isFullscreen) {
+        var w = fullWidth,
+            h = fullHeight,
+            destination = "body";
+        if (isFullscreen) {
+            w = $(window).width();
+            h = $(window).height();
+            destination = "#pancore_graph";
+        }
+        $("#pancore_graph svg").attr("width", w);
+        $("#pancore_graph svg").attr("height", h);
+        $("#graph-tip").appendTo(destination);
+    };
+
+    /**
      * Add data about a single genome to the graph
      *
      * @param <Hash> genome All data needed to visualise a genome on the graph
@@ -597,16 +633,24 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     };
 
     /**
+     * Invokes a file download containing all data currently shown
+     * in the graph (i.e. each datapoint) in csv format.
+     */
+    that.handleSaveData = function handleSaveData() {
+        downloadDataByForm(that.getDataAsCsv(), "pan_core_peptidome.csv");
+    };
+
+    /**
      * Redraws the entire pancore graph
      */
     that.redraw = function redraw() {
         // erase everything
         $("#pancore_graph svg").remove();
-        $("#pancore_graph div.tip").remove();
+        $("#graph-tip").remove();
 
         // reset domain
-        xScale.domain([]);
-        yScale.domain([]);
+        xScale.domain([0, 1]);
+        yScale.domain([0, 1]);
 
         // create the svg
         svg = d3.select("#pancore_graph")
@@ -623,9 +667,10 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         // create the tooltip
-        tooltip = d3.select("#pancore_graph")
+        tooltip = d3.select("body")
           .append("div")
             .attr("class", "tip")
+            .attr("id", "graph-tip")
             .style("position", "absolute")
             .style("top", "0px")
             .style("left", "0px")
@@ -676,17 +721,29 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .attr("class", "legend")
             .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; })
             .on("click", legendClick);
-        legend.append("rect")
+        var legendRects = legend.append("rect")
             .attr("x", 30)
-            .attr("width", 8)
-            .attr("height", 8)
-            .style("shape-rendering", "crispEdges")
+            .attr("rx", 3)
+            .attr("ry", 3)
             .style("fill", function (d) { return d.color; });
-        legend.append("text")
-            .attr("x", 40)
-            .attr("y", 8)
+        var legendTexts = legend.append("text")
+            .attr("x", 33)
+            .attr("y", 11)
             .style("text-anchor", "start")
+            .style("fill", "white")
             .text(function (d) { return d.name; });
+        legendRects.each(function () {
+            var box;
+            try {
+                box = $(this).parent().find("text")[0].getBBox();
+            } catch (err) {
+                box = {width: 100, height: 15};
+            }
+            d3.select(this)
+                .attr("width", Math.ceil(box.width) + 6)
+                .attr("height", Math.ceil(box.height));
+        });
+
         $(".legend").disableSelection();
 
         // draw the lines
@@ -756,12 +813,16 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .style("pointer-events", "none");
         trash.insert("path").attr("d", "M408.302,604.218h-7.95c0.002-0.055,0.009-0.109,0.009-0.166v-1.6c0-2.91-2.384-5.293-5.294-5.293h-8.824    c-2.912,0-5.294,2.383-5.294,5.293v1.6c0,0.057,0.007,0.111,0.009,0.166h-7.95c-1.456,0-2.646,1.191-2.646,2.646v2.646    c0,1.457,1.19,2.648,2.646,2.648h0.883v-1.766h33.529v1.766h0.883c1.455,0,2.646-1.191,2.646-2.648v-2.646    C410.948,605.409,409.757,604.218,408.302,604.218z M385.333,601.571h10.588v2.646h-10.588V601.571z");
         trash.insert("path").attr("d", "M375.654,613.042v26.469c0,1.457,1.19,2.648,2.647,2.648h24.705c1.456,0,2.647-1.191,2.647-2.648v-26.469    H375.654z M384.478,636.423c0,0.486-0.397,0.883-0.882,0.883h-1.765c-0.486,0-0.883-0.396-0.883-0.883v-17.646    c0-0.484,0.396-0.883,0.883-0.883h1.765c0.484,0,0.882,0.398,0.882,0.883V636.423z M392.419,636.423    c0,0.486-0.398,0.883-0.882,0.883h-1.766c-0.485,0-0.882-0.396-0.882-0.883v-17.646c0-0.484,0.396-0.883,0.882-0.883h1.766    c0.483,0,0.882,0.398,0.882,0.883V636.423z M400.36,636.423c0,0.486-0.398,0.883-0.883,0.883h-1.765    c-0.485,0-0.882-0.396-0.882-0.883v-17.646c0-0.484,0.396-0.883,0.882-0.883h1.765c0.484,0,0.883,0.398,0.883,0.883V636.423z");
+
+        that.update();
     };
 
     /**
      * Updates the pancore graph
      */
     that.update = function update() {
+        that.removePopoversAndHighlights();
+
         // Prepare for line transition
         var oldPanDatum = svg.select(".line.pan").datum(),
             oldCoreDatum = svg.select(".line.core").datum();
@@ -779,6 +840,37 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         // set the domains
         xScale.domain(graphData.map(function (d) { return d.bioproject_id; }));
         yScale.domain([0, getMaxVisibleDatapoint()]);
+
+        // update the legend
+        svg.selectAll(".legend rect").each(function () {
+            var box;
+            try {
+                box = $(this).parent().find("text")[0].getBBox();
+            } catch (err) {
+                box = {width: 100, height: 15};
+            }
+            d3.select(this)
+                .attr("width", Math.ceil(box.width) + 6)
+                .attr("height", Math.ceil(box.height));
+        });
+        svg.selectAll(".legend rect").transition()
+            .duration(transitionDuration)
+            .style("fill", function (d) {
+                if (toggles[d.toggle]) {
+                    return d.color;
+                } else {
+                    return "white";
+                }
+            });
+        svg.selectAll(".legend text").transition()
+            .duration(transitionDuration)
+            .style("fill", function (d) {
+                if (toggles[d.toggle]) {
+                    return "white";
+                } else {
+                    return d.color;
+                }
+            });
 
         // update the axes
         svg.select(".x.axis").transition().duration(transitionDuration).call(xAxis);

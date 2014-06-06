@@ -20,6 +20,9 @@ self.addEventListener('message', function (e) {
     case 'loadData':
         loadData(data.msg.bioproject_id, data.msg.name);
         break;
+    case 'loadUserData':
+        loadUserData(data.msg.id, data.msg.name, data.msg.ids);
+        break;
     case 'removeData':
         removeData(data.msg.bioproject_id, data.msg.order, data.msg.start);
         break;
@@ -30,7 +33,7 @@ self.addEventListener('message', function (e) {
         recalculatePanCore(data.msg.order, data.msg.start, data.msg.stop);
         break;
     case 'getUniqueSequences':
-        getUniqueSequences(data.msg.order);
+        getUniqueSequences(data.msg.order, data.msg.force);
         break;
     case 'autoSort':
         autoSort(data.msg.type);
@@ -38,15 +41,15 @@ self.addEventListener('message', function (e) {
     case "getSequences":
         getSequences(data.msg.type, data.msg.bioproject_id);
         break;
-        /*case "calculateSimilarity":
+    case "calculateSimilarity":
         matrix.calculateSimilarity();
         break;
     case "clusterMatrix":
         matrix.clusterMatrix();
         break;
-    case "newDataAdded":
-        addNewMatrixdata();
-        break;*/
+    case "getMatrix":
+        matrix.sendToHost();
+        break;
     default:
         error(data.msg);
     }
@@ -55,113 +58,286 @@ self.addEventListener('message', function (e) {
 
 /* Write a small class to contain all the variables for the matrix */
 var matrixBackend = function matrixBackend(data) {
-    var matrix = [],
-        order  = [];
+    var idsToCalculate = [],
+        matrixOrder  = [],
+        matrixObject = {};
 
-    /* this is a reference to the data, read-only! */
-    var data = data;
-
-    /* variable to keep track of dirty state */
-    var needsRecalculating = false;
+    // variable to keep track of dirty state
+    var dirty = false;
 
     var that = {};
 
-    function updateRow(index) {
-        sendToHost('rowUpdated', {'row': index, 'data': matrix[index]});
-    }
+    /**************************** Private methods *****************************/
 
-    function rowRemoved(index) {
-        sendToHost('rowRemoved', {'row': index});
-    }
-
-    that.addGenome = function (genome_id) {
-        needsRecalculating = true;
-        order.push(genome_id);
-
-        var length = matrix.length;
-        for (var x = 0; x < length; x ++) {
-            // add -1 to the end
-            matrix[x].push(-1);
-            updateRow(x);
-        }
-
-        var new_row = []
-        for (var x = 0; x < order.length; x ++) {
-            new_row.push(-1);
-        }
-        matrix.push(new_row);
-        updateRow(matrix.length - 1);
-    }
-
-    that.removeGenome = function (genome_id) {
-        var index = order.indexOf(genome_id);
-        order.splice(index, 1);
-
-        matrix.splice(index, 1);
-        for (var x = 0; x < matrix.length; x ++) {
-            // add -1 to the end
-            matrix[x].splice(index, 1);
-            updateRow(x);
-        }
-        rowRemoved(index);
-    }
-
-    that.calculateSimilarity = function () {
-        for (var x = 0; x < order.length; x++) {
-            var new_row = [],
-                compare_list = data[order[x]].peptide_list;
-
-            for (y = 0 ; y < order.length; y ++) {
-                var peptide_list = data[order[y]].peptide_list;
-                new_row[y] = genomeSimilarity(compare_list, peptide_list);
+    /**
+     * Converts the object representation of the matrix to a normal array
+     */
+    function matrixObjectToArray() {
+        var returnMatrix = [],
+            i,
+            j;
+        for (i = 0; i < matrixOrder.length; i++) {
+            returnMatrix[i] = [];
+            for (j = 0; j < matrixOrder.length; j++) {
+                returnMatrix[i][j] = matrixObject[matrixOrder[i]][matrixOrder[j]];
             }
-            matrix[x] = new_row;
-            updateRow(x);
         }
-        needsRecalculating = false;
+        return returnMatrix;
     }
 
-
-    that.reOrder = function (new_order) {
-        sendToHost('newOrder', new_order);
+    /**
+     * Searches in tree for an occurance of x to replace that occurance by the
+     * triplet [x, y, val]
+     *
+     * @param <Array> tree A hierarchical array representing the tree
+     * @param <Number> x The first value
+     * @param <Number> y The second value
+     * @param <Number> val The similarity between x and y
+     */
+    function findAndReplace(tree, x, y, val) {
+        var index;
+        if (tree instanceof Array) {
+            index = tree.indexOf(x);
+            if (index === -1 || index === 2) {
+                findAndReplace(tree[0], x, y, val);
+                findAndReplace(tree[1], x, y, val);
+            } else {
+                tree[index] = [x, y, val];
+            }
+        }
     }
 
+    /**
+     * Flattens a hierarchical array based on the first 2 elements. Always
+     * removes the last element. Converts the id's to bioproject id's.
+     *
+     * @param <Array> array The array to flatten
+     */
+    function treeToOrder(array) {
+        var result = [],
+            i;
+        for (i = 0; i < array.length - 1; i++) {
+            if (array[i] instanceof Array) {
+                result = result.concat(treeToOrder(array[i]));
+            } else {
+                result.push(matrixOrder[array[i]]);
+            }
+        }
+        return result;
+    }
 
-    that.clusterMatrix = function () {
-        while(needsRecalculating) {
+    /**
+     * Recursively converts the clustered similarities to a valid newick string
+     *
+     * @param <Array> array The clustered similarities
+     * @param <Number> prevDist The previous distance
+     */
+    function arrayToNewick(array, prevDist) {
+        // default to zero
+        if (prevDist === undefined) {
+            prevDist = 0;
+        }
+
+        var string = "(",
+            distance = array[array.length - 1],
+            i;
+
+        for (i = 0; i < array.length - 1; i++) {
+            if (array[i] instanceof Array) {
+                string += arrayToNewick(array[i], distance);
+            } else {
+                string += generateNewickName(data[matrixOrder[array[i]]]) + ":" + (1 - distance);
+            }
+            if (i !== array.length - 2) {
+                string += ", ";
+            }
+        }
+        string += "):" + (distance - prevDist);
+        return string;
+    }
+
+    /***************************** Public methods *****************************/
+
+    /**
+     * Adds a genome to the matrix object
+     *
+     * @param <Number> genomeId The id of the genome to add
+     */
+    that.addGenome = function addGenome(genomeId) {
+        var id;
+        dirty = true;
+        matrixOrder.push(genomeId);
+        idsToCalculate.push(genomeId);
+
+        matrixObject[genomeId] = {};
+        for (id in matrixObject) {
+            matrixObject[id][genomeId] = -1;
+            matrixObject[genomeId][id] = -1;
+        }
+    };
+
+    /**
+     * Removes a genome from the matrix object
+     *
+     * @param <Number> genomeId The id of the genome to remove
+     */
+    that.removeGenome = function removeGenome(genomeId) {
+        var x;
+
+        matrixOrder.splice(matrixOrder.indexOf(genomeId), 1);
+        x = idsToCalculate.indexOf(genomeId);
+        if (x !== -1) {
+            idsToCalculate.splice(x, 1);
+        }
+        delete matrixObject[genomeId];
+        for (x in matrixObject) {
+            delete matrixObject[x][genomeId];
+        }
+    };
+
+    /**
+     * Calculates all uncalculated cells in the similarity matrix
+     */
+    that.calculateSimilarity = function calculateSimilarity() {
+        var sendFullMatrix = true,
+            dataQueue = {},
+            x,
+            id,
+            peptides,
+            id2,
+            similarity;
+
+        // Be a bit clever with sending data
+        if (idsToCalculate.length > 3) {
+            sendFullMatrix = false;
+        }
+
+        for (x = 0; x < idsToCalculate.length; x++) {
+            id = idsToCalculate[x];
+            peptides = data[id].peptide_list;
+
+            for (id2 in matrixObject) {
+                similarity = genomeSimilarity(peptides, data[id2].peptide_list);
+                matrixObject[id][id2] = similarity;
+                matrixObject[id2][id] = similarity;
+            }
+
+            if (!sendFullMatrix) {
+                dataQueue[id] = matrixObject[id];
+                if (x % 3 === 2 || x === idsToCalculate.length - 1) {
+                    that.sendRows(dataQueue);
+                    dataQueue = {};
+                }
+            }
+        }
+
+        if (sendFullMatrix) {
+            that.sendMatrix(matrixObject);
+        }
+
+        dirty = false;
+        idsToCalculate = [];
+    };
+
+    /**
+     * Sends the full similarity matrix to the client
+     *
+     * @param <SimObject> m The full similarity matrix to send
+     */
+    that.sendMatrix = function sendMatrix(m) {
+        sendToHost('processSimilarityData', {'fullMatrix' : true, 'data': m});
+    };
+
+    /**
+     * Sends a single row of similarities to the client
+     *
+     * @param <Map> dataQueue The list of id to data mappings
+     */
+    that.sendRows = function sendRows(dataQueue) {
+        sendToHost('processSimilarityData', {'fullMatrix' : false, 'data' : dataQueue});
+    };
+
+    /**
+     * Calculates the order of the clustered matrix
+     */
+    that.getClusteredOrder = function getClusteredOrder() {
+        return treeToOrder(that.calculateTree());
+    };
+
+    /**
+     * Clusters the genomes based on similarity
+     */
+    that.clusterMatrix = function clusterMatrix() {
+        if (matrixOrder.length === 0) {
+            return;
+        }
+        var tree = that.calculateTree();
+        sendToHost('processClusteredMatrix', {
+            order : treeToOrder(tree),
+            newick : arrayToNewick(tree) + ";"
+        });
+    };
+
+    /**
+     * Clusters the matrix and returns a tree of the clustering
+     */
+    that.calculateTree = function calculateTree() {
+        var i,
+            matrixArray,
+            result,
+            resultOrder,
+            first,
+            tree,
+            next;
+
+        if (dirty) {
             that.calculateSimilarity();
         }
 
-        // Create a deep copy and call our recursive cluster function
-        var matrix_deep_copy = [];
-        for (var i = 0; i < matrix.length; i++) {
-            matrix_deep_copy[i] = matrix[i].slice(0);
+        // Create an array representation of the similarities object
+        matrixArray = matrixObjectToArray();
+
+        // Cluster the matrix
+        result = clusterMatrixRecursively(matrixArray, {}, []);
+        resultOrder = result.order;
+
+        // Start building the tree
+        first = resultOrder.splice(-1, 1)[0];
+        tree = [first.x, first.y, first.value];
+        for (i = resultOrder.length - 1; i >= 0; i--) {
+            next = resultOrder[i];
+            // Find next.x recursively
+            findAndReplace(tree, next.x, next.y, next.value);
         }
-        var result = clusterMatrixRec(matrix_deep_copy, {}, []);
 
-        var result_order = result['order'];
-        var first = result_order.splice(-1,1)[0];
-        var new_order = [first.x,first.y];
+        return tree;
+    };
 
-        for (i = result_order.length - 1; i >= 0; i--) {
-            var index = new_order.indexOf(result_order[i]['x']);
-            new_order.splice(index, 0, result_order[i]['y']);
-        }
-        that.reOrder(new_order);
-    }
+    /**
+     * Clusters the matrix recursively
+     *
+     * @param <Array> matrix The array representation of the similarities
+     * @param <Map> cluster A mapping of which rows were combined in previous
+     *      steps
+     * @param <Array> order A list of objects containing the combined rows and
+     *      their similarities
+     */
+    function clusterMatrixRecursively(matrix, cluster, order) {
+        var x = 0,
+            y = 0,
+            largest = -1,
+            i,
+            j;
 
-    function clusterMatrixRec(matrix, cluster, order) {
-        // Lame recursion check
-        if(order.length == matrix.length - 1) {
+        // Are we done?
+        if (order.length === matrix.length - 1) {
             return {'order': order, 'cluster': cluster};
         }
 
         // find highest similarity
-        var x = 0, y = 0, largest = -1;
-        var i = 0, j = 0;
-        for (i = 0 ; i < matrix.length; i++) {
+        for (i = 0; i < matrix.length; i++) {
             for (j = 0; j < matrix[i].length; j++) {
-                if (matrix[i][j] > largest && i != j) {
+                if (matrix[i][j] > largest && i !== j) {
                     x = i;
                     y = j;
                     largest = matrix[i][j];
@@ -169,57 +345,90 @@ var matrixBackend = function matrixBackend(data) {
             }
         }
 
-        if(cluster[x]) {
-            cluster[x].push(y);
-        } else {
-            cluster[x] = [y];
+        if (!cluster[x]) {
+            cluster[x] = [];
         }
+        cluster[x].push(y);
 
         order.push({'x': x, 'y': y, 'value': largest});
 
-        // update sim matrix with average values
-        for (j = 0 ; j < matrix[x].length; j++) {
-            if ( j != y && j != x ) {
+        // Update sim matrix with average values
+        for (j = 0; j < matrix.length; j++) {
+            if (j !== y && j !== x) {
                 matrix[x][j] = (matrix[x][j] + matrix[y][j]) / 2;
                 matrix[j][x] = (matrix[x][j] + matrix[y][j]) / 2;
             }
         }
 
-        // set the value of comparison with y to zero
-        for (j = 0 ; j < matrix.length; j++) {
-            matrix[j][y] = -1;
+        // Set the value of comparison with y to zero
+        for (j = 0; j < matrix.length; j++) {
             matrix[y][j] = -1;
+            matrix[j][y] = -1;
         }
 
-        return clusterMatrixRec(matrix, cluster, order);
-
+        return clusterMatrixRecursively(matrix, cluster, order);
     }
 
     return that;
-}
-//matrix = matrixBackend(data);
+};
+matrix = matrixBackend(data);
 
 
-// Sends a response type and message to the host
+/**
+ * Sends a response type and message to the host
+ *
+ * @param <String> type The type of the message
+ * @param <String> message A string or Object in JSON
+ */
 function sendToHost(type, message) {
     self.postMessage({'type': type, 'msg': message});
 }
 
-// Loads peptides, based on bioproject_id
+/**
+ * Requests the sequence id's for a given bioproject id. Calls the addData
+ * function when done.
+ *
+ * @param <Number> bioproject_id The bioprojectId of the sequences we want
+ * @param <String> name The name of the organism
+ */
 function loadData(bioproject_id, name) {
-    request_rank = rank;
-    getJSON("/pancore/sequences/" + bioproject_id + ".json", function (json_data) {
-        addData(bioproject_id, name, json_data, request_rank);
+    var requestRank = rank;
+    getJSON("/peptidome/sequences/" + bioproject_id + ".json", function (json_data) {
+        addData(bioproject_id, name, json_data, requestRank);
     });
 }
 
-// Adds new dataset to the data array
+/**
+ * Integrates a user-uploaded genome into the visualisation
+ *
+ * @params <Number> id An id
+ * @params <String> name The name of the genome
+ * @params <Array> ids A list of internal peptide id's
+ */
+function loadUserData(id, name, ids) {
+    ids = JSON.parse(ids);
+    addData(id, name, ids, rank);
+}
+
+/**
+ * Processes a list of sequence_id's, received from the webserver and adds it
+ * to the data array.
+ *
+ * @param <Number> bioproject_id The bioprojectId of the organism
+ * @param <String> name The name of the organism
+ * @param <Array> set The ordered array of sequence_id, contains no duplicates
+ * @param <Number> request_rank The rank of the request. Used to discard old
+ *      requests
+ */
 function addData(bioproject_id, name, set, request_rank) {
     var core,
         pan,
         unicore,
         temp;
+
+    // Discard old data
     if (request_rank !== rank) return;
+
     // Store data for later use
     data[bioproject_id] = {};
     data[bioproject_id].bioproject_id = bioproject_id;
@@ -237,7 +446,7 @@ function addData(bioproject_id, name, set, request_rank) {
         unicores.push(unicore);
     }
 
-    //matrix.addGenome(bioproject_id);
+    matrix.addGenome(bioproject_id);
 
     // Return the results to the host
     temp = {};
@@ -254,8 +463,15 @@ function addData(bioproject_id, name, set, request_rank) {
     sendToHost("processLoadedGenome", {data: temp, rank: request_rank});
 }
 
-// Removes a genomes from the data
+/**
+ * Removes a genome from the data
+ *
+ * @param <Number> bioproject_id The id of the genome to remove
+ * @param <Array> newOrder The new order of the genomes
+ * @param <Number start The id where the change of order starts
+ */
 function removeData(bioproject_id, newOrder, start) {
+    // Remove stuff
     var l = pans.length;
     delete data[bioproject_id];
     pans.splice(l - 1, 1);
@@ -263,11 +479,11 @@ function removeData(bioproject_id, newOrder, start) {
     unicores.splice(l - 1, 1);
     unicorePresent = false;
     unicores = [];
+
+    // Recalculate stuff
     recalculatePanCore(newOrder, start, l - 2);
-    getUniqueSequences(newOrder);
-
-    //matrix.removeGenome(bioproject_id);
-
+    getUniqueSequences(newOrder, false);
+    matrix.removeGenome(bioproject_id);
 }
 
 // Recalculates the pan and core data based on a
@@ -307,11 +523,16 @@ function recalculatePanCore(newOrder, start, stop) {
         }
         response.push(temp);
     }
+
     sendToHost("processPancoreData", {data : response, lca : lca, rank : rank});
 }
 
 // Sorts the genomes in a given order
 function autoSort(type) {
+    if (order.length === 0) {
+        return;
+    }
+
     var i,
         sortFunction,
         tempPan,
@@ -320,6 +541,7 @@ function autoSort(type) {
         optVal,
         temp,
         easySort = true,
+        clustered = false,
         sortableArray = [],
         tempOrder = [],
         newOrder = [],
@@ -342,83 +564,106 @@ function autoSort(type) {
                 return b.size - a.size;
             };
             break;
+        case 'clustered':
+            clustered = true;
+            break;
         default:
             easySort = false;
     }
-    // Prepare the array to sort
-    for (i in data) {
-        sortableArray.push({bioproject_id : data[i].bioproject_id, name : data[i].name, size : data[i].peptides});
-    }
-    // Do the actual sorting
-    if (easySort) {
-        sortableArray.sort(sortFunction);
+    if (clustered) {
+        newOrder = matrix.getClusteredOrder();
     } else {
-        tempPan = data[order[0]].peptide_list;
-        tempCore = data[order[0]].peptide_list;
-        for (i = 0; i < sortableArray.length; i++) {
-            if (sortableArray[i].bioproject_id === order[0]) {
-                tempOrder.push(sortableArray[i]);
-                delete sortableArray[i];
-                break;
-            }
+        // Prepare the array to sort
+        for (i in data) {
+            sortableArray.push({bioproject_id : data[i].bioproject_id, name : data[i].name, size : data[i].peptides});
         }
-        while (tempOrder.length < sortableArray.length) {
-            optId = -1;
-            optVal = 0;
+        // Do the actual sorting
+        if (easySort) {
+            sortableArray.sort(sortFunction);
+        } else {
+            tempPan = data[order[0]].peptide_list;
+            tempCore = data[order[0]].peptide_list;
             for (i = 0; i < sortableArray.length; i++) {
-                if (sortableArray[i] !== undefined) {
-                    if (type === "minpan") {
-                        temp = union(tempPan, data[sortableArray[i].bioproject_id].peptide_list);
-                        if (optId === -1 || temp.length < optVal) {
-                            optId = i;
-                            optVal = temp.length;
-                        }
-                    } else if (type === "maxcore") {
-                        temp = intersection(tempCore, data[sortableArray[i].bioproject_id].peptide_list);
-                        if (optId === -1 || temp.length > optVal) {
-                            optId = i;
-                            optVal = temp.length;
-                        }
-                    } else if (type === "optimal") {
-                        temp = union(tempPan, data[sortableArray[i].bioproject_id].peptide_list).length - intersection(tempCore, data[sortableArray[i].bioproject_id].peptide_list).length;
-                        if (optId === -1 || temp < optVal) {
-                            optId = i;
-                            optVal = temp;
+                if (sortableArray[i].bioproject_id === order[0]) {
+                    tempOrder.push(sortableArray[i]);
+                    delete sortableArray[i];
+                    break;
+                }
+            }
+            while (tempOrder.length < sortableArray.length) {
+                optId = -1;
+                optVal = 0;
+                for (i = 0; i < sortableArray.length; i++) {
+                    if (sortableArray[i] !== undefined) {
+                        if (type === "minpan") {
+                            temp = union(tempPan, data[sortableArray[i].bioproject_id].peptide_list);
+                            if (optId === -1 || temp.length < optVal) {
+                                optId = i;
+                                optVal = temp.length;
+                            }
+                        } else if (type === "maxcore") {
+                            temp = intersection(tempCore, data[sortableArray[i].bioproject_id].peptide_list);
+                            if (optId === -1 || temp.length > optVal) {
+                                optId = i;
+                                optVal = temp.length;
+                            }
+                        } else if (type === "optimal") {
+                            temp = union(tempPan, data[sortableArray[i].bioproject_id].peptide_list).length - intersection(tempCore, data[sortableArray[i].bioproject_id].peptide_list).length;
+                            if (optId === -1 || temp < optVal) {
+                                optId = i;
+                                optVal = temp;
+                            }
                         }
                     }
                 }
+                if (type === "minpan") {
+                    tempPan = union(tempPan, data[sortableArray[optId].bioproject_id].peptide_list);
+                } else if (type === "maxcore") {
+                    tempCore = intersection(tempCore, data[sortableArray[optId].bioproject_id].peptide_list);
+                } else if (type === "optimal") {
+                    tempPan = union(tempPan, data[sortableArray[optId].bioproject_id].peptide_list);
+                    tempCore = intersection(tempCore, data[sortableArray[optId].bioproject_id].peptide_list);
+                }
+                tempOrder.push(sortableArray[optId]);
+                delete sortableArray[optId];
             }
-            if (type === "minpan") {
-                tempPan = union(tempPan, data[sortableArray[optId].bioproject_id].peptide_list);
-            } else if (type === "maxcore") {
-                tempCore = intersection(tempCore, data[sortableArray[optId].bioproject_id].peptide_list);
-            } else if (type === "optimal") {
-                tempPan = union(tempPan, data[sortableArray[optId].bioproject_id].peptide_list);
-                tempCore = intersection(tempCore, data[sortableArray[optId].bioproject_id].peptide_list);
-            }
-            tempOrder.push(sortableArray[optId]);
-            delete sortableArray[optId];
+            sortableArray = tempOrder;
         }
-        sortableArray = tempOrder;
-    }
-    // Prepare to return the result
-    for (i = 0; i < sortableArray.length; i++) {
-        newOrder.push(sortableArray[i].bioproject_id);
+        // Prepare to return the result
+        for (i = 0; i < sortableArray.length; i++) {
+            newOrder.push(sortableArray[i].bioproject_id);
+        }
     }
     start = newOrder[0] === order[0] ? 1 : 0;
-    recalculatePanCore(newOrder, start, newOrder.length - 1);
+    sendToHost('autoSorted', {order: newOrder, start: start, stop: newOrder.length -1 });
 }
 
 // Retrieves the unique sequences
-function getUniqueSequences(newOrder) {
+function getUniqueSequences(newOrder, force) {
+    force = typeof force !== 'undefined' ? force : true;
     order = newOrder;
     if (order.length > 0) {
-        var s = data[order[0]].peptide_list;
-        getJSONByPost("/pancore/unique_sequences/", "type=uniprot&bioprojects=" + order + "&sequences=[" + s + "]", function (d) {
-            lca = d[0];
-            calculateUnicore(d[1]);
-        });
+        if (force) {
+            reallyGetUniqueSequences(data[order[0]].peptide_list);
+        } else {
+            getJSONByPost("/peptidome/get_lca/", "bioprojects=" + filterIds(order), function (d) {
+                // only fetch sequences when there's a new lca
+                if (lca !== d.name) {
+                    reallyGetUniqueSequences(data[order[0]].peptide_list);
+                } else {
+                    calculateUnicore(unicoreData);
+                }
+            });
+        }
     }
+}
+
+// fetch the sequences
+function reallyGetUniqueSequences(s) {
+    getJSONByPost("/peptidome/unique_sequences/", "type=uniprot&bioprojects=" + filterIds(order) + "&sequences=[" + s + "]", function (d) {
+        lca = d[0];
+        calculateUnicore(d[1]);
+    });
 }
 
 // Calculates the unique peptides data
@@ -444,6 +689,7 @@ function clearAllData() {
     cores = [];
     unicores = [];
     rank++;
+    matrix = matrixBackend(data);
 }
 
 // Sends a list sequences to the client
@@ -466,12 +712,12 @@ function getSequences(type, bioproject_id) {
     default:
         error("Unknown type: " + type);
     }
-    getJSONByPost("/pancore/full_sequences/", "sequence_ids=[" + ids + "]", function (d) {
+    getJSONByPost("/peptidome/full_sequences/", "sequence_ids=[" + ids + "]", function (d) {
         sendToHost("processDownloadedSequences", {sequences : d, type : type});
     });
 }
 
-// These functions are not accessible from the host
+/************ These functions are not accessible from the host ****************/
 
 // Returns the rank of a give bioproject_id for the current order
 function getOrderByBioprojectId(bioproject_id) {
@@ -500,7 +746,7 @@ function getJSON(url, callback) {
                 var data = JSON.parse(req.responseText);
                 callback(data);
             } else {
-                error("request error for " + url, "It seems like something went wrong while we loaded the data");
+                error("request error for " + url, "It seems like something went wrong while we loaded the data. Are you still conected to the internet? You might want to reload this page.");
             }
         }
     };
@@ -518,7 +764,7 @@ function getJSONByPost(url, data, callback) {
                 var data = JSON.parse(req.responseText);
                 callback(data);
             } else {
-                error("request error for " + url, "It seems like something went wrong while we loaded the data");
+                error("request error for " + url, "It seems like something went wrong while we loaded the data. Are you still conected to the internet? You might want to reload this page.");
             }
         }
     };
@@ -529,131 +775,31 @@ function genomeSimilarity(peptide_list1, peptide_list2) {
     return intersection(peptide_list1, peptide_list2).length / union(peptide_list1, peptide_list2).length;
 }
 
-function calculateSimilarity() {
-    // 0,0 is the topleft coordinate
-    var x = 0;
-    var y = 0;
-    var names = [];
-    sim_matrix = [];
-    for (x = 0; x < order.length; x++) {
-        sim_matrix[x] = [];
-    }
+/**
+ * Removes [,;:] from a string and replaces spaces by underscores. Also adds
+ * the bioprojectid.
+ *
+ * @param <Genome> genome The genome we want to convert
+ */
+function generateNewickName(genome) {
+    return genome.name.replace(/ /g, "_").replace(/[,;:-]/g, "_") + "-" + genome.bioproject_id;
+}
 
-    for (x = 0; x < order.length; x++) {
-        var bioproject_id = order[x];
-        names.push(data[bioproject_id].name);
-        var compare_list = data[bioproject_id].peptide_list;
-
-        // only need to calculate upper part of matrix
-        for (y = 0 ; y < order.length; y ++) {
-            var peptide_list = data[order[y]].peptide_list;
-            sim_matrix[x][y] = genomeSimilarity(compare_list, peptide_list);
+/**
+ * Returns a new array containing only real bioproject ids
+ *
+ * @param <Array> a A list of ids.
+ */
+function filterIds(a) {
+    var r = [],
+        i;
+    for (i = 0; i < a.length; i++) {
+        if (!isNaN(+a[i])) {
+            r.push(a[i]);
         }
     }
-    sendToHost('sim_matrix', {'genomes': names, 'sim_matrix': sim_matrix, 'order': order});
-    return sim_matrix;
+    return r;
 }
-
-function addNewMatrixdata() {
-    var initial_length = sim_matrix.length;
-    var x = 0;
-    var names = [];
-    for (x = initial_length; x < order.length; x++) {
-        sim_matrix[x] = [];
-    }
-
-    for (x = 0; x < order.length; x++) {
-        var bioproject_id = order[x];
-        names.push(data[bioproject_id].name);
-    }
-
-    for (x = initial_length; x < order.length; x++) {
-        for (y = 0 ; y < order.length; y ++) {
-            sim_matrix[x][y] = 0;
-        }
-    }
-    sendToHost('sim_matrix', {'genomes': names, 'sim_matrix': sim_matrix, 'order': order});
-    return sim_matrix;
-}
-
-function clusterMatrix() {
-    // Check if we already calculated the similarity
-    var length = sim_matrix.length;
-    if (! (sim_matrix[length - 1][length - 1] > 0)) {
-        calculateSimilarity();
-    }
-
-    // Create a deep copy and call our recursive cluster function
-    var matrix_deep_copy = [];
-    var i = 0;
-    for (i = 0; i < length; i++) {
-        matrix_deep_copy[i] = sim_matrix[i].slice(0);
-    }
-    var result = clusterMatrixRec(matrix_deep_copy, {}, []);
-
-    var result_order = result['order'];
-    var first = result_order.splice(-1,1)[0];
-    var new_order = [first.x,first.y];
-
-    for (i = result_order.length - 1; i >= 0; i--) {
-        var index = new_order.indexOf(result_order[i]['x']);
-        new_order.splice(index, 0, result_order[i]['y']);
-    }
-    sendToHost('newOrder', new_order);
-
-    /* TODO: move this into matrixBackend */
-    // constuct newick format of tree
-    var tree = [first.x, first.y, first.value];
-    var treeOrder = [];
-
-    for (i = result_order.length - 1; i >= 0; i--) {
-        var next = result_order[i];
-        // find next.x recursively
-        findAndReplace(tree, next.x, next.y, next.value);
-    }
-    for (i = 0; i < new_order.length; i++) {
-        treeOrder[new_order[i]] = i;
-    }
-    sendToHost('sim_graph', {'data': arrayToNewick(tree), 'order': treeOrder});
-}
-
-
-function addDistance(array) {
-    var distance = array.splice(-1,1);
-    for(var i = 0; i < array.length ; i ++) {
-        var val = array[i];
-        if (val instanceof Array) {
-            addDistance(val);
-        } else {
-            array[i] = "" + array[i] + ":" + distance;
-        }
-    }
-    array.push(distance[0]);
-}
-function arrayToNewick(array) {
-    /* TODO: someday i will write this in a good way */
-    addDistance(array);
-    var string = JSON.stringify(array).replace(/\[/g, '(').replace(/\]/g, ')').replace(/\"/g, '');
-    string = string.replace(/,([.0-9]*)\)/g, '):$1');
-    return string + ';';
-}
-
-function findAndReplace(tree, x, y, val) {
-    var index = -1;
-    do {
-        index = tree.indexOf(x, index + 1);
-    } while (index % 3 === 2)
-    if (index == -1) {
-        for (var j = 0; j < tree.length - 1; j ++) {
-            if( tree[j] instanceof Array) {
-                findAndReplace(tree[j], x, y, val - tree[2]);
-            }
-        }
-    } else {
-        tree[index] = [x, y, val];
-    }
-}
-
 
 // union and intersection for sorted arrays
 function union(a, b) {

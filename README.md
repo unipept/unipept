@@ -1,20 +1,36 @@
-# Unipept #
+# Unipept
 
-The Unipept web application supports biodiversity analysis of large and complex metaproteome samples.
-Its underlying index structure is designed to quickly retrieve all occurrences of a tryptic peptide in UniProtKB records. 
-Taxon-specificity of the tryptic peptide is successively derived from these occurrences using a novel lowest common ancestor approach that is robust against taxonomic misarrangements, misidentifications and inaccuracies. 
-Not taking into account this identification noise would otherwise result in drastic loss of information. 
+The [Unipept web application](http://unipept.ugent.be) supports biodiversity analysis of large and complex metaproteome samples.
+The 2.2 release of Unipept has 4 main features:
+* Single peptide analysis
+* Milti-peptide analysis
+* Unique peptide finder
+* Peptidome clustering
 
-## Single peptide analysis ##
-With single peptide analysis, you can submit a single tryptic peptide that can be 5 to 50 residues long.
-The application will respond with a list of all UniProtKB records wherein the peptide was found along with a complete taxonomic lineage derived from the NCBI taxonomy.
-These lineages are presented as a comprehensible table and using an interactive tree view.
+## Contributing
 
-## Multi-peptide analysis ##
-Multi-peptide analysis helps you analyze lists of tryptic peptides, e.g. extracted from an environmental sample using shotgun tandem mass spectrometric methods.
-You can submit a list of peptides of which the lowest common ancestors (LCA) will be calculated.
-These LCAs will be bundled and displayed in an interactive treemap giving you insight into the biodiversity of your sample.
+Found a bug or have an idea for an awesome new feature?
+File an issue using the github issue tracker or drop us a line at [unipept@ugent.be](mailto:unipept@ugent.be).
 
-## Unique Peptide Finder ##
-This application lets you find unique peptides for a species of your choice, based on the data of the completed refseq genomes.
-These peptides can be downloaded and used for targeted proteomics experiments.
+If you're willing to get your hands dirty, you might of course also send us a pull request!
+
+## Installation
+
+This application is deployed and fully functional at [unipept.ugent.be](http://unipept.ugent.be).
+If for some reason you wish to run your own instance, you can do so by deploying this rails application and setting up a database.
+This isn't straightforward and you'll probably want some help, so contact us at [unipept@ugent.be](mailto:unipept@ugent.be) before you attempt an installation.
+
+A more user friendly way to set up your own Unipept instance is planned for the next release.
+We will probably use [docker](https://www.docker.io/) for this, and release a ready made database as a separate download.
+
+## Who made this app?
+
+Unipept is a research project of the computational biology group at Ghent University. If you use this application, please cite:
+Mesuere et al. (2012) J. Proteome Res. doi:10.1021/pr300576s
+
+The following people contributed to this project:
+* Bart Mesuere ([@bmesuere](https://github.com/bmesuere)): PhD student and lead developer
+* Peter Dawyndt ([@pdawyndt](https://github.com/pdawyndt)): Group leader and PhD supervisor
+* Toon Willems ([@nudded](https://github.com/nudded)): Master's student 2013-2014
+* Peter Vandamme: PhD co-supervisor
+* Bart Devreese: PhD co-supervisor

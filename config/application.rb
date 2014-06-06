@@ -3,10 +3,9 @@ require File.expand_path('../boot', __FILE__)
 require 'rails/all'
 
 if defined?(Bundler)
-  # If you precompile assets before deploying to production, use this line
-  Bundler.require *Rails.groups(:assets => %w(development test))
-  # If you want your assets lazily compiled in production, use this line
-  # Bundler.require(:default, :assets, Rails.env)
+  # Require the gems listed in Gemfile, including any gems
+  # you've limited to :test, :development, or :production.
+  Bundler.require(:default, Rails.env)
 end
 
 module UnipeptWeb
@@ -48,15 +47,9 @@ module UnipeptWeb
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1'
 
-    config.assets.precompile += ['workers/pancore_worker.js', 'jit/Extras/excanvas.js']
+    config.assets.precompile += ['workers/pancore_worker.js', 'workers/mygenome_worker.js', 'jit/Extras/excanvas.js']
 
     config.assets.paths << "#{Rails}/vendor/assets/fonts"
-
-    # CAS
-    config.rubycas.cas_base_url = "https://login.ugent.be/"
-    config.rubycas.validate_url = "https://login.ugent.be/samlValidate"
-    config.rubycas.logger = Rails.logger
-    config.rubycas.enable_single_sign_out = true
 
     ### Part of a Spork hack. See http://bit.ly/arY19y
     if Rails.env.test?

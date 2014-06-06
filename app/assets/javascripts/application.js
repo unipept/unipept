@@ -5,7 +5,7 @@
 //= require jquery_ujs
 //= require_self
 //= require_directory .
-//= require_directory ./pancore
+//= require_directory ./peptidome
 //= require vendor
 
 // highlights the background color
@@ -92,14 +92,14 @@ function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
     // Show the image and add buttons
     function showImage(dataURL) {
         $image.html("<img src='" + dataURL + "' />");
-        $buttons.html("");
+        $buttons.empty();
         if (svgSelector) {
-            $buttons.append("<button id='download-svg' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as SVG</button>");
+            $buttons.append("<button id='download-svg' class='btn btn-primary'><span class='glyphicon glyphicon-download'></span> Download as SVG</button>");
             $("#download-svg").click(function () {
                 downloadDataByForm(svg, baseFileName + ".svg");
             });
         }
-        $buttons.append("<button id='download-png' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as PNG</button>");
+        $buttons.append("<button id='download-png' class='btn btn-primary'><span class='glyphicon glyphicon-download'></span> Download as PNG</button>");
         $("#download-png").click(function () {
             downloadDataByLink($("#save-as-modal .image img").attr("src"), baseFileName + ".png");
         });
@@ -185,7 +185,22 @@ function info(message) {
  * Logs a message as exception to Google Analytics
  */
 function logErrorToGoogle(errorMessage) {
-    _gaq.push(['_trackEvent', 'Global', "Exception", errorMessage]);
+    logToGoogle("Global", "Exception", errorMessage);
+}
+
+/*
+ * Logs data to Google Analytics
+ */
+function logToGoogle(page, action, name, value) {
+    if (typeof(_gaq) !== "undefined") {
+        if (name === undefined) {
+            _gaq.push(['_trackEvent', page, action]);
+        } else if (value === undefined) {
+            _gaq.push(['_trackEvent', page, action, name]);
+        } else {
+            _gaq.push(['_trackEvent', page, action, name, value]);
+        }
+    }
 }
 
 /*
@@ -200,9 +215,53 @@ var delay = (function () {
     };
 })();
 
+/**
+ * Hash function for strings from
+ * http://stackoverflow.com/a/15710692/865696
+ */
+function stringHash(s){
+  return s.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);
+}
+
+/**
+ * Array reduce polyfill from
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce#Polyfill
+ */
+(function () {
+    if ( 'function' !== typeof Array.prototype.reduce ) {
+        Array.prototype.reduce = function( callback /*, initialValue*/ ) {
+            'use strict';
+            if ( null === this || 'undefined' === typeof this ) {
+                throw new TypeError('Array.prototype.reduce called on null or undefined' );
+            }
+            if ( 'function' !== typeof callback ) {
+                throw new TypeError( callback + ' is not a function' );
+            }
+            var t = Object( this ), len = t.length >>> 0, k = 0, value;
+            if ( arguments.length >= 2 ) {
+                value = arguments[1];
+            } else {
+                while ( k < len && ! k in t ) k++;
+                if ( k >= len ) {
+                    throw new TypeError('Reduce of empty array with no initial value');
+                }
+                value = t[ k++ ];
+            }
+            for ( ; k < len ; k++ ) {
+                if ( k in t ) {
+                    value = callback( value, t[k], k, t );
+                }
+            }
+            return value;
+        };
+    }
+})();
+
 /*
  * add an object called fullScreenApi until the fullscreen API gets finalized
  * from: http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugin/
+ *
+ * heavily adapted to support IE11 and the new specs
  */
 (function () {
     var fullScreenApi = {
@@ -217,7 +276,7 @@ var delay = (function () {
         i;
 
     // check for native support
-    if (typeof document.cancelFullScreen != 'undefined') {
+    if (typeof document.exitFullScreen != 'undefined') {
         fullScreenApi.supportsFullScreen = true;
     } else {
         // check for fullscreen support by vendor prefix
@@ -228,28 +287,53 @@ var delay = (function () {
                 fullScreenApi.supportsFullScreen = true;
                 break;
             }
+            if (typeof document[fullScreenApi.prefix + 'ExitFullscreen'] != 'undefined') {
+                fullScreenApi.supportsFullScreen = true;
+                break;
+            }
         }
     }
 
     // update methods to do something useful
     if (fullScreenApi.supportsFullScreen) {
         fullScreenApi.fullScreenEventName = fullScreenApi.prefix + 'fullscreenchange';
+        if (fullScreenApi.prefix === "ms") {
+            fullScreenApi.fullScreenEventName = "MSFullscreenChange";
+        }
 
         fullScreenApi.isFullScreen = function () {
             switch (this.prefix) {
                 case '':
-                    return document.fullScreen;
-                case 'webkit':
-                    return document.webkitIsFullScreen;
+                    return document.fullscreenElement !== null;
+                case 'moz':
+                    return document.mozFullScreenElement !== null;
                 default:
-                    return document[this.prefix + 'FullScreen'];
+                    return document[this.prefix + 'FullscreenElement'] !== null;
             }
         };
         fullScreenApi.requestFullScreen = function (el) {
-            return (this.prefix === '') ? el.requestFullScreen() : el[this.prefix + 'RequestFullScreen']();
+            switch (this.prefix) {
+                case '':
+                    return el.requestFullscreen();
+                case 'webkit':
+                    return el.webkitRequestFullscreen();
+                case 'ms':
+                    return el.msRequestFullscreen();
+                case 'moz':
+                    return el.mozRequestFullScreen();
+                case 'default':
+                    return el[this.prefix + "RequestFullscreen"]();
+            }
         };
         fullScreenApi.cancelFullScreen = function (el) {
-            return (this.prefix === '') ? document.cancelFullScreen() : document[this.prefix + 'CancelFullScreen']();
+            switch (this.prefix) {
+                case '':
+                    return document.exitFullscreen();
+                case 'moz':
+                    return document.mozCancelFullScreen();
+                case 'default':
+                    return document[this.prefix + "ExitFullscreen"]();
+            }
         };
     }
 
