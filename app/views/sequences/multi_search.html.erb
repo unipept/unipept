@@ -77,7 +77,7 @@
 </div>
 
 <% if @number_found > 0 %>
-<!--[if IE]><%= javascript_include_tag "jit/Extras/excanvas.js"%><![endif]-->
+<!--[if IE]><%= javascript_include_tag asset_path("jit/Extras/excanvas.js") %><![endif]-->
 <script type="text/javascript">
     var data1 = <%= raw(@treemap_json)%>;
     var data2 = <%= raw(@sunburst_json)%>;
