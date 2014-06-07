@@ -60,7 +60,7 @@
     </ul>
 
     <!-- JIT Library File -->
-    <!--[if IE]><%= javascript_include_tag "jit/Extras/excanvas.js"%><![endif]-->
+    <!--[if IE]><%= javascript_include_tag asset_path("jit/Extras/excanvas.js") %><![endif]-->
     <script type="text/javascript">
         $(function () {init_sequence_show(<%= raw(@root)%>, <%= @lca_taxon.id %>);});
     </script>
