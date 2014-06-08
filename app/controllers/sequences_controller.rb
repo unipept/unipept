@@ -148,6 +148,7 @@ class SequencesController < ApplicationController
     export = !params[:export].nil? && params[:export] == "1"
     search_name = params[:search_name]
     query = params[:qs]
+    csv_string = ""
 
     # quit if the query was empty
     raise EmptyQueryError.new if query.nil? || query.empty?
@@ -290,7 +291,8 @@ class SequencesController < ApplicationController
     @treemap_json = Oj.dump(treemap_hash)
 
     if export
-      csv_string = CSV.generate_line ["peptide"].concat(Lineage.ranks) + csv_string
+      csv_string = CSV.generate_line(["peptide"].concat(Lineage.ranks)) + csv_string
+
       cookies['nonce'] = params[:nonce]
       filename = search_name != "" ? search_name : "export"
       send_data csv_string, :type => 'text/csv; charset=iso-8859-1; header=present', :disposition => "attachment; filename="+filename+".csv"
