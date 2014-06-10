@@ -158,7 +158,7 @@ class SequencesController < ApplicationController
     data = data.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2") unless handle_missed
     data = data.lines.map(&:strip).to_a.select{|l| l.size >= 5}
     sequence_mapping = Hash[data.map{|v| @equate_il ? [v.gsub(/I/,'L'), v] : [v, v]}]
-    data = sequence_mapping.keys
+    data = data.map{|s| @equate_il ? s.gsub(/I/,'L') : s}
     data_counts = Hash[data.group_by{|k| k}.map{|k,v| [k, v.length]}]
     number_searched_for = data.length
     data = data_counts.keys
