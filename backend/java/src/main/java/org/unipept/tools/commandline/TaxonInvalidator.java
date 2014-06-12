@@ -1,8 +1,8 @@
-package tools.commandline;
+package org.unipept.tools.commandline;
 
 import java.sql.Timestamp;
 
-import storage.TaxonInvalidatorData;
+import org.unipept.storage.TaxonInvalidatorData;
 
 /**
  * This script invalidates NCBI taxon data

@@ -1,4 +1,4 @@
-package tools.commandline;
+package org.unipept.tools.commandline;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -6,7 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Timestamp;
 
-import storage.TaxonLoaderData;
+import org.unipept.storage.TaxonLoaderData;
 
 /**
  * This script parses NCBI taxon node and name files and inserts them into the
