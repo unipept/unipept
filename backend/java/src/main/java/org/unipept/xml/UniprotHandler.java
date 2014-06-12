@@ -1,4 +1,4 @@
-package xml;
+package org.unipept.xml;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -8,8 +8,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import storage.PeptideLoaderData;
-import tools.ProgressWriter;
+import org.unipept.storage.PeptideLoaderData;
+import org.unipept.tools.ProgressWriter;
 
 public class UniprotHandler extends DefaultHandler {
 

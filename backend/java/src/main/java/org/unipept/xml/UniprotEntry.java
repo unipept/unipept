@@ -1,4 +1,4 @@
-package xml;
+package org.unipept.xml;
 
 import java.util.ArrayList;
 import java.util.List;
