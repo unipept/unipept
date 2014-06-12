@@ -1,6 +1,6 @@
-package xml;
+package org.unipept.xml;
 
-import xml.UniprotEntry;
+import org.unipept.xml.UniprotEntry;
 
 public interface UniprotObserver {
 	public void handleEntry(UniprotEntry entry);
