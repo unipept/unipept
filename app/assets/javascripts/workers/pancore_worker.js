@@ -297,8 +297,13 @@ var matrixBackend = function matrixBackend(data) {
         // Create an array representation of the similarities object
         matrixArray = matrixObjectToArray();
 
+        sizes = [];
+        for (i = 0; i < matrixArray.length; i++) {
+            sizes[i] = 1;
+        }
+
         // Cluster the matrix
-        result = clusterMatrixRecursively(matrixArray, {}, []);
+        result = clusterMatrixRecursively(matrixArray, sizes, {}, []);
         resultOrder = result.order;
 
         // Start building the tree
@@ -317,17 +322,19 @@ var matrixBackend = function matrixBackend(data) {
      * Clusters the matrix recursively
      *
      * @param <Array> matrix The array representation of the similarities
+     * @param <Array> sizes The size of the clusters corresponding with the rows
      * @param <Map> cluster A mapping of which rows were combined in previous
      *      steps
      * @param <Array> order A list of objects containing the combined rows and
      *      their similarities
      */
-    function clusterMatrixRecursively(matrix, cluster, order) {
+    function clusterMatrixRecursively(matrix, sizes, cluster, order) {
         var x = 0,
             y = 0,
             largest = -1,
             i,
-            j;
+            j,
+            temp;
 
         // Are we done?
         if (order.length === matrix.length - 1) {
@@ -355,8 +362,9 @@ var matrixBackend = function matrixBackend(data) {
         // Update sim matrix with average values
         for (j = 0; j < matrix.length; j++) {
             if (j !== y && j !== x) {
-                matrix[x][j] = (matrix[x][j] + matrix[y][j]) / 2;
-                matrix[j][x] = (matrix[x][j] + matrix[y][j]) / 2;
+                temp = (sizes[x] * matrix[x][j] + sizes[y] * matrix[y][j]) / (sizes[x] + sizes[y]);
+                matrix[x][j] = temp;
+                matrix[j][x] = temp;
             }
         }
 
@@ -366,7 +374,10 @@ var matrixBackend = function matrixBackend(data) {
             matrix[j][y] = -1;
         }
 
-        return clusterMatrixRecursively(matrix, cluster, order);
+        sizes[x] = sizes[x] + sizes[y];
+        sizes[y] = 0;
+
+        return clusterMatrixRecursively(matrix, sizes, cluster, order);
     }
 
     return that;
