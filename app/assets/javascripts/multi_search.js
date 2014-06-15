@@ -34,6 +34,7 @@ function init_multi(data, data2, equate_il) {
     // treeview
     try {
         initTreeView(data);
+        $("#jitTreeViewWrapper").removeClass("active");
     } catch (err) {
         error(err.message, "Loading the Treeview visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
@@ -171,9 +172,32 @@ function initTreeMap(jsonData) {
     tm.refresh();
 
     window.tm = tm;
+
+    function createLabel(domElement, node) {
+
+    }
 }
 
 function initTreeView(jsonData) {
+    var labelType,
+        useGradients,
+        nativeTextSupport,
+        animate;
+
+    (function () {
+        var ua = navigator.userAgent,
+            iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
+            typeOfCanvas = typeof HTMLCanvasElement,
+            nativeCanvasSupport = (typeOfCanvas === 'object' || typeOfCanvas === 'function'),
+            textSupport = nativeCanvasSupport && (typeof document.createElement('canvas').getContext('2d').fillText === 'function');
+        // I'm setting this based on the fact that ExCanvas provides text support for IE
+        // and that as of today iPhone/iPad current text support is lame
+        labelType = (!nativeCanvasSupport || (textSupport && !iStuff)) ? 'Native' : 'HTML';
+        nativeTextSupport = labelType === 'Native';
+        useGradients = nativeCanvasSupport;
+        animate = !(iStuff || !nativeCanvasSupport);
+    }());
+
     var st = new $jit.ST({
         injectInto: 'jitTreeView',
         // id of viz container element
@@ -206,6 +230,10 @@ function initTreeView(jsonData) {
             align: 'center'
         },
 
+        Label: {
+            type: 'Native'
+        },
+
         Edge: {
             type: 'bezier',
             color: '#DCDFE4',
@@ -215,7 +243,8 @@ function initTreeView(jsonData) {
         // This method is called on DOM label creation.
         // Use this method to add event handlers and styles to
         // your node.
-        onCreateLabel: function (label, node) {
+        /*onCreateLabel: function (label, node) {
+            console.log(node);
             label.id = node.id;
             label.innerHTML = node.name;
             label.onclick = function () {
@@ -231,7 +260,7 @@ function initTreeView(jsonData) {
             style.fontSize = '0.8em';
             style.textAlign = 'center';
             style.paddingTop = '3px';
-        },
+        },*/
 
         // This method is called right before plotting
         // a node. It's useful for changing an individual node
@@ -275,7 +304,6 @@ function initTreeView(jsonData) {
     });
     // load json data
     st.loadJSON(jsonData);
-    console.log(jsonData);
 
     // compute node positions and layout
     st.compute();
@@ -283,10 +311,7 @@ function initTreeView(jsonData) {
     // optional: make a translation of the tree
     st.geom.translate(new $jit.Complex(-200, 0), "current");
 
-    st.onClick(jsonData.id);
-
-    // disable the text selection of tree nodes
-    $("#jitTreeView").disableSelection();
+    st.onClick(st.root);
 }
 
 function initTree(data, equate_il) {
