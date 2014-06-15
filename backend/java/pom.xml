@@ -14,6 +14,12 @@
 			<testResource>
 				<directory>${basedir}/src/test/java</directory>
 			</testResource>
+			<testResource>
+				<directory>${basedir}/src/test/resources</directory>
+				<includes>
+                    <include>**/*.*</include>
+                </includes>
+			</testResource>
 		</testResources>
 		<plugins>
 			<plugin>
@@ -31,6 +37,11 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.31</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
 		</dependency>
 	</dependencies>
 	<name>Unipept</name>
