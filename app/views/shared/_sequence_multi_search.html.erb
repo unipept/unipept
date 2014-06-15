@@ -24,8 +24,13 @@
         </div>
     </div>
     <div id="search_button">
-        <%= button_tag(raw("<span class='glyphicon glyphicon-search'></span> Search"), :type => "submit", :class => "btn btn-primary") %>
+        <%= button_tag(raw("<span class='glyphicon glyphicon-search'></span> Search"), :type => "submit", :class => "btn btn-primary", :id =>"search-multi-form") %>
         <%= button_tag(raw("<span class='glyphicon glyphicon-repeat'></span> Start Over"), { :name => 'reset', :id => 'reset_button', :type => "reset", :class => "btn btn-default" }) %>
+    </div>
+    <div id="form-progress" class="progress progress-striped active hide">
+      <div class="progress-bar"  role="progressbar" style="width: 100%">
+        <span>Processing data...</span>
+      </div>
     </div>
 
 <% end %>
