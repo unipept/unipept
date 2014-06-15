@@ -179,25 +179,6 @@ function initTreeMap(jsonData) {
 }
 
 function initTreeView(jsonData) {
-    var labelType,
-        useGradients,
-        nativeTextSupport,
-        animate;
-
-    (function () {
-        var ua = navigator.userAgent,
-            iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
-            typeOfCanvas = typeof HTMLCanvasElement,
-            nativeCanvasSupport = (typeOfCanvas === 'object' || typeOfCanvas === 'function'),
-            textSupport = nativeCanvasSupport && (typeof document.createElement('canvas').getContext('2d').fillText === 'function');
-        // I'm setting this based on the fact that ExCanvas provides text support for IE
-        // and that as of today iPhone/iPad current text support is lame
-        labelType = (!nativeCanvasSupport || (textSupport && !iStuff)) ? 'Native' : 'HTML';
-        nativeTextSupport = labelType === 'Native';
-        useGradients = nativeCanvasSupport;
-        animate = !(iStuff || !nativeCanvasSupport);
-    }());
-
     var st = new $jit.ST({
         injectInto: 'jitTreeView',
         // id of viz container element
@@ -238,6 +219,18 @@ function initTreeView(jsonData) {
             type: 'bezier',
             color: '#DCDFE4',
             overridable: true
+        },
+
+        Events: {
+            enable: true,
+            onClick: function (node) {
+                console.log(node);
+                /*if (node) {
+                    logToGoogle("Multi Peptide", "Zoom", "Treemap", "In");
+                    tm.enter(node);
+                    treeSearch(node.name, 500);
+                }*/
+            }
         },
 
         // This method is called on DOM label creation.
