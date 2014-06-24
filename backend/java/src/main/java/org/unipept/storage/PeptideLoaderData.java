@@ -1,4 +1,4 @@
-package storage;
+package org.unipept.storage;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,11 +11,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import xml.UniprotDbRef;
-import xml.UniprotECRef;
-import xml.UniprotEntry;
-import xml.UniprotEntry.Pair;
-import xml.UniprotGORef;
+import org.unipept.xml.UniprotDbRef;
+import org.unipept.xml.UniprotECRef;
+import org.unipept.xml.UniprotEntry;
+import org.unipept.xml.UniprotEntry.Pair;
+import org.unipept.xml.UniprotGORef;
+import org.unipept.xml.UniprotObserver;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
@@ -25,7 +26,7 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
  * @author Bart Mesuere
  * 
  */
-public class PeptideLoaderData {
+public class PeptideLoaderData implements UniprotObserver {
 	// database stuff
 	private Connection connection;
 
@@ -455,5 +456,8 @@ public class PeptideLoaderData {
 			e1.printStackTrace();
 		}
 	}
-
+	
+	public void handleEntry(UniprotEntry entry) {
+		store(entry);
+	}
 }

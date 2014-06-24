@@ -1,4 +1,4 @@
-package tools.commandline;
+package org.unipept.tools.commandline;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,9 +12,9 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.SAXException;
 
-import storage.PeptideLoaderData;
-import tools.ProgressWriter;
-import xml.UniprotHandler;
+import org.unipept.storage.PeptideLoaderData;
+import org.unipept.tools.ProgressWriter;
+import org.unipept.xml.UniprotHandler;
 
 /**
  * This script parses uniprot xml files, extracts the protein information and
@@ -66,7 +66,8 @@ public class PeptideLoader {
 
 		try {
 			InputStream in = new FileInputStream(file);
-			UniprotHandler handler = new UniprotHandler(isSwissprot, data);
+			UniprotHandler handler = new UniprotHandler(isSwissprot);
+			handler.subscribe(data);
 			xmlParser.parse(in, handler);
 		} catch (SAXException e) {
 			System.err.println(new Timestamp(System.currentTimeMillis())
