@@ -1,4 +1,4 @@
 #!/bin/sh
-binpath=$(realpath $(dirname $0))
+binpath=$(dirname $0)
 targetpath=$binpath/../target
-java -cp "$targetpath/unipept-0.0.1-SNAPSHOT.jar" tools.commandline.PeptideLoader $@
+java -cp "$targetpath/unipept-0.0.1-SNAPSHOT.jar" org.unipept.tools.commandline.PeptideLoader $@
