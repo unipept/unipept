@@ -3,15 +3,15 @@ package org.unipept.tools.commandline;
 import java.io.*;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
 
-/**
- * This script calculates all lowest common ancestors
- *
- * @author Bart Mesuere
- *
- */
 public class LCACalculator {
 
+    private static final Pattern SEPARATOR = Pattern.compile("\t");
+    public static final int GENUS = 20;
+    public static final int SPECIES = 24;
+    public static final int RANKS = 28;
     private static int[][] taxonomy;
 
     public static void buildTaxonomy(String file) throws FileNotFoundException {
@@ -20,12 +20,13 @@ public class LCACalculator {
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
         br.lines()
-                .skip(1)
+                .skip(1) // skip header
                 .forEach(line -> {
                     String[] elements = SEPARATOR.split(line);
 
                     int key = Integer.parseInt(elements[0]);
                     int[] lineage = Arrays.stream(elements)
+                            .skip(1)// skip taxonId
                             .mapToInt(s -> s.equals("NULL") ? 0 : Integer.parseInt(s))
                             .toArray();
 
@@ -37,44 +38,27 @@ public class LCACalculator {
         taxonomyMap.keySet().stream().forEach(key -> taxonomy[key] = taxonomyMap.get(key));
     }
 
-    public static void calculateLCAs(String file) throws FileNotFoundException {
-        Scanner sc = new Scanner(new File(file));
+    public static void calculateLCAs(String file) throws IOException {
+        Scanner sc = new Scanner(new GZIPInputStream(new FileInputStream(file)));
         sc.nextLine(); // skip header
 
         int count = 0;
-
         int currentSequence = -1;
         Collection<Integer> taxa = new ArrayList<>();
+
         while (sc.hasNext()) {
             count++;
             if (count % 1000000 == 0) {
                 System.err.println(new Timestamp(System.currentTimeMillis()) + ": " + count);
             }
+
             String[] split = SEPARATOR.split(sc.nextLine());
             int sequenceId = Integer.parseInt(split[0]);
             int taxonId = Integer.parseInt(split[1]);
 
             if (sequenceId != currentSequence) {
                 if (currentSequence != -1) {
-                    int lca = 1;
-                    int[][] lineages = taxa.stream()
-                            .map(t -> taxonomy[t])
-                            .filter(l -> l != null)
-                            .toArray(int[][]::new);
-                    for (int rank = 0; rank < lineages[0].length; rank++) {
-                        final int finalRank = rank;
-                        int[] current = Arrays.stream(lineages)
-                                .mapToInt(l -> l[finalRank])
-                                .filter(i -> i > 0)
-                                .toArray();
-                        if (current.length > 1) {
-                            break;
-                        }
-                        if (current.length > 0 && current[0] != 0) {
-                            lca = current[0];
-                        }
-                    }
-                    //System.out.println(currentSequence + "," + lca);
+                    handleLCA(currentSequence, calculateLCA(taxa));
                 }
 
                 currentSequence = sequenceId;
@@ -82,6 +66,55 @@ public class LCACalculator {
             }
 
             taxa.add(taxonId);
+        }
+        handleLCA(currentSequence, calculateLCA(taxa));
+    }
+
+    private static int calculateLCA(Collection<Integer> taxa) {
+        int lca = 1;
+        int[][] lineages = taxa.stream()
+                .map(t -> taxonomy[t])
+                .filter(l -> l != null)
+                .toArray(int[][]::new);
+        for (int rank = 0; rank < RANKS; rank++) {
+            final int finalRank = rank;
+            int[] current = Arrays.stream(lineages)
+                    .mapToInt(l -> l[finalRank])
+                    .filter(i -> finalRank == GENUS || finalRank == SPECIES ? i > 0 : i >= 0)
+                    .distinct()
+                    .toArray();
+            if (current.length > 1) {
+                break;
+            }
+            if (current.length > 0 && current[0] != 0) {
+                lca = current[0];
+            }
+        }
+        return lca;
+    }
+
+    private static void handleLCA(int sequenceId, int lca) {
+        //System.out.println(sequenceId + " " + lca);
+    }
+
+    /**
+     * first argument should be the lineages in tsv format with a header row. Create by running:
+     * $ echo "select * from lineages;" | mysql -u unipept -p unipept > lineages.tsv
+     * <p>
+     * second argument should be the peptides in gzip'ed tsv format with a header row. Create by running:
+     * $ echo "select sequence_id, taxon_id from peptides left join uniprot_entries on peptides.uniprot_entry_id = uniprot_entries.id;" | \n
+     * mysql -u unipept -p unipept -q | sort -S 50% --parallel=12 -k1n > sequences.tsv
+     *
+     * @param args
+     */
+    public static void main(String[] args) {
+        try {
+            System.err.println(new Timestamp(System.currentTimeMillis()) + ": reading taxonomy");
+            buildTaxonomy(args[0]);
+            System.err.println(new Timestamp(System.currentTimeMillis()) + ": reading sequences");
+            calculateLCAs(args[1]);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
