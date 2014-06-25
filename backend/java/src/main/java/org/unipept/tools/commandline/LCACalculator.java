@@ -8,10 +8,10 @@ import java.util.zip.GZIPInputStream;
 
 public class LCACalculator {
 
-    private static final Pattern SEPARATOR = Pattern.compile("\t");
     public static final int GENUS = 20;
     public static final int SPECIES = 24;
     public static final int RANKS = 28;
+    private static final Pattern SEPARATOR = Pattern.compile("\t");
     private static int[][] taxonomy;
 
     public static void buildTaxonomy(String file) throws FileNotFoundException {
@@ -39,22 +39,23 @@ public class LCACalculator {
     }
 
     public static void calculateLCAs(String file) throws IOException {
-        Scanner sc = new Scanner(new GZIPInputStream(new FileInputStream(file)));
-        sc.nextLine(); // skip header
+        BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(file))));
+        br.readLine(); // skip header
 
         int count = 0;
         int currentSequence = -1;
         Collection<Integer> taxa = new ArrayList<>();
-
-        while (sc.hasNext()) {
+        String line;
+        while ((line = br.readLine()) != null) {
             count++;
-            if (count % 1000000 == 0) {
+            if (count % 10000000 == 0) {
                 System.err.println(new Timestamp(System.currentTimeMillis()) + ": " + count);
             }
 
-            String[] split = SEPARATOR.split(sc.nextLine());
-            int sequenceId = Integer.parseInt(split[0]);
-            int taxonId = Integer.parseInt(split[1]);
+            // outperforms split by at least 20%
+            int t = line.indexOf('\t');
+            int sequenceId = Integer.parseInt(line.substring(0, t));
+            int taxonId = Integer.parseInt(line.substring(t + 1));
 
             if (sequenceId != currentSequence) {
                 if (currentSequence != -1) {
