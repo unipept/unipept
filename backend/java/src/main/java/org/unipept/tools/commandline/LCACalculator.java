@@ -2,7 +2,10 @@ package org.unipept.tools.commandline;
 
 import java.io.*;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
@@ -13,9 +16,11 @@ public class LCACalculator {
     public static final int RANKS = 28;
     private static final Pattern SEPARATOR = Pattern.compile("\t");
     private int[][] taxonomy;
+    private final Writer writer;
 
-    public LCACalculator(String file) throws FileNotFoundException {
-        buildTaxonomy(file);
+    public LCACalculator(String taxonomyFile, String outputFile) throws IOException {
+        writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "utf-8"));
+        buildTaxonomy(taxonomyFile);
     }
 
     private void buildTaxonomy(String file) throws FileNotFoundException {
@@ -103,23 +108,29 @@ public class LCACalculator {
     }
 
     private void handleLCA(int sequenceId, int lca) {
-        //System.out.println(sequenceId + " " + lca);
+        try {
+            writer.write(sequenceId + "\t" + lca);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * first argument should be the lineages in tsv format with a header row. Create by running:
      * $ echo "select * from lineages;" | mysql -u unipept -p unipept > lineages.tsv
-     * <p>
+     * <p/>
      * second argument should be the peptides in gzip'ed tsv format with a header row. Create by running:
      * $ echo "select sequence_id, taxon_id from peptides left join uniprot_entries on peptides.uniprot_entry_id = uniprot_entries.id;" | \n
      * mysql -u unipept -p unipept -q | sort -S 50% --parallel=12 -k1n > sequences.tsv
+     * <p/>
+     * third argument should be the filename of the output file
      *
      * @param args
      */
-    public static void main(String[] args) {
+    public static void main(String... args) {
         try {
             System.err.println(new Timestamp(System.currentTimeMillis()) + ": reading taxonomy");
-            LCACalculator l = new LCACalculator(args[0]);
+            LCACalculator l = new LCACalculator(args[0], args[2]);
             System.err.println(new Timestamp(System.currentTimeMillis()) + ": reading sequences");
             l.calculateLCAs(args[1]);
         } catch (IOException e) {
