@@ -12,9 +12,13 @@ public class LCACalculator {
     public static final int SPECIES = 24;
     public static final int RANKS = 28;
     private static final Pattern SEPARATOR = Pattern.compile("\t");
-    private static int[][] taxonomy;
+    private int[][] taxonomy;
 
-    public static void buildTaxonomy(String file) throws FileNotFoundException {
+    public LCACalculator(String file) throws FileNotFoundException {
+        buildTaxonomy(file);
+    }
+
+    private void buildTaxonomy(String file) throws FileNotFoundException {
         HashMap<Integer, int[]> taxonomyMap = new HashMap<>();
         InputStream is = new FileInputStream(new File(file));
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -22,7 +26,7 @@ public class LCACalculator {
         br.lines()
                 .skip(1) // skip header
                 .forEach(line -> {
-                    String[] elements = SEPARATOR.split(line);
+                    String[] elements = SEPARATOR.split(line, 29);
 
                     int key = Integer.parseInt(elements[0]);
                     int[] lineage = Arrays.stream(elements)
@@ -38,8 +42,8 @@ public class LCACalculator {
         taxonomyMap.keySet().stream().forEach(key -> taxonomy[key] = taxonomyMap.get(key));
     }
 
-    public static void calculateLCAs(String file) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(file))));
+    public void calculateLCAs(String file) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(file))), 67108864);
         br.readLine(); // skip header
 
         int count = 0;
@@ -71,7 +75,7 @@ public class LCACalculator {
         handleLCA(currentSequence, calculateLCA(taxa));
     }
 
-    private static int calculateLCA(Collection<Integer> taxa) {
+    private int calculateLCA(Collection<Integer> taxa) {
         int lca = 1;
         int[][] lineages = taxa.stream()
                 .map(t -> taxonomy[t])
@@ -79,22 +83,26 @@ public class LCACalculator {
                 .toArray(int[][]::new);
         for (int rank = 0; rank < RANKS; rank++) {
             final int finalRank = rank;
-            int[] current = Arrays.stream(lineages)
+            final int[] val = {-1};
+            boolean allMatch = Arrays.stream(lineages)
                     .mapToInt(l -> l[finalRank])
                     .filter(i -> finalRank == GENUS || finalRank == SPECIES ? i > 0 : i >= 0)
-                    .distinct()
-                    .toArray();
-            if (current.length > 1) {
-                break;
-            }
-            if (current.length > 0 && current[0] != 0) {
-                lca = current[0];
+                    .peek(i -> val[0] = val[0] == -1 ? i : val[0])
+                    .allMatch(i -> i == val[0]);
+
+            if (val[0] != -1) {
+                if (!allMatch) {
+                    break;
+                }
+                if (val[0] != 0) {
+                    lca = val[0];
+                }
             }
         }
         return lca;
     }
 
-    private static void handleLCA(int sequenceId, int lca) {
+    private void handleLCA(int sequenceId, int lca) {
         //System.out.println(sequenceId + " " + lca);
     }
 
@@ -111,9 +119,9 @@ public class LCACalculator {
     public static void main(String[] args) {
         try {
             System.err.println(new Timestamp(System.currentTimeMillis()) + ": reading taxonomy");
-            buildTaxonomy(args[0]);
+            LCACalculator l = new LCACalculator(args[0]);
             System.err.println(new Timestamp(System.currentTimeMillis()) + ": reading sequences");
-            calculateLCAs(args[1]);
+            l.calculateLCAs(args[1]);
         } catch (IOException e) {
             e.printStackTrace();
         }
