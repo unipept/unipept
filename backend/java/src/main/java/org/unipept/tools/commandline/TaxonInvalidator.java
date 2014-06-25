@@ -12,7 +12,7 @@ import org.unipept.storage.TaxonInvalidatorData;
  */
 public class TaxonInvalidator {
     // data
-    TaxonInvalidatorData data;
+    private final TaxonInvalidatorData data;
 
     /**
      * Creates a new taxon invalidator and sets all taxa to valid
@@ -66,7 +66,7 @@ public class TaxonInvalidator {
      * @param args
      *            not used
      */
-    public static void main(String[] args) {
+    public static void main(String... args) {
         TaxonInvalidator ti = new TaxonInvalidator();
         ti.invalidate();
     }

@@ -12,11 +12,11 @@ import java.sql.SQLException;
  */
 class Database {
     // DB settings
-    private final static String DRIVER = "com.mysql.jdbc.Driver";
+    private static final String DRIVER = "com.mysql.jdbc.Driver";
 
-    private final static String JDBC_URL = "jdbc:mysql://localhost/unipept";
-    private final static String USER = "unipept";
-    private final static String PASSWORD = "unipept";
+    private static final String JDBC_URL = "jdbc:mysql://localhost/unipept";
+    private static final String USER = "unipept";
+    private static final String PASSWORD = "unipept";
 
     /**
      * Creates a new Connection object with the hardcoded URL, username and

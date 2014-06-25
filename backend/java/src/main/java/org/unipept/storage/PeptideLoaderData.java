@@ -304,9 +304,8 @@ public class PeptideLoaderData implements UniprotObserver {
      */
     public List<Integer> getUniqueTaxonIds() {
         List<Integer> result = new ArrayList<Integer>();
-        Statement stmt;
         try {
-            stmt = connection.createStatement();
+            Statement stmt = connection.createStatement();
             try {
                 ResultSet rs = stmt.executeQuery("SELECT DISTINCT taxon_id FROM uniprot_entries");
                 while (rs.next())
@@ -388,12 +387,15 @@ public class PeptideLoaderData implements UniprotObserver {
                     Statement stmt = connection.createStatement();
 
                     if (rs.getBoolean("valid_taxon"))// normal case
+                    {
                         stmt.executeUpdate("UPDATE lineages SET `" + rank + "` = " + parentId
                                 + " WHERE `taxon_id` = " + taxonId);
-                    else
+                    } else
                         // invalid
+                    {
                         stmt.executeUpdate("UPDATE lineages SET `" + rank + "` = "
                                 + (-1 * parentId) + " WHERE `taxon_id` = " + taxonId);
+                    }
 
                     stmt.close();
                 }
@@ -409,9 +411,8 @@ public class PeptideLoaderData implements UniprotObserver {
      * Truncates all peptide tables
      */
     public void emptyAllTables() {
-        Statement stmt;
         try {
-            stmt = connection.createStatement();
+            Statement stmt = connection.createStatement();
             try {
                 stmt.executeQuery("SET FOREIGN_KEY_CHECKS=0");
                 stmt.executeUpdate("TRUNCATE TABLE `peptides`");
@@ -438,9 +439,8 @@ public class PeptideLoaderData implements UniprotObserver {
     }
 
     public void emptyLineages() {
-        Statement stmt;
         try {
-            stmt = connection.createStatement();
+            Statement stmt = connection.createStatement();
             try {
                 stmt.executeUpdate("TRUNCATE TABLE `lineages`");
             } catch (SQLException e) {
@@ -457,6 +457,7 @@ public class PeptideLoaderData implements UniprotObserver {
         }
     }
 
+    @Override
     public void handleEntry(UniprotEntry entry) {
         store(entry);
     }

@@ -30,27 +30,18 @@ import org.unipept.xml.UniprotHandler;
 public class PeptideLoader {
 
     // Objects used
-    private PeptideLoaderData data;
-    private SAXParser xmlParser;
+    private final PeptideLoaderData data;
+    private final SAXParser xmlParser;
 
-    public PeptideLoader(boolean emptyTheDatabase) {
+    public PeptideLoader(boolean emptyTheDatabase) throws ParserConfigurationException, SAXException {
         // easy access to the database
         data = new PeptideLoaderData();
-        if (emptyTheDatabase)
+        if (emptyTheDatabase) {
             data.emptyAllTables();
+        }
 
         // xml stuff
-        try {
-            xmlParser = SAXParserFactory.newInstance().newSAXParser();
-        } catch (ParserConfigurationException e) {
-            System.err.println(new Timestamp(System.currentTimeMillis())
-                    + " Something went wrong creating the parser");
-            e.printStackTrace();
-        } catch (SAXException e) {
-            System.err.println(new Timestamp(System.currentTimeMillis())
-                    + " Something went wrong creating the parser");
-            e.printStackTrace();
-        }
+        xmlParser = SAXParserFactory.newInstance().newSAXParser();
     }
 
     /**
@@ -89,8 +80,9 @@ public class PeptideLoader {
                 + list.size() + " lineages");
         int i = 1;
         for (Integer id : list) {
-            if (++i % 100000 == 0)
+            if (++i % 100000 == 0) {
                 System.err.println(new Timestamp(System.currentTimeMillis()) + " " + i + " done");
+            }
             data.addLineage(id);
         }
 
@@ -104,14 +96,18 @@ public class PeptideLoader {
      * @param args
      *            the path to the input files
      */
-    public static void main(String[] args) {
+    public static void main(String... args) throws ParserConfigurationException, SAXException {
         // Process input
         if (args.length != 1 && args.length != 2) {
             System.out.println("To load data: java PeptideLoader swissprot.xml trembl.xml");
             System.out.println("To fix lineages: java PeptideLoader lineages");
             System.exit(-1);
         }
-        if (!args[0].equals("lineages")) {
+        if (args[0].equals("lineages")) {
+            // create a new loader object
+            PeptideLoader loader = new PeptideLoader(false);
+            loader.addLineage();
+        } else {
             // create a new loader object
             PeptideLoader loader = new PeptideLoader(true);
 
@@ -132,10 +128,6 @@ public class PeptideLoader {
 
             loader.addLineage();
             ProgressWriter.removeProgress("PeptideLoader");
-        } else {
-            // create a new loader object
-            PeptideLoader loader = new PeptideLoader(false);
-            loader.addLineage();
         }
     }
 }

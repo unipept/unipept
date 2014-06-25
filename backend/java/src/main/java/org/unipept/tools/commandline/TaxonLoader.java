@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.regex.Pattern;
 
 import org.unipept.storage.TaxonLoaderData;
 
@@ -20,8 +21,9 @@ import org.unipept.storage.TaxonLoaderData;
  * 
  */
 public class TaxonLoader {
+    private static final Pattern PIPE_PATTERN = Pattern.compile("\\|");
     // data
-    TaxonLoaderData data;
+    private final TaxonLoaderData data;
 
     // BioJava
     private final String nodes;
@@ -55,21 +57,22 @@ public class TaxonLoader {
             BufferedReader reader = new BufferedReader(new FileReader(names));
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\\|");
+                String[] parts = PIPE_PATTERN.split(line);
                 Integer taxId = Integer.valueOf(parts[0].trim());
                 String name = parts[1].trim();
                 String nameClass = parts[3].trim();
-                if (nameClass.equals("scientific name"))
+                if (nameClass.equals("scientific name")) {
                     data.addName(taxId, name);
+                }
             }
             // parse the nodes file
             System.out.println("loading " + nodes);
             reader = new BufferedReader(new FileReader(nodes));
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\\|");
+                String[] parts = PIPE_PATTERN.split(line);
                 Integer taxId = Integer.valueOf(parts[0].trim());
                 String pti = parts[1].trim();
-                Integer parentTaxId = pti.length() > 0 ? new Integer(pti) : null;
+                Integer parentTaxId = pti.isEmpty() ? null : Integer.valueOf(pti);
                 String rank = parts[2].trim();
                 data.addRank(taxId, parentTaxId, rank);
             }
@@ -94,7 +97,7 @@ public class TaxonLoader {
      * @param args
      *            the path to the input file
      */
-    public static void main(String[] args) {
+    public static void main(String... args) {
         // Process input
         if (args.length != 2) {
             System.out.println("Usage: java TaxonLoader nodes.dmp names.dmp");
