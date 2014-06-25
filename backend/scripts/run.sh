@@ -16,7 +16,7 @@ echo "Build database - load taxa#30" > public/progress
 echo "Build database - load uniprot#45" > public/progress
 
 # Load Uniprot
-backend/java/bin/peptide_loader ../data/uniprot/uniprot_sprot.xml ../data/uniprot/uniprot_trembl.xml
+backend/java/bin/peptide_loader ../data/uniprot/uniprot_sprot.xml.gz ../data/uniprot/uniprot_trembl.xml.gz
 echo "Build database - invalidate taxa#95" > public/progress
 
 # Invalidate taxa

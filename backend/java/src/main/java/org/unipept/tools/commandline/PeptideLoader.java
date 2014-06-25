@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -56,7 +57,7 @@ public class PeptideLoader {
         System.err.println(new Timestamp(System.currentTimeMillis()) + " Reading " + file);
 
         try {
-            InputStream in = new FileInputStream(file);
+            InputStream in = new GZIPInputStream(new FileInputStream(file));
             UniprotHandler handler = new UniprotHandler(isSwissprot);
             handler.subscribe(data);
             xmlParser.parse(in, handler);
@@ -99,7 +100,7 @@ public class PeptideLoader {
     public static void main(String... args) throws ParserConfigurationException, SAXException {
         // Process input
         if (args.length != 1 && args.length != 2) {
-            System.out.println("To load data: java PeptideLoader swissprot.xml trembl.xml");
+            System.out.println("To load data: java PeptideLoader swissprot.xml.gz trembl.xml.gz");
             System.out.println("To fix lineages: java PeptideLoader lineages");
             System.exit(-1);
         }
