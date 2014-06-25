@@ -2,13 +2,13 @@ package org.unipept.xml;
 
 public class UniprotGORef {
 
-	private String id;
+    private String id;
 
-	public UniprotGORef(String id) {
-		this.id = id;
-	}
+    public UniprotGORef(String id) {
+        this.id = id;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 }
