@@ -1,4 +1,4 @@
-package xml;
+package org.unipept.xml;
 
 public class UniprotDbRef {
 

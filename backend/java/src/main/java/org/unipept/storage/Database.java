@@ -1,4 +1,4 @@
-package storage;
+package org.unipept.storage;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
