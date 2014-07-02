@@ -32,5 +32,6 @@ The following people contributed to this project:
 * Bart Mesuere ([@bmesuere](https://github.com/bmesuere)): PhD student and lead developer
 * Peter Dawyndt ([@pdawyndt](https://github.com/pdawyndt)): Group leader and PhD supervisor
 * Toon Willems ([@nudded](https://github.com/nudded)): Master's student 2013-2014
+* Ewan Higgs ([@ehiggs](https://github.com/ehiggs)): Ghent University HPC team
 * Peter Vandamme: PhD co-supervisor
 * Bart Devreese: PhD co-supervisor
