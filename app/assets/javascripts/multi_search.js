@@ -314,10 +314,15 @@ function initTreeView(jsonData) {
     st.onClick(st.root);
 }
 
+/**
+ * Zoomable treeview based on
+ * - http://bl.ocks.org/mbostock/4339083
+ * - https://gist.github.com/robschmuecker/7880033
+ */
 function initTreeView2(jsonData) {
-    var margin = {top: 20, right: 120, bottom: 20, left: 120},
-        width = 960 - margin.right - margin.left,
-        height = 800 - margin.top - margin.bottom;
+    var margin = {top: 5, right: 5, bottom: 5, left: 60},
+        width = 916 - margin.right - margin.left,
+        height = 600 - margin.top - margin.bottom;
 
     var i = 0,
         duration = 750,
@@ -329,11 +334,16 @@ function initTreeView2(jsonData) {
     var diagonal = d3.svg.diagonal()
         .projection(function(d) { return [d.y, d.x]; });
 
+    // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
+    var zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
+
     var svg = d3.select("#d3TreeView").append("svg")
         .attr("width", width + margin.right + margin.left)
         .attr("height", height + margin.top + margin.bottom)
+        .call(zoomListener)
       .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+      .append("g");
 
     draw(jsonData)
 
@@ -460,6 +470,26 @@ function initTreeView2(jsonData) {
         d._children = null;
       }
       update(d);
+      centerNode(d);
+    }
+
+    // Zoom function
+    function zoom() {
+        svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    }
+
+    // Center a node
+    function centerNode(source) {
+        var scale = zoomListener.scale(),
+            x = -source.y0,
+            y = -source.x0;
+        x = x * scale + width / 2;
+        y = y * scale + height / 2;
+        svg.transition()
+            .duration(duration)
+            .attr("transform", "translate(" + x + "," + y + ")scale(" + scale + ")");
+        zoomListener.scale(scale);
+        zoomListener.translate([x, y]);
     }
 }
 
