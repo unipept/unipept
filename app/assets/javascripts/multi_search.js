@@ -219,6 +219,26 @@ function initTreeView(jsonData) {
         root.x0 = height / 2;
         root.y0 = 0;
 
+        // set colors
+        function color(d, c) {
+            if (c) {
+                d.color = c;
+            } else if (d.name == "Bacteria") {
+                d.color = "#1f77b4"; // blue
+            } else if (d.name == "Archae") {
+                d.color = "#ff7f0e"; // orange
+            } else if (d.name == "Eukaryota") {
+                d.color = "#2ca02c"; // green
+            } else if (d.name == "Viruses") {
+                d.color = "#d6616b"; // red
+            }
+            if (d.children) {
+                d.children.forEach( function (node) { color(node, d.color); });
+            }
+        }
+        root.children.forEach( function (node) {color(node); });
+
+        // collapse everything
         function collapse(d) {
             if (d.children && d.children.length == 0) {
                 d.children = null;
@@ -228,10 +248,10 @@ function initTreeView(jsonData) {
                 d._children.forEach(collapse);
                 d.children = null;
             }
-          }
+        }
+        root.children.forEach(collapse);
 
-          root.children.forEach(collapse);
-          update(root);
+        update(root);
     };
 
     d3.select(self.frameElement).style("height", "800px");
@@ -258,7 +278,7 @@ function initTreeView(jsonData) {
 
       nodeEnter.append("circle")
           .attr("r", 1e-6)
-          .style("stroke", "steelblue")
+          .style("stroke", function (d) { return d.color || "#aaa";})
           .style("stroke-width", "1.5px")
           .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
 
@@ -280,7 +300,7 @@ function initTreeView(jsonData) {
               return widthScale(d.data.count) / 2;
           })
           .style("fill-opacity", function(d) { return d._children ? 1 : 0; })
-          .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+          .style("fill", function(d) { return d._children ? d.color : "#fff"; });
 
       nodeUpdate.select("text")
           .style("fill-opacity", 1);
@@ -305,7 +325,7 @@ function initTreeView(jsonData) {
       link.enter().insert("path", "g")
           .attr("class", "link")
           .style("fill", "none")
-          .style("stroke", "#aaa")
+          .style("stroke", function (d) { return d.target.color; })
           .style("stroke-opacity", "0.5")
           .style("stroke-linecap", "round")
           .style("stroke-width", function (d) {
