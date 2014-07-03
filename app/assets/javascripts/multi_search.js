@@ -181,6 +181,7 @@ function initTreeMap(jsonData) {
  * Zoomable treeview based on
  * - http://bl.ocks.org/mbostock/4339083
  * - https://gist.github.com/robschmuecker/7880033
+ * - http://www.brightpointinc.com/interactive/budget/index.html?source=d3js
  */
 function initTreeView(jsonData) {
     var margin = {top: 5, right: 5, bottom: 5, left: 60},
@@ -300,7 +301,7 @@ function initTreeView(jsonData) {
               return widthScale(d.data.count) / 2;
           })
           .style("fill-opacity", function(d) { return d._children ? 1 : 0; })
-          .style("fill", function(d) { return d._children ? d.color : "#fff"; });
+          .style("fill", function(d) { return d._children ? d.color || "#aaa" : "#fff"; });
 
       nodeUpdate.select("text")
           .style("fill-opacity", 1);
