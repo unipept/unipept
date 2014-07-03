@@ -220,6 +220,9 @@ function initTreeView(jsonData) {
         root.y0 = 0;
 
         function collapse(d) {
+            if (d.children && d.children.length == 0) {
+                d.children = null;
+            }
             if (d.children) {
                 d._children = d.children;
                 d._children.forEach(collapse);
