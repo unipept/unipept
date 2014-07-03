@@ -225,7 +225,7 @@ function initTreeView(jsonData) {
                 d.color = c;
             } else if (d.name == "Bacteria") {
                 d.color = "#1f77b4"; // blue
-            } else if (d.name == "Archae") {
+            } else if (d.name == "Archaea") {
                 d.color = "#ff7f0e"; // orange
             } else if (d.name == "Eukaryota") {
                 d.color = "#2ca02c"; // green
