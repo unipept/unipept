@@ -197,6 +197,8 @@ function initTreeView(jsonData) {
     var diagonal = d3.svg.diagonal()
         .projection(function(d) { return [d.y, d.x]; });
 
+    var widthScale = d3.scale.linear().range([2,105]);
+
     // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
     var zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
 
@@ -211,20 +213,22 @@ function initTreeView(jsonData) {
     draw(jsonData)
 
     function draw(data) {
-      root = data;
-      root.x0 = height / 2;
-      root.y0 = 0;
+        widthScale.domain([1, data.data.count]);
 
-      function collapse(d) {
-        if (d.children) {
-          d._children = d.children;
-          d._children.forEach(collapse);
-          d.children = null;
-        }
-      }
+        root = data;
+        root.x0 = height / 2;
+        root.y0 = 0;
 
-      root.children.forEach(collapse);
-      update(root);
+        function collapse(d) {
+            if (d.children) {
+                d._children = d.children;
+                d._children.forEach(collapse);
+                d.children = null;
+            }
+          }
+
+          root.children.forEach(collapse);
+          update(root);
     };
 
     d3.select(self.frameElement).style("height", "800px");
@@ -269,7 +273,10 @@ function initTreeView(jsonData) {
           .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
 
       nodeUpdate.select("circle")
-          .attr("r", 4.5)
+          .attr("r", function(d) {
+              return widthScale(d.data.count) / 2;
+          })
+          .style("fill-opacity", function(d) { return d._children ? 1 : 0; })
           .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
 
       nodeUpdate.select("text")
@@ -278,7 +285,7 @@ function initTreeView(jsonData) {
       // Transition exiting nodes to the parent's new position.
       var nodeExit = node.exit().transition()
           .duration(duration)
-          .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
+          .attr("transform", function (d) { return "translate(" + source.y + "," + source.x + ")"; })
           .remove();
 
       nodeExit.select("circle")
@@ -289,15 +296,19 @@ function initTreeView(jsonData) {
 
       // Update the links…
       var link = svg.selectAll("path.link")
-          .data(links, function(d) { return d.target.id; });
+          .data(links, function (d) { return d.target.id; });
 
       // Enter any new links at the parent's previous position.
       link.enter().insert("path", "g")
           .attr("class", "link")
           .style("fill", "none")
-          .style("stroke", "#ccc")
-          .style("stroke-width", "1.5px")
-          .attr("d", function(d) {
+          .style("stroke", "#aaa")
+          .style("stroke-opacity", "0.5")
+          .style("stroke-linecap", "round")
+          .style("stroke-width", function (d) {
+              return widthScale(d.target.data.count) + "px";
+          })
+          .attr("d", function (d) {
             var o = {x: source.x0, y: source.y0};
             return diagonal({source: o, target: o});
           });
