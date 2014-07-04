@@ -415,9 +415,19 @@ function initTreeView(jsonData) {
     }
 
     function rightClick(d) {
+        // set Selection properties
         setSelected(root, false);
         setSelected(d, true);
+
+        // scale the lines
         widthScale.domain([1, d.data.count]);
+
+        if (d._children) {
+            d.children = d._children;
+            d._children = null;
+        }
+
+        // redraw
         d3.event.preventDefault();
         update(d);
         centerNode(d);
