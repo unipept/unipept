@@ -205,7 +205,8 @@ function initTreeView(jsonData) {
         height = 600 - margin.top - margin.bottom;
 
     var rightClicked,
-        zoomEnd = 0;
+        zoomEnd = 0,
+        tooltipTimer;
 
     var i = 0,
         duration = 750,
@@ -545,8 +546,7 @@ function initTreeView(jsonData) {
 
     // tooltip functions
     function tooltipIn(d, i) {
-        tooltip.style("visibility", "visible")
-            .html("<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" +
+        tooltip.html("<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" +
                 (!d.data.self_count ? "0" : d.data.self_count) +
                 (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
                 (!d.data.count ? "0" : d.data.count) +
@@ -557,8 +557,13 @@ function initTreeView(jsonData) {
                 tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 15) + "px");
             }
 
+        tooltipTimer = setTimeout(function () {
+            tooltip.style("visibility", "visible");
+        }, 1000);
+
     }
     function tooltipOut(d, i) {
+        clearTimeout(tooltipTimer)
         tooltip.style("visibility", "hidden");
     }
 }
