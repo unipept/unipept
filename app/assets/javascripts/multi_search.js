@@ -401,19 +401,42 @@ function initTreeView(jsonData) {
       });
     }
 
+    // Expands a node and its children
+    function expand(d) {
+        if (d._children) {
+            d.children = d._children;
+            d._children = null;
+        }
+        if (d.children) {
+            d.children.forEach(function (c) {
+                if (c._children) {
+                    c.children = c._children;
+                    c._children = null;
+                }
+            });
+        }
+    }
+
+    // Collapses a node
+    function collapse(d) {
+        if (d.children) {
+            d._children = d.children;
+            d.children = null;
+        }
+    }
+
     // Toggle children on click.
     function click(d) {
       if (d.children) {
-        d._children = d.children;
-        d.children = null;
+        collapse(d);
       } else {
-        d.children = d._children;
-        d._children = null;
+        expand(d);
       }
       update(d);
       centerNode(d);
     }
 
+    // Sets the width of the right clicked node to 100%
     function rightClick(d) {
         // set Selection properties
         setSelected(root, false);
@@ -422,10 +445,7 @@ function initTreeView(jsonData) {
         // scale the lines
         widthScale.domain([0, d.data.count]);
 
-        if (d._children) {
-            d.children = d._children;
-            d._children = null;
-        }
+        expand(d);
 
         // redraw
         d3.event.preventDefault();
