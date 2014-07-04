@@ -96,7 +96,7 @@ function init_multi(data, data2, equate_il) {
                 }
                 $("#d3TreeView svg").attr("width", width);
                 $("#d3TreeView svg").attr("height", height);
-                //$("#d3TreeView-tooltip").appendTo(destination);
+                $("#treeview-tooltip").appendTo(destination);
             }, 1000);
         }
     }
@@ -211,6 +211,14 @@ function initTreeView(jsonData) {
         duration = 750,
         root;
 
+    var tooltip = d3.select("body")
+        .append("div")
+        .attr("id", "treeview-tooltip")
+        .attr("class", "tip")
+        .style("position", "absolute")
+        .style("z-index", "10")
+        .style("visibility", "hidden");
+
     var tree = d3.layout.tree()
         .size([height, width]);
 
@@ -309,6 +317,8 @@ function initTreeView(jsonData) {
           .style("cursor", "pointer")
           .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
           .on("click", click)
+          .on("mouseover", tooltipIn)
+          .on("mouseout", tooltipOut)
           .on("contextmenu",rightClick);
 
       nodeEnter.append("circle")
@@ -531,6 +541,25 @@ function initTreeView(jsonData) {
             .attr("transform", "translate(" + x + "," + y + ")scale(" + scale + ")");
         zoomListener.scale(scale);
         zoomListener.translate([x, y]);
+    }
+
+    // tooltip functions
+    function tooltipIn(d, i) {
+        tooltip.style("visibility", "visible")
+            .html("<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" +
+                (!d.data.self_count ? "0" : d.data.self_count) +
+                (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
+                (!d.data.count ? "0" : d.data.count) +
+                (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower");
+            if (window.fullScreenApi.isFullScreen()) {
+                tooltip.style("top", (d3.event.clientY - 5) + "px").style("left", (d3.event.clientX + 15) + "px");
+            } else {
+                tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 15) + "px");
+            }
+
+    }
+    function tooltipOut(d, i) {
+        tooltip.style("visibility", "hidden");
     }
 }
 
