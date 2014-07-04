@@ -220,6 +220,15 @@ function initTreeView(jsonData) {
         root.x0 = height / 2;
         root.y0 = 0;
 
+        // set everything visible
+        function setVisible(d) {
+            d.selected = true;
+            if (d.children) {
+                d.children.forEach(setVisible);
+            }
+        }
+        setVisible(root);
+
         // set colors
         function color(d, c) {
             if (c) {
@@ -275,7 +284,8 @@ function initTreeView(jsonData) {
           .attr("class", "node")
           .style("cursor", "pointer")
           .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
-          .on("click", click);
+          .on("click", click)
+          .on("contextmenu",rightClick);
 
       nodeEnter.append("circle")
           .attr("r", 1e-6)
@@ -298,10 +308,29 @@ function initTreeView(jsonData) {
 
       nodeUpdate.select("circle")
           .attr("r", function(d) {
-              return widthScale(d.data.count) / 2;
+              if (d.selected) {
+                  return widthScale(d.data.count) / 2;
+              } else {
+                  return 2;
+              }
+
           })
           .style("fill-opacity", function(d) { return d._children ? 1 : 0; })
-          .style("fill", function(d) { return d._children ? d.color || "#aaa" : "#fff"; });
+          .style("stroke", function (d) {
+              if (d.selected) {
+                  return d.color || "#aaa";
+              } else {
+                  return "#aaa";
+              }
+          })
+          .style("fill", function(d) {
+              if (d.selected) {
+                  return d._children ? d.color || "#aaa" : "#fff";
+              } else {
+                  return "#aaa";
+              }
+
+          });
 
       nodeUpdate.select("text")
           .style("fill-opacity", 1);
@@ -340,7 +369,21 @@ function initTreeView(jsonData) {
       // Transition links to their new position.
       link.transition()
           .duration(duration)
-          .attr("d", diagonal);
+          .attr("d", diagonal)
+          .style("stroke", function (d) {
+              if (d.source.selected) {
+                  return d.target.color;
+              } else {
+                  return "#aaa";
+              }
+          })
+          .style("stroke-width", function (d) {
+              if (d.source.selected) {
+                  return widthScale(d.target.data.count) + "px";
+              } else {
+                  return "4px";
+              }
+          });
 
       // Transition exiting nodes to the parent's new position.
       link.exit().transition()
@@ -369,6 +412,24 @@ function initTreeView(jsonData) {
       }
       update(d);
       centerNode(d);
+    }
+
+    function rightClick(d) {
+        setSelected(root, false);
+        setSelected(d, true);
+        widthScale.domain([1, d.data.count]);
+        d3.event.preventDefault();
+        update(d);
+        centerNode(d);
+
+        function setSelected(d, value) {
+            d.selected = value;
+            if (d.children) {
+                d.children.forEach(function (c) {setSelected(c, value);});
+            } else if (d._children) {
+                d._children.forEach(function (c) {setSelected(c, value);});
+            }
+        }
     }
 
     // Zoom function
