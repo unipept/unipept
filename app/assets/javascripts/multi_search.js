@@ -52,9 +52,12 @@ function init_multi(data, data2, equate_il) {
             if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
                 logToGoogle("Multi Peptide", "Full Screen", "Sunburst");
                 window.fullScreenApi.requestFullScreen($("#sunburst").get(0));
-            } else {
+            } else if ($(".tab-content .active").attr('id') === "treeMapWrapper") {
                 logToGoogle("Multi Peptide", "Full Screen", "Treemap");
                 window.fullScreenApi.requestFullScreen($("#treeMap").get(0));
+            } else {
+                logToGoogle("Multi Peptide", "Full Screen", "Treeview");
+                window.fullScreenApi.requestFullScreen($("#d3TreeView").get(0));
             }
         });
         $(document).bind(fullScreenApi.fullScreenEventName, resizeFullScreen);
@@ -73,7 +76,7 @@ function init_multi(data, data2, equate_il) {
                 $("#sunburst svg").attr("height", size);
                 $("#sunburst-tooltip").appendTo(destination);
             }, 1000);
-        } else {
+        } else if ($(".tab-content .active").attr('id') === "treeMapWrapper") {
             var destination = "body";
             if (window.fullScreenApi.isFullScreen()) {
                 destination = "#treeMap";
@@ -81,6 +84,20 @@ function init_multi(data, data2, equate_il) {
             $("#_tooltip").appendTo(destination);
             window.tm.canvas.resize($("#treeMap").width(), $("#treeMap").height());
 
+        } else {
+            setTimeout(function () {
+                var width = 916,
+                    height = 600,
+                    destination = "body";
+                if (window.fullScreenApi.isFullScreen()) {
+                    width = $(window).width();
+                    height = $(window).height();
+                    destination = "#d3TreeView";
+                }
+                $("#d3TreeView svg").attr("width", width);
+                $("#d3TreeView svg").attr("height", height);
+                //$("#d3TreeView-tooltip").appendTo(destination);
+            }, 1000);
         }
     }
 
@@ -178,7 +195,7 @@ function initTreeMap(jsonData) {
 }
 
 /**
- * Zoomable treeview based on
+ * Zoomable treeview, inspiration from
  * - http://bl.ocks.org/mbostock/4339083
  * - https://gist.github.com/robschmuecker/7880033
  * - http://www.brightpointinc.com/interactive/budget/index.html?source=d3js
@@ -206,6 +223,9 @@ function initTreeView(jsonData) {
     var zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
 
     var svg = d3.select("#d3TreeView").append("svg")
+        .attr("version", "1.1")
+        .attr("xmlns", "http://www.w3.org/2000/svg")
+        .attr("viewBox", "0 0 " + (width + margin.right + margin.left) + " " + (height + margin.top + margin.bottom))
         .attr("width", width + margin.right + margin.left)
         .attr("height", height + margin.top + margin.bottom)
         .call(zoomListener)
