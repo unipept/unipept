@@ -291,9 +291,22 @@ function initTreeView(jsonData) {
 
       nodeEnter.append("circle")
           .attr("r", 1e-6)
-          .style("stroke", function (d) { return d.color || "#aaa";})
           .style("stroke-width", "1.5px")
-          .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+          .style("stroke", function (d) {
+              if (d.selected) {
+                  return d.color || "#aaa";
+              } else {
+                  return "#aaa";
+              }
+          })
+          .style("fill", function(d) {
+              if (d.selected) {
+                  return d._children ? d.color || "#aaa" : "#fff";
+              } else {
+                  return "#aaa";
+              }
+
+          });
 
       nodeEnter.append("text")
           .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
@@ -357,12 +370,16 @@ function initTreeView(jsonData) {
       link.enter().insert("path", "g")
           .attr("class", "link")
           .style("fill", "none")
-          .style("stroke", function (d) { return d.target.color; })
           .style("stroke-opacity", "0.5")
           .style("stroke-linecap", "round")
-          .style("stroke-width", function (d) {
-              return widthScale(d.target.data.count) + "px";
+          .style("stroke", function (d) {
+              if (d.source.selected) {
+                  return d.target.color;
+              } else {
+                  return "#aaa";
+              }
           })
+          .style("stroke-width", 1e-6)
           .attr("d", function (d) {
             var o = {x: source.x0, y: source.y0};
             return diagonal({source: o, target: o});
@@ -390,6 +407,7 @@ function initTreeView(jsonData) {
       // Transition exiting nodes to the parent's new position.
       link.exit().transition()
           .duration(duration)
+          .style("stroke-width", 1e-6)
           .attr("d", function(d) {
             var o = {x: source.x, y: source.y};
             return diagonal({source: o, target: o});
