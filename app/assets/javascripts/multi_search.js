@@ -106,15 +106,14 @@ function init_multi(data, data2, equate_il) {
     $("#save-btn").click(function () {
         $(".debug_dump").hide();
         if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
-            // Track save image
             logToGoogle("Multi Peptide", "Save Image", "Sunburst");
-
             triggerDownloadModal("#sunburst svg", null, "unipept_sunburst");
-        } else {
-            // Track save image
+        } else if ($(".tab-content .active").attr('id') === "treeMapWrapper") {
             logToGoogle("Multi Peptide", "Save Image", "Treemap");
-
             triggerDownloadModal(null, "#treeMap", "unipept_treemap");
+        } else {
+            logToGoogle("Multi Peptide", "Save Image", "Treeview");
+            triggerDownloadModal("#d3TreeView svg", null, "unipept_treeview");
         }
     });
 }
