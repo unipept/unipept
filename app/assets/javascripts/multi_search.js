@@ -188,6 +188,8 @@ function initTreeView(jsonData) {
         width = 916 - margin.right - margin.left,
         height = 600 - margin.top - margin.bottom;
 
+    var rightClicked;
+
     var i = 0,
         duration = 750,
         root;
@@ -438,6 +440,12 @@ function initTreeView(jsonData) {
 
     // Sets the width of the right clicked node to 100%
     function rightClick(d) {
+        if (d === rightClicked && d !== root) {
+            rightClick(root);
+            return;
+        }
+        rightClicked = d;
+
         // set Selection properties
         setSelected(root, false);
         setSelected(d, true);
