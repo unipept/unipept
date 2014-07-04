@@ -18,7 +18,7 @@ function init_multi(data, data2, equate_il) {
 
     // sunburst
     try {
-        initSunburst(data2);
+        initSunburst(JSON.parse(JSON.stringify(data2)));
     } catch (err) {
         error(err.message, "Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
@@ -33,7 +33,7 @@ function init_multi(data, data2, equate_il) {
 
     // treeview
     try {
-        initTreeView(JSON.parse(JSON.stringify(data)));
+        initTreeView(data2);
     } catch (err) {
         error(err.message, "Loading the Treeview visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
@@ -252,6 +252,16 @@ function initTreeView(jsonData) {
         root = data;
         root.x0 = height / 2;
         root.y0 = 0;
+
+        // convert kids to children
+        function kids(d) {
+            if (d.kids) {
+                d.kids.forEach(kids);
+                d.children = d.kids;
+                d.kids = null;
+            }
+        }
+        kids(root);
 
         // set everything visible
         function setVisible(d) {
