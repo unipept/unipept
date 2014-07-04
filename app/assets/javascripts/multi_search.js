@@ -214,7 +214,7 @@ function initTreeView(jsonData) {
     draw(jsonData)
 
     function draw(data) {
-        widthScale.domain([1, data.data.count]);
+        widthScale.domain([0, data.data.count]);
 
         root = data;
         root.x0 = height / 2;
@@ -420,7 +420,7 @@ function initTreeView(jsonData) {
         setSelected(d, true);
 
         // scale the lines
-        widthScale.domain([1, d.data.count]);
+        widthScale.domain([0, d.data.count]);
 
         if (d._children) {
             d.children = d._children;
