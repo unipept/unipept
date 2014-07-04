@@ -204,7 +204,8 @@ function initTreeView(jsonData) {
         width = 916 - margin.right - margin.left,
         height = 600 - margin.top - margin.bottom;
 
-    var rightClicked;
+    var rightClicked,
+        zoomEnd = 0;
 
     var i = 0,
         duration = 750,
@@ -219,7 +220,9 @@ function initTreeView(jsonData) {
     var widthScale = d3.scale.linear().range([2,105]);
 
     // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
-    var zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
+    var zoomListener = d3.behavior.zoom()
+        .scaleExtent([0.1, 3])
+        .on("zoom", zoom);
 
     var svg = d3.select("#d3TreeView").append("svg")
         .attr("version", "1.1")
@@ -466,13 +469,16 @@ function initTreeView(jsonData) {
 
     // Toggle children on click.
     function click(d) {
-      if (d.children) {
-        collapse(d);
-      } else {
-        expand(d);
-      }
-      update(d);
-      centerNode(d);
+        // check if click is triggered by panning on a node
+        if (Date.now() - zoomEnd < 200) return;
+
+        if (d.children) {
+            collapse(d);
+        } else {
+            expand(d);
+        }
+        update(d);
+        centerNode(d);
     }
 
     // Sets the width of the right clicked node to 100%
@@ -509,6 +515,7 @@ function initTreeView(jsonData) {
 
     // Zoom function
     function zoom() {
+        zoomEnd = Date.now();
         svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
     }
 
