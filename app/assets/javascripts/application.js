@@ -14,6 +14,38 @@ ZeroClipboard.config({
     hoverClass: 'btn-clipboard-hover'
 });
 
+function addCopy(selector, textFunction) {
+    var copyMissed = new ZeroClipboard(selector);
+    var htmlBridge = $('#global-zeroclipboard-html-bridge');
+    copyMissed.on('ready', function () {
+        htmlBridge
+          .data('placement', 'top')
+          .attr('title', 'Copy to clipboard')
+          .tooltip();
+    });
+    // Copy to clipboard
+    copyMissed.on('copy', function (client) {
+      copyMissed.setText(textFunction.call());
+    });
+    // Notify copy success and reset tooltip title
+    copyMissed.on('aftercopy', function () {
+        htmlBridge
+          .attr('title', 'Copied!')
+          .tooltip('fixTitle')
+          .tooltip('show')
+          .attr('title', 'Copy to clipboard')
+          .tooltip('fixTitle');
+    });
+    // Notify copy failure
+    copyMissed.on('error', function (e) {
+        selector.first()
+          .data('placement', 'top')
+          .attr('title', 'Flash is required')
+          .tooltip('fixTitle')
+          .tooltip("show");
+    });
+}
+
 // highlights the background color
 // of the given element for 2 seconds
 function highlight(element) {

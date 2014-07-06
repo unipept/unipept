@@ -16,36 +16,8 @@ function init_multi(data, data2, equate_il) {
         return true;
     });
 
-    // copy to clipboard
-    var copyMissed = new ZeroClipboard($("#copy-missed span").first());
-    var htmlBridge = $('#global-zeroclipboard-html-bridge');
-    copyMissed.on('ready', function () {
-        htmlBridge
-          .data('placement', 'top')
-          .attr('title', 'Copy to clipboard')
-          .tooltip();
-    });
-    // Copy to clipboard
-    copyMissed.on('copy', function (client) {
-      copyMissed.setText($(".mismatches").text());
-    });
-    // Notify copy success and reset tooltip title
-    copyMissed.on('aftercopy', function () {
-        htmlBridge
-          .attr('title', 'Copied!')
-          .tooltip('fixTitle')
-          .tooltip('show')
-          .attr('title', 'Copy to clipboard')
-          .tooltip('fixTitle');
-    });
-    // Notify copy failure
-    copyMissed.on('error', function (e) {
-        $("#copy-missed span").first()
-          .data('placement', 'left')
-          .attr('title', 'Flash is required')
-          .tooltip('fixTitle')
-          .tooltip("show");
-    });
+    // copy to clipboard for missed peptides
+    addCopy($("#copy-missed span").first(), function() {return $(".mismatches").text();});
 
     // sunburst
     try {
@@ -677,17 +649,22 @@ function initTree(data, equate_il) {
         $("#tree_data").css("transform", "translateY(" + margin + "px)");
         ownSequences = d.data.own_sequences;
         if (ownSequences && ownSequences.length > 0) {
-            list = infoPane.append("<h4>Peptides specific for this taxon</h4><ul></ul>").find("ul").last();
+            list = infoPane.append("<h4 class='own'>Peptides specific for this taxon</h4><ul></ul>").find("ul").last();
             for (peptide in ownSequences) {
                 list.append("<li><a href='/sequences/" + ownSequences[peptide] + "/" + equate_il + "' target='_blank'>" + ownSequences[peptide] + "</a></li>");
             }
+            infoPane.find("h4.own").before("<div id='copy-own' class='zero-clipboard'><span class='btn-clipboard'>Copy</span></div>");
+            addCopy($("#copy-own span").first(), function() {return ownSequences.join("\n");});
+
         }
         allSequences = d.data.all_sequences;
         if (allSequences && allSequences.length > 0 && allSequences.length !== (ownSequences ? ownSequences.length : 0)) {
-            list = infoPane.append("<h4>Peptides specific to this taxon or one of its subtaxa</h4><ul></ul>").find("ul").last();
+            list = infoPane.append("<h4 class='all'>Peptides specific to this taxon or one of its subtaxa</h4><ul></ul>").find("ul").last();
             for (peptide in allSequences) {
                 list.append("<li><a href='/sequences/" + allSequences[peptide] + "/" + equate_il + "' target='_blank'>" + allSequences[peptide] + "</a></li>");
             }
+            infoPane.find("h4.all").before("<div id='copy-all' class='zero-clipboard'><span class='btn-clipboard'>Copy</span></div>");
+            addCopy($("#copy-all span").first(), function() {return allSequences.join("\n");});
         }
         return false;
     });
