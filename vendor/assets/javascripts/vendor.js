@@ -1,5 +1,5 @@
 //  all pages
-//  3.1.1
+//  3.2
 //= require bootstrap/bootstrap.min.js
 
 //  sunburst, pancore and tree
