@@ -3,6 +3,7 @@
 //= require jquery.ui.droppable
 //= require jquery.ui.sortable
 //= require jquery_ujs
+//= require zeroclipboard
 //= require_self
 //= require_directory .
 //= require_directory ./peptidome
