@@ -292,17 +292,18 @@ function initTreeView(jsonData) {
         root.children.forEach( function (node) {color(node); });
 
         // collapse everything
-        function collapse(d) {
+        function collapseAll(d) {
             if (d.children && d.children.length == 0) {
                 d.children = null;
             }
             if (d.children) {
                 d._children = d.children;
-                d._children.forEach(collapse);
+                d._children.forEach(collapseAll);
                 d.children = null;
             }
         }
-        root.children.forEach(collapse);
+        collapseAll(root);
+        expand(root);
 
         update(root);
     };
