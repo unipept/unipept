@@ -17,7 +17,7 @@ function init_multi(data, data2, equate_il) {
     });
 
     // copy to clipboard
-    var copyMissed = new ZeroClipboard($("#copy-missed span"));
+    var copyMissed = new ZeroClipboard($("#copy-missed span").first());
     var htmlBridge = $('#global-zeroclipboard-html-bridge');
     copyMissed.on('ready', function () {
         htmlBridge
@@ -36,14 +36,15 @@ function init_multi(data, data2, equate_il) {
           .tooltip('fixTitle')
           .tooltip('show')
           .attr('title', 'Copy to clipboard')
-          .tooltip('fixTitle')
+          .tooltip('fixTitle');
     });
     // Notify copy failure
-    copyMissed.on('error', function () {
-        htmlBridge
-          .attr('title', 'Flash required')
+    copyMissed.on('error', function (e) {
+        $("#copy-missed span").first()
+          .data('placement', 'left')
+          .attr('title', 'Flash is required')
           .tooltip('fixTitle')
-          .tooltip('show')
+          .tooltip("show");
     });
 
     // sunburst
