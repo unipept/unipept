@@ -9,6 +9,11 @@
 //= require_directory ./peptidome
 //= require vendor
 
+// zeroclipboard config
+ZeroClipboard.config({
+    hoverClass: 'btn-clipboard-hover'
+});
+
 // highlights the background color
 // of the given element for 2 seconds
 function highlight(element) {

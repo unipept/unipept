@@ -16,6 +16,36 @@ function init_multi(data, data2, equate_il) {
         return true;
     });
 
+    // copy to clipboard
+    var copyMissed = new ZeroClipboard($("#copy-missed span"));
+    var htmlBridge = $('#global-zeroclipboard-html-bridge');
+    copyMissed.on('ready', function () {
+        htmlBridge
+          .data('placement', 'top')
+          .attr('title', 'Copy to clipboard')
+          .tooltip();
+    });
+    // Copy to clipboard
+    copyMissed.on('copy', function (client) {
+      copyMissed.setText($(".mismatches").text());
+    });
+    // Notify copy success and reset tooltip title
+    copyMissed.on('aftercopy', function () {
+        htmlBridge
+          .attr('title', 'Copied!')
+          .tooltip('fixTitle')
+          .tooltip('show')
+          .attr('title', 'Copy to clipboard')
+          .tooltip('fixTitle')
+    });
+    // Notify copy failure
+    copyMissed.on('error', function () {
+        htmlBridge
+          .attr('title', 'Flash required')
+          .tooltip('fixTitle')
+          .tooltip('show')
+    });
+
     // sunburst
     try {
         initSunburst(JSON.parse(JSON.stringify(data2)));
