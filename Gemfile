@@ -18,6 +18,9 @@ gem "jquery-ui-rails", "4.0.2"
 gem 'devise'
 gem 'devise_cas_authenticatable'
 
+# zeroclipboard
+gem 'zeroclipboard-rails'
+
 # needed for asset creation
 gem 'therubyracer'
 

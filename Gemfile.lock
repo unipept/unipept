@@ -187,6 +187,8 @@ GEM
       rack (>= 1.0)
       rack-test (>= 0.5.3)
     will_paginate (3.0.5)
+    zeroclipboard-rails (0.1.0)
+      railties (>= 3.1)
 
 PLATFORMS
   ruby
@@ -221,3 +223,4 @@ DEPENDENCIES
   uglifier
   webrat
   will_paginate
+  zeroclipboard-rails
