@@ -40,7 +40,7 @@ class SequencesController < ApplicationController
       @entries.select!{|e| e.protein_contains?(seq, equate_il)}
 
       raise NoMatchesFoundError.new(seq) if @entries.size == 0
-      @lineages = @entries.map(&:lineage).uniq
+      @lineages = @entries.map(&:lineage).uniq.compact
     end
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) #calculate the LCA
