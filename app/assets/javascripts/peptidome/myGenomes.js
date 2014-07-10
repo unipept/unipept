@@ -27,6 +27,10 @@ var constructMyGenomes = function constructMyGenomes(args) {
      * Initializes the table
      */
     function init() {
+        if (!window.indexedDB) {
+            error("no IndexedDB", "Your browser doesn't support a stable version of IndexedDB. The myGenomes feature will not be available.");
+            return;
+        }
         genomes = localStorage.genomes ? JSON.parse(localStorage.genomes) : {};
         genomeList = localStorage.genomeList ? JSON.parse(localStorage.genomeList) : [];
 
