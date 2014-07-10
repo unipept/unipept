@@ -9,6 +9,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
 
     var that = {},
         pancore = args.pancore,
+        dataStore = {},
         worker;
 
     // Data vars
@@ -27,12 +28,17 @@ var constructMyGenomes = function constructMyGenomes(args) {
      * Initializes the table
      */
     function init() {
-        if (!window.indexedDB) {
+        if (window.indexedDB) {
+            dataStore.open();
+        } else {
             error("no IndexedDB", "Your browser doesn't support a stable version of IndexedDB. The myGenomes feature will not be available.");
             return;
         }
-        genomes = localStorage.genomes ? JSON.parse(localStorage.genomes) : {};
-        genomeList = localStorage.genomeList ? JSON.parse(localStorage.genomeList) : [];
+        genomes = {};
+        genomeList = [];
+
+        //genomes = localStorage.genomes ? JSON.parse(localStorage.genomes) : {};
+        //genomeList = localStorage.genomeList ? JSON.parse(localStorage.genomeList) : [];
 
         // init worker
         // Create the Javascript Worker for background data processing
@@ -41,7 +47,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
         worker.addEventListener('error', error, false);
 
         // init gui
-        redrawTable();
+        //redrawTable();
 
         // init popover
         $myGenomesButton.popover({
@@ -208,12 +214,14 @@ var constructMyGenomes = function constructMyGenomes(args) {
     function addGenome(id, name, ids) {
         // update local list
         genomeList.push(id);
-        genomes[id] = {id : id, name : name, dateAdded : Date()};
+        genomes[id] = {id : id, name : name};
+
+        dataStore.addGenome({id : id, name : name, peptides : ids});
 
         // update local storage
-        localStorage.genomeList = JSON.stringify(genomeList);
-        localStorage.genomes = JSON.stringify(genomes);
-        localStorage["genome_" + id] = JSON.stringify(ids);
+        //localStorage.genomeList = JSON.stringify(genomeList);
+        //localStorage.genomes = JSON.stringify(genomes);
+        //localStorage["genome_" + id] = JSON.stringify(ids);
 
         // update the list
         redrawTable();
@@ -229,10 +237,12 @@ var constructMyGenomes = function constructMyGenomes(args) {
         genomeList.splice(genomeList.indexOf(id), 1);
         delete genomes[id];
 
+        dataStore.removeGenome(id);
+
         // update local storage
-        localStorage.genomeList = JSON.stringify(genomeList);
-        localStorage.genomes = JSON.stringify(genomes);
-        delete localStorage["genome_" + id];
+        //localStorage.genomeList = JSON.stringify(genomeList);
+        //localStorage.genomes = JSON.stringify(genomes);
+        //delete localStorage["genome_" + id];
 
         // update the list
         redrawTable();
@@ -244,7 +254,8 @@ var constructMyGenomes = function constructMyGenomes(args) {
     function removeAllGenomes() {
         var i;
         for (i = 0; i < genomeList.length; i++) {
-            delete localStorage["genome_" + genomeList[i]];
+            dataStore.removeGenome(genomeList[i]);
+            //delete localStorage["genome_" + genomeList[i]];
         }
 
         // update local list
@@ -252,8 +263,8 @@ var constructMyGenomes = function constructMyGenomes(args) {
         genomes = {};
 
         // update local storage
-        localStorage.genomeList = JSON.stringify(genomeList);
-        localStorage.genomes = JSON.stringify(genomes);
+        //localStorage.genomeList = JSON.stringify(genomeList);
+        //localStorage.genomes = JSON.stringify(genomes);
 
         // update the list
         redrawTable();
@@ -345,21 +356,142 @@ var constructMyGenomes = function constructMyGenomes(args) {
         return $(returnString);
     }
 
+    /*************** Datastore methods ************/
+
+    /**
+     * Opens the database
+     */
+    dataStore.open = function open() {
+        var version = 3;
+        var request = indexedDB.open("myGenomes", version);
+
+        request.onupgradeneeded = function (e) {
+            var db = e.target.result;
+
+            e.target.transaction.onerror = dataStore.onerror;
+
+            if(db.objectStoreNames.contains("metadata")) {
+                db.deleteObjectStore("metadata");
+            }
+            if(db.objectStoreNames.contains("peptideLists")) {
+                db.deleteObjectStore("peptideLists");
+            }
+
+            db.createObjectStore("metadata", {keyPath: "id"});
+            db.createObjectStore("peptideLists", {keyPath: "id"});
+        };
+
+        request.onsuccess = function(e) {
+            dataStore.db = e.target.result;
+            dataStore.loadMyGenomes();
+        };
+
+        request.onerror = dataStore.onerror;
+    };
+
+    /**
+     * Retrieves a list of genomes from the store
+     */
+    dataStore.loadMyGenomes = function loadMyGenomes() {
+        var db = dataStore.db;
+        var trans = db.transaction(["metadata"], "readwrite");
+        var store = trans.objectStore("metadata");
+
+        // Get everything in the store;
+        var keyRange = IDBKeyRange.lowerBound(0);
+        var cursorRequest = store.openCursor(keyRange);
+
+        cursorRequest.onsuccess = function(e) {
+            var result = e.target.result;
+            // are we done yet?
+            if(!!result == false) {
+                redrawTable();
+                return;
+            }
+
+            genomeList.push(result.value.id);
+            genomes[result.value.id] = result.value;
+
+            result.continue();
+        };
+
+        cursorRequest.onerror = dataStore.onerror;
+    };
+
+    /**
+     * Adds a genome to the data store
+     */
+    dataStore.addGenome = function addGenome(genome) {
+        var genomePeptides = {id : genome.id, peptides : genome.peptides};
+        var genomeMetadata = genome;
+        delete genomeMetadata.peptides;
+
+        var db = dataStore.db;
+        var trans = db.transaction(["metadata", "peptideLists"], "readwrite");
+        var metadata = trans.objectStore("metadata");
+        var peptideLists = trans.objectStore("peptideLists");
+
+        var metadataRequest = metadata.put(genomeMetadata);
+        metadataRequest.onerror = dataStore.onerror;
+
+        var peptideListRequest = peptideLists.put(genomePeptides);
+        peptideListRequest.onerror = dataStore.onerror;
+    };
+
+    /**
+     * Removes a genome from the datastore
+     */
+    dataStore.removeGenome = function removeGenome(id) {
+        var db = dataStore.db;
+        var trans = db.transaction(["metadata", "peptideLists"], "readwrite");
+        var metadata = trans.objectStore("metadata");
+        var peptideLists = trans.objectStore("peptideLists");
+
+        var metadataRequest = metadata.delete(id);
+        metadataRequest.onerror = dataStore.onerror;
+
+        var peptideListRequest = peptideLists.delete(id);
+        peptideListRequest.onerror = dataStore.onerror;
+    };
+
+    /**
+     * Fetches a list of peptides and executes the callback when it's done
+     */
+    dataStore.getPeptideList = function getPeptideList(id, callback) {
+        var db = dataStore.db;
+        var trans = db.transaction(["metadata", "peptideLists"], "readwrite");
+        var peptideLists = trans.objectStore("peptideLists");
+
+        var peptideListRequest = peptideLists.get(id);
+        peptideListRequest.onsuccess = function(e) {
+            callback.call(this, e.target.result.peptides);
+        }
+        peptideListRequest.onerror = dataStore.onerror;
+    }
+
+    /**
+     * Handles an indexedDB error
+     */
+    dataStore.onerror = function onerror(e) {
+        console.log(e);
+    }
+
     /*************** Public methods ***************/
 
     /**
      * Retrieves the list of peptide ids from the local storage for a given id
      *
      * @param <String> id The id of the genome
-     * @param <Boolean> asString Return it as a JSON string, not as an object
+     * @param <Function> callback This function gets called when loaded
      */
-    that.getIds = function getIds(id, asString) {
-        var ids = localStorage["genome_" + id];
+    that.getIds = function getIds(id, callback) {
+        dataStore.getPeptideList(id, callback);
+        /*var ids = localStorage["genome_" + id];
         if (asString) {
             return ids;
         } else {
             return JSON.parse(ids);
-        }
+        }*/
     };
 
     // initialize the object
