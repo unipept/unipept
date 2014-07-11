@@ -270,10 +270,30 @@ var constructMyGenomes = function constructMyGenomes(args) {
         } else {
             for (i = 0; i < genomeList.length; i++) {
                 g = genomes[genomeList[i]];
-                $myGenomesTable.append("<tr class='own' data-genomeid='" + g.id + "'><td><span class='glyphicon glyphicon-move'></span></td><td class='name'>" + g.name + "</td><td></td><td class='button'><a class='btn btn-default btn-xs remove-my-genome' title='remove genome'><span class='glyphicon glyphicon-trash'></span></a></td></<tr>");
+                $myGenomesTable.append("<tr class='own' data-genomeid='" + g.id + "'>" +
+                    "<td><span class='glyphicon glyphicon-move'></span></td>" +
+                    "<td class='name'>" + g.name + "</td>" +
+                    "<td><a class='btn btn-default btn-xs edit-genome-name' title='edit genome name'><span class='glyphicon glyphicon-pencil'></span></a></td>" +
+                    "<td class='button'><a class='btn btn-default btn-xs remove-my-genome' title='remove genome'><span class='glyphicon glyphicon-trash'></span></a></td>" +
+                    "</<tr>");
             }
             $(".remove-my-genome").click(function () {
                 removeGenome($(this).parents("tr").data("genomeid"));
+            });
+            $(".edit-genome-name").click(function () {
+                var $row = $(this).parents("tr");
+                if ($row.hasClass("edit")) {
+                    var name = $row.find(".name input").val();
+                    $row.find(".name").html(name);
+                    $(this).find(".glyphicon").removeClass("glyphicon-ok").addClass("glyphicon-pencil");
+                    $row.removeClass("edit");
+                } else {
+                    var name = $row.find(".name").text();
+                    $row.find(".name").html("<input type='text' class='form-control input-xs' value='" + name + "'></input>");
+                    $(this).find(".glyphicon").removeClass("glyphicon-pencil").addClass("glyphicon-ok");
+                    $row.addClass("edit");
+                    $row.find(".name input").focus();
+                }
             });
 
             initDrag();
