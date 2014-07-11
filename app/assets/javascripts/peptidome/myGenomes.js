@@ -313,6 +313,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
         $myGenomesTable.find("tr").draggable({
             appendTo: "#genomes-table-div table",
             addClasses: false,
+            cancel: ".edit",
             refreshPositions: true,
             // Mimic the style of the table on the right
             helper: function startHelping(event) {
