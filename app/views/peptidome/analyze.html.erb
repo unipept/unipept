@@ -118,7 +118,7 @@
               <div class="input-group"  data-toggle="tooltip" title="Select a FASTA file containing one or more protein sequences.">
                 <span class="input-group-btn">
                   <span class="btn btn-default btn-file">
-                    Browse… <input type="file" id="myGenomeFile">
+                    Browse… <input type="file" id="myGenomeFile" multiple>
                   </span>
                 </span>
                 <input type="text" class="form-control" readonly="">
@@ -129,6 +129,7 @@
             </div>
             <div id="myGenomeProgress" class="progress hide">
               <div class="progress-bar progress-bar-striped active"  role="progressbar" style="width: 45%">
+                <span></span>
               </div>
             </div>
             <small><span class="glyphicon glyphicon-info-sign"></span> The genomes you add will only be visible in your browser. Nothing will be stored on the Unipept servers.</small>

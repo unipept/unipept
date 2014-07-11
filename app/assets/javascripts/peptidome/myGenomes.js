@@ -12,7 +12,9 @@ var constructMyGenomes = function constructMyGenomes(args) {
         worker;
 
     // Data vars
-    var genomes,
+    var dataQueue = [],
+        dataQueueSize = 0,
+        genomes,
         genomeList;
 
     // Data storage
@@ -130,15 +132,26 @@ var constructMyGenomes = function constructMyGenomes(args) {
             var $input = $(this),
                 numFiles = $input.get(0).files ? $input.get(0).files.length : 1,
                 label = $input.val().replace(/\\/g, '/').replace(/.*\//, ''),
-                log = numFiles > 1 ? numFiles + ' files selected' : label;
+                multi = numFiles > 1,
+                log = multi ? numFiles + ' files selected' : label;
             $input.parents('.input-group').find(':text').val(log);
+            if (multi) {
+                $(".popover-content #myGenomeName").prop("disabled", true).val("").attr("placeholder", "filenames will be used as name").data("multi", "multi");
+            } else {
+                $(".popover-content #myGenomeName").prop("disabled", false).attr("placeholder", "name").data("multi", "");
+            }
         });
 
         // hook up the button
         $(".popover-content #processMyGenomeButton").click(function () {
-            var name = $(".popover-content #myGenomeName").val(),
-                file = $(".popover-content #myGenomeFile").prop("files")[0];
-            if (!name) {
+            var multi = $(".popover-content #myGenomeName").data("multi") === "multi",
+                name = $(".popover-content #myGenomeName").val(),
+                files = $(".popover-content #myGenomeFile").prop("files"),
+                file = files[0],
+                i;
+
+            // Form validation
+            if (!(multi || name)) {
                 $(".popover-content #myGenomeName").parents(".form-group").addClass("has-error");
             } else {
                 $(".popover-content #myGenomeName").parents(".form-group").removeClass("has-error");
@@ -148,33 +161,67 @@ var constructMyGenomes = function constructMyGenomes(args) {
             } else {
                 $(".popover-content #myGenomeFile").parents(".form-group").removeClass("has-error");
             }
-            if (name && file) {
+
+            // Handle form
+            if (multi || (name && file)) {
                 $(this).attr("disabled", "disabled");
+                $(".popover-content #myGenomeFile").prop("disabled", true);
                 $(this).addClass("hide");
-                processProgress(0);
                 $(".popover-content #myGenomeProgress").removeClass("hide");
 
-                handleAddMyGenome(name, file);
+                if (multi) {
+                    for (i = 0; i < files.length; i++) {
+                        file = files[i];
+                        dataQueue.push({name: file.name, file:file});
+                    }
+                } else {
+                    dataQueue.push({name: name, file: file});
+                }
+                dataQueueSize = files.length;
+                handleAddMyGenome();
             }
         });
     }
 
     /**
-     * Handles the addMyGenome event
-     *
-     * @param <String> name The name of the genome
-     * @param <File> file A file object
+     * Processes a file from the dataQueue
      */
-    function handleAddMyGenome(name, file) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            sendToWorker("processFile", {file : reader.result, name : name});
-        };
-        reader.readAsText(file);
+    function handleAddMyGenome() {
+        if (dataQueue.length > 0) {
+            var reader = new FileReader(),
+                file = dataQueue[0];
+            reader.onload = function (e) {
+                sendToWorker("processFile", {file : reader.result, name : file.name});
+            };
+            reader.readAsText(file.file);
+
+            processProgress(0);
+            $(".popover-content #myGenomeProgress .progress-bar span").text("File " + (dataQueueSize - dataQueue.length + 1) + " of " + dataQueueSize);
+        }
     }
 
     /**
-     * Processes the converted genome, cleans up the popover.
+     * Reset the add my genome form
+     */
+    function resetForm() {
+        dataQueueSize = 0;
+
+        // reset the form
+        $(".popover-content #processMyGenomeButton").parents("form").trigger('reset');
+        $(".popover-content #myGenomeName").prop("disabled", false).attr("placeholder", "name").data("multi", "");
+        $(".popover-content #processMyGenomeButton").removeAttr("disabled");
+        $(".popover-content #myGenomeFile").prop("disabled", false);
+        $(".popover-content #processMyGenomeButton").removeClass("hide");
+        $(".popover-content #myGenomeProgress").addClass("hide");
+
+        // hide the popover
+        if (!$popover.hasClass("hide")) {
+            $myGenomesButton.click();
+        }
+    }
+
+    /**
+     * Processes the converted genome
      *
      * @param <Array> ids A sorted array with integer id's
      * @param <String> name The name of the genome
@@ -183,16 +230,12 @@ var constructMyGenomes = function constructMyGenomes(args) {
         // generate an id
         var id = "u" + new Date().getTime();
         addGenome(id, name, ids);
+        dataQueue.shift();
 
-        // reset the form
-        $(".popover-content #processMyGenomeButton").parents("form").trigger('reset');
-        $(".popover-content #processMyGenomeButton").removeAttr("disabled");
-        $(".popover-content #processMyGenomeButton").removeClass("hide");
-        $(".popover-content #myGenomeProgress").addClass("hide");
-
-        // hide the popover
-        if (!$popover.hasClass("hide")) {
-            $myGenomesButton.click();
+        if (dataQueue.length == 0) {
+            resetForm();
+        } else {
+            handleAddMyGenome();
         }
     }
 
