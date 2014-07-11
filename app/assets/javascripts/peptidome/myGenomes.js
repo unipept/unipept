@@ -240,6 +240,17 @@ var constructMyGenomes = function constructMyGenomes(args) {
     }
 
     /**
+     * Changes the genome name
+     *
+     * @param <String> id The id of the genome
+     * @param <String> name The new name of the genome
+     */
+    function editGenomeName(id, name) {
+        genomes[id].name = name;
+        dataStore.updateGenome(genomes[id]);
+    }
+
+    /**
      * removes all the genomes from the my genome list
      */
     function removeAllGenomes() {
@@ -287,6 +298,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
                     $row.find(".name").html(name);
                     $(this).find(".glyphicon").removeClass("glyphicon-ok").addClass("glyphicon-pencil");
                     $row.removeClass("edit");
+                    editGenomeName($row.data("genomeid"), name);
                 } else {
                     var name = $row.find(".name").text();
                     $row.find(".name").html("<input type='text' class='form-control input-xs' value='" + name + "'></input>");
@@ -467,6 +479,20 @@ var constructMyGenomes = function constructMyGenomes(args) {
     };
 
     /**
+     * Updates a genome in the data store
+     *
+     * @param <Genome> genome The genome to update
+     */
+    indexedDBStore.updateGenome = function updateGenome(genome) {
+        var db = indexedDBStore.db;
+        var trans = db.transaction(["metadata"], "readwrite");
+        var metadata = trans.objectStore("metadata");
+
+        var metadataRequest = metadata.put(genome);
+        metadataRequest.onerror = indexedDBStore.onerror;
+    };
+
+    /**
      * Fetches a list of peptides for a given genome and executes the callback
      * when it's done
      *
@@ -532,6 +558,16 @@ var constructMyGenomes = function constructMyGenomes(args) {
         localStorage.genomeList = JSON.stringify(genomeList);
         localStorage.genomes = JSON.stringify(genomes);
         delete localStorage["genome_" + id];
+    };
+
+    /**
+     * Updates a genome in the data store
+     *
+     * @param <Genome> genome The genome to update
+     */
+    localStorageStore.updateGenome = function updateGenome(genome) {
+        localStorage.genomeList = JSON.stringify(genomeList);
+        localStorage.genomes = JSON.stringify(genomes);
     };
 
     /**
