@@ -301,10 +301,10 @@ var constructMyGenomes = function constructMyGenomes(args) {
                     editGenomeName($row.data("genomeid"), name);
                 } else {
                     var name = $row.find(".name").text();
-                    $row.find(".name").html("<input type='text' class='form-control input-xs' value='" + name + "'></input>");
+                    $row.find(".name").html("<input type='text' class='form-control input-xs'></input>");
                     $(this).find(".glyphicon").removeClass("glyphicon-pencil").addClass("glyphicon-ok");
+                    $row.find(".name input").focus().val(name);
                     $row.addClass("edit");
-                    $row.find(".name input").focus();
                 }
             });
 
