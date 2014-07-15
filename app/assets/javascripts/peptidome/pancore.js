@@ -96,6 +96,21 @@ var constructPancore = function constructPancore(args) {
      * Initializes the help popups
      */
     function initHelp() {
+        // tab help
+        $("#tabs li a span").on("mouseover", function () {
+            if ($(this).parent().attr("id") === "unique-peptide-finder-tab") {
+                $("#unique-peptide-finder-help").show();
+                $("#peptidome-clustering-help").hide();
+            } else {
+                $("#peptidome-clustering-help").show();
+                $("#unique-peptide-finder-help").hide();
+            }
+            $("#tab-help").stop(true, true).fadeIn(200);
+        });
+        $("#tabs li a span").on("mouseout", function () {
+            $("#tab-help").stop(true, true).fadeOut(200);
+        });
+
         $("#add-by-species-help").tooltip({placement : "right", container : "body"});
         $("#add-by-genome-help").tooltip({placement : "right", container : "body"});
     }
