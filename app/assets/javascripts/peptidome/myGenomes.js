@@ -3,12 +3,14 @@
  * genomes and optiones to add or remove them.
  *
  * @param <Pancore> args.pancore Pancore object
+ * @param <String> args.version The uniprot version
  */
 var constructMyGenomes = function constructMyGenomes(args) {
     /*************** Private variables ***************/
 
     var that = {},
         pancore = args.pancore,
+        version = args.version,
         worker;
 
     // Data vars
@@ -34,7 +36,6 @@ var constructMyGenomes = function constructMyGenomes(args) {
      * Initializes the table
      */
     function init() {
-
         genomes = {};
         genomeList = [];
 
@@ -229,7 +230,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
     function processConvertedGenome(ids, name) {
         // generate an id
         var id = "u" + new Date().getTime();
-        addGenome(id, name, ids);
+        addGenome(id, name, version, ids);
         dataQueue.shift();
 
         if (dataQueue.length == 0) {
@@ -253,14 +254,15 @@ var constructMyGenomes = function constructMyGenomes(args) {
      *
      * @param <String> id A random id
      * @param <String> name The genome name
+     * @param <String version The uniprot version
      * @param <Array> ids A list of ints
      */
-    function addGenome(id, name, ids) {
+    function addGenome(id, name, version, ids) {
         // update local list
         genomeList.push(id);
-        genomes[id] = {id : id, name : name};
+        genomes[id] = {id : id, name : name, version : version};
 
-        dataStore.addGenome({id : id, name : name, peptides : ids});
+        dataStore.addGenome({id : id, name : name, version : version, peptides : ids});
 
         // update the list
         redrawTable();

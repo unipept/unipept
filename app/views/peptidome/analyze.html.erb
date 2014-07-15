@@ -191,7 +191,8 @@
     if (typeof(Worker)!=="undefined") {
         constructPancore({
             data : <%= raw(@genomes) %>,
-            taxa : <%= raw(@taxa) %>
+            taxa : <%= raw(@taxa) %>,
+            version : "<%=Rails.application.config.versions[:uniprot] %>"
         });
     } else {
       error(null, "Sorry, this page uses Web Workers, an advanced JavaScript technology that's not supported by your browser. Try using an up to date version of Google Chrome, Firefox or Internet Explorer 10.")

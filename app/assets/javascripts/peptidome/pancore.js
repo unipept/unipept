@@ -8,6 +8,7 @@
  *          "name":"Campylobacter jejuni","order_id":213849,"species_id":197}
  * @param <Hash> args.taxa is a list of key-value pairs mapping
  *          taxon id's to taxon names used for the selection tree.
+ * @param <String> args.version The uniprot version
  * @return <Pancore> that The constructed Pancore object
  */
 var constructPancore = function constructPancore(args) {
@@ -70,7 +71,7 @@ var constructPancore = function constructPancore(args) {
 
         // Constructs the myGenomes feature
         if (window.File && window.FileReader && window.FileList) {
-            myGenomes = constructMyGenomes({pancore : that});
+            myGenomes = constructMyGenomes({pancore : that, version : args.version});
         } else {
             $("#my-genome-error").removeClass("hide");
         }
