@@ -11,6 +11,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
     var that = {},
         pancore = args.pancore,
         version = args.version,
+        version = "test",
         worker;
 
     // Data vars
@@ -330,13 +331,13 @@ var constructMyGenomes = function constructMyGenomes(args) {
         } else {
             for (i = 0; i < genomeList.length; i++) {
                 g = genomes[genomeList[i]];
-                row = "<tr class='own' data-genomeid='" + g.id + "'>" +
-                    "<td><span class='glyphicon glyphicon-move'></span></td>" +
+                row = g.version === version ? "<tr class='own' data-genomeid='" + g.id + "'>" : "<tr class='own old' data-genomeid='" + g.id + "'>";
+                row += "<td><span class='glyphicon glyphicon-move'></span></td>" +
                     "<td class='name'>" + g.name + "</td>";
                 if (g.version === version) {
                     row += "<td><a class='btn btn-default btn-xs edit-genome-name' title='edit genome name'><span class='glyphicon glyphicon-pencil'></span></a></td>";
                 } else {
-                    row += "<td></td>";
+                    row += "<td><span class='glyphicon glyphicon-refresh'></span></td>";
                 }
                 row += "<td class='button'><a class='btn btn-default btn-xs remove-my-genome' title='remove genome'><span class='glyphicon glyphicon-trash'></span></a></td>" +
                     "</<tr>";
@@ -379,7 +380,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
         $myGenomesTable.find("tr").draggable({
             appendTo: "#genomes-table-div table",
             addClasses: false,
-            cancel: ".edit",
+            cancel: ".edit, .old",
             refreshPositions: true,
             // Mimic the style of the table on the right
             helper: function startHelping(event) {
