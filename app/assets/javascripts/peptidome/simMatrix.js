@@ -51,8 +51,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
         init_phylogram();
 
         // tab help
-        $("#tabs li a").on("mouseover", function () {
-            if ($(this).attr("id") === "unique-peptide-finder-tab") {
+        $("#tabs li a span").on("mouseover", function () {
+            if ($(this).parent().attr("id") === "unique-peptide-finder-tab") {
                 $("#unique-peptide-finder-help").show();
                 $("#peptidome-clustering-help").hide();
             } else {
@@ -61,7 +61,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
             }
             $("#tab-help").stop(true, true).fadeIn(200);
         });
-        $("#tabs li a").on("mouseout", function () {
+        $("#tabs li a span").on("mouseout", function () {
             $("#tab-help").stop(true, true).fadeOut(200);
         });
 
