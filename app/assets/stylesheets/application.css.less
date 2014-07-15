@@ -48,6 +48,14 @@
     display: block;
 }
 
+.input-xs {
+    height: 22px;
+    padding: 1px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+}
+
 html, body {
     background-color: @gray-lighter;
     height: 100%;
@@ -555,6 +563,10 @@ span.dir {
 #myGenomeProgress {
     height: 30px;
 }
+#myGenomeProgress .progress-bar{
+    padding-top: 6px;
+    max-width: 100%;
+}
 #my-genomes-table .handle {
     width: 30px;
 }
@@ -567,7 +579,7 @@ span.dir {
 #my-genomes-table .action {
     width: 30px;
 }
-#my-genomes-table tbody tr:not(.info) {
+#my-genomes-table tbody tr:not(.info):not(.edit):not(.old) {
     cursor: pointer;
     cursor: url(/openhand.cur), pointer;
     cursor: url(/openhand.cur) 7 5, pointer;
