@@ -100,7 +100,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
             console.log(data.msg);
             break;
         case 'processConvertedGenome':
-            processConvertedGenome(data.msg.ids, data.msg.name);
+            processConvertedGenome(data.msg.ids, data.msg.name, data.msg.id);
             break;
         case 'processProgress':
             processProgress(data.msg.progress);
@@ -149,6 +149,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
                 name = $(".popover-content #myGenomeName").val(),
                 files = $(".popover-content #myGenomeFile").prop("files"),
                 file = files[0],
+                id = "u" + new Date().getTime(),
                 i;
 
             // Form validation
@@ -173,10 +174,10 @@ var constructMyGenomes = function constructMyGenomes(args) {
                 if (multi) {
                     for (i = 0; i < files.length; i++) {
                         file = files[i];
-                        dataQueue.push({name: file.name, file:file});
+                        dataQueue.push({name: file.name, file: file, id: id + i});
                     }
                 } else {
-                    dataQueue.push({name: name, file: file});
+                    dataQueue.push({name: name, file: file, id: id});
                 }
                 dataQueueSize = files.length;
                 handleAddMyGenome();
@@ -192,7 +193,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
             var reader = new FileReader(),
                 file = dataQueue[0];
             reader.onload = function (e) {
-                sendToWorker("processFile", {file : reader.result, name : file.name});
+                sendToWorker("processFile", {file : reader.result, name : file.name, id : file.id});
             };
             reader.readAsText(file.file);
 
@@ -226,10 +227,9 @@ var constructMyGenomes = function constructMyGenomes(args) {
      *
      * @param <Array> ids A sorted array with integer id's
      * @param <String> name The name of the genome
+     * @param <String> id The id of the genome
      */
-    function processConvertedGenome(ids, name) {
-        // generate an id
-        var id = "u" + new Date().getTime();
+    function processConvertedGenome(ids, name, id) {
         addGenome(id, name, version, ids);
         dataQueue.shift();
 
