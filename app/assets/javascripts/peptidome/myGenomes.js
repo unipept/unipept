@@ -321,7 +321,8 @@ var constructMyGenomes = function constructMyGenomes(args) {
      */
     function redrawTable() {
         var i,
-            g;
+            g,
+            row;
 
         $myGenomesTable.empty();
         if (genomeList.length === 0) {
@@ -329,12 +330,17 @@ var constructMyGenomes = function constructMyGenomes(args) {
         } else {
             for (i = 0; i < genomeList.length; i++) {
                 g = genomes[genomeList[i]];
-                $myGenomesTable.append("<tr class='own' data-genomeid='" + g.id + "'>" +
+                row = "<tr class='own' data-genomeid='" + g.id + "'>" +
                     "<td><span class='glyphicon glyphicon-move'></span></td>" +
-                    "<td class='name'>" + g.name + "</td>" +
-                    "<td><a class='btn btn-default btn-xs edit-genome-name' title='edit genome name'><span class='glyphicon glyphicon-pencil'></span></a></td>" +
-                    "<td class='button'><a class='btn btn-default btn-xs remove-my-genome' title='remove genome'><span class='glyphicon glyphicon-trash'></span></a></td>" +
-                    "</<tr>");
+                    "<td class='name'>" + g.name + "</td>";
+                if (g.version === version) {
+                    row += "<td><a class='btn btn-default btn-xs edit-genome-name' title='edit genome name'><span class='glyphicon glyphicon-pencil'></span></a></td>";
+                } else {
+                    row += "<td></td>";
+                }
+                row += "<td class='button'><a class='btn btn-default btn-xs remove-my-genome' title='remove genome'><span class='glyphicon glyphicon-trash'></span></a></td>" +
+                    "</<tr>";
+                $myGenomesTable.append(row);
             }
             $(".remove-my-genome").click(function () {
                 removeGenome($(this).parents("tr").data("genomeid"));
@@ -594,8 +600,21 @@ var constructMyGenomes = function constructMyGenomes(args) {
      * Retrieves the list of genomes from the store and updates the UI
      */
     localStorageStore.loadMyGenomes = function loadMyGenomes() {
+        var i,
+            id;
+
         genomes = localStorage.genomes ? JSON.parse(localStorage.genomes) : {};
         genomeList = localStorage.genomeList ? JSON.parse(localStorage.genomeList) : [];
+
+        // remove old genomes
+        for (i = genomeList.length - 1; i >= 0; i--) {
+            id = genomeList[i];
+            if (genomes[id].version !== version) {
+                genomeList.splice(i, 1);
+                delete genomes[id];
+                localStorageStore.removeGenome(id);
+            }
+        }
 
         redrawTable();
     };
