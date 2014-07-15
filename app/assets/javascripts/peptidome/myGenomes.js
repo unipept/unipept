@@ -16,6 +16,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
     // Data vars
     var dataQueue = [],
         dataQueueSize = 0,
+        files = {},
         genomes,
         genomeList;
 
@@ -194,6 +195,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
                 file = dataQueue[0];
             reader.onload = function (e) {
                 sendToWorker("processFile", {file : reader.result, name : file.name, id : file.id});
+                files[file.id] = reader.result;
             };
             reader.readAsText(file.file);
 
@@ -262,7 +264,8 @@ var constructMyGenomes = function constructMyGenomes(args) {
         genomeList.push(id);
         genomes[id] = {id : id, name : name, version : version};
 
-        dataStore.addGenome({id : id, name : name, version : version, peptides : ids});
+        dataStore.addGenome({id : id, name : name, version : version, peptides : ids, file : files[id]});
+        delete files[id];
 
         // update the list
         redrawTable();
@@ -427,7 +430,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
      * Initializes the database
      */
     indexedDBStore.init = function init() {
-        var version = 3;
+        var version = 4;
         var request = indexedDB.open("myGenomes", version);
 
         request.onupgradeneeded = function (e) {
@@ -441,9 +444,13 @@ var constructMyGenomes = function constructMyGenomes(args) {
             if(db.objectStoreNames.contains("peptideLists")) {
                 db.deleteObjectStore("peptideLists");
             }
+            if(db.objectStoreNames.contains("files")) {
+                db.deleteObjectStore("files");
+            }
 
             db.createObjectStore("metadata", {keyPath: "id"});
             db.createObjectStore("peptideLists", {keyPath: "id"});
+            db.createObjectStore("files", {keyPath: "id"});
         };
 
         request.onsuccess = function(e) {
@@ -490,19 +497,25 @@ var constructMyGenomes = function constructMyGenomes(args) {
      */
     indexedDBStore.addGenome = function addGenome(genome) {
         var genomePeptides = {id : genome.id, peptides : genome.peptides};
+        var genomeFile = {id : genome.id, file : genome.file};
         var genomeMetadata = genome;
         delete genomeMetadata.peptides;
+        delete genomeMetadata.file;
 
         var db = indexedDBStore.db;
-        var trans = db.transaction(["metadata", "peptideLists"], "readwrite");
+        var trans = db.transaction(["metadata", "peptideLists", "files"], "readwrite");
         var metadata = trans.objectStore("metadata");
         var peptideLists = trans.objectStore("peptideLists");
+        var files = trans.objectStore("files");
 
         var metadataRequest = metadata.put(genomeMetadata);
         metadataRequest.onerror = indexedDBStore.onerror;
 
         var peptideListRequest = peptideLists.put(genomePeptides);
         peptideListRequest.onerror = indexedDBStore.onerror;
+
+        var fileRequest = files.put(genomeFile);
+        fileRequest.onerror = indexedDBStore.onerror;
     };
 
     /**
@@ -512,15 +525,19 @@ var constructMyGenomes = function constructMyGenomes(args) {
      */
     indexedDBStore.removeGenome = function removeGenome(id) {
         var db = indexedDBStore.db;
-        var trans = db.transaction(["metadata", "peptideLists"], "readwrite");
+        var trans = db.transaction(["metadata", "peptideLists", "files"], "readwrite");
         var metadata = trans.objectStore("metadata");
         var peptideLists = trans.objectStore("peptideLists");
+        var files = trans.objectStore("files");
 
         var metadataRequest = metadata.delete(id);
         metadataRequest.onerror = indexedDBStore.onerror;
 
         var peptideListRequest = peptideLists.delete(id);
         peptideListRequest.onerror = indexedDBStore.onerror;
+
+        var filesRequest = files.delete(id);
+        filesRequest.onerror = indexedDBStore.onerror;
     };
 
     /**
