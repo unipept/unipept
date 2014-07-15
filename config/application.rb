@@ -53,6 +53,12 @@ module UnipeptWeb
 
     config.assets.paths << "#{Rails}/vendor/assets/fonts"
 
+    config.versions = {
+      :unipept => "2.3 beta",
+      :gem => "0.5.7",
+      :uniprot => "2013.04"
+    }
+
     ### Part of a Spork hack. See http://bit.ly/arY19y
     if Rails.env.test?
       initializer :after => :initialize_dependency_mechanism do
