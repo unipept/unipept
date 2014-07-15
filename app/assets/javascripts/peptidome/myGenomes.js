@@ -11,7 +11,6 @@ var constructMyGenomes = function constructMyGenomes(args) {
     var that = {},
         pancore = args.pancore,
         version = args.version,
-        version = "test",
         worker;
 
     // Data vars
@@ -220,7 +219,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
         $(".popover-content #myGenomeProgress").addClass("hide");
 
         // hide the popover
-        if (!$popover.hasClass("hide")) {
+        if ($popover && !$popover.hasClass("hide")) {
             $myGenomesButton.click();
         }
     }
@@ -261,12 +260,18 @@ var constructMyGenomes = function constructMyGenomes(args) {
      * @param <Array> ids A list of ints
      */
     function addGenome(id, name, version, ids) {
-        // update local list
-        genomeList.push(id);
-        genomes[id] = {id : id, name : name, version : version};
+        if (genomeList.indexOf(id) === -1) {
+            // add
+            genomeList.push(id);
+            genomes[id] = {id : id, name : name, version : version};
 
-        dataStore.addGenome({id : id, name : name, version : version, peptides : ids, file : files[id]});
-        delete files[id];
+            dataStore.addGenome({id : id, name : name, version : version, peptides : ids, file : files[id]});
+            delete files[id];
+        } else {
+            // update
+            genomes[id].version = version;
+            dataStore.addGenome({id : id, name : name, version : version, peptides : ids});
+        }
 
         // update the list
         redrawTable();
@@ -473,8 +478,10 @@ var constructMyGenomes = function constructMyGenomes(args) {
      */
     indexedDBStore.loadMyGenomes = function loadMyGenomes() {
         var db = indexedDBStore.db;
-        var trans = db.transaction(["metadata"], "readwrite");
+        var trans = db.transaction(["metadata", "files"], "readwrite");
         var store = trans.objectStore("metadata");
+        var files = trans.objectStore("files");
+        var fileRequest;
 
         // Get everything in the store;
         var keyRange = IDBKeyRange.lowerBound(0);
@@ -491,6 +498,15 @@ var constructMyGenomes = function constructMyGenomes(args) {
             genomeList.push(result.value.id);
             genomes[result.value.id] = result.value;
 
+            // process if done
+            if (result.value.version !== version) {
+                fileRequest = files.get(result.value.id);
+                fileRequest.onsuccess = function(e) {
+                    sendToWorker("processFile", {file : e.target.result.file, name : result.value.name, id : result.value.id});
+                }
+                fileRequest.onerror = indexedDBStore.onerror;
+            }
+
             result.continue();
         };
 
@@ -504,7 +520,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
      */
     indexedDBStore.addGenome = function addGenome(genome) {
         var genomePeptides = {id : genome.id, peptides : genome.peptides};
-        var genomeFile = {id : genome.id, file : genome.file};
+        var genomeFile = genome.file ? {id : genome.id, file : genome.file} : null;
         var genomeMetadata = genome;
         delete genomeMetadata.peptides;
         delete genomeMetadata.file;
@@ -521,8 +537,10 @@ var constructMyGenomes = function constructMyGenomes(args) {
         var peptideListRequest = peptideLists.put(genomePeptides);
         peptideListRequest.onerror = indexedDBStore.onerror;
 
-        var fileRequest = files.put(genomeFile);
-        fileRequest.onerror = indexedDBStore.onerror;
+        if (genomeFile) {
+            var fileRequest = files.put(genomeFile);
+            fileRequest.onerror = indexedDBStore.onerror;
+        }
     };
 
     /**
