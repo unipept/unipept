@@ -89,12 +89,9 @@
       </div>
       <div class="tab-pane fade" id="my-genomes">
         <div class="alert alert-danger hide" id="my-genome-error">
-              <strong>Oh snap!</strong> Sorry, your browser doesn't seem to support the File API. Everything should work find in Firefox or Google Chrome.
-            </div>
+          <strong>Oh snap!</strong> Sorry, your browser doesn't seem to support the File API. Everything should work find in Firefox or Google Chrome.
+        </div>
         <div id="myGenomes" class="hide">
-          <div class="alert alert-info">
-            <strong>Heads up! </strong>The My Genomes feature is still experimental and might only save the first few genomes you add.
-          </div>
           <table class="table table-condensed" id="my-genomes-table">
             <thead>
               <tr>
@@ -121,7 +118,7 @@
               <div class="input-group"  data-toggle="tooltip" title="Select a FASTA file containing one or more protein sequences.">
                 <span class="input-group-btn">
                   <span class="btn btn-default btn-file">
-                    Browse… <input type="file" id="myGenomeFile">
+                    Browse… <input type="file" id="myGenomeFile" multiple>
                   </span>
                 </span>
                 <input type="text" class="form-control" readonly="">
@@ -132,6 +129,7 @@
             </div>
             <div id="myGenomeProgress" class="progress hide">
               <div class="progress-bar progress-bar-striped active"  role="progressbar" style="width: 45%">
+                <span></span>
               </div>
             </div>
             <small><span class="glyphicon glyphicon-info-sign"></span> The genomes you add will only be visible in your browser. Nothing will be stored on the Unipept servers.</small>
@@ -193,7 +191,8 @@
     if (typeof(Worker)!=="undefined") {
         constructPancore({
             data : <%= raw(@genomes) %>,
-            taxa : <%= raw(@taxa) %>
+            taxa : <%= raw(@taxa) %>,
+            version : "<%=Rails.application.config.versions[:uniprot] %>"
         });
     } else {
       error(null, "Sorry, this page uses Web Workers, an advanced JavaScript technology that's not supported by your browser. Try using an up to date version of Google Chrome, Firefox or Internet Explorer 10.")
