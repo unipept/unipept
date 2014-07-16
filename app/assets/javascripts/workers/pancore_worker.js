@@ -271,6 +271,7 @@ var matrixBackend = function matrixBackend(data) {
         if (matrixOrder.length === 0) {
             return;
         }
+        matrixOrder.sort();
         var tree = that.calculateTree();
         sendToHost('processClusteredMatrix', {
             order : treeToOrder(tree),
