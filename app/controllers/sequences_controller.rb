@@ -13,7 +13,7 @@ class SequencesController < ApplicationController
 
     # process the input, convert seq to a valid @sequence
     if seq.match(/\A[0-9]+\z/)
-      sequence = Sequence.includes({:peptides => {:uniprot_entry => :name}}).find_by_id(seq)
+      sequence = Sequence.includes({:peptides => {:uniprot_entry => [:name, :ec_cross_references, :go_cross_references]}}).find_by_id(seq)
       @original_sequence = sequence.sequence
     else
       sequence = Sequence.single_search(seq, equate_il)

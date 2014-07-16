@@ -6,6 +6,7 @@
   <ul>
     <li>Lowest common ancestor: <%= link_to @lca_taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + @lca_taxon.id.to_s, :target => "_blank" %> (<%=@lca_taxon.rank%>)</li>
         <li>Common lineage: <%= raw @common_lineage.length==0 ? "nothing" : @common_lineage.map{|t| link_to t.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + t.id.to_s, :target => "_blank" }.join(" > ") %></li>
+        <li><%= link_to "Blast "+@original_sequence , "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on&USER_FORMAT_DEFAULTS=on&PAGE=Proteins&PROGRAM=blastp&QUERY="+@original_sequence+"&GAPCOSTS=11%201&EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&DATABASE=nr&BLAST_PROGRAMS=blastp&MAX_NUM_SEQ=100&SHORT_QUERY_ADJUST=on&EXPECT=10&WORD_SIZE=3&MATRIX_NAME=BLOSUM62&COMPOSITION_BASED_STATISTICS=2&SHOW_OVERVIEW=on&SHOW_LINKOUT=on&ALIGNMENT_VIEW=Pairwise&MASK_CHAR=2&MASK_COLOR=1&GET_SEQUENCE=on&NEW_VIEW=on&NUM_OVERVIEW=100&DESCRIPTIONS=100&ALIGNMENTS=100&FORMAT_OBJECT=Alignment&FORMAT_TYPE=HTML&OLD_BLAST=false", :target => "_blank" %></li>
     </ul>
 
     <h2>Lineage</h2>
@@ -44,20 +45,25 @@
         </table>
     </div>
 
-    <h2>External links</h2>
-    <ul>
-        <li> <%= link_to "Blast this peptide" , "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on&USER_FORMAT_DEFAULTS=on&PAGE=Proteins&PROGRAM=blastp&QUERY="+@original_sequence+"&GAPCOSTS=11%201&EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&DATABASE=nr&BLAST_PROGRAMS=blastp&MAX_NUM_SEQ=100&SHORT_QUERY_ADJUST=on&EXPECT=10&WORD_SIZE=3&MATRIX_NAME=BLOSUM62&COMPOSITION_BASED_STATISTICS=2&SHOW_OVERVIEW=on&SHOW_LINKOUT=on&ALIGNMENT_VIEW=Pairwise&MASK_CHAR=2&MASK_COLOR=1&GET_SEQUENCE=on&NEW_VIEW=on&NUM_OVERVIEW=100&DESCRIPTIONS=100&ALIGNMENTS=100&FORMAT_OBJECT=Alignment&FORMAT_TYPE=HTML&OLD_BLAST=false", :target => "_blank" %> <span class="glyphicon glyphicon-share-alt"></span></li>
-
-        <li> Open in uniprot:
-            <ul>
-                <% for entry in @entries do %>
-                <% unless entry.name.nil? %>
-                <li><%= link_to entry.name.name, "http://www.uniprot.org/uniprot/"+entry.uniprot_accession_number, :target => "_blank" %> <span class="glyphicon glyphicon-share-alt"></span></li>
-                <% end %>
-                <% end %>
-            </ul>
-        </li>
-    </ul>
+    <h2>Protein info</h2>
+      <table class="table table-condensed table-hover protein-info">
+          <thead><tr>
+            <th class="id">Uniprot ID</th>
+            <th class="organism">Organism</th>
+            <th class="ec">EC number</th>
+            <th class="go">GO terms</th>
+          </tr></thead>
+          <% for entry in @entries do %>
+            <% unless entry.name.nil? %>
+              <tr>
+                <td><%= link_to entry.uniprot_accession_number, "http://www.uniprot.org/uniprot/"+entry.uniprot_accession_number, :target => "_blank" %></td>
+                <td><%= link_to entry.name.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="+entry.name.id.to_s, :target => "_blank" %></td>
+                <td><%= raw(entry.ec_cross_references.map{|ec| "<a href='http://enzyme.expasy.org/EC/"+ec.ec_id+"' target='_blank'>"+ec.ec_id+"</a>"}.join(", ")) %></td>
+                <td><%= raw(entry.go_cross_references.map{|go| "<a href='http://amigo.geneontology.org/amigo/term/"+go.go_id+"' target='_blank'>"+go.go_id+"</a>"}.join(", ")) %></td>
+              </tr>
+            <% end %>
+          <% end %>
+      </table>
 
     <!-- JIT Library File -->
     <!--[if IE]><%= javascript_include_tag asset_path("jit/Extras/excanvas.js") %><![endif]-->

@@ -39,7 +39,7 @@ class Sequence < ActiveRecord::Base
     raise SequenceTooShortError if sequence.length < 5
     sequence = sequence.gsub(/I/,'L') if equate_il
     # this solves the N+1 query problem
-    self.includes(peptides_relation_name(equate_il) => {uniprot_entry: :name})
+    self.includes(peptides_relation_name(equate_il) => {:uniprot_entry => [:name, :ec_cross_references, :go_cross_references]})
       .find_by_sequence(sequence)
   end
 
