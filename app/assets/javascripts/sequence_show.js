@@ -9,9 +9,26 @@ function init_sequence_show(data, lcaId) {
     // set up save image stuff
     setUpImageSave();
 
+    // enable the external link popovers
+    addExternalLinks();
 
 
     /******************* Functions ***********************/
+
+    function addExternalLinks() {
+        // Add handler to the autosort-button
+        $(".externalLinks-button").parent().mouseenter(function () {
+            console.log('enter');
+            if (!$(this).hasClass("open")) {
+                $(this).find(".externalLinks-button").dropdown("toggle");
+            }
+        });
+        $(".externalLinks-button").parent().mouseleave(function () {
+            if ($(this).hasClass("open")) {
+                $(this).find(".externalLinks-button").dropdown("toggle");
+            }
+        });
+    }
 
     /**
      * Sets up the image save stuff
