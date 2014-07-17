@@ -153,7 +153,13 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`dataset_items` (
   `name` VARCHAR(160) NULL ,
   `data` MEDIUMTEXT CHARACTER SET 'ascii' COLLATE 'ascii_general_ci' NOT NULL ,
   `order` INT NULL ,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_dataset_items_datasets` (`dataset_id` ASC) ,
+  CONSTRAINT `fk_dataset_items_datasets`
+    FOREIGN KEY (`dataset_id` )
+    REFERENCES `unipept`.`datasets` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_general_ci;
