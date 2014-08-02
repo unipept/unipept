@@ -90,7 +90,7 @@
                 tree.name = token;
             } else {
                 temp = token.split("-");
-                tree.name = temp[0];
+                tree.name = token;
                 if (temp[1].charAt(0) === "u") {
                     tree.bioproject_id = temp[1];
                 } else {

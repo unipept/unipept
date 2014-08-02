@@ -6,7 +6,7 @@ self.addEventListener('message', function (e) {
         sendToHost("log", data.msg);
         break;
     case 'processFile':
-        processFile(data.msg.file, data.msg.name);
+        processFile(data.msg.file, data.msg.name, data.msg.id);
         break;
     default:
         error(data.msg);
@@ -28,11 +28,12 @@ function sendToHost(type, message) {
  *
  * @param <String> file The content of a fasta file
  * @param <String> name The name of the genome
+ * @param <String> id The generated id of the genome
  */
-function processFile(file, name) {
+function processFile(file, name, id) {
     var peptides = digest(parseFasta(file));
     var ids = convertPeptidesToInts(peptides);
-    sendToHost("processConvertedGenome", {"ids" : ids, "name" : name});
+    sendToHost("processConvertedGenome", {ids : ids, name : name, id : id});
 }
 
 /**

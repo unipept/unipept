@@ -1,4 +1,10 @@
 function initDatasets() {
+    // add progress bar when submitting form
+    $("#search-multi-form").click(function () {
+        $("#search_button").hide();
+        $("#form-progress").removeClass("hide");
+    });
+
     // hide more options + set up action to show is
     $("#more_options_form").hide();
     $("#more_options a").click(function () {

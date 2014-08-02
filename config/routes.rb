@@ -39,6 +39,7 @@ UnipeptWeb::Application.routes.draw do
   match '/peptidome/convert_peptides', via: [:get, :post], :to => 'peptidome#convert_peptides'
   match '/peptidome/get_lca', via: [:get, :post], :to => 'peptidome#get_lca'
   get '/peptidome', :to => 'peptidome#analyze', :as => 'pancore_analyze'
+  get '/pancore', :to => 'peptidome#analyze'
   get '/peptidefinder', :to => 'peptidome#analyze', :as => 'peptide_finder', defaults: { tab: 'peptidefinder' }
   get '/peptidomeclustering', :to => 'peptidome#analyze', :as => 'peptidome_clustering', defaults: { tab: 'peptidomeclustering' }
 

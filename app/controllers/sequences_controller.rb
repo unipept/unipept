@@ -13,7 +13,7 @@ class SequencesController < ApplicationController
 
     # process the input, convert seq to a valid @sequence
     if seq.match(/\A[0-9]+\z/)
-      sequence = Sequence.includes({:peptides => {:uniprot_entry => :name}}).find_by_id(seq)
+      sequence = Sequence.includes({:peptides => {:uniprot_entry => [:name, :ec_cross_references, :go_cross_references]}}).find_by_id(seq)
       @original_sequence = sequence.sequence
     else
       sequence = Sequence.single_search(seq, equate_il)
@@ -40,7 +40,7 @@ class SequencesController < ApplicationController
       @entries.select!{|e| e.protein_contains?(seq, equate_il)}
 
       raise NoMatchesFoundError.new(seq) if @entries.size == 0
-      @lineages = @entries.map(&:lineage).uniq
+      @lineages = @entries.map(&:lineage).uniq.compact
     end
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) #calculate the LCA
@@ -154,7 +154,7 @@ class SequencesController < ApplicationController
     raise EmptyQueryError.new if query.nil? || query.empty?
 
     # remove duplicates, filter shorts, substitute I by L, ...
-    data = query.upcase
+    data = query.upcase.gsub(/#/,"")
     data = data.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2") unless handle_missed
     data = data.lines.map(&:strip).to_a.select{|l| l.size >= 5}
     sequence_mapping = Hash[data.map{|v| @equate_il ? [v.gsub(/I/,'L'), v] : [v, v]}]

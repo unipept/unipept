@@ -8,6 +8,7 @@
  *          "name":"Campylobacter jejuni","order_id":213849,"species_id":197}
  * @param <Hash> args.taxa is a list of key-value pairs mapping
  *          taxon id's to taxon names used for the selection tree.
+ * @param <String> args.version The uniprot version
  * @return <Pancore> that The constructed Pancore object
  */
 var constructPancore = function constructPancore(args) {
@@ -70,7 +71,7 @@ var constructPancore = function constructPancore(args) {
 
         // Constructs the myGenomes feature
         if (window.File && window.FileReader && window.FileList) {
-            myGenomes = constructMyGenomes({pancore : that});
+            myGenomes = constructMyGenomes({pancore : that, version : args.version});
         } else {
             $("#my-genome-error").removeClass("hide");
         }
@@ -95,6 +96,21 @@ var constructPancore = function constructPancore(args) {
      * Initializes the help popups
      */
     function initHelp() {
+        // tab help
+        $("#tabs li a span").on("mouseover", function () {
+            if ($(this).parent().attr("id") === "unique-peptide-finder-tab") {
+                $("#unique-peptide-finder-help").show();
+                $("#peptidome-clustering-help").hide();
+            } else {
+                $("#peptidome-clustering-help").show();
+                $("#unique-peptide-finder-help").hide();
+            }
+            $("#tab-help").stop(true, true).fadeIn(200);
+        });
+        $("#tabs li a span").on("mouseout", function () {
+            $("#tab-help").stop(true, true).fadeOut(200);
+        });
+
         $("#add-by-species-help").tooltip({placement : "right", container : "body"});
         $("#add-by-genome-help").tooltip({placement : "right", container : "body"});
     }
@@ -244,8 +260,9 @@ var constructPancore = function constructPancore(args) {
      */
     function loadData(bioproject_id, name) {
         if ((bioproject_id + "").charAt(0) === "u") {
-            var ids = myGenomes.getIds(bioproject_id, true);
-            sendToWorker("loadUserData", {"id" : bioproject_id, "name" : name, "ids" : ids});
+            myGenomes.getIds(bioproject_id, function (ids) {
+                sendToWorker("loadUserData", {"id" : bioproject_id, "name" : name, "ids" : ids});
+            });
         } else {
             sendToWorker("loadData", {"bioproject_id" : bioproject_id, "name" : name});
         }
