@@ -58,7 +58,7 @@ if Rails.application.config.unipept_error_mails
     :notifier => "email",
     :notifier_options => {
       :email_prefix => "[Unipept-dev] ",
-      :sender_address => %{"Unipept" <unipept@ugent.be>},
+      :sender_address => %{"Unipept-dev" <unipept@ugent.be>},
       :exception_recipients => Rails.application.config.unipept_error_mails_addresses
     },
     :per_hour => 1

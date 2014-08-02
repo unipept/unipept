@@ -1,4 +1,5 @@
 @import "vendor.less";
+@import "sequence_show.css.less";
 
 // Your custom LESS stylesheets goes here
 //
@@ -46,6 +47,14 @@
     background: white;
     cursor: inherit;
     display: block;
+}
+
+.input-xs {
+    height: 22px;
+    padding: 1px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
 }
 
 html, body {
@@ -332,69 +341,12 @@ select.dataset {
 input#pride_exp_id {
     width: 280px;
 }
-/*** single peptide page ***/
-/* single peptide page */
-#buttons-single {
-    float: right;
-    margin-top: -20px;
+#form-progress {
+    height: 30px;
+    margin-top: 5px;
 }
-#buttons-single button {
-    margin-left: 5px;
-}
-#lineageTree {
-    height: 500px;
-    width: 100%;
-    background-color: white;
-}
-#lineageTree .node {
-    width: 100px !important;
-    padding-top: 0px !important;
-}
-#sequence_table {
-    overflow: auto;
-    max-height: 500px;
-}
-.c0 {background: #f9f0ab;}
-.c1 {background: #e8e596;}
-.c2 {background: #f0e2a3;}
-.c3 {background: #ede487;}
-.c4 {background: #efd580;}
-.c5 {background: #f1cb82;}
-.c6 {background: #f1c298;}
-.c7 {background: #e8b598;}
-.c8 {background: #d5dda1;}
-.c9 {background: #c9d2b5;}
-.c10 {background: #aec1ad;}
-.c11 {background: #a7b8a8;}
-.c12 {background: #b49a3d;}
-.c13 {background: #b28647;}
-.c14 {background: #a97d32;}
-.c15 {background: #b68334;}
-.c16 {background: #d6a680;}
-.c17 {background: #dfad70;}
-.c18 {background: #a2765d;}
-.c19 {background: #9f6652;}
-.c20 {background: #b9763f;}
-.c21 {background: #bf6e5d;}
-.c22 {background: #af643c;}
-.c23 {background: #9b4c3f;}
-.c24 {background: #72659d;}
-.c25 {background: #8a6e9e;}
-.c26 {background: #8f5c85;}
-.c27 {background: #934b8b;}
-.c28 {background: #9d4e87;}
-.c29 {background: #92538c;}
-#sequence_table td {
-    font-size:10px;
-    line-height:1.1em;
-}
-#sequence_table th {
-    font-size:10px;
-    color: #369;
-    font-weight: bold;
-}
-.jit-autoadjust-label {
-    left: -100px;
+#form-progress .progress-bar{
+    padding-top: 6px;
 }
 
 /*** multi search result page ***/
@@ -459,6 +411,8 @@ span.dir {
 }
 #colorswap .dropdown-menu {
     margin-top: 0px;
+    padding-left: 15px;
+    padding-top: 0px;
     min-width: 135px;
 }
 #treeMap {
@@ -476,6 +430,9 @@ span.dir {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+#d3TreeView {
+    background-color: white;
+}
 #multisearch_list ul {
     padding-top: 0px;
     padding-bottom: 0px;
@@ -489,6 +446,11 @@ span.dir {
 }
 .tip-title {
     text-align:center;
+}
+/* treeview */
+#jitTreeView {
+    width: 100%;
+    height: 600px;
 }
 /* tree */
 #tree_data {
@@ -538,6 +500,10 @@ span.dir {
 #myGenomeProgress {
     height: 30px;
 }
+#myGenomeProgress .progress-bar{
+    padding-top: 6px;
+    max-width: 100%;
+}
 #my-genomes-table .handle {
     width: 30px;
 }
@@ -550,7 +516,7 @@ span.dir {
 #my-genomes-table .action {
     width: 30px;
 }
-#my-genomes-table tbody tr:not(.info) {
+#my-genomes-table tbody tr:not(.info):not(.edit):not(.old) {
     cursor: pointer;
     cursor: url(/openhand.cur), pointer;
     cursor: url(/openhand.cur) 7 5, pointer;
@@ -697,7 +663,7 @@ span.dir {
     padding:0 0 0 1.5em;
 }
 .treeView ul ul {
-    background:url('list-item-contents.png') repeat-y left;
+    background:asset-url('list-item-contents.png') repeat-y left;
 }
 .treeView li:last-child > ul {
     background-image:none;
@@ -774,4 +740,28 @@ tbody.dragging tr {
     border: none;
     width: 100%;
     height: 600px;
+}
+
+.zero-clipboard {
+  position: relative;
+  display: block;
+}
+.btn-clipboard {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 10;
+  display: block;
+  padding: 5px 8px;
+  font-size: 12px;
+  color: #777;
+  cursor: pointer;
+  background-color: #fff;
+  border: 1px solid #e1e1e8;
+  border-radius: 0 4px 0 4px;
+}
+.btn-clipboard-hover {
+  color: #fff;
+  background-color: steelblue;
+  border-color: steelblue;
 }

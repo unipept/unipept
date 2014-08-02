@@ -161,7 +161,7 @@ var constructSelectionTree = function constructSelectionTree(args) {
                 .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
                 .attr("title", "Class")
                 .attr("class", "collapsibleListOpen")
-                .attr("data-search", function (d) { return taxa[d.key]; })
+                .attr("data-search", function (d) { return taxa[d.key] ? taxa[d.key].toLowerCase() : "undefined"; })
             .append("ul");
         for (i = 1; i < 4; i++) {
             items = items.selectAll("li").data(function (d) { return d.values; })
@@ -170,7 +170,7 @@ var constructSelectionTree = function constructSelectionTree(args) {
                     .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
                     .attr("title", titles[i])
                     .attr("class", "collapsibleListOpen")
-                    .attr("data-search", function (d) { return taxa[d.key]; })
+                    .attr("data-search", function (d) { return taxa[d.key] ? taxa[d.key].toLowerCase() : "undefined"; })
                 .append("ul");
         }
         items = items.selectAll("li").data(function (d) { return d.values; })

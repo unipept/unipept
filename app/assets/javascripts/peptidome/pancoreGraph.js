@@ -251,6 +251,9 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      */
     function invokePopover(d) {
         var target = $(d3.event.target);
+        var $popover;
+        var graphOffset = $("#pancore_graph").offset();
+        var dotOffset = $(".dot._" + d.bioproject_id).first().offset();
         d3.event.stopPropagation();
         if (mouse.clickId === d.bioproject_id) {
             that.removePopoversAndHighlights();
@@ -273,6 +276,12 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
                 title: title,
                 content: getPopoverContent(d)});
             target.popover("show");
+
+            // Since bootstrap 3.2, the position of the bar element was calculated incorrectly, so we set the popover on the correct place manually.
+            $popover = $(".popover");
+            $popover.css("left", dotOffset.left - graphOffset.left + 20);
+            $popover.css("top", -75 + height / 2);
+            $popover.find(".arrow").css("top", "50%");
             target.attr("class", "bar pop");
             addPopoverBehaviour();
             mouse.clickId = d.bioproject_id;

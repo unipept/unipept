@@ -1,7 +1,7 @@
 # Unipept
 
 The [Unipept web application](http://unipept.ugent.be) supports biodiversity analysis of large and complex metaproteome samples.
-The 2.2 release of Unipept has 4 main features:
+The 2.3 release of Unipept has 4 main features:
 * Single peptide analysis
 * Milti-peptide analysis
 * Unique peptide finder
@@ -32,5 +32,6 @@ The following people contributed to this project:
 * Bart Mesuere ([@bmesuere](https://github.com/bmesuere)): PhD student and lead developer
 * Peter Dawyndt ([@pdawyndt](https://github.com/pdawyndt)): Group leader and PhD supervisor
 * Toon Willems ([@nudded](https://github.com/nudded)): Master's student 2013-2014
+* Ewan Higgs ([@ehiggs](https://github.com/ehiggs)): Ghent University HPC team
 * Peter Vandamme: PhD co-supervisor
 * Bart Devreese: PhD co-supervisor
