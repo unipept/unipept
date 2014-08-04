@@ -171,9 +171,13 @@ var constructPancore = function constructPancore(args) {
                 selector = "#sim_matrix svg";
                 tracking = "sim matrix";
                 filename = "similarity_matrix";
+                d3.selectAll(".inner.node circle").attr("class", "hidden");
             }
             logToGoogle("Pancore", "Save Image", tracking);
             triggerDownloadModal(selector, null, filename);
+            if ($(".tab-content .active").attr('id') === "sim_matrix_wrapper") {
+                d3.selectAll(".inner.node circle").attr("class", "");
+            }
         });
 
         $("#buttons-pancore").prepend("<button id='save-data' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-download'></span> Download data</button>");

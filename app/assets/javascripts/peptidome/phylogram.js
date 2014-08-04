@@ -198,8 +198,11 @@ function init_phylogram() {
         var diagonal = options.diagonal || d3.phylogram.rightAngleDiagonal();
         var vis = options.vis || d3.select(selector).append("svg:svg")
             .attr("width", w + 30)
-            .attr("height", h + 30)
-          .append("svg:g")
+            .attr("height", h + 30);
+        vis.append("style")
+            .attr("type", "text/css")
+            .html(".hidden{ visibility: hidden;}");
+        vis.append("svg:g")
             .attr("transform", "translate(20, 20)");
         var treeNodes = tree(nodes);
 
