@@ -1,5 +1,6 @@
 #!/bin/bash
-# extracts all .tsv.gz files, imports them and removes the files
+# extracts all .tsv.gz files, imports them into the unipept2 database
+# and removes the files
 
 function print {
     echo $(date -u) $1
