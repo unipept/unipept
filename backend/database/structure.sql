@@ -175,18 +175,6 @@ COLLATE = ascii_general_ci;
 
 
 -- -----------------------------------------------------
--- Table `unipept`.`counters`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `unipept`.`counters` (
-  `name` VARCHAR(31) NOT NULL ,
-  `value` INT UNSIGNED NOT NULL DEFAULT 0 ,
-  PRIMARY KEY (`name`) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = ascii
-COLLATE = ascii_general_ci;
-
-
--- -----------------------------------------------------
 -- Table `unipept`.`datasets`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `unipept`.`datasets` (
