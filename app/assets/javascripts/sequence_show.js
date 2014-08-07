@@ -363,8 +363,7 @@ function init_sequence_show(data, lcaId) {
               .attr("class", "node")
               .style("cursor", "pointer")
               .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
-              .on("click", click)
-              .on("contextmenu",rightClick);
+              .on("click", click);
 
           nodeEnter.append("circle")
               .attr("r", 1e-6)
