@@ -43,7 +43,7 @@
                   <% for rank in lineage do%>
                   <% if !rank.nil? %>
                       <% colors.store(rank.id, "c"+(i%30).to_s) if !colors.has_key?(rank.id) %>
-                      <td class="klik <%= colors[rank.id] %>"><%= rank.name %></td>
+                      <td class="<%= colors[rank.id] %>"><%= link_to rank.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + rank.id.to_s, :target => "_blank", :title => "Open in NCBI" %></td>
                   <% else %>
                       <td></td>
                   <% end %>
