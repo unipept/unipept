@@ -279,21 +279,21 @@ function init_sequence_show(data, lcaId) {
         draw(jsonData)
 
         function draw(data) {
-            widthScale.domain([0, data.data.count]);
-
             root = data;
             root.x0 = height / 2;
             root.y0 = 0;
 
-            // convert kids to children
-            function kids(d) {
-                if (d.kids) {
-                    d.kids.forEach(kids);
-                    d.children = d.kids;
-                    d.kids = null;
+            // add counts
+            function addCounts(d) {
+                if (d.children && d.children.length > 0) {
+                    d.children.forEach(addCounts);
+                    d.data.count = d.children.map(function (e) {return e.data.count;}).reduce(function (a,b) {return a + b;});
+                } else {
+                    d.data.count = 1;
                 }
             }
-            kids(root);
+            addCounts(root);
+            widthScale.domain([0, root.data.count]);
 
             // set everything visible
             function setVisible(d) {
