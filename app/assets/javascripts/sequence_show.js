@@ -316,6 +316,8 @@ function init_sequence_show(data, lcaId) {
                     d.color = "#2ca02c"; // green
                 } else if (d.name == "Viruses") {
                     d.color = "#d6616b"; // red
+                } else {
+                    d.color = "#1f77b4"; // blue
                 }
                 if (d.children) {
                     d.children.forEach( function (node) { color(node, d.color); });
@@ -334,10 +336,19 @@ function init_sequence_show(data, lcaId) {
                     d.children = null;
                 }
             }
-            collapseAll(root);
-            expand(root);
+            //collapseAll(root);
+            //expand(root);
 
             update(root);
+
+            function findLCA(d) {
+                if (d.children && d.children.length == 1) {
+                    findLCA(d.children[0]);
+                } else {
+                    rightClick(d);
+                }
+            }
+            findLCA(root);
         };
 
         d3.select(self.frameElement).style("height", "800px");
@@ -553,7 +564,9 @@ function init_sequence_show(data, lcaId) {
             expand(d);
 
             // redraw
-            d3.event.preventDefault();
+            try {
+                d3.event.preventDefault();
+            } catch (e){}
             update(d);
             centerNode(d);
 
