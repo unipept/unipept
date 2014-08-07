@@ -6,7 +6,7 @@ class DatasetsController < ApplicationController
   # GET /datasets
   # GET /datasets.xml
   def index
-    @title = "Multi-peptide Analysis"
+    @title = "Metaproteomics Analysis"
     @datasets = Dataset.includes(:dataset_items).all
 
     respond_to do |format|

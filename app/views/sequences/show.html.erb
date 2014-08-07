@@ -1,51 +1,68 @@
 <h1><%= @title %></h1>
-<h2>Information</h2>
+
 <% if @lineages.empty? %>
-    <p>No results were found for this sequence.</p>
+    <p class="lead">No results were found for <%= @original_sequence %>.</p>
 <% else %>
-  <ul>
-    <li>Lowest common ancestor: <%= link_to @lca_taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + @lca_taxon.id.to_s, :target => "_blank" %> (<%=@lca_taxon.rank%>)</li>
-        <li>Common lineage: <%= raw @common_lineage.length==0 ? "nothing" : @common_lineage.map{|t| link_to t.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + t.id.to_s, :target => "_blank" }.join(" > ") %></li>
-        <li><%= link_to "Blast "+@original_sequence , "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on&USER_FORMAT_DEFAULTS=on&PAGE=Proteins&PROGRAM=blastp&QUERY="+@original_sequence+"&GAPCOSTS=11%201&EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&DATABASE=nr&BLAST_PROGRAMS=blastp&MAX_NUM_SEQ=100&SHORT_QUERY_ADJUST=on&EXPECT=10&WORD_SIZE=3&MATRIX_NAME=BLOSUM62&COMPOSITION_BASED_STATISTICS=2&SHOW_OVERVIEW=on&SHOW_LINKOUT=on&ALIGNMENT_VIEW=Pairwise&MASK_CHAR=2&MASK_COLOR=1&GET_SEQUENCE=on&NEW_VIEW=on&NUM_OVERVIEW=100&DESCRIPTIONS=100&ALIGNMENTS=100&FORMAT_OBJECT=Alignment&FORMAT_TYPE=HTML&OLD_BLAST=false", :target => "_blank" %></li>
-    </ul>
+<p class="lead"><%= @original_sequence %> was found in <b><%= @entries.size %></b> <%= 'Uniprot record'.pluralize(@entries.size) %> with a lowest common ancestor of <b><%= @lca_taxon.name %></b>.</p>
+<p>Summary of the analysis:</p>
+<ul>
+  <li>Lowest common ancestor: <%= link_to @lca_taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + @lca_taxon.id.to_s, :target => "_blank", :title => @lca_taxon.rank %> (<%=@lca_taxon.rank%>)</li>
+  <li>Common lineage: <%= raw @common_lineage.length==0 ? "nothing" : @common_lineage.map{|t| link_to t.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + t.id.to_s, :target => "_blank", :title => t.rank }.join(" > ") %></li>
+  <li><%= link_to "Blast "+@original_sequence , "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on&USER_FORMAT_DEFAULTS=on&PAGE=Proteins&PROGRAM=blastp&QUERY="+@original_sequence+"&GAPCOSTS=11%201&EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&DATABASE=nr&BLAST_PROGRAMS=blastp&MAX_NUM_SEQ=100&SHORT_QUERY_ADJUST=on&EXPECT=10&WORD_SIZE=3&MATRIX_NAME=BLOSUM62&COMPOSITION_BASED_STATISTICS=2&SHOW_OVERVIEW=on&SHOW_LINKOUT=on&ALIGNMENT_VIEW=Pairwise&MASK_CHAR=2&MASK_COLOR=1&GET_SEQUENCE=on&NEW_VIEW=on&NUM_OVERVIEW=100&DESCRIPTIONS=100&ALIGNMENTS=100&FORMAT_OBJECT=Alignment&FORMAT_TYPE=HTML&OLD_BLAST=false", :target => "_blank", :title => "Open in BLAST"%></li>
+</ul>
+<div id="single-peptide-tabs">
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#lineage-tree" id="lineage-tree-tab"data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-info-sign"></span></a></li>
+    <li><a href="#lineage-table" id="lineage-table-tab" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-info-sign"></span></a></li>
+    <li><a href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
+</ul>
 
-    <h2>Lineage</h2>
-    <h3>Lineage tree</h3>
+<div class="tab-help" id="tab-help">
+  <div id="lineage-tree-help">
     <p>This interactive tree bundles the complete taxonomic lineages of all UniProtKB records whose protein sequence contains <%= @original_sequence %>. You can click on nodes to expand them. Take into account that due to gaps in the hierarchical structure of the NCBI taxonomy, taxonomic levels are not always properly aligned in the tree view.</p>
-    <div id="buttons-single"></div>
-    <div id="lineageTree"></div>
-
-    <h3>Lineage table</h3>
+  </div>
+  <div id="lineage-table-help">
     <p>This table shows the complete taxonomic lineages of all UniProtKB records whose protein sequence contains <%= @original_sequence %>. Each row represents the complete taxonomic lineage of a single UniProtKB record. The first column contains the name extracted from the UniProtKB record, follow by columns representing valid taxonomic ranks ordered from superkingdom on the left to forma on the right. Only ranks used in the complete lineages of the records in which the peptide was found are displayed as columns in the table. To ease the interpretation of the table, rows are ordered according to the taxonomic names in the taxonomic rank columns and cells containing the same taxonomic name are marked with the same color code per column.</p>
-    <div id="sequence_table">
-        <% colors = Hash.new %>
-        <table class="table table-condensed">
-        <thead>
-        <tr>
-            <% for rank in @table_ranks do%>
-                <th><%= rank %></th>
-            <% end %>
-        </tr>
-        </thead>
-        <% i = -1 %>
-        <% for lineage in @table_lineages do%>
-            <% i += 1 %>
-            <tr>
-                <td><strong><%= lineage.delete_at(0) %></strong></td>
-                <% for rank in lineage do%>
-                <% if !rank.nil? %>
-                    <% colors.store(rank.id, "c"+(i%30).to_s) if !colors.has_key?(rank.id) %>
-                    <td class="klik <%= colors[rank.id] %>"><%= rank.name %></td>
-                <% else %>
-                    <td></td>
-                <% end %>
-                <% end %>
-            </tr>
-        <% end %>
-        </table>
+  </div>
+</div>
+
+<div class="tab-content">
+    <div class="tab-pane active" id="lineage-tree">
+      <div id="buttons-single"></div>
+      <div id="lineageTree"></div>
     </div>
 
-    <h2>Protein info</h2>
+    <div class="tab-pane" id="lineage-table">
+      <div id="sequence_table">
+          <% colors = Hash.new %>
+          <table class="table table-condensed">
+          <thead>
+          <tr>
+              <% for rank in @table_ranks do%>
+                  <th><%= rank %></th>
+              <% end %>
+          </tr>
+          </thead>
+          <% i = -1 %>
+          <% for lineage in @table_lineages do%>
+              <% i += 1 %>
+              <tr>
+                  <td><strong><%= lineage.delete_at(0) %></strong></td>
+                  <% for rank in lineage do%>
+                  <% if !rank.nil? %>
+                      <% colors.store(rank.id, "c"+(i%30).to_s) if !colors.has_key?(rank.id) %>
+                      <td class="<%= colors[rank.id] %>"><%= link_to rank.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + rank.id.to_s, :target => "_blank", :title => "Open in NCBI" %></td>
+                  <% else %>
+                      <td></td>
+                  <% end %>
+                  <% end %>
+              </tr>
+          <% end %>
+          </table>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="proteins">
       <table class="table table-condensed table-hover protein-info">
           <thead><tr>
             <th class="id">Uniprot ID</th>
@@ -74,12 +91,16 @@
             <% end %>
           <% end %>
       </table>
+    </div>
+</div>
+</div>
 
     <!-- JIT Library File -->
     <!--[if IE]><%= javascript_include_tag asset_path("jit/Extras/excanvas.js") %><![endif]-->
     <script type="text/javascript">
         $(function () {init_sequence_show(<%= raw(@root)%>, <%= @lca_taxon.id %>);});
     </script>
+
 <% end %>
 
 <%= render 'shared/save_image_modal' %>

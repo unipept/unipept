@@ -2,8 +2,8 @@
 
 The [Unipept web application](http://unipept.ugent.be) supports biodiversity analysis of large and complex metaproteome samples.
 The 2.4 release of Unipept has 4 main features:
-* Single peptide analysis
-* Milti-peptide analysis
+* Tryptic peptide analysis (previously single peptide analysis)
+* Metaproteomics analysis (previously multi-peptide analysis)
 * Unique peptide finder
 * Peptidome clustering
 
