@@ -227,7 +227,7 @@ class SequencesController < ApplicationController
     end
 
     # prepare for output
-    @title = "Multi-peptide analysis result"
+    @title = "Metaproteomics analysis result"
     @title += " of " + search_name unless search_name.nil? || search_name == ""
     @prideURL = "http://www.ebi.ac.uk/pride/experiment.do?experimentAccessionNumber=#{search_name[/[0-9]*$/]}" if search_name.include? "Pride experiment"
 
