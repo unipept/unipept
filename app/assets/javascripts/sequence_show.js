@@ -12,8 +12,31 @@ function init_sequence_show(data, lcaId) {
     // enable the external link popovers
     addExternalLinks();
 
+    // add the tab help
+    initHelp();
+
 
     /******************* Functions ***********************/
+
+    /**
+     * Initializes the help popups
+     */
+    function initHelp() {
+        // tab help
+        $(".nav-tabs li a span").on("mouseover", function () {
+            if ($(this).parent().attr("id") === "lineage-tree-tab") {
+                $("#lineage-tree-help").show();
+                $("#lineage-table-help").hide();
+            } else {
+                $("#lineage-table-help").show();
+                $("#lineage-tree-help").hide();
+            }
+            $("#tab-help").stop(true, true).fadeIn(200);
+        });
+        $(".nav-tabs li a span").on("mouseout", function () {
+            $("#tab-help").stop(true, true).fadeOut(200);
+        });
+    }
 
     function addExternalLinks() {
         // Add handler to the autosort-button
