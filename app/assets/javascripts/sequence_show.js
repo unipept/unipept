@@ -580,7 +580,7 @@ function init_sequence_show(data, lcaId) {
             var scale = zoomListener.scale(),
                 x = -source.y0,
                 y = -source.x0;
-            x = x * scale + width / 2;
+            x = x * scale + width / 8;
             y = y * scale + height / 2;
             svg.transition()
                 .duration(duration)
