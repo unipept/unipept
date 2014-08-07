@@ -81,6 +81,7 @@ class SequencesController < ApplicationController
     end
 
     #don't show the root when we don't need it
+    @root.name = "organism"
     @root = @root.children.count > 1 ? Oj.dump(@root) : Oj.dump(@root.children[0])
 
     #Table stuff
