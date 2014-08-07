@@ -317,6 +317,16 @@ function init_sequence_show(data, lcaId) {
             }
             root.children.forEach( function (node) {color(node); });
 
+            var LCA;
+            function findLCA(d) {
+                if (d.children && d.children.length == 1) {
+                    findLCA(d.children[0]);
+                } else {
+                    LCA = d;
+                }
+            }
+            findLCA(root);
+
             // collapse everything
             function collapseAll(d) {
                 if (d.children && d.children.length == 0) {
@@ -328,19 +338,10 @@ function init_sequence_show(data, lcaId) {
                     d.children = null;
                 }
             }
-            //collapseAll(root);
-            //expand(root);
+            collapseAll(LCA);
 
             update(root);
-
-            function findLCA(d) {
-                if (d.children && d.children.length == 1) {
-                    findLCA(d.children[0]);
-                } else {
-                    rightClick(d);
-                }
-            }
-            findLCA(root);
+            highlight(LCA);
         };
 
         d3.select(self.frameElement).style("height", "800px");
@@ -497,19 +498,19 @@ function init_sequence_show(data, lcaId) {
           });
         }
 
-        // Expands a node and its children
-        function expand(d) {
-            if (d._children) {
-                d.children = d._children;
-                d._children = null;
+        // Expands a node for i levels
+        function expand(d, i) {
+            if (typeof i === "undefined") {
+                i = 1;
             }
-            if (d.children) {
-                d.children.forEach(function (c) {
-                    if (c._children) {
-                        c.children = c._children;
-                        c._children = null;
-                    }
-                });
+            if (i > 0) {
+                if (d._children) {
+                    d.children = d._children;
+                    d._children = null;
+                }
+                if (d.children) {
+                    d.children.forEach(function (c) {expand(c, i-1)});
+                }
             }
         }
 
@@ -535,8 +536,8 @@ function init_sequence_show(data, lcaId) {
             centerNode(d);
         }
 
-        // Sets the width of the right clicked node to 100%
-        function rightClick(d) {
+        // Sets the width of this node to 100%
+        function highlight(d) {
             if (d === rightClicked && d !== root) {
                 rightClick(root);
                 return;
@@ -550,12 +551,9 @@ function init_sequence_show(data, lcaId) {
             // scale the lines
             widthScale.domain([0, d.data.count]);
 
-            expand(d);
+            expand(d, 4);
 
             // redraw
-            try {
-                d3.event.preventDefault();
-            } catch (e){}
             update(d);
             centerNode(d);
 
