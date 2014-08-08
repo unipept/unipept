@@ -72,25 +72,20 @@ function init_sequence_show(data, lcaId) {
             $("#buttons-single").prepend("<button id='zoom-btn-lineage' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-resize-full'></span> Enter full screen</button>");
             $("#zoom-btn-lineage").click(function () {
                 logToGoogle("Single Peptide", "Full Screen");
-
                 window.fullScreenApi.requestFullScreen($("#lineageTree").get(0));
             });
             $(document).bind(fullScreenApi.fullScreenEventName, resizeFullScreen);
         }
         function resizeFullScreen() {
             setTimeout(function () {
-                var height = 500;
+                var width = 916,
+                    height = 600;
                 if (window.fullScreenApi.isFullScreen()) {
+                    width = $(window).width();
                     height = $(window).height();
-                    $("#lineageTree").height(height);
-                    st.config.levelsToShow = 50;
                 }
-                else {
-                    $("#lineageTree").height(500);
-                    st.config.levelsToShow = 4;
-                }
-                st.canvas.resize($("#lineageTree").width(), height);
-                st.refresh();
+                $("#lineageTree svg").attr("width", width);
+                $("#lineageTree svg").attr("height", height);
             }, 1000);
         }
     }
