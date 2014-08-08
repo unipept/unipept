@@ -1,3 +1,3 @@
 #!/bin/bash
-java -cp "backend/java:backend/java/bin:backend/java/bin/:backend/java/lib/mysql.jar" -Xmx512m tools/commandline/TaxonInvalidator
-java -cp "backend/java:backend/java/bin:backend/java/bin/:backend/java/lib/mysql.jar" -Xmx512m tools/commandline/PeptideLoader lineages
+backend/java/bin/taxon_invalidator
+backend/java/bin/peptide_loader lineages
