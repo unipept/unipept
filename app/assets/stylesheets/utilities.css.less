@@ -1,0 +1,102 @@
+// file containing general utilities
+
+
+// splits the page into 2 columns with or without separator line in the middle
+.split {
+    overflow: hidden;
+}
+.split-left,
+.split-right {
+    width: 448px;
+    float: left;
+    padding-bottom: 100%;
+    margin-bottom: -100%;
+}
+.split-left {
+    padding-right: 9px;
+    border-right: 1px solid @hairlinegray;
+}
+.split-right {
+    padding-left: 9px;
+}
+
+// visual clear
+.visualClear {
+    display: block;
+    clear: both;
+}
+
+// Fancy file upload button
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 999px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+// highlight an element
+.flash {
+  animation: flash 2s ease-out;
+  animation-iteration-count: 1;
+
+  -webkit-animation: flash 2s ease-out;
+  -webkit-animation-iteration-count: 1;
+}
+@keyframes flash {
+    0% {background-color:#FFFF9C;}
+    100% {background-color:none;}
+}
+@-webkit-keyframes flash {
+    0% {background-color:#FFFF9C;}
+    100% {background-color:none;}
+}
+
+// The save as modal
+#save-as-modal img {
+    width: 100%;
+}
+#save-as-modal .modal-footer {
+    margin-top: 0px;
+}
+#save-as-modal .buttons button {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+// Zero clipboard
+.zero-clipboard {
+  position: relative;
+  display: block;
+}
+.btn-clipboard {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 10;
+  display: block;
+  padding: 5px 8px;
+  font-size: 12px;
+  color: #777;
+  cursor: pointer;
+  background-color: #fff;
+  border: 1px solid #e1e1e8;
+  border-radius: 0 4px 0 4px;
+}
+.btn-clipboard-hover {
+  color: #fff;
+  background-color: steelblue;
+  border-color: steelblue;
+}
