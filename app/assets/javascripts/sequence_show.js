@@ -1,4 +1,4 @@
-function init_sequence_show(data, lcaId) {
+function init_sequence_show(data) {
 
     // set up the fancy tree
     initLineageTree(data);
@@ -39,9 +39,8 @@ function init_sequence_show(data, lcaId) {
     }
 
     function addExternalLinks() {
-        // Add handler to the autosort-button
+        // Add handler to the external links buttons
         $(".externalLinks-button").parent().mouseenter(function () {
-            console.log('enter');
             if (!$(this).hasClass("open")) {
                 $(this).find(".externalLinks-button").dropdown("toggle");
             }
@@ -98,11 +97,8 @@ function init_sequence_show(data, lcaId) {
             width = 916 - margin.right - margin.left,
             height = 600 - margin.top - margin.bottom;
 
-        var rightClicked,
-            zoomEnd = 0,
-            tooltipTimer;
-
-        var i = 0,
+        var zoomEnd = 0,
+            i = 0,
             duration = 750,
             root;
 
@@ -110,9 +106,9 @@ function init_sequence_show(data, lcaId) {
             .size([height, width]);
 
         var diagonal = d3.svg.diagonal()
-            .projection(function(d) { return [d.y, d.x]; });
+            .projection(function (d) { return [d.y, d.x]; });
 
-        var widthScale = d3.scale.linear().range([2,105]);
+        var widthScale = d3.scale.linear().range([2, 105]);
 
         // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
         var zoomListener = d3.behavior.zoom()
@@ -130,7 +126,7 @@ function init_sequence_show(data, lcaId) {
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
           .append("g");
 
-        draw(jsonData)
+        draw(jsonData);
 
         function draw(data) {
             root = data;
@@ -141,7 +137,7 @@ function init_sequence_show(data, lcaId) {
             function addCounts(d) {
                 if (d.children && d.children.length > 0) {
                     d.children.forEach(addCounts);
-                    d.data.count = d.children.map(function (e) {return e.data.count;}).reduce(function (a,b) {return a + b;});
+                    d.data.count = d.children.map(function (e) {return e.data.count; }).reduce(function (a, b) {return a + b; });
                 } else {
                     d.data.count = 1;
                 }
@@ -162,26 +158,26 @@ function init_sequence_show(data, lcaId) {
             function color(d, c) {
                 if (c) {
                     d.color = c;
-                } else if (d.name == "Bacteria") {
+                } else if (d.name === "Bacteria") {
                     d.color = "#1f77b4"; // blue
-                } else if (d.name == "Archaea") {
+                } else if (d.name === "Archaea") {
                     d.color = "#ff7f0e"; // orange
-                } else if (d.name == "Eukaryota") {
+                } else if (d.name === "Eukaryota") {
                     d.color = "#2ca02c"; // green
-                } else if (d.name == "Viruses") {
+                } else if (d.name === "Viruses") {
                     d.color = "#d6616b"; // red
                 } else {
                     d.color = "#1f77b4"; // blue
                 }
                 if (d.children) {
-                    d.children.forEach( function (node) { color(node, d.color); });
+                    d.children.forEach(function (node) { color(node, d.color); });
                 }
             }
-            root.children.forEach( function (node) {color(node); });
+            root.children.forEach(function (node) {color(node); });
 
             var LCA;
             function findLCA(d) {
-                if (d.children && d.children.length == 1) {
+                if (d.children && d.children.length === 1) {
                     findLCA(d.children[0]);
                 } else {
                     LCA = d;
@@ -191,7 +187,7 @@ function init_sequence_show(data, lcaId) {
 
             // collapse everything
             function collapseAll(d) {
-                if (d.children && d.children.length == 0) {
+                if (d.children && d.children.length === 0) {
                     d.children = null;
                 }
                 if (d.children) {
@@ -204,31 +200,31 @@ function init_sequence_show(data, lcaId) {
 
             update(root);
             highlight(LCA);
-        };
+        }
 
         d3.select(self.frameElement).style("height", "800px");
 
         function update(source) {
 
-          // Compute the new tree layout.
-          var nodes = tree.nodes(root).reverse(),
-              links = tree.links(nodes);
+            // Compute the new tree layout.
+            var nodes = tree.nodes(root).reverse(),
+                links = tree.links(nodes);
 
-          // Normalize for fixed-depth.
-          nodes.forEach(function(d) { d.y = d.depth * 180; });
+            // Normalize for fixed-depth.
+            nodes.forEach(function (d) { d.y = d.depth * 180; });
 
-          // Update the nodes…
-          var node = svg.selectAll("g.node")
-              .data(nodes, function(d) { return d.id || (d.id = ++i); });
+            // Update the nodes
+            var node = svg.selectAll("g.node")
+              .data(nodes, function (d) { return d.id || (d.id = ++i); });
 
-          // Enter any new nodes at the parent's previous position.
-          var nodeEnter = node.enter().append("g")
+            // Enter any new nodes at the parent's previous position.
+            var nodeEnter = node.enter().append("g")
               .attr("class", "node")
               .style("cursor", "pointer")
-              .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
+              .attr("transform", function (d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
               .on("click", click);
 
-          nodeEnter.append("circle")
+            nodeEnter.append("circle")
               .attr("r", 1e-6)
               .style("stroke-width", "1.5px")
               .style("stroke", function (d) {
@@ -238,7 +234,7 @@ function init_sequence_show(data, lcaId) {
                       return "#aaa";
                   }
               })
-              .style("fill", function(d) {
+              .style("fill", function (d) {
                   if (d.selected) {
                       return d._children ? d.color || "#aaa" : "#fff";
                   } else {
@@ -247,20 +243,20 @@ function init_sequence_show(data, lcaId) {
 
               });
 
-          nodeEnter.append("text")
+            nodeEnter.append("text")
               .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
               .attr("dy", ".35em")
-              .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
+              .attr("text-anchor", function (d) { return d.children || d._children ? "end" : "start"; })
               .text(function(d) { return d.name; })
               .style("font", "10px sans-serif")
               .style("fill-opacity", 1e-6);
 
-          // Transition nodes to their new position.
-          var nodeUpdate = node.transition()
+            // Transition nodes to their new position.
+            var nodeUpdate = node.transition()
               .duration(duration)
-              .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
+              .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; });
 
-          nodeUpdate.select("circle")
+            nodeUpdate.select("circle")
               .attr("r", function(d) {
                   if (d.selected) {
                       return widthScale(d.data.count) / 2;
@@ -269,7 +265,7 @@ function init_sequence_show(data, lcaId) {
                   }
 
               })
-              .style("fill-opacity", function(d) { return d._children ? 1 : 0; })
+              .style("fill-opacity", function (d) { return d._children ? 1 : 0; })
               .style("stroke", function (d) {
                   if (d.selected) {
                       return d.color || "#aaa";
@@ -277,7 +273,7 @@ function init_sequence_show(data, lcaId) {
                       return "#aaa";
                   }
               })
-              .style("fill", function(d) {
+              .style("fill", function (d) {
                   if (d.selected) {
                       return d._children ? d.color || "#aaa" : "#fff";
                   } else {
@@ -286,27 +282,27 @@ function init_sequence_show(data, lcaId) {
 
               });
 
-          nodeUpdate.select("text")
+            nodeUpdate.select("text")
               .style("fill-opacity", 1);
 
-          // Transition exiting nodes to the parent's new position.
-          var nodeExit = node.exit().transition()
+            // Transition exiting nodes to the parent's new position.
+            var nodeExit = node.exit().transition()
               .duration(duration)
               .attr("transform", function (d) { return "translate(" + source.y + "," + source.x + ")"; })
               .remove();
 
-          nodeExit.select("circle")
+            nodeExit.select("circle")
               .attr("r", 1e-6);
 
-          nodeExit.select("text")
+            nodeExit.select("text")
               .style("fill-opacity", 1e-6);
 
-          // Update the links…
-          var link = svg.selectAll("path.link")
+            // Update the links…
+            var link = svg.selectAll("path.link")
               .data(links, function (d) { return d.target.id; });
 
-          // Enter any new links at the parent's previous position.
-          link.enter().insert("path", "g")
+            // Enter any new links at the parent's previous position.
+            link.enter().insert("path", "g")
               .attr("class", "link")
               .style("fill", "none")
               .style("stroke-opacity", "0.5")
@@ -320,12 +316,12 @@ function init_sequence_show(data, lcaId) {
               })
               .style("stroke-width", 1e-6)
               .attr("d", function (d) {
-                var o = {x: source.x0, y: source.y0};
-                return diagonal({source: o, target: o});
+                  var o = {x: source.x0, y: source.y0};
+                  return diagonal({source: o, target: o});
               });
 
-          // Transition links to their new position.
-          link.transition()
+            // Transition links to their new position.
+            link.transition()
               .duration(duration)
               .attr("d", diagonal)
               .style("stroke", function (d) {
@@ -343,21 +339,21 @@ function init_sequence_show(data, lcaId) {
                   }
               });
 
-          // Transition exiting nodes to the parent's new position.
-          link.exit().transition()
+            // Transition exiting nodes to the parent's new position.
+            link.exit().transition()
               .duration(duration)
               .style("stroke-width", 1e-6)
-              .attr("d", function(d) {
-                var o = {x: source.x, y: source.y};
-                return diagonal({source: o, target: o});
+              .attr("d", function (d) {
+                  var o = {x: source.x, y: source.y};
+                  return diagonal({source: o, target: o});
               })
               .remove();
 
-          // Stash the old positions for transition.
-          nodes.forEach(function(d) {
-            d.x0 = d.x;
-            d.y0 = d.y;
-          });
+            // Stash the old positions for transition.
+            nodes.forEach(function (d) {
+                d.x0 = d.x;
+                d.y0 = d.y;
+            });
         }
 
         // Expands a node for i levels
@@ -371,7 +367,7 @@ function init_sequence_show(data, lcaId) {
                     d._children = null;
                 }
                 if (d.children) {
-                    d.children.forEach(function (c) {expand(c, i-1)});
+                    d.children.forEach(function (c) {expand(c, i-1);});
                 }
             }
         }
@@ -400,12 +396,6 @@ function init_sequence_show(data, lcaId) {
 
         // Sets the width of this node to 100%
         function highlight(d) {
-            if (d === rightClicked && d !== root) {
-                rightClick(root);
-                return;
-            }
-            rightClicked = d;
-
             // set Selection properties
             setSelected(root, false);
             setSelected(d, true);
@@ -449,5 +439,4 @@ function init_sequence_show(data, lcaId) {
             zoomListener.translate([x, y]);
         }
     }
-
 }
