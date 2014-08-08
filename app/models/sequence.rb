@@ -110,25 +110,6 @@ class Sequence < ActiveRecord::Base
     end
   end
 
-  # Calculates the LCAs for all sequences
-  def self.calculate_lcas(equate_il = true)
-    slice_size = 1000
-    id = Counter.find_by_name("lca_counter")
-    id = Counter.new({:name => "lca_counter", :value => 0}, :without_protection => true) if id.nil?
-    max = Sequence.find(:first, :order => 'id DESC').id
-    while id.value < max
-      if id.value % 100000 == 0
-        File.open("public/progress", 'w') { |file| file.write("LCA calculator#" + ActionController::Base.helpers.number_with_precision((id.value * 100.0 / max), :precision => 2) ) }
-      end
-      ActiveRecord::Base.transaction do
-        sequences = Sequence.find(:all, :conditions => ['id BETWEEN ? AND ?', id.value, id.value + slice_size])
-        sequences.each{|s| s.calculate_lca(equate_il)}
-      end
-      id.value += slice_size;
-      id.save;
-    end
-  end
-
   # Processes the input file and writes the results in csv format to the output file
   def self.batch_process(input, output = "output.csv", equate_il = true, filter_duplicates = true, handle_missed = false)
     file = File.open(input, 'r')

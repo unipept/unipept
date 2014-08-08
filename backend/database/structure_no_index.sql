@@ -14,13 +14,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`taxons` (
   `rank` ENUM('no rank', 'superkingdom', 'kingdom', 'subkingdom', 'superphylum', 'phylum', 'subphylum', 'superclass', 'class', 'subclass', 'infraclass', 'superorder', 'order', 'suborder', 'infraorder', 'parvorder', 'superfamily', 'family', 'subfamily', 'tribe', 'subtribe', 'genus', 'subgenus', 'species group', 'species subgroup', 'species', 'subspecies', 'varietas', 'forma' ) NULL DEFAULT NULL ,
   `parent_id` MEDIUMINT UNSIGNED NULL DEFAULT NULL ,
   `valid_taxon` BIT NOT NULL DEFAULT 1 ,
-  PRIMARY KEY (`id`) ,
-  INDEX `fk_taxon_taxon` (`parent_id` ASC) ,
-  CONSTRAINT `fk_taxon_taxon`
-    FOREIGN KEY (`parent_id` )
-    REFERENCES `unipept`.`taxons` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_general_ci;
@@ -36,13 +30,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`uniprot_entries` (
   `taxon_id` MEDIUMINT UNSIGNED NOT NULL ,
   `type` ENUM('swissprot', 'trembl') NOT NULL ,
   `protein` TEXT NOT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `fk_uniprot_entries_taxons` (`taxon_id` ASC) ,
-  CONSTRAINT `fk_uniprot_entries_taxons`
-    FOREIGN KEY (`taxon_id` )
-    REFERENCES `unipept`.`taxons` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
 COLLATE = ascii_general_ci;
@@ -81,14 +69,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`lineages` (
   `subspecies` MEDIUMINT NULL DEFAULT NULL ,
   `varietas` MEDIUMINT NULL DEFAULT NULL ,
   `forma` MEDIUMINT NULL DEFAULT NULL ,
-  PRIMARY KEY (`taxon_id`) ,
-  INDEX `idx_species` (`species` ASC) ,
-  INDEX `fk_lineages_taxons` (`taxon_id` ASC) ,
-  CONSTRAINT `fk_lineages_taxons`
-    FOREIGN KEY (`taxon_id` )
-    REFERENCES `unipept`.`taxons` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`taxon_id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
 COLLATE = ascii_general_ci;
@@ -102,20 +83,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
   `sequence` VARCHAR(50) NOT NULL ,
   `lca` MEDIUMINT UNSIGNED NULL ,
   `lca_il` MEDIUMINT UNSIGNED NULL ,
-  PRIMARY KEY (`id`) ,
-  UNIQUE INDEX `uidx_sequence` (`sequence` ASC) ,
-  INDEX `fk_sequences_taxons` (`lca` ASC) ,
-  INDEX `fk_sequences_taxons_2` (`lca_il` ASC) ,
-  CONSTRAINT `fk_sequences_taxons`
-    FOREIGN KEY (`lca` )
-    REFERENCES `unipept`.`taxons` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_sequences_taxons_2`
-    FOREIGN KEY (`lca_il` )
-    REFERENCES `unipept`.`taxons` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii;
 
@@ -129,25 +97,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`peptides` (
   `original_sequence_id` INT UNSIGNED NOT NULL ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
   `position` SMALLINT UNSIGNED NOT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `fk_peptides_sequences` (`sequence_id` ASC) ,
-  INDEX `fk_peptides_uniprot_entries` (`uniprot_entry_id` ASC) ,
-  INDEX `fk_peptides_original_sequences` (`original_sequence_id` ASC) ,
-  CONSTRAINT `fk_peptides_sequences`
-    FOREIGN KEY (`sequence_id` )
-    REFERENCES `unipept`.`sequences` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_peptides_uniprot_entries`
-    FOREIGN KEY (`uniprot_entry_id` )
-    REFERENCES `unipept`.`uniprot_entries` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_peptides_original_sequences`
-    FOREIGN KEY (`original_sequence_id` )
-    REFERENCES `unipept`.`sequences` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
 COLLATE = ascii_general_ci;
@@ -161,14 +111,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`embl_cross_references` (
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
   `protein_id` VARCHAR(15) NULL ,
   `sequence_id` VARCHAR(15) NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `fk_embl_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
-  INDEX `idx_sequence_id` (`sequence_id` ASC) ,
-  CONSTRAINT `fk_uniprot_cross_reference_uniprot_entries`
-    FOREIGN KEY (`uniprot_entry_id` )
-    REFERENCES `unipept`.`uniprot_entries` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
 COLLATE = ascii_general_ci;
@@ -234,10 +177,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`genomes` (
   `insdc_id` VARCHAR(15) NOT NULL ,
   `status` VARCHAR(20) NOT NULL ,
   `taxon_id` MEDIUMINT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `idx_insdc_id` (`insdc_id` ASC) ,
-  INDEX `idx_bioproject_id` (`bioproject_id` ASC) ,
-  INDEX `idx_taxon_id` (`taxon_id` ASC) )
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
 COLLATE = ascii_general_ci;
@@ -251,13 +191,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`refseq_cross_references` (
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
   `protein_id` VARCHAR(15) NULL ,
   `sequence_id` VARCHAR(15) NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `fk_refseq_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
-  CONSTRAINT `fk_refseq_cross_reference_uniprot_entries`
-    FOREIGN KEY (`uniprot_entry_id` )
-    REFERENCES `unipept`.`uniprot_entries` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
 COLLATE = ascii_general_ci;
@@ -270,13 +204,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`go_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
   `go_id` VARCHAR(12) NOT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `fk_go_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
-  CONSTRAINT `fk_go_cross_reference_uniprot_entries`
-    FOREIGN KEY (`uniprot_entry_id` )
-    REFERENCES `unipept`.`uniprot_entries` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
 COLLATE = ascii_general_ci;
@@ -289,13 +217,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`ec_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
   `ec_id` VARCHAR(12) NOT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `fk_ec_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
-  CONSTRAINT `fk_ec_cross_reference_uniprot_entries`
-    FOREIGN KEY (`uniprot_entry_id` )
-    REFERENCES `unipept`.`uniprot_entries` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
 COLLATE = ascii_general_ci;
