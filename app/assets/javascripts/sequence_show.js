@@ -60,7 +60,7 @@ function init_sequence_show(data, lcaId) {
         $("#buttons-single").prepend("<button id='save-btn-lineage' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-download'></span> Save tree as image</button>");
         $("#save-btn-lineage").click(function () {
             logToGoogle("Single Peptide", "Save Image");
-            triggerDownloadModal(null, "#lineageTree", "unipept_lineage");
+            triggerDownloadModal("#lineageTree svg", null, "unipept_treeview");
         });
     }
 
