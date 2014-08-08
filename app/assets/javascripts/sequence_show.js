@@ -23,7 +23,7 @@ function init_sequence_show(data, lcaId) {
      */
     function initHelp() {
         // tab help
-        $(".nav-tabs li a span").on("mouseover", function () {
+        $(".nav-tabs li a span.help").on("mouseover", function () {
             if ($(this).parent().attr("id") === "lineage-tree-tab") {
                 $("#lineage-tree-help").show();
                 $("#lineage-table-help").hide();
