@@ -1,0 +1,40 @@
+// Your custom LESS stylesheets goes here
+//
+// Since bootstrap was imported above you have access to its mixins which
+// you may use and inherit here
+//
+// If you'd like to override bootstrap's own variables, you can do so here as well
+// See http://getbootstrap.com/customize/#less-variables for their names and documentation
+//
+// Example:
+// @linkColor: #ff0000;
+
+@hairlinegray: #dddddd;
+
+// Overrides
+@font-size-base: 13px;
+@baseLineHeight: 18px;
+@line-height-base: 1.3846153846;
+@icon-font-path: "/assets/bootstrap/";
+
+// Disable responsiveness
+.container {
+    max-width: none !important;
+    width: 940px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+// extra small input elements
+.input-xs {
+    height: 22px;
+    padding: 1px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+}
+
+// fix position errors
+.tab-content {
+    position: relative;
+}

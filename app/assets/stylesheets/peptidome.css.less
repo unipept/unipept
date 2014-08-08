@@ -1,0 +1,159 @@
+// styles related to the peptidome analysis page
+
+// tabs
+.tab-help .help-icon {
+    font-size: 50pt;
+    margin-bottom: 0px;
+}
+#tabs>li.active>a:hover {
+    background-color: @nav-link-hover-bg !important;
+}
+
+// pancore graph
+#pancore_graph .bar {
+    cursor: pointer;
+    cursor: url(/openhand.cur), pointer;
+    cursor: url(/openhand.cur) 7 5, pointer;
+}
+#pancore_graph #trash {
+    cursor: pointer;
+    cursor: url(/closedhand.cur), pointer;
+    cursor: url(/closedhand.cur) 7 5, pointer;
+}
+.legend {
+    cursor: pointer;
+}
+#pancore_graph div.tip {
+    .translate3d(0, 0, 0);
+}
+.popover-buttons {
+    margin-top: 5px;
+    min-width: 220px;
+}
+#download-peptides .dropdown-menu {
+    margin-top: 0px;
+}
+#download-peptides #download-peptides-toggle {
+    margin-bottom: 2px;
+}
+#buttons-pancore {
+    float: right;
+}
+#buttons-pancore button {
+    margin-left: 5px;
+}
+#pancore_graph, #sim_matrix {
+    background-color: white;
+}
+
+// clustering
+#downloadModal .buttons button {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+// refseq genomes
+#genome-tabs {
+    margin-top: 5px;
+}
+#add-by-species-form {
+    padding-top: 5px;
+}
+#species_id {
+    width: 315px;
+}
+#add_species_peptidome {
+    width: 119px;
+}
+.treeView.pancore li span {
+    cursor: pointer !important;
+    cursor: url(/openhand.cur), pointer !important;
+    cursor: url(/openhand.cur) 7 5, pointer !important;
+}
+.treeView.pancore {
+    width: 438px;
+    min-height: 10px;
+}
+
+// my genomes
+#myGenomeProgress {
+    height: 30px;
+}
+#myGenomeProgress .progress-bar{
+    padding-top: 6px;
+    max-width: 100%;
+}
+#my-genomes-table .handle {
+    width: 30px;
+}
+#my-genomes-table .name {
+    width: 325px;
+}
+#my-genomes-table .status {
+    width: 30px;
+}
+#my-genomes-table .action {
+    width: 30px;
+}
+#my-genomes-table tbody tr:not(.info):not(.edit):not(.old) {
+    cursor: pointer;
+    cursor: url(/openhand.cur), pointer;
+    cursor: url(/openhand.cur) 7 5, pointer;
+}
+
+// analyzed genomes
+#genomes_table .handle {
+    width: 30px;
+}
+#genomes_table .name {
+    width: 325px;
+}
+#genomes_table .status {
+    width: 30px;
+}
+#genomes_table .action {
+    width: 30px;
+}
+#genomes_table {
+    margin: 5px;
+    width: auto;
+}
+#genomes_table tr.ui-sortable-helper {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+#genomes-table-div {
+    .transition(margin-top 0.5s ease-in-out);
+}
+#genomes_table tfoot {
+    display: none;
+}
+#genomes_table tfoot th {
+    text-align: center;
+}
+#genomes_table.acceptDrop tfoot {
+    display: table-row-group;
+}
+#genomes_table.acceptDrop {
+    background-color: #eeeeee;
+    border: 5px dashed #cccccc;
+    border-collapse: separate;
+    margin: 0px;
+}
+#genomes_table.willDrop {
+    background-color: #dff0d8;
+    cursor: copy;
+}
+#autosort .dropdown-menu {
+    margin-top: 0px;
+}
+#genomes_table tbody tr:not(.ui-sortable-helper) {
+    cursor: pointer;
+    cursor: url(/openhand.cur), pointer;
+    cursor: url(/openhand.cur) 7 5, pointer;
+}
+tbody.dragging tr {
+    cursor: pointer !important;
+    cursor: url(/closedhand.cur), pointer !important;
+    cursor: url(/closedhand.cur) 7 5, pointer !important;
+    background-color: rgba(255, 255, 255, 0.8);
+}
