@@ -12,8 +12,8 @@
 </ul>
 <div id="single-peptide-tabs">
 <ul class="nav nav-tabs">
-    <li class="active"><a href="#lineage-tree" id="lineage-tree-tab"data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-info-sign"></span></a></li>
-    <li><a href="#lineage-table" id="lineage-table-tab" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-info-sign"></span></a></li>
+    <li class="active"><a href="#lineage-tree" id="lineage-tree-tab"data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-info-sign help"></a></li>
+    <li><a href="#lineage-table" id="lineage-table-tab" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-info-sign help"></span></a></li>
     <li><a href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
 </ul>
 
@@ -95,10 +95,8 @@
 </div>
 </div>
 
-    <!-- JIT Library File -->
-    <!--[if IE]><%= javascript_include_tag asset_path("jit/Extras/excanvas.js") %><![endif]-->
     <script type="text/javascript">
-        $(function () {init_sequence_show(<%= raw(@root)%>, <%= @lca_taxon.id %>);});
+        $(function () {init_sequence_show(<%= raw(@root)%>);});
     </script>
 
 <% end %>
