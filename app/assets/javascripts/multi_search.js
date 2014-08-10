@@ -549,7 +549,7 @@ function initTreeView(jsonData) {
         var scale = zoomListener.scale(),
             x = -source.y0,
             y = -source.x0;
-        x = x * scale + width / 2;
+        x = x * scale + width / 4;
         y = y * scale + height / 2;
         svg.transition()
             .duration(duration)
