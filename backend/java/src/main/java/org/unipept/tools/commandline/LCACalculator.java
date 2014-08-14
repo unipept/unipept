@@ -15,6 +15,8 @@ public class LCACalculator {
     public static final int SPECIES = 24;
     public static final int RANKS = 28;
     private static final Pattern SEPARATOR = Pattern.compile("\t");
+    private static final String NULL = "\\N";
+    private int counter;
     private int[][] taxonomy;
     private final Writer writer;
 
@@ -48,6 +50,7 @@ public class LCACalculator {
     }
 
     public void calculateLCAs(String file) throws IOException {
+        counter = 0;
         BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(file))), 67108864);
         br.readLine(); // skip header
 
@@ -109,7 +112,11 @@ public class LCACalculator {
 
     private void handleLCA(int sequenceId, int lca) {
         try {
+            for (; counter + 1 < sequenceId; counter++) {
+                writer.write(counter + "\t" + NULL + '\n');
+            }
             writer.write(sequenceId + "\t" + lca + '\n');
+            counter = sequenceId;
         } catch (IOException e) {
             e.printStackTrace();
         }
