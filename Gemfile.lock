@@ -93,6 +93,7 @@ GEM
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
+    maruku (0.7.2)
     mime-types (1.25.1)
     mini_portile (0.6.0)
     minitest (5.4.0)
@@ -209,6 +210,7 @@ DEPENDENCIES
   jquery-rails
   jquery-ui-rails (= 4.0.2)
   less-rails
+  maruku
   mysql2
   oj
   protected_attributes
