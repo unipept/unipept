@@ -1,5 +1,5 @@
 Apipie.configure do |config|
-  config.app_name                = "Unipept"
+  config.app_name                = "Unipept API"
   config.api_base_url            = "/api"
   config.doc_base_url            = "/apidoc"
   config.reload_controllers      = Rails.env.development?
