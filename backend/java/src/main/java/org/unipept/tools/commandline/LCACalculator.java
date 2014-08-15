@@ -113,7 +113,7 @@ public class LCACalculator {
     private void handleLCA(int sequenceId, int lca) {
         try {
             for (; counter + 1 < sequenceId; counter++) {
-                writer.write(counter + "\t" + NULL + '\n');
+                writer.write((counter + 1) + "\t" + NULL + '\n');
             }
             writer.write(sequenceId + "\t" + lca + '\n');
             counter = sequenceId;
