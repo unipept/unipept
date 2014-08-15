@@ -58,9 +58,6 @@ end
 # API stats
 gem "stathat"
 
-# API stats
-gem "stathat"
-
 group :development do
   gem 'rspec-rails'
 	gem 'annotate'

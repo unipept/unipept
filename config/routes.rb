@@ -67,16 +67,6 @@ UnipeptWeb::Application.routes.draw do
     match 'messages' => 'api#messages', via: [:get, :post]
   end
 
-  # API namespace
-  namespace :api, path: 'api/v1' do
-    match 'pept2taxa' => "api#pept2taxa", via: [:get, :post]
-    match 'pept2lca' => "api#pept2lca", via: [:get, :post]
-    match 'taxa2lca' => 'api#taxa2lca', via: [:get, :post]
-    match 'pept2prot' => 'api#pept2prot', via: [:get, :post]
-    match 'taxonomy' => 'api#taxonomy', via: [:get, :post]
-    match 'messages' => 'api#messages', via: [:get, :post]
-  end
-
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
