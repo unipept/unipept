@@ -56,7 +56,7 @@ module UnipeptWeb
     config.versions = {
       :unipept => "2.4 beta",
       :gem => "0.5.7",
-      :uniprot => "2013.04"
+      :uniprot => "2014.05"
     }
 
     ### Part of a Spork hack. See http://bit.ly/arY19y
