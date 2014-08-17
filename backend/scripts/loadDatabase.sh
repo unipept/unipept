@@ -12,6 +12,10 @@ do
     print $file
     gunzip $file
     file=`echo $file | sed "s/.gz//"`
+    if [ "lineages.tsv"=$file ]
+    then
+        sed -i  "s/NULL/\\\N/g" "lineages.tsv"
+    fi
     print $file
     mysqlimport -u unipept -punipept --local unipept2 $file
     rm $file
