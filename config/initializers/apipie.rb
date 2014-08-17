@@ -1,7 +1,7 @@
 Apipie.configure do |config|
   config.app_name                = "Unipept API"
   config.api_base_url            = "/api"
-  config.doc_base_url            = "/apidoc"
+  config.doc_base_url            = "/apidocs"
   config.reload_controllers      = Rails.env.development?
   config.validate                = false
   config.markup                  = Apipie::Markup::Markdown.new
