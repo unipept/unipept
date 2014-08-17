@@ -64,7 +64,21 @@ class Api::ApiController < ApplicationController
   param :extra, ['true','false'], desc: "Request extra information such as the entire lineage"
   param :names, ['true','false'], desc: "Include the lineage names"
   description <<-EOS
-  Returns uniprot information of the proteins in which the input peptides are found
+  This method returns a list of all Uniprot entries containing a given tryptic peptide.
+  Its result should be the same as the *Protein matches* tab in the [Tryptic peptide analysis](/search/single).
+
+  ## Input
+
+  ## Output
+  By default, a list of matches for any of the input sequences is returned, each consisting of
+  - `sequence`: the matched sequence
+  - `uniprot_id`: the Uniprot accession number of the matching record
+  - `taxon_id`: the NCBI taxon id of the organism associated with the matching record
+
+  When the `extra` parameter is set to `true`, the following additional fields are returned per match:
+  - `taxon_name`: the name of the associated organism
+  - `ec_references`: a space separated list of EC numbers associated with the matching Uniprot record
+  - `go_references`: a space separated list of GO terms associated with the matching Uniprot record
   EOS
   example <<-EOS
   $ curl -X POST -H "Accept: application/json" scruffy.ugent.be/api/v1/pept2prot -d 'input[0]=SASLGR'
