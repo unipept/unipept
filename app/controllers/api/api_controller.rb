@@ -62,7 +62,6 @@ class Api::ApiController < ApplicationController
   param :input, Array, required: true, desc: "List of input peptides"
   param :equate_il, ['true','false'], desc: "Indicate if you want to equate I and L"
   param :extra, ['true','false'], desc: "Request extra information such as the entire lineage"
-  param :names, ['true','false'], desc: "Include the lineage names"
   description <<-EOS
   This method returns a list of all Uniprot entries containing a given tryptic peptide.
   Its result should be the same as the *Protein matches* tab in the [Tryptic peptide analysis](/search/single).
