@@ -59,10 +59,10 @@ class Api::ApiController < ApplicationController
 
 
   api :POST, '/v1/pept2prot', "Returns a list of Uniprot entries containing a given tryptic peptide"
-  param :input, Array, required: true, description: "List of input peptides"
-  param :equate_il, ['true','false'], description: "Indicate if you want to equate I and L"
-  param :extra, ['true','false'], description: "Request extra information such as the entire lineage"
-  param :names, ['true','false'], description: "Include the lineage names"
+  param :input, Array, required: true, desc: "List of input peptides"
+  param :equate_il, ['true','false'], desc: "Indicate if you want to equate I and L"
+  param :extra, ['true','false'], desc: "Request extra information such as the entire lineage"
+  param :names, ['true','false'], desc: "Include the lineage names"
   description <<-EOS
   Returns uniprot information of the proteins in which the input peptides are found
   EOS
@@ -103,10 +103,10 @@ class Api::ApiController < ApplicationController
   end
 
   api :POST, '/v1/pept2taxa', "Returns a list of taxa retrieved from the Uniprot entries containing a given tryptic peptide"
-  param :input, Array, required: true, description: "List of input peptides"
-  param :equate_il, ['true','false'], description: "Indicate if you want to equate I and L"
-  param :extra, ['true','false'], description: "Request extra information such as the entire lineage"
-  param :names, ['true','false'], description: "Include the lineage names"
+  param :input, Array, required: true, desc: "List of input peptides"
+  param :equate_il, ['true','false'], desc: "Indicate if you want to equate I and L"
+  param :extra, ['true','false'], desc: "Request extra information such as the entire lineage"
+  param :names, ['true','false'], desc: "Include the lineage names"
 
   description <<-EOS
   The api is strictly on a per peptide basis, there is no aggregation. However due to speed concerns there is a possibility to pass
@@ -141,10 +141,10 @@ class Api::ApiController < ApplicationController
   end
 
   api :POST, '/v1/pept2lca', "Returns the taxonomic lowest common ancestor for a given tryptic peptide"
-  param :input, Array, required: true, description: "List of input peptides"
-  param :equate_il, ['true','false'], description: "Indicate if you want to equate I and L"
-  param :extra, ['true','false'], description: "Request extra information such as the entire lineage"
-  param :names, ['true','false'], description: "Include the lineage names"
+  param :input, Array, required: true, desc: "List of input peptides"
+  param :equate_il, ['true','false'], desc: "Indicate if you want to equate I and L"
+  param :extra, ['true','false'], desc: "Request extra information such as the entire lineage"
+  param :names, ['true','false'], desc: "Include the lineage names"
   description <<-EOS
   For each input peptide, return the lowest common ancestor as found in the unipept database.
   EOS
@@ -180,9 +180,9 @@ class Api::ApiController < ApplicationController
   end
 
   api :POST, '/v1/taxa2lca', "Returns the lowest common ancestor for a given list of taxon id's"
-  param :input, Array, required: true, description: "List of input taxon ids"
-  param :extra, ['true','false'], description: "Request extra information such as the entire lineage"
-  param :names, ['true','false'], description: "Include the lineage names"
+  param :input, Array, required: true, desc: "List of input taxon ids"
+  param :extra, ['true','false'], desc: "Request extra information such as the entire lineage"
+  param :names, ['true','false'], desc: "Include the lineage names"
   description <<-EOS
   This will actually calculate the lowest common ancestor of all the lineages of all the taxon ids passed via the input paramater.
   EOS
