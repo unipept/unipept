@@ -29,7 +29,8 @@
 <div class='container main'>
     <%= render 'layouts/header' %>
 
-    <div class='content'>
+    <div class='content <%= "api" if controller_name == "apipies" %>'>
+
     <!-- message of the day -->
     <% unless @motd.nil? %>
         <div class="alert alert-info">
@@ -58,6 +59,7 @@
             <% end %>
         <% end %>
     </div>
+
     <!-- actual page content -->
     <%= yield %>
 

@@ -48,6 +48,7 @@ gem 'exception_notification', :git => 'git://github.com/unipept/exception_notifi
 gem 'capistrano', '~> 3.0'
 
 gem 'apipie-rails'
+gem 'maruku'
 
 group :development do
   gem 'capistrano-rails',   '~> 1.1', require: false
