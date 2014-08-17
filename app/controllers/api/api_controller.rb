@@ -80,7 +80,7 @@ class Api::ApiController < ApplicationController
   - `go_references`: a space separated list of GO terms associated with the matching Uniprot record
   EOS
   example <<-EOS
-  $ curl -X POST -H "Accept: application/json" scruffy.ugent.be/api/v1/pept2prot -d 'input[0]=SASLGR'
+  $ curl -X POST -H "Accept: application/json" #{Rails.application.config.api_host}/api/v1/pept2prot -d 'input[0]=SASLGR'
   [{"sequence":"SASLGR","uniprot_id":"Q99243","taxon_id":9986}, ...]
   EOS
   def pept2prot
@@ -127,7 +127,7 @@ class Api::ApiController < ApplicationController
   the organisms and return its taxon_id, taxon_name, ...
   EOS
   example <<-EOS
-  $ curl -X POST -H "Accept: application/json" scruffy.ugent.be/api/v1/pept2taxa -d 'input[0]=SASLGR'
+  $ curl -X POST -H "Accept: application/json" #{Rails.application.config.api_host}/api/v1/pept2taxa -d 'input[0]=SASLGR'
   [{"sequence":"SASLGR","taxon_id":3055,"taxon_name":"Chlamydomonas reinhardtii","taxon_parent_id":3052,"taxon_rank":"species"},...]
   EOS
   def pept2taxa
@@ -162,10 +162,10 @@ class Api::ApiController < ApplicationController
   For each input peptide, return the lowest common ancestor as found in the unipept database.
   EOS
   example <<-EOS
-  $ curl -X POST -H "Accept: application/json" scruffy.ugent.be/api/v1/pept2lca -d 'input[0]=ASFHLECIK' -d 'equate_il=false'
+  $ curl -X POST -H "Accept: application/json" #{Rails.application.config.api_host}/api/v1/pept2lca -d 'input[0]=ASFHLECIK' -d 'equate_il=false'
   []
 
-  $ curl -X POST -H "Accept: application/json" scruffy.ugent.be/api/v1/pept2lca -d 'input[0]=ASFHLECIK' -d 'equate_il=true'
+  $ curl -X POST -H "Accept: application/json" #{Rails.application.config.api_host}/api/v1/pept2lca -d 'input[0]=ASFHLECIK' -d 'equate_il=true'
   [{"sequence":"ASFHLECIK","taxon_id":7776,"taxon_name":"Gnathostomata","taxon_parent_id":7742,"taxon_rank":"superclass"}]
   EOS
   def pept2lca
@@ -200,7 +200,7 @@ class Api::ApiController < ApplicationController
   This will actually calculate the lowest common ancestor of all the lineages of all the taxon ids passed via the input paramater.
   EOS
   example <<-EOS
-  $ curl -X POST -H "Accept: application/json" scruffy.ugent.be/api/v1/taxa2lca -d 'input[0]=816' -d 'input[1]=124'
+  $ curl -X POST -H "Accept: application/json" #{Rails.application.config.api_host}/api/v1/taxa2lca -d 'input[0]=816' -d 'input[1]=124'
   {"taxon_id":2,"taxon_name":"Bacteria","taxon_parent_id":131567,"taxon_rank":"superkingdom"}
   EOS
   def taxa2lca
