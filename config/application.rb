@@ -54,9 +54,9 @@ module UnipeptWeb
     config.assets.paths << "#{Rails}/vendor/assets/fonts"
 
     config.versions = {
-      :unipept => "2.3",
+      :unipept => "2.3.1",
       :gem => "0.5.7",
-      :uniprot => "2013.04"
+      :uniprot => "2014.05"
     }
 
     ### Part of a Spork hack. See http://bit.ly/arY19y
