@@ -9,8 +9,8 @@
           "uniprot_id" => u.uniprot_accession_number,
           "taxon_id" => u.taxon_id,
           "taxon_name" => u.name.try(:name),
-          "ec_references" => u.ec_cross_references.pluck(:id).join(" "),
-          "go_references" => u.go_cross_references.pluck(:id).join(" "),
+          "ec_references" => u.ec_cross_references.map(&:ec_id).join(" "),
+          "go_references" => u.go_cross_references.map(&:go_id).join(" "),
         }
       end
     end.flatten).html_safe
