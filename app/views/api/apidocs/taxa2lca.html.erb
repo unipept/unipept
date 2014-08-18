@@ -1,46 +1,27 @@
+<div class="apidocs row">
+  <div class="col-xs-9">
+    <div class='page-header'>
+      <h1>POST /api/v1/taxa2lca
+        <br>
+        <small>Returns the lowest common ancestor for a given list of taxon id's</small>
+      </h1>
+    </div>
 
-    <ul class='breadcrumb'>
-  <li>
-    <a href='/apidoc/v1.html'>Unipept API v1</a>
-    <span class='divider'>/</span>
-  </li>
-  <li>
-    <a href='/apidoc/v1/api.html'>
-      Api
+    <p>
+      This will actually calculate the lowest common ancestor of all the lineages of all the taxon ids passed via the input paramater.
+    </p>
 
-    </a>
-    <span class='divider'>/</span>
-  </li>
-  <li class='active'>taxa2lca</li>
+    <h2 id="input">Input</h2>
 
+    <h2 id="output">Output</h2>
 
-</ul>
-
-  <div class='page-header'>
-    <h1>
-      POST /api/v1/taxa2lca
-      <br>
-      <small>Returns the lowest common ancestor for a given list of taxon id's</small>
-    </h1>
-  </div>
-
-<div>
-
-
-<p>This will actually calculate the lowest common ancestor of all the lineages of all the taxon ids passed via the input paramater.</p>
-
-
-  <h2>Supported Formats</h2>
-  json
-
-
-
-  <h2>Examples</h2>
-    <pre class="prettyprint">$ curl -X POST -H &quot;Accept: application/json&quot; api.unipept.ugent.be/api/v1/taxa2lca -d &#39;input[0]=816&#39; -d &#39;input[1]=124&#39;
+    <h2 id="examples">Examples</h2>
+    <pre class="prettyprint">
+$ curl -X POST -H &quot;Accept: application/json&quot; api.unipept.ugent.be/api/v1/taxa2lca -d &#39;input[0]=816&#39; -d &#39;input[1]=124&#39;
 {&quot;taxon_id&quot;:2,&quot;taxon_name&quot;:&quot;Bacteria&quot;,&quot;taxon_parent_id&quot;:131567,&quot;taxon_rank&quot;:&quot;superkingdom&quot;}
-</pre>
+    </pre>
 
-  <h2>Params</h2>
+  <h2 id="parameters">Parameters</h2>
   <table class='table'>
     <thead>
       <tr>
@@ -49,69 +30,43 @@
       </tr>
     </thead>
     <tbody>
-        <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>input </strong><br>
-      <small>
-        required
-
-      </small>
-    </td>
-    <td>
-
-<p>List of input taxon ids</p>
-
-        <br>
-        Value: Must be an array of any type
-
-
-    </td>
-
-  </tr>
-
-
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>extra </strong><br>
-      <small>
-        optional
-
-      </small>
-    </td>
-    <td>
-
-<p>Request extra information such as the entire lineage</p>
-
-        <br>
-        Value: Must be one of: true, false.
-
-
-    </td>
-
-  </tr>
-
-
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>names </strong><br>
-      <small>
-        optional
-
-      </small>
-    </td>
-    <td>
-
-<p>Include the lineage names</p>
-
-        <br>
-        Value: Must be one of: true, false.
-
-
-    </td>
-
-  </tr>
-
-
-
+      <tr>
+        <td>
+          <strong>input </strong><br>
+          <small>required</small>
+        </td>
+        <td>
+          <p>List of input taxon ids</p>
+          <br>
+          Value: Must be an array of any type
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <strong>extra </strong><br>
+          <small>optional</small>
+        </td>
+        <td>
+          <p>Request extra information such as the entire lineage</p>
+          <br>
+          Value: Must be one of: true, false.
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <strong>names </strong><br>
+          <small>optional</small>
+        </td>
+        <td>
+          <p>Include the lineage names</p>
+          <br>
+          Value: Must be one of: true, false.
+        </td>
+      </tr>
     </tbody>
   </table>
+  </div>
+  <div class="col-xs-3">
+    <%= render 'sidebar' %>
+  </div>
+</div>
