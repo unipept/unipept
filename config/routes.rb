@@ -67,6 +67,16 @@ UnipeptWeb::Application.routes.draw do
     match 'messages' => 'api#messages', via: [:get, :post]
   end
 
+  # API docs
+  namespace :api, path: "apidocs" do
+    get "/",          :to => "apidocs#index"
+    get "pept2prot",  :to => "apidocs#pept2prot"
+    get "pept2taxa",  :to => "apidocs#pept2taxa"
+    get "pept2lca",   :to => "apidocs#pept2lca"
+    get "taxa2lca",   :to => "apidocs#taxa2lca"
+  end
+
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
