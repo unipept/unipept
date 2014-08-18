@@ -1,0 +1,21 @@
+<div class="apidocs-sidebar hidden-print" data-spy="affix" data-offset-top="170" data-offset-bottom="70">
+  <ul class="nav apidocs-sidenav">
+    <% @sidebar_nav.each do |nav_item| %>
+      <li class="<%= "active" if @sidebar_name == nav_item[:name] %>">
+        <%= link_to(nav_item[:name], nav_item[:path]) %>
+        <% if @sidebar_name == nav_item[:name] && !@sidebar_subnav.nil?%>
+          <ul class="nav">
+            <%= raw(@sidebar_subnav.map{|name| "<li><a href='##{name.downcase}'>#{name}</a></li>"}.join) %>
+          </ul>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+  <a class="back-to-top" href="#top">
+    Back to top
+  </a>
+</div>
+
+<script>
+  $('body').scrollspy({ target: '.apidocs-sidenav' })
+</script>

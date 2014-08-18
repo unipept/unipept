@@ -1,5 +1,7 @@
 // styles used for the api documentation
 
+@sidebar-color: #104B7D;
+
 .apidocs h2 {
     border-bottom: none;
     color: #333;
@@ -13,4 +15,101 @@
 
 .apidocs li {
     line-height: 1.8;
+}
+
+.apidocs .page-header {
+    margin-top: 5px;
+}
+
+// sidebar, borrowed from the bootstrap docs
+/* First level of nav */
+.apidocs-sidenav {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* All levels of nav */
+.apidocs-sidebar .nav > li > a {
+    display: block;
+    padding: 4px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #999;
+}
+.apidocs-sidebar .nav > li > a:hover,
+.apidocs-sidebar .nav > li > a:focus {
+    padding-left: 19px;
+    color: @sidebar-color;
+    text-decoration: none;
+    background-color: transparent;
+    border-left: 1px solid @sidebar-color;
+}
+.apidocs-sidebar .nav > .active > a,
+.apidocs-sidebar .nav > .active:hover > a,
+.apidocs-sidebar .nav > .active:focus > a {
+    padding-left: 18px;
+    font-weight: bold;
+    color: @sidebar-color;
+    background-color: transparent;
+    border-left: 2px solid @sidebar-color;
+}
+
+/* Nav: second level (shown on .active) */
+.apidocs-sidebar .nav .nav {
+    display: block;
+    padding-bottom: 10px;
+}
+.apidocs-sidebar .nav .nav > li > a {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 30px;
+    font-size: 12px;
+    font-weight: normal;
+}
+.apidocs-sidebar .nav .nav > li > a:hover,
+.apidocs-sidebar .nav .nav > li > a:focus {
+    padding-left: 29px;
+}
+.apidocs-sidebar .nav .nav > .active > a,
+.apidocs-sidebar .nav .nav > .active:hover > a,
+.apidocs-sidebar .nav .nav > .active:focus > a {
+    padding-left: 28px;
+    font-weight: 500;
+}
+
+/* Back to top */
+.back-to-top {
+    display: block;
+    padding: 4px 10px;
+    margin-top: 10px;
+    margin-left: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #999;
+}
+.back-to-top:hover {
+    color: @sidebar-color;
+    text-decoration: none;
+}
+
+
+.apidocs-sidebar .nav > .active > ul {
+    display: block;
+}
+/* Widen the fixed sidebar */
+.apidocs-sidebar.affix,
+.apidocs-sidebar.affix-bottom {
+    width: 213px;
+}
+.apidocs-sidebar.affix {
+    position: fixed;
+    top: 20px;
+}
+.apidocs-sidebar.affix-bottom {
+    position: absolute;
+}
+.apidocs-sidebar.affix-bottom .apidocs-sidenav,
+.apidocs-sidebar.affix .apidocs-sidenav {
+    margin-top: 0;
+    margin-bottom: 0;
 }

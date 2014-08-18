@@ -1,45 +1,50 @@
-<div class="apidocs">
-  <h1 class='api-title'>Unipept API documentation <small>v1</small></h1>
-  <p class='lead'>
-    Unipept offers most of its peptide analysis features as a web service. This page contains the documentation to use these services.
-  </p>
-  <p>There are four basic methods:</p>
-  <dl class='dl-horizontal'>
-    <dt>pept2prot</dt>
-    <dd>Returns a list of Uniprot entries containing a given tryptic peptide</dd>
-    <dt>pept2taxa</dt>
-    <dd>Returns a list of taxa retrieved from the Uniprot entries containing a given tryptic peptide</dd>
-    <dt>pept2lca</dt>
-    <dd>Returns the taxonomic lowest common ancestor for a given tryptic peptide</dd>
-    <dt>taxa2lca</dt>
-    <dd>Returns the lowest common ancestor for a given list of taxon id's</dd>
-  </dl>
-  <p> Click the corresponding links below for more information about how to access them, a description of the paramters they take and a list of examples.</p>
+<div class="apidocs row">
+  <div class="col-xs-9">
+    <h1 class='api-title'>Unipept API documentation <small>v1</small></h1>
+    <p class='lead'>
+      Unipept offers most of its peptide analysis features as a web service. This page contains the documentation to use these services.
+    </p>
+    <p>There are four basic methods:</p>
+    <dl class='dl-horizontal'>
+      <dt>pept2prot</dt>
+      <dd>Returns a list of Uniprot entries containing a given tryptic peptide</dd>
+      <dt>pept2taxa</dt>
+      <dd>Returns a list of taxa retrieved from the Uniprot entries containing a given tryptic peptide</dd>
+      <dt>pept2lca</dt>
+      <dd>Returns the taxonomic lowest common ancestor for a given tryptic peptide</dd>
+      <dt>taxa2lca</dt>
+      <dd>Returns the lowest common ancestor for a given list of taxon id's</dd>
+    </dl>
+    <p> Click the corresponding links below for more information about how to access them, a description of the paramters they take and a list of examples.</p>
 
-  <table class='table'>
-    <thead>
-      <tr>
-        <th>Resource</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><%= link_to("POST /api/v1/pept2prot", api_apidocs_pept2prot_path) %></td>
-        <td width='60%'>Returns a list of Uniprot entries containing a given tryptic peptide</td>
-      </tr>
-      <tr>
-        <td><%= link_to("POST /api/v1/pept2taxa", api_apidocs_pept2taxa_path) %></td>
-        <td width='60%'>Returns a list of taxa retrieved from the Uniprot entries containing a given tryptic peptide</td>
-      </tr>
-      <tr>
-        <td><%= link_to("POST /api/v1/pept2lca", api_apidocs_pept2lca_path) %></td>
-        <td width='60%'>Returns the taxonomic lowest common ancestor for a given tryptic peptide</td>
-      </tr>
-      <tr>
-        <td><%= link_to("POST /api/v1/taxa2lca", api_apidocs_taxa2lca_path) %></td>
-        <td width='60%'>Returns the lowest common ancestor for a given list of taxon id&#39;s</td>
-      </tr>
-    </tbody>
-  </table>
+    <table class='table'>
+      <thead>
+        <tr>
+          <th>Resource</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><%= link_to("POST /api/v1/pept2prot", api_apidocs_pept2prot_path) %></td>
+          <td width='60%'>Returns a list of Uniprot entries containing a given tryptic peptide</td>
+        </tr>
+        <tr>
+          <td><%= link_to("POST /api/v1/pept2taxa", api_apidocs_pept2taxa_path) %></td>
+          <td width='60%'>Returns a list of taxa retrieved from the Uniprot entries containing a given tryptic peptide</td>
+        </tr>
+        <tr>
+          <td><%= link_to("POST /api/v1/pept2lca", api_apidocs_pept2lca_path) %></td>
+          <td width='60%'>Returns the taxonomic lowest common ancestor for a given tryptic peptide</td>
+        </tr>
+        <tr>
+          <td><%= link_to("POST /api/v1/taxa2lca", api_apidocs_taxa2lca_path) %></td>
+          <td width='60%'>Returns the lowest common ancestor for a given list of taxon id&#39;s</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-xs-3">
+    <%= render 'sidebar' %>
+  </div>
 </div>
