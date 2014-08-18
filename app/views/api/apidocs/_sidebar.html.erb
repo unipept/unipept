@@ -1,4 +1,4 @@
-<div class="apidocs-sidebar hidden-print" data-spy="affix" data-offset-top="170" data-offset-bottom="70">
+<div class="apidocs-sidebar hidden-print">
   <ul class="nav apidocs-sidenav">
     <% @sidebar_nav.each do |nav_item| %>
       <li class="<%= "active" if @sidebar_name == nav_item[:name] %>">
@@ -17,5 +17,13 @@
 </div>
 
 <script>
-  $('body').scrollspy({ target: '.apidocs-sidenav' })
+  $(function() {
+    $('body').scrollspy({ target: '.apidocs-sidenav' });
+    $('.apidocs-sidebar').affix({
+        offset: {
+          top: $(".apidocs-sidebar").offset().top,
+          bottom: 70
+        }
+    });
+  });
 </script>
