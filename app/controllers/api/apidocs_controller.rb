@@ -14,7 +14,7 @@ class Api::ApidocsController < ApplicationController
   end
 
   def set_sidebar_subnav
-    @sidebar_subnav = ["Input", "Output", "Parameters", "Examples"]
+    @sidebar_subnav = ["Request", "Response", "Parameters", "Examples"]
   end
 
   def index

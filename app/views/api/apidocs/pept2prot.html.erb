@@ -11,7 +11,7 @@
       This method returns a list of all Uniprot entries containing a given tryptic peptide. Its result should be the same as the <em>Protein matches</em> tab when doing a search with the <%= link_to("Tryptic Peptide Analysis", search_single_path) %>.
     </p>
 
-    <h2 id="input">Input</h2>
+    <h2 id="request">Request</h2>
     <p>
       Use this method by doing a HTTP POST-request to <code>http://<%= Rails.application.config.api_host %>/api/v1/pept2prot</code>. <a href="#parameters">Parameters</a> can be included in the request body. The only required parameter is <code>input</code> which is a list containing one or more tryptic peptides.
     </p>
@@ -33,7 +33,7 @@
 
     <h3>extra</h3>
     <p>
-      <code>extra</code> is an optional parameter and can be either <code>true</code> or <code>false</code>. When the parameter is not set, the default value of <code>false</code> is assumed. When the parameter is set to <code>true</code>, Unipept will return additional information fields. See the <a href="output">output</a> section for more information.
+      <code>extra</code> is an optional parameter and can be either <code>true</code> or <code>false</code>. When the parameter is not set, the default value of <code>false</code> is assumed. When the parameter is set to <code>true</code>, Unipept will return additional information fields. See the <a href="#response">response</a> section for more information.
     </p>
 
     <div class="apidocs-callout apidocs-callout-warning">
@@ -41,7 +41,7 @@
       <p>Setting <code>extra</code> to <code>true</code> causes additional database queries and an accompanying performance penalty. Don't use this parameter unless you need the extra information fields.</p>
     </div>
 
-    <h2 id="output">Output</h2>
+    <h2 id="response">Response</h2>
     <p>
       By default, a list of matching Uniprot records is returned as a JSON object. Each object consists of the following fields:
     </p>
