@@ -1,0 +1,140 @@
+<ul class='breadcrumb'>
+  <li>
+    <a href='/apidoc/v1.html'>Unipept API v1</a>
+    <span class='divider'>/</span>
+  </li>
+  <li>
+    <a href='/apidoc/v1/api.html'>
+      Api
+
+    </a>
+    <span class='divider'>/</span>
+  </li>
+  <li class='active'>pept2lca</li>
+
+
+</ul>
+
+  <div class='page-header'>
+    <h1>
+      POST /api/v1/pept2lca
+      <br>
+      <small>Returns the taxonomic lowest common ancestor for a given tryptic peptide</small>
+    </h1>
+  </div>
+
+<div>
+
+
+<p>For each input peptide, return the lowest common ancestor as found in the unipept database.</p>
+
+
+  <h2>Supported Formats</h2>
+  json
+
+
+
+  <h2>Examples</h2>
+    <pre class="prettyprint">$ curl -X POST -H &quot;Accept: application/json&quot; api.unipept.ugent.be/api/v1/pept2lca -d &#39;input[0]=ASFHLECIK&#39; -d &#39;equate_il=false&#39;
+[]
+
+$ curl -X POST -H &quot;Accept: application/json&quot; api.unipept.ugent.be/api/v1/pept2lca -d &#39;input[0]=ASFHLECIK&#39; -d &#39;equate_il=true&#39;
+[{&quot;sequence&quot;:&quot;ASFHLECIK&quot;,&quot;taxon_id&quot;:7776,&quot;taxon_name&quot;:&quot;Gnathostomata&quot;,&quot;taxon_parent_id&quot;:7742,&quot;taxon_rank&quot;:&quot;superclass&quot;}]
+</pre>
+
+  <h2>Params</h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>input </strong><br>
+      <small>
+        required
+
+      </small>
+    </td>
+    <td>
+
+<p>List of input peptides</p>
+
+        <br>
+        Value: Must be an array of any type
+
+
+    </td>
+
+  </tr>
+
+
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>equate_il </strong><br>
+      <small>
+        optional
+
+      </small>
+    </td>
+    <td>
+
+<p>Indicate if you want to equate I and L</p>
+
+        <br>
+        Value: Must be one of: true, false.
+
+
+    </td>
+
+  </tr>
+
+
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>extra </strong><br>
+      <small>
+        optional
+
+      </small>
+    </td>
+    <td>
+
+<p>Request extra information such as the entire lineage</p>
+
+        <br>
+        Value: Must be one of: true, false.
+
+
+    </td>
+
+  </tr>
+
+
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>names </strong><br>
+      <small>
+        optional
+
+      </small>
+    </td>
+    <td>
+
+<p>Include the lineage names</p>
+
+        <br>
+        Value: Must be one of: true, false.
+
+
+    </td>
+
+  </tr>
+
+
+
+    </tbody>
+  </table>
