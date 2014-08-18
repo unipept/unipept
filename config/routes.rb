@@ -2,9 +2,6 @@ UnipeptWeb::Application.routes.draw do
   # cas auth
   devise_for :users
 
-  # api docs
-  apipie
-
   # home page
   root :to => 'pages#home'
 
@@ -69,7 +66,7 @@ UnipeptWeb::Application.routes.draw do
 
   # API docs
   namespace :api, path: "apidocs" do
-    get "/",          :to => "apidocs#index"
+    get "/",          :to => "apidocs#index",     :as => 'apidocs'
     get "pept2prot",  :to => "apidocs#pept2prot"
     get "pept2taxa",  :to => "apidocs#pept2taxa"
     get "pept2lca",   :to => "apidocs#pept2lca"
