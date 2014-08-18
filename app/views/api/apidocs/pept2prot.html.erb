@@ -31,12 +31,9 @@
       <li><code>go_references</code>: a space separated list of GO terms associated with the matching Uniprot record</li>
     </ul>
 
-    <h2>Supported Formats</h2>
-    json
-
     <h2 id="examples">Examples</h2>
       <pre class="prettyprint">
-        $ curl -X POST -H &quot;Accept: application/json&quot; api.unipept.ugent.be/api/v1/pept2prot -d &#39;input[0]=SASLGR&#39;
+$ curl -X POST -H &quot;Accept: application/json&quot; api.unipept.ugent.be/api/v1/pept2prot -d &#39;input[0]=SASLGR&#39;
     [{&quot;sequence&quot;:&quot;SASLGR&quot;,&quot;uniprot_id&quot;:&quot;Q99243&quot;,&quot;taxon_id&quot;:9986}, ...]
       </pre>
 
