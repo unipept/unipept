@@ -1,6 +1,5 @@
 // styles used for the api documentation
-
-@sidebar-color: #104B7D;
+@sidebar-color: #104B7D; // footer color
 
 .apidocs h2 {
     border-bottom: none;
@@ -21,13 +20,12 @@
     margin-top: 5px;
 }
 
-// sidebar, borrowed from the bootstrap docs
+// sidebar navigation, inspiration from the bootstrap docs
 /* First level of nav */
 .apidocs-sidenav {
     margin-top: 20px;
     margin-bottom: 20px;
 }
-
 /* All levels of nav */
 .apidocs-sidebar .nav > li > a {
     display: block;
@@ -53,7 +51,6 @@
     background-color: transparent;
     border-left: 2px solid @sidebar-color;
 }
-
 /* Nav: second level (shown on .active) */
 .apidocs-sidebar .nav .nav {
     display: block;
@@ -76,7 +73,6 @@
     padding-left: 28px;
     font-weight: 500;
 }
-
 /* Back to top */
 .back-to-top {
     display: block;
@@ -91,8 +87,6 @@
     color: @sidebar-color;
     text-decoration: none;
 }
-
-
 .apidocs-sidebar .nav > .active > ul {
     display: block;
 }
@@ -112,4 +106,48 @@
 .apidocs-sidebar.affix .apidocs-sidenav {
     margin-top: 0;
     margin-bottom: 0;
+}
+
+// callouts, taken from the bootstrap docs
+
+/* Common styles for all types */
+.apidocs-callout {
+  padding: 20px;
+  margin: 20px 0;
+  border: 1px solid #eee;
+  border-left-width: 5px;
+  border-radius: 3px;
+}
+.apidocs-callout h4 {
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+.apidocs-callout p:last-child {
+  margin-bottom: 0;
+}
+.apidocs-callout code {
+  border-radius: 3px;
+}
+/* Tighten up space between multiple callouts */
+.apidocs-callout + .apidocs-callout {
+  margin-top: -5px;
+}
+/* Variations */
+.apidocs-callout-danger {
+  border-left-color: #d9534f;
+}
+.apidocs-callout-danger h4 {
+  color: #d9534f;
+}
+.apidocs-callout-warning {
+  border-left-color: #f0ad4e;
+}
+.apidocs-callout-warning h4 {
+  color: #f0ad4e;
+}
+.apidocs-callout-info {
+  border-left-color: #5bc0de;
+}
+.apidocs-callout-info h4 {
+  color: #5bc0de;
 }
