@@ -8,14 +8,43 @@
     </div>
 
     <p>
-      This method returns a list of all Uniprot entries containing a given tryptic peptide. Its result should be the same as the <em>Protein matches</em> tab in the <%= link_to("Tryptic Peptide Analysis", search_single_path) %>.
+      This method returns a list of all Uniprot entries containing a given tryptic peptide. Its result should be the same as the <em>Protein matches</em> tab when doing a search with the <%= link_to("Tryptic Peptide Analysis", search_single_path) %>.
     </p>
 
     <h2 id="input">Input</h2>
+    <p>
+      Use this method by doing a HTTP POST-request to <code>http://<%= Rails.application.config.api_host %>/api/v1/pept2prot</code>. <a href="#parameters">Parameters</a> can be included in the request body. The only required parameter is <code>input</code> which is a list containing one or more tryptic peptides.
+    </p>
+
+    <h3>input</h3>
+    <p>
+      <code>input</code> is a required parameter and contains a list of one or more peptides to match. Unipept will return all Uniprot records that contain any of the records in <code>input</code>.
+    </p>
+
+    <div class="apidocs-callout apidocs-callout-warning">
+      <h4><span class="glyphicon glyphicon-exclamation-sign"></span> Input size</h4>
+      <p>Unipept puts no restrictions on the number of peptides in the <code>input</code> parameter. Do take in mind that searching for many peptides at once may cause the request to timeout. When searching for many peptides, we suggest splitting them over requests of 100 peptides at a time.</p>
+    </div>
+
+    <h3>equate_il</h3>
+    <p>
+      <code>equate_il</code> is an optional parameter and can be either <code>true</code> or <code>false</code>. When the parameter is not set, the default value of <code>false</code> is assumed. When the parameter is set to <code>true</code>, isoleucine (I) and leucine (L) are equated during the search. This setting is similar to checking the <i>Equate I and L?</i> checkbox in the <%= link_to("Tryptic Peptide Analysis", search_single_path) %>.
+    </p>
+
+    <h3>extra</h3>
+    <p>
+      <code>extra</code> is an optional parameter and can be either <code>true</code> or <code>false</code>. When the parameter is not set, the default value of <code>false</code> is assumed. When the parameter is set to <code>true</code>, Unipept will return additional information fields. See the <a href="output">output</a> section for more information.
+    </p>
+
+    <div class="apidocs-callout apidocs-callout-warning">
+      <h4><span class="glyphicon glyphicon-exclamation-sign"></span> Performance penalty</h4>
+      <p>Setting <code>extra</code> to <code>true</code> causes additional database queries and an accompanying performance penalty. Don't use this parameter unless you need the extra information fields.</p>
+    </div>
 
     <h2 id="output">Output</h2>
-
-    <p>By default, a list of matches for any of the input sequences is returned, each consisting of</p>
+    <p>
+      By default, a list of matching Uniprot records is returned as a JSON object. Each object consists of the following fields:
+    </p>
 
     <ul>
       <li><code>sequence</code>: the matched sequence</li>
@@ -31,13 +60,8 @@
       <li><code>go_references</code>: a space separated list of GO terms associated with the matching Uniprot record</li>
     </ul>
 
-    <h2 id="examples">Examples</h2>
-      <pre class="prettyprint">
-$ curl -X POST -H &quot;Accept: application/json&quot; api.unipept.ugent.be/api/v1/pept2prot -d &#39;input[0]=SASLGR&#39;
-    [{&quot;sequence&quot;:&quot;SASLGR&quot;,&quot;uniprot_id&quot;:&quot;Q99243&quot;,&quot;taxon_id&quot;:9986}, ...]
-      </pre>
-
     <h2 id="parameters">Parameters</h2>
+    TODO...
     <table class='table'>
       <thead>
         <tr>
@@ -81,6 +105,13 @@ $ curl -X POST -H &quot;Accept: application/json&quot; api.unipept.ugent.be/api/
         </tr>
       </tbody>
     </table>
+
+    <h2 id="examples">Examples</h2>
+    TODO...
+      <pre class="prettyprint">
+$ curl -X POST -H &quot;Accept: application/json&quot; api.unipept.ugent.be/api/v1/pept2prot -d &#39;input[0]=SASLGR&#39;
+    [{&quot;sequence&quot;:&quot;SASLGR&quot;,&quot;uniprot_id&quot;:&quot;Q99243&quot;,&quot;taxon_id&quot;:9986}, ...]
+      </pre>
   </div>
   <div class="col-xs-3">
     <%= render 'sidebar' %>
