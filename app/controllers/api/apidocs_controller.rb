@@ -29,16 +29,16 @@ class Api::ApidocsController < ApplicationController
 
   def pept2taxa
     @title = "pept2taxa"
-    @sidebar_name = "pept2prot"
+    @sidebar_name = "pept2taxa"
   end
 
   def pept2lca
     @title = "pept2lca"
-    @sidebar_name = "pept2prot"
+    @sidebar_name = "pept2lca"
   end
 
   def taxa2lca
     @title = "taxa2lca"
-    @sidebar_name = "pept2prot"
+    @sidebar_name = "taxa2lca"
   end
 end
