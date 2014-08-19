@@ -11,7 +11,7 @@
 <div class="tab-help" id="tab-help">
   <div id="unique-peptide-finder-help">
     <p>Find unique peptides for a species of your choice, based on the data of the completed refseq genomes. Unique tryptic peptides are found in all selected genomes and in none of the Uniprot records belonging to taxa outside those of the selected genomes. These taxon-specific peptides can be downloaded and used for targeted proteomics experiments.</p>
-    <p>Incremental unions and intersections are computed for the peptidomes of all selected whole-genome sequences. The size of the incremental unions (pan peptidome) is shown in blue and the size of the incremental intersections (core peptidome) in orange. The size of the unique peptidome, a subset of the core peptidome that is unique to the lowest common ancestor (LCA) of the selected whole-genome sequences, is shown in green. The size of the individual peptidomes — expressed as the total number of tryptic peptides — is shown in grey. Individual data sets can be shown/hidden by clicking their name in the graph legend.</p>
+    <p>Incremental unions and intersections are computed for the peptidomes of all selected whole-genome sequences. The size of the incremental unions (pan peptidome) is shown in blue and the size of the incremental intersections (core peptidome) in orange. The size of the unique peptidome, a subset of the core peptidome that is unique to the lowest common ancestor (<span class="initialism">LCA</span>) of the selected whole-genome sequences, is shown in green. The size of the individual peptidomes — expressed as the total number of tryptic peptides — is shown in grey. Individual data sets can be shown/hidden by clicking their name in the graph legend.</p>
     <div class="row features">
       <div class="col-xs-4">
         <p class="text-center help-icon"><span class="glyphicon glyphicon-plus-sign"></span></p>
@@ -31,7 +31,7 @@
     </div>
   </div>
   <div id="peptidome-clustering-help">
-    <p>Find similarities between a selection of genomes and view the results in a similarity matrix or a phylogenetic tree. UPGMA is used to cluster the genomes based on their peptidome content. Pairwise similarities are computed as the ratio of the size of the insersection to the size of the union of both peptidomes.</p>
+    <p>Find similarities between a selection of genomes and view the results in a similarity matrix or a phylogenetic tree. <span class="initialism">UPGMA</span> is used to cluster the genomes based on their peptidome content. Pairwise similarities are computed as the ratio of the size of the insersection to the size of the union of both peptidomes.</p>
     <div class="row features">
       <div class="col-xs-4">
         <p class="text-center help-icon"><span class="glyphicon glyphicon-plus-sign"></span></p>
@@ -46,7 +46,7 @@
       <div class="col-xs-4">
         <p class="text-center help-icon"><span class="glyphicon glyphicon-download"></span></p>
         <h3>3. Download results</h3>
-        <p>You can download the similarity data by clicking the 'Download data' button in the top-right corner. The pairwise similarities between the genomes are offered as a Microsoft Excel-compatible CSV file, the UPGMA tree in the newick format.</p>
+        <p>You can download the similarity data by clicking the 'Download data' button in the top-right corner. The pairwise similarities between the genomes are offered as a Microsoft Excel-compatible <span class="initialism">CSV</span> file, the <span class="initialism">UPGMA</span> tree in the newick format.</p>
       </div>
     </div>
   </div>
@@ -89,7 +89,7 @@
       </div>
       <div class="tab-pane fade" id="my-genomes">
         <div class="alert alert-danger hide" id="my-genome-error">
-          <strong>Oh snap!</strong> Sorry, your browser doesn't seem to support the File API. Everything should work find in Firefox or Google Chrome.
+          <strong>Oh snap!</strong> Sorry, your browser doesn't seem to support the File <span class="initialism">API</span>. Everything should work find in Firefox or Google Chrome.
         </div>
         <div id="myGenomes" class="hide">
           <table class="table table-condensed" id="my-genomes-table">
@@ -114,7 +114,7 @@
               <input type="text" id="myGenomeName" class="form-control" placeholder="name" data-toggle="tooltip" title="Enter a name. The one of the organism would be a good choice.">
             </div>
             <div class="form-group">
-              <label for="myGenomeFile" class="control-label">FASTA file</label>
+              <label for="myGenomeFile" class="control-label"><span class="initialism">FASTA</span> file</label>
               <div class="input-group"  data-toggle="tooltip" title="Select a FASTA file containing one or more protein sequences.">
                 <span class="input-group-btn">
                   <span class="btn btn-default btn-file">
@@ -125,7 +125,7 @@
               </div>
             </div>
             <div class="form-group text-center">
-              <button type="button" id="processMyGenomeButton" class="btn btn-primary form-control">Process FASTA file</button>
+              <button type="button" id="processMyGenomeButton" class="btn btn-primary form-control">Process <span class="initialism">FASTA</span> file</button>
             </div>
             <div id="myGenomeProgress" class="progress hide">
               <div class="progress-bar progress-bar-striped active"  role="progressbar" style="width: 45%">

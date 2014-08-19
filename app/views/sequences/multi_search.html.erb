@@ -3,7 +3,7 @@
     <div class="col-xs-9">
         <p><%= @intro_text %></p>
         <% if @prideUrl %>
-          <p>This dataset was loaded from PRIDE. <%= link_to "View in PRIDE" , @prideURL, :target => "_blank" %> <span class='glyphicon glyphicon-share-alt'></span></p>
+          <p>This dataset was loaded from <span class="initialism">PRIDE</span>. <%= link_to "View in PRIDE" , @prideURL, :target => "_blank" %> <span class='glyphicon glyphicon-share-alt'></span></p>
         <% end %>
     </div>
     <div class="col-xs-3 text-right">
@@ -81,7 +81,7 @@
                 <div id="copy-missed" class="zero-clipboard"><span class="btn-clipboard">Copy</span></div>
                 <div class="well">
                   <h3>Sorry,</h3>
-                  <p>We didn't manage to find some of your peptides. You can <strong>BLAST</strong> them by clicking the links on the left or <strong>copy</strong> them to your clipboard with the top right link.</p>
+                  <p>We didn't manage to find some of your peptides. You can <strong><span class="initialism">BLAST</span></strong> them by clicking the links on the left or <strong>copy</strong> them to your clipboard with the top right link.</p>
                 </div>
               </div>
             </div>
