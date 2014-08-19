@@ -1,7 +1,7 @@
 <div class="apidocs row">
   <div class="col-xs-9">
     <div class='page-header'>
-      <h1>POST /api/v1/pept2prot
+      <h1><span class="initialism">POST</span> /api/v1/pept2prot
         <br>
         <small>Returns a list of Uniprot entries containing a given tryptic peptide</small>
       </h1>
@@ -13,7 +13,7 @@
 
     <h2 id="request">Request</h2>
     <p>
-      Use this method by doing a HTTP POST-request to <code>http://<%= Rails.application.config.api_host %>/api/v1/pept2prot</code>. <a href="#parameters">Parameters</a> can be included in the request body. The only required parameter is <code>input</code> which is a list containing one or more tryptic peptides.
+      The pept2prot method can be used by doing a <span class="initialism">HTTP</span> <span class="initialism">POST</span>-request (preferred) or <span class="initialism">GET</span>-request to <code>http://<%= Rails.application.config.api_host %>/api/v1/pept2prot</code>. <a href="#parameters">Parameters</a> can be included in the request body (<span class="initialism">POST</span>) or in the query string (<span class="initialism">GET</span>). The only required parameter is <code>input</code> which is a list containing one or more tryptic peptides.
     </p>
 
     <h3>input</h3>
@@ -23,7 +23,7 @@
 
     <div class="apidocs-callout apidocs-callout-warning">
       <h4>Input size</h4>
-      <p>Unipept puts no restrictions on the number of peptides in the <code>input</code> parameter. Do take in mind that searching for many peptides at once may cause the request to timeout. When searching for many peptides, we suggest splitting them over requests of 100 peptides at a time.</p>
+      <p>Unipept puts no restrictions on the number of peptides in the <code>input</code> parameter. Do take in mind that searching for many peptides at once may cause the request to timeout or, in the case of a <span class="initialism">GET</span>-request, exceed the maximum URL length. When searching for many peptides, we suggest splitting them over requests of 100 peptides at a time.</p>
     </div>
 
     <h3>equate_il</h3>
@@ -49,7 +49,7 @@
     <ul>
       <li><code>sequence</code>: the matched sequence</li>
       <li><code>uniprot_id</code>: the Uniprot accession number of the matching record</li>
-      <li><code>taxon_id</code>: the NCBI taxon id of the organism associated with the matching record</li>
+      <li><code>taxon_id</code>: the <span class="initialism">NCBI</span> taxon id of the organism associated with the matching record</li>
     </ul>
 
     <p>When the <code>extra</code> parameter is set to <code>true</code>, the following additional fields are returned per match:</p>

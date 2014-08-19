@@ -54,9 +54,9 @@ class Api::ApiController < ApplicationController
 
 
   # Returns a list of Uniprot entries containing a given tryptic peptide
-  # param :input, Array, required: true, desc: "List of input peptides"
-  # param :equate_il, ['true','false'], desc: "Indicate if you want to equate I and L"
-  # param :extra, ['true','false'], desc: "Request extra information such as the entire lineage"
+  # params[:input]: Array, required, List of input peptides
+  # params[:equate_il]: "true" or "false" (default), optional, Equate I and L?
+  # params[:extra]: "true" or "false" (default), optional, Output extra info?
   def pept2prot
     lookup = Hash.new { |h,k| h[k] = Set.new }
 
