@@ -22,7 +22,7 @@
     </p>
 
     <div class="apidocs-callout apidocs-callout-warning">
-      <h4><span class="glyphicon glyphicon-exclamation-sign"></span> Input size</h4>
+      <h4>Input size</h4>
       <p>Unipept puts no restrictions on the number of peptides in the <code>input</code> parameter. Do take in mind that searching for many peptides at once may cause the request to timeout. When searching for many peptides, we suggest splitting them over requests of 100 peptides at a time.</p>
     </div>
 
@@ -37,7 +37,7 @@
     </p>
 
     <div class="apidocs-callout apidocs-callout-warning">
-      <h4><span class="glyphicon glyphicon-exclamation-sign"></span> Performance penalty</h4>
+      <h4>Performance penalty</h4>
       <p>Setting <code>extra</code> to <code>true</code> causes additional database queries and an accompanying performance penalty. Don't use this parameter unless you need the extra information fields.</p>
     </div>
 
@@ -61,11 +61,10 @@
     </ul>
 
     <h2 id="parameters">Parameters</h2>
-    TODO...
     <table class='table'>
       <thead>
         <tr>
-          <th>Param name</th>
+          <th>Name</th>
           <th>Description</th>
         </tr>
       </thead>
@@ -73,34 +72,31 @@
         <tr>
           <td>
             <strong>input </strong><br>
-            <small>required</small>
+            <small><mark>required</mark></small>
           </td>
           <td>
-            <p>List of input peptides</p>
-            <br>
-            Value: Must be an array of any type
+            <p>List of tryptic peptides to search for.</p>
+            <small>Value: Must be an array of strings</small>
           </td>
         </tr>
         <tr>
           <td>
             <strong>equate_il </strong><br>
-            <small>optional</small>
+            <small><i>optional</i></small>
           </td>
           <td>
-            <p>Indicate if you want to equate I and L</p>
-            <br>
-            Value: Must be one of: true, false.
+            <p>Equate isoleucine (I) and leucine (L).</p>
+            <small>Value: Must be <code>true</code> or <code>false</code> (default)</small>
           </td>
         </tr>
         <tr>
           <td>
             <strong>extra </strong><br>
-            <small>optional</small>
+            <small><i>optional</i></small>
           </td>
           <td>
-            <p>Request extra information such as the entire lineage</p>
-            <br>
-            Value: Must be one of: true, false.
+            <p>Request extra information.</p>
+            <small>Value: Must be <code>true</code> or <code>false</code> (default)</small>
           </td>
         </tr>
       </tbody>
