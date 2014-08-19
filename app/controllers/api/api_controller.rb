@@ -94,7 +94,7 @@ class Api::ApiController < ApplicationController
   # param :input, Array, required: true, desc: "List of input peptides"
   # param :equate_il, ['true','false'], desc: "Indicate if you want to equate I and L"
   # param :extra, ['true','false'], desc: "Request extra information such as the entire lineage"
-  param :names, ['true','false'], desc: "Include the lineage names"
+  # param :names, ['true','false'], desc: "Include the lineage names"
   def pept2taxa
     @result = {}
     lookup = Hash.new { |h,k| h[k] = Set.new }
