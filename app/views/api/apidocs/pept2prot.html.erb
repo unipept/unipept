@@ -3,61 +3,61 @@
     <div class='page-header'>
       <h1><span class="initialism">POST</span> /api/v1/pept2prot
         <br>
-        <small>Returns a list of Uniprot entries containing a given tryptic peptide</small>
+        <small>Returns a list of UniProt entries containing a given tryptic peptide</small>
       </h1>
     </div>
 
     <p>
-      This method returns a list of all Uniprot entries containing a given tryptic peptide. Its result should be the same as the <em>Protein matches</em> tab when doing a search with the <%= link_to("Tryptic Peptide Analysis", search_single_path) %>.
+      This method returns a list of all UniProt entries containing a given tryptic peptide. This is the same information as provided on the <em>Protein matches</em> tab when performing a search with the <%= link_to("Tryptic Peptide Analysis", search_single_path) %> in the web  interface.
     </p>
 
     <h2 id="request">Request</h2>
     <p>
-      The pept2prot method can be used by doing a <span class="initialism">HTTP</span> <span class="initialism">POST</span>-request (preferred) or <span class="initialism">GET</span>-request to <code>http://<%= Rails.application.config.api_host %>/api/v1/pept2prot</code>. <a href="#parameters">Parameters</a> can be included in the request body (<span class="initialism">POST</span>) or in the query string (<span class="initialism">GET</span>). The only required parameter is <code>input</code> which is a list containing one or more tryptic peptides.
+      The pept2prot method can be used by doing a <span class="initialism">HTTP</span> <span class="initialism">POST</span>-request (preferred) or <span class="initialism">GET</span>-request to <code>http://<%= Rails.application.config.api_host %>/api/v1/pept2prot</code>. <a href="#parameters">Parameters</a> can be included in the request body (<span class="initialism">POST</span>) or in the query string (<span class="initialism">GET</span>). The only required parameter is <code>input</code>, which is passed as a list containing one or more tryptic peptides.
     </p>
 
     <h3>input</h3>
     <p>
-      <code>input</code> is a required parameter and contains a list of one or more peptides to match. Unipept will return all Uniprot records that contain any of the records in <code>input</code>.
+      <code>input</code> is a required parameter that takes a list of one or more tryptic. Unipept will return all UniProt records that contain any of the peptides in <code>input</code> in their protein sequence.
     </p>
 
     <div class="apidocs-callout apidocs-callout-warning">
       <h4>Input size</h4>
-      <p>Unipept puts no restrictions on the number of peptides in the <code>input</code> parameter. Do take in mind that searching for many peptides at once may cause the request to timeout or, in the case of a <span class="initialism">GET</span>-request, exceed the maximum URL length. When searching for many peptides, we suggest splitting them over requests of 100 peptides at a time.</p>
+      <p>Unipept puts no restrictions on the number of peptides passed to the <code>input</code> parameter. Keep in mind that searching for lots of peptides at once may cause the request to timeout or, in the case of a <span class="initialism">GET</span>-request, exceed the maximum URL length. When performing bulk searches, we suggest splitting the input set over requests of 100 peptides each.</p>
     </div>
 
     <h3>equate_il</h3>
     <p>
-      <code>equate_il</code> is an optional parameter and can be either <code>true</code> or <code>false</code>. When the parameter is not set, the default value of <code>false</code> is assumed. When the parameter is set to <code>true</code>, isoleucine (I) and leucine (L) are equated during the search. This setting is similar to checking the <i>Equate I and L?</i> checkbox in the <%= link_to("Tryptic Peptide Analysis", search_single_path) %>.
+      <code>equate_il</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, isoleucine (I) and leucine (L) are equated when matching tryptic peptides to UniProt records. This setting is similar to checking the <i>Equate I and L?</i> checkbox when performing a search with the <%= link_to("Tryptic Peptide Analysis", search_single_path) %> in the web interface.
     </p>
 
     <h3>extra</h3>
     <p>
-      <code>extra</code> is an optional parameter and can be either <code>true</code> or <code>false</code>. When the parameter is not set, the default value of <code>false</code> is assumed. When the parameter is set to <code>true</code>, Unipept will return additional information fields. See the <a href="#response">response</a> section for more information.
+      <code>extra</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitelly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, Unipept will return additional information fields. See the <a href="#response">response</a> section for more information.
     </p>
 
     <div class="apidocs-callout apidocs-callout-warning">
       <h4>Performance penalty</h4>
-      <p>Setting <code>extra</code> to <code>true</code> causes additional database queries and an accompanying performance penalty. Don't use this parameter unless you need the extra information fields.</p>
+      <p>Setting <code>extra</code> to <code>true</code> has a performance penalty inferred from additional database queries. Do not use this parameter unless the extra information fields are needed.</p>
     </div>
 
     <h2 id="response">Response</h2>
     <p>
-      By default, a list of matching Uniprot records is returned as a JSON object. Each object consists of the following fields:
+      Matching UniProt records are returned as a list of <span class="initialism">JSON</span> objects. By default, each object contains the following information fields extracted from the UniProt record:
     </p>
 
     <ul>
-      <li><code>sequence</code>: the matched sequence</li>
-      <li><code>uniprot_id</code>: the Uniprot accession number of the matching record</li>
+      <li><code>sequence</code>: the peptide that matched this record</li>
+      <li><code>uniprot_id</code>: the UniProt accession number of the matching record</li>
       <li><code>taxon_id</code>: the <span class="initialism">NCBI</span> taxon id of the organism associated with the matching record</li>
     </ul>
 
-    <p>When the <code>extra</code> parameter is set to <code>true</code>, the following additional fields are returned per match:</p>
+    <p>When the <code>extra</code> parameter is set to <code>true</code>, objects contain the following additional fields extracted from the UniProt record:</p>
 
     <ul>
-      <li><code>taxon_name</code>: the name of the associated organism</li>
-      <li><code>ec_references</code>: a space separated list of EC numbers associated with the matching Uniprot record</li>
-      <li><code>go_references</code>: a space separated list of GO terms associated with the matching Uniprot record</li>
+      <li><code>taxon_name</code>: the name of the organism associated with the matching UniProt record</li>
+      <li><code>ec_references</code>: a space separated list of EC numbers associated with the matching UniProt record</li>
+      <li><code>go_references</code>: a space separated list of GO terms associated with the matching UniProt record</li>
     </ul>
 
     <h2 id="parameters">Parameters</h2>
@@ -95,7 +95,7 @@
             <small><i>optional</i></small>
           </td>
           <td>
-            <p>Request extra information.</p>
+            <p>Return additional information fields.</p>
             <small>Value: Must be <code>true</code> or <code>false</code> (default)</small>
           </td>
         </tr>
@@ -104,8 +104,8 @@
 
     <h2 id="examples">Examples</h2>
     <div class="apidocs-example">
-      <h4>Example <small>Retrieve all uniprot records containing a single tryptic peptide</small></h4>
-      <p>This example retrieves all uniprot records containing the peptide <i class="initialism">AIPQLEVARPADAYETAEAYR</i>. The results should be the same as <%= link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) %> in the Tryptic Peptide Analysis.</p>
+      <h4>Example <small>Retrieve all UniProt records containing a given tryptic peptide</small></h4>
+      <p>This example retrieves all UniProt records containing the peptide <i class="initialism">AIPQLEVARPADAYETAEAYR</i>. The result is the same as <%= link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) %> with the Tryptic Peptide Analysis in the web interface.</p>
         <pre class="pygmentize"><span class="gp">$</span> curl -X POST -H <span class="s2">"Accept: application/json"</span> <%= Rails.application.config.api_host %>/api/v1/pept2prot \
 -d <span class="s1">'input[0]=AIPQLEVARPADAYETAEAYR'</span></pre>
     </div>
@@ -127,7 +127,7 @@
 
     <div class="apidocs-example">
       <h4>Example <small>Retrieve all uniprot records containing one of multiple tryptic peptides</small></h4>
-      <p>This example retrieves all uniprot records containing the peptide <i class="initialism">AIPQLEVARPADAYETAEAYR</i> or <i class="initialism">APVLSDSSCK</i>. The results should be the same as the combination of <%= link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) %> and <%= link_to("this search", sequence_path("APVLSDSSCK")) %> in the Tryptic Peptide Analysis.</p>
+      <p>This example retrieves all uniprot records containing the peptide <i class="initialism">AIPQLEVARPADAYETAEAYR</i> or <i class="initialism">APVLSDSSCK</i>. The result is the same as the combination of <%= link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) %> and <%= link_to("this search", sequence_path("APVLSDSSCK")) %> with the Tryptic Peptide Analysis in the web interface.</p>
         <pre class="pygmentize"><span class="gp">$</span> curl -X POST -H <span class="s2">"Accept: application/json"</span> <%= Rails.application.config.api_host %>/api/v1/pept2prot \
 -d <span class="s1">'input[0]=AIPQLEVARPADAYETAEAYR'</span> \
 -d <span class="s1">'input[1]=APVLSDSSCK'</span></pre>
@@ -166,7 +166,7 @@
 
     <div class="apidocs-example">
       <h4>Example <small>Retrieve all uniprot records containing a single tryptic peptide equating I and L</small></h4>
-      <p>This example retrieves all uniprot records containing the peptide <i class="initialism">APVISDSSCK</i>, equating I and L. The results should be the same as <%= link_to("this search", sequence_path("APVISDSSCK") + "/equate_il") %> in the Tryptic Peptide Analysis.</p>
+      <p>This example retrieves all uniprot records containing the peptide <i class="initialism">APVISDSSCK</i>, equating I and L. The result is the same as <%= link_to("this search", sequence_path("APVISDSSCK") + "/equate_il") %> with the Tryptic Peptide Analysis in the web interface.</p>
         <pre class="pygmentize"><span class="gp">$</span> curl -X POST -H <span class="s2">"Accept: application/json"</span> <%= Rails.application.config.api_host %>/api/v1/pept2prot \
 -d <span class="s1">'input[0]=APVISDSSCK'</span> \
 -d <span class="s1">'equate_il=true'</span></pre>
@@ -195,7 +195,7 @@
 
     <div class="apidocs-example">
       <h4>Example <small>Retrieve all uniprot records containing a single tryptic peptide with extra information</small></h4>
-      <p>This example retrieves all uniprot records containing the peptide <i class="initialism">AIPQLEVARPADAYETAEAYR</i> including all extra information in the Unipept database. The results should be the same as <%= link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) %> in the Tryptic Peptide Analysis.</p>
+      <p>This example retrieves all uniprot records containing the peptide <i class="initialism">AIPQLEVARPADAYETAEAYR</i> including all extra information in the Unipept database. The result is the same as <%= link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) %> with the Tryptic Peptide Analysis in the web interface.</p>
         <pre class="pygmentize"><span class="gp">$</span> curl -X POST -H <span class="s2">"Accept: application/json"</span> <%= Rails.application.config.api_host %>/api/v1/pept2prot \
 -d <span class="s1">'input[0]=AIPQLEVARPADAYETAEAYR'</span> \
 -d <span class="s1">'extra=true'</span></pre>
