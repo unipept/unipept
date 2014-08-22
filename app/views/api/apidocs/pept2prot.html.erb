@@ -13,17 +13,17 @@
 
     <h2 id="request">Request</h2>
     <p>
-      The pept2prot method can be used by doing a <span class="initialism">HTTP</span> <span class="initialism">POST</span>-request (preferred) or <span class="initialism">GET</span>-request to <code>http://<%= Rails.application.config.api_host %>/api/v1/pept2prot</code>. <a href="#parameters">Parameters</a> can be included in the request body (<span class="initialism">POST</span>) or in the query string (<span class="initialism">GET</span>). The only required parameter is <code>input</code>, which is passed as a list containing one or more tryptic peptides.
+      The pept2prot method can be used by doing a <span class="initialism">HTTP</span> <span class="initialism">POST</span>-request (preferred) or <span class="initialism">GET</span>-request to <code>http://<%= Rails.application.config.api_host %>/api/v1/pept2prot</code>. <a href="#parameters">Parameters</a> can be included in the request body (<span class="initialism">POST</span>) or in the query string (<span class="initialism">GET</span>). The only required parameter is <code>input[]</code>, which takes one or more tryptic peptides.
     </p>
 
     <h3>input</h3>
     <p>
-      <code>input</code> is a required parameter that takes a list of one or more tryptic. Unipept will return all UniProt records that contain any of the peptides in <code>input</code> in their protein sequence.
+      <code>input[]</code> is a required parameter that takes one or more tryptic peptides. Unipept will return all UniProt records that contain any of the <code>input[]</code> peptides in their protein sequence. To pass multiple peptides at once , simply add multiple <code>input[]</code> parameters (see <a href="#apidocs-example-multiple">example</a>).
     </p>
 
     <div class="apidocs-callout apidocs-callout-warning">
       <h4>Input size</h4>
-      <p>Unipept puts no restrictions on the number of peptides passed to the <code>input</code> parameter. Keep in mind that searching for lots of peptides at once may cause the request to timeout or, in the case of a <span class="initialism">GET</span>-request, exceed the maximum URL length. When performing bulk searches, we suggest splitting the input set over requests of 100 peptides each.</p>
+      <p>Unipept puts no restrictions on the number of peptides passed to the <code>input[]</code> parameter. Keep in mind that searching for lots of peptides at once may cause the request to timeout or, in the case of a <span class="initialism">GET</span>-request, exceed the maximum URL length. When performing bulk searches, we suggest splitting the input set over requests of 100 peptides each.</p>
     </div>
 
     <h3>equate_il</h3>
@@ -71,12 +71,12 @@
       <tbody>
         <tr>
           <td>
-            <strong>input </strong><br>
+            <strong>input[] </strong><br>
             <small><mark>required</mark></small>
           </td>
           <td>
-            <p>List of tryptic peptides to search for.</p>
-            <small>Value: Must be an array of strings</small>
+            <p>Tryptic peptide to search for. Add multiple parameters to search for multiple peptides.</p>
+            <small>Value: String</small>
           </td>
         </tr>
         <tr>
@@ -108,9 +108,9 @@
       <p>This example retrieves all UniProt records containing the peptide <i class="initialism">AIPQLEVARPADAYETAEAYR</i>. The result is the same as <%= link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) %> with the Tryptic Peptide Analysis in the web interface.</p>
         <span class="initialism"><b>POST</b></span>
         <pre class="pygmentize"><span class="gp">$</span> curl -X POST -H <span class="s2">"Accept: application/json"</span> <%= Rails.application.config.api_host %>/api/v1/pept2prot \
--d <span class="s1">'input[0]=AIPQLEVARPADAYETAEAYR'</span></pre>
+-d <span class="s1">'input[]=AIPQLEVARPADAYETAEAYR'</span></pre>
         <span class="initialism"><b>GET</b></span>
-        <pre><a href="http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[0]=AIPQLEVARPADAYETAEAYR" target="_blank">http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[0]=AIPQLEVARPADAYETAEAYR</a></pre>
+        <pre><a href="http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR" target="_blank">http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR</a></pre>
     </div>
     <div class="highlight">
       <h4>Response</h4>
@@ -128,15 +128,15 @@
 <span class="p">]</span></code></pre>
     </div>
 
-    <div class="apidocs-example">
+    <div class="apidocs-example" id="apidocs-example-multiple">
       <h4>Example <small>Retrieve all uniprot records containing one of multiple tryptic peptides</small></h4>
       <p>This example retrieves all uniprot records containing the peptide <i class="initialism">AIPQLEVARPADAYETAEAYR</i> or <i class="initialism">APVLSDSSCK</i>. The result is the same as the combination of <%= link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) %> and <%= link_to("this search", sequence_path("APVLSDSSCK")) %> with the Tryptic Peptide Analysis in the web interface.</p>
         <span class="initialism"><b>POST</b></span>
         <pre class="pygmentize"><span class="gp">$</span> curl -X POST -H <span class="s2">"Accept: application/json"</span> <%= Rails.application.config.api_host %>/api/v1/pept2prot \
--d <span class="s1">'input[0]=AIPQLEVARPADAYETAEAYR'</span> \
--d <span class="s1">'input[1]=APVLSDSSCK'</span></pre>
+-d <span class="s1">'input[]=AIPQLEVARPADAYETAEAYR'</span> \
+-d <span class="s1">'input[]=APVLSDSSCK'</span></pre>
         <span class="initialism"><b>GET</b></span>
-        <pre><a href="http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[0]=AIPQLEVARPADAYETAEAYR&input[1]=APVLSDSSCK" target="_blank">http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[0]=AIPQLEVARPADAYETAEAYR&amp;input[1]=APVLSDSSCK</a></pre>
+        <pre><a href="http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR&input[]=APVLSDSSCK" target="_blank">http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR&amp;input[]=APVLSDSSCK</a></pre>
     </div>
     <div class="highlight">
       <h4>Response</h4>
@@ -175,10 +175,10 @@
       <p>This example retrieves all uniprot records containing the peptide <i class="initialism">APVISDSSCK</i>, equating I and L. The result is the same as <%= link_to("this search", sequence_path("APVISDSSCK") + "/equate_il") %> with the Tryptic Peptide Analysis in the web interface.</p>
         <span class="initialism"><b>POST</b></span>
         <pre class="pygmentize"><span class="gp">$</span> curl -X POST -H <span class="s2">"Accept: application/json"</span> <%= Rails.application.config.api_host %>/api/v1/pept2prot \
--d <span class="s1">'input[0]=APVISDSSCK'</span> \
+-d <span class="s1">'input[]=APVISDSSCK'</span> \
 -d <span class="s1">'equate_il=true'</span></pre>
         <span class="initialism"><b>GET</b></span>
-        <pre><a href="http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[0]=APVISDSSCK&equate_il=true" target="_blank">http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[0]=APVISDSSCK&amp;equate_il=true</a></pre>
+        <pre><a href="http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[]=APVISDSSCK&equate_il=true" target="_blank">http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[]=APVISDSSCK&amp;equate_il=true</a></pre>
     </div>
     <div class="highlight">
       <h4>Response</h4>
@@ -207,10 +207,10 @@
       <p>This example retrieves all uniprot records containing the peptide <i class="initialism">AIPQLEVARPADAYETAEAYR</i> including all extra information in the Unipept database. The result is the same as <%= link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) %> with the Tryptic Peptide Analysis in the web interface.</p>
         <span class="initialism"><b>POST</b></span>
         <pre class="pygmentize"><span class="gp">$</span> curl -X POST -H <span class="s2">"Accept: application/json"</span> <%= Rails.application.config.api_host %>/api/v1/pept2prot \
--d <span class="s1">'input[0]=AIPQLEVARPADAYETAEAYR'</span> \
+-d <span class="s1">'input[]=AIPQLEVARPADAYETAEAYR'</span> \
 -d <span class="s1">'extra=true'</span></pre>
         <span class="initialism"><b>GET</b></span>
-        <pre><a href="http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[0]=AIPQLEVARPADAYETAEAYR&extra=true" target="_blank">http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[0]=AIPQLEVARPADAYETAEAYR&amp;extra=true</a></pre>
+        <pre><a href="http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR&extra=true" target="_blank">http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR&amp;extra=true</a></pre>
     </div>
     <div class="highlight">
       <h4>Response</h4>
