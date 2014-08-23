@@ -199,6 +199,27 @@
     </table>
 
     <h2 id="examples">Examples</h2>
+    <%= render 'example',
+      example_id: "fix_me"
+      title: "Retrieve all UniProt records containing a given tryptic peptide",
+      explanation: "<p>This example retrieves all UniProt records containing the peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i>. The result is the same as " + link_to('this search', sequence_path('AIPQLEVARPADAYETAEAYR')) + " with the Tryptic Peptide Analysis in the web interface.</p>",
+      post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2prot \\
+-d <span class='s1'>'input[]=AIPQLEVARPADAYETAEAYR'</span>",
+      get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR</a>",
+      response: "<span class='p'>[</span>
+  <span class='p'>{</span>
+    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
+    <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'A7A5N6'</span><span class='p'>,</span>
+    <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>411481</span>
+  <span class='p'>},</span>
+  <span class='p'>{</span>
+    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
+    <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'A1A1M7'</span><span class='p'>,</span>
+    <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>367928</span>
+  <span class='p'>}</span>
+<span class='p'>]</span>"
+    %>
+
     <pre class="prettyprint">
 $ curl -X POST -H &quot;Accept: application/json&quot; api.unipept.ugent.be/api/v1/pept2taxa -d &#39;input[0]=SASLGR&#39;
 [{&quot;sequence&quot;:&quot;SASLGR&quot;,&quot;taxon_id&quot;:3055,&quot;taxon_name&quot;:&quot;Chlamydomonas reinhardtii&quot;,&quot;taxon_parent_id&quot;:3052,&quot;taxon_rank&quot;:&quot;species&quot;},...]
