@@ -147,60 +147,42 @@
     </div>
 
     <h2 id="parameters">Parameters</h2>
-    <table class='table parameter-table'>
-      <thead>
-        <tr>
-          <th class="name">Name</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            <strong>input[] </strong><br>
-            <small><mark>required</mark></small>
-          </td>
-          <td>
-            <p>Tryptic peptide to search for. Add multiple parameters to search for multiple peptides.</p>
-            <small>Value: String</small>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong>equate_il </strong><br>
-            <small><i>optional</i></small>
-          </td>
-          <td>
-            <p>Equate isoleucine (I) and leucine (L).</p>
-            <small>Value: Must be <code>true</code> or <code>false</code> (default)</small>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong>extra </strong><br>
-            <small><i>optional</i></small>
-          </td>
-          <td>
-            <p>Additionally return the lineage (if <code>true</code>).</p>
-            <small>Value: Must be <code>true</code> or <code>false</code> (default)</small>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong>names </strong><br>
-            <small><i>optional</i></small>
-          </td>
-          <td>
-            <p>Additionally return the names of the lineage (if <code>true</code>).</p>
-            <small>Value: Must be <code>true</code> or <code>false</code> (default)</small>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+
+    <%= render "parameters", parameters: [
+      {
+        name: "input[]",
+        required: true,
+        optional: false,
+        description: "Tryptic peptide to search for. Add multiple parameters to search for multiple peptides.",
+        value: "String"
+      },
+      {
+        name: "equate_il",
+        required: false,
+        optional: true,
+        description: "Equate isoleucine (I) and leucine (L).",
+        value: "Must be <code>true</code> or <code>false</code> (default)"
+      },
+      {
+        name: "extra",
+        required: false,
+        optional: true,
+        description: "Additionally return the lineage if <code>true</code>.",
+        value: "Must be <code>true</code> or <code>false</code> (default)"
+      },
+      {
+        name: "names",
+        required: false,
+        optional: true,
+        description: "Additionally return the names of the lineage if <code>true</code>.",
+        value: "Must be <code>true</code> or <code>false</code> (default)"
+      }
+    ]
+    %>
 
     <h2 id="examples">Examples</h2>
     <%= render 'example',
-      example_id: "fix_me"
+      example_id: "fix_me",
       title: "Retrieve all UniProt records containing a given tryptic peptide",
       explanation: "<p>This example retrieves all UniProt records containing the peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i>. The result is the same as " + link_to('this search', sequence_path('AIPQLEVARPADAYETAEAYR')) + " with the Tryptic Peptide Analysis in the web interface.</p>",
       post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2prot \\
