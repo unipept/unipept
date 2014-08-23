@@ -88,138 +88,119 @@
     %>
 
     <h2 id="examples">Examples</h2>
-    <div class="apidocs-example">
-      <h4>Example <small>Retrieve all UniProt records containing a given tryptic peptide</small></h4>
-      <p>This example retrieves all UniProt records containing the peptide <i class="initialism">AIPQLEVARPADAYETAEAYR</i>. The result is the same as <%= link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) %> with the Tryptic Peptide Analysis in the web interface.</p>
-        <span class="initialism"><b>POST</b></span>
-        <pre class="pygmentize"><span class="gp">$</span> curl -X POST -H <span class="s2">"Accept: application/json"</span> <%= Rails.application.config.api_host %>/api/v1/pept2prot \
--d <span class="s1">'input[]=AIPQLEVARPADAYETAEAYR'</span></pre>
-        <span class="initialism"><b>GET</b></span>
-        <pre><a href="http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR" target="_blank">http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR</a></pre>
-    </div>
-    <div class="highlight">
-      <h4>Response</h4>
-      <pre class="pygmentize pre-scrollable"><code><span class="p">[</span>
-  <span class="p">{</span>
-    <span class="nx">sequence</span><span class="o">:</span> <span class="s2">"AIPQLEVARPADAYETAEAYR"</span><span class="p">,</span>
-    <span class="nx">uniprot_id</span><span class="o">:</span> <span class="s2">"A7A5N6"</span><span class="p">,</span>
-    <span class="nx">taxon_id</span><span class="o">:</span> <span class="mi">411481</span>
-  <span class="p">},</span>
-  <span class="p">{</span>
-    <span class="nx">sequence</span><span class="o">:</span> <span class="s2">"AIPQLEVARPADAYETAEAYR"</span><span class="p">,</span>
-    <span class="nx">uniprot_id</span><span class="o">:</span> <span class="s2">"A1A1M7"</span><span class="p">,</span>
-    <span class="nx">taxon_id</span><span class="o">:</span> <span class="mi">367928</span>
-  <span class="p">}</span>
-<span class="p">]</span></code></pre>
-    </div>
+    <%= render 'example',
+      example_id: "apidocs-example-single",
+      title: "Retrieve all UniProt records containing a given tryptic peptide",
+      explanation: "<p>This example retrieves all UniProt records containing the peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i>. The result is the same as " + link_to('this search', sequence_path('AIPQLEVARPADAYETAEAYR')) + " with the Tryptic Peptide Analysis in the web interface.</p>",
+      post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2prot \\
+-d <span class='s1'>'input[]=AIPQLEVARPADAYETAEAYR'</span>",
+      get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR</a>",
+      response: "<span class='p'>[</span>
+  <span class='p'>{</span>
+    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
+    <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'A7A5N6'</span><span class='p'>,</span>
+    <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>411481</span>
+  <span class='p'>},</span>
+  <span class='p'>{</span>
+    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
+    <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'A1A1M7'</span><span class='p'>,</span>
+    <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>367928</span>
+  <span class='p'>}</span>
+<span class='p'>]</span>"
+    %>
 
-    <div class="apidocs-example" id="apidocs-example-multiple">
-      <h4>Example <small>Retrieve all UniProt records containing one of multiple tryptic peptides</small></h4>
-      <p>This example retrieves all UniProt records containing the peptide <i class="initialism">AIPQLEVARPADAYETAEAYR</i> or <i class="initialism">APVLSDSSCK</i>. The result is the same as the combination of <%= link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) %> and <%= link_to("this search", sequence_path("APVLSDSSCK")) %> with the Tryptic Peptide Analysis in the web interface.</p>
-        <span class="initialism"><b>POST</b></span>
-        <pre class="pygmentize"><span class="gp">$</span> curl -X POST -H <span class="s2">"Accept: application/json"</span> <%= Rails.application.config.api_host %>/api/v1/pept2prot \
--d <span class="s1">'input[]=AIPQLEVARPADAYETAEAYR'</span> \
--d <span class="s1">'input[]=APVLSDSSCK'</span></pre>
-        <span class="initialism"><b>GET</b></span>
-        <pre><a href="http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR&input[]=APVLSDSSCK" target="_blank">http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR&amp;input[]=APVLSDSSCK</a></pre>
-    </div>
-    <div class="highlight">
-      <h4>Response</h4>
-      <pre class="pygmentize pre-scrollable"><code><span class="p">[</span>
-  <span class="p">{</span>
-    <span class="nx">sequence</span><span class="o">:</span> <span class="s2">"AIPQLEVARPADAYETAEAYR"</span><span class="p">,</span>
-    <span class="nx">uniprot_id</span><span class="o">:</span> <span class="s2">"A7A5N6"</span><span class="p">,</span>
-    <span class="nx">taxon_id</span><span class="o">:</span> <span class="mi">411481</span>
-  <span class="p">},</span>
-  <span class="p">{</span>
-    <span class="nx">sequence</span><span class="o">:</span> <span class="s2">"AIPQLEVARPADAYETAEAYR"</span><span class="p">,</span>
-    <span class="nx">uniprot_id</span><span class="o">:</span> <span class="s2">"A1A1M7"</span><span class="p">,</span>
-    <span class="nx">taxon_id</span><span class="o">:</span> <span class="mi">367928</span>
-  <span class="p">},</span>
-  <span class="p">{</span>
-    <span class="nx">sequence</span><span class="o">:</span> <span class="s2">"APVLSDSSCK"</span><span class="p">,</span>
-    <span class="nx">uniprot_id</span><span class="o">:</span> <span class="s2">"P00761"</span><span class="p">,</span>
-    <span class="nx">taxon_id</span><span class="o">:</span> <span class="mi">9823</span>
-  <span class="p">},</span>
-  <span class="p">{</span>
-    <span class="nx">sequence</span><span class="o">:</span> <span class="s2">"APVLSDSSCK"</span><span class="p">,</span>
-    <span class="nx">uniprot_id</span><span class="o">:</span> <span class="s2">"C5IWV5"</span><span class="p">,</span>
-    <span class="nx">taxon_id</span><span class="o">:</span> <span class="mi">9823</span>
-  <span class="p">},</span>
-  <span class="p">{</span>
-    <span class="nx">sequence</span><span class="o">:</span> <span class="s2">"APVLSDSSCK"</span><span class="p">,</span>
-    <span class="nx">uniprot_id</span><span class="o">:</span> <span class="s2">"F1SRS2"</span><span class="p">,</span>
-    <span class="nx">taxon_id</span><span class="o">:</span> <span class="mi">9823</span>
-  <span class="p">}</span>
-<span class="p">]</span>
-</code></pre>
-    </div>
+    <%= render 'example',
+      example_id: "apidocs-example-multiple",
+      title: "Retrieve all UniProt records containing one of multiple tryptic peptides",
+      explanation: "<p>This example retrieves all UniProt records containing the peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i> or <i class='initialism'>APVLSDSSCK</i>. The result is the same as the combination of " + link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) + " and " + link_to("this search", sequence_path("APVLSDSSCK")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
+      post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2prot \\
+-d <span class='s1'>'input[]=AIPQLEVARPADAYETAEAYR'</span> \\
+-d <span class='s1'>'input[]=APVLSDSSCK'</span>",
+      get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR&input[]=APVLSDSSCK' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR&amp;input[]=APVLSDSSCK</a>",
+      response: "<span class='p'>[</span>
+  <span class='p'>{</span>
+    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
+    <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'A7A5N6'</span><span class='p'>,</span>
+    <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>411481</span>
+  <span class='p'>},</span>
+  <span class='p'>{</span>
+    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
+    <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'A1A1M7'</span><span class='p'>,</span>
+    <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>367928</span>
+  <span class='p'>},</span>
+  <span class='p'>{</span>
+    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'APVLSDSSCK'</span><span class='p'>,</span>
+    <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'P00761'</span><span class='p'>,</span>
+    <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>9823</span>
+  <span class='p'>},</span>
+  <span class='p'>{</span>
+    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'APVLSDSSCK'</span><span class='p'>,</span>
+    <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'C5IWV5'</span><span class='p'>,</span>
+    <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>9823</span>
+  <span class='p'>},</span>
+  <span class='p'>{</span>
+    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'APVLSDSSCK'</span><span class='p'>,</span>
+    <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'F1SRS2'</span><span class='p'>,</span>
+    <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>9823</span>
+  <span class='p'>}</span>
+<span class='p'>]</span>"
+    %>
 
-    <div class="apidocs-example">
-      <h4>Example <small>Retrieve all UniProt records containing a single tryptic peptide equating I and L</small></h4>
-      <p>This example retrieves all UniProt records containing the peptide <i class="initialism">APVISDSSCK</i>, equating I and L. The result is the same as <%= link_to("this search", sequence_path("APVISDSSCK") + "/equate_il") %> with the Tryptic Peptide Analysis in the web interface.</p>
-        <span class="initialism"><b>POST</b></span>
-        <pre class="pygmentize"><span class="gp">$</span> curl -X POST -H <span class="s2">"Accept: application/json"</span> <%= Rails.application.config.api_host %>/api/v1/pept2prot \
--d <span class="s1">'input[]=APVISDSSCK'</span> \
--d <span class="s1">'equate_il=true'</span></pre>
-        <span class="initialism"><b>GET</b></span>
-        <pre><a href="http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[]=APVISDSSCK&equate_il=true" target="_blank">http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[]=APVISDSSCK&amp;equate_il=true</a></pre>
-    </div>
-    <div class="highlight">
-      <h4>Response</h4>
-      <pre class="pygmentize pre-scrollable"><code><span class="p">[</span>
-  <span class="p">{</span>
-    <span class="nx">sequence</span><span class="o">:</span> <span class="s2">"APVISDSSCK"</span><span class="p">,</span>
-    <span class="nx">uniprot_id</span><span class="o">:</span> <span class="s2">"P00761"</span><span class="p">,</span>
-    <span class="nx">taxon_id</span><span class="o">:</span> <span class="mi">9823</span>
-  <span class="p">},</span>
-  <span class="p">{</span>
-    <span class="nx">sequence</span><span class="o">:</span> <span class="s2">"APVISDSSCK"</span><span class="p">,</span>
-    <span class="nx">uniprot_id</span><span class="o">:</span> <span class="s2">"C5IWV5"</span><span class="p">,</span>
-    <span class="nx">taxon_id</span><span class="o">:</span> <span class="mi">9823</span>
-  <span class="p">},</span>
-  <span class="p">{</span>
-    <span class="nx">sequence</span><span class="o">:</span> <span class="s2">"APVISDSSCK"</span><span class="p">,</span>
-    <span class="nx">uniprot_id</span><span class="o">:</span> <span class="s2">"F1SRS2"</span><span class="p">,</span>
-    <span class="nx">taxon_id</span><span class="o">:</span> <span class="mi">9823</span>
-  <span class="p">}</span>
-<span class="p">]</span>
-</code></pre>
-    </div>
+    <%= render 'example',
+      example_id: "apidocs-example-equate_il",
+      title: "Retrieve all UniProt records containing a single tryptic peptide equating I and L",
+      explanation: "<p>This example retrieves all UniProt records containing the peptide <i class='initialism'>APVISDSSCK</i>, equating I and L. The result is the same as " + link_to("this search", sequence_path("APVISDSSCK") + "/equate_il") + " with the Tryptic Peptide Analysis in the web interface.</p>",
+      post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2prot \\
+-d <span class='s1'>'input[]=APVISDSSCK'</span> \\
+-d <span class='s1'>'equate_il=true'</span>",
+      get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/pept2prot.json?input[]=APVISDSSCK&equate_il=true' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/pept2prot.json?input[]=APVISDSSCK&amp;equate_il=true</a>",
+      response: "<span class='p'>[</span>
+  <span class='p'>{</span>
+    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'APVISDSSCK'</span><span class='p'>,</span>
+    <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'P00761'</span><span class='p'>,</span>
+    <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>9823</span>
+  <span class='p'>},</span>
+  <span class='p'>{</span>
+    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'APVISDSSCK'</span><span class='p'>,</span>
+    <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'C5IWV5'</span><span class='p'>,</span>
+    <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>9823</span>
+  <span class='p'>},</span>
+  <span class='p'>{</span>
+    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'APVISDSSCK'</span><span class='p'>,</span>
+    <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'F1SRS2'</span><span class='p'>,</span>
+    <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>9823</span>
+  <span class='p'>}</span>
+<span class='p'>]</span>"
+    %>
 
-    <div class="apidocs-example">
-      <h4>Example <small>Retrieve all UniProt records containing a single tryptic peptide with extra information</small></h4>
-      <p>This example retrieves all UniProt records containing the peptide <i class="initialism">AIPQLEVARPADAYETAEAYR</i> including all extra information in the Unipept database. The result is the same as <%= link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) %> with the Tryptic Peptide Analysis in the web interface.</p>
-        <span class="initialism"><b>POST</b></span>
-        <pre class="pygmentize"><span class="gp">$</span> curl -X POST -H <span class="s2">"Accept: application/json"</span> <%= Rails.application.config.api_host %>/api/v1/pept2prot \
--d <span class="s1">'input[]=AIPQLEVARPADAYETAEAYR'</span> \
--d <span class="s1">'extra=true'</span></pre>
-        <span class="initialism"><b>GET</b></span>
-        <pre><a href="http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR&extra=true" target="_blank">http://<%= Rails.application.config.api_host %>/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR&amp;extra=true</a></pre>
-    </div>
-    <div class="highlight">
-      <h4>Response</h4>
-      <pre class="pygmentize pre-scrollable"><code><span class="p">[</span>
-  <span class="p">{</span>
-    <span class="nx">sequence</span><span class="o">:</span> <span class="s2">"AIPQLEVARPADAYETAEAYR"</span><span class="p">,</span>
-    <span class="nx">uniprot_id</span><span class="o">:</span> <span class="s2">"A7A5N6"</span><span class="p">,</span>
-    <span class="nx">taxon_id</span><span class="o">:</span> <span class="mi">411481</span><span class="p">,</span>
-    <span class="nx">taxon_name</span><span class="o">:</span> <span class="s2">"Bifidobacterium adolescentis L2-32"</span><span class="p">,</span>
-    <span class="nx">ec_references</span><span class="o">:</span> <span class="s2">"2.2.1.1"</span><span class="p">,</span>
-    <span class="nx">go_references</span><span class="o">:</span> <span class="s2">""</span>
-  <span class="p">},</span>
-  <span class="p">{</span>
-    <span class="nx">sequence</span><span class="o">:</span> <span class="s2">"AIPQLEVARPADAYETAEAYR"</span><span class="p">,</span>
-    <span class="nx">uniprot_id</span><span class="o">:</span> <span class="s2">"A1A1M7"</span><span class="p">,</span>
-    <span class="nx">taxon_id</span><span class="o">:</span> <span class="mi">367928</span><span class="p">,</span>
-    <span class="nx">taxon_name</span><span class="o">:</span> <span class="s2">"Bifidobacterium adolescentis ATCC 15703"</span><span class="p">,</span>
-    <span class="nx">ec_references</span><span class="o">:</span> <span class="s2">""</span><span class="p">,</span>
-    <span class="nx">go_references</span><span class="o">:</span> <span class="s2">""</span>
-  <span class="p">}</span>
-<span class="p">]</span>
-</code>
-      </pre>
-    </div>
+    <%= render 'example',
+      example_id: "apidocs-example-extra",
+      title: "Retrieve all UniProt records containing a single tryptic peptide with extra information",
+      explanation: "<p>This example retrieves all UniProt records containing the peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i> including all extra information in the Unipept database. The result is the same as " + link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
+      post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2prot \\
+-d <span class='s1'>'input[]=AIPQLEVARPADAYETAEAYR'</span> \\
+-d <span class='s1'>'extra=true'</span>",
+      get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR&extra=true' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR&amp;extra=true</a>",
+      response: "<span class='p'>[</span>
+  <span class='p'>{</span>
+    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
+    <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'A7A5N6'</span><span class='p'>,</span>
+    <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>411481</span><span class='p'>,</span>
+    <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Bifidobacterium adolescentis L2-32'</span><span class='p'>,</span>
+    <span class='nx'>ec_references</span><span class='o'>:</span> <span class='s2'>'2.2.1.1'</span><span class='p'>,</span>
+    <span class='nx'>go_references</span><span class='o'>:</span> <span class='s2'>''</span>
+  <span class='p'>},</span>
+  <span class='p'>{</span>
+    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
+    <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'A1A1M7'</span><span class='p'>,</span>
+    <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>367928</span><span class='p'>,</span>
+    <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Bifidobacterium adolescentis ATCC 15703'</span><span class='p'>,</span>
+    <span class='nx'>ec_references</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+    <span class='nx'>go_references</span><span class='o'>:</span> <span class='s2'>''</span>
+  <span class='p'>}</span>
+<span class='p'>]</span>"
+    %>
+
   </div>
   <div class="col-xs-3">
     <%= render 'sidebar' %>
