@@ -1,0 +1,13 @@
+<tr>
+  <td>
+    <strong><%= parameter[:name] %></strong><br>
+    <small>
+      <%= raw("<mark>required</mark>") if parameter[:required] %>
+      <%= raw("<i>optional</i>")if parameter[:optional] %>
+    </small>
+  </td>
+  <td>
+    <p><%= raw(parameter[:description]) %></p>
+    <small>Value: <%= raw(parameter[:value]) %></small>
+  </td>
+</tr>

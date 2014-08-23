@@ -61,46 +61,31 @@
     </ul>
 
     <h2 id="parameters">Parameters</h2>
-    <table class='table parameter-table'>
-      <thead>
-        <tr>
-          <th class="name">Name</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            <strong>input[] </strong><br>
-            <small><mark>required</mark></small>
-          </td>
-          <td>
-            <p>Tryptic peptide to search for. Add multiple parameters to search for multiple peptides.</p>
-            <small>Value: String</small>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong>equate_il </strong><br>
-            <small><i>optional</i></small>
-          </td>
-          <td>
-            <p>Equate isoleucine (I) and leucine (L).</p>
-            <small>Value: Must be <code>true</code> or <code>false</code> (default)</small>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong>extra </strong><br>
-            <small><i>optional</i></small>
-          </td>
-          <td>
-            <p>Returns additional information fields if set to <code>true</code>.</p>
-            <small>Value: Must be <code>true</code> or <code>false</code> (default)</small>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+
+    <%= render "parameters", parameters: [
+      {
+        name: "input[]",
+        required: true,
+        optional: false,
+        description: "Tryptic peptide to search for. Add multiple parameters to search for multiple peptides.",
+        value: "String"
+      },
+      {
+        name: "equate_il",
+        required: false,
+        optional: true,
+        description: "Equate isoleucine (I) and leucine (L).",
+        value: "Must be <code>true</code> or <code>false</code> (default)"
+      },
+      {
+        name: "extra",
+        required: false,
+        optional: true,
+        description: "Tryptic peptide to search for. Add multiple parameters to search for multiple peptides.",
+        value: "Must be <code>true</code> or <code>false</code> (default)"
+      }
+    ]
+    %>
 
     <h2 id="examples">Examples</h2>
     <div class="apidocs-example">
