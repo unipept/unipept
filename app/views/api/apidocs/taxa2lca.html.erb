@@ -8,63 +8,163 @@
     </div>
 
     <p>
-      This will actually calculate the lowest common ancestor of all the lineages of all the taxon ids passed via the input paramater.
+      This method calculates and returns the taxonomic lowest common ancestor for a given list of <span class="initialism">NCBI</span> taxon id's.
     </p>
 
     <h2 id="request">Request</h2>
+    <p>
+      The pept2taxa method can be used by doing a <span class="initialism">HTTP</span> <span class="initialism">POST</span>-request (preferred) or <span class="initialism">GET</span>-request to <code>http://<%= Rails.application.config.api_host %>/api/v1/pept2lca</code>. <a href="#parameters">Parameters</a> can be included in the request body (<span class="initialism">POST</span>) or in the query string (<span class="initialism">GET</span>). The only required parameter is <code>input[]</code>, which takes at least two taxon id's.
+    </p>
+
+    <h3>input</h3>
+    <p>
+      <code>input[]</code> is a required parameter that takes at least two taxon id's. Unipept will calculate and return the lowest common ancestor for the given taxa. To pass multiple taxon id's, simply add multiple <code>input[]</code> parameters (see <a href="#apidocs-example-multiple">example</a>).
+    </p>
+
+    <h3>extra</h3>
+    <p>
+      <code>extra</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, Unipept will return the full lineage for the lowest common ancestor. See the <a href="#response">response</a> section for more information.
+    </p>
+
+    <h3>names</h3>
+    <p>
+      <code>names</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When both <code>names</code> and <code>extra</code> are set to <code>true</code>, Unipept will also return the names of all ranks in the lineage of each organism. Setting only <code>names</code> to <code>true</code> has no effect on the output. See the <a href="#response">response</a> section for more information.
+    </p>
+
+    <div class="apidocs-callout apidocs-callout-warning">
+      <h4>Performance penalty</h4>
+      <p>Setting <code>names</code> to <code>true</code> has a performance penalty inferred from additional database queries. Do not use this parameter unless the extra information fields are needed.</p>
+    </div>
 
     <h2 id="response">Response</h2>
 
-    <h2 id="examples">Examples</h2>
-    <pre class="prettyprint">
-$ curl -X POST -H &quot;Accept: application/json&quot; api.unipept.ugent.be/api/v1/taxa2lca -d &#39;input[0]=816&#39; -d &#39;input[1]=124&#39;
-{&quot;taxon_id&quot;:2,&quot;taxon_name&quot;:&quot;Bacteria&quot;,&quot;taxon_parent_id&quot;:131567,&quot;taxon_rank&quot;:&quot;superkingdom&quot;}
-    </pre>
+    <p>
+      The lowest common ancestors for the given list of taxon id's is returned as a <span class="initialism">JSON</span> object. By default, the object contains the following information fields extracted from the <span class="initialism">NCBI</span> taxonomy:
+    </p>
 
-  <h2 id="parameters">Parameters</h2>
-  <table class='table'>
-    <thead>
-      <tr>
-        <th>Param name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>
-          <strong>input </strong><br>
-          <small>required</small>
-        </td>
-        <td>
-          <p>List of input taxon ids</p>
-          <br>
-          Value: Must be an array of any type
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <strong>extra </strong><br>
-          <small>optional</small>
-        </td>
-        <td>
-          <p>Request extra information such as the entire lineage</p>
-          <br>
-          Value: Must be one of: true, false.
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <strong>names </strong><br>
-          <small>optional</small>
-        </td>
-        <td>
-          <p>Include the lineage names</p>
-          <br>
-          Value: Must be one of: true, false.
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <ul>
+      <li><code>taxon_id</code>: the <span class="initialism">NCBI</span> taxon id of the lowest common ancestor</li>
+      <li><code>taxon_name</code>: the name of the lowest common ancestor</li>
+      <li><code>taxon_rank</code>: the taxonomic rank of the lowest common ancestor</li>
+    </ul>
+
+    <p>When the <code>extra</code> parameter is set to <code>true</code>, objects contain additional lineage information extracted from the <span class="initialism">NCBI</span> taxonomy. For each of the ranks of the lineage, the taxon id is specified using the following fields:</p>
+    <div class="row">
+      <div class="col-xs-4">
+        <ul>
+          <li><code>superkingdom_id</code></li>
+          <li><code>kingdom_id</code></li>
+          <li><code>subkingdom_id</code></li>
+          <li><code>superphylum_id</code></li>
+          <li><code>phylum_id</code></li>
+          <li><code>subphylum_id</code></li>
+          <li><code>superclass_id</code></li>
+          <li><code>class_id</code></li>
+          <li><code>subclass_id</code></li>
+          <li><code>infraclass_id</code></li>
+        </ul>
+      </div>
+      <div class="col-xs-4">
+        <ul>
+          <li><code>superorder_id</code></li>
+          <li><code>order_id</code></li>
+          <li><code>suborder_id</code></li>
+          <li><code>infraorder_id</code></li>
+          <li><code>parvorder_id</code></li>
+          <li><code>superfamily_id</code></li>
+          <li><code>family_id</code></li>
+          <li><code>subfamily_id</code></li>
+          <li><code>tribe_id</code></li>
+          <li><code>subtribe_id</code></li>
+        </ul>
+      </div>
+      <div class="col-xs-4">
+        <ul>
+          <li><code>genus_id</code></li>
+          <li><code>subgenus_id</code></li>
+          <li><code>species_group_id</code></li>
+          <li><code>species_subgroup_id</code></li>
+          <li><code>species_id</code></li>
+          <li><code>subspecies_id</code></li>
+          <li><code>varietas_id</code></li>
+          <li><code>forma_id</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <p>When both the <code>name</code> and <code>extra</code> parameters are set to <code>true</code>, objects also contain the names of the ranks of the lineage. The following fields are used:</p>
+    <div class="row">
+      <div class="col-xs-4">
+        <ul>
+          <li><code>superkingdom_name</code></li>
+          <li><code>kingdom_name</code></li>
+          <li><code>subkingdom_name</code></li>
+          <li><code>superphylum_name</code></li>
+          <li><code>phylum_name</code></li>
+          <li><code>subphylum_name</code></li>
+          <li><code>superclass_name</code></li>
+          <li><code>class_name</code></li>
+          <li><code>subclass_name</code></li>
+          <li><code>infraclass_name</code></li>
+        </ul>
+      </div>
+      <div class="col-xs-4">
+        <ul>
+          <li><code>superorder_name</code></li>
+          <li><code>order_name</code></li>
+          <li><code>suborder_name</code></li>
+          <li><code>infraorder_name</code></li>
+          <li><code>parvorder_name</code></li>
+          <li><code>superfamily_name</code></li>
+          <li><code>family_name</code></li>
+          <li><code>subfamily_name</code></li>
+          <li><code>tribe_name</code></li>
+          <li><code>subtribe_name</code></li>
+        </ul>
+      </div>
+      <div class="col-xs-4">
+        <ul>
+          <li><code>genus_name</code></li>
+          <li><code>subgenus_name</code></li>
+          <li><code>species_group_name</code></li>
+          <li><code>species_subgroup_name</code></li>
+          <li><code>species_name</code></li>
+          <li><code>subspecies_name</code></li>
+          <li><code>varietas_name</code></li>
+          <li><code>forma_name</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <h2 id="parameters">Parameters</h2>
+    <%= render "parameters", parameters: [
+      {
+        name: "input[]",
+        required: true,
+        optional: false,
+        description: "List of taxon id's to calculate the lowest common ancestor for. Add multiple parameters to specify multiple id's.",
+        value: "Integer"
+      },
+      {
+        name: "extra",
+        required: false,
+        optional: true,
+        description: "Additionally return the lineage if <code>true</code>.",
+        value: "Must be <code>true</code> or <code>false</code> (default)"
+      },
+      {
+        name: "names",
+        required: false,
+        optional: true,
+        description: "Additionally return the names of the lineage if <code>true</code>.",
+        value: "Must be <code>true</code> or <code>false</code> (default)"
+      }
+    ]
+    %>
+
+    <h2 id="examples">Examples</h2>
+
+
   </div>
   <div class="col-xs-3">
     <%= render 'sidebar' %>
