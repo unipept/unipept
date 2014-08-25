@@ -104,11 +104,11 @@
       }
 
 
-      $("#try-it-request").text(url);
+      $("#try-it-request").html("<a href='" + url + "' target='_blank'>" + url + "</a>");
       $("#try-it-response").text("loading...");
       $.get(url, function (data) {
-        console.log(data);
-      })
+        $("#try-it-response").text(data);
+      }, "html")
       .fail(function (e) {
         console.log(e);
       });

@@ -59,7 +59,7 @@ module UnipeptWeb
       :uniprot => "2013.04"
     }
 
-    config.api_host = "unipept.ugent.be"
+    config.api_host = "scruffy.ugent.be"
 
     ### Part of a Spork hack. See http://bit.ly/arY19y
     if Rails.env.test?
