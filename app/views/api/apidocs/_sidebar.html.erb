@@ -5,7 +5,7 @@
         <%= link_to(nav_item[:name], nav_item[:path]) %>
         <% if @sidebar_name == nav_item[:name] && !@sidebar_subnav.nil?%>
           <ul class="nav">
-            <%= raw(@sidebar_subnav.map{|name| "<li><a href='##{name.downcase}'>#{name}</a></li>"}.join) %>
+            <%= raw(@sidebar_subnav.map{|name| "<li><a href='##{name.downcase.gsub(/\s+/, '-')}'>#{name}</a></li>"}.join) %>
           </ul>
         <% end %>
       </li>

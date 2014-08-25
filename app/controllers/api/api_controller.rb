@@ -2,11 +2,21 @@ class Api::ApiController < ApplicationController
 
   respond_to :json
 
+  before_filter :set_headers, only: [:pept2taxa, :pept2lca, :pept2prot, :taxa2lca, :taxonomy]
   before_filter :set_params, only: [:pept2taxa, :pept2lca, :pept2prot, :taxa2lca, :taxonomy]
   before_filter :set_query, only: [:pept2taxa, :pept2lca, :taxonomy]
   before_filter :set_sequences, only: [:pept2taxa, :pept2prot]
 
   before_filter :log, only: [:pept2taxa, :pept2lca, :pept2prot, :taxa2lca, :taxonomy]
+
+  # enable cross origin requests
+  def set_headers
+    headers['Access-Control-Allow-Origin'] = '*'
+    headers['Access-Control-Expose-Headers'] = 'ETag'
+    headers['Access-Control-Allow-Methods'] = 'GET, POST'
+    headers['Access-Control-Allow-Headers'] = '*,x-requested-with,Content-Type,If-Modified-Since,If-None-Match'
+    headers['Access-Control-Max-Age'] = '86400'
+  end
 
   # handles the parameters
   def set_params
