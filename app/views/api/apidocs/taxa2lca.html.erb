@@ -163,7 +163,140 @@
     %>
 
     <h2 id="examples">Examples</h2>
+    <%= render 'example',
+      example_id: "apidocs-example-multiple",
+      title: "Calculate the lowest common ancestor",
+      explanation: "<p>This example retrieves the lowest common ancestor for <i>Bacteroides fragilis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=817' target='_blank' title='Open in NCBI'>817</a>), <i>Bacteroides intestinalis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=329854' target='_blank' title='Open in NCBI'>329854</a>) and <i>Coprobacter fastidiosus</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=1099853' target='_blank' title='Open in NCBI'>1099853</a>).</p>",
+      post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/taxa2lca \\
+-d <span class='s1'>'input[]=817'</span> \\
+-d <span class='s1'>'input[]=329854'</span> \\
+-d <span class='s1'>'input[]=1099853'</span>",
+      get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/taxa2lca.json?input[]=817&amp;input[]=329854&amp;input[]=1099853</a>",
+      response: "<span class='p'>{</span>
+  <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>171549</span><span class='p'>,</span>
+  <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Bacteroidales'</span><span class='p'>,</span>
+  <span class='nx'>taxon_rank</span><span class='o'>:</span> <span class='s2'>'order'</span>
+<span class='p'>}</span>"
+    %>
 
+    <%= render 'example',
+      example_id: "apidocs-example-extra",
+      title: "Calculate the lowest common ancestor with lineage",
+      explanation: "<p>This example retrieves the lowest common ancestor with full lineage for <i>Bacteroides fragilis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=817' target='_blank' title='Open in NCBI'>817</a>), <i>Bacteroides intestinalis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=329854' target='_blank' title='Open in NCBI'>329854</a>) and <i>Coprobacter fastidiosus</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=1099853' target='_blank' title='Open in NCBI'>1099853</a>).</p>",
+      post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/taxa2lca \\
+-d <span class='s1'>'input[]=817'</span> \\
+-d <span class='s1'>'input[]=329854'</span> \\
+-d <span class='s1'>'input[]=1099853'</span> \\
+-d <span class='s1'>'extra=true'</span>",
+      get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853&extra=true' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/taxa2lca.json?input[]=817&amp;input[]=329854&amp;input[]=1099853&amp;extra=true</a>",
+      response: "<span class='p'>{</span>
+  <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>171549</span><span class='p'>,</span>
+  <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Bacteroidales'</span><span class='p'>,</span>
+  <span class='nx'>taxon_rank</span><span class='o'>:</span> <span class='s2'>'order'</span><span class='p'>,</span>
+  <span class='nx'>superkingdom_id</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+  <span class='nx'>kingdom_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>subkingdom_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>superphylum_id</span><span class='o'>:</span> <span class='mi'>68336</span><span class='p'>,</span>
+  <span class='nx'>phylum_id</span><span class='o'>:</span> <span class='mi'>976</span><span class='p'>,</span>
+  <span class='nx'>subphylum_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>superclass_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>class_id</span><span class='o'>:</span> <span class='mi'>200643</span><span class='p'>,</span>
+  <span class='nx'>subclass_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>infraclass_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>superorder_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>order_id</span><span class='o'>:</span> <span class='mi'>171549</span><span class='p'>,</span>
+  <span class='nx'>suborder_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>infraorder_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>parvorder_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>superfamily_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>family_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>subfamily_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>tribe_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>subtribe_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>genus_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>subgenus_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>species_group_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>species_subgroup_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>species_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>subspecies_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>varietas_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>forma_id</span><span class='o'>:</span> <span class='kc'>null</span>
+<span class='p'>}</span>"
+    %>
+
+    <%= render 'example',
+      example_id: "apidocs-example-names",
+      title: "Calculate the lowest common ancestor with lineage and names",
+      explanation: "<p>This example retrieves the lowest common ancestor with full lineage including all names for <i>Bacteroides fragilis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=817' target='_blank' title='Open in NCBI'>817</a>), <i>Bacteroides intestinalis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=329854' target='_blank' title='Open in NCBI'>329854</a>) and <i>Coprobacter fastidiosus</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=1099853' target='_blank' title='Open in NCBI'>1099853</a>).</p>",
+      post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/taxa2lca \\
+-d <span class='s1'>'input[]=817'</span> \\
+-d <span class='s1'>'input[]=329854'</span> \\
+-d <span class='s1'>'input[]=1099853'</span> \\
+-d <span class='s1'>'extra=true'</span> \\
+-d <span class='s1'>'names=true'</span>",
+      get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853&extra=true&names=true' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/taxa2lca.json?input[]=817&amp;input[]=329854&amp;input[]=1099853&amp;extra=true&amp;names=true</a>",
+      response: "<span class='p'>{</span>
+  <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>171549</span><span class='p'>,</span>
+  <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Bacteroidales'</span><span class='p'>,</span>
+  <span class='nx'>taxon_rank</span><span class='o'>:</span> <span class='s2'>'order'</span><span class='p'>,</span>
+  <span class='nx'>superkingdom_id</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+  <span class='nx'>superkingdom_name</span><span class='o'>:</span> <span class='s2'>'Bacteria'</span><span class='p'>,</span>
+  <span class='nx'>kingdom_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>kingdom_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>subkingdom_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>subkingdom_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>superphylum_id</span><span class='o'>:</span> <span class='mi'>68336</span><span class='p'>,</span>
+  <span class='nx'>superphylum_name</span><span class='o'>:</span> <span class='s2'>'Bacteroidetes/Chlorobi group'</span><span class='p'>,</span>
+  <span class='nx'>phylum_id</span><span class='o'>:</span> <span class='mi'>976</span><span class='p'>,</span>
+  <span class='nx'>phylum_name</span><span class='o'>:</span> <span class='s2'>'Bacteroidetes'</span><span class='p'>,</span>
+  <span class='nx'>subphylum_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>subphylum_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>superclass_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>superclass_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>class_id</span><span class='o'>:</span> <span class='mi'>200643</span><span class='p'>,</span>
+  <span class='nx'>class_name</span><span class='o'>:</span> <span class='s2'>'Bacteroidia'</span><span class='p'>,</span>
+  <span class='nx'>subclass_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>subclass_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>infraclass_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>infraclass_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>superorder_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>superorder_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>order_id</span><span class='o'>:</span> <span class='mi'>171549</span><span class='p'>,</span>
+  <span class='nx'>order_name</span><span class='o'>:</span> <span class='s2'>'Bacteroidales'</span><span class='p'>,</span>
+  <span class='nx'>suborder_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>suborder_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>infraorder_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>infraorder_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>parvorder_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>parvorder_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>superfamily_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>superfamily_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>family_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>family_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>subfamily_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>subfamily_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>tribe_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>tribe_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>subtribe_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>subtribe_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>genus_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>genus_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>subgenus_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>subgenus_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>species_group_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>species_group_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>species_subgroup_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>species_subgroup_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>species_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>species_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>subspecies_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>subspecies_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>varietas_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>varietas_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+  <span class='nx'>forma_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+  <span class='nx'>forma_name</span><span class='o'>:</span> <span class='s2'>''</span>
+<span class='p'>}</span>"
+    %>
 
   </div>
   <div class="col-xs-3">
