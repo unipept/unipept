@@ -174,6 +174,7 @@ class Api::ApiController < ApplicationController
     respond_with(@result)
   end
 
+  # Reorders the results according to the input order
   def filter_input_order
     @input_order.select! do |s|
       key = @equate_il ? s.gsub(/I/,'L') : s
