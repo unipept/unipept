@@ -91,10 +91,10 @@ class Api::ApiController < ApplicationController
 
 
   # Returns a list of taxa retrieved from the Uniprot entries containing a given tryptic peptide
-  # param :input, Array, required: true, desc: "List of input peptides"
-  # param :equate_il, ['true','false'], desc: "Indicate if you want to equate I and L"
-  # param :extra, ['true','false'], desc: "Include lineage"
-  # param :names, ['true','false'], desc: "Include the lineage names"
+  # param[input]: Array, required, List of input peptides
+  # param[equate_il]: "true" or "false", Indicate if you want to equate I and L
+  # param[extra]: "true" or "false", Include lineage
+  # param[names]: "true" or "false", Include the lineage names
   def pept2taxa
     @result = {}
     lookup = Hash.new { |h,k| h[k] = Set.new }
@@ -119,11 +119,11 @@ class Api::ApiController < ApplicationController
   end
 
 
-  # Returns the taxonomic lowest common ancestor for a given tryptic peptide"
-  # param :input, Array, required: true, desc: "List of input peptides"
-  # param :equate_il, ['true','false'], desc: "Indicate if you want to equate I and L"
-  # param :extra, ['true','false'], desc: "Request extra information such as the entire lineage"
-  # param :names, ['true','false'], desc: "Include the lineage names"
+  # Returns the taxonomic lowest common ancestor for a given tryptic peptide
+  # param[input]: Array, required, List of input peptides
+  # param[equate_il]: "true" or "false", Indicate if you want to equate I and L
+  # param[extra]: "true" or "false", Include lineage
+  # param[names]: "true" or "false", Include the lineage names
   def pept2lca
     @result = {}
     lookup = Hash.new { |h,k| h[k] = Set.new }
@@ -149,10 +149,10 @@ class Api::ApiController < ApplicationController
   end
 
 
-  # Returns the lowest common ancestor for a given list of taxon id's"
-  # param :input, Array, required: true, desc: "List of input taxon ids"
-  # param :extra, ['true','false'], desc: "Request extra information such as the entire lineage"
-  # param :names, ['true','false'], desc: "Include the lineage names"
+  # Returns the lowest common ancestor for a given list of taxon id's
+  # param[input]: Array, required, List of input taxon ids
+  # param[extra]: "true" or "false", Include lineage
+  # param[names]: "true" or "false", Include the lineage names
   def taxa2lca
     # handle case where 1 is provided
     if @input.include? "1"
@@ -165,10 +165,12 @@ class Api::ApiController < ApplicationController
     respond_with(@result)
   end
 
+  # Returns the taxonomic information for a given list of taxon id's
+  # param[input]: Array, required, List of input taxon ids
+  # param[extra]: "true" or "false", Include lineage
+  # param[names]: "true" or "false", Include the lineage names
   def taxonomy
     @result = @query.where(id: @input)
-
-    filter_input_order
     respond_with(@result)
   end
 
