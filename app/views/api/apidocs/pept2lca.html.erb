@@ -181,6 +181,186 @@
     %>
 
     <h2 id="examples">Examples</h2>
+
+    <%= render 'example',
+      example_id: "apidocs-example-single",
+      title: "Retrieve the lowest common ancestor for a given tryptic peptide",
+      explanation: "<p>This example retrieves the lowest common ancestor for the peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i>. The result is the same as " + link_to('this search', sequence_path('AIPQLEVARPADAYETAEAYR')) + " with the Tryptic Peptide Analysis in the web interface.</p>",
+      post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2lca \\
+-d <span class='s1'>'input[]=AIPQLEVARPADAYETAEAYR'</span>",
+      get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/pept2lca.json?input[]=AIPQLEVARPADAYETAEAYR' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/pept2lca.json?input[]=AIPQLEVARPADAYETAEAYR</a>",
+      response: "<span class='p'>[</span>
+  <span class='p'>{</span>
+    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
+    <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>1680</span><span class='p'>,</span>
+    <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Bifidobacterium adolescentis'</span><span class='p'>,</span>
+    <span class='nx'>taxon_rank</span><span class='o'>:</span> <span class='s2'>'species'</span>
+  <span class='p'>}</span>
+<span class='p'>]</span>"
+    %>
+
+    <%= render 'example',
+      example_id: "apidocs-example-multiple",
+      title: "Retrieve the lowest common ancestor for each of multiple tryptic peptides",
+      explanation: "<p>This example retrieves the lowest common ancestor for the peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i> and <i class='initialism'>APVLSDSSCK</i>. The result is the same as the combination of " + link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) + " and " + link_to("this search", sequence_path("APVLSDSSCK")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
+      post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2lca \\
+-d <span class='s1'>'input[]=AIPQLEVARPADAYETAEAYR'</span> \\
+-d <span class='s1'>'input[]=APVLSDSSCK'</span>",
+      get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/pept2lca.json?input[]=AIPQLEVARPADAYETAEAYR&input[]=APVLSDSSCK' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/pept2lca.json?input[]=AIPQLEVARPADAYETAEAYR&amp;input[]=APVLSDSSCK</a>",
+      response: "<span class='p'>[</span>
+  <span class='p'>{</span>
+    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
+    <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>1680</span><span class='p'>,</span>
+    <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Bifidobacterium adolescentis'</span><span class='p'>,</span>
+    <span class='nx'>taxon_rank</span><span class='o'>:</span> <span class='s2'>'species'</span>
+  <span class='p'>},</span>
+  <span class='p'>{</span>
+    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'APVLSDSSCK'</span><span class='p'>,</span>
+    <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>9823</span><span class='p'>,</span>
+    <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Sus scrofa'</span><span class='p'>,</span>
+    <span class='nx'>taxon_rank</span><span class='o'>:</span> <span class='s2'>'species'</span>
+  <span class='p'>}</span>
+<span class='p'>]</span>"
+    %>
+
+    <%= render 'example',
+      example_id: "apidocs-example-equate_il",
+      title: "Retrieve the lowest common ancestor for a single tryptic peptide equating I and L",
+      explanation: "<p>This example retrieves the lowest common ancestor for the peptide <i class='initialism'>APVISDSSCK</i>, equating I and L. The result is the same as " + link_to("this search", sequence_path("APVISDSSCK") + "/equate_il") + " with the Tryptic Peptide Analysis in the web interface.</p>",
+      post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2lca \\
+-d <span class='s1'>'input[]=APVISDSSCK'</span> \\
+-d <span class='s1'>'equate_il=true'</span>",
+      get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/pept2lca.json?input[]=APVISDSSCK&equate_il=true' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/pept2lca.json?input[]=APVISDSSCK&amp;equate_il=true</a>",
+      response: "<span class='p'>[</span>
+  <span class='p'>{</span>
+    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'APVISDSSCK'</span><span class='p'>,</span>
+    <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>9823</span><span class='p'>,</span>
+    <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Sus scrofa'</span><span class='p'>,</span>
+    <span class='nx'>taxon_rank</span><span class='o'>:</span> <span class='s2'>'species'</span>
+  <span class='p'>}</span>
+<span class='p'>]</span>"
+    %>
+
+    <%= render 'example',
+      example_id: "apidocs-example-extra",
+      title: "Retrieve the lowest common ancestor for a single tryptic peptide with lineages",
+      explanation: "<p>This example retrieves the lowest common ancestor for the peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i> including all lineages. The result is the same as " + link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
+      post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2lca \\
+-d <span class='s1'>'input[]=AIPQLEVARPADAYETAEAYR'</span> \\
+-d <span class='s1'>'extra=true'</span>",
+      get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/pept2lca.json?input[]=AIPQLEVARPADAYETAEAYR&extra=true' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/pept2lca.json?input[]=AIPQLEVARPADAYETAEAYR&amp;extra=true</a>",
+      response: "<span class='p'>[</span>
+  <span class='p'>{</span>
+    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
+    <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>1680</span><span class='p'>,</span>
+    <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Bifidobacterium adolescentis'</span><span class='p'>,</span>
+    <span class='nx'>taxon_rank</span><span class='o'>:</span> <span class='s2'>'species'</span><span class='p'>,</span>
+    <span class='nx'>superkingdom_id</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+    <span class='nx'>kingdom_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>subkingdom_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>superphylum_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>phylum_id</span><span class='o'>:</span> <span class='mi'>201174</span><span class='p'>,</span>
+    <span class='nx'>subphylum_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>superclass_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>class_id</span><span class='o'>:</span> <span class='mi'>1760</span><span class='p'>,</span>
+    <span class='nx'>subclass_id</span><span class='o'>:</span> <span class='mi'>85003</span><span class='p'>,</span>
+    <span class='nx'>infraclass_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>superorder_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>order_id</span><span class='o'>:</span> <span class='mi'>85004</span><span class='p'>,</span>
+    <span class='nx'>suborder_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>infraorder_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>parvorder_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>superfamily_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>family_id</span><span class='o'>:</span> <span class='mi'>31953</span><span class='p'>,</span>
+    <span class='nx'>subfamily_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>tribe_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>subtribe_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>genus_id</span><span class='o'>:</span> <span class='mi'>1678</span><span class='p'>,</span>
+    <span class='nx'>subgenus_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>species_group_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>species_subgroup_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>species_id</span><span class='o'>:</span> <span class='mi'>1680</span><span class='p'>,</span>
+    <span class='nx'>subspecies_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>varietas_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>forma_id</span><span class='o'>:</span> <span class='kc'>null</span>
+  <span class='p'>}</span>
+<span class='p'>]</span>"
+    %>
+
+    <%= render 'example',
+      example_id: "apidocs-example-names",
+      title: "Retrieve the lowest common ancestor for a single tryptic peptide with names",
+      explanation: "<p>This example retrieves the lowest common ancestor for the peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i> including all lineages and names. The result is the same as " + link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
+      post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2lca \\
+-d <span class='s1'>'input[]=AIPQLEVARPADAYETAEAYR'</span> \\
+-d <span class='s1'>'extra=true' \\
+-d <span class='s1'>'names=true'</span>",
+      get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/pept2lca.json?input[]=AIPQLEVARPADAYETAEAYR&extra=true&names=true' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/pept2lca.json?input[]=AIPQLEVARPADAYETAEAYR&amp;extra=true&amp;names=true</a>",
+      response: "<span class='p'>[</span>
+  <span class='p'>{</span>
+    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
+    <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>1680</span><span class='p'>,</span>
+    <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Bifidobacterium adolescentis'</span><span class='p'>,</span>
+    <span class='nx'>taxon_rank</span><span class='o'>:</span> <span class='s2'>'species'</span><span class='p'>,</span>
+    <span class='nx'>superkingdom_id</span><span class='o'>:</span> <span class='mi'>2</span><span class='p'>,</span>
+    <span class='nx'>superkingdom_name</span><span class='o'>:</span> <span class='s2'>'Bacteria'</span><span class='p'>,</span>
+    <span class='nx'>kingdom_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>kingdom_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+    <span class='nx'>subkingdom_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>subkingdom_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+    <span class='nx'>superphylum_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>superphylum_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+    <span class='nx'>phylum_id</span><span class='o'>:</span> <span class='mi'>201174</span><span class='p'>,</span>
+    <span class='nx'>phylum_name</span><span class='o'>:</span> <span class='s2'>'Actinobacteria'</span><span class='p'>,</span>
+    <span class='nx'>subphylum_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>subphylum_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+    <span class='nx'>superclass_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>superclass_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+    <span class='nx'>class_id</span><span class='o'>:</span> <span class='mi'>1760</span><span class='p'>,</span>
+    <span class='nx'>class_name</span><span class='o'>:</span> <span class='s2'>'Actinobacteria'</span><span class='p'>,</span>
+    <span class='nx'>subclass_id</span><span class='o'>:</span> <span class='mi'>85003</span><span class='p'>,</span>
+    <span class='nx'>subclass_name</span><span class='o'>:</span> <span class='s2'>'Actinobacteridae'</span><span class='p'>,</span>
+    <span class='nx'>infraclass_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>infraclass_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+    <span class='nx'>superorder_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>superorder_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+    <span class='nx'>order_id</span><span class='o'>:</span> <span class='mi'>85004</span><span class='p'>,</span>
+    <span class='nx'>order_name</span><span class='o'>:</span> <span class='s2'>'Bifidobacteriales'</span><span class='p'>,</span>
+    <span class='nx'>suborder_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>suborder_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+    <span class='nx'>infraorder_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>infraorder_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+    <span class='nx'>parvorder_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>parvorder_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+    <span class='nx'>superfamily_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>superfamily_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+    <span class='nx'>family_id</span><span class='o'>:</span> <span class='mi'>31953</span><span class='p'>,</span>
+    <span class='nx'>family_name</span><span class='o'>:</span> <span class='s2'>'Bifidobacteriaceae'</span><span class='p'>,</span>
+    <span class='nx'>subfamily_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>subfamily_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+    <span class='nx'>tribe_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>tribe_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+    <span class='nx'>subtribe_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>subtribe_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+    <span class='nx'>genus_id</span><span class='o'>:</span> <span class='mi'>1678</span><span class='p'>,</span>
+    <span class='nx'>genus_name</span><span class='o'>:</span> <span class='s2'>'Bifidobacterium'</span><span class='p'>,</span>
+    <span class='nx'>subgenus_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>subgenus_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+    <span class='nx'>species_group_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>species_group_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+    <span class='nx'>species_subgroup_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>species_subgroup_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+    <span class='nx'>species_id</span><span class='o'>:</span> <span class='mi'>1680</span><span class='p'>,</span>
+    <span class='nx'>species_name</span><span class='o'>:</span> <span class='s2'>'Bifidobacterium adolescentis'</span><span class='p'>,</span>
+    <span class='nx'>subspecies_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>subspecies_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+    <span class='nx'>varietas_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>varietas_name</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>
+    <span class='nx'>forma_id</span><span class='o'>:</span> <span class='kc'>null</span><span class='p'>,</span>
+    <span class='nx'>forma_name</span><span class='o'>:</span> <span class='s2'>''</span>
+  <span class='p'>}</span>
+<span class='p'>]</span>"
+    %>
   </div>
   <div class="col-xs-3">
     <%= render 'sidebar' %>
