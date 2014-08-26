@@ -58,5 +58,7 @@ module UnipeptWeb
       :gem => "0.5.7",
       :uniprot => "2014.05"
     }
+
+    config.api_host = "scruffy.ugent.be"
   end
 end

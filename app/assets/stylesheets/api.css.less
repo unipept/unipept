@@ -1,0 +1,263 @@
+// styles used for the api documentation
+@sidebar-color: #104B7D; // footer color
+
+// bigger fonts
+.apidocs {
+    font-size: 14px;
+}
+.apidocs h4 {
+    font-size: 18px;
+}
+.apidocs h3 {
+    font-size: 20px;
+}
+.apidocs h2 {
+    border-bottom: none;
+    color: #333;
+    font-weight: 500;
+    font-size: 24px;
+}
+
+.apidocs h1.api-title {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.apidocs li {
+    line-height: 1.8;
+}
+
+.apidocs .page-header {
+    margin-top: 5px;
+}
+
+.apidocs-example pre a,
+#try-it-request a {
+    color: #333;
+}
+
+.parameter-table .name {
+    min-width: 150px;
+}
+
+#try-input {
+    height: 80px;
+}
+
+// sidebar navigation, inspiration from the bootstrap docs
+/* First level of nav */
+.apidocs-sidenav {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+/* All levels of nav */
+.apidocs-sidebar .nav > li > a {
+    display: block;
+    padding: 4px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #999;
+}
+.apidocs-sidebar .nav > li > a:hover,
+.apidocs-sidebar .nav > li > a:focus {
+    padding-left: 19px;
+    color: @sidebar-color;
+    text-decoration: none;
+    background-color: transparent;
+    border-left: 1px solid @sidebar-color;
+}
+.apidocs-sidebar .nav > .active > a,
+.apidocs-sidebar .nav > .active:hover > a,
+.apidocs-sidebar .nav > .active:focus > a {
+    padding-left: 18px;
+    font-weight: bold;
+    color: @sidebar-color;
+    background-color: transparent;
+    border-left: 2px solid @sidebar-color;
+}
+/* Nav: second level (shown on .active) */
+.apidocs-sidebar .nav .nav {
+    display: block;
+    padding-bottom: 10px;
+}
+.apidocs-sidebar .nav .nav > li > a {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 30px;
+    font-size: 12px;
+    font-weight: normal;
+}
+.apidocs-sidebar .nav .nav > li > a:hover,
+.apidocs-sidebar .nav .nav > li > a:focus {
+    padding-left: 29px;
+}
+.apidocs-sidebar .nav .nav > .active > a,
+.apidocs-sidebar .nav .nav > .active:hover > a,
+.apidocs-sidebar .nav .nav > .active:focus > a {
+    padding-left: 28px;
+    font-weight: 500;
+}
+/* Back to top */
+.back-to-top {
+    display: block;
+    padding: 4px 10px;
+    margin-top: 10px;
+    margin-left: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #999;
+}
+.back-to-top:hover {
+    color: @sidebar-color;
+    text-decoration: none;
+}
+.apidocs-sidebar .nav > .active > ul {
+    display: block;
+}
+/* Widen the fixed sidebar */
+.apidocs-sidebar.affix,
+.apidocs-sidebar.affix-bottom {
+    width: 213px;
+}
+.apidocs-sidebar.affix {
+    position: fixed;
+    top: 20px;
+}
+.apidocs-sidebar.affix-bottom {
+    position: absolute;
+}
+.apidocs-sidebar.affix-bottom .apidocs-sidenav,
+.apidocs-sidebar.affix .apidocs-sidenav {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+// callouts, taken from the bootstrap docs
+/* Common styles for all types */
+.apidocs-callout {
+  padding: 20px;
+  margin: 20px 0;
+  border: 1px solid #eee;
+  border-left-width: 5px;
+  border-radius: 3px;
+}
+.apidocs-callout h4 {
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+.apidocs-callout p:last-child {
+  margin-bottom: 0;
+}
+.apidocs-callout code {
+  border-radius: 3px;
+}
+/* Tighten up space between multiple callouts */
+.apidocs-callout + .apidocs-callout {
+  margin-top: -5px;
+}
+/* Variations */
+.apidocs-callout-danger {
+  border-left-color: #d9534f;
+}
+.apidocs-callout-danger h4 {
+  color: #d9534f;
+}
+.apidocs-callout-warning {
+  border-left-color: #f0ad4e;
+}
+.apidocs-callout-warning h4 {
+  color: #f0ad4e;
+}
+.apidocs-callout-info {
+  border-left-color: #5bc0de;
+}
+.apidocs-callout-info h4 {
+  color: #5bc0de;
+}
+
+// examples, taken from the bootstrap docs
+/*
+ * Examples
+ *
+ * Isolated sections of example content for each component or feature. Usually
+ * followed by a code snippet.
+ */
+
+.apidocs-example {
+    position: relative;
+    padding: 15px 15px 15px;
+    margin: 0 -15px 15px;
+    border-color: #e5e5e5 #eee #eee;
+    border-style: solid;
+    border-width: 1px 0;
+    -webkit-box-shadow: inset 0 3px 6px rgba(0,0,0,.05);
+            box-shadow: inset 0 3px 6px rgba(0,0,0,.05);
+}
+.apidocs-example h4,
+.apidocs-example + .highlight h4 {
+    font-size: 13px;
+    font-weight: bold;
+    color: #959595;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+.apidocs-example h4 small {
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 85%;
+}
+/* Tweak display of the code snippets when following an example */
+.apidocs-example + .highlight {
+    margin: -15px -15px 15px;
+    border-width: 0 0 1px;
+    border-radius: 0;
+}
+/* Make the examples and snippets not full-width */
+.apidocs-example {
+    margin-right: 0;
+    margin-left: 0;
+    background-color: #fff;
+    border-color: #ddd;
+    border-width: 1px;
+    border-radius: 4px 4px 0 0;
+    -webkit-box-shadow: none;
+            box-shadow: none;
+}
+.apidocs-example + .highlight {
+    margin-top: -16px;
+    margin-right: 0;
+    margin-left: 0;
+    border-width: 1px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+.apidocs-example-standalone {
+    border-radius: 4px;
+}
+.highlight {
+  padding: 9px 14px;
+  margin-bottom: 14px;
+  background-color: #f7f7f9;
+  border: 1px solid #e1e1e8;
+  border-radius: 4px;
+}
+.highlight pre {
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  word-break: normal;
+  word-wrap: nowrap;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+}
+.highlight pre code {
+  font-size: inherit;
+  color: #333; /* Effectively the base text color */
+}
+.highlight pre code:first-child {
+  display: inline-block;
+  padding-right: 45px;
+}
+

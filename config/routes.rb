@@ -2,9 +2,6 @@ UnipeptWeb::Application.routes.draw do
   # cas auth
   devise_for :users
 
-  # api docs
-  apipie
-
   # home page
   root :to => 'pages#home'
 
@@ -66,6 +63,17 @@ UnipeptWeb::Application.routes.draw do
     match 'taxonomy' => 'api#taxonomy', via: [:get, :post]
     match 'messages' => 'api#messages', via: [:get, :post]
   end
+
+  # API docs
+  namespace :api, path: "apidocs" do
+    get "/",          :to => "apidocs#index",     :as => 'apidocs'
+    get "pept2prot",  :to => "apidocs#pept2prot", :as => 'apidocs/pept2prot'
+    get "pept2taxa",  :to => "apidocs#pept2taxa", :as => 'apidocs/pept2taxa'
+    get "pept2lca",   :to => "apidocs#pept2lca",  :as => 'apidocs/pept2lca'
+    get "taxa2lca",   :to => "apidocs#taxa2lca",  :as => 'apidocs/taxa2lca'
+    get "taxonomy",   :to => "apidocs#taxonomy",  :as => 'apidocs/taxonomy'
+  end
+
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

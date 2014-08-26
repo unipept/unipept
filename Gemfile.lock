@@ -38,8 +38,6 @@ GEM
     annotate (2.6.5)
       activerecord (>= 2.3.0)
       rake (>= 0.8.7)
-    apipie-rails (0.2.2)
-      json
     arel (5.0.1.20140414130214)
     bcrypt (3.1.7)
     be_valid_asset (1.2.3)
@@ -196,7 +194,6 @@ PLATFORMS
 
 DEPENDENCIES
   annotate
-  apipie-rails
   be_valid_asset
   capistrano (~> 3.0)
   capistrano-bundler (~> 1.1)
