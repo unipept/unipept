@@ -2,22 +2,22 @@
   <div class="col-xs-9">
     <h1 class='api-title'>Unipept <span class="initialism">API</span> documentation <small>v1</small></h1>
     <p class='lead'>
-      Unipept offers most of its peptide analysis features as a web service. This page contains the documentation to use these services.
+      Most of the peptide analysis workflows provided by Unipept are available as web services. This page contains the documentation on how to use these services.
     </p>
-    <p>The Unipept <span class="initialism">API</span> is <span class="initialism">HTTP</span>-based and returns <span class="initialism">JSON</span> objects as response. There are five basic methods:</p>
+    <p>The Unipept <span class="initialism">API</span> is <span class="initialism">HTTP</span>-based and always returns <span class="initialism">JSON</span> objects as response. There are five basic methods:</p>
     <dl class='dl-horizontal'>
       <dt>pept2prot</dt>
-      <dd>Returns a list of UniProt entries containing a given tryptic peptide</dd>
+      <dd>Returns the list of UniProt entries containing a given tryptic peptide</dd>
       <dt>pept2taxa</dt>
-      <dd>Returns a list of taxa retrieved from the UniProt entries containing a given tryptic peptide</dd>
+      <dd>Returns the set of taxa extracted from the UniProt entries containing a given tryptic peptide</dd>
       <dt>pept2lca</dt>
       <dd>Returns the taxonomic lowest common ancestor for a given tryptic peptide</dd>
       <dt>taxa2lca</dt>
-      <dd>Returns the lowest common ancestor for a given list of taxon id's</dd>
+      <dd>Returns the taxonomic lowest common ancestor for a given list of taxon identifiers</dd>
       <dt>taxonomy</dt>
-      <dd>Returns the taxonomic information for a given taxon id.</dd>
+      <dd>Returns the taxonomic information for a given taxon identifier</dd>
     </dl>
-    <p> Click the corresponding links below for more information about how to access them, a description of the paramters they take and a list of examples.</p>
+    <p>Click the links below for a detailed description of each of the five supported methods, including information about parameters, response format, examples, and live demonstrations.</p>
 
     <table class='table'>
       <thead>
@@ -29,11 +29,11 @@
       <tbody>
         <tr>
           <td><%= link_to("POST /api/v1/pept2prot", api_apidocs_pept2prot_path) %></td>
-          <td width='60%'>Returns a list of UniProt entries containing a given tryptic peptide</td>
+          <td width='60%'>Returns the list of UniProt entries containing a given tryptic peptide</td>
         </tr>
         <tr>
           <td><%= link_to("POST /api/v1/pept2taxa", api_apidocs_pept2taxa_path) %></td>
-          <td width='60%'>Returns a list of taxa retrieved from the UniProt entries containing a given tryptic peptide</td>
+          <td width='60%'>Returns the set of taxa extracted from the UniProt entries containing a given tryptic peptide</td>
         </tr>
         <tr>
           <td><%= link_to("POST /api/v1/pept2lca", api_apidocs_pept2lca_path) %></td>
@@ -41,7 +41,11 @@
         </tr>
         <tr>
           <td><%= link_to("POST /api/v1/taxa2lca", api_apidocs_taxa2lca_path) %></td>
-          <td width='60%'>Returns the lowest common ancestor for a given list of taxon id&#39;s</td>
+          <td width='60%'>Returns the taxonomic lowest common ancestor for a given list of taxon identifiers</td>
+        </tr>
+        <tr>
+          <td><%= link_to("POST /api/v1/taxonomy", api_apidocs_taxonomy_path) %></td>
+          <td width='60%'>Returns the taxonomic information for a given taxon identifier</td>
         </tr>
       </tbody>
     </table>

@@ -3,32 +3,32 @@
     <div class='page-header'>
       <h1><span class="initialism">POST</span> /api/v1/taxa2lca
         <br>
-        <small>Returns the lowest common ancestor for a given list of taxon id's.</small>
+        <small>Returns the taxonomic lowest common ancestor for a given list of taxon identifiers.</small>
       </h1>
     </div>
 
     <p>
-      This method calculates and returns the taxonomic lowest common ancestor for a given list of <span class="initialism">NCBI</span> taxon id's.
+      This method calculates and returns the taxonomic lowest common ancestor for a given list of <span class="initialism">NCBI</span> taxon identifiers.
     </p>
 
     <h2 id="request">Request</h2>
     <p>
-      The pept2taxa method can be used by doing a <span class="initialism">HTTP</span> <span class="initialism">POST</span>-request (preferred) or <span class="initialism">GET</span>-request to <code>http://<%= Rails.application.config.api_host %>/api/v1/pept2lca</code>. <a href="#parameters">Parameters</a> can be included in the request body (<span class="initialism">POST</span>) or in the query string (<span class="initialism">GET</span>). The only required parameter is <code>input[]</code>, which takes at least two taxon id's.
+      The pept2taxa method can be used by doing a <span class="initialism">HTTP</span> <span class="initialism">POST</span>-request (preferred) or <span class="initialism">GET</span>-request to <code>http://<%= Rails.application.config.api_host %>/api/v1/pept2lca</code>. <a href="#parameters">Parameters</a> can be included in the request body (<span class="initialism">POST</span>) or in the query string (<span class="initialism">GET</span>). The only required parameter is <code>input[]</code>, which takes at least two taxon identifiers.
     </p>
 
     <h3>input</h3>
     <p>
-      <code>input[]</code> is a required parameter that takes at least two taxon id's. Unipept will calculate and return the lowest common ancestor for the given taxa. To pass multiple taxon id's, simply add multiple <code>input[]</code> parameters (see <a href="#apidocs-example-multiple">example</a>).
+      <code>input[]</code> is a required parameter that takes at least two taxon identifiers. Unipept will calculate and return the taxonomic lowest common ancestor of the given taxa. To pass multiple taxon identifiers, simply add multiple <code>input[]</code> parameters (see <a href="#apidocs-example-multiple">example</a>).
     </p>
 
     <h3>extra</h3>
     <p>
-      <code>extra</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, Unipept will return the full lineage for the lowest common ancestor. See the <a href="#response">response</a> section for more information.
+      <code>extra</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, Unipept will return the complete lineage of the taxonomic lowest common ancestor. See the <a href="#response">response</a> section for an overview of the information fields returned.
     </p>
 
     <h3>names</h3>
     <p>
-      <code>names</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When both <code>names</code> and <code>extra</code> are set to <code>true</code>, Unipept will also return the names of all ranks in the lineage of the lowest common ancestor. Setting only <code>names</code> to <code>true</code> has no effect on the output. See the <a href="#response">response</a> section for more information.
+      <code>names</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When both <code>names</code> and <code>extra</code> are set to <code>true</code>, Unipept will return the names of all ranks in the lineage of the taxonomic lowest common ancestor. Setting only <code>names</code> to <code>true</code> will not result in additional information fields being returned. See the <a href="#response">response</a> section for an overview of the information fields returned.
     </p>
 
     <div class="apidocs-callout apidocs-callout-warning">
@@ -39,16 +39,16 @@
     <h2 id="response">Response</h2>
 
     <p>
-      The lowest common ancestors for the given list of taxon id's is returned as a <span class="initialism">JSON</span> object. By default, the object contains the following information fields extracted from the <span class="initialism">NCBI</span> taxonomy:
+      The taxonomic lowest common ancestor for the given list of taxon identifiers is returned as a <span class="initialism">JSON</span> object. By default, the object contains the following information fields extracted from the <span class="initialism">NCBI</span> taxonomy:
     </p>
 
     <ul>
-      <li><code>taxon_id</code>: the <span class="initialism">NCBI</span> taxon id of the lowest common ancestor</li>
-      <li><code>taxon_name</code>: the name of the lowest common ancestor</li>
-      <li><code>taxon_rank</code>: the taxonomic rank of the lowest common ancestor</li>
+      <li><code>taxon_id</code>: the <span class="initialism">NCBI</span> taxon id of the taxonomic lowest common ancestor</li>
+      <li><code>taxon_name</code>: the name of the taxonomic lowest common ancestor</li>
+      <li><code>taxon_rank</code>: the taxonomic rank of the taxonomic lowest common ancestor</li>
     </ul>
 
-    <p>When the <code>extra</code> parameter is set to <code>true</code>, objects contain additional lineage information extracted from the <span class="initialism">NCBI</span> taxonomy. For each of the ranks of the lineage, the taxon id is specified using the following fields:</p>
+    <p>When the <code>extra</code> parameter is set to <code>true</code>, the object contains additional information about the lineage of the taxonomic lowest common ancestor extracted from the <span class="initialism">NCBI</span> taxonomy. The taxon id of each rank in the lineage is specified using the following information fields:</p>
     <div class="row">
       <div class="col-xs-4">
         <ul>
@@ -92,7 +92,7 @@
       </div>
     </div>
 
-    <p>When both the <code>name</code> and <code>extra</code> parameters are set to <code>true</code>, objects also contain the names of the ranks of the lineage. The following fields are used:</p>
+    <p>When both the <code>names</code> and <code>extra</code> parameters are set to <code>true</code>, objects also contain the names for each rank in the lineage using the following information fields:</p>
     <div class="row">
       <div class="col-xs-4">
         <ul>
@@ -142,21 +142,21 @@
         name: "input[]",
         required: true,
         optional: false,
-        description: "List of taxon id's to calculate the lowest common ancestor for. Add multiple parameters to specify multiple id's.",
+        description: "List of taxon identifiers to calculate the lowest common ancestor for. Add multiple parameters to specify multiple taxon id's.",
         value: "Integer"
       },
       {
         name: "extra",
         required: false,
         optional: true,
-        description: "Additionally return the lineage if <code>true</code>.",
+        description: "Return additional lineage information fields if <code>true</code>.",
         value: "Must be <code>true</code> or <code>false</code> (default)"
       },
       {
         name: "names",
         required: false,
         optional: true,
-        description: "Additionally return the names of the lineage if <code>true</code>.",
+        description: "Return names of ranks in the lineage if <code>true</code>.",
         value: "Must be <code>true</code> or <code>false</code> (default)"
       }
     ]
@@ -165,8 +165,8 @@
     <h2 id="examples">Examples</h2>
     <%= render 'example',
       example_id: "apidocs-example-multiple",
-      title: "Calculate the lowest common ancestor",
-      explanation: "<p>This example retrieves the lowest common ancestor for <i>Bacteroides fragilis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=817' target='_blank' title='Open in NCBI'>817</a>), <i>Bacteroides intestinalis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=329854' target='_blank' title='Open in NCBI'>329854</a>) and <i>Coprobacter fastidiosus</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=1099853' target='_blank' title='Open in NCBI'>1099853</a>).</p>",
+      title: "Calculate the taxonomic lowest common ancestor for a given list of taxon identifiers",
+      explanation: "<p>This example calculates and retrieves the taxonomic lowest common ancestor of <i>Bacteroides fragilis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=817' target='_blank' title='Open in NCBI'>817</a>), <i>Bacteroides intestinalis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=329854' target='_blank' title='Open in NCBI'>329854</a>) and <i>Coprobacter fastidiosus</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=1099853' target='_blank' title='Open in NCBI'>1099853</a>).</p>",
       post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/taxa2lca \\
 -d <span class='s1'>'input[]=817'</span> \\
 -d <span class='s1'>'input[]=329854'</span> \\
@@ -181,8 +181,8 @@
 
     <%= render 'example',
       example_id: "apidocs-example-extra",
-      title: "Calculate the lowest common ancestor with lineage",
-      explanation: "<p>This example retrieves the lowest common ancestor with full lineage for <i>Bacteroides fragilis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=817' target='_blank' title='Open in NCBI'>817</a>), <i>Bacteroides intestinalis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=329854' target='_blank' title='Open in NCBI'>329854</a>) and <i>Coprobacter fastidiosus</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=1099853' target='_blank' title='Open in NCBI'>1099853</a>).</p>",
+      title: "Retrieve the taxonomic lowest common ancestor and its lineage for a given list of taxon identifiers",
+      explanation: "<p>This example calculates and retrieves the taxonomic lowest common ancestor of <i>Bacteroides fragilis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=817' target='_blank' title='Open in NCBI'>817</a>), <i>Bacteroides intestinalis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=329854' target='_blank' title='Open in NCBI'>329854</a>) and <i>Coprobacter fastidiosus</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=1099853' target='_blank' title='Open in NCBI'>1099853</a>), including its complete lineage.</p>",
       post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/taxa2lca \\
 -d <span class='s1'>'input[]=817'</span> \\
 -d <span class='s1'>'input[]=329854'</span> \\
@@ -226,8 +226,8 @@
 
     <%= render 'example',
       example_id: "apidocs-example-names",
-      title: "Calculate the lowest common ancestor with lineage and names",
-      explanation: "<p>This example retrieves the lowest common ancestor with full lineage including all names for <i>Bacteroides fragilis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=817' target='_blank' title='Open in NCBI'>817</a>), <i>Bacteroides intestinalis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=329854' target='_blank' title='Open in NCBI'>329854</a>) and <i>Coprobacter fastidiosus</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=1099853' target='_blank' title='Open in NCBI'>1099853</a>).</p>",
+      title: "Retrieve the taxonomic lowest common ancestor and its lineage and names for a given list of taxon identifiers",
+      explanation: "<p>This example retrieves the taxonomic lowest common ancestor of <i>Bacteroides fragilis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=817' target='_blank' title='Open in NCBI'>817</a>), <i>Bacteroides intestinalis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=329854' target='_blank' title='Open in NCBI'>329854</a>) and <i>Coprobacter fastidiosus</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=1099853' target='_blank' title='Open in NCBI'>1099853</a>), including its complete lineage with names.</p>",
       post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/taxa2lca \\
 -d <span class='s1'>'input[]=817'</span> \\
 -d <span class='s1'>'input[]=329854'</span> \\

@@ -18,7 +18,7 @@
 
     <h3>input</h3>
     <p>
-      <code>input[]</code> is a required parameter that takes one or more tryptic peptides. Unipept will return the lowest common ancestor for all of the <code>input[]</code> peptides. To pass multiple peptides at once, simply add multiple <code>input[]</code> parameters (see <a href="#apidocs-example-multiple">example</a>).
+      <code>input[]</code> is a required parameter that takes one or more tryptic peptides. Unipept will return the taxonomic lowest common ancestor for each of the <code>input[]</code> peptides based on their occurence in UniProt records. To pass multiple peptides at once, simply add multiple <code>input[]</code> parameters (see <a href="#apidocs-example-multiple">example</a>).
     </p>
 
     <div class="apidocs-callout apidocs-callout-warning">
@@ -33,12 +33,12 @@
 
     <h3>extra</h3>
     <p>
-      <code>extra</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, Unipept will return the full lineage for the lowest common ancestor. See the <a href="#response">response</a> section for more information.
+      <code>extra</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, Unipept will return the complete lineage of the taxonomic lowest common ancestor. See the <a href="#response">response</a> section for an overview of the information fields returned.
     </p>
 
     <h3>names</h3>
     <p>
-      <code>names</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When both <code>names</code> and <code>extra</code> are set to <code>true</code>, Unipept will also return the names of all ranks in the lineage of each organism. Setting only <code>names</code> to <code>true</code> has no effect on the output. See the <a href="#response">response</a> section for more information.
+      <code>names</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When both <code>names</code> and <code>extra</code> are set to <code>true</code>, Unipept will return the names of all ranks in the lineage of the taxonomic lowest common ancestor. Setting only <code>names</code> to <code>true</code> will not result in additional information fields being returned. See the <a href="#response">response</a> section for an overview of the information fields returned.
     </p>
 
     <div class="apidocs-callout apidocs-callout-warning">
@@ -48,17 +48,17 @@
 
     <h2 id="response">Response</h2>
     <p>
-      The lowest common ancestors associated with the given peptides are returned as a list of <span class="initialism">JSON</span> objects. By default, each object contains the following information fields extracted from the UniProt record and <span class="initialism">NCBI</span> taxonomy:
+      The taxonomic lowest common ancestors associated with the given peptides are returned as a list of <span class="initialism">JSON</span> objects. By default, each object contains the following information fields extracted from the UniProt record and <span class="initialism">NCBI</span> taxonomy:
     </p>
 
     <ul>
-      <li><code>sequence</code>: the peptide that was seached for</li>
-      <li><code>taxon_id</code>: the <span class="initialism">NCBI</span> taxon id of the lowest common ancestor</li>
-      <li><code>taxon_name</code>: the name of the lowest common ancestor</li>
-      <li><code>taxon_rank</code>: the taxonomic rank of the lowest common ancestor</li>
+      <li><code>sequence</code>: the peptide that was searched for</li>
+      <li><code>taxon_id</code>: the <span class="initialism">NCBI</span> taxon id of the taxonomic lowest common ancestor</li>
+      <li><code>taxon_name</code>: the name of the taxonomic lowest common ancestor</li>
+      <li><code>taxon_rank</code>: the taxonomic rank of the taxonomic lowest common ancestor</li>
     </ul>
 
-    <p>When the <code>extra</code> parameter is set to <code>true</code>, objects contain additional lineage information extracted from the <span class="initialism">NCBI</span> taxonomy. For each of the ranks of the lineage, the taxon id is specified using the following fields:</p>
+    <p>When the <code>extra</code> parameter is set to <code>true</code>, objects contain additional information about the lineage of the taxonomic lowest common ancestor extracted from the <span class="initialism">NCBI</span> taxonomy. The taxon id of each rank in the lineage is specified using the following information fields:</p>
     <div class="row">
       <div class="col-xs-4">
         <ul>
@@ -102,7 +102,7 @@
       </div>
     </div>
 
-    <p>When both the <code>name</code> and <code>extra</code> parameters are set to <code>true</code>, objects also contain the names of the ranks of the lineage. The following fields are used:</p>
+    <p>When both the <code>names</code> and <code>extra</code> parameter are set to <code>true</code>, objects also contain the names for each rank in the lineage using the following information fields:</p>
     <div class="row">
       <div class="col-xs-4">
         <ul>
@@ -167,14 +167,14 @@
         name: "extra",
         required: false,
         optional: true,
-        description: "Additionally return the lineage if <code>true</code>.",
+        description: "Return additional lineage information fields if <code>true</code>.",
         value: "Must be <code>true</code> or <code>false</code> (default)"
       },
       {
         name: "names",
         required: false,
         optional: true,
-        description: "Additionally return the names of the lineage if <code>true</code>.",
+        description: "Return names of ranks in the lineage if <code>true</code>.",
         value: "Must be <code>true</code> or <code>false</code> (default)"
       }
     ]
@@ -184,8 +184,8 @@
 
     <%= render 'example',
       example_id: "apidocs-example-single",
-      title: "Retrieve the lowest common ancestor for a given tryptic peptide",
-      explanation: "<p>This example retrieves the lowest common ancestor for the peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i>. The result is the same as " + link_to('this search', sequence_path('AIPQLEVARPADAYETAEAYR')) + " with the Tryptic Peptide Analysis in the web interface.</p>",
+      title: "Retrieve the taxonomic lowest common ancestor for a given tryptic peptide",
+      explanation: "<p>This example retrieves the taxonomic lowest common ancestor for the tryptic peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i>. The result is the same as " + link_to('this search', sequence_path('AIPQLEVARPADAYETAEAYR')) + " with the Tryptic Peptide Analysis in the web interface.</p>",
       post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2lca \\
 -d <span class='s1'>'input[]=AIPQLEVARPADAYETAEAYR'</span>",
       get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/pept2lca.json?input[]=AIPQLEVARPADAYETAEAYR' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/pept2lca.json?input[]=AIPQLEVARPADAYETAEAYR</a>",
@@ -201,8 +201,8 @@
 
     <%= render 'example',
       example_id: "apidocs-example-multiple",
-      title: "Retrieve the lowest common ancestor for each of multiple tryptic peptides",
-      explanation: "<p>This example retrieves the lowest common ancestor for the peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i> and <i class='initialism'>APVLSDSSCK</i>. The result is the same as the combination of " + link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) + " and " + link_to("this search", sequence_path("APVLSDSSCK")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
+      title: "Retrieve the taxonomic lowest common ancestor for each of multiple tryptic peptides",
+      explanation: "<p>This example retrieves the taxonomic lowest common ancestor for both the tryptic peptides <i class='initialism'>AIPQLEVARPADAYETAEAYR</i> and <i class='initialism'>APVLSDSSCK</i>. The result is the same as the combination of " + link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) + " and " + link_to("this search", sequence_path("APVLSDSSCK")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
       post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2lca \\
 -d <span class='s1'>'input[]=AIPQLEVARPADAYETAEAYR'</span> \\
 -d <span class='s1'>'input[]=APVLSDSSCK'</span>",
@@ -225,8 +225,8 @@
 
     <%= render 'example',
       example_id: "apidocs-example-equate_il",
-      title: "Retrieve the lowest common ancestor for a single tryptic peptide equating I and L",
-      explanation: "<p>This example retrieves the lowest common ancestor for the peptide <i class='initialism'>APVISDSSCK</i>, equating I and L. The result is the same as " + link_to("this search", sequence_path("APVISDSSCK") + "/equate_il") + " with the Tryptic Peptide Analysis in the web interface.</p>",
+      title: "Retrieve the taxonomic lowest common ancestor for a single tryptic peptide, while equating I and L",
+      explanation: "<p>This example retrieves the taxonomic lowest common ancestor for the tryptic peptide <i class='initialism'>APVISDSSCK</i>. In searching, isoleucine (I) and leucinge (L) are considered equal. The result is the same as " + link_to("this search", sequence_path("APVISDSSCK") + "/equate_il") + " with the Tryptic Peptide Analysis in the web interface.</p>",
       post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2lca \\
 -d <span class='s1'>'input[]=APVISDSSCK'</span> \\
 -d <span class='s1'>'equate_il=true'</span>",
@@ -243,8 +243,8 @@
 
     <%= render 'example',
       example_id: "apidocs-example-extra",
-      title: "Retrieve the lowest common ancestor for a single tryptic peptide with lineages",
-      explanation: "<p>This example retrieves the lowest common ancestor for the peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i> including all lineages. The result is the same as " + link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
+      title: "Retrieve the taxonomic lowest common ancestor and lineage for a single tryptic peptide",
+      explanation: "<p>This example retrieves the taxonomic lowest common ancestor for the tryptic peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i> including its complete lineage. The result is the same as " + link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
       post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2lca \\
 -d <span class='s1'>'input[]=AIPQLEVARPADAYETAEAYR'</span> \\
 -d <span class='s1'>'extra=true'</span>",
@@ -289,8 +289,8 @@
 
     <%= render 'example',
       example_id: "apidocs-example-names",
-      title: "Retrieve the lowest common ancestor for a single tryptic peptide with names",
-      explanation: "<p>This example retrieves the lowest common ancestor for the peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i> including all lineages and names. The result is the same as " + link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
+      title: "Retrieve the taxonmic lowest common ancestor and lineage names for a single tryptic peptide",
+      explanation: "<p>This example retrieves the taxonomic lowest common ancestor for the tryptic peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i> including its complete lineage with names. The result is the same as " + link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
       post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2lca \\
 -d <span class='s1'>'input[]=AIPQLEVARPADAYETAEAYR'</span> \\
 -d <span class='s1'>'extra=true' \\
