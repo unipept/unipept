@@ -158,8 +158,14 @@ class Api::ApiController < ApplicationController
   # handles the parameters
   def set_params
     @input = params[:input]
-    if @input.kind_of? Hash
+    if @input.kind_of? Hash        # hash
       @input = @input.values
+    elsif @input.kind_of? String   # string
+      if @input[0] == "["          # parse json
+        @input = JSON.parse @input
+      elsif                        # comma separated
+        @input = @input.split(",");
+      end
     end
     @input.map! &:chomp
     @input_order = @input.dup
