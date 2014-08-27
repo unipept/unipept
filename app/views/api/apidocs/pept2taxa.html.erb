@@ -52,7 +52,7 @@
     </p>
 
     <ul>
-      <li><code>sequence</code>: the peptide that matched this record</li>
+      <li><code>peptide</code>: the peptide that matched this record</li>
       <li><code>taxon_id</code>: the <span class="initialism">NCBI</span> taxon id of the organism associated with the matching record</li>
       <li><code>taxon_name</code>: the name of the organism associated with the matching record</li>
       <li><code>taxon_rank</code>: the taxonomic rank of the organism associated with the matching record</li>
@@ -190,13 +190,13 @@
       get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR</a>",
       response: "<span class='p'>[</span>
   <span class='p'>{</span>
-    <span class='nx'>sequence</span><span class='o'>: </span><span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
+    <span class='nx'>peptide</span><span class='o'>: </span><span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>: </span><span class='mi'>367928</span><span class='p'>,</span>
     <span class='nx'>taxon_name</span><span class='o'>: </span><span class='s2'>'Bifidobacterium adolescentis ATCC 15703'</span><span class='p'>,</span>
     <span class='nx'>taxon_rank</span><span class='o'>: </span><span class='s2'>'no rank'</span>
   <span class='p'>},</span>
   <span class='p'>{</span>
-    <span class='nx'>sequence</span><span class='o'>: </span><span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
+    <span class='nx'>peptide</span><span class='o'>: </span><span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>: </span><span class='mi'>411481</span><span class='p'>,</span>
     <span class='nx'>taxon_name</span><span class='o'>: </span><span class='s2'>'Bifidobacterium adolescentis L2-32'</span><span class='p'>,</span>
     <span class='nx'>taxon_rank</span><span class='o'>: </span><span class='s2'>'no rank'</span>
@@ -214,19 +214,19 @@
       get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR&input[]=APVLSDSSCK' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR&amp;input[]=APVLSDSSCK</a>",
       response: "<span class='p'>[</span>
   <span class='p'>{</span>
-    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
+    <span class='nx'>peptide</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>367928</span><span class='p'>,</span>
     <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Bifidobacterium adolescentis ATCC 15703'</span><span class='p'>,</span>
     <span class='nx'>taxon_rank</span><span class='o'>:</span> <span class='s2'>'no rank'</span>
   <span class='p'>},</span>
   <span class='p'>{</span>
-    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
+    <span class='nx'>peptide</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>411481</span><span class='p'>,</span>
     <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Bifidobacterium adolescentis L2-32'</span><span class='p'>,</span>
     <span class='nx'>taxon_rank</span><span class='o'>:</span> <span class='s2'>'no rank'</span>
   <span class='p'>},</span>
   <span class='p'>{</span>
-    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'APVLSDSSCK'</span><span class='p'>,</span>
+    <span class='nx'>peptide</span><span class='o'>:</span> <span class='s2'>'APVLSDSSCK'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>9823</span><span class='p'>,</span>
     <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Sus scrofa'</span><span class='p'>,</span>
     <span class='nx'>taxon_rank</span><span class='o'>:</span> <span class='s2'>'species'</span>
@@ -244,7 +244,7 @@
       get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/pept2taxa.json?input[]=APVISDSSCK&equate_il=true' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/pept2taxa.json?input[]=APVISDSSCK&amp;equate_il=true</a>",
       response: "<span class='p'>[</span>
   <span class='p'>{</span>
-    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'APVISDSSCK'</span><span class='p'>,</span>
+    <span class='nx'>peptide</span><span class='o'>:</span> <span class='s2'>'APVISDSSCK'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>9823</span><span class='p'>,</span>
     <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Sus scrofa'</span><span class='p'>,</span>
     <span class='nx'>taxon_rank</span><span class='o'>:</span> <span class='s2'>'species'</span>
@@ -262,7 +262,7 @@
       get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR&extra=true' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR&amp;extra=true</a>",
       response: "<span class='p'>[</span>
   <span class='p'>{</span>
-    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
+    <span class='nx'>peptide</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>367928</span><span class='p'>,</span>
     <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Bifidobacterium adolescentis ATCC 15703'</span><span class='p'>,</span>
     <span class='nx'>taxon_rank</span><span class='o'>:</span> <span class='s2'>'no rank'</span><span class='p'>,</span>
@@ -296,7 +296,7 @@
     <span class='nx'>forma_id</span><span class='o'>:</span> <span class='kc'>null</span>
   <span class='p'>},</span>
   <span class='p'>{</span>
-    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
+    <span class='nx'>peptide</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>411481</span><span class='p'>,</span>
     <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Bifidobacterium adolescentis L2-32'</span><span class='p'>,</span>
     <span class='nx'>taxon_rank</span><span class='o'>:</span> <span class='s2'>'no rank'</span><span class='p'>,</span>
@@ -343,7 +343,7 @@
       get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR&extra=true&names=true' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR&amp;extra=true&amp;names=true</a>",
       response: "<span class='p'>[</span>
   <span class='p'>{</span>
-    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
+    <span class='nx'>peptide</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>367928</span><span class='p'>,</span>
     <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Bifidobacterium adolescentis ATCC 15703'</span><span class='p'>,</span>
     <span class='nx'>taxon_rank</span><span class='o'>:</span> <span class='s2'>'no rank'</span><span class='p'>,</span>
@@ -405,7 +405,7 @@
     <span class='nx'>forma_name</span><span class='o'>:</span> <span class='s2'>''</span>
   <span class='p'>},</span>
   <span class='p'>{</span>
-    <span class='nx'>sequence</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
+    <span class='nx'>peptide</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>411481</span><span class='p'>,</span>
     <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Bifidobacterium adolescentis L2-32'</span><span class='p'>,</span>
     <span class='nx'>taxon_rank</span><span class='o'>:</span> <span class='s2'>'no rank'</span><span class='p'>,</span>
