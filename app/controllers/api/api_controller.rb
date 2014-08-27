@@ -9,62 +9,10 @@ class Api::ApiController < ApplicationController
 
   before_filter :log, only: [:pept2taxa, :pept2lca, :pept2prot, :taxa2lca, :taxonomy]
 
-  # enable cross origin requests
-  def set_headers
-    headers['Access-Control-Allow-Origin'] = '*'
-    headers['Access-Control-Expose-Headers'] = 'ETag'
-    headers['Access-Control-Allow-Methods'] = 'GET, POST'
-    headers['Access-Control-Allow-Headers'] = '*,x-requested-with,Content-Type,If-Modified-Since,If-None-Match'
-    headers['Access-Control-Max-Age'] = '86400'
-  end
-
-  # handles the parameters
-  def set_params
-    @input = params[:input]
-    if @input.kind_of? Hash
-      @input = @input.values
-    end
-    @input.map! &:chomp
-    @input_order = @input.dup
-
-    @equate_il = (!params[:equate_il].blank? && params[:equate_il] == 'true')
-    @extra_info = (!params[:extra].blank? && params[:extra] == 'true')
-    @names = (!params[:names].blank? && params[:names] == 'true')
-
-    @input = @input.map {|s| s.gsub(/I/,'L') } if @equate_il
-  end
-
-  # prepares the taxonomy query
-  def set_query
-    if @extra_info
-      if @names
-        @query = Taxon.includes(lineage: Lineage::ORDER_T)
-      else
-        @query = Taxon.includes(:lineage)
-      end
-    else
-      @query = Taxon
-    end
-  end
-
-  # prepares the sequences query
-  def set_sequences
-    rel_name = @equate_il ? :peptides : :original_peptides
-    @sequences = Sequence.joins(rel_name => :uniprot_entry).
-      where(sequence: @input)
-  end
-
   # sends a message to the ruby cli
   def messages
     version = params[:version]
     render text: "Unipept 0.4.0 is released!"
-  end
-
-  # log all api calls to stathat
-  def log
-    if Rails.application.config.unipept_API_logging
-      StatHat::API.ez_post_count('API - ' + action_name, Rails.application.config.unipept_stathat_key, 1)
-    end
   end
 
 
@@ -187,6 +135,60 @@ class Api::ApiController < ApplicationController
   def taxonomy
     @result = @query.where(id: @input)
     respond_with(@result)
+  end
+
+  private
+
+  # log all api calls to stathat
+  def log
+    if Rails.application.config.unipept_API_logging
+      StatHat::API.ez_post_count('API - ' + action_name, Rails.application.config.unipept_stathat_key, 1)
+    end
+  end
+
+  # enable cross origin requests
+  def set_headers
+    headers['Access-Control-Allow-Origin'] = '*'
+    headers['Access-Control-Expose-Headers'] = 'ETag'
+    headers['Access-Control-Allow-Methods'] = 'GET, POST'
+    headers['Access-Control-Allow-Headers'] = '*,x-requested-with,Content-Type,If-Modified-Since,If-None-Match'
+    headers['Access-Control-Max-Age'] = '86400'
+  end
+
+  # handles the parameters
+  def set_params
+    @input = params[:input]
+    if @input.kind_of? Hash
+      @input = @input.values
+    end
+    @input.map! &:chomp
+    @input_order = @input.dup
+
+    @equate_il = (!params[:equate_il].blank? && params[:equate_il] == 'true')
+    @extra_info = (!params[:extra].blank? && params[:extra] == 'true')
+    @names = (!params[:names].blank? && params[:names] == 'true')
+
+    @input = @input.map {|s| s.gsub(/I/,'L') } if @equate_il
+  end
+
+  # prepares the taxonomy query
+  def set_query
+    if @extra_info
+      if @names
+        @query = Taxon.includes(lineage: Lineage::ORDER_T)
+      else
+        @query = Taxon.includes(:lineage)
+      end
+    else
+      @query = Taxon
+    end
+  end
+
+  # prepares the sequences query
+  def set_sequences
+    rel_name = @equate_il ? :peptides : :original_peptides
+    @sequences = Sequence.joins(rel_name => :uniprot_entry).
+      where(sequence: @input)
   end
 
   # Reorders the results according to the input order
