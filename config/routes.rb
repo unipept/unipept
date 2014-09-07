@@ -71,6 +71,11 @@ UnipeptWeb::Application.routes.draw do
     get "taxonomy",   :to => "apidocs#taxonomy",  :as => 'apidocs/taxonomy'
   end
 
+  # CLI docs
+  namespace :api, path: "clidocs" do
+    get "/",          :to => "clidocs#index",     :as => 'clidocs'
+  end
+
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
