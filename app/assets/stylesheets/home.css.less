@@ -67,3 +67,32 @@
     margin-top: -20px;
     margin-left: 5px;
 }
+.feature-terminal {
+    width: 200px;
+    height: 200px;
+    border-radius: 16px;
+    background-color: #333333;
+    color: white;
+    margin: auto;
+}
+.feature-terminal-prompt {
+    font-size: 80px;
+    margin-left: 25px;
+    line-height: 80px;
+}
+.feature-terminal-flicker {
+    -webkit-animation-timing-function: ease-in-out;
+    -webkit-animation: flicker-anim 1s infinite;
+    animation-timing-function: ease-in-out;
+    animation: flicker-anim 1s infinite;
+}
+@-webkit-keyframes flicker-anim{
+    0% {opacity: 1;}
+    50% {opacity: 0;}
+    100% {opacity: 1;}
+}
+@keyframes flicker-anim{
+    0% {opacity: 1;}
+    50% {opacity: 0;}
+    100% {opacity: 1;}
+}
