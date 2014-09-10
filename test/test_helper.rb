@@ -6,9 +6,9 @@ require "minitest/pride"
 require 'capybara/rails'
 require 'capybara/poltergeist'
 
-Capybara.default_driver = :poltergeist
-Capybara.javascript_driver = :poltergeist
-require 'webmock/minitest'
+#Capybara.default_driver = :poltergeist
+#Capybara.javascript_driver = :poltergeist
+#require 'webmock/minitest'
 
 class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
