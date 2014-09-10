@@ -59,6 +59,6 @@ module UnipeptWeb
       :uniprot => "2014.05"
     }
 
-    config.api_host = "scruffy.ugent.be"
+    config.api_host = "api.unipept.ugent.be"
   end
 end
