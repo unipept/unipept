@@ -1,0 +1,8 @@
+# == Schema Information
+#
+# Table name: genome_caches
+#
+#  bioproject_id  :integer          not null, primary key
+#  json_sequences :text(16777215)   not null
+#
+

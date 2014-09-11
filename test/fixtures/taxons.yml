@@ -1,0 +1,11 @@
+# == Schema Information
+#
+# Table name: taxons
+#
+#  id          :integer          not null, primary key
+#  name        :string(120)      not null
+#  rank        :string(16)
+#  parent_id   :integer
+#  valid_taxon :boolean          default(TRUE), not null
+#
+
