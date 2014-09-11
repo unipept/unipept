@@ -11,33 +11,20 @@ require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
 
-  test "should raise error on create" do
-    assert_raises(ActiveRecord::ReadOnlyRecord) {User.create()}
+  test "should not save username changes" do
+    user = users(:bart)
+    user.username = "change!"
+    user.save
+    user.reload
+    assert_equal "bart", user.username, "Was able to save username changes"
   end
 
-  test "should raise error on save" do
+  test "should not save admin changes" do
     user = users(:bart)
-    assert_raises(ActiveRecord::ReadOnlyRecord) {user.save}
-  end
-
-  test "should raise error on username change" do
-    user = users(:bart)
-    assert_raises(ActiveRecord::ActiveRecordError) {user.update_attribute(:username, 'other name')}
-  end
-
-  test "should raise error on admin change" do
-    user = users(:bart)
-    assert_raises(ActiveRecord::ActiveRecordError) {user.update_attribute(:admin, 1)}
-  end
-
-  test "should raise error on delete" do
-    user = users(:bart)
-    assert_raises(ActiveRecord::ReadOnlyRecord) {user.delete}
-  end
-
-  test "should raise error on destroy" do
-    user = users(:bart)
-    assert_raises(ActiveRecord::ReadOnlyRecord) {user.destroy}
+    user.admin = 1
+    user.save
+    user.reload
+    assert_equal 0, user.admin, "Was able to save admin changes"
   end
 
   test "should not be admin" do
