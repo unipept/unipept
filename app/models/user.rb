@@ -8,9 +8,9 @@
 #
 
 class User < ActiveRecord::Base
-  devise :cas_authenticatable
+  include ReadOnlyModel
 
-  attr_readonly :id, :username, :admin
+  devise :cas_authenticatable
 
   def is_admin?
     return admin == 1
