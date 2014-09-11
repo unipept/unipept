@@ -9,3 +9,9 @@
 #  position             :integer          not null
 #
 
+pept1:
+    id: 1
+    sequence_id: 1
+    original_sequence_id: 1
+    uniprot_entry_id: 1
+    position: 1

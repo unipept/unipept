@@ -1,6 +1,6 @@
 module ReadOnlyModel
-  # taken from http://www.rollnorocks.com/2013/01/implementing-read-only-models-with-activerecord/
   # Forces model to be read-only by raising errors on write operations.
+  # taken from http://www.rollnorocks.com/2013/01/implementing-read-only-models-with-activerecord/
 
   extend ActiveSupport::Concern
 
