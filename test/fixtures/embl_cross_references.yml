@@ -8,3 +8,9 @@
 #  sequence_id      :string(15)
 #
 
+emblcrossreference1:
+    id: 1
+    uniprot_entry_id: 1
+    protein_id: "pid"
+    sequence_id: "sid"
+
