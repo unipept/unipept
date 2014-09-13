@@ -7,3 +7,7 @@
 #  ec_id            :string(12)       not null
 #
 
+eccrossreference1:
+    id: 1
+    uniprot_entry_id: 1
+    ec_id: "ecid"

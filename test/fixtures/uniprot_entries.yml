@@ -10,3 +10,10 @@
 #  protein                  :text             not null
 #
 
+uniprotentry1:
+    id: 1
+    uniprot_accession_number: "nr"
+    version: 1
+    taxon_id: 1
+    type: "trembl"
+    protein: "ELTR"
