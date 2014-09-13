@@ -21,7 +21,7 @@ class PostTest < ActiveSupport::TestCase
 
   test "should not save post with too long title" do
     post = Post.new
-    post.title = "a" * 150
+    post.title = "a" * 101
     post.content = "test"
     post.date = "01-01-1990"
     assert_not post.save, "Saved the post with too long title"
