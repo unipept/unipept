@@ -7,3 +7,7 @@
 #  go_id            :string(12)       not null
 #
 
+gocrossreference1:
+    id: 1
+    uniprot_entry_id: 1
+    go_id: "goid"
