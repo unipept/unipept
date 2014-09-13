@@ -9,3 +9,8 @@
 #  order      :integer
 #
 
+datasetitem1:
+    id: 1
+    dataset_id: 1
+    name: "name"
+    data: "data"
