@@ -16,4 +16,12 @@ uniprotentry1:
     version: 1
     taxon_id: 1
     type: "trembl"
-    protein: "ELTR"
+    protein: "ELABA"
+
+uniprotentry2:
+    id: 2
+    uniprot_accession_number: "nr2"
+    version: 2
+    taxon_id: 2
+    type: "swissprot"
+    protein: "EIABA"
