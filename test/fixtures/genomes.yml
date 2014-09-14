@@ -21,7 +21,7 @@ genome1:
 genome2:
     id: 2
     name: "genome2"
-    bioproject_id: 1
+    bioproject_id: 2
     insdc_id: "sid"
     status: "Complete"
 
