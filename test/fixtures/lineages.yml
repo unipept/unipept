@@ -33,3 +33,11 @@
 #  forma            :integer
 #
 
+lineage1:
+    taxon_id: 1
+    kingdom: 2
+    species: 1
+
+lineage2:
+    taxon_id: 2
+    kingdom: 2
