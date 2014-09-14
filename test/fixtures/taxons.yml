@@ -9,3 +9,15 @@
 #  valid_taxon :boolean          default(TRUE), not null
 #
 
+taxon1:
+    id: 1
+    name: "species1"
+    rank: "species"
+    parent_id: 2
+    valid_taxon: true
+
+taxon2:
+    id: 2
+    name: "kingdom1"
+    rank: "kingdom"
+    valid_taxon: true
