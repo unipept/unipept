@@ -109,8 +109,8 @@ COLLATE = ascii_general_ci;
 CREATE  TABLE IF NOT EXISTS `unipept`.`embl_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `protein_id` VARCHAR(15) NULL ,
-  `sequence_id` VARCHAR(15) NULL ,
+  `protein_id` VARCHAR(25) NULL ,
+  `sequence_id` VARCHAR(25) NULL ,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
@@ -174,7 +174,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`genomes` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(100) NOT NULL ,
   `bioproject_id` INT UNSIGNED NOT NULL ,
-  `insdc_id` VARCHAR(15) NOT NULL ,
+  `insdc_id` VARCHAR(25) NOT NULL ,
   `status` VARCHAR(20) NOT NULL ,
   `taxon_id` MEDIUMINT NULL ,
   PRIMARY KEY (`id`))
@@ -189,8 +189,8 @@ COLLATE = ascii_general_ci;
 CREATE  TABLE IF NOT EXISTS `unipept`.`refseq_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `protein_id` VARCHAR(15) NULL ,
-  `sequence_id` VARCHAR(15) NULL ,
+  `protein_id` VARCHAR(25) NULL ,
+  `sequence_id` VARCHAR(25) NULL ,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
