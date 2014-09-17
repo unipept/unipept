@@ -31,7 +31,7 @@ COLLATE = utf8_general_ci;
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `unipept`.`uniprot_entries` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `uniprot_accession_number` CHAR(8) ASCII NOT NULL ,
+  `uniprot_accession_number` CHAR(10) ASCII NOT NULL ,
   `version` SMALLINT UNSIGNED NOT NULL ,
   `taxon_id` MEDIUMINT UNSIGNED NOT NULL ,
   `type` ENUM('swissprot', 'trembl') NOT NULL ,
