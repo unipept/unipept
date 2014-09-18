@@ -11,7 +11,7 @@ module ApplicationHelper
 
   # helper to add remove links to forms
   def link_to_remove_fields(name, f)
-    f.hidden_field(:_destroy) + link_to_function(name, "remove_fields(this)")
+    f.hidden_field(:_destroy) + link_to(name, "#", :onclick => "remove_fields(this); return false;")
   end
 
   #helper to add add links to forms
@@ -20,7 +20,7 @@ module ApplicationHelper
     fields = f.fields_for(association, new_object, :child_index => "new_#{association}") do |builder|
       render(association.to_s.singularize + "_fields", :f => builder)
     end
-    link_to_function(name, "add_fields(this, \"#{association}\", \"#{escape_javascript(fields)}\")")
+    link_to(name, "#", :onclick => "add_fields(this, \"#{association}\", \"#{escape_javascript(fields)}\"); return false;")
   end
 
   class BootstrapLinkRenderer < ::WillPaginate::ActionView::LinkRenderer
