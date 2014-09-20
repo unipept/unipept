@@ -15,3 +15,10 @@ pept1:
     original_sequence_id: 2
     uniprot_entry_id: 1
     position: 1
+
+pept2:
+    id: 2
+    sequence_id: 1
+    original_sequence_id: 1
+    uniprot_entry_id: 2
+    position: 1

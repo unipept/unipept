@@ -31,7 +31,7 @@ class SequencesController < ApplicationController
       @lineages = sequence.lineages(equate_il, true)
     else
       # we didn't find the sequence in the database, so let's try to split it
-      long_sequences = Sequence.multi_search(seq, equate_il)
+      long_sequences = Sequence.advanced_single_search(seq, equate_il)
       # calculate possible uniprot entries
       temp_entries = long_sequences.map{|s| s.peptides(equate_il).map(&:uniprot_entry).to_set}
       # take the intersection of all sets

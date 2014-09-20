@@ -8,3 +8,14 @@
 #  lca_il   :integer
 #
 
+sequence1:
+    id: 1
+    sequence: "AALER"
+    lca: 2
+    lca_il: 1
+
+sequence2:
+    id: 2
+    sequence: "AAIER"
+    lca: 2
+    lca_il: 1
