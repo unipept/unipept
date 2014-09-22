@@ -57,7 +57,9 @@ end
 gem "stathat"
 
 group :development do
-	gem 'annotate'
+	gem 'annotate' # annotate models with database info
+  gem 'guard-minitest' # auto run tests
+  gem 'terminal-notifier-guard' # mac notifications
 	gem "rake"
 	gem 'sprockets'
 end

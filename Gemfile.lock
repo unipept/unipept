@@ -60,7 +60,10 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
+    celluloid (0.16.0)
+      timers (~> 4.0.0)
     cliver (0.3.2)
+    coderay (1.1.0)
     colorize (0.7.3)
     commonjs (0.2.7)
     devise (3.2.4)
@@ -74,7 +77,19 @@ GEM
       rubycas-client (>= 2.2.1)
     erubis (2.7.0)
     execjs (2.2.1)
+    ffi (1.9.3)
+    formatador (0.2.5)
+    guard (2.6.1)
+      formatador (>= 0.2.4)
+      listen (~> 2.7)
+      lumberjack (~> 1.0)
+      pry (>= 0.9.12)
+      thor (>= 0.18.1)
+    guard-minitest (2.3.2)
+      guard (~> 2.0)
+      minitest (>= 3.0)
     hike (1.2.3)
+    hitimes (1.2.2)
     httparty (0.13.1)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
@@ -92,9 +107,15 @@ GEM
       actionpack (>= 3.1)
       less (~> 2.5.0)
     libv8 (3.16.14.3)
+    listen (2.7.9)
+      celluloid (>= 0.15.2)
+      rb-fsevent (>= 0.9.3)
+      rb-inotify (>= 0.9)
+    lumberjack (1.0.9)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
+    method_source (0.8.2)
     mime-types (1.25.1)
     mini_portile (0.6.0)
     minitest (5.4.0)
@@ -116,6 +137,10 @@ GEM
     polyglot (0.3.5)
     protected_attributes (1.0.8)
       activemodel (>= 4.0.1, < 5.0)
+    pry (0.10.1)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
     rack (1.5.2)
     rack-test (0.6.2)
       rack (>= 1.0)
@@ -135,10 +160,14 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     rake (10.3.2)
+    rb-fsevent (0.9.4)
+    rb-inotify (0.9.5)
+      ffi (>= 0.5.0)
     ref (1.0.5)
     rmagick (2.13.3)
     rubycas-client (2.3.9)
       activesupport
+    slop (3.6.0)
     sprockets (2.12.1)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -153,12 +182,15 @@ GEM
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
     stathat (0.1.7)
+    terminal-notifier-guard (1.5.3)
     therubyracer (0.12.1)
       libv8 (~> 3.16.14.0)
       ref
     thor (0.19.1)
     thread_safe (0.3.4)
     tilt (1.4.1)
+    timers (4.0.1)
+      hitimes
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
@@ -189,6 +221,7 @@ DEPENDENCIES
   devise
   devise_cas_authenticatable
   exception_notification!
+  guard-minitest
   httparty
   jquery-rails
   jquery-ui-rails (= 4.0.2)
@@ -202,6 +235,7 @@ DEPENDENCIES
   rmagick
   sprockets
   stathat
+  terminal-notifier-guard
   therubyracer
   uglifier
   will_paginate
