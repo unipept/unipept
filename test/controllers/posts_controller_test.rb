@@ -15,6 +15,11 @@ class PostsControllerTest < ActionController::TestCase
     assert_equal post1, assigns(:post)
   end
 
+  test "should give 404 when show post doesn't exist" do
+    skip
+    get :show, {'id' => "-11"}
+  end
+
   test "should show new post form" do
     sign_in users(:bart_admin)
     get :new
@@ -30,6 +35,12 @@ class PostsControllerTest < ActionController::TestCase
     assert_response :success
     assert_template :edit
     assert_equal post1, assigns(:post)
+  end
+
+  test "should give 404 when edit post doesn't exist" do
+    skip
+    sign_in users(:bart_admin)
+    get :edit, {'id' => "-1"}
   end
 
   test "should create post" do
