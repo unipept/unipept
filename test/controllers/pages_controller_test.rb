@@ -3,6 +3,7 @@ class PagesControllerTest < ActionController::TestCase
   test "should get home" do
     get :home
     assert_response :success
+    assert_template :home
     assert_equal "Home", assigns(:title)
     assert_not_nil assigns(:post)
   end
@@ -10,12 +11,14 @@ class PagesControllerTest < ActionController::TestCase
   test "should get about" do
     get :about
     assert_response :success
+    assert_template :about
     assert_equal "About", assigns(:title)
   end
 
   test "should get contact" do
     get :contact
     assert_response :success
+    assert_template :contact
     assert_equal "Contact", assigns(:title)
   end
 
@@ -23,6 +26,7 @@ class PagesControllerTest < ActionController::TestCase
     sign_in users(:bart_admin)
     get :admin
     assert_response :success
+    assert_template :admin
     assert_equal "Admin", assigns(:title)
   end
 

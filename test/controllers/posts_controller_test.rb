@@ -3,6 +3,7 @@ class PostsControllerTest < ActionController::TestCase
   test "should get index" do
     get :index
     assert_response :success
+    assert_template :index
     assert_not_nil assigns(:posts)
   end
 
@@ -10,6 +11,7 @@ class PostsControllerTest < ActionController::TestCase
     post1 = posts(:post1)
     get :show, {'id' => "1"}
     assert_response :success
+    assert_template :show
     assert_equal post1, assigns(:post)
   end
 
@@ -17,6 +19,7 @@ class PostsControllerTest < ActionController::TestCase
     sign_in users(:bart_admin)
     get :new
     assert_response :success
+    assert_template :new
     assert_not_nil assigns(:post)
   end
 
@@ -25,6 +28,7 @@ class PostsControllerTest < ActionController::TestCase
     post1 = posts(:post1)
     get :edit, {'id' => "1"}
     assert_response :success
+    assert_template :edit
     assert_equal post1, assigns(:post)
   end
 
