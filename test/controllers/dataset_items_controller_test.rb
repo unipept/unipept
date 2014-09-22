@@ -1,3 +1,5 @@
+require 'test_helper'
+
 class DatasetItemsControllerTest < ActionController::TestCase
 
   test "should show datasetitem" do

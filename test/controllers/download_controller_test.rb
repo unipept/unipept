@@ -1,3 +1,5 @@
+require 'test_helper'
+
 class DownloadControllerTest < ActionController::TestCase
 
   test "should download post data" do

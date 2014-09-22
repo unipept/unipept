@@ -1,3 +1,5 @@
+require 'test_helper'
+
 class PrideControllerTest < ActionController::TestCase
 
   test "should load PRIDE data" do

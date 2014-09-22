@@ -1,3 +1,5 @@
+require 'test_helper'
+
 class ImagemagickControllerTest < ActionController::TestCase
 
   test "should generate image" do

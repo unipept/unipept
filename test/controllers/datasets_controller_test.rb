@@ -1,3 +1,5 @@
+require 'test_helper'
+
 class DatasetsControllerTest < ActionController::TestCase
 
   test "should get index" do
