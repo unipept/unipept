@@ -89,7 +89,7 @@ class PostsControllerTest < ActionController::TestCase
     assert_redirected_to root_url
   end
 
-  test "should redirect when not root" do
+  test "should redirect when not admin" do
     sign_in users(:bart)
     get :new
     assert_equal "Please log in to use this feature", flash[:error]
