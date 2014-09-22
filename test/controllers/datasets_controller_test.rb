@@ -4,6 +4,7 @@ class DatasetsControllerTest < ActionController::TestCase
     get :index
     assert_response :success
     assert_template :index
+    assert_equal "Metaproteomics Analysis", assigns(:title)
     assert_not_nil assigns(:datasets)
   end
 
@@ -125,6 +126,15 @@ class DatasetsControllerTest < ActionController::TestCase
     delete :destroy, {'id' => "1"}
     assert_equal "Please log in to use this feature", flash[:error]
     assert_redirected_to root_url
+  end
+
+  test "should preload" do
+    get :preload, id: 1, type: "type"
+    assert_response :success
+    assert_template :preload
+    assert_equal "Load dataset", assigns(:title)
+    assert_equal "1", assigns(:id)
+    assert_equal "type", assigns(:type)
   end
 
 end
