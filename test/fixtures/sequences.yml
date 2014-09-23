@@ -19,3 +19,9 @@ sequence2:
     sequence: "AAIER"
     lca: 2
     lca_il: 1
+
+sequence3:
+    id: 3
+    sequence: "RANDOM"
+    lca: 1
+    lca_il: 1
