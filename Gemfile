@@ -59,7 +59,8 @@ gem "stathat"
 group :development do
 	gem 'annotate' # annotate models with database info
   gem 'guard-minitest' # auto run tests
-  gem 'terminal-notifier-guard' # mac notifications
+  gem 'terminal-notifier-guard', :git => 'git://github.com/unipept/terminal-notifier-guard.git' # mac notifications
+  gem 'terminal-notifier'
 	gem "rake"
 	gem 'sprockets'
 end

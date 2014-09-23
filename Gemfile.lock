@@ -6,6 +6,12 @@ GIT
       actionmailer (>= 3.0.4)
       activesupport (>= 3.0.4)
 
+GIT
+  remote: git://github.com/unipept/terminal-notifier-guard.git
+  revision: b1f994d88c65cbc9d16a56d7a25df27fb9cddf4c
+  specs:
+    terminal-notifier-guard (1.5.0)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -182,7 +188,7 @@ GEM
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
     stathat (0.1.7)
-    terminal-notifier-guard (1.5.3)
+    terminal-notifier (1.6.1)
     therubyracer (0.12.1)
       libv8 (~> 3.16.14.0)
       ref
@@ -235,7 +241,8 @@ DEPENDENCIES
   rmagick
   sprockets
   stathat
-  terminal-notifier-guard
+  terminal-notifier
+  terminal-notifier-guard!
   therubyracer
   uglifier
   will_paginate
