@@ -25,3 +25,19 @@ uniprotentry2:
     taxon_id: 2
     type: "swissprot"
     protein: "EIABA"
+
+uniprotentry3:
+    id: 3
+    uniprot_accession_number: "nr3"
+    version: 2
+    taxon_id: 2
+    type: "swissprot"
+    protein: "AAILERAGGAR"
+
+uniprotentry4:
+    id: 4
+    uniprot_accession_number: "nr4"
+    version: 2
+    taxon_id: 1
+    type: "swissprot"
+    protein: "AAILERA"

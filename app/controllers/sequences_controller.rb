@@ -82,7 +82,7 @@ class SequencesController < ApplicationController
 
     #don't show the root when we don't need it
     @root.name = "organism"
-    @root = @root.children.count > 1 ? Oj.dump(@root) : Oj.dump(@root.children[0])
+    @root = @root.children.count > 1 ? Oj.dump(@root, mode: :compat) : Oj.dump(@root.children[0], mode: :compat)
 
     #Table stuff
     @table_lineages = Array.new
