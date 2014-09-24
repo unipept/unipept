@@ -169,7 +169,7 @@ class SequencesController < ApplicationController
     @number_found = 0
 
     # build the resultset
-    @matches = Hash.new
+    matches = Hash.new
     @misses = data.to_set
     data.each_slice(1000) do |data_slice|
       Sequence.includes({Sequence.lca_t_relation_name(@equate_il) => {:lineage => Lineage::ORDER_T}}).where(sequence: data_slice).each do |sequence|
@@ -177,9 +177,9 @@ class SequencesController < ApplicationController
         unless lca_t.nil?
           num_of_seq = filter_duplicates ? 1 : data_counts[sequence.sequence]
           @number_found += num_of_seq
-          @matches[lca_t] = Array.new if @matches[lca_t].nil?
+          matches[lca_t] = Array.new if matches[lca_t].nil?
           num_of_seq.times do
-            @matches[lca_t] << sequence_mapping[sequence.sequence]
+            matches[lca_t] << sequence_mapping[sequence.sequence]
           end
         end
         @misses.delete(sequence.sequence)
@@ -218,9 +218,9 @@ class SequencesController < ApplicationController
         unless lca_t.nil?
           num_of_seq = filter_duplicates ? 1 : data_counts[seq]
           @number_found += num_of_seq
-          @matches[lca_t] = Array.new if @matches[lca_t].nil?
+          matches[lca_t] = Array.new if matches[lca_t].nil?
           num_of_seq.times do
-            @matches[lca_t] << sequence_mapping[seq]
+            matches[lca_t] << sequence_mapping[seq]
           end
         end
         @misses.delete(seq)
@@ -247,9 +247,9 @@ class SequencesController < ApplicationController
     @misses = @misses.map{|m| sequence_mapping[m]}.to_a.sort
 
     # construct treemap nodes
-    @root = TreeMapNode.new(1, "organism", "no rank")
-    @matches.each do |taxon, seqs| # for every match
-      @root.add_sequences(seqs)
+    root = TreeMapNode.new(1, "organism", "no rank")
+    matches.each do |taxon, seqs| # for every match
+      root.add_sequences(seqs)
       lca_l = taxon.lineage
 
       #export stuff
@@ -259,30 +259,30 @@ class SequencesController < ApplicationController
         end
       end
 
-      last_node_loop = @root
+      last_node_loop = root
       while !lca_l.nil? && lca_l.has_next? # process every rank in lineage
         t = lca_l.next_t
         unless t.nil?
-          node = TreeMapNode.find_by_id(t.id, @root)
+          node = TreeMapNode.find_by_id(t.id, root)
           if node.nil?
             node = TreeMapNode.new(t.id, t.name, t.rank)
-            last_node_loop = last_node_loop.add_child(node, @root)
+            last_node_loop = last_node_loop.add_child(node, root)
           else
             last_node_loop = node
           end
           node.add_sequences(seqs)
         end
       end
-      node = taxon.id == 1 ? @root : TreeMapNode.find_by_id(taxon.id, @root)
+      node = taxon.id == 1 ? root : TreeMapNode.find_by_id(taxon.id, root)
       node.add_own_sequences(seqs) unless node.nil?
     end
 
     #don't show the root when we don't need it
-    @root = @root.children[0] if @root.children.count == 0
-    @root.add_piechart_data unless @root.nil?
-    @root.sort_peptides_and_children unless @root.nil?
+    root = root.children[0] if root.children.count == 0
+    root.add_piechart_data unless root.nil?
+    root.sort_peptides_and_children unless root.nil?
 
-    root_json = Oj.dump(@root, mode: :compat)
+    root_json = Oj.dump(root, mode: :compat)
     sunburst_hash = Oj.load(String.new(root_json))
     TreeMapNode.clean_sunburst!(sunburst_hash) unless sunburst_hash.nil?
     @sunburst_json = Oj.dump(sunburst_hash).gsub("children","kids")
