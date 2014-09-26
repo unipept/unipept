@@ -103,7 +103,7 @@ class TreeMapNode < Node
     hash["data"].delete("taxon_id")
   end
 
-  # cleans a hash of redundant data for sunburst
+  # cleans a hash of redundant data for treemap
   def self.clean_treemap!(hash)
     hash.delete("nodes")
   end

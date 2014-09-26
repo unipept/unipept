@@ -1,0 +1,16 @@
+# == Schema Information
+#
+# Table name: users
+#
+#  id       :integer          not null, primary key
+#  username :string(8)        not null
+#  admin    :integer          default(0), not null
+#
+
+bart:
+    username: bart
+    admin: 0
+
+bart_admin:
+    username: bmesuere
+    admin: 1

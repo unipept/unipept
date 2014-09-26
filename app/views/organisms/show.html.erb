@@ -1,9 +1,9 @@
 <h1><%= @organism.name %></h1>
-<% if @aantal == 0 %>
+<% if @number == 0 %>
     <span>No genomes were found for this organism.</span>
 <% else %>
     <span>
-        <%= pluralize(@aantal, "gene was", "genes were") %>
+        <%= pluralize(@number, "gene was", "genes were") %>
          found for this organism.
     </span>
     <ul class="uniprot_entries">
