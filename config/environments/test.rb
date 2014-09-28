@@ -38,4 +38,16 @@ UnipeptWeb::Application.configure do
 
   # Raise exception on mass assignment protection for Active Record models
   config.active_record.mass_assignment_sanitizer = :strict
+
+  # enable google analytics
+  config.unipept_analytics = false
+
+  # if authentication is disabled, a guest user will always be signed in
+  config.unipept_enable_auth = true
+
+  # enable API logging
+  config.unipept_API_logging = false
+
+  # enable error emails
+  config.unipept_error_mails = false
 end

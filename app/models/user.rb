@@ -10,7 +10,7 @@
 class User < ActiveRecord::Base
   devise :cas_authenticatable
 
-  attr_accessible :username
+  attr_readonly :id, :username, :admin
 
   def is_admin?
     return admin == 1

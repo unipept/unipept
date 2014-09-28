@@ -1,5 +1,5 @@
 class SearchController < ApplicationController
   def single
-    @title = "Single peptide search"
+    @title = "Tryptic Peptide Analysis"
   end
 end

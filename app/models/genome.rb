@@ -11,20 +11,29 @@
 #
 
 class Genome < ActiveRecord::Base
-  attr_accessible nil
+  attr_readonly :id, :name, :bioproject_id, :insdc_id, :status
 
   belongs_to :lineage, :foreign_key  => "taxon_id", :primary_key  => "taxon_id",  :class_name   => 'Lineage'
 
+  def destroy
+    raise ActiveRecord::ReadOnlyRecord
+  end
+
+  def delete
+    raise ActiveRecord::ReadOnlyRecord
+  end
+
+
   def self.get_genome_species()
     # order by uses filesort since there's no index on taxon name
-    return connection.select_all("SELECT taxons.name, taxons.id, count(*) AS num 
-     FROM genomes 
+    return connection.select_all("SELECT taxons.name, taxons.id, count(*) AS num
+     FROM genomes
      INNER JOIN lineages ON (genomes.taxon_id = lineages.taxon_id)
-     LEFT JOIN taxons ON (lineages.species = taxons.id) 
+     LEFT JOIN taxons ON (lineages.species = taxons.id)
      WHERE taxons.id IS NOT NULL
-     AND status = 'Complete' 
-     GROUP BY taxons.id 
-     HAVING num > 1 
+     AND status = 'Complete'
+     GROUP BY taxons.id
+     HAVING num >= 1
      ORDER BY name")
   end
 
@@ -36,7 +45,7 @@ class Genome < ActiveRecord::Base
   # fills in the taxon_id column
   def self.precompute_taxa
     Genome.all.each do |genome|
-      ue = UniprotEntry.find_by_sql("SELECT DISTINCT uniprot_entries.* 
+      ue = UniprotEntry.find_by_sql("SELECT DISTINCT uniprot_entries.*
             FROM uniprot_entries
             LEFT JOIN embl_cross_references ON uniprot_entry_id = uniprot_entries.id
             WHERE sequence_id = '#{genome.insdc_id}'").first

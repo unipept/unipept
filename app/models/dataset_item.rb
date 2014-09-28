@@ -13,4 +13,9 @@ class DatasetItem < ActiveRecord::Base
   attr_accessible :name, :data
 
   belongs_to :dataset
+
+  validates :name, :presence => true,
+                   :length => { :maximum => 160 }
+  validates :data, :presence => true,
+                   :length => { :maximum => 16777215 }
 end

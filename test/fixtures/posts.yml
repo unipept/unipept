@@ -1,0 +1,15 @@
+# == Schema Information
+#
+# Table name: posts
+#
+#  id      :integer          not null, primary key
+#  title   :string(100)      not null
+#  content :text             not null
+#  date    :date             not null
+#
+
+post1:
+    id: 1
+    title: "title"
+    content: "content"
+    date: "1990-01-01"
