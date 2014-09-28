@@ -671,7 +671,7 @@ function getUniqueSequences(newOrder, force) {
 
 // fetch the sequences
 function reallyGetUniqueSequences(s) {
-    getJSONByPost("/peptidome/unique_sequences/", "type=uniprot&bioprojects=" + filterIds(order) + "&sequences=[" + s + "]", function (d) {
+    getJSONByPost("/peptidome/unique_sequences/", "bioprojects=" + filterIds(order) + "&sequences=[" + s + "]", function (d) {
         lca = d[0];
         calculateUnicore(d[1]);
     });
