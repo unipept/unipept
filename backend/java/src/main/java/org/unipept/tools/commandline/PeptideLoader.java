@@ -89,6 +89,10 @@ public class PeptideLoader {
 
     }
 
+    public void finalize() {
+        data.finalize();
+    }
+
     /**
      * This script parses uniprot xml files, extracts the protein information
      * and puts the peptides in the database. The input is expected to be the
@@ -108,6 +112,7 @@ public class PeptideLoader {
             // create a new loader object
             PeptideLoader loader = new PeptideLoader(false);
             loader.addLineage();
+            loader.finalize();
         } else {
             // create a new loader object
             PeptideLoader loader = new PeptideLoader(true);
@@ -122,12 +127,13 @@ public class PeptideLoader {
             ProgressWriter.updateProgress("Build database - load uniprot", 70);
 
             // process the tremble input file
-            ProgressWriter.addProgress("TrEMBL", 22660469);
-            loader.processFile(args[1], false);
-            ProgressWriter.removeProgress("TrEMBL");
+            //ProgressWriter.addProgress("TrEMBL", 22660469);
+            //loader.processFile(args[1], false);
+            //ProgressWriter.removeProgress("TrEMBL");
             ProgressWriter.updateProgress("Build database - load uniprot", 90);
 
             loader.addLineage();
+            loader.finalize();
             ProgressWriter.removeProgress("PeptideLoader");
         }
     }

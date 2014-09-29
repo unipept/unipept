@@ -24,80 +24,90 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
  * Intermediate class to add PeptideData to the database
  * 
  * @author Bart Mesuere
+ * @author Felix Van der Jeugt
  * 
  */
 public class PeptideLoaderData implements UniprotObserver {
-    // database stuff
     private Connection connection;
-
-    private PreparedStatement containsSequence;
-    private PreparedStatement addSequence;
-    private PreparedStatement addUniprotEntry;
-    private PreparedStatement addPeptide;
     private PreparedStatement addLineage;
     private PreparedStatement addInvalidLineage;
-    private PreparedStatement addRefseqRef;
-    private PreparedStatement addEMBLRef;
-    private PreparedStatement addGORef;
-    private PreparedStatement addECRef;
     private PreparedStatement lineageExists;
-    private PreparedStatement getTaxon;
 
+    private Map<String, Integer> sequenceIds;
+    private ArrayList<Taxon> taxons;
     private Set<Integer> wrongTaxonIds;
+
+    // csv files
+    private CSVWriter uniprotEntries;
+    private CSVWriter peptides;
+    private CSVWriter refseqCrossReferences;
+    private CSVWriter emblCrossReferences;
+    private CSVWriter goCrossReferences;
+    private CSVWriter ecCrossReferences;
 
     /**
      * Creates a new data object
      */
     public PeptideLoaderData() {
+        wrongTaxonIds = new HashSet<Integer>();
+        sequenceIds = new HashMap<String, Integer>();
+        taxons = new ArrayList<Taxon>();
+
+        /* Opening CSV files for writing. */
         try {
-            wrongTaxonIds = new HashSet<Integer>();
+            uniprotEntries = new CSVWriter("uniprotEntries.tsv", "uniprot_accession_number", "version", "taxon_id", "type", "protein");
+            peptides = new CSVWriter("peptides.tsv", "sequence_id", "uniprot_entry_id", "original_sequence_id", "position");
+            refseqCrossReferences = new CSVWriter("refseq_cross_references.tsv", "uniprot_entry_id", "protein_id", "sequence_id");
+            emblCrossReferences = new CSVWriter("embl_cross_references.tsv", "uniprot_entry_id", "protein_id", "sequence_id");
+            goCrossReferences = new CSVWriter("go_cross_references.tsv", "uniprot_entry_id", "go_id");
+            ecCrossReferences = new CSVWriter("ec_cross_references.tsv", "uniprot_entry_id", "ec_id");
+        } catch(IOException e) {
+            System.err.println(new Timestamp(System.currentTimeMillis())
+                    + " Error creating tsv files");
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        /* Reading the available taxons from the database. */
+        try {
             connection = Database.getConnection();
-            prepareStatements();
-        } catch (SQLException e) {
+        } catch(SQLException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + "Database connection failed");
             e.printStackTrace();
             System.exit(1);
         }
-    }
 
-    /**
-     * creates all prepared statements used in this class.
-     */
-    private void prepareStatements() {
+        Statement stmt = null;
         try {
-            containsSequence = connection
-                    .prepareStatement("SELECT id FROM sequences WHERE `sequence` = ?");
-            addSequence = connection.prepareStatement(
-                    "INSERT INTO sequences (`sequence`) VALUES (?)",
-                    Statement.RETURN_GENERATED_KEYS);
-            addUniprotEntry = connection
-                    .prepareStatement(
-                            "INSERT INTO uniprot_entries (`uniprot_accession_number`, `version`, `taxon_id`, `type`, `protein`) VALUES (?,?,?,?,?)",
-                            Statement.RETURN_GENERATED_KEYS);
-            addPeptide = connection
-                    .prepareStatement("INSERT INTO peptides (`sequence_id`, `uniprot_entry_id`, `original_sequence_id`, `position`) VALUES (?,?,?,?)");
-            addLineage = connection
-                    .prepareStatement("INSERT INTO lineages (`taxon_id`) VALUES (?)");
-            addInvalidLineage = connection
-                    .prepareStatement("INSERT INTO lineages (`taxon_id`, `superkingdom`, `kingdom`, `subkingdom`, `superphylum`, `phylum`, `subphylum`,`superclass`, `class`, `subclass`, `infraclass`, `superorder`, `order`, `suborder`, `infraorder`, `parvorder`, `superfamily`, `family`, `subfamily`, `tribe`, `subtribe`, `genus`, `subgenus`, `species_group`, `species_subgroup`, `species`, `subspecies`, `varietas`, `forma`) VALUES (?, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)");
-            addRefseqRef = connection
-                    .prepareStatement("INSERT INTO refseq_cross_references (`uniprot_entry_id`, `protein_id`, `sequence_id`) VALUES (?,?,?)");
-            addEMBLRef = connection
-                    .prepareStatement("INSERT INTO embl_cross_references (`uniprot_entry_id`, `protein_id`, `sequence_id`) VALUES (?,?,?)");
-            addGORef = connection
-                    .prepareStatement("INSERT INTO go_cross_references (`uniprot_entry_id`, `go_id`) VALUES (?,?)");
-            addECRef = connection
-                    .prepareStatement("INSERT INTO ec_cross_references (`uniprot_entry_id`, `ec_id`) VALUES (?,?)");
-            lineageExists = connection
-                    .prepareStatement("SELECT COUNT(*) AS aantal FROM lineages WHERE `taxon_id` = ?");
-            getTaxon = connection
-                    .prepareStatement("SELECT rank, parent_id, valid_taxon FROM taxons WHERE id = ?");
-        } catch (SQLException e) {
+            stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT id, rank, parent_id, valid_taxon FROM taxons ORDER BY id ASC");
+            while(rs.next()) {
+                int id = rs.getInt("id");
+                while(id < taxons.size()) taxons.add(null); // In case of deleted taxons.
+                taxons.add(new Taxon(rs.getString("rank"), rs.getInt("parent_id"), rs.getBoolean("valid_taxon")));
+            }
+        } catch(SQLException e) {
+            System.err.println(new Timestamp(System.currentTimeMillis())
+                    + "Taxon retrieval failed.");
+            e.printStackTrace();
+            System.exit(1);
+        } finally {
+            if(stmt != null) { stmt.close(); }
+        }
+
+        /* Prepaering Lineage statements. */
+        try {
+            addLineage = connection.prepareStatement("INSERT INTO lineages (`taxon_id`) VALUES (?)");
+            addInvalidLineage = connection.prepareStatement("INSERT INTO lineages (`taxon_id`, `superkingdom`, `kingdom`, `subkingdom`, `superphylum`, `phylum`, `subphylum`,`superclass`, `class`, `subclass`, `infraclass`, `superorder`, `order`, `suborder`, `infraorder`, `parvorder`, `superfamily`, `family`, `subfamily`, `tribe`, `subtribe`, `genus`, `subgenus`, `species_group`, `species_subgroup`, `species`, `subspecies`, `varietas`, `forma`) VALUES (?, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)");
+            lineageExists = connection.prepareStatement("SELECT COUNT(*) AS aantal FROM lineages WHERE `taxon_id` = ?");
+        } catch(SQLException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + " Error creating prepared statements");
             e.printStackTrace();
+            System.exit(1)
         }
+
     }
 
     /**
@@ -141,28 +151,27 @@ public class PeptideLoaderData implements UniprotObserver {
      */
     public int addUniprotEntry(String uniprotAccessionNumber, int version, int taxonId,
             String type, String sequence) {
-        try {
-            addUniprotEntry.setString(1, uniprotAccessionNumber);
-            addUniprotEntry.setInt(2, version);
-            addUniprotEntry.setInt(3, taxonId);
-            addUniprotEntry.setString(4, type);
-            addUniprotEntry.setString(5, sequence);
-            addUniprotEntry.executeUpdate();
-            ResultSet res = addUniprotEntry.getGeneratedKeys();
-            res.next();
-            int id = res.getInt(1);
-            res.close();
-            return id;
-        } catch (MySQLIntegrityConstraintViolationException e) {
+        if(0 <= taxonId && taxonId < taxons.length && taxons[taxonId] != null) {
+            try {
+                int id = uniprotEntries.write(
+                        uniprotAccessionNumber,
+                        Integer.toString(version),
+                        Integer.toString(taxonId),
+                        type,
+                        sequence);
+                taxons[taxonId].used = true;
+                return id;
+            } catch(IOException e) {
+                System.err.println(new Timestamp(System.currentTimeMillis())
+                        + " Error writing to CSV.");
+                e.printStackTrace();
+            }
+        } else {
             if (!wrongTaxonIds.contains(taxonId)) {
                 wrongTaxonIds.add(taxonId);
                 System.err.println(new Timestamp(System.currentTimeMillis()) + " " + taxonId
                         + " added to the list of " + wrongTaxonIds.size() + " invalid taxonIds.");
             }
-        } catch (SQLException e) {
-            System.err.println(new Timestamp(System.currentTimeMillis())
-                    + " Error executing query.");
-            e.printStackTrace();
         }
         return -1;
     }
@@ -177,29 +186,7 @@ public class PeptideLoaderData implements UniprotObserver {
      * @return the database id of given sequence
      */
     private int getSequenceId(String sequence) {
-        try {
-            containsSequence.setString(1, sequence);
-            ResultSet res = containsSequence.executeQuery();
-            if (res.next()) {// try retrieving
-                int id = res.getInt("id");
-                res.close();
-                return id;
-            } else {// else add to database
-                res.close();
-                addSequence.setString(1, sequence);
-                addSequence.executeUpdate();
-                res = addSequence.getGeneratedKeys();
-                res.next();
-                int id = res.getInt(1);
-                res.close();
-                return id;
-            }
-        } catch (SQLException e) {
-            System.err.println(new Timestamp(System.currentTimeMillis())
-                    + " Error getting id of sequence " + sequence);
-            e.printStackTrace();
-        }
-        return -1;
+        return sequenceIds.computeIfAbsent(sequence, s -> sequenceIds.size() + 1)
     }
 
     /**
@@ -215,12 +202,13 @@ public class PeptideLoaderData implements UniprotObserver {
      */
     public void addData(String sequence, int uniprotEntryId, String originalSequence, int position) {
         try {
-            addPeptide.setInt(1, getSequenceId(sequence));
-            addPeptide.setInt(2, uniprotEntryId);
-            addPeptide.setInt(3, getSequenceId(originalSequence));
-            addPeptide.setInt(4, position);
-            addPeptide.executeUpdate();
-        } catch (SQLException e) {
+            sequences.write(
+                    Integer.toString(getSequenceId(sequence)),
+                    Integer.toString(uniprotEntryId),
+                    Integer.toString(getSequenceId(originalSequence)),
+                    Integer.toString(position)
+                    );
+        } catch(IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + " Error adding this peptide to the database: " + sequence);
             e.printStackTrace();
@@ -237,21 +225,17 @@ public class PeptideLoaderData implements UniprotObserver {
      */
     public void addDbRef(UniprotDbRef ref, int uniprotEntryId) {
         try {
-            PreparedStatement ps;
-            if (ref.getType().equals("EMBL"))
-                ps = addEMBLRef;
-            else
-                ps = addRefseqRef;
-            ps.setInt(1, uniprotEntryId);
-            ps.setString(2, ref.getProteinId());
-            ps.setString(3, ref.getSequenceId());
-            ps.executeUpdate();
-        } catch (SQLException e) {
+            CSVWriter w = (ref.getType().equals("EMBL"))
+                ? emblCrossReferences
+                : refseqCrossReferences;
+            w.write(Integer.toString(uniprotEntryId),
+                    ref.getProteinId(),
+                    ref.getSequenceId());
+        } catch (IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + " Error adding this cross reference to the database.");
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -264,10 +248,8 @@ public class PeptideLoaderData implements UniprotObserver {
      */
     public void addGORef(UniprotGORef ref, int uniprotEntryId) {
         try {
-            addGORef.setInt(1, uniprotEntryId);
-            addGORef.setString(2, ref.getId());
-            addGORef.executeUpdate();
-        } catch (SQLException e) {
+            goCrossReferences.write(Integer.toString(uniprotEntryId), ref.getId());
+        } catch (IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + " Error adding this GO reference to the database.");
             e.printStackTrace();
@@ -285,10 +267,8 @@ public class PeptideLoaderData implements UniprotObserver {
      */
     public void addECRef(UniprotECRef ref, int uniprotEntryId) {
         try {
-            addECRef.setInt(1, uniprotEntryId);
-            addECRef.setString(2, ref.getId());
-            addECRef.executeUpdate();
-        } catch (SQLException e) {
+            ecCrossReferences.write(Integer.toString(uniprotEntryId), ref.getId());
+        } catch (IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + " Error adding this EC reference to the database.");
             e.printStackTrace();
@@ -304,24 +284,8 @@ public class PeptideLoaderData implements UniprotObserver {
      */
     public List<Integer> getUniqueTaxonIds() {
         List<Integer> result = new ArrayList<Integer>();
-        try {
-            Statement stmt = connection.createStatement();
-            try {
-                ResultSet rs = stmt.executeQuery("SELECT DISTINCT taxon_id FROM uniprot_entries");
-                while (rs.next())
-                    result.add(rs.getInt(1));
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(new Timestamp(System.currentTimeMillis())
-                        + " Something went wrong truncating tables.");
-                e.printStackTrace();
-            } finally {
-                stmt.close();
-            }
-        } catch (SQLException e1) {
-            System.err.println(new Timestamp(System.currentTimeMillis())
-                    + " Something went wrong creating a new statement.");
-            e1.printStackTrace();
+        for(int i = 0; i < taxons.length; i++) {
+            if(taxons[i].used) result.add(i);
         }
         return result;
     }
@@ -334,14 +298,12 @@ public class PeptideLoaderData implements UniprotObserver {
      *            The taxonId of the organism
      */
     public void addLineage(int taxonId) {
-        try {
+        try { 
             lineageExists.setInt(1, taxonId);
             ResultSet rs = lineageExists.executeQuery();
             if (rs.next() && rs.getInt("aantal") == 0) {
-                getTaxon.setInt(1, taxonId);
-                rs = getTaxon.executeQuery();
-                if (rs.next()) {
-                    if (rs.getBoolean("valid_taxon")) {
+                if (0 <= taxonId && taxonId < taxons.length && taxons[taxonId] != null) {
+                    if (taxons[taxonId].validTaxon) {
                         addLineage.setInt(1, taxonId);
                         addLineage.executeUpdate();
                     } else {
@@ -376,17 +338,15 @@ public class PeptideLoaderData implements UniprotObserver {
                 addLineage(parentId);
             }
             // retrieve the parent info
-            getTaxon.setInt(1, parentId);
-            ResultSet rs = getTaxon.executeQuery();
-            if (rs.next()) {
-                String rank = rs.getString("rank");
+            if (0 <= parentId && parentId < taxons.length && taxons[parentId] != null) {
+                String rank = taxons[parentId].rank;
 
                 // if we have a valid rank, update the lineage
                 if (!rank.equals("no rank")) {
                     rank = rank.replace(' ', '_');
                     Statement stmt = connection.createStatement();
 
-                    if (rs.getBoolean("valid_taxon"))// normal case
+                    if (taxons[parentId].validTaxon)// normal case
                     {
                         stmt.executeUpdate("UPDATE lineages SET `" + rank + "` = " + parentId
                                 + " WHERE `taxon_id` = " + taxonId);
@@ -403,12 +363,12 @@ public class PeptideLoaderData implements UniprotObserver {
                 // recursion if fun!
                 updateLineage(taxonId, rs.getInt("parent_id"));
             }
-            rs.close();
         }
     }
 
     /**
      * Truncates all peptide tables
+     * TODO
      */
     public void emptyAllTables() {
         try {
@@ -460,5 +420,55 @@ public class PeptideLoaderData implements UniprotObserver {
     @Override
     public void handleEntry(UniprotEntry entry) {
         store(entry);
+    }
+
+    @Override
+    public void finalize() {
+        uniprotEntries.close();
+        peptides.close();
+        lineages.close();
+        refseq_cross_references.close();
+        embl_cross_references.close();
+        go_cross_references.close();
+        ec_cross_references.close();
+    }
+
+    private class CSVWriter {
+        private BufferedWriter buffer;
+        private int index = 0;
+        public CSVWriter(String file, String... titles) throws IOException {
+            buffer = new BufferedWriter(new FileWriter(file));
+            buffer.write("id");
+            for(int i = 0; i < titles.length; i++) {
+                buffer.write("	" + titles[i].toString());
+            }
+            buffer.newLine();
+        }
+        public int write(String... values) throws IOException {
+            buffer.write(++index);
+            for(int i = 0; i < values.length; i++) {
+                buffer.write("	" + values[i]);
+            }
+            buffer.newLine();
+            return index;
+        }
+        public void finalize() {
+            buffer.close()
+        }
+    }
+
+    private class Taxon {
+        public String rank;
+        public int parentId;
+        public boolean validTaxon;
+        public int lineageCount;
+        public boolean used;
+        public Taxon(String rank, int parentId, boolean validTaxon) {
+            this.rank = rank;
+            this.parentId = parentId;
+            this.lineageCount = 0;
+            this.validTaxon = validTaxon;
+            this.used = false;
+        }
     }
 }
