@@ -89,8 +89,8 @@ public class PeptideLoader {
 
     }
 
-    public void finalize() {
-        data.finalize();
+    public void close() {
+        data.close();
     }
 
     /**
@@ -112,7 +112,7 @@ public class PeptideLoader {
             // create a new loader object
             PeptideLoader loader = new PeptideLoader(false);
             loader.addLineage();
-            loader.finalize();
+            loader.close();
         } else {
             // create a new loader object
             PeptideLoader loader = new PeptideLoader(true);
@@ -133,7 +133,7 @@ public class PeptideLoader {
             ProgressWriter.updateProgress("Build database - load uniprot", 90);
 
             loader.addLineage();
-            loader.finalize();
+            loader.close();
             ProgressWriter.removeProgress("PeptideLoader");
         }
     }

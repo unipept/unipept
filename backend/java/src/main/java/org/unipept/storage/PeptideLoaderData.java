@@ -6,10 +6,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import org.unipept.xml.UniprotDbRef;
 import org.unipept.xml.UniprotECRef;
@@ -87,13 +94,12 @@ public class PeptideLoaderData implements UniprotObserver {
                 while(id < taxons.size()) taxons.add(null); // In case of deleted taxons.
                 taxons.add(new Taxon(rs.getString("rank"), rs.getInt("parent_id"), rs.getBoolean("valid_taxon")));
             }
+            stmt.close();
         } catch(SQLException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + "Taxon retrieval failed.");
             e.printStackTrace();
             System.exit(1);
-        } finally {
-            if(stmt != null) { stmt.close(); }
         }
 
         /* Prepaering Lineage statements. */
@@ -105,7 +111,7 @@ public class PeptideLoaderData implements UniprotObserver {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + " Error creating prepared statements");
             e.printStackTrace();
-            System.exit(1)
+            System.exit(1);
         }
 
     }
@@ -151,7 +157,7 @@ public class PeptideLoaderData implements UniprotObserver {
      */
     public int addUniprotEntry(String uniprotAccessionNumber, int version, int taxonId,
             String type, String sequence) {
-        if(0 <= taxonId && taxonId < taxons.length && taxons[taxonId] != null) {
+        if(0 <= taxonId && taxonId < taxons.size() && taxons.get(taxonId) != null) {
             try {
                 int id = uniprotEntries.write(
                         uniprotAccessionNumber,
@@ -159,7 +165,7 @@ public class PeptideLoaderData implements UniprotObserver {
                         Integer.toString(taxonId),
                         type,
                         sequence);
-                taxons[taxonId].used = true;
+                taxons.get(taxonId).used = true;
                 return id;
             } catch(IOException e) {
                 System.err.println(new Timestamp(System.currentTimeMillis())
@@ -186,7 +192,7 @@ public class PeptideLoaderData implements UniprotObserver {
      * @return the database id of given sequence
      */
     private int getSequenceId(String sequence) {
-        return sequenceIds.computeIfAbsent(sequence, s -> sequenceIds.size() + 1)
+        return sequenceIds.computeIfAbsent(sequence, s -> sequenceIds.size() + 1);
     }
 
     /**
@@ -202,7 +208,7 @@ public class PeptideLoaderData implements UniprotObserver {
      */
     public void addData(String sequence, int uniprotEntryId, String originalSequence, int position) {
         try {
-            sequences.write(
+            peptides.write(
                     Integer.toString(getSequenceId(sequence)),
                     Integer.toString(uniprotEntryId),
                     Integer.toString(getSequenceId(originalSequence)),
@@ -284,8 +290,8 @@ public class PeptideLoaderData implements UniprotObserver {
      */
     public List<Integer> getUniqueTaxonIds() {
         List<Integer> result = new ArrayList<Integer>();
-        for(int i = 0; i < taxons.length; i++) {
-            if(taxons[i].used) result.add(i);
+        for(int i = 0; i < taxons.size(); i++) {
+            if(taxons.get(i).used) result.add(i);
         }
         return result;
     }
@@ -302,8 +308,8 @@ public class PeptideLoaderData implements UniprotObserver {
             lineageExists.setInt(1, taxonId);
             ResultSet rs = lineageExists.executeQuery();
             if (rs.next() && rs.getInt("aantal") == 0) {
-                if (0 <= taxonId && taxonId < taxons.length && taxons[taxonId] != null) {
-                    if (taxons[taxonId].validTaxon) {
+                if (0 <= taxonId && taxonId < taxons.size() && taxons.get(taxonId) != null) {
+                    if (taxons.get(taxonId).validTaxon) {
                         addLineage.setInt(1, taxonId);
                         addLineage.executeUpdate();
                     } else {
@@ -338,15 +344,15 @@ public class PeptideLoaderData implements UniprotObserver {
                 addLineage(parentId);
             }
             // retrieve the parent info
-            if (0 <= parentId && parentId < taxons.length && taxons[parentId] != null) {
-                String rank = taxons[parentId].rank;
+            if (0 <= parentId && parentId < taxons.size() && taxons.get(parentId) != null) {
+                String rank = taxons.get(parentId).rank;
 
                 // if we have a valid rank, update the lineage
                 if (!rank.equals("no rank")) {
                     rank = rank.replace(' ', '_');
                     Statement stmt = connection.createStatement();
 
-                    if (taxons[parentId].validTaxon)// normal case
+                    if (taxons.get(parentId).validTaxon)// normal case
                     {
                         stmt.executeUpdate("UPDATE lineages SET `" + rank + "` = " + parentId
                                 + " WHERE `taxon_id` = " + taxonId);
@@ -361,7 +367,7 @@ public class PeptideLoaderData implements UniprotObserver {
                 }
 
                 // recursion if fun!
-                updateLineage(taxonId, rs.getInt("parent_id"));
+                updateLineage(taxonId, taxons.get(parentId).parentId);
             }
         }
     }
@@ -423,14 +429,19 @@ public class PeptideLoaderData implements UniprotObserver {
     }
 
     @Override
-    public void finalize() {
-        uniprotEntries.close();
-        peptides.close();
-        lineages.close();
-        refseq_cross_references.close();
-        embl_cross_references.close();
-        go_cross_references.close();
-        ec_cross_references.close();
+    public void close() {
+        try {
+            uniprotEntries.close();
+            peptides.close();
+            refseqCrossReferences.close();
+            emblCrossReferences.close();
+            goCrossReferences.close();
+            ecCrossReferences.close();
+        } catch(IOException e) {
+            System.err.println(new Timestamp(System.currentTimeMillis())
+                    + " Something closing the csv files.");
+            e.printStackTrace();
+        }
     }
 
     private class CSVWriter {
@@ -452,8 +463,9 @@ public class PeptideLoaderData implements UniprotObserver {
             buffer.newLine();
             return index;
         }
-        public void finalize() {
-            buffer.close()
+        public void close() throws IOException {
+            buffer.flush();
+            buffer.close();
         }
     }
 
