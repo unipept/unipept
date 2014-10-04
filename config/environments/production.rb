@@ -81,7 +81,7 @@ if Rails.application.config.unipept_error_mails
   :throttle => {
     :notifier => "email",
     :notifier_options => {
-      :email_prefix => "[Unipept] ",
+      :email_prefix => "[Unipept-api] ",
       :sender_address => %{"Unipept" <unipept@ugent.be>},
       :exception_recipients => Rails.application.config.unipept_error_mails_addresses
     },
