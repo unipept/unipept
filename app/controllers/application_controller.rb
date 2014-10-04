@@ -3,12 +3,18 @@ class ApplicationController < ActionController::Base
   before_action :set_motd
   before_action :my_auth
 
+  before_action :disable_website
+
   def set_motd
     file = Rails.root.join("public", "motd")
     @motd = File.read(file) if FileTest.exists?(file)
   end
 
   protected
+
+  def disable_website
+    redirect_to "http://unipept.ugent.be" + request.original_fullpath
+  end
 
   def authorize
     unless user_signed_in? && current_user.is_admin?

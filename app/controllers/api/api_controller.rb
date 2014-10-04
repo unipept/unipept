@@ -2,6 +2,8 @@ class Api::ApiController < ApplicationController
 
   respond_to :json
 
+  skip_before_action :disable_website
+
   before_filter :set_headers, only: [:pept2taxa, :pept2lca, :pept2prot, :taxa2lca, :taxonomy]
   before_filter :set_params, only: [:pept2taxa, :pept2lca, :pept2prot, :taxa2lca, :taxonomy]
   before_filter :set_query, only: [:pept2taxa, :pept2lca, :taxonomy]
