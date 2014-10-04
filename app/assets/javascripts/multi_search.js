@@ -196,7 +196,7 @@ function initTreeMap(jsonData) {
     }
 
     // hook up the reset button
-    $("#treemap-reset").click(function resetSunburst() {
+    $("#treemap-reset").click(function resetTreemap() {
         var rootId = jsonData.id;
         tm.enter(tm.graph.getNode(rootId));
         setTimeout(function() {
@@ -256,7 +256,12 @@ function initTreeView(jsonData) {
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
       .append("g");
 
-    draw(jsonData)
+    // hook up the reset button
+    $("#treeview-reset").click(function resetTreeview() {
+        rightClick(root);
+    });
+
+    draw(jsonData);
 
     function draw(data) {
         widthScale.domain([0, data.data.count]);
@@ -533,7 +538,9 @@ function initTreeView(jsonData) {
         expand(d);
 
         // redraw
-        d3.event.preventDefault();
+        if (d3.event !== null) {
+            d3.event.preventDefault();
+        }
         update(d);
         centerNode(d);
 
