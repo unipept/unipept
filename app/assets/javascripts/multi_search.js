@@ -194,6 +194,15 @@ function initTreeMap(jsonData) {
     function createLabel(domElement, node) {
 
     }
+
+    // hook up the reset button
+    $("#treemap-reset").click(function resetSunburst() {
+        var rootId = jsonData.id;
+        tm.enter(tm.graph.getNode(rootId));
+        setTimeout(function() {
+            tm.refresh();
+        }, 600);
+    });
 }
 
 /**
