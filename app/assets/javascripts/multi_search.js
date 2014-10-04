@@ -258,6 +258,7 @@ function initTreeView(jsonData) {
 
     // hook up the reset button
     $("#treeview-reset").click(function resetTreeview() {
+        zoomListener.scale(1);
         rightClick(root);
     });
 
