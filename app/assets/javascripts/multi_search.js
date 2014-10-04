@@ -805,6 +805,11 @@ function initSunburst(data) {
         redrawColors();
     });
 
+    // hook up the reset button
+    $("#sunburst-reset").click(function resetSunburst() {
+        click(data);
+    });
+
     /**
      * redraws the colors of the sunburst
      */
