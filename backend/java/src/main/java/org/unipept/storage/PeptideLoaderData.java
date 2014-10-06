@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.File;
 
 import org.unipept.xml.UniprotDbRef;
 import org.unipept.xml.UniprotECRef;
@@ -25,7 +26,17 @@ import org.unipept.xml.UniprotEntry.Pair;
 import org.unipept.xml.UniprotGORef;
 import org.unipept.xml.UniprotObserver;
 
+import org.mapdb.DBMaker;
+
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
+import com.sleepycat.je.EnvironmentConfig;
+import com.sleepycat.je.DatabaseConfig;
+//import com.sleepycat.je.Database;
+import com.sleepycat.collections.StoredMap;
+import com.sleepycat.je.Environment;
+import com.sleepycat.bind.tuple.StringBinding;
+import com.sleepycat.bind.tuple.IntegerBinding;
 
 /**
  * Intermediate class to add PeptideData to the database
@@ -57,8 +68,26 @@ public class PeptideLoaderData implements UniprotObserver {
      */
     public PeptideLoaderData() {
         wrongTaxonIds = new HashSet<Integer>();
-        sequenceIds = new HashMap<String, Integer>();
         taxons = new ArrayList<Taxon>();
+
+        /* Opening BerkeleyDB for sequence ID's. */
+        try {
+            EnvironmentConfig envConfig = new EnvironmentConfig();
+            envConfig.setAllowCreate(true);
+            envConfig.setCacheSize(500000);
+            Environment env = new Environment(new File("/run/media/felix/memoria/home/"), envConfig);
+            DatabaseConfig dbConfig = new DatabaseConfig();
+            dbConfig.setAllowCreate(true);
+            //dbConfig.setDeferredWrite(true);
+            dbConfig.setTemporary(true);
+            com.sleepycat.je.Database db = env.openDatabase(null, "sequenceIds", dbConfig);
+            sequenceIds = new StoredMap<String, Integer>(db, new StringBinding(), new IntegerBinding(), true);
+        } catch(Exception e) {
+            System.err.println(new Timestamp(System.currentTimeMillis())
+                    + " Error creating sequenceIds database.");
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         /* Opening CSV files for writing. */
         try {
@@ -192,7 +221,13 @@ public class PeptideLoaderData implements UniprotObserver {
      * @return the database id of given sequence
      */
     private int getSequenceId(String sequence) {
-        return sequenceIds.computeIfAbsent(sequence, s -> sequenceIds.size() + 1);
+        if(sequenceIds.containsKey(sequence)) {
+            return sequenceIds.get(sequence);
+        } else {
+            sequenceIds.put(sequence, sequenceIds.size() + 1);
+            return sequenceIds.size();
+        }
+        //return sequenceIds.putIfAbsent(sequence, sequenceIds.size() + 1);
     }
 
     /**
