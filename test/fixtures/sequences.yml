@@ -1,0 +1,45 @@
+# == Schema Information
+#
+# Table name: sequences
+#
+#  id       :integer          not null, primary key
+#  sequence :string(50)       not null
+#  lca      :integer
+#  lca_il   :integer
+#
+
+sequence1:
+    id: 1
+    sequence: "AALER"
+    lca: 2
+    lca_il: 1
+
+sequence2:
+    id: 2
+    sequence: "AAIER"
+    lca: 2
+    lca_il: 1
+
+sequence3:
+    id: 3
+    sequence: "RANDOM"
+    lca: 1
+    lca_il: 1
+
+sequence4:
+    id: 4
+    sequence: "AAILER"
+    lca: 1
+    lca_il: 2
+
+sequence5:
+    id: 5
+    sequence: "AALLER"
+    lca: 2
+    lca_il: 1
+
+sequence6:
+    id: 6
+    sequence: "AGGAR"
+    lca: 1
+    lca_il: 2

@@ -31,7 +31,7 @@ COLLATE = utf8_general_ci;
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `unipept`.`uniprot_entries` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `uniprot_accession_number` CHAR(8) ASCII NOT NULL ,
+  `uniprot_accession_number` CHAR(10) ASCII NOT NULL ,
   `version` SMALLINT UNSIGNED NOT NULL ,
   `taxon_id` MEDIUMINT UNSIGNED NOT NULL ,
   `type` ENUM('swissprot', 'trembl') NOT NULL ,
@@ -159,8 +159,8 @@ COLLATE = ascii_general_ci;
 CREATE  TABLE IF NOT EXISTS `unipept`.`embl_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `protein_id` VARCHAR(15) NULL ,
-  `sequence_id` VARCHAR(15) NULL ,
+  `protein_id` VARCHAR(25) NULL ,
+  `sequence_id` VARCHAR(25) NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_embl_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
   INDEX `idx_sequence_id` (`sequence_id` ASC) ,
@@ -169,18 +169,6 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`embl_cross_references` (
     REFERENCES `unipept`.`uniprot_entries` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = ascii
-COLLATE = ascii_general_ci;
-
-
--- -----------------------------------------------------
--- Table `unipept`.`counters`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `unipept`.`counters` (
-  `name` VARCHAR(31) NOT NULL ,
-  `value` INT UNSIGNED NOT NULL DEFAULT 0 ,
-  PRIMARY KEY (`name`) )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
 COLLATE = ascii_general_ci;
@@ -243,7 +231,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`genomes` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(100) NOT NULL ,
   `bioproject_id` INT UNSIGNED NOT NULL ,
-  `insdc_id` VARCHAR(15) NOT NULL ,
+  `insdc_id` VARCHAR(25) NOT NULL ,
   `status` VARCHAR(20) NOT NULL ,
   `taxon_id` MEDIUMINT NULL ,
   PRIMARY KEY (`id`) ,
@@ -261,8 +249,8 @@ COLLATE = ascii_general_ci;
 CREATE  TABLE IF NOT EXISTS `unipept`.`refseq_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `protein_id` VARCHAR(15) NULL ,
-  `sequence_id` VARCHAR(15) NULL ,
+  `protein_id` VARCHAR(25) NULL ,
+  `sequence_id` VARCHAR(25) NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_refseq_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
   CONSTRAINT `fk_refseq_cross_reference_uniprot_entries`

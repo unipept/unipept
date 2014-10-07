@@ -1,0 +1,16 @@
+# == Schema Information
+#
+# Table name: embl_cross_references
+#
+#  id               :integer          not null, primary key
+#  uniprot_entry_id :integer          not null
+#  protein_id       :string(15)
+#  sequence_id      :string(15)
+#
+
+emblcrossreference1:
+    id: 1
+    uniprot_entry_id: 1
+    protein_id: "pid"
+    sequence_id: "sid"
+

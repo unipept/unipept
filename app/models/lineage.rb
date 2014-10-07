@@ -34,6 +34,7 @@
 #
 
 class Lineage < ActiveRecord::Base
+  include ReadOnlyModel
   attr_accessible nil
 
   has_many :uniprot_entries,      :foreign_key  => "taxon_id",      :primary_key  => "taxon_id", :class_name   => 'UniprotEntry'
@@ -98,13 +99,14 @@ class Lineage < ActiveRecord::Base
   end
 
   def next
+    @iterator = 0 if @iterator.nil?
     result = ORDER[@iterator]
     @iterator += 1
     return self[result]
-    #return read_attribute(result) # what is this line doing here?
   end
 
   def next_t
+    @iterator = 0 if @iterator.nil?
     result = ORDER_T[@iterator]
     @iterator += 1
     return self.send(result)
@@ -112,10 +114,7 @@ class Lineage < ActiveRecord::Base
 
   #returns an array containing the lineage names in the right order
   def to_a
-    array = []
-    for rank in ORDER_T do
-      array << self.send(rank)
-    end
+    array = ORDER_T.map{|rank| self.send(rank)}
     return array.map{|x| x.nil? ? "" : x.name}
   end
 
@@ -134,7 +133,7 @@ class Lineage < ActiveRecord::Base
     return -1 if lineages.size == 0
     lca = 1 #default lca
     for rank in ORDER do
-      #nils enkel filteren bij species en genus
+      # only filter nil at species and genus
       if rank == :species || rank == :genus
         current = lineages.map(&rank).find_all{|n| n.nil? || n > 0}.uniq.compact
       else

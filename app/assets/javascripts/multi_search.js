@@ -194,6 +194,15 @@ function initTreeMap(jsonData) {
     function createLabel(domElement, node) {
 
     }
+
+    // hook up the reset button
+    $("#treemap-reset").click(function resetTreemap() {
+        var rootId = jsonData.id;
+        tm.enter(tm.graph.getNode(rootId));
+        setTimeout(function() {
+            tm.refresh();
+        }, 600);
+    });
 }
 
 /**
@@ -247,7 +256,13 @@ function initTreeView(jsonData) {
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
       .append("g");
 
-    draw(jsonData)
+    // hook up the reset button
+    $("#treeview-reset").click(function resetTreeview() {
+        zoomListener.scale(1);
+        rightClick(root);
+    });
+
+    draw(jsonData);
 
     function draw(data) {
         widthScale.domain([0, data.data.count]);
@@ -524,7 +539,9 @@ function initTreeView(jsonData) {
         expand(d);
 
         // redraw
-        d3.event.preventDefault();
+        if (d3.event !== null) {
+            d3.event.preventDefault();
+        }
         update(d);
         centerNode(d);
 
@@ -549,7 +566,7 @@ function initTreeView(jsonData) {
         var scale = zoomListener.scale(),
             x = -source.y0,
             y = -source.x0;
-        x = x * scale + width / 2;
+        x = x * scale + width / 4;
         y = y * scale + height / 2;
         svg.transition()
             .duration(duration)
@@ -803,6 +820,11 @@ function initSunburst(data) {
     $("#colorswap-checkbox").change(function (){
         useFixedColors = $(this).is(':checked');
         redrawColors();
+    });
+
+    // hook up the reset button
+    $("#sunburst-reset").click(function resetSunburst() {
+        click(data);
     });
 
     /**

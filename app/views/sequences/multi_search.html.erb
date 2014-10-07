@@ -3,7 +3,7 @@
     <div class="col-xs-9">
         <p><%= @intro_text %></p>
         <% if @prideUrl %>
-          <p>This dataset was loaded from PRIDE. <%= link_to "View in PRIDE" , @prideURL, :target => "_blank" %> <span class='glyphicon glyphicon-share-alt'></span></p>
+          <p>This dataset was loaded from <span class="initialism">PRIDE</span>. <%= link_to "View in PRIDE" , @prideURL, :target => "_blank" %> <span class='glyphicon glyphicon-share-alt'></span></p>
         <% end %>
     </div>
     <div class="col-xs-3 text-right">
@@ -31,6 +31,9 @@
         <div class="tab-pane active" id="sunburstWrapper">
             <h2 class="ghead">
               <span class="dir">
+                <a class="btn btn-xs btn-default" id="sunburst-reset" title="reset visualisation"><i class="glyphicon glyphicon-repeat"></i></a>
+              </span>
+              <span class="dir">
                 <div class="btn-group" id="colorswap">
                   <a class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" id="colorswap-button"><i class="glyphicon glyphicon-cog"></i></a>
                   <ul class="dropdown-menu dropdown-menu-right dropdown-menu-form">
@@ -38,16 +41,26 @@
                   </ul>
                 </div>
               </span>
-              <span class="dir" id="sunburst-info">Click a slice to zoom in and the center node to zoom out</span>
+              <span class="dir text">Click a slice to zoom in and the center node to zoom out</span>
             </h2>
             <div id="sunburst"></div>
         </div>
         <div class="tab-pane active" id="treeMapWrapper">
-            <h2 class="ghead"><span class="dir">Click a square to zoom in and right click to zoom out</span></h2>
+            <h2 class="ghead">
+              <span class="dir">
+                <a class="btn btn-xs btn-default" id="treemap-reset" title="reset visualisation"><i class="glyphicon glyphicon-repeat"></i></a>
+              </span>
+              <span class="dir text">Click a square to zoom in and right click to zoom out</span>
+            </h2>
             <div id="treeMap"></div>
         </div>
         <div class="tab-pane" id="d3TreeViewWrapper">
-            <h2 class="ghead"><span class="dir">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span></h2>
+            <h2 class="ghead">
+              <span class="dir">
+                <a class="btn btn-xs btn-default" id="treeview-reset" title="reset visualisation"><i class="glyphicon glyphicon-repeat"></i></a>
+              </span>
+              <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
+            </h2>
             <div id="d3TreeView"></div>
         </div>
     </div>
@@ -81,7 +94,7 @@
                 <div id="copy-missed" class="zero-clipboard"><span class="btn-clipboard">Copy</span></div>
                 <div class="well">
                   <h3>Sorry,</h3>
-                  <p>We didn't manage to find some of your peptides. You can <strong>BLAST</strong> them by clicking the links on the left or <strong>copy</strong> them to your clipboard with the top right link.</p>
+                  <p>We didn't manage to find some of your peptides. You can <strong><span class="initialism">BLAST</span></strong> them by clicking the links on the left or <strong>copy</strong> them to your clipboard with the top right link.</p>
                 </div>
               </div>
             </div>

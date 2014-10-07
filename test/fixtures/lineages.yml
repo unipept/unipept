@@ -1,0 +1,83 @@
+# == Schema Information
+#
+# Table name: lineages
+#
+#  taxon_id         :integer          not null, primary key
+#  superkingdom     :integer
+#  kingdom          :integer
+#  subkingdom       :integer
+#  superphylum      :integer
+#  phylum           :integer
+#  subphylum        :integer
+#  superclass       :integer
+#  class            :integer
+#  subclass         :integer
+#  infraclass       :integer
+#  superorder       :integer
+#  order            :integer
+#  suborder         :integer
+#  infraorder       :integer
+#  parvorder        :integer
+#  superfamily      :integer
+#  family           :integer
+#  subfamily        :integer
+#  tribe            :integer
+#  subtribe         :integer
+#  genus            :integer
+#  subgenus         :integer
+#  species_group    :integer
+#  species_subgroup :integer
+#  species          :integer
+#  subspecies       :integer
+#  varietas         :integer
+#  forma            :integer
+#
+
+lineage1:
+    taxon_id: 1
+    kingdom: 2
+    species: 1
+
+lineage2:
+    taxon_id: 2
+    kingdom: 2
+
+root1:
+    taxon_id: 3
+    superkingdom: 3
+
+root2:
+    taxon_id: 4
+    superkingdom: 2
+
+root3:
+    taxon_id: 5
+    kingdom: 4
+
+root4:
+    taxon_id: 6
+    kingdom: 5
+
+kingdom1:
+    taxon_id: 7
+    kingdom: 2
+
+kingdom2:
+    taxon_id: 8
+    kingdom: 2
+    family: 3
+
+species1:
+    taxon_id: 9
+    kingdom: 2
+    species: 4
+
+genus1:
+    taxon_id: 10
+    kingdom: 2
+    species: 5
+
+kingdom3:
+    taxon_id: 11
+    kingdom: 2
+    family: -3

@@ -1,0 +1,145 @@
+// styles for the metaproteomics analysis results page
+
+// page intro
+#buttons {
+    float: right;
+    margin-top: 10px;
+}
+#buttons button {
+    margin-left: 5px;
+}
+
+// tab stuff
+.tab-content.multi-search {
+    overflow: visible;
+}
+h2.ghead {
+    margin-bottom: 8px;
+    margin-top: 3px;
+    font-weight: bold;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: 13px Helvetica,arial,freesans,clean,sans-serif;
+    line-height: 1.4;
+    color: #333;
+}
+h2.ghead::after {
+    content: ".";
+    height: 0;
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+span.dir {
+    font-size: 12px;
+    font-weight: normal;
+    color: #555;
+    line-height: 100%;
+    float: right;
+    margin-left: 5px;
+}
+span.dir.text {
+    margin-top: 5px;
+}
+
+// tooltip
+.tip {
+    background-color: #ffffff;
+    padding: 2px;
+    border: 1px solid @hairlinegray;
+    border-radius: 3px;
+}
+.tip-title {
+    text-align:center;
+}
+
+// sunburst
+#sunburst {
+    width: 100%;
+    background-color: white;
+}
+#sunburst svg {
+    margin: 0 auto;
+    display: block;
+}
+.dropdown-menu-form div.checkbox {
+    margin-bottom: 0px;
+    margin-top: 5px;
+    margin-left: 10px;
+}
+.dropdown-menu-form div.checkbox label{
+    padding-left: 0px;
+}
+.dropdown-menu-form div.checkbox input[type="checkbox"]{
+    margin-top: 0px;
+}
+#colorswap .dropdown-menu {
+    margin-top: 0px;
+    padding-left: 15px;
+    padding-top: 0px;
+    min-width: 135px;
+}
+
+// treemap
+#treeMap {
+    background-color: #DCDFE4;
+    width: 100%;
+    height: 600px;
+}
+#treeMap .node {
+    color: #fff;
+    font-size: 9px;
+    overflow: hidden;
+    cursor: pointer;
+    text-align: center;
+    font-family: "Lucida Grande", Verdana;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+// treeview
+#d3TreeView {
+    background-color: white;
+}
+
+/* lineage tree */
+#tree_data {
+    width: 450px;
+    float: right;
+    padding: 5px;
+    background: @gray-lighter;
+    border: 1px solid #cccccc;
+    border-radius: 3px;
+    .transition(all 1s ease-in-out);
+}
+#tree_data::before {
+    content: "";
+    display: block;
+    height: 0;
+    width: 0;
+    margin-left: -15px;
+    border: 10px solid #cccccc;
+    border-width: 10px 10px 10px 0;
+    border-color: transparent #cccccc transparent transparent;
+    position: absolute;
+}
+#tree_data h3 {
+    margin: 3px 0 5px 0;
+}
+#tree_data h4 {
+    margin: 8px 5px 0px 5px;
+}
+#tree_data h3 a {
+    color: #666 !important;
+}
+#tree ul {
+    padding-left: 0px;
+}
+#tree_search_group {
+    width: 440px;
+}
+#outline-mismatch-tabs {
+    margin-top: 10px;
+    margin-bottom: 8px;
+}
