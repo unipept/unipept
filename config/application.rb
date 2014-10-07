@@ -54,17 +54,11 @@ module UnipeptWeb
     config.assets.paths << "#{Rails}/vendor/assets/fonts"
 
     config.versions = {
-      :unipept => "2.3.1",
+      :unipept => "2.4",
       :gem => "0.5.7",
       :uniprot => "2014.05"
     }
 
-    ### Part of a Spork hack. See http://bit.ly/arY19y
-    if Rails.env.test?
-      initializer :after => :initialize_dependency_mechanism do
-        # Work around initializer in railties/lib/rails/application/bootstrap.rb
-        ActiveSupport::Dependencies.mechanism = :load
-      end
-    end
+    config.api_host = "api.unipept.ugent.be"
   end
 end

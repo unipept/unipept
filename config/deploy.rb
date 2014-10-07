@@ -1,5 +1,5 @@
 set :application, "unipept-web"
-set :repo_url,  "ssh://git@github.ugent.be/bmesuere/unipept.git"
+set :repo_url,  "ssh://git@github.ugent.be/unipept/unipept.git"
 
 set :deploy_to, "/home/bmesuere/rails"
 

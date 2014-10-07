@@ -16,3 +16,4 @@ doc/app
 .sass-cache/
 public/assets
 *.mwb.bak
+backend/java/bin/**/*.class

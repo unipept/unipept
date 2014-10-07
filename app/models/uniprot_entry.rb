@@ -11,6 +11,7 @@
 #
 
 class UniprotEntry < ActiveRecord::Base
+  include ReadOnlyModel
   attr_accessible nil
 
   has_many :peptides
@@ -26,11 +27,8 @@ class UniprotEntry < ActiveRecord::Base
                                 :primary_key  => "taxon_id",
                                 :class_name   => 'Lineage'
 
-  validates :uniprot_accession_number,  :presence   => true
-  validates :version,  :presence   => true
-  validates :taxon_id,  :presence   => true
-  validates :type,  :presence   => true
-
+  # the type attribute is used by rails to specify inheritance so we change
+  # the default value
   self.inheritance_column = "type_id"
 
   def protein_contains?(sequence, equate_il)

@@ -2,15 +2,15 @@
 //  3.2
 //= require bootstrap/bootstrap.min.js
 
-//  sunburst, pancore and tree
-//  3.4.8
+//  sunburst, treeview, pancore, tree
+//  3.4.11
 //= require d3/d3.v3.min.js
 
-//  lineage tree and treemap
+//  treemap
 //  2.0.1
 //= require jit/jit-yc.js
 
-//  export lineage tree and treemap to png
+//  export treemap to png
 //  0.4.1
 //= require html2canvas/html2canvas.js
 

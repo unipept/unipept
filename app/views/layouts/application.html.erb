@@ -30,6 +30,7 @@
     <%= render 'layouts/header' %>
 
     <div class='content'>
+
     <!-- message of the day -->
     <% unless @motd.nil? %>
         <div class="alert alert-info">
@@ -58,6 +59,7 @@
             <% end %>
         <% end %>
     </div>
+
     <!-- actual page content -->
     <%= yield %>
 

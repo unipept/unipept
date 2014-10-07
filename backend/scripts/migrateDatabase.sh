@@ -1,4 +1,6 @@
 #!/bin/bash
+# the combination of dumpDatabase.sh and loadDatabase.sh is preferred over
+# this script!
 
 #backup old database
 ssh -p 4840 bmesuere@nibbler.ugent.be "mysqldump -u unipept -p --opt unipept | gzip - > dump.old.sql.gz"

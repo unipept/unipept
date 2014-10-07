@@ -1,26 +1,28 @@
 /*** single peptide page ***/
+
+#single-peptide-tabs .tab-content {
+    margin-top: 5px;
+}
+#single-peptide-tabs .nav-tabs>li.active>a:hover {
+  background-color: @nav-link-hover-bg !important;
+}
+
+/* Lineage tree */
 #buttons-single {
     float: right;
-    margin-top: -20px;
+    margin-top: -35px;
 }
 #buttons-single button {
     margin-left: 5px;
 }
 
 #lineageTree {
-    height: 500px;
-    width: 100%;
     background-color: white;
 }
-#lineageTree .node {
-    width: 100px !important;
-    padding-top: 0px !important;
-}
 
+/* Lineage table */
 #sequence_table {
     overflow: auto;
-    max-height: 500px;
-    margin-bottom: 10px;
 }
 #sequence_table td {
     font-size:10px;
@@ -30,6 +32,9 @@
     font-size:10px;
     color: #369;
     font-weight: bold;
+}
+#sequence_table a {
+    color: #333;
 }
 
 .c0 {background: #f9f0ab;}
@@ -63,10 +68,7 @@
 .c28 {background: #9d4e87;}
 .c29 {background: #92538c;}
 
-.jit-autoadjust-label {
-    left: -100px;
-}
-
+/* protein table */
 table.protein-info .id, table.protein-info .ec {
     min-width: 80px;
 }

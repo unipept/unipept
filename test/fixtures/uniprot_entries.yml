@@ -1,0 +1,43 @@
+# == Schema Information
+#
+# Table name: uniprot_entries
+#
+#  id                       :integer          not null, primary key
+#  uniprot_accession_number :string(8)        not null
+#  version                  :integer          not null
+#  taxon_id                 :integer          not null
+#  type                     :string(9)        not null
+#  protein                  :text             not null
+#
+
+uniprotentry1:
+    id: 1
+    uniprot_accession_number: "nr"
+    version: 1
+    taxon_id: 1
+    type: "trembl"
+    protein: "ELABA"
+
+uniprotentry2:
+    id: 2
+    uniprot_accession_number: "nr2"
+    version: 2
+    taxon_id: 2
+    type: "swissprot"
+    protein: "EIABA"
+
+uniprotentry3:
+    id: 3
+    uniprot_accession_number: "nr3"
+    version: 2
+    taxon_id: 2
+    type: "swissprot"
+    protein: "AAILERAGGAR"
+
+uniprotentry4:
+    id: 4
+    uniprot_accession_number: "nr4"
+    version: 2
+    taxon_id: 1
+    type: "swissprot"
+    protein: "AAILERA"
