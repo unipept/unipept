@@ -74,8 +74,8 @@ public class PeptideLoaderData implements UniprotObserver {
         try {
             EnvironmentConfig envConfig = new EnvironmentConfig();
             envConfig.setAllowCreate(true);
-            envConfig.setCacheSize(500000);
-            Environment env = new Environment(new File("/run/media/felix/memoria/home/"), envConfig);
+            envConfig.setCacheSize(500000000);
+            Environment env = new Environment(new File(System.getProperty("user.home")), envConfig);
             DatabaseConfig dbConfig = new DatabaseConfig();
             dbConfig.setAllowCreate(true);
             //dbConfig.setDeferredWrite(true);
