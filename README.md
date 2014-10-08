@@ -1,4 +1,4 @@
-# Unipept
+# Unipept [![Build Status](https://travis-ci.org/unipept/unipept.svg?branch=master)](https://travis-ci.org/unipept/unipept)
 
 The [Unipept web application](http://unipept.ugent.be) supports biodiversity analysis of large and complex metaproteome samples and the analysis of peptidomes.
 The 2.4 release of Unipept has these main features:
