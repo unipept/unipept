@@ -1,0 +1,10 @@
+language: ruby
+rvm:
+    - 2.1.0
+
+install: bundle install --without development
+
+before_script:
+  - "mysql -e 'create database unipept_test;'"
+  - "cat backend/database/structure.sql | sed 's/unipept/unipept_test/' | mysql"
+  - "sed -i '/socket/d;/password/d;s/username: unipept/username: travis/' config/database.yml"

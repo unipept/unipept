@@ -17,6 +17,7 @@ class GenomeCacheTest < ActiveSupport::TestCase
 
   test "should save genomecache with valid fields" do
     genomecache = GenomeCache.new
+    genomecache.bioproject_id = 99
     genomecache.json_sequences = "test"
     assert genomecache.save, "Unable to save the post with valid fields"
   end
