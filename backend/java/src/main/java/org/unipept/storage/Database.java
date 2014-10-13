@@ -18,16 +18,17 @@ class Database {
     private static final String USER = "unipept";
     private static final String PASSWORD = "unipept";
 
+    private static Connection singleton = null;
+
     /**
      * Creates a new Connection object with the hardcoded URL, username and
      * password.
      *
-     * TODO: make this a singleton
-     *
      * @throws SQLException
      */
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(JDBC_URL, USER, PASSWORD);
+        if(singleton == null) singleton = DriverManager.getConnection(JDBC_URL, USER, PASSWORD);
+        return singleton;
     }
 
     // load the driver
