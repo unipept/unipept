@@ -208,7 +208,8 @@ function initTreeMap(jsonData) {
 }
 
 function initD3TreeMap(data) {
-    console.log(data);
+    var root = data,
+        current;
 
     var margin = {top: 10, right: 0, bottom: 0, left: 0},
         width = 916 - margin.left - margin.right,
@@ -217,7 +218,6 @@ function initD3TreeMap(data) {
     var treemap = d3.layout.treemap()
         .size([width, height])
         .padding([10, 0, 0, 0])
-        .sticky(true)
         .value(function(d) { return d.data.self_count; });
 
     var div = d3.select("#d3TreeMap").append("div")
@@ -227,35 +227,47 @@ function initD3TreeMap(data) {
         .style("left", margin.left + "px")
         .style("top", margin.top + "px");
 
-    start(data);
-    function start(root) {
-      var node = div.datum(root).selectAll(".node")
-          .data(treemap.nodes)
-        .enter().append("div")
-          .attr("class", "node")
-          .call(position)
-          .style("background", function(d) { return d.data.$color; })
-          .style("color", function (d) { return getReadableColorFor(d.data.$color); })
-          .text(function(d) { return d.name; });
+    update(root);
 
-      d3.selectAll("input").on("change", function change() {
-        var value = this.value === "count"
-            ? function() { return 1; }
-            : function(d) { return d.size; };
+    function update(data) {
+        current = data;
+        var nodes = div.selectAll(".node")
+            .data(treemap.nodes(data), function (d) {return d.id;});
 
-        node
-            .data(treemap.value(value).nodes)
-          .transition()
-            .duration(1500)
+        nodes.enter()
+            .append("div")
+            .attr("class", "node")
+            .style("background", function (d) { return d.data.$color; })
+            .style("color", function (d) { return getReadableColorFor(d.data.$color); })
+            .style("left", "0px")
+            .style("top", "0px")
+            .style("width", "0px")
+            .style("height", "0px")
+            .text(function (d) { return d.name; })
+            .on("click", function (d) {update(d);})
+            .on("contextmenu", function (d) {
+                d3.event.preventDefault();
+                if (current.parent) {
+                    update(current.parent);
+                }
+            });
+
+        nodes.order()
+            .transition()
             .call(position);
-      });
+
+        nodes.exit()
+            .transition()
+            .ease("poly(-10)")
+            .style("opacity", "0")
+            .remove();
     }
 
     function position() {
-      this.style("left", function(d) { return d.x + "px"; })
-          .style("top", function(d) { return d.y + "px"; })
-          .style("width", function(d) { return Math.max(0, d.dx - 1) + "px"; })
-          .style("height", function(d) { return Math.max(0, d.dy - 1) + "px"; });
+      this.style("left", function (d) { return d.x + "px"; })
+          .style("top", function (d) { return d.y + "px"; })
+          .style("width", function (d) { return Math.max(0, d.dx - 1) + "px"; })
+          .style("height", function (d) { return Math.max(0, d.dy - 1) + "px"; });
     }
 }
 
