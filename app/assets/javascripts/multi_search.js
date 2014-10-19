@@ -256,11 +256,7 @@ function initD3TreeMap(data) {
             .transition()
             .call(position);
 
-        nodes.exit()
-            .transition()
-            .ease("poly(-10)")
-            .style("opacity", "0")
-            .remove();
+        nodes.exit().remove();
     }
 
     function position() {

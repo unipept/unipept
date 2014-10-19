@@ -90,17 +90,18 @@ span.dir.text {
     margin: 0 auto;
     display: block;
 }
-
 #d3TreeMap .node {
-      /*border: solid 1px white;*/
-      font: 9px sans-serif;
-      line-height: 12px;
-      overflow: hidden;
-      position: absolute;
-      text-indent: 2px;
-      text-align:center;
-      text-overflow: ellipsis;
-      /* white-space: nowrap;*/
+    font: 9px sans-serif;
+    line-height: 12px;
+    overflow: hidden;
+    position: absolute;
+    text-indent: 2px;
+    text-align:center;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+#d3TreeMap .node:hover {
+    outline: 1px solid white;
 }
 
 
