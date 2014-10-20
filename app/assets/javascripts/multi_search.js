@@ -28,13 +28,11 @@ function init_multi(data, data2, equate_il) {
 
     // treemap
     try {
-        initTreeMap(data);
+        initD3TreeMap(JSON.parse(JSON.stringify(data)));
         $("#treeMapWrapper").removeClass("active");
     } catch (err) {
         error(err.message, "Loading the Treemap visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
-
-    initD3TreeMap(JSON.parse(JSON.stringify(data)));
 
     // treeview
     try {
@@ -123,90 +121,6 @@ function init_multi(data, data2, equate_il) {
     });
 }
 
-function initTreeMap(jsonData) {
-    // init TreeMap
-    var tm = new $jit.TM.Squarified({
-        // where to inject the visualization
-        injectInto: 'treeMap',
-        // parent box title heights
-        titleHeight: 15,
-        // enable animations
-        animate: true,
-        // box offsets
-        offset: 0,
-        // constrained: true,
-        // levelsToShow: 1,
-        // Attach left and right click events
-        Events: {
-            enable: true,
-            onClick: function (node) {
-                if (node) {
-                    logToGoogle("Multi Peptide", "Zoom", "Treemap", "In");
-                    tm.enter(node);
-                    treeSearch(node.name, 500);
-                }
-            },
-            onRightClick: function () {
-                    logToGoogle("Multi Peptide", "Zoom", "Treemap", "Out");
-                // TODO: replace this if bug in JIT gets fixed
-                tm.out();
-            }
-        },
-        duration: 500,
-        // Enable tips
-        Tips: {
-            enable: true,
-            // add positioning offsets
-            offsetX: 20,
-            offsetY: 20,
-            // implement the onShow method to add content
-            // to the tooltip when a node is hovered
-            onShow: function (tip, node, isLeaf, domElement) {
-                tip.innerHTML = "<div class='tip-title'><b>" + node.name + "</b> (" + node.data.rank + ")</div><div class='tip-text'>" +
-                    (!node.data.self_count ? "0" : node.data.self_count) +
-                    (node.data.self_count && node.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
-                    (!node.data.count ? "0" : node.data.count) +
-                    (node.data.count && node.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower<br/>" +
-                    (typeof node.data.piecharturl == "undefined" ? "" : "<img src='" + node.data.piecharturl + "'/>") + "</div>";
-            }
-        },
-
-        // Add the name of the node in the correponding label
-        // This method is called once, on label creation.
-        onCreateLabel: function (domElement, node) {
-            domElement.innerHTML = node.name + " (" + (!node.data.self_count ? "0" : node.data.self_count) + "/" + (!node.data.count ? "0" : node.data.count) + ")";
-            var style = domElement.style;
-            style.display = '';
-            style.border = '2px solid transparent';
-            style.color = getReadableColorFor(node.data.$color);
-
-            domElement.onmouseover = function () {
-                style.border = '2px solid #9FD4FF';
-            };
-            domElement.onmouseout = function () {
-                style.border = '2px solid transparent';
-            };
-        }
-    });
-    tm.loadJSON(jsonData);
-    tm.refresh();
-
-    window.tm = tm;
-
-    function createLabel(domElement, node) {
-
-    }
-
-    // hook up the reset button
-    $("#treemap-reset").click(function resetTreemap() {
-        var rootId = jsonData.id;
-        tm.enter(tm.graph.getNode(rootId));
-        setTimeout(function() {
-            tm.refresh();
-        }, 600);
-    });
-}
-
 function initD3TreeMap(data) {
     var root = data,
         current;
@@ -228,6 +142,11 @@ function initD3TreeMap(data) {
         .style("top", margin.top + "px");
 
     update(root);
+
+    // hook up the reset button
+    $("#treemap-reset").click(function resetTreemap() {
+        update(root);
+    });
 
     function update(data) {
         current = data;
