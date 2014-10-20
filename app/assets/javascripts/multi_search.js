@@ -131,6 +131,14 @@ function initD3TreeMap(data) {
         width = 916 - margin.left - margin.right,
         height = 600 - margin.top - margin.bottom;
 
+    var tooltip = d3.select("body")
+        .append("div")
+        .attr("id", "treemap-tooltip")
+        .attr("class", "tip")
+        .style("position", "absolute")
+        .style("z-index", "10")
+        .style("visibility", "hidden");
+
     var treemap = d3.layout.treemap()
         .size([width, height])
         .padding([10, 0, 0, 0])
@@ -186,9 +194,7 @@ function initD3TreeMap(data) {
             .attr("class", "crumb")
             .attr("title", function (d) { return d.data.rank; })
             .html(function (d) { return "<span class='link'>" + d.name + "</span>"; })
-            .on("click", function (d) {
-                update(d);
-            });
+            .on("click", function (d) { update(d); });
 
         var nodes = div.selectAll(".node")
             .data(treemap.nodes(data), function (d) {return d.id;});
@@ -209,7 +215,10 @@ function initD3TreeMap(data) {
                 if (current.parent) {
                     update(current.parent);
                 }
-            });
+            })
+            .on("mouseover", tooltipIn)
+            .on("mousemove", tooltipMove)
+            .on("mouseout", tooltipOut);
 
         nodes.order()
             .transition()
@@ -223,6 +232,26 @@ function initD3TreeMap(data) {
           .style("top", function (d) { return d.y + "px"; })
           .style("width", function (d) { return Math.max(0, d.dx - 1) + "px"; })
           .style("height", function (d) { return Math.max(0, d.dy - 1) + "px"; });
+    }
+
+    // tooltip functions
+    function tooltipIn(d, i) {
+        tooltip.style("visibility", "visible")
+            .html("<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" +
+                (!d.data.self_count ? "0" : d.data.self_count) +
+                (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
+                (!d.data.count ? "0" : d.data.count) +
+                (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower");
+    }
+    function tooltipMove() {
+        if (window.fullScreenApi.isFullScreen()) {
+            tooltip.style("top", (d3.event.clientY - 5) + "px").style("left", (d3.event.clientX + 15) + "px");
+        } else {
+            tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 15) + "px");
+        }
+    }
+    function tooltipOut(d, i) {
+        tooltip.style("visibility", "hidden");
     }
 }
 
