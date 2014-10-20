@@ -6,10 +6,6 @@
 //  3.4.11
 //= require d3/d3.v3.min.js
 
-//  treemap
-//  2.0.1
-//= require jit/jit-yc.js
-
 //  export treemap to png
 //  0.4.1
 //= require html2canvas/html2canvas.js
