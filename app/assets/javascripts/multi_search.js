@@ -1007,7 +1007,7 @@ function initSunburst(data) {
 // Highlights the field
 // filters the tree after the given number of ms
 function treeSearch(searchTerm, duration) {
-    if (searchTerm === "organism") {
+    if (searchTerm === "Organism") {
         searchTerm = "";
     }
     var timeout = duration || 0;

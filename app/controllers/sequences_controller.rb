@@ -81,7 +81,7 @@ class SequencesController < ApplicationController
     end
 
     #don't show the root when we don't need it
-    @root.name = "organism"
+    @root.name = "Organism"
     @root = @root.children.count > 1 ? Oj.dump(@root, mode: :compat) : Oj.dump(@root.children[0], mode: :compat)
 
     #Table stuff
@@ -89,7 +89,7 @@ class SequencesController < ApplicationController
     @table_ranks = Array.new
 
     @table_lineages << @lineages.map{|lineage| lineage.name.name}
-    @table_ranks << "organism"
+    @table_ranks << "Organism"
     @lineages.map{|lineage| lineage.set_iterator_position(0)} #reset the iterator
     while @lineages[0].has_next?
       temp = @lineages.map{|lineage| lineage.next_t}
@@ -247,7 +247,7 @@ class SequencesController < ApplicationController
     @misses = @misses.map{|m| sequence_mapping[m]}.to_a.sort
 
     # construct treemap nodes
-    root = TreeMapNode.new(1, "organism", "no rank")
+    root = TreeMapNode.new(1, "Organism", "no rank")
     matches.each do |taxon, seqs| # for every match
       root.add_sequences(seqs)
       lca_l = taxon.lineage
