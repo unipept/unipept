@@ -14,6 +14,8 @@ import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
 
+import java.lang.RuntimeException;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -46,6 +48,16 @@ import com.sleepycat.bind.tuple.IntegerBinding;
  * 
  */
 public class PeptideLoaderData implements UniprotObserver {
+
+    public static final String[] ranks = new String[]{"taxon_id", "superkingdom", "kingdom", "subkingdom", "superphylum", "phylum", "subphylum","superclass", "class", "subclass", "infraclass", "superorder", "order", "suborder", "infraorder", "parvorder", "superfamily", "family", "subfamily", "tribe", "subtribe", "genus", "subgenus", "species_group", "species_subgroup", "species", "subspecies", "varietas", "forma"};
+    private static final Map<String, Integer> rankIndices = new HashMap<>();
+
+    {
+        for(int i = 0; i < ranks.length; i++) {
+            rankIndices.put(ranks[i], i);
+        }
+    }
+
     private Connection connection;
     private PreparedStatement addLineage;
     private PreparedStatement addInvalidLineage;
@@ -54,6 +66,7 @@ public class PeptideLoaderData implements UniprotObserver {
     private Map<String, Integer> sequenceIds;
     private ArrayList<Taxon> taxons;
     private Set<Integer> wrongTaxonIds;
+    private Set<Integer> existingLineages;
 
     // csv files
     private CSVWriter uniprotEntries;
@@ -62,6 +75,7 @@ public class PeptideLoaderData implements UniprotObserver {
     private CSVWriter emblCrossReferences;
     private CSVWriter goCrossReferences;
     private CSVWriter ecCrossReferences;
+    private CSVWriter lineages;
 
     /**
      * Creates a new data object
@@ -69,6 +83,7 @@ public class PeptideLoaderData implements UniprotObserver {
     public PeptideLoaderData() {
         wrongTaxonIds = new HashSet<Integer>();
         taxons = new ArrayList<Taxon>();
+        existingLineages = new HashSet<Integer>();
 
         /* Opening BerkeleyDB for sequence ID's. */
         try {
@@ -81,7 +96,8 @@ public class PeptideLoaderData implements UniprotObserver {
             //dbConfig.setDeferredWrite(true);
             dbConfig.setTemporary(true);
             com.sleepycat.je.Database db = env.openDatabase(null, "sequenceIds", dbConfig);
-            sequenceIds = new StoredMap<String, Integer>(db, new StringBinding(), new IntegerBinding(), true);
+            //sequenceIds = new StoredMap<String, Integer>(db, new StringBinding(), new IntegerBinding(), true);
+            sequenceIds = new HashMap<String, Integer>();
         } catch(Exception e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + " Error creating sequenceIds database.");
@@ -97,6 +113,7 @@ public class PeptideLoaderData implements UniprotObserver {
             emblCrossReferences = new CSVWriter("embl_cross_references.tsv", "uniprot_entry_id", "protein_id", "sequence_id");
             goCrossReferences = new CSVWriter("go_cross_references.tsv", "uniprot_entry_id", "go_id");
             ecCrossReferences = new CSVWriter("ec_cross_references.tsv", "uniprot_entry_id", "ec_id");
+            lineages = new CSVWriter("lineages.tsv", ranks);
         } catch(IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + " Error creating tsv files");
@@ -120,25 +137,13 @@ public class PeptideLoaderData implements UniprotObserver {
             ResultSet rs = stmt.executeQuery("SELECT id, rank, parent_id, valid_taxon FROM taxons ORDER BY id ASC");
             while(rs.next()) {
                 int id = rs.getInt("id");
-                while(id < taxons.size()) taxons.add(null); // In case of deleted taxons.
-                taxons.add(new Taxon(rs.getString("rank"), rs.getInt("parent_id"), rs.getBoolean("valid_taxon")));
+                while(id > taxons.size()) taxons.add(null); // In case of deleted taxons.
+                if(id != 0) taxons.add(new Taxon(id, rs.getString("rank"), rs.getInt("parent_id"), rs.getBoolean("valid_taxon")));
             }
             stmt.close();
         } catch(SQLException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + "Taxon retrieval failed.");
-            e.printStackTrace();
-            System.exit(1);
-        }
-
-        /* Prepaering Lineage statements. */
-        try {
-            addLineage = connection.prepareStatement("INSERT INTO lineages (`taxon_id`) VALUES (?)");
-            addInvalidLineage = connection.prepareStatement("INSERT INTO lineages (`taxon_id`, `superkingdom`, `kingdom`, `subkingdom`, `superphylum`, `phylum`, `subphylum`,`superclass`, `class`, `subclass`, `infraclass`, `superorder`, `order`, `suborder`, `infraorder`, `parvorder`, `superfamily`, `family`, `subfamily`, `tribe`, `subtribe`, `genus`, `subgenus`, `species_group`, `species_subgroup`, `species`, `subspecies`, `varietas`, `forma`) VALUES (?, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)");
-            lineageExists = connection.prepareStatement("SELECT COUNT(*) AS aantal FROM lineages WHERE `taxon_id` = ?");
-        } catch(SQLException e) {
-            System.err.println(new Timestamp(System.currentTimeMillis())
-                    + " Error creating prepared statements");
             e.printStackTrace();
             System.exit(1);
         }
@@ -326,7 +331,7 @@ public class PeptideLoaderData implements UniprotObserver {
     public List<Integer> getUniqueTaxonIds() {
         List<Integer> result = new ArrayList<Integer>();
         for(int i = 0; i < taxons.size(); i++) {
-            if(taxons.get(i).used) result.add(i);
+            if(taxons.get(i) != null && taxons.get(i).used) result.add(i);
         }
         return result;
     }
@@ -339,70 +344,46 @@ public class PeptideLoaderData implements UniprotObserver {
      *            The taxonId of the organism
      */
     public void addLineage(int taxonId) {
-        try { 
-            lineageExists.setInt(1, taxonId);
-            ResultSet rs = lineageExists.executeQuery();
-            if (rs.next() && rs.getInt("aantal") == 0) {
-                if (0 <= taxonId && taxonId < taxons.size() && taxons.get(taxonId) != null) {
-                    if (taxons.get(taxonId).validTaxon) {
-                        addLineage.setInt(1, taxonId);
-                        addLineage.executeUpdate();
-                    } else {
-                        addInvalidLineage.setInt(1, taxonId);
-                        addInvalidLineage.executeUpdate();
-                    }
-                    updateLineage(taxonId, taxonId);
-                }
-            }
-            rs.close();
-        } catch (SQLException e) {
-            System.err.println(new Timestamp(System.currentTimeMillis())
-                    + " Something went wrong with the database");
-            e.printStackTrace();
+        if(0 > taxonId && taxonId >= taxons.size() || taxons.get(taxonId) == null) {
+            // That's not a taxon we have!
+            return;
         }
-    }
 
-    /**
-     * Updates the lineage record of the given taxonId with the information in
-     * the Taxon record of parentId
-     *
-     * @param taxonId
-     *            The taxonId of the record that needs updating
-     * @param parentId
-     *            The taxonId of the record containing new information
-     * @throws SQLException
-     */
-    private void updateLineage(int taxonId, int parentId) throws SQLException {
-        // if the parent == 1, we're at the root
-        if (parentId != 1) {
-            if (taxonId != parentId) {
-                addLineage(parentId);
-            }
-            // retrieve the parent info
-            if (0 <= parentId && parentId < taxons.size() && taxons.get(parentId) != null) {
-                String rank = taxons.get(parentId).rank;
+        if(existingLineages.add(taxonId)) {
 
-                // if we have a valid rank, update the lineage
-                if (!rank.equals("no rank")) {
-                    rank = rank.replace(' ', '_');
-                    Statement stmt = connection.createStatement();
+            // Let's build a new lineage.
+            String[] lineage = new String[ranks.length];
+            lineage[0] = Integer.toString(taxonId); // 0 is taxon_id
 
-                    if (taxons.get(parentId).validTaxon)// normal case
-                    {
-                        stmt.executeUpdate("UPDATE lineages SET `" + rank + "` = " + parentId
-                                + " WHERE `taxon_id` = " + taxonId);
-                    } else
-                        // invalid
-                    {
-                        stmt.executeUpdate("UPDATE lineages SET `" + rank + "` = "
-                                + (-1 * parentId) + " WHERE `taxon_id` = " + taxonId);
+            if(taxons.get(taxonId).validTaxon) {
+                // Valid lineage.
+
+                // Iterate over ancestors, starting with itself.
+                int parentId = taxonId;
+                while(parentId != 1) {
+                    if(0 <= parentId && parentId < taxons.size() && taxons.get(parentId) != null) {
+                        String rank = taxons.get(parentId).rank;
+                        if(rank != null && !rank.equals("no rank")) {
+                            rank = rank.replace(' ', '_');
+                            lineage[rankIndices.get(rank)] = Integer.toString((taxons.get(parentId).validTaxon ? 1 : -1) * parentId);
+                        }
                     }
-
-                    stmt.close();
+                    parentId = taxons.get(parentId).parentId;
                 }
 
-                // recursion if fun!
-                updateLineage(taxonId, taxons.get(parentId).parentId);
+
+            } else {
+                // It's an invalid lineage. Put it in the lineages as invalid.
+                for(int i = 1; i < ranks.length; i++) lineage[i] = "-1";
+            }
+
+            try {
+                // Write away the lineage.
+                lineages.write(lineage);
+            } catch(IOException e) {
+                System.err.println(new Timestamp(System.currentTimeMillis())
+                        + " Error writing taxon " + taxonId + " to lineage file");
+                e.printStackTrace();
             }
         }
     }
@@ -510,7 +491,8 @@ public class PeptideLoaderData implements UniprotObserver {
         public boolean validTaxon;
         public int lineageCount;
         public boolean used;
-        public Taxon(String rank, int parentId, boolean validTaxon) {
+        public Taxon(int id, String rank, int parentId, boolean validTaxon) {
+            if(rank == null || rank.length() == 0) System.out.println("AAAAAAH " + id);
             this.rank = rank;
             this.parentId = parentId;
             this.lineageCount = 0;
@@ -518,4 +500,5 @@ public class PeptideLoaderData implements UniprotObserver {
             this.used = false;
         }
     }
+
 }

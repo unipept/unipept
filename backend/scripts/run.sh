@@ -13,13 +13,14 @@ echo "Build database - compile#0" > public/progress
 
 # Load Taxon
 #./backend/scripts/loadTaxon.sh
-#echo "Build database - load uniprot#45" > public/progress
-
-# Load Uniprot
-touch empty
-backend/java/bin/peptide_loader ../data/uniprot/uniprot_sprot.xml.gz empty #../data/uniprot/uniprot_trembl.xml.gz
-echo "Build database - invalidate taxa#95" > public/progress
 
 # Invalidate taxa
+echo "Build database - invalidate taxa#45" > public/progress
 ./backend/scripts/invalidateTaxon.sh
+
+# Load Uniprot
+echo "Build database - load uniprot#50" > public/progress
+touch empty
+backend/java/bin/peptide_loader ../data/uniprot/uniprot_sprot.xml.gz empty #../data/uniprot/uniprot_trembl.xml.gz
+
 rm public/progress
