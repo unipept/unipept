@@ -96,12 +96,27 @@ span.dir.text {
     overflow: hidden;
     position: absolute;
     text-indent: 2px;
-    text-align:center;
+    text-align: center;
     text-overflow: ellipsis;
     cursor: pointer;
 }
 #d3TreeMap .node:hover {
     outline: 1px solid white;
+}
+#d3TreeMap .breadcrumbs {
+    font: 12px sans-serif;
+    line-height: 22px;
+    padding-left: 5px;
+}
+#d3TreeMap .crumb {
+    cursor: pointer;
+}
+#d3TreeMap .crumb .link:hover {
+    text-decoration: underline;
+}
+#d3TreeMap .breadcrumbs .crumb + .crumb::before {
+    content: " > ";
+    cursor: default;
 }
 
 // treeview

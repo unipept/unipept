@@ -125,7 +125,7 @@ function initD3TreeMap(data) {
     var root = data,
         current;
 
-    var margin = {top: 10, right: 0, bottom: 0, left: 0},
+    var margin = {top: 0, right: 0, bottom: 0, left: 0},
         width = 916 - margin.left - margin.right,
         height = 600 - margin.top - margin.bottom;
 
@@ -133,6 +133,13 @@ function initD3TreeMap(data) {
         .size([width, height])
         .padding([10, 0, 0, 0])
         .value(function(d) { return d.data.self_count; });
+
+    var breadcrumbs = d3.select("#d3TreeMap").append("div")
+        .attr("class", "breadcrumbs")
+        .style("position", "relative")
+        .style("width", (width + margin.left + margin.right - 1) + "px")
+        .style("height", "20px")
+        .style("background-color", "orange");
 
     var div = d3.select("#d3TreeMap").append("div")
         .style("position", "relative")
@@ -150,6 +157,25 @@ function initD3TreeMap(data) {
 
     function update(data) {
         current = data;
+
+        // breadcrumbs
+        var crumbs = [];
+        var temp = data;
+        while (temp) {
+            crumbs.push(temp);
+            temp = temp.parent;
+        }
+        crumbs.reverse();
+        breadcrumbs.html("");
+        breadcrumbs.selectAll(".crumb")
+            .data(crumbs)
+            .enter()
+            .append("span")
+            .attr("class", "crumb")
+            .attr("title", function (d) { return d.data.rank; })
+            .html(function (d) { return "<span class='link'>" + d.name + "</span>"; })
+            .on("click", function (d) { update(d); });
+
         var nodes = div.selectAll(".node")
             .data(treemap.nodes(data), function (d) {return d.id;});
 
