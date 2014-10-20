@@ -20,6 +20,9 @@ public class UniprotHandlerTest extends Assert {
             entries++;
             sequences++;
         }
+
+        public void close() {
+        }
     }
     
     public UniprotHandlerTest() { 
