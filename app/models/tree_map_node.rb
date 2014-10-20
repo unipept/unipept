@@ -4,11 +4,8 @@
 # - children
 # - data
 #   - title
-#   - $area
-#   - $color
 #   - count
 #   - self_count
-#   - level
 #   - piecharturl
 #   - rank
 #   - taxon_id
@@ -17,14 +14,10 @@
 # - nodes
 class TreeMapNode < Node
 
-  # Gradients for the treemap
-  GRADIENT = Hash["no rank", "#242a42", "superkingdom", "#26314a", "kingdom", "#283851", "subkingdom", "#294059", "superphylum", "#2b4760", "phylum", "#2d4f67", "subphylum", "#2f576d", "superclass", "#315e74", "class", "#35667a", "subclass", "#386e7f", "infraclass", "#3d7685", "superorder", "#427e8a", "order", "#48868e", "suborder", "#4f8e93", "infraorder", "#579697", "parvorder", "#5f9e9a", "superfamily", "#68a69e", "family", "#72aea1", "subfamily", "#7db6a5", "tribe", "#88bea8", "subtribe", "#93c5ab", "genus", "#9fcdae", "subgenus", "#abd4b2", "species group", "#b8dcb5", "species subgroup", "#c5e3b9", "species", "#d3eabd", "subspecies", "#e1f1c2", "varietas", "#eff8c7", "forma", "#fdffcc"]
-
   def initialize(id, name, rank="root")
     super(id, name)
 
     #area
-    @data["$area"] = 0
     @data["count"] = 0
 
     @data["all_sequences"] = Array.new
@@ -32,17 +25,12 @@ class TreeMapNode < Node
 
     @data["rank"] = rank
 
-    #color
-    @data["level"] = 0
-    @data["$color"] = GRADIENT[rank]
-
     fix_title
   end
 
   # adds a child to this node and updates the color of the child
   # returns the added child
   def add_child(child, root)
-    child.data["level"] = @data["level"]+1
     super(child, root)
   end
 
@@ -51,7 +39,6 @@ class TreeMapNode < Node
     @data["all_sequences"].concat(sequences)
 
     @data["count"] += sequences.length
-    @data["$area"] = Math.log10(@data["count"]+1)/Math.log10(2)
   end
 
   def add_own_sequences(sequences)
@@ -95,9 +82,6 @@ class TreeMapNode < Node
     hash.delete("nodes")
     hash["data"].delete("title")
     hash["data"].delete("piecharturl")
-    hash["data"].delete("level")
-    hash["data"].delete("$color")
-    hash["data"].delete("$area")
     hash["data"].delete("all_sequences")
     hash["data"].delete("own_sequences")
     hash["data"].delete("taxon_id")

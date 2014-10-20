@@ -122,6 +122,8 @@ function init_multi(data, data2, equate_il) {
 }
 
 function initD3TreeMap(data) {
+    var ranks = ["no rank", "superkingdom", "kingdom", "subkingdom", "superphylum", "phylum", "subphylum", "superclass", "class", "subclass", "infraclass", "superorder", "order", "suborder", "infraorder", "parvorder", "superfamily", "family", "subfamily", "tribe", "subtribe", "genus", "subgenus", "species group", "species subgroup", "species", "subspecies", "varietas", "forma"];
+
     var root = data,
         current;
 
@@ -134,12 +136,19 @@ function initD3TreeMap(data) {
         .padding([10, 0, 0, 0])
         .value(function(d) { return d.data.self_count; });
 
+    var colorScale = d3.scale.ordinal()
+        .domain(ranks)
+        .range(d3.range(ranks.length).map(d3.scale.linear()
+            .domain([0, ranks.length - 1])
+            .range(["#104B7D", "#fdffcc"])
+            .interpolate(d3.interpolateLab)));
+
     var breadcrumbs = d3.select("#d3TreeMap").append("div")
         .attr("class", "breadcrumbs")
         .style("position", "relative")
         .style("width", (width + margin.left + margin.right - 1) + "px")
         .style("height", "20px")
-        .style("background-color", "orange");
+        .style("background-color", "#ffb300");
 
     var div = d3.select("#d3TreeMap").append("div")
         .style("position", "relative")
@@ -182,8 +191,8 @@ function initD3TreeMap(data) {
         nodes.enter()
             .append("div")
             .attr("class", "node")
-            .style("background", function (d) { return d.data.$color; })
-            .style("color", function (d) { return getReadableColorFor(d.data.$color); })
+            .style("background", function (d) { return colorScale(d.data.rank); })
+            .style("color", function (d) { return getReadableColorFor(colorScale(d.data.rank)); })
             .style("left", "0px")
             .style("top", "0px")
             .style("width", "0px")
