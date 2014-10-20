@@ -188,7 +188,7 @@ function initD3TreeMap(data) {
             .style("top", "0px")
             .style("width", "0px")
             .style("height", "0px")
-            .text(function (d) { return d.name; })
+            .text(function (d) { return d.data.title; })
             .on("click", function (d) {update(d);})
             .on("contextmenu", function (d) {
                 d3.event.preventDefault();
