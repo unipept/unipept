@@ -167,6 +167,9 @@ function initD3TreeMap(data) {
     function update(data) {
         current = data;
 
+        // search for the new root
+        treeSearch(data.name, 500);
+
         // breadcrumbs
         var crumbs = [];
         var temp = data;
@@ -183,7 +186,9 @@ function initD3TreeMap(data) {
             .attr("class", "crumb")
             .attr("title", function (d) { return d.data.rank; })
             .html(function (d) { return "<span class='link'>" + d.name + "</span>"; })
-            .on("click", function (d) { update(d); });
+            .on("click", function (d) {
+                update(d);
+            });
 
         var nodes = div.selectAll(".node")
             .data(treemap.nodes(data), function (d) {return d.id;});
