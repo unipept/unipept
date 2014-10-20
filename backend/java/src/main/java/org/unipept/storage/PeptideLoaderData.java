@@ -96,8 +96,7 @@ public class PeptideLoaderData implements UniprotObserver {
             //dbConfig.setDeferredWrite(true);
             dbConfig.setTemporary(true);
             com.sleepycat.je.Database db = env.openDatabase(null, "sequenceIds", dbConfig);
-            //sequenceIds = new StoredMap<String, Integer>(db, new StringBinding(), new IntegerBinding(), true);
-            sequenceIds = new HashMap<String, Integer>();
+            sequenceIds = new StoredMap<String, Integer>(db, new StringBinding(), new IntegerBinding(), true);
         } catch(Exception e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + " Error creating sequenceIds database.");
