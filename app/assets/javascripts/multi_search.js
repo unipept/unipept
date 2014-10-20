@@ -242,6 +242,9 @@ function initD3TreeMap(data) {
                 (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
                 (!d.data.count ? "0" : d.data.count) +
                 (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower");
+        if (d.children && d.children.length > 1) {
+            tooltip.html(tooltip.html() + "<br><img src='" + getPiechartUrl(d) + "'/>");
+        }
     }
     function tooltipMove() {
         if (window.fullScreenApi.isFullScreen()) {
@@ -252,6 +255,15 @@ function initD3TreeMap(data) {
     }
     function tooltipOut(d, i) {
         tooltip.style("visibility", "hidden");
+    }
+    function getPiechartUrl(d) {
+        var url = "http://chart.apis.google.com/chart?chs=300x225&cht=p&chd=t:";
+        url += d.children.map(function (i) { return i.data["count"]; }).join(",");
+        url += "&chdl=";
+        url += d.children.map(function (i) { return i.name + " (" + i.data["count"] + ")"}).join("|");
+        url += "&chds=0,";
+        url +=  d3.max(d.children.map(function (i) { return i.data["count"]; }));
+        return url;
     }
 }
 

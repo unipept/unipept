@@ -6,7 +6,6 @@
 #   - title
 #   - count
 #   - self_count
-#   - piecharturl
 #   - rank
 #   - taxon_id
 #   - all_sequences
@@ -51,21 +50,10 @@ class TreeMapNode < Node
     @data["title"] += " (" + (@data["self_count"].nil? ? "0" : @data["self_count"].to_s) + "/" + @data["count"].to_s + ")"
   end
 
-  # Adds a URL to every node linking to a piechart of their children
-  # also fixes the title, this is somewhat of hack
-  def add_piechart_data
+  # fix all titles
+  def fix_all_titles
     fix_title
-    unless @children.empty?
-      @children.map{|c| c.add_piechart_data}
-      if @children.size > 1
-        @data["piecharturl"] = "http://chart.apis.google.com/chart?chs=300x225&cht=p&chd=t:"
-        @data["piecharturl"] += @children.map{|c| c.data["count"].to_s}.join(",")
-        @data["piecharturl"] += "&chdl="
-        @data["piecharturl"] += @children.map{|c| c.name + " (" + c.data["count"].to_s + ")"}.join("|")
-        @data["piecharturl"] += "&chds=0,"
-        @data["piecharturl"] += @children.map{|c| c.data["count"]}.max.to_s
-      end
-    end
+    @children.map{|c| c.fix_all_titles} unless @children.empty?
   end
 
   # Sorts the peptides lists and children alphabetically
@@ -81,7 +69,6 @@ class TreeMapNode < Node
     hash["children"].map{|c| TreeMapNode.clean_sunburst!(c)} unless hash["children"].nil?
     hash.delete("nodes")
     hash["data"].delete("title")
-    hash["data"].delete("piecharturl")
     hash["data"].delete("all_sequences")
     hash["data"].delete("own_sequences")
     hash["data"].delete("taxon_id")

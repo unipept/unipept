@@ -279,7 +279,7 @@ class SequencesController < ApplicationController
 
     #don't show the root when we don't need it
     root = root.children[0] if root.children.count == 0
-    root.add_piechart_data unless root.nil?
+    root.fix_all_titles unless root.nil?
     root.sort_peptides_and_children unless root.nil?
 
     root_json = Oj.dump(root, mode: :compat)
