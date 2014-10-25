@@ -55,9 +55,9 @@ function init_multi(data, data2, equate_il) {
             if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
                 logToGoogle("Multi Peptide", "Full Screen", "Sunburst");
                 window.fullScreenApi.requestFullScreen($("#sunburst").get(0));
-            } else if ($(".tab-content .active").attr('id') === "treeMapWrapper") {
+            } else if ($(".tab-content .active").attr('id') === "d3TreeMapWrapper") {
                 logToGoogle("Multi Peptide", "Full Screen", "Treemap");
-                window.fullScreenApi.requestFullScreen($("#treeMap").get(0));
+                window.fullScreenApi.requestFullScreen($("#d3TreeMap").get(0));
             } else {
                 logToGoogle("Multi Peptide", "Full Screen", "Treeview");
                 window.fullScreenApi.requestFullScreen($("#d3TreeView").get(0));
@@ -79,14 +79,12 @@ function init_multi(data, data2, equate_il) {
                 $("#sunburst svg").attr("height", size);
                 $("#sunburst-tooltip").appendTo(destination);
             }, 1000);
-        } else if ($(".tab-content .active").attr('id') === "treeMapWrapper") {
+        } else if ($(".tab-content .active").attr('id') === "d3TreeMapWrapper") {
             var destination = "body";
             if (window.fullScreenApi.isFullScreen()) {
-                destination = "#treeMap";
+                destination = "#d3TreeMap";
             }
-            $("#_tooltip").appendTo(destination);
-            window.tm.canvas.resize($("#treeMap").width(), $("#treeMap").height());
-
+            $("#treemap-tooltip").appendTo(destination);
         } else {
             setTimeout(function () {
                 var width = 916,
