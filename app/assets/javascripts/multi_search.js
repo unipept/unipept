@@ -111,9 +111,9 @@ function init_multi(data, data2, equate_il) {
         if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
             logToGoogle("Multi Peptide", "Save Image", "Sunburst");
             triggerDownloadModal("#sunburst svg", null, "unipept_sunburst");
-        } else if ($(".tab-content .active").attr('id') === "treeMapWrapper") {
+        } else if ($(".tab-content .active").attr('id') === "d3TreeMapWrapper") {
             logToGoogle("Multi Peptide", "Save Image", "Treemap");
-            triggerDownloadModal(null, "#treeMap", "unipept_treemap");
+            triggerDownloadModal(null, "#d3TreeMap", "unipept_treemap");
         } else {
             logToGoogle("Multi Peptide", "Save Image", "Treeview");
             triggerDownloadModal("#d3TreeView svg", null, "unipept_treeview");
