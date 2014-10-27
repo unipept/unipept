@@ -1,10 +1,5 @@
 package org.unipept.storage;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 
 import java.util.ArrayList;
@@ -16,8 +11,6 @@ import java.util.HashMap;
 
 import java.lang.RuntimeException;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.File;
 
@@ -27,8 +20,6 @@ import org.unipept.xml.UniprotEntry;
 import org.unipept.xml.UniprotEntry.Pair;
 import org.unipept.xml.UniprotGORef;
 import org.unipept.xml.UniprotObserver;
-
-import org.mapdb.DBMaker;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
@@ -57,11 +48,6 @@ public class PeptideLoaderData implements UniprotObserver {
             rankIndices.put(ranks[i], i);
         }
     }
-
-    private Connection connection;
-    private PreparedStatement addLineage;
-    private PreparedStatement addInvalidLineage;
-    private PreparedStatement lineageExists;
 
     private Map<String, Integer> sequenceIds;
     private ArrayList<Taxon> taxons;
@@ -122,27 +108,17 @@ public class PeptideLoaderData implements UniprotObserver {
 
         /* Reading the available taxons from the database. */
         try {
-            connection = Database.getConnection();
-        } catch(SQLException e) {
-            System.err.println(new Timestamp(System.currentTimeMillis())
-                    + "Database connection failed");
-            e.printStackTrace();
-            System.exit(1);
-        }
-
-        Statement stmt = null;
-        try {
-            stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT id, rank, parent_id, valid_taxon FROM taxons ORDER BY id ASC");
-            while(rs.next()) {
-                int id = rs.getInt("id");
+            CSVReader reader = new CSVReader("taxons.tsv");
+            String[] items;
+            while((items = reader.read()) != null) {
+                int id = Integer.parseUnsignedInt(items[0]);
+                boolean valid = items[4] == "";
                 while(id > taxons.size()) taxons.add(null); // In case of deleted taxons.
-                if(id != 0) taxons.add(new Taxon(id, rs.getString("rank"), rs.getInt("parent_id"), rs.getBoolean("valid_taxon")));
+                if(id != 0) taxons.add(new Taxon(id, items[1], items[2], Integer.parseInt(items[3]), valid));
             }
-            stmt.close();
-        } catch(SQLException e) {
+        } catch(IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
-                    + "Taxon retrieval failed.");
+                    + " Taxon retrieval failed.");
             e.printStackTrace();
             System.exit(1);
         }
@@ -389,53 +365,23 @@ public class PeptideLoaderData implements UniprotObserver {
 
     /**
      * Truncates all peptide tables
-     * TODO
      */
     public void emptyAllTables() {
-        try {
-            Statement stmt = connection.createStatement();
-            try {
-                stmt.executeQuery("SET FOREIGN_KEY_CHECKS=0");
-                stmt.executeUpdate("TRUNCATE TABLE `peptides`");
-                stmt.executeUpdate("TRUNCATE TABLE `sequences`");
-                stmt.executeUpdate("TRUNCATE TABLE `uniprot_entries`");
-                stmt.executeUpdate("TRUNCATE TABLE `refseq_cross_references`");
-                stmt.executeUpdate("TRUNCATE TABLE `embl_cross_references`");
-                stmt.executeUpdate("TRUNCATE TABLE `ec_cross_references`");
-                stmt.executeUpdate("TRUNCATE TABLE `go_cross_references`");
-                stmt.executeUpdate("TRUNCATE TABLE `lineages`");
-                stmt.executeQuery("SET FOREIGN_KEY_CHECKS=1");
-            } catch (SQLException e) {
-                System.err.println(new Timestamp(System.currentTimeMillis())
-                        + " Something went wrong truncating tables.");
-                e.printStackTrace();
-            } finally {
-                stmt.close();
-            }
-        } catch (SQLException e1) {
-            System.err.println(new Timestamp(System.currentTimeMillis())
-                    + " Something went wrong creating a new statement.");
-            e1.printStackTrace();
-        }
+        // TODO remove tsv files?
+        // stmt.executeQuery("SET FOREIGN_KEY_CHECKS=0");
+        // stmt.executeUpdate("TRUNCATE TABLE `peptides`");
+        // stmt.executeUpdate("TRUNCATE TABLE `sequences`");
+        // stmt.executeUpdate("TRUNCATE TABLE `uniprot_entries`");
+        // stmt.executeUpdate("TRUNCATE TABLE `refseq_cross_references`");
+        // stmt.executeUpdate("TRUNCATE TABLE `embl_cross_references`");
+        // stmt.executeUpdate("TRUNCATE TABLE `ec_cross_references`");
+        // stmt.executeUpdate("TRUNCATE TABLE `go_cross_references`");
+        // stmt.executeUpdate("TRUNCATE TABLE `lineages`");
+        // stmt.executeQuery("SET FOREIGN_KEY_CHECKS=1");
     }
 
     public void emptyLineages() {
-        try {
-            Statement stmt = connection.createStatement();
-            try {
-                stmt.executeUpdate("TRUNCATE TABLE `lineages`");
-            } catch (SQLException e) {
-                System.err.println(new Timestamp(System.currentTimeMillis())
-                        + " Something went wrong truncating tables.");
-                e.printStackTrace();
-            } finally {
-                stmt.close();
-            }
-        } catch (SQLException e1) {
-            System.err.println(new Timestamp(System.currentTimeMillis())
-                    + " Something went wrong creating a new statement.");
-            e1.printStackTrace();
-        }
+        // TODO remove tsv file?
     }
 
     @Override
@@ -456,47 +402,6 @@ public class PeptideLoaderData implements UniprotObserver {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + " Something closing the csv files.");
             e.printStackTrace();
-        }
-    }
-
-    private class CSVWriter {
-        private BufferedWriter buffer;
-        private int index = 0;
-        public CSVWriter(String file, String... titles) throws IOException {
-            buffer = new BufferedWriter(new FileWriter(file));
-            buffer.write("id");
-            for(int i = 0; i < titles.length; i++) {
-                buffer.write("	" + titles[i].toString());
-            }
-            buffer.newLine();
-        }
-        public int write(String... values) throws IOException {
-            buffer.write(++index);
-            for(int i = 0; i < values.length; i++) {
-                buffer.write("	" + values[i]);
-            }
-            buffer.newLine();
-            return index;
-        }
-        public void close() throws IOException {
-            buffer.flush();
-            buffer.close();
-        }
-    }
-
-    private class Taxon {
-        public String rank;
-        public int parentId;
-        public boolean validTaxon;
-        public int lineageCount;
-        public boolean used;
-        public Taxon(int id, String rank, int parentId, boolean validTaxon) {
-            if(rank == null || rank.length() == 0) System.out.println("AAAAAAH " + id);
-            this.rank = rank;
-            this.parentId = parentId;
-            this.lineageCount = 0;
-            this.validTaxon = validTaxon;
-            this.used = false;
         }
     }
 
