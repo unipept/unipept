@@ -44,7 +44,7 @@ class SequencesController < ApplicationController
     end
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) #calculate the LCA
-    @root = Node.new(1, "root") #start constructing the tree
+    @root = Node.new(1, "root", nil) #start constructing the tree
     last_node = @root
 
     #common lineage
@@ -56,7 +56,7 @@ class SequencesController < ApplicationController
       unless t.nil?
         found = (@lca_taxon.id == t.id)
         @common_lineage << t
-        last_node = last_node.add_child(Node.new(t.id, t.name), @root)
+        last_node = last_node.add_child(Node.new(t.id, t.name, @root), @root)
       end
     end
 
@@ -71,7 +71,7 @@ class SequencesController < ApplicationController
           l << t.name # add the taxon name to de lineage
           node = Node.find_by_id(t.id, @root)
           if node.nil? # if the node isn't create yet
-            node = Node.new(t.id, t.name)
+            node = Node.new(t.id, t.name, @root)
             last_node_loop = last_node_loop.add_child(node, @root);
           else
             last_node_loop = node;
@@ -247,7 +247,7 @@ class SequencesController < ApplicationController
     @misses = @misses.map{|m| sequence_mapping[m]}.to_a.sort
 
     # construct treemap nodes
-    root = TreeMapNode.new(1, "Organism", "no rank")
+    root = TreeMapNode.new(1, "Organism", nil, "no rank")
     matches.each do |taxon, seqs| # for every match
       root.add_sequences(seqs)
       lca_l = taxon.lineage
@@ -265,7 +265,7 @@ class SequencesController < ApplicationController
         unless t.nil?
           node = TreeMapNode.find_by_id(t.id, root)
           if node.nil?
-            node = TreeMapNode.new(t.id, t.name, t.rank)
+            node = TreeMapNode.new(t.id, t.name, root, t.rank)
             last_node_loop = last_node_loop.add_child(node, root)
           else
             last_node_loop = node
@@ -277,19 +277,16 @@ class SequencesController < ApplicationController
       node.add_own_sequences(seqs) unless node.nil?
     end
 
-    #don't show the root when we don't need it
-    root = root.children[0] if root.children.count == 0
+
+    @sequences_json = Oj.dump(root.sequences, mode: :compat)
+
     root.fix_all_titles unless root.nil?
     root.sort_peptides_and_children unless root.nil?
 
-    root_json = Oj.dump(root, mode: :compat)
-    sunburst_hash = Oj.load(String.new(root_json))
+    @treemap_json = Oj.dump(root, mode: :compat)
+    sunburst_hash = Oj.load(String.new(@treemap_json))
     TreeMapNode.clean_sunburst!(sunburst_hash) unless sunburst_hash.nil?
     @sunburst_json = Oj.dump(sunburst_hash).gsub("children","kids")
-
-    treemap_hash = Oj.load(root_json)
-    TreeMapNode.clean_treemap!(treemap_hash) unless treemap_hash.nil?
-    @treemap_json = Oj.dump(treemap_hash)
 
     if export
       csv_string = CSV.generate_line(["peptide"].concat(Lineage.ranks)) + csv_string

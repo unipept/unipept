@@ -723,7 +723,7 @@ function init_multi(data, data2, sequences, equate_il) {
             infoPane = $("#tree_data").html("<h3>" + innertext + "</h3>");
             $("#tree_data").css("-webkit-transform", "translateY(" + margin + "px)");
             $("#tree_data").css("transform", "translateY(" + margin + "px)");
-            ownSequences = d.data.own_sequences;
+            ownSequences = getOwnSequences(d.id).sort();
             if (ownSequences && ownSequences.length > 0) {
                 list = infoPane.append("<h4 class='own'>Peptides specific for this taxon</h4><ul></ul>").find("ul").last();
                 for (peptide in ownSequences) {
@@ -733,7 +733,7 @@ function init_multi(data, data2, sequences, equate_il) {
                 addCopy($("#copy-own span").first(), function() {return ownSequences.join("\n");});
 
             }
-            allSequences = d.data.all_sequences;
+            allSequences = getAllSequences(d).sort();
             if (allSequences && allSequences.length > 0 && allSequences.length !== (ownSequences ? ownSequences.length : 0)) {
                 list = infoPane.append("<h4 class='all'>Peptides specific to this taxon or one of its subtaxa</h4><ul></ul>").find("ul").last();
                 for (peptide in allSequences) {
@@ -1066,5 +1066,20 @@ function init_multi(data, data2, sequences, equate_il) {
         $("#tree_search").val(searchTerm);
         highlight("#tree_search");
         setTimeout(function () { $("#tree_search").change(); }, timeout);
+    }
+
+    // returns an array containing all sequences specific to this sequence id
+    function getOwnSequences(id) {
+        return sequences[id] || [];
+    }
+
+    // returns an array containing all sequences specific to this node or
+    // something below
+    function getAllSequences(d) {
+        var s = getOwnSequences(d.id);
+        for (var i = 0; i < d.children.length; i++) {
+            s = s.concat(getAllSequences(d.children[i]));
+        }
+        return s;
     }
 }

@@ -108,8 +108,9 @@
 <script type="text/javascript">
     var data1 = <%= raw(@treemap_json)%>;
     var data2 = <%= raw(@sunburst_json)%>;
+    var sequences = <%= raw(@sequences_json)%>;
 
-    $(function () {init_multi(data1, data2, <%=@equate_il %>);});
+    $(function () {init_multi(data1, data2, sequences, <%=@equate_il %>);});
 </script>
 <% end %>
 
