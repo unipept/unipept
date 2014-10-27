@@ -112,7 +112,7 @@ public class PeptideLoaderData implements UniprotObserver {
             String[] items;
             while((items = reader.read()) != null) {
                 int id = Integer.parseUnsignedInt(items[0]);
-                boolean valid = items[4] == "";
+                boolean valid = items[4].charAt(0) == (char) 1;
                 while(id > taxons.size()) taxons.add(null); // In case of deleted taxons.
                 if(id != 0) taxons.add(new Taxon(id, items[1], items[2], Integer.parseInt(items[3]), valid));
             }

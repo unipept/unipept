@@ -16,7 +16,9 @@ public class CSVReader {
     }
 
     public String[] read() throws IOException {
-        return buffer.readLine().split("	");
+        String line = buffer.readLine();
+        if(line == null) return null;
+        return line.split("	");
     }
 
     public void close() throws IOException {
