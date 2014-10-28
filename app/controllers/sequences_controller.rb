@@ -278,15 +278,12 @@ class SequencesController < ApplicationController
     end
 
 
-    @sequences_json = Oj.dump(root.sequences, mode: :compat)
+    @json_sequences = Oj.dump(root.sequences, mode: :compat)
 
     root.fix_all_titles unless root.nil?
     root.sort_peptides_and_children unless root.nil?
 
-    @treemap_json = Oj.dump(root, mode: :compat)
-    sunburst_hash = Oj.load(String.new(@treemap_json))
-    TreeMapNode.clean_sunburst!(sunburst_hash) unless sunburst_hash.nil?
-    @sunburst_json = Oj.dump(sunburst_hash).gsub("children","kids")
+    @json_tree = Oj.dump(root, mode: :compat)
 
     if export
       csv_string = CSV.generate_line(["peptide"].concat(Lineage.ranks)) + csv_string

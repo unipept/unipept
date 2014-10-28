@@ -53,10 +53,4 @@ class TreeMapNode < Node
     @children.sort_by!(&:name) unless @children.empty?
     @children.map{|c| c.sort_peptides_and_children} unless @children.empty?
   end
-
-  # cleans a hash of redundant data for sunburst
-  def self.clean_sunburst!(hash)
-    hash["children"].map{|c| TreeMapNode.clean_sunburst!(c)} unless hash["children"].nil?
-    hash["data"].delete("title")
-  end
 end

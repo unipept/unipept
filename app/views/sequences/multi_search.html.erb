@@ -106,11 +106,10 @@
 
 <% if @number_found > 0 %>
 <script type="text/javascript">
-    var data1 = <%= raw(@treemap_json)%>;
-    var data2 = <%= raw(@sunburst_json)%>;
-    var sequences = <%= raw(@sequences_json)%>;
+    var data = <%= raw(@json_tree)%>;
+    var sequences = <%= raw(@json_sequences)%>;
 
-    $(function () {init_multi(data1, data2, sequences, <%=@equate_il %>);});
+    $(function () {init_multi(data, sequences, <%=@equate_il %>);});
 </script>
 <% end %>
 

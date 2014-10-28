@@ -1,4 +1,4 @@
-function init_multi(data, data2, sequences, equate_il) {
+function init_multi(data, sequences, equate_il) {
 
     $("#downloadDataset").click(function () {
         // Track the download button
@@ -21,7 +21,7 @@ function init_multi(data, data2, sequences, equate_il) {
 
     // sunburst
     try {
-        initSunburst(JSON.parse(JSON.stringify(data2)));
+        initSunburst(JSON.parse(JSON.stringify(data).replace(/children/g, "kids")));
     } catch (err) {
         error(err.message, "Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
@@ -36,7 +36,7 @@ function init_multi(data, data2, sequences, equate_il) {
 
     // treeview
     try {
-        initTreeView(data2);
+        initTreeView(JSON.parse(JSON.stringify(data)));
     } catch (err) {
         error(err.message, "Loading the Treeview visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
@@ -329,16 +329,6 @@ function init_multi(data, data2, sequences, equate_il) {
             root = data;
             root.x0 = height / 2;
             root.y0 = 0;
-
-            // convert kids to children
-            function kids(d) {
-                if (d.kids) {
-                    d.kids.forEach(kids);
-                    d.children = d.kids;
-                    d.kids = null;
-                }
-            }
-            kids(root);
 
             // set everything visible
             function setVisible(d) {
