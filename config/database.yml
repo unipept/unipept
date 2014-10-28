@@ -5,8 +5,8 @@ development:
   username: unipept
   password: unipept
   # setup local port forwarding for this to work
-  host: 127.0.0.1
-  port: 3306
+  host: <%= ENV['MYSQL_PORT_3306_TCP_ADDR'] %>
+  port: <%= ENV['MYSQL_PORT_3306_TCP_PORT'] %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
