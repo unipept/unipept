@@ -170,7 +170,7 @@ class SequencesController < ApplicationController
 
     # build the resultset
     matches = Hash.new
-    @misses = data.to_set
+    misses = data.to_set
     data.each_slice(1000) do |data_slice|
       Sequence.includes({Sequence.lca_t_relation_name(@equate_il) => {:lineage => Lineage::ORDER_T}}).where(sequence: data_slice).each do |sequence|
         lca_t = sequence.calculate_lca(@equate_il, true)
@@ -182,13 +182,13 @@ class SequencesController < ApplicationController
             matches[lca_t] << sequence_mapping[sequence.sequence]
           end
         end
-        @misses.delete(sequence.sequence)
+        misses.delete(sequence.sequence)
       end
     end
 
     # handle the misses
     if handle_missed
-      iter = @misses.to_a
+      iter = misses.to_a
       iter.each do |seq|
         sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
         next if sequences.size == 1
@@ -223,7 +223,7 @@ class SequencesController < ApplicationController
             matches[lca_t] << sequence_mapping[seq]
           end
         end
-        @misses.delete(seq)
+        misses.delete(seq)
       end
     end
 
@@ -244,7 +244,7 @@ class SequencesController < ApplicationController
     end
     @intro_text += "."
 
-    @misses = @misses.map{|m| sequence_mapping[m]}.to_a.sort
+    @json_missed = Oj.dump(misses.map{|m| sequence_mapping[m]}.to_a.sort, mode: :compat)
 
     # construct treemap nodes
     root = TreeMapNode.new(1, "Organism", nil, "no rank")
@@ -279,10 +279,8 @@ class SequencesController < ApplicationController
 
 
     @json_sequences = Oj.dump(root.sequences, mode: :compat)
-
     root.fix_all_titles unless root.nil?
     root.sort_peptides_and_children unless root.nil?
-
     @json_tree = Oj.dump(root, mode: :compat)
 
     if export
