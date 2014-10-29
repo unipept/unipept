@@ -37,7 +37,9 @@ public class UniprotEntry {
     }
 
     public void setUniprotAccessionNumber(String uniprotAccessionNumber) {
-        this.uniprotAccessionNumber = uniprotAccessionNumber;
+        if(this.uniprotAccessionNumber == null) {
+            this.uniprotAccessionNumber = uniprotAccessionNumber;
+        }
     }
 
     public int getVersion() {
