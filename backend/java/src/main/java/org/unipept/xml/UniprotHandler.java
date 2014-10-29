@@ -132,7 +132,7 @@ public class UniprotHandler extends DefaultHandler {
                     } else if (atts.getValue("type").equals("RefSeq")) {
                         dbRef = new UniprotDbRef("RefSeq");
                         dbRef.setProteinId(atts.getValue("id"));
-                    } else if (atts.getValue("type").equals("Go")) {
+                    } else if (atts.getValue("type").equals("GO")) {
                         goRef = new UniprotGORef(atts.getValue("id"));
                     } else if (atts.getValue("type").equals("EC")) {
                         ecRef = new UniprotECRef(atts.getValue("id"));
