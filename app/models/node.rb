@@ -22,7 +22,7 @@ class Node
     @data["rank"] = rank
 
     # root node
-    if id == 1
+    if is_root?
       @nodes = Array.new
       @sequences = Hash.new
     end
@@ -31,20 +31,8 @@ class Node
     fix_title
   end
 
-  # returns the added child
-  def add_child(child, root)
-    root.nodes << child
-    @children << child
-    return child
-  end
-
-  # find a node by id within the current tree
-  def self.find_by_id(id, root)
-    found = nil
-    root.nodes.each { |o|
-      found = o if o.id == id
-    }
-    return found
+  def is_root?
+    return id == 1
   end
 
   def nodes
@@ -55,8 +43,16 @@ class Node
     return @sequences
   end
 
+  # returns the added child
+  def add_child(child)
+    n = is_root? ? @nodes : @root.nodes
+    n << child
+    @children << child
+    return child
+  end
+
   def set_sequences(id, sequences)
-    if @root.nil?
+    if is_root?
       @sequences[id] = sequences
     else
       @root.set_sequences(id, sequences)
@@ -97,6 +93,15 @@ class Node
     hash.delete(:nodes)
     hash.delete(:sequences)
     return hash
+  end
+
+  # find a node by id within the current tree
+  def self.find_by_id(id, root)
+    found = nil
+    root.nodes.each { |o|
+      found = o if o.id == id
+    }
+    return found
   end
 
   #methods to make the partials render

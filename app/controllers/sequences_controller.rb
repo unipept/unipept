@@ -56,7 +56,7 @@ class SequencesController < ApplicationController
       unless t.nil?
         found = (@lca_taxon.id == t.id)
         @common_lineage << t
-        last_node = last_node.add_child(Node.new(t.id, t.name, @root), @root)
+        last_node = last_node.add_child(Node.new(t.id, t.name, @root))
       end
     end
 
@@ -69,10 +69,10 @@ class SequencesController < ApplicationController
         t = lineage.next_t
         unless t.nil?
           l << t.name # add the taxon name to de lineage
-          node = Node.find_by_id(t.id, @root, t.rank)
+          node = Node.find_by_id(t.id, @root)
           if node.nil? # if the node isn't create yet
             node = Node.new(t.id, t.name, @root, t.rank)
-            last_node_loop = last_node_loop.add_child(node, @root);
+            last_node_loop = last_node_loop.add_child(node);
           else
             last_node_loop = node;
           end
@@ -266,7 +266,7 @@ class SequencesController < ApplicationController
           node = Node.find_by_id(t.id, root)
           if node.nil?
             node = Node.new(t.id, t.name, root, t.rank)
-            last_node_loop = last_node_loop.add_child(node, root)
+            last_node_loop = last_node_loop.add_child(node)
           else
             last_node_loop = node
           end
