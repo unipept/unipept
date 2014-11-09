@@ -1,18 +1,34 @@
+# Overview of the data in a Node
+# - id
+# - name
+# - children
+# - data
+#   - title
+#   - count
+#   - self_count
+#   - rank
+#   - taxon_id
 class Node
   attr_accessor :id, :name, :children, :data
 
-  def initialize(id, name, root)
+  def initialize(id, name, root, rank="")
     @id = id
     @name = name
     @root = root
     @children = Array.new
+
     @data = Hash.new
+    @data["count"] = 0
+    @data["rank"] = rank
 
     # root node
     if id == 1
       @nodes = Array.new
       @sequences = Hash.new
     end
+
+    # TODO: remove
+    fix_title
   end
 
   # returns the added child
@@ -45,6 +61,33 @@ class Node
     else
       @root.set_sequences(id, sequences)
     end
+  end
+
+  # adds a number to the count variable
+  def add_sequences(sequences)
+    @data["count"] += sequences.length
+  end
+
+  def add_own_sequences(sequences)
+    set_sequences(@id, sequences)
+    @data["self_count"] = sequences.length
+  end
+
+  def fix_title
+    @data["title"] = @name
+    @data["title"] += " (" + (@data["self_count"].nil? ? "0" : @data["self_count"].to_s) + "/" + @data["count"].to_s + ")"
+  end
+
+  # fix all titles
+  def fix_all_titles
+    fix_title
+    @children.map{|c| c.fix_all_titles} unless @children.empty?
+  end
+
+  # Sorts the peptides lists and children alphabetically
+  def sort_peptides_and_children
+    @children.sort_by!(&:name) unless @children.empty?
+    @children.map{|c| c.sort_peptides_and_children} unless @children.empty?
   end
 
   # used by Oj.dump to exclude the root

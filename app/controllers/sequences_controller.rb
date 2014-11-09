@@ -44,7 +44,7 @@ class SequencesController < ApplicationController
     end
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) #calculate the LCA
-    @root = Node.new(1, "root", nil) #start constructing the tree
+    @root = Node.new(1, "root", nil, "root") #start constructing the tree
     last_node = @root
 
     #common lineage
@@ -69,9 +69,9 @@ class SequencesController < ApplicationController
         t = lineage.next_t
         unless t.nil?
           l << t.name # add the taxon name to de lineage
-          node = Node.find_by_id(t.id, @root)
+          node = Node.find_by_id(t.id, @root, t.rank)
           if node.nil? # if the node isn't create yet
-            node = Node.new(t.id, t.name, @root)
+            node = Node.new(t.id, t.name, @root, t.rank)
             last_node_loop = last_node_loop.add_child(node, @root);
           else
             last_node_loop = node;
@@ -247,7 +247,7 @@ class SequencesController < ApplicationController
     @json_missed = Oj.dump(misses.map{|m| sequence_mapping[m]}.to_a.sort, mode: :compat)
 
     # construct treemap nodes
-    root = TreeMapNode.new(1, "Organism", nil, "no rank")
+    root = Node.new(1, "Organism", nil, "no rank")
     matches.each do |taxon, seqs| # for every match
       root.add_sequences(seqs)
       lca_l = taxon.lineage
@@ -263,9 +263,9 @@ class SequencesController < ApplicationController
       while !lca_l.nil? && lca_l.has_next? # process every rank in lineage
         t = lca_l.next_t
         unless t.nil?
-          node = TreeMapNode.find_by_id(t.id, root)
+          node = Node.find_by_id(t.id, root)
           if node.nil?
-            node = TreeMapNode.new(t.id, t.name, root, t.rank)
+            node = Node.new(t.id, t.name, root, t.rank)
             last_node_loop = last_node_loop.add_child(node, root)
           else
             last_node_loop = node
@@ -273,7 +273,7 @@ class SequencesController < ApplicationController
           node.add_sequences(seqs)
         end
       end
-      node = taxon.id == 1 ? root : TreeMapNode.find_by_id(taxon.id, root)
+      node = taxon.id == 1 ? root : Node.find_by_id(taxon.id, root)
       node.add_own_sequences(seqs) unless node.nil?
     end
 
