@@ -216,7 +216,7 @@ function init_multi(data, sequences, missed, equate_il) {
                 .style("top", "0px")
                 .style("width", "0px")
                 .style("height", "0px")
-                .text(function (d) { return d.data.title; })
+                .text(getTitle)
                 .on("click", function (d) {update(d);})
                 .on("contextmenu", function (d) {
                     d3.event.preventDefault();
@@ -672,7 +672,7 @@ function init_multi(data, sequences, missed, equate_il) {
         items = tree.selectAll("li").data([data])
             .enter()
             .append("li")
-                .html(function (d) { return "<span>" + d.data.title + "</span>"; })
+                .html(function (d) { return "<span>" + getTitle(d) + "</span>"; })
                 .attr("title", function (d) { return d.data.rank; })
                 .attr("class", "collapsibleListOpen")
                 .attr("data-search", function (d) { return d.name.toLowerCase(); })
@@ -681,7 +681,7 @@ function init_multi(data, sequences, missed, equate_il) {
             items = items.selectAll("li").data(function (d) { return d.children; })
                 .enter()
                 .append("li")
-                    .html(function (d) { return "<span>" + d.data.title + "</span>"; })
+                    .html(function (d) { return "<span>" + getTitle(d) + "</span>"; })
                     .attr("title", function (d) { return d.data.rank; })
                     .attr("class", function (d) {
                         if (!d.children.length) {
@@ -1082,5 +1082,12 @@ function init_multi(data, sequences, missed, equate_il) {
             s = s.concat(getAllSequences(d.children[i]));
         }
         return s;
+    }
+
+    // constructs a title
+    function getTitle(d) {
+        var title = d.name;
+        title += " (" + d.data.self_count + "/" + d.data.count + ")";
+        return title
     }
 }

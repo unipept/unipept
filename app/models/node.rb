@@ -3,7 +3,6 @@
 # - name
 # - children
 # - data
-#   - title
 #   - count
 #   - self_count
 #   - rank
@@ -26,9 +25,6 @@ class Node
       @nodes = Array.new
       @sequences = Hash.new
     end
-
-    # TODO: remove
-    fix_title
   end
 
   def is_root?
@@ -57,17 +53,6 @@ class Node
     else
       @root.set_sequences(sequences, id)
     end
-  end
-
-  def fix_title
-    @data["title"] = @name
-    @data["title"] += " (" + (@data["self_count"].nil? ? "0" : @data["self_count"].to_s) + "/" + @data["count"].to_s + ")"
-  end
-
-  # fix all titles
-  def fix_all_titles
-    fix_title
-    @children.map{|c| c.fix_all_titles} unless @children.empty?
   end
 
   # Sorts the peptides lists and children alphabetically

@@ -278,7 +278,6 @@ class SequencesController < ApplicationController
 
     @json_sequences = Oj.dump(root.sequences, mode: :compat)
     root.prepare_for_multitree unless root.nil?
-    root.fix_all_titles unless root.nil?
     root.sort_peptides_and_children unless root.nil?
     @json_tree = Oj.dump(root, mode: :compat)
 
