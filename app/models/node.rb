@@ -55,10 +55,19 @@ class Node
     end
   end
 
-  # Sorts the peptides lists and children alphabetically
-  def sort_peptides_and_children
-    @children.sort_by!(&:name) unless @children.empty?
-    @children.map{|c| c.sort_peptides_and_children} unless @children.empty?
+  # Sorts the children alphabetically
+  def sort_children
+    @children.sort_by!(&:name)
+    @children.map{|c| c.sort_children}
+  end
+
+  # sets the count and self_count
+  def prepare_for_multitree
+    r = is_root? ? self : @root
+    @children.map(&:prepare_for_multitree)
+    @data["self_count"] = r.sequences[@id].nil? ? 0 : r.sequences[@id].size
+    count = @children.reduce(0){ |sum, n| sum + n.data["count"]}
+    @data["count"] = @data["self_count"] + count
   end
 
   # used by Oj.dump to exclude the root
@@ -68,14 +77,6 @@ class Node
     hash.delete(:nodes)
     hash.delete(:sequences)
     return hash
-  end
-
-  def prepare_for_multitree
-    r = is_root? ? self : @root
-    @children.map(&:prepare_for_multitree)
-    @data["self_count"] = r.sequences[@id].nil? ? 0 : r.sequences[@id].size
-    count = @children.reduce(0){ |sum, n| sum + n.data["count"]}
-    @data["count"] = @data["self_count"] + count
   end
 
   # find a node by id within the current tree

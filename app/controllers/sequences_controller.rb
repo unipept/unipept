@@ -44,7 +44,7 @@ class SequencesController < ApplicationController
     end
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) #calculate the LCA
-    @root = Node.new(1, "root", nil, "root") #start constructing the tree
+    @root = Node.new(1, "Organism", nil, "root") #start constructing the tree
     last_node = @root
 
     #common lineage
@@ -68,7 +68,7 @@ class SequencesController < ApplicationController
       while lineage.has_next?
         t = lineage.next_t
         unless t.nil?
-          l << t.name # add the taxon name to de lineage
+          l << t.name # add the taxon name to the lineage
           node = Node.find_by_id(t.id, @root)
           if node.nil? # if the node isn't create yet
             node = Node.new(t.id, t.name, @root, t.rank)
@@ -81,8 +81,8 @@ class SequencesController < ApplicationController
     end
 
     #don't show the root when we don't need it
-    @root.name = "Organism"
-    @root = @root.children.count > 1 ? Oj.dump(@root, mode: :compat) : Oj.dump(@root.children[0], mode: :compat)
+    @root.sort_children
+    @root = Oj.dump(@root, mode: :compat)
 
     #Table stuff
     @table_lineages = Array.new
@@ -278,7 +278,7 @@ class SequencesController < ApplicationController
 
     @json_sequences = Oj.dump(root.sequences, mode: :compat)
     root.prepare_for_multitree unless root.nil?
-    root.sort_peptides_and_children unless root.nil?
+    root.sort_children unless root.nil?
     @json_tree = Oj.dump(root, mode: :compat)
 
     if export
