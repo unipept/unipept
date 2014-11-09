@@ -51,22 +51,12 @@ class Node
     return child
   end
 
-  def set_sequences(id, sequences)
+  def set_sequences(sequences, id = @id)
     if is_root?
       @sequences[id] = sequences
     else
-      @root.set_sequences(id, sequences)
+      @root.set_sequences(sequences, id)
     end
-  end
-
-  # adds a number to the count variable
-  def add_sequences(sequences)
-    @data["count"] += sequences.length
-  end
-
-  def add_own_sequences(sequences)
-    set_sequences(@id, sequences)
-    @data["self_count"] = sequences.length
   end
 
   def fix_title
@@ -93,6 +83,14 @@ class Node
     hash.delete(:nodes)
     hash.delete(:sequences)
     return hash
+  end
+
+  def prepare_for_multitree
+    r = is_root? ? self : @root
+    @children.map(&:prepare_for_multitree)
+    @data["self_count"] = r.sequences[@id].nil? ? 0 : r.sequences[@id].size
+    count = @children.reduce(0){ |sum, n| sum + n.data["count"]}
+    @data["count"] = @data["self_count"] + count
   end
 
   # find a node by id within the current tree

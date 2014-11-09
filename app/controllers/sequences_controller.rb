@@ -249,7 +249,6 @@ class SequencesController < ApplicationController
     # construct treemap nodes
     root = Node.new(1, "Organism", nil, "no rank")
     matches.each do |taxon, seqs| # for every match
-      root.add_sequences(seqs)
       lca_l = taxon.lineage
 
       #export stuff
@@ -270,15 +269,15 @@ class SequencesController < ApplicationController
           else
             last_node_loop = node
           end
-          node.add_sequences(seqs)
         end
       end
       node = taxon.id == 1 ? root : Node.find_by_id(taxon.id, root)
-      node.add_own_sequences(seqs) unless node.nil?
+      node.set_sequences(seqs) unless node.nil?
     end
 
 
     @json_sequences = Oj.dump(root.sequences, mode: :compat)
+    root.prepare_for_multitree unless root.nil?
     root.fix_all_titles unless root.nil?
     root.sort_peptides_and_children unless root.nil?
     @json_tree = Oj.dump(root, mode: :compat)
