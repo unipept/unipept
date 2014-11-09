@@ -186,15 +186,15 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal @request.parameters, assigns(:p)
     assert_not assigns(:equate_il)
     assert_equal 3, assigns(:number_found)
-    assert_equal ["MISSES"], assigns(:misses)
+    assert assigns(:json_missed).include?("MISSES")
     assert_nil assigns(:prideURL)
     assert_not assigns(:intro_text).include?("deduplicated")
     assert_not assigns(:intro_text).include?("equated")
     assert_not assigns(:intro_text).include?("missed cleavage handling")
-    assert_not_nil assigns(:sunburst_json)
-    assert_not_nil assigns(:treemap_json)
-    assert assigns(:treemap_json).include?("AALER")
-    assert assigns(:treemap_json).include?("AAILER")
+    assert_not_nil assigns(:json_tree)
+    assert_not_nil assigns(:json_sequences)
+    assert assigns(:json_sequences).include?("AALER")
+    assert assigns(:json_sequences).include?("AAILER")
   end
 
   test "should get multi_search with il" do
@@ -205,15 +205,15 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal @request.parameters, assigns(:p)
     assert assigns(:equate_il)
     assert_equal 2, assigns(:number_found)
-    assert_equal ["MISSES"], assigns(:misses)
+    assert assigns(:json_missed).include?("MISSES")
     assert_nil assigns(:prideURL)
     assert_not assigns(:intro_text).include?("deduplicated")
     assert assigns(:intro_text).include?("equated")
     assert assigns(:intro_text).include?("missed cleavage handling")
-    assert_not_nil assigns(:sunburst_json)
-    assert_not_nil assigns(:treemap_json)
-    assert assigns(:treemap_json).include?("AALER")
-    assert assigns(:treemap_json).include?("AAILER")
+    assert_not_nil assigns(:json_tree)
+    assert_not_nil assigns(:json_sequences)
+    assert assigns(:json_sequences).include?("AALER")
+    assert assigns(:json_sequences).include?("AAILER")
   end
 
   test "should get multi_search with dupes" do
@@ -224,15 +224,15 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal @request.parameters, assigns(:p)
     assert_not assigns(:equate_il)
     assert_equal 2, assigns(:number_found)
-    assert_equal ["MISSES"], assigns(:misses)
+    assert assigns(:json_missed).include?("MISSES")
     assert_nil assigns(:prideURL)
     assert assigns(:intro_text).include?("deduplicated")
     assert_not assigns(:intro_text).include?("equated")
     assert assigns(:intro_text).include?("missed cleavage handling")
-    assert_not_nil assigns(:sunburst_json)
-    assert_not_nil assigns(:treemap_json)
-    assert assigns(:treemap_json).include?("AALER")
-    assert assigns(:treemap_json).include?("AAILER")
+    assert_not_nil assigns(:json_tree)
+    assert_not_nil assigns(:json_sequences)
+    assert assigns(:json_sequences).include?("AALER")
+    assert assigns(:json_sequences).include?("AAILER")
   end
 
   test "should get multi_search without advanced" do
@@ -243,15 +243,15 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal @request.parameters, assigns(:p)
     assert_not assigns(:equate_il)
     assert_equal 2, assigns(:number_found)
-    assert_equal [], assigns(:misses)
+    assert_equal "[]", assigns(:json_missed)
     assert_nil assigns(:prideURL)
     assert_not assigns(:intro_text).include?("deduplicated")
     assert_not assigns(:intro_text).include?("equated")
     assert_not assigns(:intro_text).include?("missed cleavage handling")
-    assert_not_nil assigns(:sunburst_json)
-    assert_not_nil assigns(:treemap_json)
-    assert assigns(:treemap_json).include?("AAILER")
-    assert assigns(:treemap_json).include?("AGGAR")
+    assert_not_nil assigns(:json_tree)
+    assert_not_nil assigns(:json_sequences)
+    assert assigns(:json_sequences).include?("AAILER")
+    assert assigns(:json_sequences).include?("AGGAR")
   end
 
   test "should get multi_search with advanced" do
@@ -262,14 +262,14 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal @request.parameters, assigns(:p)
     assert_not assigns(:equate_il)
     assert_equal 1, assigns(:number_found)
-    assert_equal [], assigns(:misses)
+    assert_equal "[]", assigns(:json_missed)
     assert_nil assigns(:prideURL)
     assert_not assigns(:intro_text).include?("deduplicated")
     assert_not assigns(:intro_text).include?("equated")
     assert_not assigns(:intro_text).include?("missed cleavage handling")
-    assert_not_nil assigns(:sunburst_json)
-    assert_not_nil assigns(:treemap_json)
-    assert assigns(:treemap_json).include?("AAILERAGGAR")
+    assert_not_nil assigns(:json_tree)
+    assert_not_nil assigns(:json_sequences)
+    assert assigns(:json_sequences).include?("AAILERAGGAR")
   end
 
   test "multi_search should return csv with export" do
