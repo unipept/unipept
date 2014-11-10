@@ -202,7 +202,10 @@ function init_multi(data, sequences, missed, equate_il) {
                 .attr("class", "crumb")
                 .attr("title", function (d) { return d.data.rank; })
                 .html(function (d) { return "<span class='link'>" + d.name + "</span>"; })
-                .on("click", function (d) { update(d); });
+                .on("click", function (d) {
+                    logToGoogle("Multi Peptide", "Zoom", "Treemap", "Breadcrumb");
+                    update(d);
+                });
 
             var nodes = div.selectAll(".node")
                 .data(treemap.nodes(data), function (d) {return d.id;});
@@ -217,7 +220,10 @@ function init_multi(data, sequences, missed, equate_il) {
                 .style("width", "0px")
                 .style("height", "0px")
                 .text(getTitle)
-                .on("click", function (d) {update(d);})
+                .on("click", function (d) {
+                    logToGoogle("Multi Peptide", "Zoom", "Treemap");
+                    update(d);
+                })
                 .on("contextmenu", function (d) {
                     d3.event.preventDefault();
                     if (current.parent) {
