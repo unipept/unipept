@@ -3,7 +3,7 @@
 //= require bootstrap/bootstrap.min.js
 
 //  sunburst, treeview, pancore, tree
-//  3.4.11
+//  3.4.13
 //= require d3/d3.v3.min.js
 
 //  treemap
