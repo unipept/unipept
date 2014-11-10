@@ -23,12 +23,12 @@
 <% if @number_found > 0 %>
     <div id="buttons"></div>
     <ul class="nav nav-tabs" id="viz-tabs">
-        <li><a href="#sunburstWrapper" data-toggle="tab">Sunburst</a></li>
-        <li class="active"><a href="#d3TreeMapWrapper" data-toggle="tab">Treemap</a></li>
+        <li class="active"><a href="#sunburstWrapper" data-toggle="tab">Sunburst</a></li>
+        <li><a href="#d3TreeMapWrapper" data-toggle="tab">Treemap</a></li>
         <li><a href="#d3TreeViewWrapper" data-toggle="tab">Treeview</a></li>
     </ul>
     <div class="tab-content multi-search">
-        <div class="tab-pane" id="sunburstWrapper">
+        <div class="tab-pane active" id="sunburstWrapper">
             <h2 class="ghead">
               <span class="dir">
                 <a class="btn btn-xs btn-default" id="sunburst-reset" title="reset visualisation"><i class="glyphicon glyphicon-repeat"></i></a>
@@ -45,7 +45,7 @@
             </h2>
             <div id="sunburst"></div>
         </div>
-        <div class="tab-pane active" id="d3TreeMapWrapper">
+        <div class="tab-pane" id="d3TreeMapWrapper">
             <h2 class="ghead">
               <span class="dir">
                 <a class="btn btn-xs btn-default" id="treemap-reset" title="reset visualisation"><i class="glyphicon glyphicon-repeat"></i></a>
