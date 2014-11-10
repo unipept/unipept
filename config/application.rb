@@ -47,7 +47,7 @@ module UnipeptWeb
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1'
 
-    config.assets.precompile += ['workers/pancore_worker.js', 'workers/mygenome_worker.js', 'jit/Extras/excanvas.js', '*.eot', '*.svg', '*.ttf', '*.woff']
+    config.assets.precompile += ['workers/pancore_worker.js', 'workers/mygenome_worker.js', '*.eot', '*.svg', '*.ttf', '*.woff']
     config.assets.nodigest = ['workers/pancore_worker.js', 'workers/mygenome_worker.js']
     config.assets.nodigest_fonts = ['glyphicons-halflings-regular.eot', 'glyphicons-halflings-regular.svg', 'glyphicons-halflings-regular.ttf', 'glyphicons-halflings-regular.woff']
 
