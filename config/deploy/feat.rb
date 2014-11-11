@@ -5,5 +5,5 @@ server "scruffy.ugent.be", user: 'bmesuere', roles: [:web, :app], ssh_options: {
   port: 4840,
 }
 
-set :branch, 'feature/d3-treemap'
+set :branch, 'develop'
 set :rails_env, :development
