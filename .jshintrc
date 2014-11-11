@@ -1,0 +1,60 @@
+{
+  "predef": [ "ZeroClipboard", "confirm", "requestAnimFrame", "self", "init_phylogram", "Newick", "indexedDB", "IDBKeyRange", "constructSelectionTree", "constructGenomeTable", "constructPancoreGraph", "constructSimMatrix", "constructMyGenomes", "downloadDataByForm", "d3", "html2canvas", "console", "_gaq", "delay", "stringHash", "logToGoogle", "info", "highlight", "error", "addCopy", "fullScreenApi", "triggerDownloadModal", "getReadableColorFor"],
+
+  /*** Enforcing options ***/
+  // Set these to `true` to enforce, or `false` to relax.
+  "bitwise":      true,
+  "curly":        true,
+  "eqeqeq":       true,
+  "forin":        true,
+  "immed":        true,
+  "latedef":      false,
+  "newcap":       true,
+  "noarg":        true,
+  "noempty":      true,
+  "nonew":        true,
+  "plusplus":     false,
+  "regexp":       true,
+  "undef":        true,
+  "strict":       false,
+  "trailing":     true,
+
+  /*** Relaxing options ***/
+  // Set these to `true` to relax, or `false` to enforce.
+  "asi":          false,
+  "boss":         false,
+  "debug":        false,
+  "eqnull":       false,
+  "es5":          false,
+  "esnext":       false,
+  "evil":         false,
+  "expr":         false,
+  "funcscope":    false,
+  "globalstrict": false,
+  "iterator":     false,
+  "lastsemic":    false,
+  "laxbreak":     false,
+  "laxcomma":     false,
+  "loopfunc":     false,
+  "multistr":     false,
+  "onecase":      false,
+  "proto":        false,
+  "regexdash":    false,
+  "scripturl":    false,
+  "shadow":       false,
+  "smarttabs":    false,
+  "sub":          false,
+  "supernew":     false,
+  "validthis":    false,
+
+
+  /*** Legacy from JSLint ***/
+  // Set these to `true` to enforce, or `false` to relax.
+  "nomen":        true,
+  "onevar":       false,
+  "passfail":     false,
+  "white":        true,
+
+  "browser":      true,
+  "jquery":       true
+}
