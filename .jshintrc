@@ -3,7 +3,7 @@
 
   /*** Enforcing options ***/
   // Set these to `true` to enforce, or `false` to relax.
-  "bitwise":      true,
+  "bitwise":      false,
   "curly":        true,
   "eqeqeq":       true,
   "forin":        true,
@@ -24,7 +24,7 @@
   "asi":          false,
   "boss":         false,
   "debug":        false,
-  "eqnull":       false,
+  "eqnull":       true,
   "es5":          false,
   "esnext":       false,
   "evil":         false,
@@ -50,7 +50,7 @@
 
   /*** Legacy from JSLint ***/
   // Set these to `true` to enforce, or `false` to relax.
-  "nomen":        true,
+  "nomen":        false,
   "onevar":       false,
   "passfail":     false,
   "white":        true,
