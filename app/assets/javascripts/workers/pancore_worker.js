@@ -283,7 +283,8 @@ var matrixBackend = function matrixBackend(data) {
      * Clusters the matrix and returns a tree of the clustering
      */
     that.calculateTree = function calculateTree() {
-        var i,
+        var sizes,
+            i,
             matrixArray,
             result,
             resultOrder,
@@ -646,7 +647,7 @@ function autoSort(type) {
         }
     }
     start = newOrder[0] === order[0] ? 1 : 0;
-    sendToHost('autoSorted', {order: newOrder, start: start, stop: newOrder.length -1 });
+    sendToHost('autoSorted', {order: newOrder, start: start, stop: newOrder.length - 1 });
 }
 
 // Retrieves the unique sequences
@@ -730,7 +731,7 @@ function getSequences(type, bioproject_id) {
 
 /************ These functions are not accessible from the host ****************/
 
-// Returns the rank of a give bioproject_id for the current order
+// Returns the rank of a given bioproject_id for the current order
 function getOrderByBioprojectId(bioproject_id) {
     var i;
     for (i = 0; i < order.length; i++) {
@@ -743,8 +744,8 @@ function getOrderByBioprojectId(bioproject_id) {
 }
 
 // Provide an error function with the same signature as in the host
-function error(error, message) {
-    sendToHost("error", {"error" : error, "msg" : message});
+function error(err, message) {
+    sendToHost("error", {"error" : err, "msg" : message});
 }
 
 // Wrapper around xhr json request
