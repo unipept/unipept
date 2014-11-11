@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-
     <title><%=title%></title>
+
     <%= render 'layouts/stylesheets' %>
     <%= javascript_include_tag "application" %>
     <%= csrf_meta_tag %>
+
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="application-name" content="Unipept">
     <meta name="theme-color" content="#FFB300">
+    <meta name="msapplication-TileColor" content="#FFB300"/>
+    <meta name="msapplication-TileImage" content="logo.png"/>
+
+    <link rel="icon" sizes="192x192" href="logo.png">
+    <link rel="apple-touch-icon-precomposed" href="logo.png"/>
     <link rel="shortcut icon" href="/favicon.ico" />
 
     <% if Rails.application.config.unipept_analytics %>
