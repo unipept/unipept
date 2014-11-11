@@ -23,6 +23,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
     // D3 vars
     var svg,
         matrixSvg,
+        buttonSvg,
         treeSvg,
         blur,
         transitionDuration = 1000,
@@ -563,7 +564,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         $("#download-newick").click(function () {
             downloadDataByForm(newick, "phylogenetic_tree_newick.txt");
         });
-        $modal = $("#downloadModal").modal();
+        $("#downloadModal").modal();
     };
 
     // Initialize the object

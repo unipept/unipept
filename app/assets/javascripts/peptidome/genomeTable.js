@@ -230,11 +230,11 @@ var constructGenomeTable = function constructGenomeTable(args) {
      * @return <Array> order An array containing the bioproject id's
      */
     that.getOrder = function getOrder() {
-      var order = [];
-      d3.selectAll("#genomes_table tbody tr").each(function (d, i) {
-          order[i] = d.bioproject_id;
-      });
-      return order;
+        var order = [];
+        d3.selectAll("#genomes_table tbody tr").each(function (d, i) {
+            order[i] = d.bioproject_id;
+        });
+        return order;
     };
 
     /**
