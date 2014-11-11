@@ -103,7 +103,12 @@ function init_sequence_show(data) {
             root;
 
         var tree = d3.layout.tree()
-            .size([height, width]);
+            .nodeSize([2, 105])
+            .separation(function(a, b) {
+                var width = (nodeSize(a) + nodeSize(b)),
+                distance = width / 2 + 4;
+                return (a.parent === b.parent) ? distance : distance + 4;
+            });
 
         var diagonal = d3.svg.diagonal()
             .projection(function (d) { return [d.y, d.x]; });
@@ -257,14 +262,7 @@ function init_sequence_show(data) {
               .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; });
 
             nodeUpdate.select("circle")
-              .attr("r", function(d) {
-                  if (d.selected) {
-                      return widthScale(d.data.count) / 2;
-                  } else {
-                      return 2;
-                  }
-
-              })
+              .attr("r", nodeSize)
               .style("fill-opacity", function (d) { return d._children ? 1 : 0; })
               .style("stroke", function (d) {
                   if (d.selected) {
@@ -377,6 +375,14 @@ function init_sequence_show(data) {
             if (d.children) {
                 d._children = d.children;
                 d.children = null;
+            }
+        }
+
+        function nodeSize(d) {
+            if (d.selected) {
+                return widthScale(d.data.count) / 2;
+            } else {
+                return 2;
             }
         }
 
