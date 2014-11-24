@@ -56,6 +56,9 @@ end
 # API stats
 gem "stathat"
 
+# test coverage
+gem "codeclimate-test-reporter", group: :test, require: nil
+
 group :development do
 	gem 'annotate' # annotate models with database info
   gem 'guard-minitest' # auto run tests
