@@ -34,12 +34,17 @@ class Api::ApiControllerTest < ActionController::TestCase
     assert assigns(:names)
   end
 
-  test "should get messages" do
-    get :messages
+  test "should get messages for old version" do
+    get :messages, version: "0"
     assert_response :success
-    skip
+    assert @response.body.present?
   end
 
+  test "should not get message for current version" do
+    get :messages, version: Rails.application.config.versions[:gem]
+    assert_response :success
+    assert @response.body.blank?
+  end
 
   test "should get pept2prot" do
     get :pept2prot, input: ["AAIER", "AAILER"], format: "json"

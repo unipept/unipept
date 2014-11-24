@@ -21,7 +21,7 @@ class SequencesController < ApplicationController
     end
 
     # quit if it doensn't contain any peptides
-    raise NoMatchesFoundError.new(sequence.sequence) if !sequence.nil? && sequence.peptides(equate_il).empty?
+    raise NoMatchesFoundError.new(sequence.sequence) if sequence.present? && sequence.peptides(equate_il).empty?
 
     # get the uniprot entries of every peptide
     # only used for the open in uniprot links
@@ -39,7 +39,7 @@ class SequencesController < ApplicationController
       # check if the protein contains the startsequence
       @entries.select!{|e| e.protein_contains?(seq, equate_il)}
 
-      raise NoMatchesFoundError.new(seq) if @entries.size == 0
+      raise NoMatchesFoundError.new(seq) if @entries.empty?
       @lineages = @entries.map(&:lineage).uniq.compact
     end
 
@@ -143,16 +143,16 @@ class SequencesController < ApplicationController
     @p = params
 
     # set search parameters
-    @equate_il = !params[:il].nil?
-    filter_duplicates = !params[:dupes].nil? && params[:dupes] == "1"
-    handle_missed = !params[:missed].nil? && params[:missed] == "1"
-    export = !params[:export].nil? && params[:export] == "1"
+    @equate_il = params[:il].present?
+    filter_duplicates = params[:dupes] == "1"
+    handle_missed = params[:missed] == "1"
+    export = params[:export] == "1"
     search_name = params[:search_name]
     query = params[:qs]
     csv_string = ""
 
     # quit if the query was empty
-    raise EmptyQueryError.new if query.nil? || query.empty?
+    raise EmptyQueryError.new if query.blank?
 
     # remove duplicates, filter shorts, substitute I by L, ...
     data = query.upcase.gsub(/#/,"")
@@ -200,7 +200,7 @@ class SequencesController < ApplicationController
 
         # jump the loop if we don't have any matches
         next if long_sequences.include? nil
-        next if long_sequences.size == 0
+        next if long_sequences.empty?
 
         # calculate possible uniprot entries
         temp_entries = long_sequences.map{|s| s.peptides(@equate_il).map(&:uniprot_entry).to_set}
@@ -210,7 +210,7 @@ class SequencesController < ApplicationController
         entries.select!{|e| e.protein_contains?(seq, @equate_il)}
 
         # skip if nothing left
-        next if entries.size == 0
+        next if entries.empty?
 
         seq_lins = entries.map(&:lineage).uniq.compact
         lca_t = Lineage.calculate_lca_taxon(seq_lins) #calculate the LCA

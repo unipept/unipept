@@ -104,7 +104,7 @@ function init_sequence_show(data) {
 
         var tree = d3.layout.tree()
             .nodeSize([2, 105])
-            .separation(function(a, b) {
+            .separation(function (a, b) {
                 var width = (nodeSize(a) + nodeSize(b)),
                 distance = width / 2 + 4;
                 return (a.parent === b.parent) ? distance : distance + 4;
@@ -245,14 +245,13 @@ function init_sequence_show(data) {
                   } else {
                       return "#aaa";
                   }
-
               });
 
             nodeEnter.append("text")
-              .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
+              .attr("x", function (d) { return d.children || d._children ? -10 : 10; })
               .attr("dy", ".35em")
               .attr("text-anchor", function (d) { return d.children || d._children ? "end" : "start"; })
-              .text(function(d) { return d.name; })
+              .text(function (d) { return d.name; })
               .style("font", "10px sans-serif")
               .style("fill-opacity", 1e-6);
 
@@ -295,7 +294,7 @@ function init_sequence_show(data) {
             nodeExit.select("text")
               .style("fill-opacity", 1e-6);
 
-            // Update the links…
+            // Update the links
             var link = svg.selectAll("path.link")
               .data(links, function (d) { return d.target.id; });
 
@@ -365,7 +364,7 @@ function init_sequence_show(data) {
                     d._children = null;
                 }
                 if (d.children) {
-                    d.children.forEach(function (c) {expand(c, i-1);});
+                    d.children.forEach(function (c) {expand(c, i - 1); });
                 }
             }
         }
@@ -418,9 +417,9 @@ function init_sequence_show(data) {
             function setSelected(d, value) {
                 d.selected = value;
                 if (d.children) {
-                    d.children.forEach(function (c) {setSelected(c, value);});
+                    d.children.forEach(function (c) {setSelected(c, value); });
                 } else if (d._children) {
-                    d._children.forEach(function (c) {setSelected(c, value);});
+                    d._children.forEach(function (c) {setSelected(c, value); });
                 }
             }
         }
