@@ -33,7 +33,7 @@ class Api::ApiController < ApplicationController
         @result[sequence] = Set.new
       end
 
-      ids = ids.uniq.reject(&:nil?).sort
+      ids = ids.uniq.compact.sort
       UniprotEntry.includes(:name,:ec_cross_references, :go_cross_references).
         where(id: ids).find_in_batches do |group|
 
@@ -68,7 +68,7 @@ class Api::ApiController < ApplicationController
       @result[sequence] = Set.new
     end
 
-    ids = ids.uniq.reject(&:nil?).sort
+    ids = ids.uniq.compact.sort
 
     @query.where(id: ids).find_in_batches do |group|
       group.each do |t|
@@ -98,7 +98,7 @@ class Api::ApiController < ApplicationController
       lookup[lca_il] << sequence
     end
 
-    ids = ids.uniq.reject(&:nil?).sort
+    ids = ids.uniq.compact.sort
 
     @query.where(id: ids).find_in_batches do |group|
       group.each do |t|
@@ -170,9 +170,9 @@ class Api::ApiController < ApplicationController
     @input.map! &:chomp
     @input_order = @input.dup
 
-    @equate_il = (!params[:equate_il].blank? && params[:equate_il] == 'true')
-    @extra_info = (!params[:extra].blank? && params[:extra] == 'true')
-    @names = (!params[:names].blank? && params[:names] == 'true')
+    @equate_il = params[:equate_il] == 'true'
+    @extra_info = params[:extra] == 'true'
+    @names = params[:names] == 'true'
 
     @input = @input.map {|s| s.gsub(/I/,'L') } if @equate_il
   end
