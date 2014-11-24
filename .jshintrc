@@ -35,7 +35,7 @@
   "lastsemic":    false,
   "laxbreak":     false,
   "laxcomma":     false,
-  "loopfunc":     false,
+  "loopfunc":     true,
   "multistr":     false,
   "onecase":      false,
   "proto":        false,
@@ -53,7 +53,7 @@
   "nomen":        false,
   "onevar":       false,
   "passfail":     false,
-  "white":        true,
+  "white":        false,
 
   "browser":      true,
   "jquery":       true
