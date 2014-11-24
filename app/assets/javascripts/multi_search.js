@@ -230,9 +230,9 @@ function init_multi(data, sequences, missed, equate_il) {
                         update(current.parent);
                     }
                 })
-                .on("mouseover", tooltipIn)
-                .on("mousemove", tooltipMove)
-                .on("mouseout", tooltipOut);
+                .on("mouseover", function (d) { tooltipIn(d, tooltip, true); })
+                .on("mousemove", function () { tooltipMove(tooltip); })
+                .on("mouseout", function (d) { tooltipOut(tooltip); });
 
             nodes.order()
                 .transition()
@@ -246,38 +246,6 @@ function init_multi(data, sequences, missed, equate_il) {
                 .style("top", function (d) { return d.y + "px"; })
                 .style("width", function (d) { return Math.max(0, d.dx - 1) + "px"; })
                 .style("height", function (d) { return Math.max(0, d.dy - 1) + "px"; });
-        }
-
-        // tooltip functions
-        function tooltipIn(d, i) {
-            tooltip.style("visibility", "visible")
-                .html("<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" +
-                    (!d.data.self_count ? "0" : d.data.self_count) +
-                    (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
-                    (!d.data.count ? "0" : d.data.count) +
-                    (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower");
-            if (d.children && d.children.length > 1) {
-                tooltip.html(tooltip.html() + "<br><img src='" + getPiechartUrl(d) + "'/>");
-            }
-        }
-        function tooltipMove() {
-            if (window.fullScreenApi.isFullScreen()) {
-                tooltip.style("top", (d3.event.clientY - 5) + "px").style("left", (d3.event.clientX + 15) + "px");
-            } else {
-                tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 15) + "px");
-            }
-        }
-        function tooltipOut(d, i) {
-            tooltip.style("visibility", "hidden");
-        }
-        function getPiechartUrl(d) {
-            var url = "http://chart.apis.google.com/chart?chs=300x225&cht=p&chd=t:";
-            url += d.children.map(function (i) { return i.data.count; }).join(",");
-            url += "&chdl=";
-            url += d.children.map(function (i) { return i.name + " (" + i.data.count + ")"; }).join("|");
-            url += "&chds=0,";
-            url +=  d3.max(d.children.map(function (i) { return i.data.count; }));
-            return url;
         }
     }
 
@@ -649,24 +617,16 @@ function init_multi(data, sequences, missed, equate_il) {
         }
 
         // tooltip functions
-        function tooltipIn(d, i) {
-            tooltip.html("<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" +
-                    (!d.data.self_count ? "0" : d.data.self_count) +
-                    (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
-                    (!d.data.count ? "0" : d.data.count) +
-                    (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower");
-            if (window.fullScreenApi.isFullScreen()) {
-                tooltip.style("top", (d3.event.clientY - 5) + "px").style("left", (d3.event.clientX + 15) + "px");
-            } else {
-                tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 15) + "px");
-            }
+        function tooltipIn(d) {
+            var pos = getTooltipPosition();
+            tooltip.html(getTooltipContent(d));
+            tooltip.style("top", pos.top).style("left", pos.left);
 
             tooltipTimer = setTimeout(function () {
                 tooltip.style("visibility", "visible");
             }, 1000);
-
         }
-        function tooltipOut(d, i) {
+        function tooltipOut(d) {
             clearTimeout(tooltipTimer);
             tooltip.style("visibility", "hidden");
         }
@@ -843,9 +803,13 @@ function init_multi(data, sequences, missed, equate_il) {
             .attr("fill-rule", "evenodd")                         // fill rule
             .style("fill", colour)                                // call function for colour
             .on("click", click)                                   // call function on click
-            .on("mouseover", tooltipIn)
-            .on("mousemove", tooltipMove)
-            .on("mouseout", tooltipOut);
+            .on("mouseover", function (d) {
+                if (d.depth < currentMaxLevel && d.name !== "empty") {
+                    tooltipIn(d, tooltip);
+                }
+            })
+            .on("mousemove", function () { tooltipMove(tooltip); })
+            .on("mouseout", function () { tooltipOut(tooltip); });
 
         // put labels on the nodes
         var text = vis.selectAll("text").data(nodes);
@@ -1031,30 +995,6 @@ function init_multi(data, sequences, missed, equate_il) {
             return colors[colorCounter];
         }
 
-        // tooltip functions
-        function tooltipIn(d, i) {
-            if (d.depth < currentMaxLevel && d.name !== "empty") {
-                tooltip.style("visibility", "visible")
-                    .html("<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" +
-                        (!d.data.self_count ? "0" : d.data.self_count) +
-                        (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
-                        (!d.data.count ? "0" : d.data.count) +
-                        (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower");
-                // vis.selectAll("#path-" + i).transition().duration(200).style("fill-opacity","0.9");
-            }
-        }
-        function tooltipMove() {
-            if (window.fullScreenApi.isFullScreen()) {
-                tooltip.style("top", (d3.event.clientY - 5) + "px").style("left", (d3.event.clientX + 15) + "px");
-            } else {
-                tooltip.style("top", (d3.event.pageY - 5) + "px").style("left", (d3.event.pageX + 15) + "px");
-            }
-        }
-        function tooltipOut(d, i) {
-            tooltip.style("visibility", "hidden");
-            // vis.selectAll("#path-" + i).transition().duration(200).style("fill-opacity","1");
-        }
-
         function addEmptyChildren(kids, count) {
             var i;
             for (i = 0; i < kids.length; i++) {
@@ -1067,6 +1007,49 @@ function init_multi(data, sequences, missed, equate_il) {
             }
             return kids;
         }
+    }
+
+    // tooltip functions
+    function tooltipIn(d, tt, pie) {
+        tt.style("visibility", "visible")
+            .html(getTooltipContent(d));
+        if (pie && d.children && d.children.length > 1) {
+            tt.html(tt.html() + "<br><img src='" + getPiechartUrl(d) + "'/>");
+        }
+    }
+    function tooltipMove(tt) {
+        var pos = getTooltipPosition();
+        tt.style("top", pos.top).style("left", pos.left);
+    }
+    function tooltipOut(tt) {
+        tt.style("visibility", "hidden");
+    }
+    function getTooltipContent(d) {
+        return "<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" +
+            (!d.data.self_count ? "0" : d.data.self_count) +
+            (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
+            (!d.data.count ? "0" : d.data.count) +
+            (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower";
+    }
+    function getPiechartUrl(d) {
+        var url = "http://chart.apis.google.com/chart?chs=300x225&cht=p&chd=t:";
+        url += d.children.map(function (i) { return i.data.count; }).join(",");
+        url += "&chdl=";
+        url += d.children.map(function (i) { return i.name + " (" + i.data.count + ")"; }).join("|");
+        url += "&chds=0,";
+        url +=  d3.max(d.children.map(function (i) { return i.data.count; }));
+        return url;
+    }
+    function getTooltipPosition() {
+        var pos = {};
+        if (window.fullScreenApi.isFullScreen()) {
+            pos.top = (d3.event.clientY - 5) + "px";
+            pos.left = (d3.event.clientX + 15) + "px";
+        } else {
+            pos.top = (d3.event.pageY - 5) + "px";
+            pos.left = (d3.event.pageX + 15) + "px";
+        }
+        return pos;
     }
 
     // Enters the given string in the search box

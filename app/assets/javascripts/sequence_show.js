@@ -417,9 +417,9 @@ function init_sequence_show(data) {
             function setSelected(d, value) {
                 d.selected = value;
                 if (d.children) {
-                    d.children.forEach(function (c) {setSelected(c, value);});
+                    d.children.forEach(function (c) {setSelected(c, value); });
                 } else if (d._children) {
-                    d._children.forEach(function (c) {setSelected(c, value);});
+                    d._children.forEach(function (c) {setSelected(c, value); });
                 }
             }
         }
