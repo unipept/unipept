@@ -235,7 +235,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
         addGenome(id, name, version, ids);
         dataQueue.shift();
 
-        if (dataQueue.length == 0) {
+        if (dataQueue.length === 0) {
             resetForm();
         } else {
             handleAddMyGenome();
@@ -328,7 +328,8 @@ var constructMyGenomes = function constructMyGenomes(args) {
     function redrawTable() {
         var i,
             g,
-            row;
+            row,
+            name;
 
         $myGenomesTable.empty();
         if (genomeList.length === 0) {
@@ -354,13 +355,13 @@ var constructMyGenomes = function constructMyGenomes(args) {
             $(".edit-genome-name").click(function () {
                 var $row = $(this).parents("tr");
                 if ($row.hasClass("edit")) {
-                    var name = $row.find(".name input").val();
+                    name = $row.find(".name input").val();
                     $row.find(".name").html(name);
                     $(this).find(".glyphicon").removeClass("glyphicon-ok").addClass("glyphicon-pencil");
                     $row.removeClass("edit");
                     editGenomeName($row.data("genomeid"), name);
                 } else {
-                    var name = $row.find(".name").text();
+                    name = $row.find(".name").text();
                     $row.find(".name").html("<input type='text' class='form-control input-xs'></input>");
                     $(this).find(".glyphicon").removeClass("glyphicon-pencil").addClass("glyphicon-ok");
                     $row.find(".name input").focus().val(name);
@@ -450,13 +451,13 @@ var constructMyGenomes = function constructMyGenomes(args) {
 
             e.target.transaction.onerror = indexedDBStore.onerror;
 
-            if(db.objectStoreNames.contains("metadata")) {
+            if (db.objectStoreNames.contains("metadata")) {
                 db.deleteObjectStore("metadata");
             }
-            if(db.objectStoreNames.contains("peptideLists")) {
+            if (db.objectStoreNames.contains("peptideLists")) {
                 db.deleteObjectStore("peptideLists");
             }
-            if(db.objectStoreNames.contains("files")) {
+            if (db.objectStoreNames.contains("files")) {
                 db.deleteObjectStore("files");
             }
 
@@ -465,7 +466,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
             db.createObjectStore("files", {keyPath: "id"});
         };
 
-        request.onsuccess = function(e) {
+        request.onsuccess = function (e) {
             indexedDBStore.db = e.target.result;
             indexedDBStore.loadMyGenomes();
         };
@@ -487,10 +488,10 @@ var constructMyGenomes = function constructMyGenomes(args) {
         var keyRange = IDBKeyRange.lowerBound(0);
         var cursorRequest = store.openCursor(keyRange);
 
-        cursorRequest.onsuccess = function(e) {
+        cursorRequest.onsuccess = function (e) {
             var result = e.target.result;
             // are we done yet?
-            if(!!result == false) {
+            if (!!result == false) {
                 redrawTable();
                 return;
             }
@@ -501,9 +502,9 @@ var constructMyGenomes = function constructMyGenomes(args) {
             // process if done
             if (result.value.version !== version) {
                 fileRequest = files.get(result.value.id);
-                fileRequest.onsuccess = function(e) {
+                fileRequest.onsuccess = function (e) {
                     sendToWorker("processFile", {file : e.target.result.file, name : result.value.name, id : result.value.id});
-                }
+                };
                 fileRequest.onerror = indexedDBStore.onerror;
             }
 
@@ -593,18 +594,18 @@ var constructMyGenomes = function constructMyGenomes(args) {
         var peptideLists = trans.objectStore("peptideLists");
 
         var peptideListRequest = peptideLists.get(id);
-        peptideListRequest.onsuccess = function(e) {
+        peptideListRequest.onsuccess = function (e) {
             callback.call(this, e.target.result.peptides);
-        }
+        };
         peptideListRequest.onerror = indexedDBStore.onerror;
-    }
+    };
 
     /**
      * Handles an indexedDB error
      */
     indexedDBStore.onerror = function onerror(e) {
         console.log(e);
-    }
+    };
 
     /*************** localstorage methods ************/
 
@@ -681,7 +682,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
     localStorageStore.getPeptideList = function getPeptideList(id, callback) {
         var ids = JSON.parse(localStorage["genome_" + id]);
         callback.call(this, ids);
-    }
+    };
 
     /*************** Public methods ***************/
 

@@ -198,7 +198,7 @@ class SequencesControllerTest < ActionController::TestCase
   end
 
   test "should get multi_search with il" do
-    post :multi_search, qs: "AALER\nAAILER\nMISSES", search_name: "", il: ""
+    post :multi_search, qs: "AALER\nAAILER\nMISSES", search_name: "", il: 1
     assert_response :success
     assert_template :multi_search
     assert_equal "Metaproteomics analysis result", assigns(:title)

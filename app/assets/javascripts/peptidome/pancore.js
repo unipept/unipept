@@ -183,8 +183,7 @@ var constructPancore = function constructPancore(args) {
         $("#buttons-pancore").prepend("<button id='save-data' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-download'></span> Download data</button>");
         $("#save-data").click(function clickSaveData() {
             var activeObject,
-                tracking,
-                filename;
+                tracking;
             if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
                 activeObject = graph;
                 tracking = "graph";
@@ -361,7 +360,7 @@ var constructPancore = function constructPancore(args) {
             $("#add_species_peptidome").button('reset');
             table.setEnabled(true);
 
-            setTimeout(function () { sendToWorker("getUniqueSequences", {order : table.getOrder(), force : false });}, 1000);
+            setTimeout(function () { sendToWorker("getUniqueSequences", {order : table.getOrder(), force : false }); }, 1000);
         }
     }
 
@@ -466,23 +465,23 @@ var constructPancore = function constructPancore(args) {
      */
     that.requestSimilarityCalculation = function requestSimilarityCalculation() {
         sendToWorker("calculateSimilarity");
-    }
+    };
 
     /**
      * Requests the clustering of the data
      */
     that.requestClustering = function requestClustering() {
         sendToWorker("clusterMatrix");
-    }
+    };
 
     /**
      * Send the autoSort command to the worker
      *
      * @param <String> type The type of sort we want to run
      */
-    that.autoSort = function autoSort(type){
+    that.autoSort = function autoSort(type) {
         sendToWorker("autoSort", {type : type});
-    }
+    };
 
     /**
      * Abbreviates an organism name
@@ -495,7 +494,7 @@ var constructPancore = function constructPancore(args) {
             i;
 
         // Don't abbreviate single words
-        if (split.size == 1) {
+        if (split.size === 1) {
             return name;
         }
 
@@ -513,7 +512,7 @@ var constructPancore = function constructPancore(args) {
             split[0] = "Ca.";
         } else {
             // Take first letter of first word
-            split[0] = split[0].substr(0,1) + ".";
+            split[0] = split[0].substr(0, 1) + ".";
         }
 
         // Abbreviate common words
@@ -541,7 +540,7 @@ var constructPancore = function constructPancore(args) {
         }
 
         return split.join(" ");
-    }
+    };
 
     // initialize the object
     init();

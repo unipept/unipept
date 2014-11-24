@@ -6,6 +6,9 @@ require "minitest/pride"
 require 'capybara/rails'
 require 'capybara/poltergeist'
 
+require "codeclimate-test-reporter"
+CodeClimate::TestReporter.start
+
 #Capybara.default_driver = :poltergeist
 #Capybara.javascript_driver = :poltergeist
 #require 'webmock/minitest'

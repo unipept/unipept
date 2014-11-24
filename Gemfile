@@ -28,7 +28,7 @@ gem 'therubyracer'
 gem 'oj'
 
 # imagemagick bindings
-gem "rmagick"
+gem "rmagick", require: false
 
 # do HTTP requests
 gem "httparty"
@@ -55,6 +55,9 @@ end
 
 # API stats
 gem "stathat"
+
+# test coverage
+gem "codeclimate-test-reporter", group: :test, require: nil
 
 group :development do
 	gem 'annotate' # annotate models with database info
