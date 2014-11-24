@@ -28,7 +28,7 @@ gem 'therubyracer'
 gem 'oj'
 
 # imagemagick bindings
-gem "rmagick"
+gem "rmagick", require: false
 
 # do HTTP requests
 gem "httparty"
