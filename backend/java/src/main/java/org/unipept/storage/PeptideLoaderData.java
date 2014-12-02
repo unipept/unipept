@@ -75,8 +75,8 @@ public class PeptideLoaderData implements UniprotObserver {
         try {
             EnvironmentConfig envConfig = new EnvironmentConfig();
             envConfig.setAllowCreate(true);
-            envConfig.setCacheSize(500000000);
-            Environment env = new Environment(new File(System.getenv("VSC_SCRATCH_CLUSTER") + "berkeleydb/"), envConfig);
+            envConfig.setCacheSize(100000000000L);
+            Environment env = new Environment(new File(System.getenv("VSC_SCRATCH_CLUSTER") + "/berkeleydb/"), envConfig);
             DatabaseConfig dbConfig = new DatabaseConfig();
             dbConfig.setAllowCreate(true);
             //dbConfig.setDeferredWrite(true);

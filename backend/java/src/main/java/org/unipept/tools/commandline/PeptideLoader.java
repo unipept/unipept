@@ -127,9 +127,9 @@ public class PeptideLoader {
             ProgressWriter.updateProgress("Build database - load uniprot", 70);
 
             // process the tremble input file
-            //ProgressWriter.addProgress("TrEMBL", 22660469);
-            //loader.processFile(args[1], false);
-            //ProgressWriter.removeProgress("TrEMBL");
+            ProgressWriter.addProgress("TrEMBL", 22660469);
+            loader.processFile(args[1], false);
+            ProgressWriter.removeProgress("TrEMBL");
             ProgressWriter.updateProgress("Build database - load uniprot", 90);
 
             loader.addLineage();
