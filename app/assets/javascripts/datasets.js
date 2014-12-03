@@ -20,15 +20,7 @@ function initDatasets() {
         logToGoogle("Multi Peptide", "Export");
     });
 
-    $("#qs").on("paste", function () {
-        var lines = $("#qs").val().split(/\n/).length;
-        if (lines > 10000) {
-            $(".multisearch-warning-amount").text(lines);
-            $("#multisearch-warning").show("fast");
-        } else {
-            $("#multisearch-warning").hide("fast");
-        }
-    })
+    $("#qs").on("paste", datasetLoader.checkDatasetSize);
 
     // load a dataset from the local database
     $(".load-dataset").click(function () {
@@ -88,6 +80,19 @@ function initPreload(type, id) {
 function constructDatasetLoader() {
     var that = {};
 
+    /**
+     * Checks if the number of peptides in the current dataset isn't too high
+     */
+    that.checkDatasetSize = function checkDatasetSize() {
+        var lines = $("#qs").val().split(/\n/).length;
+        if (lines > 10000) {
+            $(".multisearch-warning-amount").text(lines);
+            $("#multisearch-warning").show("fast");
+        } else {
+            $("#multisearch-warning").hide("fast");
+        }
+    };
+
     that.loadDataset = function loadDataset(url, name, button) {
         // expand the search options and prepare the form
         $("#more_options a").click();
@@ -107,6 +112,7 @@ function constructDatasetLoader() {
                     // fill in the data
                     $("#search_name").val(name);
                     $("#qs").val(data);
+                    that.checkDatasetSize();
 
                     // highlight what happend to the user
                     $('html, body').animate({
