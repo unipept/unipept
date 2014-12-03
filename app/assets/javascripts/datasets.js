@@ -20,7 +20,9 @@ function initDatasets() {
         logToGoogle("Multi Peptide", "Export");
     });
 
-    $("#qs").on("paste", datasetLoader.checkDatasetSize);
+    $("#qs").on("paste", function () {
+        setTimeout(datasetLoader.checkDatasetSize, 0);
+    });
 
     // load a dataset from the local database
     $(".load-dataset").click(function () {
