@@ -1,4 +1,6 @@
 function initDatasets() {
+    var datasetLoader = constructDatasetLoader();
+
     // add progress bar when submitting form
     $("#search-multi-form").click(function () {
         $("#search_button").hide();
@@ -28,7 +30,7 @@ function initDatasets() {
         logToGoogle("Datasets", "Load", "Database - " + name);
 
         // load the datasets
-        loadDataset(url, name, $(this));
+        datasetLoader.loadDataset(url, name, $(this));
         return false;
     });
 
@@ -49,11 +51,34 @@ function initDatasets() {
         logToGoogle("Datasets", "Load", "Pride - " + name);
 
         // load the datasets
-        loadDataset(url, name, $(this));
+        datasetLoader.loadDataset(url, name, $(this));
         return false;
     });
+}
 
-    function loadDataset(url, name, button) {
+function initPreload(type, id) {
+    // show full form
+    $("#more_options").hide();
+
+    var datasetLoader = constructDatasetLoader(),
+        url
+        name;
+
+    if (type === "database") {
+        url = "/dataset_items/" + id;
+        name = "Dataset " + id;
+    } else {
+        url = "/pride/" + id;
+        name = "Pride experiment " + id;
+    }
+
+    datasetLoader.loadDataset(url, name);
+}
+
+function constructDatasetLoader() {
+    var that = {};
+
+    that.loadDataset = function loadDataset(url, name, button) {
         // expand the search options and prepare the form
         $("#more_options a").click();
         $("#qs").val("Please wait while we load the dataset...");
@@ -68,10 +93,6 @@ function initDatasets() {
                     // track the load times
                     var loadTime = new Date().getTime() - startTimer;
                     logToGoogle("Datasets", "Loaded", name, loadTime);
-
-                    // enable the form elements
-                    $("#qs").attr('disabled', false);
-                    button.button('reset');
 
                     // fill in the data
                     $("#search_name").val(name);
@@ -92,8 +113,6 @@ function initDatasets() {
 
                     // reset the form elements
                     $("#qs").val("");
-                    $("#qs").attr('disabled', false);
-                    button.button('reset');
 
                     // highlight what pappend to the user
                     error(textStatus, "Something went wrong while loading the datasets.");
@@ -101,63 +120,17 @@ function initDatasets() {
                         scrollTop: $("#messages").offset().top
                     }, 1000);
                 }
-            );
-    }
-}
-
-function initPreload(type, id) {
-    // show full form
-    $("#more_options").hide();
-
-    var url, name;
-
-    if (type === "database") {
-        url = "/dataset_items/" + id;
-        name = "Dataset " + id;
-    } else {
-        url = "/pride/" + id;
-        name = "Pride experiment " + id;
-    }
-
-    preloadDataset(url, name);
-
-    function preloadDataset(url, name) {
-        // prepare the form
-        $("#qs").val("Please wait while we load the dataset...");
-        $("#qs").attr('disabled', 'disabled');
-
-        var startTimer = new Date().getTime();
-
-        $.get(url)
-            .done(
-                function (data) {
-                    // track the load times
-                    var loadTime = new Date().getTime() - startTimer;
-                    logToGoogle("Datasets", "Loaded", name, loadTime);
-
+            )
+            .always(
+                function () {
                     // enable the form elements
                     $("#qs").attr('disabled', false);
-
-                    // fill in the data
-                    $("#search_name").val(name);
-                    $("#qs").val(data);
-
-                    // highlight what happend to the user
-                    highlight("#qs");
-                    highlight("#search_name");
-                }
-            )
-            .fail( // something went wrong
-                function (jqXHR, textStatus, errorType) {
-                    // track is something is wrong
-                    logToGoogle("Datasets", "Failed", name, textStatus);
-
-                    // reset the form elements
-                    $("#qs").val("");
-                    $("#qs").attr('disabled', false);
-
-                    error(textStatus, "Something went wrong while loading the datasets.");
+                    if (button) {
+                        button.button('reset');
+                    }
                 }
             );
-    }
+    };
+
+    return that;
 }
