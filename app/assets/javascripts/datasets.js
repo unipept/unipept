@@ -20,6 +20,16 @@ function initDatasets() {
         logToGoogle("Multi Peptide", "Export");
     });
 
+    $("#qs").on("paste", function () {
+        var lines = $("#qs").val().split(/\n/).length;
+        if (lines > 10000) {
+            $(".multisearch-warning-amount").text(lines);
+            $("#multisearch-warning").show("fast");
+        } else {
+            $("#multisearch-warning").hide("fast");
+        }
+    })
+
     // load a dataset from the local database
     $(".load-dataset").click(function () {
         $(this).button('loading');
