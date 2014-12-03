@@ -1,3 +1,6 @@
+require 'coveralls'
+Coveralls.wear!
+
 ENV["RAILS_ENV"] = "test"
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
@@ -5,12 +8,6 @@ require "minitest/pride"
 
 require 'capybara/rails'
 require 'capybara/poltergeist'
-
-require 'coveralls'
-Coveralls.wear!
-
-require "codeclimate-test-reporter"
-CodeClimate::TestReporter.start
 
 #Capybara.default_driver = :poltergeist
 #Capybara.javascript_driver = :poltergeist

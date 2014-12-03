@@ -1,7 +1,6 @@
 language: ruby
 rvm:
     - 2.1.0
-env: CODECLIMATE_REPO_TOKEN=6bb7a785e027916f348df84e6fed1cbac5be37e5f795f0aaad7a6feb07669a4a
 
 install: bundle install --without development
 
