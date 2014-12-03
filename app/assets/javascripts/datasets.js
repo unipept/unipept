@@ -28,13 +28,13 @@ function initDatasets() {
     $(".load-dataset").click(function () {
         $(this).button('loading');
         // set the vars
-        var url = $(this).parent().find("select").val(),
+        var id = $(this).parent().find("select").val(),
             name = $(this).parent().find("select option:selected").text();
 
         logToGoogle("Datasets", "Load", "Database - " + name);
 
         // load the datasets
-        datasetLoader.loadDataset(url, name, $(this));
+        datasetLoader.loadDataset("internal", id, name, $(this));
         return false;
     });
 
@@ -42,7 +42,6 @@ function initDatasets() {
     $(".load-pride").click(function () {
         // set the vars
         var experiment = $("#pride_exp_id").val(),
-            url = "/pride/" + experiment,
             name = "PRIDE experiment " + experiment;
 
         if (experiment === "") {
@@ -55,7 +54,7 @@ function initDatasets() {
         logToGoogle("Datasets", "Load", "Pride - " + name);
 
         // load the datasets
-        datasetLoader.loadDataset(url, name, $(this));
+        datasetLoader.loadDataset("pride", experiment, name, $(this));
         return false;
     });
 }
@@ -64,23 +63,36 @@ function initPreload(type, id) {
     // show full form
     $("#more_options").hide();
 
-    var datasetLoader = constructDatasetLoader(),
-        url
-        name;
+    var datasetLoader = constructDatasetLoader();
 
     if (type === "database") {
-        url = "/dataset_items/" + id;
-        name = "Dataset " + id;
+        datasetLoader.loadDataset("internal", id, "Dataset " + id);
     } else {
-        url = "/pride/" + id;
-        name = "Pride experiment " + id;
+        datasetLoader.loadDataset("pride", id, "Pride experiment " + id);
     }
-
-    datasetLoader.loadDataset(url, name);
 }
 
 function constructDatasetLoader() {
     var that = {};
+
+    /************** private methods *************/
+
+    function loadInternalDataset(id, done, fail, always) {
+        $.get("/dataset_items/" + id)
+            .done(done)
+            .fail(fail)
+            .always(always);
+    }
+
+    function loadPrideDataset(id, done, fail, always) {
+        $.get("/pride/" + id)
+            .done(done)
+            .fail(fail)
+            .always(always);
+    }
+
+
+    /************** public methods *************/
 
     /**
      * Checks if the number of peptides in the current dataset isn't too high
@@ -95,7 +107,7 @@ function constructDatasetLoader() {
         }
     };
 
-    that.loadDataset = function loadDataset(url, name, button) {
+    that.loadDataset = function loadDataset(type, id, name, button) {
         // expand the search options and prepare the form
         $("#more_options a").click();
         $("#qs").val("Please wait while we load the dataset...");
@@ -103,51 +115,51 @@ function constructDatasetLoader() {
 
         var startTimer = new Date().getTime();
 
-        // request the actual data
-        $.get(url)
-            .done( // all goes well
-                function (data) {
-                    // track the load times
-                    var loadTime = new Date().getTime() - startTimer;
-                    logToGoogle("Datasets", "Loaded", name, loadTime);
+        var done = function (data) {
+            // track the load times
+            var loadTime = new Date().getTime() - startTimer;
+            logToGoogle("Datasets", "Loaded", name, loadTime);
 
-                    // fill in the data
-                    $("#search_name").val(name);
-                    $("#qs").val(data);
-                    that.checkDatasetSize();
+            // fill in the data
+            $("#search_name").val(name);
+            $("#qs").val(data);
+            that.checkDatasetSize();
 
-                    // highlight what happend to the user
-                    $('html, body').animate({
-                        scrollTop: $("#search_elements").parent().parent().offset().top
-                    }, 1000);
-                    highlight("#qs");
-                    highlight("#search_name");
-                }
-            )
-            .fail( // something went wrong
-                function (jqXHR, textStatus, errorType) {
-                    // track is something goes wrong
-                    logToGoogle("Datasets", "Failed", name, textStatus);
+            // highlight what happend to the user
+            $('html, body').animate({
+                scrollTop: $("#search_elements").parent().parent().offset().top
+            }, 1000);
+            highlight("#qs");
+            highlight("#search_name");
+        };
 
-                    // reset the form elements
-                    $("#qs").val("");
+        var fail = function (jqXHR, textStatus, errorType) {
+            // track is something goes wrong
+            logToGoogle("Datasets", "Failed", name, textStatus);
 
-                    // highlight what pappend to the user
-                    error(textStatus, "Something went wrong while loading the datasets.");
-                    $('html, body').animate({
-                        scrollTop: $("#messages").offset().top
-                    }, 1000);
-                }
-            )
-            .always(
-                function () {
-                    // enable the form elements
-                    $("#qs").attr('disabled', false);
-                    if (button) {
-                        button.button('reset');
-                    }
-                }
-            );
+            // reset the form elements
+            $("#qs").val("");
+
+            // highlight what pappend to the user
+            error(textStatus, "Something went wrong while loading the datasets.");
+            $('html, body').animate({
+                scrollTop: $("#messages").offset().top
+            }, 1000);
+        };
+
+        var always = function () {
+            // enable the form elements
+            $("#qs").attr('disabled', false);
+            if (button) {
+                button.button('reset');
+            }
+        };
+
+        if (type === "internal") {
+            loadInternalDataset(id, done, fail, always);
+        } else {
+            loadPrideDataset(id, done, fail, always);
+        }
     };
 
     return that;
