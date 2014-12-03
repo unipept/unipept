@@ -30,6 +30,9 @@ gem 'oj'
 # imagemagick bindings
 gem "rmagick", require: false
 
+# coveralls
+gem 'coveralls', require: false
+
 # do HTTP requests
 gem "httparty"
 

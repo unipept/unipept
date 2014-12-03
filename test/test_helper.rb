@@ -6,6 +6,9 @@ require "minitest/pride"
 require 'capybara/rails'
 require 'capybara/poltergeist'
 
+require 'coveralls'
+Coveralls.wear!
+
 require "codeclimate-test-reporter"
 CodeClimate::TestReporter.start
 
