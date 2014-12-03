@@ -100,9 +100,6 @@ GEM
       minitest (>= 3.0)
     hike (1.2.3)
     hitimes (1.2.2)
-    httparty (0.13.3)
-      json (~> 1.8)
-      multi_xml (>= 0.5.2)
     i18n (0.6.11)
     jquery-rails (3.1.2)
       railties (>= 3.0, < 5.0)
@@ -129,7 +126,6 @@ GEM
     mini_portile (0.6.1)
     minitest (5.4.2)
     multi_json (1.10.1)
-    multi_xml (0.5.5)
     mysql2 (0.3.16)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
@@ -235,7 +231,6 @@ DEPENDENCIES
   devise_cas_authenticatable
   exception_notification!
   guard-minitest
-  httparty
   jquery-rails
   jquery-ui-rails (= 4.0.2)
   less-rails
