@@ -85,10 +85,43 @@ function constructDatasetLoader() {
     }
 
     function loadPrideDataset(id, done, fail, always) {
-        $.get("/pride/" + id)
-            .done(done)
-            .fail(fail)
-            .always(always);
+        var batchSize = 1000,
+            page = 0,
+            peptides = [],
+            datasetSize;
+
+        $("#pride-progress").show("fast");
+        $("#pride-progress .progress-bar").css("width", "0%");
+        $.get("http://www.ebi.ac.uk:80/pride/ws/archive/peptide/count/assay/" + id)
+            .done(function (data) {
+                datasetSize = data;
+                loadNextBatch();
+            })
+            .fail(prideFail);
+
+            function loadNextBatch() {
+                $("#pride-progress .progress-bar").css("width", (100 * page * batchSize) / datasetSize + "%");
+                if (page * batchSize > datasetSize) { // we're done
+                    $("#pride-progress").hide("fast");
+                    done.call(this, peptides.join("\n"));
+                    always.call(this);
+                } else { // load next batch
+                    $.get("http://www.ebi.ac.uk:80/pride/ws/archive/peptide/list/assay/" + id + "?show=" + batchSize + "&page=" + page)
+                        .done(function (data) {
+                            page++;
+                            loadNextBatch();
+                            data = data.list.map(function (d) {return d.sequence; });
+                            peptides = peptides.concat(data);
+                        })
+                        .fail(prideFail);
+                }
+            }
+
+            function prideFail() {
+                $("#pride-progress").hide("fast");
+                fail.call(this);
+                always.call(this);
+            }
     }
 
 
