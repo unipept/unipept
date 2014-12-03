@@ -42,10 +42,10 @@ function initDatasets() {
     $(".load-pride").click(function () {
         // set the vars
         var experiment = $("#pride_exp_id").val(),
-            name = "PRIDE experiment " + experiment;
+            name = "PRIDE assay " + experiment;
 
         if (experiment === "") {
-            info("Please enter a PRIDE id");
+            info("Please enter a PRIDE assay id");
             return false;
         }
 
@@ -68,7 +68,7 @@ function initPreload(type, id) {
     if (type === "database") {
         datasetLoader.loadDataset("internal", id, "Dataset " + id);
     } else {
-        datasetLoader.loadDataset("pride", id, "Pride experiment " + id);
+        datasetLoader.loadDataset("pride", id, "Pride assay " + id);
     }
 }
 
@@ -108,10 +108,10 @@ function constructDatasetLoader() {
                 } else { // load next batch
                     $.get("http://www.ebi.ac.uk:80/pride/ws/archive/peptide/list/assay/" + id + "?show=" + batchSize + "&page=" + page)
                         .done(function (data) {
-                            page++;
-                            loadNextBatch();
                             data = data.list.map(function (d) {return d.sequence; });
                             peptides = peptides.concat(data);
+                            page++;
+                            loadNextBatch();
                         })
                         .fail(prideFail);
                 }
