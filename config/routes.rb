@@ -51,9 +51,6 @@ UnipeptWeb::Application.routes.draw do
   # downloads a file
   post "/download", :to => "download#download"
 
-  # load pride dataset from webservice
-  get '/pride/:id', :to => 'pride#load'
-
   # API namespace
   namespace :api, path: 'api/v1' do
     match 'pept2taxa' => "api#pept2taxa", via: [:get, :post]
