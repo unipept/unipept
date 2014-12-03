@@ -1,5 +1,7 @@
-# Unipept [![Build Status](https://travis-ci.org/unipept/unipept.svg?branch=master)](https://travis-ci.org/unipept/unipept)
+# Unipept
 
+[![Build Status](https://travis-ci.org/unipept/unipept.svg?branch=master)](https://travis-ci.org/unipept/unipept)
+[![Coverage Status](https://img.shields.io/coveralls/unipept/unipept.svg)](https://coveralls.io/r/unipept/unipept)
 [![Code Climate](https://codeclimate.com/github/unipept/unipept/badges/gpa.svg)](https://codeclimate.com/github/unipept/unipept)
 
 The [Unipept web application](http://unipept.ugent.be) supports biodiversity analysis of large and complex metaproteome samples and the analysis of peptidomes.
