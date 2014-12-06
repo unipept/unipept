@@ -62,6 +62,7 @@ public class PeptideLoaderData implements UniprotObserver {
     private CSVWriter goCrossReferences;
     private CSVWriter ecCrossReferences;
     private CSVWriter lineages;
+    private CSVWriter sequences;
 
     /**
      * Creates a new data object
@@ -75,7 +76,8 @@ public class PeptideLoaderData implements UniprotObserver {
         try {
             EnvironmentConfig envConfig = new EnvironmentConfig();
             envConfig.setAllowCreate(true);
-            envConfig.setCacheSize(100000000000L);
+            envConfig.setCacheSize(500000000);
+            //envConfig.setCacheSize(100000000000L);
             Environment env = new Environment(new File(System.getenv("VSC_SCRATCH_CLUSTER") + "/berkeleydb/"), envConfig);
             DatabaseConfig dbConfig = new DatabaseConfig();
             dbConfig.setAllowCreate(true);
@@ -99,6 +101,7 @@ public class PeptideLoaderData implements UniprotObserver {
             goCrossReferences = new CSVWriter("go_cross_references.tsv", "uniprot_entry_id", "go_id");
             ecCrossReferences = new CSVWriter("ec_cross_references.tsv", "uniprot_entry_id", "ec_id");
             lineages = new CSVWriter("lineages.tsv", ranks);
+            sequences = new CSVWriter("sequences.tsv", "sequence");
         } catch(IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + " Error creating tsv files");
@@ -204,8 +207,16 @@ public class PeptideLoaderData implements UniprotObserver {
         if(sequenceIds.containsKey(sequence)) {
             return sequenceIds.get(sequence);
         } else {
-            sequenceIds.put(sequence, sequenceIds.size() + 1);
-            return sequenceIds.size();
+            int index = 0;
+            try {
+                index = sequences.write(sequence);
+            } catch(IOException e) {
+                System.err.println(new Timestamp(System.currentTimeMillis())
+                        + " Error writing to CSV.");
+                e.printStackTrace();
+            }
+            sequenceIds.put(sequence, index);
+            return index;
         }
         //return sequenceIds.putIfAbsent(sequence, sequenceIds.size() + 1);
     }
@@ -330,26 +341,23 @@ public class PeptideLoaderData implements UniprotObserver {
             String[] lineage = new String[ranks.length];
             lineage[0] = Integer.toString(taxonId); // 0 is taxon_id
 
-            if(taxons.get(taxonId).validTaxon) {
-                // Valid lineage.
-
-                // Iterate over ancestors, starting with itself.
-                int parentId = taxonId;
-                while(parentId != 1) {
-                    if(0 <= parentId && parentId < taxons.size() && taxons.get(parentId) != null) {
-                        String rank = taxons.get(parentId).rank;
-                        if(rank != null && !rank.equals("no rank")) {
-                            rank = rank.replace(' ', '_');
-                            lineage[rankIndices.get(rank)] = Integer.toString((taxons.get(parentId).validTaxon ? 1 : -1) * parentId);
-                        }
-                    }
-                    parentId = taxons.get(parentId).parentId;
-                }
-
-
-            } else {
+            if(!taxons.get(taxonId).validTaxon) {
                 // It's an invalid lineage. Put it in the lineages as invalid.
                 for(int i = 1; i < ranks.length; i++) lineage[i] = "-1";
+            }
+
+            // Iterate over ancestors, starting with itself.
+            int parentId = taxonId;
+            while(parentId != 1) {
+                if(taxonId != parentId) addLineage(parentId);
+                if(0 <= parentId && parentId < taxons.size() && taxons.get(parentId) != null) {
+                    String rank = taxons.get(parentId).rank;
+                    if(rank != null && !rank.equals("no rank")) {
+                        rank = rank.replace(' ', '_');
+                        lineage[rankIndices.get(rank)] = Integer.toString((taxons.get(parentId).validTaxon ? 1 : -1) * parentId);
+                    }
+                }
+                parentId = taxons.get(parentId).parentId;
             }
 
             try {

@@ -38,7 +38,7 @@ public class LCACalculator {
                     int key = Integer.parseInt(elements[0]);
                     int[] lineage = Arrays.stream(elements)
                             .skip(1)// skip taxonId
-                            .mapToInt(s -> s.equals("NULL") ? 0 : Integer.parseInt(s))
+                            .mapToInt(s -> s.toUpperCase().equals("NULL") ? 0 : Integer.parseInt(s))
                             .toArray();
 
                     taxonomyMap.put(key, lineage);

@@ -15,12 +15,12 @@ echo "Build database - compile#0" > public/progress
 #./backend/scripts/loadTaxon.sh
 
 # Invalidate taxa
-echo "Build database - invalidate taxa#45" > public/progress
-./backend/scripts/invalidateTaxon.sh
+#echo "Build database - invalidate taxa#45" > public/progress
+#./backend/scripts/invalidateTaxon.sh
 
 # Load Uniprot
 echo "Build database - load uniprot#50" > public/progress
 touch empty
-backend/java/bin/peptide_loader ../data/uniprot/uniprot_sprot.xml.gz empty #../data/uniprot/uniprot_trembl.xml.gz
+VSC_SCRATCH_CLUSTER=./ backend/java/bin/peptide_loader ../data/uniprot/uniprot_sprot.xml.gz empty #../data/uniprot/uniprot_trembl.xml.gz
 
 rm public/progress
