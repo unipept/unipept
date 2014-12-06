@@ -30,9 +30,6 @@ gem 'oj'
 # imagemagick bindings
 gem "rmagick", require: false
 
-# do HTTP requests
-gem "httparty"
-
 # The dynamic stylesheet language for the Rails asset pipeline.
 # Allows other gems to extend Less load path.
 gem "less-rails"

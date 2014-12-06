@@ -230,7 +230,7 @@ class SequencesController < ApplicationController
     # prepare for output
     @title = "Metaproteomics analysis result"
     @title += " of " + search_name unless search_name.nil? || search_name == ""
-    @prideURL = "http://www.ebi.ac.uk/pride/experiment.do?experimentAccessionNumber=#{search_name[/[0-9]*$/]}" if search_name.include? "Pride experiment"
+    @prideURL = "http://www.ebi.ac.uk/pride/archive/assays/#{search_name[/[0-9]*$/]}" if search_name.include? "PRIDE assay"
 
     @intro_text = "#{@number_found} out of #{number_searched_for} #{"peptide".send(number_searched_for != 1 ? :pluralize : :to_s)}  were matched"
     if filter_duplicates || @equate_il
