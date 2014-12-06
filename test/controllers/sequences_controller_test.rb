@@ -3,6 +3,7 @@ require 'test_helper'
 class SequencesControllerTest < ActionController::TestCase
 
   test "should get index" do
+    Sequence.per_page = 1
     get :index
     assert_response :success
     assert_template :index

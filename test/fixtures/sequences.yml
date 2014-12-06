@@ -49,3 +49,9 @@ sequence7:
     sequence: "TEST"
     lca: 13
     lca_il: 13
+
+sequence8:
+    id: 8
+    sequence: "TAST"
+    lca: 13
+    lca_il: 13
