@@ -60,6 +60,13 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal ["Organism", "kingdom", "species"], assigns(:table_ranks)
   end
 
+  test "should get show with distinct lineage" do
+    get :show, id:7
+    assert_response :success
+    assert_template :show
+  end
+
+
   test "should get show with lowercase peptide" do
     sequence = sequences(:sequence4)
     taxon1 = taxons(:taxon1)
