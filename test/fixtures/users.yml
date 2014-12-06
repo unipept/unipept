@@ -14,3 +14,7 @@ bart:
 bart_admin:
     username: bmesuere
     admin: 1
+
+guest:
+    username: guest
+    admin: 1

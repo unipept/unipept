@@ -58,7 +58,7 @@ class PeptidomeControllerTest < ActionController::TestCase
   test "should get get_sequences" do
     get :get_sequences, sequence_ids: "[1, 2]"
     assert_response :success
-    assert_equal '"AAIER\nAALER"', @response.body
+    assert_equal '"AALER\nAAIER"', @response.body
   end
 
   test "should get convert_peptides" do
