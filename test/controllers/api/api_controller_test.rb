@@ -406,6 +406,7 @@ class Api::ApiControllerTest < ActionController::TestCase
     Rails.application.config.unipept_stathat_key = "key"
     get :taxonomy, input: ["1", "2"], format: "json"
     assert_response :success
+    Rails.application.config.unipept_API_logging = false
   end
 
 end

@@ -47,6 +47,12 @@ class PagesControllerTest < ActionController::TestCase
     assert assigns(:progress)
   end
 
+  test "should get admin if auth is disabled" do
+    Rails.application.config.unipept_enable_auth = false
+    get :admin
+    Rails.application.config.unipept_enable_auth = true
+  end
+
   test "should redirect when not signed in" do
     get :admin
     assert_equal "Please log in to use this feature", flash[:error]
