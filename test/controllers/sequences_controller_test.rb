@@ -3,6 +3,7 @@ require 'test_helper'
 class SequencesControllerTest < ActionController::TestCase
 
   test "should get index" do
+    Sequence.per_page = 1
     get :index
     assert_response :success
     assert_template :index
@@ -59,6 +60,13 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal [[taxon2, nil],[taxon2, taxon1]], assigns(:table_lineages)
     assert_equal ["Organism", "kingdom", "species"], assigns(:table_ranks)
   end
+
+  test "should get show with distinct lineage" do
+    get :show, id:7
+    assert_response :success
+    assert_template :show
+  end
+
 
   test "should get show with lowercase peptide" do
     sequence = sequences(:sequence4)
