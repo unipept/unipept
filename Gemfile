@@ -33,9 +33,6 @@ gem "rmagick", require: false
 # coveralls
 gem "coveralls", require: false
 
-# do HTTP requests
-gem "httparty"
-
 # The dynamic stylesheet language for the Rails asset pipeline.
 # Allows other gems to extend Less load path.
 gem "less-rails"

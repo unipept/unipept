@@ -319,11 +319,11 @@ class SequencesControllerTest < ActionController::TestCase
   end
 
   test "multi_search should add pride url is data comes from pride" do
-    post :multi_search, qs: "AALER", search_name: "Pride experiment 123456"
+    post :multi_search, qs: "AALER", search_name: "PRIDE assay 123456"
     assert_response :success
     assert_template :multi_search
     assert assigns(:prideURL).include?("123456")
-    assert_equal "Metaproteomics analysis result of Pride experiment 123456", assigns(:title)
+    assert_equal "Metaproteomics analysis result of PRIDE assay 123456", assigns(:title)
   end
 
   test "multi_search should include name in title" do
