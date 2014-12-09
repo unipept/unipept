@@ -77,6 +77,17 @@ function constructDatasetLoader() {
 
     /************** private methods *************/
 
+    /**
+     * Loads a dataset from the database
+     *
+     * @param <Integer> id The id of the dataset(item) we want to load
+     * @param <Function> done The callback function that gets executed when
+     *          everything succeeds
+     * @param <Function> done The callback function that gets executed when
+     *          loading the dataset fails
+     * @param <Function always The callback function that gets always gets
+     *          executed
+     */
     function loadInternalDataset(id, done, fail, always) {
         $.get("/dataset_items/" + id)
             .done(done)
@@ -84,6 +95,17 @@ function constructDatasetLoader() {
             .always(always);
     }
 
+    /**
+     * Loads a dataset from PRIDE using the PRIDE API
+     *
+     * @param <Integer> id The id of the assay we want to load
+     * @param <Function> done The callback function that gets executed when
+     *          everything succeeds
+     * @param <Function> done The callback function that gets executed when
+     *          loading the dataset fails
+     * @param <Function always The callback function that gets always gets
+     *          executed
+     */
     function loadPrideDataset(id, done, fail, always) {
         var batchSize = 1000,
             page = 0,
@@ -129,6 +151,7 @@ function constructDatasetLoader() {
 
     /**
      * Checks if the number of peptides in the current dataset isn't too high
+     * and displays a warning if it is.
      */
     that.checkDatasetSize = function checkDatasetSize() {
         var lines = $("#qs").val().split(/\n/).length;
@@ -140,6 +163,15 @@ function constructDatasetLoader() {
         }
     };
 
+    /**
+     * Public method to load a dataset
+     *
+     * @param <String> type The type of the dataset to load: internal or pride
+     * @param <Integer> id The id of the dataset to load
+     * @param <String> name The name of the dataset
+     * @param <DOM element> button The button that was clicked to load the
+     *          dataset. Can be nil.
+     */
     that.loadDataset = function loadDataset(type, id, name, button) {
         // expand the search options and prepare the form
         $("#more_options a").click();
