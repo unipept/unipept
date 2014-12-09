@@ -26,9 +26,9 @@ UnipeptWeb::Application.routes.draw do
   post '/search/sequences', :to => 'sequences#multi_search', :as => 'sequence_multi_search'
 
   get '/sequences/:id/:equate_il', :to => 'sequences#show', :as => 'sequence_show'
+  match '/sequences/ec/:sequence', via: [:get, :post], :to => 'sequences#ec'
   get '/search/single', :to => 'search#single'
 
-  match '/sequences/ec/:sequence', via: [:get, :post], :to => 'sequences#ec'
   match '/search/sequences/ec', via: [:get, :post], :to => 'sequences#ec_multi_search', :as => 'sequence_ec_multi_search'
   match '/search/sequences/compare/ec', via: [:get, :post], :to => 'sequences#ec_compare_search', :as => 'sequence_ec_compare_search'
 
