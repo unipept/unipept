@@ -35,10 +35,10 @@ rm -f "${datadir}/peptides.tsv.gz"
 rm -f "${datadir}/original_peptides.tsv.gz"
 
 print "Dumping sequences"
-echo "select id, sequence from sequences order by id;" | mysql -u unipept -punipept unipept -q | gzip - > "${datadir}/sequences.tsv.gz"
+echo "select id, sequence from sequences order by id;" | mysql -u unipept -punipept unipept -q --skip-column-names | gzip - > "${datadir}/sequences.tsv.gz"
 
 print "Merging all data"
-zcat "${datadir}/sequences.tsv.gz" | tail -n+2 | join --nocheck-order -a1 -t $'\t' -o "1.1 1.2 2.2" - "${datadir}/original_LCAs.tsv" | join --nocheck-order -t $'\t' -a1 -o "1.1 1.2 1.3 2.2" - "${datadir}/LCAs.tsv" > "${datadir}/sequences.dump"
+zcat "${datadir}/sequences.tsv.gz" | join --nocheck-order -a1 -t $'\t' -o "1.1 1.2 2.2" - "${datadir}/original_LCAs.tsv" | join --nocheck-order -t $'\t' -a1 -o "1.1 1.2 1.3 2.2" - "${datadir}/LCAs.tsv" > "${datadir}/sequences.dump"
 
 print "Dropping old sequences table"
 echo "SET FOREIGN_KEY_CHECKS=0; DROP TABLE sequences; CREATE  TABLE IF NOT EXISTS unipept.sequences ( id INT UNSIGNED NOT NULL AUTO_INCREMENT , sequence VARCHAR(50) NOT NULL , lca MEDIUMINT UNSIGNED NULL , lca_il MEDIUMINT UNSIGNED NULL , PRIMARY KEY (id) ENGINE = InnoDB DEFAULT CHARACTER SET = ascii;" | mysql -u unipept -punipept unipept
@@ -47,7 +47,7 @@ print "Loading into the database"
 mysqlimport -u unipept -punipept --local unipept "${datadir}/sequences.dump"
 # took 90 minutes
 
-print "Revoving all files"
+print "Removing all files"
 rm -f "${datadir}/sequences.tsv.gz"
 rm -f "${datadir}/sequences.dump"
 
