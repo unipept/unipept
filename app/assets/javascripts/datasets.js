@@ -113,7 +113,7 @@ function constructDatasetLoader() {
             datasetSize;
 
         $("#pride-progress").show("fast");
-        $("#pride-progress .progress-bar").css("width", "0%");
+        $("#pride-progress .progress-bar").css("width", "10%");
         $.get("http://www.ebi.ac.uk:80/pride/ws/archive/peptide/count/assay/" + id)
             .done(function (data) {
                 datasetSize = data;
@@ -122,7 +122,7 @@ function constructDatasetLoader() {
             .fail(prideFail);
 
             function loadNextBatch() {
-                $("#pride-progress .progress-bar").css("width", (100 * page * batchSize) / datasetSize + "%");
+                $("#pride-progress .progress-bar").css("width", 10 + (90 * page * batchSize) / datasetSize + "%");
                 if (page * batchSize > datasetSize) { // we're done
                     $("#pride-progress").hide("fast");
                     done.call(this, peptides.join("\n"));
