@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def disable_website
-    redirect_to "http://unipept.ugent.be" + request.original_fullpath
+    redirect_to "http://unipept.ugent.be" + api_apidocs_path
   end
 
   def authorize

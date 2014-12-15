@@ -14,7 +14,8 @@ class Api::ApiController < ApplicationController
   # sends a message to the ruby cli
   def messages
     version = params[:version]
-    render text: "Unipept 0.4.0 is released!"
+    render text: ""
+    #render text: "Unipept 0.4.0 is released!"
   end
 
 
