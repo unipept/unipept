@@ -1,0 +1,32 @@
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+
+    DocumentRoot /root/rails/public
+
+    <Directory /root/rails/public>
+        Options ExecCGI FollowSymLinks -MultiViews
+        AddHandler cgi-script .cgi
+        AllowOverride all
+        Order allow,deny
+        Allow from all
+        RailsEnv production
+    </Directory>
+
+# production only
+        # The Expires* directives requires the Apache module `mod_expires` to be enabled.
+        <Location ~ "/assets/[^w].*">
+                # Use of ETag is discouraged when Last-Modified is present
+                Header unset ETag
+                FileETag None
+                # RFC says only cache for 1 year
+                ExpiresActive On
+                ExpiresDefault "access plus 1 year"
+        </Location>
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+
+    # Possible values include: debug, info, notice, warn, error, crit,
+    # alert, emerg.
+    LogLevel warn
+
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>

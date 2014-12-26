@@ -25,4 +25,7 @@ production:
   pool: 5
   username: unipept
   password: unipept
-  socket: /tmp/mysql.sock
+  # setup local port forwarding for this to work
+  host: <%= ENV['MYSQL_PORT_3306_TCP_ADDR'] %>
+  port: <%= ENV['MYSQL_PORT_3306_TCP_PORT'] %>
+
