@@ -1,7 +1,7 @@
 <div class="apidocs-sidebar hidden-print">
   <ul class="nav apidocs-sidenav">
     <% @sidebar_nav.each do |nav_item| %>
-      <li class="<%= "active" if @sidebar_name == nav_item[:name] %>">
+      <li class="<%= "active always-active" if @sidebar_name == nav_item[:name] %>">
         <%= link_to(nav_item[:name], nav_item[:path]) %>
         <% if @sidebar_name == nav_item[:name] && !@sidebar_subnav.nil?%>
           <ul class="nav">
@@ -22,7 +22,9 @@
     $('.apidocs-sidebar').affix({
         offset: {
           top: $(".apidocs-sidebar").offset().top,
-          bottom: 70
+          // bottom: 70 is needed to prevent overlap with the footer
+          // but it seems to be broken in bootstrap 3.3.1
+          //bottom: 70
         }
     });
   });
