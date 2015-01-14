@@ -107,8 +107,10 @@ function init_multi(data, sequences, missed, equate_il) {
     $("#save-btn").click(function () {
         $(".debug_dump").hide();
         if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
+            d3.selectAll(".toHide").attr("class", "hidden");
             logToGoogle("Multi Peptide", "Save Image", "Sunburst");
             triggerDownloadModal("#sunburst svg", null, "unipept_sunburst");
+            d3.selectAll(".hidden").attr("class", "toHide");
         } else if ($(".tab-content .active").attr('id') === "d3TreeMapWrapper") {
             logToGoogle("Multi Peptide", "Save Image", "Treemap");
             triggerDownloadModal(null, "#d3TreeMap", "unipept_treemap");
@@ -769,8 +771,11 @@ function init_multi(data, sequences, missed, equate_il) {
             .attr("width", w + p * 2)
             .attr("height", h + p * 2)
             .attr("overflow", "hidden")
-            .style("font-family", "'Helvetica Neue', Helvetica, Arial, sans-serif")
-            .append("g")
+            .style("font-family", "'Helvetica Neue', Helvetica, Arial, sans-serif");
+        vis.append("style")
+            .attr("type", "text/css")
+            .html(".hidden{ visibility: hidden;}");
+        vis = vis.append("g")
             .attr("transform", "translate(" + (r + p) + "," + (r + p) + ")"); // set origin to radius center
 
         var tooltip = d3.select("body")
@@ -888,6 +893,12 @@ function init_multi(data, sequences, missed, equate_il) {
             path.transition()
                 .duration(duration)
                 .attrTween("d", arcTween(d))
+                .attr("class", function (d) {
+                    if (d.depth >= currentMaxLevel) {
+                        return "toHide";
+                    }
+                    return "";
+                })
                 .attr("fill-opacity", function (d) {
                     if (d.depth >= currentMaxLevel) {
                         return 0.2;
