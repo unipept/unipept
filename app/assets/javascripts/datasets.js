@@ -177,6 +177,7 @@ function constructDatasetLoader() {
         $("#more_options a").click();
         $("#qs").val("Please wait while we load the dataset...");
         $("#qs").attr('disabled', 'disabled');
+        $("#search-multi-form").button("loading");
 
         var startTimer = new Date().getTime();
 
@@ -215,6 +216,7 @@ function constructDatasetLoader() {
         var always = function () {
             // enable the form elements
             $("#qs").attr('disabled', false);
+            $("#search-multi-form").button("reset");
             if (button) {
                 button.button('reset');
             }
