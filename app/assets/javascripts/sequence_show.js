@@ -219,6 +219,8 @@ function init_sequence_show(data) {
               .attr("transform", function (d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
               .on("click", click);
 
+            nodeEnter.append("title").html(function (d) {return "hits: " + d.data.count; });
+
             nodeEnter.append("circle")
               .attr("r", 1e-6)
               .style("stroke-width", "1.5px")
