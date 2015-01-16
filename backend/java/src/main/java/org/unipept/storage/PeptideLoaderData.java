@@ -76,8 +76,8 @@ public class PeptideLoaderData implements UniprotObserver {
         try {
             EnvironmentConfig envConfig = new EnvironmentConfig();
             envConfig.setAllowCreate(true);
-            envConfig.setCacheSize(500000000);
-            //envConfig.setCacheSize(100000000000L);
+            //envConfig.setCacheSize(500000000);
+            envConfig.setCacheSize(100000000000L);
             Environment env = new Environment(new File(System.getenv("VSC_SCRATCH_CLUSTER") + "/berkeleydb/"), envConfig);
             DatabaseConfig dbConfig = new DatabaseConfig();
             dbConfig.setAllowCreate(true);
@@ -94,7 +94,7 @@ public class PeptideLoaderData implements UniprotObserver {
 
         /* Opening CSV files for writing. */
         try {
-            uniprotEntries = new CSVWriter("uniprotEntries.tsv", "uniprot_accession_number", "version", "taxon_id", "type", "protein");
+            uniprotEntries = new CSVWriter("uniprot_entries.tsv", "uniprot_accession_number", "version", "taxon_id", "type", "protein");
             peptides = new CSVWriter("peptides.tsv", "sequence_id", "uniprot_entry_id", "original_sequence_id", "position");
             refseqCrossReferences = new CSVWriter("refseq_cross_references.tsv", "uniprot_entry_id", "protein_id", "sequence_id");
             emblCrossReferences = new CSVWriter("embl_cross_references.tsv", "uniprot_entry_id", "protein_id", "sequence_id");
@@ -406,6 +406,8 @@ public class PeptideLoaderData implements UniprotObserver {
             emblCrossReferences.close();
             goCrossReferences.close();
             ecCrossReferences.close();
+            lineages.close();
+            sequences.close();
         } catch(IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + " Something closing the csv files.");
