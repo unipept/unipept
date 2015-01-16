@@ -108,9 +108,8 @@ GEM
     jquery-rails (3.1.2)
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
-    jquery-ui-rails (4.0.2)
-      jquery-rails
-      railties (>= 3.1.0)
+    jquery-ui-rails (5.0.3)
+      railties (>= 3.2.16)
     json (1.8.1)
     less (2.6.0)
       commonjs (~> 0.2.7)
@@ -243,7 +242,7 @@ DEPENDENCIES
   exception_notification!
   guard-minitest
   jquery-rails
-  jquery-ui-rails (= 4.0.2)
+  jquery-ui-rails
   less-rails
   mysql2
   oj
