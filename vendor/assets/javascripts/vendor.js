@@ -3,7 +3,7 @@
 //= require bootstrap/bootstrap.min.js
 
 //  sunburst, treeview, pancore, tree
-//  3.5.2
+//  3.5.3
 //= require d3/d3.v3.min.js
 
 //  export treemap to png
