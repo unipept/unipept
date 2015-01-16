@@ -7,6 +7,7 @@
 //= require_self
 //= require_directory .
 //= require_directory ./peptidome
+//= require_directory ./multi_search
 //= require vendor
 
 // zeroclipboard config
