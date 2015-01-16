@@ -1,6 +1,6 @@
 function init_multi(data, sequences, missed, equate_il) {
 
-    constructMultisearch();
+    constructMultisearch({data : data});
 
     $("#downloadDataset").click(function () {
         // Track the download button
@@ -23,7 +23,7 @@ function init_multi(data, sequences, missed, equate_il) {
 
     // sunburst
     try {
-        initSunburst(JSON.parse(JSON.stringify(data).replace(/children/g, "kids")));
+        //initSunburst(JSON.parse(JSON.stringify(data).replace(/children/g, "kids")));
     } catch (err) {
         error(err.message, "Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
     }
