@@ -138,16 +138,6 @@ function init_sequence_show(data) {
             root.x0 = height / 2;
             root.y0 = 0;
 
-            // add counts
-            function addCounts(d) {
-                if (d.children && d.children.length > 0) {
-                    d.children.forEach(addCounts);
-                    d.data.count = d.children.map(function (e) {return e.data.count; }).reduce(function (a, b) {return a + b; });
-                } else {
-                    d.data.count = 1;
-                }
-            }
-            addCounts(root);
             widthScale.domain([0, root.data.count]);
 
             // set everything visible

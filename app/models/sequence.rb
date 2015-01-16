@@ -33,7 +33,7 @@ class Sequence < ActiveRecord::Base
     raise(ArgumentError, ":equate_il must be a boolean") unless Sequence.is_boolean?(equate_il)
     raise(ArgumentError, ":eager must be a boolean") unless Sequence.is_boolean?(eager)
 
-    l = Lineage.joins(:uniprot_entries => :peptides).uniq
+    l = Lineage.joins(:uniprot_entries => :peptides)
     if equate_il
       l = l.where("peptides.sequence_id = ?", id)
     else

@@ -40,11 +40,12 @@ class SequencesController < ApplicationController
       @entries.select!{|e| e.protein_contains?(seq, equate_il)}
 
       raise NoMatchesFoundError.new(seq) if @entries.empty?
-      @lineages = @entries.map(&:lineage).uniq.compact
+      @lineages = @entries.map(&:lineage).compact
     end
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) #calculate the LCA
     @root = Node.new(1, "Organism", nil, "root") #start constructing the tree
+    @root.data["count"] = @lineages.size
     last_node = @root
 
     #common lineage
@@ -56,7 +57,9 @@ class SequencesController < ApplicationController
       unless t.nil?
         found = (@lca_taxon.id == t.id)
         @common_lineage << t
-        last_node = last_node.add_child(Node.new(t.id, t.name, @root))
+        node = Node.new(t.id, t.name, @root)
+        node.data["count"] = @lineages.size
+        last_node = last_node.add_child(node)
       end
     end
 
@@ -72,8 +75,10 @@ class SequencesController < ApplicationController
           node = Node.find_by_id(t.id, @root)
           if node.nil? # if the node isn't create yet
             node = Node.new(t.id, t.name, @root, t.rank)
-            last_node_loop = last_node_loop.add_child(node);
+            node.data["count"] = 1
+            last_node_loop = last_node_loop.add_child(node)
           else
+            node.data["count"] += 1
             last_node_loop = node;
           end
         end
@@ -88,6 +93,7 @@ class SequencesController < ApplicationController
     @table_lineages = Array.new
     @table_ranks = Array.new
 
+    @lineages = @lineages.uniq
     @table_lineages << @lineages.map{|lineage| lineage.name.name}
     @table_ranks << "Organism"
     @lineages.map{|lineage| lineage.set_iterator_position(0)} #reset the iterator
