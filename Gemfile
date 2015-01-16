@@ -12,7 +12,7 @@ gem 'will_paginate'
 
 # jquery
 gem 'jquery-rails'
-gem "jquery-ui-rails", "4.0.2"
+gem "jquery-ui-rails"
 
 # cas auth
 gem 'devise'
