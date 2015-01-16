@@ -1,5 +1,7 @@
 function init_multi(data, sequences, missed, equate_il) {
 
+    constructMultisearch();
+
     $("#downloadDataset").click(function () {
         // Track the download button
         logToGoogle("Multi Peptide", "Export");
