@@ -135,8 +135,6 @@ function init_sequence_show(data) {
 
         function draw(data) {
             root = data;
-            root.x0 = height / 2;
-            root.y0 = 0;
 
             widthScale.domain([0, root.data.count]);
 
