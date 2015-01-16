@@ -67,7 +67,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
         });
         $("#genomes_table tbody").sortable({
             axis: 'y',
-            containment: '.split-right',
+            containment: '.left-col',
             cursor: 'url(/closedhand.cur) 7 5, move',
             stop: function () {
                 pancore.updateOrder(calculateTablePositions());
