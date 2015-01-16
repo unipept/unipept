@@ -17,33 +17,33 @@ class RefseqCrossReferenceTest < ActiveSupport::TestCase
   end
 
   test "should raise error on save" do
-    RefseqCrossReference = refseq_cross_references(:refseqcrossreference1)
-    assert_raises(ActiveRecord::ReadOnlyRecord) {RefseqCrossReference.save}
+    refseqcrossreference = refseq_cross_references(:refseqcrossreference1)
+    assert_raises(ActiveRecord::ReadOnlyRecord) {refseqcrossreference.save}
   end
 
   test "should raise error on uniprot_entry_id change" do
-    RefseqCrossReference = refseq_cross_references(:refseqcrossreference1)
-    assert_raises(ActiveRecord::ActiveRecordError) {RefseqCrossReference.update_attribute(:uniprot_entry_id, 35)}
+    refseqcrossreference = refseq_cross_references(:refseqcrossreference1)
+    assert_raises(ActiveRecord::ActiveRecordError) {refseqcrossreference.update_attribute(:uniprot_entry_id, 35)}
   end
 
   test "should raise error on protein_id change" do
-    RefseqCrossReference = refseq_cross_references(:refseqcrossreference1)
-    assert_raises(ActiveRecord::ActiveRecordError) {RefseqCrossReference.update_attribute(:protein_id, "35")}
+    refseqcrossreference = refseq_cross_references(:refseqcrossreference1)
+    assert_raises(ActiveRecord::ActiveRecordError) {refseqcrossreference.update_attribute(:protein_id, "35")}
   end
 
   test "should raise error on sequence_id change" do
-    RefseqCrossReference = refseq_cross_references(:refseqcrossreference1)
-    assert_raises(ActiveRecord::ActiveRecordError) {RefseqCrossReference.update_attribute(:sequence_id, "35")}
+    refseqcrossreference = refseq_cross_references(:refseqcrossreference1)
+    assert_raises(ActiveRecord::ActiveRecordError) {refseqcrossreference.update_attribute(:sequence_id, "35")}
   end
 
   test "should raise error on delete" do
-    RefseqCrossReference = refseq_cross_references(:refseqcrossreference1)
-    assert_raises(ActiveRecord::ReadOnlyRecord) {RefseqCrossReference.delete}
+    refseqcrossreference = refseq_cross_references(:refseqcrossreference1)
+    assert_raises(ActiveRecord::ReadOnlyRecord) {refseqcrossreference.delete}
   end
 
   test "should raise error on destroy" do
-    RefseqCrossReference = refseq_cross_references(:refseqcrossreference1)
-    assert_raises(ActiveRecord::ReadOnlyRecord) {RefseqCrossReference.destroy}
+    refseqcrossreference = refseq_cross_references(:refseqcrossreference1)
+    assert_raises(ActiveRecord::ReadOnlyRecord) {refseqcrossreference.destroy}
   end
 
 end
