@@ -39,36 +39,64 @@ var constructSunburst = function constructSunburst(args) {
      * Initializes Sunburst
      */
     function init() {
+        // init controls
+        initControls();
+
         // prepare data
-        data.kids = addEmptyChildren(data.kids, data.data.self_count);
+        data.children = addEmptyChildren(data.children, data.data.self_count);
 
         // draw everything
         redraw();
 
         // fake click on the center node
-        setTimeout(function () {click(data); }, 1000);
+        setTimeout(that.reset, 1000);
+    }
+
+    /**
+     * Initialise the controls
+     */
+    function initControls() {
+        // the reset button
+        $("#sunburst-reset").click(that.reset);
+
+        // hook up the swap colors checkbox
+        $("#colorswap").mouseenter(function () {
+            if (!$("#colorswap").hasClass("open")) {
+                $("#colorswap-button").dropdown("toggle");
+            }
+        });
+        $("#colorswap").mouseleave(function () {
+            if ($("#colorswap").hasClass("open")) {
+                $("#colorswap-button").dropdown("toggle");
+            }
+        });
+        $("#colorswap li").tooltip({placement : "right", container : "body"});
+        $("#colorswap-checkbox").change(function () {
+            useFixedColors = $(this).is(':checked');
+            that.redrawColors();
+        });
     }
 
     /**
      * Adds data for the peptides on the self level
      * Is called recursively
      *
-     * @param <Array> kids A list of children
+     * @param <Array> children A list of children
      * @param <int> count The number of peptides that should be the sum of the
-     *          kids count
+     *          children count
      * @return <Array> The modified list of children
      */
-    function addEmptyChildren(kids, count) {
+    function addEmptyChildren(children, count) {
         var i;
-        for (i = 0; i < kids.length; i++) {
-            if (typeof kids[i].kids !== "undefined") {
-                kids[i].kids = addEmptyChildren(kids[i].kids, kids[i].data.self_count);
+        for (i = 0; i < children.length; i++) {
+            if (typeof children[i].children !== "undefined") {
+                children[i].children = addEmptyChildren(children[i].children, children[i].data.self_count);
             }
         }
-        if (kids.length > 0 && count !== 0 && count !== undefined) {
-            kids.push({id: -1, name: "empty", data: {count: count, self_count: count}});
+        if (children.length > 0 && count !== 0 && count !== undefined) {
+            children.push({id: -1, name: "empty", data: {count: count, self_count: count}});
         }
-        return kids;
+        return children;
     }
 
     /**
@@ -112,8 +140,7 @@ var constructSunburst = function constructSunburst(args) {
 
         partition = d3.layout.partition()               // creates a new partition layout
             .sort(null)                                     // don't sort,  use tree traversal order
-            .value(function (d) { return d.data.self_count; })    // set the size of the pieces
-            .children(function (d) { return d.kids; });
+            .value(function (d) { return d.data.self_count; });    // set the size of the pieces
 
         // calculate arcs out of partition coordinates
         arc = d3.svg.arc()
@@ -133,13 +160,13 @@ var constructSunburst = function constructSunburst(args) {
             .style("fill", colour)                                // call function for colour
             .on("click", click)                                   // call function on click
             // TODO
-            .on("mouseover", function (d) {
+            /*.on("mouseover", function (d) {
                 if (d.depth < currentMaxLevel && d.name !== "empty") {
                     tooltipIn(d, tooltip);
                 }
             })
             .on("mousemove", function () { tooltipMove(tooltip); })
-            .on("mouseout", function () { tooltipOut(tooltip); });
+            .on("mouseout", function () { tooltipOut(tooltip); })*/;
 
         // put labels on the nodes
         text = vis.selectAll("text").data(nodes);
@@ -303,10 +330,10 @@ var constructSunburst = function constructSunburst(args) {
                 if (singleChild) {
                     return d3.hsl(a.h, a.s, a.l * 0.98);
                 }
-                // if we have 2 kids or more, take the average of the first two kids
+                // if we have 2 children or more, take the average of the first two children
                 return d3.hsl((a.h + b.h) / 2, (a.s + b.s) / 2, (a.l + b.l) / 2);
             }
-            // if we don't have kids, pick a new color
+            // if we don't have children, pick a new color
             if (!d.color) {
                 d.color = getColor();
             }
@@ -326,6 +353,23 @@ var constructSunburst = function constructSunburst(args) {
     }
 
     /*************** Public methods ***************/
+
+    /**
+     * Resets the sunburst to its initial position
+     */
+    that.reset = function reset() {
+        click(data);
+    };
+
+    /**
+     * redraws the colors of the sunburst
+     */
+    that.redrawColors = function redrawColors() {
+        path.transition()
+            .style("fill", colour);
+        text.transition()
+            .style("fill", function (d) { return getReadableColorFor(colour(d)); });
+    }
 
     // initialize the object
     init();

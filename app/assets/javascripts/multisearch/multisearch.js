@@ -17,9 +17,12 @@ var constructMultisearch = function constructMultisearch(args) {
      * Initializes Multisearch
      */
     function init() {
-
-        // construct visualisations
-        sunburst = constructSunburst({data : JSON.parse(JSON.stringify(data).replace(/children/g, "kids"))});
+        // sunburst
+        try {
+            sunburst = constructSunburst({data : JSON.parse(JSON.stringify(data))});
+        } catch (err) {
+            error(err.message, "Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
+        }
 
     }
 
