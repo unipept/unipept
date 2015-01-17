@@ -25,7 +25,13 @@ var constructSunburst = function constructSunburst(args) {
         useFixedColors = false;
 
     // components
-    var tooltip;
+    var tooltip,
+        path, // the arcs
+        x, // the x-scale
+        y, // the y-scale
+        arc, // the arc function
+        text, // all text nodes
+        currentMaxLevel;
 
     /*************** Private methods ***************/
 
@@ -33,22 +39,45 @@ var constructSunburst = function constructSunburst(args) {
      * Initializes Sunburst
      */
     function init() {
+        // prepare data
+        data.kids = addEmptyChildren(data.kids, data.data.self_count);
+
+        // draw everything
         redraw();
+
+        // fake click on the center node
+        setTimeout(function () {click(data); }, 1000);
+    }
+
+    /**
+     * Adds data for the peptides on the self level
+     * Is called recursively
+     *
+     * @param <Array> kids A list of children
+     * @param <int> count The number of peptides that should be the sum of the
+     *          kids count
+     * @return <Array> The modified list of children
+     */
+    function addEmptyChildren(kids, count) {
+        var i;
+        for (i = 0; i < kids.length; i++) {
+            if (typeof kids[i].kids !== "undefined") {
+                kids[i].kids = addEmptyChildren(kids[i].kids, kids[i].data.self_count);
+            }
+        }
+        if (kids.length > 0 && count !== 0 && count !== undefined) {
+            kids.push({id: -1, name: "empty", data: {count: count, self_count: count}});
+        }
+        return kids;
     }
 
     /**
      * Redraws the pancore graph
      */
     function redraw() {
-        var x, // x-scale
-            y, // y-scale
-            currentMaxLevel, // ???
-            vis, // the visualisation
+        var vis, // the visualisation
             partition, // the partition layout
-            arc, // the arc function
             nodes, // the result of the partition layout
-            path, // the arcs
-            text, // all text nodes
             textEnter; // new text nodes
 
         // clear everything
@@ -103,6 +132,7 @@ var constructSunburst = function constructSunburst(args) {
             .attr("fill-rule", "evenodd")                         // fill rule
             .style("fill", colour)                                // call function for colour
             .on("click", click)                                   // call function on click
+            // TODO
             .on("mouseover", function (d) {
                 if (d.depth < currentMaxLevel && d.name !== "empty") {
                     tooltipIn(d, tooltip);
@@ -138,6 +168,161 @@ var constructSunburst = function constructSunburst(args) {
         textEnter.style("font-size", function (d) {
             return Math.min(((r / levels) / this.getComputedTextLength() * 10) + 1, 12) + "px";
         });
+    }
+
+    /**
+     *  Interpolate the scales!
+     * Defines new scales based on the clicked item
+     *
+     * @param <Object> d The clicked item
+     * @return <Scale> new scales
+     */
+    function arcTween(d) {
+        var my = Math.min(maxY(d), d.y + levels * d.dy),
+            xd = d3.interpolate(x.domain(), [d.x, d.x + d.dx]),
+            yd = d3.interpolate(y.domain(), [d.y, my]),
+            yr = d3.interpolate(y.range(), [d.y ? 20 : 0, r]);
+        return function (d) {
+            return function (t) { x.domain(xd(t)); y.domain(yd(t)).range(yr(t)); return arc(d); };
+        };
+    }
+
+    /**
+     * calculate the max-y of the clicked item
+     *
+     * @param <Object> d The clicked item
+     * @return <Number> The maximal y-value
+     */
+    function maxY(d) {
+        return d.children ? Math.max.apply(Math, d.children.map(maxY)) : d.y + d.dy;
+    }
+
+    /**
+     * Defines what happens after a node is clicked
+     *
+     * @param <Object> d The data object of the clicked arc
+     */
+    function click(d) {
+        if (d.name === "empty") {
+            return;
+        }
+        logToGoogle("Multi Peptide", "Zoom", "Sunburst");
+
+        // set tree, but only after the animation
+        // TODO
+        //treeSearch(d.name, duration);
+
+        // perform animation
+        currentMaxLevel = d.depth + levels;
+        path.transition()
+            .duration(duration)
+            .attrTween("d", arcTween(d))
+            .attr("class", function (d) {
+                if (d.depth >= currentMaxLevel) {
+                    return "toHide";
+                }
+                return "";
+            })
+            .attr("fill-opacity", function (d) {
+                if (d.depth >= currentMaxLevel) {
+                    return 0.2;
+                }
+                return 1;
+            });
+
+        // Somewhat of a hack as we rely on arcTween updating the scales.
+        text
+            .style("visibility", function (e) {
+                return isParentOf(d, e) ? null : d3.select(this).style("visibility");
+            })
+            .transition().duration(duration)
+            .attrTween("text-anchor", function (d) {
+                return function () {
+                    return x(d.x + d.dx / 2) > Math.PI ? "end" : "start";
+                };
+            })
+            .attrTween("transform", function (d) {
+                var multiline = (d.name || "").split(" ").length > 1;
+                return function () {
+                    var angle = x(d.x + d.dx / 2) * 180 / Math.PI - 90,
+                        rotate = angle + (multiline ? -0.5 : 0);
+                    return "rotate(" + rotate + ")translate(" + (y(d.y) + p) + ")rotate(" + (angle > 90 ? -180 : 0) + ")";
+                };
+            })
+            .style("fill-opacity", function (e) { return isParentOf(d, e) ? 1 : 1e-6; })
+            .each("end", function (e) {
+                d3.select(this).style("visibility", isParentOf(d, e) ? null : "hidden");
+            });
+    }
+
+    /**
+     * Calculates if p is a parent of c
+     * Returns true is label must be drawn
+     */
+    function isParentOf(p, c) {
+        if (c.depth >= currentMaxLevel) {
+            return false;
+        }
+        if (p === c) {
+            return true;
+        }
+        if (p.children) {
+            return p.children.some(function (d) {
+                return isParentOf(d, c);
+            });
+        }
+        return false;
+    }
+
+    /**
+     * Calculates the color of an arc based on the color of his children
+     *
+     * @param <Object> d The node for which we want the color
+     * @returm <Color> The calculated color
+     */
+    function colour(d) {
+        if (d.name === "empty") {
+            return "white";
+        }
+        if (useFixedColors) {
+            switch (d.name) {
+            case "Bacteria":
+                return fixedColors[0];
+            case "Eukaryota":
+                return fixedColors[1];
+            default:
+                return fixedColors[Math.abs(stringHash(d.name + " " + d.data.rank)) % fixedColors.length];
+            }
+        } else {
+            if (d.children) {
+                var colours = d.children.map(colour),
+                    a = d3.hsl(colours[0]),
+                    b = d3.hsl(colours[1]),
+                    singleChild = d.children.length === 1 || d.children[1].name === "empty";
+                // if we only have one child, return a slightly darker variant of the child color
+                if (singleChild) {
+                    return d3.hsl(a.h, a.s, a.l * 0.98);
+                }
+                // if we have 2 kids or more, take the average of the first two kids
+                return d3.hsl((a.h + b.h) / 2, (a.s + b.s) / 2, (a.l + b.l) / 2);
+            }
+            // if we don't have kids, pick a new color
+            if (!d.color) {
+                d.color = getColor();
+            }
+            return d.color;
+        }
+    }
+
+    /**
+     * color generation function
+     * iterates over fixed list of colors
+     *
+     * @return <Color> The generated color
+     */
+    function getColor() {
+        colorCounter = (colorCounter + 1) % 52;
+        return colors[colorCounter];
     }
 
     /*************** Public methods ***************/
