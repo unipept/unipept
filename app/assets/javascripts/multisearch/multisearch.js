@@ -10,7 +10,8 @@ var constructMultisearch = function constructMultisearch(args) {
     var that = {},
         data = args.data,
         sunburst,
-        treemap;
+        treemap,
+        treeview;
 
     /*************** Private methods ***************/
 
@@ -26,11 +27,18 @@ var constructMultisearch = function constructMultisearch(args) {
         }
 
         // treemap
-        //try {
+        try {
             treemap = constructTreemap({data : JSON.parse(JSON.stringify(data))});
-            /*} catch (err) {
+        } catch (err) {
             error(err.message, "Loading the Treemap visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
-        }*/
+        }
+
+        // treeview
+        try {
+            treeview = constructTreeview({data : JSON.parse(JSON.stringify(data))});
+        } catch (err) {
+            error(err.message, "Loading the Treeview visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
+        }
 
     }
 

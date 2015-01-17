@@ -45,7 +45,7 @@ var constructTreemap = function constructTreemap(args) {
      */
     function initControls() {
         // the reset button
-        $("#sunburst-reset").click(that.reset);
+        $("#treemap-reset").click(that.reset);
     }
 
     /**
