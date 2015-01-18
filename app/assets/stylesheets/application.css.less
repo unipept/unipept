@@ -1,6 +1,8 @@
 @import "vendor.less";
 @import "bootstrap_overrides.css.less";
 
+@import "font-awesome.css";
+
 @import "layout.css.less";
 @import "utilities.css.less";
 @import "pygmentize.css.less";
@@ -18,4 +20,40 @@
     border: none;
     width: 100%;
     height: 600px;
+}
+
+.btn.btn-animate span.glyphicon {
+    .transition-duration(0.3s);
+    .transition-property('transform, color');
+    .transition-timing-function(ease-out);
+}
+
+.btn.btn-animate:hover span.glyphicon.grow,
+.btn.btn-animate:focus span.glyphicon.grow,
+.btn.btn-animate:active span.glyphicon.grow {
+    .scale(1.2);
+}
+
+.btn.btn-animate:hover span.glyphicon.spin,
+.btn.btn-animate:focus span.glyphicon.spin,
+.btn.btn-animate:active span.glyphicon.spin {
+    .rotate(360deg);
+}
+
+.btn.btn-animate:hover span.glyphicon.down,
+.btn.btn-animate:focus span.glyphicon.down,
+.btn.btn-animate:active span.glyphicon.down {
+    .translate(0px, 3px);
+}
+
+.btn.btn-animate:hover span.glyphicon.right,
+.btn.btn-animate:focus span.glyphicon.right,
+.btn.btn-animate:active span.glyphicon.right {
+    .translate(3px, 0px);
+}
+
+.btn.btn-animate:hover span.glyphicon.red,
+.btn.btn-animate:focus span.glyphicon.red,
+.btn.btn-animate:active span.glyphicon.red {
+    color: @brand-danger;
 }
