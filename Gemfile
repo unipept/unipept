@@ -21,6 +21,9 @@ gem 'devise_cas_authenticatable'
 # zeroclipboard
 gem 'zeroclipboard-rails'
 
+# font-awesome
+gem "font-awesome-rails"
+
 # needed for asset creation
 gem 'therubyracer'
 
