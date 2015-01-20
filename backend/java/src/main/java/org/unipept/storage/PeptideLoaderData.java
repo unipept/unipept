@@ -109,6 +109,18 @@ public class PeptideLoaderData implements UniprotObserver {
             System.exit(1);
         }
 
+        /* Write root to lineages. */
+        try {
+            String[] lineage = new String[ranks.length];
+            lineage[0] = "1";
+            lineages.write(lineage);
+        } catch(IOException e) {
+            System.err.println(new Timestamp(System.currentTimeMillis())
+                    + " Failed to add root.");
+            e.printStackTrace();
+            System.exit(1);
+        }
+
         /* Reading the available taxons from the database. */
         try {
             CSVReader reader = new CSVReader("taxons");
