@@ -353,11 +353,6 @@ public class PeptideLoaderData implements UniprotObserver {
             String[] lineage = new String[ranks.length];
             lineage[0] = Integer.toString(taxonId); // 0 is taxon_id
 
-            if(!taxons.get(taxonId).validTaxon) {
-                // It's an invalid lineage. Put it in the lineages as invalid.
-                for(int i = 1; i < ranks.length; i++) lineage[i] = "-1";
-            }
-
             // Iterate over ancestors, starting with itself.
             int parentId = taxonId;
             while(parentId != 1) {
@@ -370,6 +365,12 @@ public class PeptideLoaderData implements UniprotObserver {
                     }
                 }
                 parentId = taxons.get(parentId).parentId;
+            }
+
+            boolean valid = true;
+            for(int i = 1; i < ranks.length; i++) {
+                if(lineage[i] == null && !valid) lineage[i] = "-1";
+                else if(lineage[i] != null) valid = !lineage[i].startsWith("-");
             }
 
             try {
