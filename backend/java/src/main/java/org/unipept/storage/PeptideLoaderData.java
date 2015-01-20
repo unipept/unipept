@@ -76,9 +76,9 @@ public class PeptideLoaderData implements UniprotObserver {
         try {
             EnvironmentConfig envConfig = new EnvironmentConfig();
             envConfig.setAllowCreate(true);
-            //envConfig.setCacheSize(500000000);
-            envConfig.setCacheSize(100000000000L);
-            Environment env = new Environment(new File(System.getenv("VSC_SCRATCH_CLUSTER") + "/berkeleydb/"), envConfig);
+            envConfig.setCacheSize(500000000);
+            //envConfig.setCacheSize(100000000000L);
+            Environment env = new Environment(new File(System.getenv("BDBDIR")), envConfig);
             DatabaseConfig dbConfig = new DatabaseConfig();
             dbConfig.setAllowCreate(true);
             //dbConfig.setDeferredWrite(true);
@@ -94,14 +94,14 @@ public class PeptideLoaderData implements UniprotObserver {
 
         /* Opening CSV files for writing. */
         try {
-            uniprotEntries = new CSVWriter("uniprot_entries.tsv", "uniprot_accession_number", "version", "taxon_id", "type", "protein");
-            peptides = new CSVWriter("peptides.tsv", "sequence_id", "uniprot_entry_id", "original_sequence_id", "position");
-            refseqCrossReferences = new CSVWriter("refseq_cross_references.tsv", "uniprot_entry_id", "protein_id", "sequence_id");
-            emblCrossReferences = new CSVWriter("embl_cross_references.tsv", "uniprot_entry_id", "protein_id", "sequence_id");
-            goCrossReferences = new CSVWriter("go_cross_references.tsv", "uniprot_entry_id", "go_id");
-            ecCrossReferences = new CSVWriter("ec_cross_references.tsv", "uniprot_entry_id", "ec_id");
-            lineages = new CSVWriter("lineages.tsv", ranks);
-            sequences = new CSVWriter("sequences.tsv", "sequence");
+            uniprotEntries = new CSVWriter("uniprot_entries");
+            peptides = new CSVWriter("peptides");
+            refseqCrossReferences = new CSVWriter("refseq_cross_references");
+            emblCrossReferences = new CSVWriter("embl_cross_references");
+            goCrossReferences = new CSVWriter("go_cross_references");
+            ecCrossReferences = new CSVWriter("ec_cross_references");
+            lineages = new CSVWriter("lineages");
+            sequences = new CSVWriter("sequences");
         } catch(IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + " Error creating tsv files");
@@ -111,7 +111,7 @@ public class PeptideLoaderData implements UniprotObserver {
 
         /* Reading the available taxons from the database. */
         try {
-            CSVReader reader = new CSVReader("taxons.tsv");
+            CSVReader reader = new CSVReader("taxons");
             String[] items;
             while((items = reader.read()) != null) {
                 int id = Integer.parseUnsignedInt(items[0]);

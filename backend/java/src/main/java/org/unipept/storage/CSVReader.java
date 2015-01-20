@@ -2,17 +2,25 @@ package org.unipept.storage;
 
 import java.io.IOException;
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.util.zip.GZIPInputStream;
+import java.io.FileInputStream;
 
 public class CSVReader {
 
     private BufferedReader buffer;
-    private int titleCount;
 
     public CSVReader(String file) throws IOException {
-        buffer = new BufferedReader(new FileReader(file));
+        buffer = new BufferedReader(
+                    new InputStreamReader(
+                        new GZIPInputStream(
+                            new FileInputStream(
+                                System.getenv("TABDIR")+"/"+file+".tsv.gz"
+                            )
+                        )
+                    )
+                );
         String titles = buffer.readLine(); // Skipping the header
-        titleCount = titles.length() - titles.replace("	", "").length();
     }
 
     public String[] read() throws IOException {

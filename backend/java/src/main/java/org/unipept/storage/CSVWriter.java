@@ -2,7 +2,9 @@ package org.unipept.storage;
 
 import java.io.IOException;
 import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.util.zip.GZIPOutputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 
 public class CSVWriter {
 
@@ -10,7 +12,15 @@ public class CSVWriter {
     private int index = 0;
 
     public CSVWriter(String file) throws IOException {
-        buffer = new BufferedWriter(new FileWriter(file));
+        buffer = new BufferedWriter(
+                    new OutputStreamWriter(
+                        new GZIPOutputStream(
+                            new FileOutputStream(
+                                System.getenv("TABDIR")+"/"+file+".tsv.gz"
+                            )
+                        )
+                    )
+                );
     }
 
     public int write(String... values) throws IOException {
