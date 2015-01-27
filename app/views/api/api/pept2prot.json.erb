@@ -11,6 +11,10 @@
           "taxon_name" => u.name.try(:name),
           "ec_references" => u.ec_cross_references.map(&:ec_id).join(" "),
           "go_references" => u.go_cross_references.map(&:go_id).join(" "),
+          "refseq_ids" => u.refseq_cross_references.map(&:sequence_id).join(" "),
+          "refseq_protein_ids" => u.refseq_cross_references.map(&:protein_id).join(" "),
+          "insdc_ids" => u.embl_cross_references.map(&:sequence_id).join(" "),
+          "insdc_protein_ids" => u.embl_cross_references.map(&:protein_id).join(" "),
         }
       end
     end.flatten).html_safe

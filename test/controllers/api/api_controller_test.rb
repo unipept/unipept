@@ -87,6 +87,10 @@ class Api::ApiControllerTest < ActionController::TestCase
     assert @response.body.include? "taxon_name"
     assert @response.body.include? "ec_references"
     assert @response.body.include? "go_references"
+    assert @response.body.include? "refseq_ids"
+    assert @response.body.include? "refseq_protein_ids"
+    assert @response.body.include? "insdc_ids"
+    assert @response.body.include? "insdc_protein_ids"
     assert_not @response.body.include? '"uniprot_id":"nr2"'
   end
 
@@ -103,6 +107,10 @@ class Api::ApiControllerTest < ActionController::TestCase
     assert @response.body.include? "taxon_name"
     assert @response.body.include? "ec_references"
     assert @response.body.include? "go_references"
+    assert @response.body.include? "refseq_ids"
+    assert @response.body.include? "refseq_protein_ids"
+    assert @response.body.include? "insdc_ids"
+    assert @response.body.include? "insdc_protein_ids"
     assert @response.body.include? '"uniprot_id":"nr2"'
   end
 

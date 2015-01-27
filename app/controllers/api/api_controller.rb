@@ -39,7 +39,7 @@ class Api::ApiController < ApplicationController
       end
 
       ids = ids.uniq.compact.sort
-      UniprotEntry.includes(:name,:ec_cross_references, :go_cross_references).
+      UniprotEntry.includes(:name,:ec_cross_references, :go_cross_references, :refseq_cross_references, :embl_cross_references).
         where(id: ids).find_in_batches do |group|
 
         group.each do |uni|
