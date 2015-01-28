@@ -23,6 +23,26 @@ var constructMultisearch = function constructMultisearch(args) {
      * Initializes Multisearch
      */
     function init() {
+        // set up visualisations
+        initVisualisations();
+
+        // set up save images
+        setUpSaveImage();
+
+        // set up save dataset
+        setUpSaveDataset();
+
+        // set up full screen
+        setUpFullScreen();
+
+        // set up missed
+        addMissed();
+        // copy to clipboard for missed peptides
+        addCopy($("#copy-missed span").first(), function () {return $(".mismatches").text(); });
+
+    }
+
+    function initVisualisations() {
         // sunburst
         try {
             sunburst = constructSunburst({multi : that, data : JSON.parse(JSON.stringify(data))});
@@ -50,12 +70,6 @@ var constructMultisearch = function constructMultisearch(args) {
         } catch (err) {
             error(err.message, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
-
-        // set up missed
-        addMissed();
-        // copy to clipboard for missed peptides
-        addCopy($("#copy-missed span").first(), function () {return $(".mismatches").text(); });
-
     }
 
     /**
@@ -67,6 +81,98 @@ var constructMultisearch = function constructMultisearch(args) {
             misses += "<li><a href='http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&amp;SET_SAVED_SEARCH=on&amp;USER_FORMAT_DEFAULTS=on&amp;PAGE=Proteins&amp;PROGRAM=blastp&amp;QUERY=" + missed[i] + "&amp;GAPCOSTS=11%201&amp;EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&amp;DATABASE=nr&amp;BLAST_PROGRAMS=blastp&amp;MAX_NUM_SEQ=100&amp;SHORT_QUERY_ADJUST=on&amp;EXPECT=10&amp;WORD_SIZE=3&amp;MATRIX_NAME=BLOSUM62&amp;COMPOSITION_BASED_STATISTICS=2&amp;SHOW_OVERVIEW=on&amp;SHOW_LINKOUT=on&amp;ALIGNMENT_VIEW=Pairwise&amp;MASK_CHAR=2&amp;MASK_COLOR=1&amp;GET_SEQUENCE=on&amp;NEW_VIEW=on&amp;NUM_OVERVIEW=100&amp;DESCRIPTIONS=100&amp;ALIGNMENTS=100&amp;FORMAT_OBJECT=Alignment&amp;FORMAT_TYPE=HTML&amp;OLD_BLAST=false' target='_blank'>" + missed[i] + "</a> <span class='glyphicon glyphicon-share-alt'></span></li>";
         }
         $(".mismatches").html(misses);
+    }
+
+    function setUpSaveImage() {
+        $("#buttons").prepend("<button id='save-btn' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-download'></span> Save as image</button>");
+        $("#save-btn").click(function () {
+            $(".debug_dump").hide();
+            if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
+                d3.selectAll(".toHide").attr("class", "hidden");
+                logToGoogle("Multi Peptide", "Save Image", "Sunburst");
+                triggerDownloadModal("#sunburst svg", null, "unipept_sunburst");
+                d3.selectAll(".hidden").attr("class", "toHide");
+            } else if ($(".tab-content .active").attr('id') === "d3TreeMapWrapper") {
+                logToGoogle("Multi Peptide", "Save Image", "Treemap");
+                triggerDownloadModal(null, "#d3TreeMap", "unipept_treemap");
+            } else {
+                logToGoogle("Multi Peptide", "Save Image", "Treeview");
+                triggerDownloadModal("#d3TreeView svg", null, "unipept_treeview");
+            }
+        });
+    }
+
+    function setUpSaveDataset() {
+        $("#downloadDataset").click(function () {
+            // Track the download button
+            logToGoogle("Multi Peptide", "Export");
+
+            var nonce = Math.random();
+            $("#nonce").val(nonce);
+            $("#downloadDataset").button('loading');
+            var downloadTimer = setInterval(function () {
+                if (document.cookie.indexOf(nonce) !== -1) {
+                    $("#downloadDataset").button('reset');
+                    clearInterval(downloadTimer);
+                }
+            }, 1000);
+            return true;
+        });
+    }
+
+    function setUpFullScreen() {
+        if (fullScreenApi.supportsFullScreen) {
+            $("#buttons").prepend("<button id='zoom-btn' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-resize-full'></span> Enter full screen</button>");
+            $("#zoom-btn").click(function () {
+                if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
+                    logToGoogle("Multi Peptide", "Full Screen", "Sunburst");
+                    window.fullScreenApi.requestFullScreen($("#sunburst").get(0));
+                } else if ($(".tab-content .active").attr('id') === "d3TreeMapWrapper") {
+                    logToGoogle("Multi Peptide", "Full Screen", "Treemap");
+                    window.fullScreenApi.requestFullScreen($("#d3TreeMap").get(0));
+                } else {
+                    logToGoogle("Multi Peptide", "Full Screen", "Treeview");
+                    window.fullScreenApi.requestFullScreen($("#d3TreeView").get(0));
+                }
+            });
+            $(document).bind(fullScreenApi.fullScreenEventName, resizeFullScreen);
+        }
+    }
+
+    function resizeFullScreen() {
+        if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
+            setTimeout(function () {
+                var size = 740,
+                    destination = "body";
+                if (window.fullScreenApi.isFullScreen()) {
+                    size = Math.min($(window).height(), $(window).width());
+                    destination = "#sunburst";
+                }
+                $("#sunburst svg").attr("width", size);
+                $("#sunburst svg").attr("height", size);
+                $("#sunburst-tooltip").appendTo(destination);
+            }, 1000);
+        } else if ($(".tab-content .active").attr('id') === "d3TreeMapWrapper") {
+            var destination = "body";
+            if (window.fullScreenApi.isFullScreen()) {
+                destination = "#d3TreeMap";
+            }
+            $("#treemap-tooltip").appendTo(destination);
+        } else {
+            setTimeout(function () {
+                var width = 916,
+                    height = 600,
+                    destination = "body";
+                if (window.fullScreenApi.isFullScreen()) {
+                    width = $(window).width();
+                    height = $(window).height();
+                    destination = "#d3TreeView";
+                }
+                $("#d3TreeView svg").attr("width", width);
+                $("#d3TreeView svg").attr("height", height);
+                $("#treeview-tooltip").appendTo(destination);
+            }, 1000);
+        }
     }
 
     /*************** Public methods ***************/
