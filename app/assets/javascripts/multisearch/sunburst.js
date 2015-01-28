@@ -161,14 +161,13 @@ var constructSunburst = function constructSunburst(args) {
             .attr("fill-rule", "evenodd")                         // fill rule
             .style("fill", colour)                                // call function for colour
             .on("click", click)                                   // call function on click
-            // TODO
-            /*.on("mouseover", function (d) {
+            .on("mouseover", function (d) {
                 if (d.depth < currentMaxLevel && d.name !== "empty") {
-                    tooltipIn(d, tooltip);
+                    multi.tooltipIn(d, tooltip);
                 }
             })
-            .on("mousemove", function () { tooltipMove(tooltip); })
-            .on("mouseout", function () { tooltipOut(tooltip); })*/;
+            .on("mousemove", function () { multi.tooltipMove(tooltip); })
+            .on("mouseout", function () { multi.tooltipOut(tooltip); });
 
         // put labels on the nodes
         text = vis.selectAll("text").data(nodes);

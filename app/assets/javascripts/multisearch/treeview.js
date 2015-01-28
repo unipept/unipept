@@ -258,8 +258,8 @@ var constructTreeview = function constructTreeview(args) {
 
     // tooltip functions
     function tooltipIn(d) {
-        var pos = getTooltipPosition();
-        tooltip.html(getTooltipContent(d));
+        var pos = multi.getTooltipPosition();
+        tooltip.html(multi.getTooltipContent(d));
         tooltip.style("top", pos.top).style("left", pos.left);
 
         tooltipTimer = setTimeout(function () {

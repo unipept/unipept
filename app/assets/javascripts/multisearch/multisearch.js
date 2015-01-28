@@ -122,6 +122,49 @@ var constructMultisearch = function constructMultisearch(args) {
         return title;
     };
 
+    // tooltip functions
+    that.tooltipIn = function tooltipIn(d, tt, pie) {
+        tt.style("visibility", "visible")
+            .html(that.getTooltipContent(d));
+        if (pie && d.children && d.children.length > 1) {
+            tt.html(tt.html() + "<br><img src='" + that.getPiechartUrl(d) + "'/>");
+        }
+    };
+    that.tooltipMove = function tooltipMove(tt) {
+        var pos = that.getTooltipPosition();
+        tt.style("top", pos.top).style("left", pos.left);
+    };
+    that.tooltipOut = function tooltipOut(tt) {
+        tt.style("visibility", "hidden");
+    };
+    that.getTooltipContent = function getTooltipContent(d) {
+        return "<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" +
+            (!d.data.self_count ? "0" : d.data.self_count) +
+            (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
+            (!d.data.count ? "0" : d.data.count) +
+            (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower";
+    };
+    that.getPiechartUrl = function getPiechartUrl(d) {
+        var url = "http://chart.apis.google.com/chart?chs=300x225&cht=p&chd=t:";
+        url += d.children.map(function (i) { return i.data.count; }).join(",");
+        url += "&chdl=";
+        url += d.children.map(function (i) { return i.name + " (" + i.data.count + ")"; }).join("|");
+        url += "&chds=0,";
+        url +=  d3.max(d.children.map(function (i) { return i.data.count; }));
+        return url;
+    };
+    that.getTooltipPosition = function getTooltipPosition() {
+        var pos = {};
+        if (window.fullScreenApi.isFullScreen()) {
+            pos.top = (d3.event.clientY - 5) + "px";
+            pos.left = (d3.event.clientX + 15) + "px";
+        } else {
+            pos.top = (d3.event.pageY - 5) + "px";
+            pos.left = (d3.event.pageX + 15) + "px";
+        }
+        return pos;
+    };
+
     // initialize the object
     init();
 

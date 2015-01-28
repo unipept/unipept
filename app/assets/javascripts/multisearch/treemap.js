@@ -157,10 +157,9 @@ var constructTreemap = function constructTreemap(args) {
                     update(current.parent);
                 }
             })
-            // TODO
-            /*.on("mouseover", function (d) { tooltipIn(d, tooltip, true); })
-            .on("mousemove", function () { tooltipMove(tooltip); })
-            .on("mouseout", function (d) { tooltipOut(tooltip); })*/;
+            .on("mouseover", function (d) { multi.tooltipIn(d, tooltip, true); })
+            .on("mousemove", function () { multi.tooltipMove(tooltip); })
+            .on("mouseout", function (d) { multi.tooltipOut(tooltip); });
 
         nodes.order()
             .transition()
