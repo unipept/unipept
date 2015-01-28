@@ -33,17 +33,18 @@
               <span class="dir">
                 <a class="btn btn-xs btn-default" id="sunburst-reset" title="reset visualisation"><i class="glyphicon glyphicon-repeat"></i></a>
               </span>
-              <span class="dir">
-                <div class="btn-group" id="colorswap">
-                  <a class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" id="colorswap-button"><i class="glyphicon glyphicon-cog"></i></a>
-                  <ul class="dropdown-menu dropdown-menu-right dropdown-menu-form">
-                    <li title="Enabling this will assign fixed colors to taxa making it easier to compare samples."><div class="checkbox"><label class="checkbox"><input type="checkbox" id="colorswap-checkbox">Use fixed colors</label></div></li>
-                  </ul>
-                </div>
-              </span>
               <span class="dir text">Click a slice to zoom in and the center node to zoom out</span>
             </h2>
-            <div id="sunburst"></div>
+            <div id="sunburst">
+                <div id="sunburstSettings">
+                    <h4>settings</h4>
+                    <div class="checkbox">
+                        <label title="Enabling this will assign fixed colors to taxa making it easier to compare samples.">
+                          <input type="checkbox" id="colorswap-checkbox"> Use fixed colors
+                        </label>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="tab-pane" id="d3TreeMapWrapper">
             <h2 class="ghead">
