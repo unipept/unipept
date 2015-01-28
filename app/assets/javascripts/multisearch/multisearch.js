@@ -9,6 +9,7 @@ var constructMultisearch = function constructMultisearch(args) {
 
     var that = {},
         data = args.data,
+        equateIL = args.equateIL,
         sunburst,
         treemap,
         treeview;
@@ -39,6 +40,13 @@ var constructMultisearch = function constructMultisearch(args) {
         } catch (err) {
             error(err.message, "Loading the Treeview visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
+
+        // searchtree
+        //try {
+            searchtree = constructSearchtree({data : data, equateIL : equateIL});
+            /*} catch (err) {
+            error(err.message, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
+        }*/
 
     }
 
