@@ -11,6 +11,7 @@ var constructMultisearch = function constructMultisearch(args) {
         data = args.data,
         equateIL = args.equateIL,
         missed = args.missed,
+        sequences = args.sequences,
         sunburst,
         treemap,
         treeview
@@ -82,7 +83,44 @@ var constructMultisearch = function constructMultisearch(args) {
             searchTerm = "";
         }
         setTimeout(function () { searchtree.search(searchTerm); }, timeout);
-    }
+    };
+
+    /**
+     * returns an array containing all sequences specific to this sequence id
+     *
+     * @param <int> id The taxonId of the organism we want the sequences from
+     * @return <Array> An array of sequences (strings)
+     */
+    that.getOwnSequences = function getOwnSequences(id) {
+        return sequences[id] || [];
+    };
+
+    /**
+     * Returns an array containing all sequences mathing the given node or any
+     * of its children.
+     *
+     * @param <node> d The node
+     * @return <Array> An array of sequences (strings)
+     */
+    that.getAllSequences = function getAllSequences(d) {
+        var s = that.getOwnSequences(d.id);
+        for (var i = 0; i < d.children.length; i++) {
+            s = s.concat(that.getAllSequences(d.children[i]));
+        }
+        return s;
+    };
+
+    /**
+     * Constructs a title string for a given node
+     *
+     * @param <node> d The node
+     * @return <Array> A title string
+     */
+    that.getTitle = function getTitle(d) {
+        var title = d.name;
+        title += " (" + d.data.self_count + "/" + d.data.count + ")";
+        return title;
+    };
 
     // initialize the object
     init();

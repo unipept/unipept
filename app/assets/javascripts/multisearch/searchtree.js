@@ -37,7 +37,7 @@ var constructSearchtree = function constructSearchtree(args) {
         items = tree.selectAll("li").data([data])
             .enter()
             .append("li")
-                .html(function (d) { return "<span>" + getTitle(d) + "</span>"; })
+                .html(function (d) { return "<span>" + multi.getTitle(d) + "</span>"; })
                 .attr("title", function (d) { return d.data.rank; })
                 .attr("class", "collapsibleListOpen")
                 .attr("data-search", function (d) { return d.name.toLowerCase(); })
@@ -46,7 +46,7 @@ var constructSearchtree = function constructSearchtree(args) {
             items = items.selectAll("li").data(function (d) { return d.children; })
                 .enter()
                 .append("li")
-                    .html(function (d) { return "<span>" + getTitle(d) + "</span>"; })
+                    .html(function (d) { return "<span>" + multi.getTitle(d) + "</span>"; })
                     .attr("title", function (d) { return d.data.rank; })
                     .attr("class", function (d) {
                         if (!d.children.length) {
@@ -97,11 +97,6 @@ var constructSearchtree = function constructSearchtree(args) {
 
     }
 
-    // todo remove me
-    function getTitle(d) {
-        return d.name;
-    }
-
     /**
      * Loads the peptides corresponding with the clicked node and moves the
      * info div to the corresponding position
@@ -124,21 +119,21 @@ var constructSearchtree = function constructSearchtree(args) {
         infoPane = $("#tree_data").html("<h3>" + innertext + "</h3>");
         $("#tree_data").css("-webkit-transform", "translateY(" + margin + "px)");
         $("#tree_data").css("transform", "translateY(" + margin + "px)");
-        ownSequences = getOwnSequences(d.id).sort();
+        ownSequences = multi.getOwnSequences(d.id).sort();
         if (ownSequences && ownSequences.length > 0) {
             list = infoPane.append("<h4 class='own'>Peptides specific for this taxon</h4><ul></ul>").find("ul").last();
             for (peptide in ownSequences) {
-                list.append("<li><a href='/sequences/" + ownSequences[peptide] + "/" + equate_il + "' target='_blank'>" + ownSequences[peptide] + "</a></li>");
+                list.append("<li><a href='/sequences/" + ownSequences[peptide] + "/" + equateIL + "' target='_blank'>" + ownSequences[peptide] + "</a></li>");
             }
             infoPane.find("h4.own").before("<div id='copy-own' class='zero-clipboard'><span class='btn-clipboard'>Copy</span></div>");
             addCopy($("#copy-own span").first(), function () {return ownSequences.join("\n"); });
 
         }
-        allSequences = getAllSequences(d).sort();
+        allSequences = multi.getAllSequences(d).sort();
         if (allSequences && allSequences.length > 0 && allSequences.length !== (ownSequences ? ownSequences.length : 0)) {
             list = infoPane.append("<h4 class='all'>Peptides specific to this taxon or one of its subtaxa</h4><ul></ul>").find("ul").last();
             for (peptide in allSequences) {
-                list.append("<li><a href='/sequences/" + allSequences[peptide] + "/" + equate_il + "' target='_blank'>" + allSequences[peptide] + "</a></li>");
+                list.append("<li><a href='/sequences/" + allSequences[peptide] + "/" + equateIL + "' target='_blank'>" + allSequences[peptide] + "</a></li>");
             }
             infoPane.find("h4.all").before("<div id='copy-all' class='zero-clipboard'><span class='btn-clipboard'>Copy</span></div>");
             addCopy($("#copy-all span").first(), function () {return allSequences.join("\n"); });

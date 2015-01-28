@@ -1,6 +1,10 @@
 function init_multi(data, sequences, missed, equate_il) {
 
-    constructMultisearch({data : data, equateIL : equate_il, missed : missed});
+    constructMultisearch({
+        data : data,
+        equateIL : equate_il,
+        missed : missed,
+        sequences : sequences});
 
     $("#downloadDataset").click(function () {
         // Track the download button
@@ -135,25 +139,5 @@ function init_multi(data, sequences, missed, equate_il) {
         return pos;
     }
 
-    // returns an array containing all sequences specific to this sequence id
-    function getOwnSequences(id) {
-        return sequences[id] || [];
-    }
 
-    // returns an array containing all sequences specific to this node or
-    // something below
-    function getAllSequences(d) {
-        var s = getOwnSequences(d.id);
-        for (var i = 0; i < d.children.length; i++) {
-            s = s.concat(getAllSequences(d.children[i]));
-        }
-        return s;
-    }
-
-    // constructs a title
-    function getTitle(d) {
-        var title = d.name;
-        title += " (" + d.data.self_count + "/" + d.data.count + ")";
-        return title;
-    }
 }

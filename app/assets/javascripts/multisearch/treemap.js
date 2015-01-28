@@ -102,17 +102,6 @@ var constructTreemap = function constructTreemap(args) {
             .style("height", function (d) { return Math.max(0, d.dy - 1) + "px"; });
     }
 
-    /**
-     * Constructs a title
-     * @param <Object> d The object to construct a title for
-     * @return <String> The title
-     */
-    function getTitle(d) {
-        var title = d.name;
-        title += " (" + d.data.self_count + "/" + d.data.count + ")";
-        return title;
-    }
-
     /*************** Public methods ***************/
 
     /**
@@ -157,7 +146,7 @@ var constructTreemap = function constructTreemap(args) {
             .style("top", "0px")
             .style("width", "0px")
             .style("height", "0px")
-            .text(getTitle)
+            .text(multi.getTitle)
             .on("click", function (d) {
                 logToGoogle("Multi Peptide", "Zoom", "Treemap");
                 update(d);

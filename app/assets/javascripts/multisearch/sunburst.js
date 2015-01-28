@@ -306,7 +306,7 @@ var constructSunburst = function constructSunburst(args) {
      * Calculates the color of an arc based on the color of his children
      *
      * @param <Object> d The node for which we want the color
-     * @returm <Color> The calculated color
+     * @return <Color> The calculated color
      */
     function colour(d) {
         if (d.name === "empty") {
