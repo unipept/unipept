@@ -124,23 +124,30 @@ var constructMultisearch = function constructMultisearch(args) {
         if (fullScreenApi.supportsFullScreen) {
             $("#buttons").prepend("<button id='zoom-btn' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-resize-full'></span> Enter full screen</button>");
             $("#zoom-btn").click(function () {
-                if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
-                    logToGoogle("Multi Peptide", "Full Screen", "Sunburst");
-                    window.fullScreenApi.requestFullScreen($("#sunburst").get(0));
-                } else if ($(".tab-content .active").attr('id') === "d3TreeMapWrapper") {
-                    logToGoogle("Multi Peptide", "Full Screen", "Treemap");
-                    window.fullScreenApi.requestFullScreen($("#d3TreeMap").get(0));
-                } else {
-                    logToGoogle("Multi Peptide", "Full Screen", "Treeview");
-                    window.fullScreenApi.requestFullScreen($("#d3TreeView").get(0));
-                }
+                logToGoogle("Multi Peptide", "Full Screen", getActiveTab());
+                window.fullScreenApi.requestFullScreen($("#visualisations").get(0));
             });
             $(document).bind(fullScreenApi.fullScreenEventName, resizeFullScreen);
         }
     }
 
     function resizeFullScreen() {
-        if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
+        var activeTab = getActiveTab(),
+            isFullScreen = window.fullScreenApi.isFullScreen();
+
+        // sync tabs
+        $("ul.visualisations li.active").removeClass("active");
+        $("ul.visualisations li").each(function (i, el) {
+            if ($(el).find("a").attr("href") === "#" + activeTab + "Wrapper") {
+                $(el).addClass("active");
+            }
+        });
+
+        // class
+        $("#visualisations").toggleClass("fullScreen", isFullScreen);
+        $("#visualisations").toggleClass("notFullScreen", !isFullScreen);
+
+        /*if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
             setTimeout(function () {
                 var size = 740,
                     destination = "body";
@@ -172,7 +179,12 @@ var constructMultisearch = function constructMultisearch(args) {
                 $("#d3TreeView svg").attr("height", height);
                 $("#treeview-tooltip").appendTo(destination);
             }, 1000);
-        }
+        }*/
+    }
+
+    function getActiveTab() {
+        var activePane = $("#visualisations div.active").attr('id');
+        return activePane.split("Wrapper")[0];
     }
 
     /*************** Public methods ***************/

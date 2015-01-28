@@ -22,12 +22,27 @@
 
 <% if @number_found > 0 %>
     <div id="buttons"></div>
-    <ul class="nav nav-tabs" id="viz-tabs">
+    <ul class="nav nav-tabs visualisations" id="viz-tabs">
         <li class="active"><a href="#sunburstWrapper" data-toggle="tab">Sunburst</a></li>
         <li><a href="#d3TreeMapWrapper" data-toggle="tab">Treemap</a></li>
         <li><a href="#d3TreeViewWrapper" data-toggle="tab">Treeview</a></li>
     </ul>
-    <div class="tab-content multi-search">
+    <div id="visualisations" class="tab-content multi-search notFullScreen">
+        <div id="fullScreenBar">
+            <div class="logo"><img src="<%= asset_path('trans_logo.png') %>" alt="logo" width="40" height="40"></div>
+            <nav class="fullScreenNav">
+                <ul class="visualisations">
+                    <li class="active"><a href="#sunburstWrapper" data-toggle="tab">Sunburst</a></li>
+                    <li><a href="#d3TreeMapWrapper" data-toggle="tab">Treemap</a></li>
+                    <li><a href="#d3TreeViewWrapper" data-toggle="tab">Treeview</a></li>
+                </ul>
+            </nav>
+            <div class="fullScreenActions">
+                <a><span class="glyphicon glyphicon-repeat"></span></a>
+                <a><span class="glyphicon glyphicon-download"></span></a>
+                <a><span class="glyphicon glyphicon-resize-small"></span></a>
+            </div>
+        </div>
         <div class="tab-pane active" id="sunburstWrapper">
             <h2 class="ghead">
               <span class="dir">
@@ -44,20 +59,6 @@
               <span class="dir text">Click a slice to zoom in and the center node to zoom out</span>
             </h2>
             <div id="sunburst">
-                <div id="fullScreenBar">
-                    <nav class="fullScreenNav">
-                        <ul>
-                            <li class="active"><a>Sunburst</a></li>
-                            <li><a>Treemap</a></li>
-                            <li><a>Treeview</a></li>
-                        </ul>
-                    </nav>
-                    <div class="fullScreenActions">
-                        <a><span class="glyphicon glyphicon-repeat"></span></a>
-                        <a><span class="glyphicon glyphicon-download"></span></a>
-                        <a><span class="glyphicon glyphicon-resize-small"></span></a>
-                    </div>
-                </div>
                 <div id="sunburstPanel">&nbsp;</div>
             </div>
         </div>
