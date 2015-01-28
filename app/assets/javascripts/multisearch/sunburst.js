@@ -8,6 +8,7 @@ var constructSunburst = function constructSunburst(args) {
 
     // parameters
     var that = {},
+        multi = args.multi,
         data = args.data;
 
     // layout
@@ -237,8 +238,7 @@ var constructSunburst = function constructSunburst(args) {
         logToGoogle("Multi Peptide", "Zoom", "Sunburst");
 
         // set tree, but only after the animation
-        // TODO
-        //treeSearch(d.name, duration);
+        multi.search(d.name, duration);
 
         // perform animation
         currentMaxLevel = d.depth + levels;

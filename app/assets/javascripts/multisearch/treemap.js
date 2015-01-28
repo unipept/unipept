@@ -8,6 +8,7 @@ var constructTreemap = function constructTreemap(args) {
 
     // parameters
     var that = {},
+        multi = args.multi,
         data = args.data;
 
     var ranks = ["no rank", "superkingdom", "kingdom", "subkingdom", "superphylum", "phylum", "subphylum", "superclass", "class", "subclass", "infraclass", "superorder", "order", "suborder", "infraorder", "parvorder", "superfamily", "family", "subfamily", "tribe", "subtribe", "genus", "subgenus", "species group", "species subgroup", "species", "subspecies", "varietas", "forma"];
@@ -121,8 +122,7 @@ var constructTreemap = function constructTreemap(args) {
         current = data;
 
         // search for the new root
-        // todo
-        //treeSearch(data.name, 500);
+        multi.search(data.name);
 
         // breadcrumbs
         var crumbs = [];

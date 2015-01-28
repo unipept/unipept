@@ -8,7 +8,8 @@ var constructSearchtree = function constructSearchtree(args) {
 
     // parameters
     var that = {},
-        data = args.data
+        data = args.data,
+        multi = args.multi,
         equateIL = args.equateIL ? "equateIL" : "";
 
     var tree,
@@ -147,8 +148,15 @@ var constructSearchtree = function constructSearchtree(args) {
 
     /*************** Public methods ***************/
 
-    that.search = function search(q) {
-
+    /**
+     * searches for a term
+     *
+     * @param <String> searchTerm The string searched for
+     */
+    that.search = function search(searchTerm) {
+        $("#tree_search").val(searchTerm);
+        highlight("#tree_search");
+        $("#tree_search").change();
     };
 
 

@@ -12,6 +12,7 @@ var constructTreeview = function constructTreeview(args) {
 
     // parameters
     var that = {},
+        multi = args.multi,
         data = args.data;
 
     // settings

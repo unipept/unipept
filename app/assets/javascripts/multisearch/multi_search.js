@@ -148,19 +148,6 @@ function init_multi(data, sequences, missed, equate_il) {
         return pos;
     }
 
-    // Enters the given string in the search box
-    // Highlights the field
-    // filters the tree after the given number of ms
-    function treeSearch(searchTerm, duration) {
-        if (searchTerm === "Organism") {
-            searchTerm = "";
-        }
-        var timeout = duration || 0;
-        $("#tree_search").val(searchTerm);
-        highlight("#tree_search");
-        setTimeout(function () { $("#tree_search").change(); }, timeout);
-    }
-
     // returns an array containing all sequences specific to this sequence id
     function getOwnSequences(id) {
         return sequences[id] || [];
