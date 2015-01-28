@@ -148,8 +148,8 @@ var constructMultisearch = function constructMultisearch(args) {
                     size = Math.min($(window).height(), $(window).width());
                     destination = "#sunburst";
                 }
-                $("#sunburst svg").attr("width", size);
-                $("#sunburst svg").attr("height", size);
+                $("#sunburst > svg").attr("width", size);
+                $("#sunburst > svg").attr("height", size);
                 $("#sunburst-tooltip").appendTo(destination);
             }, 1000);
         } else if ($(".tab-content .active").attr('id') === "d3TreeMapWrapper") {
