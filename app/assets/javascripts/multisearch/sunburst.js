@@ -250,6 +250,7 @@ var constructSunburst = function constructSunburst(args) {
             .append("li")
             .on("click", function (d) { click(d.parent); })
             .attr("class", "crumb")
+            .style("opacity", "0")
             .attr("title", function (d) { return d.data.rank; })
             .html(function (d) { return "<p class='name'>" +
                 d.name +
@@ -260,7 +261,13 @@ var constructSunburst = function constructSunburst(args) {
                 "</p>"; })
             .insert("svg", ":first-child").attr("width", 30).attr("height", 30)
             .append("path").attr("d", breadArc).attr("transform", "translate(15, 15)").attr("fill", colour);
-        bc.exit().remove();
+        bc.transition()
+            .duration(duration)
+            .style("opacity", "1");
+        bc.exit().transition()
+            .duration(duration)
+            .style("opacity", "0")
+            .remove();
     }
 
     /**
