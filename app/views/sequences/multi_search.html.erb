@@ -107,7 +107,13 @@
     var sequences = <%= raw(@json_sequences)%>;
     var missed = <%= raw(@json_missed)%>
 
-    $(function () {init_multi(data, sequences, missed, <%=@equate_il %>);});
+    $(function () {
+        constructMultisearch({
+            data : data,
+            equateIL : <%=@equate_il %>,
+            missed : missed,
+            sequences : sequences});
+    });
 </script>
 <% end %>
 
