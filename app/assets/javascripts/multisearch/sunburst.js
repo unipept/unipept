@@ -60,7 +60,18 @@ var constructSunburst = function constructSunburst(args) {
         // the reset button
         $("#sunburst-reset").click(that.reset);
 
-        $("#sunburstSettings label").tooltip({placement : "left", container : "body"});
+        // hook up the swap colors checkbox
+        $("#colorswap").mouseenter(function () {
+            if (!$("#colorswap").hasClass("open")) {
+                $("#colorswap-button").dropdown("toggle");
+            }
+        });
+        $("#colorswap").mouseleave(function () {
+            if ($("#colorswap").hasClass("open")) {
+                $("#colorswap-button").dropdown("toggle");
+            }
+        });
+        $("#colorswap li").tooltip({placement : "right", container : "body"});
         $("#colorswap-checkbox").change(function () {
             useFixedColors = $(this).is(':checked');
             that.redrawColors();
@@ -99,7 +110,7 @@ var constructSunburst = function constructSunburst(args) {
             textEnter; // new text nodes
 
         // clear everything
-        $("#sunburst svg").remove();
+        $("#sunburst").empty();
         $("#sunburst-tooltip").remove();
 
         x = d3.scale.linear().range([0, 2 * Math.PI]), // use full circle
