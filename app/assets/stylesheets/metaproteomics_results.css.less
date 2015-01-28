@@ -59,7 +59,7 @@ span.dir.text {
     width: 100%;
     background-color: white;
 }
-#sunburst svg {
+#sunburst > svg {
     margin: 0 auto;
     display: block;
 }
@@ -79,6 +79,32 @@ span.dir.text {
     padding-left: 15px;
     padding-top: 0px;
     min-width: 135px;
+}
+#sunburstPanel {
+    width: 165px;
+    float: right;
+}
+#sunburstPanel ul {
+    padding-left: 0px;
+    list-style: none;
+}
+.crumb {
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+.crumb svg {
+    float: left;
+    margin-right: 3px;
+}
+.crumb p {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin: 0;
+    font-size: 14px
+}
+.crumb .percentage {
+    font-size: 11px;
 }
 
 // d3 treemap

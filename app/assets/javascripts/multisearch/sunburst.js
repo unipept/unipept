@@ -27,6 +27,7 @@ var constructSunburst = function constructSunburst(args) {
 
     // components
     var tooltip,
+        breadcrumbs,
         path, // the arcs
         x, // the x-scale
         y, // the y-scale
@@ -110,8 +111,11 @@ var constructSunburst = function constructSunburst(args) {
             textEnter; // new text nodes
 
         // clear everything
-        $("#sunburst").empty();
+        $("#sunburst svg").remove();
         $("#sunburst-tooltip").remove();
+        $("#sunburstPanel").empty();
+
+        breadcrumbs = d3.select("#sunburstPanel").append("ul");
 
         x = d3.scale.linear().range([0, 2 * Math.PI]), // use full circle
         y = d3.scale.linear().domain([0, 1]).range([0, r]),
@@ -225,6 +229,40 @@ var constructSunburst = function constructSunburst(args) {
         return d.children ? Math.max.apply(Math, d.children.map(maxY)) : d.y + d.dy;
     }
 
+    function setBreadcrumbs(d) {
+        // breadcrumbs
+        var crumbs = [];
+        var temp = d;
+        while (temp) {
+            crumbs.push(temp);
+            temp = temp.parent;
+        }
+        crumbs.reverse().shift();
+        //breadcrumbs.html("");
+        var breadArc = d3.svg.arc()
+            .innerRadius(0)
+            .outerRadius(15)
+            .startAngle(0)
+            .endAngle(function (d) { return 2 * Math.PI * d.data.count / d.parent.data.count; });
+        var bc = breadcrumbs.selectAll(".crumb")
+            .data(crumbs);
+        bc.enter()
+            .append("li")
+            .on("click", function (d) { click(d.parent); })
+            .attr("class", "crumb")
+            .attr("title", function (d) { return d.data.rank; })
+            .html(function (d) { return "<p class='name'>" +
+                d.name +
+                "</p><p class='percentage'>" +
+                Math.round(100 * d.data.count / d.parent.data.count) +
+                "% of " +
+                d.parent.name +
+                "</p>"; })
+            .insert("svg", ":first-child").attr("width", 30).attr("height", 30)
+            .append("path").attr("d", breadArc).attr("transform", "translate(15, 15)").attr("fill", colour);
+        bc.exit().remove();
+    }
+
     /**
      * Defines what happens after a node is clicked
      *
@@ -235,6 +273,8 @@ var constructSunburst = function constructSunburst(args) {
             return;
         }
         logToGoogle("Multi Peptide", "Zoom", "Sunburst");
+
+        setBreadcrumbs(d);
 
         // set tree, but only after the animation
         multi.search(d.name, duration);
@@ -365,6 +405,8 @@ var constructSunburst = function constructSunburst(args) {
      * redraws the colors of the sunburst
      */
     that.redrawColors = function redrawColors() {
+        d3.selectAll(".crumb path").transition()
+            .style("fill", colour);
         path.transition()
             .style("fill", colour);
         text.transition()
