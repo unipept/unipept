@@ -14,8 +14,9 @@ var constructMultisearch = function constructMultisearch(args) {
         sequences = args.sequences,
         sunburst,
         treemap,
-        treeview
-        searchtree;
+        treeview,
+        searchtree,
+        mapping = {};
 
     /*************** Private methods ***************/
 
@@ -34,6 +35,9 @@ var constructMultisearch = function constructMultisearch(args) {
 
         // set up full screen
         setUpFullScreen();
+
+        // set up the full screen action bar
+        setUpActionBar();
 
         // set up missed
         addMissed();
@@ -70,6 +74,10 @@ var constructMultisearch = function constructMultisearch(args) {
         } catch (err) {
             error(err.message, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
+
+        mapping.sunburst = sunburst;
+        mapping.d3TreeMap = treemap;
+        mapping.d3TreeView = treeview;
     }
 
     /**
@@ -180,6 +188,17 @@ var constructMultisearch = function constructMultisearch(args) {
                 $("#treeview-tooltip").appendTo(destination);
             }, 1000);
         }*/
+    }
+
+    function setUpActionBar() {
+        $(".fullScreenActions a").tooltip({placement: "bottom", delay: { "show": 300, "hide": 300 }});
+        $(".fullScreenActions .reset").click(function () {
+            mapping[getActiveTab()].reset();
+        });
+        $(".fullScreenActions .download").click(function () {console.log("download")});
+        $(".fullScreenActions .exit").click(function () {
+            window.fullScreenApi.cancelFullScreen();
+        });
     }
 
     function getActiveTab() {
