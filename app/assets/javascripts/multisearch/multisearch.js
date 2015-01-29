@@ -93,21 +93,7 @@ var constructMultisearch = function constructMultisearch(args) {
 
     function setUpSaveImage() {
         $("#buttons").prepend("<button id='save-btn' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-download'></span> Save as image</button>");
-        $("#save-btn").click(function () {
-            $(".debug_dump").hide();
-            if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
-                d3.selectAll(".toHide").attr("class", "hidden");
-                logToGoogle("Multi Peptide", "Save Image", "Sunburst");
-                triggerDownloadModal("#sunburst svg", null, "unipept_sunburst");
-                d3.selectAll(".hidden").attr("class", "toHide");
-            } else if ($(".tab-content .active").attr('id') === "d3TreeMapWrapper") {
-                logToGoogle("Multi Peptide", "Save Image", "Treemap");
-                triggerDownloadModal(null, "#d3TreeMap", "unipept_treemap");
-            } else {
-                logToGoogle("Multi Peptide", "Save Image", "Treeview");
-                triggerDownloadModal("#d3TreeView svg", null, "unipept_treeview");
-            }
-        });
+        $("#save-btn").click(saveImage);
     }
 
     function setUpSaveDataset() {
@@ -190,12 +176,27 @@ var constructMultisearch = function constructMultisearch(args) {
         }*/
     }
 
+    function saveImage () {
+        var activeTab = getActiveTab();
+        $(".debug_dump").hide();
+        logToGoogle("Multi Peptide", "Save Image", activeTab);
+        if (activeTab === "sunburst") {
+            d3.selectAll(".toHide").attr("class", "hidden");
+            triggerDownloadModal("#sunburst svg", null, "unipept_sunburst", "#visualisations");
+            d3.selectAll(".hidden").attr("class", "toHide");
+        } else if (activeTab === "d3TreeMap") {
+            triggerDownloadModal(null, "#d3TreeMap", "unipept_treemap", "#visualisations");
+        } else {
+            triggerDownloadModal("#d3TreeView svg", null, "unipept_treeview", "#visualisations");
+        }
+    }
+
     function setUpActionBar() {
         $(".fullScreenActions a").tooltip({placement: "bottom", delay: { "show": 300, "hide": 300 }});
         $(".fullScreenActions .reset").click(function () {
             mapping[getActiveTab()].reset();
         });
-        $(".fullScreenActions .download").click(function () {console.log("download")});
+        $(".fullScreenActions .download").click(saveImage);
         $(".fullScreenActions .exit").click(function () {
             window.fullScreenApi.cancelFullScreen();
         });

@@ -101,10 +101,14 @@ function add_fields(link, association, content) {
  * @param <String> canvasSelector The DOM selector of the canvas
  * @param <String> baseFileName The requested file name
  */
-function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
+function triggerDownloadModal(svgSelector, canvasSelector, baseFileName, parentSelector) {
     var $buttons = $("#save-as-modal .buttons"),
         $image = $("#save-as-modal .image"),
         svg;
+
+    if (parentSelector) {
+        $(parentSelector).append($("#save-as-modal"));
+    }
 
     // Reset the modal and show it
     $buttons.html("<h3>Please wait while we create your image</h3>");
