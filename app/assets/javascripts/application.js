@@ -104,6 +104,7 @@ function add_fields(link, association, content) {
 function triggerDownloadModal(svgSelector, canvasSelector, baseFileName, parentSelector) {
     var $buttons = $("#save-as-modal .buttons"),
         $image = $("#save-as-modal .image"),
+        $element,
         svg;
 
     if (parentSelector) {
@@ -120,7 +121,9 @@ function triggerDownloadModal(svgSelector, canvasSelector, baseFileName, parentS
     // Generate the image
     if (svgSelector) {
         // Send the SVG code to the server for png conversion
-        svg = $(svgSelector).wrap("<div></div>").parent().html();
+        $element = $(svgSelector);
+        svg = $element.wrap("<div></div>").parent().html();
+        $element.unwrap();
         $.post("/convert", { image: svg }, showImage);
     }
     if (canvasSelector) {

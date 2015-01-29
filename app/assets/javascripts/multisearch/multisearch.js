@@ -153,7 +153,7 @@ var constructMultisearch = function constructMultisearch(args) {
         logToGoogle("Multi Peptide", "Save Image", activeTab);
         if (activeTab === "sunburst") {
             d3.selectAll(".toHide").attr("class", "hidden");
-            triggerDownloadModal("#sunburst svg", null, "unipept_sunburst", "#visualisations");
+            triggerDownloadModal("#sunburst > svg", null, "unipept_sunburst", "#visualisations");
             d3.selectAll(".hidden").attr("class", "toHide");
         } else if (activeTab === "d3TreeMap") {
             triggerDownloadModal(null, "#d3TreeMap", "unipept_treemap", "#visualisations");
