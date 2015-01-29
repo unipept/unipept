@@ -251,7 +251,7 @@ var constructSunburst = function constructSunburst(args) {
             .on("click", function (d) { click(d.parent); })
             .attr("class", "crumb")
             .style("opacity", "0")
-            .attr("title", function (d) { return d.data.rank; })
+            .attr("title", function (d) { return "[" + d.data.rank + "] " + d.name; })
             .html(function (d) { return "<p class='name'>" +
                 d.name +
                 "</p><p class='percentage'>" +
