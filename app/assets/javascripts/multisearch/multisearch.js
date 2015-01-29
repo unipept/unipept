@@ -141,6 +141,9 @@ var constructMultisearch = function constructMultisearch(args) {
         $("#visualisations").toggleClass("fullScreen", isFullScreen);
         $("#visualisations").toggleClass("notFullScreen", !isFullScreen);
 
+        // update visualisations
+        sunburst.setFullScreen(isFullScreen);
+
         /*if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
             setTimeout(function () {
                 var size = 740,
