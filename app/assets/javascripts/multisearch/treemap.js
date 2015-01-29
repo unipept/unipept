@@ -102,6 +102,17 @@ var constructTreemap = function constructTreemap(args) {
             .style("height", function (d) { return Math.max(0, d.dy - 1) + "px"; });
     }
 
+    /**
+     * Resizes the treemap for a given width and height
+     */
+    function resize(width, height) {
+        treemap = d3.layout.treemap()
+            .size([width, height])
+            .padding([10, 0, 0, 0])
+            .value(function (d) { return d.data.self_count; });
+        that.update(current);
+    }
+
     /*************** Public methods ***************/
 
     /**
@@ -173,6 +184,29 @@ var constructTreemap = function constructTreemap(args) {
      */
     that.reset = function reset() {
         that.update(root);
+    };
+
+    /**
+     * Sets the visualisation in full screen mode
+     *
+     * @param <boolean> isFullScreen indicates if we're in full screen mode
+     */
+    that.setFullScreen = function setFullScreen(isFullScreen) {
+        // the delay is because the event fires before we're in fullscreen
+        // so the height en width functions don't give a correct result
+        // without the delay
+        setTimeout(function () {
+            var destination = "body",
+                w = width,
+                h = height;
+            if (isFullScreen) {
+                destination = "#d3TreeMap";
+                w = $(window).width();
+                h = $(window).height() - 44;
+            }
+            $("#treemap-tooltip").appendTo(destination);
+            resize(w, h);
+        }, 1000);
     };
 
     // initialize the object

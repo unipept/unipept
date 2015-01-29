@@ -143,16 +143,8 @@ var constructMultisearch = function constructMultisearch(args) {
 
         // update visualisations
         sunburst.setFullScreen(isFullScreen);
+        treemap.setFullScreen(isFullScreen);
         treeview.setFullScreen(isFullScreen);
-
-        /*
-        } else if ($(".tab-content .active").attr('id') === "d3TreeMapWrapper") {
-            var destination = "body";
-            if (window.fullScreenApi.isFullScreen()) {
-                destination = "#d3TreeMap";
-            }
-            $("#treemap-tooltip").appendTo(destination);
-        } */
     }
 
     function saveImage () {

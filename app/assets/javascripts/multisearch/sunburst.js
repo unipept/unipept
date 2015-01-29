@@ -423,16 +423,16 @@ var constructSunburst = function constructSunburst(args) {
     /**
      * Sets the visualisation in full screen mode
      *
-     * @param <boolean> fullScreen indicates if we're in full screen mode
+     * @param <boolean> isFullScreen indicates if we're in full screen mode
      */
-    that.setFullScreen = function setFullScreen(fullScreen) {
+    that.setFullScreen = function setFullScreen(isFullScreen) {
         // the delay is because the event fires before we're in fullscreen
         // so the height en width functions don't give a correct result
         // without the delay
         setTimeout(function () {
             var size = 740,
                 destination = "body";
-            if (fullScreen) {
+            if (isFullScreen) {
                 size = Math.min($(window).height() - 44, $(window).width() - 165);
                 destination = "#sunburst";
             }

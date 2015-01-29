@@ -435,9 +435,9 @@ var constructTreeview = function constructTreeview(args) {
     /**
      * Sets the visualisation in full screen mode
      *
-     * @param <boolean> fullScreen indicates if we're in full screen mode
+     * @param <boolean> isFullScreen indicates if we're in full screen mode
      */
-    that.setFullScreen = function setFullScreen(fullScreen) {
+    that.setFullScreen = function setFullScreen(isFullScreen) {
         // the delay is because the event fires before we're in fullscreen
         // so the height en width functions don't give a correct result
         // without the delay
@@ -445,9 +445,9 @@ var constructTreeview = function constructTreeview(args) {
             var width = 916,
                 height = 600,
                 destination = "body";
-            if (window.fullScreenApi.isFullScreen()) {
+            if (isFullScreen) {
                 width = $(window).width();
-                height = $(window).height();
+                height = $(window).height() - 44;
                 destination = "#d3TreeView";
             }
             $("#d3TreeView svg").attr("width", width);
