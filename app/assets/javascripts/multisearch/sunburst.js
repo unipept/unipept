@@ -164,7 +164,11 @@ var constructSunburst = function constructSunburst(args) {
             .attr("d", arc)                                       // path data
             .attr("fill-rule", "evenodd")                         // fill rule
             .style("fill", colour)                                // call function for colour
-            .on("click", click)                                   // call function on click
+            .on("click", function (d) {
+                if (d.depth < currentMaxLevel) {
+                    click(d);
+                }
+            })                                   // call function on click
             .on("mouseover", function (d) {
                 if (d.depth < currentMaxLevel && d.name !== "empty") {
                     multi.tooltipIn(d, tooltip);
@@ -238,7 +242,6 @@ var constructSunburst = function constructSunburst(args) {
             temp = temp.parent;
         }
         crumbs.reverse().shift();
-        //breadcrumbs.html("");
         var breadArc = d3.svg.arc()
             .innerRadius(0)
             .outerRadius(15)
