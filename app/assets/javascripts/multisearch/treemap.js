@@ -82,7 +82,7 @@ var constructTreemap = function constructTreemap(args) {
             .style("position", "relative")
             .style("width", (width + margin.left + margin.right - 1) + "px")
             .style("height", "20px")
-            .style("background-color", "#ffb300");
+            .style("background-color", "#FF7700");
 
         div = d3.select("#d3TreeMap").append("div")
             .style("position", "relative")
