@@ -5,5 +5,5 @@ server "scruffy.ugent.be", user: 'bmesuere', roles: [:web, :app], ssh_options: {
   port: 4840,
 }
 
-set :branch, 'develop'
+set :branch, 'feature/MPA-viz-refactor'
 set :rails_env, :development
