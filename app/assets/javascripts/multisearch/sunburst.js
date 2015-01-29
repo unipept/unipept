@@ -418,7 +418,7 @@ var constructSunburst = function constructSunburst(args) {
             .style("fill", colour);
         text.transition()
             .style("fill", function (d) { return getReadableColorFor(colour(d)); });
-    }
+    };
 
     /**
      * Sets the visualisation in full screen mode
@@ -440,7 +440,7 @@ var constructSunburst = function constructSunburst(args) {
             $("#sunburst > svg").attr("height", size);
             $("#sunburst-tooltip").appendTo(destination);
         }, 1000);
-    }
+    };
 
     // initialize the object
     init();

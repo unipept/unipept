@@ -432,6 +432,30 @@ var constructTreeview = function constructTreeview(args) {
         rightClick(root);
     };
 
+    /**
+     * Sets the visualisation in full screen mode
+     *
+     * @param <boolean> fullScreen indicates if we're in full screen mode
+     */
+    that.setFullScreen = function setFullScreen(fullScreen) {
+        // the delay is because the event fires before we're in fullscreen
+        // so the height en width functions don't give a correct result
+        // without the delay
+        setTimeout(function () {
+            var width = 916,
+                height = 600,
+                destination = "body";
+            if (window.fullScreenApi.isFullScreen()) {
+                width = $(window).width();
+                height = $(window).height();
+                destination = "#d3TreeView";
+            }
+            $("#d3TreeView svg").attr("width", width);
+            $("#d3TreeView svg").attr("height", height);
+            $("#treeview-tooltip").appendTo(destination);
+        }, 1000);
+    };
+
     // initialize the object
     init();
 

@@ -143,40 +143,16 @@ var constructMultisearch = function constructMultisearch(args) {
 
         // update visualisations
         sunburst.setFullScreen(isFullScreen);
+        treeview.setFullScreen(isFullScreen);
 
-        /*if ($(".tab-content .active").attr('id') === "sunburstWrapper") {
-            setTimeout(function () {
-                var size = 740,
-                    destination = "body";
-                if (window.fullScreenApi.isFullScreen()) {
-                    size = Math.min($(window).height(), $(window).width());
-                    destination = "#sunburst";
-                }
-                $("#sunburst > svg").attr("width", size);
-                $("#sunburst > svg").attr("height", size);
-                $("#sunburst-tooltip").appendTo(destination);
-            }, 1000);
+        /*
         } else if ($(".tab-content .active").attr('id') === "d3TreeMapWrapper") {
             var destination = "body";
             if (window.fullScreenApi.isFullScreen()) {
                 destination = "#d3TreeMap";
             }
             $("#treemap-tooltip").appendTo(destination);
-        } else {
-            setTimeout(function () {
-                var width = 916,
-                    height = 600,
-                    destination = "body";
-                if (window.fullScreenApi.isFullScreen()) {
-                    width = $(window).width();
-                    height = $(window).height();
-                    destination = "#d3TreeView";
-                }
-                $("#d3TreeView svg").attr("width", width);
-                $("#d3TreeView svg").attr("height", height);
-                $("#treeview-tooltip").appendTo(destination);
-            }, 1000);
-        }*/
+        } */
     }
 
     function saveImage () {
