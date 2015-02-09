@@ -436,7 +436,7 @@ var constructSunburst = function constructSunburst(args) {
             var size = 740,
                 destination = "body";
             if (isFullScreen) {
-                size = Math.min($(window).height() - 44, $(window).width() - 165);
+                size = Math.min($(window).height() - 44, $(window).width() - 250);
                 destination = "#sunburst";
             }
             $("#sunburst > svg").attr("width", size);
