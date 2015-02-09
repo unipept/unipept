@@ -156,19 +156,24 @@ var constructTreeview = function constructTreeview(args) {
         centerNode(root);
     }
 
-    // Expands a node and its children
-    function expand(d) {
-        if (d._children) {
-            d.children = d._children;
-            d._children = null;
+    // expands all children of a node
+    function expandAll(d) {
+        expand(d, 30);
+    }
+
+    // Expands a node for i levels
+    function expand(d, i) {
+        if (typeof i === "undefined") {
+            i = 2;
         }
-        if (d.children) {
-            d.children.forEach(function (c) {
-                if (c._children) {
-                    c.children = c._children;
-                    c._children = null;
-                }
-            });
+        if (i > 0) {
+            if (d._children) {
+                d.children = d._children;
+                d._children = null;
+            }
+            if (d.children) {
+                d.children.forEach(function (c) {expand(c, i - 1); });
+            }
         }
     }
 
@@ -196,7 +201,11 @@ var constructTreeview = function constructTreeview(args) {
         if (d.children) {
             collapse(d);
         } else {
-            expand(d);
+            if (d3.event.shiftKey) {
+                expandAll(d);
+            } else {
+                expand(d);
+            }
         }
         that.update(d);
         centerNode(d);
