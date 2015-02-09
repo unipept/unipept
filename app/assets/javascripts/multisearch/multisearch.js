@@ -141,6 +141,13 @@ var constructMultisearch = function constructMultisearch(args) {
         $("#visualisations").toggleClass("fullScreen", isFullScreen);
         $("#visualisations").toggleClass("notFullScreen", !isFullScreen);
 
+        // tooltip
+        if (isFullScreen) {
+            $("#tooltip").appendTo("#visualisations");
+        } else {
+            $("#tooltip").appendTo("body");
+        }
+
         // update visualisations
         sunburst.setFullScreen(isFullScreen);
         treemap.setFullScreen(isFullScreen);

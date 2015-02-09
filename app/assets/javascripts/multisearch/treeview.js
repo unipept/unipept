@@ -27,7 +27,7 @@ var constructTreeview = function constructTreeview(args) {
     var i = 0,
         duration = 750,
         root,
-        tooltip,
+        tooltip = d3.select("#tooltip"),
         tree,
         diagonal,
         widthScale,
@@ -63,15 +63,6 @@ var constructTreeview = function constructTreeview(args) {
     function redraw() {
         // reset
         $("#d3TreeView").empty();
-        $("#treeview-tooltip").remove();
-
-        tooltip = d3.select("body")
-            .append("div")
-            .attr("id", "treeview-tooltip")
-            .attr("class", "tip")
-            .style("position", "absolute")
-            .style("z-index", "10")
-            .style("visibility", "hidden");
 
         tree = d3.layout.tree()
             .nodeSize([2, 105])
@@ -452,16 +443,13 @@ var constructTreeview = function constructTreeview(args) {
         // without the delay
         setTimeout(function () {
             var width = 916,
-                height = 600,
-                destination = "body";
+            height = 600;
             if (isFullScreen) {
                 width = $(window).width();
                 height = $(window).height() - 44;
-                destination = "#d3TreeView";
             }
             $("#d3TreeView svg").attr("width", width);
             $("#d3TreeView svg").attr("height", height);
-            $("#treeview-tooltip").appendTo(destination);
         }, 1000);
     };
 

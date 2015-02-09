@@ -15,7 +15,7 @@ var constructTreemap = function constructTreemap(args) {
 
     var root = data,
         current,
-        tooltip,
+        tooltip = d3.select("#tooltip"),
         treemap,
         colorScale,
         breadcrumbs,
@@ -55,15 +55,6 @@ var constructTreemap = function constructTreemap(args) {
     function redraw() {
         // clear old stuff
         $("#d3TreeMap").empty();
-        $("#treemap-tooltip").remove();
-
-        tooltip = d3.select("body")
-            .append("div")
-            .attr("id", "treemap-tooltip")
-            .attr("class", "tip")
-            .style("position", "absolute")
-            .style("z-index", "10")
-            .style("visibility", "hidden");
 
         treemap = d3.layout.treemap()
             .size([width, height])
@@ -196,15 +187,12 @@ var constructTreemap = function constructTreemap(args) {
         // so the height en width functions don't give a correct result
         // without the delay
         setTimeout(function () {
-            var destination = "body",
-                w = width,
+            var w = width,
                 h = height;
             if (isFullScreen) {
-                destination = "#d3TreeMap";
                 w = $(window).width();
                 h = $(window).height() - 44;
             }
-            $("#treemap-tooltip").appendTo(destination);
             resize(w, h);
         }, 1000);
     };

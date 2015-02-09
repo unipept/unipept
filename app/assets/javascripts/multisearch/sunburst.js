@@ -26,7 +26,7 @@ var constructSunburst = function constructSunburst(args) {
         useFixedColors = false;
 
     // components
-    var tooltip,
+    var tooltip = d3.select("#tooltip"),
         breadcrumbs,
         path, // the arcs
         x, // the x-scale
@@ -112,7 +112,6 @@ var constructSunburst = function constructSunburst(args) {
 
         // clear everything
         $("#sunburst svg").remove();
-        $("#sunburst-tooltip").remove();
         $("#sunburstPanel").empty();
 
         breadcrumbs = d3.select("#sunburstPanel").append("ul");
@@ -135,14 +134,6 @@ var constructSunburst = function constructSunburst(args) {
             .html(".hidden{ visibility: hidden;}");
         vis = vis.append("g")
             .attr("transform", "translate(" + (r + p) + "," + (r + p) + ")"); // set origin to radius center
-
-        tooltip = d3.select("body")
-            .append("div")
-            .attr("id", "sunburst-tooltip")
-            .attr("class", "tip")
-            .style("position", "absolute")
-            .style("z-index", "10")
-            .style("visibility", "hidden");
 
         partition = d3.layout.partition()               // creates a new partition layout
             .sort(null)                                     // don't sort,  use tree traversal order
@@ -434,15 +425,12 @@ var constructSunburst = function constructSunburst(args) {
         // so the height en width functions don't give a correct result
         // without the delay
         setTimeout(function () {
-            var size = 740,
-                destination = "body";
+            var size = 740;
             if (isFullScreen) {
                 size = Math.min($(window).height() - 44, $(window).width() - 250);
-                destination = "#sunburst";
             }
             $("#sunburst > svg").attr("width", size);
             $("#sunburst > svg").attr("height", size);
-            $("#sunburst-tooltip").appendTo(destination);
         }, 1000);
     };
 
