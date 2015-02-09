@@ -22,12 +22,27 @@
 
 <% if @number_found > 0 %>
     <div id="buttons"></div>
-    <ul class="nav nav-tabs" id="viz-tabs">
+    <ul class="nav nav-tabs visualisations" id="viz-tabs">
         <li class="active"><a href="#sunburstWrapper" data-toggle="tab">Sunburst</a></li>
         <li><a href="#d3TreeMapWrapper" data-toggle="tab">Treemap</a></li>
         <li><a href="#d3TreeViewWrapper" data-toggle="tab">Treeview</a></li>
     </ul>
-    <div class="tab-content multi-search">
+    <div id="visualisations" class="tab-content multi-search notFullScreen">
+        <div id="fullScreenBar">
+            <div class="logo"><img src="<%= asset_path('trans_logo.png') %>" alt="logo" width="40" height="40"></div>
+            <nav class="fullScreenNav">
+                <ul class="visualisations">
+                    <li class="active"><a href="#sunburstWrapper" data-toggle="tab">Sunburst</a></li>
+                    <li><a href="#d3TreeMapWrapper" data-toggle="tab">Treemap</a></li>
+                    <li><a href="#d3TreeViewWrapper" data-toggle="tab">Treeview</a></li>
+                </ul>
+            </nav>
+            <div class="fullScreenActions">
+                <a title="Reset the visualisation" class="reset"><span class="glyphicon glyphicon-repeat"></span></a>
+                <a title="Download the current view as an svg or png image" class="download"><span class="glyphicon glyphicon-download"></span></a>
+                <a title="Exit full screen mode" class="exit"><span class="glyphicon glyphicon-resize-small"></span></a>
+            </div>
+        </div>
         <div class="tab-pane active" id="sunburstWrapper">
             <h2 class="ghead">
               <span class="dir">
@@ -43,7 +58,9 @@
               </span>
               <span class="dir text">Click a slice to zoom in and the center node to zoom out</span>
             </h2>
-            <div id="sunburst"></div>
+            <div id="sunburst">
+                <div id="sunburstPanel">&nbsp;</div>
+            </div>
         </div>
         <div class="tab-pane" id="d3TreeMapWrapper">
             <h2 class="ghead">
@@ -77,7 +94,7 @@
             <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
         </div>
         <div class="visualClear"></div>
-        <div id="treeView" class="treeView multi"></div>
+        <div id="searchtree" class="treeView multi"></div>
         <div id="tree_data"><p>Click on a node in the tree to see the peptides associated with that organism.</p></div>
     </div>
     <div class="tab-pane" id="mismatches">
@@ -100,6 +117,7 @@
         <% end %>
     </div>
 </div>
+<div id="tooltip" class="tip"></div>
 
 <% if @number_found > 0 %>
 <script type="text/javascript">
@@ -107,7 +125,13 @@
     var sequences = <%= raw(@json_sequences)%>;
     var missed = <%= raw(@json_missed)%>
 
-    $(function () {init_multi(data, sequences, missed, <%=@equate_il %>);});
+    $(function () {
+        constructMultisearch({
+            data : data,
+            equateIL : <%=@equate_il %>,
+            missed : missed,
+            sequences : sequences});
+    });
 </script>
 <% end %>
 

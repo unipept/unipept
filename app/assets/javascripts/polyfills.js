@@ -144,6 +144,10 @@
             switch (this.prefix) {
             case '':
                 return document.exitFullscreen();
+            case 'webkit':
+                return document.webkitExitFullscreen();
+            case 'ms':
+                return document.msExitFullscreen();
             case 'moz':
                 return document.mozCancelFullScreen();
             case 'default':

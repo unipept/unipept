@@ -7,6 +7,7 @@
 //= require_self
 //= require_directory .
 //= require_directory ./peptidome
+//= require_directory ./multisearch
 //= require vendor
 
 // zeroclipboard config
@@ -100,10 +101,15 @@ function add_fields(link, association, content) {
  * @param <String> canvasSelector The DOM selector of the canvas
  * @param <String> baseFileName The requested file name
  */
-function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
+function triggerDownloadModal(svgSelector, canvasSelector, baseFileName, parentSelector) {
     var $buttons = $("#save-as-modal .buttons"),
         $image = $("#save-as-modal .image"),
+        $element,
         svg;
+
+    if (parentSelector) {
+        $(parentSelector).append($("#save-as-modal"));
+    }
 
     // Reset the modal and show it
     $buttons.html("<h3>Please wait while we create your image</h3>");
@@ -115,7 +121,9 @@ function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
     // Generate the image
     if (svgSelector) {
         // Send the SVG code to the server for png conversion
-        svg = $(svgSelector).wrap("<div></div>").parent().html();
+        $element = $(svgSelector);
+        svg = $element.wrap("<div></div>").parent().html();
+        $element.unwrap();
         $.post("/convert", { image: svg }, showImage);
     }
     if (canvasSelector) {

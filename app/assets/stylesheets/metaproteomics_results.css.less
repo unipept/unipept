@@ -43,7 +43,27 @@ span.dir.text {
     margin-top: 5px;
 }
 
+#visualisations {
+    width: 100%;
+}
+
+#visualisations.fullScreen {
+    height: 100%;
+}
+
+#visualisations.fullScreen h2.ghead {
+    display: none;
+}
+#visualisations.notFullScreen #fullScreenBar {
+    display: none;
+}
+
 // tooltip
+#tooltip.tip {
+    position: absolute;
+    z-index: 10;
+    visibility: hidden;
+}
 .tip {
     background-color: #ffffff;
     padding: 2px;
@@ -59,9 +79,21 @@ span.dir.text {
     width: 100%;
     background-color: white;
 }
-#sunburst svg {
+#sunburst > svg {
     margin: 0 auto;
     display: block;
+}
+.fullScreen #sunburst > svg {
+    overflow: visible;
+}
+#sunburst .toHide {
+    pointer-events: none;
+}
+#sunburst > svg .arc {
+    cursor: pointer;
+}
+#sunburst > svg .arc:hover {
+    fill-opacity: 0.9;
 }
 .dropdown-menu-form div.checkbox {
     margin-bottom: 0px;
@@ -79,6 +111,95 @@ span.dir.text {
     padding-left: 15px;
     padding-top: 0px;
     min-width: 135px;
+}
+#sunburstPanel {
+    width: 165px;
+    float: right;
+    margin-top:10px;
+}
+.fullScreen #sunburstPanel {
+    width: 250px;
+    margin-right: 10px;
+}
+#sunburstPanel ul {
+    padding-left: 0px;
+    list-style: none;
+}
+.crumb {
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+.crumb svg {
+    float: left;
+    margin-right: 3px;
+}
+.crumb p {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin: 0;
+    font-size: 14px
+}
+.crumb .percentage {
+    font-size: 11px;
+}
+
+#fullScreenBar {
+    position: relative;
+    width: 100%;
+    height: 44px;
+    background-color: #FDB813;
+    color: white;
+    font-size: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+#fullScreenBar .logo {
+    float: left;
+    padding-left: 10px;
+    padding-top: 3px;
+}
+#fullScreenBar .fullScreenNav ul{
+    list-style: none;
+    width: 300px;
+    margin: 0 auto;
+}
+#fullScreenBar .fullScreenNav ul li {
+    float: left;
+    height: 44px;
+    overflow: hidden;
+    cursor: pointer;
+}
+#fullScreenBar .fullScreenNav ul li a {
+    color: inherit;
+    display: block;
+    font-weight: 500;
+    height: 49px;
+    line-height: 1;
+    padding-top: 13px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-bottom: 5px solid white;
+    .transition-duration(0.2s);
+    .transition-property('height');
+    .transition-timing-function(ease-out);
+}
+#fullScreenBar .fullScreenNav ul li.active a,
+#fullScreenBar .fullScreenNav ul li:hover a {
+    height: 44px;
+    text-decoration: none;
+}
+#fullScreenBar .fullScreenActions {
+    float: right;
+    margin-right: 5px;
+}
+#fullScreenBar .fullScreenActions a {
+    font-size: 120%;
+    display: block;
+    color: inherit;
+    padding-top: 11px;
+    cursor: pointer;
+    float: left;
+    margin-right: 20px;
 }
 
 // d3 treemap
@@ -109,6 +230,9 @@ span.dir.text {
     padding-left: 5px;
     font-weight: bold;
     color: white;
+}
+.fullScreen #d3TreeMap .breadcrumbs {
+    width: 100% !important;
 }
 #d3TreeMap .crumb {
     cursor: pointer;
