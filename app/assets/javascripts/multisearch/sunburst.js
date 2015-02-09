@@ -160,6 +160,7 @@ var constructSunburst = function constructSunburst(args) {
 
         path = vis.selectAll("path").data(nodes);
         path.enter().append("path")                               // for every node, draw an arc
+            .attr("class", "arc")
             .attr("id", function (d, i) { return "path-" + i; })  // id based on index
             .attr("d", arc)                                       // path data
             .attr("fill-rule", "evenodd")                         // fill rule
@@ -296,9 +297,9 @@ var constructSunburst = function constructSunburst(args) {
             .attrTween("d", arcTween(d))
             .attr("class", function (d) {
                 if (d.depth >= currentMaxLevel) {
-                    return "toHide";
+                    return "arc toHide";
                 }
-                return "";
+                return "arc";
             })
             .attr("fill-opacity", function (d) {
                 if (d.depth >= currentMaxLevel) {
