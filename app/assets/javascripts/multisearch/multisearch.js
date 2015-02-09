@@ -194,7 +194,7 @@ var constructMultisearch = function constructMultisearch(args) {
      * @param <int> timeout The number of ms to wait for
      */
     that.search = function search(searchTerm, timeout) {
-        var timeout = timeout || 500 // the number of ms before actually searching
+        var timeout = timeout || 500; // the number of ms before actually searching
         if (searchTerm === "Organism") {
             searchTerm = "";
         }

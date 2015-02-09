@@ -116,8 +116,8 @@ var constructSunburst = function constructSunburst(args) {
 
         breadcrumbs = d3.select("#sunburstPanel").append("ul");
 
-        x = d3.scale.linear().range([0, 2 * Math.PI]), // use full circle
-        y = d3.scale.linear().domain([0, 1]).range([0, r]),
+        x = d3.scale.linear().range([0, 2 * Math.PI]); // use full circle
+        y = d3.scale.linear().domain([0, 1]).range([0, r]);
         currentMaxLevel = 4;
 
         vis = d3.select("#sunburst")
