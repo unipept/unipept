@@ -92,7 +92,7 @@ var constructMultisearch = function constructMultisearch(args) {
     }
 
     function setUpSaveImage() {
-        $("#buttons").prepend("<button id='save-btn' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-download'></span> Save as image</button>");
+        $("#buttons").prepend("<button id='save-btn' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save as image</button>");
         $("#save-btn").click(saveImage);
     }
 
@@ -116,7 +116,7 @@ var constructMultisearch = function constructMultisearch(args) {
 
     function setUpFullScreen() {
         if (fullScreenApi.supportsFullScreen) {
-            $("#buttons").prepend("<button id='zoom-btn' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-resize-full'></span> Enter full screen</button>");
+            $("#buttons").prepend("<button id='zoom-btn' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
             $("#zoom-btn").click(function () {
                 logToGoogle("Multi Peptide", "Full Screen", getActiveTab());
                 window.fullScreenApi.requestFullScreen($("#visualisations").get(0));

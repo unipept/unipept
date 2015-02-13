@@ -22,38 +22,44 @@
     height: 600px;
 }
 
-.btn.btn-animate span.glyphicon {
+.btn-animate span.glyphicon {
     .transition-duration(0.3s);
     .transition-property('transform, color');
     .transition-timing-function(ease-out);
 }
 
-.btn.btn-animate:hover span.glyphicon.grow,
-.btn.btn-animate:focus span.glyphicon.grow,
-.btn.btn-animate:active span.glyphicon.grow {
+.btn-animate:hover span.glyphicon.grow,
+.btn-animate:focus span.glyphicon.grow,
+.btn-animate:active span.glyphicon.grow {
     .scale(1.2);
 }
 
-.btn.btn-animate:hover span.glyphicon.spin,
-.btn.btn-animate:focus span.glyphicon.spin,
-.btn.btn-animate:active span.glyphicon.spin {
+.btn-animate:hover span.glyphicon.shrink,
+.btn-animate:focus span.glyphicon.shrink,
+.btn-animate:active span.glyphicon.shrink {
+    .scale(0.8);
+}
+
+.btn-animate:hover span.glyphicon.spin,
+.btn-animate:focus span.glyphicon.spin,
+.btn-animate:active span.glyphicon.spin {
     .rotate(360deg);
 }
 
-.btn.btn-animate:hover span.glyphicon.down,
-.btn.btn-animate:focus span.glyphicon.down,
-.btn.btn-animate:active span.glyphicon.down {
+.btn-animate:hover span.glyphicon.down,
+.btn-animate:focus span.glyphicon.down,
+.btn-animate:active span.glyphicon.down {
     .translate(0px, 3px);
 }
 
-.btn.btn-animate:hover span.glyphicon.right,
-.btn.btn-animate:focus span.glyphicon.right,
-.btn.btn-animate:active span.glyphicon.right {
+.btn-animate:hover span.glyphicon.right,
+.btn-animate:focus span.glyphicon.right,
+.btn-animate:active span.glyphicon.right {
     .translate(3px, 0px);
 }
 
-.btn.btn-animate:hover span.glyphicon.red,
-.btn.btn-animate:focus span.glyphicon.red,
-.btn.btn-animate:active span.glyphicon.red {
+.btn-animate:hover span.glyphicon.red,
+.btn-animate:focus span.glyphicon.red,
+.btn-animate:active span.glyphicon.red {
     color: @brand-danger;
 }
