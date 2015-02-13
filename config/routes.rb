@@ -41,7 +41,7 @@ UnipeptWeb::Application.routes.draw do
   get '/peptidomeclustering', :to => 'peptidome#analyze', :as => 'peptidome_clustering', defaults: { tab: 'peptidomeclustering' }
 
   # simple pages
-  get '/contact', :to => 'pages#contact'
+  get '/publications', :to => 'pages#publications'
   get '/about',   :to => 'pages#about'
   get '/admin',   :to => 'pages#admin'
 

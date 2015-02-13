@@ -17,11 +17,11 @@ class PagesControllerTest < ActionController::TestCase
     assert_equal "About", assigns(:title)
   end
 
-  test "should get contact" do
-    get :contact
+  test "should get publications" do
+    get :publications
     assert_response :success
-    assert_template :contact
-    assert_equal "Contact", assigns(:title)
+    assert_template :publications
+    assert_equal "Publications", assigns(:title)
   end
 
   test "should get admin" do
