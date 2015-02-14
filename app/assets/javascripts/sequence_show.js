@@ -56,7 +56,7 @@ function init_sequence_show(data) {
      * Sets up the image save stuff
      */
     function setUpImageSave() {
-        $("#buttons-single").prepend("<button id='save-btn-lineage' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-download'></span> Save tree as image</button>");
+        $("#buttons-single").prepend("<button id='save-btn-lineage' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>");
         $("#save-btn-lineage").click(function () {
             logToGoogle("Single Peptide", "Save Image");
             triggerDownloadModal("#lineageTree svg", null, "unipept_treeview");
@@ -68,7 +68,7 @@ function init_sequence_show(data) {
      */
     function setUpFullScreen() {
         if (fullScreenApi.supportsFullScreen) {
-            $("#buttons-single").prepend("<button id='zoom-btn-lineage' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-resize-full'></span> Enter full screen</button>");
+            $("#buttons-single").prepend("<button id='zoom-btn-lineage' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
             $("#zoom-btn-lineage").click(function () {
                 logToGoogle("Single Peptide", "Full Screen");
                 window.fullScreenApi.requestFullScreen($("#lineageTree").get(0));

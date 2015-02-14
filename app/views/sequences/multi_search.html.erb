@@ -15,7 +15,7 @@
             <%= hidden_field_tag(:export, 1) %>
             <%= hidden_field_tag(:nonce, "") %>
             <%= hidden_field_tag(:search_name, @p[:search_name])%>
-            <%= button_tag(raw("<span class='glyphicon glyphicon-download'></span> Download these results"), :type => "submit", :class => "btn btn-primary", :"data-loading-text" => raw("<span class='glyphicon glyphicon-time'></span> Please wait..."), :id => "downloadDataset" ) %>
+            <%= button_tag(raw("<span class='glyphicon glyphicon-download down'></span> Download these results"), :type => "submit", :class => "btn btn-primary btn-animate", :"data-loading-text" => raw("<span class='glyphicon glyphicon-time'></span> Please wait..."), :id => "downloadDataset" ) %>
         <% end %>
     </div>
 </div>
@@ -38,19 +38,19 @@
                 </ul>
             </nav>
             <div class="fullScreenActions">
-                <a title="Reset the visualisation" class="reset"><span class="glyphicon glyphicon-repeat"></span></a>
-                <a title="Download the current view as an svg or png image" class="download"><span class="glyphicon glyphicon-download"></span></a>
-                <a title="Exit full screen mode" class="exit"><span class="glyphicon glyphicon-resize-small"></span></a>
+                <a title="Reset the visualisation" class="btn-animate reset"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                <a title="Download the current view as an svg or png image" class="btn-animate download"><span class="glyphicon glyphicon-download down"></span></a>
+                <a title="Exit full screen mode" class="btn-animate exit"><span class="glyphicon glyphicon-resize-small shrink"></span></a>
             </div>
         </div>
         <div class="tab-pane active" id="sunburstWrapper">
             <h2 class="ghead">
               <span class="dir">
-                <a class="btn btn-xs btn-default" id="sunburst-reset" title="reset visualisation"><i class="glyphicon glyphicon-repeat"></i></a>
+                <a class="btn btn-xs btn-default btn-animate" id="sunburst-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
               </span>
               <span class="dir">
                 <div class="btn-group" id="colorswap">
-                  <a class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" id="colorswap-button"><i class="glyphicon glyphicon-cog"></i></a>
+                  <a class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" id="colorswap-button"><span class="glyphicon glyphicon-cog"></span></a>
                   <ul class="dropdown-menu dropdown-menu-right dropdown-menu-form">
                     <li title="Enabling this will assign fixed colors to taxa making it easier to compare samples."><div class="checkbox"><label class="checkbox"><input type="checkbox" id="colorswap-checkbox">Use fixed colors</label></div></li>
                   </ul>
@@ -65,7 +65,7 @@
         <div class="tab-pane" id="d3TreeMapWrapper">
             <h2 class="ghead">
               <span class="dir">
-                <a class="btn btn-xs btn-default" id="treemap-reset" title="reset visualisation"><i class="glyphicon glyphicon-repeat"></i></a>
+                <a class="btn btn-xs btn-default btn-animate" id="treemap-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
               </span>
               <span class="dir text">Click a square to zoom in and right click to zoom out</span>
             </h2>
@@ -74,7 +74,7 @@
         <div class="tab-pane" id="d3TreeViewWrapper">
             <h2 class="ghead">
               <span class="dir">
-                <a class="btn btn-xs btn-default" id="treeview-reset" title="reset visualisation"><i class="glyphicon glyphicon-repeat"></i></a>
+                <a class="btn btn-xs btn-default btn-animate" id="treeview-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
               </span>
               <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
             </h2>
