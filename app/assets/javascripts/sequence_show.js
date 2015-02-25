@@ -56,7 +56,7 @@ function init_sequence_show(data) {
      * Sets up the image save stuff
      */
     function setUpImageSave() {
-        $("#buttons-single").prepend("<button id='save-btn-lineage' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-download'></span> Save tree as image</button>");
+        $("#buttons-single").prepend("<button id='save-btn-lineage' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>");
         $("#save-btn-lineage").click(function () {
             logToGoogle("Single Peptide", "Save Image");
             triggerDownloadModal("#lineageTree svg", null, "unipept_treeview");
@@ -68,7 +68,7 @@ function init_sequence_show(data) {
      */
     function setUpFullScreen() {
         if (fullScreenApi.supportsFullScreen) {
-            $("#buttons-single").prepend("<button id='zoom-btn-lineage' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-resize-full'></span> Enter full screen</button>");
+            $("#buttons-single").prepend("<button id='zoom-btn-lineage' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
             $("#zoom-btn-lineage").click(function () {
                 logToGoogle("Single Peptide", "Full Screen");
                 window.fullScreenApi.requestFullScreen($("#lineageTree").get(0));
@@ -103,7 +103,12 @@ function init_sequence_show(data) {
             root;
 
         var tree = d3.layout.tree()
-            .size([height, width]);
+            .nodeSize([2, 105])
+            .separation(function (a, b) {
+                var width = (nodeSize(a) + nodeSize(b)),
+                distance = width / 2 + 4;
+                return (a.parent === b.parent) ? distance : distance + 4;
+            });
 
         var diagonal = d3.svg.diagonal()
             .projection(function (d) { return [d.y, d.x]; });
@@ -130,19 +135,7 @@ function init_sequence_show(data) {
 
         function draw(data) {
             root = data;
-            root.x0 = height / 2;
-            root.y0 = 0;
 
-            // add counts
-            function addCounts(d) {
-                if (d.children && d.children.length > 0) {
-                    d.children.forEach(addCounts);
-                    d.data.count = d.children.map(function (e) {return e.data.count; }).reduce(function (a, b) {return a + b; });
-                } else {
-                    d.data.count = 1;
-                }
-            }
-            addCounts(root);
             widthScale.domain([0, root.data.count]);
 
             // set everything visible
@@ -224,6 +217,8 @@ function init_sequence_show(data) {
               .attr("transform", function (d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
               .on("click", click);
 
+            nodeEnter.append("title").html(function (d) {return "hits: " + d.data.count; });
+
             nodeEnter.append("circle")
               .attr("r", 1e-6)
               .style("stroke-width", "1.5px")
@@ -240,14 +235,13 @@ function init_sequence_show(data) {
                   } else {
                       return "#aaa";
                   }
-
               });
 
             nodeEnter.append("text")
-              .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
+              .attr("x", function (d) { return d.children || d._children ? -10 : 10; })
               .attr("dy", ".35em")
               .attr("text-anchor", function (d) { return d.children || d._children ? "end" : "start"; })
-              .text(function(d) { return d.name; })
+              .text(function (d) { return d.name; })
               .style("font", "10px sans-serif")
               .style("fill-opacity", 1e-6);
 
@@ -257,14 +251,7 @@ function init_sequence_show(data) {
               .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; });
 
             nodeUpdate.select("circle")
-              .attr("r", function(d) {
-                  if (d.selected) {
-                      return widthScale(d.data.count) / 2;
-                  } else {
-                      return 2;
-                  }
-
-              })
+              .attr("r", nodeSize)
               .style("fill-opacity", function (d) { return d._children ? 1 : 0; })
               .style("stroke", function (d) {
                   if (d.selected) {
@@ -297,7 +284,7 @@ function init_sequence_show(data) {
             nodeExit.select("text")
               .style("fill-opacity", 1e-6);
 
-            // Update the links…
+            // Update the links
             var link = svg.selectAll("path.link")
               .data(links, function (d) { return d.target.id; });
 
@@ -367,7 +354,7 @@ function init_sequence_show(data) {
                     d._children = null;
                 }
                 if (d.children) {
-                    d.children.forEach(function (c) {expand(c, i-1);});
+                    d.children.forEach(function (c) {expand(c, i - 1); });
                 }
             }
         }
@@ -377,6 +364,14 @@ function init_sequence_show(data) {
             if (d.children) {
                 d._children = d.children;
                 d.children = null;
+            }
+        }
+
+        function nodeSize(d) {
+            if (d.selected) {
+                return widthScale(d.data.count) / 2;
+            } else {
+                return 2;
             }
         }
 
@@ -412,9 +407,9 @@ function init_sequence_show(data) {
             function setSelected(d, value) {
                 d.selected = value;
                 if (d.children) {
-                    d.children.forEach(function (c) {setSelected(c, value);});
+                    d.children.forEach(function (c) {setSelected(c, value); });
                 } else if (d._children) {
-                    d._children.forEach(function (c) {setSelected(c, value);});
+                    d._children.forEach(function (c) {setSelected(c, value); });
                 }
             }
         }

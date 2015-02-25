@@ -1,4 +1,6 @@
 function initDatasets() {
+    var datasetLoader = constructDatasetLoader();
+
     // add progress bar when submitting form
     $("#search-multi-form").click(function () {
         $("#search_button").hide();
@@ -18,17 +20,21 @@ function initDatasets() {
         logToGoogle("Multi Peptide", "Export");
     });
 
+    $("#qs").on("paste", function () {
+        setTimeout(datasetLoader.checkDatasetSize, 0);
+    });
+
     // load a dataset from the local database
     $(".load-dataset").click(function () {
         $(this).button('loading');
         // set the vars
-        var url = $(this).parent().find("select").val(),
+        var id = $(this).parent().find("select").val(),
             name = $(this).parent().find("select option:selected").text();
 
         logToGoogle("Datasets", "Load", "Database - " + name);
 
         // load the datasets
-        loadDataset(url, name, $(this));
+        datasetLoader.loadDataset("internal", id, name, $(this));
         return false;
     });
 
@@ -36,11 +42,10 @@ function initDatasets() {
     $(".load-pride").click(function () {
         // set the vars
         var experiment = $("#pride_exp_id").val(),
-            url = "/pride/" + experiment,
-            name = "PRIDE experiment " + experiment;
+            name = "PRIDE assay " + experiment;
 
         if (experiment === "") {
-            info("Please enter a PRIDE id");
+            info("Please enter a PRIDE assay id");
             return false;
         }
 
@@ -49,115 +54,180 @@ function initDatasets() {
         logToGoogle("Datasets", "Load", "Pride - " + name);
 
         // load the datasets
-        loadDataset(url, name, $(this));
+        datasetLoader.loadDataset("pride", experiment, name, $(this));
         return false;
     });
-
-    function loadDataset(url, name, button) {
-        // expand the search options and prepare the form
-        $("#more_options a").click();
-        $("#qs").val("Please wait while we load the dataset...");
-        $("#qs").attr('disabled', 'disabled');
-
-        var startTimer = new Date().getTime();
-
-        // request the actual data
-        $.get(url)
-            .done( // all goes well
-                function (data) {
-                    // track the load times
-                    var loadTime = new Date().getTime() - startTimer;
-                    logToGoogle("Datasets", "Loaded", name, loadTime);
-
-                    // enable the form elements
-                    $("#qs").attr('disabled', false);
-                    button.button('reset');
-
-                    // fill in the data
-                    $("#search_name").val(name);
-                    $("#qs").val(data);
-
-                    // highlight what happend to the user
-                    $('html, body').animate({
-                        scrollTop: $("#search_elements").parent().parent().offset().top
-                    }, 1000);
-                    highlight("#qs");
-                    highlight("#search_name");
-                }
-            )
-            .fail( // something went wrong
-                function (jqXHR, textStatus, errorType) {
-                    // track is something goes wrong
-                    logToGoogle("Datasets", "Failed", name, textStatus);
-
-                    // reset the form elements
-                    $("#qs").val("");
-                    $("#qs").attr('disabled', false);
-                    button.button('reset');
-
-                    // highlight what pappend to the user
-                    error(textStatus, "Something went wrong while loading the datasets.");
-                    $('html, body').animate({
-                        scrollTop: $("#messages").offset().top
-                    }, 1000);
-                }
-            );
-    }
 }
 
 function initPreload(type, id) {
     // show full form
     $("#more_options").hide();
 
-    var url, name;
+    var datasetLoader = constructDatasetLoader();
 
     if (type === "database") {
-        url = "/dataset_items/" + id;
-        name = "Dataset " + id;
+        datasetLoader.loadDataset("internal", id, "Dataset " + id);
     } else {
-        url = "/pride/" + id;
-        name = "Pride experiment " + id;
+        datasetLoader.loadDataset("pride", id, "Pride assay " + id);
+    }
+}
+
+function constructDatasetLoader() {
+    var that = {};
+
+    /************** private methods *************/
+
+    /**
+     * Loads a dataset from the database
+     *
+     * @param <Integer> id The id of the dataset(item) we want to load
+     * @param <Function> done The callback function that gets executed when
+     *          everything succeeds
+     * @param <Function> done The callback function that gets executed when
+     *          loading the dataset fails
+     * @param <Function always The callback function that gets always gets
+     *          executed
+     */
+    function loadInternalDataset(id, done, fail, always) {
+        $.get("/dataset_items/" + id)
+            .done(done)
+            .fail(fail)
+            .always(always);
     }
 
-    preloadDataset(url, name);
+    /**
+     * Loads a dataset from PRIDE using the PRIDE API
+     *
+     * @param <Integer> id The id of the assay we want to load
+     * @param <Function> done The callback function that gets executed when
+     *          everything succeeds
+     * @param <Function> done The callback function that gets executed when
+     *          loading the dataset fails
+     * @param <Function always The callback function that gets always gets
+     *          executed
+     */
+    function loadPrideDataset(id, done, fail, always) {
+        var batchSize = 1000,
+            page = 0,
+            peptides = [],
+            datasetSize;
 
-    function preloadDataset(url, name) {
-        // prepare the form
+        $("#pride-progress").show("fast");
+        $("#pride-progress .progress-bar").css("width", "10%");
+        $.get("http://www.ebi.ac.uk:80/pride/ws/archive/peptide/count/assay/" + id)
+            .done(function (data) {
+                datasetSize = data;
+                loadNextBatch();
+            })
+            .fail(prideFail);
+
+            function loadNextBatch() {
+                $("#pride-progress .progress-bar").css("width", 10 + (90 * page * batchSize) / datasetSize + "%");
+                if (page * batchSize > datasetSize) { // we're done
+                    $("#pride-progress").hide("fast");
+                    done.call(this, peptides.join("\n"));
+                    always.call(this);
+                } else { // load next batch
+                    $.get("http://www.ebi.ac.uk:80/pride/ws/archive/peptide/list/assay/" + id + "?show=" + batchSize + "&page=" + page)
+                        .done(function (data) {
+                            data = data.list.map(function (d) {return d.sequence; });
+                            peptides = peptides.concat(data);
+                            page++;
+                            loadNextBatch();
+                        })
+                        .fail(prideFail);
+                }
+            }
+
+            function prideFail() {
+                $("#pride-progress").hide("fast");
+                fail.call(this);
+                always.call(this);
+            }
+    }
+
+
+    /************** public methods *************/
+
+    /**
+     * Checks if the number of peptides in the current dataset isn't too high
+     * and displays a warning if it is.
+     */
+    that.checkDatasetSize = function checkDatasetSize() {
+        var lines = $("#qs").val().split(/\n/).length;
+        if (lines > 10000) {
+            $(".multisearch-warning-amount").text(lines);
+            $("#multisearch-warning").show("fast");
+        } else {
+            $("#multisearch-warning").hide("fast");
+        }
+    };
+
+    /**
+     * Public method to load a dataset
+     *
+     * @param <String> type The type of the dataset to load: internal or pride
+     * @param <Integer> id The id of the dataset to load
+     * @param <String> name The name of the dataset
+     * @param <DOM element> button The button that was clicked to load the
+     *          dataset. Can be nil.
+     */
+    that.loadDataset = function loadDataset(type, id, name, button) {
+        // expand the search options and prepare the form
+        $("#more_options a").click();
         $("#qs").val("Please wait while we load the dataset...");
         $("#qs").attr('disabled', 'disabled');
+        $("#search-multi-form").button("loading");
 
         var startTimer = new Date().getTime();
 
-        $.get(url)
-            .done(
-                function (data) {
-                    // track the load times
-                    var loadTime = new Date().getTime() - startTimer;
-                    logToGoogle("Datasets", "Loaded", name, loadTime);
+        var done = function (data) {
+            // track the load times
+            var loadTime = new Date().getTime() - startTimer;
+            logToGoogle("Datasets", "Loaded", name, loadTime);
 
-                    // enable the form elements
-                    $("#qs").attr('disabled', false);
+            // fill in the data
+            $("#search_name").val(name);
+            $("#qs").val(data);
+            that.checkDatasetSize();
 
-                    // fill in the data
-                    $("#search_name").val(name);
-                    $("#qs").val(data);
+            // highlight what happend to the user
+            $('html, body').animate({
+                scrollTop: $("#search_elements").parent().parent().offset().top
+            }, 1000);
+            highlight("#qs");
+            highlight("#search_name");
+        };
 
-                    // highlight what happend to the user
-                    highlight("#qs");
-                    highlight("#search_name");
-                }
-            )
-            .fail( // something went wrong
-                function (jqXHR, textStatus, errorType) {
-                    // track is something is wrong
-                    logToGoogle("Datasets", "Failed", name, textStatus);
+        var fail = function (jqXHR, textStatus, errorType) {
+            // track is something goes wrong
+            logToGoogle("Datasets", "Failed", name, textStatus);
 
-                    // reset the form elements
-                    $("#qs").val("");
-                    $("#qs").attr('disabled', false);
+            // reset the form elements
+            $("#qs").val("");
 
-                    error(textStatus, "Something went wrong while loading the datasets.");
-                }
-            );
-    }
+            // highlight what pappend to the user
+            error(textStatus, "Something went wrong while loading the datasets.");
+            $('html, body').animate({
+                scrollTop: $("#messages").offset().top
+            }, 1000);
+        };
+
+        var always = function () {
+            // enable the form elements
+            $("#qs").attr('disabled', false);
+            $("#search-multi-form").button("reset");
+            if (button) {
+                button.button('reset');
+            }
+        };
+
+        if (type === "internal") {
+            loadInternalDataset(id, done, fail, always);
+        } else {
+            loadPrideDataset(id, done, fail, always);
+        }
+    };
+
+    return that;
 }

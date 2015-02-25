@@ -18,11 +18,6 @@ class DatasetsControllerTest < ActionController::TestCase
     assert_equal dataset1, assigns(:dataset)
   end
 
-  test "should give 404 when show dataset doesn't exist" do
-    skip
-    get :show, {'id' => "-11"}
-  end
-
   test "should show new dataset form" do
     sign_in users(:bart_admin)
     get :new
@@ -38,12 +33,6 @@ class DatasetsControllerTest < ActionController::TestCase
     assert_response :success
     assert_template :edit
     assert_equal dataset1, assigns(:dataset)
-  end
-
-  test "should give 404 when edit dataset doesn't exist" do
-    skip
-    sign_in users(:bart_admin)
-    get :edit, {'id' => "-1"}
   end
 
   test "should create dataset" do

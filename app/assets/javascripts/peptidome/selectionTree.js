@@ -108,16 +108,16 @@ var constructSelectionTree = function constructSelectionTree(args) {
     function help($node) {
         var returnString = "<tbody class='dragging'>";
         if ($node.hasClass("leaf")) {
-            returnString += "<tr><td class='handle'><span class='glyphicon glyphicon-resize-vertical'></span></td><td class='data name' data-bioproject_id='"
-                + $node.attr("data-bioproject_id") + "'>"
-                + $node.text()
-                + "</td><td class='data status'></td><td></td></tr>";
+            returnString += "<tr><td class='handle'><span class='glyphicon glyphicon-resize-vertical'></span></td><td class='data name' data-bioproject_id='" +
+                $node.attr("data-bioproject_id") + "'>" +
+                $node.text() +
+                "</td><td class='data status'></td><td></td></tr>";
         } else {
             $node.find(".leaf").each(function () {
-                returnString += "<tr><td class='handle'><span class='glyphicon glyphicon-resize-vertical'></span></td><td class='data name' data-bioproject_id='"
-                    + $(this).attr("data-bioproject_id") + "'>"
-                    + $(this).text()
-                    + "</td><td class='data status'></td><td></td></tr>";
+                returnString += "<tr><td class='handle'><span class='glyphicon glyphicon-resize-vertical'></span></td><td class='data name' data-bioproject_id='" +
+                    $(this).attr("data-bioproject_id") + "'>" +
+                    $(this).text() +
+                    "</td><td class='data status'></td><td></td></tr>";
             });
         }
         returnString += "</tbody>";

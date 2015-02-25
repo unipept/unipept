@@ -33,7 +33,7 @@ class Sequence < ActiveRecord::Base
     raise(ArgumentError, ":equate_il must be a boolean") unless Sequence.is_boolean?(equate_il)
     raise(ArgumentError, ":eager must be a boolean") unless Sequence.is_boolean?(eager)
 
-    l = Lineage.joins(:uniprot_entries => :peptides).uniq
+    l = Lineage.joins(:uniprot_entries => :peptides)
     if equate_il
       l = l.where("peptides.sequence_id = ?", id)
     else
@@ -105,49 +105,6 @@ class Sequence < ActiveRecord::Base
   # Filters a list of sequences for having a given lca
   def self.filter_unique_uniprot_peptides(sequences, lca)
     Sequence.where(id: sequences, lca: lca).order(:id).pluck(:id)
-  end
-
-  # Filters a list of sequences for a given lca
-  # remove me
-  def self.filter_unique_genome_peptides(sequences, species_id)
-    # alternative query
-    # was slower in tests
-    #a = connection.select_values("SELECT original_sequence_id FROM peptides
-    #left join refseq_cross_references on peptides.uniprot_entry_id = refseq_cross_references.uniprot_entry_id
-    #WHERE original_sequence_id IN (#{sequences.join(",")})
-    #AND refseq_cross_references.sequence_id IN
-    #(SELECT refseq_id FROM genomes WHERE species_id != #{species_id})").to_a
-
-    bp_id = Set.new
-    result = sequences
-    GenomeCache.find_by_sql("SELECT genome_caches.* from genome_caches LEFT JOIN genomes ON genome_caches.bioproject_id = genomes.bioproject_id LEFT JOIN lineages ON genomes.taxon_id = lineages.taxon_id WHERE lineages.species != #{species_id}").each do |genome|
-      if bp_id.include?(genome.bioproject_id)
-        next
-      else
-        bp_id.add(genome.bioproject_id)
-      end
-      genome = Oj.load(genome.json_sequences)
-      r = []
-      i = 0
-      j = 0
-      while i < result.length && j < genome.length do
-        if result[i] > genome[j]
-          j += 1
-        elsif result[i] < genome[j]
-          r << result[i]
-          i += 1
-        else
-          i += 1
-          j += 1
-        end
-      end
-      while i < result.length do
-        r << result[i]
-        i += 1
-      end
-      result = r
-    end
-    return result
   end
 
   private

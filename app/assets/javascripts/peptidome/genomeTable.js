@@ -67,7 +67,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
         });
         $("#genomes_table tbody").sortable({
             axis: 'y',
-            containment: '.split-right',
+            containment: '.left-col',
             cursor: 'url(/closedhand.cur) 7 5, move',
             stop: function () {
                 pancore.updateOrder(calculateTablePositions());
@@ -146,7 +146,9 @@ var constructGenomeTable = function constructGenomeTable(args) {
     that.removeGenome = function removeGenome(bioprojectId) {
         // Only remove data that's already loaded
         if (genomes[bioprojectId].status !== "Done") return;
-
+        for (i in genomes) {
+            genomes[i].status = "Processing";
+        }
         delete genomes[bioprojectId];
         that.update();
         var r = calculateTablePositions();
@@ -178,6 +180,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
      *          Should be set to false in case of batch update
      */
     that.setGenomeStatus = function setGenomeStatus(bioprojectId, status, updateTable) {
+        if (!genomes.hasOwnProperty(bioprojectId)) return;
         genomes[bioprojectId].status = status;
         if (updateTable) {
             that.update();
@@ -194,6 +197,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
      *          Should be set to false in case of batch update
      */
     that.setGenomePosition = function setGenomePosition(bioprojectId, position, updateTable) {
+        if (!genomes.hasOwnProperty(bioprojectId)) return;
         genomes[bioprojectId].position = position;
         if (updateTable) {
             that.update();
@@ -230,11 +234,11 @@ var constructGenomeTable = function constructGenomeTable(args) {
      * @return <Array> order An array containing the bioproject id's
      */
     that.getOrder = function getOrder() {
-      var order = [];
-      d3.selectAll("#genomes_table tbody tr").each(function (d, i) {
-          order[i] = d.bioproject_id;
-      });
-      return order;
+        var order = [];
+        d3.selectAll("#genomes_table tbody tr").each(function (d, i) {
+            order[i] = d.bioproject_id;
+        });
+        return order;
     };
 
     /**

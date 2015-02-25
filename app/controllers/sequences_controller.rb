@@ -21,7 +21,7 @@ class SequencesController < ApplicationController
     end
 
     # quit if it doensn't contain any peptides
-    raise NoMatchesFoundError.new(sequence.sequence) if !sequence.nil? && sequence.peptides(equate_il).empty?
+    raise NoMatchesFoundError.new(sequence.sequence) if sequence.present? && sequence.peptides(equate_il).empty?
 
     # get the uniprot entries of every peptide
     # only used for the open in uniprot links
@@ -39,12 +39,13 @@ class SequencesController < ApplicationController
       # check if the protein contains the startsequence
       @entries.select!{|e| e.protein_contains?(seq, equate_il)}
 
-      raise NoMatchesFoundError.new(seq) if @entries.size == 0
-      @lineages = @entries.map(&:lineage).uniq.compact
+      raise NoMatchesFoundError.new(seq) if @entries.empty?
+      @lineages = @entries.map(&:lineage).compact
     end
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) #calculate the LCA
-    @root = Node.new(1, "root") #start constructing the tree
+    @root = Node.new(1, "Organism", nil, "root") #start constructing the tree
+    @root.data["count"] = @lineages.size
     last_node = @root
 
     #common lineage
@@ -56,7 +57,9 @@ class SequencesController < ApplicationController
       unless t.nil?
         found = (@lca_taxon.id == t.id)
         @common_lineage << t
-        last_node = last_node.add_child(Node.new(t.id, t.name), @root)
+        node = Node.new(t.id, t.name, @root)
+        node.data["count"] = @lineages.size
+        last_node = last_node.add_child(node)
       end
     end
 
@@ -68,12 +71,14 @@ class SequencesController < ApplicationController
       while lineage.has_next?
         t = lineage.next_t
         unless t.nil?
-          l << t.name # add the taxon name to de lineage
+          l << t.name # add the taxon name to the lineage
           node = Node.find_by_id(t.id, @root)
           if node.nil? # if the node isn't create yet
-            node = Node.new(t.id, t.name)
-            last_node_loop = last_node_loop.add_child(node, @root);
+            node = Node.new(t.id, t.name, @root, t.rank)
+            node.data["count"] = 1
+            last_node_loop = last_node_loop.add_child(node)
           else
+            node.data["count"] += 1
             last_node_loop = node;
           end
         end
@@ -81,15 +86,16 @@ class SequencesController < ApplicationController
     end
 
     #don't show the root when we don't need it
-    @root.name = "organism"
-    @root = @root.children.count > 1 ? Oj.dump(@root, mode: :compat) : Oj.dump(@root.children[0], mode: :compat)
+    @root.sort_children
+    @root = Oj.dump(@root, mode: :compat)
 
     #Table stuff
     @table_lineages = Array.new
     @table_ranks = Array.new
 
+    @lineages = @lineages.uniq
     @table_lineages << @lineages.map{|lineage| lineage.name.name}
-    @table_ranks << "organism"
+    @table_ranks << "Organism"
     @lineages.map{|lineage| lineage.set_iterator_position(0)} #reset the iterator
     while @lineages[0].has_next?
       temp = @lineages.map{|lineage| lineage.next_t}
@@ -143,16 +149,16 @@ class SequencesController < ApplicationController
     @p = params
 
     # set search parameters
-    @equate_il = !params[:il].nil?
-    filter_duplicates = !params[:dupes].nil? && params[:dupes] == "1"
-    handle_missed = !params[:missed].nil? && params[:missed] == "1"
-    export = !params[:export].nil? && params[:export] == "1"
+    @equate_il = params[:il].present?
+    filter_duplicates = params[:dupes] == "1"
+    handle_missed = params[:missed] == "1"
+    export = params[:export] == "1"
     search_name = params[:search_name]
     query = params[:qs]
     csv_string = ""
 
     # quit if the query was empty
-    raise EmptyQueryError.new if query.nil? || query.empty?
+    raise EmptyQueryError.new if query.blank?
 
     # remove duplicates, filter shorts, substitute I by L, ...
     data = query.upcase.gsub(/#/,"")
@@ -170,7 +176,7 @@ class SequencesController < ApplicationController
 
     # build the resultset
     matches = Hash.new
-    @misses = data.to_set
+    misses = data.to_set
     data.each_slice(1000) do |data_slice|
       Sequence.includes({Sequence.lca_t_relation_name(@equate_il) => {:lineage => Lineage::ORDER_T}}).where(sequence: data_slice).each do |sequence|
         lca_t = sequence.calculate_lca(@equate_il, true)
@@ -182,13 +188,13 @@ class SequencesController < ApplicationController
             matches[lca_t] << sequence_mapping[sequence.sequence]
           end
         end
-        @misses.delete(sequence.sequence)
+        misses.delete(sequence.sequence)
       end
     end
 
     # handle the misses
     if handle_missed
-      iter = @misses.to_a
+      iter = misses.to_a
       iter.each do |seq|
         sequences = seq.gsub(/([KR])([^P])/,"\\1\n\\2").gsub(/([KR])([^P])/,"\\1\n\\2").lines.map(&:strip).to_a
         next if sequences.size == 1
@@ -200,7 +206,7 @@ class SequencesController < ApplicationController
 
         # jump the loop if we don't have any matches
         next if long_sequences.include? nil
-        next if long_sequences.size == 0
+        next if long_sequences.empty?
 
         # calculate possible uniprot entries
         temp_entries = long_sequences.map{|s| s.peptides(@equate_il).map(&:uniprot_entry).to_set}
@@ -210,7 +216,7 @@ class SequencesController < ApplicationController
         entries.select!{|e| e.protein_contains?(seq, @equate_il)}
 
         # skip if nothing left
-        next if entries.size == 0
+        next if entries.empty?
 
         seq_lins = entries.map(&:lineage).uniq.compact
         lca_t = Lineage.calculate_lca_taxon(seq_lins) #calculate the LCA
@@ -223,14 +229,14 @@ class SequencesController < ApplicationController
             matches[lca_t] << sequence_mapping[seq]
           end
         end
-        @misses.delete(seq)
+        misses.delete(seq)
       end
     end
 
     # prepare for output
     @title = "Metaproteomics analysis result"
     @title += " of " + search_name unless search_name.nil? || search_name == ""
-    @prideURL = "http://www.ebi.ac.uk/pride/experiment.do?experimentAccessionNumber=#{search_name[/[0-9]*$/]}" if search_name.include? "Pride experiment"
+    @prideURL = "http://www.ebi.ac.uk/pride/archive/assays/#{search_name[/[0-9]*$/]}" if search_name.include? "PRIDE assay"
 
     @intro_text = "#{@number_found} out of #{number_searched_for} #{"peptide".send(number_searched_for != 1 ? :pluralize : :to_s)}  were matched"
     if filter_duplicates || @equate_il
@@ -244,12 +250,11 @@ class SequencesController < ApplicationController
     end
     @intro_text += "."
 
-    @misses = @misses.map{|m| sequence_mapping[m]}.to_a.sort
+    @json_missed = Oj.dump(misses.map{|m| sequence_mapping[m]}.to_a.sort, mode: :compat)
 
     # construct treemap nodes
-    root = TreeMapNode.new(1, "organism", "no rank")
+    root = Node.new(1, "Organism", nil, "no rank")
     matches.each do |taxon, seqs| # for every match
-      root.add_sequences(seqs)
       lca_l = taxon.lineage
 
       #export stuff
@@ -263,33 +268,24 @@ class SequencesController < ApplicationController
       while !lca_l.nil? && lca_l.has_next? # process every rank in lineage
         t = lca_l.next_t
         unless t.nil?
-          node = TreeMapNode.find_by_id(t.id, root)
+          node = Node.find_by_id(t.id, root)
           if node.nil?
-            node = TreeMapNode.new(t.id, t.name, t.rank)
-            last_node_loop = last_node_loop.add_child(node, root)
+            node = Node.new(t.id, t.name, root, t.rank)
+            last_node_loop = last_node_loop.add_child(node)
           else
             last_node_loop = node
           end
-          node.add_sequences(seqs)
         end
       end
-      node = taxon.id == 1 ? root : TreeMapNode.find_by_id(taxon.id, root)
-      node.add_own_sequences(seqs) unless node.nil?
+      node = taxon.id == 1 ? root : Node.find_by_id(taxon.id, root)
+      node.set_sequences(seqs) unless node.nil?
     end
 
-    #don't show the root when we don't need it
-    root = root.children[0] if root.children.count == 0
-    root.add_piechart_data unless root.nil?
-    root.sort_peptides_and_children unless root.nil?
 
-    root_json = Oj.dump(root, mode: :compat)
-    sunburst_hash = Oj.load(String.new(root_json))
-    TreeMapNode.clean_sunburst!(sunburst_hash) unless sunburst_hash.nil?
-    @sunburst_json = Oj.dump(sunburst_hash).gsub("children","kids")
-
-    treemap_hash = Oj.load(root_json)
-    TreeMapNode.clean_treemap!(treemap_hash) unless treemap_hash.nil?
-    @treemap_json = Oj.dump(treemap_hash)
+    @json_sequences = Oj.dump(root.sequences, mode: :compat)
+    root.prepare_for_multitree unless root.nil?
+    root.sort_children unless root.nil?
+    @json_tree = Oj.dump(root, mode: :compat)
 
     if export
       csv_string = CSV.generate_line(["peptide"].concat(Lineage.ranks)) + csv_string

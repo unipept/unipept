@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '4.1.4'
+gem 'rails', '4.1.8'
 
 gem 'mysql2'
 
@@ -12,7 +12,7 @@ gem 'will_paginate'
 
 # jquery
 gem 'jquery-rails'
-gem "jquery-ui-rails", "4.0.2"
+gem "jquery-ui-rails"
 
 # cas auth
 gem 'devise'
@@ -21,6 +21,9 @@ gem 'devise_cas_authenticatable'
 # zeroclipboard
 gem 'zeroclipboard-rails'
 
+# font-awesome
+gem "font-awesome-less"
+
 # needed for asset creation
 gem 'therubyracer'
 
@@ -28,10 +31,10 @@ gem 'therubyracer'
 gem 'oj'
 
 # imagemagick bindings
-gem "rmagick"
+gem "rmagick", require: false
 
-# do HTTP requests
-gem "httparty"
+# coveralls
+gem "coveralls", require: false
 
 # The dynamic stylesheet language for the Rails asset pipeline.
 # Allows other gems to extend Less load path.
