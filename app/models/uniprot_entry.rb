@@ -16,6 +16,7 @@ class UniprotEntry < ActiveRecord::Base
 
   has_many :peptides
   has_many :refseq_cross_references
+  has_many :embl_cross_references
   has_many :ec_cross_references
   has_many :go_cross_references
 

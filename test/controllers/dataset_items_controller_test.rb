@@ -9,9 +9,4 @@ class DatasetItemsControllerTest < ActionController::TestCase
     assert_equal datasetitem1.data, @response.body
   end
 
-  test "should give 404 when show datasetitem doesn't exist" do
-    skip
-    get :show, {'id' => "-11"}
-  end
-
 end

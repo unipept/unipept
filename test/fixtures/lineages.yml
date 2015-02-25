@@ -81,3 +81,18 @@ kingdom3:
     taxon_id: 11
     kingdom: 2
     family: -3
+
+distinct1:
+    taxon_id: 13
+    kingdom: 13
+
+distinct2:
+    taxon_id: 14
+    kingdom: 13
+    phylum: 14
+
+distinct3:
+    taxon_id: 15
+    kingdom: 13
+    phylum: 14
+    class: 15

@@ -1,6 +1,6 @@
 <%= form_tag(:sequence_search, :method => "get", :class => "form-inline") do %>
     <%= search_field_tag(:q, "", :placeholder => "SEQUENCE", :class => "form-control") %>
-    <%= button_tag(raw("<span class='glyphicon glyphicon-search'></span> Search"), :type => "submit", :class => "btn btn-primary") %>
+    <%= button_tag(raw("<span class='glyphicon glyphicon-search grow'></span> Search"), :type => "submit", :class => "btn btn-primary btn-animate") %>
     <div class="checkbox">
       <%= label_tag(:il_s, check_box_tag(:il_s, "equateIL", true) + " Equate I and L?") %>
     </div>

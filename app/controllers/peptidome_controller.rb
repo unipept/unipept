@@ -46,7 +46,7 @@ class PeptidomeController < ApplicationController
     sequences = JSON(params[:sequences])
     if params[:bioprojects].size > 0
       lca = Lineage.calculate_lca(Lineage.find_by_sql("SELECT lineages.* from genomes LEFT JOIN lineages ON genomes.taxon_id = lineages.taxon_id WHERE bioproject_id IN (#{params[:bioprojects]}) AND genomes.taxon_id is not null"))
-      result = params[:type] == "genome" ? Sequence.filter_unique_genome_peptides(sequences, lca) : Sequence.filter_unique_uniprot_peptides(sequences, lca)
+      result = Sequence.filter_unique_uniprot_peptides(sequences, lca)
       lca = Taxon.find_by_id(lca).name
     else
       lca = "undefined"

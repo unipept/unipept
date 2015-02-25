@@ -21,3 +21,21 @@ taxon2:
     name: "kingdom1"
     rank: "kingdom"
     valid_taxon: true
+
+taxon13:
+    id: 13
+    name: "kingdom2"
+    rank: "kingdom"
+    valid_taxon: true
+
+taxon14:
+    id: 14
+    name: "phylum1"
+    rank: "phylum"
+    valid_taxon: true
+
+taxon15:
+    id: 15
+    name: "class1"
+    rank: "class"
+    valid_taxon: true

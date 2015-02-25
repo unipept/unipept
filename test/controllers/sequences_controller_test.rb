@@ -3,6 +3,7 @@ require 'test_helper'
 class SequencesControllerTest < ActionController::TestCase
 
   test "should get index" do
+    Sequence.per_page = 1
     get :index
     assert_response :success
     assert_template :index
@@ -37,7 +38,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert assigns(:root).end_with? "}"
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, nil],[taxon2, taxon1]], assigns(:table_lineages)
-    assert_equal ["organism", "kingdom", "species"], assigns(:table_ranks)
+    assert_equal ["Organism", "kingdom", "species"], assigns(:table_ranks)
   end
 
   test "should get show with peptide" do
@@ -57,8 +58,15 @@ class SequencesControllerTest < ActionController::TestCase
     assert assigns(:root).end_with? "}"
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, nil],[taxon2, taxon1]], assigns(:table_lineages)
-    assert_equal ["organism", "kingdom", "species"], assigns(:table_ranks)
+    assert_equal ["Organism", "kingdom", "species"], assigns(:table_ranks)
   end
+
+  test "should get show with distinct lineage" do
+    get :show, id:7
+    assert_response :success
+    assert_template :show
+  end
+
 
   test "should get show with lowercase peptide" do
     sequence = sequences(:sequence4)
@@ -77,7 +85,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert assigns(:root).end_with? "}"
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, nil],[taxon2, taxon1]], assigns(:table_lineages)
-    assert_equal ["organism", "kingdom", "species"], assigns(:table_ranks)
+    assert_equal ["Organism", "kingdom", "species"], assigns(:table_ranks)
   end
 
   test "should get show with id and il" do
@@ -97,7 +105,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert assigns(:root).end_with? "}"
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, nil],[taxon2, taxon1]], assigns(:table_lineages)
-    assert_equal ["organism", "kingdom", "species"], assigns(:table_ranks)
+    assert_equal ["Organism", "kingdom", "species"], assigns(:table_ranks)
   end
 
   test "should get show with peptide and il" do
@@ -117,7 +125,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert assigns(:root).end_with? "}"
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, nil],[taxon2, taxon1]], assigns(:table_lineages)
-    assert_equal ["organism", "kingdom", "species"], assigns(:table_ranks)
+    assert_equal ["Organism", "kingdom", "species"], assigns(:table_ranks)
   end
 
   test "should get show with misscleavage and partial peptide" do
@@ -137,7 +145,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert assigns(:root).end_with? "}"
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, nil],[taxon2, taxon1]], assigns(:table_lineages)
-    assert_equal ["organism", "kingdom", "species"], assigns(:table_ranks)
+    assert_equal ["Organism", "kingdom", "species"], assigns(:table_ranks)
   end
 
   test "should get show with misscleavage and 2 peptides" do
@@ -157,7 +165,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert assigns(:root).end_with? "}"
     assert_equal [taxon2], assigns(:common_lineage)
     assert_equal [[taxon2]], assigns(:table_lineages)
-    assert_equal ["organism", "kingdom"], assigns(:table_ranks)
+    assert_equal ["Organism", "kingdom"], assigns(:table_ranks)
   end
 
   test "show should error when id not found" do
@@ -186,34 +194,34 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal @request.parameters, assigns(:p)
     assert_not assigns(:equate_il)
     assert_equal 3, assigns(:number_found)
-    assert_equal ["MISSES"], assigns(:misses)
+    assert assigns(:json_missed).include?("MISSES")
     assert_nil assigns(:prideURL)
     assert_not assigns(:intro_text).include?("deduplicated")
     assert_not assigns(:intro_text).include?("equated")
     assert_not assigns(:intro_text).include?("missed cleavage handling")
-    assert_not_nil assigns(:sunburst_json)
-    assert_not_nil assigns(:treemap_json)
-    assert assigns(:treemap_json).include?("AALER")
-    assert assigns(:treemap_json).include?("AAILER")
+    assert_not_nil assigns(:json_tree)
+    assert_not_nil assigns(:json_sequences)
+    assert assigns(:json_sequences).include?("AALER")
+    assert assigns(:json_sequences).include?("AAILER")
   end
 
   test "should get multi_search with il" do
-    post :multi_search, qs: "AALER\nAAILER\nMISSES", search_name: "", il: ""
+    post :multi_search, qs: "AALER\nAAILER\nMISSES", search_name: "", il: 1
     assert_response :success
     assert_template :multi_search
     assert_equal "Metaproteomics analysis result", assigns(:title)
     assert_equal @request.parameters, assigns(:p)
     assert assigns(:equate_il)
     assert_equal 2, assigns(:number_found)
-    assert_equal ["MISSES"], assigns(:misses)
+    assert assigns(:json_missed).include?("MISSES")
     assert_nil assigns(:prideURL)
     assert_not assigns(:intro_text).include?("deduplicated")
     assert assigns(:intro_text).include?("equated")
     assert assigns(:intro_text).include?("missed cleavage handling")
-    assert_not_nil assigns(:sunburst_json)
-    assert_not_nil assigns(:treemap_json)
-    assert assigns(:treemap_json).include?("AALER")
-    assert assigns(:treemap_json).include?("AAILER")
+    assert_not_nil assigns(:json_tree)
+    assert_not_nil assigns(:json_sequences)
+    assert assigns(:json_sequences).include?("AALER")
+    assert assigns(:json_sequences).include?("AAILER")
   end
 
   test "should get multi_search with dupes" do
@@ -224,15 +232,15 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal @request.parameters, assigns(:p)
     assert_not assigns(:equate_il)
     assert_equal 2, assigns(:number_found)
-    assert_equal ["MISSES"], assigns(:misses)
+    assert assigns(:json_missed).include?("MISSES")
     assert_nil assigns(:prideURL)
     assert assigns(:intro_text).include?("deduplicated")
     assert_not assigns(:intro_text).include?("equated")
     assert assigns(:intro_text).include?("missed cleavage handling")
-    assert_not_nil assigns(:sunburst_json)
-    assert_not_nil assigns(:treemap_json)
-    assert assigns(:treemap_json).include?("AALER")
-    assert assigns(:treemap_json).include?("AAILER")
+    assert_not_nil assigns(:json_tree)
+    assert_not_nil assigns(:json_sequences)
+    assert assigns(:json_sequences).include?("AALER")
+    assert assigns(:json_sequences).include?("AAILER")
   end
 
   test "should get multi_search without advanced" do
@@ -243,15 +251,15 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal @request.parameters, assigns(:p)
     assert_not assigns(:equate_il)
     assert_equal 2, assigns(:number_found)
-    assert_equal [], assigns(:misses)
+    assert_equal "[]", assigns(:json_missed)
     assert_nil assigns(:prideURL)
     assert_not assigns(:intro_text).include?("deduplicated")
     assert_not assigns(:intro_text).include?("equated")
     assert_not assigns(:intro_text).include?("missed cleavage handling")
-    assert_not_nil assigns(:sunburst_json)
-    assert_not_nil assigns(:treemap_json)
-    assert assigns(:treemap_json).include?("AAILER")
-    assert assigns(:treemap_json).include?("AGGAR")
+    assert_not_nil assigns(:json_tree)
+    assert_not_nil assigns(:json_sequences)
+    assert assigns(:json_sequences).include?("AAILER")
+    assert assigns(:json_sequences).include?("AGGAR")
   end
 
   test "should get multi_search with advanced" do
@@ -262,14 +270,14 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal @request.parameters, assigns(:p)
     assert_not assigns(:equate_il)
     assert_equal 1, assigns(:number_found)
-    assert_equal [], assigns(:misses)
+    assert_equal "[]", assigns(:json_missed)
     assert_nil assigns(:prideURL)
     assert_not assigns(:intro_text).include?("deduplicated")
     assert_not assigns(:intro_text).include?("equated")
     assert_not assigns(:intro_text).include?("missed cleavage handling")
-    assert_not_nil assigns(:sunburst_json)
-    assert_not_nil assigns(:treemap_json)
-    assert assigns(:treemap_json).include?("AAILERAGGAR")
+    assert_not_nil assigns(:json_tree)
+    assert_not_nil assigns(:json_sequences)
+    assert assigns(:json_sequences).include?("AAILERAGGAR")
   end
 
   test "multi_search should return csv with export" do
@@ -311,11 +319,11 @@ class SequencesControllerTest < ActionController::TestCase
   end
 
   test "multi_search should add pride url is data comes from pride" do
-    post :multi_search, qs: "AALER", search_name: "Pride experiment 123456"
+    post :multi_search, qs: "AALER", search_name: "PRIDE assay 123456"
     assert_response :success
     assert_template :multi_search
     assert assigns(:prideURL).include?("123456")
-    assert_equal "Metaproteomics analysis result of Pride experiment 123456", assigns(:title)
+    assert_equal "Metaproteomics analysis result of PRIDE assay 123456", assigns(:title)
   end
 
   test "multi_search should include name in title" do

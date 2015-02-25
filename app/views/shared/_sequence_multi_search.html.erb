@@ -3,6 +3,8 @@
         <%= text_area_tag(:qs, nil, :rows => 7, :spellcheck => "false", :class => "form-control") %>
     </div>
 
+    <div id="multisearch-warning" class='alert alert-warning' role='alert'><strong>Oh snap!</strong> You're trying to analyse <strong class="multisearch-warning-amount">9001</strong> peptides. Searching for this many peptides might take a while and the resulting visualisations will probably be suboptimal. Our <a href="<%= api_apidocs_path %>">webservice</a> might provide a better solution.</div>
+
     <div id="more_options"><span class="glyphicon glyphicon-plus"></span> <%= link_to("More options", "#") %></div>
     <div id="more_options_form">
         <h4>Advanced search options</h4>
@@ -24,8 +26,8 @@
         </div>
     </div>
     <div id="search_button">
-        <%= button_tag(raw("<span class='glyphicon glyphicon-search'></span> Search"), :type => "submit", :class => "btn btn-primary", :id =>"search-multi-form") %>
-        <%= button_tag(raw("<span class='glyphicon glyphicon-repeat'></span> Start Over"), { :name => 'reset', :id => 'reset_button', :type => "reset", :class => "btn btn-default" }) %>
+        <%= button_tag(raw("<span class='glyphicon glyphicon-search grow'></span> Search"), :type => "submit", :class => "btn btn-primary btn-animate", :id =>"search-multi-form", :"data-loading-text" => "Loading...") %>
+        <%= button_tag(raw("<span class='glyphicon glyphicon-repeat spin'></span> Start Over"), { :name => 'reset', :id => 'reset_button', :type => "reset", :class => "btn btn-default btn-animate" }) %>
     </div>
     <div id="form-progress" class="progress hide">
       <div class="progress-bar progress-bar-striped active"  role="progressbar" style="width: 100%">

@@ -239,7 +239,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         $("#download-peptides ul a").click(downloadSequenceHandler);
         $("#popover-remove-genome").click(function () {
             pancore.removeGenome(genomes[$(this).data("bioproject_id")]);
-        })
+        });
     }
 
     /**
@@ -615,7 +615,6 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     that.clearAllData = function clearAllData() {
         graphData = [];
         dataQueue = [];
-        toLoad = 0;
         that.redraw();
     };
 

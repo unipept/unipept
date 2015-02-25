@@ -41,3 +41,27 @@ uniprotentry4:
     taxon_id: 1
     type: "swissprot"
     protein: "AAILERA"
+
+uniprotentry5:
+    id: 5
+    uniprot_accession_number: "nr5"
+    version: 2
+    taxon_id: 13
+    type: "swissprot"
+    protein: "TEST"
+
+uniprotentry6:
+    id: 6
+    uniprot_accession_number: "nr6"
+    version: 2
+    taxon_id: 14
+    type: "swissprot"
+    protein: "TEST"
+
+uniprotentry7:
+    id: 7
+    uniprot_accession_number: "nr7"
+    version: 2
+    taxon_id: 15
+    type: "swissprot"
+    protein: "TEST"

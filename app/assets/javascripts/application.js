@@ -1,12 +1,13 @@
 //= require jquery
-//= require jquery.ui.draggable
-//= require jquery.ui.droppable
-//= require jquery.ui.sortable
+//= require jquery-ui/draggable
+//= require jquery-ui/droppable
+//= require jquery-ui/sortable
 //= require jquery_ujs
 //= require zeroclipboard
 //= require_self
 //= require_directory .
 //= require_directory ./peptidome
+//= require_directory ./multisearch
 //= require vendor
 
 // zeroclipboard config
@@ -25,7 +26,7 @@ function addCopy(selector, textFunction) {
     });
     // Copy to clipboard
     copyMissed.on('copy', function (client) {
-      copyMissed.setText(textFunction.call());
+        copyMissed.setText(textFunction.call());
     });
     // Notify copy success and reset tooltip title
     copyMissed.on('aftercopy', function () {
@@ -100,10 +101,15 @@ function add_fields(link, association, content) {
  * @param <String> canvasSelector The DOM selector of the canvas
  * @param <String> baseFileName The requested file name
  */
-function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
+function triggerDownloadModal(svgSelector, canvasSelector, baseFileName, parentSelector) {
     var $buttons = $("#save-as-modal .buttons"),
         $image = $("#save-as-modal .image"),
+        $element,
         svg;
+
+    if (parentSelector) {
+        $(parentSelector).append($("#save-as-modal"));
+    }
 
     // Reset the modal and show it
     $buttons.html("<h3>Please wait while we create your image</h3>");
@@ -115,7 +121,9 @@ function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
     // Generate the image
     if (svgSelector) {
         // Send the SVG code to the server for png conversion
-        svg = $(svgSelector).wrap("<div></div>").parent().html();
+        $element = $(svgSelector);
+        svg = $element.wrap("<div></div>").parent().html();
+        $element.unwrap();
         $.post("/convert", { image: svg }, showImage);
     }
     if (canvasSelector) {
@@ -132,12 +140,12 @@ function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
         $image.html("<img src='" + dataURL + "' />");
         $buttons.empty();
         if (svgSelector) {
-            $buttons.append("<button id='download-svg' class='btn btn-primary'><span class='glyphicon glyphicon-download'></span> Download as SVG</button>");
+            $buttons.append("<button id='download-svg' class='btn btn-primary btn-animate'><span class='glyphicon glyphicon-download down'></span> Download as SVG</button>");
             $("#download-svg").click(function () {
                 downloadDataByForm(svg, baseFileName + ".svg");
             });
         }
-        $buttons.append("<button id='download-png' class='btn btn-primary'><span class='glyphicon glyphicon-download'></span> Download as PNG</button>");
+        $buttons.append("<button id='download-png' class='btn btn-primary btn-animate'><span class='glyphicon glyphicon-download down'></span> Download as PNG</button>");
         $("#download-png").click(function () {
             downloadDataByLink($("#save-as-modal .image img").attr("src"), baseFileName + ".png");
         });
@@ -167,7 +175,7 @@ function downloadDataByForm(data, fileName, callback) {
     $downloadForm.submit();
     if (callback) {
         downloadTimer = setInterval(function checkCookie() {
-            if (document.cookie.indexOf(nonce) != -1) {
+            if (document.cookie.indexOf(nonce) !== -1) {
                 callback();
                 clearInterval(downloadTimer);
             }
@@ -200,7 +208,7 @@ function downloadDataByLink(dataURL, fileName) {
 function error(errorMessage, userMessage) {
     if (errorMessage !== null) {
         logErrorToGoogle(errorMessage);
-        if (typeof console != "undefined") {
+        if (typeof console !== "undefined") {
             console.error(errorMessage);
         }
     }
@@ -257,159 +265,20 @@ var delay = (function () {
  * Hash function for strings from
  * http://stackoverflow.com/a/15710692/865696
  */
-function stringHash(s){
-  return s.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);
+function stringHash(s) {
+    return s.split("").reduce(function (a, b) {
+        a = ((a << 5) - a) + b.charCodeAt(0);
+        return a & a;
+    }, 0);
 }
-
-/**
- * Array reduce polyfill from
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce#Polyfill
- */
-(function () {
-    if ( 'function' !== typeof Array.prototype.reduce ) {
-        Array.prototype.reduce = function( callback /*, initialValue*/ ) {
-            'use strict';
-            if ( null === this || 'undefined' === typeof this ) {
-                throw new TypeError('Array.prototype.reduce called on null or undefined' );
-            }
-            if ( 'function' !== typeof callback ) {
-                throw new TypeError( callback + ' is not a function' );
-            }
-            var t = Object( this ), len = t.length >>> 0, k = 0, value;
-            if ( arguments.length >= 2 ) {
-                value = arguments[1];
-            } else {
-                while ( k < len && ! k in t ) k++;
-                if ( k >= len ) {
-                    throw new TypeError('Reduce of empty array with no initial value');
-                }
-                value = t[ k++ ];
-            }
-            for ( ; k < len ; k++ ) {
-                if ( k in t ) {
-                    value = callback( value, t[k], k, t );
-                }
-            }
-            return value;
-        };
-    }
-})();
-
-/*
- * add an object called fullScreenApi until the fullscreen API gets finalized
- * from: http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugin/
- *
- * heavily adapted to support IE11 and the new specs
- */
-(function () {
-    var fullScreenApi = {
-            supportsFullScreen: false,
-            isFullScreen: function () { return false; },
-            requestFullScreen: function () {},
-            cancelFullScreen: function () {},
-            fullScreenEventName: '',
-            prefix: ''
-        },
-        browserPrefixes = 'webkit moz o ms khtml'.split(' '),
-        i;
-
-    // check for native support
-    if (typeof document.exitFullScreen != 'undefined') {
-        fullScreenApi.supportsFullScreen = true;
-    } else {
-        // check for fullscreen support by vendor prefix
-        for (i = 0, il = browserPrefixes.length; i < il; i++) {
-            fullScreenApi.prefix = browserPrefixes[i];
-
-            if (typeof document[fullScreenApi.prefix + 'CancelFullScreen'] != 'undefined') {
-                fullScreenApi.supportsFullScreen = true;
-                break;
-            }
-            if (typeof document[fullScreenApi.prefix + 'ExitFullscreen'] != 'undefined') {
-                fullScreenApi.supportsFullScreen = true;
-                break;
-            }
-        }
-    }
-
-    // update methods to do something useful
-    if (fullScreenApi.supportsFullScreen) {
-        fullScreenApi.fullScreenEventName = fullScreenApi.prefix + 'fullscreenchange';
-        if (fullScreenApi.prefix === "ms") {
-            fullScreenApi.fullScreenEventName = "MSFullscreenChange";
-        }
-
-        fullScreenApi.isFullScreen = function () {
-            switch (this.prefix) {
-                case '':
-                    return document.fullscreenElement !== null;
-                case 'moz':
-                    return document.mozFullScreenElement !== null;
-                default:
-                    return document[this.prefix + 'FullscreenElement'] !== null;
-            }
-        };
-        fullScreenApi.requestFullScreen = function (el) {
-            switch (this.prefix) {
-                case '':
-                    return el.requestFullscreen();
-                case 'webkit':
-                    return el.webkitRequestFullscreen();
-                case 'ms':
-                    return el.msRequestFullscreen();
-                case 'moz':
-                    return el.mozRequestFullScreen();
-                case 'default':
-                    return el[this.prefix + "RequestFullscreen"]();
-            }
-        };
-        fullScreenApi.cancelFullScreen = function (el) {
-            switch (this.prefix) {
-                case '':
-                    return document.exitFullscreen();
-                case 'moz':
-                    return document.mozCancelFullScreen();
-                case 'default':
-                    return document[this.prefix + "ExitFullscreen"]();
-            }
-        };
-    }
-
-    // jQuery plugin
-    if (typeof jQuery != 'undefined') {
-        jQuery.fn.requestFullScreen = function () {
-            return this.each(function () {
-                if (fullScreenApi.supportsFullScreen) {
-                    fullScreenApi.requestFullScreen(this);
-                }
-            });
-        };
-    }
-
-    // export api
-    window.fullScreenApi = fullScreenApi;
-})();
-
-/**
- * requestAnimationFrame shim
- * source: http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
- */
-window.requestAnimFrame = (function(){
-    return  window.requestAnimationFrame       ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame    ||
-            function( callback ){
-                window.setTimeout(callback, 1000 / 60);
-            };
-})();
 
 /**
  * Catches all errors, displays them in console and
  * logs them to Google Analytics
  */
-window.onerror = function(message, file, line) {
+window.onerror = function (message, file, line) {
     var e = file + '(' + line + '): ' + message;
-    if (typeof console != "undefined") {
+    if (typeof console !== "undefined") {
         console.error(e);
     }
     logErrorToGoogle(e);

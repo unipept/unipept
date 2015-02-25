@@ -43,3 +43,24 @@ pept5:
     original_sequence_id: 6
     uniprot_entry_id: 3
     position: 1
+
+pept6:
+    id: 6
+    sequence_id: 7
+    original_sequence_id: 7
+    uniprot_entry_id: 5
+    position: 1
+
+pept7:
+    id: 7
+    sequence_id: 7
+    original_sequence_id: 7
+    uniprot_entry_id: 6
+    position: 1
+
+pept8:
+    id: 8
+    sequence_id: 7
+    original_sequence_id: 7
+    uniprot_entry_id: 7
+    position: 1

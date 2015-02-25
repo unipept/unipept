@@ -10,8 +10,8 @@ class PagesController < ApplicationController
     @title = "About"
   end
 
-  def contact
-    @title = "Contact"
+  def publications
+    @title = "Publications"
   end
 
   def admin

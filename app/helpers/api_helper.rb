@@ -2,6 +2,7 @@ module ApiHelper
 
   def lineage_info(lineage, include_names=false)
     ids = Lineage::ORDER.map {|o| lineage.try(o) }
+    ids = ids.map{|i| i.nil? || i == -1  ? nil : i.abs}
     id_names = Lineage::ORDER.map {|s| s == :class_ ? "class_id" : "#{s}_id"}
 
     if include_names

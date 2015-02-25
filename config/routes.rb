@@ -41,7 +41,7 @@ UnipeptWeb::Application.routes.draw do
   get '/peptidomeclustering', :to => 'peptidome#analyze', :as => 'peptidome_clustering', defaults: { tab: 'peptidomeclustering' }
 
   # simple pages
-  get '/contact', :to => 'pages#contact'
+  get '/publications', :to => 'pages#publications'
   get '/about',   :to => 'pages#about'
   get '/admin',   :to => 'pages#admin'
 
@@ -50,9 +50,6 @@ UnipeptWeb::Application.routes.draw do
 
   # downloads a file
   post "/download", :to => "download#download"
-
-  # load pride dataset from webservice
-  get '/pride/:id', :to => 'pride#load'
 
   # API namespace
   namespace :api, path: 'api/v1' do
