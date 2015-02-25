@@ -17,11 +17,11 @@ class PagesControllerTest < ActionController::TestCase
     assert_equal "About", assigns(:title)
   end
 
-  test "should get contact" do
-    get :contact
+  test "should get publications" do
+    get :publications
     assert_response :success
-    assert_template :contact
-    assert_equal "Contact", assigns(:title)
+    assert_template :publications
+    assert_equal "Publications", assigns(:title)
   end
 
   test "should get admin" do
@@ -30,6 +30,27 @@ class PagesControllerTest < ActionController::TestCase
     assert_response :success
     assert_template :admin
     assert_equal "Admin", assigns(:title)
+  end
+
+  test "should get admin with progress" do
+    sign_in users(:bart_admin)
+    path = Rails.root.join("public", "progress")
+    content = "test"
+    File.open(path, "w+") do |f|
+      f.write(content)
+    end
+    get :admin
+    File.delete(path)
+    assert_response :success
+    assert_template :admin
+    assert_equal "Admin", assigns(:title)
+    assert assigns(:progress)
+  end
+
+  test "should get admin if auth is disabled" do
+    Rails.application.config.unipept_enable_auth = false
+    get :admin
+    Rails.application.config.unipept_enable_auth = true
   end
 
   test "should redirect when not signed in" do

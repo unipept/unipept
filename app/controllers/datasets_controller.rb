@@ -1,5 +1,4 @@
 class DatasetsController < ApplicationController
-  require 'httparty'
 
    before_action :authorize, :only => [:new, :edit, :create, :update, :destroy]
 
