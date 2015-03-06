@@ -100,15 +100,19 @@ function constructDatasetLoader() {
         $("#pride-progress .progress-bar").css("width", "10%");
 
         return get("http://www.ebi.ac.uk:80/pride/ws/archive/peptide/count/assay/" + id).then(function(datasetSize) {
-            var urls = [];
-            for (var page = 0; page * batchSize < datasetSize; page++) {
+            var urls = [],
+                page;
+            for (page = 0; page * batchSize < datasetSize; page++) {
                 urls.push("http://www.ebi.ac.uk:80/pride/ws/archive/peptide/list/assay/" + id + "?show=" + batchSize + "&page=" + page);
             }
+            page = 0;
             return urls.map(getJSON)
                 .reduce(function (sequence, batchPromise) {
                     return sequence.then(function () {
                         return batchPromise;
                     }).then(function (response) {
+                        page++;
+                        $("#pride-progress .progress-bar").css("width", 10 + (90 * page * batchSize) / datasetSize + "%");
                         peptides = peptides.concat(response.list.map(function (d) {return d.sequence; }));
                     });
                 }, Promise.resolve());
