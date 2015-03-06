@@ -81,69 +81,45 @@ function constructDatasetLoader() {
      * Loads a dataset from the database
      *
      * @param <Integer> id The id of the dataset(item) we want to load
-     * @param <Function> done The callback function that gets executed when
-     *          everything succeeds
-     * @param <Function> done The callback function that gets executed when
-     *          loading the dataset fails
-     * @param <Function always The callback function that gets always gets
-     *          executed
      */
-    function loadInternalDataset(id, done, fail, always) {
-        $.get("/dataset_items/" + id)
-            .done(done)
-            .fail(fail)
-            .always(always);
+    function loadInternalDataset(id) {
+        return get("/dataset_items/" + id);
     }
 
     /**
      * Loads a dataset from PRIDE using the PRIDE API
      *
      * @param <Integer> id The id of the assay we want to load
-     * @param <Function> done The callback function that gets executed when
-     *          everything succeeds
-     * @param <Function> done The callback function that gets executed when
-     *          loading the dataset fails
-     * @param <Function always The callback function that gets always gets
-     *          executed
      */
-    function loadPrideDataset(id, done, fail, always) {
+    function loadPrideDataset(id) {
         var batchSize = 1000,
-            page = 0,
             peptides = [],
-            datasetSize;
+            e;
 
         $("#pride-progress").show("fast");
         $("#pride-progress .progress-bar").css("width", "10%");
-        $.get("http://www.ebi.ac.uk:80/pride/ws/archive/peptide/count/assay/" + id)
-            .done(function (data) {
-                datasetSize = data;
-                loadNextBatch();
-            })
-            .fail(prideFail);
 
-            function loadNextBatch() {
-                $("#pride-progress .progress-bar").css("width", 10 + (90 * page * batchSize) / datasetSize + "%");
-                if (page * batchSize > datasetSize) { // we're done
-                    $("#pride-progress").hide("fast");
-                    done.call(this, peptides.join("\n"));
-                    always.call(this);
-                } else { // load next batch
-                    $.get("http://www.ebi.ac.uk:80/pride/ws/archive/peptide/list/assay/" + id + "?show=" + batchSize + "&page=" + page)
-                        .done(function (data) {
-                            data = data.list.map(function (d) {return d.sequence; });
-                            peptides = peptides.concat(data);
-                            page++;
-                            loadNextBatch();
-                        })
-                        .fail(prideFail);
-                }
+        return get("http://www.ebi.ac.uk:80/pride/ws/archive/peptide/count/assay/" + id).then(function(datasetSize) {
+            var urls = [];
+            for (var page = 0; page * batchSize < datasetSize; page++) {
+                urls.push("http://www.ebi.ac.uk:80/pride/ws/archive/peptide/list/assay/" + id + "?show=" + batchSize + "&page=" + page);
             }
-
-            function prideFail() {
-                $("#pride-progress").hide("fast");
-                fail.call(this);
-                always.call(this);
-            }
+            return urls.map(getJSON)
+                .reduce(function (sequence, batchPromise) {
+                    return sequence.then(function () {
+                        return batchPromise;
+                    }).then(function (response) {
+                        peptides = peptides.concat(response.list.map(function (d) {return d.sequence; }));
+                    });
+                }, Promise.resolve());
+        }).catch(function (err) {
+            e = err;
+        })
+        .then(function () {
+            $("#pride-progress").hide("fast");
+            if (e) throw e;
+            return peptides.join("\n");
+        });
     }
 
 
@@ -222,11 +198,10 @@ function constructDatasetLoader() {
             }
         };
 
-        if (type === "internal") {
-            loadInternalDataset(id, done, fail, always);
-        } else {
-            loadPrideDataset(id, done, fail, always);
-        }
+        var request = type === "internal" ? loadInternalDataset(id) : loadPrideDataset(id);
+        request.then(done)
+              .catch(fail)
+              .then(always);
     };
 
     return that;
