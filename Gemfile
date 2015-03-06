@@ -40,6 +40,9 @@ gem "coveralls", require: false
 # Allows other gems to extend Less load path.
 gem "less-rails"
 
+# auto css prefixer
+gem "autoprefixer-rails"
+
 # Uglifier minifies JavaScript files by wrapping UglifyJS to be accessible
 # in Ruby
 gem "uglifier"
