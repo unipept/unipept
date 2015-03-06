@@ -4,11 +4,12 @@
 //= require jquery-ui/sortable
 //= require jquery_ujs
 //= require zeroclipboard
+//= require vendor
+//= require ./polyfills
 //= require_self
 //= require_directory .
 //= require_directory ./peptidome
 //= require_directory ./multisearch
-//= require vendor
 
 // zeroclipboard config
 ZeroClipboard.config({
