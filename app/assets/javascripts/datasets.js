@@ -78,7 +78,7 @@ function constructDatasetLoader() {
     /************** private methods *************/
 
     /**
-     * Loads a dataset from the database
+     * Returns a list of peptides from an internal dataset as a promise
      *
      * @param <Integer> id The id of the dataset(item) we want to load
      */
@@ -87,7 +87,7 @@ function constructDatasetLoader() {
     }
 
     /**
-     * Loads a dataset from PRIDE using the PRIDE API
+     * Returns a list of peptide from a pride experiment as a promise
      *
      * @param <Integer> id The id of the assay we want to load
      */
@@ -175,15 +175,15 @@ function constructDatasetLoader() {
             highlight("#search_name");
         };
 
-        var fail = function (jqXHR, textStatus, errorType) {
+        var fail = function (error) {
             // track is something goes wrong
-            logToGoogle("Datasets", "Failed", name, textStatus);
+            logToGoogle("Datasets", "Failed", name, error);
 
             // reset the form elements
             $("#qs").val("");
 
             // highlight what pappend to the user
-            error(textStatus, "Something went wrong while loading the datasets.");
+            error(error, "Something went wrong while loading the datasets.");
             $('html, body').animate({
                 scrollTop: $("#messages").offset().top
             }, 1000);
