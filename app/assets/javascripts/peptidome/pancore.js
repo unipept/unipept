@@ -315,9 +315,10 @@ var constructPancore = function constructPancore(args) {
      * @param <String> type The type of the sequences
      */
     function processDownloadedSequences(sequences, type) {
-        downloadDataByForm(sequences, type + '-sequences.txt', function enableButton() {
+        downloadDataByForm(sequences, type + '-sequences.txt')
+          .then(function enableButton() {
             $("#download-peptides-toggle").button('reset');
-        });
+          });
     }
 
     /**

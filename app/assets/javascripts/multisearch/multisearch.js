@@ -16,7 +16,7 @@ var constructMultisearch = function constructMultisearch(args) {
         treemap,
         treeview,
         searchtree,
-        mapping = {};
+        mapping = new Map();
 
     /*************** Private methods ***************/
 
@@ -75,9 +75,9 @@ var constructMultisearch = function constructMultisearch(args) {
             error(err.message, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
 
-        mapping.sunburst = sunburst;
-        mapping.d3TreeMap = treemap;
-        mapping.d3TreeView = treeview;
+        mapping.set("sunburst", sunburst);
+        mapping.set("d3TreeMap", treemap);
+        mapping.set("d3TreeView", treeview);
     }
 
     /**
@@ -172,7 +172,7 @@ var constructMultisearch = function constructMultisearch(args) {
     function setUpActionBar() {
         $(".fullScreenActions a").tooltip({placement: "bottom", delay: { "show": 300, "hide": 300 }});
         $(".fullScreenActions .reset").click(function () {
-            mapping[getActiveTab()].reset();
+            mapping.get(getActiveTab()).reset();
         });
         $(".fullScreenActions .download").click(saveImage);
         $(".fullScreenActions .exit").click(function () {
