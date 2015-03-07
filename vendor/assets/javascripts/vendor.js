@@ -1,6 +1,11 @@
-// global
-// 0.27.1
-//= require es6-shim/es6-shim.min.js
+//  es6 shims
+//  https://github.com/jakearchibald/es6-promise/
+//  2.0.1
+//= require es6-shims/es6-promise.min.js
+//
+//  https://github.com/WebReflection/es6-collections
+//  0.5.2
+//= require es6-shims/es6-collections.min.js
 
 //  global
 //  3.3.2
