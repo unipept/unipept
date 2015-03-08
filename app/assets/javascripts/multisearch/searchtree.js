@@ -109,9 +109,10 @@ var constructSearchtree = function constructSearchtree(args) {
             innertext = "<a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + d.data.taxon_id + "' target='_blank'>" + d.name + "</a>",
             infoPane,
             ownSequences,
-            list,
             peptide,
-            allSequences;
+            allSequences,
+            i
+            stringBuffer = "";
 
         $("span.clicked").removeClass("clicked");
         $(this).addClass("clicked");
@@ -121,20 +122,24 @@ var constructSearchtree = function constructSearchtree(args) {
         $("#tree_data").css("transform", "translateY(" + margin + "px)");
         ownSequences = multi.getOwnSequences(d.id).sort();
         if (ownSequences && ownSequences.length > 0) {
-            list = infoPane.append("<h4 class='own'>Peptides specific for this taxon</h4><ul></ul>").find("ul").last();
-            for (peptide in ownSequences) {
-                list.append("<li><a href='/sequences/" + ownSequences[peptide] + "/" + equateIL + "' target='_blank'>" + ownSequences[peptide] + "</a></li>");
+            stringBuffer = "<h4 class='own'>Peptides specific for this taxon</h4><ul>";
+            for (i = 0; i < ownSequences.length; i++) {
+                stringBuffer += "<li><a href='/sequences/" + ownSequences[i] + "/" + equateIL + "' target='_blank'>" + ownSequences[i] + "</a></li>";
             }
+            stringBuffer += "</ul>";
+            infoPane.append(stringBuffer);
             infoPane.find("h4.own").before("<div id='copy-own' class='zero-clipboard'><span class='btn-clipboard'>Copy</span></div>");
             addCopy($("#copy-own span").first(), function () {return ownSequences.join("\n"); });
 
         }
         allSequences = multi.getAllSequences(d).sort();
         if (allSequences && allSequences.length > 0 && allSequences.length !== (ownSequences ? ownSequences.length : 0)) {
-            list = infoPane.append("<h4 class='all'>Peptides specific to this taxon or one of its subtaxa</h4><ul></ul>").find("ul").last();
-            for (peptide in allSequences) {
-                list.append("<li><a href='/sequences/" + allSequences[peptide] + "/" + equateIL + "' target='_blank'>" + allSequences[peptide] + "</a></li>");
+            stringBuffer = "<h4 class='all'>Peptides specific to this taxon or one of its subtaxa</h4><ul>";
+            for (i = 0; i < allSequences.length; i++) {
+                stringBuffer += "<li><a href='/sequences/" + allSequences[i] + "/" + equateIL + "' target='_blank'>" + allSequences[i] + "</a></li>";
             }
+            stringBuffer += "</ul>";
+            infoPane.append(stringBuffer);
             infoPane.find("h4.all").before("<div id='copy-all' class='zero-clipboard'><span class='btn-clipboard'>Copy</span></div>");
             addCopy($("#copy-all span").first(), function () {return allSequences.join("\n"); });
         }
