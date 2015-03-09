@@ -1,9 +1,11 @@
 //  es6 shims
 //  https://github.com/jakearchibald/es6-promise/
+//  used by IE, SF 6/7.0
 //  2.0.1
 //= require es6-shims/es6-promise.min.js
 //
 //  https://github.com/WebReflection/es6-collections
+//  used by IE, SF 6/7.0
 //  0.5.2
 //= require es6-shims/es6-collections.min.js
 

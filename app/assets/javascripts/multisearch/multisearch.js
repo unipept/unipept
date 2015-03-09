@@ -194,11 +194,12 @@ var constructMultisearch = function constructMultisearch(args) {
      * @param <int> timeout The number of ms to wait for
      */
     that.search = function search(searchTerm, timeout) {
-        var timeout = timeout || 500; // the number of ms before actually searching
-        if (searchTerm === "Organism") {
-            searchTerm = "";
+        var localTimeout = timeout || 500; // the number of ms before actually searching
+        var localTerm = searchTerm;
+        if (localTerm === "Organism") {
+            localTerm = "";
         }
-        setTimeout(function () { searchtree.search(searchTerm); }, timeout);
+        setTimeout(function () { searchtree.search(localTerm); }, localTimeout);
     };
 
     /**
@@ -212,7 +213,7 @@ var constructMultisearch = function constructMultisearch(args) {
     };
 
     /**
-     * Returns an array containing all sequences mathing the given node or any
+     * Returns an array containing all sequences matching the given node or any
      * of its children.
      *
      * @param <node> d The node
