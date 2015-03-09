@@ -318,3 +318,16 @@ window.onerror = function (message, file, line) {
     }
     logErrorToGoogle(e);
 };
+
+/**
+ * Takes an iterator and puts all values in an array
+ */
+function iteratorToArray(iterator) {
+    var values = [],
+        next = iterator.next();
+    while (!next.done) {
+        values.push(next.value);
+        next = iterator.next();
+    }
+    return values;
+}

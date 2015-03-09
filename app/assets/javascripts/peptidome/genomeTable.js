@@ -3,7 +3,7 @@
  * currently in the visualisation. features: reorder by dragging, autosort,
  * remove individual genomes, remove all genome.
  *
- * @param <Hash> args.genomes Hash of genomes (by bioproject_id)
+ * @param <Map> args.genomes Map of genomes (by bioproject_id)
  * @param <Pancore> args.pancore Pancore object
  */
 var constructGenomeTable = function constructGenomeTable(args) {
@@ -90,12 +90,13 @@ var constructGenomeTable = function constructGenomeTable(args) {
 
         d3.selectAll("#genomes_table tbody tr").each(function (d, i) {
             var bioproject_id = d.bioproject_id;
-            if (genomes[bioproject_id].position === i && stop === 0) {
+            var genome = genomes.get(bioproject_id);
+            if (genome.position === i && stop === 0) {
                 start = i;
-            } else if (genomes[bioproject_id].position !== i) {
+            } else if (genome.position !== i) {
                 stop = i;
-                genomes[bioproject_id].position = i;
-                genomes[bioproject_id].status = "Processing";
+                genome.position = i;
+                genome.status = "Processing";
             }
             order[i] = bioproject_id;
         });
@@ -110,12 +111,28 @@ var constructGenomeTable = function constructGenomeTable(args) {
     function runAutosort() {
         var i;
         pancore.autoSort($(this).attr("data-type"));
-        for (i in genomes) {
-            genomes[i].status = "Processing";
-        }
+        genomes.forEach(function (val) { val.status = "Processing"; });
         that.update();
         $("#autosort").mouseleave();
         return false;
+    }
+
+    /**
+     * Sets the property of a genome in the table
+     *
+     * @param <String> bioprojectId The id of the genome of which we want to
+     *          change the status
+     * @param <String> property the name of the property to set
+     * @param <Object> propertyValue the value of the property to set
+     * @param <Boolean> updateTable If true, update the table on the web page.
+     *          Should be set to false in case of batch update
+     */
+    function setGenomeProperty(bioprojectId, property, propertyValue, updateTable) {
+        if (!genomes.has(bioprojectId)) return;
+        genomes.get(bioprojectId)[property] = propertyValue;
+        if (updateTable) {
+            that.update();
+        }
     }
 
     /*************** Public methods ***************/
@@ -134,7 +151,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
      * @param <Genome> genome The genome we want to add
      */
     that.addGenome = function addGenome(genome) {
-        genomes[genome.bioproject_id] = genome;
+        genomes.set(genome.bioproject_id, genome);
     };
 
     /**
@@ -145,11 +162,9 @@ var constructGenomeTable = function constructGenomeTable(args) {
      */
     that.removeGenome = function removeGenome(bioprojectId) {
         // Only remove data that's already loaded
-        if (genomes[bioprojectId].status !== "Done") return;
-        for (i in genomes) {
-            genomes[i].status = "Processing";
-        }
-        delete genomes[bioprojectId];
+        if (genomes.get(bioprojectId).status !== "Done") return;
+        genomes.forEach(function (val) { val.status = "Processing"; });
+        genomes.delete(bioprojectId);
         that.update();
         var r = calculateTablePositions();
         return {"bioproject_id" : bioprojectId,
@@ -164,9 +179,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
     that.clearAllData = function clearAllData() {
         lca = "";
         var i;
-        for (i in genomes) {
-            delete genomes[i];
-        }
+        genomes.clear();
         that.clear();
     };
 
@@ -180,11 +193,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
      *          Should be set to false in case of batch update
      */
     that.setGenomeStatus = function setGenomeStatus(bioprojectId, status, updateTable) {
-        if (!genomes.hasOwnProperty(bioprojectId)) return;
-        genomes[bioprojectId].status = status;
-        if (updateTable) {
-            that.update();
-        }
+        setGenomeProperty(bioprojectId, "status", status, updateTable);
     };
 
     /**
@@ -197,11 +206,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
      *          Should be set to false in case of batch update
      */
     that.setGenomePosition = function setGenomePosition(bioprojectId, position, updateTable) {
-        if (!genomes.hasOwnProperty(bioprojectId)) return;
-        genomes[bioprojectId].position = position;
-        if (updateTable) {
-            that.update();
-        }
+        setGenomeProperty(bioprojectId, "position", position, updateTable);
     };
 
     /**
@@ -212,7 +217,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
     that.setOrder = function setOrder(order) {
         var i;
         for (i = 0; i < order.length; i++) {
-            genomes[order[i]].position = i;
+            genomes.get(order[i]).position = i;
         }
         that.update();
     };
@@ -258,7 +263,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
 
         // Add rows
         tr = d3.select("#genomes_table tbody").selectAll("tr.added")
-            .data(d3.values(genomes), function (d) { return d.bioproject_id; });
+            .data(iteratorToArray(genomes.values()), function (d) { return d.bioproject_id; });
         newRows = tr.enter().append("tr").attr("class", "added");
         tr.exit().remove();
         tr.sort(function (a, b) { return a.position - b.position; });

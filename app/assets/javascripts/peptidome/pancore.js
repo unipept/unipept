@@ -15,7 +15,7 @@ var constructPancore = function constructPancore(args) {
     /*************** Private variables ***************/
 
     var that = {},
-        genomes = {},
+        genomes = new Map(),
         isLoading = false,
         toLoad = 0,
         rank = 0,
@@ -389,7 +389,7 @@ var constructPancore = function constructPancore(args) {
             abbrev;
         for (i = 0; i < g.length; i++) {
             // only add new genomes
-            if (genomes[g[i].bioproject_id] === undefined) {
+            if (!genomes.has(g[i].bioproject_id)) {
                 toLoad++;
                 abbrev = that.abbreviate(g[i].name, g[i].bioproject_id);
                 table.addGenome({

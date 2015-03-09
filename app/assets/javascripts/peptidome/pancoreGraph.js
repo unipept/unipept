@@ -91,7 +91,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
 
         xAxis = d3.svg.axis()
             .scale(xScale)
-            .tickFormat(function (d) { return (genomes[d] && genomes[d].abbreviation) || ""; })
+            .tickFormat(function (d) { return genomes.has(d) ? genomes.get(d).abbreviation : ""; })
             .orient("bottom");
         yAxis = d3.svg.axis()
             .scale(yScale)
@@ -238,7 +238,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         });
         $("#download-peptides ul a").click(downloadSequenceHandler);
         $("#popover-remove-genome").click(function () {
-            pancore.removeGenome(genomes[$(this).data("bioproject_id")]);
+            pancore.removeGenome(genomes.get($(this).data("bioproject_id")));
         });
     }
 
@@ -258,7 +258,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         if (mouse.clickId === d.bioproject_id) {
             that.removePopoversAndHighlights();
         } else {
-            var title = genomes[d.bioproject_id].name;
+            var title = genomes.get(d.bioproject_id).name;
             if (("" + d.bioproject_id).charAt(0) === "u") {
                 title = "<span class='glyphicon glyphicon-home' title='local genome'></span> " + title;
             } else {
@@ -296,7 +296,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     function invokeTooltipAndHighlight(d) {
         if (mouse.isDragging) return;
         if (mouse.clickId === d.bioproject_id) return;
-        var tooltipHtml = "<b>" + genomes[d.bioproject_id].name + "</b><br/>" + getTooltipContent(d);
+        var tooltipHtml = "<b>" + genomes.get(d.bioproject_id).name + "</b><br/>" + getTooltipContent(d);
         tooltip.html(tooltipHtml).style("visibility", "visible");
         that.addHighlight(d);
     }
@@ -482,9 +482,9 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             bioprojectId;
         for (i = 0; i < graphData.length; i++) {
             bioprojectId = graphData[i].bioproject_id;
-            if (genomes[bioprojectId].position === i && stop === 0) {
+            if (genomes.get(bioprojectId).position === i && stop === 0) {
                 start = i;
-            } else if (genomes[bioprojectId].position !== i) {
+            } else if (genomes.get(bioprojectId).position !== i) {
                 stop = i;
                 table.setGenomeStatus(bioprojectId, "Processing...", false);
             }
@@ -629,7 +629,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             tempArray;
         for (i = 0; i < graphData.length; i++) {
             tempArray = [];
-            tempArray.push(genomes[graphData[i].bioproject_id].name);
+            tempArray.push(genomes.get(graphData[i].bioproject_id).name);
             tempArray.push(graphData[i].bioproject_id);
             tempArray.push(graphData[i].peptides);
             tempArray.push(graphData[i].core);
