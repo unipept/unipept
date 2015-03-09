@@ -148,8 +148,6 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * of the graph to prevent overlap with the legend.
      */
     function getMaxVisibleDatapoint() {
-        var max = 0,
-            i;
         if (graphData.length === 0) {
             return 0;
         }
@@ -157,12 +155,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             return graphData[graphData.length - 1].pan;
         }
         if (toggles.showGenome) {
-            for (i = 0; i < graphData.length; i++) {
-                if (graphData[i].peptides > max) {
-                    max = graphData[i].peptides;
-                }
-            }
-            return max * 1.3;
+            return d3.max(graphData, function (d) {return d.peptides;}) * 1.3;
         }
         if (toggles.showCore) {
             return graphData[0].core * 1.3;
@@ -630,19 +623,17 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * @return <String> exportString The data in CSV format
      */
     that.getDataAsCsv = function getDataAsCsv() {
-        var exportString = "name,bioproject_id,genome_peptides,core_peptides,pan_peptides,unique_peptides\n",
-            i,
-            tempArray;
-        for (i = 0; i < graphData.length; i++) {
-            tempArray = [];
-            tempArray.push(genomes.get(graphData[i].bioproject_id).name);
-            tempArray.push(graphData[i].bioproject_id);
-            tempArray.push(graphData[i].peptides);
-            tempArray.push(graphData[i].core);
-            tempArray.push(graphData[i].pan);
-            tempArray.push(graphData[i].unicore);
+        var exportString = "name,bioproject_id,genome_peptides,core_peptides,pan_peptides,unique_peptides\n";
+        graphData.forEach(function (genome) {
+            var tempArray = [];
+            tempArray.push(genomes.get(genome.bioproject_id).name);
+            tempArray.push(genome.bioproject_id);
+            tempArray.push(genome.peptides);
+            tempArray.push(genome.core);
+            tempArray.push(genome.pan);
+            tempArray.push(genome.unicore);
             exportString += tempArray.join(",") + "\n";
-        }
+        });
         return exportString;
     };
 
