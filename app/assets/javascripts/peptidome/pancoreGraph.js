@@ -520,9 +520,15 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     function downloadSequenceHandler() {
         var type = $(this).attr("data-type");
         var bioprojectId = $(this).attr("data-bioproject_id");
-        pancore.requestSequences(bioprojectId, type);
         $("#download-peptides").mouseleave();
         $("#download-peptides-toggle").button('loading');
+        pancore.requestSequences(bioprojectId, type)
+            .then(function (data) {
+                return downloadDataByForm(data.sequences, data.type + '-sequences.txt');
+            })
+            .then(function enableButton() {
+                $("#download-peptides-toggle").button('reset');
+            });
         return false;
     }
 

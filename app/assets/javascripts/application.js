@@ -52,7 +52,7 @@ function addCopy(selector, textFunction) {
 // from http://www.html5rocks.com/en/tutorials/es6/promises/
 function get(url) {
   // Return a new promise.
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     // Do the usual XHR stuff
     var req = new XMLHttpRequest();
     req.open('GET', url);
