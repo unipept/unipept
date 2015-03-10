@@ -76,7 +76,7 @@ function digest(proteins) {
             .split("+");
         for (j = 0; j < digestList.length; j++) {
             if (digestList[j].length >= 5) {
-                peptides.push(digest[j]);
+                peptides.push(digestList[j]);
             }
         }
     }
