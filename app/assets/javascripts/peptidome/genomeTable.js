@@ -251,9 +251,9 @@ var constructGenomeTable = function constructGenomeTable(args) {
      */
     that.update = function update() {
         var text,
-        tr,
-        newRows,
-        td;
+            tr,
+            newRows,
+            td;
 
         text = "Genomes";
         if (lca !== "") {

@@ -76,7 +76,7 @@ function digest(proteins) {
             .split("+");
         for (j = 0; j < digestList.length; j++) {
             if (digestList[j].length >= 5) {
-                peptides.push(digest[j]);
+                peptides.push(digestList[j]);
             }
         }
     }
@@ -106,7 +106,9 @@ function convertPeptidesToInts(peptides) {
         } else {
             error("request error for /peptidome/convert_peptides", "It seems like something went wrong while we loaded the data");
         }
-        sendToHost("processProgress", {progress : ((i +  sliceSize) / peptides.length)});
+        if (i % 10000 === 0) {
+            sendToHost("processProgress", {progress : ((i +  sliceSize) / peptides.length)});
+        }
     }
     return ids.sort(function (a, b) { return a - b; });
 }
