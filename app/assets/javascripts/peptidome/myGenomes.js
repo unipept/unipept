@@ -511,7 +511,12 @@ var constructMyGenomes = function constructMyGenomes(args) {
             if (result.value.version !== version) {
                 fileRequest = files.get(result.value.id);
                 fileRequest.onsuccess = function (e) {
+<<<<<<< HEAD
                     dataQueue.push({file: e.target.result.file, name: result.value.name, id: result.value.id});
+=======
+                    console.log(e);
+                    processFileContent(e.target.result.file, result.value.name, result.value.id);
+>>>>>>> refactor myGenomes
                 };
                 fileRequest.onerror = indexedDBStore.onerror;
             }
