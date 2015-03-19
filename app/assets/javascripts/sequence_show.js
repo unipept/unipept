@@ -345,16 +345,17 @@ function init_sequence_show(data) {
 
         // Expands a node for i levels
         function expand(d, i) {
-            if (typeof i === "undefined") {
-                i = 1;
+            var local_i = i;
+            if (typeof local_i === "undefined") {
+                local_i = 1;
             }
-            if (i > 0) {
+            if (local_i > 0) {
                 if (d._children) {
                     d.children = d._children;
                     d._children = null;
                 }
                 if (d.children) {
-                    d.children.forEach(function (c) {expand(c, i - 1); });
+                    d.children.forEach(function (c) {expand(c, local_i - 1); });
                 }
             }
         }

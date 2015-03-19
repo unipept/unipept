@@ -16,7 +16,7 @@ var constructMultisearch = function constructMultisearch(args) {
         treemap,
         treeview,
         searchtree,
-        mapping = {};
+        mapping = new Map();
 
     /*************** Private methods ***************/
 
@@ -75,9 +75,9 @@ var constructMultisearch = function constructMultisearch(args) {
             error(err.message, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
 
-        mapping.sunburst = sunburst;
-        mapping.d3TreeMap = treemap;
-        mapping.d3TreeView = treeview;
+        mapping.set("sunburst", sunburst);
+        mapping.set("d3TreeMap", treemap);
+        mapping.set("d3TreeView", treeview);
     }
 
     /**
@@ -172,7 +172,7 @@ var constructMultisearch = function constructMultisearch(args) {
     function setUpActionBar() {
         $(".fullScreenActions a").tooltip({placement: "bottom", delay: { "show": 300, "hide": 300 }});
         $(".fullScreenActions .reset").click(function () {
-            mapping[getActiveTab()].reset();
+            mapping.get(getActiveTab()).reset();
         });
         $(".fullScreenActions .download").click(saveImage);
         $(".fullScreenActions .exit").click(function () {
@@ -194,11 +194,12 @@ var constructMultisearch = function constructMultisearch(args) {
      * @param <int> timeout The number of ms to wait for
      */
     that.search = function search(searchTerm, timeout) {
-        var timeout = timeout || 500; // the number of ms before actually searching
-        if (searchTerm === "Organism") {
-            searchTerm = "";
+        var localTimeout = timeout || 500; // the number of ms before actually searching
+        var localTerm = searchTerm;
+        if (localTerm === "Organism") {
+            localTerm = "";
         }
-        setTimeout(function () { searchtree.search(searchTerm); }, timeout);
+        setTimeout(function () { searchtree.search(localTerm); }, localTimeout);
     };
 
     /**
@@ -212,7 +213,7 @@ var constructMultisearch = function constructMultisearch(args) {
     };
 
     /**
-     * Returns an array containing all sequences mathing the given node or any
+     * Returns an array containing all sequences matching the given node or any
      * of its children.
      *
      * @param <node> d The node

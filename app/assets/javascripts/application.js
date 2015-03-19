@@ -4,11 +4,12 @@
 //= require jquery-ui/sortable
 //= require jquery_ujs
 //= require zeroclipboard
+//= require vendor
+//= require ./polyfills
 //= require_self
 //= require_directory .
 //= require_directory ./peptidome
 //= require_directory ./multisearch
-//= require vendor
 
 // zeroclipboard config
 ZeroClipboard.config({
@@ -45,6 +46,42 @@ function addCopy(selector, textFunction) {
           .tooltip('fixTitle')
           .tooltip("show");
     });
+}
+
+// a promise based get function
+// from http://www.html5rocks.com/en/tutorials/es6/promises/
+function get(url) {
+  // Return a new promise.
+  return new Promise(function (resolve, reject) {
+    // Do the usual XHR stuff
+    var req = new XMLHttpRequest();
+    req.open('GET', url);
+
+    req.onload = function() {
+      // This is called even on 404 etc
+      // so check the status
+      if (req.status == 200) {
+        // Resolve the promise with the response text
+        resolve(req.response);
+      }
+      else {
+        // Otherwise reject with the status text
+        // which will hopefully be a meaningful error
+        reject(Error(req.statusText));
+      }
+    };
+
+    // Handle network errors
+    req.onerror = function() {
+      reject(Error("Network Error"));
+    };
+
+    // Make the request
+    req.send();
+  });
+}
+function getJSON(url) {
+  return get(url).then(JSON.parse);
 }
 
 // highlights the background color
@@ -154,33 +191,31 @@ function triggerDownloadModal(svgSelector, canvasSelector, baseFileName, parentS
 
 /**
  * Triggers a file download in the browser using a hidden
- * form and a server round trip. Fires an optional callback
- * when the file starts downloading
+ * form and a server round trip. Returns a Promise that resolves when
+ * the file starts downloading
  *
  * @param <String> data The text you want in the file
  * @param <String> filename The requested file name
- * @param <Function> callback Optional callback that gets
- *          fired when the file starts downloading
  */
-function downloadDataByForm(data, fileName, callback) {
-    var nonce = Math.random(),
-        downloadTimer,
-        $downloadForm;
-    $("form.download").remove();
-    $("body").append("<form class='download' method='post' action='/download'></form>");
-    $downloadForm = $("form.download").append("<input type='hidden' name='filename' value='" + fileName + "'/>");
-    $downloadForm.append("<input type='hidden' name='data' class='data'/>");
-    $downloadForm.append("<input type='hidden' name='nonce' value='" + nonce + "'/>");
-    $downloadForm.find(".data").val(data);
-    $downloadForm.submit();
-    if (callback) {
+function downloadDataByForm(data, fileName) {
+    return new Promise(function(resolve, reject) {
+        var nonce = Math.random(),
+            downloadTimer,
+            $downloadForm;
+        $("form.download").remove();
+        $("body").append("<form class='download' method='post' action='/download'></form>");
+        $downloadForm = $("form.download").append("<input type='hidden' name='filename' value='" + fileName + "'/>");
+        $downloadForm.append("<input type='hidden' name='data' class='data'/>");
+        $downloadForm.append("<input type='hidden' name='nonce' value='" + nonce + "'/>");
+        $downloadForm.find(".data").val(data);
         downloadTimer = setInterval(function checkCookie() {
             if (document.cookie.indexOf(nonce) !== -1) {
-                callback();
                 clearInterval(downloadTimer);
+                resolve(fileName);
             }
         }, 100);
-    }
+        $downloadForm.submit();
+    });
 }
 
 /**
@@ -283,3 +318,16 @@ window.onerror = function (message, file, line) {
     }
     logErrorToGoogle(e);
 };
+
+/**
+ * Takes an iterator and puts all values in an array
+ */
+function iteratorToArray(iterator) {
+    var values = [],
+        next = iterator.next();
+    while (!next.done) {
+        values.push(next.value);
+        next = iterator.next();
+    }
+    return values;
+}

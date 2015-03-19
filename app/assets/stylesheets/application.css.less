@@ -25,39 +25,39 @@
 }
 
 .btn-animate span.glyphicon {
-    .transition-duration(0.3s);
-    .transition-property('transform, color');
-    .transition-timing-function(ease-out);
+    transition-duration: 0.3s;
+    transition-property: transform, color;
+    transition-timing-function: ease-out;
 }
 
 .btn-animate:hover span.glyphicon.grow,
 .btn-animate:focus span.glyphicon.grow,
 .btn-animate:active span.glyphicon.grow {
-    .scale(1.2);
+    transform: scale(1.2);
 }
 
 .btn-animate:hover span.glyphicon.shrink,
 .btn-animate:focus span.glyphicon.shrink,
 .btn-animate:active span.glyphicon.shrink {
-    .scale(0.8);
+    transform: scale(0.8);
 }
 
 .btn-animate:hover span.glyphicon.spin,
 .btn-animate:focus span.glyphicon.spin,
 .btn-animate:active span.glyphicon.spin {
-    .rotate(360deg);
+    transform: rotate(360deg);
 }
 
 .btn-animate:hover span.glyphicon.down,
 .btn-animate:focus span.glyphicon.down,
 .btn-animate:active span.glyphicon.down {
-    .translate(0px, 3px);
+    transform: translate(0px, 3px);
 }
 
 .btn-animate:hover span.glyphicon.right,
 .btn-animate:focus span.glyphicon.right,
 .btn-animate:active span.glyphicon.right {
-    .translate(3px, 0px);
+    transform: translate(3px, 0px);
 }
 
 .btn-animate:hover span.glyphicon.red,

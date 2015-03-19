@@ -725,7 +725,7 @@ function getSequences(type, bioproject_id) {
         error("Unknown type: " + type);
     }
     getJSONByPost("/peptidome/full_sequences/", "sequence_ids=[" + ids + "]", function (d) {
-        sendToHost("processDownloadedSequences", {sequences : d, type : type});
+        sendToHost("processDownloadedSequences", {sequences : d, type : type, bioprojectId : bioproject_id});
     });
 }
 
