@@ -72,7 +72,7 @@ var constructPancore = function constructPancore(args) {
 
         // Constructs the myGenomes feature
         if (window.File && window.FileReader && window.FileList) {
-            myGenomes = constructMyGenomes({pancore : that, version : args.version});
+            myGenomes = constructMyGenomes({version : args.version});
         } else {
             $("#my-genome-error").removeClass("hide");
         }
@@ -263,9 +263,11 @@ var constructPancore = function constructPancore(args) {
      */
     function loadData(bioproject_id, name) {
         if ((bioproject_id + "").charAt(0) === "u") {
-            myGenomes.getIds(bioproject_id, function (ids) {
-                sendToWorker("loadUserData", {"id" : bioproject_id, "name" : name, "ids" : ids});
-            });
+            myGenomes.getIds(bioproject_id).then(
+                function (ids) {
+                    sendToWorker("loadUserData", {"id" : bioproject_id, "name" : name, "ids" : ids});
+                }
+            );
         } else {
             sendToWorker("loadData", {"bioproject_id" : bioproject_id, "name" : name});
         }

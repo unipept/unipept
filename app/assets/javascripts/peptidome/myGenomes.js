@@ -2,14 +2,12 @@
  * creates a myGenomes object representing the table showing all self uploaded
  * genomes and optiones to add or remove them.
  *
- * @param <Pancore> args.pancore Pancore object
  * @param <String> args.version The uniprot version
  */
 var constructMyGenomes = function constructMyGenomes(args) {
     /*************** Private variables ***************/
 
     var that = {},
-        pancore = args.pancore,
         version = args.version,
         worker;
 
@@ -178,7 +176,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
         $(".popover-content #myGenomeProgress .progress-bar span").text("File 0 of " + totalFiles);
         return dataFiles.reduce(function (promise, data) {
             return promise.then(function () {
-                return readFile(data.file)
+                return readFile(data.file);
             }).then(function (content) {
                 return processFileContent(content, data.name, data.id);
             }).then(function () {
@@ -488,6 +486,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
         var store = trans.objectStore("metadata");
         var files = trans.objectStore("files");
         var fileRequest;
+        var dataQueue = [];
 
         // Get everything in the store;
         var keyRange = IDBKeyRange.lowerBound(0);
@@ -498,7 +497,11 @@ var constructMyGenomes = function constructMyGenomes(args) {
             // are we done yet?
             if (!!result == false) {
                 redrawTable();
-                return;
+                return dataQueue.reduce(function (promise, data) {
+                    return promise.then(function () {
+                        return processFileContent(data.file, data.name, data.id);
+                    });
+                }, Promise.resolve());
             }
 
             genomeList.push(result.value.id);
@@ -508,8 +511,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
             if (result.value.version !== version) {
                 fileRequest = files.get(result.value.id);
                 fileRequest.onsuccess = function (e) {
-                    console.log(e);
-                    processFileContent(e.target.result.file, result.value.name, result.value.id);
+                    dataQueue.push({file: e.target.result.file, name: result.value.name, id: result.value.id});
                 };
                 fileRequest.onerror = indexedDBStore.onerror;
             }
@@ -586,23 +588,22 @@ var constructMyGenomes = function constructMyGenomes(args) {
     };
 
     /**
-     * Fetches a list of peptides for a given genome and executes the callback
-     * when it's done
+     * Fetches a list of peptides for a given genome and returns it as a promise
      *
      * @param <String> id The id of the genome
-     * @param <Function> callback The callback that gets executed when the ids
-     *          are done loading
      */
-    indexedDBStore.getPeptideList = function getPeptideList(id, callback) {
-        var db = indexedDBStore.db;
-        var trans = db.transaction(["metadata", "peptideLists"], "readwrite");
-        var peptideLists = trans.objectStore("peptideLists");
+    indexedDBStore.getPeptideList = function getPeptideList(id) {
+        return new Promise(function (resolve, reject) {
+            var db = indexedDBStore.db;
+            var trans = db.transaction(["metadata", "peptideLists"], "readwrite");
+            var peptideLists = trans.objectStore("peptideLists");
 
-        var peptideListRequest = peptideLists.get(id);
-        peptideListRequest.onsuccess = function (e) {
-            callback.call(this, e.target.result.peptides);
-        };
-        peptideListRequest.onerror = indexedDBStore.onerror;
+            var peptideListRequest = peptideLists.get(id);
+            peptideListRequest.onsuccess = function (e) {
+                resolve(e.target.result.peptides);
+            };
+            peptideListRequest.onerror = indexedDBStore.onerror;
+        });
     };
 
     /**
@@ -677,28 +678,25 @@ var constructMyGenomes = function constructMyGenomes(args) {
     };
 
     /**
-     * Fetches a list of peptides for a given genome and executes the callback
-     * when it's done
+     * Fetches a list of peptides for a given genome and returns it as a promise
      *
      * @param <String> id The id of the genome
-     * @param <Function> callback The callback that gets executed when the ids
-     *          are done loading
      */
-    localStorageStore.getPeptideList = function getPeptideList(id, callback) {
+    localStorageStore.getPeptideList = function getPeptideList(id) {
         var ids = JSON.parse(localStorage["genome_" + id]);
-        callback.call(this, ids);
+        return Promise.resolve(ids);
     };
 
     /*************** Public methods ***************/
 
     /**
-     * Retrieves the list of peptide ids from the local storage for a given id
+     * Retrieves the list of peptide ids from the datastore and returns it as
+     * a promise.
      *
      * @param <String> id The id of the genome
-     * @param <Function> callback This function gets called when loaded
      */
-    that.getIds = function getIds(id, callback) {
-        dataStore.getPeptideList(id, callback);
+    that.getIds = function getIds(id) {
+        return dataStore.getPeptideList(id);
     };
 
     // initialize the object
