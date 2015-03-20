@@ -107,7 +107,7 @@ public class TableWriter implements UniprotObserver {
      */
     public void store(UniprotEntry entry) {
         int uniprotEntryId = addUniprotEntry(entry.getUniprotAccessionNumber(), entry.getVersion(),
-                entry.getTaxonId(), entry.getType(), entry.getSequence());
+                entry.getTaxonId(), entry.getType(), entry.getName(), entry.getSequence());
         if (uniprotEntryId != -1) { // failed to add entry
             for (Pair p : entry.digest())
                 addData(p.getSequence().replace("I", "L"), uniprotEntryId, p.getSequence(),
@@ -139,7 +139,7 @@ public class TableWriter implements UniprotObserver {
      * @return The database ID of the uniprot entry.
      */
     public int addUniprotEntry(String uniprotAccessionNumber, int version, int taxonId,
-            String type, String sequence) {
+            String type, String name, String sequence) {
         if(0 <= taxonId && taxonId < taxonList.size() && taxonList.get(taxonId) != null) {
             try {
                 uniprotEntries.write(
@@ -147,6 +147,7 @@ public class TableWriter implements UniprotObserver {
                         Integer.toString(version),
                         Integer.toString(taxonId),
                         type,
+                        name,
                         sequence);
                 return uniprotEntries.index();
             } catch(IOException e) {

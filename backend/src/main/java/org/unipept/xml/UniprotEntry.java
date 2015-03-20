@@ -17,6 +17,7 @@ public class UniprotEntry {
     private int version;
     private int taxonId;
     private String type;
+    private String name;
     private String sequence;
     private List<UniprotDbRef> dbReferences;
     private List<UniprotGORef> goReferences;
@@ -34,6 +35,7 @@ public class UniprotEntry {
         version = 0;
         taxonId = 0;
         this.type = type;
+        name = null;
         sequence = null;
         dbReferences.clear();
         goReferences.clear();
@@ -68,6 +70,14 @@ public class UniprotEntry {
 
     public String getType() {
         return type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getSequence() {

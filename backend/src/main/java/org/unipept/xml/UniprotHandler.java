@@ -22,6 +22,7 @@ public class UniprotHandler extends DefaultHandler {
     private int i;
     private boolean inOrganism = false;
     private boolean inEvidence = false;
+    private boolean inRecommendedName = false;
     private List<UniprotObserver> observers;
 
     private Map<String, EndTagWorker> endTagWorkers;
@@ -66,6 +67,12 @@ public class UniprotHandler extends DefaultHandler {
                 inEvidence = false;
             }
         });
+        endTagWorkers.put("recommendedName", new EndTagWorker() {
+            @Override
+            public void handleTag(String data) {
+                inRecommendedName = false;
+            }
+        });
         endTagWorkers.put("sequence", new EndTagWorker() {
             @Override
             public void handleTag(String data) {
@@ -89,6 +96,14 @@ public class UniprotHandler extends DefaultHandler {
                 }
             }
         });
+        endTagWorkers.put("fullName", new EndTagWorker() {
+            @Override
+            public void handleTag(String data) {
+                if (inRecommendedName) {
+                    currentItem.setName(data);
+                }
+            }
+        });
 
         // set up start tag workers
         startTagWorkers = new HashMap<String, StartTagWorker>();
@@ -109,6 +124,12 @@ public class UniprotHandler extends DefaultHandler {
             @Override
             public void handleTag(Attributes atts) {
                 inEvidence = true;
+            }
+        });
+        startTagWorkers.put("recommendedName", new StartTagWorker() {
+            @Override
+            public void handleTag(Attributes atts) {
+                inRecommendedName = true;
             }
         });
         startTagWorkers.put("dbReference", new StartTagWorker() {
