@@ -206,8 +206,8 @@ public class TableWriter implements UniprotObserver {
         try {
             peptides.write(
                     Integer.toString(getSequenceId(sequence)),
-                    Integer.toString(uniprotEntryId),
                     Integer.toString(getSequenceId(originalSequence)),
+                    Integer.toString(uniprotEntryId),
                     Integer.toString(position)
                     );
         } catch(IOException e) {
