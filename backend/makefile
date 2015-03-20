@@ -15,7 +15,7 @@ BDBDIR=../../berkeleydb
 
 TABLES=                                      \
 	$(TABDIR)/peptides.tsv.gz                \
-	$(TABDIR)/sequences.tsv.gz               \
+	$(INTDIR)/sequences.tsv.gz               \
 	$(TABDIR)/uniprot_entries.tsv.gz         \
 	$(TABDIR)/refseq_cross_references.tsv.gz \
 	$(TABDIR)/ec_cross_references.tsv.gz     \
@@ -27,7 +27,7 @@ SRC=$(shell find src/ -type f -name '*.java')
 JAR=target/unipept-0.0.1-SNAPSHOT.jar
 PAC=org.unipept.tools
 
-all: $(JAR) $(TABDIR)/taxons.tsv.gz $(TABLES) $(TABDIR)/lcad_sequences.tsv.gz $(TABDIR)/assemblies.tsv.gz $(TABDIR)/genome_sequences.tsv.gz
+all: $(JAR) $(TABDIR)/taxons.tsv.gz $(TABLES) $(TABDIR)/sequences.tsv.gz $(TABDIR)/assemblies.tsv.gz $(TABDIR)/genome_sequences.tsv.gz
 	date +"%Y-%m-%d %H:%M:%S"
 
 # Compiling {{{ ----------------------------------------------------------------
@@ -70,6 +70,7 @@ $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz: $(TAXDIR)/names.dmp $(TAXDIR)
 $(TABLES): $(TABDIR)/taxons.tsv.gz $(UNIDIR)/uniprot_sprot.xml.gz
 	date +"%Y-%m-%d %H:%M:%S"
 	mkdir -p $(BDBDIR)
+	mkdir -p $(INTDIR)
 	java $(JMEM) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(BDBDIR) $(BDBMEM) $(TABDIR)/taxons.tsv.gz $(TABLES) $(UNIDIR)/uniprot_sprot.xml.gz "swissprot"
 	#java $(JMEM) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(BDBDIR) $(BDBMEM) $(TABDIR)/taxons.tsv.gz $(TABLES) $(UNIDIR)/uniprot_sprot.xml.gz "swissprot" $(UNIDIR)/uniprot_trembl.xml.gz "trembl"
 # }}}
@@ -107,9 +108,9 @@ $(INTDIR)/original_LCAs.tsv.gz: $(TABDIR)/lineages.tsv.gz $(INTDIR)/original_seq
 	date +"%Y-%m-%d %H:%M:%S"
 	java $(JMEM) -cp $(JAR) $(PAC).LineagesSequencesTaxons2LCAs $^ $@
 
-$(TABDIR)/lcad_sequences.tsv.gz: $(TABDIR)/sequences.tsv.gz $(INTDIR)/LCAs.tsv.gz $(INTDIR)/original_LCAs.tsv.gz
+$(TABDIR)/sequences.tsv.gz: $(INTDIR)/sequences.tsv.gz $(INTDIR)/LCAs.tsv.gz $(INTDIR)/original_LCAs.tsv.gz
 	date +"%Y-%m-%d %H:%M:%S"
-	zcat $(TABDIR)/sequences.tsv.gz \
+	zcat $(INTDIR)/sequences.tsv.gz \
 		| join --nocheck-order -a1 -t '	' -o "1.1 1.2 2.2" - <(zcat $(INTDIR)/original_LCAs.tsv.gz) \
 		| join --nocheck-order -a1 -t '	' -o "1.1 1.2 1.3 2.2" - <(zcat $(INTDIR)/LCAs.tsv.gz) \
 		| gzip - \
