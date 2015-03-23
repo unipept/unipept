@@ -136,12 +136,12 @@ public class TaxonList extends ArrayList<Taxon> {
             int tid = rankedAncestor(i);
             t = get(tid);
             boolean valid = t.valid();
-            for(int j = nranks - 2; j >= 0; j--) {
+            for(int j = nranks - 1; j >= 1; j--) {
                 if(j > t.rank.index()) {
-                    lineage[j+1] = valid ? null : "-1";
+                    lineage[j] = valid ? null : "-1";
                 } else {
                     valid = t.valid();
-                    lineage[j+1] = Integer.toString((valid ? 1 : -1) * tid);
+                    lineage[j] = Integer.toString((valid ? 1 : -1) * tid);
                     tid = rankedAncestor(t.parent);
                     t = get(tid);
                 }
@@ -162,7 +162,7 @@ public class TaxonList extends ArrayList<Taxon> {
             t = get(tid);
         }
         if(t != null) return tid;
-        return 1;
+        return 1; // only used in case a taxon is no descendant of root
     }
 
 }
