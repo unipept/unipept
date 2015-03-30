@@ -6,7 +6,7 @@
         </p>
         <p>&copy; <%= Date.today.year %> Universiteit Gent. </p>
     </div>
-    <div id="version"><p><%= link_to Rails.application.config.versions[:unipept], posts_path %></p></div>
+    <div id="version"><p><%= link_to "Unipept " + Rails.application.config.versions[:unipept] + " using UniprotKB " + Rails.application.config.versions[:uniprot], posts_path %></p></div>
     <div class="external-links">
         <p>
             <a target="_blank" href="mailto:unipept@ugent.be" title="mail us"><i class="fa fa-envelope-o"></i></a>
