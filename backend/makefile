@@ -29,6 +29,17 @@ PAC=org.unipept.tools
 
 all: $(JAR) $(TABDIR)/taxons.tsv.gz $(TABLES) $(TABDIR)/sequences.tsv.gz $(TABDIR)/assemblies.tsv.gz $(TABDIR)/genome_sequences.tsv.gz
 	date +"%Y-%m-%d %H:%M:%S"
+jar: $(JAR)
+	date +"%Y-%m-%d %H:%M:%S"
+taxons: $(TABDIR)/taxons.tsv.gz
+	date +"%Y-%m-%d %H:%M:%S"
+tables: $(TABLES)
+	date +"%Y-%m-%d %H:%M:%S"
+sequences: $(TABDIR)/sequences.tsv.gz
+	date +"%Y-%m-%d %H:%M:%S"
+assemblies: $(TABDIR)/assemblies.tsv.gz $(TABDIR)/genome_sequences.tsv.gz
+	date +"%Y-%m-%d %H:%M:%S"
+
 
 # Compiling {{{ ----------------------------------------------------------------
 # TODO:

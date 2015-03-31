@@ -18,6 +18,7 @@ NR != 1 && FNR == 1 { # starting a next file
           assembly["Genome representation"], \
           assembly["Organism name"], \
           assembly["RefSeq Assembly Accession"], \
+          assembly["Assembly level"], \
           assembly["Taxid"] >> assemblies_file
     split("", assembly, ":") # deleting array
     # setting up the next file
