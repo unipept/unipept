@@ -337,6 +337,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`assemblies` (
   `assembly_level` ENUM('Contig', 'Scaffold', 'Complete Genome', 'Chromosome', 'Chromosome with gaps', 'Gapless Chromosome') NOT NULL,
   `assembly_name` VARCHAR(104) NOT NULL,
   `organism_name` VARCHAR(86) NOT NULL,
+  `biosample` VARCHAR(14) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_taxons_assemblies_idx` (`taxon_id` ASC),
   CONSTRAINT `fk_taxons_assemblies`

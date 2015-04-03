@@ -10,6 +10,7 @@
 #  assembly_level             :string(20)       not null
 #  assembly_name              :string(104)      not null
 #  organism_name              :string(86)       not null
+#  biosample                  :string(14)
 #
 
 class Assembly < ActiveRecord::Base
