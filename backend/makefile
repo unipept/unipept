@@ -4,7 +4,7 @@ DATADIR=../../data
 TABDIR=$(DATADIR)/tables
 UNIDIR=$(DATADIR)/uniprot
 TAXDIR=$(DATADIR)/taxon
-GENDIR=$(DATADIR)/genome
+GENDIR=$(DATADIR)/assembly
 INTDIR=$(DATADIR)/intermediate
 
 JMEM=-Xmx3g
@@ -27,7 +27,7 @@ SRC=$(shell find src/ -type f -name '*.java')
 JAR=target/unipept-0.0.1-SNAPSHOT.jar
 PAC=org.unipept.tools
 
-all: $(JAR) $(TABDIR)/taxons.tsv.gz $(TABLES) $(TABDIR)/sequences.tsv.gz $(TABDIR)/assemblies.tsv.gz $(TABDIR)/genome_sequences.tsv.gz
+all: $(JAR) $(TABDIR)/taxons.tsv.gz $(TABLES) $(TABDIR)/sequences.tsv.gz $(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz
 	date +"%Y-%m-%d %H:%M:%S"
 jar: $(JAR)
 	date +"%Y-%m-%d %H:%M:%S"
@@ -37,7 +37,7 @@ tables: $(TABLES)
 	date +"%Y-%m-%d %H:%M:%S"
 sequences: $(TABDIR)/sequences.tsv.gz
 	date +"%Y-%m-%d %H:%M:%S"
-assemblies: $(TABDIR)/assemblies.tsv.gz $(TABDIR)/genome_sequences.tsv.gz
+assemblies: $(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz
 	date +"%Y-%m-%d %H:%M:%S"
 
 
@@ -129,14 +129,14 @@ $(TABDIR)/sequences.tsv.gz: $(INTDIR)/sequences.tsv.gz $(INTDIR)/LCAs.tsv.gz $(I
 # }}}
 
 # Genome tables {{{ ------------------------------------------------------------
-$(TABDIR)/assemblies.tsv.gz $(TABDIR)/genome_sequences.tsv.gz: parse_assemblies.awk
+$(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz: parse_assemblies.awk
 	date +"%Y-%m-%d %H:%M:%S"
 	mkdir -p $(GENDIR)
 	rsync --ignore-existing 'rsync://ftp.ncbi.nlm.nih.gov/genomes/ASSEMBLY_REPORTS/All/*.assembly.txt' $(GENDIR)
 	find $(GENDIR) -name 'GCA_*.assembly.txt' \
 		| xargs awk -f parse_assemblies.awk \
 			-v assemblies_file=>(gzip - > $(TABDIR)/assemblies.tsv.gz) \
-			-v genome_sequences_file=>(gzip - > $(TABDIR)/genome_sequences.tsv.gz)
+			-v assembly_sequences_file=>(gzip - > $(TABDIR)/assembly_sequences.tsv.gz)
 # }}}
 
 .PHONY: clean
