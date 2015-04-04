@@ -17,6 +17,7 @@ class Assembly < ActiveRecord::Base
   attr_readonly :id, :genbank_assembly_accession, :refseq_assembly_accession, :genome_representation, :assembly_level, :assembly_name, :organism_name
 
   belongs_to :lineage, :foreign_key  => "taxon_id", :primary_key  => "taxon_id",  :class_name   => 'Lineage'
+  has_many :assembly_sequences
 
   def destroy
     raise ActiveRecord::ReadOnlyRecord

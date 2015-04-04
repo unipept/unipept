@@ -1,10 +1,17 @@
-function showNotification(content, autoHide) {
+function showNotification(content, properties) {
+    var autoHide = properties.autoHide === undefined ? true : properties.autoHide;
+    var loading = properties.loading === undefined ? true : properties.loading;
+
     var $notification = getNotificationHTML(content);
     $(".notifications").prepend($notification);
 
     if (autoHide) {
         setTimeout(hide, 3000);
     }
+    if (loading) {
+        $notification.append("<div class='spinner'></div>");
+    }
+
     requestAnimationFrame(function () {
         $notification.removeClass("notification-show");
     });

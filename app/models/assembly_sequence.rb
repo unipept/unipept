@@ -12,5 +12,5 @@ class AssemblySequence < ActiveRecord::Base
   include ReadOnlyModel
   attr_accessible nil
 
-  # TODO: add relations
+  belongs_to :assembly
 end
