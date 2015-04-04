@@ -7,10 +7,10 @@ TAXDIR=$(DATADIR)/taxon
 GENDIR=$(DATADIR)/genome
 INTDIR=$(DATADIR)/intermediate
 
-JMEM=-Xmx3g
-BDBMEM=500000000
-#JMEM=-Xms140g -Xmx150g
-#BDBMEM=100000000000
+#JMEM=-Xmx3g
+#BDBMEM=500000000
+JMEM=-Xms140g -Xmx150g
+BDBMEM=100000000000
 BDBDIR=../../berkeleydb
 
 TABLES=                                      \
@@ -78,12 +78,12 @@ $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz: $(TAXDIR)/names.dmp $(TAXDIR)
 # }}}
 
 # Uniprot entries, peptides, sequences and cross references {{{ ----------------
-$(TABLES): $(TABDIR)/taxons.tsv.gz $(UNIDIR)/uniprot_sprot.xml.gz
+$(TABLES): $(TABDIR)/taxons.tsv.gz # $(UNIDIR)/uniprot_sprot.xml.gz
 	date +"%Y-%m-%d %H:%M:%S"
 	mkdir -p $(BDBDIR)
 	mkdir -p $(INTDIR)
 	java $(JMEM) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(BDBDIR) $(BDBMEM) $(TABDIR)/taxons.tsv.gz $(TABLES) $(UNIDIR)/uniprot_sprot.xml.gz "swissprot"
-	#java $(JMEM) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(BDBDIR) $(BDBMEM) $(TABDIR)/taxons.tsv.gz $(TABLES) $(UNIDIR)/uniprot_sprot.xml.gz "swissprot" $(UNIDIR)/uniprot_trembl.xml.gz "trembl"
+	java $(JMEM) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(BDBDIR) $(BDBMEM) $(TABDIR)/taxons.tsv.gz $(TABLES) $(UNIDIR)/uniprot_sprot.xml.gz "swissprot" $(UNIDIR)/uniprot_trembl.xml.gz "trembl"
 # }}}
 
 # Sequences with LCA {{{ -------------------------------------------------------
