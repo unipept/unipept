@@ -6,20 +6,19 @@ BEGIN {
 NR == 1 { # beginning the first file
     assembly_id = 1
     sequence_id = 1
-    genbankacc = FILENAME
-    sub(/.*\//, "", genbankacc)
-    sub(/\..*/, "", genbankacc)
     parse_it = 0
 }
 /GenBank Assembly Accession: .* \(latest\)/ {
     parse_it = 1
 }
-NR != 1 && FNR == 1 { # starting a next file
+NR != 1 && /^# Assembly Name/ { # starting a next file
     # printing the assembly from the previous file
     if(parse_it) {
         parse_it = 0
+        genbankacc = assembly["GenBank Assembly Accession"]
+        sub(/ .*/, "", genbankacc)
         refseqacc = assembly["RefSeq Assembly Accession"]
-        sub(/\..*/, "", refseqacc)
+        sub(/ .*/, "", refseqacc)
         print assembly_id \
             , genbankacc \
             , refseqacc \
@@ -29,16 +28,12 @@ NR != 1 && FNR == 1 { # starting a next file
             , assembly["Assembly Name"] \
             , assembly["Organism name"] \
             , assembly["BioSample"] \
-              >> assemblies_file
+            >> assemblies_file
         assembly_id += 1
     }
     split("", assembly, ":") # deleting array
-    # setting up the next file
-    genbankacc = FILENAME
-    sub(/.*\//, "", genbankacc)
-    sub(/\..*/, "", genbankacc)
 }
-FNR == 1,/^#\W*$/ {
+/^# Assembly Name/,/^#\W*$/ {
     key = $1
     sub("# ", "", key)
     value = $0
@@ -47,7 +42,7 @@ FNR == 1,/^#\W*$/ {
     assembly[key] = value;
 }
 !/^#/ && parse_it {
-    print sequence_id, assembly_id, $5, $4 >> assembly_sequences_file
+    print sequence_id, assembly_id, $0 >> assembly_sequences_file
     sequence_id += 1
 }
 END {
