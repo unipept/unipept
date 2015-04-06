@@ -27,46 +27,46 @@ class Assembly < ActiveRecord::Base
     raise ActiveRecord::ReadOnlyRecord
   end
 
-  # TODO
-  def self.get_genome_species()
+  def self.get_assembly_species()
     # order by uses filesort since there's no index on taxon name
+    # maybe add status filter?
     return connection.select_all("SELECT taxons.name, taxons.id, count(*) AS num
-     FROM genomes
-     INNER JOIN lineages ON (genomes.taxon_id = lineages.taxon_id)
+     FROM assemblies
+     INNER JOIN lineages ON (assemblies.taxon_id = lineages.taxon_id)
      LEFT JOIN taxons ON (lineages.species = taxons.id)
      WHERE taxons.id IS NOT NULL
-     AND status = 'Complete'
+     /*AND status = 'Complete'*/
      GROUP BY taxons.id
      HAVING num >= 1
      ORDER BY name")
   end
 
-  # TODO
   # returns a set of genome objects for a given species_id
   def self.get_by_species_id(species_id)
-    Genome.select("bioproject_id, name").joins(:lineage).where("genomes.status = 'Complete' AND lineages.species = ?", species_id).group("bioproject_id")
+    # maybe add status filter?
+    #Assembly.select("id, organism_name").joins(:lineage).where("genomes.status = 'Complete' AND lineages.species = ?", species_id).group("bioproject_id")
+    Assembly.select("id, organism_name").joins(:lineage).where("lineages.species = ?", species_id)
   end
 
-  # TODO
   # fills in the taxon_id column
   def self.precompute_taxa
-    Genome.all.each do |genome|
-      ue = UniprotEntry.find_by_sql("SELECT DISTINCT uniprot_entries.*
-            FROM uniprot_entries
-            LEFT JOIN embl_cross_references ON uniprot_entry_id = uniprot_entries.id
-            WHERE sequence_id = '#{genome.insdc_id}'").first
-      unless ue.nil?
-        genome.taxon_id = ue.taxon_id
-        genome.save
-      end
+    taxa = connection.select_all("SELECT DISTINCT assembly_id, uniprot_entries.taxon_id
+      FROM uniprot_entries
+      INNER JOIN embl_cross_references
+        ON uniprot_entry_id = uniprot_entries.id
+      INNER JOIN assembly_sequences
+        ON sequence_id = assembly_sequences.genbank_accession;")
+    taxa = Hash[ taxa.map{ |t| [t["assembly_id"], t["taxon_id"]] } ]
+    Assembly.all.each do |assembly|
+      assembly.taxon_id = taxa[assembly.id]
+      assembly.save
     end
   end
 
-  # TODO
-  # fills the genome_cache table
-  def self.precompute_genome_caches
-    Genome.all.each do |genome|
-      GenomeCache.get_by_bioproject_id(genome.bioproject_id)
+  # fills the assembly_cache table
+  def self.precompute_assembly_caches
+    Assembly.all.each do |assembly|
+      AssemblyCache.get_by_assembly_id(assembly.id)
     end
   end
 end

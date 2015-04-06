@@ -354,8 +354,8 @@ ENGINE = InnoDB
 CREATE TABLE IF NOT EXISTS `unipept`.`assembly_sequences` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `assembly_id` INT UNSIGNED NOT NULL,
+  `sequence_type` ENUM('Chromosome', 'Linkage Group', 'Mitochondrion', 'Plasmid', 'na') NOT NULL DEFAULT 'na',
   `genbank_accession` VARCHAR(25) NOT NULL,
-  `type` ENUM('Chromosome', 'Linkage Group', 'Mitochondrion', 'Plasmid', 'na') NOT NULL DEFAULT 'na',
   PRIMARY KEY (`id`),
   INDEX `fk_assemblies_assembly_sequences_idx` (`assembly_id` ASC),
   INDEX `idx_genbank_accession` (`genbank_accession` ASC),
