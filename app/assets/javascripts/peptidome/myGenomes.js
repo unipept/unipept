@@ -419,7 +419,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
      */
     function dragHelp($node) {
         var returnString = "<tbody class='dragging'>" +
-            "<tr><td class='handle'><span class='glyphicon glyphicon-resize-vertical'></span></td><td class='data name' data-bioproject_id='" +
+            "<tr><td class='handle'><span class='glyphicon glyphicon-resize-vertical'></span></td><td class='data name' data-id='" +
             $node.data("genomeid") + "'>" +
             $node.find(".name").text() +
             "</td><td class='data status'></td><td></td></tr>" +

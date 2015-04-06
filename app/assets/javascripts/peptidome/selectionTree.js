@@ -3,7 +3,7 @@
  * selectable taxonomy tree using nested unordered lists
  *
  * @param <Array> args.data is an array of around 2500 objects with this format:
- *          {"bioproject_id":57587,"class_id":29547,"genus_id":194,
+ *          {"id":57587,"class_id":29547,"genus_id":194,
  *          "name":"Campylobacter jejuni","order_id":213849,"species_id":197}
  * @param <Hash> args.taxa is a list of key-value pairs mapping
  *          taxon id's to taxon names
@@ -108,14 +108,14 @@ var constructSelectionTree = function constructSelectionTree(args) {
     function help($node) {
         var returnString = "<tbody class='dragging'>";
         if ($node.hasClass("leaf")) {
-            returnString += "<tr><td class='handle'><span class='glyphicon glyphicon-resize-vertical'></span></td><td class='data name' data-bioproject_id='" +
-                $node.attr("data-bioproject_id") + "'>" +
+            returnString += "<tr><td class='handle'><span class='glyphicon glyphicon-resize-vertical'></span></td><td class='data name' data-id='" +
+                $node.attr("data-id") + "'>" +
                 $node.text() +
                 "</td><td class='data status'></td><td></td></tr>";
         } else {
             $node.find(".leaf").each(function () {
-                returnString += "<tr><td class='handle'><span class='glyphicon glyphicon-resize-vertical'></span></td><td class='data name' data-bioproject_id='" +
-                    $(this).attr("data-bioproject_id") + "'>" +
+                returnString += "<tr><td class='handle'><span class='glyphicon glyphicon-resize-vertical'></span></td><td class='data name' data-id='" +
+                    $(this).attr("data-id") + "'>" +
                     $(this).text() +
                     "</td><td class='data status'></td><td></td></tr>";
             });
@@ -177,9 +177,10 @@ var constructSelectionTree = function constructSelectionTree(args) {
             .enter()
             .append("li")
                 .attr("class", "not leaf")
-                .attr("title", function (d) { return "bioproject id: " + d.bioproject_id; })
-                .attr("data-search", function (d) { return d.name.toLowerCase() + " " + d.bioproject_id; })
-                .attr("data-bioproject_id", function (d) { return d.bioproject_id; })
+                // TODO
+                //.attr("title", function (d) { return "bioproject id: " + d.bioproject_id; })
+                .attr("data-search", function (d) { return d.name.toLowerCase() + " " + d.id; })
+                .attr("data-id", function (d) { return d.id; })
                 .html(function (d) { return "<span>" + d.name + "</span>"; });
 
         // Prevent accidental text selection

@@ -4,7 +4,7 @@
  *
  * @param <Array> args.data The data array used to construct the selection tree
  *          has around 2500 objects with this format:
- *          {"bioproject_id":57587,"class_id":29547,"genus_id":194,
+ *          {"id":57587,"class_id":29547,"genus_id":194,
  *          "name":"Campylobacter jejuni","order_id":213849,"species_id":197}
  * @param <Hash> args.taxa is a list of key-value pairs mapping
  *          taxon id's to taxon names used for the selection tree.
@@ -122,7 +122,7 @@ var constructPancore = function constructPancore(args) {
     function initSpeciesForm() {
         // Add handler to the "add species"-form
         $("#add_species_peptidome").click(function () {
-            // Get all bioproject id's for the selected species id
+            // Get all assembly id's for the selected species id
             var url = "/peptidome/genomes/species/" + $("#species_id").val() + ".json";
             getJSON(url).then(function (genomes) {
                 that.addGenomes(genomes);
@@ -258,21 +258,21 @@ var constructPancore = function constructPancore(args) {
     /**
      * Asks the worker to load a genome
      *
-     * @param <String> bioproject_id The id of the genome we want to load
+     * @param <String> id The id of the assembly we want to load
      * @param <String> name The name of the genome we want to load
      */
-    function loadData(bioproject_id, name) {
-        if ((bioproject_id + "").charAt(0) === "u") {
-            myGenomes.getIds(bioproject_id).then(
+    function loadData(id, name) {
+        if ((id + "").charAt(0) === "u") {
+            myGenomes.getIds(id).then(
                 function (ids) {
-                    sendToWorker("loadUserData", {"id" : bioproject_id, "name" : name, "ids" : ids});
+                    sendToWorker("loadUserData", {"id" : id, "name" : name, "ids" : ids});
                 }
             );
         } else {
-            sendToWorker("loadData", {"bioproject_id" : bioproject_id, "name" : name});
+            sendToWorker("loadData", {"id" : id, "name" : name});
         }
         return new Promise(function (resolve, reject) {
-            promisesLoading.set(bioproject_id, function (genome, requestRank) {
+            promisesLoading.set(id, function (genome, requestRank) {
                 if (rank === requestRank) {
                     resolve(genome);
                 } else {
@@ -290,9 +290,9 @@ var constructPancore = function constructPancore(args) {
      * @param <Number> requestRank The rank of the original request
      */
     function processLoadedGenome(genome, requestRank) {
-        if (promisesLoading.has(genome.bioproject_id)) {
-            promisesLoading.get(genome.bioproject_id).call(this, genome, requestRank);
-            promisesLoading.delete(genome.bioproject_id);
+        if (promisesLoading.has(genome.id)) {
+            promisesLoading.get(genome.id).call(this, genome, requestRank);
+            promisesLoading.delete(genome.id);
         }
     }
 
@@ -315,13 +315,13 @@ var constructPancore = function constructPancore(args) {
      * Fullfills the corresponding downloadSequences Promise
      *
      * @param <String> data.type The type of sequences
-     * @param <String> data.bioprojectId The bioprojectId of the  request
+     * @param <String> data.id The assembly id of the request
      * @param <String> data.sequences The returned sequences
      */
     function processDownloadedSequences(data) {
-        if (promisesDownload.has(data.bioprojectId + data.type)) {
-            promisesDownload.get(data.bioprojectId + data.type).call(this, data);
-            promisesDownload.delete(data.bioprojectId + data.type);
+        if (promisesDownload.has(data.id + data.type)) {
+            promisesDownload.get(data.id + data.type).call(this, data);
+            promisesDownload.delete(data.id + data.type);
         }
     }
 
@@ -386,25 +386,25 @@ var constructPancore = function constructPancore(args) {
     /**
      * Adds genomes to the visualisation
      *
-     * @param <Array> g Array of bioproject_id's of the genomes we want to add
+     * @param <Array> g Array of id's of the genomes we want to add
      */
     that.addGenomes = function addGenomes(g) {
         return Promise.all(g.map(function addGenome(genome, i){
             // only add new genomes
-            if (genomes.has(genome.bioproject_id)) return;
+            if (genomes.has(genome.id)) return;
             setLoading(true);
             table.addGenome({
-                "bioproject_id" : genome.bioproject_id,
+                "id" : genome.id,
                 "name" : genome.name,
                 "status" : "Loading",
                 "position" : 100 + i,
-                "abbreviation" : that.abbreviate(genome.name, genome.bioproject_id)
+                "abbreviation" : that.abbreviate(genome.name, genome.id)
             });
-            return loadData(genome.bioproject_id, genome.name)
+            return loadData(genome.id, genome.name)
                 .then(function (genome) {
-                    table.setGenomeStatus(genome.bioproject_id, "Done", false);
+                    table.setGenomeStatus(genome.id, "Done", false);
 
-                    genome.abbreviation = that.abbreviate(genome.name, genome.bioproject_id);
+                    genome.abbreviation = that.abbreviate(genome.name, genome.id);
 
                     graph.addToDataQueue(genome);
                     matrix.addGenome(genome);
@@ -427,8 +427,8 @@ var constructPancore = function constructPancore(args) {
      * @param <Genome> genome The genome we want to remove
      */
     that.removeGenome = function removeGenome(genome) {
-        var removeData = table.removeGenome(genome.bioproject_id);
-        matrix.removeGenome(genome.bioproject_id);
+        var removeData = table.removeGenome(genome.id);
+        matrix.removeGenome(genome.id);
 
         sendToWorker("removeData", removeData);
     };
@@ -467,16 +467,16 @@ var constructPancore = function constructPancore(args) {
     /**
      * Requests a set of sequences to the worker
      *
-     * @param <Number> bioprojectId The id of the genome we want data from
+     * @param <Number> id The id of the genome we want data from
      * @param <String> type The type of sequences we want
      */
-    that.requestSequences = function requestSequences(bioprojectId, type) {
+    that.requestSequences = function requestSequences(id, type) {
         sendToWorker("getSequences", {
-            "bioproject_id" : bioprojectId,
+            "id" : id,
             "type" : type
         });
         return new Promise(function (resolve, reject) {
-            promisesDownload.set(bioprojectId + type, function (data) {
+            promisesDownload.set(id + type, function (data) {
                 resolve(data);
             });
         });

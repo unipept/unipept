@@ -250,7 +250,7 @@ function init_phylogram() {
             .attr("stroke-width", "2px");
 
         var node = vis.selectAll("g.node")
-            .data(treeNodes, function (d) {return d.bioproject_id ? d.bioproject_id : d.name; })
+            .data(treeNodes, function (d) {return d.id ? d.id : d.name; })
           .enter().append("svg:g")
             .attr("class", function (n) {
                 if (n.children) {
@@ -321,7 +321,7 @@ function init_phylogram() {
                 .transition()
                 .duration(duration)
                 .attr("d", diagonal);
-            node.data(treeNodes, function (d) {return d.bioproject_id ? d.bioproject_id : d.name; })
+            node.data(treeNodes, function (d) {return d.id ? d.id : d.name; })
                 .transition()
                 .duration(duration)
                 .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; });
@@ -331,7 +331,7 @@ function init_phylogram() {
     };
 
     /**
-     * Recursively compiles a list with bioproject_id's in the order of the tree
+     * Recursively compiles a list with id's in the order of the tree
      */
     function getGenomeOrder(node, order) {
         var i;
@@ -339,8 +339,8 @@ function init_phylogram() {
         for (i = 0; node.branchset && i < node.branchset.length; i++) {
             getGenomeOrder(node.branchset[i], order);
         }
-        if (node.bioproject_id) {
-            order.push(node.bioproject_id);
+        if (node.id) {
+            order.push(node.id);
         }
         return order;
     }

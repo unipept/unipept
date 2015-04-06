@@ -79,7 +79,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
     /**
      * Shows the info panel with info about the similarities
      *
-     * @param <Number> d.key The bioprojectid associated with the square
+     * @param <Number> d.key The ids associated with the square
      */
     function showInfoPanel(d) {
         var col = d.key,
@@ -431,7 +431,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * @param <Genome> genome The genome object we want to add
      */
     that.addGenome = function addGenome(genome) {
-        var id = genome.bioproject_id,
+        var id = genome.id,
             name = genome.name,
             size = genome.peptides,
             abbreviation = genome.abbreviation,
@@ -464,7 +464,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
     /**
      * Remove data from the matrix
      *
-     * @param <Number> id The bioprojectId of the genome to remove
+     * @param <Number> id The id of the genome to remove
      */
     that.removeGenome = function removeGenome(id) {
         var id2;

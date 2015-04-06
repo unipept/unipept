@@ -6,7 +6,7 @@
  * @param <Number> args.transitionDuration Duration of transitions in ms
  * @param <Number> args.width Width of the graph
  * @param <Number> args.height Height of the graph
- * @param <Hash> args.genomes Hash of genomes (by bioproject_id)
+ * @param <Hash> args.genomes Hash of genomes (by id)
  * @return <PancoreGraph> that The constructed PancoreGraph object
  */
 var constructPancoreGraph = function constructPancoreGraph(args) {
@@ -99,15 +99,15 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
 
         panLine = d3.svg.line()
             .interpolate("linear")
-            .x(function (d) { return xScale(d.bioproject_id); })
+            .x(function (d) { return xScale(d.id); })
             .y(function (d) { return yScale(d.pan); });
         coreLine = d3.svg.line()
             .interpolate("linear")
-            .x(function (d) { return xScale(d.bioproject_id); })
+            .x(function (d) { return xScale(d.id); })
             .y(function (d) { return yScale(d.core); });
         unicoreLine = d3.svg.line()
             .interpolate("linear")
-            .x(function (d) { return xScale(d.bioproject_id); })
+            .x(function (d) { return xScale(d.id); })
             .y(function (d) { return yScale(d.unicore); });
 
         // calculate similarity and update on tab switch
@@ -130,7 +130,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             while (dataQueue.length > 0) {
                 data = dataQueue.shift();
                 graphData.push(data);
-                table.setGenomePosition(data.bioproject_id, graphData.length - 1, false);
+                table.setGenomePosition(data.id, graphData.length - 1, false);
             }
             mayStartAnimation = false;
             that.update();
@@ -201,13 +201,13 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             "<span class='caret'></span>" +
           "</a>" +
           "<ul class='dropdown-menu'>" +
-            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='all'><span style='color: " + genomeColor + ";'>&#9632;</span> genome peptides</a></li>" +
-            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='pan'><span style='color: " + panColor + ";'>&#9632;</span> pan peptides</a></li>" +
-            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='core'><span style='color: " + coreColor + ";'>&#9632;</span> core peptides</a></li>" +
-            "<li><a href='#' data-bioproject_id='" + d.bioproject_id + "' data-type='unique'><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptides</a></li>" +
+            "<li><a href='#' data-id='" + d.id + "' data-type='all'><span style='color: " + genomeColor + ";'>&#9632;</span> genome peptides</a></li>" +
+            "<li><a href='#' data-id='" + d.id + "' data-type='pan'><span style='color: " + panColor + ";'>&#9632;</span> pan peptides</a></li>" +
+            "<li><a href='#' data-id='" + d.id + "' data-type='core'><span style='color: " + coreColor + ";'>&#9632;</span> core peptides</a></li>" +
+            "<li><a href='#' data-id='" + d.id + "' data-type='unique'><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptides</a></li>" +
           "</ul>" +
         "</div>" +
-        "<span class='pull-right'><a class='btn btn-danger' title='remove genome' id='popover-remove-genome'data-bioproject_id='" + d.bioproject_id + "'><span class='glyphicon glyphicon-trash'></span></a></span>" +
+        "<span class='pull-right'><a class='btn btn-danger' title='remove genome' id='popover-remove-genome'data-id='" + d.id + "'><span class='glyphicon glyphicon-trash'></span></a></span>" +
         "</div>";
 
         return content;
@@ -231,7 +231,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         });
         $("#download-peptides ul a").click(downloadSequenceHandler);
         $("#popover-remove-genome").click(function () {
-            pancore.removeGenome(genomes.get($(this).data("bioproject_id")));
+            pancore.removeGenome(genomes.get($(this).data("id")));
         });
     }
 
@@ -246,16 +246,17 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         var target = $(d3.event.target);
         var $popover;
         var graphOffset = $("#pancore_graph").offset();
-        var dotOffset = $(".dot._" + d.bioproject_id).first().offset();
+        var dotOffset = $(".dot._" + d.id).first().offset();
         d3.event.stopPropagation();
-        if (mouse.clickId === d.bioproject_id) {
+        if (mouse.clickId === d.id) {
             that.removePopoversAndHighlights();
         } else {
-            var title = genomes.get(d.bioproject_id).name;
-            if (("" + d.bioproject_id).charAt(0) === "u") {
+            var title = genomes.get(d.id).name;
+            if (("" + d.id).charAt(0) === "u") {
                 title = "<span class='glyphicon glyphicon-home' title='local genome'></span> " + title;
             } else {
-                title += " (bioproject <a href='http://www.ncbi.nlm.nih.gov/bioproject/?term=" + d.bioproject_id + "' target='_blank' title='open bioproject page'>" + d.bioproject_id + "</a>)";
+                // TODO
+                title += " (bioproject <a href='http://www.ncbi.nlm.nih.gov/bioproject/?term=" + d.id + "' target='_blank' title='open bioproject page'>" + d.id + "</a>)";
             }
             that.removePopoversAndHighlights();
             that.removeTooltip();
@@ -277,7 +278,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             $popover.find(".arrow").css("top", "50%");
             target.attr("class", "bar pop");
             addPopoverBehaviour();
-            mouse.clickId = d.bioproject_id;
+            mouse.clickId = d.id;
         }
     }
 
@@ -288,8 +289,8 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      */
     function invokeTooltipAndHighlight(d) {
         if (mouse.isDragging) return;
-        if (mouse.clickId === d.bioproject_id) return;
-        var tooltipHtml = "<b>" + genomes.get(d.bioproject_id).name + "</b><br/>" + getTooltipContent(d);
+        if (mouse.clickId === d.id) return;
+        var tooltipHtml = "<b>" + genomes.get(d.id).name + "</b><br/>" + getTooltipContent(d);
         tooltip.html(tooltipHtml).style("visibility", "visible");
         that.addHighlight(d);
     }
@@ -301,8 +302,8 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      */
     function abolishTooltipAndHighlight(d) {
         if (mouse.isDragging) return;
-        if (mouse.clickId === d.bioproject_id) return;
-        that.removeHighlight(d.bioproject_id);
+        if (mouse.clickId === d.id) return;
+        that.removeHighlight(d.id);
     }
 
     /**
@@ -330,8 +331,8 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     function dragStart(d) {
         mouse.isDragging = true;
         mouse.hasDragged = false;
-        mouse.dragId = d.bioproject_id;
-        mouse.dragging[d.bioproject_id] = this.__origin__ = xScale(d.bioproject_id);
+        mouse.dragId = d.id;
+        mouse.dragging[d.id] = this.__origin__ = xScale(d.id);
         // FIXME This is disabled since it takes 1 second to recalculate the
         // styles in chrome. Cursor now only changes after moving at least 1px
         //d3.select("body").style("cursor", "url(/closedhand.cur) 7 5, move");
@@ -352,12 +353,12 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         mouse.hasDragged = true;
         if (mouse.clickId) {
             that.removePopovers();
-            if (mouse.clickId !== d.bioproject_id) {
+            if (mouse.clickId !== d.id) {
                 that.removeHighlight(mouse.clickId);
             }
         }
         that.removeTooltip();
-        mouse.dragging[d.bioproject_id] = Math.min(width, Math.max(0, this.__origin__ += d3.event.dx));
+        mouse.dragging[d.id] = Math.min(width, Math.max(0, this.__origin__ += d3.event.dx));
         requestAnimFrame(afMoveDrag);
     }
 
@@ -370,7 +371,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      */
     function dragEnd(d) {
         delete this.__origin__;
-        delete mouse.dragging[d.bioproject_id];
+        delete mouse.dragging[d.id];
         d3.select("body").style("cursor", "auto");
         svg.selectAll(".bar").style("cursor", "url(/openhand.cur) 7 5, move");
         svg.select("#trash").transition()
@@ -457,8 +458,8 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * @return <Number> The x-position of the genome
      */
     function position(d) {
-        var v = mouse.dragging[d.bioproject_id];
-        return v == null ? xScale(d.bioproject_id) : v;
+        var v = mouse.dragging[d.id];
+        return v == null ? xScale(d.id) : v;
     }
 
     /**
@@ -472,16 +473,16 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             start = -1,
             stop = 0,
             i,
-            bioprojectId;
+            id;
         for (i = 0; i < graphData.length; i++) {
-            bioprojectId = graphData[i].bioproject_id;
-            if (genomes.get(bioprojectId).position === i && stop === 0) {
+            id = graphData[i].id;
+            if (genomes.get(id).position === i && stop === 0) {
                 start = i;
-            } else if (genomes.get(bioprojectId).position !== i) {
+            } else if (genomes.get(id).position !== i) {
                 stop = i;
-                table.setGenomeStatus(bioprojectId, "Processing...", false);
+                table.setGenomeStatus(id, "Processing...", false);
             }
-            order[i] = bioprojectId;
+            order[i] = id;
         }
         start++;
         return {"order" : order, "start" : start, "stop" : stop};
@@ -500,7 +501,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             return true;
         }
         for (i = 0; i < oldData.length; i++) {
-            if (oldData[i].bioproject_id !== newData[i].bioproject_id) {
+            if (oldData[i].id !== newData[i].id) {
                 return true;
             }
         }
@@ -512,10 +513,10 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      */
     function downloadSequenceHandler() {
         var type = $(this).attr("data-type");
-        var bioprojectId = $(this).attr("data-bioproject_id");
+        var id = $(this).attr("data-id");
         $("#download-peptides").mouseleave();
         $("#download-peptides-toggle").button('loading');
-        pancore.requestSequences(bioprojectId, type)
+        pancore.requestSequences(id, type)
             .then(function (data) {
                 return downloadDataByForm(data.sequences, data.type + '-sequences.txt');
             })
@@ -542,11 +543,11 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         graphData.sort(function (a, b) { return position(a) - position(b); });
         // If some position is swapped, redraw some stuff
         if (hasChanged(oldData, graphData)) {
-            xScale.domain(graphData.map(function (d) { return d.bioproject_id; }));
-            svg.selectAll(".bar").attr("x", function (d) { return xScale(d.bioproject_id) - mouseOverWidth / 2; });
+            xScale.domain(graphData.map(function (d) { return d.id; }));
+            svg.selectAll(".bar").attr("x", function (d) { return xScale(d.id) - mouseOverWidth / 2; });
             svg.selectAll(".dot:not(._" + mouse.dragId + ")").transition()
                 .duration(transitionDuration)
-                .attr("cx", function (d) { return xScale(d.bioproject_id); });
+                .attr("cx", function (d) { return xScale(d.id); });
             svg.select(".x.axis").transition()
                 .duration(transitionDuration)
                 .call(xAxis);
@@ -602,8 +603,8 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         graphData = data;
         that.update();
         for (i = 0; i < data.length; i++) {
-            table.setGenomeStatus(data[i].bioproject_id, "Done", false);
-            table.setGenomePosition(data[i].bioproject_id, i, false);
+            table.setGenomeStatus(data[i].id, "Done", false);
+            table.setGenomePosition(data[i].id, i, false);
         }
         table.update();
     };
@@ -623,11 +624,11 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * @return <String> exportString The data in CSV format
      */
     that.getDataAsCsv = function getDataAsCsv() {
-        var exportString = "name,bioproject_id,genome_peptides,core_peptides,pan_peptides,unique_peptides\n";
+        var exportString = "name,id,genome_peptides,core_peptides,pan_peptides,unique_peptides\n";
         graphData.forEach(function (genome) {
             var tempArray = [];
-            tempArray.push(genomes.get(genome.bioproject_id).name);
-            tempArray.push(genome.bioproject_id);
+            tempArray.push(genomes.get(genome.id).name);
+            tempArray.push(genome.id);
             tempArray.push(genome.peptides);
             tempArray.push(genome.core);
             tempArray.push(genome.pan);
@@ -843,7 +844,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         }
 
         // set the domains
-        xScale.domain(graphData.map(function (d) { return d.bioproject_id; }));
+        xScale.domain(graphData.map(function (d) { return d.id; }));
         yScale.domain([0, getMaxVisibleDatapoint()]);
 
         // update the legend
@@ -894,15 +895,15 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
 
         // draw the dots
         var genomeDots = graphArea.selectAll(".dot.genome")
-            .data(graphData, function (d) { return d.bioproject_id; });
+            .data(graphData, function (d) { return d.id; });
         genomeDots.enter().append("circle")
-            .attr("class", function (d) { return "dot genome _" + d.bioproject_id; })
+            .attr("class", function (d) { return "dot genome _" + d.id; })
             .attr("r", 5)
             .attr("fill", genomeColor)
             .attr("cx", width);
         genomeDots.transition()
             .duration(transitionDuration)
-            .attr("cx", function (d) { return xScale(d.bioproject_id); })
+            .attr("cx", function (d) { return xScale(d.id); })
             .attr("cy", function (d) { return yScale(d.peptides); })
             .attr("opacity", toggles.showGenome ? 1 : 0);
         genomeDots.exit()
@@ -911,15 +912,15 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
                 .attr("cx", width)
             .remove();
         var panDots = graphArea.selectAll(".dot.pan")
-            .data(graphData, function (d) { return d.bioproject_id; });
+            .data(graphData, function (d) { return d.id; });
         panDots.enter().append("circle")
-            .attr("class", function (d) { return "dot pan _" + d.bioproject_id; })
+            .attr("class", function (d) { return "dot pan _" + d.id; })
             .attr("r", 5)
             .attr("fill", panColor)
             .attr("cx", width);
         panDots.transition()
             .duration(transitionDuration)
-            .attr("cx", function (d) { return xScale(d.bioproject_id); })
+            .attr("cx", function (d) { return xScale(d.id); })
             .attr("cy", function (d) { return yScale(d.pan); })
             .attr("opacity", toggles.showPan ? 1 : 0);
         panDots.exit()
@@ -928,16 +929,16 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
                 .attr("cx", width)
             .remove();
         var coreDots = graphArea.selectAll(".dot.core")
-            .data(graphData, function (d) {return d.bioproject_id; });
+            .data(graphData, function (d) {return d.id; });
         coreDots.enter().append("circle")
-            .attr("class", function (d) { return "dot core _" + d.bioproject_id; })
+            .attr("class", function (d) { return "dot core _" + d.id; })
             .attr("r", 5)
             .attr("fill", coreColor)
             .attr("cx", width)
             .attr("cy", yScale(0));
         coreDots.transition()
             .duration(transitionDuration)
-            .attr("cx", function (d) { return xScale(d.bioproject_id); })
+            .attr("cx", function (d) { return xScale(d.id); })
             .attr("cy", function (d) { return yScale(d.core); })
             .attr("opacity", toggles.showCore ? 1 : 0);
         coreDots.exit()
@@ -948,16 +949,16 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         var unicoreDots = graphArea.selectAll(".dot.unicore")
             .data(graphData.filter(function (entry) {
                 return entry.unicore !== undefined;
-            }), function (d) {return d.bioproject_id; });
+            }), function (d) {return d.id; });
         unicoreDots.enter().append("circle")
-            .attr("class", function (d) { return "dot unicore _" + d.bioproject_id; })
+            .attr("class", function (d) { return "dot unicore _" + d.id; })
             .attr("r", 5)
             .attr("fill", unicoreColor)
             .attr("cx", width)
             .attr("cy", yScale(0));
         unicoreDots.transition()
             .duration(transitionDuration)
-            .attr("cx", function (d) { return xScale(d.bioproject_id); })
+            .attr("cx", function (d) { return xScale(d.id); })
             .attr("cy", function (d) { return yScale(d.unicore); })
             .attr("opacity", toggles.showUnicore ? 1 : 0);
         unicoreDots.exit()
@@ -1004,7 +1005,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         // update the mouseover rects
         mouseOverWidth = (width / graphData.length) / 1.5;
         var bars = graphArea.selectAll(".bar")
-            .data(graphData, function (d) {return d.bioproject_id; });
+            .data(graphData, function (d) {return d.id; });
 
         bars.enter().append("polygon")
             .attr("class", "bar")
@@ -1024,12 +1025,12 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .duration(transitionDuration)
             .attr("points", function (d) {
                 var ret = "";
-                ret += (xScale(d.bioproject_id) - mouseOverWidth / 2) + ", " + (height + 15) + " ";
-                ret += (xScale(d.bioproject_id) - mouseOverWidth / 2) + ", 0 ";
-                ret += (xScale(d.bioproject_id) + mouseOverWidth / 2) + ", 0 ";
-                ret += (xScale(d.bioproject_id) + mouseOverWidth / 2) + ", " + (height + 15) + " ";
-                ret += (xScale(d.bioproject_id) + mouseOverWidth / 2 - (margin.bottom - 15)) + ", " + (height + margin.bottom) + " ";
-                ret += (xScale(d.bioproject_id) - mouseOverWidth / 2 - (margin.bottom - 15)) + ", " + (height + margin.bottom) + " ";
+                ret += (xScale(d.id) - mouseOverWidth / 2) + ", " + (height + 15) + " ";
+                ret += (xScale(d.id) - mouseOverWidth / 2) + ", 0 ";
+                ret += (xScale(d.id) + mouseOverWidth / 2) + ", 0 ";
+                ret += (xScale(d.id) + mouseOverWidth / 2) + ", " + (height + 15) + " ";
+                ret += (xScale(d.id) + mouseOverWidth / 2 - (margin.bottom - 15)) + ", " + (height + margin.bottom) + " ";
+                ret += (xScale(d.id) - mouseOverWidth / 2 - (margin.bottom - 15)) + ", " + (height + margin.bottom) + " ";
                 return ret;
             });
         bars.exit().remove();
@@ -1073,14 +1074,14 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     };
 
     /**
-     * Remove the highlight with the given bioproject_id
+     * Remove the highlight with the given id
      *
-     * @param <Number> bioproject_id The bioproject_id of the highlight we want
+     * @param <Number> id The id of the highlight we want
      *           to remove
      */
-    that.removeHighlight = function removeHighlight(bioproject_id) {
-        svg.selectAll(".dot._" + bioproject_id).attr("filter", "").attr("r", 5);
-        svg.selectAll(".tick._" + bioproject_id + " text").style("font-weight", "normal");
+    that.removeHighlight = function removeHighlight(id) {
+        svg.selectAll(".dot._" + id).attr("filter", "").attr("r", 5);
+        svg.selectAll(".tick._" + id + " text").style("font-weight", "normal");
         svg.selectAll(".axisline").style("visibility", "hidden");
         tooltip.style("visibility", "hidden");
     };
@@ -1092,8 +1093,8 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      */
     that.addHighlight = function addHighlight(d) {
         // add dropshadow to the dot and axis text
-        svg.selectAll(".dot._" + d.bioproject_id).attr("filter", "url(#dropshadow)").attr("r", 6);
-        svg.selectAll(".tick._" + d.bioproject_id + " text").style("font-weight", "bold");
+        svg.selectAll(".dot._" + d.id).attr("filter", "url(#dropshadow)").attr("r", 6);
+        svg.selectAll(".tick._" + d.id + " text").style("font-weight", "bold");
 
         if (toggles.showGenome) {
             svg.select(".axisline.genome")

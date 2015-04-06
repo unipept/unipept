@@ -45,7 +45,7 @@ class Assembly < ActiveRecord::Base
   def self.get_by_species_id(species_id)
     # maybe add status filter?
     #Assembly.select("id, organism_name").joins(:lineage).where("genomes.status = 'Complete' AND lineages.species = ?", species_id).group("bioproject_id")
-    Assembly.select("id, organism_name").joins(:lineage).where("lineages.species = ?", species_id)
+    Assembly.select("id, organism_name as name").joins(:lineage).where("lineages.species = ?", species_id)
   end
 
   # fills in the taxon_id column
@@ -65,7 +65,7 @@ class Assembly < ActiveRecord::Base
 
   # fills the assembly_cache table
   def self.precompute_assembly_caches
-    Assembly.all.each do |assembly|
+    Assembly.where("taxon_id is not null").each do |assembly|
       AssemblyCache.get_by_assembly_id(assembly.id)
     end
   end
