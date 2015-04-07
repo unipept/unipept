@@ -613,6 +613,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * Resets the visualisation
      */
     that.clearAllData = function clearAllData() {
+        that.removePopoversAndHighlights();
         graphData = [];
         dataQueue = [];
         that.redraw();
