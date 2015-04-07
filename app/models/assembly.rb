@@ -29,13 +29,12 @@ class Assembly < ActiveRecord::Base
 
   def self.get_assembly_species()
     # order by uses filesort since there's no index on taxon name
-    # maybe add status filter?
     return connection.select_all("SELECT taxons.name, taxons.id, count(*) AS num
      FROM assemblies
      INNER JOIN lineages ON (assemblies.taxon_id = lineages.taxon_id)
      LEFT JOIN taxons ON (lineages.species = taxons.id)
      WHERE taxons.id IS NOT NULL
-     /*AND status = 'Complete'*/
+     AND assembly_level = 'Complete Genome'
      GROUP BY taxons.id
      HAVING num >= 1
      ORDER BY name")
@@ -43,9 +42,7 @@ class Assembly < ActiveRecord::Base
 
   # returns a set of genome objects for a given species_id
   def self.get_by_species_id(species_id)
-    # maybe add status filter?
-    #Assembly.select("id, organism_name").joins(:lineage).where("genomes.status = 'Complete' AND lineages.species = ?", species_id).group("bioproject_id")
-    Assembly.select("id, organism_name as name").joins(:lineage).where("lineages.species = ?", species_id)
+    Assembly.select("id, organism_name as name").joins(:lineage).where("assembly_level = 'Complete Genome' and lineages.species = ?", species_id)
   end
 
   # fills in the taxon_id column
