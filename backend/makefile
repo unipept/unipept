@@ -128,15 +128,16 @@ $(TABDIR)/sequences.tsv.gz: $(INTDIR)/sequences.tsv.gz $(INTDIR)/LCAs.tsv.gz $(I
 		> $@
 # }}}
 
-# Genome tables {{{ ------------------------------------------------------------
+# Assembly tables {{{ ----------------------------------------------------------
 $(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz: parse_assemblies.awk
 	date +"%Y-%m-%d %H:%M:%S"
 	mkdir -p $(GENDIR)
 	rsync --ignore-existing 'rsync://ftp.ncbi.nlm.nih.gov/genomes/ASSEMBLY_REPORTS/All/*.assembly.txt' $(GENDIR)
 	find $(GENDIR) -name 'GCA_*.assembly.txt' \
-		| xargs awk -f parse_assemblies.awk \
-			-v assemblies_file=>(gzip - > $(TABDIR)/assemblies.tsv.gz) \
-			-v assembly_sequences_file=>(gzip - > $(TABDIR)/assembly_sequences.tsv.gz)
+		| xargs cat \
+		| awk -f parse_assemblies.awk \
+			-v assemblies_file=>(tee assemblies.csv | gzip - > $(TABDIR)/assemblies.tsv.gz) \
+			-v assembly_sequences_file=>(cut -f1,2,6,7 | sed 's/\.[^.]*//' | tee sequences.csv | gzip - > $(TABDIR)/assembly_sequences.tsv.gz)
 # }}}
 
 .PHONY: clean
