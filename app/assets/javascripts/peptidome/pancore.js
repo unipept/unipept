@@ -525,8 +525,8 @@ var constructPancore = function constructPancore(args) {
             return name;
         }
 
-        // Don't abbreviate if my genome and length < 30
-        if (("" + id).charAt(0) === "u" && name.length < 30) {
+        // Don't abbreviate if my genome
+        if (("" + id).charAt(0) === "u") {
             return name;
         }
 
