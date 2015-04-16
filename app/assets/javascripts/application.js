@@ -323,11 +323,17 @@ window.onerror = function (message, file, line) {
  * Takes an iterator and puts all values in an array
  */
 function iteratorToArray(iterator) {
-    var values = [],
-        next = iterator.next();
-    while (!next.done) {
-        values.push(next.value);
-        next = iterator.next();
+    var vals = [],
+        v;
+    if (typeof iterator.next === 'function') {
+        console.log("next");
+        v = iterator.next();
+        while (!v.done) {
+            vals.push(v.value);
+            v = iterator.next();
+        }
+    } else {
+        eval("for (v of iterator) vals.push(v)");
     }
-    return values;
+    return vals;
 }
