@@ -23,10 +23,37 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
      * Initialize the genome Selector
      */
     function init() {
+        var searchTokens = [];
+        for (var taxonId in taxa) {
+            searchTokens.push({value: taxa[taxonId], label: "taxon:" + taxonId});
+        }
+        var engine = new Bloodhound({
+          local: searchTokens,
+          datumTokenizer: function(d) {
+            return Bloodhound.tokenizers.whitespace(d.value);
+          },
+          queryTokenizer: Bloodhound.tokenizers.whitespace
+        });
+        engine.initialize();
+
+
         $("#genomeSelectorSearch").tokenfield({
             delimiter: " ",
             beautify: false,
-            createTokensOnBlur: true
+            createTokensOnBlur: true,
+            typeahead: [null, { source: engine.ttAdapter() }]
+        })
+        .on('tokenfield:createtoken', function (e) {
+            if (e.attrs.label.indexOf(":") !== -1) {
+                var swap = e.attrs.value;
+                e.attrs.value = e.attrs.label;
+                e.attrs.label = swap;
+            }
+        })
+        .on('tokenfield:createdtoken', function (e) {
+            if (e.attrs.value.indexOf("taxon") === 0) {
+                $(e.relatedTarget).addClass('token-taxon');
+            }
         });
         $("#genomeSelectorSearch-tokenfield").keyup(function keyUpped() {
             var list = $("#genomeSelectorSearch").tokenfield('getTokensList');
@@ -43,8 +70,23 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
     function search(searchString) {
         delay(function doSearch() {
             var tokens = searchString.toLowerCase().split(" ");
+            var metaTokens = tokens.filter(function (token) {
+                return token.indexOf(":") !== -1;
+            });
+            var textTokens = tokens.filter(function (token) {
+                return token.indexOf(":") === -1;
+            });
             var results = data;
-            tokens.forEach(function filter (token) {
+            metaTokens.forEach(function filter (token) {
+                var id = +(token.split(":")[1]);
+                results = results.filter(function (element) {
+                    return element.class_id === id
+                        || element.order_id === id
+                        || element.genus_id === id
+                        || element.species_id === id;
+                });
+            });
+            textTokens.forEach(function filter (token) {
                 results = results.filter(function (element) {
                     return element.name.toLowerCase().indexOf(token) !== -1;
                 });
@@ -64,7 +106,6 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         selectedResults = results.slice(0, ELEMENTS_SHOWN);
 
         selectedResults.forEach(function (result) {
-            console.log(result);
             resultString += "<tr>";
             resultString += "<td><input type='checkbox'/></td>";
             resultString += "<td>" + result.name + "<br>";

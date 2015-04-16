@@ -17,6 +17,10 @@
 //  http://sliptree.github.io/bootstrap-tokenfield/
 //= require bootstrap-tokenfield/bootstrap-tokenfield.min.js
 
+//  typeahead
+//  0.10.5
+//= require typeahead/typeahead.bundle.min.js
+
 //  global
 //  3.5.3
 //= require d3/d3.v3.min.js
