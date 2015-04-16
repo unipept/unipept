@@ -33,10 +33,13 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
      * Filters all genomes for the given search query
      */
     function search(searchString) {
-        var text = searchString.toLowerCase();
         delay(function doSearch() {
-            var results = data.filter(function (element) {
-                return element.name.toLowerCase().indexOf(text) !== -1;
+            var tokens = searchString.toLowerCase().split(" ");
+            var results = data;
+            tokens.forEach(function filter (token) {
+                results = results.filter(function (element) {
+                    return element.name.toLowerCase().indexOf(token) !== -1;
+                });
             });
             drawList(results);
         }, 500);
