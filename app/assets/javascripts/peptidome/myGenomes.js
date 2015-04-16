@@ -36,7 +36,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
         genomes = {};
         genomeList = [];
 
-        if (window.indexedDB) {
+        if (window.indexedDB && navigator.vendor.indexOf("Apple") === -1) {
             dataStore = indexedDBStore;
         } else {
             dataStore = localStorageStore;
