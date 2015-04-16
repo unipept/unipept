@@ -326,7 +326,6 @@ function iteratorToArray(iterator) {
     var vals = [],
         v;
     if (typeof iterator.next === 'function') {
-        console.log("next");
         v = iterator.next();
         while (!v.done) {
             vals.push(v.value);
