@@ -64,12 +64,19 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             if (e.attrs.value.indexOf("taxon") === 0) {
                 $(e.relatedTarget).addClass('token-taxon');
             }
+            keyUpped();
+        })
+        .on('tokenfield:removedtoken', function (e) {
+            keyUpped();
         });
-        $("#genomeSelectorSearch-tokenfield").keyup(function keyUpped() {
+
+        $("#genomeSelectorSearch-tokenfield").keyup(keyUpped);
+
+        function keyUpped() {
             var list = $("#genomeSelectorSearch").tokenfield('getTokensList');
-            list += " " + $(this).val();
+            list += " " + $("#genomeSelectorSearch-tokenfield").val();
             search(list);
-        });
+        }
     }
 
     /**
