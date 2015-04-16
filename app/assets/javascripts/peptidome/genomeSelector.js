@@ -23,6 +23,17 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
      * Initialize the genome Selector
      */
     function init() {
+        data.sort(function (a, b) { return d3.ascending(a.name, b.name) });
+
+        initTypeAhead();
+
+        drawList(data);
+    }
+
+    /**
+     * Initializes the typeahead and token stuff
+     */
+    function initTypeAhead() {
         var searchTokens = [];
         for (var taxonId in taxa) {
             searchTokens.push({value: taxa[taxonId], label: "taxon:" + taxonId});
@@ -35,7 +46,6 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
           queryTokenizer: Bloodhound.tokenizers.whitespace
         });
         engine.initialize();
-
 
         $("#genomeSelectorSearch").tokenfield({
             delimiter: " ",
@@ -60,8 +70,6 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             list += " " + $(this).val();
             search(list);
         });
-
-        drawList(data);
     }
 
     /**
@@ -103,7 +111,6 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             resultString = "";
 
         $resultTable.find(".result-count").text(results.length);
-        results.sort(function (a, b) { return d3.ascending(a.name, b.name) });
         selectedResults = results.slice(0, ELEMENTS_SHOWN);
 
         selectedResults.forEach(function (result) {
