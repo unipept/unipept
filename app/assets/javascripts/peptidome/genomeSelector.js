@@ -102,6 +102,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         var $resultTable = $("#genomeSelector-results"),
             resultString = "";
 
+        $resultTable.find(".result-count").text(results.length);
         results.sort(function (a, b) { return d3.ascending(a.name, b.name) });
         selectedResults = results.slice(0, ELEMENTS_SHOWN);
 
