@@ -56,9 +56,11 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         selectedResults = results.slice(0, ELEMENTS_SHOWN);
 
         selectedResults.forEach(function (result) {
+            console.log(result);
             resultString += "<tr>";
             resultString += "<td><input type='checkbox'/></td>";
-            resultString += "<td>" + result.name + "</td>";
+            resultString += "<td>" + result.name + "<br>";
+            resultString += "<span class='lineage'>" + getLineage(result) + "</span></td>";
             resultString += "<td><button class='btn btn-default btn-xs'><span class='glyphicon glyphicon-plus'></span></button></td>";
             resultString += "</tr>";
         });
@@ -66,10 +68,27 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         $resultTable.find("tbody").html(resultString);
 
         if (selectedResults.length < results.length) {
-            $resultTable.find("tfoot").html("<tr><th colspan='3' class='warning'><span class='glyphicon glyphicon-warning-sign'></span> Showing first " + ELEMENTS_SHOWN + " of " + results.length + " results</th></tr>")
+            $resultTable.find("tfoot").html("<tr><th colspan='3' class='warning'><span class='glyphicon glyphicon-warning-sign'></span> Showing " + ELEMENTS_SHOWN + " of " + results.length + "</th></tr>")
         } else {
             $resultTable.find("tfoot").empty();
         }
+    }
+
+    function getLineage(organism) {
+        var result = [];
+        if (organism.class_id !== null) {
+            result.push(taxa[organism.class_id]);
+        }
+        if (organism.order_id !== null) {
+            result.push(taxa[organism.order_id]);
+        }
+        if (organism.genus_id !== null) {
+            result.push(taxa[organism.genus_id]);
+        }
+        if (organism.species_id !== null) {
+            result.push(taxa[organism.species_id]);
+        }
+        return result.join(" / ");
     }
 
     /*************** Public methods ***************/
