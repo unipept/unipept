@@ -36,13 +36,11 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
     function initTypeAhead() {
         var searchTokens = [];
         for (var taxonId in taxa) {
-            searchTokens.push({value: taxa[taxonId], label: "taxon:" + taxonId});
+            searchTokens.push({label: taxa[taxonId], value: "taxon:" + taxonId});
         }
         var engine = new Bloodhound({
           local: searchTokens,
-          datumTokenizer: function(d) {
-            return Bloodhound.tokenizers.whitespace(d.value);
-          },
+          datumTokenizer: Bloodhound.tokenizers.obj.whitespace("label"),
           queryTokenizer: Bloodhound.tokenizers.whitespace
         });
         engine.initialize();
@@ -51,7 +49,11 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             delimiter: " ",
             beautify: false,
             createTokensOnBlur: true,
-            typeahead: [null, { source: engine.ttAdapter() }]
+            typeahead: [null, {
+                displayKey: 'label',
+                source: engine.ttAdapter(),
+                hint: false
+            }]
         })
         .on('tokenfield:createtoken', function (e) {
             if (e.attrs.label.indexOf(":") !== -1) {
