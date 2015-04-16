@@ -23,9 +23,17 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
      * Initialize the genome Selector
      */
     function init() {
-        $("#genomeSelector-search input").keyup(function keyUpped() {
-            search($(this).val());
+        $("#genomeSelectorSearch").tokenfield({
+            delimiter: " ",
+            beautify: false,
+            createTokensOnBlur: true
         });
+        $("#genomeSelectorSearch-tokenfield").keyup(function keyUpped() {
+            var list = $("#genomeSelectorSearch").tokenfield('getTokensList');
+            list += " " + $(this).val();
+            search(list);
+        });
+
         drawList(data);
     }
 
