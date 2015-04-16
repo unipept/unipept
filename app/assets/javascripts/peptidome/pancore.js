@@ -21,7 +21,7 @@ var constructPancore = function constructPancore(args) {
         isLoading = false,
         rank = 0,
         lca = "",
-        tree,
+        genomeSelector,
         graph,
         matrix,
         table,
@@ -34,12 +34,11 @@ var constructPancore = function constructPancore(args) {
      * Initializes pancore
      */
     function init() {
-        // Construct the selection tree
-        tree = constructSelectionTree({data : args.data, taxa : args.taxa});
-        tree.drawTree({
-            tree : "#treeView",
-            tableDiv : "#genomes-table-div",
-            treeSearch : "#treeSearchDiv"
+
+        // Construct the genome selector
+        genomeSelector = constructGenomeSelector({
+            data : args.data,
+            taxa : args.taxa
         });
 
         // Constructs the table

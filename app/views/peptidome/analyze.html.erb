@@ -81,10 +81,27 @@
 
         <hr>
         <h5>Add by genome <span class="glyphicon glyphicon-info-sign" id="add-by-genome-help" title="Drag any node from the taxonomic tree below to the table on the right to add individual peptidomes (or all peptidomes corresponding to a given taxon) to the analysis."></span></h5>
-        <div id="treeView" class="treeView pancore">
-          <div class="input-group" id="treeSearchDiv">
-          <%= search_field_tag(:treeSearch, "", :placeholder => "type to filter the tree by name or bioproject id", :class => "form-control") %><span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-          </div>
+        <br>
+        <div id="genomeSelector" class="genomeSelector">
+            <div class="input-group" id="genomeSelector-search">
+            <%= search_field_tag(:genomeSelectorSearch, "", :placeholder => "type to filter the results", :class => "form-control") %><span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+            </div>
+            <table class="table table-condensed genomes-table" id="genomeSelector-results">
+                <thead>
+                    <tr>
+                        <th class="handle">
+                            <input type="checkbox"/>
+                        </th>
+                        <th class="name">Results
+                        </th>
+                        <th class="action">
+                            <button class='btn btn-primary btn-xs'><span class='glyphicon glyphicon-plus'></span></button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot></tfoot>
+            </table>
         </div>
       </div>
       <div class="tab-pane fade" id="my-genomes">
@@ -92,7 +109,7 @@
           <strong>Oh snap!</strong> Sorry, your browser doesn't seem to support the File <span class="initialism">API</span>. Everything should work find in Firefox or Google Chrome.
         </div>
         <div id="myGenomes" class="hide">
-          <table class="table table-condensed" id="my-genomes-table">
+          <table class="table table-condensed genomes-table" id="my-genomes-table">
             <thead>
               <tr>
                 <th class="handle">
@@ -145,7 +162,7 @@
     <span id="table-message"><span class="glyphicon glyphicon-chevron-left"></span> Select a species to analyze and click the load button.</span>
     <div id="genomes-table-div">
       <div style="overflow: hidden; height: 0px; width: 0px;">&nbsp;</div>
-      <table class="table table-condensed" id="genomes_table">
+      <table class="table table-condensed genomes-table" id="genomes_table">
         <thead>
           <tr>
             <th class="handle">
