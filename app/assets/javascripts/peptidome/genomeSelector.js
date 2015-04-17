@@ -26,6 +26,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         data.sort(function (a, b) { return d3.ascending(a.name, b.name) });
 
         initTypeAhead();
+        initCheckAll();
 
         drawList(data);
     }
@@ -82,6 +83,15 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
     }
 
     /**
+     * Initializes the check all button on the top of the table
+     */
+    function initCheckAll() {
+        $("#genomeSelector .check-all").change(function () {
+            $("#genomeSelector .check").prop('checked', this.checked);
+        });
+    }
+
+    /**
      * Filters all genomes for the given search query
      */
     function search(searchString) {
@@ -125,7 +135,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         // build table
         selectedResults.forEach(function (result) {
             resultString += "<tr data-id='" + result.id + "' data-name='" + result.name + "'>";
-            resultString += "<td><input type='checkbox'/></td>";
+            resultString += "<td><input type='checkbox' class='check'></input></td>";
             resultString += "<td>" + result.name + "<br>";
             resultString += "<span class='lineage'>" + getLineage(result) + "</span></td>";
             resultString += "<td><button class='btn btn-default btn-xs btn-add'><span class='glyphicon glyphicon-plus'></span></button></td>";
