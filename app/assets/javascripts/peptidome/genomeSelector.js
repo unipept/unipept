@@ -165,7 +165,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
 
         // set table footer
         if (selectedResults.length < results.length) {
-            $resultTable.find("tfoot").html("<tr><th colspan='3' class='warning'><span class='glyphicon glyphicon-warning-sign'></span> Showing " + ELEMENTS_SHOWN + " of " + results.length + "</th></tr>")
+            $resultTable.find("tfoot").html("<tr class='warning'><th colspan='3'>Showing 0-" + ELEMENTS_SHOWN + " of " + results.length + "</th></tr>")
         } else {
             $resultTable.find("tfoot").empty();
         }
