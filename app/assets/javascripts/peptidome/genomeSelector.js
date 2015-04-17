@@ -27,6 +27,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
 
         initTypeAhead();
         initCheckAll();
+        initAddAll();
 
         drawList(data);
     }
@@ -88,6 +89,25 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
     function initCheckAll() {
         $("#genomeSelector .check-all").change(function () {
             $("#genomeSelector .check").prop('checked', this.checked);
+        });
+    }
+
+    function initAddAll() {
+        $("#genomeSelector .btn-add-all").click(function () {
+            // get checked boxes
+            var $boxes = $(".check:checked");
+            var genomes;
+            if ($boxes.length === 0) {
+                $boxes = $(".check");
+            }
+
+            // get genomes
+            genomes = $boxes.closest("tr").map(function (i, e) {
+                return getGenome($(e));
+            }).get();
+
+            // add everything
+            pancore.addGenomes(genomes);
         });
     }
 
