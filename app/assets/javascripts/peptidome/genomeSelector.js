@@ -14,7 +14,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
     var that = {},
         data = args.data,
         taxa = args.taxa,
-        titles = ["Class", "Order", "Genus", "Species"],
+        pancore = args.pancore,
         ELEMENTS_SHOWN = 10;
 
     /*************** Private methods ***************/
@@ -122,22 +122,33 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         $resultTable.find(".result-count").text(results.length);
         selectedResults = results.slice(0, ELEMENTS_SHOWN);
 
+        // build table
         selectedResults.forEach(function (result) {
-            resultString += "<tr>";
+            resultString += "<tr data-id='" + result.id + "' data-name='" + result.name + "'>";
             resultString += "<td><input type='checkbox'/></td>";
             resultString += "<td>" + result.name + "<br>";
             resultString += "<span class='lineage'>" + getLineage(result) + "</span></td>";
-            resultString += "<td><button class='btn btn-default btn-xs'><span class='glyphicon glyphicon-plus'></span></button></td>";
+            resultString += "<td><button class='btn btn-default btn-xs btn-add'><span class='glyphicon glyphicon-plus'></span></button></td>";
             resultString += "</tr>";
         });
-
         $resultTable.find("tbody").html(resultString);
 
+        // set table footer
         if (selectedResults.length < results.length) {
             $resultTable.find("tfoot").html("<tr><th colspan='3' class='warning'><span class='glyphicon glyphicon-warning-sign'></span> Showing " + ELEMENTS_SHOWN + " of " + results.length + "</th></tr>")
         } else {
             $resultTable.find("tfoot").empty();
         }
+
+        // hook up plus buttons
+        $resultTable.find(".btn-add").click(function () {
+            var genome = getGenome($(this).closest("tr"));
+            pancore.addGenomes([genome]);
+        });
+    }
+
+    function getGenome($row) {
+        return {name : $row.data("name"), id : $row.data("id")};
     }
 
     function getLineage(organism) {

@@ -38,7 +38,8 @@ var constructPancore = function constructPancore(args) {
         // Construct the genome selector
         genomeSelector = constructGenomeSelector({
             data : args.data,
-            taxa : args.taxa
+            taxa : args.taxa,
+            pancore : that
         });
 
         // Constructs the table
