@@ -183,6 +183,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         $resultTable.find(".btn-add").click(function () {
             var genome = getGenome($(this).closest("tr"));
             pancore.addGenomes([genome]);
+            return false;
         });
 
         // hook up lineage links
@@ -193,6 +194,18 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                 label: taxa[id].name,
                 rank: taxa[id].rank
             });
+            return false;
+        });
+
+        // disable fix checkboxes
+        $resultTable.find(".check").click(function (e) {
+            e.stopPropagation();
+        });
+
+        // make rows clickable
+        $resultTable.find(".check").closest("tr").click(function () {
+            var $checkbox = $(this).find(".check");
+            $checkbox.prop('checked', !$checkbox.prop('checked'));
             return false;
         });
     }
