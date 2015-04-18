@@ -19,7 +19,9 @@ class PeptidomeController < ApplicationController
     @taxa.merge(@genomes.map{|g| g.genus_id})
     @taxa.merge(@genomes.map{|g| g.order_id})
     @taxa.merge(@genomes.map{|g| g.class_id})
-    @taxa = Hash[Taxon.select([:id, :name]).where(:id => @taxa.to_a).map{|t| [t.id, t.name]}]
+    @taxa = Hash[Taxon.select([:id, :name, :rank])
+      .where(:id => @taxa.to_a)
+      .map{|t| [t.id, Hash["name" => t.name, "rank" => t.rank]]}]
 
     @taxa = Oj.dump(@taxa, mode: :compat)
     @genomes = Oj.dump(@genomes, mode: :compat)

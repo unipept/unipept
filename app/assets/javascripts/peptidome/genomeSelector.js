@@ -5,7 +5,7 @@
  *          {"id":57587,"class_id":29547,"genus_id":194,
  *          "name":"Campylobacter jejuni","order_id":213849,"species_id":197}
  * @param <Hash> args.taxa is a list of key-value pairs mapping
- *          taxon id's to taxon names
+ *          taxon id's to an object containing name and rank
  * @return <GenomeSelector> that The constructed selectionTree object
  */
 var constructGenomeSelector = function constructGenomeSelector(args) {
@@ -38,10 +38,15 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
     function initTypeAhead() {
         var searchTokens = [];
         for (var taxonId in taxa) {
-            searchTokens.push({label: taxa[taxonId], value: "taxon:" + taxonId});
+            searchTokens.push({
+                label: taxa[taxonId].name,
+                value: "taxon:" + taxonId,
+                rank: taxa[taxonId].rank
+            });
         }
         var engine = new Bloodhound({
           local: searchTokens,
+          limit: 10,
           datumTokenizer: Bloodhound.tokenizers.obj.whitespace("label"),
           queryTokenizer: Bloodhound.tokenizers.whitespace
         });
@@ -51,10 +56,17 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             delimiter: " ",
             beautify: false,
             createTokensOnBlur: true,
-            typeahead: [null, {
+            typeahead: [{
+                hint: false,
+                highlight: true
+            }, {
                 displayKey: 'label',
                 source: engine.ttAdapter(),
-                hint: false
+                templates: {
+                    suggestion: function (q) {
+                        return "<p>" + q.label + " – <i class='small'>" + q.rank + "</i></p>";
+                    }
+                  }
             }]
         })
         .on('tokenfield:createtoken', function (e) {
@@ -127,10 +139,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             metaTokens.forEach(function filter (token) {
                 var id = +(token.split(":")[1]);
                 results = results.filter(function (element) {
-                    return element.class_id === id
-                        || element.order_id === id
-                        || element.genus_id === id
-                        || element.species_id === id;
+                    return element[taxa[id].rank + "_id"] === id;
                 });
             });
             textTokens.forEach(function filter (token) {
@@ -181,7 +190,8 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             var id = $(this).data("id");
             $("#genomeSelectorSearch").tokenfield('createToken', {
                 value: "taxon:" + id,
-                label: taxa[id]
+                label: taxa[id].name,
+                rank: taxa[id].rank
             });
             return false;
         });
@@ -193,22 +203,22 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
 
     function getLineage(organism) {
         var result = [];
-        if (organism.class_id !== null) {
+        if (organism.class_id !== null && organism.class_id > 0) {
             result.push(createLink(organism.class_id));
         }
-        if (organism.order_id !== null) {
+        if (organism.order_id !== null && organism.order_id > 0) {
             result.push(createLink(organism.order_id));
         }
-        if (organism.genus_id !== null) {
+        if (organism.genus_id !== null && organism.genus_id > 0) {
             result.push(createLink(organism.genus_id));
         }
-        if (organism.species_id !== null) {
+        if (organism.species_id !== null && organism.species_id > 0) {
             result.push(createLink(organism.species_id));
         }
         return result.join(" / ");
 
         function createLink(taxonId) {
-            return "<a href='#' class='lineage-link' data-id='" + taxonId + "'>" + taxa[taxonId] + "</a>";
+            return "<a href='#' class='lineage-link' data-id='" + taxonId + "'>" + taxa[taxonId].name + "</a>";
         }
     }
 
