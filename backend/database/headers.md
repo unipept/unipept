@@ -2,6 +2,9 @@
 Headers
 =======
 
+Genome Caches
+-------------
+
 Taxons
 ------
  - ***id***: The taxon's identifier, as assigned by the NCBI. An
@@ -66,7 +69,7 @@ rank were mentioned before.
 Sequences
 ---------
 
-Contains the triptic peptides.
+Contains the tryptic peptides.
 
  - ***id***: A self-assigned id. Integral, incremental, no gaps.
  - ***sequence***: An Amino Acid sequence, more precisely a tryptic

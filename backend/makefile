@@ -12,6 +12,8 @@ BDBMEM=500000000
 #JMEM=-Xms140g -Xmx150g
 #BDBMEM=100000000000
 BDBDIR=../../berkeleydb
+TAXON_URL=ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip
+UNIPROT_URL=ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/
 
 TABLES=                                      \
 	$(TABDIR)/peptides.tsv.gz                \
@@ -56,7 +58,7 @@ $(TAXDIR)/taxdmp.zip:
 	date +"%Y-%m-%d %H:%M:%S"
 	mkdir -p $(TAXDIR)
 	-rm -f $@
-	wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip -O $@
+	wget "$(TAXON_URL)" -O $@
 
 $(TAXDIR)/names.dmp $(TAXDIR)/nodes.dmp: $(TAXDIR)/taxdmp.zip
 	date +"%Y-%m-%d %H:%M:%S"
@@ -67,7 +69,7 @@ $(UNIDIR)/uniprot_sprot.xml.gz:
 	date +"%Y-%m-%d %H:%M:%S"
 	mkdir -p $(UNIDIR)
 	rm -f $@
-	wget -q ftp://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/complete/$(notdir $@) -O $@
+	wget "$(UNIPROT_URL)$(notdir $@)" -O $@
 # }}}
 
 # Taxons and Lineages {{{ ------------------------------------------------------
@@ -132,7 +134,7 @@ $(TABDIR)/sequences.tsv.gz: $(INTDIR)/sequences.tsv.gz $(INTDIR)/LCAs.tsv.gz $(I
 $(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz: parse_assemblies.awk
 	date +"%Y-%m-%d %H:%M:%S"
 	mkdir -p $(GENDIR)
-	rsync --ignore-existing 'rsync://ftp.ncbi.nlm.nih.gov/genomes/ASSEMBLY_REPORTS/All/*.assembly.txt' $(GENDIR)
+	rsync --ignore-existing 'rsync://ftp.ncbi.nlm.nih.gov/genomes/ASSEMBLY_REPORTS/All/GCA_*.assembly.txt' $(GENDIR)
 	find $(GENDIR) -name 'GCA_*.assembly.txt' \
 		| xargs cat \
 		| awk -f parse_assemblies.awk \
@@ -142,17 +144,18 @@ $(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz: parse_assemblie
 
 .PHONY: clean
 clean:
-	rm -f $(JAR)
-	rm -f $(TAXDIR)/names.dmp $(TAXDIR)/nodes.dmp
-	rm -f $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
-	rm -f $(TABLES)
-	rm -f $(INTDIR)/*
-	rm -f $(TABDIR)/lcad_sequences.tsv.gz
+	@rm -vf $(JAR)
+	@rm -vf $(TAXDIR)/names.dmp $(TAXDIR)/nodes.dmp
+	@rm -vf $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
+	@rm -vf $(TABLES)
+	@rm -vf $(INTDIR)/*
+	@rm -vf $(TABDIR)/lcad_sequences.tsv.gz
 
-new: clean
-	rm -f $(TAXDIR)/taxdmp.zip
-	rm -f $(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/uniprot_treml.xml.gz
-	rm -f $(GENDIR)/*.assembly.txt
+.PHONY: pristine
+pristine: clean
+	@rm -vf $(TAXDIR)/taxdmp.zip
+	@rm -vf $(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/uniprot_treml.xml.gz
+	@find $(GENDIR)/ -name '*.assembly.txt' -exec rm -vf \{\} \;
 
 
 # vim: foldmethod=marker
