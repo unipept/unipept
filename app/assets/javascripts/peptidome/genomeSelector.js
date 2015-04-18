@@ -164,7 +164,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
 
         // build table
         selectedResults.forEach(function (result) {
-            resultString += "<tr data-id='" + result.id + "' data-name='" + result.name + "'>";
+            resultString += "<tr class='genome' data-id='" + result.id + "' data-name='" + result.name + "'>";
             resultString += "<td><input type='checkbox' class='check'></input></td>";
             resultString += "<td>" + result.name + "<br>";
             resultString += "<span class='lineage'>" + getLineage(result) + "</span></td>";
@@ -209,6 +209,34 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             $checkbox.prop('checked', !$checkbox.prop('checked'));
             return false;
         });
+
+        // enable drag and drop
+        var $tableDiv = $("#genomes-table-div");
+        // Make the nodes draggable using JQuery UI
+        $resultTable.find("tbody tr").draggable({
+            appendTo: "#genomes-table-div table",
+            addClasses: false,
+            // Mimic the style of the table on the right
+            helper: function startHelping(event) {
+                return dragHelp($(this));
+            }
+        });
+
+        /**
+         * Drag helper. Constructs html-code that gets added to the page and
+         * 'follows' the cursor while dragging. Mimics the design of the table.
+         *
+         * @param <jQuery> $node jQuery object of the dom element were dragging
+         */
+        function dragHelp($node) {
+            var returnString = "<tbody class='dragging'>" +
+                "<tr><td class='handle'><span class='glyphicon glyphicon-resize-vertical'></span></td><td class='data name' data-id='" +
+                $node.data("id") + "'>" +
+                $node.data("name") +
+                "</td><td class='data status'></td><td></td></tr>" +
+                "</tbody>";
+            return $(returnString);
+        }
     }
 
     function getGenome($row) {
