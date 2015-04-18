@@ -15,7 +15,15 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         data = args.data,
         taxa = args.taxa,
         pancore = args.pancore,
-        ELEMENTS_SHOWN = 10;
+        ELEMENTS_SHOWN = 10,
+        SEARCH_VALUES = {
+            complete : {attr: "assembly_level", value: "Complete Genome"},
+            scaffold : {attr: "assembly_level", value: "Scaffold"},
+            contig : {attr: "assembly_level", value: "Contig"},
+            chromosome : {attr: "assembly_level", value: "Chromosome"},
+            gaps : {attr: "assembly_level", value: "Chromosome with gaps"},
+            gapless : {attr: "assembly_level", value: "Gapless Chromosome"}
+        };
 
     /*************** Private methods ***************/
 
@@ -80,6 +88,8 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         .on('tokenfield:createdtoken', function (e) {
             if (e.attrs.value.indexOf("taxon") === 0) {
                 $(e.relatedTarget).addClass('token-taxon');
+            } else if (e.attrs.value.indexOf("is") === 0) {
+                $(e.relatedTarget).addClass('token-filter');
             }
             keyUpped(true);
         })
@@ -139,10 +149,19 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             });
             var results = data;
             metaTokens.forEach(function filter (token) {
-                var id = +(token.split(":")[1]);
-                results = results.filter(function (element) {
-                    return element[taxa[id].rank + "_id"] === id;
-                });
+                var meta = token.split(":");
+                if (meta[0] === "taxon") {
+                    var id = +(meta[1]);
+                    results = results.filter(function (element) {
+                        return element[taxa[id].rank + "_id"] === id;
+                    });
+                } else {
+                    if (meta[0] === "is" && SEARCH_VALUES[meta[1]]) {
+                        results = results.filter(function (element) {
+                            return element[SEARCH_VALUES[meta[1]].attr] === SEARCH_VALUES[meta[1]].value;
+                        });
+                    }
+                }
             });
             textTokens.forEach(function filter (token) {
                 results = results.filter(function (element) {
