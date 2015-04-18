@@ -80,18 +80,18 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             if (e.attrs.value.indexOf("taxon") === 0) {
                 $(e.relatedTarget).addClass('token-taxon');
             }
-            keyUpped();
+            keyUpped(true);
         })
         .on('tokenfield:removedtoken', function (e) {
-            keyUpped();
+            keyUpped(true);
         });
 
-        $("#genomeSelectorSearch-tokenfield").keyup(keyUpped);
+        $("#genomeSelectorSearch-tokenfield").keyup(function () { keyUpped(false); });
 
-        function keyUpped() {
+        function keyUpped(direct) {
             var list = $("#genomeSelectorSearch").tokenfield('getTokensList');
             list += " " + $("#genomeSelectorSearch-tokenfield").val();
-            search(list);
+            search(list, direct);
         }
     }
 
@@ -126,7 +126,8 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
     /**
      * Filters all genomes for the given search query
      */
-    function search(searchString) {
+    function search(searchString, direct) {
+        var wait = direct ? 0 : 500;
         delay(function doSearch() {
             var tokens = searchString.toLowerCase().split(" ");
             var metaTokens = tokens.filter(function (token) {
@@ -148,7 +149,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                 });
             });
             drawList(results);
-        }, 500);
+        }, wait);
     }
 
     /**
