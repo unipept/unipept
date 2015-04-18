@@ -175,6 +175,16 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             var genome = getGenome($(this).closest("tr"));
             pancore.addGenomes([genome]);
         });
+
+        // hook up lineage links
+        $resultTable.find(".lineage-link").click(function () {
+            var id = $(this).data("id");
+            $("#genomeSelectorSearch").tokenfield('createToken', {
+                value: "taxon:" + id,
+                label: taxa[id]
+            });
+            return false;
+        });
     }
 
     function getGenome($row) {
@@ -184,60 +194,26 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
     function getLineage(organism) {
         var result = [];
         if (organism.class_id !== null) {
-            result.push(taxa[organism.class_id]);
+            result.push(createLink(organism.class_id));
         }
         if (organism.order_id !== null) {
-            result.push(taxa[organism.order_id]);
+            result.push(createLink(organism.order_id));
         }
         if (organism.genus_id !== null) {
-            result.push(taxa[organism.genus_id]);
+            result.push(createLink(organism.genus_id));
         }
         if (organism.species_id !== null) {
-            result.push(taxa[organism.species_id]);
+            result.push(createLink(organism.species_id));
         }
         return result.join(" / ");
+
+        function createLink(taxonId) {
+            return "<a href='#' class='lineage-link' data-id='" + taxonId + "'>" + taxa[taxonId] + "</a>";
+        }
     }
 
     /*************** Public methods ***************/
 
-    /**
-     * Adds the collapsible selection tree to the page at the given selector
-     * and adds the dragging behaviour.
-     *
-     * @param <String> selectors.tree Selector of div where we want
-     *          to add the tree
-     * @param <String> selectors.tableDiv Selector of the div containing
-     *          the genomes table
-     * @param <String> selectors.treeSearch Selector of the div containing
-     *          the tree search field
-     */
-    that.drawTree = function drawTree(selectors) {
-        var treeSelector = selectors.tree,
-            tableDivSelector = selectors.tableDiv,
-            treeSearchSelector = selectors.treeSearch,
-            $tree = $(treeSelector),
-            $tableDiv = $(tableDivSelector),
-            tree,
-            items,
-            i;
-
-        // Add the root
-        tree = d3.select(treeSelector)
-            .append("ul")
-            .append("li")
-                .attr("class", "root not")
-            .append("ul");
-
-        // Add the lower nodes
-        items = tree.selectAll("li").data(data)
-            .enter()
-            .append("li")
-                .html(function (d) { return "<span>" + taxa[d.key] + " (" + d.children + ")</span>"; })
-                .attr("title", "Class")
-                .attr("class", "collapsibleListOpen")
-                .attr("data-search", function (d) { return taxa[d.key] ? taxa[d.key].toLowerCase() : "undefined"; })
-            .append("ul");
-    };
 
     // initialize the object
     init();
