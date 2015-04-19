@@ -84,14 +84,15 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         for (var filter in SEARCH_VALUES) {
             filterTokens.push({
                 label: "is:" + filter,
-                value: "is:" + filter + " " + filter + " " + SEARCH_VALUES[filter].value,
+                value: "is:" + filter,
+                search: "is:" + filter + " " + filter + " " + SEARCH_VALUES[filter].value,
                 obj: SEARCH_VALUES[filter]
             });
         }
         var filterEngine = new Bloodhound({
           local: filterTokens,
           limit: 10,
-          datumTokenizer: Bloodhound.tokenizers.obj.whitespace("value"),
+          datumTokenizer: Bloodhound.tokenizers.obj.whitespace("search"),
           queryTokenizer: Bloodhound.tokenizers.whitespace
         });
         filterEngine.initialize();
@@ -125,24 +126,27 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             }]
         })
         .on('tokenfield:createtoken', function (e) {
-            if (e.attrs.label.indexOf("taxon:") !== -1) {
-                var swap = e.attrs.value;
-                e.attrs.value = e.attrs.label;
-                e.attrs.label = swap;
-            } else if (e.attrs.label.indexOf("is:") !== -1) {
-                e.attrs.value = e.attrs.label;
+            var parts = e.attrs.value.split(":");
+            if (parts.length === 2) {
+                // remove tokens of same kind
+                var tokens = $("#genomeSelectorSearch").tokenfield('getTokens');
+                tokens = tokens.filter(function (token) {
+                    return token.value.indexOf(parts[0] + ":") !== 0;
+                });
+                $("#genomeSelectorSearch").tokenfield('setTokens', tokens);
+                if (parts[1] === "any") return false;
             }
         })
         .on('tokenfield:createdtoken', function (e) {
-            if (e.attrs.value.indexOf("taxon") === 0) {
+            var parts = e.attrs.value.split(":");
+            if (parts[0] === "taxon") {
                 $(e.relatedTarget).addClass('token-taxon');
-            } else if (e.attrs.value.indexOf("is") === 0) {
-                if (SEARCH_VALUES[e.attrs.value.split(":")[1]]) {
+            } else if (parts[0] === "is") {
+                if (SEARCH_VALUES[parts[1]]) {
                     $(e.relatedTarget).addClass('token-filter');
                 } else {
                     $(e.relatedTarget).addClass('invalid');
                 }
-
             }
             keyUpped(true);
         })
@@ -197,7 +201,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             content += "<div class='form-group'>";
             content += "<label for='assemblyLevel' class='control-label'>Assembly level</label>";
             content += "<select class='form-control' id='assemblyLevel' name='assemblyLevel'>";
-            content += "<option value='any'>Any</option>";
+            content += "<option value='is:any'>Any</option>";
             for (var option in SEARCH_VALUES) {
                 content += "<option value='is:" + option + "'>" + SEARCH_VALUES[option].value + "</option>";
             }
@@ -208,7 +212,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             content += "<div class='form-group'>";
             content += "<label for='classId' class='control-label'>Class</label>";
             content += "<select class='form-control' id='classId' name='classId'>";
-            content += "<option value='any'>Any</option>";
+            content += "<option value='taxon:any'>Any</option>";
             classes.forEach(function (taxon) {
                 content += "<option value='taxon:" + taxon + "'>" + taxa[taxon].name + "</option>";
             });
@@ -219,7 +223,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             content += "<div class='form-group'>";
             content += "<label for='orderId' class='control-label'>Order</label>";
             content += "<select class='form-control' id='orderId' name='orderId'>";
-            content += "<option value='any'>Any</option>";
+            content += "<option value='taxon:any'>Any</option>";
             orders.forEach(function (taxon) {
                 content += "<option value='taxon:" + taxon + "'>" + taxa[taxon].name + "</option>";
             });
@@ -230,7 +234,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             content += "<div class='form-group'>";
             content += "<label for='genusId' class='control-label'>Genus</label>";
             content += "<select class='form-control' id='genusId' name='genusId'>";
-            content += "<option value='any'>Any</option>";
+            content += "<option value='taxon:any'>Any</option>";
             genera.forEach(function (taxon) {
                 content += "<option value='taxon:" + taxon + "'>" + taxa[taxon].name + "</option>";
             });
@@ -241,7 +245,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             content += "<div class='form-group'>";
             content += "<label for='speciesId' class='control-label'>Species</label>";
             content += "<select class='form-control' id='speciesId' name='speciesId'>";
-            content += "<option value='any'>Any</option>";
+            content += "<option value='taxon:any'>Any</option>";
             species.forEach(function (taxon) {
                 content += "<option value='taxon:" + taxon + "'>" + taxa[taxon].name + "</option>";
             });
@@ -258,9 +262,15 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             // add event listeners
             $popover.find("select").change(function () {
                 var val = $(this).val();
-                if (val !== "any") {
+                if (val.indexOf("taxon:") === 0 && val !== "taxon:any") {
+                    $("#genomeSelectorSearch").tokenfield('createToken', {
+                        value: val,
+                        label: taxa[val.split(":")[1]].name
+                    });
+                } else {
                     $("#genomeSelectorSearch").tokenfield('createToken', val);
                 }
+
             })
         }
     }
