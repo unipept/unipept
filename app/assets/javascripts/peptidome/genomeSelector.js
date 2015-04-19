@@ -16,7 +16,8 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         taxa = args.taxa,
         pancore = args.pancore,
         $popover,
-        ELEMENTS_SHOWN = 10,
+        addAll = false,
+        ELEMENTS_SHOWN = 100,
         SEARCH_VALUES = {
             complete : {attr: "assembly_level", value: "Complete Genome", name: "Complete genome"},
             scaffold : {attr: "assembly_level", value: "Scaffold", name: "Scaffold"},
@@ -52,13 +53,6 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         initSettings();
         initCheckAll();
         initAddAll();
-
-        // we have to wait till everything is painted because there's a bug
-        // that miscalculates the width otherwise
-        requestAnimationFrame(function () {
-            $("#genomeSelectorSearch").tokenfield('createToken', 'is:complete');
-        });
-
     }
 
     /**
@@ -434,6 +428,12 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             }
         });
 
+        // add after search?
+        if (addAll) {
+            addAll = false;
+            $("#genomeSelector .btn-add-all").click();
+        }
+
         /**
          * Drag helper. Constructs html-code that gets added to the page and
          * 'follows' the cursor while dragging. Mimics the design of the table.
@@ -477,6 +477,17 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
     }
 
     /*************** Public methods ***************/
+
+    /**
+     * Searches for all complete Acinetobacter Baumannii genomes and adds them
+     */
+    that.demo = function demo() {
+        addAll = true;
+        $("#genomeSelectorSearch").tokenfield('setTokens', [
+            {"value":"is:complete","label":"is:complete"},
+            {"label":"Acinetobacter baumannii","value":"taxon:470"}
+        ]);
+    };
 
 
     // initialize the object

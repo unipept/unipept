@@ -79,7 +79,6 @@ var constructPancore = function constructPancore(args) {
 
         // Initialize the rest of the page
         initHelp();
-        initSpeciesForm();
         initFullScreen();
         initSaveImage();
 
@@ -89,8 +88,7 @@ var constructPancore = function constructPancore(args) {
         }
 
         // Ready for take off
-        $("#species_id").val(470);
-        $("#add_species_peptidome").click();
+        genomeSelector.demo();
     }
 
     /**
@@ -112,26 +110,7 @@ var constructPancore = function constructPancore(args) {
             $("#tab-help").stop(true, true).fadeOut(200);
         });
 
-        $("#add-by-species-help").tooltip({placement : "right", container : "body"});
         $("#add-by-genome-help").tooltip({placement : "right", container : "body"});
-    }
-
-    /**
-     * Initializes the add species button
-     */
-    function initSpeciesForm() {
-        // Add handler to the "add species"-form
-        $("#add_species_peptidome").click(function () {
-            // Get all assembly id's for the selected species id
-            var url = "/peptidome/genomes/species/" + $("#species_id").val() + ".json";
-            getJSON(url).then(function (genomes) {
-                that.addGenomes(genomes);
-            })
-            .catch(function (e) {
-                groupErrors("request error for " + url, "It seems like something went wrong while we loaded the data. Are you still conected to the internet? You might want to reload this page.");
-            });
-            return false;
-        });
     }
 
     /**
@@ -359,10 +338,8 @@ var constructPancore = function constructPancore(args) {
         if (isLoading === loading) return;
         isLoading = loading;
         if (loading) {
-            $("#add_species_peptidome").button('loading');
             table.setEnabled(false);
         } else {
-            $("#add_species_peptidome").button('reset');
             table.setEnabled(true);
 
             setTimeout(function () { sendToWorker("getUniqueSequences", {order : table.getOrder(), force : false }); }, 1000);

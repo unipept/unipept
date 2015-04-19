@@ -27,24 +27,6 @@ class Assembly < ActiveRecord::Base
     raise ActiveRecord::ReadOnlyRecord
   end
 
-  def self.get_assembly_species()
-    # order by uses filesort since there's no index on taxon name
-    return connection.select_all("SELECT taxons.name, taxons.id, count(*) AS num
-     FROM assemblies
-     INNER JOIN lineages ON (assemblies.taxon_id = lineages.taxon_id)
-     LEFT JOIN taxons ON (lineages.species = taxons.id)
-     WHERE taxons.id IS NOT NULL
-     AND assembly_level = 'Complete Genome'
-     GROUP BY taxons.id
-     HAVING num >= 1
-     ORDER BY name")
-  end
-
-  # returns a set of genome objects for a given species_id
-  def self.get_by_species_id(species_id)
-    Assembly.select("id, organism_name as name").joins(:lineage).where("assembly_level = 'Complete Genome' and lineages.species = ?", species_id)
-  end
-
   # fills in the taxon_id column
   def self.precompute_taxa
     taxa = connection.select_all("SELECT DISTINCT assembly_id, uniprot_entries.taxon_id

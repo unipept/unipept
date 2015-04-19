@@ -30,7 +30,6 @@ UnipeptWeb::Application.routes.draw do
 
   # pancore
   match '/peptidome/sequences/:assembly_id.:format', via: [:get, :post], :to => 'peptidome#get_sequence_ids_for_assembly', :constraints => { :assembly_id => /[0-z\._]+/ }
-  match '/peptidome/genomes/species/:species_id.:format', via: [:get, :post], :to => 'peptidome#get_genomes'
   match '/peptidome/unique_sequences', via: [:get, :post], :to => 'peptidome#get_unique_sequences'
   match '/peptidome/full_sequences', via: [:get, :post], :to => 'peptidome#get_sequences'
   match '/peptidome/convert_peptides', via: [:get, :post], :to => 'peptidome#convert_peptides'

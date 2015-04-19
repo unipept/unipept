@@ -11,7 +11,6 @@ class PeptidomeController < ApplicationController
       @tab = "peptidefinder"
     end
 
-    @species = Assembly.get_assembly_species().map{|g| [g["name"], g["id"]]}
     @genomes = Assembly.joins(:lineage).select("assemblies.organism_name as name, assemblies.id, assembly_level, lineages.species as species_id, lineages.genus as genus_id, lineages.order as order_id, lineages.class as class_id").uniq
 
     @taxa = Set.new
@@ -32,14 +31,6 @@ class PeptidomeController < ApplicationController
     cache = AssemblyCache.get_by_assembly_id(params[:assembly_id])
     respond_to do |format|
       format.json { render json: cache.json_sequences }
-    end
-  end
-
-  # Returns a list of genomes for a given species_id or genus_id
-  def get_genomes
-    genomes = Assembly.get_by_species_id(params[:species_id])
-    respond_to do |format|
-      format.json { render json: Oj.dump(genomes, mode: :compat) }
     end
   end
 
