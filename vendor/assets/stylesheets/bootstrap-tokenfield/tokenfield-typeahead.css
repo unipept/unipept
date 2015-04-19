@@ -99,7 +99,7 @@
 }
 .tt-suggestion {
   display: block;
-  padding: 3px 20px;
+  padding: 3px 15px;
 }
 .tt-suggestion.tt-cursor {
   color: #262626;
@@ -135,4 +135,9 @@
 }
 .tokenfield .twitter-typeahead .tt-suggestions {
   font-size: 14px;
+}
+.tokenfield .header {
+  margin: 3px 15px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid #D3D3D3;
 }

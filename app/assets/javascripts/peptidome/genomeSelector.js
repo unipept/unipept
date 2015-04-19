@@ -17,12 +17,12 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         pancore = args.pancore,
         ELEMENTS_SHOWN = 10,
         SEARCH_VALUES = {
-            complete : {attr: "assembly_level", value: "Complete Genome"},
-            scaffold : {attr: "assembly_level", value: "Scaffold"},
-            contig : {attr: "assembly_level", value: "Contig"},
-            chromosome : {attr: "assembly_level", value: "Chromosome"},
-            gaps : {attr: "assembly_level", value: "Chromosome with gaps"},
-            gapless : {attr: "assembly_level", value: "Gapless Chromosome"}
+            complete : {attr: "assembly_level", value: "Complete Genome", name: "Complete genome"},
+            scaffold : {attr: "assembly_level", value: "Scaffold", name: "Scaffold"},
+            contig : {attr: "assembly_level", value: "Contig", name: "Contig"},
+            chromosome : {attr: "assembly_level", value: "Chromosome", name: "Chromosome"},
+            gaps : {attr: "assembly_level", value: "Chromosome with gaps", name: "Chromosome with gaps"},
+            gapless : {attr: "assembly_level", value: "Gapless Chromosome", name: "Gapless chromosome"}
         };
 
     /*************** Private methods ***************/
@@ -49,21 +49,37 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
      * Initializes the typeahead and token stuff
      */
     function initTypeAhead() {
-        var searchTokens = [];
+        var taxaTokens = [];
         for (var taxonId in taxa) {
-            searchTokens.push({
+            taxaTokens.push({
                 label: taxa[taxonId].name,
                 value: "taxon:" + taxonId,
                 rank: taxa[taxonId].rank
             });
         }
-        var engine = new Bloodhound({
-          local: searchTokens,
+        var taxaEngine = new Bloodhound({
+          local: taxaTokens,
           limit: 10,
           datumTokenizer: Bloodhound.tokenizers.obj.whitespace("label"),
           queryTokenizer: Bloodhound.tokenizers.whitespace
         });
-        engine.initialize();
+        taxaEngine.initialize();
+
+        var filterTokens = [];
+        for (var filter in SEARCH_VALUES) {
+            filterTokens.push({
+                label: "is:" + filter,
+                value: "is:" + filter + " " + filter + " " + SEARCH_VALUES[filter].value,
+                obj: SEARCH_VALUES[filter]
+            });
+        }
+        var filterEngine = new Bloodhound({
+          local: filterTokens,
+          limit: 10,
+          datumTokenizer: Bloodhound.tokenizers.obj.whitespace("value"),
+          queryTokenizer: Bloodhound.tokenizers.whitespace
+        });
+        filterEngine.initialize();
 
         $("#genomeSelectorSearch").tokenfield({
             delimiter: " ",
@@ -75,19 +91,31 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                 highlight: true
             }, {
                 displayKey: 'label',
-                source: engine.ttAdapter(),
+                source: filterEngine.ttAdapter(),
                 templates: {
+                    header: "<h4 class='header'>Filters</h4>",
+                    suggestion: function (q) {
+                        return "<p>" + q.label + " – <i class='small'>" + q.obj.name + "</i></p>";
+                    }
+                }
+            }, {
+                displayKey: 'label',
+                source: taxaEngine.ttAdapter(),
+                templates: {
+                    header: "<h4 class='header'>Lineage</h4>",
                     suggestion: function (q) {
                         return "<p>" + q.label + " – <i class='small'>" + q.rank + "</i></p>";
                     }
-                  }
+                }
             }]
         })
         .on('tokenfield:createtoken', function (e) {
-            if (e.attrs.label.indexOf(":") !== -1) {
+            if (e.attrs.label.indexOf("taxon:") !== -1) {
                 var swap = e.attrs.value;
                 e.attrs.value = e.attrs.label;
                 e.attrs.label = swap;
+            } else if (e.attrs.label.indexOf("is:") !== -1) {
+                e.attrs.value = e.attrs.label;
             }
         })
         .on('tokenfield:createdtoken', function (e) {
@@ -107,7 +135,9 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             keyUpped(true);
         });
 
-        $("#genomeSelectorSearch-tokenfield").keyup(function () { keyUpped(false); });
+        $("#genomeSelectorSearch-tokenfield").keyup(function () {
+            keyUpped(false);
+        });
 
         function keyUpped(direct) {
             var list = $("#genomeSelectorSearch").tokenfield('getTokensList');
