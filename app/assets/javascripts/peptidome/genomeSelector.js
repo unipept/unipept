@@ -15,6 +15,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         data = args.data,
         taxa = args.taxa,
         pancore = args.pancore,
+        $popover,
         ELEMENTS_SHOWN = 10,
         SEARCH_VALUES = {
             complete : {attr: "assembly_level", value: "Complete Genome", name: "Complete genome"},
@@ -159,6 +160,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         });
 
         function keyUpped(direct) {
+            updateFilters();
             var list = $("#genomeSelectorSearch").tokenfield('getTokensList');
             list += " " + $("#genomeSelectorSearch-tokenfield").val();
             search(list, direct);
@@ -169,8 +171,6 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
      * Initializes the search settings popover
      */
     function initSettings() {
-        var $popover;
-
         // set up the form
         var content =
         $("#genomeSelector-popover-content");
@@ -211,7 +211,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             // classes
             content += "<div class='form-group'>";
             content += "<label for='classId' class='control-label'>Class</label>";
-            content += "<select class='form-control' id='classId' name='classId'>";
+            content += "<select class='form-control taxon-select' id='classId' name='classId'>";
             content += "<option value='taxon:any'>Any</option>";
             classes.forEach(function (taxon) {
                 content += "<option value='taxon:" + taxon + "'>" + taxa[taxon].name + "</option>";
@@ -222,7 +222,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             // orders
             content += "<div class='form-group'>";
             content += "<label for='orderId' class='control-label'>Order</label>";
-            content += "<select class='form-control' id='orderId' name='orderId'>";
+            content += "<select class='form-control taxon-select' id='orderId' name='orderId'>";
             content += "<option value='taxon:any'>Any</option>";
             orders.forEach(function (taxon) {
                 content += "<option value='taxon:" + taxon + "'>" + taxa[taxon].name + "</option>";
@@ -233,7 +233,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             // genera
             content += "<div class='form-group'>";
             content += "<label for='genusId' class='control-label'>Genus</label>";
-            content += "<select class='form-control' id='genusId' name='genusId'>";
+            content += "<select class='form-control taxon-select' id='genusId' name='genusId'>";
             content += "<option value='taxon:any'>Any</option>";
             genera.forEach(function (taxon) {
                 content += "<option value='taxon:" + taxon + "'>" + taxa[taxon].name + "</option>";
@@ -244,7 +244,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             // species
             content += "<div class='form-group'>";
             content += "<label for='speciesId' class='control-label'>Species</label>";
-            content += "<select class='form-control' id='speciesId' name='speciesId'>";
+            content += "<select class='form-control taxon-select' id='speciesId' name='speciesId'>";
             content += "<option value='taxon:any'>Any</option>";
             species.forEach(function (taxon) {
                 content += "<option value='taxon:" + taxon + "'>" + taxa[taxon].name + "</option>";
@@ -271,7 +271,9 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                     $("#genomeSelectorSearch").tokenfield('createToken', val);
                 }
 
-            })
+            });
+
+            updateFilters();
         }
     }
 
@@ -303,6 +305,24 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         });
     }
 
+    function updateFilters() {
+        if ($popover) {
+            $popover.find("#assemblyLevel").val("is:any");
+            $popover.find(".taxon-select").val("taxon:any");
+            var tokens = $("#genomeSelectorSearch").tokenfield('getTokens');
+            tokens.forEach(function (token) {
+                var parts = token.value.split(":");
+                if (parts.length === 2) {
+                    if (parts[0] === "is") {
+                        $popover.find("#assemblyLevel").val(token.value);
+                    } else if (parts[0] === "taxon") {
+                        taxa[parts[1]].rank
+                        $popover.find("#" + taxa[parts[1]].rank + "Id").val(token.value);
+                    }
+                }
+            });
+        }
+    }
     /**
      * Filters all genomes for the given search query
      */
