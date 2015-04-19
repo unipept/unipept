@@ -157,6 +157,9 @@ tbody.dragging tr {
     cursor: url(/closedhand.cur) 7 5, pointer !important;
     background-color: rgba(255, 255, 255, 0.8);
 }
+#genomeSelector-results {
+    margin-top: 10px;
+}
 #genomeSelector-results tr.genome {
     cursor: pointer;
     cursor: url(/openhand.cur), pointer;
@@ -188,4 +191,15 @@ tbody.dragging tr {
     color: @state-success-text;
     background-color: @state-success-bg;
     border-color: @state-success-border;
+}
+.search-settings {
+    cursor: pointer;
+    user-select: none;
+    color: @btn-primary-color;
+    background-color: @btn-primary-bg;
+    border-color: @btn-primary-border;
+}
+.search-settings:hover {
+    background-color: darken(@btn-primary-bg, 10%);
+    border-color: darken(@btn-primary-border, 12%);
 }

@@ -84,7 +84,13 @@
         <br>
         <div id="genomeSelector" class="genomeSelector">
             <div class="input-group" id="genomeSelector-search">
-            <%= search_field_tag(:genomeSelectorSearch, "", :placeholder => "type to filter the results", :class => "form-control") %><span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-search"></span>
+                </span>
+                <%= search_field_tag(:genomeSelectorSearch, "", :placeholder => "type to filter the results", :class => "form-control") %>
+                <span class="input-group-addon search-settings">
+                    <span class="glyphicon glyphicon-cog"></span>
+                </span>
             </div>
             <table class="table table-condensed genomes-table" id="genomeSelector-results">
                 <thead>
@@ -114,7 +120,7 @@
             <thead>
               <tr>
                 <th class="handle">
-                  <button type="button" id='addMyGenomeButton' class='btn btn-primary btn-xs btn-animate' data-toggle="button"><span class='glyphicon glyphicon-plus grow'></span></button>
+                  <button type="button" id='addMyGenomeButton' class='btn btn-primary btn-xs' data-toggle="button"><span class='glyphicon glyphicon-plus'></span></button>
                 </th>
                 <th class="name">My genomes <span id="my-genomes-help" class='glyphicon glyphicon-info-sign' title='You can easily add other genomes yourself! Just select a FASTA-file containing one or more proteins for processing and it will be stored in your browser. After adding them to My genomes, you can simply drag them to the table on the right as you would with other genomes.'></span></th>
                 <th class="status"></th>
@@ -127,31 +133,31 @@
           <div id="mygenomes-popover-head" class="hide">Add your own genome</div>
           <div id="mygenomes-popover-content" class="hide">
             <form>
-            <div class="form-group">
-              <label for="myGenomeName" class="control-label">Name</label>
-              <input type="text" id="myGenomeName" class="form-control" placeholder="name" data-toggle="tooltip" title="Enter a name. The one of the organism would be a good choice.">
-            </div>
-            <div class="form-group">
-              <label for="myGenomeFile" class="control-label"><span class="initialism">FASTA</span> file</label>
-              <div class="input-group"  data-toggle="tooltip" title="Select a FASTA file containing one or more protein sequences.">
-                <span class="input-group-btn">
-                  <span class="btn btn-default btn-file">
-                    Browse… <input type="file" id="myGenomeFile" multiple>
-                  </span>
-                </span>
-                <input type="text" class="form-control" readonly="">
-              </div>
-            </div>
-            <div class="form-group text-center">
-              <button type="button" id="processMyGenomeButton" class="btn btn-primary form-control">Process <span class="initialism">FASTA</span> file</button>
-            </div>
-            <div id="myGenomeProgress" class="progress hide">
-              <div class="progress-bar progress-bar-striped active"  role="progressbar" style="width: 45%">
-                <span></span>
-              </div>
-            </div>
-            <small><span class="glyphicon glyphicon-info-sign"></span> The genomes you add will only be visible in your browser. Nothing will be stored on the Unipept servers.</small>
-          </form>
+                <div class="form-group">
+                  <label for="myGenomeName" class="control-label">Name</label>
+                  <input type="text" id="myGenomeName" class="form-control" placeholder="name" data-toggle="tooltip" title="Enter a name. The one of the organism would be a good choice.">
+                </div>
+                <div class="form-group">
+                  <label for="myGenomeFile" class="control-label"><span class="initialism">FASTA</span> file</label>
+                  <div class="input-group"  data-toggle="tooltip" title="Select a FASTA file containing one or more protein sequences.">
+                    <span class="input-group-btn">
+                      <span class="btn btn-default btn-file">
+                        Browse… <input type="file" id="myGenomeFile" multiple>
+                      </span>
+                    </span>
+                    <input type="text" class="form-control" readonly="">
+                  </div>
+                </div>
+                <div class="form-group text-center">
+                  <button type="button" id="processMyGenomeButton" class="btn btn-primary form-control">Process <span class="initialism">FASTA</span> file</button>
+                </div>
+                <div id="myGenomeProgress" class="progress hide">
+                  <div class="progress-bar progress-bar-striped active"  role="progressbar" style="width: 45%">
+                    <span></span>
+                  </div>
+                </div>
+                <small><span class="glyphicon glyphicon-info-sign"></span> The genomes you add will only be visible in your browser. Nothing will be stored on the Unipept servers.</small>
+            </form>
           </div>
         </div>
       </div>

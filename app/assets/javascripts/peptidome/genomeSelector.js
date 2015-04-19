@@ -23,7 +23,11 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             chromosome : {attr: "assembly_level", value: "Chromosome", name: "Chromosome"},
             gaps : {attr: "assembly_level", value: "Chromosome with gaps", name: "Chromosome with gaps"},
             gapless : {attr: "assembly_level", value: "Gapless Chromosome", name: "Gapless chromosome"}
-        };
+        },
+        classes = [],
+        orders = [],
+        genera = [],
+        species = [];
 
     /*************** Private methods ***************/
 
@@ -32,8 +36,19 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
      */
     function init() {
         data.sort(function (a, b) { return d3.ascending(a.name, b.name) });
+        for (var taxon in taxa) {
+            if (taxa[taxon].rank === "class") classes.push(taxon);
+            else if (taxa[taxon].rank === "order") orders.push(taxon);
+            else if (taxa[taxon].rank === "genus") genera.push(taxon);
+            else if (taxa[taxon].rank === "species") species.push(taxon);
+        }
+        classes.sort(function (a, b) { return d3.ascending(taxa[a].name, taxa[b].name) });
+        orders.sort(function (a, b) { return d3.ascending(taxa[a].name, taxa[b].name) });
+        genera.sort(function (a, b) { return d3.ascending(taxa[a].name, taxa[b].name) });
+        species.sort(function (a, b) { return d3.ascending(taxa[a].name, taxa[b].name) });
 
         initTypeAhead();
+        initSettings();
         initCheckAll();
         initAddAll();
 
@@ -143,6 +158,104 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             var list = $("#genomeSelectorSearch").tokenfield('getTokensList');
             list += " " + $("#genomeSelectorSearch-tokenfield").val();
             search(list, direct);
+        }
+    }
+
+    /**
+     * Initializes the search settings popover
+     */
+    function initSettings() {
+        var $popover;
+
+        // set up the form
+        var content =
+        $("#genomeSelector-popover-content");
+
+        $(".search-settings").popover({
+            html : true,
+            trigger : "manual",
+            title: "Filter settings",
+            content: createContent,
+            container: "body"
+        });
+
+        // enable settings button
+        $(".search-settings").click(function () {
+            if (!$popover) {
+                $(".search-settings").popover("show");
+            } else {
+                $popover.toggleClass("hide");
+            }
+        });
+
+        // add pop-over behaviour
+        $(".search-settings").on("shown.bs.popover", initPopoverBehaviour);
+
+        function createContent() {
+            var content = "<form>";
+            // assembly level
+            content += "<div class='form-group'>";
+            content += "<label for='assemblyLevel' class='control-label'>Assembly level</label>";
+            content += "<select class='form-control' id='assemblyLevel' name='assemblyLevel'>";
+            content += "<option value='any'>Any</option>";
+            for (var option in SEARCH_VALUES) {
+                content += "<option value='is:" + option + "'>" + SEARCH_VALUES[option].value + "</option>";
+            }
+            content += "</select>"
+            content += "</div>";
+
+            // classes
+            content += "<div class='form-group'>";
+            content += "<label for='classId' class='control-label'>Class</label>";
+            content += "<select class='form-control' id='classId' name='classId'>";
+            content += "<option value='any'>Any</option>";
+            classes.forEach(function (taxon) {
+                content += "<option value='taxon:" + taxon + "'>" + taxa[taxon].name + "</option>";
+            });
+            content += "</select>"
+            content += "</div>";
+
+            // orders
+            content += "<div class='form-group'>";
+            content += "<label for='orderId' class='control-label'>Order</label>";
+            content += "<select class='form-control' id='orderId' name='orderId'>";
+            content += "<option value='any'>Any</option>";
+            orders.forEach(function (taxon) {
+                content += "<option value='taxon:" + taxon + "'>" + taxa[taxon].name + "</option>";
+            });
+            content += "</select>"
+            content += "</div>";
+
+            // genera
+            content += "<div class='form-group'>";
+            content += "<label for='genusId' class='control-label'>Genus</label>";
+            content += "<select class='form-control' id='genusId' name='genusId'>";
+            content += "<option value='any'>Any</option>";
+            genera.forEach(function (taxon) {
+                content += "<option value='taxon:" + taxon + "'>" + taxa[taxon].name + "</option>";
+            });
+            content += "</select>"
+            content += "</div>";
+
+            // species
+            content += "<div class='form-group'>";
+            content += "<label for='speciesId' class='control-label'>Species</label>";
+            content += "<select class='form-control' id='speciesId' name='speciesId'>";
+            content += "<option value='any'>Any</option>";
+            species.forEach(function (taxon) {
+                content += "<option value='taxon:" + taxon + "'>" + taxa[taxon].name + "</option>";
+            });
+            content += "</select>"
+            content += "</div>";
+
+            content += "</form>";
+            return content;
+        }
+
+        function initPopoverBehaviour() {
+            $popover = $(".popover-content #assemblyLevel").parents(".popover");
+
+            // add event listeners
         }
     }
 
