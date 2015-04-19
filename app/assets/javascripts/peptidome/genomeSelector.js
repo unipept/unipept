@@ -37,7 +37,12 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         initCheckAll();
         initAddAll();
 
-        drawList(data);
+        // we have to wait till everything is painted because there's a bug
+        // that miscalculates the width otherwise
+        requestAnimationFrame(function () {
+            $("#genomeSelectorSearch").tokenfield('createToken', 'is:complete');
+        });
+
     }
 
     /**
@@ -145,12 +150,15 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
     function search(searchString, direct) {
         var wait = direct ? 0 : 500;
         delay(function doSearch() {
-            var tokens = searchString.toLowerCase().split(" ");
-            var metaTokens = tokens.filter(function (token) {
-                return token.indexOf(":") !== -1;
-            });
-            var textTokens = tokens.filter(function (token) {
-                return token.indexOf(":") === -1;
+            var tokens = searchString.toLowerCase().split(" "),
+                metaTokens = [],
+                textTokens = [];
+            tokens.forEach(function (token) {
+                if (token.indexOf(":") !== -1) {
+                    metaTokens.push(token);
+                } else {
+                    textTokens.push(token);
+                }
             });
             var results = data;
             metaTokens.forEach(function filter (token) {
