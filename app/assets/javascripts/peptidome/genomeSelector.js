@@ -89,7 +89,12 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             if (e.attrs.value.indexOf("taxon") === 0) {
                 $(e.relatedTarget).addClass('token-taxon');
             } else if (e.attrs.value.indexOf("is") === 0) {
-                $(e.relatedTarget).addClass('token-filter');
+                if (SEARCH_VALUES[e.attrs.value.split(":")[1]]) {
+                    $(e.relatedTarget).addClass('token-filter');
+                } else {
+                    $(e.relatedTarget).addClass('invalid');
+                }
+
             }
             keyUpped(true);
         })
