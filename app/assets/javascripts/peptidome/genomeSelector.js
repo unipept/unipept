@@ -256,6 +256,12 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             $popover = $(".popover-content #assemblyLevel").parents(".popover");
 
             // add event listeners
+            $popover.find("select").change(function () {
+                var val = $(this).val();
+                if (val !== "any") {
+                    $("#genomeSelectorSearch").tokenfield('createToken', val);
+                }
+            })
         }
     }
 
