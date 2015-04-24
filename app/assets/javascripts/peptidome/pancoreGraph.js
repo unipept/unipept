@@ -26,7 +26,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         unicoreColor = "#2ca02c"; // green
 
     // Sizes
-    var margin = {top: 20, right: 40, bottom: 170, left: 60},
+    var margin = {top: 20, right: 40, bottom: 170, left: 68},
         width = fullWidth - margin.left - margin.right,
         height = fullHeight - margin.top - margin.bottom,
         mouseOverWidth;
