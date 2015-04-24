@@ -95,7 +95,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         $("#genomeSelectorSearch").tokenfield({
             delimiter: " ",
             beautify: false,
-            minWidth: 130,
+            minWidth: 330,
             createTokensOnBlur: true,
             typeahead: [{
                 hint: false,
