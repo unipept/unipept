@@ -189,6 +189,16 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         // add pop-over behaviour
         $(".search-settings").on("shown.bs.popover", initPopoverBehaviour);
 
+        // add pop-over hide behaviour
+        $(document).click(function(e) {
+            if ($popover &&
+                !$popover.hasClass("hide") &&
+                !$popover.get(0).contains(e.target) &&
+                !$(".search-settings").get(0).contains(e.target)) {
+                $popover.addClass('hide');
+            }
+        });
+
         function createContent() {
             var content = "<form>";
             // assembly level
