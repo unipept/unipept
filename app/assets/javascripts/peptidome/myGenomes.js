@@ -121,6 +121,16 @@ var constructMyGenomes = function constructMyGenomes(args) {
         // hide the popover
         $popover = $(".popover-content #myGenomeName").parents(".popover");
 
+        // add pop-over hide behaviour
+        $(document).click(function(e) {
+            if ($popover &&
+                !$popover.hasClass("hide") &&
+                !$popover.get(0).contains(e.target) &&
+                !$myGenomesButton.get(0).contains(e.target)) {
+                $popover.addClass('hide');
+            }
+        });
+
         // enable the tooltips
         $(".popover-content #myGenomeName").tooltip({placement : "right", trigger : "hover", container : "body"});
         $(".popover-content #myGenomeFile").parents(".input-group").tooltip({placement : "right", trigger : "hover", container : "body"});
