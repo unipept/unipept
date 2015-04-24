@@ -217,7 +217,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * Adds actions the currently shown popover
      */
     function addPopoverBehaviour() {
-        $(".popover").prepend("<button type='button' class='close' style='margin-right: 5px'>&times;</button>");
+        $("#popovers .popover").prepend("<button type='button' class='close' style='margin-right: 5px'>&times;</button>");
         $(".close").click(that.removePopoversAndHighlights);
         $("#download-peptides").mouseenter(function () {
             if (!$("#download-peptides").hasClass("open")) {
@@ -272,7 +272,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             target.popover("show");
 
             // Since bootstrap 3.2, the position of the bar element was calculated incorrectly, so we set the popover on the correct place manually.
-            $popover = $(".popover");
+            $popover = $("#popovers .popover");
             $popover.css("left", dotOffset.left - graphOffset.left + 20);
             $popover.css("top", -75 + height / 2);
             $popover.find(".arrow").css("top", "50%");
