@@ -93,7 +93,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         filterEngine.initialize();
 
         $("#genomeSelectorSearch").tokenfield({
-            delimiter: " ",
+            delimiter: "-",
             beautify: false,
             minWidth: 330,
             createTokensOnBlur: true,
@@ -333,7 +333,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
     function search(searchString, direct) {
         var wait = direct ? 0 : 500;
         delay(function doSearch() {
-            var tokens = searchString.toLowerCase().split(" "),
+            var tokens = searchString.replace(/-/g, " ").toLowerCase().split(" "),
                 metaTokens = [],
                 textTokens = [];
             tokens.forEach(function (token) {
