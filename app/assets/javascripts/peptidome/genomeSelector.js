@@ -380,7 +380,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
 
         // build table
         selectedResults.forEach(function (result) {
-            resultString += "<tr class='genome' data-id='" + result.id + "' data-name='" + result.name + "'>";
+            resultString += "<tr class='genome' data-id='" + result.id + "' data-name=\"" + result.name + "\">";
             resultString += "<td><input type='checkbox' class='check'></input></td>";
             resultString += "<td>" + result.name + "<br>";
             resultString += "<span class='lineage'>" + getLineage(result) + "</span></td>";
