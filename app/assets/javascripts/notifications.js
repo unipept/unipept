@@ -1,3 +1,13 @@
+/**
+ * Shows a notification in the bottom left corner
+ *
+ * @param <String> content The string to show
+ * @param <Boolean> properties.autoHide Whether to automatically hide the
+ *       notification. Default is true.
+ * @param <Boolean> properties.loading Whether a loading indicator should be
+ *       shown. Default is false.
+ * @return <Notification> $notification
+ */
 function showNotification(content, properties) {
     var autoHide = properties.autoHide === undefined ? true : properties.autoHide;
     var loading = properties.loading === undefined ? true : properties.loading;

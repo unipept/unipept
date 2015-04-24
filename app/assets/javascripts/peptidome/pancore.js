@@ -19,6 +19,7 @@ var constructPancore = function constructPancore(args) {
         promisesLoading = new Map(),
         promisesDownload = new Map(),
         isLoading = false,
+        $loadingNotification,
         rank = 0,
         lca = "",
         genomeSelector,
@@ -339,8 +340,13 @@ var constructPancore = function constructPancore(args) {
         isLoading = loading;
         if (loading) {
             table.setEnabled(false);
+            $loadingNotification = showNotification("Loading genomes...", {
+                loading: true,
+                autoHide: false
+            });
         } else {
             table.setEnabled(true);
+            $loadingNotification.hide();
 
             setTimeout(function () { sendToWorker("getUniqueSequences", {order : table.getOrder(), force : false }); }, 1000);
         }
