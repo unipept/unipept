@@ -136,11 +136,11 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             // not a special token, yet
             if (parts.length === 1) {
                 // the name is a taxon name
-                var taxonId = getSpeciesId($("#genomeSelectorSearch-tokenfield").val());
+                var taxonId = getTaxonId($("#genomeSelectorSearch-tokenfield").val());
                 if (taxonId !== -1 ) {
                     e.attrs.value = "taxon:" + taxonId;
                     e.attrs.label = taxa[taxonId].name;
-                    parts[0] = "taxon:";
+                    parts[0] = "taxon";
                     parts[1] = taxonId;
                     $("#genomeSelectorSearch-tokenfield").val("")
                 } else {
@@ -540,10 +540,11 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
      *
      * @param <String> name The name to search for
      */
-    function getSpeciesId(name) {
-        for (var id in species) {
-            if (taxa[species[id]].name.toLowerCase() === name.toLowerCase().trim()) {
-                return species[id];
+    function getTaxonId(name) {
+        for (var id in taxa) {
+            if (taxa[id].name.toLowerCase() === name.toLowerCase().trim()
+                && taxa[id].rank !== "genus") {
+                return id;
             }
         }
         return -1;
