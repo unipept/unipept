@@ -378,6 +378,9 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         $resultTable.find(".result-count").text(results.length);
         selectedResults = results.slice(0, ELEMENTS_SHOWN);
 
+        // uncheck checkbox
+        $("#genomeSelector .check-all").prop("checked", false);
+
         // build table
         selectedResults.forEach(function (result) {
             resultString += "<tr class='genome' data-id='" + result.id + "' data-name=\"" + result.name + "\">";
