@@ -24,7 +24,9 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             contig : {attr: "assembly_level", value: "Contig", name: "Contig"},
             chromosome : {attr: "assembly_level", value: "Chromosome", name: "Chromosome"},
             gaps : {attr: "assembly_level", value: "Chromosome with gaps", name: "Chromosome with gaps"},
-            gapless : {attr: "assembly_level", value: "Gapless Chromosome", name: "Gapless chromosome"}
+            gapless : {attr: "assembly_level", value: "Gapless Chromosome", name: "Gapless chromosome"},
+            full : {attr: "genome_representation", value: "full", name: "Full genome"},
+            partial : {attr: "genome_representation", value: "partial", name: "Partial genome"}
         },
         classes = [],
         orders = [],
@@ -142,7 +144,16 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                 // remove tokens of same kind
                 var tokens = $("#genomeSelectorSearch").tokenfield('getTokens');
                 tokens = tokens.filter(function (token) {
-                    return token.value.indexOf(parts[0] + ":") !== 0;
+                    var tokenSplit = token.value.split(":");
+                    if (parts[0] !== tokenSplit[0]) {
+                        return true;
+                    }
+                    if (parts[0] === "taxon") {
+                        return tokenSplit[0] !== "taxon";
+                    } if (SEARCH_VALUES[parts[1]]) {
+                        return SEARCH_VALUES[tokenSplit[1]] &&
+                            SEARCH_VALUES[tokenSplit[1]].attr !== SEARCH_VALUES[parts[1]].attr;
+                    }
                 });
                 $("#genomeSelectorSearch").tokenfield('setTokens', tokens);
                 if (parts[1] === "any") return false;
@@ -224,7 +235,22 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             content += "<select class='form-control' id='assemblyLevel' name='assemblyLevel'>";
             content += "<option value='is:any'>Any</option>";
             for (var option in SEARCH_VALUES) {
-                content += "<option value='is:" + option + "'>" + SEARCH_VALUES[option].value + "</option>";
+                if (SEARCH_VALUES[option].attr === "assembly_level") {
+                    content += "<option value='is:" + option + "'>" + SEARCH_VALUES[option].value + "</option>";
+                }
+            }
+            content += "</select>"
+            content += "</div>";
+
+            // genome representation
+            content += "<div class='form-group'>";
+            content += "<label for='genomeRepresentation' class='control-label'>Genome representation</label>";
+            content += "<select class='form-control' id='genomeRepresentation' name='genomeRepresentation'>";
+            content += "<option value='is:any'>Any</option>";
+            for (var option in SEARCH_VALUES) {
+                if (SEARCH_VALUES[option].attr === "genome_representation") {
+                    content += "<option value='is:" + option + "'>" + SEARCH_VALUES[option].name + "</option>";
+                }
             }
             content += "</select>"
             content += "</div>";
@@ -308,13 +334,18 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
     function updateFilters() {
         if ($popover) {
             $popover.find("#assemblyLevel").val("is:any");
+            $popover.find("#genomeRepresentation").val("is:any");
             $popover.find(".taxon-select").val("taxon:any");
             var tokens = $("#genomeSelectorSearch").tokenfield('getTokens');
             tokens.forEach(function (token) {
                 var parts = token.value.split(":");
                 if (parts.length === 2) {
                     if (parts[0] === "is") {
-                        $popover.find("#assemblyLevel").val(token.value);
+                        if (SEARCH_VALUES[parts[1]].attr === "assembly_level") {
+                            $popover.find("#assemblyLevel").val(token.value);
+                        } else if (SEARCH_VALUES[parts[1]].attr === "genome_representation") {
+                            $popover.find("#genomeRepresentation").val(token.value);
+                        }
                     } else if (parts[0] === "taxon") {
                         taxa[parts[1]].rank
                         $popover.find("#" + taxa[parts[1]].rank + "Id").val(token.value);
