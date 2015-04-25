@@ -122,6 +122,22 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         })
         .on('tokenfield:createtoken', function (e) {
             var parts = e.attrs.value.split(":");
+            // not a special token, yet
+            if (parts.length === 1) {
+                // the name is a taxon name
+                var taxonId = getSpeciesId($("#genomeSelectorSearch-tokenfield").val());
+                if (taxonId !== -1 ) {
+                    e.attrs.value = "taxon:" + taxonId;
+                    e.attrs.label = taxa[taxonId].name;
+                    parts[0] = "taxon:";
+                    parts[1] = taxonId;
+                    $("#genomeSelectorSearch-tokenfield").val("")
+                } else {
+                    $("#genomeSelectorSearch-tokenfield")
+                        .val($("#genomeSelectorSearch-tokenfield").val() + " ");
+                    return false;
+                }
+            }
             if (parts.length === 2) {
                 // remove tokens of same kind
                 var tokens = $("#genomeSelectorSearch").tokenfield('getTokens');
@@ -130,10 +146,6 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                 });
                 $("#genomeSelectorSearch").tokenfield('setTokens', tokens);
                 if (parts[1] === "any") return false;
-            } else {
-                $("#genomeSelectorSearch-tokenfield")
-                    .val($("#genomeSelectorSearch-tokenfield").val() + " ");
-                return false;
             }
         })
         .on('tokenfield:createdtoken', function (e) {
@@ -491,6 +503,21 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         function createLink(taxonId) {
             return "<a href='#' class='lineage-link' data-id='" + taxonId + "'>" + taxa[taxonId].name + "</a>";
         }
+    }
+
+    /**
+     * Searches through the list of species if it contains the given name and
+     * returns the taxonId if it does. Returns -1 in the other case.
+     *
+     * @param <String> name The name to search for
+     */
+    function getSpeciesId(name) {
+        for (var id in species) {
+            if (taxa[species[id]].name.toLowerCase() === name.toLowerCase().trim()) {
+                return species[id];
+            }
+        }
+        return -1;
     }
 
     /*************** Public methods ***************/
