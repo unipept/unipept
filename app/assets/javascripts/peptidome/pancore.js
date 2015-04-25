@@ -28,10 +28,11 @@ var constructPancore = function constructPancore(args) {
         myGenomes,
         worker;
 
-    // notification
+    // notifications
     var $loadingNotification,
+        $pancoreNotification,
         $autosortNotification,
-        $pancoreNotification;
+        $similarityNotification;
 
     /*************** Private methods ***************/
 
@@ -321,9 +322,14 @@ var constructPancore = function constructPancore(args) {
      * @param <Boolean> simData.fullMatrix Is this the full matrix?
      * @param <SimObject> simData.data A single row or full matrix of similarity
      *      data!
+     * @param <Boolean> simData.final Is this the final batch?
      */
     function processSimilarityData(simData) {
         matrix.addSimilarityData(simData.fullMatrix, simData.data);
+        if (simData.final && $similarityNotification) {
+            $similarityNotification.hide();
+            $similarityNotification = undefined;
+        }
     }
 
     /**
@@ -501,9 +507,15 @@ var constructPancore = function constructPancore(args) {
     };
 
     /**
-     * Requests a similarity calculation to the webserver
+     * Requests a similarity calculation to the worker
      */
     that.requestSimilarityCalculation = function requestSimilarityCalculation() {
+        if (!$similarityNotification) {
+            $similarityNotification = showNotification("Calculating similarities...", {
+                loading: true,
+                autoHide: false
+            });
+        }
         sendToWorker("calculateSimilarity");
     };
 

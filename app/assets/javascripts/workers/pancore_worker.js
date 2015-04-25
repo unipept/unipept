@@ -205,7 +205,8 @@ var matrixBackend = function matrixBackend(data) {
             id,
             peptides,
             id2,
-            similarity;
+            similarity,
+            finalBatch;
 
         // Be a bit clever with sending data
         if (idsToCalculate.length > 3) {
@@ -217,15 +218,23 @@ var matrixBackend = function matrixBackend(data) {
             peptides = data[id].peptide_list;
 
             for (id2 in matrixObject) {
-                similarity = genomeSimilarity(peptides, data[id2].peptide_list);
-                matrixObject[id][id2] = similarity;
-                matrixObject[id2][id] = similarity;
+                if (matrixObject[id][id2] === -1) {
+                    if ("" + id === "" + id2) {
+                        similarity = 1;
+                    } else {
+                        similarity = genomeSimilarity(peptides, data[id2].peptide_list);
+                    }
+
+                    matrixObject[id][id2] = similarity;
+                    matrixObject[id2][id] = similarity;
+                }
             }
 
             if (!sendFullMatrix) {
                 dataQueue[id] = matrixObject[id];
-                if (x % 3 === 2 || x === idsToCalculate.length - 1) {
-                    that.sendRows(dataQueue);
+                finalBatch = (x === idsToCalculate.length - 1)
+                if (x % 3 === 2 || finalBatch) {
+                    that.sendRows(dataQueue, finalBatch);
                     dataQueue = {};
                 }
             }
@@ -245,16 +254,25 @@ var matrixBackend = function matrixBackend(data) {
      * @param <SimObject> m The full similarity matrix to send
      */
     that.sendMatrix = function sendMatrix(m) {
-        sendToHost('processSimilarityData', {'fullMatrix' : true, 'data': m});
+        sendToHost('processSimilarityData', {
+            'fullMatrix' : true,
+            'data': m,
+            'final' : true
+        });
     };
 
     /**
      * Sends a single row of similarities to the client
      *
      * @param <Map> dataQueue The list of id to data mappings
+     * @param <Boolean> final The final batch?
      */
-    that.sendRows = function sendRows(dataQueue) {
-        sendToHost('processSimilarityData', {'fullMatrix' : false, 'data' : dataQueue});
+    that.sendRows = function sendRows(dataQueue, final) {
+        sendToHost('processSimilarityData', {
+            'fullMatrix' : false,
+            'data' : dataQueue,
+            'final' : final
+        });
     };
 
     /**
