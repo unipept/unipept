@@ -161,6 +161,9 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             }
             keyUpped(true);
         })
+        .on('tokenfield:edittoken', function (e) {
+            e.attrs.value = e.attrs.label;
+        })
         .on('tokenfield:removedtoken', function (e) {
             keyUpped(true);
         });
