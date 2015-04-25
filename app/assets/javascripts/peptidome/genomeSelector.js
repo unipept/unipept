@@ -205,17 +205,15 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         // add pop-over behaviour
         $(".search-settings").on("shown.bs.popover", initPopoverBehaviour);
 
-        // add pop-over hide behaviour
-        $(document).click(function(e) {
-            if ($popover &&
-                !$popover.hasClass("hide") &&
-                !$popover.get(0).contains(e.target) &&
-                !$(".search-settings").get(0).contains(e.target)) {
-                $popover.addClass('hide');
-            }
-        });
-
+        // creates the html content for the popover
         function createContent() {
+            var ranks = ["Class", "Order", "Genus", "Species"],
+            lists = {
+                "Class" : classes,
+                "Order" : orders,
+                "Genus" : genera,
+                "Species" : species
+            }
             var content = "<form>";
             // assembly level
             content += "<div class='form-group'>";
@@ -228,49 +226,18 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             content += "</select>"
             content += "</div>";
 
-            // classes
-            content += "<div class='form-group'>";
-            content += "<label for='classId' class='control-label'>Class</label>";
-            content += "<select class='form-control taxon-select' id='classId' name='classId'>";
-            content += "<option value='taxon:any'>Any</option>";
-            classes.forEach(function (taxon) {
-                content += "<option value='taxon:" + taxon + "'>" + taxa[taxon].name + "</option>";
+            ranks.forEach(function (rank) {
+                var id = rank.toLowerCase() + "Id";
+                content += "<div class='form-group'>";
+                content += "<label for='" + id + "' class='control-label'>" + rank + "</label>";
+                content += "<select class='form-control taxon-select' id='" + id + "' name='" + id + "'>";
+                content += "<option value='taxon:any'>Any</option>";
+                lists[rank].forEach(function (taxon) {
+                    content += "<option value='taxon:" + taxon + "'>" + taxa[taxon].name + "</option>";
+                });
+                content += "</select>"
+                content += "</div>";
             });
-            content += "</select>"
-            content += "</div>";
-
-            // orders
-            content += "<div class='form-group'>";
-            content += "<label for='orderId' class='control-label'>Order</label>";
-            content += "<select class='form-control taxon-select' id='orderId' name='orderId'>";
-            content += "<option value='taxon:any'>Any</option>";
-            orders.forEach(function (taxon) {
-                content += "<option value='taxon:" + taxon + "'>" + taxa[taxon].name + "</option>";
-            });
-            content += "</select>"
-            content += "</div>";
-
-            // genera
-            content += "<div class='form-group'>";
-            content += "<label for='genusId' class='control-label'>Genus</label>";
-            content += "<select class='form-control taxon-select' id='genusId' name='genusId'>";
-            content += "<option value='taxon:any'>Any</option>";
-            genera.forEach(function (taxon) {
-                content += "<option value='taxon:" + taxon + "'>" + taxa[taxon].name + "</option>";
-            });
-            content += "</select>"
-            content += "</div>";
-
-            // species
-            content += "<div class='form-group'>";
-            content += "<label for='speciesId' class='control-label'>Species</label>";
-            content += "<select class='form-control taxon-select' id='speciesId' name='speciesId'>";
-            content += "<option value='taxon:any'>Any</option>";
-            species.forEach(function (taxon) {
-                content += "<option value='taxon:" + taxon + "'>" + taxa[taxon].name + "</option>";
-            });
-            content += "</select>"
-            content += "</div>";
 
             content += "</form>";
             return content;
@@ -278,6 +245,16 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
 
         function initPopoverBehaviour() {
             $popover = $(".popover-content #assemblyLevel").parents(".popover");
+
+            // add pop-over hide behaviour
+            $(document).click(function(e) {
+                if ($popover &&
+                    !$popover.hasClass("hide") &&
+                    !$popover.get(0).contains(e.target) &&
+                    !$(".search-settings").get(0).contains(e.target)) {
+                    $popover.addClass('hide');
+                }
+            });
 
             // add event listeners
             $popover.find("select").change(function () {
@@ -349,7 +326,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
     function search(searchString, direct) {
         var wait = direct ? 0 : 500;
         delay(function doSearch() {
-            var tokens = searchString.replace(/-/g, " ").toLowerCase().split(" "),
+            var tokens = searchString.toLowerCase().split(" "),
                 metaTokens = [],
                 textTokens = [];
             tokens.forEach(function (token) {
