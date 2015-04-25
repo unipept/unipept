@@ -484,6 +484,12 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         return {name : $row.data("name"), id : $row.data("id")};
     }
 
+    /**
+     * Returns the lineage of the given organism as a string containing links
+     * to each of the ranks.
+     *
+     * @param <Organism> organism The organism to create the lineage for
+     */
     function getLineage(organism) {
         var result = [];
         if (organism.class_id !== null && organism.class_id > 0) {
@@ -501,7 +507,8 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         return result.join(" / ");
 
         function createLink(taxonId) {
-            return "<a href='#' class='lineage-link' data-id='" + taxonId + "'>" + taxa[taxonId].name + "</a>";
+            var name = taxa[taxonId].name;
+            return "<a href='#' class='lineage-link' title=\"Show all " + name + "\" data-id='" + taxonId + "'>" + name + "</a>";
         }
     }
 
