@@ -6,6 +6,8 @@
  *          "name":"Campylobacter jejuni","order_id":213849,"species_id":197}
  * @param <Hash> args.taxa is a list of key-value pairs mapping
  *          taxon id's to an object containing name and rank
+ * @param <Map> args.genomes a map of genomes present in the analysis
+ * @param <Pancore> args.pancore the pancore object
  * @return <GenomeSelector> that The constructed selectionTree object
  */
 var constructGenomeSelector = function constructGenomeSelector(args) {
@@ -15,6 +17,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         data = args.data,
         taxa = args.taxa,
         pancore = args.pancore,
+        genomes = args.genomes,
         $popover,
         addAll = false,
         ELEMENTS_SHOWN = 100,
@@ -86,6 +89,12 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                 obj: SEARCH_VALUES[filter]
             });
         }
+        filterTokens.push({
+            label: "not:added",
+            value: "not:added",
+            search: "not:added added",
+            obj: {name: "not yet in analysis"}
+        });
         var filterEngine = new Bloodhound({
           local: filterTokens,
           limit: 10,
@@ -167,6 +176,10 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                 if (SEARCH_VALUES[parts[1]]) {
                     $(e.relatedTarget).addClass('token-filter');
                 } else {
+                    $(e.relatedTarget).addClass('invalid');
+                }
+            } else if (parts[0] === "not") {
+                if (parts[1] !== "added") {
                     $(e.relatedTarget).addClass('invalid');
                 }
             }
@@ -377,6 +390,10 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                     var id = +(meta[1]);
                     results = results.filter(function (element) {
                         return element[taxa[id].rank + "_id"] === id;
+                    });
+                } else if (meta[0] === "not") {
+                    results = results.filter(function (element) {
+                        return !genomes.has(element.id);
                     });
                 } else {
                     if (meta[0] === "is" && SEARCH_VALUES[meta[1]]) {

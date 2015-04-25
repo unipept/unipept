@@ -40,6 +40,7 @@ var constructPancore = function constructPancore(args) {
         genomeSelector = constructGenomeSelector({
             data : args.data,
             taxa : args.taxa,
+            genomes: genomes,
             pancore : that
         });
 
