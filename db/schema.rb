@@ -13,6 +13,32 @@
 
 ActiveRecord::Schema.define(version: 0) do
 
+  create_table "assemblies", force: true do |t|
+    t.string  "genbank_assembly_accession", limit: 16
+    t.string  "refseq_assembly_accession",  limit: 16
+    t.integer "taxon_id",                   limit: 3
+    t.string  "genome_representation",      limit: 7,   null: false
+    t.string  "assembly_level",             limit: 20,  null: false
+    t.string  "assembly_name",              limit: 104, null: false
+    t.string  "organism_name",              limit: 86,  null: false
+    t.string  "biosample",                  limit: 14
+  end
+
+  add_index "assemblies", ["taxon_id"], name: "fk_taxons_assemblies_idx", using: :btree
+
+  create_table "assembly_caches", primary_key: "assembly_id", force: true do |t|
+    t.text "json_sequences", limit: 16777215, null: false
+  end
+
+  create_table "assembly_sequences", force: true do |t|
+    t.integer "assembly_id",                                 null: false
+    t.string  "sequence_type",     limit: 13, default: "na", null: false
+    t.string  "genbank_accession", limit: 25,                null: false
+  end
+
+  add_index "assembly_sequences", ["assembly_id"], name: "fk_assemblies_assembly_sequences_idx", using: :btree
+  add_index "assembly_sequences", ["genbank_accession"], name: "idx_genbank_accession", using: :btree
+
   create_table "dataset_items", force: true do |t|
     t.integer "dataset_id"
     t.string  "name",       limit: 160
@@ -45,12 +71,12 @@ ActiveRecord::Schema.define(version: 0) do
 
   create_table "embl_cross_references", force: true do |t|
     t.integer "uniprot_entry_id",            null: false
-    t.string  "protein_id",       limit: 15
-    t.string  "sequence_id",      limit: 15
+    t.string  "protein_id",       limit: 25
+    t.string  "sequence_id",      limit: 25
   end
 
   add_index "embl_cross_references", ["sequence_id"], name: "idx_sequence_id", using: :btree
-  add_index "embl_cross_references", ["uniprot_entry_id"], name: "fk_uniprot_cross_reference_uniprot_entries", using: :btree
+  add_index "embl_cross_references", ["uniprot_entry_id"], name: "fk_embl_reference_uniprot_entries", using: :btree
 
   create_table "genome_caches", primary_key: "bioproject_id", force: true do |t|
     t.text "json_sequences", limit: 16777215, null: false
@@ -117,7 +143,6 @@ ActiveRecord::Schema.define(version: 0) do
   end
 
   add_index "lineages", ["species"], name: "idx_species", using: :btree
-  add_index "lineages", ["taxon_id"], name: "fk_lineages_taxons", using: :btree
 
   create_table "peptides", force: true do |t|
     t.integer "sequence_id",                    null: false
@@ -138,8 +163,8 @@ ActiveRecord::Schema.define(version: 0) do
 
   create_table "refseq_cross_references", force: true do |t|
     t.integer "uniprot_entry_id",            null: false
-    t.string  "protein_id",       limit: 15
-    t.string  "sequence_id",      limit: 15
+    t.string  "protein_id",       limit: 25
+    t.string  "sequence_id",      limit: 25
   end
 
   add_index "refseq_cross_references", ["uniprot_entry_id"], name: "fk_refseq_reference_uniprot_entries", using: :btree
@@ -152,23 +177,34 @@ ActiveRecord::Schema.define(version: 0) do
 
   add_index "sequences", ["lca"], name: "fk_sequences_taxons", using: :btree
   add_index "sequences", ["lca_il"], name: "fk_sequences_taxons_2", using: :btree
-  add_index "sequences", ["sequence"], name: "uidx_sequence", unique: true, using: :btree
+  add_index "sequences", ["sequence"], name: "idx_sequences", unique: true, using: :btree
 
   create_table "taxons", force: true do |t|
-    t.string  "name",        limit: 120,                null: false
+    t.string  "name",        limit: 120,                  null: false
     t.string  "rank",        limit: 16
     t.integer "parent_id",   limit: 3
-    t.boolean "valid_taxon",             default: true, null: false
+    t.binary  "valid_taxon", limit: 1,   default: "b'1'", null: false
   end
 
   add_index "taxons", ["parent_id"], name: "fk_taxon_taxon", using: :btree
 
+  create_table "test", force: true do |t|
+    t.integer "sequence_id",          null: false
+    t.integer "original_sequence_id", null: false
+    t.integer "uniprot_entry_id",     null: false
+  end
+
+  add_index "test", ["original_sequence_id"], name: "fk_peptides_original_sequences", using: :btree
+  add_index "test", ["sequence_id"], name: "fk_peptides_sequences", using: :btree
+  add_index "test", ["uniprot_entry_id"], name: "fk_peptides_uniprot_entries", using: :btree
+
   create_table "uniprot_entries", force: true do |t|
-    t.string  "uniprot_accession_number", limit: 8, null: false
-    t.integer "version",                  limit: 2, null: false
-    t.integer "taxon_id",                 limit: 3, null: false
-    t.string  "type",                     limit: 9, null: false
-    t.text    "protein",                            null: false
+    t.string  "uniprot_accession_number", limit: 10,  null: false
+    t.integer "version",                  limit: 2,   null: false
+    t.integer "taxon_id",                 limit: 3,   null: false
+    t.string  "type",                     limit: 9,   null: false
+    t.string  "name",                     limit: 150, null: false
+    t.text    "protein",                              null: false
   end
 
   add_index "uniprot_entries", ["taxon_id"], name: "fk_uniprot_entries_taxons", using: :btree

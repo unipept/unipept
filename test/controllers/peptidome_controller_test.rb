@@ -8,7 +8,6 @@ class PeptidomeControllerTest < ActionController::TestCase
     assert_template :analyze
     assert_equal "Peptidome Analysis", assigns(:title)
     assert_equal "peptidefinder", assigns(:tab)
-    assert_not_nil assigns(:species)
     assert_not_nil assigns(:genomes)
     assert_not_nil assigns(:taxa)
   end
@@ -29,28 +28,21 @@ class PeptidomeControllerTest < ActionController::TestCase
     assert_equal "peptidomeclustering", assigns(:tab)
   end
 
-  test "should get get_sequence_ids_for_bioproject" do
-    genome = genome_caches(:genomecache1)
-    get :get_sequence_ids_for_bioproject, bioproject_id: "1", format: "json"
+  test "should get get_sequence_ids_for_assembly" do
+    assembly = assembly_caches(:assemblycache1)
+    get :get_sequence_ids_for_assembly, assembly_id: "1", format: "json"
     assert_response :success
-    assert_equal genome.json_sequences, @response.body
-  end
-
-  test "should get get_genomes" do
-    get :get_genomes, species_id: "1", format: "json"
-    assert_response :success
-    assert @response.body.start_with? "[{"
-    assert @response.body.end_with? "}]"
+    assert_equal assembly.json_sequences, @response.body
   end
 
   test "should get get_unique_sequences" do
-    get :get_unique_sequences, sequences: "[1, 2, 3]", bioprojects: "1", format: "json"
+    get :get_unique_sequences, sequences: "[1, 2, 3]", ids: "1", format: "json"
     assert_response :success
     assert_equal '["species1",[3]]', @response.body
   end
 
   test "should return undefined for get_unique_sequences without bioprojects" do
-    get :get_unique_sequences, sequences: "[1, 2, 3]", bioprojects: "", format: "json"
+    get :get_unique_sequences, sequences: "[1, 2, 3]", ids: "", format: "json"
     assert_response :success
     assert_equal '["undefined",[]]', @response.body
   end
@@ -69,13 +61,13 @@ class PeptidomeControllerTest < ActionController::TestCase
 
   test "should get get_lca" do
     species = taxons(:taxon1)
-    get :get_lca, bioprojects: "1"
+    get :get_lca, ids: "1"
     assert_response :success
     assert_equal species.to_json, @response.body
   end
 
   test "should return undefined without bioprojects" do
-    get :get_lca, bioprojects: ""
+    get :get_lca, ids: ""
     assert_response :success
     assert_equal '{"name":"undefined"}', @response.body
   end

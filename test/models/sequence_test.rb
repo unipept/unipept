@@ -13,7 +13,7 @@ require 'test_helper'
 class SequenceTest < ActiveSupport::TestCase
 
   test "should fail to create new sequence" do
-    assert_not Peptide.new.save
+    assert_raises(ActiveRecord::ReadOnlyRecord) {Sequence.new.save}
   end
 
   test "should raise error on save" do
