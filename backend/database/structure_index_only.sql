@@ -40,12 +40,6 @@ ALTER TABLE embl_cross_references ADD INDEX fk_embl_reference_uniprot_entries (u
 
 
 -- -----------------------------------------------------
--- Table `unipept`.`genomes`
--- -----------------------------------------------------
-ALTER TABLE genomes ADD INDEX idx_insdc_id (insdc_id ASC), ADD INDEX idx_bioproject_id (bioproject_id ASC), ADD INDEX idx_taxon_id (taxon_id ASC);
-
-
--- -----------------------------------------------------
 -- Table `unipept`.`refseq_cross_references`
 -- -----------------------------------------------------
 ALTER TABLE refseq_cross_references ADD INDEX fk_refseq_reference_uniprot_entries (uniprot_entry_id ASC);

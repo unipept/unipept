@@ -12,12 +12,6 @@ echo "select * from ec_cross_references order by id;" | mysql -u unipept -punipe
 print "Dumping embl_cross_references"
 echo "select * from embl_cross_references order by id;" | mysql -u unipept -punipept unipept -q --skip-column-names | sed "s/NULL/\\\N/g" | gzip - > "${datadir}/embl_cross_references.tsv.gz"
 
-print "Dumping genome_caches"
-echo "select * from genome_caches order by bioproject_id;" | mysql -u unipept -punipept unipept -q --skip-column-names | sed "s/NULL/\\\N/g" | gzip - > "${datadir}/genome_caches.tsv.gz"
-
-print "Dumping genomes"
-echo "select * from genomes order by id;" | mysql -u unipept -punipept unipept -q --skip-column-names | sed "s/NULL/\\\N/g" | gzip - > "${datadir}/genomes.tsv.gz"
-
 print "Dumping go_cross_references"
 echo "select * from go_cross_references order by id;" | mysql -u unipept -punipept unipept -q --skip-column-names | sed "s/NULL/\\\N/g" | gzip - > "${datadir}/go_cross_references.tsv.gz"
 

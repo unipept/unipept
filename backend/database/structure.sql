@@ -226,25 +226,6 @@ COLLATE = utf8_general_ci;
 
 
 -- -----------------------------------------------------
--- Table `unipept`.`genomes`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `unipept`.`genomes` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(100) NOT NULL ,
-  `bioproject_id` INT UNSIGNED NOT NULL ,
-  `insdc_id` VARCHAR(25) NOT NULL ,
-  `status` VARCHAR(20) NOT NULL ,
-  `taxon_id` MEDIUMINT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `idx_insdc_id` (`insdc_id` ASC) ,
-  INDEX `idx_bioproject_id` (`bioproject_id` ASC) ,
-  INDEX `idx_taxon_id` (`taxon_id` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = ascii
-COLLATE = ascii_general_ci;
-
-
--- -----------------------------------------------------
 -- Table `unipept`.`refseq_cross_references`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `unipept`.`refseq_cross_references` (
@@ -297,18 +278,6 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`ec_cross_references` (
     REFERENCES `unipept`.`uniprot_entries` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = ascii
-COLLATE = ascii_general_ci;
-
-
--- -----------------------------------------------------
--- Table `unipept`.`genome_caches`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `unipept`.`genome_caches` (
-  `bioproject_id` INT UNSIGNED NOT NULL ,
-  `json_sequences` MEDIUMTEXT NOT NULL ,
-  PRIMARY KEY (`bioproject_id`) )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
 COLLATE = ascii_general_ci;

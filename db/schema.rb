@@ -78,22 +78,6 @@ ActiveRecord::Schema.define(version: 0) do
   add_index "embl_cross_references", ["sequence_id"], name: "idx_sequence_id", using: :btree
   add_index "embl_cross_references", ["uniprot_entry_id"], name: "fk_embl_reference_uniprot_entries", using: :btree
 
-  create_table "genome_caches", primary_key: "bioproject_id", force: true do |t|
-    t.text "json_sequences", limit: 16777215, null: false
-  end
-
-  create_table "genomes", force: true do |t|
-    t.string  "name",          limit: 120, null: false
-    t.integer "bioproject_id",             null: false
-    t.string  "insdc_id",      limit: 15,  null: false
-    t.string  "status",        limit: 20,  null: false
-    t.integer "taxon_id",      limit: 3
-  end
-
-  add_index "genomes", ["bioproject_id"], name: "idx_bioproject_id", using: :btree
-  add_index "genomes", ["insdc_id"], name: "idx_insdc_id", using: :btree
-  add_index "genomes", ["taxon_id"], name: "idx_species_id_bioproject_id", using: :btree
-
   create_table "go_cross_references", force: true do |t|
     t.integer "uniprot_entry_id",            null: false
     t.string  "go_id",            limit: 12, null: false
