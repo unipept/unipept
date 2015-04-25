@@ -93,7 +93,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         filterEngine.initialize();
 
         $("#genomeSelectorSearch").tokenfield({
-            delimiter: "-",
+            delimiter: " ",
             beautify: false,
             minWidth: 330,
             createTokensOnBlur: true,
@@ -130,6 +130,10 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                 });
                 $("#genomeSelectorSearch").tokenfield('setTokens', tokens);
                 if (parts[1] === "any") return false;
+            } else {
+                $("#genomeSelectorSearch-tokenfield")
+                    .val($("#genomeSelectorSearch-tokenfield").val() + " ");
+                return false;
             }
         })
         .on('tokenfield:createdtoken', function (e) {
