@@ -19,7 +19,6 @@ var constructPancore = function constructPancore(args) {
         promisesLoading = new Map(),
         promisesDownload = new Map(),
         isLoading = false,
-        $loadingNotification,
         rank = 0,
         lca = "",
         genomeSelector,
@@ -28,6 +27,11 @@ var constructPancore = function constructPancore(args) {
         table,
         myGenomes,
         worker;
+
+    // notification
+    var $loadingNotification,
+        $autosortNotification,
+        $pancoreNotification;
 
     /*************** Private methods ***************/
 
@@ -219,7 +223,7 @@ var constructPancore = function constructPancore(args) {
             processClusteredMatrix(data.msg.order, data.msg.newick);
             break;
         case 'autoSorted':
-            that.updateOrder(data.msg);
+            processAutoSorted(data.msg);
             break;
         case 'processSimilarityData':
             processSimilarityData(data.msg);
@@ -290,6 +294,11 @@ var constructPancore = function constructPancore(args) {
         graph.setData(data);
         table.setLca(l);
         lca = l;
+
+        if ($pancoreNotification) {
+            $pancoreNotification.hide();
+            $pancoreNotification = undefined;
+        }
     }
 
     /**
@@ -327,6 +336,19 @@ var constructPancore = function constructPancore(args) {
         matrix.setOrder(order);
         matrix.drawTree(newick);
         matrix.setClustered(true);
+    }
+
+    /**
+     * Handles the arrival of newly autosorted data
+     *
+     * @param <Array> order A list with the new order of the genomes
+     */
+    function processAutoSorted(order) {
+        that.updateOrder(order);
+        if ($autosortNotification) {
+            $autosortNotification.hide();
+            $autosortNotification = undefined;
+        }
     }
 
     /**
@@ -411,6 +433,12 @@ var constructPancore = function constructPancore(args) {
      * @param <Genome> genome The genome we want to remove
      */
     that.removeGenome = function removeGenome(genome) {
+        if (!$pancoreNotification) {
+            $pancoreNotification = showNotification("Calculating peptidomes...", {
+                loading: true,
+                autoHide: false
+            });
+        }
         var removeData = table.removeGenome(genome.id);
         matrix.removeGenome(genome.id);
 
@@ -443,6 +471,12 @@ var constructPancore = function constructPancore(args) {
      * @param <Number> orderData.stop The position till where there's a change
      */
     that.updateOrder = function updateOrder(orderData) {
+        if (!$pancoreNotification) {
+            $pancoreNotification = showNotification("Calculating peptidomes...", {
+                loading: true,
+                autoHide: false
+            });
+        }
         sendToWorker("recalculatePanCore", orderData);
         table.setOrder(orderData.order);
         matrix.setOrder(orderData.order);
@@ -486,6 +520,12 @@ var constructPancore = function constructPancore(args) {
      * @param <String> type The type of sort we want to run
      */
     that.autoSort = function autoSort(type) {
+        if (!$autosortNotification) {
+            $autosortNotification = showNotification("Sorting genomes...", {
+                loading: true,
+                autoHide: false
+            });
+        }
         sendToWorker("autoSort", {type : type});
     };
 

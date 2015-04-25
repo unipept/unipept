@@ -28,7 +28,7 @@ function showNotification(content, properties) {
 
     return {hide: hide};
 
-    function hide() {
+    function hide(delayed) {
         $notification.addClass("notification-hide");
         setTimeout(function () {$notification.remove(); }, 1000);
     }
