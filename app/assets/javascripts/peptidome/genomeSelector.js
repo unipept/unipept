@@ -491,19 +491,13 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
      * @param <Organism> organism The organism to create the lineage for
      */
     function getLineage(organism) {
-        var result = [];
-        if (organism.class_id !== null && organism.class_id > 0) {
-            result.push(createLink(organism.class_id));
-        }
-        if (organism.order_id !== null && organism.order_id > 0) {
-            result.push(createLink(organism.order_id));
-        }
-        if (organism.genus_id !== null && organism.genus_id > 0) {
-            result.push(createLink(organism.genus_id));
-        }
-        if (organism.species_id !== null && organism.species_id > 0) {
-            result.push(createLink(organism.species_id));
-        }
+        var ranks = ["class_id", "order_id", "genus_id", "species_id"],
+            result = [];
+        ranks.forEach(function (rank) {
+            if (organism[rank] !== null && organism[rank] > 0) {
+                result.push(createLink(organism[rank]));
+            }
+        });
         return result.join(" / ");
 
         function createLink(taxonId) {
