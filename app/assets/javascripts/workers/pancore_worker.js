@@ -232,7 +232,7 @@ var matrixBackend = function matrixBackend(data) {
 
             if (!sendFullMatrix) {
                 dataQueue[id] = matrixObject[id];
-                finalBatch = (x === idsToCalculate.length - 1)
+                finalBatch = (x === idsToCalculate.length - 1);
                 if (x % 3 === 2 || finalBatch) {
                     that.sendRows(dataQueue, finalBatch);
                     dataQueue = {};

@@ -20,7 +20,9 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         genomes = args.genomes,
         $popover,
         addAll = false,
-        ELEMENTS_SHOWN = 100,
+        currentResults,
+        currentPage,
+        ELEMENTS_SHOWN = 50,
         SEARCH_VALUES = {
             complete : {attr: "assembly_level", value: "Complete Genome", name: "Complete genome"},
             scaffold : {attr: "assembly_level", value: "Scaffold", name: "Scaffold"},
@@ -42,6 +44,18 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
      * Initialize the genome Selector
      */
     function init() {
+        initData();
+        initTypeAhead();
+        initSettings();
+        initCheckAll();
+        initAddAll();
+        initPagination();
+    }
+
+    /**
+     * Prepares the data
+     */
+    function initData() {
         data.sort(function (a, b) { return d3.ascending(a.name, b.name) });
         for (var taxon in taxa) {
             if (taxa[taxon].rank === "class") classes.push(taxon);
@@ -53,13 +67,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         orders.sort(function (a, b) { return d3.ascending(taxa[a].name, taxa[b].name) });
         genera.sort(function (a, b) { return d3.ascending(taxa[a].name, taxa[b].name) });
         species.sort(function (a, b) { return d3.ascending(taxa[a].name, taxa[b].name) });
-
-        initTypeAhead();
-        initSettings();
-        initCheckAll();
-        initAddAll();
     }
-
     /**
      * Initializes the typeahead and token stuff
      */
@@ -325,6 +333,9 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         });
     }
 
+    /**
+     * Initializes the add all button on the top of the table
+     */
     function initAddAll() {
         $("#genomeSelector .btn-add-all").click(function () {
             // get checked boxes
@@ -341,6 +352,18 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
 
             // add everything
             pancore.addGenomes(genomes);
+        });
+    }
+
+    /**
+     * Initializes the pagination links
+     */
+    function initPagination() {
+        $(".prev-page").click(function () {
+            drawList(currentResults, currentPage - 1);
+        });
+        $(".next-page").click(function () {
+            drawList(currentResults, currentPage + 1);
         });
     }
 
@@ -415,15 +438,26 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
     /**
      * Draws a table based on the results array
      */
-    function drawList(results) {
+    function drawList(results, page) {
         var $resultTable = $("#genomeSelector-results"),
             resultString = "";
 
-        $resultTable.find(".result-count").text(results.length);
-        selectedResults = results.slice(0, ELEMENTS_SHOWN);
+        currentResults = results;
+        page = page ? page : 0;
+        currentPage = page;
+
+        var firstElement = page * ELEMENTS_SHOWN;
+        var lastElement = Math.min((page + 1) * ELEMENTS_SHOWN, results.length);
+
+        selectedResults = results.slice(firstElement, lastElement);
+        $resultTable.find(".result-count").text("Showing " + (firstElement + 1) + "-" + lastElement + " of " + results.length);
 
         // uncheck checkbox
         $("#genomeSelector .check-all").prop("checked", false);
+
+        // enable/disable pagination
+        $(".prev-page").prop("disabled", page === 0);
+        $(".next-page").prop("disabled", lastElement === results.length);
 
         // build table
         selectedResults.forEach(function (result) {
@@ -435,13 +469,6 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             resultString += "</tr>";
         });
         $resultTable.find("tbody").html(resultString);
-
-        // set table footer
-        if (selectedResults.length < results.length) {
-            $resultTable.find("tfoot").html("<tr class='warning'><th colspan='3'>Showing 0-" + ELEMENTS_SHOWN + " of " + results.length + "</th></tr>")
-        } else {
-            $resultTable.find("tfoot").empty();
-        }
 
         // hook up plus buttons
         $resultTable.find(".btn-add").click(function () {
