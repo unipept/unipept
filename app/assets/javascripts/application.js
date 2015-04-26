@@ -336,3 +336,10 @@ function iteratorToArray(iterator) {
     }
     return vals;
 }
+
+/**
+ * Capitalizes the first letter of a string
+ */
+String.prototype.capitalizeFirstLetter = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
