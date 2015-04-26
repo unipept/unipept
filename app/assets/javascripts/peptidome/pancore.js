@@ -116,8 +116,6 @@ var constructPancore = function constructPancore(args) {
         $("#tabs li a span").on("mouseout", function () {
             $("#tab-help").stop(true, true).fadeOut(200);
         });
-
-        $("#add-by-genome-help").tooltip({placement : "right", container : "body"});
     }
 
     /**
