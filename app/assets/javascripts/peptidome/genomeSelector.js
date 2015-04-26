@@ -235,6 +235,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             } else {
                 $popover.toggleClass("hide");
             }
+            updateFilters();
         });
 
         // add pop-over behaviour
@@ -367,8 +368,12 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         });
     }
 
+    /**
+     * Updates the form in the popover to correspond with the tokens currently
+     * present in the search box
+     */
     function updateFilters() {
-        if ($popover) {
+        if ($popover && !$popover.hasClass("hide")) {
             $popover.find("#assemblyLevel").val("is:any");
             $popover.find("#genomeRepresentation").val("is:any");
             $popover.find(".taxon-select").val("taxon:any");
