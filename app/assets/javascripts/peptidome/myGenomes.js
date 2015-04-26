@@ -379,44 +379,14 @@ var constructMyGenomes = function constructMyGenomes(args) {
      * Initializes the draggin from the my genomes table
      */
     function initDrag() {
-        var $tableDiv = $("#genomes-table-div"),
-            moving,
-            moving2;
         // Make the nodes draggable using JQuery UI
         $myGenomesTable.find("tr").draggable({
             appendTo: "#genomes-table-div table",
             addClasses: false,
             cancel: ".edit, .old",
-            refreshPositions: true,
             // Mimic the style of the table on the right
             helper: function startHelping(event) {
                 return dragHelp($(this));
-            },
-            // Table on the right slides into view on drag start
-            start: function startDragging(event, ui) {
-                var pos = Math.max(0, window.pageYOffset - $tableDiv.offset().top + 16);
-                $tableDiv.css("margin-top", pos + "px");
-                $(event.target).draggable('option', 'refreshPositions', true);
-                moving = true;
-                moving2 = true;
-                setTimeout(function () {moving = false; }, 800);
-            },
-            // Table on the right slides back to original position 1s after
-            // drag stop
-            stop: function stopDragging(event, ui) {
-                setTimeout(function () {$tableDiv.css("margin-top", "0px"); }, 1000);
-            },
-            // Because the drop target slides in, we have to recalculate the
-            // position of the target while dragging. This is computationally
-            // expensive, so we stop recalculating once we know the target
-            // stays in place
-            drag: function whileDragging(event, ui) {
-                if (!moving2) {
-                    $(event.target).draggable('option', 'refreshPositions', false);
-                }
-                if (!moving) {
-                    moving2 = false;
-                }
             }
         });
     }
