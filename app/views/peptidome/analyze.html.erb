@@ -81,7 +81,7 @@
                     <span class="glyphicon glyphicon-search"></span>
                 </span>
                 <%= search_field_tag(:genomeSelectorSearch, "", :placeholder => "type to filter the results", :class => "form-control") %>
-                <span class="input-group-addon search-settings">
+                <span class="input-group-addon search-settings" title="advanced search settings">
                     <span class="glyphicon glyphicon-cog"></span>
                 </span>
             </div>
@@ -89,15 +89,15 @@
                 <thead>
                     <tr>
                         <th class="handle">
-                            <input type="checkbox" class="check-all"></input>
+                            <input type="checkbox" class="check-all" title="select all results"></input>
                         </th>
                         <th class="name">
-                            <button class="btn btn-link btn-xs prev-page">&larr;</button>
+                            <button class="btn btn-link btn-xs prev-page" title="previous page">&larr;</button>
                             <span class="result-count">  </span>
-                            <button class="btn btn-link btn-xs next-page">&rarr;</button>
+                            <button class="btn btn-link btn-xs next-page" title="next page">&rarr;</button>
                         </th>
                         <th class="action">
-                            <button class='btn btn-primary btn-xs btn-add-all'><span class='glyphicon glyphicon-plus'></span></button>
+                            <button class='btn btn-primary btn-xs btn-add-all' title="add all selected genomes to analysis"><span class='glyphicon glyphicon-plus'></span></button>
                         </th>
                     </tr>
                 </thead>

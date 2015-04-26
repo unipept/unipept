@@ -480,7 +480,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             resultString += "<td><input type='checkbox' class='check'></input></td>";
             resultString += "<td>" + result.name + "<br>";
             resultString += "<span class='lineage'>" + getLineage(result) + "</span></td>";
-            resultString += "<td><button class='btn btn-default btn-xs btn-add'><span class='glyphicon glyphicon-plus'></span></button></td>";
+            resultString += "<td><button class='btn btn-default btn-xs btn-add' title='add genome to analysis'><span class='glyphicon glyphicon-plus'></span></button></td>";
             resultString += "</tr>";
         });
         $resultTable.find("tbody").html(resultString);
