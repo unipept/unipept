@@ -497,6 +497,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
         var files = trans.objectStore("files");
         var fileRequest;
         var dataQueue = [];
+        var $notification;
 
         // Get everything in the store;
         var keyRange = IDBKeyRange.lowerBound(0);
@@ -511,7 +512,12 @@ var constructMyGenomes = function constructMyGenomes(args) {
                     return promise.then(function () {
                         return processFileContent(data.file, data.name, data.id);
                     });
-                }, Promise.resolve());
+                }, Promise.resolve())
+                .then(function () {
+                    if($notification) {
+                        $notification.hide();
+                    }
+                });
             }
 
             genomeList.push(result.value.id);
@@ -519,6 +525,12 @@ var constructMyGenomes = function constructMyGenomes(args) {
 
             // process if done
             if (result.value.version !== version) {
+                if (!$notification) {
+                    $notification = showNotification("Updating my genomes...", {
+                        loading: true,
+                        autoHide: false
+                    });
+                }
                 fileRequest = files.get(result.value.id);
                 fileRequest.onsuccess = function (e) {
                     dataQueue.push({file: e.target.result.file, name: result.value.name, id: result.value.id});

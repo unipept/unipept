@@ -493,7 +493,7 @@ var constructPancore = function constructPancore(args) {
      * @param <String> type The type of sequences we want
      */
     that.requestSequences = function requestSequences(id, type) {
-        var notification = showNotification("Preparing sequences...", {
+        var $notification = showNotification("Preparing sequences...", {
                 loading: true,
                 autoHide: false
             });
@@ -503,7 +503,7 @@ var constructPancore = function constructPancore(args) {
         });
         return new Promise(function (resolve, reject) {
             promisesDownload.set(id + type, function (data) {
-                notification.hide();
+                $notification.hide();
                 resolve(data);
             });
         });
