@@ -11,6 +11,7 @@
 #  assembly_name              :string(104)      not null
 #  organism_name              :string(86)       not null
 #  biosample                  :string(14)
+#  type_strain                :binary(1)        default("b'0'"), not null
 #
 
 class Assembly < ActiveRecord::Base

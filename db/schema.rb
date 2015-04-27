@@ -17,14 +17,30 @@ ActiveRecord::Schema.define(version: 0) do
     t.string  "genbank_assembly_accession", limit: 16
     t.string  "refseq_assembly_accession",  limit: 16
     t.integer "taxon_id",                   limit: 3
-    t.string  "genome_representation",      limit: 7,   null: false
-    t.string  "assembly_level",             limit: 20,  null: false
-    t.string  "assembly_name",              limit: 104, null: false
-    t.string  "organism_name",              limit: 86,  null: false
+    t.string  "genome_representation",      limit: 7,                    null: false
+    t.string  "assembly_level",             limit: 20,                   null: false
+    t.string  "assembly_name",              limit: 104,                  null: false
+    t.string  "organism_name",              limit: 86,                   null: false
     t.string  "biosample",                  limit: 14
+    t.binary  "type_strain",                limit: 1,   default: "b'0'", null: false
   end
 
   add_index "assemblies", ["taxon_id"], name: "fk_taxons_assemblies_idx", using: :btree
+
+  create_table "assemblies2", force: true do |t|
+    t.string  "genbank_assembly_accession", limit: 16
+    t.string  "refseq_assembly_accession",  limit: 16
+    t.integer "taxon_id",                   limit: 3
+    t.string  "genome_representation",      limit: 7,                    null: false
+    t.string  "assembly_level",             limit: 20,                   null: false
+    t.string  "assembly_name",              limit: 104,                  null: false
+    t.string  "organism_name",              limit: 86,                   null: false
+    t.string  "biosample",                  limit: 14
+    t.binary  "type_strain",                limit: 1,   default: "b'0'", null: false
+  end
+
+  add_index "assemblies2", ["assembly_name"], name: "temp", using: :btree
+  add_index "assemblies2", ["taxon_id"], name: "fk_taxons_assemblies_idx", using: :btree
 
   create_table "assembly_caches", primary_key: "assembly_id", force: true do |t|
     t.text "json_sequences", limit: 16777215, null: false

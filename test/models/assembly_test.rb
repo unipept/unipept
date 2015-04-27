@@ -11,6 +11,7 @@
 #  assembly_name              :string(104)      not null
 #  organism_name              :string(86)       not null
 #  biosample                  :string(14)
+#  type_strain                :binary(1)        default("b'0'"), not null
 #
 
 require 'test_helper'
@@ -78,6 +79,15 @@ class AssemblyTest < ActiveSupport::TestCase
     assembly.save
     assembly.reload
     assert_equal oldValue, assembly.biosample, "Was able to save biosample changes"
+  end
+
+  test "should not save type_strain changes" do
+    assembly = assemblies(:assembly1)
+    oldValue = assembly.type_strain
+    assembly.type_strain = !oldValue
+    assembly.save
+    assembly.reload
+    assert_equal oldValue, assembly.type_strain, "Was able to save type_strain changes"
   end
 
   test "should raise error on delete" do

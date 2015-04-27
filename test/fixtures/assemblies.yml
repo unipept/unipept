@@ -11,6 +11,7 @@
 #  assembly_name              :string(104)      not null
 #  organism_name              :string(86)       not null
 #  biosample                  :string(14)
+#  type_strain                :binary(1)        default("b'0'"), not null
 #
 
 assembly1:
@@ -23,6 +24,7 @@ assembly1:
     assembly_name: "assembly1"
     organism_name: "org1"
     biosample: "don't care"
+    type_strain: false
 
 assembly2:
     id: 2

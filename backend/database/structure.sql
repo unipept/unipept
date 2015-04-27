@@ -307,6 +307,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`assemblies` (
   `assembly_name` VARCHAR(104) NOT NULL,
   `organism_name` VARCHAR(86) NOT NULL,
   `biosample` VARCHAR(14) NULL,
+  `type_strain` BIT(1) NOT NULL DEFAULT b'0',
   PRIMARY KEY (`id`),
   INDEX `fk_taxons_assemblies_idx` (`taxon_id` ASC),
   CONSTRAINT `fk_taxons_assemblies`
@@ -314,7 +315,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`assemblies` (
     REFERENCES `unipept`.`taxons` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -333,7 +334,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`assembly_sequences` (
     REFERENCES `unipept`.`assemblies` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -348,7 +349,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`assembly_caches` (
     REFERENCES `unipept`.`assemblies` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
+ENGINE = InnoDB;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
