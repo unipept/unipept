@@ -343,6 +343,11 @@ function init_sequence_show(data) {
             });
         }
 
+        // expands all children of a node
+        function expandAll(d) {
+            expand(d, 30);
+        }
+
         // Expands a node for i levels
         function expand(d, i) {
             var local_i = i;
@@ -381,11 +386,14 @@ function init_sequence_show(data) {
             // check if click is triggered by panning on a node
             if (Date.now() - zoomEnd < 200) return;
 
-            if (d.children) {
+            if (d3.event.shiftKey) {
+                expandAll(d);
+            } else if (d.children) {
                 collapse(d);
             } else {
                 expand(d);
             }
+
             update(d);
             centerNode(d);
         }
