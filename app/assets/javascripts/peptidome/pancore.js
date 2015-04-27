@@ -367,7 +367,7 @@ var constructPancore = function constructPancore(args) {
         isLoading = loading;
         if (loading) {
             table.setEnabled(false);
-            $loadingNotification = showNotification("Loading genomes...", {
+            $loadingNotification = showNotification("Loading proteomes...", {
                 loading: true,
                 autoHide: false
             });
@@ -536,7 +536,7 @@ var constructPancore = function constructPancore(args) {
      */
     that.autoSort = function autoSort(type) {
         if (!$autosortNotification) {
-            $autosortNotification = showNotification("Sorting genomes...", {
+            $autosortNotification = showNotification("Sorting proteomes...", {
                 loading: true,
                 autoHide: false
             });

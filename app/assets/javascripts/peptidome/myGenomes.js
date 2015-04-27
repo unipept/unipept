@@ -333,7 +333,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
 
         $myGenomesTable.empty();
         if (genomeList.length === 0) {
-            $myGenomesTable.append("<tr class='info'><td colspan='4' class='info'><span class='glyphicon glyphicon-chevron-up'></span> Click the plus-button to add your own genomes.</td></tr>");
+            $myGenomesTable.append("<tr class='info'><td colspan='4' class='info'><span class='glyphicon glyphicon-chevron-up'></span> Click the plus-button to add your own proteomes.</td></tr>");
         } else {
             for (i = 0; i < genomeList.length; i++) {
                 g = genomes[genomeList[i]];
@@ -341,11 +341,11 @@ var constructMyGenomes = function constructMyGenomes(args) {
                 row += "<td><span class='glyphicon glyphicon-move'></span></td>" +
                     "<td class='name'>" + g.name + "</td>";
                 if (g.version === version) {
-                    row += "<td><a class='btn btn-default btn-xs edit-genome-name' title='edit genome name'><span class='glyphicon glyphicon-pencil'></span></a></td>";
+                    row += "<td><a class='btn btn-default btn-xs edit-genome-name' title='edit proteome name'><span class='glyphicon glyphicon-pencil'></span></a></td>";
                 } else {
                     row += "<td><span class='glyphicon glyphicon-refresh'></span></td>";
                 }
-                row += "<td class='button'><a class='btn btn-default btn-xs remove-my-genome' title='remove genome'><span class='glyphicon glyphicon-trash'></span></a></td>" +
+                row += "<td class='button'><a class='btn btn-default btn-xs remove-my-genome' title='remove proteome'><span class='glyphicon glyphicon-trash'></span></a></td>" +
                     "</<tr>";
                 $myGenomesTable.append(row);
             }

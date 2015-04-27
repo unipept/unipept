@@ -60,7 +60,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
                 ui.helper.find(".data.name").each(function () {
                     g.push({name : $(this).text(), id : $(this).data("id")});
                 });
-                if (g.length < 70 || confirm("You're trying to add a lot of genomes (" + g.length + "). Are you sure you want to continue?")) {
+                if (g.length < 70 || confirm("You're trying to add a lot of proteomes (" + g.length + "). Are you sure you want to continue?")) {
                     pancore.addGenomes(g);
                 }
             }
@@ -254,7 +254,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
             newRows,
             td;
 
-        text = "Genomes";
+        text = "Proteomes";
         if (lca !== "") {
             text += " (LCA: " + lca + ")";
         }
@@ -292,7 +292,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
                         // TODO
                         return d.value + " <a href='http://www.ncbi.nlm.nih.gov/bioproject/?term=" + d3.select(this.parentNode).datum().id + "' target='_blank' title='open bioproject page'><span class='glyphicon glyphicon-share-alt'></span></a>";
                     } else {
-                        return d.value + " <span class='glyphicon glyphicon-home' title='local genome'></span>";
+                        return d.value + " <span class='glyphicon glyphicon-home' title='local proteome'></span>";
                     }
                 }
                 return d.value;
@@ -304,7 +304,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
             .append("a")
             .html("<span class='glyphicon glyphicon-trash'></span>")
             .attr("class", "btn btn-default btn-xs")
-            .attr("title", "remove genome")
+            .attr("title", "remove proteome")
             .on("click", pancore.removeGenome);
         newRows.each(function () { highlight(this); });
         tr.selectAll("td.button a.btn").classed("disabled", function (d) {return d.status !== "Done"; });
@@ -332,7 +332,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
             that.setTableMessage("info-sign", "Drag rows to reorder them or use one of the autosort options.");
             $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", false);
         } else {
-            that.setTableMessage("refresh", "Please wait while we load the genomes for this species.");
+            that.setTableMessage("refresh", "Please wait while we load the proteomes.");
             $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", true);
         }
     };

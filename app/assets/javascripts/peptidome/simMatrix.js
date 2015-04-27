@@ -90,7 +90,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         if (window.fullScreenApi.isFullScreen()) {
             pos.top -= $("#sim_matrix").offset().top;
         }
-        tooltipHtml += "<thead><tr><th>Name</th><th>Genome size</th></tr></thead><tbody>";
+        tooltipHtml += "<thead><tr><th>Name</th><th>Peptidome size</th></tr></thead><tbody>";
         tooltipHtml += "<tr><td>" + metadata[row].name + "</td><td>" + d3.format(",")(metadata[row].size) + " peptides</td></tr>";
         tooltipHtml += "<tr><td>" + metadata[col].name + "</td><td>" + d3.format(",")(metadata[col].size) + " peptides</td></tr>";
         tooltipHtml += "<tr><td colspan='2'><strong>Similarity</strong>: " + d3.format(",.2%")(similarities[row][col]) + "</td></tr>";

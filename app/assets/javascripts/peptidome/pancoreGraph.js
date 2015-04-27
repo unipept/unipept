@@ -81,7 +81,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * Initializes the graph
      */
     function init() {
-        legendData = [{"name": "genome peptidome", "color": genomeColor, "toggle": "showGenome"},
+        legendData = [{"name": "peptidome", "color": genomeColor, "toggle": "showGenome"},
             {"name": "pan peptidome", "color": panColor, "toggle": "showPan"},
             {"name": "core peptidome", "color": coreColor, "toggle": "showCore"},
             {"name": "unique peptidome", "color": unicoreColor, "toggle": "showUnicore"}];
@@ -173,7 +173,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * @param <Genome> d The genome of which we want a tooltip
      */
     function getTooltipContent(d) {
-        var tooltipHtml = "<span style='color: " + genomeColor + ";'>&#9632;</span> genome peptidome size: <b>" + d3.format(",")(d.peptides) + "</b><br/>";
+        var tooltipHtml = "<span style='color: " + genomeColor + ";'>&#9632;</span> peptidome size: <b>" + d3.format(",")(d.peptides) + "</b><br/>";
         if (toggles.showPan) {
             tooltipHtml += "<span style='color: " + panColor + ";'>&#9632;</span> pan peptidome size: <b>" + d3.format(",")(d.pan) + "</b><br/>";
         }
@@ -201,13 +201,13 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             "<span class='caret'></span>" +
           "</a>" +
           "<ul class='dropdown-menu'>" +
-            "<li><a href='#' data-id='" + d.id + "' data-type='all'><span style='color: " + genomeColor + ";'>&#9632;</span> genome peptides</a></li>" +
-            "<li><a href='#' data-id='" + d.id + "' data-type='pan'><span style='color: " + panColor + ";'>&#9632;</span> pan peptides</a></li>" +
-            "<li><a href='#' data-id='" + d.id + "' data-type='core'><span style='color: " + coreColor + ";'>&#9632;</span> core peptides</a></li>" +
-            "<li><a href='#' data-id='" + d.id + "' data-type='unique'><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptides</a></li>" +
+            "<li><a href='#' data-id='" + d.id + "' data-type='all'><span style='color: " + genomeColor + ";'>&#9632;</span> peptidome</a></li>" +
+            "<li><a href='#' data-id='" + d.id + "' data-type='pan'><span style='color: " + panColor + ";'>&#9632;</span> pan peptidome</a></li>" +
+            "<li><a href='#' data-id='" + d.id + "' data-type='core'><span style='color: " + coreColor + ";'>&#9632;</span> core peptidome</a></li>" +
+            "<li><a href='#' data-id='" + d.id + "' data-type='unique'><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptidome</a></li>" +
           "</ul>" +
         "</div>" +
-        "<span class='pull-right'><a class='btn btn-danger' title='remove genome' id='popover-remove-genome'data-id='" + d.id + "'><span class='glyphicon glyphicon-trash'></span></a></span>" +
+        "<span class='pull-right'><a class='btn btn-danger' title='remove proteome' id='popover-remove-genome'data-id='" + d.id + "'><span class='glyphicon glyphicon-trash'></span></a></span>" +
         "</div>";
 
         return content;
@@ -253,7 +253,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         } else {
             var title = genomes.get(d.id).name;
             if (("" + d.id).charAt(0) === "u") {
-                title = "<span class='glyphicon glyphicon-home' title='local genome'></span> " + title;
+                title = "<span class='glyphicon glyphicon-home' title='local proteome'></span> " + title;
             } else {
                 // TODO
                 title += " (bioproject <a href='http://www.ncbi.nlm.nih.gov/bioproject/?term=" + d.id + "' target='_blank' title='open bioproject page'>" + d.id + "</a>)";
@@ -625,7 +625,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * @return <String> exportString The data in CSV format
      */
     that.getDataAsCsv = function getDataAsCsv() {
-        var exportString = "name,id,genome_peptides,core_peptides,pan_peptides,unique_peptides\n";
+        var exportString = "name,id,peptidome_size,core_peptidome_size,pan_peptidome_size,unique_peptidome_size\n";
         graphData.forEach(function (genome) {
             var tempArray = [];
             tempArray.push(genomes.get(genome.id).name);

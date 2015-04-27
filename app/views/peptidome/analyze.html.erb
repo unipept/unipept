@@ -1,5 +1,5 @@
 <h1>Peptidome Analysis</h1>
-<p>The (tryptic) peptidome is the complete set of (tryptic) peptides encoded in the genome of an organism. Unipept provides fast and flexible analysis tools for identifying the unique peptidome of a given taxon and clustering whole-genomes based on their peptidome content.</p>
+<p>The (tryptic) peptidome is the complete set of (tryptic) peptides encoded in the proteome of an organism. Unipept provides fast and flexible analysis tools for identifying the unique peptidome of a given taxon and peptidome-based clustering.</p>
 
 <div id="buttons-pancore"></div>
 
@@ -10,43 +10,43 @@
 
 <div class="tab-help" id="tab-help">
   <div id="unique-peptide-finder-help">
-    <p>Find unique peptides for a species of your choice, based on the data of the completed genomes. Unique tryptic peptides are found in all selected genomes and in none of the Uniprot records belonging to taxa outside those of the selected genomes. These taxon-specific peptides can be downloaded and used for targeted proteomics experiments.</p>
-    <p>Incremental unions and intersections are computed for the peptidomes of all selected whole-genome sequences. The size of the incremental unions (pan peptidome) is shown in blue and the size of the incremental intersections (core peptidome) in orange. The size of the unique peptidome, a subset of the core peptidome that is unique to the lowest common ancestor (<span class="initialism">LCA</span>) of the selected whole-genome sequences, is shown in green. The size of the individual peptidomes — expressed as the total number of tryptic peptides — is shown in grey. Individual data sets can be shown/hidden by clicking their name in the graph legend.</p>
+    <p>Find unique peptides for a species of your choice, based on proteome data. Unique tryptic peptides are found in all selected proteomes and in none of the Uniprot records belonging to taxa outside those of the selected proteomes. These taxon-specific peptides can be downloaded and used for targeted proteomics experiments.</p>
+    <p>Incremental unions and intersections are computed for the peptidomes of all selected proteomes. The size of the incremental unions (pan peptidome) is shown in blue and the size of the incremental intersections (core peptidome) in orange. The size of the unique peptidome — the subset of the core peptidome that is unique to the lowest common ancestor (<span class="initialism">LCA</span>) of the taxa of the selected proteomes — is shown in green. The size of the individual peptidomes — expressed as the total number of tryptic peptides — is shown in grey. Individual data sets can be shown/hidden by clicking their name in the graph legend.</p>
     <div class="row features">
       <div class="col-xs-4">
         <p class="text-center help-icon"><span class="glyphicon glyphicon-plus-sign"></span></p>
-        <h3>1. Add genomes</h3>
-        <p>You can add genomes by selecting a species from the drop-down list and clicking the 'Add species' button, or by dragging individual genomes from the tree on the left to the table on the right.</p>
+        <h3>1. Add proteomes</h3>
+        <p>You can add proteomes to the analysis by selecting them from the filterable table on the bottom right.</p>
       </div>
       <div class="col-xs-4">
         <p class="text-center help-icon"><span class="glyphicon glyphicon-random"></span></p>
         <h3>2. Reorder</h3>
-        <p>You can easily reorder the genomes by dragging them to the desired position on the graph or table. Alternatively, you can use one of the automatic sort options.</p>
+        <p>You can easily reorder the proteomes by dragging them to the desired position on the graph or table. Alternatively, you can use one of the automatic sort options.</p>
       </div>
       <div class="col-xs-4">
         <p class="text-center help-icon"><span class="glyphicon glyphicon-download"></span></p>
         <h3>3. Download unique peptides</h3>
-        <p>You can download a list of peptides present in all of the selected genomes but nowhere outside of this taxonomic group, by clicking on the rightmost datapoint in de graph. Next, use the 'Download peptides' button and select 'Unique peptides'.</p>
+        <p>You can download a list of peptides present in all of the selected proteomes but nowhere outside of this taxonomic group, by clicking on the rightmost datapoint in de graph. Next, use the 'Download peptides' button and select 'Unique peptides'.</p>
       </div>
     </div>
   </div>
   <div id="peptidome-clustering-help">
-    <p>Find similarities between a selection of genomes and view the results in a similarity matrix or a phylogenetic tree. <span class="initialism">UPGMA</span> is used to cluster the genomes based on their peptidome content. Pairwise similarities are computed as the ratio of the size of the intersection to the size of the union of both peptidomes.</p>
+    <p>Find similarities between a selection of proteomes and view the results in a similarity matrix or a phylogenetic tree. <span class="initialism">UPGMA</span> is used to cluster the proteomes based on their peptidome content. Pairwise similarities are computed as the ratio of the size of the intersection to the size of the union of both peptidomes.</p>
     <div class="row features">
       <div class="col-xs-4">
         <p class="text-center help-icon"><span class="glyphicon glyphicon-plus-sign"></span></p>
-        <h3>1. Add genomes</h3>
-        <p>You can add genomes by selecting a species from the drop-down list and clicking the 'Add species' button, or by dragging individual genomes from the tree on the left to the table on the right.</p>
+        <h3>1. Add proteomes</h3>
+        <p>You can add proteomes to the analysis by selecting them from the filterable table on the bottom right.</p>
       </div>
       <div class="col-xs-4">
         <p class="text-center help-icon"><span class="glyphicon glyphicon-th"></span></p>
         <h3>2. Cluster</h3>
-        <p>You can easily cluster the genomes by clicking the blurred phylogenetic tree next to the similarity matrix. A phylogenetic tree will be draw by using UPGMA on the pairwise similarities.</p>
+        <p>You can easily cluster the proteomes by clicking the blurred phylogenetic tree next to the similarity matrix. A phylogenetic tree will be draw by using UPGMA on the pairwise similarities.</p>
       </div>
       <div class="col-xs-4">
         <p class="text-center help-icon"><span class="glyphicon glyphicon-download"></span></p>
         <h3>3. Download results</h3>
-        <p>You can download the similarity data by clicking the 'Download data' button in the top-right corner. The pairwise similarities between the genomes are offered as a Microsoft Excel-compatible <span class="initialism">CSV</span> file, the <span class="initialism">UPGMA</span> tree in the newick format.</p>
+        <p>You can download the similarity matrix by clicking the 'Download data' button in the top-right corner. The pairwise similarities between the proteomes are offered as a Microsoft Excel-compatible <span class="initialism">CSV</span> file, the <span class="initialism">UPGMA</span> tree in the newick format.</p>
       </div>
     </div>
   </div>
@@ -65,10 +65,10 @@
 <hr>
 <div class="row">
   <div class="col-xs-6">
-    <h3>Genome library</h3>
+    <h3>Proteome library</h3>
     <ul id="genome-tabs" class="nav nav-tabs">
-      <li class="active"><a href="#refseq-genomes" id="refseq-genomes-tab" data-toggle="tab">Complete genomes</a></li>
-      <li><a href="#my-genomes" id="my-genomes-tab" data-toggle="tab">My genomes <span class="badge">0</span></a></li>
+      <li class="active"><a href="#refseq-genomes" id="refseq-genomes-tab" data-toggle="tab">NCBI proteomes</a></li>
+      <li><a href="#my-genomes" id="my-genomes-tab" data-toggle="tab">My proteomes <span class="badge">0</span></a></li>
     </ul>
 
     <div class="tab-content" id="genome-tabs">
@@ -115,7 +115,7 @@
                 <th class="handle">
                   <button type="button" id='addMyGenomeButton' class='btn btn-primary btn-xs' data-toggle="button"><span class='glyphicon glyphicon-plus'></span></button>
                 </th>
-                <th class="name">My genomes <span id="my-genomes-help" class='glyphicon glyphicon-info-sign' title='You can easily add other genomes yourself! Just select a FASTA-file containing one or more proteins for processing and it will be stored in your browser. After adding them to My genomes, you can simply drag them to the table on the right as you would with other genomes.'></span></th>
+                <th class="name">My proteomes <span id="my-genomes-help" class='glyphicon glyphicon-info-sign' title="Add your own proteomes by selecting FASTA-files containing individual proteomes. After processing, they're stored in your browser and are available for analysis under my proteomes."></span></th>
                 <th class="status"></th>
                 <th class="action"><a id="remove-my-genomes" class="btn btn-xs btn-danger" title="remove all my genomes"><span class="glyphicon glyphicon-trash"></span></a></th>
               </tr>
@@ -123,7 +123,7 @@
             <tbody>
             </tbody>
           </table>
-          <div id="mygenomes-popover-head" class="hide">Add your own genome</div>
+          <div id="mygenomes-popover-head" class="hide">Add your own proteome</div>
           <div id="mygenomes-popover-content" class="hide">
             <form>
                 <div class="form-group">
@@ -149,7 +149,7 @@
                     <span></span>
                   </div>
                 </div>
-                <small><span class="glyphicon glyphicon-info-sign"></span> The genomes you add will only be visible in your browser. Nothing will be stored on the Unipept servers.</small>
+                <small><span class="glyphicon glyphicon-info-sign"></span> The proteomes you add are only visible in this webbrowser. Nothing will be stored on the Unipept servers.</small>
             </form>
           </div>
         </div>
@@ -158,8 +158,8 @@
   </div>
 
   <div class="col-xs-6 left-col">
-    <h3>Analyzed genomes</h3>
-    <span id="table-message"><span class="glyphicon glyphicon-chevron-left"></span> Select a species to analyze and click the load button.</span>
+    <h3>Analyzed proteomes</h3>
+    <span id="table-message"></span>
     <div id="genomes-table-div">
       <div style="overflow: hidden; height: 0px; width: 0px;">&nbsp;</div>
       <table class="table table-condensed genomes-table" id="genomes_table">
@@ -171,22 +171,22 @@
                   <span class="glyphicon glyphicon-random"></span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li><a data-type="name" data-toggle="tooltip" title="Sorts the genomes alphabetically from A-Z." href="#">Sort by name</a></li>
-                  <li><a data-type="size" data-toggle="tooltip" title="Sorts the genomes by the number of peptides from high to low." href="#">Sort by genome size</a></li>
-                  <li><a data-type="clustered" data-toggle="tooltip" title="Clusters the genomes by similarity and uses that order." href="#">Order by similarity</a></li>
-                  <li><a data-type="minpan" data-toggle="tooltip" title="Heuristically minimizes the pan line. Starts from the current first node." href="#">Minimize the pan</a></li>
-                  <li><a data-type="maxcore" data-toggle="tooltip" title="Heuristically maximizes the core line. Starts from the current first node." href="#">Maximize the core</a></li>
-                  <li><a data-type="optimal" data-toggle="tooltip" title="Heuristically minimizes the distance between the pan and core line. Starts from the current first node." href="#">Optimize pan and core</a></li>
+                  <li><a data-type="name" data-toggle="tooltip" title="Sorts the proteomes alphabetically from A-Z." href="#">Sort by name</a></li>
+                  <li><a data-type="size" data-toggle="tooltip" title="Sorts the proteomes by the number of peptides from high to low." href="#">Sort by genome size</a></li>
+                  <li><a data-type="clustered" data-toggle="tooltip" title="Clusters the proteomes by similarity and uses that order." href="#">Order by similarity</a></li>
+                  <li><a data-type="minpan" data-toggle="tooltip" title="Heuristically minimizes the pan peptidome. Starts from the current first node." href="#">Minimize the pan</a></li>
+                  <li><a data-type="maxcore" data-toggle="tooltip" title="Heuristically maximizes the core peptidome. Starts from the current first node." href="#">Maximize the core</a></li>
+                  <li><a data-type="optimal" data-toggle="tooltip" title="Heuristically minimizes the distance between the pan and core lines. Starts from the current first node." href="#">Optimize pan and core</a></li>
                 </ul>
               </div>
             </th>
-            <th class="name">Genomes</th>
+            <th class="name">Proteomes</th>
             <th class="status"></th>
-            <th class="action"><a id="remove-all" class="btn btn-xs btn-danger" title="remove all genomes"><span class="glyphicon glyphicon-trash"></span></a></th>
+            <th class="action"><a id="remove-all" class="btn btn-xs btn-danger" title="remove all proteomes"><span class="glyphicon glyphicon-trash"></span></a></th>
           </tr>
           <tr id="reorder-header" class="hidden warning">
               <td colspan="4" align="center">
-                  The order of the genomes in this table currently doesn't correspond with the order in the similarity matrix<br>
+                  The order of the proteomes in this table currently doesn't correspond with the order in the similarity matrix<br>
                   <a id='use-cluster-order' class="btn btn-primary btn-xs" title="reorder the table to correspond with the clustered order"><span class="glyphicon glyphicon-random"></span> Use clustered order</a>
                   <a id='decluster-matrix' class="btn btn-default btn-xs" title="decluster the matrix and keep using the order of the table">Undo clustering</a>
               </td>
@@ -195,7 +195,7 @@
         <tbody>
         </tbody>
         <tfoot>
-          <tr><th colspan=4><span class="glyphicon glyphicon-plus"></span> Drop genomes here</th></tr>
+          <tr><th colspan=4><span class="glyphicon glyphicon-plus"></span> Drop proteomes here</th></tr>
         </tfoot>
       </table>
     </div>
