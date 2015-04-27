@@ -31,7 +31,9 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             gaps : {attr: "assembly_level", value: "Chromosome with gaps", name: "Chromosome with gaps"},
             gapless : {attr: "assembly_level", value: "Gapless Chromosome", name: "Gapless chromosome"},
             full : {attr: "genome_representation", value: "full", name: "Full genome"},
-            partial : {attr: "genome_representation", value: "partial", name: "Partial genome"}
+            partial : {attr: "genome_representation", value: "partial", name: "Partial genome"},
+            type : {attr: "type_strain", value: true, name: "Is a type strain"},
+            notype : {attr: "type_strain", value: false, name: "Is not a type strain"}
         },
         classes = [],
         orders = [],
