@@ -190,15 +190,14 @@ var constructTreeview = function constructTreeview(args) {
         // check if click is triggered by panning on a node
         if (Date.now() - zoomEnd < 200) return;
 
-        if (d.children) {
+        if (d3.event.shiftKey) {
+            expandAll(d);
+        } else if (d.children) {
             collapse(d);
         } else {
-            if (d3.event.shiftKey) {
-                expandAll(d);
-            } else {
-                expand(d);
-            }
+            expand(d);
         }
+
         that.update(d);
         centerNode(d);
     }
