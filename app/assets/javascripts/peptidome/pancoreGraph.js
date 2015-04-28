@@ -255,8 +255,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             if (("" + d.id).charAt(0) === "u") {
                 title = "<span class='glyphicon glyphicon-home' title='local proteome'></span> " + title;
             } else {
-                // TODO
-                title += " (bioproject <a href='http://www.ncbi.nlm.nih.gov/bioproject/?term=" + d.id + "' target='_blank' title='open bioproject page'>" + d.id + "</a>)";
+                title += " (assembly <a href='http://www.ncbi.nlm.nih.gov/assembly/" + genomes.get(d.id).assembly_id + "' target='_blank' title='open assembly page'>" + genomes.get(d.id).assembly_id + "</a>)";
             }
             that.removePopoversAndHighlights();
             that.removeTooltip();

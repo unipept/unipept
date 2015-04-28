@@ -289,8 +289,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
                 } else {
                     var id = d3.select(this.parentNode).datum().id;
                     if (("" + id).charAt(0) !== "u") {
-                        // TODO
-                        return d.value + " <a href='http://www.ncbi.nlm.nih.gov/bioproject/?term=" + d3.select(this.parentNode).datum().id + "' target='_blank' title='open bioproject page'><span class='glyphicon glyphicon-share-alt'></span></a>";
+                        return d.value + " <a href='http://www.ncbi.nlm.nih.gov/assembly/" + d3.select(this.parentNode).datum().assembly_id + "' target='_blank' title='open assembly page'><span class='glyphicon glyphicon-share-alt'></span></a>";
                     } else {
                         return d.value + " <span class='glyphicon glyphicon-home' title='local proteome'></span>";
                     }

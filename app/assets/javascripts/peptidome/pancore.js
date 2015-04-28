@@ -2,10 +2,7 @@
  * Constructs a Pancore object that handles all JavaScript on the Unique
  * Peptide Finder page.
  *
- * @param <Array> args.data The data array used to construct the selection tree
- *          has around 2500 objects with this format:
- *          {"id":57587,"class_id":29547,"genus_id":194,
- *          "name":"Campylobacter jejuni","order_id":213849,"species_id":197}
+ * @param <Array> args.data The data array containing all genomes
  * @param <Hash> args.taxa is a list of key-value pairs mapping
  *          taxon id's to taxon names used for the selection tree.
  * @param <String> args.version The uniprot version
@@ -15,6 +12,7 @@ var constructPancore = function constructPancore(args) {
     /*************** Private variables ***************/
 
     var that = {},
+        genomeData = new Map(),
         genomes = new Map(),
         promisesLoading = new Map(),
         promisesDownload = new Map(),
@@ -40,6 +38,10 @@ var constructPancore = function constructPancore(args) {
      * Initializes pancore
      */
     function init() {
+        // init genomeData map
+        args.data.forEach(function (genome) {
+            genomeData.set(genome.id, genome);
+        });
 
         // Construct the genome selector
         genomeSelector = constructGenomeSelector({
@@ -406,6 +408,7 @@ var constructPancore = function constructPancore(args) {
             table.addGenome({
                 "id" : genome.id,
                 "name" : genome.name,
+                "assembly_id" : that.getGenome(genome.id).genbank_assembly_accession,
                 "status" : "Loading",
                 "position" : 100 + i,
                 "abbreviation" : that.abbreviate(genome.name, genome.id)
@@ -602,6 +605,13 @@ var constructPancore = function constructPancore(args) {
 
         return split.join(" ");
     };
+
+    /**
+     * Retrieves the genome object for a given id
+     */
+    that.getGenome = function getGenome(id) {
+        return genomeData.get(id);
+    }
 
     // initialize the object
     init();

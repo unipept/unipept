@@ -11,7 +11,7 @@ class PeptidomeController < ApplicationController
       @tab = "peptidefinder"
     end
 
-    @genomes = Assembly.joins(:lineage).select("assemblies.organism_name as name, assemblies.id, assembly_level, genome_representation, type_strain, lineages.species as species_id, lineages.genus as genus_id, lineages.order as order_id, lineages.class as class_id").uniq
+    @genomes = Assembly.joins(:lineage).select("assemblies.organism_name as name, assemblies.id, assembly_level, genome_representation, type_strain, genbank_assembly_accession, lineages.species as species_id, lineages.genus as genus_id, lineages.order as order_id, lineages.class as class_id").uniq
 
     @taxa = Set.new
     @taxa.merge(@genomes.map{|g| g.species_id})
