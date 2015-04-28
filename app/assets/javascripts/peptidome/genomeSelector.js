@@ -520,7 +520,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
 
         // build table
         selectedResults.forEach(function (result) {
-            resultString += "<tr class='genome' data-id='" + result.id + "' data-name=\"" + result.name + "\">";
+            resultString += "<tr class='genome' data-id='" + result.id + "'>";
             resultString += "<td><input type='checkbox' class='check'></input></td>";
             resultString += "<td>" + result.name + "<br>";
             resultString += "<span class='lineage'>" + getLineage(result) + "</span></td>";
@@ -559,36 +559,10 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             return false;
         });
 
-        // enable drag and drop using JQuery UI
-        $resultTable.find("tbody tr").draggable({
-            appendTo: "#genomes-table-div table",
-            addClasses: false,
-            // Mimic the style of the table on the right
-            helper: function startHelping() {
-                return dragHelp($(this));
-            }
-        });
-
         // add after search?
         if (addAll) {
             addAll = false;
             $("#genomeSelector .btn-add-all").click();
-        }
-
-        /**
-         * Drag helper. Constructs html-code that gets added to the page and
-         * 'follows' the cursor while dragging. Mimics the design of the table.
-         *
-         * @param <jQuery> $node jQuery object of the dom element were dragging
-         */
-        function dragHelp($node) {
-            var returnString = "<tbody class='dragging'>" +
-                "<tr><td class='handle'><span class='glyphicon glyphicon-resize-vertical'></span></td><td class='data name' data-id='" +
-                $node.data("id") + "'>" +
-                $node.data("name") +
-                "</td><td class='data status'></td><td></td></tr>" +
-                "</tbody>";
-            return $(returnString);
         }
     }
 
@@ -598,7 +572,8 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
      * @param <jQuery> $row jQuery object of the row to convert
      */
     function getGenome($row) {
-        return {name : $row.data("name"), id : $row.data("id")};
+        var id = $row.data("id");
+        return {name : pancore.getGenome(id).name, id : id};
     }
 
     /**
