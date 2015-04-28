@@ -466,8 +466,12 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             lastElement = Math.min((page + 1) * ELEMENTS_SHOWN, results.length);
 
         var selectedResults = results.slice(firstElement, lastElement);
-        $resultTable.find(".result-count")
-            .text("Showing " + (firstElement + 1) + "-" + lastElement + " of " + results.length);
+        if (selectedResults.length === 0) {
+            $resultTable.find(".result-count").text("Showing 0 results");
+        } else {
+            $resultTable.find(".result-count")
+                .text("Showing " + (firstElement + 1) + "-" + lastElement + " of " + results.length);
+        }
 
         // uncheck checkbox
         $("#genomeSelector .check-all").prop("checked", false);
