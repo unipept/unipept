@@ -255,44 +255,59 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         // creates the html content for the popover
         function createContent() {
             var ranks = ["class", "order", "genus", "species"],
-                content = "<form>",
+                content = "<form class='form-horizontal'>",
                 option;
             // assembly level
             content += "<div class='form-group'>";
-            content += "<label for='assemblyLevel' class='control-label'>Assembly level</label>";
-            content += "<select class='form-control' id='assemblyLevel' name='assemblyLevel'>";
+            content += "<label for='assemblyLevel' class='control-label col-sm-4'>Assembly level</label>";
+            content += "<div class='col-sm-8'><select class='form-control' id='assemblyLevel' name='assemblyLevel'>";
             content += "<option value='is:any'>Any</option>";
             for (option in SEARCH_VALUES) {
                 if (SEARCH_VALUES[option].attr === "assembly_level") {
                     content += "<option value='is:" + option + "'>" + SEARCH_VALUES[option].value + "</option>";
                 }
             }
-            content += "</select>";
+            content += "</select></div>";
             content += "</div>";
 
             // genome representation
             content += "<div class='form-group'>";
-            content += "<label for='genomeRepresentation' class='control-label'>Genome representation</label>";
-            content += "<select class='form-control' id='genomeRepresentation' name='genomeRepresentation'>";
+            content += "<label for='genomeRepresentation' class='control-label col-sm-4' style='margin-top: -10px'>Genome representation</label>";
+            content += "<div class='col-sm-8'><select class='form-control' id='genomeRepresentation' name='genomeRepresentation'>";
             content += "<option value='is:any'>Any</option>";
             for (option in SEARCH_VALUES) {
                 if (SEARCH_VALUES[option].attr === "genome_representation") {
                     content += "<option value='is:" + option + "'>" + SEARCH_VALUES[option].name + "</option>";
                 }
             }
-            content += "</select>";
+            content += "</select></div>";
             content += "</div>";
+
+            // type strain
+            content += "<div class='form-group'>";
+            content += "<div class='col-sm-offset-4 col-sm-8'><div class='checkbox'>";
+            content += "<label><input type='checkbox' id='typeStrain'> Only show <strong>type strains</strong></label>";
+            content += "</div></div></div>";
+
+            // analyzed
+            content += "<div class='form-group'>";
+            content += "<div class='col-sm-offset-4 col-sm-8'><div class='checkbox'>";
+            content += "<label><input type='checkbox' id='inAnalysis'> Don't show already in analysis</label>";
+            content += "</div></div></div>";
+
+
+            content += "<div class='form-group'><h4 class='control-label col-sm-4'>Taxonomy</h4></div>";
 
             ranks.forEach(function (rank) {
                 var id = rank + "Id";
                 content += "<div class='form-group'>";
-                content += "<label for='" + id + "' class='control-label'>" + rank.capitalizeFirstLetter() + "</label>";
-                content += "<select class='form-control taxon-select' id='" + id + "' name='" + id + "'>";
+                content += "<label for='" + id + "' class='control-label col-sm-4'>" + rank.capitalizeFirstLetter() + "</label>";
+                content += "<div class='col-sm-8'><select class='form-control taxon-select' id='" + id + "' name='" + id + "'>";
                 content += "<option value='taxon:any'>Any</option>";
                 lists[rank].forEach(function (taxon) {
                     content += "<option value='taxon:" + taxon + "'>" + taxa[taxon].name + "</option>";
                 });
-                content += "</select>";
+                content += "</select></div>";
                 content += "</div>";
             });
 
@@ -302,6 +317,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
 
         function initPopoverBehaviour() {
             $popover = $(".popover-content #assemblyLevel").parents(".popover");
+            $popover.css("max-width", "none");
 
             // add pop-over hide behaviour
             $(document).click(function (e) {
@@ -326,6 +342,22 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                 }
 
             });
+            addCheckboxListener("#typeStrain", "is:type");
+            addCheckboxListener("#inAnalysis", "not:added");
+
+            function addCheckboxListener(id, filter) {
+                $(id).change(function () {
+                    if ($(this).prop('checked')) {
+                        $("#genomeSelectorSearch").tokenfield('createToken', filter);
+                    } else {
+                        var tokens = $("#genomeSelectorSearch").tokenfield('getTokens');
+                        tokens = tokens.filter(function (token) {
+                            return token.value !== filter;
+                        });
+                        $("#genomeSelectorSearch").tokenfield('setTokens', tokens);
+                    }
+                });
+            }
 
             updateFilters();
         }
@@ -385,12 +417,18 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         $popover.find("#assemblyLevel").val("is:any");
         $popover.find("#genomeRepresentation").val("is:any");
         $popover.find(".taxon-select").val("taxon:any");
+        $("#typeStrain").prop('checked', false);
+        $("#inAnalysis").prop('checked', false);
 
         var tokens = $("#genomeSelectorSearch").tokenfield('getTokens');
         tokens.forEach(function (token) {
             var parts = token.value.split(":");
             if (parts.length === 2) {
-                if (parts[0] === "is") {
+                if (token.value === "is:type") {
+                    $("#typeStrain").prop('checked', true);
+                } else if (token.value === "not:added") {
+                    $("#inAnalysis").prop('checked', true);
+                } else if (parts[0] === "is") {
                     if (SEARCH_VALUES[parts[1]].attr === "assembly_level") {
                         $popover.find("#assemblyLevel").val(token.value);
                     } else if (SEARCH_VALUES[parts[1]].attr === "genome_representation") {
