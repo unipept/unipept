@@ -21,7 +21,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
      */
     function init() {
         initAutoSort();
-        initDropAndSort();
+        initDrag();
 
         $("#remove-all").click(pancore.clearAllData);
     }
@@ -46,25 +46,10 @@ var constructGenomeTable = function constructGenomeTable(args) {
     }
 
     /**
-     * Initializes dragable and sortable
+     * Initializes sortable
      */
-    function initDropAndSort() {
+    function initDrag() {
         $("#genomes_table").disableSelection();
-        $("#genomes_table, #pancore_graph, #sim_matrix").droppable({
-            activeClass: "acceptDrop",
-            hoverClass: "willDrop",
-            tolerance: "pointer",
-            accept: "tr.genome,tr.own",
-            drop: function (event, ui) {
-                var g = [];
-                ui.helper.find(".data.name").each(function () {
-                    g.push({name : $(this).text(), id : $(this).data("id")});
-                });
-                if (g.length < 70 || confirm("You're trying to add a lot of proteomes (" + g.length + "). Are you sure you want to continue?")) {
-                    pancore.addGenomes(g);
-                }
-            }
-        });
         $("#genomes_table tbody").sortable({
             axis: 'y',
             containment: '.left-col',

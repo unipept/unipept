@@ -396,43 +396,9 @@ var constructMyGenomes = function constructMyGenomes(args) {
                     $row.addClass("edit");
                 }
             });
-
-            initDrag();
         }
 
         $("#my-genomes-tab .badge").text(genomeList.length);
-    }
-
-    /**
-     * Initializes the draggin from the my genomes table
-     */
-    function initDrag() {
-        // Make the nodes draggable using JQuery UI
-        $myGenomesTable.find("tr").draggable({
-            appendTo: "#genomes-table-div table",
-            addClasses: false,
-            cancel: ".edit, .old",
-            // Mimic the style of the table on the right
-            helper: function startHelping(event) {
-                return dragHelp($(this));
-            }
-        });
-    }
-
-    /**
-     * Drag helper. Constructs html-code that gets added to the page and
-     * 'follows' the cursor while dragging. Mimics the design of the table.
-     *
-     * @param <jQuery> $node jQuery object of the dom element were dragging
-     */
-    function dragHelp($node) {
-        var returnString = "<tbody class='dragging'>" +
-            "<tr><td class='handle'><span class='glyphicon glyphicon-resize-vertical'></span></td><td class='data name' data-id='" +
-            $node.data("genomeid") + "'>" +
-            $node.find(".name").text() +
-            "</td><td class='data status'></td><td></td></tr>" +
-            "</tbody>";
-        return $(returnString);
     }
 
     /**

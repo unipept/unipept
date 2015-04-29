@@ -86,11 +86,6 @@
 #my-genomes-table .action {
     width: 30px;
 }
-#my-genomes-table tbody tr:not(.info):not(.edit):not(.old) {
-    cursor: pointer;
-    cursor: url(/openhand.cur), pointer;
-    cursor: url(/openhand.cur) 7 5, pointer;
-}
 #addMyGenomeButton {
     display: block;
     margin: 10px auto 0px auto;
@@ -113,38 +108,10 @@
     width: 100%;
     table-layout: fixed;
 }
-#genomes_table {
-    width: auto;
-    margin: 5px;
-}
-#genomes_table tr.ui-sortable-helper {
-    background-color: rgba(255, 255, 255, 0.8);
-}
-#genomes-table-div {
-    .transition(margin-top 0.5s ease-in-out);
-}
-#genomes_table tfoot {
-    display: none;
-}
-#genomes_table tfoot th {
-    text-align: center;
-}
-#genomes_table.acceptDrop tfoot {
-    display: table-row-group;
-}
-#genomes_table.acceptDrop {
-    background-color: #eeeeee;
-    border: 5px dashed #cccccc;
-    margin: 0px;
-}
-#genomes_table.willDrop {
-    background-color: #dff0d8;
-    cursor: copy;
-}
 #autosort .dropdown-menu {
     margin-top: 0px;
 }
-#genomes_table tbody tr:not(.ui-sortable-helper) {
+#genomes_table tbody tr {
     cursor: pointer;
     cursor: url(/openhand.cur), pointer;
     cursor: url(/openhand.cur) 7 5, pointer;
