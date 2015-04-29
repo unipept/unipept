@@ -81,7 +81,10 @@ var constructPancore = function constructPancore(args) {
 
         // Constructs the myGenomes feature
         if (window.File && window.FileReader && window.FileList) {
-            myGenomes = constructMyGenomes({version : args.version});
+            myGenomes = constructMyGenomes({
+                version : args.version,
+                pancore : that
+            });
         } else {
             $("#my-genome-error").removeClass("hide");
         }
@@ -246,9 +249,10 @@ var constructPancore = function constructPancore(args) {
      *
      * @param <String> id The id of the assembly we want to load
      * @param <String> name The name of the genome we want to load
+     * @param <Boolean> own Whether it's an own genome
      */
-    function loadData(id, name) {
-        if ((id + "").charAt(0) === "u") {
+    function loadData(id, name, own) {
+        if (own) {
             myGenomes.getIds(id).then(
                 function (ids) {
                     sendToWorker("loadUserData", {"id" : id, "name" : name, "ids" : ids});
@@ -405,19 +409,21 @@ var constructPancore = function constructPancore(args) {
             // only add new genomes
             if (genomes.has(genome.id)) return;
             setLoading(true);
+            var gen = that.getGenome(genome.id);
             table.addGenome({
                 "id" : genome.id,
                 "name" : genome.name,
-                "assembly_id" : that.getGenome(genome.id).genbank_assembly_accession,
+                "own" : gen.own,
+                "assembly_id" : gen.genbank_assembly_accession,
                 "status" : "Loading",
                 "position" : 100 + i,
-                "abbreviation" : that.abbreviate(genome.name, genome.id)
+                "abbreviation" : that.abbreviate(genome.name, gen.own)
             });
-            return loadData(genome.id, genome.name)
+            return loadData(genome.id, genome.name, gen.own)
                 .then(function (genome) {
                     table.setGenomeStatus(genome.id, "Done", false);
 
-                    genome.abbreviation = that.abbreviate(genome.name, genome.id);
+                    genome.abbreviation = that.abbreviate(genome.name, gen.own);
 
                     graph.addToDataQueue(genome);
                     matrix.addGenome(genome);
@@ -551,11 +557,15 @@ var constructPancore = function constructPancore(args) {
      * Abbreviates an organism name
      *
      * @param <String> name The name of the organism
-     * @param <String> id The id of the genome
+     * @param <Boolean> own Whether it's an own genome
      */
-    that.abbreviate = function abbreviate(name, id) {
+    that.abbreviate = function abbreviate(name, own) {
         var split = name.split(" "),
             i;
+
+        if (own) {
+            return name;
+        }
 
         // Don't abbreviate single words
         if (split.size === 1) {
@@ -564,11 +574,6 @@ var constructPancore = function constructPancore(args) {
 
         // If the second part is "sp.", return the full name
         if (split[1] === "sp.") {
-            return name;
-        }
-
-        // Don't abbreviate if my genome and length < 30
-        if (("" + id).charAt(0) === "u" && name.length < 30) {
             return name;
         }
 
@@ -610,7 +615,16 @@ var constructPancore = function constructPancore(args) {
      * Retrieves the genome object for a given id
      */
     that.getGenome = function getGenome(id) {
-        return genomeData.get(id);
+        var g;
+        if (("" + id).charAt(0) === "u") {
+            g = myGenomes.getGenome(id);
+            g.genbank_assembly_accession = "";
+            g.own = true;
+        } else {
+            g = genomeData.get(id);
+            g.own = false;
+        }
+        return g;
     }
 
     // initialize the object

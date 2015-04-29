@@ -3,12 +3,14 @@
  * genomes and optiones to add or remove them.
  *
  * @param <String> args.version The uniprot version
+ * @param <String> args.pancore The pancore object
  */
 var constructMyGenomes = function constructMyGenomes(args) {
     /*************** Private variables ***************/
 
     var that = {},
         version = args.version,
+        pancore = args.pancore,
         worker;
 
     // Data vars
@@ -74,6 +76,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
 
         // enable remove all button
         $("#remove-my-genomes").click(removeAllGenomes);
+        $myGenomesDiv.find(".btn-add-all").click(addAllGenomes);
 
         // add pop-over behaviour
         $myGenomesButton.on("shown.bs.popover", initPopoverBehaviour);
@@ -323,6 +326,21 @@ var constructMyGenomes = function constructMyGenomes(args) {
     }
 
     /**
+     * Add all my genomes to the analysis
+     */
+    function addAllGenomes() {
+        var toAdd = [];
+        var i;
+        for (i = 0; i < genomeList.length; i++) {
+            toAdd.push({
+                id: genomeList[i],
+                name: genomes[genomeList[i]].name
+            });
+        }
+        pancore.addGenomes(toAdd);
+    }
+
+    /**
      * Redraws the table with all added genomes
      */
     function redrawTable() {
@@ -333,22 +351,32 @@ var constructMyGenomes = function constructMyGenomes(args) {
 
         $myGenomesTable.empty();
         if (genomeList.length === 0) {
+            // TODO
             $myGenomesTable.append("<tr class='info'><td colspan='4' class='info'><span class='glyphicon glyphicon-chevron-up'></span> Click the plus-button to add your own proteomes.</td></tr>");
         } else {
             for (i = 0; i < genomeList.length; i++) {
                 g = genomes[genomeList[i]];
                 row = g.version === version ? "<tr class='own' data-genomeid='" + g.id + "'>" : "<tr class='own old' data-genomeid='" + g.id + "'>";
-                row += "<td><span class='glyphicon glyphicon-move'></span></td>" +
-                    "<td class='name'>" + g.name + "</td>";
+                row += "<td class='button'><a class='btn btn-default btn-xs remove-my-genome' title='remove proteome'><span class='glyphicon glyphicon-trash'></span></a></td>";
+                row += "<td class='name'>" + g.name + "</td>";
                 if (g.version === version) {
                     row += "<td><a class='btn btn-default btn-xs edit-genome-name' title='edit proteome name'><span class='glyphicon glyphicon-pencil'></span></a></td>";
                 } else {
                     row += "<td><span class='glyphicon glyphicon-refresh'></span></td>";
                 }
-                row += "<td class='button'><a class='btn btn-default btn-xs remove-my-genome' title='remove proteome'><span class='glyphicon glyphicon-trash'></span></a></td>" +
-                    "</<tr>";
+                row += "<td><button class='btn btn-default btn-xs btn-add' title='add proteome to analysis'><span class='glyphicon glyphicon-plus'></span></button></td>";
+                row += "</tr>";
                 $myGenomesTable.append(row);
             }
+            $myGenomesTable.find(".btn-add").click(function () {
+                var $row = $(this).closest("tr");
+                var id = $row.data("genomeid");
+                var name = $row.find(".name").text();
+                pancore.addGenomes([{
+                    id: id,
+                    name: name
+                }]);
+            });
             $(".remove-my-genome").click(function () {
                 removeGenome($(this).parents("tr").data("genomeid"));
             });
@@ -689,6 +717,13 @@ var constructMyGenomes = function constructMyGenomes(args) {
      */
     that.getIds = function getIds(id) {
         return dataStore.getPeptideList(id);
+    };
+
+    /**
+     * Retrieves a genome object for a given id
+     */
+    that.getGenome = function getGenome(id) {
+        return genomes[id];
     };
 
     // initialize the object

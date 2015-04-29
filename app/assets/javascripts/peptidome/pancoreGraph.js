@@ -247,15 +247,16 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         var $popover;
         var graphOffset = $("#pancore_graph").offset();
         var dotOffset = $(".dot._" + d.id).first().offset();
+        var genome = genomes.get(d.id);
         d3.event.stopPropagation();
         if (mouse.clickId === d.id) {
             that.removePopoversAndHighlights();
         } else {
             var title = genomes.get(d.id).name;
-            if (("" + d.id).charAt(0) === "u") {
+            if (genome.own) {
                 title = "<span class='glyphicon glyphicon-home' title='local proteome'></span> " + title;
             } else {
-                title += " (assembly <a href='http://www.ncbi.nlm.nih.gov/assembly/" + genomes.get(d.id).assembly_id + "' target='_blank' title='open assembly page'>" + genomes.get(d.id).assembly_id + "</a>)";
+                title += " (assembly <a href='http://www.ncbi.nlm.nih.gov/assembly/" + genome.assembly_id + "' target='_blank' title='open assembly page'>" + genome.assembly_id + "</a>)";
             }
             that.removePopoversAndHighlights();
             that.removeTooltip();

@@ -95,7 +95,7 @@
                             <button class="btn btn-link btn-xs next-page" title="next page">&rarr;</button>
                         </th>
                         <th class="action">
-                            <button class='btn btn-primary btn-xs btn-add-all' title="add all selected genomes to analysis"><span class='glyphicon glyphicon-plus'></span></button>
+                            <button class='btn btn-primary btn-xs btn-add-all' title="add all selected proteomes to analysis"><span class='glyphicon glyphicon-plus'></span></button>
                         </th>
                     </tr>
                 </thead>
@@ -109,15 +109,18 @@
           <strong>Oh snap!</strong> Sorry, your browser doesn't seem to support the File <span class="initialism">API</span>. Everything should work find in Firefox or Google Chrome.
         </div>
         <div id="myGenomes" class="hide">
+        <button type="button" id='addMyGenomeButton' class='btn btn-primary' data-toggle="button"><span class='glyphicon glyphicon-plus'></span> Add your own proteomes</button>
           <table class="table table-condensed genomes-table" id="my-genomes-table">
             <thead>
               <tr>
                 <th class="handle">
-                  <button type="button" id='addMyGenomeButton' class='btn btn-primary btn-xs' data-toggle="button"><span class='glyphicon glyphicon-plus'></span></button>
+                  <button id="remove-my-genomes" class="btn btn-xs btn-danger" title="remove all my genomes"><span class="glyphicon glyphicon-trash"></span></button>
                 </th>
                 <th class="name">My proteomes <span id="my-genomes-help" class='glyphicon glyphicon-info-sign' title="Add your own proteomes by selecting FASTA-files containing individual proteomes. After processing, they're stored in your browser and are available for analysis under my proteomes."></span></th>
                 <th class="status"></th>
-                <th class="action"><a id="remove-my-genomes" class="btn btn-xs btn-danger" title="remove all my genomes"><span class="glyphicon glyphicon-trash"></span></a></th>
+                <th class="action">
+                    <button class='btn btn-primary btn-xs btn-add-all' title="add all selected proteomes to analysis"><span class='glyphicon glyphicon-plus'></span></button>
+                </th>
               </tr>
             </thead>
             <tbody>
