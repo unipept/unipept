@@ -751,8 +751,6 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
                 .attr("height", Math.ceil(box.height));
         });
 
-        $(".legend").disableSelection();
-
         // draw the lines
         graphArea.append("path")
             .datum(graphData)
