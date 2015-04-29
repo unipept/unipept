@@ -49,8 +49,13 @@ var constructGenomeTable = function constructGenomeTable(args) {
      * Initializes sortable
      */
     function initDrag() {
-        $("#genomes_table").disableSelection();
-        $("#genomes_table tbody").sortable({
+        dragula([$("#genomes_table tbody").get(0)], {
+            direction: 'vertical'
+        }).on("drop", function () {
+            pancore.updateOrder(calculateTablePositions());
+            that.update();
+        });
+        /*$("#genomes_table tbody").sortable({
             axis: 'y',
             containment: '.left-col',
             cursor: 'url(/closedhand.cur) 7 5, move',
@@ -58,7 +63,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
                 pancore.updateOrder(calculateTablePositions());
                 that.update();
             }
-        });
+        });*/
     }
 
     /**
