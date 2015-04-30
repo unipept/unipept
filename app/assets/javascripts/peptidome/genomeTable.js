@@ -50,20 +50,15 @@ var constructGenomeTable = function constructGenomeTable(args) {
      */
     function initDrag() {
         dragula([$("#genomes_table tbody").get(0)], {
-            direction: 'vertical'
-        }).on("drop", function () {
+            direction: 'vertical',
+            moves: function (el) {
+              return d3.select(el).datum().status === "Done";
+            }
+        })
+        .on("drop", function () {
             pancore.updateOrder(calculateTablePositions());
             that.update();
         });
-        /*$("#genomes_table tbody").sortable({
-            axis: 'y',
-            containment: '.left-col',
-            cursor: 'url(/closedhand.cur) 7 5, move',
-            stop: function () {
-                pancore.updateOrder(calculateTablePositions());
-                that.update();
-            }
-        });*/
     }
 
     /**
