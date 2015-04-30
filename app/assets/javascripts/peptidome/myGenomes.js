@@ -347,24 +347,29 @@ var constructMyGenomes = function constructMyGenomes(args) {
         var i,
             g,
             row,
-            name;
+            name,
+            isCurrent;
 
         $myGenomesTable.empty();
         if (genomeList.length === 0) {
-            // TODO
             $myGenomesTable.append("<tr class='info'><td colspan='4' class='info'><span class='glyphicon glyphicon-info-sign'></span> Click the add your own proteomes button to add proteomes.</td></tr>");
         } else {
             for (i = 0; i < genomeList.length; i++) {
                 g = genomes[genomeList[i]];
-                row = g.version === version ? "<tr class='own' data-genomeid='" + g.id + "'>" : "<tr class='own old' data-genomeid='" + g.id + "'>";
-                row += "<td class='button'><a class='btn btn-default btn-xs remove-my-genome' title='remove proteome'><span class='glyphicon glyphicon-trash'></span></a></td>";
+                isCurrent = g.version === version;
+                row = "<tr class='own' data-genomeid='" + g.id + "'>";
+                row += "<td class='button'><button class='btn btn-default btn-xs remove-my-genome' title='remove proteome'";
+                row += isCurrent ? "" : " disabled ";
+                row += "><span class='glyphicon glyphicon-trash'></span></button></td>";
                 row += "<td class='name'>" + g.name + "</td>";
-                if (g.version === version) {
-                    row += "<td><a class='btn btn-default btn-xs edit-genome-name' title='edit proteome name'><span class='glyphicon glyphicon-pencil'></span></a></td>";
+                if (isCurrent) {
+                    row += "<td><button class='btn btn-default btn-xs edit-genome-name' title='edit proteome name'><span class='glyphicon glyphicon-pencil'></span></button></td>";
                 } else {
                     row += "<td><span class='glyphicon glyphicon-refresh'></span></td>";
                 }
-                row += "<td><button class='btn btn-default btn-xs btn-add' title='add proteome to analysis'><span class='glyphicon glyphicon-plus'></span></button></td>";
+                row += "<td><button class='btn btn-default btn-xs btn-add' title='add proteome to analysis'";
+                row += isCurrent ? "" : " disabled ";
+                row += "><span class='glyphicon glyphicon-plus'></span></button></td>";
                 row += "</tr>";
                 $myGenomesTable.append(row);
             }
