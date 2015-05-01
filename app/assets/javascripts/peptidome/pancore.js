@@ -18,6 +18,7 @@ var constructPancore = function constructPancore(args) {
         promisesLoading = new Map(),
         promisesDownload = new Map(),
         isLoading = false,
+        askRestore = false,
         rank = 0,
         lca = "",
         genomeSelector,
@@ -397,6 +398,17 @@ var constructPancore = function constructPancore(args) {
             that.loadStatus();
             $("#restore-analysis").addClass("hide");
         });
+        setTimeout(function () {
+            askRestore = true;
+        }, 1000);
+
+    }
+
+    function hideRestore() {
+        if (askRestore) {
+            $("#restore-analysis").addClass("hide");
+            askRestore = false;
+        }
     }
 
     /**
@@ -419,6 +431,7 @@ var constructPancore = function constructPancore(args) {
      * @param <Array> g Array of id's of the genomes we want to add
      */
     that.addGenomes = function addGenomes(g, loadUnique) {
+        hideRestore();
         var loadUnique = loadUnique === undefined ? true : loadUnique;
         return Promise.all(g.map(function addGenome(genome, i){
             // only add new genomes
