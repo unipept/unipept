@@ -131,7 +131,7 @@
             <form>
                 <div class="form-group">
                   <label for="myGenomeName" class="control-label">Name</label>
-                  <input type="text" id="myGenomeName" class="form-control" placeholder="name" data-toggle="tooltip" title="Enter a name. The one of the organism would be a good choice.">
+                  <input type="text" id="myGenomeName" class="form-control" placeholder="name" data-toggle="tooltip" title="Enter a name for this proteome.">
                 </div>
                 <div class="form-group">
                   <label for="myGenomeFile" class="control-label"><span class="initialism">FASTA</span> file</label>
@@ -148,8 +148,8 @@
                   <button type="button" id="processMyGenomeButton" class="btn btn-primary form-control">Process <span class="initialism">FASTA</span> file</button>
                 </div>
                 <div id="myGenomeProgress" class="progress hide">
-                  <div class="progress-bar progress-bar-striped active"  role="progressbar" style="width: 45%">
-                    <span></span>
+                  <span class="progress-text"></span>
+                  <div class="progress-bar progress-bar-success progress-bar-striped active"  role="progressbar" style="width: 45%">
                   </div>
                 </div>
                 <small><span class="glyphicon glyphicon-info-sign"></span> The proteomes you add are only visible in this webbrowser. Nothing will be stored on the Unipept servers.</small>

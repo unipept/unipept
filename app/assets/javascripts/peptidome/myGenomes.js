@@ -183,17 +183,17 @@ var constructMyGenomes = function constructMyGenomes(args) {
      * Process a list of files
      */
     function handleFiles(dataFiles) {
-        var i = 0,
+        var i = 1,
             totalFiles = dataFiles.length;
         processProgress(0);
-        $(".popover-content #myGenomeProgress .progress-bar span").text("File 0 of " + totalFiles);
+        $(".popover-content #myGenomeProgress .progress-text").text("Processing file 1 of " + totalFiles);
         return dataFiles.reduce(function (promise, data) {
             return promise.then(function () {
                 return readFile(data.file);
             }).then(function (content) {
                 return processFileContent(content, data.name, data.id);
             }).then(function () {
-                $(".popover-content #myGenomeProgress .progress-bar span").text("File " + (++i) + " of " + totalFiles);
+                $(".popover-content #myGenomeProgress .progress-text").text("Processing file " + (++i) + " of " + totalFiles);
             });
         }, Promise.resolve()).then(resetForm);
     }
@@ -251,7 +251,9 @@ var constructMyGenomes = function constructMyGenomes(args) {
      * @param <Number> percentage The new width in %
      */
     function processProgress(percentage) {
-        $(".popover-content #myGenomeProgress .progress-bar").css("width", (percentage * 100) + "%");
+        requestAnimFrame(function () {
+            $(".popover-content #myGenomeProgress .progress-bar").css("width", (percentage * 100) + "%");
+        });
     }
 
     /**

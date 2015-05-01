@@ -22,7 +22,7 @@ function showNotification(content, properties) {
         $notification.append("<div class='spinner'></div>");
     }
 
-    requestAnimationFrame(function () {
+    requestAnimFrame(function () {
         $notification.removeClass("notification-show");
     });
 
