@@ -99,6 +99,8 @@ var constructPancore = function constructPancore(args) {
             info("You're using Internet Explorer 10. Everything should work as expected, but for an optimal experience, please use a recent version of Mozilla Firefox or Google Chrome.");
         }
 
+        window.onbeforeunload = that.saveStatus;
+
         // Ready for take off
         genomeSelector.demo();
     }
@@ -554,6 +556,18 @@ var constructPancore = function constructPancore(args) {
     };
 
     /**
+     * Saves the currently loaded genomes in local storage
+     */
+    that.saveStatus = function saveStatus() {
+        var assemblies = table.getOrder().map(function (as) {
+            return that.getGenome(as).genbank_assembly_accession;
+        });
+        localStorage.pancoreStatus = JSON.stringify({
+            assemblies: assemblies
+        });
+    };
+
+    /**
      * Abbreviates an organism name
      *
      * @param <String> name The name of the organism
@@ -618,7 +632,7 @@ var constructPancore = function constructPancore(args) {
         var g;
         if (("" + id).charAt(0) === "u") {
             g = myGenomes.getGenome(id);
-            g.genbank_assembly_accession = "";
+            g.genbank_assembly_accession = id;
             g.own = true;
         } else {
             g = genomeData.get(id);
