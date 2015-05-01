@@ -253,7 +253,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
         tr.sort(function (a, b) { return a.position - b.position; });
 
         // Add cells
-        newRows.append("td").attr("class", "handle").html("<span class='glyphicon glyphicon-resize-vertical'></span>");
+        newRows.append("td").attr("class", "handle").html("<span class='glyphicon glyphicon-resize-vertical' title='drag to reorder'></span>");
         td = tr.selectAll("td.data")
             .data(function (d) {
                 return d3.entries(d).filter(function (entry) {
@@ -295,28 +295,12 @@ var constructGenomeTable = function constructGenomeTable(args) {
     };
 
     /**
-     * Displays a message above the table
-     *
-     * @param <String> icon The name of the glyphicon you want to show in front
-     *          of your message
-     * @param <String> msg The message you want to set
-     */
-    that.setTableMessage = function setTableMessage(icon, msg) {
-        $("#table-message").html("<span class='glyphicon glyphicon-" + icon + "'></span> " + msg);
-    };
-
-    /**
-     * Enables or disables the dragging of the tables and updates the message
-     * above the table.
+     * Does nothing for the moment
      *
      * @param <Boolean> enabled True if we want to enable the table
      */
     that.setEnabled = function setEnabled(enabled) {
-        if (enabled) {
-            that.setTableMessage("info-sign", "Drag rows to reorder them or use one of the autosort options.");
-        } else {
-            that.setTableMessage("refresh", "Please wait while we load the proteomes.");
-        }
+
     };
 
     // initialize the object
