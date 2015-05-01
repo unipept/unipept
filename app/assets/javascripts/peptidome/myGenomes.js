@@ -506,7 +506,11 @@ var constructMyGenomes = function constructMyGenomes(args) {
                 }
                 fileRequest = files.get(result.value.id);
                 fileRequest.onsuccess = function (e) {
-                    dataQueue.push({file: e.target.result.file, name: result.value.name, id: result.value.id});
+                    if (e.target.result) {
+                        dataQueue.push({file: e.target.result.file, name: result.value.name, id: result.value.id});
+                    } else {
+                        removeGenome(result.value.id);
+                    }
                 };
                 fileRequest.onerror = indexedDBStore.onerror;
             }
