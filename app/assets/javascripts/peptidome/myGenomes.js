@@ -160,6 +160,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
                 files = $(".popover-content #myGenomeFile").prop("files"),
                 dataFiles = [],
                 i,
+                $notification,
                 id = "u" + new Date().getTime();
 
             // Form validation
@@ -174,7 +175,13 @@ var constructMyGenomes = function constructMyGenomes(args) {
                 for (i = 0; i < files.length; i++) {
                     dataFiles.push({name: name || files[i].name, file: files[i], id: id + i});
                 }
-                handleFiles(dataFiles);
+                $notification = showNotification("Processing proteomes...", {
+                        loading: true,
+                        autoHide: false
+                    });
+                handleFiles(dataFiles).then(function () {
+                    $notification.hide();
+                });
             }
         });
     }
@@ -499,7 +506,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
             // process if done
             if (result.value.version !== version) {
                 if (!$notification) {
-                    $notification = showNotification("Updating my genomes...", {
+                    $notification = showNotification("Updating my proteomes...", {
                         loading: true,
                         autoHide: false
                     });
