@@ -311,18 +311,20 @@ var constructMyGenomes = function constructMyGenomes(args) {
      * removes all the genomes from the my genome list
      */
     function removeAllGenomes() {
-        var i,
-            id;
+        if (confirm("Are you sure you want to remove all your proteomes?")) {
+            var i,
+                id;
 
-        for (i = genomeList.length - 1; i >= 0; i--) {
-            id = genomeList[i];
-            genomeList.splice(i, 1);
-            delete genomes[id];
-            dataStore.removeGenome(id);
+            for (i = genomeList.length - 1; i >= 0; i--) {
+                id = genomeList[i];
+                genomeList.splice(i, 1);
+                delete genomes[id];
+                dataStore.removeGenome(id);
+            }
+
+            // update the list
+            redrawTable();
         }
-
-        // update the list
-        redrawTable();
     }
 
     /**
