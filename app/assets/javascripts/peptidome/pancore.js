@@ -103,10 +103,10 @@ var constructPancore = function constructPancore(args) {
         window.onbeforeunload = that.saveStatus;
 
         // Ready for take off
+        genomeSelector.demo();
+
         if (localStorage.pancoreStatus) {
-            that.loadStatus();
-        } else {
-            genomeSelector.demo();
+            askToRestore();
         }
     }
 
@@ -388,6 +388,15 @@ var constructPancore = function constructPancore(args) {
             table.setEnabled(true);
             $loadingNotification.hide();
         }
+    }
+
+    function askToRestore() {
+        $("#restore-analysis").removeClass("hide");
+        $("#restore-analysis a").click(function (e) {
+            e.preventDefault();
+            that.loadStatus();
+            $("#restore-analysis").addClass("hide");
+        });
     }
 
     /**
