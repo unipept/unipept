@@ -219,6 +219,10 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             keyUpped(false);
         });
 
+        if (navigator.userAgent.toLowerCase().indexOf('chrome') > -1) {
+            $("#genomeSelector .tokenfield").css("width", "365px");
+        }
+
         function keyUpped(direct) {
             updateFilters();
             var list = $("#genomeSelectorSearch").tokenfield('getTokensList');
