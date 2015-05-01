@@ -132,10 +132,8 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
                 graphData.push(data);
                 table.setGenomePosition(data.id, graphData.length - 1, false);
             }
-            mayStartAnimation = false;
             that.update();
             table.update();
-            setTimeout(function () { mayStartAnimation = true; }, transitionDuration);
         } else {
             setTimeout(tryUpdateGraph, transitionDuration);
         }
@@ -599,14 +597,18 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * @param <Array> data Array of pancoreGraph data
      */
     that.setData = function setData(data) {
-        var i;
-        graphData = data;
-        that.update();
-        for (i = 0; i < data.length; i++) {
-            table.setGenomeStatus(data[i].id, "Done", false);
-            table.setGenomePosition(data[i].id, i, false);
+        if (mayStartAnimation) {
+            var i;
+            graphData = data;
+            that.update();
+            for (i = 0; i < data.length; i++) {
+                table.setGenomeStatus(data[i].id, "Done", false);
+                table.setGenomePosition(data[i].id, i, false);
+            }
+            table.update();
+        } else {
+            setTimeout(function () { setData(data); }, transitionDuration);
         }
-        table.update();
     };
 
     /**
@@ -826,6 +828,9 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * Updates the pancore graph
      */
     that.update = function update() {
+        mayStartAnimation = false;
+        setTimeout(function () { mayStartAnimation = true; }, transitionDuration);
+
         that.removePopoversAndHighlights();
 
         // Prepare for line transition

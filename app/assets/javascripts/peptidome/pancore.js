@@ -12,6 +12,7 @@ var constructPancore = function constructPancore(args) {
     /*************** Private variables ***************/
 
     var that = {},
+        data = args.data,
         genomeData = new Map(),
         genomes = new Map(),
         promisesLoading = new Map(),
@@ -45,7 +46,7 @@ var constructPancore = function constructPancore(args) {
 
         // Construct the genome selector
         genomeSelector = constructGenomeSelector({
-            data : args.data,
+            data : data,
             taxa : args.taxa,
             genomes: genomes,
             pancore : that
@@ -102,7 +103,11 @@ var constructPancore = function constructPancore(args) {
         window.onbeforeunload = that.saveStatus;
 
         // Ready for take off
-        genomeSelector.demo();
+        if (localStorage.pancoreStatus) {
+            that.loadStatus();
+        } else {
+            genomeSelector.demo();
+        }
     }
 
     /**
@@ -382,8 +387,6 @@ var constructPancore = function constructPancore(args) {
         } else {
             table.setEnabled(true);
             $loadingNotification.hide();
-
-            setTimeout(function () { sendToWorker("getUniqueSequences", {order : table.getOrder(), force : false }); }, 1000);
         }
     }
 
@@ -406,7 +409,8 @@ var constructPancore = function constructPancore(args) {
      *
      * @param <Array> g Array of id's of the genomes we want to add
      */
-    that.addGenomes = function addGenomes(g) {
+    that.addGenomes = function addGenomes(g, loadUnique) {
+        var loadUnique = loadUnique === undefined ? true : loadUnique;
         return Promise.all(g.map(function addGenome(genome, i){
             // only add new genomes
             if (genomes.has(genome.id)) return;
@@ -434,8 +438,15 @@ var constructPancore = function constructPancore(args) {
                     groupErrors(e, "It seems like something went wrong while we loaded the data. Are you still conected to the internet? You might want to reload this page.");
                 });
         })).then( function () {
+            return new Promise(function (resolve, reject) {
+                setTimeout(resolve, 1000);
+            });
+        }).then( function () {
             if (promisesLoading.size === 0) {
                 setLoading(false);
+            }
+            if (loadUnique) {
+                sendToWorker("getUniqueSequences", {order : table.getOrder(), force : false });
             }
         });
     };
@@ -564,6 +575,48 @@ var constructPancore = function constructPancore(args) {
         });
         localStorage.pancoreStatus = JSON.stringify({
             assemblies: assemblies
+        });
+    };
+
+    /**
+     * Loads a status. First loads all genomes, then sets the order
+     */
+    that.loadStatus = function loadStatus(status) {
+        var status = status || JSON.parse(localStorage.pancoreStatus),
+            assemblySet = new Set(status.assemblies),
+            statusGenomes = new Map(),
+            assemblies,
+            assembliesOrder,
+            assembly;
+
+        // reset the visualisation
+        that.clearAllData();
+
+        // convert assemblies to addable genome objects
+        data.forEach(function (value) {
+            if (assemblySet.has(value.genbank_assembly_accession)) {
+                statusGenomes.set(value.genbank_assembly_accession, {
+                    id : value.id,
+                    name : value.name
+                });
+            }
+        });
+        assemblies = status.assemblies.map(function (element) {
+            return statusGenomes.get(element);
+        });
+        assembliesOrder = assemblies.map(function (element) {
+            return element.id;
+        }).filter(function (element) {
+            return element;
+        });
+
+        // load the genomes and set the order
+        that.addGenomes(assemblies, false).then(function () {
+            that.updateOrder({
+                order : assembliesOrder,
+                start : 0,
+                stop : assembliesOrder.length - 1
+            });
         });
     };
 
