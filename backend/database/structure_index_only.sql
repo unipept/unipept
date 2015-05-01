@@ -57,6 +57,19 @@ ALTER TABLE go_cross_references ADD INDEX fk_go_reference_uniprot_entries (unipr
 ALTER TABLE ec_cross_references ADD INDEX fk_ec_reference_uniprot_entries (uniprot_entry_id ASC);
 
 
+-- -----------------------------------------------------
+-- Table `unipept`.`assemblies`
+-- -----------------------------------------------------
+ALTER TABLE assemblies ADD INDEX fk_taxons_assemblies_idx (taxon_id ASC);
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`assembly_sequences`
+-- -----------------------------------------------------
+ALTER TABLE assembly_sequences ADD INDEX fk_assemblies_assembly_sequences_idx (assembly_id ASC);
+ALTER TABLE assembly_sequences ADD INDEX idx_genbank_accession (genbank_accession ASC);
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
