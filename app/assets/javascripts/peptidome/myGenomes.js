@@ -16,7 +16,9 @@ var constructMyGenomes = function constructMyGenomes(args) {
     // Data vars
     var promisesProcess = new Map(),
         genomes,
-        genomeList;
+        genomeList,
+        genomesPromise,
+        genomesResolver;
 
     // Data storage
     var indexedDBStore = {},
@@ -37,6 +39,10 @@ var constructMyGenomes = function constructMyGenomes(args) {
     function init() {
         genomes = {};
         genomeList = [];
+
+        genomesPromise = new Promise( function (resolve, reject) {
+            genomesResolver = resolve;
+        });
 
         if (window.indexedDB && navigator.vendor.indexOf("Apple") === -1) {
             dataStore = indexedDBStore;
@@ -438,33 +444,34 @@ var constructMyGenomes = function constructMyGenomes(args) {
     indexedDBStore.init = function init() {
         var version = 4;
         var request = indexedDB.open("myGenomes", version);
+        return new Promise(function (resolve, reject) {
+            request.onupgradeneeded = function (e) {
+                var db = e.target.result;
 
-        request.onupgradeneeded = function (e) {
-            var db = e.target.result;
+                e.target.transaction.onerror = indexedDBStore.onerror;
 
-            e.target.transaction.onerror = indexedDBStore.onerror;
+                if (db.objectStoreNames.contains("metadata")) {
+                    db.deleteObjectStore("metadata");
+                }
+                if (db.objectStoreNames.contains("peptideLists")) {
+                    db.deleteObjectStore("peptideLists");
+                }
+                if (db.objectStoreNames.contains("files")) {
+                    db.deleteObjectStore("files");
+                }
 
-            if (db.objectStoreNames.contains("metadata")) {
-                db.deleteObjectStore("metadata");
-            }
-            if (db.objectStoreNames.contains("peptideLists")) {
-                db.deleteObjectStore("peptideLists");
-            }
-            if (db.objectStoreNames.contains("files")) {
-                db.deleteObjectStore("files");
-            }
+                db.createObjectStore("metadata", {keyPath: "id"});
+                db.createObjectStore("peptideLists", {keyPath: "id"});
+                db.createObjectStore("files", {keyPath: "id"});
+            };
 
-            db.createObjectStore("metadata", {keyPath: "id"});
-            db.createObjectStore("peptideLists", {keyPath: "id"});
-            db.createObjectStore("files", {keyPath: "id"});
-        };
+            request.onsuccess = function (e) {
+                indexedDBStore.db = e.target.result;
+                resolve(indexedDBStore.loadMyGenomes());
+            };
 
-        request.onsuccess = function (e) {
-            indexedDBStore.db = e.target.result;
-            indexedDBStore.loadMyGenomes();
-        };
-
-        request.onerror = indexedDBStore.onerror;
+            request.onerror = indexedDBStore.onerror;
+        });
     };
 
     /**
@@ -478,53 +485,58 @@ var constructMyGenomes = function constructMyGenomes(args) {
         var fileRequest;
         var dataQueue = [];
         var $notification;
+        return new Promise(function (resolve, reject) {
 
-        // Get everything in the store;
-        var keyRange = IDBKeyRange.lowerBound(0);
-        var cursorRequest = store.openCursor(keyRange);
+            // Get everything in the store;
+            var keyRange = IDBKeyRange.lowerBound(0);
+            var cursorRequest = store.openCursor(keyRange);
 
-        cursorRequest.onsuccess = function (e) {
-            var result = e.target.result;
-            // are we done yet?
-            if (!!result == false) {
-                redrawTable();
-                return dataQueue.reduce(function (promise, data) {
-                    return promise.then(function () {
-                        return processFileContent(data.file, data.name, data.id);
-                    });
-                }, Promise.resolve())
-                .then(function () {
-                    if($notification) {
-                        $notification.hide();
-                    }
-                });
-            }
-
-            genomeList.push(result.value.id);
-            genomes[result.value.id] = result.value;
-
-            // process if done
-            if (result.value.version !== version) {
-                if (!$notification) {
-                    $notification = showNotification("Updating my proteomes...", {
-                        loading: true,
-                        autoHide: false
-                    });
+            cursorRequest.onsuccess = function (e) {
+                var result = e.target.result;
+                // are we done yet?
+                if (!!result == false) {
+                    resolve();
+                    return;
                 }
-                fileRequest = files.get(result.value.id);
-                fileRequest.onsuccess = function (e) {
-                    if (e.target.result) {
-                        dataQueue.push({file: e.target.result.file, name: result.value.name, id: result.value.id});
-                    } else {
-                        removeGenome(result.value.id);
-                    }
-                };
-                fileRequest.onerror = indexedDBStore.onerror;
-            }
-            result.continue();
-        };
 
-        cursorRequest.onerror = indexedDBStore.onerror;
+                genomeList.push(result.value.id);
+                genomes[result.value.id] = result.value;
+
+                // process if done
+                if (result.value.version !== version) {
+                    if (!$notification) {
+                        $notification = showNotification("Updating my proteomes...", {
+                            loading: true,
+                            autoHide: false
+                        });
+                    }
+                    fileRequest = files.get(result.value.id);
+                    fileRequest.onsuccess = function (e) {
+                        if (e.target.result) {
+                            dataQueue.push({file: e.target.result.file, name: result.value.name, id: result.value.id});
+                        } else {
+                            removeGenome(result.value.id);
+                        }
+                    };
+                    fileRequest.onerror = indexedDBStore.onerror;
+                }
+                result.continue();
+            };
+            cursorRequest.onerror = indexedDBStore.onerror;
+        }).then(function () {
+            genomesResolver(genomes);
+            redrawTable();
+            return dataQueue.reduce(function (promise, data) {
+                return promise.then(function () {
+                    return processFileContent(data.file, data.name, data.id);
+                });
+            }, Promise.resolve())
+            .then(function () {
+                if($notification) {
+                    $notification.hide();
+                }
+            });
+        });
     };
 
     /**
@@ -625,7 +637,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
      * Initializes the database
      */
     localStorageStore.init = function init() {
-        localStorageStore.loadMyGenomes();
+        return localStorageStore.loadMyGenomes();
     };
 
     /**
@@ -648,7 +660,9 @@ var constructMyGenomes = function constructMyGenomes(args) {
             }
         }
 
+        genomesResolver(genomes);
         redrawTable();
+        return Promise.resolve();
     };
 
     /**
@@ -710,6 +724,13 @@ var constructMyGenomes = function constructMyGenomes(args) {
      */
     that.getGenome = function getGenome(id) {
         return genomes[id];
+    };
+
+    /**
+     * Retrieves a genomes promise
+     */
+    that.getGenomes = function getGenomes() {
+        return genomesPromise;
     };
 
     // initialize the object

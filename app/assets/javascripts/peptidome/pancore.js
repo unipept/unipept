@@ -615,43 +615,67 @@ var constructPancore = function constructPancore(args) {
      */
     that.loadStatus = function loadStatus(status) {
         var status = status || JSON.parse(localStorage.pancoreStatus),
-            assemblySet = new Set(status.assemblies),
+            assemblySet = new Set(),
             statusGenomes = new Map(),
             assemblies,
             assembliesOrder,
-            assembly;
+            assembly,
+            startPromise = myGenomes ? myGenomes.getGenomes() : Promise.resolve();
 
-        // reset the visualisation
-        that.clearAllData();
+        // create the assemblies set manually because of stupid Safari
+        status.assemblies.forEach(function (element) {
+            assemblySet.add(element);
+        });
 
-        // convert assemblies to addable genome objects
-        data.forEach(function (value) {
-            if (assemblySet.has(value.genbank_assembly_accession)) {
-                statusGenomes.set(value.genbank_assembly_accession, {
-                    id : value.id,
-                    name : value.name
+        // only start loading after the my genomes list is complete
+        startPromise.then(function () {
+            // reset the visualisation
+            that.clearAllData();
+
+            // convert assemblies to addable genome objects
+            data.forEach(function (value) {
+                if (assemblySet.has(value.genbank_assembly_accession)) {
+                    statusGenomes.set(value.genbank_assembly_accession, {
+                        id : value.id,
+                        name : value.name
+                    });
+                }
+            });
+            if (myGenomes) {
+                status.assemblies.forEach(function (element) {
+                    if (element.charAt(0) === "u") {
+                        var assembly = myGenomes.getGenome(element);
+                        if (assembly) {
+                            statusGenomes.set(assembly.id, {
+                                id : assembly.id,
+                                name : assembly.name
+                            });
+                        }
+                    }
                 });
             }
-        });
-        assemblies = status.assemblies.map(function (element) {
-            return statusGenomes.get(element);
-        }).filter(function (element) {
-            return element;
-        });
-        assembliesOrder = assemblies.map(function (element) {
-            return element.id;
-        });
 
-        // load the genomes and set the order
-        that.addGenomes(assemblies, false).then(function () {
-            that.updateOrder({
-                order : assembliesOrder,
-                start : 0,
-                stop : assembliesOrder.length - 1
+            // put them in the right order
+            assemblies = status.assemblies.map(function (element) {
+                return statusGenomes.get(element);
+            }).filter(function (element) {
+                return element;
             });
-            if (assemblySet.size !== assemblies.length) {
-                error(null, "We couldn't load one or more proteomes from your previous session.");
-            }
+            assembliesOrder = assemblies.map(function (element) {
+                return element.id;
+            });
+
+            // load the genomes and set the order
+            that.addGenomes(assemblies, false).then(function () {
+                that.updateOrder({
+                    order : assembliesOrder,
+                    start : 0,
+                    stop : assembliesOrder.length - 1
+                });
+                if (assemblySet.size !== assemblies.length) {
+                    error(null, "We couldn't load one or more proteomes from your previous session.");
+                }
+            });
         });
     };
 
