@@ -624,7 +624,7 @@ var constructPancore = function constructPancore(args) {
 
         // create the assemblies set manually because of stupid Safari
         status.assemblies.forEach(function (element) {
-            assemblySet.add(element);
+            assemblySet.add(element.split(".")[0]);
         });
 
         // only start loading after the my genomes list is complete
@@ -634,8 +634,8 @@ var constructPancore = function constructPancore(args) {
 
             // convert assemblies to addable genome objects
             data.forEach(function (value) {
-                if (assemblySet.has(value.genbank_assembly_accession)) {
-                    statusGenomes.set(value.genbank_assembly_accession, {
+                if (assemblySet.has(value.genbank_assembly_accession.split(".")[0])) {
+                    statusGenomes.set(value.genbank_assembly_accession.split(".")[0], {
                         id : value.id,
                         name : value.name
                     });
@@ -657,7 +657,7 @@ var constructPancore = function constructPancore(args) {
 
             // put them in the right order
             assemblies = status.assemblies.map(function (element) {
-                return statusGenomes.get(element);
+                return statusGenomes.get(element.split(".")[0]);
             }).filter(function (element) {
                 return element;
             });
