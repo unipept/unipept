@@ -597,18 +597,14 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * @param <Array> data Array of pancoreGraph data
      */
     that.setData = function setData(data) {
-        if (mayStartAnimation) {
-            var i;
-            graphData = data;
-            that.update();
-            for (i = 0; i < data.length; i++) {
-                table.setGenomeStatus(data[i].id, "Done", false);
-                table.setGenomePosition(data[i].id, i, false);
-            }
-            table.update();
-        } else {
-            setTimeout(function () { setData(data); }, transitionDuration);
+        var i;
+        graphData = data;
+        that.update();
+        for (i = 0; i < data.length; i++) {
+            table.setGenomeStatus(data[i].id, "Done", false);
+            table.setGenomePosition(data[i].id, i, false);
         }
+        table.update();
     };
 
     /**
