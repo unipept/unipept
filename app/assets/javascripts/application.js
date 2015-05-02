@@ -245,7 +245,7 @@ function error(errorMessage, userMessage) {
         }
     }
     if (userMessage) {
-        var msg = $("<div class='alert alert-danger' style='display: none;'><strong>Oh snap!</strong> " + userMessage + "</div>");
+        var msg = $("<div class='alert alert-danger alert-dismissible' style='display: none;'><button type='button' class='close' data-dismiss='alert'><span>&times;</span></button><strong>Oh snap!</strong> " + userMessage + "</div>");
         $("#messages").append(msg);
         msg.show("normal");
     }
@@ -254,7 +254,7 @@ function error(errorMessage, userMessage) {
 /* display the message variable in an info alert
  */
 function info(message) {
-    var msg = $("<div class='alert alert-info' style='display: none;'><strong>Heads up!</strong> " + message + "</div>");
+    var msg = $("<div class='alert alert-info alert-dismissible' style='display: none;'><button type='button' class='close' data-dismiss='alert'><span>&times;</span></button><strong>Heads up!</strong> " + message + "</div>");
     $("#messages").append(msg);
     msg.show("normal");
 }

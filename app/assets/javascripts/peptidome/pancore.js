@@ -635,11 +635,11 @@ var constructPancore = function constructPancore(args) {
         });
         assemblies = status.assemblies.map(function (element) {
             return statusGenomes.get(element);
+        }).filter(function (element) {
+            return element;
         });
         assembliesOrder = assemblies.map(function (element) {
             return element.id;
-        }).filter(function (element) {
-            return element;
         });
 
         // load the genomes and set the order
@@ -649,6 +649,9 @@ var constructPancore = function constructPancore(args) {
                 start : 0,
                 stop : assembliesOrder.length - 1
             });
+            if (assemblySet.size !== assemblies.length) {
+                error(null, "We couldn't load one or more proteomes from your previous session.");
+            }
         });
     };
 
