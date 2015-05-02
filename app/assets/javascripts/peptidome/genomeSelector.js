@@ -58,6 +58,8 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         initCheckAll();
         initAddAll();
         initPagination();
+
+        search("");
     }
 
     /**

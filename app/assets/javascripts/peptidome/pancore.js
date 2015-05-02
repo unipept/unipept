@@ -104,10 +104,16 @@ var constructPancore = function constructPancore(args) {
         window.onbeforeunload = that.saveStatus;
 
         // Ready for take off
-        genomeSelector.demo();
-
         if (localStorage.pancoreStatus) {
-            askToRestore();
+            if (localStorage.pancoreLoadedBefore === "no") {
+                localStorage.pancoreLoadedBefore = "yes";
+                that.loadStatus();
+            } else {
+                genomeSelector.demo();
+                askToRestore();
+            }
+        } else {
+            genomeSelector.demo();
         }
     }
 
@@ -595,9 +601,13 @@ var constructPancore = function constructPancore(args) {
         var assemblies = table.getOrder().map(function (as) {
             return that.getGenome(as).genbank_assembly_accession;
         });
-        localStorage.pancoreStatus = JSON.stringify({
+        var status = JSON.stringify({
             assemblies: assemblies
         });
+        if (status !== localStorage.pancoreStatus) {
+            localStorage.pancoreStatus = status
+            localStorage.pancoreLoadedBefore = "no";
+        }
     };
 
     /**
