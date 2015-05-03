@@ -61,9 +61,6 @@ var constructSearchtree = function constructSearchtree(args) {
                 .append("ul");
         }
 
-        // Prevent accidental text selection
-        $("#searchtree li.root ul").disableSelection();
-
         // Expand or collapse a node when clicked
         $("#searchtree li").click(function () {
             if (!$(this).hasClass("not")) {
