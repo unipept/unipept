@@ -94,6 +94,7 @@ var constructPancore = function constructPancore(args) {
         // Initialize the rest of the page
         initHelp();
         initFullScreen();
+        initActionBar();
         initSaveImage();
 
         // IE10 message
@@ -136,8 +137,6 @@ var constructPancore = function constructPancore(args) {
             $("#tab-help").stop(true, true).fadeOut(200);
         });
     }
-
-
 
     /**
      * Initializes the full screen stuff
@@ -185,31 +184,23 @@ var constructPancore = function constructPancore(args) {
     }
 
     /**
+     * Initializes the full screen buttons
+     */
+    function initActionBar() {
+        $(".fullScreenActions a").tooltip({placement: "bottom", delay: { "show": 300, "hide": 300 }});
+        $(".fullScreenActions .download").click(saveImage);
+        $(".fullScreenActions .exit").click(function () {
+            window.fullScreenApi.cancelFullScreen();
+        });
+    }
+
+    /**
      * Initializes the save image stuff
      */
     function initSaveImage() {
         // The save image stuff
         $("#buttons-pancore").prepend("<button id='save-img' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-download'></span> Save image</button>");
-        $("#save-img").click(function clickSaveImage() {
-            var selector,
-                tracking,
-                filename;
-            if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
-                selector = "#pancore_graph svg";
-                tracking = "graph";
-                filename = "unique_peptides_graph";
-            } else {
-                selector = "#sim_matrix svg";
-                tracking = "sim matrix";
-                filename = "similarity_matrix";
-                d3.selectAll(".inner.node circle").attr("class", "hidden");
-            }
-            logToGoogle("Pancore", "Save Image", tracking);
-            triggerDownloadModal(selector, null, filename);
-            if ($(".tab-content .active").attr('id') === "sim_matrix_wrapper") {
-                d3.selectAll(".inner.node circle").attr("class", "");
-            }
-        });
+        $("#save-img").click(saveImage);
 
         $("#buttons-pancore").prepend("<button id='save-data' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-download'></span> Download data</button>");
         $("#save-data").click(function clickSaveData() {
@@ -225,6 +216,21 @@ var constructPancore = function constructPancore(args) {
             logToGoogle("Pancore", "save Data", tracking);
             activeObject.handleSaveData();
         });
+    }
+
+    /**
+     * Triggers a modal to save an image of the active tab
+     */
+    function saveImage () {
+        var activeTab = getActiveTab();
+        logToGoogle("Pancore", "Save Image", activeTab);
+        if (activeTab === "pancore_graph") {
+            triggerDownloadModal("#pancore_graph svg", null, "unique_peptides_graph", ".full-screen-container");
+        } else {
+            d3.selectAll(".inner.node circle").attr("class", "hidden");
+            triggerDownloadModal("#sim_matrix svg", null, "similarity_matrix", ".full-screen-container");
+            d3.selectAll(".inner.node circle").attr("class", "");
+        }
     }
 
     /**
