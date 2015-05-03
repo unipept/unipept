@@ -3,7 +3,7 @@
 
 <div id="buttons-pancore"></div>
 
-<ul id="tabs" class="nav nav-tabs">
+<ul id="tabs" class="nav nav-tabs visualisations">
   <li class="<%= @tab == "peptidefinder" ? "active" : ""%>"><a href="#pancore_graph_wrapper" id="unique-peptide-finder-tab" data-toggle="tab">Unique Peptide Finder <span class="small glyphicon glyphicon-info-sign"></span></a></li>
   <li class="<%= @tab == "peptidomeclustering" ? "active" : ""%>"><a href="#sim_matrix_wrapper" id="peptidome-clustering-tab" data-toggle="tab">Peptidome Clustering <span class="small glyphicon glyphicon-info-sign"></a></li>
 </ul>
@@ -52,7 +52,20 @@
   </div>
 </div>
 
-<div class="tab-content">
+<div class="tab-content full-screen-container pancore not-full-screen">
+  <div class="full-screen-bar">
+    <div class="logo"><img src="/assets/trans_logo.png" alt="logo" width="40" height="40"></div>
+      <nav class="fullScreenNav">
+        <ul class="visualisations">
+          <li class="active"><a href="#pancore_graph_wrapper" data-toggle="tab">Unique peptide finder</a></li>
+          <li><a href="#sim_matrix_wrapper" data-toggle="tab">Peptidome clustering</a></li>
+        </ul>
+      </nav>
+      <div class="fullScreenActions">
+          <a title="" class="btn-animate download" data-original-title="Download the current view as an svg or png image"><span class="glyphicon glyphicon-download down"></span></a>
+          <a title="" class="btn-animate exit" data-original-title="Exit full screen mode"><span class="glyphicon glyphicon-resize-small shrink"></span></a>
+      </div>
+    </div>
   <div class="tab-pane fade <%= @tab == "peptidefinder" ? "in active" : ""%>" id="pancore_graph_wrapper">
     <div id="pancore_graph">
       <div id="popovers"></div>

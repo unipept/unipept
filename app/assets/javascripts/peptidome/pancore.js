@@ -137,23 +137,51 @@ var constructPancore = function constructPancore(args) {
         });
     }
 
+
+
     /**
      * Initializes the full screen stuff
      */
     function initFullScreen() {
         if (fullScreenApi.supportsFullScreen) {
-            $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-resize-full'></span> Enter full screen</button>");
+            $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
             $("#zoom-btn").click(function () {
-                if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
-                    logToGoogle("Pancore", "Full Screen", "graph");
-                    window.fullScreenApi.requestFullScreen($("#pancore_graph_wrapper").get(0));
-                } else {
-                    logToGoogle("Pancore", "Full Screen", "simmatrix");
-                    window.fullScreenApi.requestFullScreen($("#sim_matrix_wrapper").get(0));
-                }
+                logToGoogle("Pancore", "Full Screen", getActiveTab());
+                window.fullScreenApi.requestFullScreen($(".full-screen-container").get(0));
             });
             $(document).bind(fullScreenApi.fullScreenEventName, resizeFullScreen);
         }
+    }
+
+    /**
+     * Gets called to handle the change from and to full screen mode.
+     */
+    function resizeFullScreen() {
+        var activeTab = getActiveTab(),
+            isFullScreen = window.fullScreenApi.isFullScreen();
+
+        // sync tabs
+        $("ul.visualisations li.active").removeClass("active");
+        $("ul.visualisations li").each(function (i, el) {
+            if ($(el).find("a").attr("href") === "#" + activeTab + "_wrapper") {
+                $(el).addClass("active");
+            }
+        });
+
+        // class
+        $(".full-screen-container").toggleClass("full-screen", isFullScreen);
+        $(".full-screen-container").toggleClass("not-full-screen", !isFullScreen);
+
+        // tooltip
+        if (isFullScreen) {
+            $(".tip").appendTo(".full-screen-container");
+        } else {
+            $(".tip").appendTo("body");
+        }
+
+        // update visualisations
+        graph.handleFullScreen(isFullScreen);
+        matrix.handleFullScreen(isFullScreen);
     }
 
     /**
@@ -196,21 +224,6 @@ var constructPancore = function constructPancore(args) {
             }
             logToGoogle("Pancore", "save Data", tracking);
             activeObject.handleSaveData();
-        });
-    }
-
-    /**
-     * Gets called to handle the change from and to full screen mode.
-     * Mostly just scales the SVG
-     */
-    function resizeFullScreen() {
-        setTimeout(function handleFullScreen() {
-            var fullscreen = window.fullScreenApi.isFullScreen();
-            if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
-                graph.handleFullScreen(fullscreen);
-            } else {
-                matrix.handleFullScreen(fullscreen);
-            }
         });
     }
 
@@ -427,6 +440,11 @@ var constructPancore = function constructPancore(args) {
         delay(function () {
             error(errorMsg, userMsg);
         }, 1000);
+    }
+
+    function getActiveTab() {
+        var activePane = $(".full-screen-container div.active").attr('id');
+        return activePane.split("_wrapper")[0];
     }
 
     /*************** Public methods ***************/
