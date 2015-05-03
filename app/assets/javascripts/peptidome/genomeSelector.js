@@ -323,11 +323,11 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         }
 
         function repositionPopover() {
-            console.log("reposition");
             var buttonOffset = $(".search-settings").offset(),
                 containerOffset = $(".full-screen-container").offset();
             $popover.css("left", buttonOffset.left - containerOffset.left + 45);
             $popover.css("top", Math.max(0, buttonOffset.top - containerOffset.top - 195));
+            $popover.find(".arrow").css("top", $(".full-screen-container").hasClass("full-screen") ? "35%" : "50%");
         }
 
         function initPopoverBehaviour() {
