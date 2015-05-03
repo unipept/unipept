@@ -180,7 +180,7 @@ var constructPancore = function constructPancore(args) {
         }
 
         // update visualisations
-        graph.handleFullScreen(isFullScreen);
+        graph.setFullScreen(isFullScreen);
         matrix.handleFullScreen(isFullScreen);
     }
 
