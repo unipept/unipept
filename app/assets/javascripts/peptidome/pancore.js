@@ -181,7 +181,7 @@ var constructPancore = function constructPancore(args) {
 
         // update visualisations
         graph.setFullScreen(isFullScreen);
-        matrix.handleFullScreen(isFullScreen);
+        matrix.setFullScreen(isFullScreen);
     }
 
     /**

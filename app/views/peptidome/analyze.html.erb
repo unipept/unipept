@@ -5,7 +5,7 @@
 
 <ul id="tabs" class="nav nav-tabs visualisations">
   <li class="<%= @tab == "peptidefinder" ? "active" : ""%>"><a href="#pancore_graph_wrapper" id="unique-peptide-finder-tab" data-toggle="tab">Unique Peptide Finder <span class="small glyphicon glyphicon-info-sign"></span></a></li>
-  <li class="<%= @tab == "peptidomeclustering" ? "active" : ""%>"><a href="#sim_matrix_wrapper" id="peptidome-clustering-tab" data-toggle="tab">Peptidome Clustering <span class="small glyphicon glyphicon-info-sign"></a></li>
+  <li class="<%= @tab == "peptidomeclustering" ? "active" : ""%> peptidome-clustering-tab"><a href="#sim_matrix_wrapper" data-toggle="tab">Peptidome Clustering <span class="small glyphicon glyphicon-info-sign"></a></li>
 </ul>
 
 <div class="tab-help" id="tab-help">
@@ -58,7 +58,7 @@
       <nav class="fullScreenNav">
         <ul class="visualisations">
           <li class="active"><a href="#pancore_graph_wrapper" data-toggle="tab">Unique peptide finder</a></li>
-          <li><a href="#sim_matrix_wrapper" data-toggle="tab">Peptidome clustering</a></li>
+          <li><a href="#sim_matrix_wrapper" data-toggle="tab" class="peptidome-clustering-tab">Peptidome clustering</a></li>
         </ul>
       </nav>
       <div class="fullScreenActions">

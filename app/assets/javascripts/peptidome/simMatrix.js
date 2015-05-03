@@ -39,8 +39,6 @@ var constructSimMatrix = function constructSimMatrix(args) {
         clustered,
         newick;
 
-    var $matrixTab = $('#peptidome-clustering-tab');
-
     var that = {};
 
     /*************** Private methods ***************/
@@ -52,7 +50,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         init_phylogram();
 
         // calculate similarity and update on tab switch
-        $matrixTab.on('shown.bs.tab', function tabSwitchAction() {
+        $('.peptidome-clustering-tab').on('shown.bs.tab', function tabSwitchAction() {
             calculateSimilarity();
             that.update();
         });
@@ -140,18 +138,20 @@ var constructSimMatrix = function constructSimMatrix(args) {
      *
      * @param <Boolean> isFullscreen Is the page in full screen mode?
      */
-    that.handleFullScreen = function handleFullScreen(isFullscreen) {
-        var w = fullWidth,
-            h = fullHeight,
-            destination = "body";
-        if (isFullscreen) {
-            w = $(window).width();
-            h = $(window).height();
-            destination = "#sim_matrix";
-        }
-        $("#sim_matrix svg").attr("width", w);
-        $("#sim_matrix svg").attr("height", h);
-        $("#matrix-tip").appendTo(destination);
+    that.setFullScreen = function setFullScreen(isFullScreen) {
+        // the delay is because the event fires before we're in fullscreen
+        // so the height en width functions don't give a correct result
+        // without the delay
+        setTimeout(function () {
+            var w = fullWidth,
+                h = fullHeight;
+            if (isFullScreen) {
+                w = $(window).width();
+                h = $(window).height() - 44;
+            }
+            $("#sim_matrix svg").attr("width", w);
+            $("#sim_matrix svg").attr("height", h);
+        }, 1000);
     };
 
     /**
@@ -506,7 +506,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * Returns true if the matrix tab is currently visible to the user
      */
     that.isActiveTab = function isActiveTab() {
-        return $matrixTab.parent().hasClass("active");
+        return $("#sim_matrix_wrapper").hasClass("active");
     };
 
     /**
