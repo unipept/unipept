@@ -242,7 +242,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             trigger : "manual",
             title: "Filter settings",
             content: createContent,
-            container: "body"
+            container: ".full-screen-container"
         });
 
         // enable settings button
@@ -250,6 +250,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             if (!$popover) {
                 $(".search-settings").popover("show");
             } else {
+                repositionPopover();
                 $popover.toggleClass("hide");
             }
             updateFilters();
@@ -321,9 +322,19 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             return content;
         }
 
+        function repositionPopover() {
+            console.log("reposition");
+            var buttonOffset = $(".search-settings").offset(),
+                containerOffset = $(".full-screen-container").offset();
+            $popover.css("left", buttonOffset.left - containerOffset.left + 45);
+            $popover.css("top", Math.max(0, buttonOffset.top - containerOffset.top - 195));
+        }
+
         function initPopoverBehaviour() {
             $popover = $(".popover-content #assemblyLevel").parents(".popover");
             $popover.css("max-width", "none");
+
+            repositionPopover();
 
             // add pop-over hide behaviour
             $(document).click(function (e) {
