@@ -54,7 +54,7 @@
 
 <div class="tab-content full-screen-container pancore not-full-screen">
   <div class="full-screen-bar">
-    <div class="logo"><img src="/assets/trans_logo.png" alt="logo" width="40" height="40"></div>
+    <div class="logo"><button class='btn btn-default add-proteomes' data-toggle="button">Add proteomes</button></div>
       <nav class="fullScreenNav">
         <ul class="visualisations">
           <li class="active"><a href="#pancore_graph_wrapper" data-toggle="tab">Unique peptide finder</a></li>
@@ -76,8 +76,8 @@
   </div>
 </div>
 <hr>
-<div class="row">
-  <div class="col-xs-6">
+<div class="row proteome-adder">
+  <div class="col-xs-6 proteome-library">
     <h3>Proteome library</h3>
     <ul id="genome-tabs" class="nav nav-tabs">
       <li class="active"><a href="#refseq-genomes" id="refseq-genomes-tab" data-toggle="tab">NCBI proteomes</a></li>
@@ -173,7 +173,7 @@
     </div>
   </div>
 
-  <div class="col-xs-6 left-col">
+  <div class="col-xs-6 analyzed-proteomes">
     <h3>Analyzed proteomes</h3>
     <div id="restore-analysis" class="alert alert-info alert-dismissible hide" role="alert">
       <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>

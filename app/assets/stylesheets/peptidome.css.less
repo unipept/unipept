@@ -206,3 +206,37 @@ tr.gu-mirror .button {
 #restore-analysis {
     margin-bottom: 8px;
 }
+
+// full screen layout
+.full-screen .proteome-library {
+    position: absolute;
+    top: 44px;
+    left: -500px;
+    width: 473px;
+    height: 100%;
+    background-color: #FFF;
+    z-index: 5;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition-duration: 1s;
+    transition-property: transform;
+    transition-timing-function: ease-out;
+}
+.full-screen .proteome-library.shown {
+    transform: translateX(500px);
+}
+.full-screen .analyzed-proteomes {
+    position: absolute;
+    top: 44px;
+    right: -500px;
+    width: 473px;
+    height: 100%;
+    background-color: #FFF;
+    z-index: 5;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition-duration: 1s;
+    transition-property: transform;
+    transition-timing-function: ease-out;
+}
+.full-screen .analyzed-proteomes.shown {
+    transform: translateX(-500px);
+}

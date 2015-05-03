@@ -624,6 +624,33 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
     /*************** Public methods ***************/
 
     /**
+     * Handles the transition from and to fullscreen mode
+     *
+     * @param <Boolean> isFullScreen Is the page in full screen mode?
+     */
+    that.setFullScreen = function setFullScreen(isFullScreen) {
+        // the delay is because the event fires before we're in fullscreen
+        // so the height en width functions don't give a correct result
+        // without the delay
+        /*setTimeout(function () {
+            var w = "auto",
+                h = "auto";
+            if (isFullScreen) {
+                w = "440px";
+                h = $(window).height() - 44;
+            }
+            $("#pancore_graph svg").attr("width", w);
+            $("#pancore_graph svg").attr("height", h);
+        }, 1000);*/
+
+        if (isFullScreen) {
+            $(".proteome-library").appendTo(".full-screen-container");
+        } else {
+            $(".proteome-library").prependTo(".proteome-adder");
+        }
+    };
+
+    /**
      * Searches for all complete Acinetobacter baumannii proteomes and adds them
      */
     that.demo = function demo() {

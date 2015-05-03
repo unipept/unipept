@@ -181,6 +181,8 @@ var constructPancore = function constructPancore(args) {
         // update visualisations
         graph.setFullScreen(isFullScreen);
         matrix.setFullScreen(isFullScreen);
+        genomeSelector.setFullScreen(isFullScreen);
+        table.setFullScreen(isFullScreen);
     }
 
     /**
@@ -192,6 +194,11 @@ var constructPancore = function constructPancore(args) {
         $(".fullScreenActions .exit").click(function () {
             window.fullScreenApi.cancelFullScreen();
         });
+        $(".full-screen-bar .add-proteomes").click(function () {
+            $(this).blur();
+            $(".proteome-library").toggleClass("shown");
+            $(".analyzed-proteomes").toggleClass("shown");
+        })
     }
 
     /**
