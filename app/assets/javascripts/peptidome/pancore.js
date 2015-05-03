@@ -171,11 +171,11 @@ var constructPancore = function constructPancore(args) {
         $(".full-screen-container").toggleClass("full-screen", isFullScreen);
         $(".full-screen-container").toggleClass("not-full-screen", !isFullScreen);
 
-        // tooltip
+        // tooltips and notifications
         if (isFullScreen) {
-            $(".tip").appendTo(".full-screen-container");
+            $(".tip, .notifications").appendTo(".full-screen-container");
         } else {
-            $(".tip").appendTo("body");
+            $(".tip, .notifications").appendTo("body");
         }
 
         // update visualisations

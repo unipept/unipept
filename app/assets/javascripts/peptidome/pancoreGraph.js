@@ -616,7 +616,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         that.removePopoversAndHighlights();
         graphData = [];
         dataQueue = [];
-        that.redraw();
+        that.update();
     };
 
     /**
