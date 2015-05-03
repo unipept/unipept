@@ -68,7 +68,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
             content: function () {
                 return $("#mygenomes-popover-content").html();
             },
-            container: "body"
+            container: ".full-screen-container"
         });
 
         // enable add my genome button
@@ -77,6 +77,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
                 $myGenomesButton.popover("show");
             } else {
                 $popover.toggleClass("hide");
+                repositionPopover();
             }
         });
 
@@ -129,6 +130,8 @@ var constructMyGenomes = function constructMyGenomes(args) {
     function initPopoverBehaviour() {
         // hide the popover
         $popover = $(".popover-content #myGenomeName").parents(".popover");
+
+        repositionPopover();
 
         // add pop-over hide behaviour
         $(document).click(function(e) {
@@ -190,6 +193,17 @@ var constructMyGenomes = function constructMyGenomes(args) {
                 });
             }
         });
+    }
+
+    /**
+     * Repositions the popover
+     */
+    function repositionPopover() {
+        var buttonOffset = $myGenomesButton.offset(),
+            containerOffset = $(".full-screen-container").offset();
+        $popover.css("left", buttonOffset.left - containerOffset.left + 190);
+        $popover.css("top", buttonOffset.top - containerOffset.top - 134);
+        //$popover.find(".arrow").css("top", $(".full-screen-container").hasClass("full-screen") ? "35%" : "50%");
     }
 
     /**
