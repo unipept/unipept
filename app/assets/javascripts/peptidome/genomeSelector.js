@@ -22,7 +22,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         addAll = false,
         currentResults,
         currentPage,
-        ELEMENTS_SHOWN = 50,
+        elementsShown = 50,
         SEARCH_VALUES = {
             complete : {attr: "assembly_level", value: "Complete Genome", name: "Complete genome"},
             scaffold : {attr: "assembly_level", value: "Scaffold", name: "Scaffold"},
@@ -506,8 +506,8 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         page = page || 0;
         currentPage = page;
 
-        var firstElement = page * ELEMENTS_SHOWN,
-            lastElement = Math.min((page + 1) * ELEMENTS_SHOWN, results.length);
+        var firstElement = page * elementsShown,
+            lastElement = Math.min((page + 1) * elementsShown, results.length);
 
         var selectedResults = results.slice(firstElement, lastElement);
         if (selectedResults.length === 0) {
@@ -632,22 +632,16 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         // the delay is because the event fires before we're in fullscreen
         // so the height en width functions don't give a correct result
         // without the delay
-        /*setTimeout(function () {
-            var w = "auto",
-                h = "auto";
+        setTimeout(function () {
             if (isFullScreen) {
-                w = "440px";
-                h = $(window).height() - 44;
+                $(".proteome-library").appendTo(".full-screen-container");
+                elementsShown = Math.floor(($(window).height() - 209 - 44) / 45);
+            } else {
+                $(".proteome-library").prependTo(".proteome-adder");
+                elementsShown = 50;
             }
-            $("#pancore_graph svg").attr("width", w);
-            $("#pancore_graph svg").attr("height", h);
-        }, 1000);*/
-
-        if (isFullScreen) {
-            $(".proteome-library").appendTo(".full-screen-container");
-        } else {
-            $(".proteome-library").prependTo(".proteome-adder");
-        }
+            drawList(currentResults);
+        }, 1000);
     };
 
     /**
