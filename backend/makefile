@@ -12,8 +12,11 @@ BDBMEM=500000000
 #JMEM=-Xms140g -Xmx150g
 #BDBMEM=100000000000
 BDBDIR=../../berkeleydb
+ENTREZ_BATCH_SIZE=1000
 TAXON_URL=ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip
 UNIPROT_URL=ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/
+ASSEMBLY_URL='rsync://ftp.ncbi.nlm.nih.gov/genomes/ASSEMBLY_REPORTS/All/GCA_*.assembly.txt'
+ENTREZ_URL=http://eutils.ncbi.nlm.nih.gov/entrez/eutils
 
 TABLES=                                      \
 	$(TABDIR)/peptides.tsv.gz                \
@@ -131,15 +134,19 @@ $(TABDIR)/sequences.tsv.gz: $(INTDIR)/sequences.tsv.gz $(INTDIR)/LCAs.tsv.gz $(I
 # }}}
 
 # Assembly tables {{{ ----------------------------------------------------------
-$(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz: parse_assemblies.awk
+$(INTDIR)/unstrained_assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz: parse_assemblies.awk
 	date +"%Y-%m-%d %H:%M:%S"
 	mkdir -p $(GENDIR)
-	rsync --ignore-existing 'rsync://ftp.ncbi.nlm.nih.gov/genomes/ASSEMBLY_REPORTS/All/GCA_*.assembly.txt' $(GENDIR)
+	rsync --ignore-existing "$(ASSEMBLY_URL)" $(GENDIR)
 	find $(GENDIR) -name 'GCA_*.assembly.txt' \
+		| sort \
 		| xargs cat \
 		| awk -f parse_assemblies.awk \
-			-v assemblies_file=>(tee assemblies.csv | gzip - > $(TABDIR)/assemblies.tsv.gz) \
-			-v assembly_sequences_file=>(cut -f1,2,6,7 | sed 's/\.[^.]*//' | tee sequences.csv | gzip - > $(TABDIR)/assembly_sequences.tsv.gz)
+			-v assemblies_file=>(sed -e 's/ *	 */	/g' -e 's/ *$$//' | gzip - > $(INTDIR)/unstrained_assemblies.tsv.gz) \
+			-v assembly_sequences_file=>(cut -f1,2,6,7 | sed -e 's/\.[^.]*//' -e 's/ *·  */·/g' -e 's/ *$$//' | gzip - > $(TABDIR)/assembly_sequences.tsv.gz)
+
+$(TABDIR)/assemblies.tsv.gz: $(INTDIR)/unstrained_assemblies.tsv.gz strains_assembly_ids.sh
+	ENTREZ_URL=$(ENTREZ_URL) ENTREZ_BATCH_SIZE=$(ENTREZ_BATCH_SIZE) ./strains_assembly_ids.sh $(INTDIR)/unstrained_assemblies.tsv.gz $@
 # }}}
 
 .PHONY: clean
