@@ -13,7 +13,7 @@ class SequencesController < ApplicationController
 
     # process the input, convert seq to a valid @sequence
     if seq.match(/\A[0-9]+\z/)
-      sequence = Sequence.includes({:peptides => {:uniprot_entry => [:name, :ec_cross_references, :go_cross_references]}}).find_by_id(seq)
+      sequence = Sequence.includes({:peptides => {:uniprot_entry => [:taxon, :ec_cross_references, :go_cross_references]}}).find_by_id(seq)
       @original_sequence = sequence.sequence
     else
       sequence = Sequence.single_search(seq, equate_il)
@@ -110,7 +110,7 @@ class SequencesController < ApplicationController
     @table_lineages = @table_lineages.transpose.sort_by{ |k| k[1..-1].map!{|lin| lin || root_taxon} }
 
     #sort entries
-    @entries = @entries.to_a.sort_by{|e| e.name.nil? ? "" : e.name.name}
+    @entries = @entries.to_a.sort_by{|e| e.taxon.nil? ? "" : e.taxon.name}
 
     @title = "Tryptic peptide analysis of #{@original_sequence}"
 

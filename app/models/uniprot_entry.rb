@@ -20,7 +20,7 @@ class UniprotEntry < ActiveRecord::Base
   has_many :ec_cross_references
   has_many :go_cross_references
 
-  belongs_to :name,             :foreign_key  => "taxon_id",
+  belongs_to :taxon,            :foreign_key  => "taxon_id",
                                 :primary_key  => "id",
                                 :class_name   => 'Taxon'
 
