@@ -91,7 +91,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         tooltipHtml += "<thead><tr><th>Name</th><th>Peptidome size</th></tr></thead><tbody>";
         tooltipHtml += "<tr><td>" + metadata[row].name + "</td><td>" + d3.format(",")(metadata[row].size) + " peptides</td></tr>";
         tooltipHtml += "<tr><td>" + metadata[col].name + "</td><td>" + d3.format(",")(metadata[col].size) + " peptides</td></tr>";
-        tooltipHtml += "<tr><td colspan='2'><strong>Similarity</strong>: " + d3.format(",.2%")(similarities[row][col]) + "</td></tr>";
+        tooltipHtml += "<tr><td colspan='2'><strong>Similarity</strong>: " + d3.format(",.2%")(similarities[row][col].similarity) + "</td></tr>";
         tooltipHtml += "</tbody></table>";
         tooltip.html(tooltipHtml)
             .style("top", (pos.top + x.rangeBand() + 5) + "px")
@@ -447,8 +447,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         similarities[id] = {};
         for (i in similarities) {
-            similarities[id][i] = -1;
-            similarities[i][id] = -1;
+            similarities[id][i] = {};
+            similarities[i][id] = {};
         }
 
         that.setClustered(false);
@@ -527,7 +527,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
             tempArray = [];
             tempArray.push('"' + metadata[order[i]].name + '"');
             for (j = 0; j < order.length; j++) {
-                tempArray.push(similarities[order[i]][order[j]]);
+                tempArray.push(similarities[order[i]][order[j]].similarity);
             }
             csvString += tempArray.join(',') + "\n";
         }

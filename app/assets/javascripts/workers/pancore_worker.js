@@ -801,8 +801,9 @@ function getJSONByPost(url, data, callback) {
     req.send(data);
 }
 
-function genomeSimilarity(peptide_list1, peptide_list2) {
-    return intersection(peptide_list1, peptide_list2).length / union(peptide_list1, peptide_list2).length;
+function genomeSimilarity(peptideList1, peptideList2) {
+    var result = unionIntersection(peptideList1, peptideList2);
+    return result.intersection.length / result.union.length;
 }
 
 /**
@@ -832,6 +833,38 @@ function filterIds(a) {
 }
 
 // union and intersection for sorted arrays
+function unionIntersection(a, b) {
+    var intersection = [],
+        union = [],
+        i = 0,
+        j = 0;
+        while (i < a.length && j < b.length) {
+            if (a[i] < b[j]) {
+                union.push(a[i]);
+                i++;
+            } else if (a[i] > b[j]) {
+                union.push(b[j]);
+                j++;
+            } else {
+                union.push(a[i]);
+                intersection.push(a[i]);
+                i++;
+                j++;
+            }
+        }
+        while (i < a.length) {
+            union.push(a[i]);
+            i++;
+        }
+        while (j < b.length) {
+            union.push(b[j]);
+            j++;
+        }
+        return {
+            union : union,
+            intersection : intersection
+        };
+}
 function union(a, b) {
     var r = [],
         i = 0,
