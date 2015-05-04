@@ -100,6 +100,7 @@ Assemblies
  - ***organism name***: Name of the organisme this assembly originates
    from.
  - ***biosample id***: External reference to a biosample.
+ - ***type strain***: # TODO
 
 Assembly Sequences
 ------------------
