@@ -345,8 +345,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
                 .attr("x", function (d) { return x(d.key); })
                 .attr("width", x.rangeBand())
                 .attr("height", x.rangeBand())
-                .style("fill-opacity", function (d) { return z(d.value * d.value); })
-                .style("fill", function (d) { return (d.value !== -1) ? "steelblue" : "white"; });
+                .style("fill-opacity", function (d) { return z(d.value.similarity * d.value.similarity); })
+                .style("fill", function (d) { return (d.value.similarity !== undefined) ? "steelblue" : "white"; });
 
             cells.exit().remove();
         });

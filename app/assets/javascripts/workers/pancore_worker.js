@@ -79,7 +79,7 @@ var matrixBackend = function matrixBackend(data) {
         for (i = 0; i < matrixOrder.length; i++) {
             returnMatrix[i] = [];
             for (j = 0; j < matrixOrder.length; j++) {
-                returnMatrix[i][j] = matrixObject[matrixOrder[i]][matrixOrder[j]];
+                returnMatrix[i][j] = matrixObject[matrixOrder[i]][matrixOrder[j]].similarity;
             }
         }
         return returnMatrix;
@@ -171,8 +171,8 @@ var matrixBackend = function matrixBackend(data) {
 
         matrixObject[genomeId] = {};
         for (id in matrixObject) {
-            matrixObject[id][genomeId] = -1;
-            matrixObject[genomeId][id] = -1;
+            matrixObject[id][genomeId] = {};
+            matrixObject[genomeId][id] = {};
         }
     };
 
@@ -218,15 +218,15 @@ var matrixBackend = function matrixBackend(data) {
             peptides = data[id].peptide_list;
 
             for (id2 in matrixObject) {
-                if (matrixObject[id][id2] === -1) {
+                if (matrixObject[id][id2].similarity === undefined) {
                     if ("" + id === "" + id2) {
                         similarity = 1;
                     } else {
                         similarity = genomeSimilarity(peptides, data[id2].peptide_list);
                     }
 
-                    matrixObject[id][id2] = similarity;
-                    matrixObject[id2][id] = similarity;
+                    matrixObject[id][id2].similarity = similarity;
+                    matrixObject[id2][id].similarity = similarity;
                 }
             }
 
