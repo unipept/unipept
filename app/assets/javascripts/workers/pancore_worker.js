@@ -802,8 +802,9 @@ function getJSONByPost(url, data, callback) {
 }
 
 function genomeSimilarity(peptideList1, peptideList2) {
-    var result = unionIntersection(peptideList1, peptideList2);
-    return result.intersection.length / result.union.length;
+    var intersectionSize = intersection(peptideList1, peptideList2).length;
+    var unionSize = peptideList1.length + peptideList2.length - intersectionSize;
+    return intersectionSize / unionSize;
 }
 
 /**
