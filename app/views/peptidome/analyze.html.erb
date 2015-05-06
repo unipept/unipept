@@ -72,6 +72,13 @@
     </div>
   </div>
   <div class="tab-pane fade <%= @tab == "peptidomeclustering" ? "in active" : ""%>" id="sim_matrix_wrapper">
+    <select id="similarity-selector" class="pull-right">
+      <option value="simDefault">Default</option>
+      <option value="simMin">Minimum</option>
+      <option value="simMax">Maximum</option>
+      <option value="simAvg">Average</option>
+      <option value="simExtra">Extra</option>
+    </select>
     <div id="sim_matrix"></div>
   </div>
 </div>

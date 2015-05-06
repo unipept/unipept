@@ -36,7 +36,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         order = [],
         similarities = {},
         dirty = false,
-        selectedSimilarity = "simExtra",
+        selectedSimilarity = "simDefault",
         clustered,
         newick;
 
@@ -62,6 +62,13 @@ var constructSimMatrix = function constructSimMatrix(args) {
         });
 
         $('#use-cluster-order').click(that.useClusterOrder);
+
+        $("#similarity-selector").change(function () {
+            selectedSimilarity = $(this).val();
+            that.setClustered(false);
+            dirty = true;
+            that.update();
+        });
 
         that.redraw(true);
     }
