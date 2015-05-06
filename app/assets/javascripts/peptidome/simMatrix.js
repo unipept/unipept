@@ -36,6 +36,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         order = [],
         similarities = {},
         dirty = false,
+        selectedSimilarity = "simExtra",
         clustered,
         newick;
 
@@ -91,7 +92,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         tooltipHtml += "<thead><tr><th>Name</th><th>Peptidome size</th></tr></thead><tbody>";
         tooltipHtml += "<tr><td>" + metadata[row].name + "</td><td>" + d3.format(",")(metadata[row].size) + " peptides</td></tr>";
         tooltipHtml += "<tr><td>" + metadata[col].name + "</td><td>" + d3.format(",")(metadata[col].size) + " peptides</td></tr>";
-        tooltipHtml += "<tr><td colspan='2'><strong>Similarity</strong>: " + d3.format(",.2%")(similarities[row][col].similarity) + "</td></tr>";
+        tooltipHtml += "<tr><td colspan='2'><strong>Similarity</strong>: " + d3.format(",.2%")(similarities[row][col][selectedSimilarity]) + "</td></tr>";
         tooltipHtml += "</tbody></table>";
         tooltip.html(tooltipHtml)
             .style("top", (pos.top + x.rangeBand() + 5) + "px")
@@ -345,8 +346,9 @@ var constructSimMatrix = function constructSimMatrix(args) {
                 .attr("x", function (d) { return x(d.key); })
                 .attr("width", x.rangeBand())
                 .attr("height", x.rangeBand())
-                .style("fill-opacity", function (d) { return z(d.value.similarity * d.value.similarity); })
-                .style("fill", function (d) { return (d.value.similarity !== undefined) ? "steelblue" : "white"; });
+                .style("fill-opacity", function (d) { return z(d.value[selectedSimilarity] * d.value[selectedSimilarity]); })
+                .style("fill", function (d) {
+                    return d.value ? "steelblue" : "white"; });
 
             cells.exit().remove();
         });
@@ -422,7 +424,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * Requests the clustering of the matrix to the pancore object
      */
     that.clusterMatrix = function clusterMatrix() {
-        pancore.requestClustering();
+        pancore.requestClustering(selectedSimilarity);
     };
 
     /**
@@ -446,10 +448,6 @@ var constructSimMatrix = function constructSimMatrix(args) {
         order.push(id);
 
         similarities[id] = {};
-        for (i in similarities) {
-            similarities[id][i] = {};
-            similarities[i][id] = {};
-        }
 
         that.setClustered(false);
         dirty = true;
@@ -527,7 +525,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
             tempArray = [];
             tempArray.push('"' + metadata[order[i]].name + '"');
             for (j = 0; j < order.length; j++) {
-                tempArray.push(similarities[order[i]][order[j]].similarity);
+                tempArray.push(similarities[order[i]][order[j]][selectedSimilarity]);
             }
             csvString += tempArray.join(',') + "\n";
         }

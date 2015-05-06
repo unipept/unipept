@@ -45,7 +45,7 @@ self.addEventListener('message', function (e) {
         matrix.calculateSimilarity();
         break;
     case "clusterMatrix":
-        matrix.clusterMatrix();
+        matrix.clusterMatrix(data.msg.similarity);
         break;
     case "getMatrix":
         matrix.sendToHost();
@@ -72,14 +72,14 @@ var matrixBackend = function matrixBackend(data) {
     /**
      * Converts the object representation of the matrix to a normal array
      */
-    function matrixObjectToArray() {
+    function matrixObjectToArray(similarity) {
         var returnMatrix = [],
             i,
             j;
         for (i = 0; i < matrixOrder.length; i++) {
             returnMatrix[i] = [];
             for (j = 0; j < matrixOrder.length; j++) {
-                returnMatrix[i][j] = matrixObject[matrixOrder[i]][matrixOrder[j]].similarity;
+                returnMatrix[i][j] = matrixObject[matrixOrder[i]][matrixOrder[j]][similarity];
             }
         }
         return returnMatrix;
@@ -170,10 +170,6 @@ var matrixBackend = function matrixBackend(data) {
         idsToCalculate.push(genomeId);
 
         matrixObject[genomeId] = {};
-        for (id in matrixObject) {
-            matrixObject[id][genomeId] = {};
-            matrixObject[genomeId][id] = {};
-        }
     };
 
     /**
@@ -218,15 +214,26 @@ var matrixBackend = function matrixBackend(data) {
             peptides = data[id].peptide_list;
 
             for (id2 in matrixObject) {
-                if (matrixObject[id][id2].similarity === undefined) {
+                if (matrixObject[id][id2] === undefined) {
                     if ("" + id === "" + id2) {
-                        similarity = 1;
+                        similarity = {
+                            intersection : peptides.length,
+                            union        : peptides.length,
+                            min          : peptides.length,
+                            max          : peptides.length,
+                            avg          : peptides.length,
+                            simDefault   : 1,
+                            simMin       : 1,
+                            simMax       : 1,
+                            simAvg       : 1,
+                            simExtra     : 1
+                        };
                     } else {
                         similarity = genomeSimilarity(peptides, data[id2].peptide_list);
                     }
 
-                    matrixObject[id][id2].similarity = similarity;
-                    matrixObject[id2][id].similarity = similarity;
+                    matrixObject[id][id2] = similarity;
+                    matrixObject[id2][id] = similarity;
                 }
             }
 
@@ -285,12 +292,12 @@ var matrixBackend = function matrixBackend(data) {
     /**
      * Clusters the genomes based on similarity
      */
-    that.clusterMatrix = function clusterMatrix() {
+    that.clusterMatrix = function clusterMatrix(similarity) {
         if (matrixOrder.length === 0) {
             return;
         }
         matrixOrder.sort();
-        var tree = that.calculateTree();
+        var tree = that.calculateTree(similarity);
         sendToHost('processClusteredMatrix', {
             order : treeToOrder(tree),
             newick : arrayToNewick(tree) + ";"
@@ -300,7 +307,7 @@ var matrixBackend = function matrixBackend(data) {
     /**
      * Clusters the matrix and returns a tree of the clustering
      */
-    that.calculateTree = function calculateTree() {
+    that.calculateTree = function calculateTree(similarity) {
         var sizes,
             i,
             matrixArray,
@@ -315,7 +322,7 @@ var matrixBackend = function matrixBackend(data) {
         }
 
         // Create an array representation of the similarities object
-        matrixArray = matrixObjectToArray();
+        matrixArray = matrixObjectToArray(similarity);
 
         sizes = [];
         for (i = 0; i < matrixArray.length; i++) {
@@ -802,9 +809,24 @@ function getJSONByPost(url, data, callback) {
 }
 
 function genomeSimilarity(peptideList1, peptideList2) {
-    var intersectionSize = intersection(peptideList1, peptideList2).length;
-    var unionSize = peptideList1.length + peptideList2.length - intersectionSize;
-    return intersectionSize / unionSize;
+    var intersect = intersection(peptideList1, peptideList2).length,
+        union = peptideList1.length + peptideList2.length - intersect,
+        min = Math.min(peptideList1.length, peptideList2.length),
+        max = Math.max(peptideList1.length, peptideList2.length),
+        avg = (peptideList1.length + peptideList2.length) / 2,
+        extra = peptideList1.length * peptideList2.length / Math.sqrt((peptideList1.length * peptideList1.length + peptideList2.length * peptideList2.length) / 2);
+    return {
+        intersection : intersect,
+        union        : union,
+        min          : min,
+        max          : max,
+        avg          : avg,
+        simDefault   : intersect / union,
+        simMin       : intersect / min,
+        simMax       : intersect / max,
+        simAvg       : intersect / avg,
+        simExtra     : intersect / extra
+    };
 }
 
 /**

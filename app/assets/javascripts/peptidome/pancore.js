@@ -606,8 +606,8 @@ var constructPancore = function constructPancore(args) {
     /**
      * Requests the clustering of the data
      */
-    that.requestClustering = function requestClustering() {
-        sendToWorker("clusterMatrix");
+    that.requestClustering = function requestClustering(similarity) {
+        sendToWorker("clusterMatrix", {similarity : similarity});
     };
 
     /**
