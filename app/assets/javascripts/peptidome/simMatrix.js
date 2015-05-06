@@ -353,9 +353,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
                 .attr("x", function (d) { return x(d.key); })
                 .attr("width", x.rangeBand())
                 .attr("height", x.rangeBand())
-                .style("fill-opacity", function (d) { return z(d.value[selectedSimilarity] * d.value[selectedSimilarity]); })
-                .style("fill", function (d) {
-                    return d.value ? "steelblue" : "white"; });
+                .style("fill-opacity", function (d) { return d.value ? z(d.value[selectedSimilarity] * d.value[selectedSimilarity]) : 1; })
+                .style("fill", function (d) { return d.value ? "steelblue" : "white"; });
 
             cells.exit().remove();
         });
@@ -455,6 +454,10 @@ var constructSimMatrix = function constructSimMatrix(args) {
         order.push(id);
 
         similarities[id] = {};
+        for (i in similarities) {
+            similarities[id][i] = false;
+            similarities[i][id] = false;
+        }
 
         that.setClustered(false);
         dirty = true;
