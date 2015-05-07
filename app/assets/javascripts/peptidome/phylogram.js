@@ -291,7 +291,8 @@ function init_phylogram() {
         vis.selectAll('g.inner.node')
             .append('svg:circle')
             .attr("r", 3)
-            .attr('fill', 'black');
+            .attr('fill', 'black')
+            .append("title").text("Click to swap branches");
         vis.selectAll("g.inner.node, g.root.node")
             .style("cursor", "pointer")
             .on("mouseover", function () {
