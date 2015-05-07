@@ -13,7 +13,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         table = args.table;
 
     // UI variables
-    var margin = {top: 20, right: 200, bottom: 200, left: 20},
+    var margin = {top: 15, right: 200, bottom: 200, left: 20},
         width = 500,
         height = 500,
         treeWidth = 200,
