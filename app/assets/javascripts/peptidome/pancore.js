@@ -729,6 +729,11 @@ var constructPancore = function constructPancore(args) {
             return name;
         }
 
+        // Don't abbreviate names between [] or ''
+        if (split[0].charAt(0) === "[" || split[0].charAt(0) === "'") {
+            return name;
+        }
+
         // If the second part is "sp.", return the full name
         if (split[1] === "sp.") {
             return name;
