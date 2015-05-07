@@ -63,12 +63,15 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         $('#use-cluster-order').click(that.useClusterOrder);
 
-        $("#similarity-selector").change(function () {
-            selectedSimilarity = $(this).val();
+        $("#similarity-selector a").click(function (event) {
+            event.preventDefault();
+            selectedSimilarity = $(this).data("sim");
+            $("#similarity-selector .similarity-type").text($(this).text().toLowerCase());
             that.setClustered(false);
             dirty = true;
             that.update();
         });
+        $("#similarity-selector a").tooltip({placement : "left", container : "body"});
 
         that.redraw(true);
     }
