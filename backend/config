@@ -1,0 +1,17 @@
+
+DATADIR=../../data
+LOGFILE=main.log
+
+#JMEMMIN='-Xms140g'
+#JMEMMAX='-Xmx150g'
+#BDBMEM='100000000000'
+JMEMMIN='-Xms2g'
+JMEMMAX='-Xmx3g'
+BDBMEM=500000000
+BDBDIR='../../berkeleydb'
+ENTREZ_BATCH_SIZE='1000'
+TAXON_URL=ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip
+UNIPROT_URL=ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/
+ASSEMBLY_URL=rsync://ftp.ncbi.nlm.nih.gov/genomes/ASSEMBLY_REPORTS/All
+ENTREZ_URL=http://eutils.ncbi.nlm.nih.gov/entrez/eutils
+
