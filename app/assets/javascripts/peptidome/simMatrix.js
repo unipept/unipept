@@ -191,11 +191,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         }
 
         dirty = true;
-        if (addingGenomes) {
-            setTimeout(that.update, transitionDuration);
-        } else {
-            that.update();
-        }
+        that.tryUpdate();
     };
 
     /**
@@ -306,6 +302,17 @@ var constructSimMatrix = function constructSimMatrix(args) {
     };
 
     /**
+     * Don't update the graph while we're adding genomes
+     */
+    that.tryUpdate = function tryUpdate() {
+        if (addingGenomes) {
+            setTimeout(that.tryUpdate, transitionDuration);
+        } else {
+            that.update();
+        }
+    };
+
+    /**
      * Updates the SimMatrix
      */
     that.update = function update() {
@@ -316,8 +323,6 @@ var constructSimMatrix = function constructSimMatrix(args) {
         if (!dirty) {
             return;
         }
-
-        setTimeout(function () { addingGenomes = false; }, transitionDuration);
 
         var dataArray = d3.entries(similarities);
         x.domain(order);
@@ -372,7 +377,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         rows.transition()
             .duration(transitionDuration)
-            .attr("transform", function (d) { return "translate(0," + x(d.key) + ")"; });
+            .attr("transform", function (d) { return "translate(0," + x(d.key) + ")"; })
+            .each("end", function() { addingGenomes = false; });
 
         rows.selectAll("text")
             .transition()
