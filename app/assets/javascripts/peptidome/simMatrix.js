@@ -35,6 +35,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
     var metadata = {},
         order = [],
         similarities = {},
+        addingGenomes = false,
         dirty = false,
         selectedSimilarity = "simDefault",
         clustered,
@@ -190,7 +191,11 @@ var constructSimMatrix = function constructSimMatrix(args) {
         }
 
         dirty = true;
-        that.update();
+        if (addingGenomes) {
+            setTimeout(that.update, transitionDuration);
+        } else {
+            that.update();
+        }
     };
 
     /**
@@ -311,6 +316,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
         if (!dirty) {
             return;
         }
+
+        setTimeout(function () { addingGenomes = false; }, transitionDuration);
 
         var dataArray = d3.entries(similarities);
         x.domain(order);
@@ -465,6 +472,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         that.setClustered(false);
         dirty = true;
+        addingGenomes = true;
         if (that.isActiveTab()) {
             delay(function () {
                 calculateSimilarity();
