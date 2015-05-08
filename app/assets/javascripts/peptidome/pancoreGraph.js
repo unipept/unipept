@@ -99,15 +99,15 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
 
         panLine = d3.svg.line()
             .interpolate("linear")
-            .x(function (d) { return xScale(d.id); })
+            .x(function (d) { var t = xScale(d.id); return isNaN(t) ? 0 : t;})
             .y(function (d) { return yScale(d.pan); });
         coreLine = d3.svg.line()
             .interpolate("linear")
-            .x(function (d) { return xScale(d.id); })
+            .x(function (d) { var t = xScale(d.id); return isNaN(t) ? 0 : t;})
             .y(function (d) { return yScale(d.core); });
         unicoreLine = d3.svg.line()
             .interpolate("linear")
-            .x(function (d) { return xScale(d.id); })
+            .x(function (d) { var t = xScale(d.id); return isNaN(t) ? 0 : t;})
             .y(function (d) { return yScale(d.unicore); });
 
         // calculate similarity and update on tab switch
