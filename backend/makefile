@@ -144,20 +144,23 @@ $(TABDIR)/assemblies.tsv.gz: $(INTDIR)/unstrained_assemblies.tsv.gz strains_asse
 	echo "Finished the straining of assemblies."
 # }}}
 
+.PHONY: clean_intermediates
+clean_intermediates:
+	rm -vf $(INTDIR)/*
+	rm -vf $(TAXDIR)/names.dmp $(TAXDIR)/nodes.dmp
+
 .PHONY: clean
-clean:
-	@rm -vf $(JAR)
-	@rm -vf $(TAXDIR)/names.dmp $(TAXDIR)/nodes.dmp
-	@rm -vf $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
-	@rm -vf $(TABLES)
-	@rm -vf $(INTDIR)/*
-	@rm -vf $(TABDIR)/lcad_sequences.tsv.gz
+clean: clean_intermediates
+	rm -vf $(JAR)
+	rm -vf $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
+	rm -vf $(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz
+	rm -vf $(TABLES)
 
 .PHONY: pristine
 pristine: clean
-	@rm -vf $(TAXDIR)/taxdmp.zip
-	@rm -vf $(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/uniprot_treml.xml.gz
-	@find $(GENDIR)/ -name '*.assembly.txt' -exec rm -vf \{\} \;
+	rm -vf $(TAXDIR)/taxdmp.zip
+	rm -vf $(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/uniprot_treml.xml.gz
+	find $(GENDIR)/ -name '*.assembly.txt' -exec rm -vf \{\} \;
 
 
 # vim: foldmethod=marker
