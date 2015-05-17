@@ -108,7 +108,7 @@ var constructSearchtree = function constructSearchtree(args) {
             ownSequences,
             peptide,
             allSequences,
-            i
+            i,
             stringBuffer = "";
 
         $("span.clicked").removeClass("clicked");

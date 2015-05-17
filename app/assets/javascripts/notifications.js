@@ -26,11 +26,15 @@ function showNotification(content, properties) {
         $notification.removeClass("notification-show");
     });
 
-    return {hide: hide};
+    return {
+        hide: hide
+    };
 
     function hide(delayed) {
         $notification.addClass("notification-hide");
-        setTimeout(function () {$notification.remove(); }, 1000);
+        setTimeout(function () {
+            $notification.remove();
+        }, 1000);
     }
 
     function getNotificationHTML(content) {

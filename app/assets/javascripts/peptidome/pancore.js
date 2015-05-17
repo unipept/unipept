@@ -198,7 +198,7 @@ var constructPancore = function constructPancore(args) {
             $(this).blur();
             $(".proteome-library").toggleClass("shown");
             $(".analyzed-proteomes").toggleClass("shown");
-        })
+        });
     }
 
     /**
@@ -636,7 +636,7 @@ var constructPancore = function constructPancore(args) {
             assemblies: assemblies
         });
         if (status !== localStorage.pancoreStatus) {
-            localStorage.pancoreStatus = status
+            localStorage.pancoreStatus = status;
             localStorage.pancoreLoadedBefore = "no";
         }
     };
@@ -787,7 +787,7 @@ var constructPancore = function constructPancore(args) {
             g.own = false;
         }
         return g;
-    }
+    };
 
     // initialize the object
     init();
