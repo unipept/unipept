@@ -1,14 +1,12 @@
 // styles related to the peptidome analysis page
-
 // tabs
 .tab-help .help-icon {
     font-size: 50pt;
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 #tabs>li.active>a:hover {
     background-color: @nav-link-hover-bg !important;
 }
-
 // pancore graph
 #pancore_graph {
     user-select: none;
@@ -16,12 +14,12 @@
 #pancore_graph .bar {
     cursor: pointer;
     cursor: url(/openhand.cur), pointer;
-    cursor: url(/openhand.cur) 7 5, pointer;
+    cursor: url("/openhand.cur") 7 5, pointer;
 }
 #pancore_graph #trash {
     cursor: pointer;
     cursor: url(/closedhand.cur), pointer;
-    cursor: url(/closedhand.cur) 7 5, pointer;
+    cursor: url("/closedhand.cur") 7 5, pointer;
 }
 .legend {
     cursor: pointer;
@@ -29,7 +27,7 @@
 #pancore_graph div.tip {
     .translate3d(0, 0, 0);
 }
-#pancore_graph .popover-title{
+#pancore_graph .popover-title {
     line-height: 18px;
 }
 .popover-buttons {
@@ -37,7 +35,7 @@
     min-width: 220px;
 }
 #download-peptides .dropdown-menu {
-    margin-top: 0px;
+    margin-top: 0;
 }
 #download-peptides #download-peptides-toggle {
     margin-bottom: 2px;
@@ -49,13 +47,13 @@
 #buttons-pancore button {
     margin-left: 5px;
 }
-#pancore_graph, #sim_matrix {
+#pancore_graph,
+#sim_matrix {
     background-color: white;
 }
 #pancore_graph {
     min-height: 600px;
 }
-
 // clustering
 #downloadModal .buttons button {
     margin-left: 10px;
@@ -63,13 +61,13 @@
 }
 
 #sim_matrix_wrapper .ghead {
-    margin-bottom: 0px;
+    margin-bottom: 0;
     margin-top: -5px;
     position: relative;
     top: 10px;
 }
 .tip .table {
-    margin-bottom: 0px
+    margin-bottom: 0;
 }
 .tip .table .fat {
     border-top-width: 2px;
@@ -80,12 +78,10 @@
 .tip .table .sim {
     text-align: center;
 }
-
 // refseq genomes
 #genome-tabs {
     margin-top: 5px;
 }
-
 // my genomes
 #myGenomeProgress {
     height: 30px;
@@ -98,7 +94,7 @@
     text-align: center;
     margin-top: 5px;
 }
-#myGenomeProgress .progress-bar{
+#myGenomeProgress .progress-bar {
     padding-top: 6px;
     max-width: 100%;
 }
@@ -116,9 +112,8 @@
 }
 #addMyGenomeButton {
     display: block;
-    margin: 10px auto 0px auto;
+    margin: 10px auto 0;
 }
-
 // analyzed genomes
 .genomes-table .handle {
     width: 30px;
@@ -145,7 +140,7 @@ tr.gu-mirror td {
     border-top: 1px solid @table-border-color;
     cursor: pointer !important;
     cursor: url(/closedhand.cur), pointer !important;
-    cursor: url(/closedhand.cur) 7 5, pointer !important;
+    cursor: url("/closedhand.cur") 7 5, pointer !important;
 }
 tr.gu-mirror .name {
     width: 355px;
@@ -156,12 +151,12 @@ tr.gu-mirror .button {
     width: 30px;
 }
 #autosort .dropdown-menu {
-    margin-top: 0px;
+    margin-top: 0;
 }
 #genomes_table tbody tr {
     cursor: pointer;
     cursor: url(/openhand.cur), pointer;
-    cursor: url(/openhand.cur) 7 5, pointer;
+    cursor: url("/openhand.cur") 7 5, pointer;
 }
 .genomeSelector {
     margin-top: 10px;
@@ -189,13 +184,13 @@ tr.gu-mirror .button {
 #genomeSelector-results .next-page {
     margin-top: -5px;
     margin-left: 10px;
-    margin-right: 20px; // visual center
+    margin-right: 20px;
+    // visual center
 }
 .lineage {
     font-size: 80%;
     color: #808080;
     white-space: nowrap;
-
 }
 .lineage-link,
 .lineage-link:hover {
@@ -226,7 +221,6 @@ tr.gu-mirror .button {
 #restore-analysis {
     margin-bottom: 8px;
 }
-
 // full screen layout
 .full-screen .proteome-library {
     position: absolute;
@@ -234,7 +228,7 @@ tr.gu-mirror .button {
     left: -500px;
     width: 473px;
     height: 100%;
-    background-color: #FFF;
+    background-color: #fff;
     z-index: 5;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     overflow: scroll;
@@ -251,7 +245,7 @@ tr.gu-mirror .button {
     right: -500px;
     width: 473px;
     height: 100%;
-    background-color: #FFF;
+    background-color: #fff;
     z-index: 5;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     overflow: scroll;
