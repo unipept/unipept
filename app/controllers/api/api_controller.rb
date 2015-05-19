@@ -139,8 +139,12 @@ class Api::ApiController < ApplicationController
   # param[names]: "true" or "false", Include the lineage names
   def taxonomy
     @result = @query.where(id: @input)
+    @result = Hash[@result.map { |t| [t.id, t] }]
+    @input_order = @input.select { |i| @result.key? i.to_i }
+    @result = @input_order.map { |i| @result[i.to_i] }
     respond_with(@result)
   end
+
 
   private
 
@@ -172,7 +176,7 @@ class Api::ApiController < ApplicationController
         @input = @input.split(",");
       end
     end
-    @input.map! &:chomp
+    @input.map!(&:chomp)
     @input_order = @input.dup
 
     @equate_il = params[:equate_il] == 'true'
