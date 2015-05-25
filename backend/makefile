@@ -2,12 +2,6 @@ SHELL := /bin/bash
 
 include config
 
-TABDIR=$(DATADIR)/tables
-UNIDIR=$(DATADIR)/uniprot
-TAXDIR=$(DATADIR)/taxon
-GENDIR=$(DATADIR)/assembly
-INTDIR=$(DATADIR)/intermediate
-
 TABLES=                                      \
 	$(TABDIR)/peptides.tsv.gz                \
 	$(INTDIR)/sequences.tsv.gz               \
@@ -22,14 +16,14 @@ SRC=$(shell find src/ -type f -name '*.java')
 JAR=target/unipept-0.0.1-SNAPSHOT.jar
 PAC=org.unipept.tools
 
-all: $(TABDIR)/taxons.tsv.gz $(TABLES) $(TABDIR)/sequences.tsv.gz $(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz
+all: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz $(TABLES) $(TABDIR)/sequences.tsv.gz $(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz
 jar: $(JAR)
-taxons: $(TABDIR)/taxons.tsv.gz
+taxons: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
 tables: $(TABLES)
 sequences: $(TABDIR)/sequences.tsv.gz
 assemblies: $(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz
-download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/uniprot_trembl.xml.gz
-	rsync --ignore-existing "$(ASSEMBLY_URL)/GCA_*.assembly.txt" $(GENDIR)
+download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz #$(UNIDIR)/uniprot_trembl.xml.gz
+	rsync --ignore-existing "$(ASSEMBLY_URL)/GCA_*.assembly.txt" $(ASMDIR)
 
 
 # Compiling {{{ ----------------------------------------------------------------
@@ -128,9 +122,9 @@ $(TABDIR)/sequences.tsv.gz: $(INTDIR)/sequences.tsv.gz $(INTDIR)/LCAs.tsv.gz $(I
 # Assembly tables {{{ ----------------------------------------------------------
 $(INTDIR)/unstrained_assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz: parse_assemblies.awk
 	echo "Starting the assembly parsing."
-	mkdir -p $(GENDIR)
-	rsync --ignore-existing --no-motd --verbose "$(ASSEMBLY_URL)/GCA_*.assembly.txt" $(GENDIR)
-	find $(GENDIR) -name 'GCA_*.assembly.txt' \
+	mkdir -p $(ASMDIR)
+	rsync --ignore-existing --no-motd --verbose "$(ASSEMBLY_URL)/GCA_*.assembly.txt" $(ASMDIR)
+	find $(ASMDIR) -name 'GCA_*.assembly.txt' \
 		| sort \
 		| xargs cat \
 		| awk -f parse_assemblies.awk \
@@ -151,16 +145,16 @@ clean_intermediates:
 
 .PHONY: clean
 clean: clean_intermediates
-	rm -vf $(JAR)
 	rm -vf $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
 	rm -vf $(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz
 	rm -vf $(TABLES)
 
 .PHONY: pristine
 pristine: clean
+	rm -vf $(JAR)
 	rm -vf $(TAXDIR)/taxdmp.zip
 	rm -vf $(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/uniprot_treml.xml.gz
-	find $(GENDIR)/ -name '*.assembly.txt' -exec rm -vf \{\} \;
+	find $(ASMDIR)/ -name '*.assembly.txt' -exec rm -vf \{\} \;
 
 
 # vim: foldmethod=marker
