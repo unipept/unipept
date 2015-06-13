@@ -31,7 +31,7 @@
     </div>
   </div>
   <div id="peptidome-clustering-help">
-    <p>Find similarities between a selection of genomes and view the results in a similarity matrix or a phylogenetic tree. <span class="initialism">UPGMA</span> is used to cluster the genomes based on their peptidome content. Pairwise similarities are computed as the ratio of the size of the insersection to the size of the union of both peptidomes.</p>
+    <p>Find similarities between a selection of genomes and view the results in a similarity matrix or a phylogenetic tree. <span class="initialism">UPGMA</span> is used to cluster the genomes based on their peptidome content. Pairwise similarities are computed as the ratio of the size of the intersection to the size of the union of both peptidomes.</p>
     <div class="row features">
       <div class="col-xs-4">
         <p class="text-center help-icon"><span class="glyphicon glyphicon-plus-sign"></span></p>
@@ -76,7 +76,7 @@
         <h5>Add by species <span class="glyphicon glyphicon-info-sign" id="add-by-species-help" title="Pick a species, and click the 'Add species'-button to add all peptidomes derived from whole-genome RefSeq sequences assigned to the given species to the analysis."></span></h5>
         <%= form_tag(:pancore_analyze, :method => "get", :class => "form-inline", :id => "add-by-species-form") do %>
             <div class="form-group"><%= select_tag(:species_id, options_for_select(@species, params[:species_id]), :class => "form-control") %></div>
-            <div class="form-group"><%= button_tag(raw("Add species <span class='glyphicon glyphicon-chevron-right'></span>"), :type => "button", :class => "btn btn-primary", :id => "add_species_peptidome", :"data-loading-text" => "Loading...") %></div>
+            <div class="form-group"><%= button_tag(raw("Add species <span class='glyphicon glyphicon-chevron-right right'></span>"), :type => "button", :class => "btn btn-primary btn-animate", :id => "add_species_peptidome", :"data-loading-text" => "Loading...") %></div>
         <% end %>
 
         <hr>
@@ -96,7 +96,7 @@
             <thead>
               <tr>
                 <th class="handle">
-                  <button type="button" id='addMyGenomeButton' class='btn btn-primary btn-xs' data-toggle="button"><span class='glyphicon glyphicon-plus'></span></button>
+                  <button type="button" id='addMyGenomeButton' class='btn btn-primary btn-xs btn-animate' data-toggle="button"><span class='glyphicon glyphicon-plus grow'></span></button>
                 </th>
                 <th class="name">My genomes <span id="my-genomes-help" class='glyphicon glyphicon-info-sign' title='You can easily add non-RefSeq genomes yourself! Just select a FASTA-file containing one or more proteins for processing and it will be stored in your browser. After adding them to My genomes, you can simply drag them to the table on the right as you would with other genomes.'></span></th>
                 <th class="status"></th>
@@ -140,7 +140,7 @@
     </div>
   </div>
 
-  <div class="col-xs-6">
+  <div class="col-xs-6 left-col">
     <h3>Analyzed genomes</h3>
     <span id="table-message"><span class="glyphicon glyphicon-chevron-left"></span> Select a species to analyze and click the load button.</span>
     <div id="genomes-table-div">

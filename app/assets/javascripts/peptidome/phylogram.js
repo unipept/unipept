@@ -64,7 +64,8 @@ function init_phylogram() {
     // Convert XY and radius to angle of a circle centered at 0,0
     d3.phylogram.coordinateToAngle = function (coord, radius) {
         var wholeAngle = 2 * Math.PI,
-            quarterAngle = wholeAngle / 4;
+            quarterAngle = wholeAngle / 4,
+            coordAngle;
 
         var coordQuad = coord[0] >= 0 ? (coord[1] >= 0 ? 1 : 2) : (coord[1] >= 0 ? 4 : 3),
             coordBaseAngle = Math.abs(Math.asin(coord[1] / radius));
@@ -206,12 +207,13 @@ function init_phylogram() {
             .attr("transform", "translate(20, 20)");
         var treeNodes = tree(nodes);
 
+        var yscale;
         if (options.skipBranchLengthScaling) {
-            var yscale = d3.scale.linear()
+            yscale = d3.scale.linear()
                 .domain([0, w])
                 .range([0, w]);
         } else {
-            var yscale = scaleBranchLengths(treeNodes, w);
+            yscale = scaleBranchLengths(treeNodes, w);
         }
 
         if (!options.skipTicks) {
@@ -239,7 +241,7 @@ function init_phylogram() {
         }
 
         var link = vis.selectAll("path.link")
-            .data(tree.links(treeNodes), function (d) {return "" + d.source.name + d.target.name;})
+            .data(tree.links(treeNodes), function (d) {return "" + d.source.name + d.target.name; })
           .enter().append("svg:path")
             .attr("class", "link")
             .attr("d", diagonal)
@@ -248,7 +250,7 @@ function init_phylogram() {
             .attr("stroke-width", "2px");
 
         var node = vis.selectAll("g.node")
-            .data(treeNodes, function (d) {return d.bioproject_id ? d.bioproject_id : d.name;})
+            .data(treeNodes, function (d) {return d.bioproject_id ? d.bioproject_id : d.name; })
           .enter().append("svg:g")
             .attr("class", function (n) {
                 if (n.children) {
@@ -282,7 +284,7 @@ function init_phylogram() {
               .attr('font-family', 'Helvetica Neue, Helvetica, sans-serif')
               .attr('font-size', '10px')
               .attr('fill', '#333')
-              .text(function (d) { return d.name + ' ('+d.length+')'; });
+              .text(function (d) { return d.name + ' (' + d.length + ')'; });
         }
 
         // hook up the nodes
@@ -315,11 +317,11 @@ function init_phylogram() {
             matrix.setClustered(true);
             treeNodes = tree(nodes);
             yscale = scaleBranchLengths(treeNodes, w);
-            link.data(tree.links(treeNodes), function (d) {return "" + d.source.name + d.target.name;})
+            link.data(tree.links(treeNodes), function (d) {return "" + d.source.name + d.target.name; })
                 .transition()
                 .duration(duration)
                 .attr("d", diagonal);
-            node.data(treeNodes, function (d) {return d.bioproject_id ? d.bioproject_id : d.name;})
+            node.data(treeNodes, function (d) {return d.bioproject_id ? d.bioproject_id : d.name; })
                 .transition()
                 .duration(duration)
                 .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; });
@@ -331,9 +333,9 @@ function init_phylogram() {
     /**
      * Recursively compiles a list with bioproject_id's in the order of the tree
      */
-    function getGenomeOrder(node, order){
-        var order = order || [],
-            i;
+    function getGenomeOrder(node, order) {
+        var i;
+        order = order || [];
         for (i = 0; node.branchset && i < node.branchset.length; i++) {
             getGenomeOrder(node.branchset[i], order);
         }
@@ -367,7 +369,7 @@ function init_phylogram() {
           .children(options.children || function (node) {
               return node.branchset;
           })
-          .separation(function (a, b) { return (a.parent == b.parent ? 1 : 2) / a.depth; });
+          .separation(function (a, b) { return (a.parent === b.parent ? 1 : 2) / a.depth; });
 
         var phylogram = d3.phylogram.build(selector, nodes, {
             vis: vis,
@@ -382,10 +384,10 @@ function init_phylogram() {
 
         if (!options.skipLabels) {
             vis.selectAll('g.leaf.node text')
-                .attr("dx", function(d) { return d.x < 180 ? 8 : -8; })
+                .attr("dx", function (d) { return d.x < 180 ? 8 : -8; })
                 .attr("dy", ".31em")
-                .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
-                .attr("transform", function(d) { return d.x < 180 ? null : "rotate(180)"; })
+                .attr("text-anchor", function (d) { return d.x < 180 ? "start" : "end"; })
+                .attr("transform", function (d) { return d.x < 180 ? null : "rotate(180)"; })
                 .attr('font-family', 'Helvetica Neue, Helvetica, sans-serif')
                 .attr('font-size', '10px')
                 .attr('fill', 'black')

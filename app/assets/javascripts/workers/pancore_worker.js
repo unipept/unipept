@@ -283,7 +283,8 @@ var matrixBackend = function matrixBackend(data) {
      * Clusters the matrix and returns a tree of the clustering
      */
     that.calculateTree = function calculateTree() {
-        var i,
+        var sizes,
+            i,
             matrixArray,
             result,
             resultOrder,
@@ -646,7 +647,7 @@ function autoSort(type) {
         }
     }
     start = newOrder[0] === order[0] ? 1 : 0;
-    sendToHost('autoSorted', {order: newOrder, start: start, stop: newOrder.length -1 });
+    sendToHost('autoSorted', {order: newOrder, start: start, stop: newOrder.length - 1 });
 }
 
 // Retrieves the unique sequences
@@ -671,7 +672,7 @@ function getUniqueSequences(newOrder, force) {
 
 // fetch the sequences
 function reallyGetUniqueSequences(s) {
-    getJSONByPost("/peptidome/unique_sequences/", "type=uniprot&bioprojects=" + filterIds(order) + "&sequences=[" + s + "]", function (d) {
+    getJSONByPost("/peptidome/unique_sequences/", "bioprojects=" + filterIds(order) + "&sequences=[" + s + "]", function (d) {
         lca = d[0];
         calculateUnicore(d[1]);
     });
@@ -724,13 +725,13 @@ function getSequences(type, bioproject_id) {
         error("Unknown type: " + type);
     }
     getJSONByPost("/peptidome/full_sequences/", "sequence_ids=[" + ids + "]", function (d) {
-        sendToHost("processDownloadedSequences", {sequences : d, type : type});
+        sendToHost("processDownloadedSequences", {sequences : d, type : type, bioprojectId : bioproject_id});
     });
 }
 
 /************ These functions are not accessible from the host ****************/
 
-// Returns the rank of a give bioproject_id for the current order
+// Returns the rank of a given bioproject_id for the current order
 function getOrderByBioprojectId(bioproject_id) {
     var i;
     for (i = 0; i < order.length; i++) {
@@ -743,8 +744,8 @@ function getOrderByBioprojectId(bioproject_id) {
 }
 
 // Provide an error function with the same signature as in the host
-function error(error, message) {
-    sendToHost("error", {"error" : error, "msg" : message});
+function error(err, message) {
+    sendToHost("error", {"error" : err, "msg" : message});
 }
 
 // Wrapper around xhr json request

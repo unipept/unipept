@@ -1,8 +1,17 @@
 <footer>
-  <p class='copyright'>
-      <span class='byline_author'>Mesuere et al. (2012) J. Proteome Res.</span>
-      <a href="http://dx.doi.org/10.1021/pr300576s" target="_blank" class="byline_author">doi:10.1021/pr300576s</a>
-  </p>
-  <p>&copy; 2014 Universiteit Gent. </p>
-  <p id="version"><%=Rails.application.config.versions[:unipept] %></p>
+    <div class="pull-left">
+        <p class='copyright'>
+            <span class='byline_author'>Mesuere et al. (2015) Proteomics</span>
+            <a href="http://dx.doi.org/10.1002/pmic.201400361" target="_blank" class="byline_author">doi:10.1002/pmic.201400361</a>
+        </p>
+        <p>&copy; <%= Date.today.year %> Universiteit Gent. </p>
+    </div>
+    <div id="version"><p><%= link_to "Unipept " + Rails.application.config.versions[:unipept] + " using UniprotKB " + Rails.application.config.versions[:uniprot], posts_path %></p></div>
+    <div class="external-links">
+        <p>
+            <a href="mailto:unipept@ugent.be" title="mail us"><i class="fa fa-envelope-o"></i></a>
+            <a target="_blank" href="http://twitter.com/unipept" title="find us on twitter"><i class="fa fa-twitter"></i></a>
+            <a target="_blank" href="http://github.com/unipept/unipept" title="find us on github"><i class="fa fa-github"></i></a>
+        </p>
+    </div>
 </footer>

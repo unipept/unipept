@@ -35,6 +35,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`uniprot_entries` (
   `version` SMALLINT UNSIGNED NOT NULL ,
   `taxon_id` MEDIUMINT UNSIGNED NOT NULL ,
   `type` ENUM('swissprot', 'trembl') NOT NULL ,
+  `name`VARCHAR(150) NOT NULL ,
   `protein` TEXT NOT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_uniprot_entries_taxons` (`taxon_id` ASC) ,

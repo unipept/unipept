@@ -23,6 +23,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
     // D3 vars
     var svg,
         matrixSvg,
+        buttonSvg,
         treeSvg,
         blur,
         transitionDuration = 1000,
@@ -228,7 +229,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
             .attr("xmlns", "http://www.w3.org/2000/svg")
             .attr("viewBox", "0 0 " + fullWidth + " " + fullHeight)
             .attr("width", fullWidth)
-            .attr("height", fullHeight);
+            .attr("height", fullHeight)
+            .style("font-family", "'Helvetica Neue', Helvetica, Arial, sans-serif");
         treeSvg = svg.append("g")
             .attr("id", "tree-svg")
             .attr("transform", "translate(20," + margin.top + ")")
@@ -563,7 +565,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         $("#download-newick").click(function () {
             downloadDataByForm(newick, "phylogenetic_tree_newick.txt");
         });
-        $modal = $("#downloadModal").modal();
+        $("#downloadModal").modal();
     };
 
     // Initialize the object

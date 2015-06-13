@@ -1,11 +1,18 @@
 # Unipept
 
-The [Unipept web application](http://unipept.ugent.be) supports biodiversity analysis of large and complex metaproteome samples.
-The 2.4 release of Unipept has 4 main features:
+[![Build Status](https://travis-ci.org/unipept/unipept.svg?branch=master)](https://travis-ci.org/unipept/unipept)
+[![Coverage Status](https://img.shields.io/coveralls/unipept/unipept.svg)](https://coveralls.io/r/unipept/unipept)
+[![Code Climate](https://codeclimate.com/github/unipept/unipept/badges/gpa.svg)](https://codeclimate.com/github/unipept/unipept)
+
+The [Unipept web application](http://unipept.ugent.be) supports biodiversity analysis of large and complex metaproteome samples and the analysis of peptidomes.
+The 2.5 release of Unipept has 4 main features:
 * Tryptic peptide analysis (previously single peptide analysis)
 * Metaproteomics analysis (previously multi-peptide analysis)
 * Unique peptide finder
 * Peptidome clustering
+* an API to retrieve all data
+
+We are currently finalising a command line application built on our API. [Contact us](mailto:unipept@ugent.be) if you want access to the beta version of this tool.
 
 ## Contributing
 
@@ -32,6 +39,10 @@ The following people contributed to this project:
 * Bart Mesuere ([@bmesuere](https://github.com/bmesuere)): PhD student and lead developer
 * Peter Dawyndt ([@pdawyndt](https://github.com/pdawyndt)): Group leader and PhD supervisor
 * Toon Willems ([@nudded](https://github.com/nudded)): Master's student 2013-2014
+* Tom Naessens ([@silox](https://github.com/silox)): Master's student 2014-2015
+* Felix Van der Jeugt ([@FelixVanderJeugt](https://github.com/FelixVanderJeugt)): Master's student 2014-2015
 * Ewan Higgs ([@ehiggs](https://github.com/ehiggs)): Ghent University HPC team
 * Peter Vandamme: PhD co-supervisor
 * Bart Devreese: PhD co-supervisor
+
+For code contributions, the [contributors graph](https://github.com/unipept/unipept/graphs/contributors) is the place to be.

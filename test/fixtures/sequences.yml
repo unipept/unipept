@@ -42,4 +42,16 @@ sequence6:
     id: 6
     sequence: "AGGAR"
     lca: 1
-    lca_il: 2
+    lca_il: 1
+
+sequence7:
+    id: 7
+    sequence: "TEST"
+    lca: 13
+    lca_il: 13
+
+sequence8:
+    id: 8
+    sequence: "TAST"
+    lca: 13
+    lca_il: 13

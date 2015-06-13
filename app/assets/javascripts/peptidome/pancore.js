@@ -15,9 +15,10 @@ var constructPancore = function constructPancore(args) {
     /*************** Private variables ***************/
 
     var that = {},
-        genomes = {},
+        genomes = new Map(),
+        promisesLoading = new Map(),
+        promisesDownload = new Map(),
         isLoading = false,
-        toLoad = 0,
         rank = 0,
         lca = "",
         tree,
@@ -71,7 +72,7 @@ var constructPancore = function constructPancore(args) {
 
         // Constructs the myGenomes feature
         if (window.File && window.FileReader && window.FileList) {
-            myGenomes = constructMyGenomes({pancore : that, version : args.version});
+            myGenomes = constructMyGenomes({version : args.version});
         } else {
             $("#my-genome-error").removeClass("hide");
         }
@@ -121,13 +122,12 @@ var constructPancore = function constructPancore(args) {
     function initSpeciesForm() {
         // Add handler to the "add species"-form
         $("#add_species_peptidome").click(function () {
-            var url;
             // Get all bioproject id's for the selected species id
-            url = "/peptidome/genomes/species/" + $("#species_id").val() + ".json";
-            $.getJSON(url, function (genomes) {
+            var url = "/peptidome/genomes/species/" + $("#species_id").val() + ".json";
+            getJSON(url).then(function (genomes) {
                 that.addGenomes(genomes);
             })
-            .fail(function () {
+            .catch(function (e) {
                 groupErrors("request error for " + url, "It seems like something went wrong while we loaded the data. Are you still conected to the internet? You might want to reload this page.");
             });
             return false;
@@ -183,8 +183,7 @@ var constructPancore = function constructPancore(args) {
         $("#buttons-pancore").prepend("<button id='save-data' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-download'></span> Download data</button>");
         $("#save-data").click(function clickSaveData() {
             var activeObject,
-                tracking,
-                filename;
+                tracking;
             if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
                 activeObject = graph;
                 tracking = "graph";
@@ -233,7 +232,7 @@ var constructPancore = function constructPancore(args) {
             processPancoreData(data.msg.data, data.msg.lca, data.msg.rank);
             break;
         case 'processDownloadedSequences':
-            processDownloadedSequences(data.msg.sequences, data.msg.type);
+            processDownloadedSequences(data.msg);
             break;
         case 'processClusteredMatrix':
             processClusteredMatrix(data.msg.order, data.msg.newick);
@@ -264,33 +263,37 @@ var constructPancore = function constructPancore(args) {
      */
     function loadData(bioproject_id, name) {
         if ((bioproject_id + "").charAt(0) === "u") {
-            myGenomes.getIds(bioproject_id, function (ids) {
-                sendToWorker("loadUserData", {"id" : bioproject_id, "name" : name, "ids" : ids});
-            });
+            myGenomes.getIds(bioproject_id).then(
+                function (ids) {
+                    sendToWorker("loadUserData", {"id" : bioproject_id, "name" : name, "ids" : ids});
+                }
+            );
         } else {
             sendToWorker("loadData", {"bioproject_id" : bioproject_id, "name" : name});
         }
+        return new Promise(function (resolve, reject) {
+            promisesLoading.set(bioproject_id, function (genome, requestRank) {
+                if (rank === requestRank) {
+                    resolve(genome);
+                } else {
+                    reject("old data");
+                }
+            });
+        });
     }
 
     /**
-     * Gets called when the worker is done loading a new genome the calculated
-     * data gets added the update queue if the request_rank matches
+     * Gets called when the worker is done loading a new genome
+     * Fullfills the corresponding loadGenome Promise
      *
      * @param <Genome> genome The data that's loaded
      * @param <Number> requestRank The rank of the original request
      */
     function processLoadedGenome(genome, requestRank) {
-        // If the rank doesn't match, this is old data
-        if (rank !== requestRank) return;
-        toLoad--;
-        table.setGenomeStatus(genome.bioproject_id, "Done", false);
-
-        genome.abbreviation = that.abbreviate(genome.name, genome.bioproject_id);
-
-        graph.addToDataQueue(genome);
-        matrix.addGenome(genome);
-
-        setLoading(toLoad !== 0);
+        if (promisesLoading.has(genome.bioproject_id)) {
+            promisesLoading.get(genome.bioproject_id).call(this, genome, requestRank);
+            promisesLoading.delete(genome.bioproject_id);
+        }
     }
 
     /**
@@ -309,16 +312,17 @@ var constructPancore = function constructPancore(args) {
     }
 
     /**
-     * Takes the downloaded sequences from the worker and pushes them to the
-     * user via a file download.
+     * Fullfills the corresponding downloadSequences Promise
      *
-     * @param <String> sequences The list of sequences
-     * @param <String> type The type of the sequences
+     * @param <String> data.type The type of sequences
+     * @param <String> data.bioprojectId The bioprojectId of the  request
+     * @param <String> data.sequences The returned sequences
      */
-    function processDownloadedSequences(sequences, type) {
-        downloadDataByForm(sequences, type + '-sequences.txt', function enableButton() {
-            $("#download-peptides-toggle").button('reset');
-        });
+    function processDownloadedSequences(data) {
+        if (promisesDownload.has(data.bioprojectId + data.type)) {
+            promisesDownload.get(data.bioprojectId + data.type).call(this, data);
+            promisesDownload.delete(data.bioprojectId + data.type);
+        }
     }
 
     /**
@@ -361,7 +365,7 @@ var constructPancore = function constructPancore(args) {
             $("#add_species_peptidome").button('reset');
             table.setEnabled(true);
 
-            setTimeout(function () { sendToWorker("getUniqueSequences", {order : table.getOrder(), force : false });}, 1000);
+            setTimeout(function () { sendToWorker("getUniqueSequences", {order : table.getOrder(), force : false }); }, 1000);
         }
     }
 
@@ -380,29 +384,39 @@ var constructPancore = function constructPancore(args) {
     /*************** Public methods ***************/
 
     /**
-     * Gives the order to add genomes to the visualisation.
+     * Adds genomes to the visualisation
      *
      * @param <Array> g Array of bioproject_id's of the genomes we want to add
      */
     that.addGenomes = function addGenomes(g) {
-        var i,
-            abbrev;
-        for (i = 0; i < g.length; i++) {
+        return Promise.all(g.map(function addGenome(genome, i){
             // only add new genomes
-            if (genomes[g[i].bioproject_id] === undefined) {
-                toLoad++;
-                abbrev = that.abbreviate(g[i].name, g[i].bioproject_id);
-                table.addGenome({
-                    "bioproject_id" : g[i].bioproject_id,
-                    "name" : g[i].name,
-                    "status" : "Loading",
-                    "position" : 100 + i,
-                    "abbreviation" : abbrev
+            if (genomes.has(genome.bioproject_id)) return;
+            setLoading(true);
+            table.addGenome({
+                "bioproject_id" : genome.bioproject_id,
+                "name" : genome.name,
+                "status" : "Loading",
+                "position" : 100 + i,
+                "abbreviation" : that.abbreviate(genome.name, genome.bioproject_id)
+            });
+            return loadData(genome.bioproject_id, genome.name)
+                .then(function (genome) {
+                    table.setGenomeStatus(genome.bioproject_id, "Done", false);
+
+                    genome.abbreviation = that.abbreviate(genome.name, genome.bioproject_id);
+
+                    graph.addToDataQueue(genome);
+                    matrix.addGenome(genome);
+                })
+                .catch(function (e) {
+                    groupErrors(e, "It seems like something went wrong while we loaded the data. Are you still conected to the internet? You might want to reload this page.");
                 });
-                loadData(g[i].bioproject_id, g[i].name);
+        })).then( function () {
+            if (promisesLoading.size === 0) {
+                setLoading(false);
             }
-        }
-        setLoading(toLoad !== 0);
+        });
     };
 
     /**
@@ -429,6 +443,8 @@ var constructPancore = function constructPancore(args) {
         rank++;
         sendToWorker("clearAllData", "");
         lca = "";
+        promisesLoading.clear();
+        promisesDownload.clear();
         setLoading(false);
         table.clearAllData();
         graph.clearAllData();
@@ -459,6 +475,11 @@ var constructPancore = function constructPancore(args) {
             "bioproject_id" : bioprojectId,
             "type" : type
         });
+        return new Promise(function (resolve, reject) {
+            promisesDownload.set(bioprojectId + type, function (data) {
+                resolve(data);
+            });
+        });
     };
 
     /**
@@ -466,23 +487,23 @@ var constructPancore = function constructPancore(args) {
      */
     that.requestSimilarityCalculation = function requestSimilarityCalculation() {
         sendToWorker("calculateSimilarity");
-    }
+    };
 
     /**
      * Requests the clustering of the data
      */
     that.requestClustering = function requestClustering() {
         sendToWorker("clusterMatrix");
-    }
+    };
 
     /**
      * Send the autoSort command to the worker
      *
      * @param <String> type The type of sort we want to run
      */
-    that.autoSort = function autoSort(type){
+    that.autoSort = function autoSort(type) {
         sendToWorker("autoSort", {type : type});
-    }
+    };
 
     /**
      * Abbreviates an organism name
@@ -495,7 +516,7 @@ var constructPancore = function constructPancore(args) {
             i;
 
         // Don't abbreviate single words
-        if (split.size == 1) {
+        if (split.size === 1) {
             return name;
         }
 
@@ -504,8 +525,8 @@ var constructPancore = function constructPancore(args) {
             return name;
         }
 
-        // Don't abbreviate if my genome and length < 30
-        if (("" + id).charAt(0) === "u" && name.length < 30) {
+        // Don't abbreviate if my genome
+        if (("" + id).charAt(0) === "u") {
             return name;
         }
 
@@ -513,7 +534,7 @@ var constructPancore = function constructPancore(args) {
             split[0] = "Ca.";
         } else {
             // Take first letter of first word
-            split[0] = split[0].substr(0,1) + ".";
+            split[0] = split[0].substr(0, 1) + ".";
         }
 
         // Abbreviate common words
@@ -541,7 +562,7 @@ var constructPancore = function constructPancore(args) {
         }
 
         return split.join(" ");
-    }
+    };
 
     // initialize the object
     init();

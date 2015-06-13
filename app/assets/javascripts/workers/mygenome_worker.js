@@ -67,16 +67,16 @@ function parseFasta(fasta) {
  */
 function digest(proteins) {
     var peptides = [],
-        digest,
+        digestList,
         i,
         j;
     for (i = 0; i < proteins.length; i++) {
-        digest = proteins[i].replace(/([KR])([^P])/g,"$1+$2")
-            .replace(/([KR])([^P+])/g,"$1+$2")
+        digestList = proteins[i].replace(/([KR])([^P])/g, "$1+$2")
+            .replace(/([KR])([^P+])/g, "$1+$2")
             .split("+");
-        for (j = 0; j < digest.length; j++) {
-            if (digest[j].length >=5) {
-                peptides.push(digest[j]);
+        for (j = 0; j < digestList.length; j++) {
+            if (digestList[j].length >= 5) {
+                peptides.push(digestList[j]);
             }
         }
     }
@@ -104,9 +104,11 @@ function convertPeptidesToInts(peptides) {
             slice = JSON.parse(req.responseText);
             ids = ids.concat(slice);
         } else {
-            error("request error for " + url, "It seems like something went wrong while we loaded the data");
+            error("request error for /peptidome/convert_peptides", "It seems like something went wrong while we loaded the data");
         }
-        sendToHost("processProgress", {progress : ((i +  sliceSize) / peptides.length)});
+        if (i % 10000 === 0) {
+            sendToHost("processProgress", {progress : ((i +  sliceSize) / peptides.length)});
+        }
     }
-    return ids.sort(function(a,b){return a-b});
+    return ids.sort(function (a, b) { return a - b; });
 }

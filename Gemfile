@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '4.1.4'
+gem 'rails', '4.1.8'
 
 gem 'mysql2'
 
@@ -12,7 +12,7 @@ gem 'will_paginate'
 
 # jquery
 gem 'jquery-rails'
-gem "jquery-ui-rails", "4.0.2"
+gem "jquery-ui-rails"
 
 # cas auth
 gem 'devise'
@@ -28,14 +28,17 @@ gem 'therubyracer'
 gem 'oj'
 
 # imagemagick bindings
-gem "rmagick"
+gem "rmagick", require: false
 
-# do HTTP requests
-gem "httparty"
+# coveralls
+gem "coveralls", require: false
 
 # The dynamic stylesheet language for the Rails asset pipeline.
 # Allows other gems to extend Less load path.
 gem "less-rails"
+
+# auto css prefixer
+gem "autoprefixer-rails"
 
 # Uglifier minifies JavaScript files by wrapping UglifyJS to be accessible
 # in Ruby
