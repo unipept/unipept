@@ -10,7 +10,6 @@ TABLES=                                      \
 	$(TABDIR)/ec_cross_references.tsv.gz     \
 	$(TABDIR)/embl_cross_references.tsv.gz   \
 	$(TABDIR)/go_cross_references.tsv.gz
-GENOME_TABLES=genomes.tsg.gz genome_cache.tsv.gz
 
 SRC=$(shell find src/ -type f -name '*.java')
 JAR=target/unipept-0.0.1-SNAPSHOT.jar
