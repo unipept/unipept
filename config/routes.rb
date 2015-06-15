@@ -27,10 +27,10 @@ UnipeptWeb::Application.routes.draw do
   get '/search/sequence', :to => 'sequences#search', :as => 'sequence_search'
   post '/search/sequences', :to => 'sequences#multi_search', :as => 'sequence_multi_search'
   # proteins
-  get '/search/protein', :to => 'proteins#search', :as => 'protein_search'
+  post '/search/protein', :to => 'proteins#show', :as => 'protein_search'
 
   get '/sequences/:id/:equate_il', :to => 'sequences#show'
-  get '/proteins/:id/:equate_il', :to => 'proteins#show'
+  post '/proteins/:id/:equate_il', :to => 'proteins#show'
   get '/search/single', :to => 'search#single'
   get '/search/single_protein', :to => 'search#single_protein'
 

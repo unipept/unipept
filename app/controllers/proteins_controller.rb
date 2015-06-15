@@ -6,14 +6,9 @@ class ProteinsController < ApplicationController
     # should we equate I and L?
     equate_il = (params[:equate_il] == "equateIL")
     # the sequence or id of the protein
-    prot = params[:id].upcase
+    prot = params[:q].gsub(/\s+/, "").upcase
 
     # get the peptides
     logger.debug prot2pept(prot)
-  end
-
-  # redirects to show
-  def search
-    redirect_to "#{proteins_path}/#{params[:q]}/#{params[:il_s]}"
   end
 end
