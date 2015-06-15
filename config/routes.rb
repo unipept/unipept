@@ -9,6 +9,7 @@ UnipeptWeb::Application.routes.draw do
   resources :posts
   resources :dataset_items
   resources :sequences, :only => [:show, :index]
+  resources :proteins, :only => [:show, :index]
   resources :organisms, :only => [:show, :index]
 
   # datasets
@@ -22,11 +23,16 @@ UnipeptWeb::Application.routes.draw do
   end
 
   # search
+  # peptides
   get '/search/sequence', :to => 'sequences#search', :as => 'sequence_search'
   post '/search/sequences', :to => 'sequences#multi_search', :as => 'sequence_multi_search'
+  # proteins
+  get '/search/protein', :to => 'proteins#search', :as => 'protein_search'
 
   get '/sequences/:id/:equate_il', :to => 'sequences#show'
+  get '/proteins/:id/:equate_il', :to => 'proteins#show'
   get '/search/single', :to => 'search#single'
+  get '/search/single_protein', :to => 'search#single_protein'
 
   # pancore
   match '/peptidome/sequences/:bioproject_id.:format', via: [:get, :post], :to => 'peptidome#get_sequence_ids_for_bioproject', :constraints => { :bioproject_id => /[0-z\._]+/ }
