@@ -17,7 +17,8 @@ public class UniprotEntry {
     private int version;
     private int taxonId;
     private String type;
-    private String name;
+    private String recommendedName;
+    private String submittedName;
     private String sequence;
     private List<UniprotDbRef> dbReferences;
     private List<UniprotGORef> goReferences;
@@ -35,7 +36,8 @@ public class UniprotEntry {
         version = 0;
         taxonId = 0;
         this.type = type;
-        name = null;
+        recommendedName = null;
+        submittedName = null;
         sequence = null;
         dbReferences.clear();
         goReferences.clear();
@@ -73,11 +75,16 @@ public class UniprotEntry {
     }
 
     public String getName() {
-        return name;
+        if(recommendedName != null) return recommendedName;
+        return submittedName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setRecommendedName(String name) {
+        recommendedName = name;
+    }
+
+    public void setSubmittedName(String name) {
+        submittedName = name;
     }
 
     public String getSequence() {
