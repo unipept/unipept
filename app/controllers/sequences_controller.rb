@@ -300,4 +300,5 @@ class SequencesController < ApplicationController
       redirect_to datasets_path
   end
 end
+
 class EmptyQueryError < StandardError; end
