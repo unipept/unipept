@@ -3,7 +3,7 @@ MAIL=unipept@ugent.be
 
 DATADIR=../../data
 TABDIR=${DATADIR}/tables
-UNIDIR=${DATADIR}/uniprot
+SRCDIR=${DATADIR}/sources
 TAXDIR=${DATADIR}/taxon
 ASMDIR=${DATADIR}/assembly
 INTDIR=${DATADIR}/intermediate
@@ -18,6 +18,7 @@ BDBMEM=500000000
 
 TAXON_URL=ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip
 UNIPROT_URL=ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/
+IGC_URL= ftp://climb.genomics.cn/pub/10.5524/100001_101000/100064/
 ASSEMBLY_URL=rsync://ftp.ncbi.nlm.nih.gov/genomes/ASSEMBLY_REPORTS/All
 ENTREZ_URL=http://eutils.ncbi.nlm.nih.gov/entrez/eutils
 ENTREZ_BATCH_SIZE='1000'

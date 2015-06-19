@@ -21,7 +21,7 @@ true > "$LOGFILE"
 log "Starting unipept backend run."
 
 newstamp="$(mktemp)"
-oldstamp="$UNIDIR/.STAMP"
+oldstamp="$SRCDIR/.STAMP"
 
 # Get the new "Last Modified" stamp from uniprot.
 curl -s --head "$UNIPROT_URL/uniprot_trembl.xml.gz" > "$newstamp"
@@ -39,7 +39,7 @@ if [ -f "$oldstamp" ]; then
     log "Old version was $(head -1 "$oldstamp")"
     log "New version is $(head -1 "$newstamp")"
 else
-    mkdir -p "$UNIDIR"
+    mkdir -p "$SRCDIR"
     touch "$oldstamp"
     log "No local version."
     log "New version is $(head -1 "$newstamp")"
