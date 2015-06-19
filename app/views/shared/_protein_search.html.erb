@@ -1,7 +1,4 @@
 <%= form_tag(:protein_search, :method => "post", :class => "form-inline") do %>
     <%= text_area_tag(:q, "", :placeholder => "PROTEIN", :rows => 8, :cols => 50, :class => "form-control") %><br />
-    <div class="checkbox">
-      <%= label_tag(:il_s, check_box_tag(:il_s, "equateIL", true) + " Equate I and L?") %>
-    </div><br />
     <%= button_tag(raw("<span class='glyphicon glyphicon-search grow'></span> Search"), :type => "submit", :class => "btn btn-primary btn-animate") %>
 <% end %>

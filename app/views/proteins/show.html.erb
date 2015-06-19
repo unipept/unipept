@@ -1,1 +1,19 @@
 <h1><%= @title %></h1>
+<%= @lca_star.id %>, <%= @lca_star.name %>
+
+<%= @prot %><br />
+
+<table class="table table-condensed table-hover protein-info">
+  <thead>
+    <tr>
+      <th>Peptide</th>
+      <th>Organism</th>
+    </tr>
+  </thead>
+  <% @sequence_hash.each do |seq, tax| %>
+    <tr>
+      <td><%= link_to seq %></td>
+      <td><%= tax.name if tax %></td>
+    </tr>
+  <% end %>
+</table>
