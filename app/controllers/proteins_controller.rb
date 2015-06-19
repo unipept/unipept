@@ -20,10 +20,9 @@ class ProteinsController < ApplicationController
 
     # perform tryptic digest
     sequences = prot2pept(@prot)
-
-    # build the sequence hash
-    sequence_hash = {}
-    sequences.each{|s| sequence_hash[s] = nil}
+    sequence_to_taxon = Hash.new
+    sequence_counts = Hash[sequences.group_by{|k| k}.map{|k,v| [k, v.length]}]
+    matches = Hash.new
 
     # build the resultset
     lcas = []
@@ -33,7 +32,17 @@ class ProteinsController < ApplicationController
         lca_t = sequence.calculate_lca(@equate_il, true)
 
         lcas << lca_t
-        sequence_hash[sequence.sequence] = lca_t
+
+        # add to sequence_taxon mapping
+        sequence_to_taxon[sequence.sequence] = lca_t
+
+        # treeview data
+        num_of_seq = sequence_counts[sequence.sequence]
+        matches[lca_t] ||= []
+        num_of_seq.times do
+          matches[lca_t] << sequence.sequence
+        end
+
       end
     end
 
@@ -41,7 +50,39 @@ class ProteinsController < ApplicationController
 
     # prepare for output
     @title = "Protein analysis result"
-    @sequence_hash = sequence_hash
+
+    # peptides table
+    @matches = matches
+    @sequences = sequences
+    @sequence_to_taxon = sequence_to_taxon
+
+    # construct treemap nodes
+    root = Node.new(1, "Organism", nil, "no rank")
+    matches.each do |taxon, seqs| # for every match
+      lca_l = taxon.lineage
+
+      last_node_loop = root
+      while !lca_l.nil? && lca_l.has_next? # process every rank in lineage
+        t = lca_l.next_t
+        unless t.nil?
+          node = Node.find_by_id(t.id, root)
+          if node.nil?
+            node = Node.new(t.id, t.name, root, t.rank)
+            last_node_loop = last_node_loop.add_child(node)
+          else
+            last_node_loop = node
+          end
+        end
+      end
+      node = taxon.id == 1 ? root : Node.find_by_id(taxon.id, root)
+      node.set_sequences(seqs) unless node.nil?
+    end
+
+
+    @json_sequences = Oj.dump(root.sequences, mode: :compat)
+    root.prepare_for_multitree unless root.nil?
+    root.sort_children unless root.nil?
+    @json_tree = Oj.dump(root, mode: :compat)
 
     rescue EmptyQueryError
       flash[:error] = "Your query was empty, please try again."

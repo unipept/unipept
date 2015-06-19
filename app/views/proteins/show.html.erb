@@ -3,17 +3,45 @@
 
 <%= @prot %><br />
 
-<table class="table table-condensed table-hover protein-info">
-  <thead>
-    <tr>
-      <th>Peptide</th>
-      <th>Organism</th>
-    </tr>
-  </thead>
-  <% @sequence_hash.each do |seq, tax| %>
-    <tr>
-      <td><%= link_to seq %></td>
-      <td><%= tax.name if tax %></td>
-    </tr>
-  <% end %>
-</table>
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#lineage-tree" id="lineage-tree-tab" data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-info-sign help"></a></li>
+    <li><a href="#peptides" data-toggle="tab">Peptide matches <span class="badge"><%= @sequences.size %></span></a></li>
+</ul>
+
+<div class="tab-help" id="tab-help">
+  <div id="lineage-tree-help">
+    <p>This interactive tree bundles the complete taxonomic lineages of all UniProtKB records whose protein sequence contains <%= @original_sequence %>. You can click on nodes to expand them. Take into account that due to gaps in the hierarchical structure of the NCBI taxonomy, taxonomic levels are not always properly aligned in the tree view.</p>
+  </div>
+</div>
+
+<div class="tab-content">
+    <div class="tab-pane active" id="lineage-tree">
+      <div id="buttons-single"></div>
+      <div id="lineageTree"></div>
+    </div>
+
+    <div class="tab-pane" id="peptides">
+      <table class="table table-condensed table-hover protein-info">
+        <thead>
+          <tr>
+            <th>Peptide</th>
+            <th>Organism</th>
+          </tr>
+        </thead>
+        <%
+          @sequences.each do |seq|
+            tax = @sequence_to_taxon[seq]
+        %>
+          <tr>
+            <td><%= link_to seq %></td>
+            <td><%= link_to tax.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="+tax.id.to_s, :target => "_blank" if tax %></td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {init_sequence_show(<%= raw(@json_tree)%>);});
+</script>
