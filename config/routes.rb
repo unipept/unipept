@@ -30,7 +30,6 @@ UnipeptWeb::Application.routes.draw do
   post '/search/protein', :to => 'proteins#show', :as => 'protein_search'
 
   get '/sequences/:id/:equate_il', :to => 'sequences#show'
-  post '/proteins/:id/:equate_il', :to => 'proteins#show'
   get '/search/single', :to => 'search#single'
   get '/search/single_protein', :to => 'search#single_protein'
 
