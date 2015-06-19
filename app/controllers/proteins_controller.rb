@@ -1,5 +1,6 @@
 class ProteinsController < ApplicationController
   include Utils
+  include Errors
 
   def show
     # save parameters
@@ -88,4 +89,3 @@ class ProteinsController < ApplicationController
       redirect_to search_single_protein_path
   end
 end
-class EmptyQueryError < StandardError; end
