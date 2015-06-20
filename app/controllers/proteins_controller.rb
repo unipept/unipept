@@ -50,6 +50,7 @@ class ProteinsController < ApplicationController
 
     # prepare for output
     @title = "Protein analysis result"
+    @intro_text = "Out of #{sequences.size} peptides extracted from the input protein, #{sequence_to_taxon.size} unique peptides were matched"
 
     # peptides table
     @matches = matches
