@@ -7,7 +7,12 @@ class ProteinsController < ApplicationController
 
   # redirect to the get url
   def search_by_acc
+    raise EmptyQueryError.new if params[:id].blank?
     redirect_to proteins_path(params[:id])
+
+    rescue EmptyQueryError
+      flash[:error] = "Your query was empty, please try again."
+      redirect_to search_single_protein_path
   end
 
   def get_protein_by_accession_id
