@@ -44,15 +44,17 @@
           @sequences.each do |seq|
             tax = @sequence_to_taxon[seq]
         %>
+        <% if tax %>
           <tr>
-            <% if tax %>
-              <td><%= link_to seq, "/sequences/#{seq}" %></td>
-              <td><%= link_to tax.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="+tax.id.to_s, :target => "_blank"  %></td>
-            <% else %>
-              <td><%= seq %></td>
-              <td>No match found</td>
-            <% end %>
+            <td><%= link_to seq, "/sequences/#{seq}" %></td>
+            <td><%= link_to tax.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="+tax.id.to_s, :target => "_blank"  %></td>
           </tr>
+        <% else %>
+          <tr class="row-dimmed">
+            <td><%= seq %></td>
+            <td>No match found</td>
+          </tr>
+          <% end %>
         <% end %>
       </table>
     </div>
