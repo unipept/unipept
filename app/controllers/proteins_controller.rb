@@ -3,20 +3,46 @@ class ProteinsController < ApplicationController
   include Errors
 
   def show
-    # save parameters
-    @p = params
+  end
 
+  # redirect to the get url
+  def search_by_acc
+    redirect_to proteins_path(params[:id])
+  end
+
+  def get_protein_by_accession_id
+    prot_acc = params[:id]
+
+    uniprot_entry = UniprotEntry.find_by_uniprot_accession_number(prot_acc)
+    raise EmptyQueryError.new if uniprot_entry.blank?
+
+    @prot = uniprot_entry.protein
+
+    search_single @prot
+
+    rescue EmptyQueryError
+      flash[:error] = "Your query was empty, please try again."
+      redirect_to search_single_protein_path
+  end
+
+  def search_by_text
     # set search parameters
     @prot = params[:q]
-    @equate_il = false # always false
 
+    search_single @prot
+  end
+
+  private
+
+  def search_single(prot)
     # process parameters
+    @equate_il = false # always false
 
     # check for empty searched
     raise EmptyQueryError.new if @prot.blank?
 
     # sanitize the protein sequence
-    @prot = @prot.gsub(/\s+/, "").upcase
+    @prot = prot.gsub(/\s+/, "").upcase
 
     # perform tryptic digest
     sequences = prot2pept(@prot)
@@ -85,8 +111,11 @@ class ProteinsController < ApplicationController
     root.sort_children unless root.nil?
     @json_tree = Oj.dump(root, mode: :compat)
 
+    render :show
+
     rescue EmptyQueryError
       flash[:error] = "Your query was empty, please try again."
       redirect_to search_single_protein_path
   end
+
 end
