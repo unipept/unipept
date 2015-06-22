@@ -55,7 +55,7 @@ module UnipeptWeb
 
     config.versions = {
       :unipept => "2.5.2",
-      :gem => "0.5.7",
+      :gem => "0.9.0",
       :uniprot => "2015.02"
     }
 

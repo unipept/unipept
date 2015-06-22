@@ -6,6 +6,7 @@ class Api::ClidocsController < ApplicationController
   def index
     @title = "Unipept command line interface"
     @sidebar_name = "Overview"
+    @sidebar_subnav = ["Installation", "Configuration"]
   end
 
   private

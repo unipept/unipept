@@ -1,12 +1,86 @@
 <div class="apidocs row">
   <div class="col-xs-9">
-    <h1 class='api-title'>Unipept <span class="initialism">CLI</span> documentation <small>v1</small></h1>
+    <h1 class='api-title'>Unipept
+      <span class="initialism">CLI</span>
+      documentation
+      <small>v<%= Rails.application.config.versions[:gem] %></small>
+    </h1>
     <p class='lead'>
-      This is an introduction.
+      The Unipept command line tools offer an easy way to integrate Unipept functionality into your data processing script or pipeline.
     </p>
     <p>
-      This is a paragraph.
+      TODO: Add a general introduction about the purpose of the tools and its relation to the API here.
     </p>
+    <h2 id="installation">Installation</h2>
+    <p>
+      To use the Unipept command line tools, Ruby needs to be installed on your system. We recommend using Ruby 2.2, but all versions since Ruby 1.9.3, as well as JRuby are supported. To check if you have the correct Ruby version installed, open a terminal
+      <code>ruby --version</code>.
+    </p>
+
+    <pre>
+$ ruby --version
+ruby 2.2.2p95 (2015-04-13 revision 50295) [x86_64-darwin14]</pre>
+
+    <div class="apidocs-callout apidocs-callout-info">
+      <h4>Installing Ruby</h4>
+      <p>
+        If the
+        <code>ruby --version</code>
+        command returns
+        <samp>command not found</samp>, Ruby is not yet installed on your system. More information on installing Ruby can be found at
+        <a href='https://www.ruby-lang.org/en/installation/' target='_blank'>https://www.ruby-lang.org/en/installation/</a>.
+      </p>
+    </div>
+
+    <p>
+      The Unipept CLI is available as a
+      <i>gem</i>. This means it can easily be installed with the
+      <code>gem install unipept</code>
+      command:
+    </p>
+
+    <pre>
+$ gem install unipept
+Fetching: unipept-<%= Rails.application.config.versions[:gem] %>.gem (100%)
+Successfully installed unipept-<%= Rails.application.config.versions[:gem] %>
+Parsing documentation for unipept-<%= Rails.application.config.versions[:gem] %>
+Installing ri documentation for unipept-<%= Rails.application.config.versions[:gem] %>
+Done installing documentation for unipept after 0 seconds
+1 gem installed</pre>
+
+    <p>
+      After a successful installation, the unipept command should be available. To check if unipept was installed correctly, run
+      <code>unipept --version</code>. This should print the version number:
+    </p>
+
+    <pre>
+$ unipept --version
+<%= Rails.application.config.versions[:gem] %></pre>
+
+    <p>
+      More information about the installed command can be found on these pages, or by running the
+      <code>unipept -h</code>
+      command.
+    </p>
+    <h2 id="configuration">Configuration</h2>
+    <p>
+      The Unipept command line tools require no additional configuration and can be used right after installing. By default, the public Unipept server will be used for all commands. If you have a local Unipept server running, it is possible to use it in
+      <code>unipept config host http://local.server</code>
+      command, where you substitute
+      <code>http://local.server</code>
+      with the address of your local Unipept server:
+    </p>
+
+    <pre>
+$ unipept config host http://local.server
+host was set to http://local.server</pre>
+
+    <div class="apidocs-callout apidocs-callout-info">
+      <h4>Default settings</h4>
+      <p>If you changed the host settings and wish to return to the default host, simple run
+        <code>unipept config host http://api.unipept.ugent.be</code>.
+      </p>
+    </div>
   </div>
   <div class="col-xs-3">
     <%= render 'api/shared/sidebar' %>
