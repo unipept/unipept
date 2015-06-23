@@ -38,6 +38,7 @@
           <tr>
             <th>Peptide</th>
             <th>Organism</th>
+            <th>Rank</th>
           </tr>
         </thead>
         <%
@@ -48,11 +49,19 @@
           <tr>
             <td><%= link_to seq, "/sequences/#{seq}" %></td>
             <td><%= link_to tax.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="+tax.id.to_s, :target => "_blank"  %></td>
+            <td><%= tax.rank %></td>
           </tr>
-        <% else %>
+        <% elsif seq.length < 5 || seq.length > 50 %>
           <tr class="row-dimmed">
+            <td><%= seq.length > 50 ? "#{seq[0..9]}...#{seq[-10..-1]}" : seq %></td>
+            <td>(peptide too short/long)</td>
+            <td></td>
+          </tr>
+        <% elsif %>
+          <tr>
             <td><%= seq %></td>
             <td>No match found</td>
+            <td></td>
           </tr>
           <% end %>
         <% end %>
@@ -62,7 +71,7 @@
 </div>
 
 <script type="text/javascript">
-    $(function () {init_sequence_show(<%= raw(@json_tree)%>);});
+    $(function () {init_sequence_show_lca_star(<%= raw(@json_tree)%>);});
 
     $("#lca-star-help").tooltip({placement : "bottom", container : "body"});
 </script>
