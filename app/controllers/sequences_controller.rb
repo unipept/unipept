@@ -1,6 +1,8 @@
 class SequencesController < ApplicationController
   require 'oj'
 
+  include Errors
+
   # shows information about a peptide
   # the peptide should be in params[:id] and
   # can be a peptide id or the sequence itself
@@ -300,5 +302,3 @@ class SequencesController < ApplicationController
       redirect_to datasets_path
   end
 end
-
-class EmptyQueryError < StandardError; end

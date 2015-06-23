@@ -22,11 +22,17 @@ UnipeptWeb::Application.routes.draw do
   end
 
   # search
+  # peptides
   get '/search/sequence', :to => 'sequences#search', :as => 'sequence_search'
   post '/search/sequences', :to => 'sequences#multi_search', :as => 'sequence_multi_search'
+  # proteins
+  get '/search/protein', :to => 'proteins#search_by_acc', :as => 'protein_acc_search'
+  post '/search/protein', :to => 'proteins#search_by_text', :as => 'protein_text_search'
 
   get '/sequences/:id/:equate_il', :to => 'sequences#show'
   get '/search/single', :to => 'search#single'
+  get '/proteins/:id', :to => 'proteins#get_protein_by_accession_id', :as => 'proteins'
+  get '/search/single_protein', :to => 'search#single_protein'
 
   # pancore
   match '/peptidome/sequences/:bioproject_id.:format', via: [:get, :post], :to => 'peptidome#get_sequence_ids_for_bioproject', :constraints => { :bioproject_id => /[0-z\._]+/ }

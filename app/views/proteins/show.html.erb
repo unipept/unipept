@@ -1,0 +1,77 @@
+<div class="row">
+  <div class="col-xs-9">
+    <h1><%= @title %></h1>
+    <%= @intro_text %>
+
+    <p>Summary of the analysis:</p>
+    <ul>
+      <li>
+        Lowest common ancestor<b>*</b> <span class="glyphicon glyphicon-info-sign" id="lca-star-help" title="The LCA* algorithm is an adaption for the regular LCA calculation which first removes all matches with deeper matches on the same lineage to the root."></span>:
+        <%= link_to @lca_star.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + @lca_star.id.to_s, :target => "_blank", :title => @lca_star.rank %> (<%=@lca_star.rank%>)
+      </li>
+      <li>Input protein:<br /><textarea rows="4" cols="100" disabled><%= @prot.gsub(/(.{8})(?=.)/, '\1 \2') %></textarea></li>
+      <li><%= link_to "Blast input protein" , "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on&USER_FORMAT_DEFAULTS=on&PAGE=Proteins&PROGRAM=blastp&QUERY="+@prot+"&GAPCOSTS=11%201&EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&DATABASE=nr&BLAST_PROGRAMS=blastp&MAX_NUM_SEQ=100&SHORT_QUERY_ADJUST=on&EXPECT=10&WORD_SIZE=3&MATRIX_NAME=BLOSUM62&COMPOSITION_BASED_STATISTICS=2&SHOW_OVERVIEW=on&SHOW_LINKOUT=on&ALIGNMENT_VIEW=Pairwise&MASK_CHAR=2&MASK_COLOR=1&GET_SEQUENCE=on&NEW_VIEW=on&NUM_OVERVIEW=100&DESCRIPTIONS=100&ALIGNMENTS=100&FORMAT_OBJECT=Alignment&FORMAT_TYPE=HTML&OLD_BLAST=false", :target => "_blank", :title => "Open in BLAST"%></li>
+    </ul>
+  </div>
+</div>
+
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#lineage-tree" id="lineage-tree-tab" data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-info-sign help"></a></li>
+    <li><a href="#peptides" data-toggle="tab">Peptide matches <span class="badge"><%= @sequences.size %></span></a></li>
+</ul>
+
+<div class="tab-help" id="tab-help">
+  <div id="lineage-tree-help">
+    <p>This interactive tree bundles the complete taxonomic lineages of all UniProtKB records whose protein sequence contains <%= @original_sequence %>. You can click on nodes to expand them. Take into account that due to gaps in the hierarchical structure of the NCBI taxonomy, taxonomic levels are not always properly aligned in the tree view.</p>
+  </div>
+</div>
+
+<div class="tab-content">
+    <div class="tab-pane active" id="lineage-tree">
+      <div id="buttons-single"></div>
+      <div id="lineageTree"></div>
+    </div>
+
+    <div class="tab-pane" id="peptides">
+      <table class="table table-condensed table-hover protein-info">
+        <thead>
+          <tr>
+            <th>Peptide</th>
+            <th>Organism</th>
+            <th>Rank</th>
+          </tr>
+        </thead>
+        <%
+          @sequences.each do |seq|
+            tax = @sequence_to_taxon[seq]
+        %>
+        <% if tax %>
+          <tr>
+            <td><%= link_to seq, "/sequences/#{seq}" %></td>
+            <td><%= link_to tax.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="+tax.id.to_s, :target => "_blank"  %></td>
+            <td><%= tax.rank %></td>
+          </tr>
+        <% elsif seq.length < 5 || seq.length > 50 %>
+          <tr class="row-dimmed">
+            <td><%= seq.length > 50 ? "#{seq[0..9]}...#{seq[-10..-1]}" : seq %></td>
+            <td>(peptide too short/long)</td>
+            <td></td>
+          </tr>
+        <% elsif %>
+          <tr>
+            <td><%= seq %></td>
+            <td>No match found</td>
+            <td></td>
+          </tr>
+          <% end %>
+        <% end %>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {init_sequence_show_lca_star(<%= raw(@json_tree)%>);});
+
+    $("#lca-star-help").tooltip({placement : "bottom", container : "body"});
+</script>

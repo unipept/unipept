@@ -24,6 +24,9 @@ gem 'zeroclipboard-rails'
 # needed for asset creation
 gem 'therubyracer'
 
+# simple HTTP calls
+gem 'httparty'
+
 # faster json
 gem 'oj'
 
