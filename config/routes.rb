@@ -74,6 +74,7 @@ UnipeptWeb::Application.routes.draw do
   # CLI docs
   namespace :api, path: "clidocs" do
     get "/",          :to => "clidocs#index",     :as => 'clidocs'
+    get "pept2lca",   :to => "clidocs#pept2lca",  :as => 'clidocs/pept2lca'
   end
 
 
