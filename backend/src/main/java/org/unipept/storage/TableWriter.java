@@ -16,6 +16,9 @@ import com.sleepycat.collections.StoredMap;
 import com.sleepycat.bind.tuple.StringBinding;
 import com.sleepycat.bind.tuple.IntegerBinding;
 
+import orestes.bloomfilter.BloomFilter;
+import orestes.bloomfilter.FilterBuilder;
+
 import org.unipept.xml.UniprotObserver;
 import org.unipept.xml.UniprotDbRef;
 import org.unipept.xml.UniprotECRef;
@@ -43,6 +46,7 @@ public class TableWriter implements UniprotObserver {
         }
     }
 
+    private BloomFilter<String> sequenceBloom;
     private Map<String, Integer> sequenceIds;
     private TaxonList taxonList;
     private Set<Integer> wrongTaxonIds;
@@ -96,6 +100,9 @@ public class TableWriter implements UniprotObserver {
             e.printStackTrace();
             System.exit(1);
         }
+
+        /* Open Bloom Filter for sequence ID's. */
+        sequenceBloom = new FilterBuilder(1_000_000_000, 0.01).buildBloomFilter();
 
     }
 
@@ -175,7 +182,7 @@ public class TableWriter implements UniprotObserver {
      * @return the database id of given sequence
      */
     private int getSequenceId(String sequence) {
-        if(sequenceIds.containsKey(sequence)) {
+        if(sequenceBloom.contains(sequence) && sequenceIds.containsKey(sequence)) {
             return sequenceIds.get(sequence);
         } else {
             int index = 0;
@@ -188,6 +195,7 @@ public class TableWriter implements UniprotObserver {
                 e.printStackTrace();
             }
             sequenceIds.put(sequence, index);
+            sequenceBloom.add(sequence);
             return index;
         }
     }

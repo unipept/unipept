@@ -78,6 +78,11 @@
             <artifactId>je</artifactId>
             <version>3.3.75</version>
         </dependency>
+        <dependency>
+            <groupId>com.baqend</groupId>
+            <artifactId>bloom-filter</artifactId>
+            <version>1.0.6</version>
+        </dependency>
     </dependencies>
     <repositories>
         <repository>
@@ -85,6 +90,14 @@
             <name>Oracle Released Java Packages</name>
             <url>http://download.oracle.com/maven</url>
             <layout>default</layout>
+        </repository>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>bintray</name>
+            <url>http://jcenter.bintray.com</url>
         </repository>
     </repositories>
     <name>Unipept</name>
