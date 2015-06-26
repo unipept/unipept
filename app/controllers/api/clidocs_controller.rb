@@ -29,6 +29,6 @@ class Api::ClidocsController < ApplicationController
   end
 
   def set_sidebar_subnav
-    @sidebar_subnav = %w(Input Output Parameters Examples)
+    @sidebar_subnav = %w(Usage Options Examples)
   end
 end

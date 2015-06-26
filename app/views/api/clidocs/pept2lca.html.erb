@@ -9,23 +9,86 @@
     <p>
       The <code>unipept pept2lca</code> command takes one or more tryptic peptides as input and returns the taxonomic lowest common ancestor (<span class="initialism">LCA</span>) for each of them as output. The <span class="initialism">LCA</span> is calculated from all taxa associated with the UniProt records that contain the given peptide. All this information is fetched by doing <a href='<%= api_apidocs_pept2lca_path %>' target='_blank'> <span class="initialism">API</span>-requests </a> to the Unipept server.
     </p>
-    <ul>
-      <li>input: stdin, args, file</li>
-      <li>output: stdout, file</li>
-      <li>format: json, xml, csv</li>
-      <li>all</li>
-      <li>equate</li>
-      <li>select</li>
-      <li>other options: host, help</li>
-      <li>fasta support</li>
-      <li>examples</li>
-    </ul>
-    <h2 id="input">Input</h2>
-    <p></p>
-    <h2 id="output">Output</h2>
-    <p></p>
-    <h2 id="parameters">Parameters</h2>
-    <p></p>
+    <h2 id="usage">Usage</h2>
+    <h3>Input</h3>
+    <h3>Output</h3>
+    <h3>Fasta support</h3>
+    <h3>Example usage</h3>
+    <h2 id="options">Command-line options</h2>
+    <h3><samp>--equate</samp> / <samp>-e</samp> <small>Equate isoleucine and leucine</small></h3>
+    <p>
+      If the <code>--equate</code> flag is set, isoleucine (I) and leucine (L) are equated when matching tryptic peptides to UniProt records. This is similar to checking the <i>Equate I and L?</i> checkbox when performing a search in the Unipept web interface.
+    </p>
+    <pre>
+<b>$</b> unipept pept2lca LGAALGAGLAVIGAGIGIGK
+peptide,taxon_id,taxon_name,taxon_rank
+LGAALGAGLAVIGAGIGIGK,817,Bacteroides fragilis,species
+<b>$</b> unipept pept2lca <b>--equate</b> LGAALGAGLAVIGAGIGIGK
+peptide,taxon_id,taxon_name,taxon_rank
+LGAALGAGLAVIGAGIGIGK,171549,Bacteroidales,order</pre>
+    <h3><samp>--input</samp> / <samp>-i</samp> <small>Specify an input file</small></h3>
+    <p>
+      All unipept commands can process input from 3 sources: command line arguments, a file, or <i>standard input</i>. The optional <code>--input</code> option allows you to specify a file to read input from. The file should contain a single peptide per line.
+    </p>
+    <h5>Example</h5>
+    <pre>
+<b>$</b> cat input.txt
+AALTER
+OMGWTFBBQ
+MDGTEYIIVK
+<b>$</b> unipept pept2lca <b>--input</b> input.txt
+peptide,taxon_id,taxon_name,taxon_rank
+AALTER,1,root,no rank
+MDGTEYIIVK,1263,Ruminococcus,genus</pre>
+    <h3><samp>--output</samp> / <samp>-o</samp> <small>Specify an output file</small></h3>
+    <p>
+      By default, the unipept commands write their output to <i>standard output</i>. Using the optional <code>--output</code> option allows you to specify a file to write the output to. If the file already exists, the output will be appended, if it doesn't, a new file will be created.
+    </p>
+    <h5>Example</h5>
+    <pre>
+<b>$</b> unipept pept2lca <b>--output</b> output.txt AALTER
+<b>$</b> cat output.txt
+peptide,taxon_id,taxon_name,taxon_rank
+AALTER,1,root,no rank</pre>
+    <h3><samp>--select</samp> / <samp>-s</samp> <small>Specify the output fields</small></h3>
+    <p>
+      By default, the unipept commands return all information fields received by the webserver. The <code>--select</code> option allows you to control which fields are returned. A list of fields can be specified by a comma-separated list, or by using multiple <code>--select</code> options. A <samp>*</samp> can be used as a wildcard for fieldnames. For example, <code>--select peptide,taxon*</code> will return the peptide field and all fields starting with <i>taxon</i>.
+    </p>
+    <h5>Example</h5>
+    <pre>
+<b>$</b> unipept pept2lca <b>--select</b> peptide,taxon_id AALTER
+peptide,taxon_id
+AALTER,1
+<b>$</b> unipept pept2lca <b>--select</b> peptide <b>--select</b> *name AALTER
+peptide,taxon_name
+AALTER,root</pre>
+    <h3><samp>--format</samp> / <samp>-f</samp> <small>Specify the output format</small></h3>
+    <p>
+      By default, the unipept commands return their output in the <i>csv</i> format. The <code>--format</code> option allows you to select another format. Supported formats are <samp>csv</samp>, <samp>json</samp>, and <samp>xml</samp>.
+    </p>
+    <h5>Example</h5>
+    <pre>
+<b>$</b> unipept pept2lca <b>--format</b> json AALTER MDGTEYIIVK
+[{"peptide":"AALTER","taxon_id":1,"taxon_name":"root","taxon_rank":"no rank"},{"peptide":"MDGTEYIIVK","taxon_id":1263,"taxon_name":"Ruminococcus","taxon_rank":"genus"}]
+<b>$</b> unipept pept2lca <b>--format</b> xml AALTER MDGTEYIIVK
+&lt;results&gt;&lt;result&gt;&lt;peptide&gt;AALTER&lt;/peptide&gt;&lt;taxon_id&gt;1&lt;/taxon_id&gt;&lt;taxon_name&gt;root&lt;/taxon_name&gt;&lt;taxon_rank&gt;no rank&lt;/taxon_rank&gt;&lt;/result&gt;&lt;result&gt;&lt;peptide&gt;MDGTEYIIVK&lt;/peptide&gt;&lt;taxon_id&gt;1263&lt;/taxon_id&gt;&lt;taxon_name&gt;Ruminococcus&lt;/taxon_name&gt;&lt;taxon_rank&gt;genus&lt;/taxon_rank&gt;&lt;/result&gt;&lt;/results&gt;</pre>
+    <h3><samp>--all</samp> / <samp>-a</samp> <small>Request additional information</small></h3>
+    <p>
+      By default, the unipept commands only request basic and fast to retrieve information from the webserver. By using the <code>--all</code> flag, you can request additional information fields such as the lineage of the returned taxa. You can use the <code>--select</code> option to select which fields you want in your output.
+    </p>
+    <div class="apidocs-callout apidocs-callout-warning">
+      <h4>Performance penalty</h4>
+      <p>Setting <code>--all</code> has a performance penalty inferred from additional database queries. Do not use this option unless the extra information fields are needed.</p>
+    </div>
+    <h5>Example</h5>
+    <pre>
+<b>$</b> unipept pept2lca <b>--all</b> --select peptide,taxon_id,order* MDGTEYIIVK
+peptide,taxon_id,order_id,order_name
+MDGTEYIIVK,1263,186802,Clostridiales</pre>
+    <h3><samp>--help</samp> / <samp>-h</samp> <small>Display help</small></h3>
+    <p>
+      This flag displays the help.
+    </p>
     <h2 id="examples">Examples</h2>
     <p></p>
   </div>
