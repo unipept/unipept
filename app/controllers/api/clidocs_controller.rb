@@ -5,7 +5,7 @@ class Api::ClidocsController < ApplicationController
   def index
     @title = 'Unipept command line interface'
     @sidebar_name = 'Overview'
-    @sidebar_subnav = %w(Installation Configuration)
+    @sidebar_subnav = %w(Installation Updates Configuration)
   end
 
   def pept2lca

@@ -9,10 +9,13 @@
       The Unipept command line tools offer an easy way to integrate Unipept functionality into your data processing script or pipeline.
     </p>
     <p>
-      TODO: Add a general introduction about the purpose of the tools and its relation to the API here.
+      These tools provide a command line interface to the <%= link_to("Unipept web services", api_apidocs_path) %> and a few utility commands for handling proteins using the command line. All tools support fasta and plain text input, multiple output formats (csv, xml and json) and parallel web requests for improved performance.
     </p>
     <p>
-      TODO: Add a link to github and the changelog.
+      The Unipept command line tools are open source under the MIT License and all code is available on <a href='https://github.ugent.be/unipept/unipept-cli' target='_blank'>Github</a>. The changes between releases are listed in the <a href='https://github.ugent.be/unipept/unipept-cli/releases' target='_blank'>changelog</a>. If you have any issues using these tools, have feature requests or found a but, don't hesitate to contact us by email (<a href='mailto:unipept@ugent.be'>unipept@ugent.be</a>), or <a href='https://github.ugent.be/unipept/unipept-cli/issues' target='_blank'>create an issue</a> on Github.
+    </p>
+    <p>
+      TODO: list commands
     </p>
     <h2 id="installation">Installation</h2>
     <p>
@@ -36,10 +39,7 @@ ruby 2.2.2p95 (2015-04-13 revision 50295) [x86_64-darwin14]</pre>
     </div>
 
     <p>
-      The Unipept CLI is available as a
-      <i>gem</i>. This means it can easily be installed with the
-      <code>gem install unipept</code>
-      command:
+      The Unipept CLI is available as a <a href='http://rubygems.com/gems/unipept' target='_blank'><i>gem</i></a>. This means it can easily be installed with the <code>gem install unipept</code> command:
     </p>
 
     <pre>
@@ -64,6 +64,10 @@ $ unipept --version
       More information about the installed command can be found on these pages, or by running the
       <code>unipept -h</code>
       command.
+    </p>
+    <h2 id="updates">Updates</h2>
+    <p>
+      To update the Unipept command line tools to the latest version, just run <code>gem update unipept</code>. The changes between releases are listed in the <a href='https://github.ugent.be/unipept/unipept-cli/releases' target='_blank'>changelog</a>.
     </p>
     <h2 id="configuration">Configuration</h2>
     <p>
