@@ -30,6 +30,6 @@ class Api::ClidocsController < ApplicationController
   end
 
   def set_sidebar_subnav
-    @sidebar_subnav = %w(Usage Options)
+    @sidebar_subnav = %w(Input Output Fasta Options)
   end
 end
