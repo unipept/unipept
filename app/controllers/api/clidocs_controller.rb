@@ -19,6 +19,7 @@ class Api::ClidocsController < ApplicationController
     @sidebar_nav = [
       { name: 'Overview',  path: api_clidocs_path },
       { name: 'uniprot',  path: api_clidocs_pept2lca_path },
+      { name: 'prot2pept',  path: api_clidocs_pept2lca_path },
       { name: 'peptfilter',  path: api_clidocs_pept2lca_path },
       { name: 'unipept pept2lca',  path: api_clidocs_pept2lca_path },
       { name: 'unipept pept2prot',  path: api_clidocs_pept2lca_path },
@@ -29,6 +30,6 @@ class Api::ClidocsController < ApplicationController
   end
 
   def set_sidebar_subnav
-    @sidebar_subnav = %w(Usage Options Examples)
+    @sidebar_subnav = %w(Usage Options)
   end
 end

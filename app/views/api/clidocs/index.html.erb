@@ -12,11 +12,26 @@
       These tools provide a command line interface to the <%= link_to("Unipept web services", api_apidocs_path) %> and a few utility commands for handling proteins using the command line. All tools support fasta and plain text input, multiple output formats (csv, xml and json) and parallel web requests for improved performance.
     </p>
     <p>
-      The Unipept command line tools are open source under the MIT License and all code is available on <a href='https://github.ugent.be/unipept/unipept-cli' target='_blank'>Github</a>. The changes between releases are listed in the <a href='https://github.ugent.be/unipept/unipept-cli/releases' target='_blank'>changelog</a>. If you have any issues using these tools, have feature requests or found a but, don't hesitate to contact us by email (<a href='mailto:unipept@ugent.be'>unipept@ugent.be</a>), or <a href='https://github.ugent.be/unipept/unipept-cli/issues' target='_blank'>create an issue</a> on Github.
+      The Unipept command line tools are open source under the MIT License and all code is available on <a href='https://github.com/unipept/unipept-cli' target='_blank'>Github</a>. The changes between releases are listed in the <a href='https://github.com/unipept/unipept-cli/releases' target='_blank'>changelog</a>. If you have any issues using these tools, have feature requests or found a but, don't hesitate to contact us by email (<a href='mailto:unipept@ugent.be'>unipept@ugent.be</a>), or <a href='https://github.com/unipept/unipept-cli/issues' target='_blank'>create an issue</a> on Github.
     </p>
-    <p>
-      TODO: list commands
-    </p>
+    <dl class='dl-horizontal'>
+      <dt>uniprot</dt>
+      <dd>Fetches uniprot records based on their accession numbers</dd>
+      <dt>prot2pept</dt>
+      <dd>Splits proteins into peptides based on trypsin digest</dd>
+      <dt>peptfilter</dt>
+      <dd>Filters peptides based on length and/or amino acid occurrence</dd>
+      <dt>unipept pept2prot</dt>
+      <dd>Returns the list of UniProt entries containing a given tryptic peptide</dd>
+      <dt>unipept pept2taxa</dt>
+      <dd>Returns the set of taxa extracted from the UniProt entries containing a given tryptic peptide</dd>
+      <dt>unipept pept2lca</dt>
+      <dd>Returns the taxonomic lowest common ancestor for a given tryptic peptide</dd>
+      <dt>unipept taxa2lca</dt>
+      <dd>Returns the taxonomic lowest common ancestor for a given list of taxon identifiers</dd>
+      <dt>unipept taxonomy</dt>
+      <dd>Returns the taxonomic information for a given taxon identifier</dd>
+    </dl>
     <h2 id="installation">Installation</h2>
     <p>
       To use the Unipept command line tools, Ruby needs to be installed on your system. We recommend using Ruby 2.2, but all versions since Ruby 1.9.3, as well as JRuby are supported. To check if you have the correct Ruby version installed, open a terminal
@@ -24,7 +39,7 @@
     </p>
 
     <pre>
-$ ruby --version
+<b>$</b> ruby --version
 ruby 2.2.2p95 (2015-04-13 revision 50295) [x86_64-darwin14]</pre>
 
     <div class="apidocs-callout apidocs-callout-info">
@@ -43,7 +58,7 @@ ruby 2.2.2p95 (2015-04-13 revision 50295) [x86_64-darwin14]</pre>
     </p>
 
     <pre>
-$ gem install unipept
+<b>$</b> gem install unipept
 Fetching: unipept-<%= Rails.application.config.versions[:gem] %>.gem (100%)
 Successfully installed unipept-<%= Rails.application.config.versions[:gem] %>
 Parsing documentation for unipept-<%= Rails.application.config.versions[:gem] %>
@@ -57,7 +72,7 @@ Done installing documentation for unipept after 0 seconds
     </p>
 
     <pre>
-$ unipept --version
+<b>$</b> unipept --version
 <%= Rails.application.config.versions[:gem] %></pre>
 
     <p>
@@ -65,10 +80,29 @@ $ unipept --version
       <code>unipept -h</code>
       command.
     </p>
+
+    <div class="apidocs-callout apidocs-callout-info">
+      <h4>Permission problems</h4>
+      <p>
+        When trying to install a gem, you might run into permission problems if you don't have write access to the default installation directory. This can be fixed by doing a <i>user install</i>, which installs the gem in your home directory. Simply run <code>gem install unipept --user-install</code> instead of the normal installation command. More  information can be found on the <a href='http://guides.rubygems.org/faqs/#user-install' target='_blank'>RubyGems website</a>.
+      </p>
+    </div>
+
     <h2 id="updates">Updates</h2>
     <p>
-      To update the Unipept command line tools to the latest version, just run <code>gem update unipept</code>. The changes between releases are listed in the <a href='https://github.ugent.be/unipept/unipept-cli/releases' target='_blank'>changelog</a>.
+      To update the Unipept command line tools to the latest version, just run <code>gem update unipept</code>. The changes between releases are listed in the <a href='https://github.com/unipept/unipept-cli/releases' target='_blank'>changelog</a>.
     </p>
+    <pre>
+<b>$</b> gem update unipept
+Updating installed gems
+Updating unipept
+Fetching: unipept-<%= Rails.application.config.versions[:gem] %>.gem (100%)
+Successfully installed unipept-<%= Rails.application.config.versions[:gem] %>
+Parsing documentation for unipept-<%= Rails.application.config.versions[:gem] %>
+Installing ri documentation for unipept-<%= Rails.application.config.versions[:gem] %>
+Installing darkfish documentation for unipept-<%= Rails.application.config.versions[:gem] %>
+Done installing documentation for unipept after 0 seconds
+Gems updated: unipept</pre>
     <h2 id="configuration">Configuration</h2>
     <p>
       The Unipept command line tools require no additional configuration and can be used right after installing. By default, the public Unipept server will be used for all commands. If you have a local Unipept server running, it is possible to use it in
