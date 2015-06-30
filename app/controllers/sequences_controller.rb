@@ -28,7 +28,7 @@ class SequencesController < ApplicationController
     # and calculate the LCA
     unless sequence.nil?
       @entries = sequence.peptides(equate_il).map(&:uniprot_entry)
-      @lineages = sequence.lineages(equate_il, true)
+      @lineages = sequence.lineages(equate_il, true).to_a
     else
       # we didn't find the sequence in the database, so let's try to split it
       long_sequences = Sequence.advanced_single_search(seq, equate_il)
