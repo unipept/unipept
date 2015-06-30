@@ -3,7 +3,7 @@
 source config
 
 set -e
-trap "mailx -s 'Unipept Database Build Failed' -a '$LOGFILE' zal '$MAIL' <<<'EOM'" EXIT
+trap "mailx -s 'Unipept Database Build Failed' -a '$LOGFILE' '$MAIL' <<<'EOM'" EXIT
 
 log() {
     exec 3>&1
