@@ -32,7 +32,6 @@ public class LineagesSequencesTaxons2LCAs {
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
         br.lines()
-                .skip(1) // skip header
                 .forEach(line -> {
                     String[] elements = SEPARATOR.split(line, 29);
 
