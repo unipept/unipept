@@ -39,7 +39,7 @@ class Sequence < ActiveRecord::Base
     else
       l = l.where("peptides.original_sequence_id = ?", id)
     end
-    l = l.includes(:name, Lineage::ORDER_T) if eager
+    l = l.eager_load(:name).preload(Lineage::ORDER_T) if eager
     return l
   end
 
