@@ -11,17 +11,17 @@ class ApplicationController < ActionController::Base
   protected
 
   def authorize
-    unless user_signed_in? && current_user.is_admin?
-      flash[:error] = 'Please log in to use this feature'
-      redirect_to root_url
-    end
+    return if user_signed_in? && current_user.is_admin?
+
+    flash[:error] = 'Please log in to use this feature'
+    redirect_to root_url
   end
 
+  # if authentication is disabled, sign is with guest user
   def my_auth
-    # if authentication is disabled, sign is with guest user
-    unless Rails.application.config.unipept_enable_auth
-      u = User.find_by_username('guest')
-      sign_in(:user, u)
-    end
+    return if Rails.application.config.unipept_enable_auth
+
+    u = User.find_by_username('guest')
+    sign_in(:user, u)
   end
 end
