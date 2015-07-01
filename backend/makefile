@@ -21,7 +21,7 @@ taxons: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
 tables: $(TABLES)
 sequences: $(TABDIR)/sequences.tsv.gz
 assemblies: $(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz
-download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz #$(UNIDIR)/uniprot_trembl.xml.gz
+download: $(TAXDIR)/taxdmp.zip $(SRCDIR)/uniprot_sprot.xml.gz #$(SRCDIR)/uniprot_trembl.xml.gz
 	rsync --ignore-existing "$(ASSEMBLY_URL)/GCA_*.assembly.txt" $(ASMDIR)
 
 
@@ -47,12 +47,27 @@ $(TAXDIR)/names.dmp $(TAXDIR)/nodes.dmp: $(TAXDIR)/taxdmp.zip
 	unzip -DDo $< $(notdir $@) -d $(dir $@)
 	echo "Finished unzipping names and nodes from the taxon dump."
 
-$(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/uniprot_trembl.xml.gz:
+$(SRCDIR)/uniprot_sprot.xml.gz $(SRCDIR)/uniprot_trembl.xml.gz:
 	echo "Starting downloading $@."
-	mkdir -p $(UNIDIR)
+	mkdir -p $(SRCDIR)
 	rm -f $@
 	wget --progress=dot:giga "$(UNIPROT_URL)$(notdir $@)" -O $@
 	echo "Finished downloading $@."
+
+$(SRCDIR)/IGC.pep.gz:
+	echo "Starting downloading $@."
+	mkdir -p $(SRCDIR)
+	rm -f $@
+	wget --progress=dot:giga "$(IGC_URL)/1.GeneCatalogs/$(notdir $@)" -O $@ 
+	echo "Finished downloading $@."
+
+$(SRCDIR)/IGC.annotation_OF.summary.gz:
+	echo "Starting downloading $@."
+	mkdir -p $(SRCDIR)
+	rm -f $@
+	wget --progress=dot:giga "$(IGC_URL)/3.IGC.AnnotationInfo/$(notdir $@)" -O $@
+	echo "Finished downloading $@."
+
 # }}}
 
 # Taxons and Lineages {{{ ------------------------------------------------------
@@ -64,13 +79,21 @@ $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz: $(TAXDIR)/names.dmp $(TAXDIR)
 # }}}
 
 # Uniprot entries, peptides, sequences and cross references {{{ ----------------
-$(TABLES): $(TABDIR)/taxons.tsv.gz $(UNIDIR)/uniprot_sprot.xml.gz #$(UNIDIR)/uniprot_trembl.xml.gz
+$(TABLES): $(TABDIR)/taxons.tsv.gz $(INTDIR)/igc.xml.gz # TODO $(SRCDIR)/uniprot_sprot.xml.gz $(SRCDIR)/uniprot_trembl.xml.gz
 	echo "Started calculation of most tables."
 	mkdir -p $(BDBDIR)
 	mkdir -p $(INTDIR)
-	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(BDBDIR) $(BDBMEM) $(TABDIR)/taxons.tsv.gz $(TABLES) $(UNIDIR)/uniprot_sprot.xml.gz "swissprot"
-	#java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(BDBDIR) $(BDBMEM) $(TABDIR)/taxons.tsv.gz $(TABLES) $(UNIDIR)/uniprot_sprot.xml.gz "swissprot" $(UNIDIR)/uniprot_trembl.xml.gz "trembl"
+	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(BDBDIR) $(BDBMEM) $(TABDIR)/taxons.tsv.gz $(TABLES) $(INTDIR)/igc.xml.gz "igc" $(SRCDIR)/uniprot_sprot.xml.gz "swissprot" # TODO $(SRCDIR)/uniprot_trembl.xml.gz "trembl"
 	echo "Finished calculation of most tables."
+
+$(INTDIR)/igc.xml.gz: # TODO $(SRCDIR)/IGC.annotation_OF.summary.gz $(SRCDIR)/IGC.pep.gz $(TABDIR)/taxons.tsv.gz
+	echo "Starting conversion from IGC to XML"
+	python igcAnnotationsPeptides2xml.py \
+		<(zcat $(SRCDIR)/IGC.annotation_OF.summary.gz) \
+		<(zcat $(SRCDIR)/IGC.pep.gz) \
+		<(zcat $(TABDIR)/taxons.tsv.gz) \
+		>(gzip - > $@)
+	echo "Finished conversion from IGC to XML"
 # }}}
 
 # Sequences with LCA {{{ -------------------------------------------------------
@@ -151,7 +174,7 @@ clean: clean_intermediates
 pristine: clean
 	rm -vf $(JAR)
 	rm -vf $(TAXDIR)/taxdmp.zip
-	rm -vf $(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/uniprot_treml.xml.gz
+	rm -vf $(SRCDIR)/uniprot_sprot.xml.gz $(SRCDIR)/uniprot_treml.xml.gz
 	find $(ASMDIR)/ -name '*.assembly.txt' -exec rm -vf \{\} \;
 
 
