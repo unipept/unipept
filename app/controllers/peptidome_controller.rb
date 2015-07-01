@@ -1,25 +1,24 @@
 class PeptidomeController < ApplicationController
-
   def analyze
     @tab = params[:tab]
-    if @tab == "peptidefinder"
-      @title = "Unique Peptide Finder"
-    elsif @tab == "peptidomeclustering"
-      @title = "Peptidome Clustering"
+    if @tab == 'peptidefinder'
+      @title = 'Unique Peptide Finder'
+    elsif @tab == 'peptidomeclustering'
+      @title = 'Peptidome Clustering'
     else
-      @title = "Peptidome Analysis"
-      @tab = "peptidefinder"
+      @title = 'Peptidome Analysis'
+      @tab = 'peptidefinder'
     end
 
-    @species = Genome.get_genome_species().map{|g| [g["name"], g["id"]]}
-    @genomes = Genome.joins(:lineage).select("genomes.name, genomes.bioproject_id, lineages.species as species_id, lineages.genus as genus_id, lineages.order as order_id, lineages.class as class_id").where("status = 'Complete'").uniq
+    @species = Genome.get_genome_species.map { |g| [g['name'], g['id']] }
+    @genomes = Genome.joins(:lineage).select('genomes.name, genomes.bioproject_id, lineages.species as species_id, lineages.genus as genus_id, lineages.order as order_id, lineages.class as class_id').where("status = 'Complete'").uniq
 
     @taxa = Set.new
-    @taxa.merge(@genomes.map{|g| g.species_id})
-    @taxa.merge(@genomes.map{|g| g.genus_id})
-    @taxa.merge(@genomes.map{|g| g.order_id})
-    @taxa.merge(@genomes.map{|g| g.class_id})
-    @taxa = Hash[Taxon.select([:id, :name]).where(:id => @taxa.to_a).map{|t| [t.id, t.name]}]
+    @taxa.merge(@genomes.map(&:species_id))
+    @taxa.merge(@genomes.map(&:genus_id))
+    @taxa.merge(@genomes.map(&:order_id))
+    @taxa.merge(@genomes.map(&:class_id))
+    @taxa = Hash[Taxon.select([:id, :name]).where(id: @taxa.to_a).map { |t| [t.id, t.name] }]
 
     @taxa = Oj.dump(@taxa, mode: :compat)
     @genomes = Oj.dump(@genomes, mode: :compat)
@@ -49,7 +48,7 @@ class PeptidomeController < ApplicationController
       result = Sequence.filter_unique_uniprot_peptides(sequences, lca)
       lca = Taxon.find_by_id(lca).name
     else
-      lca = "undefined"
+      lca = 'undefined'
       result = []
     end
     render json: Oj.dump([lca, result], mode: :compat)
@@ -74,7 +73,7 @@ class PeptidomeController < ApplicationController
       lca = Lineage.calculate_lca(Lineage.find_by_sql("SELECT lineages.* from genomes LEFT JOIN lineages ON genomes.taxon_id = lineages.taxon_id WHERE bioproject_id IN (#{params[:bioprojects]}) AND genomes.taxon_id is not null"))
       lca = Taxon.find_by_id(lca)
     else
-      lca = {:name => "undefined"}
+      lca = { name: 'undefined' }
     end
     render json: Oj.dump(lca, mode: :compat)
   end
