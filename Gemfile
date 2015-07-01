@@ -5,14 +5,14 @@ gem 'rails', '4.1.8'
 gem 'mysql2'
 
 # Protect attributes from mass assignment
-gem "protected_attributes"
+gem 'protected_attributes'
 
 # pagination
 gem 'will_paginate'
 
 # jquery
 gem 'jquery-rails'
-gem "jquery-ui-rails"
+gem 'jquery-ui-rails'
 
 # cas auth
 gem 'devise'
@@ -28,24 +28,24 @@ gem 'therubyracer'
 gem 'oj'
 
 # imagemagick bindings
-gem "rmagick", require: false
+gem 'rmagick', require: false
 
 # coveralls
-gem "coveralls", require: false
+gem 'coveralls', require: false
 
 # The dynamic stylesheet language for the Rails asset pipeline.
 # Allows other gems to extend Less load path.
-gem "less-rails"
+gem 'less-rails'
 
 # auto css prefixer
-gem "autoprefixer-rails"
+gem 'autoprefixer-rails'
 
 # Uglifier minifies JavaScript files by wrapping UglifyJS to be accessible
 # in Ruby
-gem "uglifier"
+gem 'uglifier'
 
 # Exception emails
-gem 'exception_notification', :git => 'git://github.com/unipept/exception_notification.git'
+gem 'exception_notification', git: 'git://github.com/unipept/exception_notification.git'
 
 # Deploy with Capistrano
 gem 'capistrano', '~> 3.0'
@@ -57,15 +57,15 @@ group :development do
 end
 
 # API stats
-gem "stathat"
+gem 'stathat'
 
 group :development do
-	gem 'annotate' # annotate models with database info
+  gem 'annotate' # annotate models with database info
   gem 'guard-minitest' # auto run tests
-  gem 'terminal-notifier-guard', :git => 'git://github.com/unipept/terminal-notifier-guard.git' # mac notifications
+  gem 'terminal-notifier-guard', git: 'git://github.com/unipept/terminal-notifier-guard.git' # mac notifications
   gem 'terminal-notifier'
-	gem "rake"
-	gem 'sprockets'
+  gem 'rake'
+  gem 'sprockets'
 end
 
 group :test do
