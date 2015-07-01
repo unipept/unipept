@@ -143,9 +143,8 @@ class Api::ApiController < ApplicationController
 
   # log all api calls to stathat
   def log
-    if Rails.application.config.unipept_API_logging
-      StatHat::API.ez_post_count('API - ' + action_name, Rails.application.config.unipept_stathat_key, 1)
-    end
+    return unless Rails.application.config.unipept_API_logging
+    StatHat::API.ez_post_count('API - ' + action_name, Rails.application.config.unipept_stathat_key, 1)
   end
 
   # enable cross origin requests
@@ -165,7 +164,7 @@ class Api::ApiController < ApplicationController
     elsif @input.is_a? String   # string
       if @input[0] == '['          # parse json
         @input = JSON.parse @input
-      elsif                        # comma separated
+      else                        # comma separated
         @input = @input.split(',')
       end
     end
