@@ -2,8 +2,8 @@
 <div class="row">
     <div class="col-xs-9">
         <p><%= @intro_text %></p>
-        <% if @prideURL.present? %>
-          <p>This dataset was loaded from <span class="initialism">PRIDE</span>. <%= link_to "View in PRIDE" , @prideURL, :target => "_blank" %> <span class='glyphicon glyphicon-share-alt'></span></p>
+        <% if @pride_url.present? %>
+          <p>This dataset was loaded from <span class="initialism">PRIDE</span>. <%= link_to "View in PRIDE" , @pride_url, :target => "_blank" %> <span class='glyphicon glyphicon-share-alt'></span></p>
         <% end %>
     </div>
     <div class="col-xs-3 text-right">

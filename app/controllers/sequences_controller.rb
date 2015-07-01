@@ -21,15 +21,12 @@ class SequencesController < ApplicationController
     end
 
     # quit if it doensn't contain any peptides
-    fail NoMatchesFoundError.new(sequence.sequence) if sequence.present? && sequence.peptides(equate_il).empty?
+    fail NoMatchesFoundError, sequence.sequence if sequence.present? && sequence.peptides(equate_il).empty?
 
     # get the uniprot entries of every peptide
     # only used for the open in uniprot links
     # and calculate the LCA
-    unless sequence.nil?
-      @entries = sequence.peptides(equate_il).map(&:uniprot_entry)
-      @lineages = sequence.lineages(equate_il, true).to_a
-    else
+    if !sequence.nil?
       # we didn't find the sequence in the database, so let's try to split it
       long_sequences = Sequence.advanced_single_search(seq, equate_il)
       # calculate possible uniprot entries
@@ -39,8 +36,11 @@ class SequencesController < ApplicationController
       # check if the protein contains the startsequence
       @entries.select! { |e| e.protein_contains?(seq, equate_il) }
 
-      fail NoMatchesFoundError.new(seq) if @entries.empty?
+      fail NoMatchesFoundError, seq if @entries.empty?
       @lineages = @entries.map(&:lineage).compact
+    else
+      @entries = sequence.peptides(equate_il).map(&:uniprot_entry)
+      @lineages = sequence.lineages(equate_il, true).to_a
     end
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
@@ -54,13 +54,12 @@ class SequencesController < ApplicationController
     found = (@lca_taxon.name == 'root')
     while !found && l.has_next?
       t = l.next_t
-      unless t.nil?
-        found = (@lca_taxon.id == t.id)
-        @common_lineage << t
-        node = Node.new(t.id, t.name, @root)
-        node.data['count'] = @lineages.size
-        last_node = last_node.add_child(node)
-      end
+      next if t.nil?
+      found = (@lca_taxon.id == t.id)
+      @common_lineage << t
+      node = Node.new(t.id, t.name, @root)
+      node.data['count'] = @lineages.size
+      last_node = last_node.add_child(node)
     end
 
     # distinct lineage
@@ -70,17 +69,16 @@ class SequencesController < ApplicationController
       l = []
       while lineage.has_next?
         t = lineage.next_t
-        unless t.nil?
-          l << t.name # add the taxon name to the lineage
-          node = Node.find_by_id(t.id, @root)
-          if node.nil? # if the node isn't create yet
-            node = Node.new(t.id, t.name, @root, t.rank)
-            node.data['count'] = 1
-            last_node_loop = last_node_loop.add_child(node)
-          else
-            node.data['count'] += 1
-            last_node_loop = node
-          end
+        next if t.nil?
+        l << t.name # add the taxon name to the lineage
+        node = Node.find_by_id(t.id, @root)
+        if node.nil? # if the node isn't create yet
+          node = Node.new(t.id, t.name, @root, t.rank)
+          node.data['count'] = 1
+          last_node_loop = last_node_loop.add_child(node)
+        else
+          node.data['count'] += 1
+          last_node_loop = node
         end
       end
     end
@@ -160,7 +158,7 @@ class SequencesController < ApplicationController
     csv_string = ''
 
     # quit if the query was empty
-    fail EmptyQueryError.new if query.blank?
+    fail EmptyQueryError if query.blank?
 
     # remove duplicates, filter shorts, substitute I by L, ...
     data = query.upcase.gsub(/#/, '')
@@ -238,7 +236,7 @@ class SequencesController < ApplicationController
     # prepare for output
     @title = 'Metaproteomics analysis result'
     @title += ' of ' + search_name unless search_name.nil? || search_name == ''
-    @prideURL = "http://www.ebi.ac.uk/pride/archive/assays/#{search_name[/[0-9]*$/]}" if search_name.include? 'PRIDE assay'
+    @pride_url = "http://www.ebi.ac.uk/pride/archive/assays/#{search_name[/[0-9]*$/]}" if search_name.include? 'PRIDE assay'
 
     @intro_text = "#{@number_found} out of #{number_searched_for} #{'peptide'.send(number_searched_for != 1 ? :pluralize : :to_s)}  were matched"
     if filter_duplicates || @equate_il
@@ -269,14 +267,13 @@ class SequencesController < ApplicationController
       last_node_loop = root
       while !lca_l.nil? && lca_l.has_next? # process every rank in lineage
         t = lca_l.next_t
-        unless t.nil?
-          node = Node.find_by_id(t.id, root)
-          if node.nil?
-            node = Node.new(t.id, t.name, root, t.rank)
-            last_node_loop = last_node_loop.add_child(node)
-          else
-            last_node_loop = node
-          end
+        next if t.nil?
+        node = Node.find_by_id(t.id, root)
+        if node.nil?
+          node = Node.new(t.id, t.name, root, t.rank)
+          last_node_loop = last_node_loop.add_child(node)
+        else
+          last_node_loop = node
         end
       end
       node = taxon.id == 1 ? root : Node.find_by_id(taxon.id, root)

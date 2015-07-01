@@ -193,7 +193,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert_not assigns(:equate_il)
     assert_equal 3, assigns(:number_found)
     assert assigns(:json_missed).include?('MISSES')
-    assert_nil assigns(:prideURL)
+    assert_nil assigns(:pride_url)
     assert_not assigns(:intro_text).include?('deduplicated')
     assert_not assigns(:intro_text).include?('equated')
     assert_not assigns(:intro_text).include?('missed cleavage handling')
@@ -212,7 +212,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert assigns(:equate_il)
     assert_equal 2, assigns(:number_found)
     assert assigns(:json_missed).include?('MISSES')
-    assert_nil assigns(:prideURL)
+    assert_nil assigns(:pride_url)
     assert_not assigns(:intro_text).include?('deduplicated')
     assert assigns(:intro_text).include?('equated')
     assert assigns(:intro_text).include?('missed cleavage handling')
@@ -231,7 +231,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert_not assigns(:equate_il)
     assert_equal 2, assigns(:number_found)
     assert assigns(:json_missed).include?('MISSES')
-    assert_nil assigns(:prideURL)
+    assert_nil assigns(:pride_url)
     assert assigns(:intro_text).include?('deduplicated')
     assert_not assigns(:intro_text).include?('equated')
     assert assigns(:intro_text).include?('missed cleavage handling')
@@ -250,7 +250,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert_not assigns(:equate_il)
     assert_equal 2, assigns(:number_found)
     assert_equal '[]', assigns(:json_missed)
-    assert_nil assigns(:prideURL)
+    assert_nil assigns(:pride_url)
     assert_not assigns(:intro_text).include?('deduplicated')
     assert_not assigns(:intro_text).include?('equated')
     assert_not assigns(:intro_text).include?('missed cleavage handling')
@@ -269,7 +269,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert_not assigns(:equate_il)
     assert_equal 1, assigns(:number_found)
     assert_equal '[]', assigns(:json_missed)
-    assert_nil assigns(:prideURL)
+    assert_nil assigns(:pride_url)
     assert_not assigns(:intro_text).include?('deduplicated')
     assert_not assigns(:intro_text).include?('equated')
     assert_not assigns(:intro_text).include?('missed cleavage handling')
@@ -320,7 +320,7 @@ class SequencesControllerTest < ActionController::TestCase
     post :multi_search, qs: 'AALER', search_name: 'PRIDE assay 123456'
     assert_response :success
     assert_template :multi_search
-    assert assigns(:prideURL).include?('123456')
+    assert assigns(:pride_url).include?('123456')
     assert_equal 'Metaproteomics analysis result of PRIDE assay 123456', assigns(:title)
   end
 
