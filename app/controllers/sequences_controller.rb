@@ -136,12 +136,15 @@ class SequencesController < ApplicationController
     @sequences = Sequence.paginate(:page => params[:page])
   end
 
-
   # redirects to show
   def search
-    redirect_to "#{sequences_path}/#{params[:q]}/#{params[:il_s]}"
+    if params[:q].empty?
+      flash[:error] = 'Your query was empty, please try again.'
+      redirect_to search_single_path
+    else
+      redirect_to "#{sequences_path}/#{params[:q]}/#{params[:il_s]}"
+    end
   end
-
 
   # processes a list of sequences
   def multi_search
