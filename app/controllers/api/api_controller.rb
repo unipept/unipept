@@ -176,6 +176,7 @@ class Api::ApiController < ApplicationController
         @input = @input.split(",");
       end
     end
+    @input = [] if @input.nil?
     @input.map!(&:chomp)
     @input_order = @input.dup
 
