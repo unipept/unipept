@@ -12,7 +12,7 @@ UnipeptWeb::Application.configure do
   config.action_controller.perform_caching = true
 
   # Specifies the header that your server uses for sending files
-  config.action_dispatch.x_sendfile_header = "X-Sendfile"
+  config.action_dispatch.x_sendfile_header = 'X-Sendfile'
 
   # For nginx:
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
@@ -62,29 +62,29 @@ UnipeptWeb::Application.configure do
 
   # enable google analytics
   config.unipept_analytics = true
-  config.unipept_analytics_key = "UA-22900446-1"
+  config.unipept_analytics_key = 'UA-22900446-1'
 
   # if authentication is disabled, a guest user will always be signed in
   config.unipept_enable_auth = true
 
   # enable API logging
   config.unipept_API_logging = true
-  config.unipept_stathat_key = "unipept@ugent.be"
+  config.unipept_stathat_key = 'unipept@ugent.be'
 
   # enable error emails
   config.unipept_error_mails = true
-  config.unipept_error_mails_addresses = ["bart.mesuere@ugent.be"]
+  config.unipept_error_mails_addresses = ['bart.mesuere@ugent.be']
 end
 
 if Rails.application.config.unipept_error_mails
   UnipeptWeb::Application.config.middleware.use ExceptionNotification::Rack,
-  :throttle => {
-    :notifier => "email",
-    :notifier_options => {
-      :email_prefix => "[Unipept] ",
-      :sender_address => %{"Unipept" <unipept@ugent.be>},
-      :exception_recipients => Rails.application.config.unipept_error_mails_addresses
-    },
-    :per_hour => 1
-  }
+                                                throttle: {
+                                                  notifier: 'email',
+                                                  notifier_options: {
+                                                    email_prefix: '[Unipept] ',
+                                                    sender_address: %("Unipept" <unipept@ugent.be>),
+                                                    exception_recipients: Rails.application.config.unipept_error_mails_addresses
+                                                  },
+                                                  per_hour: 1
+                                                }
 end

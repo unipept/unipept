@@ -36,7 +36,7 @@ module UnipeptWeb
     # config.action_view.javascript_expansions[:defaults] = %w(jquery rails)
 
     # Configure the default encoding used in templates for Ruby 1.9.
-    config.encoding = "utf-8"
+    config.encoding = 'utf-8'
 
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
@@ -54,11 +54,11 @@ module UnipeptWeb
     config.assets.paths << "#{Rails}/vendor/assets/fonts"
 
     config.versions = {
-      :unipept => "2.5.2",
-      :gem => "0.5.7",
-      :uniprot => "2015.02"
+      unipept: '2.5.2',
+      gem: '0.5.7',
+      uniprot: '2015.02'
     }
 
-    config.api_host = "api.unipept.ugent.be"
+    config.api_host = 'api.unipept.ugent.be'
   end
 end
