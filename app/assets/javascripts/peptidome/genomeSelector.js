@@ -222,7 +222,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         });
 
         if (navigator.userAgent.toLowerCase().indexOf('chrome') > -1) {
-            $("#genomeSelector .tokenfield").css("width", "365px");
+            $("#genomeSelector .tokenfield").css("width", "367px");
         }
 
         function keyUpped(direct) {
