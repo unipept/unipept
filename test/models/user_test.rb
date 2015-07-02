@@ -28,11 +28,11 @@ class UserTest < ActiveSupport::TestCase
 
   test 'should not be admin' do
     user = users(:bart)
-    assert_not user.is_admin?, 'Normal user was admin'
+    assert_not user.admin?, 'Normal user was admin'
   end
 
   test 'should be admin' do
     user = users(:bart_admin)
-    assert user.is_admin?, "admin user wasn't admin"
+    assert user.admin?, "admin user wasn't admin"
   end
 end

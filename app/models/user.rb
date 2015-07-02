@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
 
   attr_readonly :id, :username, :admin
 
-  def is_admin?
+  def admin?
     admin == 1
   end
 end

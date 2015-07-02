@@ -37,6 +37,6 @@
     <li><%= link_to("Metaproteomics Analysis", datasets_path) %></li>
     <li><%= link_to("Peptidome Analysis", pancore_analyze_path) %></li>
     <li><%= link_to("API", api_apidocs_path) %></li>
-    <% if user_signed_in? && current_user.is_admin? %><li><%= link_to("Admin", admin_path) %></li><% end %>
+    <% if user_signed_in? && current_user.admin? %><li><%= link_to("Admin", admin_path) %></li><% end %>
   </ul>
 </nav>

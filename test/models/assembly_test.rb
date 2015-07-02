@@ -19,74 +19,74 @@ require 'test_helper'
 class AssemblyTest < ActiveSupport::TestCase
   test 'should not save genbank_assembly_accession changes' do
     assembly = assemblies(:assembly1)
-    oldValue = assembly.genbank_assembly_accession
-    assembly.genbank_assembly_accession = oldValue + 'aa'
+    old_value = assembly.genbank_assembly_accession
+    assembly.genbank_assembly_accession = old_value + 'aa'
     assembly.save
     assembly.reload
-    assert_equal oldValue, assembly.genbank_assembly_accession, 'Was able to save genbank_assembly_accession changes'
+    assert_equal old_value, assembly.genbank_assembly_accession, 'Was able to save genbank_assembly_accession changes'
   end
 
   test 'should not save refseq_assembly_accession changes' do
     assembly = assemblies(:assembly1)
-    oldValue = assembly.refseq_assembly_accession
-    assembly.refseq_assembly_accession = oldValue + 'aa'
+    old_value = assembly.refseq_assembly_accession
+    assembly.refseq_assembly_accession = old_value + 'aa'
     assembly.save
     assembly.reload
-    assert_equal oldValue, assembly.refseq_assembly_accession, 'Was able to save refseq_assembly_accession changes'
+    assert_equal old_value, assembly.refseq_assembly_accession, 'Was able to save refseq_assembly_accession changes'
   end
 
   test 'should not save genome_representation changes' do
     assembly = assemblies(:assembly1)
-    oldValue = assembly.genome_representation
-    assembly.genome_representation = oldValue + 'aa'
+    old_value = assembly.genome_representation
+    assembly.genome_representation = old_value + 'aa'
     assembly.save
     assembly.reload
-    assert_equal oldValue, assembly.genome_representation, 'Was able to save genome_representation changes'
+    assert_equal old_value, assembly.genome_representation, 'Was able to save genome_representation changes'
   end
 
   test 'should not save assembly_level changes' do
     assembly = assemblies(:assembly1)
-    oldValue = assembly.assembly_level
-    assembly.assembly_level = oldValue + 'aa'
+    old_value = assembly.assembly_level
+    assembly.assembly_level = old_value + 'aa'
     assembly.save
     assembly.reload
-    assert_equal oldValue, assembly.assembly_level, 'Was able to save assembly_level changes'
+    assert_equal old_value, assembly.assembly_level, 'Was able to save assembly_level changes'
   end
 
   test 'should not save assembly_name changes' do
     assembly = assemblies(:assembly1)
-    oldValue = assembly.assembly_name
-    assembly.assembly_name = oldValue + 'aa'
+    old_value = assembly.assembly_name
+    assembly.assembly_name = old_value + 'aa'
     assembly.save
     assembly.reload
-    assert_equal oldValue, assembly.assembly_name, 'Was able to save assembly_name changes'
+    assert_equal old_value, assembly.assembly_name, 'Was able to save assembly_name changes'
   end
 
   test 'should not save organism_name changes' do
     assembly = assemblies(:assembly1)
-    oldValue = assembly.organism_name
-    assembly.organism_name = oldValue + 'aa'
+    old_value = assembly.organism_name
+    assembly.organism_name = old_value + 'aa'
     assembly.save
     assembly.reload
-    assert_equal oldValue, assembly.organism_name, 'Was able to save organism_name changes'
+    assert_equal old_value, assembly.organism_name, 'Was able to save organism_name changes'
   end
 
   test 'should not save biosample changes' do
     assembly = assemblies(:assembly1)
-    oldValue = assembly.biosample
-    assembly.biosample = oldValue + 'aa'
+    old_value = assembly.biosample
+    assembly.biosample = old_value + 'aa'
     assembly.save
     assembly.reload
-    assert_equal oldValue, assembly.biosample, 'Was able to save biosample changes'
+    assert_equal old_value, assembly.biosample, 'Was able to save biosample changes'
   end
 
   test 'should not save type_strain changes' do
     assembly = assemblies(:assembly1)
-    oldValue = assembly.type_strain
-    assembly.type_strain = !oldValue
+    old_value = assembly.type_strain
+    assembly.type_strain = !old_value
     assembly.save
     assembly.reload
-    assert_equal oldValue, assembly.type_strain, 'Was able to save type_strain changes'
+    assert_equal old_value, assembly.type_strain, 'Was able to save type_strain changes'
   end
 
   test 'should raise error on delete' do

@@ -132,7 +132,7 @@ class Lineage < ActiveRecord::Base
   def self.calculate_lca(lineages)
     return -1 if lineages.size == 0
     lca = 1 # default lca
-    for rank in ORDER do
+    ORDER.each do |rank|
       # only filter nil at species and genus
       if rank == :species || rank == :genus
         current = lineages.map(&rank).find_all { |n| n.nil? || n > 0 }.uniq.compact

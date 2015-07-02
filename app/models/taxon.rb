@@ -18,8 +18,8 @@ class Taxon < ActiveRecord::Base
   scope :with_genome, -> { uniq.joins('RIGHT JOIN uniprot_entries ON taxons.id = uniprot_entries.taxon_id') }
 
   # sorting order
-  def <=>(o)
-    return -1 if o.nil?
-    id <=> o.id
+  def <=>(other)
+    return -1 if other.nil?
+    id <=> other.id
   end
 end

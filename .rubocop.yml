@@ -18,6 +18,10 @@ Style/Documentation:
   Enabled: false
 Style/RescueModifier:
   Enabled: false
+Style/AccessorMethodName:
+  Enabled: false
+Style/PredicateName:
+  Enabled: false
 Metrics/AbcSize:
   Enabled: false
 Metrics/ClassLength:

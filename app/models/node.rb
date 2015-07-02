@@ -21,13 +21,12 @@ class Node
     @data['rank'] = rank
 
     # root node
-    if is_root?
-      @nodes = []
-      @sequences = {}
-    end
+    return unless root?
+    @nodes = []
+    @sequences = {}
   end
 
-  def is_root?
+  def root?
     id == 1
   end
 
@@ -37,14 +36,14 @@ class Node
 
   # returns the added child
   def add_child(child)
-    n = is_root? ? @nodes : @root.nodes
+    n = root? ? @nodes : @root.nodes
     n << child
     @children << child
     child
   end
 
   def set_sequences(sequences, id = @id)
-    if is_root?
+    if root?
       @sequences[id] = sequences
     else
       @root.set_sequences(sequences, id)
@@ -59,10 +58,10 @@ class Node
 
   # sets the count and self_count
   def prepare_for_multitree
-    r = is_root? ? self : @root
+    r = root? ? self : @root
     @children.map(&:prepare_for_multitree)
     @data['self_count'] = r.sequences[@id].nil? ? 0 : r.sequences[@id].size
-    count = @children.reduce(0) { |sum, n| sum + n.data['count'] }
+    count = @children.reduce(0) { |a, e| a + e.data['count'] }
     @data['count'] = @data['self_count'] + count
   end
 

@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def authorize
-    return if user_signed_in? && current_user.is_admin?
+    return if user_signed_in? && current_user.admin?
 
     flash[:error] = 'Please log in to use this feature'
     redirect_to root_url

@@ -29,8 +29,8 @@ class Sequence < ActiveRecord::Base
 
   # SELECT DISTINCT lineages.* FROM unipept.peptides INNER JOIN unipept.uniprot_entries ON (uniprot_entries.id = peptides.uniprot_entry_id) INNER JOIN unipept.lineages ON (uniprot_entries.taxon_id = lineages.taxon_id) WHERE peptides.sequence_id = #{id}
   def lineages(equate_il = true, eager = false)
-    fail(ArgumentError, ':equate_il must be a boolean') unless Sequence.is_boolean?(equate_il)
-    fail(ArgumentError, ':eager must be a boolean') unless Sequence.is_boolean?(eager)
+    fail(ArgumentError, ':equate_il must be a boolean') unless Sequence.boolean?(equate_il)
+    fail(ArgumentError, ':eager must be a boolean') unless Sequence.boolean?(eager)
 
     l = Lineage.joins(uniprot_entries: :peptides)
     if equate_il
@@ -54,18 +54,18 @@ class Sequence < ActiveRecord::Base
   end
 
   def self.peptides_relation_name(equate_il)
-    fail(ArgumentError, ':equate_il must be a boolean') unless is_boolean?(equate_il)
+    fail(ArgumentError, ':equate_il must be a boolean') unless boolean?(equate_il)
     equate_il ? :peptides : :original_peptides
   end
 
   def self.lca_t_relation_name(equate_il)
-    fail(ArgumentError, ':equate_il must be a boolean') unless is_boolean?(equate_il)
+    fail(ArgumentError, ':equate_il must be a boolean') unless boolean?(equate_il)
     equate_il ? :lca_il_t : :lca_t
   end
 
   # search for a single sequence, include information through join tables
   def self.single_search(sequence, equate_il = true)
-    fail(ArgumentError, ':equate_il must be a boolean') unless is_boolean?(equate_il)
+    fail(ArgumentError, ':equate_il must be a boolean') unless boolean?(equate_il)
     fail SequenceTooShortError if sequence.length < 5
     sequence = sequence.gsub(/I/, 'L') if equate_il
     # this solves the N+1 query problem
@@ -75,9 +75,9 @@ class Sequence < ActiveRecord::Base
 
   # try to find multiple matches for a single sequence
   def self.advanced_single_search(sequence, equate_il = true)
-    fail(ArgumentError, ':equate_il must be a boolean') unless is_boolean?(equate_il)
+    fail(ArgumentError, ':equate_il must be a boolean') unless boolean?(equate_il)
     # sanity check
-    fail NoMatchesFoundError.new(sequence) if sequence.index(/([KR])([^P])/).nil?
+    fail NoMatchesFoundError, sequence if sequence.index(/([KR])([^P])/).nil?
 
     sequence = sequence.gsub(/I/, 'L') if equate_il
 
@@ -89,7 +89,7 @@ class Sequence < ActiveRecord::Base
     long_sequences = sequences.select { |s| s.length >= 5 }.map { |s| query.find_by_sequence(s) }
 
     # check if it has a match for every sequence and at least one long part
-    fail NoMatchesFoundError.new(sequence) if long_sequences.include? nil
+    fail NoMatchesFoundError, sequence if long_sequences.include? nil
     fail SequenceTooShortError if long_sequences.size == 0
 
     long_sequences
@@ -105,9 +105,7 @@ class Sequence < ActiveRecord::Base
     Sequence.where(id: sequences, lca: lca).order(:id).pluck(:id)
   end
 
-  private
-
-  def self.is_boolean?(variable)
+  def self.boolean?(variable)
     variable.is_a?(TrueClass) || variable.is_a?(FalseClass)
   end
 end

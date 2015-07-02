@@ -169,13 +169,13 @@ class SequenceTest < ActiveSupport::TestCase
     assert_equal [1, 2].sort, Sequence.filter_unique_uniprot_peptides([2, 1], 2)
   end
 
-  test 'should give correct result for is_boolean?' do
-    assert_not Sequence.is_boolean? 0
-    assert_not Sequence.is_boolean? 55
-    assert_not Sequence.is_boolean? []
-    assert_not Sequence.is_boolean? 'true'
-    assert_not Sequence.is_boolean? nil
-    assert Sequence.is_boolean? true
-    assert Sequence.is_boolean? false
+  test 'should give correct result for boolean?' do
+    assert_not Sequence.boolean? 0
+    assert_not Sequence.boolean? 55
+    assert_not Sequence.boolean? []
+    assert_not Sequence.boolean? 'true'
+    assert_not Sequence.boolean? nil
+    assert Sequence.boolean? true
+    assert Sequence.boolean? false
   end
 end
