@@ -119,7 +119,7 @@ class SequenceTest < ActiveSupport::TestCase
     assert sequence.peptides.loaded?
     assert_not sequence.original_peptides.loaded?
     assert sequence.peptides.first.association(:uniprot_entry).loaded?
-    assert sequence.peptides.first.uniprot_entry.association(:name).loaded?
+    assert sequence.peptides.first.uniprot_entry.association(:taxon).loaded?
     assert sequence.peptides.first.uniprot_entry.ec_cross_references.loaded?
     assert sequence.peptides.first.uniprot_entry.go_cross_references.loaded?
   end
@@ -141,7 +141,7 @@ class SequenceTest < ActiveSupport::TestCase
     assert sequence.peptides.loaded?
     assert_not sequence.original_peptides.loaded?
     assert sequence.peptides.first.association(:uniprot_entry).loaded?
-    assert sequence.peptides.first.uniprot_entry.association(:name).loaded?
+    assert sequence.peptides.first.uniprot_entry.association(:taxon).loaded?
     assert sequence.peptides.first.uniprot_entry.association(:lineage).loaded?
   end
 
