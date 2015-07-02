@@ -43,6 +43,11 @@ class UniprotEntryTest < ActiveSupport::TestCase
     assert_raises(ActiveRecord::ActiveRecordError) { uniprotentry.update_attribute(:type, '35') }
   end
 
+  test 'should raise error on name change' do
+    uniprotentry = uniprot_entries(:uniprotentry1)
+    assert_raises(ActiveRecord::ActiveRecordError) { uniprotentry.update_attribute(:name, '35') }
+  end
+
   test 'should raise error on protein change' do
     uniprotentry = uniprot_entries(:uniprotentry1)
     assert_raises(ActiveRecord::ActiveRecordError) { uniprotentry.update_attribute(:protein, '35') }
