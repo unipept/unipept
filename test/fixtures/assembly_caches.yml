@@ -1,0 +1,11 @@
+# == Schema Information
+#
+# Table name: assembly_caches
+#
+#  assembly_id    :integer          not null, primary key
+#  json_sequences :text(16777215)   not null
+#
+
+assemblycache1:
+    assembly_id: 1
+    json_sequences: "[sequence]"

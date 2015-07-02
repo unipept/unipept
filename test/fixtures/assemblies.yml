@@ -1,0 +1,37 @@
+# == Schema Information
+#
+# Table name: assemblies
+#
+#  id                         :integer          not null, primary key
+#  genbank_assembly_accession :string(16)
+#  refseq_assembly_accession  :string(16)
+#  taxon_id                   :integer
+#  genome_representation      :string(7)        not null
+#  assembly_level             :string(20)       not null
+#  assembly_name              :string(104)      not null
+#  organism_name              :string(86)       not null
+#  biosample                  :string(14)
+#  type_strain                :binary(1)        default("b'0'"), not null
+#
+
+assembly1:
+    id: 1
+    genbank_assembly_accession: "don't care"
+    refseq_assembly_accession: "don't care"
+    taxon_id: 1
+    genome_representation: "full"
+    assembly_level: "Complete Genome"
+    assembly_name: "assembly1"
+    organism_name: "org1"
+    biosample: "don't care"
+    type_strain: false
+
+assembly2:
+    id: 2
+    genbank_assembly_accession: "don't care"
+    refseq_assembly_accession: "don't care"
+    genome_representation: "full"
+    assembly_level: "Complete Genome"
+    assembly_name: "assembly2"
+    organism_name: "org2"
+    biosample: "don't care"

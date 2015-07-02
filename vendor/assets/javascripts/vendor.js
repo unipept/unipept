@@ -13,6 +13,18 @@
 //  3.3.2
 //= require bootstrap/bootstrap.min.js
 
+//  pancore
+//  http://sliptree.github.io/bootstrap-tokenfield/
+//= require bootstrap-tokenfield/bootstrap-tokenfield.min.js
+
+//  typeahead
+//  0.10.5
+//= require typeahead/typeahead.bundle.min.js
+
+//  dragula
+//  1.5.1
+//= require dragula/dragula.min.js
+
 //  global
 //  3.5.3
 //= require d3/d3.v3.min.js

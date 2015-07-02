@@ -169,22 +169,6 @@ COLLATE = utf8_general_ci;
 
 
 -- -----------------------------------------------------
--- Table `unipept`.`genomes`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `unipept`.`genomes` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(100) NOT NULL ,
-  `bioproject_id` INT UNSIGNED NOT NULL ,
-  `insdc_id` VARCHAR(25) NOT NULL ,
-  `status` VARCHAR(20) NOT NULL ,
-  `taxon_id` MEDIUMINT NULL ,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = ascii
-COLLATE = ascii_general_ci;
-
-
--- -----------------------------------------------------
 -- Table `unipept`.`refseq_cross_references`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `unipept`.`refseq_cross_references` (
@@ -225,18 +209,6 @@ COLLATE = ascii_general_ci;
 
 
 -- -----------------------------------------------------
--- Table `unipept`.`genome_caches`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `unipept`.`genome_caches` (
-  `bioproject_id` INT UNSIGNED NOT NULL ,
-  `json_sequences` MEDIUMTEXT NOT NULL ,
-  PRIMARY KEY (`bioproject_id`) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = ascii
-COLLATE = ascii_general_ci;
-
-
--- -----------------------------------------------------
 -- Table `unipept`.`users`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`users` (
@@ -245,6 +217,45 @@ CREATE TABLE IF NOT EXISTS `unipept`.`users` (
   `admin` TINYINT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `unipept`.`assemblies`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`assemblies` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `genbank_assembly_accession` CHAR(16) NULL,
+  `refseq_assembly_accession` CHAR(16) NULL,
+  `taxon_id` MEDIUMINT UNSIGNED NULL,
+  `genome_representation` ENUM('full', 'partial') NOT NULL,
+  `assembly_level` ENUM('Contig', 'Scaffold', 'Complete Genome', 'Chromosome', 'Chromosome with gaps', 'Gapless Chromosome') NOT NULL,
+  `assembly_name` VARCHAR(104) NOT NULL,
+  `organism_name` VARCHAR(86) NOT NULL,
+  `biosample` VARCHAR(14) NULL,
+  `type_strain` BIT(1) NOT NULL DEFAULT b'0',
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `unipept`.`assembly_sequences`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`assembly_sequences` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `assembly_id` INT UNSIGNED NOT NULL,
+  `sequence_type` ENUM('Chromosome', 'Linkage Group', 'Mitochondrion', 'Plasmid', 'na') NOT NULL DEFAULT 'na',
+  `genbank_accession` VARCHAR(25) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`assembly_caches`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`assembly_caches` (
+  `assembly_id` INT UNSIGNED NOT NULL,
+  `json_sequences` MEDIUMTEXT NOT NULL,
+  PRIMARY KEY (`assembly_id`))
+ENGINE = InnoDB;
+
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

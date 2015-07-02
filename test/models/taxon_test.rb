@@ -6,7 +6,7 @@
 #  name        :string(120)      not null
 #  rank        :string(16)
 #  parent_id   :integer
-#  valid_taxon :boolean          default(TRUE), not null
+#  valid_taxon :binary(1)        default("b'1'"), not null
 #
 
 require 'test_helper'

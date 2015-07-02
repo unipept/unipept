@@ -226,25 +226,6 @@ COLLATE = utf8_general_ci;
 
 
 -- -----------------------------------------------------
--- Table `unipept`.`genomes`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `unipept`.`genomes` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(100) NOT NULL ,
-  `bioproject_id` INT UNSIGNED NOT NULL ,
-  `insdc_id` VARCHAR(25) NOT NULL ,
-  `status` VARCHAR(20) NOT NULL ,
-  `taxon_id` MEDIUMINT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `idx_insdc_id` (`insdc_id` ASC) ,
-  INDEX `idx_bioproject_id` (`bioproject_id` ASC) ,
-  INDEX `idx_taxon_id` (`taxon_id` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = ascii
-COLLATE = ascii_general_ci;
-
-
--- -----------------------------------------------------
 -- Table `unipept`.`refseq_cross_references`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `unipept`.`refseq_cross_references` (
@@ -303,18 +284,6 @@ COLLATE = ascii_general_ci;
 
 
 -- -----------------------------------------------------
--- Table `unipept`.`genome_caches`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `unipept`.`genome_caches` (
-  `bioproject_id` INT UNSIGNED NOT NULL ,
-  `json_sequences` MEDIUMTEXT NOT NULL ,
-  PRIMARY KEY (`bioproject_id`) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = ascii
-COLLATE = ascii_general_ci;
-
-
--- -----------------------------------------------------
 -- Table `unipept`.`users`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`users` (
@@ -322,6 +291,64 @@ CREATE TABLE IF NOT EXISTS `unipept`.`users` (
   `username` VARCHAR(8) NOT NULL,
   `admin` TINYINT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`assemblies`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`assemblies` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `genbank_assembly_accession` CHAR(16) NULL,
+  `refseq_assembly_accession` CHAR(16) NULL,
+  `taxon_id` MEDIUMINT UNSIGNED NULL,
+  `genome_representation` ENUM('full', 'partial') NOT NULL,
+  `assembly_level` ENUM('Contig', 'Scaffold', 'Complete Genome', 'Chromosome', 'Chromosome with gaps', 'Gapless Chromosome') NOT NULL,
+  `assembly_name` VARCHAR(104) NOT NULL,
+  `organism_name` VARCHAR(86) NOT NULL,
+  `biosample` VARCHAR(14) NULL,
+  `type_strain` BIT(1) NOT NULL DEFAULT b'0',
+  PRIMARY KEY (`id`),
+  INDEX `fk_taxons_assemblies_idx` (`taxon_id` ASC),
+  CONSTRAINT `fk_taxons_assemblies`
+    FOREIGN KEY (`taxon_id`)
+    REFERENCES `unipept`.`taxons` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`assembly_sequences`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`assembly_sequences` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `assembly_id` INT UNSIGNED NOT NULL,
+  `sequence_type` ENUM('Chromosome', 'Linkage Group', 'Mitochondrion', 'Plasmid', 'na') NOT NULL DEFAULT 'na',
+  `genbank_accession` VARCHAR(25) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_assemblies_assembly_sequences_idx` (`assembly_id` ASC),
+  INDEX `idx_genbank_accession` (`genbank_accession` ASC),
+  CONSTRAINT `fk_assemblies_assembly_sequences`
+    FOREIGN KEY (`assembly_id`)
+    REFERENCES `unipept`.`assemblies` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`assembly_caches`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`assembly_caches` (
+  `assembly_id` INT UNSIGNED NOT NULL,
+  `json_sequences` MEDIUMTEXT NOT NULL,
+  PRIMARY KEY (`assembly_id`),
+  CONSTRAINT `fk_assemblies_assembly_caches`
+    FOREIGN KEY (`assembly_id`)
+    REFERENCES `unipept`.`assemblies` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 

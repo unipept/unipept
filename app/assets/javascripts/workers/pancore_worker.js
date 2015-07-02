@@ -18,13 +18,13 @@ self.addEventListener('message', function (e) {
         sendToHost("log", data.msg);
         break;
     case 'loadData':
-        loadData(data.msg.bioproject_id, data.msg.name);
+        loadData(data.msg.id, data.msg.name);
         break;
     case 'loadUserData':
         loadUserData(data.msg.id, data.msg.name, data.msg.ids);
         break;
     case 'removeData':
-        removeData(data.msg.bioproject_id, data.msg.order, data.msg.start);
+        removeData(data.msg.id, data.msg.order, data.msg.start);
         break;
     case 'clearAllData':
         clearAllData();
@@ -39,13 +39,13 @@ self.addEventListener('message', function (e) {
         autoSort(data.msg.type);
         break;
     case "getSequences":
-        getSequences(data.msg.type, data.msg.bioproject_id);
+        getSequences(data.msg.type, data.msg.id);
         break;
     case "calculateSimilarity":
         matrix.calculateSimilarity();
         break;
     case "clusterMatrix":
-        matrix.clusterMatrix();
+        matrix.clusterMatrix(data.msg.similarity);
         break;
     case "getMatrix":
         matrix.sendToHost();
@@ -72,14 +72,14 @@ var matrixBackend = function matrixBackend(data) {
     /**
      * Converts the object representation of the matrix to a normal array
      */
-    function matrixObjectToArray() {
+    function matrixObjectToArray(similarity) {
         var returnMatrix = [],
             i,
             j;
         for (i = 0; i < matrixOrder.length; i++) {
             returnMatrix[i] = [];
             for (j = 0; j < matrixOrder.length; j++) {
-                returnMatrix[i][j] = matrixObject[matrixOrder[i]][matrixOrder[j]];
+                returnMatrix[i][j] = matrixObject[matrixOrder[i]][matrixOrder[j]][similarity];
             }
         }
         return returnMatrix;
@@ -109,7 +109,7 @@ var matrixBackend = function matrixBackend(data) {
 
     /**
      * Flattens a hierarchical array based on the first 2 elements. Always
-     * removes the last element. Converts the id's to bioproject id's.
+     * removes the last element. Converts the id's to assembly id's.
      *
      * @param <Array> array The array to flatten
      */
@@ -170,10 +170,6 @@ var matrixBackend = function matrixBackend(data) {
         idsToCalculate.push(genomeId);
 
         matrixObject[genomeId] = {};
-        for (id in matrixObject) {
-            matrixObject[id][genomeId] = -1;
-            matrixObject[genomeId][id] = -1;
-        }
     };
 
     /**
@@ -205,7 +201,8 @@ var matrixBackend = function matrixBackend(data) {
             id,
             peptides,
             id2,
-            similarity;
+            similarity,
+            finalBatch;
 
         // Be a bit clever with sending data
         if (idsToCalculate.length > 3) {
@@ -217,15 +214,34 @@ var matrixBackend = function matrixBackend(data) {
             peptides = data[id].peptide_list;
 
             for (id2 in matrixObject) {
-                similarity = genomeSimilarity(peptides, data[id2].peptide_list);
-                matrixObject[id][id2] = similarity;
-                matrixObject[id2][id] = similarity;
+                if (matrixObject[id][id2] === undefined) {
+                    if ("" + id === "" + id2) {
+                        similarity = {
+                            intersection : peptides.length,
+                            union        : peptides.length,
+                            min          : peptides.length,
+                            max          : peptides.length,
+                            avg          : peptides.length,
+                            simUnion     : 1,
+                            simMin       : 1,
+                            simMax       : 1,
+                            simAvg       : 1,
+                            simExtra     : 1
+                        };
+                    } else {
+                        similarity = genomeSimilarity(peptides, data[id2].peptide_list);
+                    }
+
+                    matrixObject[id][id2] = similarity;
+                    matrixObject[id2][id] = similarity;
+                }
             }
 
             if (!sendFullMatrix) {
                 dataQueue[id] = matrixObject[id];
-                if (x % 3 === 2 || x === idsToCalculate.length - 1) {
-                    that.sendRows(dataQueue);
+                finalBatch = (x === idsToCalculate.length - 1);
+                if (x % 3 === 2 || finalBatch) {
+                    that.sendRows(dataQueue, finalBatch);
                     dataQueue = {};
                 }
             }
@@ -245,16 +261,25 @@ var matrixBackend = function matrixBackend(data) {
      * @param <SimObject> m The full similarity matrix to send
      */
     that.sendMatrix = function sendMatrix(m) {
-        sendToHost('processSimilarityData', {'fullMatrix' : true, 'data': m});
+        sendToHost('processSimilarityData', {
+            'fullMatrix' : true,
+            'data': m,
+            'final' : true
+        });
     };
 
     /**
      * Sends a single row of similarities to the client
      *
      * @param <Map> dataQueue The list of id to data mappings
+     * @param <Boolean> final The final batch?
      */
-    that.sendRows = function sendRows(dataQueue) {
-        sendToHost('processSimilarityData', {'fullMatrix' : false, 'data' : dataQueue});
+    that.sendRows = function sendRows(dataQueue, final) {
+        sendToHost('processSimilarityData', {
+            'fullMatrix' : false,
+            'data' : dataQueue,
+            'final' : final
+        });
     };
 
     /**
@@ -267,12 +292,12 @@ var matrixBackend = function matrixBackend(data) {
     /**
      * Clusters the genomes based on similarity
      */
-    that.clusterMatrix = function clusterMatrix() {
+    that.clusterMatrix = function clusterMatrix(similarity) {
         if (matrixOrder.length === 0) {
             return;
         }
         matrixOrder.sort();
-        var tree = that.calculateTree();
+        var tree = that.calculateTree(similarity);
         sendToHost('processClusteredMatrix', {
             order : treeToOrder(tree),
             newick : arrayToNewick(tree) + ";"
@@ -282,7 +307,7 @@ var matrixBackend = function matrixBackend(data) {
     /**
      * Clusters the matrix and returns a tree of the clustering
      */
-    that.calculateTree = function calculateTree() {
+    that.calculateTree = function calculateTree(similarity) {
         var sizes,
             i,
             matrixArray,
@@ -297,7 +322,7 @@ var matrixBackend = function matrixBackend(data) {
         }
 
         // Create an array representation of the similarities object
-        matrixArray = matrixObjectToArray();
+        matrixArray = matrixObjectToArray(similarity);
 
         sizes = [];
         for (i = 0; i < matrixArray.length; i++) {
@@ -398,16 +423,16 @@ function sendToHost(type, message) {
 }
 
 /**
- * Requests the sequence id's for a given bioproject id. Calls the addData
+ * Requests the sequence id's for a given assembly id. Calls the addData
  * function when done.
  *
- * @param <Number> bioproject_id The bioprojectId of the sequences we want
+ * @param <Number> id The id of the assembly of sequences we want
  * @param <String> name The name of the organism
  */
-function loadData(bioproject_id, name) {
+function loadData(id, name) {
     var requestRank = rank;
-    getJSON("/peptidome/sequences/" + bioproject_id + ".json", function (json_data) {
-        addData(bioproject_id, name, json_data, requestRank);
+    getJSON("/peptidome/sequences/" + id + ".json", function (json_data) {
+        addData(id, name, json_data, requestRank);
     });
 }
 
@@ -426,13 +451,13 @@ function loadUserData(id, name, ids) {
  * Processes a list of sequence_id's, received from the webserver and adds it
  * to the data array.
  *
- * @param <Number> bioproject_id The bioprojectId of the organism
+ * @param <Number> id The assembly id of the organism
  * @param <String> name The name of the organism
  * @param <Array> set The ordered array of sequence_id, contains no duplicates
  * @param <Number> request_rank The rank of the request. Used to discard old
  *      requests
  */
-function addData(bioproject_id, name, set, request_rank) {
+function addData(id, name, set, request_rank) {
     var core,
         pan,
         unicore,
@@ -442,11 +467,11 @@ function addData(bioproject_id, name, set, request_rank) {
     if (request_rank !== rank) return;
 
     // Store data for later use
-    data[bioproject_id] = {};
-    data[bioproject_id].bioproject_id = bioproject_id;
-    data[bioproject_id].name = name;
-    data[bioproject_id].peptide_list = set;
-    data[bioproject_id].peptides = set.length;
+    data[id] = {};
+    data[id].id = id;
+    data[id].name = name;
+    data[id].peptide_list = set;
+    data[id].peptides = set.length;
 
     // Calculate pan and core
     core = cores.length === 0 ? set : intersection(cores[cores.length - 1], set);
@@ -458,11 +483,11 @@ function addData(bioproject_id, name, set, request_rank) {
         unicores.push(unicore);
     }
 
-    matrix.addGenome(bioproject_id);
+    matrix.addGenome(id);
 
     // Return the results to the host
     temp = {};
-    temp.bioproject_id = bioproject_id;
+    temp.id = id;
     temp.pan = pan.length;
     temp.peptide_list = set;
     temp.name = name;
@@ -478,14 +503,14 @@ function addData(bioproject_id, name, set, request_rank) {
 /**
  * Removes a genome from the data
  *
- * @param <Number> bioproject_id The id of the genome to remove
+ * @param <Number> id The id of the genome to remove
  * @param <Array> newOrder The new order of the genomes
  * @param <Number start The id where the change of order starts
  */
-function removeData(bioproject_id, newOrder, start) {
+function removeData(id, newOrder, start) {
     // Remove stuff
     var l = pans.length;
-    delete data[bioproject_id];
+    delete data[id];
     pans.splice(l - 1, 1);
     cores.splice(l - 1, 1);
     unicores.splice(l - 1, 1);
@@ -495,7 +520,7 @@ function removeData(bioproject_id, newOrder, start) {
     // Recalculate stuff
     recalculatePanCore(newOrder, start, l - 2);
     getUniqueSequences(newOrder, false);
-    matrix.removeGenome(bioproject_id);
+    matrix.removeGenome(id);
 }
 
 // Recalculates the pan and core data based on a
@@ -526,7 +551,7 @@ function recalculatePanCore(newOrder, start, stop) {
     }
     for (i = 0; i < order.length; i++) {
         temp = {};
-        temp.bioproject_id = order[i];
+        temp.id = order[i];
         temp.pan = pans[i].length;
         temp.core = cores[i].length;
         temp.peptides = data[order[i]].peptides;
@@ -587,7 +612,7 @@ function autoSort(type) {
     } else {
         // Prepare the array to sort
         for (i in data) {
-            sortableArray.push({bioproject_id : data[i].bioproject_id, name : data[i].name, size : data[i].peptides});
+            sortableArray.push({id : data[i].id, name : data[i].name, size : data[i].peptides});
         }
         // Do the actual sorting
         if (easySort) {
@@ -596,7 +621,7 @@ function autoSort(type) {
             tempPan = data[order[0]].peptide_list;
             tempCore = data[order[0]].peptide_list;
             for (i = 0; i < sortableArray.length; i++) {
-                if (sortableArray[i].bioproject_id === order[0]) {
+                if (sortableArray[i].id === order[0]) {
                     tempOrder.push(sortableArray[i]);
                     delete sortableArray[i];
                     break;
@@ -608,19 +633,19 @@ function autoSort(type) {
                 for (i = 0; i < sortableArray.length; i++) {
                     if (sortableArray[i] !== undefined) {
                         if (type === "minpan") {
-                            temp = union(tempPan, data[sortableArray[i].bioproject_id].peptide_list);
+                            temp = union(tempPan, data[sortableArray[i].id].peptide_list);
                             if (optId === -1 || temp.length < optVal) {
                                 optId = i;
                                 optVal = temp.length;
                             }
                         } else if (type === "maxcore") {
-                            temp = intersection(tempCore, data[sortableArray[i].bioproject_id].peptide_list);
+                            temp = intersection(tempCore, data[sortableArray[i].id].peptide_list);
                             if (optId === -1 || temp.length > optVal) {
                                 optId = i;
                                 optVal = temp.length;
                             }
                         } else if (type === "optimal") {
-                            temp = union(tempPan, data[sortableArray[i].bioproject_id].peptide_list).length - intersection(tempCore, data[sortableArray[i].bioproject_id].peptide_list).length;
+                            temp = union(tempPan, data[sortableArray[i].id].peptide_list).length - intersection(tempCore, data[sortableArray[i].id].peptide_list).length;
                             if (optId === -1 || temp < optVal) {
                                 optId = i;
                                 optVal = temp;
@@ -629,12 +654,12 @@ function autoSort(type) {
                     }
                 }
                 if (type === "minpan") {
-                    tempPan = union(tempPan, data[sortableArray[optId].bioproject_id].peptide_list);
+                    tempPan = union(tempPan, data[sortableArray[optId].id].peptide_list);
                 } else if (type === "maxcore") {
-                    tempCore = intersection(tempCore, data[sortableArray[optId].bioproject_id].peptide_list);
+                    tempCore = intersection(tempCore, data[sortableArray[optId].id].peptide_list);
                 } else if (type === "optimal") {
-                    tempPan = union(tempPan, data[sortableArray[optId].bioproject_id].peptide_list);
-                    tempCore = intersection(tempCore, data[sortableArray[optId].bioproject_id].peptide_list);
+                    tempPan = union(tempPan, data[sortableArray[optId].id].peptide_list);
+                    tempCore = intersection(tempCore, data[sortableArray[optId].id].peptide_list);
                 }
                 tempOrder.push(sortableArray[optId]);
                 delete sortableArray[optId];
@@ -643,7 +668,7 @@ function autoSort(type) {
         }
         // Prepare to return the result
         for (i = 0; i < sortableArray.length; i++) {
-            newOrder.push(sortableArray[i].bioproject_id);
+            newOrder.push(sortableArray[i].id);
         }
     }
     start = newOrder[0] === order[0] ? 1 : 0;
@@ -658,7 +683,7 @@ function getUniqueSequences(newOrder, force) {
         if (force) {
             reallyGetUniqueSequences(data[order[0]].peptide_list);
         } else {
-            getJSONByPost("/peptidome/get_lca/", "bioprojects=" + filterIds(order), function (d) {
+            getJSONByPost("/peptidome/get_lca/", "ids=" + filterIds(order), function (d) {
                 // only fetch sequences when there's a new lca
                 if (lca !== d.name) {
                     reallyGetUniqueSequences(data[order[0]].peptide_list);
@@ -672,7 +697,7 @@ function getUniqueSequences(newOrder, force) {
 
 // fetch the sequences
 function reallyGetUniqueSequences(s) {
-    getJSONByPost("/peptidome/unique_sequences/", "bioprojects=" + filterIds(order) + "&sequences=[" + s + "]", function (d) {
+    getJSONByPost("/peptidome/unique_sequences/", "ids=" + filterIds(order) + "&sequences=[" + s + "]", function (d) {
         lca = d[0];
         calculateUnicore(d[1]);
     });
@@ -705,12 +730,12 @@ function clearAllData() {
 }
 
 // Sends a list sequences to the client
-function getSequences(type, bioproject_id) {
+function getSequences(type, id) {
     var ids,
-        ord = getOrderByBioprojectId(bioproject_id);
+        ord = getOrderById(id);
     switch (type) {
     case 'all':
-        ids = data[bioproject_id].peptide_list;
+        ids = data[id].peptide_list;
         break;
     case 'pan':
         ids = pans[ord];
@@ -725,21 +750,21 @@ function getSequences(type, bioproject_id) {
         error("Unknown type: " + type);
     }
     getJSONByPost("/peptidome/full_sequences/", "sequence_ids=[" + ids + "]", function (d) {
-        sendToHost("processDownloadedSequences", {sequences : d, type : type, bioprojectId : bioproject_id});
+        sendToHost("processDownloadedSequences", {sequences : d, type : type, id : id});
     });
 }
 
 /************ These functions are not accessible from the host ****************/
 
-// Returns the rank of a given bioproject_id for the current order
-function getOrderByBioprojectId(bioproject_id) {
+// Returns the rank of a given assembly id for the current order
+function getOrderById(id) {
     var i;
     for (i = 0; i < order.length; i++) {
-        if (order[i] == bioproject_id) {
+        if (order[i] == id) {
             return i;
         }
     }
-    error("unknown bioprojectId: " + bioproject_id);
+    error("unknown id: " + id);
     return 0;
 }
 
@@ -783,22 +808,39 @@ function getJSONByPost(url, data, callback) {
     req.send(data);
 }
 
-function genomeSimilarity(peptide_list1, peptide_list2) {
-    return intersection(peptide_list1, peptide_list2).length / union(peptide_list1, peptide_list2).length;
+function genomeSimilarity(peptideList1, peptideList2) {
+    var intersect = intersection(peptideList1, peptideList2).length,
+        union = peptideList1.length + peptideList2.length - intersect,
+        min = Math.min(peptideList1.length, peptideList2.length),
+        max = Math.max(peptideList1.length, peptideList2.length),
+        avg = (peptideList1.length + peptideList2.length) / 2,
+        extra = peptideList1.length * peptideList2.length / Math.sqrt((peptideList1.length * peptideList1.length + peptideList2.length * peptideList2.length) / 2);
+    return {
+        intersection : intersect,
+        union        : union,
+        min          : min,
+        max          : max,
+        avg          : avg,
+        simUnion   : intersect / union,
+        simMin       : intersect / min,
+        simMax       : intersect / max,
+        simAvg       : intersect / avg,
+        simExtra     : intersect / extra
+    };
 }
 
 /**
  * Removes [,;:] from a string and replaces spaces by underscores. Also adds
- * the bioprojectid.
+ * the assembly id.
  *
  * @param <Genome> genome The genome we want to convert
  */
 function generateNewickName(genome) {
-    return genome.name.replace(/ /g, "_").replace(/[,;:-]/g, "_") + "-" + genome.bioproject_id;
+    return genome.name.replace(/ /g, "_").replace(/[,;:-]/g, "_") + "-" + genome.id;
 }
 
 /**
- * Returns a new array containing only real bioproject ids
+ * Returns a new array containing only real assembly ids
  *
  * @param <Array> a A list of ids.
  */
@@ -814,6 +856,38 @@ function filterIds(a) {
 }
 
 // union and intersection for sorted arrays
+function unionIntersection(a, b) {
+    var intersection = [],
+        union = [],
+        i = 0,
+        j = 0;
+        while (i < a.length && j < b.length) {
+            if (a[i] < b[j]) {
+                union.push(a[i]);
+                i++;
+            } else if (a[i] > b[j]) {
+                union.push(b[j]);
+                j++;
+            } else {
+                union.push(a[i]);
+                intersection.push(a[i]);
+                i++;
+                j++;
+            }
+        }
+        while (i < a.length) {
+            union.push(a[i]);
+            i++;
+        }
+        while (j < b.length) {
+            union.push(b[j]);
+            j++;
+        }
+        return {
+            union : union,
+            intersection : intersection
+        };
+}
 function union(a, b) {
     var r = [],
         i = 0,
