@@ -37,7 +37,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         similarities = {},
         addingGenomes = false,
         dirty = false,
-        selectedSimilarity = "simDefault",
+        selectedSimilarity = "simUnion",
         clustered,
         newick;
 
