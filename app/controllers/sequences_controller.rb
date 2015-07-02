@@ -21,12 +21,12 @@ class SequencesController < ApplicationController
     end
 
     # quit if it doensn't contain any peptides
-    fail NoMatchesFoundError, sequence.sequence if sequence.present? && sequence.peptides(equate_il).empty?
+    fail(NoMatchesFoundError, sequence.sequence) if sequence.present? && sequence.peptides(equate_il).empty?
 
     # get the uniprot entries of every peptide
     # only used for the open in uniprot links
     # and calculate the LCA
-    if !sequence.nil?
+    if sequence.nil?
       # we didn't find the sequence in the database, so let's try to split it
       long_sequences = Sequence.advanced_single_search(seq, equate_il)
       # calculate possible uniprot entries
@@ -36,7 +36,7 @@ class SequencesController < ApplicationController
       # check if the protein contains the startsequence
       @entries.select! { |e| e.protein_contains?(seq, equate_il) }
 
-      fail NoMatchesFoundError, seq if @entries.empty?
+      fail(NoMatchesFoundError, seq) if @entries.empty?
       @lineages = @entries.map(&:lineage).compact
     else
       @entries = sequence.peptides(equate_il).map(&:uniprot_entry)

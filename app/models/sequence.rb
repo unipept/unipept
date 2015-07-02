@@ -77,7 +77,7 @@ class Sequence < ActiveRecord::Base
   def self.advanced_single_search(sequence, equate_il = true)
     fail(ArgumentError, ':equate_il must be a boolean') unless boolean?(equate_il)
     # sanity check
-    fail NoMatchesFoundError, sequence if sequence.index(/([KR])([^P])/).nil?
+    fail(NoMatchesFoundError, sequence) if sequence.index(/([KR])([^P])/).nil?
 
     sequence = sequence.gsub(/I/, 'L') if equate_il
 
