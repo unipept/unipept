@@ -63,11 +63,12 @@ class PeptidomeController < ApplicationController
 
   # Calculates the LCA of a list of bioproject id's
   def get_lca
+    params[:ids] = [] if params[:ids].nil?
     if params[:ids].size > 0
       lca = Lineage.calculate_lca(Lineage.find_by_sql("SELECT lineages.* from assemblies LEFT JOIN lineages ON assemblies.taxon_id = lineages.taxon_id WHERE assemblies.id IN (#{params[:ids]}) AND assemblies.taxon_id is not null"))
       lca = Taxon.find_by_id(lca)
     else
-      lca = {:name => "undefined"}
+      lca = { name: 'undefined' }
     end
     render json: Oj.dump(lca, mode: :compat)
   end
