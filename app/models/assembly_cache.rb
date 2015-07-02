@@ -9,8 +9,8 @@
 class AssemblyCache < ActiveRecord::Base
   attr_accessible :assembly_id, :json_sequences
 
-  validates :json_sequences, :presence => true,
-                             :length => { :maximum => 16777215 }
+  validates :json_sequences, presence: true,
+                             length: { maximum: 16_777_215 }
 
   # Tries to retrieve the the cached version of the peptides list
   # and creates it if it doesn't exist
@@ -24,6 +24,6 @@ class AssemblyCache < ActiveRecord::Base
       json = Oj.dump(result_set.to_a.sort!, mode: :compat)
       cache = AssemblyCache.create(assembly_id: assembly_id, json_sequences: json)
     end
-    return cache
+    cache
   end
 end

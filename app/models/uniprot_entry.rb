@@ -21,24 +21,23 @@ class UniprotEntry < ActiveRecord::Base
   has_many :ec_cross_references
   has_many :go_cross_references
 
-  belongs_to :taxon,            :foreign_key  => "taxon_id",
-                                :primary_key  => "id",
-                                :class_name   => 'Taxon'
+  belongs_to :taxon,            foreign_key: 'taxon_id',
+                                primary_key: 'id',
+                                class_name: 'Taxon'
 
-  belongs_to :lineage,          :foreign_key  => "taxon_id",
-                                :primary_key  => "taxon_id",
-                                :class_name   => 'Lineage'
+  belongs_to :lineage,          foreign_key: 'taxon_id',
+                                primary_key: 'taxon_id',
+                                class_name: 'Lineage'
 
   # the type attribute is used by rails to specify inheritance so we change
   # the default value
-  self.inheritance_column = "type_id"
+  self.inheritance_column = 'type_id'
 
   def protein_contains?(sequence, equate_il)
     if equate_il
-      protein.gsub(/I/,'L').include? sequence.gsub(/I/,'L')
+      protein.gsub(/I/, 'L').include? sequence.gsub(/I/, 'L')
     else
       protein.include? sequence
     end
   end
-
 end

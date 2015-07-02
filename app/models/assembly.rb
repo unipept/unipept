@@ -17,19 +17,19 @@
 class Assembly < ActiveRecord::Base
   attr_readonly :id, :genbank_assembly_accession, :refseq_assembly_accession, :genome_representation, :assembly_level, :assembly_name, :organism_name, :biosample, :type_strain
 
-  belongs_to :lineage, :foreign_key  => "taxon_id", :primary_key  => "taxon_id",  :class_name   => 'Lineage'
+  belongs_to :lineage, foreign_key: 'taxon_id', primary_key: 'taxon_id',  class_name: 'Lineage'
   has_many :assembly_sequences
 
   def destroy
-    raise ActiveRecord::ReadOnlyRecord
+    fail ActiveRecord::ReadOnlyRecord
   end
 
   def delete
-    raise ActiveRecord::ReadOnlyRecord
+    fail ActiveRecord::ReadOnlyRecord
   end
 
   def type_strain
-    self.read_attribute(:type_strain) == "\x01" ? true : false
+    read_attribute(:type_strain) == "\x01" ? true : false
   end
 
   # fills in the taxon_id column
@@ -40,7 +40,7 @@ class Assembly < ActiveRecord::Base
         ON uniprot_entry_id = uniprot_entries.id
       INNER JOIN assembly_sequences
         ON sequence_id = assembly_sequences.genbank_accession;")
-    taxa = Hash[ taxa.map{ |t| [t["assembly_id"], t["taxon_id"]] } ]
+    taxa = Hash[taxa.map { |t| [t['assembly_id'], t['taxon_id']] }]
     Assembly.all.each do |assembly|
       assembly.taxon_id = taxa[assembly.id]
       assembly.save
@@ -49,7 +49,7 @@ class Assembly < ActiveRecord::Base
 
   # fills the assembly_cache table
   def self.precompute_assembly_caches
-    Assembly.where("taxon_id is not null").each do |assembly|
+    Assembly.where('taxon_id is not null').each do |assembly|
       AssemblyCache.get_by_assembly_id(assembly.id)
     end
   end

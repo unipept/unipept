@@ -14,8 +14,8 @@ class DatasetItem < ActiveRecord::Base
 
   belongs_to :dataset
 
-  validates :name, :presence => true,
-                   :length => { :maximum => 160 }
-  validates :data, :presence => true,
-                   :length => { :maximum => 16777215 }
+  validates :name, presence: true,
+                   length: { maximum: 160 }
+  validates :data, presence: true,
+                   length: { maximum: 16_777_215 }
 end

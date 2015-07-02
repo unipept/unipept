@@ -13,6 +13,6 @@ class User < ActiveRecord::Base
   attr_readonly :id, :username, :admin
 
   def is_admin?
-    return admin == 1
+    admin == 1
   end
 end
