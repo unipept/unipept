@@ -63,7 +63,7 @@ public class TableWriter implements UniprotObserver {
     /**
      * Creates a new data object
      */
-    public TableWriter(String berkeleyDir, long berkeleyMem, TaxonList taxonList, String peptidesFile, String sequencesFile, String uniprotEntriesFile, String refseqCrossReferencesFile, String ecCrossReferencesFile, String emblCrossReferencesFile, String goCrossReferencesFile) {
+    public TableWriter(String berkeleyDir, long berkeleyMem, int bloomsize, double bloomacc, TaxonList taxonList, String peptidesFile, String sequencesFile, String uniprotEntriesFile, String refseqCrossReferencesFile, String ecCrossReferencesFile, String emblCrossReferencesFile, String goCrossReferencesFile) {
         wrongTaxonIds = new HashSet<Integer>();
         this.taxonList = taxonList;
 
@@ -102,7 +102,7 @@ public class TableWriter implements UniprotObserver {
         }
 
         /* Open Bloom Filter for sequence ID's. */
-        sequenceBloom = new FilterBuilder(1_000_000_000, 0.01).buildBloomFilter();
+        sequenceBloom = new FilterBuilder(bloomsize, bloomacc).buildBloomFilter();
 
     }
 

@@ -41,6 +41,8 @@ public class TaxonsUniprots2Tables {
         int i = 0;
         String berkeleyDir = args[i++];
         long berkeleyMem = Long.parseLong(args[i++]);
+        int bloomsize = Integer.parseInt(args[i++]);
+        double bloomacc = Double.parseDouble(args[i++]);
         String taxonsFile = args[i++];
         String peptidesFile = args[i++];
         String sequencesFile = args[i++];
@@ -52,6 +54,7 @@ public class TaxonsUniprots2Tables {
 
         TaxonList taxonList = TaxonList.loadFromFile(taxonsFile);
         TableWriter writer = new TableWriter(berkeleyDir, berkeleyMem,
+            bloomsize, bloomacc,
             taxonList, peptidesFile, sequencesFile,
             uniprotEntriesFile, refseqCrossReferencesFile,
             ecCrossReferencesFile, emblCrossReferencesFile,
