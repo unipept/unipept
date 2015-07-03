@@ -18,7 +18,7 @@ class AssemblyCache < ActiveRecord::Base
     cache = AssemblyCache.find_by_assembly_id(assembly_id)
     if cache.nil?
       result_set = Set.new
-      AssemblySequence.where(assembly_id: assembly_id).each do |assembly_sequence|
+      AssemblySequence.where(assembly_id: assembly_id).find_each do |assembly_sequence|
         result_set.merge(EmblCrossReference.get_sequence_ids(assembly_sequence.genbank_accession))
       end
       json = Oj.dump(result_set.to_a.sort!, mode: :compat)

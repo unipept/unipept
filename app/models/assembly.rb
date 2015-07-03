@@ -29,7 +29,7 @@ class Assembly < ActiveRecord::Base
   end
 
   def type_strain
-    read_attribute(:type_strain) == "\x01" ? true : false
+    self[:type_strain] == "\x01" ? true : false
   end
 
   # fills in the taxon_id column
@@ -41,7 +41,7 @@ class Assembly < ActiveRecord::Base
       INNER JOIN assembly_sequences
         ON sequence_id = assembly_sequences.genbank_accession;")
     taxa = Hash[taxa.map { |t| [t['assembly_id'], t['taxon_id']] }]
-    Assembly.all.each do |assembly|
+    Assembly.all.find_each do |assembly|
       assembly.taxon_id = taxa[assembly.id]
       assembly.save
     end
@@ -49,7 +49,7 @@ class Assembly < ActiveRecord::Base
 
   # fills the assembly_cache table
   def self.precompute_assembly_caches
-    Assembly.where('taxon_id is not null').each do |assembly|
+    Assembly.where('taxon_id is not null').find_each do |assembly|
       AssemblyCache.get_by_assembly_id(assembly.id)
     end
   end

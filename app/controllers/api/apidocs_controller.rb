@@ -1,6 +1,6 @@
 class Api::ApidocsController < ApplicationController
-  before_filter :set_sidebar_nav
-  before_filter :set_sidebar_subnav, only: [:pept2prot, :pept2taxa, :pept2lca, :taxa2lca, :taxonomy]
+  before_action :set_sidebar_nav
+  before_action :set_sidebar_subnav, only: [:pept2prot, :pept2taxa, :pept2lca, :taxa2lca, :taxonomy]
 
   def index
     @title = 'Unipept API'

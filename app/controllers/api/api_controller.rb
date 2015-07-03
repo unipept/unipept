@@ -1,12 +1,12 @@
 class Api::ApiController < ApplicationController
   respond_to :json
 
-  before_filter :set_headers, only: [:pept2taxa, :pept2lca, :pept2prot, :taxa2lca, :taxonomy]
-  before_filter :set_params, only: [:pept2taxa, :pept2lca, :pept2prot, :taxa2lca, :taxonomy]
-  before_filter :set_query, only: [:pept2taxa, :pept2lca, :taxonomy]
-  before_filter :set_sequences, only: [:pept2taxa, :pept2prot]
+  before_action :set_headers, only: [:pept2taxa, :pept2lca, :pept2prot, :taxa2lca, :taxonomy]
+  before_action :set_params, only: [:pept2taxa, :pept2lca, :pept2prot, :taxa2lca, :taxonomy]
+  before_action :set_query, only: [:pept2taxa, :pept2lca, :taxonomy]
+  before_action :set_sequences, only: [:pept2taxa, :pept2prot]
 
-  before_filter :log, only: [:pept2taxa, :pept2lca, :pept2prot, :taxa2lca, :taxonomy]
+  before_action :log, only: [:pept2taxa, :pept2lca, :pept2prot, :taxa2lca, :taxonomy]
 
   # sends a message to the ruby cli
   def messages

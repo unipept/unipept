@@ -153,6 +153,6 @@ class Lineage < ActiveRecord::Base
   end
 
   def class_
-    read_attribute(:class)
+    self[:class]
   end
 end
