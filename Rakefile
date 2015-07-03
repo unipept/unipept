@@ -3,5 +3,8 @@
 
 require File.expand_path('../config/application', __FILE__)
 require 'rake'
+require 'rubocop/rake_task'
 
 UnipeptWeb::Application.load_tasks
+
+RuboCop::RakeTask.new
