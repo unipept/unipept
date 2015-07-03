@@ -32,7 +32,6 @@
 #  varietas         :integer
 #  forma            :integer
 #
-
 class Lineage < ActiveRecord::Base
   include ReadOnlyModel
   attr_accessible nil
@@ -84,6 +83,18 @@ class Lineage < ActiveRecord::Base
              :varietas_t, :forma_t]
 
   scope :with_names, -> { includes(ORDER_T) }
+
+  # rails 4.2 checks the values befor using them in queries
+  # Eager loading the Taxa results in a range error if there are -1 values
+  # http://metaskills.net/2015/01/06/activerecord-42s-type-casting/
+  # This code disables the rangecheck for UnsignedIntegers
+  module ActiveRecord::Type
+      class UnsignedInteger
+        def type_cast_for_database(value)
+          type_cast(value)
+        end
+      end
+  end
 
   def set_iterator_position(position)
     @iterator = position
