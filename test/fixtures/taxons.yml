@@ -14,28 +14,28 @@ taxon1:
     name: "species1"
     rank: "species"
     parent_id: 2
-    valid_taxon: true
+    valid_taxon: 0b1
 
 taxon2:
     id: 2
     name: "kingdom1"
     rank: "kingdom"
-    valid_taxon: true
+    valid_taxon: 0b1
 
 taxon13:
     id: 13
     name: "kingdom2"
     rank: "kingdom"
-    valid_taxon: true
+    valid_taxon: 0b1
 
 taxon14:
     id: 14
     name: "phylum1"
     rank: "phylum"
-    valid_taxon: true
+    valid_taxon: 0b1
 
 taxon15:
     id: 15
     name: "class1"
     rank: "class"
-    valid_taxon: true
+    valid_taxon: 0b1

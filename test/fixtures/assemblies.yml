@@ -24,7 +24,7 @@ assembly1:
     assembly_name: "assembly1"
     organism_name: "org1"
     biosample: "don't care"
-    type_strain: false
+    type_strain: 0b0
 
 assembly2:
     id: 2
@@ -34,4 +34,4 @@ assembly2:
     assembly_level: "Complete Genome"
     assembly_name: "assembly2"
     organism_name: "org2"
-    biosample: "don't care"
+    biosample: 0b1
