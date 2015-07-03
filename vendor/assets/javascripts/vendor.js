@@ -10,7 +10,7 @@
 //= require es6-shims/es6-collections.min.js
 
 //  global
-//  3.3.2
+//  3.3.5
 //= require bootstrap/bootstrap.min.js
 
 //  pancore
