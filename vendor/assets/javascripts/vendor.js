@@ -26,7 +26,7 @@
 //= require dragula/dragula.min.js
 
 //  global
-//  3.5.3
+//  3.5.5
 //= require d3/d3.v3.min.js
 
 //  export treemap to png
