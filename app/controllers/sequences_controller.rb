@@ -161,7 +161,7 @@ class SequencesController < ApplicationController
     fail EmptyQueryError if query.blank?
 
     # remove duplicates, filter shorts, substitute I by L, ...
-    data = query.upcase.gsub(/#/, '')
+    data = query.upcase.gsub(/#/, '').gsub(/\P{ASCII}/, '')
     data = data.gsub(/([KR])([^P])/, "\\1\n\\2").gsub(/([KR])([^P])/, "\\1\n\\2") unless handle_missed
     data = data.lines.map(&:strip).to_a.select { |l| l.size >= 5 }
     sequence_mapping = Hash[data.map { |v| @equate_il ? [v.gsub(/I/, 'L'), v] : [v, v] }]
