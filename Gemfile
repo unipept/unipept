@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '4.1.8'
+gem 'rails', '4.2.3'
 
 gem 'mysql2'
 
@@ -14,7 +14,8 @@ gem 'will_paginate'
 gem 'jquery-rails'
 
 # cas auth
-gem 'devise'
+gem 'devise', '>= 3.5'
+gem 'responders', '>= 2.0'
 gem 'devise_cas_authenticatable'
 
 # zeroclipboard
@@ -65,6 +66,7 @@ group :development do
   gem 'terminal-notifier'
   gem 'rake'
   gem 'sprockets'
+  gem 'web-console', '~> 2.0'
 end
 
 group :test do
