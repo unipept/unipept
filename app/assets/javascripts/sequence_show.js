@@ -1,7 +1,7 @@
 function init_sequence_show(data) {
 
     // set up the fancy tree
-    initLineageTree(data);
+    initLineageTree(data.tree);
 
     // set up the fullscreen stuff
     setUpFullScreen();
@@ -11,6 +11,9 @@ function init_sequence_show(data) {
 
     // enable the external link popovers
     addExternalLinks();
+
+    // enable the open in UniProt link
+    setUpOpenInUniprot(data.uniprotEntries);
 
     // add the tab help
     initHelp();
@@ -49,6 +52,14 @@ function init_sequence_show(data) {
             if ($(this).hasClass("open")) {
                 $(this).find(".externalLinks-button").dropdown("toggle");
             }
+        });
+    }
+
+    function setUpOpenInUniprot(entries) {
+        $("#open-uniprot").click(function () {
+            var url = "http://www.uniprot.org/uniprot/?query=accession%3A";
+            url += entries.join("+OR+accession%3A");
+            window.open(url, '_blank');
         });
     }
 
