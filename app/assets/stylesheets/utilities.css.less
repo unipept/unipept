@@ -1,5 +1,4 @@
 // file containing general utilities
-
 // visual clear
 .visualClear {
     display: block;
@@ -19,7 +18,7 @@
     min-height: 100%;
     font-size: 999px;
     text-align: right;
-    filter: alpha(opacity=0);
+    filter:alpha(opacity=0);
     opacity: 0;
     outline: none;
     background: white;
@@ -33,8 +32,12 @@
     animation-iteration-count: 1;
 }
 @keyframes flash {
-    0% {background-color:#FFFF9C;}
-    100% {background-color:none;}
+    0% {
+        background-color: #ffff9c;
+    }
+    100% {
+        background-color: none;
+    }
 }
 
 // The save as modal
@@ -42,7 +45,7 @@
     width: 100%;
 }
 #save-as-modal .modal-footer {
-    margin-top: 0px;
+    margin-top: 0;
 }
 #save-as-modal .buttons button {
     margin-left: 20px;
@@ -51,27 +54,27 @@
 
 // Zero clipboard
 .zero-clipboard {
-  position: relative;
-  display: block;
+    position: relative;
+    display: block;
 }
 .btn-clipboard {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 10;
-  display: block;
-  padding: 5px 8px;
-  font-size: 12px;
-  color: #777;
-  cursor: pointer;
-  background-color: #fff;
-  border: 1px solid #e1e1e8;
-  border-radius: 0 4px 0 4px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10;
+    display: block;
+    padding: 5px 8px;
+    font-size: 12px;
+    color: #777;
+    cursor: pointer;
+    background-color: #fff;
+    border: 1px solid #e1e1e8;
+    border-radius: 0 4px 0 4px;
 }
 .btn-clipboard-hover {
-  color: #fff;
-  background-color: steelblue;
-  border-color: steelblue;
+    color: #fff;
+    background-color: steelblue;
+    border-color: steelblue;
 }
 
 // tab help
@@ -82,7 +85,7 @@
     z-index: 100;
     position: absolute;
     border: 1px solid @nav-tabs-active-link-hover-border-color;
-    border-top: 0px;
+    border-top: 0;
     padding: 10px;
     display: none;
     .border-bottom-radius(4px);
@@ -100,46 +103,45 @@
     float: left;
 }
 .treeView ul {
-    margin:-5px 0 0 -1.5em;
-    padding:0 0 0 1.5em;
+    margin: -5px 0 0 -1.5em;
+    padding: 0 0 0 1.5em;
 }
 .treeView ul ul {
-    background:asset-url('list-item-contents.png') repeat-y left;
+    background: asset-url('list-item-contents.png') repeat-y left;
 }
 .treeView li:last-child > ul {
-    background-image:none;
+    background-image: none;
 }
 .treeView li {
-    margin:0;
-    padding:0;
-    padding-top: 5px;
-    background:asset-url('list-item-root.png') no-repeat top left;
-    list-style-position:inside;
-    list-style-image:asset-url('button.png');
+    margin: 0;
+    padding: 5px 0 0;
+    background: asset-url('list-item-root.png') no-repeat top left;
+    list-style-position: inside;
+    list-style-image: asset-url('button.png');
     cursor: auto;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 .treeView li.collapsibleListOpen {
-    list-style-image:asset-url('button-open.png');
-    cursor:pointer;
+    list-style-image: asset-url('button-open.png');
+    cursor: pointer;
 }
 .treeView li.collapsibleListClosed {
-    list-style-image:asset-url('button-closed.png');
-    cursor:pointer;
+    list-style-image: asset-url('button-closed.png');
+    cursor: pointer;
 }
 .treeView li.collapsibleListClosed ul {
     display: none;
 }
 .treeView li li {
-    background-image:asset-url('list-item.png');
-    padding-left:1.5em;
+    background-image: asset-url('list-item.png');
+    padding-left: 1.5em;
 }
 .treeView li:last-child {
-    background-image:asset-url('list-item-last.png');
+    background-image: asset-url('list-item-last.png');
 }
 .treeView li.root {
-    background-image:none;
+    background-image: none;
     list-style-type: none;
     list-style-image: none;
 }
@@ -147,16 +149,16 @@
     display: none;
 }
 .treeView li.leaf {
-    background-image:asset-url('list-item-leaf.png');
+    background-image: asset-url('list-item-leaf.png');
     list-style-type: none;
     list-style-image: none;
 }
 .treeView li.leaf:last-child {
-    background-image:asset-url('list-item-last-leaf.png');
+    background-image: asset-url('list-item-last-leaf.png');
 }
 .treeView span.clicked {
     background: @gray-lighter !important;
-    border: 1px solid #cccccc !important;
+    border: 1px solid #ccc !important;
     border-radius: 3px;
 }
 .treeView li.leaf span {
