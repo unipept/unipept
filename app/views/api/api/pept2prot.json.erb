@@ -9,7 +9,7 @@
           "uniprot_id" => u.uniprot_accession_number,
           "protein_name" => u.name,
           "taxon_id" => u.taxon_id,
-          "taxon_name" => u.name.try(:name),
+          "taxon_name" => u.taxon.try(:name),
           "ec_references" => u.ec_cross_references.map(&:ec_id).join(" "),
           "go_references" => u.go_cross_references.map(&:go_id).join(" "),
           "refseq_ids" => u.refseq_cross_references.map(&:sequence_id).join(" "),
