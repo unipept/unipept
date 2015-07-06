@@ -49,6 +49,7 @@
     <ul>
       <li><code>peptide</code>: the peptide that matched this record</li>
       <li><code>uniprot_id</code>: the UniProt accession number of the matching record</li>
+      <li><span class="label label-success">New</span> <code>protein_name</code>: the name of the protein of the matching record</li>
       <li><code>taxon_id</code>: the <span class="initialism">NCBI</span> taxon id of the organism associated with the matching record</li>
     </ul>
 
@@ -58,10 +59,10 @@
       <li><code>taxon_name</code>: the name of the organism associated with the matching UniProt record</li>
       <li><code>ec_references</code>: a space separated list of associated EC numbers</li>
       <li><code>go_references</code>: a space separated list of associated GO terms</li>
-      <li><span class="label label-success">New</span> <code>refseq_ids</code>: a space separated list of associated RefSeq accession numbers</li>
-      <li><span class="label label-success">New</span> <code>refseq_protein_ids</code>: a space separated list of associated RefSeq protein accession numbers</li>
-      <li><span class="label label-success">New</span><code>insdc_ids</code>: a space separated list of associated insdc accession numbers</li>
-      <li><span class="label label-success">New</span><code>insdc_protein_ids</code>: a space separated list of associated insdc protein accession numbers</li>
+      <li><code>refseq_ids</code>: a space separated list of associated RefSeq accession numbers</li>
+      <li><code>refseq_protein_ids</code>: a space separated list of associated RefSeq protein accession numbers</li>
+      <li><code>insdc_ids</code>: a space separated list of associated insdc accession numbers</li>
+      <li><code>insdc_protein_ids</code>: a space separated list of associated insdc protein accession numbers</li>
     </ul>
 
     <h2 id="parameters">Parameters</h2>
@@ -103,11 +104,13 @@
   <span class='p'>{</span>
     <span class='nx'>peptide</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
     <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'A7A5N6'</span><span class='p'>,</span>
+    <span class='nx'>protein_name</span><span class='o'>:</span> <span class='s2'>'Transketolase'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>411481</span>
   <span class='p'>},</span>
   <span class='p'>{</span>
     <span class='nx'>peptide</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
     <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'A1A1M7'</span><span class='p'>,</span>
+    <span class='nx'>protein_name</span><span class='o'>:</span> <span class='s2'>'Transketolase'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>367928</span>
   <span class='p'>}</span>
 <span class='p'>]</span>"
@@ -125,26 +128,31 @@
   <span class='p'>{</span>
     <span class='nx'>peptide</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
     <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'A7A5N6'</span><span class='p'>,</span>
+    <span class='nx'>protein_name</span><span class='o'>:</span> <span class='s2'>'Transketolase'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>411481</span>
   <span class='p'>},</span>
   <span class='p'>{</span>
     <span class='nx'>peptide</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
     <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'A1A1M7'</span><span class='p'>,</span>
+    <span class='nx'>protein_name</span><span class='o'>:</span> <span class='s2'>'Transketolase'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>367928</span>
   <span class='p'>},</span>
   <span class='p'>{</span>
     <span class='nx'>peptide</span><span class='o'>:</span> <span class='s2'>'APVLSDSSCK'</span><span class='p'>,</span>
     <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'P00761'</span><span class='p'>,</span>
+    <span class='nx'>protein_name</span><span class='o'>:</span> <span class='s2'>'Trypsin'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>9823</span>
   <span class='p'>},</span>
   <span class='p'>{</span>
     <span class='nx'>peptide</span><span class='o'>:</span> <span class='s2'>'APVLSDSSCK'</span><span class='p'>,</span>
     <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'C5IWV5'</span><span class='p'>,</span>
+    <span class='nx'>protein_name</span><span class='o'>:</span> <span class='s2'>'Trypsinogen'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>9823</span>
   <span class='p'>},</span>
   <span class='p'>{</span>
     <span class='nx'>peptide</span><span class='o'>:</span> <span class='s2'>'APVLSDSSCK'</span><span class='p'>,</span>
     <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'F1SRS2'</span><span class='p'>,</span>
+    <span class='nx'>protein_name</span><span class='o'>:</span> <span class='s2'>'Uncharacterized protein'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>9823</span>
   <span class='p'>}</span>
 <span class='p'>]</span>"
@@ -162,16 +170,19 @@
   <span class='p'>{</span>
     <span class='nx'>peptide</span><span class='o'>:</span> <span class='s2'>'APVISDSSCK'</span><span class='p'>,</span>
     <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'P00761'</span><span class='p'>,</span>
+    <span class='nx'>protein_name</span><span class='o'>:</span> <span class='s2'>'Trypsin'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>9823</span>
   <span class='p'>},</span>
   <span class='p'>{</span>
     <span class='nx'>peptide</span><span class='o'>:</span> <span class='s2'>'APVISDSSCK'</span><span class='p'>,</span>
     <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'C5IWV5'</span><span class='p'>,</span>
+    <span class='nx'>protein_name</span><span class='o'>:</span> <span class='s2'>'Trypsinogen'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>9823</span>
   <span class='p'>},</span>
   <span class='p'>{</span>
     <span class='nx'>peptide</span><span class='o'>:</span> <span class='s2'>'APVISDSSCK'</span><span class='p'>,</span>
     <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'F1SRS2'</span><span class='p'>,</span>
+    <span class='nx'>protein_name</span><span class='o'>:</span> <span class='s2'>'Uncharacterized protein'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>9823</span>
   <span class='p'>}</span>
 <span class='p'>]</span>"
@@ -189,6 +200,7 @@
   <span class='p'>{</span>
     <span class='nx'>peptide</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
     <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'A7A5N6'</span><span class='p'>,</span>
+    <span class='nx'>protein_name</span><span class='o'>:</span> <span class='s2'>'Transketolase'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>411481</span><span class='p'>,</span>
     <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Bifidobacterium adolescentis L2-32'</span><span class='p'>,</span>
     <span class='nx'>ec_references</span><span class='o'>:</span> <span class='s2'>'2.2.1.1'</span><span class='p'>,</span>
@@ -201,6 +213,7 @@
   <span class='p'>{</span>
     <span class='nx'>peptide</span><span class='o'>:</span> <span class='s2'>'AIPQLEVARPADAYETAEAYR'</span><span class='p'>,</span>
     <span class='nx'>uniprot_id</span><span class='o'>:</span> <span class='s2'>'A1A1M7'</span><span class='p'>,</span>
+    <span class='nx'>protein_name</span><span class='o'>:</span> <span class='s2'>'Transketolase'</span><span class='p'>,</span>
     <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>367928</span><span class='p'>,</span>
     <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Bifidobacterium adolescentis ATCC 15703'</span><span class='p'>,</span>
     <span class='nx'>ec_references</span><span class='o'>:</span> <span class='s2'>''</span><span class='p'>,</span>

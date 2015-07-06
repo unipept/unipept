@@ -45,8 +45,8 @@ class Api::ApiController < ApplicationController
       end
     else
       @result = Hash.new { |h, k| h[k] = Set.new }
-      @sequences.pluck(:sequence, 'uniprot_entries.uniprot_accession_number', 'uniprot_entries.taxon_id').each do |sequence, uniprot_id, taxon_id|
-        @result[sequence] << [uniprot_id, taxon_id]
+      @sequences.pluck(:sequence, 'uniprot_entries.uniprot_accession_number', 'uniprot_entries.name', 'uniprot_entries.taxon_id').each do |sequence, uniprot_id, protein_name, taxon_id|
+        @result[sequence] << [uniprot_id, protein_name, taxon_id]
       end
     end
 
