@@ -226,7 +226,7 @@ var matrixBackend = function matrixBackend(data) {
                             simMin       : 1,
                             simMax       : 1,
                             simAvg       : 1,
-                            simExtra     : 1
+                            simOchiai    : 1
                         };
                     } else {
                         similarity = genomeSimilarity(peptides, data[id2].peptide_list);
@@ -814,18 +814,18 @@ function genomeSimilarity(peptideList1, peptideList2) {
         min = Math.min(peptideList1.length, peptideList2.length),
         max = Math.max(peptideList1.length, peptideList2.length),
         avg = (peptideList1.length + peptideList2.length) / 2,
-        extra = peptideList1.length * peptideList2.length / Math.sqrt((peptideList1.length * peptideList1.length + peptideList2.length * peptideList2.length) / 2);
+        ochiai = Math.sqrt(peptideList1.length * peptideList2.length);
     return {
         intersection : intersect,
         union        : union,
         min          : min,
         max          : max,
         avg          : avg,
-        simUnion   : intersect / union,
+        simUnion     : intersect / union,
         simMin       : intersect / min,
         simMax       : intersect / max,
         simAvg       : intersect / avg,
-        simExtra     : intersect / extra
+        simOchiai    : intersect / ochiai
     };
 }
 
