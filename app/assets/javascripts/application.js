@@ -322,14 +322,10 @@ window.onerror = function (message, file, line) {
 function iteratorToArray(iterator) {
     var vals = [],
         v;
-    if (typeof iterator.next === 'function') {
+    v = iterator.next();
+    while (!v.done) {
+        vals.push(v.value);
         v = iterator.next();
-        while (!v.done) {
-            vals.push(v.value);
-            v = iterator.next();
-        }
-    } else {
-        eval("for (v of iterator) vals.push(v)");
     }
     return vals;
 }
