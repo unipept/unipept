@@ -41,9 +41,10 @@ UnipeptWeb::Application.routes.draw do
   get '/peptidomeclustering', :to => 'peptidome#analyze', :as => 'peptidome_clustering', defaults: { tab: 'peptidomeclustering' }
 
   # simple pages
-  get '/publications', :to => 'pages#publications'
   get '/about',   :to => 'pages#about'
   get '/admin',   :to => 'pages#admin'
+  get '/docs',    :to => 'pages#documentation'
+  get '/publications', :to => 'pages#publications'
 
   # generate png from svg
   post "/convert", :to => "imagemagick#convert"
