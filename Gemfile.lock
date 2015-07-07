@@ -263,3 +263,6 @@ DEPENDENCIES
   uglifier
   will_paginate
   zeroclipboard-rails
+
+BUNDLED WITH
+   1.10.3
