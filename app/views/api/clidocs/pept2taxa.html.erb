@@ -108,19 +108,19 @@ fasta_header,peptide,taxon_id,taxon_name,taxon_rank
     </p>
     <pre>
 <b>$</b> unipept pept2taxa FEALLGDGSQYGLHLQYK
-peptide,uniprot_id,protein_name,taxon_id
-FEALLGDGSQYGLHLQYK,D1PLT2,Glucose-1-phosphate thymidylyltransferase,411471
-FEALLGDGSQYGLHLQYK,K1TWG3,"Glucose-1-phosphate thymidylyltransferase, long form",408170
+peptide,taxon_id,taxon_name,taxon_rank
+FEALLGDGSQYGLHLQYK,408170,human gut metagenome,species
+FEALLGDGSQYGLHLQYK,411471,Subdoligranulum variabile DSM 15176,no rank
 <b>$</b> unipept pept2taxa <b>--equate</b> FEALLGDGSQYGLHLQYK
-peptide,uniprot_id,protein_name,taxon_id
-FEALLGDGSQYGLHLQYK,D4K7A9,Glucose-1-phosphate thymidylyltransferase,657322
-FEALLGDGSQYGLHLQYK,D4K112,Glucose-1-phosphate thymidylyltransferase,718252
-FEALLGDGSQYGLHLQYK,D1PLT2,Glucose-1-phosphate thymidylyltransferase,411471
-FEALLGDGSQYGLHLQYK,A8SH27,Glucose-1-phosphate thymidylyltransferase,411485
-FEALLGDGSQYGLHLQYK,K1TWG3,"Glucose-1-phosphate thymidylyltransferase, long form",408170
-FEALLGDGSQYGLHLQYK,E2ZLF5,Glucose-1-phosphate thymidylyltransferase,748224
-FEALLGDGSQYGLHLQYK,R6Q2J6,Glucose-1-phosphate thymidylyltransferase,1262898
-FEALLGDGSQYGLHLQYK,C7HAW8,Glucose-1-phosphate thymidylyltransferase,411483</pre>
+peptide,taxon_id,taxon_name,taxon_rank
+FEALLGDGSQYGLHLQYK,408170,human gut metagenome,species
+FEALLGDGSQYGLHLQYK,411471,Subdoligranulum variabile DSM 15176,no rank
+FEALLGDGSQYGLHLQYK,411483,Faecalibacterium prausnitzii A2-165,no rank
+FEALLGDGSQYGLHLQYK,411485,Faecalibacterium prausnitzii M21/2,no rank
+FEALLGDGSQYGLHLQYK,657322,Faecalibacterium prausnitzii SL3/3,no rank
+FEALLGDGSQYGLHLQYK,718252,Faecalibacterium prausnitzii L2-6,no rank
+FEALLGDGSQYGLHLQYK,748224,Faecalibacterium cf. prausnitzii KLE1255,no rank
+FEALLGDGSQYGLHLQYK,1262898,Faecalibacterium sp. CAG:82,species</pre>
     <h3><samp>--input</samp> / <samp>-i</samp> <small>Specify an input file</small></h3>
     <p>
       All Unipept <span class='initialism'>CLI</span> commands can process input from 3 sources: command line arguments, a file, or <i>standard input</i>. The optional <code>--input</code> option allows you to specify an input file. The file should contain a single peptide per line.
@@ -128,38 +128,40 @@ FEALLGDGSQYGLHLQYK,C7HAW8,Glucose-1-phosphate thymidylyltransferase,411483</pre>
     <h5>Example</h5>
     <pre>
 <b>$</b> cat input.txt
-ISVAQGASK
-OMGWTFBBQ
 MFNEIAPK
+OMGWTFBBQ
+ISVAQGASK
 <b>$</b> unipept pept2taxa <b>--input</b> input.txt
-peptide,uniprot_id,protein_name,taxon_id
-ISVAQGASK,Q9Y6R7,IgGFc-binding protein,9606
-ISVAQGASK,A0A087WXI2,IgGFc-binding protein,9606
-MFNEIAPK,C6JD41,10 kDa chaperonin,457412</pre>
+peptide,taxon_id,taxon_name,taxon_rank
+MFNEIAPK,1262758,Blautia sp. CAG:52,species
+MFNEIAPK,1262948,Roseburia sp. CAG:471,species
+ISVAQGASK,9606,Homo sapiens,species</pre>
     <h3 id='#param-output'><samp>--output</samp> / <samp>-o</samp> <small>Specify an output file</small></h3>
     <p>
       By default, the unipept commands write their output to <i>standard output</i>. Using the optional <code>--output</code> option allows you to specify a file to write the output to. If the file already exists, the output will be appended; if it doesn't, a new file will be created.
     </p>
     <h5>Example</h5>
     <pre>
-<b>$</b> unipept pept2taxa <b>--output</b> output.txt ISVAQGASK MFNEIAPK
+<b>$</b> unipept pept2taxa <b>--output</b> output.txt MFNEIAPK ISVAQGASK
 <b>$</b> cat output.txt
-peptide,uniprot_id,protein_name,taxon_id
-ISVAQGASK,Q9Y6R7,IgGFc-binding protein,9606
-ISVAQGASK,A0A087WXI2,IgGFc-binding protein,9606
-MFNEIAPK,C6JD41,10 kDa chaperonin,457412</pre>
+peptide,taxon_id,taxon_name,taxon_rank
+MFNEIAPK,1262758,Blautia sp. CAG:52,species
+MFNEIAPK,1262948,Roseburia sp. CAG:471,species
+ISVAQGASK,9606,Homo sapiens,species</pre>
     <h3 id='#param-input'><samp>--select</samp> / <samp>-s</samp> <small>Specify the output fields</small></h3>
     <p>
       By default, the Unipept <span class='initialism'>CLI</span> commands output all information fields received from the Unipept server. The <code>--select</code> option allows you to control which fields are returned. A list of fields can be specified by a comma-separated list, or by using multiple <code>--select</code> options. A <samp>*</samp> can be used as a wildcard for field names. For example, <code>--select peptide,taxon*</code> will return the peptide field and all fields starting with <i>taxon</i>.
     </p>
     <h5>Example</h5>
     <pre>
-<b>$</b> unipept pept2taxa <b>--select</b> peptide,uniprot_id MFNEIAPK
-peptide,uniprot_id
-MFNEIAPK,C6JD41
-<b>$</b> unipept pept2taxa <b>--select</b> peptide <b>--select</b> *id MFNEIAPK
-peptide,uniprot_id,taxon_id
-MFNEIAPK,C6JD41,457412</pre>
+<b>$</b> unipept pept2taxa <b>--select</b> peptide,taxon_id MFNEIAPK
+peptide,taxon_id
+MFNEIAPK,1262758
+MFNEIAPK,1262948
+<b>$</b> unipept pept2taxa <b>--select</b> peptide <b>--select</b> *name MFNEIAPK
+peptide,taxon_name
+MFNEIAPK,Blautia sp. CAG:52
+MFNEIAPK,Roseburia sp. CAG:471</pre>
     <h3 id='#param-format'><samp>--format</samp> / <samp>-f</samp> <small>Specify the output format</small></h3>
     <p>
       By default, the Unipept <span class='initialism'>CLI</span> commands return their output in <samp>csv</samp> format. The <code>--format</code> option allows you to select another format. Supported formats are <samp>csv</samp>, <samp>json</samp>, and <samp>xml</samp>.
@@ -167,12 +169,12 @@ MFNEIAPK,C6JD41,457412</pre>
     <h5>Example</h5>
     <pre>
 <b>$</b> unipept pept2taxa <b>--format</b> json ISVAQGASK MFNEIAPK
-[{"peptide":"ISVAQGASK","uniprot_id":"Q9Y6R7","protein_name":"IgGFc-binding protein","taxon_id":9606},{"peptide":"ISVAQGASK","uniprot_id":"A0A087WXI2","protein_name":"IgGFc-binding protein","taxon_id":9606},{"peptide":"MFNEIAPK","uniprot_id":"C6JD41","protein_name":"10 kDa chaperonin","taxon_id":457412}]
+[{"peptide":"ISVAQGASK","taxon_id":9606,"taxon_name":"Homo sapiens","taxon_rank":"species"},{"peptide":"MFNEIAPK","taxon_id":1262758,"taxon_name":"Blautia sp. CAG:52","taxon_rank":"species"},{"peptide":"MFNEIAPK","taxon_id":1262948,"taxon_name":"Roseburia sp. CAG:471","taxon_rank":"species"}]
 <b>$</b> unipept pept2taxa <b>--format</b> xml ISVAQGASK MFNEIAPK
-&lt;results&gt;&lt;result&gt;&lt;peptide&gt;ISVAQGASK&lt;/peptide&gt;&lt;uniprot_id&gt;Q9Y6R7&lt;/uniprot_id&gt;&lt;protein_name&gt;IgGFc-binding protein&lt;/protein_name&gt;&lt;taxon_id&gt;9606&lt;/taxon_id&gt;&lt;/result&gt;&lt;result&gt;&lt;peptide&gt;ISVAQGASK&lt;/peptide&gt;&lt;uniprot_id&gt;A0A087WXI2&lt;/uniprot_id&gt;&lt;protein_name&gt;IgGFc-binding protein&lt;/protein_name&gt;&lt;taxon_id&gt;9606&lt;/taxon_id&gt;&lt;/result&gt;&lt;result&gt;&lt;peptide&gt;MFNEIAPK&lt;/peptide&gt;&lt;uniprot_id&gt;C6JD41&lt;/uniprot_id&gt;&lt;protein_name&gt;10 kDa chaperonin&lt;/protein_name&gt;&lt;taxon_id&gt;457412&lt;/taxon_id&gt;&lt;/result&gt;&lt;/results&gt;</pre>
+&lt;results&gt;&lt;result&gt;&lt;peptide&gt;ISVAQGASK&lt;/peptide&gt;&lt;taxon_id&gt;9606&lt;/taxon_id&gt;&lt;taxon_name&gt;Homo sapiens&lt;/taxon_name&gt;&lt;taxon_rank&gt;species&lt;/taxon_rank&gt;&lt;/result&gt;&lt;result&gt;&lt;peptide&gt;MFNEIAPK&lt;/peptide&gt;&lt;taxon_id&gt;1262758&lt;/taxon_id&gt;&lt;taxon_name&gt;Blautia sp. CAG:52&lt;/taxon_name&gt;&lt;taxon_rank&gt;species&lt;/taxon_rank&gt;&lt;/result&gt;&lt;result&gt;&lt;peptide&gt;MFNEIAPK&lt;/peptide&gt;&lt;taxon_id&gt;1262948&lt;/taxon_id&gt;&lt;taxon_name&gt;Roseburia sp. CAG:471&lt;/taxon_name&gt;&lt;taxon_rank&gt;species&lt;/taxon_rank&gt;&lt;/result&gt;&lt;/results&gt;</pre>
     <h3 id='#param-all'><samp>--all</samp> / <samp>-a</samp> <small>Request additional information</small></h3>
     <p>
-      By default, the Unipept <span class='initialism'>CLI</span> commands only request basic information from the Unipept server. By using the <code>--all</code> flag, you can request additional information fields such as cross references of the returned UniProt entries. You can use the <code>--select</code> option to select which fields are included in the output.
+      By default, the Unipept <span class='initialism'>CLI</span> commands only request basic information from the Unipept server. By using the <code>--all</code> flag, you can request additional information fields such as the lineage of the returned taxa. You can use the <code>--select</code> option to select which fields are included in the output.
     </p>
     <div class="apidocs-callout apidocs-callout-warning">
       <h4>Performance penalty</h4>
@@ -180,10 +182,11 @@ MFNEIAPK,C6JD41,457412</pre>
     </div>
     <h5>Example</h5>
     <pre>
-<b>$</b> unipept pept2taxa <b>--all</b> --select peptide,uniprot_id,*name,go_references ISVAQGASK
-peptide,uniprot_id,protein_name,taxon_name,go_references
-ISVAQGASK,Q9Y6R7,IgGFc-binding protein,Homo sapiens,GO:0070062
-ISVAQGASK,A0A087WXI2,IgGFc-binding protein,Homo sapiens,</pre>
+<b>$</b> unipept pept2taxa <b>--all</b> --select peptide,taxon_id,order* ISVAQGASK MFNEIAPK
+peptide,taxon_id,order_id,order_name
+ISVAQGASK,9606,9443,Primates
+MFNEIAPK,1262758,186802,Clostridiales
+MFNEIAPK,1262948,186802,Clostridiales</pre>
     <h3><samp>--help</samp> / <samp>-h</samp> <small>Display help</small></h3>
     <p>
       This flag displays the help.
