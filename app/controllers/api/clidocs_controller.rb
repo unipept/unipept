@@ -1,6 +1,6 @@
 class Api::ClidocsController < ApplicationController
   before_filter :set_sidebar_nav
-  before_filter :set_sidebar_subnav, only: [:pept2lca, :pept2prot, :pept2taxa, :taxa2lca]
+  before_filter :set_sidebar_subnav, only: [:pept2lca, :pept2prot, :pept2taxa, :taxa2lca, :taxonomy]
 
   def index
     @title = 'Unipept command line interface'
@@ -29,6 +29,11 @@ class Api::ClidocsController < ApplicationController
     @sidebar_subnav.delete('Fasta')
   end
 
+  def taxonomy
+    @title = 'The unipept taxonomy command'
+    @sidebar_name = 'unipept taxonomy'
+  end
+
   private
 
   def set_sidebar_nav
@@ -41,7 +46,7 @@ class Api::ClidocsController < ApplicationController
       { name: 'unipept pept2prot',  path: api_clidocs_pept2prot_path },
       { name: 'unipept pept2taxa',  path: api_clidocs_pept2taxa_path },
       { name: 'unipept taxa2lca',   path: api_clidocs_taxa2lca_path },
-      { name: 'unipept taxonomy',   path: api_clidocs_pept2lca_path }
+      { name: 'unipept taxonomy',   path: api_clidocs_taxonomy_path }
     ]
   end
 

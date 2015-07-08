@@ -80,6 +80,7 @@ UnipeptWeb::Application.routes.draw do
     get "pept2prot",  :to => "clidocs#pept2prot", :as => 'clidocs/pept2prot'
     get "pept2taxa",  :to => "clidocs#pept2taxa", :as => 'clidocs/pept2taxa'
     get "taxa2lca",   :to => "clidocs#taxa2lca",  :as => 'clidocs/taxa2lca'
+    get "taxonomy",   :to => "clidocs#taxonomy",  :as => 'clidocs/taxonomy'
   end
 
 
