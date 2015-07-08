@@ -78,6 +78,7 @@ UnipeptWeb::Application.routes.draw do
     get "prot2pept",  :to => "clidocs#prot2pept", :as => 'clidocs/prot2pept'
     get "pept2lca",   :to => "clidocs#pept2lca",  :as => 'clidocs/pept2lca'
     get "pept2prot",  :to => "clidocs#pept2prot", :as => 'clidocs/pept2prot'
+    get "pept2taxa",  :to => "clidocs#pept2taxa", :as => 'clidocs/pept2taxa'
   end
 
 
