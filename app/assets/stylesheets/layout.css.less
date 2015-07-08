@@ -2,6 +2,78 @@ html,
 body {
     background-color: @grey-50;
     height: 100%;
+    font-family: 'Helvetica Neue', Helvetica, Arial, 'DejaVu Sans Condensed', sans-serif;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    flex-shrink: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    min-height: 44px;
+    z-index: 3;
+    background-color: @primary-500;
+    color: #fff;
+    box-shadow: rgba(0, 0, 0, 0.258824) 0 2px 5px 0;
+}
+.header-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    align-self: stretch;
+    align-items: center;
+    height: 44px;
+    margin: 0;
+    padding: 0 60px;
+}
+.header-row>* {
+    flex-shrink: 0;
+}
+.header-title {
+    display: table-cell;
+    position: relative;
+    vertical-align: middle;
+    padding-left: 12px;
+    font-size: 20px;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    font-weight: 400;
+}
+.header-title a {
+    color: inherit;
+    text-decoration: none;
+}
+.header-spacer {
+    flex-grow: 1;
+}
+.header-navigation {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    height: 44px;
+}
+.header-navigation-link {
+    display: block;
+    color: #fff;
+    line-height: 44px;
+    padding: 0 12px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 13px;
+    margin: 0;
+}
+a.header-navigation-link {
+    color: inherit;
+    text-decoration: inherit;
 }
 
 h1,
@@ -53,77 +125,6 @@ h4 {
 }
 .content {
     padding: 15px 12px 12px;
-}
-/* top bar */
-#topbar {
-    .clearfix();
-    padding: 5px;
-}
-#user {
-    float: right;
-}
-#subbar ul,
-#utility ul,
-#user ul {
-    list-style: none outside none;
-}
-#utility ul li,
-#user ul li {
-    float: left;
-    padding: 0 5px;
-}
-#utility ul li.separator,
-#user ul li.separator {
-    border-right: 1px solid @gray-light;
-}
-
-/* header */
-#header {
-    background: asset-url("sprieten.png") no-repeat 0 0;
-    background-size: 940px 32px;
-    height: 32px;
-    .clearfix();
-}
-#headerleft h1 {
-    position: relative;
-    top: -10px;
-    left: 53px;
-    float: left;
-}
-#headerleft h2 {
-    float: left;
-    margin-left: 125px;
-    margin-top: -3px;
-    padding: 0;
-    height: 15px;
-}
-#headerleft h2 a {
-    text-decoration: none;
-    color: white;
-}
-#headerright {
-    float: right;
-    overflow: hidden;
-}
-#utility {
-    margin-top: -2px;
-}
-#subbar {
-    font-family: 'Helvetica Neue', Helvetica, Arial, 'DejaVu Sans Condensed', sans-serif;
-    background: #e9e9e9;
-    margin-left: 200px;
-    margin-top: -8.5px;
-    height: 24px;
-    border-bottom-left-radius: 3px;
-}
-#subbar ul {
-    padding-left: 25px;
-}
-#subbar ul li {
-    float: left;
-    margin-right: 1.7em;
-    padding: 3px;
-    font-weight: bold;
 }
 
 /* footer */
