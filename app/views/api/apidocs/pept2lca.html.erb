@@ -289,7 +289,7 @@
 
     <%= render 'example',
       example_id: "apidocs-example-names",
-      title: "Retrieve the taxonmic lowest common ancestor and lineage names for a single tryptic peptide",
+      title: "Retrieve the taxonomic lowest common ancestor and lineage names for a single tryptic peptide",
       explanation: "<p>This example retrieves the taxonomic lowest common ancestor for the tryptic peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i> including its complete lineage with names. The result is the same as " + link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
       post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2lca \\
 -d <span class='s1'>'input[]=AIPQLEVARPADAYETAEAYR'</span> \\

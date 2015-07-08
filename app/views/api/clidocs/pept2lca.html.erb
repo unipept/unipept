@@ -20,6 +20,7 @@
     <h5>Example</h5>
     <pre>
 <b>$</b> unipept pept2lca AALTER MDGTEYIIVK
+peptide,taxon_id,taxon_name,taxon_rank
 AALTER,1,root,no rank
 MDGTEYIIVK,1263,Ruminococcus,genus</pre>
     <h4>File input</h4>
@@ -49,7 +50,7 @@ AALTER,1,root,no rank
 MDGTEYIIVK,1263,Ruminococcus,genus</pre>
     <h2 id="output">Output</h2>
     <p>
-      The <code>unipept pept2lca</code> command outputs the taxonomic lowest common ancestor (<span class='initialism'>LCA</span>) for each of the (tryptic) input peptides that were found in the Unipept database. By default, the NCBI taxon id, taxon name and taxonmic rank of the <span class='initialism'>LCA</span> are returned. By using the <a href='#param-all'><samp>--all</samp> parameter</a>, this can be supplemented with the full taxonomic lineage of the <span class='initialism'>LCA</span>. Consult the <a href='<%= api_apidocs_pept2lca_path %>#response' target='_blank'><span class="initialism">API</span> documentation</a> for a detailed list of output fields. A selection of output fields can be specified with the <a href='#param-select'><samp>--select</samp> parameter</a>. By default, output is generated in csv format. By using the <a href='#param-format'><samp>--format</samp> parameter</a>, the format can be changed into json or xml. The output can be written to a file or to <i>standard output</i>.
+      The <code>unipept pept2lca</code> command outputs the taxonomic lowest common ancestor (<span class='initialism'>LCA</span>) for each of the (tryptic) input peptides that were found in the Unipept database. By default, the NCBI taxon id, taxon name and taxonomic rank of the <span class='initialism'>LCA</span> are returned. By using the <a href='#param-all'><samp>--all</samp> parameter</a>, this can be supplemented with the full taxonomic lineage of the <span class='initialism'>LCA</span>. Consult the <a href='<%= api_apidocs_pept2lca_path %>#response' target='_blank'><span class="initialism">API</span> documentation</a> for a detailed list of output fields. A selection of output fields can be specified with the <a href='#param-select'><samp>--select</samp> parameter</a>. By default, output is generated in csv format. By using the <a href='#param-format'><samp>--format</samp> parameter</a>, the format can be changed into json or xml. The output can be written to a file or to <i>standard output</i>.
     </p>
     <h4>File output</h4>
     <p>
