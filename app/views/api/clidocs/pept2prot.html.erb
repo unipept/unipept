@@ -138,7 +138,7 @@ peptide,uniprot_id,protein_name,taxon_id
 ISVAQGASK,Q9Y6R7,IgGFc-binding protein,9606
 ISVAQGASK,A0A087WXI2,IgGFc-binding protein,9606
 MDGTEYIIVK,C6JD41,10 kDa chaperonin,457412</pre>
-    <h3 id='#param-output'><samp>--output</samp> / <samp>-o</samp> <small>Specify an output file</small></h3>
+    <h3 id='param-output'><samp>--output</samp> / <samp>-o</samp> <small>Specify an output file</small></h3>
     <p>
       By default, the unipept commands write their output to <i>standard output</i>. Using the optional <code>--output</code> option allows you to specify a file to write the output to. If the file already exists, the output will be appended; if it doesn't, a new file will be created.
     </p>
@@ -150,7 +150,7 @@ peptide,uniprot_id,protein_name,taxon_id
 ISVAQGASK,Q9Y6R7,IgGFc-binding protein,9606
 ISVAQGASK,A0A087WXI2,IgGFc-binding protein,9606
 MDGTEYIIVK,C6JD41,10 kDa chaperonin,457412</pre>
-    <h3 id='#param-input'><samp>--select</samp> / <samp>-s</samp> <small>Specify the output fields</small></h3>
+    <h3 id='param-input'><samp>--select</samp> / <samp>-s</samp> <small>Specify the output fields</small></h3>
     <p>
       By default, the Unipept <span class='initialism'>CLI</span> commands output all information fields received from the Unipept server. The <code>--select</code> option allows you to control which fields are returned. A list of fields can be specified by a comma-separated list, or by using multiple <code>--select</code> options. A <samp>*</samp> can be used as a wildcard for field names. For example, <code>--select peptide,taxon*</code> will return the peptide field and all fields starting with <i>taxon</i>.
     </p>
@@ -162,7 +162,7 @@ MDGTEYIIVK,C6JD41
 <b>$</b> unipept pept2prot <b>--select</b> peptide <b>--select</b> *id MDGTEYIIVK
 peptide,uniprot_id,taxon_id
 MDGTEYIIVK,C6JD41,457412</pre>
-    <h3 id='#param-format'><samp>--format</samp> / <samp>-f</samp> <small>Specify the output format</small></h3>
+    <h3 id='param-format'><samp>--format</samp> / <samp>-f</samp> <small>Specify the output format</small></h3>
     <p>
       By default, the Unipept <span class='initialism'>CLI</span> commands return their output in <samp>csv</samp> format. The <code>--format</code> option allows you to select another format. Supported formats are <samp>csv</samp>, <samp>json</samp>, and <samp>xml</samp>.
     </p>
@@ -172,7 +172,7 @@ MDGTEYIIVK,C6JD41,457412</pre>
 [{"peptide":"ISVAQGASK","uniprot_id":"Q9Y6R7","protein_name":"IgGFc-binding protein","taxon_id":9606},{"peptide":"ISVAQGASK","uniprot_id":"A0A087WXI2","protein_name":"IgGFc-binding protein","taxon_id":9606},{"peptide":"MDGTEYIIVK","uniprot_id":"C6JD41","protein_name":"10 kDa chaperonin","taxon_id":457412}]
 <b>$</b> unipept pept2prot <b>--format</b> xml ISVAQGASK MDGTEYIIVK
 &lt;results&gt;&lt;result&gt;&lt;peptide&gt;ISVAQGASK&lt;/peptide&gt;&lt;uniprot_id&gt;Q9Y6R7&lt;/uniprot_id&gt;&lt;protein_name&gt;IgGFc-binding protein&lt;/protein_name&gt;&lt;taxon_id&gt;9606&lt;/taxon_id&gt;&lt;/result&gt;&lt;result&gt;&lt;peptide&gt;ISVAQGASK&lt;/peptide&gt;&lt;uniprot_id&gt;A0A087WXI2&lt;/uniprot_id&gt;&lt;protein_name&gt;IgGFc-binding protein&lt;/protein_name&gt;&lt;taxon_id&gt;9606&lt;/taxon_id&gt;&lt;/result&gt;&lt;result&gt;&lt;peptide&gt;MDGTEYIIVK&lt;/peptide&gt;&lt;uniprot_id&gt;C6JD41&lt;/uniprot_id&gt;&lt;protein_name&gt;10 kDa chaperonin&lt;/protein_name&gt;&lt;taxon_id&gt;457412&lt;/taxon_id&gt;&lt;/result&gt;&lt;/results&gt;</pre>
-    <h3 id='#param-all'><samp>--all</samp> / <samp>-a</samp> <small>Request additional information</small></h3>
+    <h3 id='param-all'><samp>--all</samp> / <samp>-a</samp> <small>Request additional information</small></h3>
     <p>
       By default, the Unipept <span class='initialism'>CLI</span> commands only request basic information from the Unipept server. By using the <code>--all</code> flag, you can request additional information fields such as cross references of the returned UniProt entries. You can use the <code>--select</code> option to select which fields are included in the output.
     </p>

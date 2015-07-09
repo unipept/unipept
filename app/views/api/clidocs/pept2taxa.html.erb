@@ -138,7 +138,7 @@ peptide,taxon_id,taxon_name,taxon_rank
 MFNEIAPK,1262758,Blautia sp. CAG:52,species
 MFNEIAPK,1262948,Roseburia sp. CAG:471,species
 ISVAQGASK,9606,Homo sapiens,species</pre>
-    <h3 id='#param-output'><samp>--output</samp> / <samp>-o</samp> <small>Specify an output file</small></h3>
+    <h3 id='param-output'><samp>--output</samp> / <samp>-o</samp> <small>Specify an output file</small></h3>
     <p>
       By default, the unipept commands write their output to <i>standard output</i>. Using the optional <code>--output</code> option allows you to specify a file to write the output to. If the file already exists, the output will be appended; if it doesn't, a new file will be created.
     </p>
@@ -150,7 +150,7 @@ peptide,taxon_id,taxon_name,taxon_rank
 MFNEIAPK,1262758,Blautia sp. CAG:52,species
 MFNEIAPK,1262948,Roseburia sp. CAG:471,species
 ISVAQGASK,9606,Homo sapiens,species</pre>
-    <h3 id='#param-input'><samp>--select</samp> / <samp>-s</samp> <small>Specify the output fields</small></h3>
+    <h3 id='param-input'><samp>--select</samp> / <samp>-s</samp> <small>Specify the output fields</small></h3>
     <p>
       By default, the Unipept <span class='initialism'>CLI</span> commands output all information fields received from the Unipept server. The <code>--select</code> option allows you to control which fields are returned. A list of fields can be specified by a comma-separated list, or by using multiple <code>--select</code> options. A <samp>*</samp> can be used as a wildcard for field names. For example, <code>--select peptide,taxon*</code> will return the peptide field and all fields starting with <i>taxon</i>.
     </p>
@@ -164,7 +164,7 @@ MFNEIAPK,1262948
 peptide,taxon_name
 MFNEIAPK,Blautia sp. CAG:52
 MFNEIAPK,Roseburia sp. CAG:471</pre>
-    <h3 id='#param-format'><samp>--format</samp> / <samp>-f</samp> <small>Specify the output format</small></h3>
+    <h3 id='param-format'><samp>--format</samp> / <samp>-f</samp> <small>Specify the output format</small></h3>
     <p>
       By default, the Unipept <span class='initialism'>CLI</span> commands return their output in <samp>csv</samp> format. The <code>--format</code> option allows you to select another format. Supported formats are <samp>csv</samp>, <samp>json</samp>, and <samp>xml</samp>.
     </p>
@@ -174,7 +174,7 @@ MFNEIAPK,Roseburia sp. CAG:471</pre>
 [{"peptide":"ISVAQGASK","taxon_id":9606,"taxon_name":"Homo sapiens","taxon_rank":"species"},{"peptide":"MFNEIAPK","taxon_id":1262758,"taxon_name":"Blautia sp. CAG:52","taxon_rank":"species"},{"peptide":"MFNEIAPK","taxon_id":1262948,"taxon_name":"Roseburia sp. CAG:471","taxon_rank":"species"}]
 <b>$</b> unipept pept2taxa <b>--format</b> xml ISVAQGASK MFNEIAPK
 &lt;results&gt;&lt;result&gt;&lt;peptide&gt;ISVAQGASK&lt;/peptide&gt;&lt;taxon_id&gt;9606&lt;/taxon_id&gt;&lt;taxon_name&gt;Homo sapiens&lt;/taxon_name&gt;&lt;taxon_rank&gt;species&lt;/taxon_rank&gt;&lt;/result&gt;&lt;result&gt;&lt;peptide&gt;MFNEIAPK&lt;/peptide&gt;&lt;taxon_id&gt;1262758&lt;/taxon_id&gt;&lt;taxon_name&gt;Blautia sp. CAG:52&lt;/taxon_name&gt;&lt;taxon_rank&gt;species&lt;/taxon_rank&gt;&lt;/result&gt;&lt;result&gt;&lt;peptide&gt;MFNEIAPK&lt;/peptide&gt;&lt;taxon_id&gt;1262948&lt;/taxon_id&gt;&lt;taxon_name&gt;Roseburia sp. CAG:471&lt;/taxon_name&gt;&lt;taxon_rank&gt;species&lt;/taxon_rank&gt;&lt;/result&gt;&lt;/results&gt;</pre>
-    <h3 id='#param-all'><samp>--all</samp> / <samp>-a</samp> <small>Request additional information</small></h3>
+    <h3 id='param-all'><samp>--all</samp> / <samp>-a</samp> <small>Request additional information</small></h3>
     <p>
       By default, the Unipept <span class='initialism'>CLI</span> commands only request basic information from the Unipept server. By using the <code>--all</code> flag, you can request additional information fields such as the lineage of the returned taxa. You can use the <code>--select</code> option to select which fields are included in the output.
     </p>

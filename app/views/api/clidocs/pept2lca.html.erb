@@ -122,7 +122,7 @@ MDGTEYIIVK
 peptide,taxon_id,taxon_name,taxon_rank
 AALTER,1,root,no rank
 MDGTEYIIVK,1263,Ruminococcus,genus</pre>
-    <h3 id='#param-output'><samp>--output</samp> / <samp>-o</samp> <small>Specify an output file</small></h3>
+    <h3 id='param-output'><samp>--output</samp> / <samp>-o</samp> <small>Specify an output file</small></h3>
     <p>
       By default, the unipept commands write their output to <i>standard output</i>. Using the optional <code>--output</code> option allows you to specify a file to write the output to. If the file already exists, the output will be appended; if it doesn't, a new file will be created.
     </p>
@@ -132,7 +132,7 @@ MDGTEYIIVK,1263,Ruminococcus,genus</pre>
 <b>$</b> cat output.txt
 peptide,taxon_id,taxon_name,taxon_rank
 AALTER,1,root,no rank</pre>
-    <h3 id='#param-input'><samp>--select</samp> / <samp>-s</samp> <small>Specify the output fields</small></h3>
+    <h3 id='param-input'><samp>--select</samp> / <samp>-s</samp> <small>Specify the output fields</small></h3>
     <p>
       By default, the Unipept <span class='initialism'>CLI</span> commands output all information fields received from the Unipept server. The <code>--select</code> option allows you to control which fields are returned. A list of fields can be specified by a comma-separated list, or by using multiple <code>--select</code> options. A <samp>*</samp> can be used as a wildcard for field names. For example, <code>--select peptide,taxon*</code> will return the peptide field and all fields starting with <i>taxon</i>.
     </p>
@@ -144,7 +144,7 @@ AALTER,1
 <b>$</b> unipept pept2lca <b>--select</b> peptide <b>--select</b> *name AALTER
 peptide,taxon_name
 AALTER,root</pre>
-    <h3 id='#param-format'><samp>--format</samp> / <samp>-f</samp> <small>Specify the output format</small></h3>
+    <h3 id='param-format'><samp>--format</samp> / <samp>-f</samp> <small>Specify the output format</small></h3>
     <p>
       By default, the Unipept <span class='initialism'>CLI</span> commands return their output in <samp>csv</samp> format. The <code>--format</code> option allows you to select another format. Supported formats are <samp>csv</samp>, <samp>json</samp>, and <samp>xml</samp>.
     </p>
@@ -154,7 +154,7 @@ AALTER,root</pre>
 [{"peptide":"AALTER","taxon_id":1,"taxon_name":"root","taxon_rank":"no rank"},{"peptide":"MDGTEYIIVK","taxon_id":1263,"taxon_name":"Ruminococcus","taxon_rank":"genus"}]
 <b>$</b> unipept pept2lca <b>--format</b> xml AALTER MDGTEYIIVK
 &lt;results&gt;&lt;result&gt;&lt;peptide&gt;AALTER&lt;/peptide&gt;&lt;taxon_id&gt;1&lt;/taxon_id&gt;&lt;taxon_name&gt;root&lt;/taxon_name&gt;&lt;taxon_rank&gt;no rank&lt;/taxon_rank&gt;&lt;/result&gt;&lt;result&gt;&lt;peptide&gt;MDGTEYIIVK&lt;/peptide&gt;&lt;taxon_id&gt;1263&lt;/taxon_id&gt;&lt;taxon_name&gt;Ruminococcus&lt;/taxon_name&gt;&lt;taxon_rank&gt;genus&lt;/taxon_rank&gt;&lt;/result&gt;&lt;/results&gt;</pre>
-    <h3 id='#param-all'><samp>--all</samp> / <samp>-a</samp> <small>Request additional information</small></h3>
+    <h3 id='param-all'><samp>--all</samp> / <samp>-a</samp> <small>Request additional information</small></h3>
     <p>
       By default, the Unipept <span class='initialism'>CLI</span> commands only request basic information from the Unipept server. By using the <code>--all</code> flag, you can request additional information fields such as the lineage of the returned taxa. You can use the <code>--select</code> option to select which fields are included in the output.
     </p>
