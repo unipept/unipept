@@ -1,55 +1,40 @@
 // All styles related to the home page
-// news box
-#news {
-    padding: 5px 12px 2px;
-    margin: 0 0 2.0em;
-    border: 1px solid @hairlinegray;
-    border-radius: 3px;
-}
-#news div {
-    margin-left: 10px;
-}
 
-// feature boxes
-.features .thumbnail:hover {
-    border-color: @link-color;
-    cursor: pointer;
+.feature .card-supporting-text {
+    width: 100%;
+}
+.feature:hover {
+    .shadow-z3();
+}
+.feature .click-catcher {
+    width: 285px;
+    height: 285px;
+    position: relative;
+    top: -285px;
+    margin-bottom: -285px;
+}
+.features {
+    margin-bottom: 30px;
 }
 .features a:hover {
     text-decoration: none;
 }
 .features object {
-    margin-bottom: -3px;
-}
-.features div.title {
-    color: white;
-    padding-top: 20px;
-    position: relative;
-    top: -55px;
-    margin-bottom: -55px;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-    #gradient.vertical(rgba(0, 0, 0, 0.0001), rgba(0, 0, 0, 0.6), 0, 50%);
-}
-.features .click-catcher {
-    width: 275px;
-    height: 275px;
-    position: relative;
-    top: -275px;
-    margin-bottom: -275px;
+    margin-bottom: -4px;
 }
 
 .feature-documentation {
-    width: 275px;
-    height: 275px;
+    width: 285px;
+    height: 285px;
     padding-top: 20px;
 }
 .feature-circle {
     width: 200px;
     height: 200px;
     border-radius: 100px;
-    border: 10px solid #ffb300;
-    background-color: white;
-    color: #104b7d;
+    border: 10px solid @accent-800;
+    background-color: @accent-800;
+    color: white;
     text-align: center;
     margin: auto;
 }
