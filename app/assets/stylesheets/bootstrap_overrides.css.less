@@ -8,9 +8,24 @@
 //
 // Example:
 // @linkColor: #ff0000;
+// color overrides
 @hairlinegray: @black-divider;
+@brand-info: @info-500;
+@body-bg: @grey-50;
+@text-color: @black-text;
 
-// Overrides
+// alerts
+@state-info-bg: @brand-info;
+@state-info-text: white;
+.alert {
+    .shadow-z2();
+    border-radius: 2px;
+}
+.alert-link {
+    color: white !important;
+}
+
+// font stuff
 @font-size-base: 14px;
 @baseLineHeight: 24px;
 @line-height-base: 1.3846153846;
