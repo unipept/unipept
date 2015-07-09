@@ -1,24 +1,29 @@
-<h1>Welcome</h1>
-
 <div class="row">
     <div class="col-xs-6">
+      <h1>Welcome</h1>
         <p class="intro">
             The Unipept web application supports biodiversity analysis of large and complex metaproteome samples. Its underlying index structure is designed to quickly retrieve all occurrences of a tryptic peptide in UniProtKB records. Taxon-specificity of the tryptic peptide is successively derived from these occurrences using a novel lowest common ancestor approach that is robust against taxonomic misarrangements, misidentifications and inaccuracies. This application consists of four separate functionalities: the <a href="<%= search_single_path %>">Tryptic Peptide Analysis</a>, the <a href="<%= datasets_path %>">Metaproteomics Analysis</a>, the <a href="<%= peptide_finder_path %>">Unique Peptide Finder</a> and the <a href="<%= peptidome_clustering_path %>">Peptidome Clustering</a>.
         </p>
     </div>
     <% unless @post.nil? %>
     <div class="col-xs-6">
-        <div id="news">
-            <h2>News</h2>
-            <div>
-                <%= render @post, :well => false %>
-                <p class="pull-right"><%= link_to '> more news', posts_path %></p>
+        <div class='card news'>
+            <div class='card-title card-title-colored'>
+              <h2 class='card-title-text'><%= @post.title %></h2>
+              <h3 class='card-subtitle-text'>posted on <%= @post.date %></h3>
             </div>
-            <div class="visualClear"></div>
+            <div class='card-supporting-text'>
+                <%= @post.content.html_safe %>
+            </div>
+            <div class="card-actions card-border">
+              <%= link_to 'more news', posts_path, class: 'btn-text pull-right' %>
+            </div>
         </div>
     </div>
     <% end %>
 </div>
+
+<br>
 
 <div class="row features">
     <div class="col-xs-4">
