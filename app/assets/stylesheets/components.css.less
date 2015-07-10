@@ -23,7 +23,7 @@
     position: relative;
     background: white;
     border-radius: 2px;
-    transition: box-shadow .2s cubic-bezier(.4,0,.2,1);
+    transition: box-shadow 0.2s cubic-bezier(.4,0,.2,1);
     .shadow-z2();
     margin-bottom: 10px;
 }
@@ -66,7 +66,7 @@
     overflow: hidden;
     margin: 0;
 }
-.card-title-colored .card-title-text{
+.card-title-colored .card-title-text {
     color: @white-text;
 }
 .card-title-image {
@@ -81,7 +81,7 @@
     margin: 0;
     font-weight: normal;
 }
-.card-title-colored .card-subtitle-text{
+.card-title-colored .card-subtitle-text {
     color: @white-secondary;
 }
 .card-supporting-text {
@@ -91,7 +91,6 @@
     overflow: hidden;
     padding: 16px;
 }
-
 .card-actions {
     font-size: 16px;
     line-height: normal;
@@ -111,6 +110,50 @@
     position: absolute;
     right: 16px;
     top: 16px;
+}
+
+// card tabs
+.card-nav .card-title {
+    padding-bottom: 0px;
+    padding-top: 5px;
+}
+.card-title .nav-tabs {
+    border: none;
+    height: 45px;
+}
+.card-title .nav-tabs li {
+    height: 45px;
+    overflow: hidden;
+    margin-bottom: -5px;
+}
+.card-title .nav-tabs li a {
+    padding-bottom: 8px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-right: 10px;
+    height: 50px;
+    border: none;
+    border-bottom: 5px solid @primary-500;
+    color: white;
+    font-size: 18px;
+    .transition-duration(0.2s);
+    .transition-property('height');
+    .transition-timing-function(ease-out);
+}
+.card-title .nav-tabs li.active {
+
+}
+.card-title .nav-tabs li.active a,
+.card-title .nav-tabs li a:hover,
+.card-title .nav-tabs li a:focus {
+    border: none;
+    color: white;
+    border-bottom: 5px solid @primary-500;
+    background: inherit;
+    height: 45px;
+}
+.card-nav svg {
+    margin: -16px;
 }
 
 // text button
@@ -136,7 +179,7 @@
     text-align: center;
     line-height: 36px;
     vertical-align: middle;
-    transition: background-color .2s cubic-bezier(.4,0,.2,1);
+    transition: background-color 0.2s cubic-bezier(.4,0,.2,1);
 }
 .btn-text:hover {
     text-decoration: none;

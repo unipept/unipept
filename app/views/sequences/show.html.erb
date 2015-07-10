@@ -9,101 +9,108 @@
     <li>Common lineage: <%= raw @common_lineage.length==0 ? "nothing" : @common_lineage.map{|t| link_to t.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + t.id.to_s, :target => "_blank", :title => t.rank }.join(" > ") %></li>
     <li><%= link_to "Blast "+@original_sequence , "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on&USER_FORMAT_DEFAULTS=on&PAGE=Proteins&PROGRAM=blastp&QUERY="+@original_sequence+"&GAPCOSTS=11%201&EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&DATABASE=nr&BLAST_PROGRAMS=blastp&MAX_NUM_SEQ=100&SHORT_QUERY_ADJUST=on&EXPECT=10&WORD_SIZE=3&MATRIX_NAME=BLOSUM62&COMPOSITION_BASED_STATISTICS=2&SHOW_OVERVIEW=on&SHOW_LINKOUT=on&ALIGNMENT_VIEW=Pairwise&MASK_CHAR=2&MASK_COLOR=1&GET_SEQUENCE=on&NEW_VIEW=on&NUM_OVERVIEW=100&DESCRIPTIONS=100&ALIGNMENTS=100&FORMAT_OBJECT=Alignment&FORMAT_TYPE=HTML&OLD_BLAST=false", :target => "_blank", :title => "Open in BLAST"%></li>
   </ul>
-  <div id="single-peptide-tabs">
-    <ul class="nav nav-tabs">
-      <li class="active"><a href="#lineage-tree" id="lineage-tree-tab"data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-info-sign help"></span></a></li>
-      <li><a href="#lineage-table" id="lineage-table-tab" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-info-sign help"></span></a></li>
-      <li><a href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
-    </ul>
-    <div class="tab-help" id="tab-help">
-      <div id="lineage-tree-help">
-        <p>This interactive tree bundles the complete taxonomic lineages of all UniProtKB records whose protein sequence contains <%= @original_sequence %>. You can click on nodes to expand them. Take into account that due to gaps in the hierarchical structure of the NCBI taxonomy, taxonomic levels are not always properly aligned in the tree view.</p>
-      </div>
-      <div id="lineage-table-help">
-        <p>This table shows the complete taxonomic lineages of all UniProtKB records whose protein sequence contains <%= @original_sequence %>. Each row represents the complete taxonomic lineage of a single UniProtKB record. The first column contains the name extracted from the UniProtKB record, follow by columns representing valid taxonomic ranks ordered from superkingdom on the left to forma on the right. Only ranks used in the complete lineages of the records in which the peptide was found are displayed as columns in the table. To ease the interpretation of the table, rows are ordered according to the taxonomic names in the taxonomic rank columns and cells containing the same taxonomic name are marked with the same color code per column.</p>
+  <div class='card card-nav'>
+    <div class='card-title card-title-colored'>
+      <div id="single-peptide-tabs">
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#lineage-tree" id="lineage-tree-tab"data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-info-sign help"></span></a></li>
+          <li><a href="#lineage-table" id="lineage-table-tab" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-info-sign help"></span></a></li>
+          <li><a href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
+        </ul>
+        <div class="tab-help" id="tab-help">
+          <div id="lineage-tree-help">
+            <p>This interactive tree bundles the complete taxonomic lineages of all UniProtKB records whose protein sequence contains <%= @original_sequence %>. You can click on nodes to expand them. Take into account that due to gaps in the hierarchical structure of the NCBI taxonomy, taxonomic levels are not always properly aligned in the tree view.</p>
+          </div>
+          <div id="lineage-table-help">
+            <p>This table shows the complete taxonomic lineages of all UniProtKB records whose protein sequence contains <%= @original_sequence %>. Each row represents the complete taxonomic lineage of a single UniProtKB record. The first column contains the name extracted from the UniProtKB record, follow by columns representing valid taxonomic ranks ordered from superkingdom on the left to forma on the right. Only ranks used in the complete lineages of the records in which the peptide was found are displayed as columns in the table. To ease the interpretation of the table, rows are ordered according to the taxonomic names in the taxonomic rank columns and cells containing the same taxonomic name are marked with the same color code per column.</p>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="tab-content">
-      <div class="tab-pane active" id="lineage-tree">
-        <div id="buttons-single" class="buttons-single"></div>
-        <div id="lineageTree"></div>
-      </div>
-      <div class="tab-pane" id="lineage-table">
-        <div id="sequence_table">
-          <% colors = Hash.new %>
-          <table class="table table-condensed">
+    <div class='card-supporting-text'>
+      <div class="tab-content">
+        <div class="tab-pane active" id="lineage-tree">
+          <div id="buttons-single" class="buttons-single"></div>
+          <div id="lineageTree"></div>
+        </div>
+        <div class="tab-pane" id="lineage-table">
+          <div id="sequence_table">
+            <% colors = Hash.new %>
+            <table class="table table-condensed">
+              <thead>
+                <tr>
+                  <% for rank in @table_ranks do%>
+                    <th><%= rank %></th>
+                  <% end %>
+                </tr>
+              </thead>
+              <% i = -1 %>
+              <% for lineage in @table_lineages do%>
+                <% i += 1 %>
+                <tr>
+                  <td><strong><%= lineage.delete_at(0) %></strong></td>
+                  <% for rank in lineage do%>
+                    <% if !rank.nil? %>
+                      <% colors.store(rank.id, "c"+(i%30).to_s) if !colors.has_key?(rank.id) %>
+                      <td class="<%= colors[rank.id] %>"><%= link_to rank.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + rank.id.to_s, :target => "_blank", :title => "Open in NCBI" %></td>
+                    <% else %>
+                      <td></td>
+                    <% end %>
+                  <% end %>
+                </tr>
+              <% end %>
+            </table>
+          </div>
+        </div>
+        <div class="tab-pane" id="proteins">
+          <div class="buttons-single">
+            <button id="clipboard-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-copy"></span> Copy to clipboard</button>
+            <button id="open-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-new-window"></span> Open in UniProt</button>
+          </div>
+          <table class="table table-condensed table-hover protein-info">
             <thead>
               <tr>
-                <% for rank in @table_ranks do%>
-                  <th><%= rank %></th>
-                <% end %>
+                <th class="id">Uniprot ID</th>
+                <th class="name">Name</th>
+                <th class="organism">Organism</th>
+                <th class="ec">EC number</th>
+                <th class="go">GO terms</th>
               </tr>
             </thead>
-            <% i = -1 %>
-            <% for lineage in @table_lineages do%>
-              <% i += 1 %>
-              <tr>
-                <td><strong><%= lineage.delete_at(0) %></strong></td>
-                <% for rank in lineage do%>
-                  <% if !rank.nil? %>
-                    <% colors.store(rank.id, "c"+(i%30).to_s) if !colors.has_key?(rank.id) %>
-                    <td class="<%= colors[rank.id] %>"><%= link_to rank.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + rank.id.to_s, :target => "_blank", :title => "Open in NCBI" %></td>
-                  <% else %>
-                    <td></td>
-                  <% end %>
-                <% end %>
-              </tr>
+            <% for entry in @entries do %>
+              <% unless entry.name.nil? %>
+                <tr>
+                  <td>
+                    <div class="btn-group">
+                      <a class="btn btn-default btn-xs dropdown-toggle externalLinks-button" data-toggle="dropdown"><%= entry.uniprot_accession_number %> <span class="caret"></span></a>
+                      <ul class="dropdown-menu">
+                        <li role="presentation" class="dropdown-header">Open on external site</li>
+                        <li><%= link_to "Uniprot", "http://www.uniprot.org/uniprot/"+entry.uniprot_accession_number, :target => "_blank" %></li>
+                        <li><%= link_to "PRIDE", "http://www.ebi.ac.uk/pride/searchSummary.do?queryTypeSelected=identification%20accession%20number&identificationAccessionNumber="+entry.uniprot_accession_number, :target => "_blank" %></li>
+                        <li><%= link_to "PeptideAtlas", "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/Search?apply_action=GO&exact_match=exact_match%22&search_key="+entry.uniprot_accession_number, :target => "_blank" %></li>
+                      </ul>
+                    </div>
+                  </td>
+                  <td><%= entry.name %></td>
+                  <td><%= link_to entry.taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="+entry.taxon.id.to_s, :target => "_blank" %></td>
+                  <td><%= raw(entry.ec_cross_references.map{|ec| "<a href='http://enzyme.expasy.org/EC/"+ec.ec_id+"' target='_blank'>"+ec.ec_id+"</a>"}.join(", ")) %></td>
+                  <td><%= raw(entry.go_cross_references.map{|go| "<a href='http://amigo.geneontology.org/amigo/term/"+go.go_id+"' target='_blank'>"+go.go_id+"</a>"}.join(", ")) %></td>
+                </tr>
+              <% end %>
             <% end %>
           </table>
         </div>
       </div>
-      <div class="tab-pane" id="proteins">
-        <div class="buttons-single">
-          <button id="clipboard-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-copy"></span> Copy to clipboard</button>
-          <button id="open-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-new-window"></span> Open in UniProt</button>
-        </div>
-        <table class="table table-condensed table-hover protein-info">
-          <thead>
-            <tr>
-              <th class="id">Uniprot ID</th>
-              <th class="name">Name</th>
-              <th class="organism">Organism</th>
-              <th class="ec">EC number</th>
-              <th class="go">GO terms</th>
-            </tr>
-          </thead>
-          <% for entry in @entries do %>
-            <% unless entry.name.nil? %>
-              <tr>
-                <td>
-                  <div class="btn-group">
-                    <a class="btn btn-default btn-xs dropdown-toggle externalLinks-button" data-toggle="dropdown"><%= entry.uniprot_accession_number %> <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                      <li role="presentation" class="dropdown-header">Open on external site</li>
-                      <li><%= link_to "Uniprot", "http://www.uniprot.org/uniprot/"+entry.uniprot_accession_number, :target => "_blank" %></li>
-                      <li><%= link_to "PRIDE", "http://www.ebi.ac.uk/pride/searchSummary.do?queryTypeSelected=identification%20accession%20number&identificationAccessionNumber="+entry.uniprot_accession_number, :target => "_blank" %></li>
-                      <li><%= link_to "PeptideAtlas", "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/Search?apply_action=GO&exact_match=exact_match%22&search_key="+entry.uniprot_accession_number, :target => "_blank" %></li>
-                    </ul>
-                  </div>
-                </td>
-                <td><%= entry.name %></td>
-                <td><%= link_to entry.taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="+entry.taxon.id.to_s, :target => "_blank" %></td>
-                <td><%= raw(entry.ec_cross_references.map{|ec| "<a href='http://enzyme.expasy.org/EC/"+ec.ec_id+"' target='_blank'>"+ec.ec_id+"</a>"}.join(", ")) %></td>
-                <td><%= raw(entry.go_cross_references.map{|go| "<a href='http://amigo.geneontology.org/amigo/term/"+go.go_id+"' target='_blank'>"+go.go_id+"</a>"}.join(", ")) %></td>
-              </tr>
-            <% end %>
-          <% end %>
-        </table>
-      </div>
     </div>
   </div>
-  <script type="text/javascript">
-    $(function () {
-      init_sequence_show({
-        tree: <%= raw(@root) %>,
-        uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>
-      });
+</div>
+<script type="text/javascript">
+  $(function () {
+    init_sequence_show({
+      tree: <%= raw(@root) %>,
+      uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>
     });
-  </script>
+  });
+</script>
 <% end %>
 <%= render 'shared/save_image_modal' %>
