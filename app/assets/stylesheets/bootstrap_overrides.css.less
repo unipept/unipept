@@ -24,6 +24,12 @@
 // other values
 @border-radius-base: 2px;
 
+// font stuff
+@font-size-base: 14px;
+@baseLineHeight: 24px;
+@line-height-base: 1.3846153846;
+@icon-font-path: "/assets/bootstrap/";
+
 // alerts
 @state-info-bg: @brand-info;
 @state-info-text: white;
@@ -34,11 +40,13 @@
     color: white !important;
 }
 
-// font stuff
-@font-size-base: 14px;
-@baseLineHeight: 24px;
-@line-height-base: 1.3846153846;
-@icon-font-path: "/assets/bootstrap/";
+// buttons
+.btn {
+    .shadow-z1();
+}
+.btn:hover {
+    .shadow-z3();
+}
 
 // Disable responsiveness
 .container {
