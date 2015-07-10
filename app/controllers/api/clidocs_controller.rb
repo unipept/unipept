@@ -8,6 +8,12 @@ class Api::ClidocsController < ApplicationController
     @sidebar_subnav = %w(Installation Updates Configuration)
   end
 
+  def casestudies
+    @title = 'Unipept command line interface case studies'
+    @sidebar_name = 'Case studies'
+    @sidebar_subnav = ['Tryptic peptide', 'Metaproteomics data']
+  end
+
   def pept2lca
     @title = 'The unipept pept2lca command'
     @sidebar_name = 'unipept pept2lca'
@@ -55,6 +61,7 @@ class Api::ClidocsController < ApplicationController
   def set_sidebar_nav
     @sidebar_nav = [
       { name: 'Overview',           path: api_clidocs_path },
+      { name: 'Case studies',       path: api_clidocs_casestudies_path },
       { name: 'uniprot',            path: api_clidocs_uniprot_path },
       { name: 'prot2pept',          path: api_clidocs_prot2pept_path },
       { name: 'peptfilter',         path: api_clidocs_peptfilter_path },

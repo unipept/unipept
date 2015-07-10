@@ -74,17 +74,17 @@ UnipeptWeb::Application.routes.draw do
 
   # CLI docs
   namespace :api, path: "clidocs" do
-    get "/",          :to => "clidocs#index",      :as => 'clidocs'
-    get "prot2pept",  :to => "clidocs#prot2pept",  :as => 'clidocs/prot2pept'
-    get "peptfilter", :to => "clidocs#peptfilter", :as => 'clidocs/peptfilter'
-    get "uniprot",    :to => "clidocs#uniprot",    :as => 'clidocs/uniprot'
-    get "pept2lca",   :to => "clidocs#pept2lca",   :as => 'clidocs/pept2lca'
-    get "pept2prot",  :to => "clidocs#pept2prot",  :as => 'clidocs/pept2prot'
-    get "pept2taxa",  :to => "clidocs#pept2taxa",  :as => 'clidocs/pept2taxa'
-    get "taxa2lca",   :to => "clidocs#taxa2lca",   :as => 'clidocs/taxa2lca'
-    get "taxonomy",   :to => "clidocs#taxonomy",   :as => 'clidocs/taxonomy'
+    get "/",           :to => "clidocs#index",       :as => 'clidocs'
+    get "casestudies", :to => "clidocs#casestudies", :as => 'clidocs/casestudies'
+    get "prot2pept",   :to => "clidocs#prot2pept",   :as => 'clidocs/prot2pept'
+    get "peptfilter",  :to => "clidocs#peptfilter",  :as => 'clidocs/peptfilter'
+    get "uniprot",     :to => "clidocs#uniprot",     :as => 'clidocs/uniprot'
+    get "pept2lca",    :to => "clidocs#pept2lca",    :as => 'clidocs/pept2lca'
+    get "pept2prot",   :to => "clidocs#pept2prot",   :as => 'clidocs/pept2prot'
+    get "pept2taxa",   :to => "clidocs#pept2taxa",   :as => 'clidocs/pept2taxa'
+    get "taxa2lca",    :to => "clidocs#taxa2lca",    :as => 'clidocs/taxa2lca'
+    get "taxonomy",    :to => "clidocs#taxonomy",    :as => 'clidocs/taxonomy'
   end
-
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
