@@ -5,7 +5,13 @@
         <%= link_to(nav_item[:name], nav_item[:path]) %>
         <% if @sidebar_name == nav_item[:name] && !@sidebar_subnav.nil?%>
           <ul class="nav">
-            <%= raw(@sidebar_subnav.map{|name| "<li><a href='##{name.downcase.gsub(/\s+/, '-')}'>#{name}</a></li>"}.join) %>
+            <% if @sidebar_name == "Case studies" %>
+              <% @sidebar_subnav.each do |(name, url)| %>
+                <li class="<%= "active" if name == @study %>"><%= link_to(name, url) %></li>
+              <% end %>
+            <% else %>
+              <%= raw(@sidebar_subnav.map{|name| "<li><a href='##{name.downcase.gsub(/\s+/, '-')}'>#{name}</a></li>"}.join) %>
+            <% end %>
           </ul>
         <% end %>
       </li>

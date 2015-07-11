@@ -76,6 +76,7 @@ UnipeptWeb::Application.routes.draw do
   namespace :api, path: "clidocs" do
     get "/",           :to => "clidocs#index",       :as => 'clidocs'
     get "casestudies", :to => "clidocs#casestudies", :as => 'clidocs/casestudies'
+    get "casestudies/tpa", :to => "clidocs#casestudy_tpa", :as => 'clidocs/casestudy_tpa'
     get "prot2pept",   :to => "clidocs#prot2pept",   :as => 'clidocs/prot2pept'
     get "peptfilter",  :to => "clidocs#peptfilter",  :as => 'clidocs/peptfilter'
     get "uniprot",     :to => "clidocs#uniprot",     :as => 'clidocs/uniprot'
