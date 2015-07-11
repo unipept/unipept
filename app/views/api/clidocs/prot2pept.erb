@@ -7,7 +7,7 @@
       </h1>
     </div>
     <p>
-      The <code>prot2pept</code> command takes one or more protein sequences as input, performs an in silico tryptic digest on them and returns the digested peptides as output. By default, a trypsin digest is simulated, but other proteases can be specified by using the the <a href='#param-pattern'><samp>--pattern</samp> parameter</a>. This command runs entirely locally and doesn't connect to any server.
+      The <code>prot2pept</code> command takes one or more protein sequences as input, performs an in silico tryptic digest on them and returns the digested peptides as output. By default, a trypsin digest is simulated, but other proteases can be specified by using the <a href='#param-pattern'><samp>--pattern</samp> parameter</a>. This command runs entirely locally and doesn't connect to any server.
     </p>
     <h2 id="input">Input</h2>
     <p>
@@ -55,7 +55,7 @@ PEPTIDE
     <h2 id="options">Command-line options</h2>
     <h3 id='param-pattern'><samp>--pattern</samp> / <samp>-p</samp> <small>Specify cleavage pattern</small></h3>
     <p>
-      By default, proteins are split by simulating a trypsin digest. This corresponds by splitting the input string by using the regular expression <code>([KR])([^P])</code>. The <code>--pattern</code> options allows you to specify an alternative regular expression to split the sequences.
+      By default, proteins are split by simulating a trypsin digest. This corresponds by splitting the input string by using the regular expression <code>([KR])([^P])</code>. The <code>--pattern</code> option allows you to specify an alternative (ruby-style) regular expression to split the sequences.
     </p>
     <h5>Example</h5>
     <pre>
