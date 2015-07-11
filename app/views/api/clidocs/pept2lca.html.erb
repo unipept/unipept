@@ -7,7 +7,7 @@
       </h1>
     </div>
     <p>
-      The <code>unipept pept2lca</code> command takes one or more tryptic peptides as input and returns the taxonomic lowest common ancestor (<span class="initialism">LCA</span>) for each of them as output. The <span class="initialism">LCA</span> is calculated from all taxa associated with the UniProt records that contain the given peptide. All this information is fetched by doing <a href='<%= api_apidocs_pept2lca_path %>' target='_blank'><span class="initialism">API</span>-requests</a> to the Unipept server.
+      The <code>unipept pept2lca</code> command takes one or more tryptic peptides as input and returns the taxonomic lowest common ancestor (<span class="initialism">LCA</span>) for each of them as output. The <span class="initialism">LCA</span> is calculated from all taxa associated with the UniProt entries that contain the given peptide. All this information is fetched by doing <a href='<%= api_apidocs_pept2lca_path %>' target='_blank'><span class="initialism">API</span>-requests</a> to the Unipept server.
     </p>
     <h2 id="input">Input</h2>
     <p>
@@ -98,7 +98,7 @@ fasta_header,peptide,taxon_id,taxon_name,taxon_rank
     <h2 id="options">Command-line options</h2>
     <h3><samp>--equate</samp> / <samp>-e</samp> <small>Equate isoleucine and leucine</small></h3>
     <p>
-      If the <code>--equate</code> flag is set, isoleucine (I) and leucine (L) are equated when matching tryptic peptides to UniProt records. This is similar to checking the <i>Equate I and L?</i> checkbox when performing a search in the Unipept web interface.
+      If the <code>--equate</code> flag is set, isoleucine (I) and leucine (L) are equated when matching tryptic peptides to UniProt entries. This is similar to checking the <i>Equate I and L?</i> checkbox when performing a search in the Unipept web interface.
     </p>
     <h5>Example</h5>
     <pre>

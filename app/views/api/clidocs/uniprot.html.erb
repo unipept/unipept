@@ -3,11 +3,11 @@
     <div class='page-header'>
       <h1>
         <samp>uniprot</samp><br>
-        <small>Fetches UniProt records based on their accession numbers.</small>
+        <small>Fetches UniProt entries based on their accession numbers.</small>
       </h1>
     </div>
     <p>
-      The <code>uniprot</code> command takes one or more UniProt accession numbers and returns the corresponding UniProt record for each of the accession numbers as output. This information is fetched by using the UniProt webservice.
+      The <code>uniprot</code> command takes one or more UniProt accession numbers and returns the corresponding UniProt entry for each of the accession numbers as output. This information is fetched by using the UniProt webservice.
     </p>
     <h2 id="input">Input</h2>
     <p>
@@ -35,12 +35,12 @@ MTLVPLGDRVVLKQVEAEETTKSGIVLPGQAQEKPQQAEVVAVGPGGVVDGKEVKMEVAVGDKVIYSKYSGTEVKMDGTE
 MFTNSIKNLIIYLMPLMVTLMLLSVSFVDAGKKPSGPNPGGNN</pre>
     <h2 id="output">Output</h2>
     <p>
-      The <code>uniprot</code> command outputs the UniProt record for each of the input accession numbers. By default, only the protein sequences are returned. By using the <a href='#param-format'><samp>--format</samp> parameter</a>, this can be changed to fasta, txt, xml, rdf or gff. All output is written to <i>standard output</i>.
+      The <code>uniprot</code> command outputs the UniProt entry for each of the input accession numbers. By default, only the protein sequences are returned. By using the <a href='#param-format'><samp>--format</samp> parameter</a>, this can be changed to fasta, txt, xml, rdf or gff. All output is written to <i>standard output</i>.
     </p>
     <h2 id="options">Command-line options</h2>
     <h3 id='param-format'><samp>--format</samp> / <samp>-f</samp> <small>Specify the output format</small></h3>
     <p>
-      By default, the <code>uniprot</code> command only returns the protein sequence of the UniProt record. The <code>--format</code> option allows you to select another format. Supported formats are <samp>sequence</samp>, <samp>fasta</samp>, <samp>txt</samp>, <samp>xml</samp>, <samp>rdf</samp>, and <samp>gff</samp>.
+      By default, the <code>uniprot</code> command only returns the protein sequence of the UniProt entry. The <code>--format</code> option allows you to select another format. Supported formats are <samp>sequence</samp>, <samp>fasta</samp>, <samp>txt</samp>, <samp>xml</samp>, <samp>rdf</samp>, and <samp>gff</samp>.
     </p>
     <h5>Example</h5>
     <pre>

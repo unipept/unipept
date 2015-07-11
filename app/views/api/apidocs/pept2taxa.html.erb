@@ -18,7 +18,7 @@
 
     <h3>input</h3>
     <p>
-      <code>input[]</code> is a required parameter that takes one or more tryptic peptides. Unipept will return the set of organisms associated with the UniProt records that contain any of the <code>input[]</code> peptides in their protein sequence. To pass multiple peptides at once, simply add multiple <code>input[]</code> parameters (see <a href="#apidocs-example-multiple">example</a>).
+      <code>input[]</code> is a required parameter that takes one or more tryptic peptides. Unipept will return the set of organisms associated with the UniProt entries that contain any of the <code>input[]</code> peptides in their protein sequence. To pass multiple peptides at once, simply add multiple <code>input[]</code> parameters (see <a href="#apidocs-example-multiple">example</a>).
     </p>
 
     <div class="apidocs-callout apidocs-callout-warning">
@@ -28,7 +28,7 @@
 
     <h3>equate_il</h3>
     <p>
-      <code>equate_il</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, isoleucine (I) and leucine (L) are equated when matching tryptic peptides to UniProt records. This setting is similar to checking the <i>Equate I and L?</i> checkbox when performing a search with the <%= link_to("Tryptic Peptide Analysis", search_single_path) %> in the web interface.
+      <code>equate_il</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, isoleucine (I) and leucine (L) are equated when matching tryptic peptides to UniProt entries. This setting is similar to checking the <i>Equate I and L?</i> checkbox when performing a search with the <%= link_to("Tryptic Peptide Analysis", search_single_path) %> in the web interface.
     </p>
 
     <h3>extra</h3>
@@ -48,7 +48,7 @@
 
     <h2 id="response">Response</h2>
     <p>
-      The organisms associated with matching UniProt records are returned as a list of <span class="initialism">JSON</span> objects. By default, each object contains the following information fields extracted from the UniProt record and <span class="initialism">NCBI</span> taxonomy:
+      The organisms associated with matching UniProt entries are returned as a list of <span class="initialism">JSON</span> objects. By default, each object contains the following information fields extracted from the UniProt entry and <span class="initialism">NCBI</span> taxonomy:
     </p>
 
     <ul>
@@ -183,8 +183,8 @@
     <h2 id="examples">Examples</h2>
     <%= render 'example',
       example_id: "apidocs-example-single",
-      title: "Retrieve all organisms associated with the UniProt records containing a given tryptic peptide",
-      explanation: "<p>This example retrieves all organisms associated with the UniProt records containing the peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i>. The result is the same as " + link_to('this search', sequence_path('AIPQLEVARPADAYETAEAYR')) + " with the Tryptic Peptide Analysis in the web interface.</p>",
+      title: "Retrieve all organisms associated with the UniProt entries containing a given tryptic peptide",
+      explanation: "<p>This example retrieves all organisms associated with the UniProt entries containing the peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i>. The result is the same as " + link_to('this search', sequence_path('AIPQLEVARPADAYETAEAYR')) + " with the Tryptic Peptide Analysis in the web interface.</p>",
       post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2taxa \\
 -d <span class='s1'>'input[]=AIPQLEVARPADAYETAEAYR'</span>",
       get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR</a>",
@@ -206,8 +206,8 @@
 
     <%= render 'example',
       example_id: "apidocs-example-multiple",
-      title: "Retrieve all organisms associated with the UniProt records containing any of multiple tryptic peptides",
-      explanation: "<p>This example retrieves all organisms associated with the UniProt records containing the peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i> or <i class='initialism'>APVLSDSSCK</i>. The result is the same as the combination of " + link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) + " and " + link_to("this search", sequence_path("APVLSDSSCK")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
+      title: "Retrieve all organisms associated with the UniProt entries containing any of multiple tryptic peptides",
+      explanation: "<p>This example retrieves all organisms associated with the UniProt entries containing the peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i> or <i class='initialism'>APVLSDSSCK</i>. The result is the same as the combination of " + link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) + " and " + link_to("this search", sequence_path("APVLSDSSCK")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
       post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2taxa \\
 -d <span class='s1'>'input[]=AIPQLEVARPADAYETAEAYR'</span> \\
 -d <span class='s1'>'input[]=APVLSDSSCK'</span>",
@@ -236,8 +236,8 @@
 
     <%= render 'example',
       example_id: "apidocs-example-equate_il",
-      title: "Retrieve all organisms associated with the UniProt records containing a single tryptic peptide, while equating I and L",
-      explanation: "<p>This example retrieves all organisms associated with the UniProt records containing the peptide <i class='initialism'>APVISDSSCK</i>. In searching, isoleucine (I) and leucine (L) are considered equal. The result is the same as " + link_to("this search", sequence_path("APVISDSSCK") + "/equate_il") + " with the Tryptic Peptide Analysis in the web interface.</p>",
+      title: "Retrieve all organisms associated with the UniProt entries containing a single tryptic peptide, while equating I and L",
+      explanation: "<p>This example retrieves all organisms associated with the UniProt entries containing the peptide <i class='initialism'>APVISDSSCK</i>. In searching, isoleucine (I) and leucine (L) are considered equal. The result is the same as " + link_to("this search", sequence_path("APVISDSSCK") + "/equate_il") + " with the Tryptic Peptide Analysis in the web interface.</p>",
       post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2taxa \\
 -d <span class='s1'>'input[]=APVISDSSCK'</span> \\
 -d <span class='s1'>'equate_il=true'</span>",
@@ -254,8 +254,8 @@
 
     <%= render 'example',
       example_id: "apidocs-example-extra",
-      title: "Retrieve all organisms and lineage associated with the UniProt records containing a single tryptic peptide",
-      explanation: "<p>This example retrieves all organisms associated with the UniProt records containing the peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i> including the complete lineage of these organisms. The result is the same as " + link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
+      title: "Retrieve all organisms and lineage associated with the UniProt entries containing a single tryptic peptide",
+      explanation: "<p>This example retrieves all organisms associated with the UniProt entries containing the peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i> including the complete lineage of these organisms. The result is the same as " + link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
       post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2taxa \\
 -d <span class='s1'>'input[]=AIPQLEVARPADAYETAEAYR'</span> \\
 -d <span class='s1'>'extra=true'</span>",
@@ -334,8 +334,8 @@
 
     <%= render 'example',
       example_id: "apidocs-example-names",
-      title: "Retrieve all organisms and lineage names associated with the UniProt records containing a single tryptic peptide",
-      explanation: "<p>This example retrieves all organisms associated with the UniProt records containing the peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i>, including the complete lineage of these organisms with the names of all ranks. The result is the same as " + link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
+      title: "Retrieve all organisms and lineage names associated with the UniProt entries containing a single tryptic peptide",
+      explanation: "<p>This example retrieves all organisms associated with the UniProt entries containing the peptide <i class='initialism'>AIPQLEVARPADAYETAEAYR</i>, including the complete lineage of these organisms with the names of all ranks. The result is the same as " + link_to("this search", sequence_path("AIPQLEVARPADAYETAEAYR")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
       post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2taxa \\
 -d <span class='s1'>'input[]=AIPQLEVARPADAYETAEAYR'</span> \\
 -d <span class='s1'>'extra=true' \\

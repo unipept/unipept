@@ -7,7 +7,7 @@
       </h1>
     </div>
     <p>
-      The <code>unipept pept2taxa</code> command takes one or more tryptic peptides as input and returns the set of (<span class="initialism">NCBI</span>) taxa extracted from the UniProt records containing the peptides as output. This information is fetched by doing <a href='<%= api_apidocs_pept2taxa_path %>' target='_blank'><span class="initialism">API</span>-requests</a> to the Unipept server.
+      The <code>unipept pept2taxa</code> command takes one or more tryptic peptides as input and returns the set of (<span class="initialism">NCBI</span>) taxa extracted from the UniProt entries containing the peptides as output. This information is fetched by doing <a href='<%= api_apidocs_pept2taxa_path %>' target='_blank'><span class="initialism">API</span>-requests</a> to the Unipept server.
     </p>
     <h2 id="input">Input</h2>
     <p>
@@ -54,7 +54,7 @@ MFNEIAPK,1262948,Roseburia sp. CAG:471,species
 ISVAQGASK,9606,Homo sapiens,species</pre>
     <h2 id="output">Output</h2>
     <p>
-      The <code>unipept pept2taxa</code> command outputs all <span class='initialism'>NCBI</span> taxonomy entries that are associated with UniProt records that contain the given (tryptic) input peptides. By default, for each of the taxa, the <span class='initialism'>NCBI</span> taxon id, the name of the organism and the taxonomic rank are returned. By using the <a href='#param-all'><samp>--all</samp> parameter</a>, this can be supplemented with the full taxonomic lineage of the taxon. Consult the <a href='<%= api_apidocs_pept2taxa_path %>#response' target='_blank'><span class="initialism">API</span> documentation</a> for a detailed list of output fields. A selection of output fields can be specified with the <a href='#param-select'><samp>--select</samp> parameter</a>. By default, output is generated in csv format. By using the <a href='#param-format'><samp>--format</samp> parameter</a>, the format can be changed into json or xml. The output can be written to a file or to <i>standard output</i>.
+      The <code>unipept pept2taxa</code> command outputs all <span class='initialism'>NCBI</span> taxonomy entries that are associated with UniProt entries that contain the given (tryptic) input peptides. By default, for each of the taxa, the <span class='initialism'>NCBI</span> taxon id, the name of the organism and the taxonomic rank are returned. By using the <a href='#param-all'><samp>--all</samp> parameter</a>, this can be supplemented with the full taxonomic lineage of the taxon. Consult the <a href='<%= api_apidocs_pept2taxa_path %>#response' target='_blank'><span class="initialism">API</span> documentation</a> for a detailed list of output fields. A selection of output fields can be specified with the <a href='#param-select'><samp>--select</samp> parameter</a>. By default, output is generated in csv format. By using the <a href='#param-format'><samp>--format</samp> parameter</a>, the format can be changed into json or xml. The output can be written to a file or to <i>standard output</i>.
     </p>
     <h4>File output</h4>
     <p>
@@ -105,7 +105,7 @@ fasta_header,peptide,taxon_id,taxon_name,taxon_rank
     <h2 id="options">Command-line options</h2>
     <h3><samp>--equate</samp> / <samp>-e</samp> <small>Equate isoleucine and leucine</small></h3>
     <p>
-      If the <code>--equate</code> flag is set, isoleucine (I) and leucine (L) are equated when matching tryptic peptides to UniProt records. This is similar to checking the <i>Equate I and L?</i> checkbox when performing a search in the Unipept web interface.
+      If the <code>--equate</code> flag is set, isoleucine (I) and leucine (L) are equated when matching tryptic peptides to UniProt entries. This is similar to checking the <i>Equate I and L?</i> checkbox when performing a search in the Unipept web interface.
     </p>
     <h5>Example</h5>
     <pre>
