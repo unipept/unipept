@@ -19,32 +19,37 @@
     </p>
     <h5>Example</h5>
     <pre>
-<b>$</b> uniprot C6JD41
-MTLVPLGDRVVLKQVEAEETTKSGIVLPGQAQEKPQQAEVVAVGPGGVVDGKEVKMEVAVGDKVIYSKYSGTEVKMDGTEYIIVKQNDILAIVK</pre>
+<b>$</b> uniprot C6JD41 Q06JG4
+MTLVPLGDRVVLKQVEAEETTKSGIVLPGQAQEKPQQAEVVAVGPGGVVDGKEVKMEVAVGDKVIYSKYSGTEVKMDGTEYIIVKQNDILAIVK
+MFTNSIKNLIIYLMPLMVTLMLLSVSFVDAGKKPSGPNPGGNN</pre>
     <h4>Standard input</h4>
     <p>
-      If the command is run without arguments and no file is specified, <code>uniprot</code> will read its input from <i>standard input</i>. When <i>standard input</i> is used, a single UniProt accession number per line is expected.
+      If the command is run without arguments, <code>uniprot</code> will read its input from <i>standard input</i>. When <i>standard input</i> is used, a single UniProt accession number per line is expected.
     </p>
     <pre>
 <b>$</b> cat input.txt
 C6JD41
+Q06JG4
 <b>$</b> cat input | uniprot
-MTLVPLGDRVVLKQVEAEETTKSGIVLPGQAQEKPQQAEVVAVGPGGVVDGKEVKMEVAVGDKVIYSKYSGTEVKMDGTEYIIVKQNDILAIVK</pre>
+MTLVPLGDRVVLKQVEAEETTKSGIVLPGQAQEKPQQAEVVAVGPGGVVDGKEVKMEVAVGDKVIYSKYSGTEVKMDGTEYIIVKQNDILAIVK
+MFTNSIKNLIIYLMPLMVTLMLLSVSFVDAGKKPSGPNPGGNN</pre>
     <h2 id="output">Output</h2>
     <p>
-      The <code>uniprot</code> command outputs the UniProt record for each of the input accession numbers. By default, only the sequences are returned. By using the <a href='#param-format'><samp>--format</samp> parameter</a>, this can be changed to fasta, txt, xml, rdf or gff. All output is written to <i>standard output</i>.
+      The <code>uniprot</code> command outputs the UniProt record for each of the input accession numbers. By default, only the protein sequences are returned. By using the <a href='#param-format'><samp>--format</samp> parameter</a>, this can be changed to fasta, txt, xml, rdf or gff. All output is written to <i>standard output</i>.
     </p>
     <h2 id="options">Command-line options</h2>
     <h3 id='param-format'><samp>--format</samp> / <samp>-f</samp> <small>Specify the output format</small></h3>
     <p>
-      By default, the <code>uniprot</code> command only returns the sequences of the UniProt record. The <code>--format</code> option allows you to select another format. Supported formats are <samp>sequence</samp>, <samp>fasta</samp>, <samp>txt</samp>, <samp>xml</samp>, <samp>rdf</samp>, and <samp>gff</samp>.
+      By default, the <code>uniprot</code> command only returns the protein sequence of the UniProt record. The <code>--format</code> option allows you to select another format. Supported formats are <samp>sequence</samp>, <samp>fasta</samp>, <samp>txt</samp>, <samp>xml</samp>, <samp>rdf</samp>, and <samp>gff</samp>.
     </p>
     <h5>Example</h5>
     <pre>
-<b>$</b> uniprot <b>--format</b> fasta C6JD41
+<b>$</b> uniprot <b>--format</b> fasta C6JD41 Q06JG4
 >tr|C6JD41|C6JD41_9FIRM 10 kDa chaperonin OS=Ruminococcus sp. 5_1_39BFAA GN=groS PE=3 SV=1
 MTLVPLGDRVVLKQVEAEETTKSGIVLPGQAQEKPQQAEVVAVGPGGVVDGKEVKMEVAV
-GDKVIYSKYSGTEVKMDGTEYIIVKQNDILAIVK</pre>
+GDKVIYSKYSGTEVKMDGTEYIIVKQNDILAIVK
+>sp|Q06JG4|16D10_MELHA CLAVATA3/ESR (CLE)-related protein 16D10 OS=Meloidogyne hapla GN=16D10 PE=2 SV=1
+MFTNSIKNLIIYLMPLMVTLMLLSVSFVDAGKKPSGPNPGGNN</pre>
     <h3><samp>--help</samp> / <samp>-h</samp> <small>Display help</small></h3>
     <p>
       This flag displays the help.
