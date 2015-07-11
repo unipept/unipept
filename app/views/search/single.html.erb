@@ -1,21 +1,32 @@
-<h1>
-  Tryptic Peptide Analysis
-  <small>search for a single tryptic peptide</small>
-</h1>
 <div class="row">
-  <div class="col-xs-6">
-    <p>
-      <%= render 'shared/single_search_intro' %>
-    </p>
-  </div>
-  <div class="col-xs-6">
+  <div class="col-xs-offset-3 col-xs-6">
     <div class='card'>
       <div class='card-title card-title-colored'>
-        <h2 class='card-title-text'>Try searching for a tryptic peptide</h2>
+        <h2 class='card-title-text'>Search for a single tryptic peptide</h2>
       </div>
       <div class='card-supporting-text'>
         <%= render 'shared/sequence_search' %>
       </div>
     </div>
+  </div>
+</div>
+<div class="row tpa-info">
+  <div class="col-xs-4 info-step">
+    <h2>Enter a tryptic peptide</h2>
+    <p>
+      An input peptide can be 5 to 50 residues long and can contain any number of miscleavages.
+    </p>
+  </div>
+  <div class="col-xs-4 info-step">
+    <h2>Click search</h2>
+    <p>
+      Unipept will try to find exact matches in all UniProt records, equating leucine (L) and isoleucine (I) if you wish.
+    </p>
+  </div>
+  <div class="col-xs-4 info-step">
+    <h2>View results</h2>
+    <p>
+      All matched UniProt records and corresponding NCBI taxa are listed and visualised and the taxonomic lowest common ancestor is calculated.
+    </p>
   </div>
 </div>
