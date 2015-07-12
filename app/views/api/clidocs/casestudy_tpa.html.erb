@@ -4,6 +4,7 @@
     <p class='lead'>
       This case study describes how the Unipept command line tools can be used for the taxonomic analysis of a single tryptic peptide.
     </p>
+    <h2>Introduction</h2>
     <p>
       Because most proteins are simply to large to be analysed using a mass spectrometer, they are usually cleaved into smaller peptides before the actual MS analysis takes place. In practice, most proteomics studies achieve such a cleavage by adding trypsin to a protein sample. Trypsin is a serine protease found in the digestive system of humans and many other vertebrates, where it helps to digest food proteins. The enzyme has a very specific function — it only cleaves <a href='http://en.wikipedia.org/wiki/Peptide' target='_blank'>peptide</a> chains at the <a href='http://en.wikipedia.org/wiki/Carboxyl' target='_blank'>carboxyl</a> side of the <a href='http://en.wikipedia.org/wiki/Amino_acids' target='_blank'>amino acids</a> <a href='http://en.wikipedia.org/wiki/Lysine' target='_blank'>lysine</a> (represented by the letter <code>K</code>) or <a href='http://en.wikipedia.org/wiki/Arginine' target='_blank'>arginine</a> (represented by the letter <code>R</code>). As a result, it is commonly used in biological research during <a href='http://en.wikipedia.org/wiki/Proteomics' target='_blank'>proteomics</a> experiments to digest proteins into peptides for mass spectrometry analysis, e.g. <a href='http://en.wikipedia.org/wiki/In-gel_digestion' target='_blank'>in-gel digestion</a>.
     </p>
@@ -25,6 +26,7 @@
         <p class='panel-caption'><b>Figure 2</b> General outline of the Unipept workflow for taxonomic identification of tryptic peptides. For a given tryptic peptide, all UniProt entries having an exact match of the peptide in the protein sequence are found. Unipept then computes the lowest common ancestor (<span class='initialism'>LCA</span>) of the taxonomic annotations extracted from the matched UniProt entries, based on a cleaned up version of the <span class='initialism'>NCBI</span> Taxonomy. All intermediate results are shown for the sample tryptic peptide <code>ENFVY[IL]AK</code> (isoleucine and leucine equated), leading to an <span class='initialism'>LCA</span> in the phylum <i>Streptophyta</i>. Arrows at the bottom show which processing steps are available as functions in the Unipept API and the Unipept <span class='initialism'>CLI</span>.</p>
       </div>
     </div>
+    <h2>Getting started</h2>
     <p>
       Before the Unipept command line interface (<span class='initialism'>CLI</span>) can be used, it first needs to be installed locally. Since the commands of the <span class='initialism'>CLI</span> are implemented in Ruby, <a href='https://www.ruby-lang.org/en/downloads/' target='_blank'>the Ruby environment must be installed first</a> (at least version 1.9). The Unipept <span class='initialism'>CLI</span> can then be installed using the <code>gem</code> command, which is the RubyGems package manager for the Ruby programming language.
     </p>
@@ -108,6 +110,8 @@ Installing ri documentation for unipept-<%= Rails.application.config.versions[:g
 Installing RDoc documentation for unipept-<%= Rails.application.config.versions[:gem] %>...
 <b>$</b> unipept --version
 <%= Rails.application.config.versions[:gem] %></pre>
+
+    <h2>The Unipept commands</h2>
     <p>
       Using the <code>unipept</code> command with a single tryptic peptide passed as an argument or read from standard input, corresponds to using the <i>Tryptic Peptide Analysis</i> feature from the Unipept web interface (<a href='#figure-3'>Figure 3</a>). Activating the option <i>Equate I and L</i> in the web interface corresponds to using the <code>-e</code> option with the <code>unipept</code> command.
   </p>
@@ -132,6 +136,7 @@ Installing RDoc documentation for unipept-<%= Rails.application.config.versions[
         <p class='panel-caption'><b>Figure 4</b> Information about the lowest common ancestor of the tryptic peptide <code>ENFVYIAK</code>, as displayed on top of the page that shows the results of a Tryptic Peptide Analysis in the Unipept web interface.</p>
       </div>
     </div>
+    <h2>Taxonomic analysis</h2>
     <p>
       Say that we have determined the mass spectrum of a tryptic peptide, that was identified as the peptide <code>ENFVYIAK</code> using database searches (<i>Mascot</i> (Cottrell &amp; London, 1999), <i>Sequest</i> (Eng <i>et al.</i>, 1994), <i>X!Tandem</i> (Craig <i>et al.</i>, 2003)) or <i>de novo</i> identification (<i>PEAKS</i> (Ma <i>et al.</i>, 2003)). As an example, we show how this tryptic peptide can be taxonomically assigned to the phylum <i>Streptophyta</i>. As a starter, we can use the <code>unipept pept2prot</code> command to fetch all UniProt proteins indexed by Unipept that contain the peptide.
     </p>
@@ -343,7 +348,7 @@ ENFVYLAK,35493,Streptophyta,phylum</pre>
     <p>
       The correctness of the computed LCAs can be checked based on the taxonomic hierarchy shown in <a href='#figure-2'>Figure 2</a>.
     </p>
-    <h3>References</h3>
+    <h2>References</h2>
     <ul>
 <li>Ashburner, M., Ball, C. A., Blake, J. A., Botstein, D., Butler, H., Cherry, J. M., ... &amp; Sherlock, G. (2000). Gene Ontology: tool for the unification of biology. Nature genetics, 25(1), 25-29.</li>
 <li>Benson, D. A., Cavanaugh, M., Clark, K., Karsch-Mizrachi, I., Lipman, D. J., Ostell, J., &amp; Sayers, E. W. (2013). GenBank. Nucleic acids research, 41(D1), D36-D42.</li>
