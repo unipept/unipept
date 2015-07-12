@@ -96,21 +96,6 @@ ENFVYIAK,35493,Streptophyta,phylum
 <b>$</b> unipept pept2lca ENFVYIAK
 peptide,taxon_id,taxon_name,taxon_rank
 ENFVYIAK,35493,Streptophyta,phylum</pre>
-    <p>
-      The Unipept command line tools can be easily updated by running the <code>gem update</code> command.
-    </p>
-    <pre>
-<b>$</b> unipept --version
-0.9.0
-<b>$</b> gem update unipept
-Fetching: unipept-<%= Rails.application.config.versions[:gem] %>.gem (100%)
-Successfully installed unipept-<%= Rails.application.config.versions[:gem] %>
-1 gem installed
-Installing ri documentation for unipept-<%= Rails.application.config.versions[:gem] %>...
-Installing RDoc documentation for unipept-<%= Rails.application.config.versions[:gem] %>...
-<b>$</b> unipept --version
-<%= Rails.application.config.versions[:gem] %></pre>
-
     <h2>The Unipept commands</h2>
     <p>
       Using the <code>unipept</code> command with a single tryptic peptide passed as an argument or read from standard input, corresponds to using the <i>Tryptic Peptide Analysis</i> feature from the Unipept web interface (<a href='#figure-3'>Figure 3</a>). Activating the option <i>Equate I and L</i> in the web interface corresponds to using the <code>-e</code> option with the <code>unipept</code> command.
