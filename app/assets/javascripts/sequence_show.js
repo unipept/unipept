@@ -26,18 +26,19 @@ function init_sequence_show(data) {
      */
     function initHelp() {
         // tab help
-        $(".nav-tabs li a span.help").on("mouseover", function () {
+        $(".nav-tabs li a span.help").click(function (e) {
+            var title,
+                content;
+            e.stopPropagation();
+            e.preventDefault();
             if ($(this).parent().attr("id") === "lineage-tree-tab") {
-                $("#lineage-tree-help").show();
-                $("#lineage-table-help").hide();
+                title = "Lineage tree";
+                content = "This interactive tree bundles the complete taxonomic lineages of all UniProt entries whose protein sequence contains " + data.peptide + ". You can click on nodes to expand them, scroll to zoom and drag to move the tree.";
             } else {
-                $("#lineage-table-help").show();
-                $("#lineage-tree-help").hide();
+                title = "Lineage table";
+                content = "This table shows the complete taxonomic lineages of all taxa associated with the UniProt entries whose protein sequence contains " + data.peptide + ". The first column contains the taxon name extracted from the UniProt entry, followed by columns representing taxonomic ranks ordered from superkingdom on the left to forma on the right.";
             }
-            $("#tab-help").stop(true, true).fadeIn(200);
-        });
-        $(".nav-tabs li a span").on("mouseout", function () {
-            $("#tab-help").stop(true, true).fadeOut(200);
+            showInfoModal(title, content);
         });
     }
 

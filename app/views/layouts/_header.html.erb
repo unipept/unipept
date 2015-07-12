@@ -8,7 +8,7 @@
       <% if user_signed_in? %>
         <%= link_to("Sign out", destroy_user_session_path, :method => :delete, class: "header-navigation-link") if Rails.application.config.unipept_enable_auth %>
       <% else %>
-        <%= link_to(new_user_session_path, class: "header-navigation-link btn-icon") do %>
+        <%= link_to(new_user_session_path, class: "header-navigation-link header-btn-login btn-icon") do %>
           <span class="glyphicon glyphicon-lock"></span>
         <% end %>
       <% end %>

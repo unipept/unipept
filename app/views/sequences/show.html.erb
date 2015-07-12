@@ -13,18 +13,10 @@
     <div class='card-title card-title-colored'>
       <div id="single-peptide-tabs">
         <ul class="nav nav-tabs">
-          <li class="active"><a href="#lineage-tree" id="lineage-tree-tab" data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-info-sign help"></span></a></li>
-          <li><a href="#lineage-table" id="lineage-table-tab" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-info-sign help"></span></a></li>
+          <li class="active"><a href="#lineage-tree" id="lineage-tree-tab" data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-info-sign help btn-icon"></span></a></li>
+          <li><a href="#lineage-table" id="lineage-table-tab" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-info-sign help btn-icon"></span></a></li>
           <li><a href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
         </ul>
-        <div class="tab-help" id="tab-help">
-          <div id="lineage-tree-help">
-            <p>This interactive tree bundles the complete taxonomic lineages of all UniProtKB records whose protein sequence contains <%= @original_sequence %>. You can click on nodes to expand them. Take into account that due to gaps in the hierarchical structure of the NCBI taxonomy, taxonomic levels are not always properly aligned in the tree view.</p>
-          </div>
-          <div id="lineage-table-help">
-            <p>This table shows the complete taxonomic lineages of all UniProtKB records whose protein sequence contains <%= @original_sequence %>. Each row represents the complete taxonomic lineage of a single UniProtKB record. The first column contains the name extracted from the UniProtKB record, follow by columns representing valid taxonomic ranks ordered from superkingdom on the left to forma on the right. Only ranks used in the complete lineages of the records in which the peptide was found are displayed as columns in the table. To ease the interpretation of the table, rows are ordered according to the taxonomic names in the taxonomic rank columns and cells containing the same taxonomic name are marked with the same color code per column.</p>
-          </div>
-        </div>
       </div>
     </div>
     <div class='card-supporting-text'>
@@ -103,13 +95,14 @@
       </div>
     </div>
   </div>
-<script type="text/javascript">
-  $(function () {
-    init_sequence_show({
-      tree: <%= raw(@root) %>,
-      uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>
+  <script type="text/javascript">
+    $(function () {
+      init_sequence_show({
+        peptide: "<%= @original_sequence %>",
+        tree: <%= raw(@root) %>,
+        uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>
+      });
     });
-  });
-</script>
+  </script>
 <% end %>
 <%= render 'shared/save_image_modal' %>
