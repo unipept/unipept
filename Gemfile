@@ -60,7 +60,7 @@ end
 gem 'stathat'
 
 group :development do
-  gem 'rubocop', require: false
+  gem 'rubocop'
   gem 'annotate' # annotate models with database info
   gem 'guard'
   gem 'guard-minitest' # auto run tests
