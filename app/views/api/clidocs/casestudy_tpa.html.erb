@@ -29,7 +29,7 @@
     <%= render 'getting_started' %>
     <h2>The Unipept commands</h2>
     <p>
-      Using the <code>unipept</code> command with a single tryptic peptide passed as an argument or read from standard input, corresponds to using the <i>Tryptic Peptide Analysis</i> feature from the Unipept web interface (<a href='#figure-3'>Figure 3</a>). Activating the option <i>Equate I and L</i> in the web interface corresponds to using the <code>-e</code> option with the <code>unipept</code> command.
+      Using the <code>unipept</code> command with a single tryptic peptide passed as an argument or read from standard input, corresponds to using the <a href='<%= search_single_path %>' target='_blank'><i>Tryptic Peptide Analysis</i></a> feature from the Unipept web interface (<a href='#figure-3'>Figure 3</a>). Activating the option <i>Equate I and L</i> in the web interface corresponds to using the <code>-e</code> option with the <code>unipept</code> command.
   </p>
     <div id='figure-3' class="panel panel-default panel-figure">
       <div class="panel-body">
@@ -38,7 +38,7 @@
       </div>
     </div>
     <p>
-      The <code>unipept pept2prot</code> command is an implementation of the <code>pept2prot</code> step in <a href='#figure-2'>Figure 2</a>. This command can therefore be used to fetch all UniProt proteins that contain (exact matching) the given tryptic peptide. These peptides are listed in the <i>Protein matches</i> tab on the page that shows the results of a Tryptic Peptide Analysis on the Unipept web interface. When the option <code>-a/--all</code> is used, additional taxonomic and functional information is shown for each of the matched protein records. These metadata are extracted directly from the annotations on the UniProt entries.
+      The <code>unipept pept2prot</code> command is an implementation of the <code>pept2prot</code> step in <a href='#figure-2'>Figure 2</a>. This command can therefore be used to fetch all UniProt proteins that contain (exact matching) the given tryptic peptide. These peptides are listed in the <i>Protein matches</i> tab on the <a href='<%= sequence_show_path(id: 'ENFVYIAK', equate_il: 'equate_il') %>' target='_blank'>page</a> that shows the results of a Tryptic Peptide Analysis on the Unipept web interface. When the option <code>-a/--all</code> is used, additional taxonomic and functional information is shown for each of the matched protein records. These metadata are extracted directly from the annotations on the UniProt entries.
     </p>
     <p>
       The <code>unipept pept2taxa</code> command is the composition of the <code>pept2prot</code> and <code>prot2taxa</code> steps in <a href='#figure-2'>Figure 2</a>, apart from the fact that this command also implements a deduplication of the matched taxa. The command can thus be used to fetch all taxonomic annotations from all UniProt proteins that contain the given tryptic peptide. This information is represented in the Unipept web interface in tabular format (<i>Lineage table</i> tab) and in tree format (<i>Lineage tree</i> tab). All information included in the table can be retrieved using the <code>-a</code> option in combination with this command. The tree structure is only a compact representation of the complete lineages included in the table.
