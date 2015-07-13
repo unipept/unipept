@@ -2,8 +2,8 @@
 <div class="row">
     <div class="col-xs-9">
         <p><%= @intro_text %></p>
-        <% if @prideURL.present? %>
-          <p>This dataset was loaded from <span class="initialism">PRIDE</span>. <%= link_to "View in PRIDE" , @prideURL, :target => "_blank" %> <span class='glyphicon glyphicon-share-alt'></span></p>
+        <% if @pride_url.present? %>
+          <p>This dataset was loaded from <span class="initialism">PRIDE</span>. <%= link_to "View in PRIDE" , @pride_url, :target => "_blank" %> <span class='glyphicon glyphicon-share-alt'></span></p>
         <% end %>
     </div>
     <div class="col-xs-3 text-right">
@@ -27,8 +27,8 @@
         <li><a href="#d3TreeMapWrapper" data-toggle="tab">Treemap</a></li>
         <li><a href="#d3TreeViewWrapper" data-toggle="tab">Treeview</a></li>
     </ul>
-    <div id="visualisations" class="tab-content multi-search notFullScreen">
-        <div id="fullScreenBar">
+    <div class="full-screen-container tab-content multi-search not-full-screen">
+        <div class="full-screen-bar">
             <div class="logo"><img src="<%= asset_path('trans_logo.png') %>" alt="logo" width="40" height="40"></div>
             <nav class="fullScreenNav">
                 <ul class="visualisations">

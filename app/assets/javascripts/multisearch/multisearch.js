@@ -119,7 +119,7 @@ var constructMultisearch = function constructMultisearch(args) {
             $("#buttons").prepend("<button id='zoom-btn' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
             $("#zoom-btn").click(function () {
                 logToGoogle("Multi Peptide", "Full Screen", getActiveTab());
-                window.fullScreenApi.requestFullScreen($("#visualisations").get(0));
+                window.fullScreenApi.requestFullScreen($(".full-screen-container").get(0));
             });
             $(document).bind(fullScreenApi.fullScreenEventName, resizeFullScreen);
         }
@@ -138,12 +138,12 @@ var constructMultisearch = function constructMultisearch(args) {
         });
 
         // class
-        $("#visualisations").toggleClass("fullScreen", isFullScreen);
-        $("#visualisations").toggleClass("notFullScreen", !isFullScreen);
+        $(".full-screen-container").toggleClass("full-screen", isFullScreen);
+        $(".full-screen-container").toggleClass("not-full-screen", !isFullScreen);
 
         // tooltip
         if (isFullScreen) {
-            $("#tooltip").appendTo("#visualisations");
+            $("#tooltip").appendTo(".full-screen-container");
         } else {
             $("#tooltip").appendTo("body");
         }
@@ -160,12 +160,12 @@ var constructMultisearch = function constructMultisearch(args) {
         logToGoogle("Multi Peptide", "Save Image", activeTab);
         if (activeTab === "sunburst") {
             d3.selectAll(".toHide").attr("class", "arc hidden");
-            triggerDownloadModal("#sunburst > svg", null, "unipept_sunburst", "#visualisations");
+            triggerDownloadModal("#sunburst > svg", null, "unipept_sunburst", ".full-screen-container");
             d3.selectAll(".hidden").attr("class", "arc toHide");
         } else if (activeTab === "d3TreeMap") {
-            triggerDownloadModal(null, "#d3TreeMap", "unipept_treemap", "#visualisations");
+            triggerDownloadModal(null, "#d3TreeMap", "unipept_treemap", ".full-screen-container");
         } else {
-            triggerDownloadModal("#d3TreeView svg", null, "unipept_treeview", "#visualisations");
+            triggerDownloadModal("#d3TreeView svg", null, "unipept_treeview", ".full-screen-container");
         }
     }
 
@@ -181,7 +181,7 @@ var constructMultisearch = function constructMultisearch(args) {
     }
 
     function getActiveTab() {
-        var activePane = $("#visualisations div.active").attr('id');
+        var activePane = $(".full-screen-container div.active").attr('id');
         return activePane.split("Wrapper")[0];
     }
 

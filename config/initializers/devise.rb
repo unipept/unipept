@@ -6,7 +6,7 @@ Devise.setup do |config|
   # confirmation, reset password and unlock tokens in the database.
   config.secret_key = 'cfad0db2bfbbe209b0cc1c2eef818e62a164a711de036a1e91760c8fa79003823c7e6d8c808821ef1e6b2d67952e5bd5366933e0362e59c444b24bda1494f9ab'
 
-  config.cas_base_url = "https://login.ugent.be"
+  config.cas_base_url = 'https://login.ugent.be'
   config.cas_enable_single_sign_out = true
 
   # ==> Mailer Configuration
@@ -44,12 +44,12 @@ Devise.setup do |config|
   # Configure which authentication keys should be case-insensitive.
   # These keys will be downcased upon creating or modifying a user and when used
   # to authenticate or find a user. Default is :email.
-  config.case_insensitive_keys = [ :username ]
+  config.case_insensitive_keys = [:username]
 
   # Configure which authentication keys should have whitespace stripped.
   # These keys will have whitespace before and after removed upon creating or
   # modifying a user and when used to authenticate or find a user. Default is :email.
-  config.strip_whitespace_keys = [ :username ]
+  config.strip_whitespace_keys = [:username]
 
   # Tell if authentication through request.params is enabled. True by default.
   # It can be set to an array that will enable params authentication only for the

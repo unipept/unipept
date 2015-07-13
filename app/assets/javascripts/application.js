@@ -1,7 +1,4 @@
 //= require jquery
-//= require jquery-ui/draggable
-//= require jquery-ui/droppable
-//= require jquery-ui/sortable
 //= require jquery_ujs
 //= require zeroclipboard
 //= require vendor
@@ -60,7 +57,7 @@ function get(url) {
     req.onload = function() {
       // This is called even on 404 etc
       // so check the status
-      if (req.status == 200) {
+      if (req.status === 200) {
         // Resolve the promise with the response text
         resolve(req.response);
       }
@@ -248,7 +245,7 @@ function error(errorMessage, userMessage) {
         }
     }
     if (userMessage) {
-        var msg = $("<div class='alert alert-danger' style='display: none;'><strong>Oh snap!</strong> " + userMessage + "</div>");
+        var msg = $("<div class='alert alert-danger alert-dismissible' style='display: none;'><button type='button' class='close' data-dismiss='alert'><span>&times;</span></button><strong>Oh snap!</strong> " + userMessage + "</div>");
         $("#messages").append(msg);
         msg.show("normal");
     }
@@ -257,7 +254,7 @@ function error(errorMessage, userMessage) {
 /* display the message variable in an info alert
  */
 function info(message) {
-    var msg = $("<div class='alert alert-info' style='display: none;'><strong>Heads up!</strong> " + message + "</div>");
+    var msg = $("<div class='alert alert-info alert-dismissible' style='display: none;'><button type='button' class='close' data-dismiss='alert'><span>&times;</span></button><strong>Heads up!</strong> " + message + "</div>");
     $("#messages").append(msg);
     msg.show("normal");
 }
@@ -323,11 +320,19 @@ window.onerror = function (message, file, line) {
  * Takes an iterator and puts all values in an array
  */
 function iteratorToArray(iterator) {
-    var values = [],
-        next = iterator.next();
-    while (!next.done) {
-        values.push(next.value);
-        next = iterator.next();
+    var vals = [],
+        v;
+    v = iterator.next();
+    while (!v.done) {
+        vals.push(v.value);
+        v = iterator.next();
     }
-    return values;
+    return vals;
 }
+
+/**
+ * Capitalizes the first letter of a string
+ */
+String.prototype.capitalizeFirstLetter = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+};

@@ -1,6 +1,6 @@
 <h1>News</h1>
 
-<%= link_to 'New Post', new_post_path, :class => "btn btn-primary" if user_signed_in? && current_user.is_admin? %>
+<%= link_to 'New Post', new_post_path, :class => "btn btn-primary" if user_signed_in? && current_user.admin? %>
 <br/><br/>
 
 <div id="posts">

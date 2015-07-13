@@ -1,4 +1,4 @@
 <%= render @dataset, :load => false %>
 
-<%= link_to('Edit', edit_dataset_path(@dataset)) + " |" if user_signed_in? && current_user.is_admin? %>
+<%= link_to('Edit', edit_dataset_path(@dataset)) + " |" if user_signed_in? && current_user.admin? %>
 <%= link_to 'Back', datasets_path %>

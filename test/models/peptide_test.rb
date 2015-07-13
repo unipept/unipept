@@ -12,29 +12,27 @@
 require 'test_helper'
 
 class PeptideTest < ActiveSupport::TestCase
-
-  test "should fail to create new peptide" do
+  test 'should fail to create new peptide' do
     assert_not Peptide.new.save
   end
 
-  test "should raise error on save" do
+  test 'should raise error on save' do
     peptide = peptides(:pept1)
-    assert_raises(ActiveRecord::ReadOnlyRecord) {peptide.save}
+    assert_raises(ActiveRecord::ReadOnlyRecord) { peptide.save }
   end
 
-  test "should raise error on sequence_id change" do
+  test 'should raise error on sequence_id change' do
     peptide = peptides(:pept1)
-    assert_raises(ActiveRecord::ActiveRecordError) {peptide.update_attribute(:sequence_id, 35)}
+    assert_raises(ActiveRecord::ActiveRecordError) { peptide.update_attribute(:sequence_id, 35) }
   end
 
-  test "should raise error on delete" do
+  test 'should raise error on delete' do
     peptide = peptides(:pept1)
-    assert_raises(ActiveRecord::ReadOnlyRecord) {peptide.delete}
+    assert_raises(ActiveRecord::ReadOnlyRecord) { peptide.delete }
   end
 
-  test "should raise error on destroy" do
+  test 'should raise error on destroy' do
     peptide = peptides(:pept1)
-    assert_raises(ActiveRecord::ReadOnlyRecord) {peptide.destroy}
+    assert_raises(ActiveRecord::ReadOnlyRecord) { peptide.destroy }
   end
-
 end

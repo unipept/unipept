@@ -154,7 +154,7 @@ var constructTreeview = function constructTreeview(args) {
 
     // Expands a node for i levels
     function expand(d, i) {
-        var local_i = i
+        var local_i = i;
         if (typeof local_i === "undefined") {
             local_i = 2;
         }

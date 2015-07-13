@@ -1,7 +1,6 @@
 <h1><%= @title %></h1>
-
 <% if @lineages.empty? %>
-    <p class="lead">No results were found for <%= @original_sequence %>.</p>
+  <p class="lead">No results were found for <%= @original_sequence %>.</p>
 <% else %>
 <p class="lead"><span class="initialism"><%= @original_sequence %></span> was found in <b><%= @entries.size %></b> <%= 'UniProt entry'.pluralize(@entries.size) %> with a lowest common ancestor of <b><%= @lca_taxon.name %></b>.</p>
 <p>Summary of the analysis:</p>
@@ -31,46 +30,55 @@
       <div id="buttons-single"></div>
       <div id="lineageTree"></div>
     </div>
-
-    <div class="tab-pane" id="lineage-table">
-      <div id="sequence_table">
+    <div class="tab-content">
+      <div class="tab-pane active" id="lineage-tree">
+        <div id="buttons-single" class="buttons-single"></div>
+        <div id="lineageTree"></div>
+      </div>
+      <div class="tab-pane" id="lineage-table">
+        <div id="sequence_table">
           <% colors = Hash.new %>
           <table class="table table-condensed">
-          <thead>
-          <tr>
-              <% for rank in @table_ranks do%>
+            <thead>
+              <tr>
+                <% for rank in @table_ranks do%>
                   <th><%= rank %></th>
-              <% end %>
-          </tr>
-          </thead>
-          <% i = -1 %>
-          <% for lineage in @table_lineages do%>
+                <% end %>
+              </tr>
+            </thead>
+            <% i = -1 %>
+            <% for lineage in @table_lineages do%>
               <% i += 1 %>
               <tr>
-                  <td><strong><%= lineage.delete_at(0) %></strong></td>
-                  <% for rank in lineage do%>
+                <td><strong><%= lineage.delete_at(0) %></strong></td>
+                <% for rank in lineage do%>
                   <% if !rank.nil? %>
-                      <% colors.store(rank.id, "c"+(i%30).to_s) if !colors.has_key?(rank.id) %>
-                      <td class="<%= colors[rank.id] %>"><%= link_to rank.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + rank.id.to_s, :target => "_blank", :title => "Open in NCBI" %></td>
+                    <% colors.store(rank.id, "c"+(i%30).to_s) if !colors.has_key?(rank.id) %>
+                    <td class="<%= colors[rank.id] %>"><%= link_to rank.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + rank.id.to_s, :target => "_blank", :title => "Open in NCBI" %></td>
                   <% else %>
-                      <td></td>
+                    <td></td>
                   <% end %>
-                  <% end %>
+                <% end %>
               </tr>
-          <% end %>
+            <% end %>
           </table>
+        </div>
       </div>
-    </div>
-
-    <div class="tab-pane" id="proteins">
-      <table class="table table-condensed table-hover protein-info">
-          <thead><tr>
-            <th class="id">UniProt ID</th>
-            <th class="name">Name</th>
-            <th class="organism">Organism</th>
-            <th class="ec">EC number</th>
-            <th class="go">GO terms</th>
-          </tr></thead>
+      <div class="tab-pane" id="proteins">
+        <div class="buttons-single">
+          <button id="clipboard-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-copy"></span> Copy to clipboard</button>
+          <button id="open-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-new-window"></span> Open in UniProt</button>
+        </div>
+        <table class="table table-condensed table-hover protein-info">
+          <thead>
+            <tr>
+              <th class="id">Uniprot ID</th>
+              <th class="name">Name</th>
+              <th class="organism">Organism</th>
+              <th class="ec">EC number</th>
+              <th class="go">GO terms</th>
+            </tr>
+          </thead>
           <% for entry in @entries do %>
             <% unless entry.name.nil? %>
               <tr>
@@ -92,15 +100,17 @@
               </tr>
             <% end %>
           <% end %>
-      </table>
+        </table>
+      </div>
     </div>
-</div>
-</div>
-
-    <script type="text/javascript">
-        $(function () {init_sequence_show(<%= raw(@root)%>);});
-    </script>
-
+  </div>
+  <script type="text/javascript">
+    $(function () {
+      init_sequence_show({
+        tree: <%= raw(@root) %>,
+        uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>
+      });
+    });
+  </script>
 <% end %>
-
 <%= render 'shared/save_image_modal' %>

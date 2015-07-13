@@ -2,10 +2,7 @@
  * Constructs a Pancore object that handles all JavaScript on the Unique
  * Peptide Finder page.
  *
- * @param <Array> args.data The data array used to construct the selection tree
- *          has around 2500 objects with this format:
- *          {"bioproject_id":57587,"class_id":29547,"genus_id":194,
- *          "name":"Campylobacter jejuni","order_id":213849,"species_id":197}
+ * @param <Array> args.data The data array containing all genomes
  * @param <Hash> args.taxa is a list of key-value pairs mapping
  *          taxon id's to taxon names used for the selection tree.
  * @param <String> args.version The uniprot version
@@ -15,18 +12,27 @@ var constructPancore = function constructPancore(args) {
     /*************** Private variables ***************/
 
     var that = {},
+        data = args.data,
+        genomeData = new Map(),
         genomes = new Map(),
         promisesLoading = new Map(),
         promisesDownload = new Map(),
         isLoading = false,
+        askRestore = false,
         rank = 0,
         lca = "",
-        tree,
+        genomeSelector,
         graph,
         matrix,
         table,
         myGenomes,
         worker;
+
+    // notifications
+    var $loadingNotification,
+        $pancoreNotification,
+        $autosortNotification,
+        $similarityNotification;
 
     /*************** Private methods ***************/
 
@@ -34,12 +40,17 @@ var constructPancore = function constructPancore(args) {
      * Initializes pancore
      */
     function init() {
-        // Construct the selection tree
-        tree = constructSelectionTree({data : args.data, taxa : args.taxa});
-        tree.drawTree({
-            tree : "#treeView",
-            tableDiv : "#genomes-table-div",
-            treeSearch : "#treeSearchDiv"
+        // init genomeData map
+        args.data.forEach(function (genome) {
+            genomeData.set(genome.id, genome);
+        });
+
+        // Construct the genome selector
+        genomeSelector = constructGenomeSelector({
+            data : data,
+            taxa : args.taxa,
+            genomes: genomes,
+            pancore : that
         });
 
         // Constructs the table
@@ -72,15 +83,18 @@ var constructPancore = function constructPancore(args) {
 
         // Constructs the myGenomes feature
         if (window.File && window.FileReader && window.FileList) {
-            myGenomes = constructMyGenomes({version : args.version});
+            myGenomes = constructMyGenomes({
+                version : args.version,
+                pancore : that
+            });
         } else {
             $("#my-genome-error").removeClass("hide");
         }
 
         // Initialize the rest of the page
         initHelp();
-        initSpeciesForm();
         initFullScreen();
+        initActionBar();
         initSaveImage();
 
         // IE10 message
@@ -88,9 +102,20 @@ var constructPancore = function constructPancore(args) {
             info("You're using Internet Explorer 10. Everything should work as expected, but for an optimal experience, please use a recent version of Mozilla Firefox or Google Chrome.");
         }
 
+        window.onbeforeunload = that.saveStatus;
+
         // Ready for take off
-        $("#species_id").val(470);
-        $("#add_species_peptidome").click();
+        if (localStorage.pancoreStatus) {
+            if (localStorage.pancoreLoadedBefore === "no") {
+                localStorage.pancoreLoadedBefore = "yes";
+                that.loadStatus();
+            } else {
+                genomeSelector.demo();
+                askToRestore();
+            }
+        } else {
+            genomeSelector.demo();
+        }
     }
 
     /**
@@ -111,27 +136,6 @@ var constructPancore = function constructPancore(args) {
         $("#tabs li a span").on("mouseout", function () {
             $("#tab-help").stop(true, true).fadeOut(200);
         });
-
-        $("#add-by-species-help").tooltip({placement : "right", container : "body"});
-        $("#add-by-genome-help").tooltip({placement : "right", container : "body"});
-    }
-
-    /**
-     * Initializes the add species button
-     */
-    function initSpeciesForm() {
-        // Add handler to the "add species"-form
-        $("#add_species_peptidome").click(function () {
-            // Get all bioproject id's for the selected species id
-            var url = "/peptidome/genomes/species/" + $("#species_id").val() + ".json";
-            getJSON(url).then(function (genomes) {
-                that.addGenomes(genomes);
-            })
-            .catch(function (e) {
-                groupErrors("request error for " + url, "It seems like something went wrong while we loaded the data. Are you still conected to the internet? You might want to reload this page.");
-            });
-            return false;
-        });
     }
 
     /**
@@ -139,18 +143,62 @@ var constructPancore = function constructPancore(args) {
      */
     function initFullScreen() {
         if (fullScreenApi.supportsFullScreen) {
-            $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-resize-full'></span> Enter full screen</button>");
+            $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
             $("#zoom-btn").click(function () {
-                if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
-                    logToGoogle("Pancore", "Full Screen", "graph");
-                    window.fullScreenApi.requestFullScreen($("#pancore_graph_wrapper").get(0));
-                } else {
-                    logToGoogle("Pancore", "Full Screen", "simmatrix");
-                    window.fullScreenApi.requestFullScreen($("#sim_matrix_wrapper").get(0));
-                }
+                logToGoogle("Pancore", "Full Screen", getActiveTab());
+                window.fullScreenApi.requestFullScreen($(".full-screen-container").get(0));
             });
             $(document).bind(fullScreenApi.fullScreenEventName, resizeFullScreen);
         }
+    }
+
+    /**
+     * Gets called to handle the change from and to full screen mode.
+     */
+    function resizeFullScreen() {
+        var activeTab = getActiveTab(),
+            isFullScreen = window.fullScreenApi.isFullScreen();
+
+        // sync tabs
+        $("ul.visualisations li.active").removeClass("active");
+        $("ul.visualisations li").each(function (i, el) {
+            if ($(el).find("a").attr("href") === "#" + activeTab + "_wrapper") {
+                $(el).addClass("active");
+            }
+        });
+
+        // class
+        $(".full-screen-container").toggleClass("full-screen", isFullScreen);
+        $(".full-screen-container").toggleClass("not-full-screen", !isFullScreen);
+
+        // tooltips and notifications
+        if (isFullScreen) {
+            $(".tip, .notifications").appendTo(".full-screen-container");
+        } else {
+            $(".tip, .notifications").appendTo("body");
+        }
+
+        // update visualisations
+        graph.setFullScreen(isFullScreen);
+        matrix.setFullScreen(isFullScreen);
+        genomeSelector.setFullScreen(isFullScreen);
+        table.setFullScreen(isFullScreen);
+    }
+
+    /**
+     * Initializes the full screen buttons
+     */
+    function initActionBar() {
+        $(".fullScreenActions a").tooltip({placement: "bottom", delay: { "show": 300, "hide": 300 }});
+        $(".fullScreenActions .download").click(saveImage);
+        $(".fullScreenActions .exit").click(function () {
+            window.fullScreenApi.cancelFullScreen();
+        });
+        $(".full-screen-bar .add-proteomes").click(function () {
+            $(this).blur();
+            $(".proteome-library").toggleClass("shown");
+            $(".analyzed-proteomes").toggleClass("shown");
+        });
     }
 
     /**
@@ -159,26 +207,7 @@ var constructPancore = function constructPancore(args) {
     function initSaveImage() {
         // The save image stuff
         $("#buttons-pancore").prepend("<button id='save-img' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-download'></span> Save image</button>");
-        $("#save-img").click(function clickSaveImage() {
-            var selector,
-                tracking,
-                filename;
-            if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
-                selector = "#pancore_graph svg";
-                tracking = "graph";
-                filename = "unique_peptides_graph";
-            } else {
-                selector = "#sim_matrix svg";
-                tracking = "sim matrix";
-                filename = "similarity_matrix";
-                d3.selectAll(".inner.node circle").attr("class", "hidden");
-            }
-            logToGoogle("Pancore", "Save Image", tracking);
-            triggerDownloadModal(selector, null, filename);
-            if ($(".tab-content .active").attr('id') === "sim_matrix_wrapper") {
-                d3.selectAll(".inner.node circle").attr("class", "");
-            }
-        });
+        $("#save-img").click(saveImage);
 
         $("#buttons-pancore").prepend("<button id='save-data' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-download'></span> Download data</button>");
         $("#save-data").click(function clickSaveData() {
@@ -197,18 +226,18 @@ var constructPancore = function constructPancore(args) {
     }
 
     /**
-     * Gets called to handle the change from and to full screen mode.
-     * Mostly just scales the SVG
+     * Triggers a modal to save an image of the active tab
      */
-    function resizeFullScreen() {
-        setTimeout(function handleFullScreen() {
-            var fullscreen = window.fullScreenApi.isFullScreen();
-            if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
-                graph.handleFullScreen(fullscreen);
-            } else {
-                matrix.handleFullScreen(fullscreen);
-            }
-        });
+    function saveImage () {
+        var activeTab = getActiveTab();
+        logToGoogle("Pancore", "Save Image", activeTab);
+        if (activeTab === "pancore_graph") {
+            triggerDownloadModal("#pancore_graph svg", null, "unique_peptides_graph", ".full-screen-container");
+        } else {
+            d3.selectAll(".inner.node circle").attr("class", "hidden");
+            triggerDownloadModal("#sim_matrix svg", null, "similarity_matrix", ".full-screen-container");
+            d3.selectAll(".inner.node circle").attr("class", "");
+        }
     }
 
     /**
@@ -238,7 +267,7 @@ var constructPancore = function constructPancore(args) {
             processClusteredMatrix(data.msg.order, data.msg.newick);
             break;
         case 'autoSorted':
-            that.updateOrder(data.msg);
+            processAutoSorted(data.msg);
             break;
         case 'processSimilarityData':
             processSimilarityData(data.msg);
@@ -258,21 +287,22 @@ var constructPancore = function constructPancore(args) {
     /**
      * Asks the worker to load a genome
      *
-     * @param <String> bioproject_id The id of the genome we want to load
+     * @param <String> id The id of the assembly we want to load
      * @param <String> name The name of the genome we want to load
+     * @param <Boolean> own Whether it's an own genome
      */
-    function loadData(bioproject_id, name) {
-        if ((bioproject_id + "").charAt(0) === "u") {
-            myGenomes.getIds(bioproject_id).then(
+    function loadData(id, name, own) {
+        if (own) {
+            myGenomes.getIds(id).then(
                 function (ids) {
-                    sendToWorker("loadUserData", {"id" : bioproject_id, "name" : name, "ids" : ids});
+                    sendToWorker("loadUserData", {"id" : id, "name" : name, "ids" : ids});
                 }
             );
         } else {
-            sendToWorker("loadData", {"bioproject_id" : bioproject_id, "name" : name});
+            sendToWorker("loadData", {"id" : id, "name" : name});
         }
         return new Promise(function (resolve, reject) {
-            promisesLoading.set(bioproject_id, function (genome, requestRank) {
+            promisesLoading.set(id, function (genome, requestRank) {
                 if (rank === requestRank) {
                     resolve(genome);
                 } else {
@@ -290,9 +320,9 @@ var constructPancore = function constructPancore(args) {
      * @param <Number> requestRank The rank of the original request
      */
     function processLoadedGenome(genome, requestRank) {
-        if (promisesLoading.has(genome.bioproject_id)) {
-            promisesLoading.get(genome.bioproject_id).call(this, genome, requestRank);
-            promisesLoading.delete(genome.bioproject_id);
+        if (promisesLoading.has(genome.id)) {
+            promisesLoading.get(genome.id).call(this, genome, requestRank);
+            promisesLoading.delete(genome.id);
         }
     }
 
@@ -309,19 +339,24 @@ var constructPancore = function constructPancore(args) {
         graph.setData(data);
         table.setLca(l);
         lca = l;
+
+        if ($pancoreNotification) {
+            $pancoreNotification.hide();
+            $pancoreNotification = undefined;
+        }
     }
 
     /**
      * Fullfills the corresponding downloadSequences Promise
      *
      * @param <String> data.type The type of sequences
-     * @param <String> data.bioprojectId The bioprojectId of the  request
+     * @param <String> data.id The assembly id of the request
      * @param <String> data.sequences The returned sequences
      */
     function processDownloadedSequences(data) {
-        if (promisesDownload.has(data.bioprojectId + data.type)) {
-            promisesDownload.get(data.bioprojectId + data.type).call(this, data);
-            promisesDownload.delete(data.bioprojectId + data.type);
+        if (promisesDownload.has(data.id + data.type)) {
+            promisesDownload.get(data.id + data.type).call(this, data);
+            promisesDownload.delete(data.id + data.type);
         }
     }
 
@@ -331,9 +366,14 @@ var constructPancore = function constructPancore(args) {
      * @param <Boolean> simData.fullMatrix Is this the full matrix?
      * @param <SimObject> simData.data A single row or full matrix of similarity
      *      data!
+     * @param <Boolean> simData.final Is this the final batch?
      */
     function processSimilarityData(simData) {
         matrix.addSimilarityData(simData.fullMatrix, simData.data);
+        if (simData.final && $similarityNotification) {
+            $similarityNotification.hide();
+            $similarityNotification = undefined;
+        }
     }
 
     /**
@@ -349,6 +389,19 @@ var constructPancore = function constructPancore(args) {
     }
 
     /**
+     * Handles the arrival of newly autosorted data
+     *
+     * @param <Array> order A list with the new order of the genomes
+     */
+    function processAutoSorted(order) {
+        that.updateOrder(order);
+        if ($autosortNotification) {
+            $autosortNotification.hide();
+            $autosortNotification = undefined;
+        }
+    }
+
+    /**
      * Gets called when the data is (done) loading
      * Enables/disables some buttons and actions (e.g. reordering)
      *
@@ -359,13 +412,34 @@ var constructPancore = function constructPancore(args) {
         if (isLoading === loading) return;
         isLoading = loading;
         if (loading) {
-            $("#add_species_peptidome").button('loading');
             table.setEnabled(false);
+            $loadingNotification = showNotification("Loading proteomes...", {
+                loading: true,
+                autoHide: false
+            });
         } else {
-            $("#add_species_peptidome").button('reset');
             table.setEnabled(true);
+            $loadingNotification.hide();
+        }
+    }
 
-            setTimeout(function () { sendToWorker("getUniqueSequences", {order : table.getOrder(), force : false }); }, 1000);
+    function askToRestore() {
+        $("#restore-analysis").removeClass("hide");
+        $("#restore-analysis a").click(function (e) {
+            e.preventDefault();
+            that.loadStatus();
+            $("#restore-analysis").addClass("hide");
+        });
+        setTimeout(function () {
+            askRestore = true;
+        }, 1000);
+
+    }
+
+    function hideRestore() {
+        if (askRestore) {
+            $("#restore-analysis").addClass("hide");
+            askRestore = false;
         }
     }
 
@@ -381,30 +455,40 @@ var constructPancore = function constructPancore(args) {
         }, 1000);
     }
 
+    function getActiveTab() {
+        var activePane = $(".full-screen-container div.active").attr('id');
+        return activePane.split("_wrapper")[0];
+    }
+
     /*************** Public methods ***************/
 
     /**
      * Adds genomes to the visualisation
      *
-     * @param <Array> g Array of bioproject_id's of the genomes we want to add
+     * @param <Array> g Array of id's of the genomes we want to add
      */
-    that.addGenomes = function addGenomes(g) {
+    that.addGenomes = function addGenomes(g, loadUnique) {
+        hideRestore();
+        var loadUnique = loadUnique === undefined ? true : loadUnique;
         return Promise.all(g.map(function addGenome(genome, i){
             // only add new genomes
-            if (genomes.has(genome.bioproject_id)) return;
+            if (genomes.has(genome.id)) return;
             setLoading(true);
+            var gen = that.getGenome(genome.id);
             table.addGenome({
-                "bioproject_id" : genome.bioproject_id,
+                "id" : genome.id,
                 "name" : genome.name,
+                "own" : gen.own,
+                "assembly_id" : gen.genbank_assembly_accession,
                 "status" : "Loading",
                 "position" : 100 + i,
-                "abbreviation" : that.abbreviate(genome.name, genome.bioproject_id)
+                "abbreviation" : that.abbreviate(genome.name, gen.own)
             });
-            return loadData(genome.bioproject_id, genome.name)
+            return loadData(genome.id, genome.name, gen.own)
                 .then(function (genome) {
-                    table.setGenomeStatus(genome.bioproject_id, "Done", false);
+                    table.setGenomeStatus(genome.id, "Done", false);
 
-                    genome.abbreviation = that.abbreviate(genome.name, genome.bioproject_id);
+                    genome.abbreviation = that.abbreviate(genome.name, gen.own);
 
                     graph.addToDataQueue(genome);
                     matrix.addGenome(genome);
@@ -413,8 +497,15 @@ var constructPancore = function constructPancore(args) {
                     groupErrors(e, "It seems like something went wrong while we loaded the data. Are you still conected to the internet? You might want to reload this page.");
                 });
         })).then( function () {
+            return new Promise(function (resolve, reject) {
+                setTimeout(resolve, 1000);
+            });
+        }).then( function () {
             if (promisesLoading.size === 0) {
                 setLoading(false);
+            }
+            if (loadUnique) {
+                sendToWorker("getUniqueSequences", {order : table.getOrder(), force : false });
             }
         });
     };
@@ -427,8 +518,14 @@ var constructPancore = function constructPancore(args) {
      * @param <Genome> genome The genome we want to remove
      */
     that.removeGenome = function removeGenome(genome) {
-        var removeData = table.removeGenome(genome.bioproject_id);
-        matrix.removeGenome(genome.bioproject_id);
+        if (!$pancoreNotification) {
+            $pancoreNotification = showNotification("Calculating peptidomes...", {
+                loading: true,
+                autoHide: false
+            });
+        }
+        var removeData = table.removeGenome(genome.id);
+        matrix.removeGenome(genome.id);
 
         sendToWorker("removeData", removeData);
     };
@@ -459,6 +556,12 @@ var constructPancore = function constructPancore(args) {
      * @param <Number> orderData.stop The position till where there's a change
      */
     that.updateOrder = function updateOrder(orderData) {
+        if (!$pancoreNotification) {
+            $pancoreNotification = showNotification("Calculating peptidomes...", {
+                loading: true,
+                autoHide: false
+            });
+        }
         sendToWorker("recalculatePanCore", orderData);
         table.setOrder(orderData.order);
         matrix.setOrder(orderData.order);
@@ -467,33 +570,44 @@ var constructPancore = function constructPancore(args) {
     /**
      * Requests a set of sequences to the worker
      *
-     * @param <Number> bioprojectId The id of the genome we want data from
+     * @param <Number> id The id of the genome we want data from
      * @param <String> type The type of sequences we want
      */
-    that.requestSequences = function requestSequences(bioprojectId, type) {
+    that.requestSequences = function requestSequences(id, type) {
+        var $notification = showNotification("Preparing sequences...", {
+                loading: true,
+                autoHide: false
+            });
         sendToWorker("getSequences", {
-            "bioproject_id" : bioprojectId,
+            "id" : id,
             "type" : type
         });
         return new Promise(function (resolve, reject) {
-            promisesDownload.set(bioprojectId + type, function (data) {
+            promisesDownload.set(id + type, function (data) {
+                $notification.hide();
                 resolve(data);
             });
         });
     };
 
     /**
-     * Requests a similarity calculation to the webserver
+     * Requests a similarity calculation to the worker
      */
     that.requestSimilarityCalculation = function requestSimilarityCalculation() {
+        if (!$similarityNotification) {
+            $similarityNotification = showNotification("Calculating similarities...", {
+                loading: true,
+                autoHide: false
+            });
+        }
         sendToWorker("calculateSimilarity");
     };
 
     /**
      * Requests the clustering of the data
      */
-    that.requestClustering = function requestClustering() {
-        sendToWorker("clusterMatrix");
+    that.requestClustering = function requestClustering(similarity) {
+        sendToWorker("clusterMatrix", {similarity : similarity});
     };
 
     /**
@@ -502,31 +616,126 @@ var constructPancore = function constructPancore(args) {
      * @param <String> type The type of sort we want to run
      */
     that.autoSort = function autoSort(type) {
+        if (!$autosortNotification) {
+            $autosortNotification = showNotification("Sorting proteomes...", {
+                loading: true,
+                autoHide: false
+            });
+        }
         sendToWorker("autoSort", {type : type});
+    };
+
+    /**
+     * Saves the currently loaded genomes in local storage
+     */
+    that.saveStatus = function saveStatus() {
+        var assemblies = table.getOrder().map(function (as) {
+            return that.getGenome(as).genbank_assembly_accession;
+        });
+        var status = JSON.stringify({
+            assemblies: assemblies
+        });
+        if (status !== localStorage.pancoreStatus) {
+            localStorage.pancoreStatus = status;
+            localStorage.pancoreLoadedBefore = "no";
+        }
+    };
+
+    /**
+     * Loads a status. First loads all genomes, then sets the order
+     */
+    that.loadStatus = function loadStatus(status) {
+        var status = status || JSON.parse(localStorage.pancoreStatus),
+            assemblySet = new Set(),
+            statusGenomes = new Map(),
+            assemblies,
+            assembliesOrder,
+            assembly,
+            startPromise = myGenomes ? myGenomes.getGenomes() : Promise.resolve();
+
+        // create the assemblies set manually because of stupid Safari
+        status.assemblies.forEach(function (element) {
+            assemblySet.add(element.split(".")[0]);
+        });
+
+        // only start loading after the my genomes list is complete
+        startPromise.then(function () {
+            // reset the visualisation
+            that.clearAllData();
+
+            // convert assemblies to addable genome objects
+            data.forEach(function (value) {
+                if (assemblySet.has(value.genbank_assembly_accession.split(".")[0])) {
+                    statusGenomes.set(value.genbank_assembly_accession.split(".")[0], {
+                        id : value.id,
+                        name : value.name
+                    });
+                }
+            });
+            if (myGenomes) {
+                status.assemblies.forEach(function (element) {
+                    if (element.charAt(0) === "u") {
+                        var assembly = myGenomes.getGenome(element);
+                        if (assembly) {
+                            statusGenomes.set(assembly.id, {
+                                id : assembly.id,
+                                name : assembly.name
+                            });
+                        }
+                    }
+                });
+            }
+
+            // put them in the right order
+            assemblies = status.assemblies.map(function (element) {
+                return statusGenomes.get(element.split(".")[0]);
+            }).filter(function (element) {
+                return element;
+            });
+            assembliesOrder = assemblies.map(function (element) {
+                return element.id;
+            });
+
+            // load the genomes and set the order
+            that.addGenomes(assemblies, false).then(function () {
+                that.updateOrder({
+                    order : assembliesOrder,
+                    start : 0,
+                    stop : assembliesOrder.length - 1
+                });
+                if (assemblySet.size !== assemblies.length) {
+                    error(null, "We couldn't load one or more proteomes from your previous session.");
+                }
+            });
+        });
     };
 
     /**
      * Abbreviates an organism name
      *
      * @param <String> name The name of the organism
-     * @param <String> id The id of the genome
+     * @param <Boolean> own Whether it's an own genome
      */
-    that.abbreviate = function abbreviate(name, id) {
+    that.abbreviate = function abbreviate(name, own) {
         var split = name.split(" "),
             i;
+
+        if (own) {
+            return name;
+        }
 
         // Don't abbreviate single words
         if (split.size === 1) {
             return name;
         }
 
-        // If the second part is "sp.", return the full name
-        if (split[1] === "sp.") {
+        // Don't abbreviate names between [] or ''
+        if (split[0].charAt(0) === "[" || split[0].charAt(0) === "'") {
             return name;
         }
 
-        // Don't abbreviate if my genome
-        if (("" + id).charAt(0) === "u") {
+        // If the second part is "sp.", return the full name
+        if (split[1] === "sp.") {
             return name;
         }
 
@@ -562,6 +771,22 @@ var constructPancore = function constructPancore(args) {
         }
 
         return split.join(" ");
+    };
+
+    /**
+     * Retrieves the genome object for a given id
+     */
+    that.getGenome = function getGenome(id) {
+        var g;
+        if (("" + id).charAt(0) === "u") {
+            g = myGenomes.getGenome(id);
+            g.genbank_assembly_accession = id;
+            g.own = true;
+        } else {
+            g = genomeData.get(id);
+            g.own = false;
+        }
+        return g;
     };
 
     // initialize the object

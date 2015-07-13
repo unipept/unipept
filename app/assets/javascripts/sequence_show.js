@@ -1,7 +1,7 @@
 function init_sequence_show(data) {
 
     // set up the fancy tree
-    initLineageTree(data);
+    initLineageTree(data.tree);
 
     // set up the fullscreen stuff
     setUpFullScreen();
@@ -11,6 +11,9 @@ function init_sequence_show(data) {
 
     // enable the external link popovers
     addExternalLinks();
+
+    // enable the open in UniProt and clipboard buttons
+    setUpUniprotButtons(data.uniprotEntries);
 
     // add the tab help
     initHelp();
@@ -52,6 +55,17 @@ function init_sequence_show(data) {
         });
     }
 
+    function setUpUniprotButtons(entries) {
+        $("#open-uniprot").click(function () {
+            var url = "http://www.uniprot.org/uniprot/?query=accession%3A";
+            url += entries.join("+OR+accession%3A");
+            window.open(url, '_blank');
+        });
+        addCopy($("#clipboard-uniprot").first(), function () {
+            return entries.join("\n");
+        });
+    }
+
     /**
      * Sets up the image save stuff
      */
@@ -75,6 +89,7 @@ function init_sequence_show(data) {
             });
             $(document).bind(fullScreenApi.fullScreenEventName, resizeFullScreen);
         }
+
         function resizeFullScreen() {
             setTimeout(function () {
                 var width = 916,
@@ -93,7 +108,12 @@ function init_sequence_show(data) {
      * Inits the lineage tree
      */
     function initLineageTree(jsonData) {
-        var margin = {top: 5, right: 5, bottom: 5, left: 60},
+        var margin = {
+                top: 5,
+                right: 5,
+                bottom: 5,
+                left: 60
+            },
             width = 916 - margin.right - margin.left,
             height = 600 - margin.top - margin.bottom;
 
@@ -106,12 +126,14 @@ function init_sequence_show(data) {
             .nodeSize([2, 105])
             .separation(function (a, b) {
                 var width = (nodeSize(a) + nodeSize(b)),
-                distance = width / 2 + 4;
+                    distance = width / 2 + 4;
                 return (a.parent === b.parent) ? distance : distance + 4;
             });
 
         var diagonal = d3.svg.diagonal()
-            .projection(function (d) { return [d.y, d.x]; });
+            .projection(function (d) {
+                return [d.y, d.x];
+            });
 
         var widthScale = d3.scale.linear().range([2, 105]);
 
@@ -127,9 +149,9 @@ function init_sequence_show(data) {
             .attr("width", width + margin.right + margin.left)
             .attr("height", height + margin.top + margin.bottom)
             .call(zoomListener)
-          .append("g")
+            .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-          .append("g");
+            .append("g");
 
         draw(jsonData);
 
@@ -163,12 +185,17 @@ function init_sequence_show(data) {
                     d.color = "#1f77b4"; // blue
                 }
                 if (d.children) {
-                    d.children.forEach(function (node) { color(node, d.color); });
+                    d.children.forEach(function (node) {
+                        color(node, d.color);
+                    });
                 }
             }
-            root.children.forEach(function (node) {color(node); });
+            root.children.forEach(function (node) {
+                color(node);
+            });
 
             var LCA;
+
             function findLCA(d) {
                 if (d.children && d.children.length === 1) {
                     findLCA(d.children[0]);
@@ -204,137 +231,171 @@ function init_sequence_show(data) {
                 links = tree.links(nodes);
 
             // Normalize for fixed-depth.
-            nodes.forEach(function (d) { d.y = d.depth * 180; });
+            nodes.forEach(function (d) {
+                d.y = d.depth * 180;
+            });
 
             // Update the nodes
             var node = svg.selectAll("g.node")
-              .data(nodes, function (d) { return d.id || (d.id = ++i); });
+                .data(nodes, function (d) {
+                    return d.id || (d.id = ++i);
+                });
 
             // Enter any new nodes at the parent's previous position.
             var nodeEnter = node.enter().append("g")
-              .attr("class", "node")
-              .style("cursor", "pointer")
-              .attr("transform", function (d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
-              .on("click", click);
+                .attr("class", "node")
+                .style("cursor", "pointer")
+                .attr("transform", function (d) {
+                    return "translate(" + source.y0 + "," + source.x0 + ")";
+                })
+                .on("click", click);
 
-            nodeEnter.append("title").html(function (d) {return "hits: " + d.data.count; });
+            nodeEnter.append("title").html(function (d) {
+                return "hits: " + d.data.count;
+            });
 
             nodeEnter.append("circle")
-              .attr("r", 1e-6)
-              .style("stroke-width", "1.5px")
-              .style("stroke", function (d) {
-                  if (d.selected) {
-                      return d.color || "#aaa";
-                  } else {
-                      return "#aaa";
-                  }
-              })
-              .style("fill", function (d) {
-                  if (d.selected) {
-                      return d._children ? d.color || "#aaa" : "#fff";
-                  } else {
-                      return "#aaa";
-                  }
-              });
+                .attr("r", 1e-6)
+                .style("stroke-width", "1.5px")
+                .style("stroke", function (d) {
+                    if (d.selected) {
+                        return d.color || "#aaa";
+                    } else {
+                        return "#aaa";
+                    }
+                })
+                .style("fill", function (d) {
+                    if (d.selected) {
+                        return d._children ? d.color || "#aaa" : "#fff";
+                    } else {
+                        return "#aaa";
+                    }
+                });
 
             nodeEnter.append("text")
-              .attr("x", function (d) { return d.children || d._children ? -10 : 10; })
-              .attr("dy", ".35em")
-              .attr("text-anchor", function (d) { return d.children || d._children ? "end" : "start"; })
-              .text(function (d) { return d.name; })
-              .style("font", "10px sans-serif")
-              .style("fill-opacity", 1e-6);
+                .attr("x", function (d) {
+                    return d.children || d._children ? -10 : 10;
+                })
+                .attr("dy", ".35em")
+                .attr("text-anchor", function (d) {
+                    return d.children || d._children ? "end" : "start";
+                })
+                .text(function (d) {
+                    return d.name;
+                })
+                .style("font", "10px sans-serif")
+                .style("fill-opacity", 1e-6);
 
             // Transition nodes to their new position.
             var nodeUpdate = node.transition()
-              .duration(duration)
-              .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; });
+                .duration(duration)
+                .attr("transform", function (d) {
+                    return "translate(" + d.y + "," + d.x + ")";
+                });
 
             nodeUpdate.select("circle")
-              .attr("r", nodeSize)
-              .style("fill-opacity", function (d) { return d._children ? 1 : 0; })
-              .style("stroke", function (d) {
-                  if (d.selected) {
-                      return d.color || "#aaa";
-                  } else {
-                      return "#aaa";
-                  }
-              })
-              .style("fill", function (d) {
-                  if (d.selected) {
-                      return d._children ? d.color || "#aaa" : "#fff";
-                  } else {
-                      return "#aaa";
-                  }
+                .attr("r", nodeSize)
+                .style("fill-opacity", function (d) {
+                    return d._children ? 1 : 0;
+                })
+                .style("stroke", function (d) {
+                    if (d.selected) {
+                        return d.color || "#aaa";
+                    } else {
+                        return "#aaa";
+                    }
+                })
+                .style("fill", function (d) {
+                    if (d.selected) {
+                        return d._children ? d.color || "#aaa" : "#fff";
+                    } else {
+                        return "#aaa";
+                    }
 
-              });
+                });
 
             nodeUpdate.select("text")
-              .style("fill-opacity", 1);
+                .style("fill-opacity", 1);
 
             // Transition exiting nodes to the parent's new position.
             var nodeExit = node.exit().transition()
-              .duration(duration)
-              .attr("transform", function (d) { return "translate(" + source.y + "," + source.x + ")"; })
-              .remove();
+                .duration(duration)
+                .attr("transform", function (d) {
+                    return "translate(" + source.y + "," + source.x + ")";
+                })
+                .remove();
 
             nodeExit.select("circle")
-              .attr("r", 1e-6);
+                .attr("r", 1e-6);
 
             nodeExit.select("text")
-              .style("fill-opacity", 1e-6);
+                .style("fill-opacity", 1e-6);
 
             // Update the links
             var link = svg.selectAll("path.link")
-              .data(links, function (d) { return d.target.id; });
+                .data(links, function (d) {
+                    return d.target.id;
+                });
 
             // Enter any new links at the parent's previous position.
             link.enter().insert("path", "g")
-              .attr("class", "link")
-              .style("fill", "none")
-              .style("stroke-opacity", "0.5")
-              .style("stroke-linecap", "round")
-              .style("stroke", function (d) {
-                  if (d.source.selected) {
-                      return d.target.color;
-                  } else {
-                      return "#aaa";
-                  }
-              })
-              .style("stroke-width", 1e-6)
-              .attr("d", function (d) {
-                  var o = {x: source.x0, y: source.y0};
-                  return diagonal({source: o, target: o});
-              });
+                .attr("class", "link")
+                .style("fill", "none")
+                .style("stroke-opacity", "0.5")
+                .style("stroke-linecap", "round")
+                .style("stroke", function (d) {
+                    if (d.source.selected) {
+                        return d.target.color;
+                    } else {
+                        return "#aaa";
+                    }
+                })
+                .style("stroke-width", 1e-6)
+                .attr("d", function (d) {
+                    var o = {
+                        x: source.x0,
+                        y: source.y0
+                    };
+                    return diagonal({
+                        source: o,
+                        target: o
+                    });
+                });
 
             // Transition links to their new position.
             link.transition()
-              .duration(duration)
-              .attr("d", diagonal)
-              .style("stroke", function (d) {
-                  if (d.source.selected) {
-                      return d.target.color;
-                  } else {
-                      return "#aaa";
-                  }
-              })
-              .style("stroke-width", function (d) {
-                  if (d.source.selected) {
-                      return widthScale(d.target.data.count) + "px";
-                  } else {
-                      return "4px";
-                  }
-              });
+                .duration(duration)
+                .attr("d", diagonal)
+                .style("stroke", function (d) {
+                    if (d.source.selected) {
+                        return d.target.color;
+                    } else {
+                        return "#aaa";
+                    }
+                })
+                .style("stroke-width", function (d) {
+                    if (d.source.selected) {
+                        return widthScale(d.target.data.count) + "px";
+                    } else {
+                        return "4px";
+                    }
+                });
 
             // Transition exiting nodes to the parent's new position.
             link.exit().transition()
-              .duration(duration)
-              .style("stroke-width", 1e-6)
-              .attr("d", function (d) {
-                  var o = {x: source.x, y: source.y};
-                  return diagonal({source: o, target: o});
-              })
-              .remove();
+                .duration(duration)
+                .style("stroke-width", 1e-6)
+                .attr("d", function (d) {
+                    var o = {
+                        x: source.x,
+                        y: source.y
+                    };
+                    return diagonal({
+                        source: o,
+                        target: o
+                    });
+                })
+                .remove();
 
             // Stash the old positions for transition.
             nodes.forEach(function (d) {
@@ -360,7 +421,9 @@ function init_sequence_show(data) {
                     d._children = null;
                 }
                 if (d.children) {
-                    d.children.forEach(function (c) {expand(c, local_i - 1); });
+                    d.children.forEach(function (c) {
+                        expand(c, local_i - 1);
+                    });
                 }
             }
         }
@@ -416,9 +479,13 @@ function init_sequence_show(data) {
             function setSelected(d, value) {
                 d.selected = value;
                 if (d.children) {
-                    d.children.forEach(function (c) {setSelected(c, value); });
+                    d.children.forEach(function (c) {
+                        setSelected(c, value);
+                    });
                 } else if (d._children) {
-                    d._children.forEach(function (c) {setSelected(c, value); });
+                    d._children.forEach(function (c) {
+                        setSelected(c, value);
+                    });
                 }
             }
         }
