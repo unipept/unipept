@@ -42,7 +42,7 @@ for line in sys.stdin:
     else:
         sys.stdout.write(line)</pre>
     <p>
-      <b>NOTE</b>: The file <code>singles_proteins.fasta.faa</code> may contains two mates coming from the same clone, but that are not consecutive in the file. Since we know that the protein fragments from both mates come from the same organism, the processing could be improved if we also join the peptides from the protein fragments of the same clone. This is not yet covered by the python script. This could be done by sorting the results after the next step (after <code>unipept pept2lca</code>).
+      <b>NOTE</b>: The file <code>singles_proteins.fasta.faa</code> may contain two mates coming from the same clone, but that are not consecutive in the file. Since we know that the protein fragments from both mates come from the same organism, the processing could be improved if we also join the peptides from the protein fragments of the same clone. This is not yet covered by the python script. This could be done by sorting the results after the next step (after <code>unipept pept2lca</code>).
     </p>
     <p>
       Then we compute the LCA for all individual tryptic peptides <i>(timing: 37 mins 17 secs)</i>.
@@ -50,7 +50,7 @@ for line in sys.stdin:
     <pre>
 unipept pept2lca < peptides.fst > peptides.lca.fst</pre>
     <p>
-      Instead of deriving the biodiversity distribution from the individual peptides, we can aggregate the identifications of all peptides coming from the same DNA read into a concensus identification. To do so, we use a special version of the lowest common ancestor algorithm (LCA*) that takes the most specific node in the taxonomic tree if both nodes are on the same lineage <i>(timing: 6 mins 36 secs)</i>.
+      Instead of deriving the biodiversity distribution from the individual peptides, we can aggregate the identifications of all peptides coming from the same DNA read into a consensus identification. To do so, we use a special version of the lowest common ancestor algorithm (LCA*) that takes the most specific node in the taxonomic tree if both nodes are on the same lineage <i>(timing: 6 mins 36 secs)</i>.
     </p>
     <pre>
 python3 /work/unipept-metagenomics-scripts/tree-of-life/pept2lca2lca.py < peptides.lca.fst > reads.lca.fst</pre>
@@ -65,7 +65,7 @@ sort -T /work peptides.lca.fst > peptides.lca.sorted.fst</pre>
     <pre>
 tail -n +2 < reads.lca.fst | awk -F, '{print $2}' | sort | uniq -c | sed 's/^[\t ]*//g' | sed 's/\([^ ]*\) \(.*\)/\2,\1/' | sort > distribution.csv</pre>
     <p>
-      As the analysis only reports the taxon IDs, we now lookup the names and ranks of all taxons found in the sample <i>(timing: 1.3 secs)</i>.
+      As the analysis only reports the taxon IDs, we now lookup the names and ranks of all taxa found in the sample <i>(timing: 1.3 secs)</i>.
     </p>
     <pre>
 cat distribution.csv | awk -F, '{print $1}'| unipept taxonomy | tail -n +2 | sort > taxons.csv</pre>
