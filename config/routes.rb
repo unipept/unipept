@@ -78,6 +78,7 @@ UnipeptWeb::Application.routes.draw do
     get "casestudies", :to => "clidocs#casestudies", :as => 'clidocs/casestudies'
     get "casestudies/tpa", :to => "clidocs#casestudy_tpa", :as => 'clidocs/casestudy_tpa'
     get "casestudies/mpa", :to => "clidocs#casestudy_mpa", :as => 'clidocs/casestudy_mpa'
+    get "casestudies/metagenomics", :to => "clidocs#casestudy_metagenomics", :as => 'clidocs/casestudy_metagenomics'
     get "prot2pept",   :to => "clidocs#prot2pept",   :as => 'clidocs/prot2pept'
     get "peptfilter",  :to => "clidocs#peptfilter",  :as => 'clidocs/peptfilter'
     get "uniprot",     :to => "clidocs#uniprot",     :as => 'clidocs/uniprot'

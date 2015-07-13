@@ -27,6 +27,12 @@ class Api::ClidocsController < ApplicationController
     @study = 'Metaproteomics data'
   end
 
+  def casestudy_metagenomics
+    @title = 'Case study: metagenomics'
+    @sidebar_name = 'Case studies'
+    @study = 'Metagenomics'
+  end
+
   def pept2lca
     @title = 'The unipept pept2lca command'
     @sidebar_name = 'unipept pept2lca'
