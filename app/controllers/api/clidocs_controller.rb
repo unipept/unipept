@@ -1,7 +1,7 @@
 class Api::ClidocsController < ApplicationController
   before_filter :set_sidebar_nav
   before_filter :set_sidebar_subnav, only: [:pept2lca, :pept2prot, :pept2taxa, :taxa2lca, :taxonomy, :uniprot, :prot2pept, :peptfilter]
-  before_filter :set_case_subnav, only: [:casestudies, :casestudy_tpa]
+  before_filter :set_case_subnav, only: [:casestudies, :casestudy_tpa, :casestudy_mpa]
 
   def index
     @title = 'Unipept command line interface'
@@ -19,6 +19,12 @@ class Api::ClidocsController < ApplicationController
     @title = 'Case study: tryptic peptide'
     @sidebar_name = 'Case studies'
     @study = 'Tryptic peptide'
+  end
+
+  def casestudy_mpa
+    @title = 'Case study: metaproteomics data'
+    @sidebar_name = 'Case studies'
+    @study = 'Metaproteomics data'
   end
 
   def pept2lca
@@ -85,6 +91,6 @@ class Api::ClidocsController < ApplicationController
   end
 
   def set_case_subnav
-    @sidebar_subnav = [['Tryptic peptide', api_clidocs_casestudy_tpa_path], ['Metaproteomics data', 'mpa']]
+    @sidebar_subnav = [['Tryptic peptide', api_clidocs_casestudy_tpa_path], ['Metaproteomics data', api_clidocs_casestudy_mpa_path]]
   end
 end
