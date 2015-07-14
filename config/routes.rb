@@ -25,7 +25,7 @@ UnipeptWeb::Application.routes.draw do
   get '/search/sequence', :to => 'sequences#search', :as => 'sequence_search'
   post '/search/sequences', :to => 'sequences#multi_search', :as => 'sequence_multi_search'
 
-  get '/sequences/:id/:equate_il', :to => 'sequences#show'
+  get '/sequences/:id/:equate_il', :to => 'sequences#show', :as => 'sequence_show'
   get '/search/single', :to => 'search#single'
 
   # pancore
@@ -40,9 +40,10 @@ UnipeptWeb::Application.routes.draw do
   get '/peptidomeclustering', :to => 'peptidome#analyze', :as => 'peptidome_clustering', defaults: { tab: 'peptidomeclustering' }
 
   # simple pages
-  get '/publications', :to => 'pages#publications'
   get '/about',   :to => 'pages#about'
   get '/admin',   :to => 'pages#admin'
+  get '/docs',    :to => 'pages#documentation'
+  get '/publications', :to => 'pages#publications'
 
   # generate png from svg
   post "/convert", :to => "imagemagick#convert"
@@ -70,6 +71,22 @@ UnipeptWeb::Application.routes.draw do
     get "taxonomy",   :to => "apidocs#taxonomy",  :as => 'apidocs/taxonomy'
   end
 
+  # CLI docs
+  namespace :api, path: "clidocs" do
+    get "/",           :to => "clidocs#index",       :as => 'clidocs'
+    get "casestudies", :to => "clidocs#casestudies", :as => 'clidocs/casestudies'
+    get "casestudies/tpa", :to => "clidocs#casestudy_tpa", :as => 'clidocs/casestudy_tpa'
+    get "casestudies/mpa", :to => "clidocs#casestudy_mpa", :as => 'clidocs/casestudy_mpa'
+    get "casestudies/metagenomics", :to => "clidocs#casestudy_metagenomics", :as => 'clidocs/casestudy_metagenomics'
+    get "prot2pept",   :to => "clidocs#prot2pept",   :as => 'clidocs/prot2pept'
+    get "peptfilter",  :to => "clidocs#peptfilter",  :as => 'clidocs/peptfilter'
+    get "uniprot",     :to => "clidocs#uniprot",     :as => 'clidocs/uniprot'
+    get "pept2lca",    :to => "clidocs#pept2lca",    :as => 'clidocs/pept2lca'
+    get "pept2prot",   :to => "clidocs#pept2prot",   :as => 'clidocs/pept2prot'
+    get "pept2taxa",   :to => "clidocs#pept2taxa",   :as => 'clidocs/pept2taxa'
+    get "taxa2lca",    :to => "clidocs#taxa2lca",    :as => 'clidocs/taxa2lca'
+    get "taxonomy",    :to => "clidocs#taxonomy",    :as => 'clidocs/taxonomy'
+  end
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

@@ -136,4 +136,13 @@ class LineageTest < ActiveSupport::TestCase
     lineage2 = lineages(:kingdom3)
     assert_equal 3, Lineage.calculate_lca([lineage1, lineage2])
   end
+
+  test 'cast should not raise a range error for negative values' do
+    lineage = lineages(:kingdom2)
+    def lineage.convert
+      uint = ActiveRecord::Type::UnsignedInteger.new
+      uint.type_cast_for_database('-5')
+    end
+    lineage.convert
+  end
 end
