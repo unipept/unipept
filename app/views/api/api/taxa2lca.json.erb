@@ -1,5 +1,6 @@
 <%=
   p = @result
+  return if p.nil?
   res = {
       "taxon_id" => p.id,
       "taxon_name" => p.name,
