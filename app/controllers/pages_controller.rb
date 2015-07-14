@@ -15,7 +15,7 @@ class PagesController < ApplicationController
   end
 
   def documentation
-    @title = "Documentation"
+    @title = 'Documentation'
   end
 
   def admin

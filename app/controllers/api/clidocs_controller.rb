@@ -1,7 +1,7 @@
 class Api::ClidocsController < ApplicationController
-  before_filter :set_sidebar_nav
-  before_filter :set_sidebar_subnav, only: [:pept2lca, :pept2prot, :pept2taxa, :taxa2lca, :taxonomy, :uniprot, :prot2pept, :peptfilter]
-  before_filter :set_case_subnav, only: [:casestudies, :casestudy_tpa, :casestudy_mpa]
+  before_action :set_sidebar_nav
+  before_action :set_sidebar_subnav, only: [:pept2lca, :pept2prot, :pept2taxa, :taxa2lca, :taxonomy, :uniprot, :prot2pept, :peptfilter]
+  before_action :set_case_subnav, only: [:casestudies, :casestudy_tpa, :casestudy_mpa]
 
   def index
     @title = 'Unipept command line interface'

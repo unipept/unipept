@@ -89,11 +89,11 @@ class Lineage < ActiveRecord::Base
   # http://metaskills.net/2015/01/06/activerecord-42s-type-casting/
   # This code disables the rangecheck for UnsignedIntegers
   module ActiveRecord::Type
-      class UnsignedInteger
-        def type_cast_for_database(value)
-          type_cast(value)
-        end
+    class UnsignedInteger
+      def type_cast_for_database(value)
+        type_cast(value)
       end
+    end
   end
 
   def set_iterator_position(position)
