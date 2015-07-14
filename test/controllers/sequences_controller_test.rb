@@ -20,6 +20,12 @@ class SequencesControllerTest < ActionController::TestCase
     assert_redirected_to sequences_path + '/AALER/'
   end
 
+  test 'should redirect to search page with error' do
+    get :search, q: ''
+    assert_equal 'Your query was empty, please try again.', flash[:error]
+    assert_redirected_to search_single_path
+  end
+
   test 'should get show with id' do
     sequence = sequences(:sequence4)
     taxon1 = taxons(:taxon1)
