@@ -1,5 +1,5 @@
 class ImagemagickController < ApplicationController
-  require 'RMagick'
+  require 'rmagick'
 
   # converts an svg to a png
   def convert

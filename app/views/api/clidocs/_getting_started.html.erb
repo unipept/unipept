@@ -1,0 +1,70 @@
+<h2>Getting started</h2>
+<p>
+  Before the Unipept command line interface (<span class='initialism'>CLI</span>) can be used, it first needs to be <a href='<%= api_clidocs_path %>#installation' target='_blank'>installed locally</a>. Since the commands of the <span class='initialism'>CLI</span> are implemented in Ruby, <a href='https://www.ruby-lang.org/en/downloads/' target='_blank'>the Ruby environment must be installed first</a> (at least version 1.9). The Unipept <span class='initialism'>CLI</span> can then be installed using the <code>gem</code> command, which is the RubyGems package manager for the Ruby programming language.
+</p>
+<pre>
+<b>$</b> gem install unipept
+Successfully installed unipept-<%= Rails.application.config.versions[:gem] %>
+1 gem installed
+Installing ri documentation for unipept-<%= Rails.application.config.versions[:gem] %>...
+Installing RDoc documentation for unipept-<%= Rails.application.config.versions[:gem] %>...</pre>
+<p>
+  By default, the <code>gem</code> command installs the Unipept <span class='initialism'>CLI</span> for all users on the computer system. To make a personal installation or in case you don't have the necessary permissions for the appropriate directories to make a system-wide installation, you can use the option <code>--user-install</code> of the <code>gem</code> command.
+</p>
+<p>
+  The Unipept <span class='initialism'>CLI</span> is a bundle of different commands that all come with <a href='<%= api_clidocs_path %>' target='_blank'>detailed online documentation</a>. Naturally, the most important command is <code>unipept</code>.
+</p>
+<pre>
+<b>$</b> unipept --help
+NAME
+unipept - Command line interface to Unipept web services.
+
+USAGE
+unipept subcommand [options]
+
+DESCRIPTION
+The unipept subcommands are command line wrappers around the Unipept web
+services.
+
+Subcommands that start with pept expect a list of tryptic peptides as
+input. Subcommands that start with tax expect a list of NCBI Taxonomy
+Identifiers as input. Input is passed
+
+- as separate command line arguments
+- in a text file that is passed as an argument to the -i option
+- to standard input
+
+The command will give priority to the first way the input is passed, in
+the order as listed above. Text files and standard input should have one
+tryptic peptide or one NCBI Taxonomy Identifier per line.
+
+COMMANDS
+config        Set configuration options.
+help          show help
+pept2lca      Fetch taxonomic lowest common ancestor of UniProt entries that match tryptic peptides.
+pept2prot     Fetch UniProt entries that match tryptic peptides.
+pept2taxa     Fetch taxa of UniProt entries that match tryptic peptides.
+taxa2lca      Compute taxonomic lowest common ancestor for given list of taxa.
+taxonomy      Fetch taxonomic information from Unipept Taxonomy.
+
+OPTIONS
+-f --format=&lt;value&gt;        define the output format (available: json,
+                           csv, xml) (default: csv)
+-h --help                  show help for this command
+   --host=&lt;value&gt;          specify the server running the Unipept web
+                           service
+-i --input=&lt;value&gt;         read input from file
+-o --output=&lt;value&gt;        write output to file
+-q --quiet                 disable service messages
+-v --version               displays the version</pre>
+<p>
+  As the <code>unipept</code> command makes calls to the Unipept API that is provided by an instance of the Unipept application server (web services that communicate with an instance of the Unipept database), the location of the Unipept application server must be <a href='<%= api_clidocs_path %>#configuration' target='_blank'>configured</a>. By default, the public Unipept server (api.unipept.ugent.be) is used, but this can be changed by passing the <span class='initialism'>URL</span> of the server as an argument to the option <code>--host</code>. To avoid that a custom server needs to be specified with each use of the <code>unipept</code> command, a custom server can be set as default using the <code>unipept config</code> subcommand. A server set with the <code>--host</code> option always overrides the default server.
+</p>
+<pre>
+<b>$</b> unipept <b>--host 'api.unipept.ugent.be'</b> pept2lca ENFVYIAK
+peptide,taxon_id,taxon_name,taxon_rank
+ENFVYIAK,35493,Streptophyta,phylum
+<b>$</b> unipept <b>config host 'api.unipept.ugent.be'</b>
+<b>$</b> unipept pept2lca ENFVYIAK
+peptide,taxon_id,taxon_name,taxon_rank
+ENFVYIAK,35493,Streptophyta,phylum</pre>

@@ -2,26 +2,33 @@
 <% if @lineages.empty? %>
   <p class="lead">No results were found for <%= @original_sequence %>.</p>
 <% else %>
-  <p class="lead"><span class="initialism"><%= @original_sequence %></span> was found in <b><%= @entries.size %></b> <%= 'Uniprot record'.pluralize(@entries.size) %> with a lowest common ancestor of <b><%= @lca_taxon.name %></b>.</p>
-  <p>Summary of the analysis:</p>
-  <ul>
-    <li>Lowest common ancestor: <%= link_to @lca_taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + @lca_taxon.id.to_s, :target => "_blank", :title => @lca_taxon.rank %> (<%=@lca_taxon.rank%>)</li>
-    <li>Common lineage: <%= raw @common_lineage.length==0 ? "nothing" : @common_lineage.map{|t| link_to t.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + t.id.to_s, :target => "_blank", :title => t.rank }.join(" > ") %></li>
-    <li><%= link_to "Blast "+@original_sequence , "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on&USER_FORMAT_DEFAULTS=on&PAGE=Proteins&PROGRAM=blastp&QUERY="+@original_sequence+"&GAPCOSTS=11%201&EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&DATABASE=nr&BLAST_PROGRAMS=blastp&MAX_NUM_SEQ=100&SHORT_QUERY_ADJUST=on&EXPECT=10&WORD_SIZE=3&MATRIX_NAME=BLOSUM62&COMPOSITION_BASED_STATISTICS=2&SHOW_OVERVIEW=on&SHOW_LINKOUT=on&ALIGNMENT_VIEW=Pairwise&MASK_CHAR=2&MASK_COLOR=1&GET_SEQUENCE=on&NEW_VIEW=on&NUM_OVERVIEW=100&DESCRIPTIONS=100&ALIGNMENTS=100&FORMAT_OBJECT=Alignment&FORMAT_TYPE=HTML&OLD_BLAST=false", :target => "_blank", :title => "Open in BLAST"%></li>
-  </ul>
-  <div id="single-peptide-tabs">
-    <ul class="nav nav-tabs">
-      <li class="active"><a href="#lineage-tree" id="lineage-tree-tab"data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-info-sign help"></span></a></li>
-      <li><a href="#lineage-table" id="lineage-table-tab" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-info-sign help"></span></a></li>
-      <li><a href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
-    </ul>
-    <div class="tab-help" id="tab-help">
-      <div id="lineage-tree-help">
-        <p>This interactive tree bundles the complete taxonomic lineages of all UniProtKB records whose protein sequence contains <%= @original_sequence %>. You can click on nodes to expand them. Take into account that due to gaps in the hierarchical structure of the NCBI taxonomy, taxonomic levels are not always properly aligned in the tree view.</p>
-      </div>
-      <div id="lineage-table-help">
-        <p>This table shows the complete taxonomic lineages of all UniProtKB records whose protein sequence contains <%= @original_sequence %>. Each row represents the complete taxonomic lineage of a single UniProtKB record. The first column contains the name extracted from the UniProtKB record, follow by columns representing valid taxonomic ranks ordered from superkingdom on the left to forma on the right. Only ranks used in the complete lineages of the records in which the peptide was found are displayed as columns in the table. To ease the interpretation of the table, rows are ordered according to the taxonomic names in the taxonomic rank columns and cells containing the same taxonomic name are marked with the same color code per column.</p>
-      </div>
+<p class="lead"><span class="initialism"><%= @original_sequence %></span> was found in <b><%= @entries.size %></b> <%= 'UniProt entry'.pluralize(@entries.size) %> with a lowest common ancestor of <b><%= @lca_taxon.name %></b>.</p>
+<p>Summary of the analysis:</p>
+<ul>
+  <li>Lowest common ancestor: <%= link_to @lca_taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + @lca_taxon.id.to_s, :target => "_blank", :title => @lca_taxon.rank %> (<%=@lca_taxon.rank%>)</li>
+  <li>Common lineage: <%= raw @common_lineage.length==0 ? "nothing" : @common_lineage.map{|t| link_to t.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + t.id.to_s, :target => "_blank", :title => t.rank }.join(" > ") %></li>
+  <li><%= link_to "Blast "+@original_sequence , "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on&USER_FORMAT_DEFAULTS=on&PAGE=Proteins&PROGRAM=blastp&QUERY="+@original_sequence+"&GAPCOSTS=11%201&EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&DATABASE=nr&BLAST_PROGRAMS=blastp&MAX_NUM_SEQ=100&SHORT_QUERY_ADJUST=on&EXPECT=10&WORD_SIZE=3&MATRIX_NAME=BLOSUM62&COMPOSITION_BASED_STATISTICS=2&SHOW_OVERVIEW=on&SHOW_LINKOUT=on&ALIGNMENT_VIEW=Pairwise&MASK_CHAR=2&MASK_COLOR=1&GET_SEQUENCE=on&NEW_VIEW=on&NUM_OVERVIEW=100&DESCRIPTIONS=100&ALIGNMENTS=100&FORMAT_OBJECT=Alignment&FORMAT_TYPE=HTML&OLD_BLAST=false", :target => "_blank", :title => "Open in BLAST"%></li>
+</ul>
+<div id="single-peptide-tabs">
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#lineage-tree" id="lineage-tree-tab"data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-info-sign help"></a></li>
+    <li><a href="#lineage-table" id="lineage-table-tab" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-info-sign help"></span></a></li>
+    <li><a href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
+</ul>
+
+<div class="tab-help" id="tab-help">
+  <div id="lineage-tree-help">
+    <p>This interactive tree bundles the complete taxonomic lineages of all UniProt entries whose protein sequence contains <%= @original_sequence %>. You can click on nodes to expand them. Take into account that due to gaps in the hierarchical structure of the NCBI taxonomy, taxonomic levels are not always properly aligned in the tree view.</p>
+  </div>
+  <div id="lineage-table-help">
+    <p>This table shows the complete taxonomic lineages of all UniProt entries whose protein sequence contains <%= @original_sequence %>. Each row represents the complete taxonomic lineage of a single UniProt entry. The first column contains the name extracted from the UniProt entry, follow by columns representing valid taxonomic ranks ordered from superkingdom on the left to forma on the right. Only ranks used in the complete lineages of the records in which the peptide was found are displayed as columns in the table. To ease the interpretation of the table, rows are ordered according to the taxonomic names in the taxonomic rank columns and cells containing the same taxonomic name are marked with the same color code per column.</p>
+  </div>
+</div>
+
+<div class="tab-content">
+    <div class="tab-pane active" id="lineage-tree">
+      <div id="buttons-single"></div>
+      <div id="lineageTree"></div>
     </div>
     <div class="tab-content">
       <div class="tab-pane active" id="lineage-tree">
@@ -80,7 +87,7 @@
                     <a class="btn btn-default btn-xs dropdown-toggle externalLinks-button" data-toggle="dropdown"><%= entry.uniprot_accession_number %> <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                       <li role="presentation" class="dropdown-header">Open on external site</li>
-                      <li><%= link_to "Uniprot", "http://www.uniprot.org/uniprot/"+entry.uniprot_accession_number, :target => "_blank" %></li>
+                      <li><%= link_to "UniProt", "http://www.uniprot.org/uniprot/"+entry.uniprot_accession_number, :target => "_blank" %></li>
                       <li><%= link_to "PRIDE", "http://www.ebi.ac.uk/pride/searchSummary.do?queryTypeSelected=identification%20accession%20number&identificationAccessionNumber="+entry.uniprot_accession_number, :target => "_blank" %></li>
                       <li><%= link_to "PeptideAtlas", "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/Search?apply_action=GO&exact_match=exact_match%22&search_key="+entry.uniprot_accession_number, :target => "_blank" %></li>
                     </ul>

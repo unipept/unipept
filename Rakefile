@@ -3,8 +3,10 @@
 
 require File.expand_path('../config/application', __FILE__)
 require 'rake'
-require 'rubocop/rake_task'
+
+if ENV['CI'] != 'true' # skip on Travis
+  require 'rubocop/rake_task'
+  RuboCop::RakeTask.new
+end
 
 UnipeptWeb::Application.load_tasks
-
-RuboCop::RakeTask.new

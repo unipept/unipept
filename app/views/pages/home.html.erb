@@ -3,7 +3,7 @@
 <div class="row">
     <div class="col-xs-6">
         <p class="intro">
-            The Unipept web application supports biodiversity analysis of large and complex metaproteome samples. Its underlying index structure is designed to quickly retrieve all occurrences of a tryptic peptide in UniProtKB records. Taxon-specificity of the tryptic peptide is successively derived from these occurrences using a novel lowest common ancestor approach that is robust against taxonomic misarrangements, misidentifications and inaccuracies. This application consists of four separate functionalities: the <a href="<%= search_single_path %>">Tryptic Peptide Analysis</a>, the <a href="<%= datasets_path %>">Metaproteomics Analysis</a>, the <a href="<%= peptide_finder_path %>">Unique Peptide Finder</a> and the <a href="<%= peptidome_clustering_path %>">Peptidome Clustering</a>.
+            The Unipept web application supports biodiversity analysis of large and complex metaproteome samples. Its underlying index structure is designed to quickly retrieve all occurrences of a tryptic peptide in UniProt entries. Taxon-specificity of the tryptic peptide is successively derived from these occurrences using a novel lowest common ancestor approach that is robust against taxonomic misarrangements, misidentifications and inaccuracies. This application consists of four separate functionalities: the <a href="<%= search_single_path %>">Tryptic Peptide Analysis</a>, the <a href="<%= datasets_path %>">Metaproteomics Analysis</a>, the <a href="<%= peptide_finder_path %>">Unique Peptide Finder</a> and the <a href="<%= peptidome_clustering_path %>">Peptidome Clustering</a>.
         </p>
     </div>
     <% unless @post.nil? %>
@@ -29,7 +29,7 @@
                     <h3>Tryptic Peptide Analysis</h3>
                 </div>
                 <div class="caption">
-                    <p>With tryptic peptide analysis, you can submit a single tryptic peptide that can be 5 to 50 residues long. The application will respond with a list of all UniProtKB records wherein the peptide was found along with a complete taxonomic lineage derived from the <span class="initialism">NCBI</span> taxonomy. These lineages are presented as a comprehensible table and using an interactive tree view.</p>
+                    <p>With tryptic peptide analysis, you can submit a single tryptic peptide that can be 5 to 50 residues long. The application will respond with a list of all UniProt entries wherein the peptide was found along with a complete taxonomic lineage derived from the <span class="initialism">NCBI</span> taxonomy. These lineages are presented as a comprehensible table and using an interactive tree view.</p>
                 </div>
             </div>
         </a>
@@ -57,7 +57,7 @@
                     <h3>Unique Peptide Finder</h3>
                 </div>
                 <div class="caption">
-                    <p>The unique peptide finder is an interactive web application that lets you find unique tryptic peptides for a species or genus of your choice. The user friendly application is powered by Uniprot and the set of completed genomes or your own set of genomes and lets you download lists of unique peptides, which can be used for targeted proteomics experiments.</p>
+                    <p>The unique peptide finder is an interactive web application that lets you find unique tryptic peptides for a species or genus of your choice. The user friendly application is powered by UniProt and the refseq genomes or your own set of genomes and lets you download lists of unique peptides, which can be used for targeted proteomics experiments.</p>
                 </div>
             </div>
         </a>
@@ -73,7 +73,7 @@
                     <h3>Peptidome Clustering</h3>
                 </div>
                 <div class="caption">
-                    <p><span class="label label-success">New</span> Peptidome clustering builds on the foundations of the user friendly unique peptide finder interface to let you select a set of genomes of your choice, and calculate similarities between them based on their tryptic peptidome. The result is shown as a similarity matrix and a phylogenetic tree.</p>
+                    <p>Peptidome clustering builds on the foundations of the user friendly unique peptide finder interface to let you select a set of genomes of your choice, and calculate similarities between them based on their tryptic peptidome. The result is shown as a similarity matrix and a phylogenetic tree.</p>
                 </div>
             </div>
         </a>
@@ -92,7 +92,25 @@
                     <h3>API Documentation</h3>
                 </div>
                 <div class="caption">
-                    <p><span class="label label-success">New</span> Unipept offers most of its peptide analysis features as a web service. This enables the integration of Unipept functionality into other applications and the creation of batch processing scripts. These documentation pages describe the available features of the <span class="initialism">API</span> and how to best access them.</p>
+                    <p>Unipept offers most of its peptide analysis features as a web service. This enables the integration of Unipept functionality into other applications and the creation of batch processing scripts. These documentation pages describe the available features of the <span class="initialism">API</span>, how to access them and plenty examples.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-xs-4">
+        <a href="<%= api_clidocs_path %>">
+            <div class="thumbnail">
+                <div class="feature-documentation">
+                    <div class="feature-terminal">
+                        <span class="feature-terminal-prompt">&gt;<span class="feature-terminal-flicker">_</span></span>
+                    </div>
+                </div>
+                <div class="click-catcher"></div>
+                <div class="caption title">
+                    <h3>Command Line Interface</h3>
+                </div>
+                <div class="caption">
+                    <p><span class="label label-success">New</span> The Unipept command line interface (<span class='initialism'>CLI</span>) is a wrapper around the Unipept <span class='initialism'>API</span> that offers an easy way to integrate Unipept functionality into your data processing pipelines and scripts. These documentation pages cover installation and usage instructions, an overview of all available options and several use cases.</p>
                 </div>
             </div>
         </a>
