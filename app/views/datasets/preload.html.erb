@@ -1,16 +1,6 @@
 <h1>Load a dataset</h1>
 <div class="row">
-<div class="col-xs-6">
-    <p>
-    Metaproteomics analysis helps you analyze lists of tryptic peptides, e.g. extracted from an environmental sample using shotgun tandem mass spectrometric methods. You can submit a list of peptides of which the lowest common ancestors (LCA) will be calculated. These LCAs will be bundled and displayed in an interactive treemap giving you insight into the biodiversity of your sample.
-    </p>
-    <p>
-    Advanced options lets you filter duplicate peptides, equate isoleucine and leucine or export the results to an Microsoft Excel compatible file. If  advanced missed cleavage handling is left unchecked, Unipept will perform an in silico digest on the list of peptides. The resulting subpeptides will be handled individually. When the box is checked, the results of subpeptides will be combined. Enabling advanced missed cleavage handling has a serious performance impact!
-    </p>
-    <%= render 'pride_progress' %>
-</div>
-<div class="col-xs-6">
-  <h3>Analyze a list of peptides</h3>
+<div class="col-xs-6 col-xs-offset-3">
   <%= render 'shared/sequence_multi_search' %>
 </div>
 </div>

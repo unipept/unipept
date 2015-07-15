@@ -172,9 +172,6 @@ function constructDatasetLoader() {
             that.checkDatasetSize();
 
             // highlight what happend to the user
-            $('html, body').animate({
-                scrollTop: $("#search_elements").parent().parent().offset().top
-            }, 1000);
             highlight("#qs");
             highlight("#search_name");
         };
