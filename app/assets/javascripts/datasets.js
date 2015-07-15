@@ -1,18 +1,22 @@
 function initDatasets() {
     var datasetLoader = constructDatasetLoader();
 
+    // enable tooltips
+    $(".js-has-hover-tooltip").tooltip({
+        container: "body",
+        placement: "right"
+    });
+    $(".js-has-focus-tooltip").tooltip({
+        trigger: "focus",
+        container: "body",
+        placement: "right"
+    });
+
+
     // add progress bar when submitting form
     $("#search-multi-form").click(function () {
         $("#search_button").hide();
         $("#form-progress").removeClass("hide");
-    });
-
-    // hide more options + set up action to show is
-    $("#more_options_form").hide();
-    $("#more_options a").click(function () {
-        $("#more_options_form").slideDown("slow");
-        $("#more_options").hide("fast");
-        return false;
     });
 
     // track the use of the export checkbox
@@ -60,9 +64,6 @@ function initDatasets() {
 }
 
 function initPreload(type, id) {
-    // show full form
-    $("#more_options").hide();
-
     var datasetLoader = constructDatasetLoader();
 
     if (type === "database") {
@@ -154,7 +155,6 @@ function constructDatasetLoader() {
      */
     that.loadDataset = function loadDataset(type, id, name, button) {
         // expand the search options and prepare the form
-        $("#more_options a").click();
         $("#qs").val("Please wait while we load the dataset...");
         $("#qs").attr('disabled', 'disabled');
         $("#search-multi-form").button("loading");
