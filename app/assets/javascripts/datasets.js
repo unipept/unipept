@@ -65,6 +65,7 @@ function initDatasets() {
 
 function initPreload(type, id) {
     var datasetLoader = constructDatasetLoader();
+    $("#pride-progress").appendTo(".card-supporting-text");
 
     if (type === "database") {
         datasetLoader.loadDataset("internal", id, "Dataset " + id);

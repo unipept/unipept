@@ -1,11 +1,10 @@
-<h1>Load a dataset</h1>
 <div class="row">
-<div class="col-xs-6 col-xs-offset-3">
-  <%= render 'shared/sequence_multi_search' %>
+  <div class="col-xs-6 col-xs-offset-3">
+    <%= render 'shared/sequence_multi_search' %>
+    <%= render 'pride_progress' %>
+  </div>
 </div>
-</div>
-
-
+<%= render 'shared/multi_search_intro' %>
 <script type="text/javascript">
-    $(document).ready(initPreload("<%= @type %>", <%= @id %>));
+  $(document).ready(initPreload("<%= @type %>", <%= @id %>));
 </script>
