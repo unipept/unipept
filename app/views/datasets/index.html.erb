@@ -1,17 +1,13 @@
 <div class="row">
-  <div class="col-xs-6 col-xs-offset-3">
+  <div class="col-xs-6">
     <%= render 'shared/sequence_multi_search' %>
   </div>
-</div>
-<%= render 'shared/multi_search_intro' %>
-
-<div class="row">
   <div class="col-xs-6">
     <%= render 'shared/load_datasets_form' %>
     <%= render 'pride_progress' %>
   </div>
 </div>
-
+<%= render 'shared/multi_search_intro' %>
 
 <script type="text/javascript">
   $(document).ready(initDatasets);
