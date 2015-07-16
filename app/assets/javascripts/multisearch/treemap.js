@@ -57,7 +57,7 @@ var constructTreemap = function constructTreemap(args) {
         $("#d3TreeMap").empty();
 
         treemap = d3.layout.treemap()
-            .size([width, height])
+            .size([width + 1, height + 1])
             .padding([10, 0, 0, 0])
             .value(function (d) { return d.data.self_count; });
 
@@ -71,9 +71,9 @@ var constructTreemap = function constructTreemap(args) {
         breadcrumbs = d3.select("#d3TreeMap").append("div")
             .attr("class", "breadcrumbs")
             .style("position", "relative")
-            .style("width", (width + margin.left + margin.right - 1) + "px")
+            .style("width", (width + margin.left + margin.right) + "px")
             .style("height", "20px")
-            .style("background-color", "#FF7700");
+            .style("background-color", "#FF8F00");
 
         div = d3.select("#d3TreeMap").append("div")
             .style("position", "relative")
@@ -98,7 +98,7 @@ var constructTreemap = function constructTreemap(args) {
      */
     function resize(width, height) {
         treemap = d3.layout.treemap()
-            .size([width, height])
+            .size([width + 1, height + 1])
             .padding([10, 0, 0, 0])
             .value(function (d) { return d.data.self_count; });
         that.update(current);
