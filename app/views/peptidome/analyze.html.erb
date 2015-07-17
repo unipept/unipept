@@ -1,253 +1,260 @@
 <h1>Peptidome Analysis</h1>
 <p>The (tryptic) peptidome is the complete set of (tryptic) peptides encoded in the proteome of an organism. Unipept provides fast and flexible analysis tools for identifying the unique peptidome of a given taxon and peptidome-based clustering.</p>
-
-<div id="buttons-pancore"></div>
-
-<ul id="tabs" class="nav nav-tabs visualisations">
-  <li class="<%= @tab == "peptidefinder" ? "active" : ""%>"><a href="#pancore_graph_wrapper" id="unique-peptide-finder-tab" data-toggle="tab">Unique Peptide Finder <span class="small glyphicon glyphicon-question-sign"></span></a></li>
-  <li class="<%= @tab == "peptidomeclustering" ? "active" : ""%> peptidome-clustering-tab"><a href="#sim_matrix_wrapper" data-toggle="tab">Peptidome Clustering <span class="small glyphicon glyphicon-question-sign"></a></li>
-</ul>
-
-<div class="tab-help" id="tab-help">
-  <div id="unique-peptide-finder-help">
-    <p>Find unique peptides for a species of your choice, based on proteome data. Unique tryptic peptides are found in all selected proteomes and in none of the Uniprot records belonging to taxa outside those of the selected proteomes. These taxon-specific peptides can be downloaded and used for targeted proteomics experiments.</p>
-    <p>Incremental unions and intersections are computed for the peptidomes of all selected proteomes. The size of the incremental unions (pan peptidome) is shown in blue and the size of the incremental intersections (core peptidome) in orange. The size of the unique peptidome — the subset of the core peptidome that is unique to the lowest common ancestor (<span class="initialism">LCA</span>) of the taxa of the selected proteomes — is shown in green. The size of the individual peptidomes — expressed as the total number of tryptic peptides — is shown in grey. Individual data sets can be shown/hidden by clicking their name in the graph legend.</p>
-    <div class="row features">
-      <div class="col-xs-4">
-        <p class="text-center help-icon"><span class="glyphicon glyphicon-plus-sign"></span></p>
-        <h3>1. Add proteomes</h3>
-        <p>You can add proteomes to the analysis by selecting them from the filterable table on the bottom right.</p>
-      </div>
-      <div class="col-xs-4">
-        <p class="text-center help-icon"><span class="glyphicon glyphicon-random"></span></p>
-        <h3>2. Reorder</h3>
-        <p>You can easily reorder the proteomes by dragging them to the desired position on the graph or table. Alternatively, you can use one of the automatic sort options.</p>
-      </div>
-      <div class="col-xs-4">
-        <p class="text-center help-icon"><span class="glyphicon glyphicon-download"></span></p>
-        <h3>3. Download unique peptides</h3>
-        <p>You can download a list of peptides present in all of the selected proteomes but nowhere outside of this taxonomic group, by clicking on the rightmost datapoint in de graph. Next, use the 'Download peptides' button and select 'Unique peptides'.</p>
-      </div>
-    </div>
-  </div>
-  <div id="peptidome-clustering-help">
-    <p>Find similarities between a selection of proteomes and view the results in a similarity matrix or a phylogenetic tree. <span class="initialism">UPGMA</span> is used to cluster the proteomes based on their peptidome content. Pairwise similarities are computed as the ratio of the size of the intersection to the size of the union of both peptidomes.</p>
-    <div class="row features">
-      <div class="col-xs-4">
-        <p class="text-center help-icon"><span class="glyphicon glyphicon-plus-sign"></span></p>
-        <h3>1. Add proteomes</h3>
-        <p>You can add proteomes to the analysis by selecting them from the filterable table on the bottom right.</p>
-      </div>
-      <div class="col-xs-4">
-        <p class="text-center help-icon"><span class="glyphicon glyphicon-th"></span></p>
-        <h3>2. Cluster</h3>
-        <p>You can easily cluster the proteomes by clicking the blurred phylogenetic tree next to the similarity matrix. A phylogenetic tree will be draw by using UPGMA on the pairwise similarities.</p>
-      </div>
-      <div class="col-xs-4">
-        <p class="text-center help-icon"><span class="glyphicon glyphicon-download"></span></p>
-        <h3>3. Download results</h3>
-        <p>You can download the similarity matrix by clicking the 'Download data' button in the top-right corner. The pairwise similarities between the proteomes are offered as a Microsoft Excel-compatible <span class="initialism">CSV</span> file, the <span class="initialism">UPGMA</span> tree in the newick format.</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="tab-content full-screen-container pancore not-full-screen">
-  <div class="full-screen-bar">
-    <div class="action-button"><button class='btn btn-primary add-proteomes' data-toggle="button"><span class="glyphicon glyphicon-plus"></span> Add proteomes</button></div>
-      <nav class="fullScreenNav">
-        <ul class="visualisations">
-          <li class="active"><a href="#pancore_graph_wrapper" data-toggle="tab">Unique peptide finder</a></li>
-          <li><a href="#sim_matrix_wrapper" data-toggle="tab" class="peptidome-clustering-tab">Peptidome clustering</a></li>
-        </ul>
-      </nav>
-      <div class="fullScreenActions">
-          <a title="" class="btn-animate download" data-original-title="Download the current view as an svg or png image"><span class="glyphicon glyphicon-download down"></span></a>
-          <a title="" class="btn-animate exit" data-original-title="Exit full screen mode"><span class="glyphicon glyphicon-resize-small shrink"></span></a>
-      </div>
-    </div>
-  <div class="tab-pane fade <%= @tab == "peptidefinder" ? "in active" : ""%>" id="pancore_graph_wrapper">
-    <div id="pancore_graph">
-      <div id="popovers"></div>
-    </div>
-  </div>
-  <div class="tab-pane fade <%= @tab == "peptidomeclustering" ? "in active" : ""%>" id="sim_matrix_wrapper">
-    <h2 class="ghead">
-      <span class="dir">
-        <div id="similarity-selector" class="btn-group pull-right">
-      <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
-        Similarity: <span class="similarity-type">union</span> <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu" role="menu">
-        <li class="dropdown-header">Recommended similarities</li>
-        <li><a href="#" data-sim="simUnion" data-toggle="tooltip" title="Great for intraspecies discernibility. The size of the intersection of the 2 peptidomes divided by the size of the union.">Union</a></li>
-        <li><a href="#" data-sim="simMin" data-toggle="tooltip" title="Great for interspecies discernibility. The size of the intersection divided by the minimum of the size of the 2 peptidomes.">Minimum</a></li>
-        <li role="separator" class="divider"></li>
-        <li><a href="#" data-sim="simMax" data-toggle="tooltip" title="The size of the intersection divided by the maximum of the size of the 2 peptidomes.">Maximum</a></li>
-        <li><a href="#" data-sim="simAvg" data-toggle="tooltip" title="The size of the intersection divided by the average of the size of the 2 peptidomes.">Average</a></li>
-        <li><a href="#" data-sim="simOchiai" data-toggle="tooltip" title="The size of the intersection divided by the square root of the product  of the size of the 2 peptidomes.">Ochiai</a></li>
+<div class='card card-nav'>
+  <div class='card-title card-title-colored'>
+    <ul id="tabs" class="nav nav-tabs visualisations">
+      <li class="<%= @tab == "peptidefinder" ? "active" : ""%>"><a href="#pancore_graph_wrapper" id="unique-peptide-finder-tab" data-toggle="tab">Unique Peptide Finder <span class="small glyphicon glyphicon-question-sign"></span></a></li>
+      <li class="<%= @tab == "peptidomeclustering" ? "active" : ""%> peptidome-clustering-tab"><a href="#sim_matrix_wrapper" data-toggle="tab">Peptidome Clustering <span class="small glyphicon glyphicon-question-sign"></a></li>
       </ul>
     </div>
-      </span>
-    </h2>
-    <div id="sim_matrix"></div>
+    <div class='card-supporting-text'>
+      <div id="buttons-pancore" class='buttons-single'></div>
+      <div class="tab-content full-screen-container pancore not-full-screen">
+        <div class="full-screen-bar">
+          <div class="action-button"><button class='btn btn-primary add-proteomes' data-toggle="button"><span class="glyphicon glyphicon-plus"></span> Add proteomes</button></div>
+          <nav class="fullScreenNav">
+            <ul class="visualisations">
+              <li class="active"><a href="#pancore_graph_wrapper" data-toggle="tab">Unique peptide finder</a></li>
+              <li><a href="#sim_matrix_wrapper" data-toggle="tab" class="peptidome-clustering-tab">Peptidome clustering</a></li>
+            </ul>
+          </nav>
+          <div class="fullScreenActions">
+            <a title="" class="btn-animate download" data-original-title="Download the current view as an svg or png image"><span class="glyphicon glyphicon-download down"></span></a>
+            <a title="" class="btn-animate exit" data-original-title="Exit full screen mode"><span class="glyphicon glyphicon-resize-small shrink"></span></a>
+          </div>
+        </div>
+        <div class="tab-pane fade <%= @tab == "peptidefinder" ? "in active" : ""%>" id="pancore_graph_wrapper">
+          <div id="pancore_graph">
+            <div id="popovers"></div>
+          </div>
+        </div>
+        <div class="tab-pane fade <%= @tab == "peptidomeclustering" ? "in active" : ""%>" id="sim_matrix_wrapper">
+          <h2 class="ghead">
+            <span class="dir">
+              <div id="similarity-selector" class="btn-group pull-right">
+                <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
+                  Similarity: <span class="similarity-type">union</span> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <li class="dropdown-header">Recommended similarities</li>
+                  <li><a href="#" data-sim="simUnion" data-toggle="tooltip" title="Great for intraspecies discernibility. The size of the intersection of the 2 peptidomes divided by the size of the union.">Union</a></li>
+                  <li><a href="#" data-sim="simMin" data-toggle="tooltip" title="Great for interspecies discernibility. The size of the intersection divided by the minimum of the size of the 2 peptidomes.">Minimum</a></li>
+                  <li role="separator" class="divider"></li>
+                  <li><a href="#" data-sim="simMax" data-toggle="tooltip" title="The size of the intersection divided by the maximum of the size of the 2 peptidomes.">Maximum</a></li>
+                  <li><a href="#" data-sim="simAvg" data-toggle="tooltip" title="The size of the intersection divided by the average of the size of the 2 peptidomes.">Average</a></li>
+                  <li><a href="#" data-sim="simOchiai" data-toggle="tooltip" title="The size of the intersection divided by the square root of the product  of the size of the 2 peptidomes.">Ochiai</a></li>
+                </ul>
+              </div>
+            </span>
+          </h2>
+          <div id="sim_matrix"></div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
-<hr>
-<div class="row proteome-adder">
-  <div class="col-xs-6 proteome-library">
-    <h3>Proteome library</h3>
-    <ul id="genome-tabs" class="nav nav-tabs">
-      <li class="active"><a href="#refseq-genomes" id="refseq-genomes-tab" data-toggle="tab">NCBI proteomes</a></li>
-      <li><a href="#my-genomes" id="my-genomes-tab" data-toggle="tab">My proteomes <span class="badge">0</span></a></li>
-    </ul>
-
-    <div class="tab-content" id="genome-tabs">
-      <div class="tab-pane fade in active" id="refseq-genomes">
-        <div id="genomeSelector" class="genomeSelector">
-            <div class="input-group" id="genomeSelector-search">
-                <span class="input-group-addon">
+  <div class="tab-help" id="tab-help">
+    <div id="unique-peptide-finder-help">
+      <p>Find unique peptides for a species of your choice, based on proteome data. Unique tryptic peptides are found in all selected proteomes and in none of the Uniprot records belonging to taxa outside those of the selected proteomes. These taxon-specific peptides can be downloaded and used for targeted proteomics experiments.</p>
+      <p>Incremental unions and intersections are computed for the peptidomes of all selected proteomes. The size of the incremental unions (pan peptidome) is shown in blue and the size of the incremental intersections (core peptidome) in orange. The size of the unique peptidome — the subset of the core peptidome that is unique to the lowest common ancestor (<span class="initialism">LCA</span>) of the taxa of the selected proteomes — is shown in green. The size of the individual peptidomes — expressed as the total number of tryptic peptides — is shown in grey. Individual data sets can be shown/hidden by clicking their name in the graph legend.</p>
+      <div class="row features">
+        <div class="col-xs-4">
+          <p class="text-center help-icon"><span class="glyphicon glyphicon-plus-sign"></span></p>
+          <h3>1. Add proteomes</h3>
+          <p>You can add proteomes to the analysis by selecting them from the filterable table on the bottom right.</p>
+        </div>
+        <div class="col-xs-4">
+          <p class="text-center help-icon"><span class="glyphicon glyphicon-random"></span></p>
+          <h3>2. Reorder</h3>
+          <p>You can easily reorder the proteomes by dragging them to the desired position on the graph or table. Alternatively, you can use one of the automatic sort options.</p>
+        </div>
+        <div class="col-xs-4">
+          <p class="text-center help-icon"><span class="glyphicon glyphicon-download"></span></p>
+          <h3>3. Download unique peptides</h3>
+          <p>You can download a list of peptides present in all of the selected proteomes but nowhere outside of this taxonomic group, by clicking on the rightmost datapoint in de graph. Next, use the 'Download peptides' button and select 'Unique peptides'.</p>
+        </div>
+      </div>
+    </div>
+    <div id="peptidome-clustering-help">
+      <p>Find similarities between a selection of proteomes and view the results in a similarity matrix or a phylogenetic tree. <span class="initialism">UPGMA</span> is used to cluster the proteomes based on their peptidome content. Pairwise similarities are computed as the ratio of the size of the intersection to the size of the union of both peptidomes.</p>
+      <div class="row features">
+        <div class="col-xs-4">
+          <p class="text-center help-icon"><span class="glyphicon glyphicon-plus-sign"></span></p>
+          <h3>1. Add proteomes</h3>
+          <p>You can add proteomes to the analysis by selecting them from the filterable table on the bottom right.</p>
+        </div>
+        <div class="col-xs-4">
+          <p class="text-center help-icon"><span class="glyphicon glyphicon-th"></span></p>
+          <h3>2. Cluster</h3>
+          <p>You can easily cluster the proteomes by clicking the blurred phylogenetic tree next to the similarity matrix. A phylogenetic tree will be draw by using UPGMA on the pairwise similarities.</p>
+        </div>
+        <div class="col-xs-4">
+          <p class="text-center help-icon"><span class="glyphicon glyphicon-download"></span></p>
+          <h3>3. Download results</h3>
+          <p>You can download the similarity matrix by clicking the 'Download data' button in the top-right corner. The pairwise similarities between the proteomes are offered as a Microsoft Excel-compatible <span class="initialism">CSV</span> file, the <span class="initialism">UPGMA</span> tree in the newick format.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row proteome-adder">
+    <div class="col-xs-6 proteome-library">
+      <h3>Proteome library</h3>
+      <div class='card card-nav datasets'>
+        <div class='card-title card-title-colored'>
+          <ul id="genome-tabs" class="nav nav-tabs">
+            <li class="active"><a href="#refseq-genomes" id="refseq-genomes-tab" data-toggle="tab">NCBI proteomes</a></li>
+            <li><a href="#my-genomes" id="my-genomes-tab" data-toggle="tab">My proteomes <span class="badge">0</span></a></li>
+          </ul>
+        </div>
+        <div class='card-supporting-text'>
+          <div class="tab-content" id="genome-tabs">
+            <div class="tab-pane fade in active" id="refseq-genomes">
+              <div id="genomeSelector" class="genomeSelector">
+                <div class="input-group" id="genomeSelector-search">
+                  <span class="input-group-addon">
                     <span class="glyphicon glyphicon-search"></span>
-                </span>
-                <%= search_field_tag(:genomeSelectorSearch, "", :placeholder => "type to filter the results", :class => "form-control", :autocomplete => "off") %>
-                <span class="input-group-addon search-settings" title="Advanced search settings">
+                  </span>
+                  <%= search_field_tag(:genomeSelectorSearch, "", :placeholder => "type to filter the results", :class => "form-control", :autocomplete => "off") %>
+                  <span class="input-group-addon search-settings" title="Advanced search settings">
                     <span class="glyphicon glyphicon-cog"></span>
-                </span>
-            </div>
-            <table class="table table-condensed genomes-table" id="genomeSelector-results">
-                <thead>
+                  </span>
+                </div>
+                <table class="table table-condensed genomes-table" id="genomeSelector-results">
+                  <thead>
                     <tr>
-                        <th class="handle">
-                            <input type="checkbox" class="check-all" title="select all results"></input>
-                        </th>
-                        <th class="name">
-                            <button class="btn btn-link btn-xs prev-page" title="previous page">&larr;</button>
-                            <span class="result-count">  </span>
-                            <button class="btn btn-link btn-xs next-page" title="next page">&rarr;</button>
-                        </th>
-                        <th class="action">
-                            <button class='btn btn-primary btn-xs btn-add-all' title="add all selected proteomes to analysis"><span class='glyphicon glyphicon-plus'></span></button>
-                        </th>
-                    </tr>
+                      <th class="handle">
+                        <input type="checkbox" class="check-all" title="select all results"></input>
+                    </th>
+                    <th class="name">
+                      <button class="btn btn-link btn-xs prev-page" title="previous page">&larr;</button>
+                      <span class="result-count">  </span>
+                      <button class="btn btn-link btn-xs next-page" title="next page">&rarr;</button>
+                    </th>
+                    <th class="action">
+                      <button class='btn btn-primary btn-xs btn-add-all' title="add all selected proteomes to analysis"><span class='glyphicon glyphicon-plus'></span></button>
+                    </th>
+                  </tr>
                 </thead>
                 <tbody></tbody>
                 <tfoot></tfoot>
-            </table>
-        </div>
-      </div>
-      <div class="tab-pane fade" id="my-genomes">
-        <div class="alert alert-danger hide" id="my-genome-error">
-          <strong>Oh snap!</strong> Sorry, your browser doesn't seem to support the File <span class="initialism">API</span>. Everything should work find in Firefox or Google Chrome.
-        </div>
-        <div id="myGenomes" class="hide">
-        <button type="button" id='addMyGenomeButton' class='btn btn-primary' data-toggle="button"><span class='glyphicon glyphicon-plus'></span> Add your own proteomes</button>
-          <table class="table table-condensed genomes-table" id="my-genomes-table">
-            <thead>
-              <tr>
-                <th class="handle">
-                  <button id="remove-my-genomes" class="btn btn-xs btn-danger" title="remove all my genomes"><span class="glyphicon glyphicon-trash"></span></button>
-                </th>
-                <th class="name">My proteomes <span id="my-genomes-help" class='glyphicon glyphicon-question-sign' title="Add your own proteomes by selecting FASTA-files containing individual proteomes. After processing, they're stored in your browser and are available for analysis under my proteomes."></span></th>
-                <th class="status"></th>
-                <th class="action">
-                    <button class='btn btn-primary btn-xs btn-add-all' title="add all selected proteomes to analysis"><span class='glyphicon glyphicon-plus'></span></button>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
-          <div id="mygenomes-popover-head" class="hide">Add your own proteome</div>
-          <div id="mygenomes-popover-content" class="hide">
-            <form>
-                <div class="form-group">
-                  <label for="myGenomeName" class="control-label">Name</label>
-                  <input type="text" id="myGenomeName" class="form-control" placeholder="name" data-toggle="tooltip" title="Enter a name for this proteome.">
-                </div>
-                <div class="form-group">
-                  <label for="myGenomeFile" class="control-label"><span class="initialism">FASTA</span> file</label>
-                  <div class="input-group"  data-toggle="tooltip" title="Select a FASTA file containing one or more protein sequences.">
-                    <span class="input-group-btn">
-                      <span class="btn btn-default btn-file">
-                        Browse… <input type="file" id="myGenomeFile" multiple>
+              </table>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="my-genomes">
+            <div class="alert alert-danger hide" id="my-genome-error">
+              <strong>Oh snap!</strong> Sorry, your browser doesn't seem to support the File <span class="initialism">API</span>. Everything should work find in Firefox or Google Chrome.
+            </div>
+            <div id="myGenomes" class="hide">
+              <button type="button" id='addMyGenomeButton' class='btn btn-primary' data-toggle="button"><span class='glyphicon glyphicon-plus'></span> Add your own proteomes</button>
+              <table class="table table-condensed genomes-table" id="my-genomes-table">
+                <thead>
+                  <tr>
+                    <th class="handle">
+                      <button id="remove-my-genomes" class="btn btn-xs btn-danger" title="remove all my genomes"><span class="glyphicon glyphicon-trash"></span></button>
+                    </th>
+                    <th class="name">My proteomes <span id="my-genomes-help" class='glyphicon glyphicon-question-sign' title="Add your own proteomes by selecting FASTA-files containing individual proteomes. After processing, they're stored in your browser and are available for analysis under my proteomes."></span></th>
+                    <th class="status"></th>
+                    <th class="action">
+                      <button class='btn btn-primary btn-xs btn-add-all' title="add all selected proteomes to analysis"><span class='glyphicon glyphicon-plus'></span></button>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+              <div id="mygenomes-popover-head" class="hide">Add your own proteome</div>
+              <div id="mygenomes-popover-content" class="hide">
+                <form>
+                  <div class="form-group">
+                    <label for="myGenomeName" class="control-label">Name</label>
+                    <input type="text" id="myGenomeName" class="form-control" placeholder="name" data-toggle="tooltip" title="Enter a name for this proteome.">
+                  </div>
+                  <div class="form-group">
+                    <label for="myGenomeFile" class="control-label"><span class="initialism">FASTA</span> file</label>
+                    <div class="input-group"  data-toggle="tooltip" title="Select a FASTA file containing one or more protein sequences.">
+                      <span class="input-group-btn">
+                        <span class="btn btn-default btn-file">
+                          Browse… <input type="file" id="myGenomeFile" multiple>
+                        </span>
                       </span>
-                    </span>
-                    <input type="text" class="form-control" readonly="">
+                      <input type="text" class="form-control" readonly="">
+                    </div>
                   </div>
-                </div>
-                <div class="form-group text-center">
-                  <button type="button" id="processMyGenomeButton" class="btn btn-primary form-control">Process <span class="initialism">FASTA</span> file</button>
-                </div>
-                <div id="myGenomeProgress" class="progress hide">
-                  <span class="progress-text"></span>
-                  <div class="progress-bar progress-bar-success progress-bar-striped active"  role="progressbar" style="width: 45%">
+                  <div class="form-group text-center">
+                    <button type="button" id="processMyGenomeButton" class="btn btn-primary form-control">Process <span class="initialism">FASTA</span> file</button>
                   </div>
-                </div>
-                <small><span class="glyphicon glyphicon-question-sign"></span> The proteomes you add are only visible in this webbrowser. Nothing will be stored on the Unipept servers.</small>
-            </form>
+                  <div id="myGenomeProgress" class="progress hide">
+                    <span class="progress-text"></span>
+                    <div class="progress-bar progress-bar-success progress-bar-striped active"  role="progressbar" style="width: 45%">
+                    </div>
+                  </div>
+                  <small><span class="glyphicon glyphicon-question-sign"></span> The proteomes you add are only visible in this webbrowser. Nothing will be stored on the Unipept servers.</small>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-
   <div class="col-xs-6 analyzed-proteomes">
     <h3>Analyzed proteomes</h3>
     <div id="restore-analysis" class="alert alert-info alert-dismissible hide" role="alert">
       <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       Resume your previous analysis? <a href="#" class="alert-link">Restore data</a>
     </div>
-    <div id="genomes-table-div">
-      <div style="overflow: hidden; height: 0px; width: 0px;">&nbsp;</div>
-      <table class="table table-condensed genomes-table" id="genomes_table">
-        <thead>
-          <tr>
-            <th class="handle">
-              <div class="btn-group" id="autosort">
-                <a class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" id="autosort-button">
-                  <span class="glyphicon glyphicon-random"></span>
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a data-type="name" data-toggle="tooltip" title="Sorts the proteomes alphabetically from A-Z." href="#">Sort by name</a></li>
-                  <li><a data-type="size" data-toggle="tooltip" title="Sorts the proteomes by the number of peptides from high to low." href="#">Sort by genome size</a></li>
-                  <li><a data-type="clustered" data-toggle="tooltip" title="Clusters the proteomes by similarity and uses that order." href="#">Order by similarity</a></li>
-                  <li><a data-type="minpan" data-toggle="tooltip" title="Heuristically minimizes the pan peptidome. Starts from the current first node." href="#">Minimize the pan</a></li>
-                  <li><a data-type="maxcore" data-toggle="tooltip" title="Heuristically maximizes the core peptidome. Starts from the current first node." href="#">Maximize the core</a></li>
-                  <li><a data-type="optimal" data-toggle="tooltip" title="Heuristically minimizes the distance between the pan and core lines. Starts from the current first node." href="#">Optimize pan and core</a></li>
-                </ul>
-              </div>
-            </th>
-            <th class="name">Proteomes</th>
-            <th class="status"></th>
-            <th class="action"><a id="remove-all" class="btn btn-xs btn-danger" title="remove all proteomes"><span class="glyphicon glyphicon-trash"></span></a></th>
-          </tr>
-          <tr id="reorder-header" class="hidden warning">
-              <td colspan="4" align="center">
+    <div class='card'>
+      <div class='card-supporting-text'>
+        <div id="genomes-table-div">
+          <div style="overflow: hidden; height: 0px; width: 0px;">&nbsp;</div>
+          <table class="table table-condensed genomes-table" id="genomes_table">
+            <thead>
+              <tr>
+                <th class="handle">
+                  <div class="btn-group" id="autosort">
+                    <a class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" id="autosort-button">
+                      <span class="glyphicon glyphicon-random"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><a data-type="name" data-toggle="tooltip" title="Sorts the proteomes alphabetically from A-Z." href="#">Sort by name</a></li>
+                      <li><a data-type="size" data-toggle="tooltip" title="Sorts the proteomes by the number of peptides from high to low." href="#">Sort by genome size</a></li>
+                      <li><a data-type="clustered" data-toggle="tooltip" title="Clusters the proteomes by similarity and uses that order." href="#">Order by similarity</a></li>
+                      <li><a data-type="minpan" data-toggle="tooltip" title="Heuristically minimizes the pan peptidome. Starts from the current first node." href="#">Minimize the pan</a></li>
+                      <li><a data-type="maxcore" data-toggle="tooltip" title="Heuristically maximizes the core peptidome. Starts from the current first node." href="#">Maximize the core</a></li>
+                      <li><a data-type="optimal" data-toggle="tooltip" title="Heuristically minimizes the distance between the pan and core lines. Starts from the current first node." href="#">Optimize pan and core</a></li>
+                    </ul>
+                  </div>
+                </th>
+                <th class="name">Proteomes</th>
+                <th class="status"></th>
+                <th class="action"><a id="remove-all" class="btn btn-xs btn-danger" title="remove all proteomes"><span class="glyphicon glyphicon-trash"></span></a></th>
+              </tr>
+              <tr id="reorder-header" class="hidden warning">
+                <td colspan="4" align="center">
                   The order of the proteomes in this table currently doesn't correspond with the order in the similarity matrix<br>
                   <a id='use-cluster-order' class="btn btn-primary btn-xs" title="reorder the table to correspond with the clustered order"><span class="glyphicon glyphicon-random"></span> Use clustered order</a>
                   <a id='decluster-matrix' class="btn btn-default btn-xs" title="decluster the matrix and keep using the order of the table">Undo clustering</a>
-              </td>
-          <tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
+                </td>
+                <tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-
-<script type="text/javascript">
-  $(function () {
-    if (typeof(Worker)!=="undefined") {
-        constructPancore({
-            data : <%= raw(@genomes) %>,
-            taxa : <%= raw(@taxa) %>,
-            version : "<%=Rails.application.config.versions[:uniprot] %>"
-        });
-    } else {
-      error(null, "Sorry, this page uses Web Workers, an advanced JavaScript technology that's not supported by your browser. Try using an up to date version of Google Chrome, Firefox or Internet Explorer 10.")
-    }
-  });
-</script>
-
-<%= render 'shared/save_image_modal' %>
+    <script type="text/javascript">
+      $(function () {
+        if (typeof(Worker)!=="undefined") {
+            constructPancore({
+                data : <%= raw(@genomes) %>,
+                taxa : <%= raw(@taxa) %>,
+                version : "<%=Rails.application.config.versions[:uniprot] %>"
+            });
+        } else {
+          error(null, "Sorry, this page uses Web Workers, an advanced JavaScript technology that's not supported by your browser. Try using an up to date version of Google Chrome, Firefox or Internet Explorer 10.")
+        }
+      });
+    </script>
+    <%= render 'shared/save_image_modal' %>
