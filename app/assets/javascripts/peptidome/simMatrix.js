@@ -18,7 +18,8 @@ var constructSimMatrix = function constructSimMatrix(args) {
         height = 500,
         treeWidth = 200,
         fullWidth = treeWidth + width + margin.left + margin.right,
-        fullHeight = height + margin.top + margin.bottom;
+        fullHeight = height + margin.top + margin.bottom,
+        fillColor = "#1565C0";
 
     // D3 vars
     var svg,
@@ -370,7 +371,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
                 .attr("width", x.rangeBand())
                 .attr("height", x.rangeBand())
                 .style("fill-opacity", function (d) { return d.value ? z(d.value[selectedSimilarity] * d.value[selectedSimilarity]) : 1; })
-                .style("fill", function (d) { return d.value ? "steelblue" : "white"; });
+                .style("fill", function (d) { return d.value ? fillColor : "white"; });
 
             cells.exit().remove();
         });

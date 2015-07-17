@@ -20,10 +20,10 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         fullHeight = args.height;
 
     // Colors
-    var genomeColor = "#d9d9d9",  // gray
-        panColor = "#1f77b4",     // blue
-        coreColor = "#ff7f0e",    // orange
-        unicoreColor = "#2ca02c"; // green
+    var genomeColor = "#CFD8DC",  // gray
+        panColor = "#1565C0",     // blue
+        coreColor = "#FF8F00",    // orange
+        unicoreColor = "#2E7D32"; // green
 
     // Sizes
     var margin = {top: 20, right: 40, bottom: 170, left: 68},
