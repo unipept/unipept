@@ -730,8 +730,8 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .on("click", legendClick);
         var legendRects = legend.append("rect")
             .attr("x", 30)
-            .attr("rx", 3)
-            .attr("ry", 3)
+            .attr("rx", 2)
+            .attr("ry", 2)
             .style("fill", function (d) { return d.color; });
         var legendTexts = legend.append("text")
             .attr("x", 33)

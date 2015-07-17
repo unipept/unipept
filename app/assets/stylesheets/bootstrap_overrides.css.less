@@ -69,6 +69,20 @@ h1, h2, h3, h4, h5 {
 @modal-backdrop-opacity: 0.35;
 @modal-content-border-color: white;
 
+// popovers
+@popover-border-color: @grey-100;
+@popover-title-bg: @grey-100;
+.popover {
+    border-radius: 2px;
+    padding: 0px;
+    .shadow-z5();
+    z-index: 5;
+}
+.popover .popover-title {
+    border-radius: 2px 2px 0 0;
+    border: 0;
+}
+
 // buttons
 .btn {
     .shadow-z1();

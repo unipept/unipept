@@ -64,7 +64,7 @@ var constructPancore = function constructPancore(args) {
             pancore : that,
             table : table,
             transitionDuration : 500,
-            width : 930,
+            width : 916,
             height : 600,
             genomes : genomes
         });
