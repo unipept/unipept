@@ -12,25 +12,25 @@
 
 <div class="form-group">
     <%= f.label :environment, :class => "col-xs-2 control-label"  %>
-    <div class="col-xs-6">
+    <div class="col-xs-10">
         <%= f.text_field :environment, :class => "form-control" %>
     </div>
 </div>
 <div class="form-group">
     <%= f.label :reference, :class => "col-xs-2 control-label"  %>
-    <div class="col-xs-6">
+    <div class="col-xs-10">
         <%= f.text_area :reference, :rows => 3, :class => "form-control" %>
     </div>
 </div>
 <div class="form-group">
     <%= f.label :url, :class => "col-xs-2 control-label"  %>
-    <div class="col-xs-6">
+    <div class="col-xs-10">
         <%= f.text_field :url, :class => "form-control" %>
     </div>
 </div>
 <div class="form-group">
     <%= f.label :project_website, :class => "col-xs-2 control-label"  %>
-    <div class="col-xs-6">
+    <div class="col-xs-10">
         <%= f.text_field :project_website, :class => "form-control" %>
     </div>
 </div>
@@ -39,12 +39,12 @@
 <%= render 'dataset_item_fields', :f => builder %>
 <% end %>
 <div class="form-group">
-    <div class="col-xs-6 col-md-offset-2">
+    <div class="col-xs-10 col-md-offset-2">
         <p><span class='glyphicon glyphicon-plus'></span> <%= link_to_add_fields "add item", f, :dataset_items %></p>
     </div>
 </div>
 <div class="form-group">
-    <div class="col-xs-6 col-md-offset-2">
+    <div class="col-xs-10 col-md-offset-2">
         <%= f.submit :class => "btn-primary btn" %>
     </div>
 </div>
