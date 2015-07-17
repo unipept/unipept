@@ -182,41 +182,42 @@ span.dir.text {
 
 /* lineage tree */
 #tree_data {
-    width: 450px;
+    width: 420px;
     float: right;
-    padding: 5px;
+    padding: 8px;
     background: @gray-lighter;
     border: 1px solid #ccc;
-    border-radius: 3px;
+    border-radius: 2px;
     .transition(all 1s ease-in-out);
+    .shadow-z5();
 }
 #tree_data::before {
     content: "";
     display: block;
     height: 0;
     width: 0;
-    margin-left: -15px;
+    margin-left: -18px;
     border: 10px solid #ccc;
     border-width: 10px 10px 10px 0;
     border-color: transparent #ccc transparent transparent;
     position: absolute;
 }
 #tree_data h3 {
+    line-height: 30px;
     margin: 3px 0 5px;
+    color: @black-secondary;
 }
 #tree_data h4 {
-    margin: 8px 5px 0;
+    line-height: 25px;
+    margin-left: 5px;
 }
 #tree_data h3 a {
-    color: #666 !important;
+    color: @black-text !important;
 }
 #tree ul {
     padding-left: 0;
 }
-#tree_search_group {
-    width: 440px;
-}
-#outline-mismatch-tabs {
-    margin-top: 10px;
-    margin-bottom: 8px;
+#tree_search_group,
+#searchtree {
+    max-width: 420px;
 }
