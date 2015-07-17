@@ -3,10 +3,6 @@
 <p>
   <b>Environment:</b>
   <%= dataset.environment %>
-  <% if user_signed_in? && current_user.admin? && edit %>
-    <%= link_to raw("<span class='glyphicon glyphicon-pencil'></span> Edit"), edit_dataset_path(dataset), :class => 'btn btn-default btn-xs' %>
-    <%= link_to raw("<span class='glyphicon glyphicon-trash'></span> Delete"), dataset, data: {confirm: 'Are you sure?'}, :method => :delete, :class => 'btn btn-xs btn-danger' %>
-  <% end %>
   <br/>
   <b>Reference:</b>
   <small>
