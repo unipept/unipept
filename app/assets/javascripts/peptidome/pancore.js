@@ -123,18 +123,19 @@ var constructPancore = function constructPancore(args) {
      */
     function initHelp() {
         // tab help
-        $("#tabs li a span").on("mouseover", function () {
+        $("#tabs li a span.help").click(function (e) {
+            var title,
+                content;
+            e.stopPropagation();
+            e.preventDefault();
             if ($(this).parent().attr("id") === "unique-peptide-finder-tab") {
-                $("#unique-peptide-finder-help").show();
-                $("#peptidome-clustering-help").hide();
+                title = "Unique Peptide Finder";
+                content = $("#unique-peptide-finder-help").html();
             } else {
-                $("#peptidome-clustering-help").show();
-                $("#unique-peptide-finder-help").hide();
+                title = "Peptidome Clustering";
+                content = $("#peptidome-clustering-help").html();
             }
-            $("#tab-help").stop(true, true).fadeIn(200);
-        });
-        $("#tabs li a span").on("mouseout", function () {
-            $("#tab-help").stop(true, true).fadeOut(200);
+            showInfoModal(title, content, {wide: true});
         });
     }
 

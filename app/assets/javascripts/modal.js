@@ -1,4 +1,8 @@
-function showInfoModal(title, content) {
+function showInfoModal(title, content, options) {
+    var options = options || {};
+    if (options.wide) {
+        $("#info-modal .modal-dialog").addClass("modal-lg");
+    }
     $("#info-modal .modal-body")
         .empty()
         .append("<h2>" + title + "</h2>")

@@ -3,8 +3,8 @@
 <div class='card card-nav'>
   <div class='card-title card-title-colored'>
     <ul id="tabs" class="nav nav-tabs visualisations">
-      <li class="<%= @tab == "peptidefinder" ? "active" : ""%>"><a href="#pancore_graph_wrapper" id="unique-peptide-finder-tab" data-toggle="tab">Unique Peptide Finder <span class="small glyphicon glyphicon-question-sign"></span></a></li>
-      <li class="<%= @tab == "peptidomeclustering" ? "active" : ""%> peptidome-clustering-tab"><a href="#sim_matrix_wrapper" data-toggle="tab">Peptidome Clustering <span class="small glyphicon glyphicon-question-sign"></span></a></li>
+      <li class="<%= @tab == "peptidefinder" ? "active" : ""%>"><a href="#pancore_graph_wrapper" id="unique-peptide-finder-tab" data-toggle="tab">Unique Peptide Finder <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+      <li class="<%= @tab == "peptidomeclustering" ? "active" : ""%> peptidome-clustering-tab"><a href="#sim_matrix_wrapper" data-toggle="tab">Peptidome Clustering <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
     </ul>
   </div>
   <div class='card-supporting-text'>
@@ -201,44 +201,44 @@
     </div>
   </div>
 </div>
-<div class="tab-help" id="tab-help">
+<div class="hidden">
   <div id="unique-peptide-finder-help">
-    <p>Find unique peptides for a species of your choice, based on proteome data. Unique tryptic peptides are found in all selected proteomes and in none of the Uniprot records belonging to taxa outside those of the selected proteomes. These taxon-specific peptides can be downloaded and used for targeted proteomics experiments.</p>
+    <p>Find <b>unique peptides</b> for a species of your choice, based on proteome data. Unique tryptic peptides are found <b>in all selected proteomes</b> and in <b>none of the Uniprot records</b> belonging to taxa outside those of the selected proteomes. These taxon-specific peptides can be downloaded and used for targeted proteomics experiments.</p>
     <p>Incremental unions and intersections are computed for the peptidomes of all selected proteomes. The size of the incremental unions (pan peptidome) is shown in blue and the size of the incremental intersections (core peptidome) in orange. The size of the unique peptidome — the subset of the core peptidome that is unique to the lowest common ancestor (<span class="initialism">LCA</span>) of the taxa of the selected proteomes — is shown in green. The size of the individual peptidomes — expressed as the total number of tryptic peptides — is shown in grey. Individual data sets can be shown/hidden by clicking their name in the graph legend.</p>
-    <div class="row features">
+    <div class="row search-info">
       <div class="col-xs-4">
         <p class="text-center help-icon"><span class="glyphicon glyphicon-plus-sign"></span></p>
-        <h3>1. Add proteomes</h3>
+        <h4>1. Add proteomes</h4>
         <p>You can add proteomes to the analysis by selecting them from the filterable table on the bottom right.</p>
       </div>
       <div class="col-xs-4">
         <p class="text-center help-icon"><span class="glyphicon glyphicon-random"></span></p>
-        <h3>2. Reorder</h3>
+        <h4>2. Reorder</h4>
         <p>You can easily reorder the proteomes by dragging them to the desired position on the graph or table. Alternatively, you can use one of the automatic sort options.</p>
       </div>
       <div class="col-xs-4">
         <p class="text-center help-icon"><span class="glyphicon glyphicon-download"></span></p>
-        <h3>3. Download unique peptides</h3>
+        <h4>3. Download unique peptides</h4>
         <p>You can download a list of peptides present in all of the selected proteomes but nowhere outside of this taxonomic group, by clicking on the rightmost datapoint in de graph. Next, use the 'Download peptides' button and select 'Unique peptides'.</p>
       </div>
     </div>
   </div>
   <div id="peptidome-clustering-help">
-    <p>Find similarities between a selection of proteomes and view the results in a similarity matrix or a phylogenetic tree. <span class="initialism">UPGMA</span> is used to cluster the proteomes based on their peptidome content. Pairwise similarities are computed as the ratio of the size of the intersection to the size of the union of both peptidomes.</p>
-    <div class="row features">
+    <p>Find <b>similarities</b> between a selection of proteomes and view the results in a <b>similarity matrix</b> or a <b>phylogenetic tree</b>. <span class="initialism">UPGMA</span> is used to cluster the proteomes based on their peptidome content. You can choose between five similarity measures to calculate the pairwise similarities.</p>
+    <div class="row search-info">
       <div class="col-xs-4">
         <p class="text-center help-icon"><span class="glyphicon glyphicon-plus-sign"></span></p>
-        <h3>1. Add proteomes</h3>
+        <h4>1. Add proteomes</h4>
         <p>You can add proteomes to the analysis by selecting them from the filterable table on the bottom right.</p>
       </div>
       <div class="col-xs-4">
         <p class="text-center help-icon"><span class="glyphicon glyphicon-th"></span></p>
-        <h3>2. Cluster</h3>
+        <h4>2. Cluster</h4>
         <p>You can easily cluster the proteomes by clicking the blurred phylogenetic tree next to the similarity matrix. A phylogenetic tree will be draw by using UPGMA on the pairwise similarities.</p>
       </div>
       <div class="col-xs-4">
         <p class="text-center help-icon"><span class="glyphicon glyphicon-download"></span></p>
-        <h3>3. Download results</h3>
+        <h4>3. Download results</h4>
         <p>You can download the similarity matrix by clicking the 'Download data' button in the top-right corner. The pairwise similarities between the proteomes are offered as a Microsoft Excel-compatible <span class="initialism">CSV</span> file, the <span class="initialism">UPGMA</span> tree in the newick format.</p>
       </div>
     </div>
