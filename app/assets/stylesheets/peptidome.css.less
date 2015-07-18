@@ -1,8 +1,17 @@
 // styles related to the peptidome analysis page
+// undo card padding:
+#pancore_graph,
+#sim_matrix {
+    margin: -16px;
+}
+#pancore_graph svg,
+#sim_matrix svg {
+    margin-bottom: -5px;
+}
+
 // pancore graph
 #pancore_graph {
     min-height: 600px;
-    margin: -16px;
     user-select: none;
 }
 #pancore_graph .bar {
