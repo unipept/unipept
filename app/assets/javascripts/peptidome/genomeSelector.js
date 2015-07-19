@@ -128,7 +128,6 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         $("#genomeSelectorSearch").tokenfield({
             delimiter: " ",
             beautify: false,
-            minWidth: 330,
             createTokensOnBlur: true,
             typeahead: [{
                 hint: false,
@@ -137,7 +136,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                 displayKey: 'label',
                 source: filterEngine.ttAdapter(),
                 templates: {
-                    header: "<h4 class='header'>Filters</h4>",
+                    header: "<h4 class='dataset-header'>Filters</h4>",
                     suggestion: function (q) {
                         return "<p>" + q.label + " - <i class='small'>" + q.obj.name + "</i></p>";
                     }
@@ -146,7 +145,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                 displayKey: 'label',
                 source: taxaEngine.ttAdapter(),
                 templates: {
-                    header: "<h4 class='header'>Lineage</h4>",
+                    header: "<h4 class='dataset-header'>Lineage</h4>",
                     suggestion: function (q) {
                         return "<p>" + q.label + " - <i class='small'>" + q.rank + "</i></p>";
                     }
@@ -221,8 +220,9 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             keyUpped(false);
         });
 
+        // chrome makes the input fields a few pixels too winde on initial render
         if (navigator.userAgent.toLowerCase().indexOf('chrome') > -1) {
-            $("#genomeSelector .tokenfield").css("width", "367px");
+            $("#genomeSelector .tokenfield").css("width", "333px");
         }
 
         function keyUpped(direct) {
