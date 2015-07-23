@@ -42,7 +42,6 @@ UnipeptWeb::Application.routes.draw do
   # simple pages
   get '/about',   :to => 'pages#about'
   get '/admin',   :to => 'pages#admin'
-  get '/docs',    :to => 'pages#documentation'
   get '/publications', :to => 'pages#publications'
 
   # generate png from svg
