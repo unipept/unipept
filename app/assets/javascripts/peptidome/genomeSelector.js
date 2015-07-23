@@ -242,7 +242,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             trigger : "manual",
             title: "Filter settings",
             content: createContent,
-            container: ".full-screen-container"
+            container: "body"
         });
 
         // enable settings button
@@ -303,7 +303,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             content += "</div></div></div>";
 
 
-            content += "<div class='form-group'><h4 class='control-label col-sm-4'>Taxonomy</h4></div>";
+            content += "<div class='form-group'><b class='control-label col-sm-4'>Taxonomy</b></div>";
 
             ranks.forEach(function (rank) {
                 var id = rank + "Id";
@@ -324,9 +324,9 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
 
         function repositionPopover() {
             var buttonOffset = $(".search-settings").offset(),
-                containerOffset = $(".full-screen-container").offset();
+                containerOffset = $(".full-screen-container").hasClass("full-screen") ? $(".full-screen-container").offset() : $("body").offset();
             $popover.css("left", buttonOffset.left - containerOffset.left + 45);
-            $popover.css("top", Math.max(0, buttonOffset.top - containerOffset.top - 195));
+            $popover.css("top", Math.max(0, buttonOffset.top - containerOffset.top - 215));
             $popover.find(".arrow").css("top", $(".full-screen-container").hasClass("full-screen") ? "35%" : "50%");
         }
 
