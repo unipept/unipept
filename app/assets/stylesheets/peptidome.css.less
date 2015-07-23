@@ -222,36 +222,28 @@ tr.gu-mirror .button {
 }
 
 // full screen layout
-.full-screen .proteome-library {
+.full-screen .proteome-library,
+.full-screen .analyzed-proteomes{
     position: absolute;
     top: 44px;
-    left: -500px;
     width: 473px;
     height: 100%;
     background-color: #fff;
     z-index: 5;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     overflow: scroll;
     transition-duration: 0.5s;
     transition-property: transform;
     transition-timing-function: ease-out;
+    .shadow-z3();
+}
+.full-screen .proteome-library {
+    left: -500px;
 }
 .full-screen .proteome-library.shown {
     transform: translateX(500px);
 }
 .full-screen .analyzed-proteomes {
-    position: absolute;
-    top: 44px;
     right: -500px;
-    width: 473px;
-    height: 100%;
-    background-color: #fff;
-    z-index: 5;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    overflow: scroll;
-    transition-duration: 0.5s;
-    transition-property: transform;
-    transition-timing-function: ease-out;
 }
 .full-screen .analyzed-proteomes.shown {
     transform: translateX(-500px);

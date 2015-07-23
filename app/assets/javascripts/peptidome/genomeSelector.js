@@ -324,11 +324,20 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         }
 
         function repositionPopover() {
+            if (!$popover) return;
+
+            var fullScreen = $(".full-screen-container").hasClass("full-screen");
+            if (fullScreen) {
+                $popover.appendTo(".full-screen-container");
+            } else {
+                $popover.appendTo("body");
+            }
             var buttonOffset = $(".search-settings").offset(),
-                containerOffset = $(".full-screen-container").hasClass("full-screen") ? $(".full-screen-container").offset() : $("body").offset();
+                containerOffset = fullScreen ? $(".full-screen-container").offset() : $("body").offset();
+            $popover.css("z-index", 10);
             $popover.css("left", buttonOffset.left - containerOffset.left + 45);
             $popover.css("top", Math.max(0, buttonOffset.top - containerOffset.top - 215));
-            $popover.find(".arrow").css("top", $(".full-screen-container").hasClass("full-screen") ? "35%" : "50%");
+            $popover.find(".arrow").css("top", fullScreen ? "42%" : "50%");
         }
 
         function initPopoverBehaviour() {
@@ -647,7 +656,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         setTimeout(function () {
             if (isFullScreen) {
                 $(".proteome-library").appendTo(".full-screen-container");
-                elementsShown = Math.floor(($(window).height() - 209 - 44) / 45);
+                elementsShown = Math.floor(($(window).height() - 260 - 44) / 45);
             } else {
                 $(".proteome-library").prependTo(".proteome-adder");
                 elementsShown = 50;
