@@ -199,11 +199,19 @@ var constructMyGenomes = function constructMyGenomes(args) {
      * Repositions the popover
      */
     function repositionPopover() {
+        if (!$popover) return;
+
+        var fullScreen = $(".full-screen-container").hasClass("full-screen");
+        if (fullScreen) {
+            $popover.appendTo(".full-screen-container");
+        } else {
+            $popover.appendTo("body");
+        }
         var buttonOffset = $myGenomesButton.offset(),
             containerOffset = $(".full-screen-container").hasClass("full-screen") ? $(".full-screen-container").offset() : $("body").offset();
         $popover.css("left", buttonOffset.left - containerOffset.left + 215);
         $popover.css("top", buttonOffset.top - containerOffset.top - 150);
-        //$popover.find(".arrow").css("top", $(".full-screen-container").hasClass("full-screen") ? "35%" : "50%");
+        $popover.css("z-index", 10);
     }
 
     /**
