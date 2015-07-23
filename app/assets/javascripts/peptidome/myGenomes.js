@@ -68,7 +68,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
             content: function () {
                 return $("#mygenomes-popover-content").html();
             },
-            container: ".full-screen-container"
+            container: "body"
         });
 
         // enable add my genome button
@@ -200,9 +200,9 @@ var constructMyGenomes = function constructMyGenomes(args) {
      */
     function repositionPopover() {
         var buttonOffset = $myGenomesButton.offset(),
-            containerOffset = $(".full-screen-container").offset();
-        $popover.css("left", buttonOffset.left - containerOffset.left + 190);
-        $popover.css("top", buttonOffset.top - containerOffset.top - 134);
+            containerOffset = $(".full-screen-container").hasClass("full-screen") ? $(".full-screen-container").offset() : $("body").offset();
+        $popover.css("left", buttonOffset.left - containerOffset.left + 215);
+        $popover.css("top", buttonOffset.top - containerOffset.top - 150);
         //$popover.find(".arrow").css("top", $(".full-screen-container").hasClass("full-screen") ? "35%" : "50%");
     }
 
@@ -752,4 +752,3 @@ var constructMyGenomes = function constructMyGenomes(args) {
 
     return that;
 };
-
