@@ -6,139 +6,142 @@
         <small>Returns the taxonomic information for a given taxon identifier.</small>
       </h1>
     </div>
-
     <p>
       This method returns the taxonomic information from the Unipept Taxonomy, for a given <span class="initialism">NCBI</span> taxon identifier.
     </p>
-
-    <h2 id="request">Request</h2>
-    <p>
-      The taxonomy method can be used by doing a <span class="initialism">HTTP</span> <span class="initialism">POST</span>-request (preferred) or <span class="initialism">GET</span>-request to <code>http://<%= Rails.application.config.api_host %>/api/v1/taxonomy</code>. <a href="#parameters">Parameters</a> can be included in the request body (<span class="initialism">POST</span>) or in the query string (<span class="initialism">GET</span>). The only required parameter is <code>input[]</code>, which takes one or more taxon identifiers.
-    </p>
-
-    <h3>input</h3>
-    <p>
-      <code>input[]</code> is a required parameter that takes one or more taxon identifiers. Unipept will return the taxonomic information for the given taxa. To pass multiple taxon identifiers, simply add multiple <code>input[]</code> parameters (see <a href="#apidocs-example-multiple">example</a>).
-    </p>
-
-    <h3>extra</h3>
-    <p>
-      <code>extra</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, Unipept will return the complete lineage for each taxon. See the <a href="#response">response</a> section for an overview of the information fields returned.
-    </p>
-
-    <h3>names</h3>
-    <p>
-      <code>names</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When both <code>names</code> and <code>extra</code> are set to <code>true</code>, Unipept will return the names of all ranks in the lineage of each organism. Setting only <code>names</code> to <code>true</code> will not result in additional information fields being returned. . See the <a href="#response">response</a> section for an overview of the information fields returned.
-    </p>
-
-    <div class="apidocs-callout apidocs-callout-warning">
-      <h4>Performance penalty</h4>
-      <p>Setting <code>names</code> to <code>true</code> has a performance penalty inferred from additional database queries. Do not use this parameter unless the extra information fields are needed.</p>
-    </div>
-
-    <h2 id="response">Response</h2>
-
-    <p>
-      The organisms associated with the given taxon identifiers are returned as a list of <span class="initialism">JSON</span> objects. By default, each object contains the following information fields extracted from the UniProt entry and <span class="initialism">NCBI</span> taxonomy:
-    </p>
-
-    <ul>
-      <li><code>taxon_id</code>: the <span class="initialism">NCBI</span> taxon id of the organism</li>
-      <li><code>taxon_name</code>: the name of the organism</li>
-      <li><code>taxon_rank</code>: the taxonomic rank of the organism</li>
-    </ul>
-
-    <p>When the <code>extra</code> parameter is set to <code>true</code>, objects contain additional information about the lineage of the organims extracted from the <span class="initialism">NCBI</span> taxonomy. The taxon id of each rank in the lineage is specified using the following information fields:</p>
-    <div class="row">
-      <div class="col-xs-4">
-        <ul>
-          <li><code>superkingdom_id</code></li>
-          <li><code>kingdom_id</code></li>
-          <li><code>subkingdom_id</code></li>
-          <li><code>superphylum_id</code></li>
-          <li><code>phylum_id</code></li>
-          <li><code>subphylum_id</code></li>
-          <li><code>superclass_id</code></li>
-          <li><code>class_id</code></li>
-          <li><code>subclass_id</code></li>
-          <li><code>infraclass_id</code></li>
-        </ul>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='request'>Request</h2>
       </div>
-      <div class="col-xs-4">
-        <ul>
-          <li><code>superorder_id</code></li>
-          <li><code>order_id</code></li>
-          <li><code>suborder_id</code></li>
-          <li><code>infraorder_id</code></li>
-          <li><code>parvorder_id</code></li>
-          <li><code>superfamily_id</code></li>
-          <li><code>family_id</code></li>
-          <li><code>subfamily_id</code></li>
-          <li><code>tribe_id</code></li>
-          <li><code>subtribe_id</code></li>
-        </ul>
-      </div>
-      <div class="col-xs-4">
-        <ul>
-          <li><code>genus_id</code></li>
-          <li><code>subgenus_id</code></li>
-          <li><code>species_group_id</code></li>
-          <li><code>species_subgroup_id</code></li>
-          <li><code>species_id</code></li>
-          <li><code>subspecies_id</code></li>
-          <li><code>varietas_id</code></li>
-          <li><code>forma_id</code></li>
-        </ul>
+      <div class='card-supporting-text'>
+        <p>
+          The taxonomy method can be used by doing a <span class="initialism">HTTP</span> <span class="initialism">POST</span>-request (preferred) or <span class="initialism">GET</span>-request to <code>http://<%= Rails.application.config.api_host %>/api/v1/taxonomy</code>. <a href="#parameters">Parameters</a> can be included in the request body (<span class="initialism">POST</span>) or in the query string (<span class="initialism">GET</span>). The only required parameter is <code>input[]</code>, which takes one or more taxon identifiers.
+    </p>
+        <h3>input</h3>
+        <p>
+          <code>input[]</code> is a required parameter that takes one or more taxon identifiers. Unipept will return the taxonomic information for the given taxa. To pass multiple taxon identifiers, simply add multiple <code>input[]</code> parameters (see <a href="#apidocs-example-multiple">example</a>).
+    </p>
+        <h3>extra</h3>
+        <p>
+          <code>extra</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, Unipept will return the complete lineage for each taxon. See the <a href="#response">response</a> section for an overview of the information fields returned.
+    </p>
+        <h3>names</h3>
+        <p>
+          <code>names</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When both <code>names</code> and <code>extra</code> are set to <code>true</code>, Unipept will return the names of all ranks in the lineage of each organism. Setting only <code>names</code> to <code>true</code> will not result in additional information fields being returned. . See the <a href="#response">response</a> section for an overview of the information fields returned.
+    </p>
+        <div class="apidocs-callout apidocs-callout-warning">
+          <h4>Performance penalty</h4>
+          <p>Setting <code>names</code> to <code>true</code> has a performance penalty inferred from additional database queries. Do not use this parameter unless the extra information fields are needed.</p>
+        </div>
       </div>
     </div>
-
-    <p>When both the <code>names</code> and <code>extra</code> parameters are set to <code>true</code>, objects also contain the names for each rank in the lineage using the following information fields:</p>
-    <div class="row">
-      <div class="col-xs-4">
-        <ul>
-          <li><code>superkingdom_name</code></li>
-          <li><code>kingdom_name</code></li>
-          <li><code>subkingdom_name</code></li>
-          <li><code>superphylum_name</code></li>
-          <li><code>phylum_name</code></li>
-          <li><code>subphylum_name</code></li>
-          <li><code>superclass_name</code></li>
-          <li><code>class_name</code></li>
-          <li><code>subclass_name</code></li>
-          <li><code>infraclass_name</code></li>
-        </ul>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='response'>Response</h2>
       </div>
-      <div class="col-xs-4">
+      <div class='card-supporting-text'>
+        <p>
+          The organisms associated with the given taxon identifiers are returned as a list of <span class="initialism">JSON</span> objects. By default, each object contains the following information fields extracted from the UniProt entry and <span class="initialism">NCBI</span> taxonomy:
+    </p>
         <ul>
-          <li><code>superorder_name</code></li>
-          <li><code>order_name</code></li>
-          <li><code>suborder_name</code></li>
-          <li><code>infraorder_name</code></li>
-          <li><code>parvorder_name</code></li>
-          <li><code>superfamily_name</code></li>
-          <li><code>family_name</code></li>
-          <li><code>subfamily_name</code></li>
-          <li><code>tribe_name</code></li>
-          <li><code>subtribe_name</code></li>
+          <li><code>taxon_id</code>: the <span class="initialism">NCBI</span> taxon id of the organism</li>
+          <li><code>taxon_name</code>: the name of the organism</li>
+          <li><code>taxon_rank</code>: the taxonomic rank of the organism</li>
         </ul>
-      </div>
-      <div class="col-xs-4">
-        <ul>
-          <li><code>genus_name</code></li>
-          <li><code>subgenus_name</code></li>
-          <li><code>species_group_name</code></li>
-          <li><code>species_subgroup_name</code></li>
-          <li><code>species_name</code></li>
-          <li><code>subspecies_name</code></li>
-          <li><code>varietas_name</code></li>
-          <li><code>forma_name</code></li>
-        </ul>
+        <p>When the <code>extra</code> parameter is set to <code>true</code>, objects contain additional information about the lineage of the organims extracted from the <span class="initialism">NCBI</span> taxonomy. The taxon id of each rank in the lineage is specified using the following information fields:</p>
+        <div class="row">
+          <div class="col-xs-4">
+            <ul>
+              <li><code>superkingdom_id</code></li>
+              <li><code>kingdom_id</code></li>
+              <li><code>subkingdom_id</code></li>
+              <li><code>superphylum_id</code></li>
+              <li><code>phylum_id</code></li>
+              <li><code>subphylum_id</code></li>
+              <li><code>superclass_id</code></li>
+              <li><code>class_id</code></li>
+              <li><code>subclass_id</code></li>
+              <li><code>infraclass_id</code></li>
+            </ul>
+          </div>
+          <div class="col-xs-4">
+            <ul>
+              <li><code>superorder_id</code></li>
+              <li><code>order_id</code></li>
+              <li><code>suborder_id</code></li>
+              <li><code>infraorder_id</code></li>
+              <li><code>parvorder_id</code></li>
+              <li><code>superfamily_id</code></li>
+              <li><code>family_id</code></li>
+              <li><code>subfamily_id</code></li>
+              <li><code>tribe_id</code></li>
+              <li><code>subtribe_id</code></li>
+            </ul>
+          </div>
+          <div class="col-xs-4">
+            <ul>
+              <li><code>genus_id</code></li>
+              <li><code>subgenus_id</code></li>
+              <li><code>species_group_id</code></li>
+              <li><code>species_subgroup_id</code></li>
+              <li><code>species_id</code></li>
+              <li><code>subspecies_id</code></li>
+              <li><code>varietas_id</code></li>
+              <li><code>forma_id</code></li>
+            </ul>
+          </div>
+        </div>
+        <p>When both the <code>names</code> and <code>extra</code> parameters are set to <code>true</code>, objects also contain the names for each rank in the lineage using the following information fields:</p>
+        <div class="row">
+          <div class="col-xs-4">
+            <ul>
+              <li><code>superkingdom_name</code></li>
+              <li><code>kingdom_name</code></li>
+              <li><code>subkingdom_name</code></li>
+              <li><code>superphylum_name</code></li>
+              <li><code>phylum_name</code></li>
+              <li><code>subphylum_name</code></li>
+              <li><code>superclass_name</code></li>
+              <li><code>class_name</code></li>
+              <li><code>subclass_name</code></li>
+              <li><code>infraclass_name</code></li>
+            </ul>
+          </div>
+          <div class="col-xs-4">
+            <ul>
+              <li><code>superorder_name</code></li>
+              <li><code>order_name</code></li>
+              <li><code>suborder_name</code></li>
+              <li><code>infraorder_name</code></li>
+              <li><code>parvorder_name</code></li>
+              <li><code>superfamily_name</code></li>
+              <li><code>family_name</code></li>
+              <li><code>subfamily_name</code></li>
+              <li><code>tribe_name</code></li>
+              <li><code>subtribe_name</code></li>
+            </ul>
+          </div>
+          <div class="col-xs-4">
+            <ul>
+              <li><code>genus_name</code></li>
+              <li><code>subgenus_name</code></li>
+              <li><code>species_group_name</code></li>
+              <li><code>species_subgroup_name</code></li>
+              <li><code>species_name</code></li>
+              <li><code>subspecies_name</code></li>
+              <li><code>varietas_name</code></li>
+              <li><code>forma_name</code></li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
-
-    <h2 id="parameters">Parameters</h2>
-
-    <%= render "parameters", parameters: [
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='parameters'>Parameters</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <%= render "parameters", parameters: [
       {
         name: "input[]",
         required: true,
@@ -162,9 +165,9 @@
       }
     ]
     %>
-
-    <h2 id="examples">Examples</h2>
-
+      </div>
+    </div>
+    <h2 id='examples'>Examples</h2>
     <%= render 'example',
       example_id: "apidocs-example-single",
       title: "Retrieve taxonomic information for a given taxon identifier",
@@ -180,7 +183,6 @@
   <span class='p'>}</span>
 <span class='p'>]</span>"
     %>
-
     <%= render 'example',
       example_id: "apidocs-example-multiple",
       title: "Retrieve taxonomic information for a given list of taxon identifiers",
@@ -202,7 +204,6 @@
   <span class='p'>}</span>
 <span class='p'>]</span>"
     %>
-
     <%= render 'example',
       example_id: "apidocs-example-extra",
       title: "Retrieve taxonomic information for a given taxon identifier including its complete lineage",
@@ -247,7 +248,6 @@
   <span class='p'>}</span>
 <span class='p'>]</span>"
     %>
-
     <%= render 'example',
       example_id: "apidocs-example-names",
       title: "Retrieve taxonomic information for a given taxon identifier including its complete lineage and names",
@@ -321,8 +321,6 @@
   <span class='p'>}</span>
 <span class='p'>]</span>"
     %>
-
-    <h2 id="try-it">Try it</h2>
     <%= render 'tryit',
       name: "taxonomy",
       input: true,

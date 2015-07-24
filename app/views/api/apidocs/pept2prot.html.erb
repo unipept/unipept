@@ -6,68 +6,71 @@
         <small>Returns the set of UniProt entries containing a given tryptic peptide.</small>
       </h1>
     </div>
-
     <p>
       This method returns the list of UniProt entries containing a given tryptic peptide. This is the same information as provided on the <em>Protein matches</em> tab when performing a search with the <%= link_to("Tryptic Peptide Analysis", search_single_path) %> in the web interface.
     </p>
-
-    <h2 id="request">Request</h2>
-    <p>
-      The pept2prot method can be used by doing a <span class="initialism">HTTP</span> <span class="initialism">POST</span>-request (preferred) or <span class="initialism">GET</span>-request to <code>http://<%= Rails.application.config.api_host %>/api/v1/pept2prot</code>. <a href="#parameters">Parameters</a> can be included in the request body (<span class="initialism">POST</span>) or in the query string (<span class="initialism">GET</span>). The only required parameter is <code>input[]</code>, which takes one or more tryptic peptides.
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='request'>Request</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>
+          The pept2prot method can be used by doing a <span class="initialism">HTTP</span> <span class="initialism">POST</span>-request (preferred) or <span class="initialism">GET</span>-request to <code>http://<%= Rails.application.config.api_host %>/api/v1/pept2prot</code>. <a href="#parameters">Parameters</a> can be included in the request body (<span class="initialism">POST</span>) or in the query string (<span class="initialism">GET</span>). The only required parameter is <code>input[]</code>, which takes one or more tryptic peptides.
     </p>
-
-    <h3>input</h3>
-    <p>
-      <code>input[]</code> is a required parameter that takes one or more tryptic peptides. Unipept will return the list of UniProt entries that contain any of the <code>input[]</code> peptides in their protein sequence. To pass multiple peptides at once, simply add multiple <code>input[]</code> parameters (see <a href="#apidocs-example-multiple">example</a>).
+        <h3>input</h3>
+        <p>
+          <code>input[]</code> is a required parameter that takes one or more tryptic peptides. Unipept will return the list of UniProt entries that contain any of the <code>input[]</code> peptides in their protein sequence. To pass multiple peptides at once, simply add multiple <code>input[]</code> parameters (see <a href="#apidocs-example-multiple">example</a>).
     </p>
-
-    <div class="apidocs-callout apidocs-callout-warning">
-      <h4>Input size</h4>
-      <p>Unipept puts no restrictions on the number of peptides passed to the <code>input[]</code> parameter. Keep in mind that searching for lots of peptides at once may cause the request to timeout or, in the case of a <span class="initialism">GET</span>-request, exceed the maximum URL length. When performing bulk searches, we suggest splitting the input set over requests of 100 peptides each.</p>
+        <div class="apidocs-callout apidocs-callout-warning">
+          <h4>Input size</h4>
+          <p>Unipept puts no restrictions on the number of peptides passed to the <code>input[]</code> parameter. Keep in mind that searching for lots of peptides at once may cause the request to timeout or, in the case of a <span class="initialism">GET</span>-request, exceed the maximum URL length. When performing bulk searches, we suggest splitting the input set over requests of 100 peptides each.</p>
+        </div>
+        <h3>equate_il</h3>
+        <p>
+          <code>equate_il</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, isoleucine (I) and leucine (L) are equated when matching tryptic peptides to UniProt entries. This setting is similar to checking the <i>Equate I and L?</i> checkbox when performing a search with the <%= link_to("Tryptic Peptide Analysis", search_single_path) %> in the web interface.
+    </p>
+        <h3>extra</h3>
+        <p>
+          <code>extra</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, Unipept will return additional information fields. See the <a href="#response">response</a> section for an overview of the information fields returned.
+    </p>
+        <div class="apidocs-callout apidocs-callout-warning">
+          <h4>Performance penalty</h4>
+          <p>Setting <code>extra</code> to <code>true</code> has a performance penalty inferred from additional database queries. Do not use this parameter unless the extra information fields are needed.</p>
+        </div>
+      </div>
     </div>
-
-    <h3>equate_il</h3>
-    <p>
-      <code>equate_il</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, isoleucine (I) and leucine (L) are equated when matching tryptic peptides to UniProt entries. This setting is similar to checking the <i>Equate I and L?</i> checkbox when performing a search with the <%= link_to("Tryptic Peptide Analysis", search_single_path) %> in the web interface.
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='response'>Response</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>
+          Matching UniProt entries are returned as a list of <span class="initialism">JSON</span> objects. By default, each object contains the following information fields extracted from the UniProt entry:
     </p>
-
-    <h3>extra</h3>
-    <p>
-      <code>extra</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, Unipept will return additional information fields. See the <a href="#response">response</a> section for an overview of the information fields returned.
-    </p>
-
-    <div class="apidocs-callout apidocs-callout-warning">
-      <h4>Performance penalty</h4>
-      <p>Setting <code>extra</code> to <code>true</code> has a performance penalty inferred from additional database queries. Do not use this parameter unless the extra information fields are needed.</p>
+        <ul>
+          <li><code>peptide</code>: the peptide that matched this record</li>
+          <li><code>uniprot_id</code>: the UniProt accession number of the matching record</li>
+          <li><span class="label label-success">New</span> <code>protein_name</code>: the name of the protein of the matching record</li>
+          <li><code>taxon_id</code>: the <span class="initialism">NCBI</span> taxon id of the organism associated with the matching record</li>
+        </ul>
+        <p>When the <code>extra</code> parameter is set to <code>true</code>, objects contain the following additional fields extracted from the UniProt entry:</p>
+        <ul>
+          <li><code>taxon_name</code>: the name of the organism associated with the matching UniProt entry</li>
+          <li><code>ec_references</code>: a space separated list of associated EC numbers</li>
+          <li><code>go_references</code>: a space separated list of associated GO terms</li>
+          <li><code>refseq_ids</code>: a space separated list of associated RefSeq accession numbers</li>
+          <li><code>refseq_protein_ids</code>: a space separated list of associated RefSeq protein accession numbers</li>
+          <li><code>insdc_ids</code>: a space separated list of associated insdc accession numbers</li>
+          <li><code>insdc_protein_ids</code>: a space separated list of associated insdc protein accession numbers</li>
+        </ul>
+      </div>
     </div>
-
-    <h2 id="response">Response</h2>
-    <p>
-      Matching UniProt entries are returned as a list of <span class="initialism">JSON</span> objects. By default, each object contains the following information fields extracted from the UniProt entry:
-    </p>
-
-    <ul>
-      <li><code>peptide</code>: the peptide that matched this record</li>
-      <li><code>uniprot_id</code>: the UniProt accession number of the matching record</li>
-      <li><span class="label label-success">New</span> <code>protein_name</code>: the name of the protein of the matching record</li>
-      <li><code>taxon_id</code>: the <span class="initialism">NCBI</span> taxon id of the organism associated with the matching record</li>
-    </ul>
-
-    <p>When the <code>extra</code> parameter is set to <code>true</code>, objects contain the following additional fields extracted from the UniProt entry:</p>
-
-    <ul>
-      <li><code>taxon_name</code>: the name of the organism associated with the matching UniProt entry</li>
-      <li><code>ec_references</code>: a space separated list of associated EC numbers</li>
-      <li><code>go_references</code>: a space separated list of associated GO terms</li>
-      <li><code>refseq_ids</code>: a space separated list of associated RefSeq accession numbers</li>
-      <li><code>refseq_protein_ids</code>: a space separated list of associated RefSeq protein accession numbers</li>
-      <li><code>insdc_ids</code>: a space separated list of associated insdc accession numbers</li>
-      <li><code>insdc_protein_ids</code>: a space separated list of associated insdc protein accession numbers</li>
-    </ul>
-
-    <h2 id="parameters">Parameters</h2>
-
-    <%= render "parameters", parameters: [
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='parameters'>Parameters</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <%= render "parameters", parameters: [
       {
         name: "input[]",
         required: true,
@@ -91,7 +94,8 @@
       }
     ]
     %>
-
+      </div>
+    </div>
     <h2 id="examples">Examples</h2>
     <%= render 'example',
       example_id: "apidocs-example-single",
@@ -115,7 +119,6 @@
   <span class='p'>}</span>
 <span class='p'>]</span>"
     %>
-
     <%= render 'example',
       example_id: "apidocs-example-multiple",
       title: "Retrieve all UniProt entries containing any of multiple tryptic peptides",
@@ -157,7 +160,6 @@
   <span class='p'>}</span>
 <span class='p'>]</span>"
     %>
-
     <%= render 'example',
       example_id: "apidocs-example-equate_il",
       title: "Retrieve all UniProt entries containing a single tryptic peptide, while equating I and L",
@@ -187,7 +189,6 @@
   <span class='p'>}</span>
 <span class='p'>]</span>"
     %>
-
     <%= render 'example',
       example_id: "apidocs-example-extra",
       title: "Retrieve all UniProt entries containing a single tryptic peptide and return extra information",
@@ -225,8 +226,6 @@
   <span class='p'>}</span>
 <span class='p'>]</span>"
     %>
-
-    <h2 id="try-it">Try it</h2>
     <%= render 'tryit',
       name: "pept2prot",
       input: true,
@@ -234,7 +233,6 @@
       extra: true,
       names: false
     %>
-
   </div>
   <div class="col-xs-3">
     <%= render 'api/shared/sidebar' %>
