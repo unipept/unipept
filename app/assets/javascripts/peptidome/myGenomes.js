@@ -391,7 +391,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
 
         $myGenomesTable.empty();
         if (genomeList.length === 0) {
-            $myGenomesTable.append("<tr class='info'><td colspan='4' class='info'><span class='glyphicon glyphicon-question-sign'></span> Click the add your own proteomes button to add proteomes.</td></tr>");
+            $myGenomesTable.append("<tr class='success'><td colspan='4' class='success'><span class='glyphicon glyphicon-question-sign'></span> Click the add your own proteomes button to add proteomes.</td></tr>");
         } else {
             for (i = 0; i < genomeList.length; i++) {
                 g = genomes[genomeList[i]];
