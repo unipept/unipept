@@ -735,7 +735,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .style("fill", function (d) { return d.color; });
         var legendTexts = legend.append("text")
             .attr("x", 33)
-            .attr("y", 11)
+            .attr("y", 12)
             .style("text-anchor", "start")
             .style("fill", "white")
             .text(function (d) { return d.name; });
