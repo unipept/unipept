@@ -1,9 +1,6 @@
 // styles used for the api documentation
-@sidebar-color: #104b7d; // footer color
+@sidebar-color: @primary-800; // footer color
 // bigger fonts
-.apidocs {
-    font-size: 14px;
-}
 .apidocs h4 {
     font-size: 18px;
 }
@@ -13,7 +10,6 @@
 .apidocs h2 {
     border-bottom: none;
     color: #333;
-    font-weight: 500;
     font-size: 24px;
 }
 
@@ -33,6 +29,9 @@
 .apidocs-example pre a,
 #try-it-request a {
     color: #333;
+}
+.apidocs .card {
+    margin-bottom: 20px;
 }
 
 .parameter-table .name {
@@ -55,7 +54,7 @@
     padding: 4px 20px;
     font-size: 13px;
     font-weight: 500;
-    color: #999;
+    color: @black-secondary;
 }
 .apidocs-sidebar .nav > li > a:hover,
 .apidocs-sidebar .nav > li > a:focus {
@@ -144,11 +143,12 @@
     margin: 20px 0;
     border: 1px solid #eee;
     border-left-width: 5px;
-    border-radius: 3px;
+    border-radius: 2px;
 }
 .apidocs-callout h4 {
     margin-top: 0;
     margin-bottom: 5px;
+    line-height: 1.1;
 }
 .apidocs-callout p:last-child {
     margin-bottom: 0;
@@ -162,22 +162,22 @@
 }
 /* Variations */
 .apidocs-callout-danger {
-    border-left-color: #d9534f;
+    border-left-color: @danger-500;
 }
 .apidocs-callout-danger h4 {
-    color: #d9534f;
+    color: @danger-500;
 }
 .apidocs-callout-warning {
-    border-left-color: #f0ad4e;
+    border-left-color: @warning-500;
 }
 .apidocs-callout-warning h4 {
-    color: #f0ad4e;
+    color: @warning-500;
 }
 .apidocs-callout-info {
-    border-left-color: #5bc0de;
+    border-left-color: @info-500;
 }
 .apidocs-callout-info h4 {
-    color: #5bc0de;
+    color: @info-500;
 }
 
 // examples, taken from the bootstrap docs
