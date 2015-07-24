@@ -10,16 +10,12 @@
   </div>
   <div class='footer-spacer'></div>
   <div class="footer-block">
-    <p class='footer-links'>
-      <a href="mailto:unipept@ugent.be" title="mail us"><i class="fa fa-envelope-o"></i></a>
-      <a target="_blank" href="http://twitter.com/unipept" title="find us on twitter"><i class="fa fa-twitter"></i></a>
-      <a target="_blank" href="http://github.com/unipept/unipept" title="find us on github"><i class="fa fa-github"></i></a>
-    </p>
-  </div>
-  <div class='footer-spacer'></div>
-  <div class="footer-block">
     <div class='footer-version'>
-      <p>&nbsp;</p>
+      <p class='footer-links'>
+        <a href="mailto:unipept@ugent.be" title="mail us"><i class="fa fa-envelope-o"></i></a>
+        <a target="_blank" href="http://twitter.com/unipept" title="find us on twitter"><i class="fa fa-twitter"></i></a>
+        <a target="_blank" href="http://github.com/unipept/unipept" title="find us on github"><i class="fa fa-github"></i></a>
+      </p>
       <%= link_to "Unipept " + Rails.application.config.versions[:unipept] + " using Uniprot " + Rails.application.config.versions[:uniprot], posts_path %>
     </div>
   </div>
