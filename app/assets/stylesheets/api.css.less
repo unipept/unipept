@@ -1,7 +1,12 @@
 // styles used for the api documentation
 @sidebar-color: @primary-800; // footer color
 // bigger fonts
+.apidocs h5 {
+    line-height: normal;
+    font-weight: 500;
+}
 .apidocs h4 {
+    line-height: normal;
     font-size: 18px;
 }
 .apidocs h3 {
@@ -15,7 +20,11 @@
 
 .apidocs h1.api-title {
     font-size: 28px;
-    margin-bottom: 10px;
+    margin-top: 10px;
+    line-height: normal;
+}
+.apidocs .panel {
+    .shadow-z1();
 }
 
 .apidocs li {
@@ -143,7 +152,7 @@
     margin: 20px 0;
     border: 1px solid #eee;
     border-left-width: 5px;
-    border-radius: 2px;
+    border-radius: 3px;
 }
 .apidocs-callout h4 {
     margin-top: 0;
@@ -266,14 +275,14 @@
 .panel-figure {
     text-align: center;
 }
- .panel-figure img {
-     max-width: 100%;
- }
- .panel-caption {
-     margin-top: 15px;
-     font-size: small;
-     text-align: left;
- }
+.panel-figure img {
+    max-width: 100%;
+}
+.panel-caption {
+    margin-top: 15px;
+    font-size: small;
+    text-align: left;
+}
 .casestudies pre {
     max-height: 200px;
 }

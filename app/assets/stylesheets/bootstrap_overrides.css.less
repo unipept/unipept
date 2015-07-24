@@ -21,6 +21,7 @@
 @text-color: @black-text;
 @link-color: @accent-800;
 @code-color: @primary-800;
+@page-header-border-color: @black-divider;
 
 // other values
 @border-radius-base: 2px;
@@ -141,6 +142,12 @@ h1, h2, h3, h4, h5 {
     font-size: 12px;
     line-height: 1.5;
     border-radius: 3px;
+}
+
+// panels
+.panel {
+    border: 0;
+    .shadow-z3();
 }
 
 // fix position errors
