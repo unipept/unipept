@@ -68,7 +68,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
             content: function () {
                 return $("#mygenomes-popover-content").html();
             },
-            container: ".full-screen-container"
+            container: "body"
         });
 
         // enable add my genome button
@@ -199,11 +199,19 @@ var constructMyGenomes = function constructMyGenomes(args) {
      * Repositions the popover
      */
     function repositionPopover() {
+        if (!$popover) return;
+
+        var fullScreen = $(".full-screen-container").hasClass("full-screen");
+        if (fullScreen) {
+            $popover.appendTo(".full-screen-container");
+        } else {
+            $popover.appendTo("body");
+        }
         var buttonOffset = $myGenomesButton.offset(),
-            containerOffset = $(".full-screen-container").offset();
-        $popover.css("left", buttonOffset.left - containerOffset.left + 190);
-        $popover.css("top", buttonOffset.top - containerOffset.top - 134);
-        //$popover.find(".arrow").css("top", $(".full-screen-container").hasClass("full-screen") ? "35%" : "50%");
+            containerOffset = $(".full-screen-container").hasClass("full-screen") ? $(".full-screen-container").offset() : $("body").offset();
+        $popover.css("left", buttonOffset.left - containerOffset.left + 215);
+        $popover.css("top", buttonOffset.top - containerOffset.top - 150);
+        $popover.css("z-index", 10);
     }
 
     /**
@@ -383,7 +391,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
 
         $myGenomesTable.empty();
         if (genomeList.length === 0) {
-            $myGenomesTable.append("<tr class='info'><td colspan='4' class='info'><span class='glyphicon glyphicon-info-sign'></span> Click the add your own proteomes button to add proteomes.</td></tr>");
+            $myGenomesTable.append("<tr class='success'><td colspan='4' class='success'><span class='glyphicon glyphicon-question-sign'></span> Click the add your own proteomes button to add proteomes.</td></tr>");
         } else {
             for (i = 0; i < genomeList.length; i++) {
                 g = genomes[genomeList[i]];
@@ -752,4 +760,3 @@ var constructMyGenomes = function constructMyGenomes(args) {
 
     return that;
 };
-

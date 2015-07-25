@@ -131,7 +131,7 @@ var constructSearchtree = function constructSearchtree(args) {
         }
         allSequences = multi.getAllSequences(d).sort();
         if (allSequences && allSequences.length > 0 && allSequences.length !== (ownSequences ? ownSequences.length : 0)) {
-            stringBuffer = "<h4 class='all'>Peptides specific to this taxon or one of its subtaxa</h4><ul>";
+            stringBuffer = "<h4 class='all'>Peptides specific to this taxon or its subtaxa</h4><ul>";
             for (i = 0; i < allSequences.length; i++) {
                 stringBuffer += "<li><a href='/sequences/" + allSequences[i] + "/" + equateIL + "' target='_blank'>" + allSequences[i] + "</a></li>";
             }

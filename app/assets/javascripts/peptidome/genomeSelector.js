@@ -128,7 +128,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         $("#genomeSelectorSearch").tokenfield({
             delimiter: " ",
             beautify: false,
-            minWidth: 330,
+            minWidth: 280,
             createTokensOnBlur: true,
             typeahead: [{
                 hint: false,
@@ -137,7 +137,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                 displayKey: 'label',
                 source: filterEngine.ttAdapter(),
                 templates: {
-                    header: "<h4 class='header'>Filters</h4>",
+                    header: "<h4 class='dataset-header'>Filters</h4>",
                     suggestion: function (q) {
                         return "<p>" + q.label + " - <i class='small'>" + q.obj.name + "</i></p>";
                     }
@@ -146,7 +146,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                 displayKey: 'label',
                 source: taxaEngine.ttAdapter(),
                 templates: {
-                    header: "<h4 class='header'>Lineage</h4>",
+                    header: "<h4 class='dataset-header'>Lineage</h4>",
                     suggestion: function (q) {
                         return "<p>" + q.label + " - <i class='small'>" + q.rank + "</i></p>";
                     }
@@ -221,8 +221,9 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             keyUpped(false);
         });
 
+        // chrome makes the input fields a few pixels too winde on initial render
         if (navigator.userAgent.toLowerCase().indexOf('chrome') > -1) {
-            $("#genomeSelector .tokenfield").css("width", "367px");
+            $("#genomeSelector .tokenfield").css("width", "333px");
         }
 
         function keyUpped(direct) {
@@ -242,7 +243,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             trigger : "manual",
             title: "Filter settings",
             content: createContent,
-            container: ".full-screen-container"
+            container: "body"
         });
 
         // enable settings button
@@ -303,7 +304,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             content += "</div></div></div>";
 
 
-            content += "<div class='form-group'><h4 class='control-label col-sm-4'>Taxonomy</h4></div>";
+            content += "<div class='form-group'><b class='control-label col-sm-4'>Taxonomy</b></div>";
 
             ranks.forEach(function (rank) {
                 var id = rank + "Id";
@@ -323,11 +324,20 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         }
 
         function repositionPopover() {
+            if (!$popover) return;
+
+            var fullScreen = $(".full-screen-container").hasClass("full-screen");
+            if (fullScreen) {
+                $popover.appendTo(".full-screen-container");
+            } else {
+                $popover.appendTo("body");
+            }
             var buttonOffset = $(".search-settings").offset(),
-                containerOffset = $(".full-screen-container").offset();
+                containerOffset = fullScreen ? $(".full-screen-container").offset() : $("body").offset();
+            $popover.css("z-index", 10);
             $popover.css("left", buttonOffset.left - containerOffset.left + 45);
-            $popover.css("top", Math.max(0, buttonOffset.top - containerOffset.top - 195));
-            $popover.find(".arrow").css("top", $(".full-screen-container").hasClass("full-screen") ? "35%" : "50%");
+            $popover.css("top", Math.max(0, buttonOffset.top - containerOffset.top - 215));
+            $popover.find(".arrow").css("top", fullScreen ? "42%" : "50%");
         }
 
         function initPopoverBehaviour() {
@@ -646,7 +656,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         setTimeout(function () {
             if (isFullScreen) {
                 $(".proteome-library").appendTo(".full-screen-container");
-                elementsShown = Math.floor(($(window).height() - 209 - 44) / 45);
+                elementsShown = Math.floor(($(window).height() - 275 - 44) / 45);
             } else {
                 $(".proteome-library").prependTo(".proteome-adder");
                 elementsShown = 50;

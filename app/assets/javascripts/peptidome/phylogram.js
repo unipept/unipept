@@ -93,8 +93,8 @@ function init_phylogram() {
         vis.selectAll('g.root.node')
             .append('svg:circle')
             .attr("r", 3)
-            .attr('fill', 'steelblue')
-            .attr('stroke', 'steelblue')
+            .attr('fill', '#1565C0')
+            .attr('stroke', '#1565C0')
             .attr('stroke-width', '3px');
     };
 

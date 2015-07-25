@@ -1,7 +1,7 @@
 <div class="apidocs row">
   <div class="col-xs-9">
     <div class='page-header'>
-      <h1>
+      <h1 class='api-title'>
         <samp>uniprot</samp><br>
         <small>Fetches UniProt entries based on their accession numbers.</small>
       </h1>
@@ -9,51 +9,70 @@
     <p>
       The <code>uniprot</code> command takes one or more UniProt accession numbers and returns the corresponding UniProt entry for each of the accession numbers as output. This information is fetched by using the UniProt webservice.
     </p>
-    <h2 id="input">Input</h2>
-    <p>
-      The <code>uniprot</code> command expects UniProt accession numbers as input. The source of this input can be command line arguments or <i>standard input</i>. If input is supplied using multiple sources at the same time, the order of priority as described above is used.
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='input'>Input</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>
+          The <code>uniprot</code> command expects UniProt accession numbers as input. The source of this input can be command line arguments or <i>standard input</i>. If input is supplied using multiple sources at the same time, the order of priority as described above is used.
     </p>
-    <h4>Command line arguments</h4>
-    <p>
-      If input is supplied using command line arguments, the accession numbers must be separated by spaces.
+        <h4>Command line arguments</h4>
+        <p>
+          If input is supplied using command line arguments, the accession numbers must be separated by spaces.
     </p>
-    <h5>Example</h5>
-    <pre>
+        <h5>Example</h5>
+        <pre>
 <b>$</b> uniprot C6JD41 Q06JG4
 MTLVPLGDRVVLKQVEAEETTKSGIVLPGQAQEKPQQAEVVAVGPGGVVDGKEVKMEVAVGDKVIYSKYSGTEVKMDGTEYIIVKQNDILAIVK
 MFTNSIKNLIIYLMPLMVTLMLLSVSFVDAGKKPSGPNPGGNN</pre>
-    <h4>Standard input</h4>
-    <p>
-      If the command is run without arguments, <code>uniprot</code> will read its input from <i>standard input</i>. When <i>standard input</i> is used, a single UniProt accession number per line is expected.
+        <h4>Standard input</h4>
+        <p>
+          If the command is run without arguments, <code>uniprot</code> will read its input from <i>standard input</i>. When <i>standard input</i> is used, a single UniProt accession number per line is expected.
     </p>
-    <pre>
+        <h5>Example</h5>
+        <pre>
 <b>$</b> cat input.txt
 C6JD41
 Q06JG4
 <b>$</b> cat input | uniprot
 MTLVPLGDRVVLKQVEAEETTKSGIVLPGQAQEKPQQAEVVAVGPGGVVDGKEVKMEVAVGDKVIYSKYSGTEVKMDGTEYIIVKQNDILAIVK
 MFTNSIKNLIIYLMPLMVTLMLLSVSFVDAGKKPSGPNPGGNN</pre>
-    <h2 id="output">Output</h2>
-    <p>
-      The <code>uniprot</code> command outputs the UniProt entry for each of the input accession numbers. By default, only the protein sequences are returned. By using the <a href='#param-format'><samp>--format</samp> parameter</a>, this can be changed to fasta, txt, xml, rdf or gff. All output is written to <i>standard output</i>.
+      </div>
+    </div>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='output'>Output</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>
+          The <code>uniprot</code> command outputs the UniProt entry for each of the input accession numbers. By default, only the protein sequences are returned. By using the <a href='#param-format'><samp>--format</samp> parameter</a>, this can be changed to fasta, txt, xml, rdf or gff. All output is written to <i>standard output</i>.
     </p>
-    <h2 id="options">Command-line options</h2>
-    <h3 id='param-format'><samp>--format</samp> / <samp>-f</samp> <small>Specify the output format</small></h3>
-    <p>
-      By default, the <code>uniprot</code> command only returns the protein sequence of the UniProt entry. The <code>--format</code> option allows you to select another format. Supported formats are <samp>sequence</samp>, <samp>fasta</samp>, <samp>txt</samp>, <samp>xml</samp>, <samp>rdf</samp>, and <samp>gff</samp>.
+      </div>
+    </div>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='options'>Command-line options</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <h3 id='param-format'><samp>--format</samp> / <samp>-f</samp> <small>Specify the output format</small></h3>
+        <p>
+          By default, the <code>uniprot</code> command only returns the protein sequence of the UniProt entry. The <code>--format</code> option allows you to select another format. Supported formats are <samp>sequence</samp>, <samp>fasta</samp>, <samp>txt</samp>, <samp>xml</samp>, <samp>rdf</samp>, and <samp>gff</samp>.
     </p>
-    <h5>Example</h5>
-    <pre>
+        <h5>Example</h5>
+        <pre>
 <b>$</b> uniprot <b>--format</b> fasta C6JD41 Q06JG4
 >tr|C6JD41|C6JD41_9FIRM 10 kDa chaperonin OS=Ruminococcus sp. 5_1_39BFAA GN=groS PE=3 SV=1
 MTLVPLGDRVVLKQVEAEETTKSGIVLPGQAQEKPQQAEVVAVGPGGVVDGKEVKMEVAV
 GDKVIYSKYSGTEVKMDGTEYIIVKQNDILAIVK
 >sp|Q06JG4|16D10_MELHA CLAVATA3/ESR (CLE)-related protein 16D10 OS=Meloidogyne hapla GN=16D10 PE=2 SV=1
 MFTNSIKNLIIYLMPLMVTLMLLSVSFVDAGKKPSGPNPGGNN</pre>
-    <h3><samp>--help</samp> / <samp>-h</samp> <small>Display help</small></h3>
-    <p>
-      This flag displays the help.
+        <h3><samp>--help</samp> / <samp>-h</samp> <small>Display help</small></h3>
+        <p>
+          This flag displays the help.
     </p>
+      </div>
+    </div>
   </div>
   <div class="col-xs-3">
     <%= render 'api/shared/sidebar' %>

@@ -5,5 +5,5 @@ server 'nibbler.ugent.be', user: 'bmesuere', roles: [:web, :app], ssh_options: {
   port: 4840
 }
 
-set :branch, 'frankenbuild'
+set :branch, 'feature/material'
 set :rails_env, :development

@@ -1,19 +1,29 @@
+@import "variables.css.less";
+@import "mixins.css.less";
 @import "vendor.less";
 @import "bootstrap_overrides.css.less";
 @import "icons.css.less";
 @import "layout.css.less";
 @import "utilities.css.less";
+@import "components.css.less";
 @import "pygmentize.css.less";
 @import "home.css.less";
-@import "documentation.css.less";
 @import "publications.css.less";
-@import "about.css.less";
 @import "posts.css.less";
 @import "search.css.less";
 @import "sequence_show.css.less";
 @import "metaproteomics_results.css.less";
 @import "peptidome.css.less";
 @import "api.css.less";
+
+.debug_dump {
+    .shadow-z2();
+    border: 0;
+}
+
+.secondary-text {
+    color: @black-secondary;
+}
 
 // admin page
 #api-stats {
@@ -84,7 +94,7 @@
     position: relative;
     width: 100%;
     height: 44px;
-    background-color: #fdb813;
+    background-color: @primary-500;
     color: white;
     font-size: 15px;
     z-index: 10;

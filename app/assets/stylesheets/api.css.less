@@ -1,25 +1,31 @@
 // styles used for the api documentation
-@sidebar-color: #104b7d; // footer color
+@sidebar-color: @primary-800; // footer color
 // bigger fonts
-.apidocs {
-    font-size: 14px;
+.apidocs h5 {
+    line-height: normal;
+    font-weight: 500;
 }
 .apidocs h4 {
+    line-height: normal;
     font-size: 18px;
 }
 .apidocs h3 {
+    line-height: normal;
     font-size: 20px;
 }
 .apidocs h2 {
     border-bottom: none;
     color: #333;
-    font-weight: 500;
     font-size: 24px;
 }
 
 .apidocs h1.api-title {
     font-size: 28px;
-    margin-bottom: 10px;
+    margin-top: 10px;
+    line-height: normal;
+}
+.apidocs .panel {
+    .shadow-z1();
 }
 
 .apidocs li {
@@ -33,6 +39,9 @@
 .apidocs-example pre a,
 #try-it-request a {
     color: #333;
+}
+.apidocs .card {
+    margin-bottom: 20px;
 }
 
 .parameter-table .name {
@@ -55,7 +64,7 @@
     padding: 4px 20px;
     font-size: 13px;
     font-weight: 500;
-    color: #999;
+    color: @black-secondary;
 }
 .apidocs-sidebar .nav > li > a:hover,
 .apidocs-sidebar .nav > li > a:focus {
@@ -149,6 +158,7 @@
 .apidocs-callout h4 {
     margin-top: 0;
     margin-bottom: 5px;
+    line-height: 1.1;
 }
 .apidocs-callout p:last-child {
     margin-bottom: 0;
@@ -162,22 +172,22 @@
 }
 /* Variations */
 .apidocs-callout-danger {
-    border-left-color: #d9534f;
+    border-left-color: @danger-500;
 }
 .apidocs-callout-danger h4 {
-    color: #d9534f;
+    color: @danger-500;
 }
 .apidocs-callout-warning {
-    border-left-color: #f0ad4e;
+    border-left-color: @warning-500;
 }
 .apidocs-callout-warning h4 {
-    color: #f0ad4e;
+    color: @warning-500;
 }
 .apidocs-callout-info {
-    border-left-color: #5bc0de;
+    border-left-color: @info-500;
 }
 .apidocs-callout-info h4 {
-    color: #5bc0de;
+    color: @info-500;
 }
 
 // examples, taken from the bootstrap docs
@@ -217,13 +227,18 @@
     border-radius: 0;
 }
 /* Make the examples and snippets not full-width */
+.apidocs-example-wrapper {
+    .shadow-z3();
+    border-radius: 2px;
+    margin-bottom: 20px;
+}
 .apidocs-example {
     margin-right: 0;
     margin-left: 0;
     background-color: #fff;
     border-color: #ddd;
     border-width: 1px;
-    border-radius: 4px 4px 0 0;
+    border-radius: 2px 2px 0 0;
     box-shadow: none;
 }
 .apidocs-example + .highlight {
@@ -231,8 +246,8 @@
     margin-right: 0;
     margin-left: 0;
     border-width: 1px;
-    border-bottom-right-radius: 4px;
-    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px;
 }
 .apidocs-example-standalone {
     border-radius: 4px;
@@ -266,14 +281,24 @@
 .panel-figure {
     text-align: center;
 }
- .panel-figure img {
-     max-width: 100%;
- }
- .panel-caption {
-     margin-top: 15px;
-     font-size: small;
-     text-align: left;
- }
+.panel-figure img {
+    max-width: 100%;
+}
+.panel-caption {
+    margin-top: 15px;
+    font-size: small;
+    text-align: left;
+}
 .casestudies pre {
     max-height: 200px;
+}
+
+.try-it-header {
+    background-color: @accent-500;
+    margin: -15px -15px 20px;
+    padding: 16px;
+}
+.try-it-header h2 {
+    color: white;
+    line-height: normal;
 }

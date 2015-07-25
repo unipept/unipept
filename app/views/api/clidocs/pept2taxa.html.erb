@@ -1,7 +1,7 @@
 <div class="apidocs row">
   <div class="col-xs-9">
     <div class='page-header'>
-      <h1>
+      <h1 class='api-title'>
         <samp>unipept pept2taxa</samp><br>
         <small>Returns the set of taxa extracted from the UniProt entries containing a given tryptic peptide.</small>
       </h1>
@@ -9,27 +9,31 @@
     <p>
       The <code>unipept pept2taxa</code> command takes one or more tryptic peptides as input and returns the set of (<span class="initialism">NCBI</span>) taxa extracted from the UniProt entries containing the peptides as output. This information is fetched by doing <a href='<%= api_apidocs_pept2taxa_path %>' target='_blank'><span class="initialism">API</span>-requests</a> to the Unipept server.
     </p>
-    <h2 id="input">Input</h2>
-    <p>
-      The <code>unipept pept2taxa</code> command expects tryptic peptides as input. The source of this input can be command line arguments, a file, or <i>standard input</i>. If input is supplied using multiple sources at the same time, the order of priority as described above is used.
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='input'>Input</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>
+          The <code>unipept pept2taxa</code> command expects tryptic peptides as input. The source of this input can be command line arguments, a file, or <i>standard input</i>. If input is supplied using multiple sources at the same time, the order of priority as described above is used.
     </p>
-    <h4>Command line arguments</h4>
-    <p>
-      If input is supplied using command line arguments, the peptides must be separated by spaces.
+        <h4>Command line arguments</h4>
+        <p>
+          If input is supplied using command line arguments, the peptides must be separated by spaces.
     </p>
-    <h5>Example</h5>
-    <pre>
+        <h5>Example</h5>
+        <pre>
 <b>$</b> unipept pept2taxa MFNEIAPK ISVAQGASK
 peptide,taxon_id,taxon_name,taxon_rank
 MFNEIAPK,1262758,Blautia sp. CAG:52,species
 MFNEIAPK,1262948,Roseburia sp. CAG:471,species
 ISVAQGASK,9606,Homo sapiens,species</pre>
-    <h4>File input</h4>
-    <p>
-      Use the <a href='#param-input'><samp>--input</samp> parameter</a> to specify a file to use as input. If input is supplied using a file, a single peptide per line is expected.
+        <h4>File input</h4>
+        <p>
+          Use the <a href='#param-input'><samp>--input</samp> parameter</a> to specify a file to use as input. If input is supplied using a file, a single peptide per line is expected.
     </p>
-    <h5>Example</h5>
-    <pre>
+        <h5>Example</h5>
+        <pre>
 <b>$</b> cat input.txt
 MFNEIAPK
 ISVAQGASK
@@ -38,12 +42,12 @@ peptide,taxon_id,taxon_name,taxon_rank
 MFNEIAPK,1262758,Blautia sp. CAG:52,species
 MFNEIAPK,1262948,Roseburia sp. CAG:471,species
 ISVAQGASK,9606,Homo sapiens,species</pre>
-    <h4>Standard input</h4>
-    <p>
-      If the command is run without arguments and no file is specified, <code>unipept pept2taxa</code> will read its input from <i>standard input</i>. When <i>standard input</i> is used, a single peptide per line is expected.
+        <h4>Standard input</h4>
+        <p>
+          If the command is run without arguments and no file is specified, <code>unipept pept2taxa</code> will read its input from <i>standard input</i>. When <i>standard input</i> is used, a single peptide per line is expected.
     </p>
-    <h5>Example</h5>
-    <pre>
+        <h5>Example</h5>
+        <pre>
 <b>$</b> cat input.txt
 MFNEIAPK
 ISVAQGASK
@@ -52,27 +56,33 @@ peptide,taxon_id,taxon_name,taxon_rank
 MFNEIAPK,1262758,Blautia sp. CAG:52,species
 MFNEIAPK,1262948,Roseburia sp. CAG:471,species
 ISVAQGASK,9606,Homo sapiens,species</pre>
-    <h2 id="output">Output</h2>
-    <p>
-      The <code>unipept pept2taxa</code> command outputs all <span class='initialism'>NCBI</span> taxonomy entries that are associated with UniProt entries that contain the given (tryptic) input peptides. By default, for each of the taxa, the <span class='initialism'>NCBI</span> taxon id, the name of the organism and the taxonomic rank are returned. By using the <a href='#param-all'><samp>--all</samp> parameter</a>, this can be supplemented with the full taxonomic lineage of the taxon. Consult the <a href='<%= api_apidocs_pept2taxa_path %>#response' target='_blank'><span class="initialism">API</span> documentation</a> for a detailed list of output fields. A selection of output fields can be specified with the <a href='#param-select'><samp>--select</samp> parameter</a>. By default, output is generated in csv format. By using the <a href='#param-format'><samp>--format</samp> parameter</a>, the format can be changed into json or xml. The output can be written to a file or to <i>standard output</i>.
+      </div>
+    </div>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='output'>Output</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>
+          The <code>unipept pept2taxa</code> command outputs all <span class='initialism'>NCBI</span> taxonomy entries that are associated with UniProt entries that contain the given (tryptic) input peptides. By default, for each of the taxa, the <span class='initialism'>NCBI</span> taxon id, the name of the organism and the taxonomic rank are returned. By using the <a href='#param-all'><samp>--all</samp> parameter</a>, this can be supplemented with the full taxonomic lineage of the taxon. Consult the <a href='<%= api_apidocs_pept2taxa_path %>#response' target='_blank'><span class="initialism">API</span> documentation</a> for a detailed list of output fields. A selection of output fields can be specified with the <a href='#param-select'><samp>--select</samp> parameter</a>. By default, output is generated in csv format. By using the <a href='#param-format'><samp>--format</samp> parameter</a>, the format can be changed into json or xml. The output can be written to a file or to <i>standard output</i>.
     </p>
-    <h4>File output</h4>
-    <p>
-      Use the <a href='#param-input'><samp>--output</samp> parameter</a> to specify an output file. If the file aready exists, the output will be appended to the end of the file.
+        <h4>File output</h4>
+        <p>
+          Use the <a href='#param-input'><samp>--output</samp> parameter</a> to specify an output file. If the file aready exists, the output will be appended to the end of the file.
     </p>
-    <pre>
+        <pre>
 <b>$</b> unipept pept2taxa --output output.txt MFNEIAPK ISVAQGASK
 <b>$</b> cat output.txt
 peptide,taxon_id,taxon_name,taxon_rank
 MFNEIAPK,1262758,Blautia sp. CAG:52,species
 MFNEIAPK,1262948,Roseburia sp. CAG:471,species
 ISVAQGASK,9606,Homo sapiens,species</pre>
-    <h4>Standard output</h4>
-    <p>
-      If no output file is specified, <code>unipept pept2taxa</code> will write its output to <i>standard output</i>.
+        <h4>Standard output</h4>
+        <p>
+          If no output file is specified, <code>unipept pept2taxa</code> will write its output to <i>standard output</i>.
     </p>
-    <h5>Example</h5>
-    <pre>
+        <h5>Example</h5>
+        <pre>
 <b>$</b> unipept pept2taxa MFNEIAPK ISVAQGASK
 peptide,taxon_id,taxon_name,taxon_rank
 MFNEIAPK,1262758,Blautia sp. CAG:52,species
@@ -84,12 +94,18 @@ peptide,taxon_id,taxon_name,taxon_rank
 MFNEIAPK,1262758,Blautia sp. CAG:52,species
 MFNEIAPK,1262948,Roseburia sp. CAG:471,species
 ISVAQGASK,9606,Homo sapiens,species</pre>
-    <h2 id="fasta">Fasta support</h2>
-    <p>
-      The <code>unipept pept2taxa</code> command supports input (from any source) in a fasta-like format (for example generated by the <a href='<%= api_clidocs_prot2pept_path %>'><samp>prot2pept</samp> command</a>). This format consists of a fasta header (a line starting with a <samp>&gt;</samp>), followed by one or more lines containing one peptide each. When this format is detected, the output will automatically include an extra information field containing the corresponding fasta header.
+      </div>
+    </div>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='fasta'>Fasta support</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>
+          The <code>unipept pept2taxa</code> command supports input (from any source) in a fasta-like format (for example generated by the <a href='<%= api_clidocs_prot2pept_path %>'><samp>prot2pept</samp> command</a>). This format consists of a fasta header (a line starting with a <samp>&gt;</samp>), followed by one or more lines containing one peptide each. When this format is detected, the output will automatically include an extra information field containing the corresponding fasta header.
     </p>
-    <h5>Example</h5>
-    <pre>
+        <h5>Example</h5>
+        <pre>
 <b>$</b> cat input.txt
 > header 1
 ISVAQGASK
@@ -102,13 +118,19 @@ fasta_header,peptide,taxon_id,taxon_name,taxon_rank
 > header 1,MFNEIAPK,1262758,Blautia sp. CAG:52,species
 > header 1,MFNEIAPK,1262948,Roseburia sp. CAG:471,species
 > header 2,ISVAQGASK,9606,Homo sapiens,species</pre>
-    <h2 id="options">Command-line options</h2>
-    <h3><samp>--equate</samp> / <samp>-e</samp> <small>Equate isoleucine and leucine</small></h3>
-    <p>
-      If the <code>--equate</code> flag is set, isoleucine (I) and leucine (L) are equated when matching tryptic peptides to UniProt entries. This is similar to checking the <i>Equate I and L?</i> checkbox when performing a search in the Unipept web interface.
+      </div>
+    </div>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='options'>Command-line options</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <h3><samp>--equate</samp> / <samp>-e</samp> <small>Equate isoleucine and leucine</small></h3>
+        <p>
+          If the <code>--equate</code> flag is set, isoleucine (I) and leucine (L) are equated when matching tryptic peptides to UniProt entries. This is similar to checking the <i>Equate I and L?</i> checkbox when performing a search in the Unipept web interface.
     </p>
-    <h5>Example</h5>
-    <pre>
+        <h5>Example</h5>
+        <pre>
 <b>$</b> unipept pept2taxa FEALLGDGSQYGLHLQYK
 peptide,taxon_id,taxon_name,taxon_rank
 FEALLGDGSQYGLHLQYK,408170,human gut metagenome,species
@@ -123,12 +145,12 @@ FEALLGDGSQYGLHLQYK,657322,Faecalibacterium prausnitzii SL3/3,no rank
 FEALLGDGSQYGLHLQYK,718252,Faecalibacterium prausnitzii L2-6,no rank
 FEALLGDGSQYGLHLQYK,748224,Faecalibacterium cf. prausnitzii KLE1255,no rank
 FEALLGDGSQYGLHLQYK,1262898,Faecalibacterium sp. CAG:82,species</pre>
-    <h3><samp>--input</samp> / <samp>-i</samp> <small>Specify an input file</small></h3>
-    <p>
-      All Unipept <span class='initialism'>CLI</span> commands can process input from 3 sources: command line arguments, a file, or <i>standard input</i>. The optional <code>--input</code> option allows you to specify an input file. The file should contain a single peptide per line.
+        <h3><samp>--input</samp> / <samp>-i</samp> <small>Specify an input file</small></h3>
+        <p>
+          All Unipept <span class='initialism'>CLI</span> commands can process input from 3 sources: command line arguments, a file, or <i>standard input</i>. The optional <code>--input</code> option allows you to specify an input file. The file should contain a single peptide per line.
     </p>
-    <h5>Example</h5>
-    <pre>
+        <h5>Example</h5>
+        <pre>
 <b>$</b> cat input.txt
 MFNEIAPK
 OMGWTFBBQ
@@ -138,24 +160,24 @@ peptide,taxon_id,taxon_name,taxon_rank
 MFNEIAPK,1262758,Blautia sp. CAG:52,species
 MFNEIAPK,1262948,Roseburia sp. CAG:471,species
 ISVAQGASK,9606,Homo sapiens,species</pre>
-    <h3 id='param-output'><samp>--output</samp> / <samp>-o</samp> <small>Specify an output file</small></h3>
-    <p>
-      By default, the unipept commands write their output to <i>standard output</i>. Using the optional <code>--output</code> option allows you to specify a file to write the output to. If the file already exists, the output will be appended; if it doesn't, a new file will be created.
+        <h3 id='param-output'><samp>--output</samp> / <samp>-o</samp> <small>Specify an output file</small></h3>
+        <p>
+          By default, the unipept commands write their output to <i>standard output</i>. Using the optional <code>--output</code> option allows you to specify a file to write the output to. If the file already exists, the output will be appended; if it doesn't, a new file will be created.
     </p>
-    <h5>Example</h5>
-    <pre>
+        <h5>Example</h5>
+        <pre>
 <b>$</b> unipept pept2taxa <b>--output</b> output.txt MFNEIAPK ISVAQGASK
 <b>$</b> cat output.txt
 peptide,taxon_id,taxon_name,taxon_rank
 MFNEIAPK,1262758,Blautia sp. CAG:52,species
 MFNEIAPK,1262948,Roseburia sp. CAG:471,species
 ISVAQGASK,9606,Homo sapiens,species</pre>
-    <h3 id='param-input'><samp>--select</samp> / <samp>-s</samp> <small>Specify the output fields</small></h3>
-    <p>
-      By default, the Unipept <span class='initialism'>CLI</span> commands output all information fields received from the Unipept server. The <code>--select</code> option allows you to control which fields are returned. A list of fields can be specified by a comma-separated list, or by using multiple <code>--select</code> options. A <samp>*</samp> can be used as a wildcard for field names. For example, <code>--select peptide,taxon*</code> will return the peptide field and all fields starting with <i>taxon</i>.
+        <h3 id='param-input'><samp>--select</samp> / <samp>-s</samp> <small>Specify the output fields</small></h3>
+        <p>
+          By default, the Unipept <span class='initialism'>CLI</span> commands output all information fields received from the Unipept server. The <code>--select</code> option allows you to control which fields are returned. A list of fields can be specified by a comma-separated list, or by using multiple <code>--select</code> options. A <samp>*</samp> can be used as a wildcard for field names. For example, <code>--select peptide,taxon*</code> will return the peptide field and all fields starting with <i>taxon</i>.
     </p>
-    <h5>Example</h5>
-    <pre>
+        <h5>Example</h5>
+        <pre>
 <b>$</b> unipept pept2taxa <b>--select</b> peptide,taxon_id MFNEIAPK
 peptide,taxon_id
 MFNEIAPK,1262758
@@ -164,35 +186,37 @@ MFNEIAPK,1262948
 peptide,taxon_name
 MFNEIAPK,Blautia sp. CAG:52
 MFNEIAPK,Roseburia sp. CAG:471</pre>
-    <h3 id='param-format'><samp>--format</samp> / <samp>-f</samp> <small>Specify the output format</small></h3>
-    <p>
-      By default, the Unipept <span class='initialism'>CLI</span> commands return their output in <samp>csv</samp> format. The <code>--format</code> option allows you to select another format. Supported formats are <samp>csv</samp>, <samp>json</samp>, and <samp>xml</samp>.
+        <h3 id='param-format'><samp>--format</samp> / <samp>-f</samp> <small>Specify the output format</small></h3>
+        <p>
+          By default, the Unipept <span class='initialism'>CLI</span> commands return their output in <samp>csv</samp> format. The <code>--format</code> option allows you to select another format. Supported formats are <samp>csv</samp>, <samp>json</samp>, and <samp>xml</samp>.
     </p>
-    <h5>Example</h5>
-    <pre>
+        <h5>Example</h5>
+        <pre>
 <b>$</b> unipept pept2taxa <b>--format</b> json ISVAQGASK MFNEIAPK
 [{"peptide":"ISVAQGASK","taxon_id":9606,"taxon_name":"Homo sapiens","taxon_rank":"species"},{"peptide":"MFNEIAPK","taxon_id":1262758,"taxon_name":"Blautia sp. CAG:52","taxon_rank":"species"},{"peptide":"MFNEIAPK","taxon_id":1262948,"taxon_name":"Roseburia sp. CAG:471","taxon_rank":"species"}]
 <b>$</b> unipept pept2taxa <b>--format</b> xml ISVAQGASK MFNEIAPK
 &lt;results&gt;&lt;result&gt;&lt;peptide&gt;ISVAQGASK&lt;/peptide&gt;&lt;taxon_id&gt;9606&lt;/taxon_id&gt;&lt;taxon_name&gt;Homo sapiens&lt;/taxon_name&gt;&lt;taxon_rank&gt;species&lt;/taxon_rank&gt;&lt;/result&gt;&lt;result&gt;&lt;peptide&gt;MFNEIAPK&lt;/peptide&gt;&lt;taxon_id&gt;1262758&lt;/taxon_id&gt;&lt;taxon_name&gt;Blautia sp. CAG:52&lt;/taxon_name&gt;&lt;taxon_rank&gt;species&lt;/taxon_rank&gt;&lt;/result&gt;&lt;result&gt;&lt;peptide&gt;MFNEIAPK&lt;/peptide&gt;&lt;taxon_id&gt;1262948&lt;/taxon_id&gt;&lt;taxon_name&gt;Roseburia sp. CAG:471&lt;/taxon_name&gt;&lt;taxon_rank&gt;species&lt;/taxon_rank&gt;&lt;/result&gt;&lt;/results&gt;</pre>
-    <h3 id='param-all'><samp>--all</samp> / <samp>-a</samp> <small>Request additional information</small></h3>
-    <p>
-      By default, the Unipept <span class='initialism'>CLI</span> commands only request basic information from the Unipept server. By using the <code>--all</code> flag, you can request additional information fields such as the lineage of the returned taxa. You can use the <code>--select</code> option to select which fields are included in the output.
+        <h3 id='param-all'><samp>--all</samp> / <samp>-a</samp> <small>Request additional information</small></h3>
+        <p>
+          By default, the Unipept <span class='initialism'>CLI</span> commands only request basic information from the Unipept server. By using the <code>--all</code> flag, you can request additional information fields such as the lineage of the returned taxa. You can use the <code>--select</code> option to select which fields are included in the output.
     </p>
-    <div class="apidocs-callout apidocs-callout-warning">
-      <h4>Performance penalty</h4>
-      <p>Setting <code>--all</code> has a performance penalty inferred from additional database queries. Do not use this option unless the extra information fields are strictly needed.</p>
-    </div>
-    <h5>Example</h5>
-    <pre>
+        <div class="apidocs-callout apidocs-callout-warning">
+          <h4>Performance penalty</h4>
+          <p>Setting <code>--all</code> has a performance penalty inferred from additional database queries. Do not use this option unless the extra information fields are strictly needed.</p>
+        </div>
+        <h5>Example</h5>
+        <pre>
 <b>$</b> unipept pept2taxa <b>--all</b> --select peptide,taxon_id,order* ISVAQGASK MFNEIAPK
 peptide,taxon_id,order_id,order_name
 ISVAQGASK,9606,9443,Primates
 MFNEIAPK,1262758,186802,Clostridiales
 MFNEIAPK,1262948,186802,Clostridiales</pre>
-    <h3><samp>--help</samp> / <samp>-h</samp> <small>Display help</small></h3>
-    <p>
-      This flag displays the help.
+        <h3><samp>--help</samp> / <samp>-h</samp> <small>Display help</small></h3>
+        <p>
+          This flag displays the help.
     </p>
+      </div>
+    </div>
   </div>
   <div class="col-xs-3">
     <%= render 'api/shared/sidebar' %>

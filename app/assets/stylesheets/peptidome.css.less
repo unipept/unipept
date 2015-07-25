@@ -1,15 +1,17 @@
 // styles related to the peptidome analysis page
-// tabs
-.tab-help .help-icon {
-    font-size: 50pt;
-    margin-bottom: 0;
+// undo card padding:
+#pancore_graph,
+#sim_matrix {
+    margin: -16px;
 }
-#tabs>li.active>a:hover {
-    background-color: @nav-link-hover-bg !important;
+#pancore_graph svg,
+#sim_matrix svg {
+    margin-bottom: -5px;
 }
 
 // pancore graph
 #pancore_graph {
+    min-height: 600px;
     user-select: none;
 }
 #pancore_graph .bar {
@@ -41,19 +43,9 @@
 #download-peptides #download-peptides-toggle {
     margin-bottom: 2px;
 }
-#buttons-pancore {
-    float: right;
-    margin-top: 10px;
-}
-#buttons-pancore button {
-    margin-left: 5px;
-}
 #pancore_graph,
 #sim_matrix {
     background-color: white;
-}
-#pancore_graph {
-    min-height: 600px;
 }
 
 // clustering
@@ -79,11 +71,6 @@
 }
 .tip .table .sim {
     text-align: center;
-}
-
-// refseq genomes
-#genome-tabs {
-    margin-top: 5px;
 }
 
 // my genomes
@@ -120,6 +107,10 @@
 }
 
 // analyzed genomes
+.analyzed-proteomes .card,
+.analyzed-proteomes .card-supporting-text {
+    overflow: visible;
+}
 .genomes-table .handle {
     width: 30px;
     vertical-align: middle;
@@ -212,6 +203,12 @@ tr.gu-mirror .button {
     background-color: @state-success-bg;
     border-color: @state-success-border;
 }
+.tokenfield .dataset-header {
+    margin: 3px 15px;
+    padding-bottom: 3px;
+    border-bottom: 1px solid #d3d3d3;
+    line-height: 30px;
+}
 .search-settings {
     cursor: pointer;
     user-select: none;
@@ -229,36 +226,28 @@ tr.gu-mirror .button {
 }
 
 // full screen layout
-.full-screen .proteome-library {
+.full-screen .proteome-library,
+.full-screen .analyzed-proteomes{
     position: absolute;
     top: 44px;
-    left: -500px;
     width: 473px;
     height: 100%;
     background-color: #fff;
     z-index: 5;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     overflow: scroll;
     transition-duration: 0.5s;
     transition-property: transform;
     transition-timing-function: ease-out;
+    .shadow-z3();
+}
+.full-screen .proteome-library {
+    left: -500px;
 }
 .full-screen .proteome-library.shown {
     transform: translateX(500px);
 }
 .full-screen .analyzed-proteomes {
-    position: absolute;
-    top: 44px;
     right: -500px;
-    width: 473px;
-    height: 100%;
-    background-color: #fff;
-    z-index: 5;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    overflow: scroll;
-    transition-duration: 0.5s;
-    transition-property: transform;
-    transition-timing-function: ease-out;
 }
 .full-screen .analyzed-proteomes.shown {
     transform: translateX(-500px);

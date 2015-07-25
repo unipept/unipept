@@ -1,4 +1,25 @@
 // file containing general utilities
+// shadow
+.shadow-z1 {
+    .shadow-z1();
+}
+
+.shadow-z2 {
+    .shadow-z2();
+}
+
+.shadow-z3 {
+    .shadow-z3();
+}
+
+.shadow-z4 {
+    .shadow-z4();
+}
+
+.shadow-z5 {
+    .shadow-z5();
+}
+
 // visual clear
 .visualClear {
     display: block;
@@ -33,7 +54,7 @@
 }
 @keyframes flash {
     0% {
-        background-color: #ffff9c;
+        background-color: @primary-300;
     }
     100% {
         background-color: none;
@@ -65,33 +86,14 @@
     display: block;
     padding: 5px 8px;
     font-size: 12px;
-    color: #777;
+    color: @black-secondary;
     cursor: pointer;
     background-color: #fff;
-    border: 1px solid #e1e1e8;
-    border-radius: 0 4px 0 4px;
+    border: 1px solid @black-divider;
+    border-radius: 2px;
 }
 .btn-clipboard-hover {
-    color: #fff;
-    background-color: steelblue;
-    border-color: steelblue;
-}
-
-// tab help
-.tab-help {
-    background-color: @nav-link-hover-bg;
-    min-height: 200px;
-    width: 916px;
-    z-index: 100;
-    position: absolute;
-    border: 1px solid @nav-tabs-active-link-hover-border-color;
-    border-top: 0;
-    padding: 10px;
-    display: none;
-    .border-bottom-radius(4px);
-}
-.nav-tabs .badge {
-    padding: 2px 7px;
+    color: @black-text;
 }
 
 // explorer-like tree
@@ -159,7 +161,7 @@
 .treeView span.clicked {
     background: @gray-lighter !important;
     border: 1px solid #ccc !important;
-    border-radius: 3px;
+    border-radius: 2px;
 }
 .treeView li.leaf span {
     cursor: pointer;

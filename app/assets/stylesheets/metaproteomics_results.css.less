@@ -1,25 +1,25 @@
 // styles for the metaproteomics analysis results page
 // page intro
-#buttons {
-    float: right;
-    margin-top: 10px;
-}
-#buttons button {
-    margin-left: 5px;
-}
 
 // tab stuff
 .tab-content.multi-search {
     overflow: visible;
 }
+.card-supporting-text.multi-results {
+    padding: 0px;
+}
+.multi-search .buttons-single {
+    margin-right: 16px;
+    margin-top: -46px;
+}
 h2.ghead {
     margin-bottom: 8px;
-    margin-top: 3px;
+    margin-top: 5px;
+    margin-right: 16px;
     font-weight: bold;
     padding: 0;
     border: 0;
-    font-size: 100%;
-    font: 13px Helvetica,arial,freesans,clean,sans-serif;
+    font-size: 13px;
     line-height: 1.4;
     color: #333;
 }
@@ -50,9 +50,10 @@ span.dir.text {
 }
 .tip {
     background-color: #fff;
-    padding: 2px;
+    padding: 5px;
     border: 1px solid @hairlinegray;
-    border-radius: 3px;
+    border-radius: 2px;
+    .shadow-z5();
 }
 .tip-title {
     text-align: center;
@@ -97,9 +98,10 @@ span.dir.text {
     min-width: 135px;
 }
 #sunburstPanel {
-    width: 165px;
+    width: 176px;
     float: right;
     margin-top: 10px;
+    padding-left: 5px;
 }
 .full-screen #sunburstPanel {
     width: 250px;
@@ -175,44 +177,48 @@ span.dir.text {
 #d3TreeView {
     background-color: white;
 }
+#d3TreeView svg {
+    margin-bottom: -5px;
+}
 
 /* lineage tree */
 #tree_data {
-    width: 450px;
+    width: 420px;
     float: right;
-    padding: 5px;
+    padding: 8px;
     background: @gray-lighter;
     border: 1px solid #ccc;
-    border-radius: 3px;
+    border-radius: 2px;
     .transition(all 1s ease-in-out);
+    .shadow-z5();
 }
 #tree_data::before {
     content: "";
     display: block;
     height: 0;
     width: 0;
-    margin-left: -15px;
+    margin-left: -18px;
     border: 10px solid #ccc;
     border-width: 10px 10px 10px 0;
     border-color: transparent #ccc transparent transparent;
     position: absolute;
 }
 #tree_data h3 {
+    line-height: 30px;
     margin: 3px 0 5px;
+    color: @black-secondary;
 }
 #tree_data h4 {
-    margin: 8px 5px 0;
+    line-height: 25px;
+    margin-left: 5px;
 }
 #tree_data h3 a {
-    color: #666 !important;
+    color: @black-text !important;
 }
 #tree ul {
     padding-left: 0;
 }
-#tree_search_group {
-    width: 440px;
-}
-#outline-mismatch-tabs {
-    margin-top: 10px;
-    margin-bottom: 8px;
+#tree_search_group,
+#searchtree {
+    max-width: 420px;
 }

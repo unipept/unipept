@@ -1,39 +1,30 @@
-/*** single peptide page ***/
-#single-peptide-tabs .tab-content {
-    margin-top: 5px;
-}
-#single-peptide-tabs .nav-tabs>li.active>a:hover {
-    background-color: @nav-link-hover-bg !important;
-}
-#single-peptide-tabs .nav-tabs > li {
-    margin-bottom: -2px;
-}
-
 /* Lineage tree */
 .buttons-single {
     float: right;
-    margin-top: -35px;
+    margin-top: -55px;
 }
 .buttons-single button {
     margin-left: 5px;
+    .shadow-z0();
+}
+.buttons-single .btn-clipboard-hover {
+    color: @black-text;
+    background: white;
 }
 
 #lineageTree {
     background-color: white;
 }
 
+#lineageTree svg {
+    margin: -16px -16px -21px -16px;
+}
+
 /* Lineage table */
 #sequence_table {
     overflow: auto;
-}
-#sequence_table td {
     font-size: 10px;
     line-height: 1.1em;
-}
-#sequence_table th {
-    font-size: 10px;
-    color: #369;
-    font-weight: bold;
 }
 #sequence_table a {
     color: #333;

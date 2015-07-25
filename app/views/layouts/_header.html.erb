@@ -1,42 +1,26 @@
-<div id='topbar'>
-  <% if user_signed_in? %>
-  <div id="user">
-    <ul>
-      <li class="separator"><span class="glyphicon glyphicon-user"></span> <%= current_user.username %></li>
-      <li><%= link_to("Sign out", destroy_user_session_path, :method => :delete) if Rails.application.config.unipept_enable_auth %></li>
-    </ul>
+<header class='header'>
+  <div class="header-row">
+    <span class="header-title"><%= link_to("Unipept", root_path) %></span>
+    <div class="header-spacer"></div>
+    <nav class="header-navigation">
+      <%= link_to("Publications", publications_path, class: "header-navigation-link") %>
+      <%= link_to("About", about_path, class: "header-navigation-link") %>
+      <% if user_signed_in? %>
+        <%= link_to("Sign out", destroy_user_session_path, :method => :delete, class: "header-navigation-link") if Rails.application.config.unipept_enable_auth %>
+      <% else %>
+        <%= link_to(new_user_session_path, class: "header-navigation-link header-btn-login btn-icon") do %>
+          <span class="glyphicon glyphicon-lock"></span>
+        <% end %>
+      <% end %>
+    </nav>
   </div>
-  <% else %>
-  <div id='user'><ul><li><span class="glyphicon glyphicon-lock"></span> <%= link_to("Sign in", new_user_session_path) %></li></ul></div>
-  <% end %>
-</div>
-
-<header id='header'>
-  <div id='headerleft'>
-    <h1>
-      <% logo = image_tag("universiteit_gent.png", :alt => "Ghent University", :height => "69", :width => "95") %>
-      <%= link_to(logo, "http://www.ugent.be", :title => "Ghent University") %>
-    </h1>
-    <h2>
-      <%= link_to("Unipept", root_path) %>
-    </h2>
-  </div>
-  <div id='headerright'>
-    <div id="utility">
-      <ul>
-        <li class="separator"><%= link_to("Publications", publications_path, :title => "Publications") %></li>
-        <li><%= link_to("About", about_path, :title => "About") %></li>
-      </ul>
-    </div>
+  <div class="header-row">
+    <nav class="header-navigation">
+      <%= link_to("Tryptic Peptide Analysis", search_single_path, class: "header-navigation-link") %>
+      <%= link_to("Metaproteomics Analysis", datasets_path, class: "header-navigation-link") %>
+      <%= link_to("Peptidome Analysis", pancore_analyze_path, class: "header-navigation-link") %>
+      <%= link_to("API", api_apidocs_path, class: "header-navigation-link") %>
+      <%= link_to("CLI", api_clidocs_path, class: "header-navigation-link") %>
+    </nav>
   </div>
 </header>
-<nav id="subbar">
-  <ul>
-    <li><%= link_to("Home", root_path) %></li>
-    <li><%= link_to("Tryptic Peptide Analysis", search_single_path) %></li>
-    <li><%= link_to("Metaproteomics Analysis", datasets_path) %></li>
-    <li><%= link_to("Peptidome Analysis", pancore_analyze_path) %></li>
-    <li><%= link_to("Docs", docs_path) %></li>
-    <% if user_signed_in? && current_user.admin? %><li><%= link_to("Admin", admin_path) %></li><% end %>
-  </ul>
-</nav>

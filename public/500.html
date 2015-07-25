@@ -1,35 +1,51 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>We're sorry, but something went wrong (500)</title>
-  <style type="text/css">
-    body { background-color: #fff; color: #666; text-align: center; font-family: arial, sans-serif; }
-    div.dialog {
-      width: 25em;
-      padding: 0 4em;
-      margin: 4em auto 0 auto;
-      border: 1px solid #ccc;
-      border-right-color: #999;
-      border-bottom-color: #999;
-    }
-    h1 { font-size: 100%; color: #f00; line-height: 1.5em; }
-		.dialog img{
-			width: 25em;
-		}
-		a {
-			color: #333333;
-		}
-  </style>
-</head>
 
-<body>
-  <!-- This file lives in public/500.html -->
-  <div class="dialog">
-    <h1>Oops, something went horribly wrong.</h1>
-    <p>It seems like you found a bug in Unipept.</p>
-    <p>We're notified automatically about this, but you can always drop us a line at <a href="mailto:unipept@UGent.be">unipept@ugent.be</a> or on twitter (<a href="http://twitter.com/unipept">@unipept</a>) and tell us all about it.</p>
-	<br/>
-	<img src="/images/500.png" alt="500"/>
-  </div>
-</body>
+  <head>
+    <title>We're sorry, but something went wrong (500)</title>
+    <style type="text/css">
+      body {
+        background-color: #fafafa;
+        color: #333;
+        text-align: center;
+        font-family: arial, sans-serif;
+      }
+
+      div.dialog {
+        width: 25em;
+        padding: 16px;
+        margin: 4em auto 0 auto;
+        background-color: white;
+        box-shadow: 0 8px 10px -5px rgba(0, 0, 0, .14), 0 16px 24px 2px rgba(0, 0, 0, .098), 0 6px 30px 5px rgba(0, 0, 0, .084);
+        border-radius: 2px;
+      }
+
+      h1 {
+        font-size: 100%;
+        color: #f00;
+        line-height: 1.5em;
+      }
+
+      .dialog img {
+        width: 25em;
+      }
+
+      a {
+        color: #333333;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <!-- This file lives in public/500.html -->
+    <div class="dialog">
+      <h1>Oops, something went horribly wrong.</h1>
+      <p>It seems like you found a bug in Unipept.</p>
+      <p>We're automatically notified about this and would love to tell you when we fixed this issue. Please let us know how we can contact you by dropping us a line at <a href="mailto:unipept@UGent.be">unipept@ugent.be</a> or on twitter (<a href="http://twitter.com/unipept">@unipept</a>).</p>
+      <br/>
+      <img src="/images/500.png" alt="500" />
+    </div>
+  </body>
+
 </html>

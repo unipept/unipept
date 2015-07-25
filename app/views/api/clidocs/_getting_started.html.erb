@@ -1,20 +1,24 @@
-<h2>Getting started</h2>
-<p>
-  Before the Unipept command line interface (<span class='initialism'>CLI</span>) can be used, it first needs to be <a href='<%= api_clidocs_path %>#installation' target='_blank'>installed locally</a>. Since the commands of the <span class='initialism'>CLI</span> are implemented in Ruby, <a href='https://www.ruby-lang.org/en/downloads/' target='_blank'>the Ruby environment must be installed first</a> (at least version 1.9). The Unipept <span class='initialism'>CLI</span> can then be installed using the <code>gem</code> command, which is the RubyGems package manager for the Ruby programming language.
-</p>
-<pre>
+<div class='card'>
+  <div class='card-title card-title-colored'>
+    <h2 class='card-title-text'>Getting started</h2>
+  </div>
+  <div class='card-supporting-text'>
+    <p>
+      Before the Unipept command line interface (<span class='initialism'>CLI</span>) can be used, it first needs to be <a href='<%= api_clidocs_path %>#installation' target='_blank'>installed locally</a>. Since the commands of the <span class='initialism'>CLI</span> are implemented in Ruby, <a href='https://www.ruby-lang.org/en/downloads/' target='_blank'>the Ruby environment must be installed first</a> (at least version 1.9). The Unipept <span class='initialism'>CLI</span> can then be installed using the <code>gem</code> command, which is the RubyGems package manager for the Ruby programming language.
+    </p>
+    <pre>
 <b>$</b> gem install unipept
 Successfully installed unipept-<%= Rails.application.config.versions[:gem] %>
 1 gem installed
 Installing ri documentation for unipept-<%= Rails.application.config.versions[:gem] %>...
 Installing RDoc documentation for unipept-<%= Rails.application.config.versions[:gem] %>...</pre>
-<p>
-  By default, the <code>gem</code> command installs the Unipept <span class='initialism'>CLI</span> for all users on the computer system. To make a personal installation or in case you don't have the necessary permissions for the appropriate directories to make a system-wide installation, you can use the option <code>--user-install</code> of the <code>gem</code> command.
-</p>
-<p>
-  The Unipept <span class='initialism'>CLI</span> is a bundle of different commands that all come with <a href='<%= api_clidocs_path %>' target='_blank'>detailed online documentation</a>. Naturally, the most important command is <code>unipept</code>.
-</p>
-<pre>
+    <p>
+      By default, the <code>gem</code> command installs the Unipept <span class='initialism'>CLI</span> for all users on the computer system. To make a personal installation or in case you don't have the necessary permissions for the appropriate directories to make a system-wide installation, you can use the option <code>--user-install</code> of the <code>gem</code> command.
+    </p>
+    <p>
+      The Unipept <span class='initialism'>CLI</span> is a bundle of different commands that all come with <a href='<%= api_clidocs_path %>' target='_blank'>detailed online documentation</a>. Naturally, the most important command is <code>unipept</code>.
+    </p>
+    <pre>
 <b>$</b> unipept --help
 NAME
 unipept - Command line interface to Unipept web services.
@@ -57,10 +61,10 @@ OPTIONS
 -o --output=&lt;value&gt;        write output to file
 -q --quiet                 disable service messages
 -v --version               displays the version</pre>
-<p>
-  As the <code>unipept</code> command makes calls to the Unipept API that is provided by an instance of the Unipept application server (web services that communicate with an instance of the Unipept database), the location of the Unipept application server must be <a href='<%= api_clidocs_path %>#configuration' target='_blank'>configured</a>. By default, the public Unipept server (api.unipept.ugent.be) is used, but this can be changed by passing the <span class='initialism'>URL</span> of the server as an argument to the option <code>--host</code>. To avoid that a custom server needs to be specified with each use of the <code>unipept</code> command, a custom server can be set as default using the <code>unipept config</code> subcommand. A server set with the <code>--host</code> option always overrides the default server.
-</p>
-<pre>
+    <p>
+      As the <code>unipept</code> command makes calls to the Unipept API that is provided by an instance of the Unipept application server (web services that communicate with an instance of the Unipept database), the location of the Unipept application server must be <a href='<%= api_clidocs_path %>#configuration' target='_blank'>configured</a>. By default, the public Unipept server (api.unipept.ugent.be) is used, but this can be changed by passing the <span class='initialism'>URL</span> of the server as an argument to the option <code>--host</code>. To avoid that a custom server needs to be specified with each use of the <code>unipept</code> command, a custom server can be set as default using the <code>unipept config</code> subcommand. A server set with the <code>--host</code> option always overrides the default server.
+    </p>
+    <pre>
 <b>$</b> unipept <b>--host 'api.unipept.ugent.be'</b> pept2lca ENFVYIAK
 peptide,taxon_id,taxon_name,taxon_rank
 ENFVYIAK,35493,Streptophyta,phylum
@@ -68,3 +72,5 @@ ENFVYIAK,35493,Streptophyta,phylum
 <b>$</b> unipept pept2lca ENFVYIAK
 peptide,taxon_id,taxon_name,taxon_rank
 ENFVYIAK,35493,Streptophyta,phylum</pre>
+  </div>
+</div>
