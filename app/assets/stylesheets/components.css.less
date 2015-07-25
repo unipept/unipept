@@ -30,12 +30,12 @@
     background-size: cover;
     background-origin: padding-box;
     background-attachment: scroll;
+    // workaround for IE11 flexbox bug
+    min-height: 2px;
 }
 .card-media img,
 .card-media object {
     width: 100%;
-    // workaround for IE11 flexbox bug
-    min-height: 2px;
 }
 .card-title {
     align-items: flex-start;
