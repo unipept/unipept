@@ -78,5 +78,29 @@
       </div>
       <%= render 'shared/info_modal' %>
     </div>
+    <script type="application/ld+json">
+    {
+      "@context" : "http://schema.org",
+      "@type" : "Organization",
+      "name" : "Unipept",
+      "url" : "http://unipept.ugent.be",
+      "sameAs" : [
+        "http://www.twitter.com/unipept",
+        "http://github.com/unipept"
+        ],
+      "email" : "unipept@ugent.be",
+      "image" : "http://unipept.ugent.be/logo.png"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context" : "http://schema.org",
+      "@type" : "WebSite",
+      "name" : "Unipept",
+      "url" : "http://unipept.ugent.be",
+      "version" : <%= Rails.application.config.versions[:unipept] %>,
+      "image" : "http://unipept.ugent.be/logo.png"
+    }
+    </script>
   </body>
 </html>
