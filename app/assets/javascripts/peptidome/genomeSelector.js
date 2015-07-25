@@ -656,7 +656,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         setTimeout(function () {
             if (isFullScreen) {
                 $(".proteome-library").appendTo(".full-screen-container");
-                elementsShown = Math.floor(($(window).height() - 260 - 44) / 45);
+                elementsShown = Math.floor(($(window).height() - 275 - 44) / 45);
             } else {
                 $(".proteome-library").prependTo(".proteome-adder");
                 elementsShown = 50;
