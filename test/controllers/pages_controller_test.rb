@@ -23,13 +23,6 @@ class PagesControllerTest < ActionController::TestCase
     assert_equal 'Publications', assigns(:title)
   end
 
-  test 'should get documentation' do
-    get :documentation
-    assert_response :success
-    assert_template :documentation
-    assert_equal 'Documentation', assigns(:title)
-  end
-
   test 'should get admin' do
     sign_in users(:bart_admin)
     get :admin
