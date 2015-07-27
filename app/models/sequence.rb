@@ -27,18 +27,17 @@ class Sequence < ActiveRecord::Base
     end
   end
 
-  # SELECT DISTINCT lineages.* FROM unipept.peptides INNER JOIN unipept.uniprot_entries ON (uniprot_entries.id = peptides.uniprot_entry_id) INNER JOIN unipept.lineages ON (uniprot_entries.taxon_id = lineages.taxon_id) WHERE peptides.sequence_id = #{id}
   def lineages(equate_il = true, eager = false)
     fail(ArgumentError, ':equate_il must be a boolean') unless Sequence.boolean?(equate_il)
     fail(ArgumentError, ':eager must be a boolean') unless Sequence.boolean?(eager)
 
-    l = Lineage.joins(uniprot_entries: :peptides)
+    l = Lineage.select("lineages.*, count(*) as hits").joins(uniprot_entries: :peptides).group("lineages.taxon_id")
     if equate_il
       l = l.where('peptides.sequence_id = ?', id)
     else
       l = l.where('peptides.original_sequence_id = ?', id)
     end
-    l = l.eager_load(:name).preload(Lineage::ORDER_T) if eager
+    l = l.includes(:name, Lineage::ORDER_T) if eager
     l
   end
 

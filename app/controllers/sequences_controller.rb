@@ -50,6 +50,7 @@ class SequencesController < ApplicationController
 
     # common lineage
     @common_lineage = [] # construct the common lineage in this array
+    common_hits = @lineages.map(&:hits).reduce(:+)
     l = @lca_taxon.lineage
     found = (@lca_taxon.name == 'root')
     while !found && l.has_next?
@@ -58,7 +59,7 @@ class SequencesController < ApplicationController
       found = (@lca_taxon.id == t.id)
       @common_lineage << t
       node = Node.new(t.id, t.name, @root)
-      node.data['count'] = @lineages.size
+      node.data['count'] = common_hits
       last_node = last_node.add_child(node)
     end
 
@@ -74,10 +75,10 @@ class SequencesController < ApplicationController
         node = Node.find_by_id(t.id, @root)
         if node.nil? # if the node isn't create yet
           node = Node.new(t.id, t.name, @root, t.rank)
-          node.data['count'] = 1
+          node.data['count'] = lineage.hits
           last_node_loop = last_node_loop.add_child(node)
         else
-          node.data['count'] += 1
+          node.data['count'] += lineage.hits
           last_node_loop = node
         end
       end
@@ -91,7 +92,6 @@ class SequencesController < ApplicationController
     @table_lineages = []
     @table_ranks = []
 
-    @lineages = @lineages.uniq
     @table_lineages << @lineages.map { |lineage| lineage.name.name }
     @table_ranks << 'Organism'
     @lineages.map { |lineage| lineage.set_iterator_position(0) } # reset the iterator
