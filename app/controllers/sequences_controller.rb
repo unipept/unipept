@@ -45,12 +45,12 @@ class SequencesController < ApplicationController
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree
-    @root.data['count'] = @lineages.size
+    common_hits = @lineages.map(&:hits).reduce(:+)
+    @root.data['count'] = common_hits
     last_node = @root
 
     # common lineage
     @common_lineage = [] # construct the common lineage in this array
-    common_hits = @lineages.map(&:hits).reduce(:+)
     l = @lca_taxon.lineage
     found = (@lca_taxon.name == 'root')
     while !found && l.has_next?
@@ -58,7 +58,7 @@ class SequencesController < ApplicationController
       next if t.nil?
       found = (@lca_taxon.id == t.id)
       @common_lineage << t
-      node = Node.new(t.id, t.name, @root)
+      node = Node.new(t.id, t.name, @root, t.rank)
       node.data['count'] = common_hits
       last_node = last_node.add_child(node)
     end
