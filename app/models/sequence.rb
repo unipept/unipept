@@ -31,7 +31,7 @@ class Sequence < ActiveRecord::Base
     fail(ArgumentError, ':equate_il must be a boolean') unless Sequence.boolean?(equate_il)
     fail(ArgumentError, ':eager must be a boolean') unless Sequence.boolean?(eager)
 
-    l = Lineage.select("lineages.*, count(*) as hits").joins(uniprot_entries: :peptides).group("lineages.taxon_id")
+    l = Lineage.select('lineages.*, count(*) as hits').joins(uniprot_entries: :peptides).group('lineages.taxon_id')
     if equate_il
       l = l.where('peptides.sequence_id = ?', id)
     else
