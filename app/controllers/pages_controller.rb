@@ -16,9 +16,9 @@ class PagesController < ApplicationController
 
   def mail
     @title = "Thanks!"
-    `mail -s "[Unipept] New issue" bart.mesuere@ugent.be <<EOM
-      #{params[:email]}
-    EOM`
+    `mail -s "[Unipept] New issue" unipept@ugent.be <<EOM
+      Please contact #{params[:email]}
+    `
   end
 
   def admin
