@@ -6,8 +6,8 @@
   <br/>
   <b>Reference:</b>
   <small>
-    <%= dataset.reference %> <%= link_to raw("<span class='glyphicon glyphicon-share-alt'></span>"), dataset.url, :target => "_blank", :title => "Article website" %>.
-    <%= link_to "Project website", dataset.project_website, :target => "_blank" %>
+    <%= dataset.reference %> <%= link_to raw("<span class='glyphicon glyphicon-link'></span>"), dataset.url, :target => "_blank", :title => "Article website" %>.
+    <%= link_to raw("<span class='glyphicon glyphicon-share-alt'></span>"), dataset.project_website, :target => "_blank", :title => "Project website" %>
   </small>
   <% if load %>
     <br/>
