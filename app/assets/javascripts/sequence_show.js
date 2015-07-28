@@ -64,7 +64,7 @@ function init_sequence_show(data) {
         });
         addCopy($("#clipboard-uniprot").first(), function () {
             return entries.join("\n");
-        });
+        }, "Copy UniProt IDs to clipboard");
     }
 
     /**

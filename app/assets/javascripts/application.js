@@ -13,13 +13,13 @@ ZeroClipboard.config({
     hoverClass: 'btn-clipboard-hover'
 });
 
-function addCopy(selector, textFunction) {
+function addCopy(selector, textFunction, tooltip) {
     var copyMissed = new ZeroClipboard(selector);
     var htmlBridge = $('#global-zeroclipboard-html-bridge');
     copyMissed.on('ready', function () {
         htmlBridge
           .data('placement', 'top')
-          .attr('title', 'Copy to clipboard')
+          .attr('title', tooltip || 'Copy to clipboard')
           .tooltip();
     });
     // Copy to clipboard
