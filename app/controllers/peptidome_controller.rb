@@ -1,5 +1,6 @@
 class PeptidomeController < ApplicationController
   def analyze
+    @header_class = 'peptidome'
     @tab = params[:tab]
     if @tab == 'peptidefinder'
       @title = 'Unique Peptide Finder'

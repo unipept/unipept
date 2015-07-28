@@ -1,4 +1,5 @@
 class Api::ApidocsController < ApplicationController
+  before_action :set_header
   before_action :set_sidebar_nav
   before_action :set_sidebar_subnav, only: [:pept2prot, :pept2taxa, :pept2lca, :taxa2lca, :taxonomy]
 
@@ -47,5 +48,9 @@ class Api::ApidocsController < ApplicationController
 
   def set_sidebar_subnav
     @sidebar_subnav = ['Request', 'Response', 'Parameters', 'Examples', 'Try it']
+  end
+
+  def set_header
+    @header_class = 'API'
   end
 end

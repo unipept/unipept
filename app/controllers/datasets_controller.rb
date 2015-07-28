@@ -5,6 +5,7 @@ class DatasetsController < ApplicationController
   # GET /datasets.xml
   def index
     @title = 'Metaproteomics Analysis'
+    @header_class = 'MPA'
     @datasets = Dataset.includes(:dataset_items).all
 
     respond_to do |format|
@@ -86,6 +87,7 @@ class DatasetsController < ApplicationController
 
   def preload
     @title = 'Load dataset'
+    @header_class = 'MPA'
     @type = params[:type]
     @id = params[:id]
   end

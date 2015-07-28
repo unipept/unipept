@@ -5,6 +5,7 @@ class SequencesController < ApplicationController
   # the peptide should be in params[:id] and
   # can be a peptide id or the sequence itself
   def show
+    @header_class = "TPA"
     # process parameters
     # should we equate I and L?
     equate_il = (params[:equate_il] == 'equateIL')
@@ -145,6 +146,7 @@ class SequencesController < ApplicationController
 
   # processes a list of sequences
   def multi_search
+    @header_class = "MPA"
     # save parameters
     @p = params
 

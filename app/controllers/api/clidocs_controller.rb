@@ -1,4 +1,5 @@
 class Api::ClidocsController < ApplicationController
+  before_action :set_header
   before_action :set_sidebar_nav
   before_action :set_sidebar_subnav, only: [:pept2lca, :pept2prot, :pept2taxa, :taxa2lca, :taxonomy, :uniprot, :prot2pept, :peptfilter]
   before_action :set_case_subnav, only: [:casestudies, :casestudy_tpa, :casestudy_mpa]
@@ -98,5 +99,9 @@ class Api::ClidocsController < ApplicationController
 
   def set_case_subnav
     @sidebar_subnav = [['Tryptic peptide', api_clidocs_casestudy_tpa_path], ['Metaproteomics data', api_clidocs_casestudy_mpa_path]]
+  end
+
+  def set_header
+    @header_class = 'CLI'
   end
 end
