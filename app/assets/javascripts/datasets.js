@@ -43,7 +43,14 @@ function initDatasets() {
     });
 
     // load a PRIDE dataset
-    $(".load-pride").click(function () {
+    $(".load-pride").click(loadPride);
+    $("#pride_exp_id").keypress(function (event) {
+        if (event.which == '13') {
+            loadPride();
+        }
+    });
+
+    function loadPride() {
         // set the vars
         var experiment = $("#pride_exp_id").val(),
             name = "PRIDE assay " + experiment;
@@ -60,7 +67,7 @@ function initDatasets() {
         // load the datasets
         datasetLoader.loadDataset("pride", experiment, name, $(this));
         return false;
-    });
+    }
 }
 
 function initPreload(type, id) {

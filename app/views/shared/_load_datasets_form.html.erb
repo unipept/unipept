@@ -9,7 +9,6 @@
     <div class="tab-content">
       <div class="tab-pane active" id="database">
         <%= render @datasets, :load => true, :edit => true %>
-        <%= link_to 'New Dataset', new_dataset_path, :class => "btn btn-primary" if user_signed_in? && current_user.admin? %>
       </div>
       <div class="tab-pane" id="pride">
         <h3>Load data from the PRIDE archive</h3>
