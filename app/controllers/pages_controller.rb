@@ -14,6 +14,13 @@ class PagesController < ApplicationController
     @title = 'Publications'
   end
 
+  def mail
+    @title = "Thanks!"
+    `mail -s "[Unipept] New issue" bart.mesuere@ugent.be <<EOM
+      #{params[:email]}
+    EOM`
+  end
+
   def admin
     @title = 'Admin'
 

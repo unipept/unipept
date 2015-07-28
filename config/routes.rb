@@ -43,6 +43,7 @@ UnipeptWeb::Application.routes.draw do
   get '/about',   :to => 'pages#about'
   get '/admin',   :to => 'pages#admin'
   get '/publications', :to => 'pages#publications'
+  post '/mail',   :to => 'pages#mail'
 
   # generate png from svg
   post "/convert", :to => "imagemagick#convert"
