@@ -23,6 +23,13 @@ class PagesControllerTest < ActionController::TestCase
     assert_equal 'Publications', assigns(:title)
   end
 
+  test 'should get mail' do
+    post :mail
+    assert_response :success
+    assert_template :mail
+    assert_equal 'Thanks!', assigns(:title)
+  end
+
   test 'should get admin' do
     sign_in users(:bart_admin)
     get :admin
