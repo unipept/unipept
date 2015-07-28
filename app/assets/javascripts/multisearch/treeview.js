@@ -115,13 +115,13 @@ var constructTreeview = function constructTreeview(args) {
             if (c) {
                 d.color = c;
             } else if (d.name === "Bacteria") {
-                d.color = "#1f77b4"; // blue
+                d.color = "#1565C0"; // blue
             } else if (d.name === "Archaea") {
-                d.color = "#ff7f0e"; // orange
+                d.color = "#FF8F00"; // orange
             } else if (d.name === "Eukaryota") {
-                d.color = "#2ca02c"; // green
+                d.color = "#2E7D32"; // green
             } else if (d.name === "Viruses") {
-                d.color = "#d6616b"; // red
+                d.color = "#C62828"; // red
             }
             if (d.children) {
                 d.children.forEach(function (node) { color(node, d.color); });
