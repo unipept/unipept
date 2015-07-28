@@ -247,7 +247,7 @@ function init_sequence_show(data) {
                 .attr("class", "node")
                 .style("cursor", "pointer")
                 .attr("transform", function (d) {
-                    return "translate(" + source.y0 + "," + source.x0 + ")";
+                    return "translate(" + (source.y0 || 0) + "," + (source.x0 || 0) + ")";
                 })
                 .on("click", click);
 
@@ -354,8 +354,8 @@ function init_sequence_show(data) {
                 .style("stroke-width", 1e-6)
                 .attr("d", function (d) {
                     var o = {
-                        x: source.x0,
-                        y: source.y0
+                        x: (source.x0 || 0),
+                        y: (source.y0 || 0)
                     };
                     return diagonal({
                         source: o,
