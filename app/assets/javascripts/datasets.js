@@ -166,8 +166,11 @@ function constructDatasetLoader() {
         $("#qs").val("Please wait while we load the dataset...");
         $("#qs").attr('disabled', 'disabled');
         $("#search-multi-form").button("loading");
-
         var startTimer = new Date().getTime();
+        var toast = showNotification("Loading dataset...", {
+            autoHide: false,
+            loading: true
+        });
 
         var done = function (data) {
             // track the load times
@@ -205,6 +208,7 @@ function constructDatasetLoader() {
             if (button) {
                 button.button('reset');
             }
+            toast.hide();
         };
 
         var request = type === "internal" ? loadInternalDataset(id) : loadPrideDataset(id);
