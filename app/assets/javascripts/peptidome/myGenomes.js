@@ -172,6 +172,8 @@ var constructMyGenomes = function constructMyGenomes(args) {
                 $notification,
                 id = "u" + new Date().getTime();
 
+            $popover.find(".invalid-file").remove();
+
             // Form validation
             $(".popover-content #myGenomeName").parents(".form-group")
                 .toggleClass("has-error", !files[0] || !(multi || name));
@@ -246,9 +248,13 @@ var constructMyGenomes = function constructMyGenomes(args) {
         $(".popover-content #myGenomeProgress").addClass("hide");
 
         // hide the popover
-        if ($popover && !$popover.hasClass("hide")) {
+        if ($popover && !$popover.hasClass("hide") && $popover.find(".invalid-file").size() === 0) {
             $myGenomesButton.click();
         }
+    }
+
+    function showInvalidFileFormat(filename) {
+        $popover.find("#myGenomeProgress").before("<div class='alert alert-danger invalid-file'>The file <b>" + filename + "</b> doesn't seem to be a valid FASTA file.</div>");
     }
 
     /**
@@ -257,12 +263,22 @@ var constructMyGenomes = function constructMyGenomes(args) {
      */
     function processFileContent(file, name, id) {
         return new Promise(function (resolve, reject) {
-            sendToWorker("processFile", {file : file, name : name, id : id});
+            sendToWorker("processFile", {
+                file: file,
+                name: name,
+                id: id
+            });
             promisesProcess.set(id, function (data) {
-                resolve(data);
+                if (data.status === "ok") {
+                    resolve(data);
+                } else {
+                    reject("Invalid file format");
+                }
             });
         }).then(function (peptides) {
             addGenome(peptides.id, peptides.name, version, peptides.ids, file);
+        }).catch(function (message) {
+            showInvalidFileFormat(name);
         });
     }
 

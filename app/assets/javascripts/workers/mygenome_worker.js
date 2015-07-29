@@ -31,9 +31,23 @@ function sendToHost(type, message) {
  * @param <String> id The generated id of the genome
  */
 function processFile(file, name, id) {
-    var peptides = digest(parseFasta(file));
-    var ids = convertPeptidesToInts(peptides);
-    sendToHost("processConvertedGenome", {ids : ids, name : name, id : id});
+    var peptides,
+        ids,
+        status;
+    try {
+        peptides = digest(parseFasta(file));
+        ids = convertPeptidesToInts(peptides);
+        status = "ok";
+    } catch (e) {
+        status = "failed";
+    } finally {
+        sendToHost("processConvertedGenome", {
+            ids: ids,
+            name: name,
+            id: id,
+            status: status
+        });
+    }
 }
 
 /**
