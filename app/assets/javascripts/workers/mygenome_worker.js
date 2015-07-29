@@ -62,6 +62,9 @@ function parseFasta(fasta) {
         line = "",
         entry = "",
         i;
+    if (lines[0].charAt(0) !== ">") {
+        throw "No FASTA file";
+    }
     for (i = 0; i < lines.length; i++) {
         line = lines[i];
         if (line.charAt(0) === ">" || i === lines.length - 1) {
