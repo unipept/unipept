@@ -17,6 +17,10 @@ function initDatasets() {
     $("#search-multi-form").click(function () {
         $("#search_button").hide();
         $("#form-progress").removeClass("hide");
+        showNotification("Sending peptides...", {
+            autoHide: false,
+            loading: true
+        });
     });
 
     // track the use of the export checkbox
