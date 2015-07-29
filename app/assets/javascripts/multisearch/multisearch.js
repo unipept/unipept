@@ -102,12 +102,17 @@ var constructMultisearch = function constructMultisearch(args) {
             logToGoogle("Multi Peptide", "Export");
 
             var nonce = Math.random();
+            var toast = showNotification("Preparing file...", {
+                autoHide: false,
+                loading: true
+            });
             $("#nonce").val(nonce);
             $("#downloadDataset").button('loading');
             var downloadTimer = setInterval(function () {
                 if (document.cookie.indexOf(nonce) !== -1) {
                     $("#downloadDataset").button('reset');
                     clearInterval(downloadTimer);
+                    toast.hide();
                 }
             }, 1000);
             return true;
