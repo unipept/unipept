@@ -276,6 +276,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
                 }
             });
         }).then(function (peptides) {
+            showNotification("Proteome " + name + " added");
             addGenome(peptides.id, peptides.name, version, peptides.ids, file);
         }).catch(function (message) {
             showInvalidFileFormat(name);

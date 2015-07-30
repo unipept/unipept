@@ -9,8 +9,9 @@
  * @return <Notification> $notification
  */
 function showNotification(content, properties) {
+    var properties = properties || {}
     var autoHide = properties.autoHide === undefined ? true : properties.autoHide;
-    var loading = properties.loading === undefined ? true : properties.loading;
+    var loading = properties.loading === undefined ? false : properties.loading;
 
     var $notification = getNotificationHTML(content);
     $(".notifications").prepend($notification);
