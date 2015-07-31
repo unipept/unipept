@@ -1,65 +1,69 @@
-<div class="apidocs-example">
-  <p>Use the <span class='initialism'>API</span> explorer form below to call the <%= name %> method on live data and see the response.</p>
-  <form class="form-horizontal" id="try-it-form">
-    <% if input %>
-    <div class="form-group">
-      <label for="try-input" class="col-xs-2 control-label">input[]</label>
-      <div class="col-xs-10">
-        <textarea class="form-control" id="try-input"></textarea>
-      </div>
+<div class='apidocs-example-wrapper'>
+  <div class="apidocs-example">
+    <div class='try-it-header'>
+      <h2 id="try-it">Try it</h2>
     </div>
-    <% end %>
-    <% if equate_il %>
-    <div class="form-group">
-      <label for="input" class="col-xs-2 control-label">equate_il</label>
-      <div class="col-xs-10">
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" id="try-equate_il"> set to true
+    <p>Use the <span class='initialism'>API</span> explorer form below to call the <%= name %> method on live data and see the response.</p>
+    <form class="form-horizontal" id="try-it-form">
+      <% if input %>
+        <div class="form-group">
+          <label for="try-input" class="col-xs-2 control-label">input[]</label>
+          <div class="col-xs-10">
+            <textarea class="form-control" id="try-input"></textarea>
+          </div>
+        </div>
+      <% end %>
+      <% if equate_il %>
+        <div class="form-group">
+          <label for="input" class="col-xs-2 control-label">equate_il</label>
+          <div class="col-xs-10">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" id="try-equate_il"> set to true
           </label>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <% if extra %>
+        <div class="form-group">
+          <label for="input" class="col-xs-2 control-label">extra</label>
+          <div class="col-xs-10">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" id="try-extra"> set to true
+          </label>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <% if names %>
+        <div class="form-group">
+          <label for="input" class="col-xs-2 control-label">names</label>
+          <div class="col-xs-10">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" id="try-names"> set to true
+          </label>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <div class="form-group">
+        <div class="col-xs-offset-2 col-xs-10">
+          <button type="submit" class="btn btn-primary" id="try-it-submit">Try it!</button>
         </div>
       </div>
-    </div>
-    <% end %>
-    <% if extra %>
-    <div class="form-group">
-      <label for="input" class="col-xs-2 control-label">extra</label>
-      <div class="col-xs-10">
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" id="try-extra"> set to true
-          </label>
-        </div>
-      </div>
-    </div>
-    <% end %>
-    <% if names %>
-    <div class="form-group">
-      <label for="input" class="col-xs-2 control-label">names</label>
-      <div class="col-xs-10">
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" id="try-names"> set to true
-          </label>
-        </div>
-      </div>
-    </div>
-    <% end %>
-    <div class="form-group">
-      <div class="col-xs-offset-2 col-xs-10">
-        <button type="submit" class="btn btn-primary" id="try-it-submit">Try it!</button>
-      </div>
-    </div>
-  </form>
+    </form>
+  </div>
+  <div class="highlight">
+    <h4>Request</h4>
+    <pre class="pygmentize pre-scrollable"><code id="try-it-request"></code></pre>
+    <br>
+    <h4>Response</h4>
+    <pre class="pygmentize pre-scrollable"><code id="try-it-response"></code></pre>
+  </div>
 </div>
-<div class="highlight">
-  <h4>Request</h4>
-  <pre class="pygmentize pre-scrollable"><code id="try-it-request"></code></pre>
-  <br>
-  <h4>Response</h4>
-  <pre class="pygmentize pre-scrollable"><code id="try-it-response"></code></pre>
-</div>
-
 <script>
   $(function() {
     var name = "<%= name %>",
@@ -115,4 +119,3 @@
     });
   });
 </script>
-

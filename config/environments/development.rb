@@ -34,33 +34,33 @@ UnipeptWeb::Application.configure do
 
   # Log the query plan for queries taking more than this (works
   # with SQLite, MySQL, and PostgreSQL)
-  #config.active_record.auto_explain_threshold_in_seconds = 30
+  # config.active_record.auto_explain_threshold_in_seconds = 30
 
   # enable google analytics
   config.unipept_analytics = true
-  config.unipept_analytics_key = "UA-22900446-2"
+  config.unipept_analytics_key = 'UA-22900446-2'
 
   # if authentication is disabled, a guest user will always be signed in
   config.unipept_enable_auth = true
 
   # enable API logging
   config.unipept_API_logging = true
-  config.unipept_stathat_key = "unipept@ugent.be"
+  config.unipept_stathat_key = 'unipept@ugent.be'
 
   # enable error emails
   config.unipept_error_mails = true
-  config.unipept_error_mails_addresses = ["bart.mesuere@ugent.be"]
+  config.unipept_error_mails_addresses = ['bart.mesuere@ugent.be']
 end
 
 if Rails.application.config.unipept_error_mails
   UnipeptWeb::Application.config.middleware.use ExceptionNotification::Rack,
-  :throttle => {
-    :notifier => "email",
-    :notifier_options => {
-      :email_prefix => "[Unipept-dev] ",
-      :sender_address => %{"Unipept-dev" <unipept@ugent.be>},
-      :exception_recipients => Rails.application.config.unipept_error_mails_addresses
-    },
-    :per_hour => 1
-  }
+                                                throttle: {
+                                                  notifier: 'email',
+                                                  notifier_options: {
+                                                    email_prefix: '[Unipept-dev] ',
+                                                    sender_address: %("Unipept-dev" <unipept@ugent.be>),
+                                                    exception_recipients: Rails.application.config.unipept_error_mails_addresses
+                                                  },
+                                                  per_hour: 1
+                                                }
 end

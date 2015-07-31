@@ -13,12 +13,13 @@ var constructSimMatrix = function constructSimMatrix(args) {
         table = args.table;
 
     // UI variables
-    var margin = {top: 20, right: 200, bottom: 200, left: 20},
+    var margin = {top: 15, right: 200, bottom: 200, left: 16},
         width = 500,
         height = 500,
         treeWidth = 200,
         fullWidth = treeWidth + width + margin.left + margin.right,
-        fullHeight = height + margin.top + margin.bottom;
+        fullHeight = height + margin.top + margin.bottom,
+        fillColor = "#1565C0";
 
     // D3 vars
     var svg,
@@ -35,11 +36,11 @@ var constructSimMatrix = function constructSimMatrix(args) {
     var metadata = {},
         order = [],
         similarities = {},
+        addingGenomes = false,
         dirty = false,
+        selectedSimilarity = "simUnion",
         clustered,
         newick;
-
-    var $matrixTab = $('#peptidome-clustering-tab');
 
     var that = {};
 
@@ -52,7 +53,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         init_phylogram();
 
         // calculate similarity and update on tab switch
-        $matrixTab.on('shown.bs.tab', function tabSwitchAction() {
+        $('.peptidome-clustering-tab').on('shown.bs.tab', function tabSwitchAction() {
             calculateSimilarity();
             that.update();
         });
@@ -63,6 +64,16 @@ var constructSimMatrix = function constructSimMatrix(args) {
         });
 
         $('#use-cluster-order').click(that.useClusterOrder);
+
+        $("#similarity-selector a").click(function (event) {
+            event.preventDefault();
+            selectedSimilarity = $(this).data("sim");
+            $("#similarity-selector .similarity-type").text($(this).text().toLowerCase());
+            that.setClustered(false);
+            dirty = true;
+            that.update();
+        });
+        $("#similarity-selector a").tooltip({placement : "left", container : "body"});
 
         that.redraw(true);
     }
@@ -79,7 +90,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
     /**
      * Shows the info panel with info about the similarities
      *
-     * @param <Number> d.key The bioprojectid associated with the square
+     * @param <Number> d.key The ids associated with the square
      */
     function showInfoPanel(d) {
         var col = d.key,
@@ -90,10 +101,11 @@ var constructSimMatrix = function constructSimMatrix(args) {
         if (window.fullScreenApi.isFullScreen()) {
             pos.top -= $("#sim_matrix").offset().top;
         }
-        tooltipHtml += "<thead><tr><th>Name</th><th>Genome size</th></tr></thead><tbody>";
-        tooltipHtml += "<tr><td>" + metadata[row].name + "</td><td>" + d3.format(",")(metadata[row].size) + " peptides</td></tr>";
-        tooltipHtml += "<tr><td>" + metadata[col].name + "</td><td>" + d3.format(",")(metadata[col].size) + " peptides</td></tr>";
-        tooltipHtml += "<tr><td colspan='2'><strong>Similarity</strong>: " + d3.format(",.2%")(similarities[row][col]) + "</td></tr>";
+        tooltipHtml += "<thead><tr><th>Name</th><th>Peptidome size</th></tr></thead><tbody>";
+        tooltipHtml += "<tr><td>" + metadata[row].name + "</td><td class='num'>" + d3.format(",")(metadata[row].size) + " peptides</td></tr>";
+        tooltipHtml += "<tr><td>" + metadata[col].name + "</td><td class='num'>" + d3.format(",")(metadata[col].size) + " peptides</td></tr>";
+        tooltipHtml += "<tr><td colspan='2' class='fat'><strong>" + d3.format(",")(d.value.intersection) + "</strong> common peptides <span class='pull-right'><strong>" + d3.format(",")(d.value.union) + "</strong> distinct peptides</span></td></tr>";
+        tooltipHtml += "<tr><td colspan='2' class='sim'><strong>" + d3.format(",.2%")(similarities[row][col][selectedSimilarity]) + "</strong> similarity</td></tr>";
         tooltipHtml += "</tbody></table>";
         tooltip.html(tooltipHtml)
             .style("top", (pos.top + x.rangeBand() + 5) + "px")
@@ -140,18 +152,20 @@ var constructSimMatrix = function constructSimMatrix(args) {
      *
      * @param <Boolean> isFullscreen Is the page in full screen mode?
      */
-    that.handleFullScreen = function handleFullScreen(isFullscreen) {
-        var w = fullWidth,
-            h = fullHeight,
-            destination = "body";
-        if (isFullscreen) {
-            w = $(window).width();
-            h = $(window).height();
-            destination = "#sim_matrix";
-        }
-        $("#sim_matrix svg").attr("width", w);
-        $("#sim_matrix svg").attr("height", h);
-        $("#matrix-tip").appendTo(destination);
+    that.setFullScreen = function setFullScreen(isFullScreen) {
+        // the delay is because the event fires before we're in fullscreen
+        // so the height en width functions don't give a correct result
+        // without the delay
+        setTimeout(function () {
+            var w = fullWidth,
+                h = fullHeight;
+            if (isFullScreen) {
+                w = $(window).width();
+                h = $(window).height() - 44;
+            }
+            $("#sim_matrix svg").attr("width", w);
+            $("#sim_matrix svg").attr("height", h);
+        }, 1000);
     };
 
     /**
@@ -178,7 +192,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         }
 
         dirty = true;
-        that.update();
+        that.tryUpdate();
     };
 
     /**
@@ -289,6 +303,17 @@ var constructSimMatrix = function constructSimMatrix(args) {
     };
 
     /**
+     * Don't update the graph while we're adding genomes
+     */
+    that.tryUpdate = function tryUpdate() {
+        if (addingGenomes) {
+            setTimeout(that.tryUpdate, transitionDuration);
+        } else {
+            that.update();
+        }
+    };
+
+    /**
      * Updates the SimMatrix
      */
     that.update = function update() {
@@ -345,15 +370,16 @@ var constructSimMatrix = function constructSimMatrix(args) {
                 .attr("x", function (d) { return x(d.key); })
                 .attr("width", x.rangeBand())
                 .attr("height", x.rangeBand())
-                .style("fill-opacity", function (d) { return z(d.value * d.value); })
-                .style("fill", function (d) { return (d.value !== -1) ? "steelblue" : "white"; });
+                .style("fill-opacity", function (d) { return d.value ? z(d.value[selectedSimilarity] * d.value[selectedSimilarity]) : 1; })
+                .style("fill", function (d) { return d.value ? fillColor : "white"; });
 
             cells.exit().remove();
         });
 
         rows.transition()
             .duration(transitionDuration)
-            .attr("transform", function (d) { return "translate(0," + x(d.key) + ")"; });
+            .attr("transform", function (d) { return "translate(0," + x(d.key) + ")"; })
+            .each("end", function() { addingGenomes = false; });
 
         rows.selectAll("text")
             .transition()
@@ -422,7 +448,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * Requests the clustering of the matrix to the pancore object
      */
     that.clusterMatrix = function clusterMatrix() {
-        pancore.requestClustering();
+        pancore.requestClustering(selectedSimilarity);
     };
 
     /**
@@ -431,7 +457,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * @param <Genome> genome The genome object we want to add
      */
     that.addGenome = function addGenome(genome) {
-        var id = genome.bioproject_id,
+        var id = genome.id,
             name = genome.name,
             size = genome.peptides,
             abbreviation = genome.abbreviation,
@@ -447,12 +473,13 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         similarities[id] = {};
         for (i in similarities) {
-            similarities[id][i] = -1;
-            similarities[i][id] = -1;
+            similarities[id][i] = false;
+            similarities[i][id] = false;
         }
 
         that.setClustered(false);
         dirty = true;
+        addingGenomes = true;
         if (that.isActiveTab()) {
             delay(function () {
                 calculateSimilarity();
@@ -464,7 +491,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
     /**
      * Remove data from the matrix
      *
-     * @param <Number> id The bioprojectId of the genome to remove
+     * @param <Number> id The id of the genome to remove
      */
     that.removeGenome = function removeGenome(id) {
         var id2;
@@ -506,7 +533,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * Returns true if the matrix tab is currently visible to the user
      */
     that.isActiveTab = function isActiveTab() {
-        return $matrixTab.parent().hasClass("active");
+        return $("#sim_matrix_wrapper").hasClass("active");
     };
 
     /**
@@ -527,7 +554,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
             tempArray = [];
             tempArray.push('"' + metadata[order[i]].name + '"');
             for (j = 0; j < order.length; j++) {
-                tempArray.push(similarities[order[i]][order[j]]);
+                tempArray.push(similarities[order[i]][order[j]][selectedSimilarity]);
             }
             csvString += tempArray.join(',') + "\n";
         }

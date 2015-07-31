@@ -1,14 +1,14 @@
 class PostsController < ApplicationController
-   before_action :authorize, :only => [:new, :edit, :create, :update, :destroy]
-  
+  before_action :authorize, only: [:new, :edit, :create, :update, :destroy]
+
   # GET /posts
   # GET /posts.json
   def index
-    @posts = Post.order("id DESC").page(params[:page]).per_page(10)
+    @posts = Post.order('id DESC').page(params[:page]).per_page(10)
 
     respond_to do |format|
       format.html # index.html.erb
-      format.js #index.js.erb
+      format.js # index.js.erb
       format.json { render json: @posts }
     end
   end
@@ -47,10 +47,10 @@ class PostsController < ApplicationController
 
     respond_to do |format|
       if @post.save
-        format.html { redirect_to @post, :flash => { :success => 'Post was successfully created.' } }
+        format.html { redirect_to @post, flash: { success: 'Post was successfully created.' } }
         format.json { render json: @post, status: :created, location: @post }
       else
-        format.html { render action: "new" }
+        format.html { render action: 'new' }
         format.json { render json: @post.errors, status: :unprocessable_entity }
       end
     end
@@ -63,10 +63,10 @@ class PostsController < ApplicationController
 
     respond_to do |format|
       if @post.update_attributes(params[:post])
-        format.html { redirect_to @post, :flash => { :success => 'Post was successfully updated.' } }
+        format.html { redirect_to @post, flash: { success: 'Post was successfully updated.' } }
         format.json { head :no_content }
       else
-        format.html { render action: "edit" }
+        format.html { render action: 'edit' }
         format.json { render json: @post.errors, status: :unprocessable_entity }
       end
     end

@@ -4,8 +4,8 @@
 #
 #  id               :integer          not null, primary key
 #  uniprot_entry_id :integer          not null
-#  protein_id       :string(15)
-#  sequence_id      :string(15)
+#  protein_id       :string(25)
+#  sequence_id      :string(25)
 #
 
 class RefseqCrossReference < ActiveRecord::Base

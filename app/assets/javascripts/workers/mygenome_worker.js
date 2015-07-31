@@ -31,9 +31,23 @@ function sendToHost(type, message) {
  * @param <String> id The generated id of the genome
  */
 function processFile(file, name, id) {
-    var peptides = digest(parseFasta(file));
-    var ids = convertPeptidesToInts(peptides);
-    sendToHost("processConvertedGenome", {ids : ids, name : name, id : id});
+    var peptides,
+        ids,
+        status;
+    try {
+        peptides = digest(parseFasta(file));
+        ids = convertPeptidesToInts(peptides);
+        status = "ok";
+    } catch (e) {
+        status = "failed";
+    } finally {
+        sendToHost("processConvertedGenome", {
+            ids: ids,
+            name: name,
+            id: id,
+            status: status
+        });
+    }
 }
 
 /**
@@ -48,6 +62,9 @@ function parseFasta(fasta) {
         line = "",
         entry = "",
         i;
+    if (lines[0].charAt(0) !== ">") {
+        throw "No FASTA file";
+    }
     for (i = 0; i < lines.length; i++) {
         line = lines[i];
         if (line.charAt(0) === ">" || i === lines.length - 1) {
@@ -106,7 +123,9 @@ function convertPeptidesToInts(peptides) {
         } else {
             error("request error for /peptidome/convert_peptides", "It seems like something went wrong while we loaded the data");
         }
-        sendToHost("processProgress", {progress : ((i +  sliceSize) / peptides.length)});
+        if (i % 10000 === 0) {
+            sendToHost("processProgress", {progress : ((i +  sliceSize) / peptides.length)});
+        }
     }
     return ids.sort(function (a, b) { return a - b; });
 }
