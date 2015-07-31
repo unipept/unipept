@@ -1,18 +1,26 @@
 function initDatasets() {
     var datasetLoader = constructDatasetLoader();
 
+    // enable tooltips
+    $(".js-has-hover-tooltip").tooltip({
+        container: "body",
+        placement: "right"
+    });
+    $(".js-has-focus-tooltip").tooltip({
+        trigger: "focus",
+        container: "body",
+        placement: "right"
+    });
+
+
     // add progress bar when submitting form
     $("#search-multi-form").click(function () {
         $("#search_button").hide();
         $("#form-progress").removeClass("hide");
-    });
-
-    // hide more options + set up action to show is
-    $("#more_options_form").hide();
-    $("#more_options a").click(function () {
-        $("#more_options_form").slideDown("slow");
-        $("#more_options").hide("fast");
-        return false;
+        showNotification("Sending peptides...", {
+            autoHide: false,
+            loading: true
+        });
     });
 
     // track the use of the export checkbox
@@ -39,7 +47,14 @@ function initDatasets() {
     });
 
     // load a PRIDE dataset
-    $(".load-pride").click(function () {
+    $(".load-pride").click(loadPride);
+    $("#pride_exp_id").keypress(function (event) {
+        if (event.which == '13') {
+            loadPride();
+        }
+    });
+
+    function loadPride() {
         // set the vars
         var experiment = $("#pride_exp_id").val(),
             name = "PRIDE assay " + experiment;
@@ -56,14 +71,12 @@ function initDatasets() {
         // load the datasets
         datasetLoader.loadDataset("pride", experiment, name, $(this));
         return false;
-    });
+    }
 }
 
 function initPreload(type, id) {
-    // show full form
-    $("#more_options").hide();
-
     var datasetLoader = constructDatasetLoader();
+    $("#pride-progress").appendTo(".card-supporting-text");
 
     if (type === "database") {
         datasetLoader.loadDataset("internal", id, "Dataset " + id);
@@ -78,72 +91,52 @@ function constructDatasetLoader() {
     /************** private methods *************/
 
     /**
-     * Loads a dataset from the database
+     * Returns a list of peptides from an internal dataset as a promise
      *
      * @param <Integer> id The id of the dataset(item) we want to load
-     * @param <Function> done The callback function that gets executed when
-     *          everything succeeds
-     * @param <Function> done The callback function that gets executed when
-     *          loading the dataset fails
-     * @param <Function always The callback function that gets always gets
-     *          executed
      */
-    function loadInternalDataset(id, done, fail, always) {
-        $.get("/dataset_items/" + id)
-            .done(done)
-            .fail(fail)
-            .always(always);
+    function loadInternalDataset(id) {
+        return get("/dataset_items/" + id);
     }
 
     /**
-     * Loads a dataset from PRIDE using the PRIDE API
+     * Returns a list of peptide from a pride experiment as a promise
      *
      * @param <Integer> id The id of the assay we want to load
-     * @param <Function> done The callback function that gets executed when
-     *          everything succeeds
-     * @param <Function> done The callback function that gets executed when
-     *          loading the dataset fails
-     * @param <Function always The callback function that gets always gets
-     *          executed
      */
-    function loadPrideDataset(id, done, fail, always) {
+    function loadPrideDataset(id) {
         var batchSize = 1000,
-            page = 0,
             peptides = [],
-            datasetSize;
+            e;
 
         $("#pride-progress").show("fast");
         $("#pride-progress .progress-bar").css("width", "10%");
-        $.get("http://www.ebi.ac.uk:80/pride/ws/archive/peptide/count/assay/" + id)
-            .done(function (data) {
-                datasetSize = data;
-                loadNextBatch();
-            })
-            .fail(prideFail);
 
-            function loadNextBatch() {
-                $("#pride-progress .progress-bar").css("width", 10 + (90 * page * batchSize) / datasetSize + "%");
-                if (page * batchSize > datasetSize) { // we're done
-                    $("#pride-progress").hide("fast");
-                    done.call(this, peptides.join("\n"));
-                    always.call(this);
-                } else { // load next batch
-                    $.get("http://www.ebi.ac.uk:80/pride/ws/archive/peptide/list/assay/" + id + "?show=" + batchSize + "&page=" + page)
-                        .done(function (data) {
-                            data = data.list.map(function (d) {return d.sequence; });
-                            peptides = peptides.concat(data);
-                            page++;
-                            loadNextBatch();
-                        })
-                        .fail(prideFail);
-                }
+        return get("http://www.ebi.ac.uk:80/pride/ws/archive/peptide/count/assay/" + id).then(function(datasetSize) {
+            var urls = [],
+                page;
+            for (page = 0; page * batchSize < datasetSize; page++) {
+                urls.push("http://www.ebi.ac.uk:80/pride/ws/archive/peptide/list/assay/" + id + "?show=" + batchSize + "&page=" + page);
             }
-
-            function prideFail() {
-                $("#pride-progress").hide("fast");
-                fail.call(this);
-                always.call(this);
-            }
+            page = 0;
+            return urls.map(getJSON)
+                .reduce(function (sequence, batchPromise) {
+                    return sequence.then(function () {
+                        return batchPromise;
+                    }).then(function (response) {
+                        page++;
+                        $("#pride-progress .progress-bar").css("width", 10 + (90 * page * batchSize) / datasetSize + "%");
+                        peptides = peptides.concat(response.list.map(function (d) {return d.sequence; }));
+                    });
+                }, Promise.resolve());
+        }).catch(function (err) {
+            e = err;
+        })
+        .then(function () {
+            $("#pride-progress").hide("fast");
+            if (e) throw e;
+            return peptides.join("\n");
+        });
     }
 
 
@@ -174,12 +167,14 @@ function constructDatasetLoader() {
      */
     that.loadDataset = function loadDataset(type, id, name, button) {
         // expand the search options and prepare the form
-        $("#more_options a").click();
         $("#qs").val("Please wait while we load the dataset...");
         $("#qs").attr('disabled', 'disabled');
         $("#search-multi-form").button("loading");
-
         var startTimer = new Date().getTime();
+        var toast = showNotification("Loading dataset...", {
+            autoHide: false,
+            loading: true
+        });
 
         var done = function (data) {
             // track the load times
@@ -192,22 +187,19 @@ function constructDatasetLoader() {
             that.checkDatasetSize();
 
             // highlight what happend to the user
-            $('html, body').animate({
-                scrollTop: $("#search_elements").parent().parent().offset().top
-            }, 1000);
             highlight("#qs");
             highlight("#search_name");
         };
 
-        var fail = function (jqXHR, textStatus, errorType) {
+        var fail = function (error) {
             // track is something goes wrong
-            logToGoogle("Datasets", "Failed", name, textStatus);
+            logToGoogle("Datasets", "Failed", name, error);
 
             // reset the form elements
             $("#qs").val("");
 
             // highlight what pappend to the user
-            error(textStatus, "Something went wrong while loading the datasets.");
+            error(error, "Something went wrong while loading the datasets.");
             $('html, body').animate({
                 scrollTop: $("#messages").offset().top
             }, 1000);
@@ -220,13 +212,13 @@ function constructDatasetLoader() {
             if (button) {
                 button.button('reset');
             }
+            toast.hide();
         };
 
-        if (type === "internal") {
-            loadInternalDataset(id, done, fail, always);
-        } else {
-            loadPrideDataset(id, done, fail, always);
-        }
+        var request = type === "internal" ? loadInternalDataset(id) : loadPrideDataset(id);
+        request.then(done)
+              .catch(fail)
+              .then(always);
     };
 
     return that;

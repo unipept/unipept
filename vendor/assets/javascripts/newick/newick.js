@@ -92,9 +92,9 @@
                 temp = token.split("-");
                 tree.name = token;
                 if (temp[1].charAt(0) === "u") {
-                    tree.bioproject_id = temp[1];
+                    tree.id = temp[1];
                 } else {
-                    tree.bioproject_id = +temp[1];
+                    tree.id = +temp[1];
                 }
 
             }

@@ -10,9 +10,9 @@
 
 class Post < ActiveRecord::Base
   attr_accessible :content, :date, :title
-  
-  validates :content, :presence => true
-  validates :title,   :presence => true,
-                      :length => { :maximum => 100 }
-  validates :date,    :presence => true
+
+  validates :content, presence: true
+  validates :title,   presence: true,
+                      length: { maximum: 100 }
+  validates :date,    presence: true
 end

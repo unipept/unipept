@@ -2,23 +2,23 @@
  * creates a myGenomes object representing the table showing all self uploaded
  * genomes and optiones to add or remove them.
  *
- * @param <Pancore> args.pancore Pancore object
  * @param <String> args.version The uniprot version
+ * @param <String> args.pancore The pancore object
  */
 var constructMyGenomes = function constructMyGenomes(args) {
     /*************** Private variables ***************/
 
     var that = {},
-        pancore = args.pancore,
         version = args.version,
+        pancore = args.pancore,
         worker;
 
     // Data vars
-    var dataQueue = [],
-        dataQueueSize = 0,
-        files = {},
+    var promisesProcess = new Map(),
         genomes,
-        genomeList;
+        genomeList,
+        genomesPromise,
+        genomesResolver;
 
     // Data storage
     var indexedDBStore = {},
@@ -40,7 +40,11 @@ var constructMyGenomes = function constructMyGenomes(args) {
         genomes = {};
         genomeList = [];
 
-        if (window.indexedDB) {
+        genomesPromise = new Promise( function (resolve, reject) {
+            genomesResolver = resolve;
+        });
+
+        if (window.indexedDB && navigator.vendor.indexOf("Apple") === -1) {
             dataStore = indexedDBStore;
         } else {
             dataStore = localStorageStore;
@@ -73,11 +77,13 @@ var constructMyGenomes = function constructMyGenomes(args) {
                 $myGenomesButton.popover("show");
             } else {
                 $popover.toggleClass("hide");
+                repositionPopover();
             }
         });
 
         // enable remove all button
         $("#remove-my-genomes").click(removeAllGenomes);
+        $myGenomesDiv.find(".btn-add-all").click(addAllGenomes);
 
         // add pop-over behaviour
         $myGenomesButton.on("shown.bs.popover", initPopoverBehaviour);
@@ -101,7 +107,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
             console.log(data.msg);
             break;
         case 'processConvertedGenome':
-            processConvertedGenome(data.msg.ids, data.msg.name, data.msg.id);
+            processConvertedGenome(data.msg);
             break;
         case 'processProgress':
             processProgress(data.msg.progress);
@@ -124,6 +130,18 @@ var constructMyGenomes = function constructMyGenomes(args) {
     function initPopoverBehaviour() {
         // hide the popover
         $popover = $(".popover-content #myGenomeName").parents(".popover");
+
+        repositionPopover();
+
+        // add pop-over hide behaviour
+        $(document).click(function(e) {
+            if ($popover &&
+                !$popover.hasClass("hide") &&
+                !$popover.get(0).contains(e.target) &&
+                !$myGenomesButton.get(0).contains(e.target)) {
+                $popover.addClass('hide');
+            }
+        });
 
         // enable the tooltips
         $(".popover-content #myGenomeName").tooltip({placement : "right", trigger : "hover", container : "body"});
@@ -149,67 +167,78 @@ var constructMyGenomes = function constructMyGenomes(args) {
             var multi = $(".popover-content #myGenomeName").data("multi") === "multi",
                 name = $(".popover-content #myGenomeName").val(),
                 files = $(".popover-content #myGenomeFile").prop("files"),
-                file = files[0],
-                id = "u" + new Date().getTime(),
-                i;
+                dataFiles = [],
+                i,
+                $notification,
+                id = "u" + new Date().getTime();
+
+            $popover.find(".invalid-file").remove();
 
             // Form validation
-            if (!(multi || name)) {
-                $(".popover-content #myGenomeName").parents(".form-group").addClass("has-error");
-            } else {
-                $(".popover-content #myGenomeName").parents(".form-group").removeClass("has-error");
-            }
-            if (!file) {
-                $(".popover-content #myGenomeFile").parents(".form-group").addClass("has-error");
-            } else {
-                $(".popover-content #myGenomeFile").parents(".form-group").removeClass("has-error");
-            }
+            $(".popover-content #myGenomeName").parents(".form-group")
+                .toggleClass("has-error", !files[0] || !(multi || name));
 
             // Handle form
-            if (multi || (name && file)) {
-                $(this).attr("disabled", "disabled");
+            if (multi || (name && files[0])) {
+                $(this).prop("disabled", true).addClass("hide");
                 $(".popover-content #myGenomeFile").prop("disabled", true);
-                $(this).addClass("hide");
                 $(".popover-content #myGenomeProgress").removeClass("hide");
-
-                if (multi) {
-                    for (i = 0; i < files.length; i++) {
-                        file = files[i];
-                        dataQueue.push({name: file.name, file: file, id: id + i});
-                    }
-                } else {
-                    dataQueue.push({name: name, file: file, id: id});
+                for (i = 0; i < files.length; i++) {
+                    dataFiles.push({name: name || files[i].name, file: files[i], id: id + i});
                 }
-                dataQueueSize = files.length;
-                handleAddMyGenome();
+                $notification = showNotification("Processing proteomes...", {
+                        loading: true,
+                        autoHide: false
+                    });
+                handleFiles(dataFiles).then(function () {
+                    $notification.hide();
+                });
             }
         });
     }
 
     /**
-     * Processes a file from the dataQueue
+     * Repositions the popover
      */
-    function handleAddMyGenome() {
-        if (dataQueue.length > 0) {
-            var reader = new FileReader(),
-                file = dataQueue[0];
-            reader.onload = function (e) {
-                sendToWorker("processFile", {file : reader.result, name : file.name, id : file.id});
-                files[file.id] = reader.result;
-            };
-            reader.readAsText(file.file);
+    function repositionPopover() {
+        if (!$popover) return;
 
-            processProgress(0);
-            $(".popover-content #myGenomeProgress .progress-bar span").text("File " + (dataQueueSize - dataQueue.length + 1) + " of " + dataQueueSize);
+        var fullScreen = $(".full-screen-container").hasClass("full-screen");
+        if (fullScreen) {
+            $popover.appendTo(".full-screen-container");
+        } else {
+            $popover.appendTo("body");
         }
+        var buttonOffset = $myGenomesButton.offset(),
+            containerOffset = $(".full-screen-container").hasClass("full-screen") ? $(".full-screen-container").offset() : $("body").offset();
+        $popover.css("left", buttonOffset.left - containerOffset.left + 215);
+        $popover.css("top", buttonOffset.top - containerOffset.top - 150);
+        $popover.css("z-index", 10);
+    }
+
+    /**
+     * Process a list of files
+     */
+    function handleFiles(dataFiles) {
+        var i = 1,
+            totalFiles = dataFiles.length;
+        processProgress(0);
+        $(".popover-content #myGenomeProgress .progress-text").text("Processing file 1 of " + totalFiles);
+        return dataFiles.reduce(function (promise, data) {
+            return promise.then(function () {
+                return readFile(data.file);
+            }).then(function (content) {
+                return processFileContent(content, data.name, data.id);
+            }).then(function () {
+                $(".popover-content #myGenomeProgress .progress-text").text("Processing file " + (++i) + " of " + totalFiles);
+            });
+        }, Promise.resolve()).then(resetForm);
     }
 
     /**
      * Reset the add my genome form
      */
     function resetForm() {
-        dataQueueSize = 0;
-
         // reset the form
         $(".popover-content #processMyGenomeButton").parents("form").trigger('reset');
         $(".popover-content #myGenomeName").prop("disabled", false).attr("placeholder", "name").data("multi", "");
@@ -219,9 +248,39 @@ var constructMyGenomes = function constructMyGenomes(args) {
         $(".popover-content #myGenomeProgress").addClass("hide");
 
         // hide the popover
-        if ($popover && !$popover.hasClass("hide")) {
+        if ($popover && !$popover.hasClass("hide") && $popover.find(".invalid-file").size() === 0) {
             $myGenomesButton.click();
         }
+    }
+
+    function showInvalidFileFormat(filename) {
+        $popover.find("#myGenomeProgress").before("<div class='alert alert-danger invalid-file'>The file <b>" + filename + "</b> doesn't seem to be a valid FASTA file.</div>");
+    }
+
+    /**
+     * Sends a request to the webworker to process the content of a file
+     * Returns a promise containing the list of peptides.
+     */
+    function processFileContent(file, name, id) {
+        return new Promise(function (resolve, reject) {
+            sendToWorker("processFile", {
+                file: file,
+                name: name,
+                id: id
+            });
+            promisesProcess.set(id, function (data) {
+                if (data.status === "ok") {
+                    resolve(data);
+                } else {
+                    reject("Invalid file format");
+                }
+            });
+        }).then(function (peptides) {
+            showNotification("Proteome " + name + " added");
+            addGenome(peptides.id, peptides.name, version, peptides.ids, file);
+        }).catch(function (message) {
+            showInvalidFileFormat(name);
+        });
     }
 
     /**
@@ -231,24 +290,22 @@ var constructMyGenomes = function constructMyGenomes(args) {
      * @param <String> name The name of the genome
      * @param <String> id The id of the genome
      */
-    function processConvertedGenome(ids, name, id) {
-        addGenome(id, name, version, ids);
-        dataQueue.shift();
-
-        if (dataQueue.length === 0) {
-            resetForm();
-        } else {
-            handleAddMyGenome();
+    function processConvertedGenome(data) {
+        if (promisesProcess.has(data.id)) {
+            promisesProcess.get(data.id).call(this, data);
+            promisesProcess.delete(data.id);
         }
     }
 
     /**
      * Updates the progress bar with a new value
      *
-     * @param <Number> percentage Value between 0 and 1 indicating the progress
+     * @param <Number> percentage The new width in %
      */
     function processProgress(percentage) {
-        $(".popover-content #myGenomeProgress .progress-bar").css("width", (percentage * 100) + "%");
+        requestAnimFrame(function () {
+            $(".popover-content #myGenomeProgress .progress-bar").css("width", (percentage * 100) + "%");
+        });
     }
 
     /**
@@ -258,15 +315,15 @@ var constructMyGenomes = function constructMyGenomes(args) {
      * @param <String> name The genome name
      * @param <String version The uniprot version
      * @param <Array> ids A list of ints
+     * @param <String> file The content of the original file
      */
-    function addGenome(id, name, version, ids) {
+    function addGenome(id, name, version, ids, file) {
         if (genomeList.indexOf(id) === -1) {
             // add
             genomeList.push(id);
             genomes[id] = {id : id, name : name, version : version};
 
-            dataStore.addGenome({id : id, name : name, version : version, peptides : ids, file : files[id]});
-            delete files[id];
+            dataStore.addGenome({id : id, name : name, version : version, peptides : ids, file : file});
         } else {
             // update
             genomes[id].version = version;
@@ -308,18 +365,35 @@ var constructMyGenomes = function constructMyGenomes(args) {
      * removes all the genomes from the my genome list
      */
     function removeAllGenomes() {
-        var i,
-            id;
+        if (confirm("Are you sure you want to remove all your proteomes?")) {
+            var i,
+                id;
 
-        for (i = genomeList.length - 1; i >= 0; i--) {
-            id = genomeList[i];
-            genomeList.splice(i, 1);
-            delete genomes[id];
-            dataStore.removeGenome(id);
+            for (i = genomeList.length - 1; i >= 0; i--) {
+                id = genomeList[i];
+                genomeList.splice(i, 1);
+                delete genomes[id];
+                dataStore.removeGenome(id);
+            }
+
+            // update the list
+            redrawTable();
         }
+    }
 
-        // update the list
-        redrawTable();
+    /**
+     * Add all my genomes to the analysis
+     */
+    function addAllGenomes() {
+        var toAdd = [];
+        var i;
+        for (i = 0; i < genomeList.length; i++) {
+            toAdd.push({
+                id: genomeList[i],
+                name: genomes[genomeList[i]].name
+            });
+        }
+        pancore.addGenomes(toAdd);
     }
 
     /**
@@ -329,26 +403,41 @@ var constructMyGenomes = function constructMyGenomes(args) {
         var i,
             g,
             row,
-            name;
+            name,
+            isCurrent;
 
         $myGenomesTable.empty();
         if (genomeList.length === 0) {
-            $myGenomesTable.append("<tr class='info'><td colspan='4' class='info'><span class='glyphicon glyphicon-chevron-up'></span> Click the plus-button to add your own genomes.</td></tr>");
+            $myGenomesTable.append("<tr class='success'><td colspan='4' class='success'><span class='glyphicon glyphicon-question-sign'></span> Click the add your own proteomes button to add proteomes.</td></tr>");
         } else {
             for (i = 0; i < genomeList.length; i++) {
                 g = genomes[genomeList[i]];
-                row = g.version === version ? "<tr class='own' data-genomeid='" + g.id + "'>" : "<tr class='own old' data-genomeid='" + g.id + "'>";
-                row += "<td><span class='glyphicon glyphicon-move'></span></td>" +
-                    "<td class='name'>" + g.name + "</td>";
-                if (g.version === version) {
-                    row += "<td><a class='btn btn-default btn-xs edit-genome-name' title='edit genome name'><span class='glyphicon glyphicon-pencil'></span></a></td>";
+                isCurrent = g.version === version;
+                row = "<tr class='own' data-genomeid='" + g.id + "'>";
+                row += "<td class='button'><button class='btn btn-default btn-xs remove-my-genome' title='remove proteome'";
+                row += isCurrent ? "" : " disabled ";
+                row += "><span class='glyphicon glyphicon-trash'></span></button></td>";
+                row += "<td class='name'>" + g.name + "</td>";
+                if (isCurrent) {
+                    row += "<td><button class='btn btn-default btn-xs edit-genome-name' title='edit proteome name'><span class='glyphicon glyphicon-pencil'></span></button></td>";
                 } else {
                     row += "<td><span class='glyphicon glyphicon-refresh'></span></td>";
                 }
-                row += "<td class='button'><a class='btn btn-default btn-xs remove-my-genome' title='remove genome'><span class='glyphicon glyphicon-trash'></span></a></td>" +
-                    "</<tr>";
+                row += "<td><button class='btn btn-default btn-xs btn-add' title='add proteome to analysis'";
+                row += isCurrent ? "" : " disabled ";
+                row += "><span class='glyphicon glyphicon-plus'></span></button></td>";
+                row += "</tr>";
                 $myGenomesTable.append(row);
             }
+            $myGenomesTable.find(".btn-add").click(function () {
+                var $row = $(this).closest("tr");
+                var id = $row.data("genomeid");
+                var name = $row.find(".name").text();
+                pancore.addGenomes([{
+                    id: id,
+                    name: name
+                }]);
+            });
             $(".remove-my-genome").click(function () {
                 removeGenome($(this).parents("tr").data("genomeid"));
             });
@@ -368,73 +457,22 @@ var constructMyGenomes = function constructMyGenomes(args) {
                     $row.addClass("edit");
                 }
             });
-
-            initDrag();
         }
 
         $("#my-genomes-tab .badge").text(genomeList.length);
     }
 
     /**
-     * Initializes the draggin from the my genomes table
+     * Reads a given file and returns its content as a Promise
      */
-    function initDrag() {
-        var $tableDiv = $("#genomes-table-div"),
-            moving,
-            moving2;
-        // Make the nodes draggable using JQuery UI
-        $myGenomesTable.find("tr").draggable({
-            appendTo: "#genomes-table-div table",
-            addClasses: false,
-            cancel: ".edit, .old",
-            refreshPositions: true,
-            // Mimic the style of the table on the right
-            helper: function startHelping(event) {
-                return dragHelp($(this));
-            },
-            // Table on the right slides into view on drag start
-            start: function startDragging(event, ui) {
-                var pos = Math.max(0, window.pageYOffset - $tableDiv.offset().top + 16);
-                $tableDiv.css("margin-top", pos + "px");
-                $(event.target).draggable('option', 'refreshPositions', true);
-                moving = true;
-                moving2 = true;
-                setTimeout(function () {moving = false; }, 800);
-            },
-            // Table on the right slides back to original position 1s after
-            // drag stop
-            stop: function stopDragging(event, ui) {
-                setTimeout(function () {$tableDiv.css("margin-top", "0px"); }, 1000);
-            },
-            // Because the drop target slides in, we have to recalculate the
-            // position of the target while dragging. This is computationally
-            // expensive, so we stop recalculating once we know the target
-            // stays in place
-            drag: function whileDragging(event, ui) {
-                if (!moving2) {
-                    $(event.target).draggable('option', 'refreshPositions', false);
-                }
-                if (!moving) {
-                    moving2 = false;
-                }
-            }
+    function readFile(file) {
+        return new Promise(function (resolve, reject) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                resolve(reader.result);
+            };
+            reader.readAsText(file);
         });
-    }
-
-    /**
-     * Drag helper. Constructs html-code that gets added to the page and
-     * 'follows' the cursor while dragging. Mimics the design of the table.
-     *
-     * @param <jQuery> $node jQuery object of the dom element were dragging
-     */
-    function dragHelp($node) {
-        var returnString = "<tbody class='dragging'>" +
-            "<tr><td class='handle'><span class='glyphicon glyphicon-resize-vertical'></span></td><td class='data name' data-bioproject_id='" +
-            $node.data("genomeid") + "'>" +
-            $node.find(".name").text() +
-            "</td><td class='data status'></td><td></td></tr>" +
-            "</tbody>";
-        return $(returnString);
     }
 
     /*************** indexedDBStore methods ************/
@@ -445,33 +483,34 @@ var constructMyGenomes = function constructMyGenomes(args) {
     indexedDBStore.init = function init() {
         var version = 4;
         var request = indexedDB.open("myGenomes", version);
+        return new Promise(function (resolve, reject) {
+            request.onupgradeneeded = function (e) {
+                var db = e.target.result;
 
-        request.onupgradeneeded = function (e) {
-            var db = e.target.result;
+                e.target.transaction.onerror = indexedDBStore.onerror;
 
-            e.target.transaction.onerror = indexedDBStore.onerror;
+                if (db.objectStoreNames.contains("metadata")) {
+                    db.deleteObjectStore("metadata");
+                }
+                if (db.objectStoreNames.contains("peptideLists")) {
+                    db.deleteObjectStore("peptideLists");
+                }
+                if (db.objectStoreNames.contains("files")) {
+                    db.deleteObjectStore("files");
+                }
 
-            if (db.objectStoreNames.contains("metadata")) {
-                db.deleteObjectStore("metadata");
-            }
-            if (db.objectStoreNames.contains("peptideLists")) {
-                db.deleteObjectStore("peptideLists");
-            }
-            if (db.objectStoreNames.contains("files")) {
-                db.deleteObjectStore("files");
-            }
+                db.createObjectStore("metadata", {keyPath: "id"});
+                db.createObjectStore("peptideLists", {keyPath: "id"});
+                db.createObjectStore("files", {keyPath: "id"});
+            };
 
-            db.createObjectStore("metadata", {keyPath: "id"});
-            db.createObjectStore("peptideLists", {keyPath: "id"});
-            db.createObjectStore("files", {keyPath: "id"});
-        };
+            request.onsuccess = function (e) {
+                indexedDBStore.db = e.target.result;
+                resolve(indexedDBStore.loadMyGenomes());
+            };
 
-        request.onsuccess = function (e) {
-            indexedDBStore.db = e.target.result;
-            indexedDBStore.loadMyGenomes();
-        };
-
-        request.onerror = indexedDBStore.onerror;
+            request.onerror = indexedDBStore.onerror;
+        });
     };
 
     /**
@@ -483,35 +522,60 @@ var constructMyGenomes = function constructMyGenomes(args) {
         var store = trans.objectStore("metadata");
         var files = trans.objectStore("files");
         var fileRequest;
+        var dataQueue = [];
+        var $notification;
+        return new Promise(function (resolve, reject) {
 
-        // Get everything in the store;
-        var keyRange = IDBKeyRange.lowerBound(0);
-        var cursorRequest = store.openCursor(keyRange);
+            // Get everything in the store;
+            var keyRange = IDBKeyRange.lowerBound(0);
+            var cursorRequest = store.openCursor(keyRange);
 
-        cursorRequest.onsuccess = function (e) {
-            var result = e.target.result;
-            // are we done yet?
-            if (!!result == false) {
-                redrawTable();
-                return;
-            }
+            cursorRequest.onsuccess = function (e) {
+                var result = e.target.result;
+                // are we done yet?
+                if (!!result == false) {
+                    resolve();
+                    return;
+                }
 
-            genomeList.push(result.value.id);
-            genomes[result.value.id] = result.value;
+                genomeList.push(result.value.id);
+                genomes[result.value.id] = result.value;
 
-            // process if done
-            if (result.value.version !== version) {
-                fileRequest = files.get(result.value.id);
-                fileRequest.onsuccess = function (e) {
-                    sendToWorker("processFile", {file : e.target.result.file, name : result.value.name, id : result.value.id});
-                };
-                fileRequest.onerror = indexedDBStore.onerror;
-            }
-
-            result.continue();
-        };
-
-        cursorRequest.onerror = indexedDBStore.onerror;
+                // process if done
+                if (result.value.version !== version) {
+                    if (!$notification) {
+                        $notification = showNotification("Updating my proteomes...", {
+                            loading: true,
+                            autoHide: false
+                        });
+                    }
+                    fileRequest = files.get(result.value.id);
+                    fileRequest.onsuccess = function (e) {
+                        if (e.target.result) {
+                            dataQueue.push({file: e.target.result.file, name: result.value.name, id: result.value.id});
+                        } else {
+                            removeGenome(result.value.id);
+                        }
+                    };
+                    fileRequest.onerror = indexedDBStore.onerror;
+                }
+                result.continue();
+            };
+            cursorRequest.onerror = indexedDBStore.onerror;
+        }).then(function () {
+            genomesResolver(genomes);
+            redrawTable();
+            return dataQueue.reduce(function (promise, data) {
+                return promise.then(function () {
+                    return processFileContent(data.file, data.name, data.id);
+                });
+            }, Promise.resolve())
+            .then(function () {
+                if($notification) {
+                    $notification.hide();
+                }
+            });
+        });
     };
 
     /**
@@ -581,23 +645,22 @@ var constructMyGenomes = function constructMyGenomes(args) {
     };
 
     /**
-     * Fetches a list of peptides for a given genome and executes the callback
-     * when it's done
+     * Fetches a list of peptides for a given genome and returns it as a promise
      *
      * @param <String> id The id of the genome
-     * @param <Function> callback The callback that gets executed when the ids
-     *          are done loading
      */
-    indexedDBStore.getPeptideList = function getPeptideList(id, callback) {
-        var db = indexedDBStore.db;
-        var trans = db.transaction(["metadata", "peptideLists"], "readwrite");
-        var peptideLists = trans.objectStore("peptideLists");
+    indexedDBStore.getPeptideList = function getPeptideList(id) {
+        return new Promise(function (resolve, reject) {
+            var db = indexedDBStore.db;
+            var trans = db.transaction(["metadata", "peptideLists"], "readwrite");
+            var peptideLists = trans.objectStore("peptideLists");
 
-        var peptideListRequest = peptideLists.get(id);
-        peptideListRequest.onsuccess = function (e) {
-            callback.call(this, e.target.result.peptides);
-        };
-        peptideListRequest.onerror = indexedDBStore.onerror;
+            var peptideListRequest = peptideLists.get(id);
+            peptideListRequest.onsuccess = function (e) {
+                resolve(e.target.result.peptides);
+            };
+            peptideListRequest.onerror = indexedDBStore.onerror;
+        });
     };
 
     /**
@@ -613,7 +676,7 @@ var constructMyGenomes = function constructMyGenomes(args) {
      * Initializes the database
      */
     localStorageStore.init = function init() {
-        localStorageStore.loadMyGenomes();
+        return localStorageStore.loadMyGenomes();
     };
 
     /**
@@ -636,7 +699,9 @@ var constructMyGenomes = function constructMyGenomes(args) {
             }
         }
 
+        genomesResolver(genomes);
         redrawTable();
+        return Promise.resolve();
     };
 
     /**
@@ -672,28 +737,39 @@ var constructMyGenomes = function constructMyGenomes(args) {
     };
 
     /**
-     * Fetches a list of peptides for a given genome and executes the callback
-     * when it's done
+     * Fetches a list of peptides for a given genome and returns it as a promise
      *
      * @param <String> id The id of the genome
-     * @param <Function> callback The callback that gets executed when the ids
-     *          are done loading
      */
-    localStorageStore.getPeptideList = function getPeptideList(id, callback) {
+    localStorageStore.getPeptideList = function getPeptideList(id) {
         var ids = JSON.parse(localStorage["genome_" + id]);
-        callback.call(this, ids);
+        return Promise.resolve(ids);
     };
 
     /*************** Public methods ***************/
 
     /**
-     * Retrieves the list of peptide ids from the local storage for a given id
+     * Retrieves the list of peptide ids from the datastore and returns it as
+     * a promise.
      *
      * @param <String> id The id of the genome
-     * @param <Function> callback This function gets called when loaded
      */
-    that.getIds = function getIds(id, callback) {
-        dataStore.getPeptideList(id, callback);
+    that.getIds = function getIds(id) {
+        return dataStore.getPeptideList(id);
+    };
+
+    /**
+     * Retrieves a genome object for a given id
+     */
+    that.getGenome = function getGenome(id) {
+        return genomes[id];
+    };
+
+    /**
+     * Retrieves a genomes promise
+     */
+    that.getGenomes = function getGenomes() {
+        return genomesPromise;
     };
 
     // initialize the object

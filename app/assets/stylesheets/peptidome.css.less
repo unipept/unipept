@@ -1,24 +1,28 @@
 // styles related to the peptidome analysis page
-
-// tabs
-.tab-help .help-icon {
-    font-size: 50pt;
-    margin-bottom: 0px;
+// undo card padding:
+#pancore_graph,
+#sim_matrix {
+    margin: -16px;
 }
-#tabs>li.active>a:hover {
-    background-color: @nav-link-hover-bg !important;
+#pancore_graph svg,
+#sim_matrix svg {
+    margin-bottom: -5px;
 }
 
 // pancore graph
+#pancore_graph {
+    min-height: 600px;
+    user-select: none;
+}
 #pancore_graph .bar {
     cursor: pointer;
     cursor: url(/openhand.cur), pointer;
-    cursor: url(/openhand.cur) 7 5, pointer;
+    cursor: url("/openhand.cur") 7 5, pointer;
 }
 #pancore_graph #trash {
     cursor: pointer;
     cursor: url(/closedhand.cur), pointer;
-    cursor: url(/closedhand.cur) 7 5, pointer;
+    cursor: url("/closedhand.cur") 7 5, pointer;
 }
 .legend {
     cursor: pointer;
@@ -26,7 +30,7 @@
 #pancore_graph div.tip {
     .translate3d(0, 0, 0);
 }
-#pancore_graph .popover-title{
+#pancore_graph .popover-title {
     line-height: 18px;
 }
 .popover-buttons {
@@ -34,22 +38,14 @@
     min-width: 220px;
 }
 #download-peptides .dropdown-menu {
-    margin-top: 0px;
+    margin-top: 0;
 }
 #download-peptides #download-peptides-toggle {
     margin-bottom: 2px;
 }
-#buttons-pancore {
-    float: right;
-}
-#buttons-pancore button {
-    margin-left: 5px;
-}
-#pancore_graph, #sim_matrix {
+#pancore_graph,
+#sim_matrix {
     background-color: white;
-}
-#pancore_graph {
-    min-height: 600px;
 }
 
 // clustering
@@ -58,34 +54,38 @@
     margin-right: 10px;
 }
 
-// refseq genomes
-#genome-tabs {
-    margin-top: 5px;
+#sim_matrix_wrapper .ghead {
+    margin-bottom: 0;
+    margin-top: -5px;
+    position: relative;
+    top: 10px;
 }
-#add-by-species-form {
-    padding-top: 5px;
+.tip .table {
+    margin-bottom: 0;
 }
-#species_id {
-    width: 315px;
+.tip .table .fat {
+    border-top-width: 2px;
 }
-#add_species_peptidome {
-    width: 119px;
+.tip .table .num {
+    text-align: right;
 }
-.treeView.pancore li span {
-    cursor: pointer !important;
-    cursor: url(/openhand.cur), pointer !important;
-    cursor: url(/openhand.cur) 7 5, pointer !important;
-}
-.treeView.pancore {
-    width: 438px;
-    min-height: 10px;
+.tip .table .sim {
+    text-align: center;
 }
 
 // my genomes
 #myGenomeProgress {
     height: 30px;
+    position: relative;
 }
-#myGenomeProgress .progress-bar{
+#myGenomeProgress .progress-text {
+    position: absolute;
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: 5px;
+}
+#myGenomeProgress .progress-bar {
     padding-top: 6px;
     max-width: 100%;
 }
@@ -101,65 +101,154 @@
 #my-genomes-table .action {
     width: 30px;
 }
-#my-genomes-table tbody tr:not(.info):not(.edit):not(.old) {
-    cursor: pointer;
-    cursor: url(/openhand.cur), pointer;
-    cursor: url(/openhand.cur) 7 5, pointer;
+#addMyGenomeButton {
+    display: block;
+    margin: 10px auto 0;
 }
 
 // analyzed genomes
-#genomes_table .handle {
+.analyzed-proteomes .card,
+.analyzed-proteomes .card-supporting-text {
+    overflow: visible;
+}
+.genomes-table .handle {
+    width: 30px;
+    vertical-align: middle;
+}
+.genomes-table td.name {
+    min-width: 325px;
+    vertical-align: middle;
+}
+.genomes-table .status {
     width: 30px;
 }
-#genomes_table .name {
-    width: 325px;
-}
-#genomes_table .status {
+.genomes-table .action {
     width: 30px;
 }
-#genomes_table .action {
-    width: 30px;
+.genomes-table {
+    width: 100%;
+    table-layout: fixed;
 }
-#genomes_table {
-    margin: 5px;
-    width: auto;
-}
-#genomes_table tr.ui-sortable-helper {
-    background-color: rgba(255, 255, 255, 0.8);
-}
-#genomes-table-div {
-    .transition(margin-top 0.5s ease-in-out);
-}
-#genomes_table tfoot {
-    display: none;
-}
-#genomes_table tfoot th {
-    text-align: center;
-}
-#genomes_table.acceptDrop tfoot {
-    display: table-row-group;
-}
-#genomes_table.acceptDrop {
-    background-color: #eeeeee;
-    border: 5px dashed #cccccc;
-    border-collapse: separate;
-    margin: 0px;
-}
-#genomes_table.willDrop {
-    background-color: #dff0d8;
-    cursor: copy;
-}
-#autosort .dropdown-menu {
-    margin-top: 0px;
-}
-#genomes_table tbody tr:not(.ui-sortable-helper) {
-    cursor: pointer;
-    cursor: url(/openhand.cur), pointer;
-    cursor: url(/openhand.cur) 7 5, pointer;
-}
-tbody.dragging tr {
+tr.gu-mirror td {
+    background-color: white;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-top: 1px solid @table-border-color;
     cursor: pointer !important;
     cursor: url(/closedhand.cur), pointer !important;
-    cursor: url(/closedhand.cur) 7 5, pointer !important;
-    background-color: rgba(255, 255, 255, 0.8);
+    cursor: url("/closedhand.cur") 7 5, pointer !important;
+}
+tr.gu-mirror .name {
+    width: 355px;
+}
+tr.gu-mirror .handle,
+tr.gu-mirror .status,
+tr.gu-mirror .button {
+    width: 30px;
+}
+#autosort .dropdown-menu {
+    margin-top: 0;
+}
+#genomes_table tbody tr {
+    cursor: pointer;
+    cursor: url(/openhand.cur), pointer;
+    cursor: url("/openhand.cur") 7 5, pointer;
+}
+.genomeSelector {
+    margin-top: 10px;
+}
+#genomeSelector-results {
+    margin-top: 10px;
+}
+#genomeSelector .tokenfield {
+    min-height: 68px;
+}
+#genomeSelector-results tr.genome {
+    cursor: pointer;
+}
+#genomeSelector-results td {
+    vertical-align: middle;
+    overflow: hidden;
+}
+#genomeSelector-results th.name {
+    text-align: center;
+}
+#genomeSelector-results .prev-page {
+    margin-top: -5px;
+    margin-right: 10px;
+}
+#genomeSelector-results .next-page {
+    margin-top: -5px;
+    margin-left: 10px;
+
+    // visual center
+    margin-right: 20px;
+}
+.lineage {
+    font-size: 80%;
+    color: #808080;
+    white-space: nowrap;
+}
+.lineage-link,
+.lineage-link:hover {
+    color: #808080;
+}
+.token.token-taxon {
+    color: @state-info-text;
+    background-color: @state-info-bg;
+    border-color: @state-info-border;
+}
+.token.token-filter {
+    color: @state-success-text;
+    background-color: @state-success-bg;
+    border-color: @state-success-border;
+}
+.tokenfield .dataset-header {
+    margin: 3px 15px;
+    padding-bottom: 3px;
+    border-bottom: 1px solid #d3d3d3;
+    line-height: 30px;
+}
+.search-settings {
+    cursor: pointer;
+    user-select: none;
+    color: @btn-primary-color;
+    background-color: @btn-primary-bg;
+    border-color: @btn-primary-border;
+}
+.search-settings:hover {
+    background-color: darken(@btn-primary-bg, 10%);
+    border-color: darken(@btn-primary-border, 12%);
+}
+
+#restore-analysis {
+    margin-bottom: 8px;
+}
+
+// full screen layout
+.full-screen .proteome-library,
+.full-screen .analyzed-proteomes{
+    position: absolute;
+    top: 44px;
+    width: 473px;
+    height: 100%;
+    background-color: #fff;
+    z-index: 5;
+    overflow: scroll;
+    transition-duration: 0.5s;
+    transition-property: transform;
+    transition-timing-function: ease-out;
+    .shadow-z3();
+}
+.full-screen .proteome-library {
+    left: -500px;
+}
+.full-screen .proteome-library.shown {
+    transform: translateX(500px);
+}
+.full-screen .analyzed-proteomes {
+    right: -500px;
+}
+.full-screen .analyzed-proteomes.shown {
+    transform: translateX(-500px);
 }

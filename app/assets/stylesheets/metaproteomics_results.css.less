@@ -1,26 +1,25 @@
 // styles for the metaproteomics analysis results page
-
 // page intro
-#buttons {
-    float: right;
-    margin-top: 10px;
-}
-#buttons button {
-    margin-left: 5px;
-}
 
 // tab stuff
 .tab-content.multi-search {
     overflow: visible;
 }
+.card-supporting-text.multi-results {
+    padding: 0px;
+}
+.multi-search .buttons-single {
+    margin-right: 16px;
+    margin-top: -46px;
+}
 h2.ghead {
     margin-bottom: 8px;
-    margin-top: 3px;
+    margin-top: 5px;
+    margin-right: 16px;
     font-weight: bold;
     padding: 0;
     border: 0;
-    font-size: 100%;
-    font: 13px Helvetica,arial,freesans,clean,sans-serif;
+    font-size: 13px;
     line-height: 1.4;
     color: #333;
 }
@@ -43,21 +42,6 @@ span.dir.text {
     margin-top: 5px;
 }
 
-#visualisations {
-    width: 100%;
-}
-
-#visualisations.fullScreen {
-    height: 100%;
-}
-
-#visualisations.fullScreen h2.ghead {
-    display: none;
-}
-#visualisations.notFullScreen #fullScreenBar {
-    display: none;
-}
-
 // tooltip
 #tooltip.tip {
     position: absolute;
@@ -65,13 +49,14 @@ span.dir.text {
     visibility: hidden;
 }
 .tip {
-    background-color: #ffffff;
-    padding: 2px;
+    background-color: #fff;
+    padding: 5px;
     border: 1px solid @hairlinegray;
-    border-radius: 3px;
+    border-radius: 2px;
+    .shadow-z5();
 }
 .tip-title {
-    text-align:center;
+    text-align: center;
 }
 
 // sunburst
@@ -83,7 +68,7 @@ span.dir.text {
     margin: 0 auto;
     display: block;
 }
-.fullScreen #sunburst > svg {
+.full-screen #sunburst > svg {
     overflow: visible;
 }
 #sunburst .toHide {
@@ -96,33 +81,34 @@ span.dir.text {
     fill-opacity: 0.9;
 }
 .dropdown-menu-form div.checkbox {
-    margin-bottom: 0px;
+    margin-bottom: 0;
     margin-top: 5px;
     margin-left: 10px;
 }
-.dropdown-menu-form div.checkbox label{
-    padding-left: 0px;
+.dropdown-menu-form div.checkbox label {
+    padding-left: 0;
 }
-.dropdown-menu-form div.checkbox input[type="checkbox"]{
-    margin-top: 0px;
+.dropdown-menu-form div.checkbox input[type="checkbox"] {
+    margin-top: 0;
 }
 #colorswap .dropdown-menu {
-    margin-top: 0px;
+    margin-top: 0;
     padding-left: 15px;
-    padding-top: 0px;
+    padding-top: 0;
     min-width: 135px;
 }
 #sunburstPanel {
-    width: 165px;
+    width: 176px;
     float: right;
-    margin-top:10px;
+    margin-top: 10px;
+    padding-left: 5px;
 }
-.fullScreen #sunburstPanel {
+.full-screen #sunburstPanel {
     width: 250px;
     margin-right: 10px;
 }
 #sunburstPanel ul {
-    padding-left: 0px;
+    padding-left: 0;
     list-style: none;
 }
 .crumb {
@@ -138,68 +124,10 @@ span.dir.text {
     text-overflow: ellipsis;
     overflow: hidden;
     margin: 0;
-    font-size: 14px
+    font-size: 14px;
 }
 .crumb .percentage {
     font-size: 11px;
-}
-
-#fullScreenBar {
-    position: relative;
-    width: 100%;
-    height: 44px;
-    background-color: #FDB813;
-    color: white;
-    font-size: 15px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
-#fullScreenBar .logo {
-    float: left;
-    padding-left: 10px;
-    padding-top: 3px;
-}
-#fullScreenBar .fullScreenNav ul{
-    list-style: none;
-    width: 300px;
-    margin: 0 auto;
-}
-#fullScreenBar .fullScreenNav ul li {
-    float: left;
-    height: 44px;
-    overflow: hidden;
-    cursor: pointer;
-}
-#fullScreenBar .fullScreenNav ul li a {
-    color: inherit;
-    display: block;
-    font-weight: 500;
-    height: 49px;
-    line-height: 1;
-    padding-top: 13px;
-    padding-left: 10px;
-    padding-right: 10px;
-    border-bottom: 5px solid white;
-    .transition-duration(0.2s);
-    .transition-property('height');
-    .transition-timing-function(ease-out);
-}
-#fullScreenBar .fullScreenNav ul li.active a,
-#fullScreenBar .fullScreenNav ul li:hover a {
-    height: 44px;
-    text-decoration: none;
-}
-#fullScreenBar .fullScreenActions {
-    float: right;
-    margin-right: 5px;
-}
-#fullScreenBar .fullScreenActions a {
-    font-size: 120%;
-    display: block;
-    color: inherit;
-    padding-top: 12px;
-    cursor: pointer;
-    float: left;
-    margin-right: 20px;
 }
 
 // d3 treemap
@@ -231,7 +159,7 @@ span.dir.text {
     font-weight: bold;
     color: white;
 }
-.fullScreen #d3TreeMap .breadcrumbs {
+.full-screen #d3TreeMap .breadcrumbs {
     width: 100% !important;
 }
 #d3TreeMap .crumb {
@@ -249,44 +177,48 @@ span.dir.text {
 #d3TreeView {
     background-color: white;
 }
+#d3TreeView svg {
+    margin-bottom: -5px;
+}
 
 /* lineage tree */
 #tree_data {
-    width: 450px;
+    width: 420px;
     float: right;
-    padding: 5px;
+    padding: 8px;
     background: @gray-lighter;
-    border: 1px solid #cccccc;
-    border-radius: 3px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
     .transition(all 1s ease-in-out);
+    .shadow-z5();
 }
 #tree_data::before {
     content: "";
     display: block;
     height: 0;
     width: 0;
-    margin-left: -15px;
-    border: 10px solid #cccccc;
+    margin-left: -18px;
+    border: 10px solid #ccc;
     border-width: 10px 10px 10px 0;
-    border-color: transparent #cccccc transparent transparent;
+    border-color: transparent #ccc transparent transparent;
     position: absolute;
 }
 #tree_data h3 {
-    margin: 3px 0 5px 0;
+    line-height: 30px;
+    margin: 3px 0 5px;
+    color: @black-secondary;
 }
 #tree_data h4 {
-    margin: 8px 5px 0px 5px;
+    line-height: 25px;
+    margin-left: 5px;
 }
 #tree_data h3 a {
-    color: #666 !important;
+    color: @black-text !important;
 }
 #tree ul {
-    padding-left: 0px;
+    padding-left: 0;
 }
-#tree_search_group {
-    width: 440px;
-}
-#outline-mismatch-tabs {
-    margin-top: 10px;
-    margin-bottom: 8px;
+#tree_search_group,
+#searchtree {
+    max-width: 420px;
 }

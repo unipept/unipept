@@ -1,0 +1,192 @@
+<div class="apidocs casestudies row">
+  <div class="col-xs-9">
+    <h1 class='api-title'>Case study: Taxonomic analysis of a metaproteomics data set</h1>
+    <p class='lead'>
+      This case study describes how the Unipept command line tools can be used for the taxonomic analysis of a metaproteomics dataset.
+    </p>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text'>Introduction</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>
+          Over the period of evolution, we human beings have co-evolved an intricate symbiosis with microorganisms that inhabit our gastrointestinal tract. These microorganisms are responsible for maintaining a healthy gut environment, they aid in digestion of our food and our immune system and they guard us against invading pathogens. In addition, some diseases, such as <a href='https://en.wikipedia.org/wiki/Crohn%27s_disease' target='_blank'>Crohn's disease</a>, are somehow correlated to the composition of the gut microbiota. Although we are dependent on microorganisms for normal gut functioning, much remains to be learned about microbial processes in the gut that are carried out by this huge community of largely unexplored microbial cells that can amount to numbers as great as 10<sup>11</sup> per gram of faeces.
+    </p>
+        <p>
+          Recently, we have been aided by the development of molecular tools that enable us to determine the composition of microorganisms inhabiting the intestine without having to cultivate them. In addition to the increasing amounts of information about the identities of microorganisms in the gut from our own studies and others, there have been a limited number of studies of the functional genes in the entire gut microbial metagenome, using sequencing based metagenomics approaches.
+    </p>
+        <p>
+          A next step is to determine what genes are actually expressed and the function of the gut microbiota in different states of health and disease. <i>Shotgun proteomics</i> (<a href='#figure-1'>Figure 1</a>) is one approach that can be used to determine what proteins were expressed in an environmental sample. As of today, this technique is still in its infancy, but given the rapid technological developments and based on the results of the first analyses, we can nevertheless consider this to be a very promising technique.
+    </p>
+        <div id='figure-1' class="panel panel-default panel-figure">
+          <div class="panel-body">
+            <%= image_tag "clidocs/shotgun_metaproteomics.jpg" %>
+            <p class='panel-caption'><b>Figure 1</b> Shotgun metaproteomics approach used to identify microbial proteins in human faecal samples. Taken from Verberkmoes <i>et al.</i> (2009).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%= render 'getting_started' %>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text'>Taxonomic analysis</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>
+          As a demonstration of the Unipept <span class='initialism'>CLI</span> we show how it can be used to get insight into the biodiversity within one of the faecal samples from a gut microbiome study (Verberkmoes <i>et al.</i>, 2009). The sample was taken from a female that is part of a healthy monozygotic twin pair born in 1951 that was invited to take part in a larger double-blinded study. Details of this individual with respect to diet, antibiotic usage, and so on are described by Dicksved <i>et al.</i> (2008; individual 6a in this study, sample 7 in the study of Verberkmoes <i>et al.</i> (2009)). The most important that we learn from the available information in the questionnaire that this individual has filled up, is that she had gastroenteritis at the time the sample was taken and that her twin sister (individual 6b in the study of Dicksved <i>et al.</i> (2008), sample 7 in the study of Verberkmoes <i>et al.</i> (2009)) had taken non-steroidal anti-inflammatory drugs during the past 12 months before the time of sampling. The data can be downloaded from the <a href='http://www.nature.com/ismej/journal/v3/n2/full/ismej2008108a.html#bib7' target='_blank'>website of the study</a> and is also available as a demo data set on the <a href='http://unipept.ugent.be/datasets' target='_blank'>Unipept website</a>.
+    </p>
+        <p>
+          Say that we stored the list of tryptic peptides that were extracted from sample 7 in the study of Verberkmoes <i>et al.</i> (2009) in the text file <a href='/sample7.dat' target='_blank'>sample7.dat</a>. The file contains a list of all tryptic peptides, each on a separate line. The following session shows that this file contains a list of 3983 tryptic peptides (2065 unique peptides) that could be identified in the faecal sample using <i>shotgun metaproteomics</i>.
+    </p>
+        <pre style='max-height: initial;'>
+<b>$</b> head sample7.dat
+SGIVLPGQAQEKPQQAEVVAVGPGGVVDGK
+SGIVLPGQAQEKPQQAEVVAVGPGGVVDGK
+SGIVLPGQAQEKPQQAEVVAVGPGGVVDGKEVK
+MEVAVGDKVIYSK
+MDGTEYIIVK
+GLTAAIEAADAMTK
+AAEVALVGTEK
+IGSGLVTVMVR
+IGSGLVTVMVR
+AAVESGSAAASR
+<b>$</b> wc -l sample7.dat
+3983 sample7.dat
+<b>$</b> sort -u sample7.dat | wc -l
+2065</pre>
+        <p>
+          The first thing that strikes the eye is that a mass spectrometer might pick up multiple copies of the same tryptic peptide from an environmental sample. Depending on the fact whether or not we can draw quantitative conclusion on the number of different identifications of a particular peptide (apart from identification, the quantification of proteins in an environmental sample is an important research theme (Seifert <i>et al.</i>, 2013; Kolmeder &amp; de Vos, 2014)), we might decide to deduplicate the peptides before they are analysed further using the Unipept <span class='initialism'>CLI</span>. This decision has an impact on the analysis results, but deduplication also results in improved performance since it avoids duplicate work.
+    </p>
+        <p>
+          What might be less obvious at first sight, is that the peptides on lines 3 and 4 in the text file <a href='https://github.ugent.be/unipept/unipept-CLI/blob/master/data/sample7.dat' target='_blank'>sample7.dat</a> actually aren't tryptic peptides, but the composition of two tryptic peptides. This is a consequence of the fact that cleavage of proteins using trypsin is not always perfect, leading to some proteins that aren't cleaved properly. Such composed tryptic peptides are called <i>missed cleavages</i>. The index structure underpinning Unipept only indexes tryptic peptides that result from an in <i>silico trypsin</i> digest of the proteins in UniProt, so that missed cleavages cannot be matched directly by Unipept.
+    </p>
+        <p>
+          To cope with this problem, we can start to check if the peptides resulting from a shotgun metaproteomics experiment need to be cleaved further before making taxonomic identifications using Unipept. Performing an <i>in silico</i> trypsin digest can be done using the <code>prot2pept</code> command from the Unipept <span class='initialism'>CLI</span>. This command is executed purely <i>client side</i>, and thus is provided as a standalone command and not as a subcommand of the <code>unipept</code> command.
+    </p>
+        <pre>
+<b>$</b> sed -ne '4{p;q}' sample7.dat
+MEVAVGDKVIYSK
+<b>$</b> sed -ne '4{p;q}' sample7.dat | <b>prot2pept</b>
+MEVAVGDK
+VIYSK</pre>
+        <p>
+          Once a peptide is broken into multiple tryptic peptides, the lowest common ancestor can be computed for each tryptic peptide using the <code>unipept pept2lca</code> command. Next to accepting tryptic peptides as arguments, the command can also read one ore more tryptic peptides from standard input if no arguments were passed. Each tryptic peptide should be on a separate line when using standard input.
+    </p>
+        <pre style='max-height: initial;'>
+<b>$</b> unipept <b>pept2lca</b> -e SGIVLPGQAQEKPQQAEVVAVGPGGVVDGK MDGTEYIIVK
+peptide,taxon_id,taxon_name,taxon_rank
+SGIVLPGQAQEKPQQAEVVAVGPGGVVDGK,1263,Ruminococcus,genus
+MDGTEYIIVK,1263,Ruminococcus,genus
+<b>$</b> sed -ne '3{p;q}' sample7.dat
+SGIVLPGQAQEKPQQAEVVAVGPGGVVDGKEVK
+<b>$</b> sed -ne '3{p;q}' sample7.dat | unipept <b>pept2lca</b> -e
+<b>$</b> sed -ne '3{p;q}' sample7.dat | prot2pept
+SGIVLPGQAQEKPQQAEVVAVGPGGVVDGK
+EVK
+<b>$</b> sed -ne '3{p;q}' sample7.dat | prot2pept | unipept <b>pept2lca</b> -e
+peptide,taxon_id,taxon_name,taxon_rank
+SGIVLPGQAQEKPQQAEVVAVGPGGVVDGK,1263,Ruminococcus,genus</pre>
+        <p>
+          Unipept only indexes tryptic peptides extracted from UniProt sequences that have a length between 5 and 50 amino acids (boundaries included). This choice was driven by the detection limits of most common mass spectrometers. As a result, an additional time saver is to search for tryptic peptides that have less than 5 of more than 50 amino acids, because Unipept will never find protein matches for these peptides. The <code>peptfilter</code> command from the Unipept <span class='initialism'>CLI</span> can be used to filter out peptides that are too short or too long prior to the taxonomic identification step. By default, it filters out all peptides for which it is known in advance that Unipept will find no matches.
+    </p>
+        <pre>
+<b>$</b> sed -ne '3{p;q}' sample7.dat | prot2pept | <b>peptfilter</b> | unipept pept2lca -e
+peptide,taxon_id,taxon_name,taxon_rank
+SGIVLPGQAQEKPQQAEVVAVGPGGVVDGK,1263,Ruminococcus,genus</pre>
+        <p>
+          All commands of the Unipept <span class='initialism'>CLI</span> follow the input/output paradigm of the Unix command line, so that they be chained together seamlessly. This way, for example, we can determine the <span class='initialism'>LCA</span>s for the first six peptides of sample 7 by combining the previous processing steps: split missed cleavages, filter out peptides that are too short or too long, equate leucine (residue <code>L</code>) and isoleucine (residue <code>I</code>), and deduplicate the tryptic peptides.
+    </p>
+        <pre style='max-height: initial;'>
+<b>$</b> head -n6 sample7.dat | prot2pept | peptfilter | tr I L | sort -u
+GLTAALEAADAMTK
+MDGTEYLLVK
+MEVAVGDK
+SGLVLPGQAQEKPQQAEVVAVGPGGVVDGK
+VLYSK
+<b>$</b> head -n6 sample7.dat | prot2pept | peptfilter | tr I L | sort -u | unipept pept2lca -e
+peptide,taxon_id,taxon_name,taxon_rank
+GLTAALEAADAMTK,186802,Clostridiales,order
+MDGTEYLLVK,1263,Ruminococcus,genus
+MEVAVGDK,1263,Ruminococcus,genus
+SGLVLPGQAQEKPQQAEVVAVGPGGVVDGK,1263,Ruminococcus,genus
+VLYSK,1,root,no rank</pre>
+      </div>
+    </div>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text'>Comparison with the Unipept web interface</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>
+          The biodiversity in sample 7 from the study of Verberkmoes <i>et al.</i> (2009) can be easily computed and visualised using the <i>Metagenomics Analysis</i> feature of the <a href='http://unipept.ugent.be' target='_blank'>Unipept web site</a>. All it takes is to paste the list of peptides that were identified from an environmental sample in a text area, select the appropriate search options, and to click the Search button to launch the identification process.
+    </p>
+        <p>
+          In the session that is shown in <a href='#figure-2'>Figure 2</a>, we have indicated that no distinction should be made between leucine (<code>L</code>) and isoleucine (<code>I</code>), that the peptides must be deduplicate prior to the actual biodiversity analysis, and that the results must be exported in csv format (<i>comma separated values</i>). Breaking up the missed cleavages happens by default. In addition, the option <i>Advanced missed cleavage handling</i> can be activated to indicate that the results should be aggregated as a post-processing step (not selected in this example).
+    </p>
+        <div id='figure-2' class="panel panel-default panel-figure">
+          <div class="panel-body">
+            <%= image_tag "clidocs/multi_peptide_analysis.png" %>
+            <p class='panel-caption'><b>Figure 2</b> Processing of sample 7 from the study of Verberkmoes <i>et al.</i> (2009) using the <i>Metaproteomics Analysis</i> feature of the <a href='http://unipept.ugent.be' target='_blank'>Unipept web site</a>. In this example session we indicate that no distinction should be made between leucine (<code>L</code>) and isoleucine (<code>I</code>), that the peptides must be deduplicated, and that the results must be exported in csv format (<i>comma separated values</i>). Breaking up the missed cleavages happens by default. In addition, the option <i>Advanced missed cleavage handling</i> can be activated to indicate that the results should be aggregated as a post-processing step (not selected in this example).</p>
+          </div>
+        </div>
+        <p>
+          The same result can be obtained using the following combination of commands from the Unipept <span class='initialism'>CLI</span>. The timing gives an impression of the performance of Unipept to compute the <span class='initialism'>LCA</span>s for all 2005 unique tryptic peptides extracted from sample 7. It indicates that part of the processing is parallelised, and that the majority of the processing time is consumed by exchanging data between the client and the Unipept server and the server-side processing of the data.
+    </p>
+        <pre style='max-height: initial;'>
+<b>$</b> prot2pept < sample7.dat | peptfilter | tr I L | sort -u | wc -l
+2005
+<b>$</b> time prot2pept < sample7.dat | peptfilter | tr I L | sort -u | unipept pept2lca -e > sample7.csv
+
+real    0m0.329s
+user    0m0.465s
+sys     0m0.038s
+<b>$</b> head sample7.csv
+peptide,taxon_id,taxon_name,taxon_rank
+AAALNLVPNSTGAAK,2,Bacteria,superkingdom
+AAALNTLAHSTGAAK,1678,Bifidobacterium,genus
+AAALNTLPHSTGAAK,1678,Bifidobacterium,genus
+AAAMSMLPTSTGAAK,2,Bacteria,superkingdom
+AAANESFGYNEDELVSSDLVGMR,186802,Clostridiales,order
+AAANYLDLPLYR,2,Bacteria,superkingdom
+AAAVNLVPNSTGAAK,2,Bacteria,superkingdom
+AADAAAALGEGLQAFCLPGSVADHR,186802,Clostridiales,order
+AADAAAALGEGLQAFCLPGSVADTR,186802,Clostridiales,order</pre>
+        <p>
+          For those that are not familiar with <i>IO redirection</i>, the <code>unipept</code> command also supports the <code>-i/--input</code> option to read the peptides from the file that is passed as an argument and the <code>-o/--output</code> option to store the results in a file that is passed as an argument.
+    </p>
+        <pre style='max-height: initial'>
+<b>$</b> unipept pept2lca <b>--input</b> sample7.dat <b>--output</b> sample7.csv
+<b>$</b> head sample7.csv
+peptide,taxon_id,taxon_name,taxon_rank
+AAALNLVPNSTGAAK,2,Bacteria,superkingdom
+AAALNTLAHSTGAAK,1678,Bifidobacterium,genus
+AAALNTLPHSTGAAK,1678,Bifidobacterium,genus
+AAAMSMLPTSTGAAK,2,Bacteria,superkingdom
+AAANESFGYNEDELVSSDLVGMR,186802,Clostridiales,order
+AAANYLDLPLYR,2,Bacteria,superkingdom
+AAAVNLVPNSTGAAK,2,Bacteria,superkingdom
+AADAAAALGEGLQAFCLPGSVADHR,186802,Clostridiales,order
+AADAAAALGEGLQAFCLPGSVADTR,186802,Clostridiales,order</pre>
+        <p>
+          If needed, the <code>unipept pept2lca</code> command can be used in combination with the <code>-a</code> option to fetch the complete lineages for all <span class='initialism'>LCA</span>s according to the Unipept Taxonomy. <a href='#figure-3'>Figure 3</a> shows the hierarchical classification of the taxa that could be identified in sample 7, with the node representing the order <i>Clostridiales</i> having the focus. A similar tree view can be found in the <i>Treeview</i> tab on the page showing the results of a <a href='<%= datasets_path %>' target='_blank'>Metaproteomics analysis</a> in the Unipept web interface.
+    </p>
+        <div id='figure-3' class="panel panel-default panel-figure">
+          <div class="panel-body">
+            <%= image_tag "clidocs/sample7_treeview.png" %>
+            <p class='panel-caption'><b>Figure 3</b> Snapshot of an interactive tree view that shows the results of the biodiversity analysis of sample 7, a metaproteomics data set from the study of Verberkmoes <i>et al.</i> (2009). The node that represents the order <i>Clostridiales</i> has the focus. Percentages on the nodes indicate the relative amount of tryptic peptides that are specific for the corresponding taxa or one of its subtaxa, and also correspond to the linear color gradient that was used to color the nodes: red (100%) - light yellow (0%).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h2>References</h2>
+    <ul>
+      <li>Dicksved, J., Halfvarson, J., Rosenquist, M., Järnerot, G., Tysk, C., Apajalahti, J., ... &amp; Jansson, J. K. (2008). Molecular analysis of the gut microbiota of identical twins with Crohn's disease. <em>The ISME journal</em>, 2(7), 716-727.</li>
+      <li>Kolmeder, C. A., &amp; de Vos, W. M. (2014). Metaproteomics of our microbiome — developing insight in function and activity in man and model systems. <em>Journal of proteomics</em>, 97, 3-16.</li>
+      <li>Seifert, J., Herbst, F. A., Halkjær Nielsen, P., Planes, F. J., Jehmlich, N., Ferrer, M., &amp; Bergen, M. (2013). Bioinformatic progress and applications in metaproteogenomics for bridging the gap between genomic sequences and metabolic functions in microbial communities. <em>Proteomics</em>, 13(18-19), 2786-2804.</li>
+      <li>Verberkmoes, N. C., Russell, A. L., Shah, M., Godzik, A., Rosenquist, M., Halfvarson, J., ... &amp; Jansson, J. K. (2009). Shotgun metaproteomics of the human distal gut microbiota. <em>The ISME journal</em>, 3(2), 179-189.</li>
+    </ul>
+  </div>
+  <div class="col-xs-3">
+    <%= render 'api/shared/sidebar' %>
+  </div>
+</div>
