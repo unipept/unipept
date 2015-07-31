@@ -54,8 +54,8 @@ module UnipeptWeb
     config.assets.paths << "#{Rails}/vendor/assets/fonts"
 
     config.versions = {
-      unipept: '3.0 beta',
-      gem: '1.0.0',
+      unipept: '3.0',
+      gem: '1.0.1',
       uniprot: '2015.07'
     }
 
