@@ -3,7 +3,7 @@
  * currently in the visualisation. features: reorder by dragging, autosort,
  * remove individual genomes, remove all genome.
  *
- * @param <Hash> args.genomes Hash of genomes (by bioproject_id)
+ * @param <Map> args.genomes Map of genomes (by assembly id)
  * @param <Pancore> args.pancore Pancore object
  */
 var constructGenomeTable = function constructGenomeTable(args) {
@@ -21,7 +21,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
      */
     function init() {
         initAutoSort();
-        initDropAndSort();
+        initDrag();
 
         $("#remove-all").click(pancore.clearAllData);
     }
@@ -46,33 +46,18 @@ var constructGenomeTable = function constructGenomeTable(args) {
     }
 
     /**
-     * Initializes dragable and sortable
+     * Initializes sortable
      */
-    function initDropAndSort() {
-        $("#genomes_table").disableSelection();
-        $("#genomes_table, #pancore_graph, #sim_matrix").droppable({
-            activeClass: "acceptDrop",
-            hoverClass: "willDrop",
-            tolerance: "pointer",
-            accept: "li,tr.own",
-            drop: function (event, ui) {
-                var g = [];
-                ui.helper.find(".data.name").each(function () {
-                    g.push({name : $(this).text(), bioproject_id : $(this).data("bioproject_id")});
-                });
-                if (g.length < 70 || confirm("You're trying to add a lot of genomes (" + g.length + "). Are you sure you want to continue?")) {
-                    pancore.addGenomes(g);
-                }
+    function initDrag() {
+        dragula([$("#genomes_table tbody").get(0)], {
+            direction: 'vertical',
+            moves: function (el) {
+              return d3.select(el).datum().status === "Done";
             }
-        });
-        $("#genomes_table tbody").sortable({
-            axis: 'y',
-            containment: '.left-col',
-            cursor: 'url(/closedhand.cur) 7 5, move',
-            stop: function () {
-                pancore.updateOrder(calculateTablePositions());
-                that.update();
-            }
+        })
+        .on("drop", function () {
+            pancore.updateOrder(calculateTablePositions());
+            that.update();
         });
     }
 
@@ -89,15 +74,16 @@ var constructGenomeTable = function constructGenomeTable(args) {
             stop = 0;
 
         d3.selectAll("#genomes_table tbody tr").each(function (d, i) {
-            var bioproject_id = d.bioproject_id;
-            if (genomes[bioproject_id].position === i && stop === 0) {
+            var id = d.id;
+            var genome = genomes.get(id);
+            if (genome.position === i && stop === 0) {
                 start = i;
-            } else if (genomes[bioproject_id].position !== i) {
+            } else if (genome.position !== i) {
                 stop = i;
-                genomes[bioproject_id].position = i;
-                genomes[bioproject_id].status = "Processing";
+                genome.position = i;
+                genome.status = "Processing";
             }
-            order[i] = bioproject_id;
+            order[i] = id;
         });
         start++;
         return {"order" : order, "start" : start, "stop" : stop};
@@ -110,15 +96,44 @@ var constructGenomeTable = function constructGenomeTable(args) {
     function runAutosort() {
         var i;
         pancore.autoSort($(this).attr("data-type"));
-        for (i in genomes) {
-            genomes[i].status = "Processing";
-        }
+        genomes.forEach(function (val) { val.status = "Processing"; });
         that.update();
         $("#autosort").mouseleave();
         return false;
     }
 
+    /**
+     * Sets the property of a genome in the table
+     *
+     * @param <String> id The assembly id of the genome of which we want to
+     *          change the status
+     * @param <String> property the name of the property to set
+     * @param <Object> propertyValue the value of the property to set
+     * @param <Boolean> updateTable If true, update the table on the web page.
+     *          Should be set to false in case of batch update
+     */
+    function setGenomeProperty(id, property, propertyValue, updateTable) {
+        if (!genomes.has(id)) return;
+        genomes.get(id)[property] = propertyValue;
+        if (updateTable) {
+            that.update();
+        }
+    }
+
     /*************** Public methods ***************/
+
+    /**
+     * Handles the transition from and to fullscreen mode
+     *
+     * @param <Boolean> isFullScreen Is the page in full screen mode?
+     */
+    that.setFullScreen = function setFullScreen(isFullScreen) {
+        if (isFullScreen) {
+            $(".analyzed-proteomes").appendTo(".full-screen-container");
+        } else {
+            $(".analyzed-proteomes").appendTo(".proteome-adder");
+        }
+    };
 
     /**
      * Redraws the table
@@ -134,25 +149,23 @@ var constructGenomeTable = function constructGenomeTable(args) {
      * @param <Genome> genome The genome we want to add
      */
     that.addGenome = function addGenome(genome) {
-        genomes[genome.bioproject_id] = genome;
+        genomes.set(genome.id, genome);
     };
 
     /**
-     * Removes the genome with the given bioproject_id
+     * Removes the genome with the given id
      *
-     * @param <Number> bioprojectId The id of the genome we want to remove
+     * @param <Number> id The id of the genome we want to remove
      * @return
      */
-    that.removeGenome = function removeGenome(bioprojectId) {
+    that.removeGenome = function removeGenome(id) {
         // Only remove data that's already loaded
-        if (genomes[bioprojectId].status !== "Done") return;
-        for (i in genomes) {
-            genomes[i].status = "Processing";
-        }
-        delete genomes[bioprojectId];
+        if (genomes.get(id).status !== "Done") return;
+        genomes.forEach(function (val) { val.status = "Processing"; });
+        genomes.delete(id);
         that.update();
         var r = calculateTablePositions();
-        return {"bioproject_id" : bioprojectId,
+        return {"id" : id,
             "order" : r.order,
             "start" : r.start
         };
@@ -164,44 +177,34 @@ var constructGenomeTable = function constructGenomeTable(args) {
     that.clearAllData = function clearAllData() {
         lca = "";
         var i;
-        for (i in genomes) {
-            delete genomes[i];
-        }
+        genomes.clear();
         that.clear();
     };
 
     /**
      * Sets the status of a genome in the table
      *
-     * @param <Number> bioprojectId The id of the genome of which we want to
+     * @param <Number> id The id of the genome of which we want to
      *          change the status
      * @param <String> status the new status
      * @param <Boolean> updateTable If true, update the table on the web page.
      *          Should be set to false in case of batch update
      */
-    that.setGenomeStatus = function setGenomeStatus(bioprojectId, status, updateTable) {
-        if (!genomes.hasOwnProperty(bioprojectId)) return;
-        genomes[bioprojectId].status = status;
-        if (updateTable) {
-            that.update();
-        }
+    that.setGenomeStatus = function setGenomeStatus(id, status, updateTable) {
+        setGenomeProperty(id, "status", status, updateTable);
     };
 
     /**
      * Sets the order of a genome in the table
      *
-     * @param <Number> bioprojectId The id of the genome of which we want to
+     * @param <Number> id The id of the genome of which we want to
      *          change the status
      * @param <Number> position the new position
      * @param <Boolean> updateTable If true, update the table on the web page.
      *          Should be set to false in case of batch update
      */
-    that.setGenomePosition = function setGenomePosition(bioprojectId, position, updateTable) {
-        if (!genomes.hasOwnProperty(bioprojectId)) return;
-        genomes[bioprojectId].position = position;
-        if (updateTable) {
-            that.update();
-        }
+    that.setGenomePosition = function setGenomePosition(id, position, updateTable) {
+        setGenomeProperty(id, "position", position, updateTable);
     };
 
     /**
@@ -212,7 +215,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
     that.setOrder = function setOrder(order) {
         var i;
         for (i = 0; i < order.length; i++) {
-            genomes[order[i]].position = i;
+            genomes.get(order[i]).position = i;
         }
         that.update();
     };
@@ -228,15 +231,14 @@ var constructGenomeTable = function constructGenomeTable(args) {
     };
 
     /**
-     * Returns the order of the genomes in the table as an array of
-     * bioproject id's
+     * Returns the order of the genomes in the table as an array of id's
      *
-     * @return <Array> order An array containing the bioproject id's
+     * @return <Array> order An array containing the  id's
      */
     that.getOrder = function getOrder() {
         var order = [];
         d3.selectAll("#genomes_table tbody tr").each(function (d, i) {
-            order[i] = d.bioproject_id;
+            order[i] = d.id;
         });
         return order;
     };
@@ -246,11 +248,11 @@ var constructGenomeTable = function constructGenomeTable(args) {
      */
     that.update = function update() {
         var text,
-        tr,
-        newRows,
-        td;
+            tr,
+            newRows,
+            td;
 
-        text = "Genomes";
+        text = "Proteomes";
         if (lca !== "") {
             text += " (LCA: " + lca + ")";
         }
@@ -258,13 +260,13 @@ var constructGenomeTable = function constructGenomeTable(args) {
 
         // Add rows
         tr = d3.select("#genomes_table tbody").selectAll("tr.added")
-            .data(d3.values(genomes), function (d) { return d.bioproject_id; });
+            .data(iteratorToArray(genomes.values()), function (d) { return d.id; });
         newRows = tr.enter().append("tr").attr("class", "added");
         tr.exit().remove();
         tr.sort(function (a, b) { return a.position - b.position; });
 
         // Add cells
-        newRows.append("td").attr("class", "handle").html("<span class='glyphicon glyphicon-resize-vertical'></span>");
+        newRows.append("td").attr("class", "handle").html("<span class='glyphicon glyphicon-resize-vertical' title='drag to reorder'></span>");
         td = tr.selectAll("td.data")
             .data(function (d) {
                 return d3.entries(d).filter(function (entry) {
@@ -283,11 +285,11 @@ var constructGenomeTable = function constructGenomeTable(args) {
                         return "<span class='glyphicon glyphicon-cloud-download'></span>";
                     }
                 } else {
-                    var id = d3.select(this.parentNode).datum().bioproject_id;
-                    if (("" + id).charAt(0) !== "u") {
-                        return d.value + " <a href='http://www.ncbi.nlm.nih.gov/bioproject/?term=" + d3.select(this.parentNode).datum().bioproject_id + "' target='_blank' title='open bioproject page'><span class='glyphicon glyphicon-share-alt'></span></a>";
+                    var genome = d3.select(this.parentNode).datum();
+                    if (!genome.own) {
+                        return d.value + " <a href='http://www.ncbi.nlm.nih.gov/assembly/" + genome.assembly_id + "' target='_blank' title='open assembly page'><span class='glyphicon glyphicon-share-alt'></span></a>";
                     } else {
-                        return d.value + " <span class='glyphicon glyphicon-home' title='local genome'></span>";
+                        return d.value + " <span class='glyphicon glyphicon-home' title='local proteome'></span>";
                     }
                 }
                 return d.value;
@@ -299,37 +301,19 @@ var constructGenomeTable = function constructGenomeTable(args) {
             .append("a")
             .html("<span class='glyphicon glyphicon-trash'></span>")
             .attr("class", "btn btn-default btn-xs")
-            .attr("title", "remove genome")
+            .attr("title", "remove proteome")
             .on("click", pancore.removeGenome);
         newRows.each(function () { highlight(this); });
         tr.selectAll("td.button a.btn").classed("disabled", function (d) {return d.status !== "Done"; });
     };
 
     /**
-     * Displays a message above the table
-     *
-     * @param <String> icon The name of the glyphicon you want to show in front
-     *          of your message
-     * @param <String> msg The message you want to set
-     */
-    that.setTableMessage = function setTableMessage(icon, msg) {
-        $("#table-message").html("<span class='glyphicon glyphicon-" + icon + "'></span> " + msg);
-    };
-
-    /**
-     * Enables or disables the dragging of the tables and updates the message
-     * above the table.
+     * Does nothing for the moment
      *
      * @param <Boolean> enabled True if we want to enable the table
      */
     that.setEnabled = function setEnabled(enabled) {
-        if (enabled) {
-            that.setTableMessage("info-sign", "Drag rows to reorder them or use one of the autosort options.");
-            $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", false);
-        } else {
-            that.setTableMessage("refresh", "Please wait while we load the genomes for this species.");
-            $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", true);
-        }
+
     };
 
     // initialize the object

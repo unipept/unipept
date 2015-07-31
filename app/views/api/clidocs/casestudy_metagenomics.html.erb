@@ -1,0 +1,123 @@
+<div class="apidocs casestudies row">
+  <div class="col-xs-9">
+    <h1 class='api-title'>Case study: Metagenomics</h1>
+    <p class='lead'>
+      This case study describes how the Unipept command line tools can be used for the taxonomic analysis of metagenomics.
+    </p>
+    <div class="apidocs-callout apidocs-callout-danger" style="background-color: white">
+      <h4>Warning</h4>
+      <p>This is an (very incomplete) draft of how Unipept could be used for metagenomics. Proceed at your own risk.</p>
+    </div>
+    <div class='card'>
+      <div class='card-supporting-text'>
+        <p>
+          This is a short report on analysing the data from a shotgun metagenomics data set. For the moment, we have omitted the steps involved in quality filtering and mate pair assembly of the raw DNA reads, as well as gene prediction using <code>FragGeneScan</code>. The end result of all these steps are two files:
+    </p>
+        <ul>
+          <li><code>joined_proteins.fasta.faa</code>: predicted protein fragments on assembled reads that passed the quality filtering.</li>
+          <li><code>single_proteins.fasta.faa</code>: predicted protein fragments on non-assembled reads that passed the quality filtering.</li>
+        </ul>
+        <p>
+          In a first step, we process all protein fragments (both from the assembled and single reads) by splitting them into tryptic peptides (filtered to length in the range [5, 50]) and merging the peptides coming from the same DNA read into a single FASTA record <i>(timing: 12 mins 22 secs)</i>.
+    </p>
+        <pre>
+<b>$</b> cat joined_proteins.fasta.faa singles_proteins.fasta.faa | prot2pept | peptfilter | python3 join_reads.py > peptides.fst</pre>
+        <p>
+          This makes use of the following Python3 script that merges all peptides coming from the same DNA read into a single FASTA record.
+    </p>
+        <pre>
+import sys
+
+prevheader = None
+skipped = 0
+for line in sys.stdin:
+
+    if line.startswith('>'):
+        header = line.split('_')[0]
+        if header != prevheader:
+            prevheader = header
+            sys.stdout.write('{}\n'.format(header))
+        else:
+            skipped += 1
+            sys.stderr.write('{}: skipped {}\n'.format(skipped, header.rstrip()))
+    else:
+        sys.stdout.write(line)</pre>
+        <p>
+          <b>NOTE</b>: The file <code>singles_proteins.fasta.faa</code> may contain two mates coming from the same clone, but that are not consecutive in the file. Since we know that the protein fragments from both mates come from the same organism, the processing could be improved if we also join the peptides from the protein fragments of the same clone. This is not yet covered by the python script. This could be done by sorting the results after the next step (after <code>unipept pept2lca</code>).
+    </p>
+        <p>
+          Then we compute the LCA for all individual tryptic peptides <i>(timing: 37 mins 17 secs)</i>.
+    </p>
+        <pre>
+<b>$</b> unipept pept2lca < peptides.fst > peptides.lca.fst</pre>
+        <p>
+          Instead of deriving the biodiversity distribution from the individual peptides, we can aggregate the identifications of all peptides coming from the same DNA read into a consensus identification. To do so, we use a special version of the lowest common ancestor algorithm (LCA*) that takes the most specific node in the taxonomic tree if both nodes are on the same lineage <i>(timing: 6 mins 36 secs)</i>.
+    </p>
+        <pre>
+<b>$</b> python3 /work/unipept-metagenomics-scripts/tree-of-life/pept2lca2lca.py < peptides.lca.fst > reads.lca.fst</pre>
+        <p>
+          <b>NOTE</b>: if we do not need all the intermediate results of the steps leading into the DNA read identifications, we can merge all command that lead to the generation of the file <code>reads.lca.fst</code> into a single piped command.
+    </p>
+        <pre>
+<b>$</b> sort -T /work peptides.lca.fst > peptides.lca.sorted.fst</pre>
+        <p>
+          Then we can compute the biodiversity distribution of a sample by counting the number of occurrences of each taxon <i>(timing: 4.8 secs)</i>.
+    </p>
+        <pre>
+<b>$</b> tail -n +2 < reads.lca.fst | awk -F, '{print $2}' | sort | uniq -c | sed 's/^[\t ]*//g' | sed 's/\([^ ]*\) \(.*\)/\2,\1/' | sort > distribution.csv</pre>
+        <p>
+          As the analysis only reports the taxon IDs, we now lookup the names and ranks of all taxa found in the sample <i>(timing: 1.3 secs)</i>.
+    </p>
+        <pre>
+<b>$</b> cat distribution.csv | awk -F, '{print $1}'| unipept taxonomy | tail -n +2 | sort > taxons.csv</pre>
+        <p>
+          This allows us to determine the most abundant species-level identifications in the sample <i>(timing: 0 secs)</i>.
+    </p>
+        <pre>
+<b>$</b> join -t, -1 1 -2 1 distribution.csv taxons.csv | sort -t, -k2,2nr | grep species | head -n30</pre>
+        <p>
+          The 30 most dominant species are:
+    </p>
+        <pre>
+411153,63403,Gramella forsetii,species
+248452,29568,Psychrobacter aquaticus,species
+195907,24491,Gillisia limnaea,species
+72228,18734,Ophiocordyceps sinensis,species
+1165841,16102,Sulfurovum sp. AR,species
+1789,11623,Mycobacterium xenopi,species
+7897,10129,Latimeria chalumnae,species
+225422,10043,Oceanibulbus indolifex,species
+562,7295,Escherichia coli,species
+7668,7059,Strongylocentrotus purpuratus,species
+228,6819,Pseudoalteromonas haloplanktis,species
+60137,5755,Sulfitobacter pontiacus,species
+930802,5417,Nonlabens marinus,species
+5888,5067,Paramecium tetraurelia,species
+398743,5041,Zunongwangia profunda,species
+197222,4994,Glaciecola mesophila,species
+5911,4619,Tetrahymena thermophila,species
+340170,4499,Spathaspora passalidarum,species
+7029,4448,Acyrthosiphon pisum,species
+8022,4414,Oncorhynchus mykiss,species
+180542,4068,Salinisphaera shabanensis,species
+29760,3840,Vitis vinifera,species
+6412,3821,Helobdella robusta,species
+8128,3574,Oreochromis niloticus,species
+5786,3529,Dictyostelium purpureum,species
+46433,3501,Reticulomyxa filosa,species
+1172189,3486,Oxytricha trifallax,species
+334543,3472,Psychrobacter arcticus,species
+5949,3255,Stylonychia lemnae,species
+588596,3152,Rhizophagus irregularis,species</pre>
+        <p>
+          We can also summarize the biodiversity distribution in a tree. The following code converts the distribution into a JSON file that maps the counts onto the tree of life <i>(timing: 33.5 secs)</i>.
+    </p>
+        <pre>
+<b>$</b> tail -n +2 < reads.lca.fst | awk -F, '{print $2}' | python3 /work/unipept-metagenomics-scripts/tree-of-life/tax2tree.py tree.json</pre>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-3">
+    <%= render 'api/shared/sidebar' %>
+  </div>
+</div>

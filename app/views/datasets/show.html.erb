@@ -1,4 +1,14 @@
-<%= render @dataset, :load => false %>
-
-<%= link_to('Edit', edit_dataset_path(@dataset)) + " |" if user_signed_in? && current_user.is_admin? %>
-<%= link_to 'Back', datasets_path %>
+<div class="card news">
+  <div class='card-title card-title-colored'>
+    <h2 class='card-title-text'><%= @dataset.environment %></h2>
+  </div>
+  <div class='card-supporting-text'>
+    <%= render @dataset, :load => false %>
+  </div>
+  <% if user_signed_in? && current_user.admin? %>
+    <div class="card-actions card-border">
+      <%= link_to raw("<span class='glyphicon glyphicon-pencil'></span> Edit"), edit_dataset_path(@dataset), :class => 'btn btn-default' %>
+      <%= link_to raw("<span class='glyphicon glyphicon-trash'></span> Delete"), @dataset, data: {confirm: 'Are you sure?'}, :method => :delete, :class => 'btn btn-danger' %>
+    </div>
+  <% end %>
+</div>

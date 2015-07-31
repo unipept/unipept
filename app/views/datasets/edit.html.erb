@@ -1,6 +1,16 @@
-<h1>Editing dataset</h1>
-
-<%= render 'form' %>
-
-<%= link_to 'Show', @dataset %> |
-<%= link_to 'Back', datasets_path %>
+<div class="row">
+  <div class="col-xs-8 col-xs-offset-2">
+    <div class='card'>
+        <div class='card-title card-title-colored'>
+          <h2 class='card-title-text'>Edit a dataset</h2>
+        </div>
+        <div class='card-supporting-text'>
+          <%= render 'form' %>
+        </div>
+        <div class="card-actions card-border">
+          <%= link_to 'Show', @dataset, class: "btn-text" %>
+          <%= link_to 'Back', datasets_path, class: "btn-text" %>
+        </div>
+    </div>
+  </div>
+</div>

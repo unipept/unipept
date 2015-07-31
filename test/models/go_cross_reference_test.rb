@@ -10,34 +10,32 @@
 require 'test_helper'
 
 class GoCrossReferenceTest < ActiveSupport::TestCase
-
-  test "should rails error on create new GoCrossReference" do
-    assert_raises(ActiveRecord::ReadOnlyRecord) {GoCrossReference.new.save}
+  test 'should rails error on create new GoCrossReference' do
+    assert_raises(ActiveRecord::ReadOnlyRecord) { GoCrossReference.new.save }
   end
 
-  test "should raise error on save" do
+  test 'should raise error on save' do
     gocrossreference = go_cross_references(:gocrossreference1)
-    assert_raises(ActiveRecord::ReadOnlyRecord) {gocrossreference.save}
+    assert_raises(ActiveRecord::ReadOnlyRecord) { gocrossreference.save }
   end
 
-  test "should raise error on uniprot_entry_id change" do
+  test 'should raise error on uniprot_entry_id change' do
     gocrossreference = go_cross_references(:gocrossreference1)
-    assert_raises(ActiveRecord::ActiveRecordError) {gocrossreference.update_attribute(:uniprot_entry_id, 35)}
+    assert_raises(ActiveRecord::ActiveRecordError) { gocrossreference.update_attribute(:uniprot_entry_id, 35) }
   end
 
-  test "should raise error on go_id change" do
+  test 'should raise error on go_id change' do
     gocrossreference = go_cross_references(:gocrossreference1)
-    assert_raises(ActiveRecord::ActiveRecordError) {gocrossreference.update_attribute(:go_id, "35")}
+    assert_raises(ActiveRecord::ActiveRecordError) { gocrossreference.update_attribute(:go_id, '35') }
   end
 
-  test "should raise error on delete" do
+  test 'should raise error on delete' do
     gocrossreference = go_cross_references(:gocrossreference1)
-    assert_raises(ActiveRecord::ReadOnlyRecord) {gocrossreference.delete}
+    assert_raises(ActiveRecord::ReadOnlyRecord) { gocrossreference.delete }
   end
 
-  test "should raise error on destroy" do
+  test 'should raise error on destroy' do
     gocrossreference = go_cross_references(:gocrossreference1)
-    assert_raises(ActiveRecord::ReadOnlyRecord) {gocrossreference.destroy}
+    assert_raises(ActiveRecord::ReadOnlyRecord) { gocrossreference.destroy }
   end
-
 end

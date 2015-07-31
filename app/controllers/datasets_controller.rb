@@ -1,16 +1,16 @@
 class DatasetsController < ApplicationController
-
-   before_action :authorize, :only => [:new, :edit, :create, :update, :destroy]
+  before_action :authorize, only: [:new, :edit, :create, :update, :destroy]
 
   # GET /datasets
   # GET /datasets.xml
   def index
-    @title = "Metaproteomics Analysis"
+    @title = 'Metaproteomics Analysis'
+    @header_class = 'MPA'
     @datasets = Dataset.includes(:dataset_items).all
 
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @datasets }
+      format.xml  { render xml: @datasets }
     end
   end
 
@@ -21,7 +21,7 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @dataset }
+      format.xml  { render xml: @dataset }
     end
   end
 
@@ -32,7 +32,7 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
       format.html # new.html.erb
-      format.xml  { render :xml => @dataset }
+      format.xml  { render xml: @dataset }
     end
   end
 
@@ -48,11 +48,11 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
       if @dataset.save
-        format.html { redirect_to(@dataset, :flash => { :success => 'Dataset was successfully created.' }) }
-        format.xml  { render :xml => @dataset, :status => :created, :location => @dataset }
+        format.html { redirect_to(@dataset, flash: { success: 'Dataset was successfully created.' }) }
+        format.xml  { render xml: @dataset, status: :created, location: @dataset }
       else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @dataset.errors, :status => :unprocessable_entity }
+        format.html { render action: 'new' }
+        format.xml  { render xml: @dataset.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -64,11 +64,11 @@ class DatasetsController < ApplicationController
 
     respond_to do |format|
       if @dataset.update_attributes(params[:dataset])
-        format.html { redirect_to(@dataset, :flash => { :success => 'Dataset was successfully updated.' }) }
+        format.html { redirect_to(@dataset, flash: { success: 'Dataset was successfully updated.' }) }
         format.xml  { head :ok }
       else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @dataset.errors, :status => :unprocessable_entity }
+        format.html { render action: 'edit' }
+        format.xml  { render xml: @dataset.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -86,7 +86,8 @@ class DatasetsController < ApplicationController
   end
 
   def preload
-    @title = "Load dataset"
+    @title = 'Load dataset'
+    @header_class = 'MPA'
     @type = params[:type]
     @id = params[:id]
   end

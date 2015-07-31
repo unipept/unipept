@@ -1,10 +1,10 @@
-<h1>News</h1>
-
-<%= link_to 'New Post', new_post_path, :class => "btn btn-primary" if user_signed_in? && current_user.is_admin? %>
-<br/><br/>
+<h1>
+  News
+  <%= link_to 'New Post', new_post_path, :class => "btn btn-primary pull-right" if user_signed_in? && current_user.admin? %>
+</h1>
 
 <div id="posts">
-    <%= render @posts, :well => true %>
+    <%= render @posts %>
 </div>
 
 <%= will_paginate @posts %>

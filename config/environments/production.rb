@@ -12,7 +12,7 @@ UnipeptWeb::Application.configure do
   config.action_controller.perform_caching = true
 
   # Specifies the header that your server uses for sending files
-  config.action_dispatch.x_sendfile_header = "X-Sendfile"
+  config.action_dispatch.x_sendfile_header = 'X-Sendfile'
 
   # For nginx:
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
@@ -30,7 +30,7 @@ UnipeptWeb::Application.configure do
   # config.cache_store = :mem_cache_store
 
   # Enable Rails's static asset server
-  config.serve_static_assets = true
+  config.serve_static_files = true
 
   # Enable serving of images, stylesheets, and javascripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
@@ -62,7 +62,7 @@ UnipeptWeb::Application.configure do
 
   # enable google analytics
   config.unipept_analytics = false
-  config.unipept_analytics_key = ""
+  config.unipept_analytics_key = ''
 
   # if authentication is disabled, a guest user will always be signed in
   config.unipept_enable_auth = false
@@ -73,18 +73,18 @@ UnipeptWeb::Application.configure do
 
   # enable error emails
   config.unipept_error_mails = false
-  config.unipept_error_mails_addresses = [""]
+  config.unipept_error_mails_addresses = ['']
 end
 
 if Rails.application.config.unipept_error_mails
   UnipeptWeb::Application.config.middleware.use ExceptionNotification::Rack,
-  :throttle => {
-    :notifier => "email",
-    :notifier_options => {
-      :email_prefix => "[Unipept] ",
-      :sender_address => %{"Unipept" <unipept@ugent.be>},
-      :exception_recipients => Rails.application.config.unipept_error_mails_addresses
-    },
-    :per_hour => 1
-  }
+                                                throttle: {
+                                                  notifier: 'email',
+                                                  notifier_options: {
+                                                    email_prefix: '[Unipept] ',
+                                                    sender_address: %("Unipept" <unipept@ugent.be>),
+                                                    exception_recipients: Rails.application.config.unipept_error_mails_addresses
+                                                  },
+                                                  per_hour: 1
+                                                }
 end

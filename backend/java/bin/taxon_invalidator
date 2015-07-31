@@ -1,4 +1,0 @@
-#!/bin/sh
-binpath=$(dirname $0)
-targetpath=$binpath/../target
-java -Xmx1g -cp "$targetpath/unipept-0.0.1-SNAPSHOT.jar" org.unipept.tools.commandline.TaxonInvalidator $@

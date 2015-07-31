@@ -34,7 +34,7 @@ UnipeptWeb::Application.configure do
 
   # Log the query plan for queries taking more than this (works
   # with SQLite, MySQL, and PostgreSQL)
-  #config.active_record.auto_explain_threshold_in_seconds = 30
+  # config.active_record.auto_explain_threshold_in_seconds = 30
 
   # enable google analytics
   config.unipept_analytics = false
@@ -54,13 +54,13 @@ end
 
 if Rails.application.config.unipept_error_mails
   UnipeptWeb::Application.config.middleware.use ExceptionNotification::Rack,
-  :throttle => {
-    :notifier => "email",
-    :notifier_options => {
-      :email_prefix => "[Unipept-dev] ",
-      :sender_address => %{"Unipept-dev" <unipept@ugent.be>},
-      :exception_recipients => Rails.application.config.unipept_error_mails_addresses
-    },
-    :per_hour => 1
-  }
+                                                throttle: {
+                                                  notifier: 'email',
+                                                  notifier_options: {
+                                                    email_prefix: '[Unipept-dev] ',
+                                                    sender_address: %("Unipept-dev" <unipept@ugent.be>),
+                                                    exception_recipients: Rails.application.config.unipept_error_mails_addresses
+                                                  },
+                                                  per_hour: 1
+                                                }
 end

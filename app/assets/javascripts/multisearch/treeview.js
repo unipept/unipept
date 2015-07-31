@@ -115,13 +115,13 @@ var constructTreeview = function constructTreeview(args) {
             if (c) {
                 d.color = c;
             } else if (d.name === "Bacteria") {
-                d.color = "#1f77b4"; // blue
+                d.color = "#1565C0"; // blue
             } else if (d.name === "Archaea") {
-                d.color = "#ff7f0e"; // orange
+                d.color = "#FF8F00"; // orange
             } else if (d.name === "Eukaryota") {
-                d.color = "#2ca02c"; // green
+                d.color = "#2E7D32"; // green
             } else if (d.name === "Viruses") {
-                d.color = "#d6616b"; // red
+                d.color = "#C62828"; // red
             }
             if (d.children) {
                 d.children.forEach(function (node) { color(node, d.color); });
@@ -154,16 +154,17 @@ var constructTreeview = function constructTreeview(args) {
 
     // Expands a node for i levels
     function expand(d, i) {
-        if (typeof i === "undefined") {
-            i = 2;
+        var local_i = i;
+        if (typeof local_i === "undefined") {
+            local_i = 2;
         }
-        if (i > 0) {
+        if (local_i > 0) {
             if (d._children) {
                 d.children = d._children;
                 d._children = null;
             }
             if (d.children) {
-                d.children.forEach(function (c) {expand(c, i - 1); });
+                d.children.forEach(function (c) {expand(c, local_i - 1); });
             }
         }
     }
@@ -189,15 +190,14 @@ var constructTreeview = function constructTreeview(args) {
         // check if click is triggered by panning on a node
         if (Date.now() - zoomEnd < 200) return;
 
-        if (d.children) {
+        if (d3.event.shiftKey) {
+            expandAll(d);
+        } else if (d.children) {
             collapse(d);
         } else {
-            if (d3.event.shiftKey) {
-                expandAll(d);
-            } else {
-                expand(d);
-            }
+            expand(d);
         }
+
         that.update(d);
         centerNode(d);
     }

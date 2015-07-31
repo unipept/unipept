@@ -1,0 +1,37 @@
+<div class="apidocs-sidebar hidden-print">
+  <ul class="nav apidocs-sidenav">
+    <% @sidebar_nav.each do |nav_item| %>
+      <li class="<%= "active always-active" if @sidebar_name == nav_item[:name] %>">
+        <%= link_to(nav_item[:name], nav_item[:path]) %>
+        <% if @sidebar_name == nav_item[:name] && !@sidebar_subnav.nil?%>
+          <ul class="nav">
+            <% if @sidebar_name == "Case studies" %>
+              <% @sidebar_subnav.each do |(name, url)| %>
+                <li class="<%= "active" if name == @study %>"><%= link_to(name, url) %></li>
+              <% end %>
+            <% else %>
+              <%= raw(@sidebar_subnav.map{|name| "<li><a href='##{name.downcase.gsub(/\s+/, '-')}'>#{name}</a></li>"}.join) %>
+            <% end %>
+          </ul>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+  <a class="back-to-top" href="#top">
+    Back to top
+  </a>
+</div>
+
+<script>
+  $(function() {
+    $('body').scrollspy({ target: '.apidocs-sidenav' });
+    $('.apidocs-sidebar').affix({
+        offset: {
+          top: $(".apidocs-sidebar").offset().top,
+          // bottom: 70 is needed to prevent overlap with the footer
+          // but it seems to be broken in bootstrap 3.3.1
+          //bottom: 70
+        }
+    });
+  });
+</script>

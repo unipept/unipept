@@ -1,27 +1,25 @@
 //= require jquery
-//= require jquery-ui/draggable
-//= require jquery-ui/droppable
-//= require jquery-ui/sortable
 //= require jquery_ujs
 //= require zeroclipboard
+//= require vendor
+//= require ./polyfills
 //= require_self
 //= require_directory .
 //= require_directory ./peptidome
 //= require_directory ./multisearch
-//= require vendor
 
 // zeroclipboard config
 ZeroClipboard.config({
     hoverClass: 'btn-clipboard-hover'
 });
 
-function addCopy(selector, textFunction) {
+function addCopy(selector, textFunction, tooltip) {
     var copyMissed = new ZeroClipboard(selector);
     var htmlBridge = $('#global-zeroclipboard-html-bridge');
     copyMissed.on('ready', function () {
         htmlBridge
           .data('placement', 'top')
-          .attr('title', 'Copy to clipboard')
+          .attr('title', tooltip || 'Copy to clipboard')
           .tooltip();
     });
     // Copy to clipboard
@@ -45,6 +43,42 @@ function addCopy(selector, textFunction) {
           .tooltip('fixTitle')
           .tooltip("show");
     });
+}
+
+// a promise based get function
+// from http://www.html5rocks.com/en/tutorials/es6/promises/
+function get(url) {
+  // Return a new promise.
+  return new Promise(function (resolve, reject) {
+    // Do the usual XHR stuff
+    var req = new XMLHttpRequest();
+    req.open('GET', url);
+
+    req.onload = function() {
+      // This is called even on 404 etc
+      // so check the status
+      if (req.status === 200) {
+        // Resolve the promise with the response text
+        resolve(req.response);
+      }
+      else {
+        // Otherwise reject with the status text
+        // which will hopefully be a meaningful error
+        reject(Error(req.statusText));
+      }
+    };
+
+    // Handle network errors
+    req.onerror = function() {
+      reject(Error("Network Error"));
+    };
+
+    // Make the request
+    req.send();
+  });
+}
+function getJSON(url) {
+  return get(url).then(JSON.parse);
 }
 
 // highlights the background color
@@ -154,33 +188,31 @@ function triggerDownloadModal(svgSelector, canvasSelector, baseFileName, parentS
 
 /**
  * Triggers a file download in the browser using a hidden
- * form and a server round trip. Fires an optional callback
- * when the file starts downloading
+ * form and a server round trip. Returns a Promise that resolves when
+ * the file starts downloading
  *
  * @param <String> data The text you want in the file
  * @param <String> filename The requested file name
- * @param <Function> callback Optional callback that gets
- *          fired when the file starts downloading
  */
-function downloadDataByForm(data, fileName, callback) {
-    var nonce = Math.random(),
-        downloadTimer,
-        $downloadForm;
-    $("form.download").remove();
-    $("body").append("<form class='download' method='post' action='/download'></form>");
-    $downloadForm = $("form.download").append("<input type='hidden' name='filename' value='" + fileName + "'/>");
-    $downloadForm.append("<input type='hidden' name='data' class='data'/>");
-    $downloadForm.append("<input type='hidden' name='nonce' value='" + nonce + "'/>");
-    $downloadForm.find(".data").val(data);
-    $downloadForm.submit();
-    if (callback) {
+function downloadDataByForm(data, fileName) {
+    return new Promise(function(resolve, reject) {
+        var nonce = Math.random(),
+            downloadTimer,
+            $downloadForm;
+        $("form.download").remove();
+        $("body").append("<form class='download' method='post' action='/download'></form>");
+        $downloadForm = $("form.download").append("<input type='hidden' name='filename' value='" + fileName + "'/>");
+        $downloadForm.append("<input type='hidden' name='data' class='data'/>");
+        $downloadForm.append("<input type='hidden' name='nonce' value='" + nonce + "'/>");
+        $downloadForm.find(".data").val(data);
         downloadTimer = setInterval(function checkCookie() {
             if (document.cookie.indexOf(nonce) !== -1) {
-                callback();
                 clearInterval(downloadTimer);
+                resolve(fileName);
             }
         }, 100);
-    }
+        $downloadForm.submit();
+    });
 }
 
 /**
@@ -213,7 +245,7 @@ function error(errorMessage, userMessage) {
         }
     }
     if (userMessage) {
-        var msg = $("<div class='alert alert-danger' style='display: none;'><strong>Oh snap!</strong> " + userMessage + "</div>");
+        var msg = $("<div class='alert alert-danger alert-dismissible' style='display: none;'><button type='button' class='close' data-dismiss='alert'><span>&times;</span></button><strong>Oh snap!</strong> " + userMessage + "</div>");
         $("#messages").append(msg);
         msg.show("normal");
     }
@@ -222,7 +254,7 @@ function error(errorMessage, userMessage) {
 /* display the message variable in an info alert
  */
 function info(message) {
-    var msg = $("<div class='alert alert-info' style='display: none;'><strong>Heads up!</strong> " + message + "</div>");
+    var msg = $("<div class='alert alert-info alert-dismissible' style='display: none;'><button type='button' class='close' data-dismiss='alert'><span>&times;</span></button><strong>Heads up!</strong> " + message + "</div>");
     $("#messages").append(msg);
     msg.show("normal");
 }
@@ -282,4 +314,25 @@ window.onerror = function (message, file, line) {
         console.error(e);
     }
     logErrorToGoogle(e);
+};
+
+/**
+ * Takes an iterator and puts all values in an array
+ */
+function iteratorToArray(iterator) {
+    var vals = [],
+        v;
+    v = iterator.next();
+    while (!v.done) {
+        vals.push(v.value);
+        v = iterator.next();
+    }
+    return vals;
+}
+
+/**
+ * Capitalizes the first letter of a string
+ */
+String.prototype.capitalizeFirstLetter = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
 };

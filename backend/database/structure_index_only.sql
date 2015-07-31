@@ -40,12 +40,6 @@ ALTER TABLE embl_cross_references ADD INDEX fk_embl_reference_uniprot_entries (u
 
 
 -- -----------------------------------------------------
--- Table `unipept`.`genomes`
--- -----------------------------------------------------
-ALTER TABLE genomes ADD INDEX idx_insdc_id (insdc_id ASC), ADD INDEX idx_bioproject_id (bioproject_id ASC), ADD INDEX idx_taxon_id (taxon_id ASC);
-
-
--- -----------------------------------------------------
 -- Table `unipept`.`refseq_cross_references`
 -- -----------------------------------------------------
 ALTER TABLE refseq_cross_references ADD INDEX fk_refseq_reference_uniprot_entries (uniprot_entry_id ASC);
@@ -61,6 +55,19 @@ ALTER TABLE go_cross_references ADD INDEX fk_go_reference_uniprot_entries (unipr
 -- Table `unipept`.`ec_cross_references`
 -- -----------------------------------------------------
 ALTER TABLE ec_cross_references ADD INDEX fk_ec_reference_uniprot_entries (uniprot_entry_id ASC);
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`assemblies`
+-- -----------------------------------------------------
+ALTER TABLE assemblies ADD INDEX fk_taxons_assemblies_idx (taxon_id ASC);
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`assembly_sequences`
+-- -----------------------------------------------------
+ALTER TABLE assembly_sequences ADD INDEX fk_assemblies_assembly_sequences_idx (assembly_id ASC);
+ALTER TABLE assembly_sequences ADD INDEX idx_genbank_accession (genbank_accession ASC);
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

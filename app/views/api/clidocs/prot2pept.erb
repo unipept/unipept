@@ -1,0 +1,101 @@
+<div class="apidocs row">
+  <div class="col-xs-9">
+    <div class='page-header'>
+      <h1 class='api-title'>
+        <samp>prot2pept</samp><br>
+        <small>Splits proteins into peptides based on (trypsin) digest.</small>
+      </h1>
+    </div>
+    <p>
+      The <code>prot2pept</code> command takes one or more protein sequences as input, performs an in silico tryptic digest on them and returns the digested peptides as output. By default, a trypsin digest is simulated, but other proteases can be specified by using the <a href='#param-pattern'><samp>--pattern</samp> parameter</a>. This command runs entirely locally and doesn't connect to any server.
+    </p>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='input'>Input</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>
+          The <code>prot2pept</code> command expects protein sequences as input via <i>standard input</i>. A single protein sequences per line is expected.
+
+          <h5>Example</h5>
+          <pre>
+<b>$</b> cat input.txt
+AALTERAALE
+MDGTEKYIIVK
+<b>$</b> cat input | prot2pept
+AALTER
+AALE
+MDGTEK
+YIIVK</pre>
+        </div>
+      </div>
+      <div class='card'>
+        <div class='card-title card-title-colored'>
+          <h2 class='card-title-text' id='output'>Output</h2>
+        </div>
+        <div class='card-supporting-text'>
+          <p>
+            The <code>prot2pept</code> command outputs the split peptides to <i>standard output</i>. All peptides are separated by newlines.
+    </p>
+        </div>
+      </div>
+      <div class='card'>
+        <div class='card-title card-title-colored'>
+          <h2 class='card-title-text' id='fasta'>Fasta support</h2>
+        </div>
+        <div class='card-supporting-text'>
+          <p>
+            The <code>prot2pept</code> command supports input in fasta format. This format consists of a fasta header (a line starting with a <samp>&gt;</samp>), followed by one or more lines containing the protein sequence. When this format is detected, the command behaves slightly different. The main difference is that newlines between fasta headers are ignored: all lines between fasta headers are treated as a single protein. Next to this, the fasta headers are also written to output.
+    </p>
+          <h5>Example</h5>
+          <pre>
+<b>$</b> cat input.txt
+AALTE
+AALRTER
+<b>$</b> cat input.txt | prot2pept
+AALTE
+AALR
+TER
+<b>$</b> cat input.txt
+> fasta header
+AALTE
+AALRTER
+> other header
+PEPTIDE
+<b>$</b> cat input.txt | prot2pept
+> fasta header
+AALTEAALR
+TER
+> other header
+PEPTIDE
+</pre>
+        </div>
+      </div>
+      <div class='card'>
+        <div class='card-title card-title-colored'>
+          <h2 class='card-title-text' id='options'>Command-line options</h2>
+        </div>
+        <div class='card-supporting-text'>
+          <h3 id='param-pattern'><samp>--pattern</samp> / <samp>-p</samp> <small>Specify cleavage pattern</small></h3>
+          <p>
+            By default, proteins are split by simulating a trypsin digest. This corresponds by splitting the input string by using the regular expression <code>([KR])([^P])</code>. The <code>--pattern</code> option allows you to specify an alternative (ruby-style) regular expression to split the sequences.
+    </p>
+          <h5>Example</h5>
+          <pre>
+<b>$</b> echo "LGAARPLGAGLAKVIGAGIGIGK" | prot2pept
+LGAARPLGAGLAK
+VIGAGIGIGK
+<b>$</b> echo "LGAARPLGAGLAKVIGAGIGIGK" | prot2pept <b>--pattern</b> '([KR])([^V])'
+LGAAR
+PLGAGLAKVIGAGIGIGK</pre>
+          <h3><samp>--help</samp> / <samp>-h</samp> <small>Display help</small></h3>
+          <p>
+            This flag displays the help.
+    </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-3">
+      <%= render 'api/shared/sidebar' %>
+    </div>
+  </div>
