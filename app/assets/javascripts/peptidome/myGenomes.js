@@ -254,7 +254,9 @@ var constructMyGenomes = function constructMyGenomes(args) {
     }
 
     function showInvalidFileFormat(filename) {
-        $popover.find("#myGenomeProgress").before("<div class='alert alert-danger invalid-file'>The file <b>" + filename + "</b> doesn't seem to be a valid FASTA file.</div>");
+        if ($popover) {
+            $popover.find("#myGenomeProgress").before("<div class='alert alert-danger invalid-file'>The file <b>" + filename + "</b> doesn't seem to be a valid FASTA file.</div>");
+        }
     }
 
     /**
