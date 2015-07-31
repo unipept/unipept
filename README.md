@@ -5,14 +5,13 @@
 [![Code Climate](https://codeclimate.com/github/unipept/unipept/badges/gpa.svg)](https://codeclimate.com/github/unipept/unipept)
 
 The [Unipept web application](http://unipept.ugent.be) supports biodiversity analysis of large and complex metaproteome samples and the analysis of peptidomes.
-The 2.5 release of Unipept has 4 main features:
+The 3.0 release of Unipept has several main features:
 * Tryptic peptide analysis (previously single peptide analysis)
 * Metaproteomics analysis (previously multi-peptide analysis)
 * Unique peptide finder
 * Peptidome clustering
 * an API to retrieve all data
-
-We are currently finalising a command line application built on our API. [Contact us](mailto:unipept@ugent.be) if you want access to the beta version of this tool.
+* [a command line tool](http://github.com/unipept/unipept-cli)
 
 ## Contributing
 
@@ -33,14 +32,15 @@ We will probably use [docker](https://www.docker.io/) for this, and release a re
 ## Who made this app?
 
 Unipept is a research project of the computational biology group at Ghent University. If you use this application, please cite:
-Mesuere et al. (2012) J. Proteome Res. doi:10.1021/pr300576s
+* Mesuere et al. (2015) Proteomics [doi:10.1002/pmic.201400361](http://dx.doi.org/10.1002/pmic.201400361)
+* Mesuere et al. (2012) J. Proteome Res. [doi:10.1021/pr300576s](http://dx.doi.org/10.1021/pr300576s)
 
 The following people contributed to this project:
 * Bart Mesuere ([@bmesuere](https://github.com/bmesuere)): PhD student and lead developer
 * Peter Dawyndt ([@pdawyndt](https://github.com/pdawyndt)): Group leader and PhD supervisor
-* Toon Willems ([@nudded](https://github.com/nudded)): Master's student 2013-2014
 * Tom Naessens ([@silox](https://github.com/silox)): Master's student 2014-2015
 * Felix Van der Jeugt ([@FelixVanderJeugt](https://github.com/FelixVanderJeugt)): Master's student 2014-2015
+* Toon Willems ([@nudded](https://github.com/nudded)): Master's student 2013-2014
 * Ewan Higgs ([@ehiggs](https://github.com/ehiggs)): Ghent University HPC team
 * Peter Vandamme: PhD co-supervisor
 * Bart Devreese: PhD co-supervisor
