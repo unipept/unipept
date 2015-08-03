@@ -135,14 +135,14 @@ function add_fields(link, association, content) {
  * @param <String> canvasSelector The DOM selector of the canvas
  * @param <String> baseFileName The requested file name
  */
-function triggerDownloadModal(svgSelector, canvasSelector, baseFileName, parentSelector) {
+function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
     var $buttons = $("#save-as-modal .buttons"),
         $image = $("#save-as-modal .image"),
         $element,
         svg;
 
-    if (parentSelector) {
-        $(parentSelector).append($("#save-as-modal"));
+    if (window.fullScreenApi.isFullScreen()) {
+        window.fullScreenApi.cancelFullScreen();
     }
 
     // Reset the modal and show it
