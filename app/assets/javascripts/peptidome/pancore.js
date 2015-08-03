@@ -233,10 +233,10 @@ var constructPancore = function constructPancore(args) {
         var activeTab = getActiveTab();
         logToGoogle("Pancore", "Save Image", activeTab);
         if (activeTab === "pancore_graph") {
-            triggerDownloadModal("#pancore_graph svg", null, "unique_peptides_graph", ".full-screen-container");
+            triggerDownloadModal("#pancore_graph svg", null, "unique_peptides_graph");
         } else {
             d3.selectAll(".inner.node circle").attr("class", "hidden");
-            triggerDownloadModal("#sim_matrix svg", null, "similarity_matrix", ".full-screen-container");
+            triggerDownloadModal("#sim_matrix svg", null, "similarity_matrix");
             d3.selectAll(".inner.node circle").attr("class", "");
         }
     }

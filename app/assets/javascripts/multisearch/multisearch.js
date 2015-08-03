@@ -165,12 +165,12 @@ var constructMultisearch = function constructMultisearch(args) {
         logToGoogle("Multi Peptide", "Save Image", activeTab);
         if (activeTab === "sunburst") {
             d3.selectAll(".toHide").attr("class", "arc hidden");
-            triggerDownloadModal("#sunburst > svg", null, "unipept_sunburst", ".full-screen-container");
+            triggerDownloadModal("#sunburst > svg", null, "unipept_sunburst");
             d3.selectAll(".hidden").attr("class", "arc toHide");
         } else if (activeTab === "d3TreeMap") {
-            triggerDownloadModal(null, "#d3TreeMap", "unipept_treemap", ".full-screen-container");
+            triggerDownloadModal(null, "#d3TreeMap", "unipept_treemap");
         } else {
-            triggerDownloadModal("#d3TreeView svg", null, "unipept_treeview", ".full-screen-container");
+            triggerDownloadModal("#d3TreeView svg", null, "unipept_treeview");
         }
     }
 
