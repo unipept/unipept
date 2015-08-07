@@ -39,6 +39,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
         $("#autosort").mouseleave(function () {
             if ($("#autosort").hasClass("open")) {
                 $("#autosort-button").dropdown("toggle");
+                $("#autosort ul a").blur();
             }
         });
         $("#autosort ul a").click(runAutosort);
