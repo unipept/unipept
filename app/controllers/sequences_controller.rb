@@ -93,6 +93,7 @@ class SequencesController < ApplicationController
     @table_lineages = []
     @table_ranks = []
 
+    @lineages.uniq!
     @table_lineages << @lineages.map { |lineage| lineage.name.name }
     @table_ranks << 'Organism'
     @lineages.map { |lineage| lineage.set_iterator_position(0) } # reset the iterator
