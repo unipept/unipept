@@ -4,8 +4,7 @@
     <%= text_area_tag(:ecqs, nil, :rows => 7, :spellcheck => "false", :class => "form-control") %>
   </div>
   <div id="search_button">
-  <%= button_tag(raw("<span class='glyphicon glyphicon-search'></span> Search"), :type => "submit", :class => "btn btn-primary") %>
-  <%= button_tag(raw("<span class='glyphicon glyphicon-repeat'></span> Start Over"), { :name => 'reset', :id => 'reset_button', :type => "reset", :class => "btn btn-default" }) %>
+    <%= button_tag(raw("<span class='glyphicon glyphicon-search'></span> Search"), :type => "submit", :class => "btn btn-primary") %>
+    <%= button_tag(raw("<span class='glyphicon glyphicon-repeat'></span> Start Over"), { :name => 'reset', :id => 'reset_button', :type => "reset", :class => "btn btn-default" }) %>
   </div>
-
 <% end %>
