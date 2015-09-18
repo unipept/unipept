@@ -1,0 +1,18 @@
+<div class="split">
+<div class="split-left">
+  <h3>EC numbers</h3>
+  <b>EC numbers only in sample 1:</b> <%= @sample1 %> </br>
+  <b>EC numbers only in sample 2:</b> <%= @sample2 %> </br>
+  <b>EC numbers in both samples:</b> <%= @both %> </br>
+</div>
+<div class="split-right">
+  <h3>Pathways</h3>
+  pathway: #ec numbers (<span style="color: #2ca02c">#sample 1</span>, <span style="color: #d62728">#sample 2</span>, <span style="color: #ff7f0e">#both</span>)
+  <ul>
+    <% for @pathway in @pathways do %>
+      <li><a target="_blank" href="http://www.genome.jp/kegg-bin/show_pathway?nocolor=1&scale=1.0&map=<%= @pathway[0].long_id %>&multi_query=<%= @pathway[2].map{|i| i.to_s + "+%232ca02c%0D%0A"}.join %><%= @pathway[3].map{|i| i.to_s + "+%23d62728%0D%0A"}.join %><%= @pathway[4].map{|i| i.to_s + "+%23ff7f0e%0D%0A"}.join %>"><%= @pathway[0].long_id %></a> <%= @pathway[0].name %>: <%= @pathway[1].length %> (<span style="color: #2ca02c"><%= @pathway[2].length %></span>, <span style="color: #d62728"><%= @pathway[3].length %></span>, <span style="color: #ff7f0e"><%= @pathway[4].length %></span>)</li>
+    <% end %>
+  </ul>
+</div>
+<div class="visualClear"></div>
+</div>

@@ -300,6 +300,62 @@ class SequencesController < ApplicationController
       flash[:error] = 'Your query was empty, please try again.'
       redirect_to datasets_path
   end
+
+  def ec
+    seq = params[:sequence].upcase
+    @sequence = Sequence.where(sequence: seq).includes({:peptides => {:uniprot_entry => [:name, :ec_cross_references]}}).first
+    @ecs = @sequence.peptides.map{|p| p.uniprot_entry.ec_cross_references.map{|e| e.ec_id}.flatten}.flatten
+    @lca = EcCrossReference.calculate_lca(@ecs)
+  end
+
+  def ec_multi_search
+    data = params[:ecqs]
+    data = data.upcase
+    data = data.lines.map(&:strip).to_a.select{|l| l.size >= 5}
+
+    # fetch sequences
+    @sequences = Sequence.where(sequence: data).includes({:peptides => {:uniprot_entry => [:name, :ec_cross_references]}})
+
+    # fetch ec numbers associated with sequences
+    @ecs = @sequences.map{|s| EcCrossReference.calculate_lca(s.peptides.map{|p| p.uniprot_entry.ec_cross_references.map{|e| e.ec_id}.flatten}.flatten)}
+
+    # group them
+    @grouped_ecs = @ecs.group_by(&:to_s).map{|k,v| [k, EcNumber.find_by_number(k), v.length]}.sort_by{|e| e[2]}.reverse!
+    @grouped_ecs[0][0] = "No EC number" if @grouped_ecs[0][0].empty?
+
+    # map ecs to pathways
+    @pathways = EcNumber.where(number: @ecs.uniq).includes({:kegg_pathway_mappings => :kegg_pathway}).map(&:kegg_pathway_mappings).flatten!
+    @pathways = @pathways.group_by(&:kegg_pathway).map{|k,v| [k, v.map{|p| p.ec_number.number}]}.sort_by{|p| p[1].length}.reverse!
+  end
+
+  def ec_compare_search
+      # prepare data
+      data1 = params[:ecqs1]
+      data1 = data1.upcase
+      data1 = data1.lines.map(&:strip).to_a.select{|l| l.size >= 5}
+      data2 = params[:ecqs2]
+      data2 = data2.upcase
+      data2 = data2.lines.map(&:strip).to_a.select{|l| l.size >= 5}
+
+      # fetch data from database
+      data1 = Sequence.where(sequence: data1).includes({:peptides => {:uniprot_entry => [:name, :ec_cross_references]}})
+      data1 = data1.map{|s| EcCrossReference.calculate_lca(s.peptides.map{|p| p.uniprot_entry.ec_cross_references.map{|e| e.ec_id}.flatten}.flatten)}
+      data2 = Sequence.where(sequence: data2).includes({:peptides => {:uniprot_entry => [:name, :ec_cross_references]}})
+      data2 = data2.map{|s| EcCrossReference.calculate_lca(s.peptides.map{|p| p.uniprot_entry.ec_cross_references.map{|e| e.ec_id}.flatten}.flatten)}
+
+      @sample1 = (data1 - data2).to_set
+      @sample2 = (data2 - data1).to_set
+      @both = (data1 & data2).to_set
+      all_ecs = (data1 + data2).uniq
+
+      # add pathways to the mix
+      @pathways = EcNumber.where(number: all_ecs).includes({:kegg_pathway_mappings => :kegg_pathway}).map(&:kegg_pathway_mappings).flatten!
+      @pathways = @pathways.group_by(&:kegg_pathway).map{|k,v| numbers = v.map{|p| p.ec_number.number}; [k, numbers, @sample1 & numbers, @sample2 & numbers, @both & numbers]}.map{|p| p << 1000 * ([0, (p[2].length - 2.0) / p[1].length].max ** 2 + [0, (p[3].length - 2.0) / p[1].length].max ** 2) + p[2].length + p[3].length + p[1].length}.sort_by{|p| p[5]}.reverse!
+
+      @sample1 = @sample1.to_a.compact.sort
+      @sample2 = @sample2.to_a.compact.sort
+      @both = @both.to_a.compact.sort
+  end
 end
 
 class EmptyQueryError < StandardError; end
