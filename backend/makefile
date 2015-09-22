@@ -78,8 +78,8 @@ $(INTDIR)/sequence_taxon.tsv.gz: $(TABDIR)/peptides.tsv.gz $(TABDIR)/uniprot_ent
 	echo "Starting the joining of equalized peptides and uniprot entries."
 	mkdir -p $(INTDIR)
 	join -t '	' -o '1.2,2.4' -1 4 -2 1 \
-			<(zcat $(TABDIR)/peptides.tsv.gz) \
-			<(zcat $(TABDIR)/uniprot_entries.tsv.gz) \
+			<(zcat < $(TABDIR)/peptides.tsv.gz) \
+			<(zcat < $(TABDIR)/uniprot_entries.tsv.gz) \
 		| sort -S 20% -k1n \
 		| gzip - \
 		> $@
@@ -89,8 +89,8 @@ $(INTDIR)/original_sequence_taxon.tsv.gz: $(TABDIR)/peptides.tsv.gz $(TABDIR)/un
 	echo "Starting the joining of non-equalized peptides and uniprot entries."
 	mkdir -p $(INTDIR)
 	join -t '	' -o '1.3,2.4' -1 4 -2 1 \
-			<(zcat $(TABDIR)/peptides.tsv.gz) \
-			<(zcat $(TABDIR)/uniprot_entries.tsv.gz) \
+			<(zcat < $(TABDIR)/peptides.tsv.gz) \
+			<(zcat < $(TABDIR)/uniprot_entries.tsv.gz) \
 		| sort -S 20% -k1n \
 		| gzip - \
 		> $@
