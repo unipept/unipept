@@ -44,7 +44,7 @@ $(TAXDIR)/taxdmp.zip:
 
 $(TAXDIR)/names.dmp $(TAXDIR)/nodes.dmp: $(TAXDIR)/taxdmp.zip
 	echo "Starting unzipping names and nodes from the taxon dump."
-	unzip -DDo $< $(notdir $@) -d $(dir $@)
+	unzip -o $< $(notdir $@) -d $(dir $@)
 	echo "Finished unzipping names and nodes from the taxon dump."
 
 $(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/uniprot_trembl.xml.gz:
