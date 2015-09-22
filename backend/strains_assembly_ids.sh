@@ -48,7 +48,7 @@ while ((returned == BATCH_SIZE)); do
 done
 
 join -1 2 -2 1 -a 1 -t '	'                    \
-        <(zcat "$assembly_gz_file")              \
+        <(zcat < "$assembly_gz_file")              \
         <(sed "s/$/\t\x01/" "$tempfile" | sort)  \
     | sed -e "/\x01$/!s/$/	\x00/"               \
           -e 's/^\([^\t]*\)\t\([^\t]*\)/\2\t\1/' \
