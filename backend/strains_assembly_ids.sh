@@ -9,7 +9,7 @@ outfile="$2"
 # Please crash on first mistake.
 set -e
 
-tempfile="$(mktemp)"
+tempfile="$(mktemp -t 'tmp_file')"
 > "$tempfile"
 
 header="$(curl -d 'db=assembly'                       \
