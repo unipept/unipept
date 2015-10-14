@@ -45,7 +45,7 @@ END {
 }' >> enzyme.sql
 
 # load the file into the database
-#echo "loading the database"
-#mysql -u unipept -punipept unipept < "enzyme.sql"
+echo "loading the database"
+mysql -u unipept -punipept unipept < "enzyme.sql"
 
 cd "${currentdir}"
