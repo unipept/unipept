@@ -307,7 +307,10 @@ COLLATE = ascii_general_ci
 -- -----------------------------------------------------
 -- Table `unipept`.`ec_numbers`
 -- -----------------------------------------------------
-
+CREATE TABLE IF NOT EXISTS `unipept`.`ec_numbers` (
+  `ec_number` VARCHAR(12) NOT NULL,
+  `name` VARCHAR(160) NOT NULL,
+  PRIMARY KEY (`ec_number`))
 
 
 -- -----------------------------------------------------
