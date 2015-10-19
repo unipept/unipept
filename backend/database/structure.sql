@@ -267,21 +267,6 @@ COLLATE = ascii_general_ci;
 -- -----------------------------------------------------
 -- Table `unipept`.`ec_cross_references`
 -- -----------------------------------------------------
-#CREATE  TABLE IF NOT EXISTS `unipept`.`ec_cross_references` (
-#  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-#  `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-#  `ec_id` VARCHAR(12) NOT NULL ,
-#  PRIMARY KEY (`id`) ,
-#  INDEX `fk_ec_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
-#  CONSTRAINT `fk_ec_cross_reference_uniprot_entries`
-#    FOREIGN KEY (`uniprot_entry_id` )
-#    REFERENCES `unipept`.`uniprot_entries` (`id` )
-#    ON DELETE NO ACTION
-#    ON UPDATE NO ACTION)
-#ENGINE = InnoDB
-#DEFAULT CHARACTER SET = ascii
-#COLLATE = ascii_general_ci;
-
 CREATE TABLE IF NOT EXISTS `unipept`.`ec_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `uniprot_entry_id` INT UNSIGNED NOT NULL,
@@ -311,6 +296,9 @@ CREATE TABLE IF NOT EXISTS `unipept`.`ec_numbers` (
   `ec_number` VARCHAR(12) NOT NULL,
   `name` VARCHAR(160) NOT NULL,
   PRIMARY KEY (`ec_number`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci
 
 
 -- -----------------------------------------------------
