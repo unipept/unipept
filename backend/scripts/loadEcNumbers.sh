@@ -19,7 +19,7 @@ awk 'BEGIN {
 }
 /^ID/{
   if (id != "") {
-    printf("INSERT INTO ec_numbers (number, name) VALUES (\"%s\", \"%s\");\n", id, name)
+    printf("INSERT INTO ec_numbers (ec_number, name) VALUES (\"%s\", \"%s\");\n", id, name)
   }
   name = ""
   id = $2
@@ -29,17 +29,16 @@ awk 'BEGIN {
   name = name $2
 }
 END {
-  printf("INSERT INTO ec_numbers (number, name) VALUES (\"%s\", \"%s\");\n", id, name)
+  printf("INSERT INTO ec_numbers (ec_number, name) VALUES (\"%s\", \"%s\");\n", id, name)
 }' enzyme.dat >> enzyme.sql
 
 cat enzclass.txt| sed -e "s/- /-    /" | awk 'BEGIN {
         FS = "    "
 }
 /^[1-9]/ {
-
         gsub(/ /, "", $1)
         gsub(/^ */, "", $2)
-        printf("INSERT INTO ec_numbers (number, name) VALUES (\"%s\", \"%s\");\n", $1, $2)
+        printf("INSERT INTO ec_numbers (ec_number, name) VALUES (\"%s\", \"%s\");\n", $1, $2)
 }
 END {
 }' >> enzyme.sql
