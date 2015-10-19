@@ -267,20 +267,47 @@ COLLATE = ascii_general_ci;
 -- -----------------------------------------------------
 -- Table `unipept`.`ec_cross_references`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `unipept`.`ec_cross_references` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `ec_id` VARCHAR(12) NOT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `fk_ec_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
+#CREATE  TABLE IF NOT EXISTS `unipept`.`ec_cross_references` (
+#  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+#  `uniprot_entry_id` INT UNSIGNED NOT NULL ,
+#  `ec_id` VARCHAR(12) NOT NULL ,
+#  PRIMARY KEY (`id`) ,
+#  INDEX `fk_ec_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
+#  CONSTRAINT `fk_ec_cross_reference_uniprot_entries`
+#    FOREIGN KEY (`uniprot_entry_id` )
+#    REFERENCES `unipept`.`uniprot_entries` (`id` )
+#    ON DELETE NO ACTION
+#    ON UPDATE NO ACTION)
+#ENGINE = InnoDB
+#DEFAULT CHARACTER SET = ascii
+#COLLATE = ascii_general_ci;
+
+CREATE TABLE IF NOT EXISTS `unipept`.`ec_cross_references` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uniprot_entry_id` INT UNSIGNED NOT NULL,
+  `ec_number` VARCHAR(12) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_ec_reference_uniprot_entries` (`uniprot_entry_id` ASC),
+  INDEX `fk_ec_cross_reference_ec_numbers_idx` (`ec_number` ASC),
   CONSTRAINT `fk_ec_cross_reference_uniprot_entries`
-    FOREIGN KEY (`uniprot_entry_id` )
-    REFERENCES `unipept`.`uniprot_entries` (`id` )
+    FOREIGN KEY (`uniprot_entry_id`)
+    REFERENCES `unipept`.`uniprot_entries` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ec_cross_reference_ec_numbers`
+    FOREIGN KEY (`ec_number`)
+    REFERENCES `unipept`.`ec_numbers` (`ec_number`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
-COLLATE = ascii_general_ci;
+COLLATE = ascii_general_ci
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`ec_numbers`
+-- -----------------------------------------------------
+
 
 
 -- -----------------------------------------------------
