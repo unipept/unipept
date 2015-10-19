@@ -10,5 +10,5 @@ class EcNumber < ActiveRecord::Base
   include ReadOnlyModel
   attr_accessible nil
 
-  has_many :ec_cross_reference
+  has_many :ec_number_cross_info, foreign_key: 'ec_number', primary_key: 'ec_number', class_name: 'ec_cross_reference'
 end
