@@ -108,9 +108,9 @@ $(INTDIR)/original_LCAs.tsv.gz: $(TABDIR)/lineages.tsv.gz $(INTDIR)/original_seq
 
 $(TABDIR)/sequences.tsv.gz: $(INTDIR)/sequences.tsv.gz $(INTDIR)/LCAs.tsv.gz $(INTDIR)/original_LCAs.tsv.gz
 	echo "Starting the creation of the sequences table."
-	zcat $(INTDIR)/sequences.tsv.gz \
-		| join --nocheck-order -a1 -t '	' -o "1.1 1.2 2.2" - <(zcat $(INTDIR)/original_LCAs.tsv.gz) \
-		| join --nocheck-order -a1 -t '	' -o "1.1 1.2 1.3 2.2" - <(zcat $(INTDIR)/LCAs.tsv.gz) \
+	zcat < $(INTDIR)/sequences.tsv.gz \
+		| join -a1 -t '	' -o "1.1 1.2 2.2" - <(zcat < $(INTDIR)/original_LCAs.tsv.gz) \
+		| join -a1 -t '	' -o "1.1 1.2 1.3 2.2" - <(zcat < $(INTDIR)/LCAs.tsv.gz) \
 		| gzip - \
 		> $@
 	echo "Finished the creation of the sequences table."
