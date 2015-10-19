@@ -286,7 +286,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`ec_cross_references` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
-COLLATE = ascii_general_ci
+COLLATE = ascii_general_ci;
 
 
 -- -----------------------------------------------------
@@ -298,7 +298,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`ec_numbers` (
   PRIMARY KEY (`ec_number`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
-COLLATE = ascii_general_ci
+COLLATE = ascii_general_ci;
 
 
 -- -----------------------------------------------------
