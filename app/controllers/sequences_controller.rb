@@ -21,6 +21,13 @@ class SequencesController < ApplicationController
       @original_sequence = seq
     end
 
+    ## test add ec_numbers
+    #Cizar: TODO:
+    #Get all ECs with the het peptides (add to above sequence include)
+    #Process ecnumber to collapse and add count
+    #Go to show view map and write html
+    ## end test
+
     # quit if it doensn't contain any peptides
     fail(NoMatchesFoundError, sequence.sequence) if sequence.present? && sequence.peptides(equate_il).empty?
 
@@ -42,6 +49,7 @@ class SequencesController < ApplicationController
     else
       @entries = sequence.peptides(equate_il).map(&:uniprot_entry)
       @lineages = sequence.lineages(equate_il, true).to_a
+      # Cizar: Can add the compress algorithm for ecnumbers
     end
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
@@ -116,7 +124,7 @@ class SequencesController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.json { render json: @entries.to_json(only: :uniprot_accession_number, include: [{ ec_cross_references: { only: :ec_id } }, { go_cross_references: { only: :go_id } }]) }
+      format.json { render json: @entries.to_json(only: :uniprot_accession_number, include: [{ ec_cross_references: { only: :ec_number } }, { go_cross_references: { only: :go_id } }]) }
       # TODO: switch to OJ for higher performance
       # format.json { render json: Oj.dump(@entries, :include => :name, :mode => :compat) }
     end
