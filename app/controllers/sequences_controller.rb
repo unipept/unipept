@@ -14,19 +14,12 @@ class SequencesController < ApplicationController
 
     # process the input, convert seq to a valid @sequence
     if seq.match(/\A[0-9]+\z/)
-      sequence = Sequence.includes(peptides: { uniprot_entry: [:taxon, :ec_cross_references, :go_cross_references] }).find_by_id(seq)
+      sequence = Sequence.includes(peptides: { uniprot_entry: [:taxon, ec_cross_references: {:ec_numbers}, :go_cross_references] }).find_by_id(seq)
       @original_sequence = sequence.sequence
     else
       sequence = Sequence.single_search(seq, equate_il)
       @original_sequence = seq
     end
-
-    ## test add ec_numbers
-    #Cizar: TODO:
-    #Get all ECs with the het peptides (add to above sequence include)
-    #Process ecnumber to collapse and add count
-    #Go to show view map and write html
-    ## end test
 
     # quit if it doensn't contain any peptides
     fail(NoMatchesFoundError, sequence.sequence) if sequence.present? && sequence.peptides(equate_il).empty?
