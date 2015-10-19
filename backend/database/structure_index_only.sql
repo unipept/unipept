@@ -55,6 +55,7 @@ ALTER TABLE go_cross_references ADD INDEX fk_go_reference_uniprot_entries (unipr
 -- Table `unipept`.`ec_cross_references`
 -- -----------------------------------------------------
 ALTER TABLE ec_cross_references ADD INDEX fk_ec_reference_uniprot_entries (uniprot_entry_id ASC);
+ALTER TABLE ec_cross_references ADD INDEX fk_ec_cross_reference_ec_numbers_idx (ec_number ASC);
 
 
 -- -----------------------------------------------------
