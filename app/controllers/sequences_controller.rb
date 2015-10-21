@@ -42,8 +42,37 @@ class SequencesController < ApplicationController
     else
       @entries = sequence.peptides(equate_il).map(&:uniprot_entry)
       @lineages = sequence.lineages(equate_il, true).to_a
-      # Cizar: Can add the compress algorithm for ecnumbers
     end
+
+    # create list for all ec_cross_reference numbers
+    ecnumbers = []
+    # get all ec_cross_references
+    ec_cross_numbers = @entries.map(&:ec_cross_references)
+    # get all ec_cross_reference numbers and puts them in array
+    ec_cross_numbers.each do |ecs|
+      ecs.each do |ec|
+        ecnumbers << ec.ec_number
+      end
+    end
+    # make list unique
+    uniqecnumbers = ecnumbers.uniq
+    # get all items from table EcNumber
+    ecdb = EcNumber.all
+    # nested list in which each row is stored
+    tp_ec_lca_table = []
+    # create a hash that contails all required data for visualization
+    @ec_lca_table = {}
+    # for each piece of an ec number get its enzymatical function
+    uniqecnumbers.each do |ecn|
+      tpe = ecn.split(".")
+      @ec_lca_table[ecn] = [ecdb.find_by(ec_number: tpe[0]+".-.-.-"),
+                            ecdb.find_by(ec_number: tpe[0]+"."+tpe[1]+".-.-"),
+                            ecdb.find_by(ec_number: tpe[0]+"."+tpe[1]+"."+tpe[2]+".-"),
+                            ecdb.find_by(ec_number: ecn),
+                            ecnumbers.count(ecn)
+                            ]
+    end
+
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree
