@@ -56,7 +56,7 @@ class SequencesController < ApplicationController
     end
 
     # make list unique
-    uniq_ec_numbers = ec_numbers_list.uniq
+    uniq_ec_numbers = ec_numbers_list.to_set
     # get all items from table EcNumber
     ecdb = EcNumber.all
     # add column names list
