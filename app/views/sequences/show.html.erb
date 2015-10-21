@@ -16,6 +16,7 @@
           <li class="active"><a href="#lineage-tree" id="lineage-tree-tab" data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
           <li><a href="#lineage-table" id="lineage-table-tab" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
           <li><a href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
+          <li><a href="#ec-table" data-toggle="tab">EC numbers <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
         </ul>
       </div>
     </div>
@@ -92,6 +93,27 @@
             <% end %>
           </table>
         </div>
+        <div class="tab-pane" id="ec-table">
+          <table class="table table-condensed">
+            <thead>
+              <tr>
+                <% for column in @column_name do%>
+                  <th><%= column %></th>
+                <% end %>
+              </tr>
+            </thead>
+            <% for ec_key, ec_value in @ec_lca_table do%>
+                <td><strong><%= ec_key %></strong></td>
+                <td><strong><%= ec_value[0][:name] %></strong></td>
+                <td><strong><%= ec_value[1][:name] %></strong></td>
+                <td><strong><%= ec_value[2][:name] %></strong></td>
+                <td><strong><%= ec_value[3][:name] %></strong></td>
+                <td><strong><%= ec_value[4] %></strong></td>
+                <tr></tr>
+            <% end %>
+          </table>
+        </div>
+
       </div>
     </div>
   </div>
