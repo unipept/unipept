@@ -59,7 +59,7 @@ class SequencesController < ApplicationController
     # get all items from table EcNumber
     ecdb = EcNumber.all
     # add column names list
-    @column_name = ["name", "digit 1", "digit 2", "digit 3", "digit 4", "count"]
+    @ec_column_name = ["name", "digit 1", "digit 2", "digit 3", "digit 4", "count"]
     # nested list in which each row is stored
     tp_ec_lca_table = []
     # create a hash that contails all required data for visualization
