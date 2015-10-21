@@ -45,17 +45,18 @@ class SequencesController < ApplicationController
     end
 
     # create list for all ec_cross_reference numbers
-    ecnumbers = []
+    ec_numbers_list = []
     # get all ec_cross_references
     ec_cross_numbers = @entries.map(&:ec_cross_references)
     # get all ec_cross_reference numbers and puts them in array
     ec_cross_numbers.each do |ecs|
       ecs.each do |ec|
-        ecnumbers << ec.ec_number
+        ec_numbers_list << ec.ec_number
       end
     end
+
     # make list unique
-    uniqecnumbers = ecnumbers.uniq
+    uniq_ec_numbers = ec_numbers_list.uniq
     # get all items from table EcNumber
     ecdb = EcNumber.all
     # add column names list
@@ -65,13 +66,13 @@ class SequencesController < ApplicationController
     # create a hash that contails all required data for visualization
     @ec_lca_table = {}
     # for each piece of an ec number get its enzymatical function
-    uniqecnumbers.each do |ecn|
+    uniq_ec_numbers.each do |ecn|
       tpe = ecn.split(".")
       @ec_lca_table[ecn] = [ecdb.find_by(ec_number: tpe[0]+".-.-.-"),
                             ecdb.find_by(ec_number: tpe[0]+"."+tpe[1]+".-.-"),
                             ecdb.find_by(ec_number: tpe[0]+"."+tpe[1]+"."+tpe[2]+".-"),
                             ecdb.find_by(ec_number: ecn),
-                            ecnumbers.count(ecn)
+                            ec_numbers_list.count(ecn)
                             ]
     end
 
