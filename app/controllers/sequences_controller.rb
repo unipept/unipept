@@ -44,16 +44,10 @@ class SequencesController < ApplicationController
       @lineages = sequence.lineages(equate_il, true).to_a
     end
 
-    # create list for all ec_cross_reference numbers
-    ec_numbers_list = []
     # get all ec_cross_references
     ec_cross_numbers = @entries.map(&:ec_cross_references)
     # get all ec_cross_reference numbers and puts them in array
-    ec_cross_numbers.each do |ecs|
-      ecs.each do |ec|
-        ec_numbers_list << ec.ec_number
-      end
-    end
+    ec_numbers_list = ec_cross_numbers.map{|ecs| ecs.map{|ec| ec.ec_number} if ecs.length != 0}.compact.flatten(1)
 
     # make list unique
     uniq_ec_numbers = ec_numbers_list.to_set
@@ -61,21 +55,23 @@ class SequencesController < ApplicationController
     ecdb = EcNumber.all
     # add column names list
     @ec_column_name = ["name", "digit 1", "digit 2", "digit 3", "digit 4", "count"]
-    # nested list in which each row is stored
-    tp_ec_lca_table = []
+    # list in which each row is stored
+    # @tp_ec_lca_table = uniq_ec_numbers.map{|ecn| ecn.map{|tpe| tpe.split(".")}}.flatten(1)
     # create a hash that contails all required data for visualization
     @ec_lca_table = {}
-    # for each piece of an ec number get its enzymatical function
     uniq_ec_numbers.each do |ecn|
       tpe = ecn.split(".")
-      @ec_lca_table[ecn] = [ecdb.find_by(ec_number: tpe[0]+".-.-.-"),
-                            ecdb.find_by(ec_number: tpe[0]+"."+tpe[1]+".-.-"),
-                            ecdb.find_by(ec_number: tpe[0]+"."+tpe[1]+"."+tpe[2]+".-"),
-                            ecdb.find_by(ec_number: ecn),
-                            ec_numbers_list.count(ecn)
+      @ec_lca_table[ecn] = [  ecdb.find_by(ec_number: tpe[0]+".-.-.-"),
+                              ecdb.find_by(ec_number: tpe[0]+"."+tpe[1]+".-.-"),
+                              ecdb.find_by(ec_number: tpe[0]+"."+tpe[1]+"."+tpe[2]+".-"),
+                              ecdb.find_by(ec_number: ecn),
+                              ec_numbers_list.count(ecn)
                             ]
     end
 
+    # for each piece of an ec number get its enzymatical function
+    #@test = tp_ec_lca_table
+    #@test = ecdb.find_by(ec_number: tp_ec_lca_table.values).map{|x| x}
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree
