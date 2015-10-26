@@ -44,34 +44,60 @@ class SequencesController < ApplicationController
       @lineages = sequence.lineages(equate_il, true).to_a
     end
 
+    # ----------- test ------------ #
+    # Prototype functional analysis #
+    # ----------------------------- #
+
     # get all ec_cross_references
     ec_cross_numbers = @entries.map(&:ec_cross_references)
+    # get all items from table EcNumber
+    ec_db = EcNumber.all
     # get all ec_cross_reference numbers and puts them in array
     ec_numbers_list = ec_cross_numbers.map{|ecs| ecs.map{|ec| ec.ec_number} if ecs.length != 0}.compact.flatten(1)
-
     # make list unique
-    uniq_ec_numbers = ec_numbers_list.to_set
-    # get all items from table EcNumber
-    ecdb = EcNumber.all
-    # add column names list
-    @ec_column_name = ["name", "digit 1", "digit 2", "digit 3", "digit 4", "count"]
-    # list in which each row is stored
-    # @tp_ec_lca_table = uniq_ec_numbers.map{|ecn| ecn.map{|tpe| tpe.split(".")}}.flatten(1)
-    # create a hash that contails all required data for visualization
+    ec_numbers_uniq = ec_numbers_list.to_set
+    # list of ec column names
+    @ec_column_name = ["EC number", "Class", "Subclass level 1", "Subclass level 2", "Subclass level 3", "Hits"]
+    # create instance variables
     @ec_lca_table = {}
-    uniq_ec_numbers.each do |ecn|
-      tpe = ecn.split(".")
-      @ec_lca_table[ecn] = [  ecdb.find_by(ec_number: tpe[0]+".-.-.-"),
-                              ecdb.find_by(ec_number: tpe[0]+"."+tpe[1]+".-.-"),
-                              ecdb.find_by(ec_number: tpe[0]+"."+tpe[1]+"."+tpe[2]+".-"),
-                              ecdb.find_by(ec_number: ecn),
-                              ec_numbers_list.count(ecn)
-                            ]
+    @ec_functions = {}
+    @ec_lca_count = {}
+
+    # get all rank order for each ec number 
+    ec_numbers_uniq.each do |ecn|
+      @ec_lca_table[ecn] = []
+      ec_split = ecn.split(".")
+      ec_rank = ""
+      counter = 0
+      ec_split.each do |ec_subclass|
+        counter += 1
+        if ec_subclass != "-"
+          @ec_lca_table[ecn] += [ec_rank+ec_subclass+".-"*(4-counter)] # creates all ranks for one ec number
+          ec_rank += ec_subclass+"."
+        else
+          @ec_lca_table[ecn] += [""] 
+        end
+      end
+    end
+    # sort the hash and make it an array
+    @ec_lca_table_sorted = @ec_lca_table.sort_by{|x|x}.flatten(1)
+
+    # get all ec numbers from the ec_lca_table
+    ec_all_ranks = @ec_lca_table.values.flatten(1).to_set.map{|x| x}
+    # get all functions accociated with the ranks
+    ec_tmp_all_functions = ec_db.select("ec_number, name").where(ec_number: ec_all_ranks).to_set
+    
+    # store all in hash & remove all "." from end of line
+    ec_tmp_all_functions.each do |ec_hash|
+      @ec_functions[ec_hash[:ec_number]] = ec_hash[:name].gsub(/\.$/, '')
     end
 
-    # for each piece of an ec number get its enzymatical function
-    #@test = tp_ec_lca_table
-    #@test = ecdb.find_by(ec_number: tp_ec_lca_table.values).map{|x| x}
+    # hash with the counts for each ec rank
+    ec_all_ranks.each do |rank|
+      @ec_lca_count[rank] = ec_numbers_list.count(rank)
+    end
+
+    # ----------- end ------------ #
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree
