@@ -24,8 +24,8 @@
     <div class='card-supporting-text'>
       <div class="tab-content">
         <div class="tab-pane active" id="lineage-tree">
-          <div id="buttons-single" class="buttons-single"></div>
           <div id="lineageTree"></div>
+          <div id="buttons-single" class="buttons-single"></div>
         </div>
         <div class="tab-pane" id="lineage-table">
           <div id="sequence_table">
@@ -94,24 +94,35 @@
             <% end %>
           </table>
         </div>
+        <div class="tab-pane active" id="ec-tree">
+          <div id="ecTree"></div>
+          <div id="buttons-second" class="buttons-second"></div>
+        </div>
         <div class="tab-pane" id="ec-table">
           <table class="table table-condensed">
             <thead>
               <tr>
-                <% for column in @ec_column_name do%>
+                <% for column in @ec_column_name do %>
                   <th><%= column %></th>
                 <% end %>
               </tr>
             </thead>
-            <% for ec_key, ec_value in @ec_lca_table do%>
-                <tr>
-                <td><strong><%= link_to ec_key, "http://enzyme.expasy.org/EC/" + ec_key.to_s %></strong></td>
-                <td><%= ec_value[0][:name] %></td>
-                <td><%= ec_value[1][:name] %></td>
-                <td><%= ec_value[2][:name] %></td>
-                <td><%= ec_value[3][:name] %></td>
-                <td><%= ec_value[4] %></td>
-                </tr>
+            <% counter = 0 %>
+            <% while counter < @ec_lca_table_sorted.length do %>
+              <tr>
+                <% if counter % 2 == 0%>
+                  <td><strong><%= link_to @ec_lca_table_sorted[counter], "http://enzyme.expasy.org/EC/" + @ec_lca_table_sorted[counter] %></strong></td>
+                  <% for subclass in @ec_lca_table_sorted[counter+1] do %>
+                    <% if subclass != "" %>
+                      <td><%= link_to @ec_functions[subclass], "http://enzyme.expasy.org/EC/" + subclass %></td>
+                    <% else %>
+                      <td></td>
+                    <% end %>
+                  <% end %>
+                  <td><%= @ec_lca_count[@ec_lca_table_sorted[counter]] %></td>
+                <% end %>
+                <% counter += 2 %>
+              </tr>
             <% end %>
           </table>
         </div>
