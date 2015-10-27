@@ -27,7 +27,7 @@ class Node
   end
 
   def root?
-    id == 1
+    id == 1 or id == "-.-.-.-"
   end
 
   attr_reader :nodes
