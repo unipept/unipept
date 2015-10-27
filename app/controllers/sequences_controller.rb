@@ -62,6 +62,8 @@ class SequencesController < ApplicationController
     @ec_lca_table = {}
     @ec_functions = {}
     @ec_lca_count = {}
+    @ec_lca_class = {}
+    @ec_lca_id = {}
 
     # get all rank order for each ec number 
     ec_numbers_uniq.each do |ecn|
@@ -86,7 +88,7 @@ class SequencesController < ApplicationController
     ec_all_ranks = @ec_lca_table.values.flatten(1).to_set.map{|x| x}
     # get all functions accociated with the ranks
     ec_tmp_all_functions = ec_db.select("ec_number, name").where(ec_number: ec_all_ranks).to_set
-    
+
     # store all in hash & remove all "." from end of line
     ec_tmp_all_functions.each do |ec_hash|
       @ec_functions[ec_hash[:ec_number]] = ec_hash[:name].gsub(/\.$/, '')
@@ -96,6 +98,41 @@ class SequencesController < ApplicationController
     ec_all_ranks.each do |rank|
       @ec_lca_count[rank] = ec_numbers_list.count(rank)
     end
+
+    # store all classes for each ec number
+    ec_all_ranks.each do |rank|
+      @ec_lca_table.values.each do |l|
+        class_pos = l.index(rank)
+        if !class_pos.nil?
+          @ec_lca_class[rank] = @ec_column_name[class_pos+1]
+        end
+      end
+    end
+
+    # --------- Tree view for EC numbers --------- #
+
+    @ec_root = Node.new("-.-.-.-", 'ec_number', nil, 'root') # start constructing the tree
+    @ec_root.data['count'] = @ec_lca_count.values.sum
+    ec_last_node =  @ec_root
+
+    for key, value in @ec_lca_table do
+      ec_last_node_loop = ec_last_node
+      value.each do |ecs|
+        if ecs != ""
+          node = Node.find_by_id(ecs, @ec_root)
+          if node.nil?
+            node = Node.new(ecs, ecs, @ec_root, @ec_lca_class[ecs])
+            node.data['count'] = @ec_lca_count[ecs]
+            ec_last_node_loop = ec_last_node_loop.add_child(node)
+          else
+            node.data['count'] += @ec_lca_count[ecs]
+            ec_last_node_loop = node
+          end         
+
+        end
+      end
+    end
+    @test = Oj.dump(@ec_root, mode: :compat)
 
     # ----------- end ------------ #
 
@@ -129,7 +166,7 @@ class SequencesController < ApplicationController
         next if t.nil?
         l << t.name # add the taxon name to the lineage
         node = Node.find_by_id(t.id, @root)
-        if node.nil? # if the node isn't create yet
+        if node.nil? # if the node isn't created yet
           node = Node.new(t.id, t.name, @root, t.rank)
           node.data['count'] = lineage.hits
           last_node_loop = last_node_loop.add_child(node)
