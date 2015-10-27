@@ -99,6 +99,7 @@
           <div id="buttons-second" class="buttons-second"></div>
         </div>
         <div class="tab-pane" id="ec-table">
+          <% colors = Hash.new %>
           <table class="table table-condensed">
             <thead>
               <tr>
@@ -108,13 +109,16 @@
               </tr>
             </thead>
             <% counter = 0 %>
+            <% i = 5 %>
             <% while counter < @ec_lca_table_sorted.length do %>
+              <% i += 1 %>
               <tr>
                 <% if counter % 2 == 0%>
                   <td><strong><%= link_to @ec_lca_table_sorted[counter], "http://enzyme.expasy.org/EC/" + @ec_lca_table_sorted[counter] %></strong></td>
                   <% for subclass in @ec_lca_table_sorted[counter+1] do %>
                     <% if subclass != "" %>
-                      <td><%= link_to @ec_functions[subclass], "http://enzyme.expasy.org/EC/" + subclass %></td>
+                      <% colors.store(subclass, "c"+(i%30).to_s) if !colors.has_key?(subclass) %>
+                      <td class="<%= colors[subclass] %>"><%= link_to @ec_functions[subclass], "http://enzyme.expasy.org/EC/" + subclass %></td>
                     <% else %>
                       <td></td>
                     <% end %>
@@ -134,6 +138,15 @@
       init_sequence_show({
         peptide: "<%= @original_sequence %>",
         tree: <%= raw(@root) %>,
+        uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>
+      });
+    });
+  </script>
+  <script type="text/javascript">
+    $(function () {
+      init_ec_show({
+        peptide: "<%= @original_sequence %>",
+        tree: <%= raw(@test) %>,
         uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>
       });
     });
