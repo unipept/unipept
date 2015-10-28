@@ -57,13 +57,14 @@ class SequencesController < ApplicationController
     # make list unique
     ec_numbers_uniq = ec_numbers_list.to_set
     # list of ec column names
-    @ec_column_name = ["EC number", "Class", "Subclass level 1", "Subclass level 2", "Subclass level 3", "Hits"]
+    @ec_column_name = ["EC number", "Class", "Subclass", "Sub-subclass", "Topclass", "Hits"]
     # create instance variables
     @ec_lca_table = {}
     @ec_functions = {}
     @ec_lca_count = {}
     @ec_lca_class = {}
     @ec_lca_id = {}
+    @ec_lca = {}
 
     # get all rank order for each ec number 
     ec_numbers_uniq.each do |ecn|
@@ -95,8 +96,22 @@ class SequencesController < ApplicationController
     end
 
     # hash with the counts for each ec rank
+    ecc = {}
     ec_all_ranks.each do |rank|
-      @ec_lca_count[rank] = ec_numbers_list.count(rank)
+      ecc[rank] = ec_numbers_list.count(rank)
+    end
+    # calculate all steps of the tree the amount of hits
+    test = []
+    for ec_key, ec_value in @ec_lca_table 
+      ec_value.each do |ecitems|
+        if ecitems != ""
+          if !@ec_lca_count.has_key?(ecitems)
+            @ec_lca_count[ecitems] = ecc[ec_key]
+          else
+            @ec_lca_count[ecitems] += ecc[ec_key]
+          end
+        end
+      end
     end
 
     # store all classes for each ec number
@@ -105,13 +120,17 @@ class SequencesController < ApplicationController
         class_pos = l.index(rank)
         if !class_pos.nil?
           @ec_lca_class[rank] = @ec_column_name[class_pos+1]
+          #@ec_lca[@ec_column_name[class_pos+1]] += @ec_lca_count[rank]
         end
       end
     end
 
+    # calculate ec LCA
+    #@test1 = @ec_lca.sort_by{|x|x}.map{|lis| lis[-1] > 1 ? lis[0] : ""}
+
     # --------- Tree view for EC numbers --------- #
 
-    @ec_root = Node.new("-.-.-.-", 'ec_number', nil, 'root') # start constructing the tree
+    @ec_root = Node.new("-.-.-.-", '-.-.-.-', nil, 'root') # start constructing the tree
     @ec_root.data['count'] = @ec_lca_count.values.sum
     ec_last_node =  @ec_root
 
@@ -128,7 +147,6 @@ class SequencesController < ApplicationController
             node.data['count'] += @ec_lca_count[ecs]
             ec_last_node_loop = node
           end         
-
         end
       end
     end
