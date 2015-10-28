@@ -94,36 +94,42 @@
             <% end %>
           </table>
         </div>
-        <div class="tab-pane active" id="ec-tree">
+        <div class="tab-pane" id="ec-tree">
           <tpa-tree id="ecTree"></tpa-tree>
           <div id="buttons-second" class="buttons-second"></div>
         </div>
         <div class="tab-pane" id="ec-table">
+          <div id="sequence_table">
           <% colors = Hash.new %>
           <table class="table table-condensed">
             <thead>
               <tr>
-                <% for column in @ec_column_name do %>
-                  <th><%= column %></th>
+                <%=@test1%>
+                <% pos = 0%>
+                <% while pos < (@ec_column_name.length) do %>
+                  <th><%= @ec_column_name[pos] %></th>
+                  <% pos += 1%>
                 <% end %>
               </tr>
             </thead>
             <% counter = 0 %>
-            <% i = 5 %>
+            <% i = -1 %>
             <% while counter < @ec_lca_table_sorted.length do %>
-              <% i += 1 %>
+              <% i += 2 %>
               <tr>
                 <% if counter % 2 == 0%>
                   <td><strong><%= link_to @ec_lca_table_sorted[counter], "http://enzyme.expasy.org/EC/" + @ec_lca_table_sorted[counter] %></strong></td>
-                  <% for subclass in @ec_lca_table_sorted[counter+1] do %>
-                    <% if subclass != "" %>
-                      <% colors.store(subclass, "c"+(i%30).to_s) if !colors.has_key?(subclass) %>
-                      <td class="<%= colors[subclass] %>"><%= link_to @ec_functions[subclass], "http://enzyme.expasy.org/EC/" + subclass %></td>
+                  <% subcounter = 0 %>
+                  <% while subcounter < (@ec_lca_table_sorted[counter+1].length) do %>
+                    <% if @ec_lca_table_sorted[counter+1][subcounter] != "" %>
+                      <% colors.store(@ec_lca_table_sorted[counter+1][subcounter], "c"+(i%30).to_s) if !colors.has_key?(@ec_lca_table_sorted[counter+1][subcounter]) %>
+                      <td class="<%= colors[@ec_lca_table_sorted[counter+1][subcounter]] %>"><%= link_to @ec_functions[@ec_lca_table_sorted[counter+1][subcounter]], "http://enzyme.expasy.org/EC/" + @ec_lca_table_sorted[counter+1][subcounter] %></td>
                     <% else %>
                       <td></td>
                     <% end %>
+                    <% subcounter += 1 %>
                   <% end %>
-                  <td><%= @ec_lca_count[@ec_lca_table_sorted[counter]] %></td>
+                  <td><%= @ecc[@ec_lca_table_sorted[counter]] %></td>
                 <% end %>
                 <% counter += 2 %>
               </tr>
@@ -145,9 +151,7 @@
   <script type="text/javascript">
     $(function () {
       init_ec_show({
-        peptide: "<%= @original_sequence %>",
-        tree: <%= raw(@test) %>,
-        uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>
+        tree: <%= raw(@ec_root) %>
       });
     });
   </script>
