@@ -112,8 +112,6 @@ class SequencesController < ApplicationController
         end
       end
     end
-    @test1 = @ec_lca_count
-
 
     # store all classes for each ec number
     ec_all_ranks.each do |rank|
