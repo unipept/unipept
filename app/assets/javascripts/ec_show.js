@@ -183,9 +183,9 @@ function init_ec_show(data) {
                 } else if (d.name === "4.-.-.-") {
                     d.color = "#C62828"; // red
                 } else if (d.name === "5.-.-.-") {
-                    d.color = "#800080"; // purple
+                    d.color = "#6A1B9A"; // purple
                 } else if (d.name === "6.-.-.-") {
-                    d.color = "#FFFF00"; // yellow
+                    d.color = "#00695C"; // yellow
                 } else {
                     d.color = "#1565C0"; // blue
                 }
