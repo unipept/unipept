@@ -106,7 +106,7 @@
               <tr>
                 <%=@test1%>
                 <% pos = 0%>
-                <% while pos < (@ec_column_name.length) do %>
+                <% while pos < (@ec_column_name.length-1) do %>
                   <th><%= @ec_column_name[pos] %></th>
                   <% pos += 1%>
                 <% end %>
@@ -118,7 +118,7 @@
               <% i += 2 %>
               <tr>
                 <% if counter % 2 == 0%>
-                  <td><strong><%= link_to @ec_lca_table_sorted[counter], "http://enzyme.expasy.org/EC/" + @ec_lca_table_sorted[counter] %></strong></td>
+                  <td title="<%= @ec_functions[@ec_lca_table_sorted[counter]] %>" ><strong><%= link_to @ec_lca_table_sorted[counter], "http://enzyme.expasy.org/EC/" + @ec_lca_table_sorted[counter] %></strong></td>
                   <% subcounter = 0 %>
                   <% while subcounter < (@ec_lca_table_sorted[counter+1].length) do %>
                     <% if @ec_lca_table_sorted[counter+1][subcounter] != "" %>
@@ -129,7 +129,7 @@
                     <% end %>
                     <% subcounter += 1 %>
                   <% end %>
-                  <td><%= @ecc[@ec_lca_table_sorted[counter]] %></td>
+                  <!--<td><%= @ecc[@ec_lca_table_sorted[counter]] %></td>-->
                 <% end %>
                 <% counter += 2 %>
               </tr>
