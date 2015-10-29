@@ -123,7 +123,7 @@
                   <% while subcounter < (@ec_lca_table_sorted[counter+1].length) do %>
                     <% if @ec_lca_table_sorted[counter+1][subcounter] != "" %>
                       <% colors.store(@ec_lca_table_sorted[counter+1][subcounter], "c"+(i%30).to_s) if !colors.has_key?(@ec_lca_table_sorted[counter+1][subcounter]) %>
-                      <td title="<%= @ec_functions[@ec_lca_table_sorted[counter+1][subcounter]] %>" class="<%= colors[@ec_lca_table_sorted[counter+1][subcounter]] %>"><%= link_to @ec_functions[@ec_lca_table_sorted[counter+1][subcounter]], "http://enzyme.expasy.org/EC/" + @ec_lca_table_sorted[counter+1][subcounter] %></td>
+                      <td title="<%= @ec_functions[@ec_lca_table_sorted[counter+1][subcounter]] %>" class="<%= colors[@ec_lca_table_sorted[counter+1][subcounter]] %>"><div id="shorten"><%= link_to @ec_functions[@ec_lca_table_sorted[counter+1][subcounter]], "http://enzyme.expasy.org/EC/" + @ec_lca_table_sorted[counter+1][subcounter] %></div></td>
                     <% else %>
                       <td></td>
                     <% end %>
