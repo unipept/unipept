@@ -119,13 +119,13 @@ class SequencesController < ApplicationController
         class_pos = l.index(rank)
         if !class_pos.nil?
           @ec_lca_class[rank] = @ec_column_name[class_pos+1]
-          #@ec_lca[@ec_column_name[class_pos+1]] += @ec_lca_count[rank]
         end
       end
     end
 
     # calculate ec LCA
-    #@test1 = @ec_lca.sort_by{|x|x}.map{|lis| lis[-1] > 1 ? lis[0] : ""}
+    #@test1 = @ec_lca_table.map {|ecs| ec_lca_table[ecs][0] ? }
+
 
     # --------- Tree view for EC numbers --------- #
 
@@ -139,17 +139,21 @@ class SequencesController < ApplicationController
         if ecs != ""
           node = Node.find_by_id(ecs, @ec_root)
           if node.nil?
-            node = Node.new(ecs, ecs, @ec_root, @ec_lca_class[ecs])
+            if @ec_lca_table.has_key?(ecs)
+              node = Node.new(ecs, @ec_functions[ecs], @ec_root, @ec_lca_class[ecs])
+            else
+              node = Node.new(ecs, ecs, @ec_root, @ec_lca_class[ecs])
+            end
             node.data['count'] = @ec_lca_count[ecs]
             ec_last_node_loop = ec_last_node_loop.add_child(node)
           else
-            node.data['count'] += 0
             ec_last_node_loop = node
           end         
         end
       end
     end
-    @test = Oj.dump(@ec_root, mode: :compat)
+    @ec_root.sort_children
+    @ec_root = Oj.dump(@ec_root, mode: :compat)
 
     # ----------- end ------------ #
 
