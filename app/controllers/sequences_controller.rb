@@ -57,7 +57,7 @@ class SequencesController < ApplicationController
     # make list unique
     ec_numbers_uniq = ec_numbers_list.to_set
     # list of ec column names
-    @ec_column_name = ["EC number", "Class", "Subclass", "Sub-subclass", "Topclass", "Hits"]
+    @ec_column_name = ["EC number", "Class", "Subclass", "Sub-subclass", "Enzyme", "Hits"]
     # create instance variables
     @ec_lca_table = {}
     @ec_functions = {}
@@ -147,6 +147,7 @@ class SequencesController < ApplicationController
             node.data['count'] = @ec_lca_count[ecs]
             ec_last_node_loop = ec_last_node_loop.add_child(node)
           else
+            node.name = ecs
             ec_last_node_loop = node
           end         
         end
