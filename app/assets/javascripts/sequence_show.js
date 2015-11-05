@@ -1,7 +1,10 @@
 function init_sequence_show(data) {
 
     // set up the fancy tree
-    initLineageTree(data.tree);
+    initD3TreeView(data.tree, "#lineage-tree");
+
+    // set up fancy d3TreeView
+    initD3TreeView(data.ec_tree, "#d3TreeView")
 
     // set up the fullscreen stuff
     setUpFullScreen();
@@ -40,6 +43,26 @@ function init_sequence_show(data) {
             }
             showInfoModal(title, content);
         });
+    }
+
+    function initD3TreeView(data, page) {
+      $("#treeview-reset").click(function() {
+        $("#d3TreeView").treeview('reset');
+      });
+        $(page).treeview({
+          data: data,
+          width: 916,
+          height: 600,
+        });
+      nodeFillColor = function nodeFillColor(d) {
+          return "red";
+      };
+      nodeStrokeColor = function nodeStrokeColor(d) {
+          return "red";
+      };
+      linkStrokeColor = function linkStrokeColor(d) {
+          return "red";
+      };
     }
 
     function addExternalLinks() {
@@ -510,5 +533,18 @@ function init_sequence_show(data) {
             zoomListener.scale(scale);
             zoomListener.translate([x, y]);
         }
+    }
+}
+
+function toggle_column(col) {
+    els = $("#ec-table tr td:nth-child(" + col + ") div");
+    if (els.css('display') == "none") {
+        els.show();
+        $("#ec-table tr th:nth-child(" + col + ") a span.classdesc").show();
+        $("#ec-table tr th:nth-child(" + col + ") a span.glyphicon").hide();
+    } else {
+        els.hide();
+        $("#ec-table tr th:nth-child(" + col + ") a span.classdesc").hide();
+        $("#ec-table tr th:nth-child(" + col + ") a span.glyphicon").show();
     }
 }
