@@ -548,3 +548,20 @@ function toggle_column(col) {
         $("#ec-table tr th:nth-child(" + col + ") a span.glyphicon").show();
     }
 }
+
+function toggle_tab() {
+    $("#proteins-tab").click(function(){
+      $("#lineage-analysis").hide();
+      $("#functional-analysis").hide();
+    });
+
+    $("#functional-analysis-tab").click(function(){
+      $("#lineage-analysis").hide();
+      $("#functional-analysis").show();
+    });
+
+    $("#lineage-analysis-tab").click(function(){
+        $("#functional-analysis").hide();
+        $("#lineage-analysis").show();
+    })
+}
