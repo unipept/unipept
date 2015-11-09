@@ -13,13 +13,13 @@
     <div class='card-title card-title-colored'>
       <div id="single-peptide-tabs">
         <ul class="nav nav-tabs">
-          <li><a onclick="toggle_tab()" id="proteins-tab" href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
+          <li class="active"><a onclick="toggle_tab()" id="proteins-tab" href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
           <li><a onclick="toggle_tab()" id="lineage-analysis-tab" href="#lineage-analysis" data-toggle="tab">Lineage Analysis <span></span></a></li>
           <li><a onclick="toggle_tab()" id="functional-analysis-tab" href="#functional-analysis" data-toggle="tab">Functional Analysis <span></span></a></li>
         </ul>
         <div id="lineage-analysis" class="sub-navigation change-decoration">
           <ul class="nav nav-tabs">
-            <li class="active"><a href="#lineage-tree" data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+            <li><a href="#lineage-tree" data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
             <li><a href="#lineage-table" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
           </ul>
         </div>
@@ -33,7 +33,7 @@
     </div>
     <div class='card-supporting-text'>
       <div class="tab-content">
-        <div class="tab-pane active" id="lineage-tree">
+        <div class="tab-pane" id="lineage-tree">
           <div id="buttons-single" class="buttons-single"></div>
           <div class="tpa-tree" id="lineageTree"></div>
         </div>
@@ -66,7 +66,7 @@
             </table>
           </div>
         </div>
-        <div class="tab-pane" id="proteins">
+        <div class="tab-pane active" id="proteins">
           <div class="buttons-single">
             <button id="clipboard-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-copy"></span> Copy to clipboard</button>
             <button id="open-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-new-window"></span> Open in UniProt</button>
@@ -114,33 +114,26 @@
           <table id="ec-table" class="table table-condensed">
             <thead>
               <tr>
-                <%=@test1%>
-                <% pos = 0%>
-                <% while pos < (@ec_column_name.length-1) do %>
-                  <th><a onclick="toggle_column(<%= pos+1 %>)" href="#"><span class="classdesc"><%= @ec_column_name[pos] %></span><span class="glyphicon glyphicon-resize-horizontal" style="display: none"></span></a></th>
+                <% pos = 1 %>
+                <% @ec_column_name.each do |eccn| %>
+                  <th><a onclick="toggle_column(<%= pos %>)" href="#"><span class="classdesc"><%= eccn %></span><span class="glyphicon glyphicon-resize-horizontal" style="display: none"></span></a></th>
                   <% pos += 1%>
                 <% end %>
               </tr>
             </thead>
-            <% counter = 0 %>
             <% i = -1 %>
-            <% while counter < @ec_lca_table_sorted.length do %>
-              <% i += 2 %>
+            <% @ec_lca_table_sorted.each do |ec_lts| %>
+              <% i += 1 %>
               <tr>
-                <% if counter % 2 == 0 %>
-                  <td title="<%= @ec_functions[@ec_lca_table_sorted[counter]] %>" ><div><strong><%= link_to @ec_lca_table_sorted[counter], "http://enzyme.expasy.org/EC/" + @ec_lca_table_sorted[counter] %></strong></div></td>
-                  <% subcounter = 0 %>
-                  <% while subcounter < (@ec_lca_table_sorted[counter+1].length) do %>
-                    <% if @ec_lca_table_sorted[counter+1][subcounter] != "" %>
-                      <% colors.store(@ec_lca_table_sorted[counter+1][subcounter], "c"+(i%30).to_s) if !colors.has_key?(@ec_lca_table_sorted[counter+1][subcounter]) %>
-                      <td title="<%= @ec_functions[@ec_lca_table_sorted[counter+1][subcounter]] %>" class="<%= colors[@ec_lca_table_sorted[counter+1][subcounter]] %>"><div class="shorten"><%= link_to @ec_functions[@ec_lca_table_sorted[counter+1][subcounter]], "http://enzyme.expasy.org/EC/" + @ec_lca_table_sorted[counter+1][subcounter] %></div></td>
-                    <% else %>
-                      <td></td>
-                    <% end %>
-                    <% subcounter += 1 %>
-                  <% end %>
+              <td title="<%= @ec_functions[ec_lts] %>" ><div><strong><%= link_to ec_lts, "http://enzyme.expasy.org/EC/" + ec_lts %></strong></div></td>
+              <% @ec_lca_table[ec_lts].each do |ec_ltsl| %>
+                <% if ec_ltsl != "" %>
+                  <% colors.store(ec_ltsl, "c"+(i%30).to_s) if !colors.has_key?(ec_ltsl) %>
+                  <td title="<%= @ec_functions[ec_ltsl] %>" class="<%= colors[ec_ltsl] %>"><div class="shorten"><%= link_to @ec_functions[ec_ltsl], "http://enzyme.expasy.org/EC/" + ec_ltsl %></div></td>
+                <% else %>
+                  <td></td>
                 <% end %>
-                <% counter += 2 %>
+              <% end %>
               </tr>
             <% end %>
           </table>
