@@ -45,24 +45,12 @@ function init_sequence_show(data) {
         });
     }
 
-    function initD3TreeView(data, page) {
-      $("#treeview-reset").click(function() {
-        $("#d3TreeView").treeview('reset');
-      });
-        $(page).treeview({
+    function initD3TreeView(data, selector) {
+        $(selector).treeview({
           data: data,
           width: 916,
           height: 600,
         });
-      nodeFillColor = function nodeFillColor(d) {
-          return "red";
-      };
-      nodeStrokeColor = function nodeStrokeColor(d) {
-          return "red";
-      };
-      linkStrokeColor = function linkStrokeColor(d) {
-          return "red";
-      };
     }
 
     function addExternalLinks() {
