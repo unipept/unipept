@@ -20,7 +20,7 @@
     margin: -16px -16px -21px -16px;
 }
 
-/* Lineage table */
+/* tables */
 .sequence_table {
     overflow: auto;
     font-size: 10px;
@@ -138,4 +138,26 @@ table.protein-info .organism {
 }
 table.protein-info .dropdown-menu {
     margin-top: 0;
+}
+
+.sub-navigation { 
+    display: none;
+    background-color: @primary-500;
+    min-width: 916px;
+    margin-left: -16px;
+    .shadow-z3();
+}
+
+.sub-navigation {
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-items: center; 
+}
+
+.change-decoration {
+    .nav-tabs > li.active > a,
+    .nav-tabs > li.active > a:hover,
+    .nav-tabs > li.active > a:focus {
+        border-color: @white-text; 
+    }
 }
