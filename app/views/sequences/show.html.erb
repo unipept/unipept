@@ -13,12 +13,22 @@
     <div class='card-title card-title-colored'>
       <div id="single-peptide-tabs">
         <ul class="nav nav-tabs">
-          <li class="active"><a href="#lineage-tree" id="lineage-tree-tab" data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
-          <li><a href="#lineage-table" id="lineage-table-tab" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
-          <li><a href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
-          <li><a href="#ec-tree" id="ec-tree-tab" data-toggle="tab">EC number tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
-          <li><a href="#ec-table" data-toggle="tab">EC number table <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+          <li><a onclick="toggle_tab()" id="proteins-tab" href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
+          <li><a onclick="toggle_tab()" id="lineage-analysis-tab" href="#lineage-analysis" data-toggle="tab">Lineage Analysis <span></span></a></li>
+          <li><a onclick="toggle_tab()" id="functional-analysis-tab" href="#functional-analysis" data-toggle="tab">Functional Analysis <span></span></a></li>
         </ul>
+        <div id="lineage-analysis" class="sub-navigation change-decoration">
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#lineage-tree" data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+            <li><a href="#lineage-table" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+          </ul>
+        </div>
+        <div id="functional-analysis" class="sub-navigation change-decoration">
+          <ul class="nav nav-tabs">
+            <li><a href="#ec-tree" data-toggle="tab">EC number tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+            <li><a href="#ec-table" data-toggle="tab">EC number table <span></span></a></li>
+          </ul>
+        </div>
       </div>
     </div>
     <div class='card-supporting-text'>
