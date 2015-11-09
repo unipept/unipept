@@ -524,7 +524,7 @@ function init_sequence_show(data) {
     }
 }
 
-function toggle_column(col) {
+function toggleColumn(col) {
     els = $("#ec-table tr td:nth-child(" + col + ") div");
     if (els.css('display') == "none") {
         els.show();
@@ -537,7 +537,7 @@ function toggle_column(col) {
     }
 }
 
-function toggle_tab() {
+function toggleTab() {
     $("#proteins-tab").click(function(){
       $("#lineage-analysis").hide();
       $("#functional-analysis").hide();
