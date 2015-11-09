@@ -13,9 +13,9 @@
     <div class='card-title card-title-colored'>
       <div id="single-peptide-tabs">
         <ul class="nav nav-tabs">
-          <li class="active"><a onclick="toggle_tab()" id="proteins-tab" href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
-          <li><a onclick="toggle_tab()" id="lineage-analysis-tab" href="#lineage-analysis" data-toggle="tab">Lineage Analysis <span></span></a></li>
-          <li><a onclick="toggle_tab()" id="functional-analysis-tab" href="#functional-analysis" data-toggle="tab">Functional Analysis <span></span></a></li>
+          <li class="active"><a onclick="toggleTab()" id="proteins-tab" href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
+          <li><a onclick="toggleTab()" id="lineage-analysis-tab" href="#lineage-analysis" data-toggle="tab">Lineage Analysis <span></span></a></li>
+          <li><a onclick="toggleTab()" id="functional-analysis-tab" href="#functional-analysis" data-toggle="tab">Functional Analysis <span></span></a></li>
         </ul>
         <div id="lineage-analysis" class="sub-navigation change-decoration">
           <ul class="nav nav-tabs">
@@ -116,7 +116,7 @@
               <tr>
                 <% pos = 1 %>
                 <% @ec_column_name.each do |eccn| %>
-                  <th><a onclick="toggle_column(<%= pos %>)" href="#"><span class="classdesc"><%= eccn %></span><span class="glyphicon glyphicon-resize-horizontal" style="display: none"></span></a></th>
+                  <th><a onclick="toggleColumn(<%= pos %>)" href="#"><span class="classdesc"><%= eccn %></span><span class="glyphicon glyphicon-resize-horizontal" style="display: none"></span></a></th>
                   <% pos += 1%>
                 <% end %>
               </tr>
