@@ -57,7 +57,7 @@ class SequencesController < ApplicationController
     # make list unique
     ec_numbers_uniq = ec_numbers_list.to_set
     # list of ec column names
-    @ec_column_name = ["EC number", "Class", "Subclass", "Sub-subclass", "Enzyme", "Hits"]
+    @ec_column_name = ["EC number", "Class", "Subclass", "Sub-subclass", "Enzyme"]
     # create instance variables
     @ec_lca_table = {}
     @ec_functions = {}
@@ -84,7 +84,7 @@ class SequencesController < ApplicationController
       end
     end
     # sort the hash and make it an array
-    @ec_lca_table_sorted = @ec_lca_table.sort_by{|x|x}.flatten(1)
+    @ec_lca_table_sorted = @ec_lca_table.keys.sort_by{|x|x}.flatten(1)
 
     # get all ec numbers from the ec_lca_table
     ec_all_ranks = @ec_lca_table.values.flatten(1).to_set.map{|x| x}
