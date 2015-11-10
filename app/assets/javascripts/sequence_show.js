@@ -6,6 +6,9 @@ function init_sequence_show(data) {
     // set up fancy d3TreeView
     initD3TreeView(data.ec_tree, "#d3TreeView")
 
+    // sub navigation click events
+    initSubNav();
+
     // set up the fullscreen stuff
     setUpFullScreen();
 
@@ -51,6 +54,50 @@ function init_sequence_show(data) {
           width: 916,
           height: 600,
         });
+    }
+
+    function initSubNav() {
+        $("li a").click(function() {
+            if ($(this).attr("data-toggle") === "tab") {
+                toggleTab();
+            } 
+        })
+        $("th a span").click(function() {
+            console.log($(this).attr("class"))
+            if ($(this).attr("class") === "classdesc" || "glyphicon") {
+                toggleColumn($(this).attr("id"));
+            }
+        })
+    }
+
+    function toggleColumn(col) {
+        els = $("#ec-table tr td:nth-child(" + col + ") div");
+        if (els.css('display') == "none") {
+            els.show();
+            $("#ec-table tr th:nth-child(" + col + ") a span.classdesc").show();
+            $("#ec-table tr th:nth-child(" + col + ") a span.glyphicon").hide();
+        } else {
+            els.hide();
+            $("#ec-table tr th:nth-child(" + col + ") a span.classdesc").hide();
+            $("#ec-table tr th:nth-child(" + col + ") a span.glyphicon").show();
+        }
+    }
+
+    function toggleTab() {
+        $("#proteins-tab").click(function(){
+          $("#lineage-analysis").hide();
+          $("#functional-analysis").hide();
+        });
+
+        $("#functional-analysis-tab").click(function(){
+          $("#lineage-analysis").hide();
+          $("#functional-analysis").show();
+        });
+
+        $("#lineage-analysis-tab").click(function(){
+            $("#functional-analysis").hide();
+            $("#lineage-analysis").show();
+        })
     }
 
     function addExternalLinks() {
@@ -522,34 +569,4 @@ function init_sequence_show(data) {
             zoomListener.translate([x, y]);
         }
     }
-}
-
-function toggleColumn(col) {
-    els = $("#ec-table tr td:nth-child(" + col + ") div");
-    if (els.css('display') == "none") {
-        els.show();
-        $("#ec-table tr th:nth-child(" + col + ") a span.classdesc").show();
-        $("#ec-table tr th:nth-child(" + col + ") a span.glyphicon").hide();
-    } else {
-        els.hide();
-        $("#ec-table tr th:nth-child(" + col + ") a span.classdesc").hide();
-        $("#ec-table tr th:nth-child(" + col + ") a span.glyphicon").show();
-    }
-}
-
-function toggleTab() {
-    $("#proteins-tab").click(function(){
-      $("#lineage-analysis").hide();
-      $("#functional-analysis").hide();
-    });
-
-    $("#functional-analysis-tab").click(function(){
-      $("#lineage-analysis").hide();
-      $("#functional-analysis").show();
-    });
-
-    $("#lineage-analysis-tab").click(function(){
-        $("#functional-analysis").hide();
-        $("#lineage-analysis").show();
-    })
 }
