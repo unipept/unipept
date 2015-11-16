@@ -14,58 +14,13 @@
       <div id="single-peptide-tabs">
         <ul class="nav nav-tabs">
           <li class="active"><a id="proteins-tab" href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
-          <li><a id="lineage-analysis-tab" href="#lineage-analysis" data-toggle="tab">Lineage Analysis <span></span></a></li>
+          <li><a id="lineage-analysis-tab" href="#lineage-analysis" data-toggle="tab">Biodiversity Analysis <span></span></a></li>
           <li><a id="functional-analysis-tab" href="#functional-analysis" data-toggle="tab">Functional Analysis <span></span></a></li>
         </ul>
-        <div id="lineage-analysis" class="sub-navigation change-decoration">
-          <ul class="nav nav-tabs">
-            <li><a href="#lineage-tree" data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
-            <li><a href="#lineage-table" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
-          </ul>
-        </div>
-        <div id="functional-analysis" class="sub-navigation change-decoration">
-          <ul class="nav nav-tabs">
-            <li><a href="#ec-tree" data-toggle="tab">EC number tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
-            <li><a href="#ec-table" data-toggle="tab">EC number table <span></span></a></li>
-          </ul>
-        </div>
       </div>
     </div>
     <div class='card-supporting-text'>
       <div class="tab-content">
-        <div class="tab-pane" id="lineage-tree">
-          <div id="buttons-single" class="buttons-single"></div>
-          <div class="tpa-tree" id="lineageTree"></div>
-        </div>
-        <div class="tab-pane" id="lineage-table">
-          <div class="sequence_table">
-            <% colors = Hash.new %>
-            <table class="table table-condensed">
-              <thead>
-                <tr>
-                  <% for rank in @table_ranks do%>
-                    <th><%= rank %></th>
-                  <% end %>
-                </tr>
-              </thead>
-              <% i = -1 %>
-              <% for lineage in @table_lineages do%>
-                <% i += 1 %>
-                <tr>
-                  <td><strong><%= lineage.delete_at(0) %></strong></td>
-                  <% for rank in lineage do%>
-                    <% if !rank.nil? %>
-                      <% colors.store(rank.id, "c"+(i%30).to_s) if !colors.has_key?(rank.id) %>
-                      <td class="<%= colors[rank.id] %>"><%= link_to rank.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + rank.id.to_s, :target => "_blank", :title => "Open in NCBI" %></td>
-                    <% else %>
-                      <td></td>
-                    <% end %>
-                  <% end %>
-                </tr>
-              <% end %>
-            </table>
-          </div>
-        </div>
         <div class="tab-pane active" id="proteins">
           <div class="buttons-single">
             <button id="clipboard-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-copy"></span> Copy to clipboard</button>
@@ -104,39 +59,93 @@
             <% end %>
           </table>
         </div>
-        <div class="tab-pane" id="ec-tree">
-          <div class="tpa-tree" id="d3TreeView"></div>
-          <div id="buttons-second" class="buttons-second"></div>
-        </div>
-        <div class="tab-pane" id="ec-table">
-          <div class="sequence_table">
-          <% colors = Hash.new %>
-          <table id="ec-table" class="table table-condensed">
-            <thead>
-              <tr>
-                <% pos = 1 %>
-                <% @ec_column_name.each do |eccn| %>
-                  <th><a href="#ec-column-name"><span id="<%= pos %>" class="classdesc"><%= eccn %></span><span id="<%= pos %>" class="glyphicon glyphicon-resize-horizontal" style="display: none"></span></a></th>
-                  <% pos += 1%>
-                <% end %>
-              </tr>
-            </thead>
-            <% i = -1 %>
-            <% @ec_lca_table_sorted.each do |ec_lts| %>
-              <% i += 1 %>
-              <tr>
-              <td title="<%= @ec_functions[ec_lts] %>" ><div><strong><%= link_to ec_lts, "http://enzyme.expasy.org/EC/" + ec_lts %></strong></div></td>
-              <% @ec_lca_table[ec_lts].each do |ec_ltsl| %>
-                <% if ec_ltsl != "" %>
-                  <% colors.store(ec_ltsl, "c"+(i%30).to_s) if !colors.has_key?(ec_ltsl) %>
-                  <td title="<%= @ec_functions[ec_ltsl] %>" class="<%= colors[ec_ltsl] %>"><div class="shorten"><%= link_to @ec_functions[ec_ltsl], "http://enzyme.expasy.org/EC/" + ec_ltsl %></div></td>
-                <% else %>
-                  <td></td>
-                <% end %>
-              <% end %>
-              </tr>
-            <% end %>
-          </table>
+        <div class="tab-pane" id="lineage-analysis">
+          <ul class="nav nav-tabs">
+            <li><a class="subnav-link" href="#lineage-tree" data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+            <li><a class="subnav-link" href="#lineage-table" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+          </ul>
+          <div class='card-supporting-text'>
+            <div class="tab-content">
+
+              <div class="tab-pane" id="lineage-tree">
+                <div id="buttons-single" class="buttons-single"></div>
+                <div class="tpa-tree" id="lineageTree"></div>
+              </div>
+              <div class="tab-pane" id="lineage-table">
+                <div class="sequence_table">
+                  <% colors = Hash.new %>
+                  <table class="table table-condensed">
+                    <thead>
+                      <tr>
+                        <% for rank in @table_ranks do%>
+                          <th><%= rank %></th>
+                        <% end %>
+                      </tr>
+                    </thead>
+                    <% i = -1 %>
+                    <% for lineage in @table_lineages do%>
+                      <% i += 1 %>
+                      <tr>
+                        <td><strong><%= lineage.delete_at(0) %></strong></td>
+                        <% for rank in lineage do%>
+                          <% if !rank.nil? %>
+                            <% colors.store(rank.id, "c"+(i%30).to_s) if !colors.has_key?(rank.id) %>
+                            <td class="<%= colors[rank.id] %>"><%= link_to rank.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + rank.id.to_s, :target => "_blank", :title => "Open in NCBI" %></td>
+                          <% else %>
+                            <td></td>
+                          <% end %>
+                        <% end %>
+                      </tr>
+                    <% end %>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> 
+        <div class="tab-pane" id="functional-analysis">
+          <ul class="nav nav-tabs">
+            <li><a class="subnav-link" href="#ec-tree" data-toggle="tab">EC number tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+            <li><a class="subnav-link" href="#ec-table" data-toggle="tab">EC number table <span></span></a></li>
+          </ul>
+          <div class='card-supporting-text'>
+            <div class="tab-content">
+              <div class="tab-pane" id="ec-tree">
+                <div class="tpa-tree" id="d3TreeView"></div>
+                <div id="buttons-second" class="buttons-second"></div>
+              </div>
+              <div class="tab-pane" id="ec-table">
+                <div class="sequence_table">
+                <% colors = Hash.new %>
+                <table id="ec-table" class="table table-condensed">
+                  <thead>
+                    <tr>
+                      <% pos = 1 %>
+                      <% @ec_column_name.each do |eccn| %>
+                        <th><a><span id="<%= pos %>" class="classdesc"><%= eccn %></span><span id="<%= pos %>" class="glyphicon glyphicon-resize-horizontal" style="display: none"></span></a></th>
+                        <% pos += 1%>
+                      <% end %>
+                    </tr>
+                  </thead>
+                  <% i = -1 %>
+                  <% @ec_lca_table_sorted.each do |ec_lts| %>
+                    <% i += 1 %>
+                    <tr>
+                    <td title="<%= @ec_functions[ec_lts] %>" ><div><strong><%= link_to ec_lts, "http://enzyme.expasy.org/EC/" + ec_lts %></strong></div></td>
+                    <% @ec_lca_table[ec_lts].each do |ec_ltsl| %>
+                      <% if ec_ltsl != "" %>
+                        <% colors.store(ec_ltsl, "c"+(i%30).to_s) if !colors.has_key?(ec_ltsl) %>
+                        <td title="<%= @ec_functions[ec_ltsl] %>" class="<%= colors[ec_ltsl] %>"><div class="shorten"><%= link_to @ec_functions[ec_ltsl], "http://enzyme.expasy.org/EC/" + ec_ltsl %></div></td>
+                      <% else %>
+                        <td></td>
+                      <% end %>
+                    <% end %>
+                    </tr>
+                  <% end %>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
