@@ -129,10 +129,14 @@ function init_sequence_show(data) {
      */
     function setUpImageSave() {
         $("#buttons-single").prepend("<button id='save-btn-lineage' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>");
-        $("#buttons-second").prepend("<button id='save-btn-ec' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>");
+        $("#buttons-ec-tree").prepend("<button id='save-btn-ec' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>");
         $("#save-btn-lineage").click(function () {
             logToGoogle("Single Peptide", "Save Image");
-            triggerDownloadModal("#lineageTree svg", null, "unipept_treeview");
+            triggerDownloadModal("#lineageTree svg", null, "unipept_lineage_treeview");
+        });
+        $("#save-btn-ec").click(function () {
+            logToGoogle("Single Peptide", "Save Image");
+            triggerDownloadModal("#ecTree svg", null, "unipept_ec_treeview");
         });
     }
 
