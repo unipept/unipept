@@ -122,6 +122,17 @@
                 color(node, i);
             });
 
+            var LCA;
+
+            function findLCA(d) {
+                console.log(d.children[0])
+                if (d.children && d.children.length === 1) {
+                    findLCA(d.children[0]);
+                } else {
+                    LCA = d;
+                }
+            }
+            findLCA(root);
 
             // collapse everything
             function collapseAll(d) {
@@ -134,12 +145,13 @@
                     d.children = null;
                 }
             }
-            collapseAll(root);
-            expand(root);
 
+            collapseAll(LCA);
             update(root);
-            centerNode(root);
+            rightClick(LCA);
+
         }
+        d3.select(self.frameElement).style("height", "800px");
 
         function update(source) {
 
