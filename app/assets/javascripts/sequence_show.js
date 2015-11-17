@@ -63,7 +63,6 @@ function init_sequence_show(data) {
             } 
         })
         $("th a span").click(function() {
-            console.log($(this).attr("class"))
             if ($(this).attr("class") === "classdesc" || "glyphicon") {
                 toggleColumn($(this).attr("id"));
             }
@@ -130,6 +129,7 @@ function init_sequence_show(data) {
      */
     function setUpImageSave() {
         $("#buttons-single").prepend("<button id='save-btn-lineage' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>");
+        $("#buttons-second").prepend("<button id='save-btn-ec' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>");
         $("#save-btn-lineage").click(function () {
             logToGoogle("Single Peptide", "Save Image");
             triggerDownloadModal("#lineageTree svg", null, "unipept_treeview");
@@ -142,9 +142,14 @@ function init_sequence_show(data) {
     function setUpFullScreen() {
         if (fullScreenApi.supportsFullScreen) {
             $("#buttons-single").prepend("<button id='zoom-btn-lineage' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
+            $("#buttons-ec-tree").prepend("<button id='zoom-btn-ec' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
             $("#zoom-btn-lineage").click(function () {
                 logToGoogle("Single Peptide", "Full Screen");
                 window.fullScreenApi.requestFullScreen($("#lineageTree").get(0));
+            });
+            $("#zoom-btn-ec").click(function () {
+                logToGoogle("Single Peptide", "Full Screen");
+                window.fullScreenApi.requestFullScreen($("#ecTree").get(0));
             });
             $(document).bind(fullScreenApi.fullScreenEventName, resizeFullScreen);
         }
@@ -159,6 +164,8 @@ function init_sequence_show(data) {
                 }
                 $("#lineageTree svg").attr("width", width);
                 $("#lineageTree svg").attr("height", height);
+                $("#ecTree svg").attr("width", width);
+                $("#ecTree svg").attr("height", height);
             }, 1000);
         }
     }
