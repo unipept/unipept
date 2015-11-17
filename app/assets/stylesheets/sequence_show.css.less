@@ -14,7 +14,7 @@
 
 /* subnav botton */
 .buttons-subnav {
-    margin-top: -100px;
+    margin-top: -95px;
 }
 
 .tpa-tree {
@@ -153,5 +153,23 @@ table.protein-info .dropdown-menu {
 }
 
 .nav-tabs .subnav-link {
+    color: white;
+    height: 40px;
+    border: none;
+    font-size: 14px;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-out;
+    background: @primary-500;
+}
+
+.nav-tabs .subnav-link:hover {
     border-bottom: 5px solid @accent-500;
+    background: @primary-500;
+}
+
+.nav-tabs li.active .subnav-link, 
+.nav-tabs li.active .subnav-link:focus {
+    background: @primary-500;
+    color: white;
+    border: none;
 }
