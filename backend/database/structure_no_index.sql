@@ -219,42 +219,40 @@ CREATE TABLE IF NOT EXISTS `unipept`.`users` (
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `unipept`.`assemblies`
+-- Table `unipept`.`proteomes`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `unipept`.`assemblies` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `genbank_assembly_accession` CHAR(16) NULL,
-  `refseq_assembly_accession` CHAR(16) NULL,
-  `taxon_id` MEDIUMINT UNSIGNED NULL,
-  `genome_representation` ENUM('full', 'partial') NOT NULL,
-  `assembly_level` ENUM('Contig', 'Scaffold', 'Complete Genome', 'Chromosome', 'Chromosome with gaps', 'Gapless Chromosome') NOT NULL,
-  `assembly_name` VARCHAR(104) NOT NULL,
+CREATE TABLE IF NOT EXISTS `unipept`.`proteomes` (
+  `id` MEDIUMINT UNSIGNED NOT NULL,
+  `proteome_accession_number` CHAR(12) NOT NULL,
   `organism_name` VARCHAR(86) NOT NULL,
-  `biosample` VARCHAR(14) NULL,
+  `taxon_id` MEDIUMINT UNSIGNED NULL,
   `type_strain` BIT(1) NOT NULL DEFAULT b'0',
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+  `reference_proteome` BIT(1) NOT NULL DEFAULT b'0',
+  `strain` VARCHAR(45) NULL,
+  `assembly` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`)
+ENGINE = InnoDB
+
 
 -- -----------------------------------------------------
--- Table `unipept`.`assembly_sequences`
+-- Table `unipept`.`proteome_cross_references`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `unipept`.`assembly_sequences` (
+CREATE TABLE IF NOT EXISTS `unipept`.`proteome_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `assembly_id` INT UNSIGNED NOT NULL,
-  `sequence_type` ENUM('Chromosome', 'Linkage Group', 'Mitochondrion', 'Plasmid', 'na') NOT NULL DEFAULT 'na',
-  `genbank_accession` VARCHAR(25) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+  `uniprot_entry_id` INT UNSIGNED NOT NULL,
+  `proteome_id` MEDIUMINT UNSIGNED NOT NULL DEFAULT 'na',
+  PRIMARY KEY (`id`)
+ENGINE = InnoDB
 
 
 -- -----------------------------------------------------
--- Table `unipept`.`assembly_caches`
+-- Table `unipept`.`proteome_caches`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `unipept`.`assembly_caches` (
-  `assembly_id` INT UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `unipept`.`proteome_caches` (
+  `proteome_id` MEDIUMINT UNSIGNED NOT NULL,
   `json_sequences` MEDIUMTEXT NOT NULL,
-  PRIMARY KEY (`assembly_id`))
-ENGINE = InnoDB;
+  PRIMARY KEY (`proteome_id`)
+ENGINE = InnoDB
 
 
 

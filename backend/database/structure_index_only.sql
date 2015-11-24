@@ -58,16 +58,16 @@ ALTER TABLE ec_cross_references ADD INDEX fk_ec_reference_uniprot_entries (unipr
 
 
 -- -----------------------------------------------------
--- Table `unipept`.`assemblies`
+-- Table `unipept`.`proteomes`
 -- -----------------------------------------------------
-ALTER TABLE assemblies ADD INDEX fk_taxons_assemblies_idx (taxon_id ASC);
+ALTER TABLE proteomes ADD INDEX fk_taxons_proteomes (taxon_id ASC);
 
 
 -- -----------------------------------------------------
--- Table `unipept`.`assembly_sequences`
+-- Table `unipept`.`proteome_cross_references`
 -- -----------------------------------------------------
-ALTER TABLE assembly_sequences ADD INDEX fk_assemblies_assembly_sequences_idx (assembly_id ASC);
-ALTER TABLE assembly_sequences ADD INDEX idx_genbank_accession (genbank_accession ASC);
+ALTER TABLE proteome_cross_references ADD INDEX fk_proteome_cross_references_uniprot_entries (uniprot_entry_id ASC);
+ALTER TABLE proteome_cross_references ADD INDEX fk_proteome_cross_references (proteome_id ASC);
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

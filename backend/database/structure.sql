@@ -295,61 +295,63 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `unipept`.`assemblies`
+-- Table `unipept`.`proteomes`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `unipept`.`assemblies` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `genbank_assembly_accession` CHAR(16) NULL,
-  `refseq_assembly_accession` CHAR(16) NULL,
-  `taxon_id` MEDIUMINT UNSIGNED NULL,
-  `genome_representation` ENUM('full', 'partial') NOT NULL,
-  `assembly_level` ENUM('Contig', 'Scaffold', 'Complete Genome', 'Chromosome', 'Chromosome with gaps', 'Gapless Chromosome') NOT NULL,
-  `assembly_name` VARCHAR(104) NOT NULL,
+CREATE TABLE IF NOT EXISTS `unipept`.`proteomes` (
+  `id` MEDIUMINT UNSIGNED NOT NULL,
+  `proteome_accession_number` CHAR(12) NOT NULL,
   `organism_name` VARCHAR(86) NOT NULL,
-  `biosample` VARCHAR(14) NULL,
+  `taxon_id` MEDIUMINT UNSIGNED NULL,
   `type_strain` BIT(1) NOT NULL DEFAULT b'0',
+  `reference_proteome` BIT(1) NOT NULL DEFAULT b'0',
+  `strain` VARCHAR(45) NULL,
+  `assembly` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_taxons_assemblies_idx` (`taxon_id` ASC),
-  CONSTRAINT `fk_taxons_assemblies`
+  INDEX `fk_taxons_proteomes` (`taxon_id` ASC),
+  CONSTRAINT `fk_taxons_proteomes`
     FOREIGN KEY (`taxon_id`)
     REFERENCES `unipept`.`taxons` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
 
 
 -- -----------------------------------------------------
--- Table `unipept`.`assembly_sequences`
+-- Table `unipept`.`proteome_cross_references`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `unipept`.`assembly_sequences` (
+CREATE TABLE IF NOT EXISTS `unipept`.`proteome_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `assembly_id` INT UNSIGNED NOT NULL,
-  `sequence_type` ENUM('Chromosome', 'Linkage Group', 'Mitochondrion', 'Plasmid', 'na') NOT NULL DEFAULT 'na',
-  `genbank_accession` VARCHAR(25) NOT NULL,
+  `uniprot_entry_id` INT UNSIGNED NOT NULL,
+  `proteome_id` MEDIUMINT UNSIGNED NOT NULL DEFAULT 'na',
   PRIMARY KEY (`id`),
-  INDEX `fk_assemblies_assembly_sequences_idx` (`assembly_id` ASC),
-  INDEX `idx_genbank_accession` (`genbank_accession` ASC),
-  CONSTRAINT `fk_assemblies_assembly_sequences`
-    FOREIGN KEY (`assembly_id`)
-    REFERENCES `unipept`.`assemblies` (`id`)
+  INDEX `fk_proteome_cross_references_uniprot_entries` (`uniprot_entry_id` ASC),
+  INDEX `fk_proteome_cross_references` (`proteome_id` ASC),
+  CONSTRAINT `fk_proteome_cross_references_uniprot_entries`
+    FOREIGN KEY (`uniprot_entry_id`)
+    REFERENCES `unipept`.`uniprot_entries` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_proteome_cross_references`
+    FOREIGN KEY (`proteome_id`)
+    REFERENCES `unipept`.`proteomes` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
 
 
 -- -----------------------------------------------------
--- Table `unipept`.`assembly_caches`
+-- Table `unipept`.`proteome_caches`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `unipept`.`assembly_caches` (
-  `assembly_id` INT UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `unipept`.`proteome_caches` (
+  `proteome_id` MEDIUMINT UNSIGNED NOT NULL,
   `json_sequences` MEDIUMTEXT NOT NULL,
-  PRIMARY KEY (`assembly_id`),
-  CONSTRAINT `fk_assemblies_assembly_caches`
-    FOREIGN KEY (`assembly_id`)
-    REFERENCES `unipept`.`assemblies` (`id`)
+  PRIMARY KEY (`proteome_id`),
+  CONSTRAINT `fk_proteomes_proteome_caches`
+    FOREIGN KEY (`proteome_id`)
+    REFERENCES `unipept`.`proteomes` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

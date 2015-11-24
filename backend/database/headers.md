@@ -184,4 +184,3 @@ The proteins parsed from uniprot.
    the data.
  - ***name***: Uniprot assigned name of the protein.
  - ***sequence***: The Amino Acid sequence of this protein.
-
