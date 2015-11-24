@@ -1,4 +1,4 @@
-/* Lineage tree */
+/* buttons */
 .buttons-single {
     float: right;
     margin-top: -55px;
@@ -12,22 +12,34 @@
     background: white;
 }
 
-#lineageTree {
+/* subnav botton */
+.buttons-subnav {
+    margin-top: -95px;
+}
+
+.tpa-tree {
     background-color: white;
 }
 
-#lineageTree svg {
-    margin: -16px -16px -21px -16px;
+.tpa-tree svg {
+    margin: -16px -16px -32px -32px;
 }
 
-/* Lineage table */
-#sequence_table {
+/* tables */
+.sequence_table {
     overflow: auto;
     font-size: 10px;
     line-height: 1.1em;
 }
-#sequence_table a {
+.sequence_table a {
     color: #333;
+}
+
+.shorten {
+    width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;  
 }
 
 .c0 {
@@ -131,4 +143,35 @@ table.protein-info .organism {
 }
 table.protein-info .dropdown-menu {
     margin-top: 0;
+}
+
+.sub-navigation { 
+    background-color: @primary-500;
+    margin-top: -16px;
+    min-width: 916px;
+    margin-left: -16px;
+}
+
+.nav-tabs .subnav-link {
+    color: white;
+    height: 40px;
+    border: none;
+    font-size: 14px;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-out;
+    background: @primary-500;
+}
+
+.nav-tabs .subnav-link:hover {
+    border-bottom: 5px solid @accent-500;
+    background: @primary-500;
+}
+
+.nav-tabs li.active .subnav-link,
+.nav-tabs li.active .subnav-link:hover,
+.nav-tabs li.active .subnav-link:focus {
+    background: @primary-500;
+    color: white;
+    border: none;
+    border-bottom: 5px solid @accent-500;
 }

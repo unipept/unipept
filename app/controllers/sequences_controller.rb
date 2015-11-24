@@ -44,6 +44,120 @@ class SequencesController < ApplicationController
       @lineages = sequence.lineages(equate_il, true).to_a
     end
 
+    # ----------- test ------------ #
+    # Prototype functional analysis #
+    # ----------------------------- #
+
+    # get all ec_cross_references
+    ec_cross_numbers = @entries.map(&:ec_cross_references)
+    # get all items from table EcNumber
+    ec_db = EcNumber.all
+    # get all ec_cross_reference numbers and puts them in array
+    ec_numbers_list = ec_cross_numbers.map{|ecs| ecs.map{|ec| ec.ec_number} if ecs.length != 0}.compact.flatten(1)
+    # make list unique
+    ec_numbers_uniq = ec_numbers_list.to_set
+    # list of ec column names
+    @ec_column_name = ["EC number", "Class", "Subclass", "Sub-subclass", "Enzyme"]
+    # create instance variables
+    @ec_lca_table = {}
+    @ec_functions = {}
+    @ec_lca_count = {}
+    @ec_lca_class = {}
+    @ec_lca_id = {}
+    @ec_lca = {}
+    @ecc = {}
+
+    # get all rank order for each ec number 
+    ec_numbers_uniq.each do |ecn|
+      @ec_lca_table[ecn] = []
+      ec_split = ecn.split(".")
+      ec_rank = ""
+      counter = 0
+      ec_split.each do |ec_subclass|
+        counter += 1
+        if ec_subclass != "-"
+          @ec_lca_table[ecn] += [ec_rank+ec_subclass+".-"*(4-counter)] # creates all ranks for one ec number
+          ec_rank += ec_subclass+"."
+        else
+          @ec_lca_table[ecn] += [""] 
+        end
+      end
+    end
+    # sort the hash and make it an array
+    @ec_lca_table_sorted = @ec_lca_table.keys.sort_by{|x|x}.flatten(1)
+
+    # get all ec numbers from the ec_lca_table
+    ec_all_ranks = @ec_lca_table.values.flatten(1).to_set.map{|x| x}
+    # get all functions accociated with the ranks
+    ec_tmp_all_functions = ec_db.select("ec_number, name").where(ec_number: ec_all_ranks).to_set
+
+    # store all in hash & remove all "." from end of line
+    ec_tmp_all_functions.each do |ec_hash|
+      @ec_functions[ec_hash[:ec_number]] = ec_hash[:name].gsub(/\.$/, '')
+    end
+
+    # hash with the counts for each ec rank
+    ec_all_ranks.each do |rank|
+      @ecc[rank] = ec_numbers_list.count(rank)
+    end
+    # calculate all steps of the tree the amount of hits
+    for ec_key, ec_value in @ec_lca_table 
+      ec_value.each do |ecitems|
+        if ecitems != ""
+          if !@ec_lca_count.has_key?(ecitems)
+            @ec_lca_count[ecitems] = @ecc[ec_key]
+          else
+            @ec_lca_count[ecitems] += @ecc[ec_key]
+          end
+        end
+      end
+    end
+
+    # store all classes for each ec number
+    ec_all_ranks.each do |rank|
+      @ec_lca_table.values.each do |l|
+        class_pos = l.index(rank)
+        if !class_pos.nil?
+          @ec_lca_class[rank] = @ec_column_name[class_pos+1]
+        end
+      end
+    end
+
+    # calculate ec LCA
+    #@test1 = @ec_lca_table.map {|ecs| ec_lca_table[ecs][0] ? }
+
+
+    # --------- Tree view for EC numbers --------- #
+
+    @ec_root = Node.new("-.-.-.-", '-.-.-.-', nil, 'root') # start constructing the tree
+    @ec_root.data['count'] = @ecc.values.sum
+    ec_last_node =  @ec_root
+
+    for key, value in @ec_lca_table do
+      ec_last_node_loop = ec_last_node
+      value.each do |ecs|
+        if ecs != ""
+          node = Node.find_by_id(ecs, @ec_root)
+          if node.nil?
+            if @ec_lca_table.has_key?(ecs)
+              node = Node.new(ecs, @ec_functions[ecs], @ec_root, @ec_lca_class[ecs])
+            else
+              node = Node.new(ecs, ecs, @ec_root, @ec_lca_class[ecs])
+            end
+            node.data['count'] = @ec_lca_count[ecs]
+            ec_last_node_loop = ec_last_node_loop.add_child(node)
+          else
+            node.name = ecs
+            ec_last_node_loop = node
+          end         
+        end
+      end
+    end
+    @ec_root.sort_children
+    @ec_root = Oj.dump(@ec_root, mode: :compat)
+
+    # ----------- end ------------ #
+
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree
     common_hits = @lineages.map(&:hits).reduce(:+)
@@ -74,7 +188,7 @@ class SequencesController < ApplicationController
         next if t.nil?
         l << t.name # add the taxon name to the lineage
         node = Node.find_by_id(t.id, @root)
-        if node.nil? # if the node isn't create yet
+        if node.nil? # if the node isn't created yet
           node = Node.new(t.id, t.name, @root, t.rank)
           node.data['count'] = lineage.hits
           last_node_loop = last_node_loop.add_child(node)
@@ -116,7 +230,7 @@ class SequencesController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.json { render json: @entries.to_json(only: :uniprot_accession_number, include: [{ ec_cross_references: { only: :ec_id } }, { go_cross_references: { only: :go_id } }]) }
+      format.json { render json: @entries.to_json(only: :uniprot_accession_number, include: [{ ec_cross_references: { only: :ec_number } }, { go_cross_references: { only: :go_id } }]) }
       # TODO: switch to OJ for higher performance
       # format.json { render json: Oj.dump(@entries, :include => :name, :mode => :compat) }
     end
