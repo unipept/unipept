@@ -2,14 +2,16 @@ SHELL := /bin/bash
 
 include config
 
-TABLES=                                      \
-	$(TABDIR)/peptides.tsv.gz                \
-	$(INTDIR)/sequences.tsv.gz               \
-	$(TABDIR)/uniprot_entries.tsv.gz         \
-	$(TABDIR)/refseq_cross_references.tsv.gz \
-	$(TABDIR)/ec_cross_references.tsv.gz     \
-	$(TABDIR)/embl_cross_references.tsv.gz   \
-	$(TABDIR)/go_cross_references.tsv.gz
+TABLES=                                        \
+	$(TABDIR)/peptides.tsv.gz                  \
+	$(INTDIR)/sequences.tsv.gz                 \
+	$(TABDIR)/uniprot_entries.tsv.gz           \
+	$(TABDIR)/refseq_cross_references.tsv.gz   \
+	$(TABDIR)/ec_cross_references.tsv.gz       \
+	$(TABDIR)/embl_cross_references.tsv.gz     \
+	$(TABDIR)/go_cross_references.tsv.gz       \
+	$(TABDIR)/proteomes.tsv.gz                 \
+	$(TABDIR)/proteome_cross_references.tsv.gz
 
 SRC=$(shell find src/ -type f -name '*.java')
 JAR=target/unipept-0.0.1-SNAPSHOT.jar
@@ -20,7 +22,7 @@ jar: $(JAR)
 taxons: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
 tables: $(TABLES)
 sequences: $(TABDIR)/sequences.tsv.gz
-assemblies: $(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz
+#assemblies: $(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz
 download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz #$(UNIDIR)/uniprot_trembl.xml.gz
 	rsync --ignore-existing "$(ASSEMBLY_URL)/GCA_*.assembly.txt" $(ASMDIR)
 

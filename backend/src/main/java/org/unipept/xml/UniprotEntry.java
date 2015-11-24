@@ -23,12 +23,14 @@ public class UniprotEntry {
     private List<UniprotDbRef> dbReferences;
     private List<UniprotGORef> goReferences;
     private List<UniprotECRef> ecReferences;
+    private List<UniprotProteomeRef> protReferences;
 
     public UniprotEntry(String type) {
         this.type = type;
         dbReferences = new ArrayList<UniprotDbRef>();
         goReferences = new ArrayList<UniprotGORef>();
         ecReferences = new ArrayList<UniprotECRef>();
+        protReferences = new ArrayList<UniprotProteomeRef>();
     }
 
     public void reset(String type) {
@@ -42,6 +44,7 @@ public class UniprotEntry {
         dbReferences.clear();
         goReferences.clear();
         ecReferences.clear();
+        protReferences.clear();
     }
 
     public String getUniprotAccessionNumber() {
@@ -107,6 +110,15 @@ public class UniprotEntry {
         ecReferences.add(ref);
     }
 
+    public void addProtRef(UniprotProteomeRef ref) {
+        for (UniprotProteomeRef r : protReferences) {
+            if (ref.equals(r)) {
+                return;
+            }
+        }
+        protReferences.add(ref);
+    }
+
     public List<Pair> digest() {
         List<Pair> list = new ArrayList<Pair>();
         int position = 0;
@@ -132,6 +144,11 @@ public class UniprotEntry {
     public List<UniprotECRef> getECReferences() {
         return ecReferences;
     }
+
+    public List<UniprotProteomeRef> getProtReferences() {
+        return protReferences;
+    }
+
 
     @Override
     public String toString() {
