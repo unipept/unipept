@@ -13,7 +13,7 @@
 #
 
 class Proteome < ActiveRecord::Base
-  attr_readonly :id, :proteome_accession_number, :organism_name, :taxon_id, :type_strain, :reference_proteome, :strain, :assembly
+  attr_readonly :id, :proteome_accession_number, :organism_name, :type_strain, :reference_proteome, :strain, :assembly
 
   belongs_to :lineage, foreign_key: 'taxon_id', primary_key: 'taxon_id',  class_name: 'Lineage'
   has_many :proteome_cross_references
@@ -47,8 +47,8 @@ class Proteome < ActiveRecord::Base
     end
   end
 
-  # fills the assembly_cache table
-  def self.precompute_assembly_caches
+  # fills the proteome_caches table
+  def self.precompute_proteome_caches
     Proteome.where('taxon_id is not null').find_each do |proteome|
       ProteomeCache.get_by_proteome_id(proteome.id)
     end
