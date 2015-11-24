@@ -11,7 +11,7 @@ class PeptidomeController < ApplicationController
       @tab = 'peptidefinder'
     end
 
-    @genomes = Assembly.joins(:lineage).select('assemblies.organism_name as name, assemblies.id, assembly_level, genome_representation, type_strain, genbank_assembly_accession, lineages.species as species_id, lineages.genus as genus_id, lineages.order as order_id, lineages.class as class_id').uniq
+    @genomes = Proteome.joins(:lineage).select('"no name" as name, proteomes.id, lineages.species as species_id, lineages.genus as genus_id, lineages.order as order_id, lineages.class as class_id').uniq
 
     @taxa = Set.new
     @taxa.merge(@genomes.map(&:species_id))
@@ -26,9 +26,9 @@ class PeptidomeController < ApplicationController
     @genomes = Oj.dump(@genomes, mode: :compat)
   end
 
-  # Returns a list of all sequence_ids for a given assembly_id
-  def get_sequence_ids_for_assembly
-    cache = AssemblyCache.get_by_assembly_id(params[:assembly_id])
+  # Returns a list of all sequence_ids for a given proteome_id
+  def get_sequence_ids_for_proteome
+    cache = ProteomeCache.get_by_proteome_id(params[:proteome_id])
     respond_to do |format|
       format.json { render json: cache.json_sequences }
     end
@@ -38,7 +38,7 @@ class PeptidomeController < ApplicationController
   def get_unique_sequences
     sequences = JSON(params[:sequences])
     if params[:ids].size > 0
-      lca = Lineage.calculate_lca(Lineage.find_by_sql("SELECT lineages.* from assemblies LEFT JOIN lineages ON assemblies.taxon_id = lineages.taxon_id WHERE assemblies.id IN (#{params[:ids]}) AND assemblies.taxon_id is not null"))
+      lca = Lineage.calculate_lca(Lineage.find_by_sql("SELECT lineages.* from proteomes LEFT JOIN lineages ON proteomes.taxon_id = lineages.taxon_id WHERE proteomes.id IN (#{params[:ids]}) AND proteomes.taxon_id is not null"))
       result = Sequence.filter_unique_uniprot_peptides(sequences, lca)
       lca = Taxon.find_by_id(lca).name
     else
@@ -65,7 +65,7 @@ class PeptidomeController < ApplicationController
   def get_lca
     params[:ids] = [] if params[:ids].nil?
     if params[:ids].size > 0
-      lca = Lineage.calculate_lca(Lineage.find_by_sql("SELECT lineages.* from assemblies LEFT JOIN lineages ON assemblies.taxon_id = lineages.taxon_id WHERE assemblies.id IN (#{params[:ids]}) AND assemblies.taxon_id is not null"))
+      lca = Lineage.calculate_lca(Lineage.find_by_sql("SELECT lineages.* from proteomes LEFT JOIN lineages ON proteomes.taxon_id = lineages.taxon_id WHERE proteomes.id IN (#{params[:ids]}) AND proteomes.taxon_id is not null"))
       lca = Taxon.find_by_id(lca)
     else
       lca = { name: 'undefined' }
