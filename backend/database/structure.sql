@@ -313,7 +313,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`proteomes` (
     REFERENCES `unipept`.`taxons` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -322,7 +322,7 @@ ENGINE = InnoDB
 CREATE TABLE IF NOT EXISTS `unipept`.`proteome_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `uniprot_entry_id` INT UNSIGNED NOT NULL,
-  `proteome_id` MEDIUMINT UNSIGNED NOT NULL DEFAULT 'na',
+  `proteome_id` MEDIUMINT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_proteome_cross_references_uniprot_entries` (`uniprot_entry_id` ASC),
   INDEX `fk_proteome_cross_references` (`proteome_id` ASC),
@@ -336,7 +336,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`proteome_cross_references` (
     REFERENCES `unipept`.`proteomes` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -351,7 +351,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`proteome_caches` (
     REFERENCES `unipept`.`proteomes` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
+ENGINE = InnoDB;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

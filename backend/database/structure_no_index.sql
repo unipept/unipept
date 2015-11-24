@@ -230,8 +230,8 @@ CREATE TABLE IF NOT EXISTS `unipept`.`proteomes` (
   `reference_proteome` BIT(1) NOT NULL DEFAULT b'0',
   `strain` VARCHAR(45) NULL,
   `assembly` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`)
-ENGINE = InnoDB
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -240,9 +240,9 @@ ENGINE = InnoDB
 CREATE TABLE IF NOT EXISTS `unipept`.`proteome_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `uniprot_entry_id` INT UNSIGNED NOT NULL,
-  `proteome_id` MEDIUMINT UNSIGNED NOT NULL DEFAULT 'na',
-  PRIMARY KEY (`id`)
-ENGINE = InnoDB
+  `proteome_id` MEDIUMINT UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -251,8 +251,8 @@ ENGINE = InnoDB
 CREATE TABLE IF NOT EXISTS `unipept`.`proteome_caches` (
   `proteome_id` MEDIUMINT UNSIGNED NOT NULL,
   `json_sequences` MEDIUMTEXT NOT NULL,
-  PRIMARY KEY (`proteome_id`)
-ENGINE = InnoDB
+  PRIMARY KEY (`proteome_id`))
+ENGINE = InnoDB;
 
 
 

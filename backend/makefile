@@ -17,7 +17,7 @@ SRC=$(shell find src/ -type f -name '*.java')
 JAR=target/unipept-0.0.1-SNAPSHOT.jar
 PAC=org.unipept.tools
 
-all: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz $(TABLES) $(TABDIR)/sequences.tsv.gz $(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz
+all: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz $(TABLES) $(TABDIR)/sequences.tsv.gz #$(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz
 jar: $(JAR)
 taxons: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
 tables: $(TABLES)
@@ -46,7 +46,7 @@ $(TAXDIR)/taxdmp.zip:
 
 $(TAXDIR)/names.dmp $(TAXDIR)/nodes.dmp: $(TAXDIR)/taxdmp.zip
 	echo "Starting unzipping names and nodes from the taxon dump."
-	unzip -DDo $< $(notdir $@) -d $(dir $@)
+	unzip -o $< $(notdir $@) -d $(dir $@)
 	echo "Finished unzipping names and nodes from the taxon dump."
 
 $(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/uniprot_trembl.xml.gz:
