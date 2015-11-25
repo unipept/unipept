@@ -79,9 +79,9 @@ $(TABLES): $(TABDIR)/taxons.tsv.gz $(UNIDIR)/uniprot_sprot.xml.gz #$(UNIDIR)/uni
 $(INTDIR)/sequence_taxon.tsv.gz: $(TABDIR)/peptides.tsv.gz $(TABDIR)/uniprot_entries.tsv.gz
 	echo "Starting the joining of equalized peptides and uniprot entries."
 	mkdir -p $(INTDIR)
-	join -t '	' -o '1.2,2.4' -1 4 -2 1 \
-			<(zcat $(TABDIR)/peptides.tsv.gz) \
-			<(zcat $(TABDIR)/uniprot_entries.tsv.gz) \
+	gjoin -t '	' -o '1.2,2.4' -1 4 -2 1 \
+			<(gzcat $(TABDIR)/peptides.tsv.gz | sort -S 20% -k4,4) \
+			<(gzcat $(TABDIR)/uniprot_entries.tsv.gz | sort -S 20% -k1,1) \
 		| sort -S 20% -k1n \
 		| gzip - \
 		> $@
@@ -90,9 +90,9 @@ $(INTDIR)/sequence_taxon.tsv.gz: $(TABDIR)/peptides.tsv.gz $(TABDIR)/uniprot_ent
 $(INTDIR)/original_sequence_taxon.tsv.gz: $(TABDIR)/peptides.tsv.gz $(TABDIR)/uniprot_entries.tsv.gz
 	echo "Starting the joining of non-equalized peptides and uniprot entries."
 	mkdir -p $(INTDIR)
-	join -t '	' -o '1.3,2.4' -1 4 -2 1 \
-			<(zcat $(TABDIR)/peptides.tsv.gz) \
-			<(zcat $(TABDIR)/uniprot_entries.tsv.gz) \
+	gjoin -t '	' -o '1.3,2.4' -1 4 -2 1 \
+			<(gzcat $(TABDIR)/peptides.tsv.gz) \
+			<(gzcat $(TABDIR)/uniprot_entries.tsv.gz) \
 		| sort -S 20% -k1n \
 		| gzip - \
 		> $@
@@ -110,9 +110,9 @@ $(INTDIR)/original_LCAs.tsv.gz: $(TABDIR)/lineages.tsv.gz $(INTDIR)/original_seq
 
 $(TABDIR)/sequences.tsv.gz: $(INTDIR)/sequences.tsv.gz $(INTDIR)/LCAs.tsv.gz $(INTDIR)/original_LCAs.tsv.gz
 	echo "Starting the creation of the sequences table."
-	zcat $(INTDIR)/sequences.tsv.gz \
-		| join --nocheck-order -a1 -t '	' -o "1.1 1.2 2.2" - <(zcat $(INTDIR)/original_LCAs.tsv.gz) \
-		| join --nocheck-order -a1 -t '	' -o "1.1 1.2 1.3 2.2" - <(zcat $(INTDIR)/LCAs.tsv.gz) \
+	gzcat $(INTDIR)/sequences.tsv.gz \
+		| gjoin --nocheck-order -a1 -t '	' -o "1.1 1.2 2.2" - <(gzcat $(INTDIR)/original_LCAs.tsv.gz) \
+		| gjoin --nocheck-order -a1 -t '	' -o "1.1 1.2 1.3 2.2" - <(gzcat $(INTDIR)/LCAs.tsv.gz) \
 		| gzip - \
 		> $@
 	echo "Finished the creation of the sequences table."
@@ -120,7 +120,8 @@ $(TABDIR)/sequences.tsv.gz: $(INTDIR)/sequences.tsv.gz $(INTDIR)/LCAs.tsv.gz $(I
 # }}}
 
 # Proteomes {{{ ----------------------------------------------------------------
-$(TABDIR)/proteomes.tsv.gz: $(INTDIR)/proteomes.tsv.gz proteomes.sh
+$(TABDIR)/proteomes.tsv.gz: $(INTDIR)/proteomes.tsv.gz
+	echo "Starting fetching proteome info."
 	./proteomes.sh $(INTDIR)/proteomes.tsv.gz $(TABDIR)/proteomes.tsv.gz
 # }}}
 
