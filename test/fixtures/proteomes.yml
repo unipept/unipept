@@ -1,0 +1,29 @@
+# == Schema Information
+#
+# Table name: proteomes
+#
+#  id                        :integer          not null, primary key
+#  proteome_accession_number :string(12)       not null
+#  proteome_name             :string(86)       not null
+#  taxon_id                  :integer
+#  type_strain               :binary(1)        default("b'0'"), not null
+#  reference_proteome        :binary(1)        default("b'0'"), not null
+#  strain                    :string(45)
+#  assembly                  :string(45)
+#
+
+proteome1:
+    id: 1
+    proteome_accession_number: "don't care"
+    proteome_name: "proteome1"
+    taxon_id: 1
+    type_strain: 0b0
+    reference_proteome: 0b0
+    strain: "don't care"
+    assembly: "don't care"
+
+proteome2:
+    id: 2
+    proteome_accession_number: "don't care"
+    proteome_name: "proteome2"
+    type_strain: 0b1
