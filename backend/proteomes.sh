@@ -9,13 +9,11 @@ outfile="$3"
 
 tmp="$(mktemp)"
 
-zcat $proteome_gz_file | head | while read id accession; do
+gzcat $proteome_gz_file | head | while read id accession; do
     curl -s http://www.uniprot.org/proteomes/$accession \
         | html2text -nobs -width 1000 \
         | awk -f proteomes.awk -v id=$id -v accession=$accession
 done > "$tmp"
-
-echo done curling
 
 join -1 8 -2 1 -a 1 -t '	'                                         \
         <(sort -t'	' -k 8 "$tmp")                                    \
