@@ -126,7 +126,7 @@ $(TABDIR)/proteomes.tsv.gz: $(INTDIR)/proteomes.tsv.gz proteomes.sh strains_asse
 		$(INTDIR)/proteomes.tsv.gz \
 		<(ENTREZ_URL=$(ENTREZ_URL) ENTREZ_BATCH_SIZE=$(ENTREZ_BATCH_SIZE) ./strains_assembly_ids.sh) \
 		$(TABDIR)/proteomes.tsv.gz
-	echo "FInished fetching proteome info."
+	echo "Finished fetching proteome info."
 # }}}
 
 # Assembly tables {{{ ----------------------------------------------------------
