@@ -11,7 +11,7 @@ class PeptidomeController < ApplicationController
       @tab = 'peptidefinder'
     end
 
-    @genomes = Proteome.joins(:lineage).select('proteomes.proteome_name as name, proteomes.id, proteomes.type_strain, proteomes.reference_proteome, lineages.species as species_id, lineages.genus as genus_id, lineages.order as order_id, lineages.class as class_id').uniq
+    @genomes = Proteome.joins(:lineage).select('proteomes.proteome_name as name, proteomes.id, proteomes.proteome_accession_number as proteome_accession, proteomes.type_strain, proteomes.reference_proteome, lineages.species as species_id, lineages.genus as genus_id, lineages.order as order_id, lineages.class as class_id').uniq
 
     @taxa = Set.new
     @taxa.merge(@genomes.map(&:species_id))
