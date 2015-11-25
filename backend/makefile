@@ -24,8 +24,6 @@ tables: $(TABLES)
 sequences: $(TABDIR)/sequences.tsv.gz
 proteomes: $(TABDIR)/proteomes.tsv.gz
 download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz #$(UNIDIR)/uniprot_trembl.xml.gz
-	rsync --ignore-existing "$(ASSEMBLY_URL)/GCA_*.assembly.txt" $(ASMDIR)
-
 
 # Compiling {{{ ----------------------------------------------------------------
 # TODO:
@@ -120,39 +118,13 @@ $(TABDIR)/sequences.tsv.gz: $(INTDIR)/sequences.tsv.gz $(INTDIR)/LCAs.tsv.gz $(I
 # }}}
 
 # Proteomes {{{ ----------------------------------------------------------------
-$(TABDIR)/proteomes.tsv.gz: $(INTDIR)/proteomes.tsv.gz proteomes.sh strains_assembly_ids.sh
+$(TABDIR)/proteomes.tsv.gz: $(INTDIR)/proteomes.tsv.gz proteomes.sh type_strains.sh
 	echo "Starting fetching proteome info."
 	./proteomes.sh \
 		$(INTDIR)/proteomes.tsv.gz \
-		<(ENTREZ_URL=$(ENTREZ_URL) ENTREZ_BATCH_SIZE=$(ENTREZ_BATCH_SIZE) ./strains_assembly_ids.sh) \
+		<(ENTREZ_URL=$(ENTREZ_URL) ENTREZ_BATCH_SIZE=$(ENTREZ_BATCH_SIZE) ./type_strains.sh) \
 		$(TABDIR)/proteomes.tsv.gz
 	echo "Finished fetching proteome info."
-# }}}
-
-# Assembly tables {{{ ----------------------------------------------------------
-$(INTDIR)/unstrained_assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz: parse_assemblies.awk
-	echo "Starting the assembly parsing."
-	mkdir -p $(ASMDIR)
-	rsync --ignore-existing --no-motd --verbose "$(ASSEMBLY_URL)/GCA_*.assembly.txt" $(ASMDIR)
-	find $(ASMDIR) -name 'GCA_*.assembly.txt' \
-		| sort \
-		| xargs cat \
-		| awk -f parse_assemblies.awk \
-			-v assemblies_file=>(sed -e 's/ *	 */	/g' -e 's/ *$$//' | gzip - > $(INTDIR)/unstrained_assemblies.tsv.gz) \
-			-v assembly_sequences_file=>(cut -f1,2,6,7 | sed -e 's/\.[^.]*//' -e 's/ *·  */·/g' -e 's/ *$$//' | gzip - > $(TABDIR)/assembly_sequences.tsv.gz)
-	echo "Finished the assembly parsing."
-
-$(TABDIR)/assemblies.tsv.gz: $(INTDIR)/unstrained_assemblies.tsv.gz strains_assembly_ids.sh
-	echo "Starting the straining of assemblies."
-	join -1 2 -2 1 -a 1 -t '	' \
-			<(zcat "$(INTDIR)/unstrained_assemblies.tsv.gz") \
-			<(ENTREZ_URL=$(ENTREZ_URL) ENTREZ_BATCH_SIZE=$(ENTREZ_BATCH_SIZE) ./strains_assembly_ids.sh | sed "s/$$/\t\x01/" | sort) \
-		| sed \
-			-e '/\x01$$/!s/$$/\t\x00/'  \
-			-e 's/^\([^\t]*\)\t\([^\t]*\)/\2\t\1/' \
-		| gzip - \
-	    > "$@"
-	echo "Finished the straining of assemblies."
 # }}}
 
 .PHONY: clean_intermediates
@@ -163,7 +135,7 @@ clean_intermediates:
 .PHONY: clean
 clean: clean_intermediates
 	rm -vf $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
-	rm -vf $(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz
+	rm -vf $(TABDIR)/proteomes.tsv.gz
 	rm -vf $(TABLES)
 
 .PHONY: pristine
@@ -171,7 +143,6 @@ pristine: clean
 	rm -vf $(JAR)
 	rm -vf $(TAXDIR)/taxdmp.zip
 	rm -vf $(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/uniprot_treml.xml.gz
-	find $(ASMDIR)/ -name '*.assembly.txt' -exec rm -vf \{\} \;
 
 
 # vim: foldmethod=marker
