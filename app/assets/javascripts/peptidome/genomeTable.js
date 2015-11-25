@@ -3,7 +3,7 @@
  * currently in the visualisation. features: reorder by dragging, autosort,
  * remove individual genomes, remove all genome.
  *
- * @param <Map> args.genomes Map of genomes (by assembly id)
+ * @param <Map> args.genomes Map of genomes (by proteome id)
  * @param <Pancore> args.pancore Pancore object
  */
 var constructGenomeTable = function constructGenomeTable(args) {
@@ -106,7 +106,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
     /**
      * Sets the property of a genome in the table
      *
-     * @param <String> id The assembly id of the genome of which we want to
+     * @param <String> id The proteome id of the genome of which we want to
      *          change the status
      * @param <String> property the name of the property to set
      * @param <Object> propertyValue the value of the property to set
@@ -288,7 +288,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
                 } else {
                     var genome = d3.select(this.parentNode).datum();
                     if (!genome.own) {
-                        return d.value + " <a href='http://www.ncbi.nlm.nih.gov/assembly/" + genome.assembly_id + "' target='_blank' title='open assembly page'><span class='glyphicon glyphicon-share-alt'></span></a>";
+                        return d.value + " <a href='http://www.uniprot.org/proteomes/" + genome.proteome_id + "' target='_blank' title='open proteome page'><span class='glyphicon glyphicon-share-alt'></span></a>";
                     } else {
                         return d.value + " <span class='glyphicon glyphicon-home' title='local proteome'></span>";
                     }

@@ -4,7 +4,7 @@
 #
 #  id                        :integer          not null, primary key
 #  proteome_accession_number :string(12)       not null
-#  organism_name             :string(86)       not null
+#  proteome_name             :string(86)       not null
 #  taxon_id                  :integer
 #  type_strain               :binary(1)        default("b'0'"), not null
 #  reference_proteome        :binary(1)        default("b'0'"), not null
@@ -13,7 +13,7 @@
 #
 
 class Proteome < ActiveRecord::Base
-  attr_readonly :id, :proteome_accession_number, :organism_name, :type_strain, :reference_proteome, :strain, :assembly
+  attr_readonly :id, :proteome_accession_number, :proteome_name, :type_strain, :reference_proteome, :strain, :assembly
 
   belongs_to :lineage, foreign_key: 'taxon_id', primary_key: 'taxon_id',  class_name: 'Lineage'
   has_many :proteome_cross_references

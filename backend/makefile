@@ -121,10 +121,12 @@ $(TABDIR)/sequences.tsv.gz: $(INTDIR)/sequences.tsv.gz $(INTDIR)/LCAs.tsv.gz $(I
 
 # Proteomes {{{ ----------------------------------------------------------------
 $(TABDIR)/proteomes.tsv.gz: $(INTDIR)/proteomes.tsv.gz proteomes.sh strains_assembly_ids.sh
+	echo "Starting fetching proteome info."
 	./proteomes.sh \
 		$(INTDIR)/proteomes.tsv.gz \
 		<(ENTREZ_URL=$(ENTREZ_URL) ENTREZ_BATCH_SIZE=$(ENTREZ_BATCH_SIZE) ./strains_assembly_ids.sh) \
 		$(TABDIR)/proteomes.tsv.gz
+	echo "FInished fetching proteome info."
 # }}}
 
 # Assembly tables {{{ ----------------------------------------------------------

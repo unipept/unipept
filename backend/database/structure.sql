@@ -300,7 +300,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `unipept`.`proteomes` (
   `id` MEDIUMINT UNSIGNED NOT NULL,
   `proteome_accession_number` CHAR(12) NOT NULL,
-  `organism_name` VARCHAR(86) NOT NULL,
+  `proteome_name` VARCHAR(100) NOT NULL,
   `taxon_id` MEDIUMINT UNSIGNED NULL,
   `type_strain` BIT(1) NOT NULL DEFAULT b'0',
   `reference_proteome` BIT(1) NOT NULL DEFAULT b'0',
