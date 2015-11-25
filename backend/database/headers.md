@@ -2,7 +2,7 @@
 Headers
 =======
 
-Genome Caches
+Proteome Caches
 -------------
 
 Taxons
@@ -79,50 +79,24 @@ Contains the tryptic peptides.
  - ***original lca***: A lowest common ancestor in case we did not
    equate the I and L amino acids.
 
-Assemblies
-----------
+Proteomes
+---------
 
- - ***id***: A self-assigned id. Integral, incremental, no gaps.
- - ***genbank assembly accession***: The GenBank Accession number for
-   this assembly.
- - ***refseq assembly accession***: The RefSeq Accsession number for
-   this assembly.
- - ***taxon id***: The taxon to which this assembly is attributed.
- - ***genome representation***: Either `full` or `partial`.
- - ***assembly level***: Any of:
-   * Chromosome
-   * Chromosome with gaps
-   * Complete Genome
-   * Contig
-   * Gapless Chromosome
-   * Scaffold
- - ***assembly name***: Name of this assembly.
- - ***organism name***: Name of the organisme this assembly originates
-   from.
- - ***biosample id***: External reference to a biosample.
- - ***type strain***: # TODO
+- ***id***: A self-assigned id. Integral, incremental, no gaps.
+- ***proteome_accession_number***: The Uniprot Proteome Accession number.
+- ***proteome_name***: Name of the proteome
+- ***taxon _***: The taxon to which this proteome is attributed.
+- ***type_strain***: Is this a type strain?
+- ***reference_proteome***: Is this a reference proteome?
+- ***strain***: The strain number (might be null)
+- ***assembly***: The coresponding assembly accession number number (might be null)
 
-Assembly Sequences
+Proteome Cross Reference
 ------------------
 
  - ***id***: A self-assigned id. Integral, incremental, no gaps.
- - ***assembly id***: The assembly this sequence belongs to.
- - ***sequence type***: Type of this sequence. Any of:
-   * Apicoplast
-   * Chloroplast
-   * Chromosome
-   * Extrachromosal Element
-   * Linkage Group
-   * Mitochondrial Plasmid
-   * Mitochondrion
-   * na
-   * Non-nuclear Miscellaneous
-   * Plasmid
-   * Plastid
-   * Provirus Chromosome
-   * Virus
-   * Virus Chromosome
- - ***genbank accession***: The GenBank Accession number.
+ - ***uniprot_entry_id***: Which uniprot entry we are referencing.
+ - ***proteome_id***: Which proteome we are referencing.
 
 EC Cross References
 -------------------
