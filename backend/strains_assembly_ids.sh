@@ -1,10 +1,6 @@
 #!/bin/bash
 
-# Arguments:
-# - The gunzipped assembly file.
-# - The output file.
-assembly_gz_file="$1"
-outfile="$2"
+# Arguments: none
 
 # Please crash on first mistake.
 set -e
@@ -31,7 +27,6 @@ web_env="$(echo "$header"                               \
 returned="$BATCH_SIZE"
 retstart='1'
 while ((returned == BATCH_SIZE)); do
-    echo "$retstart"
     returned="$(curl -d 'db=assembly'                       \
                      -d "query_key=$query_key"              \
                      -d "WebEnv=$web_env"                   \
@@ -43,17 +38,11 @@ while ((returned == BATCH_SIZE)); do
               | tee -a "$tempfile"                          \
               | wc -l                                       \
               )"
-    echo "$returned"
     retstart="$((retstart + returned))"
 done
 
-join -1 2 -2 1 -a 1 -t '	'                    \
-        <(zcat "$assembly_gz_file")              \
-        <(sed "s/$/\t\x01/" "$tempfile" | sort)  \
-    | sed -e "/\x01$/!s/$/	\x00/"               \
-          -e 's/^\([^\t]*\)\t\([^\t]*\)/\2\t\1/' \
-    | gzip -                                     \
-    > "$outfile"
+# write out the type strain assembly ids
+cat "$tempfile"
 
 rm "$tempfile"
 

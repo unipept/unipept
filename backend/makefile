@@ -120,8 +120,11 @@ $(TABDIR)/sequences.tsv.gz: $(INTDIR)/sequences.tsv.gz $(INTDIR)/LCAs.tsv.gz $(I
 # }}}
 
 # Proteomes {{{ ----------------------------------------------------------------
-$(TABDIR)/proteomes.tsv.gz: $(INTDIR)/proteomes.tsv.gz proteomes.sh
-	./proteomes.sh $(INTDIR)/proteomes.tsv.gz $(TABDIR)/proteomes.tsv.gz
+$(TABDIR)/proteomes.tsv.gz: $(INTDIR)/proteomes.tsv.gz proteomes.sh strains_assembly_ids.sh
+	./proteomes.sh \
+		$(INTDIR)/proteomes.tsv.gz \
+		<(ENTREZ_URL=$(ENTREZ_URL) ENTREZ_BATCH_SIZE=$(ENTREZ_BATCH_SIZE) ./strains_assembly_ids.sh) \
+		$(TABDIR)/proteomes.tsv.gz
 # }}}
 
 # Assembly tables {{{ ----------------------------------------------------------
@@ -139,7 +142,14 @@ $(INTDIR)/unstrained_assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz: pars
 
 $(TABDIR)/assemblies.tsv.gz: $(INTDIR)/unstrained_assemblies.tsv.gz strains_assembly_ids.sh
 	echo "Starting the straining of assemblies."
-	ENTREZ_URL=$(ENTREZ_URL) ENTREZ_BATCH_SIZE=$(ENTREZ_BATCH_SIZE) ./strains_assembly_ids.sh $(INTDIR)/unstrained_assemblies.tsv.gz $@
+	join -1 2 -2 1 -a 1 -t '	' \
+			<(zcat "$(INTDIR)/unstrained_assemblies.tsv.gz") \
+			<(ENTREZ_URL=$(ENTREZ_URL) ENTREZ_BATCH_SIZE=$(ENTREZ_BATCH_SIZE) ./strains_assembly_ids.sh | sed "s/$$/\t\x01/" | sort) \
+		| sed \
+			-e '/\x01$$/!s/$$/\t\x00/'  \
+			-e 's/^\([^\t]*\)\t\([^\t]*\)/\2\t\1/' \
+		| gzip - \
+	    > "$@"
 	echo "Finished the straining of assemblies."
 # }}}
 
