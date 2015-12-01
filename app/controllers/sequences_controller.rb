@@ -10,7 +10,7 @@ class SequencesController < ApplicationController
     # should we equate I and L?
     equate_il = (params[:equate_il] == 'equateIL')
     # the sequence or id of the peptide
-    seq = params[:id].upcase
+    seq = params[:id].upcase.gsub(/\P{ASCII}/, '')
 
     # process the input, convert seq to a valid @sequence
     if seq.match(/\A[0-9]+\z/)
