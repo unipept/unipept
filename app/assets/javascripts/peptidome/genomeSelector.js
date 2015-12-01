@@ -311,8 +311,8 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                 containerOffset = fullScreen ? $(".full-screen-container").offset() : $("body").offset();
             $popover.css("z-index", 10);
             $popover.css("left", buttonOffset.left - containerOffset.left + 45);
-            $popover.css("top", Math.max(0, buttonOffset.top - containerOffset.top - 215));
-            $popover.find(".arrow").css("top", fullScreen ? "42%" : "50%");
+            $popover.css("top", Math.max(0, buttonOffset.top - containerOffset.top - 185));
+            $popover.find(".arrow").css("top", fullScreen ? "48%" : "50%");
         }
 
         function initPopoverBehaviour() {
