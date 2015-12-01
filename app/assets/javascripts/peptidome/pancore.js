@@ -108,7 +108,11 @@ var constructPancore = function constructPancore(args) {
         if (localStorage.pancoreStatus) {
             if (localStorage.pancoreLoadedBefore === "no") {
                 localStorage.pancoreLoadedBefore = "yes";
-                that.loadStatus();
+                try {
+                    that.loadStatus();
+                } catch (e) {
+                    genomeSelector.demo();
+                }
             } else {
                 genomeSelector.demo();
                 askToRestore();
