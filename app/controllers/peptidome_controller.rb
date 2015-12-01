@@ -56,7 +56,7 @@ class PeptidomeController < ApplicationController
 
   # Converts a list of peptides to id's
   def convert_peptides
-    peptides = JSON(params[:peptides])
+    peptides = JSON(params[:peptides]) rescue ''
     ids = Sequence.where(sequence: peptides).pluck(:id)
     render json: Oj.dump(ids, mode: :compat)
   end
