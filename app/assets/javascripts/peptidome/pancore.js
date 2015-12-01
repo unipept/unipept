@@ -721,7 +721,13 @@ var constructPancore = function constructPancore(args) {
         var split = name.split(" "),
             i;
 
+        // Don't abbreviat if it's a self-added genome
         if (own) {
+            return name;
+        }
+
+        // Don't abbreviate if it's a virus
+        if (name.indexOf("virus") > -1) {
             return name;
         }
 
