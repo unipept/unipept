@@ -15,7 +15,7 @@
 class Proteome < ActiveRecord::Base
   attr_readonly :id, :proteome_accession_number, :proteome_name, :type_strain, :reference_proteome, :strain, :assembly
 
-  belongs_to :lineage, foreign_key: 'taxon_id', primary_key: 'taxon_id',  class_name: 'Lineage'
+  belongs_to :lineage, foreign_key: 'taxon_id', primary_key: 'taxon_id', class_name: 'Lineage'
   has_many :proteome_cross_references
 
   def destroy
@@ -24,6 +24,14 @@ class Proteome < ActiveRecord::Base
 
   def delete
     fail ActiveRecord::ReadOnlyRecord
+  end
+
+  def full_name
+    return proteome_name if strain.nil?
+    return proteome_name if proteome_name.count(' ') > 1
+    return proteome_name if proteome_name.include?('(')
+    return proteome_name unless proteome_name.index(/[0-9]/).nil?
+    proteome_name + ' ' + strain
   end
 
   def type_strain
@@ -43,6 +51,7 @@ class Proteome < ActiveRecord::Base
     taxa = Hash[taxa.map { |t| [t['proteome_id'], t['taxon_id']] }]
     Proteome.all.find_each do |proteome|
       proteome.taxon_id = taxa[proteome.id]
+      proteome.name = proteome.full_name
       proteome.save
     end
   end

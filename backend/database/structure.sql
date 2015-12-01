@@ -306,6 +306,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`proteomes` (
   `reference_proteome` BIT(1) NOT NULL DEFAULT b'0',
   `strain` VARCHAR(45) NULL,
   `assembly` VARCHAR(45) NULL,
+  `name` VARCHAR(128) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_taxons_proteomes` (`taxon_id` ASC),
   CONSTRAINT `fk_taxons_proteomes`
