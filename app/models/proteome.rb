@@ -10,6 +10,7 @@
 #  reference_proteome        :binary(1)        default("b'0'"), not null
 #  strain                    :string(45)
 #  assembly                  :string(45)
+#  name                      :string(128)
 #
 
 class Proteome < ActiveRecord::Base

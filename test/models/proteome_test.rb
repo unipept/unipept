@@ -10,6 +10,7 @@
 #  reference_proteome        :binary(1)        default("b'0'"), not null
 #  strain                    :string(45)
 #  assembly                  :string(45)
+#  name                      :string(128)
 #
 
 require 'test_helper'
@@ -85,6 +86,31 @@ class ProteomeTest < ActiveSupport::TestCase
     Proteome.precompute_taxa
     proteome.reload
     assert_equal 1, proteome.taxon_id
+  end
+
+  test 'should fill in name field after precompute_taxa' do
+    proteome = proteomes(:proteome1)
+    assert_nil proteome.name
+    Proteome.precompute_taxa
+    proteome.reload
+    assert_equal 'proteome name strain', proteome.name
+  end
+
+  test 'shouldnt add strain name to proteome name when strain is nil' do
+    proteome = proteomes(:proteome1)
+    proteome.strain = nil
+    assert_equal 'proteome name', proteome.full_name
+  end
+
+  test 'shouldnt add strain name to proteome name when its already there' do
+    proteome = proteomes(:proteome1)
+    assert_equal 'proteome name strain', proteome.full_name
+    proteome.proteome_name = 'proteome name name'
+    assert_equal 'proteome name name', proteome.full_name
+    proteome.proteome_name = 'proteome 9'
+    assert_equal 'proteome 9', proteome.full_name
+    proteome.proteome_name = 'proteome (name)'
+    assert_equal 'proteome (name)', proteome.full_name
   end
 
   test 'should calculate proteome caches after precompute_genome_caches' do

@@ -132,6 +132,7 @@ ActiveRecord::Schema.define(version: 0) do
     t.binary  "reference_proteome",        limit: 1,                   null: true
     t.string  "strain",                    limit: 45
     t.string  "assembly",                  limit: 45
+    t.string  "name",                      limit: 128
   end
 
   add_index "proteomes", ["taxon_id"], name: "fk_taxons_proteomes", using: :btree

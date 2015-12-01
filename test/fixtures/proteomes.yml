@@ -10,16 +10,17 @@
 #  reference_proteome        :binary(1)        default("b'0'"), not null
 #  strain                    :string(45)
 #  assembly                  :string(45)
+#  name                      :string(128)
 #
 
 proteome1:
     id: 1
     proteome_accession_number: "don't care"
-    proteome_name: "proteome1"
+    proteome_name: "proteome name"
     taxon_id: 1
     type_strain: 0b0
     reference_proteome: 0b0
-    strain: "don't care"
+    strain: "strain"
     assembly: "don't care"
 
 proteome2:
