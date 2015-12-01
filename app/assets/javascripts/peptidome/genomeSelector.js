@@ -269,7 +269,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             // reference proteome
             content += "<div class='form-group'>";
             content += "<div class='col-sm-offset-4 col-sm-8'><div class='checkbox'>";
-            content += "<label><input type='checkbox' id='referenceProteome'> Only show <strong>reference proteomes</strong></label>";
+            content += "<label><input type='checkbox' id='referenceProteome'> Only show UniProt <strong>reference proteomes</strong></label>";
             content += "</div></div></div>";
 
             // analyzed
