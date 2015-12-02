@@ -934,18 +934,17 @@ function intersection(a, b) {
 }
 
 /**
- * Delta decodes an array of integers
+ * Delta decodes an array of integers IN PLACE
  *
  * @param <Array> data An array of integers
  */
 function deltaDecode(data) {
-    var output = new Array(data.length),
-        old = 0,
+    var old = 0,
         len = data.length,
         i;
     for (i = 0; i < len; i++) {
         old += data[i];
-        output[i] = old;
+        data[i] = old;
     }
-    return output;
+    return data;
 }
