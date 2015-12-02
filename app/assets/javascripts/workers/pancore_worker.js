@@ -432,7 +432,7 @@ function sendToHost(type, message) {
 function loadData(id, name) {
     var requestRank = rank;
     getJSON("/peptidome/sequences/" + id + ".json", function (json_data) {
-        addData(id, name, json_data, requestRank);
+        addData(id, name, deltaDecode(json_data), requestRank);
     });
 }
 
@@ -931,4 +931,21 @@ function intersection(a, b) {
         }
     }
     return r;
+}
+
+/**
+ * Delta decodes an array of integers
+ *
+ * @param <Array> data An array of integers
+ */
+function deltaDecode(data) {
+    var output = new Array(data.length),
+        old = 0,
+        len = data.length,
+        i;
+    for (i = 0; i < len; i++) {
+        old += data[i];
+        output[i] = old;
+    }
+    return output;
 }
