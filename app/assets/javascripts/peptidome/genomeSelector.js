@@ -520,7 +520,14 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         selectedResults.forEach(function (result) {
             resultString += "<tr class='genome' data-id='" + result.id + "'>";
             resultString += "<td><input type='checkbox' class='check'></input></td>";
-            resultString += "<td>" + result.name + "<br>";
+            resultString += "<td>" + result.name;
+            if (result.type_strain) {
+                resultString += " <span class='badge strain-badge' title='show all type strains'>t</span>";
+            }
+            if (result.reference_proteome) {
+                resultString += " <span class='badge reference-badge' title='show all reference proteomes'>r</span>";
+            }
+            resultString += "<br>";
             resultString += "<span class='lineage'>" + getLineage(result) + "</span></td>";
             resultString += "<td><button class='btn btn-default btn-xs btn-add' title='add proteome to analysis'><span class='glyphicon glyphicon-plus'></span></button></td>";
             resultString += "</tr>";
@@ -543,6 +550,18 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                 rank: taxa[id].rank
             });
             return false;
+        });
+
+        // hook up badges
+        $resultTable.find(".strain-badge").click(function () {
+            $("#genomeSelectorSearch").tokenfield('createToken', {
+                value: "is:type"
+            });
+        });
+        $resultTable.find(".reference-badge").click(function () {
+            $("#genomeSelectorSearch").tokenfield('createToken', {
+                value: "is:reference"
+            });
         });
 
         // disable fix checkboxes
