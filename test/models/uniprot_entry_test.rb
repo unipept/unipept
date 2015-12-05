@@ -8,7 +8,7 @@
 #  taxon_id                 :integer          not null
 #  type                     :string(9)        not null
 #  name                     :string(150)      not null
-#  protein                  :text             not null
+#  protein                  :text(65535)      not null
 #
 
 require 'test_helper'

@@ -49,13 +49,15 @@ public class TaxonsUniprots2Tables {
         String ecCrossReferencesFile = args[i++];
         String emblCrossReferencesFile = args[i++];
         String goCrossReferencesFile = args[i++];
+        String proteomesFile = args[i++];
+        String proteomeCrossReferencesFile = args[i++];
 
         TaxonList taxonList = TaxonList.loadFromFile(taxonsFile);
         TableWriter writer = new TableWriter(berkeleyDir, berkeleyMem,
             taxonList, peptidesFile, sequencesFile,
             uniprotEntriesFile, refseqCrossReferencesFile,
             ecCrossReferencesFile, emblCrossReferencesFile,
-            goCrossReferencesFile
+            goCrossReferencesFile, proteomesFile, proteomeCrossReferencesFile
         );
         SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 

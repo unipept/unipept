@@ -109,7 +109,7 @@ var matrixBackend = function matrixBackend(data) {
 
     /**
      * Flattens a hierarchical array based on the first 2 elements. Always
-     * removes the last element. Converts the id's to assembly id's.
+     * removes the last element. Converts the id's to proteome id's.
      *
      * @param <Array> array The array to flatten
      */
@@ -423,16 +423,16 @@ function sendToHost(type, message) {
 }
 
 /**
- * Requests the sequence id's for a given assembly id. Calls the addData
+ * Requests the sequence id's for a given proteome id. Calls the addData
  * function when done.
  *
- * @param <Number> id The id of the assembly of sequences we want
+ * @param <Number> id The id of the proteome of sequences we want
  * @param <String> name The name of the organism
  */
 function loadData(id, name) {
     var requestRank = rank;
     getJSON("/peptidome/sequences/" + id + ".json", function (json_data) {
-        addData(id, name, json_data, requestRank);
+        addData(id, name, deltaDecode(json_data), requestRank);
     });
 }
 
@@ -451,7 +451,7 @@ function loadUserData(id, name, ids) {
  * Processes a list of sequence_id's, received from the webserver and adds it
  * to the data array.
  *
- * @param <Number> id The assembly id of the organism
+ * @param <Number> id The proteome id of the organism
  * @param <String> name The name of the organism
  * @param <Array> set The ordered array of sequence_id, contains no duplicates
  * @param <Number> request_rank The rank of the request. Used to discard old
@@ -756,7 +756,7 @@ function getSequences(type, id) {
 
 /************ These functions are not accessible from the host ****************/
 
-// Returns the rank of a given assembly id for the current order
+// Returns the rank of a given proteome id for the current order
 function getOrderById(id) {
     var i;
     for (i = 0; i < order.length; i++) {
@@ -831,7 +831,7 @@ function genomeSimilarity(peptideList1, peptideList2) {
 
 /**
  * Removes [,;:] from a string and replaces spaces by underscores. Also adds
- * the assembly id.
+ * the proteome id.
  *
  * @param <Genome> genome The genome we want to convert
  */
@@ -840,7 +840,7 @@ function generateNewickName(genome) {
 }
 
 /**
- * Returns a new array containing only real assembly ids
+ * Returns a new array containing only real proteome ids
  *
  * @param <Array> a A list of ids.
  */
@@ -931,4 +931,20 @@ function intersection(a, b) {
         }
     }
     return r;
+}
+
+/**
+ * Delta decodes an array of integers IN PLACE
+ *
+ * @param <Array> data An array of integers
+ */
+function deltaDecode(data) {
+    var old = 0,
+        len = data.length,
+        i;
+    for (i = 0; i < len; i++) {
+        old += data[i];
+        data[i] = old;
+    }
+    return data;
 }

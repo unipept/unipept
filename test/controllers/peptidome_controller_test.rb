@@ -27,11 +27,11 @@ class PeptidomeControllerTest < ActionController::TestCase
     assert_equal 'peptidomeclustering', assigns(:tab)
   end
 
-  test 'should get get_sequence_ids_for_assembly' do
-    assembly = assembly_caches(:assemblycache1)
-    get :get_sequence_ids_for_assembly, assembly_id: '1', format: 'json'
+  test 'should get get_sequence_ids_for_proteome' do
+    proteome = proteome_caches(:proteomecache1)
+    get :get_sequence_ids_for_proteome, proteome_id: '1', format: 'json'
     assert_response :success
-    assert_equal assembly.json_sequences, @response.body
+    assert_equal proteome.json_sequences, @response.body
   end
 
   test 'should get get_unique_sequences' do

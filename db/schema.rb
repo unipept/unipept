@@ -13,33 +13,6 @@
 
 ActiveRecord::Schema.define(version: 0) do
 
-  create_table "assemblies", force: :cascade do |t|
-    t.string  "genbank_assembly_accession", limit: 16
-    t.string  "refseq_assembly_accession",  limit: 16
-    t.integer "taxon_id",                   limit: 3
-    t.string  "genome_representation",      limit: 7,                    null: false
-    t.string  "assembly_level",             limit: 20,                   null: false
-    t.string  "assembly_name",              limit: 104,                  null: false
-    t.string  "organism_name",              limit: 86,                   null: false
-    t.string  "biosample",                  limit: 14
-    t.binary  "type_strain",                limit: 1,   default: 0b0, null: false
-  end
-
-  add_index "assemblies", ["taxon_id"], name: "fk_taxons_assemblies_idx", using: :btree
-
-  create_table "assembly_caches", primary_key: "assembly_id", force: :cascade do |t|
-    t.text "json_sequences", limit: 16777215, null: false
-  end
-
-  create_table "assembly_sequences", force: :cascade do |t|
-    t.integer "assembly_id",       limit: 4,                 null: false
-    t.string  "sequence_type",     limit: 13, default: "na", null: false
-    t.string  "genbank_accession", limit: 25,                null: false
-  end
-
-  add_index "assembly_sequences", ["assembly_id"], name: "fk_assemblies_assembly_sequences_idx", using: :btree
-  add_index "assembly_sequences", ["genbank_accession"], name: "idx_genbank_accession", using: :btree
-
   create_table "dataset_items", force: :cascade do |t|
     t.integer "dataset_id", limit: 4
     t.string  "name",       limit: 160
@@ -62,13 +35,6 @@ ActiveRecord::Schema.define(version: 0) do
   end
 
   add_index "ec_cross_references", ["uniprot_entry_id"], name: "fk_ec_reference_uniprot_entries", using: :btree
-
-  create_table "ec_numbers", force: :cascade do |t|
-    t.string "number", limit: 12,  null: false
-    t.string "name",   limit: 160, null: false
-  end
-
-  add_index "ec_numbers", ["number"], name: "idx_number", using: :btree
 
   create_table "embl_cross_references", force: :cascade do |t|
     t.integer "uniprot_entry_id", limit: 4,  null: false
@@ -146,6 +112,31 @@ ActiveRecord::Schema.define(version: 0) do
     t.date   "date",                  null: false
   end
 
+  create_table "proteome_caches", primary_key: "proteome_id", force: :cascade do |t|
+    t.text "json_sequences", limit: 16777215, null: false
+  end
+
+  create_table "proteome_cross_references", force: :cascade do |t|
+    t.integer "uniprot_entry_id", limit: 4, null: false
+    t.integer "proteome_id",      limit: 3, null: false
+  end
+
+  add_index "proteome_cross_references", ["proteome_id"], name: "fk_proteome_cross_references", using: :btree
+  add_index "proteome_cross_references", ["uniprot_entry_id"], name: "fk_proteome_cross_references_uniprot_entries", using: :btree
+
+  create_table "proteomes", force: :cascade do |t|
+    t.string  "proteome_accession_number", limit: 12,                  null: false
+    t.string  "proteome_name",             limit: 86,                  null: false
+    t.integer "taxon_id",                  limit: 3
+    t.binary  "type_strain",               limit: 1,                   null: true
+    t.binary  "reference_proteome",        limit: 1,                   null: true
+    t.string  "strain",                    limit: 45
+    t.string  "assembly",                  limit: 45
+    t.string  "name",                      limit: 128
+  end
+
+  add_index "proteomes", ["taxon_id"], name: "fk_taxons_proteomes", using: :btree
+
   create_table "refseq_cross_references", force: :cascade do |t|
     t.integer "uniprot_entry_id", limit: 4,  null: false
     t.string  "protein_id",       limit: 25
@@ -168,7 +159,7 @@ ActiveRecord::Schema.define(version: 0) do
     t.string  "name",        limit: 120,                  null: false
     t.string  "rank",        limit: 16
     t.integer "parent_id",   limit: 3
-    t.binary  "valid_taxon", limit: 1,   default: 0b1, null: false
+    t.binary  "valid_taxon", limit: 1,                    null: true
   end
 
   add_index "taxons", ["parent_id"], name: "fk_taxon_taxon", using: :btree
