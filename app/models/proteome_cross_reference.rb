@@ -19,8 +19,8 @@ class ProteomeCrossReference < ActiveRecord::Base
     connection.select_values("SELECT original_sequence_id
       FROM peptides
       LEFT JOIN  proteome_cross_references ON peptides.uniprot_entry_id = proteome_cross_references.uniprot_entry_id
-      WHERE proteome_cross_references.proteome_id = '#{proteome_id}'").to_a.sort.chunk{|i| i}.map(&:first)
-        # the combination of chunck + map is faster than uniq for already sorted
-        # arrays
+      WHERE proteome_cross_references.proteome_id = '#{proteome_id}'").to_a.sort.chunk { |i| i }.map(&:first)
+    # the combination of chunck + map is faster than uniq for already sorted
+    # arrays
   end
 end

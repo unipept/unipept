@@ -15,8 +15,8 @@ class Sequence < ActiveRecord::Base
   has_many :peptides
   has_many :original_peptides, foreign_key: 'original_sequence_id', primary_key: 'id', class_name: 'Peptide'
 
-  belongs_to :lca_t, foreign_key: 'lca', primary_key: 'id',  class_name: 'Taxon'
-  belongs_to :lca_il_t, foreign_key: 'lca_il', primary_key: 'id',  class_name: 'Taxon'
+  belongs_to :lca_t, foreign_key: 'lca', primary_key: 'id', class_name: 'Taxon'
+  belongs_to :lca_il_t, foreign_key: 'lca_il', primary_key: 'id', class_name: 'Taxon'
 
   alias_method :generated_peptides, :peptides
   def peptides(equate_il = true)
@@ -66,7 +66,7 @@ class Sequence < ActiveRecord::Base
   def self.single_search(sequence, equate_il = true)
     fail(ArgumentError, ':equate_il must be a boolean') unless boolean?(equate_il)
     fail SequenceTooShortError if sequence.length < 5
-    sequence = sequence.gsub(/I/, 'L') if equate_il
+    sequence = sequence.tr('I', 'L') if equate_il
     # this solves the N+1 query problem
     includes(peptides_relation_name(equate_il) => { uniprot_entry: [:taxon, :ec_cross_references, :go_cross_references] })
       .find_by_sequence(sequence)
@@ -78,7 +78,7 @@ class Sequence < ActiveRecord::Base
     # sanity check
     fail(NoMatchesFoundError, sequence) if sequence.index(/([KR])([^P])/).nil?
 
-    sequence = sequence.gsub(/I/, 'L') if equate_il
+    sequence = sequence.tr('I', 'L') if equate_il
 
     # Split in silico (use little trick to fix overlap)
     sequences = sequence.gsub(/([KR])([^P])/, "\\1\n\\2").gsub(/([KR])([^P])/, "\\1\n\\2").lines.map(&:strip).to_a

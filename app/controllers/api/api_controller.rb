@@ -162,9 +162,9 @@ class Api::ApiController < ApplicationController
     if @input.is_a? Hash        # hash
       @input = @input.values
     elsif @input.is_a? String   # string
-      if @input[0] == '['          # parse json
+      if @input[0] == '[' # parse json
         @input = JSON.parse @input
-      else                        # comma separated
+      else # comma separated
         @input = @input.split(',')
       end
     end
@@ -176,7 +176,7 @@ class Api::ApiController < ApplicationController
     @extra_info = params[:extra] == 'true'
     @names = params[:names] == 'true'
 
-    @input = @input.map { |s| s.gsub(/I/, 'L') } if @equate_il
+    @input = @input.map { |s| s.tr('I', 'L') } if @equate_il
   end
 
   # prepares the taxonomy query
@@ -202,7 +202,7 @@ class Api::ApiController < ApplicationController
   # Reorders the results according to the input order
   def filter_input_order
     @input_order.select! do |s|
-      key = @equate_il ? s.gsub(/I/, 'L') : s
+      key = @equate_il ? s.tr('I', 'L') : s
       @result.key? key
     end
   end

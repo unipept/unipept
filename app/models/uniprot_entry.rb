@@ -36,7 +36,7 @@ class UniprotEntry < ActiveRecord::Base
 
   def protein_contains?(sequence, equate_il)
     if equate_il
-      protein.gsub(/I/, 'L').include? sequence.gsub(/I/, 'L')
+      protein.tr('I', 'L').include? sequence.tr('I', 'L')
     else
       protein.include? sequence
     end
