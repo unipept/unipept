@@ -43,6 +43,44 @@ class Proteome < ActiveRecord::Base
     self[:reference_proteome] == "\x01" ? true : false
   end
 
+  # returns a cached json object containing all proteomes
+  def self.json_proteomes
+    versions = Rails.application.config.versions
+    cache_key = "proteomes_#{versions[:unipept]}_#{versions[:uniprot]}"
+    Rails.cache.fetch(cache_key, expires_in: 1.year) do
+      Oj.dump(Proteome.proteomes, mode: :compat)
+    end
+  end
+
+  # returns a cached json object containing all taxon data needed for the
+  # proteomes
+  def self.json_taxa
+    versions = Rails.application.config.versions
+    cache_key = "taxa_#{versions[:unipept]}_#{versions[:uniprot]}"
+    Rails.cache.fetch(cache_key, expires_in: 1.year) do
+      Oj.dump(Proteome.taxa, mode: :compat)
+    end
+  end
+
+  # returns all proteomes in the database
+  def self.proteomes
+    Proteome.joins(:lineage).select('proteomes.name as name, proteomes.id, proteomes.proteome_accession_number as proteome_accession, proteomes.type_strain, proteomes.reference_proteome, lineages.species as species_id, lineages.genus as genus_id, lineages.order as order_id, lineages.class as class_id').uniq
+  end
+
+  # returns all taxa needed for the proteomes
+  def self.taxa
+    proteomes = Proteome.proteomes
+
+    taxa = Set.new
+    taxa.merge(proteomes.map(&:species_id))
+    taxa.merge(proteomes.map(&:genus_id))
+    taxa.merge(proteomes.map(&:order_id))
+    taxa.merge(proteomes.map(&:class_id))
+    Hash[Taxon.select([:id, :name, :rank])
+      .where(id: taxa.to_a)
+      .map { |t| [t.id, Hash['name' => t.name, 'rank' => t.rank]] }]
+  end
+
   # fills in the taxon_id column
   def self.precompute_taxa
     taxa = connection.select_all("SELECT DISTINCT proteome_id, uniprot_entries.taxon_id

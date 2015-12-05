@@ -248,7 +248,7 @@
   $(function () {
     if (typeof(Worker)!=="undefined") {
         constructPancore({
-            data : <%= raw(@genomes) %>,
+            data : <%= raw(@proteomes) %>,
             taxa : <%= raw(@taxa) %>,
             version : "<%=Rails.application.config.versions[:uniprot] %>"
         });

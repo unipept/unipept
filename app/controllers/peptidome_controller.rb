@@ -11,19 +11,8 @@ class PeptidomeController < ApplicationController
       @tab = 'peptidefinder'
     end
 
-    @genomes = Proteome.joins(:lineage).select('proteomes.name as name, proteomes.id, proteomes.proteome_accession_number as proteome_accession, proteomes.type_strain, proteomes.reference_proteome, lineages.species as species_id, lineages.genus as genus_id, lineages.order as order_id, lineages.class as class_id').uniq
-
-    @taxa = Set.new
-    @taxa.merge(@genomes.map(&:species_id))
-    @taxa.merge(@genomes.map(&:genus_id))
-    @taxa.merge(@genomes.map(&:order_id))
-    @taxa.merge(@genomes.map(&:class_id))
-    @taxa = Hash[Taxon.select([:id, :name, :rank])
-                 .where(id: @taxa.to_a)
-                 .map { |t| [t.id, Hash['name' => t.name, 'rank' => t.rank]] }]
-
-    @taxa = Oj.dump(@taxa, mode: :compat)
-    @genomes = Oj.dump(@genomes, mode: :compat)
+    @taxa = Proteome.json_taxa
+    @proteomes = Proteome.json_proteomes
   end
 
   # Returns a list of all sequence_ids for a given proteome_id
