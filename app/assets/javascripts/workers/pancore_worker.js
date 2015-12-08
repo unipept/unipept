@@ -681,12 +681,12 @@ function getUniqueSequences(newOrder, force) {
     order = newOrder;
     if (order.length > 0) {
         if (force) {
-            reallyGetUniqueSequences(data[order[0]].peptide_list);
+            reallyGetUniqueSequences(order[0]);
         } else {
             getJSONByPost("/peptidome/get_lca/", "ids=" + filterIds(order), function (d) {
                 // only fetch sequences when there's a new lca
                 if (lca !== d.name) {
-                    reallyGetUniqueSequences(data[order[0]].peptide_list);
+                    reallyGetUniqueSequences(order[0]);
                 } else {
                     calculateUnicore(unicoreData);
                 }
@@ -696,10 +696,16 @@ function getUniqueSequences(newOrder, force) {
 }
 
 // fetch the sequences
-function reallyGetUniqueSequences(s) {
-    getJSONByPost("/peptidome/unique_sequences/", "ids=" + filterIds(order) + "&sequences=[" + s + "]", function (d) {
+function reallyGetUniqueSequences(id) {
+    var variables = "ids=" + filterIds(order);
+    if (isLocalProteome(id)) {
+        variables += "&sequences=[" + data[id].peptide_list + "]";
+    } else {
+        variables += "&proteome_id=" + id;
+    }
+    getJSONByPost("/peptidome/unique_sequences/", variables, function (d) {
         lca = d[0];
-        calculateUnicore(d[1]);
+        calculateUnicore(deltaDecode(d[1]));
     });
 }
 
@@ -848,11 +854,18 @@ function filterIds(a) {
     var r = [],
         i;
     for (i = 0; i < a.length; i++) {
-        if (!isNaN(+a[i])) {
+        if (!isLocalProteome(a[i])) {
             r.push(a[i]);
         }
     }
     return r;
+}
+
+/**
+ * Returns wether the given id comes from a local Proteome
+ */
+function isLocalProteome(id) {
+    return isNaN(+id);
 }
 
 // union and intersection for sorted arrays

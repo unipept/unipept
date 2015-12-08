@@ -98,7 +98,7 @@ class Proteome < ActiveRecord::Base
   # fills the proteome_caches table
   def self.precompute_proteome_caches
     Proteome.where('taxon_id is not null').find_each do |proteome|
-      ProteomeCache.get_by_proteome_id(proteome.id)
+      ProteomeCache.get_encoded_sequences(proteome.id)
     end
   end
 end

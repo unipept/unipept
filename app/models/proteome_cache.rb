@@ -14,7 +14,7 @@ class ProteomeCache < ActiveRecord::Base
 
   # Tries to retrieve the the cached version of the delta encoded peptides list
   # and creates it if it doesn't exist
-  def self.get_by_proteome_id(proteome_id)
+  def self.get_encoded_sequences(proteome_id)
     cache = ProteomeCache.find_by_proteome_id(proteome_id)
     if cache.nil?
       result = ProteomeCache.delta_encode(ProteomeCrossReference.get_sequence_ids(proteome_id))
@@ -22,6 +22,10 @@ class ProteomeCache < ActiveRecord::Base
       cache = ProteomeCache.create(proteome_id: proteome_id, json_sequences: json)
     end
     cache
+  end
+
+  def self.get_decoded_sequences(proteome_id)
+    ProteomeCache.delta_decode(JSON(ProteomeCache.get_encoded_sequences(proteome_id).json_sequences))
   end
 
   # Delta encodes a sorted list of integers
@@ -32,5 +36,14 @@ class ProteomeCache < ActiveRecord::Base
       output[i] = peptide_list[i] - peptide_list[i - 1]
     end
     output
+  end
+
+  def self.delta_decode(data)
+    old = 0
+    (1..data.length - 1).each do |i|
+      old += data[i]
+      data[i] = old
+    end
+    data
   end
 end

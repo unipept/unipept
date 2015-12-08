@@ -24,7 +24,7 @@ class ProteomeCacheTest < ActiveSupport::TestCase
   test 'should return the assembly when cache is present' do
     proteomecache = ProteomeCache.find_by_proteome_id(1)
     assert_not_nil proteomecache
-    proteomecache = ProteomeCache.get_by_proteome_id(1)
+    proteomecache = ProteomeCache.get_encoded_sequences(1)
     assert_not_nil proteomecache
     proteomecache = ProteomeCache.find_by_proteome_id(1)
     assert_not_nil proteomecache
@@ -33,7 +33,7 @@ class ProteomeCacheTest < ActiveSupport::TestCase
   test 'should calculate, return and store the assembly when cache is not present' do
     proteomecache = ProteomeCache.find_by_proteome_id(2)
     assert_nil proteomecache
-    proteomecache = ProteomeCache.get_by_proteome_id(2)
+    proteomecache = ProteomeCache.get_encoded_sequences(2)
     assert_not_nil proteomecache
     proteomecache = ProteomeCache.find_by_proteome_id(2)
     assert_not_nil proteomecache

@@ -116,7 +116,7 @@ class ProteomeTest < ActiveSupport::TestCase
   test 'should calculate proteome caches after precompute_genome_caches' do
     Proteome.precompute_proteome_caches
     Proteome.all.each do |proteome|
-      assert_not_nil ProteomeCache.get_by_proteome_id(proteome.id)
+      assert_not_nil ProteomeCache.get_encoded_sequences(proteome.id)
     end
   end
 end
