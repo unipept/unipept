@@ -69,7 +69,7 @@ function init_sequence_show(data) {
 
         // Set up the edges
         for (edge of edges) {
-            g.setEdge(edge.from, edge.to, { label: edge.label, rel_count: edge.weight, arrowhead: "undirected" });
+            g.setEdge(edge.from, edge.to, { label: edge.label, rel_count: edge.weight });
         }
 
         // Set some general styles
@@ -100,10 +100,12 @@ function init_sequence_show(data) {
         render(inner, g);
 
         inner.selectAll("g.node")
-          .attr("title", function(v) { return g.node(v).name });
-
+             .attr("title", function(v) { return g.node(v).name });
+        inner.selectAll("g.node rect") .attr("style", "fill: #fff; stroke: #333;");
         inner.selectAll("g.edgePath path")
-          .attr("stroke-width", function(v) { return g.edge(v).rel_count*15 });
+             .attr("stroke-width", function(v) { return g.edge(v).rel_count*15 })
+             .attr("style", "fill: none; stroke: #333;")
+             .attr("marker-end", "");
 
         // Center the graph
         var initialScale = 0.75;
