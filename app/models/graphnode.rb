@@ -13,8 +13,12 @@ class GraphNode
   end
 
   # returns the added link
-  def add_link(link)
-    @links[link.id] = link
+  def add_link(link, weight)
+    if @links.has_key?(link.id)
+      @links[link.id][:weight] += weight
+    else
+      @links[link.id] = {node: link, weight: weight}
+    end
   end
 
   # used by Oj.dump to exclude the root

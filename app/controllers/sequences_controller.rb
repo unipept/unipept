@@ -160,7 +160,7 @@ class SequencesController < ApplicationController
 
     # ----------- end ------------ #
 
-    def create_graph(graph, go)
+    def create_graph(graph, go, weight)
       return nil if go.nil?
       parent = graph.terms[go.id]
       if parent.nil?
@@ -168,18 +168,18 @@ class SequencesController < ApplicationController
         graph.add_term(go.id, parent)
       end
       for child in go.parents
-        parent.add_link(create_graph(graph, child))
+        parent.add_link(create_graph(graph, child, weight/go.parents.length), weight/go.parents.length)
       end
       parent
     end
     @graph = Graph.new()
     input_go_list = ['GO:0006260']
     for go in input_go_list
-      create_graph(@graph, GO_GRAPH.find_go(go))
+      create_graph(@graph, GO_GRAPH.find_go(go), 1.0)
     end
 
     @links = Array.new
-    @graph.terms.each{|k,v| v.links.each_key{|l| @links.push({'from' => k, 'to' => l, 'label' => 'is_a'})}}
+    @graph.terms.each{|k,v| v.links.each{|t,l| @links.push({'from' => k, 'to' => t, 'label' => 'is_a', 'weight' => l[:weight]})}}
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree

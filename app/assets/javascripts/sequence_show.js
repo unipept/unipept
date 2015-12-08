@@ -69,14 +69,15 @@ function init_sequence_show(data) {
 
         // Set up the edges
         for (edge of edges) {
-            g.setEdge(edge.from, edge.to, { label: edge.label });
+            g.setEdge(edge.from, edge.to, { label: edge.label, rel_count: edge.weight });
         }
 
         // Set some general styles
-        g.nodes().forEach(function(v) {
-            var node = g.node(v);
-            node.rx = node.ry = -5;
-        });
+        // g.nodes().forEach(function(v) {
+        //     var node = g.node(v);
+        //     node.rx = node.ry = -5;
+        // });
+        // dagreD3.dagre.layout(g);
 
         // Add some custom colors based on term
         // g.node('CLOSED').style = "fill: #f77";
@@ -100,6 +101,9 @@ function init_sequence_show(data) {
 
         inner.selectAll("g.node")
           .attr("title", function(v) { return g.node(v).name });
+
+        inner.selectAll("g.edgePath path")
+          .attr("stroke-width", function(v) { return g.edge(v).rel_count*10 });
 
         // Center the graph
         var initialScale = 0.75;
