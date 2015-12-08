@@ -13,15 +13,15 @@
     <div class='card-title card-title-colored'>
       <div id="single-peptide-tabs">
         <ul class="nav nav-tabs">
-          <li class="active"><a id="proteins-tab" href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
+          <li><a id="proteins-tab" href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
           <li><a id="lineage-analysis-tab" href="#lineage-analysis" data-toggle="tab">Biodiversity Analysis <span></span></a></li>
-          <li><a id="functional-analysis-tab" href="#functional-analysis" data-toggle="tab">Functional Analysis <span></span></a></li>
+          <li class="active"><a id="functional-analysis-tab" href="#functional-analysis" data-toggle="tab">Functional Analysis <span></span></a></li>
         </ul>
       </div>
     </div>
     <div class='card-supporting-text'>
       <div class="tab-content">
-        <div class="tab-pane active" id="proteins">
+        <div class="tab-pane" id="proteins">
           <div class="buttons-single">
             <button id="clipboard-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-copy"></span> Copy to clipboard</button>
             <button id="open-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-new-window"></span> Open in UniProt</button>
@@ -102,46 +102,51 @@
             </div>
           </div>
         </div> 
-        <div class="tab-pane" id="functional-analysis">
+        <div class="tab-pane active" id="functional-analysis">
           <ul class="nav nav-tabs sub-navigation">
-            <li class="active"><a class="subnav-link" href="#ec-tree" data-toggle="tab">EC number tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
-            <li><a class="subnav-link" href="#ec-table" data-toggle="tab">EC number table <span></span></a></li>
+            <li><a class="subnav-link" href="#ec-tree" data-toggle="tab">EC number tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+            <li><a class="subnav-link" href="#ec-table-tab" data-toggle="tab">EC number table <span></span></a></li>
+            <li class="active"><a class="subnav-link" href="#go-graph-tab" data-toggle="tab">GO graph <span></span></a></li><!-- TODO: why these spaces? -->
           </ul>
           <div class='card-supporting-text'>
             <div class="tab-content">
-              <div class="tab-pane active" id="ec-tree">
+              <div class="tab-pane" id="ec-tree">
                 <div id="buttons-ec-tree" class="buttons-single buttons-subnav"></div>
                 <div class="tpa-tree" id="ecTree"></div>
               </div>
-              <div class="tab-pane" id="ec-table">
+              <div class="tab-pane" id="ec-table-tab">
                 <div class="sequence_table">
-                <% colors = Hash.new %>
-                <table id="ec-table" class="table table-condensed">
-                  <thead>
-                    <tr>
-                      <% pos = 1 %>
-                      <% @ec_column_name.each do |eccn| %>
-                        <th><a><span id="<%= pos %>" class="classdesc"><%= eccn %></span><span id="<%= pos %>" class="glyphicon glyphicon-resize-horizontal" style="display: none"></span></a></th>
-                        <% pos += 1%>
+                  <% colors = Hash.new %>
+                  <table id="ec-table" class="table table-condensed">
+                    <thead>
+                      <tr>
+                        <% pos = 1 %>
+                        <% @ec_column_name.each do |eccn| %>
+                          <th><a><span id="<%= pos %>" class="classdesc"><%= eccn %></span><span id="<%= pos %>" class="glyphicon glyphicon-resize-horizontal" style="display: none"></span></a></th>
+                          <% pos += 1%>
+                        <% end %>
+                      </tr>
+                    </thead>
+                    <% i = -1 %>
+                    <% @ec_lca_table_sorted.each do |ec_lts| %>
+                      <% i += 1 %>
+                      <tr>
+                      <td title="<%= @ec_functions[ec_lts] %>" ><div><strong><%= link_to ec_lts, "http://enzyme.expasy.org/EC/" + ec_lts %></strong></div></td>
+                      <% @ec_lca_table[ec_lts].each do |ec_ltsl| %>
+                        <% if ec_ltsl != "" %>
+                          <% colors.store(ec_ltsl, "c"+(i%30).to_s) if !colors.has_key?(ec_ltsl) %>
+                          <td title="<%= @ec_functions[ec_ltsl] %>" class="<%= colors[ec_ltsl] %>"><div class="shorten"><%= link_to @ec_functions[ec_ltsl], "http://enzyme.expasy.org/EC/" + ec_ltsl %></div></td>
+                        <% else %>
+                          <td></td>
+                        <% end %>
                       <% end %>
-                    </tr>
-                  </thead>
-                  <% i = -1 %>
-                  <% @ec_lca_table_sorted.each do |ec_lts| %>
-                    <% i += 1 %>
-                    <tr>
-                    <td title="<%= @ec_functions[ec_lts] %>" ><div><strong><%= link_to ec_lts, "http://enzyme.expasy.org/EC/" + ec_lts %></strong></div></td>
-                    <% @ec_lca_table[ec_lts].each do |ec_ltsl| %>
-                      <% if ec_ltsl != "" %>
-                        <% colors.store(ec_ltsl, "c"+(i%30).to_s) if !colors.has_key?(ec_ltsl) %>
-                        <td title="<%= @ec_functions[ec_ltsl] %>" class="<%= colors[ec_ltsl] %>"><div class="shorten"><%= link_to @ec_functions[ec_ltsl], "http://enzyme.expasy.org/EC/" + ec_ltsl %></div></td>
-                      <% else %>
-                        <td></td>
-                      <% end %>
+                      </tr>
                     <% end %>
-                    </tr>
-                  <% end %>
-                </table>
+                  </table>
+                </div>
+              </div>
+              <div class="tab-pane active" id="go-graph-tab">
+                <svg id="go-graph" width="960" height="600"><g/></svg>
               </div>
             </div>
           </div>
@@ -155,7 +160,9 @@
         peptide: "<%= @original_sequence %>",
         tree: <%= raw(@root) %>,
         ec_tree: <%= raw(@ec_root) %>,
-        uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>
+        uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>,
+        terms: <%= raw(Oj.dump(@graph.terms.map{|k, v| {'id' => k, 'label' => v.name}})) %>,
+        edges: <%= raw(Oj.dump(@links, mode: :compat)) %>
       });
     });
   </script>

@@ -160,6 +160,7 @@ GEM
     notiffany (0.0.6)
       nenv (~> 0.1)
       shellany (~> 0.0)
+    obo (0.1.5)
     oj (2.12.9)
     orm_adapter (0.5.0)
     parser (2.2.2.6)
@@ -225,6 +226,8 @@ GEM
     ruby-progressbar (1.7.5)
     rubycas-client (2.3.9)
       activesupport
+    scbi_go (0.0.1)
+      obo
     shellany (0.0.1)
     simplecov (0.10.0)
       docile (~> 1.1.0)
@@ -305,6 +308,7 @@ DEPENDENCIES
   responders (>= 2.0)
   rmagick
   rubocop
+  scbi_go
   sprockets
   stathat
   terminal-notifier
@@ -315,4 +319,4 @@ DEPENDENCIES
   zeroclipboard-rails
 
 BUNDLED WITH
-   1.10.3
+   1.10.6

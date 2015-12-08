@@ -6,6 +6,9 @@ function init_sequence_show(data) {
     // set up fancy d3TreeView
     initD3TreeView(data.ec_tree, "#ecTree")
 
+    // set up GO graph
+    initDagreD3Graph(data.terms, data.edges, "#go-graph")
+
     // sub navigation click events
     initSubNav();
 
@@ -23,7 +26,6 @@ function init_sequence_show(data) {
 
     // add the tab help
     initHelp();
-
 
     /******************* Functions ***********************/
 
@@ -54,6 +56,59 @@ function init_sequence_show(data) {
           width: 916,
           height: 600,
         });
+    }
+
+    function initDagreD3Graph(terms, edges, selector) {
+        // Create a new directed graph
+        var g = new dagreD3.graphlib.Graph().setGraph({rankdir: "LR"});
+
+        // Automatically label each of the nodes
+        for (term of terms) {
+            g.setNode(term.id, { label: term.id, name: term.name });
+        }
+
+        // Set up the edges
+        for (edge of edges) {
+            g.setEdge(edge.from, edge.to, { label: edge.label });
+        }
+
+        // Set some general styles
+        g.nodes().forEach(function(v) {
+            var node = g.node(v);
+            node.rx = node.ry = -5;
+        });
+
+        // Add some custom colors based on term
+        // g.node('CLOSED').style = "fill: #f77";
+        // g.node('ESTAB').style = "fill: #7f7";
+
+        var svg = d3.select(selector);
+        var inner = svg.select("g");
+
+        // Set up zoom support
+        var zoom = d3.behavior.zoom().on("zoom", function() {
+            inner.attr("transform", "translate(" + d3.event.translate + ")" +
+                       "scale(" + d3.event.scale + ")");
+        });
+        svg.call(zoom);
+
+        // Create the renderer
+        var render = new dagreD3.render();
+
+        // Run the renderer. This is what draws the final graph.
+        render(inner, g);
+
+        // inner.selectAll("g.node")
+        //   .attr("title", function(v) { return g.node(v).name })
+        //   .each(function(v) { $(this).tipsy({ gravity: "w", opacity: 1, html: true }); });
+
+        // Center the graph
+        var initialScale = 0.75;
+        zoom
+            .translate([(svg.attr("width") - g.graph().width * initialScale) / 2, 20])
+            .scale(initialScale)
+            .event(svg);
+        svg.attr('height', g.graph().height * initialScale + 40);
     }
 
     function initSubNav() {

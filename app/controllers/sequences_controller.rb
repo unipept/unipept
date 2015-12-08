@@ -1,5 +1,8 @@
 class SequencesController < ApplicationController
   require 'oj'
+  require 'scbi_go'
+  require 'graphnode'
+  require 'open-uri'
 
   # shows information about a peptide
   # the peptide should be in params[:id] and
@@ -157,6 +160,32 @@ class SequencesController < ApplicationController
     @ec_root = Oj.dump(@ec_root, mode: :compat)
 
     # ----------- end ------------ #
+
+    def create_graph(graph, go)
+      return nil if go.nil?
+      parent = graph.terms[go.id]
+      if parent.nil?
+        parent = GraphNode.new(go.id, go.name)
+        graph.add_term(go.id, parent)
+      end
+      for child in go.parents
+        parent.add_link(create_graph(graph, child))
+      end
+      parent
+    end
+    file = Rails.root.join('go-basic.obo')
+    if !File.exist?(file)
+      IO.copy_stream(open('http://purl.obolibrary.org/obo/go/go-basic.obo'), file)
+    end
+    @go=ScbiGo::GeneOntology.new(filename=file.to_s)
+    @graph = Graph.new()
+    input_go_list = ['GO:0006260']
+    for go in input_go_list
+      create_graph(@graph, @go.find_go(go))
+    end
+
+    @links = Array.new
+    @graph.terms.each{|k,v| v.links.each_key{|l| @links.push({'from' => k, 'to' => l, 'label' => 'is_a'})}}
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree
@@ -413,6 +442,34 @@ class SequencesController < ApplicationController
     rescue EmptyQueryError
       flash[:error] = 'Your query was empty, please try again.'
       redirect_to datasets_path
+  end
+
+  def go
+    input_go_list = ["GO:0008360"]
+    def create_graph(graph, go)
+      return nil if go.nil?
+      parent = graph.terms[go.id]
+      if parent.nil?
+        parent = GraphNode.new(go.id, go.name)
+        graph.add_term(go.id, parent)
+      end
+      for child in go.parents
+        parent.add_link(create_graph(graph, child))
+      end
+      parent
+    end
+    file = Rails.root.join('go-basic.obo')
+    if !File.exist?(file)
+      IO.copy_stream(open('http://purl.obolibrary.org/obo/go/go-basic.obo'), file)
+    end
+    @go=ScbiGo::GeneOntology.new(filename=file.to_s)
+    @graph = Graph.new()
+    for go in input_go_list
+      create_graph(@graph, @go.find_go(go))
+    end
+
+    @links = Array.new
+    @graph.terms.each{|k,v| v.links.each_key{|l| @links.push({'from' => k, 'to' => l, 'label' => 'is_a'})}}
   end
 end
 

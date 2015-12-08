@@ -7,6 +7,8 @@
 //= require_directory .
 //= require_directory ./peptidome
 //= require_directory ./multisearch
+//= require_directory ./lib/treeview
+//= require_directory ./lib/dagre-d3
 
 // zeroclipboard config
 ZeroClipboard.config({
