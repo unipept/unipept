@@ -69,7 +69,7 @@ function init_sequence_show(data) {
 
         // Set up the edges
         for (edge of edges) {
-            g.setEdge(edge.from, edge.to, { label: edge.label, rel_count: edge.weight });
+            g.setEdge(edge.from, edge.to, { label: edge.label, rel_count: edge.weight, arrowhead: "undirected" });
         }
 
         // Set some general styles
