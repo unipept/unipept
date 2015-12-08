@@ -100,8 +100,10 @@ class Sequence < ActiveRecord::Base
   end
 
   # Filters a list of sequences for having a given lca
+  # WARNING, sequences is not escaped in the query, so it should only contains
+  # integers
   def self.filter_unique_uniprot_peptides(sequences, lca)
-    Sequence.where(id: sequences, lca: lca).order(:id).pluck(:id)
+    connection.select_values("select id from sequences where lca = #{lca} AND id in (#{sequences.join(',')}) order by id")
   end
 
   def self.boolean?(variable)

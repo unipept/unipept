@@ -40,7 +40,7 @@ class ProteomeCache < ActiveRecord::Base
 
   def self.delta_decode(data)
     old = 0
-    (1..data.length - 1).each do |i|
+    (0..data.length - 1).each do |i|
       old += data[i]
       data[i] = old
     end

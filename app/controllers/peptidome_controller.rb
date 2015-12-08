@@ -26,7 +26,7 @@ class PeptidomeController < ApplicationController
   # Returns a filtered list of unique sequence id's for a given LCA
   def get_unique_sequences
     if params[:proteome_id].nil?
-      sequences = JSON(params[:sequences])
+      sequences = JSON(params[:sequences]).map(&to_i)
     else
       sequences = ProteomeCache.get_decoded_sequences(params[:proteome_id])
     end
