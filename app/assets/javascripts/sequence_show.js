@@ -98,9 +98,8 @@ function init_sequence_show(data) {
         // Run the renderer. This is what draws the final graph.
         render(inner, g);
 
-        // inner.selectAll("g.node")
-        //   .attr("title", function(v) { return g.node(v).name })
-        //   .each(function(v) { $(this).tipsy({ gravity: "w", opacity: 1, html: true }); });
+        inner.selectAll("g.node")
+          .attr("title", function(v) { return g.node(v).name });
 
         // Center the graph
         var initialScale = 0.75;

@@ -161,7 +161,7 @@
         tree: <%= raw(@root) %>,
         ec_tree: <%= raw(@ec_root) %>,
         uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>,
-        terms: <%= raw(Oj.dump(@graph.terms.map{|k, v| {'id' => k, 'label' => v.name}})) %>,
+        terms: <%= raw(Oj.dump(@graph.terms.map{|k, v| {'id' => k, 'name' => v.name}})) %>,
         edges: <%= raw(Oj.dump(@links, mode: :compat)) %>
       });
     });
