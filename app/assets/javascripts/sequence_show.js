@@ -103,7 +103,7 @@ function init_sequence_show(data) {
           .attr("title", function(v) { return g.node(v).name });
 
         inner.selectAll("g.edgePath path")
-          .attr("stroke-width", function(v) { return g.edge(v).rel_count*10 });
+          .attr("stroke-width", function(v) { return g.edge(v).rel_count*15 });
 
         // Center the graph
         var initialScale = 0.75;
