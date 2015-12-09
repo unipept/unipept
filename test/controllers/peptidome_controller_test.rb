@@ -7,7 +7,7 @@ class PeptidomeControllerTest < ActionController::TestCase
     assert_template :analyze
     assert_equal 'Peptidome Analysis', assigns(:title)
     assert_equal 'peptidefinder', assigns(:tab)
-    assert_not_nil assigns(:genomes)
+    assert_not_nil assigns(:proteomes)
     assert_not_nil assigns(:taxa)
   end
 
@@ -35,7 +35,7 @@ class PeptidomeControllerTest < ActionController::TestCase
   end
 
   test 'should get get_unique_sequences' do
-    get :get_unique_sequences, sequences: '[1, 2, 3]', ids: '1', format: 'json'
+    get :get_unique_sequences, sequences: '[1, 1, 1]', ids: '1', format: 'json'
     assert_response :success
     assert_equal '["species1",[3]]', @response.body
   end
@@ -47,7 +47,7 @@ class PeptidomeControllerTest < ActionController::TestCase
   end
 
   test 'should get get_sequences' do
-    get :get_sequences, sequence_ids: '[1, 2]'
+    get :get_sequences, sequence_ids: '[1, 1]'
     assert_response :success
     assert_equal '"AALER\nAAIER"', @response.body
   end
