@@ -432,7 +432,7 @@ function sendToHost(type, message) {
 function loadData(id, name) {
     var requestRank = rank;
     getJSON("/peptidome/sequences/" + id + ".json", function (json_data) {
-        addData(id, name, deltaDecode(json_data), requestRank);
+        addData(id, name, deltaDecodeInPlace(json_data), requestRank);
     });
 }
 
@@ -699,13 +699,13 @@ function getUniqueSequences(newOrder, force) {
 function reallyGetUniqueSequences(id) {
     var variables = "ids=" + filterIds(order);
     if (isLocalProteome(id)) {
-        variables += "&sequences=[" + data[id].peptide_list + "]";
+        variables += "&sequences=[" + deltaEncode(data[id].peptide_list) + "]";
     } else {
         variables += "&proteome_id=" + id;
     }
     getJSONByPost("/peptidome/unique_sequences/", variables, function (d) {
         lca = d[0];
-        calculateUnicore(deltaDecode(d[1]));
+        calculateUnicore(deltaDecodeInPlace(d[1]));
     });
 }
 
@@ -951,7 +951,7 @@ function intersection(a, b) {
  *
  * @param <Array> data An array of integers
  */
-function deltaDecode(data) {
+function deltaDecodeInPlace(data) {
     var old = 0,
         len = data.length,
         i;
@@ -960,4 +960,21 @@ function deltaDecode(data) {
         data[i] = old;
     }
     return data;
+}
+
+/**
+ * Delta encodes an array of integers
+ *
+ * @param <Array> data An array of integers
+ */
+function deltaEncode(data) {
+    var prev = 0,
+        len = data.length,
+        output = new Array(len),
+        i;
+    for (i = 0; i < len; i++) {
+        output[i] = data[i] - prev;
+        prev = data[i];
+    }
+    return output;
 }
