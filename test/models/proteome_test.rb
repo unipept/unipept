@@ -119,4 +119,32 @@ class ProteomeTest < ActiveSupport::TestCase
       assert_not_nil ProteomeCache.get_encoded_sequences(proteome.id)
     end
   end
+
+  test 'should return all proteomes' do
+    proteomes = Proteome.proteomes.to_a
+    assert_equal [proteomes(:proteome1)], proteomes
+  end
+
+  test 'should return all proteomes as json' do
+    Rails.cache.clear
+    proteomes = JSON(Proteome.json_proteomes)
+    expected_result = proteomes(:proteome1)
+    assert_equal 1, proteomes.length
+    assert_equal expected_result.id, proteomes[0]['id']
+  end
+
+  test 'should return all taxa for the proteomes' do
+    taxa = Proteome.taxa
+    taxon1 = taxons(:taxon1)
+    expected_result = { 1 => { 'name' => taxon1.name, 'rank' => taxon1.rank } }
+    assert_equal expected_result, taxa
+  end
+
+  test 'should return all taxa as json' do
+    Rails.cache.clear
+    taxa = JSON(Proteome.json_taxa)
+    taxon1 = taxons(:taxon1)
+    assert_equal 1, taxa.length
+    assert_equal taxon1.name, taxa['1']['name']
+  end
 end
