@@ -28,8 +28,11 @@ class ProteomeCache < ActiveRecord::Base
     ProteomeCache.delta_decode(JSON(ProteomeCache.get_encoded_sequences(proteome_id).json_sequences))
   end
 
-  # Delta encodes a sorted list of integers
+  # Delta encodes a list of integers
   def self.delta_encode(peptide_list)
+    return [] unless peptide_list.is_a?(Array)
+    return [] if peptide_list.length == 0
+
     output = Array.new(peptide_list.length)
     output[0] = peptide_list[0]
     (1..peptide_list.length - 1).each do |i|
@@ -38,7 +41,10 @@ class ProteomeCache < ActiveRecord::Base
     output
   end
 
+  # Delta decodes a list of integers
   def self.delta_decode(data)
+    return [] unless data.is_a?(Array)
+
     old = 0
     (0..data.length - 1).each do |i|
       old += data[i]

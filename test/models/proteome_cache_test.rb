@@ -38,4 +38,30 @@ class ProteomeCacheTest < ActiveSupport::TestCase
     proteomecache = ProteomeCache.find_by_proteome_id(2)
     assert_not_nil proteomecache
   end
+
+  test 'should delta encode' do
+    result = ProteomeCache.delta_encode(nil)
+    assert_equal [], result
+    result = ProteomeCache.delta_encode([])
+    assert_equal [], result
+    result = ProteomeCache.delta_encode([1])
+    assert_equal [1], result
+    result = ProteomeCache.delta_encode([1, 2, 3])
+    assert_equal [1, 1, 1], result
+    result = ProteomeCache.delta_encode([3, 3, 9])
+    assert_equal [3, 0, 6], result
+  end
+
+  test 'should delta decode' do
+    result = ProteomeCache.delta_decode(nil)
+    assert_equal [], result
+    result = ProteomeCache.delta_decode([])
+    assert_equal [], result
+    result = ProteomeCache.delta_decode([1])
+    assert_equal [1], result
+    result = ProteomeCache.delta_decode([1, 1, 1])
+    assert_equal [1, 2, 3], result
+    result = ProteomeCache.delta_decode([3, 0, 6])
+    assert_equal [3, 3, 9], result
+  end
 end
