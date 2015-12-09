@@ -755,7 +755,7 @@ function getSequences(type, id) {
     default:
         error("Unknown type: " + type);
     }
-    getJSONByPost("/peptidome/full_sequences/", "sequence_ids=[" + ids + "]", function (d) {
+    getJSONByPost("/peptidome/full_sequences/", "sequence_ids=[" + deltaEncode(ids) + "]", function (d) {
         sendToHost("processDownloadedSequences", {sequences : d, type : type, id : id});
     });
 }

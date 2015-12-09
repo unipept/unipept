@@ -95,13 +95,21 @@ class Sequence < ActiveRecord::Base
   end
 
   # Returns an array of sequences strings based on a list of sequence id's
+  # This function used to contain an ActiveRecord query, but the huge number of
+  # integers in the where field resulted in a huge query contruction time.
+  # Constructing the query manually is many times faster.
   def self.list_sequences(ids)
-    Sequence.where(id: ids).pluck(:sequence)
+    connection.select_values("select sequence from sequences where id in (#{sequences.join(',')})")
   end
 
   # Filters a list of sequences for having a given lca
   # WARNING, sequences is not escaped in the query, so it should only contains
-  # integers
+  # integers.
+  # This function used to contain an ActiveRecord query, but the huge number of
+  # integers in the where field resulted in a huge query contruction time.
+  # Constructing the query manually is many times faster.
+  # For a bacterial genome, 50ms was spent on the query, 600ms on the
+  # construction. See issue #543 for more information.
   def self.filter_unique_uniprot_peptides(sequences, lca)
     connection.select_values("select id from sequences where lca = #{lca} AND id in (#{sequences.join(',')}) order by id")
   end
