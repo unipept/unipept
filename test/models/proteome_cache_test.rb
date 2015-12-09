@@ -21,7 +21,7 @@ class ProteomeCacheTest < ActiveSupport::TestCase
     assert proteomecache.save, 'Unable to save the post with valid fields'
   end
 
-  test 'should return the assembly when cache is present' do
+  test 'should return the proteome when cache is present' do
     proteomecache = ProteomeCache.find_by_proteome_id(1)
     assert_not_nil proteomecache
     proteomecache = ProteomeCache.get_encoded_sequences(1)

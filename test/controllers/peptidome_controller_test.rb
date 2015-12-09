@@ -34,13 +34,19 @@ class PeptidomeControllerTest < ActionController::TestCase
     assert_equal proteome.json_sequences, @response.body
   end
 
-  test 'should get get_unique_sequences' do
+  test 'should get get_unique_sequences for own sequences' do
     get :get_unique_sequences, sequences: '[1, 1, 1]', ids: '1', format: 'json'
     assert_response :success
     assert_equal '["species1",[3]]', @response.body
   end
 
-  test 'should return undefined for get_unique_sequences without bioprojects' do
+  test 'should get get_unique_sequences for uniprot proteomes' do
+    get :get_unique_sequences, proteome_id: '1', ids: '1', format: 'json'
+    assert_response :success
+    assert_equal '["species1",[3]]', @response.body
+  end
+
+  test 'should return undefined for get_unique_sequences without proteome id' do
     get :get_unique_sequences, sequences: '[1, 2, 3]', ids: '', format: 'json'
     assert_response :success
     assert_equal '["undefined",[]]', @response.body
