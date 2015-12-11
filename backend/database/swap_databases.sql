@@ -9,6 +9,7 @@ drop table
     taxons,
     uniprot_entries,
     proteomes,
+    proteome_cross_references,
     proteome_caches;
 
 rename table unipept2.ec_cross_references to unipept.ec_cross_references;
@@ -21,4 +22,5 @@ rename table unipept2.sequences to unipept.sequences;
 rename table unipept2.taxons to unipept.taxons;
 rename table unipept2.uniprot_entries to unipept.uniprot_entries;
 rename table unipept2.proteomes to unipept.proteomes;
+rename table unipept2.proteome_cross_references unipept.proteome_cross_references;
 rename table unipept2.proteome_caches to unipept.proteome_caches;
