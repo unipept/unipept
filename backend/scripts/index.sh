@@ -36,9 +36,9 @@ echo "ALTER TABLE go_cross_references ADD INDEX fk_go_reference_uniprot_entries 
 print "adding index to ec_cross_references"
 echo "ALTER TABLE ec_cross_references ADD INDEX fk_ec_reference_uniprot_entries (uniprot_entry_id ASC);" | mysql -u unipept -punipept unipept
 
-print "adding index to assemblies"
-echo "ALTER TABLE assemblies ADD INDEX fk_taxons_assemblies_idx (taxon_id ASC);" | mysql -u unipept -punipept unipept
+print "adding index to proteomes"
+echo "ALTER TABLE proteomes ADD INDEX fk_taxons_proteomes (taxon_id ASC);" | mysql -u unipept -punipept unipept
 
-print "adding index to assembly_sequences"
-echo "ALTER TABLE assembly_sequences ADD INDEX fk_assemblies_assembly_sequences_idx (assembly_id ASC);" | mysql -u unipept -punipept unipept
-echo "ALTER TABLE assembly_sequences ADD INDEX idx_genbank_accession (genbank_accession ASC);" | mysql -u unipept -punipept unipept
+print "adding index to proteome_cross_references"
+echo "ALTER TABLE proteome_cross_references ADD INDEX fk_proteome_cross_references_uniprot_entries (uniprot_entry_id ASC);" | mysql -u unipept -punipept unipept
+echo "ALTER TABLE proteome_cross_references ADD INDEX fk_proteome_cross_references (proteome_id ASC);" | mysql -u unipept -punipept unipept

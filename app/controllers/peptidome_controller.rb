@@ -11,24 +11,13 @@ class PeptidomeController < ApplicationController
       @tab = 'peptidefinder'
     end
 
-    @genomes = Assembly.joins(:lineage).select('assemblies.organism_name as name, assemblies.id, assembly_level, genome_representation, type_strain, genbank_assembly_accession, lineages.species as species_id, lineages.genus as genus_id, lineages.order as order_id, lineages.class as class_id').uniq
-
-    @taxa = Set.new
-    @taxa.merge(@genomes.map(&:species_id))
-    @taxa.merge(@genomes.map(&:genus_id))
-    @taxa.merge(@genomes.map(&:order_id))
-    @taxa.merge(@genomes.map(&:class_id))
-    @taxa = Hash[Taxon.select([:id, :name, :rank])
-                 .where(id: @taxa.to_a)
-                 .map { |t| [t.id, Hash['name' => t.name, 'rank' => t.rank]] }]
-
-    @taxa = Oj.dump(@taxa, mode: :compat)
-    @genomes = Oj.dump(@genomes, mode: :compat)
+    @taxa = Proteome.json_taxa
+    @proteomes = Proteome.json_proteomes
   end
 
-  # Returns a list of all sequence_ids for a given assembly_id
-  def get_sequence_ids_for_assembly
-    cache = AssemblyCache.get_by_assembly_id(params[:assembly_id])
+  # Returns a list of all sequence_ids for a given proteome_id
+  def get_sequence_ids_for_proteome
+    cache = ProteomeCache.get_encoded_sequences(params[:proteome_id])
     respond_to do |format|
       format.json { render json: cache.json_sequences }
     end
@@ -36,10 +25,14 @@ class PeptidomeController < ApplicationController
 
   # Returns a filtered list of unique sequence id's for a given LCA
   def get_unique_sequences
-    sequences = JSON(params[:sequences])
+    if params[:proteome_id].nil?
+      sequences = ProteomeCache.delta_decode(JSON(params[:sequences]))
+    else
+      sequences = ProteomeCache.get_decoded_sequences(params[:proteome_id])
+    end
     if params[:ids].size > 0
-      lca = Lineage.calculate_lca(Lineage.find_by_sql("SELECT lineages.* from assemblies LEFT JOIN lineages ON assemblies.taxon_id = lineages.taxon_id WHERE assemblies.id IN (#{params[:ids]}) AND assemblies.taxon_id is not null"))
-      result = Sequence.filter_unique_uniprot_peptides(sequences, lca)
+      lca = Lineage.calculate_lca(Lineage.find_by_sql("SELECT lineages.* from proteomes LEFT JOIN lineages ON proteomes.taxon_id = lineages.taxon_id WHERE proteomes.id IN (#{params[:ids]}) AND proteomes.taxon_id is not null"))
+      result = ProteomeCache.delta_encode(Sequence.filter_unique_uniprot_peptides(sequences, lca))
       lca = Taxon.find_by_id(lca).name
     else
       lca = 'undefined'
@@ -50,13 +43,13 @@ class PeptidomeController < ApplicationController
 
   # Returns a list of sequences
   def get_sequences
-    ids = JSON(params[:sequence_ids])
+    ids = ProteomeCache.delta_decode(JSON(params[:sequence_ids]))
     render json: Oj.dump(Sequence.list_sequences(ids).join("\n"), mode: :compat)
   end
 
   # Converts a list of peptides to id's
   def convert_peptides
-    peptides = JSON(params[:peptides])
+    peptides = JSON(params[:peptides]) rescue ''
     ids = Sequence.where(sequence: peptides).pluck(:id)
     render json: Oj.dump(ids, mode: :compat)
   end
@@ -65,7 +58,7 @@ class PeptidomeController < ApplicationController
   def get_lca
     params[:ids] = [] if params[:ids].nil?
     if params[:ids].size > 0
-      lca = Lineage.calculate_lca(Lineage.find_by_sql("SELECT lineages.* from assemblies LEFT JOIN lineages ON assemblies.taxon_id = lineages.taxon_id WHERE assemblies.id IN (#{params[:ids]}) AND assemblies.taxon_id is not null"))
+      lca = Lineage.calculate_lca(Lineage.find_by_sql("SELECT lineages.* from proteomes LEFT JOIN lineages ON proteomes.taxon_id = lineages.taxon_id WHERE proteomes.id IN (#{params[:ids]}) AND proteomes.taxon_id is not null"))
       lca = Taxon.find_by_id(lca)
     else
       lca = { name: 'undefined' }

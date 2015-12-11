@@ -7,7 +7,7 @@ class PeptidomeControllerTest < ActionController::TestCase
     assert_template :analyze
     assert_equal 'Peptidome Analysis', assigns(:title)
     assert_equal 'peptidefinder', assigns(:tab)
-    assert_not_nil assigns(:genomes)
+    assert_not_nil assigns(:proteomes)
     assert_not_nil assigns(:taxa)
   end
 
@@ -27,27 +27,33 @@ class PeptidomeControllerTest < ActionController::TestCase
     assert_equal 'peptidomeclustering', assigns(:tab)
   end
 
-  test 'should get get_sequence_ids_for_assembly' do
-    assembly = assembly_caches(:assemblycache1)
-    get :get_sequence_ids_for_assembly, assembly_id: '1', format: 'json'
+  test 'should get get_sequence_ids_for_proteome' do
+    proteome = proteome_caches(:proteomecache1)
+    get :get_sequence_ids_for_proteome, proteome_id: '1', format: 'json'
     assert_response :success
-    assert_equal assembly.json_sequences, @response.body
+    assert_equal proteome.json_sequences, @response.body
   end
 
-  test 'should get get_unique_sequences' do
-    get :get_unique_sequences, sequences: '[1, 2, 3]', ids: '1', format: 'json'
+  test 'should get get_unique_sequences for own sequences' do
+    get :get_unique_sequences, sequences: '[1, 1, 1]', ids: '1', format: 'json'
     assert_response :success
     assert_equal '["species1",[3]]', @response.body
   end
 
-  test 'should return undefined for get_unique_sequences without bioprojects' do
+  test 'should get get_unique_sequences for uniprot proteomes' do
+    get :get_unique_sequences, proteome_id: '1', ids: '1', format: 'json'
+    assert_response :success
+    assert_equal '["species1",[3]]', @response.body
+  end
+
+  test 'should return undefined for get_unique_sequences without proteome id' do
     get :get_unique_sequences, sequences: '[1, 2, 3]', ids: '', format: 'json'
     assert_response :success
     assert_equal '["undefined",[]]', @response.body
   end
 
   test 'should get get_sequences' do
-    get :get_sequences, sequence_ids: '[1, 2]'
+    get :get_sequences, sequence_ids: '[1, 1]'
     assert_response :success
     assert_equal '"AALER\nAAIER"', @response.body
   end
