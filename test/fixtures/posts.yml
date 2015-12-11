@@ -4,7 +4,7 @@
 #
 #  id      :integer          not null, primary key
 #  title   :string(100)      not null
-#  content :text             not null
+#  content :text(65535)      not null
 #  date    :date             not null
 #
 

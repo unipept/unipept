@@ -14,7 +14,7 @@ class EmblCrossReference < ActiveRecord::Base
 
   belongs_to :uniprot_entry
 
-  # Returns a set af sequence_ids for a given refseq_id
+  # Returns a set of sequence_ids for a given refseq_id
   def self.get_sequence_ids(insdc_id)
     connection.select_values("SELECT original_sequence_id
       FROM peptides

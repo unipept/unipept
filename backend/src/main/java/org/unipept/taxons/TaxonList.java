@@ -86,9 +86,12 @@ public class TaxonList extends ArrayList<Taxon> {
 
         if(! t.valid()
         || (t.rank == Taxon.Rank.SPECIES
-           && (t.name.matches(".*\\d.*")
+          && (
+            (t.name.matches(".*\\d.*") && !t.name.contains("virus"))
             || t.name.endsWith(" sp.")
-            || t.name.endsWith(" genomosp.")))
+            || t.name.endsWith(" genomosp.")
+          )
+        )
         || t.name.contains("enrichment culture")
         || t.name.contains("mixed culture")
         || t.name.contains("uncultured")
