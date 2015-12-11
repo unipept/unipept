@@ -5,7 +5,7 @@
 [![Code Climate](https://codeclimate.com/github/unipept/unipept/badges/gpa.svg)](https://codeclimate.com/github/unipept/unipept)
 
 The [Unipept web application](http://unipept.ugent.be) supports biodiversity analysis of large and complex metaproteome samples and the analysis of peptidomes.
-The 3.0 release of Unipept has several main features:
+The 3.1 release of Unipept has several main features:
 * Tryptic peptide analysis (previously single peptide analysis)
 * Metaproteomics analysis (previously multi-peptide analysis)
 * Unique peptide finder
@@ -26,7 +26,7 @@ This application is deployed and fully functional at [unipept.ugent.be](http://u
 If for some reason you wish to run your own instance, you can do so by deploying this rails application and setting up a database.
 This isn't straightforward and you'll probably want some help, so contact us at [unipept@ugent.be](mailto:unipept@ugent.be) before you attempt an installation.
 
-A more user friendly way to set up your own Unipept instance is planned for the next release.
+A more user friendly way to set up your own Unipept instance is planned for the future.
 We will probably use [docker](https://www.docker.io/) for this, and release a ready made database as a separate download.
 
 ## Who made this app?

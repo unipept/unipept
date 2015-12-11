@@ -104,7 +104,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         tooltipHtml += "<thead><tr><th>Name</th><th>Peptidome size</th></tr></thead><tbody>";
         tooltipHtml += "<tr><td>" + metadata[row].name + "</td><td class='num'>" + d3.format(",")(metadata[row].size) + " peptides</td></tr>";
         tooltipHtml += "<tr><td>" + metadata[col].name + "</td><td class='num'>" + d3.format(",")(metadata[col].size) + " peptides</td></tr>";
-        tooltipHtml += "<tr><td colspan='2' class='fat'><strong>" + d3.format(",")(d.value.intersection) + "</strong> common peptides <span class='pull-right'><strong>" + d3.format(",")(d.value.union) + "</strong> distinct peptides</span></td></tr>";
+        tooltipHtml += "<tr><td colspan='2' class='fat'><strong>" + d3.format(",")(d.value.intersection) + "</strong> common peptides <span class='pull-right distinct-peptides'><strong>" + d3.format(",")(d.value.union) + "</strong> distinct peptides</span></td></tr>";
         tooltipHtml += "<tr><td colspan='2' class='sim'><strong>" + d3.format(",.2%")(similarities[row][col][selectedSimilarity]) + "</strong> similarity</td></tr>";
         tooltipHtml += "</tbody></table>";
         tooltip.html(tooltipHtml)

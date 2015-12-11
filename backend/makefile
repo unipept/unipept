@@ -2,28 +2,28 @@ SHELL := /bin/bash
 
 include config
 
-TABLES=                                      \
-	$(TABDIR)/peptides.tsv.gz                \
-	$(INTDIR)/sequences.tsv.gz               \
-	$(TABDIR)/uniprot_entries.tsv.gz         \
-	$(TABDIR)/refseq_cross_references.tsv.gz \
-	$(TABDIR)/ec_cross_references.tsv.gz     \
-	$(TABDIR)/embl_cross_references.tsv.gz   \
-	$(TABDIR)/go_cross_references.tsv.gz
+TABLES=                                        \
+	$(TABDIR)/peptides.tsv.gz                  \
+	$(INTDIR)/sequences.tsv.gz                 \
+	$(TABDIR)/uniprot_entries.tsv.gz           \
+	$(TABDIR)/refseq_cross_references.tsv.gz   \
+	$(TABDIR)/ec_cross_references.tsv.gz       \
+	$(TABDIR)/embl_cross_references.tsv.gz     \
+	$(TABDIR)/go_cross_references.tsv.gz       \
+	$(INTDIR)/proteomes.tsv.gz                 \
+	$(TABDIR)/proteome_cross_references.tsv.gz
 
 SRC=$(shell find src/ -type f -name '*.java')
 JAR=target/unipept-0.0.1-SNAPSHOT.jar
 PAC=org.unipept.tools
 
-all: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz $(TABLES) $(TABDIR)/sequences.tsv.gz $(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz
+all: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz $(TABLES) $(TABDIR)/sequences.tsv.gz $(TABDIR)/proteomes.tsv.gz
 jar: $(JAR)
 taxons: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
 tables: $(TABLES)
 sequences: $(TABDIR)/sequences.tsv.gz
-assemblies: $(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz
-download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz #$(UNIDIR)/uniprot_trembl.xml.gz
-	rsync --ignore-existing "$(ASSEMBLY_URL)/GCA_*.assembly.txt" $(ASMDIR)
-
+proteomes: $(TABDIR)/proteomes.tsv.gz
+download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/uniprot_trembl.xml.gz
 
 # Compiling {{{ ----------------------------------------------------------------
 # TODO:
@@ -44,7 +44,7 @@ $(TAXDIR)/taxdmp.zip:
 
 $(TAXDIR)/names.dmp $(TAXDIR)/nodes.dmp: $(TAXDIR)/taxdmp.zip
 	echo "Starting unzipping names and nodes from the taxon dump."
-	unzip -DDo $< $(notdir $@) -d $(dir $@)
+	unzip -o $< $(notdir $@) -d $(dir $@)
 	echo "Finished unzipping names and nodes from the taxon dump."
 
 $(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/uniprot_trembl.xml.gz:
@@ -64,12 +64,12 @@ $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz: $(TAXDIR)/names.dmp $(TAXDIR)
 # }}}
 
 # Uniprot entries, peptides, sequences and cross references {{{ ----------------
-$(TABLES): $(TABDIR)/taxons.tsv.gz $(UNIDIR)/uniprot_sprot.xml.gz #$(UNIDIR)/uniprot_trembl.xml.gz
+$(TABLES): $(TABDIR)/taxons.tsv.gz $(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/uniprot_trembl.xml.gz
 	echo "Started calculation of most tables."
 	mkdir -p $(BDBDIR)
 	mkdir -p $(INTDIR)
-	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(BDBDIR) $(BDBMEM) $(TABDIR)/taxons.tsv.gz $(TABLES) $(UNIDIR)/uniprot_sprot.xml.gz "swissprot"
-	#java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(BDBDIR) $(BDBMEM) $(TABDIR)/taxons.tsv.gz $(TABLES) $(UNIDIR)/uniprot_sprot.xml.gz "swissprot" $(UNIDIR)/uniprot_trembl.xml.gz "trembl"
+	#java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(BDBDIR) $(BDBMEM) $(TABDIR)/taxons.tsv.gz $(TABLES) $(UNIDIR)/uniprot_sprot.xml.gz "swissprot"
+	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(BDBDIR) $(BDBMEM) $(TABDIR)/taxons.tsv.gz $(TABLES) $(UNIDIR)/uniprot_sprot.xml.gz "swissprot" $(UNIDIR)/uniprot_trembl.xml.gz "trembl"
 	echo "Finished calculation of most tables."
 # }}}
 
@@ -117,23 +117,14 @@ $(TABDIR)/sequences.tsv.gz: $(INTDIR)/sequences.tsv.gz $(INTDIR)/LCAs.tsv.gz $(I
 
 # }}}
 
-# Assembly tables {{{ ----------------------------------------------------------
-$(INTDIR)/unstrained_assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz: parse_assemblies.awk
-	echo "Starting the assembly parsing."
-	mkdir -p $(ASMDIR)
-	rsync --ignore-existing --no-motd --verbose "$(ASSEMBLY_URL)/GCA_*.assembly.txt" $(ASMDIR)
-	find $(ASMDIR) -name 'GCA_*.assembly.txt' \
-		| sort \
-		| xargs cat \
-		| awk -f parse_assemblies.awk \
-			-v assemblies_file=>(sed -e 's/ *	 */	/g' -e 's/ *$$//' | gzip - > $(INTDIR)/unstrained_assemblies.tsv.gz) \
-			-v assembly_sequences_file=>(cut -f1,2,6,7 | sed -e 's/\.[^.]*//' -e 's/ *·  */·/g' -e 's/ *$$//' | gzip - > $(TABDIR)/assembly_sequences.tsv.gz)
-	echo "Finished the assembly parsing."
-
-$(TABDIR)/assemblies.tsv.gz: $(INTDIR)/unstrained_assemblies.tsv.gz strains_assembly_ids.sh
-	echo "Starting the straining of assemblies."
-	ENTREZ_URL=$(ENTREZ_URL) ENTREZ_BATCH_SIZE=$(ENTREZ_BATCH_SIZE) ./strains_assembly_ids.sh $(INTDIR)/unstrained_assemblies.tsv.gz $@
-	echo "Finished the straining of assemblies."
+# Proteomes {{{ ----------------------------------------------------------------
+$(TABDIR)/proteomes.tsv.gz: $(INTDIR)/proteomes.tsv.gz proteomes.sh type_strains.sh
+	echo "Starting fetching proteome info."
+	./proteomes.sh \
+		$(INTDIR)/proteomes.tsv.gz \
+		<(ENTREZ_URL=$(ENTREZ_URL) ENTREZ_BATCH_SIZE=$(ENTREZ_BATCH_SIZE) ./type_strains.sh) \
+		$(TABDIR)/proteomes.tsv.gz
+	echo "Finished fetching proteome info."
 # }}}
 
 .PHONY: clean_intermediates
@@ -144,7 +135,7 @@ clean_intermediates:
 .PHONY: clean
 clean: clean_intermediates
 	rm -vf $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
-	rm -vf $(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz
+	rm -vf $(TABDIR)/proteomes.tsv.gz
 	rm -vf $(TABLES)
 
 .PHONY: pristine
@@ -152,7 +143,6 @@ pristine: clean
 	rm -vf $(JAR)
 	rm -vf $(TAXDIR)/taxdmp.zip
 	rm -vf $(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/uniprot_treml.xml.gz
-	find $(ASMDIR)/ -name '*.assembly.txt' -exec rm -vf \{\} \;
 
 
 # vim: foldmethod=marker

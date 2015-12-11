@@ -158,8 +158,7 @@ class SequenceTest < ActiveSupport::TestCase
   end
 
   test 'should give correct result for list_sequences' do
-    assert_equal [], Sequence.list_sequences([55, 'foo'])
-    assert_equal ['AALER'], Sequence.list_sequences(1)
+    assert_equal [], Sequence.list_sequences([55])
     assert_equal ['AALER'], Sequence.list_sequences([1])
     assert_equal %w(AALER AAIER).sort, Sequence.list_sequences([1, 2]).sort
   end

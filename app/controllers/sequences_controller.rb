@@ -5,12 +5,12 @@ class SequencesController < ApplicationController
   # the peptide should be in params[:id] and
   # can be a peptide id or the sequence itself
   def show
-    @header_class = "TPA"
+    @header_class = 'TPA'
     # process parameters
     # should we equate I and L?
     equate_il = (params[:equate_il] == 'equateIL')
     # the sequence or id of the peptide
-    seq = params[:id].upcase
+    seq = params[:id].upcase.gsub(/\P{ASCII}/, '')
 
     # process the input, convert seq to a valid @sequence
     if seq.match(/\A[0-9]+\z/)
@@ -93,6 +93,7 @@ class SequencesController < ApplicationController
     @table_lineages = []
     @table_ranks = []
 
+    @lineages.uniq!
     @table_lineages << @lineages.map { |lineage| lineage.name.name }
     @table_ranks << 'Organism'
     @lineages.map { |lineage| lineage.set_iterator_position(0) } # reset the iterator
@@ -120,12 +121,12 @@ class SequencesController < ApplicationController
       # format.json { render json: Oj.dump(@entries, :include => :name, :mode => :compat) }
     end
 
-    rescue SequenceTooShortError
-      flash[:error] = 'The sequence you searched for is too short.'
-      redirect_to search_single_url
-    rescue NoMatchesFoundError => e
-      flash[:error] = "No matches for peptide #{e.message}"
-      redirect_to search_single_url
+  rescue SequenceTooShortError
+    flash[:error] = 'The sequence you searched for is too short.'
+    redirect_to search_single_url
+  rescue NoMatchesFoundError => e
+    flash[:error] = "No matches for peptide #{e.message}"
+    redirect_to search_single_url
   end
 
   # Lists all sequences
@@ -146,7 +147,7 @@ class SequencesController < ApplicationController
 
   # processes a list of sequences
   def multi_search
-    @header_class = "MPA"
+    @header_class = 'MPA'
     # save parameters
     @p = params
 
@@ -166,8 +167,8 @@ class SequencesController < ApplicationController
     data = query.upcase.gsub(/#/, '').gsub(/\P{ASCII}/, '')
     data = data.gsub(/([KR])([^P])/, "\\1\n\\2").gsub(/([KR])([^P])/, "\\1\n\\2") unless handle_missed
     data = data.lines.map(&:strip).to_a.select { |l| l.size >= 5 }
-    sequence_mapping = Hash[data.map { |v| @equate_il ? [v.gsub(/I/, 'L'), v] : [v, v] }]
-    data = data.map { |s| @equate_il ? s.gsub(/I/, 'L') : s }
+    sequence_mapping = Hash[data.map { |v| @equate_il ? [v.tr('I', 'L'), v] : [v, v] }]
+    data = data.map { |s| @equate_il ? s.tr('I', 'L') : s }
     data_counts = Hash[data.group_by { |k| k }.map { |k, v| [k, v.length] }]
     number_searched_for = data.length
     data = data_counts.keys
@@ -295,9 +296,9 @@ class SequencesController < ApplicationController
       send_data csv_string, type: 'text/csv; charset=iso-8859-1; header=present', disposition: 'attachment; filename=' + filename + '.csv'
     end
 
-    rescue EmptyQueryError
-      flash[:error] = 'Your query was empty, please try again.'
-      redirect_to datasets_path
+  rescue EmptyQueryError
+    flash[:error] = 'Your query was empty, please try again.'
+    redirect_to datasets_path
   end
 end
 
