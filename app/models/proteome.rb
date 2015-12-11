@@ -58,6 +58,7 @@ class Proteome < ActiveRecord::Base
     versions = Rails.application.config.versions
     cache_key = "taxa_#{versions[:unipept]}_#{versions[:uniprot]}"
     Rails.cache.fetch(cache_key, expires_in: 1.year) do
+      Proteome.precompute_taxa
       Oj.dump(Proteome.taxa, mode: :compat)
     end
   end
@@ -83,13 +84,16 @@ class Proteome < ActiveRecord::Base
 
   # fills in the taxon_id column
   def self.precompute_taxa
-    taxa = connection.select_all("SELECT DISTINCT proteome_id, uniprot_entries.taxon_id
-      FROM uniprot_entries
-      INNER JOIN proteome_cross_references
-        ON uniprot_entry_id = uniprot_entries.id;")
-    taxa = Hash[taxa.map { |t| [t['proteome_id'], t['taxon_id']] }]
     Proteome.all.find_each do |proteome|
-      proteome.taxon_id = taxa[proteome.id]
+      taxon_id = connection.select_value("SELECT uniprot_entries.taxon_id, count(*) AS num
+        FROM uniprot_entries
+        INNER JOIN proteome_cross_references
+          ON uniprot_entry_id = uniprot_entries.id
+        WHERE proteome_id = #{proteome.id}
+        GROUP BY taxon_id
+        ORDER BY num DESC
+        LIMIT 1")
+      proteome.taxon_id = taxon_id
       proteome.name = proteome.full_name
       proteome.save
     end
