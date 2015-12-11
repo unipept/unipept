@@ -55,8 +55,8 @@ module UnipeptWeb
 
     config.versions = {
       unipept: '3.1 beta',
-      gem: '1.0.1',
-      uniprot: '2015.07'
+      gem: '1.1.0',
+      uniprot: '2015.12'
     }
 
     config.api_host = 'api.unipept.ugent.be'
