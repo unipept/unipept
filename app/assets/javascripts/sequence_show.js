@@ -7,7 +7,7 @@ function init_sequence_show(data) {
     initD3TreeView(data.ec_tree, "#ecTree")
 
     // set up GO graph
-    initDagreD3Graph(data.terms, data.edges, "#go-graph")
+    initDagreD3Graph(data.terms, data.edges, "goGraph", "go-graph-tab")
 
     // sub navigation click events
     initSubNav();
@@ -61,7 +61,7 @@ function init_sequence_show(data) {
         });
     }
 
-    function initDagreD3Graph(terms, edges, selector) {
+    function initDagreD3Graph(terms, edges, div, tab) {
         // Create a new directed graph
         var g = new dagreD3.graphlib.Graph().setGraph({rankdir: "LR"});
 
@@ -83,10 +83,11 @@ function init_sequence_show(data) {
         // dagreD3.dagre.layout(g);
 
         // Add some custom colors based on term
+        // TODO: use this to mark the found GO terms
         // g.node('CLOSED').style = "fill: #f77";
         // g.node('ESTAB').style = "fill: #7f7";
 
-        var svg = d3.select(selector + " svg");
+        var svg = d3.select("#" + div + " svg");
         var inner = svg.select("g");
 
         // Set up zoom support
@@ -99,32 +100,30 @@ function init_sequence_show(data) {
         // Create the renderer
         var render = new dagreD3.render();
 
-        // Run the renderer. This is what draws the final graph.
-        render(inner, g);
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            if ($(e.target).attr("id") == "go-graph-tab") {
+                // Run the renderer. This is what draws the final graph.
+                render(inner, g);
 
-        inner.selectAll("g.node")
-             .attr("title", function(v) { return g.node(v).name });
-        inner.selectAll("g.node rect") .attr("style", "fill: #fff; stroke: #333;");
-        inner.selectAll("g.edgePath path")
-             .attr("stroke-width", function(v) { return g.edge(v).rel_count*15 })
-             .attr("style", "fill: none; stroke: #333;")
-             .attr("marker-end", "");
+                inner.selectAll("g.node")
+                     .attr("title", function(v) { return g.node(v).name });
+                inner.selectAll("g.node rect") .attr("style", "fill: #fff; stroke: #333;");
+                inner.selectAll("g.edgePath path")
+                     .attr("stroke-width", function(v) { return g.edge(v).rel_count*15 })
+                     .attr("style", "fill: none; stroke: #333;")
+                     .attr("marker-end", "");
 
-        // Center the graph
-        var initialScale = 0.75;
-        zoom
-            .translate([(svg.attr("width") - g.graph().width * initialScale) / 2, 20])
-            .scale(initialScale)
-            .event(svg);
-        svg.attr('height', g.graph().height * initialScale + 40);
+                // Center the graph
+                var initialScale = 0.5;
+                zoom
+                    .translate([(svg.attr("width") - g.graph().width * initialScale) / 2, 20])
+                    .scale(initialScale)
+                    .event(svg);
+            }
+        });
     }
 
     function initSubNav() {
-        $("li a").click(function() {
-            if ($(this).attr("data-toggle") === "tab") {
-                toggleTab();
-            } 
-        })
         $("th a span").click(function() {
             if ($(this).attr("class") === "classdesc" || "glyphicon") {
                 toggleColumn($(this).attr("id"));
@@ -143,23 +142,6 @@ function init_sequence_show(data) {
             $("#ec-table tr th:nth-child(" + col + ") a span.classdesc").hide();
             $("#ec-table tr th:nth-child(" + col + ") a span.glyphicon").show();
         }
-    }
-
-    function toggleTab() {
-        $("#proteins-tab").click(function(){
-          $("#lineage-analysis").hide();
-          $("#functional-analysis").hide();
-        });
-
-        $("#functional-analysis-tab").click(function(){
-          $("#lineage-analysis").hide();
-          $("#functional-analysis").show();
-        });
-
-        $("#lineage-analysis-tab").click(function(){
-            $("#functional-analysis").hide();
-            $("#lineage-analysis").show();
-        })
     }
 
     function addExternalLinks() {
