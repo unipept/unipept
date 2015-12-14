@@ -101,7 +101,7 @@ function init_sequence_show(data) {
         var render = new dagreD3.render();
 
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-            if ($(e.target).attr("id") == "go-graph-tab") {
+            if ($(e.target).attr("id") == "go-graph-tab" && $("#" + div + " svg g g").length == 0) {
                 // Run the renderer. This is what draws the final graph.
                 render(inner, g);
 
