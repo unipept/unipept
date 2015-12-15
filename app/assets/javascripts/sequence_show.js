@@ -9,14 +9,17 @@ function init_sequence_show(data) {
     // set up GO graph
     initDagreD3Graph(data.terms, data.edges, "goGraph", "go-graph-tab")
 
-    // sub navigation click events
-    initSubNav();
+    // set up column toggle
+    initColumnToggle();
+
+    // fullscreen and save image buttons
+    var buttons = ['lineage-tree', 'ec-tree', 'go-graph']
 
     // set up the fullscreen stuff
-    setUpFullScreen();
+    setUpFullScreen(buttons);
 
     // set up save image stuff
-    setUpImageSave();
+    setUpImageSave(buttons);
 
     // enable the external link popovers
     addExternalLinks();
@@ -123,7 +126,7 @@ function init_sequence_show(data) {
         });
     }
 
-    function initSubNav() {
+    function initColumnToggle() {
         $("th a span").click(function() {
             if ($(this).attr("class") === "classdesc" || "glyphicon") {
                 toggleColumn($(this).attr("id"));
@@ -172,43 +175,27 @@ function init_sequence_show(data) {
     /**
      * Sets up the image save stuff
      */
-    function setUpImageSave() {
-        $("#buttons-single").prepend("<button id='save-btn-lineage' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>");
-        $("#buttons-ec-tree").prepend("<button id='save-btn-ec' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>");
-        $("#buttons-go-graph").prepend("<button id='save-btn-go' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>");
-        $("#save-btn-lineage").click(function () {
-            logToGoogle("Single Peptide", "Save Image");
-            triggerDownloadModal("#lineageTree svg", null, "unipept_lineage_treeview");
-        });
-        $("#save-btn-ec").click(function () {
-            logToGoogle("Single Peptide", "Save Image");
-            triggerDownloadModal("#ecTree svg", null, "unipept_ec_treeview");
-        });
-        $("#save-btn-go").click(function () {
-            logToGoogle("Single Peptide", "Save Image");
-            triggerDownloadModal("#go-graph svg", null, "unipept_go_graph");
+    function setUpImageSave(buttons) {
+        buttons.forEach(function(button) {
+            $("#buttons-" + button).prepend("<button id='save-btn-" + button + "' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>");
+            $("#save-btn-" + button).click(function () {
+                logToGoogle("Single Peptide", "Save Image");
+                triggerDownloadModal("#" + button + " svg", null, "unipept_"+button);
+            });
         });
     }
 
     /**
      * Sets up the full screen stuff
      */
-    function setUpFullScreen() {
+    function setUpFullScreen(buttons) {
         if (fullScreenApi.supportsFullScreen) {
-            $("#buttons-single").prepend("<button id='zoom-btn-lineage' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
-            $("#buttons-ec-tree").prepend("<button id='zoom-btn-ec' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
-            $("#buttons-go-graph").prepend("<button id='zoom-btn-go' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
-            $("#zoom-btn-lineage").click(function () {
-                logToGoogle("Single Peptide", "Full Screen");
-                window.fullScreenApi.requestFullScreen($("#lineageTree").get(0));
-            });
-            $("#zoom-btn-ec").click(function () {
-                logToGoogle("Single Peptide", "Full Screen");
-                window.fullScreenApi.requestFullScreen($("#ecTree").get(0));
-            });
-            $("#zoom-btn-go").click(function () {
-                logToGoogle("Single Peptide", "Full Screen");
-                window.fullScreenApi.requestFullScreen($("#go-graph").get(0));
+            buttons.forEach(function(button) {
+                $("#buttons-" + button).prepend("<button id='zoom-btn-" + button + "' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
+                $("#zoom-btn-" + button).click(function () {
+                    logToGoogle("Single Peptide", "Full Screen");
+                    window.fullScreenApi.requestFullScreen($("#" + button + " div.tpa-tree").get(0));
+                });
             });
             $(document).bind(fullScreenApi.fullScreenEventName, resizeFullScreen);
         }
@@ -221,12 +208,10 @@ function init_sequence_show(data) {
                     width = $(window).width();
                     height = $(window).height();
                 }
-                $("#lineageTree svg").attr("width", width);
-                $("#lineageTree svg").attr("height", height);
-                $("#ecTree svg").attr("width", width);
-                $("#ecTree svg").attr("height", height);
-                $("#go-graph svg").attr("width", width);
-                $("#go-graph svg").attr("height", height);
+                buttons.forEach(function(button) {
+                    $("#" + button + " div.tpa-tree svg").attr("width", width);
+                    $("#" + button + " div.tpa-tree svg").attr("height", height);
+                });
             }, 1000);
         }
     }
