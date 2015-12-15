@@ -70,12 +70,12 @@ function init_sequence_show(data) {
 
         // Automatically label each of the nodes
         for (term of terms) {
-            g.setNode(term.id, { label: term.id, name: term.name });
+            g.setNode(term.id, { label: term.name, name: term.id, style: "fill: #fff; stroke: #333" });
         }
 
         // Set up the edges
         for (edge of edges) {
-            g.setEdge(edge.from, edge.to, { label: edge.label, rel_count: edge.weight });
+            g.setEdge(edge.from, edge.to, { rel_count: edge.weight, style: "fill: none; stroke: #333;", arrowhead: "undirected", lineInterpolate: "basis" });
         }
 
         // Set some general styles
@@ -110,11 +110,9 @@ function init_sequence_show(data) {
 
                 inner.selectAll("g.node")
                      .attr("title", function(v) { return g.node(v).name });
-                inner.selectAll("g.node rect") .attr("style", "fill: #fff; stroke: #333;");
                 inner.selectAll("g.edgePath path")
-                     .attr("stroke-width", function(v) { return g.edge(v).rel_count*15 })
-                     .attr("style", "fill: none; stroke: #333;")
-                     .attr("marker-end", "");
+                     .attr("stroke-width", function(v) { return g.edge(v).rel_count*15 });
+                inner.selectAll("defs").remove()
 
                 // Center the graph
                 var initialScale = 0.5;
