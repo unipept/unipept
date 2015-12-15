@@ -70,7 +70,7 @@ function init_sequence_show(data) {
 
         // Automatically label each of the nodes
         for (term of terms) {
-            g.setNode(term.id, { label: term.name, name: term.id, style: "fill: #fff; stroke: #333" });
+            g.setNode(term.id, { label: "<div style='width:100px; color:#000; white-space:normal;'>" + term.name + "</div>", name: term.id, style: "fill: #fff; stroke: #333", labelType: "html" });
         }
 
         // Set up the edges
