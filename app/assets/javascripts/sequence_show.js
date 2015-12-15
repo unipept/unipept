@@ -70,12 +70,12 @@ function init_sequence_show(data) {
 
         // Automatically label each of the nodes
         for (term of terms) {
-            g.setNode(term.id, { label: "<div style='width:100px; color:#000; white-space:normal;'>" + term.name + "</div>", name: term.id, style: "fill: #fff; stroke: #333", labelType: "html" });
+            g.setNode(term.id, { label: "<div style='width:60px; color:#000; white-space:normal;'>" + term.name + "</div>", name: term.id, style: "fill: #fff; stroke: #222", labelType: "html", shape: "circle" });
         }
 
         // Set up the edges
         for (edge of edges) {
-            g.setEdge(edge.from, edge.to, { rel_count: edge.weight, style: "fill: none; stroke: #333;", arrowhead: "undirected", lineInterpolate: "basis" });
+            g.setEdge(edge.from, edge.to, { rel_count: edge.weight, style: "fill: none; stroke: #222;", arrowhead: "undirected", lineInterpolate: "basis" });
         }
 
         // Set some general styles
