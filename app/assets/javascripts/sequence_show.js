@@ -70,7 +70,7 @@ function init_sequence_show(data) {
 
         // Automatically label each of the nodes
         for (term of terms) {
-            g.setNode(term.id, { label: "<div style='width:60px; color:#000; white-space:normal;'>" + term.name + "</div>", name: term.id, style: "fill: #fff; stroke: #222", labelType: "html", shape: "circle" });
+            g.setNode(term.id, { label: "<div style='width:60px; color:#000; white-space:normal;'>" + term.name + "</div>", name: term.id, style: "fill: #fff; stroke: #1F77B4; stroke-width: 2px;", labelType: "html", shape: "weightCircle" });
         }
 
         // Set up the edges
@@ -102,6 +102,20 @@ function init_sequence_show(data) {
 
         // Create the renderer
         var render = new dagreD3.render();
+
+        render.shapes().weightCircle = function(parent, bbox, node) {
+            var r = 40;
+            shapeSvg = parent.insert("circle", ":first-child")
+                .attr("x", -bbox.width / 2)
+                .attr("y", -bbox.height / 2)
+                .attr("r", r)
+
+                node.intersect = function(point) {
+                    return dagreD3.intersect.circle(node, r, point);
+                };
+
+            return shapeSvg;
+        };
 
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             if ($(e.target).attr("id") == "go-graph-tab" && $("#" + div + " svg g g").length == 0) {
