@@ -173,8 +173,8 @@ class SequencesController < ApplicationController
       parent
     end
     @graph = Graph.new()
-    input_go_list = @entries.map(&:go_cross_references).flatten.map(&:go_id).uniq
-    for go in input_go_list
+    @gos = @entries.map(&:go_cross_references).flatten.map(&:go_id).uniq
+    for go in @gos
       create_graph(@graph, GO_GRAPH.find_go(go), 1.0)
     end
 

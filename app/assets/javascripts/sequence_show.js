@@ -7,7 +7,7 @@ function init_sequence_show(data) {
     initD3TreeView(data.ec_tree, "#ecTree")
 
     // set up GO graph
-    initDagreD3Graph(data.terms, data.edges, "goGraph", "go-graph-tab")
+    initDagreD3Graph(data.terms, data.edges, data.found, "goGraph", "go-graph-tab")
 
     // set up column toggle
     initColumnToggle();
@@ -64,31 +64,20 @@ function init_sequence_show(data) {
         });
     }
 
-    function initDagreD3Graph(terms, edges, div, tab) {
+    function initDagreD3Graph(terms, edges, found, div, tab) {
         // Create a new directed graph
         var g = new dagreD3.graphlib.Graph().setGraph({rankdir: "RL"});
 
         // Automatically label each of the nodes
         for (term of terms) {
-            g.setNode(term.id, { label: "<div style='width:60px; color:#000; white-space:normal;'>" + term.name + "</div>", name: term.id, style: "fill: #fff; stroke: #1F77B4; stroke-width: 2px;", labelType: "html", shape: "weightCircle" });
+            color = $.inArray(term.id, found) != -1 ? "#5698C6" : "#fff";
+            g.setNode(term.id, { label: "<div style='width:60px; color:#000; white-space:normal;'>" + term.name + "</div>", name: term.id, style: "fill: " + color + "; stroke: #1F77B4; stroke-width: 2px;", labelType: "html", shape: "weightCircle" });
         }
 
         // Set up the edges
         for (edge of edges) {
             g.setEdge(edge.from, edge.to, { style: "fill: none; stroke: #1F77B4; stroke-opacity: 0.5; stroke-linecap: round; stroke-width:" + (edge.weight*10) + "px", arrowhead: "undirected", lineInterpolate: "basis" });
         }
-
-        // Set some general styles
-        // g.nodes().forEach(function(v) {
-        //     var node = g.node(v);
-        //     node.rx = node.ry = -5;
-        // });
-        // dagreD3.dagre.layout(g);
-
-        // Add some custom colors based on term
-        // TODO: use this to mark the found GO terms
-        // g.node('CLOSED').style = "fill: #f77";
-        // g.node('ESTAB').style = "fill: #7f7";
 
         var svg = d3.select("#" + div + " svg");
         var inner = svg.select("g");
