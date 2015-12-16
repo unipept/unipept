@@ -66,7 +66,7 @@ function init_sequence_show(data) {
 
     function initDagreD3Graph(terms, edges, div, tab) {
         // Create a new directed graph
-        var g = new dagreD3.graphlib.Graph().setGraph({rankdir: "LR"});
+        var g = new dagreD3.graphlib.Graph().setGraph({rankdir: "RL"});
 
         // Automatically label each of the nodes
         for (term of terms) {
