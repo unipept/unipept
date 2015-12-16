@@ -75,7 +75,7 @@ function init_sequence_show(data) {
 
         // Set up the edges
         for (edge of edges) {
-            g.setEdge(edge.from, edge.to, { rel_count: edge.weight, style: "fill: none; stroke: #222;", arrowhead: "undirected", lineInterpolate: "basis" });
+            g.setEdge(edge.from, edge.to, { style: "fill: none; stroke: #1F77B4; stroke-opacity: 0.5; stroke-linecap: round; stroke-width:" + (edge.weight*10) + "px", arrowhead: "undirected", lineInterpolate: "basis" });
         }
 
         // Set some general styles
@@ -110,8 +110,6 @@ function init_sequence_show(data) {
 
                 inner.selectAll("g.node")
                      .attr("title", function(v) { return g.node(v).name });
-                inner.selectAll("g.edgePath path")
-                     .attr("stroke-width", function(v) { return g.edge(v).rel_count*15 });
                 inner.selectAll("defs").remove()
 
                 // Center the graph
