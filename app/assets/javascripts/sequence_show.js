@@ -71,12 +71,16 @@ function init_sequence_show(data) {
         // Automatically label each of the nodes
         for (term of terms) {
             color = $.inArray(term.id, found) != -1 ? "#5698C6" : "#fff";
-            g.setNode(term.id, { label: "<div style='width:60px; color:#000; white-space:normal;'>" + term.name + "</div>", name: term.id, style: "fill: " + color + "; stroke: #1F77B4; stroke-width: 2px;", labelType: "html", shape: "weightCircle" });
+            g.setNode(term.id, { label: "<div style='width:60px; color:#000; white-space:normal;'>" + term.name + "</div>", name: term.id, style: "fill: " + color + "; stroke: #1F77B4; stroke-width: 2px;", labelType: "html", shape: "weightCircle"});
         }
 
         // Set up the edges
         for (edge of edges) {
-            g.setEdge(edge.from, edge.to, { style: "fill: none; stroke: #1F77B4; stroke-opacity: 0.5; stroke-linecap: round; stroke-width:" + (Math.max(edge.weight*60, 2)) + "px", arrowhead: "undirected", lineInterpolate: "basis" });
+            cls = "";
+            for (link of edge.linked) {
+                cls += "go" + link.substr(3) + " ";
+            }
+            g.setEdge(edge.from, edge.to, { style: "fill: none; stroke: #1F77B4; stroke-opacity: 0.5; stroke-linecap: round; stroke-width:" + (Math.max(edge.weight*60, 2)) + "px", arrowhead: "undirected", lineInterpolate: "basis", class: cls });
         }
 
         var svg = d3.select("#" + div + " svg");
@@ -112,7 +116,11 @@ function init_sequence_show(data) {
                 render(inner, g);
 
                 inner.selectAll("g.node")
-                     .attr("title", function(v) { return g.node(v).name });
+                     .attr("title", function(v) { return g.node(v).name })
+                     .on("click", function() {
+                        cls = ".go" + $(this).attr("title").substr(3);
+                        $(cls + " path").css("stroke", "#000");
+                     });
                 inner.selectAll("defs").remove()
 
                 // Center the graph

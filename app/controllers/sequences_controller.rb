@@ -183,7 +183,7 @@ class SequencesController < ApplicationController
     end
 
     @links = []
-    @graph.terms.each { |k,v| v.links.each{ |t,l| @links.push({'from' => k, 'to' => t, 'label' => 'is_a', 'weight' => v.linked.map { |g| gos_occur[g].count }.inject(:+).to_f/gos.size}) } }
+    @graph.terms.each { |k,v| v.links.each{ |t,l| @links.push({'from' => k, 'to' => t, 'label' => 'is_a', 'weight' => v.linked.map { |g| gos_occur[g].count }.inject(:+).to_f/gos.size, 'linked' => v.linked.to_a}) } }
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree
