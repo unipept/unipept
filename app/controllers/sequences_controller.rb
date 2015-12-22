@@ -160,26 +160,30 @@ class SequencesController < ApplicationController
 
     # ----------- end ------------ #
 
-    def create_graph(graph, go, weight)
+    def create_graph(graph, go, linked)
       return nil if go.nil?
       parent = graph.terms[go.id]
       if parent.nil?
         parent = GraphNode.new(go.id, go.name)
         graph.add_term(go.id, parent)
       end
+      parent.linked.add(linked)
       for child in go.parents
-        parent.add_link(create_graph(graph, child, weight/go.parents.length), weight/go.parents.length)
+        node = create_graph(graph, child, linked)
+        parent.add_link(node)
       end
       parent
     end
-    @graph = Graph.new()
-    @gos = @entries.map(&:go_cross_references).flatten.map(&:go_id).uniq
+    @graph = Graph.new
+    gos = @entries.map(&:go_cross_references).flatten.map(&:go_id)
+    gos_occur = gos.group_by{|i| i}
+    @gos = gos.uniq
     for go in @gos
-      create_graph(@graph, GO_GRAPH.find_go(go), 1.0)
+      create_graph(@graph, GO_GRAPH.find_go(go), go)
     end
 
-    @links = Array.new
-    @graph.terms.each{|k,v| v.links.each{|t,l| @links.push({'from' => k, 'to' => t, 'label' => 'is_a', 'weight' => l[:weight]})}}
+    @links = []
+    @graph.terms.each { |k,v| v.links.each{ |t,l| @links.push({'from' => k, 'to' => t, 'label' => 'is_a', 'weight' => v.linked.map { |g| gos_occur[g].count }.inject(:+).to_f/gos.size}) } }
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree

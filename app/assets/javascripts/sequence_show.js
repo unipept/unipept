@@ -76,7 +76,7 @@ function init_sequence_show(data) {
 
         // Set up the edges
         for (edge of edges) {
-            g.setEdge(edge.from, edge.to, { style: "fill: none; stroke: #1F77B4; stroke-opacity: 0.5; stroke-linecap: round; stroke-width:" + (edge.weight*10) + "px", arrowhead: "undirected", lineInterpolate: "basis" });
+            g.setEdge(edge.from, edge.to, { style: "fill: none; stroke: #1F77B4; stroke-opacity: 0.5; stroke-linecap: round; stroke-width:" + (Math.max(edge.weight*60, 2)) + "px", arrowhead: "undirected", lineInterpolate: "basis" });
         }
 
         var svg = d3.select("#" + div + " svg");

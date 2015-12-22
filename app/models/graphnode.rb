@@ -4,26 +4,22 @@ require 'set'
 # - name
 # - links
 class GraphNode
-  attr_accessor :id, :name, :links
+  attr_accessor :id, :name, :links, :linked
 
   def initialize(id, name)
     @id = id
     @name = name
-    @links = Hash.new
+    @links = {}
+    @linked = Set.new
   end
 
   # returns the added link
-  def add_link(link, weight)
-    if @links.has_key?(link.id)
-      @links[link.id][:weight] += weight
-    else
-      @links[link.id] = {node: link, weight: weight}
-    end
+  def add_link(link)
+    @links[link.id] = link unless @links.key?(link.id)
   end
 
   # used by Oj.dump to exclude the root
   def to_hash
     Hash[instance_variables.map { |var| [var[1..-1].to_sym, instance_variable_get(var)] }]
   end
-
 end
