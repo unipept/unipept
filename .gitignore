@@ -18,3 +18,5 @@ public/assets
 *.mwb.bak
 backend/java/bin/**/*.class
 coverage/
+tags
+*.obo
