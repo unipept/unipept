@@ -815,7 +815,7 @@ function getJSONByPost(url, data, callback) {
 }
 
 function genomeSimilarity(peptideList1, peptideList2) {
-    var intersect = intersection(peptideList1, peptideList2).length,
+    var intersect = intersectionSize(peptideList1, peptideList2),
         union = peptideList1.length + peptideList2.length - intersect,
         min = Math.min(peptideList1.length, peptideList2.length),
         max = Math.max(peptideList1.length, peptideList2.length),
@@ -944,6 +944,23 @@ function intersection(a, b) {
         }
     }
     return r;
+}
+function intersectionSize(a, b) {
+    var size = 0,
+        i = 0,
+        j = 0;
+    while (i < a.length && j < b.length) {
+        if (a[i] < b[j]) {
+            i++;
+        } else if (a[i] > b[j]) {
+            j++;
+        } else {
+            size++;
+            i++;
+            j++;
+        }
+    }
+    return size;
 }
 
 /**
