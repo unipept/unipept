@@ -71,7 +71,7 @@ function init_sequence_show(data) {
         // Automatically label each of the nodes
         for (term of terms) {
             color = $.inArray(term.id, found) != -1 ? "#5698C6" : "#fff";
-            g.setNode(term.id, { label: "<div style='width:60px; color:#000; white-space:normal;'>" + term.name + "</div>", name: term.id, style: "fill: " + color + "; stroke: #1F77B4; stroke-width: 2px;", labelType: "html", shape: "weightCircle"});
+            g.setNode(term.id, { label: "<div style='width:60px; color:#000; white-space:normal;'>" + term.name + "</div>", name: term.id, style: "fill: " + color + "; stroke: #1F77B4; stroke-width: 2px;", labelType: "html", shape: "weightCircle", highlighted: false});
         }
 
         // Set up the edges
