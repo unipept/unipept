@@ -117,9 +117,15 @@ function init_sequence_show(data) {
 
                 inner.selectAll("g.node")
                      .attr("title", function(v) { return g.node(v).name })
-                     .on("click", function() {
+                     .on("click", function(node) {
                         cls = ".go" + $(this).attr("title").substr(3);
-                        $(cls + " path").css("stroke", "#000");
+                        if (!g.node(node).highlighted) {
+                            $(cls + " path").css("stroke", "#000");
+                            g.node(node).highlighted = true;
+                        } else {
+                            $(cls + " path").css("stroke", "#1F77B4");
+                            g.node(node).highlighted = false;
+                        }
                      });
                 inner.selectAll("defs").remove()
 
