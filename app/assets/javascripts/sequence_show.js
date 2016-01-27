@@ -120,10 +120,30 @@ function init_sequence_show(data) {
                      .on("click", function(node) {
                         cls = ".go" + $(this).attr("title").substr(3);
                         if (!g.node(node).highlighted) {
-                            $(cls + " path").css("stroke", "#000");
+                            $(cls + " path").css("stroke", "#000000").css("stroke-opacity", function(i, opacity) {
+                                new_opacity = parseFloat(opacity) + 1/8;
+                                if (new_opacity > 1) {
+                                    return "1";
+                                } else {
+                                    return "" + new_opacity;
+                                }
+                            });
                             g.node(node).highlighted = true;
                         } else {
-                            $(cls + " path").css("stroke", "#1F77B4");
+                            $(cls + " path").each(function(i) {
+                                path = $(this);
+                                path.css("stroke-opacity", function(i, opacity) {
+                                    new_opacity = parseFloat(opacity) - 1/8;
+                                    if (new_opacity < 0.5) {
+                                        return "0.5";
+                                    } else {
+                                        return "" + new_opacity;
+                                    }
+                                });
+                                if (path.css("stroke-opacity") == 0.5) {
+                                    path.css("stroke", "#1F77B4");
+                                }
+                            });
                             g.node(node).highlighted = false;
                         }
                      });
