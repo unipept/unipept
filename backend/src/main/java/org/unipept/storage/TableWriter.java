@@ -17,7 +17,6 @@ import com.sleepycat.bind.tuple.StringBinding;
 import com.sleepycat.bind.tuple.IntegerBinding;
 
 import org.unipept.xml.*;
-import org.unipept.xml.UniprotEntry.Pair;
 import org.unipept.storage.CSV;
 import org.unipept.taxons.TaxonList;
 
@@ -111,9 +110,8 @@ public class TableWriter implements UniprotObserver {
         int uniprotEntryId = addUniprotEntry(entry.getUniprotAccessionNumber(), entry.getVersion(),
                 entry.getTaxonId(), entry.getType(), entry.getName(), entry.getSequence());
         if (uniprotEntryId != -1) { // failed to add entry
-            for (Pair p : entry.digest())
-                addData(p.getSequence().replace("I", "L"), uniprotEntryId, p.getSequence(),
-                        p.getPosition());
+            entry.digest().forEach(sequence ->
+                    addData(sequence.replace("I", "L"), uniprotEntryId, sequence));
             for (UniprotDbRef ref : entry.getDbReferences())
                 addDbRef(ref, uniprotEntryId);
             for (UniprotGORef ref : entry.getGOReferences())
@@ -231,16 +229,13 @@ public class TableWriter implements UniprotObserver {
      * @param uniprotEntryId
      *            The id of the uniprot entry from which the peptide data was
      *            retrieved.
-     * @param position
-     *            The starting position of the sequence in the full protein
      */
-    public void addData(String sequence, int uniprotEntryId, String originalSequence, int position) {
+    public void addData(String sequence, int uniprotEntryId, String originalSequence) {
         try {
             peptides.write(
                     Integer.toString(getSequenceId(sequence)),
                     Integer.toString(getSequenceId(originalSequence)),
-                    Integer.toString(uniprotEntryId),
-                    Integer.toString(position)
+                    Integer.toString(uniprotEntryId)
                     );
         } catch(IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
