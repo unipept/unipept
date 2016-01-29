@@ -14,4 +14,19 @@ class Graph
     Hash[instance_variables.map { |var| [var[1..-1].to_sym, instance_variable_get(var)] }]
   end
 
+  def add_reachable(go, linked)
+    return nil if go.nil?
+    parent = @terms[go.id]
+    if parent.nil?
+      parent = GraphNode.new(go.id, go.name)
+      add_term(go.id, parent)
+    end
+    parent.linked.add(linked)
+    for child in go.parents
+      node = add_reachable(child, linked)
+      parent.add_link(node)
+    end
+    parent
+  end
+
 end
