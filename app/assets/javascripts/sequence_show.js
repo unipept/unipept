@@ -120,31 +120,33 @@ function init_sequence_show(data) {
                      .on("click", function(node) {
                         cls = ".go" + $(this).attr("title").substr(3);
                         if (!g.node(node).highlighted) {
-                            $(cls + " path").css("stroke", "#000000").css("stroke-opacity", function(i, opacity) {
-                                new_opacity = parseFloat(opacity) + 1/8;
-                                if (new_opacity > 1) {
-                                    return "1";
-                                } else {
-                                    return "" + new_opacity;
+                            $(cls + " path").css("stroke", "#DB4142").css("stroke-opacity", function(i, opacity) {
+                                if ($(this).data("highlighted") === undefined) {
+                                    $(this).data("highlighted", 0);
                                 }
+                                highlighted = $(this).data("highlighted") + 1;
+                                $(this).data("highlighted", highlighted);
+
+                                new_opacity = 0.5 + (highlighted - 1)/8;
+                                return new_opacity > 1 ? "1" : "" + new_opacity;
                             });
+                            $(this).find("circle").css("fill", "#DB4142");
                             g.node(node).highlighted = true;
                         } else {
                             $(cls + " path").each(function(i) {
                                 path = $(this);
                                 path.css("stroke-opacity", function(i, opacity) {
-                                    new_opacity = parseFloat(opacity) - 1/8;
-                                    if (new_opacity < 0.5) {
-                                        return "0.5";
-                                    } else {
-                                        return "" + new_opacity;
-                                    }
+                                    highlighted = $(this).data("highlighted") - 1;
+                                    $(this).data("highlighted", highlighted);
+
+                                    new_opacity = 0.5 + (highlighted - 1)/8;
+                                    return new_opacity > 1 ? "1" : "" + new_opacity;
                                 });
-                                if (path.css("stroke-opacity") == 0.5) {
+                                if (path.css("stroke-opacity") < 0.5) {
                                     path.css("stroke", "#1F77B4");
                                 }
                             });
-                            $(this).find("circle").css("fill", "#000000");
+                            $(this).find("circle").css("fill", "#1F77B4");
                             g.node(node).highlighted = false;
                         }
                      });
