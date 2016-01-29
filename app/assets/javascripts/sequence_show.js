@@ -144,6 +144,7 @@ function init_sequence_show(data) {
                                     path.css("stroke", "#1F77B4");
                                 }
                             });
+                            $(this).find("circle").css("fill", "#000000");
                             g.node(node).highlighted = false;
                         }
                      });
