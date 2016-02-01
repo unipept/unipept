@@ -218,7 +218,7 @@ var constructPancore = function constructPancore(args) {
         $("#save-data").click(function clickSaveData() {
             var activeObject,
                 tracking;
-            if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
+            if (getActiveTab() === "pancore_graph") {
                 activeObject = graph;
                 tracking = "graph";
             } else {
