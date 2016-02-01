@@ -132,8 +132,6 @@ Links the sequences back to the proteins they were cut from.
    the I and L equated.
  - ***uniprot entry id***: Refers to the protein these tryptic
    peptides were digested from.
- - ***position***: Specifies where in the protein these peptides
-   originate.
 
 RefSeq Cross References
 -----------------------
