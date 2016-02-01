@@ -656,12 +656,12 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
     };
 
     /**
-     * Searches for all complete Acinetobacter baumannii proteomes and adds them
+     * Searches for all Lactococcus lactis proteomes and adds them
      */
     that.demo = function demo() {
         addAll = true;
         $("#genomeSelectorSearch").tokenfield('setTokens', [
-            {"label":"Acinetobacter baumannii","value":"taxon:470"}
+            {"label":"Lactococcus lactis","value":"taxon:1358"}
         ]);
     };
 
