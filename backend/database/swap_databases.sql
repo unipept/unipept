@@ -22,5 +22,5 @@ rename table unipept2.sequences to unipept.sequences;
 rename table unipept2.taxons to unipept.taxons;
 rename table unipept2.uniprot_entries to unipept.uniprot_entries;
 rename table unipept2.proteomes to unipept.proteomes;
-rename table unipept2.proteome_cross_references unipept.proteome_cross_references;
+rename table unipept2.proteome_cross_references to unipept.proteome_cross_references;
 rename table unipept2.proteome_caches to unipept.proteome_caches;
