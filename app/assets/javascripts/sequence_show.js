@@ -69,19 +69,19 @@ function init_sequence_show(data) {
         var g = new dagreD3.graphlib.Graph().setGraph({rankdir: "RL"});
 
         // Automatically label each of the nodes
-        for (term of terms) {
+        terms.forEach(function(term) {
             color = $.inArray(term.id, found) != -1 ? "#5698C6" : "#fff";
             g.setNode(term.id, { label: "<div style='width:60px; color:#000; white-space:normal;'>" + term.name + "</div>", name: term.id, style: "fill: " + color + "; stroke: #1F77B4; stroke-width: 2px;", labelType: "html", shape: "weightCircle", highlighted: false});
-        }
+        });
 
         // Set up the edges
-        for (edge of edges) {
+        edges.forEach(function(edge) {
             cls = "";
-            for (link of edge.linked) {
+            edge.linked.forEach(function(link) {
                 cls += "go" + link.substr(3) + " ";
-            }
+            });
             g.setEdge(edge.from, edge.to, { style: "fill: none; stroke: #1F77B4; stroke-opacity: 0.5; stroke-linecap: round; stroke-width:" + (Math.max(edge.weight*60, 2)) + "px", arrowhead: "undirected", lineInterpolate: "basis", class: cls });
-        }
+        });
 
         var svg = d3.select("#" + div + " svg");
         var inner = svg.select("g");
