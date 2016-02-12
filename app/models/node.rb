@@ -19,6 +19,7 @@ class Node
     @data = {}
     @data['count'] = 0
     @data['rank'] = rank
+    @data["self_count"] = 0
 
     # root node
     return unless root?

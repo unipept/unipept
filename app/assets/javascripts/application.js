@@ -7,6 +7,7 @@
 //= require_directory .
 //= require_directory ./peptidome
 //= require_directory ./multisearch
+//= require_directory ./lib/treeview
 
 // zeroclipboard config
 ZeroClipboard.config({
