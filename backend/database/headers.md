@@ -44,6 +44,12 @@ Taxons
  - ***parent***: The taxon id of the parent. Refers to another entry
    in this table (or itself, in case of the root taxon).
 
+EC Numbers
+----------
+- ***id***: A self-assigned id. Integral, incremental, no gaps.
+- ***ec number***: The ec number in the form of x.x.x.x.
+- ***name***: The full name of this ec number.
+
 Lineages
 --------
 

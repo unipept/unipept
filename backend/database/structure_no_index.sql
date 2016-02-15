@@ -21,6 +21,17 @@ COLLATE = utf8_general_ci;
 
 
 -- -----------------------------------------------------
+-- Table `unipept`.`ec_numbers`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`ec_numbers` (
+  `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ec_number` VARCHAR(15) NOT NULL,
+  `name` VARCHAR(140) NOT NULL,
+  PRIMARY KEY (`id`)
+ENGINE = InnoDB
+
+
+-- -----------------------------------------------------
 -- Table `unipept`.`uniprot_entries`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `unipept`.`uniprot_entries` (
