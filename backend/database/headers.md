@@ -50,6 +50,13 @@ EC Numbers
 - ***code***: The ec number in the form of x.x.x.x.
 - ***name***: The full name of this ec number.
 
+GO Terms
+----------
+- ***id***: A self-assigned id. Integral, incremental, no gaps.
+- ***code***: The go term itself
+- ***namespace***: The namespace: 'biological process', 'molecular function' or 'cellular component'
+- ***name***: The full name (description) of this go term.
+
 Lineages
 --------
 
