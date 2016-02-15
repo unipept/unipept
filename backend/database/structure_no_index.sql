@@ -1,4 +1,4 @@
- SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
 
@@ -250,10 +250,25 @@ ENGINE = InnoDB;
 -- Table `unipept`.`interpro_cross_references`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `unipept`.`interpro_cross_references` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `uniprot_entry_id` INT UNSIGNED NOT NULL ,
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uniprot_entry_id` INT UNSIGNED NOT NULL,
   `interpro_entry_id` INT NOT NULL,
-  `interpro_id` VARCHAR(12) NOT NULL ,
+  `interpro_id` VARCHAR(15) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`interpro_entries`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`interpro_entries` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `parent_id` INT NOT NULL,
+  `interpro_id` VARCHAR(15) NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `type` ENUM('F', 'D', 'R', 'S') NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
