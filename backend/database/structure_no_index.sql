@@ -1,4 +1,4 @@
-SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
 
@@ -244,6 +244,20 @@ CREATE TABLE IF NOT EXISTS `unipept`.`proteome_cross_references` (
   `proteome_id` MEDIUMINT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`interpro_cross_references`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `unipept`.`interpro_cross_references` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `uniprot_entry_id` INT UNSIGNED NOT NULL ,
+  `interpro_entry_id` INT NOT NULL,
+  `interpro_id` VARCHAR(12) NOT NULL ,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
 
 
 -- -----------------------------------------------------
