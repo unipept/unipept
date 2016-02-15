@@ -58,6 +58,12 @@ ALTER TABLE ec_cross_references ADD INDEX fk_ec_reference_uniprot_entries (unipr
 
 
 -- -----------------------------------------------------
+-- Table `unipept`.`interpro_cross_references`
+-- -----------------------------------------------------
+ALTER TABLE interpro_cross_references ADD INDEX fk_interpro_reference_uniprot_entries (uniprot_entry_id ASC);
+
+
+-- -----------------------------------------------------
 -- Table `unipept`.`proteomes`
 -- -----------------------------------------------------
 ALTER TABLE proteomes ADD INDEX fk_taxons_proteomes (taxon_id ASC);
