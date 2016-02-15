@@ -84,6 +84,12 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
   `sequence` VARCHAR(50) NOT NULL ,
   `lca` MEDIUMINT UNSIGNED NULL ,
   `lca_il` MEDIUMINT UNSIGNED NULL ,
+  `ec` VARCHAR(255) NULL,
+  `ec_il` VARCHAR(255) NULL,
+  `go` VARCHAR(255) NULL,
+  `go_il` VARCHAR(255) NULL,
+  `interpro` VARCHAR(255) NULL,
+  `interpro_il` VARCHAR(255) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii;
