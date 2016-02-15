@@ -48,19 +48,19 @@ ALTER TABLE refseq_cross_references ADD INDEX fk_refseq_reference_uniprot_entrie
 -- -----------------------------------------------------
 -- Table `unipept`.`go_cross_references`
 -- -----------------------------------------------------
-ALTER TABLE go_cross_references ADD INDEX fk_go_reference_uniprot_entries (uniprot_entry_id ASC);
+ALTER TABLE go_cross_references ADD INDEX fk_go_reference_uniprot_entries (uniprot_entry_id ASC), ADD INDEX fk_go_reference_go_terms (go_term_id ASC);
 
 
 -- -----------------------------------------------------
 -- Table `unipept`.`ec_cross_references`
 -- -----------------------------------------------------
-ALTER TABLE ec_cross_references ADD INDEX fk_ec_reference_uniprot_entries (uniprot_entry_id ASC);
+ALTER TABLE ec_cross_references ADD INDEX fk_ec_reference_uniprot_entries (uniprot_entry_id ASC), ADD INDEX fk_ec_reference_ec_numbers (ec_number_id ASC);
 
 
 -- -----------------------------------------------------
 -- Table `unipept`.`interpro_cross_references`
 -- -----------------------------------------------------
-ALTER TABLE interpro_cross_references ADD INDEX fk_interpro_reference_uniprot_entries (uniprot_entry_id ASC);
+ALTER TABLE interpro_cross_references ADD INDEX fk_interpro_reference_uniprot_entries (uniprot_entry_id ASC), ADD INDEX fk_interpro_reference_interpro_entries (interpro_entry_id ASC);
 
 
 -- -----------------------------------------------------
