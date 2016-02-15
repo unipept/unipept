@@ -209,6 +209,19 @@ COLLATE = ascii_general_ci;
 
 
 -- -----------------------------------------------------
+-- Table `unipept`.`ec_numbers`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`ec_numbers` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `ec_number` VARCHAR(15) NOT NULL,
+  `name` VARCHAR(160) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
+
+
+-- -----------------------------------------------------
 -- Table `unipept`.`users`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`users` (
