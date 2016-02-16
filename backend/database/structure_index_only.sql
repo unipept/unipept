@@ -76,6 +76,13 @@ ALTER TABLE proteome_cross_references ADD INDEX fk_proteome_cross_references_uni
 ALTER TABLE proteome_cross_references ADD INDEX fk_proteome_cross_references (proteome_id ASC);
 
 
+-- -----------------------------------------------------
+-- Table `unipept`.`kegg_pathway_mappings`
+-- -----------------------------------------------------
+ALTER TABLE kegg_pathway_mappings ADD INDEX fk_kegg_pathways_idx (kegg_pathway_id ASC);
+ALTER TABLE kegg_pathway_mappings ADD INDEX fk_ec_numbers_idx (ec_number_id ASC);
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
