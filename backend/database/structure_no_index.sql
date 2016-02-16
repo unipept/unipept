@@ -310,6 +310,28 @@ COLLATE = ascii_general_ci;
 
 
 -- -----------------------------------------------------
+-- Table `unipept`.`kegg_pathways`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`kegg_pathways` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `long_id` VARCHAR(15) NOT NULL,
+  `name` VARCHAR(160) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`kegg_pathway_mappings`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`kegg_pathway_mappings` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ec_number_id` INT UNSIGNED NOT NULL,
+  `kegg_pathway_id` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE=InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `unipept`.`proteome_caches`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`proteome_caches` (
