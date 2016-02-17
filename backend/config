@@ -6,6 +6,9 @@ TABDIR=${DATADIR}/tables
 UNIDIR=${DATADIR}/uniprot
 TAXDIR=${DATADIR}/taxon
 INTDIR=${DATADIR}/intermediate
+ECNDIR=${DATADIR}/ecnumbers
+GOTDIR=${DATADIR}/goterms
+INPDIR=${DATADIR}/interpro
 BDBDIR=../../berkeleydb
 
 #JMEMMIN='-Xms140g'
