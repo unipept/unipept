@@ -24,3 +24,5 @@ TAXON_URL=ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip
 UNIPROT_URL=ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/
 ENTREZ_URL=http://eutils.ncbi.nlm.nih.gov/entrez/eutils
 ENTREZ_BATCH_SIZE='1000'
+ECN_URL=ftp://ftp.expasy.org/databases/enzyme/enzyme.dat
+ECNC_URL=ftp://ftp.expasy.org/databases/enzyme/enzclass.txt
