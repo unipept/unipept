@@ -6,22 +6,24 @@ TABLES=                                        \
 	$(INTDIR)/peptides.tsv.gz                  \
 	$(TABDIR)/uniprot_entries.tsv.gz           \
 	$(TABDIR)/refseq_cross_references.tsv.gz   \
+	$(ECNDIR)/ec_numbers.tsv.gz 			   \
 	$(TABDIR)/ec_cross_references.tsv.gz       \
 	$(TABDIR)/embl_cross_references.tsv.gz     \
 	$(TABDIR)/go_cross_references.tsv.gz       \
 	$(INTDIR)/proteomes.tsv.gz                 \
-	$(TABDIR)/proteome_cross_references.tsv.gz
+	$(TABDIR)/proteome_cross_references.tsv.gz 
 
 SRC=$(shell find src/ -type f -name '*.java')
 JAR=target/unipept-0.0.1-SNAPSHOT.jar
 PAC=org.unipept.tools
 
-all: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz $(TABLES) $(TABDIR)/sequences.tsv.gz $(TABDIR)/peptides.tsv.gz $(TABDIR)/proteomes.tsv.gz
+all: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz $(TABLES) $(TABDIR)/sequences.tsv.gz $(TABDIR)/peptides.tsv.gz $(TABDIR)/proteomes.tsv.gz $(ECNDIR)/ec_numbers.tsv.gz
 jar: $(JAR)
 taxons: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
 tables: $(TABLES)
 sequences: $(TABDIR)/sequences.tsv.gz
 proteomes: $(TABDIR)/proteomes.tsv.gz
+ecnumbers: $(ECNDIR)/ec_numbers.tsv.gz
 download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz 
 # $(UNIDIR)/uniprot_trembl.xml.gz
 
@@ -188,6 +190,21 @@ $(TABDIR)/proteomes.tsv.gz: $(INTDIR)/proteomes.tsv.gz proteomes.sh type_strains
 		<(ENTREZ_URL=$(ENTREZ_URL) ENTREZ_BATCH_SIZE=$(ENTREZ_BATCH_SIZE) ./type_strains.sh) \
 		$(TABDIR)/proteomes.tsv.gz
 	echo "Finished fetching proteome info."
+# }}}
+
+# Functional information {{{ ----------------------------------------------------------------
+
+
+$(ECNDIR)/ec_numbers.tsv.gz:
+	echo "Starting fetching EC numbers info"
+	mkdir -p $(ECNDIR)
+	./getEcNumbers.sh \
+		$(ECN_URL) \
+		$(ECNC_URL) \
+		> $(ECNDIR)/ec_numbers.tsv.gz
+	echo "Finished the creation of the EC numbers table."
+
+
 # }}}
 
 .PHONY: clean_intermediates
