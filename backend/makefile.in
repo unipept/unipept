@@ -185,6 +185,13 @@ $(TABLES): <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 	echo "Finished fetching proteome info."
 # }}}
 
+# Functional Data {{{ ----------------------------------------------------------
+$(TABDIR)/ec_numbers.tsv.gz: createEcNumbers.sh
+	echo "Starting fetching EC numbers information."
+	./createEcNumbers.sh | <<<CMD_GZIP>>> > $@
+	echo "Starting fetching EC numbers information."
+# }}}
+
 .PHONY: clean_intermediates
 clean_intermediates:
 	rm -vf <<<INTDIR>>>/*
@@ -199,4 +206,4 @@ pristine: clean
 	rm -vf <<<TAXDIR>>>/taxdmp.zip
 	rm -vf <<<SOURCE_FILES>>>
 
-
+# vim: foldmethod=marker
