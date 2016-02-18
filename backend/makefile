@@ -97,10 +97,9 @@ $(INTDIR)/original_aa_sequence_taxon.tsv.gz: $(INTDIR)/peptides.tsv.gz $(TABDIR)
 
 $(INTDIR)/sequences.tsv.gz: $(INTDIR)/aa_sequence_taxon.tsv.gz $(INTDIR)/original_aa_sequence_taxon.tsv.gz
 	echo "Starting the numbering of sequences."
-	cat \
+	sort -m \
 			<(zcat $(INTDIR)/aa_sequence_taxon.tsv.gz | cut -f1) \
 			<(zcat $(INTDIR)/original_aa_sequence_taxon.tsv.gz | cut -f1) \
-		| sort -S 20% \
 		| uniq \
 		| cat -n \
 		| sed 's/^ *//' \
@@ -112,11 +111,10 @@ $(TABDIR)/peptides.tsv.gz: $(INTDIR)/peptides.tsv.gz $(INTDIR)/sequences.tsv.gz
 	echo "Starting the substitution of AA's by ID's for the peptides."
 	zcat $(INTDIR)/peptides.tsv.gz \
 		| sort -k 2b,2 \
-		| tee >(head >&2) \
 		| join -t '	' -o '1.1,2.1,1.3,1.4' -1 2 -2 2 - <(zcat $(INTDIR)/sequences.tsv.gz) \
 		| sort -k 3b,3 \
-		| tee >(head >&2) \
 		| join -t '	' -o '1.1,1.2,2.1,1.4' -1 3 -2 2 - <(zcat $(INTDIR)/sequences.tsv.gz) \
+		| sort -n \
 		| gzip - \
 		> $@
 	echo "Finishing the substitution of AA's by ID's for the peptides."
