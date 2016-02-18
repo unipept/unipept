@@ -6,14 +6,11 @@ TABDIR=${DATADIR}/tables
 UNIDIR=${DATADIR}/uniprot
 TAXDIR=${DATADIR}/taxon
 INTDIR=${DATADIR}/intermediate
-BDBDIR=../../berkeleydb
 
-JMEMMIN='-Xms140g'
-JMEMMAX='-Xmx150g'
-BDBMEM='100000000000'
-#JMEMMIN='-Xms2g'
-#JMEMMAX='-Xmx3g'
-#BDBMEM=500000000
+#JMEMMIN='-Xms140g'
+#JMEMMAX='-Xmx150g'
+JMEMMIN='-Xms2g'
+JMEMMAX='-Xmx3g'
 
 TAXON_URL=ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip
 UNIPROT_URL=ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/

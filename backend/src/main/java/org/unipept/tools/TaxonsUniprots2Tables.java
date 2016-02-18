@@ -34,16 +34,13 @@ public class TaxonsUniprots2Tables {
      */
     public static void main(String[] args) throws SAXException,
            ParserConfigurationException, FileNotFoundException, IOException {
-        if(args.length < 10) {
+        if(args.length < 9) {
             throw new RuntimeException("Please provide the parameters.");
         }
 
         int i = 0;
-        String berkeleyDir = args[i++];
-        long berkeleyMem = Long.parseLong(args[i++]);
         String taxonsFile = args[i++];
         String peptidesFile = args[i++];
-        String sequencesFile = args[i++];
         String uniprotEntriesFile = args[i++];
         String refseqCrossReferencesFile = args[i++];
         String ecCrossReferencesFile = args[i++];
@@ -53,11 +50,11 @@ public class TaxonsUniprots2Tables {
         String proteomeCrossReferencesFile = args[i++];
 
         TaxonList taxonList = TaxonList.loadFromFile(taxonsFile);
-        TableWriter writer = new TableWriter(berkeleyDir, berkeleyMem,
-            taxonList, peptidesFile, sequencesFile,
-            uniprotEntriesFile, refseqCrossReferencesFile,
-            ecCrossReferencesFile, emblCrossReferencesFile,
-            goCrossReferencesFile, proteomesFile, proteomeCrossReferencesFile
+        TableWriter writer = new TableWriter(taxonList, peptidesFile,
+                uniprotEntriesFile, refseqCrossReferencesFile,
+                ecCrossReferencesFile, emblCrossReferencesFile,
+                goCrossReferencesFile, proteomesFile,
+                proteomeCrossReferencesFile
         );
         SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 
