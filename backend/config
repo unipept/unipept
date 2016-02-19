@@ -27,3 +27,4 @@ ENTREZ_BATCH_SIZE='1000'
 ECN_URL=ftp://ftp.expasy.org/databases/enzyme/enzyme.dat
 ECNC_URL=ftp://ftp.expasy.org/databases/enzyme/enzclass.txt
 GOB_URL=http://geneontology.org/ontology/go-basic.obo
+INTPR_URL=ftp://ftp.ebi.ac.uk/pub/databases/interpro/Current/interpro.xml.gz
