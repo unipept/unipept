@@ -153,7 +153,7 @@ $(TABDIR)/proteomes.tsv.gz: $(INTDIR)/proteomes.tsv.gz proteomes.sh type_strains
 
 $(TABDIR)/ec_numbers.tsv.gz: $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt
 	echo "Starting fetching EC numbers info"
-	./getEcNumbers.sh \
+	./ectable.sh \
 		$(ECNDIR)/enzclass.txt \
 		$(ECNDIR)/enzymes.dat \
 		| gzip - \
