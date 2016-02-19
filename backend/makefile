@@ -10,6 +10,7 @@ TABLES=                                        \
 	$(TABDIR)/ec_numbers.tsv.gz 			   \
 	$(TABDIR)/ec_cross_references.tsv.gz       \
 	$(TABDIR)/embl_cross_references.tsv.gz     \
+	$(TABDIR)/go_terms.tsv.gzip 			   \
 	$(TABDIR)/go_cross_references.tsv.gz       \
 	$(INTDIR)/proteomes.tsv.gz                 \
 	$(TABDIR)/proteome_cross_references.tsv.gz 
@@ -25,7 +26,8 @@ tables: $(TABLES)
 sequences: $(TABDIR)/sequences.tsv.gz
 proteomes: $(TABDIR)/proteomes.tsv.gz
 ecnumbers: $(TABDIR)/ec_numbers.tsv.gz
-download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt
+goterms: $(TABDIR)/go_terms.tsv.gz
+download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt $(GOBDIR)/goinfo.obo
 # $(UNIDIR)/uniprot_trembl.xml.gz
 
 # Compiling {{{ ----------------------------------------------------------------
@@ -71,6 +73,14 @@ $(ECNDIR)/enzclass.txt:
 	rm -f $@
 	wget --no-verbose "$(ECNC_URL)" -O $@
 	echo "Finished downloading $@."
+
+$(GOBDIR)/goinfo.obo:
+	echo "Starting GO terms dump download."
+	mkdir -p $(GOBDIR)
+	rm -f $@
+	wget --no-verbose $(GOB_URL) -O $@
+	echo "Finished downloading $@."
+
 
 # }}}
 
@@ -159,6 +169,14 @@ $(TABDIR)/ec_numbers.tsv.gz: $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt
 		| gzip - \
 		> $@
 	echo "Finished the creation of the EC numbers table."
+
+$(TABDIR)/go_terms.tsv.gz: $(GOBDIR)/goinfo.obo
+	echo "Starting fetching GO terms info"
+	./gotable.sh \
+		$(GOBDIR)/goinfo.obo \
+		| gzip - \
+		> $@
+	echo "Finished the creation of the GO terms table."
 
 
 # }}}
