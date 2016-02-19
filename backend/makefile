@@ -6,7 +6,7 @@ TABLES=                                        \
 	$(INTDIR)/peptides.tsv.gz                  \
 	$(TABDIR)/uniprot_entries.tsv.gz           \
 	$(TABDIR)/refseq_cross_references.tsv.gz   \
-	$(ECNDIR)/ec_numbers.tsv.gz 			   \
+	$(TABDIR)/ec_numbers.tsv.gz 			   \
 	$(TABDIR)/ec_cross_references.tsv.gz       \
 	$(TABDIR)/embl_cross_references.tsv.gz     \
 	$(TABDIR)/go_cross_references.tsv.gz       \
@@ -17,14 +17,14 @@ SRC=$(shell find src/ -type f -name '*.java')
 JAR=target/unipept-0.0.1-SNAPSHOT.jar
 PAC=org.unipept.tools
 
-all: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz $(TABLES) $(TABDIR)/sequences.tsv.gz $(TABDIR)/peptides.tsv.gz $(TABDIR)/proteomes.tsv.gz $(ECNDIR)/ec_numbers.tsv.gz
+all: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz $(TABLES) $(TABDIR)/sequences.tsv.gz $(TABDIR)/peptides.tsv.gz $(TABDIR)/proteomes.tsv.gz
 jar: $(JAR)
 taxons: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
 tables: $(TABLES)
 sequences: $(TABDIR)/sequences.tsv.gz
 proteomes: $(TABDIR)/proteomes.tsv.gz
-ecnumbers: $(ECNDIR)/ec_numbers.tsv.gz
-download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz 
+ecnumbers: $(TABDIR)/ec_numbers.tsv.gz
+download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt
 # $(UNIDIR)/uniprot_trembl.xml.gz
 
 # Compiling {{{ ----------------------------------------------------------------
@@ -56,6 +56,21 @@ $(UNIDIR)/uniprot_sprot.xml.gz:
 	rm -f $@
 	wget --progress=dot:giga "$(UNIPROT_URL)$(notdir $@)" -O $@
 	echo "Finished downloading $@."
+
+$(ECNDIR)/enzymes.dat:
+	echo "Starting EC numbers dump download."
+	mkdir -p $(ECNDIR)
+	rm -f $@
+	wget --no-verbose "$(ECN_URL)" -O $@
+	echo "Finished downloading $@."
+
+$(ECNDIR)/enzclass.txt:
+	echo "Starting EC class dump download."
+	mkdir -p $(ECNDIR)
+	rm -f $@
+	wget --no-verbose "$(ECNC_URL)" -O $@
+	echo "Finished downloading $@."
+
 # }}}
 
 # Taxons and Lineages {{{ ------------------------------------------------------
@@ -195,12 +210,12 @@ $(TABDIR)/proteomes.tsv.gz: $(INTDIR)/proteomes.tsv.gz proteomes.sh type_strains
 # Functional information {{{ ----------------------------------------------------------------
 
 
-$(ECNDIR)/ec_numbers.tsv.gz:
+$(TABDIR)/ec_numbers.tsv.gz: $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt
 	echo "Starting fetching EC numbers info"
-	mkdir -p $(ECNDIR)
 	./getEcNumbers.sh \
-		$(ECN_URL) \
-		$(ECNC_URL) \
+		$(ECNDIR)/enzclass.txt \
+		$(ECNDIR)/enzymes.dat \
+		| gzip - \
 		> $(ECNDIR)/ec_numbers.tsv.gz
 	echo "Finished the creation of the EC numbers table."
 
