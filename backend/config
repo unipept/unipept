@@ -7,7 +7,7 @@ UNIDIR=${DATADIR}/uniprot
 TAXDIR=${DATADIR}/taxon
 INTDIR=${DATADIR}/intermediate
 ECNDIR=${DATADIR}/ecnumbers
-GOTDIR=${DATADIR}/goterms
+GOBDIR=${DATADIR}/goterms
 INPDIR=${DATADIR}/interpro
 BDBDIR=../../berkeleydb
 
