@@ -172,7 +172,7 @@ $(TABDIR)/ec_numbers.tsv.gz: $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt
 
 $(TABDIR)/go_terms.tsv.gz: $(GOBDIR)/goinfo.obo
 	echo "Starting fetching GO terms info"
-	./gotable.sh \
+	./gotable.py \
 		$(GOBDIR)/goinfo.obo \
 		| gzip - \
 		> $@
