@@ -8,14 +8,6 @@ import java.io.IOException;
 import java.io.File;
 import java.sql.Timestamp;
 
-import com.sleepycat.je.Database;
-import com.sleepycat.je.DatabaseConfig;
-import com.sleepycat.je.Environment;
-import com.sleepycat.je.EnvironmentConfig;
-import com.sleepycat.collections.StoredMap;
-import com.sleepycat.bind.tuple.StringBinding;
-import com.sleepycat.bind.tuple.IntegerBinding;
-
 import org.unipept.xml.*;
 import org.unipept.storage.CSV;
 import org.unipept.taxons.TaxonList;
