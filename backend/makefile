@@ -157,7 +157,7 @@ $(TABDIR)/ec_numbers.tsv.gz: $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt
 		$(ECNDIR)/enzclass.txt \
 		$(ECNDIR)/enzymes.dat \
 		| gzip - \
-		> $(ECNDIR)/ec_numbers.tsv.gz
+		> $@
 	echo "Finished the creation of the EC numbers table."
 
 
