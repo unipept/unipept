@@ -79,7 +79,7 @@ $(INTDIR)/aa_sequence_taxon.tsv.gz: $(INTDIR)/peptides.tsv.gz $(TABDIR)/uniprot_
 	join -t '	' -o '1.2,2.2' -j 1 \
 			<(zcat $(INTDIR)/peptides.tsv.gz | awk '{ printf("%020d\t%s\n", $$4, $$2) }') \
 			<(zcat $(TABDIR)/uniprot_entries.tsv.gz | awk '{ printf("%020d\t%s\n", $$1, $$4) }') \
-		| sort -S 20% -k1 \
+		| $(SORT) -k1 \
 		| gzip - \
 		> $@
 	echo "Finished the joining of equalized peptides and uniprot entries."
@@ -90,14 +90,14 @@ $(INTDIR)/original_aa_sequence_taxon.tsv.gz: $(INTDIR)/peptides.tsv.gz $(TABDIR)
 	join -t '	' -o '1.2,2.2' -j 1 \
 			<(zcat $(INTDIR)/peptides.tsv.gz | awk '{ printf("%020d\t%s\n", $$4, $$3) }') \
 			<(zcat $(TABDIR)/uniprot_entries.tsv.gz | awk '{ printf("%020d\t%s\n", $$1, $$4) }') \
-		| sort -S 20% -k1 \
+		| $(SORT) -k1 \
 		| gzip - \
 		> $@
 	echo "Finished the joining of non-equalized peptides and uniprot entries."
 
 $(INTDIR)/sequences.tsv.gz: $(INTDIR)/aa_sequence_taxon.tsv.gz $(INTDIR)/original_aa_sequence_taxon.tsv.gz
 	echo "Starting the numbering of sequences."
-	sort -m \
+	$(SORT) -m \
 			<(zcat $(INTDIR)/aa_sequence_taxon.tsv.gz | cut -f1) \
 			<(zcat $(INTDIR)/original_aa_sequence_taxon.tsv.gz | cut -f1) \
 		| uniq \
@@ -110,11 +110,11 @@ $(INTDIR)/sequences.tsv.gz: $(INTDIR)/aa_sequence_taxon.tsv.gz $(INTDIR)/origina
 $(TABDIR)/peptides.tsv.gz: $(INTDIR)/peptides.tsv.gz $(INTDIR)/sequences.tsv.gz
 	echo "Starting the substitution of AA's by ID's for the peptides."
 	zcat $(INTDIR)/peptides.tsv.gz \
-		| sort -k 2b,2 \
+		| $(SORT) -k 2b,2 \
 		| join -t '	' -o '1.1,2.1,1.3,1.4' -1 2 -2 2 - <(zcat $(INTDIR)/sequences.tsv.gz) \
-		| sort -k 3b,3 \
+		| $(SORT) -k 3b,3 \
 		| join -t '	' -o '1.1,1.2,2.1,1.4' -1 3 -2 2 - <(zcat $(INTDIR)/sequences.tsv.gz) \
-		| sort -n \
+		| $(SORT) -n \
 		| gzip - \
 		> $@
 	echo "Finishing the substitution of AA's by ID's for the peptides."
