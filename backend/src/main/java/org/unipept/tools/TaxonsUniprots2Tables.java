@@ -21,16 +21,15 @@ public class TaxonsUniprots2Tables {
     /**
      * Parse the uniprot xml files into TSV tables.
      *
-     * The first parameter is the name of an existing directory, which will be
-     * used to store a temporary database. The second parameter is a taxon file, as written by NamesNodes2Taxons. The
-     * next 7 parameters are the output files, all in TSV format. In order, they
-     * are: the peptides, the sequences, the uniprot entries, the RefSeq cross
-     * references, the EC cross references, the EMBL cross references and the GO
-     * cross references.
+     * The first parameter is a taxon file, as written by NamesNodes2Taxons. The
+     * next 8 parameters are the output files, all in TSV format. In order, they
+     * are: the peptides, the uniprot entries, the RefSeq cross,references, the 
+     * EC cross references, the EMBL cross references, the GO cross references,
+     * the proteomes and the proteome cross references.
      *
      * The rest of the parameters comes in pairs. Each pair is a uniprot xml
      * file to parse and the "type" the entries parsed from this file should get
-     * in the uniprot entries output. The number of pairs is arbitrary.
+     * in the UniProt entries output. The number of pairs is flexible.
      */
     public static void main(String[] args) throws SAXException,
            ParserConfigurationException, FileNotFoundException, IOException {
