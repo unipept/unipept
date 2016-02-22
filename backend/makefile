@@ -249,6 +249,7 @@ $(TABDIR)/interpro_entries.tsv.gz: $(INPDIR)/interpro.xml.gz
 		| gzip - \
 		> $@
 	echo "Finished the creation of the InterPro table."
+	
 # }}}
 
 # Update cross reference tables (EC,GO,InterPro) {{{ ----------------------------------------
@@ -275,6 +276,16 @@ $(TABDIR)/go_cross_references.tsv.gz: $(TABDIR)/go_cross_references.tsv.gz $(TAB
 		> $@
 		echo "Finished updating the GO cross ref table."
 
+$(TABDIR)/go_cross_references.tsv.gz: $(TABDIR)/interpro_cross_references.tsv.gz $(TABDIR)/interpro_entries.tsv.gz
+	echo "Starting fetching GO cross ref and GO terms table"
+	mv $(TABDIR)/interpro_cross_references.tsv.gz $(INPDIR)/interpro_cross_references.tsv.gz
+	./crossreftable.py \
+		$(TABDIR)/interpro_entries.tsv.gz \
+		$(GOBDIR)/interpro_cross_references.tsv.gz \
+		2 \											# field containing the InterPro entries
+		| gzip - \
+		> $@
+		echo "Finished updating the InterPro cross ref table."
 
 # }}}
 
