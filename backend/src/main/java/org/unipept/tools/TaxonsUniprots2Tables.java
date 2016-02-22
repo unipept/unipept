@@ -61,9 +61,7 @@ public class TaxonsUniprots2Tables {
         for(; i < args.length; i += 2) {
             String uniprotFile = args[i];
             String uniprotType = args[i+1];
-            InputStream uniprotStream = new GZIPInputStream(
-                new FileInputStream(uniprotFile)
-            );
+            InputStream uniprotStream = new FileInputStream(uniprotFile);
             UniprotHandler handler = new UniprotHandler(uniprotType);
             handler.addObserver(writer);
             parser.parse(uniprotStream, handler);

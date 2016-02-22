@@ -67,8 +67,8 @@ $(TABLES): $(TABDIR)/taxons.tsv.gz $(UNIDIR)/uniprot_sprot.xml.gz
 	#$(UNIDIR)/uniprot_trembl.xml.gz
 	echo "Started calculation of most tables."
 	mkdir -p $(INTDIR)
-	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(TABDIR)/taxons.tsv.gz $(TABLES) $(UNIDIR)/uniprot_sprot.xml.gz "swissprot"
-	#java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(TABDIR)/taxons.tsv.gz $(TABLES) $(UNIDIR)/uniprot_sprot.xml.gz "swissprot" $(UNIDIR)/uniprot_trembl.xml.gz "trembl"
+	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(TABDIR)/taxons.tsv.gz $(TABLES) <(zcat $(UNIDIR)/uniprot_sprot.xml.gz) "swissprot"
+	#java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(TABDIR)/taxons.tsv.gz $(TABLES) <(zcat $(UNIDIR)/uniprot_sprot.xml.gz) "swissprot" <(zcat $(UNIDIR)/uniprot_trembl.xml.gz) "trembl"
 	echo "Finished calculation of most tables."
 # }}}
 
