@@ -225,8 +225,6 @@ $(TABDIR)/proteomes.tsv.gz: $(INTDIR)/proteomes.tsv.gz proteomes.sh type_strains
 # }}}
 
 # Functional information {{{ ----------------------------------------------------------------
-
-
 $(TABDIR)/ec_numbers.tsv.gz: $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt
 	echo "Starting fetching EC numbers info"
 	./ectable.sh \
@@ -251,8 +249,23 @@ $(TABDIR)/interpro_entries.tsv.gz: $(INPDIR)/interpro.xml.gz
 		| gzip - \
 		> $@
 	echo "Finished the creation of the InterPro table."
+# }}}
+
+# Update cross reference tables (EC,GO,InterPro) {{{ ----------------------------------------
+	
+$(TABDIR)/ec_cross_references.tsv.gz: $(TABDIR)/ec_cross_references.tsv.gz $(TABDIR)/ec_numbers.tsv.gz
+	echo "Starting fetching EC cross ref and EC number table"
+	mv $(TABDIR)/ec_cross_references.tsv.gz $(ECNDIR)/ec_cross_references.tsv.gz
+	./crossreftable.py \
+		$(TABDIR)/ec_numbers.tsv.gz \
+		$(ECNDIR)/ec_cross_references.tsv.gz \
+		| gzip - \
+		> $@
+		echo "Finished updating the EC cross ref table."
+
 
 # }}}
+
 
 .PHONY: clean_intermediates
 clean_intermediates:
