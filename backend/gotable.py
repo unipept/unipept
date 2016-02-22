@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import sys
 
 seg, pkey, go, name, namespace, deff=False, 1, "", "", "", ""
