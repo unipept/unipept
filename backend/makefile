@@ -83,7 +83,7 @@ $(GOBDIR)/goinfo.obo:
 	wget --no-verbose $(GOB_URL) -O $@
 	echo "Finished downloading $@."
 
-$(GOBDIR)/interpro.xml.gz:
+$(INPDIR)/interpro.xml.gz:
 	echo "Starting InterPro xml dump download."
 	mkdir -p $(INPDIR)
 	rm -f $@
@@ -190,7 +190,7 @@ $(TABDIR)/interpro_entries.tsv.gz: $(INPDIR)/interpro.xml.gz
 		| gzip - \
 		> $@
 	echo "Finished the creation of the InterPro table."
-	
+
 # }}}
 
 # Update cross reference tables (EC,GO,InterPro) {{{ ----------------------------------------
