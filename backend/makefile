@@ -11,6 +11,7 @@ TABLES=                                        \
 	$(TABDIR)/embl_cross_references.tsv.gz     \
 	$(TABDIR)/go_terms.tsv.gzip 			   \
 	$(TABDIR)/go_cross_references.tsv.gz       \
+	$(TABDIR)/interpro_entries.tsv.gz 		   \
 	$(INTDIR)/proteomes.tsv.gz                 \
 	$(TABDIR)/proteome_cross_references.tsv.gz 
 
@@ -25,8 +26,9 @@ tables: $(TABLES)
 sequences: $(TABDIR)/sequences.tsv.gz
 proteomes: $(TABDIR)/proteomes.tsv.gz
 ecnumbers: $(TABDIR)/ec_numbers.tsv.gz
+interpro: $(TABDIR)/interpro_entries.tsv.gz
 goterms: $(TABDIR)/go_terms.tsv.gz
-download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt $(GOBDIR)/goinfo.obo
+download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt $(GOBDIR)/goinfo.obo $(INPDIR)/interpro.xml.gz
 # $(UNIDIR)/uniprot_trembl.xml.gz
 
 # Compiling {{{ ----------------------------------------------------------------
@@ -80,7 +82,12 @@ $(GOBDIR)/goinfo.obo:
 	wget --no-verbose $(GOB_URL) -O $@
 	echo "Finished downloading $@."
 
-
+$(GOBDIR)/interpro.xml.gz:
+	echo "Starting InterPro xml dump download."
+	mkdir -p $(INPDIR)
+	rm -f $@
+	wget --no-verbose $(INTPR_URL) -O $@
+	echo "Finished downloading $@."
 # }}}
 
 # Taxons and Lineages {{{ ------------------------------------------------------
@@ -237,6 +244,13 @@ $(TABDIR)/go_terms.tsv.gz: $(GOBDIR)/goinfo.obo
 		> $@
 	echo "Finished the creation of the GO terms table."
 
+$(TABDIR)/interpro_entries.tsv.gz: $(INPDIR)/interpro.xml.gz
+	echo "Starting fetching InterPro info"
+	./interprotable.py \
+		$(INPDIR)/interpro.xml.gz \
+		| gzip - \
+		> $@
+	echo "Finished the creation of the InterPro table."
 
 # }}}
 
