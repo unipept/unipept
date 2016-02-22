@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 import org.unipept.xml.*;
 import org.unipept.storage.CSV;
 import org.unipept.taxons.TaxonList;
+import org.unipept.tools.TaxonsUniprots2Tables;
 
 /**
  * Intermediate class to add PeptideData to the database
@@ -47,21 +48,21 @@ public class TableWriter implements UniprotObserver {
     /**
      * Creates a new data object
      */
-    public TableWriter(TaxonList taxonList, String peptidesFile, String uniprotEntriesFile, String refseqCrossReferencesFile, String ecCrossReferencesFile, String emblCrossReferencesFile, String goCrossReferencesFile, String proteomesFile, String proteomeCrossReferencesFile) {
+    public TableWriter(TaxonsUniprots2Tables args) {
         wrongTaxonIds = new HashSet<Integer>();
         proteomeIds = new HashMap<>();
-        this.taxonList = taxonList;
 
         /* Opening CSV files for writing. */
         try {
-            peptides = new CSV.IndexedWriter(peptidesFile);
-            proteomes = new CSV.IndexedWriter(proteomesFile);
-            uniprotEntries = new CSV.IndexedWriter(uniprotEntriesFile);
-            refseqCrossReferences = new CSV.IndexedWriter(refseqCrossReferencesFile);
-            ecCrossReferences = new CSV.IndexedWriter(ecCrossReferencesFile);
-            emblCrossReferences = new CSV.IndexedWriter(emblCrossReferencesFile);
-            goCrossReferences = new CSV.IndexedWriter(goCrossReferencesFile);
-            proteomeCrossReferences = new CSV.IndexedWriter(proteomeCrossReferencesFile);
+            taxonList = TaxonList.loadFromFile(args.taxonsFile);
+            peptides = new CSV.IndexedWriter(args.peptidesFile);
+            proteomes = new CSV.IndexedWriter(args.proteomesFile);
+            uniprotEntries = new CSV.IndexedWriter(args.uniprotEntriesFile);
+            refseqCrossReferences = new CSV.IndexedWriter(args.refseqCrossReferencesFile);
+            ecCrossReferences = new CSV.IndexedWriter(args.ecCrossReferencesFile);
+            emblCrossReferences = new CSV.IndexedWriter(args.emblCrossReferencesFile);
+            goCrossReferences = new CSV.IndexedWriter(args.goCrossReferencesFile);
+            proteomeCrossReferences = new CSV.IndexedWriter(args.proteomeCrossReferencesFile);
         } catch(IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + " Error creating tsv files");

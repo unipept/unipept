@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.zip.GZIPInputStream;
+import java.util.List;
+import java.util.ArrayList;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -12,11 +14,25 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.JCommander;
+
 import org.unipept.xml.UniprotHandler;
 import org.unipept.taxons.TaxonList;
 import org.unipept.storage.TableWriter;
 
 public class TaxonsUniprots2Tables {
+
+    @Parameter(                           description="Files to be parsed")                   public List<String> files  = new ArrayList<>();
+    @Parameter(names="--taxons",          description="Taxons TSV input file")                public String taxonsFile;
+    @Parameter(names="--peptides",        description="Peptides TSV output file")             public String peptidesFile;
+    @Parameter(names="--uniprot-entries", description="Uniprot entries TSV output file")      public String uniprotEntriesFile;
+    @Parameter(names="--refseq",          description="RefSeq references TSV output file")    public String refseqCrossReferencesFile;
+    @Parameter(names="--ec",              description="EC references TSV output file")        public String ecCrossReferencesFile;
+    @Parameter(names="--embl",            description="EMBL references TSV output file")      public String emblCrossReferencesFile;
+    @Parameter(names="--go",              description="GO references TSV output file")        public String goCrossReferencesFile;
+    @Parameter(names="--proteomes",       description="Proteomes TSV output file")            public String proteomesFile;
+    @Parameter(names="--proteomes-ref",   description="Proteomes references TSV output file") public String proteomeCrossReferencesFile;
 
     /**
      * Parse the uniprot xml files into TSV tables.
@@ -33,34 +49,16 @@ public class TaxonsUniprots2Tables {
      */
     public static void main(String[] args) throws SAXException,
            ParserConfigurationException, FileNotFoundException, IOException {
-        if(args.length < 9) {
-            throw new RuntimeException("Please provide the parameters.");
-        }
+        TaxonsUniprots2Tables main = new TaxonsUniprots2Tables();
+        new JCommander(main, args);
 
-        int i = 0;
-        String taxonsFile = args[i++];
-        String peptidesFile = args[i++];
-        String uniprotEntriesFile = args[i++];
-        String refseqCrossReferencesFile = args[i++];
-        String ecCrossReferencesFile = args[i++];
-        String emblCrossReferencesFile = args[i++];
-        String goCrossReferencesFile = args[i++];
-        String proteomesFile = args[i++];
-        String proteomeCrossReferencesFile = args[i++];
-
-        TaxonList taxonList = TaxonList.loadFromFile(taxonsFile);
-        TableWriter writer = new TableWriter(taxonList, peptidesFile,
-                uniprotEntriesFile, refseqCrossReferencesFile,
-                ecCrossReferencesFile, emblCrossReferencesFile,
-                goCrossReferencesFile, proteomesFile,
-                proteomeCrossReferencesFile
-        );
+        TableWriter writer = new TableWriter(main);
         SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 
         /* Parse each uniprot file. */
-        for(; i < args.length; i += 2) {
-            String uniprotFile = args[i];
-            String uniprotType = args[i+1];
+        for(String inputfile : main.files) {
+            String uniprotFile = inputfile.split("=")[1];
+            String uniprotType = inputfile.split("=")[0];
             InputStream uniprotStream = new FileInputStream(uniprotFile);
             UniprotHandler handler = new UniprotHandler(uniprotType);
             handler.addObserver(writer);

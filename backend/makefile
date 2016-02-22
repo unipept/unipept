@@ -62,13 +62,25 @@ $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz: $(TAXDIR)/names.dmp $(TAXDIR)
 	echo "Finished calculation of taxons and lineages tables."
 # }}}
 
+TABLES=                                        \
+	$(INTDIR)/peptides.tsv.gz                  \
 # Uniprot entries, peptides, sequences and cross references {{{ ----------------
 $(TABLES): $(TABDIR)/taxons.tsv.gz $(UNIDIR)/uniprot_sprot.xml.gz
 	#$(UNIDIR)/uniprot_trembl.xml.gz
 	echo "Started calculation of most tables."
 	mkdir -p $(INTDIR)
-	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(TABDIR)/taxons.tsv.gz $(TABLES) <(zcat $(UNIDIR)/uniprot_sprot.xml.gz) "swissprot"
-	#java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(TABDIR)/taxons.tsv.gz $(TABLES) <(zcat $(UNIDIR)/uniprot_sprot.xml.gz) "swissprot" <(zcat $(UNIDIR)/uniprot_trembl.xml.gz) "trembl"
+	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables           \
+		--taxons          <(zcat $(TABDIR)/taxons.tsv.gz)                        \
+		--peptides        >(gzip - > $(INTDIR)/peptides.tsv.gz)                  \
+		--uniprot-entries >(gzip - > $(TABDIR)/uniprot_entries.tsv.gz)           \
+		--refseq          >(gzip - > $(TABDIR)/refseq_cross_references.tsv.gz)   \
+		--ec              >(gzip - > $(TABDIR)/ec_cross_references.tsv.gz)       \
+		--embl            >(gzip - > $(TABDIR)/embl_cross_references.tsv.gz)     \
+		--go              >(gzip - > $(TABDIR)/go_cross_references.tsv.gz)       \
+		--proteomes       >(gzip - > $(INTDIR)/proteomes.tsv.gz)                 \
+		--proteomes-ref   >(gzip - > $(TABDIR)/proteome_cross_references.tsv.gz) \
+		swissprot=<(zcat $(UNIDIR)/uniprot_sprot.xml.gz)
+	#trembl=<(zcat $(UNIDIR)/uniprot_trembl.xml.gz)
 	echo "Finished calculation of most tables."
 # }}}
 

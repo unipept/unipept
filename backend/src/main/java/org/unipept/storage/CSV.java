@@ -20,9 +20,7 @@ public class CSV {
         public Reader(String file) throws IOException {
             buffer = new BufferedReader(
                 new InputStreamReader(
-                    new GZIPInputStream(
-                        new FileInputStream(file)
-                    )
+                    new FileInputStream(file)
                 )
             );
         }
@@ -44,9 +42,7 @@ public class CSV {
         public Writer(String file) throws IOException {
             buffer = new BufferedWriter(
                 new OutputStreamWriter(
-                    new GZIPOutputStream(
-                        new FileOutputStream(file)
-                    )
+                    new FileOutputStream(file)
                 ), MB4
             );
         }
