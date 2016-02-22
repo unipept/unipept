@@ -26,6 +26,7 @@ public class UniprotEntry {
     private List<UniprotGORef> goReferences;
     private List<UniprotECRef> ecReferences;
     private List<UniprotProteomeRef> protReferences;
+    private List<String> sequences;
 
     public UniprotEntry(String type) {
         this.type = type;
@@ -33,6 +34,7 @@ public class UniprotEntry {
         goReferences = new ArrayList<UniprotGORef>();
         ecReferences = new ArrayList<UniprotECRef>();
         protReferences = new ArrayList<UniprotProteomeRef>();
+        sequences = new ArrayList<String>();
     }
 
     public void reset(String type) {
@@ -47,6 +49,7 @@ public class UniprotEntry {
         goReferences.clear();
         ecReferences.clear();
         protReferences.clear();
+        sequences.clear();
     }
 
     public String getUniprotAccessionNumber() {
@@ -121,13 +124,23 @@ public class UniprotEntry {
         protReferences.add(ref);
     }
 
-    public Stream<String> digest() {
-        String[] splitArray = sequence.replaceAll("([RK])([^P])", "$1,$2")
-                                      .replaceAll("([RK])([^P,])", "$1,$2")
-                                      .split(",");
-        return Arrays.stream(splitArray)
-                     .filter(seq -> seq.length() >= MIN_PEPT_SIZE
-                                 && seq.length() <= MAX_PEPT_SIZE);
+    public List<String> digest() {
+        sequences.clear();
+        int start = 0;
+        int length = sequence.length();
+        for (int i = 0; i < length; i++) {
+            char x = sequence.charAt(i);
+            if ((x == 'K' || x == 'R') && (i + 1 < length && sequence.charAt(i + 1) != 'P')) {
+                if (i + 1 - start >= MIN_PEPT_SIZE && i + 1 - start <= MAX_PEPT_SIZE) {
+                    sequences.add(sequence.substring(start, i + 1));
+                }
+                start = i + 1;
+            }
+        }
+        if (length - start >= MIN_PEPT_SIZE && length - start <= MAX_PEPT_SIZE) {
+            sequences.add(sequence.substring(start, length));
+        }
+        return sequences;
     }
 
     public List<UniprotDbRef> getDbReferences() {
