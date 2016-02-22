@@ -200,9 +200,21 @@ $(TABDIR)/ec_cross_references.tsv.gz: $(TABDIR)/ec_cross_references.tsv.gz $(TAB
 	./crossreftable.py \
 		$(TABDIR)/ec_numbers.tsv.gz \
 		$(ECNDIR)/ec_cross_references.tsv.gz \
+		1 \											# field containing the EC numbers
 		| gzip - \
 		> $@
 		echo "Finished updating the EC cross ref table."
+
+$(TABDIR)/go_cross_references.tsv.gz: $(TABDIR)/go_cross_references.tsv.gz $(TABDIR)/go_terms.tsv.gz
+	echo "Starting fetching GO cross ref and GO terms table"
+	mv $(TABDIR)/go_cross_references.tsv.gz $(GOBDIR)/go_cross_references.tsv.gz
+	./crossreftable.py \
+		$(TABDIR)/go_terms.tsv.gz \
+		$(GOBDIR)/go_cross_references.tsv.gz \
+		1 \											# field containing the GO terms
+		| gzip - \
+		> $@
+		echo "Finished updating the GO cross ref table."
 
 
 # }}}
