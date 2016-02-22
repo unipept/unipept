@@ -81,8 +81,9 @@ public class TableWriter implements UniprotObserver {
         int uniprotEntryId = addUniprotEntry(entry.getUniprotAccessionNumber(), entry.getVersion(),
                 entry.getTaxonId(), entry.getType(), entry.getName(), entry.getSequence());
         if (uniprotEntryId != -1) { // failed to add entry
-            entry.digest().forEach(sequence ->
-                    addData(sequence.replace("I", "L"), uniprotEntryId, sequence));
+            for(String sequence : entry.digest()) {
+                addData(sequence.replace('I', 'L'), uniprotEntryId, sequence);
+            }
             for (UniprotDbRef ref : entry.getDbReferences())
                 addDbRef(ref, uniprotEntryId);
             for (UniprotGORef ref : entry.getGOReferences())

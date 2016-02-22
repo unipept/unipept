@@ -12,6 +12,8 @@ import java.io.FileOutputStream;
 
 public class CSV {
 
+    private static final int MB4 = 4194304;
+
     public static class Reader {
         private BufferedReader buffer;
 
@@ -45,7 +47,7 @@ public class CSV {
                     new GZIPOutputStream(
                         new FileOutputStream(file)
                     )
-                )
+                ), MB4
             );
         }
 
