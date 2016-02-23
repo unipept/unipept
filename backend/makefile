@@ -192,7 +192,7 @@ $(TABDIR)/keggpathways.tsv.gz:
 		> $@
 	echo "Finished the creation of the KEGG pathways table."
 
-$(TABDIR)/keggpathwaymappings.tsv.gz:
+$(TABDIR)/keggpathwaymappings.tsv.gz: $(TABDIR)/keggpathways.tsv.gz $(TABDIR)/ec_numbers.tsv.gz
 	echo "Starting fetching KEGG pathway mappings table info"
 	./keggpathwaymappingstable.sh \
 		$(KGPDIR)/keggpathwaymappings.tsv \
@@ -237,7 +237,7 @@ $(TABDIR)/ec_cross_references.tsv.gz: $(TABDIR)/ec_cross_references.tsv.gz $(TAB
 		1 \											# field containing the EC numbers
 		| gzip - \
 		> $@
-		echo "Finished updating the EC cross ref table."
+	echo "Finished updating the EC cross ref table."
 
 $(TABDIR)/go_cross_references.tsv.gz: $(TABDIR)/go_cross_references.tsv.gz $(TABDIR)/go_terms.tsv.gz
 	echo "Starting fetching GO cross ref and GO terms table info"
@@ -248,7 +248,7 @@ $(TABDIR)/go_cross_references.tsv.gz: $(TABDIR)/go_cross_references.tsv.gz $(TAB
 		1 \											# field containing the GO terms
 		| gzip - \
 		> $@
-		echo "Finished updating the GO cross ref table."
+	echo "Finished updating the GO cross ref table."
 
 $(TABDIR)/interpro_cross_references.tsv.gz: $(TABDIR)/interpro_cross_references.tsv.gz $(TABDIR)/interpro_entries.tsv.gz
 	echo "Starting fetching interpro cross ref and interpro entries table info"
@@ -259,7 +259,7 @@ $(TABDIR)/interpro_cross_references.tsv.gz: $(TABDIR)/interpro_cross_references.
 		2 \											# field containing the InterPro entries
 		| gzip - \
 		> $@
-		echo "Finished updating the InterPro cross ref table."
+	echo "Finished updating the InterPro cross ref table."
 
 # }}}
 
