@@ -65,14 +65,14 @@ $(UNIDIR)/uniprot_sprot.xml.gz:
 	wget --progress=dot:giga "$(UNIPROT_URL)$(notdir $@)" -O $@
 	echo "Finished downloading $@."
 
-$(KGPDIR)/keggpathways:
+$(KGPDIR)/keggpathways.tsv:
 	echo "Starting download KEGG pathway."
 	makdir -p $(KGPDIR)
 	rm -f $@
 	wget --no-verbose "$(KEGGP_URL)" -O $@
 	echo "Finished downloading $@."
 
-$(KGPDIR)/keggpathwaymappings:
+$(KGPDIR)/keggpathwaymappings.tsv:
 	echo "Starting download KEGG pathway mapping."
 	makdir -p $(KGPDIR)
 	rm -f $@
@@ -255,6 +255,8 @@ $(TABDIR)/keggpathwaymappings.tsv.gz: $(TABDIR)/keggpathways.tsv.gz $(TABDIR)/ec
 	echo "Starting fetching KEGG pathway mappings table info"
 	./keggpathwaymappingstable.sh \
 		$(KGPDIR)/keggpathwaymappings.tsv \
+		$(TABDIR)/keggpathways.tsv.gz \
+		$(TABDIR)/ec_numbers.tsv.gz \
 		| gzip - \
 		> $@
 	echo "Finished the creation of the KEGG pathway mappings table."	
