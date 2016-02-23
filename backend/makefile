@@ -91,8 +91,8 @@ $(INTDIR)/aa_sequence_taxon.tsv.gz: $(INTDIR)/peptides.tsv.gz $(TABDIR)/uniprot_
 	echo "Starting the joining of equalized peptides and uniprot entries."
 	mkdir -p $(INTDIR)
 	join -t '	' -o '1.2,2.2' -j 1 \
-			<(zcat $(INTDIR)/peptides.tsv.gz | awk '{ printf("%020d\t%s\n", $$4, $$2) }') \
-			<(zcat $(TABDIR)/uniprot_entries.tsv.gz | awk '{ printf("%020d\t%s\n", $$1, $$4) }') \
+			<(zcat $(INTDIR)/peptides.tsv.gz | awk '{ printf("%012d\t%s\n", $$4, $$2) }') \
+			<(zcat $(TABDIR)/uniprot_entries.tsv.gz | awk '{ printf("%012d\t%s\n", $$1, $$4) }') \
 		| $(SORT) -k1 \
 		| $(GZIP) - \
 		> $@
@@ -102,8 +102,8 @@ $(INTDIR)/original_aa_sequence_taxon.tsv.gz: $(INTDIR)/peptides.tsv.gz $(TABDIR)
 	echo "Starting the joining of non-equalized peptides and uniprot entries."
 	mkdir -p $(INTDIR)
 	join -t '	' -o '1.2,2.2' -j 1 \
-			<(zcat $(INTDIR)/peptides.tsv.gz | awk '{ printf("%020d\t%s\n", $$4, $$3) }') \
-			<(zcat $(TABDIR)/uniprot_entries.tsv.gz | awk '{ printf("%020d\t%s\n", $$1, $$4) }') \
+			<(zcat $(INTDIR)/peptides.tsv.gz | awk '{ printf("%012d\t%s\n", $$4, $$3) }') \
+			<(zcat $(TABDIR)/uniprot_entries.tsv.gz | awk '{ printf("%012d\t%s\n", $$1, $$4) }') \
 		| $(SORT) -k1 \
 		| $(GZIP) - \
 		> $@
