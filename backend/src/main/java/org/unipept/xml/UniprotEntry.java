@@ -1,7 +1,9 @@
 package org.unipept.xml;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @author Bart Mesuere
@@ -119,18 +121,13 @@ public class UniprotEntry {
         protReferences.add(ref);
     }
 
-    public List<Pair> digest() {
-        List<Pair> list = new ArrayList<Pair>();
-        int position = 0;
+    public Stream<String> digest() {
         String[] splitArray = sequence.replaceAll("([RK])([^P])", "$1,$2")
-                .replaceAll("([RK])([^P,])", "$1,$2").split(",");
-        for (String seq : splitArray) {
-            if (seq.length() >= MIN_PEPT_SIZE && seq.length() <= MAX_PEPT_SIZE) {
-                list.add(new Pair(seq, position));
-            }
-            position += seq.length();
-        }
-        return list;
+                                      .replaceAll("([RK])([^P,])", "$1,$2")
+                                      .split(",");
+        return Arrays.stream(splitArray)
+                     .filter(seq -> seq.length() >= MIN_PEPT_SIZE
+                                 && seq.length() <= MAX_PEPT_SIZE);
     }
 
     public List<UniprotDbRef> getDbReferences() {
@@ -156,21 +153,4 @@ public class UniprotEntry {
                 + sequence;
     }
 
-    public class Pair {
-        private String sequence;
-        private int position;
-
-        public Pair(String sequence, int position) {
-            this.sequence = sequence;
-            this.position = position;
-        }
-
-        public String getSequence() {
-            return sequence;
-        }
-
-        public int getPosition() {
-            return position;
-        }
-    }
 }
