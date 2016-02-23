@@ -77,7 +77,7 @@ $(KGPDIR)/keggpathwaymappings:
 	echo "Starting download KEGG pathway mapping."
 	makdir -p $(KGPDIR)
 	rm -f $@
-	wget --no-verbose "$(KEGGPM_URL)" -O $@
+	wget --no-verbose "$(KEGGPM_URL)" | fgrep 'path:map' > $@
 	echo "Finished downloading $@."
 
 $(ECNDIR)/enzymes.dat:
