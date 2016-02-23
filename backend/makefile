@@ -7,11 +7,16 @@ TABLES=                                        \
 	$(INTDIR)/sequences.tsv.gz                 \
 	$(TABDIR)/uniprot_entries.tsv.gz           \
 	$(TABDIR)/refseq_cross_references.tsv.gz   \
+	$(TABDIR)/keggpathways.tsv.gz 			   \
+	$(TABDIR)/keggpathwaymappings.tsv.gz 	   \
+	$(TABDIR)/ec_numbers.tsv.gz 			   \
 	$(TABDIR)/ec_cross_references.tsv.gz       \
 	$(TABDIR)/embl_cross_references.tsv.gz     \
+	$(TABDIR)/go_terms.tsv.gzip 			   \
 	$(TABDIR)/go_cross_references.tsv.gz       \
+	$(TABDIR)/interpro_entries.tsv.gz 		   \
 	$(INTDIR)/proteomes.tsv.gz                 \
-	$(TABDIR)/proteome_cross_references.tsv.gz
+	$(TABDIR)/proteome_cross_references.tsv.gz 
 
 SRC=$(shell find src/ -type f -name '*.java')
 JAR=target/unipept-0.0.1-SNAPSHOT.jar
@@ -23,7 +28,13 @@ taxons: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
 tables: $(TABLES)
 sequences: $(TABDIR)/sequences.tsv.gz
 proteomes: $(TABDIR)/proteomes.tsv.gz
-download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/uniprot_trembl.xml.gz
+keggpathways:$(TABDIR)/keggpathways.tsv.gz
+keggpathwaymappings:$(TABDIR)/keggpathwaymappings.tsv.gz
+ecnumbers: $(TABDIR)/ec_numbers.tsv.gz
+interpro: $(TABDIR)/interpro_entries.tsv.gz
+goterms: $(TABDIR)/go_terms.tsv.gz
+download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt $(GOBDIR)/goinfo.obo $(INPDIR)/interpro.xml.gz $(KGPDIR)/keggpathways.tsv $(KGPDIR)/keggpathwaymappings.tsv
+# $(UNIDIR)/uniprot_trembl.xml.gz
 
 # Compiling {{{ ----------------------------------------------------------------
 # TODO:
@@ -47,11 +58,54 @@ $(TAXDIR)/names.dmp $(TAXDIR)/nodes.dmp: $(TAXDIR)/taxdmp.zip
 	unzip -o $< $(notdir $@) -d $(dir $@)
 	echo "Finished unzipping names and nodes from the taxon dump."
 
-$(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/uniprot_trembl.xml.gz:
+$(UNIDIR)/uniprot_sprot.xml.gz: 
+	#$(UNIDIR)/uniprot_trembl.xml.gz:
 	echo "Starting downloading $@."
 	mkdir -p $(UNIDIR)
 	rm -f $@
 	wget --progress=dot:giga "$(UNIPROT_URL)$(notdir $@)" -O $@
+	echo "Finished downloading $@."
+
+$(KGPDIR)/keggpathways:
+	echo "Starting download KEGG pathway."
+	makdir -p $(KGPDIR)
+	rm -f $@
+	wget --no-verbose "$(KEGGP_URL)" -O $@
+	echo "Finished downloading $@."
+
+$(KGPDIR)/keggpathwaymappings:
+	echo "Starting download KEGG pathway mapping."
+	makdir -p $(KGPDIR)
+	rm -f $@
+	wget --no-verbose "$(KEGGPM_URL)" -O $@
+	echo "Finished downloading $@."
+
+$(ECNDIR)/enzymes.dat:
+	echo "Starting EC numbers dump download."
+	mkdir -p $(ECNDIR)
+	rm -f $@
+	wget --no-verbose "$(ECN_URL)" -O $@
+	echo "Finished downloading $@."
+
+$(ECNDIR)/enzclass.txt:
+	echo "Starting EC class dump download."
+	mkdir -p $(ECNDIR)
+	rm -f $@
+	wget --no-verbose "$(ECNC_URL)" -O $@
+	echo "Finished downloading $@."
+
+$(GOBDIR)/goinfo.obo:
+	echo "Starting GO terms dump download."
+	mkdir -p $(GOBDIR)
+	rm -f $@
+	wget --no-verbose $(GOB_URL) -O $@
+	echo "Finished downloading $@."
+
+$(INPDIR)/interpro.xml.gz:
+	echo "Starting InterPro xml dump download."
+	mkdir -p $(INPDIR)
+	rm -f $@
+	wget --no-verbose $(INTPR_URL) -O $@
 	echo "Finished downloading $@."
 # }}}
 
@@ -64,12 +118,14 @@ $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz: $(TAXDIR)/names.dmp $(TAXDIR)
 # }}}
 
 # Uniprot entries, peptides, sequences and cross references {{{ ----------------
-$(TABLES): $(TABDIR)/taxons.tsv.gz $(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/uniprot_trembl.xml.gz
+$(TABLES): $(TABDIR)/taxons.tsv.gz $(UNIDIR)/uniprot_sprot.xml.gz 
+	#$(UNIDIR)/uniprot_trembl.xml.gz
 	echo "Started calculation of most tables."
 	mkdir -p $(BDBDIR)
 	mkdir -p $(INTDIR)
 	#java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(BDBDIR) $(BDBMEM) $(TABDIR)/taxons.tsv.gz $(TABLES) $(UNIDIR)/uniprot_sprot.xml.gz "swissprot"
-	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(BDBDIR) $(BDBMEM) $(TABDIR)/taxons.tsv.gz $(TABLES) $(UNIDIR)/uniprot_sprot.xml.gz "swissprot" $(UNIDIR)/uniprot_trembl.xml.gz "trembl"
+	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(BDBDIR) $(BDBMEM) $(TABDIR)/taxons.tsv.gz $(TABLES) $(UNIDIR)/uniprot_sprot.xml.gz "swissprot" 
+	#$(UNIDIR)/uniprot_trembl.xml.gz "trembl"
 	echo "Finished calculation of most tables."
 # }}}
 
@@ -126,6 +182,87 @@ $(TABDIR)/proteomes.tsv.gz: $(INTDIR)/proteomes.tsv.gz proteomes.sh type_strains
 		$(TABDIR)/proteomes.tsv.gz
 	echo "Finished fetching proteome info."
 # }}}
+
+# Functional information {{{ ----------------------------------------------------------------
+$(TABDIR)/keggpathways.tsv.gz:
+	echo "Starting fetching KEGG pathways table info"
+	./keggpathwaystable.sh \
+		$(KGPDIR)/keggpathways.tsv \
+		| gzip - \
+		> $@
+	echo "Finished the creation of the KEGG pathways table."
+
+$(TABDIR)/keggpathwaymappings.tsv.gz: $(TABDIR)/keggpathways.tsv.gz $(TABDIR)/ec_numbers.tsv.gz
+	echo "Starting fetching KEGG pathway mappings table info"
+	./keggpathwaymappingstable.sh \
+		$(KGPDIR)/keggpathwaymappings.tsv \
+		| gzip - \
+		> $@
+	echo "Finished the creation of the KEGG pathway mappings table."	
+
+$(TABDIR)/ec_numbers.tsv.gz: $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt
+	echo "Starting fetching EC numbers info"
+	./ectable.sh \
+		$(ECNDIR)/enzclass.txt \
+		$(ECNDIR)/enzymes.dat \
+		| gzip - \
+		> $@
+	echo "Finished the creation of the EC numbers table."
+
+$(TABDIR)/go_terms.tsv.gz: $(GOBDIR)/goinfo.obo
+	echo "Starting fetching GO terms info"
+	./gotable.py \
+		$(GOBDIR)/goinfo.obo \
+		| gzip - \
+		> $@
+	echo "Finished the creation of the GO terms table."
+
+$(TABDIR)/interpro_entries.tsv.gz: $(INPDIR)/interpro.xml.gz
+	echo "Starting fetching InterPro info"
+	./interprotable.py \
+		$(INPDIR)/interpro.xml.gz \
+		| gzip - \
+		> $@
+	echo "Finished the creation of the InterPro table."
+
+# }}}
+
+# Update cross reference tables (EC,GO,InterPro) {{{ ----------------------------------------
+$(TABDIR)/ec_cross_references.tsv.gz: $(TABDIR)/ec_cross_references.tsv.gz $(TABDIR)/ec_numbers.tsv.gz
+	echo "Starting fetching EC cross ref and EC number tableinfo"
+	mv $(TABDIR)/ec_cross_references.tsv.gz $(ECNDIR)/ec_cross_references.tsv.gz
+	./crossreftable.py \
+		$(TABDIR)/ec_numbers.tsv.gz \
+		$(ECNDIR)/ec_cross_references.tsv.gz \
+		1 \											# field containing the EC numbers
+		| gzip - \
+		> $@
+	echo "Finished updating the EC cross ref table."
+
+$(TABDIR)/go_cross_references.tsv.gz: $(TABDIR)/go_cross_references.tsv.gz $(TABDIR)/go_terms.tsv.gz
+	echo "Starting fetching GO cross ref and GO terms table info"
+	mv $(TABDIR)/go_cross_references.tsv.gz $(GOBDIR)/go_cross_references.tsv.gz
+	./crossreftable.py \
+		$(TABDIR)/go_terms.tsv.gz \
+		$(GOBDIR)/go_cross_references.tsv.gz \
+		1 \											# field containing the GO terms
+		| gzip - \
+		> $@
+	echo "Finished updating the GO cross ref table."
+
+$(TABDIR)/interpro_cross_references.tsv.gz: $(TABDIR)/interpro_cross_references.tsv.gz $(TABDIR)/interpro_entries.tsv.gz
+	echo "Starting fetching interpro cross ref and interpro entries table info"
+	mv $(TABDIR)/interpro_cross_references.tsv.gz $(INPDIR)/interpro_cross_references.tsv.gz
+	./crossreftable.py \
+		$(TABDIR)/interpro_entries.tsv.gz \
+		$(GOBDIR)/interpro_cross_references.tsv.gz \
+		2 \											# field containing the InterPro entries
+		| gzip - \
+		> $@
+	echo "Finished updating the InterPro cross ref table."
+
+# }}}
+
 
 .PHONY: clean_intermediates
 clean_intermediates:

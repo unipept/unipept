@@ -84,6 +84,12 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
   `sequence` VARCHAR(50) NOT NULL ,
   `lca` MEDIUMINT UNSIGNED NULL ,
   `lca_il` MEDIUMINT UNSIGNED NULL ,
+  `ec` VARCHAR(255) NULL,
+  `ec_il` VARCHAR(255) NULL,
+  `go` VARCHAR(255) NULL,
+  `go_il` VARCHAR(255) NULL,
+  `interpro` VARCHAR(255) NULL,
+  `interpro_il` VARCHAR(255) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii;
@@ -188,7 +194,22 @@ COLLATE = ascii_general_ci;
 CREATE  TABLE IF NOT EXISTS `unipept`.`go_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `go_id` VARCHAR(12) NOT NULL ,
+  `go_term_id` INT NOT NULL,
+  `go_id` VARCHAR(15) NOT NULL ,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`go_terms`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `go_id` VARCHAR(15) NOT NULL,
+  `name` VARCHAR(160) NOT NULL,
+  `name_space` ENUM('BP', 'MF', 'CC') NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
@@ -201,7 +222,21 @@ COLLATE = ascii_general_ci;
 CREATE  TABLE IF NOT EXISTS `unipept`.`ec_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `ec_id` VARCHAR(12) NOT NULL ,
+  `ec_number_id` INT NOT NULL,
+  `ec_number` VARCHAR(15) NOT NULL ,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`ec_numbers`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`ec_numbers` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `ec_number` VARCHAR(15) NOT NULL,
+  `name` VARCHAR(160) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
@@ -244,6 +279,57 @@ CREATE TABLE IF NOT EXISTS `unipept`.`proteome_cross_references` (
   `proteome_id` MEDIUMINT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`interpro_cross_references`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `unipept`.`interpro_cross_references` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uniprot_entry_id` INT UNSIGNED NOT NULL,
+  `interpro_entry_id` INT NOT NULL,
+  `interpro_id` VARCHAR(15) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`interpro_entries`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`interpro_entries` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `parent_id` INT NOT NULL,
+  `interpro_id` VARCHAR(15) NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `type` ENUM('F', 'D', 'R', 'S') NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`kegg_pathways`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`kegg_pathways` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `long_id` VARCHAR(15) NOT NULL,
+  `name` VARCHAR(160) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`kegg_pathway_mappings`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`kegg_pathway_mappings` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ec_number_id` INT UNSIGNED NOT NULL,
+  `kegg_pathway_id` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE=InnoDB;
 
 
 -- -----------------------------------------------------
