@@ -12,7 +12,8 @@ INTDIR=${DATADIR}/intermediate
 JMEMMIN='-Xms2g'
 JMEMMAX='-Xmx3g'
 
-SORT=sort --buffer-size=80% --parallel=4
+SORT=LC_ALL=C sort --buffer-size=80% --parallel=4
+GZIP=gzip
 
 TAXON_URL=ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip
 UNIPROT_URL=ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/
