@@ -54,9 +54,9 @@ module UnipeptWeb
     config.assets.paths << "#{Rails}/vendor/assets/fonts"
 
     config.versions = {
-      unipept: '3.1.1',
+      unipept: '3.1.2',
       gem: '1.1.0',
-      uniprot: '2016.01'
+      uniprot: '2016.02'
     }
 
     config.api_host = 'api.unipept.ugent.be'
