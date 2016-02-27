@@ -163,7 +163,7 @@ $(INTDIR)/original_LCAs.tsv.gz: $(TABDIR)/lineages.tsv.gz $(INTDIR)/original_seq
 	echo "Starting the calculation non-equalized LCA's."
 	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).LineagesSequencesTaxons2LCAs \
 		<(zcat $(TABDIR)/lineages.tsv.gz) \
-		<(zcat $(INTDIR)/sequence_taxon.tsv.gz) \
+		<(zcat $(INTDIR)/original_sequence_taxon.tsv.gz) \
 		>($(GZIP) - > $(INTDIR)/original_LCAs.tsv.gz)
 	echo "Finished the calculation non-equalized LCA's."
 
