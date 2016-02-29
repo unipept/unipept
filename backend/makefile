@@ -83,8 +83,7 @@ $(TABLES): $(TABDIR)/taxons.tsv.gz $(UNIDIR)/uniprot_sprot.xml.gz
 		--go              >($(GZIP) - > $(TABDIR)/go_cross_references.tsv.gz)       \
 		--proteomes       >($(GZIP) - > $(INTDIR)/proteomes.tsv.gz)                 \
 		--proteomes-ref   >($(GZIP) - > $(TABDIR)/proteome_cross_references.tsv.gz) \
-		swissprot=<(zcat $(UNIDIR)/uniprot_sprot.xml.gz)
-	#trembl=<(zcat $(UNIDIR)/uniprot_trembl.xml.gz)
+		swissprot=<(zcat $(UNIDIR)/uniprot_sprot.xml.gz) trembl=<(zcat $(UNIDIR)/uniprot_trembl.xml.gz)
 	echo "Finished calculation of most tables."
 # }}}
 

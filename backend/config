@@ -11,10 +11,8 @@ UNIDIR=${DATADIR}/uniprot
 TAXDIR=${DATADIR}/taxon
 INTDIR=${DATADIR}/intermediate
 
-#JMEMMIN='-Xms140g'
-#JMEMMAX='-Xmx150g'
-JMEMMIN='-Xms2g'
-JMEMMAX='-Xmx3g'
+JMEMMIN='-Xms5g'
+JMEMMAX='-Xmx6g'
 
 SORT=LC_ALL=C sort --buffer-size=80% --parallel=4
 GZIP=gzip
