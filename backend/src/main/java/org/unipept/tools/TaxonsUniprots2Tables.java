@@ -24,6 +24,8 @@ import org.unipept.storage.TableWriter;
 public class TaxonsUniprots2Tables {
 
     @Parameter(                           description="Files to be parsed")                   public List<String> files  = new ArrayList<>();
+    @Parameter(names="--peptide-min",    description="Minimum peptide length")               public int peptideMin;
+    @Parameter(names="--peptide-max",    description="Maximum peptide length")               public int peptideMax;
     @Parameter(names="--taxons",          description="Taxons TSV input file")                public String taxonsFile;
     @Parameter(names="--peptides",        description="Peptides TSV output file")             public String peptidesFile;
     @Parameter(names="--uniprot-entries", description="Uniprot entries TSV output file")      public String uniprotEntriesFile;
@@ -60,7 +62,7 @@ public class TaxonsUniprots2Tables {
             String uniprotFile = inputfile.split("=")[1];
             String uniprotType = inputfile.split("=")[0];
             InputStream uniprotStream = new FileInputStream(uniprotFile);
-            UniprotHandler handler = new UniprotHandler(uniprotType);
+            UniprotHandler handler = new UniprotHandler(main.peptideMin, main.peptideMax, uniprotType);
             handler.addObserver(writer);
             parser.parse(uniprotStream, handler);
             uniprotStream.close();

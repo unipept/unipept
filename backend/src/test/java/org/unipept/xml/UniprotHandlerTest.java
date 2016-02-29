@@ -31,7 +31,7 @@ public class UniprotHandlerTest extends Assert {
     @Test
     public void testHandlerSwissProt_1() {
         Stats s = new Stats();
-        runHandler(new UniprotHandler("swissprot"), s, "../../../uniprot_sprot_1.xml");
+        runHandler(new UniprotHandler(5, 50, "swissprot"), s, "../../../uniprot_sprot_1.xml");
         assertEquals(s.entries, 1);
         assertEquals(s.sequences, 1);
     }
@@ -39,7 +39,7 @@ public class UniprotHandlerTest extends Assert {
     @Test
     public void testHandlerSwissProt_3() {
         Stats s = new Stats();
-        runHandler(new UniprotHandler("swissprot"), s, "../../../uniprot_sprot_3.xml");
+        runHandler(new UniprotHandler(5, 50, "swissprot"), s, "../../../uniprot_sprot_3.xml");
         assertEquals(s.entries, 3);
         assertEquals(s.sequences, 3);
     }

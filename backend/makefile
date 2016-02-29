@@ -71,8 +71,10 @@ $(TABLES): $(TABDIR)/taxons.tsv.gz $(UNIDIR)/uniprot_sprot.xml.gz
 	#$(UNIDIR)/uniprot_trembl.xml.gz
 	echo "Started calculation of most tables."
 	mkdir -p $(INTDIR)
-	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables           \
-		--taxons          <(zcat $(TABDIR)/taxons.tsv.gz)                        \
+	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables              \
+		--peptide-min     $(PEPMIN)                                                 \
+		--peptide-max     $(PEPMAX)                                                 \
+		--taxons          <(zcat $(TABDIR)/taxons.tsv.gz)                           \
 		--peptides        >($(GZIP) - > $(INTDIR)/peptides.tsv.gz)                  \
 		--uniprot-entries >($(GZIP) - > $(TABDIR)/uniprot_entries.tsv.gz)           \
 		--refseq          >($(GZIP) - > $(TABDIR)/refseq_cross_references.tsv.gz)   \

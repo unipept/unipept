@@ -1,6 +1,10 @@
 LOGFILE=main.log
 MAIL=unipept@ugent.be
 
+# Peptides minimum length
+PEPMIN=8
+PEPMAX=50
+
 DATADIR=../../data
 TABDIR=${DATADIR}/tables
 UNIDIR=${DATADIR}/uniprot
