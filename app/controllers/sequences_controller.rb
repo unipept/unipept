@@ -167,7 +167,8 @@ class SequencesController < ApplicationController
     @gos.each{|go| @graph.add_reachable(GO_GRAPH.find_go(go), go)}
 
     @links = []
-    @graph.terms.each { |k,v| v.links.each{ |t,l| @links.push({'from' => k, 'to' => t, 'label' => 'is_a', 'weight' => v.linked.map { |g| gos_occur[g].count }.inject(:+).to_f/gos.size, 'linked' => v.linked.to_a}) } }
+    graph_size = gos_occur.map{|g,n| @graph.terms.include?(g) ? n.count : 0}.inject(:+)
+    @graph.terms.each { |k,v| v.links.each{ |t,l| @links.push({'from' => k, 'to' => t, 'label' => 'is_a', 'weight' => v.linked.map { |g| gos_occur[g].count }.inject(:+).to_f/graph_size, 'linked' => v.linked.to_a}) } }
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree
