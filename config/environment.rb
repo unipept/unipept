@@ -4,7 +4,7 @@ require 'csv'
 require 'scbi_go'
 
 # Initialize GO graph
-file = Rails.root.join('go-basic-process.obo')
+file = Rails.root.join('go-basic.obo')
 GO_GRAPH = ScbiGo::GeneOntology.new(filename=file.to_s)
 
 # Initialize the rails application

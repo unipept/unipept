@@ -164,7 +164,10 @@ class SequencesController < ApplicationController
     gos = @entries.map(&:go_cross_references).flatten.map(&:go_id)
     gos_occur = gos.group_by{|i| i}
     @gos = gos.uniq
-    @gos.each{|go| @graph.add_reachable(GO_GRAPH.find_go(go), go)}
+    for go in @gos
+      node = GO_GRAPH.find_go(go)
+      @graph.add_reachable(node, go) if !node.nil? && node.namespace == 'molecular_function'
+    end
 
     @links = []
     graph_size = gos_occur.map{|g,n| @graph.terms.include?(g) ? n.count : 0}.inject(:+)
