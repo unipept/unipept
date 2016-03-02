@@ -132,9 +132,9 @@ $(TABLES): $(TABDIR)/taxons.tsv.gz $(UNIDIR)/uniprot_sprot.xml.gz
 		--peptides        >($(GZIP) - > $(INTDIR)/peptides.tsv.gz)                  \
 		--uniprot-entries >($(GZIP) - > $(TABDIR)/uniprot_entries.tsv.gz)           \
 		--refseq          >($(GZIP) - > $(TABDIR)/refseq_cross_references.tsv.gz)   \
-		--ec              >($(GZIP) - > $(TABDIR)/ec_cross_references.tsv.gz)       \
+		--ec              >($(GZIP) - > $(ECNDIR)/ec_cross_references.tsv.gz)       \
 		--embl            >($(GZIP) - > $(TABDIR)/embl_cross_references.tsv.gz)     \
-		--go              >($(GZIP) - > $(TABDIR)/go_cross_references.tsv.gz)       \
+		--go              >($(GZIP) - > $(GOBDIR)/go_cross_references.tsv.gz)       \
 		--interpro        >($(GZIP) - > $(INPDIR)/interpro_cross_references.tsv.gz) \
 		--proteomes       >($(GZIP) - > $(INTDIR)/proteomes.tsv.gz)                 \
 		--proteomes-ref   >($(GZIP) - > $(TABDIR)/proteome_cross_references.tsv.gz) \
@@ -294,7 +294,6 @@ $(TABDIR)/interpro_entries.tsv.gz: $(INPDIR)/interpro.xml.gz
 # Update cross reference tables (EC,GO,InterPro) {{{ ----------------------------------------
 $(TABDIR)/ec_cross_references.tsv.gz: $(TABDIR)/ec_cross_references.tsv.gz $(TABDIR)/ec_numbers.tsv.gz
 	echo "Starting fetching EC cross ref and EC number tableinfo"
-	mv $(TABDIR)/ec_cross_references.tsv.gz $(ECNDIR)/ec_cross_references.tsv.gz
 	./crossreftable.py \
 		$(TABDIR)/ec_numbers.tsv.gz \
 		$(ECNDIR)/ec_cross_references.tsv.gz \
@@ -305,7 +304,6 @@ $(TABDIR)/ec_cross_references.tsv.gz: $(TABDIR)/ec_cross_references.tsv.gz $(TAB
 
 $(TABDIR)/go_cross_references.tsv.gz: $(TABDIR)/go_cross_references.tsv.gz $(TABDIR)/go_terms.tsv.gz
 	echo "Starting fetching GO cross ref and GO terms table info"
-	mv $(TABDIR)/go_cross_references.tsv.gz $(GOBDIR)/go_cross_references.tsv.gz
 	./crossreftable.py \
 		$(TABDIR)/go_terms.tsv.gz \
 		$(GOBDIR)/go_cross_references.tsv.gz \
@@ -314,12 +312,11 @@ $(TABDIR)/go_cross_references.tsv.gz: $(TABDIR)/go_cross_references.tsv.gz $(TAB
 		> $@
 	echo "Finished updating the GO cross ref table."
 
-$(TABDIR)/interpro_cross_references.tsv.gz: $(TABDIR)/interpro_cross_references.tsv.gz $(TABDIR)/interpro_entries.tsv.gz
+$(TABDIR)/interpro_cross_references.tsv.gz: $(INPDIR)/interpro_cross_references.tsv.gz $(TABDIR)/interpro_entries.tsv.gz
 	echo "Starting fetching interpro cross ref and interpro entries table info"
-	mv $(TABDIR)/interpro_cross_references.tsv.gz $(INPDIR)/interpro_cross_references.tsv.gz
 	./crossreftable.py \
 		$(TABDIR)/interpro_entries.tsv.gz \
-		$(GOBDIR)/interpro_cross_references.tsv.gz \
+		$(INPDIR)/interpro_cross_references.tsv.gz \
 		2 \											# field containing the InterPro entries
 		| gzip - \
 		> $@
