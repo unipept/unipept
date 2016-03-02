@@ -33,6 +33,7 @@ public class TaxonsUniprots2Tables {
     @Parameter(names="--ec",              description="EC references TSV output file")        public String ecCrossReferencesFile;
     @Parameter(names="--embl",            description="EMBL references TSV output file")      public String emblCrossReferencesFile;
     @Parameter(names="--go",              description="GO references TSV output file")        public String goCrossReferencesFile;
+    @Parameter(names="--interpro",        description="InterPro references TSV output file")  public String interproCrossReferencesFile;
     @Parameter(names="--proteomes",       description="Proteomes TSV output file")            public String proteomesFile;
     @Parameter(names="--proteomes-ref",   description="Proteomes references TSV output file") public String proteomeCrossReferencesFile;
 
