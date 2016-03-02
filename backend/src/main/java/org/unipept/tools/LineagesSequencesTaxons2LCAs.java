@@ -7,8 +7,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.regex.Pattern;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 public class LineagesSequencesTaxons2LCAs {
 
@@ -22,13 +20,13 @@ public class LineagesSequencesTaxons2LCAs {
     private final Writer writer;
 
     public LineagesSequencesTaxons2LCAs(String taxonomyFile, String outputFile) throws IOException {
-        writer = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(outputFile)), "utf-8"));
+        writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "utf-8"));
         buildTaxonomy(taxonomyFile);
     }
 
     private void buildTaxonomy(String file) throws FileNotFoundException, IOException {
         HashMap<Integer, int[]> taxonomyMap = new HashMap<>();
-        InputStream is = new GZIPInputStream(new FileInputStream(new File(file)));
+        InputStream is = new FileInputStream(new File(file));
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
         br.lines()
@@ -51,7 +49,7 @@ public class LineagesSequencesTaxons2LCAs {
 
     public void calculateLCAs(String file) throws IOException {
         counter = 0;
-        BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(file))), 67108864);
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)), 67108864);
 
         int count = 0;
         int currentSequence = -1;
