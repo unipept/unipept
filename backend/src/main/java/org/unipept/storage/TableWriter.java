@@ -62,6 +62,7 @@ public class TableWriter implements UniprotObserver {
             ecCrossReferences = new CSV.IndexedWriter(args.ecCrossReferencesFile);
             emblCrossReferences = new CSV.IndexedWriter(args.emblCrossReferencesFile);
             goCrossReferences = new CSV.IndexedWriter(args.goCrossReferencesFile);
+            interproCrossReferences = new CSV.IndexedWriter(args.interproCrossReferencesFile);
             proteomeCrossReferences = new CSV.IndexedWriter(args.proteomeCrossReferencesFile);
         } catch(IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
