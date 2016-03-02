@@ -15,6 +15,7 @@ TABLES=                                        \
 	$(TABDIR)/go_cross_references.tsv.gz       \
 	$(TABDIR)/interpro_entries.tsv.gz 		   \
 	$(TABDIR)/interpro_cross_references.tsv.gz \
+	$(TABDIR)/interpro_2_go.tsv.gz             \
 	$(INTDIR)/proteomes.tsv.gz                 \
 	$(TABDIR)/proteome_cross_references.tsv.gz 
 
@@ -33,7 +34,7 @@ keggpathwaymappings:$(TABDIR)/keggpathwaymappings.tsv.gz
 ecnumbers: $(TABDIR)/ec_numbers.tsv.gz
 interpro: $(TABDIR)/interpro_entries.tsv.gz
 goterms: $(TABDIR)/go_terms.tsv.gz
-download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt $(GOBDIR)/goinfo.obo $(INPDIR)/interpro.xml.gz $(KGPDIR)/keggpathways.tsv $(KGPDIR)/keggpathwaymappings.tsv
+download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt $(GOBDIR)/goinfo.obo $(INPDIR)/interpro.xml.gz $(INPDIR)/interpro2go.txt $(KGPDIR)/keggpathways.tsv $(KGPDIR)/keggpathwaymappings.tsv
 # $(UNIDIR)/uniprot_trembl.xml.gz
 
 # Compiling {{{ ----------------------------------------------------------------
@@ -106,6 +107,13 @@ $(INPDIR)/interpro.xml.gz:
 	mkdir -p $(INPDIR)
 	rm -f $@
 	wget --no-verbose $(INTPR_URL) -O $@
+	echo "Finished downloading $@."
+
+$(INPDIR)/interpro2go.txt:
+	echo "Starting InterPro2GO dump download."
+	mkdir -p $(INPDIR)
+	rm -f $@
+	wget --no-verbose $(INP2GO_URL) -O $@
 	echo "Finished downloading $@."
 # }}}
 
@@ -288,10 +296,11 @@ $(TABDIR)/interpro_entries.tsv.gz: $(INPDIR)/interpro.xml.gz
 		> $@
 	echo "Finished the creation of the InterPro table."
 
-$(TABDIR)/interpro_2_go.tsv.gz: 
-	echo "Starting fetching InterPro info"
-	./interprotable.py \
-		$(INPDIR)/interpro.xml.gz \
+$(TABDIR)/interpro_2_go.tsv.gz: $(INPDIR)/interpro2go.txt
+	echo "Starting parsing InterPro2GO info"
+	cat $(INPDIR)/interpro2go.txt \
+		| sed 's/InterPro://' \
+		| sed 's/ .*; /       /g' \
 		| gzip - \
 		> $@
 	echo "Finished the creation of the InterPro table."
