@@ -42,6 +42,7 @@ public class TableWriter implements UniprotObserver {
     private CSV.IndexedWriter emblCrossReferences;
     private CSV.IndexedWriter goCrossReferences;
     private CSV.IndexedWriter ecCrossReferences;
+    private CSV.IndexedWriter interproCrossReferences;
     private CSV.IndexedWriter proteomeCrossReferences;
     private CSV.IndexedWriter proteomes;
 
@@ -92,6 +93,8 @@ public class TableWriter implements UniprotObserver {
                 addGORef(ref, uniprotEntryId);
             for (UniprotECRef ref : entry.getECReferences())
                 addECRef(ref, uniprotEntryId);
+            for (UniprotInterproRef ref : entry.getInterproReferences())
+                addInterproRef(ref, uniprotEntryId);
             for (UniprotProteomeRef ref : entry.getProtReferences())
                 addProteomeRef(ref, uniprotEntryId);
         }
@@ -256,6 +259,25 @@ public class TableWriter implements UniprotObserver {
     }
 
     /**
+     * Adds a uniprot entry InterPro reference to the database
+     *
+     * @param ref
+     *            The uniprot InterPro reference to add
+     * @param uniprotEntryId
+     *            The uniprotEntry of the cross reference
+     */
+    public void addInterproRef(UniprotECRef ref, int uniprotEntryId) {
+        try {
+            interproCrossReferences.write(Integer.toString(uniprotEntryId), ref.getId());
+        } catch (IOException e) {
+            System.err.println(new Timestamp(System.currentTimeMillis())
+                    + " Error adding this InterPro reference to the database.");
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
      * Adds a uniprot proteome reference to the database
      *
      * @param ref
@@ -288,6 +310,7 @@ public class TableWriter implements UniprotObserver {
             emblCrossReferences.close();
             goCrossReferences.close();
             ecCrossReferences.close();
+            interproCrossReferences.close();
             proteomeCrossReferences.close();
             proteomes.close();
         } catch(IOException e) {
