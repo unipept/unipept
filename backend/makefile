@@ -14,6 +14,7 @@ TABLES=                                        \
 	$(TABDIR)/go_terms.tsv.gzip 			   \
 	$(TABDIR)/go_cross_references.tsv.gz       \
 	$(TABDIR)/interpro_entries.tsv.gz 		   \
+	$(TABDIR)/interpro_cross_references.tsv.gz \
 	$(INTDIR)/proteomes.tsv.gz                 \
 	$(TABDIR)/proteome_cross_references.tsv.gz 
 
@@ -280,6 +281,14 @@ $(TABDIR)/go_terms.tsv.gz: $(GOBDIR)/goinfo.obo
 	echo "Finished the creation of the GO terms table."
 
 $(TABDIR)/interpro_entries.tsv.gz: $(INPDIR)/interpro.xml.gz
+	echo "Starting fetching InterPro info"
+	./interprotable.py \
+		$(INPDIR)/interpro.xml.gz \
+		| gzip - \
+		> $@
+	echo "Finished the creation of the InterPro table."
+
+$(TABDIR)/interpro_2_go.tsv.gz: 
 	echo "Starting fetching InterPro info"
 	./interprotable.py \
 		$(INPDIR)/interpro.xml.gz \
