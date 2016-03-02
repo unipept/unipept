@@ -44,7 +44,7 @@ public class TaxonsUniprots2Tables {
      * next 8 parameters are the output files, all in TSV format. In order, they
      * are: the peptides, the uniprot entries, the RefSeq cross,references, the 
      * EC cross references, the EMBL cross references, the GO cross references,
-     * the proteomes and the proteome cross references.
+     * the InterPro cross references, the proteomes and the proteome cross references.
      *
      * The rest of the parameters comes in pairs. Each pair is a uniprot xml
      * file to parse and the "type" the entries parsed from this file should get
