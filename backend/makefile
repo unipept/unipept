@@ -67,14 +67,14 @@ $(UNIDIR)/uniprot_sprot.xml.gz:
 
 $(KGPDIR)/keggpathways.tsv:
 	echo "Starting download KEGG pathway."
-	makdir -p $(KGPDIR)
+	mkdir -p $(KGPDIR)
 	rm -f $@
 	wget --no-verbose "$(KEGGP_URL)" -O $@
 	echo "Finished downloading $@."
 
 $(KGPDIR)/keggpathwaymappings.tsv:
 	echo "Starting download KEGG pathway mapping."
-	makdir -p $(KGPDIR)
+	mkdir -p $(KGPDIR)
 	rm -f $@
 	wget --no-verbose "$(KEGGPM_URL)" | fgrep 'path:map' > $@
 	echo "Finished downloading $@."
