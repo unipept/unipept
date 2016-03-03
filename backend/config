@@ -31,3 +31,4 @@ ECN_URL=ftp://ftp.ebi.ac.uk/pub/databases/enzyme/enzyme.dat
 ECNC_URL=ftp://ftp.ebi.ac.uk/pub/databases/enzyme/enzclass.txt
 GOB_URL=http://geneontology.org/ontology/go-basic.obo
 INTPR_URL=ftp://ftp.ebi.ac.uk/pub/databases/interpro/Current/interpro.xml.gz
+INP2GO_URL=http://geneontology.org/external2go/interpro2go
