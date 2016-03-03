@@ -126,10 +126,9 @@ class SequencesController < ApplicationController
     # calculate ec LCA
     #@test1 = @ec_lca_table.map {|ecs| ec_lca_table[ecs][0] ? }
 
-
     # --------- Tree view for EC numbers --------- #
 
-    @ec_root = Node.new("-.-.-.-", '-.-.-.-', nil, 'root') # start constructing the tree
+    @ec_root = Node.new("-.-.-.-", 'root', nil, 'root') # start constructing the tree
     @ec_root.data['count'] = @ecc.values.sum
     ec_last_node =  @ec_root
 
@@ -155,6 +154,17 @@ class SequencesController < ApplicationController
     end
     @ec_root.sort_children
     @ec_root = Oj.dump(@ec_root, mode: :compat)
+
+    def calc_ec_lca(ec_hash, ec_root)
+      if ec_hash["children"].nil? or ec_hash["children"].size > 1
+        return ec_root
+      end
+      ec_root = ec_hash["children"][0]["id"]
+      calc_ec_lca(ec_hash["children"][0], ec_root)
+    end
+
+    ec_lca_hash = JSON.parse(@ec_root)
+    @ec_lca_root = calc_ec_lca(ec_lca_hash, "root")
 
     # ----------- end ------------ #
 
