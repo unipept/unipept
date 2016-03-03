@@ -155,16 +155,17 @@ class SequencesController < ApplicationController
     @ec_root.sort_children
     @ec_root = Oj.dump(@ec_root, mode: :compat)
 
-    def calc_ec_lca(ec_hash, ec_root)
+    def calc_ec_lca(ec_hash, ec_root, common_ec_lineage)
       if ec_hash["children"].nil? or ec_hash["children"].size > 1
-        return ec_root
+        return ec_root, common_ec_lineage
       end
       ec_root = ec_hash["children"][0]["id"]
-      calc_ec_lca(ec_hash["children"][0], ec_root)
+      common_ec_lineage.push(ec_root)
+      calc_ec_lca(ec_hash["children"][0], ec_root, common_ec_lineage)
     end
 
     ec_lca_hash = JSON.parse(@ec_root)
-    @ec_lca_root = calc_ec_lca(ec_lca_hash, "root")
+    @ec_lca_root, @common_ec_lineage = calc_ec_lca(ec_lca_hash, "root", [])
 
     # ----------- end ------------ #
 
