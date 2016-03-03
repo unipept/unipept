@@ -156,7 +156,7 @@ class SequencesController < ApplicationController
     @ec_root = Oj.dump(@ec_root, mode: :compat)
 
     def calc_ec_lca(ec_hash, ec_root, common_ec_lineage)
-      if ec_hash["children"].nil? or ec_hash["children"].size > 1
+      if ec_hash["children"].nil? or ec_hash["children"].size > 1 or ec_hash["children"] == []
         return ec_root, common_ec_lineage
       end
       ec_root = ec_hash["children"][0]["id"]
