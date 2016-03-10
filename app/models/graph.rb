@@ -21,6 +21,8 @@ class Graph
       parent = GraphNode.new(go.id, go.name)
       add_term(go.id, parent)
     end
+    # We do need to traverse these children, even if we already processed this
+    # node, because we need to add a new reachable node.
     parent.linked.add(linked)
     for child in go.parents
       node = add_reachable(child, linked)

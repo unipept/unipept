@@ -107,6 +107,7 @@
             <li class="active"><a class="subnav-link" id="ec-tree-tab" href="#ec-tree" data-toggle="tab">EC number tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
             <li><a class="subnav-link" href="#ec-table-tab" data-toggle="tab">EC number table <span></span></a></li>
             <li><a class="subnav-link" id="go-graph-tab" href="#go-graph" data-toggle="tab">GO graph <span></span></a></li>
+            <li><a class="subnav-link" id="go-tree-tab" href="#go-tree" data-toggle="tab">GO tree <span></span></a></li>
           </ul>
           <div class='card-supporting-text'>
             <div class="tab-content">
@@ -151,6 +152,10 @@
                   <svg width="916" height="600"><g/></svg>
                 </div>
               </div>
+              <div class="tab-pane" id="go-tree">
+                <div id="buttons-go-tree" class="buttons-single buttons-subnav"></div>
+                <div class="tpa-tree" id="goTree"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -166,7 +171,8 @@
         uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>,
         terms: <%= raw(Oj.dump(@graph.terms.map{|k, v| {'id' => k, 'name' => v.name}})) %>,
         edges: <%= raw(Oj.dump(@links, mode: :compat)) %>,
-        found: <%= raw(@gos) %>
+        found: <%= raw(@gos) %>,
+        go_tree: <%= raw(@go_root) %>
       });
     });
   </script>

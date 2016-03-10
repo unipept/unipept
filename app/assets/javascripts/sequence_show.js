@@ -8,6 +8,7 @@ function init_sequence_show(data) {
 
     // set up GO graph
     initDagreD3Graph(data.terms, data.edges, data.found, "goGraph", "go-graph-tab")
+    initD3TreeView(data.go_tree, "#goTree")
 
     // set up column toggle
     initColumnToggle();
