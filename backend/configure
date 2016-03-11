@@ -63,7 +63,7 @@ option() {
     local file=".default-config" option="$1" default="$2" question="$3" value=
     value="$(confirm "$question" "${!option:-$default}")"
     echo "$option=\"$value\"" >> "$file"
-    echo "s|<<<$option>>>|${value//|/\\|}|g" >> "$sedscript"
+    echo "s|<<<${option#CONFIG_}>>>|${value//|/\\|}|g" >> "$sedscript"
 }
 
 option "CONFIG_PEPTIDE_MIN_LENGTH" "8" "What is the minimum length for peptides?"
@@ -112,12 +112,42 @@ source ".default-config"
 # None-configured variables
 
 ENTREZ_URL="http://eutils.ncbi.nlm.nih.gov/entrez/eutils"
+echo "s|<<<ENTREZ_URL>>>|$ENTREZ_URL|g" >> "$sedscript"
+
 TAXON_URL="ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip"
+echo "s|<<<TAXON_URL>>>|$TAXON_URL|g" >> "$sedscript"
 
 # --------------------------------------------------------------------
 # Writing the makefile
 
+source_files=""
+source_inputs=""
+for (( i = 0 ; i < sources_count ; i += 2 )); do
+    name="${CONFIG_SOURCES[$i]}"
+    url="${CONFIG_SOURCES[$((i + 1))]}"
+    source_files="$source_files $CONFIG_SRCDIR/${name}.xml.gz"
+    source_inputs="$source_inputs $name=<($CONFIG_CMD_ZCAT $CONFIG_SRCDIR/${name}.xml.gz)"
+done
+echo "s|<<<SOURCE_FILES>>>|$source_files|g" >> "$sedscript"
+echo "s|<<<SOURCE_INPUTS>>>|$source_inputs|g" >> "$sedscript"
+
+
 $CONFIG_CMD_SED -f "$sedscript" makefile.in > makefile
 
 rm "$sedscript"
+
+for (( i = 0 ; i < sources_count ; i += 2 )); do
+    name="${CONFIG_SOURCES[$i]}"
+    name="$CONFIG_SRCDIR/${name}.xml.gz"
+    url="${CONFIG_SOURCES[$((i + 1))]}"
+    cat >> makefile <<HERE
+$file:
+	echo "Starting downloading $name."
+	mkdir -p $CONFIG_SRCDIR
+	rm -f $file
+	wget --progress=dot:giga "$url" -O $file
+	echo "Finished downloading $name."
+
+HERE
+done
 
