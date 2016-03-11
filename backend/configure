@@ -1,0 +1,123 @@
+#!/bin/bash
+
+echo "Configuring the Unipept backend program."
+
+erro() {
+    echo $@ >&2
+}
+
+sedscript="$(mktemp)"
+
+# --------------------------------------------------------------------
+# Prompt functions
+
+ask() {
+    local answer
+    erro -n "$1 [Y/n] "
+    read answer
+    while true; do
+        case "${answer:-Yes}" in
+            N*|n*) return 1;;
+            Y*|y*) return 0;;
+        esac
+        erro -n "Please answer with [y]es or [n]o. "
+        read answer
+    done
+}
+
+confirm() {
+    local question="$1" default="$2" answer=
+    erro -n "$question [$default] "
+    read answer
+    echo "${answer:-$default}"
+}
+
+# --------------------------------------------------------------------
+# Backing up the previous files
+
+backup() {
+    if [ -e "$1" ]; then
+        erro "Seems like '$1' already exists."
+        if ask "Should I make a backup?"; then
+            i=1
+            while [ -e "${1}.$i" ]; do i=$((i + 1)); done
+            cp "$1" "${1}.$i"
+            erro "Moved '$1' to '${1}.${i}'"
+        fi
+    fi
+}
+
+backup "makefile"
+backup ".default-config"
+
+# --------------------------------------------------------------------
+# Reading and remembering defaults
+
+if [ -f ".default-config" ]; then
+    source ".default-config"
+fi
+
+> ".default-config"
+
+option() {
+    local file=".default-config" option="$1" default="$2" question="$3" value=
+    value="$(confirm "$question" "${!option:-$default}")"
+    echo "$option=\"$value\"" >> "$file"
+    echo "s|<<<$option>>>|${value//|/\\|}|g" >> "$sedscript"
+}
+
+option "CONFIG_PEPTIDE_MIN_LENGTH" "8" "What is the minimum length for peptides?"
+option "CONFIG_PEPTIDE_MAX_LENGTH" "50" "What is the maximum length for peptides?"
+option "CONFIG_TABDIR" "./data/tables" "Where should I store the final TSV files?"
+option "CONFIG_INTDIR" "./data/intermediate" "Where should I store intermediate TSV files?"
+option "CONFIG_TAXDIR" "./data/taxon" "Where should I download and extract the taxon zip?"
+option "CONFIG_SRCDIR" "./data/sources" "Where should I download the source xml files?"
+option "CONFIG_JAVA_MINMEM" "-Xms5g" "How much memory does Java require?"
+option "CONFIG_JAVA_MAXMEM" "-Xmx6g" "How much memory may Java use?"
+option "CONFIG_ENTREZ_BATCH_SIZE" "1000" "Which batch size should I use for communication with Entrez?"
+option "CONFIG_CMD_SORT" "LC_ALL=C sort --buffer-size=80% --parallel=4" "Which sort command should I use?"
+option "CONFIG_CMD_GZIP" "gzip -" "How should I compress?"
+option "CONFIG_CMD_ZCAT" "zcat" "How should I decompress?"
+option "CONFIG_CMD_UNZIP" "unzip -DD" "How do I unzip while discarding dates?"
+option "CONFIG_CMD_SED" "sed" "What's my sed executable?"
+
+sources_count="${#CONFIG_SOURCES[@]}"
+if [ "$sources_count" == "0" ]; then
+    CONFIG_SOURCES=('swissprot' 'ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/swissprot.xml.gz'
+                    'trembl' 'ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/trembl.xml.gz')
+    sources_count=4
+fi
+echo "CONFIG_SOURCES=(" >> ".default-config"
+for (( i = 0 ; i < sources_count ; i += 2 )); do
+    if ask "Parse ${CONFIG_SOURCES[$i]} (${CONFIG_SOURCES[$((i + 1))]})?"; then
+        echo "    '${CONFIG_SOURCES[$i]}' '${CONFIG_SOURCES[$((i + 1))]}'" >> ".default-config"
+    fi
+done
+erro -n "Add another source by entering the name. An empty name cancels: "
+read name
+while [ -n "$name" ]; do
+    erro -n "Where can I download this source (url)? "
+    read url
+
+    echo "    '$name' '$url'" >> ".default-config"
+
+    erro -n "Add another source by entering the name. An empty name cancels: "
+    read name
+done
+echo ")" >> ".default-config"
+
+source ".default-config"
+
+# --------------------------------------------------------------------
+# None-configured variables
+
+ENTREZ_URL="http://eutils.ncbi.nlm.nih.gov/entrez/eutils"
+TAXON_URL="ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip"
+
+# --------------------------------------------------------------------
+# Writing the makefile
+
+$CONFIG_CMD_SED -f "$sedscript" makefile.in > makefile
+
+rm "$sedscript"
+
