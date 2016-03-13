@@ -11,6 +11,9 @@ import java.util.stream.Stream;
  */
 public class UniprotEntry {
 
+    // TODO Make this static for now
+    private static final int K = 7;
+
     // peptide settings
     private final int peptideMin;
     private final int peptideMax;
@@ -128,20 +131,10 @@ public class UniprotEntry {
 
     public List<String> digest() {
         sequences.clear();
-        int start = 0;
         int length = sequence.length();
-        for (int i = 0; i < length; i++) {
-            char x = sequence.charAt(i);
-            if ((x == 'K' || x == 'R') && (i + 1 < length && sequence.charAt(i + 1) != 'P')) {
-                if (i + 1 - start >= peptideMin && i + 1 - start <= peptideMax) {
-                    sequences.add(sequence.substring(start, i + 1));
-                }
-                start = i + 1;
-            }
-        }
-        if (length - start >= peptideMin && length - start <= peptideMax) {
-            sequences.add(sequence.substring(start, length));
-        }
+        for (int i = 0; i <= length - K; i++) {
+            sequences.add(sequence.substring(i, i + K));
+         }
         return sequences;
     }
 
