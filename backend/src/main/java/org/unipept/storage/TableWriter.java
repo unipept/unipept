@@ -12,6 +12,7 @@ import org.unipept.xml.*;
 import org.unipept.storage.CSV;
 import org.unipept.taxons.TaxonList;
 import org.unipept.tools.TaxonsUniprots2Tables;
+import org.unipept.tools.Debug;
 
 /**
  * Intermediate class to add PeptideData to the database
@@ -34,6 +35,7 @@ public class TableWriter implements UniprotObserver {
     private Map<String, Integer> proteomeIds;
     private TaxonList taxonList;
     private Set<Integer> wrongTaxonIds;
+    private int peptide_count;
 
     // csv files
     private CSV.IndexedWriter peptides;
@@ -51,6 +53,7 @@ public class TableWriter implements UniprotObserver {
     public TableWriter(TaxonsUniprots2Tables args) {
         wrongTaxonIds = new HashSet<Integer>();
         proteomeIds = new HashMap<>();
+        peptide_count = 0;
 
         /* Opening CSV files for writing. */
         try {
@@ -186,6 +189,15 @@ public class TableWriter implements UniprotObserver {
                     originalSequence,
                     Integer.toString(uniprotEntryId)
                     );
+
+            peptide_count++;
+            if (peptide_count % 10000000 == 0) {
+                System.err.println(
+                    new Timestamp(System.currentTimeMillis()) + ":\n"
+                    + "  K-mers read: " + peptide_count + "\n"
+                    + "  Memory used: " + Debug.memory() + "\n"
+                );
+            }
         } catch(IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + " Error adding this peptide to the database: " + unifiedSequence);
