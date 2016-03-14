@@ -1,5 +1,7 @@
 #!/bin/bash
 
+
+
 echo "Configuring the Unipept backend program."
 
 erro() {
@@ -7,6 +9,34 @@ erro() {
 }
 
 sedscript="$(mktemp tmp.XXXXXXX.sed)"
+
+# --------------------------------------------------------------------
+# checking for dependencies
+
+checkdep() {
+    hash $1 > /dev/null 2>&1 || {
+        erro "Unipept backend requires ${2:-$1} to be installed."
+        exit 1
+    }
+}
+
+checkdep awk
+checkdep cat
+checkdep curl
+checkdep grep
+checkdep html2text
+checkdep java
+checkdep join
+checkdep make
+checkdep mkdir
+checkdep mvn "Maven"
+checkdep rm
+checkdep tee
+checkdep tr
+checkdep uniq
+checkdep wc
+checkdep wget
+checkdep xargs
 
 # --------------------------------------------------------------------
 # Prompt functions
