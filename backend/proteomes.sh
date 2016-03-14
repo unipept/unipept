@@ -10,7 +10,6 @@ outfile="$3"
 set -e
 
 tmp="$(mktemp proteomes.XXXXXXX)"
-echo "$tmp"
 
 get_proteome() {
     local id="$1"
