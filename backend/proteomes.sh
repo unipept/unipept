@@ -9,7 +9,7 @@ outfile="$3"
 
 set -e
 
-tmp="$(mktemp)"
+tmp="$(mktemp proteomes.XXXXXXX)"
 echo "$tmp"
 
 get_proteome() {

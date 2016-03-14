@@ -5,7 +5,7 @@
 # Please crash on first mistake.
 set -e
 
-tempfile="$(mktemp)"
+tempfile="$(mktemp tmp.XXXXXXXX)"
 > "$tempfile"
 
 header="$(curl -d 'db=assembly'                       \

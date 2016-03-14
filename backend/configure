@@ -6,7 +6,7 @@ erro() {
     echo $@ >&2
 }
 
-sedscript="$(mktemp)"
+sedscript="$(mktemp tmp.XXXXXXX.sed)"
 
 # --------------------------------------------------------------------
 # Prompt functions
