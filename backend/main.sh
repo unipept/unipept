@@ -20,7 +20,7 @@ log() {
 true > "$LOGFILE"
 log "Starting unipept backend run."
 
-newstamp="$(mktemp)"
+newstamp="$(mktemp STAMP.XXXXXXX)"
 oldstamp="$UNIDIR/.STAMP"
 
 # Get the new "Last Modified" stamp from uniprot.
