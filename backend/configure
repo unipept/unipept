@@ -74,7 +74,7 @@ option "CONFIG_TAXDIR" "./data/taxon" "Where should I store and extract the down
 option "CONFIG_SRCDIR" "./data/sources" "Where should I store the downloaded source xml files (large, single-write, single-read)?"
 option "CONFIG_JAVA_MEM" "6g" "How much memory should Java use?"
 option "CONFIG_ENTREZ_BATCH_SIZE" "1000" "Which batch size should I use for communication with Entrez?"
-option "CONFIG_CMD_SORT" "LC_ALL=C sort --buffer-size=80% --parallel=4" "Which sort command should I use?"
+option "CONFIG_CMD_SORT" "sort --buffer-size=80% --parallel=4" "Which sort command should I use?"
 option "CONFIG_CMD_GZIP" "gzip -" "Which pipe compression command should I use?"
 option "CONFIG_CMD_ZCAT" "zcat" "Which pipe decompression command (e.g. zcat, gzcat) should I use?"
 option "CONFIG_CMD_UNZIP" "unzip -DD" "How do I unzip while discarding dates?"
