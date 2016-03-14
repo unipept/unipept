@@ -1,2 +1,4 @@
 target/
 data/
+.default-config
+makefile
