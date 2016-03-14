@@ -3,7 +3,7 @@
 echo "Configuring the Unipept backend program."
 
 erro() {
-    echo $@ >&2
+    echo "$@" >&2
 }
 
 sedscript="$(mktemp tmp.XXXXXXX.sed)"
@@ -66,20 +66,19 @@ option() {
     echo "s|<<<${option#CONFIG_}>>>|${value//|/\\|}|g" >> "$sedscript"
 }
 
-option "CONFIG_PEPTIDE_MIN_LENGTH" "8" "What is the minimum length for peptides?"
-option "CONFIG_PEPTIDE_MAX_LENGTH" "50" "What is the maximum length for peptides?"
-option "CONFIG_TABDIR" "./data/tables" "Where should I store the final TSV files?"
-option "CONFIG_INTDIR" "./data/intermediate" "Where should I store intermediate TSV files?"
-option "CONFIG_TAXDIR" "./data/taxon" "Where should I download and extract the taxon zip?"
-option "CONFIG_SRCDIR" "./data/sources" "Where should I download the source xml files?"
-option "CONFIG_JAVA_MINMEM" "-Xms5g" "How much memory does Java require?"
-option "CONFIG_JAVA_MAXMEM" "-Xmx6g" "How much memory may Java use?"
+option "CONFIG_PEPTIDE_MIN_LENGTH" "5" "What is the minimum length (inclusive) for peptides?"
+option "CONFIG_PEPTIDE_MAX_LENGTH" "50" "What is the maximum length (inclusive) for peptides?"
+option "CONFIG_TABDIR" "./data/tables" "Where should I store the final TSV files (large, single-write)?"
+option "CONFIG_INTDIR" "./data/intermediate" "Where should I store intermediate TSV files (large, single-write, multiple-read?"
+option "CONFIG_TAXDIR" "./data/taxon" "Where should I store and extract the downloaded taxon zip (small, single-write, single-read)?"
+option "CONFIG_SRCDIR" "./data/sources" "Where should I store the downloaded source xml files (large, single-write, single-read)?"
+option "CONFIG_JAVA_MEM" "6g" "How much memory should Java use?"
 option "CONFIG_ENTREZ_BATCH_SIZE" "1000" "Which batch size should I use for communication with Entrez?"
 option "CONFIG_CMD_SORT" "LC_ALL=C sort --buffer-size=80% --parallel=4" "Which sort command should I use?"
-option "CONFIG_CMD_GZIP" "gzip -" "How should I compress?"
-option "CONFIG_CMD_ZCAT" "zcat" "How should I decompress?"
+option "CONFIG_CMD_GZIP" "gzip -" "Which pipe compression command should I use?"
+option "CONFIG_CMD_ZCAT" "zcat" "Which pipe decompression command (e.g. zcat, gzcat) should I use?"
 option "CONFIG_CMD_UNZIP" "unzip -DD" "How do I unzip while discarding dates?"
-option "CONFIG_CMD_SED" "sed" "What's my sed executable?"
+option "CONFIG_CMD_SED" "sed" "What's my sed executable (e.g. sed, gsed)?"
 
 sources_count="${#CONFIG_SOURCES[@]}"
 if [ "$sources_count" == "0" ]; then
