@@ -107,6 +107,7 @@ done
 echo ")" >> ".default-config"
 
 source ".default-config"
+sources_count="${#CONFIG_SOURCES[@]}"
 
 # --------------------------------------------------------------------
 # None-configured variables
@@ -138,7 +139,7 @@ rm "$sedscript"
 
 for (( i = 0 ; i < sources_count ; i += 2 )); do
     name="${CONFIG_SOURCES[$i]}"
-    name="$CONFIG_SRCDIR/${name}.xml.gz"
+    file="$CONFIG_SRCDIR/${name}.xml.gz"
     url="${CONFIG_SOURCES[$((i + 1))]}"
     cat >> makefile <<HERE
 $file:

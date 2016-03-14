@@ -49,7 +49,7 @@ $(JAR): $(SRC)
 <<<TABDIR>>>/taxons.tsv.gz <<<TABDIR>>>/lineages.tsv.gz: <<<INTDIR>>>/names.dmp <<<INTDIR>>>/nodes.dmp
 	echo "Starting calculation of taxons and lineages tables."
 	mkdir -p $(dir $@)
-	java <<<JAVA_MEMMIN>>> <<<JAVA_MEMMAX>>> -cp $(JAR) $(PAC).NamesNodes2TaxonsLineages \
+	java <<<JAVA_MINMEM>>> <<<JAVA_MAXMEM>>> -cp $(JAR) $(PAC).NamesNodes2TaxonsLineages \
 		--names <<<INTDIR>>>/names.dmp \
 		--nodes <<<INTDIR>>>/nodes.dmp \
 		--taxons >(<<<CMD_GZIP>>> > <<<TABDIR>>>/taxons.tsv.gz) \
@@ -144,7 +144,7 @@ $(TABLES): <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 
 <<<INTDIR>>>/LCAs.tsv.gz: <<<TABDIR>>>/lineages.tsv.gz <<<INTDIR>>>/sequence_taxon.tsv.gz
 	echo "Starting the calculation equalized LCA's."
-	java <<<JAVA_MEMMIN>>> <<<JAVA_MEMMAX>>> -cp $(JAR) $(PAC).LineagesSequencesTaxons2LCAs \
+	java <<<JAVA_MINMEM>>> <<<JAVA_MAXMEM>>> -cp $(JAR) $(PAC).LineagesSequencesTaxons2LCAs \
 		<(<<<CMD_ZCAT>>> <<<TABDIR>>>/lineages.tsv.gz) \
 		<(<<<CMD_ZCAT>>> <<<INTDIR>>>/sequence_taxon.tsv.gz) \
 		>(<<<CMD_GZIP>>> > <<<INTDIR>>>/LCAs.tsv.gz)
@@ -152,7 +152,7 @@ $(TABLES): <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 
 <<<INTDIR>>>/original_LCAs.tsv.gz: <<<TABDIR>>>/lineages.tsv.gz <<<INTDIR>>>/original_sequence_taxon.tsv.gz
 	echo "Starting the calculation non-equalized LCA's."
-	java <<<JAVA_MEMMIN>>> <<<JAVA_MEMMAX>>> -cp $(JAR) $(PAC).LineagesSequencesTaxons2LCAs \
+	java <<<JAVA_MINMEM>>> <<<JAVA_MAXMEM>>> -cp $(JAR) $(PAC).LineagesSequencesTaxons2LCAs \
 		<(<<<CMD_ZCAT>>> <<<TABDIR>>>/lineages.tsv.gz) \
 		<(<<<CMD_ZCAT>>> <<<INTDIR>>>/original_sequence_taxon.tsv.gz) \
 		>(<<<CMD_GZIP>>> > <<<INTDIR>>>/original_LCAs.tsv.gz)
