@@ -54,7 +54,7 @@ module UnipeptWeb
     config.assets.paths << "#{Rails}/vendor/assets/fonts"
 
     config.versions = {
-      unipept: '3.0.4 feature/tpa-functionalanalysis',
+      unipept: '3.0.4 meta-proteomic-analysis-sunburst',
       gem: '1.0.1',
       uniprot: '2015.07'
     }
@@ -62,3 +62,4 @@ module UnipeptWeb
     config.api_host = 'api.unipept.ugent.be'
   end
 end
+
