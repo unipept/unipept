@@ -7,10 +7,15 @@
     var constructSunburst = function constructSunburst(element, args) {
         /*************** Private variables ***************/
 
+        console.log() 
+
         // parameters
         var that = {},
             multi = args.multi,
             data = args.data;
+            sunburstID = element.id
+            panelID = element.childNodes[1].id
+
 
         // layout
         var w = 730,   // width
@@ -112,16 +117,16 @@
                 textEnter; // new text nodes
 
             // clear everything
-            $("#sunburst svg").remove();
-            $("#sunburstPanel").empty();
+            $("#"+sunburstID+" svg").remove();
+            $("#"+panelID).empty();
 
-            breadcrumbs = d3.select("#sunburstPanel").append("ul");
+            breadcrumbs = d3.select("#"+panelID).append("ul");
 
             x = d3.scale.linear().range([0, 2 * Math.PI]); // use full circle
             y = d3.scale.linear().domain([0, 1]).range([0, r]);
             currentMaxLevel = 4;
 
-            vis = d3.select("#sunburst")
+            vis = d3.select("#"+sunburstID)
                 .append("svg")
                 .attr("version", "1.1")
                 .attr("xmlns", "http://www.w3.org/2000/svg")
@@ -430,8 +435,8 @@
                 if (isFullScreen) {
                     size = Math.min($(window).height() - 44, $(window).width() - 250);
                 }
-                $("#sunburst > svg").attr("width", size);
-                $("#sunburst > svg").attr("height", size);
+                $("#"+sunburstID+" > svg").attr("width", size);
+                $("#"+sunburstID+" > svg").attr("height", size);
             }, 1000);
         };
 
