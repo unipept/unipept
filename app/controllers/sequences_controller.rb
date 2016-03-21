@@ -189,7 +189,6 @@ class SequencesController < ApplicationController
       # it's no error that from and to are swapped, because the relation of the
       # ontology is in the reverse direction of the tree we want
       if !done.include?(link['from'])
-        puts "ok"
         nodes[link['to']].add_child(nodes[link['from']])
         done.add(link['from'])
       end
@@ -211,6 +210,12 @@ class SequencesController < ApplicationController
     counts(nodes['GO:0003674'])
     cleanup(nodes['GO:0003674'])
     @go_root = Oj.dump(nodes['GO:0003674'], mode: :compat)
+
+    @graph = @graph.to_tree
+
+    @links = []
+    graph_size = gos_occur.map{|g,n| @graph.terms.include?(g) ? n.count : 0}.inject(:+)
+    @graph.terms.each { |k,v| v.links.each{ |t,l| @links.push({'from' => k, 'to' => t, 'label' => 'is_a', 'weight' => v.linked.map { |g| gos_occur[g].count }.inject(:+).to_f/graph_size, 'linked' => v.linked.to_a}) } }
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree

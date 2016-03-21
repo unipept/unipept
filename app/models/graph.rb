@@ -31,4 +31,31 @@ class Graph
     parent
   end
 
+  def add_reachable_tree(node, linked)
+    child = @terms[node.id]
+    if child.nil?
+      child = GraphNode.new(node.id, node.name)
+      add_term(node.id, child)
+    end
+    child.linked.add(linked)
+    if !node.links.values.empty?
+      parent = nil
+      for cand in node.links.values
+        if parent.nil?
+          parent = cand
+        end
+      end
+      child.add_link(add_reachable_tree(parent, linked))
+    end
+    child
+  end
+
+  def to_tree
+    tree = Graph.new
+    for hit in @terms['GO:0003674'].linked
+      tree.add_reachable_tree(@terms[hit], hit)
+    end
+    tree
+  end
+
 end
