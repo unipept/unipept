@@ -176,6 +176,11 @@ class SequencesController < ApplicationController
     nodes = {}
     for term in @graph.terms.keys
       nodes[term] = Node.new(term[3..-1].to_i, term, nil, term)
+      if gos_occur.include?(term)
+        nodes[term].data['self_count'] = gos_occur[term].count
+      else
+        nodes[term].data['self_count'] = 0
+      end
     end
 
     done = Set.new
@@ -190,10 +195,20 @@ class SequencesController < ApplicationController
       end
     end
 
+    def counts(parent)
+      parent.data['count'] = parent.data['self_count']
+      for child in parent.children
+          counts(child)
+          parent.data['count'] += child.data['count']
+      end
+    end
+
     def cleanup(parent)
       parent.children.each{|child| cleanup(child)}
       parent.children.delete_if{|child| child.data['count'] == 0}
     end
+
+    counts(nodes['GO:0003674'])
     cleanup(nodes['GO:0003674'])
     @go_root = Oj.dump(nodes['GO:0003674'], mode: :compat)
 
