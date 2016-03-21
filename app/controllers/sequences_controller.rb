@@ -144,6 +144,7 @@ class SequencesController < ApplicationController
               node = Node.new(ecs, ecs, @ec_root, @ec_lca_class[ecs])
             end
             node.data['count'] = @ec_lca_count[ecs]
+            node.data['self_count'] = @ecc[ecs]
             ec_last_node_loop = ec_last_node_loop.add_child(node)
           else
             node.name = ecs
