@@ -189,6 +189,12 @@ class SequencesController < ApplicationController
         done.add(link['from'])
       end
     end
+
+    def cleanup(parent)
+      parent.children.each{|child| cleanup(child)}
+      parent.children.delete_if{|child| child.data['count'] == 0}
+    end
+    cleanup(nodes['GO:0003674'])
     @go_root = Oj.dump(nodes['GO:0003674'], mode: :compat)
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
