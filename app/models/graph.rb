@@ -1,8 +1,9 @@
 class Graph
   attr_accessor :terms
 
-  def initialize
+  def initialize(counts)
     @terms = Hash.new
+    @counts = counts
   end
 
   def add_term(term, node)
@@ -37,12 +38,14 @@ class Graph
       child = GraphNode.new(node.id, node.name)
       add_term(node.id, child)
     end
-    child.linked.add(linked)
+    child.add_linked(linked, @counts[node.id])
     if !node.links.values.empty?
       parent = nil
+      weigth = 0
       for cand in node.links.values
-        if parent.nil?
+        if parent.nil? || weigth < cand.weight
           parent = cand
+          weigth = cand.weight
         end
       end
       child.add_link(add_reachable_tree(parent, linked))
@@ -51,7 +54,7 @@ class Graph
   end
 
   def to_tree
-    tree = Graph.new
+    tree = Graph.new(@counts)
     for hit in @terms['GO:0003674'].linked
       tree.add_reachable_tree(@terms[hit], hit)
     end

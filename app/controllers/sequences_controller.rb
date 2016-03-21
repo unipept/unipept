@@ -160,9 +160,12 @@ class SequencesController < ApplicationController
 
     # ----------- end ------------ #
 
-    @graph = Graph.new
     gos = @entries.map(&:go_cross_references).flatten.map(&:go_id)
     gos_occur = gos.group_by{|i| i}
+    gos_counts = {}
+    gos_occur.each{|k,v| gos_counts[k] = v.count}
+
+    @graph = Graph.new(gos_counts)
     @gos = gos.uniq
     for go in @gos
       node = GO_GRAPH.find_go(go)
