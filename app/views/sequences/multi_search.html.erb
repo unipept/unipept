@@ -152,13 +152,13 @@
 <div id="tooltip" class="tip"></div>
 <% if @number_found > 0 %>
   <script type="text/javascript">
-    var data = <%= raw(@json_tree)%>;
+    var diversityData = <%= raw(@json_tree)%>;
     var sequences = <%= raw(@json_sequences)%>;
     var missed = <%= raw(@json_missed)%>
 
     $(function () {
         constructMultisearch({
-            data : data,
+            diversityData : diversityData,
             equateIL : <%=@equate_il %>,
             missed : missed,
             sequences : sequences});
