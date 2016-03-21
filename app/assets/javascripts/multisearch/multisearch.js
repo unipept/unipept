@@ -25,7 +25,7 @@ var constructMultisearch = function constructMultisearch(args) {
      */
     function init() {
         // set up visualisations
-        initVisualisations();
+        initVisualisations("#d3TreeView");
 
         // set up save images
         setUpSaveImage();
@@ -46,7 +46,7 @@ var constructMultisearch = function constructMultisearch(args) {
 
     }
 
-    function initVisualisations() {
+    function initVisualisations(selector) {
         // sunburst
         try {
             sunburst = constructSunburst({multi : that, data : JSON.parse(JSON.stringify(data))});
@@ -63,7 +63,7 @@ var constructMultisearch = function constructMultisearch(args) {
 
         // treeview
         try {
-            treeview = constructTreeview({multi : that, data : JSON.parse(JSON.stringify(data))});
+            treeview = $(selector).treeview({data : JSON.parse(JSON.stringify(data)), width: 916, height: 600,});
         } catch (err) {
             error(err.message, "Loading the Treeview visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
