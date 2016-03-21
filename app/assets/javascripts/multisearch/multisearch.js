@@ -27,9 +27,6 @@ var constructMultisearch = function constructMultisearch(args) {
         // set up visualisations
         initVisualisations("#d3TreeView");
 
-        // set up visualisations
-        initVisualisations(selector);
-
         // set up save images
         setUpSaveImage();
 
