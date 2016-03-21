@@ -8,7 +8,7 @@ var constructMultisearch = function constructMultisearch(args) {
     /*************** Private variables ***************/
 
     var that = {},
-        data = args.data,
+        data = args.diversityData,
         equateIL = args.equateIL,
         missed = args.missed,
         sequences = args.sequences,
@@ -25,7 +25,11 @@ var constructMultisearch = function constructMultisearch(args) {
      */
     function init() {
         // set up visualisations
-        initVisualisations("#d3TreeView");
+        initVisualisations();
+
+        initVisualisationsSunburst(data, '#sunburst')
+
+        initVisualisationsTreeview(data, "#d3TreeView");
 
         // set up save images
         setUpSaveImage();
@@ -46,26 +50,31 @@ var constructMultisearch = function constructMultisearch(args) {
 
     }
 
-    function initVisualisations(selector) {
+    function initVisualisationsSunburst(data, selector) {
         // sunburst
         try {
-            sunburst = constructSunburst({multi : that, data : JSON.parse(JSON.stringify(data))});
+            sunburst = $(selector).sunburst({multi : that, data : JSON.parse(JSON.stringify(data))});
         } catch (err) {
             error(err.message, "Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
+    }
+
+    function initVisualisationsTreeview(data, selector) {
+        // treeview
+        try {
+            treeview = $(selector).treeview({data : JSON.parse(JSON.stringify(data)), width: 916, height: 600,});
+        } catch (err) {
+            error(err.message, "Loading the Treeview visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
+        }
+    }
+
+    function initVisualisations(selector) {
 
         // treemap
         try {
             treemap = constructTreemap({multi : that, data : JSON.parse(JSON.stringify(data))});
         } catch (err) {
             error(err.message, "Loading the Treemap visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
-        }
-
-        // treeview
-        try {
-            treeview = $(selector).treeview({data : JSON.parse(JSON.stringify(data)), width: 916, height: 600,});
-        } catch (err) {
-            error(err.message, "Loading the Treeview visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
 
         // searchtree
