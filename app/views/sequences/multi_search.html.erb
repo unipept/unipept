@@ -100,6 +100,30 @@
                   <li><a class="subnav-link" href="#ecSunburstWrapper" data-toggle="tab">Sunburst</a></li>
                 </ul>
               </div>
+
+              <div class="tab-content">
+                <div class="tab-pane active" id="ecSunburstWrapper">
+                  <h2 class="ghead">
+                    <span class="dir">
+                      <a class="btn btn-xs btn-default btn-animate" id="sunburst-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                    </span>
+                    <span class="dir">
+                      <div class="btn-group" id="colorswap">
+                        <a class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" id="colorswap-button"><span class="glyphicon glyphicon-cog"></span></a>
+                        <ul class="dropdown-menu dropdown-menu-right dropdown-menu-form">
+                          <li title="Enabling this will assign fixed colors to taxa making it easier to compare samples.">
+                            <div class="checkbox"><label class="checkbox"><input type="checkbox" id="colorswap-checkbox">Use fixed colors</label></div>
+                          </li>
+                        </ul>
+                      </div>
+                    </span>
+                    <span class="dir text">Click a slice to zoom in and the center node to zoom out</span>
+                  </h2>
+                  <div id="ecSunburst">
+                    <div id="ecSunburstPanel">&nbsp;</div>
+                  </div>
+                </div>
+
             </div>
           </div>
         </div>
@@ -154,13 +178,15 @@
   <script type="text/javascript">
     var diversityData = <%= raw(@json_tree)%>;
     var sequences = <%= raw(@json_sequences)%>;
-    var missed = <%= raw(@json_missed)%>
+    var missed = <%= raw(@json_missed)%>;
+    var functionalData = <%= raw(@json_tree)%>
 
     $(function () {
         constructMultisearch({
             diversityData : diversityData,
             equateIL : <%=@equate_il %>,
             missed : missed,
+            functionalData: functionalData,
             sequences : sequences});
     });
   </script>
