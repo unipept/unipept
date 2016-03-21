@@ -9,6 +9,7 @@ var constructMultisearch = function constructMultisearch(args) {
 
     var that = {},
         data = args.diversityData,
+        fdata = args.functionalData,
         equateIL = args.equateIL,
         missed = args.missed,
         sequences = args.sequences,
@@ -27,9 +28,13 @@ var constructMultisearch = function constructMultisearch(args) {
         // set up visualisations
         initVisualisations();
 
+        initVisualisationsSunburst(fdata, '#ecSunburst');
+
         initVisualisationsSunburst(data, '#sunburst')
 
         initVisualisationsTreeview(data, "#d3TreeView");
+
+        //initVisualisationsTreeview(data, "#ecSunburst");
 
         // set up save images
         setUpSaveImage();
@@ -53,7 +58,7 @@ var constructMultisearch = function constructMultisearch(args) {
     function initVisualisationsSunburst(data, selector) {
         // sunburst
         try {
-            sunburst = $(selector).sunburst({multi : that, data : JSON.parse(JSON.stringify(data))});
+            $(selector).sunburst({multi : that, data : JSON.parse(JSON.stringify(data))});
         } catch (err) {
             error(err.message, "Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
@@ -62,13 +67,13 @@ var constructMultisearch = function constructMultisearch(args) {
     function initVisualisationsTreeview(data, selector) {
         // treeview
         try {
-            treeview = $(selector).treeview({data : JSON.parse(JSON.stringify(data)), width: 916, height: 600,});
+            $(selector).treeview({data : JSON.parse(JSON.stringify(data)), width: 916, height: 600,});
         } catch (err) {
             error(err.message, "Loading the Treeview visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
     }
 
-    function initVisualisations(selector) {
+    function initVisualisations() {
 
         // treemap
         try {
@@ -84,9 +89,7 @@ var constructMultisearch = function constructMultisearch(args) {
             error(err.message, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
 
-        mapping.set("sunburst", sunburst);
         mapping.set("d3TreeMap", treemap);
-        mapping.set("d3TreeView", treeview);
     }
 
     /**
