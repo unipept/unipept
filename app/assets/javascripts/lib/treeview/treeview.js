@@ -125,7 +125,6 @@
             var LCA;
 
             function findLCA(d) {
-                console.log(d.children[0])
                 if (d.children && d.children.length === 1) {
                     findLCA(d.children[0]);
                 } else {
