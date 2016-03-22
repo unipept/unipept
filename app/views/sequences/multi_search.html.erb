@@ -56,22 +56,22 @@
                 <div class="tab-pane active" id="sunburstWrapper">
                   <h2 class="ghead">
                     <span class="dir">
-                      <a class="btn btn-xs btn-default btn-animate" id="sunburst-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                      <a class="btn btn-xs btn-default btn-animate reset" id="sunburst-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
                     </span>
                     <span class="dir">
-                      <div class="btn-group" id="colorswap">
-                        <a class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" id="colorswap-button"><span class="glyphicon glyphicon-cog"></span></a>
+                      <div class="btn-group colorswap" id="colorswap">
+                        <a class="btn btn-xs btn-default dropdown-toggle colorswap-button" data-toggle="dropdown" id="colorswap-button"><span class="glyphicon glyphicon-cog"></span></a>
                         <ul class="dropdown-menu dropdown-menu-right dropdown-menu-form">
                           <li title="Enabling this will assign fixed colors to taxa making it easier to compare samples.">
-                            <div class="checkbox"><label class="checkbox"><input type="checkbox" id="colorswap-checkbox">Use fixed colors</label></div>
+                            <div class="checkbox"><label class="checkbox"><input class="colorswap-checkbox" type="checkbox" id="colorswap-checkbox">Use fixed colors</label></div>
                           </li>
                         </ul>
                       </div>
                     </span>
                     <span class="dir text">Click a slice to zoom in and the center node to zoom out</span>
                   </h2>
-                  <div id="sunburst">
-                    <div id="sunburstPanel">&nbsp;</div>
+                  <div class="sunburst" id="sunburst">
+                    <div class="sunburstPanel" id="sunburstPanel">&nbsp;</div>
                   </div>
                 </div>
                 <div class="tab-pane" id="d3TreeMapWrapper">
@@ -105,22 +105,22 @@
                 <div class="tab-pane active" id="ecSunburstWrapper">
                   <h2 class="ghead">
                     <span class="dir">
-                      <a class="btn btn-xs btn-default btn-animate" id="sunburst-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                      <a class="btn btn-xs btn-default btn-animate reset" id="ecSunburst-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
                     </span>
                     <span class="dir">
-                      <div class="btn-group" id="colorswap">
-                        <a class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" id="colorswap-button"><span class="glyphicon glyphicon-cog"></span></a>
+                      <div class="btn-group colorswap" id="ecColorswap">
+                        <a class="btn btn-xs btn-default dropdown-toggle colorswap-button" data-toggle="dropdown" id="ecColorswap-button"><span class="glyphicon glyphicon-cog"></span></a>
                         <ul class="dropdown-menu dropdown-menu-right dropdown-menu-form">
                           <li title="Enabling this will assign fixed colors to taxa making it easier to compare samples.">
-                            <div class="checkbox"><label class="checkbox"><input type="checkbox" id="colorswap-checkbox">Use fixed colors</label></div>
+                            <div class="checkbox"><label class="checkbox"><input class="colorswap-checkbox" type="checkbox" id="ecColorswap-checkbox">Use fixed colors</label></div>
                           </li>
                         </ul>
                       </div>
                     </span>
                     <span class="dir text">Click a slice to zoom in and the center node to zoom out</span>
                   </h2>
-                  <div id="ecSunburst">
-                    <div id="ecSunburstPanel">&nbsp;</div>
+                  <div class="sunburst" id="ecSunburst">
+                    <div class="sunburstPanel" id="ecSunburstPanel">&nbsp;</div>
                   </div>
                 </div>
 
