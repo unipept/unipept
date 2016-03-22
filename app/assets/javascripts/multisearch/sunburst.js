@@ -7,14 +7,12 @@
     var constructSunburst = function constructSunburst(element, args) {
         /*************** Private variables ***************/
 
-        console.log() 
-
         // parameters
         var that = {},
             multi = args.multi,
             data = args.data;
             sunburstID = element.id
-            panelID = element.childNodes[1].id
+            panelID = element.getElementsByClassName("sunburstPanel")[0].id
 
 
         // layout
@@ -65,21 +63,21 @@
          */
         function initControls() {
             // the reset button
-            $("#sunburst-reset").click(that.reset);
+            $("#"+element.parentNode.getElementsByClassName("reset")[0].id).click(that.reset);
 
             // hook up the swap colors checkbox
-            $("#colorswap").mouseenter(function () {
-                if (!$("#colorswap").hasClass("open")) {
-                    $("#colorswap-button").dropdown("toggle");
+            $("#"+element.parentNode.getElementsByClassName("colorswap")[0].id).mouseenter(function () {
+                if (!$("#"+element.parentNode.getElementsByClassName("colorswap")[0].id).hasClass("open")) {
+                    $("#"+element.parentNode.getElementsByClassName("colorswap-button")[0].id).dropdown("toggle");
                 }
             });
-            $("#colorswap").mouseleave(function () {
-                if ($("#colorswap").hasClass("open")) {
-                    $("#colorswap-button").dropdown("toggle");
+            $("#"+element.parentNode.getElementsByClassName("colorswap")[0].id).mouseleave(function () {
+                if ($("#"+element.parentNode.getElementsByClassName("colorswap")[0].id).hasClass("open")) {
+                    $("#"+element.parentNode.getElementsByClassName("colorswap-button")[0].id).dropdown("toggle");
                 }
             });
-            $("#colorswap li").tooltip({placement : "right", container : "body"});
-            $("#colorswap-checkbox").change(function () {
+            $("#"+element.parentNode.getElementsByClassName("colorswap")[0].id+" li").tooltip({placement : "right", container : "body"});
+            $("#"+element.parentNode.getElementsByClassName("colorswap-checkbox")[0].id).change(function () {
                 useFixedColors = $(this).is(':checked');
                 that.redrawColors();
             });
