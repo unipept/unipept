@@ -142,6 +142,8 @@
     <div class="tab-content multi-search">
       <div class="tab-pane active" id="outline">
         <div class="input-group" id="tree_search_group">
+          <%=@testx%>
+          <%=@testy%>
           <%= search_field_tag(:tree_search, "", :placeholder => "search for an organism...", :class => "form-control") %>
           <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
         </div>
@@ -179,7 +181,7 @@
     var diversityData = <%= raw(@json_tree)%>;
     var sequences = <%= raw(@json_sequences)%>;
     var missed = <%= raw(@json_missed)%>;
-    var functionalData = <%= raw(@json_tree)%>
+    var functionalData = <%= raw(@ec_root)%>
 
     $(function () {
         constructMultisearch({
