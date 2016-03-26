@@ -490,7 +490,7 @@ class SequencesController < ApplicationController
 
     # --------- Tree view for EC numbers --------- #
 
-    @ec_root = Node.new("-.-.-.-", 'root', nil, 'root') # start constructing the tree
+    @ec_root = Node.new("-.-.-.-", 'root', nil, '-.-.-.-') # start constructing the tree
     @ec_root.data['count'] = eccountdic.values.sum
     ec_last_node =  @ec_root
 
@@ -501,7 +501,7 @@ class SequencesController < ApplicationController
           node = Node.find_by_id(ecs, @ec_root)
           if node.nil?
             #if ec_lca_table.has_key?(ecs)
-            node = Node.new(ecs, @ec_functions[ecs], @ec_root, @ec_lca_class[ecs])
+            node = Node.new(ecs, @ec_functions[ecs], @ec_root, ecs)
             #else
             #  node = Node.new(ecs, ecs, @ec_root, @ec_lca_class[ecs])
             #end
