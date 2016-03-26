@@ -466,6 +466,7 @@ class SequencesController < ApplicationController
 
     # get all ec numbers from the ec_lca_table
     ec_all_ranks = ec_lca_table.values.flatten(1).to_set.map{|x| x}
+
     # get all functions accociated with the ranks
     ec_tmp_all_functions = ec_db.select("ec_number, name").where(ec_number: ec_all_ranks).to_set
 
@@ -499,11 +500,11 @@ class SequencesController < ApplicationController
         if ecs != ""
           node = Node.find_by_id(ecs, @ec_root)
           if node.nil?
-            if ec_lca_table.has_key?(ecs)
-              node = Node.new(ecs, @ec_functions[ecs], @ec_root, @ec_lca_class[ecs])
-            else
-              node = Node.new(ecs, ecs, @ec_root, @ec_lca_class[ecs])
-            end
+            #if ec_lca_table.has_key?(ecs)
+            node = Node.new(ecs, @ec_functions[ecs], @ec_root, @ec_lca_class[ecs])
+            #else
+            #  node = Node.new(ecs, ecs, @ec_root, @ec_lca_class[ecs])
+            #end
             node.data['count'] = @ec_lca_count[ecs]
             if ec_lca_table.has_key?(ecs)
               node.data['self_count'] = eccountdic[ecs]
@@ -512,7 +513,7 @@ class SequencesController < ApplicationController
             end
             ec_last_node_loop = ec_last_node_loop.add_child(node)
           else
-            node.name = ecs
+            node.name = @ec_functions[ecs]
             ec_last_node_loop = node
           end         
         end
