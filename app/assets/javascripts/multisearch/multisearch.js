@@ -131,6 +131,50 @@ var constructMultisearch = function constructMultisearch(args) {
         });
     }
 
+
+    /**
+     * Sets the visualisation in full screen mode
+     *
+     * @param <boolean> isFullScreen indicates if we're in full screen mode
+     */
+    function setSunburstFullScreen(isFullScreen) {
+        // the delay is because the event fires before we're in fullscreen
+        // so the height en width functions don't give a correct result
+        // without the delay
+        setTimeout(function () {
+            var size = 740;
+            if (isFullScreen) {
+                size = Math.min($(window).height() - 44, $(window).width() - 250);
+            }
+            $("#sunburst > svg").attr("height", size);
+            $("#sunburst > svg").attr("width", size);
+            $("#ecSunburst > svg").attr("height", size);
+            $("#ecSunburst > svg").attr("width", size);
+        }, 1000);
+    };
+
+
+    /**
+     * Sets the visualisation in full screen mode
+     *
+     * @param <boolean> isFullScreen indicates if we're in full screen mode
+     */
+    function setTreeviewFullScreen(isFullScreen) {
+        // the delay is because the event fires before we're in fullscreen
+        // so the height en width functions don't give a correct result
+        // without the delay
+        setTimeout(function () {
+            var width = 916,
+            height = 600;
+            if (isFullScreen) {
+                width = $(window).width();
+                height = $(window).height() - 44;
+            }
+            $("#d3TreeView svg").attr("width", width);
+            $("#d3TreeView svg").attr("height", height);
+        }, 1000);
+    };
+
     function setUpFullScreen() {
         if (fullScreenApi.supportsFullScreen) {
             $("#buttons").prepend("<button id='zoom-btn' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
@@ -149,7 +193,7 @@ var constructMultisearch = function constructMultisearch(args) {
         // sync tabs
         $("ul.visualisations li.active").removeClass("active");
         $("ul.visualisations li").each(function (i, el) {
-            if ($(el).find("a").attr("href") === "#" + activeTab + "Wrapper") {
+            if ($(el).find("a").attr("href") === "#" + activeTab) {
                 $(el).addClass("active");
             }
         });
@@ -166,9 +210,9 @@ var constructMultisearch = function constructMultisearch(args) {
         }
 
         // update visualisations
-        sunburst.setFullScreen(isFullScreen);
+        setSunburstFullScreen(isFullScreen);
         treemap.setFullScreen(isFullScreen);
-        treeview.setFullScreen(isFullScreen);
+        setTreeviewFullScreen(isFullScreen);
     }
 
     function saveImage () {
@@ -198,8 +242,8 @@ var constructMultisearch = function constructMultisearch(args) {
     }
 
     function getActiveTab() {
-        var activePane = $(".full-screen-container div.active").attr('id');
-        return activePane.split("Wrapper")[0];
+        var activePane = $(".full-screen-container li.active").find("a").attr('href');
+        return activePane.split("Wrapper")[0].substring(1,activePane.length);
     }
 
     /*************** Public methods ***************/
@@ -293,7 +337,7 @@ var constructMultisearch = function constructMultisearch(args) {
             pos.top = (d3.event.clientY - 5) + "px";
             pos.left = (d3.event.clientX + 15) + "px";
         } else {
-            pos.top = (d3.event.pageY - 275) + "px";
+            pos.top = (d3.event.pageY - 5) + "px";
             pos.left = (d3.event.pageX + 15) + "px";
         }
         return pos;
@@ -301,6 +345,8 @@ var constructMultisearch = function constructMultisearch(args) {
 
     // initialize the object
     init();
+    // to correct screen size for tooltip coordinates
+    setSunburstFullScreen(false);
 
     return that;
 };
