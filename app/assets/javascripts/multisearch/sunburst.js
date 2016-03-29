@@ -195,10 +195,21 @@
             textEnter.append("tspan")
                 .attr("x", 0)
                 .attr("dy", "1em")
-                .text(function (d) { return d.depth && d.name !== "empty" ? d.name.split(" ")[2] || "" : ""; });
+                .text(function (d) { 
+                    if (d.depth && d.name !== "empty") {
+                        if (d.name.split(" ").length > 3) {
+                            return d.name.split(" ")[2] + "..."
+                        } if  (d.name.split(" ").length == 2) {
+                            return ""
+                        } else {
+                            return d.name.split(" ")[2]
+                        }
+                    } else {
+                        return ""
+                    }; });
 
             textEnter.style("font-size", function (d) {
-                return Math.min(((r / levels) / this.getComputedTextLength() * 10) + 1, 12) + "px";
+                return Math.min(((r / levels) / this.getComputedTextLength() * 10) + 1, 10) + "px";
             });
         }
 
