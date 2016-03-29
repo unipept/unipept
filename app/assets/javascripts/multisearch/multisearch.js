@@ -293,7 +293,7 @@ var constructMultisearch = function constructMultisearch(args) {
             pos.top = (d3.event.clientY - 5) + "px";
             pos.left = (d3.event.clientX + 15) + "px";
         } else {
-            pos.top = (d3.event.pageY - 5) + "px";
+            pos.top = (d3.event.pageY - 275) + "px";
             pos.left = (d3.event.pageX + 15) + "px";
         }
         return pos;
