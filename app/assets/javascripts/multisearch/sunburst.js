@@ -430,25 +430,6 @@
                 .style("fill", function (d) { return getReadableColorFor(colour(d)); });
         };
 
-        /**
-         * Sets the visualisation in full screen mode
-         *
-         * @param <boolean> isFullScreen indicates if we're in full screen mode
-         */
-        that.setFullScreen = function setFullScreen(isFullScreen) {
-            // the delay is because the event fires before we're in fullscreen
-            // so the height en width functions don't give a correct result
-            // without the delay
-            setTimeout(function () {
-                var size = 740;
-                if (isFullScreen) {
-                    size = Math.min($(window).height() - 44, $(window).width() - 250);
-                }
-                $("#"+sunburstID+" > svg").attr("width", size);
-                $("#"+sunburstID+" > svg").attr("height", size);
-            }, 1000);
-        };
-
         // initialize the object
         init();
 
