@@ -506,18 +506,22 @@
     };
 
     function Plugin(option) {
-        return this.each(function () {
+        var dt = Object
+        var plug = this.each(function () {
             var $this = $(this);
             var data = $this.data('vis.treeview');
             var options = $.extend({}, TreeView.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
-                $this.data('vis.treeview', (data = new TreeView(this, options)));
+                data = new TreeView(this, options)
+                dt = data;
+                $this.data('vis.treeview', (data));
             }
             if (typeof option === 'string') {
                 data[option]();
             }
         });
+        return dt;
     }
 
     $.fn.treeview = Plugin;
