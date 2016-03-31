@@ -432,24 +432,27 @@
 
         // initialize the object
         init();
-
         return that;
 
     };
 
     function Plugin(option) {
-        return this.each(function () {
+        var dt = Object  
+        var plug = this.each(function () {
             var $this = $(this);
             var data = $this.data('vis.sunburst');
             var options = $.extend({}, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
-                $this.data('vis.sunburst', (data = new constructSunburst(this, options)));
+                data = new constructSunburst(this, options);
+                dt = data;
+                $this.data('vis.sunburst', (data));
             }
             if (typeof option === 'string') {
                 data[option]();
             }
         });
+        return dt
     }
 
     $.fn.sunburst = Plugin;
