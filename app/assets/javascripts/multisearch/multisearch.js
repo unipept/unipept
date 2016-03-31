@@ -13,6 +13,7 @@ var constructMultisearch = function constructMultisearch(args) {
         equateIL = args.equateIL,
         missed = args.missed,
         sequences = args.sequences,
+        select,
         sunburst,
         treemap,
         treeview,
@@ -58,19 +59,21 @@ var constructMultisearch = function constructMultisearch(args) {
     function initVisualisationsSunburst(data, selector) {
         // sunburst
         try {
-            $(selector).sunburst({multi : that, data : JSON.parse(JSON.stringify(data))});
+            sunburst = $(selector).sunburst({multi : that, data : JSON.parse(JSON.stringify(data))});
         } catch (err) {
             error(err.message, "Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
+        mapping.set(selector.substring(1,selector.length), sunburst);
     }
 
     function initVisualisationsTreeview(data, selector) {
         // treeview
         try {
-            $(selector).treeview({data : JSON.parse(JSON.stringify(data)), width: 916, height: 600,});
+            treeview = $(selector).treeview({data : JSON.parse(JSON.stringify(data)), width: 916, height: 600,});
         } catch (err) {
             error(err.message, "Loading the Treeview visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
+        mapping.set(selector.substring(1,selector.length), treeview);
     }
 
     function initVisualisations() {
@@ -88,7 +91,6 @@ var constructMultisearch = function constructMultisearch(args) {
         } catch (err) {
             error(err.message, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
-
         mapping.set("d3TreeMap", treemap);
     }
 
@@ -233,12 +235,23 @@ var constructMultisearch = function constructMultisearch(args) {
     function setUpActionBar() {
         $(".fullScreenActions a").tooltip({placement: "bottom", delay: { "show": 300, "hide": 300 }});
         $(".fullScreenActions .reset").click(function () {
-            mapping.get(getActiveTab()).reset();
+            mapping.get(getActiveSubTab()).reset();
         });
         $(".fullScreenActions .download").click(saveImage);
         $(".fullScreenActions .exit").click(function () {
             window.fullScreenApi.cancelFullScreen();
         });
+    }
+
+    function getActiveSubTab() {
+        var activePanes = $(".tab-pane .card-supporting-text li.active").find("a");
+        if (getActiveTab() === "biodiversityAnalysis") {
+            var activePane = activePanes.attr("href");
+            return activePane.split("Wrapper")[0].substring(1,activePane.length);
+        } else if (getActiveTab() === "functionalAnalysis") {
+            var activePane = activePanes[1].getAttribute("href");
+            return activePane.split("Wrapper")[0].substring(1,activePane.length);
+        } else {"There is no third tab!"}
     }
 
     function getActiveTab() {
