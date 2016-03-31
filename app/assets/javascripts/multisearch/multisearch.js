@@ -189,8 +189,12 @@ var constructMultisearch = function constructMultisearch(args) {
     }
 
     function resizeFullScreen() {
-        var activeTab = getActiveTab(),
-            isFullScreen = window.fullScreenApi.isFullScreen();
+        var isFullScreen = window.fullScreenApi.isFullScreen();
+        if (!isFullScreen) {
+            var activeTab = getActiveTab();
+        } else {
+            var activeTab = getActiveCloseTab();
+        }
 
         // sync tabs
         $("ul.visualisations li.active").removeClass("active");
@@ -218,17 +222,21 @@ var constructMultisearch = function constructMultisearch(args) {
     }
 
     function saveImage () {
-        var activeTab = getActiveTab();
+        var activeTab = getActiveSubTab();
         $(".debug_dump").hide();
         logToGoogle("Multi Peptide", "Save Image", activeTab);
         if (activeTab === "sunburst") {
             d3.selectAll(".toHide").attr("class", "arc hidden");
-            triggerDownloadModal("#sunburst > svg", null, "unipept_sunburst");
+            triggerDownloadModal("#"+activeTab+" > svg", null, "unipept_sunburst");
+            d3.selectAll(".hidden").attr("class", "arc toHide");
+        } else if (activeTab === "ecSunburst") {
+            d3.selectAll(".toHide").attr("class", "arc hidden");
+            triggerDownloadModal("#"+activeTab+" > svg", null, "unipept_ecSunburst");
             d3.selectAll(".hidden").attr("class", "arc toHide");
         } else if (activeTab === "d3TreeMap") {
-            triggerDownloadModal(null, "#d3TreeMap", "unipept_treemap");
-        } else {
-            triggerDownloadModal("#d3TreeView svg", null, "unipept_treeview");
+            triggerDownloadModal(null, "#"+activeTab, "unipept_treemap");
+        } else if (activeTab === "d3TreeView") {
+            triggerDownloadModal("#"+activeTab+" svg", null, "unipept_treeview");
         }
     }
 
@@ -252,6 +260,11 @@ var constructMultisearch = function constructMultisearch(args) {
             var activePane = activePanes[1].getAttribute("href");
             return activePane.split("Wrapper")[0].substring(1,activePane.length);
         } else {"There is no third tab!"}
+    }
+
+    function getActiveCloseTab() {
+        var activePane = $(".card-title.card-title-colored li.active").find("a").attr('href');
+        return activePane.split("Wrapper")[0].substring(1,activePane.length);
     }
 
     function getActiveTab() {
