@@ -161,26 +161,25 @@ class SequencesController < ApplicationController
     # ----------- end ------------ #
 
     gos = @entries.map(&:go_cross_references).flatten.map(&:go_id)
-    gos_occur = gos.group_by{|i| i}
     gos_counts = {}
-    gos_occur.each{|k,v| gos_counts[k] = v.count}
+    gos.group_by{|i| i}.each{|k,v| gos_counts[k] = v.count}
 
     @graph = Graph.new(gos_counts)
-    @gos = gos.uniq
+    @gos = gos_counts.keys
     for go in @gos
       node = GO_GRAPH.find_go(go)
       @graph.add_reachable(node, go) if !node.nil? && node.namespace == 'molecular_function'
     end
 
     @links = []
-    graph_size = gos_occur.map{|g,n| @graph.terms.include?(g) ? n.count : 0}.inject(:+)
-    @graph.terms.each { |k,v| v.links.each{ |t,l| @links.push({'from' => k, 'to' => t, 'label' => 'is_a', 'weight' => v.linked.map { |g| gos_occur[g].count }.inject(:+).to_f/graph_size, 'linked' => v.linked.to_a}) } }
+    graph_size = gos_counts.map{|g,n| @graph.terms.include?(g) ? n : 0}.inject(:+)
+    @graph.terms.each { |k,v| v.links.each{ |t,l| @links.push({'from' => k, 'to' => t, 'label' => 'is_a', 'weight' => v.linked.map { |g| gos_counts[g]}.inject(:+).to_f/graph_size, 'linked' => v.linked.to_a}) } }
 
     nodes = {}
     for term in @graph.terms.keys
       nodes[term] = Node.new(term[3..-1].to_i, term, nil, term)
-      if gos_occur.include?(term)
-        nodes[term].data['self_count'] = gos_occur[term].count
+      if gos_counts.include?(term)
+        nodes[term].data['self_count'] = gos_counts[term]
       else
         nodes[term].data['self_count'] = 0
       end
@@ -217,8 +216,8 @@ class SequencesController < ApplicationController
     @graph = @graph.to_tree
 
     @links = []
-    graph_size = gos_occur.map{|g,n| @graph.terms.include?(g) ? n.count : 0}.inject(:+)
-    @graph.terms.each { |k,v| v.links.each{ |t,l| @links.push({'from' => k, 'to' => t, 'label' => 'is_a', 'weight' => v.linked.map { |g| gos_occur[g].count }.inject(:+).to_f/graph_size, 'linked' => v.linked.to_a}) } }
+    graph_size = gos_counts.map{|g,n| @graph.terms.include?(g) ? n: 0}.inject(:+)
+    @graph.terms.each { |k,v| v.links.each{ |t,l| @links.push({'from' => k, 'to' => t, 'label' => 'is_a', 'weight' => v.linked.map { |g| gos_counts[g]}.inject(:+).to_f/graph_size, 'linked' => v.linked.to_a}) } }
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree
