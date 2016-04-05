@@ -42,6 +42,7 @@
                 <th class="organism">Organism</th>
                 <th class="ec">EC number</th>
                 <th class="go">GO terms</th>
+                <th class="ip">IP&nbsp;identifier</th>
               </tr>
             </thead>
             <% for entry in @entries do %>
@@ -62,6 +63,7 @@
                   <td><%= link_to entry.taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="+entry.taxon.id.to_s, :target => "_blank" %></td>
                   <td><%= raw(entry.ec_cross_references.map{|ec| "<a href='http://enzyme.expasy.org/EC/"+ec.ec_number+"' target='_blank'>"+ec.ec_number+"</a>"}.join(", ")) %></td>
                   <td><%= raw(entry.go_cross_references.map{|go| "<a href='http://amigo.geneontology.org/amigo/term/"+go.go_id+"' target='_blank'>"+go.go_id+"</a>"}.join(", ")) %></td>
+                  <td>IP:0000001</td>
                 </tr>
               <% end %>
             <% end %>
