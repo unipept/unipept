@@ -431,6 +431,7 @@ class SequencesController < ApplicationController
     eccountdic = {}
     @ec_lca_id = {}
     @ec_lca = {}
+    ec_barchart_count = {}
 
     # fetch all ec numbers
     ec_db = EcNumber.all 
@@ -488,7 +489,7 @@ class SequencesController < ApplicationController
       end
     end
 
-    # --------- Tree view for EC numbers --------- #
+    # create json data filef or EC sunburst
 
     @ec_root = Node.new("-.-.-.-", 'root', nil, '-.-.-.-') # start constructing the tree
     @ec_root.data['count'] = eccountdic.values.sum
@@ -500,14 +501,11 @@ class SequencesController < ApplicationController
         if ecs != ""
           node = Node.find_by_id(ecs, @ec_root)
           if node.nil?
-            #if ec_lca_table.has_key?(ecs)
             node = Node.new(ecs, @ec_functions[ecs], @ec_root, ecs)
-            #else
-            #  node = Node.new(ecs, ecs, @ec_root, @ec_lca_class[ecs])
-            #end
             node.data['count'] = @ec_lca_count[ecs]
             if ec_lca_table.has_key?(ecs)
               node.data['self_count'] = eccountdic[ecs]
+              ec_barchart_count[ecs] = [@ec_functions[ecs], eccountdic[ecs]] # for barchart
             else
               node.data['self_count'] = 0
             end
@@ -521,6 +519,7 @@ class SequencesController < ApplicationController
     end
     @ec_root.sort_children
     @ec_root = Oj.dump(@ec_root, mode: :compat)
+    @ecBarChart = Oj.dump(ec_barchart_count, mode: :compat)
     #@testx = @ec_root
 
     def calc_ec_lca(ec_hash, ec_root, common_ec_lineage)
