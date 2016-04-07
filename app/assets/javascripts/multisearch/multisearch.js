@@ -9,7 +9,8 @@ var constructMultisearch = function constructMultisearch(args) {
 
     var that = {},
         data = args.diversityData,
-        fdata = args.functionalData,
+        sbecdata = args.functionalData,
+        chartdata = args.barchartEcData,
         equateIL = args.equateIL,
         missed = args.missed,
         sequences = args.sequences,
@@ -29,13 +30,15 @@ var constructMultisearch = function constructMultisearch(args) {
         // set up visualisations
         initVisualisations();
 
-        initVisualisationsSunburst(fdata, '#ecSunburst');
+        initVisualisationsSunburst(sbecdata, '#ecSunburst');
 
         initVisualisationsSunburst(data, '#sunburst')
 
         initVisualisationsTreeview(data, "#d3TreeView");
 
-        //initVisualisationsTreeview(data, "#ecSunburst");
+        initBarChart(chartdata, "#barChart");
+
+        initPieChart(data, "#pieChart");
 
         // set up save images
         setUpSaveImage();
@@ -54,6 +57,14 @@ var constructMultisearch = function constructMultisearch(args) {
         // copy to clipboard for missed peptides
         addCopy($("#copy-missed span").first(), function () {return $(".mismatches").text(); });
 
+    }
+
+    function initBarChart(data, selector){
+        $(selector).barchart(data);
+    }
+
+    function initPieChart(data, selector){
+        $(selector).piechart({multi : that, data : JSON.parse(JSON.stringify(data))});
     }
 
     function initVisualisationsSunburst(data, selector) {
@@ -347,6 +358,10 @@ var constructMultisearch = function constructMultisearch(args) {
             (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
             (!d.data.count ? "0" : d.data.count) +
             (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower";
+    };
+    that.getTooltipContentPieChart = function getTooltipContent(d) {
+        return "<b>" + d.data.function + "</b> (" + d.data.name + ")<br/>" +
+        (d.data.amount) + " total hits<br/>"
     };
     that.getPiechartUrl = function getPiechartUrl(d) {
         var url = "http://chart.apis.google.com/chart?chs=300x225&cht=p&chd=t:";
