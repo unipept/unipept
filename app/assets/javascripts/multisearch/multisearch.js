@@ -345,6 +345,10 @@ var constructMultisearch = function constructMultisearch(args) {
             tt.html(tt.html() + "<br><img src='" + that.getPiechartUrl(d) + "'/>");
         }
     };
+    that.tooltipInPieChart = function tooltipInPieChart(d, tt, pie) {
+        tt.style("visibility", "visible")
+            .html(that.getTooltipContentPieChart(d));
+    };
     that.tooltipMove = function tooltipMove(tt) {
         var pos = that.getTooltipPosition();
         tt.style("top", pos.top).style("left", pos.left);
