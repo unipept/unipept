@@ -1,39 +1,31 @@
  (function () {
-    var constructBarchart = function constructBarchart(element, data) {
+    var constructBarchart = function constructBarchart(element, args) {
 
-        // transform to array of arrays
-        var ecArray = []
-        for (var key in data) {
-            ecArray.push([key,data[key][1]])
-        }
+        // options
+        var that = {}, 
+            multi = args.multi,
+            data = args.data
 
-        // sort the array of arrays
-        function Comparator(a,b){
-            if (a[1] < b[1]) return -1;
-            if (a[1] > b[1]) return 1;
-            return 0;
-        }
+        // variables
+        var limit = 10,
+            yValues = []
 
-        ecArray = ecArray.sort(Comparator).reverse().slice(0,10);
-
-        var yValues = ecArray.map( function (d) { return d[0] });
-        var oyValues = jQuery.extend(true, [], yValues);
-            yValues.unshift("")
-
-        var xValues = ecArray.map( function (d) { return d[1] });
+        data.sort(function(a, b){
+          return a.count - b.count;
+        }).reverse();
 
         var colors = ['#0094ff'];
 
         var xscale = d3.scale.linear()
-                        .domain([0,d3.max(xValues)])
+                        .domain([0,11])
                         .range([0,730]);
 
         var yscale = d3.scale.linear()
-                        .domain([0,yValues.length])
+                        .domain([0,limit+1])
                         .range([0,480]);
 
         var colorScale = d3.scale.quantize()
-                        .domain([0,yValues.length])
+                        .domain([0,limit+1])
                         .range(colors);
 
         var canvas = d3.select(element)
@@ -45,13 +37,24 @@
                 .orient('bottom')
                 .scale(xscale)
 
+        function getYAxis(data){
+          var i = 0
+          while (i < limit) {
+            yValues.push(data[i]["name"])
+            i++
+          }
+          console.log(yValues)
+          return yValues
+        };
+        getYAxis(data).unshift("")
+
         var yAxis = d3.svg.axis();
             yAxis
                 .orient('left')
                 .scale(yscale)
                 .tickSize(1)
-                .tickFormat(function(d,i){ return yValues[i]; })
-                .tickValues(d3.range(yValues.length));
+                .tickFormat(function(d,i){ if (i < (limit+1)) return yValues[d]; })
+                .tickValues(d3.range(limit+1));
 
         var y_xis = canvas.append('g')
                           .attr("transform", "translate(100,20)")
@@ -77,21 +80,24 @@
                             .attr("transform", "translate(100,15)")
                             .attr('id','bars')
                             .selectAll('rect')
-                            .data(xValues)
+                            .data(data)
                             .enter()
                             .append('rect')
                             .attr('height',40)
-                            .attr({'x':0,'y':function(d,i){ return yscale(i)+30; }})
-                            .style('fill',function(d,i){ return colorScale(i); })
-                            .attr('width',function(d){ return xscale(d); });
+                            .attr({'x':0,'y':function(d,i){ if (i < limit) return yscale(i)+30; }})
+                            .style('fill',function(d,i){ if (i < limit) return colorScale(i); })
+                            .attr('width',function(d, i){ if (i < limit) return xscale(d.count); })
+                            .on("mouseover", function (d) { multi.tooltipInChart(d, tooltip); })
+                            .on("mousemove", function () { multi.tooltipMove(tooltip); })
+                            .on("mouseout", function () { multi.tooltipOut(tooltip); });
 
         var transitext = d3.select('#bars')
                             .selectAll('text')
-                            .data(xValues)
+                            .data(data)
                             .enter()
                             .append('text')
-                            .attr({'x':function(d) {return 5; },'y':function(d,i){ return yscale(i)+52; }})
-                            .text(function(d,i) { return data[oyValues[i]][0];}).style({'fill':'#000','font-size':'12px'});
+                            .attr({'x':function(d) {return 5; },'y':function(d,i){ if (i < limit) return yscale(i)+52; }})
+                            .text(function(d,i) { if (i < limit) return d.function;}).style({'fill':'#000','font-size':'12px'});
 
     }
 
