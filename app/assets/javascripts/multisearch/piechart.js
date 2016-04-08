@@ -24,20 +24,20 @@
 
     // data
     var data = [
-                  { "name": "IPR000001", "function": "something 1", "amount": 12000},
-                  { "name": "IPR000002", "function": "something 2", "amount": 2000},
-                  { "name": "IPR000003", "function": "something 3", "amount": 17000},
-                  { "name": "IPR000004", "function": "something 4", "amount": 15000},
-                  { "name": "IPR000005", "function": "something 5", "amount": 14000},
-                  { "name": "IPR000006", "function": "something 6", "amount": 17000},
-                  { "name": "IPR000007", "function": "something 7", "amount": 1000},
-                  { "name": "IPR000008", "function": "something 8", "amount": 100},
-                  { "name": "IPR000009", "function": "something 9", "amount": 36000},
-                  { "name": "IPR000010", "function": "something 10", "amount": 6000},
-                  { "name": "IPR000011", "function": "something 11", "amount": 14000},
-                  { "name": "IPR000012", "function": "something 12", "amount": 5000},
-                  { "name": "IPR000013", "function": "something 13", "amount": 12345},
-                  { "name": "IPR000014", "function": "something 14", "amount": 12345}
+                  { "name": "IPR000001", "function": "something 1", "count": 12000},
+                  { "name": "IPR000002", "function": "something 2", "count": 2000},
+                  { "name": "IPR000003", "function": "something 3", "count": 17000},
+                  { "name": "IPR000004", "function": "something 4", "count": 15000},
+                  { "name": "IPR000005", "function": "something 5", "count": 14000},
+                  { "name": "IPR000006", "function": "something 6", "count": 17000},
+                  { "name": "IPR000007", "function": "something 7", "count": 1000},
+                  { "name": "IPR000008", "function": "something 8", "count": 100},
+                  { "name": "IPR000009", "function": "something 9", "count": 36000},
+                  { "name": "IPR000010", "function": "something 10", "count": 6000},
+                  { "name": "IPR000011", "function": "something 11", "count": 14000},
+                  { "name": "IPR000012", "function": "something 12", "count": 5000},
+                  { "name": "IPR000013", "function": "something 13", "count": 12345},
+                  { "name": "IPR000014", "function": "something 14", "count": 12345}
                 ]
 
     // initialize functions
@@ -67,7 +67,7 @@
 
       var pie = d3.layout.pie()
           .sort(null)
-          .value(function(d) { return d.amount; }); // population has to be EC column name
+          .value(function(d) { return d.count; }); // population has to be EC column name
 
       var svg = d3.select("#"+pieId).append("svg")
           .attr("width", width)
@@ -83,7 +83,7 @@
       g.append("path")
           .attr("d", arc)
           .style("fill", function(d) { return color(d.data.name); })
-          .on("mouseover", function (d) { multi.tooltipInPieChart(d, tooltip); })
+          .on("mouseover", function (d) { multi.tooltipInChart(d, tooltip); })
           .on("mousemove", function () { multi.tooltipMove(tooltip); })
           .on("mouseout", function () { multi.tooltipOut(tooltip); });
 
