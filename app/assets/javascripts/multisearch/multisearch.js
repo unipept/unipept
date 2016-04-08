@@ -60,7 +60,7 @@ var constructMultisearch = function constructMultisearch(args) {
     }
 
     function initBarChart(data, selector){
-        $(selector).barchart(data);
+        $(selector).barchart({multi : that, data : JSON.parse(JSON.stringify(data))});
     }
 
     function initPieChart(data, selector){
@@ -345,9 +345,9 @@ var constructMultisearch = function constructMultisearch(args) {
             tt.html(tt.html() + "<br><img src='" + that.getPiechartUrl(d) + "'/>");
         }
     };
-    that.tooltipInPieChart = function tooltipInPieChart(d, tt, pie) {
+    that.tooltipInChart = function tooltipInPieChart(d, tt, pie) {
         tt.style("visibility", "visible")
-            .html(that.getTooltipContentPieChart(d));
+            .html(that.getTooltipContentChart(d));
     };
     that.tooltipMove = function tooltipMove(tt) {
         var pos = that.getTooltipPosition();
@@ -363,9 +363,9 @@ var constructMultisearch = function constructMultisearch(args) {
             (!d.data.count ? "0" : d.data.count) +
             (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower";
     };
-    that.getTooltipContentPieChart = function getTooltipContent(d) {
+    that.getTooltipContentChart = function getTooltipContent(d) {
         return "<b>" + d.data.function + "</b> (" + d.data.name + ")<br/>" +
-        (d.data.amount) + " total hits<br/>"
+        (d.data.count) + " total hits<br/>"
     };
     that.getPiechartUrl = function getPiechartUrl(d) {
         var url = "http://chart.apis.google.com/chart?chs=300x225&cht=p&chd=t:";
