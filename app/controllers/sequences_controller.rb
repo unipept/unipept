@@ -431,6 +431,7 @@ class SequencesController < ApplicationController
     eccountdic = {}
     @ec_lca_id = {}
     @ec_lca = {}
+    ec_barchart_count_list = []
     ec_barchart_count = {}
 
     # fetch all ec numbers
@@ -505,7 +506,12 @@ class SequencesController < ApplicationController
             node.data['count'] = @ec_lca_count[ecs]
             if ec_lca_table.has_key?(ecs)
               node.data['self_count'] = eccountdic[ecs]
-              ec_barchart_count[ecs] = [@ec_functions[ecs], eccountdic[ecs]] # for barchart
+              # --- for barchart
+              ec_barchart_count["name"] = ecs
+              ec_barchart_count["function"] = @ec_functions[ecs]
+              ec_barchart_count["count"] = eccountdic[ecs]
+              ec_barchart_count_list.push(Marshal.load(Marshal.dump(ec_barchart_count)))
+              # ---
             else
               node.data['self_count'] = 0
             end
@@ -519,7 +525,7 @@ class SequencesController < ApplicationController
     end
     @ec_root.sort_children
     @ec_root = Oj.dump(@ec_root, mode: :compat)
-    @ecBarChart = Oj.dump(ec_barchart_count, mode: :compat)
+    @ecBarChart = Oj.dump(ec_barchart_count_list, mode: :compat)
     #@testx = @ec_root
 
     def calc_ec_lca(ec_hash, ec_root, common_ec_lineage)
