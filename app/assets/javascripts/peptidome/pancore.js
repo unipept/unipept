@@ -108,7 +108,11 @@ var constructPancore = function constructPancore(args) {
         if (localStorage.pancoreStatus) {
             if (localStorage.pancoreLoadedBefore === "no") {
                 localStorage.pancoreLoadedBefore = "yes";
-                that.loadStatus();
+                try {
+                    that.loadStatus();
+                } catch (e) {
+                    genomeSelector.demo();
+                }
             } else {
                 genomeSelector.demo();
                 askToRestore();
@@ -214,7 +218,7 @@ var constructPancore = function constructPancore(args) {
         $("#save-data").click(function clickSaveData() {
             var activeObject,
                 tracking;
-            if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
+            if (getActiveTab() === "pancore_graph") {
                 activeObject = graph;
                 tracking = "graph";
             } else {
@@ -288,9 +292,9 @@ var constructPancore = function constructPancore(args) {
     /**
      * Asks the worker to load a genome
      *
-     * @param <String> id The id of the assembly we want to load
-     * @param <String> name The name of the genome we want to load
-     * @param <Boolean> own Whether it's an own genome
+     * @param <String> id The id of the proteome we want to load
+     * @param <String> name The name of the proteome we want to load
+     * @param <Boolean> own Whether it's an own proteome
      */
     function loadData(id, name, own) {
         if (own) {
@@ -303,9 +307,9 @@ var constructPancore = function constructPancore(args) {
             sendToWorker("loadData", {"id" : id, "name" : name});
         }
         return new Promise(function (resolve, reject) {
-            promisesLoading.set(id, function (genome, requestRank) {
+            promisesLoading.set(id, function (proteome, requestRank) {
                 if (rank === requestRank) {
-                    resolve(genome);
+                    resolve(proteome);
                 } else {
                     reject("old data");
                 }
@@ -314,7 +318,7 @@ var constructPancore = function constructPancore(args) {
     }
 
     /**
-     * Gets called when the worker is done loading a new genome
+     * Gets called when the worker is done loading a new proteome
      * Fullfills the corresponding loadGenome Promise
      *
      * @param <Genome> genome The data that's loaded
@@ -351,7 +355,7 @@ var constructPancore = function constructPancore(args) {
      * Fullfills the corresponding downloadSequences Promise
      *
      * @param <String> data.type The type of sequences
-     * @param <String> data.id The assembly id of the request
+     * @param <String> data.id The proteome id of the request
      * @param <String> data.sequences The returned sequences
      */
     function processDownloadedSequences(data) {
@@ -480,7 +484,7 @@ var constructPancore = function constructPancore(args) {
                 "id" : genome.id,
                 "name" : genome.name,
                 "own" : gen.own,
-                "assembly_id" : gen.genbank_assembly_accession,
+                "proteome_id" : gen.proteome_accession,
                 "status" : "Loading",
                 "position" : 100 + i,
                 "abbreviation" : that.abbreviate(genome.name, gen.own)
@@ -630,11 +634,11 @@ var constructPancore = function constructPancore(args) {
      * Saves the currently loaded genomes in local storage
      */
     that.saveStatus = function saveStatus() {
-        var assemblies = table.getOrder().map(function (as) {
-            return that.getGenome(as).genbank_assembly_accession;
+        var proteomes = table.getOrder().map(function (as) {
+            return that.getGenome(as).proteome_accession;
         });
         var status = JSON.stringify({
-            assemblies: assemblies
+            proteomes: proteomes
         });
         if (status !== localStorage.pancoreStatus) {
             localStorage.pancoreStatus = status;
@@ -647,16 +651,16 @@ var constructPancore = function constructPancore(args) {
      */
     that.loadStatus = function loadStatus(status) {
         var status = status || JSON.parse(localStorage.pancoreStatus),
-            assemblySet = new Set(),
+            proteomeSet = new Set(),
             statusGenomes = new Map(),
-            assemblies,
-            assembliesOrder,
-            assembly,
+            proteomes,
+            proteomesOrder,
+            proteome,
             startPromise = myGenomes ? myGenomes.getGenomes() : Promise.resolve();
 
-        // create the assemblies set manually because of stupid Safari
-        status.assemblies.forEach(function (element) {
-            assemblySet.add(element.split(".")[0]);
+        // create the proteomes set manually because of stupid Safari
+        status.proteomes.forEach(function (element) {
+            proteomeSet.add(element);
         });
 
         // only start loading after the my genomes list is complete
@@ -664,23 +668,23 @@ var constructPancore = function constructPancore(args) {
             // reset the visualisation
             that.clearAllData();
 
-            // convert assemblies to addable genome objects
+            // convert proteomes to addable genome objects
             data.forEach(function (value) {
-                if (assemblySet.has(value.genbank_assembly_accession.split(".")[0])) {
-                    statusGenomes.set(value.genbank_assembly_accession.split(".")[0], {
+                if (proteomeSet.has(value.proteome_accession)) {
+                    statusGenomes.set(value.proteome_accession, {
                         id : value.id,
                         name : value.name
                     });
                 }
             });
             if (myGenomes) {
-                status.assemblies.forEach(function (element) {
+                status.proteomes.forEach(function (element) {
                     if (element.charAt(0) === "u") {
-                        var assembly = myGenomes.getGenome(element);
-                        if (assembly) {
-                            statusGenomes.set(assembly.id, {
-                                id : assembly.id,
-                                name : assembly.name
+                        var proteome = myGenomes.getGenome(element);
+                        if (proteome) {
+                            statusGenomes.set(proteome.id, {
+                                id : proteome.id,
+                                name : proteome.name
                             });
                         }
                     }
@@ -688,23 +692,23 @@ var constructPancore = function constructPancore(args) {
             }
 
             // put them in the right order
-            assemblies = status.assemblies.map(function (element) {
-                return statusGenomes.get(element.split(".")[0]);
+            proteomes = status.proteomes.map(function (element) {
+                return statusGenomes.get(element);
             }).filter(function (element) {
                 return element;
             });
-            assembliesOrder = assemblies.map(function (element) {
+            proteomesOrder = proteomes.map(function (element) {
                 return element.id;
             });
 
             // load the genomes and set the order
-            that.addGenomes(assemblies, false).then(function () {
+            that.addGenomes(proteomes, false).then(function () {
                 that.updateOrder({
-                    order : assembliesOrder,
+                    order : proteomesOrder,
                     start : 0,
-                    stop : assembliesOrder.length - 1
+                    stop : proteomesOrder.length - 1
                 });
-                if (assemblySet.size !== assemblies.length) {
+                if (proteomeSet.size !== proteomes.length) {
                     error(null, "We couldn't load one or more proteomes from your previous session.");
                 }
             });
@@ -721,7 +725,13 @@ var constructPancore = function constructPancore(args) {
         var split = name.split(" "),
             i;
 
+        // Don't abbreviat if it's a self-added genome
         if (own) {
+            return name;
+        }
+
+        // Don't abbreviate if it's a virus
+        if (name.indexOf("virus") > -1) {
             return name;
         }
 
@@ -781,7 +791,7 @@ var constructPancore = function constructPancore(args) {
         var g;
         if (("" + id).charAt(0) === "u") {
             g = myGenomes.getGenome(id);
-            g.genbank_assembly_accession = id;
+            g.proteome_accession = id;
             g.own = true;
         } else {
             g = genomeData.get(id);

@@ -1,24 +1,34 @@
 LOGFILE=main.log
 MAIL=unipept@ugent.be
 
+# Peptides minimum length
+PEPMIN=8
+PEPMAX=50
+
 DATADIR=../../data
 TABDIR=${DATADIR}/tables
 UNIDIR=${DATADIR}/uniprot
 TAXDIR=${DATADIR}/taxon
-ASMDIR=${DATADIR}/assembly
 INTDIR=${DATADIR}/intermediate
-BDBDIR=../../berkeleydb
+KGPDIR=${DATADIR}/keggpathways
+ECNDIR=${DATADIR}/ecnumbers
+GOBDIR=${DATADIR}/goterms
+INPDIR=${DATADIR}/interpro
 
-#JMEMMIN='-Xms140g'
-#JMEMMAX='-Xmx150g'
-#BDBMEM='100000000000'
-JMEMMIN='-Xms2g'
-JMEMMAX='-Xmx3g'
-BDBMEM=500000000
+JMEMMIN='-Xms5g'
+JMEMMAX='-Xmx6g'
+
+SORT=LC_ALL=C sort --buffer-size=80% --parallel=4
+GZIP=gzip
 
 TAXON_URL=ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip
 UNIPROT_URL=ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/
-ASSEMBLY_URL=rsync://ftp.ncbi.nlm.nih.gov/genomes/ASSEMBLY_REPORTS/All
 ENTREZ_URL=http://eutils.ncbi.nlm.nih.gov/entrez/eutils
 ENTREZ_BATCH_SIZE='1000'
-
+KEGGP_URL=http://rest.kegg.jp/list/path
+KEGGPM_URL=http://rest.kegg.jp/link/path/ec
+ECN_URL=ftp://ftp.ebi.ac.uk/pub/databases/enzyme/enzyme.dat
+ECNC_URL=ftp://ftp.ebi.ac.uk/pub/databases/enzyme/enzclass.txt
+GOB_URL=http://geneontology.org/ontology/go-basic.obo
+INTPR_URL=ftp://ftp.ebi.ac.uk/pub/databases/interpro/Current/interpro.xml.gz
+INP2GO_URL=http://geneontology.org/external2go/interpro2go

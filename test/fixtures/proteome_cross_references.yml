@@ -1,0 +1,18 @@
+# == Schema Information
+#
+# Table name: proteome_cross_references
+#
+#  id               :integer          not null, primary key
+#  uniprot_entry_id :integer          not null
+#  proteome_id      :integer          not null
+#
+
+proteomecrossreference1:
+    id: 1
+    proteome_id: 1
+    uniprot_entry_id: 1
+
+proteomecrossreference2:
+    id: 2
+    proteome_id: 2
+    uniprot_entry_id: 1

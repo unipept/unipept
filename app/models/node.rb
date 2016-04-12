@@ -88,6 +88,7 @@ class Node
   def self.model_name
     Node
   end
+
   def self.partial_path
     'nodes/node'
   end

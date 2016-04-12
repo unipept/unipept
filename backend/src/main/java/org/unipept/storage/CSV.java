@@ -12,15 +12,15 @@ import java.io.FileOutputStream;
 
 public class CSV {
 
+    private static final int MB4 = 4194304;
+
     public static class Reader {
         private BufferedReader buffer;
 
         public Reader(String file) throws IOException {
             buffer = new BufferedReader(
                 new InputStreamReader(
-                    new GZIPInputStream(
-                        new FileInputStream(file)
-                    )
+                    new FileInputStream(file)
                 )
             );
         }
@@ -42,10 +42,8 @@ public class CSV {
         public Writer(String file) throws IOException {
             buffer = new BufferedWriter(
                 new OutputStreamWriter(
-                    new GZIPOutputStream(
-                        new FileOutputStream(file)
-                    )
-                )
+                    new FileOutputStream(file)
+                ), MB4
             );
         }
 

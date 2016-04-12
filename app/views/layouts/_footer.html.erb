@@ -2,8 +2,13 @@
   <div class="footer-block">
     <div class="footer-ref">
       <p>
-        <span>Mesuere et al. (2015) Proteomics</span>
-        <a href="http://dx.doi.org/10.1002/pmic.201400361" target="_blank">doi:10.1002/pmic.201400361</a>
+        <% if @header_class == "API" %>
+            <span>Mesuere et al. (2016) Bioinformatics</span>
+            <a target="_blank" href="http://dx.doi.org/10.1093/bioinformatics/btw039">doi:10.1093/bioinformatics/btw039</a>
+        <% else %>
+            <span>Mesuere et al. (2015) Proteomics</span>
+            <a href="http://dx.doi.org/10.1002/pmic.201400361" target="_blank">doi:10.1002/pmic.201400361</a>
+        <% end %>
       </p>
     </div>
     &copy; <%= Date.today.year %> Universiteit Gent.
@@ -16,7 +21,7 @@
         <a target="_blank" href="http://twitter.com/unipept" title="find us on twitter"><i class="fa fa-twitter"></i></a>
         <a target="_blank" href="http://github.com/unipept/unipept" title="find us on github"><i class="fa fa-github"></i></a>
       </p>
-      <%= link_to "Unipept " + Rails.application.config.versions[:unipept] + " using Uniprot " + Rails.application.config.versions[:uniprot], posts_path %>
+      <%= link_to "Unipept " + Rails.application.config.versions[:unipept] + " using UniProt " + Rails.application.config.versions[:uniprot], posts_path %>
     </div>
   </div>
 </footer>

@@ -2,28 +2,40 @@ SHELL := /bin/bash
 
 include config
 
-TABLES=                                      \
-	$(TABDIR)/peptides.tsv.gz                \
-	$(INTDIR)/sequences.tsv.gz               \
-	$(TABDIR)/uniprot_entries.tsv.gz         \
-	$(TABDIR)/refseq_cross_references.tsv.gz \
-	$(TABDIR)/ec_cross_references.tsv.gz     \
-	$(TABDIR)/embl_cross_references.tsv.gz   \
-	$(TABDIR)/go_cross_references.tsv.gz
+TABLES=                                        \
+	$(INTDIR)/peptides.tsv.gz                  \
+	$(TABDIR)/uniprot_entries.tsv.gz           \
+	$(TABDIR)/refseq_cross_references.tsv.gz   \
+	$(TABDIR)/keggpathways.tsv.gz 			   \
+	$(TABDIR)/keggpathwaymappings.tsv.gz 	   \
+	$(TABDIR)/ec_numbers.tsv.gz 			   \
+	$(TABDIR)/ec_cross_references.tsv.gz       \
+	$(TABDIR)/embl_cross_references.tsv.gz     \
+	$(TABDIR)/go_terms.tsv.gzip 			   \
+	$(TABDIR)/go_cross_references.tsv.gz       \
+	$(TABDIR)/interpro_entries.tsv.gz 		   \
+	$(TABDIR)/interpro_cross_references.tsv.gz \
+	$(TABDIR)/interpro_2_go.tsv.gz             \
+	$(INTDIR)/proteomes.tsv.gz                 \
+	$(TABDIR)/proteome_cross_references.tsv.gz 
 
 SRC=$(shell find src/ -type f -name '*.java')
 JAR=target/unipept-0.0.1-SNAPSHOT.jar
 PAC=org.unipept.tools
 
-all: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz $(TABLES) $(TABDIR)/sequences.tsv.gz $(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz
+all: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz $(TABLES) $(TABDIR)/sequences.tsv.gz $(TABDIR)/peptides.tsv.gz $(TABDIR)/proteomes.tsv.gz
 jar: $(JAR)
 taxons: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
 tables: $(TABLES)
 sequences: $(TABDIR)/sequences.tsv.gz
-assemblies: $(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz
-download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz #$(UNIDIR)/uniprot_trembl.xml.gz
-	rsync --ignore-existing "$(ASSEMBLY_URL)/GCA_*.assembly.txt" $(ASMDIR)
-
+proteomes: $(TABDIR)/proteomes.tsv.gz
+keggpathways:$(TABDIR)/keggpathways.tsv.gz
+keggpathwaymappings:$(TABDIR)/keggpathwaymappings.tsv.gz
+ecnumbers: $(TABDIR)/ec_numbers.tsv.gz
+interpro: $(TABDIR)/interpro_entries.tsv.gz
+goterms: $(TABDIR)/go_terms.tsv.gz
+download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt $(GOBDIR)/goinfo.obo $(INPDIR)/interpro.xml.gz $(INPDIR)/interpro2go.txt $(KGPDIR)/keggpathways.tsv $(KGPDIR)/keggpathwaymappings.tsv
+# $(UNIDIR)/uniprot_trembl.xml.gz
 
 # Compiling {{{ ----------------------------------------------------------------
 # TODO:
@@ -42,68 +54,183 @@ $(TAXDIR)/taxdmp.zip:
 	wget --no-verbose "$(TAXON_URL)" -O $@
 	echo "Finished taxon dump download."
 
-$(TAXDIR)/names.dmp $(TAXDIR)/nodes.dmp: $(TAXDIR)/taxdmp.zip
+$(INTDIR)/names.dmp $(INTDIR)/nodes.dmp: $(TAXDIR)/taxdmp.zip
 	echo "Starting unzipping names and nodes from the taxon dump."
-	unzip -DDo $< $(notdir $@) -d $(dir $@)
+	unzip -DD -o $< $(notdir $@) -d $(dir $@)
 	echo "Finished unzipping names and nodes from the taxon dump."
 
-$(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/uniprot_trembl.xml.gz:
+$(UNIDIR)/uniprot_sprot.xml.gz: 
+	#$(UNIDIR)/uniprot_trembl.xml.gz:
 	echo "Starting downloading $@."
 	mkdir -p $(UNIDIR)
 	rm -f $@
 	wget --progress=dot:giga "$(UNIPROT_URL)$(notdir $@)" -O $@
 	echo "Finished downloading $@."
+
+$(KGPDIR)/keggpathways.tsv:
+	echo "Starting download KEGG pathway."
+	mkdir -p $(KGPDIR)
+	rm -f $@
+	wget --no-verbose "$(KEGGP_URL)" -O $@
+	echo "Finished downloading $@."
+
+$(KGPDIR)/keggpathwaymappings.tsv:
+	echo "Starting download KEGG pathway mapping."
+	mkdir -p $(KGPDIR)
+	rm -f $@
+	wget --no-verbose "$(KEGGPM_URL)" | fgrep 'path:map' > $@
+	echo "Finished downloading $@."
+
+$(ECNDIR)/enzymes.dat:
+	echo "Starting EC numbers dump download."
+	mkdir -p $(ECNDIR)
+	rm -f $@
+	wget --no-verbose "$(ECN_URL)" -O $@
+	echo "Finished downloading $@."
+
+$(ECNDIR)/enzclass.txt:
+	echo "Starting EC class dump download."
+	mkdir -p $(ECNDIR)
+	rm -f $@
+	wget --no-verbose "$(ECNC_URL)" -O $@
+	echo "Finished downloading $@."
+
+$(GOBDIR)/goinfo.obo:
+	echo "Starting GO terms dump download."
+	mkdir -p $(GOBDIR)
+	rm -f $@
+	wget --no-verbose $(GOB_URL) -O $@
+	echo "Finished downloading $@."
+
+$(INPDIR)/interpro.xml.gz:
+	echo "Starting InterPro xml dump download."
+	mkdir -p $(INPDIR)
+	rm -f $@
+	wget --no-verbose $(INTPR_URL) -O $@
+	echo "Finished downloading $@."
+
+$(INPDIR)/interpro2go.txt:
+	echo "Starting InterPro2GO dump download."
+	mkdir -p $(INPDIR)
+	rm -f $@
+	wget --no-verbose $(INP2GO_URL) -O $@
+	echo "Finished downloading $@."
 # }}}
 
 # Taxons and Lineages {{{ ------------------------------------------------------
-$(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz: $(TAXDIR)/names.dmp $(TAXDIR)/nodes.dmp
+$(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz: $(INTDIR)/names.dmp $(INTDIR)/nodes.dmp
 	echo "Starting calculation of taxons and lineages tables."
 	mkdir -p $(dir $@)
-	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).NamesNodes2TaxonsLineages $(TAXDIR)/names.dmp $(TAXDIR)/nodes.dmp $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
+	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).NamesNodes2TaxonsLineages \
+		--names $(INTDIR)/names.dmp \
+		--nodes $(INTDIR)/nodes.dmp \
+		--taxons >($(GZIP) - > $(TABDIR)/taxons.tsv.gz) \
+		--lineages >($(GZIP) - > $(TABDIR)/lineages.tsv.gz)
 	echo "Finished calculation of taxons and lineages tables."
 # }}}
 
 # Uniprot entries, peptides, sequences and cross references {{{ ----------------
-$(TABLES): $(TABDIR)/taxons.tsv.gz $(UNIDIR)/uniprot_sprot.xml.gz #$(UNIDIR)/uniprot_trembl.xml.gz
+$(TABLES): $(TABDIR)/taxons.tsv.gz $(UNIDIR)/uniprot_sprot.xml.gz
+	#$(UNIDIR)/uniprot_trembl.xml.gz
 	echo "Started calculation of most tables."
-	mkdir -p $(BDBDIR)
 	mkdir -p $(INTDIR)
-	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(BDBDIR) $(BDBMEM) $(TABDIR)/taxons.tsv.gz $(TABLES) $(UNIDIR)/uniprot_sprot.xml.gz "swissprot"
-	#java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables $(BDBDIR) $(BDBMEM) $(TABDIR)/taxons.tsv.gz $(TABLES) $(UNIDIR)/uniprot_sprot.xml.gz "swissprot" $(UNIDIR)/uniprot_trembl.xml.gz "trembl"
+	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables              \
+		--peptide-min     $(PEPMIN)                                                 \
+		--peptide-max     $(PEPMAX)                                                 \
+		--taxons          <(zcat $(TABDIR)/taxons.tsv.gz)                           \
+		--peptides        >($(GZIP) - > $(INTDIR)/peptides.tsv.gz)                  \
+		--uniprot-entries >($(GZIP) - > $(TABDIR)/uniprot_entries.tsv.gz)           \
+		--refseq          >($(GZIP) - > $(TABDIR)/refseq_cross_references.tsv.gz)   \
+		--ec              >($(GZIP) - > $(ECNDIR)/ec_cross_references.tsv.gz)       \
+		--embl            >($(GZIP) - > $(TABDIR)/embl_cross_references.tsv.gz)     \
+		--go              >($(GZIP) - > $(GOBDIR)/go_cross_references.tsv.gz)       \
+		--interpro        >($(GZIP) - > $(INPDIR)/interpro_cross_references.tsv.gz) \
+		--proteomes       >($(GZIP) - > $(INTDIR)/proteomes.tsv.gz)                 \
+		--proteomes-ref   >($(GZIP) - > $(TABDIR)/proteome_cross_references.tsv.gz) \
+		swissprot=<(zcat $(UNIDIR)/uniprot_sprot.xml.gz) 
+	#trembl=<(zcat $(UNIDIR)/uniprot_trembl.xml.gz)
 	echo "Finished calculation of most tables."
 # }}}
 
 # Sequences with LCA {{{ -------------------------------------------------------
-$(INTDIR)/sequence_taxon.tsv.gz: $(TABDIR)/peptides.tsv.gz $(TABDIR)/uniprot_entries.tsv.gz
+$(INTDIR)/aa_sequence_taxon.tsv.gz: $(INTDIR)/peptides.tsv.gz $(TABDIR)/uniprot_entries.tsv.gz
 	echo "Starting the joining of equalized peptides and uniprot entries."
 	mkdir -p $(INTDIR)
-	join -t '	' -o '1.2,2.4' -1 4 -2 1 \
-			<(zcat $(TABDIR)/peptides.tsv.gz) \
-			<(zcat $(TABDIR)/uniprot_entries.tsv.gz) \
-		| sort -S 20% -k1n \
-		| gzip - \
+	join -t '	' -o '1.2,2.2' -j 1 \
+			<(zcat $(INTDIR)/peptides.tsv.gz | awk '{ printf("%012d\t%s\n", $$4, $$2) }') \
+			<(zcat $(TABDIR)/uniprot_entries.tsv.gz | awk '{ printf("%012d\t%s\n", $$1, $$4) }') \
+		| $(SORT) -k1 \
+		| $(GZIP) - \
 		> $@
 	echo "Finished the joining of equalized peptides and uniprot entries."
 
-$(INTDIR)/original_sequence_taxon.tsv.gz: $(TABDIR)/peptides.tsv.gz $(TABDIR)/uniprot_entries.tsv.gz
+$(INTDIR)/original_aa_sequence_taxon.tsv.gz: $(INTDIR)/peptides.tsv.gz $(TABDIR)/uniprot_entries.tsv.gz
 	echo "Starting the joining of non-equalized peptides and uniprot entries."
 	mkdir -p $(INTDIR)
-	join -t '	' -o '1.3,2.4' -1 4 -2 1 \
-			<(zcat $(TABDIR)/peptides.tsv.gz) \
-			<(zcat $(TABDIR)/uniprot_entries.tsv.gz) \
-		| sort -S 20% -k1n \
-		| gzip - \
+	join -t '	' -o '1.2,2.2' -j 1 \
+			<(zcat $(INTDIR)/peptides.tsv.gz | awk '{ printf("%012d\t%s\n", $$4, $$3) }') \
+			<(zcat $(TABDIR)/uniprot_entries.tsv.gz | awk '{ printf("%012d\t%s\n", $$1, $$4) }') \
+		| $(SORT) -k1 \
+		| $(GZIP) - \
 		> $@
 	echo "Finished the joining of non-equalized peptides and uniprot entries."
 
+$(INTDIR)/sequences.tsv.gz: $(INTDIR)/aa_sequence_taxon.tsv.gz $(INTDIR)/original_aa_sequence_taxon.tsv.gz
+	echo "Starting the numbering of sequences."
+	$(SORT) -m \
+			<(zcat $(INTDIR)/aa_sequence_taxon.tsv.gz | cut -f1) \
+			<(zcat $(INTDIR)/original_aa_sequence_taxon.tsv.gz | cut -f1) \
+		| uniq \
+		| cat -n \
+		| sed 's/^ *//' \
+		| $(GZIP) - \
+		> $@
+	echo "Finishing the numbering of sequences."
+
+$(TABDIR)/peptides.tsv.gz: $(INTDIR)/peptides.tsv.gz $(INTDIR)/sequences.tsv.gz
+	echo "Starting the substitution of AA's by ID's for the peptides."
+	zcat $(INTDIR)/peptides.tsv.gz \
+		| $(SORT) -k 2b,2 \
+		| join -t '	' -o '1.1,2.1,1.3,1.4' -1 2 -2 2 - <(zcat $(INTDIR)/sequences.tsv.gz) \
+		| $(SORT) -k 3b,3 \
+		| join -t '	' -o '1.1,1.2,2.1,1.4' -1 3 -2 2 - <(zcat $(INTDIR)/sequences.tsv.gz) \
+		| $(SORT) -n \
+		| $(GZIP) - \
+		> $@
+	echo "Finishing the substitution of AA's by ID's for the peptides."
+
+$(INTDIR)/sequence_taxon.tsv.gz: $(INTDIR)/sequences.tsv.gz $(INTDIR)/aa_sequence_taxon.tsv.gz
+	echo "Starting the substitution of AA's by ID's for the sequences"
+	join -t '	' -o '1.1,2.2' -1 2 -2 1 \
+			<(zcat $(INTDIR)/sequences.tsv.gz) \
+			<(zcat $(INTDIR)/aa_sequence_taxon.tsv.gz) \
+		| $(GZIP) - \
+		> $@
+	echo "Finishing the substitution of AA's by ID's for the sequences"
+
+$(INTDIR)/original_sequence_taxon.tsv.gz: $(INTDIR)/sequences.tsv.gz $(INTDIR)/original_aa_sequence_taxon.tsv.gz
+	echo "Starting the substitution of AA's by ID's for the original sequences"
+	join -t '	' -o '1.1,2.2' -1 2 -2 1 \
+			<(zcat $(INTDIR)/sequences.tsv.gz) \
+			<(zcat $(INTDIR)/original_aa_sequence_taxon.tsv.gz) \
+		| $(GZIP) - \
+		> $@
+	echo "Finishing the substitution of AA's by ID's for the original sequences"
+
 $(INTDIR)/LCAs.tsv.gz: $(TABDIR)/lineages.tsv.gz $(INTDIR)/sequence_taxon.tsv.gz
 	echo "Starting the calculation equalized LCA's."
-	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).LineagesSequencesTaxons2LCAs $^ $@
+	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).LineagesSequencesTaxons2LCAs \
+		<(zcat $(TABDIR)/lineages.tsv.gz) \
+		<(zcat $(INTDIR)/sequence_taxon.tsv.gz) \
+		>($(GZIP) - > $(INTDIR)/LCAs.tsv.gz)
 	echo "Finished the calculation equalized LCA's."
 
 $(INTDIR)/original_LCAs.tsv.gz: $(TABDIR)/lineages.tsv.gz $(INTDIR)/original_sequence_taxon.tsv.gz
 	echo "Starting the calculation non-equalized LCA's."
-	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).LineagesSequencesTaxons2LCAs $^ $@
+	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).LineagesSequencesTaxons2LCAs \
+		<(zcat $(TABDIR)/lineages.tsv.gz) \
+		<(zcat $(INTDIR)/original_sequence_taxon.tsv.gz) \
+		>($(GZIP) - > $(INTDIR)/original_LCAs.tsv.gz)
 	echo "Finished the calculation non-equalized LCA's."
 
 $(TABDIR)/sequences.tsv.gz: $(INTDIR)/sequences.tsv.gz $(INTDIR)/LCAs.tsv.gz $(INTDIR)/original_LCAs.tsv.gz
@@ -111,45 +238,123 @@ $(TABDIR)/sequences.tsv.gz: $(INTDIR)/sequences.tsv.gz $(INTDIR)/LCAs.tsv.gz $(I
 	zcat $(INTDIR)/sequences.tsv.gz \
 		| join --nocheck-order -a1 -t '	' -o "1.1 1.2 2.2" - <(zcat $(INTDIR)/original_LCAs.tsv.gz) \
 		| join --nocheck-order -a1 -t '	' -o "1.1 1.2 1.3 2.2" - <(zcat $(INTDIR)/LCAs.tsv.gz) \
-		| gzip - \
+		| $(GZIP) - \
 		> $@
 	echo "Finished the creation of the sequences table."
 
 # }}}
 
-# Assembly tables {{{ ----------------------------------------------------------
-$(INTDIR)/unstrained_assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz: parse_assemblies.awk
-	echo "Starting the assembly parsing."
-	mkdir -p $(ASMDIR)
-	rsync --ignore-existing --no-motd --verbose "$(ASSEMBLY_URL)/GCA_*.assembly.txt" $(ASMDIR)
-	find $(ASMDIR) -name 'GCA_*.assembly.txt' \
-		| sort \
-		| xargs cat \
-		| awk -f parse_assemblies.awk \
-			-v assemblies_file=>(sed -e 's/ *	 */	/g' -e 's/ *$$//' | gzip - > $(INTDIR)/unstrained_assemblies.tsv.gz) \
-			-v assembly_sequences_file=>(cut -f1,2,6,7 | sed -e 's/\.[^.]*//' -e 's/ *·  */·/g' -e 's/ *$$//' | gzip - > $(TABDIR)/assembly_sequences.tsv.gz)
-	echo "Finished the assembly parsing."
-
-$(TABDIR)/assemblies.tsv.gz: $(INTDIR)/unstrained_assemblies.tsv.gz strains_assembly_ids.sh
-	echo "Starting the straining of assemblies."
-	ENTREZ_URL=$(ENTREZ_URL) ENTREZ_BATCH_SIZE=$(ENTREZ_BATCH_SIZE) ./strains_assembly_ids.sh $(INTDIR)/unstrained_assemblies.tsv.gz $@
-	echo "Finished the straining of assemblies."
+# Proteomes {{{ ----------------------------------------------------------------
+$(TABDIR)/proteomes.tsv.gz: $(INTDIR)/proteomes.tsv.gz proteomes.sh type_strains.sh
+	echo "Starting fetching proteome info."
+	./proteomes.sh \
+		$(INTDIR)/proteomes.tsv.gz \
+		<(ENTREZ_URL=$(ENTREZ_URL) ENTREZ_BATCH_SIZE=$(ENTREZ_BATCH_SIZE) ./type_strains.sh) \
+		$(TABDIR)/proteomes.tsv.gz
+	echo "Finished fetching proteome info."
 # }}}
+
+# Functional information {{{ ----------------------------------------------------------------
+$(TABDIR)/keggpathways.tsv.gz:
+	echo "Starting fetching KEGG pathways table info"
+	./keggpathwaystable.sh \
+		$(KGPDIR)/keggpathways.tsv \
+		| gzip - \
+		> $@
+	echo "Finished the creation of the KEGG pathways table."
+
+$(TABDIR)/keggpathwaymappings.tsv.gz: $(TABDIR)/keggpathways.tsv.gz $(TABDIR)/ec_numbers.tsv.gz
+	echo "Starting fetching KEGG pathway mappings table info"
+	./keggpathwaymappingstable.sh \
+		$(KGPDIR)/keggpathwaymappings.tsv \
+		$(TABDIR)/keggpathways.tsv.gz \
+		$(TABDIR)/ec_numbers.tsv.gz \
+		| gzip - \
+		> $@
+	echo "Finished the creation of the KEGG pathway mappings table."	
+
+$(TABDIR)/ec_numbers.tsv.gz: $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt
+	echo "Starting fetching EC numbers info"
+	./ectable.sh \
+		$(ECNDIR)/enzclass.txt \
+		$(ECNDIR)/enzymes.dat \
+		| gzip - \
+		> $@
+	echo "Finished the creation of the EC numbers table."
+
+$(TABDIR)/go_terms.tsv.gz: $(GOBDIR)/goinfo.obo
+	echo "Starting fetching GO terms info"
+	./gotable.py \
+		$(GOBDIR)/goinfo.obo \
+		| gzip - \
+		> $@
+	echo "Finished the creation of the GO terms table."
+
+$(TABDIR)/interpro_entries.tsv.gz: $(INPDIR)/interpro.xml.gz
+	echo "Starting fetching InterPro info"
+	./interprotable.py \
+		$(INPDIR)/interpro.xml.gz \
+		| gzip - \
+		> $@
+	echo "Finished the creation of the InterPro table."
+
+$(TABDIR)/interpro_2_go.tsv.gz: $(INPDIR)/interpro2go.txt
+	echo "Starting parsing InterPro2GO info"
+	cat $(INPDIR)/interpro2go.txt \
+		| sed 's/InterPro://' \
+		| sed 's/ .*; /       /g' \
+		| gzip - \
+		> $@
+	echo "Finished the creation of the InterPro table."
+
+# }}}
+
+# Update cross reference tables (EC,GO,InterPro) {{{ ----------------------------------------
+$(TABDIR)/ec_cross_references.tsv.gz: $(TABDIR)/ec_cross_references.tsv.gz $(TABDIR)/ec_numbers.tsv.gz
+	echo "Starting fetching EC cross ref and EC number tableinfo"
+	./crossreftable.py \
+		$(TABDIR)/ec_numbers.tsv.gz \
+		$(ECNDIR)/ec_cross_references.tsv.gz \
+		1 \											# field containing the EC numbers
+		| gzip - \
+		> $@
+	echo "Finished updating the EC cross ref table."
+
+$(TABDIR)/go_cross_references.tsv.gz: $(TABDIR)/go_cross_references.tsv.gz $(TABDIR)/go_terms.tsv.gz
+	echo "Starting fetching GO cross ref and GO terms table info"
+	./crossreftable.py \
+		$(TABDIR)/go_terms.tsv.gz \
+		$(GOBDIR)/go_cross_references.tsv.gz \
+		1 \											# field containing the GO terms
+		| gzip - \
+		> $@
+	echo "Finished updating the GO cross ref table."
+
+$(TABDIR)/interpro_cross_references.tsv.gz: $(INPDIR)/interpro_cross_references.tsv.gz $(TABDIR)/interpro_entries.tsv.gz
+	echo "Starting fetching interpro cross ref and interpro entries table info"
+	./crossreftable.py \
+		$(TABDIR)/interpro_entries.tsv.gz \
+		$(INPDIR)/interpro_cross_references.tsv.gz \
+		2 \											# field containing the InterPro entries
+		| gzip - \
+		> $@
+	echo "Finished updating the InterPro cross ref table."
+
+# }}}
+
 
 .PHONY: clean_intermediates
 clean_intermediates:
 	rm -vf $(INTDIR)/*
-	rm -vf $(TAXDIR)/names.dmp $(TAXDIR)/nodes.dmp
 
 .PHONY: clean
 clean: clean_intermediates
-	rm -vf $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
-	rm -vf $(TABDIR)/assemblies.tsv.gz $(TABDIR)/assembly_sequences.tsv.gz
-	rm -vf $(TABLES)
+	rm -vf $(TABDIR)/*
 
 .PHONY: pristine
 pristine: clean
 	rm -vf $(JAR)
 	rm -vf $(TAXDIR)/taxdmp.zip
 	rm -vf $(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/uniprot_treml.xml.gz
-	find $(ASMDIR)/ -name '*.assembly.txt' -exec rm -vf \{\} \;
+
+# vim: foldmethod=marker

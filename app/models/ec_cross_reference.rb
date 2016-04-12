@@ -12,5 +12,5 @@ class EcCrossReference < ActiveRecord::Base
   attr_accessible nil
 
   belongs_to :uniprot_entry
-  belongs_to :ec_number_info, foreign_key: 'ec_number', primary_key: 'ec_number', class_name: 'ec_number'
+  belongs_to :ec_number
 end

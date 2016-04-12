@@ -8,7 +8,7 @@
 #  taxon_id                 :integer          not null
 #  type                     :string(9)        not null
 #  name                     :string(150)      not null
-#  protein                  :text             not null
+#  protein                  :text(65535)      not null
 #
 
 class UniprotEntry < ActiveRecord::Base
@@ -20,6 +20,7 @@ class UniprotEntry < ActiveRecord::Base
   has_many :embl_cross_references
   has_many :ec_cross_references
   has_many :go_cross_references
+  has_many :proteome_cross_references
 
   belongs_to :taxon,            foreign_key: 'taxon_id',
                                 primary_key: 'id',
@@ -35,7 +36,7 @@ class UniprotEntry < ActiveRecord::Base
 
   def protein_contains?(sequence, equate_il)
     if equate_il
-      protein.gsub(/I/, 'L').include? sequence.gsub(/I/, 'L')
+      protein.tr('I', 'L').include? sequence.tr('I', 'L')
     else
       protein.include? sequence
     end

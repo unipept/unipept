@@ -18,6 +18,8 @@ public class UniprotHandler extends DefaultHandler {
     private UniprotDbRef dbRef;
     private UniprotGORef goRef;
     private UniprotECRef ecRef;
+    private UniprotInterproRef interproRef;
+    private UniprotProteomeRef protRef;
     private StringBuilder charData;
     private int i;
     private boolean inOrganism = false;
@@ -29,10 +31,10 @@ public class UniprotHandler extends DefaultHandler {
     private Map<String, EndTagWorker> endTagWorkers;
     private Map<String, StartTagWorker> startTagWorkers;
 
-    public UniprotHandler(String uniprotType) {
+    public UniprotHandler(int peptideMinLength, int peptideMaxLength, String uniprotType) {
         super();
         this.uniprotType = uniprotType;
-        currentItem = new UniprotEntry(uniprotType);
+        currentItem = new UniprotEntry(uniprotType, peptideMinLength, peptideMaxLength);
         charData = new StringBuilder();
         observers = new ArrayList<UniprotObserver>();
         i = 0;
@@ -99,6 +101,12 @@ public class UniprotHandler extends DefaultHandler {
                     } else if (ecRef != null) {
                         currentItem.addECRef(ecRef);
                         ecRef = null;
+                    } else if (interproRef != null) {
+                        currentItem.addInterproRef(interproRef);
+                        interproRef = null;
+                    } else if (protRef != null) {
+                        currentItem.addProtRef(protRef);
+                        protRef = null;
                     }
                 }
             }
@@ -164,6 +172,10 @@ public class UniprotHandler extends DefaultHandler {
                         goRef = new UniprotGORef(atts.getValue("id"));
                     } else if (atts.getValue("type").equals("EC")) {
                         ecRef = new UniprotECRef(atts.getValue("id"));
+                    } else if (atts.getValue("type").equals("InterPro")) {
+                        interproRef = new UniprotInterproRef(atts.getValue("id"));
+                    } else if (atts.getValue("type").equals("Proteomes")) {
+                        protRef = new UniprotProteomeRef(atts.getValue("id"));
                     }
                 }
             }

@@ -48,27 +48,39 @@ ALTER TABLE refseq_cross_references ADD INDEX fk_refseq_reference_uniprot_entrie
 -- -----------------------------------------------------
 -- Table `unipept`.`go_cross_references`
 -- -----------------------------------------------------
-ALTER TABLE go_cross_references ADD INDEX fk_go_reference_uniprot_entries (uniprot_entry_id ASC);
+ALTER TABLE go_cross_references ADD INDEX fk_go_reference_uniprot_entries (uniprot_entry_id ASC), ADD INDEX fk_go_reference_go_terms (go_term_id ASC);
 
 
 -- -----------------------------------------------------
 -- Table `unipept`.`ec_cross_references`
 -- -----------------------------------------------------
-ALTER TABLE ec_cross_references ADD INDEX fk_ec_reference_uniprot_entries (uniprot_entry_id ASC);
-ALTER TABLE ec_cross_references ADD INDEX fk_ec_cross_reference_ec_numbers_idx (ec_number ASC);
+ALTER TABLE ec_cross_references ADD INDEX fk_ec_reference_uniprot_entries (uniprot_entry_id ASC), ADD INDEX fk_ec_reference_ec_numbers (ec_number_id ASC);
 
 
 -- -----------------------------------------------------
--- Table `unipept`.`assemblies`
+-- Table `unipept`.`interpro_cross_references`
 -- -----------------------------------------------------
-ALTER TABLE assemblies ADD INDEX fk_taxons_assemblies_idx (taxon_id ASC);
+ALTER TABLE interpro_cross_references ADD INDEX fk_interpro_reference_uniprot_entries (uniprot_entry_id ASC), ADD INDEX fk_interpro_reference_interpro_entries (interpro_entry_id ASC);
 
 
 -- -----------------------------------------------------
--- Table `unipept`.`assembly_sequences`
+-- Table `unipept`.`proteomes`
 -- -----------------------------------------------------
-ALTER TABLE assembly_sequences ADD INDEX fk_assemblies_assembly_sequences_idx (assembly_id ASC);
-ALTER TABLE assembly_sequences ADD INDEX idx_genbank_accession (genbank_accession ASC);
+ALTER TABLE proteomes ADD INDEX fk_taxons_proteomes (taxon_id ASC);
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`proteome_cross_references`
+-- -----------------------------------------------------
+ALTER TABLE proteome_cross_references ADD INDEX fk_proteome_cross_references_uniprot_entries (uniprot_entry_id ASC);
+ALTER TABLE proteome_cross_references ADD INDEX fk_proteome_cross_references (proteome_id ASC);
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`kegg_pathway_mappings`
+-- -----------------------------------------------------
+ALTER TABLE kegg_pathway_mappings ADD INDEX fk_kegg_pathways_idx (kegg_pathway_id ASC);
+ALTER TABLE kegg_pathway_mappings ADD INDEX fk_ec_numbers_idx (ec_number_id ASC);
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

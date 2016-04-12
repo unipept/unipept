@@ -12,4 +12,5 @@ class GoCrossReference < ActiveRecord::Base
   attr_accessible nil
 
   belongs_to :uniprot_entry
+  belongs_to :go_term
 end

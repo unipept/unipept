@@ -84,6 +84,12 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
   `sequence` VARCHAR(50) NOT NULL ,
   `lca` MEDIUMINT UNSIGNED NULL ,
   `lca_il` MEDIUMINT UNSIGNED NULL ,
+  `ec` VARCHAR(255) NULL,
+  `ec_il` VARCHAR(255) NULL,
+  `go` VARCHAR(255) NULL,
+  `go_il` VARCHAR(255) NULL,
+  `interpro` VARCHAR(255) NULL,
+  `interpro_il` VARCHAR(255) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii;
@@ -188,7 +194,22 @@ COLLATE = ascii_general_ci;
 CREATE  TABLE IF NOT EXISTS `unipept`.`go_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `go_id` VARCHAR(12) NOT NULL ,
+  `go_term_id` INT NOT NULL,
+  `go_id` VARCHAR(15) NOT NULL ,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`go_terms`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `go_id` VARCHAR(15) NOT NULL,
+  `name` VARCHAR(160) NOT NULL,
+  `name_space` ENUM('BP', 'MF', 'CC') NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
@@ -201,7 +222,8 @@ COLLATE = ascii_general_ci;
 CREATE  TABLE IF NOT EXISTS `unipept`.`ec_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `ec_number` VARCHAR(12) NOT NULL ,
+  `ec_number_id` INT NOT NULL,
+  `ec_number` VARCHAR(15) NOT NULL ,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
@@ -212,13 +234,13 @@ COLLATE = ascii_general_ci;
 -- Table `unipept`.`ec_numbers`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`ec_numbers` (
-  `ec_number` VARCHAR(12) NOT NULL,
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `ec_number` VARCHAR(15) NOT NULL,
   `name` VARCHAR(160) NOT NULL,
-  PRIMARY KEY (`ec_number`))
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
 COLLATE = ascii_general_ci;
-
 
 -- -----------------------------------------------------
 -- Table `unipept`.`users`
@@ -231,43 +253,92 @@ CREATE TABLE IF NOT EXISTS `unipept`.`users` (
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `unipept`.`assemblies`
+-- Table `unipept`.`proteomes`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `unipept`.`assemblies` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `genbank_assembly_accession` CHAR(16) NULL,
-  `refseq_assembly_accession` CHAR(16) NULL,
+CREATE TABLE IF NOT EXISTS `unipept`.`proteomes` (
+  `id` MEDIUMINT UNSIGNED NOT NULL,
+  `proteome_accession_number` CHAR(12) NOT NULL,
+  `proteome_name` VARCHAR(100) NOT NULL,
   `taxon_id` MEDIUMINT UNSIGNED NULL,
-  `genome_representation` ENUM('full', 'partial') NOT NULL,
-  `assembly_level` ENUM('Contig', 'Scaffold', 'Complete Genome', 'Chromosome', 'Chromosome with gaps', 'Gapless Chromosome') NOT NULL,
-  `assembly_name` VARCHAR(104) NOT NULL,
-  `organism_name` VARCHAR(86) NOT NULL,
-  `biosample` VARCHAR(14) NULL,
   `type_strain` BIT(1) NOT NULL DEFAULT b'0',
+  `reference_proteome` BIT(1) NOT NULL DEFAULT b'0',
+  `strain` VARCHAR(45) NULL,
+  `assembly` VARCHAR(45) NULL,
+  `name` VARCHAR(128) NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
+
 -- -----------------------------------------------------
--- Table `unipept`.`assembly_sequences`
+-- Table `unipept`.`proteome_cross_references`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `unipept`.`assembly_sequences` (
+CREATE TABLE IF NOT EXISTS `unipept`.`proteome_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `assembly_id` INT UNSIGNED NOT NULL,
-  `sequence_type` ENUM('Chromosome', 'Linkage Group', 'Mitochondrion', 'Plasmid', 'na') NOT NULL DEFAULT 'na',
-  `genbank_accession` VARCHAR(25) NOT NULL,
+  `uniprot_entry_id` INT UNSIGNED NOT NULL,
+  `proteome_id` MEDIUMINT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `unipept`.`assembly_caches`
+-- Table `unipept`.`interpro_cross_references`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `unipept`.`assembly_caches` (
-  `assembly_id` INT UNSIGNED NOT NULL,
-  `json_sequences` MEDIUMTEXT NOT NULL,
-  PRIMARY KEY (`assembly_id`))
+CREATE  TABLE IF NOT EXISTS `unipept`.`interpro_cross_references` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uniprot_entry_id` INT UNSIGNED NOT NULL,
+  `interpro_entry_id` INT NOT NULL,
+  `interpro_id` VARCHAR(15) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`interpro_entries`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`interpro_entries` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `parent_id` INT NOT NULL,
+  `interpro_id` VARCHAR(15) NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `type` ENUM('F', 'D', 'R', 'S') NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`kegg_pathways`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`kegg_pathways` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `long_id` VARCHAR(15) NOT NULL,
+  `name` VARCHAR(160) NOT NULL,
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
+
+-- -----------------------------------------------------
+-- Table `unipept`.`kegg_pathway_mappings`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`kegg_pathway_mappings` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ec_number_id` INT UNSIGNED NOT NULL,
+  `kegg_pathway_id` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE=InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`proteome_caches`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`proteome_caches` (
+  `proteome_id` MEDIUMINT UNSIGNED NOT NULL,
+  `json_sequences` MEDIUMTEXT NOT NULL,
+  PRIMARY KEY (`proteome_id`))
+ENGINE = InnoDB;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

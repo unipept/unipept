@@ -109,7 +109,7 @@ var matrixBackend = function matrixBackend(data) {
 
     /**
      * Flattens a hierarchical array based on the first 2 elements. Always
-     * removes the last element. Converts the id's to assembly id's.
+     * removes the last element. Converts the id's to proteome id's.
      *
      * @param <Array> array The array to flatten
      */
@@ -423,16 +423,16 @@ function sendToHost(type, message) {
 }
 
 /**
- * Requests the sequence id's for a given assembly id. Calls the addData
+ * Requests the sequence id's for a given proteome id. Calls the addData
  * function when done.
  *
- * @param <Number> id The id of the assembly of sequences we want
+ * @param <Number> id The id of the proteome of sequences we want
  * @param <String> name The name of the organism
  */
 function loadData(id, name) {
     var requestRank = rank;
     getJSON("/peptidome/sequences/" + id + ".json", function (json_data) {
-        addData(id, name, json_data, requestRank);
+        addData(id, name, deltaDecodeInPlace(json_data), requestRank);
     });
 }
 
@@ -451,7 +451,7 @@ function loadUserData(id, name, ids) {
  * Processes a list of sequence_id's, received from the webserver and adds it
  * to the data array.
  *
- * @param <Number> id The assembly id of the organism
+ * @param <Number> id The proteome id of the organism
  * @param <String> name The name of the organism
  * @param <Array> set The ordered array of sequence_id, contains no duplicates
  * @param <Number> request_rank The rank of the request. Used to discard old
@@ -681,12 +681,12 @@ function getUniqueSequences(newOrder, force) {
     order = newOrder;
     if (order.length > 0) {
         if (force) {
-            reallyGetUniqueSequences(data[order[0]].peptide_list);
+            reallyGetUniqueSequences(order[0]);
         } else {
             getJSONByPost("/peptidome/get_lca/", "ids=" + filterIds(order), function (d) {
                 // only fetch sequences when there's a new lca
                 if (lca !== d.name) {
-                    reallyGetUniqueSequences(data[order[0]].peptide_list);
+                    reallyGetUniqueSequences(order[0]);
                 } else {
                     calculateUnicore(unicoreData);
                 }
@@ -696,10 +696,16 @@ function getUniqueSequences(newOrder, force) {
 }
 
 // fetch the sequences
-function reallyGetUniqueSequences(s) {
-    getJSONByPost("/peptidome/unique_sequences/", "ids=" + filterIds(order) + "&sequences=[" + s + "]", function (d) {
+function reallyGetUniqueSequences(id) {
+    var variables = "ids=" + filterIds(order);
+    if (isLocalProteome(id)) {
+        variables += "&sequences=[" + deltaEncode(data[id].peptide_list) + "]";
+    } else {
+        variables += "&proteome_id=" + id;
+    }
+    getJSONByPost("/peptidome/unique_sequences/", variables, function (d) {
         lca = d[0];
-        calculateUnicore(d[1]);
+        calculateUnicore(deltaDecodeInPlace(d[1]));
     });
 }
 
@@ -749,14 +755,14 @@ function getSequences(type, id) {
     default:
         error("Unknown type: " + type);
     }
-    getJSONByPost("/peptidome/full_sequences/", "sequence_ids=[" + ids + "]", function (d) {
+    getJSONByPost("/peptidome/full_sequences/", "sequence_ids=[" + deltaEncode(ids) + "]", function (d) {
         sendToHost("processDownloadedSequences", {sequences : d, type : type, id : id});
     });
 }
 
 /************ These functions are not accessible from the host ****************/
 
-// Returns the rank of a given assembly id for the current order
+// Returns the rank of a given proteome id for the current order
 function getOrderById(id) {
     var i;
     for (i = 0; i < order.length; i++) {
@@ -809,7 +815,7 @@ function getJSONByPost(url, data, callback) {
 }
 
 function genomeSimilarity(peptideList1, peptideList2) {
-    var intersect = intersection(peptideList1, peptideList2).length,
+    var intersect = intersectionSize(peptideList1, peptideList2),
         union = peptideList1.length + peptideList2.length - intersect,
         min = Math.min(peptideList1.length, peptideList2.length),
         max = Math.max(peptideList1.length, peptideList2.length),
@@ -831,7 +837,7 @@ function genomeSimilarity(peptideList1, peptideList2) {
 
 /**
  * Removes [,;:] from a string and replaces spaces by underscores. Also adds
- * the assembly id.
+ * the proteome id.
  *
  * @param <Genome> genome The genome we want to convert
  */
@@ -840,7 +846,7 @@ function generateNewickName(genome) {
 }
 
 /**
- * Returns a new array containing only real assembly ids
+ * Returns a new array containing only real proteome ids
  *
  * @param <Array> a A list of ids.
  */
@@ -848,11 +854,18 @@ function filterIds(a) {
     var r = [],
         i;
     for (i = 0; i < a.length; i++) {
-        if (!isNaN(+a[i])) {
+        if (!isLocalProteome(a[i])) {
             r.push(a[i]);
         }
     }
     return r;
+}
+
+/**
+ * Returns wether the given id comes from a local Proteome
+ */
+function isLocalProteome(id) {
+    return isNaN(+id);
 }
 
 // union and intersection for sorted arrays
@@ -931,4 +944,54 @@ function intersection(a, b) {
         }
     }
     return r;
+}
+function intersectionSize(a, b) {
+    var size = 0,
+        i = 0,
+        j = 0;
+    while (i < a.length && j < b.length) {
+        if (a[i] < b[j]) {
+            i++;
+        } else if (a[i] > b[j]) {
+            j++;
+        } else {
+            size++;
+            i++;
+            j++;
+        }
+    }
+    return size;
+}
+
+/**
+ * Delta decodes an array of integers IN PLACE
+ *
+ * @param <Array> data An array of integers
+ */
+function deltaDecodeInPlace(data) {
+    var old = 0,
+        len = data.length,
+        i;
+    for (i = 0; i < len; i++) {
+        old += data[i];
+        data[i] = old;
+    }
+    return data;
+}
+
+/**
+ * Delta encodes an array of integers
+ *
+ * @param <Array> data An array of integers
+ */
+function deltaEncode(data) {
+    var prev = 0,
+        len = data.length,
+        output = new Array(len),
+        i;
+    for (i = 0; i < len; i++) {
+        output[i] = data[i] - prev;
+        prev = data[i];
+    }
+    return output;
 }

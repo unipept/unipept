@@ -8,22 +8,10 @@ import java.io.IOException;
 import java.io.File;
 import java.sql.Timestamp;
 
-import com.sleepycat.je.Database;
-import com.sleepycat.je.DatabaseConfig;
-import com.sleepycat.je.Environment;
-import com.sleepycat.je.EnvironmentConfig;
-import com.sleepycat.collections.StoredMap;
-import com.sleepycat.bind.tuple.StringBinding;
-import com.sleepycat.bind.tuple.IntegerBinding;
-
-import org.unipept.xml.UniprotObserver;
-import org.unipept.xml.UniprotDbRef;
-import org.unipept.xml.UniprotECRef;
-import org.unipept.xml.UniprotEntry;
-import org.unipept.xml.UniprotEntry.Pair;
-import org.unipept.xml.UniprotGORef;
+import org.unipept.xml.*;
 import org.unipept.storage.CSV;
 import org.unipept.taxons.TaxonList;
+import org.unipept.tools.TaxonsUniprots2Tables;
 
 /**
  * Intermediate class to add PeptideData to the database
@@ -43,53 +31,40 @@ public class TableWriter implements UniprotObserver {
         }
     }
 
-    private Map<String, Integer> sequenceIds;
+    private Map<String, Integer> proteomeIds;
     private TaxonList taxonList;
     private Set<Integer> wrongTaxonIds;
 
     // csv files
-    private CSV.IndexedWriter uniprotEntries;
     private CSV.IndexedWriter peptides;
+    private CSV.IndexedWriter uniprotEntries;
     private CSV.IndexedWriter refseqCrossReferences;
     private CSV.IndexedWriter emblCrossReferences;
     private CSV.IndexedWriter goCrossReferences;
     private CSV.IndexedWriter ecCrossReferences;
-    private CSV.IndexedWriter sequences;
+    private CSV.IndexedWriter interproCrossReferences;
+    private CSV.IndexedWriter proteomeCrossReferences;
+    private CSV.IndexedWriter proteomes;
 
     /**
      * Creates a new data object
      */
-    public TableWriter(String berkeleyDir, long berkeleyMem, TaxonList taxonList, String peptidesFile, String sequencesFile, String uniprotEntriesFile, String refseqCrossReferencesFile, String ecCrossReferencesFile, String emblCrossReferencesFile, String goCrossReferencesFile) {
+    public TableWriter(TaxonsUniprots2Tables args) {
         wrongTaxonIds = new HashSet<Integer>();
-        this.taxonList = taxonList;
-
-        /* Opening BerkeleyDB for sequence ID's. */
-        try {
-            EnvironmentConfig envConfig = new EnvironmentConfig();
-            envConfig.setAllowCreate(true);
-            envConfig.setCacheSize(berkeleyMem);
-            Environment env = new Environment(new File(berkeleyDir), envConfig);
-            DatabaseConfig dbConfig = new DatabaseConfig();
-            dbConfig.setAllowCreate(true);
-            dbConfig.setTemporary(true);
-            Database db = env.openDatabase(null, "sequenceIds", dbConfig);
-            sequenceIds = new StoredMap<String, Integer>(db, new StringBinding(), new IntegerBinding(), true);
-        } catch(Exception e) {
-            System.err.println(new Timestamp(System.currentTimeMillis())
-                    + " Error creating sequenceIds database.");
-            e.printStackTrace();
-            System.exit(1);
-        }
+        proteomeIds = new HashMap<>();
 
         /* Opening CSV files for writing. */
         try {
-            peptides = new CSV.IndexedWriter(peptidesFile);
-            sequences = new CSV.IndexedWriter(sequencesFile);
-            uniprotEntries = new CSV.IndexedWriter(uniprotEntriesFile);
-            refseqCrossReferences = new CSV.IndexedWriter(refseqCrossReferencesFile);
-            ecCrossReferences = new CSV.IndexedWriter(ecCrossReferencesFile);
-            emblCrossReferences = new CSV.IndexedWriter(emblCrossReferencesFile);
-            goCrossReferences = new CSV.IndexedWriter(goCrossReferencesFile);
+            taxonList = TaxonList.loadFromFile(args.taxonsFile);
+            peptides = new CSV.IndexedWriter(args.peptidesFile);
+            proteomes = new CSV.IndexedWriter(args.proteomesFile);
+            uniprotEntries = new CSV.IndexedWriter(args.uniprotEntriesFile);
+            refseqCrossReferences = new CSV.IndexedWriter(args.refseqCrossReferencesFile);
+            ecCrossReferences = new CSV.IndexedWriter(args.ecCrossReferencesFile);
+            emblCrossReferences = new CSV.IndexedWriter(args.emblCrossReferencesFile);
+            goCrossReferences = new CSV.IndexedWriter(args.goCrossReferencesFile);
+            interproCrossReferences = new CSV.IndexedWriter(args.interproCrossReferencesFile);
+            proteomeCrossReferences = new CSV.IndexedWriter(args.proteomeCrossReferencesFile);
         } catch(IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + " Error creating tsv files");
@@ -109,15 +84,19 @@ public class TableWriter implements UniprotObserver {
         int uniprotEntryId = addUniprotEntry(entry.getUniprotAccessionNumber(), entry.getVersion(),
                 entry.getTaxonId(), entry.getType(), entry.getName(), entry.getSequence());
         if (uniprotEntryId != -1) { // failed to add entry
-            for (Pair p : entry.digest())
-                addData(p.getSequence().replace("I", "L"), uniprotEntryId, p.getSequence(),
-                        p.getPosition());
+            for(String sequence : entry.digest()) {
+                addData(sequence.replace('I', 'L'), uniprotEntryId, sequence);
+            }
             for (UniprotDbRef ref : entry.getDbReferences())
                 addDbRef(ref, uniprotEntryId);
             for (UniprotGORef ref : entry.getGOReferences())
                 addGORef(ref, uniprotEntryId);
             for (UniprotECRef ref : entry.getECReferences())
                 addECRef(ref, uniprotEntryId);
+            for (UniprotInterproRef ref : entry.getInterproReferences())
+                addInterproRef(ref, uniprotEntryId);
+            for (UniprotProteomeRef ref : entry.getProtReferences())
+                addProteomeRef(ref, uniprotEntryId);
         }
     }
 
@@ -166,28 +145,28 @@ public class TableWriter implements UniprotObserver {
     }
 
     /**
-     * returns the database ID of given sequence. If the local index is enabled,
+     * returns the database ID of given proteome. If the local index is enabled,
      * try that index first. If no ID is found, the sequence is added to the
      * database.
      *
-     * @param sequence
-     *            String of the sequence of which we want to get the id
+     * @param proteomeAccession
+     *            The accession number of the proteome of which we want to get the id
      * @return the database id of given sequence
      */
-    private int getSequenceId(String sequence) {
-        if(sequenceIds.containsKey(sequence)) {
-            return sequenceIds.get(sequence);
+    private int getProteomeId(String proteomeAccession) {
+        Integer id = proteomeIds.get(proteomeAccession);
+        if(id != null) {
+            return id;
         } else {
-            int index = 0;
+            int index = proteomeIds.size() + 1;
             try {
-                sequences.write(sequence);
-                index = sequences.index();
+                proteomes.write(proteomeAccession);
             } catch(IOException e) {
                 System.err.println(new Timestamp(System.currentTimeMillis())
                         + " Error writing to CSV.");
                 e.printStackTrace();
             }
-            sequenceIds.put(sequence, index);
+            proteomeIds.put(proteomeAccession, index);
             return index;
         }
     }
@@ -195,25 +174,25 @@ public class TableWriter implements UniprotObserver {
     /**
      * Adds peptide data to the database
      *
-     * @param sequence
-     *            The sequence of the peptide
+     * @param unifiedSequence
+     *            The sequence of the peptide with AA's I and L the
+     *            same.
      * @param uniprotEntryId
      *            The id of the uniprot entry from which the peptide data was
      *            retrieved.
-     * @param position
-     *            The starting position of the sequence in the full protein
+     * @param originalSequence
+     *            The original sequence of the peptide.
      */
-    public void addData(String sequence, int uniprotEntryId, String originalSequence, int position) {
+    public void addData(String unifiedSequence, int uniprotEntryId, String originalSequence) {
         try {
             peptides.write(
-                    Integer.toString(getSequenceId(sequence)),
-                    Integer.toString(getSequenceId(originalSequence)),
-                    Integer.toString(uniprotEntryId),
-                    Integer.toString(position)
+                    unifiedSequence,
+                    originalSequence,
+                    Integer.toString(uniprotEntryId)
                     );
         } catch(IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
-                    + " Error adding this peptide to the database: " + sequence);
+                    + " Error adding this peptide to the database: " + unifiedSequence);
             e.printStackTrace();
         }
     }
@@ -279,6 +258,44 @@ public class TableWriter implements UniprotObserver {
 
     }
 
+    /**
+     * Adds a uniprot entry InterPro reference to the database
+     *
+     * @param ref
+     *            The uniprot InterPro reference to add
+     * @param uniprotEntryId
+     *            The uniprotEntry of the cross reference
+     */
+    public void addInterproRef(UniprotECRef ref, int uniprotEntryId) {
+        try {
+            interproCrossReferences.write(Integer.toString(uniprotEntryId), ref.getId());
+        } catch (IOException e) {
+            System.err.println(new Timestamp(System.currentTimeMillis())
+                    + " Error adding this InterPro reference to the database.");
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Adds a uniprot proteome reference to the database
+     *
+     * @param ref
+     *            The uniprot proteome reference to add
+     * @param uniprotEntryId
+     *            The uniprotEntry of the cross reference
+     */
+    public void addProteomeRef(UniprotProteomeRef ref, int uniprotEntryId) {
+        try {
+            proteomeCrossReferences.write(Integer.toString(uniprotEntryId), Integer.toString(getProteomeId(ref.getId())));
+        } catch (IOException e) {
+            System.err.println(new Timestamp(System.currentTimeMillis())
+                    + " Error adding this Proteome reference to the database.");
+            e.printStackTrace();
+        }
+
+    }
+
     @Override
     public void handleEntry(UniprotEntry entry) {
         store(entry);
@@ -293,7 +310,9 @@ public class TableWriter implements UniprotObserver {
             emblCrossReferences.close();
             goCrossReferences.close();
             ecCrossReferences.close();
-            sequences.close();
+            interproCrossReferences.close();
+            proteomeCrossReferences.close();
+            proteomes.close();
         } catch(IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + " Something closing the csv files.");

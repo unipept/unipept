@@ -24,16 +24,10 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         currentPage,
         elementsShown = 50,
         SEARCH_VALUES = {
-            complete : {attr: "assembly_level", value: "Complete Genome", name: "Complete genome"},
-            scaffold : {attr: "assembly_level", value: "Scaffold", name: "Scaffold"},
-            contig : {attr: "assembly_level", value: "Contig", name: "Contig"},
-            chromosome : {attr: "assembly_level", value: "Chromosome", name: "Chromosome"},
-            gaps : {attr: "assembly_level", value: "Chromosome with gaps", name: "Chromosome with gaps"},
-            gapless : {attr: "assembly_level", value: "Gapless Chromosome", name: "Gapless chromosome"},
-            full : {attr: "genome_representation", value: "full", name: "Full genome"},
-            partial : {attr: "genome_representation", value: "partial", name: "Partial genome"},
             type : {attr: "type_strain", value: true, name: "Is a type strain"},
-            notype : {attr: "type_strain", value: false, name: "Is not a type strain"}
+            notype : {attr: "type_strain", value: false, name: "Is not a type strain"},
+            reference : {attr: "reference_proteome", value: true, name: "Is a reference proteome"},
+            noreference : {attr: "reference_proteome", value: false, name: "Is not a reference proteome"}
         },
         classes = [],
         orders = [],
@@ -265,36 +259,17 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             var ranks = ["class", "order", "genus", "species"],
                 content = "<form class='form-horizontal'>",
                 option;
-            // assembly level
-            content += "<div class='form-group'>";
-            content += "<label for='assemblyLevel' class='control-label col-sm-4'>Assembly level</label>";
-            content += "<div class='col-sm-8'><select class='form-control' id='assemblyLevel' name='assemblyLevel'>";
-            content += "<option value='is:any'>Any</option>";
-            for (option in SEARCH_VALUES) {
-                if (SEARCH_VALUES[option].attr === "assembly_level") {
-                    content += "<option value='is:" + option + "'>" + SEARCH_VALUES[option].value + "</option>";
-                }
-            }
-            content += "</select></div>";
-            content += "</div>";
-
-            // genome representation
-            content += "<div class='form-group'>";
-            content += "<label for='genomeRepresentation' class='control-label col-sm-4' style='margin-top: -10px'>Genome representation</label>";
-            content += "<div class='col-sm-8'><select class='form-control' id='genomeRepresentation' name='genomeRepresentation'>";
-            content += "<option value='is:any'>Any</option>";
-            for (option in SEARCH_VALUES) {
-                if (SEARCH_VALUES[option].attr === "genome_representation") {
-                    content += "<option value='is:" + option + "'>" + SEARCH_VALUES[option].name + "</option>";
-                }
-            }
-            content += "</select></div>";
-            content += "</div>";
 
             // type strain
             content += "<div class='form-group'>";
             content += "<div class='col-sm-offset-4 col-sm-8'><div class='checkbox'>";
             content += "<label><input type='checkbox' id='typeStrain'> Only show <strong>type strains</strong></label>";
+            content += "</div></div></div>";
+
+            // reference proteome
+            content += "<div class='form-group'>";
+            content += "<div class='col-sm-offset-4 col-sm-8'><div class='checkbox'>";
+            content += "<label><input type='checkbox' id='referenceProteome'> Only show UniProt <strong>reference proteomes</strong></label>";
             content += "</div></div></div>";
 
             // analyzed
@@ -336,12 +311,12 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                 containerOffset = fullScreen ? $(".full-screen-container").offset() : $("body").offset();
             $popover.css("z-index", 10);
             $popover.css("left", buttonOffset.left - containerOffset.left + 45);
-            $popover.css("top", Math.max(0, buttonOffset.top - containerOffset.top - 215));
-            $popover.find(".arrow").css("top", fullScreen ? "42%" : "50%");
+            $popover.css("top", Math.max(0, buttonOffset.top - containerOffset.top - 185));
+            $popover.find(".arrow").css("top", fullScreen ? "48%" : "50%");
         }
 
         function initPopoverBehaviour() {
-            $popover = $(".popover-content #assemblyLevel").parents(".popover");
+            $popover = $(".popover-content #referenceProteome").parents(".popover");
             $popover.css("max-width", "none");
 
             repositionPopover();
@@ -370,6 +345,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
 
             });
             addCheckboxListener("#typeStrain", "is:type");
+            addCheckboxListener("#referenceProteome", "is:reference");
             addCheckboxListener("#inAnalysis", "not:added");
 
             function addCheckboxListener(id, filter) {
@@ -441,10 +417,9 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         if (!$popover) return;
         if ($popover.hasClass("hide")) return;
 
-        $popover.find("#assemblyLevel").val("is:any");
-        $popover.find("#genomeRepresentation").val("is:any");
         $popover.find(".taxon-select").val("taxon:any");
         $("#typeStrain").prop('checked', false);
+        $("#referenceProteome").prop('checked', false);
         $("#inAnalysis").prop('checked', false);
 
         var tokens = $("#genomeSelectorSearch").tokenfield('getTokens');
@@ -453,14 +428,10 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             if (parts.length === 2) {
                 if (token.value === "is:type") {
                     $("#typeStrain").prop('checked', true);
+                } else if (token.value === "is:reference") {
+                    $("#referenceProteome").prop('checked', true);
                 } else if (token.value === "not:added") {
                     $("#inAnalysis").prop('checked', true);
-                } else if (parts[0] === "is") {
-                    if (SEARCH_VALUES[parts[1]].attr === "assembly_level") {
-                        $popover.find("#assemblyLevel").val(token.value);
-                    } else if (SEARCH_VALUES[parts[1]].attr === "genome_representation") {
-                        $popover.find("#genomeRepresentation").val(token.value);
-                    }
                 } else if (parts[0] === "taxon") {
                     $popover.find("#" + taxa[parts[1]].rank + "Id").val(token.value);
                 }
@@ -549,7 +520,14 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         selectedResults.forEach(function (result) {
             resultString += "<tr class='genome' data-id='" + result.id + "'>";
             resultString += "<td><input type='checkbox' class='check'></input></td>";
-            resultString += "<td>" + result.name + "<br>";
+            resultString += "<td>" + result.name;
+            if (result.type_strain) {
+                resultString += " <span class='badge strain-badge' title='show all type strains'>t</span>";
+            }
+            if (result.reference_proteome) {
+                resultString += " <span class='badge reference-badge' title='show all reference proteomes'>r</span>";
+            }
+            resultString += "<br>";
             resultString += "<span class='lineage'>" + getLineage(result) + "</span></td>";
             resultString += "<td><button class='btn btn-default btn-xs btn-add' title='add proteome to analysis'><span class='glyphicon glyphicon-plus'></span></button></td>";
             resultString += "</tr>";
@@ -572,6 +550,18 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                 rank: taxa[id].rank
             });
             return false;
+        });
+
+        // hook up badges
+        $resultTable.find(".strain-badge").click(function () {
+            $("#genomeSelectorSearch").tokenfield('createToken', {
+                value: "is:type"
+            });
+        });
+        $resultTable.find(".reference-badge").click(function () {
+            $("#genomeSelectorSearch").tokenfield('createToken', {
+                value: "is:reference"
+            });
         });
 
         // disable fix checkboxes
@@ -666,13 +656,12 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
     };
 
     /**
-     * Searches for all complete Acinetobacter baumannii proteomes and adds them
+     * Searches for all Lactococcus lactis proteomes and adds them
      */
     that.demo = function demo() {
         addAll = true;
         $("#genomeSelectorSearch").tokenfield('setTokens', [
-            {"value":"is:complete","label":"is:complete"},
-            {"label":"Acinetobacter baumannii","value":"taxon:470"}
+            {"label":"Lactococcus lactis","value":"taxon:1358"}
         ]);
     };
 

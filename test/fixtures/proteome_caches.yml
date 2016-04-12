@@ -1,0 +1,11 @@
+# == Schema Information
+#
+# Table name: proteome_caches
+#
+#  proteome_id    :integer          not null, primary key
+#  json_sequences :text(16777215)   not null
+#
+
+proteomecache1:
+    proteome_id: 1
+    json_sequences: "[1,1,1]"
