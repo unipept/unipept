@@ -1,3 +1,5 @@
+package org.unipept.xml;
+
 public class UniprotInterproRef {
 
     private String id;
