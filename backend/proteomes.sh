@@ -9,7 +9,7 @@ outfile="$3"
 
 set -e
 
-tmp="$(mktemp)"
+tmp="$(gmktemp)"
 echo "$tmp"
 
 get_proteome() {
@@ -17,7 +17,7 @@ get_proteome() {
     local accession="$2"
     curl -s http://www.uniprot.org/proteomes/$accession \
         | html2text -nobs -width 1000 \
-        | awk -f proteomes.awk -v id=$id -v accession=$accession
+        | gawk -f proteomes.awk -v id=$id -v accession=$accession
 }
 # to reach it with the bash subprocess of xargs
 export -f get_proteome
