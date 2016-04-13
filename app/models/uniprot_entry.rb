@@ -20,6 +20,7 @@ class UniprotEntry < ActiveRecord::Base
   has_many :embl_cross_references
   has_many :ec_cross_references
   has_many :go_cross_references
+  has_many :interpro_cross_references
   has_many :proteome_cross_references
 
   belongs_to :taxon,            foreign_key: 'taxon_id',
