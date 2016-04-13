@@ -55,10 +55,11 @@ module UnipeptWeb
 
     config.versions = {
       unipept: '3.0.4 feature/develop-functional-analysis',
-      gem: '1.0.1',
-      uniprot: '2015.07'
+      gem: '2.4.3',
+      uniprot: '2016.04'
     }
 
     config.api_host = 'api.unipept.ugent.be'
   end
 end
+

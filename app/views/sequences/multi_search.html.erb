@@ -23,9 +23,8 @@
   <div class='card card-nav'>
     <div class='card-title card-title-colored'>
       <ul class="nav nav-tabs visualisations" id="viz-tabs">
-        <li class="active"><a href="#sunburstWrapper" data-toggle="tab">Sunburst</a></li>
-        <li><a href="#d3TreeMapWrapper" data-toggle="tab">Treemap</a></li>
-        <li><a href="#d3TreeViewWrapper" data-toggle="tab">Treeview</a></li>
+        <li class="active"><a id="biodiversityAnalysis-tab" href="#biodiversityAnalysis" data-toggle="tab">Biodiversity Analysis</a></li>
+        <li><a id="functionalAnalysis-tab" href="#functionalAnalysis" data-toggle="tab">Functional Analysis</a></li>
       </ul>
     </div>
     <div class='card-supporting-text multi-results'>
@@ -35,9 +34,8 @@
           <div class="logo"><img src="<%= asset_path('trans_logo.png') %>" alt="logo" width="40" height="40"></div>
           <nav class="fullScreenNav">
             <ul class="visualisations">
-              <li class="active"><a href="#sunburstWrapper" data-toggle="tab">Sunburst</a></li>
-              <li><a href="#d3TreeMapWrapper" data-toggle="tab">Treemap</a></li>
-              <li><a href="#d3TreeViewWrapper" data-toggle="tab">Treeview</a></li>
+              <li class="active"><a href="#biodiversityAnalysis" data-toggle="tab">Biodiversity Analysis</a></li>
+              <li><a href="#functionalAnalysis" data-toggle="tab">Functional Analysis</a></li>
             </ul>
           </nav>
           <div class="fullScreenActions">
@@ -46,44 +44,93 @@
             <a title="Exit full screen mode" class="btn-animate exit"><span class="glyphicon glyphicon-resize-small shrink"></span></a>
           </div>
         </div>
-        <div class="tab-pane active" id="sunburstWrapper">
-          <h2 class="ghead">
-            <span class="dir">
-              <a class="btn btn-xs btn-default btn-animate" id="sunburst-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
-            </span>
-            <span class="dir">
-              <div class="btn-group" id="colorswap">
-                <a class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" id="colorswap-button"><span class="glyphicon glyphicon-cog"></span></a>
-                <ul class="dropdown-menu dropdown-menu-right dropdown-menu-form">
-                  <li title="Enabling this will assign fixed colors to taxa making it easier to compare samples.">
-                    <div class="checkbox"><label class="checkbox"><input type="checkbox" id="colorswap-checkbox">Use fixed colors</label></div>
-                  </li>
-                </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="biodiversityAnalysis">
+            <div class='card-supporting-text multi-results-sub'>
+              <ul class="nav nav-tabs sub-navigation">
+                <li class="active"><a class="subnav-link" href="#sunburstWrapper" data-toggle="tab">Sunburst</a></li>
+                <li><a class="subnav-link" href="#d3TreeMapWrapper" data-toggle="tab">Treemap</a></li>
+                <li><a class="subnav-link" href="#d3TreeViewWrapper" data-toggle="tab">Treeview</a></li>
+              </ul>
+            </div>
+            <div class="tab-content">
+              <div class="tab-pane active" id="sunburstWrapper">
+                <h2 class="ghead">
+                  <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate reset" id="sunburst-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                  </span>
+                  <span class="dir">
+                    <div class="btn-group colorswap" id="colorswap">
+                      <a class="btn btn-xs btn-default dropdown-toggle colorswap-button" data-toggle="dropdown" id="colorswap-button"><span class="glyphicon glyphicon-cog"></span></a>
+                      <ul class="dropdown-menu dropdown-menu-right dropdown-menu-form">
+                        <li title="Enabling this will assign fixed colors to taxa making it easier to compare samples.">
+                          <div class="checkbox"><label class="checkbox"><input class="colorswap-checkbox" type="checkbox" id="colorswap-checkbox">Use fixed colors</label></div>
+                        </li>
+                      </ul>
+                    </div>
+                  </span>
+                  <span class="dir text">Click a slice to zoom in and the center node to zoom out</span>
+                </h2>
+                <div class="sunburst" id="sunburst">
+                  <div class="sunburstPanel" id="sunburstPanel">&nbsp;</div>
+                </div>
               </div>
-            </span>
-            <span class="dir text">Click a slice to zoom in and the center node to zoom out</span>
-          </h2>
-          <div id="sunburst">
-            <div id="sunburstPanel">&nbsp;</div>
+              <div class="tab-pane" id="d3TreeMapWrapper">
+                <h2 class="ghead">
+                  <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate" id="treemap-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                  </span>
+                  <span class="dir text">Click a square to zoom in and right click to zoom out</span>
+                </h2>
+                <div id="d3TreeMap"></div>
+              </div>
+              <div class="tab-pane" id="d3TreeViewWrapper">
+                <h2 class="ghead">
+                  <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate" id="treeview-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                  </span>
+                  <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
+                </h2>
+                <div id="d3TreeView"></div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="tab-pane" id="d3TreeMapWrapper">
-          <h2 class="ghead">
-            <span class="dir">
-              <a class="btn btn-xs btn-default btn-animate" id="treemap-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
-            </span>
-            <span class="dir text">Click a square to zoom in and right click to zoom out</span>
-          </h2>
-          <div id="d3TreeMap"></div>
-        </div>
-        <div class="tab-pane" id="d3TreeViewWrapper">
-          <h2 class="ghead">
-            <span class="dir">
-              <a class="btn btn-xs btn-default btn-animate" id="treeview-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
-            </span>
-            <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
-          </h2>
-          <div id="d3TreeView"></div>
+          <div class="tab-pane" id="functionalAnalysis">
+            <div class='card-supporting-text multi-results-sub'>
+              <ul class="nav nav-tabs sub-navigation">
+                <li class="active"><a class="subnav-link" href="#ecSunburstWrapper" data-toggle="tab">Sunburst</a></li>
+                <li><a class="subnav-link" href="#pieChart" data-toggle="tab">Piechart</a></li>
+                <li><a class="subnav-link" href="#barChart" data-toggle="tab">Barchart</a></li>
+              </ul>
+            </div>
+
+            <div class="tab-content">
+              <div class="tab-pane active" id="ecSunburstWrapper">
+                <h2 class="ghead">
+                  <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate reset" id="ecSunburst-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                  </span>
+                  <span class="dir">
+                    <div class="btn-group colorswap" id="ecColorswap">
+                      <a class="btn btn-xs btn-default dropdown-toggle colorswap-button" data-toggle="dropdown" id="ecColorswap-button"><span class="glyphicon glyphicon-cog"></span></a>
+                      <ul class="dropdown-menu dropdown-menu-right dropdown-menu-form">
+                        <li title="Enabling this will assign fixed colors to taxa making it easier to compare samples.">
+                          <div class="checkbox"><label class="checkbox"><input class="colorswap-checkbox" type="checkbox" id="ecColorswap-checkbox">Use fixed colors</label></div>
+                        </li>
+                      </ul>
+                    </div>
+                  </span>
+                  <span class="dir text">Click a slice to zoom in and the center node to zoom out</span>
+                </h2>
+                <div class="sunburst" id="ecSunburst">
+                  <div class="sunburstPanel" id="ecSunburstPanel">&nbsp;</div>
+                </div>
+              </div>
+              <div class="tab-pane" id="pieChart"></div>
+              <div class="tab-pane" id="barChart"></div>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
@@ -134,15 +181,19 @@
 <div id="tooltip" class="tip"></div>
 <% if @number_found > 0 %>
   <script type="text/javascript">
-    var data = <%= raw(@json_tree)%>;
+    var diversityData = <%= raw(@json_tree)%>;
     var sequences = <%= raw(@json_sequences)%>;
-    var missed = <%= raw(@json_missed)%>
+    var missed = <%= raw(@json_missed)%>;
+    var functionalData = <%= raw(@ec_root)%>;
+    var barchartEcData = <%= raw(@ecBarChart)%>;
 
     $(function () {
         constructMultisearch({
-            data : data,
+            diversityData : diversityData,
             equateIL : <%=@equate_il %>,
             missed : missed,
+            functionalData: functionalData,
+            barchartEcData: barchartEcData,
             sequences : sequences});
     });
   </script>

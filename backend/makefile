@@ -15,7 +15,7 @@ TABLES=                                        \
 	$(GOBDIR)/go_cross_references.tsv.gz       \
 	$(TABDIR)/interpro_entries.tsv.gz 		   \
 	$(INPDIR)/interpro_cross_references.tsv.gz \
-	$(TABDIR)/interpro_to_go.tsv.gz             \
+	$(TABDIR)/interpro_to_gos.tsv.gz             \
 	$(INTDIR)/proteomes.tsv.gz                 \
 	$(TABDIR)/proteome_cross_references.tsv.gz 
 
@@ -299,7 +299,7 @@ $(TABDIR)/interpro_entries.tsv.gz: $(INPDIR)/interpro.xml.gz
 		> $@
 	echo "Finished the creation of the InterPro table."
 
-$(TABDIR)/interpro_to_go.tsv.gz: $(INPDIR)/interpro2go.txt
+$(TABDIR)/interpro_to_gos.tsv.gz: $(INPDIR)/interpro2go.txt
 	echo "Starting parsing InterPro2GO info"
 	cat $(INPDIR)/interpro2go.txt \
 		| sed 's/InterPro://' \

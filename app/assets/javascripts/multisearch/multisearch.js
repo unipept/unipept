@@ -8,10 +8,13 @@ var constructMultisearch = function constructMultisearch(args) {
     /*************** Private variables ***************/
 
     var that = {},
-        data = args.data,
+        data = args.diversityData,
+        sbecdata = args.functionalData,
+        chartdata = args.barchartEcData,
         equateIL = args.equateIL,
         missed = args.missed,
         sequences = args.sequences,
+        select,
         sunburst,
         treemap,
         treeview,
@@ -26,6 +29,16 @@ var constructMultisearch = function constructMultisearch(args) {
     function init() {
         // set up visualisations
         initVisualisations();
+
+        initVisualisationsSunburst(sbecdata, '#ecSunburst');
+
+        initVisualisationsSunburst(data, '#sunburst')
+
+        initVisualisationsTreeview(data, "#d3TreeView");
+
+        initBarChart(chartdata, "#barChart");
+
+        initPieChart(data, "#pieChart");
 
         // set up save images
         setUpSaveImage();
@@ -46,13 +59,35 @@ var constructMultisearch = function constructMultisearch(args) {
 
     }
 
-    function initVisualisations() {
+    function initBarChart(data, selector){
+        $(selector).barchart({multi : that, data : JSON.parse(JSON.stringify(data))});
+    }
+
+    function initPieChart(data, selector){
+        $(selector).piechart({multi : that, data : JSON.parse(JSON.stringify(data))});
+    }
+
+    function initVisualisationsSunburst(data, selector) {
         // sunburst
         try {
-            sunburst = constructSunburst({multi : that, data : JSON.parse(JSON.stringify(data))});
+            sunburst = $(selector).sunburst({multi : that, data : JSON.parse(JSON.stringify(data))});
         } catch (err) {
             error(err.message, "Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
+        mapping.set(selector.substring(1,selector.length), sunburst);
+    }
+
+    function initVisualisationsTreeview(data, selector) {
+        // treeview
+        try {
+            treeview = $(selector).treeview({data : JSON.parse(JSON.stringify(data)), width: 916, height: 600,});
+        } catch (err) {
+            error(err.message, "Loading the Treeview visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
+        }
+        mapping.set(selector.substring(1,selector.length), treeview);
+    }
+
+    function initVisualisations() {
 
         // treemap
         try {
@@ -61,23 +96,13 @@ var constructMultisearch = function constructMultisearch(args) {
             error(err.message, "Loading the Treemap visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
 
-        // treeview
-        try {
-            treeview = constructTreeview({multi : that, data : JSON.parse(JSON.stringify(data))});
-        } catch (err) {
-            error(err.message, "Loading the Treeview visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
-        }
-
         // searchtree
         try {
             searchtree = constructSearchtree({multi : that, data : data, equateIL : equateIL});
         } catch (err) {
             error(err.message, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
-
-        mapping.set("sunburst", sunburst);
         mapping.set("d3TreeMap", treemap);
-        mapping.set("d3TreeView", treeview);
     }
 
     /**
@@ -119,6 +144,50 @@ var constructMultisearch = function constructMultisearch(args) {
         });
     }
 
+
+    /**
+     * Sets the visualisation in full screen mode
+     *
+     * @param <boolean> isFullScreen indicates if we're in full screen mode
+     */
+    function setSunburstFullScreen(isFullScreen) {
+        // the delay is because the event fires before we're in fullscreen
+        // so the height en width functions don't give a correct result
+        // without the delay
+        setTimeout(function () {
+            var size = 740;
+            if (isFullScreen) {
+                size = Math.min($(window).height() - 44, $(window).width() - 250);
+            }
+            $("#sunburst > svg").attr("height", size);
+            $("#sunburst > svg").attr("width", size);
+            $("#ecSunburst > svg").attr("height", size);
+            $("#ecSunburst > svg").attr("width", size);
+        }, 1000);
+    };
+
+
+    /**
+     * Sets the visualisation in full screen mode
+     *
+     * @param <boolean> isFullScreen indicates if we're in full screen mode
+     */
+    function setTreeviewFullScreen(isFullScreen) {
+        // the delay is because the event fires before we're in fullscreen
+        // so the height en width functions don't give a correct result
+        // without the delay
+        setTimeout(function () {
+            var width = 916,
+            height = 600;
+            if (isFullScreen) {
+                width = $(window).width();
+                height = $(window).height() - 44;
+            }
+            $("#d3TreeView svg").attr("width", width);
+            $("#d3TreeView svg").attr("height", height);
+        }, 1000);
+    };
+
     function setUpFullScreen() {
         if (fullScreenApi.supportsFullScreen) {
             $("#buttons").prepend("<button id='zoom-btn' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
@@ -131,13 +200,17 @@ var constructMultisearch = function constructMultisearch(args) {
     }
 
     function resizeFullScreen() {
-        var activeTab = getActiveTab(),
-            isFullScreen = window.fullScreenApi.isFullScreen();
+        var isFullScreen = window.fullScreenApi.isFullScreen();
+        if (!isFullScreen) {
+            var activeTab = getActiveTab();
+        } else {
+            var activeTab = getActiveCloseTab();
+        }
 
         // sync tabs
         $("ul.visualisations li.active").removeClass("active");
         $("ul.visualisations li").each(function (i, el) {
-            if ($(el).find("a").attr("href") === "#" + activeTab + "Wrapper") {
+            if ($(el).find("a").attr("href") === "#" + activeTab) {
                 $(el).addClass("active");
             }
         });
@@ -154,30 +227,34 @@ var constructMultisearch = function constructMultisearch(args) {
         }
 
         // update visualisations
-        sunburst.setFullScreen(isFullScreen);
+        setSunburstFullScreen(isFullScreen);
         treemap.setFullScreen(isFullScreen);
-        treeview.setFullScreen(isFullScreen);
+        setTreeviewFullScreen(isFullScreen);
     }
 
     function saveImage () {
-        var activeTab = getActiveTab();
+        var activeTab = getActiveSubTab();
         $(".debug_dump").hide();
         logToGoogle("Multi Peptide", "Save Image", activeTab);
         if (activeTab === "sunburst") {
             d3.selectAll(".toHide").attr("class", "arc hidden");
-            triggerDownloadModal("#sunburst > svg", null, "unipept_sunburst");
+            triggerDownloadModal("#"+activeTab+" > svg", null, "unipept_sunburst");
+            d3.selectAll(".hidden").attr("class", "arc toHide");
+        } else if (activeTab === "ecSunburst") {
+            d3.selectAll(".toHide").attr("class", "arc hidden");
+            triggerDownloadModal("#"+activeTab+" > svg", null, "unipept_ecSunburst");
             d3.selectAll(".hidden").attr("class", "arc toHide");
         } else if (activeTab === "d3TreeMap") {
-            triggerDownloadModal(null, "#d3TreeMap", "unipept_treemap");
-        } else {
-            triggerDownloadModal("#d3TreeView svg", null, "unipept_treeview");
+            triggerDownloadModal(null, "#"+activeTab, "unipept_treemap");
+        } else if (activeTab === "d3TreeView") {
+            triggerDownloadModal("#"+activeTab+" svg", null, "unipept_treeview");
         }
     }
 
     function setUpActionBar() {
         $(".fullScreenActions a").tooltip({placement: "bottom", delay: { "show": 300, "hide": 300 }});
         $(".fullScreenActions .reset").click(function () {
-            mapping.get(getActiveTab()).reset();
+            mapping.get(getActiveSubTab()).reset();
         });
         $(".fullScreenActions .download").click(saveImage);
         $(".fullScreenActions .exit").click(function () {
@@ -185,9 +262,25 @@ var constructMultisearch = function constructMultisearch(args) {
         });
     }
 
+    function getActiveSubTab() {
+        var activePanes = $(".tab-pane .card-supporting-text li.active").find("a");
+        if (getActiveTab() === "biodiversityAnalysis") {
+            var activePane = activePanes.attr("href");
+            return activePane.split("Wrapper")[0].substring(1,activePane.length);
+        } else if (getActiveTab() === "functionalAnalysis") {
+            var activePane = activePanes[1].getAttribute("href");
+            return activePane.split("Wrapper")[0].substring(1,activePane.length);
+        } else {"There is no third tab!"}
+    }
+
+    function getActiveCloseTab() {
+        var activePane = $(".card-title.card-title-colored li.active").find("a").attr('href');
+        return activePane.split("Wrapper")[0].substring(1,activePane.length);
+    }
+
     function getActiveTab() {
-        var activePane = $(".full-screen-container div.active").attr('id');
-        return activePane.split("Wrapper")[0];
+        var activePane = $(".full-screen-container li.active").find("a").attr('href');
+        return activePane.split("Wrapper")[0].substring(1,activePane.length);
     }
 
     /*************** Public methods ***************/
@@ -252,6 +345,10 @@ var constructMultisearch = function constructMultisearch(args) {
             tt.html(tt.html() + "<br><img src='" + that.getPiechartUrl(d) + "'/>");
         }
     };
+    that.tooltipInChart = function tooltipInPieChart(d, tt, pie) {
+        tt.style("visibility", "visible")
+            .html(that.getTooltipContentChart(d));
+    };
     that.tooltipMove = function tooltipMove(tt) {
         var pos = that.getTooltipPosition();
         tt.style("top", pos.top).style("left", pos.left);
@@ -265,6 +362,10 @@ var constructMultisearch = function constructMultisearch(args) {
             (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
             (!d.data.count ? "0" : d.data.count) +
             (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower";
+    };
+    that.getTooltipContentChart = function getTooltipContent(d) {
+        return "<b>" + d.data.function + "</b> (" + d.data.name + ")<br/>" +
+        (d.data.count) + " total hits<br/>"
     };
     that.getPiechartUrl = function getPiechartUrl(d) {
         var url = "http://chart.apis.google.com/chart?chs=300x225&cht=p&chd=t:";
@@ -289,6 +390,8 @@ var constructMultisearch = function constructMultisearch(args) {
 
     // initialize the object
     init();
+    // to correct screen size for tooltip coordinates
+    setSunburstFullScreen(false);
 
     return that;
 };

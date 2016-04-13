@@ -125,9 +125,6 @@ class SequencesController < ApplicationController
       end
     end
 
-    # calculate ec LCA
-    #@test1 = @ec_lca_table.map {|ecs| ec_lca_table[ecs][0] ? }
-
     # --------- Tree view for EC numbers --------- #
 
     @ec_root = Node.new("-.-.-.-", 'root', nil, 'root') # start constructing the tree
@@ -424,9 +421,134 @@ class SequencesController < ApplicationController
       send_data csv_string, type: 'text/csv; charset=iso-8859-1; header=present', disposition: 'attachment; filename=' + filename + '.csv'
     end
 
-  rescue EmptyQueryError
-    flash[:error] = 'Your query was empty, please try again.'
-    redirect_to datasets_path
+    #=================|EC Multisearch|=================
+
+    # get all ec numbers mapped with the input peptides.
+    #TODO: write an dexport to csv; write code to match sequence with ec
+
+    # variables
+    @ec_functions = {}
+    @ec_lca_count = {}
+    @ec_lca_class = {}
+    ec_lca_table = {}
+    eccountdic = {}
+    @ec_lca_id = {}
+    @ec_lca = {}
+    ec_barchart_count_list = []
+    ec_barchart_count = {}
+
+    # fetch all ec numbers
+    ec_db = EcNumber.all 
+
+    # fetch sequences
+    @sequences = Sequence.where(sequence: data).includes({:peptides => {uniprot_entry: :ec_cross_references}})
+    # get only the unique ec per peptide
+    ecuniq = @sequences.map{|s| (s.peptides.map{|p| p.uniprot_entry.ec_cross_references.map{|e| e.ec_number}.flatten}.flatten).uniq}.reject(&:blank?).flatten(1)
+
+    # create dictionary containing all levels and count of ec for sunburst
+    ecuniq.each do |ec|
+      ec = ec[:ec_number]
+      ecsplit = ec.split(".")
+      eccounter=0
+      while eccounter < 4 do
+        ecbreak=ecsplit[0..eccounter].join(".")+(".-"*(3-eccounter))
+        # all lineage of ec number
+        if !ec_lca_table.has_key?(ec)
+          ec_lca_table[ec] = [ecbreak]
+        else
+          if ec_lca_table[ec].index(ecbreak).nil?
+            ec_lca_table[ec] += [ecbreak]
+          end
+        end
+        # counts for each lineage
+        if !eccountdic.has_key?(ecbreak)
+          eccountdic[ecbreak] = 1
+        else
+          eccountdic[ecbreak] += 1
+        end
+        eccounter += 1
+      end
+    end
+
+    # get all ec numbers from the ec_lca_table
+    ec_all_ranks = ec_lca_table.values.flatten(1).to_set.map{|x| x}
+
+    # get all functions accociated with the ranks
+    ec_tmp_all_functions = ec_db.select("ec_number, name").where(ec_number: ec_all_ranks).to_set
+
+    # store all in hash & remove all "." from end of line
+    ec_tmp_all_functions.each do |ec_hash|
+      @ec_functions[ec_hash[:ec_number]] = ec_hash[:name].gsub(/\.$/, '')
+    end
+
+    # calculate all steps of the tree the amount of hits
+    for ec_key, ec_value in ec_lca_table 
+      ec_value.each do |ecitems|
+        if ecitems != ""
+          if !@ec_lca_count.has_key?(ecitems)
+            @ec_lca_count[ecitems] = eccountdic[ec_key]
+          else
+            @ec_lca_count[ecitems] += eccountdic[ec_key]
+          end
+        end
+      end
+    end
+
+    # create json data filef or EC sunburst
+
+    @ec_root = Node.new("-.-.-.-", 'root', nil, '-.-.-.-') # start constructing the tree
+    @ec_root.data['count'] = eccountdic.values.sum
+    ec_last_node =  @ec_root
+
+    for key, value in ec_lca_table do
+      ec_last_node_loop = ec_last_node
+      value.each do |ecs|
+        if ecs != ""
+          node = Node.find_by_id(ecs, @ec_root)
+          if node.nil?
+            node = Node.new(ecs, @ec_functions[ecs], @ec_root, ecs)
+            node.data['count'] = @ec_lca_count[ecs]
+            if ec_lca_table.has_key?(ecs)
+              node.data['self_count'] = eccountdic[ecs]
+              # --- for barchart
+              ec_barchart_count["name"] = ecs
+              ec_barchart_count["function"] = @ec_functions[ecs]
+              ec_barchart_count["count"] = eccountdic[ecs]
+              ec_barchart_count_list.push(Marshal.load(Marshal.dump(ec_barchart_count)))
+              # ---
+            else
+              node.data['self_count'] = 0
+            end
+            ec_last_node_loop = ec_last_node_loop.add_child(node)
+          else
+            node.name = @ec_functions[ecs]
+            ec_last_node_loop = node
+          end         
+        end
+      end
+    end
+    @ec_root.sort_children
+    @ec_root = Oj.dump(@ec_root, mode: :compat)
+    @ecBarChart = Oj.dump(ec_barchart_count_list, mode: :compat)
+    #@testx = @ec_root
+
+    def calc_ec_lca(ec_hash, ec_root, common_ec_lineage)
+      if ec_hash["children"].nil? or ec_hash["children"].size > 1 or ec_hash["children"] == []
+        return ec_root, common_ec_lineage
+      end
+      ec_root = ec_hash["children"][0]["id"]
+      common_ec_lineage.push(ec_root)
+      calc_ec_lca(ec_hash["children"][0], ec_root, common_ec_lineage)
+    end
+
+    ec_lca_hash = JSON.parse(@ec_root)
+    @ec_lca_root, @common_ec_lineage = calc_ec_lca(ec_lca_hash, "root", [])
+
+    # ----------- end ------------ #
+
+    rescue EmptyQueryError
+      flash[:error] = 'Your query was empty, please try again.'
+      redirect_to datasets_path
   end
 end
 

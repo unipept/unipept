@@ -59,25 +59,40 @@ span.dir.text {
     text-align: center;
 }
 
+// barchart
+#xaxis .domain {
+    fill:none;
+    stroke:#000;
+}
+
+#xaxis text, #yaxis text {
+    font-size: 12px;
+}
+
 // sunburst
-#sunburst {
+.sunburst {
     width: 100%;
     background-color: white;
 }
-#sunburst > svg {
+.sunburst > svg {
     margin: 0 auto;
     display: block;
 }
 .full-screen #sunburst > svg {
     overflow: visible;
 }
-#sunburst .toHide {
+
+.full-screen #ecSunburst > svg {
+    overflow: visible;
+}
+
+.sunburst .toHide {
     pointer-events: none;
 }
-#sunburst > svg .arc {
+.sunburst > svg .arc {
     cursor: pointer;
 }
-#sunburst > svg .arc:hover {
+.sunburst > svg .arc:hover {
     fill-opacity: 0.9;
 }
 .dropdown-menu-form div.checkbox {
@@ -91,13 +106,13 @@ span.dir.text {
 .dropdown-menu-form div.checkbox input[type="checkbox"] {
     margin-top: 0;
 }
-#colorswap .dropdown-menu {
+.colorswap .dropdown-menu {
     margin-top: 0;
     padding-left: 15px;
     padding-top: 0;
     min-width: 135px;
 }
-#sunburstPanel {
+.sunburstPanel {
     width: 176px;
     float: right;
     margin-top: 10px;
@@ -107,7 +122,13 @@ span.dir.text {
     width: 250px;
     margin-right: 10px;
 }
-#sunburstPanel ul {
+
+.full-screen #ecSunburstPanel {
+    width: 250px;
+    margin-right: 10px;
+}
+
+.sunburstPanel ul {
     padding-left: 0;
     list-style: none;
 }
