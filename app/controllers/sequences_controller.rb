@@ -14,7 +14,7 @@ class SequencesController < ApplicationController
 
     # process the input, convert seq to a valid @sequence
     if seq.match(/\A[0-9]+\z/)
-      sequence = Sequence.includes(peptides: { uniprot_entry: [:taxon, :ec_cross_references, :go_cross_references] }).find_by_id(seq)
+      sequence = Sequence.includes(peptides: { uniprot_entry: [:taxon, :ec_cross_references, :go_cross_references, :interpro_cross_references] }).find_by_id(seq)
       @original_sequence = sequence.sequence
     else
       sequence = Sequence.single_search(seq, equate_il)
@@ -55,7 +55,7 @@ class SequencesController < ApplicationController
     # get all ec_cross_reference numbers and puts them in array
     ec_numbers_list = ec_cross_numbers.map{|ecs| ecs.map{|ec| ec.ec_number} if ecs.length != 0}.compact.flatten(1)
     # make list unique
-    ec_numbers_uniq = ec_numbers_list.to_set
+    ec_numbers_uniq = ec_numbers_list.uniq
     # list of ec column names
     @ec_column_name = ["EC number", "Class", "Subclass", "Sub-subclass", "Enzyme"]
     # create instance variables
@@ -69,6 +69,7 @@ class SequencesController < ApplicationController
 
     # get all rank order for each ec number 
     ec_numbers_uniq.each do |ecn|
+      ecn = ecn[:ec_number]
       @ec_lca_table[ecn] = []
       ec_split = ecn.split(".")
       ec_rank = ""
@@ -83,6 +84,7 @@ class SequencesController < ApplicationController
         end
       end
     end
+
     # sort the hash and make it an array
     @ec_lca_table_sorted = @ec_lca_table.keys.sort_by{|x|x}.flatten(1)
 
