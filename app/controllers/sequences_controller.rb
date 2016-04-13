@@ -175,28 +175,6 @@ class SequencesController < ApplicationController
     graph_size = gos_counts.map{|g,n| @graph.terms.include?(g) ? n : 0}.inject(:+)
     @graph.terms.each { |k,v| v.links.each{ |t,l| @links.push({'from' => k, 'to' => t, 'label' => 'is_a', 'weight' => v.linked.map { |g| gos_counts[g]}.inject(:+).to_f/graph_size, 'linked' => v.linked.to_a}) } }
 
-    nodes = {}
-    for term in @graph.terms.keys
-      nodes[term] = Node.new(term[3..-1].to_i, term, nil, term)
-      if gos_counts.include?(term)
-        nodes[term].data['self_count'] = gos_counts[term]
-      else
-        nodes[term].data['self_count'] = 0
-      end
-    end
-
-    # kruskal
-    done = Set.new
-    queue = @links.sort_by{|l| l['weigth']}.reverse!
-    for link in queue
-      # it's no error that from and to are swapped, because the relation of the
-      # ontology is in the reverse direction of the tree we want
-      if !done.include?(link['from'])
-        nodes[link['to']].add_child(nodes[link['from']])
-        done.add(link['from'])
-      end
-    end
-
     def counts(parent)
       parent.data['count'] = parent.data['self_count']
       for child in parent.children
@@ -205,14 +183,9 @@ class SequencesController < ApplicationController
       end
     end
 
-    def cleanup(parent)
-      parent.children.each{|child| cleanup(child)}
-      parent.children.delete_if{|child| child.data['count'] == 0}
-    end
-
-    counts(nodes['GO:0008150'])
-    cleanup(nodes['GO:0008150'])
-    @go_root = Oj.dump(nodes['GO:0008150'], mode: :compat)
+    tree = @graph.to_tree('GO:0008150')
+    counts(tree)
+    @go_root = Oj.dump(tree, mode: :compat)
 
     def cutoff(parent, cutoff, lcas)
       if parent.data['count'] >= cutoff
@@ -229,14 +202,8 @@ class SequencesController < ApplicationController
     end
 
     @go_lcas = []
-    min_count = 0.30*nodes['GO:0008150'].data['count']
-    cutoff(nodes['GO:0008150'], min_count, @go_lcas)
-
-    @graph = @graph.to_tree
-
-    @links = []
-    graph_size = gos_counts.map{|g,n| @graph.terms.include?(g) ? n: 0}.inject(:+)
-    @graph.terms.each { |k,v| v.links.each{ |t,l| @links.push({'from' => k, 'to' => t, 'label' => 'is_a', 'weight' => v.linked.map { |g| gos_counts[g]}.inject(:+).to_f/graph_size, 'linked' => v.linked.to_a}) } }
+    min_count = 0.30*tree.data['count']
+    cutoff(tree, min_count, @go_lcas)
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree

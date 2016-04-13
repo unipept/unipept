@@ -32,13 +32,13 @@ class Graph
     parent
   end
 
-  def add_reachable_tree(node, linked)
-    child = @terms[node.id]
+  def add_reachable_tree(node, nodes)
+    child = nodes[node.id]
     if child.nil?
-      child = GraphNode.new(node.id, node.name)
-      add_term(node.id, child)
+      child = Node.new(node.id[3..-1].to_i, node.name, nil, node.id)
+      child.data['self_count'] = @counts.include?(node.id) ? @counts[node.id] : 0
+      nodes[node.id] = child
     end
-    child.add_linked(linked, @counts[node.id])
     if !node.links.values.empty?
       parent = nil
       weigth = 0
@@ -48,17 +48,18 @@ class Graph
           weigth = cand.weight
         end
       end
-      child.add_link(add_reachable_tree(parent, linked))
+      tree_parent = add_reachable_tree(parent, nodes)
+      tree_parent.add_child(child) unless tree_parent.children.include?(child)
     end
     child
   end
 
-  def to_tree
-    tree = Graph.new(@counts)
-    for hit in @terms['GO:0008150'].linked
-      tree.add_reachable_tree(@terms[hit], hit)
+  def to_tree(root)
+    nodes = Hash.new
+    for hit in @terms[root].linked
+      add_reachable_tree(@terms[hit], nodes)
     end
-    tree
+    nodes[root]
   end
 
 end
