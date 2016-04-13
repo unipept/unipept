@@ -30,6 +30,9 @@
             svg;
 
         function init() {
+            // init controls
+            initControls();
+            
             margin = {
                 top: 5,
                 right: 5,
@@ -87,6 +90,14 @@
                 .append("g");
 
             draw(options.data);
+        }
+
+        /**
+         * Initialise the controls
+         */
+        function initControls() {
+            // hook up the reset button
+            $("#treeview-reset").click(that.reset);
         }
 
         function draw(data) {
@@ -201,7 +212,7 @@
                     return isLeaf(d) ? "end" : "start";
                 })
                 .text(function (d) {
-                    return d.name;
+                    return d.name.length > 27 ? d.name.substring(0,30)+"..." : d.name;
                 })
                 .style("font", "10px sans-serif")
                 .style("fill-opacity", 1e-6);
