@@ -100,7 +100,7 @@ class SequencesController < ApplicationController
 
     # hash with the counts for each ec rank
     ec_all_ranks.each do |rank|
-      @ecc[rank] = ec_numbers_list.count(rank)
+      @ecc[rank] = ec_numbers_list.map{|ecnc| ecnc[:ec_number]}.count(rank)
     end
     # calculate all steps of the tree the amount of hits
     for ec_key, ec_value in @ec_lca_table 
@@ -137,16 +137,12 @@ class SequencesController < ApplicationController
         if ecs != ""
           node = Node.find_by_id(ecs, @ec_root)
           if node.nil?
-            if @ec_lca_table.has_key?(ecs)
-              node = Node.new(ecs, @ec_functions[ecs], @ec_root, @ec_lca_class[ecs])
-            else
-              node = Node.new(ecs, ecs, @ec_root, @ec_lca_class[ecs])
-            end
+            node = Node.new(ecs, @ec_functions[ecs], @ec_root, ecs)
             node.data['count'] = @ec_lca_count[ecs]
             node.data['self_count'] = @ecc[ecs]
             ec_last_node_loop = ec_last_node_loop.add_child(node)
           else
-            node.name = ecs
+            node.name = @ec_functions[ecs]
             ec_last_node_loop = node
           end         
         end
