@@ -25,6 +25,7 @@ public class UniprotEntry {
     private List<UniprotDbRef> dbReferences;
     private List<UniprotGORef> goReferences;
     private List<UniprotECRef> ecReferences;
+    private List<UniprotInterproRef> interproReferences;
     private List<UniprotProteomeRef> protReferences;
     private List<String> sequences;
 
@@ -35,6 +36,7 @@ public class UniprotEntry {
         dbReferences = new ArrayList<UniprotDbRef>();
         goReferences = new ArrayList<UniprotGORef>();
         ecReferences = new ArrayList<UniprotECRef>();
+        interproReferences = new ArrayList<UniprotInterproRef>();
         protReferences = new ArrayList<UniprotProteomeRef>();
         sequences = new ArrayList<String>();
     }
@@ -50,6 +52,7 @@ public class UniprotEntry {
         dbReferences.clear();
         goReferences.clear();
         ecReferences.clear();
+        interproReferences.clear();
         protReferences.clear();
         sequences.clear();
     }
@@ -117,6 +120,10 @@ public class UniprotEntry {
         ecReferences.add(ref);
     }
 
+    public void addInterproRef(UniprotInterproRef ref) {
+        interproReferences.add(ref);
+    }
+
     public void addProtRef(UniprotProteomeRef ref) {
         for (UniprotProteomeRef r : protReferences) {
             if (ref.equals(r)) {
@@ -155,6 +162,10 @@ public class UniprotEntry {
 
     public List<UniprotECRef> getECReferences() {
         return ecReferences;
+    }
+
+    public List<UniprotInterproRef> getInterproReferences() {
+        return interproReferences;
     }
 
     public List<UniprotProteomeRef> getProtReferences() {
