@@ -6,16 +6,16 @@ TABLES=                                        \
 	$(INTDIR)/peptides.tsv.gz                  \
 	$(TABDIR)/uniprot_entries.tsv.gz           \
 	$(TABDIR)/refseq_cross_references.tsv.gz   \
-	$(TABDIR)/keggpathways.tsv.gz 			   \
-	$(TABDIR)/keggpathwaymappings.tsv.gz 	   \
+	$(TABDIR)/kegg_pathways.tsv.gz 			   \
+	$(TABDIR)/kegg_pathway_mappings.tsv.gz 	   \
 	$(TABDIR)/ec_numbers.tsv.gz 			   \
-	$(TABDIR)/ec_cross_references.tsv.gz       \
+	$(ECNDIR)/ec_cross_references.tsv.gz       \
 	$(TABDIR)/embl_cross_references.tsv.gz     \
 	$(TABDIR)/go_terms.tsv.gzip 			   \
-	$(TABDIR)/go_cross_references.tsv.gz       \
+	$(GOBDIR)/go_cross_references.tsv.gz       \
 	$(TABDIR)/interpro_entries.tsv.gz 		   \
-	$(TABDIR)/interpro_cross_references.tsv.gz \
-	$(TABDIR)/interpro_2_go.tsv.gz             \
+	$(INPDIR)/interpro_cross_references.tsv.gz \
+	$(TABDIR)/interpro_to_go.tsv.gz             \
 	$(INTDIR)/proteomes.tsv.gz                 \
 	$(TABDIR)/proteome_cross_references.tsv.gz 
 
@@ -23,18 +23,19 @@ SRC=$(shell find src/ -type f -name '*.java')
 JAR=target/unipept-0.0.1-SNAPSHOT.jar
 PAC=org.unipept.tools
 
-all: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz $(TABLES) $(TABDIR)/sequences.tsv.gz $(TABDIR)/peptides.tsv.gz $(TABDIR)/proteomes.tsv.gz
+all: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz $(TABLES) $(TABDIR)/sequences.tsv.gz $(TABDIR)/peptides.tsv.gz $(TABDIR)/proteomes.tsv.gz $(TABDIR)/ec_cross_references.tsv.gz $(TABDIR)/go_cross_references.tsv.gz $(TABDIR)/interpro_cross_references.tsv.gz
 jar: $(JAR)
 taxons: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
 tables: $(TABLES)
 sequences: $(TABDIR)/sequences.tsv.gz
 proteomes: $(TABDIR)/proteomes.tsv.gz
-keggpathways:$(TABDIR)/keggpathways.tsv.gz
-keggpathwaymappings:$(TABDIR)/keggpathwaymappings.tsv.gz
+kegg_pathways:$(TABDIR)/kegg_pathways.tsv.gz
+kegg_pathway_mappings:$(TABDIR)/kegg_pathway_mappings.tsv.gz
 ecnumbers: $(TABDIR)/ec_numbers.tsv.gz
 interpro: $(TABDIR)/interpro_entries.tsv.gz
 goterms: $(TABDIR)/go_terms.tsv.gz
-download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt $(GOBDIR)/goinfo.obo $(INPDIR)/interpro.xml.gz $(INPDIR)/interpro2go.txt $(KGPDIR)/keggpathways.tsv $(KGPDIR)/keggpathwaymappings.tsv
+download: $(KGPDIR)/kegg_pathway_mappings.tsv
+#$(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt $(GOBDIR)/goinfo.obo $(INPDIR)/interpro.xml.gz $(INPDIR)/interpro2go.txt $(KGPDIR)/kegg_pathways.tsv $(KGPDIR)/kegg_pathway_mappings.tsv
 # $(UNIDIR)/uniprot_trembl.xml.gz
 
 # Compiling {{{ ----------------------------------------------------------------
@@ -67,18 +68,18 @@ $(UNIDIR)/uniprot_sprot.xml.gz:
 	wget --progress=dot:giga "$(UNIPROT_URL)$(notdir $@)" -O $@
 	echo "Finished downloading $@."
 
-$(KGPDIR)/keggpathways.tsv:
+$(KGPDIR)/kegg_pathways.tsv:
 	echo "Starting download KEGG pathway."
 	mkdir -p $(KGPDIR)
 	rm -f $@
-	wget --no-verbose "$(KEGGP_URL)" -O $@
+	wget --no-verbose "$(KEGGP_URL)" 
 	echo "Finished downloading $@."
 
-$(KGPDIR)/keggpathwaymappings.tsv:
+$(KGPDIR)/kegg_pathway_mappings.tsv:
 	echo "Starting download KEGG pathway mapping."
 	mkdir -p $(KGPDIR)
 	rm -f $@
-	wget --no-verbose "$(KEGGPM_URL)" | fgrep 'path:map' > $@
+	wget --no-verbose "$(KEGGPM_URL)" -O $@
 	echo "Finished downloading $@."
 
 $(ECNDIR)/enzymes.dat:
@@ -136,7 +137,7 @@ $(TABLES): $(TABDIR)/taxons.tsv.gz $(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/unip
 	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables              \
 		--peptide-min     $(PEPMIN)                                                 \
 		--peptide-max     $(PEPMAX)                                                 \
-		--taxons          <(zcat $(TABDIR)/taxons.tsv.gz)                           \
+		--taxons          <(zcat $(TABDIR)/taxons.tsv.gz)                          \
 		--peptides        >($(GZIP) - > $(INTDIR)/peptides.tsv.gz)                  \
 		--uniprot-entries >($(GZIP) - > $(TABDIR)/uniprot_entries.tsv.gz)           \
 		--refseq          >($(GZIP) - > $(TABDIR)/refseq_cross_references.tsv.gz)   \
@@ -189,9 +190,9 @@ $(TABDIR)/peptides.tsv.gz: $(INTDIR)/peptides.tsv.gz $(INTDIR)/sequences.tsv.gz
 	echo "Starting the substitution of AA's by ID's for the peptides."
 	zcat $(INTDIR)/peptides.tsv.gz \
 		| $(SORT) -k 2b,2 \
-		| join -t '	' -o '1.1,2.1,1.3,1.4' -1 2 -2 2 - <(zcat $(INTDIR)/sequences.tsv.gz) \
+		| join -t '	' -o '1.1,2.1,1.3,1.4' -1 2 -2 2 -- - <(zcat $(INTDIR)/sequences.tsv.gz) \
 		| $(SORT) -k 3b,3 \
-		| join -t '	' -o '1.1,1.2,2.1,1.4' -1 3 -2 2 - <(zcat $(INTDIR)/sequences.tsv.gz) \
+		| join -t '	' -o '1.1,1.2,2.1,1.4' -1 3 -2 2 -- - <(zcat $(INTDIR)/sequences.tsv.gz) \
 		| $(SORT) -n \
 		| $(GZIP) - \
 		> $@
@@ -234,8 +235,8 @@ $(INTDIR)/original_LCAs.tsv.gz: $(TABDIR)/lineages.tsv.gz $(INTDIR)/original_seq
 $(TABDIR)/sequences.tsv.gz: $(INTDIR)/sequences.tsv.gz $(INTDIR)/LCAs.tsv.gz $(INTDIR)/original_LCAs.tsv.gz
 	echo "Starting the creation of the sequences table."
 	zcat $(INTDIR)/sequences.tsv.gz \
-		| join --nocheck-order -a1 -t '	' -o "1.1 1.2 2.2" - <(zcat $(INTDIR)/original_LCAs.tsv.gz) \
-		| join --nocheck-order -a1 -t '	' -o "1.1 1.2 1.3 2.2" - <(zcat $(INTDIR)/LCAs.tsv.gz) \
+		| join -a1 -t '	' -o "1.1 1.2 2.2" -- - <(zcat $(INTDIR)/original_LCAs.tsv.gz) \
+		| join -a1 -t '	' -o "1.1 1.2 1.3 2.2" -- - <(zcat $(INTDIR)/LCAs.tsv.gz) \
 		| $(GZIP) - \
 		> $@
 	echo "Finished the creation of the sequences table."
@@ -253,19 +254,19 @@ $(TABDIR)/proteomes.tsv.gz: $(INTDIR)/proteomes.tsv.gz proteomes.sh type_strains
 # }}}
 
 # Functional information {{{ ----------------------------------------------------------------
-$(TABDIR)/keggpathways.tsv.gz:
+$(TABDIR)/kegg_pathways.tsv.gz:
 	echo "Starting fetching KEGG pathways table info"
-	./keggpathwaystable.sh \
-		$(KGPDIR)/keggpathways.tsv \
+	python ./kegg_pathways.py \
+		$(KGPDIR)/kegg_pathways.tsv \
 		| gzip - \
 		> $@
 	echo "Finished the creation of the KEGG pathways table."
 
-$(TABDIR)/keggpathwaymappings.tsv.gz: $(TABDIR)/keggpathways.tsv.gz $(TABDIR)/ec_numbers.tsv.gz
+$(TABDIR)/kegg_pathway_mappings.tsv.gz: $(TABDIR)/kegg_pathways.tsv.gz $(TABDIR)/ec_numbers.tsv.gz
 	echo "Starting fetching KEGG pathway mappings table info"
-	./keggpathwaymappingstable.sh \
-		$(KGPDIR)/keggpathwaymappings.tsv \
-		$(TABDIR)/keggpathways.tsv.gz \
+	python ./kegg_pathway_mappings.py \
+		$(KGPDIR)/kegg_pathway_mappings.tsv \
+		$(TABDIR)/kegg_pathways.tsv.gz \
 		$(TABDIR)/ec_numbers.tsv.gz \
 		| gzip - \
 		> $@
@@ -273,16 +274,16 @@ $(TABDIR)/keggpathwaymappings.tsv.gz: $(TABDIR)/keggpathways.tsv.gz $(TABDIR)/ec
 
 $(TABDIR)/ec_numbers.tsv.gz: $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt
 	echo "Starting fetching EC numbers info"
-	./ectable.sh \
-		$(ECNDIR)/enzclass.txt \
+	python ./ectable.py \
 		$(ECNDIR)/enzymes.dat \
+		$(ECNDIR)/enzclass.txt \
 		| gzip - \
 		> $@
 	echo "Finished the creation of the EC numbers table."
 
 $(TABDIR)/go_terms.tsv.gz: $(GOBDIR)/goinfo.obo
 	echo "Starting fetching GO terms info"
-	./gotable.py \
+	python ./gotable.py \
 		$(GOBDIR)/goinfo.obo \
 		| gzip - \
 		> $@
@@ -290,13 +291,13 @@ $(TABDIR)/go_terms.tsv.gz: $(GOBDIR)/goinfo.obo
 
 $(TABDIR)/interpro_entries.tsv.gz: $(INPDIR)/interpro.xml.gz
 	echo "Starting fetching InterPro info"
-	./interprotable.py \
+	python ./interprotable.py \
 		$(INPDIR)/interpro.xml.gz \
 		| gzip - \
 		> $@
 	echo "Finished the creation of the InterPro table."
 
-$(TABDIR)/interpro_2_go.tsv.gz: $(INPDIR)/interpro2go.txt
+$(TABDIR)/interpro_to_go.tsv.gz: $(INPDIR)/interpro2go.txt
 	echo "Starting parsing InterPro2GO info"
 	cat $(INPDIR)/interpro2go.txt \
 		| sed 's/InterPro://' \
@@ -308,32 +309,32 @@ $(TABDIR)/interpro_2_go.tsv.gz: $(INPDIR)/interpro2go.txt
 # }}}
 
 # Update cross reference tables (EC,GO,InterPro) {{{ ----------------------------------------
-$(TABDIR)/ec_cross_references.tsv.gz: $(TABDIR)/ec_cross_references.tsv.gz $(TABDIR)/ec_numbers.tsv.gz
+$(TABDIR)/ec_cross_references.tsv.gz: $(ECNDIR)/ec_cross_references.tsv.gz $(TABDIR)/ec_numbers.tsv.gz
 	echo "Starting fetching EC cross ref and EC number tableinfo"
-	./crossreftable.py \
+	python ./crossreftable.py \
 		$(TABDIR)/ec_numbers.tsv.gz \
 		$(ECNDIR)/ec_cross_references.tsv.gz \
-		1 \											# field containing the EC numbers
+		1 \
 		| gzip - \
 		> $@
 	echo "Finished updating the EC cross ref table."
 
 $(TABDIR)/go_cross_references.tsv.gz: $(GOBDIR)/go_cross_references.tsv.gz $(TABDIR)/go_terms.tsv.gz
 	echo "Starting fetching GO cross ref and GO terms table info"
-	./crossreftable.py \
+	python ./crossreftable.py \
 		$(TABDIR)/go_terms.tsv.gz \
 		$(GOBDIR)/go_cross_references.tsv.gz \
-		1 \											# field containing the GO terms
+		1 \
 		| gzip - \
 		> $@
 	echo "Finished updating the GO cross ref table."
 
 $(TABDIR)/interpro_cross_references.tsv.gz: $(INPDIR)/interpro_cross_references.tsv.gz $(TABDIR)/interpro_entries.tsv.gz
 	echo "Starting fetching interpro cross ref and interpro entries table info"
-	./crossreftable.py \
+	python ./crossreftable.py \
 		$(TABDIR)/interpro_entries.tsv.gz \
 		$(INPDIR)/interpro_cross_references.tsv.gz \
-		2 \											# field containing the InterPro entries
+		2 \
 		| gzip - \
 		> $@
 	echo "Finished updating the InterPro cross ref table."
