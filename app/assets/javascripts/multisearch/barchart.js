@@ -43,7 +43,6 @@
             yValues.push(data[i]["name"])
             i++
           }
-          console.log(yValues)
           return yValues
         };
         getYAxis(data).unshift("")
