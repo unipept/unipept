@@ -64,6 +64,12 @@ ALTER TABLE interpro_cross_references ADD INDEX fk_interpro_reference_uniprot_en
 
 
 -- -----------------------------------------------------
+-- Table `unipept`.`interpro_to_gos`
+-- -----------------------------------------------------
+ALTER TABLE interpro_to_gos ADD INDEX fk_interpro_entries_has_go_terms_go_terms1_idx (go_term_id ASC), ADD INDEX fk_interpro_entries_has_go_terms_interpro_entries1_idx (interpro_entry_id ASC);
+
+
+-- -----------------------------------------------------
 -- Table `unipept`.`proteomes`
 -- -----------------------------------------------------
 ALTER TABLE proteomes ADD INDEX fk_taxons_proteomes (taxon_id ASC);
