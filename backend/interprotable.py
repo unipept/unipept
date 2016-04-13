@@ -18,6 +18,15 @@ def parseTSV(temp, dict_ids):
 		line=line.strip().split("\t")
 		print("{}\t{}\t{}\t{}\t{}".format(line[0], dict_ids[line[1]], line[2], line[3], line[4]))
 
+def getType(types):
+	if types.lower()=="active_site": return "AS"
+	elif types.lower()=="binding_site": return "BS"
+	elif types.lower()=="conserved_site": return "CS"
+	elif types.lower()=="domain": return "D"
+	elif types.lower()=="family": return "F"
+	elif types.lower()=="repeat": return "R"
+	else: return "PTM"
+
 def parseIntPXML():
 	import xml.etree.ElementTree as ET
 
@@ -33,7 +42,7 @@ def parseIntPXML():
 			parent=attr.get("id")
 			intid=attr.get("id")
 			name=attr.get("short_name")
-			types=" ".join(attr.get("type").split("_"))
+			types=getType(attr.get("type"))
 			for nchild in child.iter("parent_list"):
 				parent=nchild.getchildren()[0].get("ipr_ref")
 			temp.append("{}\t{}\t{}\t{}\t{}".format(pkey, parent, intid, name, types))
