@@ -28,17 +28,18 @@ def addToDict(ecfile, mapfile):
 def parseMapFile(rfile, dict_ids):
 	pkey=0
 	for line in rfile:
-		ec_id, kegg_path_id=line.strip().split("\t")
-		ec_id, kegg_path_id=ec_id[3:], kegg_path_id[5:]
-		if ec_id in dict_ids and kegg_path_id in dict_ids:
-			pkey+=1
-			print("{}\t{}\t{}".format(pkey, dict_ids[ec_id], dict_ids[kegg_path_id]))
-		# below this code should actually not happen. but still needs testing!
-		#elif ec_id in dict_ids and kegg_path_id not in dict_ids:
-		#	print("{}\t{}\t{}".format(pkey, dict_ids[ec_id], "Null"))
-		#elif ec_id not in dict_ids and kegg_path_id in dict_ids:
-		#	print("{}\t{}\t{}".format(pkey, "Null", dict_ids[kegg_path_id]))
-		#else: print("{}\t{}\t{}".format(pkey, "Null", "Null"))
+		if 'path:map' in line:
+			ec_id, kegg_path_id=line.strip().split("\t")
+			ec_id, kegg_path_id=ec_id[3:], kegg_path_id[5:]
+			if ec_id in dict_ids and kegg_path_id in dict_ids:
+				pkey+=1
+				print("{}\t{}\t{}".format(pkey, dict_ids[ec_id], dict_ids[kegg_path_id]))
+			# below this code should actually not happen. but still needs testing!
+			#elif ec_id in dict_ids and kegg_path_id not in dict_ids:
+			#	print("{}\t{}\t{}".format(pkey, dict_ids[ec_id], "Null"))
+			#elif ec_id not in dict_ids and kegg_path_id in dict_ids:
+			#	print("{}\t{}\t{}".format(pkey, "Null", dict_ids[kegg_path_id]))
+			#else: print("{}\t{}\t{}".format(pkey, "Null", "Null"))
 
 
 dict_ids=addToDict(readGzFile(pathway), readGzFile(ecnumber))
