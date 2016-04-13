@@ -29,13 +29,12 @@ taxons: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
 tables: $(TABLES)
 sequences: $(TABDIR)/sequences.tsv.gz
 proteomes: $(TABDIR)/proteomes.tsv.gz
-kegg_pathways:$(TABDIR)/kegg_pathways.tsv.gz
-kegg_pathway_mappings:$(TABDIR)/kegg_pathway_mappings.tsv.gz
+keggpathways:$(TABDIR)/kegg_pathways.tsv.gz
+keggpathwaymappings:$(TABDIR)/kegg_pathway_mappings.tsv.gz
 ecnumbers: $(TABDIR)/ec_numbers.tsv.gz
 interpro: $(TABDIR)/interpro_entries.tsv.gz
 goterms: $(TABDIR)/go_terms.tsv.gz
-download: $(KGPDIR)/kegg_pathway_mappings.tsv
-#$(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt $(GOBDIR)/goinfo.obo $(INPDIR)/interpro.xml.gz $(INPDIR)/interpro2go.txt $(KGPDIR)/kegg_pathways.tsv $(KGPDIR)/kegg_pathway_mappings.tsv
+download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt $(GOBDIR)/goinfo.obo $(INPDIR)/interpro.xml.gz $(INPDIR)/interpro2go.txt $(KGPDIR)/kegg_pathways.tsv $(KGPDIR)/kegg_pathway_mappings.tsv
 # $(UNIDIR)/uniprot_trembl.xml.gz
 
 # Compiling {{{ ----------------------------------------------------------------
@@ -72,7 +71,7 @@ $(KGPDIR)/kegg_pathways.tsv:
 	echo "Starting download KEGG pathway."
 	mkdir -p $(KGPDIR)
 	rm -f $@
-	wget --no-verbose "$(KEGGP_URL)" 
+	wget --no-verbose "$(KEGGP_URL)" -O $@
 	echo "Finished downloading $@."
 
 $(KGPDIR)/kegg_pathway_mappings.tsv:
@@ -258,7 +257,7 @@ $(TABDIR)/proteomes.tsv.gz: $(INTDIR)/proteomes.tsv.gz proteomes.sh type_strains
 # Functional information {{{ ----------------------------------------------------------------
 $(TABDIR)/kegg_pathways.tsv.gz:
 	echo "Starting fetching KEGG pathways table info"
-	python ./kegg_pathways.py \
+	python ./keggpathways.py \
 		$(KGPDIR)/kegg_pathways.tsv \
 		| gzip - \
 		> $@
@@ -266,7 +265,7 @@ $(TABDIR)/kegg_pathways.tsv.gz:
 
 $(TABDIR)/kegg_pathway_mappings.tsv.gz: $(TABDIR)/kegg_pathways.tsv.gz $(TABDIR)/ec_numbers.tsv.gz
 	echo "Starting fetching KEGG pathway mappings table info"
-	python ./kegg_pathway_mappings.py \
+	python ./keggpathwaymappings.py \
 		$(KGPDIR)/kegg_pathway_mappings.tsv \
 		$(TABDIR)/kegg_pathways.tsv.gz \
 		$(TABDIR)/ec_numbers.tsv.gz \
