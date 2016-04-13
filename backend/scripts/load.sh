@@ -14,5 +14,5 @@ do
     file=`echo $file | sed "s/.gz//"`
     print $file
     mysqlimport -u unipept -punipept --local unipept $file
-    rm $file
+    #rm $file
 done
