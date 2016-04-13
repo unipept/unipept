@@ -2,7 +2,7 @@ LOGFILE=main.log
 MAIL=unipept@ugent.be
 
 # Peptides minimum length
-PEPMIN=8
+PEPMIN=5
 PEPMAX=50
 
 DATADIR=../../data
@@ -18,7 +18,7 @@ INPDIR=${DATADIR}/interpro
 JMEMMIN='-Xms5g'
 JMEMMAX='-Xmx6g'
 
-SORT=LC_ALL=C sort --buffer-size=80% --parallel=4
+SORT=LC_ALL=C sort --buffer-size=80%
 GZIP=gzip
 
 TAXON_URL=ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip
