@@ -212,7 +212,7 @@
                     return isLeaf(d) ? "end" : "start";
                 })
                 .text(function (d) {
-                    return d.name.length > 27 && d.children ? d.name.substring(0,30)+"..." : d.name;
+                    return d.name.length > 27 && d._children || d.children ? d.name.substring(0,30)+"..." : d.name;
                 })
                 .style("font", "10px sans-serif")
                 .style("fill-opacity", 1e-6);
