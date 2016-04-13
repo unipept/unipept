@@ -168,7 +168,7 @@ class SequencesController < ApplicationController
     @gos = gos_counts.keys
     for go in @gos
       node = GO_GRAPH.find_go(go)
-      @graph.add_reachable(node, go) if !node.nil? && node.namespace == 'molecular_function'
+      @graph.add_reachable(node, go) if !node.nil? && node.namespace == 'biological_process'
     end
 
     @links = []
@@ -185,6 +185,7 @@ class SequencesController < ApplicationController
       end
     end
 
+    # kruskal
     done = Set.new
     queue = @links.sort_by{|l| l['weigth']}.reverse!
     for link in queue
@@ -209,9 +210,27 @@ class SequencesController < ApplicationController
       parent.children.delete_if{|child| child.data['count'] == 0}
     end
 
-    counts(nodes['GO:0003674'])
-    cleanup(nodes['GO:0003674'])
-    @go_root = Oj.dump(nodes['GO:0003674'], mode: :compat)
+    counts(nodes['GO:0008150'])
+    cleanup(nodes['GO:0008150'])
+    @go_root = Oj.dump(nodes['GO:0008150'], mode: :compat)
+
+    def cutoff(parent, cutoff, lcas)
+      if parent.data['count'] >= cutoff
+        added = false
+        for child in parent.children
+          added = cutoff(child, cutoff, lcas) || added # it's essential to put added to the back, otherwise cutoff isn't evaluated
+        end
+        if !added
+          lcas.append(parent.name)
+        end
+        return true
+      end
+      return false
+    end
+
+    @go_lcas = []
+    min_count = 0.30*nodes['GO:0008150'].data['count']
+    cutoff(nodes['GO:0008150'], min_count, @go_lcas)
 
     @graph = @graph.to_tree
 

@@ -55,7 +55,7 @@ class Graph
 
   def to_tree
     tree = Graph.new(@counts)
-    for hit in @terms['GO:0003674'].linked
+    for hit in @terms['GO:0008150'].linked
       tree.add_reachable_tree(@terms[hit], hit)
     end
     tree
