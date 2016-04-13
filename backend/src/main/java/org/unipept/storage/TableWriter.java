@@ -266,7 +266,7 @@ public class TableWriter implements UniprotObserver {
      * @param uniprotEntryId
      *            The uniprotEntry of the cross reference
      */
-    public void addInterproRef(UniprotECRef ref, int uniprotEntryId) {
+    public void addInterproRef(UniprotInterproRef ref, int uniprotEntryId) {
         try {
             interproCrossReferences.write(Integer.toString(uniprotEntryId), ref.getId());
         } catch (IOException e) {
