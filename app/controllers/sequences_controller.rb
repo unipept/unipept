@@ -47,7 +47,7 @@ class SequencesController < ApplicationController
     end
 
     # ----------- test ------------ #
-    # Prototype functional analysis #
+    #      functional analysis      #
     # ----------------------------- #
 
     # get all ec_cross_references
@@ -498,8 +498,6 @@ class SequencesController < ApplicationController
       end
     end
 
-    # create json data filef or EC sunburst
-
     @ec_root = Node.new("-.-.-.-", 'root', nil, '-.-.-.-') # start constructing the tree
     @ec_root.data['count'] = eccountdic.values.sum
     ec_last_node =  @ec_root
@@ -514,12 +512,6 @@ class SequencesController < ApplicationController
             node.data['count'] = @ec_lca_count[ecs]
             if ec_lca_table.has_key?(ecs)
               node.data['self_count'] = eccountdic[ecs]
-              # --- for barchart
-              ec_barchart_count["name"] = ecs
-              ec_barchart_count["function"] = @ec_functions[ecs]
-              ec_barchart_count["count"] = eccountdic[ecs]
-              ec_barchart_count_list.push(Marshal.load(Marshal.dump(ec_barchart_count)))
-              # ---
             else
               node.data['self_count'] = 0
             end
@@ -534,7 +526,6 @@ class SequencesController < ApplicationController
     @ec_root.sort_children
     @ec_root = Oj.dump(@ec_root, mode: :compat)
     @ecBarChart = Oj.dump(ec_barchart_count_list, mode: :compat)
-    #@testx = @ec_root
 
     def calc_ec_lca(ec_hash, ec_root, common_ec_lineage)
       if ec_hash["children"].nil? or ec_hash["children"].size > 1 or ec_hash["children"] == []
