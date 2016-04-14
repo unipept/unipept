@@ -175,6 +175,8 @@ var constructMultisearch = function constructMultisearch(args) {
             }
             $("#d3TreeView svg").attr("width", width);
             $("#d3TreeView svg").attr("height", height);
+            $("#goTreeView svg").attr("width", width);
+            $("#goTreeView svg").attr("height", height);
         }, 1000);
     };
 
