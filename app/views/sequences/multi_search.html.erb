@@ -100,11 +100,8 @@
               <ul class="nav nav-tabs sub-navigation">
                 <li class="active"><a class="subnav-link" href="#ecSunburstWrapper" data-toggle="tab">Sunburst</a></li>
                 <li><a class="subnav-link" href="#goTreeViewWrapper" data-toggle="tab">GO Treeview</a></li>
-                <li><a class="subnav-link" href="#pieChart" data-toggle="tab">Piechart</a></li>
-                <li><a class="subnav-link" href="#barChart" data-toggle="tab">Barchart</a></li>
               </ul>
             </div>
-
             <div class="tab-content tab-nav">
               <div class="tab-pane active" id="ecSunburstWrapper">
                 <h2 class="ghead">
@@ -136,10 +133,7 @@
                 </h2>
                 <div id="goTreeView"></div>
               </div>
-              <div class="tab-pane" id="pieChart"></div>
-              <div class="tab-pane" id="barChart"></div>
             </div>
-
           </div>
         </div>
       </div>
@@ -195,7 +189,6 @@
     var sequences = <%= raw(@json_sequences)%>;
     var missed = <%= raw(@json_missed)%>;
     var functionalData = <%= raw(@ec_root)%>;
-    var barchartEcData = <%= raw(@ecBarChart)%>;
     var go_tree = <%= raw(@go_root)%>;
 
     $(function () {
@@ -204,7 +197,6 @@
             equateIL : <%=@equate_il %>,
             missed : missed,
             functionalData: functionalData,
-            barchartEcData: barchartEcData,
             go_tree: go_tree,
             sequences : sequences});
     });
