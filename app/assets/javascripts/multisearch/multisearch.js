@@ -10,7 +10,6 @@ var constructMultisearch = function constructMultisearch(args) {
     var that = {},
         data = args.diversityData,
         sbecdata = args.functionalData,
-        chartdata = args.barchartEcData,
         equateIL = args.equateIL,
         missed = args.missed,
         sequences = args.sequences,
@@ -39,11 +38,6 @@ var constructMultisearch = function constructMultisearch(args) {
 
         initVisualisationsTreeview(godata, "#goTreeView")
 
-        initBarChart(chartdata, "#barChart");
-
-        initPieChart(data, "#pieChart");
-
-
         // set up save images
         setUpSaveImage();
 
@@ -61,14 +55,6 @@ var constructMultisearch = function constructMultisearch(args) {
         // copy to clipboard for missed peptides
         addCopy($("#copy-missed span").first(), function () {return $(".mismatches").text(); });
 
-    }
-
-    function initBarChart(data, selector){
-        $(selector).barchart({multi : that, data : JSON.parse(JSON.stringify(data))});
-    }
-
-    function initPieChart(data, selector){
-        $(selector).piechart({multi : that, data : JSON.parse(JSON.stringify(data))});
     }
 
     function initVisualisationsSunburst(data, selector) {
