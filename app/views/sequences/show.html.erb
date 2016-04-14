@@ -4,17 +4,20 @@
 <% else %>
   <p class="lead"><span class="initialism"><%= @original_sequence %></span> was found in <b><%= @entries.size %></b> <%= 'UniProt entry'.pluralize(@entries.size) %> with a lowest common ancestor of <b><%= @lca_taxon.name %></b>.</p>
   <table width="900">
-    <tr><td><p>Summary of the biodiversity analysis:</p></td><td><p>Summary of the functional analysis:</p></td></tr>
     <tr>
-      <td>Lowest common ancestor: <%= link_to @lca_taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + @lca_taxon.id.to_s, :target => "_blank", :title => @lca_taxon.rank %> (<%=@lca_taxon.rank%>)</td>
-      <td>Lowest common ancestor: <%= link_to @ec_lca_root, "http://enzyme.expasy.org/EC/" + @ec_lca_root, :target => "_blank", :title => @ec_functions[@ec_lca_root] %></td>
+      <td class="biodiv"><p>Summary of the biodiversity analysis:</p></td>
+      <td class="funana"><p>Summary of the functional analysis:</p></td>
     </tr>
     <tr>
-      <td>Common lineage: <%= raw @common_lineage.length==0 ? "nothing" : @common_lineage.map{|t| link_to t.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + t.id.to_s, :target => "_blank", :title => t.rank }.join(" > ") %></td>
-      <td>Common function: <%= raw @common_ec_lineage.length==0 ? "nothing" : @common_ec_lineage.map{|t| link_to @ec_functions[t.to_s], "http://enzyme.expasy.org/EC/" + t.to_s, :target => "_blank", :title =>  @ec_functions[t.to_s]}.join(" > ") %></td>
+      <td class="biodiv">Lowest common ancestor: <%= link_to @lca_taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + @lca_taxon.id.to_s, :target => "_blank", :title => @lca_taxon.rank %> (<%=@lca_taxon.rank%>)</td>
+      <td class="funana">Lowest common ancestor: <%= link_to (@ec_lca_root == "root" ? @ec_lca_root : @ec_functions[@ec_lca_root]), "http://enzyme.expasy.org/EC/" + @ec_lca_root, :target => "_blank", :title => @ec_lca_root %></td>
     </tr>
     <tr>
-      <td><%= link_to "Blast "+@original_sequence , "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on&USER_FORMAT_DEFAULTS=on&PAGE=Proteins&PROGRAM=blastp&QUERY="+@original_sequence+"&GAPCOSTS=11%201&EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&DATABASE=nr&BLAST_PROGRAMS=blastp&MAX_NUM_SEQ=100&SHORT_QUERY_ADJUST=on&EXPECT=10&WORD_SIZE=3&MATRIX_NAME=BLOSUM62&COMPOSITION_BASED_STATISTICS=2&SHOW_OVERVIEW=on&SHOW_LINKOUT=on&ALIGNMENT_VIEW=Pairwise&MASK_CHAR=2&MASK_COLOR=1&GET_SEQUENCE=on&NEW_VIEW=on&NUM_OVERVIEW=100&DESCRIPTIONS=100&ALIGNMENTS=100&FORMAT_OBJECT=Alignment&FORMAT_TYPE=HTML&OLD_BLAST=false", :target => "_blank", :title => "Open in BLAST"%></td>
+      <td class="biodiv">Common lineage: <%= raw @common_lineage.length==0 ? "nothing" : @common_lineage.map{|t| link_to t.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + t.id.to_s, :target => "_blank", :title => t.rank }.join(" > ") %></td>
+      <td class="funana">Common function: <%= raw @common_ec_lineage.length==0 ? "nothing" : @common_ec_lineage.map{|t| link_to @ec_functions[t.to_s], "http://enzyme.expasy.org/EC/" + t.to_s, :target => "_blank", :title =>  t.to_s}.join(" > ") %></td>
+    </tr>
+    <tr>
+      <td class="biodiv"><%= link_to "Blast "+@original_sequence , "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on&USER_FORMAT_DEFAULTS=on&PAGE=Proteins&PROGRAM=blastp&QUERY="+@original_sequence+"&GAPCOSTS=11%201&EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&DATABASE=nr&BLAST_PROGRAMS=blastp&MAX_NUM_SEQ=100&SHORT_QUERY_ADJUST=on&EXPECT=10&WORD_SIZE=3&MATRIX_NAME=BLOSUM62&COMPOSITION_BASED_STATISTICS=2&SHOW_OVERVIEW=on&SHOW_LINKOUT=on&ALIGNMENT_VIEW=Pairwise&MASK_CHAR=2&MASK_COLOR=1&GET_SEQUENCE=on&NEW_VIEW=on&NUM_OVERVIEW=100&DESCRIPTIONS=100&ALIGNMENTS=100&FORMAT_OBJECT=Alignment&FORMAT_TYPE=HTML&OLD_BLAST=false", :target => "_blank", :title => "Open in BLAST"%></td>
     </tr>
   </table>
   <div class='card card-nav'>
