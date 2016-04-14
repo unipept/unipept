@@ -167,18 +167,8 @@ class SequencesController < ApplicationController
 
     # ----------- end ------------ #
 
-    @graph = Graph.new
     gos = @entries.map(&:go_cross_references).flatten.map(&:go_id)
-    gos_occur = gos.group_by{|i| i}
-    @gos = gos.uniq
-    for go in @gos
-      node = GO_GRAPH.find_go(go)
-      @graph.add_reachable(node, go) if !node.nil? && node.namespace == 'molecular_function'
-    end
-
-    @links = []
-    graph_size = gos_occur.map{|g,n| @graph.terms.include?(g) ? n.count : 0}.inject(:+)
-    @graph.terms.each { |k,v| v.links.each{ |t,l| @links.push({'from' => k, 'to' => t, 'label' => 'is_a', 'weight' => v.linked.map { |g| gos_occur[g].count }.inject(:+).to_f/graph_size, 'linked' => v.linked.to_a}) } }
+    go(gos)
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree
@@ -316,6 +306,7 @@ class SequencesController < ApplicationController
     # build the resultset
     matches = {}
     misses = data.to_set
+    gos = []
     data.each_slice(1000) do |data_slice|
       Sequence.includes(Sequence.lca_t_relation_name(@equate_il) => { lineage: Lineage::ORDER_T }).where(sequence: data_slice).each do |sequence|
         lca_t = sequence.calculate_lca(@equate_il, true)
@@ -329,7 +320,9 @@ class SequencesController < ApplicationController
         end
         misses.delete(sequence.sequence)
       end
+      gos.push(*GoCrossReference.joins(uniprot_entry: { peptides: :sequence }).where('sequences.sequence' => data_slice).group('go_cross_references.go_id,sequences.id').map(&:go_id))
     end
+    go(gos)
 
     # handle the misses
     if handle_missed
@@ -560,6 +553,58 @@ class SequencesController < ApplicationController
     rescue EmptyQueryError
       flash[:error] = 'Your query was empty, please try again.'
       redirect_to datasets_path
+  end
+
+  def go(gos)
+    gos_counts = {}
+    gos.group_by{|i| i}.each{|k,v| gos_counts[k] = v.count}
+
+    ontologies = {'biological_process' => 'GO:0008150', 'molecular_function' => 'GO:0003674', 'cellular_component' => 'GO:0005575'}
+
+    @graphs = {}
+    ontologies.keys.each{|o| @graphs[o] = Graph.new(gos_counts)}
+    @gos = gos_counts.keys
+    for go in @gos
+      node = GO_GRAPH.find_go(go)
+      @graphs[node.namespace].add_reachable(node, go) unless node.nil?
+    end
+
+    ont = 'biological_process'
+    @graph = @graphs[ont]
+
+    @links = []
+    graph_size = gos_counts.map{|g,n| @graph.terms.include?(g) ? n : 0}.inject(:+)
+    @graph.terms.each { |k,v| v.links.each{ |t,l| @links.push({'from' => k, 'to' => t, 'label' => 'is_a', 'weight' => v.linked.map { |g| gos_counts[g]}.inject(:+).to_f/graph_size, 'linked' => v.linked.to_a}) } }
+
+    def counts(parent)
+      parent.data['count'] = parent.data['self_count']
+      for child in parent.children
+          counts(child)
+          parent.data['count'] += child.data['count']
+      end
+    end
+
+    tree = @graph.to_tree(ontologies[ont])
+    counts(tree)
+    @go_root = Oj.dump(tree, mode: :compat)
+
+    def cutoff(parent, cutoff, lcas)
+      if parent.data['count'] >= cutoff
+        added = false
+        for child in parent.children
+          added = cutoff(child, cutoff, lcas) || added # it's essential to put added to the back, otherwise cutoff isn't evaluated
+        end
+        if !added
+          lcas.append(parent.name)
+        end
+        return true
+      end
+      return false
+    end
+
+    @go_lcas = []
+    min_count = 0.30*tree.data['count']
+    cutoff(tree, min_count, @go_lcas)
   end
 end
 

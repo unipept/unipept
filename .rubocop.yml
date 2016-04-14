@@ -5,7 +5,6 @@ AllCops:
     - 'db/schema.rb'
     - 'config/routes.rb'
     - 'bin/setup'
-  RunRailsCops: true
 
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact

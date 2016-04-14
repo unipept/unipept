@@ -99,6 +99,7 @@
             <div class='card-supporting-text multi-results-sub'>
               <ul class="nav nav-tabs sub-navigation">
                 <li class="active"><a class="subnav-link" href="#ecSunburstWrapper" data-toggle="tab">Sunburst</a></li>
+                <li><a class="subnav-link" href="#goTreeViewWrapper" data-toggle="tab">GO Treeview</a></li>
                 <li><a class="subnav-link" href="#pieChart" data-toggle="tab">Piechart</a></li>
                 <li><a class="subnav-link" href="#barChart" data-toggle="tab">Barchart</a></li>
               </ul>
@@ -125,6 +126,15 @@
                 <div class="sunburst" id="ecSunburst">
                   <div class="sunburstPanel" id="ecSunburstPanel">&nbsp;</div>
                 </div>
+              </div>
+              <div class="tab-pane" id="goTreeViewWrapper">
+                <h2 class="ghead">
+                  <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate" id="treeview-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                  </span>
+                  <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
+                </h2>
+                <div id="goTreeView"></div>
               </div>
               <div class="tab-pane" id="pieChart"></div>
               <div class="tab-pane" id="barChart"></div>
@@ -186,6 +196,7 @@
     var missed = <%= raw(@json_missed)%>;
     var functionalData = <%= raw(@ec_root)%>;
     var barchartEcData = <%= raw(@ecBarChart)%>;
+    var go_tree = <%= raw(@go_root)%>;
 
     $(function () {
         constructMultisearch({
@@ -194,6 +205,7 @@
             missed : missed,
             functionalData: functionalData,
             barchartEcData: barchartEcData,
+            go_tree: go_tree,
             sequences : sequences});
     });
   </script>

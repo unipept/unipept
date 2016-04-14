@@ -14,6 +14,7 @@ var constructMultisearch = function constructMultisearch(args) {
         equateIL = args.equateIL,
         missed = args.missed,
         sequences = args.sequences,
+        godata = args.go_tree,
         select,
         sunburst,
         treemap,
@@ -36,9 +37,12 @@ var constructMultisearch = function constructMultisearch(args) {
 
         initVisualisationsTreeview(data, "#d3TreeView");
 
+        initVisualisationsTreeview(godata, "#goTreeView")
+
         initBarChart(chartdata, "#barChart");
 
         initPieChart(data, "#pieChart");
+
 
         // set up save images
         setUpSaveImage();
