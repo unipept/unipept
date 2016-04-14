@@ -35,6 +35,7 @@ def parseFileClasses(classes):
 			counter += 1
 			ecs, desc = line.split("  ", 1)
 			ids = "".join(ecs.split())
+			desc = desc.replace("'","")
 			desc = desc.strip()[:-1] if line.strip()[-1] == "." else line.strip()
 			print str(counter)+"\t"+ids+"\t"+desc
 
