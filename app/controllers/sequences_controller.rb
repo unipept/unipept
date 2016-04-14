@@ -1,5 +1,7 @@
 class SequencesController < ApplicationController
   require 'oj'
+  require 'graphnode'
+  require 'open-uri'
 
   # shows information about a peptide
   # the peptide should be in params[:id] and
@@ -164,6 +166,19 @@ class SequencesController < ApplicationController
     @ec_lca_root, @common_ec_lineage = calc_ec_lca(ec_lca_hash, "root", [])
 
     # ----------- end ------------ #
+
+    @graph = Graph.new
+    gos = @entries.map(&:go_cross_references).flatten.map(&:go_id)
+    gos_occur = gos.group_by{|i| i}
+    @gos = gos.uniq
+    for go in @gos
+      node = GO_GRAPH.find_go(go)
+      @graph.add_reachable(node, go) if !node.nil? && node.namespace == 'molecular_function'
+    end
+
+    @links = []
+    graph_size = gos_occur.map{|g,n| @graph.terms.include?(g) ? n.count : 0}.inject(:+)
+    @graph.terms.each { |k,v| v.links.each{ |t,l| @links.push({'from' => k, 'to' => t, 'label' => 'is_a', 'weight' => v.linked.map { |g| gos_occur[g].count }.inject(:+).to_f/graph_size, 'linked' => v.linked.to_a}) } }
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree

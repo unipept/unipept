@@ -12,6 +12,7 @@ doc/app
 *.swp
 *~
 ~.DS_Store
+.DS_Store
 *.log
 .sass-cache/
 public/assets
@@ -20,3 +21,5 @@ backend/java/bin/**/*.class
 coverage/
 .idea
 *.iml
+tags
+*.obo
