@@ -26,6 +26,7 @@
         <li class="active"><a href="#sunburstWrapper" data-toggle="tab">Sunburst</a></li>
         <li><a href="#d3TreeMapWrapper" data-toggle="tab">Treemap</a></li>
         <li><a href="#d3TreeViewWrapper" data-toggle="tab">Treeview</a></li>
+        <li><a href="#goTreeViewWrapper" data-toggle="tab">GO Treeview</a></li>
       </ul>
     </div>
     <div class='card-supporting-text multi-results'>
@@ -85,6 +86,15 @@
           </h2>
           <div id="d3TreeView"></div>
         </div>
+        <div class="tab-pane" id="goTreeViewWrapper">
+          <h2 class="ghead">
+            <span class="dir">
+              <a class="btn btn-xs btn-default btn-animate" id="treeview-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+            </span>
+            <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
+          </h2>
+          <div id="goTreeView"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -143,7 +153,9 @@
             data : data,
             equateIL : <%=@equate_il %>,
             missed : missed,
-            sequences : sequences});
+            sequences : sequences,
+            go_tree : <%= raw(@go_root)%>
+        });
     });
   </script>
 <% end %>

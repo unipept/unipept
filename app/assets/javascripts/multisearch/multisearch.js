@@ -16,7 +16,8 @@ var constructMultisearch = function constructMultisearch(args) {
         treemap,
         treeview,
         searchtree,
-        mapping = new Map();
+        mapping = new Map(),
+        go_tree = args.go_tree;
 
     /*************** Private methods ***************/
 
@@ -26,6 +27,8 @@ var constructMultisearch = function constructMultisearch(args) {
     function init() {
         // set up visualisations
         initVisualisations();
+
+        initD3TreeView(args.go_tree, "#goTreeView")
 
         // set up save images
         setUpSaveImage();
@@ -78,6 +81,14 @@ var constructMultisearch = function constructMultisearch(args) {
         mapping.set("sunburst", sunburst);
         mapping.set("d3TreeMap", treemap);
         mapping.set("d3TreeView", treeview);
+    }
+
+    function initD3TreeView(data, selector) {
+        $(selector).treeview({
+          data: data,
+          width: 916,
+          height: 600,
+        });
     }
 
     /**
