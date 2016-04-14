@@ -22,6 +22,7 @@ checkdep() {
     }
 }
 
+checkdep diff
 checkdep awk
 checkdep cat
 checkdep curl
@@ -79,7 +80,6 @@ backup() {
     fi
 }
 
-backup "makefile"
 backup ".default-config"
 
 # --------------------------------------------------------------------
@@ -150,7 +150,19 @@ TAXON_URL="ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip"
 echo "s|<<<TAXON_URL>>>|$TAXON_URL|g" >> "$sedscript"
 
 # --------------------------------------------------------------------
-# Writing the makefile
+# Writing the configured files
+
+backup_if_changed() {
+    original="$1"
+    tmpfile="$(mktemp tmp.XXXXXXXX)"
+    cat "$2" > "$tmpfile"
+    if [ -e "$original" ]; then
+        if ! diff "$original" "$tmpfile" > /dev/null; then
+            backup "$original"
+        fi
+    fi
+    mv "$tmpfile" "$original"
+}
 
 source_files=""
 source_inputs=""
@@ -163,14 +175,14 @@ done
 echo "s|<<<SOURCE_FILES>>>|$source_files|g" >> "$sedscript"
 echo "s|<<<SOURCE_INPUTS>>>|$source_inputs|g" >> "$sedscript"
 
-
-$CONFIG_CMD_SED -f "$sedscript" makefile.in > makefile
+tmpmakefile="$(mktemp makefile.XXXXXXXX)"
+$CONFIG_CMD_SED -f "$sedscript" makefile.in > "$tmpmakefile"
 
 for (( i = 0 ; i < sources_count ; i += 2 )); do
     name="${CONFIG_SOURCES[$i]}"
     file="$CONFIG_SRCDIR/${name}.xml.gz"
     url="${CONFIG_SOURCES[$((i + 1))]}"
-    cat >> makefile <<HERE
+    cat >> "$tmpmakefile" <<HERE
 $file:
 	echo "Starting downloading $name."
 	mkdir -p $CONFIG_SRCDIR
@@ -180,4 +192,12 @@ $file:
 
 HERE
 done
+
+backup_if_changed "makefile"        "$tmpmakefile"
+backup_if_changed "proteomes.sh"    <($CONFIG_CMD_SED -f "$sedscript" proteomes.sh.in)
+backup_if_changed "type_strains.sh" <($CONFIG_CMD_SED -f "$sedscript" type_strains.sh.in)
+
+rm "$tmpmakefile"
+chmod a+x proteomes.sh
+chmod a+x type_strains.sh
 
