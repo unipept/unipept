@@ -2,6 +2,12 @@
 // page intro
 
 // tab stuff
+.full-screen .tab-content.tab-nav {
+    z-index: -1;
+    width: 100%;
+    height: 0px;
+}
+
 .tab-content.multi-search {
     overflow: visible;
 }
@@ -9,7 +15,7 @@
     padding: 0px;
 }
 .full-screen .sub-navigation {
-    min-width: 937px;
+    min-width: 100%+37px;
 }
 .multi-search .buttons-single {
     margin-right: 16px;
@@ -81,6 +87,7 @@ span.dir.text {
     margin: 0 auto;
     display: block;
 }
+
 .full-screen #sunburst > svg {
     overflow: visible;
 }
