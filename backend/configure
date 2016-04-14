@@ -9,12 +9,14 @@ erro() {
 }
 
 sedscript="$(mktemp tmp.XXXXXXX.sed)"
+trap "rm '$sedscript'" EXIT
 
 # --------------------------------------------------------------------
 # checking for dependencies
 
+
 checkdep() {
-    hash $1 > /dev/null 2>&1 || {
+    which $1 > /dev/null 2>&1 || hash $1 > /dev/null 2>&1 || {
         erro "Unipept backend requires ${2:-$1} to be installed."
         exit 1
     }
@@ -112,8 +114,8 @@ option "CONFIG_CMD_SED" "sed" "What's my sed executable (e.g. sed, gsed)?"
 
 sources_count="${#CONFIG_SOURCES[@]}"
 if [ "$sources_count" == "0" ]; then
-    CONFIG_SOURCES=('swissprot' 'ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/swissprot.xml.gz'
-                    'trembl' 'ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/trembl.xml.gz')
+    CONFIG_SOURCES=('swissprot' 'ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/uniprot_sprot.xml.gz'
+                    'trembl' 'ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/uniprot_trembl.xml.gz')
     sources_count=4
 fi
 echo "CONFIG_SOURCES=(" >> ".default-config"
@@ -163,8 +165,6 @@ echo "s|<<<SOURCE_INPUTS>>>|$source_inputs|g" >> "$sedscript"
 
 
 $CONFIG_CMD_SED -f "$sedscript" makefile.in > makefile
-
-rm "$sedscript"
 
 for (( i = 0 ; i < sources_count ; i += 2 )); do
     name="${CONFIG_SOURCES[$i]}"
