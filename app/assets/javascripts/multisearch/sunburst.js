@@ -183,33 +183,23 @@
                 .style("pointer-events", "none") // don't invoke mouse events
                 .attr("dy", ".2em");
 
+            // trim to long text
             textEnter.append("tspan")
                 .attr("x", 0)
-                .text(function (d) { return d.depth && d.name !== "empty" ? d.name.split(" ")[0] : ""; });
-
-            textEnter.append("tspan")
-                .attr("x", 0)
-                .attr("dy", "1em")
-                .text(function (d) { return d.depth && d.name !== "empty" ? d.name.split(" ")[1] || "" : ""; });
-
-            textEnter.append("tspan")
-                .attr("x", 0)
-                .attr("dy", "1em")
-                .text(function (d) { 
+                .text(function (d) {
                     if (d.depth && d.name !== "empty") {
-                        if (d.name.split(" ").length > 3) {
-                            return d.name.split(" ")[2] + "..."
-                        } if  (d.name.split(" ").length == 2) {
-                            return ""
-                        } else {
-                            return d.name.split(" ")[2]
-                        }
-                    } else {
-                        return ""
-                    }; });
+                        if (d.name.split(" ").length > 1) {
+                            if (d.name.length > 30) {
+                                return d.name.substring(0, 27).trim()+"..." }
+                        } return d.name
+                    } else { return "" }});
 
             textEnter.style("font-size", function (d) {
-                return Math.min(((r / levels) / this.getComputedTextLength() * 10) + 1, 10) + "px";
+                fxy = (20-6)/(30-5)
+                fontSize = -fxy*(this.children[0].innerHTML.length - (30+(75/14)))
+                console.log(this.children[0].innerHTML, fontSize)
+                return fontSize+"px";
+                // return Math.min(((r / levels) / this.getComputedTextLength() * 10) + 1, 10) + "px";
             });
         }
 
