@@ -6,16 +6,10 @@ TABLES=                                        \
 	$(INTDIR)/peptides.tsv.gz                  \
 	$(TABDIR)/uniprot_entries.tsv.gz           \
 	$(TABDIR)/refseq_cross_references.tsv.gz   \
-	$(TABDIR)/kegg_pathways.tsv.gz 			   \
-	$(TABDIR)/kegg_pathway_mappings.tsv.gz 	   \
-	$(TABDIR)/ec_numbers.tsv.gz 			   \
 	$(ECNDIR)/ec_cross_references.tsv.gz       \
 	$(TABDIR)/embl_cross_references.tsv.gz     \
-	$(TABDIR)/go_terms.tsv.gzip 			   \
 	$(GOBDIR)/go_cross_references.tsv.gz       \
-	$(TABDIR)/interpro_entries.tsv.gz 		   \
 	$(INPDIR)/interpro_cross_references.tsv.gz \
-	$(TABDIR)/interpro_to_go.tsv.gz             \
 	$(INTDIR)/proteomes.tsv.gz                 \
 	$(TABDIR)/proteome_cross_references.tsv.gz 
 
@@ -130,9 +124,13 @@ $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz: $(INTDIR)/names.dmp $(INTDIR)
 # }}}
 
 # Uniprot entries, peptides, sequences and cross references {{{ ----------------
-$(TABLES): $(TABDIR)/taxons.tsv.gz $(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/uniprot_trembl.xml.gz
+$(TABLES): $(TABDIR)/taxons.tsv.gz $(UNIDIR)/uniprot_sprot.xml.gz
+	#$(UNIDIR)/uniprot_trembl.xml.gz
 	echo "Started calculation of most tables."
 	mkdir -p $(INTDIR)
+	mkdir -p $(GOBDIR)
+	mkdir -p $(ECNDIR)
+	mkdir -p $(INPDIR)
 	java $(JMEMMIN) $(JMEMMAX) -cp $(JAR) $(PAC).TaxonsUniprots2Tables              \
 		--peptide-min     $(PEPMIN)                                                 \
 		--peptide-max     $(PEPMAX)                                                 \
@@ -146,7 +144,8 @@ $(TABLES): $(TABDIR)/taxons.tsv.gz $(UNIDIR)/uniprot_sprot.xml.gz $(UNIDIR)/unip
 		--interpro        >($(GZIP) - > $(INPDIR)/interpro_cross_references.tsv.gz) \
 		--proteomes       >($(GZIP) - > $(INTDIR)/proteomes.tsv.gz)                 \
 		--proteomes-ref   >($(GZIP) - > $(TABDIR)/proteome_cross_references.tsv.gz) \
-		swissprot=<(zcat $(UNIDIR)/uniprot_sprot.xml.gz) trembl=<(zcat $(UNIDIR)/uniprot_trembl.xml.gz)
+		swissprot=<(zcat $(UNIDIR)/uniprot_sprot.xml.gz)
+	#trembl=<(zcat $(UNIDIR)/uniprot_trembl.xml.gz)
 	echo "Finished calculation of most tables."
 # }}}
 
