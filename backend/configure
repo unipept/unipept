@@ -23,13 +23,11 @@ checkdep() {
 }
 
 checkdep diff
-checkdep awk
 checkdep cat
 checkdep curl
 checkdep grep
 checkdep html2text
 checkdep java
-checkdep join
 checkdep make
 checkdep mkdir
 checkdep mvn "Maven"
@@ -111,6 +109,9 @@ option "CONFIG_CMD_GZIP" "gzip -" "Which pipe compression command should I use?"
 option "CONFIG_CMD_ZCAT" "zcat" "Which pipe decompression command (e.g. zcat, gzcat) should I use?"
 option "CONFIG_CMD_UNZIP" "unzip -DD" "How do I unzip while discarding dates?"
 option "CONFIG_CMD_SED" "sed" "What's my sed executable (e.g. sed, gsed)?"
+option "CONFIG_CMD_AWK" "awk" "What's my gnu awk executable (e.g. awk, gawk)?"
+option "CONFIG_CMD_MKTEMP" "mktemp" "What's my gnu mktemp executable (e.g. mktemp, gmktemp)?"
+option "CONFIG_CMD_JOIN" "join" "What's my gnu join executable (e.g. join, gjoin)?"
 
 sources_count="${#CONFIG_SOURCES[@]}"
 if [ "$sources_count" == "0" ]; then

@@ -9,14 +9,14 @@ outfile="$3"
 
 set -e
 
-tmp="$(mktemp proteomes.XXXXXXX)"
+tmp="$(<<<CMD_MKTEMP>>> proteomes.XXXXXXX)"
 
 get_proteome() {
     local id="$1"
     local accession="$2"
     curl -s http://www.uniprot.org/proteomes/$accession \
         | html2text -nobs -width 1000 \
-        | awk -f proteomes.awk -v id=$id -v accession=$accession
+        | <<<CMD_AWK>>> -f proteomes.awk -v id=$id -v accession=$accession
 }
 # to reach it with the bash subprocess of xargs
 export -f get_proteome
@@ -24,13 +24,13 @@ export -f get_proteome
 <<<CMD_ZCAT>>> $proteome_gz_file \
     | xargs -P 10 -I{} bash -c 'get_proteome {}' > "$tmp"
 
-join -1 8 -2 1 -a 1 -t '	'                                           \
-        <(<<<CMD_SORT>>> -t'	' -k 8 "$tmp")                          \
-        <(<<<CMD_SORT>>> "$type_strains" | <<<CMD_SED>>> 's/$/\t\x01/') \
-    | <<<CMD_SED>>> "/\x01$/!s/$/	\x00/"                              \
-    | awk 'BEGIN { FS = OFS = "	" }{ print $2,$3,$4,$5,$9,$7,$8,$1 }'   \
-    | <<<CMD_SORT>>> -n                                                  \
-    | <<<CMD_GZIP>>>                                                    \
+<<<CMD_JOIN>>> -1 8 -2 1 -a 1 -t '	'                                               \
+        <(<<<CMD_SORT>>> -t'	' -k 8 "$tmp")                                      \
+        <(<<<CMD_SORT>>> "$type_strains" | <<<CMD_SED>>> 's/$/\t\x01/')             \
+    | <<<CMD_SED>>> "/\x01$/!s/$/	\x00/"                                          \
+    | <<<CMD_AWK>>> 'BEGIN { FS = OFS = "	" }{ print $2,$3,$4,$5,$9,$7,$8,$1 }'   \
+    | <<<CMD_SORT>>> -n                                                             \
+    | <<<CMD_GZIP>>>                                                                \
     > $outfile
 
 rm "$tmp"

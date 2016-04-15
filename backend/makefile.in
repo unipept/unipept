@@ -81,9 +81,9 @@ $(TABLES): <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 <<<INTDIR>>>/aa_sequence_taxon.tsv.gz: <<<INTDIR>>>/peptides.tsv.gz <<<TABDIR>>>/uniprot_entries.tsv.gz
 	echo "Starting the joining of equalized peptides and uniprot entries."
 	mkdir -p <<<INTDIR>>>
-	join -t '	' -o '1.2,2.2' -j 1 \
-			<(<<<CMD_ZCAT>>> <<<INTDIR>>>/peptides.tsv.gz | awk '{ printf("%012d\t%s\n", $$4, $$2) }') \
-			<(<<<CMD_ZCAT>>> <<<TABDIR>>>/uniprot_entries.tsv.gz | awk '{ printf("%012d\t%s\n", $$1, $$4) }') \
+	<<<CMD_JOIN>>> -t '	' -o '1.2,2.2' -j 1 \
+			<(<<<CMD_ZCAT>>> <<<INTDIR>>>/peptides.tsv.gz | <<<CMD_AWK>>> '{ printf("%012d\t%s\n", $$4, $$2) }') \
+			<(<<<CMD_ZCAT>>> <<<TABDIR>>>/uniprot_entries.tsv.gz | <<<CMD_AWK>>> '{ printf("%012d\t%s\n", $$1, $$4) }') \
 		| LC_ALL=C <<<CMD_SORT>>> -k1 \
 		| <<<CMD_GZIP>>> \
 		> $@
@@ -92,9 +92,9 @@ $(TABLES): <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 <<<INTDIR>>>/original_aa_sequence_taxon.tsv.gz: <<<INTDIR>>>/peptides.tsv.gz <<<TABDIR>>>/uniprot_entries.tsv.gz
 	echo "Starting the joining of non-equalized peptides and uniprot entries."
 	mkdir -p <<<INTDIR>>>
-	join -t '	' -o '1.2,2.2' -j 1 \
-			<(<<<CMD_ZCAT>>> <<<INTDIR>>>/peptides.tsv.gz | awk '{ printf("%012d\t%s\n", $$4, $$3) }') \
-			<(<<<CMD_ZCAT>>> <<<TABDIR>>>/uniprot_entries.tsv.gz | awk '{ printf("%012d\t%s\n", $$1, $$4) }') \
+	<<<CMD_JOIN>>> -t '	' -o '1.2,2.2' -j 1 \
+			<(<<<CMD_ZCAT>>> <<<INTDIR>>>/peptides.tsv.gz | <<<CMD_AWK>>> '{ printf("%012d\t%s\n", $$4, $$3) }') \
+			<(<<<CMD_ZCAT>>> <<<TABDIR>>>/uniprot_entries.tsv.gz | <<<CMD_AWK>>> '{ printf("%012d\t%s\n", $$1, $$4) }') \
 		| LC_ALL=C <<<CMD_SORT>>> -k1 \
 		| <<<CMD_GZIP>>> \
 		> $@
@@ -116,9 +116,9 @@ $(TABLES): <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 	echo "Starting the substitution of AA's by ID's for the peptides."
 	<<<CMD_ZCAT>>> <<<INTDIR>>>/peptides.tsv.gz \
 		| LC_ALL=C <<<CMD_SORT>>> -k 2b,2 \
-		| join -t '	' -o '1.1,2.1,1.3,1.4' -1 2 -2 2 - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/sequences.tsv.gz) \
+		| <<<CMD_JOIN>>> -t '	' -o '1.1,2.1,1.3,1.4' -1 2 -2 2 - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/sequences.tsv.gz) \
 		| LC_ALL=C <<<CMD_SORT>>> -k 3b,3 \
-		| join -t '	' -o '1.1,1.2,2.1,1.4' -1 3 -2 2 - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/sequences.tsv.gz) \
+		| <<<CMD_JOIN>>> -t '	' -o '1.1,1.2,2.1,1.4' -1 3 -2 2 - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/sequences.tsv.gz) \
 		| LC_ALL=C <<<CMD_SORT>>> -n \
 		| <<<CMD_GZIP>>> \
 		> $@
@@ -126,7 +126,7 @@ $(TABLES): <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 
 <<<INTDIR>>>/sequence_taxon.tsv.gz: <<<INTDIR>>>/sequences.tsv.gz <<<INTDIR>>>/aa_sequence_taxon.tsv.gz
 	echo "Starting the substitution of AA's by ID's for the sequences"
-	join -t '	' -o '1.1,2.2' -1 2 -2 1 \
+	<<<CMD_JOIN>>> -t '	' -o '1.1,2.2' -1 2 -2 1 \
 			<(<<<CMD_ZCAT>>> <<<INTDIR>>>/sequences.tsv.gz) \
 			<(<<<CMD_ZCAT>>> <<<INTDIR>>>/aa_sequence_taxon.tsv.gz) \
 		| <<<CMD_GZIP>>> \
@@ -135,7 +135,7 @@ $(TABLES): <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 
 <<<INTDIR>>>/original_sequence_taxon.tsv.gz: <<<INTDIR>>>/sequences.tsv.gz <<<INTDIR>>>/original_aa_sequence_taxon.tsv.gz
 	echo "Starting the substitution of AA's by ID's for the original sequences"
-	join -t '	' -o '1.1,2.2' -1 2 -2 1 \
+	<<<CMD_JOIN>>> -t '	' -o '1.1,2.2' -1 2 -2 1 \
 			<(<<<CMD_ZCAT>>> <<<INTDIR>>>/sequences.tsv.gz) \
 			<(<<<CMD_ZCAT>>> <<<INTDIR>>>/original_aa_sequence_taxon.tsv.gz) \
 		| <<<CMD_GZIP>>> \
@@ -161,8 +161,8 @@ $(TABLES): <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 <<<TABDIR>>>/sequences.tsv.gz: <<<INTDIR>>>/sequences.tsv.gz <<<INTDIR>>>/LCAs.tsv.gz <<<INTDIR>>>/original_LCAs.tsv.gz
 	echo "Starting the creation of the sequences table."
 	<<<CMD_ZCAT>>> <<<INTDIR>>>/sequences.tsv.gz \
-		| join --nocheck-order -a1 -t '	' -o "1.1 1.2 2.2" - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/original_LCAs.tsv.gz) \
-		| join --nocheck-order -a1 -t '	' -o "1.1 1.2 1.3 2.2" - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/LCAs.tsv.gz) \
+		| <<<CMD_JOIN>>> --nocheck-order -a1 -t '	' -o "1.1 1.2 2.2" - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/original_LCAs.tsv.gz) \
+		| <<<CMD_JOIN>>> --nocheck-order -a1 -t '	' -o "1.1 1.2 1.3 2.2" - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/LCAs.tsv.gz) \
 		| <<<CMD_GZIP>>> \
 		> $@
 	echo "Finished the creation of the sequences table."
