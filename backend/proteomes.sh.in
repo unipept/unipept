@@ -29,7 +29,7 @@ join -1 8 -2 1 -a 1 -t '	'                                           \
         <(<<<CMD_SORT>>> "$type_strains" | <<<CMD_SED>>> 's/$/\t\x01/') \
     | <<<CMD_SED>>> "/\x01$/!s/$/	\x00/"                              \
     | awk 'BEGIN { FS = OFS = "	" }{ print $2,$3,$4,$5,$9,$7,$8,$1 }'   \
-    | <<CMD_SORT>>> -n                                                  \
+    | <<<CMD_SORT>>> -n                                                  \
     | <<<CMD_GZIP>>>                                                    \
     > $outfile
 
