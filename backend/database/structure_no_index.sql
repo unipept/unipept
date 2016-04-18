@@ -194,7 +194,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`go_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
   `go_term_id` INT NOT NULL,
-  `go_id` VARCHAR(20) NOT NULL ,
+  `go_id` VARCHAR(15) NOT NULL ,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
@@ -206,8 +206,8 @@ COLLATE = ascii_general_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `go_id` VARCHAR(20) NOT NULL,
-  `name` VARCHAR(255) NOT NULL,
+  `go_id` VARCHAR(15) NOT NULL,
+  `name` VARCHAR(200) NOT NULL,
   `name_space` ENUM('BP', 'MF', 'CC') NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
@@ -222,7 +222,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`ec_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
   `ec_number_id` INT NOT NULL,
-  `ec_number` VARCHAR(20) NOT NULL ,
+  `ec_number` VARCHAR(15) NOT NULL ,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
@@ -234,8 +234,8 @@ COLLATE = ascii_general_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`ec_numbers` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `ec_number` VARCHAR(20) NOT NULL,
-  `name` VARCHAR(255) NOT NULL,
+  `ec_number` VARCHAR(15) NOT NULL,
+  `name` VARCHAR(140) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
@@ -286,7 +286,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`interpro_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `uniprot_entry_id` INT UNSIGNED NOT NULL,
   `interpro_entry_id` INT NOT NULL,
-  `interpro_id` VARCHAR(20) NOT NULL,
+  `interpro_id` VARCHAR(15) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
@@ -299,8 +299,8 @@ COLLATE = ascii_general_ci;
 CREATE TABLE IF NOT EXISTS `unipept`.`interpro_entries` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `parent_id` INT NOT NULL,
-  `interpro_id` VARCHAR(20) NOT NULL,
-  `name` VARCHAR(255) NOT NULL,
+  `interpro_id` VARCHAR(15) NOT NULL,
+  `name` VARCHAR(40) NOT NULL,
   `type` ENUM('F', 'D', 'R', 'AS','BS', 'CS', 'PTM') NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
@@ -323,8 +323,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`kegg_pathways` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `long_id` VARCHAR(15) NOT NULL,
-  `name` VARCHAR(160) NOT NULL,
+  `long_id` VARCHAR(12) NOT NULL,
+  `name` VARCHAR(90) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
