@@ -26,8 +26,8 @@ def parseCrossRef(rfile, dict_ids):
 		line=line.strip().split("\t")
 		if line[-1] in dict_ids:
 			print("{}\t{}\t{}\t{}".format(line[0], line[1], dict_ids[line[-1]], line[-1]))
-		else:
-			print("{}\t{}\t{}\t{}".format(line[0], line[1], "Null", line[-1]))
+		#else:
+		#	print("{}\t{}\t{}\t{}".format(line[0], line[1], "Null", line[-1]))
 
 dict_ids=addToDict(readFile(fdb_file))
 parseCrossRef(readFile(cross_file), dict_ids)
