@@ -28,7 +28,8 @@ join -1 8 -2 1 -a 1 -t '	'                                         \
         <(sort -t'	' -k 8 "$tmp")                                    \
         <(sort "$type_strains" | sed 's/$/\t\x01/')                   \
     | sed "/\x01$/!s/$/	\x00/"                                        \
-    | awk 'BEGIN { FS = OFS = "	" }{ print $2,$3,$4,$5,$9,$7,$8,$1 }' \
+    | awk 'BEGIN { FS = "   ";OFS = "   " }{ print $2,$3,$4,$5,$9,$7,$8,$1 }' \
+    | sed -e 's/^[[:space:]]*//'                                      \
     | sort -n                                                         \
     | gzip                                                            \
     > $outfile
