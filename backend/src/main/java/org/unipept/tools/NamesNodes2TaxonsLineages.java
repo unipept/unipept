@@ -3,9 +3,17 @@ package org.unipept.tools;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.JCommander;
+
 import org.unipept.taxons.TaxonList;
 
 public class NamesNodes2TaxonsLineages {
+
+    @Parameter(names="--names", description="Taxon names input file") public String namesFile;
+    @Parameter(names="--nodes", description="Taxon nodes input file") public String nodesFile;
+    @Parameter(names="--taxons", description="Taxon TSV output file") public String taxonsFile;
+    @Parameter(names="--lineages", description="Lineages TSV output file") public String lineagesFile;
 
     /**
      * Parse a list of taxons and their lineages from the NCBI dumps.
@@ -16,19 +24,13 @@ public class NamesNodes2TaxonsLineages {
      * will be written to the third and fourth parameter.
      */
     public static void main(String[] args) throws IOException {
-        if(args.length != 4) {
-            throw new RuntimeException("Please provide the parameters.");
-        }
+        NamesNodes2TaxonsLineages main = new NamesNodes2TaxonsLineages();
+        new JCommander(main, args);
 
-        String namesFile = args[0];
-        String nodesFile = args[1];
-        String taxonsFile = args[2];
-        String lineagesFile = args[3];
-
-        TaxonList tl = TaxonList.parseDumps(namesFile, nodesFile);
+        TaxonList tl = TaxonList.parseDumps(main.namesFile, main.nodesFile);
         tl.invalidate();
-        tl.writeToFile(taxonsFile);
-        tl.writeLineagesToFile(lineagesFile);
+        tl.writeToFile(main.taxonsFile);
+        tl.writeLineagesToFile(main.lineagesFile);
     }
 
 }
