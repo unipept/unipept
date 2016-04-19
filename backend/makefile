@@ -6,16 +6,10 @@ TABLES=                                        \
 	$(INTDIR)/peptides.tsv.gz                  \
 	$(TABDIR)/uniprot_entries.tsv.gz           \
 	$(TABDIR)/refseq_cross_references.tsv.gz   \
-	$(TABDIR)/kegg_pathways.tsv.gz 			   \
-	$(TABDIR)/kegg_pathway_mappings.tsv.gz 	   \
-	$(TABDIR)/ec_numbers.tsv.gz 			   \
 	$(ECNDIR)/ec_cross_references.tsv.gz       \
 	$(TABDIR)/embl_cross_references.tsv.gz     \
-	$(TABDIR)/go_terms.tsv.gzip 			   \
 	$(GOBDIR)/go_cross_references.tsv.gz       \
-	$(TABDIR)/interpro_entries.tsv.gz 		   \
 	$(INPDIR)/interpro_cross_references.tsv.gz \
-	$(TABDIR)/interpro_to_gos.tsv.gz             \
 	$(INTDIR)/proteomes.tsv.gz                 \
 	$(TABDIR)/proteome_cross_references.tsv.gz 
 
@@ -23,7 +17,7 @@ SRC=$(shell find src/ -type f -name '*.java')
 JAR=target/unipept-0.0.1-SNAPSHOT.jar
 PAC=org.unipept.tools
 
-all: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz $(TABLES) $(TABDIR)/sequences.tsv.gz $(TABDIR)/peptides.tsv.gz $(TABDIR)/proteomes.tsv.gz $(TABDIR)/ec_cross_references.tsv.gz $(TABDIR)/go_cross_references.tsv.gz $(TABDIR)/interpro_cross_references.tsv.gz
+all: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz $(TABLES) $(TABDIR)/sequences.tsv.gz $(TABDIR)/peptides.tsv.gz $(TABDIR)/proteomes.tsv.gz $(TABDIR)/ec_cross_references.tsv.gz $(TABDIR)/go_cross_references.tsv.gz $(TABDIR)/interpro_cross_references.tsv.gz $(TABDIR)/kegg_pathway_mappings.tsv.gz
 jar: $(JAR)
 taxons: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
 tables: $(TABLES)
