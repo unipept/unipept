@@ -240,6 +240,8 @@ var constructMultisearch = function constructMultisearch(args) {
             triggerDownloadModal(null, "#"+activeTab, "unipept_treemap");
         } else if (activeTab === "d3TreeView") {
             triggerDownloadModal("#"+activeTab+" svg", null, "unipept_treeview");
+        } else if (activeTab === "goTreeView") {
+            triggerDownloadModal("#"+activeTab+" svg", null, "unipept_goTreeView");
         }
     }
 
@@ -271,7 +273,7 @@ var constructMultisearch = function constructMultisearch(args) {
     }
 
     function getActiveTab() {
-        var activePane = $(".full-screen-container li.active").find("a").attr('href');
+        var activePane = $("li.active").find("a").attr('href');
         return activePane.split("Wrapper")[0].substring(1,activePane.length);
     }
 
