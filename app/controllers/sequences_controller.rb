@@ -446,6 +446,7 @@ class SequencesController < ApplicationController
 
     # fetch sequences
     @sequences = Sequence.where(sequence: data).includes({:peptides => {uniprot_entry: {ec_cross_references: :ec_number}}})
+
     # get only the unique ec per peptide
     ecuniq = @sequences.map{|s| (s.peptides.map{|p| p.uniprot_entry.ec_cross_references.map{|e| e.ec_number}.flatten}.flatten).uniq}.reject(&:blank?).flatten(1)
 
