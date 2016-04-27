@@ -11,13 +11,22 @@ TABLES=                                        \
 	$(GOBDIR)/go_cross_references.tsv.gz       \
 	$(INPDIR)/interpro_cross_references.tsv.gz \
 	$(INTDIR)/proteomes.tsv.gz                 \
-	$(TABDIR)/proteome_cross_references.tsv.gz 
+	$(TABDIR)/proteome_cross_references.tsv.gz
+
+CROSSREF=												\
+	$(INTDIR)/ec_cross_references_lca.tsv.gz 			\
+	$(INTDIR)/ec_cross_references_lca_il.tsv.gz 		\
+	$(INTDIR)/go_cross_references_lca.tsv.gz 			\
+	$(INTDIR)/go_cross_references_lca_il.tsv.gz 		\
+	$(INTDIR)/interpro_cross_references_lca.tsv.gz 		\
+	$(INTDIR)/interpro_cross_references_lca_il.tsv.gz
+
 
 SRC=$(shell find src/ -type f -name '*.java')
 JAR=target/unipept-0.0.1-SNAPSHOT.jar
 PAC=org.unipept.tools
 
-all: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz $(TABLES) $(TABDIR)/sequences.tsv.gz $(TABDIR)/peptides.tsv.gz $(TABDIR)/proteomes.tsv.gz $(TABDIR)/ec_cross_references.tsv.gz $(TABDIR)/go_cross_references.tsv.gz $(TABDIR)/interpro_cross_references.tsv.gz $(TABDIR)/kegg_pathway_mappings.tsv.gz
+all: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz $(TABLES) $(INTDIR)/sequences_lca.tsv.gz $(TABDIR)/sequences.tsv.gz $(TABDIR)/peptides.tsv.gz $(TABDIR)/proteomes.tsv.gz $(TABDIR)/ec_cross_references.tsv.gz $(TABDIR)/go_cross_references.tsv.gz $(TABDIR)/interpro_cross_references.tsv.gz $(TABDIR)/kegg_pathway_mappings.tsv.gz $(TABDIR)/kegg_pathways.tsv.gz $(CROSSREF)
 jar: $(JAR)
 taxons: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
 tables: $(TABLES)
@@ -227,7 +236,7 @@ $(INTDIR)/original_LCAs.tsv.gz: $(TABDIR)/lineages.tsv.gz $(INTDIR)/original_seq
 		>($(GZIP) - > $(INTDIR)/original_LCAs.tsv.gz)
 	echo "Finished the calculation non-equalized LCA's."
 
-$(TABDIR)/sequences.tsv.gz: $(INTDIR)/sequences.tsv.gz $(INTDIR)/LCAs.tsv.gz $(INTDIR)/original_LCAs.tsv.gz
+$(INTDIR)/sequences_lca.tsv.gz: $(INTDIR)/sequences.tsv.gz $(INTDIR)/LCAs.tsv.gz $(INTDIR)/original_LCAs.tsv.gz
 	echo "Starting the creation of the sequences table."
 	gzcat $(INTDIR)/sequences.tsv.gz \
 		| join -a1 -t '	' -o "1.1 1.2 2.2" -- - <(gzcat $(INTDIR)/original_LCAs.tsv.gz) \
@@ -334,6 +343,23 @@ $(TABDIR)/interpro_cross_references.tsv.gz: $(INPDIR)/interpro_cross_references.
 		> $@
 	echo "Finished updating the InterPro cross ref table."
 
+# }}}
+
+# Update sequence table {{{ ----------------------------------------
+$(CROSSREF): $(INTDIR)/sequences_lca.tsv.gz $(TABDIR)/peptides.tsv.gz $(TABDIR)/ec_cross_references.tsv.gz $(TABDIR)/go_cross_references.tsv.gz $(TABDIR)/interpro_cross_references.tsv.gz
+	echo "Starting the create aggregation table for ec/go/interpro."
+	python ./aggregation.py \
+		-s $(INTDIR)/sequences_lca.tsv.gz \
+		-p $(TABDIR)/peptides.tsv.gz \
+		-e $(TABDIR)/ec_cross_references.tsv.gz \
+		-g $(TABDIR)/go_cross_references.tsv.gz \
+		-i $(TABDIR)/interpro_cross_references.tsv.gz 
+	echo "Finishing the update of the sequences table."
+
+$(TABDIR)/sequences.tsv.gz: $(CROSSREF) $(INTDIR)/sequences_lca.tsv.gz
+	echo "Starting the update of the sequences table."
+	bash ./joinsequencetable.sh
+	echo "Finishing the aggregation of the ec/go/interpro table."
 # }}}
 
 
