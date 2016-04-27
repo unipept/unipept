@@ -98,6 +98,7 @@
         function initControls() {
             // hook up the reset button
             $("#treeview-reset").click(that.reset);
+            $("#goTreeview-reset").click(that.reset);
         }
 
         function draw(data) {
