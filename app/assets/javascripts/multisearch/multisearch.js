@@ -36,6 +36,8 @@ var constructMultisearch = function constructMultisearch(args) {
 
         initVisualisationsTreeview(data, "#d3TreeView");
 
+        initVisualisationsTreeview(sbecdata, "#ecTreeView");
+
         initVisualisationsTreeview(godata, "#goTreeView")
 
         // set up save images
