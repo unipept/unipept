@@ -181,10 +181,10 @@
         tree: <%= raw(@root) %>,
         ec_tree: <%= raw(@ec_root) %>,
         uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>,
-        terms: <%= raw(Oj.dump(@graph.terms.map{|k, v| {'id' => k, 'name' => v.name}})) %>,
-        edges: <%= raw(Oj.dump(@links, mode: :compat)) %>,
+        terms: <%= raw(Oj.dump(@graphs['biological_process'].terms.map{|k, v| {'id' => k, 'name' => v.name}})) %>,
+        edges: <%= raw(Oj.dump(@links['biological_process'], mode: :compat)) %>,
         found: <%= raw(@gos) %>,
-        go_tree: <%= raw(@go_root) %>
+        go_tree: <%= raw(@go_root['biological_process']) %>
       });
     });
   </script>

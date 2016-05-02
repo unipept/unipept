@@ -168,7 +168,12 @@ class SequencesController < ApplicationController
     # ----------- end ------------ #
 
     gos = @entries.map(&:go_cross_references).flatten.map(&:go_id)
-    go(gos)
+    go_reachability(gos)
+    go_graph
+    go_tree
+    @go_lcas = []
+    min_count = 0.30*@go_tree['biological_process'].data['count']
+    cutoff(@go_tree['biological_process'], min_count, @go_lcas)
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree
@@ -546,56 +551,60 @@ class SequencesController < ApplicationController
       redirect_to datasets_path
   end
 
-  def go(gos)
-    gos_counts = {}
-    gos.group_by{|i| i}.each{|k,v| gos_counts[k] = v.count}
+  def go_reachability(gos)
+    @gos_counts = {}
+    gos.group_by{|i| i}.each{|k,v| @gos_counts[k] = v.count}
 
-    ontologies = {'biological_process' => 'GO:0008150', 'molecular_function' => 'GO:0003674', 'cellular_component' => 'GO:0005575'}
+    @ontologies = {'biological_process' => 'GO:0008150', 'molecular_function' => 'GO:0003674', 'cellular_component' => 'GO:0005575'}
 
     @graphs = {}
-    ontologies.keys.each{|o| @graphs[o] = Graph.new(gos_counts)}
-    @gos = gos_counts.keys
+    @ontologies.keys.each{|o| @graphs[o] = Graph.new(@gos_counts)}
+    @gos = @gos_counts.keys
     for go in @gos
       node = GO_GRAPH.find_go(go)
       @graphs[node.namespace].add_reachable(node, go) unless node.nil?
     end
+  end
 
-    ont = 'biological_process'
-    @graph = @graphs[ont]
+  def go_graph
+    @links = {}
+    for ont in @ontologies.keys
+      @links[ont] = []
+      graph_size = @gos_counts.map{|g,n| @graphs[ont].terms.include?(g) ? n : 0}.inject(:+)
+      @graphs[ont].terms.each { |k,v| v.links.each{ |t,l| @links[ont].push({'from' => k, 'to' => t, 'label' => 'is_a', 'weight' => v.linked.map { |g| @gos_counts[g]}.inject(:+).to_f/graph_size, 'linked' => v.linked.to_a}) } }
+    end
+  end
 
-    @links = []
-    graph_size = gos_counts.map{|g,n| @graph.terms.include?(g) ? n : 0}.inject(:+)
-    @graph.terms.each { |k,v| v.links.each{ |t,l| @links.push({'from' => k, 'to' => t, 'label' => 'is_a', 'weight' => v.linked.map { |g| gos_counts[g]}.inject(:+).to_f/graph_size, 'linked' => v.linked.to_a}) } }
+  def go_tree_counts(parent)
+    parent.data['count'] = parent.data['self_count']
+    for child in parent.children
+        go_tree_counts(child)
+        parent.data['count'] += child.data['count']
+    end
+  end
 
-    def counts(parent)
-      parent.data['count'] = parent.data['self_count']
+  def go_tree
+    @go_tree = {}
+    @go_root = {}
+    for ont in @ontologies.keys
+      @go_tree[ont] = @graphs[ont].to_tree(@ontologies[ont])
+      go_tree_counts(@go_tree[ont])
+      @go_root[ont] = Oj.dump(@go_tree[ont], mode: :compat)
+    end
+  end
+
+  def cutoff(parent, cutoff, lcas)
+    if parent.data['count'] >= cutoff
+      added = false
       for child in parent.children
-          counts(child)
-          parent.data['count'] += child.data['count']
+        added = cutoff(child, cutoff, lcas) || added # it's essential to put added to the back, otherwise cutoff isn't evaluated
       end
-    end
-
-    tree = @graph.to_tree(ontologies[ont])
-    counts(tree)
-    @go_root = Oj.dump(tree, mode: :compat)
-
-    def cutoff(parent, cutoff, lcas)
-      if parent.data['count'] >= cutoff
-        added = false
-        for child in parent.children
-          added = cutoff(child, cutoff, lcas) || added # it's essential to put added to the back, otherwise cutoff isn't evaluated
-        end
-        if !added
-          lcas.append(parent.name)
-        end
-        return true
+      if !added
+        lcas.append(parent.name)
       end
-      return false
+      return true
     end
-
-    @go_lcas = []
-    min_count = 0.30*tree.data['count']
-    cutoff(tree, min_count, @go_lcas)
+    return false
   end
 end
 
