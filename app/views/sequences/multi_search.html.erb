@@ -99,7 +99,9 @@
             <div class='card-supporting-text multi-results-sub'>
               <ul class="nav nav-tabs sub-navigation">
                 <li class="active"><a class="subnav-link" href="#ecSunburstWrapper" data-toggle="tab">Sunburst</a></li>
-                <li><a class="subnav-link" href="#goTreeViewWrapper" data-toggle="tab">GO Treeview</a></li>
+                <li><a class="subnav-link" href="#goTreeView1Wrapper" data-toggle="tab">Biological Process</a></li>
+                <li><a class="subnav-link" href="#goTreeView2Wrapper" data-toggle="tab">Molecular Function</a></li>
+                <li><a class="subnav-link" href="#goTreeView3Wrapper" data-toggle="tab">Cellular Component</a></li>
               </ul>
             </div>
             <div class="tab-content tab-nav">
@@ -124,14 +126,32 @@
                   <div class="sunburstPanel" id="ecSunburstPanel">&nbsp;</div>
                 </div>
               </div>
-              <div class="tab-pane" id="goTreeViewWrapper">
+              <div class="tab-pane" id="goTreeView1Wrapper">
                 <h2 class="ghead">
                   <span class="dir">
                     <a class="btn btn-xs btn-default btn-animate" id="treeview-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
                   </span>
                   <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
                 </h2>
-                <div class="treeView" id="goTreeView"></div>
+                <div class="treeView" id="goTreeView1"></div>
+              </div>
+              <div class="tab-pane" id="goTreeView2Wrapper">
+                <h2 class="ghead">
+                  <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate" id="treeview-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                  </span>
+                  <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
+                </h2>
+                <div class="treeView" id="goTreeView2"></div>
+              </div>
+              <div class="tab-pane" id="goTreeView3Wrapper">
+                <h2 class="ghead">
+                  <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate" id="treeview-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                  </span>
+                  <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
+                </h2>
+                <div class="treeView" id="goTreeView3"></div>
               </div>
             </div>
           </div>

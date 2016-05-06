@@ -327,7 +327,8 @@ class SequencesController < ApplicationController
       end
       gos.push(*GoCrossReference.joins(uniprot_entry: { peptides: :sequence }).where('sequences.sequence' => data_slice).group('go_cross_references.go_id,sequences.id').map(&:go_id))
     end
-    go(gos)
+    go_reachability(gos)
+    go_tree
 
     # handle the misses
     if handle_missed
@@ -591,6 +592,7 @@ class SequencesController < ApplicationController
       go_tree_counts(@go_tree[ont])
       @go_root[ont] = Oj.dump(@go_tree[ont], mode: :compat)
     end
+      @go_root = Oj.dump(@go_tree, mode: :compat)
   end
 
   def cutoff(parent, cutoff, lcas)

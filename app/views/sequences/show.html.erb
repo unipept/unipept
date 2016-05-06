@@ -184,7 +184,7 @@
         terms: <%= raw(Oj.dump(@graphs['biological_process'].terms.map{|k, v| {'id' => k, 'name' => v.name}})) %>,
         edges: <%= raw(Oj.dump(@links['biological_process'], mode: :compat)) %>,
         found: <%= raw(@gos) %>,
-        go_tree: <%= raw(@go_root['biological_process']) %>
+        go_tree: <%= raw(@go_root) %>['biological_process']
       });
     });
   </script>
