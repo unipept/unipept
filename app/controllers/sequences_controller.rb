@@ -153,15 +153,6 @@ class SequencesController < ApplicationController
     @ec_root.sort_children
     @ec_root = Oj.dump(@ec_root, mode: :compat)
 
-    def calc_ec_lca(ec_hash, ec_root, common_ec_lineage)
-      if ec_hash["children"].nil? or ec_hash["children"].size > 1 or ec_hash["children"] == []
-        return ec_root, common_ec_lineage
-      end
-      ec_root = ec_hash["children"][0]["id"]
-      common_ec_lineage.push(ec_root)
-      calc_ec_lca(ec_hash["children"][0], ec_root, common_ec_lineage)
-    end
-
     ec_lca_hash = JSON.parse(@ec_root)
     @ec_lca_root, @common_ec_lineage = calc_ec_lca(ec_lca_hash, "root", [])
 
@@ -431,15 +422,8 @@ class SequencesController < ApplicationController
     #TODO: write an dexport to csv; write code to match sequence with ec
 
     # variables
-    @ec_functions = {}
-    @ec_lca_count = {}
-    @ec_lca_class = {}
-    ec_lca_table = {}
-    eccountdic = {}
-    @ec_lca_id = {}
-    @ec_lca = {}
-    ec_barchart_count_list = []
-    ec_barchart_count = {}
+    no_hit = 0
+    ec_lca_list = []
 
     # fetch all ec numbers
     ec_db = EcNumber.all 
@@ -447,78 +431,49 @@ class SequencesController < ApplicationController
     # fetch sequences
     @sequences = Sequence.where(sequence: data).includes({:peptides => {uniprot_entry: {ec_cross_references: :ec_number}}})
 
-    # get only the unique ec per peptide
-    ecuniq = @sequences.map{|s| (s.peptides.map{|p| p.uniprot_entry.ec_cross_references.map{|e| e.ec_number}.flatten}.flatten).uniq}.reject(&:blank?).flatten(1)
-
-    # create dictionary containing all levels and count of ec for sunburst
-    ecuniq.each do |ec|
-      ec = ec[:ec_number]
-      ecsplit = ec.split(".")
-      eccounter=0
-      while eccounter < 4 do
-        ecbreak=ecsplit[0..eccounter].join(".")+(".-"*(3-eccounter))
-        # all lineage of ec number
-        if !ec_lca_table.has_key?(ec)
-          ec_lca_table[ec] = [ecbreak]
-        else
-          if ec_lca_table[ec].index(ecbreak).nil?
-            ec_lca_table[ec] += [ecbreak]
-          end
-        end
-        # counts for each lineage
-        if !eccountdic.has_key?(ecbreak)
-          eccountdic[ecbreak] = 1
-        else
-          eccountdic[ecbreak] += 1
-        end
-        eccounter += 1
+    # get ec numbers
+    @sequences.each do |s_entry|
+      unique_ecnumbers = get_ec_numbers(s_entry)
+      if unique_ecnumbers != "root"
+        ec_lca_list.insert(-1, get_ec_lca(unique_ecnumbers))
+      else
+        no_hit += 1
       end
     end
 
-    # get all ec numbers from the ec_lca_table
-    ec_all_ranks = ec_lca_table.values.flatten(1).to_set.map{|x| x}
-
-    # get all functions accociated with the ranks
-    ec_tmp_all_functions = ec_db.select("ec_number, name").where(ec_number: ec_all_ranks).to_set
-
-    # store all in hash & remove all "." from end of line
-    ec_tmp_all_functions.each do |ec_hash|
-      @ec_functions[ec_hash[:ec_number]] = ec_hash[:name].gsub(/\.$/, '')
-    end
-
-    # calculate all steps of the tree the amount of hits
-    for ec_key, ec_value in ec_lca_table 
-      ec_value.each do |ecitems|
-        if ecitems != ""
-          if !@ec_lca_count.has_key?(ecitems)
-            @ec_lca_count[ecitems] = eccountdic[ec_key]
-          else
-            @ec_lca_count[ecitems] += eccountdic[ec_key]
-          end
-        end
-      end
-    end
-
+    # make self_count dic
+    self_count = get_ec_self_count(ec_lca_list)
+    # remove roots so that errors dont happen in the node build
+    ec_lca_list.delete("-.-.-.-")
+    # create the ontology for ec and thair respected count along the branch
+    ec_ontology, ec_ontology_count = get_ec_ontology(ec_lca_list)
+    # get the ec functions
+    ec_ontology_functions = get_ec_function(ec_ontology,  ec_db)
+    
+    # build ec tree
     @ec_root = Node.new("-.-.-.-", 'root', nil, '-.-.-.-') # start constructing the tree
-    @ec_root.data['count'] = eccountdic.values.sum
+    @ec_root.data['count'] = self_count.values.sum + no_hit
+    @ec_root.data['self_count'] = self_count["-.-.-.-"] + no_hit
     ec_last_node =  @ec_root
 
-    for key, value in ec_lca_table do
+    for key, value in ec_ontology do
       ec_last_node_loop = ec_last_node
       value.each do |ecs|
-        if ecs != ""
+        if ecs == "-.-.-.-"
+          ""
+        elsif ecs != ""
           node = Node.find_by_id(ecs, @ec_root)
           if node.nil?
-            node = Node.new(ecs, @ec_functions[ecs], @ec_root, ecs)
-            node.data['count'] = @ec_lca_count[ecs]
-            if ec_lca_table.has_key?(ecs)
-              node.data['self_count'] = eccountdic[ecs]
+            node = Node.new(ecs, ec_ontology_functions[ecs], @ec_root, ecs)
+            node.data['count'] = ec_ontology_count[ecs]
+            if ec_ontology.has_key?(ecs)
+              node.data['self_count'] = self_count[ecs]
             else
               node.data['self_count'] = 0
             end
             ec_last_node_loop = ec_last_node_loop.add_child(node)
           else
-            node.name = @ec_functions[ecs]
+            node.name = ec_ontology_functions[ecs]
             ec_last_node_loop = node
           end         
         end
@@ -526,19 +481,6 @@ class SequencesController < ApplicationController
     end
     @ec_root.sort_children
     @ec_root = Oj.dump(@ec_root, mode: :compat)
-    @ecBarChart = Oj.dump(ec_barchart_count_list, mode: :compat)
-
-    def calc_ec_lca(ec_hash, ec_root, common_ec_lineage)
-      if ec_hash["children"].nil? or ec_hash["children"].size > 1 or ec_hash["children"] == []
-        return ec_root, common_ec_lineage
-      end
-      ec_root = ec_hash["children"][0]["id"]
-      common_ec_lineage.push(ec_root)
-      calc_ec_lca(ec_hash["children"][0], ec_root, common_ec_lineage)
-    end
-
-    ec_lca_hash = JSON.parse(@ec_root)
-    @ec_lca_root, @common_ec_lineage = calc_ec_lca(ec_lca_hash, "root", [])
 
     # ----------- end ------------ #
 
@@ -599,5 +541,77 @@ class SequencesController < ApplicationController
     cutoff(tree, min_count, @go_lcas)
   end
 end
+
+def get_ec_numbers(s_entry)
+    ec_numbers = s_entry.peptides.map{|p| p.uniprot_entry.ec_cross_references.map{|e| e[:ec_number]}}.uniq.flatten(1).to_a
+    return (ec_numbers != []) ? ec_numbers : "root"
+end
+
+def get_ec_lca(unique_ecnumbers)
+  return EcCrossReference.calculate_lca(unique_ecnumbers)
+end
+
+def get_ec_self_count(ec_lca_list)
+  self_count = {}
+  ec_lca_list.uniq.each do |ecl|
+    self_count[ecl] = ec_lca_list.count(ecl)
+  end
+  return self_count
+end
+
+def get_ec_function(ec_ontology, ecnumber_db)
+  ec_ontology_functions = {}
+  # get all ec numbers from the ec_ontology
+  ec_all_ontology = ec_ontology.values.flatten(1).uniq
+
+  # get all functions
+  tmp_ec_ontology_functions = ecnumber_db.select("ec_number, name").where(ec_number: ec_all_ontology)
+
+  # put functions in hash
+  tmp_ec_ontology_functions.each do |ec_func|
+    ec_ontology_functions[ec_func[:ec_number]] = ec_func[:name]
+  end
+  return ec_ontology_functions
+end
+
+def calc_ec_lca(ec_hash, ec_root, common_ec_lineage)
+  if ec_hash["children"].nil? or ec_hash["children"].size > 1 or ec_hash["children"] == []
+    return ec_root, common_ec_lineage
+  end
+  ec_root = ec_hash["children"][0]["id"]
+  common_ec_lineage.push(ec_root)
+  calc_ec_lca(ec_hash["children"][0], ec_root, common_ec_lineage)
+end
+
+def get_ec_ontology(unique_ecnumbers)
+  ec_lca_table = {}
+  eccountdic = {}
+  # create dictionary containing all levels and count of ec for sunburst
+  unique_ecnumbers.each do |ec|
+    ecsplit = ec.split(".")
+    eccounter=0
+    while eccounter < 4 do
+      ecbreak=ecsplit[0..eccounter].join(".")+(".-"*(3-eccounter))
+      # all lineage of ec number
+      if !ec_lca_table.has_key?(ec)
+        ec_lca_table[ec] = [ecbreak]
+      else
+        if ec_lca_table[ec].index(ecbreak).nil?
+          ec_lca_table[ec] += [ecbreak]
+        end
+      end
+      # counts for each lineage
+      if !eccountdic.has_key?(ecbreak)
+        eccountdic[ecbreak] = 1
+      else
+        eccountdic[ecbreak] += 1
+      end
+      eccounter += 1
+    end
+  end
+  return ec_lca_table, eccountdic
+end
+
+
 
 class EmptyQueryError < StandardError; end
