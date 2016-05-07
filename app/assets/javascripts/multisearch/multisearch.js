@@ -38,7 +38,9 @@ var constructMultisearch = function constructMultisearch(args) {
 
         initVisualisationsTreeview(sbecdata, "#ecTreeView");
 
-        initVisualisationsTreeview(godata, "#goTreeView")
+        initVisualisationsTreeview(godata['biological_process'], "#goTreeView1")
+        initVisualisationsTreeview(godata['molecular_function_'], "#goTreeView2")
+        initVisualisationsTreeview(godata['cellular_component'], "#goTreeView3")
 
         // set up save images
         setUpSaveImage();
