@@ -153,10 +153,8 @@ var constructMultisearch = function constructMultisearch(args) {
             if (isFullScreen) {
                 size = Math.min($(window).height() - 44, $(window).width() - 250);
             }
-            $("#sunburst > svg").attr("height", size);
-            $("#sunburst > svg").attr("width", size);
-            $("#ecSunburst > svg").attr("height", size);
-            $("#ecSunburst > svg").attr("width", size);
+            $(".sunburst > svg").attr("height", size);
+            $(".sunburst > svg").attr("width", size);
         }, 1000);
     };
 
@@ -175,12 +173,10 @@ var constructMultisearch = function constructMultisearch(args) {
             height = 600;
             if (isFullScreen) {
                 width = $(window).width();
-                height = $(window).height() - 44;
+                height = $(window).height();
             }
-            $("#d3TreeView svg").attr("width", width);
-            $("#d3TreeView svg").attr("height", height);
-            $("#goTreeView svg").attr("width", width);
-            $("#goTreeView svg").attr("height", height);
+            $(".treeView svg").attr("width", width);
+            $(".treeView svg").attr("height", height);
         }, 1000);
     };
 
