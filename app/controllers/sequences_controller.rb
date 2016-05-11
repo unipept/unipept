@@ -458,8 +458,8 @@ class SequencesController < ApplicationController
     
     # build ec tree
     @ec_root = Node.new("-.-.-.-", 'root', nil, '-.-.-.-') # start constructing the tree
-    @ec_root.data['count'] = self_count.values.sum + no_hit
-    @ec_root.data['self_count'] = self_count["-.-.-.-"] + no_hit
+    @ec_root.data['count'] = self_count.values.sum
+    @ec_root.data['self_count'] = self_count["-.-.-.-"]
     ec_last_node =  @ec_root
 
     for key, value in ec_ontology do
