@@ -242,8 +242,8 @@ function init_sequence_show(data) {
                 var width = 916,
                     height = 600;
                 if (window.fullScreenApi.isFullScreen()) {
-                    width = $(window).width();
-                    height = $(window).height();
+                    width = $(window).width()+32;
+                    height = $(window).height()+16;
                 }
                 buttons.forEach(function(button) {
                     $("#" + button + " div.tpa-tree svg").attr("width", width);
