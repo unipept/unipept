@@ -214,7 +214,7 @@ function init_sequence_show(data) {
      */
     function setUpImageSave(buttons) {
         buttons.forEach(function(button) {
-            $("#buttons-" + button).prepend("<button id='save-btn-" + button + "' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>");
+            $("#buttons-" + button).prepend("<button id='save-btn-" + button + "' class='btn btn-default btn-xs btn-animate btn-save'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>");
             $("#save-btn-" + button).click(function () {
                 logToGoogle("Single Peptide", "Save Image");
                 triggerDownloadModal("#" + button + " svg", null, "unipept_"+button);
@@ -228,7 +228,7 @@ function init_sequence_show(data) {
     function setUpFullScreen(buttons) {
         if (fullScreenApi.supportsFullScreen) {
             buttons.forEach(function(button) {
-                $("#buttons-" + button).prepend("<button id='zoom-btn-" + button + "' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
+                $("#buttons-" + button).prepend("<button id='zoom-btn-" + button + "' class='btn btn-default btn-xs btn-animate btn-resize'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
                 $("#zoom-btn-" + button).click(function () {
                     logToGoogle("Single Peptide", "Full Screen");
                     window.fullScreenApi.requestFullScreen($("#" + button + " div.tpa-tree").get(0));
