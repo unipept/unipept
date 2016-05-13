@@ -2,10 +2,9 @@ import os
 import sys
 import gzip
 import argparse
+import subprocess
 
 parser = argparse.ArgumentParser(description='Get cross reference aggregation.')
-parser.add_argument('-s', metavar="Sequences file", nargs='?', type=str,
-                   help='input sequences file')
 parser.add_argument('-p', metavar="Peptides file", nargs='?', type=str,
                    help='input peptides file')
 parser.add_argument('-e', metavar="EC file", nargs='?', type=str,
@@ -14,87 +13,60 @@ parser.add_argument('-g', metavar="GO file", nargs='?', type=str,
                    help='input go crossref file')
 parser.add_argument('-i', metavar="InterPro file", nargs='?', type=str,
                    help='input interpro crossref file')
+parser.add_argument('-l', metavar="LCA type", nargs='?', type=str,
+                   help='input LCA or LCA_IL')
 parser.add_argument('-o', metavar="Output path", nargs='?', type=str, default="../../data/intermediate",
                    help='output file (default ../../data/intermediate)')
 args = parser.parse_args()
+
+def fileType(tfile):
+    ext = os.path.splitext(tfile)[1]
+    return "gz" if ext == '.gz' else ""  	
 
 def readFile(rfile):
     ext = os.path.splitext(rfile)[1]
     if ext == '.gz': f = gzip.open(rfile, "r")
     else: f = open(rfile, "r")
-    return f
-
-def getSequenceTable():
-	global seqdir_lca
-	global seqdir_lcail
-
-	tabFile=readFile(args.s)
-
-	for line in tabFile:
-		line = line.strip().split("\t")
-		# key: ids; values: []
-		if line[2] != "\\N":
-			seqdir_lca[line[0]] = []
-		if line[3] != "\\N":
-			seqdir_lcail[line[0]] = []		
+    return f	
 
 def getPeptideTable():
-	global pepdir_lca
-	global pepdir_lcail
-
-	tabFile=readFile(args.p)
-
-	for line in tabFile:
-		line = line.strip().split("\t")
-		if line[1] in seqdir_lca:
-			if line[1] not in pepdir_lca:
-				# key: sequence_id or origenal_sequence_id; value: uniprot_entry_id
-				pepdir_lca[line[1]] = [line[3]]
-			else: pepdir_lca[line[1]] += [line[3]]
-		if line[2] in seqdir_lcail:
-			if line[2] not in pepdir_lcail:
-				# key: sequence_id or origenal_sequence_id; value: uniprot_entry_id
-				pepdir_lcail[line[2]] = [line[3]]
-			else: pepdir_lcail[line[2]] += [line[3]]
+	peptide_table=readFile(args.p)
+	mem, first, uni_entries= "", True, []
+	for line in peptide_table:
+		ids, lca_seq_id, org_seq_id, uni_entry = line.strip().split("\t")
+		seq_id = lca_seq_id if args.l == "lca_il" else org_seq_id
+		if first == True:
+			mem = seq_id
+			first = False
+		if mem != seq_id:
+			aggregation()
+			mem = seq_id
+		#print (ids, seq_id, org_seq_id, uni_entry)
+		getCrossrefData(seq_id, uni_entry)
 
 def getCrossrefTable(crossref):
 	global crossdir
 
-	tabFile=readFile(crossref)
-
-	for line in tabFile:
+	for line in readFile(crossref):
 		line = line.strip().split("\t")
-
 		if line[1] not in crossdir:
-			# key: uniprot_entry_id; value: crossref value
+			# key: uniprot_entry_id; value: crossref ec/go/interpro
 			crossdir[line[1]] = [line[3]]
 		else: crossdir[line[1]] += [line[3]]
 
-def getCrossrefData():
-	global resultdir_lca
-	global resultdir_lcail
+def getCrossrefData(seq_id, uniprot_entry_id):
+	global ec_dir
 
-	for key, value in pepdir_lca.items():
-		values = set(value)
-		for val in values:
-			if val in crossdir:
-				if key not in resultdir_lca:
-					resultdir_lca[key] = {}
-				if val not in resultdir_lca[key]:
-					resultdir_lca[key][val] = set()
-				else: raise "can this happen?"
-				resultdir_lca[key][val].update(crossdir[val])
-
-	for key, value in pepdir_lcail.items():
-		values = set(value)
-		for val in values:
-			if val in crossdir:
-				if key not in resultdir_lcail:
-					resultdir_lcail[key] = {}
-				if val not in resultdir_lcail[key]:
-					resultdir_lcail[key][val] = set()
-				else: raise "can this happen?"
-				resultdir_lcail[key][val].update(crossdir[val])
+	write = True
+	if uniprot_entry_id in crossdir:
+		if seq_id not in ec_dir:
+			ec_dir[seq_id] = {}
+		if uniprot_entry_id not in ec_dir[seq_id]:
+			ec_dir[seq_id][uniprot_entry_id] = set()
+		else: write = False
+		
+		if write:
+			ec_dir[seq_id][uniprot_entry_id].update(crossdir[uniprot_entry_id])
 
 def thresholdRatio(aggrdir):
 	values = aggrdir.values()
@@ -108,42 +80,61 @@ def thresholdRatio(aggrdir):
 				del aggrdir[key]
 	return aggrdir
 
-def aggregation(crossfile):
+def aggregation():
 	global crossdir
+	global ec_dir
+	global wfile
 	
-	il=""
-	crossdir={}
-	for dirc in [resultdir_lca, resultdir_lcail]:
-		fileout=gzip.open(outdir+crossfile+"_lca"+il+".tsv.gz", "w")
-		il = "_il"
-		for key, value in dirc.items():
-			aggrdir={}
-			totalperc = float(100)/float(len(value))
-			for k, v in value.items():
-				for ec in v:
-					if ec not in aggrdir:
-						aggrdir[ec] = totalperc
-					else: aggrdir[ec] += totalperc
-			result=thresholdRatio(aggrdir)
-			fileout.write("{}\t{}\n".format(key, ",".join(result.keys())))
-			#print ("{}\t{}".format(key, ",".join(result.keys())))
+	seq_id_counter = 1
+	for key, value in ec_dir.items():
+		aggrdir={}
+		totalperc = float(100)/float(len(value))
+		for k, v in value.items():
+			for ec in v:
+				if ec not in aggrdir:
+					aggrdir[ec] = totalperc
+				else: aggrdir[ec] += totalperc
+		reduced=thresholdRatio(aggrdir)
+		if loopfile == 1:
+			reduced=ec_lca_aggregation(reduced.keys())
+		elif loopfile == 2: ""
+		else: ""
+		wfile.write("{}\t{}\n".format(key, ";".join(reduced)))
+
+		#print ("{}\t{}".format(key, ",".join(lca)))
+	ec_dir = {}
+
+def ec_lca_aggregation(ec_list):
+	ontology = []
+	if len(ec_list) <= 1:
+		return ec_list
+	else:
+		ec_split = [ec.split(".") for ec in ec_list]
+		class_lev = set([le[0] for le in ec_split])
+		for cl in class_lev:
+			ecnumber = []
+			cl_cluster = [ec for ec in ec_split if ec[0] == cl]
+			for i in range(0,4):
+				merge = set([level[i] for level in cl_cluster])
+				if len(merge) == 1:
+					ecnumber.append(str(list(merge)[0])+".")
+				else: 
+					ecnumber.append("-."*(4-i))
+					break
+			ecnumber[-1] = ecnumber[-1][:-1]
+			ontology.append("".join(ecnumber))
+		return ontology
 
 if __name__=="__main__":
-	seqdir_lca={}
-	seqdir_lcail={}
-	pepdir_lca={}
-	pepdir_lcail={}
+	loopfile = 0
 
-	getSequenceTable()
-	getPeptideTable()
 	outdir= args.o if args.o[-1] == "/" else args.o+"/"
 	for cr in [args.e, args.g, args.i]:
+		wfile = file
+		crossdir = {}
+		ec_dir = {}
+		loopfile += 1
 		crossfile=cr.split("/")[-1].split(".")[0]
-		crossdir={}
-		resultdir_lca={}
-		resultdir_lcail={}
+		wfile=gzip.open(outdir+crossfile+"_"+args.l+".tsv.gz", "w")
 		getCrossrefTable(cr)
-		getCrossrefData()
-		aggregation(crossfile)
-
-		
+		getPeptideTable()
