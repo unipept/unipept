@@ -162,9 +162,9 @@ class SequencesController < ApplicationController
     go_reachability(gos)
     # go_graph
     go_tree
+
     @go_lcas = []
-    min_count = 0.30*@go_tree['biological_process'].data['count']
-    cutoff(@go_tree['biological_process'], min_count, @go_lcas)
+    @ontologies.keys.each{|o| cutoff(@go_tree[o], 0.30*@go_tree[o].data['count'], @go_lcas)}
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree
