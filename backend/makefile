@@ -13,12 +13,14 @@ TABLES=                                        \
 	$(INTDIR)/proteomes.tsv.gz                 \
 	$(TABDIR)/proteome_cross_references.tsv.gz
 
-CROSSREF=												\
+CROSSREFLCA=											\
 	$(INTDIR)/ec_cross_references_lca.tsv.gz 			\
-	$(INTDIR)/ec_cross_references_lca_il.tsv.gz 		\
 	$(INTDIR)/go_cross_references_lca.tsv.gz 			\
+	$(INTDIR)/interpro_cross_references_lca.tsv.gz 		
+
+CROSSREFLCAIL=											\
+	$(INTDIR)/ec_cross_references_lca_il.tsv.gz 		\
 	$(INTDIR)/go_cross_references_lca_il.tsv.gz 		\
-	$(INTDIR)/interpro_cross_references_lca.tsv.gz 		\
 	$(INTDIR)/interpro_cross_references_lca_il.tsv.gz
 
 
@@ -26,7 +28,7 @@ SRC=$(shell find src/ -type f -name '*.java')
 JAR=target/unipept-0.0.1-SNAPSHOT.jar
 PAC=org.unipept.tools
 
-all: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz $(TABLES) $(INTDIR)/sequences_lca.tsv.gz $(TABDIR)/sequences.tsv.gz $(TABDIR)/peptides.tsv.gz $(TABDIR)/proteomes.tsv.gz $(TABDIR)/ec_cross_references.tsv.gz $(TABDIR)/go_cross_references.tsv.gz $(TABDIR)/interpro_cross_references.tsv.gz $(TABDIR)/kegg_pathway_mappings.tsv.gz $(TABDIR)/kegg_pathways.tsv.gz $(CROSSREF)
+all: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz $(TABLES) $(INTDIR)/sequences_lca.tsv.gz $(TABDIR)/sequences.tsv.gz $(TABDIR)/peptides.tsv.gz $(TABDIR)/proteomes.tsv.gz $(TABDIR)/ec_cross_references.tsv.gz $(TABDIR)/go_cross_references.tsv.gz $(TABDIR)/interpro_cross_references.tsv.gz $(TABDIR)/kegg_pathway_mappings.tsv.gz $(TABDIR)/kegg_pathways.tsv.gz $(CROSSREFLCA) $(CROSSREFLCAIL)
 jar: $(JAR)
 taxons: $(TABDIR)/taxons.tsv.gz $(TABDIR)/lineages.tsv.gz
 tables: $(TABLES)
@@ -258,7 +260,7 @@ $(TABDIR)/proteomes.tsv.gz: $(INTDIR)/proteomes.tsv.gz proteomes.sh type_strains
 # }}}
 
 # Functional information {{{ ----------------------------------------------------------------
-$(TABDIR)/kegg_pathways.tsv.gz:
+$(TABDIR)/kegg_pathways.tsv.gz: $(KGPDIR)/kegg_pathways.tsv
 	echo "Starting fetching KEGG pathways table info"
 	python ./keggpathways.py \
 		$(KGPDIR)/kegg_pathways.tsv \
@@ -323,7 +325,7 @@ $(TABDIR)/ec_cross_references.tsv.gz: $(ECNDIR)/ec_cross_references.tsv.gz $(TAB
 		> $@
 	echo "Finished updating the EC cross ref table."
 
-$(TABDIR)/go_cross_references.tsv.gz: $(TABDIR)/go_cross_references.tsv.gz $(TABDIR)/go_terms.tsv.gz
+$(TABDIR)/go_cross_references.tsv.gz: $(GOBDIR)/go_cross_references.tsv.gz $(TABDIR)/go_terms.tsv.gz
 	echo "Starting fetching GO cross ref and GO terms table info"
 	python ./crossreftable.py \
 		$(TABDIR)/go_terms.tsv.gz \
@@ -346,20 +348,46 @@ $(TABDIR)/interpro_cross_references.tsv.gz: $(INPDIR)/interpro_cross_references.
 # }}}
 
 # Update sequence table {{{ ----------------------------------------
-$(CROSSREF): $(INTDIR)/sequences_lca.tsv.gz $(TABDIR)/peptides.tsv.gz $(TABDIR)/ec_cross_references.tsv.gz $(TABDIR)/go_cross_references.tsv.gz $(TABDIR)/interpro_cross_references.tsv.gz
-	echo "Starting the create aggregation table for ec/go/interpro."
+$(INTDIR)/peptide_lca_il_sorted.tsv.gz: $(TABDIR)/peptides.tsv.gz
+	echo "Sorting peptide table on sequence_id"
+	zcat $(TABDIR)/peptides.tsv.gz \
+		| sort -k2,2n \
+		| gzip - \
+		> $@
+	echo "Finished sorting peptide table on sequence_id"
+
+$(INTDIR)/peptide_lca_sorted.tsv.gz: $(TABDIR)/peptides.tsv.gz
+	echo "Sorting peptide table on original_sequence_id"
+	zcat $(TABDIR)/peptides.tsv.gz \
+		| sort -k3,3n \
+		| gzip - \
+		> $@
+	echo "Finished sorting peptide table on original_sequence_id"
+
+$(CROSSREFLCAIL): $(INTDIR)/peptide_lca_il_sorted.tsv.gz $(TABDIR)/ec_cross_references.tsv.gz $(TABDIR)/go_cross_references.tsv.gz $(TABDIR)/interpro_cross_references.tsv.gz
+	echo "Starting to create the aggregation for ec/go/interpro lca_il table."
 	python ./aggregation.py \
-		-s $(INTDIR)/sequences_lca.tsv.gz \
-		-p $(TABDIR)/peptides.tsv.gz \
+		-p $(INTDIR)/peptide_lca_il_sorted.tsv.gz \
 		-e $(TABDIR)/ec_cross_references.tsv.gz \
 		-g $(TABDIR)/go_cross_references.tsv.gz \
-		-i $(TABDIR)/interpro_cross_references.tsv.gz 
-	echo "Finishing the update of the sequences table."
+		-i $(TABDIR)/interpro_cross_references.tsv.gz \
+		-l "lca_il"
+	echo "Finished creating the lca_il table."
 
-$(TABDIR)/sequences.tsv.gz: $(CROSSREF) $(INTDIR)/sequences_lca.tsv.gz
+$(CROSSREFLCA): $(INTDIR)/peptide_lca_sorted.tsv.gz $(TABDIR)/ec_cross_references.tsv.gz $(TABDIR)/go_cross_references.tsv.gz $(TABDIR)/interpro_cross_references.tsv.gz
+	echo "Starting to create the aggregation for ec/go/interpro lca table."
+	python ./aggregation.py \
+		-p $(INTDIR)/peptide_lca_sorted.tsv.gz \
+		-e $(TABDIR)/ec_cross_references.tsv.gz \
+		-g $(TABDIR)/go_cross_references.tsv.gz \
+		-i $(TABDIR)/interpro_cross_references.tsv.gz \
+		-l "lca"
+	echo "Finished creating the lca table."
+
+$(TABDIR)/sequences.tsv.gz: $(CROSSREFLCAIL) $(CROSSREFLCA) $(INTDIR)/sequences_lca.tsv.gz
 	echo "Starting the update of the sequences table."
 	bash ./joinsequencetable.sh
-	echo "Finishing the aggregation of the ec/go/interpro table."
+	echo "Finished updating the sequence table."
 # }}}
 
 
