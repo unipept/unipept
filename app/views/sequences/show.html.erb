@@ -117,8 +117,9 @@
           <ul class="nav nav-tabs sub-navigation">
             <li class="active"><a class="subnav-link" id="ec-tree-tab" href="#ec-tree" data-toggle="tab">EC number tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
             <li><a class="subnav-link" href="#ec-table-tab" data-toggle="tab">EC number table <span></span></a></li>
-            <li><a class="subnav-link" id="go-graph-tab" href="#go-graph" data-toggle="tab">GO graph <span></span></a></li>
-            <li><a class="subnav-link" id="go-tree-tab" href="#go-tree" data-toggle="tab">GO tree <span></span></a></li>
+            <li><a class="subnav-link" id="go-tree1-tab" href="#go-tree1" data-toggle="tab">Biological Process <span></span></a></li>
+            <li><a class="subnav-link" id="go-tree2-tab" href="#go-tree2" data-toggle="tab">Molecular Function <span></span></a></li>
+            <li><a class="subnav-link" id="go-tree3-tab" href="#go-tree3" data-toggle="tab">Cellular Component <span></span></a></li>
           </ul>
           <div class='card-supporting-text'>
             <div class="tab-content">
@@ -163,10 +164,20 @@
                   <svg width="916" height="600"><g/></svg>
                 </div>
               </div>
-              <div class="tab-pane" id="go-tree">
+              <div class="tab-pane" id="go-tree1">
                 <%= @go_lcas %>
-                <div id="buttons-go-tree" class="buttons-single buttons-subnav"></div>
-                <div class="tpa-tree" id="goTree"></div>
+                <div id="buttons-go-tree1" class="buttons-single buttons-subnav"></div>
+                <div class="tpa-tree" id="goTree1"></div>
+              </div>
+              <div class="tab-pane" id="go-tree2">
+                <%= @go_lcas %>
+                <div id="buttons-go-tree2" class="buttons-single buttons-subnav"></div>
+                <div class="tpa-tree" id="goTree2"></div>
+              </div>
+              <div class="tab-pane" id="go-tree3">
+                <%= @go_lcas %>
+                <div id="buttons-go-tree3" class="buttons-single buttons-subnav"></div>
+                <div class="tpa-tree" id="goTree3"></div>
               </div>
             </div>
           </div>
@@ -181,10 +192,8 @@
         tree: <%= raw(@root) %>,
         ec_tree: <%= raw(@ec_root) %>,
         uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>,
-        terms: <%= raw(Oj.dump(@graphs['biological_process'].terms.map{|k, v| {'id' => k, 'name' => v.name}})) %>,
-        edges: <%= raw(Oj.dump(@links['biological_process'], mode: :compat)) %>,
         found: <%= raw(@gos) %>,
-        go_tree: <%= raw(@go_root) %>['biological_process']
+        go_tree: <%= raw(@go_root) %>
       });
     });
   </script>

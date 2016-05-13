@@ -160,7 +160,7 @@ class SequencesController < ApplicationController
 
     gos = @entries.map(&:go_cross_references).flatten.map(&:go_id)
     go_reachability(gos)
-    go_graph
+    # go_graph
     go_tree
     @go_lcas = []
     min_count = 0.30*@go_tree['biological_process'].data['count']
