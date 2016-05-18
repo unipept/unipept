@@ -43,6 +43,7 @@ def getPeptideTable():
 			mem = seq_id
 		#print (ids, seq_id, org_seq_id, uni_entry)
 		getCrossrefData(seq_id, uni_entry)
+	aggregation()
 
 def getInterProTable():
 	global ip_dir
