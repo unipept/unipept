@@ -117,7 +117,7 @@ def aggregation():
 			reduced=ec_lca_aggregation(reduced.keys())
 		elif loopfile == 2: ""
 		else:
-			reduced=thresholdRatio(aggrdir, 0.3)
+			reduced=thresholdRatio(aggrdir, 0.1)
 			reduced=ip_lca_aggregation(reduced.keys())
 		if (int(key) - seq_id_counter) > 1:
 			for c in range((seq_id_counter+1), (int(key))):
