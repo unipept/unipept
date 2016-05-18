@@ -347,9 +347,9 @@ var constructMultisearch = function constructMultisearch(args) {
     that.getTooltipContent = function getTooltipContent(d) {
         return "<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" +
             (!d.data.self_count ? "0" : d.data.self_count) +
-            (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
+            (d.data.self_count && d.data.self_count === 1 ? " peptide" : " peptides") + " specific to this level<br/>" +
             (!d.data.count ? "0" : d.data.count) +
-            (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower";
+            (d.data.count && d.data.count === 1 ? " peptide" : " peptides") + " specific to this level or lower";
     };
     that.getTooltipContentChart = function getTooltipContent(d) {
         return "<b>" + d.data.function + "</b> (" + d.data.name + ")<br/>" +
