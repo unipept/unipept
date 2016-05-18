@@ -160,11 +160,11 @@ class SequencesController < ApplicationController
 
     gos = @entries.map(&:go_cross_references).flatten.map(&:go_id)
     go_reachability(gos)
-    go_graph
+    # go_graph
     go_tree
+
     @go_lcas = []
-    min_count = 0.30*@go_tree['biological_process'].data['count']
-    cutoff(@go_tree['biological_process'], min_count, @go_lcas)
+    @ontologies.keys.each{|o| cutoff(@go_tree[o], 0.30*@go_tree[o].data['count'], @go_lcas) unless @go_tree[o].nil?}
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree
@@ -532,7 +532,7 @@ class SequencesController < ApplicationController
     @go_root = {}
     for ont in @ontologies.keys
       @go_tree[ont] = @graphs[ont].to_tree(@ontologies[ont])
-      go_tree_counts(@go_tree[ont])
+      go_tree_counts(@go_tree[ont]) unless @go_tree[ont].nil?
       @go_root[ont] = Oj.dump(@go_tree[ont], mode: :compat)
     end
       @go_root = Oj.dump(@go_tree, mode: :compat)

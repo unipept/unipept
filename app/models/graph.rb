@@ -55,6 +55,7 @@ class Graph
   end
 
   def to_tree(root)
+    return nil unless @terms.include?(root)
     nodes = Hash.new
     for hit in @terms[root].linked
       add_reachable_tree(@terms[hit], nodes)

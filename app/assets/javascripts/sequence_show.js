@@ -7,14 +7,16 @@ function init_sequence_show(data) {
     initD3TreeView(data.ec_tree, "#ecTree")
 
     // set up GO graph
-    initDagreD3Graph(data.terms, data.edges, data.found, "goGraph", "go-graph-tab")
-    initD3TreeView(data.go_tree, "#goTree")
+    // initDagreD3Graph(data.terms, data.edges, data.found, "goGraph", "go-graph-tab")
+    initD3TreeView(data.go_tree['biological_process'], "#goTree1")
+    initD3TreeView(data.go_tree['molecular_function'], "#goTree2")
+    initD3TreeView(data.go_tree['cellular_component'], "#goTree3")
 
     // set up column toggle
     initColumnToggle();
 
     // fullscreen and save image buttons
-    var buttons = ['lineage-tree', 'ec-tree', 'go-graph']
+    var buttons = ['lineage-tree', 'ec-tree', 'go-tree1', 'go-tree2', 'go-tree3']
 
     // set up the fullscreen stuff
     setUpFullScreen(buttons);
