@@ -193,10 +193,10 @@ var constructMultisearch = function constructMultisearch(args) {
 
     function resizeFullScreen() {
         var isFullScreen = window.fullScreenApi.isFullScreen();
-        if (!isFullScreen) {
+        if (isFullScreen) {
             var activeTab = getActiveTab();
         } else {
-            var activeTab = getActiveCloseTab();
+            var activeTab = getActiveFullsceenTab();
         }
 
         // sync tabs
@@ -251,18 +251,25 @@ var constructMultisearch = function constructMultisearch(args) {
     }
 
     function getActiveSubTab() {
+        var isFullScreen = window.fullScreenApi.isFullScreen();
+        if (!isFullScreen) {
+            var activeTab = getActiveTab();
+        } else {
+            var activeTab = getActiveFullsceenTab();
+        }
+
         var activePanes = $(".tab-pane .card-supporting-text li.active").find("a");
-        if (getActiveTab() === "biodiversityAnalysis") {
+        if (activeTab === "biodiversityAnalysis") {
             var activePane = activePanes.attr("href");
             return activePane.split("Wrapper")[0].substring(1,activePane.length);
-        } else if (getActiveTab() === "functionalAnalysis") {
+        } else if (activeTab === "functionalAnalysis") {
             var activePane = activePanes[1].getAttribute("href");
             return activePane.split("Wrapper")[0].substring(1,activePane.length);
         } else {"There is no third tab!"}
     }
 
-    function getActiveCloseTab() {
-        var activePane = $(".card-title.card-title-colored li.active").find("a").attr('href');
+    function getActiveFullsceenTab() {
+        var activePane = $(".full-screen-bar .fullScreenNav ul li.active").find("a").attr('href');
         return activePane.split("Wrapper")[0].substring(1,activePane.length);
     }
 
