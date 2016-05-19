@@ -97,7 +97,6 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`peptides` (
   `sequence_id` INT UNSIGNED NOT NULL ,
   `original_sequence_id` INT UNSIGNED NOT NULL ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `position` SMALLINT UNSIGNED NOT NULL ,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii

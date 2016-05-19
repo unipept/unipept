@@ -129,7 +129,6 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`peptides` (
   `sequence_id` INT UNSIGNED NOT NULL ,
   `original_sequence_id` INT UNSIGNED NOT NULL ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `position` SMALLINT UNSIGNED NOT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_peptides_sequences` (`sequence_id` ASC) ,
   INDEX `fk_peptides_uniprot_entries` (`uniprot_entry_id` ASC) ,
