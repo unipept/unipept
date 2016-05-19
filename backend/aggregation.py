@@ -116,17 +116,18 @@ def aggregation():
 		if loopfile == 1:
 			reduced=thresholdRatio(aggrdir)
 			reduced=ec_lca_aggregation(reduced.keys())
-		elif loopfile == 2: ""
+		elif loopfile == 2:
+			reduced=thresholdRatio(aggrdir, 0.1)
 		else:
 			reduced=thresholdRatio(aggrdir, 0.1)
 			reduced=ip_lca_aggregation(reduced.keys())
 		if (int(key) - seq_id_counter) > 1:
 			for c in range((seq_id_counter+1), (int(key))):
-				#wfile.write("{}\t{}\n".format(c, "\\N"))
-				print ("{}\t{}".format(c, "\\N"))
+				wfile.write("{}\t{}\n".format(c, "\\N"))
+				#print ("{}\t{}".format(c, "\\N"))
 		seq_id_counter = int(key)
-		#wfile.write("{}\t{}\n".format(key, ";".join(reduced)))
-		print ("{}\t{}".format(key, ";".join(reduced)))
+		wfile.write("{}\t{}\n".format(key, ";".join(reduced)))
+		#print ("{}\t{}".format(key, ";".join(reduced)))
 	cross_data_dir = {}
 
 def ip_lca_aggregation(ip_list):
@@ -180,6 +181,6 @@ if __name__=="__main__":
 			ip_dir = {}
 			ip_dir_rev = {}
 		crossfile=cr.split("/")[-1].split(".")[0]
-		#wfile=gzip.open(outdir+crossfile+"_"+args.l+".tsv.gz", "w")
+		wfile=gzip.open(outdir+crossfile+"_"+args.l+".tsv.gz", "w")
 		getCrossrefTable(cr)
 		getPeptideTable()
