@@ -54,6 +54,9 @@ var constructMultisearch = function constructMultisearch(args) {
         // set up the full screen action bar
         setUpActionBar();
 
+        // set up reset function
+        setUpResetTreeView()
+
         // set up missed
         addMissed();
         // copy to clipboard for missed peptides
@@ -247,6 +250,12 @@ var constructMultisearch = function constructMultisearch(args) {
         $(".fullScreenActions .download").click(saveImage);
         $(".fullScreenActions .exit").click(function () {
             window.fullScreenApi.cancelFullScreen();
+        });
+    }
+
+    function setUpResetTreeView() {
+        $('.treeview-reset').click(function() {
+            mapping.get(getActiveSubTab()).reset();
         });
     }
 
