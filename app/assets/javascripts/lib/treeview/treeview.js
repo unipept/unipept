@@ -30,9 +30,6 @@
             svg;
 
         function init() {
-            // init controls
-            initControls();
-
             margin = {
                 top: 5,
                 right: 5,
@@ -96,9 +93,7 @@
          * Initialise the controls
          */
         function initControls() {
-            // hook up the reset button
-            $("#treeview-reset").click(that.reset);
-            $("#goTreeview-reset").click(that.reset);
+            // hook up the reset button. Is now a level higher
         }
 
         function draw(data) {
