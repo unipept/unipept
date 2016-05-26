@@ -2,10 +2,18 @@
 
 import sys
 import gzip
+import argparse
 
-fdb_file=sys.argv[1]
-cross_file=sys.argv[2]
-take_pos=int(sys.argv[3])
+parser = argparse.ArgumentParser(description='Get GO terms.')
+parser.add_argument('-i', metavar="EC/GO/InterPro file", nargs='?', type=str,
+                   help='input file')
+parser.add_argument('-c', metavar="Crossref file", nargs='?', type=str,
+                   help='input crossref file')
+parser.add_argument('-k', metavar="Column position", nargs='?', type=int,
+                   help='input column number file')
+parser.add_argument('-a', metavar="Alt ids file", nargs='?', type=str, default="",
+                   help='input alt id file')
+args = parser.parse_args()
 
 def readFile(rfile):
 	return gzip.open(rfile, "r")
@@ -15,20 +23,34 @@ def addToDict(rfile):
 	for line in rfile:
 		line=line.decode("utf-8", "ignore")
 		line=line.strip().split("\t")
-		if line[take_pos] not in dict_ids:
-			dict_ids[line[take_pos]]=line[0]
+		if line[args.k] not in dict_ids:
+			dict_ids[line[args.k]]=line[0]
 		else: raise "you cant have double ids in your database!"
 	return dict_ids
 
-def parseCrossRef(rfile, dict_ids):
+def parseCrossRef(rfile, dict_ids, dict_alt_ids={}):
 	for line in rfile:
 		line=line.decode("utf-8", "ignore")
 		line=line.strip().split("\t")
-		if line[-1] in dict_ids:
-			print("{}\t{}\t{}\t{}".format(line[0], line[1], dict_ids[line[-1]], line[-1]))
+		goid=line[-1]
+		if dict_alt_ids != {}:
+			if goid in dict_alt_ids:
+				goid=dict_alt_ids[line[-1]]
+		if goid in dict_ids:
+			print("{}\t{}\t{}\t{}".format(line[0], line[1], dict_ids[goid], goid))
 		#else:
 		#	print("{}\t{}\t{}\t{}".format(line[0], line[1], "Null", line[-1]))
 
-dict_ids=addToDict(readFile(fdb_file))
-parseCrossRef(readFile(cross_file), dict_ids)
+def getAltIds(rfile):
+	dict_alt_ids={}
+	for line in rfile:
+		line=line.strip().split("\t")
+		for item in line[1:]:
+			dict_alt_ids[item]=line[0]
+	return dict_alt_ids={}
+
+dict_alt_ids={}
+if args.a != "": dict_alt_ids=getAltIds(readFile(args.a))
+dict_ids=addToDict(readFile(args.i))
+parseCrossRef(readFile(args.c), dict_ids, dict_alt_ids)
 
