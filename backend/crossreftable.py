@@ -47,7 +47,7 @@ def getAltIds(rfile):
 		line=line.strip().split("\t")
 		for item in line[1:]:
 			dict_alt_ids[item]=line[0]
-	return dict_alt_ids={}
+	return dict_alt_ids
 
 dict_alt_ids={}
 if args.a != "": dict_alt_ids=getAltIds(readFile(args.a))
