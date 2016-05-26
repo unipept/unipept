@@ -23,6 +23,10 @@ CROSSREFLCAIL=											\
 	$(INTDIR)/go_cross_references_lca_il.tsv.gz 		\
 	$(INTDIR)/interpro_cross_references_lca_il.tsv.gz
 
+GOTERMSTABLE=					\
+	$(TABDIR)/go_terms.tsv.gz 	\
+	$(GOBDIR)/alt_id.tsv.gz
+
 
 SRC=$(shell find src/ -type f -name '*.java')
 JAR=target/unipept-0.0.1-SNAPSHOT.jar
@@ -38,7 +42,7 @@ keggpathways:$(TABDIR)/kegg_pathways.tsv.gz
 keggpathwaymappings:$(TABDIR)/kegg_pathway_mappings.tsv.gz
 ecnumbers: $(TABDIR)/ec_numbers.tsv.gz
 interpro: $(TABDIR)/interpro_entries.tsv.gz
-goterms: $(TABDIR)/go_terms.tsv.gz
+goterms: $(GOTERMSTABLE)
 download: $(TAXDIR)/taxdmp.zip $(UNIDIR)/uniprot_sprot.xml.gz $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt $(GOBDIR)/goinfo.obo $(INPDIR)/interpro.xml.gz $(INPDIR)/interpro2go.txt $(KGPDIR)/kegg_pathways.tsv $(KGPDIR)/kegg_pathway_mappings.tsv
 # $(UNIDIR)/uniprot_trembl.xml.gz
 
@@ -287,12 +291,12 @@ $(TABDIR)/ec_numbers.tsv.gz: $(ECNDIR)/enzymes.dat $(ECNDIR)/enzclass.txt
 		> $@
 	echo "Finished the creation of the EC numbers table."
 
-$(TABDIR)/go_terms.tsv.gz: $(GOBDIR)/goinfo.obo
+$(GOTERMSTABLE): $(GOBDIR)/goinfo.obo
 	echo "Starting fetching GO terms info"
 	python ./gotable.py \
-		$(GOBDIR)/goinfo.obo \
-		| gzip - \
-		> $@
+		-g $(GOBDIR)/goinfo.obo \
+		-o $(TABDIR)/go_terms.tsv.gz
+		-a $(GOBDIR)/alt_id.tsv.gz
 	echo "Finished the creation of the GO terms table."
 
 $(TABDIR)/interpro_entries.tsv.gz: $(INPDIR)/interpro.xml.gz
@@ -318,19 +322,20 @@ $(TABDIR)/interpro_to_gos.tsv.gz: $(INPDIR)/interpro2go.txt
 $(TABDIR)/ec_cross_references.tsv.gz: $(ECNDIR)/ec_cross_references.tsv.gz $(TABDIR)/ec_numbers.tsv.gz
 	echo "Starting fetching EC cross ref and EC number tableinfo"
 	python ./crossreftable.py \
-		$(TABDIR)/ec_numbers.tsv.gz \
-		$(ECNDIR)/ec_cross_references.tsv.gz \
-		1 \
+		-i $(TABDIR)/ec_numbers.tsv.gz \
+		-c $(ECNDIR)/ec_cross_references.tsv.gz \
+		-k 1 \
 		| gzip - \
 		> $@
 	echo "Finished updating the EC cross ref table."
 
-$(TABDIR)/go_cross_references.tsv.gz: $(GOBDIR)/go_cross_references.tsv.gz $(TABDIR)/go_terms.tsv.gz
+$(TABDIR)/go_cross_references.tsv.gz: $(GOBDIR)/go_cross_references.tsv.gz $(GOTERMSTABLE)
 	echo "Starting fetching GO cross ref and GO terms table info"
 	python ./crossreftable.py \
-		$(TABDIR)/go_terms.tsv.gz \
-		$(GOBDIR)/go_cross_references.tsv.gz \
-		1 \
+		-i $(TABDIR)/go_terms.tsv.gz \
+		-c $(GOBDIR)/go_cross_references.tsv.gz \
+		-a $(GOBDIR)/alt_ids.tsv.gz \
+		-k 1 \
 		| gzip - \
 		> $@
 	echo "Finished updating the GO cross ref table."
@@ -338,9 +343,9 @@ $(TABDIR)/go_cross_references.tsv.gz: $(GOBDIR)/go_cross_references.tsv.gz $(TAB
 $(TABDIR)/interpro_cross_references.tsv.gz: $(INPDIR)/interpro_cross_references.tsv.gz $(TABDIR)/interpro_entries.tsv.gz
 	echo "Starting fetching interpro cross ref and interpro entries table info"
 	python ./crossreftable.py \
-		$(TABDIR)/interpro_entries.tsv.gz \
-		$(INPDIR)/interpro_cross_references.tsv.gz \
-		2 \
+		-i $(TABDIR)/interpro_entries.tsv.gz \
+		-c $(INPDIR)/interpro_cross_references.tsv.gz \
+		-k 2 \
 		| gzip - \
 		> $@
 	echo "Finished updating the InterPro cross ref table."
