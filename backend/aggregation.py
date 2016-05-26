@@ -117,10 +117,10 @@ def aggregation():
 			reduced=thresholdRatio(aggrdir)
 			reduced=ec_lca_aggregation(reduced.keys())
 		elif loopfile == 2:
-			reduced=thresholdRatio(aggrdir, 0.1)
+			reduced=thresholdRatio(aggrdir)
 		else:
-			reduced=thresholdRatio(aggrdir, 0.1)
-			reduced=ip_lca_aggregation(reduced.keys())
+			reduced=thresholdRatio(aggrdir, 0.3)
+			#reduced=ip_lca_aggregation(reduced.keys())
 		if (int(key) - seq_id_counter) > 1:
 			for c in range((seq_id_counter+1), (int(key))):
 				wfile.write("{}\t{}\n".format(c, "\\N"))
