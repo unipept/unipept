@@ -416,10 +416,10 @@ class SequencesController < ApplicationController
 
     if export
       csv_string = CSV.generate_line(['peptide'].concat(Lineage.ranks)) + csv_string
-
       cookies['nonce'] = params[:nonce]
       filename = search_name != '' ? search_name : 'export'
-      send_data csv_string, type: 'text/csv; charset=iso-8859-1; header=present', disposition: 'attachment; filename=' + filename + '.csv'
+      @csv_string = csv_string
+      render xlsx: 'multi_search.xlsx.axlsx', filename: 'metaproteomics_analysis_results.xlsx'
     end
 
     #=================|EC Multisearch|=================
