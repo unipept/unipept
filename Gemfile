@@ -47,6 +47,11 @@ gem 'uglifier'
 # Exception emails
 gem 'exception_notification', git: 'git://github.com/unipept/exception_notification.git'
 
+# Axlsx for tails
+gem 'rubyzip', '= 1.0.0'
+gem 'axlsx_rails'
+gem 'axlsx'
+
 # Deploy with Capistrano
 gem 'capistrano', '~> 3.0'
 

@@ -54,6 +54,13 @@ GEM
     autoprefixer-rails (6.1.2)
       execjs
       json
+    axlsx (2.0.1)
+      htmlentities (~> 4.3.1)
+      nokogiri (>= 1.4.1)
+      rubyzip (~> 1.0.0)
+    axlsx_rails (0.4.0)
+      axlsx (>= 2.0.1)
+      rails (>= 3.1)
     bcrypt (3.1.10)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
@@ -121,6 +128,7 @@ GEM
     guard-minitest (2.4.4)
       guard-compat (~> 1.2)
       minitest (>= 3.0)
+    htmlentities (4.3.4)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
     i18n (0.7.0)
@@ -228,6 +236,7 @@ GEM
     ruby-progressbar (1.7.5)
     rubycas-client (2.3.9)
       activesupport
+    rubyzip (1.0.0)
     scbi_go (0.0.1)
       obo
     shellany (0.0.1)
@@ -288,6 +297,8 @@ PLATFORMS
 DEPENDENCIES
   annotate
   autoprefixer-rails
+  axlsx (~> 2.0)
+  axlsx_rails
   capistrano (~> 3.0)
   capistrano-bundler (~> 1.1)
   capistrano-rails (~> 1.1)
@@ -310,6 +321,7 @@ DEPENDENCIES
   responders (>= 2.0)
   rmagick
   rubocop
+  rubyzip (= 1.0.0)
   scbi_go
   sprockets
   stathat
