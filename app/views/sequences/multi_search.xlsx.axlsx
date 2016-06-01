@@ -1,0 +1,8 @@
+wb = xlsx_package.workbook
+wb.add_worksheet(name: 'Biodiversity results') do |ws|
+	@csv_string.split("\n").each do |to_row|
+	  ws.add_row to_row.split(",")
+	end
+end
+
+
