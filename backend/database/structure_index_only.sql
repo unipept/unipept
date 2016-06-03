@@ -31,7 +31,7 @@ ALTER TABLE sequences ADD INDEX fk_sequences_ec_numbers (ec_lca ASC), ADD INDEX 
 -- -----------------------------------------------------
 -- Table `unipept`.`go_lcas`
 -- -----------------------------------------------------
-  ALTER TABLE go_lcas ADD INDEX fk_go_lcas_sequences (sequences_id ASC), ADD INDEX fk_go_lcas_go_terms (go_lca ASC), ADD INDEX fk_go_lcas_go_terms_2 (go_lca_il ASC);
+  ALTER TABLE go_lcas ADD INDEX fk_go_lcas_sequences (sequence_id ASC), ADD INDEX fk_go_lcas_go_terms (go_lca ASC), ADD INDEX fk_go_lcas_go_terms_2 (go_lca_il ASC);
 
 
 -- -----------------------------------------------------
