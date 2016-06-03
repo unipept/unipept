@@ -18,8 +18,8 @@ class Sequence < ActiveRecord::Base
 
   belongs_to :lca_t, foreign_key: 'lca', primary_key: 'id', class_name: 'Taxon'
   belongs_to :lca_il_t, foreign_key: 'lca_il', primary_key: 'id', class_name: 'Taxon'
-  belongs_to :ec_lca_t, foreign_key: 'ec_lca', primary_key: 'id', class_name: 'ec_number'
-  belongs_to :ec_lca_il_t, foreign_key: 'ec_lca_il', primary_key: 'id', class_name: 'ec_number'
+  belongs_to :ec_lca_t, foreign_key: 'ec_lca', primary_key: 'id', class_name: 'Ec_number'
+  belongs_to :ec_lca_il_t, foreign_key: 'ec_lca_il', primary_key: 'id', class_name: 'Ec_number'
 
   alias_method :generated_peptides, :peptides
   def peptides(equate_il = true)
