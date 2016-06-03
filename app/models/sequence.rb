@@ -12,6 +12,7 @@ class Sequence < ActiveRecord::Base
   include ReadOnlyModel
   attr_accessible nil
 
+  has_many :go_lcas
   has_many :peptides
   has_many :original_peptides, foreign_key: 'original_sequence_id', primary_key: 'id', class_name: 'Peptide'
 
