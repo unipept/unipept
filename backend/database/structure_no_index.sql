@@ -97,7 +97,7 @@ COLLATE = ascii_general_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`go_lcas` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `sequences_id` INT UNSIGNED NOT NULL,
+  `sequence_id` INT UNSIGNED NOT NULL,
   `go_lca` SMALLINT UNSIGNED NULL,
   `go_lca_il` SMALLINT UNSIGNED NULL,
   PRIMARY KEY (`id`))
