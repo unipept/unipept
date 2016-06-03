@@ -79,20 +79,31 @@ COLLATE = ascii_general_ci;
 -- -----------------------------------------------------
 -- Table `unipept`.`sequences`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `sequence` VARCHAR(50) NOT NULL ,
-  `lca` MEDIUMINT UNSIGNED NULL ,
-  `lca_il` MEDIUMINT UNSIGNED NULL ,
-  `ec` MEDIUMTEXT NULL,
-  `ec_il` MEDIUMTEXT NULL,
-  `go` MEDIUMTEXT NULL,
-  `go_il` MEDIUMTEXT NULL,
-  `interpro` MEDIUMTEXT NULL,
-  `interpro_il` MEDIUMTEXT NULL,
+CREATE TABLE IF NOT EXISTS `unipept`.`sequences` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `sequence` VARCHAR(50) NOT NULL,
+  `lca` MEDIUMINT UNSIGNED NULL,
+  `lca_il` MEDIUMINT UNSIGNED NULL,
+  `ec_lca` SMALLINT UNSIGNED NULL,
+  `ec_lca_il` SMALLINT UNSIGNED NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii;
+COLLATE = ascii_general_ci;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`go_lcas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`go_lcas` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `sequences_id` INT UNSIGNED NOT NULL,
+  `go_lca` SMALLINT UNSIGNED NULL,
+  `go_lca_il` SMALLINT UNSIGNED NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
 
 
 -- -----------------------------------------------------
@@ -193,7 +204,7 @@ COLLATE = ascii_general_ci;
 CREATE  TABLE IF NOT EXISTS `unipept`.`go_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `go_term_id` INT NOT NULL,
+  `go_term_id` SMALLINT UNSIGNED NOT NULL,
   `go_id` VARCHAR(15) NOT NULL ,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
@@ -221,7 +232,7 @@ COLLATE = ascii_general_ci;
 CREATE  TABLE IF NOT EXISTS `unipept`.`ec_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `ec_number_id` INT NOT NULL,
+  `ec_number_id` SMALLINT UNSIGNED NOT NULL,
   `ec_number` VARCHAR(15) NOT NULL ,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
@@ -285,7 +296,7 @@ ENGINE = InnoDB;
 CREATE  TABLE IF NOT EXISTS `unipept`.`interpro_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `uniprot_entry_id` INT UNSIGNED NOT NULL,
-  `interpro_entry_id` INT NOT NULL,
+  `interpro_entry_id` SMALLINT UNSIGNED NOT NULL,
   `interpro_id` VARCHAR(15) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
@@ -298,7 +309,7 @@ COLLATE = ascii_general_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`interpro_entries` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `parent_id` INT NOT NULL,
+  `parent_id` SMALLINT UNSIGNED NOT NULL,
   `interpro_id` VARCHAR(15) NOT NULL,
   `name` VARCHAR(40) NOT NULL,
   `type` ENUM('F', 'D', 'R', 'AS','BS', 'CS', 'PTM') NULL DEFAULT NULL,
@@ -313,8 +324,8 @@ COLLATE = ascii_general_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`interpro_to_gos` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `interpro_entry_id` INT NOT NULL,
-  `go_term_id` INT UNSIGNED NOT NULL,
+  `interpro_entry_id` SMALLINT UNSIGNED NOT NULL,
+  `go_term_id` SMALLINT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -334,8 +345,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`kegg_pathway_mappings` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `ec_number_id` INT UNSIGNED NOT NULL,
-  `kegg_pathway_id` INT UNSIGNED NOT NULL,
+  `ec_number_id` SMALLINT UNSIGNED NOT NULL,
+  `kegg_pathway_id` SMALLINT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE=InnoDB;
 
