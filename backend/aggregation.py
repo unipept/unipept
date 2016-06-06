@@ -169,7 +169,7 @@ if __name__=="__main__":
 	loopfile = 0
 
 	outdir= args.o if args.o[-1] == "/" else args.o+"/"
-	for cr in [args.e, args.g, args.i]:
+	for cr in [args.e]:
 		loopfile += 1
 		if cr == "":
 			continue
