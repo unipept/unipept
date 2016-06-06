@@ -431,7 +431,7 @@ class SequencesController < ApplicationController
     # fetch sequences
     @sequences = Sequence.where(sequence: data)
     # equal_il
-    ec_equal_il = @equate_il == true ? "ec_il" : "ec"
+    ec_equal_il = @equate_il == true ? "ec_lca_il" : "ec_lca"
 
     # Get statistics
     @sequences.each do |seq_row|
