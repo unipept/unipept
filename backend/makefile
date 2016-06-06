@@ -14,14 +14,14 @@ TABLES=                                        \
 	$(TABDIR)/proteome_cross_references.tsv.gz
 
 CROSSREFLCA=											\
-	$(INTDIR)/ec_cross_references_lca.tsv.gz 			\
-	$(INTDIR)/go_cross_references_lca.tsv.gz 			\
-	$(INTDIR)/interpro_cross_references_lca.tsv.gz 		
+	$(INTDIR)/ec_cross_references_lca.tsv.gz 			
+	#$(INTDIR)/go_cross_references_lca.tsv.gz 			\
+	#$(INTDIR)/interpro_cross_references_lca.tsv.gz 		
 
 CROSSREFLCAIL=											\
-	$(INTDIR)/ec_cross_references_lca_il.tsv.gz 		\
-	$(INTDIR)/go_cross_references_lca_il.tsv.gz 		\
-	$(INTDIR)/interpro_cross_references_lca_il.tsv.gz
+	$(INTDIR)/ec_cross_references_lca_il.tsv.gz 		
+	#$(INTDIR)/go_cross_references_lca_il.tsv.gz 		\
+	#$(INTDIR)/interpro_cross_references_lca_il.tsv.gz
 
 GOTERMSTABLE=					\
 	$(TABDIR)/go_terms.tsv.gz 	\
@@ -369,29 +369,30 @@ $(INTDIR)/peptide_lca_sorted.tsv.gz: $(TABDIR)/peptides.tsv.gz
 		> $@
 	echo "Finished sorting peptide table on original_sequence_id"
 
-$(CROSSREFLCAIL): $(INTDIR)/peptide_lca_il_sorted.tsv.gz $(TABDIR)/ec_cross_references.tsv.gz $(TABDIR)/go_cross_references.tsv.gz $(TABDIR)/interpro_cross_references.tsv.gz
-	echo "Starting to create the aggregation for ec/go/interpro lca_il table."
-	python ./aggregation.py \
-		-p $(INTDIR)/peptide_lca_il_sorted.tsv.gz \
-		-e $(TABDIR)/ec_cross_references.tsv.gz \
-		-g $(TABDIR)/go_cross_references.tsv.gz \
-		-i $(TABDIR)/interpro_cross_references.tsv.gz \
-		-l "lca_il"
-	echo "Finished creating the lca_il table."
-
-$(CROSSREFLCA): $(INTDIR)/peptide_lca_sorted.tsv.gz $(TABDIR)/ec_cross_references.tsv.gz $(TABDIR)/go_cross_references.tsv.gz $(TABDIR)/interpro_cross_references.tsv.gz
+$(CROSSREFLCA): $(INTDIR)/peptide_lca_sorted.tsv.gz $(TABDIR)/ec_cross_references.tsv.gz
 	echo "Starting to create the aggregation for ec/go/interpro lca table."
 	python ./aggregation.py \
 		-p $(INTDIR)/peptide_lca_sorted.tsv.gz \
 		-e $(TABDIR)/ec_cross_references.tsv.gz \
-		-g $(TABDIR)/go_cross_references.tsv.gz \
-		-i $(TABDIR)/interpro_cross_references.tsv.gz \
 		-l "lca"
 	echo "Finished creating the lca table."
 
+$(CROSSREFLCAIL): $(INTDIR)/peptide_lca_il_sorted.tsv.gz $(TABDIR)/ec_cross_references.tsv.gz
+	echo "Starting to create the aggregation for ec/go/interpro lca_il table."
+	python ./aggregation.py \
+		-p $(INTDIR)/peptide_lca_il_sorted.tsv.gz \
+		-e $(TABDIR)/ec_cross_references.tsv.gz \
+		-l "lca_il"
+	echo "Finished creating the lca_il table."
+
 $(TABDIR)/sequences.tsv.gz: $(CROSSREFLCAIL) $(CROSSREFLCA) $(INTDIR)/sequences_lca.tsv.gz
 	echo "Starting the update of the sequences table."
-	bash ./joinsequencetable.sh
+	bash ./joinsequencetable.sh \
+	$(INTDIR)/sequences_lca.tsv.gz \
+	$(INTDIR)/ec_cross_references_lca.tsv.gz \
+	$(INTDIR)/ec_cross_references_lca_il.tsv.gz \
+	$(TABDIR)/sequences.tsv.gz \
+	$(INTDIR)
 	echo "Finished updating the sequence table."
 # }}}
 
