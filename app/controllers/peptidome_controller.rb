@@ -47,6 +47,20 @@ class PeptidomeController < ApplicationController
     render json: Oj.dump(Sequence.list_sequences(ids).join("\n"), mode: :compat)
   end
 
+  # Returns a list of proteins
+  def get_proteins
+    ids = ProteomeCache.delta_decode(JSON(params[:sequence_ids]))
+    sequences = Sequence.includes(original_peptides: :uniprot_entry).where(id: ids)
+    data = Hash[sequences.map { |sequence| [sequence, sequence.original_peptides.map(&:uniprot_entry)] }]
+    csv_string = CSV.generate_line %w(sequence lca_taxon_id uniprot_id protein_name)
+    data.each do |sequence, proteins|
+      proteins.each do |uniprot_entry|
+        csv_string += CSV.generate_line [sequence.sequence, sequence.lca, uniprot_entry.uniprot_accession_number, uniprot_entry.name]
+      end
+    end
+    render json: Oj.dump(csv_string, mode: :compat)
+  end
+
   # Converts a list of peptides to id's
   def convert_peptides
     peptides = JSON(params[:peptides]) rescue ''
