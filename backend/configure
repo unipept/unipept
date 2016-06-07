@@ -78,19 +78,19 @@ backup() {
     fi
 }
 
-backup ".default-config"
+backup ".latest-config"
 
 # --------------------------------------------------------------------
 # Reading and remembering defaults
 
-if [ -f ".default-config" ]; then
-    source ".default-config"
+if [ -f ".latest-config" ]; then
+    source ".latest-config"
 fi
 
-> ".default-config"
+> ".latest-config"
 
 option() {
-    local file=".default-config" option="$1" default="$2" question="$3" value=
+    local file=".latest-config" option="$1" default="$2" question="$3" value=
     value="$(confirm "$question" "${!option:-$default}")"
     echo "$option=\"$value\"" >> "$file"
     echo "s|<<<${option#CONFIG_}>>>|${value//|/\\|}|g" >> "$sedscript"
@@ -119,10 +119,10 @@ if [ "$sources_count" == "0" ]; then
                     'trembl' 'ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/uniprot_trembl.xml.gz')
     sources_count=4
 fi
-echo "CONFIG_SOURCES=(" >> ".default-config"
+echo "CONFIG_SOURCES=(" >> ".latest-config"
 for (( i = 0 ; i < sources_count ; i += 2 )); do
     if ask "Parse ${CONFIG_SOURCES[$i]} (${CONFIG_SOURCES[$((i + 1))]})?"; then
-        echo "    '${CONFIG_SOURCES[$i]}' '${CONFIG_SOURCES[$((i + 1))]}'" >> ".default-config"
+        echo "    '${CONFIG_SOURCES[$i]}' '${CONFIG_SOURCES[$((i + 1))]}'" >> ".latest-config"
     fi
 done
 erro -n "Add another source by entering the name. An empty name cancels: "
@@ -131,14 +131,14 @@ while [ -n "$name" ]; do
     erro -n "Where can I download this source (url)? "
     read url
 
-    echo "    '$name' '$url'" >> ".default-config"
+    echo "    '$name' '$url'" >> ".latest-config"
 
     erro -n "Add another source by entering the name. An empty name cancels: "
     read name
 done
-echo ")" >> ".default-config"
+echo ")" >> ".latest-config"
 
-source ".default-config"
+source ".latest-config"
 sources_count="${#CONFIG_SOURCES[@]}"
 
 # --------------------------------------------------------------------

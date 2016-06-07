@@ -1,6 +1,6 @@
 target/
 data/
-.default-config
 makefile
 proteomes.sh
 type_strains.sh
+.latest-config

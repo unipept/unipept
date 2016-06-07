@@ -14,13 +14,19 @@ SRC=$(shell find src/ -type f -name '*.java')
 JAR=target/unipept-0.0.1-SNAPSHOT.jar
 PAC=org.unipept.tools
 
-all: $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<TABDIR>>>/lineages.tsv.gz $(TABLES) <<<TABDIR>>>/sequences.tsv.gz <<<TABDIR>>>/peptides.tsv.gz <<<TABDIR>>>/proteomes.tsv.gz
+all: makefile $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<TABDIR>>>/lineages.tsv.gz $(TABLES) <<<TABDIR>>>/sequences.tsv.gz <<<TABDIR>>>/peptides.tsv.gz <<<TABDIR>>>/proteomes.tsv.gz
 jar: $(JAR)
 taxons: <<<TABDIR>>>/taxons.tsv.gz <<<TABDIR>>>/lineages.tsv.gz
 tables: $(TABLES)
 sequences: <<<TABDIR>>>/sequences.tsv.gz
 proteomes: <<<TABDIR>>>/proteomes.tsv.gz
 download: <<<SOURCE_FILES>>>
+
+# Configuration check {{{ ------------------------------------------------------
+makefile: makefile.in configure
+	echo "Please run ./configure before make."
+	exit 1
+# }}}
 
 # Compiling {{{ ----------------------------------------------------------------
 # TODO:
