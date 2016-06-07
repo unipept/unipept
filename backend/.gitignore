@@ -3,4 +3,4 @@ data/
 makefile
 proteomes.sh
 type_strains.sh
-.latest-config
+latest-config
