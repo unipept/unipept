@@ -51,7 +51,7 @@ class PeptidomeController < ApplicationController
   def get_proteins
     ids = ProteomeCache.delta_decode(JSON(params[:sequence_ids]))
     sequences = Sequence.includes(original_peptides: :uniprot_entry).where(id: ids)
-    data = Hash[sequences.map { |sequence| [sequence, sequence.original_peptides.map(&:uniprot_entry)] }]
+    data = sequences.map { |sequence| [sequence, sequence.original_peptides.map(&:uniprot_entry)] }
     csv_string = CSV.generate_line %w(sequence lca_taxon_id uniprot_id protein_name)
     data.each do |sequence, proteins|
       proteins.each do |uniprot_entry|
