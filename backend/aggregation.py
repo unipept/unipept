@@ -7,12 +7,14 @@ import subprocess
 parser = argparse.ArgumentParser(description='Get cross reference aggregation.')
 parser.add_argument('-p', metavar="Peptides file", nargs='?', type=str,
                    help='input peptides file')
-parser.add_argument('-e', metavar="EC file", nargs='?', type=str,
+parser.add_argument('-e', metavar="EC cross file", nargs='?', type=str,
                    help='input ec crossref file', default="")
-parser.add_argument('-g', metavar="GO file", nargs='?', type=str,
+parser.add_argument('-g', metavar="GO cross file", nargs='?', type=str,
                    help='input go crossref file', default="")
-parser.add_argument('-i', metavar="InterPro file", nargs='?', type=str,
+parser.add_argument('-i', metavar="InterPro cross file", nargs='?', type=str,
                    help='input interpro crossref file', default="")
+parser.add_argument('-n', metavar="EC number file", nargs='?', type=str,
+                   help='input ec number file', default="")
 parser.add_argument('-l', metavar="LCA type", nargs='?', type=str,
                    help='input LCA or LCA_IL')
 parser.add_argument('-o', metavar="Output path", nargs='?', type=str, default="../../data/intermediate",
@@ -45,15 +47,13 @@ def getPeptideTable():
 		getCrossrefData(seq_id, uni_entry)
 	aggregation()
 
-def getInterProTable():
-	global ip_dir
-	global ip_dir_rev
+def getECTable():
+	global ec_dir
 
-	ipFile = readFile(args.n)
-	for line in ipFile:
-		ids, parent, inp, desc, typ = line.strip().split()
-		ip_dir[ids] = inp
-		ip_dir_rev[inp] = parent
+	ecFile = readFile(args.n)
+	for line in ecFile:
+		ids, ec, desc = line.strip().split()
+		ec_dir[ec] = ids
 
 def getCrossrefTable(crossref):
 	global crossdir
@@ -79,14 +79,6 @@ def getCrossrefData(seq_id, uniprot_entry_id):
 		if write:
 			cross_data_dir[seq_id][uniprot_entry_id].update(crossdir[uniprot_entry_id])
 
-def getIpDeepestParent(ip):
-	if ip in ip_dir_rev:
-		parentId = ip_dir_rev[ip]
-		if ip != ip_dir[ip_dir_rev[ip]]:
-			getIpDeepestParent(ip_dir[ip_dir_rev[ip]])
-		else: return ip_dir[ip_dir_rev[ip]]
-	else: return ip
-
 def thresholdRatio(aggrdir, rat = 0.1):
 	values = aggrdir.values()
 	if len(values) > 1:
@@ -103,6 +95,7 @@ def aggregation():
 	global crossdir
 	global cross_data_dir
 	global wfile
+	global ec_dir
 	global seq_id_counter
 	
 	for key, value in cross_data_dir.items():
@@ -116,36 +109,18 @@ def aggregation():
 		if loopfile == 1:
 			reduced=thresholdRatio(aggrdir)
 			reduced=ec_lca_aggregation(reduced.keys())
-		elif loopfile == 2:
+		else loopfile == 2:
 			reduced=thresholdRatio(aggrdir)
-		else:
-			reduced=thresholdRatio(aggrdir, 0.3)
-			#reduced=ip_lca_aggregation(reduced.keys())
+
 		if (int(key) - seq_id_counter) > 1:
 			for c in range((seq_id_counter+1), (int(key))):
 				wfile.write("{}\t{}\n".format(c, "\\N"))
 				#print ("{}\t{}".format(c, "\\N"))
 		seq_id_counter = int(key)
-		wfile.write("{}\t{}\n".format(key, ";".join(reduced)))
+		wfile.write("{}\t{}\n".format(key, ec_dir[reduced[0]]))
 		#print ("{}\t{}".format(key, ";".join(reduced)))
 	cross_data_dir = {}
-
-def ip_lca_aggregation(ip_list):
-	uniq_ip = set(ip_list)
-
-	parent_dir = {}
-	for ip in uniq_ip:
-		pId = getIpDeepestParent(ip)
-		if pId not in parent_dir:
-			parent_dir[pId] = [ip]
-		else: parent_dir[pId] += [ip]
-
-	aggregated_ip = []
-	for item in parent_dir:
-		if len(parent_dir[item]) > 1:
-			aggregated_ip.append(item)
-		else: aggregated_ip.append(parent_dir[item][0])
-	return aggregated_ip
+	ec_dir = {}
 
 def ec_lca_aggregation(ec_list):
 	ontology = []
@@ -172,14 +147,13 @@ if __name__=="__main__":
 	for cr in [args.e]:
 		loopfile += 1
 		if cr == "":
-			continue
+			raise "no cross reference file given!"
 		seq_id_counter = 1
 		wfile = file
 		crossdir = {}
 		cross_data_dir = {}
-		if cr == args.i:
-			ip_dir = {}
-			ip_dir_rev = {}
+		if cr == args.e:
+			ec_dir = {}
 		crossfile=cr.split("/")[-1].split(".")[0]
 		wfile=gzip.open(outdir+crossfile+"_"+args.l+".tsv.gz", "w")
 		getCrossrefTable(cr)
