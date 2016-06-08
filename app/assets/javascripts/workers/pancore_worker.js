@@ -738,7 +738,8 @@ function clearAllData() {
 // Sends a list sequences to the client
 function getSequences(type, id) {
     var ids,
-        ord = getOrderById(id);
+        ord = getOrderById(id),
+        action = "full_sequences";
     switch (type) {
     case 'all':
         ids = data[id].peptide_list;
@@ -752,10 +753,16 @@ function getSequences(type, id) {
     case 'unique':
         ids = unicores[ord];
         break;
+    case 'unique_proteins':
+        ids = unicores[ord];
+        break;
     default:
         error("Unknown type: " + type);
     }
-    getJSONByPost("/peptidome/full_sequences/", "sequence_ids=[" + deltaEncode(ids) + "]", function (d) {
+    if (type === "unique_proteins") {
+        action = "full_proteins";
+    }
+    getJSONByPost("/peptidome/" + action + "/", "sequence_ids=[" + deltaEncode(ids) + "]", function (d) {
         sendToHost("processDownloadedSequences", {sequences : d, type : type, id : id});
     });
 }

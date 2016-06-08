@@ -203,6 +203,8 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             "<li><a href='#' data-id='" + d.id + "' data-type='pan'><span style='color: " + panColor + ";'>&#9632;</span> pan peptidome</a></li>" +
             "<li><a href='#' data-id='" + d.id + "' data-type='core'><span style='color: " + coreColor + ";'>&#9632;</span> core peptidome</a></li>" +
             "<li><a href='#' data-id='" + d.id + "' data-type='unique'><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptidome</a></li>" +
+            "<li role='separator' class='divider'></li>" +
+            "<li><a href='#' data-id='" + d.id + "' data-type='unique_proteins'><span style='color: " + unicoreColor + ";'>&#9632;</span> unique peptidome proteins</a></li>" +
           "</ul>" +
         "</div>" +
         "<span class='pull-right'><a class='btn btn-danger' title='remove proteome' id='popover-remove-genome'data-id='" + d.id + "'><span class='glyphicon glyphicon-trash'></span></a></span>" +
@@ -516,7 +518,13 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         $("#download-peptides-toggle").button('loading');
         pancore.requestSequences(id, type)
             .then(function (data) {
-                return downloadDataByForm(data.sequences, data.type + '-sequences.txt');
+                var name = data.type + '-sequences';
+                var format = "txt";
+                if (data.type === "unique_proteins") {
+                    name = "unique-proteins";
+                    format = "csv";
+                }
+                return downloadDataByForm(data.sequences, name + '.' + format);
             })
             .then(function enableButton() {
                 $("#download-peptides-toggle").button('reset');
