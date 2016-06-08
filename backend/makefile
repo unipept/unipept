@@ -374,6 +374,7 @@ $(CROSSREFLCA): $(INTDIR)/peptide_lca_sorted.tsv.gz $(TABDIR)/ec_cross_reference
 	python ./aggregation.py \
 		-p $(INTDIR)/peptide_lca_sorted.tsv.gz \
 		-e $(TABDIR)/ec_cross_references.tsv.gz \
+		-n $(TABDIR)/ec_numbers.tsv.gz \
 		-l "lca"
 	echo "Finished creating the lca table."
 
@@ -382,6 +383,7 @@ $(CROSSREFLCAIL): $(INTDIR)/peptide_lca_il_sorted.tsv.gz $(TABDIR)/ec_cross_refe
 	python ./aggregation.py \
 		-p $(INTDIR)/peptide_lca_il_sorted.tsv.gz \
 		-e $(TABDIR)/ec_cross_references.tsv.gz \
+		-n $(TABDIR)/ec_numbers.tsv.gz \
 		-l "lca_il"
 	echo "Finished creating the lca_il table."
 
