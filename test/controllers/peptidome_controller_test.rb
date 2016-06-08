@@ -58,6 +58,12 @@ class PeptidomeControllerTest < ActionController::TestCase
     assert_equal '"AALER\nAAIER"', @response.body
   end
 
+  test 'should get get_proteins' do
+    get :get_proteins, sequence_ids: '[1, 1]'
+    assert_response :success
+    assert_equal '"sequence,lca_taxon_id,uniprot_id,protein_name\nAALER,2,nr2,some name\nAAIER,2,nr,some name\n"', @response.body
+  end
+
   test 'should get convert_peptides' do
     get :convert_peptides, peptides: '["AALER", "AAIER", "FOO"]'
     assert_response :success

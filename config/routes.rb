@@ -32,6 +32,7 @@ UnipeptWeb::Application.routes.draw do
   match '/peptidome/sequences/:proteome_id.:format', via: [:get, :post], :to => 'peptidome#get_sequence_ids_for_proteome', :constraints => { :proteome_id => /[0-z\._]+/ }
   match '/peptidome/unique_sequences', via: [:get, :post], :to => 'peptidome#get_unique_sequences'
   match '/peptidome/full_sequences', via: [:get, :post], :to => 'peptidome#get_sequences'
+  match '/peptidome/full_proteins', via: [:get, :post], :to => 'peptidome#get_proteins'
   match '/peptidome/convert_peptides', via: [:get, :post], :to => 'peptidome#convert_peptides'
   match '/peptidome/get_lca', via: [:get, :post], :to => 'peptidome#get_lca'
   get '/peptidome', :to => 'peptidome#analyze', :as => 'pancore_analyze'
