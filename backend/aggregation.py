@@ -9,14 +9,10 @@ parser.add_argument('-p', metavar="Peptides file", nargs='?', type=str,
                    help='input peptides file')
 parser.add_argument('-e', metavar="EC cross file", nargs='?', type=str,
                    help='input ec crossref file', default="")
-parser.add_argument('-g', metavar="GO cross file", nargs='?', type=str,
-                   help='input go crossref file', default="")
-parser.add_argument('-i', metavar="InterPro cross file", nargs='?', type=str,
-                   help='input interpro crossref file', default="")
 parser.add_argument('-n', metavar="EC number file", nargs='?', type=str,
                    help='input ec number file', default="")
 parser.add_argument('-l', metavar="LCA type", nargs='?', type=str,
-                   help='input LCA or LCA_IL')
+                   help='input LCA or LCA_IL', default="")
 parser.add_argument('-o', metavar="Output path", nargs='?', type=str, default="../../data/intermediate",
                    help='output file (default ../../data/intermediate)')
 args = parser.parse_args()
@@ -43,7 +39,6 @@ def getPeptideTable():
 		if mem != seq_id:
 			aggregation()
 			mem = seq_id
-		#print (ids, seq_id, org_seq_id, uni_entry)
 		getCrossrefData(seq_id, uni_entry)
 	aggregation()
 
@@ -52,7 +47,7 @@ def getECTable():
 
 	ecFile = readFile(args.n)
 	for line in ecFile:
-		ids, ec, desc = line.strip().split()
+		ids, ec, desc = line.strip().split("\t")
 		ec_dir[ec] = ids
 
 def getCrossrefTable(crossref):
@@ -106,27 +101,24 @@ def aggregation():
 				if ec not in aggrdir:
 					aggrdir[ec] = totalperc
 				else: aggrdir[ec] += totalperc
-		if loopfile == 1:
-			reduced=thresholdRatio(aggrdir)
-			reduced=ec_lca_aggregation(reduced.keys())
-		else loopfile == 2:
-			reduced=thresholdRatio(aggrdir)
+
+		reduced=thresholdRatio(aggrdir)
+		reduced=ec_lca_aggregation(reduced.keys())
 
 		if (int(key) - seq_id_counter) > 1:
 			for c in range((seq_id_counter+1), (int(key))):
 				wfile.write("{}\t{}\n".format(c, "\\N"))
 				#print ("{}\t{}".format(c, "\\N"))
 		seq_id_counter = int(key)
-		wfile.write("{}\t{}\n".format(key, ec_dir[reduced[0]]))
-		#print ("{}\t{}".format(key, ";".join(reduced)))
+		wfile.write("{}\t{}\n".format(key, reduced))
+		#print ("{}\t{}".format(key, reduced))
 	cross_data_dir = {}
-	ec_dir = {}
 
 def ec_lca_aggregation(ec_list):
-	ontology = []
+	ontology = -1
 	ecnumber = []
 	if len(ec_list) <= 1:
-		return ec_list
+		return 0 if ecnumber == "-.-.-.-" else ec_dir["".join(ec_list)]
 	else:
 		ec_split = [ec.split(".") for ec in ec_list]
 		for i in range(0,4):
@@ -137,24 +129,31 @@ def ec_lca_aggregation(ec_list):
 				ecnumber.append("-."*(4-i))
 				break
 		ecnumber[-1] = ecnumber[-1][:-1]
-		ontology.append("".join(ecnumber))
-		return ontology
+		ecnumber = "".join(ecnumber)
+		return 0 if ecnumber == "-.-.-.-" else ec_dir[ecnumber]
 
 if __name__=="__main__":
-	loopfile = 0
+	global cr
 
 	outdir= args.o if args.o[-1] == "/" else args.o+"/"
 	for cr in [args.e]:
-		loopfile += 1
-		if cr == "":
-			raise "no cross reference file given!"
+
+		# for empty input
+		if args.e == "" or args.n == "" or args.p == "" or args.l == "":
+			raise "an input has not been given!"
+
+		# variables
 		seq_id_counter = 1
+		ec_dir = {}
 		wfile = file
 		crossdir = {}
 		cross_data_dir = {}
-		if cr == args.e:
-			ec_dir = {}
-		crossfile=cr.split("/")[-1].split(".")[0]
+
+		# create output file
+		crossfile=os.path.basename(cr).split(".")[0]
 		wfile=gzip.open(outdir+crossfile+"_"+args.l+".tsv.gz", "w")
+
+		# get data from tsv files
+		getECTable()
 		getCrossrefTable(cr)
 		getPeptideTable()
