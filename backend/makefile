@@ -369,7 +369,7 @@ $(INTDIR)/peptide_lca_sorted.tsv.gz: $(TABDIR)/peptides.tsv.gz
 		> $@
 	echo "Finished sorting peptide table on original_sequence_id"
 
-$(CROSSREFLCA): $(INTDIR)/peptide_lca_sorted.tsv.gz $(TABDIR)/ec_cross_references.tsv.gz
+$(CROSSREFLCA): $(INTDIR)/peptide_lca_sorted.tsv.gz $(TABDIR)/ec_cross_references.tsv.gz $(TABDIR)/ec_numbers.tsv.gz
 	echo "Starting to create the aggregation for ec/go/interpro lca table."
 	python ./aggregation.py \
 		-p $(INTDIR)/peptide_lca_sorted.tsv.gz \
@@ -378,7 +378,7 @@ $(CROSSREFLCA): $(INTDIR)/peptide_lca_sorted.tsv.gz $(TABDIR)/ec_cross_reference
 		-l "lca"
 	echo "Finished creating the lca table."
 
-$(CROSSREFLCAIL): $(INTDIR)/peptide_lca_il_sorted.tsv.gz $(TABDIR)/ec_cross_references.tsv.gz
+$(CROSSREFLCAIL): $(INTDIR)/peptide_lca_il_sorted.tsv.gz $(TABDIR)/ec_cross_references.tsv.gz $(TABDIR)/ec_numbers.tsv.gz
 	echo "Starting to create the aggregation for ec/go/interpro lca_il table."
 	python ./aggregation.py \
 		-p $(INTDIR)/peptide_lca_il_sorted.tsv.gz \
