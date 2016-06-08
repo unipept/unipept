@@ -455,10 +455,12 @@ class SequencesController < ApplicationController
 
     # create csv format for ec functional analysis
     if export
-      ec_ontology.each do |pep|
+      ec_ontology.each do |pep, ec_list|
         ec_csv_string += pep
-        ec_ontology[pep].each do |ec|
-          ec_csv_string += "\t"+ec_ontology_function[ec]
+        ec_list += [""]*(4-ec_list.length)
+        ec_list.each do |ec|
+          desc = ec != "" ? ec_ontology_function[ec] : '""'
+          ec_csv_string += "\t"+desc
         end
         ec_csv_string += "\n"
       end
