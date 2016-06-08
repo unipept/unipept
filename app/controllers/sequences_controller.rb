@@ -432,19 +432,20 @@ class SequencesController < ApplicationController
     # fetch sequences
     @sequences = Sequence.where(sequence: data)
     # equal_il
-    ec_equal_il = @equate_il == true ? "ec_il" : "ec"
+    ec_equal_il = @equate_il == true ? "ec_lca_il" : "ec_lca"
 
     # Get statistics
     @sequences.each do |seq_row|
-      ec_col = seq_row[ec_equal_il]
-      pep_col =  seq_row[:sequence]
-      if !ec_col.nil?
+      ec_id = seq_row[ec_equal_il]
+      if !ec_id.nil?
+        ec_num = ec_id != 0 ? ec_db.find(ec_id)[:ec_number] : "-.-.-.-"
+        pep_col =  seq_row[:sequence]
         if filter_duplicates == true
-          ec_self_count[ec_col] = ec_self_count.has_key?(ec_col) ? ec_self_count[ec_col]+1 : 1
+          ec_self_count[ec_num] = ec_self_count.has_key?(ec_num) ? ec_self_count[ec_num]+1 : 1
         else
-          ec_self_count[ec_col] = ec_self_count.has_key?(ec_col) ? ec_self_count[ec_col]+data_counts[pep_col] : data_counts[pep_col]
+          ec_self_count[ec_num] = ec_self_count.has_key?(ec_num) ? ec_self_count[ec_num]+data_counts[pep_col] : data_counts[pep_col]
         end
-        ec_ontology[pep_col] = EcNumber.get_ontology(ec_col)
+        ec_ontology[pep_col] = EcNumber.get_ontology(ec_num)
       end
     end
     ec_ontology_count = EcNumber.count_ontology(ec_self_count)
