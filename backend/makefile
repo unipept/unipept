@@ -25,7 +25,7 @@ CROSSREFLCAIL=											\
 
 GOTERMSTABLE=					\
 	$(TABDIR)/go_terms.tsv.gz 	\
-	$(GOBDIR)/alt_id.tsv.gz
+	$(GOBDIR)/alt_ids.tsv.gz
 
 
 SRC=$(shell find src/ -type f -name '*.java')
@@ -295,8 +295,8 @@ $(GOTERMSTABLE): $(GOBDIR)/goinfo.obo
 	echo "Starting fetching GO terms info"
 	python ./gotable.py \
 		-g $(GOBDIR)/goinfo.obo \
-		-o $(TABDIR)/go_terms.tsv.gz
-		-a $(GOBDIR)/alt_id.tsv.gz
+		-o $(TABDIR)/go_terms.tsv.gz \
+		-a $(GOBDIR)/alt_ids.tsv.gz
 	echo "Finished the creation of the GO terms table."
 
 $(TABDIR)/interpro_entries.tsv.gz: $(INPDIR)/interpro.xml.gz
