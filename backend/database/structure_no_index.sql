@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`sequences` (
   `ec_lca_il` SMALLINT UNSIGNED NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = ascii;
+DEFAULT CHARACTER SET = ascii
 COLLATE = ascii_general_ci;
 
 
