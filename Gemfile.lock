@@ -297,7 +297,7 @@ PLATFORMS
 DEPENDENCIES
   annotate
   autoprefixer-rails
-  axlsx (~> 2.0)
+  axlsx
   axlsx_rails
   capistrano (~> 3.0)
   capistrano-bundler (~> 1.1)
