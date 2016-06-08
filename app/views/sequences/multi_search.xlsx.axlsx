@@ -5,4 +5,10 @@ wb.add_worksheet(name: 'Biodiversity results') do |ws|
 	end
 end
 
+wb.add_worksheet(name: 'Enzyme commission numbers') do |ws|
+	@ec_csv_string.split("\n").each do |to_row|
+	  ws.add_row to_row.split("\t")
+	end
+end
+
 
