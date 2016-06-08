@@ -424,6 +424,7 @@ class SequencesController < ApplicationController
     ec_self_count = {}
     ec_ontology_count = {}
     ec_ontology_function = {}
+    ec_csv_string = ""
 
     # fetch all ec numbers
     ec_db = EcNumber.all 
@@ -431,7 +432,7 @@ class SequencesController < ApplicationController
     # fetch sequences
     @sequences = Sequence.where(sequence: data)
     # equal_il
-    ec_equal_il = @equate_il == true ? "ec_lca_il" : "ec_lca"
+    ec_equal_il = @equate_il == true ? "ec_il" : "ec"
 
     # Get statistics
     @sequences.each do |seq_row|
@@ -450,6 +451,17 @@ class SequencesController < ApplicationController
 
     # get function for all found ec numbers and their ontology
     ec_ontology_function = EcNumber.get_ec_function(ec_ontology_count, ec_db)
+
+    # create csv format for ec functional analysis
+    if export
+      ec_ontology.each do |pep|
+        ec_csv_string += pep
+        ec_ontology[pep].each do |ec|
+          ec_csv_string += "\t"+ec_ontology_function[ec]
+        end
+        ec_csv_string += "\n"
+      end
+    end
 
     # start constructing the tree from root
     @ec_root = Node.new("-.-.-.-", 'root', nil, '-.-.-.-')
@@ -483,6 +495,7 @@ class SequencesController < ApplicationController
     # ----------- end ------------ #
 
     if export
+      @ec_csv_string = ec_csv_string
       @csv_string = CSV.generate_line(['peptide'].concat(Lineage.ranks)) + csv_string
       cookies['nonce'] = params[:nonce]
       filename = search_name != '' ? search_name : 'export'
