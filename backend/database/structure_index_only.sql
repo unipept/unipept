@@ -25,6 +25,13 @@ ALTER TABLE lineages ADD INDEX idx_species (species ASC);
 -- -----------------------------------------------------
 ALTER TABLE sequences ADD UNIQUE INDEX idx_sequences (sequence ASC);
 ALTER TABLE sequences ADD INDEX fk_sequences_taxons (lca ASC), ADD INDEX fk_sequences_taxons_2 (lca_il ASC);
+ALTER TABLE sequences ADD INDEX fk_sequences_ec_numbers (ec_lca ASC), ADD INDEX fk_sequences_ec_numbers_2 (ec_lca_il ASC);
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`go_lcas`
+-- -----------------------------------------------------
+  ALTER TABLE go_lcas ADD INDEX fk_go_lcas_sequences (sequence_id ASC), ADD INDEX fk_go_lcas_go_terms (go_lca ASC), ADD INDEX fk_go_lcas_go_terms_2 (go_lca_il ASC);
 
 
 -- -----------------------------------------------------
@@ -66,7 +73,7 @@ ALTER TABLE interpro_cross_references ADD INDEX fk_interpro_reference_uniprot_en
 -- -----------------------------------------------------
 -- Table `unipept`.`interpro_to_gos`
 -- -----------------------------------------------------
-ALTER TABLE interpro_to_gos ADD INDEX fk_interpro_entries_has_go_terms_go_terms1_idx (go_term_id ASC), ADD INDEX fk_interpro_entries_has_go_terms_interpro_entries1_idx (interpro_entry_id ASC);
+ALTER TABLE interpro_to_gos ADD INDEX fk_interpro_entries_has_go_terms_go_terms (go_term_id ASC), ADD INDEX fk_interpro_entries_has_go_terms_interpro_entries (interpro_entry_id ASC);
 
 
 -- -----------------------------------------------------
@@ -85,8 +92,8 @@ ALTER TABLE proteome_cross_references ADD INDEX fk_proteome_cross_references (pr
 -- -----------------------------------------------------
 -- Table `unipept`.`kegg_pathway_mappings`
 -- -----------------------------------------------------
-ALTER TABLE kegg_pathway_mappings ADD INDEX fk_kegg_pathways_idx (kegg_pathway_id ASC);
-ALTER TABLE kegg_pathway_mappings ADD INDEX fk_ec_numbers_idx (ec_number_id ASC);
+ALTER TABLE kegg_pathway_mappings ADD INDEX fk_kegg_pathways (kegg_pathway_id ASC);
+ALTER TABLE kegg_pathway_mappings ADD INDEX fk_ec_numbers (ec_number_id ASC);
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
