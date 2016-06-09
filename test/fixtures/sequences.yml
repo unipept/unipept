@@ -15,45 +15,61 @@ sequence1:
     sequence: "AALER"
     lca: 2
     lca_il: 1
+    ec_lca: 1
+    ec_lca_il: 1
 
 sequence2:
     id: 2
     sequence: "AAIER"
     lca: 2
     lca_il: 1
+    ec_lca: 2
+    ec_lca_il: 1
 
 sequence3:
     id: 3
     sequence: "RANDOM"
     lca: 1
     lca_il: 1
+    ec_lca: 1
+    ec_lca_il: 2
 
 sequence4:
     id: 4
     sequence: "AAILER"
     lca: 1
     lca_il: 2
+    ec_lca: 2
+    ec_lca_il: 2
 
 sequence5:
     id: 5
     sequence: "AALLER"
     lca: 2
     lca_il: 1
+    ec_lca: 1
+    ec_lca_il: 1
 
 sequence6:
     id: 6
     sequence: "AGGAR"
     lca: 1
     lca_il: 1
+    ec_lca: 13
+    ec_lca_il: 13
 
 sequence7:
     id: 7
     sequence: "TEST"
     lca: 13
     lca_il: 13
+    ec_lca: 13
+    ec_lca_il: 1
 
 sequence8:
     id: 8
     sequence: "TAST"
     lca: 13
     lca_il: 13
+    ec_lca: 5
+    ec_lca_il: 1
