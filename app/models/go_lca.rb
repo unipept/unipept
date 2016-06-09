@@ -1,4 +1,14 @@
-class Go_lca < ActiveRecord::Base
+# == Schema Information
+#
+# Table name: go_lcas
+#
+#  id          :integer          not null, primary key
+#  sequence_id :integer          not null
+#  go_lca      :integer
+#  go_lca_il   :integer
+#
+
+class GoLca < ActiveRecord::Base
 	include ReadOnlyModel
 	attr_accessible nil
 
