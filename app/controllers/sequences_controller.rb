@@ -436,6 +436,7 @@ class SequencesController < ApplicationController
 
     # create csv format for ec functional analysis
     if export
+      ec_csv_string += "peptide\tclass\tsubclass\tsub-subclass\tenzyme\n"
       ec_ontology.each do |pep, ec_list|
         ec_csv_string += pep
         ec_list += [""]*(4-ec_list.length)
