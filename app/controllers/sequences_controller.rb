@@ -50,75 +50,56 @@ class SequencesController < ApplicationController
     #      functional analysis      #
     # ----------------------------- #
 
-    # get all ec_cross_references
-    ec_cross_numbers = @entries.map(&:ec_cross_references)
-    # get all items from table EcNumber
-    ec_db = EcNumber.all
-    # get all ec_cross_reference numbers and puts them in array
-    ec_numbers_list = ec_cross_numbers.map{|ecs| ecs.map{|ec| ec.ec_number} if ecs.length != 0}.compact.flatten(1)
-    # make list unique
-    ec_numbers_uniq = ec_numbers_list.uniq
-    # list of ec column names
-    @ec_column_name = ["EC number", "Class", "Subclass", "Sub-subclass", "Enzyme"]
     # create instance variables
+    @ec_self_count = {}
     @ec_lca_table = {}
     @ec_functions = {}
-    @ec_lca_count = {}
+    @ec_ontology_count = {}
     @ec_lca_class = {}
     @ec_lca_id = {}
     @ec_lca = {}
-    @ecc = {}
 
-    # get all rank order for each ec number 
+    # get all ec_cross_references
+    ec_cross_numbers = @entries.map(&:ec_cross_references)
+
+    # get all items from table EcNumber
+    ec_db = EcNumber.all
+
+    # get all ec_cross_reference numbers and puts them in array
+    ec_numbers_list = ec_cross_numbers.map{|ecs| ecs.map{|ec| ec[:ec_number]} if ecs.length != 0}.compact.flatten(1)
+
+    # make list unique
+    ec_numbers_uniq = ec_numbers_list.uniq
+
+    # get all ontologies and functions for each ec number 
     ec_numbers_uniq.each do |ecn|
-      ecn = ecn[:ec_number]
-      @ec_lca_table[ecn] = []
-      ec_split = ecn.split(".")
-      ec_rank = ""
-      counter = 0
-      ec_split.each do |ec_subclass|
-        counter += 1
-        if ec_subclass != "-"
-          @ec_lca_table[ecn] += [ec_rank+ec_subclass+".-"*(4-counter)] # creates all ranks for one ec number
-          ec_rank += ec_subclass+"."
-        else
-          @ec_lca_table[ecn] += [""] 
-        end
-      end
+      @ec_lca_table[ecn] = EcNumber.get_ontology(ecn)
     end
 
-    # sort the hash and make it an array
+    # get all ontologies from the ec_lca_table
+    ec_ontologies = @ec_lca_table.values.flatten(1).uniq
+
+    # get function for all found ec numbers and their ontology
+    @ec_functions = EcNumber.get_ec_function(ec_ontologies, ec_db)
+
+    # hash with the counts for each ec
+    ec_numbers_uniq.each do |ec|
+      @ec_self_count[ec] = ec_numbers_list.count(ec)
+    end
+
+    # calculate all steps of the tree the amount of hits
+    @ec_ontology_count = EcNumber.count_ontology(@ec_self_count)
+
+    # --------- Table for EC numbers --------- #
+
+    # list of ec column names
+    @ec_column_name = ["EC number", "Class", "Subclass", "Sub-subclass", "Enzyme"]
+
+    # sort the hash and make it an array for ec table
     @ec_lca_table_sorted = @ec_lca_table.keys.sort_by{|x|x}.flatten(1)
 
-    # get all ec numbers from the ec_lca_table
-    ec_all_ranks = @ec_lca_table.values.flatten(1).to_set.map{|x| x}
-    # get all functions accociated with the ranks
-    ec_tmp_all_functions = ec_db.select("ec_number, name").where(ec_number: ec_all_ranks).to_set
-
-    # store all in hash & remove all "." from end of line
-    ec_tmp_all_functions.each do |ec_hash|
-      @ec_functions[ec_hash[:ec_number]] = ec_hash[:name].gsub(/\.$/, '')
-    end
-
-    # hash with the counts for each ec rank
-    ec_all_ranks.each do |rank|
-      @ecc[rank] = ec_numbers_list.map{|ecnc| ecnc[:ec_number]}.count(rank)
-    end
-    # calculate all steps of the tree the amount of hits
-    for ec_key, ec_value in @ec_lca_table 
-      ec_value.each do |ecitems|
-        if ecitems != ""
-          if !@ec_lca_count.has_key?(ecitems)
-            @ec_lca_count[ecitems] = @ecc[ec_key]
-          else
-            @ec_lca_count[ecitems] += @ecc[ec_key]
-          end
-        end
-      end
-    end
-
     # store all classes for each ec number
-    ec_all_ranks.each do |rank|
+    ec_ontologies.each do |rank|
       @ec_lca_table.values.each do |l|
         class_pos = l.index(rank)
         if !class_pos.nil?
@@ -129,24 +110,24 @@ class SequencesController < ApplicationController
 
     # --------- Tree view for EC numbers --------- #
 
-    @ec_root = Node.new("-.-.-.-", 'root', nil, 'root') # start constructing the tree
-    @ec_root.data['count'] = @ecc.values.sum
+    # start constructing the tree from root
+    @ec_root = Node.new("-.-.-.-", 'root', nil, '-.-.-.-')
+    @ec_root.data['count'] = @ec_self_count.values.sum
     ec_last_node =  @ec_root
 
-    for key, value in @ec_lca_table do
+    # add all ec ontolgy starting from root
+    @ec_lca_table.each do |ec, ontology|
       ec_last_node_loop = ec_last_node
-      value.each do |ecs|
-        if ecs != ""
-          node = Node.find_by_id(ecs, @ec_root)
-          if node.nil?
-            node = Node.new(ecs, @ec_functions[ecs], @ec_root, ecs)
-            node.data['count'] = @ec_lca_count[ecs]
-            node.data['self_count'] = @ecc[ecs]
-            ec_last_node_loop = ec_last_node_loop.add_child(node)
-          else
-            node.name = @ec_functions[ecs]
-            ec_last_node_loop = node
-          end         
+      ontology.each do |ec|
+        node = Node.find_by_id(ec, @ec_root)
+        if node.nil?
+          node = Node.new(ec, @ec_functions[ec], @ec_root, ec)
+          node.data['count'] = @ec_ontology_count[ec]
+          node.data['self_count'] = @ec_self_count.has_key?(ec) ? @ec_self_count[ec] : 0
+          ec_last_node_loop = ec_last_node_loop.add_child(node)
+        else
+          node.name = @ec_functions[ec]
+          ec_last_node_loop = node
         end
       end
     end
@@ -451,7 +432,7 @@ class SequencesController < ApplicationController
     ec_ontology_count = EcNumber.count_ontology(ec_self_count)
 
     # get function for all found ec numbers and their ontology
-    ec_ontology_function = EcNumber.get_ec_function(ec_ontology_count, ec_db)
+    ec_ontology_function = EcNumber.get_ec_function(ec_ontology_count.keys, ec_db)
 
     # create csv format for ec functional analysis
     if export
@@ -480,11 +461,7 @@ class SequencesController < ApplicationController
         if node.nil?
           node = Node.new(ec, ec_ontology_function[ec], @ec_root, ec)
           node.data['count'] = ec_ontology_count[ec]
-          if ec_self_count.has_key?(ec)
-            node.data['self_count'] = ec_self_count[ec]
-          else
-            node.data['self_count'] = 0
-          end            
+          node.data['self_count'] = ec_self_count.has_key?(ec) ? ec_self_count[ec] : 0
           ec_last_node_loop = ec_last_node_loop.add_child(node)
         else
           node.name = ec_ontology_function[ec]
