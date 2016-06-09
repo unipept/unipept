@@ -1,0 +1,15 @@
+# == Schema Information
+#
+# Table name: go_terms
+#
+#  id         :integer          not null, primary key
+#  go_id      :string(15)       not null
+#  name       :string(200)      not null
+#  name_space :string(2)        not null
+#
+
+goterm1:
+    id: 1
+    go_id: "goid"
+    name: "name"
+    go_space: "gospace"

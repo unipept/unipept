@@ -1,0 +1,15 @@
+# == Schema Information
+#
+# Table name: go_lcas
+#
+#  id          :integer          not null, primary key
+#  sequence_id :integer          not null
+#  go_lca      :integer
+#  go_lca_il   :integer
+#
+
+golca1:
+	id: 1
+	sequence_id: 1
+	go_lca: 1
+	go_lca_il: 1

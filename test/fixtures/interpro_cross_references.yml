@@ -1,0 +1,15 @@
+# == Schema Information
+#
+# Table name: interpro_cross_references
+#
+#  id                :integer          not null, primary key
+#  uniprot_entry_id  :integer          not null
+#  interpro_entry_id :integer          not null
+#  interpro_id       :string(15)       not null
+#
+
+inteprocrossreference1:
+	id: 1
+	uniprot_entry_id: 1
+	interpro_entry_id: 1
+	interpro_id: "interproid"
