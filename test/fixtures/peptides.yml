@@ -6,7 +6,6 @@
 #  sequence_id          :integer          not null
 #  original_sequence_id :integer          not null
 #  uniprot_entry_id     :integer          not null
-#  position             :integer          not null
 #
 
 pept1:
