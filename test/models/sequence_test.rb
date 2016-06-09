@@ -2,10 +2,12 @@
 #
 # Table name: sequences
 #
-#  id       :integer          not null, primary key
-#  sequence :string(50)       not null
-#  lca      :integer
-#  lca_il   :integer
+#  id        :integer          not null, primary key
+#  sequence  :string(50)       not null
+#  lca       :integer
+#  lca_il    :integer
+#  ec_lca    :integer
+#  ec_lca_il :integer
 #
 
 require 'test_helper'
