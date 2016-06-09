@@ -12,11 +12,14 @@ class Sequence < ActiveRecord::Base
   include ReadOnlyModel
   attr_accessible nil
 
+  has_many :go_lcas
   has_many :peptides
   has_many :original_peptides, foreign_key: 'original_sequence_id', primary_key: 'id', class_name: 'Peptide'
 
   belongs_to :lca_t, foreign_key: 'lca', primary_key: 'id', class_name: 'Taxon'
   belongs_to :lca_il_t, foreign_key: 'lca_il', primary_key: 'id', class_name: 'Taxon'
+  belongs_to :ec_lca_e, foreign_key: 'ec_lca', primary_key: 'id', class_name: 'Ec_number'
+  belongs_to :ec_lca_il_e, foreign_key: 'ec_lca_il', primary_key: 'id', class_name: 'Ec_number'
 
   alias_method :generated_peptides, :peptides
   def peptides(equate_il = true)
