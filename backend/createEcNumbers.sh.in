@@ -9,16 +9,16 @@ exec 3>&1
 classes="ftp://ftp.ebi.ac.uk/pub/databases/enzyme/enzclass.txt"
 numbers="ftp://ftp.ebi.ac.uk/pub/databases/enzyme/enzyme.dat"
 
-lines="$(wget "$classes" -O -          \
+lines="$(wget -q "$classes" -O -       \
        | grep "^[1-9]"                 \
-       | sed "s/\. *\([0-9\-]\)/.\1/g" \
-       | sed "s/  */\t/"               \
+       | <<<CMD_SED>>> "s/\. *\([0-9\-]\)/.\1/g" \
+       | <<<CMD_SED>>> "s/  */\t/"               \
        | nl -n "ln"                    \
        | tee >(cat >&3)                \
        | wc -l                         \
        )"
 
-wget "$numbers" -O - | awk -v lines="$lines" 'BEGIN {
+wget -q "$numbers" -O - | <<<CMD_AWK>>> -v lines="$lines" 'BEGIN {
     FS = "   "
     lines++
 } /^ID/{
