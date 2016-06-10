@@ -18,6 +18,9 @@ echo "ALTER TABLE go_terms ADD UNIQUE INDEX uidx_go_id (go_id ASC);" | mysql -u 
 print "adding index to interpro_entries"
 echo "ALTER TABLE interpro_entries ADD UNIQUE INDEX uidx_interpro_id (interpro_id ASC);" | mysql -u unipept -punipept unipept
 
+print "adding index to interpro_to_gos"
+echo "ALTER TABLE interpro_to_gos ADD INDEX fk_interpro_entries_has_go_terms_go_terms (go_term_id ASC), ADD INDEX fk_interpro_entries_has_go_terms_interpro_entries (interpro_entry_id ASC);" | mysql -u unipept -punipept unipept
+
 print "adding index to kegg_pathways"
 echo "ALTER TABLE kegg_pathways ADD UNIQUE INDEX uidx_long_id (long_id ASC);" | mysql -u unipept -punipept unipept
 
