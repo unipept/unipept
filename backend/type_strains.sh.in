@@ -24,9 +24,9 @@ web_env="$(echo "$header"                                         \
          | <<<CMD_SED>>> -n 's/.*<WebEnv>\(.*\)<\/WebEnv>.*/\1/p' \
          )"
 
-returned="$BATCH_SIZE"
+returned="$ENTREZ_BATCH_SIZE"
 retstart='1'
-while ((returned == BATCH_SIZE)); do
+while ((returned == ENTREZ_BATCH_SIZE)); do
     returned="$(curl -d 'db=assembly'                                 \
                      -d "query_key=$query_key"                        \
                      -d "WebEnv=$web_env"                             \
