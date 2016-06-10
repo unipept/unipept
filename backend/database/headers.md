@@ -44,6 +44,62 @@ Taxons
  - ***parent***: The taxon id of the parent. Refers to another entry
    in this table (or itself, in case of the root taxon).
 
+EC Numbers
+----------
+ - ***id***: A self-assigned id. Integral, incremental, no gaps.
+ - ***ec number***: The EC number in the form of x.x.x.x.
+ - ***name***: The full name of this EC number.
+
+GO Terms
+--------
+ - ***id***: A self-assigned id. Integral, incremental, no gaps.
+ - ***go id***: The GO term id in the form of GO:xxxxxxx.
+ - ***name***: The full name of this GO term id.
+ - ***name space***: The catagory it belongs to BP, MF, CC.
+   * Biological Process
+   * Molecular Function
+   * Cellular Component
+
+InterPro Entries
+----------------
+ - ***id***: A self-assigned id. Integral, incremental, no gaps.
+ - ***parent id***: The parents id to which it belongs to.
+ - ***go id***: The InterPro id in the form of IPRxxxxxx.
+ - ***name***: The full name of this IntePro id.
+ - ***type***: The catagory it belongs to F, D, R, AS, BS, CS, PTM.
+   * Family
+   * Domain
+   * Repeat
+   * Active Site
+   * Binding Site
+   * Conserved Site
+   * Post-translational Modification
+
+IntePro To Gos
+--------------
+ - ***id***: A self-assigned id. Integral, incremental, no gaps.
+ - ***interpro entry id***: The InterPro ids accociated with the GO terms.
+ - ***go term id***: The GO terms accociated with the InterPro ids.
+
+KEGG Pathways
+-------------
+ - ***id***: A self-assigned id. Integral, incremental, no gaps.
+ - ***long id***: The KEGG pathway id in the form of mapxxxxx.
+ - ***name***: The full name of this KEGG pathway id.
+
+KEGG Pathway Mappings
+---------------------
+ - ***id***: A self-assigned id. Integral, incremental, no gaps.
+ - ***ec number id***: The EC numbers accociated with the KEGG pathways.
+ - ***kegg pathway id***: The KEGG pathways accociated with the EC numbers.
+
+GO LCA
+------
+ - ***id***: A self-assigned id. Integral, incremental, no gaps.
+ - ***sequence id***: The peptide sequences id accossiated with the GO lca/il.
+ - ***go lca***: The lowest common ancestor for all GO terms accossiated with the specific peptide.
+ - ***go lca il***: Same as lca only with the I and L equated
+
 Lineages
 --------
 
@@ -78,6 +134,8 @@ Contains the tryptic peptides.
    this tryptic peptide. Refers to the taxon table.
  - ***original lca***: A lowest common ancestor in case we did not
    equate the I and L amino acids.
+ - ***ec lca***: The lowest common ancestor for all EC numbers accossiated with the specific peptide.
+ - ***ec lca il***: Same as lca only with the I and L equated
 
 Proteomes
 ---------
@@ -103,6 +161,7 @@ EC Cross References
 
  - ***id***: A self-assigned id. Integral, incremental, no gaps.
  - ***uniprot entry id***: Which uniprot entry we are referencing.
+ - ***ec number id***: Which ec number we are referencing.
  - ***ec id***: An EC reference of the uniprot entry.
 
 EMBL Cross References
@@ -119,7 +178,16 @@ GO Cross References
 
  - ***id***: A self-assigned id. Integral, incremental, no gaps.
  - ***uniprot entry id***: Which uniprot entry we are referencing.
- - ***genbank id***: A GenBank reference of the uniprot entry.
+ - ***go term id***: Which go term we are referencing.
+ - ***go id***: An GO reference of the uniprot entry.
+
+ Interpro Cross References
+--------------------------
+
+ - ***id***: A self-assigned id. Integral, incremental, no gaps.
+ - ***uniprot entry id***: Which uniprot entry we are referencing.
+ - ***interpro entry id***: Which InterPro we are referencing.
+ - ***interpro id***: A InterPro reference of the uniprot entry.
 
 Peptides
 --------
