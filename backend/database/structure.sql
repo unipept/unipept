@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`ec_numbers` (
   `ec_number` VARCHAR(15) NOT NULL,
   `name` VARCHAR(140) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `ec_number_UNIQUE` (`ec_number` ASC))
+  UNIQUE INDEX `uidx_ec_number` (`ec_number` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
 COLLATE = ascii_general_ci;
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
   `name` VARCHAR(200) NOT NULL,
   `name_space` ENUM('BP', 'MF', 'CC') NOT NULL,
   PRIMARY KEY (`id`)),
-  UNIQUE INDEX `go_id_UNIQUE` (`go_id` ASC))
+  UNIQUE INDEX `uidx_go_id` (`go_id` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
 COLLATE = ascii_general_ci;
@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`interpro_entries` (
   `type` ENUM('F', 'D', 'R', 'AS','BS', 'CS', 'PTM') NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_interpro_entries_interpro_entries` (`parent_id` ASC),
-  UNIQUE INDEX `interpro_id_UNIQUE` (`interpro_id` ASC),
+  UNIQUE INDEX `uidx_interpro_id` (`interpro_id` ASC),
   CONSTRAINT `fk_interpro_entries_interpro_entries`
     FOREIGN KEY (`parent_id`)
     REFERENCES `unipept`.`interpro_entries` (`id`)
@@ -133,7 +133,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`kegg_pathways` (
   `long_id` VARCHAR(12) NOT NULL,
   `name` VARCHAR(90) NOT NULL,
   PRIMARY KEY (`id`)),
-  UNIQUE INDEX `long_id_UNIQUE` (`long_id` ASC)),
+  UNIQUE INDEX `uidx_long_id` (`long_id` ASC)),
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
 COLLATE = ascii_general_ci;
