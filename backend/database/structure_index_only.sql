@@ -29,9 +29,33 @@ ALTER TABLE sequences ADD INDEX fk_sequences_ec_numbers (ec_lca ASC), ADD INDEX 
 
 
 -- -----------------------------------------------------
+-- Table `unipept`.`ec_numbers`
+-- -----------------------------------------------------
+ALTER TABLE ec_numbers ADD UNIQUE INDEX uidx_ec_number (ec_number ASC);
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`go_terms`
+-- -----------------------------------------------------
+ALTER TABLE go_terms ADD UNIQUE INDEX uidx_go_id (go_id ASC);
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`interpro_entries`
+-- -----------------------------------------------------
+ALTER TABLE interpro_entries ADD UNIQUE INDEX uidx_interpro_id (interpro_id ASC);
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`kegg_pathways`
+-- -----------------------------------------------------
+ALTER TABLE kegg_pathways ADD UNIQUE INDEX uidx_long_id (long_id ASC);
+
+
+-- -----------------------------------------------------
 -- Table `unipept`.`go_lcas`
 -- -----------------------------------------------------
-  ALTER TABLE go_lcas ADD INDEX fk_go_lcas_sequences (sequence_id ASC), ADD INDEX fk_go_lcas_go_terms (go_lca ASC), ADD INDEX fk_go_lcas_go_terms_2 (go_lca_il ASC);
+ALTER TABLE go_lcas ADD INDEX fk_go_lcas_sequences (sequence_id ASC), ADD INDEX fk_go_lcas_go_terms (go_lca ASC), ADD INDEX fk_go_lcas_go_terms_2 (go_lca_il ASC);
 
 
 -- -----------------------------------------------------
