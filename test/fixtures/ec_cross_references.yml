@@ -12,4 +12,4 @@ eccrossreference1:
     id: 1
     uniprot_entry_id: 1
     ec_number_id: 1
-    ec_id: "ecid"
+    ec_number: "ecid"
