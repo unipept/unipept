@@ -1,7 +1,5 @@
 #!/bin/bash
 # Parses the ec numbers and names out of 2 source files
-# $1 is a file with the ec classes: 
-# $2 is a file with the actual ec numbers: ftp://ftp.ebi.ac.uk/pub/databases/enzyme/enzyme.dat
 
 set -e
 exec 3>&1
@@ -33,4 +31,3 @@ wget -q "$numbers" -O - | <<<CMD_AWK>>> -v lines="$lines" 'BEGIN {
 } END {
     printf("%d\t%s\t%s\n", lines++, id, name)
 }'
-

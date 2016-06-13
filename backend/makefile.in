@@ -187,9 +187,9 @@ $(TABLES): <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 
 # Functional Data {{{ ----------------------------------------------------------
 <<<TABDIR>>>/ec_numbers.tsv.gz: createEcNumbers.sh
-	echo "Starting fetching EC numbers information."
+	echo "Starting creating EC numbers"
 	./createEcNumbers.sh | <<<CMD_GZIP>>> > $@
-	echo "Starting fetching EC numbers information."
+	echo "Finished creating EC numbers."
 # }}}
 
 .PHONY: clean_intermediates
