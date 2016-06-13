@@ -216,7 +216,7 @@ COLLATE = ascii_general_ci;
 -- Table `unipept`.`go_terms`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `go_id` VARCHAR(15) NOT NULL,
   `name` VARCHAR(200) NOT NULL,
   `name_space` ENUM('BP', 'MF', 'CC') NOT NULL,
@@ -244,7 +244,7 @@ COLLATE = ascii_general_ci;
 -- Table `unipept`.`ec_numbers`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`ec_numbers` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `ec_number` VARCHAR(15) NOT NULL,
   `name` VARCHAR(140) NOT NULL,
   PRIMARY KEY (`id`))
@@ -283,7 +283,7 @@ ENGINE = InnoDB;
 -- Table `unipept`.`proteome_cross_references`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`proteome_cross_references` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `uniprot_entry_id` INT UNSIGNED NOT NULL,
   `proteome_id` MEDIUMINT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`))
@@ -333,7 +333,7 @@ ENGINE = InnoDB;
 -- Table `unipept`.`kegg_pathways`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`kegg_pathways` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `long_id` VARCHAR(12) NOT NULL,
   `name` VARCHAR(90) NOT NULL,
   PRIMARY KEY (`id`))
