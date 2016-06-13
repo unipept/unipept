@@ -54,7 +54,7 @@ COLLATE = ascii_general_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`ec_numbers` (
   `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `ec_number` VARCHAR(15) NOT NULL,
+  `code` VARCHAR(15) NOT NULL,
   `name` VARCHAR(140) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `ec_number_UNIQUE` (`ec_number` ASC))

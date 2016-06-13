@@ -47,7 +47,7 @@ Taxons
 EC Numbers
 ----------
 - ***id***: A self-assigned id. Integral, incremental, no gaps.
-- ***ec number***: The ec number in the form of x.x.x.x.
+- ***code***: The ec number in the form of x.x.x.x.
 - ***name***: The full name of this ec number.
 
 Lineages
