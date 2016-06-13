@@ -175,12 +175,21 @@ ActiveRecord::Schema.define(version: 0) do
   add_index "proteome_cross_references", ["proteome_id"], name: "fk_proteome_cross_references", using: :btree
   add_index "proteome_cross_references", ["uniprot_entry_id"], name: "fk_proteome_cross_references_uniprot_entries", using: :btree
 
+  create_table "taxons", force: :cascade do |t|
+    t.string  "name",        limit: 120,                  null: false
+    t.string  "rank",        limit: 16
+    t.integer "parent_id",   limit: 3
+    t.binary  "valid_taxon", limit: 1,   default: 0b1, null: false
+  end
+
+  add_index "taxons", ["parent_id"], name: "fk_taxon_taxon", using: :btree
+
   create_table "proteomes", force: :cascade do |t|
     t.string  "proteome_accession_number", limit: 12,                   null: false
     t.string  "proteome_name",             limit: 100,                  null: false
     t.integer "taxon_id",                  limit: 3
-    t.binary  "type_strain",               limit: 1,   default: "b'0'", null: false
-    t.binary  "reference_proteome",        limit: 1,   default: "b'0'", null: false
+    t.binary  "type_strain",               limit: 1,   default: 0b0, null: false
+    t.binary  "reference_proteome",        limit: 1,   default: 0b0, null: false
     t.string  "strain",                    limit: 45
     t.string  "assembly",                  limit: 45
     t.string  "name",                      limit: 128
@@ -209,15 +218,6 @@ ActiveRecord::Schema.define(version: 0) do
   add_index "sequences", ["lca"], name: "fk_sequences_taxons", using: :btree
   add_index "sequences", ["lca_il"], name: "fk_sequences_taxons_2", using: :btree
   add_index "sequences", ["sequence"], name: "idx_sequences", unique: true, using: :btree
-
-  create_table "taxons", force: :cascade do |t|
-    t.string  "name",        limit: 120,                  null: false
-    t.string  "rank",        limit: 16
-    t.integer "parent_id",   limit: 3
-    t.binary  "valid_taxon", limit: 1,   default: "b'1'", null: false
-  end
-
-  add_index "taxons", ["parent_id"], name: "fk_taxon_taxon", using: :btree
 
   create_table "uniprot_entries", force: :cascade do |t|
     t.string  "uniprot_accession_number", limit: 10,    null: false
