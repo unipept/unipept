@@ -14,7 +14,7 @@ SRC=$(shell find src/ -type f -name '*.java')
 JAR=target/unipept-0.0.1-SNAPSHOT.jar
 PAC=org.unipept.tools
 
-all: makefile $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<TABDIR>>>/lineages.tsv.gz $(TABLES) <<<TABDIR>>>/sequences.tsv.gz <<<TABDIR>>>/peptides.tsv.gz <<<TABDIR>>>/proteomes.tsv.gz <<TABDIR>>/ec_numbers.tsv.gz
+all: makefile $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<TABDIR>>>/lineages.tsv.gz $(TABLES) <<<TABDIR>>>/sequences.tsv.gz <<<TABDIR>>>/peptides.tsv.gz <<<TABDIR>>>/proteomes.tsv.gz <<<TABDIR>>>/ec_numbers.tsv.gz
 jar: $(JAR)
 taxons: <<<TABDIR>>>/taxons.tsv.gz <<<TABDIR>>>/lineages.tsv.gz
 tables: $(TABLES)
