@@ -9,6 +9,9 @@ function print {
 print "adding index to taxons"
 echo "ALTER TABLE taxons ADD INDEX fk_taxon_taxon (parent_id ASC);" | mysql -u unipept -punipept unipept
 
+print "adding index to ec_numbers"
+echo "ALTER TABLE ec_numbers ADD UNIQUE INDEX idx_ec_numbers (ec_number ASC);" | mysql -u unipept -punipept unipept
+
 print "adding index to uniprot_entries"
 echo "ALTER TABLE uniprot_entries ADD INDEX fk_uniprot_entries_taxons (taxon_id ASC);" | mysql -u unipept -punipept unipept
 

@@ -9,6 +9,12 @@ ALTER TABLE taxons ADD INDEX fk_taxon_taxon (parent_id ASC);
 
 
 -- -----------------------------------------------------
+-- Table `unipept`.`ec_numbers`
+-- -----------------------------------------------------
+ALTER TABLE ec_numbers ADD UNIQUE INDEX idx_ec_numbers (ec_number ASC);
+
+
+-- -----------------------------------------------------
 -- Table `unipept`.`uniprot_entries`
 -- -----------------------------------------------------
 ALTER TABLE uniprot_entries ADD INDEX fk_uniprot_entries_taxons (taxon_id ASC);

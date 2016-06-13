@@ -2,5 +2,6 @@ target/
 data/
 makefile
 proteomes.sh
+createEcNumbers.sh
 type_strains.sh
 latest-config

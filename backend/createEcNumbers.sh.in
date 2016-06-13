@@ -1,0 +1,33 @@
+#!/bin/bash
+# Parses the ec numbers and names out of 2 source files
+
+set -e
+exec 3>&1
+
+classes="ftp://ftp.ebi.ac.uk/pub/databases/enzyme/enzclass.txt"
+numbers="ftp://ftp.ebi.ac.uk/pub/databases/enzyme/enzyme.dat"
+
+lines="$(wget -q "$classes" -O -       \
+       | grep "^[1-9]"                 \
+       | <<<CMD_SED>>> "s/\. *\([0-9\-]\)/.\1/g" \
+       | <<<CMD_SED>>> "s/  */\t/"               \
+       | nl -n "ln"                    \
+       | tee >(cat >&3)                \
+       | wc -l                         \
+       )"
+
+wget -q "$numbers" -O - | <<<CMD_AWK>>> -v lines="$lines" 'BEGIN {
+    FS = "   "
+    lines++
+} /^ID/{
+    if (id != "") {
+    printf("%d\t%s\t%s\n", lines++, id, name)
+}
+    name = ""
+    id = $2
+} /^DE/{
+    gsub(/.$/, "", $2)
+    name = name $2
+} END {
+    printf("%d\t%s\t%s\n", lines++, id, name)
+}'
