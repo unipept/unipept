@@ -165,6 +165,7 @@ class SequencesController < ApplicationController
 
     @go_lcas = []
     @ontologies.keys.each{|o| cutoff(@go_tree[o], 0.30*@go_tree[o].data['count'], @go_lcas) unless @go_tree[o].nil?}
+    @go_lcas.map!(&:name)
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree
@@ -324,9 +325,8 @@ class SequencesController < ApplicationController
         end
         misses.delete(sequence.sequence)
       end
-      # gos.push(*GoCrossReference.joins(uniprot_entry: { peptides: :sequence }).where('sequences.sequence' => data_slice).group('go_cross_references.go_id,sequences.id').map(&:go_id))
     end
-    puts gos
+    gos.map!{|c| c.data['rank']}
     go_reachability(gos)
     go_tree
 
@@ -554,7 +554,7 @@ class SequencesController < ApplicationController
         added = cutoff(child, cutoff, lcas) || added # it's essential to put added to the back, otherwise cutoff isn't evaluated
       end
       if !added
-        lcas.append(parent.data['rank'])
+        lcas.append(parent)
       end
       return true
     end
