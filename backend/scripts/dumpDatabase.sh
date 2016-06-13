@@ -32,3 +32,25 @@ echo "select * from taxons order by id;" | mysql -u unipept -punipept unipept -q
 
 print "Dumping uniprot_entries"
 echo "select * from uniprot_entries order by id;" | mysql -u unipept -punipept unipept -q --skip-column-names | sed "s/NULL/\\\N/g" | gzip - > "${datadir}/uniprot_entries.tsv.gz"
+
+print "Dumping intepro_entries"
+echo "select * from intepro_entries order by id;" | mysql -u unipept -punipept unipept -q --skip-column-names | sed "s/NULL/\\\N/g" | gzip - > "${datadir}/uniprot_entries.tsv.gz"
+
+print "Dumping go_terms"
+echo "select * from go_terms order by id;" | mysql -u unipept -punipept unipept -q --skip-column-names | sed "s/NULL/\\\N/g" | gzip - > "${datadir}/uniprot_entries.tsv.gz"
+
+print "Dumping ec_numbers"
+echo "select * from ec_numbers order by id;" | mysql -u unipept -punipept unipept -q --skip-column-names | sed "s/NULL/\\\N/g" | gzip - > "${datadir}/uniprot_entries.tsv.gz"
+
+print "Dumping kegg_pathways"
+echo "select * from kegg_pathways order by id;" | mysql -u unipept -punipept unipept -q --skip-column-names | sed "s/NULL/\\\N/g" | gzip - > "${datadir}/uniprot_entries.tsv.gz"
+
+print "Dumping kegg_pathway_mappings"
+echo "select * from kegg_pathway_mappings order by id;" | mysql -u unipept -punipept unipept -q --skip-column-names | sed "s/NULL/\\\N/g" | gzip - > "${datadir}/uniprot_entries.tsv.gz"
+
+print "Dumping interpro_to_gos"
+echo "select * from interpro_to_gos order by id;" | mysql -u unipept -punipept unipept -q --skip-column-names | sed "s/NULL/\\\N/g" | gzip - > "${datadir}/uniprot_entries.tsv.gz"
+
+print "Dumping go_lcas"
+echo "select * from go_lcas order by id;" | mysql -u unipept -punipept unipept -q --skip-column-names | sed "s/NULL/\\\N/g" | gzip - > "${datadir}/uniprot_entries.tsv.gz"
+
