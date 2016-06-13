@@ -9,7 +9,7 @@
 #
 
 inteprocrossreference1:
-	id: 1
-	uniprot_entry_id: 1
-	interpro_entry_id: 1
-	interpro_id: "interproid"
+    id: 1
+    uniprot_entry_id: 1
+    interpro_entry_id: 1
+    interpro_id: "interproid"

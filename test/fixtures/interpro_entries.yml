@@ -10,8 +10,8 @@
 #
 
 interproentry1:
-	id: 1
-	parent_id: 1
-	interpro_id: "interproid"
-	name: "name"
-	type: "type"
+    id: 1
+    parent_id: 1
+    interpro_id: "interproid"
+    name: "name"
+    type: "type"

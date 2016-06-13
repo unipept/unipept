@@ -8,6 +8,6 @@
 #
 
 ecnumber1:
-	id: 1
-	ec_number: "ecnumber"
-	name: "name"
+    id: 1
+    ec_number: "ecnumber"
+    name: "name"

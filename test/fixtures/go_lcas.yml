@@ -9,7 +9,7 @@
 #
 
 golca1:
-	id: 1
-	sequence_id: 1
-	go_lca: 1
-	go_lca_il: 1
+    id: 1
+    sequence_id: 1
+    go_lca: 1
+    go_lca_il: 1
