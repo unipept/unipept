@@ -67,7 +67,7 @@ COLLATE = ascii_general_ci;
 -- Table `unipept`.`go_terms`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `go_id` VARCHAR(15) NOT NULL,
   `name` VARCHAR(200) NOT NULL,
   `name_space` ENUM('BP', 'MF', 'CC') NOT NULL,
@@ -82,7 +82,7 @@ COLLATE = ascii_general_ci;
 -- Table `unipept`.`interpro_entries`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`interpro_entries` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `parent_id` SMALLINT UNSIGNED NOT NULL,
   `interpro_id` VARCHAR(15) NOT NULL,
   `name` VARCHAR(40) NOT NULL,
@@ -129,7 +129,7 @@ COLLATE = ascii_general_ci;
 -- Table `unipept`.`kegg_pathways`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`kegg_pathways` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `long_id` VARCHAR(12) NOT NULL,
   `name` VARCHAR(90) NOT NULL,
   PRIMARY KEY (`id`)),
