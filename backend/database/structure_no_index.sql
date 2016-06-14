@@ -32,6 +32,18 @@ ENGINE = InnoDB
 
 
 -- -----------------------------------------------------
+-- Table `unipept`.`go_terms`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `code` VARCHAR(15) NOT NULL,
+  `namespace` ENUM('biological process', 'molecular function', 'cellular component') NOT NULL,
+  `name` VARCHAR(200) NOT NULL,
+  PRIMARY KEY (`id`)
+ENGINE = InnoDB
+
+
+-- -----------------------------------------------------
 -- Table `unipept`.`uniprot_entries`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `unipept`.`uniprot_entries` (
@@ -199,6 +211,19 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`go_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
   `go_id` VARCHAR(12) NOT NULL ,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`go_terms`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `go_id` VARCHAR(15) NOT NULL,
+  `name` VARCHAR(160) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii

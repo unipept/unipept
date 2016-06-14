@@ -15,6 +15,12 @@ ALTER TABLE ec_numbers ADD UNIQUE INDEX idx_ec_code (code ASC);
 
 
 -- -----------------------------------------------------
+-- Table `unipept`.`go_terms`
+-- -----------------------------------------------------
+ALTER TABLE go_terms ADD UNIQUE INDEX idx_go_code (code ASC);
+
+
+-- -----------------------------------------------------
 -- Table `unipept`.`uniprot_entries`
 -- -----------------------------------------------------
 ALTER TABLE uniprot_entries ADD INDEX fk_uniprot_entries_taxons (taxon_id ASC);

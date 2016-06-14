@@ -1,0 +1,29 @@
+#!/bin/bash
+# Parses the go terms out of an input file
+
+set -o pipefail -e
+
+terms="http://geneontology.org/ontology/go-basic.obo"
+
+wget -q "$terms" -O - | <<<CMD_AWK>>> '
+BEGIN {
+    OFS = "	"
+}
+/^\[.*\]$/ { # start of a record
+    type = $0
+    split("", record, ":")
+    next
+}
+!/^$/ { # a field in a record
+    key = $0;   sub(":.*", "", key)
+    value = $0; sub("[^ ]*: ", "", value)
+    record[key] = value
+}
+/^$/ { # end of a record
+    if (id != 0 && type == "[Term]") {
+        sub("_", " ", record["namespace"])
+        print id, record["id"], record["namespace"], record["name"]
+    }
+    id++
+    type = ""
+}'

@@ -57,7 +57,20 @@ CREATE TABLE IF NOT EXISTS `unipept`.`ec_numbers` (
   `code` VARCHAR(15) NOT NULL,
   `name` VARCHAR(140) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `ec_number_UNIQUE` (`ec_number` ASC))
+  UNIQUE INDEX `ec_number_UNIQUE` (`code` ASC))
+ENGINE = InnoDB
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`go_terms`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `code` VARCHAR(15) NOT NULL,
+  `namespace` ENUM('biological process', 'molecular function', 'cellular component') NOT NULL,
+  `name` VARCHAR(200) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `uidx_code` (`code` ASC))
 ENGINE = InnoDB
 
 
