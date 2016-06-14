@@ -1,7 +1,7 @@
 #!/bin/bash
 # Parses the ec numbers and names out of 2 source files
 
-set -e
+set -o pipefail -e
 exec 3>&1
 
 classes="ftp://ftp.ebi.ac.uk/pub/databases/enzyme/enzclass.txt"
