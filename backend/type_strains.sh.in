@@ -3,7 +3,7 @@
 # Arguments: none
 
 # Please crash on first mistake.
-set -e
+set -o pipefail -e
 
 tempfile="$(<<<CMD_MKTEMP>>> tmp.XXXXXXXX)"
 > "$tempfile"

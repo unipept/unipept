@@ -7,7 +7,7 @@ proteome_gz_file="$1"
 type_strains="$2"
 outfile="$3"
 
-set -e
+set -o pipefail -e
 
 tmp="$(<<<CMD_MKTEMP>>> proteomes.XXXXXXX)"
 
