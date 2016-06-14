@@ -190,7 +190,6 @@ $(TABLES): <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 	echo "Starting creating EC numbers"
 	./createEcNumbers.sh | <<<CMD_GZIP>>> > $@
 	echo "Finished creating EC numbers."
-# }}}
 
 <<<TABDIR>>>/go_terms.tsv.gz: createGoTerms.sh
 	echo "Starting creating GO terms"
