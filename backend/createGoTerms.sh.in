@@ -5,7 +5,7 @@ set -e
 
 terms="http://geneontology.org/ontology/go-basic.obo"
 
-wget -q "$terms" -O - | awk '
+wget -q "$terms" -O - | <<<CMD_AWK>>> '
 /^\[Term\]/{
     if (id != 0) {
         printf("%d\t%s\t%s\t%s\n", id, code, namespace, name)
