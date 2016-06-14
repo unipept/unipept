@@ -203,7 +203,7 @@ backup_if_changed "makefile"           "$tmpmakefile"
 backup_if_changed "proteomes.sh"       <($CONFIG_CMD_SED -f "$sedscript" proteomes.sh.in)
 backup_if_changed "type_strains.sh"    <($CONFIG_CMD_SED -f "$sedscript" type_strains.sh.in)
 backup_if_changed "createEcNumbers.sh" <($CONFIG_CMD_SED -f "$sedscript" createEcNumbers.sh.in)
-backup_if_changed "createGoTerms.sh" <($CONFIG_CMD_SED -f "$sedscript" createGoTerms.sh.in)
+backup_if_changed "createGoTerms.sh"   <($CONFIG_CMD_SED -f "$sedscript" createGoTerms.sh.in)
 
 rm "$tmpmakefile"
 chmod a+x proteomes.sh

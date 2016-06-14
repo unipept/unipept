@@ -14,7 +14,7 @@ SRC=$(shell find src/ -type f -name '*.java')
 JAR=target/unipept-0.0.1-SNAPSHOT.jar
 PAC=org.unipept.tools
 
-all: makefile $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<TABDIR>>>/lineages.tsv.gz $(TABLES) <<<TABDIR>>>/sequences.tsv.gz <<<TABDIR>>>/peptides.tsv.gz <<<TABDIR>>>/proteomes.tsv.gz <<<TABDIR>>>/ec_numbers.tsv.gz
+all: makefile $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<TABDIR>>>/lineages.tsv.gz $(TABLES) <<<TABDIR>>>/sequences.tsv.gz <<<TABDIR>>>/peptides.tsv.gz <<<TABDIR>>>/proteomes.tsv.gz <<<TABDIR>>>/ec_numbers.tsv.gz <<<TABDIR>>>/go_terms.tsv.gz
 jar: $(JAR)
 taxons: <<<TABDIR>>>/taxons.tsv.gz <<<TABDIR>>>/lineages.tsv.gz
 tables: $(TABLES)
@@ -190,6 +190,12 @@ $(TABLES): <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 	echo "Starting creating EC numbers"
 	./createEcNumbers.sh | <<<CMD_GZIP>>> > $@
 	echo "Finished creating EC numbers."
+# }}}
+
+<<<TABDIR>>>/go_terms.tsv.gz: createGoTerms.sh
+	echo "Starting creating GO terms"
+	./createGoTerms.sh | <<<CMD_GZIP>>> > $@
+	echo "Finished creating GO terms."
 # }}}
 
 .PHONY: clean_intermediates
