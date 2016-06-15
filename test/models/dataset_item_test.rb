@@ -45,7 +45,7 @@ class DatasetItemTest < ActiveSupport::TestCase
 
   test 'should delete datasetitem on parent dataset delete' do
     dataset = datasets(:dataset1)
-    assert dataset.dataset_items.size > 0
+    assert !dataset.dataset_items.empty?
     datasetitem = dataset.dataset_items.first
     dataset.destroy
     assert_raises(ActiveRecord::RecordNotFound) { datasetitem.reload }

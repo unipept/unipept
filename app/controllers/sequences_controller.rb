@@ -13,7 +13,7 @@ class SequencesController < ApplicationController
     seq = params[:id].upcase.gsub(/\P{ASCII}/, '')
 
     # process the input, convert seq to a valid @sequence
-    if seq.match(/\A[0-9]+\z/)
+    if seq =~ /\A[0-9]+\z/
       sequence = Sequence.includes(peptides: { uniprot_entry: [:taxon, :ec_cross_references, :go_cross_references] }).find_by_id(seq)
       @original_sequence = sequence.sequence
     else
@@ -22,7 +22,7 @@ class SequencesController < ApplicationController
     end
 
     # quit if it doensn't contain any peptides
-    fail(NoMatchesFoundError, sequence.sequence) if sequence.present? && sequence.peptides(equate_il).empty?
+    raise(NoMatchesFoundError, sequence.sequence) if sequence.present? && sequence.peptides(equate_il).empty?
 
     # get the uniprot entries of every peptide
     # only used for the open in uniprot links
@@ -37,7 +37,7 @@ class SequencesController < ApplicationController
       # check if the protein contains the startsequence
       @entries.select! { |e| e.protein_contains?(seq, equate_il) }
 
-      fail(NoMatchesFoundError, seq) if @entries.empty?
+      raise(NoMatchesFoundError, seq) if @entries.empty?
       @lineages = @entries.map(&:lineage).compact
     else
       @entries = sequence.peptides(equate_il).map(&:uniprot_entry)
@@ -99,7 +99,7 @@ class SequencesController < ApplicationController
     @lineages.map { |lineage| lineage.set_iterator_position(0) } # reset the iterator
     while @lineages[0].has_next?
       temp = @lineages.map(&:next_t)
-      if temp.compact.length > 0 # don't do anything if it only contains nils
+      unless temp.compact.empty? # don't do anything if it only contains nils
         @table_lineages << temp
         @table_ranks << temp.compact[0].rank
       end
@@ -161,10 +161,10 @@ class SequencesController < ApplicationController
     csv_string = ''
 
     # quit if the query was empty
-    fail EmptyQueryError if query.blank?
+    raise EmptyQueryError if query.blank?
 
     # remove duplicates, filter shorts, substitute I by L, ...
-    data = query.upcase.gsub(/#/, '').gsub(/\P{ASCII}/, '')
+    data = query.upcase.delete('#').gsub(/\P{ASCII}/, '')
     data = data.gsub(/([KR])([^P])/, "\\1\n\\2").gsub(/([KR])([^P])/, "\\1\n\\2") unless handle_missed
     data = data.lines.map(&:strip).to_a.select { |l| l.size >= 5 }
     sequence_mapping = Hash[data.map { |v| @equate_il ? [v.tr('I', 'L'), v] : [v, v] }]

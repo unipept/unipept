@@ -17,7 +17,7 @@ class Sequence < ApplicationRecord
   belongs_to :lca_t, foreign_key: 'lca', primary_key: 'id', class_name: 'Taxon'
   belongs_to :lca_il_t, foreign_key: 'lca_il', primary_key: 'id', class_name: 'Taxon'
 
-  alias_method :generated_peptides, :peptides
+  alias generated_peptides peptides
   def peptides(equate_il = true)
     if equate_il
       generated_peptides
@@ -27,15 +27,15 @@ class Sequence < ApplicationRecord
   end
 
   def lineages(equate_il = true, eager = false)
-    fail(ArgumentError, ':equate_il must be a boolean') unless Sequence.boolean?(equate_il)
-    fail(ArgumentError, ':eager must be a boolean') unless Sequence.boolean?(eager)
+    raise(ArgumentError, ':equate_il must be a boolean') unless Sequence.boolean?(equate_il)
+    raise(ArgumentError, ':eager must be a boolean') unless Sequence.boolean?(eager)
 
     l = Lineage.select('lineages.*, count(*) as hits').joins(uniprot_entries: :peptides).group('lineages.taxon_id')
-    if equate_il
-      l = l.where('peptides.sequence_id = ?', id)
-    else
-      l = l.where('peptides.original_sequence_id = ?', id)
-    end
+    l = if equate_il
+          l.where('peptides.sequence_id = ?', id)
+        else
+          l.where('peptides.original_sequence_id = ?', id)
+        end
     l = l.includes(:name, Lineage::ORDER_T) if eager
     l
   end
@@ -52,19 +52,19 @@ class Sequence < ApplicationRecord
   end
 
   def self.peptides_relation_name(equate_il)
-    fail(ArgumentError, ':equate_il must be a boolean') unless boolean?(equate_il)
+    raise(ArgumentError, ':equate_il must be a boolean') unless boolean?(equate_il)
     equate_il ? :peptides : :original_peptides
   end
 
   def self.lca_t_relation_name(equate_il)
-    fail(ArgumentError, ':equate_il must be a boolean') unless boolean?(equate_il)
+    raise(ArgumentError, ':equate_il must be a boolean') unless boolean?(equate_il)
     equate_il ? :lca_il_t : :lca_t
   end
 
   # search for a single sequence, include information through join tables
   def self.single_search(sequence, equate_il = true)
-    fail(ArgumentError, ':equate_il must be a boolean') unless boolean?(equate_il)
-    fail SequenceTooShortError if sequence.length < 5
+    raise(ArgumentError, ':equate_il must be a boolean') unless boolean?(equate_il)
+    raise SequenceTooShortError if sequence.length < 5
     sequence = sequence.tr('I', 'L') if equate_il
     # this solves the N+1 query problem
     includes(peptides_relation_name(equate_il) => { uniprot_entry: [:taxon, :ec_cross_references, :go_cross_references] })
@@ -73,9 +73,9 @@ class Sequence < ApplicationRecord
 
   # try to find multiple matches for a single sequence
   def self.advanced_single_search(sequence, equate_il = true)
-    fail(ArgumentError, ':equate_il must be a boolean') unless boolean?(equate_il)
+    raise(ArgumentError, ':equate_il must be a boolean') unless boolean?(equate_il)
     # sanity check
-    fail(NoMatchesFoundError, sequence) if sequence.index(/([KR])([^P])/).nil?
+    raise(NoMatchesFoundError, sequence) if sequence.index(/([KR])([^P])/).nil?
 
     sequence = sequence.tr('I', 'L') if equate_il
 
@@ -87,8 +87,8 @@ class Sequence < ApplicationRecord
     long_sequences = sequences.select { |s| s.length >= 5 }.map { |s| query.find_by_sequence(s) }
 
     # check if it has a match for every sequence and at least one long part
-    fail NoMatchesFoundError, sequence if long_sequences.include? nil
-    fail SequenceTooShortError if long_sequences.size == 0
+    raise NoMatchesFoundError, sequence if long_sequences.include? nil
+    raise SequenceTooShortError if long_sequences.empty?
 
     long_sequences
   end

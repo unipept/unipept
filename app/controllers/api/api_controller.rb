@@ -38,7 +38,7 @@ class Api::ApiController < ApplicationController
 
       ids = ids.uniq.compact.sort
       UniprotEntry.includes(:taxon, :ec_cross_references, :go_cross_references, :refseq_cross_references, :embl_cross_references)
-        .where(id: ids).find_in_batches do |group|
+                  .where(id: ids).find_in_batches do |group|
         group.each do |uni|
           lookup[uni.id].each { |s| @result[s] << uni }
         end
@@ -163,11 +163,11 @@ class Api::ApiController < ApplicationController
     if @input.is_a? Hash        # hash
       @input = @input.values
     elsif @input.is_a? String   # string
-      if @input[0] == '[' # parse json
-        @input = JSON.parse @input
-      else # comma separated
-        @input = @input.split(',')
-      end
+      @input = if @input[0] == '[' # parse json
+                 JSON.parse @input
+               else # comma separated
+                 @input.split(',')
+               end
     end
     @input = [] if @input.nil?
     @input = @input.compact.map(&:chomp)
@@ -182,22 +182,22 @@ class Api::ApiController < ApplicationController
 
   # prepares the taxonomy query
   def set_query
-    if @extra_info
-      if @names
-        @query = Taxon.includes(lineage: Lineage::ORDER_T)
-      else
-        @query = Taxon.includes(:lineage)
-      end
-    else
-      @query = Taxon
-    end
+    @query = if @extra_info
+               if @names
+                 Taxon.includes(lineage: Lineage::ORDER_T)
+               else
+                 Taxon.includes(:lineage)
+                        end
+             else
+               Taxon
+             end
   end
 
   # prepares the sequences query
   def set_sequences
     rel_name = @equate_il ? :peptides : :original_peptides
     @sequences = Sequence.joins(rel_name => :uniprot_entry)
-                 .where(sequence: @input)
+                         .where(sequence: @input)
   end
 
   # Reorders the results according to the input order

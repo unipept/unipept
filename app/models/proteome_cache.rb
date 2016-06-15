@@ -29,7 +29,7 @@ class ProteomeCache < ApplicationRecord
   # Delta encodes a list of integers
   def self.delta_encode(peptide_list)
     return [] unless peptide_list.is_a?(Array)
-    return [] if peptide_list.length == 0
+    return [] if peptide_list.empty?
 
     output = Array.new(peptide_list.length)
     output[0] = peptide_list[0]

@@ -72,14 +72,14 @@ class Lineage < ApplicationRecord
            :superclass, :class_, :subclass, :infraclass, :superorder, :order, :suborder,
            :infraorder, :parvorder, :superfamily, :family, :subfamily, :tribe,
            :subtribe, :genus, :subgenus, :species_group, :species_subgroup,
-           :species, :subspecies, :varietas, :forma]
+           :species, :subspecies, :varietas, :forma].freeze
 
   ORDER_T = [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t,
              :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t,
              :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t,
              :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t,
              :species_group_t, :species_subgroup_t, :species_t, :subspecies_t,
-             :varietas_t, :forma_t]
+             :varietas_t, :forma_t].freeze
 
   scope :with_names, -> { includes(ORDER_T) }
 
@@ -89,7 +89,7 @@ class Lineage < ApplicationRecord
   # This code disables the rangecheck for UnsignedIntegers
   module ActiveModel::Type
     class UnsignedInteger
-      def ensure_in_range(value)
+      def ensure_in_range(_value)
         true
       end
     end
@@ -144,15 +144,15 @@ class Lineage < ApplicationRecord
   # calculates the lowest common ancestor
   # you shouldn't call this method directly but the calculate_lca method on the sequence
   def self.calculate_lca(lineages)
-    return -1 if lineages.size == 0
+    return -1 if lineages.empty?
     lca = 1 # default lca
     ORDER.each do |rank|
       # only filter nil at species and genus
-      if rank == :species || rank == :genus
-        current = lineages.map(&rank).find_all { |n| n.nil? || n > 0 }.uniq.compact
-      else
-        current = lineages.map(&rank).find_all { |n| n.nil? || n > 0 }.uniq
-      end
+      current = if rank == :species || rank == :genus
+                  lineages.map(&rank).find_all { |n| n.nil? || n > 0 }.uniq.compact
+                else
+                  lineages.map(&rank).find_all { |n| n.nil? || n > 0 }.uniq
+                end
       return lca if current.length > 1 # more than one distinct element
       lca = current[0] unless current[0].nil? # save lca if this rank isn't nil
     end

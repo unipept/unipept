@@ -20,11 +20,11 @@ class Proteome < ApplicationRecord
   has_many :proteome_cross_references
 
   def destroy
-    fail ActiveRecord::ReadOnlyRecord
+    raise ActiveRecord::ReadOnlyRecord
   end
 
   def delete
-    fail ActiveRecord::ReadOnlyRecord
+    raise ActiveRecord::ReadOnlyRecord
   end
 
   def full_name
@@ -78,8 +78,8 @@ class Proteome < ApplicationRecord
     taxa.merge(proteomes.map(&:order_id))
     taxa.merge(proteomes.map(&:class_id))
     Hash[Taxon.select([:id, :name, :rank])
-      .where(id: taxa.to_a)
-      .map { |t| [t.id, Hash['name' => t.name, 'rank' => t.rank]] }]
+              .where(id: taxa.to_a)
+              .map { |t| [t.id, Hash['name' => t.name, 'rank' => t.rank]] }]
   end
 
   # fills in the taxon_id column
