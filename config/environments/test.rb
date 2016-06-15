@@ -37,11 +37,8 @@ UnipeptWeb::Application.configure do
   config.active_support.test_order = :random
 
   # Configure static asset server for tests with Cache-Control for performance
-  config.serve_static_files = true
-  config.static_cache_control = 'public, max-age=3600'
-
-  # Raise exception on mass assignment protection for Active Record models
-  config.active_record.mass_assignment_sanitizer = :strict
+  config.public_file_server.enabled = true
+  config.public_file_server.headers = { 'Cache-Control' => 'public, max-age=3600' }
 
   # enable google analytics
   config.unipept_analytics = false
