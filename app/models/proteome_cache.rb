@@ -7,8 +7,6 @@
 #
 
 class ProteomeCache < ApplicationRecord
-  attr_accessible :proteome_id, :json_sequences
-
   validates :json_sequences, presence: true,
                              length: { maximum: 16_777_215 }
 

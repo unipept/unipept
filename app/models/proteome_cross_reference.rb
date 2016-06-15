@@ -9,7 +9,6 @@
 
 class ProteomeCrossReference < ApplicationRecord
   include ReadOnlyModel
-  attr_accessible nil
 
   belongs_to :uniprot_entry
   belongs_to :proteome

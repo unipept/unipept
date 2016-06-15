@@ -10,8 +10,6 @@
 #
 
 class DatasetItem < ApplicationRecord
-  attr_accessible :name, :data
-
   belongs_to :dataset
 
   validates :name, presence: true,

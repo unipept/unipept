@@ -10,9 +10,6 @@ gem 'puma'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 3.0'
 
-# Protect attributes from mass assignment
-gem 'protected_attributes'
-
 # pagination
 gem 'will_paginate'
 

@@ -9,7 +9,6 @@
 #
 
 class Post < ApplicationRecord
-  attr_accessible :content, :date, :title
 
   validates :content, presence: true
   validates :title,   presence: true,

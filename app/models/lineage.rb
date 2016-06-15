@@ -34,7 +34,6 @@
 #
 class Lineage < ApplicationRecord
   include ReadOnlyModel
-  attr_accessible nil
 
   has_many :uniprot_entries,      foreign_key: 'taxon_id',      primary_key: 'taxon_id', class_name: 'UniprotEntry'
 

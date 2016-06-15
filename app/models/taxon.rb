@@ -11,7 +11,6 @@
 
 class Taxon < ApplicationRecord
   include ReadOnlyModel
-  attr_accessible nil
 
   belongs_to :lineage, foreign_key: 'id', primary_key: 'taxon_id', class_name: 'Lineage'
 
