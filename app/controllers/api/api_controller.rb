@@ -13,9 +13,9 @@ class Api::ApiController < ApplicationController
     version = params[:version]
     gem_version = Rails.application.config.versions[:gem]
     if Gem::Version.new(gem_version) > Gem::Version.new(version)
-      render text: "Unipept gem #{gem_version} is released!. Run 'gem update unipept' to update."
+      render plain: "Unipept gem #{gem_version} is released!. Run 'gem update unipept' to update."
     else
-      render text: ''
+      render plain: ''
     end
   end
 
