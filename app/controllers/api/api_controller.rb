@@ -187,7 +187,7 @@ class Api::ApiController < ApplicationController
                  Taxon.includes(lineage: Lineage::ORDER_T)
                else
                  Taxon.includes(:lineage)
-                        end
+               end
              else
                Taxon
              end
