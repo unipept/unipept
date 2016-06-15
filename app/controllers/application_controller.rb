@@ -2,6 +2,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
   before_action :set_motd
   before_action :my_auth
+  before_action :permit_params
 
   def set_motd
     file = Rails.root.join('public', 'motd')
@@ -23,5 +24,9 @@ class ApplicationController < ActionController::Base
 
     u = User.find_by_username('guest')
     sign_in(:user, u)
+  end
+
+  def permit_params
+    params.permit!
   end
 end

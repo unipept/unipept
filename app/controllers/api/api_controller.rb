@@ -158,7 +158,8 @@ class Api::ApiController < ApplicationController
 
   # handles the parameters
   def set_params
-    @input = params[:input]
+    unsafe_hash = params.to_unsafe_h
+    @input = unsafe_hash[:input]
     if @input.is_a? Hash        # hash
       @input = @input.values
     elsif @input.is_a? String   # string
@@ -169,7 +170,7 @@ class Api::ApiController < ApplicationController
       end
     end
     @input = [] if @input.nil?
-    @input = @input.to_unsafe_h.compact.map(&:chomp)
+    @input = @input.compact.map(&:chomp)
     @input_order = @input.dup
 
     @equate_il = params[:equate_il] == 'true'
