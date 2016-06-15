@@ -169,7 +169,7 @@ class Api::ApiController < ApplicationController
       end
     end
     @input = [] if @input.nil?
-    @input = @input.compact.map(&:chomp)
+    @input = @input.to_unsafe_h.compact.map(&:chomp)
     @input_order = @input.dup
 
     @equate_il = params[:equate_il] == 'true'
