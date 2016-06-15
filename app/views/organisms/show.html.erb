@@ -3,7 +3,7 @@
     <span>No genomes were found for this organism.</span>
 <% else %>
     <span>
-        <%= pluralize(@number, "gene was", "genes were") %>
+        <%= pluralize(@number, "gene was", plural: "genes were") %>
          found for this organism.
     </span>
     <ul class="uniprot_entries">
