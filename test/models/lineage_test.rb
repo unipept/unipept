@@ -140,8 +140,8 @@ class LineageTest < ActiveSupport::TestCase
   test 'cast should not raise a range error for negative values' do
     lineage = lineages(:kingdom2)
     def lineage.convert
-      uint = ActiveRecord::Type::UnsignedInteger.new
-      uint.type_cast_for_database('-5')
+      uint = ActiveModel::Type::UnsignedInteger.new
+      uint.ensure_in_range('-5')
     end
     lineage.convert
   end

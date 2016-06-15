@@ -149,7 +149,7 @@ class SequencesController < ApplicationController
   def multi_search
     @header_class = 'MPA'
     # save parameters
-    @p = params
+    @p = params.to_h
 
     # set search parameters
     @equate_il = params[:il].present?
