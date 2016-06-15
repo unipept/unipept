@@ -93,4 +93,5 @@ end
 group :test do
   gem 'capybara'
   gem 'poltergeist'
+  gem 'rails-controller-testing'
 end
