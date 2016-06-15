@@ -84,14 +84,14 @@ class Lineage < ActiveRecord::Base
 
   scope :with_names, -> { includes(ORDER_T) }
 
-  # rails 4.2 checks the values befor using them in queries
+  # rails 4.2+ checks the values befor using them in queries
   # Eager loading the Taxa results in a range error if there are -1 values
   # http://metaskills.net/2015/01/06/activerecord-42s-type-casting/
   # This code disables the rangecheck for UnsignedIntegers
-  module ActiveRecord::Type
+  module ActiveModel::Type
     class UnsignedInteger
-      def type_cast_for_database(value)
-        type_cast(value)
+      def ensure_in_range(value)
+        true
       end
     end
   end
