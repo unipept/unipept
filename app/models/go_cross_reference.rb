@@ -7,7 +7,7 @@
 #  go_term_code     :string(15)       not null
 #
 
-class GoCrossReference < ActiveRecord::Base
+class GoCrossReference < ApplicationRecord
   include ReadOnlyModel
   attr_accessible nil
 

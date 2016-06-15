@@ -8,7 +8,7 @@
 #  date    :date             not null
 #
 
-class Post < ActiveRecord::Base
+class Post < ApplicationRecord
   attr_accessible :content, :date, :title
 
   validates :content, presence: true

@@ -8,7 +8,7 @@
 #  lca_il   :integer
 #
 
-class Sequence < ActiveRecord::Base
+class Sequence < ApplicationRecord
   include ReadOnlyModel
   attr_accessible nil
 

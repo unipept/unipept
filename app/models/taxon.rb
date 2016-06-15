@@ -9,7 +9,7 @@
 #  valid_taxon :binary(1)        default("b'1'"), not null
 #
 
-class Taxon < ActiveRecord::Base
+class Taxon < ApplicationRecord
   include ReadOnlyModel
   attr_accessible nil
 

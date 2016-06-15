@@ -6,7 +6,7 @@
 #  json_sequences :text(16777215)   not null
 #
 
-class ProteomeCache < ActiveRecord::Base
+class ProteomeCache < ApplicationRecord
   attr_accessible :proteome_id, :json_sequences
 
   validates :json_sequences, presence: true,

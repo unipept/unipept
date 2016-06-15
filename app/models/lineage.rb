@@ -32,7 +32,7 @@
 #  varietas         :integer
 #  forma            :integer
 #
-class Lineage < ActiveRecord::Base
+class Lineage < ApplicationRecord
   include ReadOnlyModel
   attr_accessible nil
 

@@ -13,7 +13,7 @@
 #  name                      :string(128)
 #
 
-class Proteome < ActiveRecord::Base
+class Proteome < ApplicationRecord
   attr_readonly :id, :proteome_accession_number, :proteome_name, :type_strain, :reference_proteome, :strain, :assembly
 
   belongs_to :lineage, foreign_key: 'taxon_id', primary_key: 'taxon_id', class_name: 'Lineage'

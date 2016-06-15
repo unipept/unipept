@@ -7,7 +7,7 @@
 #  ec_number_code   :string(15)       not null
 #
 
-class EcCrossReference < ActiveRecord::Base
+class EcCrossReference < ApplicationRecord
   include ReadOnlyModel
   attr_accessible nil
 

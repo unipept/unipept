@@ -8,7 +8,7 @@
 #  uniprot_entry_id     :integer          not null
 #
 
-class Peptide < ActiveRecord::Base
+class Peptide < ApplicationRecord
   include ReadOnlyModel
   attr_accessible nil
 
