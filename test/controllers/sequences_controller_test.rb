@@ -11,17 +11,17 @@ class SequencesControllerTest < ActionController::TestCase
   end
 
   test 'should redirect to search with il' do
-    get :search, q: 'AALER', il_s: 'equateIL'
+    get :search, params: { q: 'AALER', il_s: 'equateIL' }
     assert_redirected_to sequences_path + '/AALER/equateIL'
   end
 
   test 'should redirect to search without il' do
-    get :search, q: 'AALER'
+    get :search, params: { q: 'AALER' }
     assert_redirected_to sequences_path + '/AALER/'
   end
 
   test 'should redirect to search page with error' do
-    get :search, q: ''
+    get :search, params: { q: '' }
     assert_equal 'Your query was empty, please try again.', flash[:error]
     assert_redirected_to search_single_path
   end
@@ -30,7 +30,7 @@ class SequencesControllerTest < ActionController::TestCase
     sequence = sequences(:sequence4)
     taxon1 = taxons(:taxon1)
     taxon2 = taxons(:taxon2)
-    get :show, id: 4
+    get :show, params: { id: 4 }
     assert_response :success
     assert_template :show
     assert_equal sequence.sequence, assigns(:original_sequence)
@@ -50,7 +50,7 @@ class SequencesControllerTest < ActionController::TestCase
     sequence = sequences(:sequence4)
     taxon1 = taxons(:taxon1)
     taxon2 = taxons(:taxon2)
-    get :show, id: 'AAILER'
+    get :show, params: { id: 'AAILER' }
     assert_response :success
     assert_template :show
     assert_equal sequence.sequence, assigns(:original_sequence)
@@ -67,7 +67,7 @@ class SequencesControllerTest < ActionController::TestCase
   end
 
   test 'should get show with distinct lineage' do
-    get :show, id: 7
+    get :show, params: { id: 7 }
     assert_response :success
     assert_template :show
   end
@@ -76,7 +76,7 @@ class SequencesControllerTest < ActionController::TestCase
     sequence = sequences(:sequence4)
     taxon1 = taxons(:taxon1)
     taxon2 = taxons(:taxon2)
-    get :show, id: 'aailer'
+    get :show, params: { id: 'aailer' }
     assert_response :success
     assert_template :show
     assert_equal sequence.sequence, assigns(:original_sequence)
@@ -96,7 +96,7 @@ class SequencesControllerTest < ActionController::TestCase
     sequence = sequences(:sequence5)
     taxon1 = taxons(:taxon1)
     taxon2 = taxons(:taxon2)
-    get :show, id: 5, equate_il: 'equateIL'
+    get :show, params: { id: 5, equate_il: 'equateIL' }
     assert_response :success
     assert_template :show
     assert_equal sequence.sequence, assigns(:original_sequence)
@@ -116,7 +116,7 @@ class SequencesControllerTest < ActionController::TestCase
     sequence = sequences(:sequence5)
     taxon1 = taxons(:taxon1)
     taxon2 = taxons(:taxon2)
-    get :show, id: 'AAILER', equate_il: 'equateIL'
+    get :show, params: { id: 'AAILER', equate_il: 'equateIL' }
     assert_response :success
     assert_template :show
     assert_equal @request.parameters[:id], assigns(:original_sequence)
@@ -136,7 +136,7 @@ class SequencesControllerTest < ActionController::TestCase
     sequence = sequences(:sequence5)
     taxon1 = taxons(:taxon1)
     taxon2 = taxons(:taxon2)
-    get :show, id: 'AAILERA'
+    get :show, params: { id: 'AAILERA' }
     assert_response :success
     assert_template :show
     assert_equal @request.parameters[:id], assigns(:original_sequence)
@@ -156,7 +156,7 @@ class SequencesControllerTest < ActionController::TestCase
     sequence = sequences(:sequence5)
     sequence6 = sequences(:sequence6)
     taxon2 = taxons(:taxon2)
-    get :show, id: 'AAILERAGGAR'
+    get :show, params: { id: 'AAILERAGGAR' }
     assert_response :success
     assert_template :show
     assert_equal @request.parameters[:id], assigns(:original_sequence)
@@ -173,25 +173,25 @@ class SequencesControllerTest < ActionController::TestCase
   end
 
   test 'show should error when id not found' do
-    get :show, id: -1
+    get :show, params: { id: -1 }
     assert_equal 'The sequence you searched for is too short.', flash[:error]
     assert_redirected_to search_single_url
   end
 
   test 'show should error when peptide not found' do
-    get :show, id: 'LSKDLSQDFLSQDFS'
+    get :show, params: { id: 'LSKDLSQDFLSQDFS' }
     assert flash[:error].start_with? 'No matches for peptide'
     assert_redirected_to search_single_url
   end
 
   test 'show should error when peptide too short' do
-    get :show, id: 'AA'
+    get :show, params: { id: 'AA' }
     assert_equal 'The sequence you searched for is too short.', flash[:error]
     assert_redirected_to search_single_url
   end
 
   test 'should get multi_search' do
-    post :multi_search, qs: "AALER\nAALER\nAAILER\nMISSES", search_name: ''
+    post :multi_search, params: { qs: "AALER\nAALER\nAAILER\nMISSES", search_name: '' }
     assert_response :success
     assert_template :multi_search
     assert_equal 'Metaproteomics analysis result', assigns(:title)
@@ -210,7 +210,7 @@ class SequencesControllerTest < ActionController::TestCase
   end
 
   test 'should get multi_search with il' do
-    post :multi_search, qs: "AALER\nAAILER\nMISSES", search_name: '', il: 1
+    post :multi_search, params: { qs: "AALER\nAAILER\nMISSES", search_name: '', il: 1 }
     assert_response :success
     assert_template :multi_search
     assert_equal 'Metaproteomics analysis result', assigns(:title)
@@ -229,7 +229,7 @@ class SequencesControllerTest < ActionController::TestCase
   end
 
   test 'should get multi_search with dupes' do
-    post :multi_search, qs: "AALER\nAALER\nAAILER\nMISSES", search_name: '', dupes: 1
+    post :multi_search, params: { qs: "AALER\nAALER\nAAILER\nMISSES", search_name: '', dupes: 1 }
     assert_response :success
     assert_template :multi_search
     assert_equal 'Metaproteomics analysis result', assigns(:title)
@@ -248,7 +248,7 @@ class SequencesControllerTest < ActionController::TestCase
   end
 
   test 'should get multi_search without advanced' do
-    post :multi_search, qs: 'AAILERAGGAR', search_name: ''
+    post :multi_search, params: { qs: 'AAILERAGGAR', search_name: '' }
     assert_response :success
     assert_template :multi_search
     assert_equal 'Metaproteomics analysis result', assigns(:title)
@@ -267,7 +267,7 @@ class SequencesControllerTest < ActionController::TestCase
   end
 
   test 'should get multi_search with advanced' do
-    post :multi_search, qs: 'AAILERAGGAR', search_name: '', missed: 1
+    post :multi_search, params: { qs: 'AAILERAGGAR', search_name: '', missed: 1 }
     assert_response :success
     assert_template :multi_search
     assert_equal 'Metaproteomics analysis result', assigns(:title)
@@ -285,7 +285,7 @@ class SequencesControllerTest < ActionController::TestCase
   end
 
   test 'multi_search should return csv with export' do
-    post :multi_search, qs: "AALER\nAALER\nAAILER\nMISSES", search_name: 'exp', export: 1, nonce: 'nonce01'
+    post :multi_search, params: { qs: "AALER\nAALER\nAAILER\nMISSES", search_name: 'exp', export: 1, nonce: 'nonce01' }
     assert_response :success
     assert_equal 'nonce01', @response.cookies['nonce']
     assert_equal 'attachment; filename=exp.csv', @response.headers['Content-Disposition']
@@ -295,7 +295,7 @@ class SequencesControllerTest < ActionController::TestCase
   end
 
   test 'multi_search should return csv with export and IL' do
-    post :multi_search, qs: "AALER\nAALER\nAAILER\nMISSES", search_name: 'exp', il: 1, export: 1, nonce: 'nonce01'
+    post :multi_search, params: { qs: "AALER\nAALER\nAAILER\nMISSES", search_name: 'exp', il: 1, export: 1, nonce: 'nonce01' }
     assert_response :success
     assert_equal 'nonce01', @response.cookies['nonce']
     assert_equal 'attachment; filename=exp.csv', @response.headers['Content-Disposition']
@@ -305,7 +305,7 @@ class SequencesControllerTest < ActionController::TestCase
   end
 
   test 'multi_search should return csv with export and advanced' do
-    post :multi_search, qs: 'AAILERAGGAR', search_name: 'exp', missed: 1, export: 1, nonce: 'nonce01'
+    post :multi_search, params: { qs: 'AAILERAGGAR', search_name: 'exp', missed: 1, export: 1, nonce: 'nonce01' }
     assert_response :success
     assert_equal 'nonce01', @response.cookies['nonce']
     assert_equal 'attachment; filename=exp.csv', @response.headers['Content-Disposition']
@@ -313,7 +313,7 @@ class SequencesControllerTest < ActionController::TestCase
   end
 
   test 'multi_search should return csv with export and without advanced' do
-    post :multi_search, qs: 'AAILERAGGAR', search_name: 'exp', export: 1, nonce: 'nonce01'
+    post :multi_search, params: { qs: 'AAILERAGGAR', search_name: 'exp', export: 1, nonce: 'nonce01' }
     assert_response :success
     assert_equal 'nonce01', @response.cookies['nonce']
     assert_equal 'attachment; filename=exp.csv', @response.headers['Content-Disposition']
@@ -323,7 +323,7 @@ class SequencesControllerTest < ActionController::TestCase
   end
 
   test 'multi_search should add pride url is data comes from pride' do
-    post :multi_search, qs: 'AALER', search_name: 'PRIDE assay 123456'
+    post :multi_search, params: { qs: 'AALER', search_name: 'PRIDE assay 123456' }
     assert_response :success
     assert_template :multi_search
     assert assigns(:pride_url).include?('123456')
@@ -331,14 +331,14 @@ class SequencesControllerTest < ActionController::TestCase
   end
 
   test 'multi_search should include name in title' do
-    post :multi_search, qs: "AALER\nAAILER\nMISSES", search_name: 'title'
+    post :multi_search, params: { qs: "AALER\nAAILER\nMISSES", search_name: 'title' }
     assert_response :success
     assert_template :multi_search
     assert_equal 'Metaproteomics analysis result of title', assigns(:title)
   end
 
   test 'multi_search should error when input is empty' do
-    post :multi_search, qs: '', search_name: ''
+    post :multi_search, params: { qs: '', search_name: '' }
     assert_equal 'Your query was empty, please try again.', flash[:error]
     assert_redirected_to datasets_path
   end
