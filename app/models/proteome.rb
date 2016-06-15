@@ -65,7 +65,7 @@ class Proteome < ApplicationRecord
 
   # returns all proteomes in the database
   def self.proteomes
-    Proteome.joins(:lineage).select('proteomes.name as name, proteomes.id, proteomes.proteome_accession_number as proteome_accession, proteomes.type_strain, proteomes.reference_proteome, lineages.species as species_id, lineages.genus as genus_id, lineages.order as order_id, lineages.class as class_id').uniq
+    Proteome.joins(:lineage).select('proteomes.name as name, proteomes.id, proteomes.proteome_accession_number as proteome_accession, proteomes.type_strain, proteomes.reference_proteome, lineages.species as species_id, lineages.genus as genus_id, lineages.order as order_id, lineages.class as class_id').distinct
   end
 
   # returns all taxa needed for the proteomes
