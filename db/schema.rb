@@ -31,16 +31,15 @@ ActiveRecord::Schema.define(version: 0) do
 
   create_table "ec_cross_references", force: :cascade do |t|
     t.integer "uniprot_entry_id", limit: 4,  null: false
-    t.integer "ec_number_id",     limit: 2,  null: false
-    t.string  "ec_number",        limit: 15, null: false
+    t.string  "ec_number_code",   limit: 15, null: false
   end
 
-  add_index "ec_cross_references", ["ec_number_id"], name: "fk_ec_reference_ec_numbers", using: :btree
+  add_index "ec_cross_references", ["ec_number_code"], name: "fk_ec_reference_ec_numbers", using: :btree
   add_index "ec_cross_references", ["uniprot_entry_id"], name: "fk_ec_reference_uniprot_entries", using: :btree
 
   create_table "ec_numbers", force: :cascade do |t|
-    t.string "ec_number", limit: 15,  null: false
-    t.string "name",      limit: 140, null: false
+    t.string "code", limit: 15,  null: false
+    t.string "name", limit: 140, null: false
   end
 
   create_table "embl_cross_references", force: :cascade do |t|
@@ -54,11 +53,10 @@ ActiveRecord::Schema.define(version: 0) do
 
   create_table "go_cross_references", force: :cascade do |t|
     t.integer "uniprot_entry_id", limit: 4,  null: false
-    t.integer "go_term_id",       limit: 2,  null: false
-    t.string  "go_id",            limit: 15, null: false
+    t.string  "go_term_code",     limit: 15, null: false
   end
 
-  add_index "go_cross_references", ["go_term_id"], name: "fk_go_reference_go_terms", using: :btree
+  add_index "go_cross_references", ["go_term_code"], name: "fk_go_reference_go_terms", using: :btree
   add_index "go_cross_references", ["uniprot_entry_id"], name: "fk_go_reference_uniprot_entries", using: :btree
 
   create_table "go_lcas", force: :cascade do |t|
@@ -72,25 +70,24 @@ ActiveRecord::Schema.define(version: 0) do
   add_index "go_lcas", ["sequence_id"], name: "fk_go_lcas_sequences", using: :btree
 
   create_table "go_terms", force: :cascade do |t|
-    t.string "go_id",      limit: 15,  null: false
-    t.string "name",       limit: 200, null: false
-    t.string "name_space", limit: 2,   null: false
+    t.string "code",      limit: 15,  null: false
+    t.string "name",      limit: 200, null: false
+    t.string "namespace", limit: 2,   null: false
   end
 
   create_table "interpro_cross_references", force: :cascade do |t|
-    t.integer "uniprot_entry_id",  limit: 4,  null: false
-    t.integer "interpro_entry_id", limit: 2,  null: false
-    t.string  "interpro_id",       limit: 15, null: false
+    t.integer "uniprot_entry_id",    limit: 4,  null: false
+    t.string  "interpro_entry_code", limit: 15, null: false
   end
 
-  add_index "interpro_cross_references", ["interpro_entry_id"], name: "fk_interpro_reference_interpro_entries", using: :btree
+  add_index "interpro_cross_references", ["interpro_entry_code"], name: "fk_interpro_reference_interpro_entries", using: :btree
   add_index "interpro_cross_references", ["uniprot_entry_id"], name: "fk_interpro_reference_uniprot_entries", using: :btree
 
   create_table "interpro_entries", force: :cascade do |t|
-    t.integer "parent_id",   limit: 2,  null: false
-    t.string  "interpro_id", limit: 15, null: false
-    t.string  "name",        limit: 40, null: false
-    t.string  "type",        limit: 3
+    t.integer "parent_id", limit: 2,  null: false
+    t.string  "code",      limit: 15, null: false
+    t.string  "name",      limit: 40, null: false
+    t.string  "type",      limit: 3
   end
 
   create_table "interpro_to_gos", force: :cascade do |t|
@@ -175,15 +172,6 @@ ActiveRecord::Schema.define(version: 0) do
   add_index "proteome_cross_references", ["proteome_id"], name: "fk_proteome_cross_references", using: :btree
   add_index "proteome_cross_references", ["uniprot_entry_id"], name: "fk_proteome_cross_references_uniprot_entries", using: :btree
 
-  create_table "taxons", force: :cascade do |t|
-    t.string  "name",        limit: 120,                  null: false
-    t.string  "rank",        limit: 16
-    t.integer "parent_id",   limit: 3
-    t.binary  "valid_taxon", limit: 1,   default: 0b1, null: false
-  end
-
-  add_index "taxons", ["parent_id"], name: "fk_taxon_taxon", using: :btree
-
   create_table "proteomes", force: :cascade do |t|
     t.string  "proteome_accession_number", limit: 12,                   null: false
     t.string  "proteome_name",             limit: 100,                  null: false
@@ -218,6 +206,15 @@ ActiveRecord::Schema.define(version: 0) do
   add_index "sequences", ["lca"], name: "fk_sequences_taxons", using: :btree
   add_index "sequences", ["lca_il"], name: "fk_sequences_taxons_2", using: :btree
   add_index "sequences", ["sequence"], name: "idx_sequences", unique: true, using: :btree
+
+  create_table "taxons", force: :cascade do |t|
+    t.string  "name",        limit: 120,                  null: false
+    t.string  "rank",        limit: 16
+    t.integer "parent_id",   limit: 3
+    t.binary  "valid_taxon", limit: 1,   default: 0b1, null: false
+  end
+
+  add_index "taxons", ["parent_id"], name: "fk_taxon_taxon", using: :btree
 
   create_table "uniprot_entries", force: :cascade do |t|
     t.string  "uniprot_accession_number", limit: 10,    null: false
