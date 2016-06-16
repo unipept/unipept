@@ -46,7 +46,8 @@ CREATE TABLE IF NOT EXISTS `unipept`.`uniprot_entries` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = ascii;
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
 
 
 -- -----------------------------------------------------
@@ -58,7 +59,9 @@ CREATE TABLE IF NOT EXISTS `unipept`.`ec_numbers` (
   `name` VARCHAR(140) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `ec_number_UNIQUE` (`code` ASC))
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 
 -- -----------------------------------------------------
@@ -71,7 +74,9 @@ CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
   `name` VARCHAR(200) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `uidx_code` (`code` ASC))
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 
 -- -----------------------------------------------------
@@ -115,7 +120,8 @@ CREATE TABLE IF NOT EXISTS `unipept`.`lineages` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = ascii;
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
 
 
 -- -----------------------------------------------------
@@ -141,7 +147,8 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = ascii;
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
 
 
 -- -----------------------------------------------------
@@ -288,7 +295,8 @@ CREATE TABLE IF NOT EXISTS `unipept`.`go_cross_references` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = ascii;
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
 
 
 -- -----------------------------------------------------
@@ -312,7 +320,8 @@ CREATE TABLE IF NOT EXISTS `unipept`.`ec_cross_references` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = ascii;
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
 
 
 -- -----------------------------------------------------
@@ -346,7 +355,9 @@ CREATE TABLE IF NOT EXISTS `unipept`.`proteomes` (
     REFERENCES `unipept`.`taxons` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 
 -- -----------------------------------------------------
@@ -384,7 +395,9 @@ CREATE TABLE IF NOT EXISTS `unipept`.`proteome_caches` (
     REFERENCES `unipept`.`proteomes` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
