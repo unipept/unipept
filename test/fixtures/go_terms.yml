@@ -1,0 +1,15 @@
+# == Schema Information
+#
+# Table name: go_terms
+#
+#  id        :integer          not null, primary key
+#  code      :string(15)       not null
+#  namespace :string(18)       not null
+#  name      :string(200)      not null
+#
+
+goterm1:
+    id: 1
+    code: "go:12345"
+    namespace: "cellular component"
+    name: "some function"
