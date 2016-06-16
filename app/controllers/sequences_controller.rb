@@ -66,7 +66,7 @@ class SequencesController < ApplicationController
     ec_db = EcNumber.all
 
     # get all ec_cross_reference numbers and puts them in array
-    ec_numbers_list = ec_cross_numbers.map{|ecs| ecs.map{|ec| ec[:ec_number]} if ecs.length != 0}.compact.flatten(1)
+    ec_numbers_list = ec_cross_numbers.map{|ecs| ecs.map{|ec| ec[:ec_number_code]} if ecs.length != 0}.compact.flatten(1)
 
     # make list unique
     ec_numbers_uniq = ec_numbers_list.uniq
@@ -139,7 +139,7 @@ class SequencesController < ApplicationController
 
     # ----------- end ------------ #
 
-    gos = @entries.map(&:go_cross_references).flatten.map(&:go_id)
+    gos = @entries.map(&:go_cross_references).flatten.map(&:go_term_code)
     go_reachability(gos)
     # go_graph
     go_tree
@@ -219,7 +219,7 @@ class SequencesController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.json { render json: @entries.to_json(only: :uniprot_accession_number, include: [{ ec_cross_references: { only: :ec_number } }, { go_cross_references: { only: :go_id } }]) }
+      format.json { render json: @entries.to_json(only: :uniprot_accession_number, include: [{ ec_cross_references: { only: :ec_number_code } }, { go_cross_references: { only: :go_term_code } }]) }
       # TODO: switch to OJ for higher performance
       # format.json { render json: Oj.dump(@entries, :include => :name, :mode => :compat) }
     end
@@ -297,7 +297,7 @@ class SequencesController < ApplicationController
         end
         misses.delete(sequence.sequence)
       end
-      gos.push(*GoCrossReference.joins(uniprot_entry: { peptides: :sequence }).where('sequences.sequence' => data_slice).group('go_cross_references.go_id,sequences.id').map(&:go_id))
+      gos.push(*GoCrossReference.joins(uniprot_entry: { peptides: :sequence }).where('sequences.sequence' => data_slice).group('go_cross_references.go_term_code,sequences.id').map(&:go_term_code))
     end
     go_reachability(gos)
     go_tree
@@ -419,7 +419,7 @@ class SequencesController < ApplicationController
     @sequences.each do |seq_row|
       ec_id = seq_row[ec_equal_il]
       if !ec_id.nil?
-        ec_num = ec_id != 0 ? ec_db.find(ec_id)[:ec_number] : "-.-.-.-"
+        ec_num = ec_id != 0 ? ec_db.find(ec_id)[:ec_number_code] : "-.-.-.-"
         pep_col =  seq_row[:sequence]
         if filter_duplicates == true
           ec_self_count[ec_num] = ec_self_count.has_key?(ec_num) ? ec_self_count[ec_num]+1 : 1
