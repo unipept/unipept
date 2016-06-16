@@ -41,7 +41,6 @@ class SequencesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:root)
     assert assigns(:root).start_with? '{'
     assert assigns(:root).end_with? '}'
-    assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
     assert_equal %w(Organism kingdom species), assigns(:table_ranks)
   end
@@ -61,7 +60,6 @@ class SequencesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:root)
     assert assigns(:root).start_with? '{'
     assert assigns(:root).end_with? '}'
-    assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
     assert_equal %w(Organism kingdom species), assigns(:table_ranks)
   end
@@ -87,7 +85,6 @@ class SequencesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:root)
     assert assigns(:root).start_with? '{'
     assert assigns(:root).end_with? '}'
-    assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
     assert_equal %w(Organism kingdom species), assigns(:table_ranks)
   end
@@ -107,7 +104,6 @@ class SequencesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:root)
     assert assigns(:root).start_with? '{'
     assert assigns(:root).end_with? '}'
-    assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
     assert_equal %w(Organism kingdom species), assigns(:table_ranks)
   end
@@ -127,7 +123,6 @@ class SequencesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:root)
     assert assigns(:root).start_with? '{'
     assert assigns(:root).end_with? '}'
-    assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
     assert_equal %w(Organism kingdom species), assigns(:table_ranks)
   end
@@ -147,7 +142,6 @@ class SequencesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:root)
     assert assigns(:root).start_with? '{'
     assert assigns(:root).end_with? '}'
-    assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, nil], [taxon2, taxon1]], assigns(:table_lineages)
     assert_equal %w(Organism kingdom species), assigns(:table_ranks)
   end
@@ -167,7 +161,6 @@ class SequencesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:root)
     assert assigns(:root).start_with? '{'
     assert assigns(:root).end_with? '}'
-    assert_equal [taxon2], assigns(:common_lineage)
     assert_equal [[taxon2]], assigns(:table_lineages)
     assert_equal %w(Organism kingdom), assigns(:table_ranks)
   end
@@ -284,31 +277,31 @@ class SequencesControllerTest < ActionController::TestCase
     assert assigns(:json_sequences).include?('AAILERAGGAR')
   end
 
-  test 'multi_search should return csv with export' do
+  test 'multi_search should return xlsx with export' do
     post :multi_search, qs: "AALER\nAALER\nAAILER\nMISSES", search_name: 'exp', export: 1, nonce: 'nonce01'
     assert_response :success
     assert_equal 'nonce01', @response.cookies['nonce']
-    assert_equal 'attachment; filename=exp.csv', @response.headers['Content-Disposition']
+    assert_equal 'attachment; filename="metaproteomics_analysis_results.xlsx"', @response.headers['Content-Disposition']
     assert @response.body.include?('AALER')
     assert @response.body.include?('AAILER')
     assert_not @response.body.include?('MISSES')
   end
 
-  test 'multi_search should return csv with export and IL' do
+  test 'multi_search should return xlsx with export and IL' do
     post :multi_search, qs: "AALER\nAALER\nAAILER\nMISSES", search_name: 'exp', il: 1, export: 1, nonce: 'nonce01'
     assert_response :success
     assert_equal 'nonce01', @response.cookies['nonce']
-    assert_equal 'attachment; filename=exp.csv', @response.headers['Content-Disposition']
+    assert_equal 'attachment; filename="metaproteomics_analysis_results.xlsx"', @response.headers['Content-Disposition']
     assert @response.body.include?('AALER')
     assert @response.body.include?('AAILER')
     assert_not @response.body.include?('MISSES')
   end
 
-  test 'multi_search should return csv with export and advanced' do
+  test 'multi_search should return xlsx with export and advanced' do
     post :multi_search, qs: 'AAILERAGGAR', search_name: 'exp', missed: 1, export: 1, nonce: 'nonce01'
     assert_response :success
     assert_equal 'nonce01', @response.cookies['nonce']
-    assert_equal 'attachment; filename=exp.csv', @response.headers['Content-Disposition']
+    assert_equal 'attachment; filename="metaproteomics_analysis_results.xlsx"', @response.headers['Content-Disposition']
     assert @response.body.include?('AAILERAGGAR')
   end
 
@@ -316,7 +309,7 @@ class SequencesControllerTest < ActionController::TestCase
     post :multi_search, qs: 'AAILERAGGAR', search_name: 'exp', export: 1, nonce: 'nonce01'
     assert_response :success
     assert_equal 'nonce01', @response.cookies['nonce']
-    assert_equal 'attachment; filename=exp.csv', @response.headers['Content-Disposition']
+    assert_equal 'attachment; filename="metaproteomics_analysis_results.xlsx"', @response.headers['Content-Disposition']
     assert @response.body.include?('AGGAR')
     assert @response.body.include?('AAILER')
     assert_not @response.body.include?('AAILERAGGAR')
