@@ -9,5 +9,15 @@
 
 ecnumber1:
     id: 1
-    ec_number: "ecnumber"
+    code: "ecnumber"
+    name: "name"
+
+ecnumber2:
+    id: 2
+    code: "ecnumber"
+    name: "name"
+
+ecnumber13:
+    id: 13
+    code: "ecnumber"
     name: "name"
