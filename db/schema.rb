@@ -31,7 +31,7 @@ ActiveRecord::Schema.define(version: 0) do
 
   create_table "ec_cross_references", force: :cascade do |t|
     t.integer "uniprot_entry_id", limit: 4,  null: false
-    t.string  "ec_id",            limit: 12, null: false
+    t.string  "ec_number_code",            limit: 12, null: false
   end
 
   add_index "ec_cross_references", ["uniprot_entry_id"], name: "fk_ec_reference_uniprot_entries", using: :btree
