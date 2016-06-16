@@ -31,10 +31,17 @@ ActiveRecord::Schema.define(version: 0) do
 
   create_table "ec_cross_references", force: :cascade do |t|
     t.integer "uniprot_entry_id", limit: 4,  null: false
-    t.string  "ec_number_code",            limit: 12, null: false
+    t.string  "ec_number_code",   limit: 15, null: false
   end
 
   add_index "ec_cross_references", ["uniprot_entry_id"], name: "fk_ec_reference_uniprot_entries", using: :btree
+
+  create_table "ec_numbers", force: :cascade do |t|
+    t.string "code", limit: 15,  null: false
+    t.string "name", limit: 140, null: false
+  end
+
+  add_index "ec_numbers", ["code"], name: "ec_number_UNIQUE", unique: true, using: :btree
 
   create_table "embl_cross_references", force: :cascade do |t|
     t.integer "uniprot_entry_id", limit: 4,  null: false
@@ -51,6 +58,14 @@ ActiveRecord::Schema.define(version: 0) do
   end
 
   add_index "go_cross_references", ["uniprot_entry_id"], name: "fk_go_reference_uniprot_entries", using: :btree
+
+  create_table "go_terms", force: :cascade do |t|
+    t.string "code",      limit: 15,  null: false
+    t.string "namespace", limit: 18,  null: false
+    t.string "name",      limit: 200, null: false
+  end
+
+  add_index "go_terms", ["code"], name: "uidx_code", unique: true, using: :btree
 
   create_table "kegg_pathway_mappings", force: :cascade do |t|
     t.integer "ec_number_id",    limit: 3, null: false
@@ -99,7 +114,6 @@ ActiveRecord::Schema.define(version: 0) do
     t.integer "sequence_id",          limit: 4, null: false
     t.integer "original_sequence_id", limit: 4, null: false
     t.integer "uniprot_entry_id",     limit: 4, null: false
-    t.integer "position",             limit: 2, null: false
   end
 
   add_index "peptides", ["original_sequence_id"], name: "fk_peptides_original_sequences", using: :btree
@@ -125,11 +139,11 @@ ActiveRecord::Schema.define(version: 0) do
   add_index "proteome_cross_references", ["uniprot_entry_id"], name: "fk_proteome_cross_references_uniprot_entries", using: :btree
 
   create_table "proteomes", force: :cascade do |t|
-    t.string  "proteome_accession_number", limit: 12,                  null: false
-    t.string  "proteome_name",             limit: 86,                  null: false
+    t.string  "proteome_accession_number", limit: 12,                   null: false
+    t.string  "proteome_name",             limit: 100,                  null: false
     t.integer "taxon_id",                  limit: 3
-    t.binary  "type_strain",               limit: 1,                   null: true
-    t.binary  "reference_proteome",        limit: 1,                   null: true
+    t.binary  "type_strain",               limit: 1,   default: 0b0, null: false
+    t.binary  "reference_proteome",        limit: 1,   default: 0b0, null: false
     t.string  "strain",                    limit: 45
     t.string  "assembly",                  limit: 45
     t.string  "name",                      limit: 128
@@ -159,7 +173,7 @@ ActiveRecord::Schema.define(version: 0) do
     t.string  "name",        limit: 120,                  null: false
     t.string  "rank",        limit: 16
     t.integer "parent_id",   limit: 3
-    t.binary  "valid_taxon", limit: 1,                    null: true
+    t.binary  "valid_taxon", limit: 1,   default: 0b1, null: false
   end
 
   add_index "taxons", ["parent_id"], name: "fk_taxon_taxon", using: :btree
