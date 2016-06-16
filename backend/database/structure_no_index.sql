@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`ec_numbers` (
   `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `code` VARCHAR(15) NOT NULL,
   `name` VARCHAR(140) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_general_ci;
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
   `code` VARCHAR(15) NOT NULL,
   `namespace` ENUM('biological process', 'molecular function', 'cellular component') NOT NULL,
   `name` VARCHAR(200) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_general_ci;
