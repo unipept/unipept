@@ -10,6 +10,6 @@
 
 goterm1:
     id: 1
-    go_id: "goid"
+    code: "goid"
     name: "name"
-    go_space: "gospace"
+    namespace: "cellular component"
