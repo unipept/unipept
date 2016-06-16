@@ -72,7 +72,7 @@ ActiveRecord::Schema.define(version: 0) do
   create_table "go_terms", force: :cascade do |t|
     t.string "code",      limit: 15,  null: false
     t.string "name",      limit: 200, null: false
-    t.string "namespace", limit: 2,   null: false
+    t.string "namespace", limit: 20,   null: false
   end
 
   create_table "interpro_cross_references", force: :cascade do |t|
