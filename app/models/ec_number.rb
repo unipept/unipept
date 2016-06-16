@@ -18,6 +18,9 @@ class EcNumber < ActiveRecord::Base
   	lineage_list = []
   	mem = ""
   	count = 3
+    if ec.nil?
+      return lineage_list
+    end
   	ec.split(".").each do |ec_rank|
   	  if ec_rank != "-"
   		  lineage_list.append(mem+ec_rank+".-"*count)
@@ -44,10 +47,10 @@ class EcNumber < ActiveRecord::Base
   def self.get_ec_function(ec_ontology, ecnumber_db)
     ec_ontology_functions = {}
     # get all functions
-    tmp_ec_ontology_functions = ecnumber_db.select("ec_number, name").where(ec_number: ec_ontology)
+    tmp_ec_ontology_functions = ecnumber_db.select("code, name").where(code: ec_ontology)
     # put functions in hash
     tmp_ec_ontology_functions.each do |ec_func|
-      ec_ontology_functions[ec_func[:ec_number]] = ec_func[:name]
+      ec_ontology_functions[ec_func[:code]] = ec_func[:name]
     end
     return ec_ontology_functions
   end
