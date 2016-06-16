@@ -29,24 +29,24 @@ COLLATE = utf8_general_ci;
 -- -----------------------------------------------------
 -- Table `unipept`.`uniprot_entries`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `unipept`.`uniprot_entries` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `uniprot_accession_number` CHAR(10) ASCII NOT NULL ,
-  `version` SMALLINT UNSIGNED NOT NULL ,
-  `taxon_id` MEDIUMINT UNSIGNED NOT NULL ,
-  `type` ENUM('swissprot', 'trembl') NOT NULL ,
-  `name`VARCHAR(150) NOT NULL ,
-  `protein` TEXT NOT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `fk_uniprot_entries_taxons` (`taxon_id` ASC) ,
+CREATE TABLE IF NOT EXISTS `unipept`.`uniprot_entries` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uniprot_accession_number` CHAR(10) ASCII NOT NULL,
+  `version` SMALLINT UNSIGNED NOT NULL,
+  `taxon_id` MEDIUMINT UNSIGNED NOT NULL,
+  `type` ENUM('swissprot', 'trembl') NOT NULL,
+  `name` VARCHAR(150) NOT NULL,
+  `protein` TEXT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_uniprot_entries_taxons_idx` (`taxon_id` ASC),
+  UNIQUE INDEX `idx_uniprot_entries_accession` (`uniprot_accession_number` ASC),
   CONSTRAINT `fk_uniprot_entries_taxons`
-    FOREIGN KEY (`taxon_id` )
-    REFERENCES `unipept`.`taxons` (`id` )
+    FOREIGN KEY (`taxon_id`)
+    REFERENCES `unipept`.`taxons` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = ascii
-COLLATE = ascii_general_ci;
+DEFAULT CHARACTER SET = ascii;
 
 
 -- -----------------------------------------------------
@@ -77,47 +77,45 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `unipept`.`lineages`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `unipept`.`lineages` (
-  `taxon_id` MEDIUMINT UNSIGNED NOT NULL ,
-  `superkingdom` MEDIUMINT NULL DEFAULT NULL ,
-  `kingdom` MEDIUMINT NULL DEFAULT NULL ,
-  `subkingdom` MEDIUMINT NULL DEFAULT NULL ,
-  `superphylum` MEDIUMINT NULL DEFAULT NULL ,
-  `phylum` MEDIUMINT NULL DEFAULT NULL ,
-  `subphylum` MEDIUMINT NULL DEFAULT NULL ,
-  `superclass` MEDIUMINT NULL DEFAULT NULL ,
-  `class` MEDIUMINT NULL DEFAULT NULL ,
-  `subclass` MEDIUMINT NULL DEFAULT NULL ,
-  `infraclass` MEDIUMINT NULL DEFAULT NULL ,
-  `superorder` MEDIUMINT NULL DEFAULT NULL ,
-  `order` MEDIUMINT NULL DEFAULT NULL ,
-  `suborder` MEDIUMINT NULL DEFAULT NULL ,
-  `infraorder` MEDIUMINT NULL DEFAULT NULL ,
-  `parvorder` MEDIUMINT NULL DEFAULT NULL ,
-  `superfamily` MEDIUMINT NULL DEFAULT NULL ,
-  `family` MEDIUMINT NULL DEFAULT NULL ,
-  `subfamily` MEDIUMINT NULL DEFAULT NULL ,
-  `tribe` MEDIUMINT NULL DEFAULT NULL ,
-  `subtribe` MEDIUMINT NULL DEFAULT NULL ,
-  `genus` MEDIUMINT NULL DEFAULT NULL ,
-  `subgenus` MEDIUMINT NULL DEFAULT NULL ,
-  `species_group` MEDIUMINT NULL DEFAULT NULL ,
-  `species_subgroup` MEDIUMINT NULL DEFAULT NULL ,
-  `species` MEDIUMINT NULL DEFAULT NULL ,
-  `subspecies` MEDIUMINT NULL DEFAULT NULL ,
-  `varietas` MEDIUMINT NULL DEFAULT NULL ,
-  `forma` MEDIUMINT NULL DEFAULT NULL ,
-  PRIMARY KEY (`taxon_id`) ,
-  INDEX `idx_species` (`species` ASC) ,
-  INDEX `fk_lineages_taxons` (`taxon_id` ASC) ,
+CREATE TABLE IF NOT EXISTS `unipept`.`lineages` (
+  `taxon_id` MEDIUMINT UNSIGNED NOT NULL,
+  `superkingdom` MEDIUMINT NULL DEFAULT NULL,
+  `kingdom` MEDIUMINT NULL DEFAULT NULL,
+  `subkingdom` MEDIUMINT NULL DEFAULT NULL,
+  `superphylum` MEDIUMINT NULL DEFAULT NULL,
+  `phylum` MEDIUMINT NULL DEFAULT NULL,
+  `subphylum` MEDIUMINT NULL DEFAULT NULL,
+  `superclass` MEDIUMINT NULL DEFAULT NULL,
+  `class` MEDIUMINT NULL DEFAULT NULL,
+  `subclass` MEDIUMINT NULL DEFAULT NULL,
+  `infraclass` MEDIUMINT NULL DEFAULT NULL,
+  `superorder` MEDIUMINT NULL DEFAULT NULL,
+  `order` MEDIUMINT NULL DEFAULT NULL,
+  `suborder` MEDIUMINT NULL DEFAULT NULL,
+  `infraorder` MEDIUMINT NULL DEFAULT NULL,
+  `parvorder` MEDIUMINT NULL DEFAULT NULL,
+  `superfamily` MEDIUMINT NULL DEFAULT NULL,
+  `family` MEDIUMINT NULL DEFAULT NULL,
+  `subfamily` MEDIUMINT NULL DEFAULT NULL,
+  `tribe` MEDIUMINT NULL DEFAULT NULL,
+  `subtribe` MEDIUMINT NULL DEFAULT NULL,
+  `genus` MEDIUMINT NULL DEFAULT NULL,
+  `subgenus` MEDIUMINT NULL DEFAULT NULL,
+  `species_group` MEDIUMINT NULL DEFAULT NULL,
+  `species_subgroup` MEDIUMINT NULL DEFAULT NULL,
+  `species` MEDIUMINT NULL DEFAULT NULL,
+  `subspecies` MEDIUMINT NULL DEFAULT NULL,
+  `varietas` MEDIUMINT NULL DEFAULT NULL,
+  `forma` MEDIUMINT NULL DEFAULT NULL,
+  PRIMARY KEY (`taxon_id`),
+  INDEX `fk_lineages_taxons_idx` (`taxon_id` ASC),
   CONSTRAINT `fk_lineages_taxons`
-    FOREIGN KEY (`taxon_id` )
-    REFERENCES `unipept`.`taxons` (`id` )
+    FOREIGN KEY (`taxon_id`)
+    REFERENCES `unipept`.`taxons` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = ascii
-COLLATE = ascii_general_ci;
+DEFAULT CHARACTER SET = ascii;
 
 
 -- -----------------------------------------------------
@@ -272,39 +270,49 @@ COLLATE = ascii_general_ci;
 -- -----------------------------------------------------
 -- Table `unipept`.`go_cross_references`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `unipept`.`go_cross_references` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `go_term_code` VARCHAR(15) NOT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `fk_go_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
+CREATE TABLE IF NOT EXISTS `unipept`.`go_cross_references` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uniprot_entry_id` INT UNSIGNED NOT NULL,
+  `go_term_code` VARCHAR(15) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_go_reference_uniprot_entries` (`uniprot_entry_id` ASC),
+  INDEX `fk_go_cross_reference_go_terms_idx` (`go_term_code` ASC),
   CONSTRAINT `fk_go_cross_reference_uniprot_entries`
-    FOREIGN KEY (`uniprot_entry_id` )
-    REFERENCES `unipept`.`uniprot_entries` (`id` )
+    FOREIGN KEY (`uniprot_entry_id`)
+    REFERENCES `unipept`.`uniprot_entries` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_go_cross_reference_go_terms`
+    FOREIGN KEY (`go_term_code`)
+    REFERENCES `unipept`.`go_terms` (`code`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = ascii
-COLLATE = ascii_general_ci;
+DEFAULT CHARACTER SET = ascii;
 
 
 -- -----------------------------------------------------
 -- Table `unipept`.`ec_cross_references`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `unipept`.`ec_cross_references` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `ec_number_code` VARCHAR(15) NOT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `fk_ec_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
+CREATE TABLE IF NOT EXISTS `unipept`.`ec_cross_references` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uniprot_entry_id` INT UNSIGNED NOT NULL,
+  `ec_number_code` VARCHAR(15) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_ec_reference_uniprot_entries` (`uniprot_entry_id` ASC),
+  INDEX `fk_ec_cross_reference_ec_numbers_idx` (`ec_number_code` ASC),
   CONSTRAINT `fk_ec_cross_reference_uniprot_entries`
-    FOREIGN KEY (`uniprot_entry_id` )
-    REFERENCES `unipept`.`uniprot_entries` (`id` )
+    FOREIGN KEY (`uniprot_entry_id`)
+    REFERENCES `unipept`.`uniprot_entries` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ec_cross_reference_ec_numbers`
+    FOREIGN KEY (`ec_number_code`)
+    REFERENCES `unipept`.`ec_numbers` (`code`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = ascii
-COLLATE = ascii_general_ci;
+DEFAULT CHARACTER SET = ascii;
 
 
 -- -----------------------------------------------------
