@@ -12,6 +12,6 @@
 interproentry1:
     id: 1
     parent_id: 1
-    interpro_id: "interproid"
+    code: "interproid"
     name: "name"
-    type: "type"
+    type: "PTM"
