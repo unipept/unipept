@@ -9,7 +9,6 @@
 #
 
 eccrossreference1:
-    id: 1
-    uniprot_entry_id: 1
-    ec_number_id: 1
-    ec_number: "ecid"
+  id: 1
+  uniprot_entry_id: 2
+  ec_number_code: "1.1.1.1"
