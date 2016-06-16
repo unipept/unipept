@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`ec_numbers` (
   `code` VARCHAR(15) NOT NULL,
   `name` VARCHAR(140) NOT NULL,
   PRIMARY KEY (`id`)
-ENGINE = InnoDB
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
   `namespace` ENUM('biological process', 'molecular function', 'cellular component') NOT NULL,
   `name` VARCHAR(200) NOT NULL,
   PRIMARY KEY (`id`)
-ENGINE = InnoDB
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------

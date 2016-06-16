@@ -10,4 +10,4 @@
 eccrossreference1:
     id: 1
     uniprot_entry_id: 1
-    ec_number_code: "ecid"
+    ec_number_code: "1.2.3.4"
