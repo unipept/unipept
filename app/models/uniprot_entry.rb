@@ -15,12 +15,15 @@ class UniprotEntry < ActiveRecord::Base
   include ReadOnlyModel
   attr_accessible nil
 
-  has_many :peptides
   has_many :refseq_cross_references
   has_many :embl_cross_references
   has_many :ec_cross_references
   has_many :go_cross_references
   has_many :proteome_cross_references
+
+  has_many :peptides
+  has_many :ec_numbers, through: :ec_cross_references
+  has_many :go_terms, through: :go_cross_references
 
   belongs_to :taxon,            foreign_key: 'taxon_id',
                                 primary_key: 'id',
