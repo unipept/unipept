@@ -204,8 +204,7 @@ COLLATE = ascii_general_ci;
 CREATE  TABLE IF NOT EXISTS `unipept`.`go_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `go_term_id` SMALLINT UNSIGNED NOT NULL,
-  `go_id` VARCHAR(15) NOT NULL ,
+  `go_term_code` VARCHAR(15) NOT NULL ,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
@@ -217,9 +216,9 @@ COLLATE = ascii_general_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
   `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `go_id` VARCHAR(15) NOT NULL,
+  `code` VARCHAR(15) NOT NULL,
   `name` VARCHAR(200) NOT NULL,
-  `name_space` ENUM('BP', 'MF', 'CC') NOT NULL,
+  `namespace` ENUM('biological process', 'molecular function', 'cellular component') NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
@@ -232,8 +231,7 @@ COLLATE = ascii_general_ci;
 CREATE  TABLE IF NOT EXISTS `unipept`.`ec_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `ec_number_id` SMALLINT UNSIGNED NOT NULL,
-  `ec_number` VARCHAR(15) NOT NULL ,
+  `ec_number_code` VARCHAR(15) NOT NULL ,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
@@ -245,7 +243,7 @@ COLLATE = ascii_general_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`ec_numbers` (
   `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `ec_number` VARCHAR(15) NOT NULL,
+  `code` VARCHAR(15) NOT NULL,
   `name` VARCHAR(140) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
@@ -296,8 +294,7 @@ ENGINE = InnoDB;
 CREATE  TABLE IF NOT EXISTS `unipept`.`interpro_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `uniprot_entry_id` INT UNSIGNED NOT NULL,
-  `interpro_entry_id` SMALLINT UNSIGNED NOT NULL,
-  `interpro_id` VARCHAR(15) NOT NULL,
+  `interpro_entry_code` VARCHAR(15) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
@@ -310,9 +307,9 @@ COLLATE = ascii_general_ci;
 CREATE TABLE IF NOT EXISTS `unipept`.`interpro_entries` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `parent_id` SMALLINT UNSIGNED NOT NULL,
-  `interpro_id` VARCHAR(15) NOT NULL,
+  `code` VARCHAR(15) NOT NULL,
   `name` VARCHAR(40) NOT NULL,
-  `type` ENUM('F', 'D', 'R', 'AS','BS', 'CS', 'PTM') NULL DEFAULT NULL,
+  `type` ENUM('family', 'domain', 'repeat', 'active site','binding site', 'conserved site', 'PTM') NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
@@ -334,7 +331,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`kegg_pathways` (
   `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `long_id` VARCHAR(12) NOT NULL,
+  `code` VARCHAR(12) NOT NULL,
   `name` VARCHAR(90) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;

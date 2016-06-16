@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
   `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `code` VARCHAR(15) NOT NULL,
   `name` VARCHAR(200) NOT NULL,
-  `name_space` ENUM('biological process', 'molecular function', 'cellular component') NOT NULL,
+  `namespace` ENUM('biological process', 'molecular function', 'cellular component') NOT NULL,
   PRIMARY KEY (`id`)),
   UNIQUE INDEX `uidx_go_id` (`code` ASC))
 ENGINE = InnoDB
