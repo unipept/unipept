@@ -4,8 +4,7 @@
 #
 #  id               :integer          not null, primary key
 #  uniprot_entry_id :integer          not null
-#  ec_number_id     :integer          not null
-#  ec_number        :string(15)       not null
+#  ec_number_code   :string(15)       not null
 #
 
 eccrossreference1:

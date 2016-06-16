@@ -2,10 +2,9 @@
 #
 # Table name: interpro_cross_references
 #
-#  id                :integer          not null, primary key
-#  uniprot_entry_id  :integer          not null
-#  interpro_entry_id :integer          not null
-#  interpro_id       :string(15)       not null
+#  id                  :integer          not null, primary key
+#  uniprot_entry_id    :integer          not null
+#  interpro_entry_code :string(15)       not null
 #
 
 interprocrossreference1:
