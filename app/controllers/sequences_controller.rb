@@ -297,7 +297,7 @@ class SequencesController < ApplicationController
           end
 
           entries = sequence.peptides(@equate_il).map(&:uniprot_entry)
-          go_reachability(entries.map(&:go_cross_references).flatten.map(&:go_id))
+          go_reachability(entries.map(&:go_cross_references).flatten.map(&:go_term_code))
           go_tree
 
           @ontologies.keys.each{|o| cutoff(@go_tree[o], 0.30*@go_tree[o].data['count'], gos) unless @go_tree[o].nil?}
