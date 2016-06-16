@@ -11,5 +11,4 @@
 gocrossreference1:
     id: 1
     uniprot_entry_id: 1
-    go_term_id: 1
-    go_id: "goid"
+    go_term_code: "goid"
