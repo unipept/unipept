@@ -31,25 +31,25 @@ ALTER TABLE sequences ADD INDEX fk_sequences_ec_numbers (ec_lca ASC), ADD INDEX 
 -- -----------------------------------------------------
 -- Table `unipept`.`ec_numbers`
 -- -----------------------------------------------------
-ALTER TABLE ec_numbers ADD UNIQUE INDEX uidx_ec_number (ec_number ASC);
+ALTER TABLE ec_numbers ADD UNIQUE INDEX uidx_code (code ASC);
 
 
 -- -----------------------------------------------------
 -- Table `unipept`.`go_terms`
 -- -----------------------------------------------------
-ALTER TABLE go_terms ADD UNIQUE INDEX uidx_go_id (go_id ASC);
+ALTER TABLE go_terms ADD UNIQUE INDEX uidx_code (code ASC);
 
 
 -- -----------------------------------------------------
 -- Table `unipept`.`interpro_entries`
 -- -----------------------------------------------------
-ALTER TABLE interpro_entries ADD UNIQUE INDEX uidx_interpro_id (interpro_id ASC);
+ALTER TABLE interpro_entries ADD UNIQUE INDEX uidx_code (code ASC);
 
 
 -- -----------------------------------------------------
 -- Table `unipept`.`kegg_pathways`
 -- -----------------------------------------------------
-ALTER TABLE kegg_pathways ADD UNIQUE INDEX uidx_long_id (long_id ASC);
+ALTER TABLE kegg_pathways ADD UNIQUE INDEX uidx_code (code ASC);
 
 
 -- -----------------------------------------------------

@@ -10,16 +10,16 @@ print "adding index to taxons"
 echo "ALTER TABLE taxons ADD INDEX fk_taxon_taxon (parent_id ASC);" | mysql -u unipept -punipept unipept
 
 print "adding index to ec_numbers"
-echo "ALTER TABLE ec_numbers ADD UNIQUE INDEX uidx_ec_number (ec_number ASC);" | mysql -u unipept -punipept unipept
+echo "ALTER TABLE ec_numbers ADD UNIQUE INDEX uidx_code (code ASC);" | mysql -u unipept -punipept unipept
 
 print "adding index to go_terms"
-echo "ALTER TABLE go_terms ADD UNIQUE INDEX uidx_go_id (go_id ASC);" | mysql -u unipept -punipept unipept
+echo "ALTER TABLE go_terms ADD UNIQUE INDEX uidx_code (code ASC);" | mysql -u unipept -punipept unipept
 
 print "adding index to interpro_entries"
-echo "ALTER TABLE interpro_entries ADD UNIQUE INDEX uidx_interpro_id (interpro_id ASC);" | mysql -u unipept -punipept unipept
+echo "ALTER TABLE interpro_entries ADD UNIQUE INDEX uidx_code (code ASC);" | mysql -u unipept -punipept unipept
 
 print "adding index to kegg_pathways"
-echo "ALTER TABLE kegg_pathways ADD UNIQUE INDEX uidx_long_id (long_id ASC);" | mysql -u unipept -punipept unipept
+echo "ALTER TABLE kegg_pathways ADD UNIQUE INDEX uidx_code (code ASC);" | mysql -u unipept -punipept unipept
 
 print "adding index to kegg_pathway_mappings"
 echo "ALTER TABLE kegg_pathway_mappings ADD INDEX fk_kegg_pathways (kegg_pathway_id ASC), ALTER TABLE kegg_pathway_mappings ADD INDEX fk_ec_numbers (ec_number_id ASC);" | mysql -u unipept -punipept unipept

@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`ec_numbers` (
   `code` VARCHAR(15) NOT NULL,
   `name` VARCHAR(140) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `uidx_ec_number` (`code` ASC))
+  UNIQUE INDEX `uidx_code` (`code` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
 COLLATE = ascii_general_ci;
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
   `name` VARCHAR(200) NOT NULL,
   `namespace` ENUM('biological process', 'molecular function', 'cellular component') NOT NULL,
   PRIMARY KEY (`id`)),
-  UNIQUE INDEX `uidx_go_id` (`code` ASC))
+  UNIQUE INDEX `uidx_code` (`code` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
 COLLATE = ascii_general_ci;
@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS `unipept`.`interpro_entries` (
   `type` ENUM('family', 'domain', 'repeat', 'active site','binding site', 'conserved site', 'PTM') NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_interpro_entries_interpro_entries` (`parent_id` ASC),
-  UNIQUE INDEX `uidx_interpro_id` (`code ASC),
+  UNIQUE INDEX `uidx_code` (`code ASC),
   CONSTRAINT `fk_interpro_entries_interpro_entries`
     FOREIGN KEY (`parent_id`)
     REFERENCES `unipept`.`interpro_entries` (`id`)
