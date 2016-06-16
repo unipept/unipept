@@ -275,7 +275,7 @@ COLLATE = ascii_general_ci;
 CREATE  TABLE IF NOT EXISTS `unipept`.`go_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `go_id` VARCHAR(12) NOT NULL ,
+  `go_term_code` VARCHAR(15) NOT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_go_reference_uniprot_entries` (`uniprot_entry_id` ASC) ,
   CONSTRAINT `fk_go_cross_reference_uniprot_entries`

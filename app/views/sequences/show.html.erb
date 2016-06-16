@@ -86,7 +86,7 @@
                   <td><%= entry.name %></td>
                   <td><%= link_to entry.taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="+entry.taxon.id.to_s, :target => "_blank" %></td>
                   <td><%= raw(entry.ec_cross_references.map{|ec| "<a href='http://enzyme.expasy.org/EC/"+ec.ec_number_code+"' target='_blank'>"+ec.ec_number_code+"</a>"}.join(", ")) %></td>
-                  <td><%= raw(entry.go_cross_references.map{|go| "<a href='http://amigo.geneontology.org/amigo/term/"+go.go_id+"' target='_blank'>"+go.go_id+"</a>"}.join(", ")) %></td>
+                  <td><%= raw(entry.go_cross_references.map{|go| "<a href='http://amigo.geneontology.org/amigo/term/"+go.go_term_code+"' target='_blank'>"+go.go_term_code+"</a>"}.join(", ")) %></td>
                 </tr>
               <% end %>
             <% end %>

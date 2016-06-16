@@ -132,7 +132,7 @@ GO Cross References
 
  - ***id***: A self-assigned id. Integral, incremental, no gaps.
  - ***uniprot entry id***: Which uniprot entry we are referencing.
- - ***genbank id***: A GenBank reference of the uniprot entry.
+ - ***go term code***: A GenBank reference of the uniprot entry.
 
 Peptides
 --------

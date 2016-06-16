@@ -210,7 +210,7 @@ COLLATE = ascii_general_ci;
 CREATE  TABLE IF NOT EXISTS `unipept`.`go_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `go_id` VARCHAR(12) NOT NULL ,
+  `go_term_code` VARCHAR(15) NOT NULL ,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
@@ -222,7 +222,7 @@ COLLATE = ascii_general_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `go_id` VARCHAR(15) NOT NULL,
+  `go_term_code` VARCHAR(15) NOT NULL,
   `name` VARCHAR(160) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
