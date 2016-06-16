@@ -4,7 +4,7 @@
 #
 #  id                        :integer          not null, primary key
 #  proteome_accession_number :string(12)       not null
-#  proteome_name             :string(86)       not null
+#  proteome_name             :string(100)      not null
 #  taxon_id                  :integer
 #  type_strain               :binary(1)        default("b'0'"), not null
 #  reference_proteome        :binary(1)        default("b'0'"), not null

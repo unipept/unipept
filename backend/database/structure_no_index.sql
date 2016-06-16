@@ -21,29 +21,6 @@ COLLATE = utf8_general_ci;
 
 
 -- -----------------------------------------------------
--- Table `unipept`.`ec_numbers`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `unipept`.`ec_numbers` (
-  `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `code` VARCHAR(15) NOT NULL,
-  `name` VARCHAR(140) NOT NULL,
-  PRIMARY KEY (`id`)
-ENGINE = InnoDB
-
-
--- -----------------------------------------------------
--- Table `unipept`.`go_terms`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `code` VARCHAR(15) NOT NULL,
-  `namespace` ENUM('biological process', 'molecular function', 'cellular component') NOT NULL,
-  `name` VARCHAR(200) NOT NULL,
-  PRIMARY KEY (`id`)
-ENGINE = InnoDB
-
-
--- -----------------------------------------------------
 -- Table `unipept`.`uniprot_entries`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `unipept`.`uniprot_entries` (
@@ -58,6 +35,33 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`uniprot_entries` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
 COLLATE = ascii_general_ci;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`ec_numbers`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`ec_numbers` (
+  `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `code` VARCHAR(15) NOT NULL,
+  `name` VARCHAR(140) NOT NULL,
+  PRIMARY KEY (`id`)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`go_terms`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `code` VARCHAR(15) NOT NULL,
+  `namespace` ENUM('biological process', 'molecular function', 'cellular component') NOT NULL,
+  `name` VARCHAR(200) NOT NULL,
+  PRIMARY KEY (`id`)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 
 -- -----------------------------------------------------
@@ -109,7 +113,8 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
   `lca_il` MEDIUMINT UNSIGNED NULL ,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = ascii;
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
 
 
 -- -----------------------------------------------------
@@ -210,7 +215,7 @@ COLLATE = ascii_general_ci;
 CREATE  TABLE IF NOT EXISTS `unipept`.`go_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `go_id` VARCHAR(12) NOT NULL ,
+  `go_term_code` VARCHAR(15) NOT NULL ,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
@@ -222,7 +227,7 @@ COLLATE = ascii_general_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `go_id` VARCHAR(15) NOT NULL,
+  `go_term_code` VARCHAR(15) NOT NULL,
   `name` VARCHAR(160) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
@@ -236,7 +241,7 @@ COLLATE = ascii_general_ci;
 CREATE  TABLE IF NOT EXISTS `unipept`.`ec_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `ec_id` VARCHAR(12) NOT NULL ,
+  `ec_number_code` VARCHAR(15) NOT NULL ,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
@@ -267,7 +272,9 @@ CREATE TABLE IF NOT EXISTS `unipept`.`proteomes` (
   `assembly` VARCHAR(45) NULL,
   `name` VARCHAR(128) NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 
 -- -----------------------------------------------------
@@ -288,7 +295,9 @@ CREATE TABLE IF NOT EXISTS `unipept`.`proteome_caches` (
   `proteome_id` MEDIUMINT UNSIGNED NOT NULL,
   `json_sequences` MEDIUMTEXT NOT NULL,
   PRIMARY KEY (`proteome_id`))
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

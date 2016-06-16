@@ -116,7 +116,7 @@ EC Cross References
 
  - ***id***: A self-assigned id. Integral, incremental, no gaps.
  - ***uniprot entry id***: Which uniprot entry we are referencing.
- - ***ec id***: An EC reference of the uniprot entry.
+ - ***ec number code***: An EC reference of the uniprot entry.
 
 EMBL Cross References
 ---------------------
@@ -132,7 +132,7 @@ GO Cross References
 
  - ***id***: A self-assigned id. Integral, incremental, no gaps.
  - ***uniprot entry id***: Which uniprot entry we are referencing.
- - ***genbank id***: A GenBank reference of the uniprot entry.
+ - ***go term code***: A GenBank reference of the uniprot entry.
 
 Peptides
 --------

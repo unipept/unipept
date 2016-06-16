@@ -5,7 +5,14 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
 -- -----------------------------------------------------
 -- Table `unipept`.`taxons`
 -- -----------------------------------------------------
-ALTER TABLE taxons ADD INDEX fk_taxon_taxon (parent_id ASC);
+-- ALTER TABLE taxons ADD INDEX fk_taxon_taxon (parent_id ASC);
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`uniprot_entries`
+-- -----------------------------------------------------
+ALTER TABLE uniprot_entries ADD INDEX fk_uniprot_entries_taxons (taxon_id ASC);
+ALTER TABLE uniprot_entries ADD UNIQUE INDEX idx_uniprot_entries_accession (uniprot_accession_number ASC)
 
 
 -- -----------------------------------------------------
@@ -18,18 +25,6 @@ ALTER TABLE ec_numbers ADD UNIQUE INDEX idx_ec_code (code ASC);
 -- Table `unipept`.`go_terms`
 -- -----------------------------------------------------
 ALTER TABLE go_terms ADD UNIQUE INDEX idx_go_code (code ASC);
-
-
--- -----------------------------------------------------
--- Table `unipept`.`uniprot_entries`
--- -----------------------------------------------------
-ALTER TABLE uniprot_entries ADD INDEX fk_uniprot_entries_taxons (taxon_id ASC);
-
-
--- -----------------------------------------------------
--- Table `unipept`.`lineages`
--- -----------------------------------------------------
-ALTER TABLE lineages ADD INDEX idx_species (species ASC);
 
 
 -- -----------------------------------------------------
@@ -48,7 +43,8 @@ ALTER TABLE peptides ADD INDEX fk_peptides_sequences (sequence_id ASC), ADD INDE
 -- -----------------------------------------------------
 -- Table `unipept`.`embl_cross_references`
 -- -----------------------------------------------------
-ALTER TABLE embl_cross_references ADD INDEX fk_embl_reference_uniprot_entries (uniprot_entry_id ASC), ADD INDEX idx_sequence_id (sequence_id ASC);
+ALTER TABLE embl_cross_references ADD INDEX fk_embl_reference_uniprot_entries (uniprot_entry_id ASC);
+-- ALTER TABLE embl_cross_references ADD INDEX idx_sequence_id (sequence_id ASC);
 
 
 -- -----------------------------------------------------
@@ -61,13 +57,14 @@ ALTER TABLE refseq_cross_references ADD INDEX fk_refseq_reference_uniprot_entrie
 -- Table `unipept`.`go_cross_references`
 -- -----------------------------------------------------
 ALTER TABLE go_cross_references ADD INDEX fk_go_reference_uniprot_entries (uniprot_entry_id ASC);
+-- ALTER TABLE go_cross_references ADD INDEX fk_go_cross_reference_go_terms_idx (go_term_code ASC);
 
 
 -- -----------------------------------------------------
 -- Table `unipept`.`ec_cross_references`
 -- -----------------------------------------------------
 ALTER TABLE ec_cross_references ADD INDEX fk_ec_reference_uniprot_entries (uniprot_entry_id ASC);
-
+-- ALTER TABLE ec_cross_references ADD INDEX fk_ec_terms_reference_go_terms_idx (ec_number_code ASC);
 
 -- -----------------------------------------------------
 -- Table `unipept`.`proteomes`
