@@ -25,9 +25,9 @@ class EcCrossReferenceTest < ActiveSupport::TestCase
     assert_raises(ActiveRecord::ActiveRecordError) { eccrossreference.update_attribute(:uniprot_entry_id, 35) }
   end
 
-  test 'should raise error on ec_id change' do
+  test 'should raise error on ec_number_code change' do
     eccrossreference = ec_cross_references(:eccrossreference1)
-    assert_raises(ActiveRecord::ActiveRecordError) { eccrossreference.update_attribute(:ec_id, '35') }
+    assert_raises(ActiveRecord::ActiveRecordError) { eccrossreference.update_attribute(:ec_number_code, '35') }
   end
 
   test 'should raise error on delete' do

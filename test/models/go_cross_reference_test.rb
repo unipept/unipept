@@ -27,7 +27,7 @@ class GoCrossReferenceTest < ActiveSupport::TestCase
 
   test 'should raise error on go_id change' do
     gocrossreference = go_cross_references(:gocrossreference1)
-    assert_raises(ActiveRecord::ActiveRecordError) { gocrossreference.update_attribute(:go_id, '35') }
+    assert_raises(ActiveRecord::ActiveRecordError) { gocrossreference.update_attribute(:go_term_code, '35') }
   end
 
   test 'should raise error on delete' do
