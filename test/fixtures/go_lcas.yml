@@ -13,3 +13,15 @@ golca1:
     sequence_id: 1
     go_lca: 1
     go_lca_il: 1
+
+golca2:
+    id: 2
+    sequence_id: 1
+    go_lca: 1
+    go_lca_il: 12
+
+golca3:
+    id: 3
+    sequence_id: 10
+    go_lca: 5
+    go_lca_il: 2
