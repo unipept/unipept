@@ -37,6 +37,16 @@ class SequenceTest < ActiveSupport::TestCase
     assert_raises(ActiveRecord::ActiveRecordError) { sequence.update_attribute(:lca_il, 35) }
   end
 
+  test 'should raise error on ec_lca change' do
+    sequence = sequences(:sequence1)
+    assert_raises(ActiveRecord::ActiveRecordError) { sequence.update_attribute(:lca, 35) }
+  end
+
+  test 'should raise error on ec_lca_il change' do
+    sequence = sequences(:sequence1)
+    assert_raises(ActiveRecord::ActiveRecordError) { sequence.update_attribute(:lca_il, 35) }
+  end
+
   test 'should raise error on delete' do
     sequence = sequences(:sequence1)
     assert_raises(ActiveRecord::ReadOnlyRecord) { sequence.delete }
