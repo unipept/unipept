@@ -139,14 +139,16 @@ class SequencesController < ApplicationController
 
     # ----------- end ------------ #
 
-    gos = @entries.map(&:go_cross_references).flatten.map(&:go_term_code)
-    go_reachability(gos)
-    # go_graph
-    go_tree
+    go_array = @entries.map(&:go_cross_references).flatten.map(&:go_term_code)
+    gos_counts, graphs = GoTerm.go_reachability(go_array)
+    go_tree_build = GoTerm.go_tree(graphs)
 
     @go_lcas = []
-    @ontologies.keys.each{|o| cutoff(@go_tree[o], 0.30*@go_tree[o].data['count'], @go_lcas) unless @go_tree[o].nil?}
+    GoTerm::GO_ONTOLOGY.keys.each{|o| GoTerm.cutoff(go_tree_build[o], 0.30*go_tree_build[o].data['count'], @go_lcas) unless go_tree_build[o].nil?}
     @go_lcas.map!(&:name)
+
+    # json dump
+    @go_root = Oj.dump(go_tree_build, mode: :compat)
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree
@@ -284,7 +286,8 @@ class SequencesController < ApplicationController
     # build the resultset
     matches = {}
     misses = data.to_set
-    gos = []
+    go_consensus = []
+
     data.each_slice(1000) do |data_slice|
       Sequence.includes(Sequence.lca_t_relation_name(@equate_il) => { lineage: Lineage::ORDER_T }).where(sequence: data_slice).each do |sequence|
         lca_t = sequence.calculate_lca(@equate_il, true)
@@ -297,19 +300,20 @@ class SequencesController < ApplicationController
           end
 
           entries = sequence.peptides(@equate_il).map(&:uniprot_entry)
-          go_reachability(entries.map(&:go_cross_references).flatten.map(&:go_term_code))
-          go_tree
+          gos_counts, graphs = GoTerm.go_reachability(entries.map(&:go_cross_references).flatten.map(&:go_term_code))
+          go_tree_build = GoTerm.go_tree(graphs)
 
-          @ontologies.keys.each{|o| cutoff(@go_tree[o], 0.30*@go_tree[o].data['count'], gos) unless @go_tree[o].nil?}
-          @go_tree = nil
-          @graphs = nil
+          GoTerm::GO_ONTOLOGY.keys.each{|o| GoTerm.cutoff(go_tree_build[o], 0.30*go_tree_build[o].data['count'], go_consensus) unless go_tree_build[o].nil?}
         end
         misses.delete(sequence.sequence)
       end
     end
-    gos.map!{|c| c.data['rank']}
-    go_reachability(gos)
-    go_tree
+    go_consensus.map!{|c| c.data['rank']}
+    gos_counts, graphs = GoTerm.go_reachability(go_consensus)
+    go_tree_build = GoTerm.go_tree(graphs)
+
+    # json dump
+    @go_root = Oj.dump(go_tree_build, mode: :compat)
 
     # handle the misses
     if handle_missed
@@ -407,7 +411,7 @@ class SequencesController < ApplicationController
     #=================|EC Multisearch|=================
 
     # get all ec numbers mapped with the input peptides.
-    #TODO: write an dexport to csv; write code to match sequence with ec
+    #TODO:
 
     # new variables
     ec_ontology = {}
@@ -421,6 +425,7 @@ class SequencesController < ApplicationController
 
     # fetch sequences
     @sequences = Sequence.where(sequence: data)
+
     # equal_il
     ec_equal_il = @equate_il == true ? "ec_lca_il" : "ec_lca"
 
@@ -428,7 +433,7 @@ class SequencesController < ApplicationController
     @sequences.each do |seq_row|
       ec_id = seq_row[ec_equal_il]
       if !ec_id.nil?
-        ec_num = ec_id != 0 ? ec_db.find(ec_id)[:ec_number_code] : "-.-.-.-"
+        ec_num = ec_id != 0 ? ec_db.find(ec_id)[:code] : "-.-.-.-"
         pep_col =  seq_row[:sequence]
         if filter_duplicates == true
           ec_self_count[ec_num] = ec_self_count.has_key?(ec_num) ? ec_self_count[ec_num]+1 : 1
@@ -443,7 +448,7 @@ class SequencesController < ApplicationController
     # get function for all found ec numbers and their ontology
     ec_ontology_function = EcNumber.get_ec_function(ec_ontology_count.keys, ec_db)
 
-    # create csv format for ec functional analysis
+    # create tsv format for ec functional analysis
     if export
       ec_csv_string += "peptide\tclass\tsubclass\tsub-subclass\tenzyme\n"
       ec_ontology.each do |pep, ec_list|
@@ -495,63 +500,6 @@ class SequencesController < ApplicationController
     rescue EmptyQueryError
       flash[:error] = 'Your query was empty, please try again.'
       redirect_to datasets_path
-  end
-
-  def go_reachability(gos)
-    @gos_counts = {}
-    gos.group_by{|i| i}.each{|k,v| @gos_counts[k] = v.count}
-
-    @ontologies = {'biological_process' => 'GO:0008150', 'molecular_function' => 'GO:0003674', 'cellular_component' => 'GO:0005575'}
-
-    @graphs = {}
-    @ontologies.keys.each{|o| @graphs[o] = Graph.new(@gos_counts)}
-    @gos = @gos_counts.keys
-    for go in @gos
-      node = GO_GRAPH.find_go(go)
-      @graphs[node.namespace].add_reachable(node, go) unless node.nil?
-    end
-  end
-
-  def go_graph
-    @links = {}
-    for ont in @ontologies.keys
-      @links[ont] = []
-      graph_size = @gos_counts.map{|g,n| @graphs[ont].terms.include?(g) ? n : 0}.inject(:+)
-      @graphs[ont].terms.each { |k,v| v.links.each{ |t,l| @links[ont].push({'from' => k, 'to' => t, 'label' => 'is_a', 'weight' => v.linked.map { |g| @gos_counts[g]}.inject(:+).to_f/graph_size, 'linked' => v.linked.to_a}) } }
-    end
-  end
-
-  def go_tree_counts(parent)
-    parent.data['count'] = parent.data['self_count']
-    for child in parent.children
-        go_tree_counts(child)
-        parent.data['count'] += child.data['count']
-    end
-  end
-
-  def go_tree
-    @go_tree = {}
-    @go_root = {}
-    for ont in @ontologies.keys
-      @go_tree[ont] = @graphs[ont].to_tree(@ontologies[ont])
-      go_tree_counts(@go_tree[ont]) unless @go_tree[ont].nil?
-      @go_root[ont] = Oj.dump(@go_tree[ont], mode: :compat)
-    end
-      @go_root = Oj.dump(@go_tree, mode: :compat)
-  end
-
-  def cutoff(parent, cutoff, lcas)
-    if parent.data['count'] >= cutoff
-      added = false
-      for child in parent.children
-        added = cutoff(child, cutoff, lcas) || added # it's essential to put added to the back, otherwise cutoff isn't evaluated
-      end
-      if !added
-        lcas.append(parent)
-      end
-      return true
-    end
-    return false
   end
 end
 
