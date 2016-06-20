@@ -14,7 +14,7 @@ echo "ALTER TABLE uniprot_entries ADD INDEX fk_uniprot_entries_taxons (taxon_id 
 echo "ALTER TABLE uniprot_entries ADD UNIQUE INDEX idx_uniprot_entries_accession (uniprot_accession_number ASC);" | mysql -u unipept -punipept unipept
 
 print "adding index to ec_numbers"
-echo "ALTER TABLE ec_numbers ADD UNIQUE INDEX idx_ec_numbers (ec_number ASC);" | mysql -u unipept -punipept unipept
+echo "ALTER TABLE ec_numbers ADD UNIQUE INDEX idx_ec_numbers (code ASC);" | mysql -u unipept -punipept unipept
 
 print "adding index to go_terms"
 echo "ALTER TABLE go_terms ADD UNIQUE INDEX idx_go_code (code ASC);" | mysql -u unipept -punipept unipept
