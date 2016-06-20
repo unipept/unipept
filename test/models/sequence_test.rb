@@ -163,6 +163,10 @@ class SequenceTest < ActiveSupport::TestCase
     assert_equal %w(AALER AAIER).sort, Sequence.list_sequences([1, 2]).sort
   end
 
+  test 'should not crash with empty input list_sequences' do
+    assert_equal [], Sequence.list_sequences([])
+  end
+
   test 'should give correct result for filter_unique_uniprot_peptides' do
     assert_equal [], Sequence.filter_unique_uniprot_peptides([2, 1], 1)
     assert_equal [1, 2].sort, Sequence.filter_unique_uniprot_peptides([2, 1], 2)

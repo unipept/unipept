@@ -99,6 +99,7 @@ class Sequence < ActiveRecord::Base
   # integers in the where field resulted in a huge query contruction time.
   # Constructing the query manually is many times faster.
   def self.list_sequences(ids)
+    return [] if ids.empty?
     connection.select_values("select sequence from sequences where id in (#{ids.join(',')})")
   end
 
