@@ -129,6 +129,7 @@ class SequencesController < ApplicationController
     @ec_functions = {}
     @ec_ontology_count = {}
     @ec_table = {}
+    @ec_lca_root = {}
 
     # preload ec data
     # preload EcNumber table
@@ -194,6 +195,9 @@ class SequencesController < ApplicationController
     end
     @ec_root.sort_children
     @ec_root = Oj.dump(@ec_root, mode: :compat)
+
+    # get lca and common lineage
+    @ec_lca_root = EcNumber.calc_ec_lca(JSON.parse(@ec_root), "root")
 
   rescue SequenceTooShortError
     flash[:error] = 'The sequence you searched for is too short.'
