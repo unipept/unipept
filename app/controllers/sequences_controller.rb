@@ -128,6 +128,7 @@ class SequencesController < ApplicationController
     @ec_ontologies = {}
     @ec_functions = {}
     @ec_ontology_count = {}
+    @ec_table = {}
 
     # preload ec data
     # preload EcNumber table
@@ -154,6 +155,20 @@ class SequencesController < ApplicationController
       @ec_self_count[ec] = ec_numbers_list.count(ec)
     end
     @ec_ontology_count = EcNumber.count_ontology(@ec_self_count)
+
+    # EC table related stuff
+    # sort found EC numbers (no ontology)
+    @ec_ontologies_sorted = @ec_ontologies.keys.sort_by{|x|x}.flatten(1)
+
+    # create EC table
+    ec_ontologies_only.each do |ontology|
+      @ec_ontologies.values.each do |ontologies|
+        class_pos = ontologies.index(ontology)
+        if !class_pos.nil?
+          @ec_table[ontology] = EcNumber::EC_COLUMN_TITLE[class_pos+1]
+        end
+      end
+    end
 
   rescue SequenceTooShortError
     flash[:error] = 'The sequence you searched for is too short.'
