@@ -121,6 +121,40 @@ class SequencesController < ApplicationController
       # format.json { render json: Oj.dump(@entries, :include => :name, :mode => :compat) }
     end
 
+    # EC related stuff
+    # Here the EC table and EC tree are generated
+    # create global variables
+    @ec_self_count = {}
+    @ec_lca_table = {}
+    @ec_functions = {}
+    @ec_ontology_count = {}
+
+    # preload ec data
+    # preload EcNumber table
+    ec_db = EcNumber.all
+    # get all accossiated EC code
+    ec_cross_numbers = @entries.map(&:ec_cross_references)
+    # array of ec code
+    ec_numbers_list = ec_cross_numbers.map{|ecs| ecs.map{|ec| ec[:ec_number_code]} if ecs.length != 0}.compact.flatten(1)
+    # make list unique
+    ec_numbers_uniq = ec_numbers_list.uniq
+
+    # get the functions of each ECs and its ontology
+    # get all ontologies for each ec
+    ec_numbers_uniq.each do |ecn|
+      @ec_lca_table[ecn] = EcNumber.get_ontology(ecn)
+    end
+    # get ECs ontology functions
+    ec_ontologies = @ec_lca_table.values.flatten(1).uniq
+    @ec_functions = EcNumber.get_ec_function(ec_ontologies, ec_db)
+
+    # calculate the amount of ECs per node and 
+    # The amount of ECs along the branch
+    ec_numbers_uniq.each do |ec|
+      @ec_self_count[ec] = ec_numbers_list.count(ec)
+    end
+    @ec_ontology_count = EcNumber.count_ontology(@ec_self_count)
+
   rescue SequenceTooShortError
     flash[:error] = 'The sequence you searched for is too short.'
     redirect_to search_single_url
