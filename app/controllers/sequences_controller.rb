@@ -125,7 +125,7 @@ class SequencesController < ApplicationController
     # Here the EC table and EC tree are generated
     # create global variables
     @ec_self_count = {}
-    @ec_lca_table = {}
+    @ec_ontologies = {}
     @ec_functions = {}
     @ec_ontology_count = {}
 
@@ -142,11 +142,11 @@ class SequencesController < ApplicationController
     # get the functions of each ECs and its ontology
     # get all ontologies for each ec
     ec_numbers_uniq.each do |ecn|
-      @ec_lca_table[ecn] = EcNumber.get_ontology(ecn)
+      @ec_ontologies[ecn] = EcNumber.get_ontology(ecn)
     end
     # get ECs ontology functions
-    ec_ontologies = @ec_lca_table.values.flatten(1).uniq
-    @ec_functions = EcNumber.get_ec_function(ec_ontologies, ec_db)
+    ec_ontologies_only = @ec_ontologies.values.flatten(1).uniq
+    @ec_functions = EcNumber.get_ec_function(ec_ontologies_only, ec_db)
 
     # calculate the amount of ECs per node and 
     # The amount of ECs along the branch
