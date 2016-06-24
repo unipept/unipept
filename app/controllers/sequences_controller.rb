@@ -170,6 +170,31 @@ class SequencesController < ApplicationController
       end
     end
 
+    # compute EC treeview
+    # start constructing the tree from root
+    @ec_root = Node.new("-.-.-.-", 'root', nil, '-.-.-.-')
+    @ec_root.data['count'] = @ec_self_count.values.sum
+    ec_last_node =  @ec_root
+
+    # add all ec ontolgy starting from root
+    @ec_ontologies.each do |ec, ontology|
+      ec_last_node_loop = ec_last_node
+      ontology.each do |ec|
+        node = Node.find_by_id(ec, @ec_root)
+        if node.nil?
+          node = Node.new(ec, @ec_functions[ec], @ec_root, ec)
+          node.data['count'] = @ec_ontology_count[ec]
+          node.data['self_count'] = @ec_self_count.has_key?(ec) ? @ec_self_count[ec] : 0
+          ec_last_node_loop = ec_last_node_loop.add_child(node)
+        else
+          node.name = @ec_functions[ec]
+          ec_last_node_loop = node
+        end
+      end
+    end
+    @ec_root.sort_children
+    @ec_root = Oj.dump(@ec_root, mode: :compat)
+
   rescue SequenceTooShortError
     flash[:error] = 'The sequence you searched for is too short.'
     redirect_to search_single_url
