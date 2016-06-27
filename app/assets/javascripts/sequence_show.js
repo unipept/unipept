@@ -56,6 +56,27 @@ function init_sequence_show(data) {
         });
     }
 
+    function initColumnToggle() {
+        $("th a span").click(function() {
+            if ($(this).attr("class") === "classdesc" || "glyphicon") {
+                toggleColumn($(this).attr("id"));
+            }
+        })
+    }
+
+    function toggleColumn(col) {
+        els = $("#ec-table tr td:nth-child(" + col + ") div");
+        if (els.css('display') == "none") {
+            els.show();
+            $("#ec-table tr th:nth-child(" + col + ") a span.classdesc").show();
+            $("#ec-table tr th:nth-child(" + col + ") a span.glyphicon").hide();
+        } else {
+            els.hide();
+            $("#ec-table tr th:nth-child(" + col + ") a span.classdesc").hide();
+            $("#ec-table tr th:nth-child(" + col + ") a span.glyphicon").show();
+        }
+    }
+
     function addExternalLinks() {
         // Add handler to the external links buttons
         $(".externalLinks-button").parent().mouseenter(function () {
