@@ -109,6 +109,10 @@
           </ul>
           <div class='card-supporting-text'>
             <div class="tab-content">
+               <div class="tab-pane active" id="ec-tree">
+                <div id="buttons-ec-tree" class="buttons-single buttons-subnav"></div>
+                <div class="tpa-tree" id="ecTree"></div>
+              </div>
               <div class="tab-pane" id="ec-table-tab">
                 <div class="sequence_table">
                   <% colors = Hash.new %>
@@ -152,7 +156,6 @@
         peptide: "<%= @original_sequence %>",
         tree: <%= raw(@root) %>,
         ec_tree: <%= raw(@ec_root) %>,
-        go_tree: <%= raw(@go_root) %>,
         uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>
       });
     });
