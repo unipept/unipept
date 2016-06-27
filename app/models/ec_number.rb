@@ -53,12 +53,11 @@ class EcNumber < ActiveRecord::Base
     return ec_ontology_functions
   end
   
-  def self.calc_ec_lca(ec_hash, ec_root, common_ec_lineage)
+  def self.calc_ec_lca(ec_hash, ec_root)
     if ec_hash["children"].nil? or ec_hash["children"].size > 1 or ec_hash["children"] == []
-      return ec_root, common_ec_lineage
+      return ec_root
     end
     ec_root = ec_hash["children"][0]["id"]
-    common_ec_lineage.push(ec_root)
-    calc_ec_lca(ec_hash["children"][0], ec_root, common_ec_lineage)
+    calc_ec_lca(ec_hash["children"][0], ec_root)
   end
 end
