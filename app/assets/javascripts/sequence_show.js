@@ -6,6 +6,9 @@ function init_sequence_show(data) {
     // set up fancy d3TreeView
     initD3TreeView(data.ec_tree, "#ecTree")
 
+    // set up column toggle
+    initColumnToggle();
+
     // set up the fullscreen stuff
     setUpFullScreen();
 
