@@ -151,6 +151,8 @@
       init_sequence_show({
         peptide: "<%= @original_sequence %>",
         tree: <%= raw(@root) %>,
+        ec_tree: <%= raw(@ec_root) %>,
+        go_tree: <%= raw(@go_root) %>,
         uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>
       });
     });
