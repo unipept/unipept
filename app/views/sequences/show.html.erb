@@ -59,37 +59,47 @@
             <% end %>
           </table>
         </div>
-        <div class="tab-pane" id="lineage-tree">
-          <div id="buttons-single" class="buttons-single"></div>
-          <div id="lineageTree"></div>
-        </div>
-        <div class="tab-pane" id="lineage-table">
-          <div id="sequence_table">
-            <% colors = Hash.new %>
-            <table class="table table-condensed">
-              <thead>
-                <tr>
-                  <% for rank in @table_ranks do%>
-                    <th><%= rank %></th>
-                  <% end %>
-                </tr>
-              </thead>
-              <% i = -1 %>
-              <% for lineage in @table_lineages do%>
-                <% i += 1 %>
-                <tr>
-                  <td><strong><%= lineage.delete_at(0) %></strong></td>
-                  <% for rank in lineage do%>
-                    <% if !rank.nil? %>
-                      <% colors.store(rank.id, "c"+(i%30).to_s) if !colors.has_key?(rank.id) %>
-                      <td class="<%= colors[rank.id] %>"><%= link_to rank.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + rank.id.to_s, :target => "_blank", :title => "Open in NCBI" %></td>
-                    <% else %>
-                      <td></td>
+        <div class="tab-pane" id="lineage-analysis">
+          <ul class="nav nav-tabs sub-navigation">
+            <li class="active"><a class="subnav-link" id="lineage-tree-tab" href="#lineage-tree" data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+            <li><a class="subnav-link" id="lineage-table-tab" href="#lineage-table" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+          </ul>
+          <div class='card-supporting-text'>
+            <div class="tab-content">
+              <div class="tab-pane active" id="lineage-tree">
+                <div id="buttons-lineage-tree" class="buttons-single buttons-subnav"></div>
+                <div class="tpa-tree" id="lineageTree"></div>
+              </div>
+              <div class="tab-pane" id="lineage-table">
+                <div class="sequence_table">
+                  <% colors = Hash.new %>
+                  <table class="table table-condensed">
+                    <thead>
+                      <tr>
+                        <% for rank in @table_ranks do%>
+                          <th><%= rank %></th>
+                        <% end %>
+                      </tr>
+                    </thead>
+                    <% i = -1 %>
+                    <% for lineage in @table_lineages do%>
+                      <% i += 1 %>
+                      <tr>
+                        <td><strong><%= lineage.delete_at(0) %></strong></td>
+                        <% for rank in lineage do%>
+                          <% if !rank.nil? %>
+                            <% colors.store(rank.id, "c"+(i%30).to_s) if !colors.has_key?(rank.id) %>
+                            <td class="<%= colors[rank.id] %>"><%= link_to rank.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + rank.id.to_s, :target => "_blank", :title => "Open in NCBI" %></td>
+                          <% else %>
+                            <td></td>
+                          <% end %>
+                        <% end %>
+                      </tr>
                     <% end %>
-                  <% end %>
-                </tr>
-              <% end %>
-            </table>
+                  </table>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
