@@ -12,11 +12,11 @@ function init_sequence_show(data) {
     // fullscreen and save image buttons
     var buttons = ['lineage-tree', 'ec-tree']
 
+    // set up save image stuff
+    setUpImageSave(buttons);
+
     // set up the fullscreen stuff
     setUpFullScreen(buttons);
-
-    // set up save image stuff
-    setUpImageSave();
 
     // enable the external link popovers
     addExternalLinks();
@@ -124,12 +124,14 @@ function init_sequence_show(data) {
     /**
      * Sets up the full screen stuff
      */
-    function setUpFullScreen() {
+    function setUpFullScreen(buttons) {
         if (fullScreenApi.supportsFullScreen) {
-            $("#buttons-single").prepend("<button id='zoom-btn-lineage' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
-            $("#zoom-btn-lineage").click(function () {
-                logToGoogle("Single Peptide", "Full Screen");
-                window.fullScreenApi.requestFullScreen($("#lineageTree").get(0));
+            buttons.forEach(function(button) {
+                $("#buttons-" + button).prepend("<button id='zoom-btn-" + button + "' class='btn btn-default btn-xs btn-animate btn-resize'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
+                $("#zoom-btn-" + button).click(function () {
+                    logToGoogle("Single Peptide", "Full Screen");
+                    window.fullScreenApi.requestFullScreen($("#" + button + " div.tpa-tree").get(0));
+                });
             });
             $(document).bind(fullScreenApi.fullScreenEventName, resizeFullScreen);
         }
@@ -139,11 +141,13 @@ function init_sequence_show(data) {
                 var width = 916,
                     height = 600;
                 if (window.fullScreenApi.isFullScreen()) {
-                    width = $(window).width();
-                    height = $(window).height();
+                    width = $(window).width()+32;
+                    height = $(window).height()+16;
                 }
-                $("#lineageTree svg").attr("width", width);
-                $("#lineageTree svg").attr("height", height);
+                buttons.forEach(function(button) {
+                    $("#" + button + " div.tpa-tree svg").attr("width", width);
+                    $("#" + button + " div.tpa-tree svg").attr("height", height);
+                });
             }, 1000);
         }
     }
