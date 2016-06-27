@@ -114,13 +114,6 @@ class SequencesController < ApplicationController
 
     @title = "Tryptic peptide analysis of #{@original_sequence}"
 
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @entries.to_json(only: :uniprot_accession_number, include: [{ ec_cross_references: { only: :ec_number_code } }, { go_cross_references: { only: :go_term_code } }]) }
-      # TODO: switch to OJ for higher performance
-      # format.json { render json: Oj.dump(@entries, :include => :name, :mode => :compat) }
-    end
-
     # EC related stuff
     # Here the EC table and EC tree are generated
     # create global variables
@@ -188,6 +181,13 @@ class SequencesController < ApplicationController
 
     # get lca and common lineage
     @ec_lca_root = EcNumber.calc_ec_lca(JSON.parse(@ec_root), "root")
+
+    respond_to do |format|
+      format.html # show.html.erb
+      format.json { render json: @entries.to_json(only: :uniprot_accession_number, include: [{ ec_cross_references: { only: :ec_number_code } }, { go_cross_references: { only: :go_term_code } }]) }
+      # TODO: switch to OJ for higher performance
+      # format.json { render json: Oj.dump(@entries, :include => :name, :mode => :compat) }
+    end
 
   rescue SequenceTooShortError
     flash[:error] = 'The sequence you searched for is too short.'
