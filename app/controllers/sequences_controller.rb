@@ -161,16 +161,6 @@ class SequencesController < ApplicationController
     # sort found EC numbers (no ontology)
     @ec_ontologies_sorted = @ec_ontologies.keys.sort_by{|x|x}.flatten(1)
 
-    # create EC table
-    ec_ontologies_only.each do |ontology|
-      @ec_ontologies.values.each do |ontologies|
-        class_pos = ontologies.index(ontology)
-        if !class_pos.nil?
-          @ec_table[ontology] = EcNumber::EC_COLUMN_TITLE[class_pos+1]
-        end
-      end
-    end
-
     # compute EC treeview
     # start constructing the tree from root
     @ec_root = Node.new("-.-.-.-", 'root', nil, '-.-.-.-')
