@@ -102,6 +102,47 @@
             </div>
           </div>
         </div>
+        <div class="tab-pane" id="functional-analysis">
+          <ul class="nav nav-tabs sub-navigation">
+            <li><a class="subnav-link" id="ec-tree-tab" href="#ec-tree" data-toggle="tab">EC: Tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+            <li><a class="subnav-link" href="#ec-table-tab" data-toggle="tab">EC: Table <span></span></a></li>
+          </ul>
+          <div class='card-supporting-text'>
+            <div class="tab-content">
+              <div class="tab-pane" id="ec-table-tab">
+                <div class="sequence_table">
+                  <% colors = Hash.new %>
+                  <table id="ec-table" class="table table-condensed">
+                    <thead>
+                      <tr>
+                        <% pos = 1 %>
+                        <% EcNumber::EC_COLUMN_TITLE.each do |eccn| %>
+                          <th><a><span id="<%= pos %>" class="classdesc"><%= eccn %></span><span id="<%= pos %>" class="glyphicon glyphicon-resize-horizontal" style="display: none"></span></a></th>
+                          <% pos += 1%>
+                        <% end %>
+                      </tr>
+                    </thead>
+                    <% i = -1 %>
+                    <% @ec_ontologies_sorted.each do |ec_lts| %>
+                      <% i += 1 %>
+                      <tr>
+                      <td title="<%= @ec_functions[ec_lts] %>" ><div><strong><%= link_to ec_lts, "http://enzyme.expasy.org/EC/" + ec_lts %></strong></div></td>
+                      <% @ec_ontologies[ec_lts].each do |ec_ltsl| %>
+                        <% if ec_ltsl != "" %>
+                          <% colors.store(ec_ltsl, "c"+(i%30).to_s) if !colors.has_key?(ec_ltsl) %>
+                          <td title="<%= @ec_functions[ec_ltsl] %>" class="<%= colors[ec_ltsl] %>"><div class="shorten"><%= link_to @ec_functions[ec_ltsl], "http://enzyme.expasy.org/EC/" + ec_ltsl %></div></td>
+                        <% else %>
+                          <td></td>
+                        <% end %>
+                      <% end %>
+                      </tr>
+                    <% end %>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
