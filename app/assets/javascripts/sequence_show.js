@@ -55,8 +55,7 @@ function init_sequence_show(data) {
     }
 
     function initD3TreeView(data, selector) {
-        $(selector).treeview({
-          data: data,
+        $(selector).treeview(data, {
           width: 916,
           height: 600,
         });
