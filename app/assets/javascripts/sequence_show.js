@@ -1,7 +1,10 @@
 function init_sequence_show(data) {
 
     // set up the fancy tree
-    initLineageTree(data.tree);
+    initD3TreeView(data.tree, "#lineageTree");
+
+    // set up fancy d3TreeView
+    initD3TreeView(data.ec_tree, "#ecTree")
 
     // set up the fullscreen stuff
     setUpFullScreen();
@@ -42,6 +45,14 @@ function init_sequence_show(data) {
                 content = "This interactive tree bundles the complete hierarchy of EC numbers associated with all UniProt entries whose protein sequence contains " + data.peptide + ". You can click on nodes to expand them, scroll to zoom and drag to move the tree";
             }
             showInfoModal(title, content);
+        });
+    }
+
+    function initD3TreeView(data, selector) {
+        $(selector).treeview({
+          data: data,
+          width: 916,
+          height: 600,
         });
     }
 
