@@ -9,8 +9,11 @@ function init_sequence_show(data) {
     // set up column toggle
     initColumnToggle();
 
+    // fullscreen and save image buttons
+    var buttons = ['lineage-tree', 'ec-tree']
+
     // set up the fullscreen stuff
-    setUpFullScreen();
+    setUpFullScreen(buttons);
 
     // set up save image stuff
     setUpImageSave();
@@ -108,11 +111,13 @@ function init_sequence_show(data) {
     /**
      * Sets up the image save stuff
      */
-    function setUpImageSave() {
-        $("#buttons-single").prepend("<button id='save-btn-lineage' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>");
-        $("#save-btn-lineage").click(function () {
-            logToGoogle("Single Peptide", "Save Image");
-            triggerDownloadModal("#lineageTree svg", null, "unipept_treeview");
+    function setUpImageSave(buttons) {
+        buttons.forEach(function(button) {
+            $("#buttons-" + button).prepend("<button id='save-btn-" + button + "' class='btn btn-default btn-xs btn-animate btn-save'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>");
+            $("#save-btn-" + button).click(function () {
+                logToGoogle("Single Peptide", "Save Image");
+                triggerDownloadModal("#" + button + " svg", null, "unipept_"+button);
+            });
         });
     }
 
