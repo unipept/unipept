@@ -60,14 +60,26 @@ function init_sequence_show(data) {
         });
     }
 
+    function getPiechartUrl(d) {
+        if ( d.data.self_count == 0 || isNaN(d.id) == false ) { return "" };
+        org_counts = data.org_ec[d.id].map(function(d){return data.org_count[d]})
+
+        var url = "http://chart.apis.google.com/chart?chs=400x225&cht=p";
+        url += "&chdl=";
+        url += data.org_ec[d.id].join("|");
+        url += "&chd=t:";
+        url += org_counts.join(",");
+        return "<br><img src=" + url + "></br>";
+    }
+
     function initD3TreeView(data, selector) {
+        var numberFormat = d3.format(",d");
         $(selector).treeview(data, {
             width: 916,
             height: 600,
             getTooltip: function(d) {
-              let numberFormat = d3.format(",d");
               return "<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" + numberFormat(!d.data.self_count ? "0" : d.data.self_count) + (d.data.self_count && d.data.self_count === 1 ? " peptide" : " peptides") +
-                " specific to this level<br/>" + numberFormat(!d.data.count ? "0" : d.data.count) + (d.data.count && d.data.count === 1 ? " peptide" : " peptides") + " specific to this level or lower";
+                " specific to this level<br/>" + numberFormat(!d.data.count ? "0" : d.data.count) + (d.data.count && d.data.count === 1 ? " peptide" : " peptides") + " specific to this level or lower" + getPiechartUrl(d);
             },
             getLabel: function(d) { 
                 return d.name.length > 33 && (d._children || d.children) ? d.name.substring(0,30).trim()+"...": d.name
