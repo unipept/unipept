@@ -186,7 +186,9 @@
         peptide: "<%= @original_sequence %>",
         tree: <%= raw(@root) %>,
         ec_tree: <%= raw(@ec_root) %>,
-        uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>
+        uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>,
+        org_ec: <%= raw(@org_ec.to_json) %>,
+        org_count: <%= raw(@org_count.to_json) %>
       });
     });
   </script>
