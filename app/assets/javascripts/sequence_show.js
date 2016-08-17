@@ -61,7 +61,7 @@ function init_sequence_show(data) {
     }
 
     function getPiechartUrl(d) {
-        if ( d.data.self_count == 0 || isNaN(d.id) == false ) { return "" };
+        if ( d.data.self_count == 0 || isNaN(d.id) == false || d.name == "root") { return "" };
         org_counts = data.org_ec[d.id].map(function(d){return data.org_count[d]})
 
         var url = "http://chart.apis.google.com/chart?chs=400x225&cht=p";
