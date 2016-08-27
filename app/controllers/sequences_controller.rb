@@ -143,9 +143,9 @@ class SequencesController < ApplicationController
     gos_counts, graphs = GoTerm.go_reachability(go_array)
     go_tree_build = GoTerm.go_tree(graphs)
 
-    @go_lcas = []
-    GoTerm::GO_ONTOLOGY.keys.each{|o| GoTerm.cutoff(go_tree_build[o], 0.30*go_tree_build[o].data['count'], @go_lcas) unless go_tree_build[o].nil?}
-    @go_lcas.map!(&:name)
+    @go_consensus = {}
+    GoTerm::GO_ONTOLOGY.keys.each{|o| @go_consensus[o] = []}
+    GoTerm::GO_ONTOLOGY.keys.each{|o| GoTerm.cutoff(go_tree_build[o], 0.30*go_tree_build[o].data['count'], @go_consensus[o]) unless go_tree_build[o].nil?}
 
     # json dump
     @go_root = Oj.dump(go_tree_build, mode: :compat)
