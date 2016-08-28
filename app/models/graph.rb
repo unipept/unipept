@@ -1,9 +1,9 @@
 class Graph
-  attr_accessor :terms
+  attr_accessor :terms, :hits
 
-  def initialize(counts)
+  def initialize(support)
     @terms = Hash.new
-    @counts = counts
+    @hits = []
   end
 
   def add_term(term, node)
@@ -15,20 +15,21 @@ class Graph
     Hash[instance_variables.map { |var| [var[1..-1].to_sym, instance_variable_get(var)] }]
   end
 
-  def add_reachable(go, linked)
+  def add_reachable(go, support)
     return nil if go.nil?
+
     parent = @terms[go.id]
-    if parent.nil?
-      parent = GraphNode.new(go.id, go.name)
-      add_term(go.id, parent)
-    end
-    # We do need to traverse these children, even if we already processed this
-    # node, because we need to add a new reachable node.
-    parent.linked.add(linked)
+    return parent unless parent.nil?
+
+    parent = GraphNode.new(go.id, go.name, support)
+    add_term(go.id, parent)
+
     for child in go.parents
-      node = add_reachable(child, linked)
-      parent.add_link(node)
+      node = add_reachable(child, nil)
+      parent.add_parent(node)
+      node.add_child(parent)
     end
+
     parent
   end
 
@@ -36,16 +37,17 @@ class Graph
     child = nodes[node.id]
     if child.nil?
       child = Node.new(node.id[3..-1].to_i, node.name, nil, node.id)
-      child.data['self_count'] = @counts.include?(node.id) ? @counts[node.id] : 0
+      child.data['self_count'] = node.self_support.nil? ? 0 : node.self_support.length
+      child.data['count'] = node.weight
       nodes[node.id] = child
     end
-    if !node.links.values.empty?
+    if !node.parents.values.empty?
       parent = nil
-      weigth = 0
-      for cand in node.links.values
-        if parent.nil? || weigth < cand.weight
+      weight = 0
+      for cand in node.parents.values
+        if parent.nil? || weight < cand.weight
           parent = cand
-          weigth = cand.weight
+          weight = cand.weight
         end
       end
       tree_parent = add_reachable_tree(parent, nodes)
@@ -57,8 +59,8 @@ class Graph
   def to_tree(root)
     return nil unless @terms.include?(root)
     nodes = Hash.new
-    for hit in @terms[root].linked
-      add_reachable_tree(@terms[hit], nodes)
+    for hit in @hits
+      add_reachable_tree(hit, nodes)
     end
     nodes[root]
   end

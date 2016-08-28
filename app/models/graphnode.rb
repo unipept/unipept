@@ -4,25 +4,33 @@ require 'set'
 # - name
 # - links
 class GraphNode
-  attr_accessor :id, :name, :links, :linked, :weight
+  attr_accessor :id, :name, :parents, :children, :self_support
 
-  def initialize(id, name)
+  def initialize(id, name, support)
     @id = id
     @name = name
-    @links = {}
-    @linked = Set.new
-    @weight = 0
+    @parents = {}
+    @children = {}
+    @self_support = support
   end
 
-  # returns the added link
-  def add_link(link)
-    @links[link.id] = link unless @links.key?(link.id)
+  def add_parent(node)
+    @parents[node.id] = node unless @parents.key?(node.id)
   end
 
-  def add_linked(linked, count)
-    if @linked.add?(linked).nil?
-      @weight += count
-    end
+  def add_child(node)
+    @children[node.id] = node unless @children.key?(node.id)
+  end
+
+  def support
+    return @total_support unless @total_support.nil?
+    @total_support = @children.values.map(&:support).keep_if{|s| !s.nil?}.inject(Set.new, &:union)
+    @total_support = @total_support.union(@self_support) unless @self_support.nil?
+    @total_support
+  end
+
+  def weight
+    support.length
   end
 
   # used by Oj.dump to exclude the root

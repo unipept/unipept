@@ -139,8 +139,9 @@ class SequencesController < ApplicationController
 
     # ----------- end ------------ #
 
-    go_array = @entries.map(&:go_cross_references).flatten.map(&:go_term_code)
-    gos_counts, graphs = GoTerm.go_reachability(go_array)
+    go_array = @entries.map(&:go_cross_references).flatten.group_by{|go| go.go_term_code}
+    go_array.each{|k,v| go_array[k] = v.map(&:uniprot_entry_id)}
+    graphs = GoTerm.go_reachability(go_array)
     go_tree_build = GoTerm.go_tree(graphs)
 
     @go_consensus = {}
