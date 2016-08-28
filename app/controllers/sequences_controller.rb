@@ -146,7 +146,7 @@ class SequencesController < ApplicationController
 
     @go_consensus = {}
     GoTerm::GO_ONTOLOGY.keys.each{|o| @go_consensus[o] = []}
-    GoTerm::GO_ONTOLOGY.keys.each{|o| GoTerm.cutoff(go_tree_build[o], 0.30*go_tree_build[o].data['count'], @go_consensus[o]) unless go_tree_build[o].nil?}
+    GoTerm::GO_ONTOLOGY.keys.each{|o| GoTerm.cutoff(go_tree_build[o], 0.75*go_tree_build[o].data['count'], @go_consensus[o]) unless go_tree_build[o].nil?}
 
     # json dump
     @go_root = Oj.dump(go_tree_build, mode: :compat)
