@@ -287,7 +287,7 @@ class SequencesController < ApplicationController
     # build the resultset
     matches = {}
     misses = data.to_set
-    go_consensus = []
+    go_support = {}
 
     data.each_slice(1000) do |data_slice|
       Sequence.includes(Sequence.lca_t_relation_name(@equate_il) => { lineage: Lineage::ORDER_T }).where(sequence: data_slice).each do |sequence|
@@ -301,16 +301,19 @@ class SequencesController < ApplicationController
           end
 
           entries = sequence.peptides(@equate_il).map(&:uniprot_entry)
-          gos_counts, graphs = GoTerm.go_reachability(entries.map(&:go_cross_references).flatten.map(&:go_term_code))
+          go_array = entries.map(&:go_cross_references).flatten.group_by{|go| go.go_term_code}
+          go_array.each{|k,v| go_array[k] = v.map(&:uniprot_entry_id)}
+          graphs = GoTerm.go_reachability(go_array)
           go_tree_build = GoTerm.go_tree(graphs)
 
+          go_consensus = []
           GoTerm::GO_ONTOLOGY.keys.each{|o| GoTerm.cutoff(go_tree_build[o], 0.30*go_tree_build[o].data['count'], go_consensus) unless go_tree_build[o].nil?}
+          go_consensus.each{|n| go_support.has_key?(n.data['rang']) ? go_support[n.data['rank']].push(sequence.sequence) : go_support[n.data['rank']] = [sequence.sequence]}
         end
         misses.delete(sequence.sequence)
       end
     end
-    go_consensus.map!{|c| c.data['rank']}
-    gos_counts, graphs = GoTerm.go_reachability(go_consensus)
+    graphs = GoTerm.go_reachability(go_support)
     go_tree_build = GoTerm.go_tree(graphs)
 
     # json dump
