@@ -123,6 +123,8 @@ class SequencesController < ApplicationController
     @ec_ontology_count = {}
     @ec_table = {}
     @ec_lca_root = {}
+    @org_count = {}
+    @org_ec = {}
 
     # preload ec data
     # preload EcNumber table
@@ -198,6 +200,30 @@ class SequencesController < ApplicationController
 
     # json dump
     @go_root = Oj.dump(go_tree_build, mode: :compat)
+
+    org_tax = {}
+    lineage_table = Marshal.load(Marshal.dump(@table_lineages))
+    for l in lineage_table do
+      organism = l.shift
+      l = l.reverse
+      l.each do |node|
+        if !node.nil? and !org_tax.has_key?(organism)
+          org_tax[organism] = node[:name]
+        end
+      end
+    end
+
+    for d in @entries do
+      unless d.name.nil?
+        taxon_name = org_tax[d.taxon.name].gsub " ", "_"
+        d.ec_cross_references.map{|ec| ec.ec_number_code}.each do |ec|
+          unless ec.nil?
+            @org_ec[ec] = @org_ec.has_key?(ec) ? @org_ec[ec].append(taxon_name) : [taxon_name]
+            @org_count[taxon_name] = @org_count.has_key?(taxon_name) ? @org_count[taxon_name] + 1 : 1
+          end
+        end
+      end
+    end
 
     respond_to do |format|
       format.html # show.html.erb
