@@ -16,7 +16,7 @@ function init_sequence_show(data) {
     initColumnToggle();
 
     // fullscreen and save image buttons
-    var buttons = ['lineage-tree', 'ec-tree']
+    var buttons = ['lineage-tree', 'ec-tree', 'go-tree1', 'go-tree2', 'go-tree3']
 
     // set up save image stuff
     setUpImageSave(buttons);
