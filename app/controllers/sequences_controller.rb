@@ -182,6 +182,22 @@ class SequencesController < ApplicationController
     # get lca and common lineage
     @ec_lca_root = EcNumber.calc_ec_lca(JSON.parse(@ec_root), "root")
 
+    # GO retalted stuff
+    # variables
+    @go_lcas = []
+
+    # build GO tree
+    go_array = @entries.map(&:go_cross_references).flatten.map(&:go_term_code)
+    gos_counts, graphs = GoTerm.go_reachability(go_array)
+    go_tree_build = GoTerm.go_tree(graphs)
+
+    # filter GO tree
+    GoTerm::GO_ONTOLOGY.keys.each{|o| GoTerm.cutoff(go_tree_build[o], 0.30*go_tree_build[o].data['count'], @go_lcas) unless go_tree_build[o].nil?}
+    @go_lcas.map!(&:name)
+
+    # json dump
+    @go_root = Oj.dump(go_tree_build, mode: :compat)
+
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @entries.to_json(only: :uniprot_accession_number, include: [{ ec_cross_references: { only: :ec_number_code } }, { go_cross_references: { only: :go_term_code } }]) }
