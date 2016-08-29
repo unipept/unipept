@@ -184,16 +184,17 @@ class SequencesController < ApplicationController
 
     # GO retalted stuff
     # variables
-    @go_lcas = []
+    @go_consensus = {}
 
     # build GO tree
-    go_array = @entries.map(&:go_cross_references).flatten.map(&:go_term_code)
-    gos_counts, graphs = GoTerm.go_reachability(go_array)
+    go_array = @entries.map(&:go_cross_references).flatten.group_by{|go| go.go_term_code}
+    go_array.each{|k,v| go_array[k] = v.map(&:uniprot_entry_id)}
+    graphs = GoTerm.go_reachability(go_array)
     go_tree_build = GoTerm.go_tree(graphs)
 
-    # filter GO tree
-    GoTerm::GO_ONTOLOGY.keys.each{|o| GoTerm.cutoff(go_tree_build[o], 0.30*go_tree_build[o].data['count'], @go_lcas) unless go_tree_build[o].nil?}
-    @go_lcas.map!(&:name)
+    # GO filter
+    GoTerm::GO_ONTOLOGY.keys.each{|o| @go_consensus[o] = []}
+    GoTerm::GO_ONTOLOGY.keys.each{|o| GoTerm.cutoff(go_tree_build[o], 0.75*go_tree_build[o].data['count'], @go_consensus[o]) unless go_tree_build[o].nil?}
 
     # json dump
     @go_root = Oj.dump(go_tree_build, mode: :compat)
