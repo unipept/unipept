@@ -16,6 +16,7 @@ class GoTerm < ActiveRecord::Base
 
   # constant variable
   GO_ONTOLOGY = {'biological_process' => 'GO:0008150', 'molecular_function' => 'GO:0003674', 'cellular_component' => 'GO:0005575'}
+  CUTOFF = 0.75
 
   def self.go_reachability(support)
     graphs = {}
