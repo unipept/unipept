@@ -119,6 +119,9 @@
         </div>
         <div class="tab-pane" id="functional-analysis">
           <ul class="nav nav-tabs sub-navigation">
+            <li class="active"><a class="subnav-link" id="go-tree2-tab" href="#go-tree2" data-toggle="tab">GO: Molecular Function <span></span></a></li>
+            <li><a class="subnav-link" id="go-tree1-tab" href="#go-tree1" data-toggle="tab">GO: Biological Process <span></span></a></li>
+            <li><a class="subnav-link" id="go-tree3-tab" href="#go-tree3" data-toggle="tab">GO: Cellular Component <span></span></a></li>
             <li><a class="subnav-link" id="ec-tree-tab" href="#ec-tree" data-toggle="tab">EC: Tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
             <li><a class="subnav-link" href="#ec-table-tab" data-toggle="tab">EC: Table <span></span></a></li>
           </ul>
@@ -158,6 +161,18 @@
                     <% end %>
                   </table>
                 </div>
+              </div>
+              <div class="tab-pane" id="go-tree1">
+                <div id="buttons-go-tree1" class="buttons-single buttons-subnav"></div>
+                <div class="tpa-tree" id="goTree1"></div>
+              </div>
+              <div class="tab-pane active" id="go-tree2">
+                <div id="buttons-go-tree2" class="buttons-single buttons-subnav"></div>
+                <div class="tpa-tree" id="goTree2"></div>
+              </div>
+              <div class="tab-pane" id="go-tree3">
+                <div id="buttons-go-tree3" class="buttons-single buttons-subnav"></div>
+                <div class="tpa-tree" id="goTree3"></div>
               </div>
             </div>
           </div>
