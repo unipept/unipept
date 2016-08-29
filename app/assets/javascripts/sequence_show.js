@@ -6,6 +6,12 @@ function init_sequence_show(data) {
     // set up fancy d3TreeView
     initD3TreeView(data.ec_tree, "#ecTree")
 
+    // set up GO graph
+    // initDagreD3Graph(data.terms, data.edges, data.found, "goGraph", "go-graph-tab")
+    initD3TreeView(data.go_tree['biological_process'], "#goTree1")
+    initD3TreeView(data.go_tree['molecular_function'], "#goTree2")
+    initD3TreeView(data.go_tree['cellular_component'], "#goTree3")
+
     // set up column toggle
     initColumnToggle();
 
