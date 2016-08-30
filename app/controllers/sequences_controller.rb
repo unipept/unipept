@@ -159,7 +159,7 @@ class SequencesController < ApplicationController
     # compute EC treeview
     # start constructing the tree from root
     @ec_root = Node.new("-.-.-.-", 'root', nil, '-.-.-.-')
-    @ec_root.data['count'] = @ec_self_count.values.sum
+    @ec_root.data['count'] = ec_cross_numbers.select{|ec| ec != []}.length
     ec_last_node =  @ec_root
 
     # add all ec ontolgy starting from root
