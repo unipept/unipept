@@ -132,7 +132,7 @@ class SequencesController < ApplicationController
     # get all accossiated EC code
     ec_cross_numbers = @entries.map(&:ec_cross_references)
     # array of ec code
-    ec_numbers_list = ec_cross_numbers.map{|ecs| ecs.map{|ec| ec[:ec_number_code]} if ecs.length != 0}.compact.flatten(1)
+    ec_numbers_list = ec_cross_numbers.map{|ecs| ecs.map{|ec| ec[:ec_number_code]}}.compact.flatten(1)
     # make list unique
     ec_numbers_uniq = ec_numbers_list.uniq
 
