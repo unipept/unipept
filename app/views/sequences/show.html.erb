@@ -3,31 +3,12 @@
   <p class="lead">No results were found for <%= @original_sequence %>.</p>
 <% else %>
   <p class="lead"><span class="initialism"><%= @original_sequence %></span> was found in <b><%= @entries.size %></b> <%= 'UniProt entry'.pluralize(@entries.size) %> with a lowest common ancestor of <b><%= @lca_taxon.name %></b>.</p>
-  <div class="row">
-    <div class="col-sm-1">Summary of the biodiversity analysis:</div>
-    <div class="col-sm-1">Summary of the functional analysis:</div>
-  </div>
-  <div class="row">
-    <div class="col-sm-1">Lowest common ancestor: <%= link_to @lca_taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + @lca_taxon.id.to_s, :target => "_blank", :title => @lca_taxon.rank %> (<%=@lca_taxon.rank%>)</div>
-    <div class="col-sm-1">Enzyme commission: <%= link_to (@ec_lca_root == "root" ? @ec_lca_root : @ec_functions[@ec_lca_root]), "http://enzyme.expasy.org/EC/" + @ec_lca_root, :target => "_blank", :title => @ec_lca_root %></div>
-  </div>
-  <div class="row">
-    <div class="col-sm-1"><%= link_to "Blast "+@original_sequence , "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on&USER_FORMAT_DEFAULTS=on&PAGE=Proteins&PROGRAM=blastp&QUERY="+@original_sequence+"&GAPCOSTS=11%201&EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&DATABASE=nr&BLAST_PROGRAMS=blastp&MAX_NUM_SEQ=100&SHORT_QUERY_ADJUST=on&EXPECT=10&WORD_SIZE=3&MATRIX_NAME=BLOSUM62&COMPOSITION_BASED_STATISTICS=2&SHOW_OVERVIEW=on&SHOW_LINKOUT=on&ALIGNMENT_VIEW=Pairwise&MASK_CHAR=2&MASK_COLOR=1&GET_SEQUENCE=on&NEW_VIEW=on&NUM_OVERVIEW=100&DESCRIPTIONS=100&ALIGNMENTS=100&FORMAT_OBJECT=Alignment&FORMAT_TYPE=HTML&OLD_BLAST=false", :target => "_blank", :title => "Open in BLAST"%></div>
-    <div class="col-sm-1">Molecular Function (GO): <%= @go_consensus['molecular_function'].empty? ? 'root' : raw(@go_consensus['molecular_function'].map{|g| link_to g.name, 'http://amigo.geneontology.org/amigo/term/' + g.data['rank']}.join(', ')) %></div>
-  </div>
-  <div class="row">
-    <div class="col-sm-1"></div>
-    <div class="col-sm-1">Biological Process (GO): <%= @go_consensus['biological_process'].empty? ? 'root' : raw(@go_consensus['biological_process'].map{|g| link_to g.name, 'http://amigo.geneontology.org/amigo/term/' + g.data['rank']}.join(', ')) %></div>
-  </div>
-  <div class="row">
-    <div class="col-sm-1"></div>
-    <div class="col-sm-1">Cellular Component (GO): <%= @go_consensus['cellular_component'].empty? ? 'root' : raw(@go_consensus['cellular_component'].map{|g| link_to g.name, 'http://amigo.geneontology.org/amigo/term/' + g.data['rank']}.join(', ')) %></div>
-  </div>
   <div class='card card-nav'>
     <div class='card-title card-title-colored'>
       <div id="single-peptide-tabs">
         <ul class="nav nav-tabs">
-          <li class="active"><a id="proteins-tab" href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
+          <li class="active"><a id="functional-analysis-tab" href="#summary" data-toggle="tab">Summary <span></span></a></li>
+          <li><a id="proteins-tab" href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
           <li><a id="lineage-analysis-tab" href="#lineage-analysis" data-toggle="tab">Biodiversity Analysis <span></span></a></li>
           <li><a id="functional-analysis-tab" href="#functional-analysis" data-toggle="tab">Functional Analysis <span></span></a></li>
         </ul>
@@ -35,7 +16,17 @@
     </div>
     <div class='card-supporting-text'>
       <div class="tab-content">
-        <div class="tab-pane active" id="proteins">
+        <div class="tab-pane active" id="summary">
+          <h3>Summary of the biodiversity analysis:</h3>
+            <p>Lowest common ancestor: <%= link_to @lca_taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + @lca_taxon.id.to_s, :target => "_blank", :title => @lca_taxon.rank %> (<%=@lca_taxon.rank%>)</p>
+          <h3>Summary of the functional analysis:</h3>
+            <p>Enzyme commission: <%= link_to (@ec_lca_root == "root" ? @ec_lca_root : @ec_functions[@ec_lca_root]), "http://enzyme.expasy.org/EC/" + @ec_lca_root, :target => "_blank", :title => @ec_lca_root %></p>
+            <p>Molecular Function (GO): <%= @go_consensus['molecular_function'].empty? ? 'root' : raw(@go_consensus['molecular_function'].map{|g| link_to g.name, 'http://amigo.geneontology.org/amigo/term/' + g.data['rank']}.join(', ')) %></p>
+            <p>Biological Process (GO): <%= @go_consensus['biological_process'].empty? ? 'root' : raw(@go_consensus['biological_process'].map{|g| link_to g.name, 'http://amigo.geneontology.org/amigo/term/' + g.data['rank']}.join(', ')) %></p>
+            <p>Cellular Component (GO): <%= @go_consensus['cellular_component'].empty? ? 'root' : raw(@go_consensus['cellular_component'].map{|g| link_to g.name, 'http://amigo.geneontology.org/amigo/term/' + g.data['rank']}.join(', ')) %></p>
+            <p>BLAST: <%= link_to @original_sequence , "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on&USER_FORMAT_DEFAULTS=on&PAGE=Proteins&PROGRAM=blastp&QUERY="+@original_sequence+"&GAPCOSTS=11%201&EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&DATABASE=nr&BLAST_PROGRAMS=blastp&MAX_NUM_SEQ=100&SHORT_QUERY_ADJUST=on&EXPECT=10&WORD_SIZE=3&MATRIX_NAME=BLOSUM62&COMPOSITION_BASED_STATISTICS=2&SHOW_OVERVIEW=on&SHOW_LINKOUT=on&ALIGNMENT_VIEW=Pairwise&MASK_CHAR=2&MASK_COLOR=1&GET_SEQUENCE=on&NEW_VIEW=on&NUM_OVERVIEW=100&DESCRIPTIONS=100&ALIGNMENTS=100&FORMAT_OBJECT=Alignment&FORMAT_TYPE=HTML&OLD_BLAST=false", :target => "_blank", :title => "Open in BLAST"%></p>
+        </div>
+        <div class="tab-pane" id="proteins">
           <div class="buttons-single">
             <button id="clipboard-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-copy"></span> Copy to clipboard</button>
             <button id="open-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-new-window"></span> Open in UniProt</button>
