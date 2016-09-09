@@ -40,6 +40,11 @@ gem 'less-rails'
 # auto css prefixer
 gem 'autoprefixer-rails'
 
+# Axlsx for tails
+gem 'rubyzip', '= 1.0.0'
+gem 'axlsx_rails'
+gem 'axlsx'
+
 # Uglifier minifies JavaScript files by wrapping UglifyJS to be accessible
 # in Ruby
 gem 'uglifier'
@@ -58,6 +63,8 @@ end
 
 # API stats
 gem 'stathat'
+
+gem 'scbi_go'
 
 group :development do
   gem 'rubocop', require: false
