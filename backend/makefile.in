@@ -67,10 +67,9 @@ $(JAR): $(SRC)
 $(TABLES): <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 	echo "Started calculation of most tables."
 	mkdir -p <<<INTDIR>>>
-	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).TaxonsUniprots2Tables              \
-		--peptide-min     <<<PEPTIDE_MIN_LENGTH>>>                                                 \
-		--peptide-max     <<<PEPTIDE_MAX_LENGTH>>>                                                 \
-		--taxons          <(<<<CMD_ZCAT>>> <<<TABDIR>>>/taxons.tsv.gz)                           \
+	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).TaxonsUniprots2Tables      \
+		--kmer-length     <<<KMER_LENGTH>>>                                                 \
+		--taxons          <(<<<CMD_ZCAT>>> <<<TABDIR>>>/taxons.tsv.gz)                      \
 		--peptides        >(<<<CMD_GZIP>>> > <<<INTDIR>>>/peptides.tsv.gz)                  \
 		--uniprot-entries >(<<<CMD_GZIP>>> > <<<TABDIR>>>/uniprot_entries.tsv.gz)           \
 		--refseq          >(<<<CMD_GZIP>>> > <<<TABDIR>>>/refseq_cross_references.tsv.gz)   \

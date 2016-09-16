@@ -101,8 +101,7 @@ option() {
     echo "s|<<<${option#CONFIG_}>>>|${value//|/\\|}|g" >> "$sedscript"
 }
 
-option "CONFIG_PEPTIDE_MIN_LENGTH" "5" "What is the minimum length (inclusive) for peptides?"
-option "CONFIG_PEPTIDE_MAX_LENGTH" "50" "What is the maximum length (inclusive) for peptides?"
+option "CONFIG_KMER_LENGTH" "8" "The K in Kmer"
 option "CONFIG_TABDIR" "./data/tables" "Where should I store the final TSV files (large, single-write)?"
 option "CONFIG_INTDIR" "./data/intermediate" "Where should I store intermediate TSV files (large, single-write, multiple-read?"
 option "CONFIG_TAXDIR" "./data/taxon" "Where should I store and extract the downloaded taxon zip (small, single-write, single-read)?"

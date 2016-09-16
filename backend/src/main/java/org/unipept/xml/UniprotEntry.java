@@ -11,12 +11,8 @@ import java.util.stream.Stream;
  */
 public class UniprotEntry {
 
-    // TODO Make this static for now
-    private static final int K = 7;
-
     // peptide settings
-    private final int peptideMin;
-    private final int peptideMax;
+    private final int kmerLength;
 
     private String uniprotAccessionNumber;
     private int version;
@@ -31,10 +27,9 @@ public class UniprotEntry {
     private List<UniprotProteomeRef> protReferences;
     private List<String> sequences;
 
-    public UniprotEntry(String type, int peptideMin, int peptideMax) {
+    public UniprotEntry(String type, int kmerLength) {
         this.type = type;
-        this.peptideMin = peptideMin;
-        this.peptideMax = peptideMax;
+        this.kmerLength = kmerLength;
         dbReferences = new ArrayList<UniprotDbRef>();
         goReferences = new ArrayList<UniprotGORef>();
         ecReferences = new ArrayList<UniprotECRef>();
@@ -132,8 +127,8 @@ public class UniprotEntry {
     public List<String> digest() {
         sequences.clear();
         int length = sequence.length();
-        for (int i = 0; i <= length - K; i++) {
-            sequences.add(sequence.substring(i, i + K));
+        for (int i = 0; i <= length - kmerLength; i++) {
+            sequences.add(sequence.substring(i, i + kmerLength));
          }
         return sequences;
     }

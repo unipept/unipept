@@ -31,10 +31,10 @@ public class UniprotHandler extends DefaultHandler {
     private Map<String, EndTagWorker> endTagWorkers;
     private Map<String, StartTagWorker> startTagWorkers;
 
-    public UniprotHandler(int peptideMinLength, int peptideMaxLength, String uniprotType) {
+    public UniprotHandler(int kmerLength, String uniprotType) {
         super();
         this.uniprotType = uniprotType;
-        currentItem = new UniprotEntry(uniprotType, peptideMinLength, peptideMaxLength);
+        currentItem = new UniprotEntry(uniprotType, kmerLength);
         charData = new StringBuilder();
         observers = new ArrayList<UniprotObserver>();
         i = 0;
