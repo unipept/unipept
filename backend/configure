@@ -119,8 +119,8 @@ option "CONFIG_CMD_JOIN" "join" "What's my gnu join executable (e.g. join, gjoin
 
 sources_count="${#CONFIG_SOURCES[@]}"
 if [ "$sources_count" == "0" ]; then
-    CONFIG_SOURCES=('swissprot' 'ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/uniprot_sprot.xml.gz'
-                    'trembl' 'ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/uniprot_trembl.xml.gz')
+    CONFIG_SOURCES=('swissprot' 'http://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/uniprot_sprot.xml.gz'
+                    'trembl' 'http://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/uniprot_trembl.xml.gz')
     sources_count=4
 fi
 echo "CONFIG_SOURCES=(" >> "latest-config"
@@ -151,7 +151,7 @@ sources_count="${#CONFIG_SOURCES[@]}"
 ENTREZ_URL="http://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 echo "s|<<<ENTREZ_URL>>>|$ENTREZ_URL|g" >> "$sedscript"
 
-TAXON_URL="ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip"
+TAXON_URL="http://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip"
 echo "s|<<<TAXON_URL>>>|$TAXON_URL|g" >> "$sedscript"
 
 # --------------------------------------------------------------------
