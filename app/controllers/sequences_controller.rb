@@ -114,6 +114,49 @@ class SequencesController < ApplicationController
 
     @title = "Tryptic peptide analysis of #{@original_sequence}"
 
+    # EC related stuff
+    # variables
+    ec_functions = {}
+    # preload table 'ec_numbers'
+    ec_db = EcNumber.all
+    # get all accossiated EC numbers from 'ec_cross_references' table
+    ec_cross_reference_hits = @entries.map(&:ec_cross_references)
+
+    # generate ec tree, starting from root
+    ec_root = Node.new("-.-.-.-", 'root', nil, '-.-.-.-')
+    ec_root.data['count'] = ec_cross_reference_hits.select{|ec| ec != []}.length
+    ec_last_node =  ec_root
+    # add the other nodes to the tree
+    ec_cross_reference_hits.each do |crossref_hits|
+      if crossref_hits != []
+        ec_count = {}
+        crossref_hits.each do |cross_ref|
+          ec_last_node_loop = ec_last_node
+          ec_ontology = EcNumber.get_ontology(cross_ref["ec_number_code"])
+          if not ec_functions.has_key?(ec_ontology[-1]) # only add the functions that are missing
+            ec_functions = EcNumber.get_ec_function(ec_ontology, ec_functions, ec_db)
+          end
+          ec_ontology.each do |ec|
+            ec_count[ec] = ec_count.has_key?(ec) ? 0 : 1
+            node = Node.find_by_id(ec, ec_root)
+            if node.nil?
+              node = Node.new(ec, ec_functions[ec], ec_root, ec)
+              node.data['count'] = 1
+              node.data['self_count'] = ec_ontology[-1] == ec ? 1 : 0
+              ec_last_node_loop = ec_last_node_loop.add_child(node)
+            else
+              node.data['count'] += ec_count[ec]
+              node.data['self_count'] = ec_ontology[-1] == ec ? node.data['self_count']+1 : 0
+              node.name = ec_functions[ec]
+              ec_last_node_loop = node
+            end
+          end
+        end
+      end
+    end
+    ec_root.sort_children
+    @ec_root = Oj.dump(ec_root, mode: :compat)
+
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @entries.to_json(only: :uniprot_accession_number, include: [{ ec_cross_references: { only: :ec_number_code } }, { go_cross_references: { only: :go_term_code } }]) }
