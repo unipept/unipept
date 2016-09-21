@@ -104,12 +104,27 @@
         </div>
         <div class="tab-pane" id="functional-analysis">
           <ul class="nav nav-tabs sub-navigation">
-            <li class="active"><a class="subnav-link" id="ec-tree-tab" href="#ec-tree" data-toggle="tab">EC: Tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+            <li class="active"><a class="subnav-link" id="go-mf-tab" href="#go-mf" data-toggle="tab">GO: Molecular Function <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+            <li><a class="subnav-link" id="go-bp-tab" href="#go-bp" data-toggle="tab">GO: Biological Process <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+            <li><a class="subnav-link" id="go-cc-tab" href="#go-cc" data-toggle="tab">GO: Cellular Component <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+            <li><a class="subnav-link" id="ec-tree-tab" href="#ec-tree" data-toggle="tab">EC: Tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
             <li><a class="subnav-link" id="ec-table-tab" href="#ec-table" data-toggle="tab">EC: Table <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
           </ul>
           <div class='card-supporting-text'>
             <div class="tab-content">
-              <div class="tab-pane active" id="ec-tree">
+              <div class="tab-pane active" id="go-mf">
+                <div id="buttons-go-mf" class="buttons-single buttons-subnav"></div>
+                <div class="tpa-tree" id="goTreeMF"></div>
+              </div>
+              <div class="tab-pane" id="go-bp">
+                <div id="buttons-go-bp" class="buttons-single buttons-subnav"></div>
+                <div class="tpa-tree" id="goTreeBP"></div>
+              </div>
+              <div class="tab-pane" id="go-cc">
+                <div id="buttons-go-cc" class="buttons-single buttons-subnav"></div>
+                <div class="tpa-tree" id="goTreeCC"></div>
+              </div>
+              <div class="tab-pane" id="ec-tree">
                 <div id="buttons-ec-tree" class="buttons-single buttons-subnav"></div>
                 <div class="tpa-tree" id="ecTree"></div>
               </div>
@@ -156,6 +171,7 @@
         peptide: "<%= @original_sequence %>",
         tree: <%= raw(@root) %>,
         ec_tree: <%= raw(@ec_root) %>,
+        go_tree: <%= raw(@go_root) %>,
         uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>
       });
     });

@@ -168,6 +168,21 @@ class SequencesController < ApplicationController
     ec_root.sort_children
     @ec_root = Oj.dump(ec_root, mode: :compat)
 
+    # GO retalted stuff
+    # build GO tree
+    go_array = @entries.map(&:go_cross_references).flatten.group_by{|go| go.go_term_code}
+    go_array.each{|k,v| go_array[k] = v.map(&:uniprot_entry_id)}
+    graphs = GoTerm.go_reachability(go_array)
+    go_tree_build = GoTerm.go_tree(graphs)
+
+    # GO filter
+    @go_consensus = {}
+    GoTerm::GO_ONTOLOGY.keys.each{|o| @go_consensus[o] = []}
+    GoTerm::GO_ONTOLOGY.keys.each{|o| GoTerm.cutoff(go_tree_build[o], GoTerm::CUTOFF*go_tree_build[o].data['count'], @go_consensus[o]) unless go_tree_build[o].nil?}
+
+    # GO json dump
+    @go_root = Oj.dump(go_tree_build, mode: :compat)
+
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @entries.to_json(only: :uniprot_accession_number, include: [{ ec_cross_references: { only: :ec_number_code } }, { go_cross_references: { only: :go_term_code } }]) }
