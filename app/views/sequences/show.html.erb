@@ -15,6 +15,7 @@
         <ul class="nav nav-tabs">
            <li class="active"><a id="proteins-tab" href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
           <li><a id="lineage-analysis-tab" href="#lineage-analysis" data-toggle="tab">Biodiversity Analysis <span></span></a></li>
+          <li><a id="functional-analysis-tab" href="#functional-analysis" data-toggle="tab">Functional Analysis <span></span></a></li>
        </ul>
       </div>
     </div>
@@ -101,6 +102,19 @@
             </div>
           </div>
         </div>
+        <div class="tab-pane" id="functional-analysis">
+          <ul class="nav nav-tabs sub-navigation">
+            <li class="active"><a class="subnav-link" id="ec-tree-tab" href="#ec-tree" data-toggle="tab">EC: Tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+          </ul>
+          <div class='card-supporting-text'>
+            <div class="tab-content">
+              <div class="tab-pane active" id="ec-tree">
+                <div id="buttons-ec-tree" class="buttons-single buttons-subnav"></div>
+                <div class="tpa-tree" id="ecTree"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -109,6 +123,7 @@
       init_sequence_show({
         peptide: "<%= @original_sequence %>",
         tree: <%= raw(@root) %>,
+        ec_tree: <%= raw(@ec_root) %>,
         uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>
       });
     });
