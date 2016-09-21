@@ -105,12 +105,44 @@
         <div class="tab-pane" id="functional-analysis">
           <ul class="nav nav-tabs sub-navigation">
             <li class="active"><a class="subnav-link" id="ec-tree-tab" href="#ec-tree" data-toggle="tab">EC: Tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+            <li><a class="subnav-link" id="ec-table-tab" href="#ec-table" data-toggle="tab">EC: Table <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
           </ul>
           <div class='card-supporting-text'>
             <div class="tab-content">
               <div class="tab-pane active" id="ec-tree">
                 <div id="buttons-ec-tree" class="buttons-single buttons-subnav"></div>
                 <div class="tpa-tree" id="ecTree"></div>
+              </div>
+              <div class="tab-pane" id="ec-table">
+                <div class="sequence_table">
+                  <% colors = Hash.new %>
+                  <table id="ec-table" class="table table-condensed">
+                    <thead>
+                      <tr>
+                        <% pos = 1 %>
+                        <% EcNumber::EC_COLUMN_TITLE.each do |eccn| %>
+                          <th><a><span id="<%= pos %>" class="classdesc"><%= eccn %></span><span id="<%= pos %>" class="glyphicon glyphicon-resize-horizontal" style="display: none"></span></a></th>
+                          <% pos += 1%>
+                        <% end %>
+                      </tr>
+                    </thead>
+                    <% i = -1 %>
+                    <% @ec_ontologies.keys.sort_by{|ec|ec}.flatten(1).each do |ec| %>
+                      <% i += 1 %>
+                      <tr>
+                      <td title="<%= @ec_functions[ec] %>" ><div><strong><%= link_to ec, "http://enzyme.expasy.org/EC/" + ec %></strong></div></td>
+                      <% @ec_ontologies[ec].each do |ec_ont| %>
+                        <% if ec_ont != "" %>
+                          <% colors.store(ec_ont, "c"+(i%30).to_s) if !colors.has_key?(ec_ont) %>
+                          <td title="<%= @ec_functions[ec_ont] %>" class="<%= colors[ec_ont] %>"><div class="shorten"><%= link_to @ec_functions[ec_ont], "http://enzyme.expasy.org/EC/" + ec_ont %></div></td>
+                        <% else %>
+                          <td></td>
+                        <% end %>
+                      <% end %>
+                      </tr>
+                    <% end %>
+                  </table>
+                </div>
               </div>
             </div>
           </div>

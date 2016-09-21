@@ -13,6 +13,9 @@ function init_sequence_show(data) {
     // set up save image stuff
     setUpImageSave(buttons);
 
+    // set up column toggle
+    initColumnToggle();
+
     // enable the external link popovers
     addExternalLinks();
 
@@ -43,8 +46,10 @@ function init_sequence_show(data) {
             } else if ($(this).parent().attr("id") === "ec-tree-tab") {
                 title = "EC number tree";
                 content = "This interactive tree bundles the complete hierarchy of EC numbers associated with all UniProt entries whose protein sequence contains " + data.peptide + ". You can click on nodes to expand them, scroll to zoom and drag to move the tree";
-            }
-            showInfoModal(title, content);
+            } else if ($(this).parent().attr("id") === "ec-table-tab") {
+                title = "Lineage table";
+                content = "This table shows the complete hierarchy of EC numbers associated with the UniProt entries whose protein sequence contains " + data.peptide + ". The first column contains the EC number extracted from the UniProt entry, followed by columns representing the different levels of each EC number ordered from class on the left to enzyme on the right.";
+            } showInfoModal(title, content);
         });
     }
 
@@ -61,6 +66,27 @@ function init_sequence_show(data) {
                 return d.name.length > 33 && (d._children || d.children) ? d.name.substring(0,30).trim()+"...": d.name
             }
         });
+    }
+
+    function initColumnToggle() {
+        $("th a span").click(function() {
+            if ($(this).attr("class") === "classdesc" || "glyphicon") {
+                toggleColumn($(this).attr("id"));
+            }
+        })
+    }
+
+    function toggleColumn(col) {
+        els = $("#ec-table tr td:nth-child(" + col + ") div");
+        if (els.css('display') == "none") {
+            els.show();
+            $("#ec-table tr th:nth-child(" + col + ") a span.classdesc").show();
+            $("#ec-table tr th:nth-child(" + col + ") a span.glyphicon").hide();
+        } else {
+            els.hide();
+            $("#ec-table tr th:nth-child(" + col + ") a span.classdesc").hide();
+            $("#ec-table tr th:nth-child(" + col + ") a span.glyphicon").show();
+        }
     }
 
     function addExternalLinks() {
