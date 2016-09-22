@@ -122,15 +122,16 @@ class SequencesController < ApplicationController
     ec_db = EcNumber.all
     # get all accossiated EC numbers from 'ec_cross_references' table
     ec_cross_reference_hits = @entries.map(&:ec_cross_references)
+    ec_cross_found = ec_cross_reference_hits.select{|ec| ec != []}
 
     # generate ec tree, starting from root
     ec_root = Node.new("-.-.-.-", 'root', nil, '-.-.-.-')
-    ec_root.data['count'] = ec_cross_reference_hits.select{|ec| ec != []}.length
+    ec_root.data['count'] = ec_cross_found.length
     ec_last_node =  ec_root
 
     # generate the rest of the EC tree
-    ec_cross_reference_hits.each do |crossref_hits|
-      if crossref_hits != []
+    if not ec_cross_found.empty?
+      ec_cross_reference_hits.each do |crossref_hits|
         ec_count = {}
         crossref_hits.each do |cross_ref|
           ec_last_node_loop = ec_last_node
@@ -167,6 +168,23 @@ class SequencesController < ApplicationController
     end
     ec_root.sort_children
     @ec_root = Oj.dump(ec_root, mode: :compat)
+
+    # get EC LCA & consensus hits
+    ec_lca_id = equate_il ? sequence.ec_lca_il : sequence.ec_lca
+    @ec_lca = ec_lca_id == 0 ? 'root' : ec_db.select('code').where(id: ec_lca_id).map{|ec| ec.code}[0]
+    @ec_consensus = EcNumber.get_consensus(JSON.parse(@ec_root, :symbolize_names => true))
+
+    # get EC LCA
+    # After db update change code below to this!
+    # ec_lca_id = equate_il ? sequence.ec_lca_il : sequence.ec_lca unless sequence.nil?
+    # adler test always nil!
+    ec_lca_id = nil
+    if not ec_lca_id.nil?
+      @ec_lca = ec_lca_id != 0 ? ec_db.select('code').where(id: ec_lca_id).map{|ec| ec.code}[0] : 'root'
+    else
+      @ec_lca = @entries.empty? || ec_cross_found.empty? ? 'nothing' : @ec_consensus[-1]
+      @ec_consensus.shift
+    end
 
     respond_to do |format|
       format.html # show.html.erb
