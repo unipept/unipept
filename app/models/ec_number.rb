@@ -37,4 +37,12 @@ class EcNumber < ActiveRecord::Base
 		end
 		return ec_functions
 	end
+
+  	def self.get_consensus(ec_root, ec_consensus)
+    	if ec_root[:children].nil? or ec_root[:children].size > 1 or ec_root[:children] == []
+      		return ec_consensus
+    	end
+    	ec_consensus.push(ec_root[:children][0][:id])
+    	get_consensus(ec_root[:children][0], ec_consensus)
+  	end
 end

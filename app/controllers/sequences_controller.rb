@@ -168,6 +168,11 @@ class SequencesController < ApplicationController
     ec_root.sort_children
     @ec_root = Oj.dump(ec_root, mode: :compat)
 
+    # get EC LCA & consensus hits
+    ec_lca_id = equate_il ? sequence.ec_lca_il : sequence.ec_lca
+    @ec_lca = ec_lca_id == 0 ? 'root' : ec_db.select('code').where(id: ec_lca_id).map{|ec| ec.code}[0]
+    @ec_consensus = EcNumber.get_consensus(eval(@ec_root), ec_consensus = [])
+
     # GO retalted stuff
     # build GO tree
     go_array = @entries.map(&:go_cross_references).flatten.group_by{|go| go.go_term_code}
