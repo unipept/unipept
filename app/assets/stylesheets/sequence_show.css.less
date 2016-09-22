@@ -132,3 +132,41 @@ table.protein-info .organism {
 table.protein-info .dropdown-menu {
     margin-top: 0;
 }
+
+/* sub navigation */
+.sub-navigation {
+    background-color: @primary-500;
+    margin-top: -16px;
+    min-width: 916px;
+    margin-left: -16px;
+    height: 41px;
+}
+
+.card-title .nav-tabs li a {
+    outline: none;
+}
+
+.nav-tabs .subnav-link {
+    color: white;
+    height: 40px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-out;
+    background: @primary-500;
+}
+
+.nav-tabs .subnav-link:hover {
+    border-bottom: 5px solid @accent-500;
+    background: @primary-500;
+}
+
+.nav-tabs li.active .subnav-link,
+.nav-tabs li.active .subnav-link:hover,
+.nav-tabs li.active .subnav-link:focus {
+    background: @primary-500;
+    color: white;
+    border: none;
+    border-bottom: 5px solid @accent-500;
+}
