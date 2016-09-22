@@ -12,6 +12,33 @@ function initDatasets() {
         placement: "right"
     });
 
+    // enable file chooser
+    $("#myPeptideFile").on('change', function () {
+        var $input = $(this),
+            numFiles = $input.get(0).files ? $input.get(0).files.length : 1,
+            label = $input.val().replace(/\\/g, '/').replace(/.*\//, ''),
+            multi = numFiles > 1,
+            log = multi ? numFiles + ' files selected' : label;
+        $input.parents('.input-group').find(':text').val(log);
+
+        // change controller
+        if (numFiles > 1) {
+            $("form").attr('action', '/search/comparison')
+            $("#search-multi-form").attr('type', 'button')
+        };
+    });
+
+    // resetting input fasta files
+    $("#removeFiles").click(function () {
+        // reset field by removing the files
+        $(".input-group").find(':text').val("");
+        document.getElementById("myPeptideFile").value = "";
+
+        // reset controller
+        $("form").attr('action', '/search/sequences')
+        $("#search-multi-form").attr('type', 'submit')
+
+    });
 
     // add progress bar when submitting form
     $("#search-multi-form").click(function () {
