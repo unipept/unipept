@@ -27,6 +27,9 @@ var constructMultisearch = function constructMultisearch(args) {
         // set up visualisations
         initVisualisations();
 
+        // set up visualisations for treeview
+        initD3TreeView('#d3TreeView') 
+
         // set up save images
         setUpSaveImage();
 
@@ -61,13 +64,6 @@ var constructMultisearch = function constructMultisearch(args) {
             error(err.message, "Loading the Treemap visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
 
-        // treeview
-        try {
-            treeview = constructTreeview({multi : that, data : JSON.parse(JSON.stringify(data))});
-        } catch (err) {
-            error(err.message, "Loading the Treeview visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
-        }
-
         // searchtree
         try {
             searchtree = constructSearchtree({multi : that, data : data, equateIL : equateIL});
@@ -77,7 +73,22 @@ var constructMultisearch = function constructMultisearch(args) {
 
         mapping.set("sunburst", sunburst);
         mapping.set("d3TreeMap", treemap);
-        mapping.set("d3TreeView", treeview);
+    }
+
+    function initD3TreeView(selector) {
+        treeview = $(selector).treeview(data, {
+            width: 916,
+            height: 600,
+            getTooltip: function(d) {
+                let numberFormat = d3.format(",d");
+                return "<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" + numberFormat(!d.data.self_count ? "0" : d.data.self_count) + (d.data.self_count && d.data.self_count === 1 ? " peptide" : " peptides") +
+                    " specific to this level<br/>" + numberFormat(!d.data.count ? "0" : d.data.count) + (d.data.count && d.data.count === 1 ? " peptide" : " peptides") + " specific to this level or lower";
+            },
+            getLabel: function(d) { 
+            return d.name.length > 33 && (d._children || d.children) ? d.name.substring(0,30).trim()+"...": d.name
+            }
+        });
+        mapping.set(selector.substring(1,selector.length), treeview);
     }
 
     /**
