@@ -5,5 +5,5 @@ server 'adler.ugent.be', user: 'bmesuere', roles: [:web, :app], ssh_options: {
   port: 4840
 }
 
-set :branch, 'feature/adler-test'
+set :branch, 'feature/adler-test-v2'
 set :rails_env, :development
