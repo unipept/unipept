@@ -9,6 +9,7 @@ var constructMultisearch = function constructMultisearch(args) {
 
     var that = {},
         data = args.data,
+        ecData = args.ecData,
         equateIL = args.equateIL,
         missed = args.missed,
         sequences = args.sequences,
@@ -27,11 +28,12 @@ var constructMultisearch = function constructMultisearch(args) {
         // set up visualisations
         initVisualisations();
 
-        // set up visualisations for treeview
-        initD3TreeMap('#d3TreeMap') 
+        // set up visualisations for treemap
+        initD3TreeMap('#d3TreeMap')
 
         // set up visualisations for treeview
-        initD3TreeView('#d3TreeView') 
+        initD3TreeView(data, '#d3TreeView') 
+        initD3TreeView(ecData, '#ecTreeView') 
 
         // set up save images
         setUpSaveImage();
@@ -83,7 +85,7 @@ var constructMultisearch = function constructMultisearch(args) {
         mapping.set(selector.substring(1,selector.length), treemap);
     }
 
-    function initD3TreeView(selector) {
+    function initD3TreeView(data, selector) {
         treeview = $(selector).treeview(data, {
             width: 916,
             height: 600,
