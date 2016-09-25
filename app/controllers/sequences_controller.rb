@@ -263,6 +263,9 @@ class SequencesController < ApplicationController
     # save parameters
     @p = params.to_h
 
+    # fetch all ec numbers
+    ec_db = EcNumber.all
+
     # set search parameters
     @equate_il = params[:il].present?
     filter_duplicates = params[:dupes] == '1'
@@ -290,7 +293,7 @@ class SequencesController < ApplicationController
     @number_found = 0
 
     # build the resultset
-    matches = {}
+    matches, ec_matches, ec_functions = {}, {}, {}
     misses = data.to_set
     data.each_slice(1000) do |data_slice|
       Sequence.includes(Sequence.lca_t_relation_name(@equate_il) => { lineage: Lineage::ORDER_T }).where(sequence: data_slice).each do |sequence|
@@ -301,6 +304,23 @@ class SequencesController < ApplicationController
           matches[lca_t] = [] if matches[lca_t].nil?
           num_of_seq.times do
             matches[lca_t] << sequence_mapping[sequence.sequence]
+          end
+        end
+
+        # get all ECs
+        ec_lca_id = @equate_il ? sequence.ec_lca_il : sequence.ec_lca
+        unless ec_lca_id.nil?
+          ec_lca, ec_desc = ec_lca_id == 0 ? ['-.-.-.-', 'root'] : ec_db.select('code, name').where(id: ec_lca_id).map{|ec_rec|[ec_rec.code,ec_rec.name]}[0]
+          if ec_lca != '-.-.-.-'
+            if not ec_functions.has_key?(ec_lca)
+              ec_ontology = EcNumber.get_ontology(ec_lca)
+              ec_functions = EcNumber.get_ec_function(ec_ontology, ec_functions, ec_db)
+            end
+          end
+          ec_num_of_seq = filter_duplicates ? 1 : data_counts[sequence.sequence]
+          ec_matches[ec_lca] = [] if ec_matches[ec_lca].nil?
+          ec_num_of_seq.times do
+            ec_matches[ec_lca] << sequence_mapping[sequence.sequence]
           end
         end
         misses.delete(sequence.sequence)
@@ -399,6 +419,36 @@ class SequencesController < ApplicationController
     root&.prepare_for_multitree
     root&.sort_children
     @json_tree = Oj.dump(root, mode: :compat)
+
+    # EC related stuff
+    ec_root = Node.new("-.-.-.-", 'root', nil, '-.-.-.-')
+    ec_root.data['self_count'] = ec_matches['-.-.-.-'].nil? ? 0 : ec_matches['-.-.-.-'].size
+    ec_root.data['count'] = ec_matches.map{|k,v|v.size}.sum
+    ec_last_node = ec_root
+
+    ec_matches.each do |ec_num, pep|
+      next if ec_num == '-.-.-.-'
+      ec_last_node_loop = ec_last_node
+      EcNumber.get_ontology(ec_num).each do |ec_level|
+        node = Node.find_by_id(ec_level, ec_root)
+        if node.nil?
+          node = Node.new(ec_level, ec_functions[ec_level], ec_root, ec_level)
+          node.data['count'] = ec_matches[ec_num].size
+          node.data['self_count'] = ec_matches.has_key?(ec_level) ? ec_matches[ec_level].size : 0
+          ec_last_node_loop = ec_last_node_loop.add_child(node)
+        else
+          node.name = ec_functions[ec_level]
+          node.data['count'] += ec_matches[ec_num].size
+          ec_last_node_loop = node
+        end
+      end
+      node = ec_num == '-.-.-.-' ? ec_root : Node.find_by_id(ec_num, ec_root)
+      node.set_sequences(pep) unless node.nil?
+    end
+    @json_ec_sequences = Oj.dump(ec_root.sequences, mode: :compat)
+    ec_root.prepare_for_multitree unless ec_root.nil?
+    ec_root.sort_children unless ec_root.nil?
+    @json_ecTree = Oj.dump(ec_root, mode: :compat)
 
     if export
       csv_string = CSV.generate_line(['peptide'].concat(Lineage.ranks)) + csv_string
