@@ -23,9 +23,8 @@
   <div class='card card-nav'>
     <div class='card-title card-title-colored'>
       <ul class="nav nav-tabs visualisations" id="viz-tabs">
-        <li class="active"><a href="#sunburstWrapper" data-toggle="tab">Sunburst</a></li>
-        <li><a href="#d3TreeMapWrapper" data-toggle="tab">Treemap</a></li>
-        <li><a href="#d3TreeViewWrapper" data-toggle="tab">Treeview</a></li>
+        <li class="active"><a id="biodiversity-analysis-tab" href="#biodiversity-analysis" data-toggle="tab">Biodiversity Analysis</a></li>
+        <li><a id="functional-analysis-tab" href="#functional-analysis" data-toggle="tab">Functional Analysis</a></li>
       </ul>
     </div>
     <div class='card-supporting-text multi-results'>
@@ -65,6 +64,24 @@
           </h2>
           <div id="sunburst">
             <div id="sunburstPanel">&nbsp;</div>
+          </div>
+          <div class="tab-pane" id="functional-analysis">
+            <div class='card-supporting-text multi-results-sub'>
+              <ul class="nav nav-tabs sub-navigation">
+                <li class="active"><a class="subnav-link" href="#ecTreeViewWrapper" data-toggle="tab">EC: Tree</a></li>
+              </ul>
+            </div>
+            <div class="tab-content tab-nav">
+              <div class="tab-pane active" id="ecTreeViewWrapper">
+                <h2 class="ghead">
+                  <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate treeview-reset" id="ecTreeview-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                  </span>
+                  <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
+                </h2>
+                <div class="treeView" id="ecTreeView"></div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="tab-pane" id="d3TreeMapWrapper">
@@ -135,12 +152,14 @@
 <% if @number_found > 0 %>
   <script type="text/javascript">
     var data = <%= raw(@json_tree)%>;
+    var ecData = <%= raw(@json_ecTree)%>;
     var sequences = <%= raw(@json_sequences)%>;
     var missed = <%= raw(@json_missed)%>
 
     $(function () {
         constructMultisearch({
             data : data,
+            ecData : ecData,
             equateIL : <%=@equate_il %>,
             missed : missed,
             sequences : sequences});

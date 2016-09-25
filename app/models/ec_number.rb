@@ -45,4 +45,17 @@ class EcNumber < ApplicationRecord
     	ec_consensus.push(ec_root[:children][0][:id])
     	get_consensus(ec_root[:children][0], ec_consensus)
   	end
+
+	def self.get_lca(ec_list)
+		pos, mem = 0, ''
+		while pos < 4
+			level = ec_list.map{|ec| ec.split('.')[pos]}.uniq
+			if level.size > 1
+				return pos == 0 ? '-.-.-.-' : mem+'.-'*(4-pos)
+			end
+			mem = mem == '' ? level[0] : mem+'.'+level[0]
+			pos += 1
+		end
+		return mem
+	end
 end
