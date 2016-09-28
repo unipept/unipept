@@ -364,6 +364,23 @@ class SequencesController < ApplicationController
             matches[lca_t] << sequence_mapping[seq]
           end
         end
+
+        ec_seq_lins = entries.map(&:ec_cross_references).uniq.compact.select{|crossref| crossref if crossref != []}
+        unless ec_seq_lins == []
+          ec_lca = EcNumber.get_lca(ec_seq_lins.map{|ec| ec[0].ec_number_code}) # calculate EC lca
+          ec_desc = ec_lca == '-.-.-.-' ? 'root' : ec_db.select('name').where(code: ec_lca).map{|ec_rec|ec_rec.name}[0]
+          if ec_lca != '-.-.-.-'
+            if not ec_functions.has_key?(ec_lca)
+              ec_ontology = EcNumber.get_ontology(ec_lca)
+              ec_functions = EcNumber.get_ec_function(ec_ontology, ec_functions, ec_db)
+            end
+          end
+          ec_num_of_seq = filter_duplicates ? 1 : data_counts[seq]
+          ec_matches[ec_lca] = [] if ec_matches[ec_lca].nil?
+          ec_num_of_seq.times do
+            ec_matches[ec_lca] << sequence_mapping[seq]
+          end
+        end
         misses.delete(seq)
       end
     end
