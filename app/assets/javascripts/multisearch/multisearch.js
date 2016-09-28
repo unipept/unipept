@@ -9,6 +9,7 @@ var constructMultisearch = function constructMultisearch(args) {
 
     var that = {},
         data = args.data,
+        goData = args.goData,
         ecData = args.ecData,
         equateIL = args.equateIL,
         missed = args.missed,
@@ -32,8 +33,11 @@ var constructMultisearch = function constructMultisearch(args) {
         initD3TreeMap('#d3TreeMap')
 
         // set up visualisations for treeview
-        initD3TreeView(data, '#d3TreeView') 
-        initD3TreeView(ecData, '#ecTreeView') 
+        initD3TreeView(data, '#d3TreeView')
+        initD3TreeView(goData['molecular_function'], '#goTreeViewMF') 
+        initD3TreeView(goData['biological_process'], '#goTreeViewBP') 
+        initD3TreeView(goData['cellular_component'], '#goTreeViewCC') 
+        initD3TreeView(ecData, '#ecTreeView')
 
         // set up save images
         setUpSaveImage();
