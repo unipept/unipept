@@ -182,7 +182,7 @@ class SequencesController < ApplicationController
     @number_found = 0
 
     # build the resultset
-    matches, ec_matches, ec_functions = {}, {}, {}
+    matches, ec_matches, ec_functions, go_support = {}, {}, {}, {}
     misses = data.to_set
     data.each_slice(1000) do |data_slice|
       Sequence.includes(Sequence.lca_t_relation_name(@equate_il) => { lineage: Lineage::ORDER_T }).where(sequence: data_slice).each do |sequence|
@@ -194,6 +194,18 @@ class SequencesController < ApplicationController
           num_of_seq.times do
             matches[lca_t] << sequence_mapping[sequence.sequence]
           end
+
+          # GO related stuff
+          # Has to be remodeled after the creation of the 'go_lcas table'
+          entries = sequence.peptides(@equate_il).map(&:uniprot_entry)
+          go_array = entries.map(&:go_cross_references).flatten.group_by{|go| go.go_term_code}
+          go_array.each{|k,v| go_array[k] = v.map(&:uniprot_entry_id)}
+          graphs = GoTerm.go_reachability(go_array)
+          go_tree_build = GoTerm.go_tree(graphs)
+
+          go_consensus = []
+          GoTerm::GO_ONTOLOGY.keys.each{|o| GoTerm.cutoff(go_tree_build[o], GoTerm::CUTOFF*go_tree_build[o].data['count'], go_consensus) unless go_tree_build[o].nil?}
+          go_consensus.each{|n| go_support.has_key?(n.data['rank']) ? go_support[n.data['rank']].push(sequence.sequence) : go_support[n.data['rank']] = [sequence.sequence]}
         end
 
         # get all ECs
@@ -252,6 +264,15 @@ class SequencesController < ApplicationController
           num_of_seq.times do
             matches[lca_t] << sequence_mapping[seq]
           end
+
+          go_array = entries.map(&:go_cross_references).flatten.group_by{|go| go.go_term_code}
+          go_array.each{|k,v| go_array[k] = v.map(&:uniprot_entry_id)}
+          graphs = GoTerm.go_reachability(go_array)
+          go_tree_build = GoTerm.go_tree(graphs)
+
+          go_consensus = []
+          GoTerm::GO_ONTOLOGY.keys.each{|o| GoTerm.cutoff(go_tree_build[o], GoTerm::CUTOFF*go_tree_build[o].data['count'], go_consensus) unless go_tree_build[o].nil?}
+          go_consensus.each{|n| go_support.has_key?(n.data['rank']) ? go_support[n.data['rank']].push(seq) : go_support[n.data['rank']] = [seq]}
         end
 
         ec_seq_lins = entries.map(&:ec_cross_references).uniq.compact.select{|crossref| crossref if crossref != []}
@@ -325,6 +346,11 @@ class SequencesController < ApplicationController
     root&.prepare_for_multitree
     root&.sort_children
     @json_tree = Oj.dump(root, mode: :compat)
+
+    # GO related stuff
+    graphs = GoTerm.go_reachability(go_support)
+    go_tree_build = GoTerm.go_tree(graphs)
+    @go_root = Oj.dump(go_tree_build, mode: :compat)
 
     # EC related stuff
     ec_root = Node.new("-.-.-.-", 'root', nil, '-.-.-.-')
