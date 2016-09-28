@@ -50,5 +50,4 @@ class GoTerm < ApplicationRecord
     end
     return false
   end
-
 end

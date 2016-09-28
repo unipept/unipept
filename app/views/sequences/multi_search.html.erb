@@ -99,11 +99,41 @@
           <div class="tab-pane" id="functional-analysis">
             <div class='card-supporting-text multi-results-sub'>
               <ul class="nav nav-tabs sub-navigation">
-                <li class="active"><a class="subnav-link" href="#ecTreeViewWrapper" data-toggle="tab">EC: Tree</a></li>
+                <li class="active"><a class="subnav-link" href="#goTreeViewMFWrapper" data-toggle="tab">GO: Molecular Function</a></li>
+                <li><a class="subnav-link" href="#goTreeViewBPWrapper" data-toggle="tab">GO: Biological Process</a></li>
+                <li><a class="subnav-link" href="#goTreeViewCCWrapper" data-toggle="tab">GO: Cellular Component</a></li>
+                <li><a class="subnav-link" href="#ecTreeViewWrapper" data-toggle="tab">EC: Tree</a></li>
               </ul>
             </div>
             <div class="tab-content tab-nav">
-              <div class="tab-pane active" id="ecTreeViewWrapper">
+              <div class="tab-pane active" id="goTreeViewMFWrapper">
+                <h2 class="ghead">
+                  <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate treeview-reset" id="goTreeviewMF-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                  </span>
+                  <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
+                </h2>
+                <div class="treeView" id="goTreeViewMF"></div>
+              </div>
+              <div class="tab-pane" id="goTreeViewBPWrapper">
+                <h2 class="ghead">
+                  <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate treeview-reset" id="goTreeviewBP-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                  </span>
+                  <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
+                </h2>
+                <div class="treeView" id="goTreeViewBP"></div>
+              </div>
+              <div class="tab-pane" id="goTreeViewCCWrapper">
+                <h2 class="ghead">
+                  <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate treeview-reset" id="goTreeviewCC-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                  </span>
+                  <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
+                </h2>
+                <div class="treeView" id="goTreeViewCC"></div>
+              </div>
+              <div class="tab-pane" id="ecTreeViewWrapper">
                 <h2 class="ghead">
                   <span class="dir">
                     <a class="btn btn-xs btn-default btn-animate treeview-reset" id="ecTreeview-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
@@ -183,6 +213,7 @@
 <% if @number_found > 0 %>
   <script type="text/javascript">
     var data = <%= raw(@json_tree)%>;
+    var goData = <%= raw(@go_root)%>;
     var ecData = <%= raw(@json_ecTree)%>;
     var ec_sequences = <%= raw(@json_ec_sequences)%>;
     var sequences = <%= raw(@json_sequences)%>;
@@ -191,6 +222,7 @@
     $(function () {
         constructMultisearch({
             data : data,
+            goData : goData,
             ecData : ecData,
             equateIL : <%=@equate_il %>,
             missed : missed,
