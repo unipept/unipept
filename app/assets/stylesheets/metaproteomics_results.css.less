@@ -60,24 +60,24 @@ span.dir.text {
 }
 
 // sunburst
-#sunburst {
+.sunburst {
     width: 100%;
     background-color: white;
 }
-#sunburst > svg {
+.sunburst > svg {
     margin: 0 auto;
     display: block;
 }
-.full-screen #sunburst > svg {
+.full-screen .sunburst > svg {
     overflow: visible;
 }
-#sunburst .toHide {
+.sunburst .toHide {
     pointer-events: none;
 }
-#sunburst > svg .arc {
+.sunburst > svg .arc {
     cursor: pointer;
 }
-#sunburst > svg .arc:hover {
+.sunburst > svg .arc:hover {
     fill-opacity: 0.9;
 }
 .dropdown-menu-form div.checkbox {
@@ -91,23 +91,23 @@ span.dir.text {
 .dropdown-menu-form div.checkbox input[type="checkbox"] {
     margin-top: 0;
 }
-#colorswap .dropdown-menu {
+.colorswap .dropdown-menu {
     margin-top: 0;
     padding-left: 15px;
     padding-top: 0;
     min-width: 135px;
 }
-#sunburstPanel {
+.sunburstPanel {
     width: 176px;
     float: right;
     margin-top: 10px;
     padding-left: 5px;
 }
-.full-screen #sunburstPanel {
+.full-screen .sunburstPanel {
     width: 250px;
     margin-right: 10px;
 }
-#sunburstPanel ul {
+.sunburstPanel ul {
     padding-left: 0;
     list-style: none;
 }
@@ -131,15 +131,15 @@ span.dir.text {
 }
 
 // d3 treemap
-#d3TreeMap {
+.d3TreeMap {
     width: 100%;
     background-color: white;
 }
-#d3TreeMap svg {
+.d3TreeMap svg {
     margin: 0 auto;
     display: block;
 }
-#d3TreeMap .node {
+.d3TreeMap .node {
     font-size: 9px;
     line-height: 10px;
     overflow: hidden;
@@ -149,40 +149,40 @@ span.dir.text {
     text-overflow: ellipsis;
     cursor: pointer;
 }
-#d3TreeMap .node:hover {
+.d3TreeMap .node:hover {
     outline: 1px solid white;
 }
-#d3TreeMap .breadcrumbs {
+.d3TreeMap .breadcrumbs {
     font-size: 11px;
     line-height: 20px;
     padding-left: 5px;
     font-weight: bold;
     color: white;
 }
-.full-screen #d3TreeMap .breadcrumbs {
+.full-screen .d3TreeMap .breadcrumbs {
     width: 100% !important;
 }
-#d3TreeMap .crumb {
+.d3TreeMap .crumb {
     cursor: pointer;
 }
-#d3TreeMap .crumb .link:hover {
+.d3TreeMap .crumb .link:hover {
     text-decoration: underline;
 }
-#d3TreeMap .breadcrumbs .crumb + .crumb::before {
+.d3TreeMap .breadcrumbs .crumb + .crumb::before {
     content: " > ";
     cursor: default;
 }
 
 // treeview
-#d3TreeView {
+.d3TreeView {
     background-color: white;
 }
-#d3TreeView svg {
+.d3TreeView svg {
     margin-bottom: -5px;
 }
 
 /* lineage tree */
-#tree_data {
+.tree_data {
     width: 420px;
     float: right;
     padding: 8px;
@@ -192,7 +192,7 @@ span.dir.text {
     .transition(all 1s ease-in-out);
     .shadow-z5();
 }
-#tree_data::before {
+.tree_data::before {
     content: "";
     display: block;
     height: 0;
@@ -203,16 +203,16 @@ span.dir.text {
     border-color: transparent #ccc transparent transparent;
     position: absolute;
 }
-#tree_data h3 {
+.tree_data h3 {
     line-height: 30px;
     margin: 3px 0 5px;
     color: @black-secondary;
 }
-#tree_data h4 {
+.tree_data h4 {
     line-height: 25px;
     margin-left: 5px;
 }
-#tree_data h3 a {
+.tree_data h3 a {
     color: @black-text !important;
 }
 #tree ul {
