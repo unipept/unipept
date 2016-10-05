@@ -45,25 +45,56 @@
             <a title="Exit full screen mode" class="btn-animate exit"><span class="glyphicon glyphicon-resize-small shrink"></span></a>
           </div>
         </div>
-        <div class="tab-pane active" id="sunburstWrapper">
-          <h2 class="ghead">
-            <span class="dir">
-              <a class="btn btn-xs btn-default btn-animate" id="sunburst-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
-            </span>
-            <span class="dir">
-              <div class="btn-group" id="colorswap">
-                <a class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" id="colorswap-button"><span class="glyphicon glyphicon-cog"></span></a>
-                <ul class="dropdown-menu dropdown-menu-right dropdown-menu-form">
-                  <li title="Enabling this will assign fixed colors to taxa making it easier to compare samples.">
-                    <div class="checkbox"><label class="checkbox"><input type="checkbox" id="colorswap-checkbox">Use fixed colors</label></div>
-                  </li>
-                </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="biodiversity-analysis">
+            <div class='card-supporting-text multi-results-sub'>
+              <ul class="nav nav-tabs sub-navigation">
+                <li class="active"><a class="subnav-link" href="#sunburstWrapper" data-toggle="tab">Sunburst</a></li>
+                <li><a class="subnav-link" href="#d3TreeMapWrapper" data-toggle="tab">Treemap</a></li>
+                <li><a class="subnav-link" href="#d3TreeViewWrapper" data-toggle="tab">Treeview</a></li>
+              </ul>
+            </div>
+            <div class="tab-content tab-nav">
+              <div class="tab-pane active" id="sunburstWrapper">
+                <h2 class="ghead">
+                  <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate" id="sunburst-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                  </span>
+                  <span class="dir">
+                    <div class="btn-group colorswap" id="colorswap">
+                      <a class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" id="colorswap-button"><span class="glyphicon glyphicon-cog"></span></a>
+                      <ul class="dropdown-menu dropdown-menu-right dropdown-menu-form">
+                        <li title="Enabling this will assign fixed colors to taxa making it easier to compare samples.">
+                          <div class="checkbox"><label class="checkbox"><input type="checkbox" id="colorswap-checkbox">Use fixed colors</label></div>
+                        </li>
+                      </ul>
+                    </div>
+                  </span>
+                  <span class="dir text">Click a slice to zoom in and the center node to zoom out</span>
+                </h2>
+                <div class="sunburst" id="sunburst">
+                  <div class="sunburstPanel" id="sunburstPanel">&nbsp;</div>
+                </div>
               </div>
-            </span>
-            <span class="dir text">Click a slice to zoom in and the center node to zoom out</span>
-          </h2>
-          <div id="sunburst">
-            <div id="sunburstPanel">&nbsp;</div>
+              <div class="tab-pane" id="d3TreeMapWrapper">
+                <h2 class="ghead">
+                  <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate" id="treemap-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                  </span>
+                  <span class="dir text">Click a square to zoom in and right click to zoom out</span>
+                </h2>
+                <div class="d3TreeMap" id="d3TreeMap"></div>
+              </div>
+              <div class="tab-pane" id="d3TreeViewWrapper">
+                <h2 class="ghead">
+                  <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate" id="treeview-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                  </span>
+                  <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
+                </h2>
+                <div class="d3TreeView" id="d3TreeView"></div>
+              </div>
+            </div>
           </div>
           <div class="tab-pane" id="functional-analysis">
             <div class='card-supporting-text multi-results-sub'>
@@ -79,7 +110,7 @@
                   </span>
                   <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
                 </h2>
-                <div class="treeView" id="ecTreeView"></div>
+                <div class="d3TreeView" id="ecTreeView"></div>
               </div>
             </div>
           </div>
@@ -122,7 +153,7 @@
         </div>
         <div class="visualClear"></div>
         <div id="searchtree" class="treeView multi"></div>
-        <div id="tree_data">
+        <div class="tree_data" id="tree_data">
           <p>Click on a node in the tree to see the peptides associated with that organism.</p>
         </div>
       </div>
