@@ -199,17 +199,17 @@ var constructMultisearch = function constructMultisearch(args) {
     }
 
     function saveImage () {
-        var activeTab = getActiveTab();
+        let activeTab = getActiveSubTab();
         $(".debug_dump").hide();
         logToGoogle("Multi Peptide", "Save Image", activeTab);
-        if (activeTab === "sunburst") {
+        if ((activeTab === "sunburst" ) || (activeTab === "ecSunburst")) {
             d3.selectAll(".toHide").attr("class", "arc hidden");
-            triggerDownloadModal("#sunburst > svg", null, "unipept_sunburst");
+            triggerDownloadModal("#"+activeTab+" > svg", null, "unipept_"+activeTab);
             d3.selectAll(".hidden").attr("class", "arc toHide");
         } else if (activeTab === "d3TreeMap") {
-            triggerDownloadModal(null, "#d3TreeMap", "unipept_treemap");
+            triggerDownloadModal(null, "#"+activeTab, "unipept_treemap");
         } else {
-            triggerDownloadModal("#d3TreeView svg", null, "unipept_treeview");
+            triggerDownloadModal("#"+activeTab+" svg", null, "unipept_"+activeTab);
         }
     }
 
@@ -224,7 +224,12 @@ var constructMultisearch = function constructMultisearch(args) {
 
     function getActiveSubTab() {
         let activeSubTab;
-        activeTab = $(".full-screen-container li.active .main-tab").attr('id');
+        if (window.fullScreenApi.isFullScreen()) {
+            activeTab = $(".full-screen-container li.active .main-tab").attr('id');
+        } else {
+            activeTab = $("li.active .main-tab").attr('id');
+        }
+
         if (activeTab === 'biodiversity-analysis-tab'){
             activeSubTab = $('.sub-navigation li.active .subnav-link').attr('href');
         } else {
