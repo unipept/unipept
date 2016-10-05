@@ -61,7 +61,7 @@
                     <a class="btn btn-xs btn-default btn-animate" id="sunburst-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
                   </span>
                   <span class="dir">
-                    <div class="btn-group" id="colorswap">
+                    <div class="btn-group colorswap" id="colorswap">
                       <a class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" id="colorswap-button"><span class="glyphicon glyphicon-cog"></span></a>
                       <ul class="dropdown-menu dropdown-menu-right dropdown-menu-form">
                         <li title="Enabling this will assign fixed colors to taxa making it easier to compare samples.">
@@ -72,8 +72,8 @@
                   </span>
                   <span class="dir text">Click a slice to zoom in and the center node to zoom out</span>
                 </h2>
-                <div id="sunburst">
-                  <div id="sunburstPanel">&nbsp;</div>
+                <div class="sunburst" id="sunburst">
+                  <div class="sunburstPanel" id="sunburstPanel">&nbsp;</div>
                 </div>
               </div>
               <div class="tab-pane" id="d3TreeMapWrapper">
@@ -83,7 +83,7 @@
                   </span>
                   <span class="dir text">Click a square to zoom in and right click to zoom out</span>
                 </h2>
-                <div id="d3TreeMap"></div>
+                <div class="d3TreeMap" id="d3TreeMap"></div>
               </div>
               <div class="tab-pane" id="d3TreeViewWrapper">
                 <h2 class="ghead">
@@ -92,7 +92,7 @@
                   </span>
                   <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
                 </h2>
-                <div id="d3TreeView"></div>
+                <div class="d3TreeView" id="d3TreeView"></div>
               </div>
             </div>
           </div>
@@ -110,7 +110,7 @@
                   </span>
                   <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
                 </h2>
-                <div class="treeView" id="ecTreeView"></div>
+                <div class="d3TreeView" id="ecTreeView"></div>
               </div>
             </div>
           </div>
@@ -135,7 +135,7 @@
         </div>
         <div class="visualClear"></div>
         <div id="searchtree" class="treeView multi"></div>
-        <div id="tree_data">
+        <div class="tree_data" id="tree_data">
           <p>Click on a node in the tree to see the peptides associated with that organism.</p>
         </div>
       </div>
