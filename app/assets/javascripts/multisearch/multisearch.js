@@ -106,6 +106,15 @@ var constructMultisearch = function constructMultisearch(args) {
     }
 
     /**
+     * Get the correct visualization object
+     */
+    function getVisObject() {
+        return Object.keys(mapping.get(getActiveSubTab()).data()).map(function(key){
+            return mapping.get(getActiveSubTab()).data()[key];
+        })[0];
+    }
+
+    /**
      * Adds the list of missed peptides
      */
     function addMissed() {
@@ -156,13 +165,15 @@ var constructMultisearch = function constructMultisearch(args) {
     }
 
     function resizeFullScreen() {
-        var activeTab = getActiveTab(),
+        let activeTab = getActiveTab(),
+            width = 916,
+            height = 600,
             isFullScreen = window.fullScreenApi.isFullScreen();
 
         // sync tabs
         $("ul.visualisations li.active").removeClass("active");
         $("ul.visualisations li").each(function (i, el) {
-            if ($(el).find("a").attr("href") === "#" + activeTab + "Wrapper") {
+            if ($(el).find("a").attr("href") === "#" + activeTab) {
                 $(el).addClass("active");
             }
         });
@@ -174,14 +185,17 @@ var constructMultisearch = function constructMultisearch(args) {
         // tooltip
         if (isFullScreen) {
             $("#tooltip").appendTo(".full-screen-container");
+            width = $(window).width()+32;
+            height = $(window).height()+16;
         } else {
             $("#tooltip").appendTo("body");
         }
 
         // update visualisations
+        $(".d3TreeView svg").attr("width", width);
+        $(".d3TreeView svg").attr("height", height);
         sunburst.setFullScreen(isFullScreen);
-        treemap.setFullScreen(isFullScreen);
-        treeview.setFullScreen(isFullScreen);
+        treemap.data()['vis.treemap'].setFullScreen(isFullScreen); 
     }
 
     function saveImage () {
@@ -201,18 +215,31 @@ var constructMultisearch = function constructMultisearch(args) {
 
     function setUpActionBar() {
         $(".fullScreenActions a").tooltip({placement: "bottom", delay: { "show": 300, "hide": 300 }});
-        $(".fullScreenActions .reset").click(function () {
-            mapping.get(getActiveTab()).reset();
-        });
+        $(".fullScreenActions .reset").click(function(){getVisObject().reset()});
         $(".fullScreenActions .download").click(saveImage);
         $(".fullScreenActions .exit").click(function () {
             window.fullScreenApi.cancelFullScreen();
         });
     }
 
+    function getActiveSubTab() {
+        let activeSubTab;
+        activeTab = $(".full-screen-container li.active .main-tab").attr('id');
+        if (activeTab === 'biodiversity-analysis-tab'){
+            activeSubTab = $('.sub-navigation li.active .subnav-link').attr('href');
+        } else {
+            activeSubTab = $('.sub-navigation li.active .subnav-link')[1].getAttribute("href");
+        } return activeSubTab.split('Wrapper')[0].substring(1, activeSubTab.length);
+        
+    }
+
     function getActiveTab() {
-        var activePane = $(".full-screen-container div.active").attr('id');
-        return activePane.split("Wrapper")[0];
+        let activePane;
+        if (!window.fullScreenApi.isFullScreen()) {
+            activePane = $(".full-screen-container li.active .main-tab").attr('id');
+        } else {
+            activePane = $("li.active .main-tab").attr('id');          
+        } return activePane.split("-tab")[0];
     }
 
     /*************** Public methods ***************/
