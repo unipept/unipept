@@ -355,7 +355,7 @@ class SequencesController < ApplicationController
     ec_root = Node.new("-.-.-.-", 'root', nil, '-.-.-.-')
     ec_root.data['self_count'] = ec_matches['-.-.-.-'].nil? ? 0 : ec_matches['-.-.-.-'].size
     ec_root.data['count'] = ec_matches.map{|k,v|v.size}.sum
-    ec_last_node =  ec_root
+    ec_last_node = ec_root
 
     ec_matches.each do |ec_num, pep|
       next if ec_num == '-.-.-.-'
@@ -373,7 +373,11 @@ class SequencesController < ApplicationController
           ec_last_node_loop = node
         end
       end
+      node = ec_num == '-.-.-.-' ? ec_root : Node.find_by_id(ec_num, ec_root)
+      node.set_sequences(pep) unless node.nil?
     end
+    @json_ec_sequences = Oj.dump(ec_root.sequences, mode: :compat)
+    ec_root.prepare_for_multitree unless root.nil?
     ec_root.sort_children unless ec_root.nil?
     @json_ecTree = Oj.dump(ec_root, mode: :compat)
 
