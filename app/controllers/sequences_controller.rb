@@ -162,6 +162,7 @@ class SequencesController < ApplicationController
     search_name = params[:search_name]
     query = params[:qs]
     csv_string = ''
+    tsv_ec_string = ''
 
     # quit if the query was empty
     fail EmptyQueryError if query.blank?
@@ -321,7 +322,7 @@ class SequencesController < ApplicationController
       # export stuff
       if export
         seqs.each do |sequence|
-          csv_string += CSV.generate_line [sequence].concat(lca_l.to_a)
+          csv_string += CSV.generate_line([sequence].concat(lca_l.to_a)) + '\n'
         end
       end
 
@@ -360,7 +361,9 @@ class SequencesController < ApplicationController
     ec_matches.each do |ec_num, pep|
       next if ec_num == '-.-.-.-'
       ec_last_node_loop = ec_last_node
+      tsv_ec_string += '\n' + ec_num
       EcNumber.get_ontology(ec_num).each do |ec_level|
+        tsv_ec_string += '\t' + ec_functions[ec_level]
         node = Node.find_by_id(ec_level, ec_root)
         if node.nil?
           node = Node.new(ec_level, ec_functions[ec_level], ec_root, ec_level)
@@ -382,11 +385,11 @@ class SequencesController < ApplicationController
     @json_ecTree = Oj.dump(ec_root, mode: :compat)
 
     if export
-      csv_string = CSV.generate_line(['peptide'].concat(Lineage.ranks)) + csv_string
-
+      @tsv_ec_string = EcNumber::EC_COLUMN_TITLE.join('\t') + tsv_ec_string
+      @csv_string = CSV.generate_line(['peptide'].concat(Lineage.ranks)) + '\n' + csv_string
       cookies['nonce'] = params[:nonce]
       filename = search_name != '' ? search_name : 'export'
-      send_data csv_string, type: 'text/csv; charset=iso-8859-1; header=present', disposition: 'attachment; filename=' + filename + '.csv'
+      render xlsx: 'multi_search.xlsx.axlsx', filename: filename + '.xlsx'
     end
 
   rescue EmptyQueryError
