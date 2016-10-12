@@ -10,6 +10,8 @@
 class EcNumber < ApplicationRecord
   	include ReadOnlyModel
 
+	EC_COLUMN_TITLE = ["EC number", "Class", "Subclass", "Sub-subclass", "Enzyme"]
+
 	def self.get_ontology(ec)
 		lineage_list = []
 		mem = ""
