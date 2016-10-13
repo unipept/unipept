@@ -197,6 +197,7 @@
     var data = <%= raw(@json_tree)%>;
     var goData = <%= raw(@go_root)%>;
     var ecData = <%= raw(@json_ecTree)%>;
+    var ec_sequences = <%= raw(@json_ec_sequences)%>;
     var sequences = <%= raw(@json_sequences)%>;
     var missed = <%= raw(@json_missed)%>
 
@@ -207,7 +208,8 @@
             ecData : ecData,
             equateIL : <%=@equate_il %>,
             missed : missed,
-            sequences : sequences});
+            sequences : sequences,
+            ec_sequences : ec_sequences});
     });
   </script>
 <% end %>
