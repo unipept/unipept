@@ -13,6 +13,8 @@ var constructMultisearch = function constructMultisearch(args) {
         equateIL = args.equateIL,
         missed = args.missed,
         sequences = args.sequences,
+        ec_sequences = args.ec_sequences,
+        currentNode,
         sunburst,
         treemap,
         treeview,
@@ -44,11 +46,16 @@ var constructMultisearch = function constructMultisearch(args) {
         // set up full screen
         setUpFullScreen();
 
+        // init behaviour
+        addPopoverBehaviour();
+
         // set up the full screen action bar
         setUpActionBar();
 
         // set up missed
         addMissed();
+
+
         // copy to clipboard for missed peptides
         addCopy($("#copy-missed span").first(), function () {return $(".mismatches").text(); });
 
@@ -89,6 +96,7 @@ var constructMultisearch = function constructMultisearch(args) {
         treeview = $(selector).treeview(data, {
             width: 916,
             height: 600,
+            enableDoubleClick: true,
             getTooltip: function(d) {
                 let numberFormat = d3.format(",d");
                 return "<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" + numberFormat(!d.data.self_count ? "0" : d.data.self_count) + (d.data.self_count && d.data.self_count === 1 ? " peptide" : " peptides") +
@@ -96,6 +104,9 @@ var constructMultisearch = function constructMultisearch(args) {
             },
             getLabel: function(d) { 
                 return d.name.length > 33 && (d._children || d.children) ? d.name.substring(0,30).trim()+"...": d.name
+            },
+            getPopoverContent: function(d) {
+                return getPopoverContent(d);
             }
         });
         mapping.set(selector.substring(1,selector.length), treeview);
@@ -209,6 +220,94 @@ var constructMultisearch = function constructMultisearch(args) {
         }
     }
 
+    /**
+    * Constructs the content of a popover for a given dataset.
+    *
+    * @param <Genome> d The node of which we want a popover
+    */
+    function getPopoverContent(d) {
+        currentNode = d
+        let numberFormat = d3.format(",d");
+        let content = numberFormat(!d.data.self_count ? "0" : d.data.self_count) + (d.data.self_count && d.data.self_count === 1 ? " peptide" : " peptides") +
+            " specific to this level<br/>" + numberFormat(!d.data.count ? "0" : d.data.count) + (d.data.count && d.data.count === 1 ? " peptide" : " peptides") + " specific to this level or lower";
+      
+        content += "<div class='popover-buttons' ><br/>" +
+                        "<div class='btn-group' id='download-peptides'>" +
+                            "<a class='btn btn-default dropdown-toggle' id='download-peptides-toggle' data-toggle='dropdown' data-loading-text='Loading peptides'>" +
+                                "<span class='glyphicon glyphicon-download'></span> " +
+                                    "download peptides " +
+                                "<span class='caret'></span>" +
+                            "</a>" +
+                            "<ul class='dropdown-menu'>" +
+                                "<li><a href='#' data-id='" + d.id + "' id='node' data-type='node'><span style='color: blue;'>&#9632;</span> Node</a></li>" +
+                                "<li><a href='#' data-id='" + d.id + "' id='branch' data-type='branch'><span style='color: red;'>&#9632;</span> Branch</a></li>" +
+                            "</ul>" +
+                        "</div>" +
+                        "<span class='pull-right'><a class='btn btn-danger' title='Run peptides' id='popover-run-branch-data'><span class='glyphicon glyphicon-upload'></span></a></span>" +
+                    "</div>";
+        return content;
+    }
+
+    /**
+    * Adds actions the currently shown popover
+    */
+    function addPopoverBehaviour() {
+        $(document).dblclick(function(event) {                  
+            // behaviour
+            $(".close").click(function(){$(".bar.pop").popover("destroy");});
+            $("#download-peptides").mouseenter(function () {
+                if (!$("#download-peptides").hasClass("open")) {
+                    $("#download-peptides-toggle").dropdown("toggle");
+                }
+            });
+            $("#download-peptides").mouseleave(function () {
+                if ($("#download-peptides").hasClass("open")) {
+                    $("#download-peptides-toggle").dropdown("toggle");
+                }
+            });
+            $("#download-peptides ul a").click(downloadSequenceHandler);
+        });
+    }
+
+    /**
+     * Gets called when the users clicks on the button to download sequences
+     */
+    function downloadSequenceHandler() {
+        let type = $(this).attr("data-type");
+        let id = $(this).attr("data-id");
+        $("#download-peptides").mouseleave();
+        $("#download-peptides-toggle").button('loading');
+
+        getSequences(id, type)
+            .then(function (data_seq) {
+                return downloadDataByForm(data_seq, type + '-peptides.txt');
+            })
+            .then(function enableButton() { 
+                $("#download-peptides-toggle").button('reset');
+            });
+    }
+
+    /**
+     * @param <Number> id The id of the genome we want data from
+     * @param <String> type The type of sequences we want
+     */
+    function getSequences(id, type) {
+        let data_seq;
+        $notification = showNotification("Preparing sequences...", {
+                loading: true,
+                autoHide: false
+            });
+        return new Promise(function(resolve, reject) {
+            if (type === 'node') {
+                data_seq = that.getOwnSequences(id).join('\n');
+            } else {
+                data_seq = that.getAllSequences(currentNode).join('\n');
+            };
+            $notification.hide();
+            resolve(data_seq);
+        });
+    };
+
     function setUpActionBar() {
         $(".fullScreenActions a").tooltip({placement: "bottom", delay: { "show": 300, "hide": 300 }});
         $(".fullScreenActions .reset").click(function(){getVisObject().reset()});
@@ -267,7 +366,11 @@ var constructMultisearch = function constructMultisearch(args) {
      * @return <Array> An array of sequences (strings)
      */
     that.getOwnSequences = function getOwnSequences(id) {
-        return sequences[id] || [];
+        if (Number.isInteger(id)) {
+            return sequences[id] || [];
+        } else {
+            return ec_sequences[id] || [];
+        };
     };
 
     /**
@@ -277,11 +380,21 @@ var constructMultisearch = function constructMultisearch(args) {
      * @param <node> d The node
      * @return <Array> An array of sequences (strings)
      */
-    that.getAllSequences = function getAllSequences(d) {
-        var s = that.getOwnSequences(d.id);
-        for (var i = 0; i < d.children.length; i++) {
-            s = s.concat(that.getAllSequences(d.children[i]));
-        }
+    that.getAllSequences = function getAllSequences(d, s = []) {
+        let child;
+
+        s = s.concat(that.getOwnSequences(d.id))
+        if (('children' in d) && (d.children != null)) {
+            child = d.children;
+        } else {
+            child = d._children;
+        };
+
+        if (typeof child !== "undefined") {
+            for (var i = 0; i < child.length; i++) {
+                s = that.getAllSequences(child[i], s);
+            };
+        };
         return s;
     };
 
