@@ -246,7 +246,11 @@ var constructMultisearch = function constructMultisearch(args) {
                                 "<li><a href='#' data-id='" + d.id + "' id='branch' data-type='branch'><span style='color: red;'>&#9632;</span> Branch</a></li>" +
                             "</ul>" +
                         "</div>" +
-                        "<span class='pull-right'><a class='btn btn-danger' title='Run peptides' id='popover-run-branch-data'><span class='glyphicon glyphicon-upload'></span></a></span>" +
+                        "<span class='pull-right'>" +
+                            "<a class='btn btn-danger' title='Run peptides' id='popover-run-branch-data'>" +
+                                "<span class='glyphicon glyphicon-upload' id='upload-peptides'></span>" +
+                            "</a>" +
+                        "</span>" +
                     "</div>";
         return content;
     }
@@ -269,6 +273,7 @@ var constructMultisearch = function constructMultisearch(args) {
                 }
             });
             $("#download-peptides ul a").click(downloadSequenceHandler);
+            $("#upload-peptides").click(runInNewWindow);
         });
     }
 
@@ -301,14 +306,41 @@ var constructMultisearch = function constructMultisearch(args) {
             });
         return new Promise(function(resolve, reject) {
             if (type === 'node') {
-                data_seq = that.getOwnSequences(id).join('\n');
+                data_seq = that.getOwnSequences(id).join('\r\n');
             } else {
-                data_seq = that.getAllSequences(currentNode).join('\n');
+                data_seq = that.getAllSequences(currentNode).join('\r\n');
             };
             $notification.hide();
             resolve(data_seq);
         });
     };
+
+    /**
+     * Open new window with the uploaded sequence
+     */
+    function runInNewWindow() {
+        data = that.getAllSequences(currentNode).join('\r\n')
+        $.post('/search/sequences', {
+            utf8: "✓",
+            qs: data,
+            search_name: '',
+            il: 1,
+            dupes: 1,
+            button: '',
+            controller: 'sequences',
+            action: 'multi_search'
+        }, function(result) {
+            //var win = window.open('/', '_blank');
+            console.log(result)
+            let $html = /<body.*?>([\s\S]*)<\/body>/.exec(result)[1];
+            window.history.pushState(null, '', '/search/sequences');
+            console.log($html)
+            //console.log($(result).find('body'))
+            window.document.body.innerHTML = $html;
+            //console.log(win.history)
+            //win.focus();
+        });
+    }
 
     function setUpActionBar() {
         $(".fullScreenActions a").tooltip({placement: "bottom", delay: { "show": 300, "hide": 300 }});
