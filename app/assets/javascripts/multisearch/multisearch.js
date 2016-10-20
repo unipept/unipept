@@ -345,7 +345,7 @@ var constructMultisearch = function constructMultisearch(args) {
 
     function setUpActionBar() {
         $(".fullScreenActions a").tooltip({placement: "bottom", delay: { "show": 300, "hide": 300 }});
-        $(".fullScreenActions .reset").click(function(){getVisObject().reset()});
+        $(".reset").click(function(){getVisObject().reset()});
         $(".fullScreenActions .download").click(saveImage);
         $(".fullScreenActions .exit").click(function () {
             window.fullScreenApi.cancelFullScreen();
