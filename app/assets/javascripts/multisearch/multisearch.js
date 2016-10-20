@@ -194,11 +194,11 @@ var constructMultisearch = function constructMultisearch(args) {
 
         // tooltip
         if (isFullScreen) {
-            $("#tooltip").appendTo(".full-screen-container");
+            $(".tip").appendTo(".full-screen-container");
             width = $(window).width()+32;
             height = $(window).height()+16;
         } else {
-            $("#tooltip").appendTo("body");
+            $(".tip").appendTo("body");
         }
 
         // update visualisations
