@@ -55,7 +55,6 @@ var constructMultisearch = function constructMultisearch(args) {
         // set up missed
         addMissed();
 
-
         // copy to clipboard for missed peptides
         addCopy($("#copy-missed span").first(), function () {return $(".mismatches").text(); });
 
@@ -254,7 +253,7 @@ var constructMultisearch = function constructMultisearch(args) {
     function addPopoverBehaviour() {
         $(document).dblclick(function(event) {                  
             // behaviour
-            $(".close").click(function(){$(".bar.pop").popover("destroy");});
+            $(".close").click(that.removePopovers);
             $("#download-peptides").mouseenter(function () {
                 if (!$("#download-peptides").hasClass("open")) {
                     $("#download-peptides-toggle").dropdown("toggle");
@@ -277,7 +276,6 @@ var constructMultisearch = function constructMultisearch(args) {
         let id = $(this).attr("data-id");
         $("#download-peptides").mouseleave();
         $("#download-peptides-toggle").button('loading');
-
         getSequences(id, type)
             .then(function (data_seq) {
                 return downloadDataByForm(data_seq, type + '-peptides.txt');
@@ -330,7 +328,6 @@ var constructMultisearch = function constructMultisearch(args) {
         } else {
             activeSubTab = $('.sub-navigation li.active .subnav-link')[1].getAttribute("href");
         } return activeSubTab.split('Wrapper')[0].substring(1, activeSubTab.length);
-        
     }
 
     function getActiveTab() {
@@ -371,6 +368,14 @@ var constructMultisearch = function constructMultisearch(args) {
         } else {
             return ec_sequences[id] || [];
         };
+    };
+
+    /**
+     * Removes all popovers
+     */
+    that.removePopovers = function removePopovers() {
+        $(".bar.pop").popover("destroy");
+        $(".bar.pop").attr("class", "bar");
     };
 
     /**
