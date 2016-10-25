@@ -233,8 +233,14 @@ var constructMultisearch = function constructMultisearch(args) {
         let numberFormat = d3.format(",d");
         let content = numberFormat(!d.data.self_count ? "0" : d.data.self_count) + (d.data.self_count && d.data.self_count === 1 ? " peptide" : " peptides") +
             " specific to this level<br/>" + numberFormat(!d.data.count ? "0" : d.data.count) + (d.data.count && d.data.count === 1 ? " peptide" : " peptides") + " specific to this level or lower";
-      
+
         content += "<div class='popover-buttons' ><br/>" +
+                        "<div>" +
+                            "<a class='btn btn-default' id='submit-peptides'>" +
+                                "<span class='glyphicon glyphicon-refresh pull-left'></span>" +
+                                    "<span class='pull-left'>&nbsp;submit peptides </span>" +
+                            "</a>" +
+                        "</div>" +
                         "<div class='btn-group' id='download-peptides'>" +
                             "<a class='btn btn-default dropdown-toggle' id='download-peptides-toggle' data-toggle='dropdown' data-loading-text='Loading peptides'>" +
                                 "<span class='glyphicon glyphicon-download'></span> " +
@@ -246,11 +252,6 @@ var constructMultisearch = function constructMultisearch(args) {
                                 "<li><a href='#' data-id='" + d.id + "' id='branch' data-type='branch'><span style='color: red;'>&#9632;</span> Branch</a></li>" +
                             "</ul>" +
                         "</div>" +
-                        "<span class='pull-right'>" +
-                            "<a class='btn btn-danger' title='Run peptides' id='popover-run-branch-data'>" +
-                                "<span class='glyphicon glyphicon-upload' id='upload-peptides'></span>" +
-                            "</a>" +
-                        "</span>" +
                     "</div>";
         return content;
     }
@@ -273,7 +274,7 @@ var constructMultisearch = function constructMultisearch(args) {
                 }
             });
             $("#download-peptides ul a").click(downloadSequenceHandler);
-            $("#upload-peptides").click(runInNewWindow);
+            $("#submit-peptides").click(submitNodes);
         });
     }
 
@@ -316,30 +317,19 @@ var constructMultisearch = function constructMultisearch(args) {
     };
 
     /**
-     * Open new window with the uploaded sequence
+     * Create new form with the selected branch data and
+     * submit it
      */
-    function runInNewWindow() {
-        data = that.getAllSequences(currentNode).join('\r\n')
-        $.post('/search/sequences', {
-            utf8: "✓",
-            qs: data,
-            search_name: '',
-            il: 1,
-            dupes: 1,
-            button: '',
-            controller: 'sequences',
-            action: 'multi_search'
-        }, function(result) {
-            //var win = window.open('/', '_blank');
-            console.log(result)
-            let $html = /<body.*?>([\s\S]*)<\/body>/.exec(result)[1];
-            window.history.pushState(null, '', '/search/sequences');
-            console.log($html)
-            //console.log($(result).find('body'))
-            window.document.body.innerHTML = $html;
-            //console.log(win.history)
-            //win.focus();
-        });
+    function submitNodes() {
+        let pep = that.getAllSequences(currentNode).join('\r\n');
+        $form = $("<form action='/search/sequences' accept-charset='UTF-8' method='post' target='_blank'></form>");
+        $("<input>").attr({type: 'hidden', name: 'UTF-8', value: '✓'}).appendTo($form);
+        $("<input>").attr({type: 'hidden', name: 'qs', id: 'qs', value: pep}).appendTo($form);
+        $("<input>").attr({type: 'hidden', name: 'il', id: 'il', value: '1'}).appendTo($form);
+        $("<input>").attr({type: 'hidden', name: 'dupes', id: 'dupes', value: '1'}).appendTo($form);
+        $("<input>").attr({type: 'hidden', name: 'nonce', id: 'nonce', value: ''}).appendTo($form);
+        $("<input>").attr({type: 'hidden', name: 'search_name', id: 'search_name', value: ''}).appendTo($form);
+        $form.submit();
     }
 
     function setUpActionBar() {
