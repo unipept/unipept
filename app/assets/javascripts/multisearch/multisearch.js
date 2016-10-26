@@ -145,14 +145,14 @@ var constructMultisearch = function constructMultisearch(args) {
             // Track the download button
             logToGoogle("Multi Peptide", "Export");
 
-            var nonce = Math.random();
-            var toast = showNotification("Preparing file...", {
+            let nonce = Math.random();
+            let toast = showNotification("Preparing file...", {
                 autoHide: false,
                 loading: true
             });
             $("#nonce").val(nonce);
             $("#downloadDataset").button('loading');
-            var downloadTimer = setInterval(function () {
+            let downloadTimer = setInterval(function () {
                 if (document.cookie.indexOf(nonce) !== -1) {
                     $("#downloadDataset").button('reset');
                     clearInterval(downloadTimer);
@@ -321,14 +321,22 @@ var constructMultisearch = function constructMultisearch(args) {
      * submit it
      */
     function submitNodes() {
+        let il = document.getElementById('il').value,
+            dupes = document.getElementById('dupes').value,
+            missed = document.getElementById('missed').value,
+            searchName = document.getElementById('search_name').value,
+            csrf_token = $('meta[name="csrf-token"]').attr('content');
+
         let pep = that.getAllSequences(currentNode).join('\r\n');
-        $form = $("<form action='/search/sequences' accept-charset='UTF-8' method='post' target='_blank'></form>");
+        let $form = $("<form action='/search/sequences' accept-charset='UTF-8' method='post' target='_blank'></form>");
         $("<input>").attr({type: 'hidden', name: 'UTF-8', value: '✓'}).appendTo($form);
+        $("<input>").attr({type: 'hidden', name: "authenticity_token", value: csrf_token}).appendTo($form);
         $("<input>").attr({type: 'hidden', name: 'qs', id: 'qs', value: pep}).appendTo($form);
-        $("<input>").attr({type: 'hidden', name: 'il', id: 'il', value: '1'}).appendTo($form);
-        $("<input>").attr({type: 'hidden', name: 'dupes', id: 'dupes', value: '1'}).appendTo($form);
-        $("<input>").attr({type: 'hidden', name: 'nonce', id: 'nonce', value: ''}).appendTo($form);
-        $("<input>").attr({type: 'hidden', name: 'search_name', id: 'search_name', value: ''}).appendTo($form);
+        $("<input>").attr({type: 'hidden', name: 'il', id: 'il', value: il}).appendTo($form);
+        $("<input>").attr({type: 'hidden', name: 'dupes', id: 'dupes', value: dupes}).appendTo($form);
+        $("<input>").attr({type: 'hidden', name: 'missed', id: 'missed', value: missed}).appendTo($form);
+        $("<input>").attr({type: 'hidden', name: 'nonce', id: 'nonce'}).appendTo($form);
+        $("<input>").attr({type: 'hidden', name: 'search_name', id: 'search_name', value: searchName}).appendTo($form);
         $form.submit();
     }
 
