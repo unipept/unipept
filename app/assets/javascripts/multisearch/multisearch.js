@@ -260,8 +260,10 @@ var constructMultisearch = function constructMultisearch(args) {
     * Adds actions the currently shown popover
     */
     function addPopoverBehaviour() {
+        $("#popovers").click(function(e){e.stopPropagation()});
+        $(".full-screen-bar").click(that.removePopovers);
+        $(".tab-content").click(that.removePopovers);
         $(document).dblclick(function(event) {                  
-            // behaviour
             $(".close").click(that.removePopovers);
             $("#download-peptides").mouseenter(function () {
                 if (!$("#download-peptides").hasClass("open")) {
