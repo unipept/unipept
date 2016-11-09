@@ -1,11 +1,22 @@
 function init_sequence_show(data) {
 
+    // variables
+    var entries = data.entries,
+        ec_functions = data.ec_functions,
+        go_functions = data.go_functions,
+        taxonEntries = data.taxonEntries,
+        ecEntries = data.ecEntries,
+        goEntries = data.goEntries;
+
+    // add entries to protein table
+    setUpProteinTable();
+
     // set up the fancy tree
     initD3TreeView(data.tree, '#lineageTree');
-    initD3TreeView(data.ec_tree, '#ecTree')
+    initD3TreeView(data.ec_tree, '#ecTree');
 
     // fullscreen and save image buttons
-    var buttons = ['lineage-tree', 'ec-tree']
+    var buttons = ['lineage-tree', 'ec-tree'];
 
     // set up the fullscreen stuff
     setUpFullScreen(buttons);
@@ -53,12 +64,84 @@ function init_sequence_show(data) {
         });
     }
 
+    /**
+     * Set up button behaviour for protein table
+     */
+    function setUpProteinTable() {
+        var expand = 100,
+            addEntries = expand;
+
+        initTable(expand);
+        $("#entry-filter li").click(function() {
+            expand = ($(this)[0].innerText.trim() !== 'All') ? parseInt($(this)[0].innerText.trim()) : entries.length;
+            addEntries = expand;
+            // change button text to new number
+            document.getElementById("show-entries").innerText = $(this)[0].innerText.trim() + ' entries '
+            $("#show-entries").append($('<span class="caret"></span>'))
+            // remove previouse entries
+            document.getElementById('entry-table').innerHTML = "";
+            // set active tab
+            $("#entry-filter li").removeClass("active");
+            $(this).addClass("active");
+            // create table
+            initTable(expand);
+        });
+        $("#add-entries").click(function() {
+            var start = expand;
+            expand += (expand !== 'All') ? addEntries : 0;
+            initTable(expand, start);
+            // remove selection after click
+            $(".btn-add-entries").blur();
+        });
+    }
+
+    /**
+     * Hide and show add entries button
+     */
+    function behaviourAddEntries(showEntries) {
+        if (showEntries >= entries.length) {
+            $(".btn-add-entries").hide()
+        } else {
+            $(".btn-add-entries").show()
+        }
+    }
+
+    /**
+     * Create the protein table
+     */
+    function initTable(showEntries, start) {
+        var $table = $('#entry-table');
+        start = typeof start !== 'undefined' ? start : 0;
+        for (i = start; i < showEntries; i++) {
+            if (i < entries.length && entries[i].name !== null) {
+                var $row = $('<tr></tr>')
+                $("<td>" +
+                    '<div class="btn-group">' +
+                        '<a class="btn btn-default btn-xs dropdown-toggle externalLinks-button" data-toggle="dropdown">' + String(entries[i].uniprot_accession_number) + ' <span class="caret"></span></a>' +
+                        '<ul class="dropdown-menu">' +
+                            '<li role="presentation" class="dropdown-header">Open on external site</li>' +
+                            '<li><a href="http://www.uniprot.org/uniprot/' + String(entries[i].uniprot_accession_number) + '" target="_blank">Uniprot</a></li>' +
+                            '<li><a href="http://www.ebi.ac.uk/pride/searchSummary.do?queryTypeSelected=identification%20accession%20number&identificationAccessionNumber="' + String(entries[i].uniprot_accession_number) + '" target="_blank">PRIDE</a></li>' +
+                            '<li><a href="https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/Search?apply_action=GO&exact_match=exact_match%22&search_key=' + String(entries[i].uniprot_accession_number) + '" target="_blank">PeptideAtlas</a></li>' +
+                        '</ul>' +
+                    '</div>' +
+                '</td>').appendTo($row);
+                $('<td class="col-name"><div class="entry-info">' + entries[i].name + '</div></td>').appendTo($row);
+                $('<td class="col-organism"><div class="entry-info"><a href="http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=' + String(taxonEntries[i].id) + '" title="' + String(taxonEntries[i].id) + '" target="_blank">' + taxonEntries[i].name + '</a></div></td>').appendTo($row);
+                $('<td class="col-ec"><div class="entry-info">' + ecEntries[i].map(element => {return '<a href="http://enzyme.expasy.org/EC/' + element.ec_number_code + '" title="' + String(ec_functions[element.ec_number_code]) + '" target="_blank">' + element.ec_number_code + '</a>'}).join(", ") + '</div></td>').appendTo($row);
+                $('<td class="col-go"><div class="entry-info">' + goEntries[i].map(element => {return '<a href="http://amigo.geneontology.org/amigo/term/' + element.go_term_code + '" target="_blank">' + element.go_term_code + '</a>'}).join(", ") + '</div></td>').appendTo($row);
+                $table.append($row[0]);
+            }
+        }
+        behaviourAddEntries(showEntries);
+    }
+
     function initD3TreeView(data, selector) {
         $(selector).treeview(data, {
             width: 916,
             height: 600,
             getTooltip: function(d) {
-              let numberFormat = d3.format(",d");
+              var numberFormat = d3.format(",d");
               return "<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" + numberFormat(!d.data.self_count ? "0" : d.data.self_count) + (d.data.self_count && d.data.self_count === 1 ? " peptide" : " peptides") +
                 " specific to this level<br/>" + numberFormat(!d.data.count ? "0" : d.data.count) + (d.data.count && d.data.count === 1 ? " peptide" : " peptides") + " specific to this level or lower";
             },

@@ -25,6 +25,13 @@
     background: white;
 }
 
+.btn-expand .btn-add-entries,
+.btn-expand .btn-add-entries:hover,
+.btn-expand .btn-add-entries:focus {
+    outline: none;
+    width: 100%;
+}
+
 /* subnav botton */
 .buttons-subnav {
     margin-top: -95px;
@@ -46,6 +53,22 @@
 }
 .sequence_table a {
     color: #333;
+}
+.table div.entry-info{
+    height: 4em;
+    overflow-y: auto;
+}
+.table .col-name {
+    width: 200px;
+}
+.table .col-organism {
+    width: 200px;
+}
+.table .col-ec {
+    width: 120px;
+}
+.table .col-go {
+    width: 260px;
 }
 
 .shorten {
@@ -165,6 +188,10 @@ table.protein-info .go {
 }
 table.protein-info .dropdown-menu {
     margin-top: 0;
+}
+.btn-group.btn-entries .dropdown-menu {
+    min-width: 60px;
+    position: absolute;
 }
 
 .sub-navigation { 
