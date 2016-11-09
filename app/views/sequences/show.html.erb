@@ -25,7 +25,7 @@
           <p>Summary of the functional analysis:</p>
           <ul>
             <u>Enzyme Commission</u>
-            <li>Function: <%= link_to (@ec_lca == "root" ? @ec_lca : @ec_functions[@ec_lca]), "http://enzyme.expasy.org/EC/" + @ec_lca, :target => "_blank", :title => @ec_lca %></li>
+            <li>Function: <%= (@ec_lca == "root" or @ec_lca == "nothing") ? @ec_lca : (link_to @ec_functions[@ec_lca], "http://enzyme.expasy.org/EC/" + @ec_lca, :target => "_blank", :title => @ec_lca) %></li>
             <li>Common function: <%= raw @ec_consensus.length==0 ? "nothing" : @ec_consensus.map{|t| link_to @ec_functions[t.to_s], "http://enzyme.expasy.org/EC/" + t.to_s, :target => "_blank", :title =>  @ec_functions[t.to_s]}.join(" > ") %></li>
             <p></p>
             <u>Gene Ontology</u>
