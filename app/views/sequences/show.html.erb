@@ -40,6 +40,16 @@
             <button id="clipboard-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-copy"></span> Copy to clipboard</button>
             <button id="open-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-new-window"></span> Open in UniProt</button>
           </div>
+          <div class="btn-group pull-right btn-entries">
+            <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="show-entries"><span class="caret"></span> 100 entries </a>
+            <ul id="entry-filter" class="dropdown-menu">
+              <li class="active"><a>100</a></li>
+              <li><a>200</a></li>
+              <li><a>500</a></li>
+              <li><a>1000</a></li>
+              <li><a>All</a></li>
+            </ul>
+          </div>
           <table class="table table-condensed table-hover protein-info">
             <thead>
               <tr>
@@ -50,28 +60,11 @@
                 <th class="go">Gene&nbsp;Ontology</th>
               </tr>
             </thead>
-            <% for entry in @entries do %>
-              <% unless entry.name.nil? %>
-                <tr>
-                  <td>
-                    <div class="btn-group">
-                      <a class="btn btn-default btn-xs dropdown-toggle externalLinks-button" data-toggle="dropdown"><%= entry.uniprot_accession_number %> <span class="caret"></span></a>
-                      <ul class="dropdown-menu">
-                        <li role="presentation" class="dropdown-header">Open on external site</li>
-                        <li><%= link_to "Uniprot", "http://www.uniprot.org/uniprot/"+entry.uniprot_accession_number, :target => "_blank" %></li>
-                        <li><%= link_to "PRIDE", "http://www.ebi.ac.uk/pride/searchSummary.do?queryTypeSelected=identification%20accession%20number&identificationAccessionNumber="+entry.uniprot_accession_number, :target => "_blank" %></li>
-                        <li><%= link_to "PeptideAtlas", "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/Search?apply_action=GO&exact_match=exact_match%22&search_key="+entry.uniprot_accession_number, :target => "_blank" %></li>
-                      </ul>
-                    </div>
-                  </td>
-                  <td><%= entry.name %></td>
-                  <td><%= link_to entry.taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="+entry.taxon.id.to_s, :target => "_blank" %></td>
-                  <td><%= raw(entry.ec_cross_references.map{|ec| "<a href='http://enzyme.expasy.org/EC/"+ec.ec_number_code+"' target='_blank'>"+ec.ec_number_code+"</a>"}.join(", ")) %></td>
-                  <td><%= raw(entry.go_cross_references.map{|go| "<a href='http://amigo.geneontology.org/amigo/term/"+go.go_term_code+"' target='_blank'>"+go.go_term_code+"</a>"}.join(", ")) %></td>
-                </tr>
-              <% end %>
-            <% end %>
+            <tbody id="entry-table"></tbody>
           </table>
+          <div class="btn-expand">
+            <button id="add-entries" class="btn btn-default btn-add-entries"><span class="glyphicon glyphicon-plus"></span> Load more entries</button>
+          </div>
         </div>
         <div class="tab-pane" id="lineage-analysis">
           <ul class="nav nav-tabs sub-navigation">
@@ -186,6 +179,10 @@
         tree: <%= raw(@root) %>,
         ec_tree: <%= raw(@ec_root) %>,
         go_tree: <%= raw(@go_root) %>,
+        entries: <%= raw(@entries.to_json) %>,
+        taxonEntries: <%= raw(@entries.map{|entry| entry.taxon}.to_json) %>,
+        ecEntries: <%= raw(@entries.map{|entry| entry.ec_cross_references}.to_json) %>,
+        goEntries: <%= raw(@entries.map{|entry| entry.go_cross_references}.to_json) %>,
         uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>
       });
     });
