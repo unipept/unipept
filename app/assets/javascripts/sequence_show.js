@@ -1,7 +1,8 @@
 function init_sequence_show(data) {
 
     // variables
-    let entries = data.entries,
+    var that = {},
+        entries = data.entries,
         taxonEntries = data.taxonEntries,
         ecEntries = data.ecEntries,
         goEntries = data.goEntries;
@@ -27,6 +28,9 @@ function init_sequence_show(data) {
 
     // set up column toggle
     initColumnToggle();
+
+    // iset up popover behaviour
+    setUpPopoverBehaviour();
 
     // enable the external link popovers
     addExternalLinks();
@@ -136,6 +140,7 @@ function init_sequence_show(data) {
         $(selector).treeview(data, {
             width: 916,
             height: 600,
+            enableDoubleClick: true,
             getTooltip: function(d) {
               let numberFormat = d3.format(",d");
               return "<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" + numberFormat(!d.data.self_count ? "0" : d.data.self_count) + (d.data.self_count && d.data.self_count === 1 ? " peptide" : " peptides") +
@@ -143,6 +148,9 @@ function init_sequence_show(data) {
             },
             getLabel: function(d) { 
                 return d.name.length > 33 && (d._children || d.children) ? d.name.substring(0,30).trim()+"...": d.name
+            },
+            getPopoverContent: function(d) {
+                return getPopoverContent(d);
             }
         });
     }
@@ -166,6 +174,56 @@ function init_sequence_show(data) {
             $("#ec-table tr th:nth-child(" + col + ") a span.classdesc").hide();
             $("#ec-table tr th:nth-child(" + col + ") a span.glyphicon").show();
         }
+    }
+
+    /**
+     * Constructs the content of a popover for a given dataset.
+     *
+     * @param <Genome> d The node of which we want a popover
+     */
+    function getPopoverContent(d) {
+        var numberFormat = d3.format(",d");
+        var content = numberFormat(!d.data.self_count ? "0" : d.data.self_count) + (d.data.self_count && d.data.self_count === 1 ? " peptide" : " peptides") +
+            " specific to this level<br/>" + numberFormat(!d.data.count ? "0" : d.data.count) + (d.data.count && d.data.count === 1 ? " peptide" : " peptides") + " specific to this level or lower";
+
+        content += "<div class='popover-buttons' ><br/>" +
+                        "<div class='btn-group' id='download-organisms'>" +
+                            "<a class='btn btn-default dropdown-toggle' id='download-organisms-toggle' data-toggle='dropdown' data-loading-text='Loading organisms'>" +
+                                "<span class='glyphicon glyphicon-download'></span> " +
+                                    "download organisms " +
+                                "<span class='caret'></span>" +
+                            "</a>" +
+                            "<ul class='dropdown-menu'>" +
+                                "<li><a href='#' data-id='" + d.id + "' id='node' data-type='node'><span style='color: blue;'>&#9632;</span> Node</a></li>" +
+                                "<li><a href='#' data-id='" + d.id + "' id='branch' data-type='branch'><span style='color: red;'>&#9632;</span> Branch</a></li>" +
+                            "</ul>" +
+                        "</div>" +
+                    "</div>";
+        return content;
+    }
+
+    /**
+     * Adds actions the currently shown popover
+     */
+    function setUpPopoverBehaviour() {
+        //$("#popovers").click(function(e){e.stopPropagation()});
+        //$(".btn-resize").click(that.removePopovers);
+        $(".card-supporting-text").click(that.removePopovers);
+        $(document).dblclick(function(event) {
+            // behaviour
+            $(".close").click(that.removePopovers);
+            $("#download-organisms").mouseenter(function () {
+                if (!$("#download-organisms").hasClass("open")) {
+                    $("#download-organisms-toggle").dropdown("toggle");
+                }
+            });
+            $("#download-organisms").mouseleave(function () {
+                if ($("#download-organisms").hasClass("open")) {
+                    $("#download-organisms-toggle").dropdown("toggle");
+                }
+            });
+            $("#download-organisms ul a").click();
+        });
     }
 
     function addExternalLinks() {
@@ -228,12 +286,30 @@ function init_sequence_show(data) {
                 if (window.fullScreenApi.isFullScreen()) {
                     width = $(window).width()+32;
                     height = $(window).height()+16;
+                    // move tooltip
                 }
                 buttons.forEach(function(button) {
                     $("#" + button + " div.tpa-tree svg").attr("width", width);
                     $("#" + button + " div.tpa-tree svg").attr("height", height);
+
+                    // moving tooltip & popover
+                    treeId = $("#" + button + " div.tpa-tree").attr("id");
+                    tooltipDiv = $("#" + treeId + "-tooltip");
+                    //popoverDiv = $(".popover-tpa");
+                    window.fullScreenApi.isFullScreen() ? tooltipDiv.insertAfter("#buttons-" + button) : tooltipDiv.appendTo("body");
+                    //window.fullScreenApi.isFullScreen() ? popoverDiv.insertAfter("#buttons-" + button) : popoverDiv.appendTo("body");
                 });
             }, 1000);
         }
     }
+
+    /*************** Public methods ***************/
+
+    /**
+     * Removes all popovers
+     */
+    that.removePopovers = function removePopovers() {
+        $(".bar.pop").popover("destroy");
+        $(".bar.pop").attr("class", "bar");
+    };
 }
