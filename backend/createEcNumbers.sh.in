@@ -7,11 +7,14 @@ exec 3>&1
 classes="ftp://ftp.ebi.ac.uk/pub/databases/enzyme/enzclass.txt"
 numbers="ftp://ftp.ebi.ac.uk/pub/databases/enzyme/enzyme.dat"
 
+# TODO remove dot at end of description
 lines="$(wget -q "$classes" -O -       \
        | grep "^[1-9]"                 \
        | <<<CMD_SED>>> "s/\. *\([0-9\-]\)/.\1/g" \
        | <<<CMD_SED>>> "s/  */\t/"               \
-       | nl -n "ln"                    \
+       | nl -s "	"                  \
+       | <<<CMD_SED>>> 's/^  *//'                \
+       | <<<CMD_SED>>> 's/^\.$//'                \
        | tee >(cat >&3)                \
        | wc -l                         \
        )"
