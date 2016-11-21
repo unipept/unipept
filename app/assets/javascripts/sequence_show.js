@@ -112,7 +112,7 @@ function init_sequence_show(data) {
      * Create the protein table
      */
     function initTable(showEntries, start = 0) {
-        let $table = document.getElementById('entry-table');
+        var $table = document.getElementById('entry-table');
         for (i = start; i < showEntries; i++) {
             if (i < entries.length && entries[i].name !== null) {
                 let $row = $('<tr></tr>')
@@ -293,10 +293,10 @@ function init_sequence_show(data) {
                     $("#" + button + " div.tpa-tree svg").attr("height", height);
 
                     // moving tooltip & popover
-                    treeId = $("#" + button + " div.tpa-tree").attr("id");
+                    treeId = $("div.tpa-tree").attr("id");
                     tooltipDiv = $("#" + treeId + "-tooltip");
                     //popoverDiv = $(".popover-tpa");
-                    window.fullScreenApi.isFullScreen() ? tooltipDiv.insertAfter("#buttons-" + button) : tooltipDiv.appendTo("body");
+                    window.fullScreenApi.isFullScreen() ? tooltipDiv.appendTo("#" + treeId) : tooltipDiv.appendTo("body");
                     //window.fullScreenApi.isFullScreen() ? popoverDiv.insertAfter("#buttons-" + button) : popoverDiv.appendTo("body");
                 });
             }, 1000);
