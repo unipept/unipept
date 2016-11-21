@@ -14,7 +14,7 @@ lines="$(wget -q "$classes" -O -       \
        | <<<CMD_SED>>> "s/  */\t/"               \
        | nl -s "	"                  \
        | <<<CMD_SED>>> 's/^  *//'                \
-       | <<<CMD_SED>>> 's/^\.$//'                \
+       | <<<CMD_SED>>> 's/\.$//'                 \
        | tee >(cat >&3)                \
        | wc -l                         \
        )"
