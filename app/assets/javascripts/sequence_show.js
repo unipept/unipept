@@ -206,11 +206,9 @@ function init_sequence_show(data) {
      * Adds actions the currently shown popover
      */
     function setUpPopoverBehaviour() {
-        //$("#popovers").click(function(e){e.stopPropagation()});
-        //$(".btn-resize").click(that.removePopovers);
-        $(".card-supporting-text").click(that.removePopovers);
+        $("#popovers").click(function(e){e.stopPropagation()});
         $(document).dblclick(function(event) {
-            // behaviour
+            $("body").click(that.removePopovers);
             $(".close").click(that.removePopovers);
             $("#download-organisms").mouseenter(function () {
                 if (!$("#download-organisms").hasClass("open")) {
@@ -295,9 +293,9 @@ function init_sequence_show(data) {
                     // moving tooltip & popover
                     treeId = $("div.tpa-tree").attr("id");
                     tooltipDiv = $("#" + treeId + "-tooltip");
-                    //popoverDiv = $(".popover-tpa");
+                    popoverDiv = $("#popovers");
                     window.fullScreenApi.isFullScreen() ? tooltipDiv.appendTo("#" + treeId) : tooltipDiv.appendTo("body");
-                    //window.fullScreenApi.isFullScreen() ? popoverDiv.insertAfter("#buttons-" + button) : popoverDiv.appendTo("body");
+                    window.fullScreenApi.isFullScreen() ? popoverDiv.appendTo("#" + treeId) : popoverDiv.appendTo("body");
                 });
             }, 1000);
         }
