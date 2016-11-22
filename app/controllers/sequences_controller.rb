@@ -114,6 +114,35 @@ class SequencesController < ApplicationController
 
     @title = "Tryptic peptide analysis of #{@original_sequence}"
 
+    # get entries
+    @taxon_entries = @entries.map{|entry| entry.taxon}
+    @ec_entries = @entries.map{|entry| entry.ec_cross_references}
+    @go_entries = @entries.map{|entry| entry.go_cross_references}
+
+    # link ec, go and taxon
+    @ec_go, @ec_taxon = {}, {}
+    @go_ec, @go_taxon = {}, {}
+    @taxon_ec, @taxon_go = {}, {}
+
+    pos = 0
+    while pos < @taxon_entries.length
+
+      taxon_list = [@taxon_entries[pos].id]
+      ec_list = @ec_entries[pos].map{|e| e.ec_number_code}
+      go_list = @go_entries[pos].map{|e| e.go_term_code}
+
+      @taxon_ec = link_ids(taxon_list, @taxon_ec, 'e', pos)
+      @taxon_go = link_ids(taxon_list, @taxon_go, 'g', pos)
+
+      @ec_taxon = link_ids(ec_list, @ec_taxon, 't', pos)
+      @go_taxon = link_ids(go_list, @go_taxon, 't', pos)
+
+      @ec_go = link_ids(ec_list, @ec_go, 'g', pos)
+      @go_ec = link_ids(go_list, @go_ec, 'e', pos)
+
+      pos += 1
+    end
+
     # EC related stuff
     # variables
     @ec_functions = {}
@@ -379,6 +408,32 @@ class SequencesController < ApplicationController
     flash[:error] = 'Your query was empty, please try again.'
     redirect_to datasets_path
   end
+end
+
+# TODO: remove nil values
+def link_ids(function_ids, target_dic, table, pos)
+  if not function_ids === []
+    function_ids.each do |id|
+      if !target_dic.has_key?(id)
+        target_dic[id] = []
+      end
+
+      if table == 't'
+        target_dic[id] << @taxon_entries[pos].id
+      elsif table == 'e'
+        @ec_entries[pos].map{|e| target_dic[id] << e.ec_number_code}
+      else
+        @go_entries[pos].map{|e| target_dic[id] << e.go_term_code}
+      end
+      
+      if target_dic[id] == []
+        target_dic.except!(id)
+      else
+        target_dic[id] = target_dic[id].uniq
+      end
+    end
+  end
+  return target_dic
 end
 
 class EmptyQueryError < StandardError; end
