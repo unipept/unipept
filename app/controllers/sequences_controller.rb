@@ -200,7 +200,9 @@ class SequencesController < ApplicationController
     # get consensus hits
     @ec_consensus = EcNumber.get_consensus(JSON.parse(@ec_root))
     # get EC LCA
-    ec_lca_id = equate_il ? sequence.ec_lca_il : sequence.ec_lca unless sequence.nil?
+    # ec_lca_id = equate_il ? sequence.ec_lca_il : sequence.ec_lca unless sequence.nil?
+    # adler test always nil!
+    ec_lca_id = nil
     if not ec_lca_id.nil?
       @ec_lca = ec_lca_id != 0 ? ec_db.select('code').where(id: ec_lca_id).map{|ec| ec.code}[0] : 'root'
     else
