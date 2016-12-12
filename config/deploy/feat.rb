@@ -5,5 +5,5 @@ server 'adler.ugent.be', user: 'bmesuere', roles: [:web, :app], ssh_options: {
   port: 4840
 }
 
-set :branch, 'feature/develop-functional-analysis-tpa'
+set :branch, 'feature/develop-functional-analysis-tpa-adler'
 set :rails_env, :development
