@@ -198,7 +198,7 @@ class SequencesController < ApplicationController
     @ec_root = Oj.dump(ec_root, mode: :compat)
 
     # get consensus hits
-    @ec_consensus = EcNumber.get_consensus(eval(@ec_root))
+    @ec_consensus = EcNumber.get_consensus(JSON.parse(@ec_root))
     # get EC LCA
     ec_lca_id = equate_il ? sequence.ec_lca_il : sequence.ec_lca unless sequence.nil?
     if not ec_lca_id.nil?
