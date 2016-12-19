@@ -36,3 +36,5 @@
 // used for clustering page
 //  newick.js
 //= require newick/newick.js
+
+//= require unipept-visualizations/unipept-visualizations.min.js

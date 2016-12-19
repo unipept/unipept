@@ -20,3 +20,4 @@ backend/java/bin/**/*.class
 coverage/
 .idea
 *.iml
+.DS_Store
