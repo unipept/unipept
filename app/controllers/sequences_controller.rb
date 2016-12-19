@@ -186,7 +186,7 @@ class SequencesController < ApplicationController
               ec_last_node_loop = ec_last_node_loop.add_child(node)
             else
               node.data['count'] += ec_count[ec]
-              node.data['self_count'] = ec_ontology[-1] == ec ? node.data['self_count']+1 : 0
+              node.data['self_count'] = ec_ontology[-1] == ec ? node.data['self_count']+1 : node.data['self_count']+0
               node.name = @ec_functions[ec]
               ec_last_node_loop = node
             end
