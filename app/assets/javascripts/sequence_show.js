@@ -82,7 +82,7 @@ function init_sequence_show(data) {
      * Set up button behaviour for protein table
      */
     function setUpProteinTable() {
-        let expand = 100,
+        var expand = 100,
             addEntries = expand;
 
         initTable(expand);
@@ -100,18 +100,29 @@ function init_sequence_show(data) {
             initTable(expand);
         });
         $("#add-entries").click(function() {
-            let start = expand;
+            var start = expand;
             expand += (expand !== 'All') ? addEntries : 0;
             initTable(expand, start);
             // remove selection after click
-            $(".btn-add-entries").blur()
+            $(".btn-add-entries").blur();
         });
+    }
+
+    /**
+     * Hide and show add entries button
+     */
+    function behaviourAddEntries(showEntries) {
+        if (showEntries >= entries.length) {
+            $(".btn-add-entries").hide()
+        } else {
+            $(".btn-add-entries").show()
+        }
     }
 
     /**
      * Create the protein table
      */
-    function initTable(showEntries, start = 0) {
+    function initTable(showEntries, start=0) {
         var $table = document.getElementById('entry-table');
         for (i = start; i < showEntries; i++) {
             if (i < entries.length && entries[i].name !== null) {
@@ -134,6 +145,7 @@ function init_sequence_show(data) {
                 $table.append($row[0]);
             }
         }
+        behaviourAddEntries(showEntries);
     }
 
     function initD3TreeView(data, selector) {
