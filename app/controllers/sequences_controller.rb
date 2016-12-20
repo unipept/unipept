@@ -198,7 +198,7 @@ class SequencesController < ApplicationController
     @ec_root = Oj.dump(ec_root, mode: :compat)
 
     # get consensus hits
-    @ec_consensus = EcNumber.get_consensus(JSON.parse(@ec_root))
+    @ec_consensus = EcNumber.get_consensus(JSON.parse(@ec_root, :symbolize_names => true))
     # get EC LCA
     # ec_lca_id = equate_il ? sequence.ec_lca_il : sequence.ec_lca unless sequence.nil?
     # adler test always nil!
@@ -206,7 +206,8 @@ class SequencesController < ApplicationController
     if not ec_lca_id.nil?
       @ec_lca = ec_lca_id != 0 ? ec_db.select('code').where(id: ec_lca_id).map{|ec| ec.code}[0] : 'root'
     else
-      @ec_lca = (sequence.nil? && (not @entries.empty?)) ? @ec_consensus[-1] : 'nothing'
+      @ec_lca = (not @entries.empty?) ? @ec_consensus[-1] : 'nothing'
+      @ec_consensus.shift
     end
 
     # GO retalted stuff
