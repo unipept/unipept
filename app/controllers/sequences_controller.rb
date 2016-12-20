@@ -151,15 +151,16 @@ class SequencesController < ApplicationController
     ec_db = EcNumber.all
     # get all accossiated EC numbers from 'ec_cross_references' table
     ec_cross_reference_hits = @entries.map(&:ec_cross_references)
+    ec_cross_found = ec_cross_reference_hits.select{|ec| ec != []}
 
     # generate ec tree, starting from root
     ec_root = Node.new("-.-.-.-", 'root', nil, '-.-.-.-')
-    ec_root.data['count'] = ec_cross_reference_hits.select{|ec| ec != []}.length
+    ec_root.data['count'] = ec_cross_found.length
     ec_last_node =  ec_root
 
     # generate the rest of the EC tree
-    ec_cross_reference_hits.each do |crossref_hits|
-      if crossref_hits != []
+    if not ec_cross_found.empty?
+      ec_cross_reference_hits.each do |crossref_hits|
         ec_count = {}
         crossref_hits.each do |cross_ref|
           ec_last_node_loop = ec_last_node
@@ -206,7 +207,7 @@ class SequencesController < ApplicationController
     if not ec_lca_id.nil?
       @ec_lca = ec_lca_id != 0 ? ec_db.select('code').where(id: ec_lca_id).map{|ec| ec.code}[0] : 'root'
     else
-      @ec_lca = (not @entries.empty?) ? @ec_consensus[-1] : 'nothing'
+      @ec_lca = @entries.empty? || ec_cross_found.empty? ? 'nothing' : @ec_consensus[-1]
       @ec_consensus.shift
     end
 
