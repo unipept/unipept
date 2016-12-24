@@ -90,7 +90,8 @@ function init_sequence_show(data) {
             expand = ($(this)[0].innerText.trim() !== 'All') ? parseInt($(this)[0].innerText.trim()) : entries.length;
             addEntries = expand;
             // change button text to new number
-            document.getElementById("show-entries").innerText = $(this)[0].innerText.trim() + ' entries'
+            document.getElementById("show-entries").innerText = $(this)[0].innerText.trim() + ' entries '
+            $("#show-entries").append($('<span class="caret"></span>'))
             // remove previouse entries
             document.getElementById('entry-table').innerHTML = "";
             // set active tab
