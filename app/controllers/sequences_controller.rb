@@ -114,6 +114,116 @@ class SequencesController < ApplicationController
 
     @title = "Tryptic peptide analysis of #{@original_sequence}"
 
+    # get entries
+    @taxon_entries = @entries.map{|entry| entry.taxon}
+    @ec_entries = @entries.map{|entry| entry.ec_cross_references}
+    @go_entries = @entries.map{|entry| entry.go_cross_references}
+
+    # link ec, go and taxon
+    @ec_go, @ec_taxon = {}, {}
+    @go_ec, @go_taxon = {}, {}
+    @taxon_ec, @taxon_go = {}, {}
+
+    pos = 0
+    while pos < @taxon_entries.length
+
+      taxon_list = [@taxon_entries[pos].id]
+      ec_list = @ec_entries[pos].map{|e| e.ec_number_code}
+      go_list = @go_entries[pos].map{|e| e.go_term_code}
+
+      @taxon_ec = link_ids(taxon_list, @taxon_ec, 'e', pos)
+      @taxon_go = link_ids(taxon_list, @taxon_go, 'g', pos)
+
+      @ec_taxon = link_ids(ec_list, @ec_taxon, 't', pos)
+      @go_taxon = link_ids(go_list, @go_taxon, 't', pos)
+
+      @ec_go = link_ids(ec_list, @ec_go, 'g', pos)
+      @go_ec = link_ids(go_list, @go_ec, 'e', pos)
+
+      pos += 1
+    end
+
+    # EC related stuff
+    # variables
+    @ec_functions = {}
+    @ec_ontologies = {}
+    # preload table 'ec_numbers'
+    ec_db = EcNumber.all
+    # get all accossiated EC numbers from 'ec_cross_references' table
+    ec_cross_reference_hits = @entries.map(&:ec_cross_references)
+
+    # generate ec tree, starting from root
+    ec_root = Node.new("-.-.-.-", 'root', nil, '-.-.-.-')
+    ec_root.data['count'] = ec_cross_reference_hits.select{|ec| ec != []}.length
+    ec_last_node =  ec_root
+
+    # generate the rest of the EC tree
+    ec_cross_reference_hits.each do |crossref_hits|
+      if crossref_hits != []
+        ec_count = {}
+        crossref_hits.each do |cross_ref|
+          ec_last_node_loop = ec_last_node
+
+          # required for creating 'EC table'
+          if not @ec_ontologies.has_key?(cross_ref["ec_number_code"])
+            @ec_ontologies[cross_ref["ec_number_code"]] = EcNumber.get_ontology(cross_ref["ec_number_code"])
+          end
+          ec_ontology = @ec_ontologies[cross_ref["ec_number_code"]]
+
+          # only add the functions that are missing
+          if not @ec_functions.has_key?(ec_ontology[-1])
+            @ec_functions = EcNumber.get_ec_function(ec_ontology, @ec_functions, ec_db)
+          end
+
+          # add the other nodes to the tree
+          ec_ontology.each do |ec|
+            ec_count[ec] = ec_count.has_key?(ec) ? 0 : 1
+            node = Node.find_by_id(ec, ec_root)
+            if node.nil?
+              node = Node.new(ec, @ec_functions[ec], ec_root, ec)
+              node.data['count'] = 1
+              node.data['self_count'] = ec_ontology[-1] == ec ? 1 : 0
+              ec_last_node_loop = ec_last_node_loop.add_child(node)
+            else
+              node.data['count'] += ec_count[ec]
+              node.data['self_count'] = ec_ontology[-1] == ec ? node.data['self_count']+1 : 0
+              node.name = @ec_functions[ec]
+              ec_last_node_loop = node
+            end
+          end
+        end
+      end
+    end
+    ec_root.sort_children
+    @ec_root = Oj.dump(ec_root, mode: :compat)
+
+    # get consensus hits
+    @ec_consensus = EcNumber.get_consensus(JSON.parse(@ec_root))
+    # get EC LCA
+    # ec_lca_id = equate_il ? sequence.ec_lca_il : sequence.ec_lca unless sequence.nil?
+    # adler test always nil!
+    ec_lca_id = nil
+    if not ec_lca_id.nil?
+      @ec_lca = ec_lca_id != 0 ? ec_db.select('code').where(id: ec_lca_id).map{|ec| ec.code}[0] : 'root'
+    else
+      @ec_lca = (sequence.nil? && (not @entries.empty?)) ? @ec_consensus[-1] : 'nothing'
+    end
+
+    # GO retalted stuff
+    # build GO tree
+    go_array = @entries.map(&:go_cross_references).flatten.group_by{|go| go.go_term_code}
+    go_array.each{|k,v| go_array[k] = v.map(&:uniprot_entry_id)}
+    graphs = GoTerm.go_reachability(go_array)
+    go_tree_build = GoTerm.go_tree(graphs)
+
+    # GO filter
+    @go_consensus = {}
+    GoTerm::GO_ONTOLOGY.keys.each{|o| @go_consensus[o] = []}
+    GoTerm::GO_ONTOLOGY.keys.each{|o| GoTerm.cutoff(go_tree_build[o], GoTerm::CUTOFF*go_tree_build[o].data['count'], @go_consensus[o]) unless go_tree_build[o].nil?}
+
+    # GO json dump
+    @go_root = Oj.dump(go_tree_build, mode: :compat)
+
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @entries.to_json(only: :uniprot_accession_number, include: [{ ec_cross_references: { only: :ec_number_code } }, { go_cross_references: { only: :go_term_code } }]) }
@@ -300,6 +410,32 @@ class SequencesController < ApplicationController
     flash[:error] = 'Your query was empty, please try again.'
     redirect_to datasets_path
   end
+end
+
+# TODO: remove nil values
+def link_ids(function_ids, target_dic, table, pos)
+  if not function_ids === []
+    function_ids.each do |id|
+      if !target_dic.has_key?(id)
+        target_dic[id] = []
+      end
+
+      if table == 't'
+        target_dic[id] << @taxon_entries[pos].id
+      elsif table == 'e'
+        @ec_entries[pos].map{|e| target_dic[id] << e.ec_number_code}
+      else
+        @go_entries[pos].map{|e| target_dic[id] << e.go_term_code}
+      end
+      
+      if target_dic[id] == []
+        target_dic.except!(id)
+      else
+        target_dic[id] = target_dic[id].uniq
+      end
+    end
+  end
+  return target_dic
 end
 
 class EmptyQueryError < StandardError; end

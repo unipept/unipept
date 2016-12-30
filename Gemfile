@@ -59,6 +59,9 @@ end
 # API stats
 gem 'stathat'
 
+# GeneOntology parser
+gem 'scbi_go'
+
 group :development do
   gem 'rubocop', require: false
   gem 'annotate' # annotate models with database info
