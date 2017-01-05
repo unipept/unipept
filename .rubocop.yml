@@ -13,6 +13,9 @@ Style/ClassAndModuleChildren:
 Rails:
   Enabled: true
 
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
 # disable for now
 Lint/NestedMethodDefinition:
   Enabled: false

@@ -14,7 +14,7 @@ class SequencesController < ApplicationController
 
     # process the input, convert seq to a valid @sequence
     if seq =~ /\A[0-9]+\z/
-      sequence = Sequence.includes(peptides: { uniprot_entry: [:taxon, :ec_cross_references, :go_cross_references] }).find_by_id(seq)
+      sequence = Sequence.includes(peptides: { uniprot_entry: [:taxon, :ec_cross_references, :go_cross_references] }).find_by(id: seq)
       @original_sequence = sequence.sequence
     else
       sequence = Sequence.single_search(seq, equate_il)
@@ -205,7 +205,7 @@ class SequencesController < ApplicationController
         min_length = [8, sequences.max_by(&:length).length].min
         sequences = sequences.select { |s| s.length >= min_length }
 
-        long_sequences = sequences.map { |s| Sequence.includes(Sequence.peptides_relation_name(@equate_il) => { uniprot_entry: :lineage }).find_by_sequence(s) }
+        long_sequences = sequences.map { |s| Sequence.includes(Sequence.peptides_relation_name(@equate_il) => { uniprot_entry: :lineage }).find_by(sequence: s) }
 
         # jump the loop if we don't have any matches
         next if long_sequences.include? nil
@@ -280,12 +280,12 @@ class SequencesController < ApplicationController
         end
       end
       node = taxon.id == 1 ? root : Node.find_by_id(taxon.id, root)
-      node.set_sequences(seqs) unless node.nil?
+      node&.set_sequences(seqs)
     end
 
     @json_sequences = Oj.dump(root.sequences, mode: :compat)
-    root.prepare_for_multitree unless root.nil?
-    root.sort_children unless root.nil?
+    root&.prepare_for_multitree
+    root&.sort_children
     @json_tree = Oj.dump(root, mode: :compat)
 
     if export

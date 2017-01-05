@@ -44,10 +44,10 @@ class Sequence < ApplicationRecord
   def calculate_lca(equate_il = true, return_taxon = false)
     if equate_il
       return lca_il_t if return_taxon
-      return lca_il
+      lca_il
     else
       return lca_t if return_taxon
-      return lca
+      lca
     end
   end
 
@@ -68,7 +68,7 @@ class Sequence < ApplicationRecord
     sequence = sequence.tr('I', 'L') if equate_il
     # this solves the N+1 query problem
     includes(peptides_relation_name(equate_il) => { uniprot_entry: [:taxon, :ec_cross_references, :go_cross_references] })
-      .find_by_sequence(sequence)
+      .find_by(sequence: sequence)
   end
 
   # try to find multiple matches for a single sequence
@@ -84,7 +84,7 @@ class Sequence < ApplicationRecord
 
     # build query
     query = includes(peptides_relation_name(equate_il) => { uniprot_entry: [:taxon, :lineage] })
-    long_sequences = sequences.select { |s| s.length >= 5 }.map { |s| query.find_by_sequence(s) }
+    long_sequences = sequences.select { |s| s.length >= 5 }.map { |s| query.find_by(sequence: s) }
 
     # check if it has a match for every sequence and at least one long part
     raise NoMatchesFoundError, sequence if long_sequences.include? nil

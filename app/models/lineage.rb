@@ -138,7 +138,7 @@ class Lineage < ApplicationRecord
 
   # returns the Taxon object of the lowest common ancestor
   def self.calculate_lca_taxon(lineages)
-    Taxon.find_by_id(Lineage.calculate_lca(lineages))
+    Taxon.find_by(id: Lineage.calculate_lca(lineages))
   end
 
   # calculates the lowest common ancestor

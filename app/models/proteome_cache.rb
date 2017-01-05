@@ -13,7 +13,7 @@ class ProteomeCache < ApplicationRecord
   # Tries to retrieve the the cached version of the delta encoded peptides list
   # and creates it if it doesn't exist
   def self.get_encoded_sequences(proteome_id)
-    cache = ProteomeCache.find_by_proteome_id(proteome_id)
+    cache = ProteomeCache.find_by(proteome_id: proteome_id)
     if cache.nil?
       result = ProteomeCache.delta_encode(ProteomeCrossReference.get_sequence_ids(proteome_id))
       json = Oj.dump(result, mode: :compat)

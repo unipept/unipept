@@ -33,7 +33,7 @@ class PeptidomeController < ApplicationController
     if !params[:ids].empty?
       lca = Lineage.calculate_lca(Lineage.find_by_sql("SELECT lineages.* from proteomes LEFT JOIN lineages ON proteomes.taxon_id = lineages.taxon_id WHERE proteomes.id IN (#{params[:ids]}) AND proteomes.taxon_id is not null"))
       result = ProteomeCache.delta_encode(Sequence.filter_unique_uniprot_peptides(sequences, lca))
-      lca = Taxon.find_by_id(lca).name
+      lca = Taxon.find_by(id: lca).name
     else
       lca = 'undefined'
       result = []
@@ -73,7 +73,7 @@ class PeptidomeController < ApplicationController
     params[:ids] = [] if params[:ids].nil?
     if !params[:ids].empty?
       lca = Lineage.calculate_lca(Lineage.find_by_sql("SELECT lineages.* from proteomes LEFT JOIN lineages ON proteomes.taxon_id = lineages.taxon_id WHERE proteomes.id IN (#{params[:ids]}) AND proteomes.taxon_id is not null"))
-      lca = Taxon.find_by_id(lca)
+      lca = Taxon.find_by(id: lca)
     else
       lca = { name: 'undefined' }
     end

@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
   def my_auth
     return if Rails.application.config.unipept_enable_auth
 
-    u = User.find_by_username('guest')
+    u = User.find_by(username: 'guest')
     sign_in(:user, u)
   end
 
