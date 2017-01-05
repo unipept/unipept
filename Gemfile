@@ -1,11 +1,16 @@
 source 'http://rubygems.org'
 
-gem 'rails', '5.0.0rc1'
+git_source(:github) do |repo_name|
+  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
+  "https://github.com/#{repo_name}.git"
+end
+
+gem 'rails', '5.0.1'
 
 gem 'mysql2'
 
 # Use Puma as the app server
-gem 'puma'
+gem 'puma', '~> 3.0'
 
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 3.0'
@@ -45,7 +50,7 @@ gem 'autoprefixer-rails'
 
 # Uglifier minifies JavaScript files by wrapping UglifyJS to be accessible
 # in Ruby
-gem 'uglifier'
+gem 'uglifier', '>= 1.3.0'
 
 # Exception emails
 gem 'exception_notification', git: 'git://github.com/unipept/exception_notification.git'
@@ -60,7 +65,7 @@ end
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
-  gem 'web-console'
+  gem 'web-console', '>= 3.3.0'
   gem 'listen', '~> 3.0.5'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'

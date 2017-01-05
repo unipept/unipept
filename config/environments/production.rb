@@ -61,11 +61,10 @@ UnipeptWeb::Application.configure do
   config.assets.digest = true
 
   # Action Cable endpoint configuration
+  # Mount Action Cable outside main process or domain
+  # config.action_cable.mount_path = nil
   # config.action_cable.url = 'wss://example.com/cable'
   # config.action_cable.allowed_request_origins = [ 'http://example.com', /http:\/\/example.*/ ]
-
-  # Don't mount Action Cable in the main server process.
-  # config.action_cable.mount_path = nil
 
   # Prepend all log lines with the following tags.
   config.log_tags = [:request_id]
