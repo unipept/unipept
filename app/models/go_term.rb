@@ -10,5 +10,4 @@
 
 class GoTerm < ApplicationRecord
   include ReadOnlyModel
-
 end

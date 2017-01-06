@@ -9,5 +9,4 @@
 
 class EcNumber < ApplicationRecord
   include ReadOnlyModel
-
 end
