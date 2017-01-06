@@ -10,8 +10,8 @@
 require 'test_helper'
 
 class GoCrossReferenceTest < ActiveSupport::TestCase
-  test 'should rails error on create new GoCrossReference' do
-    assert_raises(ActiveRecord::ReadOnlyRecord) { GoCrossReference.new.save }
+  test 'should fail to create new GoCrossReference' do
+    assert_not GoCrossReference.new.save
   end
 
   test 'should raise error on save' do

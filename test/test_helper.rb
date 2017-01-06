@@ -25,5 +25,5 @@ end
 
 class ActionController::TestCase
   # Devise helper
-  include Devise::TestHelpers
+  include Devise::Test::ControllerHelpers
 end

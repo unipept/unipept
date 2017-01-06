@@ -12,8 +12,8 @@
 require 'test_helper'
 
 class TaxonTest < ActiveSupport::TestCase
-  test 'should rails error on create new Taxon' do
-    assert_raises(ActiveRecord::ReadOnlyRecord) { Taxon.new.save }
+  test 'should fail to create new Taxon' do
+    assert_not Taxon.new.save
   end
 
   test 'should raise error on save' do

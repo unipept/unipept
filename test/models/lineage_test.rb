@@ -37,12 +37,12 @@ require 'test_helper'
 
 class LineageTest < ActiveSupport::TestCase
   test 'should fail to create new lineage' do
-    assert_raises(ActiveRecord::ReadOnlyRecord) { Lineage.new.save }
+    assert_not Lineage.new.save
   end
 
-  test 'should raise error on save' do
+  test 'should fail to save' do
     lineage = lineages(:lineage1)
-    assert_raises(ActiveRecord::ReadOnlyRecord) { lineage.save }
+    assert_not lineage.save
   end
 
   test 'should raise error on taxon_id change' do

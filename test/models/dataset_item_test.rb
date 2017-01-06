@@ -38,6 +38,7 @@ class DatasetItemTest < ActiveSupport::TestCase
 
   test 'should save datasetitem with valid fields' do
     datasetitem = DatasetItem.new
+    datasetitem.dataset_id = 1
     datasetitem.name = 'test'
     datasetitem.data = 'test'
     assert datasetitem.save, 'Unable to save the datasetitem with valid fields'
