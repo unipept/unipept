@@ -7,7 +7,7 @@
 #  name :string(140)      not null
 #
 
-class EcNumber < ActiveRecord::Base
+class EcNumber < ApplicationRecord
   include ReadOnlyModel
 
 end
