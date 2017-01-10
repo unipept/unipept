@@ -87,10 +87,10 @@ Contains the tryptic peptides.
  - ***id***: A self-assigned id. Integral, incremental, no gaps.
  - ***sequence***: An Amino Acid sequence, more precisely a tryptic
    peptide.
- - ***lca***: The lowest common ancestor of all proteins containing
-   this tryptic peptide. Refers to the taxon table.
  - ***original lca***: A lowest common ancestor in case we did not
    equate the I and L amino acids.
+ - ***lca***: The lowest common ancestor of all proteins containing
+   this tryptic peptide. Refers to the taxon table.
 
 Proteomes
 ---------
