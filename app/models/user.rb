@@ -7,7 +7,7 @@
 #  admin    :integer          default(0), not null
 #
 
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   devise :cas_authenticatable
 
   attr_readonly :id, :username, :admin

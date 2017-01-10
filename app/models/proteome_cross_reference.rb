@@ -7,9 +7,8 @@
 #  proteome_id      :integer          not null
 #
 
-class ProteomeCrossReference < ActiveRecord::Base
+class ProteomeCrossReference < ApplicationRecord
   include ReadOnlyModel
-  attr_accessible nil
 
   belongs_to :uniprot_entry
   belongs_to :proteome

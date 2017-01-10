@@ -5,10 +5,15 @@ AllCops:
     - 'db/schema.rb'
     - 'config/routes.rb'
     - 'bin/setup'
-  RunRailsCops: true
 
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact
+  Enabled: false
+
+Rails:
+  Enabled: true
+
+Style/FrozenStringLiteralComment:
   Enabled: false
 
 # disable for now

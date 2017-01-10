@@ -11,9 +11,8 @@
 #  protein                  :text(65535)      not null
 #
 
-class UniprotEntry < ActiveRecord::Base
+class UniprotEntry < ApplicationRecord
   include ReadOnlyModel
-  attr_accessible nil
 
   has_many :refseq_cross_references
   has_many :embl_cross_references

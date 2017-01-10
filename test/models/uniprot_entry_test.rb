@@ -14,8 +14,8 @@
 require 'test_helper'
 
 class UniprotEntryTest < ActiveSupport::TestCase
-  test 'should rails error on create new UniprotEntry' do
-    assert_raises(ActiveRecord::ReadOnlyRecord) { UniprotEntry.new.save }
+  test 'should fail to create new UniprotEntry' do
+    assert_not UniprotEntry.new.save
   end
 
   test 'should raise error on save' do

@@ -8,7 +8,6 @@
 #  name      :string(200)      not null
 #
 
-class GoTerm < ActiveRecord::Base
+class GoTerm < ApplicationRecord
   include ReadOnlyModel
-
 end

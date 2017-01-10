@@ -10,8 +10,8 @@
 require 'test_helper'
 
 class EcCrossReferenceTest < ActiveSupport::TestCase
-  test 'should rails error on create new EcCrossReference' do
-    assert_raises(ActiveRecord::ReadOnlyRecord) { EcCrossReference.new.save }
+  test 'should fail to create new EcCrossReference' do
+    assert_not EcCrossReference.new.save
   end
 
   test 'should raise error on save' do

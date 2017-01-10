@@ -59,6 +59,21 @@ CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
   `namespace` ENUM('biological process', 'molecular function', 'cellular component') NOT NULL,
   `name` VARCHAR(200) NOT NULL,
   PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`uniprot_entries`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `unipept`.`uniprot_entries` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `uniprot_accession_number` CHAR(10) ASCII NOT NULL ,
+  `version` SMALLINT UNSIGNED NOT NULL ,
+  `taxon_id` MEDIUMINT UNSIGNED NOT NULL ,
+  `type` ENUM('swissprot', 'trembl') NOT NULL ,
+  `name`VARCHAR(150) NOT NULL ,
+  `protein` TEXT NOT NULL ,
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_general_ci;
