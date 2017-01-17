@@ -124,23 +124,15 @@ class SequencesController < ApplicationController
     @go_ec, @go_taxon = {}, {}
     @taxon_ec, @taxon_go = {}, {}
 
-    pos = 0
-    while pos < @taxon_entries.length
-
-      taxon_list = [@taxon_entries[pos].id]
-      ec_list = @ec_entries[pos].map{|e| e.ec_number_code}
-      go_list = @go_entries[pos].map{|e| e.go_term_code}
-
-      @taxon_ec = link_ids(taxon_list, @taxon_ec, 'e', pos)
-      @taxon_go = link_ids(taxon_list, @taxon_go, 'g', pos)
-
-      @ec_taxon = link_ids(ec_list, @ec_taxon, 't', pos)
-      @go_taxon = link_ids(go_list, @go_taxon, 't', pos)
-
-      @ec_go = link_ids(ec_list, @ec_go, 'g', pos)
-      @go_ec = link_ids(go_list, @go_ec, 'e', pos)
-
-      pos += 1
+    entry = 0
+    while entry < @taxon_entries.length
+      # get taxon, ec and go per found entry
+      taxon_id = @taxon_entries[entry].id
+      ec_ids = @ec_entries[entry].map{|e| e.ec_number_code}
+      go_ids = @go_entries[entry].map{|e| e.go_term_code}
+      # link taxon ids to ec and go ids
+      get_brush_linkage(taxon_id, ec_ids, go_ids)
+      entry += 1
     end
 
     # EC related stuff
@@ -412,30 +404,51 @@ class SequencesController < ApplicationController
   end
 end
 
-# TODO: remove nil values
-def link_ids(function_ids, target_dic, table, pos)
-  if not function_ids === []
-    function_ids.each do |id|
-      if !target_dic.has_key?(id)
-        target_dic[id] = []
-      end
+# Hash containing the link between taxon ids and ec and go ids.
+def get_brush_linkage(taxon_id, ec_ids, go_ids)
+  if !ec_ids.empty?
+    # link taxon to ec
+    @taxon_ec[taxon_id] = @taxon_ec[taxon_id] || Set.new
+    ec_ids.each do |ec|
+      @taxon_ec[taxon_id].add(ec)
+    end
 
-      if table == 't'
-        target_dic[id] << @taxon_entries[pos].id
-      elsif table == 'e'
-        @ec_entries[pos].map{|e| target_dic[id] << e.ec_number_code}
-      else
-        @go_entries[pos].map{|e| target_dic[id] << e.go_term_code}
-      end
-      
-      if target_dic[id] == []
-        target_dic.except!(id)
-      else
-        target_dic[id] = target_dic[id].uniq
+    ec_ids.each do |ec|
+      # link ec to taxon
+      @ec_taxon[ec] = @ec_taxon[ec] || Set.new
+      @ec_taxon[ec].add(taxon_id)
+
+      # link ec to go
+      if !go_ids.empty?
+        @ec_go[ec] = @ec_go[ec] || Set.new
+        go_ids.each do |go|
+          @ec_go[ec].add(go)
+        end
       end
     end
   end
-  return target_dic
+
+  if !go_ids.empty?
+    # link taxon to go
+    @taxon_go[taxon_id] = @taxon_go[taxon_id] || Set.new
+    go_ids.each do |go|
+      @taxon_go[taxon_id].add(go)
+    end
+
+    go_ids.each do |go|
+      # link go to taxon
+      @go_taxon[go] = @go_taxon[go] || Set.new
+      @go_taxon[go].add(taxon_id)
+
+      # link go to ec
+      if !ec_ids.empty?
+        @go_ec[go] = @go_ec[go] || Set.new
+        ec_ids.each do |ec|
+          @go_ec[go].add(ec)
+        end
+      end
+    end
+  end
 end
 
 class EmptyQueryError < StandardError; end
