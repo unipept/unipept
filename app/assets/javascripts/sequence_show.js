@@ -13,7 +13,8 @@ function init_sequence_show(data) {
         ec_taxon = data.ec_taxon,
         go_taxon = data.go_taxon,
         taxon_ec = data.taxon_ec,
-        taxon_go = data.taxon_go;
+        taxon_go = data.taxon_go,
+        currentNode;
 
     // link tabs to dictionaries
     var mapping = {
@@ -218,6 +219,7 @@ function init_sequence_show(data) {
      * @param <Genome> d The node of which we want a popover
      */
     function getPopoverContent(d) {
+        currentNode = d
         var numberFormat = d3.format(",d");
         var content = numberFormat(!d.data.self_count ? "0" : d.data.self_count) + (d.data.self_count && d.data.self_count === 1 ? " peptide" : " peptides") +
             " specific to this level<br/>" + numberFormat(!d.data.count ? "0" : d.data.count) + (d.data.count && d.data.count === 1 ? " peptide" : " peptides") + " specific to this level or lower";
@@ -293,7 +295,7 @@ function init_sequence_show(data) {
             if (type === 'node') {
                 data_seq = that.getNodeInfo(id);
             } else {
-                data_seq = that.getBranchInfo(id);
+                data_seq = that.getBranchInfo(currentNode).join('\r\n').trim();
             };
             $notification.hide();
             resolve(data_seq);
@@ -407,7 +409,23 @@ function init_sequence_show(data) {
         return d_info
     };
 
-    that.getBranchInfo = function getNodeInfo(id) {
+    that.getBranchInfo = function getBranchInfo(d, s=[]) {
+        var child;
+        if (that.getNodeInfo(d.id) != '') {
+            s = s.concat(that.getNodeInfo(d.id));
+        };
 
+        if (('children' in d) && (d.children != null)) {
+            child = d.children;
+        } else {
+            child = d._children;
+        };
+
+        if (typeof child !== "undefined") {
+            for (var i = 0; i < child.length; i++) {
+                s = that.getBranchInfo(child[i], s);
+            };
+        };
+        return s;
     };
 }
