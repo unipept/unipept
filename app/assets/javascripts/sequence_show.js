@@ -7,7 +7,22 @@ function init_sequence_show(data) {
         go_functions = data.go_functions,
         taxonEntries = data.taxonEntries,
         ecEntries = data.ecEntries,
-        goEntries = data.goEntries;
+        goEntries = data.goEntries,
+        go_ec = data.go_ec,
+        ec_go = data.ec_go,
+        ec_taxon = data.ec_taxon,
+        go_taxon = data.go_taxon,
+        taxon_ec = data.taxon_ec,
+        taxon_go = data.taxon_go;
+
+    // link tabs to dictionaries
+    var mapping = {
+                    'lineageTree': [{'taxon-?_ec-list': taxon_ec}, {'taxon-?_go-list': taxon_go}],
+                    'ecTree': [{'ec-?_taxon-list': ec_taxon}, {'ec-?_go-list': ec_go}],
+                    'goTreeMF': [{'goMF-?_taxon-list': go_taxon}, {'goMF-?_ec-list': go_ec}],
+                    'goTreeBP': [{'goBP-?_taxon-list': go_taxon}, {'goBP-?_ec-list': go_ec}],
+                    'goTreeCC': [{'goCC-?_taxon-list': go_taxon}, {'goCC-?_ec-list': go_ec}]
+                };
 
     // add entries to protein table
     setUpProteinTable();
@@ -171,6 +186,11 @@ function init_sequence_show(data) {
         });
     }
 
+    function getActiveSubTab() {
+        var focusedElement = $("#single-peptide-tabs li.active a").attr('href');
+        return $(focusedElement + " .tab-content .tab-pane.active .tpa-tree").attr('id');
+    }
+
     function initColumnToggle() {
         $("th a span").click(function() {
             if ($(this).attr("class") === "classdesc" || "glyphicon") {
@@ -203,10 +223,10 @@ function init_sequence_show(data) {
             " specific to this level<br/>" + numberFormat(!d.data.count ? "0" : d.data.count) + (d.data.count && d.data.count === 1 ? " peptide" : " peptides") + " specific to this level or lower";
 
         content += "<div class='popover-buttons' ><br/>" +
-                        "<div class='btn-group' id='download-organisms'>" +
-                            "<a class='btn btn-default dropdown-toggle' id='download-organisms-toggle' data-toggle='dropdown' data-loading-text='Loading organisms'>" +
+                        "<div class='btn-group' id='download-node-info'>" +
+                            "<a class='btn btn-default dropdown-toggle' id='download-node-info-toggle' data-toggle='dropdown' data-loading-text='Loading information'>" +
                                 "<span class='glyphicon glyphicon-download'></span> " +
-                                    "download organisms " +
+                                    "download node info " +
                                 "<span class='caret'></span>" +
                             "</a>" +
                             "<ul class='dropdown-menu'>" +
@@ -236,7 +256,47 @@ function init_sequence_show(data) {
                     $("#download-node-info-toggle").dropdown("toggle");
                 }
             });
-            //$("#download-node-info ul a").click(downloadNodeHandler);
+            $("#download-node-info ul a").click(downloadNodeHandler);
+        });
+    }
+
+    /**
+     * Gets called when the users clicks on the button to download sequences
+     */
+    function downloadNodeHandler() {
+        var type = $(this).attr("data-type");
+        var id = $(this).attr("data-id");
+        $("#download-node-info").mouseleave();
+        $("#download-node-info-toggle").button('loading');
+        getNodeInformation(id, type)
+            .then(function (data_seq) {
+                // FIX returns only 1 file not 2
+                var keys = Object.keys(data_seq)
+                return downloadDataByForm(data_seq[keys[0]].trim(), type + '_' + keys[0].replace('?', id) + '.txt');
+            })
+            .then(function enableButton() {
+                $("#download-node-info-toggle").button('reset');
+            });
+    }
+
+    /**
+     * @param <Number> id The id of the genome we want data from
+     * @param <String> type The type of sequences we want
+     */
+    function getNodeInformation(id, type) {
+        var data_seq;
+        $notification = showNotification("Preparing download...", {
+                loading: true,
+                autoHide: false
+            });
+        return new Promise(function(resolve, reject) {
+            if (type === 'node') {
+                data_seq = that.getNodeInfo(id);
+            } else {
+                data_seq = that.getBranchInfo(id);
+            };
+            $notification.hide();
+            resolve(data_seq);
         });
     }
 
@@ -329,5 +389,25 @@ function init_sequence_show(data) {
     that.removePopovers = function removePopovers() {
         $(".bar.pop").popover("destroy");
         $(".bar.pop").attr("class", "bar");
+    };
+
+    that.getNodeInfo = function getNodeInfo(id) {
+        var d_info = {};
+        func_ids = mapping[getActiveSubTab()]
+        for (i = 0; i < func_ids.length; i++) {
+            var key = Object.keys(func_ids[i])[0]
+                val = func_ids[i][key]
+            if (id in val) {
+                if (!(key in d_info)) { d_info[key] = '' };
+                for (j = 0; j < val[id].length; j++) {
+                    d_info[key] += id + ', ' + val[id][j] + '\n'
+                }
+            }
+        } 
+        return d_info
+    };
+
+    that.getBranchInfo = function getNodeInfo(id) {
+
     };
 }
