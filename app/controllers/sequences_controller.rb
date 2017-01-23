@@ -406,6 +406,23 @@ end
 
 # Hash containing the link between taxon ids and ec and go ids.
 def get_brush_linkage(taxon_id, ec_ids, go_ids)
+
+  # get deepest taxon_id if taxon found
+
+  found, pos = false, 0
+  @lineages.map { |lineage| lineage.set_iterator_position(0) }
+  while !found || pos < @lineages.length
+    if @lineages[pos].taxon_id === taxon_id
+      while @lineages[pos].has_next?
+        t = @lineages[pos].next_t
+        next if t.nil?
+        taxon_id = t.nil? ? taxon_id : t.id
+      end
+      found = true
+    end
+    pos += 1
+  end
+
   if !ec_ids.empty?
     # link taxon to ec
     @taxon_ec[taxon_id] = @taxon_ec[taxon_id] || Set.new
@@ -437,6 +454,7 @@ def get_brush_linkage(taxon_id, ec_ids, go_ids)
 
     go_ids.each do |go|
       # link go to taxon
+      go = go.split(':')[1].sub!(/^0+/, "")
       @go_taxon[go] = @go_taxon[go] || Set.new
       @go_taxon[go].add(taxon_id)
 
