@@ -5,7 +5,9 @@ function init_sequence_show(data) {
         entries = data.entries,
         taxonEntries = data.taxonEntries,
         ecEntries = data.ecEntries,
-        goEntries = data.goEntries;
+        goEntries = data.goEntries,
+        ec_functions = data.ec_functions,
+        go_functions = data.go_functions;
 
     // add entries to protein table
     setUpProteinTable();
@@ -141,9 +143,9 @@ function init_sequence_show(data) {
                     '</div>' +
                 '</td>').appendTo($row);
                 $('<td class="col-name"><div class="entry-info">' + entries[i].name + '</div></td>').appendTo($row);
-                $('<td class="col-organism"><div class="entry-info"><a href="http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=' + String(taxonEntries[i].id) + '" target="_blank">' + taxonEntries[i].name + '</a></div></td>').appendTo($row);
-                $('<td class="col-ec"><div class="entry-info">' + ecEntries[i].map(function(element) {return '<a href="http://enzyme.expasy.org/EC/' + element.ec_number_code + '" target="_blank">' + element.ec_number_code + '</a>'}).join(", ") + '</div></td>').appendTo($row);
-                $('<td class="col-go"><div class="entry-info">' + goEntries[i].map(function(element) {return '<a href="http://amigo.geneontology.org/amigo/term/' + element.go_term_code + '" target="_blank">' + element.go_term_code + '</a>'}).join(", ") + '</div></td>').appendTo($row);
+                $('<td class="col-organism"><div class="entry-info"><a href="http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=' + String(taxonEntries[i].id) + '" title="' + String(taxonEntries[i].id) + '" target="_blank">' + taxonEntries[i].name + '</a></div></td>').appendTo($row);
+                $('<td class="col-ec"><div class="entry-info">' + ecEntries[i].map(function(element) {return '<a href="http://enzyme.expasy.org/EC/' + element.ec_number_code + '" title="' + String(ec_functions[element.ec_number_code]) + '" target="_blank">' + element.ec_number_code + '</a>'}).join(", ") + '</div></td>').appendTo($row);
+                $('<td class="col-go"><div class="entry-info">' + goEntries[i].map(function(element) {return '<a href="http://amigo.geneontology.org/amigo/term/' + element.go_term_code + '" title="' + String(go_functions[element.go_term_code]) + '" target="_blank">' + element.go_term_code + '</a>'}).join(", ") + '</div></td>').appendTo($row);
                 $table.append($row[0]);
             }
         }

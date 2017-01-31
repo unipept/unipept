@@ -181,6 +181,8 @@
         ec_tree: <%= raw(@ec_root) %>,
         go_tree: <%= raw(@go_root) %>,
         entries: <%= raw(@entries.to_json) %>,
+        ec_functions: <%= raw(@ec_functions.to_json) %>,
+        go_functions: <%= raw(@go_functions.to_json) %>,
         taxonEntries: <%= raw(@entries.map{|entry| entry.taxon}.to_json) %>,
         ecEntries: <%= raw(@entries.map{|entry| entry.ec_cross_references}.to_json) %>,
         goEntries: <%= raw(@entries.map{|entry| entry.go_cross_references}.to_json) %>,

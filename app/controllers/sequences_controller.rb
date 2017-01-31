@@ -212,8 +212,16 @@ class SequencesController < ApplicationController
     end
 
     # GO retalted stuff
+    # variables
+    @go_functions = {}
+    # preload go terms table
+    go_db = GoTerm.all
     # build GO tree
     go_array = @entries.map(&:go_cross_references).flatten.group_by{|go| go.go_term_code}
+    # get all go functions
+    go_array.keys.each do |go_f|
+      @go_functions[go_f] = go_db.select("name").where(code: go_f)[0][:name]
+    end
     go_array.each{|k,v| go_array[k] = v.map(&:uniprot_entry_id)}
     graphs = GoTerm.go_reachability(go_array)
     go_tree_build = GoTerm.go_tree(graphs)
