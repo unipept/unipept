@@ -124,7 +124,7 @@ function init_sequence_show(data) {
      * Create the protein table
      */
     function initTable(showEntries, start=0) {
-        var $table = document.getElementById('entry-table');
+        var $table = $('#entry-table');
         for (i = start; i < showEntries; i++) {
             if (i < entries.length && entries[i].name !== null) {
                 let $row = $('<tr></tr>')
