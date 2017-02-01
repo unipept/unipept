@@ -300,6 +300,11 @@ function init_sequence_show(data) {
         });
     }
 
+    function getActiveSubTab() {
+        var focusedElement = $("#single-peptide-tabs li.active a").attr('href');
+        return $(focusedElement + " .tab-content .tab-pane.active .tpa-tree").attr('id');
+    }
+
     function addExternalLinks() {
         // Add handler to the external links buttons
         $(".externalLinks-button").parent().mouseenter(function () {
@@ -360,16 +365,16 @@ function init_sequence_show(data) {
                 if (window.fullScreenApi.isFullScreen()) {
                     width = $(window).width()+32;
                     height = $(window).height()+16;
-                    // move tooltip
                 }
                 buttons.forEach(function(button) {
                     $("#" + button + " div.tpa-tree svg").attr("width", width);
                     $("#" + button + " div.tpa-tree svg").attr("height", height);
 
                     // moving tooltip & popover
-                    treeId = $("div.tpa-tree").attr("id");
+                    treeId = getActiveSubTab();
                     tooltipDiv = $("#" + treeId + "-tooltip");
                     popoverDiv = $("#popovers");
+                    console.log(treeId)
                     window.fullScreenApi.isFullScreen() ? tooltipDiv.appendTo("#" + treeId) : tooltipDiv.appendTo("body");
                     window.fullScreenApi.isFullScreen() ? popoverDiv.appendTo("#" + treeId) : popoverDiv.appendTo("body");
                 });
