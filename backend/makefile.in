@@ -221,7 +221,7 @@ $(TABLES): <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 
 $(CROSSREFLCA): <<<INTDIR>>>/peptide_lca_sorted.tsv.gz <<<TABDIR>>>/ec_cross_references.tsv.gz <<<TABDIR>>>/ec_numbers.tsv.gz
 	echo "Starting to create the aggregation for ec/go/interpro lca table."
-	python ./aggregation.py \
+	python2 ./aggregation.py \
 		-p <<<INTDIR>>>/peptide_lca_sorted.tsv.gz \
 		-e <<<TABDIR>>>/ec_cross_references.tsv.gz \
 		-n <<<TABDIR>>>/ec_numbers.tsv.gz \
@@ -231,7 +231,7 @@ $(CROSSREFLCA): <<<INTDIR>>>/peptide_lca_sorted.tsv.gz <<<TABDIR>>>/ec_cross_ref
 
 $(CROSSREFLCAIL): <<<INTDIR>>>/peptide_lca_il_sorted.tsv.gz <<<TABDIR>>>/ec_cross_references.tsv.gz <<<TABDIR>>>/ec_numbers.tsv.gz
 	echo "Starting to create the aggregation for ec/go/interpro lca_il table."
-	python ./aggregation.py \
+	python2 ./aggregation.py \
 		-p <<<INTDIR>>>/peptide_lca_il_sorted.tsv.gz \
 		-e <<<TABDIR>>>/ec_cross_references.tsv.gz \
 		-n <<<TABDIR>>>/ec_numbers.tsv.gz \

@@ -38,6 +38,7 @@ checkdep uniq
 checkdep wc
 checkdep wget
 checkdep xargs
+checkdep python2
 
 # --------------------------------------------------------------------
 # Prompt functions
