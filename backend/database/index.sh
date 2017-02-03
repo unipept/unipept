@@ -26,6 +26,10 @@ print "adding index to sequences"
 echo "ALTER TABLE sequences ADD INDEX fk_sequences_taxons (lca ASC);" | mysql -u unipept -punipept unipept
 echo "ALTER TABLE sequences ADD INDEX fk_sequences_taxons_2 (lca_il ASC);" | mysql -u unipept -punipept unipept
 
+print "adding index to sequences"
+echo "ALTER TABLE sequences ADD INDEX fk_sequences_ec_numbers (ec_lca ASC);" | mysql -u unipept -punipept unipept
+echo "ALTER TABLE sequences ADD INDEX fk_sequences_ec_numbers_2 (ec_lca_il ASC);" | mysql -u unipept -punipept unipept
+
 print "adding index to peptides"
 echo "ALTER TABLE peptides ADD INDEX fk_peptides_sequences (sequence_id ASC);" | mysql -u unipept -punipept unipept
 echo "ALTER TABLE peptides ADD INDEX fk_peptides_uniprot_entries (uniprot_entry_id ASC);" | mysql -u unipept -punipept unipept

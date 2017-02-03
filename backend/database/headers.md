@@ -91,6 +91,10 @@ Contains the tryptic peptides.
    equate the I and L amino acids.
  - ***lca***: The lowest common ancestor of all proteins containing
    this tryptic peptide. Refers to the taxon table.
+- ***original ec_lca***: A lowest common ancestor in case we did not
+   equate the I and L amino acids.
+- ***ec_lca_il***: The lowest common ancestor of all proteins containing
+   this tryptic peptide. Refers to the ec_number table.
 
 Proteomes
 ---------
