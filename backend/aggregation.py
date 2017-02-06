@@ -118,7 +118,9 @@ def ec_lca_aggregation(ec_list):
 	ontology = -1
 	ecnumber = []
 	if len(ec_list) <= 1:
-		return 0 if ecnumber == "-.-.-.-" else ec_dir["".join(ec_list)]
+		if "".join(ec_list) in ec_dir:
+			ec_dir["".join(ec_list)]
+		else: return 0
 	else:
 		ec_split = [ec.split(".") for ec in ec_list]
 		for i in range(0,4):
