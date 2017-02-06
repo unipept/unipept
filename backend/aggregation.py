@@ -119,7 +119,7 @@ def ec_lca_aggregation(ec_list):
 	ecnumber = []
 	if len(ec_list) <= 1:
 		if "".join(ec_list) in ec_dir:
-			ec_dir["".join(ec_list)]
+			return ec_dir["".join(ec_list)]
 		else: return 0
 	else:
 		ec_split = [ec.split(".") for ec in ec_list]
