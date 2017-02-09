@@ -132,10 +132,14 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
   `sequence` VARCHAR(50) NOT NULL ,
   `lca` MEDIUMINT UNSIGNED NULL ,
   `lca_il` MEDIUMINT UNSIGNED NULL ,
+  `ec_lca` SMALLINT UNSIGNED NULL ,
+  `ec_lca_il` SMALLINT UNSIGNED NULL ,
   PRIMARY KEY (`id`) ,
   UNIQUE INDEX `uidx_sequence` (`sequence` ASC) ,
   INDEX `fk_sequences_taxons` (`lca` ASC) ,
   INDEX `fk_sequences_taxons_2` (`lca_il` ASC) ,
+  INDEX `fk_sequences_ec_numbers` (`ec_lca` ASC) ,
+  INDEX `fk_sequences_ec_numbers_2` (`ec_lca_il` ASC) ,
   CONSTRAINT `fk_sequences_taxons`
     FOREIGN KEY (`lca` )
     REFERENCES `unipept`.`taxons` (`id` )
@@ -144,6 +148,16 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
   CONSTRAINT `fk_sequences_taxons_2`
     FOREIGN KEY (`lca_il` )
     REFERENCES `unipept`.`taxons` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+  CONSTRAINT `fk_sequences_ec_numbers`
+    FOREIGN KEY (`ec_lca`)
+    REFERENCES `unipept`.`ec_numbers` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sequences_ec_numbers_2`
+    FOREIGN KEY (`ec_lca_il`)
+    REFERENCES `unipept`.`ec_numbers` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB

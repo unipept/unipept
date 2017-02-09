@@ -32,6 +32,8 @@ ALTER TABLE go_terms ADD UNIQUE INDEX idx_go_code (code ASC);
 -- -----------------------------------------------------
 ALTER TABLE sequences ADD UNIQUE INDEX idx_sequences (sequence ASC);
 ALTER TABLE sequences ADD INDEX fk_sequences_taxons (lca ASC), ADD INDEX fk_sequences_taxons_2 (lca_il ASC);
+ALTER TABLE sequences ADD INDEX fk_sequences_taxons (lca ASC), ADD INDEX fk_sequences_taxons_2 (lca_il ASC);
+ALTER TABLE sequences ADD INDEX fk_sequences_ec_numbers (ec_lca ASC), ADD INDEX fk_sequences_ec_numbers_2 (ec_lca_il ASC);
 
 
 -- -----------------------------------------------------

@@ -10,11 +10,16 @@ TABLES=                                           \
 	<<<INTDIR>>>/proteomes.tsv.gz                 \
 	<<<TABDIR>>>/proteome_cross_references.tsv.gz
 
+CROSSREFLCA=						\
+	<<<INTDIR>>>/ec_cross_references_lca.tsv.gz
+CROSSREFLCAIL=						\
+	<<<INTDIR>>>/ec_cross_references_lca_il.tsv.gz
+
 SRC=$(shell find src/ -type f -name '*.java')
 JAR=target/unipept-0.0.1-SNAPSHOT.jar
 PAC=org.unipept.tools
 
-all: makefile $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<TABDIR>>>/lineages.tsv.gz $(TABLES) <<<TABDIR>>>/sequences.tsv.gz <<<TABDIR>>>/peptides.tsv.gz <<<TABDIR>>>/proteomes.tsv.gz <<<TABDIR>>>/ec_numbers.tsv.gz <<<TABDIR>>>/go_terms.tsv.gz
+all: makefile $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<TABDIR>>>/lineages.tsv.gz $(TABLES) <<<TABDIR>>>/sequences.tsv.gz <<<TABDIR>>>/peptides.tsv.gz <<<TABDIR>>>/proteomes.tsv.gz <<<TABDIR>>>/ec_numbers.tsv.gz <<<TABDIR>>>/go_terms.tsv.gz $(CROSSREFLCA) $(CROSSREFLCAIL) <<<INTDIR>>>/sequences_with_ec.tsv.gz
 jar: $(JAR)
 taxons: <<<TABDIR>>>/taxons.tsv.gz <<<TABDIR>>>/lineages.tsv.gz
 tables: $(TABLES)
@@ -195,6 +200,57 @@ $(TABLES): <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 	echo "Starting creating GO terms"
 	./createGoTerms.sh | <<<CMD_GZIP>>> > $@
 	echo "Finished creating GO terms."
+# }}}
+
+# Update sequence table {{{ ----------------------------------------
+<<<INTDIR>>>/peptide_lca_il_sorted.tsv.gz: <<<TABDIR>>>/peptides.tsv.gz
+	echo "Sorting peptide table on sequence_id"
+	<<<CMD_ZCAT>>> <<<TABDIR>>>/peptides.tsv.gz \
+		| <<<CMD_SORT>>> -k2,2n \
+		| <<<CMD_GZIP>>> \
+		> $@
+	echo "Finished sorting peptide table on sequence_id"
+
+<<<INTDIR>>>/peptide_lca_sorted.tsv.gz: <<<TABDIR>>>/peptides.tsv.gz
+	echo "Sorting peptide table on original_sequence_id"
+	<<<CMD_ZCAT>>> <<<TABDIR>>>/peptides.tsv.gz \
+		| <<<CMD_SORT>>> -k3,3n \
+		| <<<CMD_GZIP>>> \
+		> $@
+	echo "Finished sorting peptide table on original_sequence_id"
+
+$(CROSSREFLCA): <<<INTDIR>>>/peptide_lca_sorted.tsv.gz <<<TABDIR>>>/ec_cross_references.tsv.gz <<<TABDIR>>>/ec_numbers.tsv.gz
+	echo "Starting to create the aggregation for ec/go/interpro lca table."
+	python2 ./aggregation.py \
+		-p <<<INTDIR>>>/peptide_lca_sorted.tsv.gz \
+		-e <<<TABDIR>>>/ec_cross_references.tsv.gz \
+		-n <<<TABDIR>>>/ec_numbers.tsv.gz \
+		-l "lca" \
+		-o <<<INTDIR>>>
+	echo "Finished creating the lca table."
+
+$(CROSSREFLCAIL): <<<INTDIR>>>/peptide_lca_il_sorted.tsv.gz <<<TABDIR>>>/ec_cross_references.tsv.gz <<<TABDIR>>>/ec_numbers.tsv.gz
+	echo "Starting to create the aggregation for ec/go/interpro lca_il table."
+	python2 ./aggregation.py \
+		-p <<<INTDIR>>>/peptide_lca_il_sorted.tsv.gz \
+		-e <<<TABDIR>>>/ec_cross_references.tsv.gz \
+		-n <<<TABDIR>>>/ec_numbers.tsv.gz \
+		-l "lca_il" \
+		-o <<<INTDIR>>>
+	echo "Finished creating the lca_il table."
+
+<<<INTDIR>>>/sequences_with_ec.tsv.gz: $(CROSSREFLCAIL) $(CROSSREFLCA) <<<TABDIR>>>/sequences.tsv.gz
+	echo "Starting the update of the sequences table."
+	#echo '' | <<<CMD_GZIP>>> > <<<INTDIR>>>/sequences.tsv.gz
+	#mv <<<TABDIR>>>/sequences.tsv.gz <<<INTDIR>>>/sequences.tsv.gz
+	bash ./joinEcLcaToSequenceTable.sh \
+		<<<TABDIR>>>/sequences.tsv.gz \
+		<<<INTDIR>>>/ec_cross_references_lca.tsv.gz \
+		<<<INTDIR>>>/ec_cross_references_lca_il.tsv.gz \
+		./$@ \
+		<<<INTDIR>>>
+	mv ./$@ <<<TABDIR>>>/sequences.tsv.gz
+	echo "Finished updating the sequence table."
 # }}}
 
 .PHONY: clean_intermediates
