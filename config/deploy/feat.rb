@@ -5,5 +5,5 @@ server 'adler.ugent.be', user: 'bmesuere', roles: [:web, :app], ssh_options: {
   port: 4840
 }
 
-set :branch, 'feature/uniprot-proteomes'
+set :branch, 'feature/adler-test'
 set :rails_env, :development
