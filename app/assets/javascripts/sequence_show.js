@@ -274,7 +274,9 @@ function init_sequence_show(data) {
             .then(function (data_seq) {
                 // FIX returns only 1 file not 2
                 var keys = Object.keys(data_seq)
-                return downloadDataByForm(data_seq[keys[0]].trim(), type + '_' + keys[0].replace('?', id) + '.txt');
+                if (data_seq[keys[0]]) {
+                    return downloadDataByForm(data_seq[keys[0]].trim(), type + '_' + keys[0].replace('?', id) + '.txt');
+                }
             })
             .then(function enableButton() {
                 $("#download-node-info-toggle").button('reset');
