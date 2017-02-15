@@ -7,6 +7,20 @@
       <div id="search_elements" class='form-group'>
         <label for="qs">Peptide list</label>
         <%= text_area_tag(:qs, nil, :rows => 7, :spellcheck => "false", :class => "form-control", autofocus: "true") %>
+        <%= hidden_field_tag(:qc, :class => "form-control", multiple: true) %>
+      </div>
+      <div class="form-group">
+        <label for="myPeptideFile" class="control-label"><span class="initialism">peptide</span> file(s)</label>
+        <div class="input-group"  data-toggle="tooltip" title="Select a Peptide file containing one or more protein sequences.">
+          <span class="input-group-btn">
+            <span class="btn btn-default btn-file">
+              Browse… <input type="file" id="myPeptideFile" multiple>
+            </span>
+          </span>
+          <input type="text" class="form-control" readonly="">
+          <a class="btn btn-default btn-xs" id="removeFiles" title="remove files"><span class="glyphicon glyphicon-trash"></span></a>
+        </div>
+      <button type="button" id="processPeptideFiles" class="btn btn-primary form-control">Process peptide file(s)</button>
       </div>
       <div id="multisearch-warning" class='alert alert-warning' role='alert'><strong>Oh snap!</strong> You're trying to analyse <strong class="multisearch-warning-amount">9001</strong> peptides. Searching for this many peptides might take a while and the resulting visualisations will probably be suboptimal. Our <a href="<%= api_apidocs_path %>">webservices</a> are a great alternative.</div>
       <div class="form-group">

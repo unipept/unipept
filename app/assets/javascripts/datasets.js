@@ -1,5 +1,7 @@
 function initDatasets() {
-    var datasetLoader = constructDatasetLoader();
+    var datasetLoader = constructDatasetLoader(),
+        numFiles = 1,
+        fileContent = [];
 
     // enable tooltips
     $(".js-has-hover-tooltip").tooltip({
@@ -12,6 +14,148 @@ function initDatasets() {
         placement: "right"
     });
 
+    // enable file chooser
+    $("#myPeptideFile").on('change', function () {
+        numFiles = $(this).get(0).files ? $(this).get(0).files.length : 1;
+        var $input = $(this),
+            label = $input.val().replace(/\\/g, '/').replace(/.*\//, ''),
+            multi = numFiles > 1,
+            log = multi ? numFiles + ' files selected' : label;
+        $input.parents('.input-group').find(':text').val(log);
+
+        // change controller
+        if (numFiles > 1) {
+            $("form").attr("action", '/search/comparison')
+            //$("#search-multi-form").attr('type', 'button')
+        };
+    });
+
+    // resetting input fasta files
+    $("#removeFiles").click(function () {
+        // reset field by removing the files
+        $(".input-group").find(':text').val("");
+        document.getElementById("myPeptideFile").value = "";
+        $("form").attr("action", '/search/sequences')
+
+        // reset controller
+        //$("#search-multi-form").attr('type', 'submit')
+
+    });
+
+    function intersection(a, b) {
+        var r = [],
+            i = 0,
+            j = 0;
+        while (i < a.length && j < b.length) {
+            if (a[i] < b[j]) {
+                i++;
+            } else if (a[i] > b[j]) {
+                j++;
+            } else {
+                r.push(a[i]);
+                i++;
+                j++;
+            }
+        }
+        return r;
+    };
+
+    function difference(a, b) {
+        var d = [],
+            i = 0,
+            j = 0;
+        while (i < a.length || j < b.length) {
+            if (a[i] < b[j] || j === b.length) {
+                d.push(a[i]);
+                i++;
+            } else if (a[i] > b[j] || i === a.length) {
+                d.push(b[j]);
+                j++;
+            } else {
+                i++;
+                j++;
+            }
+        }
+        return d;
+    };
+
+    function intersectionDifference(a, b) {
+        var r = [],
+            d1 = [],
+            d2 = [],
+            i = 0,
+            j = 0;
+        while (i < a.length || j < b.length) {
+            if (a[i] < b[j] || j === b.length) {
+                d1.push(a[i]);
+                i++;
+            } else if (a[i] > b[j] || i === a.length) {
+                d2.push(b[j]);
+                j++;
+            } else {
+                r.push(a[i]);
+                i++;
+                j++;
+            }
+        }
+        return [r, d1, d2];
+    };
+
+    /**
+     * Reads a given file and returns its content as a Promise
+     */
+    function readFile(file) {
+        return new Promise(function (resolve, reject) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                resolve(reader.result);
+            };
+            reader.readAsText(file);
+        });
+    }
+
+    /**
+     * Process a list of files
+     */
+    function handleFiles(dataFiles) {
+        var i = 1,
+            totalFiles = dataFiles.length;
+        return dataFiles.reduce(function (promise, data) {
+            return promise.then(function () {
+               return readFile(data.file);
+            }).then(function (content) {
+                fileContent.push(content.split('\n').sort())
+                return fileContent;
+            });
+        }, Promise.resolve());
+    }
+
+    // process peptide files
+    $("#processPeptideFiles").on('click', function () {
+        if (numFiles > 1) {
+            var files = document.getElementById('myPeptideFile').files,
+                dataFiles = [],
+                processedFiles = [];
+            for (var i=0, f; f=files[i]; i++) {
+                dataFiles.push({name: files[i].name, file: files[i]});
+            }
+            handleFiles(dataFiles).then(function() {
+                // nested lists: intersection, difference file 1, difference file 2
+                processedFiles = intersectionDifference(fileContent[0], fileContent[1])
+                var jsonObj = '{ "intersect": "' + processedFiles[0] +
+                        '", "' + dataFiles[0].name.split('.').slice(0, -1).join('.') + '": "' + processedFiles[1] +
+                        '", "' + dataFiles[1].name.split('.').slice(0, -1).join('.') + '": "' + processedFiles[2] +
+                        '" }';
+                document.getElementById('qc').value = jsonObj;
+
+                /** Future update when more then 2 files can be selected
+                 * intersect = intersection(fileContent[0], fileContent[1])
+                 * for (var y=0; y<fileContent.length; y++) {
+                 *    diff.push(difference(fileContent[y], intersect))
+                }*/
+            });
+        }
+    });
 
     // add progress bar when submitting form
     $("#search-multi-form").click(function () {
