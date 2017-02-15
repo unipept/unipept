@@ -295,7 +295,7 @@ function init_sequence_show(data) {
             if (type === 'node') {
                 data_seq = that.getNodeInfo(id);
             } else {
-                data_seq = that.getBranchInfo(currentNode).join('\r\n').trim();
+                data_seq = that.getBranchInfo(currentNode);
             };
             $notification.hide();
             resolve(data_seq);
@@ -393,8 +393,8 @@ function init_sequence_show(data) {
         $(".bar.pop").attr("class", "bar");
     };
 
-    that.getNodeInfo = function getNodeInfo(id) {
-        var d_info = {};
+    that.getNodeInfo = function getNodeInfo(id, d_info) {
+        var d_info = (typeof d_info === 'undefined') ? {} : d_info;
         func_ids = mapping[getActiveSubTab()]
         for (i = 0; i < func_ids.length; i++) {
             var key = Object.keys(func_ids[i])[0]
@@ -409,10 +409,11 @@ function init_sequence_show(data) {
         return d_info
     };
 
-    that.getBranchInfo = function getBranchInfo(d, s=[]) {
-        var child;
+    that.getBranchInfo = function getBranchInfo(d, s) {
+        var child,
+            s = (typeof s === 'undefined') ? {} : s;
         if (that.getNodeInfo(d.id) != '') {
-            s = s.concat(that.getNodeInfo(d.id));
+            s = that.getNodeInfo(d.id, s);
         };
 
         if (('children' in d) && (d.children != null)) {
