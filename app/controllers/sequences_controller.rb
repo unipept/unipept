@@ -180,6 +180,19 @@ class SequencesController < ApplicationController
       @ec_consensus.shift
     end
 
+    # GO related stuff
+    # get GO terms hits
+    go_array = @entries.map(&:go_cross_references).flatten.group_by{|go| go.go_term_code}
+    # map go terms to uniprot entry
+    go_array.each{|k,v| go_array[k] = v.map(&:uniprot_entry_id)}
+    # build graph
+    graphs = GoTerm.go_reachability(go_array)
+    # build tree
+    go_tree_build = GoTerm.go_tree(graphs)
+    # Oj dump
+    @go_root = Oj.dump(go_tree_build, mode: :compat)
+
+
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @entries.to_json(only: :uniprot_accession_number, include: [{ ec_cross_references: { only: :ec_number_code } }, { go_cross_references: { only: :go_term_code } }]) }

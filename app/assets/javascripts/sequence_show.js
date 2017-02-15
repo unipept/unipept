@@ -15,9 +15,12 @@ function init_sequence_show(data) {
     // set up the fancy tree
     initD3TreeView(data.tree, '#lineageTree');
     initD3TreeView(data.ec_tree, '#ecTree');
+    initD3TreeView(data.go_tree['biological_process'], '#goTreeMF');
+    initD3TreeView(data.go_tree['biological_process'], '#goTreeBP');
+    initD3TreeView(data.go_tree['biological_process'], '#goTreeCC');
 
     // fullscreen and save image buttons
-    var buttons = ['lineage-tree', 'ec-tree'];
+    var buttons = ['lineage-tree', 'ec-tree', 'go-mf', 'go-bp', 'go-cc'];
 
     // set up the fullscreen stuff
     setUpFullScreen(buttons);
@@ -58,11 +61,20 @@ function init_sequence_show(data) {
             } else if ($(this).parent().attr("id") === "lineage-table-tab") {
                 title = "Lineage table";
                 content = "This table shows the complete taxonomic lineages of all taxa associated with the UniProt entries whose protein sequence contains " + data.peptide + ". The first column contains the taxon name extracted from the UniProt entry, followed by columns representing taxonomic ranks ordered from superkingdom on the left to forma on the right.";
+            } else if ($(this).parent().attr("id") === "go-mf-tab") {
+                title = "GO molecular function tree";
+                content = "This interactive tree bundles the complete hierarchy of GO terms associated with all UniProt entries whose protein sequence contains " + data.peptide + ". You can click on nodes to expand them, scroll to zoom and drag to move the tree";
+            } else if ($(this).parent().attr("id") === "go-bp-tab") {
+                title = "GO biological process tree";
+                content = "This interactive tree bundles the complete hierarchy of GO terms associated with all UniProt entries whose protein sequence contains " + data.peptide + ". You can click on nodes to expand them, scroll to zoom and drag to move the tree";
+            } else if ($(this).parent().attr("id") === "go-cc-tab") {
+                title = "GO cellular component tree";
+                content = "This interactive tree bundles the complete hierarchy of GO terms associated with all UniProt entries whose protein sequence contains " + data.peptide + ". You can click on nodes to expand them, scroll to zoom and drag to move the tree";
             } else if ($(this).parent().attr("id") === "ec-tree-tab") {
                 title = "EC number tree";
                 content = "This interactive tree bundles the complete hierarchy of EC numbers associated with all UniProt entries whose protein sequence contains " + data.peptide + ". You can click on nodes to expand them, scroll to zoom and drag to move the tree";
             } else if ($(this).parent().attr("id") === "ec-table-tab") {
-                title = "Lineage table";
+                title = "EC table";
                 content = "This table shows the complete hierarchy of EC numbers associated with the UniProt entries whose protein sequence contains " + data.peptide + ". The first column contains the EC number extracted from the UniProt entry, followed by columns representing the different levels of each EC number ordered from class on the left to enzyme on the right.";
             } showInfoModal(title, content);
         });
