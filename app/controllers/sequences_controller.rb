@@ -114,6 +114,27 @@ class SequencesController < ApplicationController
 
     @title = "Tryptic peptide analysis of #{@original_sequence}"
 
+    # get entries
+    @taxon_entries = @entries.map{|entry| entry.taxon}
+    @ec_entries = @entries.map{|entry| entry.ec_cross_references}
+    @go_entries = @entries.map{|entry| entry.go_cross_references}
+
+    # link ec, go and taxon
+    @ec_go, @ec_taxon = {}, {}
+    @go_ec, @go_taxon = {}, {}
+    @taxon_ec, @taxon_go = {}, {}
+
+    entry = 0
+    while entry < @taxon_entries.length
+      # get taxon, ec and go per found entry
+      taxon_id = @taxon_entries[entry].id
+      ec_ids = @ec_entries[entry].map{|e| e.ec_number_code}
+      go_ids = @go_entries[entry].map{|e| e.go_term_code}
+      # link taxon ids to ec and go ids
+      get_brush_linkage(taxon_id, ec_ids, go_ids)
+      entry += 1
+    end
+
     # EC related stuff
     # variables
     @ec_functions = {}
@@ -378,6 +399,53 @@ class SequencesController < ApplicationController
   rescue EmptyQueryError
     flash[:error] = 'Your query was empty, please try again.'
     redirect_to datasets_path
+  end
+end
+
+# Hash containing the link between taxon ids and ec and go ids.
+def get_brush_linkage(taxon_id, ec_ids, go_ids)
+  if !ec_ids.empty?
+    # link taxon to ec
+    @taxon_ec[taxon_id] = @taxon_ec[taxon_id] || Set.new
+    ec_ids.each do |ec|
+      @taxon_ec[taxon_id].add(ec)
+    end
+
+    ec_ids.each do |ec|
+      # link ec to taxon
+      @ec_taxon[ec] = @ec_taxon[ec] || Set.new
+      @ec_taxon[ec].add(taxon_id)
+
+      # link ec to go
+      if !go_ids.empty?
+        @ec_go[ec] = @ec_go[ec] || Set.new
+        go_ids.each do |go|
+          @ec_go[ec].add(go)
+        end
+      end
+    end
+  end
+
+  if !go_ids.empty?
+    # link taxon to go
+    @taxon_go[taxon_id] = @taxon_go[taxon_id] || Set.new
+    go_ids.each do |go|
+      @taxon_go[taxon_id].add(go)
+    end
+
+    go_ids.each do |go|
+      # link go to taxon
+      @go_taxon[go] = @go_taxon[go] || Set.new
+      @go_taxon[go].add(taxon_id)
+
+      # link go to ec
+      if !ec_ids.empty?
+        @go_ec[go] = @go_ec[go] || Set.new
+        ec_ids.each do |ec|
+          @go_ec[go].add(ec)
+        end
+      end
+    end
   end
 end
 
