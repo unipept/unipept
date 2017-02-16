@@ -23,21 +23,20 @@
   <div class='card card-nav'>
     <div class='card-title card-title-colored'>
       <ul class="nav nav-tabs visualisations" id="viz-tabs">
-        <li class="active"><a href="#sunburstWrapper" data-toggle="tab">Sunburst</a></li>
-        <li><a href="#d3TreeMapWrapper" data-toggle="tab">Treemap</a></li>
-        <li><a href="#d3TreeViewWrapper" data-toggle="tab">Treeview</a></li>
+        <li class="active"><a class="main-tab" id="biodiversity-analysis-tab" href="#biodiversity-analysis" data-toggle="tab">Biodiversity Analysis</a></li>
+        <li><a class="main-tab" id="functional-analysis-tab" href="#functional-analysis" data-toggle="tab">Functional Analysis</a></li>
       </ul>
     </div>
     <div class='card-supporting-text multi-results'>
       <div class="full-screen-container tab-content multi-search not-full-screen">
+        <div id='popovers'></div>
         <div id="buttons" class='buttons-single'></div>
         <div class="full-screen-bar">
           <div class="logo"><img src="<%= asset_path('trans_logo.png') %>" alt="logo" width="40" height="40"></div>
           <nav class="fullScreenNav">
             <ul class="visualisations">
-              <li class="active"><a href="#sunburstWrapper" data-toggle="tab">Sunburst</a></li>
-              <li><a href="#d3TreeMapWrapper" data-toggle="tab">Treemap</a></li>
-              <li><a href="#d3TreeViewWrapper" data-toggle="tab">Treeview</a></li>
+              <li class="active"><a class="main-tab" id="biodiversity-analysis-tab" href="#biodiversity-analysis" data-toggle="tab">Biodiversity Analysis</a></li>
+              <li><a class="main-tab" id="functional-analysis-tab" href="#functional-analysis" data-toggle="tab">Functional Analysis</a></li>
             </ul>
           </nav>
           <div class="fullScreenActions">
@@ -46,25 +45,104 @@
             <a title="Exit full screen mode" class="btn-animate exit"><span class="glyphicon glyphicon-resize-small shrink"></span></a>
           </div>
         </div>
-        <div class="tab-pane active" id="sunburstWrapper">
-          <h2 class="ghead">
-            <span class="dir">
-              <a class="btn btn-xs btn-default btn-animate" id="sunburst-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
-            </span>
-            <span class="dir">
-              <div class="btn-group" id="colorswap">
-                <a class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" id="colorswap-button"><span class="glyphicon glyphicon-cog"></span></a>
-                <ul class="dropdown-menu dropdown-menu-right dropdown-menu-form">
-                  <li title="Enabling this will assign fixed colors to taxa making it easier to compare samples.">
-                    <div class="checkbox"><label class="checkbox"><input type="checkbox" id="colorswap-checkbox">Use fixed colors</label></div>
-                  </li>
-                </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="biodiversity-analysis">
+            <div class='card-supporting-text multi-results-sub'>
+              <ul class="nav nav-tabs sub-navigation">
+                <li class="active"><a class="subnav-link" href="#sunburstWrapper" data-toggle="tab">Sunburst</a></li>
+                <li><a class="subnav-link" href="#d3TreeMapWrapper" data-toggle="tab">Treemap</a></li>
+                <li><a class="subnav-link" href="#d3TreeViewWrapper" data-toggle="tab">Treeview</a></li>
+              </ul>
+            </div>
+            <div class="tab-content tab-nav">
+              <div class="tab-pane active" id="sunburstWrapper">
+                <h2 class="ghead">
+                  <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate" id="sunburst-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                  </span>
+                  <span class="dir">
+                    <div class="btn-group colorswap" id="colorswap">
+                      <a class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" id="colorswap-button"><span class="glyphicon glyphicon-cog"></span></a>
+                      <ul class="dropdown-menu dropdown-menu-right dropdown-menu-form">
+                        <li title="Enabling this will assign fixed colors to taxa making it easier to compare samples.">
+                          <div class="checkbox"><label class="checkbox"><input type="checkbox" id="colorswap-checkbox">Use fixed colors</label></div>
+                        </li>
+                      </ul>
+                    </div>
+                  </span>
+                  <span class="dir text">Click a slice to zoom in and the center node to zoom out</span>
+                </h2>
+                <div class="sunburst" id="sunburst">
+                  <div class="sunburstPanel" id="sunburstPanel">&nbsp;</div>
+                </div>
               </div>
-            </span>
-            <span class="dir text">Click a slice to zoom in and the center node to zoom out</span>
-          </h2>
-          <div id="sunburst">
-            <div id="sunburstPanel">&nbsp;</div>
+              <div class="tab-pane" id="d3TreeMapWrapper">
+                <h2 class="ghead">
+                  <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate reset" id="treemap-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                  </span>
+                  <span class="dir text">Click a square to zoom in and right click to zoom out</span>
+                </h2>
+                <div class="d3TreeMap" id="d3TreeMap"></div>
+              </div>
+              <div class="tab-pane" id="d3TreeViewWrapper">
+                <h2 class="ghead">
+                  <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate reset" id="treeview-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                  </span>
+                  <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
+                </h2>
+                <div class="d3TreeView" id="d3TreeView"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane" id="functional-analysis">
+            <div class='card-supporting-text multi-results-sub'>
+              <ul class="nav nav-tabs sub-navigation">
+                <li class="active"><a class="subnav-link" href="#goTreeViewMFWrapper" data-toggle="tab">GO: Molecular Function</a></li>
+                <li><a class="subnav-link" href="#goTreeViewBPWrapper" data-toggle="tab">GO: Biological Process</a></li>
+                <li><a class="subnav-link" href="#goTreeViewCCWrapper" data-toggle="tab">GO: Cellular Component</a></li>
+                <li><a class="subnav-link" href="#ecTreeViewWrapper" data-toggle="tab">EC: Tree</a></li>
+              </ul>
+            </div>
+            <div class="tab-content tab-nav">
+              <div class="tab-pane active" id="goTreeViewMFWrapper">
+                <h2 class="ghead">
+                  <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate reset" id="goTreeviewMF-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                  </span>
+                  <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
+                </h2>
+                <div class="d3TreeView" id="goTreeViewMF"></div>
+              </div>
+              <div class="tab-pane" id="goTreeViewBPWrapper">
+                <h2 class="ghead">
+                  <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate reset" id="goTreeviewBP-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                  </span>
+                  <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
+                </h2>
+                <div class="d3TreeView" id="goTreeViewBP"></div>
+              </div>
+              <div class="tab-pane" id="goTreeViewCCWrapper">
+                <h2 class="ghead">
+                  <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate reset" id="goTreeviewCC-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                  </span>
+                  <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
+                </h2>
+                <div class="d3TreeView" id="goTreeViewCC"></div>
+              </div>
+              <div class="tab-pane" id="ecTreeViewWrapper">
+                <h2 class="ghead">
+                  <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate reset" id="ecTreeview-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                  </span>
+                  <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
+                </h2>
+                <div class="d3TreeView" id="ecTreeView"></div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="tab-pane" id="d3TreeMapWrapper">
@@ -105,7 +183,7 @@
         </div>
         <div class="visualClear"></div>
         <div id="searchtree" class="treeView multi"></div>
-        <div id="tree_data">
+        <div class="tree_data" id="tree_data">
           <p>Click on a node in the tree to see the peptides associated with that organism.</p>
         </div>
       </div>
@@ -135,15 +213,21 @@
 <% if @number_found > 0 %>
   <script type="text/javascript">
     var data = <%= raw(@json_tree)%>;
+    var goData = <%= raw(@go_root)%>;
+    var ecData = <%= raw(@json_ecTree)%>;
+    var ec_sequences = <%= raw(@json_ec_sequences)%>;
     var sequences = <%= raw(@json_sequences)%>;
     var missed = <%= raw(@json_missed)%>
 
     $(function () {
         constructMultisearch({
             data : data,
+            goData : goData,
+            ecData : ecData,
             equateIL : <%=@equate_il %>,
             missed : missed,
-            sequences : sequences});
+            sequences : sequences,
+            ec_sequences : ec_sequences});
     });
   </script>
 <% end %>

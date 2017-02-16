@@ -114,6 +114,118 @@ class SequencesController < ApplicationController
 
     @title = "Tryptic peptide analysis of #{@original_sequence}"
 
+    # get entries
+    @taxon_entries = @entries.map{|entry| entry.taxon}
+    @ec_entries = @entries.map{|entry| entry.ec_cross_references}
+    @go_entries = @entries.map{|entry| entry.go_cross_references}
+
+    # link ec, go and taxon
+    @ec_go, @ec_taxon = {}, {}
+    @go_ec, @go_taxon = {}, {}
+    @taxon_ec, @taxon_go = {}, {}
+
+    entry = 0
+    while entry < @taxon_entries.length
+      # get taxon, ec and go per found entry
+      taxon_id = @taxon_entries[entry].id
+      ec_ids = @ec_entries[entry].map{|e| e.ec_number_code}
+      go_ids = @go_entries[entry].map{|e| e.go_term_code}
+      # link taxon ids to ec and go ids
+      get_brush_linkage(taxon_id, ec_ids, go_ids)
+      entry += 1
+    end
+
+    # EC related stuff
+    # variables
+    @ec_functions = {}
+    @ec_ontologies = {}
+    # preload table 'ec_numbers'
+    ec_db = EcNumber.all
+    # get all accossiated EC numbers from 'ec_cross_references' table
+    ec_cross_reference_hits = @entries.map(&:ec_cross_references)
+    ec_cross_found = ec_cross_reference_hits.select{|ec| ec != []}
+
+    # generate ec tree, starting from root
+    ec_root = Node.new("-.-.-.-", 'root', nil, '-.-.-.-')
+    ec_root.data['count'] = ec_cross_found.length
+    ec_last_node =  ec_root
+
+    # generate the rest of the EC tree
+    if not ec_cross_found.empty?
+      ec_cross_reference_hits.each do |crossref_hits|
+        ec_count = {}
+        crossref_hits.each do |cross_ref|
+          ec_last_node_loop = ec_last_node
+
+          # required for creating 'EC table'
+          if not @ec_ontologies.has_key?(cross_ref["ec_number_code"])
+            @ec_ontologies[cross_ref["ec_number_code"]] = EcNumber.get_ontology(cross_ref["ec_number_code"])
+          end
+          ec_ontology = @ec_ontologies[cross_ref["ec_number_code"]]
+
+          # only add the functions that are missing
+          if not @ec_functions.has_key?(ec_ontology[-1])
+            @ec_functions = EcNumber.get_ec_function(ec_ontology, @ec_functions, ec_db)
+          end
+
+          # add the other nodes to the tree
+          ec_ontology.each do |ec|
+            ec_count[ec] = ec_count.has_key?(ec) ? 0 : 1
+            node = Node.find_by_id(ec, ec_root)
+            if node.nil?
+              node = Node.new(ec, @ec_functions[ec], ec_root, ec)
+              node.data['count'] = 1
+              node.data['self_count'] = ec_ontology[-1] == ec ? 1 : 0
+              ec_last_node_loop = ec_last_node_loop.add_child(node)
+            else
+              node.data['count'] += ec_count[ec]
+              node.data['self_count'] = ec_ontology[-1] == ec ? node.data['self_count']+1 : node.data['self_count']+0
+              node.name = @ec_functions[ec]
+              ec_last_node_loop = node
+            end
+          end
+        end
+      end
+    end
+    ec_root.sort_children
+    @ec_root = Oj.dump(ec_root, mode: :compat)
+
+    # get consensus hits
+    @ec_consensus = EcNumber.get_consensus(JSON.parse(@ec_root, :symbolize_names => true))
+    # get EC LCA
+    ec_lca_id = equate_il ? sequence.ec_lca_il : sequence.ec_lca unless sequence.nil?
+    if ec_lca_id.nil?
+      @ec_lca = @entries.empty? || ec_cross_found.empty? ? 'nothing' : @ec_consensus[-1]
+    else
+      @ec_lca = (ec_lca_id == 0) ? 'root' : ec_db.select('code').where(id: ec_lca_id).map{|ec| ec.code}[0]
+    end
+    # empty concensus
+    if (@ec_lca == 'nothing') || (@ec_lca == 'root')
+      @ec_consensus.shift
+    end
+
+
+    # GO related stuff
+    # variables
+    @go_functions = {}
+    # preload go terms table
+    go_db = GoTerm.all
+    # get GO terms hits
+    go_array = @entries.map(&:go_cross_references).flatten.group_by{|go| go.go_term_code}
+    # get all go functions
+    go_array.keys.each do |go_f|
+      @go_functions[go_f] = go_db.select("name").where(code: go_f)[0][:name]
+    end
+    # map go terms to uniprot entry
+    go_array.each{|k,v| go_array[k] = v.map(&:uniprot_entry_id)}
+    # build graph
+    graphs = GoTerm.go_reachability(go_array)
+    # build tree
+    go_tree_build = GoTerm.go_tree(graphs)
+    # Oj dump
+    @go_root = Oj.dump(go_tree_build, mode: :compat)
+
+
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @entries.to_json(only: :uniprot_accession_number, include: [{ ec_cross_references: { only: :ec_number_code } }, { go_cross_references: { only: :go_term_code } }]) }
@@ -151,6 +263,9 @@ class SequencesController < ApplicationController
     # save parameters
     @p = params.to_h
 
+    # fetch all ec numbers
+    ec_db = EcNumber.all
+
     # set search parameters
     @equate_il = params[:il].present?
     filter_duplicates = params[:dupes] == '1'
@@ -159,6 +274,7 @@ class SequencesController < ApplicationController
     search_name = params[:search_name]
     query = params[:qs]
     csv_string = ''
+    tsv_ec_string = ''
 
     # quit if the query was empty
     raise EmptyQueryError if query.blank?
@@ -178,7 +294,7 @@ class SequencesController < ApplicationController
     @number_found = 0
 
     # build the resultset
-    matches = {}
+    matches, ec_matches, ec_functions, go_support = {}, {}, {}, {}
     misses = data.to_set
     data.each_slice(1000) do |data_slice|
       Sequence.includes(Sequence.lca_t_relation_name(@equate_il) => { lineage: Lineage::ORDER_T }).where(sequence: data_slice).each do |sequence|
@@ -189,6 +305,35 @@ class SequencesController < ApplicationController
           matches[lca_t] = [] if matches[lca_t].nil?
           num_of_seq.times do
             matches[lca_t] << sequence_mapping[sequence.sequence]
+          end
+
+          # GO related stuff
+          # Has to be remodeled after the creation of the 'go_lcas table'
+          entries = sequence.peptides(@equate_il).map(&:uniprot_entry)
+          go_array = entries.map(&:go_cross_references).flatten.group_by{|go| go.go_term_code}
+          go_array.each{|k,v| go_array[k] = v.map(&:uniprot_entry_id)}
+          graphs = GoTerm.go_reachability(go_array)
+          go_tree_build = GoTerm.go_tree(graphs)
+
+          go_consensus = []
+          GoTerm::GO_ONTOLOGY.keys.each{|o| GoTerm.cutoff(go_tree_build[o], GoTerm::CUTOFF*go_tree_build[o].data['count'], go_consensus) unless go_tree_build[o].nil?}
+          go_consensus.each{|n| go_support.has_key?(n.data['rank']) ? go_support[n.data['rank']].push(sequence.sequence) : go_support[n.data['rank']] = [sequence.sequence]}
+        end
+
+        # get all ECs
+        ec_lca_id = @equate_il ? sequence.ec_lca_il : sequence.ec_lca
+        unless ec_lca_id.nil?
+          ec_lca, ec_desc = ec_lca_id == 0 ? ['-.-.-.-', 'root'] : ec_db.select('code, name').where(id: ec_lca_id).map{|ec_rec|[ec_rec.code,ec_rec.name]}[0]
+          if ec_lca != '-.-.-.-'
+            if not ec_functions.has_key?(ec_lca)
+              ec_ontology = EcNumber.get_ontology(ec_lca)
+              ec_functions = EcNumber.get_ec_function(ec_ontology, ec_functions, ec_db)
+            end
+          end
+          ec_num_of_seq = filter_duplicates ? 1 : data_counts[sequence.sequence]
+          ec_matches[ec_lca] = [] if ec_matches[ec_lca].nil?
+          ec_num_of_seq.times do
+            ec_matches[ec_lca] << sequence_mapping[sequence.sequence]
           end
         end
         misses.delete(sequence.sequence)
@@ -231,6 +376,32 @@ class SequencesController < ApplicationController
           num_of_seq.times do
             matches[lca_t] << sequence_mapping[seq]
           end
+
+          go_array = entries.map(&:go_cross_references).flatten.group_by{|go| go.go_term_code}
+          go_array.each{|k,v| go_array[k] = v.map(&:uniprot_entry_id)}
+          graphs = GoTerm.go_reachability(go_array)
+          go_tree_build = GoTerm.go_tree(graphs)
+
+          go_consensus = []
+          GoTerm::GO_ONTOLOGY.keys.each{|o| GoTerm.cutoff(go_tree_build[o], GoTerm::CUTOFF*go_tree_build[o].data['count'], go_consensus) unless go_tree_build[o].nil?}
+          go_consensus.each{|n| go_support.has_key?(n.data['rank']) ? go_support[n.data['rank']].push(seq) : go_support[n.data['rank']] = [seq]}
+        end
+
+        ec_seq_lins = entries.map(&:ec_cross_references).uniq.compact.select{|crossref| crossref if crossref != []}
+        unless ec_seq_lins == []
+          ec_lca = EcNumber.get_lca(ec_seq_lins.map{|ec| ec[0].ec_number_code}) # calculate EC lca
+          ec_desc = ec_lca == '-.-.-.-' ? 'root' : ec_db.select('name').where(code: ec_lca).map{|ec_rec|ec_rec.name}[0]
+          if ec_lca != '-.-.-.-'
+            if not ec_functions.has_key?(ec_lca)
+              ec_ontology = EcNumber.get_ontology(ec_lca)
+              ec_functions = EcNumber.get_ec_function(ec_ontology, ec_functions, ec_db)
+            end
+          end
+          ec_num_of_seq = filter_duplicates ? 1 : data_counts[seq]
+          ec_matches[ec_lca] = [] if ec_matches[ec_lca].nil?
+          ec_num_of_seq.times do
+            ec_matches[ec_lca] << sequence_mapping[seq]
+          end
         end
         misses.delete(seq)
       end
@@ -263,7 +434,7 @@ class SequencesController < ApplicationController
       # export stuff
       if export
         seqs.each do |sequence|
-          csv_string += CSV.generate_line [sequence].concat(lca_l.to_a)
+          csv_string += CSV.generate_line([sequence].concat(lca_l.to_a)) + '\n'
         end
       end
 
@@ -288,17 +459,117 @@ class SequencesController < ApplicationController
     root&.sort_children
     @json_tree = Oj.dump(root, mode: :compat)
 
-    if export
-      csv_string = CSV.generate_line(['peptide'].concat(Lineage.ranks)) + csv_string
+    # GO related stuff
+    graphs = GoTerm.go_reachability(go_support)
+    go_tree_build = GoTerm.go_tree(graphs)
+    @go_root = Oj.dump(go_tree_build, mode: :compat)
 
+    # EC related stuff
+    ec_root = Node.new("-.-.-.-", 'root', nil, '-.-.-.-')
+    ec_root.data['self_count'] = ec_matches['-.-.-.-'].nil? ? 0 : ec_matches['-.-.-.-'].size
+    ec_root.data['count'] = ec_matches.map{|k,v|v.size}.sum
+    ec_last_node = ec_root
+
+    ec_matches.each do |ec_num, pep|
+      next if ec_num == '-.-.-.-'
+      ec_last_node_loop = ec_last_node
+      tsv_ec_string += '\n' + ec_num
+      EcNumber.get_ontology(ec_num).each do |ec_level|
+        tsv_ec_string += '\t' + ec_functions[ec_level]
+        node = Node.find_by_id(ec_level, ec_root)
+        if node.nil?
+          node = Node.new(ec_level, ec_functions[ec_level], ec_root, ec_level)
+          node.data['count'] = ec_matches[ec_num].size
+          node.data['self_count'] = ec_matches.has_key?(ec_level) ? ec_matches[ec_level].size : 0
+          ec_last_node_loop = ec_last_node_loop.add_child(node)
+        else
+          node.name = ec_functions[ec_level]
+          node.data['count'] += ec_matches[ec_num].size
+          ec_last_node_loop = node
+        end
+      end
+      node = ec_num == '-.-.-.-' ? ec_root : Node.find_by_id(ec_num, ec_root)
+      node.set_sequences(pep) unless node.nil?
+    end
+    @json_ec_sequences = Oj.dump(ec_root.sequences, mode: :compat)
+    ec_root.prepare_for_multitree unless ec_root.nil?
+    ec_root.sort_children unless ec_root.nil?
+    @json_ecTree = Oj.dump(ec_root, mode: :compat)
+
+    if export
+      @tsv_ec_string = EcNumber::EC_COLUMN_TITLE.join('\t') + tsv_ec_string
+      @csv_string = CSV.generate_line(['peptide'].concat(Lineage.ranks)) + '\n' + csv_string
       cookies['nonce'] = params[:nonce]
       filename = search_name != '' ? search_name : 'export'
-      send_data csv_string, type: 'text/csv; charset=iso-8859-1; header=present', disposition: 'attachment; filename=' + filename + '.csv'
+      render xlsx: 'multi_search.xlsx.axlsx', filename: filename + '.xlsx'
     end
 
   rescue EmptyQueryError
     flash[:error] = 'Your query was empty, please try again.'
     redirect_to datasets_path
+  end
+end
+
+# Hash containing the link between taxon ids and ec and go ids.
+def get_brush_linkage(taxon_id, ec_ids, go_ids)
+
+  # get deepest taxon_id if taxon found
+  found, pos = false, 0
+  @lineages.map { |lineage| lineage.set_iterator_position(0) }
+  while !found || pos < @lineages.length
+    if @lineages[pos].taxon_id === taxon_id
+      while @lineages[pos].has_next?
+        t = @lineages[pos].next_t
+        next if t.nil?
+        taxon_id = t.nil? ? taxon_id : t.id
+      end
+      found = true
+    end
+    pos += 1
+  end
+
+  if !ec_ids.empty?
+    # link taxon to ec
+    @taxon_ec[taxon_id] = @taxon_ec[taxon_id] || Set.new
+    ec_ids.each do |ec|
+      @taxon_ec[taxon_id].add(ec)
+    end
+
+    ec_ids.each do |ec|
+      # link ec to taxon
+      @ec_taxon[ec] = @ec_taxon[ec] || Set.new
+      @ec_taxon[ec].add(taxon_id)
+
+      # link ec to go
+      if !go_ids.empty?
+        @ec_go[ec] = @ec_go[ec] || Set.new
+        go_ids.each do |go|
+          @ec_go[ec].add(go)
+        end
+      end
+    end
+  end
+
+  if !go_ids.empty?
+    # link taxon to go
+    @taxon_go[taxon_id] = @taxon_go[taxon_id] || Set.new
+    go_ids.each do |go|
+      @taxon_go[taxon_id].add(go)
+    end
+
+    go_ids.each do |go|
+      # link go to taxon
+      @go_taxon[go] = @go_taxon[go] || Set.new
+      @go_taxon[go].add(taxon_id)
+
+      # link go to ec
+      if !ec_ids.empty?
+        @go_ec[go] = @go_ec[go] || Set.new
+        ec_ids.each do |ec|
+          @go_ec[go].add(ec)
+        end
+      end
+    end
   end
 end
 
