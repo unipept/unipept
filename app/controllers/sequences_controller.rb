@@ -194,12 +194,16 @@ class SequencesController < ApplicationController
     @ec_consensus = EcNumber.get_consensus(JSON.parse(@ec_root, :symbolize_names => true))
     # get EC LCA
     ec_lca_id = equate_il ? sequence.ec_lca_il : sequence.ec_lca unless sequence.nil?
-    if not ec_lca_id.nil?
-      @ec_lca = (ec_lca_id == 0) || (ec_lca_id.nil?) ? 'root' : ec_db.select('code').where(id: ec_lca_id).map{|ec| ec.code}[0]
+    if ec_lca_id.nil?
+      @ec_lca = @entries.empty? || ec_cross_found.empty? ? 'nothing' : @ec_consensus[-1]
     else
-      @ec_lca = @entries.empty? || ec_cross_found.empty? ? 'root' : @ec_consensus[-1]
+      @ec_lca = (ec_lca_id == 0) ? 'root' : ec_db.select('code').where(id: ec_lca_id).map{|ec| ec.code}[0]
+    end
+    # empty concensus
+    if (@ec_lca == 'nothing') || (@ec_lca == 'root')
       @ec_consensus.shift
     end
+
 
     # GO related stuff
     # variables
