@@ -87,7 +87,7 @@ var constructMultisearch = function constructMultisearch(args) {
             width: 916,
             height: 600,
             getTooltip: function(d) {
-                let numberFormat = d3.format(",d");
+                var numberFormat = d3.format(",d");
                 return "<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" + numberFormat(!d.data.self_count ? "0" : d.data.self_count) + (d.data.self_count && d.data.self_count === 1 ? " peptide" : " peptides") +
                     " specific to this level<br/>" + numberFormat(!d.data.count ? "0" : d.data.count) + (d.data.count && d.data.count === 1 ? " peptide" : " peptides") + " specific to this level or lower";
             }
@@ -101,7 +101,7 @@ var constructMultisearch = function constructMultisearch(args) {
             height: 600,
             enableDoubleClick: true,
             getTooltip: function(d) {
-                let numberFormat = d3.format(",d");
+                var numberFormat = d3.format(",d");
                 return "<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" + numberFormat(!d.data.self_count ? "0" : d.data.self_count) + (d.data.self_count && d.data.self_count === 1 ? " peptide" : " peptides") +
                     " specific to this level<br/>" + numberFormat(!d.data.count ? "0" : d.data.count) + (d.data.count && d.data.count === 1 ? " peptide" : " peptides") + " specific to this level or lower";
             },
@@ -175,7 +175,7 @@ var constructMultisearch = function constructMultisearch(args) {
     }
 
     function resizeFullScreen() {
-        let activeTab = getActiveTab(),
+        var activeTab = getActiveTab(),
             width = 916,
             height = 600,
             isFullScreen = window.fullScreenApi.isFullScreen();
@@ -209,7 +209,7 @@ var constructMultisearch = function constructMultisearch(args) {
     }
 
     function saveImage () {
-        let activeTab = getActiveSubTab();
+        var activeTab = getActiveSubTab();
         $(".debug_dump").hide();
         logToGoogle("Multi Peptide", "Save Image", activeTab);
         if ((activeTab === "sunburst" ) || (activeTab === "ecSunburst")) {
@@ -230,8 +230,8 @@ var constructMultisearch = function constructMultisearch(args) {
     */
     function getPopoverContent(d) {
         currentNode = d
-        let numberFormat = d3.format(",d");
-        let content = numberFormat(!d.data.self_count ? "0" : d.data.self_count) + (d.data.self_count && d.data.self_count === 1 ? " peptide" : " peptides") +
+        var numberFormat = d3.format(",d");
+        var content = numberFormat(!d.data.self_count ? "0" : d.data.self_count) + (d.data.self_count && d.data.self_count === 1 ? " peptide" : " peptides") +
             " specific to this level<br/>" + numberFormat(!d.data.count ? "0" : d.data.count) + (d.data.count && d.data.count === 1 ? " peptide" : " peptides") + " specific to this level or lower";
       
         content += "<div class='popover-buttons' ><br/>" +
@@ -284,8 +284,8 @@ var constructMultisearch = function constructMultisearch(args) {
      * Gets called when the users clicks on the button to download sequences
      */
     function downloadSequenceHandler() {
-        let type = $(this).attr("data-type");
-        let id = $(this).attr("data-id");
+        var type = $(this).attr("data-type");
+        var id = $(this).attr("data-id");
         $("#download-peptides").mouseleave();
         $("#download-peptides-toggle").button('loading');
         getSequences(id, type)
@@ -302,7 +302,7 @@ var constructMultisearch = function constructMultisearch(args) {
      * @param <String> type The type of sequences we want
      */
     function getSequences(id, type) {
-        let data_seq;
+        var data_seq;
         $notification = showNotification("Preparing sequences...", {
                 loading: true,
                 autoHide: false
@@ -353,7 +353,7 @@ var constructMultisearch = function constructMultisearch(args) {
     }
 
     function getActiveSubTab() {
-        let activeSubTab;
+        var activeSubTab;
         if (window.fullScreenApi.isFullScreen()) {
             activeTab = $(".full-screen-container li.active .main-tab").attr('id');
         } else {
@@ -368,7 +368,7 @@ var constructMultisearch = function constructMultisearch(args) {
     }
 
     function getActiveTab() {
-        let activePane;
+        var activePane;
         if (!window.fullScreenApi.isFullScreen()) {
             activePane = $(".full-screen-container li.active .main-tab").attr('id');
         } else {
@@ -423,8 +423,7 @@ var constructMultisearch = function constructMultisearch(args) {
      * @return <Array> An array of sequences (strings)
      */
     that.getAllSequences = function getAllSequences(d, s = []) {
-        let child;
-
+        var child;
         s = s.concat(that.getOwnSequences(d.id))
         if (('children' in d) && (d.children != null)) {
             child = d.children;
