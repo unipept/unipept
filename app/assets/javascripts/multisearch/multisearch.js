@@ -9,9 +9,13 @@ var constructMultisearch = function constructMultisearch(args) {
 
     var that = {},
         data = args.data,
+        goData = args.goData,
+        ecData = args.ecData,
         equateIL = args.equateIL,
         missed = args.missed,
         sequences = args.sequences,
+        ec_sequences = args.ec_sequences,
+        currentNode,
         sunburst,
         treemap,
         treeview,
@@ -27,6 +31,16 @@ var constructMultisearch = function constructMultisearch(args) {
         // set up visualisations
         initVisualisations();
 
+        // set up visualisations for treemap
+        initD3TreeMap('#d3TreeMap')
+
+        // set up visualisations for treeview
+        initD3TreeView(data, '#d3TreeView')
+        initD3TreeView(goData['molecular_function'], '#goTreeViewMF') 
+        initD3TreeView(goData['biological_process'], '#goTreeViewBP') 
+        initD3TreeView(goData['cellular_component'], '#goTreeViewCC') 
+        initD3TreeView(ecData, '#ecTreeView')
+
         // set up save images
         setUpSaveImage();
 
@@ -36,11 +50,15 @@ var constructMultisearch = function constructMultisearch(args) {
         // set up full screen
         setUpFullScreen();
 
+        // init behaviour
+        addPopoverBehaviour();
+
         // set up the full screen action bar
         setUpActionBar();
 
         // set up missed
         addMissed();
+
         // copy to clipboard for missed peptides
         addCopy($("#copy-missed span").first(), function () {return $(".mismatches").text(); });
 
@@ -54,20 +72,6 @@ var constructMultisearch = function constructMultisearch(args) {
             error(err.message, "Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
 
-        // treemap
-        try {
-            treemap = constructTreemap({multi : that, data : JSON.parse(JSON.stringify(data))});
-        } catch (err) {
-            error(err.message, "Loading the Treemap visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
-        }
-
-        // treeview
-        try {
-            treeview = constructTreeview({multi : that, data : JSON.parse(JSON.stringify(data))});
-        } catch (err) {
-            error(err.message, "Loading the Treeview visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
-        }
-
         // searchtree
         try {
             searchtree = constructSearchtree({multi : that, data : data, equateIL : equateIL});
@@ -76,8 +80,48 @@ var constructMultisearch = function constructMultisearch(args) {
         }
 
         mapping.set("sunburst", sunburst);
-        mapping.set("d3TreeMap", treemap);
-        mapping.set("d3TreeView", treeview);
+    }
+
+    function initD3TreeMap(selector) {
+        treemap = $(selector).treemap(data, {
+            width: 916,
+            height: 600,
+            getTooltip: function(d) {
+                var numberFormat = d3.format(",d");
+                return "<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" + numberFormat(!d.data.self_count ? "0" : d.data.self_count) + (d.data.self_count && d.data.self_count === 1 ? " peptide" : " peptides") +
+                    " specific to this level<br/>" + numberFormat(!d.data.count ? "0" : d.data.count) + (d.data.count && d.data.count === 1 ? " peptide" : " peptides") + " specific to this level or lower";
+            }
+        });
+        mapping.set(selector.substring(1,selector.length), treemap);
+    }
+
+    function initD3TreeView(data, selector) {
+        treeview = $(selector).treeview(data, {
+            width: 916,
+            height: 600,
+            enableDoubleClick: true,
+            getTooltip: function(d) {
+                var numberFormat = d3.format(",d");
+                return "<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" + numberFormat(!d.data.self_count ? "0" : d.data.self_count) + (d.data.self_count && d.data.self_count === 1 ? " peptide" : " peptides") +
+                    " specific to this level<br/>" + numberFormat(!d.data.count ? "0" : d.data.count) + (d.data.count && d.data.count === 1 ? " peptide" : " peptides") + " specific to this level or lower";
+            },
+            getLabel: function(d) { 
+                return d.name.length > 33 && (d._children || d.children) ? d.name.substring(0,30).trim()+"...": d.name
+            },
+            getPopoverContent: function(d) {
+                return getPopoverContent(d);
+            }
+        });
+        mapping.set(selector.substring(1,selector.length), treeview);
+    }
+
+    /**
+     * Get the correct visualization object
+     */
+    function getVisObject() {
+        return Object.keys(mapping.get(getActiveSubTab()).data()).map(function(key){
+            return mapping.get(getActiveSubTab()).data()[key];
+        })[0];
     }
 
     /**
@@ -132,12 +176,14 @@ var constructMultisearch = function constructMultisearch(args) {
 
     function resizeFullScreen() {
         var activeTab = getActiveTab(),
+            width = 916,
+            height = 600,
             isFullScreen = window.fullScreenApi.isFullScreen();
 
         // sync tabs
         $("ul.visualisations li.active").removeClass("active");
         $("ul.visualisations li").each(function (i, el) {
-            if ($(el).find("a").attr("href") === "#" + activeTab + "Wrapper") {
+            if ($(el).find("a").attr("href") === "#" + activeTab) {
                 $(el).addClass("active");
             }
         });
@@ -148,46 +194,186 @@ var constructMultisearch = function constructMultisearch(args) {
 
         // tooltip
         if (isFullScreen) {
-            $("#tooltip").appendTo(".full-screen-container");
+            $(".tip").appendTo(".full-screen-container");
+            width = $(window).width()+32;
+            height = $(window).height()+16;
         } else {
-            $("#tooltip").appendTo("body");
+            $(".tip").appendTo("body");
         }
 
         // update visualisations
+        $(".d3TreeView svg").attr("width", width);
+        $(".d3TreeView svg").attr("height", height);
         sunburst.setFullScreen(isFullScreen);
-        treemap.setFullScreen(isFullScreen);
-        treeview.setFullScreen(isFullScreen);
+        treemap.data()['vis.treemap'].setFullScreen(isFullScreen); 
     }
 
     function saveImage () {
-        var activeTab = getActiveTab();
+        var activeTab = getActiveSubTab();
         $(".debug_dump").hide();
         logToGoogle("Multi Peptide", "Save Image", activeTab);
-        if (activeTab === "sunburst") {
+        if ((activeTab === "sunburst" ) || (activeTab === "ecSunburst")) {
             d3.selectAll(".toHide").attr("class", "arc hidden");
-            triggerDownloadModal("#sunburst > svg", null, "unipept_sunburst");
+            triggerDownloadModal("#"+activeTab+" > svg", null, "unipept_"+activeTab);
             d3.selectAll(".hidden").attr("class", "arc toHide");
         } else if (activeTab === "d3TreeMap") {
-            triggerDownloadModal(null, "#d3TreeMap", "unipept_treemap");
+            triggerDownloadModal(null, "#"+activeTab, "unipept_treemap");
         } else {
-            triggerDownloadModal("#d3TreeView svg", null, "unipept_treeview");
+            triggerDownloadModal("#"+activeTab+" svg", null, "unipept_"+activeTab);
         }
+    }
+
+    /**
+    * Constructs the content of a popover for a given dataset.
+    *
+    * @param <Genome> d The node of which we want a popover
+    */
+    function getPopoverContent(d) {
+        currentNode = d
+        var numberFormat = d3.format(",d");
+        var content = numberFormat(!d.data.self_count ? "0" : d.data.self_count) + (d.data.self_count && d.data.self_count === 1 ? " peptide" : " peptides") +
+            " specific to this level<br/>" + numberFormat(!d.data.count ? "0" : d.data.count) + (d.data.count && d.data.count === 1 ? " peptide" : " peptides") + " specific to this level or lower";
+      
+        content += "<div class='popover-buttons' ><br/>" +
+                        "<div>" +
+                            "<a class='btn btn-default' id='submit-peptides'>" +
+                                "<span class='glyphicon glyphicon-refresh pull-left'></span>" +
+                                "<span class='pull-left'>&nbsp;submit peptides </span>" +
+                            "</a>" +
+                        "</div>" +
+                        "<div class='btn-group' id='download-peptides'>" +
+                            "<a class='btn btn-default dropdown-toggle' id='download-peptides-toggle' data-toggle='dropdown' data-loading-text='Loading peptides'>" +
+                                "<span class='glyphicon glyphicon-download'></span> " +
+                                    "download peptides " +
+                                "<span class='caret'></span>" +
+                            "</a>" +
+                            "<ul class='dropdown-menu'>" +
+                                "<li><a href='#' data-id='" + d.id + "' id='node' data-type='node'><span style='color: blue;'>&#9632;</span> Node</a></li>" +
+                                "<li><a href='#' data-id='" + d.id + "' id='branch' data-type='branch'><span style='color: red;'>&#9632;</span> Branch</a></li>" +
+                            "</ul>" +
+                        "</div>" +
+                    "</div>";
+        return content;
+    }
+
+    /**
+    * Adds actions the currently shown popover
+    */
+    function addPopoverBehaviour() {
+        $("#popovers").click(function(e){e.stopPropagation()});
+        $(".full-screen-bar").click(that.removePopovers);
+        $(".tab-content").click(that.removePopovers);
+        $(document).dblclick(function(event) {                  
+            $(".close").click(that.removePopovers);
+            $("#download-peptides").mouseenter(function () {
+                if (!$("#download-peptides").hasClass("open")) {
+                    $("#download-peptides-toggle").dropdown("toggle");
+                }
+            });
+            $("#download-peptides").mouseleave(function () {
+                if ($("#download-peptides").hasClass("open")) {
+                    $("#download-peptides-toggle").dropdown("toggle");
+                }
+            });
+            $("#download-peptides ul a").click(downloadSequenceHandler);
+            $("#submit-peptides").click(submitNodes);
+        });
+    }
+
+    /**
+     * Gets called when the users clicks on the button to download sequences
+     */
+    function downloadSequenceHandler() {
+        var type = $(this).attr("data-type");
+        var id = $(this).attr("data-id");
+        $("#download-peptides").mouseleave();
+        $("#download-peptides-toggle").button('loading');
+        getSequences(id, type)
+            .then(function (data_seq) {
+                return downloadDataByForm(data_seq, type + '-peptides.txt');
+            })
+            .then(function enableButton() { 
+                $("#download-peptides-toggle").button('reset');
+            });
+    }
+
+    /**
+     * @param <Number> id The id of the genome we want data from
+     * @param <String> type The type of sequences we want
+     */
+    function getSequences(id, type) {
+        var data_seq;
+        $notification = showNotification("Preparing sequences...", {
+                loading: true,
+                autoHide: false
+            });
+        return new Promise(function(resolve, reject) {
+            if (type === 'node') {
+                data_seq = that.getOwnSequences(id).join('\r\n');
+            } else {
+                data_seq = that.getAllSequences(currentNode).join('\r\n');
+            };
+            $notification.hide();
+            resolve(data_seq);
+        });
+    };
+
+    /**
+     * Create new form with the selected branch data and
+     * submit it
+     */
+    function submitNodes() {
+        var il = document.getElementById('il').value,
+            dupes = document.getElementById('dupes').value,
+            missed = document.getElementById('missed').value,
+            searchName = document.getElementById('search_name').value,
+            csrf_token = $('meta[name="csrf-token"]').attr('content');
+
+        var pep = that.getAllSequences(currentNode).join('\r\n');
+        var $form = $("<form action='/search/sequences' accept-charset='UTF-8' method='post' target='_blank'></form>");
+        $("<input>").attr({type: 'hidden', name: 'UTF-8', value: '✓'}).appendTo($form);
+        $("<input>").attr({type: 'hidden', name: "authenticity_token", value: csrf_token}).appendTo($form);
+        $("<input>").attr({type: 'hidden', name: 'qs', id: 'qs', value: pep}).appendTo($form);
+        $("<input>").attr({type: 'hidden', name: 'il', id: 'il', value: il}).appendTo($form);
+        $("<input>").attr({type: 'hidden', name: 'dupes', id: 'dupes', value: dupes}).appendTo($form);
+        $("<input>").attr({type: 'hidden', name: 'missed', id: 'missed', value: missed}).appendTo($form);
+        $("<input>").attr({type: 'hidden', name: 'nonce', id: 'nonce'}).appendTo($form);
+        $("<input>").attr({type: 'hidden', name: 'search_name', id: 'search_name', value: searchName}).appendTo($form);
+        $(document.body).append($form);
+        $form.submit()
     }
 
     function setUpActionBar() {
         $(".fullScreenActions a").tooltip({placement: "bottom", delay: { "show": 300, "hide": 300 }});
-        $(".fullScreenActions .reset").click(function () {
-            mapping.get(getActiveTab()).reset();
-        });
+        $(".reset").click(function(){getVisObject().reset()});
         $(".fullScreenActions .download").click(saveImage);
         $(".fullScreenActions .exit").click(function () {
             window.fullScreenApi.cancelFullScreen();
         });
     }
 
+    function getActiveSubTab() {
+        var activeSubTab;
+        if (window.fullScreenApi.isFullScreen()) {
+            activeTab = $(".full-screen-container li.active .main-tab").attr('id');
+        } else {
+            activeTab = $("li.active .main-tab").attr('id');
+        }
+
+        if (activeTab === 'biodiversity-analysis-tab'){
+            activeSubTab = $('.sub-navigation li.active .subnav-link').attr('href');
+        } else {
+            activeSubTab = $('.sub-navigation li.active .subnav-link')[1].getAttribute("href");
+        } return activeSubTab.split('Wrapper')[0].substring(1, activeSubTab.length);
+    }
+
     function getActiveTab() {
-        var activePane = $(".full-screen-container div.active").attr('id');
-        return activePane.split("Wrapper")[0];
+        var activePane;
+        if (!window.fullScreenApi.isFullScreen()) {
+            activePane = $(".full-screen-container li.active .main-tab").attr('id');
+        } else {
+            activePane = $("li.active .main-tab").attr('id');          
+        } return activePane.split("-tab")[0];
     }
 
     /*************** Public methods ***************/
@@ -214,7 +400,19 @@ var constructMultisearch = function constructMultisearch(args) {
      * @return <Array> An array of sequences (strings)
      */
     that.getOwnSequences = function getOwnSequences(id) {
-        return sequences[id] || [];
+        if (Number.isInteger(id)) {
+            return sequences[id] || [];
+        } else {
+            return ec_sequences[id] || [];
+        };
+    };
+
+    /**
+     * Removes all popovers
+     */
+    that.removePopovers = function removePopovers() {
+        $(".bar.pop").popover("destroy");
+        $(".bar.pop").attr("class", "bar");
     };
 
     /**
@@ -224,11 +422,20 @@ var constructMultisearch = function constructMultisearch(args) {
      * @param <node> d The node
      * @return <Array> An array of sequences (strings)
      */
-    that.getAllSequences = function getAllSequences(d) {
-        var s = that.getOwnSequences(d.id);
-        for (var i = 0; i < d.children.length; i++) {
-            s = s.concat(that.getAllSequences(d.children[i]));
-        }
+    that.getAllSequences = function getAllSequences(d, s = []) {
+        var child;
+        s = s.concat(that.getOwnSequences(d.id))
+        if (('children' in d) && (d.children != null)) {
+            child = d.children;
+        } else {
+            child = d._children;
+        };
+
+        if (typeof child !== "undefined") {
+            for (var i = 0; i < child.length; i++) {
+                s = that.getAllSequences(child[i], s);
+            };
+        };
         return s;
     };
 
