@@ -88,11 +88,6 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 # API stats
 gem 'stathat'
 
-# Axlsx for tails
-gem 'rubyzip', '= 1.0.0'
-gem 'axlsx_rails'
-gem 'axlsx'
-
 group :development do
   gem 'rubocop', require: false
   gem 'annotate' # annotate models with database info
