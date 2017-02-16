@@ -59,6 +59,9 @@ gem 'exception_notification', git: 'git://github.com/unipept/exception_notificat
 # Deploy with Capistrano
 gem 'capistrano', '~> 3.0'
 
+# GeneOntology parser
+gem 'scbi_go'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri
@@ -86,6 +89,10 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'stathat'
 
 group :development do
+  # Axlsx for tails
+  gem 'rubyzip', '= 1.0.0'
+  gem 'axlsx_rails'
+  gem 'axlsx'
   gem 'rubocop', require: false
   gem 'annotate' # annotate models with database info
   gem 'guard'
