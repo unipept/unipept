@@ -20,6 +20,7 @@ backend/java/bin/**/*.class
 coverage/
 .idea
 *.iml
-
 # Ignore Byebug command history file.
 .byebug_history
+.DS_Store
+
