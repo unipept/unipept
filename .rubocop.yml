@@ -2,9 +2,13 @@ AllCops:
   Include:
     - ''
   Exclude:
+    - 'Gemfile'
+    - 'Guardfile'
+    - 'Rakefile'
     - 'db/schema.rb'
     - 'config/routes.rb'
     - 'bin/setup'
+    - 'test/*/*.rb'
 
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact

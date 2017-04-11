@@ -68,18 +68,18 @@ class Lineage < ApplicationRecord
   belongs_to :varietas_t,         foreign_key: 'varietas',      primary_key: 'id',  class_name: 'Taxon'
   belongs_to :forma_t,            foreign_key: 'forma',         primary_key: 'id',  class_name: 'Taxon'
 
-  ORDER = [:superkingdom, :kingdom, :subkingdom, :superphylum, :phylum, :subphylum,
-           :superclass, :class_, :subclass, :infraclass, :superorder, :order, :suborder,
-           :infraorder, :parvorder, :superfamily, :family, :subfamily, :tribe,
-           :subtribe, :genus, :subgenus, :species_group, :species_subgroup,
-           :species, :subspecies, :varietas, :forma].freeze
+  ORDER = %i[superkingdom kingdom subkingdom superphylum phylum subphylum
+             superclass class_ subclass infraclass superorder order suborder
+             infraorder parvorder superfamily family subfamily tribe
+             subtribe genus subgenus species_group species_subgroup
+             species subspecies varietas forma].freeze
 
-  ORDER_T = [:superkingdom_t, :kingdom_t, :subkingdom_t, :superphylum_t, :phylum_t,
-             :subphylum_t, :superclass_t, :class_t, :subclass_t, :infraclass_t,
-             :superorder_t, :order_t, :suborder_t, :infraorder_t, :parvorder_t, :superfamily_t,
-             :family_t, :subfamily_t, :tribe_t, :subtribe_t, :genus_t, :subgenus_t,
-             :species_group_t, :species_subgroup_t, :species_t, :subspecies_t,
-             :varietas_t, :forma_t].freeze
+  ORDER_T = %i[superkingdom_t kingdom_t subkingdom_t superphylum_t phylum_t
+               subphylum_t superclass_t class_t subclass_t infraclass_t
+               superorder_t order_t suborder_t infraorder_t parvorder_t superfamily_t
+               family_t subfamily_t tribe_t subtribe_t genus_t subgenus_t
+               species_group_t species_subgroup_t species_t subspecies_t
+               varietas_t forma_t].freeze
 
   scope :with_names, -> { includes(ORDER_T) }
 

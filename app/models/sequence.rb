@@ -67,7 +67,7 @@ class Sequence < ApplicationRecord
     raise SequenceTooShortError if sequence.length < 5
     sequence = sequence.tr('I', 'L') if equate_il
     # this solves the N+1 query problem
-    includes(peptides_relation_name(equate_il) => { uniprot_entry: [:taxon, :ec_cross_references, :go_cross_references] })
+    includes(peptides_relation_name(equate_il) => { uniprot_entry: %i[taxon ec_cross_references go_cross_references] })
       .find_by(sequence: sequence)
   end
 
@@ -83,7 +83,7 @@ class Sequence < ApplicationRecord
     sequences = sequence.gsub(/([KR])([^P])/, "\\1\n\\2").gsub(/([KR])([^P])/, "\\1\n\\2").lines.map(&:strip).to_a
 
     # build query
-    query = includes(peptides_relation_name(equate_il) => { uniprot_entry: [:taxon, :lineage] })
+    query = includes(peptides_relation_name(equate_il) => { uniprot_entry: %i[taxon lineage] })
     long_sequences = sequences.select { |s| s.length >= 5 }.map { |s| query.find_by(sequence: s) }
 
     # check if it has a match for every sequence and at least one long part

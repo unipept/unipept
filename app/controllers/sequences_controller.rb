@@ -13,8 +13,8 @@ class SequencesController < ApplicationController
     seq = params[:id].upcase.gsub(/\P{ASCII}/, '')
 
     # process the input, convert seq to a valid @sequence
-    if seq =~ /\A[0-9]+\z/
-      sequence = Sequence.includes(peptides: { uniprot_entry: [:taxon, :ec_cross_references, :go_cross_references] }).find_by(id: seq)
+    if seq.match?(/\A[0-9]+\z/)
+      sequence = Sequence.includes(peptides: { uniprot_entry: %i[taxon ec_cross_references go_cross_references] }).find_by(id: seq)
       @original_sequence = sequence.sequence
     else
       sequence = Sequence.single_search(seq, equate_il)
@@ -120,7 +120,6 @@ class SequencesController < ApplicationController
       # TODO: switch to OJ for higher performance
       # format.json { render json: Oj.dump(@entries, :include => :name, :mode => :compat) }
     end
-
   rescue SequenceTooShortError
     flash[:error] = 'The sequence you searched for is too short.'
     redirect_to search_single_url
@@ -295,7 +294,6 @@ class SequencesController < ApplicationController
       filename = search_name != '' ? search_name : 'export'
       send_data csv_string, type: 'text/csv; charset=iso-8859-1; header=present', disposition: 'attachment; filename=' + filename + '.csv'
     end
-
   rescue EmptyQueryError
     flash[:error] = 'Your query was empty, please try again.'
     redirect_to datasets_path

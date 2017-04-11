@@ -43,7 +43,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert assigns(:root).end_with? '}'
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
-    assert_equal %w(Organism kingdom species), assigns(:table_ranks)
+    assert_equal %w[Organism kingdom species], assigns(:table_ranks)
   end
 
   test 'should get show with peptide' do
@@ -63,7 +63,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert assigns(:root).end_with? '}'
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
-    assert_equal %w(Organism kingdom species), assigns(:table_ranks)
+    assert_equal %w[Organism kingdom species], assigns(:table_ranks)
   end
 
   test 'should get show with distinct lineage' do
@@ -89,7 +89,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert assigns(:root).end_with? '}'
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
-    assert_equal %w(Organism kingdom species), assigns(:table_ranks)
+    assert_equal %w[Organism kingdom species], assigns(:table_ranks)
   end
 
   test 'should get show with id and il' do
@@ -109,7 +109,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert assigns(:root).end_with? '}'
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
-    assert_equal %w(Organism kingdom species), assigns(:table_ranks)
+    assert_equal %w[Organism kingdom species], assigns(:table_ranks)
   end
 
   test 'should get show with peptide and il' do
@@ -129,7 +129,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert assigns(:root).end_with? '}'
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
-    assert_equal %w(Organism kingdom species), assigns(:table_ranks)
+    assert_equal %w[Organism kingdom species], assigns(:table_ranks)
   end
 
   test 'should get show with misscleavage and partial peptide' do
@@ -149,7 +149,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert assigns(:root).end_with? '}'
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, nil], [taxon2, taxon1]], assigns(:table_lineages)
-    assert_equal %w(Organism kingdom species), assigns(:table_ranks)
+    assert_equal %w[Organism kingdom species], assigns(:table_ranks)
   end
 
   test 'should get show with misscleavage and 2 peptides' do
@@ -169,7 +169,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert assigns(:root).end_with? '}'
     assert_equal [taxon2], assigns(:common_lineage)
     assert_equal [[taxon2]], assigns(:table_lineages)
-    assert_equal %w(Organism kingdom), assigns(:table_ranks)
+    assert_equal %w[Organism kingdom], assigns(:table_ranks)
   end
 
   test 'show should error when id not found' do

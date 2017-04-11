@@ -15,13 +15,13 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'set_params should parse array input correctly' do
-    get :pept2prot, params: { input: %w(AAIER TEST), format: 'json' }
-    assert_equal %w(AAIER TEST), assigns(:input)
+    get :pept2prot, params: { input: %w[AAIER TEST], format: 'json' }
+    assert_equal %w[AAIER TEST], assigns(:input)
   end
 
   test 'set_params should parse json input correctly' do
     get :pept2prot, params: { input: '["AAIER", "TEST"]', format: 'json' }
-    assert_equal %w(AAIER TEST), assigns(:input)
+    assert_equal %w[AAIER TEST], assigns(:input)
   end
 
   test 'set_params should parse boolean options correctly' do
@@ -46,7 +46,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get pept2prot' do
-    get :pept2prot, params: { input: %w(AAIER AAILER), format: 'json' }
+    get :pept2prot, params: { input: %w[AAIER AAILER], format: 'json' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'AAIER'
@@ -61,7 +61,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get pept2prot with il' do
-    get :pept2prot, params: { input: %w(AAIER AAILER), format: 'json', equate_il: 'true' }
+    get :pept2prot, params: { input: %w[AAIER AAILER], format: 'json', equate_il: 'true' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'AAIER'
@@ -76,7 +76,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get pept2prot with extra' do
-    get :pept2prot, params: { input: %w(AAIER AAILER), format: 'json', extra: 'true' }
+    get :pept2prot, params: { input: %w[AAIER AAILER], format: 'json', extra: 'true' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'AAIER'
@@ -98,7 +98,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get pept2prot with extra and il' do
-    get :pept2prot, params: { input: %w(AAIER AAILER), format: 'json', equate_il: 'true', extra: 'true' }
+    get :pept2prot, params: { input: %w[AAIER AAILER], format: 'json', equate_il: 'true', extra: 'true' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'AAIER'
@@ -120,7 +120,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get pept2taxa' do
-    get :pept2taxa, params: { input: %w(AAIER AAILER), format: 'json' }
+    get :pept2taxa, params: { input: %w[AAIER AAILER], format: 'json' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'AAIER'
@@ -136,7 +136,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get pept2taxa with il' do
-    get :pept2taxa, params: { input: %w(AAIER AAILER), format: 'json', equate_il: 'true' }
+    get :pept2taxa, params: { input: %w[AAIER AAILER], format: 'json', equate_il: 'true' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'AAIER'
@@ -152,7 +152,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get pept2taxa with extra' do
-    get :pept2taxa, params: { input: %w(AAIER AAILER), format: 'json', extra: 'true' }
+    get :pept2taxa, params: { input: %w[AAIER AAILER], format: 'json', extra: 'true' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'AAIER'
@@ -168,7 +168,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get pept2taxa with names' do
-    get :pept2taxa, params: { input: %w(AAIER AAILER), format: 'json', names: 'true' }
+    get :pept2taxa, params: { input: %w[AAIER AAILER], format: 'json', names: 'true' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'AAIER'
@@ -184,7 +184,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get pept2taxa with extra and names' do
-    get :pept2taxa, params: { input: %w(AAIER AAILER), format: 'json', extra: 'true', names: 'true' }
+    get :pept2taxa, params: { input: %w[AAIER AAILER], format: 'json', extra: 'true', names: 'true' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'AAIER'
@@ -200,7 +200,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get pept2taxa with extra and names and il' do
-    get :pept2taxa, params: { input: %w(AAIER AAILER), format: 'json', equate_il: 'true', extra: 'true', names: 'true' }
+    get :pept2taxa, params: { input: %w[AAIER AAILER], format: 'json', equate_il: 'true', extra: 'true', names: 'true' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'AAIER'
@@ -216,7 +216,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get pept2lca' do
-    get :pept2lca, params: { input: %w(AAIER AAILER), format: 'json' }
+    get :pept2lca, params: { input: %w[AAIER AAILER], format: 'json' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'AAIER'
@@ -232,7 +232,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get pept2lca with il' do
-    get :pept2lca, params: { input: %w(AAIER AAILER), format: 'json', equate_il: 'true' }
+    get :pept2lca, params: { input: %w[AAIER AAILER], format: 'json', equate_il: 'true' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'AAIER'
@@ -248,7 +248,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get pept2lca with extra' do
-    get :pept2lca, params: { input: %w(AAIER AAILER), format: 'json', extra: 'true' }
+    get :pept2lca, params: { input: %w[AAIER AAILER], format: 'json', extra: 'true' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'AAIER'
@@ -264,7 +264,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get pept2lca with names' do
-    get :pept2lca, params: { input: %w(AAIER AAILER), format: 'json', names: 'true' }
+    get :pept2lca, params: { input: %w[AAIER AAILER], format: 'json', names: 'true' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'AAIER'
@@ -280,7 +280,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get pept2lca with extra and names' do
-    get :pept2lca, params: { input: %w(AAIER AAILER), format: 'json', extra: 'true', names: 'true' }
+    get :pept2lca, params: { input: %w[AAIER AAILER], format: 'json', extra: 'true', names: 'true' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'AAIER'
@@ -296,7 +296,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get pept2lca with extra and names and il' do
-    get :pept2lca, params: { input: %w(AAIER AAILER), format: 'json', equate_il: 'true', extra: 'true', names: 'true' }
+    get :pept2lca, params: { input: %w[AAIER AAILER], format: 'json', equate_il: 'true', extra: 'true', names: 'true' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'AAIER'
@@ -312,7 +312,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get taxa2lca' do
-    get :taxa2lca, params: { input: %w(3 2), format: 'json' }
+    get :taxa2lca, params: { input: %w[3 2], format: 'json' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'taxon_id'
@@ -323,7 +323,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get taxa2lca with root' do
-    get :taxa2lca, params: { input: %w(1 2), format: 'json' }
+    get :taxa2lca, params: { input: %w[1 2], format: 'json' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'taxon_id'
@@ -334,7 +334,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get taxa2lca with extra' do
-    get :taxa2lca, params: { input: %w(1 2), format: 'json', extra: 'true' }
+    get :taxa2lca, params: { input: %w[1 2], format: 'json', extra: 'true' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'taxon_id'
@@ -345,7 +345,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get taxa2lca with names' do
-    get :taxa2lca, params: { input: %w(1 2), format: 'json', names: 'true' }
+    get :taxa2lca, params: { input: %w[1 2], format: 'json', names: 'true' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'taxon_id'
@@ -356,7 +356,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get taxa2lca with extra and names' do
-    get :taxa2lca, params: { input: %w(1 2), format: 'json', names: 'true', extra: 'true' }
+    get :taxa2lca, params: { input: %w[1 2], format: 'json', names: 'true', extra: 'true' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'taxon_id'
@@ -367,7 +367,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get taxonomy' do
-    get :taxonomy, params: { input: %w(1 2), format: 'json' }
+    get :taxonomy, params: { input: %w[1 2], format: 'json' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'taxon_id'
@@ -378,7 +378,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get taxonomy with extra' do
-    get :taxonomy, params: { input: %w(1 2), format: 'json', extra: 'true' }
+    get :taxonomy, params: { input: %w[1 2], format: 'json', extra: 'true' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'taxon_id'
@@ -389,7 +389,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get taxonomy with names' do
-    get :taxonomy, params: { input: %w(1 2), format: 'json', names: 'true' }
+    get :taxonomy, params: { input: %w[1 2], format: 'json', names: 'true' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'taxon_id'
@@ -400,7 +400,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   end
 
   test 'should get taxonomy with extra and names' do
-    get :taxonomy, params: { input: %w(1 2), format: 'json', names: 'true', extra: 'true' }
+    get :taxonomy, params: { input: %w[1 2], format: 'json', names: 'true', extra: 'true' }
     assert_response :success
     assert_equal '*', @response.headers['Access-Control-Allow-Origin']
     assert @response.body.include? 'taxon_id'
@@ -413,7 +413,7 @@ class Api::ApiControllerTest < ActionController::TestCase
   test "shouldn't crash when logging to stathat" do
     Rails.application.config.unipept_API_logging = true
     Rails.application.config.unipept_stathat_key = 'key'
-    get :taxonomy, params: { input: %w(1 2), format: 'json' }
+    get :taxonomy, params: { input: %w[1 2], format: 'json' }
     assert_response :success
     Rails.application.config.unipept_API_logging = false
   end

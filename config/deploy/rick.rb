@@ -1,7 +1,7 @@
 set :stage, :morty
 
 # don't specify db as it's not needed for unipept
-server 'rick.ugent.be', user: 'unipept', roles: [:web, :app], ssh_options: {
+server 'rick.ugent.be', user: 'unipept', roles: %i[web app], ssh_options: {
   port: 4840
 }
 

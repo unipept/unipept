@@ -77,7 +77,7 @@ class Proteome < ApplicationRecord
     taxa.merge(proteomes.map(&:genus_id))
     taxa.merge(proteomes.map(&:order_id))
     taxa.merge(proteomes.map(&:class_id))
-    Hash[Taxon.select([:id, :name, :rank])
+    Hash[Taxon.select(%i[id name rank])
               .where(id: taxa.to_a)
               .map { |t| [t.id, Hash['name' => t.name, 'rank' => t.rank]] }]
   end
