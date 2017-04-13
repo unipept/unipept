@@ -31,9 +31,13 @@ function init_sequence_show(data) {
     // set up the fancy tree
     initD3TreeView(data.tree, '#lineageTree');
     initD3TreeView(data.ec_tree, '#ecTree');
-    initD3TreeView(data.go_tree['molecular_function'], '#goTreeMF');
-    initD3TreeView(data.go_tree['biological_process'], '#goTreeBP');
-    initD3TreeView(data.go_tree['cellular_component'], '#goTreeCC');
+    if (data.go_tree['molecular_function'] !== null) {
+        initD3TreeView(data.go_tree['molecular_function'], '#goTreeMF');
+    } if (data.go_tree['biological_process'] !== null) {
+        initD3TreeView(data.go_tree['biological_process'], '#goTreeBP');
+    } if (data.go_tree['cellular_component'] !== null) {
+        initD3TreeView(data.go_tree['cellular_component'], '#goTreeCC');
+    };
 
     // fullscreen and save image buttons
     var buttons = ['lineage-tree', 'ec-tree', 'go-mf', 'go-bp', 'go-cc'];

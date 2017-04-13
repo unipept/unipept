@@ -228,44 +228,46 @@ class SequencesController < ApplicationController
     # Oj dump
     @go_root = Oj.dump(go_tree_build, mode: :compat)
 
-    # calculate go lca
-    # get namespace
-    go_array.each do |g, un|
-      ns = go_db.select("namespace").where(code: g)[0][:namespace]
-      if !namespace.key?(ns)
-        namespace[ns] = []
-      end
-      namespace[ns] << g
-    end
-    # build distribution array
-    go_dist = @go_entries.select{ |e| e != [] }.map{ |g| g.map(&:go_term_code) }
-    ['BP', 'MF', 'CC'].each do |ns|
-      go_dist_ns[ns] = [] unless go_dist_ns.key?(ns)
-      go_dist.each do |ds|
-        tmp = []
-        ds.each do |go_ds|
-          if namespace[ns].include? go_ds
-            tmp << go_ds
-          end
+    if !go_array.empty?
+      # calculate go lca
+      # get namespace
+      go_array.each do |g, un|
+        ns = go_db.select("namespace").where(code: g)[0][:namespace]
+        if !namespace.key?(ns)
+          namespace[ns] = []
         end
-        go_dist_ns[ns] << tmp unless tmp.empty?
+        namespace[ns] << g
       end
-    end
-    # make a frequency table for all go
-    namespace.each do |ns, gs|
-      frq[ns] = {} unless frq.key?(ns)
-      namespace[ns].each{|k, v| frq[ns][k] = 0 }
-      frq[ns].each do |k, v|
-        go_dist_ns[ns].each do |r|
-          if r.include? k
-            frq[ns][k] += 1
+      # build distribution array
+      go_dist = @go_entries.select{ |e| e != [] }.map{ |g| g.map(&:go_term_code) }
+      ['BP', 'MF', 'CC'].each do |ns|
+        if namespace.key?(ns)
+          go_dist_ns[ns] = [] unless go_dist_ns.key?(ns)
+          go_dist.each do |ds|
+            tmp = []
+            ds.each do |go_ds|
+              if namespace[ns].include? go_ds
+                tmp << go_ds
+              end
+            end
+            go_dist_ns[ns] << tmp unless tmp.empty?
           end
         end
       end
-      frq[ns].each{ |g, f| frq[ns][g] = (f.to_f/go_dist_ns[ns].length.to_f)*100 }
+      # make a frequency table for all go
+      namespace.each do |ns, gs|
+        frq[ns] = {} unless frq.key?(ns)
+        namespace[ns].each{|k, v| frq[ns][k] = 0 }
+        frq[ns].each do |k, v|
+          go_dist_ns[ns].each do |r|
+            if r.include? k
+              frq[ns][k] += 1
+            end
+          end
+        end
+        frq[ns].each{ |g, f| frq[ns][g] = (f.to_f/go_dist_ns[ns].length.to_f)*100 }
+      end
     end
-
-
 
     respond_to do |format|
       format.html # show.html.erb
