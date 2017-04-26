@@ -257,7 +257,7 @@ class SequencesController < ApplicationController
         end
       end
       # make a frequency table for all go
-      namespace.each do |ns, gs|
+      ['BP', 'MF', 'CC'].each do |ns|
         frq[ns] = {} unless frq.key?(ns)
         namespace[ns].each{|k, v| frq[ns][k] = 0 }
         frq[ns].each do |k, v|
