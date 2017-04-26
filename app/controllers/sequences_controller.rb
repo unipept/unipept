@@ -216,8 +216,10 @@ class SequencesController < ApplicationController
     # get GO terms hits
     go_array = @entries.map(&:go_cross_references).flatten.group_by{|go| go.go_term_code}
     # get all go functions
-    go_array.keys.each do |go_f|
-      @go_functions[go_f] = go_db.select("name").where(code: go_f)[0][:name]
+    if go_array.empty?
+      go_array.keys.each do |go_f|
+        @go_functions[go_f] = go_db.select("name").where(code: go_f)[0][:name]
+      end
     end
     # map go terms to uniprot entry
     go_array.each{|k,v| go_array[k] = v.map(&:uniprot_entry_id)}
