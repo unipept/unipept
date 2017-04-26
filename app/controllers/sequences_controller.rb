@@ -242,7 +242,7 @@ class SequencesController < ApplicationController
       end
       # build distribution array
       go_dist = @go_entries.select{ |e| e != [] }.map{ |g| g.map(&:go_term_code) }
-      ['BP', 'MF', 'CC'].each do |ns|
+      namespace.each do |ns, gs|
         if namespace.key?(ns)
           go_dist_ns[ns] = [] unless go_dist_ns.key?(ns)
           go_dist.each do |ds|
@@ -257,7 +257,7 @@ class SequencesController < ApplicationController
         end
       end
       # make a frequency table for all go
-      ['BP', 'MF', 'CC'].each do |ns|
+      namespace.each do |ns, gs|
         frq[ns] = {} unless frq.key?(ns)
         namespace[ns].each{|k, v| frq[ns][k] = 0 }
         frq[ns].each do |k, v|
