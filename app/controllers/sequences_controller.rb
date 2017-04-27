@@ -215,7 +215,7 @@ class SequencesController < ApplicationController
     # get all go functions
     go_array.keys.each do |go_f|
       go_func = go_db.select("name").where(code: go_f)
-      if !go_func.nil?
+      if (!go_func.nil?) && (@go_functions.key(go_f))
         @go_functions[go_f] = go_func[0][:name]
       end
     end
