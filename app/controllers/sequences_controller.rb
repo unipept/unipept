@@ -238,9 +238,9 @@ class SequencesController < ApplicationController
       # calculate go lca
       # get namespace
       go_array.each do |g, un|
-        ns = go_db.select("namespace").where(code: g)
+        ns = go_db.select("namespace").where(code: g)[0]
         if !ns.nil?
-          ns = ns[0][:namespace]
+          ns = ns[:namespace]
           if !namespace.key?(ns)
             namespace[ns] = []
           end
