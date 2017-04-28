@@ -36,11 +36,11 @@ var constructMultisearch = function constructMultisearch(args) {
 
         // set up visualisations for treeview
         initD3TreeView(data, '#d3TreeView')
-        if (data.go_tree['molecular_function'] !== null) {
+        if (goData['molecular_function'] !== null) {
             initD3TreeView(goData['molecular_function'], '#goTreeViewMF') 
-        } if (data.go_tree['biological_process'] !== null) {
+        } if (goData['biological_process'] !== null) {
             initD3TreeView(goData['biological_process'], '#goTreeViewBP') 
-        } if (data.go_tree['cellular_component'] !== null) {
+        } if (goData['cellular_component'] !== null) {
             initD3TreeView(goData['cellular_component'], '#goTreeViewCC')
         }
         initD3TreeView(ecData, '#ecTreeView')
