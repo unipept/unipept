@@ -238,11 +238,14 @@ class SequencesController < ApplicationController
       # calculate go lca
       # get namespace
       go_array.each do |g, un|
-        ns = go_db.select("namespace").where(code: g)[0][:namespace]
-        if !namespace.key?(ns)
-          namespace[ns] = []
+        ns = go_db.select("namespace").where(code: g)
+        if !ns.nil?
+          ns = ns[0][:namespace]
+          if !namespace.key?(ns)
+            namespace[ns] = []
+          end
+          namespace[ns] << g
         end
-        namespace[ns] << g
       end
       # build distribution array
       go_dist = @go_entries.select{ |e| e != [] }.map{ |g| g.map(&:go_term_code) }
