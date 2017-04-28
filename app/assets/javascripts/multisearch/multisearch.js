@@ -315,7 +315,7 @@ var constructMultisearch = function constructMultisearch(args) {
             if (type === 'node') {
                 data_seq = that.getOwnSequences(id).join('\r\n');
             } else {
-                data_seq = that.getAllSequences(currentNode).join('\r\n');
+                data_seq = that.getAllSequences(currentNode, []).join('\r\n');
             };
             $notification.hide();
             resolve(data_seq);
@@ -333,7 +333,7 @@ var constructMultisearch = function constructMultisearch(args) {
             searchName = document.getElementById('search_name').value,
             csrf_token = $('meta[name="csrf-token"]').attr('content');
 
-        var pep = that.getAllSequences(currentNode).join('\r\n');
+        var pep = that.getAllSequences(currentNode, []).join('\r\n');
         var $form = $("<form action='/search/sequences' accept-charset='UTF-8' method='post' target='_blank'></form>");
         $("<input>").attr({type: 'hidden', name: 'UTF-8', value: '✓'}).appendTo($form);
         $("<input>").attr({type: 'hidden', name: "authenticity_token", value: csrf_token}).appendTo($form);
@@ -426,7 +426,7 @@ var constructMultisearch = function constructMultisearch(args) {
      * @param <node> d The node
      * @return <Array> An array of sequences (strings)
      */
-    that.getAllSequences = function getAllSequences(d, s = []) {
+    that.getAllSequences = function getAllSequences(d, s) {
         var child;
         s = s.concat(that.getOwnSequences(d.id))
         if (('children' in d) && (d.children != null)) {
