@@ -203,6 +203,9 @@ class SequencesController < ApplicationController
     if (@ec_lca == 'nothing') || (@ec_lca == 'root')
       @ec_consensus.shift
     end
+    if @ec_consensus[0] == 'root'
+      @ec_consensus.shift
+    end
 
 
     # GO related stuff
