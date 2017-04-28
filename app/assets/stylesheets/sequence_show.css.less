@@ -1,4 +1,4 @@
-/* Lineage tree */
+/* buttons */
 .buttons-single {
     float: right;
     margin-top: -55px;
@@ -7,27 +7,75 @@
     margin-left: 5px;
     .shadow-z0();
 }
+
+.btn.btn-default.btn-xs.btn-animate.btn-save {
+    position: relative;
+    bottom: 1px;
+    left: 16px;
+}
+
+.btn.btn-default.btn-xs.btn-animate.btn-resize {
+    position: relative;
+    bottom: 1px;
+    left: 16px;
+}
+
 .buttons-single .btn-clipboard-hover {
     color: @black-text;
     background: white;
 }
 
-#lineageTree {
+.btn-expand .btn-add-entries,
+.btn-expand .btn-add-entries:hover,
+.btn-expand .btn-add-entries:focus {
+    outline: none;
+    width: 100%;
+}
+
+/* subnav botton */
+.buttons-subnav {
+    margin-top: -95px;
+}
+
+.tpa-tree {
     background-color: white;
 }
 
-#lineageTree svg {
-    margin: -16px -16px -21px -16px;
+.tpa-tree svg {
+    margin: -16px -16px -36px -32px;
 }
 
-/* Lineage table */
-#sequence_table {
+/* tables */
+.sequence_table {
     overflow: auto;
     font-size: 10px;
     line-height: 1.1em;
 }
-#sequence_table a {
+.sequence_table a {
     color: #333;
+}
+.table div.entry-info{
+    height: 4em;
+    overflow-y: auto;
+}
+.table .col-name {
+    width: 200px;
+}
+.table .col-organism {
+    width: 200px;
+}
+.table .col-ec {
+    width: 120px;
+}
+.table .col-go {
+    width: 260px;
+}
+
+.shorten {
+    width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;  
 }
 
 .c0 {
@@ -126,9 +174,66 @@ table.protein-info .id,
 table.protein-info .ec {
     min-width: 80px;
 }
+table.protein-info .ip {
+    min-width: 200px;
+}
 table.protein-info .organism {
-    min-width: 250px;
+    min-width: 150px;
+}
+table.protein-info .name {
+    min-width: 150px;
+}
+table.protein-info .go {
+    min-width: 150px;
 }
 table.protein-info .dropdown-menu {
     margin-top: 0;
+}
+.btn-group.btn-entries .dropdown-menu {
+    min-width: 60px;
+    position: absolute;
+}
+
+/* popovers overwrite */
+.popover-tpa .popover-title {
+    border-radius: 2px 2px 0 0;
+    line-height: 18px;
+    border: 0;
+  }
+
+.sub-navigation { 
+    background-color: @primary-500;
+    margin-top: -16px;
+    min-width: 916px;
+    margin-left: -16px;
+    height: 41px;
+}
+
+.card-title .nav-tabs li a {
+    outline: none;
+}
+
+.nav-tabs .subnav-link {
+    color: white;
+    height: 40px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-out;
+    background: @primary-500;
+}
+
+.nav-tabs .subnav-link:hover {
+    border-bottom: 5px solid @accent-500;
+    background: @primary-500;
+}
+
+.nav-tabs li.active .subnav-link,
+.nav-tabs li.active .subnav-link:hover,
+.nav-tabs li.active .subnav-link:focus {
+    background: @primary-500;
+    color: white;
+    border: none;
+    border-bottom: 5px solid @accent-500;
 }

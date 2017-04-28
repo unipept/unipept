@@ -59,6 +59,9 @@ gem 'exception_notification', git: 'git://github.com/unipept/exception_notificat
 # Deploy with Capistrano
 gem 'capistrano', '~> 3.0'
 
+# GeneOntology parser
+gem 'scbi_go'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri
