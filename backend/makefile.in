@@ -57,7 +57,7 @@ $(JAR): $(SRC)
 	mkdir -p $(dir $@)
 	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).NamesNodes2TaxonsLineages \
 		--names <<<INTDIR>>>/names.dmp \
-		--nodes <<<INTDIR>>>/nodes.dmp \
+		--nodes <(<<<CMD_SED>>> 's/cohort/no rank/' <<<INTDIR>>>/nodes.dmp) \
 		--taxons >(<<<CMD_GZIP>>> > <<<TABDIR>>>/taxons.tsv.gz) \
 		--lineages >(<<<CMD_GZIP>>> > <<<TABDIR>>>/lineages.tsv.gz)
 	echo "Finished calculation of taxons and lineages tables."
