@@ -112,11 +112,11 @@ function constructDatasetLoader() {
         $("#pride-progress").show("fast");
         $("#pride-progress .progress-bar").css("width", "10%");
 
-        return get("http://www.ebi.ac.uk:80/pride/ws/archive/peptide/count/assay/" + id).then(function(datasetSize) {
+        return get("https://www.ebi.ac.uk/pride/ws/archive/peptide/count/assay/" + id).then(function(datasetSize) {
             var urls = [],
                 page;
             for (page = 0; page * batchSize < datasetSize; page++) {
-                urls.push("http://www.ebi.ac.uk:80/pride/ws/archive/peptide/list/assay/" + id + "?show=" + batchSize + "&page=" + page);
+                urls.push("https://www.ebi.ac.uk/pride/ws/archive/peptide/list/assay/" + id + "?show=" + batchSize + "&page=" + page);
             }
             page = 0;
             return urls.map(getJSON)
