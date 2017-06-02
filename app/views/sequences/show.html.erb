@@ -3,94 +3,168 @@
   <p class="lead">No results were found for <%= @original_sequence %>.</p>
 <% else %>
   <p class="lead"><span class="initialism"><%= @original_sequence %></span> was found in <b><%= @entries.size %></b> <%= 'UniProt entry'.pluralize(@entries.size) %> with a lowest common ancestor of <b><%= @lca_taxon.name %></b>.</p>
-  <p>Summary of the analysis:</p>
-  <ul>
-    <li>Lowest common ancestor: <%= link_to @lca_taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + @lca_taxon.id.to_s, :target => "_blank", :title => @lca_taxon.rank %> (<%=@lca_taxon.rank%>)</li>
-    <li>Common lineage: <%= raw @common_lineage.length==0 ? "nothing" : @common_lineage.map{|t| link_to t.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + t.id.to_s, :target => "_blank", :title => t.rank }.join(" > ") %></li>
-    <li><%= link_to "Blast "+@original_sequence , "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on&USER_FORMAT_DEFAULTS=on&PAGE=Proteins&PROGRAM=blastp&QUERY="+@original_sequence+"&GAPCOSTS=11%201&EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&DATABASE=nr&BLAST_PROGRAMS=blastp&MAX_NUM_SEQ=100&SHORT_QUERY_ADJUST=on&EXPECT=10&WORD_SIZE=3&MATRIX_NAME=BLOSUM62&COMPOSITION_BASED_STATISTICS=2&SHOW_OVERVIEW=on&SHOW_LINKOUT=on&ALIGNMENT_VIEW=Pairwise&MASK_CHAR=2&MASK_COLOR=1&GET_SEQUENCE=on&NEW_VIEW=on&NUM_OVERVIEW=100&DESCRIPTIONS=100&ALIGNMENTS=100&FORMAT_OBJECT=Alignment&FORMAT_TYPE=HTML&OLD_BLAST=false", :target => "_blank", :title => "Open in BLAST"%></li>
-  </ul>
   <div class='card card-nav'>
     <div class='card-title card-title-colored'>
       <div id="single-peptide-tabs">
         <ul class="nav nav-tabs">
-          <li class="active"><a href="#lineage-tree" id="lineage-tree-tab" data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
-          <li><a href="#lineage-table" id="lineage-table-tab" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
-          <li><a href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
-        </ul>
+          <li class="active"><a id="summary-tab" href="#summary" data-toggle="tab">Summary <span></span></a></li>
+          <li><a id="proteins-tab" href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
+          <li><a id="lineage-analysis-tab" href="#lineage-analysis" data-toggle="tab">Biodiversity Analysis <span></span></a></li>
+          <li><a id="functional-analysis-tab" href="#functional-analysis" data-toggle="tab">Functional Analysis <span></span></a></li>
+       </ul>
       </div>
     </div>
     <div class='card-supporting-text'>
       <div class="tab-content">
-        <div class="tab-pane active" id="lineage-tree">
-          <div id="buttons-single" class="buttons-single"></div>
-          <div id="lineageTree"></div>
-        </div>
-        <div class="tab-pane" id="lineage-table">
-          <div id="sequence_table">
-            <% colors = Hash.new %>
-            <table class="table table-condensed">
-              <thead>
-                <tr>
-                  <% for rank in @table_ranks do%>
-                    <th><%= rank %></th>
-                  <% end %>
-                </tr>
-              </thead>
-              <% i = -1 %>
-              <% for lineage in @table_lineages do%>
-                <% i += 1 %>
-                <tr>
-                  <td><strong><%= lineage.delete_at(0) %></strong></td>
-                  <% for rank in lineage do%>
-                    <% if !rank.nil? %>
-                      <% colors.store(rank.id, "c"+(i%30).to_s) if !colors.has_key?(rank.id) %>
-                      <td class="<%= colors[rank.id] %>"><%= link_to rank.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + rank.id.to_s, :target => "_blank", :title => "Open in NCBI" %></td>
-                    <% else %>
-                      <td></td>
-                    <% end %>
-                  <% end %>
-                </tr>
-              <% end %>
-            </table>
-          </div>
+        <div class="popover-tpa" id="popovers"></div>
+        <div class="tab-pane active" id="summary">
+          <p>Summary of the biodiversity analysis:</p>
+          <ul>
+            <li>Lowest common ancestor: <%= link_to @lca_taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + @lca_taxon.id.to_s, :target => "_blank", :title => @lca_taxon.rank %> (<%=@lca_taxon.rank%>)</li>
+            <li>Common lineage: <%= raw @common_lineage.length==0 ? "nothing" : @common_lineage.map{|t| link_to t.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + t.id.to_s, :target => "_blank", :title => t.rank }.join(" > ") %></li>
+          </ul>
+          <% res = (@ec_lca == 'root') ? 'root' : 'nothing' %>
+          <p>Summary of the functional analysis:</p>
+          <ul>
+            <u>Enzyme Commission</u>
+            <li>Function: <%= link_to (@ec_lca == "root" || @ec_lca == "nothing" ? res : @ec_functions[@ec_lca]), "http://enzyme.expasy.org/EC/" + @ec_lca, :target => "_blank", :title => @ec_lca %></li>
+            <li>Common function: <%= raw @ec_consensus.length==0 ? res : @ec_consensus.map{|t| link_to @ec_functions[t.to_s], "http://enzyme.expasy.org/EC/" + t.to_s, :target => "_blank", :title =>  @ec_functions[t.to_s]}.join(" > ") %></li>
+          </ul>
+          <p><%= link_to "Blast "+@original_sequence , "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on&USER_FORMAT_DEFAULTS=on&PAGE=Proteins&PROGRAM=blastp&QUERY="+@original_sequence+"&GAPCOSTS=11%201&EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&DATABASE=nr&BLAST_PROGRAMS=blastp&MAX_NUM_SEQ=100&SHORT_QUERY_ADJUST=on&EXPECT=10&WORD_SIZE=3&MATRIX_NAME=BLOSUM62&COMPOSITION_BASED_STATISTICS=2&SHOW_OVERVIEW=on&SHOW_LINKOUT=on&ALIGNMENT_VIEW=Pairwise&MASK_CHAR=2&MASK_COLOR=1&GET_SEQUENCE=on&NEW_VIEW=on&NUM_OVERVIEW=100&DESCRIPTIONS=100&ALIGNMENTS=100&FORMAT_OBJECT=Alignment&FORMAT_TYPE=HTML&OLD_BLAST=false", :target => "_blank", :title => "Open in BLAST"%></p>
         </div>
         <div class="tab-pane" id="proteins">
           <div class="buttons-single">
             <button id="clipboard-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-copy"></span> Copy to clipboard</button>
             <button id="open-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-new-window"></span> Open in UniProt</button>
           </div>
+          <div class="btn-group pull-right btn-entries">
+            <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="show-entries"> 100 entries <span class="caret"></span></a>
+            <ul id="entry-filter" class="dropdown-menu">
+              <li class="active"><a>100</a></li>
+              <li><a>200</a></li>
+              <li><a>500</a></li>
+              <li><a>1000</a></li>
+              <li><a>All</a></li>
+            </ul>
+          </div>
           <table class="table table-condensed table-hover protein-info">
             <thead>
               <tr>
-                <th class="id">Uniprot ID</th>
+                <th class="id">Uniprot&nbsp;ID</th>
                 <th class="name">Name</th>
                 <th class="organism">Organism</th>
-                <th class="ec">EC number</th>
-                <th class="go">GO terms</th>
+                <th class="ec">Enzyme&nbsp;Commission</th>
+                <th class="go">Gene&nbsp;Ontology</th>
               </tr>
             </thead>
-            <% for entry in @entries do %>
-              <% unless entry.name.nil? %>
-                <tr>
-                  <td>
-                    <div class="btn-group">
-                      <a class="btn btn-default btn-xs dropdown-toggle externalLinks-button" data-toggle="dropdown"><%= entry.uniprot_accession_number %> <span class="caret"></span></a>
-                      <ul class="dropdown-menu">
-                        <li role="presentation" class="dropdown-header">Open on external site</li>
-                        <li><%= link_to "Uniprot", "http://www.uniprot.org/uniprot/"+entry.uniprot_accession_number, :target => "_blank" %></li>
-                        <li><%= link_to "PRIDE", "http://www.ebi.ac.uk/pride/searchSummary.do?queryTypeSelected=identification%20accession%20number&identificationAccessionNumber="+entry.uniprot_accession_number, :target => "_blank" %></li>
-                        <li><%= link_to "PeptideAtlas", "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/Search?apply_action=GO&exact_match=exact_match%22&search_key="+entry.uniprot_accession_number, :target => "_blank" %></li>
-                      </ul>
-                    </div>
-                  </td>
-                  <td><%= entry.name %></td>
-                  <td><%= link_to entry.taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="+entry.taxon.id.to_s, :target => "_blank" %></td>
-                  <td><%= raw(entry.ec_cross_references.map{|ec| "<a href='http://enzyme.expasy.org/EC/"+ec.ec_number_code+"' target='_blank'>"+ec.ec_number_code+"</a>"}.join(", ")) %></td>
-                  <td><%= raw(entry.go_cross_references.map{|go| "<a href='http://amigo.geneontology.org/amigo/term/"+go.go_term_code+"' target='_blank'>"+go.go_term_code+"</a>"}.join(", ")) %></td>
-                </tr>
-              <% end %>
-            <% end %>
+            <tbody id="entry-table"></tbody>
           </table>
+          <div class="btn-expand">
+            <button id="add-entries" class="btn btn-default btn-add-entries"><span class="glyphicon glyphicon-plus"></span> Load more entries</button>
+          </div>
+        </div>
+        <div class="tab-pane" id="lineage-analysis">
+          <ul class="nav nav-tabs sub-navigation">
+            <li class="active"><a class="subnav-link" id="lineage-tree-tab" href="#lineage-tree" data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+            <li><a class="subnav-link" id="lineage-table-tab" href="#lineage-table" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+          </ul>
+          <div class='card-supporting-text'>
+            <div class="tab-content">
+              <div class="tab-pane active" id="lineage-tree">
+                <div id="buttons-lineage-tree" class="buttons-single buttons-subnav"></div>
+                <div class="tpa-tree" id="lineageTree"></div>
+              </div>
+              <div class="tab-pane" id="lineage-table">
+                <div class="sequence_table">
+                  <% colors = Hash.new %>
+                  <table class="table table-condensed">
+                    <thead>
+                      <tr>
+                        <% for rank in @table_ranks do%>
+                          <th><%= rank %></th>
+                        <% end %>
+                      </tr>
+                    </thead>
+                    <% i = -1 %>
+                    <% for lineage in @table_lineages do%>
+                      <% i += 1 %>
+                      <tr>
+                        <td><strong><%= lineage.delete_at(0) %></strong></td>
+                        <% for rank in lineage do%>
+                          <% if !rank.nil? %>
+                            <% colors.store(rank.id, "c"+(i%30).to_s) if !colors.has_key?(rank.id) %>
+                            <td class="<%= colors[rank.id] %>"><%= link_to rank.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + rank.id.to_s, :target => "_blank", :title => "Open in NCBI" %></td>
+                          <% else %>
+                            <td></td>
+                          <% end %>
+                        <% end %>
+                      </tr>
+                    <% end %>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane" id="functional-analysis">
+          <ul class="nav nav-tabs sub-navigation">
+            <li class="active"><a class="subnav-link" id="go-mf-tab" href="#go-mf" data-toggle="tab">GO: Molecular Function <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+            <li><a class="subnav-link" id="go-bp-tab" href="#go-bp" data-toggle="tab">GO: Biological Process <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+            <li><a class="subnav-link" id="go-cc-tab" href="#go-cc" data-toggle="tab">GO: Cellular Component <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+            <li><a class="subnav-link" id="ec-tree-tab" href="#ec-tree" data-toggle="tab">EC: Tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+            <li><a class="subnav-link" id="ec-table-tab" href="#ec-table" data-toggle="tab">EC: Table <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+          </ul>
+          <div class='card-supporting-text'>
+            <div class="tab-content">
+              <div class="tab-pane active" id="go-mf">
+                <div id="buttons-go-mf" class="buttons-single buttons-subnav"></div>
+                <div class="tpa-tree" id="goTreeMF"></div>
+              </div>
+              <div class="tab-pane" id="go-bp">
+                <div id="buttons-go-bp" class="buttons-single buttons-subnav"></div>
+                <div class="tpa-tree" id="goTreeBP"></div>
+              </div>
+              <div class="tab-pane" id="go-cc">
+                <div id="buttons-go-cc" class="buttons-single buttons-subnav"></div>
+                <div class="tpa-tree" id="goTreeCC"></div>
+              </div>
+              <div class="tab-pane" id="ec-tree">
+                <div id="buttons-ec-tree" class="buttons-single buttons-subnav"></div>
+                <div class="tpa-tree" id="ecTree"></div>
+              </div>
+              <div class="tab-pane" id="ec-table">
+                <div class="sequence_table">
+                  <% colors = Hash.new %>
+                  <table id="ec-table" class="table table-condensed">
+                    <thead>
+                      <tr>
+                        <% pos = 1 %>
+                        <% EcNumber::EC_COLUMN_TITLE.each do |eccn| %>
+                          <th><a><span id="<%= pos %>" class="classdesc"><%= eccn %></span><span id="<%= pos %>" class="glyphicon glyphicon-resize-horizontal" style="display: none"></span></a></th>
+                          <% pos += 1%>
+                        <% end %>
+                      </tr>
+                    </thead>
+                    <% i = -1 %>
+                    <% @ec_ontologies.keys.sort_by{|ec|ec}.flatten(1).each do |ec| %>
+                      <% i += 1 %>
+                      <tr>
+                      <td title="<%= @ec_functions[ec] %>" ><div><strong><%= link_to ec, "http://enzyme.expasy.org/EC/" + ec %></strong></div></td>
+                      <% @ec_ontologies[ec].each do |ec_ont| %>
+                        <% if ec_ont != "" %>
+                          <% colors.store(ec_ont, "c"+(i%30).to_s) if !colors.has_key?(ec_ont) %>
+                          <td title="<%= @ec_functions[ec_ont] %>" class="<%= colors[ec_ont] %>"><div class="shorten"><%= link_to @ec_functions[ec_ont], "http://enzyme.expasy.org/EC/" + ec_ont %></div></td>
+                        <% else %>
+                          <td></td>
+                        <% end %>
+                      <% end %>
+                      </tr>
+                    <% end %>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -100,6 +174,20 @@
       init_sequence_show({
         peptide: "<%= @original_sequence %>",
         tree: <%= raw(@root) %>,
+        ec_tree: <%= raw(@ec_root) %>,
+        go_tree: <%= raw(@go_root) %>,
+        entries: <%= raw(@entries.to_json) %>,
+        go_ec: <%= raw(@go_ec.to_json) %>,
+        ec_go: <%= raw(@ec_go.to_json) %>,
+        ec_taxon: <%= raw(@ec_taxon.to_json) %>,
+        go_taxon: <%= raw(@go_taxon.to_json) %>,
+        taxon_ec: <%= raw(@taxon_ec.to_json) %>,
+        taxon_go: <%= raw(@taxon_go.to_json) %>,
+        ec_functions: <%= raw(@ec_functions.to_json) %>,
+        go_functions: <%= raw(@go_functions.to_json) %>,
+        taxonEntries: <%= raw(@entries.map{|entry| entry.taxon}.to_json) %>,
+        ecEntries: <%= raw(@entries.map{|entry| entry.ec_cross_references}.to_json) %>,
+        goEntries: <%= raw(@entries.map{|entry| entry.go_cross_references}.to_json) %>,
         uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>
       });
     });
