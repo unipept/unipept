@@ -1,11 +1,11 @@
 set :stage, :prod
 
 # don't specify db as it's not needed for unipept
-server 'sherlock.ugent.be', user: 'bmesuere', roles: %i[web app], ssh_options: {
+server 'rick.ugent.be', user: 'unipept', roles: %i[web app], ssh_options: {
   port: 4840
 }
 
-set :branch, 'production'
+set :branch, 'develop'
 set :rails_env, :production
 
 namespace :deploy do
