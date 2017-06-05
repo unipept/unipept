@@ -14,7 +14,6 @@ doc/app
 ~.DS_Store
 *.log
 .sass-cache/
-public/assets
 *.mwb.bak
 backend/java/bin/**/*.class
 coverage/

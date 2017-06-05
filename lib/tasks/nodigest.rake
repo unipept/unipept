@@ -1,6 +1,6 @@
 namespace :assets do
   task nodigest: :environment do
-    assets_path = Rails.root.join('public', Rails.configuration.assets.prefix)
+    assets_path = File.join(Rails.root, 'public', Rails.application.config.assets.prefix)
     Rails.application.config.assets.nodigest.each do |asset|
       source = File.join('app/assets/javascripts', asset)
       dest = File.join(assets_path, asset)
