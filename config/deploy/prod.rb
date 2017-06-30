@@ -5,7 +5,7 @@ server 'rick.ugent.be', user: 'unipept', roles: %i[web app], ssh_options: {
   port: 4840
 }
 
-set :branch, 'develop'
+set :branch, 'production'
 set :rails_env, :production
 
 namespace :deploy do
