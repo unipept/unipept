@@ -11,8 +11,8 @@
 require 'test_helper'
 
 class EmblCrossReferenceTest < ActiveSupport::TestCase
-  test 'should rails error on create new EmblCrossReference' do
-    assert_raises(ActiveRecord::ReadOnlyRecord) { EmblCrossReference.new.save }
+  test 'should fail to create new EmblCrossReference' do
+    assert_not EmblCrossReference.new.save
   end
 
   test 'should raise error on save' do

@@ -4,7 +4,7 @@
 #
 #  id                        :integer          not null, primary key
 #  proteome_accession_number :string(12)       not null
-#  proteome_name             :string(86)       not null
+#  proteome_name             :string(100)      not null
 #  taxon_id                  :integer
 #  type_strain               :binary(1)        default("b'0'"), not null
 #  reference_proteome        :binary(1)        default("b'0'"), not null
@@ -13,18 +13,18 @@
 #  name                      :string(128)
 #
 
-class Proteome < ActiveRecord::Base
+class Proteome < ApplicationRecord
   attr_readonly :id, :proteome_accession_number, :proteome_name, :type_strain, :reference_proteome, :strain, :assembly
 
   belongs_to :lineage, foreign_key: 'taxon_id', primary_key: 'taxon_id', class_name: 'Lineage'
   has_many :proteome_cross_references
 
   def destroy
-    fail ActiveRecord::ReadOnlyRecord
+    raise ActiveRecord::ReadOnlyRecord
   end
 
   def delete
-    fail ActiveRecord::ReadOnlyRecord
+    raise ActiveRecord::ReadOnlyRecord
   end
 
   def full_name
@@ -65,7 +65,7 @@ class Proteome < ActiveRecord::Base
 
   # returns all proteomes in the database
   def self.proteomes
-    Proteome.joins(:lineage).select('proteomes.name as name, proteomes.id, proteomes.proteome_accession_number as proteome_accession, proteomes.type_strain, proteomes.reference_proteome, lineages.species as species_id, lineages.genus as genus_id, lineages.order as order_id, lineages.class as class_id').uniq
+    Proteome.joins(:lineage).select('proteomes.name as name, proteomes.id, proteomes.proteome_accession_number as proteome_accession, proteomes.type_strain, proteomes.reference_proteome, lineages.species as species_id, lineages.genus as genus_id, lineages.order as order_id, lineages.class as class_id').distinct
   end
 
   # returns all taxa needed for the proteomes
@@ -77,9 +77,9 @@ class Proteome < ActiveRecord::Base
     taxa.merge(proteomes.map(&:genus_id))
     taxa.merge(proteomes.map(&:order_id))
     taxa.merge(proteomes.map(&:class_id))
-    Hash[Taxon.select([:id, :name, :rank])
-      .where(id: taxa.to_a)
-      .map { |t| [t.id, Hash['name' => t.name, 'rank' => t.rank]] }]
+    Hash[Taxon.select(%i[id name rank])
+              .where(id: taxa.to_a)
+              .map { |t| [t.id, Hash['name' => t.name, 'rank' => t.rank]] }]
   end
 
   # fills in the taxon_id column

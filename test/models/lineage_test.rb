@@ -37,12 +37,12 @@ require 'test_helper'
 
 class LineageTest < ActiveSupport::TestCase
   test 'should fail to create new lineage' do
-    assert_raises(ActiveRecord::ReadOnlyRecord) { Lineage.new.save }
+    assert_not Lineage.new.save
   end
 
-  test 'should raise error on save' do
+  test 'should fail to save' do
     lineage = lineages(:lineage1)
-    assert_raises(ActiveRecord::ReadOnlyRecord) { lineage.save }
+    assert_not lineage.save
   end
 
   test 'should raise error on taxon_id change' do
@@ -140,8 +140,8 @@ class LineageTest < ActiveSupport::TestCase
   test 'cast should not raise a range error for negative values' do
     lineage = lineages(:kingdom2)
     def lineage.convert
-      uint = ActiveRecord::Type::UnsignedInteger.new
-      uint.type_cast_for_database('-5')
+      uint = ActiveModel::Type::UnsignedInteger.new
+      uint.ensure_in_range('-5')
     end
     lineage.convert
   end

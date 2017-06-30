@@ -29,6 +29,6 @@ class PagesController < ApplicationController
     return unless FileTest.exists?(file)
 
     file = File.open(file, 'r')
-    @progress = file.readlines.to_a.map { |line| line.strip.gsub(/#/, "\n").lines.to_a }
+    @progress = file.readlines.to_a.map { |line| line.strip.tr('#', "\n").lines.to_a }
   end
 end

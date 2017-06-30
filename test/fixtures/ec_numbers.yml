@@ -1,0 +1,13 @@
+# == Schema Information
+#
+# Table name: ec_numbers
+#
+#  id   :integer          not null, primary key
+#  code :string(15)       not null
+#  name :string(140)      not null
+#
+
+ecnumber1:
+    id: 1
+    code: "1.2.3.4"
+    name: "Some Enzyme"

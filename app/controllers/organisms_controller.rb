@@ -1,7 +1,7 @@
 class OrganismsController < ApplicationController
   # show the information about an organism
   def show
-    @organism = Taxon.find_by_id(params[:id])
+    @organism = Taxon.find_by(id: params[:id])
     if @organism.nil?
       flash[:error] = "No matches for #{params[:id]}"
       redirect_to organisms_path

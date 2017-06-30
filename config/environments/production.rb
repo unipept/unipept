@@ -30,7 +30,7 @@ UnipeptWeb::Application.configure do
   # config.cache_store = :mem_cache_store
 
   # Enable Rails's static asset server
-  config.serve_static_files = true
+  config.public_file_server.enabled = true
 
   # Enable serving of images, stylesheets, and javascripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
@@ -59,6 +59,25 @@ UnipeptWeb::Application.configure do
 
   # Generate digests for assets URLs
   config.assets.digest = true
+
+  # Action Cable endpoint configuration
+  # Mount Action Cable outside main process or domain
+  # config.action_cable.mount_path = nil
+  # config.action_cable.url = 'wss://example.com/cable'
+  # config.action_cable.allowed_request_origins = [ 'http://example.com', /http:\/\/example.*/ ]
+
+  # Prepend all log lines with the following tags.
+  config.log_tags = [:request_id]
+
+  # Use a different logger for distributed setups.
+  # require 'syslog/logger'
+  # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
+
+  if ENV['RAILS_LOG_TO_STDOUT'].present?
+    logger           = ActiveSupport::Logger.new(STDOUT)
+    logger.formatter = config.log_formatter
+    config.logger = ActiveSupport::TaggedLogging.new(logger)
+  end
 
   # enable google analytics
   config.unipept_analytics = true

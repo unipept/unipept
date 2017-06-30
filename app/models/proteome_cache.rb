@@ -6,16 +6,14 @@
 #  json_sequences :text(16777215)   not null
 #
 
-class ProteomeCache < ActiveRecord::Base
-  attr_accessible :proteome_id, :json_sequences
-
+class ProteomeCache < ApplicationRecord
   validates :json_sequences, presence: true,
                              length: { maximum: 16_777_215 }
 
   # Tries to retrieve the the cached version of the delta encoded peptides list
   # and creates it if it doesn't exist
   def self.get_encoded_sequences(proteome_id)
-    cache = ProteomeCache.find_by_proteome_id(proteome_id)
+    cache = ProteomeCache.find_by(proteome_id: proteome_id)
     if cache.nil?
       result = ProteomeCache.delta_encode(ProteomeCrossReference.get_sequence_ids(proteome_id))
       json = Oj.dump(result, mode: :compat)
@@ -31,7 +29,7 @@ class ProteomeCache < ActiveRecord::Base
   # Delta encodes a list of integers
   def self.delta_encode(peptide_list)
     return [] unless peptide_list.is_a?(Array)
-    return [] if peptide_list.length == 0
+    return [] if peptide_list.empty?
 
     output = Array.new(peptide_list.length)
     output[0] = peptide_list[0]

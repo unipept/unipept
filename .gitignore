@@ -14,9 +14,11 @@ doc/app
 ~.DS_Store
 *.log
 .sass-cache/
-public/assets
 *.mwb.bak
 backend/java/bin/**/*.class
 coverage/
 .idea
 *.iml
+
+# Ignore Byebug command history file.
+.byebug_history

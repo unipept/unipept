@@ -1,13 +1,13 @@
 class Api::ClidocsController < ApplicationController
   before_action :set_header
   before_action :set_sidebar_nav
-  before_action :set_sidebar_subnav, only: [:pept2lca, :pept2prot, :pept2taxa, :taxa2lca, :taxonomy, :uniprot, :prot2pept, :peptfilter]
-  before_action :set_case_subnav, only: [:casestudies, :casestudy_tpa, :casestudy_mpa]
+  before_action :set_sidebar_subnav, only: %i[pept2lca pept2prot pept2taxa taxa2lca taxonomy uniprot prot2pept peptfilter]
+  before_action :set_case_subnav, only: %i[casestudies casestudy_tpa casestudy_mpa]
 
   def index
     @title = 'Unipept command line interface'
     @sidebar_name = 'Overview'
-    @sidebar_subnav = %w(Installation Updates Configuration)
+    @sidebar_subnav = %w[Installation Updates Configuration]
   end
 
   def casestudies
@@ -94,7 +94,7 @@ class Api::ClidocsController < ApplicationController
   end
 
   def set_sidebar_subnav
-    @sidebar_subnav = %w(Input Output Fasta Options)
+    @sidebar_subnav = %w[Input Output Fasta Options]
   end
 
   def set_case_subnav

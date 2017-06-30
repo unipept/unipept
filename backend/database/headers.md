@@ -44,6 +44,19 @@ Taxons
  - ***parent***: The taxon id of the parent. Refers to another entry
    in this table (or itself, in case of the root taxon).
 
+EC Numbers
+----------
+- ***id***: A self-assigned id. Integral, incremental, no gaps.
+- ***code***: The ec number in the form of x.x.x.x.
+- ***name***: The full name of this ec number.
+
+GO Terms
+----------
+- ***id***: A self-assigned id. Integral, incremental, no gaps.
+- ***code***: The go term itself
+- ***namespace***: The namespace: 'biological process', 'molecular function' or 'cellular component'
+- ***name***: The full name (description) of this go term.
+
 Lineages
 --------
 
@@ -74,10 +87,10 @@ Contains the tryptic peptides.
  - ***id***: A self-assigned id. Integral, incremental, no gaps.
  - ***sequence***: An Amino Acid sequence, more precisely a tryptic
    peptide.
- - ***lca***: The lowest common ancestor of all proteins containing
-   this tryptic peptide. Refers to the taxon table.
  - ***original lca***: A lowest common ancestor in case we did not
    equate the I and L amino acids.
+ - ***lca***: The lowest common ancestor of all proteins containing
+   this tryptic peptide. Refers to the taxon table.
 
 Proteomes
 ---------
@@ -103,7 +116,7 @@ EC Cross References
 
  - ***id***: A self-assigned id. Integral, incremental, no gaps.
  - ***uniprot entry id***: Which uniprot entry we are referencing.
- - ***ec id***: An EC reference of the uniprot entry.
+ - ***ec number code***: An EC reference of the uniprot entry.
 
 EMBL Cross References
 ---------------------
@@ -119,7 +132,7 @@ GO Cross References
 
  - ***id***: A self-assigned id. Integral, incremental, no gaps.
  - ***uniprot entry id***: Which uniprot entry we are referencing.
- - ***genbank id***: A GenBank reference of the uniprot entry.
+ - ***go term code***: A GenBank reference of the uniprot entry.
 
 Peptides
 --------
@@ -132,8 +145,6 @@ Links the sequences back to the proteins they were cut from.
    the I and L equated.
  - ***uniprot entry id***: Refers to the protein these tryptic
    peptides were digested from.
- - ***position***: Specifies where in the protein these peptides
-   originate.
 
 RefSeq Cross References
 -----------------------
