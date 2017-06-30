@@ -11,7 +11,7 @@ require 'test_helper'
 
 class ProteomeCrossReferenceTest < ActiveSupport::TestCase
   test 'should fail to create new proteome cross reference' do
-    assert_raises(ActiveRecord::ReadOnlyRecord) { ProteomeCrossReference.new.save }
+    assert_not ProteomeCrossReference.new.save
   end
 
   test 'should raise error on save' do

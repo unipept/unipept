@@ -1,10 +1,10 @@
 set :application, 'unipept-web'
 set :repo_url,  'ssh://git@github.ugent.be/unipept/unipept.git'
 
-set :deploy_to, '/home/bmesuere/rails'
+set :deploy_to, '/home/unipept/rails'
 
 # set :linked_files, %w{config/database.yml}
-set :linked_dirs, %w(bin log tmp vendor/bundle public/system)
+set :linked_dirs, %w[bin log tmp vendor/bundle public/system]
 
 namespace :deploy do
   desc 'Restart application'

@@ -25,15 +25,15 @@ class PeptidomeController < ApplicationController
 
   # Returns a filtered list of unique sequence id's for a given LCA
   def get_unique_sequences
-    if params[:proteome_id].nil?
-      sequences = ProteomeCache.delta_decode(JSON(params[:sequences]))
-    else
-      sequences = ProteomeCache.get_decoded_sequences(params[:proteome_id])
-    end
-    if params[:ids].size > 0
+    sequences = if params[:proteome_id].nil?
+                  ProteomeCache.delta_decode(JSON(params[:sequences]))
+                else
+                  ProteomeCache.get_decoded_sequences(params[:proteome_id])
+                end
+    if !params[:ids].empty?
       lca = Lineage.calculate_lca(Lineage.find_by_sql("SELECT lineages.* from proteomes LEFT JOIN lineages ON proteomes.taxon_id = lineages.taxon_id WHERE proteomes.id IN (#{params[:ids]}) AND proteomes.taxon_id is not null"))
       result = ProteomeCache.delta_encode(Sequence.filter_unique_uniprot_peptides(sequences, lca))
-      lca = Taxon.find_by_id(lca).name
+      lca = Taxon.find_by(id: lca).name
     else
       lca = 'undefined'
       result = []
@@ -52,7 +52,7 @@ class PeptidomeController < ApplicationController
     ids = ProteomeCache.delta_decode(JSON(params[:sequence_ids]))
     sequences = Sequence.includes(original_peptides: :uniprot_entry).where(id: ids)
     data = sequences.map { |sequence| [sequence, sequence.original_peptides.map(&:uniprot_entry)] }
-    csv_string = CSV.generate_line %w(sequence lca_taxon_id uniprot_id protein_name)
+    csv_string = CSV.generate_line %w[sequence lca_taxon_id uniprot_id protein_name]
     data.each do |sequence, proteins|
       proteins.each do |uniprot_entry|
         csv_string += CSV.generate_line [sequence.sequence, sequence.lca, uniprot_entry.uniprot_accession_number, uniprot_entry.name]
@@ -71,9 +71,9 @@ class PeptidomeController < ApplicationController
   # Calculates the LCA of a list of bioproject id's
   def get_lca
     params[:ids] = [] if params[:ids].nil?
-    if params[:ids].size > 0
+    if !params[:ids].empty?
       lca = Lineage.calculate_lca(Lineage.find_by_sql("SELECT lineages.* from proteomes LEFT JOIN lineages ON proteomes.taxon_id = lineages.taxon_id WHERE proteomes.id IN (#{params[:ids]}) AND proteomes.taxon_id is not null"))
-      lca = Taxon.find_by_id(lca)
+      lca = Taxon.find_by(id: lca)
     else
       lca = { name: 'undefined' }
     end

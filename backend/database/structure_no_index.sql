@@ -38,6 +38,48 @@ COLLATE = ascii_general_ci;
 
 
 -- -----------------------------------------------------
+-- Table `unipept`.`ec_numbers`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`ec_numbers` (
+  `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `code` VARCHAR(15) NOT NULL,
+  `name` VARCHAR(140) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`go_terms`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `code` VARCHAR(15) NOT NULL,
+  `namespace` ENUM('biological process', 'molecular function', 'cellular component') NOT NULL,
+  `name` VARCHAR(200) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`uniprot_entries`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `unipept`.`uniprot_entries` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `uniprot_accession_number` CHAR(10) ASCII NOT NULL ,
+  `version` SMALLINT UNSIGNED NOT NULL ,
+  `taxon_id` MEDIUMINT UNSIGNED NOT NULL ,
+  `type` ENUM('swissprot', 'trembl') NOT NULL ,
+  `name`VARCHAR(150) NOT NULL ,
+  `protein` TEXT NOT NULL ,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
+
+
+-- -----------------------------------------------------
 -- Table `unipept`.`lineages`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `unipept`.`lineages` (
@@ -86,7 +128,8 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
   `lca_il` MEDIUMINT UNSIGNED NULL ,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = ascii;
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
 
 
 -- -----------------------------------------------------
@@ -97,7 +140,6 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`peptides` (
   `sequence_id` INT UNSIGNED NOT NULL ,
   `original_sequence_id` INT UNSIGNED NOT NULL ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `position` SMALLINT UNSIGNED NOT NULL ,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
@@ -188,7 +230,20 @@ COLLATE = ascii_general_ci;
 CREATE  TABLE IF NOT EXISTS `unipept`.`go_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `go_id` VARCHAR(12) NOT NULL ,
+  `go_term_code` VARCHAR(15) NOT NULL ,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`go_terms`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`go_terms` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `go_term_code` VARCHAR(15) NOT NULL,
+  `name` VARCHAR(160) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
@@ -201,7 +256,7 @@ COLLATE = ascii_general_ci;
 CREATE  TABLE IF NOT EXISTS `unipept`.`ec_cross_references` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uniprot_entry_id` INT UNSIGNED NOT NULL ,
-  `ec_id` VARCHAR(12) NOT NULL ,
+  `ec_number_code` VARCHAR(15) NOT NULL ,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
@@ -232,7 +287,9 @@ CREATE TABLE IF NOT EXISTS `unipept`.`proteomes` (
   `assembly` VARCHAR(45) NULL,
   `name` VARCHAR(128) NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
 
 
 -- -----------------------------------------------------
@@ -253,7 +310,9 @@ CREATE TABLE IF NOT EXISTS `unipept`.`proteome_caches` (
   `proteome_id` MEDIUMINT UNSIGNED NOT NULL,
   `json_sequences` MEDIUMTEXT NOT NULL,
   PRIMARY KEY (`proteome_id`))
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

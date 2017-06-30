@@ -1,7 +1,9 @@
 package org.unipept.xml;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @author Bart Mesuere
@@ -10,8 +12,8 @@ import java.util.List;
 public class UniprotEntry {
 
     // peptide settings
-    private static final int MIN_PEPT_SIZE = 5;
-    private static final int MAX_PEPT_SIZE = 50;
+    private final int peptideMin;
+    private final int peptideMax;
 
     private String uniprotAccessionNumber;
     private int version;
@@ -24,13 +26,17 @@ public class UniprotEntry {
     private List<UniprotGORef> goReferences;
     private List<UniprotECRef> ecReferences;
     private List<UniprotProteomeRef> protReferences;
+    private List<String> sequences;
 
-    public UniprotEntry(String type) {
+    public UniprotEntry(String type, int peptideMin, int peptideMax) {
         this.type = type;
+        this.peptideMin = peptideMin;
+        this.peptideMax = peptideMax;
         dbReferences = new ArrayList<UniprotDbRef>();
         goReferences = new ArrayList<UniprotGORef>();
         ecReferences = new ArrayList<UniprotECRef>();
         protReferences = new ArrayList<UniprotProteomeRef>();
+        sequences = new ArrayList<String>();
     }
 
     public void reset(String type) {
@@ -45,6 +51,7 @@ public class UniprotEntry {
         goReferences.clear();
         ecReferences.clear();
         protReferences.clear();
+        sequences.clear();
     }
 
     public String getUniprotAccessionNumber() {
@@ -119,18 +126,23 @@ public class UniprotEntry {
         protReferences.add(ref);
     }
 
-    public List<Pair> digest() {
-        List<Pair> list = new ArrayList<Pair>();
-        int position = 0;
-        String[] splitArray = sequence.replaceAll("([RK])([^P])", "$1,$2")
-                .replaceAll("([RK])([^P,])", "$1,$2").split(",");
-        for (String seq : splitArray) {
-            if (seq.length() >= MIN_PEPT_SIZE && seq.length() <= MAX_PEPT_SIZE) {
-                list.add(new Pair(seq, position));
+    public List<String> digest() {
+        sequences.clear();
+        int start = 0;
+        int length = sequence.length();
+        for (int i = 0; i < length; i++) {
+            char x = sequence.charAt(i);
+            if ((x == 'K' || x == 'R') && (i + 1 < length && sequence.charAt(i + 1) != 'P')) {
+                if (i + 1 - start >= peptideMin && i + 1 - start <= peptideMax) {
+                    sequences.add(sequence.substring(start, i + 1));
+                }
+                start = i + 1;
             }
-            position += seq.length();
         }
-        return list;
+        if (length - start >= peptideMin && length - start <= peptideMax) {
+            sequences.add(sequence.substring(start, length));
+        }
+        return sequences;
     }
 
     public List<UniprotDbRef> getDbReferences() {
@@ -156,21 +168,4 @@ public class UniprotEntry {
                 + sequence;
     }
 
-    public class Pair {
-        private String sequence;
-        private int position;
-
-        public Pair(String sequence, int position) {
-            this.sequence = sequence;
-            this.position = position;
-        }
-
-        public String getSequence() {
-            return sequence;
-        }
-
-        public int getPosition() {
-            return position;
-        }
-    }
 }

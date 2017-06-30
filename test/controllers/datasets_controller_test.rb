@@ -11,7 +11,7 @@ class DatasetsControllerTest < ActionController::TestCase
 
   test 'should show dataset' do
     dataset1 = datasets(:dataset1)
-    get :show, 'id' => '1'
+    get :show, params: { 'id' => '1' }
     assert_response :success
     assert_template :show
     assert_equal dataset1, assigns(:dataset)
@@ -28,7 +28,7 @@ class DatasetsControllerTest < ActionController::TestCase
   test 'should show dataset edit form' do
     sign_in users(:bart_admin)
     dataset1 = datasets(:dataset1)
-    get :edit, 'id' => '1'
+    get :edit, params: { 'id' => '1' }
     assert_response :success
     assert_template :edit
     assert_equal dataset1, assigns(:dataset)
@@ -37,7 +37,7 @@ class DatasetsControllerTest < ActionController::TestCase
   test 'should create dataset' do
     sign_in users(:bart_admin)
     assert_difference('Dataset.count') do
-      post :create, dataset: { environment: 'env', reference: 'ref', url: 'url', project_website: 'web' }
+      post :create, params: { dataset: { environment: 'env', reference: 'ref', url: 'url', project_website: 'web' } }
     end
     assert_equal 'Dataset was successfully created.', flash[:success]
     assert_redirected_to dataset_path(assigns(:dataset))
@@ -45,14 +45,14 @@ class DatasetsControllerTest < ActionController::TestCase
 
   test 'should render new when trying to create dataset with invalid fields' do
     sign_in users(:bart_admin)
-    post :create, dataset: { environment: 'Some title' }
+    post :create, params: { dataset: { environment: 'Some title' } }
     assert_response :success
     assert_template :new
   end
 
   test 'should update dataset' do
     sign_in users(:bart_admin)
-    put :update, id: '1', dataset: { environment: 'env', reference: 'ref', url: 'url', project_website: 'web' }
+    put :update, params: { id: '1', dataset: { environment: 'env', reference: 'ref', url: 'url', project_website: 'web' } }
     assert_equal 'env', assigns(:dataset).environment
     assert_equal 'Dataset was successfully updated.', flash[:success]
     assert_redirected_to dataset_path(assigns(:dataset))
@@ -60,7 +60,7 @@ class DatasetsControllerTest < ActionController::TestCase
 
   test 'should render edit when trying to update dataset with invalid fields' do
     sign_in users(:bart_admin)
-    put :update, id: '1', dataset: { environment: nil, reference: 'ref', url: 'url', project_website: 'web' }
+    put :update, params: { id: '1', dataset: { environment: nil, reference: 'ref', url: 'url', project_website: 'web' } }
     assert_response :success
     assert_template :edit
   end
@@ -68,7 +68,7 @@ class DatasetsControllerTest < ActionController::TestCase
   test 'should destroy dataset' do
     sign_in users(:bart_admin)
     assert_difference('Dataset.count', -1) do
-      delete :destroy, 'id' => '1'
+      delete :destroy, params: { 'id' => '1' }
     end
     assert_redirected_to datasets_path
   end
@@ -78,7 +78,7 @@ class DatasetsControllerTest < ActionController::TestCase
     assert_equal 'Please log in to use this feature', flash[:error]
     assert_redirected_to root_url
 
-    get :edit, 'id' => '1'
+    get :edit, params: { 'id' => '1' }
     assert_equal 'Please log in to use this feature', flash[:error]
     assert_redirected_to root_url
 
@@ -86,11 +86,11 @@ class DatasetsControllerTest < ActionController::TestCase
     assert_equal 'Please log in to use this feature', flash[:error]
     assert_redirected_to root_url
 
-    put :update, 'id' => '1'
+    put :update, params: { 'id' => '1' }
     assert_equal 'Please log in to use this feature', flash[:error]
     assert_redirected_to root_url
 
-    delete :destroy, 'id' => '1'
+    delete :destroy, params: { 'id' => '1' }
     assert_equal 'Please log in to use this feature', flash[:error]
     assert_redirected_to root_url
   end
@@ -101,7 +101,7 @@ class DatasetsControllerTest < ActionController::TestCase
     assert_equal 'Please log in to use this feature', flash[:error]
     assert_redirected_to root_url
 
-    get :edit, 'id' => '1'
+    get :edit, params: { 'id' => '1' }
     assert_equal 'Please log in to use this feature', flash[:error]
     assert_redirected_to root_url
 
@@ -109,17 +109,17 @@ class DatasetsControllerTest < ActionController::TestCase
     assert_equal 'Please log in to use this feature', flash[:error]
     assert_redirected_to root_url
 
-    put :update, 'id' => '1'
+    put :update, params: { 'id' => '1' }
     assert_equal 'Please log in to use this feature', flash[:error]
     assert_redirected_to root_url
 
-    delete :destroy, 'id' => '1'
+    delete :destroy, params: { 'id' => '1' }
     assert_equal 'Please log in to use this feature', flash[:error]
     assert_redirected_to root_url
   end
 
   test 'should preload' do
-    get :preload, id: 1, type: 'type'
+    get :preload, params: { id: 1, type: 'type' }
     assert_response :success
     assert_template :preload
     assert_equal 'Load dataset', assigns(:title)

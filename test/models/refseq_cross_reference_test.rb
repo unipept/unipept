@@ -11,8 +11,8 @@
 require 'test_helper'
 
 class RefseqCrossReferenceTest < ActiveSupport::TestCase
-  test 'should rails error on create new RefseqCrossReference' do
-    assert_raises(ActiveRecord::ReadOnlyRecord) { RefseqCrossReference.new.save }
+  test 'should fail to create new RefseqCrossReference' do
+    assert_not RefseqCrossReference.new.save
   end
 
   test 'should raise error on save' do

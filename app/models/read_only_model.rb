@@ -14,10 +14,10 @@ module ReadOnlyModel
   end
 
   def destroy
-    fail ActiveRecord::ReadOnlyRecord
+    raise ActiveRecord::ReadOnlyRecord
   end
 
   def delete
-    fail ActiveRecord::ReadOnlyRecord
+    raise ActiveRecord::ReadOnlyRecord
   end
 end

@@ -8,9 +8,8 @@
 #  sequence_id      :string(25)
 #
 
-class EmblCrossReference < ActiveRecord::Base
+class EmblCrossReference < ApplicationRecord
   include ReadOnlyModel
-  attr_accessible nil
 
   belongs_to :uniprot_entry
 

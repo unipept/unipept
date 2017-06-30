@@ -1,5 +1,5 @@
 class PostsController < ApplicationController
-  before_action :authorize, only: [:new, :edit, :create, :update, :destroy]
+  before_action :authorize, only: %i[new edit create update destroy]
 
   # GET /posts
   # GET /posts.json

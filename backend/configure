@@ -1,0 +1,212 @@
+#!/bin/bash
+
+
+
+echo "Configuring the Unipept backend program."
+
+erro() {
+    echo "$@" >&2
+}
+
+sedscript="$(mktemp tmp.XXXXXXX.sed)"
+trap "rm '$sedscript'" EXIT
+
+# --------------------------------------------------------------------
+# checking for dependencies
+
+
+checkdep() {
+    which $1 > /dev/null 2>&1 || hash $1 > /dev/null 2>&1 || {
+        erro "Unipept backend requires ${2:-$1} to be installed."
+        exit 1
+    }
+}
+
+checkdep diff
+checkdep cat
+checkdep curl
+checkdep grep
+checkdep html2text
+checkdep java
+checkdep make
+checkdep mkdir
+checkdep mvn "Maven"
+checkdep rm
+checkdep tee
+checkdep tr
+checkdep uniq
+checkdep wc
+checkdep wget
+checkdep xargs
+
+# --------------------------------------------------------------------
+# Prompt functions
+
+ask() {
+    local answer
+    erro -n "$1 [Y/n] "
+    read answer
+    while true; do
+        case "${answer:-Yes}" in
+            N*|n*) return 1;;
+            Y*|y*) return 0;;
+        esac
+        erro -n "Please answer with [y]es or [n]o. "
+        read answer
+    done
+}
+
+confirm() {
+    local question="$1" default="$2" answer=
+    erro -n "$question [$default] "
+    read answer
+    echo "${answer:-$default}"
+}
+
+# --------------------------------------------------------------------
+# Backing up the previous files
+
+backup() {
+    if [ -e "$1" ]; then
+        erro "Seems like '$1' already exists."
+        if ask "Should I make a backup?"; then
+            i=1
+            while [ -e "${1}.$i" ]; do i=$((i + 1)); done
+            cp "$1" "${1}.$i"
+            erro "Moved '$1' to '${1}.${i}'"
+        fi
+    fi
+}
+
+backup "latest-config"
+
+# --------------------------------------------------------------------
+# Reading and remembering defaults
+
+if [ -f "latest-config" ]; then
+    source "latest-config"
+fi
+
+cat > "latest-config" <<"HERE"
+# Run `./configure` to configure the unipept backend makefile.
+#
+# Editting this file does not configure the unipept backend run, it will
+# only change the suggested configuration when you run `./configure`.
+HERE
+
+option() {
+    local file="latest-config" option="$1" default="$2" question="$3" value=
+    value="$(confirm "$question" "${!option:-$default}")"
+    echo "$option=\"$value\"" >> "$file"
+    echo "s|<<<${option#CONFIG_}>>>|${value//|/\\|}|g" >> "$sedscript"
+}
+
+option "CONFIG_PEPTIDE_MIN_LENGTH" "5" "What is the minimum length (inclusive) for peptides?"
+option "CONFIG_PEPTIDE_MAX_LENGTH" "50" "What is the maximum length (inclusive) for peptides?"
+option "CONFIG_TABDIR" "./data/tables" "Where should I store the final TSV files (large, single-write)?"
+option "CONFIG_INTDIR" "./data/intermediate" "Where should I store intermediate TSV files (large, single-write, multiple-read?"
+option "CONFIG_TAXDIR" "./data/taxon" "Where should I store and extract the downloaded taxon zip (small, single-write, single-read)?"
+option "CONFIG_SRCDIR" "./data/sources" "Where should I store the downloaded source xml files (large, single-write, single-read)?"
+option "CONFIG_JAVA_MEM" "6g" "How much memory should Java use?"
+option "CONFIG_ENTREZ_BATCH_SIZE" "1000" "Which batch size should I use for communication with Entrez?"
+option "CONFIG_CMD_SORT" "sort --buffer-size=80% --parallel=4" "Which sort command should I use?"
+option "CONFIG_CMD_GZIP" "gzip -" "Which pipe compression command should I use?"
+option "CONFIG_CMD_ZCAT" "zcat" "Which pipe decompression command (e.g. zcat, gzcat) should I use?"
+option "CONFIG_CMD_UNZIP" "unzip -DD" "How do I unzip while discarding dates?"
+option "CONFIG_CMD_SED" "sed" "What's my sed executable (e.g. sed, gsed)?"
+option "CONFIG_CMD_AWK" "awk" "What's my gnu awk executable (e.g. awk, gawk)?"
+option "CONFIG_CMD_MKTEMP" "mktemp" "What's my gnu mktemp executable (e.g. mktemp, gmktemp)?"
+option "CONFIG_CMD_JOIN" "join" "What's my gnu join executable (e.g. join, gjoin)?"
+
+sources_count="${#CONFIG_SOURCES[@]}"
+if [ "$sources_count" == "0" ]; then
+    CONFIG_SOURCES=('swissprot' 'ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/uniprot_sprot.xml.gz'
+                    'trembl' 'ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/uniprot_trembl.xml.gz')
+    sources_count=4
+fi
+echo "CONFIG_SOURCES=(" >> "latest-config"
+for (( i = 0 ; i < sources_count ; i += 2 )); do
+    if ask "Parse ${CONFIG_SOURCES[$i]} (${CONFIG_SOURCES[$((i + 1))]})?"; then
+        echo "    '${CONFIG_SOURCES[$i]}' '${CONFIG_SOURCES[$((i + 1))]}'" >> "latest-config"
+    fi
+done
+erro -n "Add another source by entering the name. An empty name cancels: "
+read name
+while [ -n "$name" ]; do
+    erro -n "Where can I download this source (url)? "
+    read url
+
+    echo "    '$name' '$url'" >> "latest-config"
+
+    erro -n "Add another source by entering the name. An empty name cancels: "
+    read name
+done
+echo ")" >> "latest-config"
+
+source "latest-config"
+sources_count="${#CONFIG_SOURCES[@]}"
+
+# --------------------------------------------------------------------
+# None-configured variables
+
+ENTREZ_URL="http://eutils.ncbi.nlm.nih.gov/entrez/eutils"
+echo "s|<<<ENTREZ_URL>>>|$ENTREZ_URL|g" >> "$sedscript"
+
+TAXON_URL="ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip"
+echo "s|<<<TAXON_URL>>>|$TAXON_URL|g" >> "$sedscript"
+
+# --------------------------------------------------------------------
+# Writing the configured files
+
+backup_if_changed() {
+    original="$1"
+    tmpfile="$(mktemp tmp.XXXXXXXX)"
+    cat "$2" > "$tmpfile"
+    if [ -e "$original" ]; then
+        if ! diff "$original" "$tmpfile" > /dev/null; then
+            backup "$original"
+        fi
+    fi
+    mv "$tmpfile" "$original"
+}
+
+source_files=""
+source_inputs=""
+for (( i = 0 ; i < sources_count ; i += 2 )); do
+    name="${CONFIG_SOURCES[$i]}"
+    url="${CONFIG_SOURCES[$((i + 1))]}"
+    source_files="$source_files $CONFIG_SRCDIR/${name}.xml.gz"
+    source_inputs="$source_inputs $name=<($CONFIG_CMD_ZCAT $CONFIG_SRCDIR/${name}.xml.gz)"
+done
+echo "s|<<<SOURCE_FILES>>>|$source_files|g" >> "$sedscript"
+echo "s|<<<SOURCE_INPUTS>>>|$source_inputs|g" >> "$sedscript"
+
+tmpmakefile="$(mktemp makefile.XXXXXXXX)"
+$CONFIG_CMD_SED -f "$sedscript" makefile.in > "$tmpmakefile"
+
+for (( i = 0 ; i < sources_count ; i += 2 )); do
+    name="${CONFIG_SOURCES[$i]}"
+    file="$CONFIG_SRCDIR/${name}.xml.gz"
+    url="${CONFIG_SOURCES[$((i + 1))]}"
+    cat >> "$tmpmakefile" <<HERE
+$file:
+	echo "Starting downloading $name."
+	mkdir -p $CONFIG_SRCDIR
+	rm -f $file
+	wget --progress=dot:giga "$url" -O $file
+	echo "Finished downloading $name."
+
+HERE
+done
+
+backup_if_changed "makefile"           "$tmpmakefile"
+backup_if_changed "proteomes.sh"       <($CONFIG_CMD_SED -f "$sedscript" proteomes.sh.in)
+backup_if_changed "type_strains.sh"    <($CONFIG_CMD_SED -f "$sedscript" type_strains.sh.in)
+backup_if_changed "createEcNumbers.sh" <($CONFIG_CMD_SED -f "$sedscript" createEcNumbers.sh.in)
+backup_if_changed "createGoTerms.sh"   <($CONFIG_CMD_SED -f "$sedscript" createGoTerms.sh.in)
+
+rm "$tmpmakefile"
+chmod a+x proteomes.sh
+chmod a+x type_strains.sh
+chmod a+x createEcNumbers.sh
+chmod a+x createGoTerms.sh

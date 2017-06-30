@@ -9,13 +9,12 @@
 #  valid_taxon :binary(1)        default("b'1'"), not null
 #
 
-class Taxon < ActiveRecord::Base
+class Taxon < ApplicationRecord
   include ReadOnlyModel
-  attr_accessible nil
 
   belongs_to :lineage, foreign_key: 'id', primary_key: 'taxon_id', class_name: 'Lineage'
 
-  scope :with_genome, -> { uniq.joins('RIGHT JOIN uniprot_entries ON taxons.id = uniprot_entries.taxon_id') }
+  scope :with_genome, -> { distinct.joins('RIGHT JOIN uniprot_entries ON taxons.id = uniprot_entries.taxon_id') }
 
   # sorting order
   def <=>(other)

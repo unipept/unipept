@@ -12,7 +12,7 @@ require 'test_helper'
 
 class SequenceTest < ActiveSupport::TestCase
   test 'should fail to create new sequence' do
-    assert_raises(ActiveRecord::ReadOnlyRecord) { Sequence.new.save }
+    assert_not Sequence.new.save
   end
 
   test 'should raise error on save' do
@@ -160,7 +160,11 @@ class SequenceTest < ActiveSupport::TestCase
   test 'should give correct result for list_sequences' do
     assert_equal [], Sequence.list_sequences([55])
     assert_equal ['AALER'], Sequence.list_sequences([1])
-    assert_equal %w(AALER AAIER).sort, Sequence.list_sequences([1, 2]).sort
+    assert_equal %w[AALER AAIER].sort, Sequence.list_sequences([1, 2]).sort
+  end
+
+  test 'should not crash with empty input list_sequences' do
+    assert_equal [], Sequence.list_sequences([])
   end
 
   test 'should give correct result for filter_unique_uniprot_peptides' do
