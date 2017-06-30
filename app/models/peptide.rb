@@ -6,12 +6,10 @@
 #  sequence_id          :integer          not null
 #  original_sequence_id :integer          not null
 #  uniprot_entry_id     :integer          not null
-#  position             :integer          not null
 #
 
-class Peptide < ActiveRecord::Base
+class Peptide < ApplicationRecord
   include ReadOnlyModel
-  attr_accessible nil
 
   belongs_to :uniprot_entry
   belongs_to :sequence

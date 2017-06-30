@@ -9,9 +9,7 @@
 #  order      :integer
 #
 
-class DatasetItem < ActiveRecord::Base
-  attr_accessible :name, :data
-
+class DatasetItem < ApplicationRecord
   belongs_to :dataset
 
   validates :name, presence: true,

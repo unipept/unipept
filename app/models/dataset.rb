@@ -9,8 +9,7 @@
 #  project_website :string(200)
 #
 
-class Dataset < ActiveRecord::Base
-  attr_accessible :environment, :reference, :url, :project_website, :dataset_items_attributes
+class Dataset < ApplicationRecord
   has_many :dataset_items, dependent: :destroy
   accepts_nested_attributes_for :dataset_items, allow_destroy: true
 

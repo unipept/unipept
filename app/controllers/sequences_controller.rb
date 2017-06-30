@@ -13,8 +13,8 @@ class SequencesController < ApplicationController
     seq = params[:id].upcase.gsub(/\P{ASCII}/, '')
 
     # process the input, convert seq to a valid @sequence
-    if seq.match(/\A[0-9]+\z/)
-      sequence = Sequence.includes(peptides: { uniprot_entry: [:taxon, :ec_cross_references, :go_cross_references] }).find_by_id(seq)
+    if seq.match?(/\A[0-9]+\z/)
+      sequence = Sequence.includes(peptides: { uniprot_entry: %i[taxon ec_cross_references go_cross_references] }).find_by(id: seq)
       @original_sequence = sequence.sequence
     else
       sequence = Sequence.single_search(seq, equate_il)
@@ -22,7 +22,7 @@ class SequencesController < ApplicationController
     end
 
     # quit if it doensn't contain any peptides
-    fail(NoMatchesFoundError, sequence.sequence) if sequence.present? && sequence.peptides(equate_il).empty?
+    raise(NoMatchesFoundError, sequence.sequence) if sequence.present? && sequence.peptides(equate_il).empty?
 
     # get the uniprot entries of every peptide
     # only used for the open in uniprot links
@@ -37,7 +37,7 @@ class SequencesController < ApplicationController
       # check if the protein contains the startsequence
       @entries.select! { |e| e.protein_contains?(seq, equate_il) }
 
-      fail(NoMatchesFoundError, seq) if @entries.empty?
+      raise(NoMatchesFoundError, seq) if @entries.empty?
       @lineages = @entries.map(&:lineage).compact
     else
       @entries = sequence.peptides(equate_il).map(&:uniprot_entry)
@@ -99,7 +99,7 @@ class SequencesController < ApplicationController
     @lineages.map { |lineage| lineage.set_iterator_position(0) } # reset the iterator
     while @lineages[0].has_next?
       temp = @lineages.map(&:next_t)
-      if temp.compact.length > 0 # don't do anything if it only contains nils
+      unless temp.compact.empty? # don't do anything if it only contains nils
         @table_lineages << temp
         @table_ranks << temp.compact[0].rank
       end
@@ -116,11 +116,10 @@ class SequencesController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.json { render json: @entries.to_json(only: :uniprot_accession_number, include: [{ ec_cross_references: { only: :ec_id } }, { go_cross_references: { only: :go_id } }]) }
+      format.json { render json: @entries.to_json(only: :uniprot_accession_number, include: [{ ec_cross_references: { only: :ec_number_code } }, { go_cross_references: { only: :go_term_code } }]) }
       # TODO: switch to OJ for higher performance
       # format.json { render json: Oj.dump(@entries, :include => :name, :mode => :compat) }
     end
-
   rescue SequenceTooShortError
     flash[:error] = 'The sequence you searched for is too short.'
     redirect_to search_single_url
@@ -149,7 +148,7 @@ class SequencesController < ApplicationController
   def multi_search
     @header_class = 'MPA'
     # save parameters
-    @p = params
+    @p = params.to_h
 
     # set search parameters
     @equate_il = params[:il].present?
@@ -161,10 +160,10 @@ class SequencesController < ApplicationController
     csv_string = ''
 
     # quit if the query was empty
-    fail EmptyQueryError if query.blank?
+    raise EmptyQueryError if query.blank?
 
     # remove duplicates, filter shorts, substitute I by L, ...
-    data = query.upcase.gsub(/#/, '').gsub(/\P{ASCII}/, '')
+    data = query.upcase.delete('#').gsub(/\P{ASCII}/, '')
     data = data.gsub(/([KR])([^P])/, "\\1\n\\2").gsub(/([KR])([^P])/, "\\1\n\\2") unless handle_missed
     data = data.lines.map(&:strip).to_a.select { |l| l.size >= 5 }
     sequence_mapping = Hash[data.map { |v| @equate_il ? [v.tr('I', 'L'), v] : [v, v] }]
@@ -205,7 +204,7 @@ class SequencesController < ApplicationController
         min_length = [8, sequences.max_by(&:length).length].min
         sequences = sequences.select { |s| s.length >= min_length }
 
-        long_sequences = sequences.map { |s| Sequence.includes(Sequence.peptides_relation_name(@equate_il) => { uniprot_entry: :lineage }).find_by_sequence(s) }
+        long_sequences = sequences.map { |s| Sequence.includes(Sequence.peptides_relation_name(@equate_il) => { uniprot_entry: :lineage }).find_by(sequence: s) }
 
         # jump the loop if we don't have any matches
         next if long_sequences.include? nil
@@ -280,12 +279,12 @@ class SequencesController < ApplicationController
         end
       end
       node = taxon.id == 1 ? root : Node.find_by_id(taxon.id, root)
-      node.set_sequences(seqs) unless node.nil?
+      node&.set_sequences(seqs)
     end
 
     @json_sequences = Oj.dump(root.sequences, mode: :compat)
-    root.prepare_for_multitree unless root.nil?
-    root.sort_children unless root.nil?
+    root&.prepare_for_multitree
+    root&.sort_children
     @json_tree = Oj.dump(root, mode: :compat)
 
     if export
@@ -295,7 +294,6 @@ class SequencesController < ApplicationController
       filename = search_name != '' ? search_name : 'export'
       send_data csv_string, type: 'text/csv; charset=iso-8859-1; header=present', disposition: 'attachment; filename=' + filename + '.csv'
     end
-
   rescue EmptyQueryError
     flash[:error] = 'Your query was empty, please try again.'
     redirect_to datasets_path

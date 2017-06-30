@@ -10,7 +10,7 @@ class PostsControllerTest < ActionController::TestCase
 
   test 'should show post' do
     post1 = posts(:post1)
-    get :show, 'id' => '1'
+    get :show, params: { 'id' => '1' }
     assert_response :success
     assert_template :show
     assert_equal post1, assigns(:post)
@@ -27,7 +27,7 @@ class PostsControllerTest < ActionController::TestCase
   test 'should show post edit form' do
     sign_in users(:bart_admin)
     post1 = posts(:post1)
-    get :edit, 'id' => '1'
+    get :edit, params: { 'id' => '1' }
     assert_response :success
     assert_template :edit
     assert_equal post1, assigns(:post)
@@ -36,7 +36,7 @@ class PostsControllerTest < ActionController::TestCase
   test 'should create post' do
     sign_in users(:bart_admin)
     assert_difference('Post.count') do
-      post :create, post: { title: 'Some title', content: 'content', date: '01-01-1999' }
+      post :create, params: { post: { title: 'Some title', content: 'content', date: '01-01-1999' } }
     end
     assert_equal 'Post was successfully created.', flash[:success]
     assert_redirected_to post_path(assigns(:post))
@@ -44,14 +44,14 @@ class PostsControllerTest < ActionController::TestCase
 
   test 'should render new when trying to create post with invalid fields' do
     sign_in users(:bart_admin)
-    post :create, post: { title: 'Some title' }
+    post :create, params: { post: { title: 'Some title' } }
     assert_response :success
     assert_template :new
   end
 
   test 'should update post' do
     sign_in users(:bart_admin)
-    put :update, id: '1', post: { title: 'new title', content: 'content', date: '01-01-1999' }
+    put :update, params: { id: '1', post: { title: 'new title', content: 'content', date: '01-01-1999' } }
     assert_equal 'new title', assigns(:post).title
     assert_equal 'Post was successfully updated.', flash[:success]
     assert_redirected_to post_path(assigns(:post))
@@ -59,7 +59,7 @@ class PostsControllerTest < ActionController::TestCase
 
   test 'should render edit when trying to update post with invalid fields' do
     sign_in users(:bart_admin)
-    put :update, id: '1', post: { title: nil, content: 'content', date: '01-01-1999' }
+    put :update, params: { id: '1', post: { title: nil, content: 'content', date: '01-01-1999' } }
     assert_response :success
     assert_template :edit
   end
@@ -67,7 +67,7 @@ class PostsControllerTest < ActionController::TestCase
   test 'should destroy post' do
     sign_in users(:bart_admin)
     assert_difference('Post.count', -1) do
-      delete :destroy, 'id' => '1'
+      delete :destroy, params: { 'id' => '1' }
     end
     assert_redirected_to posts_path
   end
@@ -77,7 +77,7 @@ class PostsControllerTest < ActionController::TestCase
     assert_equal 'Please log in to use this feature', flash[:error]
     assert_redirected_to root_url
 
-    get :edit, 'id' => '1'
+    get :edit, params: { 'id' => '1' }
     assert_equal 'Please log in to use this feature', flash[:error]
     assert_redirected_to root_url
 
@@ -85,11 +85,11 @@ class PostsControllerTest < ActionController::TestCase
     assert_equal 'Please log in to use this feature', flash[:error]
     assert_redirected_to root_url
 
-    put :update, 'id' => '1'
+    put :update, params: { 'id' => '1' }
     assert_equal 'Please log in to use this feature', flash[:error]
     assert_redirected_to root_url
 
-    delete :destroy, 'id' => '1'
+    delete :destroy, params: { 'id' => '1' }
     assert_equal 'Please log in to use this feature', flash[:error]
     assert_redirected_to root_url
   end
@@ -100,7 +100,7 @@ class PostsControllerTest < ActionController::TestCase
     assert_equal 'Please log in to use this feature', flash[:error]
     assert_redirected_to root_url
 
-    get :edit, 'id' => '1'
+    get :edit, params: { 'id' => '1' }
     assert_equal 'Please log in to use this feature', flash[:error]
     assert_redirected_to root_url
 
@@ -108,11 +108,11 @@ class PostsControllerTest < ActionController::TestCase
     assert_equal 'Please log in to use this feature', flash[:error]
     assert_redirected_to root_url
 
-    put :update, 'id' => '1'
+    put :update, params: { 'id' => '1' }
     assert_equal 'Please log in to use this feature', flash[:error]
     assert_redirected_to root_url
 
-    delete :destroy, 'id' => '1'
+    delete :destroy, params: { 'id' => '1' }
     assert_equal 'Please log in to use this feature', flash[:error]
     assert_redirected_to root_url
   end

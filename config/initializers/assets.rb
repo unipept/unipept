@@ -9,3 +9,12 @@ Rails.application.config.assets.version = '1.0'
 # Precompile additional assets.
 # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
 # Rails.application.config.assets.precompile += %w( search.js )
+
+# Enable the asset pipeline
+Rails.application.config.assets.enabled = true
+
+Rails.application.config.assets.precompile += ['workers/pancore_worker.js', 'workers/mygenome_worker.js', '*.eot', '*.svg', '*.ttf', '*.woff', '*.woff2']
+Rails.application.config.assets.nodigest = ['workers/pancore_worker.js', 'workers/mygenome_worker.js']
+Rails.application.config.assets.nodigest_fonts = ['glyphicons-halflings-regular.eot', 'glyphicons-halflings-regular.svg', 'glyphicons-halflings-regular.ttf', 'glyphicons-halflings-regular.woff', 'glyphicons-halflings-regular.woff2']
+
+Rails.application.config.assets.paths << "#{Rails}/vendor/assets/fonts"

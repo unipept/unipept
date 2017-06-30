@@ -1,21 +1,21 @@
 class Api::ApiController < ApplicationController
   respond_to :json
 
-  before_action :set_headers, only: [:pept2taxa, :pept2lca, :pept2prot, :taxa2lca, :taxonomy]
-  before_action :set_params, only: [:pept2taxa, :pept2lca, :pept2prot, :taxa2lca, :taxonomy]
-  before_action :set_query, only: [:pept2taxa, :pept2lca, :taxonomy]
-  before_action :set_sequences, only: [:pept2taxa, :pept2prot]
+  before_action :set_headers, only: %i[pept2taxa pept2lca pept2prot taxa2lca taxonomy]
+  before_action :set_params, only: %i[pept2taxa pept2lca pept2prot taxa2lca taxonomy]
+  before_action :set_query, only: %i[pept2taxa pept2lca taxonomy]
+  before_action :set_sequences, only: %i[pept2taxa pept2prot]
 
-  before_action :log, only: [:pept2taxa, :pept2lca, :pept2prot, :taxa2lca, :taxonomy]
+  before_action :log, only: %i[pept2taxa pept2lca pept2prot taxa2lca taxonomy]
 
   # sends a message to the ruby cli
   def messages
     version = params[:version]
     gem_version = Rails.application.config.versions[:gem]
     if Gem::Version.new(gem_version) > Gem::Version.new(version)
-      render text: "Unipept gem #{gem_version} is released!. Run 'gem update unipept' to update."
+      render plain: "Unipept gem #{gem_version} is released!. Run 'gem update unipept' to update."
     else
-      render text: ''
+      render plain: ''
     end
   end
 
@@ -38,7 +38,7 @@ class Api::ApiController < ApplicationController
 
       ids = ids.uniq.compact.sort
       UniprotEntry.includes(:taxon, :ec_cross_references, :go_cross_references, :refseq_cross_references, :embl_cross_references)
-        .where(id: ids).find_in_batches do |group|
+                  .where(id: ids).find_in_batches do |group|
         group.each do |uni|
           lookup[uni.id].each { |s| @result[s] << uni }
         end
@@ -158,15 +158,16 @@ class Api::ApiController < ApplicationController
 
   # handles the parameters
   def set_params
-    @input = params[:input]
+    unsafe_hash = params.to_unsafe_h
+    @input = unsafe_hash[:input]
     if @input.is_a? Hash        # hash
       @input = @input.values
     elsif @input.is_a? String   # string
-      if @input[0] == '[' # parse json
-        @input = JSON.parse @input
-      else # comma separated
-        @input = @input.split(',')
-      end
+      @input = if @input[0] == '[' # parse json
+                 JSON.parse @input
+               else # comma separated
+                 @input.split(',')
+               end
     end
     @input = [] if @input.nil?
     @input = @input.compact.map(&:chomp)
@@ -181,22 +182,22 @@ class Api::ApiController < ApplicationController
 
   # prepares the taxonomy query
   def set_query
-    if @extra_info
-      if @names
-        @query = Taxon.includes(lineage: Lineage::ORDER_T)
-      else
-        @query = Taxon.includes(:lineage)
-      end
-    else
-      @query = Taxon
-    end
+    @query = if @extra_info
+               if @names
+                 Taxon.includes(lineage: Lineage::ORDER_T)
+               else
+                 Taxon.includes(:lineage)
+               end
+             else
+               Taxon
+             end
   end
 
   # prepares the sequences query
   def set_sequences
     rel_name = @equate_il ? :peptides : :original_peptides
     @sequences = Sequence.joins(rel_name => :uniprot_entry)
-                 .where(sequence: @input)
+                         .where(sequence: @input)
   end
 
   # Reorders the results according to the input order

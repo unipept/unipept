@@ -8,9 +8,7 @@
 #  date    :date             not null
 #
 
-class Post < ActiveRecord::Base
-  attr_accessible :content, :date, :title
-
+class Post < ApplicationRecord
   validates :content, presence: true
   validates :title,   presence: true,
                       length: { maximum: 100 }
