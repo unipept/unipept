@@ -87,7 +87,7 @@ class Lineage < ApplicationRecord
   # Eager loading the Taxa results in a range error if there are -1 values
   # http://metaskills.net/2015/01/06/activerecord-42s-type-casting/
   # This code disables the rangecheck for UnsignedIntegers
-  module ActiveModel::Type
+  module ActiveRecord::Type
     class UnsignedInteger
       def ensure_in_range(_value)
         true
