@@ -9,6 +9,9 @@ gem 'rails', '5.1.2'
 
 gem 'mysql2'
 
+# jquery
+gem 'jquery-rails'
+
 # Use Puma as the app server
 gem 'puma', '~> 3.7'
 
