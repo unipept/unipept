@@ -20,5 +20,7 @@ coverage/
 .idea
 *.iml
 
-# Ignore Byebug command history file.
+/node_modules
+/yarn-error.log
+
 .byebug_history

@@ -1,5 +1,5 @@
 //= require jquery
-//= require jquery_ujs
+//= require rails-ujs
 //= require zeroclipboard
 //= require vendor
 //= require ./polyfills
