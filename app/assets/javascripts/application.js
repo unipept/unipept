@@ -1,6 +1,7 @@
 //= require jquery
 //= require rails-ujs
 //= require zeroclipboard
+//= require dragula
 //= require vendor
 //= require ./polyfills
 //= require_self
