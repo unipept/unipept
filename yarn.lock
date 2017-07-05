@@ -37,3 +37,7 @@ jquery:
 ticky@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/ticky/-/ticky-1.0.1.tgz#b7cfa71e768f1c9000c497b9151b30947c50e46d"
+
+typeahead.js@0.10.5:
+  version "0.10.5"
+  resolved "https://registry.yarnpkg.com/typeahead.js/-/typeahead.js-0.10.5.tgz#1d9971b0f44d385feadbf22c9f369db562912de1"

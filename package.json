@@ -3,6 +3,7 @@
   "private": true,
   "dependencies": {
     "dragula": "^3.7.2",
-    "jquery": "^3.2.1"
+    "jquery": "^3.2.1",
+    "typeahead.js": "0.10.5"
   }
 }
