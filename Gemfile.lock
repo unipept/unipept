@@ -75,6 +75,8 @@ GEM
     capistrano-rvm (0.1.2)
       capistrano (~> 3.0)
       sshkit (~> 1.2)
+    capistrano-yarn (2.0.2)
+      capistrano (~> 3.0)
     capybara (2.14.4)
       addressable
       mime-types (>= 1.16)
@@ -296,6 +298,7 @@ DEPENDENCIES
   capistrano-bundler (~> 1.1)
   capistrano-rails (~> 1.1)
   capistrano-rvm
+  capistrano-yarn
   capybara (~> 2.13)
   coveralls
   devise (>= 3.5)
