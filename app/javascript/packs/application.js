@@ -7,4 +7,13 @@
 // To reference this file, add <%= javascript_pack_tag 'application' %> to the appropriate
 // layout file, like app/views/layouts/application.html.erb
 
-console.log('Hello World from Webpacker')
+import jQuery from 'jquery'
+import d3 from 'd3'
+import dragula from 'dragula'
+
+// add jquery aliases
+window.jQuery = jQuery;
+window.jquery = jQuery;
+window.$ = jQuery;
+
+window.dragula = dragula

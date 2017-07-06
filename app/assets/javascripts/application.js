@@ -1,9 +1,6 @@
 //= require rails-ujs
 
 // yarn deps
-//= require jquery
-//= require d3/d3.js
-//= require dragula
 //= require typeahead.js/dist/typeahead.bundle.js
 
 
