@@ -17,10 +17,6 @@
 //  http://sliptree.github.io/bootstrap-tokenfield/
 //= require bootstrap-tokenfield/bootstrap-tokenfield.min.js
 
-//  global
-//  3.5.5
-//= require d3/d3.v3.min.js
-
 //  export treemap to png
 //  0.4.1
 //= require html2canvas/html2canvas.js
