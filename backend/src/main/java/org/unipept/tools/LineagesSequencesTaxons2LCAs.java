@@ -15,7 +15,7 @@ public class LineagesSequencesTaxons2LCAs {
     public static final int RANKS = 28;
     private static final Pattern SEPARATOR = Pattern.compile("\t");
     private static final String NULL = "\\N";
-    private int counter;
+    private long counter;
     private int[][] taxonomy;
     private final Writer writer;
 
@@ -51,22 +51,30 @@ public class LineagesSequencesTaxons2LCAs {
         counter = 0;
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)), 67108864);
 
-        int count = 0;
-        int currentSequence = -1;
+        long count = 0;
+        long unique_count = 0;
+        long currentSequence = -1;
         Collection<Integer> taxa = new ArrayList<>();
         String line;
         while ((line = br.readLine()) != null) {
             count++;
             if (count % 10000000 == 0) {
-                System.err.println(new Timestamp(System.currentTimeMillis()) + ": " + count);
+                System.err.println(
+                    new Timestamp(System.currentTimeMillis()) + ":\n"
+                    + "  K-mers read: " + count + "\n"
+                    + "  Memory used: " + Debug.memory() + "\n"
+                    + "  Unique k-mers: " + unique_count
+                );
             }
 
             // outperforms split by at least 20%
             int t = line.indexOf('\t');
-            int sequenceId = Integer.parseInt(line.substring(0, t));
+            long sequenceId = Long.parseLong(line.substring(0, t));
             int taxonId = Integer.parseInt(line.substring(t + 1));
 
             if (sequenceId != currentSequence) {
+                unique_count++;
+
                 if (currentSequence != -1) {
                     handleLCA(currentSequence, calculateLCA(taxa));
                 }
@@ -107,7 +115,7 @@ public class LineagesSequencesTaxons2LCAs {
         return lca;
     }
 
-    private void handleLCA(int sequenceId, int lca) {
+    private void handleLCA(long sequenceId, int lca) {
         try {
             for (; counter + 1 < sequenceId; counter++) {
                 writer.write((counter + 1) + "\t" + NULL + '\n');
