@@ -1,7 +1,5 @@
 #!/bin/bash
 
-
-
 echo "Configuring the Unipept backend program."
 
 erro() {
@@ -101,8 +99,9 @@ option() {
     echo "s|<<<${option#CONFIG_}>>>|${value//|/\\|}|g" >> "$sedscript"
 }
 
-option "CONFIG_PEPTIDE_MIN_LENGTH" "5" "What is the minimum length (inclusive) for peptides?"
-option "CONFIG_PEPTIDE_MAX_LENGTH" "50" "What is the maximum length (inclusive) for peptides?"
+option "CONFIG_PEPTIDE_MIN_LENGTH" "5" "What is the minimum length (inclusive) for tryptic peptides?"
+option "CONFIG_PEPTIDE_MAX_LENGTH" "50" "What is the maximum length (inclusive) for tryptic peptides?"
+option "CONFIG_KMER_LENGTH" "9" "What is the length (k) of the K-mer peptides?"
 option "CONFIG_TABDIR" "./data/tables" "Where should I store the final TSV files (large, single-write)?"
 option "CONFIG_INTDIR" "./data/intermediate" "Where should I store intermediate TSV files (large, single-write, multiple-read?"
 option "CONFIG_TAXDIR" "./data/taxon" "Where should I store and extract the downloaded taxon zip (small, single-write, single-read)?"
@@ -120,8 +119,8 @@ option "CONFIG_CMD_JOIN" "join" "What's my gnu join executable (e.g. join, gjoin
 
 sources_count="${#CONFIG_SOURCES[@]}"
 if [ "$sources_count" == "0" ]; then
-    CONFIG_SOURCES=('swissprot' 'ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/uniprot_sprot.xml.gz'
-                    'trembl' 'ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/uniprot_trembl.xml.gz')
+    CONFIG_SOURCES=('swissprot' 'http://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/uniprot_sprot.xml.gz'
+                    'trembl' 'http://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/uniprot_trembl.xml.gz')
     sources_count=4
 fi
 echo "CONFIG_SOURCES=(" >> "latest-config"
@@ -152,7 +151,7 @@ sources_count="${#CONFIG_SOURCES[@]}"
 ENTREZ_URL="http://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 echo "s|<<<ENTREZ_URL>>>|$ENTREZ_URL|g" >> "$sedscript"
 
-TAXON_URL="ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip"
+TAXON_URL="http://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip"
 echo "s|<<<TAXON_URL>>>|$TAXON_URL|g" >> "$sedscript"
 
 # --------------------------------------------------------------------

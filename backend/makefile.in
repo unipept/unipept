@@ -1,5 +1,8 @@
 SHELL := /bin/bash -o pipefail
 
+# High level targets {{{ -------------------------------------------------------
+all: makefile database index
+
 TABLES=                                           \
 	<<<INTDIR>>>/peptides.tsv.gz                  \
 	<<<TABDIR>>>/uniprot_entries.tsv.gz           \
@@ -10,17 +13,24 @@ TABLES=                                           \
 	<<<INTDIR>>>/proteomes.tsv.gz                 \
 	<<<TABDIR>>>/proteome_cross_references.tsv.gz
 
-SRC=$(shell find src/ -type f -name '*.java')
-JAR=target/unipept-0.0.1-SNAPSHOT.jar
-PAC=org.unipept.tools
+database:                          \
+	<<<TABDIR>>>/taxons.tsv.gz     \
+	<<<TABDIR>>>/lineages.tsv.gz   \
+	$(TABLES)                      \
+	<<<TABDIR>>>/sequences.tsv.gz  \
+	<<<TABDIR>>>/peptides.tsv.gz   \
+	<<<TABDIR>>>/proteomes.tsv.gz  \
+	<<<TABDIR>>>/ec_numbers.tsv.gz \
+	<<<TABDIR>>>/go_terms.tsv.gz
 
-all: makefile $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<TABDIR>>>/lineages.tsv.gz $(TABLES) <<<TABDIR>>>/sequences.tsv.gz <<<TABDIR>>>/peptides.tsv.gz <<<TABDIR>>>/proteomes.tsv.gz <<<TABDIR>>>/ec_numbers.tsv.gz <<<TABDIR>>>/go_terms.tsv.gz
-jar: $(JAR)
-taxons: <<<TABDIR>>>/taxons.tsv.gz <<<TABDIR>>>/lineages.tsv.gz
-tables: $(TABLES)
-sequences: <<<TABDIR>>>/sequences.tsv.gz
-proteomes: <<<TABDIR>>>/proteomes.tsv.gz
+index: <<<TABDIR>>>/<<<KMER_LENGTH>>>-mer.index
+
+taxons:                          \
+	<<<TABDIR>>>/taxons.tsv.gz   \
+	<<<TABDIR>>>/lineages.tsv.gz
+
 download: <<<SOURCE_FILES>>>
+# }}}
 
 # Configuration check {{{ ------------------------------------------------------
 makefile: makefile.in configure
@@ -31,13 +41,17 @@ makefile: makefile.in configure
 # Compiling {{{ ----------------------------------------------------------------
 # TODO:
 # - split dependencies for this on the class files.
+SRC=$(shell find src/ -type f -name '*.java')
+JAR=target/unipept-0.0.1-SNAPSHOT.jar
+PAC=org.unipept.tools
+
 $(JAR): $(SRC)
 	mvn package
 
 %.class: $(JAR)
 # }}}
 
-# Downloading {{{ --------------------------------------------------------------
+# Taxons and Lineages {{{ ------------------------------------------------------
 <<<TAXDIR>>>/taxdmp.zip:
 	echo "Starting taxon dump download."
 	mkdir -p <<<TAXDIR>>>
@@ -49,10 +63,8 @@ $(JAR): $(SRC)
 	echo "Starting unzipping names and nodes from the taxon dump."
 	<<<CMD_UNZIP>>> -o $< $(notdir $@) -d $(dir $@)
 	echo "Finished unzipping names and nodes from the taxon dump."
-# }}}
 
-# Taxons and Lineages {{{ ------------------------------------------------------
-<<<TABDIR>>>/taxons.tsv.gz <<<TABDIR>>>/lineages.tsv.gz: <<<INTDIR>>>/names.dmp <<<INTDIR>>>/nodes.dmp
+<<<TABDIR>>>/taxons.tsv.gz <<<TABDIR>>>/lineages.tsv.gz: $(JAR) <<<INTDIR>>>/names.dmp <<<INTDIR>>>/nodes.dmp
 	echo "Starting calculation of taxons and lineages tables."
 	mkdir -p $(dir $@)
 	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).NamesNodes2TaxonsLineages \
@@ -64,7 +76,7 @@ $(JAR): $(SRC)
 # }}}
 
 # Uniprot entries, peptides, sequences and cross references {{{ ----------------
-$(TABLES): <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
+$(TABLES): $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 	echo "Started calculation of most tables."
 	mkdir -p <<<INTDIR>>>
 	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).TaxonsUniprots2Tables              \
@@ -167,12 +179,38 @@ $(TABLES): <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 <<<TABDIR>>>/sequences.tsv.gz: <<<INTDIR>>>/sequences.tsv.gz <<<INTDIR>>>/LCAs.tsv.gz <<<INTDIR>>>/original_LCAs.tsv.gz
 	echo "Starting the creation of the sequences table."
 	<<<CMD_ZCAT>>> <<<INTDIR>>>/sequences.tsv.gz \
-		| <<<CMD_JOIN>>> --nocheck-order -a1 -e '\N' -t '	' -o "1.1 1.2 2.2" - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/original_LCAs.tsv.gz) \
-		| <<<CMD_JOIN>>> --nocheck-order -a1 -e '\N' -t '	' -o "1.1 1.2 1.3 2.2" - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/LCAs.tsv.gz) \
+		| <<<CMD_AWK>>> '{ printf("%012d\t%s\n", $$1, $$2) }' \
+		| <<<CMD_JOIN>>> --nocheck-order -a1 -e '\N' -t '	' -o "1.1 1.2 2.2" - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/original_LCAs.tsv.gz | <<<CMD_AWK>>> '{ printf("%012d\t%s\n", $$1, $$2) }') \
+		| <<<CMD_JOIN>>> --nocheck-order -a1 -e '\N' -t '	' -o "1.1 1.2 1.3 2.2" - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/LCAs.tsv.gz | <<<CMD_AWK>>> '{ printf("%012d\t%s\n", $$1, $$2) }') \
+		| <<<CMD_SED>>> 's/^0*//' \
 		| <<<CMD_GZIP>>> \
 		> $@
 	echo "Finished the creation of the sequences table."
+# }}}
 
+# K-mers {{{ -------------------------------------------------------------------
+# - Take uniprot_entries from tryptic peptides
+# - int/peptides <- cut index and sequence from uniprot-entries and split in k-mers (| cat -n) (- equated)
+# - int/original_aa_sequence_taxon <- cut taxon-id and sequence from uniprot-entries and split in k-mers (| sort) (- duplicates???)
+# - int/sequences <- cut sequence from uniprot-entries and split (| sort | uniq | cat -n | sed 's/^ *//)
+#                 <- cut peptide from int/original_aa_sequence (| uniq | cat -n | sed 's/^ *//)
+# - int/original_sequence_taxon <- directly from ori_aa_seq_tax by counting the aa_seq along the way?
+#                                  and we can output sequences at the same time?
+#                               <- the old way, joining int/sequences and ori_aaseq_taxon
+# - int/original_lca <- the old way, from tab/lineages and int/ori_seq_taxon
+#                    <- directly from ori_aa_seq_tax by counting aa_seq along te way?
+#                       and we can output sequences at the same time?
+#                       (or output sequences instead of numbers wait isn't that sequences.tsv.gz?)
+# - tab/peptides.index <- build-index on the output of above (without the enumeration?
+#
+# optimal:
+# uniprot-entries from tryptic peptides
+# | cut taxon-id and sequence and split in k-mers (|sort)
+# | with lineages, the old java-way but with sequences in stead of numbers
+# | build-index
+
+<<<TABDIR>>>/<<<KMER_LENGTH>>>-mer.index: <<<TABDIR>>>/uniprot_entries.tsv.gz
+	touch $@
 # }}}
 
 # Proteomes {{{ ----------------------------------------------------------------
