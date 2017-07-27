@@ -36,6 +36,7 @@ checkdep uniq
 checkdep wc
 checkdep wget
 checkdep xargs
+checkdep build-index "Unipept crate (build-index)"
 
 # --------------------------------------------------------------------
 # Prompt functions

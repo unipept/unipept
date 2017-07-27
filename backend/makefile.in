@@ -3,30 +3,30 @@ SHELL := /bin/bash -o pipefail
 # High level targets {{{ -------------------------------------------------------
 all: makefile database index
 
-TABLES=                                           \
-	<<<INTDIR>>>/peptides.tsv.gz                  \
-	<<<TABDIR>>>/uniprot_entries.tsv.gz           \
-	<<<TABDIR>>>/refseq_cross_references.tsv.gz   \
-	<<<TABDIR>>>/ec_cross_references.tsv.gz       \
-	<<<TABDIR>>>/embl_cross_references.tsv.gz     \
-	<<<TABDIR>>>/go_cross_references.tsv.gz       \
-	<<<INTDIR>>>/proteomes.tsv.gz                 \
+TABLES= \
+	<<<INTDIR>>>/peptides.tsv.gz \
+	<<<TABDIR>>>/uniprot_entries.tsv.gz \
+	<<<TABDIR>>>/refseq_cross_references.tsv.gz \
+	<<<TABDIR>>>/ec_cross_references.tsv.gz \
+	<<<TABDIR>>>/embl_cross_references.tsv.gz \
+	<<<TABDIR>>>/go_cross_references.tsv.gz \
+	<<<INTDIR>>>/proteomes.tsv.gz \
 	<<<TABDIR>>>/proteome_cross_references.tsv.gz
 
-database:                          \
-	<<<TABDIR>>>/taxons.tsv.gz     \
-	<<<TABDIR>>>/lineages.tsv.gz   \
-	$(TABLES)                      \
-	<<<TABDIR>>>/sequences.tsv.gz  \
-	<<<TABDIR>>>/peptides.tsv.gz   \
-	<<<TABDIR>>>/proteomes.tsv.gz  \
+database: \
+	<<<TABDIR>>>/taxons.tsv.gz \
+	<<<TABDIR>>>/lineages.tsv.gz \
+	$(TABLES) \
+	<<<TABDIR>>>/sequences.tsv.gz \
+	<<<TABDIR>>>/peptides.tsv.gz \
+	<<<TABDIR>>>/proteomes.tsv.gz \
 	<<<TABDIR>>>/ec_numbers.tsv.gz \
 	<<<TABDIR>>>/go_terms.tsv.gz
 
 index: <<<TABDIR>>>/<<<KMER_LENGTH>>>-mer.index
 
-taxons:                          \
-	<<<TABDIR>>>/taxons.tsv.gz   \
+taxons: \
+	<<<TABDIR>>>/taxons.tsv.gz \
 	<<<TABDIR>>>/lineages.tsv.gz
 
 download: <<<SOURCE_FILES>>>
@@ -79,17 +79,17 @@ $(JAR): $(SRC)
 $(TABLES): $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 	echo "Started calculation of most tables."
 	mkdir -p <<<INTDIR>>>
-	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).TaxonsUniprots2Tables              \
-		--peptide-min     <<<PEPTIDE_MIN_LENGTH>>>                                                 \
-		--peptide-max     <<<PEPTIDE_MAX_LENGTH>>>                                                 \
-		--taxons          <(<<<CMD_ZCAT>>> <<<TABDIR>>>/taxons.tsv.gz)                           \
-		--peptides        >(<<<CMD_GZIP>>> > <<<INTDIR>>>/peptides.tsv.gz)                  \
-		--uniprot-entries >(<<<CMD_GZIP>>> > <<<TABDIR>>>/uniprot_entries.tsv.gz)           \
-		--refseq          >(<<<CMD_GZIP>>> > <<<TABDIR>>>/refseq_cross_references.tsv.gz)   \
-		--ec              >(<<<CMD_GZIP>>> > <<<TABDIR>>>/ec_cross_references.tsv.gz)       \
-		--embl            >(<<<CMD_GZIP>>> > <<<TABDIR>>>/embl_cross_references.tsv.gz)     \
-		--go              >(<<<CMD_GZIP>>> > <<<TABDIR>>>/go_cross_references.tsv.gz)       \
-		--proteomes       >(<<<CMD_GZIP>>> > <<<INTDIR>>>/proteomes.tsv.gz)                 \
+	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).TaxonsUniprots2Tables \
+		--peptide-min     <<<PEPTIDE_MIN_LENGTH>>> \
+		--peptide-max     <<<PEPTIDE_MAX_LENGTH>>> \
+		--taxons          <(<<<CMD_ZCAT>>> <<<TABDIR>>>/taxons.tsv.gz) \
+		--peptides        >(<<<CMD_GZIP>>> > <<<INTDIR>>>/peptides.tsv.gz) \
+		--uniprot-entries >(<<<CMD_GZIP>>> > <<<TABDIR>>>/uniprot_entries.tsv.gz) \
+		--refseq          >(<<<CMD_GZIP>>> > <<<TABDIR>>>/refseq_cross_references.tsv.gz) \
+		--ec              >(<<<CMD_GZIP>>> > <<<TABDIR>>>/ec_cross_references.tsv.gz) \
+		--embl            >(<<<CMD_GZIP>>> > <<<TABDIR>>>/embl_cross_references.tsv.gz) \
+		--go              >(<<<CMD_GZIP>>> > <<<TABDIR>>>/go_cross_references.tsv.gz) \
+		--proteomes       >(<<<CMD_GZIP>>> > <<<INTDIR>>>/proteomes.tsv.gz) \
 		--proteomes-ref   >(<<<CMD_GZIP>>> > <<<TABDIR>>>/proteome_cross_references.tsv.gz) \
 		<<<SOURCE_INPUTS>>>
 	echo "Finished calculation of most tables."
@@ -161,20 +161,20 @@ $(TABLES): $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 	echo "Finishing the substitution of AA's by ID's for the original sequences"
 
 <<<INTDIR>>>/LCAs.tsv.gz: <<<TABDIR>>>/lineages.tsv.gz <<<INTDIR>>>/sequence_taxon.tsv.gz
-	echo "Starting the calculation equalized LCA's."
+	echo "Starting the calculation of equalized LCA's."
 	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).LineagesSequencesTaxons2LCAs \
 		<(<<<CMD_ZCAT>>> <<<TABDIR>>>/lineages.tsv.gz) \
 		<(<<<CMD_ZCAT>>> <<<INTDIR>>>/sequence_taxon.tsv.gz) \
 		>(<<<CMD_GZIP>>> > <<<INTDIR>>>/LCAs.tsv.gz)
-	echo "Finished the calculation equalized LCA's."
+	echo "Finished the calculation of equalized LCA's."
 
 <<<INTDIR>>>/original_LCAs.tsv.gz: <<<TABDIR>>>/lineages.tsv.gz <<<INTDIR>>>/original_sequence_taxon.tsv.gz
-	echo "Starting the calculation non-equalized LCA's."
+	echo "Starting the calculation of non-equalized LCA's."
 	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).LineagesSequencesTaxons2LCAs \
 		<(<<<CMD_ZCAT>>> <<<TABDIR>>>/lineages.tsv.gz) \
 		<(<<<CMD_ZCAT>>> <<<INTDIR>>>/original_sequence_taxon.tsv.gz) \
 		>(<<<CMD_GZIP>>> > <<<INTDIR>>>/original_LCAs.tsv.gz)
-	echo "Finished the calculation non-equalized LCA's."
+	echo "Finished the calculation of non-equalized LCA's."
 
 <<<TABDIR>>>/sequences.tsv.gz: <<<INTDIR>>>/sequences.tsv.gz <<<INTDIR>>>/LCAs.tsv.gz <<<INTDIR>>>/original_LCAs.tsv.gz
 	echo "Starting the creation of the sequences table."
@@ -209,8 +209,28 @@ $(TABLES): $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 # | with lineages, the old java-way but with sequences in stead of numbers
 # | build-index
 
-<<<TABDIR>>>/<<<KMER_LENGTH>>>-mer.index: <<<TABDIR>>>/uniprot_entries.tsv.gz
-	touch $@
+<<<INTDIR>>>/<<<KMER_LENGTH>>>-mer_sequence_taxon.tsv.gz: <<<TABDIR>>>/uniprot_entries.tsv.gz
+	echo "Starting the enumeration of <<<KMER_LENGTH>>>-mers."
+	<<<CMD_ZCAT>>> <<<TABDIR>>>/uniprot_entries.tsv.gz \
+		| cut -f4,7 \
+		| <<<CMD_AWK>>> -v OFS='	' '{ for(i = length($$2) - <<<KMER_LENGTH>>> + 1; i > 0; i -= 1) print(substr($$2, i, <<<KMER_LENGTH>>>), $$1) }' \
+		| <<<CMD_SORT>>> \
+		| <<<CMD_GZIP>>> \
+		> $@
+	echo "Finishing the enumeration of <<<KMER_LENGTH>>>-mers."
+
+<<<INTDIR>>>/<<<KMER_LENGTH>>>-mer_LCAs.tsv.gz: <<<INTDIR>>>/<<<KMER_LENGTH>>>-mer_sequence_taxon.tsv.gz <<<TABDIR>>>/lineages.tsv.gz
+	echo "Starting the calculation of <<<KMER_LENGTH>>>-mer LCA's."
+	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).LineagesSequencesTaxons2LCAs \
+		<(<<<CMD_ZCAT>>> <<<TABDIR>>>/lineages.tsv.gz) \
+		<(<<<CMD_ZCAT>>> <<<INTDIR>>>/<<<KMER_LENGTH>>>-mer_sequence_taxon.tsv.gz) \
+		>(<<<CMD_GZIP>>> > $@)
+	echo "Finished the calculation of <<<KMER_LENGTH>>>-mer LCA's."
+
+<<<TABDIR>>>/<<<KMER_LENGTH>>>-mer.index: <<<INTDIR>>>/<<<KMER_LENGTH>>>-mer_LCAs.tsv.gz
+	echo "Starting the construction of the <<<KMER_LENGTH>>>-mer index."
+	build-index <(<<<CMD_ZCAT>>> $<) $@
+	echo "Finishing the construction of the <<<KMER_LENGTH>>>-mer index."
 # }}}
 
 # Proteomes {{{ ----------------------------------------------------------------
