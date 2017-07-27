@@ -24,7 +24,6 @@ checkdep diff
 checkdep cat
 checkdep curl
 checkdep grep
-checkdep html2text
 checkdep java
 checkdep make
 checkdep mkdir
@@ -149,7 +148,7 @@ sources_count="${#CONFIG_SOURCES[@]}"
 # --------------------------------------------------------------------
 # None-configured variables
 
-ENTREZ_URL="http://eutils.ncbi.nlm.nih.gov/entrez/eutils"
+ENTREZ_URL="https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 echo "s|<<<ENTREZ_URL>>>|$ENTREZ_URL|g" >> "$sedscript"
 
 TAXON_URL="http://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip"

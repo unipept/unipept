@@ -14,9 +14,21 @@ tmp="$(<<<CMD_MKTEMP>>> proteomes.XXXXXXX)"
 get_proteome() {
     local id="$1"
     local accession="$2"
-    curl -s http://www.uniprot.org/proteomes/$accession \
-        | html2text -nobs -width 1000 \
-        | <<<CMD_AWK>>> -f proteomes.awk -v id=$id -v accession=$accession
+    local table="$(curl -s http://www.uniprot.org/proteomes/$accession \
+                 | tr $'\n' ' ' | <<<CMD_SED>>> 's_<td[^>]*>_\n&_g' \
+                 | grep '^<td' | <<<CMD_SED>>> 's_<[^>]*>__g' \
+                 | tr -s '[:blank:]' ' ' | <<<CMD_SED>>> -n 'N;s/\n/\t/;p;d' \
+                 )"
+    local name="$(grep '^Proteome name' <<<"$table" | <<<CMD_SED>>> 's/.*\t//')"
+    local strain="$(grep '^Strain' <<<"$table" | <<<CMD_SED>>> 's/.*\t//')"
+    local assembly="$(grep '^Genome assembly' <<<"$table" | head -1 | <<<CMD_SED>>> -e 's/.*\t *//' -e 's/ *from.*//')"
+    printf '%s\t%s\t%s\t\\N\t\0\t%b\t%s\t%s\n' \
+        "$id" \
+        "$accession" \
+        "${name% - Reference proteome}" \
+        "$(grep -q 'Reference proteome' <<<"$name" && echo '\01' || echo '\00')" \
+        "${strain:-\\N}" \
+        "${assembly:-\\N}"
 }
 # to reach it with the bash subprocess of xargs
 export -f get_proteome
