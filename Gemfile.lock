@@ -109,6 +109,8 @@ GEM
     erubi (1.6.1)
     execjs (2.7.0)
     ffi (1.9.18)
+    foreman (0.84.0)
+      thor (~> 0.19.1)
     formatador (0.2.5)
     globalid (0.4.0)
       activesupport (>= 4.2.0)
@@ -309,6 +311,7 @@ DEPENDENCIES
   devise (>= 3.5)
   devise_cas_authenticatable
   exception_notification!
+  foreman
   guard
   guard-minitest
   less-rails

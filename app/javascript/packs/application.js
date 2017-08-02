@@ -16,4 +16,4 @@ window.jQuery = jQuery;
 window.jquery = jQuery;
 window.$ = jQuery;
 
-window.dragula = dragula
+window.dragula = dragula;
