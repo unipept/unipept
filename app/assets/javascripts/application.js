@@ -1,5 +1,9 @@
-//= require jquery
-//= require jquery_ujs
+//= require rails-ujs
+
+// yarn deps
+//= require typeahead.js/dist/typeahead.bundle.js
+
+
 //= require zeroclipboard
 //= require vendor
 //= require ./polyfills
