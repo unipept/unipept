@@ -11,6 +11,10 @@ import jQuery from 'jquery'
 import d3 from 'd3'
 import dragula from 'dragula'
 
+// the path prefix can be removed in the next version of the webpacker gem
+// by adding "resolved_paths: ['app/assets']" to "config/webpacker.yml"
+import '../../assets/javascripts/polyfills.js'
+
 // add jquery aliases
 window.jQuery = jQuery;
 window.jquery = jQuery;

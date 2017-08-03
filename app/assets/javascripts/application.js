@@ -6,16 +6,15 @@
 
 //= require zeroclipboard
 //= require vendor
-//= require ./polyfills
 
 //= require ./cable
-//= require ./datasets
 //= require ./modal
 //= require ./notifications
+
 //= require ./posts
 //= require ./sequence_show
 
-//= require_directory .
+//= require_self
 //= require_directory ./peptidome
 //= require_directory ./multisearch
 
