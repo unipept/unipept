@@ -11,7 +11,6 @@
 //= require ./modal
 //= require ./notifications
 
-//= require ./posts
 //= require ./sequence_show
 
 //= require_self
