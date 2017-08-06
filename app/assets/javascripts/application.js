@@ -11,8 +11,6 @@
 //= require ./modal
 //= require ./notifications
 
-//= require ./sequence_show
-
 //= require_self
 //= require_directory ./peptidome
 //= require_directory ./multisearch
