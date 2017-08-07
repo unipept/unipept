@@ -3,19 +3,19 @@
  *
  * @return <Searchtree> that The constructed Searchtree object
  */
-var constructSearchtree = function constructSearchtree(args) {
-    /*************** Private variables ***************/
+function constructSearchtree(args) {
+    /** ************* Private variables ***************/
 
     // parameters
-    var that = {},
+    let that = {},
         data = args.data,
         multi = args.multi,
         equateIL = args.equateIL ? "equateIL" : "";
 
-    var tree,
+    let tree,
         items;
 
-    /*************** Private methods ***************/
+    /** ************* Private methods ***************/
 
     /**
      * Initializes Searchtree
@@ -25,7 +25,7 @@ var constructSearchtree = function constructSearchtree(args) {
     }
 
     function redraw() {
-        var i;
+        let i;
 
         // clear all the things
         $("#searchtree").empty();
@@ -33,31 +33,45 @@ var constructSearchtree = function constructSearchtree(args) {
         // Add the nested unordered lists to the page based on the data array
         tree = d3.select("#searchtree");
         tree = tree.append("ul").append("li").attr("class", "root not").append("ul");
-        //$("li.root").prepend($("#treeSearchDiv"));
+        // $("li.root").prepend($("#treeSearchDiv"));
         items = tree.selectAll("li").data([data])
             .enter()
             .append("li")
-                .html(function (d) { return "<span>" + multi.getTitle(d) + "</span>"; })
-                .attr("title", function (d) { return d.data.rank; })
-                .attr("class", "collapsibleListOpen")
-                .attr("data-search", function (d) { return d.name.toLowerCase(); })
+            .html(function (d) {
+                return "<span>" + multi.getTitle(d) + "</span>";
+            })
+            .attr("title", function (d) {
+                return d.data.rank;
+            })
+            .attr("class", "collapsibleListOpen")
+            .attr("data-search", function (d) {
+                return d.name.toLowerCase();
+            })
             .append("ul");
         for (i = 0; i < 28; i++) {
-            items = items.selectAll("li").data(function (d) { return d.children; })
+            items = items.selectAll("li").data(function (d) {
+                return d.children;
+            })
                 .enter()
                 .append("li")
-                    .html(function (d) { return "<span>" + multi.getTitle(d) + "</span>"; })
-                    .attr("title", function (d) { return d.data.rank; })
-                    .attr("class", function (d) {
-                        if (!d.children.length) {
-                            return "not leaf";
-                        } else if (i < 3) {
-                            return "collapsibleListOpen";
-                        } else {
-                            return "collapsibleListClosed";
-                        }
-                    })
-                    .attr("data-search", function (d) { return d.name.toLowerCase(); })
+                .html(function (d) {
+                    return "<span>" + multi.getTitle(d) + "</span>";
+                })
+                .attr("title", function (d) {
+                    return d.data.rank;
+                })
+                .attr("class", function (d) {
+                    if (!d.children.length) {
+                        return "not leaf";
+                    } else if (i < 3) {
+                        return "collapsibleListOpen";
+                    } else {
+                        return "collapsibleListClosed";
+                    }
+                })
+                .attr("data-search", function (d) {
+                    return d.name.toLowerCase();
+                })
                 .append("ul");
         }
 
@@ -74,24 +88,23 @@ var constructSearchtree = function constructSearchtree(args) {
 
         // add search
         $("#tree_search").keyup(function () {
-            var text = $(this).val().toLowerCase();
+            let text = $(this).val().toLowerCase();
             delay(function () {
                 $("#searchtree li").removeClass("match unmatch");
                 if (text !== "") {
-                    var $matches = $("#searchtree li[data-search*='" + text + "']").addClass("match");
+                    let $matches = $("#searchtree li[data-search*='" + text + "']").addClass("match");
                     $matches.find("li").addClass("match");
                     $matches.parents("li").addClass("match").addClass("collapsibleListOpen").removeClass("collapsibleListClosed");
                     $("#searchtree li:not(.match):not(.root)").addClass("unmatch");
                 }
             }, 500);
         });
-        $('#tree_search').click(function () {
+        $("#tree_search").click(function () {
             $(this).keyup();
         });
-        $('#tree_search').change(function () {
+        $("#tree_search").change(function () {
             $(this).keyup();
         });
-
     }
 
     /**
@@ -101,8 +114,8 @@ var constructSearchtree = function constructSearchtree(args) {
     function clickAction() {
         logToGoogle("Multi Peptide", "tree", "Peptides");
 
-        var d         = d3.select(this.parentElement).datum(),
-            margin    = this.offsetTop - 9,
+        let d = d3.select(this.parentElement).datum(),
+            margin = this.offsetTop - 9,
             innertext = "<a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + d.data.taxon_id + "' target='_blank'>" + d.name + "</a>",
             infoPane,
             ownSequences,
@@ -126,8 +139,9 @@ var constructSearchtree = function constructSearchtree(args) {
             stringBuffer += "</ul>";
             infoPane.append(stringBuffer);
             infoPane.find("h4.own").before("<div id='copy-own' class='zero-clipboard'><span class='btn-clipboard'>Copy</span></div>");
-            addCopy($("#copy-own span").first(), function () {return ownSequences.join("\n"); });
-
+            addCopy($("#copy-own span").first(), function () {
+                return ownSequences.join("\n");
+            });
         }
         allSequences = multi.getAllSequences(d).sort();
         if (allSequences && allSequences.length > 0 && allSequences.length !== (ownSequences ? ownSequences.length : 0)) {
@@ -138,12 +152,14 @@ var constructSearchtree = function constructSearchtree(args) {
             stringBuffer += "</ul>";
             infoPane.append(stringBuffer);
             infoPane.find("h4.all").before("<div id='copy-all' class='zero-clipboard'><span class='btn-clipboard'>Copy</span></div>");
-            addCopy($("#copy-all span").first(), function () {return allSequences.join("\n"); });
+            addCopy($("#copy-all span").first(), function () {
+                return allSequences.join("\n");
+            });
         }
         return false;
     }
 
-    /*************** Public methods ***************/
+    /** ************* Public methods ***************/
 
     /**
      * searches for a term
@@ -161,4 +177,6 @@ var constructSearchtree = function constructSearchtree(args) {
     init();
 
     return that;
-};
+}
+
+export {constructSearchtree};

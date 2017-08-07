@@ -7,24 +7,24 @@
  *
  * @return <Treeview> that The constructed Treeview object
  */
-var constructTreeview = function constructTreeview(args) {
-    /*************** Private variables ***************/
+function constructTreeview(args) {
+    /** ************* Private variables ***************/
 
     // parameters
-    var that = {},
+    let that = {},
         multi = args.multi,
         data = args.data;
 
     // settings
-    var margin = {top: 5, right: 5, bottom: 5, left: 60},
+    let margin = {top: 5, right: 5, bottom: 5, left: 60},
         width = 916 - margin.right - margin.left,
         height = 600 - margin.top - margin.bottom;
 
-    var rightClicked,
+    let rightClicked,
         zoomEnd = 0,
         tooltipTimer;
 
-    var i = 0,
+    let i = 0,
         duration = 750,
         root,
         tooltip = d3.select("#tooltip"),
@@ -34,7 +34,7 @@ var constructTreeview = function constructTreeview(args) {
         zoomListener,
         svg;
 
-    /*************** Private methods ***************/
+    /** ************* Private methods ***************/
 
     /**
      * Initializes Treeview
@@ -67,13 +67,15 @@ var constructTreeview = function constructTreeview(args) {
         tree = d3.layout.tree()
             .nodeSize([2, 105])
             .separation(function (a, b) {
-                var width = (nodeSize(a) + nodeSize(b)),
-                distance = width / 2 + 4;
+                let width = (nodeSize(a) + nodeSize(b)),
+                    distance = width / 2 + 4;
                 return (a.parent === b.parent) ? distance : distance + 4;
             });
 
         diagonal = d3.svg.diagonal()
-            .projection(function (d) { return [d.y, d.x]; });
+            .projection(function (d) {
+                return [d.y, d.x];
+            });
 
         widthScale = d3.scale.linear().range([2, 105]);
 
@@ -89,9 +91,9 @@ var constructTreeview = function constructTreeview(args) {
             .attr("width", width + margin.right + margin.left)
             .attr("height", height + margin.top + margin.bottom)
             .call(zoomListener)
-          .append("g")
+            .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-          .append("g");
+            .append("g");
     }
 
     function draw(data) {
@@ -124,10 +126,14 @@ var constructTreeview = function constructTreeview(args) {
                 d.color = "#C62828"; // red
             }
             if (d.children) {
-                d.children.forEach(function (node) { color(node, d.color); });
+                d.children.forEach(function (node) {
+                    color(node, d.color);
+                });
             }
         }
-        root.children.forEach(function (node) { color(node); });
+        root.children.forEach(function (node) {
+            color(node);
+        });
 
         // collapse everything
         function collapseAll(d) {
@@ -154,7 +160,7 @@ var constructTreeview = function constructTreeview(args) {
 
     // Expands a node for i levels
     function expand(d, i) {
-        var local_i = i;
+        let local_i = i;
         if (typeof local_i === "undefined") {
             local_i = 2;
         }
@@ -164,7 +170,9 @@ var constructTreeview = function constructTreeview(args) {
                 d._children = null;
             }
             if (d.children) {
-                d.children.forEach(function (c) {expand(c, local_i - 1); });
+                d.children.forEach(function (c) {
+                    expand(c, local_i - 1);
+                });
             }
         }
     }
@@ -229,9 +237,13 @@ var constructTreeview = function constructTreeview(args) {
         function setSelected(d, value) {
             d.selected = value;
             if (d.children) {
-                d.children.forEach(function (c) {setSelected(c, value); });
+                d.children.forEach(function (c) {
+                    setSelected(c, value);
+                });
             } else if (d._children) {
-                d._children.forEach(function (c) {setSelected(c, value); });
+                d._children.forEach(function (c) {
+                    setSelected(c, value);
+                });
             }
         }
     }
@@ -244,7 +256,7 @@ var constructTreeview = function constructTreeview(args) {
 
     // Center a node
     function centerNode(source) {
-        var scale = zoomListener.scale(),
+        let scale = zoomListener.scale(),
             x = -source.y0,
             y = -source.x0;
         x = x * scale + width / 4;
@@ -258,7 +270,7 @@ var constructTreeview = function constructTreeview(args) {
 
     // tooltip functions
     function tooltipIn(d) {
-        var pos = multi.getTooltipPosition();
+        let pos = multi.getTooltipPosition();
         tooltip.html(multi.getTooltipContent(d));
         tooltip.style("top", pos.top).style("left", pos.left);
 
@@ -271,29 +283,34 @@ var constructTreeview = function constructTreeview(args) {
         tooltip.style("visibility", "hidden");
     }
 
-    /*************** Public methods ***************/
+    /** ************* Public methods ***************/
 
     /**
      * updates the visualisation
      */
     that.update = function update(source) {
-
         // Compute the new tree layout.
-        var nodes = tree.nodes(root).reverse(),
+        let nodes = tree.nodes(root).reverse(),
             links = tree.links(nodes);
 
         // Normalize for fixed-depth.
-        nodes.forEach(function (d) { d.y = d.depth * 180; });
+        nodes.forEach(function (d) {
+            d.y = d.depth * 180;
+        });
 
         // Update the nodes
-        var node = svg.selectAll("g.node")
-            .data(nodes, function (d) { return d.id || (d.id = ++i); });
+        let node = svg.selectAll("g.node")
+            .data(nodes, function (d) {
+                return d.id || (d.id = ++i);
+            });
 
         // Enter any new nodes at the parent's previous position.
-        var nodeEnter = node.enter().append("g")
+        let nodeEnter = node.enter().append("g")
             .attr("class", "node")
             .style("cursor", "pointer")
-            .attr("transform", function (d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
+            .attr("transform", function (d) {
+                return "translate(" + source.y0 + "," + source.x0 + ")";
+            })
             .on("click", click)
             .on("mouseover", tooltipIn)
             .on("mouseout", tooltipOut)
@@ -315,25 +332,34 @@ var constructTreeview = function constructTreeview(args) {
                 } else {
                     return "#aaa";
                 }
-
             });
 
         nodeEnter.append("text")
-            .attr("x", function (d) { return d.children || d._children ? -10 : 10; })
+            .attr("x", function (d) {
+                return d.children || d._children ? -10 : 10;
+            })
             .attr("dy", ".35em")
-            .attr("text-anchor", function (d) { return d.children || d._children ? "end" : "start"; })
-            .text(function (d) { return d.name; })
+            .attr("text-anchor", function (d) {
+                return d.children || d._children ? "end" : "start";
+            })
+            .text(function (d) {
+                return d.name;
+            })
             .style("font", "10px sans-serif")
             .style("fill-opacity", 1e-6);
 
         // Transition nodes to their new position.
-        var nodeUpdate = node.transition()
+        let nodeUpdate = node.transition()
             .duration(duration)
-            .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; });
+            .attr("transform", function (d) {
+                return "translate(" + d.y + "," + d.x + ")";
+            });
 
         nodeUpdate.select("circle")
             .attr("r", nodeSize)
-            .style("fill-opacity", function (d) { return d._children ? 1 : 0; })
+            .style("fill-opacity", function (d) {
+                return d._children ? 1 : 0;
+            })
             .style("stroke", function (d) {
                 if (d.selected) {
                     return d.color || "#aaa";
@@ -347,16 +373,17 @@ var constructTreeview = function constructTreeview(args) {
                 } else {
                     return "#aaa";
                 }
-
             });
 
         nodeUpdate.select("text")
             .style("fill-opacity", 1);
 
         // Transition exiting nodes to the parent's new position.
-        var nodeExit = node.exit().transition()
+        let nodeExit = node.exit().transition()
             .duration(duration)
-            .attr("transform", function (d) { return "translate(" + source.y + "," + source.x + ")"; })
+            .attr("transform", function (d) {
+                return "translate(" + source.y + "," + source.x + ")";
+            })
             .remove();
 
         nodeExit.select("circle")
@@ -366,8 +393,10 @@ var constructTreeview = function constructTreeview(args) {
             .style("fill-opacity", 1e-6);
 
         // Update the links
-        var link = svg.selectAll("path.link")
-            .data(links, function (d) { return d.target.id; });
+        let link = svg.selectAll("path.link")
+            .data(links, function (d) {
+                return d.target.id;
+            });
 
         // Enter any new links at the parent's previous position.
         link.enter().insert("path", "g")
@@ -384,7 +413,7 @@ var constructTreeview = function constructTreeview(args) {
             })
             .style("stroke-width", 1e-6)
             .attr("d", function (d) {
-                var o = {x: source.x0, y: source.y0};
+                let o = {x: source.x0, y: source.y0};
                 return diagonal({source: o, target: o});
             });
 
@@ -412,7 +441,7 @@ var constructTreeview = function constructTreeview(args) {
             .duration(duration)
             .style("stroke-width", 1e-6)
             .attr("d", function (d) {
-                var o = {x: source.x, y: source.y};
+                let o = {x: source.x, y: source.y};
                 return diagonal({source: o, target: o});
             })
             .remove();
@@ -442,8 +471,8 @@ var constructTreeview = function constructTreeview(args) {
         // so the height en width functions don't give a correct result
         // without the delay
         setTimeout(function () {
-            var width = 916,
-            height = 600;
+            let width = 916,
+                height = 600;
             if (isFullScreen) {
                 width = $(window).width();
                 height = $(window).height() - 44;
@@ -457,4 +486,6 @@ var constructTreeview = function constructTreeview(args) {
     init();
 
     return that;
-};
+}
+
+export {constructTreeview};

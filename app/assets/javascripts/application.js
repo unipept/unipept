@@ -13,7 +13,6 @@
 
 //= require_self
 //= require_directory ./peptidome
-//= require_directory ./multisearch
 
 // zeroclipboard config
 ZeroClipboard.config({

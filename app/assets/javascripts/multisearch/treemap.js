@@ -3,17 +3,17 @@
  *
  * @return <Streemap> that The constructed Treemap object
  */
-var constructTreemap = function constructTreemap(args) {
-    /*************** Private variables ***************/
+function constructTreemap(args) {
+    /** ************* Private variables ***************/
 
     // parameters
-    var that = {},
+    let that = {},
         multi = args.multi,
         data = args.data;
 
-    var ranks = ["no rank", "superkingdom", "kingdom", "subkingdom", "superphylum", "phylum", "subphylum", "superclass", "class", "subclass", "infraclass", "superorder", "order", "suborder", "infraorder", "parvorder", "superfamily", "family", "subfamily", "tribe", "subtribe", "genus", "subgenus", "species group", "species subgroup", "species", "subspecies", "varietas", "forma"];
+    let ranks = ["no rank", "superkingdom", "kingdom", "subkingdom", "superphylum", "phylum", "subphylum", "superclass", "class", "subclass", "infraclass", "superorder", "order", "suborder", "infraorder", "parvorder", "superfamily", "family", "subfamily", "tribe", "subtribe", "genus", "subgenus", "species group", "species subgroup", "species", "subspecies", "varietas", "forma"];
 
-    var root = data,
+    let root = data,
         current,
         tooltip = d3.select("#tooltip"),
         treemap,
@@ -21,11 +21,11 @@ var constructTreemap = function constructTreemap(args) {
         breadcrumbs,
         div;
 
-    var margin = {top: 0, right: 0, bottom: 0, left: 0},
+    let margin = {top: 0, right: 0, bottom: 0, left: 0},
         width = 916 - margin.left - margin.right,
         height = 600 - margin.top - margin.bottom;
 
-    /*************** Private methods ***************/
+    /** ************* Private methods ***************/
 
     /**
      * Initializes Treemap
@@ -59,7 +59,9 @@ var constructTreemap = function constructTreemap(args) {
         treemap = d3.layout.treemap()
             .size([width + 1, height + 1])
             .padding([10, 0, 0, 0])
-            .value(function (d) { return d.data.self_count; });
+            .value(function (d) {
+                return d.data.self_count;
+            });
 
         colorScale = d3.scale.ordinal()
             .domain(ranks)
@@ -87,10 +89,18 @@ var constructTreemap = function constructTreemap(args) {
      * calculates the position of a square
      */
     function position() {
-        this.style("left", function (d) { return d.x + "px"; })
-            .style("top", function (d) { return d.y + "px"; })
-            .style("width", function (d) { return Math.max(0, d.dx - 1) + "px"; })
-            .style("height", function (d) { return Math.max(0, d.dy - 1) + "px"; });
+        this.style("left", function (d) {
+            return d.x + "px";
+        })
+            .style("top", function (d) {
+                return d.y + "px";
+            })
+            .style("width", function (d) {
+                return Math.max(0, d.dx - 1) + "px";
+            })
+            .style("height", function (d) {
+                return Math.max(0, d.dy - 1) + "px";
+            });
     }
 
     /**
@@ -100,11 +110,13 @@ var constructTreemap = function constructTreemap(args) {
         treemap = d3.layout.treemap()
             .size([width + 1, height + 1])
             .padding([10, 0, 0, 0])
-            .value(function (d) { return d.data.self_count; });
+            .value(function (d) {
+                return d.data.self_count;
+            });
         that.update(current);
     }
 
-    /*************** Public methods ***************/
+    /** ************* Public methods ***************/
 
     /**
      * Updates the treemap and sets data as new root
@@ -116,8 +128,8 @@ var constructTreemap = function constructTreemap(args) {
         multi.search(data.name);
 
         // breadcrumbs
-        var crumbs = [];
-        var temp = data;
+        let crumbs = [];
+        let temp = data;
         while (temp) {
             crumbs.push(temp);
             temp = temp.parent;
@@ -129,21 +141,31 @@ var constructTreemap = function constructTreemap(args) {
             .enter()
             .append("span")
             .attr("class", "crumb")
-            .attr("title", function (d) { return d.data.rank; })
-            .html(function (d) { return "<span class='link'>" + d.name + "</span>"; })
+            .attr("title", function (d) {
+                return d.data.rank;
+            })
+            .html(function (d) {
+                return "<span class='link'>" + d.name + "</span>";
+            })
             .on("click", function (d) {
                 logToGoogle("Multi Peptide", "Zoom", "Treemap", "Breadcrumb");
                 update(d);
             });
 
-        var nodes = div.selectAll(".node")
-            .data(treemap.nodes(data), function (d) {return d.id; });
+        let nodes = div.selectAll(".node")
+            .data(treemap.nodes(data), function (d) {
+                return d.id;
+            });
 
         nodes.enter()
             .append("div")
             .attr("class", "node")
-            .style("background", function (d) { return colorScale(d.data.rank); })
-            .style("color", function (d) { return getReadableColorFor(colorScale(d.data.rank)); })
+            .style("background", function (d) {
+                return colorScale(d.data.rank);
+            })
+            .style("color", function (d) {
+                return getReadableColorFor(colorScale(d.data.rank));
+            })
             .style("left", "0px")
             .style("top", "0px")
             .style("width", "0px")
@@ -159,9 +181,15 @@ var constructTreemap = function constructTreemap(args) {
                     update(current.parent);
                 }
             })
-            .on("mouseover", function (d) { multi.tooltipIn(d, tooltip, true); })
-            .on("mousemove", function () { multi.tooltipMove(tooltip); })
-            .on("mouseout", function (d) { multi.tooltipOut(tooltip); });
+            .on("mouseover", function (d) {
+                multi.tooltipIn(d, tooltip, true);
+            })
+            .on("mousemove", function () {
+                multi.tooltipMove(tooltip);
+            })
+            .on("mouseout", function (d) {
+                multi.tooltipOut(tooltip);
+            });
 
         nodes.order()
             .transition()
@@ -187,7 +215,7 @@ var constructTreemap = function constructTreemap(args) {
         // so the height en width functions don't give a correct result
         // without the delay
         setTimeout(function () {
-            var w = width,
+            let w = width,
                 h = height;
             if (isFullScreen) {
                 w = $(window).width();
@@ -201,4 +229,6 @@ var constructTreemap = function constructTreemap(args) {
     init();
 
     return that;
-};
+}
+
+export {constructTreemap};

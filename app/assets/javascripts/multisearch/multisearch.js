@@ -1,13 +1,18 @@
+import {constructSearchtree} from "./searchtree.js";
+import {constructSunburst} from "./sunburst.js";
+import {constructTreemap} from "./treemap.js";
+import {constructTreeview} from "./treeview.js";
+
 /**
  * Constructs a Multisearch object that handles all JavaScript of the
  * metaproteomics analysis results page
  *
  * @return <Multisearch> that The constructed Multisearch object
  */
-var constructMultisearch = function constructMultisearch(args) {
-    /*************** Private variables ***************/
+function initMultisearch(args) {
+    /** ************* Private variables ***************/
 
-    var that = {},
+    let that = {},
         data = args.data,
         equateIL = args.equateIL,
         missed = args.missed,
@@ -18,7 +23,7 @@ var constructMultisearch = function constructMultisearch(args) {
         searchtree,
         mapping = new Map();
 
-    /*************** Private methods ***************/
+    /** ************* Private methods ***************/
 
     /**
      * Initializes Multisearch
@@ -42,35 +47,36 @@ var constructMultisearch = function constructMultisearch(args) {
         // set up missed
         addMissed();
         // copy to clipboard for missed peptides
-        addCopy($("#copy-missed span").first(), function () {return $(".mismatches").text(); });
-
+        addCopy($("#copy-missed span").first(), function () {
+            return $(".mismatches").text();
+        });
     }
 
     function initVisualisations() {
         // sunburst
         try {
-            sunburst = constructSunburst({multi : that, data : JSON.parse(JSON.stringify(data))});
+            sunburst = constructSunburst({multi: that, data: JSON.parse(JSON.stringify(data))});
         } catch (err) {
             error(err.message, "Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
 
         // treemap
         try {
-            treemap = constructTreemap({multi : that, data : JSON.parse(JSON.stringify(data))});
+            treemap = constructTreemap({multi: that, data: JSON.parse(JSON.stringify(data))});
         } catch (err) {
             error(err.message, "Loading the Treemap visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
 
         // treeview
         try {
-            treeview = constructTreeview({multi : that, data : JSON.parse(JSON.stringify(data))});
+            treeview = constructTreeview({multi: that, data: JSON.parse(JSON.stringify(data))});
         } catch (err) {
             error(err.message, "Loading the Treeview visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
 
         // searchtree
         try {
-            searchtree = constructSearchtree({multi : that, data : data, equateIL : equateIL});
+            searchtree = constructSearchtree({multi: that, data: data, equateIL: equateIL});
         } catch (err) {
             error(err.message, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
@@ -84,8 +90,8 @@ var constructMultisearch = function constructMultisearch(args) {
      * Adds the list of missed peptides
      */
     function addMissed() {
-        var misses = "";
-        for (var i = 0; i < missed.length; i++) {
+        let misses = "";
+        for (let i = 0; i < missed.length; i++) {
             misses += "<li><a href='http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&amp;SET_SAVED_SEARCH=on&amp;USER_FORMAT_DEFAULTS=on&amp;PAGE=Proteins&amp;PROGRAM=blastp&amp;QUERY=" + missed[i] + "&amp;GAPCOSTS=11%201&amp;EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&amp;DATABASE=nr&amp;BLAST_PROGRAMS=blastp&amp;MAX_NUM_SEQ=100&amp;SHORT_QUERY_ADJUST=on&amp;EXPECT=10&amp;WORD_SIZE=3&amp;MATRIX_NAME=BLOSUM62&amp;COMPOSITION_BASED_STATISTICS=2&amp;SHOW_OVERVIEW=on&amp;SHOW_LINKOUT=on&amp;ALIGNMENT_VIEW=Pairwise&amp;MASK_CHAR=2&amp;MASK_COLOR=1&amp;GET_SEQUENCE=on&amp;NEW_VIEW=on&amp;NUM_OVERVIEW=100&amp;DESCRIPTIONS=100&amp;ALIGNMENTS=100&amp;FORMAT_OBJECT=Alignment&amp;FORMAT_TYPE=HTML&amp;OLD_BLAST=false' target='_blank'>" + missed[i] + "</a> <span class='glyphicon glyphicon-share-alt'></span></li>";
         }
         $(".mismatches").html(misses);
@@ -101,16 +107,16 @@ var constructMultisearch = function constructMultisearch(args) {
             // Track the download button
             logToGoogle("Multi Peptide", "Export");
 
-            var nonce = Math.random();
-            var toast = showNotification("Preparing file...", {
+            let nonce = Math.random();
+            let toast = showNotification("Preparing file...", {
                 autoHide: false,
-                loading: true
+                loading: true,
             });
             $("#nonce").val(nonce);
-            $("#downloadDataset").button('loading');
+            $("#downloadDataset").button("loading");
             var downloadTimer = setInterval(function () {
                 if (document.cookie.indexOf(nonce) !== -1) {
-                    $("#downloadDataset").button('reset');
+                    $("#downloadDataset").button("reset");
                     clearInterval(downloadTimer);
                     toast.hide();
                 }
@@ -131,7 +137,7 @@ var constructMultisearch = function constructMultisearch(args) {
     }
 
     function resizeFullScreen() {
-        var activeTab = getActiveTab(),
+        let activeTab = getActiveTab(),
             isFullScreen = window.fullScreenApi.isFullScreen();
 
         // sync tabs
@@ -159,8 +165,8 @@ var constructMultisearch = function constructMultisearch(args) {
         treeview.setFullScreen(isFullScreen);
     }
 
-    function saveImage () {
-        var activeTab = getActiveTab();
+    function saveImage() {
+        let activeTab = getActiveTab();
         $(".debug_dump").hide();
         logToGoogle("Multi Peptide", "Save Image", activeTab);
         if (activeTab === "sunburst") {
@@ -175,7 +181,7 @@ var constructMultisearch = function constructMultisearch(args) {
     }
 
     function setUpActionBar() {
-        $(".fullScreenActions a").tooltip({placement: "bottom", delay: { "show": 300, "hide": 300 }});
+        $(".fullScreenActions a").tooltip({placement: "bottom", delay: {"show": 300, "hide": 300}});
         $(".fullScreenActions .reset").click(function () {
             mapping.get(getActiveTab()).reset();
         });
@@ -186,11 +192,11 @@ var constructMultisearch = function constructMultisearch(args) {
     }
 
     function getActiveTab() {
-        var activePane = $(".full-screen-container div.active").attr('id');
+        let activePane = $(".full-screen-container div.active").attr("id");
         return activePane.split("Wrapper")[0];
     }
 
-    /*************** Public methods ***************/
+    /** ************* Public methods ***************/
 
     /**
      * Filters the tree after a given number of ms
@@ -199,12 +205,14 @@ var constructMultisearch = function constructMultisearch(args) {
      * @param <int> timeout The number of ms to wait for
      */
     that.search = function search(searchTerm, timeout) {
-        var localTimeout = timeout || 500; // the number of ms before actually searching
-        var localTerm = searchTerm;
+        let localTimeout = timeout || 500; // the number of ms before actually searching
+        let localTerm = searchTerm;
         if (localTerm === "Organism") {
             localTerm = "";
         }
-        setTimeout(function () { searchtree.search(localTerm); }, localTimeout);
+        setTimeout(function () {
+            searchtree.search(localTerm);
+        }, localTimeout);
     };
 
     /**
@@ -225,8 +233,8 @@ var constructMultisearch = function constructMultisearch(args) {
      * @return <Array> An array of sequences (strings)
      */
     that.getAllSequences = function getAllSequences(d) {
-        var s = that.getOwnSequences(d.id);
-        for (var i = 0; i < d.children.length; i++) {
+        let s = that.getOwnSequences(d.id);
+        for (let i = 0; i < d.children.length; i++) {
             s = s.concat(that.getAllSequences(d.children[i]));
         }
         return s;
@@ -239,7 +247,7 @@ var constructMultisearch = function constructMultisearch(args) {
      * @return <Array> A title string
      */
     that.getTitle = function getTitle(d) {
-        var title = d.name;
+        let title = d.name;
         title += " (" + d.data.self_count + "/" + d.data.count + ")";
         return title;
     };
@@ -253,7 +261,7 @@ var constructMultisearch = function constructMultisearch(args) {
         }
     };
     that.tooltipMove = function tooltipMove(tt) {
-        var pos = that.getTooltipPosition();
+        let pos = that.getTooltipPosition();
         tt.style("top", pos.top).style("left", pos.left);
     };
     that.tooltipOut = function tooltipOut(tt) {
@@ -267,16 +275,22 @@ var constructMultisearch = function constructMultisearch(args) {
             (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower";
     };
     that.getPiechartUrl = function getPiechartUrl(d) {
-        var url = "http://chart.apis.google.com/chart?chs=300x225&cht=p&chd=t:";
-        url += d.children.map(function (i) { return i.data.count; }).join(",");
+        let url = "http://chart.apis.google.com/chart?chs=300x225&cht=p&chd=t:";
+        url += d.children.map(function (i) {
+            return i.data.count;
+        }).join(",");
         url += "&chdl=";
-        url += d.children.map(function (i) { return i.name + " (" + i.data.count + ")"; }).join("|");
+        url += d.children.map(function (i) {
+            return i.name + " (" + i.data.count + ")";
+        }).join("|");
         url += "&chds=0,";
-        url +=  d3.max(d.children.map(function (i) { return i.data.count; }));
+        url += d3.max(d.children.map(function (i) {
+            return i.data.count;
+        }));
         return url;
     };
     that.getTooltipPosition = function getTooltipPosition() {
-        var pos = {};
+        let pos = {};
         if (window.fullScreenApi.isFullScreen()) {
             pos.top = (d3.event.clientY - 5) + "px";
             pos.left = (d3.event.clientX + 15) + "px";
@@ -291,4 +305,6 @@ var constructMultisearch = function constructMultisearch(args) {
     init();
 
     return that;
-};
+}
+
+export {initMultisearch};
