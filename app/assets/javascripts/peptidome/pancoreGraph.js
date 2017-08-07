@@ -9,10 +9,10 @@
  * @param <Hash> args.genomes Hash of genomes (by id)
  * @return <PancoreGraph> that The constructed PancoreGraph object
  */
-var constructPancoreGraph = function constructPancoreGraph(args) {
-    /*************** Private variables ***************/
+let constructPancoreGraph = function constructPancoreGraph(args) {
+    /** ************* Private variables ***************/
 
-    var that = {},
+    let that = {},
         pancore = args.pancore,
         table = args.table,
         transitionDuration = args.transitionDuration,
@@ -20,45 +20,45 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         fullHeight = args.height;
 
     // Colors
-    var genomeColor = "#CFD8DC",  // gray
-        panColor = "#1565C0",     // blue
-        coreColor = "#FF8F00",    // orange
+    let genomeColor = "#CFD8DC", // gray
+        panColor = "#1565C0", // blue
+        coreColor = "#FF8F00", // orange
         unicoreColor = "#2E7D32"; // green
 
     // Sizes
-    var margin = {top: 20, right: 40, bottom: 170, left: 68},
+    let margin = {top: 20, right: 40, bottom: 170, left: 68},
         width = fullWidth - margin.left - margin.right,
         height = fullHeight - margin.top - margin.bottom,
         mouseOverWidth;
 
     // Data
-    var genomes = args.genomes,
+    let genomes = args.genomes,
         graphData = [],
         dataQueue = [],
         legendData;
 
     // Drag and click
-    var mouse = {
-        dragging : {},
-        isDragging : false,
-        hasDragged : false
-        //dragId,
-        //clickId,
-    },
+    let mouse = {
+            dragging: {},
+            isDragging: false,
+            hasDragged: false,
+        // dragId,
+        // clickId,
+        },
         // Stores tooltip position till next frame
         tooltipX = 0,
         tooltipY = 0;
 
     // toggles
-    var toggles = {
-        showGenome : true,
-        showPan : true,
-        showCore : true,
-        showUnicore : true
+    let toggles = {
+        showGenome: true,
+        showPan: true,
+        showCore: true,
+        showUnicore: true,
     };
 
     // D3 vars
-    var svg,
+    let svg,
         graphArea,
         tooltip,
         // Scales
@@ -73,9 +73,9 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         unicoreLine;
 
     // Is it safe to run a graph update?
-    var mayStartAnimation = true;
+    let mayStartAnimation = true;
 
-    /*************** Private methods ***************/
+    /** ************* Private methods ***************/
 
     /**
      * Initializes the graph
@@ -91,7 +91,9 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
 
         xAxis = d3.svg.axis()
             .scale(xScale)
-            .tickFormat(function (d) { return genomes.has(d) ? genomes.get(d).abbreviation : ""; })
+            .tickFormat(function (d) {
+                return genomes.has(d) ? genomes.get(d).abbreviation : "";
+            })
             .orient("bottom");
         yAxis = d3.svg.axis()
             .scale(yScale)
@@ -99,19 +101,31 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
 
         panLine = d3.svg.line()
             .interpolate("linear")
-            .x(function (d) { var t = xScale(d.id); return isNaN(t) ? 0 : t;})
-            .y(function (d) { return yScale(d.pan); });
+            .x(function (d) {
+                let t = xScale(d.id); return isNaN(t) ? 0 : t;
+            })
+            .y(function (d) {
+                return yScale(d.pan);
+            });
         coreLine = d3.svg.line()
             .interpolate("linear")
-            .x(function (d) { var t = xScale(d.id); return isNaN(t) ? 0 : t;})
-            .y(function (d) { return yScale(d.core); });
+            .x(function (d) {
+                let t = xScale(d.id); return isNaN(t) ? 0 : t;
+            })
+            .y(function (d) {
+                return yScale(d.core);
+            });
         unicoreLine = d3.svg.line()
             .interpolate("linear")
-            .x(function (d) { var t = xScale(d.id); return isNaN(t) ? 0 : t;})
-            .y(function (d) { return yScale(d.unicore); });
+            .x(function (d) {
+                let t = xScale(d.id); return isNaN(t) ? 0 : t;
+            })
+            .y(function (d) {
+                return yScale(d.unicore);
+            });
 
         // calculate similarity and update on tab switch
-        $('#unique-peptide-finder-tab').on('shown.bs.tab', function tabSwitchAction() {
+        $("#unique-peptide-finder-tab").on("shown.bs.tab", function tabSwitchAction() {
             that.update();
         });
     }
@@ -123,7 +137,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     function tryUpdateGraph() {
         if (dataQueue.length === 0) return;
 
-        var data;
+        let data;
 
         // Only update when the previous animation is done
         if (mayStartAnimation) {
@@ -153,7 +167,9 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             return graphData[graphData.length - 1].pan;
         }
         if (toggles.showGenome) {
-            return d3.max(graphData, function (d) {return d.peptides;}) * 1.3;
+            return d3.max(graphData, function (d) {
+                return d.peptides;
+            }) * 1.3;
         }
         if (toggles.showCore) {
             return graphData[0].core * 1.3;
@@ -171,7 +187,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * @param <Genome> d The genome of which we want a tooltip
      */
     function getTooltipContent(d) {
-        var tooltipHtml = "<span style='color: " + genomeColor + ";'>&#9632;</span> peptidome size: <b>" + d3.format(",")(d.peptides) + "</b><br/>";
+        let tooltipHtml = "<span style='color: " + genomeColor + ";'>&#9632;</span> peptidome size: <b>" + d3.format(",")(d.peptides) + "</b><br/>";
         if (toggles.showPan) {
             tooltipHtml += "<span style='color: " + panColor + ";'>&#9632;</span> pan peptidome size: <b>" + d3.format(",")(d.pan) + "</b><br/>";
         }
@@ -191,7 +207,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * @param <Genome> d The genome of which we want a popover
      */
     function getPopoverContent(d) {
-        var content = getTooltipContent(d);
+        let content = getTooltipContent(d);
         content += "<div class='popover-buttons' ><br/><div class='btn-group' id='download-peptides'>" +
           "<a class='btn btn-default dropdown-toggle' id='download-peptides-toggle' data-toggle='dropdown' data-loading-text='Loading peptides'>" +
             "<span class='glyphicon glyphicon-download'></span> " +
@@ -243,16 +259,16 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * @param <Genome> d The genome of the clicked node
      */
     function invokePopover(d) {
-        var target = $(d3.event.target);
-        var $popover;
-        var graphOffset = $("#pancore_graph").offset();
-        var dotOffset = $(".dot._" + d.id).first().offset();
-        var genome = genomes.get(d.id);
+        let target = $(d3.event.target);
+        let $popover;
+        let graphOffset = $("#pancore_graph").offset();
+        let dotOffset = $(".dot._" + d.id).first().offset();
+        let genome = genomes.get(d.id);
         d3.event.stopPropagation();
         if (mouse.clickId === d.id) {
             that.removePopoversAndHighlights();
         } else {
-            var title = genomes.get(d.id).name;
+            let title = genomes.get(d.id).name;
             if (genome.own) {
                 title = "<span class='glyphicon glyphicon-home' title='local proteome'></span> " + title;
             } else {
@@ -290,7 +306,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     function invokeTooltipAndHighlight(d) {
         if (mouse.isDragging) return;
         if (mouse.clickId === d.id) return;
-        var tooltipHtml = "<b>" + genomes.get(d.id).name + "</b><br/>" + getTooltipContent(d);
+        let tooltipHtml = "<b>" + genomes.get(d.id).name + "</b><br/>" + getTooltipContent(d);
         tooltip.html(tooltipHtml).style("visibility", "visible");
         that.addHighlight(d);
     }
@@ -335,7 +351,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         mouse.dragging[d.id] = this.__origin__ = xScale(d.id);
         // FIXME This is disabled since it takes 1 second to recalculate the
         // styles in chrome. Cursor now only changes after moving at least 1px
-        //d3.select("body").style("cursor", "url(/closedhand.cur) 7 5, move");
+        // d3.select("body").style("cursor", "url(/closedhand.cur) 7 5, move");
         svg.selectAll(".bar").style("cursor", "url(/closedhand.cur) 7 5, move");
         svg.select("#trash").transition()
             .duration(transitionDuration)
@@ -458,7 +474,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * @return <Number> The x-position of the genome
      */
     function position(d) {
-        var v = mouse.dragging[d.id];
+        let v = mouse.dragging[d.id];
         return v == null ? xScale(d.id) : v;
     }
 
@@ -469,7 +485,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      *          was changed
      */
     function calculateNewPositions() {
-        var order = [],
+        let order = [],
             start = -1,
             stop = 0,
             i,
@@ -485,7 +501,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             order[i] = id;
         }
         start++;
-        return {"order" : order, "start" : start, "stop" : stop};
+        return {"order": order, "start": start, "stop": stop};
     }
 
     /**
@@ -496,7 +512,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * @return <Boolean> Returns true if the arrays aren't the same
      */
     function hasChanged(oldData, newData) {
-        var i;
+        let i;
         if (oldData.length !== newData.length) {
             return true;
         }
@@ -512,22 +528,22 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * Gets called when the users clicks on the button to download sequences
      */
     function downloadSequenceHandler() {
-        var type = $(this).attr("data-type");
-        var id = $(this).attr("data-id");
+        let type = $(this).attr("data-type");
+        let id = $(this).attr("data-id");
         $("#download-peptides").mouseleave();
-        $("#download-peptides-toggle").button('loading');
+        $("#download-peptides-toggle").button("loading");
         pancore.requestSequences(id, type)
             .then(function (data) {
-                var name = data.type + '-sequences';
-                var format = "txt";
+                let name = data.type + "-sequences";
+                let format = "txt";
                 if (data.type === "unique_proteins") {
                     name = "unique-proteins";
                     format = "csv";
                 }
-                return downloadDataByForm(data.sequences, name + '.' + format);
+                return downloadDataByForm(data.sequences, name + "." + format);
             })
             .then(function enableButton() {
-                $("#download-peptides-toggle").button('reset');
+                $("#download-peptides-toggle").button("reset");
             });
         return false;
     }
@@ -545,15 +561,23 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * per frame because of the heavy computations.
      */
     function afMoveDrag() {
-        var oldData = graphData.slice(0);
-        graphData.sort(function (a, b) { return position(a) - position(b); });
+        let oldData = graphData.slice(0);
+        graphData.sort(function (a, b) {
+            return position(a) - position(b);
+        });
         // If some position is swapped, redraw some stuff
         if (hasChanged(oldData, graphData)) {
-            xScale.domain(graphData.map(function (d) { return d.id; }));
-            svg.selectAll(".bar").attr("x", function (d) { return xScale(d.id) - mouseOverWidth / 2; });
+            xScale.domain(graphData.map(function (d) {
+                return d.id;
+            }));
+            svg.selectAll(".bar").attr("x", function (d) {
+                return xScale(d.id) - mouseOverWidth / 2;
+            });
             svg.selectAll(".dot:not(._" + mouse.dragId + ")").transition()
                 .duration(transitionDuration)
-                .attr("cx", function (d) { return xScale(d.id); });
+                .attr("cx", function (d) {
+                    return xScale(d.id);
+                });
             svg.select(".x.axis").transition()
                 .duration(transitionDuration)
                 .call(xAxis);
@@ -568,7 +592,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     }
 
 
-    /*************** Public methods ***************/
+    /** ************* Public methods ***************/
 
     /**
      * Handles the transition from and to fullscreen mode
@@ -580,7 +604,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         // so the height en width functions don't give a correct result
         // without the delay
         setTimeout(function () {
-            var w = fullWidth,
+            let w = fullWidth,
                 h = fullHeight;
             if (isFullScreen) {
                 w = $(window).width();
@@ -607,7 +631,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * @param <Array> data Array of pancoreGraph data
      */
     that.setData = function setData(data) {
-        var i;
+        let i;
         graphData = data;
         that.update();
         for (i = 0; i < data.length; i++) {
@@ -633,9 +657,9 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      * @return <String> exportString The data in CSV format
      */
     that.getDataAsCsv = function getDataAsCsv() {
-        var exportString = "name,id,peptidome_size,core_peptidome_size,pan_peptidome_size,unique_peptidome_size\n";
+        let exportString = "name,id,peptidome_size,core_peptidome_size,pan_peptidome_size,unique_peptidome_size\n";
         graphData.forEach(function (genome) {
-            var tempArray = [];
+            let tempArray = [];
             tempArray.push(genomes.get(genome.id).name);
             tempArray.push(genome.id);
             tempArray.push(genome.peptides);
@@ -669,7 +693,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
 
         // create the svg
         svg = d3.select("#pancore_graph")
-          .append("svg")
+            .append("svg")
             .attr("version", "1.1")
             .attr("xmlns", "http://www.w3.org/2000/svg")
             .attr("viewBox", "0 0 " + fullWidth + " " + fullHeight)
@@ -677,13 +701,13 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .attr("height", fullHeight)
             .attr("overflow", "hidden")
             .style("font-family", "'Helvetica Neue', Helvetica, Arial, sans-serif")
-          .on("click", that.removePopoversAndHighlights)
-          .append("g")
+            .on("click", that.removePopoversAndHighlights)
+            .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         // create the tooltip
         tooltip = d3.select("body")
-          .append("div")
+            .append("div")
             .attr("class", "tip")
             .attr("id", "graph-tip")
             .style("position", "absolute")
@@ -693,9 +717,9 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .style("visibility", "hidden");
 
         // create the dropshadow filter
-        var temp = svg.append("svg:defs")
+        let temp = svg.append("svg:defs")
             .append("svg:filter")
-                .attr("id", "dropshadow");
+            .attr("id", "dropshadow");
         temp.append("svg:feGaussianBlur")
             .attr("in", "SourceAlpha")
             .attr("stdDeviation", 1);
@@ -714,7 +738,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         svg.append("g")
             .attr("class", "y axis")
             .call(yAxis)
-          .append("text")
+            .append("text")
             .attr("transform", "rotate(-90)")
             .attr("y", 6)
             .attr("dy", ".71em")
@@ -730,26 +754,32 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         graphArea = svg.append("g").attr("class", "graphArea");
 
         // add legend
-        var legend = svg.selectAll(".legend")
+        let legend = svg.selectAll(".legend")
             .data(legendData)
-          .enter().append("g")
+            .enter().append("g")
             .attr("class", "legend")
-            .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; })
+            .attr("transform", function (d, i) {
+                return "translate(0," + i * 20 + ")";
+            })
             .on("click", legendClick);
-        var legendRects = legend.append("rect")
+        let legendRects = legend.append("rect")
             .attr("x", 30)
             .attr("rx", 2)
             .attr("ry", 2)
-            .style("fill", function (d) { return d.color; });
-        var legendTexts = legend.append("text")
+            .style("fill", function (d) {
+                return d.color;
+            });
+        let legendTexts = legend.append("text")
             .attr("x", 33)
             .attr("y", 12)
             .style("font-size", "14px")
             .style("text-anchor", "start")
             .style("fill", "white")
-            .text(function (d) { return d.name; });
+            .text(function (d) {
+                return d.name;
+            });
         legendRects.each(function () {
-            var box;
+            let box;
             try {
                 box = $(this).parent().find("text")[0].getBBox();
             } catch (err) {
@@ -801,13 +831,13 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .style("visibility", "hidden");
 
         // trash bin
-        var trash = svg.insert("g")
+        let trash = svg.insert("g")
             .attr("id", "trash")
             .attr("fill", "#cccccc")
             .style("opacity", "0")
             .on("mouseover", trashMouseOver)
             .on("mouseout", trashMouseOut)
-        .insert("g")
+            .insert("g")
             .attr("transform", "translate(" + (fullWidth + 30) + " " + (height - 46) / 2 + ")");
         trash.append("circle")
             .attr("r", 30)
@@ -836,15 +866,17 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
      */
     that.update = function update() {
         mayStartAnimation = false;
-        setTimeout(function () { mayStartAnimation = true; }, transitionDuration);
+        setTimeout(function () {
+            mayStartAnimation = true;
+        }, transitionDuration);
 
         that.removePopoversAndHighlights();
 
         // Prepare for line transition
-        var oldPanDatum = svg.select(".line.pan").datum(),
+        let oldPanDatum = svg.select(".line.pan").datum(),
             oldCoreDatum = svg.select(".line.core").datum();
         if (oldPanDatum.length < graphData.length && oldPanDatum.length > 0) {
-            var i,
+            let i,
                 diff = graphData.length - oldPanDatum.length;
             for (i = 0; i < diff; i++) {
                 oldPanDatum.push(oldPanDatum[oldPanDatum.length - 1]);
@@ -855,12 +887,14 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         }
 
         // set the domains
-        xScale.domain(graphData.map(function (d) { return d.id; }));
+        xScale.domain(graphData.map(function (d) {
+            return d.id;
+        }));
         yScale.domain([0, getMaxVisibleDatapoint()]);
 
         // update the legend
         svg.selectAll(".legend rect").each(function () {
-            var box;
+            let box;
             try {
                 box = $(this).parent().find("text")[0].getBBox();
             } catch (err) {
@@ -900,101 +934,135 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         svg.selectAll(".x.axis text")
             .style("text-anchor", "end")
             .transition()
-                .duration(transitionDuration)
-                .attr("transform", "translate(-5,0)rotate(-45)");
-        svg.selectAll(".tick").attr("class", function (d) { return "tick major _" + d; });
+            .duration(transitionDuration)
+            .attr("transform", "translate(-5,0)rotate(-45)");
+        svg.selectAll(".tick").attr("class", function (d) {
+            return "tick major _" + d;
+        });
 
         // draw the dots
-        var genomeDots = graphArea.selectAll(".dot.genome")
-            .data(graphData, function (d) { return d.id; });
+        let genomeDots = graphArea.selectAll(".dot.genome")
+            .data(graphData, function (d) {
+                return d.id;
+            });
         genomeDots.enter().append("circle")
-            .attr("class", function (d) { return "dot genome _" + d.id; })
+            .attr("class", function (d) {
+                return "dot genome _" + d.id;
+            })
             .attr("r", 5)
             .attr("fill", genomeColor)
             .attr("cx", width);
         genomeDots.transition()
             .duration(transitionDuration)
-            .attr("cx", function (d) { return xScale(d.id); })
-            .attr("cy", function (d) { return yScale(d.peptides); })
+            .attr("cx", function (d) {
+                return xScale(d.id);
+            })
+            .attr("cy", function (d) {
+                return yScale(d.peptides);
+            })
             .attr("opacity", toggles.showGenome ? 1 : 0);
         genomeDots.exit()
             .transition()
-                .attr("cy", height / 2)
-                .attr("cx", width)
+            .attr("cy", height / 2)
+            .attr("cx", width)
             .remove();
-        var panDots = graphArea.selectAll(".dot.pan")
-            .data(graphData, function (d) { return d.id; });
+        let panDots = graphArea.selectAll(".dot.pan")
+            .data(graphData, function (d) {
+                return d.id;
+            });
         panDots.enter().append("circle")
-            .attr("class", function (d) { return "dot pan _" + d.id; })
+            .attr("class", function (d) {
+                return "dot pan _" + d.id;
+            })
             .attr("r", 5)
             .attr("fill", panColor)
             .attr("cx", width);
         panDots.transition()
             .duration(transitionDuration)
-            .attr("cx", function (d) { return xScale(d.id); })
-            .attr("cy", function (d) { return yScale(d.pan); })
+            .attr("cx", function (d) {
+                return xScale(d.id);
+            })
+            .attr("cy", function (d) {
+                return yScale(d.pan);
+            })
             .attr("opacity", toggles.showPan ? 1 : 0);
         panDots.exit()
             .transition()
-                .attr("cy", height / 2)
-                .attr("cx", width)
+            .attr("cy", height / 2)
+            .attr("cx", width)
             .remove();
-        var coreDots = graphArea.selectAll(".dot.core")
-            .data(graphData, function (d) {return d.id; });
+        let coreDots = graphArea.selectAll(".dot.core")
+            .data(graphData, function (d) {
+                return d.id;
+            });
         coreDots.enter().append("circle")
-            .attr("class", function (d) { return "dot core _" + d.id; })
+            .attr("class", function (d) {
+                return "dot core _" + d.id;
+            })
             .attr("r", 5)
             .attr("fill", coreColor)
             .attr("cx", width)
             .attr("cy", yScale(0));
         coreDots.transition()
             .duration(transitionDuration)
-            .attr("cx", function (d) { return xScale(d.id); })
-            .attr("cy", function (d) { return yScale(d.core); })
+            .attr("cx", function (d) {
+                return xScale(d.id);
+            })
+            .attr("cy", function (d) {
+                return yScale(d.core);
+            })
             .attr("opacity", toggles.showCore ? 1 : 0);
         coreDots.exit()
             .transition()
-                .attr("cy", height / 2)
-                .attr("cx", width)
+            .attr("cy", height / 2)
+            .attr("cx", width)
             .remove();
-        var unicoreDots = graphArea.selectAll(".dot.unicore")
+        let unicoreDots = graphArea.selectAll(".dot.unicore")
             .data(graphData.filter(function (entry) {
                 return entry.unicore !== undefined;
-            }), function (d) {return d.id; });
+            }), function (d) {
+                return d.id;
+            });
         unicoreDots.enter().append("circle")
-            .attr("class", function (d) { return "dot unicore _" + d.id; })
+            .attr("class", function (d) {
+                return "dot unicore _" + d.id;
+            })
             .attr("r", 5)
             .attr("fill", unicoreColor)
             .attr("cx", width)
             .attr("cy", yScale(0));
         unicoreDots.transition()
             .duration(transitionDuration)
-            .attr("cx", function (d) { return xScale(d.id); })
-            .attr("cy", function (d) { return yScale(d.unicore); })
+            .attr("cx", function (d) {
+                return xScale(d.id);
+            })
+            .attr("cy", function (d) {
+                return yScale(d.unicore);
+            })
             .attr("opacity", toggles.showUnicore ? 1 : 0);
         unicoreDots.exit()
             .transition()
-                .attr("cy", height / 2)
-                .attr("cx", width)
+            .attr("cy", height / 2)
+            .attr("cx", width)
             .remove();
 
         // update the lines
-        var dataCopy = graphData.slice(0);
+        let dataCopy = graphData.slice(0);
         if (graphData.length > 0) {
             graphArea.select(".line.pan").datum(dataCopy)
                 .style("visibility", "visible")
                 .transition()
-                    .duration(transitionDuration)
-                    .style("stroke", panColor)
-                    .attr("opacity", toggles.showPan ? 1 : 0)
-                    .attr("d", panLine);
+                .duration(transitionDuration)
+                .style("stroke", panColor)
+                .attr("opacity", toggles.showPan ? 1 : 0)
+                .attr("d", panLine);
             graphArea.select(".line.core").datum(dataCopy)
                 .style("visibility", "visible")
                 .transition()
-                    .duration(transitionDuration)
-                    .style("stroke", coreColor)
-                    .attr("opacity", toggles.showCore ? 1 : 0)
-                    .attr("d", coreLine);
+                .duration(transitionDuration)
+                .style("stroke", coreColor)
+                .attr("opacity", toggles.showCore ? 1 : 0)
+                .attr("d", coreLine);
         } else {
             // hide the lines when there's no data
             // drawing them with no data results in JS errors
@@ -1005,18 +1073,20 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             graphArea.select(".line.unicore").datum(dataCopy)
                 .style("visibility", "visible")
                 .transition()
-                    .duration(transitionDuration)
-                    .style("stroke", unicoreColor)
-                    .attr("opacity", toggles.showUnicore ? 1 : 0)
-                    .attr("d", unicoreLine);
+                .duration(transitionDuration)
+                .style("stroke", unicoreColor)
+                .attr("opacity", toggles.showUnicore ? 1 : 0)
+                .attr("d", unicoreLine);
         } else {
             graphArea.select(".line.unicore").style("visibility", "hidden");
         }
 
         // update the mouseover rects
         mouseOverWidth = (width / graphData.length) / 1.5;
-        var bars = graphArea.selectAll(".bar")
-            .data(graphData, function (d) {return d.id; });
+        let bars = graphArea.selectAll(".bar")
+            .data(graphData, function (d) {
+                return d.id;
+            });
 
         bars.enter().append("polygon")
             .attr("class", "bar")
@@ -1035,7 +1105,7 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         bars.transition()
             .duration(transitionDuration)
             .attr("points", function (d) {
-                var ret = "";
+                let ret = "";
                 ret += (xScale(d.id) - mouseOverWidth / 2) + ", " + (height + 15) + " ";
                 ret += (xScale(d.id) - mouseOverWidth / 2) + ", 0 ";
                 ret += (xScale(d.id) + mouseOverWidth / 2) + ", 0 ";
@@ -1138,3 +1208,5 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
 
     return that;
 };
+
+export {constructPancoreGraph};

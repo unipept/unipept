@@ -12,7 +12,6 @@
 //= require ./notifications
 
 //= require_self
-//= require_directory ./peptidome
 
 // zeroclipboard config
 ZeroClipboard.config({

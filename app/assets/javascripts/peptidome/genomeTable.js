@@ -6,15 +6,15 @@
  * @param <Map> args.genomes Map of genomes (by proteome id)
  * @param <Pancore> args.pancore Pancore object
  */
-var constructGenomeTable = function constructGenomeTable(args) {
-    /*************** Private variables ***************/
+function constructGenomeTable(args) {
+    /** ************* Private variables ***************/
 
-    var that = {},
+    let that = {},
         genomes = args.genomes,
         pancore = args.pancore,
         lca;
 
-    /*************** Private methods ***************/
+    /** ************* Private methods ***************/
 
     /**
      * Initializes the table
@@ -43,7 +43,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
             }
         });
         $("#autosort ul a").click(runAutosort);
-        $("#autosort ul a").tooltip({placement : "right", container : "body"});
+        $("#autosort ul a").tooltip({placement: "right", container: "body"});
     }
 
     /**
@@ -51,15 +51,15 @@ var constructGenomeTable = function constructGenomeTable(args) {
      */
     function initDrag() {
         dragula([$("#genomes_table tbody").get(0)], {
-            direction: 'vertical',
+            direction: "vertical",
             moves: function (el) {
-              return d3.select(el).datum().status === "Done";
-            }
+                return d3.select(el).datum().status === "Done";
+            },
         })
-        .on("drop", function () {
-            pancore.updateOrder(calculateTablePositions());
-            that.update();
-        });
+            .on("drop", function () {
+                pancore.updateOrder(calculateTablePositions());
+                that.update();
+            });
     }
 
     /**
@@ -70,13 +70,13 @@ var constructGenomeTable = function constructGenomeTable(args) {
      *          where something was changed
      */
     function calculateTablePositions() {
-        var order = [],
+        let order = [],
             start = -1,
             stop = 0;
 
         d3.selectAll("#genomes_table tbody tr").each(function (d, i) {
-            var id = d.id;
-            var genome = genomes.get(id);
+            let id = d.id;
+            let genome = genomes.get(id);
             if (genome.position === i && stop === 0) {
                 start = i;
             } else if (genome.position !== i) {
@@ -87,7 +87,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
             order[i] = id;
         });
         start++;
-        return {"order" : order, "start" : start, "stop" : stop};
+        return {"order": order, "start": start, "stop": stop};
     }
 
     /**
@@ -95,9 +95,11 @@ var constructGenomeTable = function constructGenomeTable(args) {
      * links.
      */
     function runAutosort() {
-        var i;
+        let i;
         pancore.autoSort($(this).attr("data-type"));
-        genomes.forEach(function (val) { val.status = "Processing"; });
+        genomes.forEach(function (val) {
+            val.status = "Processing";
+        });
         that.update();
         $("#autosort").mouseleave();
         return false;
@@ -121,7 +123,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
         }
     }
 
-    /*************** Public methods ***************/
+    /** ************* Public methods ***************/
 
     /**
      * Handles the transition from and to fullscreen mode
@@ -162,13 +164,15 @@ var constructGenomeTable = function constructGenomeTable(args) {
     that.removeGenome = function removeGenome(id) {
         // Only remove data that's already loaded
         if (genomes.get(id).status !== "Done") return;
-        genomes.forEach(function (val) { val.status = "Processing"; });
+        genomes.forEach(function (val) {
+            val.status = "Processing";
+        });
         genomes.delete(id);
         that.update();
-        var r = calculateTablePositions();
-        return {"id" : id,
-            "order" : r.order,
-            "start" : r.start
+        let r = calculateTablePositions();
+        return {"id": id,
+            "order": r.order,
+            "start": r.start,
         };
     };
 
@@ -177,7 +181,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
      */
     that.clearAllData = function clearAllData() {
         lca = "";
-        var i;
+        let i;
         genomes.clear();
         that.clear();
     };
@@ -214,7 +218,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
      * @param <Array> order the new order we want to set
      */
     that.setOrder = function setOrder(order) {
-        var i;
+        let i;
         for (i = 0; i < order.length; i++) {
             genomes.get(order[i]).position = i;
         }
@@ -237,7 +241,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
      * @return <Array> order An array containing the  id's
      */
     that.getOrder = function getOrder() {
-        var order = [];
+        let order = [];
         d3.selectAll("#genomes_table tbody tr").each(function (d, i) {
             order[i] = d.id;
         });
@@ -248,7 +252,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
      * Updates the table
      */
     that.update = function update() {
-        var text,
+        let text,
             tr,
             newRows,
             td;
@@ -261,10 +265,14 @@ var constructGenomeTable = function constructGenomeTable(args) {
 
         // Add rows
         tr = d3.select("#genomes_table tbody").selectAll("tr.added")
-            .data(iteratorToArray(genomes.values()), function (d) { return d.id; });
+            .data(iteratorToArray(genomes.values()), function (d) {
+                return d.id;
+            });
         newRows = tr.enter().append("tr").attr("class", "added");
         tr.exit().remove();
-        tr.sort(function (a, b) { return a.position - b.position; });
+        tr.sort(function (a, b) {
+            return a.position - b.position;
+        });
 
         // Add cells
         newRows.append("td").attr("class", "handle").html("<span class='glyphicon glyphicon-resize-vertical' title='drag to reorder'></span>");
@@ -277,25 +285,27 @@ var constructGenomeTable = function constructGenomeTable(args) {
         td.enter()
             .append("td");
         td.html(function (d) {
-                if (d.key === "status") {
-                    if (d.value === "Done") {
-                        return "";
-                    } else if (d.value === "Processing") {
-                        return "<span class='glyphicon glyphicon-refresh'></span>";
-                    } else if (d.value === "Loading") {
-                        return "<span class='glyphicon glyphicon-cloud-download'></span>";
-                    }
-                } else {
-                    var genome = d3.select(this.parentNode).datum();
-                    if (!genome.own) {
-                        return d.value + " <a href='http://www.uniprot.org/proteomes/" + genome.proteome_id + "' target='_blank' title='open proteome page'><span class='glyphicon glyphicon-share-alt'></span></a>";
-                    } else {
-                        return d.value + " <span class='glyphicon glyphicon-home' title='local proteome'></span>";
-                    }
+            if (d.key === "status") {
+                if (d.value === "Done") {
+                    return "";
+                } else if (d.value === "Processing") {
+                    return "<span class='glyphicon glyphicon-refresh'></span>";
+                } else if (d.value === "Loading") {
+                    return "<span class='glyphicon glyphicon-cloud-download'></span>";
                 }
-                return d.value;
+            } else {
+                let genome = d3.select(this.parentNode).datum();
+                if (!genome.own) {
+                    return d.value + " <a href='http://www.uniprot.org/proteomes/" + genome.proteome_id + "' target='_blank' title='open proteome page'><span class='glyphicon glyphicon-share-alt'></span></a>";
+                } else {
+                    return d.value + " <span class='glyphicon glyphicon-home' title='local proteome'></span>";
+                }
+            }
+            return d.value;
+        })
+            .attr("class", function (d) {
+                return "data " + d.key;
             })
-            .attr("class", function (d) {return "data " + d.key; })
             .attr("colspan", "1");
         newRows.append("td")
             .attr("class", "button")
@@ -304,8 +314,12 @@ var constructGenomeTable = function constructGenomeTable(args) {
             .attr("class", "btn btn-default btn-xs")
             .attr("title", "remove proteome")
             .on("click", pancore.removeGenome);
-        newRows.each(function () { highlight(this); });
-        tr.selectAll("td.button a.btn").classed("disabled", function (d) {return d.status !== "Done"; });
+        newRows.each(function () {
+            highlight(this);
+        });
+        tr.selectAll("td.button a.btn").classed("disabled", function (d) {
+            return d.status !== "Done";
+        });
     };
 
     /**
@@ -321,4 +335,6 @@ var constructGenomeTable = function constructGenomeTable(args) {
     init();
 
     return that;
-};
+}
+
+export {constructGenomeTable};
