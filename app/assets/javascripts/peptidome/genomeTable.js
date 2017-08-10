@@ -1,3 +1,5 @@
+import dragula from "dragula";
+
 /**
  * creates a genomeTable object representing the table showing all genomes
  * currently in the visualisation. features: reorder by dragging, autosort,

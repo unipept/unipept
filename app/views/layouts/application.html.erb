@@ -6,8 +6,7 @@
       <%=title%>
     </title>
     <%= render 'layouts/stylesheets' %>
-    <%= javascript_pack_tag 'manifest' %>
-    <%= javascript_pack_tag 'vendor' %>
+    <%= javascript_pack_tag 'commons' %>
     <%= javascript_pack_tag 'application' %>
     <%= javascript_include_tag "application" %>
     <%= yield :javascripts %>
