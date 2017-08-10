@@ -42,7 +42,7 @@ module.exports = {
       publicPath: output.publicPath,
       writeToFileEmit: true
     }),
-    // Creates a common vendor.js with all shared modules
+    // Creates a commons.js with all shared modules
     new webpack.optimize.CommonsChunkPlugin({
       name: 'commons',
       minChunks: 2,
