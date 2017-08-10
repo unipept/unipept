@@ -14,7 +14,7 @@
         "d3",
         "html2canvas",
         "Newick",
-        "requestAnimFrame",
+        "requestAnimationFrame",
         "self",
         "get",
         "getJSON",

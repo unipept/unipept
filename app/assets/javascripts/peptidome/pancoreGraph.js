@@ -336,7 +336,7 @@ let constructPancoreGraph = function constructPancoreGraph(args) {
             tooltipX = d3.event.pageX + 15;
             tooltipY = d3.event.pageY + 15;
         }
-        requestAnimFrame(afMoveTooltip);
+        requestAnimationFrame(afMoveTooltip);
     }
 
     /**
@@ -375,7 +375,7 @@ let constructPancoreGraph = function constructPancoreGraph(args) {
         }
         that.removeTooltip();
         mouse.dragging[d.id] = Math.min(width, Math.max(0, this.__origin__ += d3.event.dx));
-        requestAnimFrame(afMoveDrag);
+        requestAnimationFrame(afMoveDrag);
     }
 
     /**

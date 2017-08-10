@@ -305,7 +305,7 @@ function constructMyGenomes(args) {
      * @param <Number> percentage The new width in %
      */
     function processProgress(percentage) {
-        requestAnimFrame(function () {
+        requestAnimationFrame(function () {
             $(".popover-content #myGenomeProgress .progress-bar").css("width", (percentage * 100) + "%");
         });
     }
