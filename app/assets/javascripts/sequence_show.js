@@ -1,3 +1,5 @@
+import {showInfoModal} from "./modal.js";
+
 function initSequenceShow(data) {
     // set up the fancy tree
     initLineageTree(data.tree);

@@ -1,3 +1,6 @@
+import {showInfoModal} from "../modal.js";
+import {showNotification} from "../notifications.js";
+
 import {constructGenomeSelector} from "./genomeSelector.js";
 import {constructGenomeTable} from "./genomeTable.js";
 import {constructPancoreGraph} from "./pancoreGraph.js";

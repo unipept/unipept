@@ -1,3 +1,5 @@
+import {showNotification} from "../notifications.js";
+
 /**
  * creates a myGenomes object representing the table showing all self uploaded
  * genomes and optiones to add or remove them.

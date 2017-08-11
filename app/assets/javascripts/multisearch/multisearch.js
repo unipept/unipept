@@ -1,3 +1,5 @@
+import {showNotification} from "../notifications.js";
+
 import {constructSearchtree} from "./searchtree.js";
 import {constructSunburst} from "./sunburst.js";
 import {constructTreemap} from "./treemap.js";

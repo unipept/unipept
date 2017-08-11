@@ -1,3 +1,5 @@
+import {showNotification} from "./notifications.js";
+
 function initDatasets() {
     let datasetLoader = constructDatasetLoader();
 

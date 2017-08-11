@@ -3,13 +3,8 @@
 // yarn deps
 //= require typeahead.js/dist/typeahead.bundle.js
 
-
 //= require zeroclipboard
 //= require vendor
-
-//= require ./cable
-//= require ./modal
-//= require ./notifications
 
 //= require_self
 
@@ -338,6 +333,6 @@ function iteratorToArray(iterator) {
 /**
  * Capitalizes the first letter of a string
  */
-String.prototype.capitalizeFirstLetter = function() {
+String.prototype.capitalizeFirstLetter = function () {
     return this.charAt(0).toUpperCase() + this.slice(1);
 };
