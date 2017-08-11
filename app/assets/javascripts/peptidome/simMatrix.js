@@ -1,3 +1,5 @@
+import {downloadDataByForm} from "../utils.js";
+
 import {initPhylogram} from "./phylogram.js";
 
 /**
@@ -459,12 +461,10 @@ function constructSimMatrix(args) {
      * @param <String> n The tree in newick format
      * @param <Number> height Optional height of the tree
      */
-    that.drawTree = function drawTree(n, height) {
+    that.drawTree = function drawTree(n, h) {
         newick = n;
         $("#tree-svg").empty();
-        if (height === undefined) {
-            height = d3.min([500, 50 * order.length]);
-        }
+        let height = h === undefined ? d3.min([500, 50 * order.length]) : h;
         d3.phylogram.build("#sim_graph", Newick.parse(n), that, {width: 180, height: height, skipLabels: true, vis: treeSvg, duration: transitionDuration});
     };
 

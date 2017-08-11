@@ -19,6 +19,7 @@
         "max-len": "off",
         "quotes": ["error", "double"],
         "new-cap": "off",
+        "no-undef": "error",
     },
     "env": {
         "browser": true,
@@ -26,6 +27,13 @@
     },
     "globals": {
         "d3": false,
-        "$": false
+        "$": false,
+        "html2canvas": false,
+        "_gaq": false,
+        "addCopy": false,
+        "fullScreenApi": false,
+        "delay": false,
+        "Bloodhound": false,
+        "Newick": false,
     }
 }

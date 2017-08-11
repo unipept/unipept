@@ -1,3 +1,4 @@
+import {logToGoogle, triggerDownloadModal} from "./utils.js";
 import {showInfoModal} from "./modal.js";
 
 function initSequenceShow(data) {
@@ -411,18 +412,18 @@ function initSequenceShow(data) {
 
         // Expands a node for i levels
         function expand(d, i) {
-            let local_i = i;
-            if (typeof local_i === "undefined") {
-                local_i = 1;
+            let localI = i;
+            if (typeof localI === "undefined") {
+                localI = 1;
             }
-            if (local_i > 0) {
+            if (localI > 0) {
                 if (d._children) {
                     d.children = d._children;
                     d._children = null;
                 }
                 if (d.children) {
                     d.children.forEach(function (c) {
-                        expand(c, local_i - 1);
+                        expand(c, localI - 1);
                     });
                 }
             }

@@ -1,3 +1,4 @@
+import {showError} from "../utils.js";
 import {showNotification} from "../notifications.js";
 
 /**
@@ -58,7 +59,7 @@ function constructMyGenomes(args) {
         // Create the Javascript Worker for background data processing
         worker = new Worker("/assets/workers/mygenome_worker.js");
         worker.addEventListener("message", handleWorkerMessage, false);
-        worker.addEventListener("error", error, false);
+        worker.addEventListener("error", showError, false);
 
         // init popover
         $myGenomesButton.popover({
@@ -103,6 +104,7 @@ function constructMyGenomes(args) {
      * @param <Event> e The event we want to handle
      */
     function handleWorkerMessage(e) {
+        /* eslint-disable no-console */
         let data = e.data;
         switch (data.type) {
         case "log":
@@ -117,6 +119,7 @@ function constructMyGenomes(args) {
         default:
             console.log(data.msg);
         }
+        /* eslint-enable no-console */
     }
 
     /**
@@ -670,7 +673,9 @@ function constructMyGenomes(args) {
      * Handles an indexedDB error
      */
     indexedDBStore.onerror = function onerror(e) {
+        /* eslint-disable no-console */
         console.log(e);
+        /* eslint-enable no-console */
     };
 
     /** ************* localstorage methods ************/

@@ -1,4 +1,5 @@
 import {showNotification} from "./notifications.js";
+import {get, getJSON, highlight, logToGoogle, showError, showInfo} from "./utils.js";
 
 function initDatasets() {
     let datasetLoader = constructDatasetLoader();
@@ -62,7 +63,7 @@ function initDatasets() {
             name = "PRIDE assay " + experiment;
 
         if (experiment === "") {
-            info("Please enter a PRIDE assay id");
+            showInfo("Please enter a PRIDE assay id");
             return false;
         }
 
@@ -203,7 +204,7 @@ function constructDatasetLoader() {
             $("#qs").val("");
 
             // highlight what pappend to the user
-            error(error, "Something went wrong while loading the datasets.");
+            showError(error, "Something went wrong while loading the datasets.");
             $("html, body").animate({
                 scrollTop: $("#messages").offset().top,
             }, 1000);

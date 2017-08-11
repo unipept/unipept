@@ -14,7 +14,11 @@ import jQuery from "jquery";
 // by adding "resolved_paths: ['app/assets']" to "config/webpacker.yml"
 import "../../assets/javascripts/polyfills.js";
 
+import {logErrorToGoogle} from "../../assets/javascripts/utils.js";
+
 // add jquery aliases
 window.jQuery = jQuery;
 window.jquery = jQuery;
 window.$ = jQuery;
+
+window.logErrorToGoogle = logErrorToGoogle;

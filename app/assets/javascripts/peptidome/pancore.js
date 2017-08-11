@@ -1,3 +1,4 @@
+import {logToGoogle, showError, showInfo, triggerDownloadModal} from "../utils.js";
 import {showInfoModal} from "../modal.js";
 import {showNotification} from "../notifications.js";
 
@@ -83,7 +84,7 @@ function constructPancore(args) {
         // Create the Javascript Worker for background data processing
         worker = new Worker("/assets/workers/pancore_worker.js");
         worker.addEventListener("message", handleWorkerMessage, false);
-        worker.addEventListener("error", error, false);
+        worker.addEventListener("error", showError, false);
 
         // Constructs the matrix
         matrix = constructSimMatrix({
@@ -109,7 +110,7 @@ function constructPancore(args) {
 
         // IE10 message
         if (navigator.appVersion.indexOf("MSIE 10") !== -1) {
-            info("You're using Internet Explorer 10. Everything should work as expected, but for an optimal experience, please use a recent version of Mozilla Firefox or Google Chrome.");
+            showInfo("You're using Internet Explorer 10. Everything should work as expected, but for an optimal experience, please use a recent version of Mozilla Firefox or Google Chrome.");
         }
 
         window.onbeforeunload = that.saveStatus;
@@ -261,6 +262,7 @@ function constructPancore(args) {
      * @param <Event> e The event we want to handle
      */
     function handleWorkerMessage(e) {
+        /* eslint-disable no-console */
         let data = e.data;
         switch (data.type) {
         case "log":
@@ -290,6 +292,7 @@ function constructPancore(args) {
         default:
             console.log(data.msg);
         }
+        /* eslint-enable no-console */
     }
 
     /**
@@ -465,7 +468,7 @@ function constructPancore(args) {
      */
     function groupErrors(errorMsg, userMsg) {
         delay(function () {
-            error(errorMsg, userMsg);
+            showError(errorMsg, userMsg);
         }, 1000);
     }
 
@@ -481,9 +484,8 @@ function constructPancore(args) {
      *
      * @param <Array> g Array of id's of the genomes we want to add
      */
-    that.addGenomes = function addGenomes(g, loadUnique) {
+    that.addGenomes = function addGenomes(g, loadUnique = true) {
         hideRestore();
-        var loadUnique = loadUnique === undefined ? true : loadUnique;
         return Promise.all(g.map(function addGenome(genome, i) {
             // only add new genomes
             if (genomes.has(genome.id)) return;
@@ -658,13 +660,12 @@ function constructPancore(args) {
     /**
      * Loads a status. First loads all genomes, then sets the order
      */
-    that.loadStatus = function loadStatus(status) {
-        var status = status || JSON.parse(localStorage.pancoreStatus),
+    that.loadStatus = function loadStatus(state) {
+        let status = state || JSON.parse(localStorage.pancoreStatus),
             proteomeSet = new Set(),
             statusGenomes = new Map(),
             proteomes,
             proteomesOrder,
-            proteome,
             startPromise = myGenomes ? myGenomes.getGenomes() : Promise.resolve();
 
         // create the proteomes set manually because of stupid Safari
@@ -718,7 +719,7 @@ function constructPancore(args) {
                     stop: proteomesOrder.length - 1,
                 });
                 if (proteomeSet.size !== proteomes.length) {
-                    error(null, "We couldn't load one or more proteomes from your previous session.");
+                    showError(null, "We couldn't load one or more proteomes from your previous session.");
                 }
             });
         });

@@ -259,8 +259,7 @@ function constructGenomeSelector(args) {
         // creates the html content for the popover
         function createContent() {
             let ranks = ["class", "order", "genus", "species"],
-                content = "<form class='form-horizontal'>",
-                option;
+                content = "<form class='form-horizontal'>";
 
             // type strain
             content += "<div class='form-group'>";
@@ -491,12 +490,12 @@ function constructGenomeSelector(args) {
     /**
      * Draws a table based on the results array
      */
-    function drawList(results, page) {
+    function drawList(results, p) {
         let $resultTable = $("#genomeSelector-results"),
             resultString = "";
 
         currentResults = results;
-        page = page || 0;
+        let page = p || 0;
         currentPage = page;
 
         let firstElement = page * elementsShown,

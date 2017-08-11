@@ -1,4 +1,6 @@
 import dragula from "dragula";
+import {highlight, iteratorToArray} from "../utils.js";
+
 
 /**
  * creates a genomeTable object representing the table showing all genomes
@@ -97,7 +99,6 @@ function constructGenomeTable(args) {
      * links.
      */
     function runAutosort() {
-        let i;
         pancore.autoSort($(this).attr("data-type"));
         genomes.forEach(function (val) {
             val.status = "Processing";
@@ -183,7 +184,6 @@ function constructGenomeTable(args) {
      */
     that.clearAllData = function clearAllData() {
         lca = "";
-        let i;
         genomes.clear();
         that.clear();
     };

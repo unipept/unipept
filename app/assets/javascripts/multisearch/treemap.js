@@ -1,3 +1,5 @@
+import {getReadableColorFor, logToGoogle} from "../utils.js";
+
 /**
  * Constructs a Treemap object that represents the treemap visualisation
  *

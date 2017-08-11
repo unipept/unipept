@@ -1,3 +1,4 @@
+import {getReadableColorFor, logToGoogle, stringHash} from "../utils.js";
 /**
  * Constructs a Sunburst object that represents the sunburst visualisation
  *

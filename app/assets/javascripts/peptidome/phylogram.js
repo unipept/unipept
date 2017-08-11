@@ -18,8 +18,8 @@ function initPhylogram() {
         function diagonal(diagonalPath, i) {
             let source = diagonalPath.source,
                 target = diagonalPath.target,
-                midpointX = (source.x + target.x) / 2,
-                midpointY = (source.y + target.y) / 2,
+                // midpointX = (source.x + target.x) / 2,
+                // midpointY = (source.y + target.y) / 2,
                 pathData = [source, {x: target.x, y: source.y}, target];
             pathData = pathData.map(projection);
             return path(pathData);
@@ -102,7 +102,7 @@ function initPhylogram() {
 
     function scaleBranchLengths(nodes, w) {
         // Visit all nodes and adjust y pos width distance metric
-        var visitPreOrder = function (root, callback) {
+        let visitPreOrder = function (root, callback) {
             let i;
             callback(root);
             if (root.children) {
@@ -186,9 +186,8 @@ function initPhylogram() {
      *   duration
      *     The duration of the animation
      */
-    d3.phylogram.build = function (selector, nodes, matrix, options) {
+    d3.phylogram.build = function (selector, nodes, matrix, options = {}) {
         attachNames(nodes);
-        options = options || {};
         let w = options.width || d3.select(selector).style("width") || d3.select(selector).attr("width"),
             h = options.height || d3.select(selector).style("height") || d3.select(selector).attr("height");
         w = parseInt(w, 10);
@@ -358,9 +357,8 @@ function initPhylogram() {
     /**
      * Recursively compiles a list with id's in the order of the tree
      */
-    function getGenomeOrder(node, order) {
+    function getGenomeOrder(node, order = []) {
         let i;
-        order = order || [];
         for (i = 0; node.branchset && i < node.branchset.length; i++) {
             getGenomeOrder(node.branchset[i], order);
         }
@@ -376,8 +374,7 @@ function initPhylogram() {
      * Options: same as build, but without diagonal, skipTicks, and
      *   skipBranchLengthScaling
      */
-    d3.phylogram.buildRadial = function (selector, nodes, options) {
-        options = options || {};
+    d3.phylogram.buildRadial = function (selector, nodes, options = {}) {
         let w = options.width || d3.select(selector).style("width") || d3.select(selector).attr("width"),
             r = w / 2,
             labelWidth = options.skipLabels ? 10 : options.labelWidth || 120;

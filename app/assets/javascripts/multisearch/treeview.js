@@ -160,18 +160,18 @@ function constructTreeview(args) {
 
     // Expands a node for i levels
     function expand(d, i) {
-        let local_i = i;
-        if (typeof local_i === "undefined") {
-            local_i = 2;
+        let localI = i;
+        if (typeof localI === "undefined") {
+            localI = 2;
         }
-        if (local_i > 0) {
+        if (localI > 0) {
             if (d._children) {
                 d.children = d._children;
                 d._children = null;
             }
             if (d.children) {
                 d.children.forEach(function (c) {
-                    expand(c, local_i - 1);
+                    expand(c, localI - 1);
                 });
             }
         }

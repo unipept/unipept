@@ -1,4 +1,5 @@
 import {showNotification} from "../notifications.js";
+import {logToGoogle, showError, triggerDownloadModal} from "../utils.js";
 
 import {constructSearchtree} from "./searchtree.js";
 import {constructSunburst} from "./sunburst.js";
@@ -59,28 +60,28 @@ function initMultisearch(args) {
         try {
             sunburst = constructSunburst({multi: that, data: JSON.parse(JSON.stringify(data))});
         } catch (err) {
-            error(err.message, "Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
+            showError(err.message, "Loading the Sunburst visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
 
         // treemap
         try {
             treemap = constructTreemap({multi: that, data: JSON.parse(JSON.stringify(data))});
         } catch (err) {
-            error(err.message, "Loading the Treemap visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
+            showError(err.message, "Loading the Treemap visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
 
         // treeview
         try {
             treeview = constructTreeview({multi: that, data: JSON.parse(JSON.stringify(data))});
         } catch (err) {
-            error(err.message, "Loading the Treeview visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
+            showError(err.message, "Loading the Treeview visualization failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
 
         // searchtree
         try {
             searchtree = constructSearchtree({multi: that, data: data, equateIL: equateIL});
         } catch (err) {
-            error(err.message, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
+            showError(err.message, "Loading the Hierarchical outline failed. Please use Google Chrome, Firefox or Internet Explorer 9 or higher.");
         }
 
         mapping.set("sunburst", sunburst);
@@ -116,7 +117,7 @@ function initMultisearch(args) {
             });
             $("#nonce").val(nonce);
             $("#downloadDataset").button("loading");
-            var downloadTimer = setInterval(function () {
+            let downloadTimer = setInterval(function () {
                 if (document.cookie.indexOf(nonce) !== -1) {
                     $("#downloadDataset").button("reset");
                     clearInterval(downloadTimer);

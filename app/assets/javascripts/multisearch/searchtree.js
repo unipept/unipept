@@ -1,3 +1,5 @@
+import {highlight, logToGoogle} from "../utils.js";
+
 /**
  * Constructs a Searchtree object
  *
@@ -119,7 +121,6 @@ function constructSearchtree(args) {
             innertext = "<a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + d.data.taxon_id + "' target='_blank'>" + d.name + "</a>",
             infoPane,
             ownSequences,
-            peptide,
             allSequences,
             i,
             stringBuffer = "";

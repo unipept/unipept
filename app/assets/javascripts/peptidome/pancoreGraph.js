@@ -1,3 +1,5 @@
+import {downloadDataByForm} from "../utils.js";
+
 /**
  * Creates a pancoreGraph object that includes the graph visualisation
  *
@@ -769,7 +771,7 @@ let constructPancoreGraph = function constructPancoreGraph(args) {
             .style("fill", function (d) {
                 return d.color;
             });
-        let legendTexts = legend.append("text")
+        legend.append("text")
             .attr("x", 33)
             .attr("y", 12)
             .style("font-size", "14px")
