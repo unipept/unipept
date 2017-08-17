@@ -1,8 +1,5 @@
 //= require rails-ujs
 
-// yarn deps
-//= require typeahead.js/dist/typeahead.bundle.js
-
 //= require vendor
 
 //= require_self

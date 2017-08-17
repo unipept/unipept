@@ -32,7 +32,6 @@
         "_gaq": false,
         "fullScreenApi": false,
         "delay": false,
-        "Bloodhound": false,
         "Newick": false,
     }
 }
