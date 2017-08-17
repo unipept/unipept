@@ -1,3 +1,5 @@
+import Bloodhound from "corejs-typeahead";
+
 /**
  * Creates a GenomeSelector object that represents a filterable list of genomes
  *

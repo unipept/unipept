@@ -33,7 +33,6 @@
         "addCopy": false,
         "fullScreenApi": false,
         "delay": false,
-        "Bloodhound": false,
         "Newick": false,
     }
 }
