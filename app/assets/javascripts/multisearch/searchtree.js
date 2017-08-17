@@ -139,7 +139,7 @@ function constructSearchtree(args) {
             }
             stringBuffer += "</ul>";
             infoPane.append(stringBuffer);
-            infoPane.find("h4.own").before("<div id='copy-own' class='zero-clipboard'><span class='btn-clipboard'>Copy</span></div>");
+            infoPane.find("h4.own").before("<div id='copy-own' class='clipboard-btn-wrapper'><span class='btn-clipboard'>Copy</span></div>");
             addCopy("#copy-own span", () => ownSequences.join("\n"));
         }
         allSequences = multi.getAllSequences(d).sort();
@@ -150,7 +150,7 @@ function constructSearchtree(args) {
             }
             stringBuffer += "</ul>";
             infoPane.append(stringBuffer);
-            infoPane.find("h4.all").before("<div id='copy-all' class='zero-clipboard'><span class='btn-clipboard'>Copy</span></div>");
+            infoPane.find("h4.all").before("<div id='copy-all' class='clipboard-btn-wrapper'><span class='btn-clipboard'>Copy</span></div>");
             addCopy("#copy-all span", () => allSequences.join("\n"));
         }
         return false;
