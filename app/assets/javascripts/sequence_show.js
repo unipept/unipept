@@ -1,5 +1,7 @@
-function init_sequence_show(data) {
+import {logToGoogle, triggerDownloadModal} from "./utils.js";
+import {showInfoModal} from "./modal.js";
 
+function initSequenceShow(data) {
     // set up the fancy tree
     initLineageTree(data.tree);
 
@@ -19,7 +21,7 @@ function init_sequence_show(data) {
     initHelp();
 
 
-    /******************* Functions ***********************/
+    /** ***************** Functions ***********************/
 
     /**
      * Initializes the help popups
@@ -27,7 +29,7 @@ function init_sequence_show(data) {
     function initHelp() {
         // tab help
         $(".nav-tabs li a span.help").click(function (e) {
-            var title,
+            let title,
                 content;
             e.stopPropagation();
             e.preventDefault();
@@ -58,9 +60,9 @@ function init_sequence_show(data) {
 
     function setUpUniprotButtons(entries) {
         $("#open-uniprot").click(function () {
-            var url = "http://www.uniprot.org/uniprot/?query=accession%3A";
+            let url = "http://www.uniprot.org/uniprot/?query=accession%3A";
             url += entries.join("+OR+accession%3A");
-            window.open(url, '_blank');
+            window.open(url, "_blank");
         });
         addCopy($("#clipboard-uniprot").first(), function () {
             return entries.join("\n");
@@ -93,7 +95,7 @@ function init_sequence_show(data) {
 
         function resizeFullScreen() {
             setTimeout(function () {
-                var width = 916,
+                let width = 916,
                     height = 600;
                 if (window.fullScreenApi.isFullScreen()) {
                     width = $(window).width();
@@ -109,41 +111,41 @@ function init_sequence_show(data) {
      * Inits the lineage tree
      */
     function initLineageTree(jsonData) {
-        var margin = {
+        let margin = {
                 top: 5,
                 right: 5,
                 bottom: 5,
-                left: 60
+                left: 60,
             },
             width = 916 - margin.right - margin.left,
             height = 600 - margin.top - margin.bottom;
 
-        var zoomEnd = 0,
+        let zoomEnd = 0,
             i = 0,
             duration = 750,
             root;
 
-        var tree = d3.layout.tree()
+        let tree = d3.layout.tree()
             .nodeSize([2, 105])
             .separation(function (a, b) {
-                var width = (nodeSize(a) + nodeSize(b)),
+                let width = (nodeSize(a) + nodeSize(b)),
                     distance = width / 2 + 4;
                 return (a.parent === b.parent) ? distance : distance + 4;
             });
 
-        var diagonal = d3.svg.diagonal()
+        let diagonal = d3.svg.diagonal()
             .projection(function (d) {
                 return [d.y, d.x];
             });
 
-        var widthScale = d3.scale.linear().range([2, 105]);
+        let widthScale = d3.scale.linear().range([2, 105]);
 
         // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
-        var zoomListener = d3.behavior.zoom()
+        let zoomListener = d3.behavior.zoom()
             .scaleExtent([0.1, 3])
             .on("zoom", zoom);
 
-        var svg = d3.select("#lineageTree").append("svg")
+        let svg = d3.select("#lineageTree").append("svg")
             .attr("version", "1.1")
             .attr("xmlns", "http://www.w3.org/2000/svg")
             .attr("viewBox", "0 0 " + (width + margin.right + margin.left) + " " + (height + margin.top + margin.bottom))
@@ -195,7 +197,7 @@ function init_sequence_show(data) {
                 color(node);
             });
 
-            var LCA;
+            let LCA;
 
             function findLCA(d) {
                 if (d.children && d.children.length === 1) {
@@ -226,9 +228,8 @@ function init_sequence_show(data) {
         d3.select(self.frameElement).style("height", "800px");
 
         function update(source) {
-
             // Compute the new tree layout.
-            var nodes = tree.nodes(root).reverse(),
+            let nodes = tree.nodes(root).reverse(),
                 links = tree.links(nodes);
 
             // Normalize for fixed-depth.
@@ -237,13 +238,13 @@ function init_sequence_show(data) {
             });
 
             // Update the nodes
-            var node = svg.selectAll("g.node")
+            let node = svg.selectAll("g.node")
                 .data(nodes, function (d) {
                     return d.id || (d.id = ++i);
                 });
 
             // Enter any new nodes at the parent's previous position.
-            var nodeEnter = node.enter().append("g")
+            let nodeEnter = node.enter().append("g")
                 .attr("class", "node")
                 .style("cursor", "pointer")
                 .attr("transform", function (d) {
@@ -288,7 +289,7 @@ function init_sequence_show(data) {
                 .style("fill-opacity", 1e-6);
 
             // Transition nodes to their new position.
-            var nodeUpdate = node.transition()
+            let nodeUpdate = node.transition()
                 .duration(duration)
                 .attr("transform", function (d) {
                     return "translate(" + d.y + "," + d.x + ")";
@@ -312,14 +313,13 @@ function init_sequence_show(data) {
                     } else {
                         return "#aaa";
                     }
-
                 });
 
             nodeUpdate.select("text")
                 .style("fill-opacity", 1);
 
             // Transition exiting nodes to the parent's new position.
-            var nodeExit = node.exit().transition()
+            let nodeExit = node.exit().transition()
                 .duration(duration)
                 .attr("transform", function (d) {
                     return "translate(" + source.y + "," + source.x + ")";
@@ -333,7 +333,7 @@ function init_sequence_show(data) {
                 .style("fill-opacity", 1e-6);
 
             // Update the links
-            var link = svg.selectAll("path.link")
+            let link = svg.selectAll("path.link")
                 .data(links, function (d) {
                     return d.target.id;
                 });
@@ -353,13 +353,13 @@ function init_sequence_show(data) {
                 })
                 .style("stroke-width", 1e-6)
                 .attr("d", function (d) {
-                    var o = {
+                    let o = {
                         x: (source.x0 || 0),
-                        y: (source.y0 || 0)
+                        y: (source.y0 || 0),
                     };
                     return diagonal({
                         source: o,
-                        target: o
+                        target: o,
                     });
                 });
 
@@ -387,13 +387,13 @@ function init_sequence_show(data) {
                 .duration(duration)
                 .style("stroke-width", 1e-6)
                 .attr("d", function (d) {
-                    var o = {
+                    let o = {
                         x: source.x,
-                        y: source.y
+                        y: source.y,
                     };
                     return diagonal({
                         source: o,
-                        target: o
+                        target: o,
                     });
                 })
                 .remove();
@@ -412,18 +412,18 @@ function init_sequence_show(data) {
 
         // Expands a node for i levels
         function expand(d, i) {
-            var local_i = i;
-            if (typeof local_i === "undefined") {
-                local_i = 1;
+            let localI = i;
+            if (typeof localI === "undefined") {
+                localI = 1;
             }
-            if (local_i > 0) {
+            if (localI > 0) {
                 if (d._children) {
                     d.children = d._children;
                     d._children = null;
                 }
                 if (d.children) {
                     d.children.forEach(function (c) {
-                        expand(c, local_i - 1);
+                        expand(c, localI - 1);
                     });
                 }
             }
@@ -499,7 +499,7 @@ function init_sequence_show(data) {
 
         // Center a node
         function centerNode(source) {
-            var scale = zoomListener.scale(),
+            let scale = zoomListener.scale(),
                 x = -source.y0,
                 y = -source.x0;
             x = x * scale + width / 8;
@@ -512,3 +512,5 @@ function init_sequence_show(data) {
         }
     }
 }
+
+export {initSequenceShow};

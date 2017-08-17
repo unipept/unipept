@@ -41,7 +41,12 @@ module.exports = {
     new ManifestPlugin({
       publicPath: output.publicPath,
       writeToFileEmit: true
-    })
+    }),
+    // Creates a commons.js with all shared modules
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'commons',
+      minChunks: 2,
+    }),
   ],
 
   resolve: {

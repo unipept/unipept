@@ -1,3 +1,7 @@
+<% content_for :javascripts do %>
+  <%= javascript_pack_tag 'datasets' %>
+<% end %>
+
 <div class="row">
   <div class="col-xs-6 col-xs-offset-3">
     <%= render 'shared/sequence_multi_search' %>

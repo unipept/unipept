@@ -10,10 +10,10 @@
  * @param <Pancore> args.pancore the pancore object
  * @return <GenomeSelector> that The constructed selectionTree object
  */
-var constructGenomeSelector = function constructGenomeSelector(args) {
-    /*************** Private variables ***************/
+function constructGenomeSelector(args) {
+    /** ************* Private variables ***************/
 
-    var that = {},
+    let that = {},
         data = args.data,
         taxa = args.taxa,
         pancore = args.pancore,
@@ -24,23 +24,23 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         currentPage,
         elementsShown = 50,
         SEARCH_VALUES = {
-            type : {attr: "type_strain", value: true, name: "Is a type strain"},
-            notype : {attr: "type_strain", value: false, name: "Is not a type strain"},
-            reference : {attr: "reference_proteome", value: true, name: "Is a reference proteome"},
-            noreference : {attr: "reference_proteome", value: false, name: "Is not a reference proteome"}
+            type: {attr: "type_strain", value: true, name: "Is a type strain"},
+            notype: {attr: "type_strain", value: false, name: "Is not a type strain"},
+            reference: {attr: "reference_proteome", value: true, name: "Is a reference proteome"},
+            noreference: {attr: "reference_proteome", value: false, name: "Is not a reference proteome"},
         },
         classes = [],
         orders = [],
         genera = [],
         species = [];
-    var lists = {
-            "class" : classes,
-            "order" : orders,
-            "genus" : genera,
-            "species" : species
-        };
+    let lists = {
+        "class": classes,
+        "order": orders,
+        "genus": genera,
+        "species": species,
+    };
 
-    /*************** Private methods ***************/
+    /** ************* Private methods ***************/
 
     /**
      * Initialize the genome Selector
@@ -60,8 +60,10 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
      * Prepares the data
      */
     function initData() {
-        var item;
-        data.sort(function (a, b) { return d3.ascending(a.name, b.name); });
+        let item;
+        data.sort(function (a, b) {
+            return d3.ascending(a.name, b.name);
+        });
         for (item in taxa) {
             lists[taxa[item].rank].push(item);
         }
@@ -76,7 +78,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
      * Initializes the typeahead and token stuff
      */
     function initTypeAhead() {
-        var taxaTokens = [],
+        let taxaTokens = [],
             filterTokens = [],
             taxonId,
             filter,
@@ -86,14 +88,14 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             taxaTokens.push({
                 label: taxa[taxonId].name,
                 value: "taxon:" + taxonId,
-                rank: taxa[taxonId].rank
+                rank: taxa[taxonId].rank,
             });
         }
         taxaEngine = new Bloodhound({
             local: taxaTokens,
             limit: 10,
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace("label"),
-            queryTokenizer: Bloodhound.tokenizers.whitespace
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
         });
         taxaEngine.initialize();
 
@@ -102,20 +104,20 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                 label: "is:" + filter,
                 value: "is:" + filter,
                 search: "is:" + filter + " " + filter + " " + SEARCH_VALUES[filter].value,
-                obj: SEARCH_VALUES[filter]
+                obj: SEARCH_VALUES[filter],
             });
         }
         filterTokens.push({
             label: "not:added",
             value: "not:added",
             search: "not:added added",
-            obj: {name: "not yet in analysis"}
+            obj: {name: "not yet in analysis"},
         });
         filterEngine = new Bloodhound({
             local: filterTokens,
             limit: 10,
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace("search"),
-            queryTokenizer: Bloodhound.tokenizers.whitespace
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
         });
         filterEngine.initialize();
 
@@ -126,29 +128,29 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             createTokensOnBlur: true,
             typeahead: [{
                 hint: false,
-                highlight: true
+                highlight: true,
             }, {
-                displayKey: 'label',
+                displayKey: "label",
                 source: filterEngine.ttAdapter(),
                 templates: {
                     header: "<h4 class='dataset-header'>Filters</h4>",
                     suggestion: function (q) {
                         return "<p>" + q.label + " - <i class='small'>" + q.obj.name + "</i></p>";
-                    }
-                }
+                    },
+                },
             }, {
-                displayKey: 'label',
+                displayKey: "label",
                 source: taxaEngine.ttAdapter(),
                 templates: {
                     header: "<h4 class='dataset-header'>Lineage</h4>",
                     suggestion: function (q) {
                         return "<p>" + q.label + " - <i class='small'>" + q.rank + "</i></p>";
-                    }
-                }
-            }]
+                    },
+                },
+            }],
         })
-            .on('tokenfield:createtoken', function (e) {
-                var parts = e.attrs.value.split(":"),
+            .on("tokenfield:createtoken", function (e) {
+                let parts = e.attrs.value.split(":"),
                     taxonId,
                     tokens;
                 // not a special token, yet
@@ -169,9 +171,9 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                 }
                 if (parts.length === 2) {
                     // remove tokens of same kind
-                    tokens = $("#genomeSelectorSearch").tokenfield('getTokens');
+                    tokens = $("#genomeSelectorSearch").tokenfield("getTokens");
                     tokens = tokens.filter(function (token) {
-                        var tokenSplit = token.value.split(":");
+                        let tokenSplit = token.value.split(":");
                         if (parts[0] !== tokenSplit[0]) {
                             return true;
                         }
@@ -183,31 +185,31 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                                 SEARCH_VALUES[tokenSplit[1]].attr !== SEARCH_VALUES[parts[1]].attr;
                         }
                     });
-                    $("#genomeSelectorSearch").tokenfield('setTokens', tokens);
+                    $("#genomeSelectorSearch").tokenfield("setTokens", tokens);
                     if (parts[1] === "any") return false;
                 }
             })
-            .on('tokenfield:createdtoken', function (e) {
-                var parts = e.attrs.value.split(":");
+            .on("tokenfield:createdtoken", function (e) {
+                let parts = e.attrs.value.split(":");
                 if (parts[0] === "taxon") {
-                    $(e.relatedTarget).addClass('token-taxon');
+                    $(e.relatedTarget).addClass("token-taxon");
                 } else if (parts[0] === "is") {
                     if (SEARCH_VALUES[parts[1]]) {
-                        $(e.relatedTarget).addClass('token-filter');
+                        $(e.relatedTarget).addClass("token-filter");
                     } else {
-                        $(e.relatedTarget).addClass('invalid');
+                        $(e.relatedTarget).addClass("invalid");
                     }
                 } else if (parts[0] === "not") {
                     if (parts[1] !== "added") {
-                        $(e.relatedTarget).addClass('invalid');
+                        $(e.relatedTarget).addClass("invalid");
                     }
                 }
                 keyUpped(true);
             })
-            .on('tokenfield:edittoken', function (e) {
+            .on("tokenfield:edittoken", function (e) {
                 e.attrs.value = e.attrs.label;
             })
-            .on('tokenfield:removedtoken', function () {
+            .on("tokenfield:removedtoken", function () {
                 keyUpped(true);
             });
 
@@ -216,13 +218,13 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         });
 
         // chrome makes the input fields a few pixels too winde on initial render
-        if (navigator.userAgent.toLowerCase().indexOf('chrome') > -1) {
+        if (navigator.userAgent.toLowerCase().indexOf("chrome") > -1) {
             $("#genomeSelector .tokenfield").css("width", "333px");
         }
 
         function keyUpped(direct) {
             updateFilters();
-            var list = $("#genomeSelectorSearch").tokenfield('getTokensList');
+            let list = $("#genomeSelectorSearch").tokenfield("getTokensList");
             list += " " + $("#genomeSelectorSearch-tokenfield").val();
             search(list, direct);
         }
@@ -233,11 +235,11 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
      */
     function initSettings() {
         $(".search-settings").popover({
-            html : true,
-            trigger : "manual",
+            html: true,
+            trigger: "manual",
             title: "Filter settings",
             content: createContent,
-            container: "body"
+            container: "body",
         });
 
         // enable settings button
@@ -256,9 +258,8 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
 
         // creates the html content for the popover
         function createContent() {
-            var ranks = ["class", "order", "genus", "species"],
-                content = "<form class='form-horizontal'>",
-                option;
+            let ranks = ["class", "order", "genus", "species"],
+                content = "<form class='form-horizontal'>";
 
             // type strain
             content += "<div class='form-group'>";
@@ -282,7 +283,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
             content += "<div class='form-group'><b class='control-label col-sm-4'>Taxonomy</b></div>";
 
             ranks.forEach(function (rank) {
-                var id = rank + "Id";
+                let id = rank + "Id";
                 content += "<div class='form-group'>";
                 content += "<label for='" + id + "' class='control-label col-sm-4'>" + rank.capitalizeFirstLetter() + "</label>";
                 content += "<div class='col-sm-8'><select class='form-control taxon-select' id='" + id + "' name='" + id + "'>";
@@ -301,13 +302,13 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         function repositionPopover() {
             if (!$popover) return;
 
-            var fullScreen = $(".full-screen-container").hasClass("full-screen");
+            let fullScreen = $(".full-screen-container").hasClass("full-screen");
             if (fullScreen) {
                 $popover.appendTo(".full-screen-container");
             } else {
                 $popover.appendTo("body");
             }
-            var buttonOffset = $(".search-settings").offset(),
+            let buttonOffset = $(".search-settings").offset(),
                 containerOffset = fullScreen ? $(".full-screen-container").offset() : $("body").offset();
             $popover.css("z-index", 10);
             $popover.css("left", buttonOffset.left - containerOffset.left + 45);
@@ -327,22 +328,21 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                         !$popover.hasClass("hide") &&
                         !$popover.get(0).contains(e.target) &&
                         !$(".search-settings").get(0).contains(e.target)) {
-                    $popover.addClass('hide');
+                    $popover.addClass("hide");
                 }
             });
 
             // add event listeners
             $popover.find("select").change(function () {
-                var val = $(this).val();
+                let val = $(this).val();
                 if (val.indexOf("taxon:") === 0 && val !== "taxon:any") {
-                    $("#genomeSelectorSearch").tokenfield('createToken', {
+                    $("#genomeSelectorSearch").tokenfield("createToken", {
                         value: val,
-                        label: taxa[val.split(":")[1]].name
+                        label: taxa[val.split(":")[1]].name,
                     });
                 } else {
-                    $("#genomeSelectorSearch").tokenfield('createToken', val);
+                    $("#genomeSelectorSearch").tokenfield("createToken", val);
                 }
-
             });
             addCheckboxListener("#typeStrain", "is:type");
             addCheckboxListener("#referenceProteome", "is:reference");
@@ -350,14 +350,14 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
 
             function addCheckboxListener(id, filter) {
                 $(id).change(function () {
-                    if ($(this).prop('checked')) {
-                        $("#genomeSelectorSearch").tokenfield('createToken', filter);
+                    if ($(this).prop("checked")) {
+                        $("#genomeSelectorSearch").tokenfield("createToken", filter);
                     } else {
-                        var tokens = $("#genomeSelectorSearch").tokenfield('getTokens');
+                        let tokens = $("#genomeSelectorSearch").tokenfield("getTokens");
                         tokens = tokens.filter(function (token) {
                             return token.value !== filter;
                         });
-                        $("#genomeSelectorSearch").tokenfield('setTokens', tokens);
+                        $("#genomeSelectorSearch").tokenfield("setTokens", tokens);
                     }
                 });
             }
@@ -371,7 +371,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
      */
     function initCheckAll() {
         $("#genomeSelector .check-all").change(function () {
-            $("#genomeSelector .check").prop('checked', this.checked);
+            $("#genomeSelector .check").prop("checked", this.checked);
         });
     }
 
@@ -381,8 +381,8 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
     function initAddAll() {
         $("#genomeSelector .btn-add-all").click(function () {
             // get checked boxes
-            var $boxes = $(".check:checked");
-            var genomes;
+            let $boxes = $(".check:checked");
+            let genomes;
             if ($boxes.length === 0) {
                 $boxes = $(".check");
             }
@@ -418,20 +418,20 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         if ($popover.hasClass("hide")) return;
 
         $popover.find(".taxon-select").val("taxon:any");
-        $("#typeStrain").prop('checked', false);
-        $("#referenceProteome").prop('checked', false);
-        $("#inAnalysis").prop('checked', false);
+        $("#typeStrain").prop("checked", false);
+        $("#referenceProteome").prop("checked", false);
+        $("#inAnalysis").prop("checked", false);
 
-        var tokens = $("#genomeSelectorSearch").tokenfield('getTokens');
+        let tokens = $("#genomeSelectorSearch").tokenfield("getTokens");
         tokens.forEach(function (token) {
-            var parts = token.value.split(":");
+            let parts = token.value.split(":");
             if (parts.length === 2) {
                 if (token.value === "is:type") {
-                    $("#typeStrain").prop('checked', true);
+                    $("#typeStrain").prop("checked", true);
                 } else if (token.value === "is:reference") {
-                    $("#referenceProteome").prop('checked', true);
+                    $("#referenceProteome").prop("checked", true);
                 } else if (token.value === "not:added") {
-                    $("#inAnalysis").prop('checked', true);
+                    $("#inAnalysis").prop("checked", true);
                 } else if (parts[0] === "taxon") {
                     $popover.find("#" + taxa[parts[1]].rank + "Id").val(token.value);
                 }
@@ -446,9 +446,9 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
      * @param <Boolean> direct Whether to search now, or wait 500 ms.
      */
     function search(searchString, direct) {
-        var wait = direct ? 0 : 500;
+        let wait = direct ? 0 : 500;
         delay(function doSearch() {
-            var tokens = searchString.toLowerCase().split(" "),
+            let tokens = searchString.toLowerCase().split(" "),
                 metaTokens = [],
                 textTokens = [],
                 results = data;
@@ -460,9 +460,9 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
                 }
             });
             metaTokens.forEach(function filter(token) {
-                var meta = token.split(":");
+                let meta = token.split(":");
                 if (meta[0] === "taxon") {
-                    var id = +(meta[1]);
+                    let id = +(meta[1]);
                     results = results.filter(function (element) {
                         return element[taxa[id].rank + "_id"] === id;
                     });
@@ -490,18 +490,18 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
     /**
      * Draws a table based on the results array
      */
-    function drawList(results, page) {
-        var $resultTable = $("#genomeSelector-results"),
+    function drawList(results, p) {
+        let $resultTable = $("#genomeSelector-results"),
             resultString = "";
 
         currentResults = results;
-        page = page || 0;
+        let page = p || 0;
         currentPage = page;
 
-        var firstElement = page * elementsShown,
+        let firstElement = page * elementsShown,
             lastElement = Math.min((page + 1) * elementsShown, results.length);
 
-        var selectedResults = results.slice(firstElement, lastElement);
+        let selectedResults = results.slice(firstElement, lastElement);
         if (selectedResults.length === 0) {
             $resultTable.find(".result-count").text("Showing 0 results");
         } else {
@@ -536,31 +536,31 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
 
         // hook up plus buttons
         $resultTable.find(".btn-add").click(function () {
-            var genome = getGenome($(this).closest("tr"));
+            let genome = getGenome($(this).closest("tr"));
             pancore.addGenomes([genome]);
             return false;
         });
 
         // hook up lineage links
         $resultTable.find(".lineage-link").click(function () {
-            var id = $(this).data("id");
-            $("#genomeSelectorSearch").tokenfield('createToken', {
+            let id = $(this).data("id");
+            $("#genomeSelectorSearch").tokenfield("createToken", {
                 value: "taxon:" + id,
                 label: taxa[id].name,
-                rank: taxa[id].rank
+                rank: taxa[id].rank,
             });
             return false;
         });
 
         // hook up badges
         $resultTable.find(".strain-badge").click(function () {
-            $("#genomeSelectorSearch").tokenfield('createToken', {
-                value: "is:type"
+            $("#genomeSelectorSearch").tokenfield("createToken", {
+                value: "is:type",
             });
         });
         $resultTable.find(".reference-badge").click(function () {
-            $("#genomeSelectorSearch").tokenfield('createToken', {
-                value: "is:reference"
+            $("#genomeSelectorSearch").tokenfield("createToken", {
+                value: "is:reference",
             });
         });
 
@@ -571,8 +571,8 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
 
         // make rows clickable
         $resultTable.find(".check").closest("tr").click(function () {
-            var $checkbox = $(this).find(".check");
-            $checkbox.prop('checked', !$checkbox.prop('checked'));
+            let $checkbox = $(this).find(".check");
+            $checkbox.prop("checked", !$checkbox.prop("checked"));
             return false;
         });
 
@@ -589,8 +589,8 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
      * @param <jQuery> $row jQuery object of the row to convert
      */
     function getGenome($row) {
-        var id = $row.data("id");
-        return {name : pancore.getGenome(id).name, id : id};
+        let id = $row.data("id");
+        return {name: pancore.getGenome(id).name, id: id};
     }
 
     /**
@@ -600,7 +600,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
      * @param <Organism> organism The organism to create the lineage for
      */
     function getLineage(organism) {
-        var ranks = ["class_id", "order_id", "genus_id", "species_id"],
+        let ranks = ["class_id", "order_id", "genus_id", "species_id"],
             result = [];
         ranks.forEach(function (rank) {
             if (organism[rank] !== null && organism[rank] > 0) {
@@ -610,7 +610,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         return result.join(" / ");
 
         function createLink(taxonId) {
-            var name = taxa[taxonId].name;
+            let name = taxa[taxonId].name;
             return "<a href='#' class='lineage-link' title=\"Show all " + name + "\" data-id='" + taxonId + "'>" + name + "</a>";
         }
     }
@@ -622,7 +622,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
      * @param <String> name The name to search for
      */
     function getTaxonId(name) {
-        var id;
+        let id;
         for (id in taxa) {
             if (taxa[id].name.toLowerCase() === name.toLowerCase().trim() &&
                     taxa[id].rank !== "genus") {
@@ -632,7 +632,7 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
         return -1;
     }
 
-    /*************** Public methods ***************/
+    /** ************* Public methods ***************/
 
     /**
      * Handles the transition from and to fullscreen mode
@@ -660,8 +660,8 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
      */
     that.demo = function demo() {
         addAll = true;
-        $("#genomeSelectorSearch").tokenfield('setTokens', [
-            {"label":"Lactococcus lactis","value":"taxon:1358"}
+        $("#genomeSelectorSearch").tokenfield("setTokens", [
+            {"label": "Lactococcus lactis", "value": "taxon:1358"},
         ]);
     };
 
@@ -670,4 +670,6 @@ var constructGenomeSelector = function constructGenomeSelector(args) {
     init();
 
     return that;
-};
+}
+
+export {constructGenomeSelector};

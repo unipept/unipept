@@ -1,6 +1,6 @@
 function showInfoModal(title, content, options) {
-    var options = options || {};
-    if (options.wide) {
+    let opts = options || {};
+    if (opts.wide) {
         $("#info-modal .modal-dialog").addClass("modal-lg");
     }
     $("#info-modal .modal-body")
@@ -9,3 +9,5 @@ function showInfoModal(title, content, options) {
         .append("<p>" + content + "</p>");
     $("#info-modal").modal("show");
 }
+
+export {showInfoModal};

@@ -1,3 +1,9 @@
+<% content_for :javascripts do %>
+  <%= javascript_pack_tag 'd3' %>
+  <%= javascript_pack_tag 'multisearch' %>
+<% end %>
+
+
 <h1><%= @title %></h1>
 <div class="row">
   <div class="col-xs-9">
@@ -139,7 +145,7 @@
     var missed = <%= raw(@json_missed)%>
 
     $(function () {
-        constructMultisearch({
+        initMultisearch({
             data : data,
             equateIL : <%=@equate_il %>,
             missed : missed,

@@ -1,3 +1,8 @@
+<% content_for :javascripts do %>
+  <%= javascript_pack_tag 'd3' %>
+  <%= javascript_pack_tag 'sequence_show' %>
+<% end %>
+
 <h1><%= @title %></h1>
 <% if @lineages.empty? %>
   <p class="lead">No results were found for <%= @original_sequence %>.</p>
@@ -97,7 +102,7 @@
   </div>
   <script type="text/javascript">
     $(function () {
-      init_sequence_show({
+      initSequenceShow({
         peptide: "<%= @original_sequence %>",
         tree: <%= raw(@root) %>,
         uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>

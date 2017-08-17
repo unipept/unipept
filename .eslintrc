@@ -1,0 +1,39 @@
+{
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module"
+    },
+    "extends": ["eslint:recommended", "google"],
+    //"plugins": ["import"],
+    "rules": {
+        "arrow-parens": ["error", "as-needed"],
+        "no-use-before-define": "off",
+        "no-plusplus": "off",
+        "require-jsdoc": "off",
+        "valid-jsdoc": "off",
+        "one-var": "off",
+        "no-invalid-this": "off",
+        "space-before-function-paren": ["error", {"anonymous": "always", "named": "never", "asyncArrow": "always"}],
+        "no-param-reassign": ["error", { "props": false }],
+        "indent": ["error", 4],
+        "max-len": "off",
+        "quotes": ["error", "double"],
+        "new-cap": "off",
+        "no-undef": "error",
+    },
+    "env": {
+        "browser": true,
+        "es6": true
+    },
+    "globals": {
+        "d3": false,
+        "$": false,
+        "html2canvas": false,
+        "_gaq": false,
+        "addCopy": false,
+        "fullScreenApi": false,
+        "delay": false,
+        "Bloodhound": false,
+        "Newick": false,
+    }
+}

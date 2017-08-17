@@ -8,27 +8,30 @@
  *       shown. Default is false.
  * @return <Notification> $notification
  */
-function showNotification(content, properties) {
-    var properties = properties || {}
-    var autoHide = properties.autoHide === undefined ? true : properties.autoHide;
-    var loading = properties.loading === undefined ? false : properties.loading;
+function showNotification(content, properties = {}) {
+    const defaults = {
+        autoHide: true,
+        loading: false,
+    };
 
-    var $notification = getNotificationHTML(content);
+    let props = Object.assign({}, defaults, properties);
+    let $notification = getNotificationHTML(content);
+
     $(".notifications").prepend($notification);
 
-    if (autoHide) {
+    if (props.autoHide) {
         setTimeout(hide, 3000);
     }
-    if (loading) {
+    if (props.loading) {
         $notification.append("<div class='spinner'></div>");
     }
 
-    requestAnimFrame(function () {
+    requestAnimationFrame(function () {
         $notification.removeClass("notification-show");
     });
 
     return {
-        hide: hide
+        hide: hide,
     };
 
     function hide(delayed) {
@@ -42,3 +45,5 @@ function showNotification(content, properties) {
         return $("<br><div class='notification notification-show'>" + content + "</div>");
     }
 }
+
+export {showNotification};
