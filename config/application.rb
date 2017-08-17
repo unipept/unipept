@@ -38,7 +38,7 @@ module UnipeptWeb
 
     config.versions = {
       unipept: '3.2',
-      gem: '1.1.0',
+      gem: '1.3.0',
       uniprot: '2017.05'
     }
 
