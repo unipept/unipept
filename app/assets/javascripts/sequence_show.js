@@ -1,4 +1,4 @@
-import {logToGoogle, triggerDownloadModal} from "./utils.js";
+import {addCopy, logToGoogle, triggerDownloadModal} from "./utils.js";
 import {showInfoModal} from "./modal.js";
 
 function initSequenceShow(data) {
@@ -64,9 +64,7 @@ function initSequenceShow(data) {
             url += entries.join("+OR+accession%3A");
             window.open(url, "_blank");
         });
-        addCopy($("#clipboard-uniprot").first(), function () {
-            return entries.join("\n");
-        }, "Copy UniProt IDs to clipboard");
+        addCopy("#clipboard-uniprot", () => entries.join("\n"), "Copy UniProt IDs to clipboard");
     }
 
     /**

@@ -25,9 +25,6 @@ gem 'devise', '>= 3.5'
 gem 'devise_cas_authenticatable'
 gem 'responders', '>= 2.0'
 
-# zeroclipboard
-gem 'zeroclipboard-rails'
-
 # needed for asset creation
 gem 'therubyracer'
 

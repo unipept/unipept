@@ -30,7 +30,6 @@
         "$": false,
         "html2canvas": false,
         "_gaq": false,
-        "addCopy": false,
         "fullScreenApi": false,
         "delay": false,
         "Bloodhound": false,

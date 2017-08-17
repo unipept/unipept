@@ -1,4 +1,4 @@
-import {highlight, logToGoogle} from "../utils.js";
+import {addCopy, highlight, logToGoogle} from "../utils.js";
 
 /**
  * Constructs a Searchtree object
@@ -140,9 +140,7 @@ function constructSearchtree(args) {
             stringBuffer += "</ul>";
             infoPane.append(stringBuffer);
             infoPane.find("h4.own").before("<div id='copy-own' class='zero-clipboard'><span class='btn-clipboard'>Copy</span></div>");
-            addCopy($("#copy-own span").first(), function () {
-                return ownSequences.join("\n");
-            });
+            addCopy("#copy-own span", () => ownSequences.join("\n"));
         }
         allSequences = multi.getAllSequences(d).sort();
         if (allSequences && allSequences.length > 0 && allSequences.length !== (ownSequences ? ownSequences.length : 0)) {
@@ -153,9 +151,7 @@ function constructSearchtree(args) {
             stringBuffer += "</ul>";
             infoPane.append(stringBuffer);
             infoPane.find("h4.all").before("<div id='copy-all' class='zero-clipboard'><span class='btn-clipboard'>Copy</span></div>");
-            addCopy($("#copy-all span").first(), function () {
-                return allSequences.join("\n");
-            });
+            addCopy("#copy-all span", () => allSequences.join("\n"));
         }
         return false;
     }
