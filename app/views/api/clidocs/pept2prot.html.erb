@@ -65,11 +65,11 @@ ISVAQGASK,A0A087WXI2,IgGFc-binding protein,9606</pre>
       <div class='card-supporting-text'>
         <p>
           The <code>unipept pept2prot</code> command outputs all UniProt entries that contain the given (tryptic) input peptides. By default, for each of the matching UniProt entries, the accession number, the name of the protein and the <span class='initialism'>NCBI</span> taxon id are returned. By using the <a href='#param-all'><samp>--all</samp> parameter</a>, this can be supplemented with the name of the associated taxon and several cross referenes such as the the associated EC numbers and GO terms. Consult the <a href='<%= api_apidocs_pept2prot_path %>#response' target='_blank'><span class="initialism">API</span> documentation</a> for a detailed list of output fields. A selection of output fields can be specified with the <a href='#param-select'><samp>--select</samp> parameter</a>. By default, output is generated in csv format. By using the <a href='#param-format'><samp>--format</samp> parameter</a>, the format can be changed into json or xml. The output can be written to a file or to <i>standard output</i>.
-    </p>
+        </p>
         <h4>File output</h4>
         <p>
           Use the <a href='#param-input'><samp>--output</samp> parameter</a> to specify an output file. If the file aready exists, the output will be appended to the end of the file.
-    </p>
+        </p>
         <pre>
 <b>$</b> unipept pept2prot --output output.txt MDGTEYIIVK ISVAQGASK
 <b>$</b> cat output.txt
@@ -80,7 +80,7 @@ ISVAQGASK,A0A087WXI2,IgGFc-binding protein,9606</pre>
         <h4>Standard output</h4>
         <p>
           If no output file is specified, <code>unipept pept2prot</code> will write its output to <i>standard output</i>.
-    </p>
+        </p>
         <h5>Example</h5>
         <pre>
 <b>$</b> unipept pept2prot MDGTEYIIVK ISVAQGASK
@@ -212,6 +212,33 @@ ISVAQGASK,A0A087WXI2,IgGFc-binding protein,Homo sapiens,</pre>
         <p>
           This flag displays the help.
     </p>
+      </div>
+    </div>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='meganize'>Meganize</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>
+          The <code>unipept pept2prot</code> command can be used in combination with Megan, for example to perform a functional analysis of the sample. This requires using the <code>--meganize</code> option that was added in version 1.2.0.
+        </p>
+        <h5>Example</h5>
+        <pre>
+<b>$</b> unipept pept2prot <b>--meganize</b> MDGTEYIIVK ISVAQGASK
+MDGTEYIIVK	ref|WP_008705701.1|	100	10	0	0	0	10	0	10	1e-100	100
+ISVAQGASK	ref|NP_003881.2 XP_011547112.1 XP_011547113.1|	100	10	0	0	0	10	0	10	1e-100	100</pre>
+        <p>
+          The generated output can be saved to a file and imported into Megan using the following settings:
+          <ul>
+            <li>Import from blast</li>
+            <li>Select the file with the <code>unipept pept2prot --meganize</code> output</li>
+            <li>Set format to blastTab and mode to blastp</li>
+            <li>Remove the fasta mapping that was automatically added</li>
+            <li>Enable the tabs you want (taxonomy/interpro2go/...), but always select the "use accession" option for this</li>
+            <li>Go back to the first tab and make sure is says blasttab and blastp, because sometimes it changes back when you switch tabs</li>
+            <li>Click apply</li>
+          </ul>
+        </p>
       </div>
     </div>
   </div>
