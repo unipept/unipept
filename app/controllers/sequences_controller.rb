@@ -136,7 +136,7 @@ class SequencesController < ApplicationController
 
   # redirects to show
   def search
-    if params[:q].empty?
+    if params[:q].blank?
       flash[:error] = 'Your query was empty, please try again.'
       redirect_to search_single_path
     else
