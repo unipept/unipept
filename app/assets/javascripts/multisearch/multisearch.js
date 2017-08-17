@@ -1,5 +1,5 @@
 import {showNotification} from "../notifications.js";
-import {logToGoogle, showError, triggerDownloadModal} from "../utils.js";
+import {addCopy, logToGoogle, showError, triggerDownloadModal} from "../utils.js";
 
 import {constructSearchtree} from "./searchtree.js";
 import {constructSunburst} from "./sunburst.js";
@@ -50,9 +50,7 @@ function initMultisearch(args) {
         // set up missed
         addMissed();
         // copy to clipboard for missed peptides
-        addCopy($("#copy-missed span").first(), function () {
-            return $(".mismatches").text();
-        });
+        addCopy("#copy-missed span", () => $(".mismatches").text());
     }
 
     function initVisualisations() {

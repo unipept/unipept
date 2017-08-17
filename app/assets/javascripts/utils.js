@@ -1,3 +1,28 @@
+import Clipboard from "clipboard";
+
+function addCopy(selector, textFunction, tooltip = "Copy to clipboard") {
+    const $el = $(selector).data("placement", "top")
+        .attr("title", tooltip)
+        .tooltip();
+    const clip = new Clipboard(selector, {
+        text: textFunction,
+    });
+    clip.on("success", e => {
+        $el.attr("title", "Copied!")
+            .tooltip("fixTitle")
+            .tooltip("show")
+            .attr("title", tooltip)
+            .tooltip("fixTitle");
+    });
+    clip.on("error", e => {
+        $el.attr("title", "Sorry, something went wrong")
+            .tooltip("fixTitle")
+            .tooltip("show")
+            .attr("title", tooltip)
+            .tooltip("fixTitle");
+    });
+}
+
 /*
  * Returns the brightness of an rgb-color
  * from: http:// www.w3.org/WAI/ER/WD-AERT/#color-contrast
@@ -247,4 +272,4 @@ function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
     }
 }
 
-export {brightness, downloadDataByForm, downloadDataByLink, get, getJSON, getReadableColorFor, highlight, iteratorToArray, logErrorToGoogle, logToGoogle, showError, showInfo, stringHash, triggerDownloadModal};
+export {addCopy, brightness, downloadDataByForm, downloadDataByLink, get, getJSON, getReadableColorFor, highlight, iteratorToArray, logErrorToGoogle, logToGoogle, showError, showInfo, stringHash, triggerDownloadModal};
