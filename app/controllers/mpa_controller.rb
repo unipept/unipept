@@ -1,4 +1,6 @@
 class MpaController < ApplicationController
+  before_action :default_format_json, except: ['analyze']
+
   def analyze
     @header_class = 'MPA'
     @peptides = (params[:peptides] || '').lines.to_json
@@ -6,10 +8,15 @@ class MpaController < ApplicationController
 
   def pept2lca
     peptides = params[:peptides] || []
-    equate_il = true # TODO: change me
-    results = Sequence.includes(Sequence.lca_t_relation_name(equate_il) => { lineage: Lineage::ORDER_T }).where(sequence: peptides)
-
-    render json: results
+    @equate_il = true # TODO: change me
+    # for now without names
+    # @peptides = Sequence.includes(Sequence.lca_t_relation_name(@equate_il) => { lineage: Lineage::ORDER_T }).where(sequence: peptides)
+    @peptides = Sequence.includes(Sequence.lca_t_relation_name(@equate_il) => :lineage).where(sequence: peptides)
   end
 
+  private
+
+  def default_format_json
+    request.format = 'json'
+  end
 end

@@ -128,6 +128,9 @@ GEM
       guard-compat (~> 1.2)
       minitest (>= 3.0)
     i18n (0.8.6)
+    jbuilder (2.7.0)
+      activesupport (>= 4.2.0)
+      multi_json (>= 1.2)
     json (2.1.0)
     less (2.6.0)
       commonjs (~> 0.2.7)
@@ -312,8 +315,10 @@ DEPENDENCIES
   foreman
   guard
   guard-minitest
+  jbuilder
   less-rails
   listen (>= 3.0.5, < 3.2)
+  multi_json
   mysql2
   oj (= 2.17.5)
   poltergeist

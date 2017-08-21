@@ -1,6 +1,7 @@
 require_relative 'boot'
 
 require 'rails/all'
+require 'multi_json'
 
 if defined?(Bundler)
   # Require the gems listed in Gemfile, including any gems
@@ -43,5 +44,7 @@ module UnipeptWeb
     }
 
     config.api_host = 'api.unipept.ugent.be'
+
+    MultiJson.use :Oj
   end
 end
