@@ -25,7 +25,10 @@ UnipeptWeb::Application.routes.draw do
   get '/search/sequence', :to => 'sequences#search', :as => 'sequence_search'
   post '/search/sequences', :to => 'sequences#multi_search', :as => 'sequence_multi_search'
 
-  match '/mpa', via: [:get, :post], :to => 'mpa#analyze', :as => 'mpa'
+  scope :mpa, as: 'mpa' do
+    match "/",        via: [:get, :post], :to => "mpa#analyze"
+    match "pept2lca", via: [:get, :post], :to => "mpa#pept2lca"
+  end
 
   get '/sequences/:id/:equate_il', :to => 'sequences#show', :as => 'sequence_show'
   get '/search/single', :to => 'search#single'
