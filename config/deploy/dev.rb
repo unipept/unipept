@@ -6,4 +6,17 @@ server 'morty.ugent.be', user: 'unipept', roles: %i[web app], ssh_options: {
 }
 
 set :branch, 'develop'
-set :rails_env, :development
+set :rails_env, :production
+
+namespace :deploy do
+  before :publishing, :asset_stuff do
+    on roles :all do
+      within release_path do
+        with rails_env: fetch(:rails_env) do
+          execute :rake, 'assets:precompile'
+          execute :rake, 'assets:nodigest'
+        end
+      end
+    end
+  end
+end

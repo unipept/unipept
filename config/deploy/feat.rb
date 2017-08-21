@@ -8,7 +8,6 @@ server 'morty.ugent.be', user: 'unipept', roles: %i[web app], ssh_options: {
 set :branch, 'feature/es6'
 set :rails_env, :production
 
-# only needed in production
 namespace :deploy do
   before :publishing, :asset_stuff do
     on roles :all do
