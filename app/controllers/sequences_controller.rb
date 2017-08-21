@@ -73,7 +73,7 @@ class SequencesController < ApplicationController
         t = lineage.next_t
         next if t.nil?
         l << t.name # add the taxon name to the lineage
-        node = Node.find_by_id(t.id, @root)
+        node = Node.find_by_id(t.id, @root) # rubocop:disable Rails/DynamicFindBy
         if node.nil? # if the node isn't create yet
           node = Node.new(t.id, t.name, @root, t.rank)
           node.data['count'] = lineage.hits
@@ -275,7 +275,7 @@ class SequencesController < ApplicationController
       while !lca_l.nil? && lca_l.has_next? # process every rank in lineage
         t = lca_l.next_t
         next if t.nil?
-        node = Node.find_by_id(t.id, root)
+        node = Node.find_by_id(t.id, root) # rubocop:disable Rails/DynamicFindBy
         if node.nil?
           node = Node.new(t.id, t.name, root, t.rank)
           last_node_loop = last_node_loop.add_child(node)
@@ -283,7 +283,7 @@ class SequencesController < ApplicationController
           last_node_loop = node
         end
       end
-      node = taxon.id == 1 ? root : Node.find_by_id(taxon.id, root)
+      node = taxon.id == 1 ? root : Node.find_by_id(taxon.id, root) # rubocop:disable Rails/DynamicFindBy
       node&.set_sequences(seqs)
     end
 
