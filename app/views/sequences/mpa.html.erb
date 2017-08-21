@@ -1,0 +1,11 @@
+<% content_for :javascripts do %>
+  <%= javascript_pack_tag 'mpa' %>
+<% end %>
+
+<script type="text/javascript">
+  var peptides = <%= raw(@peptides) %>;
+
+  $(function () {
+      new MPA(peptides);
+  });
+</script>

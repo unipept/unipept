@@ -146,6 +146,7 @@ class SequencesController < ApplicationController
 
   def mpa
     @header_class = 'MPA'
+    @peptides = (params[:peptides] || '').lines.to_json
   end
 
   # processes a list of sequences
