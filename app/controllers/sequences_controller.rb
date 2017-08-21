@@ -144,11 +144,6 @@ class SequencesController < ApplicationController
     end
   end
 
-  def mpa
-    @header_class = 'MPA'
-    @peptides = (params[:peptides] || '').lines.to_json
-  end
-
   # processes a list of sequences
   def multi_search
     @header_class = 'MPA'
