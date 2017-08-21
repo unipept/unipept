@@ -144,6 +144,10 @@ class SequencesController < ApplicationController
     end
   end
 
+  def mpa
+    @header_class = 'MPA'
+  end
+
   # processes a list of sequences
   def multi_search
     @header_class = 'MPA'
