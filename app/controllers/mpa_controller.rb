@@ -16,6 +16,11 @@ class MpaController < ApplicationController
     @peptides = Sequence.includes(Sequence.lca_t_relation_name(@equate_il) => :lineage).where(sequence: peptides)
   end
 
+  def taxa
+    taxids = params[:taxids] || []
+    @taxa = Taxon.where(id: taxids)
+  end
+
   private
 
   def default_format_json

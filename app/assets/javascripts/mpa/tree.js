@@ -16,6 +16,16 @@ class Tree {
         this.taxa.push(child.id);
         node.addChild(child);
     }
+
+    getTaxa() {
+        return this.taxa;
+    }
+
+    setTaxonNames(taxa) {
+        for (let taxon of taxa) {
+            this.nodes.get(taxon.id).name = taxon.name;
+        }
+    }
 }
 
 export {Tree};

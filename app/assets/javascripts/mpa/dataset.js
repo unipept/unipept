@@ -2,7 +2,8 @@ import {Node} from "./node.js";
 import {Tree} from "./tree.js";
 
 const BATCH_SIZE = 1,
-    PEPT2LCA_URL = "/mpa/pept2lca";
+    PEPT2LCA_URL = "/mpa/pept2lca",
+    TAXA_URL = "/mpa/taxa";
 
 class Dataset {
     constructor(peptides = []) {
@@ -21,7 +22,14 @@ class Dataset {
                 return Dataset.postJSON(PEPT2LCA_URL, data).then(res => result = result.concat(res.peptides));
             });
         }, Promise.resolve())
-            .then(() => this.aggregate(result));
+            .then(() => {
+                const tree = this.aggregate(result);
+                return Dataset.getTaxonInfo(tree.getTaxa())
+                    .then(taxonInfo => {
+                        tree.setTaxonNames(taxonInfo);
+                    })
+                    .then(() => tree);
+            });
     }
 
     aggregate(peptides) {
@@ -41,6 +49,10 @@ class Dataset {
             currentNode.addValue(peptide);
         }
         return tree;
+    }
+
+    static getTaxonInfo(taxids) {
+        return Dataset.postJSON(TAXA_URL, JSON.stringify({taxids: taxids}));
     }
 
     static cleanPeptides(peptides) {
