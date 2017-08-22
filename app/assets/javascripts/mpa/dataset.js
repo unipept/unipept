@@ -1,4 +1,5 @@
 import {Node} from "./node.js";
+import {Tree} from "./tree.js";
 
 const BATCH_SIZE = 1,
     PEPT2LCA_URL = "/mpa/pept2lca";
@@ -24,22 +25,22 @@ class Dataset {
     }
 
     aggregate(peptides) {
-        const root = new Node(-1, "root");
+        const tree = new Tree();
         for (let peptide of peptides) {
-            let currentNode = root;
+            let currentNode = tree.getRoot();
             for (let taxid of peptide.lineage) {
                 if (taxid !== null) {
                     let newNode = currentNode.getChild(taxid);
                     if (newNode === null) {
                         newNode = new Node(taxid);
-                        currentNode.addChild(newNode);
+                        tree.addChild(currentNode, newNode);
                     }
                     currentNode = newNode;
                 }
             }
             currentNode.addValue(peptide);
         }
-        return root;
+        return tree;
     }
 
     static cleanPeptides(peptides) {
