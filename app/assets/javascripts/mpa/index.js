@@ -9,7 +9,7 @@ class MPA {
     addDataset(peptides) {
         let dataset = new Dataset(peptides);
         this.datasets.push(dataset);
-        dataset.process();
+        dataset.process().then(root => console.log(root));
     }
 }
 
