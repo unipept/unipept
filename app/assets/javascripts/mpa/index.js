@@ -6,10 +6,11 @@ class MPA {
         this.addDataset(peptides);
     }
 
-    addDataset(peptides) {
+    async addDataset(peptides) {
         let dataset = new Dataset(peptides);
         this.datasets.push(dataset);
-        dataset.process().then(root => console.log(root));
+        let tree = await dataset.process();
+        console.log(tree);
     }
 }
 

@@ -11,25 +11,19 @@ class Dataset {
         this.length = this.originalPeptides.length;
     }
 
-    process() {
-        let result = [];
-        const startIds = Array.from({length: Math.ceil(this.length/BATCH_SIZE)}, (v, k) => k * BATCH_SIZE);
-        return startIds.reduce((sequence, startId) => {
-            return sequence.then(() => {
-                const data = JSON.stringify({
-                    peptides: this.originalPeptides.slice(startId, startId + BATCH_SIZE),
-                });
-                return Dataset.postJSON(PEPT2LCA_URL, data).then(res => result = result.concat(res.peptides));
+    async process() {
+        const peptides = [];
+        for (let i = 0; i < this.length; i += BATCH_SIZE) {
+            const data = JSON.stringify({
+                peptides: this.originalPeptides.slice(i, i + BATCH_SIZE),
             });
-        }, Promise.resolve())
-            .then(() => {
-                const tree = this.aggregate(result);
-                return Dataset.getTaxonInfo(tree.getTaxa())
-                    .then(taxonInfo => {
-                        tree.setTaxonNames(taxonInfo);
-                    })
-                    .then(() => tree);
-            });
+            const result = await Dataset.postJSON(PEPT2LCA_URL, data);
+            peptides.push(...result.peptides);
+        }
+        const tree = this.aggregate(peptides);
+        const taxonInfo = await Dataset.getTaxonInfo(tree.getTaxa());
+        tree.setTaxonNames(taxonInfo);
+        return tree;
     }
 
     aggregate(peptides) {
