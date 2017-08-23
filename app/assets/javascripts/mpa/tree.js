@@ -26,6 +26,10 @@ class Tree {
             this.nodes.get(taxon.id).name = taxon.name;
         }
     }
+
+    setCounts() {
+        this.root.getCounts();
+    }
 }
 
 export {Tree};

@@ -21,8 +21,9 @@ class Dataset {
             peptides.push(...result.peptides);
         }
         const tree = this.aggregate(peptides);
-        const taxonInfo = await Dataset.getTaxonInfo(tree.getTaxa());
-        tree.setTaxonNames(taxonInfo);
+        const taxonInfo = Dataset.getTaxonInfo(tree.getTaxa());
+        tree.setCounts();
+        tree.setTaxonNames(await taxonInfo);
         return tree;
     }
 

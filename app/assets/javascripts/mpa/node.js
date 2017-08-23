@@ -5,6 +5,9 @@ class Node {
         this.name = name;
         this.children = [];
         this.values = [];
+        this.data = {
+            self_count: 0,
+        };
     }
 
     getChild(taxId) {
@@ -26,6 +29,17 @@ class Node {
 
     addValue(peptide) {
         this.values.push(peptide);
+        this.data.self_count = this.values.length;
+    }
+
+    getCounts() {
+        if (this.data.count === undefined) {
+            this.data.count = this.data.self_count;
+            if (this.getChildCount() !== 0) {
+                this.data.count += this.children.reduce((sum, c) => sum + c.getCounts(), 0);
+            }
+        }
+        return this.data.count;
     }
 }
 
