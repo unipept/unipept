@@ -9,10 +9,12 @@ class MPA {
     }
 
     async addDataset(peptides) {
+        this.enableProgressBar(true);
         let dataset = new Dataset(peptides);
         this.datasets.push(dataset);
         let tree = await dataset.process();
         $("#treeview").treeview(tree.getRoot());
+        this.enableProgressBar(false);
         return dataset;
     }
 
@@ -21,6 +23,14 @@ class MPA {
         $("#il").prop("checked", il);
         $("#dupes").prop("checked", dupes);
         $("#missed").prop("checked", missed);
+    }
+
+    enableProgressBar(enable = true) {
+        if (enable) {
+            $("#progress-analysis").css("visibility", "visible");
+        } else {
+            $("#progress-analysis").css("visibility", "hidden");
+        }
     }
 }
 
