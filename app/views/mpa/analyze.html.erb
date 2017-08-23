@@ -41,8 +41,11 @@
 
 <script type="text/javascript">
   var peptides = <%= raw(@peptides) %>;
+  var il = <%= @il %>;
+  var dupes = <%= @dupes %>;
+  var missed = <%= @missed %>;
 
   $(function () {
-      new MPA(peptides);
+      new MPA(peptides, il, dupes, missed);
   });
 </script>

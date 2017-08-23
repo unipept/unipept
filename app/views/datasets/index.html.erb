@@ -20,8 +20,8 @@
         <div class='card-supporting-text'>
           <%= form_tag(:mpa, :method => "post") do %>
             <div id="search_elements" class='form-group'>
-              <label for="peptides">Peptide list</label>
-              <%= text_area_tag(:peptides, nil, :rows => 7, :spellcheck => "false", :class => "form-control", autofocus: "true") %>
+              <label for="qs">Peptide list</label>
+              <%= text_area_tag(:qs, nil, :rows => 7, :spellcheck => "false", :class => "form-control", autofocus: "true") %>
             </div>
             <div class="checkbox">
               <%= label_tag(:il, check_box_tag(:il, 1, true) + " Equate I and L", title: "Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries.", class: 'js-has-hover-tooltip') %>

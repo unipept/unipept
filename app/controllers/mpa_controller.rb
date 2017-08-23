@@ -4,14 +4,15 @@ class MpaController < ApplicationController
 
   def analyze
     @header_class = 'MPA'
-    @peptides = (params[:peptides] || '').lines.map(&:strip).to_json
+    @peptides = (params[:qs] || '').lines.map(&:strip).to_json
+    @il = params[:il].present?
+    @dupes = params[:dupes].present?
+    @missed = params[:missed].present?
   end
 
   def pept2lca
     peptides = params[:peptides] || []
     @equate_il = true # TODO: change me
-    # for now without names
-    # @peptides = Sequence.includes(Sequence.lca_t_relation_name(@equate_il) => { lineage: Lineage::ORDER_T }).where(sequence: peptides)
     @peptides = Sequence.includes(Sequence.lca_t_relation_name(@equate_il) => :lineage).where(sequence: peptides).where.not(Sequence.lca_t_relation_name(@equate_il) => nil)
   end
 
