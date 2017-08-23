@@ -4,8 +4,8 @@
 set -o pipefail -e
 exec 3>&1
 
-classes="ftp://ftp.ebi.ac.uk/pub/databases/enzyme/enzclass.txt"
-numbers="ftp://ftp.ebi.ac.uk/pub/databases/enzyme/enzyme.dat"
+classes="http://ftp.ebi.ac.uk/pub/databases/enzyme/enzclass.txt"
+numbers="http://ftp.ebi.ac.uk/pub/databases/enzyme/enzyme.dat"
 
 # TODO remove dot at end of description
 lines="$(wget -q "$classes" -O -       \
