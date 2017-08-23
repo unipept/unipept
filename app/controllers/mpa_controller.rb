@@ -4,8 +4,7 @@ class MpaController < ApplicationController
 
   def analyze
     @header_class = 'MPA'
-    #@peptides = (params[:peptides] || '').lines.to_json TODO
-    @peptides = ["aalter", "ENDLVVK", "AAAADLAPLPR"].to_json
+    @peptides = (params[:peptides] || '').lines.map(&:strip).to_json
   end
 
   def pept2lca
@@ -13,7 +12,7 @@ class MpaController < ApplicationController
     @equate_il = true # TODO: change me
     # for now without names
     # @peptides = Sequence.includes(Sequence.lca_t_relation_name(@equate_il) => { lineage: Lineage::ORDER_T }).where(sequence: peptides)
-    @peptides = Sequence.includes(Sequence.lca_t_relation_name(@equate_il) => :lineage).where(sequence: peptides)
+    @peptides = Sequence.includes(Sequence.lca_t_relation_name(@equate_il) => :lineage).where(sequence: peptides).where.not(Sequence.lca_t_relation_name(@equate_il) => nil)
   end
 
   def taxa

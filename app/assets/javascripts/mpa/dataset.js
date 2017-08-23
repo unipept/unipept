@@ -1,7 +1,7 @@
 import {Node} from "./node.js";
 import {Tree} from "./tree.js";
 
-const BATCH_SIZE = 1,
+const BATCH_SIZE = 100,
     PEPT2LCA_URL = "/mpa/pept2lca",
     TAXA_URL = "/mpa/taxa";
 
