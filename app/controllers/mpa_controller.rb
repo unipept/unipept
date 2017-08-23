@@ -12,7 +12,7 @@ class MpaController < ApplicationController
 
   def pept2lca
     peptides = params[:peptides] || []
-    @equate_il = true # TODO: change me
+    @equate_il = params[:equate_il]
     @peptides = Sequence.includes(Sequence.lca_t_relation_name(@equate_il) => :lineage).where(sequence: peptides).where.not(Sequence.lca_t_relation_name(@equate_il) => nil)
   end
 

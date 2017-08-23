@@ -8,14 +8,16 @@ const BATCH_SIZE = 100,
 class Dataset {
     constructor(peptides = []) {
         this.originalPeptides = Dataset.cleanPeptides(peptides);
-        this.length = this.originalPeptides.length;
     }
 
-    async process() {
+    async process(il, dupes, missed) {
+        this.preparePeptides(il, dupes, missed);
+        console.log(this.preparedPeptides.length);
         const peptides = [];
-        for (let i = 0; i < this.length; i += BATCH_SIZE) {
+        for (let i = 0; i < this.preparedPeptides.length; i += BATCH_SIZE) {
             const data = JSON.stringify({
-                peptides: this.originalPeptides.slice(i, i + BATCH_SIZE),
+                peptides: this.preparedPeptides.slice(i, i + BATCH_SIZE),
+                equate_il: il,
             });
             const result = await Dataset.postJSON(PEPT2LCA_URL, data);
             peptides.push(...result.peptides);
@@ -43,7 +45,17 @@ class Dataset {
             }
             currentNode.addValue(peptide);
         }
+        this.tree = tree;
         return tree;
+    }
+
+    preparePeptides(il, dupes, missed) {
+        let peptides = Dataset.cleavePeptides(this.originalPeptides, missed);
+        peptides = Dataset.filterShortPeptides(peptides);
+        peptides = Dataset.equateIL(peptides, il);
+        peptides = Dataset.filterDuplicates(peptides, dupes);
+        this.preparedPeptides = peptides;
+        return peptides;
     }
 
     static getTaxonInfo(taxids) {
@@ -51,8 +63,35 @@ class Dataset {
     }
 
     static cleanPeptides(peptides) {
-        let cleanedPeptides = peptides.map(p => p.toUpperCase());
-        return cleanedPeptides;
+        return peptides.map(p => p.toUpperCase());
+    }
+
+    static cleavePeptides(peptides, advancedMissedCleavageHandling) {
+        if (!advancedMissedCleavageHandling) {
+            return peptides.join("+")
+                .replace(/([KR])([^P])/g, "$1+$2")
+                .replace(/([KR])([^P+])/g, "$1+$2")
+                .split("+");
+        }
+        return peptides;
+    }
+
+    static filterShortPeptides(peptides) {
+        return peptides.filter(p => p.length >= 5);
+    }
+
+    static filterDuplicates(peptides, filterDuplicates) {
+        if (filterDuplicates) {
+            return Array.from(new Set(peptides));
+        }
+        return peptides;
+    }
+
+    static equateIL(peptides, equateIL) {
+        if (equateIL) {
+            return peptides.map(p => p.replace(/I/g, "L"));
+        }
+        return peptides;
     }
 
     static postJSON(url, data) {
