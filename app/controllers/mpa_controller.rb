@@ -5,6 +5,7 @@ class MpaController < ApplicationController
   def analyze
     @header_class = 'MPA'
     @peptides = (params[:qs] || '').lines.map(&:strip).to_json
+    @name = params[:search_name]
     @il = params[:il].present?
     @dupes = params[:dupes].present?
     @missed = params[:missed].present?

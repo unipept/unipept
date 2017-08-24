@@ -23,6 +23,10 @@
               <label for="qs">Peptide list</label>
               <%= text_area_tag(:qs, nil, :rows => 7, :spellcheck => "false", :class => "form-control", autofocus: "true") %>
             </div>
+            <div class="form-group">
+              <label for="search_name">Name this search <small class='secondary-text'>optional</small></label>
+              <%= text_field_tag('search_name', nil, :placeholder => 'e.g. Sample B5', :class => "form-control js-has-focus-tooltip", title: "This name will be shown on the results page. Handy if you have many open tabs.")%>
+            </div>
             <div class="checkbox">
               <%= label_tag(:il, check_box_tag(:il, 1, true) + " Equate I and L", title: "Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries.", class: 'js-has-hover-tooltip') %>
             </div>

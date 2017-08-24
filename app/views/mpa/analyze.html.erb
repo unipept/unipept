@@ -5,7 +5,7 @@
 
 <div class='card'>
   <div class='card-title card-title-colored'>
-    <h2 class='card-title-text'>Metaproteomics Analysis</h2>
+    <h2 class='card-title-text'>Metaproteomics Analysis<%= " — #{@name}" if @name.present? %></h2>
   </div>
   <div id="progress-analysis" class="unipept-progress unipept-progress-indeterminate">
     <div class="progressbar bar bar1" style="width: 0%;"></div>
