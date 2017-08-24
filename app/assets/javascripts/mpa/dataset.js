@@ -18,6 +18,7 @@ class Dataset {
             const data = JSON.stringify({
                 peptides: peptideList.slice(i, i + BATCH_SIZE),
                 equate_il: il,
+                missed: missed,
             });
             const result = await Dataset.postJSON(PEPT2LCA_URL, data);
             processedPeptides.push(...result.peptides);

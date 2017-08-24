@@ -8,6 +8,8 @@
 #  lca_il   :integer
 #
 
+require 'ostruct'
+
 class Sequence < ApplicationRecord
   include ReadOnlyModel
 
@@ -49,6 +51,46 @@ class Sequence < ApplicationRecord
       return lca_t if return_taxon
       lca
     end
+  end
+
+  def self.missed_cleavage_lca(sequence, equate_il)
+    sequences = sequence
+                .gsub(/([KR])([^P])/, "\\1\n\\2")
+                .gsub(/([KR])([^P])/, "\\1\n\\2")
+                .lines.map(&:strip).to_a
+
+    # heuristic optimization to evade short sequences with lots of matches
+    min_length = [8, sequences.map(&:length).max].min
+    sequences = sequences.select { |s| s.length >= min_length }
+
+    long_sequences = sequences.map do |s|
+      Sequence
+        .includes(Sequence.peptides_relation_name(equate_il) => { uniprot_entry: :lineage })
+        .find_by(sequence: s)
+    end
+
+    return nil if long_sequences.include? nil
+    return nil if long_sequences.empty?
+
+    entries = long_sequences
+              .map { |s| s.peptides(equate_il).map(&:uniprot_entry).to_set }
+              .reduce(:&) # take the intersection of all sets
+              .select { |e| e.protein_contains?(sequence, equate_il) }
+
+    return nil if entries.empty?
+
+    lineages = entries.map(&:lineage).uniq.compact
+    lca = Lineage.calculate_lca_taxon(lineages)
+
+    result = OpenStruct.new(sequence: sequence)
+    if equate_il
+      result.lca_il = lca.id
+      result.lca_il_t = lca
+    else
+      result.lca = lca.id
+      result.lca_t = lca
+    end
+    result
   end
 
   def self.peptides_relation_name(equate_il)
