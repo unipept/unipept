@@ -11,25 +11,28 @@ class Dataset {
     }
 
     async process(il, dupes, missed) {
-        this.preparePeptides(il, dupes, missed);
-        console.log(this.preparedPeptides.length);
-        const peptides = [];
-        for (let i = 0; i < this.preparedPeptides.length; i += BATCH_SIZE) {
+        const peptideMap = this.preparePeptides(il, dupes, missed);
+        const peptideList = Array.from(peptideMap.keys());
+        const processedPeptides = [];
+        for (let i = 0; i < peptideList.length; i += BATCH_SIZE) {
             const data = JSON.stringify({
-                peptides: this.preparedPeptides.slice(i, i + BATCH_SIZE),
+                peptides: peptideList.slice(i, i + BATCH_SIZE),
                 equate_il: il,
             });
             const result = await Dataset.postJSON(PEPT2LCA_URL, data);
-            peptides.push(...result.peptides);
+            processedPeptides.push(...result.peptides);
         }
-        const tree = this.aggregate(peptides);
+        for (let peptide of processedPeptides) {
+            peptide.count = dupes ? 1 : peptideMap.get(peptide.sequence);
+        }
+        const tree = this.buildTree(processedPeptides, peptideMap, dupes);
         const taxonInfo = Dataset.getTaxonInfo(tree.getTaxa());
         tree.setCounts();
         tree.setTaxonNames(await taxonInfo);
         return tree;
     }
 
-    aggregate(peptides) {
+    buildTree(peptides) {
         const tree = new Tree();
         for (let peptide of peptides) {
             let currentNode = tree.getRoot();
@@ -53,8 +56,7 @@ class Dataset {
         let peptides = Dataset.cleavePeptides(this.originalPeptides, missed);
         peptides = Dataset.filterShortPeptides(peptides);
         peptides = Dataset.equateIL(peptides, il);
-        peptides = Dataset.filterDuplicates(peptides, dupes);
-        this.preparedPeptides = peptides;
+        peptides = Dataset.indexPeptides(peptides);
         return peptides;
     }
 
@@ -64,6 +66,15 @@ class Dataset {
 
     static cleanPeptides(peptides) {
         return peptides.map(p => p.toUpperCase());
+    }
+
+    static indexPeptides(peptides) {
+        const peptideMap = new Map();
+        for (let peptide of peptides) {
+            const count = peptideMap.get(peptide) || 0;
+            peptideMap.set(peptide, count + 1);
+        }
+        return peptideMap;
     }
 
     static cleavePeptides(peptides, advancedMissedCleavageHandling) {
@@ -78,13 +89,6 @@ class Dataset {
 
     static filterShortPeptides(peptides) {
         return peptides.filter(p => p.length >= 5);
-    }
-
-    static filterDuplicates(peptides, filterDuplicates) {
-        if (filterDuplicates) {
-            return Array.from(new Set(peptides));
-        }
-        return peptides;
     }
 
     static equateIL(peptides, equateIL) {

@@ -18,7 +18,7 @@ class MPA {
         let dataset = new Dataset(peptides);
         this.datasets.push(dataset);
         let tree = await dataset.process(this.searchSettings.il, this.searchSettings.dupes, this.searchSettings.missed);
-        $("#treeview").treeview(tree.getRoot());
+        $("#mpa-treeview").treeview(tree.getRoot());
         this.enableProgressBar(false);
         return dataset;
     }

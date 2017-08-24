@@ -29,7 +29,7 @@ class Node {
 
     addValue(peptide) {
         this.values.push(peptide);
-        this.data.self_count = this.values.length;
+        this.data.self_count += peptide.count;
     }
 
     getCounts() {
