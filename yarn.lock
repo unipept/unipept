@@ -5083,9 +5083,9 @@ uid-number@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/uid-number/-/uid-number-0.0.6.tgz#0ea10e8035e8eb5b8e4449f06da1c730663baa81"
 
-unipept-visualizations@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/unipept-visualizations/-/unipept-visualizations-1.2.1.tgz#df0bf8ab105c64c61960cebe97ebee225f810446"
+unipept-visualizations@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/unipept-visualizations/-/unipept-visualizations-1.2.2.tgz#56d9c49eee3b6107c9390b8211a52442ca1680d0"
 
 uniq@^1.0.1:
   version "1.0.1"

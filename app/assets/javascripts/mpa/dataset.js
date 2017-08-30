@@ -8,6 +8,7 @@ const BATCH_SIZE = 100,
 class Dataset {
     constructor(peptides = []) {
         this.originalPeptides = Dataset.cleanPeptides(peptides);
+        this.tree = null;
     }
 
     async process(il, dupes, missed) {
@@ -30,6 +31,7 @@ class Dataset {
         const taxonInfo = Dataset.getTaxonInfo(tree.getTaxa());
         tree.setCounts();
         tree.setTaxonNames(await taxonInfo);
+        this.tree = tree;
         return tree;
     }
 
