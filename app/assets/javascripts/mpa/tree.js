@@ -32,6 +32,16 @@ class Tree {
     setCounts() {
         this.root.getCounts();
     }
+
+    sortTree() {
+        this.root.callRecursively( function () {
+            this.children.sort(function (a, b) {
+                if (a.name < b.name) return -1;
+                if (a.name > b.name) return 1;
+                return 0;
+            });
+        });
+    }
 }
 
 export {Tree};

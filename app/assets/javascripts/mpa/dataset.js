@@ -31,6 +31,7 @@ class Dataset {
         const taxonInfo = Dataset.getTaxonInfo(tree.getTaxa());
         tree.setCounts();
         tree.setTaxonNames(await taxonInfo);
+        tree.sortTree();
         this.tree = tree;
         return tree;
     }

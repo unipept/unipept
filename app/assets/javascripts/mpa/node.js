@@ -46,6 +46,16 @@ class Node {
         }
         return this.data.count;
     }
+
+    // sets a property for a node and all its children
+    callRecursively(f) {
+        f.call(this);
+        if (this.children) {
+            this.children.forEach(c => {
+                c.callRecursively(f);
+            });
+        }
+    }
 }
 
 export {Node};
