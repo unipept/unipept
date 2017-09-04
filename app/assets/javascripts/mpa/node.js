@@ -28,7 +28,11 @@ class Node {
     }
 
     addValue(peptide) {
-        this.values.push(peptide);
+        this.values.push({
+            sequence: peptide.sequence,
+            count: peptide.count,
+            lca: peptide.lca,
+        });
         this.data.self_count += peptide.count;
     }
 
