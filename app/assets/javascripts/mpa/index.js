@@ -28,7 +28,7 @@ class MPA {
 
     setUpVisualisations(root) {
         const data = JSON.stringify(root);
-        $("#mpa-sunburst").sunburst(JSON.parse(data));
+        this.setUpSunburst(JSON.parse(data));
         $("#mpa-treemap").treemap(JSON.parse(data));
         $("#mpa-treeview").treeview(JSON.parse(data));
     }
@@ -40,12 +40,29 @@ class MPA {
         $("#missed").prop("checked", missed);
     }
 
+    setUpSunburst(data) {
+        $("#mpa-sunburst").sunburst(data, {
+            width: 740,
+            height: 740,
+            getTooltip: this.tooltipContent,
+            getTitleText: d => `${d.name} (${d.rank})`,
+        });
+    }
+
     enableProgressBar(enable = true) {
         if (enable) {
             $("#progress-analysis").css("visibility", "visible");
         } else {
             $("#progress-analysis").css("visibility", "hidden");
         }
+    }
+
+    tooltipContent(d) {
+        return "<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" +
+            (!d.data.self_count ? "0" : d.data.self_count) +
+            (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
+            (!d.data.count ? "0" : d.data.count) +
+            (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower";
     }
 }
 
