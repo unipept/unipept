@@ -1,8 +1,9 @@
 
 class Node {
-    constructor(id, name="") {
+    constructor(id, name="", rank="no rank") {
         this.id = id;
         this.name = name;
+        this.rank = rank;
         this.children = [];
         this.values = [];
         this.data = {

@@ -29,7 +29,7 @@ class MPA {
     setUpVisualisations(root) {
         const data = JSON.stringify(root);
         this.setUpSunburst(JSON.parse(data));
-        $("#mpa-treemap").treemap(JSON.parse(data));
+        this.setUpTreemap(JSON.parse(data));
         $("#mpa-treeview").treeview(JSON.parse(data));
     }
 
@@ -44,8 +44,20 @@ class MPA {
         $("#mpa-sunburst").sunburst(data, {
             width: 740,
             height: 740,
+            radius: 740 / 2,
             getTooltip: this.tooltipContent,
             getTitleText: d => `${d.name} (${d.rank})`,
+        });
+    }
+
+    setUpTreemap(data) {
+        $("#mpa-treemap").treemap(data, {
+            width: 916,
+            height: 600,
+            getBreadcrumbTooltip: d => d.rank,
+            getTooltip: this.tooltipContent,
+            getLabel: d => `${d.name} (${d.data.self_count}/${d.data.count})`,
+            getLevel: d => MPA.RANKS.indexOf(d.rank),
         });
     }
 
@@ -63,6 +75,10 @@ class MPA {
             (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
             (!d.data.count ? "0" : d.data.count) +
             (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower";
+    }
+
+    static get RANKS() {
+        return ["superkingdom", "kingdom", "subkingdom", "superphylum", "phylum", "subphylum", "superclass", "class", "subclass", "infraclass", "superorder", "order", "suborder", "infraorder", "parvorder", "superfamily", "family", "subfamily", "tribe", "subtribe", "genus", "subgenus", "species group", "species subgroup", "species", "subspecies", "varietas", "forma"];
     }
 }
 
