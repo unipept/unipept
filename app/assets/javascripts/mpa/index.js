@@ -58,7 +58,7 @@ class MPA {
     }
 
     tooltipContent(d) {
-        return "<b>" + d.name + "</b> (" + d.data.rank + ")<br/>" +
+        return "<b>" + d.name + "</b> (" + d.rank + ")<br/>" +
             (!d.data.self_count ? "0" : d.data.self_count) +
             (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
             (!d.data.count ? "0" : d.data.count) +

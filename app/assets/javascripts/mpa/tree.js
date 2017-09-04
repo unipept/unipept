@@ -23,7 +23,9 @@ class Tree {
 
     setTaxonNames(taxa) {
         for (let taxon of taxa) {
-            this.nodes.get(taxon.id).name = taxon.name;
+            const t = this.nodes.get(taxon.id);
+            t.name = taxon.name;
+            t.rank = taxon.rank;
         }
     }
 
