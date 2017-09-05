@@ -1,7 +1,7 @@
 import {Node} from "./node.js";
 
 class Tree {
-    constructor(id = -1, name = "root") {
+    constructor(id = -1, name = "Organism") {
         this.root = new Node(id, name);
         this.nodes = new Map();
         this.taxa = [];
