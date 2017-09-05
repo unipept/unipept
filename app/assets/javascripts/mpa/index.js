@@ -30,7 +30,7 @@ class MPA {
         const data = JSON.stringify(root);
         this.setUpSunburst(JSON.parse(data));
         this.setUpTreemap(JSON.parse(data));
-        $("#mpa-treeview").treeview(JSON.parse(data));
+        this.setUpTreeview(JSON.parse(data));
     }
 
     setUpForm(peptides, il, dupes, missed) {
@@ -58,6 +58,21 @@ class MPA {
             getTooltip: this.tooltipContent,
             getLabel: d => `${d.name} (${d.data.self_count}/${d.data.count})`,
             getLevel: d => MPA.RANKS.indexOf(d.rank),
+        });
+    }
+
+    setUpTreeview(data) {
+        $("#mpa-treeview").treeview(data, {
+            width: 916,
+            height: 600,
+            getTooltip: this.tooltipContent,
+            colors: d => {
+                if (d.name === "Bacteria") return "#1565C0"; // blue
+                if (d.name === "Archaea") return "#FF8F00"; // orange
+                if (d.name === "Eukaryota") return "#2E7D32"; // green
+                if (d.name === "Viruses") return "#C62828"; // red
+                return d3.scale.category10().call(this, d);
+            },
         });
     }
 
