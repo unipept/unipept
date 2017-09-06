@@ -21,6 +21,30 @@ class Tree {
         return this.taxa;
     }
 
+    getOwnSequences(nodeId) {
+        let node;
+        if (Number.isInteger(nodeId)) {
+            node = this.nodes.get(nodeId);
+        } else {
+            node = nodeId;
+        }
+        return node.values.map(d => d.sequence);
+    }
+
+    getAllSequences(nodeId) {
+        let node;
+        if (Number.isInteger(nodeId)) {
+            node = this.nodes.get(nodeId);
+        } else {
+            node = nodeId;
+        }
+        let s = this.getOwnSequences(node);
+        for (let i = 0; i < node.children.length; i++) {
+            s = s.concat(this.getAllSequences(node.children[i].id));
+        }
+        return s;
+    }
+
     setTaxonNames(taxa) {
         for (let taxon of taxa) {
             const t = this.nodes.get(taxon.id);

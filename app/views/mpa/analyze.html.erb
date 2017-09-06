@@ -106,6 +106,46 @@
   </div>
 </div>
 
+<div class='card card-nav'>
+  <div class='card-title card-title-colored'>
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#outline" data-toggle="tab">Hierarchical outline</a></li>
+      <li><a href="#mismatches" data-toggle="tab">Mismatches</a></li>
+    </ul>
+  </div>
+  <div class='card-supporting-text'>
+    <div class="tab-content multi-search">
+      <div class="tab-pane active" id="outline">
+        <div class="input-group" id="tree_search_group">
+          <%= search_field_tag(:tree_search, "", :placeholder => "search for an organism...", :class => "form-control") %>
+          <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+        </div>
+        <div class="visualClear"></div>
+        <div id="searchtree" class="treeView multi"></div>
+        <div id="tree_data">
+          <p>Click on a node in the tree to see the peptides associated with that organism.</p>
+        </div>
+      </div>
+      <div class="tab-pane" id="mismatches">
+          <div class="row">
+            <div class="col-md-6">
+              <ul class="mismatches">
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <div id="copy-missed" class="clipboard-btn-wrapper"><span class="btn-clipboard">Copy</span></div>
+              <div class="well">
+                <h3>Sorry,</h3>
+                <p>We didn't manage to find some of your peptides. You can <strong><span class="initialism">BLAST</span></strong> them by clicking the links on the left or <strong>copy</strong> them to your clipboard with the top right link.</p>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="tooltip" class="tip"></div>
+
 <script type="text/javascript">
   var peptides = <%= raw(@peptides) %>;
   var il = <%= @il %>;

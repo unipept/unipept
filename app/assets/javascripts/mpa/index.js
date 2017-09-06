@@ -1,4 +1,5 @@
 import {Dataset} from "./dataset.js";
+import {constructSearchtree} from "./searchtree.js";
 import "unipept-visualizations/src/treemap/treemap.js";
 import "unipept-visualizations/src/treeview/treeview.js";
 import "unipept-visualizations/src/sunburst/sunburst.js";
@@ -12,7 +13,7 @@ class MPA {
             missed: missed,
         };
         this.addDataset(peptides).then( dataset => {
-            this.setUpVisualisations(dataset.tree.getRoot());
+            this.setUpVisualisations(dataset.tree);
         });
         this.setUpForm(peptides, il, dupes, missed);
     }
@@ -26,11 +27,12 @@ class MPA {
         return dataset;
     }
 
-    setUpVisualisations(root) {
-        const data = JSON.stringify(root);
+    setUpVisualisations(tree) {
+        const data = JSON.stringify(tree.getRoot());
         this.setUpSunburst(JSON.parse(data));
         this.setUpTreemap(JSON.parse(data));
         this.setUpTreeview(JSON.parse(data));
+        constructSearchtree(tree, this.searchSettings.il);
     }
 
     setUpForm(peptides, il, dupes, missed) {
