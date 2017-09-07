@@ -77,6 +77,7 @@ class MPA {
                 if (d.name === "Viruses") return "#C62828"; // red
                 return d3.scale.category10().call(this, d);
             },
+            rerootCallback: d => this.search(d.name, 1000),
         });
     }
 
