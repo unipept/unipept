@@ -32,7 +32,7 @@ class MPA {
         this.setUpSunburst(JSON.parse(data));
         this.setUpTreemap(JSON.parse(data));
         this.setUpTreeview(JSON.parse(data));
-        constructSearchtree(tree, this.searchSettings.il);
+        this.searchTree = constructSearchtree(tree, this.searchSettings.il);
     }
 
     setUpForm(peptides, il, dupes, missed) {
@@ -49,6 +49,7 @@ class MPA {
             radius: 740 / 2,
             getTooltip: this.tooltipContent,
             getTitleText: d => `${d.name} (${d.rank})`,
+            rerootCallback: d => this.search(d.name, 1000),
         });
     }
 
@@ -60,6 +61,7 @@ class MPA {
             getTooltip: this.tooltipContent,
             getLabel: d => `${d.name} (${d.data.self_count}/${d.data.count})`,
             getLevel: d => MPA.RANKS.indexOf(d.rank),
+            rerootCallback: d => this.search(d.name),
         });
     }
 
@@ -92,6 +94,14 @@ class MPA {
             (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
             (!d.data.count ? "0" : d.data.count) +
             (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower";
+    }
+
+    search(searchTerm, timeout = 500) {
+        let localTerm = searchTerm;
+        if (localTerm === "Organism") {
+            localTerm = "";
+        }
+        setTimeout(() => this.searchTree.search(localTerm), timeout);
     }
 
     static get RANKS() {
