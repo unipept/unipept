@@ -1,3 +1,4 @@
+import {logToGoogle} from "../utils.js";
 import {Dataset} from "./dataset.js";
 import {constructSearchtree} from "./searchtree.js";
 import "unipept-visualizations/src/treemap/treemap.js";
@@ -16,7 +17,8 @@ class MPA {
             this.setUpVisualisations(dataset.tree);
         });
         this.setUpForm(peptides, il, dupes, missed);
-        this.initButtons();
+        this.setUpButtons();
+        this.setUpFullScreen();
     }
 
     async addDataset(peptides) {
@@ -43,7 +45,7 @@ class MPA {
         $("#missed").prop("checked", missed);
     }
 
-    initButtons() {
+    setUpButtons() {
         // sunburst reset
         $("#sunburst-reset").click(() => this.sunburst.reset());
 
@@ -71,6 +73,46 @@ class MPA {
         $("#treeview-reset").click(() => this.treeview.reset());
     }
 
+    setUpFullScreen() {
+        if (fullScreenApi.supportsFullScreen) {
+            $("#buttons").prepend("<button id='zoom-btn' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
+            $("#zoom-btn").click(() => {
+                logToGoogle("Multi Peptide", "Full Screen", this.getActiveTab());
+                window.fullScreenApi.requestFullScreen($(".full-screen-container").get(0));
+            });
+            $(document).bind(fullScreenApi.fullScreenEventName, () => this.resizeFullScreen(this));
+        }
+    }
+
+    resizeFullScreen(context = this) {
+        const activeTab = context.getActiveTab();
+        const isFullScreen = window.fullScreenApi.isFullScreen();
+
+        // sync tabs
+        $("ul.visualisations li.active").removeClass("active");
+        $("ul.visualisations li").each(function (i, el) {
+            if ($(el).find("a").attr("href") === "#" + activeTab + "Wrapper") {
+                $(el).addClass("active");
+            }
+        });
+
+        // class
+        $(".full-screen-container").toggleClass("full-screen", isFullScreen);
+        $(".full-screen-container").toggleClass("not-full-screen", !isFullScreen);
+
+        // tooltip
+        if (isFullScreen) {
+            $("#tooltip").appendTo(".full-screen-container");
+        } else {
+            $("#tooltip").appendTo("body");
+        }
+
+        // update visualisations
+        context.sunburst.setFullScreen(isFullScreen);
+        context.treemap.setFullScreen(isFullScreen);
+        context.treeview.setFullScreen(isFullScreen);
+    }
+
     setUpSunburst(data) {
         return $("#mpa-sunburst").sunburst(data, {
             width: 740,
@@ -95,7 +137,7 @@ class MPA {
     }
 
     setUpTreeview(data) {
-        return $("#mpa-treeview").treeview(data, {
+        return $("#mpa-treeview").html("").treeview(data, {
             width: 916,
             height: 600,
             getTooltip: this.tooltipContent,
@@ -124,6 +166,11 @@ class MPA {
             (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
             (!d.data.count ? "0" : d.data.count) +
             (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower";
+    }
+
+    getActiveTab() {
+        const activePane = $(".full-screen-container div.active").attr("id");
+        return activePane.split("Wrapper")[0];
     }
 
     search(searchTerm, timeout = 500) {
