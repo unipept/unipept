@@ -63,6 +63,12 @@ class MPA {
             this.sunburst.settings.useFixedColors = $("#colorswap-checkbox").is(":checked");
             this.sunburst.redrawColors();
         });
+
+        // treemap reset
+        $("#treemap-reset").click(() => this.treemap.reset());
+
+        // treeview reset
+        $("#treeview-reset").click(() => this.treeview.reset());
     }
 
     setUpSunburst(data) {
