@@ -16,6 +16,7 @@ class MPA {
             this.setUpVisualisations(dataset.tree);
         });
         this.setUpForm(peptides, il, dupes, missed);
+        this.initButtons();
     }
 
     async addDataset(peptides) {
@@ -29,9 +30,9 @@ class MPA {
 
     setUpVisualisations(tree) {
         const data = JSON.stringify(tree.getRoot());
-        this.setUpSunburst(JSON.parse(data));
-        this.setUpTreemap(JSON.parse(data));
-        this.setUpTreeview(JSON.parse(data));
+        this.sunburst = this.setUpSunburst(JSON.parse(data));
+        this.treemap = this.setUpTreemap(JSON.parse(data));
+        this.treeview = this.setUpTreeview(JSON.parse(data));
         this.searchTree = constructSearchtree(tree, this.searchSettings.il);
     }
 
@@ -42,8 +43,30 @@ class MPA {
         $("#missed").prop("checked", missed);
     }
 
+    initButtons() {
+        // sunburst reset
+        $("#sunburst-reset").click(() => this.sunburst.reset());
+
+        // sunburst fixed colors
+        $("#colorswap").mouseenter(function () {
+            if (!$("#colorswap").hasClass("open")) {
+                $("#colorswap-button").dropdown("toggle");
+            }
+        });
+        $("#colorswap").mouseleave(function () {
+            if ($("#colorswap").hasClass("open")) {
+                $("#colorswap-button").dropdown("toggle");
+            }
+        });
+        $("#colorswap li").tooltip({placement: "right", container: "body"});
+        $("#colorswap-checkbox").change(() => {
+            this.sunburst.settings.useFixedColors = $("#colorswap-checkbox").is(":checked");
+            this.sunburst.redrawColors();
+        });
+    }
+
     setUpSunburst(data) {
-        $("#mpa-sunburst").sunburst(data, {
+        return $("#mpa-sunburst").sunburst(data, {
             width: 740,
             height: 740,
             radius: 740 / 2,
@@ -54,7 +77,7 @@ class MPA {
     }
 
     setUpTreemap(data) {
-        $("#mpa-treemap").treemap(data, {
+        return $("#mpa-treemap").treemap(data, {
             width: 916,
             height: 600,
             getBreadcrumbTooltip: d => d.rank,
@@ -66,7 +89,7 @@ class MPA {
     }
 
     setUpTreeview(data) {
-        $("#mpa-treeview").treeview(data, {
+        return $("#mpa-treeview").treeview(data, {
             width: 916,
             height: 600,
             getTooltip: this.tooltipContent,
