@@ -1,4 +1,4 @@
-import {logToGoogle} from "../utils.js";
+import {logToGoogle, triggerDownloadModal} from "../utils.js";
 import {Dataset} from "./dataset.js";
 import {constructSearchtree} from "./searchtree.js";
 import "unipept-visualizations/src/treemap/treemap.js";
@@ -19,6 +19,7 @@ class MPA {
         this.setUpForm(peptides, il, dupes, missed);
         this.setUpButtons();
         this.setUpFullScreen();
+        this.setUpActionBar();
     }
 
     async addDataset(peptides) {
@@ -82,6 +83,13 @@ class MPA {
             });
             $(document).bind(fullScreenApi.fullScreenEventName, () => this.resizeFullScreen(this));
         }
+    }
+
+    setUpActionBar() {
+        $(".fullScreenActions a").tooltip({placement: "bottom", delay: {"show": 300, "hide": 300}});
+        $(".fullScreenActions .reset").click(() => this.mapping(this.getActiveTab()).reset());
+        $(".fullScreenActions .download").click(() => this.saveImage());
+        $(".fullScreenActions .exit").click(() => window.fullScreenApi.cancelFullScreen());
     }
 
     resizeFullScreen(context = this) {
@@ -171,6 +179,25 @@ class MPA {
     getActiveTab() {
         const activePane = $(".full-screen-container div.active").attr("id");
         return activePane.split("Wrapper")[0];
+    }
+
+    mapping(tab) {
+        return this[tab];
+    }
+
+    saveImage() {
+        const activeTab = this.getActiveTab();
+        $(".debug_dump").hide();
+        logToGoogle("Multi Peptide", "Save Image", activeTab);
+        if (activeTab === "sunburst") {
+            d3.selectAll(".toHide").attr("class", "arc hidden");
+            triggerDownloadModal("#mpa-sunburst > svg", null, "unipept_sunburst");
+            d3.selectAll(".hidden").attr("class", "arc toHide");
+        } else if (activeTab === "treemap") {
+            triggerDownloadModal(null, "#mpa-treemap", "unipept_treemap");
+        } else {
+            triggerDownloadModal("#mpa-treeview svg", null, "unipept_treeview");
+        }
     }
 
     search(searchTerm, timeout = 500) {

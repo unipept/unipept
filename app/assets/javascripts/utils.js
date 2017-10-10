@@ -227,10 +227,6 @@ function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
         $element,
         svg;
 
-    if (window.fullScreenApi.isFullScreen()) {
-        window.fullScreenApi.cancelFullScreen();
-    }
-
     // Reset the modal and show it
     $buttons.html("<h3>Please wait while we create your image</h3>");
     $image.html("<h3>Loading preview...</h3>" +
@@ -253,6 +249,10 @@ function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
                 showImage(canvas.toDataURL());
             },
         });
+    }
+
+    if (window.fullScreenApi.isFullScreen()) {
+        window.fullScreenApi.cancelFullScreen();
     }
 
     // Show the image and add buttons
