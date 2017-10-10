@@ -18,6 +18,7 @@ class MPA {
         });
         this.setUpForm(peptides, il, dupes, missed);
         this.setUpButtons();
+        this.setUpSaveImage();
         this.setUpFullScreen();
         this.setUpActionBar();
     }
@@ -72,6 +73,11 @@ class MPA {
 
         // treeview reset
         $("#treeview-reset").click(() => this.treeview.reset());
+    }
+
+    setUpSaveImage() {
+        $("#buttons").prepend("<button id='save-btn' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save as image</button>");
+        $("#save-btn").click(() => this.saveImage());
     }
 
     setUpFullScreen() {
