@@ -114,6 +114,26 @@ class SequencesController < ApplicationController
 
     @title = "Tryptic peptide analysis of #{@original_sequence}"
 
+    go_counts = Hash.new 0
+    @entries.flat_map { |n| n.go_cross_references.map(&:go_term_code) }.each do |name|
+      go_counts[name] += 1
+    end
+
+    @go_summary = Hash.new ""
+    go_counts.keys.group_by { |go| GoTerm.find_by(code: go).namespace }.each do |namespace, go|
+      @go_summary[namespace] = go.map{|term| [term,go_counts[term]]}.to_h
+    end
+
+    ec_counts = Hash.new 0
+    @entries.flat_map { |n| n.ec_cross_references.map(&:ec_number_code) }.each do |name|
+      ec_counts[name] += 1
+    end
+
+    @ec_summary = Hash.new ""
+    ec_counts.keys.group_by { |ec_code| ec_code.split(".")[0] }.each do |namespace, ec|
+      @ec_summary[namespace] = ec.map{|term| [term,ec_counts[term]]}.to_h
+    end
+
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @entries.to_json(only: :uniprot_accession_number, include: [{ ec_cross_references: { only: :ec_number_code } }, { go_cross_references: { only: :go_term_code } }]) }
