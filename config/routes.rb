@@ -33,6 +33,7 @@ UnipeptWeb::Application.routes.draw do
   scope :mpa, as: 'mpa' do
     match "/",        via: [:get, :post], :to => "mpa#analyze"
     match "pept2lca", via: [:get, :post], :to => "mpa#pept2lca"
+    match "pept2fa", via: [:get, :post], :to => "mpa#pept2fa"
     match "taxa",     via: [:get, :post], :to => "mpa#taxa"
   end
 
