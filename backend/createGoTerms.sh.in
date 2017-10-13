@@ -8,10 +8,19 @@ terms="http://geneontology.org/ontology/go-basic.obo"
 wget -q "$terms" -O - | <<<CMD_AWK>>> '
 BEGIN {
     OFS = "	"
+    id=1
 }
 /^\[.*\]$/ { # start of a record
     type = $0
+    alt_ctr = 0
     split("", record, ":")
+    split("", ids, ":")
+    next
+}
+/^(alt_id|id).*$/ { # a id or alt_id field in a record
+    value = $0; sub("[^ ]*: ", "", value)
+    record["id"][alt_ctr] = value
+    alt_ctr++
     next
 }
 !/^$/ { # a field in a record
@@ -20,10 +29,12 @@ BEGIN {
     record[key] = value
 }
 /^$/ { # end of a record
-    if (id != 0 && type == "[Term]") {
+    if (type == "[Term]") {
         sub("_", " ", record["namespace"])
-        print id, record["id"], record["namespace"], record["name"]
+        for(i in record["id"]){
+            print id, record["id"][i], record["namespace"], record["name"]
+            id++
+        }
     }
-    id++
     type = ""
 }'
