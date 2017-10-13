@@ -21,6 +21,7 @@
           <li class="active"><a href="#lineage-tree" id="lineage-tree-tab" data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
           <li><a href="#lineage-table" id="lineage-table-tab" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
           <li><a href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
+          <li><a href="#functions" data-toggle="tab">Functions</a></li>
         </ul>
       </div>
     </div>
@@ -30,48 +31,64 @@
           <div id="buttons-single" class="buttons-single"></div>
           <div id="lineageTree"></div>
         </div>
+
+        <div class="tab-pane" id="functions">
+          <article class="col-xs-6">
+          <h2>Gene Ontology data</h2>
+          <% unless @go_summary.empty? %>
+
+              <table class="table table-condensed">
+                <thead>
+                <tr>
+                  <th class="ec">GO Namespace</th>
+                  <th class="ec">Terms </th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <% for ns,things in @go_summary do %>
+                    <tr>
+                      <td><%=ns %></td>
+                      <td><%= raw(things.sort_by{|t| -t[1]}.map{|go,count| "<a href='http://amigo.geneontology.org/amigo/term/"+go+"' target='_blank'>"+go+"</a> ("+count.to_s+")"}.join(", ")) %></td>
+                    </tr>
+                <%end %>
+                </tbody>
+              </table>
+              <% else %>
+            Not enough GO term annotaions
+          <% end %>
+          </article>
+          <article class="col-xs-6">
+          <h2>Enzyme Commission numbers</h2>
+          <% unless @ec_summary.empty? %>
+              <table class="table table-condensed">
+                <thead>
+                <tr>
+                  <th class="go">EC Field</th>
+                  <th class="go">Codes </th>
+                </tr>
+                </thead>
+                <tbody>
+                <% ecNs = {"1"=>"EC 1: Oxidoreductases", "2"=>"EC 2: Transferases", "3"=>"EC 3: Hydrolases", "4"=>"EC 4: Lyases", "5"=>"EC 5: Isomerases", "6"=>"EC 6: Ligases"} %>
+                <% for ns,things in @ec_summary do %>
+                    <tr>
+                      <td><%=ecNs.has_key?(ns) ? ecNs[ns] : "Other"%></td>
+                      <td><%= raw(things.sort_by{|t| -t[1]}.map{|ec,count| "<a href='http://enzyme.expasy.org/EC/"+ec+"' target='_blank'>"+ec+"</a> ("+count.to_s+")"}.join(", ")) %></td>
+                    </tr>
+                <%end %>
+                </tbody>
+              </table>
+              <%else%>
+              Not enough EC code annotaions
+        <% end %>
+          </article>
+        </div>
+
         <div class="tab-pane" id="proteins">
           <div class="buttons-single">
             <button id="clipboard-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-copy"></span> Copy to clipboard</button>
             <button id="open-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-new-window"></span> Open in UniProt</button>
           </div>
-            <table class="table table-condensed">
-              <thead>
-              <tr>
-                <th class="ec">GO Namespace</th>
-                <th class="ec">Terms </th>
-              </tr>
-              </thead>
-              <tbody>
-
-                <% for ns,things in @go_summary do %>
-                  <tr>
-                    <td><%=ns %></td>
-                    <td><%= raw(things.sort{|t| -t[1]}.map{|go,count| "<a href='http://amigo.geneontology.org/amigo/term/"+go+"' target='_blank'>"+go+"</a> ("+count.to_s+")"}.join(", ")) %></td>
-                  </tr>
-                <%end %>
-              </tbody>
-            </table>
-
-
-          <table class="table table-condensed">
-            <thead>
-            <tr>
-              <th class="go">EC Field</th>
-              <th class="go">Codes </th>
-            </tr>
-            </thead>
-            <tbody>
-
-            <% for ns,things in @ec_summary do %>
-                <tr>
-                  <td><%=ns %></td>
-                  <td><%= raw(things.sort{|t| -t[1]}.map{|ec,count| "<a href='http://enzyme.expasy.org/EC/"+ec+"' target='_blank'>"+ec+"</a> ("+count.to_s+")"}.join(", ")) %></td>
-                </tr>
-            <%end %>
-            </tbody>
-          </table>
-
             <table class="table table-condensed table-hover protein-info">
               <thead>
               <tr>
