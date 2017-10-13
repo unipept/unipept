@@ -1,4 +1,4 @@
-import {logToGoogle, triggerDownloadModal} from "../utils.js";
+import {downloadDataByForm, logToGoogle, triggerDownloadModal} from "../utils.js";
 import {Dataset} from "./dataset.js";
 import {constructSearchtree} from "./searchtree.js";
 import "unipept-visualizations/src/treemap/treemap.js";
@@ -73,6 +73,9 @@ class MPA {
 
         // treeview reset
         $("#treeview-reset").click(() => this.treeview.reset());
+
+        // download results
+        $("#mpa-download-results").click(() => downloadDataByForm(this.datasets[0].toCSV(), "mpa_result.csv"));
     }
 
     setUpSaveImage() {

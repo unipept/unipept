@@ -36,8 +36,9 @@ function brightness(rgb) {
  * form and a server round trip. Returns a Promise that resolves when
  * the file starts downloading
  *
- * @param <String> data The text you want in the file
- * @param <String> filename The requested file name
+ * @param {string} data The text you want in the file
+ * @param {string} fileName The requested file name
+ * @return {Promise.<string>}
  */
 function downloadDataByForm(data, fileName) {
     return new Promise(function (resolve, reject) {
