@@ -1,5 +1,23 @@
-
+/**
+ * Node that represents a node in a (taxonomy)tree
+ *
+ * @typedef {Node}
+ * @type {object}
+ * @property {number} id The taxon id of the node
+ * @property {string} name The name of the organism
+ * @property {string} rank The rank of the organism
+ * @property {Node[]} children The list of children of this node
+ * @property {PeptideInfo[]} values The list of associated peptides
+ * @property {object} data Additional information such as counts
+ */
 class Node {
+    /**
+     * Creates a node based on a mandatory id. Name and rank are optional.
+     *
+     * @param  {number} id        The taxon id of the node
+     * @param  {String} [name=""] The name of the organism
+     * @param  {String} [rank="no rank"] The taxonomic rank of the organism
+     */
     constructor(id, name="", rank="no rank") {
         this.id = id;
         this.name = name;
@@ -11,6 +29,13 @@ class Node {
         };
     }
 
+    /**
+     * Searches for a node with the given taxon id in its children. Returns null
+     * if it is not found.
+     *
+     * @param  {number} taxId The taxon id to search for
+     * @return {Node} A matching Node object or null
+     */
     getChild(taxId) {
         for (let child of this.children) {
             if (child.id === taxId) {
@@ -20,14 +45,30 @@ class Node {
         return null;
     }
 
+    /**
+     * Returns the number of children for this node.
+     *
+     * @return {number} The number of children
+     */
     getChildCount() {
         return this.children.length;
     }
 
+    /**
+     * !! Please use the addChild function of the parent tree instead !!
+     * Adds a child to this node.
+     *
+     * @param {Node} node The child to add
+     */
     addChild(node) {
         this.children.push(node);
     }
 
+    /**
+     * Adds a peptide value to this node and updates its self_count
+     *
+     * @param {PeptideInfo} peptide The peptide value to add
+     */
     addValue(peptide) {
         this.values.push({
             sequence: peptide.sequence,
@@ -37,6 +78,12 @@ class Node {
         this.data.self_count += peptide.count;
     }
 
+    /**
+     * Returns the number of peptides associated with this node and all of its
+     * children
+     *
+     * @return {number} The number of peptides
+     */
     getCounts() {
         if (this.data.count === undefined) {
             this.data.count = this.data.self_count;
@@ -47,7 +94,11 @@ class Node {
         return this.data.count;
     }
 
-    // sets a property for a node and all its children
+    /**
+     * Recursively calls a function on this object and its children
+     *
+     * @param  {function} f The function to call
+     */
     callRecursively(f) {
         f.call(this);
         if (this.children) {

@@ -10,11 +10,30 @@ import {Tree} from "./tree.js";
  * @property {string} rank The rank of the taxon
  */
 
+/**
+ * @typedef PeptideInfo
+ * @type {object}
+ * @property {string} sequence The peptide sequence
+ * @property {number} count The number of times the peptide occurs
+ * @property {number} lca The taxon id of the lca
+ * @property {number[]} lineage The lineage of the lca
+ */
+
 const BATCH_SIZE = 100,
     PEPT2LCA_URL = "/mpa/pept2lca",
     TAXA_URL = "/mpa/taxa";
 
+/**
+ * Class that represents a single dataset containing a list of peptides.
+ *
+ * @type {Dataset}
+ */
 class Dataset {
+    /**
+     * Creates a Dataset object based on a list of peptides
+     *
+     * @param  {string[]}  [peptides=[]] A list of peptides (strings)
+     */
     constructor(peptides = []) {
         this.originalPeptides = Dataset.cleanPeptides(peptides);
         this.processedPeptides = [];
@@ -23,6 +42,16 @@ class Dataset {
         this.taxonMap.set(1, {id: 1, ranke: "no rank", name: "root"});
     }
 
+    /**
+     * Processes the list of peptides set in the dataset and returns a
+     * taxonomic tree.
+     *
+     * @param  {boolean}  il should we equate I and L
+     * @param  {boolean}  dupes should we filter duplicates
+     * @param  {boolean}  missed should we perform
+     *   advancedMissedCleavageHandling
+     * @return {Promise.<Tree>} The taxonomic tree containing all peptides.
+     */
     async process(il, dupes, missed) {
         const peptideMap = this.preparePeptides(il, dupes, missed);
         const peptideList = Array.from(peptideMap.keys());
@@ -49,6 +78,14 @@ class Dataset {
         return tree;
     }
 
+    /**
+     * Creates a hierarchic tree structure based on the input peptides. This is
+     * also set as the tree property of the Dataset object.
+     *
+     * @param  {PeptideInfo[]} peptides A list of peptides to build the tree
+     *   from
+     * @return {Tree} A taxon tree containing all peptides
+     */
     buildTree(peptides) {
         const tree = new Tree();
         for (const peptide of peptides) {
@@ -65,7 +102,6 @@ class Dataset {
             }
             currentNode.addValue(peptide);
         }
-        this.tree = tree;
         return tree;
     }
 
@@ -76,7 +112,7 @@ class Dataset {
      * @param  {boolean} il should we equate I and L
      * @param  {boolean} dupes should we filter duplicates?
      * @param  {boolean} missed will we perform advancedMissedCleavageHandling
-     * @return {Map.<string, number} A frequency table of the cleaned up
+     * @return {Map.<string, number>} A frequency table of the cleaned up
      *   peptides
      */
     preparePeptides(il, dupes, missed) {

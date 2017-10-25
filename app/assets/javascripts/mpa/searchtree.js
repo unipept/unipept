@@ -1,9 +1,13 @@
 import {addCopy, highlight, logToGoogle} from "../utils.js";
 
+/* eslint require-jsdoc: off */
+
 /**
  * Constructs a Searchtree object
  *
- * @return <Searchtree> that The constructed Searchtree object
+ * @param  {Tree} t The JSON representation of the tree
+ * @param  {boolean} il Whether IL were equated
+ * @return {Searchtree} The constructed Searchtree object
  */
 function constructSearchtree(t, il) {
     /** ************* Private variables ***************/
@@ -96,8 +100,10 @@ function constructSearchtree(t, il) {
     }
 
     /**
-     * Loads the peptides corresponding with the clicked node and moves the
-     * info div to the corresponding position
+    * Loads the peptides corresponding with the clicked node and moves the
+    * info div to the corresponding position
+    *      *
+     * @return {false} prevent default
      */
     function clickAction() {
         logToGoogle("Multi Peptide", "tree", "Peptides");
@@ -147,7 +153,7 @@ function constructSearchtree(t, il) {
     /**
      * searches for a term
      *
-     * @param <String> searchTerm The string searched for
+     * @param  {string} searchTerm The string to search for
      */
     that.search = function search(searchTerm) {
         $("#tree_search").val(searchTerm);

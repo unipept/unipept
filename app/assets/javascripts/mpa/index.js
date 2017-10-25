@@ -5,6 +5,7 @@ import "unipept-visualizations/src/treemap/treemap.js";
 import "unipept-visualizations/src/treeview/treeview.js";
 import "unipept-visualizations/src/sunburst/sunburst.js";
 
+/* eslint require-jsdoc: off */
 class MPA {
     constructor(peptides = [], il = true, dupes = true, missed = false) {
         this.datasets = [];
