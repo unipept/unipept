@@ -37,6 +37,7 @@ class Dataset {
     constructor(peptides = []) {
         this.originalPeptides = Dataset.cleanPeptides(peptides);
         this.processedPeptides = [];
+        this.missedPeptides = [];
         this.tree = null;
         this.taxonMap = new Map();
         this.taxonMap.set(1, {id: 1, ranke: "no rank", name: "root"});
@@ -73,6 +74,7 @@ class Dataset {
         tree.setCounts();
         tree.setTaxonNames(await taxonInfo);
         tree.sortTree();
+        this.setMissedPeptides(peptideList, this.processedPeptides);
         this.tree = tree;
         this.addTaxonInfo(await taxonInfo);
         return tree;
@@ -121,6 +123,17 @@ class Dataset {
         peptides = Dataset.equateIL(peptides, il);
         peptides = Dataset.indexPeptides(peptides);
         return peptides;
+    }
+
+    /**
+     * Calculates the missed peptides and sets the object property
+     *
+     * @param {string[]} peptideList The peptides we searched for
+     * @param {PeptideInfo[]} processedPeptides The list of results
+     */
+    setMissedPeptides(peptideList, processedPeptides) {
+        const foundPeptides = new Set(processedPeptides.map(p => p.sequence));
+        this.missedPeptides = peptideList.filter(p => !foundPeptides.has(p));
     }
 
     /**
