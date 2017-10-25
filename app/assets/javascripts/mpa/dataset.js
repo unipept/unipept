@@ -1,6 +1,10 @@
-import {MPA} from "./index.js";
+import {Resultset} from "./resultset.js";
 import {Node} from "./node.js";
 import {Tree} from "./tree.js";
+
+const BATCH_SIZE = 100,
+    PEPT2LCA_URL = "/mpa/pept2lca",
+    TAXA_URL = "/mpa/taxa";
 
 /**
  * @typedef TaxonInfo
@@ -19,10 +23,6 @@ import {Tree} from "./tree.js";
  * @property {number[]} lineage The lineage of the lca
  */
 
-const BATCH_SIZE = 100,
-    PEPT2LCA_URL = "/mpa/pept2lca",
-    TAXA_URL = "/mpa/taxa";
-
 /**
  * Class that represents a single dataset containing a list of peptides.
  *
@@ -36,8 +36,6 @@ class Dataset {
      */
     constructor(peptides = []) {
         this.originalPeptides = Dataset.cleanPeptides(peptides);
-        this.processedPeptides = [];
-        this.missedPeptides = [];
         this.tree = null;
         this.taxonMap = new Map();
         this.taxonMap.set(1, {id: 1, ranke: "no rank", name: "root"});
@@ -53,28 +51,14 @@ class Dataset {
      *   advancedMissedCleavageHandling
      * @return {Promise.<Tree>} The taxonomic tree containing all peptides.
      */
-    async process(il, dupes, missed) {
-        const peptideMap = this.preparePeptides(il, dupes, missed);
-        const peptideList = Array.from(peptideMap.keys());
-        this.processedPeptides = [];
-        for (let i = 0; i < peptideList.length; i += BATCH_SIZE) {
-            const data = JSON.stringify({
-                peptides: peptideList.slice(i, i + BATCH_SIZE),
-                equate_il: il,
-                missed: missed,
-            });
-            const result = await Dataset.postJSON(PEPT2LCA_URL, data);
-            this.processedPeptides.push(...result.peptides);
-        }
-        for (const peptide of this.processedPeptides) {
-            peptide.count = dupes ? 1 : peptideMap.get(peptide.sequence);
-        }
-        const tree = this.buildTree(this.processedPeptides, peptideMap, dupes);
+    async search({il, dupes, missed}) {
+        this.resultset = new Resultset(this, {il, dupes, missed});
+        await this.resultset.process();
+        const tree = this.buildTree(this.resultset.processedPeptides);
         const taxonInfo = Dataset.getTaxonInfo(tree.getTaxa());
         tree.setCounts();
         tree.setTaxonNames(await taxonInfo);
         tree.sortTree();
-        this.setMissedPeptides(peptideList, this.processedPeptides);
         this.tree = tree;
         this.addTaxonInfo(await taxonInfo);
         return tree;
@@ -108,35 +92,6 @@ class Dataset {
     }
 
     /**
-     * Prepares the list of originalPeptides for use in the application by
-     * cleaving, filtering, equating IL and finally generating a frequence table
-     *
-     * @param  {boolean} il should we equate I and L
-     * @param  {boolean} dupes should we filter duplicates?
-     * @param  {boolean} missed will we perform advancedMissedCleavageHandling
-     * @return {Map.<string, number>} A frequency table of the cleaned up
-     *   peptides
-     */
-    preparePeptides(il, dupes, missed) {
-        let peptides = Dataset.cleavePeptides(this.originalPeptides, missed);
-        peptides = Dataset.filterShortPeptides(peptides);
-        peptides = Dataset.equateIL(peptides, il);
-        peptides = Dataset.indexPeptides(peptides);
-        return peptides;
-    }
-
-    /**
-     * Calculates the missed peptides and sets the object property
-     *
-     * @param {string[]} peptideList The peptides we searched for
-     * @param {PeptideInfo[]} processedPeptides The list of results
-     */
-    setMissedPeptides(peptideList, processedPeptides) {
-        const foundPeptides = new Set(processedPeptides.map(p => p.sequence));
-        this.missedPeptides = peptideList.filter(p => !foundPeptides.has(p));
-    }
-
-    /**
      * Adds new taxon info to the global taxon map
      *
      * @param {TaxonInfo[]} taxonInfo A list of new taxon info
@@ -154,18 +109,36 @@ class Dataset {
      * @return {string} The analysis result in csv format
      */
     toCSV() {
-        let result = "peptide,lca," + MPA.RANKS + "\n";
-        for (const peptide of this.processedPeptides) {
-            let row = peptide.sequence + ",";
-            row += this.taxonMap.get(peptide.lca).name + ",";
-            row += peptide.lineage.map(e => {
-                if (e === null) return "";
-                return this.taxonMap.get(e).name;
-            });
-            row += "\n";
-            result += row.repeat(peptide.count);
-        }
-        return result;
+        return this.resultset.toCSV();
+    }
+
+    /**
+     * Returns the number of matched peptides, taking the deduplication setting
+     * into account.
+     *
+     * @return {number} The number of matched peptides
+     */
+    getNumberOfMatchedPeptides() {
+        return this.tree.root.data.count;
+    }
+
+    /**
+     * Returns the number of searched for peptides, taking the deduplication
+     * setting into account.
+     *
+     * @return {number} The number of searched for peptides
+     */
+    getNumberOfSearchedForPeptides() {
+        return this.resultset.getNumberOfSearchedForPeptides();
+    }
+
+    /**
+     * Returns the list of unmached peptides for the current resultset
+     *
+     * @return {string[]} An array of peptides without match
+     */
+    getMissedPeptides() {
+        return this.resultset.missedPeptides;
     }
 
     /**
@@ -192,65 +165,6 @@ class Dataset {
     }
 
     /**
-     * Creates a frequency table for a list of peptides
-     *
-     * @param  {string[]} peptides A list of peptides
-     * @return {Map.<string, number>} A map containing the frequency of
-     *   each peptide
-     */
-    static indexPeptides(peptides) {
-        const peptideMap = new Map();
-        for (let peptide of peptides) {
-            const count = peptideMap.get(peptide) || 0;
-            peptideMap.set(peptide, count + 1);
-        }
-        return peptideMap;
-    }
-
-    /**
-     * Splits all peptides after every K or R if not followed by P if
-     * advancedMissedCleavageHandling isn't set
-     *
-     * @param  {string[]} peptides The list of peptides
-     * @param  {boolean} advancedMissedCleavageHandling Should we do
-     *   advancedMissedCleavageHandling?
-     * @return {string[]} The list of cleaved peptides
-     */
-    static cleavePeptides(peptides, advancedMissedCleavageHandling) {
-        if (!advancedMissedCleavageHandling) {
-            return peptides.join("+")
-                .replace(/([KR])([^P])/g, "$1+$2")
-                .replace(/([KR])([^P+])/g, "$1+$2")
-                .split("+");
-        }
-        return peptides;
-    }
-
-    /**
-     * Filters out all peptides with a length lower than 5
-     *
-     * @param  {string[]} peptides A list of peptides
-     * @return {string[]} A filtered list of peptides
-     */
-    static filterShortPeptides(peptides) {
-        return peptides.filter(p => p.length >= 5);
-    }
-
-    /**
-     * Replaces every I with an L if equateIL is set to true
-     *
-     * @param  {string[]} peptides An array of peptides in upper case
-     * @param  {boolean}  equateIL Only makes the replacement if this is true
-     * @return {string[]} The peptides where the replacements are made
-     */
-    static equateIL(peptides, equateIL) {
-        if (equateIL) {
-            return peptides.map(p => p.replace(/I/g, "L"));
-        }
-        return peptides;
-    }
-
-    /**
      * Posts data to a url as json and returns a promise containing the parsed
      * (json) response
      *
@@ -267,6 +181,27 @@ class Dataset {
             },
             body: data,
         }).then(res => res.json());
+    }
+
+    /**
+     * The batch size to fetch peptides at a time
+     */
+    static get BATCH_SIZE() {
+        return BATCH_SIZE;
+    }
+
+    /**
+     * The URL to fetch lca info
+     */
+    static get PEPT2LCA_URL() {
+        return PEPT2LCA_URL;
+    }
+
+    /**
+     * The URL to fetch taxon info
+     */
+    static get TAXA_URL() {
+        return TAXA_URL;
     }
 }
 
