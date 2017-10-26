@@ -23,7 +23,6 @@ class Node
     # root node
     return unless root?
     @nodes = []
-    @sequences = {}
   end
 
   def root?
@@ -31,8 +30,6 @@ class Node
   end
 
   attr_reader :nodes
-
-  attr_reader :sequences
 
   # returns the added child
   def add_child(child)
@@ -42,27 +39,10 @@ class Node
     child
   end
 
-  def set_sequences(sequences, id = @id)
-    if root?
-      @sequences[id] = sequences
-    else
-      @root.set_sequences(sequences, id)
-    end
-  end
-
   # Sorts the children alphabetically
   def sort_children
     @children.sort_by!(&:name)
     @children.map(&:sort_children)
-  end
-
-  # sets the count and self_count
-  def prepare_for_multitree
-    r = root? ? self : @root
-    @children.map(&:prepare_for_multitree)
-    @data['self_count'] = r.sequences[@id].nil? ? 0 : r.sequences[@id].size
-    count = @children.reduce(0) { |a, e| a + e.data['count'] }
-    @data['count'] = @data['self_count'] + count
   end
 
   # used by Oj.dump to exclude the root
