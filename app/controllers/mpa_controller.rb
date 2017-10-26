@@ -4,6 +4,7 @@ class MpaController < ApplicationController
 
   def analyze
     @header_class = 'MPA'
+    @title = 'Metaproteomics analysis result'
     @peptides = (params[:qs] || '').lines.map(&:strip).to_json
     @name = params[:search_name]
     @il = params[:il].present?
