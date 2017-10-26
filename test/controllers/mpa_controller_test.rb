@@ -61,21 +61,4 @@ class MpaControllerTest < ActionController::TestCase
     assert_equal false, assigns(:missed)
     assert_equal "[\"AALER\",\"AALER\",\"AAILER\",\"MISSES\"]", assigns(:peptides)
   end
-
-  test 'multi_search should add pride url is data comes from pride' do
-    skip
-    post :multi_search, params: { qs: 'AALER', search_name: 'PRIDE assay 123456' }
-    assert_response :success
-    assert_template :multi_search
-    assert assigns(:pride_url).include?('123456')
-    assert_equal 'Metaproteomics analysis result of PRIDE assay 123456', assigns(:title)
-  end
-
-  test 'multi_search should include name in title' do
-    skip
-    post :multi_search, params: { qs: "AALER\nAAILER\nMISSES", search_name: 'title' }
-    assert_response :success
-    assert_template :multi_search
-    assert_equal 'Metaproteomics analysis result of title', assigns(:title)
-  end
 end
