@@ -14,11 +14,7 @@ class MPA {
             dupes: dupes,
             missed: missed,
         };
-        this.addDataset(peptides).then( dataset => {
-            this.setUpVisualisations(dataset.tree);
-            this.setUpMissedPeptides(dataset.getMissedPeptides());
-            this.updateStats(dataset.getNumberOfMatchedPeptides(), dataset.getNumberOfSearchedForPeptides());
-        });
+        this.addDataset(peptides);
         this.setUpForm(peptides, il, dupes, missed);
         this.setUpButtons();
         this.setUpSaveImage();
@@ -26,13 +22,55 @@ class MPA {
         this.setUpActionBar();
     }
 
+    /**
+     * Creates a new dataset based on a list of peptides. After creating, an
+     * analysis is run with the current search settings. The returned Promise
+     * contains the new dataset and resolves after the analysis is complete.
+     *
+     * @param  {string[]}  peptides The list of peptides to analyse
+     * @return {Promise<Dataset>} Promise of the created dataset object.
+     */
     async addDataset(peptides) {
         this.enableProgressBar(true);
         let dataset = new Dataset(peptides);
         this.datasets.push(dataset);
-        await dataset.search(this.searchSettings);
+        await this.analyse(this.searchSettings);
         this.enableProgressBar(false);
         return dataset;
+    }
+
+    /**
+     * Analyses the current dataset for a given set of search settings. Returns
+     * an empty Promise that resolves when the analysis is done.
+     *
+     * @param  {object}  searchSettings The searchsettings (il, dupes, missed)
+     *   to use.
+     * @return {Promise<Dataset>} The dataset on which the analysis was
+     *   performed
+     */
+    async analyse(searchSettings) {
+        const dataset = this.datasets[0];
+        await dataset.search(this.searchSettings);
+        this.setUpVisualisations(dataset.tree);
+        this.setUpMissedPeptides(dataset.getMissedPeptides());
+        this.updateStats(dataset.getNumberOfMatchedPeptides(), dataset.getNumberOfSearchedForPeptides());
+        return dataset;
+    }
+
+    /**
+     * Updates the search settings and reruns the analysis. Resolves when the
+     * analysis is done.
+     *
+     * @param  {boolean}  il equate il
+     * @param  {boolean}  dupes  filter duplicates
+     * @param  {boolean}  missed enable advancedMissedCleavageHandling
+     */
+    async updateSearchSettings({il, dupes, missed}) {
+        this.searchSettings = {il: il, dupes: dupes, missed: missed};
+        this.enableProgressBar(true);
+        $("#search-intro").text("Please wait while we process your data");
+        await this.analyse(this.searchSettings);
+        this.enableProgressBar(false);
     }
 
     setUpVisualisations(tree) {
@@ -99,6 +137,12 @@ class MPA {
 
         // download results
         $("#mpa-download-results").click(() => downloadDataByForm(this.datasets[0].toCSV(), "mpa_result.csv"));
+        // update settings
+        $("#mpa-update-settings").click(() => this.updateSearchSettings({
+            il: $("#il").prop("checked"),
+            dupes: $("#dupes").prop("checked"),
+            missed: $("#missed").prop("checked"),
+        }));
 
         // copy to clipboard button for missed peptides
         addCopy("#copy-missed span", () => $(".mismatches").text().replace(/ /g, "\n"));
