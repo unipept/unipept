@@ -61,4 +61,42 @@ class MpaControllerTest < ActionController::TestCase
     assert_equal false, assigns(:missed)
     assert_equal "[\"AALER\",\"AALER\",\"AAILER\",\"MISSES\"]", assigns(:peptides)
   end
+
+  test 'should get pept2lca' do
+    @request.headers['Content-Type'] = "application/json"
+    post :pept2lca, params: { peptides: ["AALER", "AALER", "AAILER", "MISSES", "AALLERAGGAR"], missed: false, equate_il: false }
+    assert_response :success
+    assert_template :pept2lca
+    assert_equal false, assigns(:equate_il)
+    assert_equal JSON.parse('{"peptides":[{"sequence":"AALER","lca":2,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},{"sequence":"AAILER","lca":1,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1,null,null,null]}]}'), JSON.parse(response.body)
+  end
+
+  test 'should get pept2lca with missed' do
+    @request.headers['Content-Type'] = "application/json"
+    post :pept2lca, params: { peptides: ["AALER", "AALER", "AAILER", "MISSES", "AALLERAGGAR"], missed: true, equate_il: false }
+    assert_response :success
+    assert_template :pept2lca
+    assert_equal false, assigns(:equate_il)
+    assert_equal JSON.parse('{"peptides":[{"sequence":"AALER","lca":2,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},{"sequence":"AAILER","lca":1,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1,null,null,null]}]}'), JSON.parse(response.body)
+  end
+
+  test 'should get pept2lca with il' do
+    @request.headers['Content-Type'] = "application/json"
+    post :pept2lca, params: { peptides: ["AALER", "AALER", "AAILER", "MISSES", "AALLERAGGAR"], missed: false, equate_il: true }
+    assert_response :success
+    assert_template :pept2lca
+    assert_equal true, assigns(:equate_il)
+    assert_equal JSON.parse('{"peptides":[{"sequence":"AALER","lca":1,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1,null,null,null]},{"sequence":"AAILER","lca":2,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}]}'), JSON.parse(response.body)
+  end
+
+  test 'should get pept2lca with il and missed' do
+    @request.headers['Content-Type'] = "application/json"
+    post :pept2lca, params: { peptides: ["AALER", "AALER", "AAILER", "MISSES", "AALLERAGGAR"], missed: true, equate_il: true }
+    assert_response :success
+    assert_template :pept2lca
+    assert_equal true, assigns(:equate_il)
+    assert_equal JSON.parse('{"peptides":[{"sequence":"AALER","lca":1,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1,null,null,null]},{"sequence":"AAILER","lca":2,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},{"sequence":"AALLERAGGAR","lca":2,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}]}
+'), JSON.parse(response.body)
+  end
+
 end
