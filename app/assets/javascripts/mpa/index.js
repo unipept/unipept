@@ -189,9 +189,9 @@ class MPA {
 
         // tooltip
         if (isFullScreen) {
-            $("#tooltip").appendTo(".full-screen-container");
+            $(".tip").appendTo(".full-screen-container");
         } else {
-            $("#tooltip").appendTo("body");
+            $(".tip").appendTo("body");
         }
 
         // update visualisations
