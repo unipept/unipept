@@ -99,4 +99,12 @@ class MpaControllerTest < ActionController::TestCase
 '), JSON.parse(response.body)
   end
 
+  test 'should get taxa' do
+    @request.headers['Content-Type'] = "application/json"
+    post :taxa, params: { taxids: [1, 2, 3] }
+    assert_response :success
+    assert_template :taxa
+    assert_equal JSON.parse('[{"id":1,"name":"species1","rank":"species"},{"id":2,"name":"kingdom1","rank":"kingdom"}]'), JSON.parse(response.body)
+  end
+
 end
