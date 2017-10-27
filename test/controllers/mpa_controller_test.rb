@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class MpaControllerTest < ActionController::TestCase
-
   test 'should get multi_search' do
     post :analyze, params: { qs: "AALER\nAALER\nAAILER\nMISSES", search_name: '' }
     assert_response :success
@@ -11,7 +10,7 @@ class MpaControllerTest < ActionController::TestCase
     assert_equal false, assigns(:il)
     assert_equal false, assigns(:dupes)
     assert_equal false, assigns(:missed)
-    assert_equal "[\"AALER\",\"AALER\",\"AAILER\",\"MISSES\"]", assigns(:peptides)
+    assert_equal '["AALER","AALER","AAILER","MISSES"]', assigns(:peptides)
   end
 
   test 'should get multi_search with il' do
@@ -23,7 +22,7 @@ class MpaControllerTest < ActionController::TestCase
     assert_equal true, assigns(:il)
     assert_equal false, assigns(:dupes)
     assert_equal false, assigns(:missed)
-    assert_equal "[\"AALER\",\"AALER\",\"AAILER\",\"MISSES\"]", assigns(:peptides)
+    assert_equal '["AALER","AALER","AAILER","MISSES"]', assigns(:peptides)
   end
 
   test 'should get multi_search with dupes' do
@@ -35,7 +34,7 @@ class MpaControllerTest < ActionController::TestCase
     assert_equal false, assigns(:il)
     assert_equal true, assigns(:dupes)
     assert_equal false, assigns(:missed)
-    assert_equal "[\"AALER\",\"AALER\",\"AAILER\",\"MISSES\"]", assigns(:peptides)
+    assert_equal '["AALER","AALER","AAILER","MISSES"]', assigns(:peptides)
   end
 
   test 'should get multi_search with missed' do
@@ -47,7 +46,7 @@ class MpaControllerTest < ActionController::TestCase
     assert_equal false, assigns(:il)
     assert_equal false, assigns(:dupes)
     assert_equal true, assigns(:missed)
-    assert_equal "[\"AALER\",\"AALER\",\"AAILER\",\"MISSES\"]", assigns(:peptides)
+    assert_equal '["AALER","AALER","AAILER","MISSES"]', assigns(:peptides)
   end
 
   test 'should get multi_search with name' do
@@ -59,12 +58,12 @@ class MpaControllerTest < ActionController::TestCase
     assert_equal false, assigns(:il)
     assert_equal false, assigns(:dupes)
     assert_equal false, assigns(:missed)
-    assert_equal "[\"AALER\",\"AALER\",\"AAILER\",\"MISSES\"]", assigns(:peptides)
+    assert_equal '["AALER","AALER","AAILER","MISSES"]', assigns(:peptides)
   end
 
   test 'should get pept2lca' do
-    @request.headers['Content-Type'] = "application/json"
-    post :pept2lca, params: { peptides: ["AALER", "AALER", "AAILER", "MISSES", "AALLERAGGAR"], missed: false, equate_il: false }
+    @request.headers['Content-Type'] = 'application/json'
+    post :pept2lca, params: { peptides: %w[AALER AALER AAILER MISSES AALLERAGGAR], missed: false, equate_il: false }
     assert_response :success
     assert_template :pept2lca
     assert_equal false, assigns(:equate_il)
@@ -72,8 +71,8 @@ class MpaControllerTest < ActionController::TestCase
   end
 
   test 'should get pept2lca with missed' do
-    @request.headers['Content-Type'] = "application/json"
-    post :pept2lca, params: { peptides: ["AALER", "AALER", "AAILER", "MISSES", "AALLERAGGAR"], missed: true, equate_il: false }
+    @request.headers['Content-Type'] = 'application/json'
+    post :pept2lca, params: { peptides: %w[AALER AALER AAILER MISSES AALLERAGGAR], missed: true, equate_il: false }
     assert_response :success
     assert_template :pept2lca
     assert_equal false, assigns(:equate_il)
@@ -81,8 +80,8 @@ class MpaControllerTest < ActionController::TestCase
   end
 
   test 'should get pept2lca with il' do
-    @request.headers['Content-Type'] = "application/json"
-    post :pept2lca, params: { peptides: ["AALER", "AALER", "AAILER", "MISSES", "AALLERAGGAR"], missed: false, equate_il: true }
+    @request.headers['Content-Type'] = 'application/json'
+    post :pept2lca, params: { peptides: %w[AALER AALER AAILER MISSES AALLERAGGAR], missed: false, equate_il: true }
     assert_response :success
     assert_template :pept2lca
     assert_equal true, assigns(:equate_il)
@@ -90,8 +89,8 @@ class MpaControllerTest < ActionController::TestCase
   end
 
   test 'should get pept2lca with il and missed' do
-    @request.headers['Content-Type'] = "application/json"
-    post :pept2lca, params: { peptides: ["AALER", "AALER", "AAILER", "MISSES", "AALLERAGGAR"], missed: true, equate_il: true }
+    @request.headers['Content-Type'] = 'application/json'
+    post :pept2lca, params: { peptides: %w[AALER AALER AAILER MISSES AALLERAGGAR], missed: true, equate_il: true }
     assert_response :success
     assert_template :pept2lca
     assert_equal true, assigns(:equate_il)
@@ -100,11 +99,10 @@ class MpaControllerTest < ActionController::TestCase
   end
 
   test 'should get taxa' do
-    @request.headers['Content-Type'] = "application/json"
+    @request.headers['Content-Type'] = 'application/json'
     post :taxa, params: { taxids: [1, 2, 3] }
     assert_response :success
     assert_template :taxa
     assert_equal JSON.parse('[{"id":1,"name":"species1","rank":"species"},{"id":2,"name":"kingdom1","rank":"kingdom"}]'), JSON.parse(response.body)
   end
-
 end
