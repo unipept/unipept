@@ -22,6 +22,7 @@ class Resultset {
         this.preparedPeptides = this.preparePeptides(dataset.originalPeptides, il, dupes, missed);
         this.processedPeptides = [];
         this.missedPeptides = [];
+        this.progress = 0;
     }
 
     /**
@@ -31,6 +32,7 @@ class Resultset {
     async process() {
         const peptideList = Array.from(this.preparedPeptides.keys());
         this.processedPeptides = [];
+        this.setProgress(0);
         for (let i = 0; i < peptideList.length; i += Dataset.BATCH_SIZE) {
             const data = JSON.stringify({
                 peptides: peptideList.slice(i, i + Dataset.BATCH_SIZE),
@@ -39,11 +41,23 @@ class Resultset {
             });
             const result = await Dataset.postJSON(Dataset.PEPT2LCA_URL, data);
             this.processedPeptides.push(...result.peptides);
+            this.setProgress(this.progress + Dataset.BATCH_SIZE / peptideList.length);
         }
         for (const peptide of this.processedPeptides) {
             peptide.count = this.preparedPeptides.get(peptide.sequence);
         }
         this.setMissedPeptides(peptideList, this.processedPeptides);
+    }
+
+    /**
+     * Sets the progress of processing the result and emits the value on the
+     * event bus.
+     *
+     * @param {number} value The new progress value
+     */
+    setProgress(value) {
+        this.progress = value;
+        eventBus.emit("dataset-progress", value);
     }
 
     /**

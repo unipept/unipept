@@ -31,6 +31,7 @@
     "resolve-url-loader": "^2.1.0",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.18.2",
+    "tiny-emitter": "^2.0.2",
     "unipept-visualizations": "^1.5.0",
     "webpack": "^3.0.0",
     "webpack-manifest-plugin": "^1.1.0",

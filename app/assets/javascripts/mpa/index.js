@@ -31,7 +31,7 @@ class MPA {
      * @return {Promise<Dataset>} Promise of the created dataset object.
      */
     async addDataset(peptides) {
-        this.enableProgressBar(true);
+        this.enableProgressBar(true, true);
         let dataset = new Dataset(peptides);
         this.datasets.push(dataset);
         await this.analyse(this.searchSettings);
@@ -67,7 +67,7 @@ class MPA {
      */
     async updateSearchSettings({il, dupes, missed}) {
         this.searchSettings = {il: il, dupes: dupes, missed: missed};
-        this.enableProgressBar(true);
+        this.enableProgressBar(true, true);
         $("#search-intro").text("Please wait while we process your data");
         await this.analyse(this.searchSettings);
         this.enableProgressBar(false);
@@ -239,12 +239,22 @@ class MPA {
         });
     }
 
-    enableProgressBar(enable = true) {
+    enableProgressBar(enable = true, determinate = false) {
         if (enable) {
             $("#progress-analysis").css("visibility", "visible");
+            $("#progress-analysis").toggleClass("unipept-progress-determinate", determinate);
+            $("#progress-analysis").toggleClass("unipept-progress-indeterminate", !determinate);
+            this.setProgressValue(0);
+            eventBus.on("dataset-progress", this.setProgressValue);
         } else {
             $("#progress-analysis").css("visibility", "hidden");
+            this.setProgressValue(0);
+            eventBus.off("dataset-progress", this.setProgressValue);
         }
+    }
+
+    setProgressValue(value = 0) {
+        $("#progress-analysis .progressbar").css("width", `${value * 100}%`);
     }
 
     tooltipContent(d) {

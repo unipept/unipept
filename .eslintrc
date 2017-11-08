@@ -31,5 +31,6 @@
         "fullScreenApi": false,
         "delay": false,
         "Newick": false,
+        "eventbus": false
     }
 }
