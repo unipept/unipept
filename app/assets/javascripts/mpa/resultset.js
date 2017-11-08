@@ -83,10 +83,10 @@ class Resultset {
         let result = "peptide,lca," + MPA.RANKS + "\n";
         for (const peptide of this.processedPeptides) {
             let row = peptide.sequence + ",";
-            row += this.taxonMap.get(peptide.lca).name + ",";
+            row += this.dataset.taxonMap.get(peptide.lca).name + ",";
             row += peptide.lineage.map(e => {
                 if (e === null) return "";
-                return this.taxonMap.get(e).name;
+                return this.dataset.taxonMap.get(e).name;
             });
             row += "\n";
             result += row.repeat(peptide.count);
