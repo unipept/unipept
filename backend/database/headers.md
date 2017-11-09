@@ -98,11 +98,12 @@ Proteomes
 - ***id***: A self-assigned id. Integral, incremental, no gaps.
 - ***proteome_accession_number***: The Uniprot Proteome Accession number.
 - ***proteome_name***: Name of the proteome
-- ***taxon _***: The taxon to which this proteome is attributed.
+- ***taxon _***: The taxon to which this proteome is attributed (calculated in rails).
 - ***type_strain***: Is this a type strain?
 - ***reference_proteome***: Is this a reference proteome?
 - ***strain***: The strain number (might be null)
 - ***assembly***: The coresponding assembly accession number number (might be null)
+- ***name***: Full name (calculated in rails).
 
 Proteome Cross Reference
 ------------------
