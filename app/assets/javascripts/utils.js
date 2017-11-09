@@ -36,8 +36,9 @@ function brightness(rgb) {
  * form and a server round trip. Returns a Promise that resolves when
  * the file starts downloading
  *
- * @param <String> data The text you want in the file
- * @param <String> filename The requested file name
+ * @param {string} data The text you want in the file
+ * @param {string} fileName The requested file name
+ * @return {Promise.<string>}
  */
 function downloadDataByForm(data, fileName) {
     return new Promise(function (resolve, reject) {
@@ -227,10 +228,6 @@ function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
         $element,
         svg;
 
-    if (window.fullScreenApi.isFullScreen()) {
-        window.fullScreenApi.cancelFullScreen();
-    }
-
     // Reset the modal and show it
     $buttons.html("<h3>Please wait while we create your image</h3>");
     $image.html("<h3>Loading preview...</h3>" +
@@ -253,6 +250,10 @@ function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
                 showImage(canvas.toDataURL());
             },
         });
+    }
+
+    if (window.fullScreenApi.isFullScreen()) {
+        window.fullScreenApi.cancelFullScreen();
     }
 
     // Show the image and add buttons

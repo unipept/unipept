@@ -1,18 +1,22 @@
 import {addCopy, highlight, logToGoogle} from "../utils.js";
 
+/* eslint require-jsdoc: off */
+
 /**
  * Constructs a Searchtree object
  *
- * @return <Searchtree> that The constructed Searchtree object
+ * @param  {Tree} t The JSON representation of the tree
+ * @param  {boolean} il Whether IL were equated
+ * @return {Searchtree} The constructed Searchtree object
  */
-function constructSearchtree(args) {
+function constructSearchtree(t, il) {
     /** ************* Private variables ***************/
 
     // parameters
     let that = {},
-        data = args.data,
-        multi = args.multi,
-        equateIL = args.equateIL ? "equateIL" : "";
+        dataTree = t,
+        data = t.root,
+        equateIL = il ? "equateIL" : "";
 
     let tree,
         items;
@@ -39,29 +43,17 @@ function constructSearchtree(args) {
         items = tree.selectAll("li").data([data])
             .enter()
             .append("li")
-            .html(function (d) {
-                return "<span>" + multi.getTitle(d) + "</span>";
-            })
-            .attr("title", function (d) {
-                return d.data.rank;
-            })
+            .html(d => `<span>${d.name} (${d.data.self_count}/${d.data.count})</span>`)
+            .attr("title", d => d.rank)
             .attr("class", "collapsibleListOpen")
-            .attr("data-search", function (d) {
-                return d.name.toLowerCase();
-            })
+            .attr("data-search", d => d.name.toLowerCase())
             .append("ul");
         for (i = 0; i < 28; i++) {
-            items = items.selectAll("li").data(function (d) {
-                return d.children;
-            })
+            items = items.selectAll("li").data(d => d.children)
                 .enter()
                 .append("li")
-                .html(function (d) {
-                    return "<span>" + multi.getTitle(d) + "</span>";
-                })
-                .attr("title", function (d) {
-                    return d.data.rank;
-                })
+                .html(d => `<span>${d.name} (${d.data.self_count}/${d.data.count})</span>`)
+                .attr("title", d => d.rank)
                 .attr("class", function (d) {
                     if (!d.children.length) {
                         return "not leaf";
@@ -71,9 +63,7 @@ function constructSearchtree(args) {
                         return "collapsibleListClosed";
                     }
                 })
-                .attr("data-search", function (d) {
-                    return d.name.toLowerCase();
-                })
+                .attr("data-search", d => d.name.toLowerCase())
                 .append("ul");
         }
 
@@ -110,8 +100,10 @@ function constructSearchtree(args) {
     }
 
     /**
-     * Loads the peptides corresponding with the clicked node and moves the
-     * info div to the corresponding position
+    * Loads the peptides corresponding with the clicked node and moves the
+    * info div to the corresponding position
+    *      *
+     * @return {false} prevent default
      */
     function clickAction() {
         logToGoogle("Multi Peptide", "tree", "Peptides");
@@ -127,11 +119,11 @@ function constructSearchtree(args) {
 
         $("span.clicked").removeClass("clicked");
         $(this).addClass("clicked");
-        innertext += " (" + d.data.rank + ")";
+        innertext += " (" + d.rank + ")";
         infoPane = $("#tree_data").html("<h3>" + innertext + "</h3>");
         $("#tree_data").css("-webkit-transform", "translateY(" + margin + "px)");
         $("#tree_data").css("transform", "translateY(" + margin + "px)");
-        ownSequences = multi.getOwnSequences(d.id).sort();
+        ownSequences = dataTree.getOwnSequences(d).sort();
         if (ownSequences && ownSequences.length > 0) {
             stringBuffer = "<h4 class='own'>Peptides specific for this taxon</h4><ul>";
             for (i = 0; i < ownSequences.length; i++) {
@@ -142,7 +134,7 @@ function constructSearchtree(args) {
             infoPane.find("h4.own").before("<div id='copy-own' class='clipboard-btn-wrapper'><span class='btn-clipboard'>Copy</span></div>");
             addCopy("#copy-own span", () => ownSequences.join("\n"));
         }
-        allSequences = multi.getAllSequences(d).sort();
+        allSequences = dataTree.getAllSequences(d).sort();
         if (allSequences && allSequences.length > 0 && allSequences.length !== (ownSequences ? ownSequences.length : 0)) {
             stringBuffer = "<h4 class='all'>Peptides specific to this taxon or its subtaxa</h4><ul>";
             for (i = 0; i < allSequences.length; i++) {
@@ -161,7 +153,7 @@ function constructSearchtree(args) {
     /**
      * searches for a term
      *
-     * @param <String> searchTerm The string searched for
+     * @param  {string} searchTerm The string to search for
      */
     that.search = function search(searchTerm) {
         $("#tree_search").val(searchTerm);

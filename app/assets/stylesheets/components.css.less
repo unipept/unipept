@@ -218,3 +218,74 @@
     font-size: 50pt;
     margin-bottom: -10px;
 }
+
+// progress bar
+.unipept-progress {
+    display: block;
+    position: relative;
+    height: 4px;
+    max-width: 100%;
+    visibility: hidden;
+}
+.unipept-progress>.bar {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 0%;
+    transition: width .2s cubic-bezier(.4,0,.2,1);
+}
+.unipept-progress>.progressbar {
+    background-color: @primary-500;
+    z-index: 1;
+    left: 0;
+}
+.unipept-progress>.bufferbar {
+    background-image: linear-gradient(to right,rgba(255,255,255,.7),rgba(255,255,255,.7)),linear-gradient(to right,@primary-500 ,@primary-500);
+    z-index: 0;
+    left: 0;
+}
+.unipept-progress>.auxbar {
+    right: 0;
+}
+.unipept-progress.unipept-progress-indeterminate>.bar1, .unipept-progress.unipept-progress-indeterminate>.bar3 {
+    background-color: @primary-500;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+.mdl-progress.mdl-progress-indeterminate>.bar3{
+    background-image: none;
+    animation-name: indeterminate2;
+}
+.unipept-progress.unipept-progress-indeterminate>.bar1{
+    animation-name: indeterminate1;
+}
+@keyframes indeterminate1 {
+    0% {
+        left: 0%;
+        width: 0%
+    }
+    50% {
+        left: 25%;
+        width: 75%
+    }
+    75% {
+        left: 100%;
+        width: 0%
+    }
+}
+@keyframes indeterminate2 {
+    0%,50% {
+        left: 0%;
+        width: 0%
+    }
+    75% {
+        left: 0%;
+        width: 25%
+    }
+    100% {
+        left: 100%;
+        width: 0%
+    }
+}

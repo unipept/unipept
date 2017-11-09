@@ -1,0 +1,160 @@
+<% content_for :javascripts do %>
+  <%= javascript_pack_tag 'd3' %>
+  <%= javascript_pack_tag 'mpa' %>
+<% end %>
+
+<div class='card'>
+  <div class='card-title card-title-colored'>
+    <h2 class='card-title-text'>Metaproteomics Analysis<%= " — #{@name}" if @name.present? %></h2>
+  </div>
+  <div id="progress-analysis" class="unipept-progress unipept-progress-indeterminate">
+    <div class="progressbar bar bar1" style="width: 0%;"></div>
+    <div class="bufferbar bar bar2" style="width: 100%;"></div>
+    <div class="auxbar bar bar3" style="width: 0%;"></div>
+  </div>
+  <div class='card-supporting-text'>
+    <div class='col-md-6'>
+        <span id="search-intro">Please wait while we are preparing your data...</span>
+        <hr>
+        <div class="checkbox">
+          <%= label_tag(:il, check_box_tag(:il, 1, false) + " Equate I and L", title: "Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries.", class: 'js-has-hover-tooltip') %>
+        </div>
+        <div class="checkbox">
+          <%= label_tag(:dupes, check_box_tag(:dupes, 1, false) + " Filter duplicate peptides", title: "Remove duplicate peptides from the input before searching.", class:'js-has-hover-tooltip') %>
+        </div>
+        <div class="checkbox">
+          <%= label_tag(:missed, check_box_tag(:missed, 1, false) + " Advanced missed cleavage handling", title: "Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!", class: 'js-has-hover-tooltip') %>
+        </div>
+        <div id="search_button" class='search-buttons-centered'>
+          <%= button_tag(raw("<span class='glyphicon glyphicon-refresh spin'></span> Update"), :class => "btn btn-primary btn-animate", :id =>"mpa-update-settings", :"data-loading-text" => "Loading...") %>
+          <%= button_tag(raw("<span class='glyphicon glyphicon-download down'></span> Download results"), :class => "btn btn-animate", :id =>"mpa-download-results", :"data-loading-text" => "Loading...") %>
+        </div>
+    </div>
+    <div class='col-md-6'>
+      <div id="search_elements" class='form-group'>
+        <%= text_area_tag(:qs, nil, rows: 7, spellcheck: false, class: "form-control", disabled: true) %>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class='card card-nav'>
+  <div class='card-title card-title-colored'>
+    <ul class="nav nav-tabs visualisations" id="viz-tabs">
+      <li class="active"><a href="#sunburstWrapper" data-toggle="tab">Sunburst</a></li>
+      <li><a href="#treemapWrapper" data-toggle="tab">Treemap</a></li>
+      <li><a href="#treeviewWrapper" data-toggle="tab">Treeview</a></li>
+    </ul>
+  </div>
+  <div class='card-supporting-text multi-results'>
+    <div class="full-screen-container tab-content multi-search not-full-screen">
+      <div id="buttons" class='buttons-single'></div>
+      <div class="full-screen-bar">
+        <div class="logo"><img src="<%= asset_path('trans_logo.png') %>" alt="logo" width="40" height="40"></div>
+        <nav class="fullScreenNav">
+          <ul class="visualisations">
+            <li class="active"><a href="#sunburstWrapper" data-toggle="tab">Sunburst</a></li>
+            <li><a href="#treemapWrapper" data-toggle="tab">Treemap</a></li>
+            <li><a href="#treeviewWrapper" data-toggle="tab">Treeview</a></li>
+          </ul>
+        </nav>
+        <div class="fullScreenActions">
+          <a title="Reset the visualisation" class="btn-animate reset"><span class="glyphicon glyphicon-repeat spin"></span></a>
+          <a title="Download the current view as an svg or png image" class="btn-animate download"><span class="glyphicon glyphicon-download down"></span></a>
+          <a title="Exit full screen mode" class="btn-animate exit"><span class="glyphicon glyphicon-resize-small shrink"></span></a>
+        </div>
+      </div>
+      <div class="tab-pane active" id="sunburstWrapper">
+        <h2 class="ghead">
+          <span class="dir">
+            <a class="btn btn-xs btn-default btn-animate" id="sunburst-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+          </span>
+          <span class="dir">
+            <div class="btn-group" id="colorswap">
+              <a class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" id="colorswap-button"><span class="glyphicon glyphicon-cog"></span></a>
+              <ul class="dropdown-menu dropdown-menu-right dropdown-menu-form">
+                <li title="Enabling this will assign fixed colors to taxa making it easier to compare samples.">
+                  <div class="checkbox"><label class="checkbox"><input type="checkbox" id="colorswap-checkbox">Use fixed colors</label></div>
+                </li>
+              </ul>
+            </div>
+          </span>
+          <span class="dir text">Click a slice to zoom in and the center node to zoom out</span>
+        </h2>
+        <div id="mpa-sunburst">
+          <div id="sunburstPanel"><div class="mpa-waiting">Please wait while we are preparing your data...</div></div>
+        </div>
+      </div>
+      <div class="tab-pane" id="treemapWrapper">
+        <h2 class="ghead">
+          <span class="dir">
+            <a class="btn btn-xs btn-default btn-animate" id="treemap-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+          </span>
+          <span class="dir text">Click a square to zoom in and right click to zoom out</span>
+        </h2>
+        <div id="mpa-treemap"><div class="mpa-waiting">Please wait while we are preparing your data...</div></div>
+      </div>
+      <div class="tab-pane" id="treeviewWrapper">
+        <h2 class="ghead">
+          <span class="dir">
+            <a class="btn btn-xs btn-default btn-animate" id="treeview-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+          </span>
+          <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
+        </h2>
+        <div id="mpa-treeview"><div class="mpa-waiting">Please wait while we are preparing your data...</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class='card card-nav'>
+  <div class='card-title card-title-colored'>
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#outline" data-toggle="tab">Hierarchical outline</a></li>
+      <li><a href="#mismatches" data-toggle="tab">Mismatches</a></li>
+    </ul>
+  </div>
+  <div class='card-supporting-text'>
+    <div class="tab-content multi-search">
+      <div class="tab-pane active" id="outline">
+        <div class="input-group" id="tree_search_group">
+          <%= search_field_tag(:tree_search, "", :placeholder => "search for an organism...", :class => "form-control") %>
+          <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+        </div>
+        <div class="visualClear"></div>
+        <div id="searchtree" class="treeView multi"></div>
+        <div id="tree_data">
+          <p>Click on a node in the tree to see the peptides associated with that organism.</p>
+        </div>
+      </div>
+      <div class="tab-pane" id="mismatches">
+          <div class="row">
+            <div class="col-md-6">
+              <ul class="mismatches">
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <div id="copy-missed" class="clipboard-btn-wrapper"><span class="btn-clipboard">Copy</span></div>
+              <div class="well">
+                <h3>Sorry,</h3>
+                <p>We didn't manage to find some of your peptides. You can <strong><span class="initialism">BLAST</span></strong> them by clicking the links on the left or <strong>copy</strong> them to your clipboard with the top right link.</p>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="tooltip" class="tip"></div>
+
+<script type="text/javascript">
+  var peptides = <%= raw(@peptides) %>;
+  var il = <%= @il %>;
+  var dupes = <%= @dupes %>;
+  var missed = <%= @missed %>;
+
+  $(function () {
+      new MPA(peptides, il, dupes, missed);
+  });
+</script>

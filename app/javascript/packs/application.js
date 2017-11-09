@@ -16,6 +16,8 @@ import "../../assets/javascripts/polyfills.js";
 
 import {logErrorToGoogle} from "../../assets/javascripts/utils.js";
 
+window.eventBus = require("tiny-emitter/instance");
+
 // add jquery aliases
 window.jQuery = jQuery;
 window.jquery = jQuery;

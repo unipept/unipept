@@ -181,4 +181,12 @@ class SequenceTest < ActiveSupport::TestCase
     assert Sequence.boolean? true
     assert Sequence.boolean? false
   end
+
+  test 'should give correct result for missed_cleavage_lca' do
+    assert_equal 2, Sequence.missed_cleavage_lca('AAILERAGGAR', false).lca
+    assert_nil Sequence.missed_cleavage_lca('AAILERAGGAR', false).lca_il
+    assert_nil Sequence.missed_cleavage_lca('AAILERAGGAR', true)
+    assert_equal 2, Sequence.missed_cleavage_lca('AALLERAGGAR', true).lca_il
+    assert_nil Sequence.missed_cleavage_lca('AALLERAGGAR', true).lca
+  end
 end
