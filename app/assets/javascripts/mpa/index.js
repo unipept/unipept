@@ -1,9 +1,7 @@
 import {addCopy, downloadDataByForm, logToGoogle, triggerDownloadModal} from "../utils.js";
 import {Dataset} from "./dataset.js";
 import {constructSearchtree} from "./searchtree.js";
-import "unipept-visualizations/src/treemap/treemap.js";
-import "unipept-visualizations/src/treeview/treeview.js";
-import "unipept-visualizations/src/sunburst/sunburst.js";
+import "unipept-visualizations/dist/unipept-visualizations.es5.js";
 
 /* eslint require-jsdoc: off */
 class MPA {
