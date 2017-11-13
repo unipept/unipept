@@ -1,3 +1,7 @@
+<% content_for :javascripts do %>
+  <%= javascript_pack_tag 'datasets' %>
+<% end %>
+
 <div class="row">
   <div class="col-xs-6">
     <%= render 'shared/sequence_multi_search' %>
@@ -6,6 +10,7 @@
     <%= render 'shared/load_datasets_form' %>
   </div>
 </div>
+
 <%= render 'shared/multi_search_intro' %>
 
 <script type="text/javascript">

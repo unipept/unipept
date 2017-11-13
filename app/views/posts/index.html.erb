@@ -1,3 +1,7 @@
+<% content_for :javascripts do %>
+  <%= javascript_pack_tag 'posts' %>
+<% end %>
+
 <h1>
   News
   <%= link_to 'New Post', new_post_path, :class => "btn btn-primary pull-right" if user_signed_in? && current_user.admin? %>
