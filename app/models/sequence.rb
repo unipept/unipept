@@ -59,23 +59,19 @@ class Sequence < ApplicationRecord
                 .gsub(/([KR])([^P])/, "\\1\n\\2")
                 .lines.map(&:strip).to_a
 
-    # heuristic optimization to evade short sequences with lots of matches
-    min_length = [8, sequences.map(&:length).max].min
-    sequences = sequences.select { |s| s.length >= min_length }
+    # search the most unique sequence
+    p_counts = Sequence.where(sequence: sequences)
+      .joins(equate_il ? :peptides : :original_peptides)
+      .group("sequences.id")
+      .select('sequences.id, count(*) as num_of_peptides')
 
-    long_sequences = sequences.map do |s|
-      Sequence
-        .includes(Sequence.peptides_relation_name(equate_il) => { uniprot_entry: :lineage })
-        .find_by(sequence: s)
-    end
+    return nil if p_counts.empty?
 
-    return nil if long_sequences.include? nil
-    return nil if long_sequences.empty?
-
-    entries = long_sequences
-              .map { |s| s.peptides(equate_il).map(&:uniprot_entry).to_set }
-              .reduce(:&) # take the intersection of all sets
-              .select { |e| e.protein_contains?(sequence, equate_il) }
+    entries = Sequence
+      .includes(Sequence.peptides_relation_name(equate_il) => { uniprot_entry: :lineage })
+      .find(p_counts.min_by(&:num_of_peptides).id)
+      .peptides(equate_il).map(&:uniprot_entry).to_set
+      .select { |e| e.protein_contains?(sequence, equate_il) }
 
     return nil if entries.empty?
 
