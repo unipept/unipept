@@ -104,6 +104,17 @@ class MPA {
         $("#il").prop("checked", il);
         $("#dupes").prop("checked", dupes);
         $("#missed").prop("checked", missed);
+
+        // enable tooltips
+        $(".js-has-hover-tooltip").tooltip({
+            container: "body",
+            placement: "right",
+        });
+        $(".js-has-focus-tooltip").tooltip({
+            trigger: "focus",
+            container: "body",
+            placement: "right",
+        });
     }
 
     setUpButtons() {
