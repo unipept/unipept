@@ -42,6 +42,7 @@ class Api::ClidocsController < ApplicationController
   def pept2prot
     @title = 'The unipept pept2prot command'
     @sidebar_name = 'unipept pept2prot'
+    @sidebar_subnav << 'Meganize'
   end
 
   def pept2taxa

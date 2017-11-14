@@ -1,3 +1,7 @@
+import {downloadDataByForm} from "../utils.js";
+
+import {initPhylogram} from "./phylogram.js";
+
 /**
  * Creates a SimMatrix object that includes the similarity matrix and
  * phylogenetic tree.
@@ -5,15 +9,15 @@
  * @param <Pancore> args.pancore The Pancore object
  * @param <GenomeTable> args.table The GenomeTable object
  */
-var constructSimMatrix = function constructSimMatrix(args) {
-    /*************** Private variables ***************/
+function constructSimMatrix(args) {
+    /** ************* Private variables ***************/
 
     // Parameters
-    var pancore = args.pancore,
+    let pancore = args.pancore,
         table = args.table;
 
     // UI variables
-    var margin = {top: 15, right: 200, bottom: 200, left: 16},
+    let margin = {top: 15, right: 200, bottom: 200, left: 16},
         width = 500,
         height = 500,
         treeWidth = 200,
@@ -22,7 +26,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         fillColor = "#1565C0";
 
     // D3 vars
-    var svg,
+    let svg,
         matrixSvg,
         buttonSvg,
         treeSvg,
@@ -33,7 +37,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         tooltip;
 
     // Constructor fields
-    var metadata = {},
+    let metadata = {},
         order = [],
         similarities = {},
         addingGenomes = false,
@@ -42,28 +46,28 @@ var constructSimMatrix = function constructSimMatrix(args) {
         clustered,
         newick;
 
-    var that = {};
+    let that = {};
 
-    /*************** Private methods ***************/
+    /** ************* Private methods ***************/
 
     /**
      * Initializes the SimMatrix
      */
     function init() {
-        init_phylogram();
+        initPhylogram();
 
         // calculate similarity and update on tab switch
-        $('.peptidome-clustering-tab').on('shown.bs.tab', function tabSwitchAction() {
+        $(".peptidome-clustering-tab").on("shown.bs.tab", function tabSwitchAction() {
             calculateSimilarity();
             that.update();
         });
 
         // decluster matrix button
-        $('#decluster-matrix').click(function declusterAction() {
+        $("#decluster-matrix").click(function declusterAction() {
             that.setOrder(table.getOrder());
         });
 
-        $('#use-cluster-order').click(that.useClusterOrder);
+        $("#use-cluster-order").click(that.useClusterOrder);
 
         $("#similarity-selector a").click(function (event) {
             event.preventDefault();
@@ -73,7 +77,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
             dirty = true;
             that.update();
         });
-        $("#similarity-selector a").tooltip({placement : "left", container : "body"});
+        $("#similarity-selector a").tooltip({placement: "left", container: "body"});
 
         that.redraw(true);
     }
@@ -82,7 +86,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * Draws a dummy newick tree
      */
     function drawDummyTree() {
-        var dummyNewick = "((((A:0.2,B:0.2):0.1,C:0.3):0.4,(F:0.4,D:0.4):0.3):0.3,E:1.0)";
+        let dummyNewick = "((((A:0.2,B:0.2):0.1,C:0.3):0.4,(F:0.4,D:0.4):0.3):0.3,E:1.0)";
         that.drawTree(dummyNewick, 500);
         that.setClustered(false);
     }
@@ -93,7 +97,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * @param <Number> d.key The ids associated with the square
      */
     function showInfoPanel(d) {
-        var col = d.key,
+        let col = d.key,
             row = d3.select(this.parentNode).datum().key,
             pos = $(this).offset(),
             tooltipHtml = "<table class='table'>";
@@ -133,7 +137,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * Returns true if the two order arrays are the same
      */
     function sameOrder(order1, order2) {
-        var i = order1.length;
+        let i = order1.length;
         if (i !== order2.length) {
             return false;
         }
@@ -145,7 +149,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         return true;
     }
 
-    /*************** Public methods ***************/
+    /** ************* Public methods ***************/
 
     /**
      * Handles the transition from and to fullscreen mode
@@ -157,7 +161,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
         // so the height en width functions don't give a correct result
         // without the delay
         setTimeout(function () {
-            var w = fullWidth,
+            let w = fullWidth,
                 h = fullHeight;
             if (isFullScreen) {
                 w = $(window).width();
@@ -175,7 +179,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * @param <SimObject> data New similarity data
      */
     that.addSimilarityData = function addSimilarityData(fullMatrix, data) {
-        var id,
+        let id,
             id2,
             row;
 
@@ -200,11 +204,11 @@ var constructSimMatrix = function constructSimMatrix(args) {
      */
     that.useClusterOrder = function useClusterOrder() {
         pancore.updateOrder({
-            'order' : order,
-            'start' : 0,
-            'stop' : order.length - 1
+            "order": order,
+            "start": 0,
+            "stop": order.length - 1,
         });
-        $('#reorder-header').addClass('hidden');
+        $("#reorder-header").addClass("hidden");
     };
 
     /**
@@ -263,7 +267,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
             .attr("fill", "white")
             .attr("stroke", "none")
             .attr("fill-opacity", 0);
-        var buttonText = buttonSvg.append("text")
+        let buttonText = buttonSvg.append("text")
             .attr("text-anchor", "middle")
             .attr("y", height / 2)
             .style("font-weight", "bold")
@@ -274,12 +278,12 @@ var constructSimMatrix = function constructSimMatrix(args) {
         // Add the blur effect definition
         blur = svg.append("defs")
             .append("filter")
-                .attr("id", "blur")
-                .attr("x", 0)
-                .attr("y", 0)
+            .attr("id", "blur")
+            .attr("x", 0)
+            .attr("y", 0)
             .append("feGaussianBlur")
-                .attr("in", "SourceGraphic")
-                .attr("stdDeviation", 5);
+            .attr("in", "SourceGraphic")
+            .attr("stdDeviation", 5);
 
         matrixSvg.append("rect")
             .attr("class", "background")
@@ -289,7 +293,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         // create the tooltip
         tooltip = d3.select("body")
-          .append("div")
+            .append("div")
             .attr("class", "tip")
             .attr("id", "matrix-tip")
             .style("position", "absolute")
@@ -325,35 +329,41 @@ var constructSimMatrix = function constructSimMatrix(args) {
             return;
         }
 
-        var dataArray = d3.entries(similarities);
+        let dataArray = d3.entries(similarities);
         x.domain(order);
 
         // 50px is the max size of a square
-        var minWidth = d3.min([width, 50 * order.length]);
+        let minWidth = d3.min([width, 50 * order.length]);
         x.rangeBands([0, minWidth]);
-        $('#cluster-div').css('height', minWidth + 30 + "px");
+        $("#cluster-div").css("height", minWidth + 30 + "px");
         d3.select(".background")
             .transition()
             .duration(transitionDuration)
             .attr("width", minWidth)
             .attr("height", minWidth);
 
-        var rows = matrixSvg.selectAll(".row")
-            .data(dataArray, function (d) { return d.key; });
+        let rows = matrixSvg.selectAll(".row")
+            .data(dataArray, function (d) {
+                return d.key;
+            });
 
         rows.enter()
             .append("g")
-                .attr("class", "row")
+            .attr("class", "row")
             .append("text")
-                .attr("x", minWidth + 6)
-                .attr("y", x.rangeBand() / 2)
-                .attr("dy", ".32em")
-                .attr("text-anchor", "begin")
-                .text(function (d) { return metadata[d.key].abbreviation; });
+            .attr("x", minWidth + 6)
+            .attr("y", x.rangeBand() / 2)
+            .attr("dy", ".32em")
+            .attr("text-anchor", "begin")
+            .text(function (d) {
+                return metadata[d.key].abbreviation;
+            });
 
         rows.each(function (d) {
-            var cells = d3.select(this).selectAll(".cell")
-                .data(d3.entries(d.value), function (d) { return d.key; });
+            let cells = d3.select(this).selectAll(".cell")
+                .data(d3.entries(d.value), function (d) {
+                    return d.key;
+                });
             cells.enter().append("rect")
                 .attr("class", "cell")
                 .attr("x", 0)
@@ -367,49 +377,65 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
             cells.transition()
                 .duration(transitionDuration)
-                .attr("x", function (d) { return x(d.key); })
+                .attr("x", function (d) {
+                    return x(d.key);
+                })
                 .attr("width", x.rangeBand())
                 .attr("height", x.rangeBand())
-                .style("fill-opacity", function (d) { return d.value ? z(d.value[selectedSimilarity] * d.value[selectedSimilarity]) : 1; })
-                .style("fill", function (d) { return d.value ? fillColor : "white"; });
+                .style("fill-opacity", function (d) {
+                    return d.value ? z(d.value[selectedSimilarity] * d.value[selectedSimilarity]) : 1;
+                })
+                .style("fill", function (d) {
+                    return d.value ? fillColor : "white";
+                });
 
             cells.exit().remove();
         });
 
         rows.transition()
             .duration(transitionDuration)
-            .attr("transform", function (d) { return "translate(0," + x(d.key) + ")"; })
-            .each("end", function() { addingGenomes = false; });
+            .attr("transform", function (d) {
+                return "translate(0," + x(d.key) + ")";
+            })
+            .each("end", function () {
+                addingGenomes = false;
+            });
 
         rows.selectAll("text")
             .transition()
-                .duration(transitionDuration)
-                .attr("x", minWidth + 6)
-                .attr('y', x.rangeBand() / 2);
+            .duration(transitionDuration)
+            .attr("x", minWidth + 6)
+            .attr("y", x.rangeBand() / 2);
 
         rows.exit().remove();
 
-        var columns = matrixSvg.selectAll(".column")
-            .data(dataArray, function (d) { return d.key; });
+        let columns = matrixSvg.selectAll(".column")
+            .data(dataArray, function (d) {
+                return d.key;
+            });
 
         columns.enter().append("g")
-                .attr("class", "column")
+            .attr("class", "column")
             .append("text")
-                .attr("x", minWidth + 6)
-                .attr("y", -x.rangeBand() / 2)
-                .attr("dy", ".32em")
-                .attr("text-anchor", "start")
-                .text(function (d) { return metadata[d.key].abbreviation; });
+            .attr("x", minWidth + 6)
+            .attr("y", -x.rangeBand() / 2)
+            .attr("dy", ".32em")
+            .attr("text-anchor", "start")
+            .text(function (d) {
+                return metadata[d.key].abbreviation;
+            });
 
         columns.transition()
             .duration(transitionDuration)
-            .attr("transform", function (d) { return "translate(" + x(d.key) + ")rotate(90)"; });
+            .attr("transform", function (d) {
+                return "translate(" + x(d.key) + ")rotate(90)";
+            });
 
         columns.selectAll("text")
             .transition()
-                .duration(transitionDuration)
-                .attr("x", minWidth + 6)
-                .attr('y', -x.rangeBand() / 2);
+            .duration(transitionDuration)
+            .attr("x", minWidth + 6)
+            .attr("y", -x.rangeBand() / 2);
 
         columns.exit().remove();
 
@@ -435,13 +461,11 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * @param <String> n The tree in newick format
      * @param <Number> height Optional height of the tree
      */
-    that.drawTree = function drawTree(n, height) {
+    that.drawTree = function drawTree(n, h) {
         newick = n;
         $("#tree-svg").empty();
-        if (height === undefined) {
-            height = d3.min([500, 50 * order.length]);
-        }
-        d3.phylogram.build('#sim_graph', Newick.parse(n), that, {width: 180, height: height, skipLabels: true, vis: treeSvg, duration: transitionDuration});
+        let height = h === undefined ? d3.min([500, 50 * order.length]) : h;
+        d3.phylogram.build("#sim_graph", Newick.parse(n), that, {width: 180, height: height, skipLabels: true, vis: treeSvg, duration: transitionDuration});
     };
 
     /**
@@ -457,7 +481,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * @param <Genome> genome The genome object we want to add
      */
     that.addGenome = function addGenome(genome) {
-        var id = genome.id,
+        let id = genome.id,
             name = genome.name,
             size = genome.peptides,
             abbreviation = genome.abbreviation,
@@ -465,9 +489,9 @@ var constructSimMatrix = function constructSimMatrix(args) {
 
         // add the data to the lists
         metadata[id] = {
-            'name' : name,
-            'size' : size,
-            'abbreviation' : abbreviation
+            "name": name,
+            "size": size,
+            "abbreviation": abbreviation,
         };
         order.push(id);
 
@@ -494,7 +518,7 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * @param <Number> id The id of the genome to remove
      */
     that.removeGenome = function removeGenome(id) {
-        var id2;
+        let id2;
 
         delete metadata[id];
         delete similarities[id];
@@ -518,11 +542,11 @@ var constructSimMatrix = function constructSimMatrix(args) {
         if (c !== clustered) {
             if (!c) {
                 buttonSvg.style("visibility", "visible");
-                $('#reorder-header').addClass('hidden');
+                $("#reorder-header").addClass("hidden");
                 blur.transition().duration(transitionDuration).attr("stdDeviation", 5);
             } else {
                 buttonSvg.style("visibility", "hidden");
-                $('#reorder-header').removeClass('hidden');
+                $("#reorder-header").removeClass("hidden");
                 blur.transition().duration(transitionDuration).attr("stdDeviation", 0);
             }
             clustered = c;
@@ -540,23 +564,23 @@ var constructSimMatrix = function constructSimMatrix(args) {
      * Converts this object to a CSV string
      */
     that.getDataAsCsv = function getDataAsCsv() {
-        var csvString = ",",
+        let csvString = ",",
             tempArray = [],
             i,
             j;
 
         for (i = 0; i < order.length; i++) {
-            tempArray.push('"' + metadata[order[i]].name + '"');
+            tempArray.push("\"" + metadata[order[i]].name + "\"");
         }
-        csvString += tempArray.join(',') + "\n";
+        csvString += tempArray.join(",") + "\n";
 
         for (i = 0; i < order.length; i++) {
             tempArray = [];
-            tempArray.push('"' + metadata[order[i]].name + '"');
+            tempArray.push("\"" + metadata[order[i]].name + "\"");
             for (j = 0; j < order.length; j++) {
                 tempArray.push(similarities[order[i]][order[j]][selectedSimilarity]);
             }
-            csvString += tempArray.join(',') + "\n";
+            csvString += tempArray.join(",") + "\n";
         }
 
         return csvString;
@@ -599,4 +623,6 @@ var constructSimMatrix = function constructSimMatrix(args) {
     init();
 
     return that;
-};
+}
+
+export {constructSimMatrix};

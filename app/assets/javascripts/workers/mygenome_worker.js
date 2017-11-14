@@ -129,3 +129,8 @@ function convertPeptidesToInts(peptides) {
     }
     return ids.sort(function (a, b) { return a - b; });
 }
+
+// Provide an error function with the same signature as in the host
+function error(err, message) {
+    sendToHost("error", {"error" : err, "msg" : message});
+}
