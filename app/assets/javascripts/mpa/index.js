@@ -214,7 +214,6 @@ class MPA {
             width: 740,
             height: 740,
             radius: 740 / 2,
-            levels: 28,
             getTooltip: this.tooltipContent,
             getTitleText: d => `${d.name} (${d.rank})`,
             rerootCallback: d => this.search(d.name, 1000),
@@ -225,6 +224,7 @@ class MPA {
         return $("#mpa-treemap").treemap(data, {
             width: 916,
             height: 600,
+            levels: 28,
             getBreadcrumbTooltip: d => d.rank,
             getTooltip: this.tooltipContent,
             getLabel: d => `${d.name} (${d.data.self_count}/${d.data.count})`,
