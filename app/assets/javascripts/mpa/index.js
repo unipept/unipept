@@ -104,6 +104,17 @@ class MPA {
         $("#il").prop("checked", il);
         $("#dupes").prop("checked", dupes);
         $("#missed").prop("checked", missed);
+
+        // enable tooltips
+        $(".js-has-hover-tooltip").tooltip({
+            container: "body",
+            placement: "right",
+        });
+        $(".js-has-focus-tooltip").tooltip({
+            trigger: "focus",
+            container: "body",
+            placement: "right",
+        });
     }
 
     setUpButtons() {
@@ -203,6 +214,7 @@ class MPA {
             width: 740,
             height: 740,
             radius: 740 / 2,
+            levels: 28,
             getTooltip: this.tooltipContent,
             getTitleText: d => `${d.name} (${d.rank})`,
             rerootCallback: d => this.search(d.name, 1000),
