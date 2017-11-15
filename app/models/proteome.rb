@@ -85,13 +85,11 @@ class Proteome < ApplicationRecord
   # fills in the taxon_id column
   def self.precompute_taxa
     Proteome.all.find_each do |proteome|
-      taxon_id = connection.select_value("SELECT uniprot_entries.taxon_id, count(*) AS num
+      taxon_id = connection.select_value("SELECT uniprot_entries.taxon_id
         FROM uniprot_entries
         INNER JOIN proteome_cross_references
           ON uniprot_entry_id = uniprot_entries.id
         WHERE proteome_id = #{proteome.id}
-        GROUP BY taxon_id
-        ORDER BY num DESC
         LIMIT 1")
       proteome.taxon_id = taxon_id
       proteome.name = proteome.full_name

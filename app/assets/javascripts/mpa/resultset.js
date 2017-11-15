@@ -32,7 +32,7 @@ class Resultset {
     async process() {
         const peptideList = Array.from(this.preparedPeptides.keys());
         this.processedPeptides = [];
-        this.setProgress(0);
+        this.setProgress(Dataset.BATCH_SIZE / peptideList.length);
         for (let i = 0; i < peptideList.length; i += Dataset.BATCH_SIZE) {
             const data = JSON.stringify({
                 peptides: peptideList.slice(i, i + Dataset.BATCH_SIZE),
