@@ -15,20 +15,38 @@ function initDatasets() {
         placement: "right",
     });
 
-
-    // add progress bar when submitting form
-    $("#search-multi-form").click(function () {
-        $("#search_button").hide();
-        $("#form-progress").removeClass("hide");
-        showNotification("Sending peptides...", {
-            autoHide: false,
-            loading: true,
-        });
-    });
-
     // track the use of the export checkbox
     $("#export").change(function () {
         logToGoogle("Multi Peptide", "Export");
+    });
+
+    $("#search-multi-form").click(function () {
+        // add progress bar when submitting form
+        $("#search_button").hide();
+        $("#form-progress").removeClass("hide");
+        let toast = showNotification("Sending peptides...", {
+            autoHide: false,
+            loading: true,
+        });
+
+        if ($("#export")[0].checked === true) {
+            // Track the download for export
+            logToGoogle("Multi Peptide", "Export");
+
+            let nonce = Math.random()
+            let input_nonce = $("<input>").attr({type: 'hidden', name: 'nonce', id: 'nonce', value: nonce})
+            input_nonce.appendTo(document.forms);
+            let downloadTimer = setInterval(function() {
+                if (document.cookie.indexOf(nonce) !== -1) {
+                    $("#search-multi-form").button('reset');
+                    $("#search_button").removeAttr("style")
+                    $("#form-progress").addClass("hide");
+                    input_nonce.remove()
+                    toast.hide();
+                    clearInterval(downloadTimer);
+                }
+            }, 1000);
+        }
     });
 
     $("#qs").on("paste", function () {
