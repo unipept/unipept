@@ -2,7 +2,6 @@
   <%= javascript_pack_tag 'd3' %>
   <%= javascript_pack_tag 'sequence_show' %>
 <% end %>
-
 <h1><%= @title %></h1>
 <% if @lineages.empty? %>
   <p class="lead">No results were found for <%= @original_sequence %>.</p>
@@ -21,7 +20,8 @@
           <li class="active"><a href="#lineage-tree" id="lineage-tree-tab" data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
           <li><a href="#lineage-table" id="lineage-table-tab" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
           <li><a href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
-          <li><a href="#functions" data-toggle="tab">Functions</a></li>
+          <li><a href="#go" data-toggle="tab">GO</a></li>
+          <li><a href="#ec" data-toggle="tab">EC</a></li>
         </ul>
       </div>
     </div>
@@ -31,97 +31,6 @@
           <div id="buttons-single" class="buttons-single"></div>
           <div id="lineageTree"></div>
         </div>
-
-        <div class="tab-pane" id="functions">
-          <article class="col-xs-6">
-          <h2>Gene Ontology data</h2>
-          <% unless @go_summary.empty? %>
-
-              <table class="table table-condensed">
-                <thead>
-                <tr>
-                  <th class="ec">GO Namespace</th>
-                  <th class="ec">Terms </th>
-                </tr>
-                </thead>
-                <tbody>
-
-                <% for ns,things in @go_summary do %>
-                    <tr>
-                      <td><%=ns %></td>
-                      <td><%= raw(things.sort_by{|t| -t[1]}.map{|go,count| "<a href='http://amigo.geneontology.org/amigo/term/"+go+"' target='_blank'>"+go+"</a> ("+count.to_s+")"}.join(", ")) %></td>
-                    </tr>
-                <%end %>
-                </tbody>
-              </table>
-              <% else %>
-            Not enough GO term annotaions
-          <% end %>
-          </article>
-          <article class="col-xs-6">
-          <h2>Enzyme Commission numbers</h2>
-          <% unless @ec_summary.empty? %>
-              <table class="table table-condensed">
-                <thead>
-                <tr>
-                  <th class="go">EC Field</th>
-                  <th class="go">Codes </th>
-                </tr>
-                </thead>
-                <tbody>
-                <% ecNs = {"1"=>"EC 1: Oxidoreductases", "2"=>"EC 2: Transferases", "3"=>"EC 3: Hydrolases", "4"=>"EC 4: Lyases", "5"=>"EC 5: Isomerases", "6"=>"EC 6: Ligases"} %>
-                <% for ns,things in @ec_summary do %>
-                    <tr>
-                      <td><%=ecNs.has_key?(ns) ? ecNs[ns] : "Other"%></td>
-                      <td><%= raw(things.sort_by{|t| -t[1]}.map{|ec,count| "<a href='http://enzyme.expasy.org/EC/"+ec+"' target='_blank'>"+ec+"</a> ("+count.to_s+")"}.join(", ")) %></td>
-                    </tr>
-                <%end %>
-                </tbody>
-              </table>
-              <%else%>
-              Not enough EC code annotaions
-        <% end %>
-          </article>
-        </div>
-
-        <div class="tab-pane" id="proteins">
-          <div class="buttons-single">
-            <button id="clipboard-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-copy"></span> Copy to clipboard</button>
-            <button id="open-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-new-window"></span> Open in UniProt</button>
-          </div>
-            <table class="table table-condensed table-hover protein-info">
-              <thead>
-              <tr>
-                <th class="id">Uniprot ID</th>
-                <th class="name">Name</th>
-                <th class="organism">Organism</th>
-                <th class="ec">EC number</th>
-                <th class="go">GO terms</th>
-              </tr>
-              </thead>
-              <% for entry in @entries do %>
-                  <% unless entry.name.nil? %>
-                      <tr>
-                        <td>
-                          <div class="btn-group">
-                            <a class="btn btn-default btn-xs dropdown-toggle externalLinks-button" data-toggle="dropdown"><%= entry.uniprot_accession_number %> <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                              <li role="presentation" class="dropdown-header">Open on external site</li>
-                              <li><%= link_to "Uniprot", "http://www.uniprot.org/uniprot/"+entry.uniprot_accession_number, :target => "_blank" %></li>
-                              <li><%= link_to "PRIDE", "http://www.ebi.ac.uk/pride/searchSummary.do?queryTypeSelected=identification%20accession%20number&identificationAccessionNumber="+entry.uniprot_accession_number, :target => "_blank" %></li>
-                              <li><%= link_to "PeptideAtlas", "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/Search?apply_action=GO&exact_match=exact_match%22&search_key="+entry.uniprot_accession_number, :target => "_blank" %></li>
-                            </ul>
-                          </div>
-                        </td>
-                        <td><%= entry.name %></td>
-                        <td><%= link_to entry.taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="+entry.taxon.id.to_s, :target => "_blank" %></td>
-                        <td><%= raw(entry.ec_cross_references.map{|ec| "<a href='http://enzyme.expasy.org/EC/"+ec.ec_number_code+"' target='_blank'>"+ec.ec_number_code+"</a>"}.join(", ")) %></td>
-                        <td><%= raw(entry.go_cross_references.map{|go| "<a href='http://amigo.geneontology.org/amigo/term/"+go.go_term_code+"' target='_blank'>"+go.go_term_code+"</a>"}.join(", ")) %></td>
-                      </tr>
-                  <% end %>
-              <% end %>
-            </table>
-            </div>
         <div class="tab-pane" id="lineage-table">
           <div id="sequence_table">
             <% colors = Hash.new %>
@@ -150,6 +59,90 @@
               <% end %>
             </table>
           </div>
+        </div>
+        <div class="tab-pane" id="proteins">
+          <div class="buttons-single">
+            <button id="clipboard-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-copy"></span> Copy to clipboard</button>
+            <button id="open-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-new-window"></span> Open in UniProt</button>
+          </div>
+          <table class="table table-condensed table-hover protein-info">
+            <thead>
+              <tr>
+                <th class="id">Uniprot ID</th>
+                <th class="name">Name</th>
+                <th class="organism">Organism</th>
+                <th class="ec">EC number</th>
+                <th class="go">GO terms</th>
+              </tr>
+            </thead>
+            <% for entry in @entries do %>
+              <% unless entry.name.nil? %>
+                <tr>
+                  <td>
+                    <div class="btn-group">
+                      <a class="btn btn-default btn-xs dropdown-toggle externalLinks-button" data-toggle="dropdown"><%= entry.uniprot_accession_number %> <span class="caret"></span></a>
+                      <ul class="dropdown-menu">
+                        <li role="presentation" class="dropdown-header">Open on external site</li>
+                        <li><%= link_to "Uniprot", "http://www.uniprot.org/uniprot/"+entry.uniprot_accession_number, :target => "_blank" %></li>
+                        <li><%= link_to "PRIDE", "http://www.ebi.ac.uk/pride/searchSummary.do?queryTypeSelected=identification%20accession%20number&identificationAccessionNumber="+entry.uniprot_accession_number, :target => "_blank" %></li>
+                        <li><%= link_to "PeptideAtlas", "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/Search?apply_action=GO&exact_match=exact_match%22&search_key="+entry.uniprot_accession_number, :target => "_blank" %></li>
+                      </ul>
+                    </div>
+                  </td>
+                  <td><%= entry.name %></td>
+                  <td><%= link_to entry.taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="+entry.taxon.id.to_s, :target => "_blank" %></td>
+                  <td><%= raw(entry.ec_cross_references.map{|ec| "<a href='http://enzyme.expasy.org/EC/"+ec.ec_number_code+"' target='_blank'>"+ec.ec_number_code+"</a>"}.join(", ")) %></td>
+                  <td><%= raw(entry.go_cross_references.map{|go| "<a href='http://amigo.geneontology.org/amigo/term/"+go.go_term_code+"' target='_blank'>"+go.go_term_code+"</a>"}.join(", ")) %></td>
+                </tr>
+              <% end %>
+            <% end %>
+          </table>
+        </div>
+        <div class="tab-pane" id="go">
+          <h2>Gene Ontology annotations</h2>
+          <% unless @go_summary.empty? %>
+            <table class="table table-condensed">
+              <thead>
+                <tr>
+                  <th class="ec">Namespace</th>
+                  <th class="ec">Terms</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% for ns,things in @go_summary do %>
+                  <tr>
+                    <td><%=ns %></td>
+                    <td><%= raw(things.sort_by{|t| -t[1]}.map{|go,count| "<a href='http://amigo.geneontology.org/amigo/term/"+go+"' target='_blank'>"+go+"</a> ("+count.to_s+")"}.join(", ")) %></td>
+                  </tr>
+                <%end %>
+              </tbody>
+            </table>
+          <% else %>
+            Sorry, none of the matched proteins had GO annotations
+          <% end %>
+        </div>
+        <div class="tab-pane" id="ec">
+          <h2>Enzyme Commission numbers</h2>
+          <% unless @ec_summary.empty? %>
+            <table class="table table-condensed">
+              <thead>
+                <tr>
+                  <th class="go">EC Field</th>
+                  <th class="go">Codes </th>
+                </tr>
+              </thead>
+              <tbody>
+                <% for ns,things in @ec_summary do %>
+                  <tr>
+                    <td><%= @ec_classes.has_key?(ns) ? ecNs[ns] : "Other"%></td>
+                    <td><%= raw(things.sort_by{|t| -t[1]}.map{|ec,count| "<a href='http://enzyme.expasy.org/EC/"+ec+"' target='_blank'>"+ec+"</a> ("+count.to_s+")"}.join(", ")) %></td>
+                  </tr>
+                <%end %>
+              </tbody>
+            </table>
+          <% else %>
+            Sorry, none of the matched proteins had EC annotations
+          <% end %>
         </div>
       </div>
     </div>
