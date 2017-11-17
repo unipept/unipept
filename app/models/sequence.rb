@@ -61,17 +61,17 @@ class Sequence < ApplicationRecord
 
     # search the most unique sequence
     p_counts = Sequence.where(sequence: sequences)
-      .joins(equate_il ? :peptides : :original_peptides)
-      .group("sequences.id")
-      .select('sequences.id, count(*) as num_of_peptides')
+                       .joins(equate_il ? :peptides : :original_peptides)
+                       .group('sequences.id')
+                       .select('sequences.id, count(*) as num_of_peptides')
 
     return nil if p_counts.empty?
 
     entries = Sequence
-      .includes(Sequence.peptides_relation_name(equate_il) => { uniprot_entry: :lineage })
-      .find(p_counts.min_by(&:num_of_peptides).id)
-      .peptides(equate_il).map(&:uniprot_entry).to_set
-      .select { |e| e.protein_contains?(sequence, equate_il) }
+              .includes(Sequence.peptides_relation_name(equate_il) => { uniprot_entry: :lineage })
+              .find(p_counts.min_by(&:num_of_peptides).id)
+              .peptides(equate_il).map(&:uniprot_entry).to_set
+              .select { |e| e.protein_contains?(sequence, equate_il) }
 
     return nil if entries.empty?
 
