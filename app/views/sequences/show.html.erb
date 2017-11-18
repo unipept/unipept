@@ -101,22 +101,27 @@
         <div class="tab-pane" id="go">
           <h2>Gene Ontology annotations</h2>
           <% unless @go_summary.empty? %>
-            <table class="table table-condensed">
-              <thead>
-                <tr>
-                  <th class="ec">Namespace</th>
-                  <th class="ec">Terms</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% for ns,things in @go_summary do %>
-                  <tr>
-                    <td><%=ns %></td>
-                    <td><%= raw(things.sort_by{|t| -t[1]}.map{|go,count| "<a href='http://amigo.geneontology.org/amigo/term/"+go+"' target='_blank'>"+go+"</a> ("+count.to_s+")"}.join(", ")) %></td>
-                  </tr>
-                <%end %>
-              </tbody>
-            </table>
+              <% for namespace, terms in @go_summary do %>
+                <h3><%= namespace.titleize %></h3>
+                <table class="table table-condensed">
+                  <thead>
+                    <tr>
+                      <th>Count</th>
+                      <th>Code</th>
+                      <th>Name</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% for go, count in terms do %>
+                        <tr>
+                          <td><%= count %></td>
+                          <td><%= link_to go.code, "http://amigo.geneontology.org/amigo/term/" + go.code, :target => "_blank" %></td>
+                          <td><%= go.name %></td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              <% end %>
           <% else %>
             Sorry, none of the matched proteins had GO annotations
           <% end %>
