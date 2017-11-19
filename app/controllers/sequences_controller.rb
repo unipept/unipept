@@ -115,11 +115,8 @@ class SequencesController < ApplicationController
     @title = "Tryptic peptide analysis of #{@original_sequence}"
 
     go_counts = Hash.new 0
-    @entries.flat_map(&:go_terms).each do |go|
-      go_counts[go] += 1
-    end
-
     @go_summary = {}
+    @entries.flat_map(&:go_terms).each { |go| go_counts[go] += 1 }
     go_counts.keys.group_by(&:namespace).each do |namespace, go|
       @go_summary[namespace] = go.map { |term| [term, go_counts[term]] }.to_h
     end
