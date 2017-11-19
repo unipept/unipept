@@ -83,16 +83,16 @@
                       <a class="btn btn-default btn-xs dropdown-toggle externalLinks-button" data-toggle="dropdown"><%= entry.uniprot_accession_number %> <span class="caret"></span></a>
                       <ul class="dropdown-menu">
                         <li role="presentation" class="dropdown-header">Open on external site</li>
-                        <li><%= link_to "Uniprot", "http://www.uniprot.org/uniprot/"+entry.uniprot_accession_number, :target => "_blank" %></li>
-                        <li><%= link_to "PRIDE", "http://www.ebi.ac.uk/pride/searchSummary.do?queryTypeSelected=identification%20accession%20number&identificationAccessionNumber="+entry.uniprot_accession_number, :target => "_blank" %></li>
+                        <li><%= link_to "UniProt", "https://www.uniprot.org/uniprot/"+entry.uniprot_accession_number, :target => "_blank" %></li>
+                        <li><%= link_to "PRIDE", "https://www.ebi.ac.uk/pride/searchSummary.do?queryTypeSelected=identification%20accession%20number&identificationAccessionNumber="+entry.uniprot_accession_number, :target => "_blank" %></li>
                         <li><%= link_to "PeptideAtlas", "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/Search?apply_action=GO&exact_match=exact_match%22&search_key="+entry.uniprot_accession_number, :target => "_blank" %></li>
                       </ul>
                     </div>
                   </td>
                   <td><%= entry.name %></td>
-                  <td><%= link_to entry.taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="+entry.taxon.id.to_s, :target => "_blank" %></td>
-                  <td><%= raw(entry.ec_cross_references.map{|ec| "<a href='http://enzyme.expasy.org/EC/"+ec.ec_number_code+"' target='_blank'>"+ec.ec_number_code+"</a>"}.join(", ")) %></td>
-                  <td><%= raw(entry.go_cross_references.map{|go| "<a href='http://amigo.geneontology.org/amigo/term/"+go.go_term_code+"' target='_blank'>"+go.go_term_code+"</a>"}.join(", ")) %></td>
+                  <td><%= link_to entry.taxon.name, "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="+entry.taxon.id.to_s, :target => "_blank" %></td>
+                  <td><%= raw(entry.ec_cross_references.map{|ec| "<a href='https://enzyme.expasy.org/EC/"+ec.ec_number_code+"' target='_blank'>"+ec.ec_number_code+"</a>"}.join(", ")) %></td>
+                  <td><%= raw(entry.go_cross_references.map{|go| "<a href='https://www.ebi.ac.uk/QuickGO/term/"+go.go_term_code+"' target='_blank'>"+go.go_term_code+"</a>"}.join(", ")) %></td>
                 </tr>
               <% end %>
             <% end %>
@@ -112,10 +112,11 @@
                     </tr>
                   </thead>
                   <tbody>
+                    <% terms = terms.sort_by{ |_k, v| v }.reverse %>
                     <% for go, count in terms do %>
                         <tr>
                           <td><%= count %></td>
-                          <td><%= link_to go.code, "http://amigo.geneontology.org/amigo/term/" + go.code, :target => "_blank" %></td>
+                          <td><%= link_to go.code, "https://www.ebi.ac.uk/QuickGO/term/" + go.code, :target => "_blank" %></td>
                           <td><%= go.name %></td>
                       </tr>
                     <% end %>
@@ -139,8 +140,8 @@
               <tbody>
                 <% for ns,things in @ec_summary do %>
                   <tr>
-                    <td><%= @ec_classes.has_key?(ns) ? ecNs[ns] : "Other"%></td>
-                    <td><%= raw(things.sort_by{|t| -t[1]}.map{|ec,count| "<a href='http://enzyme.expasy.org/EC/"+ec+"' target='_blank'>"+ec+"</a> ("+count.to_s+")"}.join(", ")) %></td>
+                    <td><%= @ec_classes.has_key?(ns) ? @ec_classes[ns] : "Other"%></td>
+                    <td><%= raw(things.sort_by{|t| -t[1]}.map{|ec,count| "<a href='https://enzyme.expasy.org/EC/"+ec+"' target='_blank'>"+ec+"</a> ("+count.to_s+")"}.join(", ")) %></td>
                   </tr>
                 <%end %>
               </tbody>
