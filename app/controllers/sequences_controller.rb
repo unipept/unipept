@@ -122,14 +122,12 @@ class SequencesController < ApplicationController
     end
 
     ec_counts = Hash.new 0
-    @entries.flat_map { |n| n.ec_cross_references.map(&:ec_number_code) }.each do |name|
-      ec_counts[name] += 1
-    end
-
-    @ec_summary = Hash.new ''
-    ec_counts.keys.group_by { |ec_code| ec_code.split('.')[0] }.each do |namespace, ec|
+    @ec_summary = {}
+    @entries.flat_map(&:ec_numbers).each { |ec| ec_counts[ec] += 1 }
+    ec_counts.keys.group_by { |ec| ec.code.split('.')[0] }.each do |namespace, ec|
       @ec_summary[namespace] = ec.map { |term| [term, ec_counts[term]] }.to_h
     end
+    @ec_summary = @ec_summary.sort
     @ec_classes = { '1' => 'EC 1: Oxidoreductases', '2' => 'EC 2: Transferases', '3' => 'EC 3: Hydrolases', '4' => 'EC 4: Lyases', '5' => 'EC 5: Isomerases', '6' => 'EC 6: Ligases' }
 
     respond_to do |format|
