@@ -100,32 +100,7 @@
         </div>
         <div class="tab-pane" id="go">
           <h2>Gene Ontology annotations</h2>
-          <% unless @go_summary.empty? %>
-            <% for namespace, terms in @go_summary do %>
-              <h3><%= namespace.titleize %></h3>
-              <table class="table table-condensed">
-                <thead>
-                  <tr>
-                    <th>Count</th>
-                    <th>Code</th>
-                    <th>Name</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% terms = terms.sort_by{ |_k, v| v }.reverse %>
-                  <% for go, count in terms do %>
-                    <tr>
-                      <td><%= count %></td>
-                      <td><%= link_to go.code, "https://www.ebi.ac.uk/QuickGO/term/" + go.code, :target => "_blank" %></td>
-                      <td><%= go.name %></td>
-                    </tr>
-                  <% end %>
-                </tbody>
-              </table>
-            <% end %>
-          <% else %>
-            Sorry, none of the matched proteins had GO annotations
-          <% end %>
+          <div id="go-pannel">Please wait while we are building a summary</div>
         </div>
         <div class="tab-pane" id="ec">
           <h2>Enzyme Commission numbers</h2>
@@ -164,7 +139,10 @@
       initSequenceShow({
         peptide: "<%= @original_sequence %>",
         tree: <%= raw(@root) %>,
-        uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>
+        uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>,
+        fa: {
+          go:<%= raw(@go_summary.map{|k, v| [k,v.map{|goterm,count| { "code" => goterm.code, "name" => goterm.name,  "value" => count}}]}.to_h.to_json) %>
+        }
       });
     });
   </script>
