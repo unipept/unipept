@@ -101,28 +101,28 @@
         <div class="tab-pane" id="go">
           <h2>Gene Ontology annotations</h2>
           <% unless @go_summary.empty? %>
-              <% for namespace, terms in @go_summary do %>
-                <h3><%= namespace.titleize %></h3>
-                <table class="table table-condensed">
-                  <thead>
+            <% for namespace, terms in @go_summary do %>
+              <h3><%= namespace.titleize %></h3>
+              <table class="table table-condensed">
+                <thead>
+                  <tr>
+                    <th>Count</th>
+                    <th>Code</th>
+                    <th>Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% terms = terms.sort_by{ |_k, v| v }.reverse %>
+                  <% for go, count in terms do %>
                     <tr>
-                      <th>Count</th>
-                      <th>Code</th>
-                      <th>Name</th>
+                      <td><%= count %></td>
+                      <td><%= link_to go.code, "https://www.ebi.ac.uk/QuickGO/term/" + go.code, :target => "_blank" %></td>
+                      <td><%= go.name %></td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    <% terms = terms.sort_by{ |_k, v| v }.reverse %>
-                    <% for go, count in terms do %>
-                        <tr>
-                          <td><%= count %></td>
-                          <td><%= link_to go.code, "https://www.ebi.ac.uk/QuickGO/term/" + go.code, :target => "_blank" %></td>
-                          <td><%= go.name %></td>
-                      </tr>
-                    <% end %>
-                  </tbody>
-                </table>
-              <% end %>
+                  <% end %>
+                </tbody>
+              </table>
+            <% end %>
           <% else %>
             Sorry, none of the matched proteins had GO annotations
           <% end %>
@@ -130,22 +130,28 @@
         <div class="tab-pane" id="ec">
           <h2>Enzyme Commission numbers</h2>
           <% unless @ec_summary.empty? %>
-            <table class="table table-condensed">
-              <thead>
-                <tr>
-                  <th class="go">EC Field</th>
-                  <th class="go">Codes </th>
-                </tr>
-              </thead>
-              <tbody>
-                <% for ns,things in @ec_summary do %>
+            <% for namespace, terms in @ec_summary do %>
+              <h3><%= @ec_classes[namespace].titleize %></h3>
+              <table class="table table-condensed">
+                <thead>
                   <tr>
-                    <td><%= @ec_classes.has_key?(ns) ? @ec_classes[ns] : "Other"%></td>
-                    <td><%= raw(things.sort_by{|t| -t[1]}.map{|ec,count| "<a href='https://enzyme.expasy.org/EC/"+ec+"' target='_blank'>"+ec+"</a> ("+count.to_s+")"}.join(", ")) %></td>
+                    <th>Count</th>
+                    <th>Code</th>
+                    <th>Name</th>
                   </tr>
-                <%end %>
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  <% terms = terms.sort_by{ |_k, v| v }.reverse %>
+                  <% for ec, count in terms do %>
+                    <tr>
+                      <td><%= count %></td>
+                      <td><%= link_to ec.code, "https://enzyme.expasy.org/EC/" + ec.code, :target => "_blank" %></td>
+                      <td><%= ec.name %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            <% end %>
           <% else %>
             Sorry, none of the matched proteins had EC annotations
           <% end %>
