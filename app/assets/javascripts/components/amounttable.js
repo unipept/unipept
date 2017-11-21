@@ -157,6 +157,7 @@ class AmountTable {
             colapseRow.remove();
             this.collapsed = !this.collapsed;
             this.buildRow(tbody);
+            this.showTooltip(false);
         });
     }
 
@@ -167,18 +168,38 @@ class AmountTable {
     addTooltips(row) {
         if (this.tooltip !== null) {
             row.on("mouseover", d => {
-                this.tooltip.style("top", (d3.event.pageY + 10) + "px")
-                    .style("left", (d3.event.pageX + 15) + "px")
-                    .style("visibility", "visible");
+                this.showTooltip(true);
+                this.positionTooltip(d3.event.pageX, d3.event.pageY);
                 this.tooltip.html(this.makeTooltip(d));
             });
             row.on("mousemove", d => {
-                this.tooltip.style("top", (d3.event.pageY + 10) + "px")
-                    .style("left", (d3.event.pageX + 15) + "px");
+                this.positionTooltip(d3.event.pageX, d3.event.pageY);
             });
-            row.on("mouseout", d => {
-                this.tooltip.style("visibility", "hidden");
-            });
+            row.on("mouseout", d => {this.showTooltip(false);});
+        }
+    }
+
+    /** Show the tooltip */
+    positionTooltip(x, y) {
+        if (this.tooltip !== null) {
+            this.tooltip
+                .style("top", (y + 10) + "px")
+                .style("left", (x + 15) + "px");
+        }
+    }
+
+    /** Hide the tooltip */
+    showTooltip(show) {
+        if (this.tooltip !== null) {
+            if (show) {
+                this.tooltip
+                    .style("visibility", "visible")
+                    .style("display", "block");
+            } else {
+                this.tooltip
+                    .style("visibility", "hidden")
+                    .style("display", "none");
+            }
         }
     }
 }
