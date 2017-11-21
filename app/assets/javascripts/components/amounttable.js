@@ -135,17 +135,17 @@ class AmountTable {
 
 
         this.addTooltips(row);
-        this.addColappseRow(tbody);
+        this.addCollapseRow(tbody);
     }
 
     /**
      * Add a row that to toggle colapsing
      * @param {d3.selection} tbody the body to add the row to
      */
-    addColappseRow(tbody) {
+    addCollapseRow(tbody) {
         if (this.limit > this.data.length) return; // No collapse row if all rows shown
-        let colapseRow = tbody.append("tr").attr("class", "colapse-row");
-        let colapseCell = colapseRow.append("td")
+        let collapseRow = tbody.append("tr").attr("class", "collapse-row");
+        let collapseCell = collapseRow.append("td")
             .attr("colspan", this.header.length)
             .attr("tabindex", "0")
             .attr("aria-expanded", !this.collapsed)
@@ -153,21 +153,21 @@ class AmountTable {
             .attr("role", "button");
 
         if (this.collapsed) {
-            colapseCell.text(`Show ${this.data.length - this.limit} more rows`);
+            collapseCell.text(`Show ${this.data.length - this.limit} more rows`);
         } else {
-            colapseCell.text(`Hide last ${this.data.length - this.limit} rows`);
+            collapseCell.text(`Hide last ${this.data.length - this.limit} rows`);
         }
 
-        // Colappse on click or on enter or on space (role button)
+        // Collapse on click or on enter or on space (role button)
         const toggler = () => {
-            colapseRow.remove();
+            collapseRow.remove();
             this.collapsed = !this.collapsed;
             this.buildRow(tbody);
             this.showTooltip(false);
         };
 
-        colapseRow.on("click", toggler);
-        colapseRow.on("keydown", () => {
+        collapseRow.on("click", toggler);
+        collapseRow.on("keydown", () => {
             if (d3.event.key === "Enter" || d3.event.key === " ") {
                 toggler();
             }
