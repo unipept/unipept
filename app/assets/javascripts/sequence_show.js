@@ -1,4 +1,4 @@
-import {addCopy, logToGoogle, triggerDownloadModal, stringTitlize} from "./utils.js";
+import {addCopy, logToGoogle, triggerDownloadModal, stringTitleize} from "./utils.js";
 import {showInfoModal} from "./modal.js";
 import {AmountTable} from "./components/amounttable.js";
 
@@ -157,7 +157,7 @@ function initSequenceShow(data) {
 
         const variants = ["biological process", "cellular component", "molecular function"];
         for (let variant of variants) {
-            const variantName = stringTitlize(variant);
+            const variantName = stringTitleize(variant);
             goPannel.append("h3").text(variantName);
 
             /* Sort GO number by their evidence (index 1) */
