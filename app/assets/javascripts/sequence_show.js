@@ -111,6 +111,44 @@ function initSequenceShow(data) {
 
     function setUpFA(fa) {
         setUpGO(fa.go)
+        setUpEC(fa.ec)
+    }
+
+    function setUpEC(ec) {
+        $("#ec-pannel").empty();
+        const ecPannel = d3.select("#ec-pannel");
+
+        /* Sort GO number by their evidence (index 1) */
+        const sortedNumbers = Array.from(ec.values()).sort((a, b) => (b.value - a.value));
+        setUpEcTable(sortedNumbers, ecPannel);
+    }
+
+    function setUpEcTable(sortedNumbers, target) {
+        let sumValues = sortedNumbers.reduce((s, v) => s+v.value, 0);
+        new AmountTable({
+            el: target,
+            header: ["Count", "EC-Number", "Name"],
+            data: sortedNumbers,
+            contents: [
+                { // Count
+                    html: d => d.value,
+                    style: {"width": "5em"},
+                    shade: d=>100*d.value/sumValues,
+                },
+                { // EC-number
+                    html: d => {
+                        let spans = d.code.split(".").map(e => `<span style="width:1.5em;display:inline-block;text-align: center">${e}</span>`).join(".");
+                        return `<a href="https://enzyme.expasy.org/EC/${d.code}" target="_blank">${spans}</a>`;
+                    },
+                    style: {"width": "8em"},
+                },
+                { // name
+                    text: d => d.name,
+                },
+            ],
+            tooltip: d => `<strong>${d.code}</strong><br>${d.name}<br>Assigned to ${(100*d.value/sumValues).toFixed(1)}% of protein matches`,
+        }
+        ).draw();
     }
 
     function setUpGO(go) {
