@@ -210,6 +210,14 @@ function stringHash(s) {
 }
 
 /**
+ * Change string to title cases
+ * https://stackoverflow.com/a/196991
+ */
+function stringTitlize(s){
+    return s.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+}
+
+/**
  * Triggers the image export modal.
  *
  * If an svgSelector is present, sends the SVG-code to the server to convert
@@ -273,4 +281,4 @@ function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
     }
 }
 
-export {addCopy, brightness, downloadDataByForm, downloadDataByLink, get, getJSON, getReadableColorFor, highlight, iteratorToArray, logErrorToGoogle, logToGoogle, showError, showInfo, stringHash, triggerDownloadModal};
+export {addCopy, brightness, downloadDataByForm, downloadDataByLink, get, getJSON, getReadableColorFor, highlight, iteratorToArray, logErrorToGoogle, logToGoogle, showError, showInfo, stringHash, stringTitlize, triggerDownloadModal};
