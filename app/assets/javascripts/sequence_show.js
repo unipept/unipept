@@ -1,4 +1,4 @@
-import {addCopy, logToGoogle, triggerDownloadModal} from "./utils.js";
+import {addCopy, logToGoogle, triggerDownloadModal, stringTitlize} from "./utils.js";
 import {showInfoModal} from "./modal.js";
 import {AmountTable} from "./components/amounttable.js";
 
@@ -115,7 +115,7 @@ function initSequenceShow(data) {
         const goPannel = d3.select("#go-pannel");
 
         for (let variant of variants) {
-            const variantName = variant[0].toUpperCase() + variant.slice(1);
+            const variantName = stringTitlize(variant);
 
             /* Sort GO number by their evidence (index 1) */
             const sortedNumbers = Array.from(fa.go[variant].values()).sort((a, b) => (b.value - a.value));
