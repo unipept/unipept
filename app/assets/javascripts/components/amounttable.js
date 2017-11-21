@@ -143,9 +143,13 @@ class AmountTable {
      * @param {d3.selection} tbody the body to add the row to
      */
     addColappseRow(tbody) {
-        let colapseRow = tbody.append("tr");
+        let colapseRow = tbody.append("tr").attr("class", "colapse-row");
         let colapseCell = colapseRow.append("td")
-            .attr("colspan", this.header.length);
+            .attr("colspan", this.header.length)
+            .attr("tabindex", "0")
+            .attr("aria-expanded", !this.collapsed)
+            .attr("aria-pressed", !this.collapsed)
+            .attr("role", "button");
 
         if (this.collapsed) {
             colapseCell.text(`Show ${this.data.length - this.limit} more rows`);
@@ -153,11 +157,19 @@ class AmountTable {
             colapseCell.text(`Hide last ${this.data.length - this.limit} rows`);
         }
 
-        colapseRow.on("click", () => {
+        // Colappse on click or on enter or on space (role button)
+        const toggler = () => {
             colapseRow.remove();
             this.collapsed = !this.collapsed;
             this.buildRow(tbody);
             this.showTooltip(false);
+        };
+
+        colapseRow.on("click", toggler);
+        colapseRow.on("keydown", () => {
+            if (d3.event.key === "Enter" || d3.event.key === " ") {
+                toggler();
+            }
         });
     }
 
