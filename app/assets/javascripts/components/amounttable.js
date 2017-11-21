@@ -188,11 +188,17 @@ class AmountTable {
             row.on("mousemove", d => {
                 this.positionTooltip(d3.event.pageX, d3.event.pageY);
             });
-            row.on("mouseout", d => {this.showTooltip(false);});
+            row.on("mouseout", d => {
+                this.showTooltip(false);
+            });
         }
     }
 
-    /** Show the tooltip */
+    /**
+     * Position the tooltip
+     * @param {number} x The x position of the cursor
+     * @param {number} y The y position of the cursor
+     */
     positionTooltip(x, y) {
         if (this.tooltip !== null) {
             this.tooltip
@@ -201,7 +207,10 @@ class AmountTable {
         }
     }
 
-    /** Hide the tooltip */
+    /**
+     * Show/Hide the tooltip
+     * @param {bool} show show the tooltip
+     */
     showTooltip(show) {
         if (this.tooltip !== null) {
             if (show) {

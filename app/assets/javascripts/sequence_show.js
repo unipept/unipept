@@ -118,7 +118,6 @@ function initSequenceShow(data) {
         $("#ec-pannel").empty();
         const ecPannel = d3.select("#ec-pannel");
 
-        /* Sort GO number by their evidence (index 1) */
         const sortedNumbers = Array.from(ec.values()).sort((a, b) => (b.value - a.value));
         setUpEcTable(sortedNumbers, ecPannel);
     }
@@ -160,7 +159,6 @@ function initSequenceShow(data) {
             const variantName = stringTitleize(variant);
             goPannel.append("h3").text(variantName);
 
-            /* Sort GO number by their evidence (index 1) */
             const sortedNumbers = Array.from(go[variant].values()).sort((a, b) => (b.value - a.value));
             let article = goPannel.append("div").attr("class", "row");
             setUpGoTable(sortedNumbers, variantName, article);
