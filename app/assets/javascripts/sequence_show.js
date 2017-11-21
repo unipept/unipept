@@ -1,6 +1,7 @@
 import {addCopy, logToGoogle, triggerDownloadModal, stringTitleize} from "./utils.js";
 import {showInfoModal} from "./modal.js";
 import {AmountTable} from "./components/amounttable.js";
+import "unipept-visualizations/src/treeview/treeview.js";
 
 /* eslint require-jsdoc: off */
 function initSequenceShow(data) {
@@ -116,10 +117,99 @@ function initSequenceShow(data) {
 
     function setUpEC(ec) {
         $("#ec-pannel").empty();
-        const ecPannel = d3.select("#ec-pannel");
-
+        setUPECTree(ec, "#ec-pannel");
         const sortedNumbers = Array.from(ec.values()).sort((a, b) => (b.value - a.value));
-        setUpEcTable(sortedNumbers, ecPannel);
+        setUpEcTable(sortedNumbers, d3.select("#ec-pannel"));
+    }
+
+    function setUPECTree(ec, target) {
+        let sumValues = ec.reduce((s, v) => s+v.value, 0);
+
+        /* Function to create a compareable string from EC numbers*/
+        let makeId = code =>{
+            // Pad each part with zeros so we can sort alphabeticly
+            // (there are EC number with letters)
+            const values = code.split(".").map(x => ("0000"+x).slice(-4));
+            return values.join(".");
+        };
+
+        // A map to store pointers to places in the tree that have already been
+        // created (non changing so we use object)
+        let map = Object.create(null);
+
+        // We make a root node, and add it to the map
+        let results = {id: 0,
+            name: "-",
+            fullname: "Enzyme Commission numbers",
+            children: [],
+            data: {self_count: 0},
+        };
+
+        map["-"] = results;
+
+        // Sort from general to specific
+        const sortedEC = Array.from(ec.values()).sort((a, b) => (a.code+".-").split(".").indexOf("-") - (b.code+".-").split(".").indexOf("-"));
+
+        for (let {code, value: count, name} of sortedEC) {
+            const tmpPath = code.split(".").filter(x => x!=="-");
+            const shortCode = tmpPath.join("."); // "-" at end are now removed
+
+            let path = new Array(tmpPath.length);
+            // "3.1.15.24" => ["3.1.15", "3.1", "3", "-"]
+            for (let i = tmpPath.length; i>0; i--) {
+                path[tmpPath.length-i] = tmpPath.slice(0, i-1).join(".");
+            }
+            path[tmpPath.length-1] = "-";
+
+            // Create a node for the new EC-code and place it in the map
+            let placed = false;
+            let toInsert = {
+                id: makeId(shortCode),
+                name: shortCode,
+                fullname: name,
+                children: [],
+                data: {self_count: count, count: count},
+            };
+
+            map[shortCode] = toInsert;
+            // visit ancestors: ["3.1.15", "3.1", "3", "-"]
+            // and iteratively add `toInsert` as a child of its parent
+            for (let c of path) {
+                if (c in map) {
+                    if (!placed) map[c].children.push(toInsert);
+                    map[c].data.count += toInsert.data.count;
+                    placed = true;
+                } else {
+                    map[c] = {
+                        id: makeId(c),
+                        name: c,
+                        children: [toInsert],
+                        data: {self_count: 0, count: toInsert.data.count},
+                    };
+                    toInsert = map[c];
+                }
+            }
+        }
+
+        // Order the nodes by their id (order by EC number)
+        Object.values(map).forEach(obj => obj.children.sort((a, b) => a.id.localeCompare(b.id)));
+
+        // Finally create tree
+        return $(target).empty().treeview(results, {
+            width: 916,
+            height: 600,
+            getTooltip: d => {
+                let name = "EC:"+ (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
+                let tip = ` <strong>${name}</strong><br>
+                          ocurrences: ${d.data.count} (${(100*d.data.count/sumValues).toFixed(1)}%) <br>`;
+                if (d.data.count == d.data.self_count) {
+                    tip += "All specific";
+                } else {
+                    tip += `Specific ocurrences: ${d.data.self_count} (${(100*d.data.self_count/sumValues).toFixed(1)}%)`;
+                }
+                return tip;
+            },
+        });
     }
 
     function setUpEcTable(sortedNumbers, target) {
