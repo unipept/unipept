@@ -104,32 +104,7 @@
         </div>
         <div class="tab-pane" id="ec">
           <h2>Enzyme Commission numbers</h2>
-          <% unless @ec_summary.empty? %>
-            <% for namespace, terms in @ec_summary do %>
-              <h3><%= @ec_classes[namespace].titleize %></h3>
-              <table class="table table-condensed">
-                <thead>
-                  <tr>
-                    <th>Count</th>
-                    <th>Code</th>
-                    <th>Name</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% terms = terms.sort_by{ |_k, v| v }.reverse %>
-                  <% for ec, count in terms do %>
-                    <tr>
-                      <td><%= count %></td>
-                      <td><%= link_to ec.code, "https://enzyme.expasy.org/EC/" + ec.code, :target => "_blank" %></td>
-                      <td><%= ec.name %></td>
-                    </tr>
-                  <% end %>
-                </tbody>
-              </table>
-            <% end %>
-          <% else %>
-            Sorry, none of the matched proteins had EC annotations
-          <% end %>
+          <div id="ec-pannel">Please wait while we are building a summary</div>
         </div>
       </div>
     </div>
@@ -141,7 +116,8 @@
         tree: <%= raw(@root) %>,
         uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>,
         fa: {
-          go:<%= raw(@go_summary.map{|k, v| [k,v.map{|goterm,count| { "code" => goterm.code, "name" => goterm.name,  "value" => count}}]}.to_h.to_json) %>
+          go:<%= raw(@go_summary.map{|k, v| [k,v.map{|goterm,count| { "code" => goterm.code, "name" => goterm.name,  "value" => count}}]}.to_h.to_json) %>,
+          ec:<%= raw(@ec_summary.map{|ec,count| { "code" => ec.code, "name" => ec.name,  "value" => count}}.to_json) %>
         }
       });
     });
