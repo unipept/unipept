@@ -110,63 +110,70 @@ function initSequenceShow(data) {
     }
 
     function setUpFA(fa) {
+        setUpGO(fa.go)
+    }
+
+    function setUpGO(go) {
         $("#go-pannel").empty();
-        const variants = ["biological process", "cellular component", "molecular function"];
         const goPannel = d3.select("#go-pannel");
 
+        const variants = ["biological process", "cellular component", "molecular function"];
         for (let variant of variants) {
             const variantName = stringTitlize(variant);
+            goPannel.append("h3").text(variantName);
 
             /* Sort GO number by their evidence (index 1) */
-            const sortedNumbers = Array.from(fa.go[variant].values()).sort((a, b) => (b.value - a.value));
-            let sumValues = sortedNumbers.reduce((s, v) => s+v.value, 0);
-
-            goPannel.append("h3").text(variantName);
+            const sortedNumbers = Array.from(go[variant].values()).sort((a, b) => (b.value - a.value));
             let article = goPannel.append("div").attr("class", "row");
-
-            let tablepart = article.append("div").attr("class", "col-xs-8");
-
-            new AmountTable({
-                el: tablepart,
-                header: ["Count", "GO term", "Name"],
-                data: sortedNumbers,
-                limit: 5,
-                contents: [
-                    { // Count
-                        html: d => d.value,
-                        style: {"width": "5em"},
-                        shade: d=>100*d.value/sumValues,
-                    },
-                    { // Go term
-                        html: d => `<a href="https://amigo.geneontology.org/amigo/term/${d.code}" target="_blank">${d.code}</a>`,
-                        style: {"width": "7em"},
-                    },
-                    { // name
-                        text: d => d.name,
-                    },
-                ],
-                tooltip: d => `<strong>${d.code}</strong><br>${d.name}<br>Occurs in ${(100*d.value/sumValues).toFixed(1)}% of cases`,
-            }
-            ).draw();
-
-            const top5 = sortedNumbers.slice(0, 5).map(x => x.code);
-            const quickGoChartURL = `https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/${top5.join(",")}/chart`;
-            const top5sentence = top5.slice(0, -1).join(", ") + " and " + top5[top5.length-1];
-            article.append("img")
-                .attr("src", quickGoChartURL)
-                .attr("class", "col-xs-4 quickGoThumb")
-                .attr("alt", top5sentence)
-                .on("click", ()=>{
-                    showInfoModal("QuickGo "+variantName, `
-                        This chart shows the realationship between the top 5 most occuring GO terms:<br/>${top5sentence}<br/>
-                        <a href="${quickGoChartURL}" target="_blank"><img style="max-width:100%" src="${quickGoChartURL}" /></a>
-                        <br>
-                        Provided by <a href="https://www.ebi.ac.uk/QuickGO" target="_blank">QuickGo</a>.`,
-                    {wide: true});
-                });
+            setUpGoTable(sortedNumbers, variantName, article);
+            setUpQuickGo(sortedNumbers, variantName, article);
         }
     }
 
+    function setUpGoTable(sortedNumbers, variantName, target) {
+        let sumValues = sortedNumbers.reduce((s, v) => s+v.value, 0);
+        let tablepart = target.append("div").attr("class", "col-xs-8");
+        new AmountTable({
+            el: tablepart,
+            header: ["Count", "GO term", "Name"],
+            data: sortedNumbers,
+            limit: 5,
+            contents: [
+                { // Count
+                    html: d => d.value,
+                    style: {"width": "5em"},
+                    shade: d=>100*d.value/sumValues,
+                },
+                { // Go term
+                    html: d => `<a href="https://amigo.geneontology.org/amigo/term/${d.code}" target="_blank">${d.code}</a>`,
+                    style: {"width": "7em"},
+                },
+                { // name
+                    text: d => d.name,
+                },
+            ],
+            tooltip: d => `<strong>${d.code}</strong><br>${d.name}<br>${variantName}<br>Assigned to ${(100*d.value/sumValues).toFixed(1)}% of protein matches`,
+        }
+        ).draw();
+    }
+
+    function setUpQuickGo(sortedNumbers, variantName, target) {
+        const top5 = sortedNumbers.slice(0, 5).map(x => x.code);
+        const quickGoChartURL = `https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/${top5.join(",")}/chart`;
+        const top5sentence = top5.slice(0, -1).join(", ") + " and " + top5[top5.length-1];
+        target.append("img")
+            .attr("src", quickGoChartURL)
+            .attr("class", "col-xs-4 quickGoThumb")
+            .attr("alt", `QuickGO chart of ${top5sentence}`)
+            .on("click", ()=>{
+                showInfoModal("QuickGo "+variantName, `
+                    This chart shows the realationship between the top 5 most occuring GO terms:<br/>${top5sentence}<br/>
+                    <a href="${quickGoChartURL}" target="_blank"><img style="max-width:100%" src="${quickGoChartURL}" /></a>
+                    <br>
+                    Provided by <a href="https://www.ebi.ac.uk/QuickGO" target="_blank">QuickGo</a>.`,
+                {wide: true});
+            });
+    }
     /**
      * Inits the lineage tree
      */
