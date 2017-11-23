@@ -143,7 +143,7 @@ class AmountTable {
      * @param {d3.selection} tbody the body to add the row to
      */
     addCollapseRow(tbody) {
-        if (this.limit > this.data.length) return; // No collapse row if all rows shown
+        if (this.limit >= this.data.length) return; // No collapse row if all rows shown
         let collapseRow = tbody.append("tr").attr("class", "collapse-row");
         let collapseCell = collapseRow.append("td")
             .attr("colspan", this.header.length)
