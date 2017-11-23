@@ -168,7 +168,8 @@ function initSequenceShow(data) {
         // Sort from general to specific
         const sortedEC = Array.from(ec.values()).sort((a, b) => (a.code+".-").split(".").indexOf("-") - (b.code+".-").split(".").indexOf("-"));
 
-        for (let {code, value: count, name} of sortedEC) {
+        for (let data of sortedEC) {
+            let {code, value: count, name} = data;
             const tmpPath = code.split(".").filter(x => x!=="-");
             const shortCode = tmpPath.join("."); // "-" at end are now removed
 
@@ -186,7 +187,7 @@ function initSequenceShow(data) {
                 name: shortCode,
                 fullname: name,
                 children: [],
-                data: {self_count: count, count: count},
+                data: {self_count: count, count: count, data: data},
             };
 
             map[shortCode] = toInsert;
@@ -217,9 +218,12 @@ function initSequenceShow(data) {
             width: 916,
             height: 600,
             getTooltip: d => {
-                let name = "EC:"+ (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
-                let tip = ` <strong>${name}</strong><br>
-                          ocurrences: ${d.data.count} (${(100*d.data.count/sumValues).toFixed(1)}%) <br>`;
+                let fullcode = "EC:"+ (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
+                let tip = `<strong>${fullcode}</strong>`;
+                if ("data" in d.data) {
+                    tip += `<br>${d.data.data.name}`;
+                }
+                tip += `<br>ocurrences: ${d.data.count} (${(100*d.data.count/sumValues).toFixed(1)}%) <br>`;
                 if (d.data.count == d.data.self_count) {
                     tip += "All specific";
                 } else {
@@ -253,7 +257,7 @@ function initSequenceShow(data) {
                     text: d => d.name,
                 },
             ],
-            tooltip: d => `<strong>${d.code}</strong><br>${d.name}<br>Assigned to ${(100*d.value/sumValues).toFixed(1)}% of protein matches`,
+            tooltip: d => `<strong>${d.name}</strong><br>EC ${d.code}<br>Assigned to ${(100*d.value/sumValues).toFixed(1)}% of protein matches`,
         }
         ).draw();
     }
@@ -300,7 +304,7 @@ function initSequenceShow(data) {
                     text: d => d.name,
                 },
             ],
-            tooltip: d => `<strong>${d.code}</strong><br>${d.name}<br>${variantName}<br>Assigned to ${(100*d.value/sumValues).toFixed(1)}% of protein matches`,
+            tooltip: d => `<strong>${d.name}</strong><br>${d.code}<br>${variantName}<br>Assigned to ${(100*d.value/sumValues).toFixed(1)}% of protein matches`,
         }
         ).draw();
     }
