@@ -4,6 +4,20 @@ import {AmountTable} from "./components/amounttable.js";
 import "unipept-visualizations/src/treeview/treeview.js";
 
 /* eslint require-jsdoc: off */
+/* TODO: make  class */
+
+/**
+ * @typedef {Object} FACounts
+ * @property {number} value count
+ * @property {string} name  The name of the GO/EC nummber
+ * @property {string} code  The code of the GO/EC nummber
+ */
+
+/**
+ * @param {Object} data descriptio of the data
+ * @param {Object.<string, FACounts>} data.fa.go - GO data inforamtion
+ * @param {FACounts} data.fa.uniprotEntries - EC data inforamtion
+ */
 function initSequenceShow(data) {
     // set up the fancy tree
     initLineageTree(data.tree);
@@ -111,18 +125,18 @@ function initSequenceShow(data) {
     }
 
     function setUpFA(fa) {
-        setUpGO(fa.go)
-        setUpEC(fa.ec)
+        setUpGO(fa.go);
+        setUpEC(fa.ec);
     }
 
     function setUpEC(ec) {
         $("#ec-pannel").empty();
-        if(ec.length > 0){
+        if (ec.length > 0) {
             setUPECTree(ec, "#ec-pannel");
             const sortedNumbers = Array.from(ec.values()).sort((a, b) => (b.value - a.value));
             setUpEcTable(sortedNumbers, d3.select("#ec-pannel"));
         } else {
-            $("#ec-pannel").append("<span>No EC code annotations found.</span>")
+            $("#ec-pannel").append("<span>No EC code annotations found.</span>");
         }
     }
 
@@ -308,9 +322,8 @@ function initSequenceShow(data) {
                 {wide: true});
             });
     }
-    /**
-     * Inits the lineage tree
-     */
+
+
     function initLineageTree(jsonData) {
         let margin = {
                 top: 5,
