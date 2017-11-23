@@ -312,7 +312,8 @@ function initSequenceShow(data) {
         target.append("img")
             .attr("src", quickGoChartURL)
             .attr("class", "col-xs-4 quickGoThumb")
-            .attr("alt", `QuickGO chart of ${top5sentence}`)
+            .attr("title", `QuickGO chart of ${top5sentence}`)
+            .style("cursor", "pointer")
             .on("click", ()=>{
                 showInfoModal("QuickGo "+variantName, `
                     This chart shows the realationship between the top 5 most occuring GO terms:<br/>${top5sentence}<br/>
