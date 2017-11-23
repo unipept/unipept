@@ -100,10 +100,12 @@
         </div>
         <div class="tab-pane" id="go">
           <h2>Gene Ontology annotations</h2>
+          <%=@pept_with_go %> of the <%=@entries.length%> matched peptides (<%='%.1f' % (100*@pept_with_go.fdiv(@entries.length))%>%) had a GO term annotation.
           <div id="go-pannel">Please wait while we are building a summary</div>
         </div>
         <div class="tab-pane" id="ec">
           <h2>Enzyme Commission numbers</h2>
+          <%=@pept_with_ec %> of the <%=@entries.length%> matched peptides (<%='%.1f' % (100*@pept_with_ec.fdiv(@entries.length))%>%) had a EC number annotation.
           <div id="ec-pannel">Please wait while we are building a summary</div>
         </div>
       </div>
