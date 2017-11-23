@@ -153,9 +153,9 @@ class AmountTable {
             .attr("role", "button");
 
         if (this.collapsed) {
-            collapseCell.text(`Show ${this.data.length - this.limit} more rows`);
+            collapseCell.html(`<span class="glyphicon glyphicon-chevron-down"></span> Show ${this.data.length - this.limit} more rows`);
         } else {
-            collapseCell.text(`Hide last ${this.data.length - this.limit} rows`);
+            collapseCell.html(`<span class="glyphicon glyphicon-chevron-up"></span> Hide last ${this.data.length - this.limit} rows`);
         }
 
         // Collapse on click or on enter or on space (role button)
