@@ -114,15 +114,28 @@ class SequencesController < ApplicationController
 
     @title = "Tryptic peptide analysis of #{@original_sequence}"
 
+    @pept_with_go = 0
+    @pept_with_ec = 0
     go_counts = Hash.new 0
     @go_summary = {}
-    @entries.flat_map(&:go_terms).each { |go| go_counts[go] += 1 }
+    @ec_summary = Hash.new 0
+    @entries.each do |entery|
+      go_terms = entery.go_cross_references.map(&:go_term)
+      unless go_terms.empty?
+        @pept_with_go += 1
+        go_terms.each { |term| go_counts[term] += 1 }
+      end
+
+      ec_numbers = entery.ec_cross_references.map(&:ec_number)
+      unless ec_numbers.empty?
+        @pept_with_ec += 1
+        ec_numbers.each { |number| @ec_summary[number] += 1 }
+      end
+    end
+
     go_counts.keys.group_by(&:namespace).each do |namespace, go|
       @go_summary[namespace] = go.map { |term| [term, go_counts[term]] }.to_h
     end
-
-    @ec_summary = Hash.new 0
-    @entries.flat_map(&:ec_numbers).each { |ec| @ec_summary[ec] += 1 }
 
     respond_to do |format|
       format.html # show.html.erb
