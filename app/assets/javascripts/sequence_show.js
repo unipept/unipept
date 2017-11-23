@@ -117,9 +117,13 @@ function initSequenceShow(data) {
 
     function setUpEC(ec) {
         $("#ec-pannel").empty();
-        setUPECTree(ec, "#ec-pannel");
-        const sortedNumbers = Array.from(ec.values()).sort((a, b) => (b.value - a.value));
-        setUpEcTable(sortedNumbers, d3.select("#ec-pannel"));
+        if(ec.length > 0){
+            setUPECTree(ec, "#ec-pannel");
+            const sortedNumbers = Array.from(ec.values()).sort((a, b) => (b.value - a.value));
+            setUpEcTable(sortedNumbers, d3.select("#ec-pannel"));
+        } else {
+            $("#ec-pannel").append("<span>No EC code annotations found.</span>")
+        }
     }
 
     function setUPECTree(ec, target) {
@@ -249,10 +253,14 @@ function initSequenceShow(data) {
             const variantName = stringTitleize(variant);
             goPannel.append("h3").text(variantName);
 
-            const sortedNumbers = Array.from(go[variant].values()).sort((a, b) => (b.value - a.value));
-            let article = goPannel.append("div").attr("class", "row");
-            setUpGoTable(sortedNumbers, variantName, article);
-            setUpQuickGo(sortedNumbers, variantName, article);
+            if (variant in go) {
+                const sortedNumbers = Array.from(go[variant].values()).sort((a, b) => (b.value - a.value));
+                let article = goPannel.append("div").attr("class", "row");
+                setUpGoTable(sortedNumbers, variantName, article);
+                setUpQuickGo(sortedNumbers, variantName, article);
+            } else {
+                goPannel.append("span").text("No GO term annotations in this namespace.");
+            }
         }
     }
 
