@@ -130,7 +130,7 @@ function initSequenceShow(data) {
     }
 
     function setUpEC(ec) {
-        if (ec.length > 0) {
+        if (ec.numAnnotatedPeptides > 0) {
             setUPECTree(ec);
             setUpEcTable(ec);
         } else {
@@ -139,9 +139,7 @@ function initSequenceShow(data) {
         }
     }
 
-    function setUPECTree(ec) {
-        let sumValues = ec.reduce((s, v) => s+v.value, 0);
-
+    function setUPECTree({numAnnotatedPeptides, data}) {
         /* Function to create a compareable string from EC numbers*/
         let makeId = code =>{
             // Pad each part with zeros so we can sort alphabeticly
@@ -165,7 +163,7 @@ function initSequenceShow(data) {
         map["-"] = results;
 
         // Sort from general to specific
-        const sortedEC = Array.from(ec.values()).sort((a, b) => (a.code+".-").split(".").indexOf("-") - (b.code+".-").split(".").indexOf("-"));
+        const sortedEC = Array.from(data.values()).sort((a, b) => (a.code+".-").split(".").indexOf("-") - (b.code+".-").split(".").indexOf("-"));
 
         for (let data of sortedEC) {
             let {code, value: count, name} = data;
@@ -222,20 +220,19 @@ function initSequenceShow(data) {
                 if ("data" in d.data) {
                     tip += `<br>${d.data.data.name}`;
                 }
-                tip += `<br>ocurrences: ${d.data.count} (${(100*d.data.count/sumValues).toFixed(1)}%) <br>`;
+                tip += `<br>ocurrences: ${d.data.count} (${(100*d.data.count/numAnnotatedPeptides).toFixed(1)}%) <br>`;
                 if (d.data.count == d.data.self_count) {
                     tip += "All specific";
                 } else {
-                    tip += `Specific ocurrences: ${d.data.self_count} (${(100*d.data.self_count/sumValues).toFixed(1)}%)`;
+                    tip += `Specific ocurrences: ${d.data.self_count} (${(100*d.data.self_count/numAnnotatedPeptides).toFixed(1)}%)`;
                 }
                 return tip;
             },
         });
     }
 
-    function setUpEcTable(ec) {
-        const sortedNumbers = Array.from(ec.values()).sort((a, b) => (b.value - a.value));
-        let sumValues = sortedNumbers.reduce((s, v) => s+v.value, 0);
+    function setUpEcTable({numAnnotatedPeptides, data}) {
+        const sortedNumbers = Array.from(data.values()).sort((a, b) => (b.value - a.value));
         new AmountTable({
             el: d3.select("#ec-table"),
             header: ["Count", "EC-Number", "Name"],
@@ -245,7 +242,7 @@ function initSequenceShow(data) {
                 { // Count
                     html: d => d.value,
                     style: {"width": "5em"},
-                    shade: d=>100*d.value/sumValues,
+                    shade: d=>100*d.value/numAnnotatedPeptides,
                 },
                 { // EC-number
                     html: d => {
@@ -258,12 +255,12 @@ function initSequenceShow(data) {
                     text: d => d.name,
                 },
             ],
-            tooltip: d => `<strong>${d.name}</strong><br>EC ${d.code}<br>Assigned to ${(100*d.value/sumValues).toFixed(1)}% of protein matches`,
+            tooltip: d => `<strong>${d.name}</strong><br>EC ${d.code}<br>Assigned to ${(100*d.value/numAnnotatedPeptides).toFixed(1)}% of annotated matches`,
         }
         ).draw();
     }
 
-    function setUpGO(go) {
+    function setUpGO({numAnnotatedPeptides, data}) {
         $("#go-pannel").empty();
         const goPannel = d3.select("#go-pannel");
 
@@ -272,10 +269,10 @@ function initSequenceShow(data) {
             const variantName = stringTitleize(variant);
             goPannel.append("h3").text(variantName);
 
-            if (variant in go) {
-                const sortedNumbers = Array.from(go[variant].values()).sort((a, b) => (b.value - a.value));
+            if (variant in data) {
+                const sortedNumbers = Array.from(data[variant].values()).sort((a, b) => (b.value - a.value));
                 let article = goPannel.append("div").attr("class", "row");
-                setUpGoTable(sortedNumbers, variantName, article);
+                setUpGoTable(sortedNumbers, numAnnotatedPeptides, variantName, article);
                 setUpQuickGo(sortedNumbers, variantName, article);
             } else {
                 goPannel.append("span").text("No GO term annotations in this namespace.");
@@ -283,8 +280,7 @@ function initSequenceShow(data) {
         }
     }
 
-    function setUpGoTable(sortedNumbers, variantName, target) {
-        let sumValues = sortedNumbers.reduce((s, v) => s+v.value, 0);
+    function setUpGoTable(sortedNumbers, numAnnotatedPeptides, variantName, target) {
         let tablepart = target.append("div").attr("class", "col-xs-8");
         new AmountTable({
             el: tablepart,
@@ -295,7 +291,7 @@ function initSequenceShow(data) {
                 { // Count
                     html: d => d.value,
                     style: {"width": "5em"},
-                    shade: d=>100*d.value/sumValues,
+                    shade: d=>100*d.value/numAnnotatedPeptides,
                 },
                 { // Go term
                     html: d => `<a href="https://amigo.geneontology.org/amigo/term/${d.code}" target="_blank">${d.code}</a>`,
@@ -305,7 +301,7 @@ function initSequenceShow(data) {
                     text: d => d.name,
                 },
             ],
-            tooltip: d => `<strong>${d.name}</strong><br>${d.code}<br>${variantName}<br>Assigned to ${(100*d.value/sumValues).toFixed(1)}% of protein matches`,
+            tooltip: d => `<strong>${d.name}</strong><br>${d.code}<br>${variantName}<br>Assigned to ${(100*d.value/numAnnotatedPeptides).toFixed(1)}% of annotated matches`,
         }
         ).draw();
     }
