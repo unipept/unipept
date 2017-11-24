@@ -122,11 +122,11 @@ class AmountTable {
                 }
             }
 
-            if (text !== null) {
-                cell.text(d => text(d));
+            if (html !== null) {
+                cell.html(d => html(d));
             } else {
-                if (html !== null) {
-                    cell.html(d => html(d));
+                if (text !== null) {
+                    cell.text(d => text(d));
                 } else {
                     throw new Error("Neither text nor html given for colunm"+ JSON.stringify(colSpec));
                 }
