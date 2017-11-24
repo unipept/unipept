@@ -240,6 +240,7 @@ function initSequenceShow(data) {
             el: target,
             header: ["Count", "EC-Number", "Name"],
             data: sortedNumbers,
+            limit: 5,
             contents: [
                 { // Count
                     html: d => d.value,
