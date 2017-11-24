@@ -174,6 +174,41 @@ class AmountTable {
         });
     }
 
+
+    /**
+     * Creates a CSV representation of the amount table
+     *
+     * prefers text() over html(), in the second case only the textContent is
+     * kept
+     *
+     * @todo clean
+     * @return {string} the CSV version of the table
+     */
+    toCSV() {
+        let result = [this.header.join(",")];
+        for (let entry of this.data) {
+            let values = [];
+            for (let colSpec of this.contents) {
+                let {html=null, text=null} = colSpec;
+                if (text !== null) {
+                    values.push(text(entry));
+                } else {
+                    if (html !== null) {
+                        let span= document.createElement("span");
+                        span.innerHTML= html(entry);
+                        values.push(span.textContent);
+                    } else {
+                        throw new Error("Neither text nor html given for colunm"+ JSON.stringify(colSpec));
+                    }
+                }
+            }
+            result.push(values.map(s => s.includes(",") ? `"${s.replace(`"`, `\\"`)}"` : s).join(","));
+        }
+        return result.join("\n");
+    }
+
+
+
     /**
      * Setup tooltips
      * @param {d3.selection} row the rows to add the tooltip to.
