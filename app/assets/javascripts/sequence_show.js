@@ -130,17 +130,17 @@ function initSequenceShow(data) {
     }
 
     function setUpEC(ec) {
-        $("#ec-pannel").empty();
         if (ec.length > 0) {
-            setUPECTree(ec, "#ec-pannel");
+            setUPECTree(ec);
             const sortedNumbers = Array.from(ec.values()).sort((a, b) => (b.value - a.value));
-            setUpEcTable(sortedNumbers, d3.select("#ec-pannel"));
+            setUpEcTable(sortedNumbers);
         } else {
-            $("#ec-pannel").append("<span>No EC code annotations found.</span>");
+            $("#ec-table").html("<span>No EC code annotations found.</span>");
+            $("#ec-treeview").remove();
         }
     }
 
-    function setUPECTree(ec, target) {
+    function setUPECTree(ec) {
         let sumValues = ec.reduce((s, v) => s+v.value, 0);
 
         /* Function to create a compareable string from EC numbers*/
@@ -214,7 +214,7 @@ function initSequenceShow(data) {
         Object.values(map).forEach(obj => obj.children.sort((a, b) => a.id.localeCompare(b.id)));
 
         // Finally create tree
-        return $(target).empty().treeview(results, {
+        return $("#ec-treeview").empty().treeview(results, {
             width: 916,
             height: 600,
             getTooltip: d => {
@@ -237,7 +237,7 @@ function initSequenceShow(data) {
     function setUpEcTable(sortedNumbers, target) {
         let sumValues = sortedNumbers.reduce((s, v) => s+v.value, 0);
         new AmountTable({
-            el: target,
+            el: d3.select("#ec-table"),
             header: ["Count", "EC-Number", "Name"],
             data: sortedNumbers,
             limit: 5,
