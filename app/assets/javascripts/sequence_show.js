@@ -132,8 +132,7 @@ function initSequenceShow(data) {
     function setUpEC(ec) {
         if (ec.length > 0) {
             setUPECTree(ec);
-            const sortedNumbers = Array.from(ec.values()).sort((a, b) => (b.value - a.value));
-            setUpEcTable(sortedNumbers);
+            setUpEcTable(ec);
         } else {
             $("#ec-table").html("<span>No EC code annotations found.</span>");
             $("#ec-treeview").remove();
@@ -234,7 +233,8 @@ function initSequenceShow(data) {
         });
     }
 
-    function setUpEcTable(sortedNumbers, target) {
+    function setUpEcTable(ec) {
+        const sortedNumbers = Array.from(ec.values()).sort((a, b) => (b.value - a.value));
         let sumValues = sortedNumbers.reduce((s, v) => s+v.value, 0);
         new AmountTable({
             el: d3.select("#ec-table"),
