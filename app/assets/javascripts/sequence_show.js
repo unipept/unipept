@@ -314,11 +314,12 @@ function initSequenceShow(data) {
         const top5 = sortedNumbers.slice(0, 5).map(x => x.code);
         const quickGoChartURL = `https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/${top5.join(",")}/chart`;
         const top5sentence = top5.slice(0, -1).join(", ") + " and " + top5[top5.length-1];
-        target.append("img")
+        target
+            .append("div").attr("class", "col-xs-4")
+            .append("img")
             .attr("src", quickGoChartURL)
-            .attr("class", "col-xs-4 quickGoThumb")
+            .attr("class", "quickGoThumb")
             .attr("title", `QuickGO chart of ${top5sentence}`)
-            .style("cursor", "pointer")
             .on("click", ()=>{
                 showInfoModal("QuickGo "+variantName, `
                     This chart shows the realationship between the top 5 most occuring GO terms:<br/>${top5sentence}<br/>
