@@ -231,10 +231,10 @@ function initSequenceShow(data) {
         });
     }
 
-    function setUpEcTable({numAnnotatedPeptides, data}) {
-        const sortedNumbers = Array.from(data.values()).sort((a, b) => (b.value - a.value));
+    function setUpEcTable({numAnnotatedPeptides, data: ecdata}) {
+        const sortedNumbers = Array.from(ecdata.values()).sort((a, b) => (b.value - a.value));
         new AmountTable({
-            title: "EC-numbers",
+            title: "EC numbers - " + data.peptide,
             el: d3.select("#ec-table"),
             header: ["Count", "EC-Number", "Name"],
             data: sortedNumbers,
@@ -285,7 +285,7 @@ function initSequenceShow(data) {
     function setUpGoTable(sortedNumbers, numAnnotatedPeptides, variantName, target) {
         let tablepart = target.append("div").attr("class", "col-xs-8");
         new AmountTable({
-            title: `GO terms - ${variantName}`,
+            title: `GO terms - ${variantName} - ${data.peptide}`,
             el: tablepart,
             header: ["Count", "GO term", "Name"],
             data: sortedNumbers,
