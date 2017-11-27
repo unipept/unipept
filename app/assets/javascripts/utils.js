@@ -32,6 +32,25 @@ function brightness(rgb) {
 }
 
 /**
+ * Download data with polyfill for browsers that don't support the download attr
+ * @param  {[type]}  data                    data to download
+ * @param  {[type]}  fileName                filename
+ * @param  {String}  [fileType="text/plain"] filetype eg text/csv
+ * @return {Promise.<string>}                Promice that returns when downloaded
+ */
+function downloadData(data, fileName, fileType="text/plain") {
+    if ("download" in document.createElement("a")) {
+        return new Promise(function (resolve, reject) {
+            downloadDataByLink(`data:${fileType};base64,${btoa(data)}`, fileName);
+            resolve(fileName);
+        });
+    } else {
+        return downloadDataByForm(data, fileName, fileType);
+    }
+}
+
+
+/**
  * Triggers a file download in the browser using a hidden
  * form and a server round trip. Returns a Promise that resolves when
  * the file starts downloading
@@ -40,15 +59,19 @@ function brightness(rgb) {
  * @param {string} fileName The requested file name
  * @return {Promise.<string>}
  */
-function downloadDataByForm(data, fileName) {
+function downloadDataByForm(data, fileName, fileType=null) {
     return new Promise(function (resolve, reject) {
         let nonce = Math.random();
         $("form.download").remove();
         $("body").append("<form class='download' method='post' action='/download'></form>");
         let $downloadForm = $("form.download").append("<input type='hidden' name='filename' value='" + fileName + "'/>");
         $downloadForm.append("<input type='hidden' name='data' class='data'/>");
+        if (fileType !== null) {
+            $downloadForm.append(`<input type='hidden' name='filetype' value='${fileType}'/>`);
+        }
         $downloadForm.append("<input type='hidden' name='nonce' value='" + nonce + "'/>");
-        $downloadForm.find(".data").val(data);
+        // The x-www-form-urlencoded spec replaces newlines with \n\r
+        $downloadForm.find(".data").val(data.replace(/\n\r/g, "\n"));
         let downloadTimer = setInterval(function checkCookie() {
             if (document.cookie.indexOf(nonce) !== -1) {
                 clearInterval(downloadTimer);
@@ -309,4 +332,4 @@ function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
     }
 }
 
-export {addCopy, brightness, downloadDataByForm, downloadDataByLink, get, getJSON, getReadableColorFor, highlight, iteratorToArray, logErrorToGoogle, logToGoogle, showError, showInfo, stringHash, stringTitleize, triggerDownloadModal};
+export {addCopy, brightness, downloadData, downloadDataByForm, downloadDataByLink, get, getJSON, getReadableColorFor, highlight, iteratorToArray, logErrorToGoogle, logToGoogle, showError, showInfo, stringHash, stringTitleize, toCSVString, triggerDownloadModal};
