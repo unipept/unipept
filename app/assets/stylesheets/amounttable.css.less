@@ -1,3 +1,20 @@
+.table-amounttable {
+  &:hover .amounttable-download,&:focus .amounttable-download{
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .amounttable-download{
+    box-shadow: none;
+    float: right;
+    visibility: hidden;
+    opacity: 0;
+    margin-right: -5px;
+  }
+}
+
+
+
 .collapse-row td {
     &:hover,&:focus {
       background: @grey-100;

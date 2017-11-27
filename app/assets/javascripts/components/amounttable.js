@@ -1,3 +1,5 @@
+import {toCSVString, downloadData} from "../utils.js";
+
 /**
  * A table representaion of data
  * @todo complete doc
@@ -7,6 +9,7 @@ class AmountTable {
      * Constructor
      * @param {Object} settings
      * @property {string}   el        A CSS selector of the target container
+     * @property {string}   title     A string naming the table (used for export name)
      * @property {string[]} header    An array of column names
      * @property {Any[]}    data      array of data to display (values are shown in order)
      * @property {Object[]} contents  An array of settings for each collum (see above)
@@ -14,8 +17,9 @@ class AmountTable {
      * @property {function(data: Any): string} tooltip  A function specifying the tooltip content given a datarow
      * @property {string}   tooltip   A CSS selector of an existing tooltip element.
      */
-    constructor({el, header = null, data, contents=null, limit=Infinity, tooltip=null, tooltipID=null}) {
+    constructor({el, title=null, header = null, data, contents=null, limit=Infinity, tooltip=null, tooltipID=null}) {
         this.el = el;
+        this.title = title;
         this.header = header;
         this.data = data || [];
         this.table = null;
@@ -86,12 +90,19 @@ class AmountTable {
      * @param {d3.selection} thead  table header
      */
     buildHeader(thead) {
-        thead.append("tr")
+        let headerCells = thead.append("tr")
             .selectAll("th")
             .data(this.header)
             .enter()
             .append("th")
+            .attr("scope", "col")
             .text(d => d);
+        let lastCell = d3.select(headerCells[0][headerCells.size()-1]);
+        lastCell
+            .append("button")
+            .classed("btn btn-default btn-xs btn-animate amounttable-download", true)
+            .html("<span class=\"glyphicon glyphicon-download down\"></span> Save CSV")
+            .on("click", ()=>this.downloadCSV());
     }
 
     /**
@@ -185,7 +196,7 @@ class AmountTable {
      * @return {string} the CSV version of the table
      */
     toCSV() {
-        let result = [this.header.join(",")];
+        let result = [this.header];
         for (let entry of this.data) {
             let values = [];
             for (let colSpec of this.contents) {
@@ -202,11 +213,22 @@ class AmountTable {
                     }
                 }
             }
-            result.push(values.map(s => s.includes(",") ? `"${s.replace(`"`, `\\"`)}"` : s).join(","));
+            result.push(values);
         }
-        return result.join("\n");
+        let csv = toCSVString(result);
+        return csv;
     }
 
+    /**
+     * Trigger a download of the tables CSV
+     */
+    downloadCSV() {
+        let filename = "export.csv";
+        if (this.title !== null) {
+            filename = `${this.title.replace(/[^a-zA-Z -_]/gi, "").replace(/  *-  */g, "-").replace(/ /g, "_")}-export.csv`;
+        }
+        downloadData(this.toCSV(), filename, "text/csv");
+    }
 
 
     /**

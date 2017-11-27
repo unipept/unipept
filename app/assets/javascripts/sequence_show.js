@@ -234,13 +234,14 @@ function initSequenceShow(data) {
     function setUpEcTable({numAnnotatedPeptides, data}) {
         const sortedNumbers = Array.from(data.values()).sort((a, b) => (b.value - a.value));
         new AmountTable({
+            title: "EC-numbers",
             el: d3.select("#ec-table"),
             header: ["Count", "EC-Number", "Name"],
             data: sortedNumbers,
             limit: 5,
             contents: [
                 { // Count
-                    html: d => d.value,
+                    text: d => d.value.toString(),
                     style: {"width": "5em"},
                     shade: d=>100*d.value/numAnnotatedPeptides,
                 },
@@ -249,6 +250,7 @@ function initSequenceShow(data) {
                         let spans = d.code.split(".").map(e => `<span style="width:1.5em;display:inline-block;text-align: center">${e}</span>`).join(".");
                         return `<a href="https://enzyme.expasy.org/EC/${d.code}" target="_blank">${spans}</a>`;
                     },
+                    text: d => d.code,
                     style: {"width": "8em"},
                 },
                 { // name
@@ -283,18 +285,20 @@ function initSequenceShow(data) {
     function setUpGoTable(sortedNumbers, numAnnotatedPeptides, variantName, target) {
         let tablepart = target.append("div").attr("class", "col-xs-8");
         new AmountTable({
+            title: `GO terms - ${variantName}`,
             el: tablepart,
             header: ["Count", "GO term", "Name"],
             data: sortedNumbers,
             limit: 5,
             contents: [
                 { // Count
-                    html: d => d.value,
+                    text: d => d.value,
                     style: {"width": "5em"},
                     shade: d=>100*d.value/numAnnotatedPeptides,
                 },
                 { // Go term
                     html: d => `<a href="https://amigo.geneontology.org/amigo/term/${d.code}" target="_blank">${d.code}</a>`,
+                    text: d => d.code,
                     style: {"width": "7em"},
                 },
                 { // name
