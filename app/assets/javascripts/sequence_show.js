@@ -1,6 +1,7 @@
 import {addCopy, logToGoogle, triggerDownloadModal, stringTitleize} from "./utils.js";
 import {showInfoModal} from "./modal.js";
 import {AmountTable} from "./components/amounttable.js";
+import PriorityQueue from "./utilities/PriorityQueue.js";
 import "unipept-visualizations/src/treeview/treeview.js";
 
 /* eslint require-jsdoc: off */
@@ -139,6 +140,13 @@ function initSequenceShow(data) {
         }
     }
 
+    /**
+     * Create the EC treeview
+     * @todo move to somewhere else
+     * @param {number}   numAnnotatedPeptides number of anotate peptides
+     * @param {FACounts} data                 EC data
+     * @return {TreeView} The created treeview
+     */
     function setUPECTree({numAnnotatedPeptides, data}) {
         /* Function to create a compareable string from EC numbers*/
         let makeId = code =>{
@@ -211,9 +219,10 @@ function initSequenceShow(data) {
         Object.values(map).forEach(obj => obj.children.sort((a, b) => a.id.localeCompare(b.id)));
 
         // Finally create tree
-        return $("#ec-treeview").empty().treeview(results, {
+        let tree= $("#ec-treeview").empty().treeview(results, {
             width: 916,
             height: 600,
+            levelsToExpand: 1,
             getTooltip: d => {
                 let fullcode = "EC:"+ (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
                 let tip = `<strong>${fullcode}</strong>`;
@@ -229,6 +238,22 @@ function initSequenceShow(data) {
                 return tip;
             },
         });
+
+        // expand certain nodes
+        // iteratively open the leaf with the largest count
+        // TODO: move to somewhere else
+        let root = tree.getRoot();
+        let allowedCount = root.data.count*2;
+        let pq = new PriorityQueue((a, b) => b.data.count - a.data.count);
+        root.children.forEach(c => pq.add(c));
+        while (allowedCount > 0) {
+            let toExpand = pq.remove();
+            allowedCount -= toExpand.data.count;
+            toExpand.expand(1);
+            (toExpand.children || []).forEach(c => pq.add(c));
+        }
+        tree.update(root);
+        return tree;
     }
 
     function setUpEcTable({numAnnotatedPeptides, data: ecdata}) {
