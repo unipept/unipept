@@ -35,7 +35,8 @@
     "unipept-visualizations": "^1.5.0",
     "webpack": "^3.0.0",
     "webpack-manifest-plugin": "^1.1.0",
-    "webpack-merge": "^4.1.0"
+    "webpack-merge": "^4.1.0",
+    "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
     "eslint": "^4.3.0",
