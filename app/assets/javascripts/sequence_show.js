@@ -358,9 +358,9 @@ function initSequenceShow(data) {
             .on("click", ()=>{
                 showInfoModal("QuickGo "+variantName, `
                     This chart shows the realationship between the top 5 most occuring GO terms:<br/>${top5sentence}<br/>
-                    <a href="${quickGoChartURL}" target="_blank"><img style="max-width:100%" src="${quickGoChartURL}" /></a>
+                    <a href="${quickGoChartURL}" target="_blank" title="Click to enlarge in new tab"><img style="max-width:100%" src="${quickGoChartURL}" alt="QuickGO chart of ${top5sentence}"/></a>
                     <br>
-                    Provided by <a href="https://www.ebi.ac.uk/QuickGO" target="_blank">QuickGo</a>.`,
+                    Provided by <a href="https://www.ebi.ac.uk/QuickGO/annotations?goId=${top5.join(",")}" target="_blank">QuickGo</a>.`,
                 {wide: true});
             });
     }
