@@ -8,6 +8,7 @@
 // layout file, like app/views/layouts/application.html.erb
 
 import "babel-polyfill";
+import "whatwg-fetch";
 import jQuery from "jquery";
 
 // the path prefix can be removed in the next version of the webpacker gem
