@@ -253,6 +253,16 @@ function initSequenceShow(data) {
             (toExpand.children || []).forEach(c => pq.add(c));
         }
         tree.update(root);
+
+        // HACK: place the tree more to the left so everything is visible
+        setTimeout(()=>d3.select("#ec-treeview>svg>g>g").attr("transform", "translate(85,295)"), 1000);
+
+        // save tree
+        $("#save-btn-ec").click(() => {
+            logToGoogle("Single Peptide", "Save EC Image");
+            triggerDownloadModal("#ec-treeview svg", null, "unipept_treeview");
+        });
+
         return tree;
     }
 
