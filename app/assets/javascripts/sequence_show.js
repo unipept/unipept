@@ -149,7 +149,25 @@ function initSequenceShow(data) {
      */
     function setUPECTree({numAnnotatedPeptides, data}) {
         let ecOrganiser = new ECNumbers(data);
-        let tree = ecOrganiser.createTree();
+        let tree = ecOrganiser.createTree("#ec-treeview", {
+            width: 916,
+            height: 600,
+            levelsToExpand: 1,
+            getTooltip: d => {
+                let fullcode = "EC:"+ (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
+                let tip = `<strong>${fullcode}</strong>`;
+                if ("data" in d.data) {
+                    tip += `<br>${d.data.data.name}`;
+                }
+                tip += `<br>ocurrences: ${d.data.count} (${(100*d.data.count/numAnnotatedPeptides).toFixed(1)}%) <br>`;
+                if (d.data.count == d.data.self_count) {
+                    tip += "All specific";
+                } else {
+                    tip += `Specific ocurrences: ${d.data.self_count} (${(100*d.data.self_count/numAnnotatedPeptides).toFixed(1)}%)`;
+                }
+                return tip;
+            },
+        });
         // save tree
         $("#save-btn-ec").click(() => {
             logToGoogle("Single Peptide", "Save EC Image");

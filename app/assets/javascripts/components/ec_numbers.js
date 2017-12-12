@@ -58,8 +58,7 @@ export default class ECNumbers {
     /**
      * Create an EC tree
      */
-    createTree() {
-        let numAnnotatedPeptides = 1;
+    createTree(target, treeViewOptions) {
         /* Function to create a compareable string from EC numbers*/
         let makeId = code =>{
             // Pad each part with zeros so we can sort alphabeticly
@@ -121,25 +120,7 @@ export default class ECNumbers {
         Object.values(map).forEach(obj => obj.children.sort((a, b) => a.id.localeCompare(b.id)));
 
         // Finally create tree
-        let tree= $("#ec-treeview").empty().treeview(results, {
-            width: 916,
-            height: 600,
-            levelsToExpand: 1,
-            getTooltip: d => {
-                let fullcode = "EC:"+ (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
-                let tip = `<strong>${fullcode}</strong>`;
-                if ("data" in d.data) {
-                    tip += `<br>${d.data.data.name}`;
-                }
-                tip += `<br>ocurrences: ${d.data.count} (${(100*d.data.count/numAnnotatedPeptides).toFixed(1)}%) <br>`;
-                if (d.data.count == d.data.self_count) {
-                    tip += "All specific";
-                } else {
-                    tip += `Specific ocurrences: ${d.data.self_count} (${(100*d.data.self_count/numAnnotatedPeptides).toFixed(1)}%)`;
-                }
-                return tip;
-            },
-        });
+        let tree= $(target).empty().treeview(results, treeViewOptions);
 
         // expand certain nodes
         // iteratively open the leaf with the largest count
@@ -157,6 +138,6 @@ export default class ECNumbers {
         tree.update(root);
 
         // HACK: place the tree more to the left so everything is visible
-        setTimeout(()=>d3.select("#ec-treeview>svg>g>g").attr("transform", "translate(85,295)"), 1000);
+        setTimeout(()=>d3.select("#ec-treeview>svg>g>g").attr("transform", `translate(85,${(treeViewOptions.height || 600) / 2})`), 1000);
     }
 }
