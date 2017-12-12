@@ -6,6 +6,7 @@ function print {
     echo $(date -u) $1
 }
 
+database=$1
 
 for file in *.tsv.gz
 do
@@ -13,6 +14,6 @@ do
     gunzip $file
     file=`echo $file | sed "s/.gz//"`
     print $file
-    mysqlimport -u unipept -punipept --local unipept $file
+    mysqlimport -u unipept -punipept --local $database $file
     rm $file
 done
