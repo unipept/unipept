@@ -154,12 +154,10 @@ function initSequenceShow(data) {
             height: 600,
             levelsToExpand: 1,
             getTooltip: d => {
-                let fullcode = "EC:"+ (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
-                let tip = `<strong>${fullcode}</strong>`;
-                if ("data" in d.data) {
-                    tip += `<br>${d.data.data.name}`;
-                }
-                tip += `<br>ocurrences: ${d.data.count} (${(100*d.data.count/numAnnotatedPeptides).toFixed(1)}%) <br>`;
+                let fullcode = (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
+                let tip = `<strong>EC ${fullcode}</strong>`;
+                tip += `<br>${ECNumbers.nameOf(fullcode)}`;
+                tip += `<br>Ocurrences: ${d.data.count} (${(100*d.data.count/numAnnotatedPeptides).toFixed(1)}%) <br>`;
                 if (d.data.count == d.data.self_count) {
                     tip += "All specific";
                 } else {
