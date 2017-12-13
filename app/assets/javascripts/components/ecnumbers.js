@@ -7,12 +7,13 @@ import PriorityQueue from "../utilities/PriorityQueue.js";
  * @property {string} code  The code of the GO/EC nummber
  */
 
-
+// const for private methods
 const addMissing = Symbol("[addMissing]");
 const addNames = Symbol("[addNames]");
 const addMissingNames = Symbol("[addMissingNames]");
 const atrificial = Symbol("atrificial");
 let ecNames = new Map();
+
 /**
  * Class that helps organising EC numbers
  * - fetch information about missing numbers in hyrarchy
@@ -87,27 +88,6 @@ export default class ECNumbers {
         let todo = codes.filter(c => !ecNames.has(c));
         let res = await ECNumbers.postJSON("/info/ecnumbers", JSON.stringify({ecnumbers: todo}));
         ECNumbers[addNames](res);
-    }
-
-
-    /**
-     * Posts data to a url as json and returns a promise containing the parsed
-     * (json) response
-     *
-     * @param  {string} url The url to which we want to send the request
-     * @param  {string} data The data to post in JSON format
-     * @return {Promise} A Promise containing the parsed response data
-     * @todo remove
-     */
-    static postJSON(url, data) {
-        return fetch(url, {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-            },
-            body: data,
-        }).then(res => res.json());
     }
 
     /**
@@ -191,16 +171,16 @@ export default class ECNumbers {
         }
         tree.update(root);
 
-        // HACK: place the tree more to the left so everything is visible
-        setTimeout(()=>d3.select("#ec-treeview>svg>g>g").attr("transform", `translate(85,${(treeViewOptions.height || 600) / 2})`), 1000);
+        // HACK: place the tree more to the left so everything is visible (after one second because there is a 750 ms delay)
+        setTimeout(()=>d3.select(target+">svg>g>g").attr("transform", `translate(85,${(treeViewOptions.height || 600) / 2})`), 1000);
         return tree;
     }
 
 
     /**
-     * Gets the name of associated with an EC number and requests it if needed
+     * Gets the name of associated with an EC number
      *
-     * @param  {string} ecNum The code of the EC number
+     * @param  {string} ecNum The code of the EC number (like "2.3.-.-")
      * @return {string}       The name of the EC number
      */
     static nameOf(ecNum) {
@@ -211,7 +191,9 @@ export default class ECNumbers {
     }
 
     /**
-     * Gets the name of associated with an EC number and requests it if needed
+     * Gets a list of ancestors of a given EC number.
+     *
+     * "2.1.3.-" would give ["2.1.-.-","2.-.-.-"]
      *
      * @param  {string} ecNum The code of the EC number
      * @return {[string]}  Ancestors of the EC number (from specific to generic)
@@ -226,5 +208,26 @@ export default class ECNumbers {
             result.push(parts.join("."));
         }
         return result;
+    }
+
+
+    /**
+     * Posts data to a url as json and returns a promise containing the parsed
+     * (json) response
+     *
+     * @param  {string} url The url to which we want to send the request
+     * @param  {string} data The data to post in JSON format
+     * @return {Promise} A Promise containing the parsed response data
+     * @todo remove
+     */
+    static postJSON(url, data) {
+        return fetch(url, {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            body: data,
+        }).then(res => res.json());
     }
 }
