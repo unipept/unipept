@@ -21,6 +21,12 @@ UnipeptWeb::Application.routes.draw do
     end
   end
 
+  # General inforamtion
+  scope :info, as: 'info' do
+    match "goterms", via: [:get, :post], :to => "info#goterms"
+    match "ecnumbers",     via: [:get, :post], :to => "info#ecnumbers"
+  end
+
   # search
   get '/search/sequence', :to => 'sequences#search', :as => 'sequence_search'
 
