@@ -1,7 +1,7 @@
 import {addCopy, logToGoogle, triggerDownloadModal, stringTitleize} from "./utils.js";
 import {showInfoModal} from "./modal.js";
 import {AmountTable} from "./components/amounttable.js";
-import ECNumbers from "./components/ec_numbers.js";
+import ECNumbers from "./components/ecnumbers.js";
 import "unipept-visualizations/src/treeview/treeview.js";
 
 /* eslint require-jsdoc: off */
