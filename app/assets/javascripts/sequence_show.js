@@ -203,7 +203,12 @@ function initSequenceShow(data) {
                     text: d => d.name,
                 },
             ],
-            tooltip: d => `<strong>${d.name}</strong><br>EC ${d.code}<br>Assigned to ${(100*d.value/numAnnotatedPeptides).toFixed(1)}% of annotated matches`,
+            tooltip: d => {
+                const fmt= ecNum=>`<span style="display:inline-block;min-width:5em;">${ecNum}</span>`;
+                return `EC ${fmt(d.code)}: <strong>${ECNumbers.nameOf(d.code)}</strong><br>
+                        ${ECNumbers.ancestorsOf(d.code).map(c => `EC ${fmt(c)}: ${ECNumbers.nameOf(c)}`).join("<br>")}
+                        <br>Assigned to ${(100*d.value/numAnnotatedPeptides).toFixed(1)}% of annotated matches`;
+            },
         }
         ).draw();
     }
