@@ -123,8 +123,9 @@ class AmountTable {
             if (shade !== false) {
                 cell.style("background-image", d => {
                     let prec = shade(d);
-                    return `linear-gradient(to right, #dddddd ${prec}%, transparent ${prec}%)`;
+                    return `linear-gradient(to right, transparent ${prec}%, white ${prec}%)`;
                 });
+                cell.classed("shaded-cell", true);
             }
 
             if (style !== null) {
