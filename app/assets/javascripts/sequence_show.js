@@ -232,7 +232,7 @@ function initSequenceShow(data) {
             goPannel.append("h3").text(variantName);
 
             if (variant in data) {
-                const sortedNumbers = Array.from(data[variant].values()).sort((a, b) => (b.value - a.value));
+                const sortedNumbers = Array.from(data[variant]).sort((a, b) => (b.value - a.value));
                 let article = goPannel.append("div").attr("class", "row");
                 setUpGoTable(sortedNumbers, numAnnotatedPeptides, variantName, article);
                 setUpQuickGo(sortedNumbers, variantName, article);
