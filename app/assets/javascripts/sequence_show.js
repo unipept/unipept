@@ -38,6 +38,9 @@ function initSequenceShow(data) {
     // setup functional annotations tabs
     setUpFA(data.fa);
 
+    // enable tooltips for EC and GO terms
+    addFAToolips();
+
     // add the tab help
     initHelp();
 
@@ -176,6 +179,12 @@ function initSequenceShow(data) {
         return tree;
     }
 
+    function ecTooltipContent(ecCode) {
+        const fmt= ecNum=>`<span style="display:inline-block;min-width:5em;">${ecNum}</span>`;
+        return `EC ${fmt(ecCode)}: <strong>${ECNumbers.nameOf(ecCode)}</strong><br>
+                ${ECNumbers.ancestorsOf(ecCode).map(c => `EC ${fmt(c)}: ${ECNumbers.nameOf(c)}`).join("<br>")}`;
+    }
+
     function setUpEcTable({numAnnotatedPeptides, data: ecdata}) {
         const sortedNumbers = Array.from(ecdata.values()).sort((a, b) => (b.value - a.value));
         const target = d3.select("#ec-table");
@@ -205,9 +214,7 @@ function initSequenceShow(data) {
                 },
             ],
             tooltip: d => {
-                const fmt= ecNum=>`<span style="display:inline-block;min-width:5em;">${ecNum}</span>`;
-                return `EC ${fmt(d.code)}: <strong>${ECNumbers.nameOf(d.code)}</strong><br>
-                        ${ECNumbers.ancestorsOf(d.code).map(c => `EC ${fmt(c)}: ${ECNumbers.nameOf(c)}`).join("<br>")}
+                return `${ecTooltipContent(d.code)}
                         <br>Assigned to ${(100*d.value/numAnnotatedPeptides).toFixed(1)}% of annotated matches`;
             },
             tooltipID: "#tooltip",
@@ -284,6 +291,31 @@ function initSequenceShow(data) {
             });
     }
 
+    function addFAToolips() {
+        const tooltipShowCSS = {"display": "block", "visibility": "visible"}
+        const tooltipHideCSS = {"display": "none", "visibility": "hidden"}
+        const $tooltip = $("#tooltip");
+
+        $(".ecNumberLink")
+            .mouseenter(function (e) {
+                let ecNum = this.textContent;
+                $tooltip.css(tooltipShowCSS)
+                    .html(ecTooltipContent(ecNum));
+                return false;
+            })
+            .mouseleave(function (e) {
+                $tooltip.css(tooltipHideCSS);
+                return false;
+            })
+            .mousemove(function (e) {
+                $tooltip.css("top", e.pageY+10);
+                $tooltip.css("left", e.pageX+10);
+                return false;
+            });
+
+        //
+
+    }
 
     function initLineageTree(jsonData) {
         let margin = {
