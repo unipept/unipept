@@ -125,7 +125,7 @@
         fa: {
           go:{
             numAnnotatedPeptides: <%=@pept_with_go%>,
-            data: <%= raw(@go_summary.map{|k, v| [k,v.map{|goterm,count| { "code" => goterm.code, "name" => goterm.name,  "value" => count}}]}.to_h.to_json) %>,
+            data: <%= raw(@go_summary.map{|k, v| [k,v.map{|goterm,count| { "code" => goterm.code, "name" => goterm.name, "namespace": goterm.namespace, "value" => count}}]}.to_h.to_json) %>,
           },
           ec:{
             numAnnotatedPeptides: <%=@pept_with_ec%>,
