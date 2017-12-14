@@ -35,6 +35,7 @@ function initSequenceShow(data) {
     // enable the open in UniProt and clipboard buttons
     setUpUniprotButtons(data.uniprotEntries);
 
+    // setup functional annotations tabs
     setUpFA(data.fa);
 
     // add the tab help
