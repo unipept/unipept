@@ -210,6 +210,7 @@ function initSequenceShow(data) {
                         ${ECNumbers.ancestorsOf(d.code).map(c => `EC ${fmt(c)}: ${ECNumbers.nameOf(c)}`).join("<br>")}
                         <br>Assigned to ${(100*d.value/numAnnotatedPeptides).toFixed(1)}% of annotated matches`;
             },
+            tooltipID: "#tooltip",
         }
         ).draw();
     }
@@ -258,6 +259,7 @@ function initSequenceShow(data) {
                 },
             ],
             tooltip: d => `<strong>${d.name}</strong><br>${d.code}<br>${variantName}<br>Assigned to ${(100*d.value/numAnnotatedPeptides).toFixed(1)}% of annotated matches`,
+            tooltipID: "#tooltip",
         }
         ).draw();
     }
