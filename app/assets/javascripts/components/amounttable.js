@@ -10,7 +10,7 @@ import {toCSVString, downloadData} from "../utils.js";
  * @property {AmountTableColSpec[]} contents  An array of settings for each collum (see above)
  * @property {Number} [limit=Infinity]  The number of rows to show in collapsed state
  * @property {function(data: Any): string} tooltip  A function specifying the tooltip content given a datarow
- * @property {string}   tooltip   A CSS selector of an existing tooltip element.
+ * @property {string}   tooltipID   A CSS selector of an existing tooltip element.
  */
 
 /**
