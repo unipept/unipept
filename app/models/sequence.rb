@@ -105,7 +105,7 @@ class Sequence < ApplicationRecord
     raise SequenceTooShortError if sequence.length < 5
     sequence = sequence.tr('I', 'L') if equate_il
     # this solves the N+1 query problem
-    includes(peptides_relation_name(equate_il) => { uniprot_entry: %i[taxon ec_cross_references go_cross_references] })
+    includes(peptides_relation_name(equate_il) => { uniprot_entry: %i[taxon ec_numbers go_terms] })
       .find_by(sequence: sequence)
   end
 
