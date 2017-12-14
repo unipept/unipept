@@ -1,21 +1,47 @@
 import {toCSVString, downloadData} from "../utils.js";
 
+
+/**
+ * @typedef {Object} AmountTableSettings
+ * @property {string}   el        A CSS selector of the target container
+ * @property {string}   title     A string naming the table (used for export name)
+ * @property {string[]} header    An array of column names
+ * @property {Any[]}    data      array of data to display (values are shown in order)
+ * @property {AmountTableColSpec[]} contents  An array of settings for each collum (see above)
+ * @property {Number} [limit=Infinity]  The number of rows to show in collapsed state
+ * @property {function(data: Any): string} tooltip  A function specifying the tooltip content given a datarow
+ * @property {string}   tooltip   A CSS selector of an existing tooltip element.
+ */
+
+/**
+ * @typedef {Object} AmountTableColSpec
+ * @property {function(data: Any): string} [html=null]
+ *           Function that generates the HTML content of the cell
+ *           (text is used if not supplied)
+ * @property {function(data: Any): string} [text=null]
+ *           Function that generates the HTML content of the cell
+ *           (html is prefered over text in when rendering a table, text is
+ *           prefered when exporting to csv)
+ * @property {object} [style=null]
+ *           object whose keys will be transformed to CSS properties of the
+ *           cells in the collum
+ * @property {function(data: Any): number} [shade=false]
+ *           Function that calculates the amount the shader is filled for cells
+ *           in this collumn. Should be in [0,100]
+ */
+
+
 /**
  * A table representaion of data
- * @todo complete doc
  */
 class AmountTable {
     /**
-     * Constructor
-     * @param {Object} settings
-     * @property {string}   el        A CSS selector of the target container
-     * @property {string}   title     A string naming the table (used for export name)
-     * @property {string[]} header    An array of column names
-     * @property {Any[]}    data      array of data to display (values are shown in order)
-     * @property {Object[]} contents  An array of settings for each collum (see above)
-     * @property {Number} [limit=Infinity]  The number of rows to show in collapsed state
-     * @property {function(data: Any): string} tooltip  A function specifying the tooltip content given a datarow
-     * @property {string}   tooltip   A CSS selector of an existing tooltip element.
+     * Constructor of an AmountTable
+     *
+     * Pro tip: use `style: {"background-color": "red"}` to change the shader
+     * fill color. Do not use `background` on a shaded cell.
+     *
+     * @param {AmountTableSettings} settings
      */
     constructor({el, title=null, header = null, data, contents=null, limit=Infinity, tooltip=null, tooltipID=null}) {
         this.el = el;
@@ -193,11 +219,11 @@ class AmountTable {
      * prefers text() over html(), in the second case only the textContent is
      * kept
      *
-     * @todo clean
      * @return {string} the CSV version of the table
      */
     toCSV() {
         let result = [this.header];
+        let htmlHelperSpan= document.createElement("span");
         for (let entry of this.data) {
             let values = [];
             for (let colSpec of this.contents) {
@@ -206,9 +232,8 @@ class AmountTable {
                     values.push(text(entry));
                 } else {
                     if (html !== null) {
-                        let span= document.createElement("span");
-                        span.innerHTML= html(entry);
-                        values.push(span.textContent);
+                        htmlHelperSpan.innerHTML= html(entry);
+                        values.push(htmlHelperSpan.textContent);
                     } else {
                         throw new Error("Neither text nor html given for colunm"+ JSON.stringify(colSpec));
                     }
