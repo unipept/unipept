@@ -177,9 +177,11 @@ function initSequenceShow(data) {
 
     function setUpEcTable({numAnnotatedPeptides, data: ecdata}) {
         const sortedNumbers = Array.from(ecdata.values()).sort((a, b) => (b.value - a.value));
+        const target = d3.select("#ec-table");
+        target.html("");
         new AmountTable({
             title: "EC numbers - " + data.peptide,
-            el: d3.select("#ec-table"),
+            el: target,
             header: ["Count", "EC-Number", "Name"],
             data: sortedNumbers,
             limit: 5,
