@@ -1,7 +1,8 @@
-import {addCopy, logToGoogle, triggerDownloadModal, stringTitleize} from "./utils.js";
+import {addCopy, logToGoogle, triggerDownloadModal, stringTitleize, numberToPercent} from "./utils.js";
 import {showInfoModal} from "./modal.js";
 import {AmountTable} from "./components/amounttable.js";
 import ECNumbers from "./components/ecnumbers.js";
+import GOTerms from "./components/goterms.js";
 import "unipept-visualizations/src/treeview/treeview.js";
 
 /* eslint require-jsdoc: off */
@@ -10,16 +11,17 @@ import "unipept-visualizations/src/treeview/treeview.js";
 /**
  * @typedef {Object} FACounts
  * @property {number} value count
- * @property {string} name  The name of the GO/EC nummber
- * @property {string} code  The code of the GO/EC nummber
+ * @property {string} name  The name of the GO/EC number
+ * @property {string} code  The code of the GO/EC number
  */
 
 /**
- * @param {Object} data descriptio of the data
- * @param {Object.<string, FACounts>} data.fa.go - GO data inforamtion
- * @param {FACounts} data.fa.uniprotEntries - EC data inforamtion
+ * @param {Object} data description of the data`
+ * @param {Object.<string, FACounts>} data.fa.go - GO data information
+ * @param {FACounts} data.fa.uniprotEntries - EC data information
  */
 function initSequenceShow(data) {
+    const $tooltip = $("#tooltip");
     // set up the fancy tree
     initLineageTree(data.tree);
 
@@ -39,7 +41,7 @@ function initSequenceShow(data) {
     setUpFA(data.fa);
 
     // enable tooltips for EC and GO terms
-    addFAToolips();
+    initFAToolips();
 
     // add the tab help
     initHelp();
@@ -134,10 +136,18 @@ function initSequenceShow(data) {
         setUpEC(fa.ec);
     }
 
-    function setUpEC(ec) {
-        if (ec.numAnnotatedPeptides > 0) {
-            setUPECTree(ec);
-            setUpEcTable(ec);
+    function setUpEC({numAnnotatedPeptides, data}) {
+        let ecResultset = new ECNumbers({numAnnotatedPeptides, data});
+        if (numAnnotatedPeptides > 0) {
+            setUpECTree(ecResultset);
+            setUpEcTable(ecResultset);
+
+            $(".ecNumberLink")
+                .mouseenter(function (e) {
+                    let ecNum = this.textContent;
+                    $tooltip.html(tooltipEC(ecNum, ecResultset));
+                    return false;
+                });
         } else {
             $("#ec-table").html("<span>No EC code annotations found.</span>");
             $("#ec-treeview").remove();
@@ -145,32 +155,58 @@ function initSequenceShow(data) {
     }
 
     /**
+     * Generate a tooltip for an EC number
+     * @param  {string}    ecNumber   The Ec number to generate a tooltip for
+     * @param  {ECNumbers} [ecResultSet=null]  A `ECNumbers` summary
+     * @return {string}    HTML for the tooltip
+     */
+    function tooltipEC(ecNumber, ecResultSet = null) {
+        const fmt= x=>`<span style="display:inline-block;min-width:5em;">${x}</span>`;
+        let result = `EC ${fmt(ecNumber)}: <strong>${ECNumbers.nameOf(ecNumber)}</strong>`;
+        if (ECNumbers.ancestorsOf(ecNumber).length > 0) {
+            result += `<br>${ECNumbers.ancestorsOf(ecNumber).map(c => `EC ${fmt(c)}: ${ECNumbers.nameOf(c)}`).join("<br>")}`;
+        }
+
+        if (ecResultSet != null) {
+            let count = ecResultSet.getValueOf(ecNumber);
+            result += `<br><em>Specificly assigned to ${count} (${numberToPercent(ecResultSet.getFractionOf(ecNumber), 1)})
+                        annotated ${count === 1 ? "match" : "matches"}</em>`;
+        }
+        return result;
+    }
+
+    /**
      * Create the EC treeview
-     * @todo move to somewhere else
-     * @param {number}   numAnnotatedPeptides number of anotate peptides
-     * @param {FACounts} data                 EC data
+     *
+     * @param {ECNumbers} ecResultSet  A `ECNumbers` summary
      * @return {TreeView} The created treeview
      */
-    function setUPECTree({numAnnotatedPeptides, data}) {
-        let ecOrganiser = new ECNumbers(data);
-        let tree = ecOrganiser.createTree("#ec-treeview", {
+    function setUpECTree(ecResultSet) {
+        let tree = ecResultSet.createTree("#ec-treeview", {
             width: 916,
             height: 600,
-            levelsToExpand: 1,
             getTooltip: d => {
                 let fullcode = (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
-                let tip = `<strong>EC ${fullcode}</strong>`;
-                tip += `<br>${ECNumbers.nameOf(fullcode)}`;
-                tip += `<br>Ocurrences: ${d.data.count} (${(100*d.data.count/numAnnotatedPeptides).toFixed(1)}%) <br>`;
+                let tip = tooltipEC(fullcode);
+                tip += `<br><em>
+                        Assigned to ${d.data.count} (${numberToPercent(d.data.count/ecResultSet.getTotalSetSize(), 1)})
+                        annotated ${d.data.count === 1 ? "match" : "matches"},<br>`;
                 if (d.data.count == d.data.self_count) {
-                    tip += "All specific";
+                    tip += "all specific.";
                 } else {
-                    tip += `Specific ocurrences: ${d.data.self_count} (${(100*d.data.self_count/numAnnotatedPeptides).toFixed(1)}%)`;
+                    if (d.data.self_count == 0) {
+                        tip += "no specific annotations";
+                    } else {
+                        tip += `specificly assigned to ${d.data.self_count} (${numberToPercent(d.data.self_count/ecResultSet.getTotalSetSize(), 1)})
+                                annotated ${d.data.self_count === 1 ? "match" : "matches"}`;
+                    }
                 }
+                tip += "</em>";
                 return tip;
             },
         });
-        // save tree
+
+        // save tree button
         $("#save-btn-ec").click(() => {
             logToGoogle("Single Peptide", "Save EC Image");
             triggerDownloadModal("#ec-treeview svg", null, "unipept_treeview");
@@ -179,14 +215,13 @@ function initSequenceShow(data) {
         return tree;
     }
 
-    function ecTooltipContent(ecCode) {
-        const fmt= ecNum=>`<span style="display:inline-block;min-width:5em;">${ecNum}</span>`;
-        return `EC ${fmt(ecCode)}: <strong>${ECNumbers.nameOf(ecCode)}</strong><br>
-                ${ECNumbers.ancestorsOf(ecCode).map(c => `EC ${fmt(c)}: ${ECNumbers.nameOf(c)}`).join("<br>")}`;
-    }
-
-    function setUpEcTable({numAnnotatedPeptides, data: ecdata}) {
-        const sortedNumbers = Array.from(ecdata.values()).sort((a, b) => (b.value - a.value));
+    /**
+     * Create the EC amount table
+     *
+     * @param {ECNumbers} ecResultSet  A `ECNumbers` summary
+     */
+    function setUpEcTable(ecResultSet) {
+        const sortedNumbers = ecResultSet.asArray().sort((a, b) => (b.value - a.value));
         const target = d3.select("#ec-table");
         target.html("");
         new AmountTable({
@@ -199,7 +234,7 @@ function initSequenceShow(data) {
                 { // Count
                     text: d => d.value.toString(),
                     style: {"width": "5em"},
-                    shade: d=>100*d.value/numAnnotatedPeptides,
+                    shade: d=>100*d.value/ecResultSet.getTotalSetSize(),
                 },
                 { // EC-number
                     html: d => {
@@ -213,19 +248,35 @@ function initSequenceShow(data) {
                     text: d => d.name,
                 },
             ],
-            tooltip: d => {
-                return `${ecTooltipContent(d.code)}
-                        <br>Assigned to ${(100*d.value/numAnnotatedPeptides).toFixed(1)}% of annotated matches`;
-            },
+            tooltip: d => tooltipEC(d.code, ecResultSet),
             tooltipID: "#tooltip",
         }
         ).draw();
     }
 
+    /**
+     * Generate a tooltip for an GO term
+     * @param  {string}    goTerm   The Ec term to generate a tooltip for
+     * @param  {GOTerms} [goResultSet=null]  A `GOTerms` summary
+     * @return {string}    HTML for the tooltip
+     */
+    function tooltipGO(goTerm, goResultSet = null) {
+        let result = `${goTerm}: <strong>${GOTerms.nameOf(goTerm)}</strong><br>
+                      ${stringTitleize(GOTerms.namespaceOf(goTerm))}`;
+
+        if (goResultSet != null) {
+            let count = goResultSet.getValueOf(goTerm);
+            result += `<br><em>Specificly assigned to ${count} (${numberToPercent(goResultSet.getFractionOf(goTerm), 1)})
+                        annotated ${count == 1 ? "match" : "matches"}</em>`;
+        }
+        return result;
+    }
+
     function setUpGO({numAnnotatedPeptides, data}) {
+        let goResultset = new GOTerms({numAnnotatedPeptides, data});
+
         $("#go-pannel").empty();
         const goPannel = d3.select("#go-pannel");
-
         const variants = ["biological process", "cellular component", "molecular function"];
         for (let variant of variants) {
             const variantName = stringTitleize(variant);
@@ -234,15 +285,23 @@ function initSequenceShow(data) {
             if (variant in data) {
                 const sortedNumbers = Array.from(data[variant]).sort((a, b) => (b.value - a.value));
                 let article = goPannel.append("div").attr("class", "row");
-                setUpGoTable(sortedNumbers, numAnnotatedPeptides, variantName, article);
+                setUpGoTable(sortedNumbers, numAnnotatedPeptides, variantName, article, goResultset);
                 setUpQuickGo(sortedNumbers, variantName, article);
             } else {
                 goPannel.append("span").text("No GO term annotations in this namespace.");
             }
         }
+
+        // Add content to the tooltips of links
+        $(".goTermLink")
+            .mouseenter(function (e) {
+                let goTerm = this.textContent;
+                $tooltip.html(tooltipGO(goTerm, goResultset));
+                return false;
+            });
     }
 
-    function setUpGoTable(sortedNumbers, numAnnotatedPeptides, variantName, target) {
+    function setUpGoTable(sortedNumbers, numAnnotatedPeptides, variantName, target, goResultset) {
         let tablepart = target.append("div").attr("class", "col-xs-8");
         new AmountTable({
             title: `GO terms - ${variantName} - ${data.peptide}`,
@@ -265,7 +324,7 @@ function initSequenceShow(data) {
                     text: d => d.name,
                 },
             ],
-            tooltip: d => `<strong>${d.name}</strong><br>${d.code}<br>${variantName}<br>Assigned to ${(100*d.value/numAnnotatedPeptides).toFixed(1)}% of annotated matches`,
+            tooltip: d => tooltipGO(d.code, goResultset),
             tooltipID: "#tooltip",
         }
         ).draw();
@@ -274,7 +333,8 @@ function initSequenceShow(data) {
     function setUpQuickGo(sortedNumbers, variantName, target) {
         const top5 = sortedNumbers.slice(0, 5).map(x => x.code);
         const quickGoChartURL = `https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/${top5.join(",")}/chart`;
-        const top5sentence = top5.slice(0, -1).join(", ") + " and " + top5[top5.length-1];
+        let top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${x})`);
+        const top5sentence = top5WithNames.slice(0, -1).join(", ") + " and " + top5WithNames[top5WithNames.length-1];
         target
             .append("div").attr("class", "col-xs-4")
             .append("img")
@@ -283,7 +343,7 @@ function initSequenceShow(data) {
             .attr("title", `QuickGO chart of ${top5sentence}`)
             .on("click", ()=>{
                 showInfoModal("QuickGo "+variantName, `
-                    This chart shows the realationship between the top 5 most occuring GO terms:<br/>${top5sentence}<br/>
+                    This chart shows the realationship between the 5 most occuring GO terms: ${top5sentence}<br/>
                     <a href="${quickGoChartURL}" target="_blank" title="Click to enlarge in new tab"><img style="max-width:100%" src="${quickGoChartURL}" alt="QuickGO chart of ${top5sentence}"/></a>
                     <br>
                     Provided by <a href="https://www.ebi.ac.uk/QuickGO/annotations?goId=${top5.join(",")}" target="_blank">QuickGo</a>.`,
@@ -291,30 +351,18 @@ function initSequenceShow(data) {
             });
     }
 
-    function addFAToolips() {
-        const tooltipShowCSS = {"display": "block", "visibility": "visible"}
-        const tooltipHideCSS = {"display": "none", "visibility": "hidden"}
-        const $tooltip = $("#tooltip");
+    function initFAToolips() {
+        /* eslint brace-style: "off" */
+        const tooltipShowCSS = {"display": "block", "visibility": "visible"};
+        const tooltipHideCSS = {"display": "none", "visibility": "hidden"};
 
-        $(".ecNumberLink")
-            .mouseenter(function (e) {
-                let ecNum = this.textContent;
-                $tooltip.css(tooltipShowCSS)
-                    .html(ecTooltipContent(ecNum));
-                return false;
-            })
-            .mouseleave(function (e) {
-                $tooltip.css(tooltipHideCSS);
-                return false;
-            })
+        $(".ecNumberLink,.goTermLink")
+            .mouseenter(() => {$tooltip.css(tooltipShowCSS);})
+            .mouseleave(() => {$tooltip.css(tooltipHideCSS);})
             .mousemove(function (e) {
                 $tooltip.css("top", e.pageY+10);
                 $tooltip.css("left", e.pageX+10);
-                return false;
             });
-
-        //
-
     }
 
     function initLineageTree(jsonData) {

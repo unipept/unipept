@@ -3,30 +3,32 @@ import PriorityQueue from "../utilities/PriorityQueue.js";
 /**
  * @typedef {Object} FACounts
  * @property {number} value count
- * @property {string} name  The name of the GO/EC nummber
- * @property {string} code  The code of the GO/EC nummber
+ * @property {string} name  The name of the GO/EC number
+ * @property {string} code  The code of the GO/EC number
  */
 
 // const for private methods
 const addMissing = Symbol("[addMissing]");
 const addNames = Symbol("[addNames]");
 const addMissingNames = Symbol("[addMissingNames]");
-const atrificial = Symbol("atrificial");
+const artificial = Symbol("artificial");
 let ecNames = new Map();
 
 /**
- * Class that helps organising EC numbers
- * - fetch information about missing numbers in hyrarchy
+ * Class to contain the results of a fetch of EC numbers.
+ *
+ * - fetch information about missing numbers in hierarchy
  * - Create a treeview
  */
 export default class ECNumbers {
     /**
-     * Creares a new ECNumbers
+     * Creates a summary of given EC numbers and their counts
      * @param  {[FACounts]} ec list of EC numbers with their counts
      */
-    constructor(ec) {
-        this.ec = new this[addMissing](ec);
-        ECNumbers[addNames](ec);
+    constructor({numAnnotatedPeptides = null, data}) {
+        this.numTotalSet = numAnnotatedPeptides;
+        this.ec = new this[addMissing](data);
+        ECNumbers[addNames](data);
 
         // Fetch names in the background, not needed yet
         setTimeout(()=>{
@@ -35,11 +37,20 @@ export default class ECNumbers {
     }
 
     /**
-     * Create a map with all EC numbers given and their ancestors even if they
+     * Returns the originality supplied set of EC numbers
+     * @return {[FACounts]} EC number values
+     */
+    asArray() {
+        return Array.from(this.ec.values()).filter(x => !(x[artificial] || false));
+    }
+
+    /**
+     * Create a map width all EC numbers given and their ancestors even if they
      * are not given.
-     * @param {[FACounts]} newEC list of new ec
-     * @param {Map} map ldld
+     * @param {[FACounts]} newEC list of new EC data
+     * @param {Map} map map to start form
      * @return {Map}
+     * @access private
      */
     [addMissing](newEC, map = null) {
         let result = (map === null ? new Map(newEC.map(x=>[x.code, x])) : map);
@@ -47,17 +58,17 @@ export default class ECNumbers {
         for (let curEc of newEC) {
             const parts = curEc.code.split(".");
             const numSpecific = parts.includes("-") ? parts.indexOf("-") : parts.length;
-            result.set(curEc.code, curEc); // overides if exists
+            result.set(curEc.code, curEc); // overrides if exists
 
             for (let i = numSpecific-1; i>=1; i--) {
                 parts[i] = "-";
                 const newKey = parts.join(".");
                 if (!result.has(newKey)) {
                     let parentEC = {code: newKey, name: null, value: 0};
-                    parentEC[atrificial] = true;
+                    parentEC[artificial] = true;
                     result.set(newKey, parentEC);
                 } else {
-                    break;// the key already exists (all folowing already done)
+                    break;// the key already exists (all following already done)
                 }
             }
         }
@@ -65,35 +76,38 @@ export default class ECNumbers {
     }
 
     /**
-     * Create a map with all EC numbers given and their ancestors even if they
-     * are not given.
-     * @param {[FACounts]} newEC list of new ec
-     * @param {Map} map ldld
+     * Gets the value of the EC number
+     *
+     * @param  {string} ecNum The code of the EC number (like "2.3.-.-")
+     * @return {number}       The name of the EC number
      */
-    static [addNames](newEC) {
-        newEC.forEach(ec => {
-            if (!ecNames.has(ec.code)) {
-                ecNames.set(ec.code, ec.name);
-            }
-        });
+    getValueOf(ecNum) {
+        return this.ec.get(ecNum).value || 0;
     }
 
     /**
-     * Create a map with all EC numbers given and their ancestors even if they
-     * are not given.
-     * @param {[string]} codes array of ec codes that should be in the cache
-     * @param {Map} map ldld
+     * Gets the value of the EC number as fraction
+     *
+     * @param  {string} ecNum The code of the EC number (like "2.3.-.-")
+     * @return {string}       The name of the EC number
      */
-    static async [addMissingNames](codes) {
-        let todo = codes.filter(c => !ecNames.has(c));
-        let res = await ECNumbers.postJSON("/info/ecnumbers", JSON.stringify({ecnumbers: todo}));
-        ECNumbers[addNames](res);
+    getFractionOf(ecNum) {
+        return this.getValueOf(ecNum) / this.numTotalSet;
+    }
+
+    /**
+     * Number of annotated peptides
+     *
+     * @return {number}       Number of annotated peptides
+     */
+    getTotalSetSize() {
+        return this.numTotalSet;
     }
 
     /**
      * Create an EC tree
      *
-     * The numbers are first dorted form general to specific (number of - at the
+     * The numbers are first sorted form general to specific (number of - at the
      * end). Then the tree is built by adding the count to all ancestors.
      *
      * @param {string} target the element to put the tree in (will be cleared)
@@ -101,9 +115,12 @@ export default class ECNumbers {
      * @return {TreeView} the created tree
      */
     createTree(target, treeViewOptions) {
-        /* Function to create a compareable string from EC numbers*/
+        // We need one level expansion to be able to nicely expand it
+        treeViewOptions["levelsToExpand"] = treeViewOptions["levelsToExpand"] || 1;
+
+        /* Function to create a comparable string from EC numbers*/
         const makeId = code =>{
-            // Pad each part with zeros so we can sort alphabeticly
+            // Pad each part with zeros so we can sort alphabetically
             // (there are EC number with letters)
             const values = code.split(".").map(x => ("0000"+x).slice(-4));
             return values.join(".");
@@ -187,6 +204,9 @@ export default class ECNumbers {
         if (ecNames.has(ecNum)) {
             return ecNames.get(ecNum);
         }
+        if (ecNum == "-.-.-.-") {
+            return "Enzyme Commission Numbers";
+        }
         return "Unknown";
     }
 
@@ -210,6 +230,30 @@ export default class ECNumbers {
         return result;
     }
 
+    /**
+     * Add EC data to the static internal map
+     * @param {[FACounts]} newEC list of new ec
+     * @access private
+     */
+    static [addNames](newEC) {
+        newEC.forEach(ec => {
+            if (!ecNames.has(ec.code)) {
+                ecNames.set(ec.code, ec.name);
+            }
+        });
+    }
+
+    /**
+     * Fetch the names of the EC numbers that are not yet in the static map of
+     * names
+     * @param {[string]} codes array of EC numbers that should be in the cache
+     * @access private
+     */
+    static async [addMissingNames](codes) {
+        let todo = codes.filter(c => !ecNames.has(c));
+        let res = await ECNumbers.postJSON("/info/ecnumbers", JSON.stringify({ecnumbers: todo}));
+        ECNumbers[addNames](res);
+    }
 
     /**
      * Posts data to a url as json and returns a promise containing the parsed
