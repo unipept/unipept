@@ -344,4 +344,23 @@ function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
     }
 }
 
-export {addCopy, brightness, downloadData, downloadDataByForm, downloadDataByLink, get, getJSON, getReadableColorFor, highlight, iteratorToArray, logErrorToGoogle, logToGoogle, showError, showInfo, stringHash, stringTitleize, toCSVString, numberToPercent, triggerDownloadModal};
+/**
+ * Posts data to a url as JSON and returns a promise containing the parsed
+ * (JSON) response
+ *
+ * @param  {string} url The url to which we want to send the request
+ * @param  {string} data The data to post in JSON format
+ * @return {Promise} A Promise containing the parsed response data
+ */
+function postJSON(url, data) {
+    return fetch(url, {
+        method: "POST",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
+        body: data,
+    }).then(res => res.json());
+}
+
+export {addCopy, brightness, downloadData, downloadDataByForm, downloadDataByLink, get, getJSON, getReadableColorFor, highlight, iteratorToArray, logErrorToGoogle, logToGoogle, showError, showInfo, stringHash, stringTitleize, toCSVString, numberToPercent, triggerDownloadModal, postJSON};

@@ -1,3 +1,5 @@
+import {postJSON} from "../utils.js";
+
 /**
  * @typedef {Object} FACounts
  * @property {number} value count
@@ -101,29 +103,8 @@ export default class GOTerms {
     static async [addMissingNames](codes) {
         let todo = codes.filter(c => !goData.has(c));
         if (todo.length > 0) {
-            let res = await GOTerms.postJSON("/info/goterms", JSON.stringify({goterms: todo}));
+            let res = await postJSON("/info/goterms", JSON.stringify({goterms: todo}));
             GOTerms[addData](res);
         }
-    }
-
-
-    /**
-     * Posts data to a url as JSON and returns a promise containing the parsed
-     * (JSON) response
-     *
-     * @param  {string} url The url to which we want to send the request
-     * @param  {string} data The data to post in JSON format
-     * @return {Promise} A Promise containing the parsed response data
-     * @todo remove
-     */
-    static postJSON(url, data) {
-        return fetch(url, {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-            },
-            body: data,
-        }).then(res => res.json());
     }
 }
