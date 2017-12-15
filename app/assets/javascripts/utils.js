@@ -268,6 +268,18 @@ function toCSVString(grid) {
     ).join("\n\r");
 }
 
+
+/**
+ * Convert a number to a percentage,
+ * 0.1 => "10%".
+ * @param  {Number} number     [description]
+ * @param  {Number} [digits=0] [description]
+ * @return {string}            [description]
+ */
+function numberToPercent(number, digits=0) {
+    return (100*number).toFixed(digits)+"%";
+}
+
 /**
  * Triggers the image export modal.
  *
@@ -332,4 +344,4 @@ function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
     }
 }
 
-export {addCopy, brightness, downloadData, downloadDataByForm, downloadDataByLink, get, getJSON, getReadableColorFor, highlight, iteratorToArray, logErrorToGoogle, logToGoogle, showError, showInfo, stringHash, stringTitleize, toCSVString, triggerDownloadModal};
+export {addCopy, brightness, downloadData, downloadDataByForm, downloadDataByLink, get, getJSON, getReadableColorFor, highlight, iteratorToArray, logErrorToGoogle, logToGoogle, showError, showInfo, stringHash, stringTitleize, toCSVString, numberToPercent, triggerDownloadModal};
