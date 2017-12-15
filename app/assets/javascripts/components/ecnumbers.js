@@ -1,5 +1,5 @@
 import PriorityQueue from "../utilities/PriorityQueue.js";
-
+import {postJSON} from "../utils.js";
 /**
  * @typedef {Object} FACounts
  * @property {number} value count
@@ -251,27 +251,8 @@ export default class ECNumbers {
      */
     static async [addMissingNames](codes) {
         let todo = codes.filter(c => !ecNames.has(c));
-        let res = await ECNumbers.postJSON("/info/ecnumbers", JSON.stringify({ecnumbers: todo}));
+        let res = await postJSON("/info/ecnumbers", JSON.stringify({ecnumbers: todo}));
         ECNumbers[addNames](res);
     }
 
-    /**
-     * Posts data to a url as json and returns a promise containing the parsed
-     * (json) response
-     *
-     * @param  {string} url The url to which we want to send the request
-     * @param  {string} data The data to post in JSON format
-     * @return {Promise} A Promise containing the parsed response data
-     * @todo remove
-     */
-    static postJSON(url, data) {
-        return fetch(url, {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-            },
-            body: data,
-        }).then(res => res.json());
-    }
 }
