@@ -5,8 +5,8 @@ server 'morty.ugent.be', user: 'unipept', roles: %i[web app], ssh_options: {
   port: 4840
 }
 
-set :branch, 'feature/es6'
-set :rails_env, :production
+set :branch, 'feature/functionalAnalysisSinglePept'
+set :rails_env, :development
 
 namespace :deploy do
   before :publishing, :asset_stuff do
