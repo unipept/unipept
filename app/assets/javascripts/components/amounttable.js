@@ -7,7 +7,7 @@ import {toCSVString, downloadData} from "../utils.js";
  * @property {string}   title     A string naming the table (used for export name)
  * @property {string[]} header    An array of column names
  * @property {Any[]}    data      array of data to display (values are shown in order)
- * @property {AmountTableColSpec[]} contents  An array of settings for each collum (see above)
+ * @property {AmountTableColSpec[]} contents  An array of settings for each column (see above)
  * @property {Number} [limit=Infinity]  The number of rows to show in collapsed state
  * @property {function(data: Any): string} tooltip  A function specifying the tooltip content given a datarow
  * @property {string}   tooltipID   A CSS selector of an existing tooltip element.
@@ -20,19 +20,19 @@ import {toCSVString, downloadData} from "../utils.js";
  *           (text is used if not supplied)
  * @property {function(data: Any): string} [text=null]
  *           Function that generates the HTML content of the cell
- *           (html is prefered over text in when rendering a table, text is
- *           prefered when exporting to csv)
+ *           (html is preferred over text in when rendering a table, text is
+ *           preferred when exporting to csv)
  * @property {object} [style=null]
  *           object whose keys will be transformed to CSS properties of the
- *           cells in the collum
+ *           cells in the column
  * @property {function(data: Any): number} [shade=false]
  *           Function that calculates the amount the shader is filled for cells
- *           in this collumn. Should be in [0,100]
+ *           in this column. Should be in [0,100]
  */
 
 
 /**
- * A table representaion of data
+ * A table representation of data
  */
 class AmountTable {
     /**
@@ -81,7 +81,7 @@ class AmountTable {
     }
 
     /**
-     * Make the table visualisation
+     * Make the table visualization
      */
     draw() {
         const [thead, tbody] = this.buildTable();
@@ -98,14 +98,14 @@ class AmountTable {
     }
 
     /**
-     * Create a table in the target element (withour emtieng it first)
+     * Create a table in the target element (without creating it first)
      * @return {d3.selection}  Table head and table body
      */
     buildTable() {
         if (this.table === null) {
             this.table = this.el.append("table").attr("class", "table table-condensed table-amounttable");
         }
-        this.table.html(); // empty the tables html
+        this.table.html(); // empty the tables HTML
         const thead = this.table.append("thead");
         const tbody = this.table.append("tbody");
         return [thead, tbody];
@@ -166,7 +166,7 @@ class AmountTable {
                 if (text !== null) {
                     cell.text(d => text(d));
                 } else {
-                    throw new Error("Neither text nor html given for colunm"+ JSON.stringify(colSpec));
+                    throw new Error("Neither text nor html given for column"+ JSON.stringify(colSpec));
                 }
             }
         }
@@ -177,7 +177,7 @@ class AmountTable {
     }
 
     /**
-     * Add a row that to toggle colapsing
+     * Add a row that to toggle collapsing
      * @param {d3.selection} tbody the body to add the row to
      */
     addCollapseRow(tbody) {
@@ -235,7 +235,7 @@ class AmountTable {
                         htmlHelperSpan.innerHTML= html(entry);
                         values.push(htmlHelperSpan.textContent);
                     } else {
-                        throw new Error("Neither text nor html given for colunm"+ JSON.stringify(colSpec));
+                        throw new Error("Neither text nor html given for column"+ JSON.stringify(colSpec));
                     }
                 }
             }

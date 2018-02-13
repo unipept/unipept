@@ -19,6 +19,9 @@ let ecNames = new Map();
  *
  * - fetch information about missing numbers in hierarchy
  * - Create a treeview
+ *
+ * The names associated with EC numbers are stored statically to prevent
+ * useless queries
  */
 export default class ECNumbers {
     /**
@@ -79,14 +82,15 @@ export default class ECNumbers {
      * Gets the value of the EC number
      *
      * @param  {string} ecNum The code of the EC number (like "2.3.-.-")
-     * @return {number}       The name of the EC number
+     * @return {number}       The value of the EC number
      */
     getValueOf(ecNum) {
         return this.ec.get(ecNum).value || 0;
     }
 
     /**
-     * Gets the value of the EC number as fraction
+     * Gets the value of the EC number as fraction of the number of
+     * the number of annotated peptides
      *
      * @param  {string} ecNum The code of the EC number (like "2.3.-.-")
      * @return {string}       The name of the EC number
@@ -254,5 +258,4 @@ export default class ECNumbers {
         let res = await postJSON("/info/ecnumbers", JSON.stringify({ecnumbers: todo}));
         ECNumbers[addNames](res);
     }
-
 }
