@@ -161,16 +161,22 @@ function initSequenceShow(data) {
      * @return {string}    HTML for the tooltip
      */
     function tooltipEC(ecNumber, ecResultSet = null) {
-        const fmt= x=>`<span style="display:inline-block;min-width:5em;">${x}</span>`;
-        let result = `EC ${fmt(ecNumber)}: <strong>${ECNumbers.nameOf(ecNumber)}</strong>`;
+        const fmt= x=>`<div class="tooltip-ec-ancestor"><span class="tooltip-ec-term small">EC ${x}</span><span class="tooltip-ec-name">${ECNumbers.nameOf(x)}</span></div>`;
+
+        let result = `
+            <h4 class="tooltip-fa-title">
+                <span class="tooltip-fa-title-name">${ECNumbers.nameOf(ecNumber)}</span>
+                <span class="tooltip-ec-term small"> EC ${ecNumber}</span>
+            </h4>`;
+
         if (ECNumbers.ancestorsOf(ecNumber).length > 0) {
-            result += `<br>${ECNumbers.ancestorsOf(ecNumber).map(c => `EC ${fmt(c)}: ${ECNumbers.nameOf(c)}`).join("<br>")}`;
+            result += `${ECNumbers.ancestorsOf(ecNumber).map(c => fmt(c)).join("\n")}`;
         }
 
         if (ecResultSet != null) {
             let count = ecResultSet.getValueOf(ecNumber);
-            result += `<br><em>Specificly assigned to ${count} (${numberToPercent(ecResultSet.getFractionOf(ecNumber), 1)})
-                        annotated ${count === 1 ? "match" : "matches"}</em>`;
+            result += `<div class="tooltip-fa-text">Specificly assigned to ${numberToPercent(ecResultSet.getFractionOf(ecNumber), 1)} (${count}) of
+            annotated matches</div>`;
         }
         return result;
     }
@@ -188,20 +194,20 @@ function initSequenceShow(data) {
             getTooltip: d => {
                 let fullcode = (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
                 let tip = tooltipEC(fullcode);
-                tip += `<br><em>
-                        Assigned to ${d.data.count} (${numberToPercent(d.data.count/ecResultSet.getTotalSetSize(), 1)})
-                        annotated ${d.data.count === 1 ? "match" : "matches"},<br>`;
+                tip += `<div class="tooltip-fa-text">
+                        Assigned to ${numberToPercent(d.data.count/ecResultSet.getTotalSetSize(), 1)} (${d.data.count})
+                        annotated matches,<br>`;
                 if (d.data.count == d.data.self_count) {
                     tip += "all specific.";
                 } else {
                     if (d.data.self_count == 0) {
                         tip += "no specific annotations";
                     } else {
-                        tip += `specificly assigned to ${d.data.self_count} (${numberToPercent(d.data.self_count/ecResultSet.getTotalSetSize(), 1)})
-                                annotated ${d.data.self_count === 1 ? "match" : "matches"}`;
+                        tip += `specificly assigned to ${numberToPercent(d.data.self_count/ecResultSet.getTotalSetSize(), 1)} (${d.data.self_count})
+                                annotated matches`;
                     }
                 }
-                tip += "</em>";
+                tip += "</div>";
                 return tip;
             },
         });
@@ -261,13 +267,17 @@ function initSequenceShow(data) {
      * @return {string}    HTML for the tooltip
      */
     function tooltipGO(goTerm, goResultSet = null) {
-        let result = `${goTerm}: <strong>${GOTerms.nameOf(goTerm)}</strong><br>
-                      ${stringTitleize(GOTerms.namespaceOf(goTerm))}`;
+        let result = `
+            <h4 class="tooltip-fa-title">
+                <span class="tooltip-fa-title-name">${GOTerms.nameOf(goTerm)}</span>
+                <span class="tooltip-go-title-term small"> ${goTerm}</span>
+            </h4>
+            <span class="tooltip-go-domain">${stringTitleize(GOTerms.namespaceOf(goTerm))}</span>`;
 
         if (goResultSet != null) {
             let count = goResultSet.getValueOf(goTerm);
-            result += `<br><em>Specificly assigned to ${count} (${numberToPercent(goResultSet.getFractionOf(goTerm), 1)})
-                        annotated ${count == 1 ? "match" : "matches"}</em>`;
+            result += `<div class="tooltip-fa-text">Specificly assigned to ${numberToPercent(goResultSet.getFractionOf(goTerm), 1)} (${count}) of
+            annotated matches</div>`;
         }
         return result;
     }
