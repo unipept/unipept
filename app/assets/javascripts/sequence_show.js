@@ -326,7 +326,7 @@ function initSequenceShow(data) {
                     shade: d=>100*d.value/numAnnotatedPeptides,
                 },
                 { // Go term
-                    html: d => `<a href="https://amigo.geneontology.org/amigo/term/${d.code}" target="_blank">${d.code}</a>`,
+                    html: d => `<a href="https://www.ebi.ac.uk/QuickGO/term/${d.code}" target="_blank">${d.code}</a>`,
                     text: d => d.code,
                     style: {"width": "7em"},
                 },
