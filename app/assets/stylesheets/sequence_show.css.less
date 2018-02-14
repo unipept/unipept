@@ -156,7 +156,6 @@ h4.tooltip-fa-title {
 }
 
 span.tooltip-go-domain, span.tooltip-go-title-term, span.tooltip-ec-term {
-    font-size: small;
     color: @black-secondary;
     white-space: nowrap;
 }
@@ -166,8 +165,9 @@ span.tooltip-go-domain, span.tooltip-go-title-term, span.tooltip-ec-term {
 
 .tooltip-ec-ancestor{
     color: @black-secondary;
-    font-size: small;
-    margin-top: 3px;
+    margin-top: 0.3em;
+    line-height: initial;
+    display: table-row;
   
     .tooltip-ec-term{
         display: table-cell;
@@ -177,7 +177,6 @@ span.tooltip-go-domain, span.tooltip-go-title-term, span.tooltip-ec-term {
     
     .tooltip-ec-name{
         display: table-cell;
-        line-height: initial;
     }
 }
 

@@ -161,7 +161,7 @@ function initSequenceShow(data) {
      * @return {string}    HTML for the tooltip
      */
     function tooltipEC(ecNumber, ecResultSet = null) {
-        const fmt= x=>`<div class="tooltip-ec-ancestor"><span class="tooltip-ec-term small">EC ${x}</span><span class="tooltip-ec-name">${ECNumbers.nameOf(x)}</span></div>`;
+        const fmt= x=>`<div class="tooltip-ec-ancestor"><span class="tooltip-ec-term">EC ${x}</span><span class="tooltip-ec-name">${ECNumbers.nameOf(x)}</span></div>`;
 
         let result = `
             <h4 class="tooltip-fa-title">
