@@ -341,7 +341,7 @@ function initSequenceShow(data) {
 
     function setUpQuickGo(goResultset, variant, variantName, target) {
         const top5 = goResultset.sortedTerms(variant).slice(0, 5).map(x => x.code);
-        const quickGoChartURL = `https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/${top5.join(",")}/chart`;
+        const quickGoChartURL = GOTerms.quickGOChartURL(top5);
         let top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${numberToPercent(goResultset.getFractionOf(x))})`);
         const top5sentence = top5WithNames.slice(0, -1).join(", ")
                              + (top5.length > 1 ? " and ": "")

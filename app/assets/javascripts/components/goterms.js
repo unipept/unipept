@@ -136,6 +136,14 @@ export default class GOTerms {
     }
 
     /**
+     * @param {[string]} terms the terms to show in the chart
+     * @return {string} The QuickGo chart URL of the given GO terms
+     */
+    static quickGOChartURL(terms) {
+        return `https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/${terms.join(",")}/chart`;
+    }
+
+    /**
      * Get a list of the 3 root namespaces of the Gene Ontology
      */
     static get NAMESPACES() {
