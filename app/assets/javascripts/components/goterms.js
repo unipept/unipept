@@ -84,10 +84,10 @@ export default class GOTerms {
 
 
     /**
-     * Gets the name of associated with an EC number
+     * Gets the name of associated with an GO Term
      *
-     * @param  {string} goTerm The code of the EC number (like "2.3.-.-")
-     * @return {string}       The name of the EC number
+     * @param  {string} goTerm The code of the GO Term (like "GO:0006423")
+     * @return {string}       The name of the GO Term
      */
     static nameOf(goTerm) {
         if (goData.has(goTerm)) {
@@ -99,8 +99,8 @@ export default class GOTerms {
     /**
      * Give the namespace of a GO term
      *
-     * @param  {string} goTerm The code of the EC number
-     * @return {[string]}  Ancestors of the EC number (from specific to generic)
+     * @param  {string} goTerm The code of the GO Term
+     * @return {[string]}  Ancestors of the GO Term (from specific to generic)
      */
     static namespaceOf(goTerm) {
         if (goData.has(goTerm)) {
@@ -112,7 +112,7 @@ export default class GOTerms {
 
     /**
      * Add GO terms to the global map
-     * @param {[FACounts]} newTerms list of new EC numbers
+     * @param {[FACounts]} newTerms list of new GO Terms
      */
     static [addData](newTerms) {
         newTerms.forEach(go => {
@@ -123,9 +123,9 @@ export default class GOTerms {
     }
 
     /**
-     * Create a map with all EC numbers given and their ancestors even if they
-     * are not given
-     * @param {[string]} codes array of EC codes that should be in the cache
+     * Fetch the names and data of the GO terms that are not yet in the static map of
+     * names
+     * @param {[string]} codes array of GO terms that should be in the cache
      */
     static async [addMissingNames](codes) {
         let todo = codes.filter(c => !goData.has(c));

@@ -235,11 +235,11 @@ export default class ECNumbers {
 
     /**
      * Add EC data to the static internal map
-     * @param {[FACounts]} newEC list of new ec
+     * @param {[FACounts]} newECs list of new ec
      * @access private
      */
-    static [addNames](newEC) {
-        newEC.forEach(ec => {
+    static [addNames](newECs) {
+        newECs.forEach(ec => {
             if (!ecNames.has(ec.code)) {
                 ecNames.set(ec.code, ec.name);
             }
@@ -247,7 +247,7 @@ export default class ECNumbers {
     }
 
     /**
-     * Fetch the names of the EC numbers that are not yet in the static map of
+     * Fetch the names and data of the EC numbers that are not yet in the static map of
      * names
      * @param {[string]} codes array of EC numbers that should be in the cache
      * @access private
