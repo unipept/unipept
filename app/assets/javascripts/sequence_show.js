@@ -362,6 +362,10 @@ function initSequenceShow(data) {
             });
     }
 
+    /**
+     * Enable show and hide of tooltips,
+     * The values are set in `setUpGO` and `setUpEC`
+     */
     function initFAToolips() {
         /* eslint brace-style: "off" */
         const tooltipShowCSS = {"display": "block", "visibility": "visible"};
