@@ -243,8 +243,8 @@ function initSequenceShow(data) {
                 },
                 { // EC-number
                     html: d => {
-                        let spans = d.code.split(".").map(e => `<span style="width:1.5em;display:inline-block;text-align: center">${e}</span>`).join(".");
-                        return `<a href="https://enzyme.expasy.org/EC/${d.code}" target="_blank">${spans}</a>`;
+                        let spans = d.code.split(".").map(e => `<span>${e}</span>`).join(".");
+                        return `<a href="https://enzyme.expasy.org/EC/${d.code}" class="ec-number-formatted" target="_blank">${spans}</a>`;
                     },
                     text: d => d.code,
                     style: {"width": "8em"},
