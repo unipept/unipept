@@ -25,6 +25,7 @@ UnipeptWeb::Application.routes.draw do
   scope :private_api, as: 'private_api' do
     match "goterms", via: [:get, :post], :to => "private_api#goterms"
     match "ecnumbers",     via: [:get, :post], :to => "private_api#ecnumbers"
+    match "taxa",     via: [:get, :post], :to => "private_api#taxa"
   end
 
   # search
@@ -34,7 +35,6 @@ UnipeptWeb::Application.routes.draw do
     match "/",        via: [:get, :post], :to => "mpa#analyze"
     match "pept2lca", via: [:get, :post], :to => "mpa#pept2lca"
     match "pept2fa", via: [:get, :post], :to => "mpa#pept2fa"
-    match "taxa",     via: [:get, :post], :to => "mpa#taxa"
   end
 
   get '/sequences/:id/:equate_il', :to => 'sequences#show', :as => 'sequence_show'
