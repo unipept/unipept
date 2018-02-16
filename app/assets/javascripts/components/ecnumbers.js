@@ -12,7 +12,7 @@ const addMissing = Symbol("[addMissing]");
 const addNames = Symbol("[addNames]");
 const addMissingNames = Symbol("[addMissingNames]");
 const artificial = Symbol("artificial");
-let ecNames = new Map();
+let ecNames = new Map([["-.-.-.-", "Enzyme Commission Numbers"]]);
 
 /**
  * Class to contain the results of a fetch of EC numbers.
@@ -209,9 +209,6 @@ export default class ECNumbers {
     static nameOf(ecNum) {
         if (ecNames.has(ecNum)) {
             return ecNames.get(ecNum);
-        }
-        if (ecNum == "-.-.-.-") {
-            return "Enzyme Commission Numbers";
         }
         return "Unknown";
     }
