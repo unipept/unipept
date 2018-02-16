@@ -227,14 +227,13 @@ function initSequenceShow(data) {
      * @param {ECNumbers} ecResultSet  A `ECNumbers` summary
      */
     function setUpEcTable(ecResultSet) {
-        const sortedNumbers = ecResultSet.asArray().sort((a, b) => (b.value - a.value));
         const target = d3.select("#ec-table");
         target.html("");
         new AmountTable({
             title: "EC numbers - " + data.peptide,
             el: target,
             header: ["Count", "EC-Number", "Name"],
-            data: sortedNumbers,
+            data: ecResultSet.sortedTerms(),
             limit: 5,
             contents: [
                 { // Count
@@ -287,16 +286,14 @@ function initSequenceShow(data) {
 
         $("#go-pannel").empty();
         const goPannel = d3.select("#go-pannel");
-        const variants = ["biological process", "cellular component", "molecular function"];
-        for (let variant of variants) {
+        for (let variant of GOTerms.NAMESPACES) {
             const variantName = stringTitleize(variant);
             goPannel.append("h3").text(variantName);
 
             if (variant in data) {
-                const sortedNumbers = Array.from(data[variant]).sort((a, b) => (b.value - a.value));
                 let article = goPannel.append("div").attr("class", "row");
-                setUpGoTable(sortedNumbers, numAnnotatedPeptides, variantName, article, goResultset);
-                setUpQuickGo(sortedNumbers, variantName, article);
+                setUpGoTable(goResultset, variant, article);
+                setUpQuickGo(goResultset, variant, variantName, article);
             } else {
                 goPannel.append("span").text("No GO term annotations in this namespace.");
             }
@@ -311,13 +308,15 @@ function initSequenceShow(data) {
             });
     }
 
-    function setUpGoTable(sortedNumbers, numAnnotatedPeptides, variantName, target, goResultset) {
+    function setUpGoTable(goResultset, variant, target) {
+        const numAnnotatedPeptides = goResultset.getTotalSetSize();
+
         let tablepart = target.append("div").attr("class", "col-xs-8");
         new AmountTable({
-            title: `GO terms - ${variantName} - ${data.peptide}`,
+            title: `GO terms - ${variant} - ${data.peptide}`,
             el: tablepart,
             header: ["Count", "GO term", "Name"],
-            data: sortedNumbers,
+            data: goResultset.sortedTerms(variant),
             limit: 5,
             contents: [
                 { // Count
@@ -340,11 +339,13 @@ function initSequenceShow(data) {
         ).draw();
     }
 
-    function setUpQuickGo(sortedNumbers, variantName, target) {
-        const top5 = sortedNumbers.slice(0, 5).map(x => x.code);
+    function setUpQuickGo(goResultset, variant, variantName, target) {
+        const top5 = goResultset.sortedTerms(variant).slice(0, 5).map(x => x.code);
         const quickGoChartURL = `https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/${top5.join(",")}/chart`;
-        let top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${x})`);
-        const top5sentence = top5WithNames.slice(0, -1).join(", ") + " and " + top5WithNames[top5WithNames.length-1];
+        let top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${numberToPercent(goResultset.getFractionOf(x))})`);
+        const top5sentence = top5WithNames.slice(0, -1).join(", ")
+                             + (top5.length > 1 ? " and ": "")
+                             + top5WithNames[top5WithNames.length-1];
         target
             .append("div").attr("class", "col-xs-4")
             .append("img")
@@ -353,7 +354,7 @@ function initSequenceShow(data) {
             .attr("title", `QuickGO chart of ${top5sentence}`)
             .on("click", ()=>{
                 showInfoModal("QuickGo "+variantName, `
-                    This chart shows the realationship between the 5 most occuring GO terms: ${top5sentence}<br/>
+                    This chart shows the realationship between the ${top5.length} most occuring GO terms: ${top5sentence}.<br/>
                     <a href="${quickGoChartURL}" target="_blank" title="Click to enlarge in new tab"><img style="max-width:100%" src="${quickGoChartURL}" alt="QuickGO chart of ${top5sentence}"/></a>
                     <br>
                     Provided by <a href="https://www.ebi.ac.uk/QuickGO/annotations?goId=${top5.join(",")}" target="_blank">QuickGo</a>.`,

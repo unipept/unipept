@@ -12,6 +12,8 @@ const addData = Symbol("[addData]");
 const addMissingNames = Symbol("[addMissingNames]");
 let goData = new Map();
 
+const NAMESPACES = ["biological process", "cellular component", "molecular function"];
+
 /**
  * Class that helps organizing GO terms
  */
@@ -26,10 +28,35 @@ export default class GOTerms {
         Object.values(data).forEach(v=>v.forEach(goTerm => this.go.set(goTerm.code, goTerm)));
         GOTerms[addData](Array.from(this.go.values()));
 
+        // Sort values to store and have every namespace
+        this.data = {};
+        for (let namespace of NAMESPACES) {
+            if (namespace in data) {
+                this.data[namespace] = Array.from(data[namespace]).sort((a, b) => (b.value - a.value));
+            } else {
+                this.data[namespace] = [];
+            }
+        }
         // Fetch names in the background, not needed yet
         setTimeout(()=>{
             GOTerms[addMissingNames](Array.from(this.go.keys()));
         }, 0);
+    }
+
+    /**
+     * @return {int} number of annotated peptides
+     */
+    getTotalSetSize() {
+        return this.numTotalSet;
+    }
+
+    /**
+     * s
+     * @param {string} namespace
+     * @return {[FAInfo]} t
+     */
+    sortedTerms(namespace) {
+        return this.data[namespace];
     }
 
     /**
@@ -106,5 +133,12 @@ export default class GOTerms {
             let res = await postJSON("/info/goterms", JSON.stringify({goterms: todo}));
             GOTerms[addData](res);
         }
+    }
+
+    /**
+     * Get a list of the 3 root namespaces of the Gene Ontology
+     */
+    static get NAMESPACES() {
+        return NAMESPACES;
     }
 }
