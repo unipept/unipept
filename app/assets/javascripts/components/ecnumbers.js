@@ -30,6 +30,7 @@ export default class ECNumbers {
      */
     constructor({numAnnotatedPeptides = null, data}) {
         this.numTotalSet = numAnnotatedPeptides;
+        this.data = Array.from(data).sort((a, b) => (b.value - a.value));
         this.ec = new this[addMissing](data);
         ECNumbers[addNames](data);
 
@@ -41,10 +42,11 @@ export default class ECNumbers {
 
     /**
      * Returns the originality supplied set of EC numbers
+     * sorted by value
      * @return {[FACounts]} EC number values
      */
-    asArray() {
-        return Array.from(this.ec.values()).filter(x => !(x[artificial] || false));
+    sortedTerms() {
+        return this.data;
     }
 
     /**
