@@ -3,7 +3,7 @@ import {toCSVString, downloadData} from "../utils.js";
 
 /**
  * @typedef {Object} AmountTableSettings
- * @property {string}   el        A CSS selector of the target container
+ * @property {d3.selection[]}  el        The target container
  * @property {string}   title     A string naming the table (used for export name)
  * @property {string[]} header    An array of column names
  * @property {Any[]}    data      array of data to display (values are shown in order)
@@ -82,7 +82,7 @@ class AmountTable {
     draw() {
         const [thead, tbody] = this.buildTable();
         this.buildHeader(thead);
-        if (this.data.length != 0) {
+        if (this.data.length !== 0) {
             this.buildRow(tbody);
         } else {
             // fallback in case there is no data
@@ -95,13 +95,13 @@ class AmountTable {
 
     /**
      * Create a table in the target element (without creating it first)
-     * @return {d3.selection}  Table head and table body
+     * @return {d3.selection[]}  Table head and table body
      */
     buildTable() {
         if (this.table === null) {
             this.table = this.el.append("table").attr("class", "table table-condensed table-amounttable");
         }
-        this.table.html(); // empty the tables HTML
+        this.table.html(""); // empty the tables HTML
         const thead = this.table.append("thead");
         const tbody = this.table.append("tbody");
         return [thead, tbody];
@@ -124,7 +124,7 @@ class AmountTable {
             .append("button")
             .classed("btn btn-default btn-xs btn-animate amounttable-download", true)
             .html("<span class=\"glyphicon glyphicon-download down\"></span> Save CSV")
-            .on("click", ()=>this.downloadCSV());
+            .on("click", () => this.downloadCSV());
     }
 
     /**
@@ -139,12 +139,12 @@ class AmountTable {
 
         let row = rows.enter().append("tr");
         for (const colSpec of this.contents) {
-            let {html=null, text=null, style=null, shade=false} = colSpec;
+            const {html=null, text=null, style=null, shade=false} = colSpec;
             const cell = row.append("td");
 
             if (shade !== false) {
                 cell.style("background-image", d => {
-                    let prec = shade(d);
+                    const prec = shade(d);
                     return `linear-gradient(to right, transparent ${prec}%, white ${prec}%)`;
                 });
                 cell.classed("shaded-cell", true);
@@ -178,8 +178,8 @@ class AmountTable {
      */
     addCollapseRow(tbody) {
         if (this.limit >= this.data.length) return; // No collapse row if all rows shown
-        let collapseRow = tbody.append("tr").attr("class", "collapse-row");
-        let collapseCell = collapseRow.append("td")
+        const collapseRow = tbody.append("tr").attr("class", "collapse-row");
+        const collapseCell = collapseRow.append("td")
             .attr("colspan", this.header.length)
             .attr("tabindex", "0")
             .attr("aria-expanded", !this.collapsed)
@@ -219,11 +219,11 @@ class AmountTable {
      */
     toCSV() {
         let result = [this.header];
-        let htmlHelperSpan= document.createElement("span");
+        const htmlHelperSpan= document.createElement("span");
         for (const entry of this.data) {
             let values = [];
             for (const colSpec of this.contents) {
-                let {html=null, text=null} = colSpec;
+                const {html=null, text=null} = colSpec;
                 if (text !== null) {
                     values.push(text(entry));
                 } else {
@@ -237,7 +237,7 @@ class AmountTable {
             }
             result.push(values);
         }
-        let csv = toCSVString(result);
+        const csv = toCSVString(result); // todo: put in next line
         return csv;
     }
 
