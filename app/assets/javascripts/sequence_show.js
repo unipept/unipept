@@ -22,6 +22,8 @@ import "unipept-visualizations/src/treeview/treeview.js";
  */
 function initSequenceShow(data) {
     const $tooltip = $("#tooltip");
+    const pannelWidth = 916;
+    const pannelHeight = 600;
     // set up the fancy tree
     initLineageTree(data.tree);
 
@@ -119,8 +121,8 @@ function initSequenceShow(data) {
 
         function resizeFullScreen() {
             setTimeout(function () {
-                let width = 916,
-                    height = 600;
+                let width = pannelWidth,
+                    height = pannelHeight;
                 if (window.fullScreenApi.isFullScreen()) {
                     width = $(window).width();
                     height = $(window).height();
@@ -189,8 +191,8 @@ function initSequenceShow(data) {
      */
     function setUpECTree(ecResultSet) {
         let tree = ecResultSet.createTree("#ec-treeview", {
-            width: 916,
-            height: 600,
+            width: pannelWidth,
+            height: pannelHeight,
             getTooltip: d => {
                 let fullcode = (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
                 let tip = tooltipEC(fullcode);
@@ -352,7 +354,7 @@ function initSequenceShow(data) {
             .attr("src", quickGoChartURL)
             .attr("class", "quickGoThumb")
             .attr("title", `QuickGO chart of ${top5sentence}`)
-            .on("click", ()=>{
+            .on("click", () => {
                 showInfoModal("QuickGo "+variantName, `
                     This chart shows the realationship between the ${top5.length} most occuring GO terms: ${top5sentence}.<br/>
                     <a href="${quickGoChartURL}" target="_blank" title="Click to enlarge in new tab"><img style="max-width:100%" src="${quickGoChartURL}" alt="QuickGO chart of ${top5sentence}"/></a>
@@ -387,8 +389,8 @@ function initSequenceShow(data) {
                 bottom: 5,
                 left: 60,
             },
-            width = 916 - margin.right - margin.left,
-            height = 600 - margin.top - margin.bottom;
+            width = pannelWidth - margin.right - margin.left,
+            height = pannelHeight - margin.top - margin.bottom;
 
         let zoomEnd = 0,
             i = 0,

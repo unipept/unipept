@@ -66,18 +66,14 @@ class AmountTable {
 
     /**
      * Create a tooltip element of class "tip" do display tooltips
+     * @todo Make general code for creation of tooltips
      */
     createTooltip() {
         this.tooltip = d3.select("body")
             .append("div")
             .attr("class", "tip")
-            .style("position", "absolute")
-            .style("z-index", "10")
             .style("visibility", "hidden")
-            .style("background-color", "white")
-            .style("padding", "2px")
-            .style("border", "1px solid #dddddd")
-            .style("border-radius", "3px;");
+            .style("display", "none");
     }
 
     /**
