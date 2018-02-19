@@ -248,7 +248,7 @@ export default class ECNumbers {
      */
     static addNames(newECs) {
         newECs.forEach(ec => {
-            if (!this.ecNames.has(ec.code) && "name" in ec) {
+            if (!this.ecNames.has(ec.code) && ec.name) {
                 this.ecNames.set(ec.code, ec.name);
             }
         });
