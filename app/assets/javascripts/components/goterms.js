@@ -7,11 +7,6 @@ import {postJSON} from "../utils.js";
  * @property {string} code  The code of the GO/EC number
  */
 
-// const for private methods
-const addData = Symbol("[addData]");
-const addMissingNames = Symbol("[addMissingNames]");
-let goData = new Map();
-
 const NAMESPACES = ["biological process", "cellular component", "molecular function"];
 
 /**
@@ -26,7 +21,7 @@ export default class GOTerms {
         this.numTotalSet = numAnnotatedPeptides;
         this.go = new Map();
         Object.values(data).forEach(v=>v.forEach(goTerm => this.go.set(goTerm.code, goTerm)));
-        GOTerms[addData](Array.from(this.go.values()));
+        GOTerms.addData(Array.from(this.go.values()));
 
         // Sort values to store and have every namespace
         this.data = {};
@@ -38,10 +33,12 @@ export default class GOTerms {
             }
         }
         // Fetch names in the background, not needed yet
-        setTimeout(()=>{
-            GOTerms[addMissingNames](Array.from(this.go.keys()));
+        setTimeout(() =>  {
+            GOTerms.addMissingNames(Array.from(this.go.keys()));
         }, 0);
     }
+
+    static goData = new Map();
 
     /**
      * @return {int} number of annotated peptides
@@ -51,9 +48,9 @@ export default class GOTerms {
     }
 
     /**
-     * s
-     * @param {string} namespace
-     * @return {[FAInfo]} t
+     * Returns the originally supplied set of GO Terms
+     * sorted by value
+     * @return {[FACounts]} Sorted GO Terms 
      */
     sortedTerms(namespace) {
         return this.data[namespace];
@@ -90,8 +87,8 @@ export default class GOTerms {
      * @return {string}       The name of the GO Term
      */
     static nameOf(goTerm) {
-        if (goData.has(goTerm)) {
-            return goData.get(goTerm).name;
+        if (this.goData.has(goTerm)) {
+            return this.goData.get(goTerm).name;
         }
         return "Unknown";
     }
@@ -103,8 +100,8 @@ export default class GOTerms {
      * @return {[string]}  Ancestors of the GO Term (from specific to generic)
      */
     static namespaceOf(goTerm) {
-        if (goData.has(goTerm)) {
-            return goData.get(goTerm).namespace;
+        if (this.goData.has(goTerm)) {
+            return this.goData.get(goTerm).namespace;
         }
         return "Unknown";
     }
@@ -114,10 +111,10 @@ export default class GOTerms {
      * Add GO terms to the global map
      * @param {[FACounts]} newTerms list of new GO Terms
      */
-    static [addData](newTerms) {
+    static addData(newTerms) {
         newTerms.forEach(go => {
-            if (!goData.has(go.code)) {
-                goData.set(go.code, go);
+            if (!this.goData.has(go.code) && "namespace" in go && "name" in go) {
+                this.goData.set(go.code, go);
             }
         });
     }
@@ -127,8 +124,8 @@ export default class GOTerms {
      * names
      * @param {[string]} codes array of GO terms that should be in the cache
      */
-    static async [addMissingNames](codes) {
-        let todo = codes.filter(c => !goData.has(c));
+    static async addMissingNames(codes) {
+        let todo = codes.filter(c => !this.goData.has(c));
         if (todo.length > 0) {
             let res = await postJSON("/info/goterms", JSON.stringify({goterms: todo}));
             GOTerms[addData](res);
