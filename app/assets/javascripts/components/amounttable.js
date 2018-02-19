@@ -112,14 +112,14 @@ class AmountTable {
      * @param {d3.selection} thead  table header
      */
     buildHeader(thead) {
-        let headerCells = thead.append("tr")
+        const headerCells = thead.append("tr")
             .selectAll("th")
             .data(this.header)
             .enter()
             .append("th")
             .attr("scope", "col")
             .text(d => d);
-        let lastCell = d3.select(headerCells[0][headerCells.size()-1]);
+        const lastCell = d3.select(headerCells[0][headerCells.size()-1]);
         lastCell
             .append("button")
             .classed("btn btn-default btn-xs btn-animate amounttable-download", true)
@@ -132,12 +132,12 @@ class AmountTable {
      * @param {d3.selection} tbody table body
      */
     buildRow(tbody) {
-        let rows = tbody.selectAll("tr")
+        const rows = tbody.selectAll("tr")
             .data(this.collapsed ? this.data.slice(0, this.limit): this.data);
 
         rows.exit().remove(); // remove rows that are no longer needed
 
-        let row = rows.enter().append("tr");
+        const row = rows.enter().append("tr");
         for (const colSpec of this.contents) {
             const {html=null, text=null, style=null, shade=false} = colSpec;
             const cell = row.append("td");
@@ -218,10 +218,10 @@ class AmountTable {
      * @return {string} the CSV version of the table
      */
     toCSV() {
-        let result = [this.header];
+        const result = [this.header];
         const htmlHelperSpan= document.createElement("span");
         for (const entry of this.data) {
-            let values = [];
+            const values = [];
             for (const colSpec of this.contents) {
                 const {html=null, text=null} = colSpec;
                 if (text !== null) {

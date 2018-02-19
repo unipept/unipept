@@ -60,7 +60,7 @@ export default class ECNumbers {
      * @access private
      */
     addMissing(newEC, map = null) {
-        let result = (map === null ? new Map(newEC.map(x=>[x.code, x])) : map);
+        const result = (map === null ? new Map(newEC.map(x=>[x.code, x])) : map);
 
         for (const curEc of newEC) {
             const parts = curEc.code.split(".");
@@ -71,7 +71,7 @@ export default class ECNumbers {
                 parts[i] = "-";
                 const newKey = parts.join(".");
                 if (!result.has(newKey)) {
-                    let parentEC = {code: newKey, name: null, value: 0};
+                    const parentEC = {code: newKey, name: null, value: 0};
                     parentEC[artificial] = true;
                     result.set(newKey, parentEC);
                 } else {
@@ -138,9 +138,9 @@ export default class ECNumbers {
             return values.join(".");
         };
 
-        let map = Object.create(null);
+        const map = Object.create(null);
 
-        let rootData = {id: 0,
+        const rootData = {id: 0,
             name: "-",
             fullname: "Enzyme Commission numbers",
             children: [],
@@ -153,11 +153,11 @@ export default class ECNumbers {
         const sortedEC = Array.from(this.ec.values()).sort((a, b) => (a.code+".-").split(".").indexOf("-") - (b.code+".-").split(".").indexOf("-"));
 
         for (const data of sortedEC) {
-            let {code, value: count, name} = data;
+            const {code, value: count, name} = data;
             const tmpPath = code.split(".").filter(x => x!=="-");
             const shortCode = tmpPath.join("."); // "-" at end are now removed
 
-            let path = new Array(tmpPath.length);
+            const path = new Array(tmpPath.length);
             // "3.1.15.24" => ["3.1.15", "3.1", "3", "-"]
             for (let i = tmpPath.length; i>0; i--) {
                 path[tmpPath.length-i] = tmpPath.slice(0, i-1).join(".");
@@ -165,7 +165,7 @@ export default class ECNumbers {
             path[tmpPath.length-1] = "-";
 
             // Create a node for the new EC-code and place it in the map
-            let toInsert = {
+            const toInsert = {
                 id: makeId(shortCode),
                 name: shortCode, fullname: name,
                 children: [],
@@ -184,24 +184,24 @@ export default class ECNumbers {
         // Order the nodes by their id (order by EC number)
         Object.values(map).forEach(obj => obj.children.sort((a, b) => a.id.localeCompare(b.id)));
 
-        let tree= $(target).empty().treeview(rootData, treeViewOptions);
+        const tree= $(target).empty().treeview(rootData, treeViewOptions);
 
         // expand certain nodes
         // iteratively open the leaf with the largest count
         if(autoExpand){
-        let root = tree.getRoot();
-        let allowedCount = root.data.count*2;
-        let pq = new PriorityQueue((a, b) => b.data.count - a.data.count);
-        root.children.forEach(c => pq.add(c));
-        while (allowedCount > 0) {
-            let toExpand = pq.remove();
-            allowedCount -= toExpand.data.count;
-            toExpand.expand(1);
-            (toExpand.children || []).forEach(c => pq.add(c));
-        }
-        tree.update(root);
+            const root = tree.getRoot();
+            let allowedCount = root.data.count*2;
+            const pq = new PriorityQueue((a, b) => b.data.count - a.data.count);
+            root.children.forEach(c => pq.add(c));
+            while (allowedCount > 0) {
+                const toExpand = pq.remove();
+                allowedCount -= toExpand.data.count;
+                toExpand.expand(1);
+                (toExpand.children || []).forEach(c => pq.add(c));
+            }
+            tree.update(root);
 
-        // HACK: place the tree more to the left so everything is visible (after one second because there is a 750 ms delay)
+            // HACK: place the tree more to the left so everything is visible (after one second because there is a 750 ms delay)
             setTimeout(() => d3.select(target+">svg>g>g").attr("transform", `translate(85,${(treeViewOptions.height || 600) / 2})`), 1000);
         }
         return tree;
@@ -230,8 +230,8 @@ export default class ECNumbers {
      * @return {[string]}  Ancestors of the EC number (from specific to generic)
      */
     static ancestorsOf(ecNum) {
-        let result = [];
-        let parts = ecNum.split(".");
+        const result = [];
+        const parts = ecNum.split(".");
         const numSpecific = parts.includes("-") ? parts.indexOf("-") : parts.length;
 
         for (let i = numSpecific-1; i>=1; i--) {
@@ -261,8 +261,8 @@ export default class ECNumbers {
      * @access private
      */
     static async addMissingNames(codes) {
-        let todo = codes.filter(c => !this.ecNames.has(c));
-        let res = await postJSON("/info/ecnumbers", JSON.stringify({ecnumbers: todo}));
+        const todo = codes.filter(c => !this.ecNames.has(c));
+        const res = await postJSON("/info/ecnumbers", JSON.stringify({ecnumbers: todo}));
         ECNumbers.addNames(res);
     }
 }
