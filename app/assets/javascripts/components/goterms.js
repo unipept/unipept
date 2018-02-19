@@ -13,6 +13,13 @@ const NAMESPACES = ["biological process", "cellular component", "molecular funct
  * Class that helps organizing GO terms
  */
 export default class GOTerms {
+
+    /**
+     * Static cache of GO term information
+     * @access private
+     */
+    static goData = new Map();
+
     /**
      * Creates a new GOTerms
      * @param  {[FACounts]} go list of GO terms with their counts
@@ -37,8 +44,6 @@ export default class GOTerms {
             GOTerms.addMissingNames(Array.from(this.go.keys()));
         }, 0);
     }
-
-    static goData = new Map();
 
     /**
      * @return {int} number of annotated peptides
@@ -125,9 +130,9 @@ export default class GOTerms {
      * @param {[string]} codes array of GO terms that should be in the cache
      */
     static async addMissingNames(codes) {
-        let todo = codes.filter(c => !this.goData.has(c));
+        const todo = codes.filter(c => !this.goData.has(c));
         if (todo.length > 0) {
-            let res = await postJSON("/info/goterms", JSON.stringify({goterms: todo}));
+            const res = await postJSON("/info/goterms", JSON.stringify({goterms: todo}));
             GOTerms[addData](res);
         }
     }

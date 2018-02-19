@@ -139,14 +139,14 @@ function initSequenceShow(data) {
     }
 
     function setUpEC({numAnnotatedPeptides, data}) {
-        let ecResultset = new ECNumbers({numAnnotatedPeptides, data});
+        const ecResultset = new ECNumbers({numAnnotatedPeptides, data});
         if (numAnnotatedPeptides > 0) {
             setUpECTree(ecResultset);
             setUpEcTable(ecResultset);
 
             $(".ecNumberLink")
                 .mouseenter(function (e) {
-                    let ecNum = this.textContent;
+                    const ecNum = this.textContent;
                     $tooltip.html(tooltipEC(ecNum, ecResultset));
                     return false;
                 });
@@ -176,7 +176,7 @@ function initSequenceShow(data) {
         }
 
         if (ecResultSet != null) {
-            let count = ecResultSet.getValueOf(ecNumber);
+            const count = ecResultSet.getValueOf(ecNumber);
             result += `<div class="tooltip-fa-text">Specificly assigned to ${numberToPercent(ecResultSet.getFractionOf(ecNumber), 1)} (${count}) of
             annotated matches</div>`;
         }
@@ -190,11 +190,11 @@ function initSequenceShow(data) {
      * @return {TreeView} The created treeview
      */
     function setUpECTree(ecResultSet) {
-        let tree = ecResultSet.createTree("#ec-treeview", {
+        const tree = ecResultSet.createTree("#ec-treeview", {
             width: pannelWidth,
             height: pannelHeight,
             getTooltip: d => {
-                let fullcode = (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
+                const fullcode = (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
                 let tip = tooltipEC(fullcode);
                 tip += `<div class="tooltip-fa-text">
                         Assigned to ${numberToPercent(d.data.count/ecResultSet.getTotalSetSize(), 1)} (${d.data.count})
@@ -245,7 +245,7 @@ function initSequenceShow(data) {
                 },
                 { // EC-number
                     html: d => {
-                        let spans = d.code.split(".").map(e => `<span>${e}</span>`).join(".");
+                        const spans = d.code.split(".").map(e => `<span>${e}</span>`).join(".");
                         return `<a href="https://enzyme.expasy.org/EC/${d.code}" class="ec-number-formatted" target="_blank">${spans}</a>`;
                     },
                     text: d => d.code,
@@ -276,7 +276,7 @@ function initSequenceShow(data) {
             <span class="tooltip-go-domain">${stringTitleize(GOTerms.namespaceOf(goTerm))}</span>`;
 
         if (goResultSet != null) {
-            let count = goResultSet.getValueOf(goTerm);
+            const count = goResultSet.getValueOf(goTerm);
             result += `<div class="tooltip-fa-text">Specificly assigned to ${numberToPercent(goResultSet.getFractionOf(goTerm), 1)} (${count}) of
             annotated matches</div>`;
         }
@@ -284,7 +284,7 @@ function initSequenceShow(data) {
     }
 
     function setUpGO({numAnnotatedPeptides, data}) {
-        let goResultset = new GOTerms({numAnnotatedPeptides, data});
+        const goResultset = new GOTerms({numAnnotatedPeptides, data});
 
         $("#go-pannel").empty();
         const goPannel = d3.select("#go-pannel");
@@ -293,7 +293,7 @@ function initSequenceShow(data) {
             goPannel.append("h3").text(variantName);
 
             if (variant in data) {
-                let article = goPannel.append("div").attr("class", "row");
+                const article = goPannel.append("div").attr("class", "row");
                 setUpGoTable(goResultset, variant, article);
                 setUpQuickGo(goResultset, variant, variantName, article);
             } else {
@@ -304,7 +304,7 @@ function initSequenceShow(data) {
         // Add content to the tooltips of links
         $(".goTermLink")
             .mouseenter(function (e) {
-                let goTerm = this.textContent;
+                const goTerm = this.textContent;
                 $tooltip.html(tooltipGO(goTerm, goResultset));
                 return false;
             });
@@ -313,7 +313,7 @@ function initSequenceShow(data) {
     function setUpGoTable(goResultset, variant, target) {
         const numAnnotatedPeptides = goResultset.getTotalSetSize();
 
-        let tablepart = target.append("div").attr("class", "col-xs-8");
+        const tablepart = target.append("div").attr("class", "col-xs-8");
         new AmountTable({
             title: `GO terms - ${variant} - ${data.peptide}`,
             el: tablepart,
@@ -344,7 +344,7 @@ function initSequenceShow(data) {
     function setUpQuickGo(goResultset, variant, variantName, target) {
         const top5 = goResultset.sortedTerms(variant).slice(0, 5).map(x => x.code);
         const quickGoChartURL = GOTerms.quickGOChartURL(top5);
-        let top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${numberToPercent(goResultset.getFractionOf(x))})`);
+        const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${numberToPercent(goResultset.getFractionOf(x))})`);
         const top5sentence = top5WithNames.slice(0, -1).join(", ")
                              + (top5.length > 1 ? " and ": "")
                              + top5WithNames[top5WithNames.length-1];
