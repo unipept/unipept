@@ -8,11 +8,7 @@ import {postJSON} from "../utils.js";
  */
 
 // const for private methods
-const addMissing = Symbol("[addMissing]");
-const addNames = Symbol("[addNames]");
-const addMissingNames = Symbol("[addMissingNames]");
 const artificial = Symbol("artificial");
-let ecNames = new Map([["-.-.-.-", "Enzyme Commission Numbers"]]);
 
 /**
  * Class to contain the results of a fetch of EC numbers.
@@ -25,25 +21,31 @@ let ecNames = new Map([["-.-.-.-", "Enzyme Commission Numbers"]]);
  */
 export default class ECNumbers {
     /**
+     * Static cache of fetched EC names
+     * @access private
+     */
+    static ecNames = new Map([["-.-.-.-", "Enzyme Commission Numbers"]]);
+
+    /**
      * Creates a summary of given EC numbers and their counts
      * @param  {[FACounts]} ec list of EC numbers with their counts
      */
     constructor({numAnnotatedPeptides = null, data}) {
         this.numTotalSet = numAnnotatedPeptides;
         this.data = Array.from(data).sort((a, b) => (b.value - a.value));
-        this.ec = new this[addMissing](data);
-        ECNumbers[addNames](data);
+        this.ec = new this.addMissing(data);
+        ECNumbers.addNames(data);
 
         // Fetch names in the background, not needed yet
-        setTimeout(()=>{
-            ECNumbers[addMissingNames](Array.from(this.ec.keys()));
+        setTimeout(() => {
+            ECNumbers.addMissingNames(Array.from(this.ec.keys()));
         }, 0);
     }
 
     /**
-     * Returns the originality supplied set of EC numbers
+     * Returns the originally supplied set of EC numbers
      * sorted by value
-     * @return {[FACounts]} EC number values
+     * @return {[FACounts]} Sorted EC number
      */
     sortedTerms() {
         return this.data;
@@ -57,7 +59,7 @@ export default class ECNumbers {
      * @return {Map}
      * @access private
      */
-    [addMissing](newEC, map = null) {
+    addMissing(newEC, map = null) {
         let result = (map === null ? new Map(newEC.map(x=>[x.code, x])) : map);
 
         for (const curEc of newEC) {
@@ -116,12 +118,16 @@ export default class ECNumbers {
      * The numbers are first sorted form general to specific (number of - at the
      * end). Then the tree is built by adding the count to all ancestors.
      *
+     * The tree is automatically expanded unless `treeViewOptions` contains the 
+     * "levelsToExpand" option.
+     * 
      * @param {string} target the element to put the tree in (will be cleared)
      * @param {object} treeViewOptions options to pass to the treeview
      * @return {TreeView} the created tree
      */
     createTree(target, treeViewOptions) {
         // We need one level expansion to be able to nicely expand it
+        const autoExpand = !("levelsToExpand" in treeViewOptions);
         treeViewOptions["levelsToExpand"] = treeViewOptions["levelsToExpand"] || 1;
 
         /* Function to create a comparable string from EC numbers*/
@@ -182,6 +188,7 @@ export default class ECNumbers {
 
         // expand certain nodes
         // iteratively open the leaf with the largest count
+        if(autoExpand){
         let root = tree.getRoot();
         let allowedCount = root.data.count*2;
         let pq = new PriorityQueue((a, b) => b.data.count - a.data.count);
@@ -195,7 +202,8 @@ export default class ECNumbers {
         tree.update(root);
 
         // HACK: place the tree more to the left so everything is visible (after one second because there is a 750 ms delay)
-        setTimeout(()=>d3.select(target+">svg>g>g").attr("transform", `translate(85,${(treeViewOptions.height || 600) / 2})`), 1000);
+            setTimeout(() => d3.select(target+">svg>g>g").attr("transform", `translate(85,${(treeViewOptions.height || 600) / 2})`), 1000);
+        }
         return tree;
     }
 
@@ -207,8 +215,8 @@ export default class ECNumbers {
      * @return {string}       The name of the EC number
      */
     static nameOf(ecNum) {
-        if (ecNames.has(ecNum)) {
-            return ecNames.get(ecNum);
+        if (this.ecNames.has(ecNum)) {
+            return this.ecNames.get(ecNum);
         }
         return "Unknown";
     }
@@ -238,10 +246,10 @@ export default class ECNumbers {
      * @param {[FACounts]} newECs list of new ec
      * @access private
      */
-    static [addNames](newECs) {
+    static addNames(newECs) {
         newECs.forEach(ec => {
-            if (!ecNames.has(ec.code)) {
-                ecNames.set(ec.code, ec.name);
+            if (!this.ecNames.has(ec.code) && "name" in ec) {
+                this.ecNames.set(ec.code, ec.name);
             }
         });
     }
@@ -252,9 +260,9 @@ export default class ECNumbers {
      * @param {[string]} codes array of EC numbers that should be in the cache
      * @access private
      */
-    static async [addMissingNames](codes) {
-        let todo = codes.filter(c => !ecNames.has(c));
+    static async addMissingNames(codes) {
+        let todo = codes.filter(c => !this.ecNames.has(c));
         let res = await postJSON("/info/ecnumbers", JSON.stringify({ecnumbers: todo}));
-        ECNumbers[addNames](res);
+        ECNumbers.addNames(res);
     }
 }
