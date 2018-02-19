@@ -30,7 +30,7 @@ export default class GOTerms {
 
         // Sort values to store and have every namespace
         this.data = {};
-        for (let namespace of NAMESPACES) {
+        for (const namespace of NAMESPACES) {
             if (namespace in data) {
                 this.data[namespace] = Array.from(data[namespace]).sort((a, b) => (b.value - a.value));
             } else {

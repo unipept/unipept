@@ -60,7 +60,7 @@ export default class ECNumbers {
     [addMissing](newEC, map = null) {
         let result = (map === null ? new Map(newEC.map(x=>[x.code, x])) : map);
 
-        for (let curEc of newEC) {
+        for (const curEc of newEC) {
             const parts = curEc.code.split(".");
             const numSpecific = parts.includes("-") ? parts.indexOf("-") : parts.length;
             result.set(curEc.code, curEc); // overrides if exists
@@ -146,7 +146,7 @@ export default class ECNumbers {
         // Sort from general to specific
         const sortedEC = Array.from(this.ec.values()).sort((a, b) => (a.code+".-").split(".").indexOf("-") - (b.code+".-").split(".").indexOf("-"));
 
-        for (let data of sortedEC) {
+        for (const data of sortedEC) {
             let {code, value: count, name} = data;
             const tmpPath = code.split(".").filter(x => x!=="-");
             const shortCode = tmpPath.join("."); // "-" at end are now removed
@@ -170,7 +170,7 @@ export default class ECNumbers {
             // visit ancestors: ["3.1.15", "3.1", "3", "-"]
             // and iteratively add `toInsert` as a child of its parent
             map[path[0]].children.push(toInsert);
-            for (let c of path) {
+            for (const c of path) {
                 map[c].data.count += toInsert.data.count;
             }
         }

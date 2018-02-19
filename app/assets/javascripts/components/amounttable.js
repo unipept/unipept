@@ -142,7 +142,7 @@ class AmountTable {
         rows.exit().remove(); // remove rows that are no longer needed
 
         let row = rows.enter().append("tr");
-        for (let colSpec of this.contents) {
+        for (const colSpec of this.contents) {
             let {html=null, text=null, style=null, shade=false} = colSpec;
             const cell = row.append("td");
 
@@ -155,7 +155,7 @@ class AmountTable {
             }
 
             if (style !== null) {
-                for (let [property, value] of Object.entries(style)) {
+                for (const [property, value] of Object.entries(style)) {
                     cell.style(property, value);
                 }
             }
@@ -224,9 +224,9 @@ class AmountTable {
     toCSV() {
         let result = [this.header];
         let htmlHelperSpan= document.createElement("span");
-        for (let entry of this.data) {
+        for (const entry of this.data) {
             let values = [];
-            for (let colSpec of this.contents) {
+            for (const colSpec of this.contents) {
                 let {html=null, text=null} = colSpec;
                 if (text !== null) {
                     values.push(text(entry));

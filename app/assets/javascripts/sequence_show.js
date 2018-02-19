@@ -286,7 +286,7 @@ function initSequenceShow(data) {
 
         $("#go-pannel").empty();
         const goPannel = d3.select("#go-pannel");
-        for (let variant of GOTerms.NAMESPACES) {
+        for (const variant of GOTerms.NAMESPACES) {
             const variantName = stringTitleize(variant);
             goPannel.append("h3").text(variantName);
 
