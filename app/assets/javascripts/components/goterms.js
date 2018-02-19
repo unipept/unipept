@@ -118,7 +118,7 @@ export default class GOTerms {
      */
     static addData(newTerms) {
         newTerms.forEach(go => {
-            if (!this.goData.has(go.code) && "namespace" in go && "name" in go) {
+            if (!this.goData.has(go.code) && go.namespace && go.name) {
                 this.goData.set(go.code, go);
             }
         });
