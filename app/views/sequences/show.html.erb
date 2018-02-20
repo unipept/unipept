@@ -100,7 +100,7 @@
         </div>
         <div class="tab-pane" id="go">
           <h2>Gene Ontology annotations</h2>
-          <%=@pept_with_go %> of the <%=@entries.length%> matched peptides (<%='%.1f' % (100*@pept_with_go.fdiv(@entries.length))%>%) had a GO term annotation.
+          <%=@amount_with_go %> of the <%=@entries.length%> matched peptides (<%='%.1f' % (100*@amount_with_go.fdiv(@entries.length))%>%) had a GO term annotation.
           <div id="go-pannel">Please wait while we are building a summary</div>
         </div>
         <div class="tab-pane" id="ec">
@@ -108,7 +108,7 @@
             <button id='save-btn-ec' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>
           </div>
           <h2>Enzyme Commission numbers</h2>
-          <%=@pept_with_ec %> of the <%=@entries.length%> matched peptides (<%='%.1f' % (100*@pept_with_ec.fdiv(@entries.length))%>%) had a EC number annotation.
+          <%=@amount_with_ec %> of the <%=@entries.length%> matched peptides (<%='%.1f' % (100*@amount_with_ec.fdiv(@entries.length))%>%) had an EC number annotation.
           <div id="ec-table">Please wait while we are building a summary</div>
           <div id="ec-treeview">Please wait while we are building a summary</div>
         </div>
@@ -124,11 +124,11 @@
         uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>,
         fa: {
           go:{
-            numAnnotatedPeptides: <%=@pept_with_go%>,
+            numAnnotatedPeptides: <%=@amount_with_go%>,
             data: <%= raw(@go_summary.map{|k, v| [k,v.map{|goterm,count| { "code" => goterm.code, "name" => goterm.name, "namespace": goterm.namespace, "value" => count}}]}.to_h.to_json) %>,
           },
           ec:{
-            numAnnotatedPeptides: <%=@pept_with_ec%>,
+            numAnnotatedPeptides: <%=@amount_with_ec%>,
             data:<%= raw(@ec_summary.map{|ec,count| { "code" => ec.code, "name" => ec.name,  "value" => count}}.to_json) %>
           }
         }

@@ -114,8 +114,8 @@ class SequencesController < ApplicationController
 
     @title = "Tryptic peptide analysis of #{@original_sequence}"
 
-    @pept_with_go = @entries.count{ |entry| !entry.go_terms.empty?}
-    @pept_with_ec = @entries.count{ |entry| !entry.ec_numbers.empty?}
+    @amount_with_go = @entries.count{ |entry| !entry.go_terms.empty?}
+    @amount_with_ec = @entries.count{ |entry| !entry.ec_numbers.empty?}
     go_counts = Hash.new 0
     @ec_summary = Hash.new 0
     @entries.each do |entry|
