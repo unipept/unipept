@@ -118,21 +118,7 @@
   <div id="tooltip" class="tip"></div>
   <script type="text/javascript">
     $(function () {
-      initSequenceShow({
-        peptide: "<%= @original_sequence %>",
-        tree: <%= raw(@root) %>,
-        uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>,
-        fa: {
-          go:{
-            numAnnotatedPeptides: <%=@fa_summary[:go][:numAnnotatedPeptides]%>,
-            data: <%= raw(@fa_summary[:go][:data].map{|k, v| [k,v.map{|goterm,count| { "code" => goterm.code, "name" => goterm.name, "namespace": goterm.namespace, "value" => count}}]}.to_h.to_json) %>,
-          },
-          ec:{
-            numAnnotatedPeptides: <%=@fa_summary[:ec][:numAnnotatedPeptides]%>,
-            data:<%= raw(@fa_summary[:ec][:data].map{|ec,count| { "code" => ec.code, "name" => ec.name,  "value" => count}}.to_json) %>
-          }
-        }
-      });
+      initSequenceShow(<%= raw render(:template => "sequences/_data.json.jbuilder") %>);
     });
   </script>
 <% end %>
