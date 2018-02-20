@@ -87,7 +87,6 @@ class SequencesController < ApplicationController
 
     # don't show the root when we don't need it
     @root.sort_children
-    @root = Oj.dump(@root, mode: :compat)
 
     # Table stuff
     @table_lineages = []
