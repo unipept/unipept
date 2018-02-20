@@ -114,19 +114,8 @@ class SequencesController < ApplicationController
 
     @title = "Tryptic peptide analysis of #{@original_sequence}"
 
-    @amount_with_go = @entries.count{ |entry| !entry.go_terms.empty?}
-    @amount_with_ec = @entries.count{ |entry| !entry.ec_numbers.empty?}
-    go_counts = Hash.new 0
-    @ec_summary = Hash.new 0
-    @entries.each do |entry|
-        entry.go_terms.each { |term| go_counts[term] += 1 }
-        entry.ec_numbers.each { |number| @ec_summary[number] += 1 }
-    end
-
-    @go_summary = {}
-    go_counts.keys.group_by(&:namespace).each do |namespace, go|
-      @go_summary[namespace] = go.map { |term| [term, go_counts[term]] }.to_h
-    end
+    # Make a summary of the GO terms
+    @fa_summary = UniprotEntry.summarize_fa(@entries)
 
     respond_to do |format|
       format.html # show.html.erb
