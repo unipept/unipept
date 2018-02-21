@@ -13,7 +13,6 @@ const NAMESPACES = ["biological process", "cellular component", "molecular funct
  * Class that helps organizing GO terms
  */
 export default class GOTerms {
-
     /**
      * Static cache of GO term information
      * @access private
@@ -40,7 +39,7 @@ export default class GOTerms {
             }
         }
         // Fetch names in the background, not needed yet
-        setTimeout(() =>  {
+        setTimeout(() => {
             GOTerms.addMissingNames(Array.from(this.go.keys()));
         }, 0);
     }
@@ -54,8 +53,9 @@ export default class GOTerms {
 
     /**
      * Returns the originally supplied set of GO Terms
-     * sorted by value
-     * @return {[FACounts]} Sorted GO Terms 
+     * sorted by value for a specific namespace
+     * @param  {String} namespace The namespace (one of GOTerms.NAMESPACES)
+     * @return {[FACounts]} Sorted GO Terms
      */
     sortedTerms(namespace) {
         return this.data[namespace];
