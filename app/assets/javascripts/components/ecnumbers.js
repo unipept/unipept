@@ -118,9 +118,9 @@ export default class ECNumbers {
      * The numbers are first sorted form general to specific (number of - at the
      * end). Then the tree is built by adding the count to all ancestors.
      *
-     * The tree is automatically expanded unless `treeViewOptions` contains the 
+     * The tree is automatically expanded unless `treeViewOptions` contains the
      * "levelsToExpand" option.
-     * 
+     *
      * @param {string} target the element to put the tree in (will be cleared)
      * @param {object} treeViewOptions options to pass to the treeview
      * @return {TreeView} the created tree
@@ -188,7 +188,7 @@ export default class ECNumbers {
 
         // expand certain nodes
         // iteratively open the leaf with the largest count
-        if(autoExpand){
+        if (autoExpand) {
             const root = tree.getRoot();
             let allowedCount = root.data.count*2;
             const pq = new PriorityQueue((a, b) => b.data.count - a.data.count);
