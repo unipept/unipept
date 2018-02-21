@@ -262,7 +262,7 @@ export default class ECNumbers {
      */
     static async addMissingNames(codes) {
         const todo = codes.filter(c => !this.ecNames.has(c));
-        const res = await postJSON("/info/ecnumbers", JSON.stringify({ecnumbers: todo}));
+        const res = await postJSON("/private_api/ecnumbers", JSON.stringify({ecnumbers: todo}));
         ECNumbers.addNames(res);
     }
 }

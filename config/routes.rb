@@ -22,9 +22,9 @@ UnipeptWeb::Application.routes.draw do
   end
 
   # General inforamtion
-  scope :info, as: 'info' do
-    match "goterms", via: [:get, :post], :to => "info#goterms"
-    match "ecnumbers",     via: [:get, :post], :to => "info#ecnumbers"
+  scope :private_api, as: 'private_api' do
+    match "goterms", via: [:get, :post], :to => "private_api#goterms"
+    match "ecnumbers",     via: [:get, :post], :to => "private_api#ecnumbers"
   end
 
   # search

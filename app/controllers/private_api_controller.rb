@@ -1,4 +1,4 @@
-class InfoController < ApplicationController
+class PrivateApiController < ApplicationController
   before_action :default_format_json
   skip_before_action :verify_authenticity_token
 
