@@ -132,7 +132,7 @@ export default class GOTerms {
     static async addMissingNames(codes) {
         const todo = codes.filter(c => !this.goData.has(c));
         if (todo.length > 0) {
-            const res = await postJSON("/info/goterms", JSON.stringify({goterms: todo}));
+            const res = await postJSON("/private_api/goterms", JSON.stringify({goterms: todo}));
             GOTerms.addData(res);
         }
     }
