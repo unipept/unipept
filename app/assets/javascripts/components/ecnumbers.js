@@ -7,9 +7,6 @@ import {postJSON} from "../utils.js";
  * @property {string} code  The code of the GO/EC number
  */
 
-// const for private methods
-const artificial = Symbol("artificial");
-
 /**
  * Class to contain the results of a fetch of EC numbers.
  *
@@ -72,7 +69,6 @@ export default class ECNumbers {
                 const newKey = parts.join(".");
                 if (!result.has(newKey)) {
                     const parentEC = {code: newKey, name: null, value: 0};
-                    parentEC[artificial] = true;
                     result.set(newKey, parentEC);
                 } else {
                     break;// the key already exists (all following already done)
