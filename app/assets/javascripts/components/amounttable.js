@@ -1,4 +1,4 @@
-import {toCSVString, downloadData} from "../utils.js";
+import {toCSVString, downloadDataByForm} from "../utils.js";
 
 
 /**
@@ -249,7 +249,7 @@ class AmountTable {
         if (this.title !== null) {
             filename = `${this.title.replace(/[^a-zA-Z -_]/gi, "").replace(/  *-  */g, "-").replace(/ /g, "_")}-export.csv`;
         }
-        downloadData(this.toCSV(), filename, "text/csv");
+        downloadDataByForm(this.toCSV(), filename, "text/csv");
     }
 
 
