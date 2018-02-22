@@ -197,18 +197,15 @@ function initSequenceShow(data) {
                 const fullcode = (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
                 let tip = tooltipEC(fullcode);
                 tip += `<div class="tooltip-fa-text">
-                        Assigned to ${numberToPercent(d.data.count/ecResultSet.getTotalSetSize(), 1)} (${d.data.count})
-                        annotated matches,<br>`;
-                if (d.data.count == d.data.self_count) {
-                    tip += "all specific.";
+                        ${d.data.count}  occurrences, `;
+
+                if (d.data.self_count == 0) {
+                    tip += "no specific annotations";
                 } else {
-                    if (d.data.self_count == 0) {
-                        tip += "no specific annotations";
-                    } else {
-                        tip += `specificly assigned to ${numberToPercent(d.data.self_count/ecResultSet.getTotalSetSize(), 1)} (${d.data.self_count})
-                                annotated matches`;
-                    }
+                    tip += `specificly assigned to ${numberToPercent(d.data.self_count/ecResultSet.getTotalSetSize(), 1)} (${d.data.self_count})
+                            annotated matches`;
                 }
+
                 tip += "</div>";
                 return tip;
             },
