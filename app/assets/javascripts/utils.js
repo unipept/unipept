@@ -32,31 +32,13 @@ function brightness(rgb) {
 }
 
 /**
- * Download data with polyfill for browsers that don't support the download attr
- * @param  {[type]}  data                    data to download
- * @param  {[type]}  fileName                filename
- * @param  {String}  [fileType="text/plain"] filetype eg text/csv
- * @return {Promise.<string>}                Promice that returns when downloaded
- */
-function downloadData(data, fileName, fileType="text/plain") {
-    if ("download" in document.createElement("a")) {
-        return new Promise(function (resolve, reject) {
-            downloadDataByLink(`data:${fileType};base64,${btoa(data)}`, fileName);
-            resolve(fileName);
-        });
-    } else {
-        return downloadDataByForm(data, fileName, fileType);
-    }
-}
-
-
-/**
  * Triggers a file download in the browser using a hidden
  * form and a server round trip. Returns a Promise that resolves when
  * the file starts downloading
  *
  * @param {string} data The text you want in the file
  * @param {string} fileName The requested file name
+ * @param  {String}  [fileType] file type like "text/csv"
  * @return {Promise.<string>}
  */
 function downloadDataByForm(data, fileName, fileType=null) {
@@ -363,4 +345,4 @@ function postJSON(url, data) {
     }).then(res => res.json());
 }
 
-export {addCopy, brightness, downloadData, downloadDataByForm, downloadDataByLink, get, getJSON, getReadableColorFor, highlight, iteratorToArray, logErrorToGoogle, logToGoogle, showError, showInfo, stringHash, stringTitleize, toCSVString, numberToPercent, triggerDownloadModal, postJSON};
+export {addCopy, brightness, downloadDataByForm, downloadDataByLink, get, getJSON, getReadableColorFor, highlight, iteratorToArray, logErrorToGoogle, logToGoogle, showError, showInfo, stringHash, stringTitleize, toCSVString, numberToPercent, triggerDownloadModal, postJSON};
