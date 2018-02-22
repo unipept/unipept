@@ -126,60 +126,7 @@ export default class ECNumbers {
         const autoExpand = !("levelsToExpand" in treeViewOptions);
         treeViewOptions["levelsToExpand"] = treeViewOptions["levelsToExpand"] || 1;
 
-        /* Function to create a comparable string from EC numbers*/
-        const makeId = code =>{
-            // Pad each part with zeros so we can sort alphabetically
-            // (there are EC number with letters)
-            const values = code.split(".").map(x => ("0000"+x).slice(-4));
-            return values.join(".");
-        };
-
-        const map = Object.create(null);
-
-        const rootData = {id: 0,
-            name: "-",
-            fullname: "Enzyme Commission numbers",
-            children: [],
-            data: {self_count: 0},
-        };
-
-        map["-"] = rootData;
-
-        // Sort from general to specific
-        const sortedEC = Array.from(this.ec.values()).sort((a, b) => (a.code+".-").split(".").indexOf("-") - (b.code+".-").split(".").indexOf("-"));
-
-        for (const data of sortedEC) {
-            const {code, value: count, name} = data;
-            const tmpPath = code.split(".").filter(x => x!=="-");
-            const shortCode = tmpPath.join("."); // "-" at end are now removed
-
-            const path = new Array(tmpPath.length);
-            // "3.1.15.24" => ["3.1.15", "3.1", "3", "-"]
-            for (let i = tmpPath.length; i>0; i--) {
-                path[tmpPath.length-i] = tmpPath.slice(0, i-1).join(".");
-            }
-            path[tmpPath.length-1] = "-";
-
-            // Create a node for the new EC-code and place it in the map
-            const toInsert = {
-                id: makeId(shortCode),
-                name: shortCode, fullname: name,
-                children: [],
-                data: {self_count: count, count: count, data: data},
-            };
-
-            map[shortCode] = toInsert;
-            // visit ancestors: ["3.1.15", "3.1", "3", "-"]
-            // and iteratively add `toInsert` as a child of its parent
-            map[path[0]].children.push(toInsert);
-            for (const c of path) {
-                map[c].data.count += toInsert.data.count;
-            }
-        }
-
-        // Order the nodes by their id (order by EC number)
-        Object.values(map).forEach(obj => obj.children.sort((a, b) => a.id.localeCompare(b.id)));
-
+        const rootData = this.treeData();
         const tree= $(target).empty().treeview(rootData, treeViewOptions);
 
         // expand certain nodes
@@ -203,6 +150,46 @@ export default class ECNumbers {
         return tree;
     }
 
+    /**
+     * Make a tree structure of the EC numbers in the resultset
+     *
+     * @access private
+     * @return {Node} a treeview data model
+     */
+    treeData() {
+        const map = Object.create(null);
+
+        // The root node
+        map["-.-.-.-"] = {id: 0, name: "-.-.-.-", children: [], data: {self_count: 0}};
+
+        // Sort from general to specific
+        const sortedEC = Array.from(this.ec.values())
+            .sort((a, b) => ECNumbers.levelOf(a.code) - ECNumbers.levelOf(b.code));
+
+        for (const data of sortedEC) {
+            const {code, value: count} = data;
+
+            // Create a node for the new EC-code and place it in the map
+            const toInsert = {
+                id: code.split(".").map(x => ("0000"+x).slice(-4)).join("."),
+                name: code,
+                children: [],
+                data: {self_count: count, count: count, data: data},
+            };
+
+            map[code] = toInsert;
+
+            const ancestors = ECNumbers.ancestorsOf(code, true);
+            map[ancestors[0]].children.push(toInsert);
+            for (const a of ancestors) {
+                map[a].data.count += toInsert.data.count;
+            }
+        }
+
+        // Order the nodes by their id (order by EC number)
+        Object.values(map).forEach(obj => obj.children.sort((a, b) => a.id.localeCompare(b.id)));
+        return map["-.-.-.-"]; // the root node
+    }
 
     /**
      * Gets the name of associated with an EC number
@@ -223,9 +210,10 @@ export default class ECNumbers {
      * "2.1.3.-" would give ["2.1.-.-","2.-.-.-"]
      *
      * @param  {string} ecNum The code of the EC number
+     * @param {bool} [includeRoot=false] weather to include the root (-.-.-.-)
      * @return {[string]}  Ancestors of the EC number (from specific to generic)
      */
-    static ancestorsOf(ecNum) {
+    static ancestorsOf(ecNum, includeRoot=false) {
         const result = [];
         const parts = ecNum.split(".");
         const numSpecific = parts.includes("-") ? parts.indexOf("-") : parts.length;
@@ -234,7 +222,23 @@ export default class ECNumbers {
             parts[i] = "-";
             result.push(parts.join("."));
         }
+
+        if (includeRoot) {
+            result.push("-.-.-.-");
+        }
         return result;
+    }
+
+    /**
+     * Calculates how specific the EC number is as int form
+     * 0 (generic) to 4 (specific). Counts the number of non "-" in
+     * the ec number
+     *
+     * @param  {string} ecNum an EC number (form "2.1.3.-")
+     * @return {int}  Ancestors of the EC number (from specific to generic)
+     */
+    static levelOf(ecNum) {
+        return (ecNum+".-").split(".").indexOf("-");
     }
 
     /**
