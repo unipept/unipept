@@ -1,5 +1,8 @@
 import {MPA} from "./index.js";
 import {Dataset} from "./dataset.js";
+import GOTerms from "../components/goterms.js";
+import ECNumbers from "../components/ecnumbers.js";
+
 /**
  * Represents the resultset for a given dataset
  *
@@ -22,6 +25,8 @@ class Resultset {
         this.preparedPeptides = this.preparePeptides(dataset.originalPeptides, il, dupes, missed);
         this.processedPeptides = [];
         this.missedPeptides = [];
+        this.ec = null;
+        this.go = null;
         this.progress = 0;
     }
 
@@ -39,14 +44,29 @@ class Resultset {
                 equate_il: this.il,
                 missed: this.missed,
             });
-            const result = await Dataset.postJSON(Dataset.PEPT2LCA_URL, data);
-            this.processedPeptides.push(...result.peptides);
-            this.setProgress(this.progress + Dataset.BATCH_SIZE / peptideList.length);
+            const lcaQuery = Dataset.postJSON(Dataset.PEPT2LCA_URL, data);
+            const faQuery = Dataset.postJSON(Dataset.PEPT2FA_URL, data);
+
+            await Promise.all([lcaQuery, faQuery]).then(([lcaResult, faResult]) => {
+                let faMapping = new Map(faResult.peptides.map(v=>[v.sequence, v]));
+
+                for (let pept of lcaResult.peptides) {
+                    let faData = faMapping.get(pept.sequence);
+                    pept.fa = {
+                        go: faData.go,
+                        ec: faData.ec,
+                    };
+                }
+
+                this.processedPeptides.push(...lcaResult.peptides);
+                this.setProgress(this.progress + Dataset.BATCH_SIZE / peptideList.length);
+            });
         }
         for (const peptide of this.processedPeptides) {
             peptide.count = this.preparedPeptides.get(peptide.sequence);
         }
         this.setMissedPeptides(peptideList, this.processedPeptides);
+        await Promise.all([this.summarizeGo(), this.summarizeEc()]);
     }
 
     /**
@@ -126,6 +146,67 @@ class Resultset {
      */
     getNumberOfSearchedForPeptides() {
         return Array.from(this.preparedPeptides.values()).reduce((a, b) => a + b, 0);
+    }
+
+    /**
+     * Fill `this.go` with a Map<string,GoInfo[]> per namespace. The values of the
+     * maps have an additional `value` field that indicated the weight of that
+     * GO number.
+     * @param {number} [percent=50] ignore data weighing less (to be removed)
+     */
+    async summarizeGo(percent = 50) {
+        let res = {};
+        for (let namespace of GOTerms.NAMESPACES) {
+            const dataExtractor = pept => pept.fa.go[namespace] || [];
+            res[namespace] = this.summarizeFa(dataExtractor, percent);
+        }
+        this.go = new GOTerms({data: res}, false);
+        await this.go.ensureData();
+    }
+
+    /**
+     * Fill `this.ec` with a Map<string,EcInfo[]>. The values of the map
+     * have an additional `value` field that indicated the weight of that
+     * EC number.
+     * @param {number} [percent=50] ignore data weighing less (to be removed)
+     */
+    async summarizeEc(percent = 50) {
+        const dataExtractor = pept => pept.fa.ec || [];
+        const result = this.summarizeFa(dataExtractor, percent);
+        this.ec = new ECNumbers({data: result}, false);
+        await this.ec.ensureData();
+    }
+
+    /**
+     * Create a mapping of functional analysis codes to a weight by aggregating
+     * the counts of all peptides that have functional analysis tags.
+     *
+     * @example this.summarizeFa(pept => pept.fa.ec || [])
+     * @param {function(pept:Peptide): {code, weight}} extract
+     *            function extracting the FAInfo form a peptide
+     * @param {number} cutoff  data with strictly lower weight is ignored
+     *                         value should be given as percentage in [0,100]
+     * @return {Map<string,number>} map  map to store the results in
+     * @todo  take not found sequences into account
+     * @todo  remove the cutoff
+     */
+    summarizeFa(extract, cutoff=50) {
+        const map = new Map();
+        const fraction = cutoff/100;
+        let numAnnotations = 0;
+        for (let pept of this.processedPeptides) {
+            for (const {code, weight} of extract(pept)) {
+                if (weight < fraction) continue; // skip if insignificant TODO: remove
+                const count = map.get(code) || 0;
+                const scaledWeight = weight*(pept.count);
+                map.set(code, count + scaledWeight);
+                numAnnotations += scaledWeight;
+            }
+        }
+        for (let [key, value] of map.entries()) {
+            map.set(key, value / numAnnotations);
+        }
+        return Array.from(map).map(x => ({code: x[0], value: x[1]}));
     }
 
     /**

@@ -4,6 +4,7 @@ import {Tree} from "./tree.js";
 
 const BATCH_SIZE = 100,
     PEPT2LCA_URL = "/mpa/pept2lca",
+    PEPT2FA_URL = "/mpa/pept2fa",
     TAXA_URL = "/private_api/taxa";
 
 /**
@@ -37,6 +38,7 @@ class Dataset {
     constructor(peptides = []) {
         this.originalPeptides = Dataset.cleanPeptides(peptides);
         this.tree = null;
+        this.fa = {go: null, ec: null};
         this.taxonMap = new Map();
         this.taxonMap.set(1, {id: 1, ranke: "no rank", name: "root"});
     }
@@ -60,6 +62,8 @@ class Dataset {
         tree.setTaxonNames(await taxonInfo);
         tree.sortTree();
         this.tree = tree;
+        this.fa.go = this.resultset.go;
+        this.fa.ec = this.resultset.ec;
         this.addTaxonInfo(await taxonInfo);
         return tree;
     }
@@ -195,6 +199,13 @@ class Dataset {
      */
     static get PEPT2LCA_URL() {
         return PEPT2LCA_URL;
+    }
+
+    /**
+     * The URL to fetch fa info
+     */
+    static get PEPT2FA_URL() {
+        return PEPT2FA_URL;
     }
 
     /**
