@@ -1,7 +1,11 @@
-import {addCopy, downloadDataByForm, logToGoogle, triggerDownloadModal} from "../utils.js";
+import {addCopy, downloadDataByForm, logToGoogle, triggerDownloadModal, numberToPercent, stringTitleize} from "../utils.js";
 import {Dataset} from "./dataset.js";
 import {constructSearchtree} from "./searchtree.js";
+import {showInfoModal} from "../modal.js";
+import {AmountTable} from "../components/amounttable.js";
 import "unipept-visualizations/dist/unipept-visualizations.es5.js";
+import GOTerms from "../components/goterms.js";
+import ECNumbers from "../components/ecnumbers.js";
 
 /* eslint require-jsdoc: off */
 class MPA {
@@ -50,6 +54,7 @@ class MPA {
         const dataset = this.datasets[0];
         await dataset.search(this.searchSettings);
         this.setUpVisualisations(dataset.tree);
+        this.setUpFAVisualisations(dataset.fa);
         this.setUpMissedPeptides(dataset.getMissedPeptides());
         this.updateStats(dataset.getNumberOfMatchedPeptides(), dataset.getNumberOfSearchedForPeptides());
         return dataset;
@@ -77,6 +82,214 @@ class MPA {
         this.treemap = this.setUpTreemap(JSON.parse(data));
         this.treeview = this.setUpTreeview(JSON.parse(data));
         this.searchTree = constructSearchtree(tree, this.searchSettings.il);
+    }
+
+
+    setUpFAVisualisations({go, ec}) {
+        this.setUpGo(go);
+        this.setUpEC(ec);
+    }
+
+    /**
+     * Create visualisations of the GO numbers
+     * @param {FAInfo} go Data about GO Terms
+     */
+    setUpGo(go) {
+        const goPanel = d3.select("#goPanel");
+        goPanel.html("");
+        for (let variant of GOTerms.NAMESPACES) {
+            const variantName = stringTitleize(variant);
+
+            const article = goPanel.append("div").attr("class", "row");
+            article.append("h3").text(variantName);
+            this.setUpGoTable(go, variant, article);
+            this.setUpQuickGo(go, variant, variantName, article);
+        }
+    }
+
+    setUpGoTable(goResultset, variant, target) {
+        const numAnnotatedPeptides = 1; // goResultset.getTotalSetSize();
+
+        const tablepart = target.append("div").attr("class", "col-xs-8");
+        new AmountTable({
+            title: `GO terms - ${variant}`,
+            el: tablepart,
+            header: ["Score", "GO term", "Name"],
+            data: goResultset.sortedTerms(variant),
+            limit: 5,
+            contents: [
+                { // Count
+                    text: d => d.value.toString(),
+                    html: d => numberToPercent(d.value, 2),
+                    style: {"width": "5em"},
+                    shade: d=>100*d.value/numAnnotatedPeptides,
+                },
+                { // Go term
+                    html: d => `<a href="https://www.ebi.ac.uk/QuickGO/term/${d.code}" target="_blank">${d.code}</a>`,
+                    text: d => d.code,
+                    style: {"width": "7em"},
+                },
+                { // name
+                    text: d => GOTerms.nameOf(d.code),
+                },
+            ],
+            tooltip: d => this.tooltipGO(d.code, goResultset),
+            tooltipID: "#tooltip",
+        }
+        ).draw();
+    }
+
+    setUpQuickGo(goResultset, variant, variantName, target) {
+        const top5 = goResultset.sortedTerms(variant).slice(0, 5).map(x => x.code);
+        const quickGoChartURL = GOTerms.quickGOChartURL(top5);
+        const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${numberToPercent(goResultset.getFractionOf(x))})`);
+        const top5sentence = top5WithNames.slice(0, -1).join(", ")
+                             + (top5.length > 1 ? " and ": "")
+                             + top5WithNames[top5WithNames.length-1];
+        target
+            .append("div").attr("class", "col-xs-4")
+            .append("img")
+            .attr("src", quickGoChartURL)
+            .attr("class", "quickGoThumb")
+            .attr("title", `QuickGO chart of ${top5sentence}`)
+            .on("click", () => {
+                showInfoModal("QuickGo "+variantName, `
+                    This chart shows the realationship between the ${top5.length} most occuring GO terms: ${top5sentence}.<br/>
+                    <a href="${quickGoChartURL}" target="_blank" title="Click to enlarge in new tab"><img style="max-width:100%" src="${quickGoChartURL}" alt="QuickGO chart of ${top5sentence}"/></a>
+                    <br>
+                    Provided by <a href="https://www.ebi.ac.uk/QuickGO/annotations?goId=${top5.join(",")}" target="_blank">QuickGo</a>.`,
+                {wide: true});
+            });
+    }
+
+    /**
+     * Generate a tooltip for an GO term
+     * @param  {string}    goTerm   The Ec term to generate a tooltip for
+     * @param  {GOTerms} [goResultSet=null]  A `GOTerms` summary
+     * @return {string}    HTML for the tooltip
+     */
+    tooltipGO(goTerm, goResultSet = null) {
+        let result = `
+            <h4 class="tooltip-fa-title">
+                <span class="tooltip-fa-title-name">${GOTerms.nameOf(goTerm)}</span>
+                <span class="tooltip-go-title-term small"> ${goTerm}</span>
+            </h4>
+            <span class="tooltip-go-domain">${stringTitleize(GOTerms.namespaceOf(goTerm))}</span>`;
+
+        if (goResultSet != null) {
+            const count = goResultSet.getValueOf(goTerm);
+            result += `<div class="tooltip-fa-text">Specificly assigned to ${numberToPercent(goResultSet.getFractionOf(goTerm), 1)} (${count}) of
+            annotated matches</div>`;
+        }
+        return result;
+    }
+
+    setUpEC(ecResultset) {
+        this.setUpECTree(ecResultset);
+        this.setUpECTable(ecResultset);
+    }
+
+    /**
+     * Generate a tooltip for an EC number
+     * @param  {string}    ecNumber   The Ec number to generate a tooltip for
+     * @param  {ECNumbers} [ecResultSet=null]  A `ECNumbers` summary
+     * @return {string}    HTML for the tooltip
+     */
+    tooltipEC(ecNumber, ecResultSet = null) {
+        const fmt= x=>`<div class="tooltip-ec-ancestor"><span class="tooltip-ec-term">EC ${x}</span><span class="tooltip-ec-name">${ECNumbers.nameOf(x)}</span></div>`;
+
+        let result = `
+            <h4 class="tooltip-fa-title">
+                <span class="tooltip-fa-title-name">${ECNumbers.nameOf(ecNumber)}</span>
+                <span class="tooltip-ec-term small"> EC ${ecNumber}</span>
+            </h4>`;
+
+        if (ECNumbers.ancestorsOf(ecNumber).length > 0) {
+            result += `${ECNumbers.ancestorsOf(ecNumber).map(c => fmt(c)).join("\n")}`;
+        }
+
+        if (ecResultSet != null) {
+            const count = ecResultSet.getValueOf(ecNumber);
+            result += `<div class="tooltip-fa-text">Specificly assigned to ${numberToPercent(ecResultSet.getFractionOf(ecNumber), 1)} (${count}) of
+            annotated matches</div>`;
+        }
+        return result;
+    }
+
+    /**
+     * Create the EC treeview
+     *
+     * @param {ECNumbers} ecResultSet  A `ECNumbers` summary
+     * @return {TreeView} The created treeview
+     */
+    setUpECTree(ecResultSet) {
+        const tree = ecResultSet.createTree("#ecTreeView", {
+            width: 916,
+            height: 500,
+            getTooltip: d => {
+                const fullcode = (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
+                let tip = this.tooltipEC(fullcode);
+                tip += `<div class="tooltip-fa-text">
+                        ${d.data.count}  occurrences, `;
+
+                if (d.data.self_count == 0) {
+                    tip += "no specific annotations";
+                } else {
+                    tip += `specificly assigned to ${numberToPercent(d.data.self_count, 1)}
+                            annotated matches`;
+                }
+
+                tip += "</div>";
+                return tip;
+            },
+        });
+
+        // save tree button
+        $("#save-btn-ec").click(() => {
+            logToGoogle("Multi peptide", "Save EC Image");
+            triggerDownloadModal("#ecTreeview svg", null, "unipept_treeview");
+        });
+
+        return tree;
+    }
+
+    /**
+     * Create the EC amount table
+     *
+     * @param {ECNumbers} ecResultSet  A `ECNumbers` summary
+     */
+    setUpECTable(ecResultSet) {
+        const target = d3.select("#ecTable");
+        target.html("");
+        new AmountTable({
+            title: "EC numbers",
+            el: target,
+            header: ["Score", "EC-Number", "Name"],
+            data: ecResultSet.sortedTerms(),
+            limit: 5,
+            contents: [
+                { // Count
+                    text: d => d.value.toString(),
+                    html: d => numberToPercent(d.value),
+                    style: {"width": "5em"},
+                    shade: d=>100*d.value,
+                },
+                { // EC-number
+                    html: d => {
+                        const spans = d.code.split(".").map(e => `<span>${e}</span>`).join(".");
+                        return `<a href="https://enzyme.expasy.org/EC/${d.code}" class="ec-number-formatted" target="_blank">${spans}</a>`;
+                    },
+                    text: d => d.code,
+                    style: {"width": "8em"},
+                },
+                { // name
+                    text: d => ECNumbers.nameOf(d.code),
+                },
+            ],
+            tooltip: d => this.tooltipEC(d.code, ecResultSet),
+            tooltipID: "#tooltip",
+        }
+        ).draw();
     }
 
     /**
@@ -152,6 +365,18 @@ class MPA {
             dupes: $("#dupes").prop("checked"),
             missed: $("#missed").prop("checked"),
         }));
+
+        /* TODO remove*/
+        const $perSelector = $("#goFilterPerc");
+        $perSelector.val(50);
+        $perSelector.change(()=>{
+            const percent = $perSelector.val()*1;
+            Promise.all([
+                this.datasets[0].resultset.summarizeGo(percent),
+                this.datasets[0].resultset.summarizeEc(percent),
+            ])
+                .then(()=>this.setUpFAVisualisations(this.datasets[0].fa));
+        });
 
         // copy to clipboard button for missed peptides
         addCopy("#copy-missed span", () => $(".mismatches").text().replace(/ /g, "\n"));
