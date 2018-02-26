@@ -22,8 +22,10 @@ export default class GOTerms {
     /**
      * Creates a new GOTerms
      * @param  {[FACounts]} go list of GO terms with their counts
+     * @param {bool} [ensureData=true] fetch names for this resultset in the background,ss
+     *                                 if false, you must call `ensureData()` on this object.
      */
-    constructor({numAnnotatedPeptides, data}) {
+    constructor({numAnnotatedPeptides, data}, ensureData = true) {
         this.numTotalSet = numAnnotatedPeptides;
         this.go = new Map();
         Object.values(data).forEach(v => v.forEach(goTerm => this.go.set(goTerm.code, goTerm)));
@@ -38,10 +40,17 @@ export default class GOTerms {
                 this.data[namespace] = [];
             }
         }
-        // Fetch names in the background, not needed yet
-        setTimeout(() => {
-            GOTerms.addMissingNames(Array.from(this.go.keys()));
-        }, 0);
+
+        if (ensureData) {
+            this.ensureData();
+        }
+    }
+
+    /**
+     * Fetch the names of the GO terms and await them
+     */
+    async ensureData() {
+        await GOTerms.addMissingNames(Array.from(this.go.keys()));
     }
 
     /**
