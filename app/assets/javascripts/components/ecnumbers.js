@@ -26,17 +26,26 @@ export default class ECNumbers {
     /**
      * Creates a summary of given EC numbers and their counts
      * @param  {[FACounts]} ec list of EC numbers with their counts
+     * @param {bool} [ensureData=true] fetch names for this resultset in the background,ss
+     *                                 if false, you must call `ensureData()` on this object.
      */
-    constructor({numAnnotatedPeptides = null, data}) {
+    constructor({numAnnotatedPeptides = null, data}, ensureData = true) {
         this.numTotalSet = numAnnotatedPeptides;
         this.data = Array.from(data).sort((a, b) => (b.value - a.value));
         this.ec = new this.addMissing(data);
         ECNumbers.addNames(data);
 
         // Fetch names in the background, not needed yet
-        setTimeout(() => {
-            ECNumbers.addMissingNames(Array.from(this.ec.keys()));
-        }, 0);
+        if (ensureData) {
+            this.ensureData();
+        }
+    }
+
+    /**
+     * Fetch the names of the GO terms and await them
+     */
+    async ensureData() {
+        await ECNumbers.addMissingNames(Array.from(this.ec.keys()));
     }
 
     /**
@@ -203,7 +212,7 @@ export default class ECNumbers {
         }
         return "Unknown";
     }
-
+ 
     /**
      * Gets a list of ancestors of a given EC number.
      *
@@ -262,7 +271,9 @@ export default class ECNumbers {
      */
     static async addMissingNames(codes) {
         const todo = codes.filter(c => !this.ecNames.has(c));
-        const res = await postJSON("/private_api/ecnumbers", JSON.stringify({ecnumbers: todo}));
-        ECNumbers.addNames(res);
+        if (todo.length > 0) {
+            const res = await postJSON("/private_api/ecnumbers", JSON.stringify({ecnumbers: todo}));
+            ECNumbers.addNames(res);
+        }
     }
 }
