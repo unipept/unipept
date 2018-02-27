@@ -108,8 +108,6 @@ class MPA {
     }
 
     setUpGoTable(goResultset, variant, target) {
-        const numAnnotatedPeptides = 1; // goResultset.getTotalSetSize();
-
         const tablepart = target.append("div").attr("class", "col-xs-8");
         new AmountTable({
             title: `GO terms - ${variant}`,
@@ -122,7 +120,7 @@ class MPA {
                     text: d => d.value.toString(),
                     html: d => numberToPercent(d.value, 2),
                     style: {"width": "5em"},
-                    shade: d=>100*d.value/numAnnotatedPeptides,
+                    shade: d=>100*d.value,
                 },
                 { // Go term
                     html: d => `<a href="https://www.ebi.ac.uk/QuickGO/term/${d.code}" target="_blank">${d.code}</a>`,
@@ -142,7 +140,7 @@ class MPA {
     setUpQuickGo(goResultset, variant, variantName, target) {
         const top5 = goResultset.sortedTerms(variant).slice(0, 5).map(x => x.code);
         const quickGoChartURL = GOTerms.quickGOChartURL(top5);
-        const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${numberToPercent(goResultset.getFractionOf(x))})`);
+        const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${numberToPercent(goResultset.getValueOf(x))})`);
         const top5sentence = top5WithNames.slice(0, -1).join(", ")
                              + (top5.length > 1 ? " and ": "")
                              + top5WithNames[top5WithNames.length-1];
@@ -177,9 +175,7 @@ class MPA {
             <span class="tooltip-go-domain">${stringTitleize(GOTerms.namespaceOf(goTerm))}</span>`;
 
         if (goResultSet != null) {
-            const count = goResultSet.getValueOf(goTerm);
-            result += `<div class="tooltip-fa-text">Specificly assigned to ${numberToPercent(goResultSet.getFractionOf(goTerm), 1)} (${count}) of
-            annotated matches</div>`;
+            result += `<div class="tooltip-fa-text">Evidence score of ${numberToPercent(goResultSet.getValueOf(goTerm), 1)}</div>`;
         }
         return result;
     }
@@ -209,9 +205,7 @@ class MPA {
         }
 
         if (ecResultSet != null) {
-            const count = ecResultSet.getValueOf(ecNumber);
-            result += `<div class="tooltip-fa-text">Specificly assigned to ${numberToPercent(ecResultSet.getFractionOf(ecNumber), 1)} (${count}) of
-            annotated matches</div>`;
+            result += `<div class="tooltip-fa-text">Evidence score of ${numberToPercent(ecResultSet.getValueOf(ecNumber), 1)}</div>`;
         }
         return result;
     }
@@ -230,13 +224,16 @@ class MPA {
                 const fullcode = (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
                 let tip = this.tooltipEC(fullcode);
                 tip += `<div class="tooltip-fa-text">
-                        ${d.data.count}  occurrences, `;
+                        Evidence score of ${numberToPercent(d.data.count, 1)} for this and child EC numbers, `;
 
                 if (d.data.self_count == 0) {
                     tip += "no specific annotations";
                 } else {
-                    tip += `specificly assigned to ${numberToPercent(d.data.self_count, 1)}
-                            annotated matches`;
+                    if (d.data.self_count == d.data.count) {
+                        tip += " all specifically for this number";
+                    } else {
+                        tip += ` ${numberToPercent(d.data.self_count, 1)} specificly for this number`;
+                    }
                 }
 
                 tip += "</div>";
@@ -305,7 +302,7 @@ class MPA {
     /**
      * Update the intro text to display the search stats.
      *
-     * @param  {number} matches The number of matched paptides
+     * @param  {number} matches The number of matched peptides
      * @param  {total} total The total number of peptides searched for
      */
     updateStats(matches, total) {
