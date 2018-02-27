@@ -69,6 +69,17 @@ class Dataset {
     }
 
     /**
+     * Reprocces functional analysis data with other cutoff
+     * @param {int} cutoff as percent (0-100)
+    */
+    async reprocessFA(cutoff) {
+        await Promise.all([this.resultset.summarizeGo(cutoff), this.resultset.summarizeEc(cutoff)]);
+        this.fa.go = this.resultset.go;
+        this.fa.ec = this.resultset.ec;
+    }
+
+
+    /**
      * Creates a hierarchic tree structure based on the input peptides. This is
      * also set as the tree property of the Dataset object.
      *

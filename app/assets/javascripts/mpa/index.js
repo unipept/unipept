@@ -368,11 +368,10 @@ class MPA {
         $perSelector.val(50);
         $perSelector.change(()=>{
             const percent = $perSelector.val()*1;
-            Promise.all([
-                this.datasets[0].resultset.summarizeGo(percent),
-                this.datasets[0].resultset.summarizeEc(percent),
-            ])
-                .then(()=>this.setUpFAVisualisations(this.datasets[0].fa));
+            this.datasets[0].reprocessFA(percent)
+                .then(()=>{
+                    this.setUpFAVisualisations(this.datasets[0].fa);
+                });
         });
 
         // copy to clipboard button for missed peptides
