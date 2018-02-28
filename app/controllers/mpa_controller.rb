@@ -36,35 +36,11 @@ class MpaController < ApplicationController
         .includes(Sequence.peptides_relation_name(equate_il) => { uniprot_entry: %i[go_cross_references ec_cross_references] })
         .where(sequence: peptides)
 
-    @results_go = Hash.new
-    @results_ec = Hash.new
+    @results_fa = Hash.new
 
     @peptides.each do |sequence|
       entries = sequence.peptides(equate_il).map(&:uniprot_entry)
-
-      #Count the GO terms
-      go_counts = Hash.new 0
-      entries.flat_map { |n| n.go_cross_references.map(&:go_term_code)}
-             .each {|go| go_counts[go] += 1}
-
-
-      #Group the GO counts by namespace
-      go_summary = Hash.new 0
-      go_grouped = go_counts.keys.group_by {|go| GoTerm.find_by(code: go).namespace}
-      go_grouped.each do |namespace, go|
-        go_summary[namespace] = go.map{ |term| {:code => term, :weight => go_counts[term].fdiv(entries.length)} }
-                                  .sort_by{ |score| -score[:weight] }
-      end
-      @results_go[sequence.sequence] = go_summary
-
-      #Count the EC numbers
-      ec_counts = Hash.new 0
-      entries.flat_map { |n| n.ec_cross_references.map(&:ec_number_code)}.each {|ec| ec_counts[ec] += 1}
-      ec_counts.each_pair { |ecCode, value|  ec_counts[ecCode] = value.fdiv(entries.length)}
-      @results_ec[sequence.sequence] = ec_counts
-        .map{ |ecCode, value| {:code => ecCode, :weight => value} }
-        .sort_by{ |score| -score[:weight] }
-
+      @results_fa[sequence.sequence] = UniprotEntry.summarize_fa(entries)
     end
   end
 
