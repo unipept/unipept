@@ -69,7 +69,7 @@ class Dataset {
     }
 
     /**
-     * Reprocces functional analysis data with other cutoff
+     * Reprocesses functional analysis data with other cutoff
      * @param {int} cutoff as percent (0-100)
     */
     async reprocessFA(cutoff) {
