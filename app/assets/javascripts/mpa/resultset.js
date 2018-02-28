@@ -53,6 +53,7 @@ class Resultset {
                 for (let pept of lcaResult.peptides) {
                     let faData = faMapping.get(pept.sequence);
                     pept.fa = {
+                        numPeptides: faData.numPeptides,
                         go: faData.go,
                         ec: faData.ec,
                     };
@@ -157,8 +158,9 @@ class Resultset {
     async summarizeGo(percent = 50) {
         let res = {};
         for (let namespace of GOTerms.NAMESPACES) {
-            const dataExtractor = pept => pept.fa.go[namespace] || [];
-            res[namespace] = this.summarizeFa(dataExtractor, percent);
+            const dataExtractor = pept => (pept.fa.go.data || {})[namespace] || [];
+            const countExtractor = pept => pept.fa.go.numAnnotatedPeptides || 0;
+            res[namespace] = this.summarizeFa(dataExtractor, countExtractor, percent);
         }
         this.go = new GOTerms({data: res}, false);
         await this.go.ensureData();
@@ -171,8 +173,9 @@ class Resultset {
      * @param {number} [percent=50] ignore data weighing less (to be removed)
      */
     async summarizeEc(percent = 50) {
-        const dataExtractor = pept => pept.fa.ec || [];
-        const result = this.summarizeFa(dataExtractor, percent);
+        const dataExtractor = pept => pept.fa.ec.data || [];
+        const countExtractor = pept => pept.fa.ec.numAnnotatedPeptides || 0;
+        const result = this.summarizeFa(dataExtractor, countExtractor, percent);
         this.ec = new ECNumbers({data: result}, false);
         await this.ec.ensureData();
     }
@@ -182,25 +185,33 @@ class Resultset {
      * the counts of all peptides that have functional analysis tags.
      *
      * @example this.summarizeFa(pept => pept.fa.ec || [])
-     * @param {function(pept:Peptide): {code, weight}} extract
+     * @param {function(pept:Peptide): {code, value}} extract
      *            function extracting the FAInfo form a peptide
+     * @param {function(pept:Peptide): int} countExtractor
+     *            function extracting the the number of annotated (full)peptides
+     *            form a peptide
      * @param {number} cutoff  data with strictly lower weight is ignored
      *                         value should be given as percentage in [0,100]
      * @return {Map<string,number>} map  map to store the results in
      * @todo  take not found sequences into account
      * @todo  remove the cutoff
      */
-    summarizeFa(extract, cutoff=50) {
+    summarizeFa(extract, countExtractor, cutoff=50) {
         const map = new Map();
         const fraction = cutoff/100;
         let numAnnotations = 0;
         for (let pept of this.processedPeptides) {
-            for (const {code, weight} of extract(pept)) {
-                if (weight < fraction) continue; // skip if insignificant TODO: remove
-                const count = map.get(code) || 0;
-                const scaledWeight = weight*(pept.count);
-                map.set(code, count + scaledWeight);
-                numAnnotations += scaledWeight;
+            const divisor = countExtractor(pept);
+            if (divisor !== 0) {
+                const counts = extract(pept);
+                for (const {code, value} of counts) {
+                    const weight = value / divisor;
+                    if (weight < fraction) continue; // skip if insignificant TODO: remove
+                    const count = map.get(code) || 0;
+                    const scaledWeight = weight*(pept.count);
+                    map.set(code, count + scaledWeight);
+                    numAnnotations += scaledWeight;
+                }
             }
         }
         for (let [key, value] of map.entries()) {

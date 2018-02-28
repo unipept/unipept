@@ -66,6 +66,7 @@ class UniprotEntry < ApplicationRecord
                  .each_with_object(Hash.new(0)) { |num, acc| acc[num] += 1; }
 
     {
+      numPeptides: entries.length,
       go: {
         data: go_summary,
         numAnnotatedPeptides: entries.count { |e| !e.go_terms.empty? }
