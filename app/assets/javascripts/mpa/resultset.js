@@ -91,7 +91,7 @@ class Resultset {
 
     /**
      * Prepares the list of originalPeptides for use in the application by
-     * cleaving, filtering, equating IL and finally generating a frequence table
+     * cleaving, filtering, equating IL and finally generating a frequency table
      *
      * @param  {string[]} originalPeptides A list of peptides
      * @param  {boolean} il should we equate I and L
