@@ -1,4 +1,4 @@
-//https://github.com/gkz/es-collections
+// https://github.com/gkz/es-collections
 function heapify(data, compareFunction) {
     for (let i = Math.floor((data.length - 2) / 2); i >= 0; i--) {
         sink(data, compareFunction, i);
@@ -30,7 +30,7 @@ function sink(data, compareFunction, index) {
     while (2 * index + 1 < size) {
         let targetIndex = 2 * index + 1;
         if (targetIndex < size - 1
-                && compareFunction(data[targetIndex + 1], data[targetIndex]) < 0) {
+            && compareFunction(data[targetIndex + 1], data[targetIndex]) < 0) {
             targetIndex++;
         }
         if (compareFunction(value, data[targetIndex]) <= 0) {
@@ -118,7 +118,7 @@ export default class PriorityQueue {
         this[data] = [];
     }
     has(item) {
-        for(let i = 0; i < this.size; i++) {
+        for (let i = 0; i < this.size; i++) {
             if (this[comp](item, this[data][i]) === 0) {
                 return true;
             }
@@ -133,7 +133,7 @@ export default class PriorityQueue {
             callback.call(thisArg, item, this);
         }
     }
-    *[Symbol.iterator]() {
+    * [Symbol.iterator]() {
         for (let i = 0; i < this.size; i++) {
             yield this[data][i];
         }

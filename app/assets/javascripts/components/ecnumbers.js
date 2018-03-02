@@ -57,14 +57,14 @@ export default class ECNumbers {
      * @access private
      */
     addMissing(newEC, map = null) {
-        const result = (map === null ? new Map(newEC.map(x=>[x.code, x])) : map);
+        const result = (map === null ? new Map(newEC.map(x => [x.code, x])) : map);
 
         for (const curEc of newEC) {
             const parts = curEc.code.split(".");
             const numSpecific = parts.includes("-") ? parts.indexOf("-") : parts.length;
             result.set(curEc.code, curEc); // overrides if exists
 
-            for (let i = numSpecific-1; i>=1; i--) {
+            for (let i = numSpecific - 1; i >= 1; i--) {
                 parts[i] = "-";
                 const newKey = parts.join(".");
                 if (!result.has(newKey)) {
@@ -127,13 +127,13 @@ export default class ECNumbers {
         treeViewOptions["levelsToExpand"] = treeViewOptions["levelsToExpand"] || 1;
 
         const rootData = this.treeData();
-        const tree= $(target).empty().treeview(rootData, treeViewOptions);
+        const tree = $(target).empty().treeview(rootData, treeViewOptions);
 
         // expand certain nodes
         // iteratively open the leaf with the largest count
         if (autoExpand) {
             const root = tree.getRoot();
-            let allowedCount = root.data.count*2;
+            let allowedCount = root.data.count * 2;
             const pq = new PriorityQueue((a, b) => b.data.count - a.data.count);
             root.children.forEach(c => pq.add(c));
             while (allowedCount > 0) {
@@ -145,7 +145,7 @@ export default class ECNumbers {
             tree.update(root);
 
             // HACK: place the tree more to the left so everything is visible (after one second because there is a 750 ms delay)
-            setTimeout(() => d3.select(target+">svg>g>g").attr("transform", `translate(85,${(treeViewOptions.height || 600) / 2})`), 1000);
+            setTimeout(() => d3.select(target + ">svg>g>g").attr("transform", `translate(85,${(treeViewOptions.height || 600) / 2})`), 1000);
         }
         return tree;
     }
@@ -171,7 +171,7 @@ export default class ECNumbers {
 
             // Create a node for the new EC-code and place it in the map
             const toInsert = {
-                id: code.split(".").map(x => ("0000"+x).slice(-4)).join("."),
+                id: code.split(".").map(x => ("0000" + x).slice(-4)).join("."),
                 name: code,
                 children: [],
                 data: {self_count: count, count: count, data: data},
@@ -213,12 +213,12 @@ export default class ECNumbers {
      * @param {bool} [includeRoot=false] weather to include the root (-.-.-.-)
      * @return {[string]}  Ancestors of the EC number (from specific to generic)
      */
-    static ancestorsOf(ecNum, includeRoot=false) {
+    static ancestorsOf(ecNum, includeRoot = false) {
         const result = [];
         const parts = ecNum.split(".");
         const numSpecific = parts.includes("-") ? parts.indexOf("-") : parts.length;
 
-        for (let i = numSpecific-1; i>=1; i--) {
+        for (let i = numSpecific - 1; i >= 1; i--) {
             parts[i] = "-";
             result.push(parts.join("."));
         }
@@ -238,7 +238,7 @@ export default class ECNumbers {
      * @return {int}  Ancestors of the EC number (from specific to generic)
      */
     static levelOf(ecNum) {
-        return (ecNum+".-").split(".").indexOf("-");
+        return (ecNum + ".-").split(".").indexOf("-");
     }
 
     /**

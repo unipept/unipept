@@ -163,7 +163,7 @@ function initSequenceShow(data) {
      * @return {string}    HTML for the tooltip
      */
     function tooltipEC(ecNumber, ecResultSet = null) {
-        const fmt= x=>`<div class="tooltip-ec-ancestor"><span class="tooltip-ec-term">EC ${x}</span><span class="tooltip-ec-name">${ECNumbers.nameOf(x)}</span></div>`;
+        const fmt = x => `<div class="tooltip-ec-ancestor"><span class="tooltip-ec-term">EC ${x}</span><span class="tooltip-ec-name">${ECNumbers.nameOf(x)}</span></div>`;
 
         let result = `
             <h4 class="tooltip-fa-title">
@@ -236,7 +236,7 @@ function initSequenceShow(data) {
                 { // Count
                     text: d => d.value.toString(),
                     style: {"width": "5em"},
-                    shade: d=>100*d.value/ecResultSet.getTotalSetSize(),
+                    shade: d => 100 * d.value / ecResultSet.getTotalSetSize(),
                 },
                 { // EC-number
                     html: d => {
@@ -252,8 +252,7 @@ function initSequenceShow(data) {
             ],
             tooltip: d => tooltipEC(d.code, ecResultSet),
             tooltipID: "#tooltip",
-        }
-        ).draw();
+        }).draw();
     }
 
     /**
@@ -318,7 +317,7 @@ function initSequenceShow(data) {
                 { // Count
                     text: d => d.value,
                     style: {"width": "5em"},
-                    shade: d=>100*d.value/numAnnotatedPeptides,
+                    shade: d => 100 * d.value / numAnnotatedPeptides,
                 },
                 { // Go term
                     html: d => `<a href="https://www.ebi.ac.uk/QuickGO/term/${d.code}" target="_blank">${d.code}</a>`,
@@ -331,8 +330,7 @@ function initSequenceShow(data) {
             ],
             tooltip: d => tooltipGO(d.code, goResultset),
             tooltipID: "#tooltip",
-        }
-        ).draw();
+        }).draw();
     }
 
     function setUpQuickGo(goResultset, variant, variantName, target) {
@@ -340,8 +338,8 @@ function initSequenceShow(data) {
         const quickGoChartURL = GOTerms.quickGOChartURL(top5);
         const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${numberToPercent(goResultset.getFractionOf(x))})`);
         const top5sentence = top5WithNames.slice(0, -1).join(", ")
-                             + (top5.length > 1 ? " and ": "")
-                             + top5WithNames[top5WithNames.length-1];
+            + (top5.length > 1 ? " and " : "")
+            + top5WithNames[top5WithNames.length - 1];
         target
             .append("div").attr("class", "col-xs-4")
             .append("img")
@@ -349,7 +347,7 @@ function initSequenceShow(data) {
             .attr("class", "quickGoThumb")
             .attr("title", `QuickGO chart of ${top5sentence}`)
             .on("click", () => {
-                showInfoModal("QuickGo "+variantName, `
+                showInfoModal("QuickGo " + variantName, `
                     This chart shows the realationship between the ${top5.length} most occuring GO terms: ${top5sentence}.<br/>
                     <a href="${quickGoChartURL}" target="_blank" title="Click to enlarge in new tab"><img style="max-width:100%" src="${quickGoChartURL}" alt="QuickGO chart of ${top5sentence}"/></a>
                     <br>
@@ -371,8 +369,8 @@ function initSequenceShow(data) {
             .mouseenter(() => {$tooltip.css(tooltipShowCSS);})
             .mouseleave(() => {$tooltip.css(tooltipHideCSS);})
             .mousemove(function (e) {
-                $tooltip.css("top", e.pageY+10);
-                $tooltip.css("left", e.pageX+10);
+                $tooltip.css("top", e.pageY + 10);
+                $tooltip.css("left", e.pageX + 10);
             });
     }
 

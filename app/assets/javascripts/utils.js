@@ -41,7 +41,7 @@ function brightness(rgb) {
  * @param  {String}  [fileType] file type like "text/csv"
  * @return {Promise.<string>}
  */
-function downloadDataByForm(data, fileName, fileType=null) {
+function downloadDataByForm(data, fileName, fileType = null) {
     return new Promise(function (resolve, reject) {
         let nonce = Math.random();
         $("form.download").remove();
@@ -86,7 +86,7 @@ function downloadDataByLink(dataURL, fileName) {
 function get(url) {
     // Return a new promise.
     return new Promise(function (resolve, reject) {
-    // Do the usual XHR stuff
+        // Do the usual XHR stuff
         let req = new XMLHttpRequest();
         req.open("GET", url);
 
@@ -164,7 +164,7 @@ function logErrorToGoogle(errorMessage) {
  * Logs data to Google Analytics
  */
 function logToGoogle(page, action, name, value) {
-    if (typeof(_gaq) !== "undefined") {
+    if (typeof (_gaq) !== "undefined") {
         if (name === undefined) {
             _gaq.push(["_trackEvent", page, action]);
         } else if (value === undefined) {
@@ -218,8 +218,10 @@ function stringHash(s) {
  * Change string to title cases
  * https://stackoverflow.com/a/196991
  */
-function stringTitleize(s){
-    return s.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+function stringTitleize(s) {
+    return s.replace(/\w\S*/g, function (txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
 }
 
 /**
@@ -246,8 +248,7 @@ function toCSVString(grid) {
             } else {
                 return content;
             }
-        }).join(",")
-    ).join("\n\r");
+        }).join(",")).join("\n\r");
 }
 
 
@@ -258,8 +259,8 @@ function toCSVString(grid) {
  * @param  {Number} [digits=0] [description]
  * @return {string}            [description]
  */
-function numberToPercent(number, digits=0) {
-    return (100*number).toFixed(digits)+"%";
+function numberToPercent(number, digits = 0) {
+    return (100 * number).toFixed(digits) + "%";
 }
 
 /**
