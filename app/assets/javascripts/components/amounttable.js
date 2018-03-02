@@ -43,7 +43,7 @@ class AmountTable {
      *
      * @param {AmountTableSettings} settings
      */
-    constructor({el, title=null, header = null, data, contents=null, limit=Infinity, tooltip=null, tooltipID=null}) {
+    constructor({el, title = null, header = null, data, contents = null, limit = Infinity, tooltip = null, tooltipID = null}) {
         this.el = el;
         this.title = title;
         this.header = header;
@@ -119,7 +119,7 @@ class AmountTable {
             .append("th")
             .attr("scope", "col")
             .text(d => d);
-        const lastCell = d3.select(headerCells[0][headerCells.size()-1]);
+        const lastCell = d3.select(headerCells[0][headerCells.size() - 1]);
         lastCell
             .append("button")
             .classed("btn btn-default btn-xs btn-animate amounttable-download", true)
@@ -133,13 +133,13 @@ class AmountTable {
      */
     buildRow(tbody) {
         const rows = tbody.selectAll("tr")
-            .data(this.collapsed ? this.data.slice(0, this.limit): this.data);
+            .data(this.collapsed ? this.data.slice(0, this.limit) : this.data);
 
         rows.exit().remove(); // remove rows that are no longer needed
 
         const row = rows.enter().append("tr");
         for (const colSpec of this.contents) {
-            const {html=null, text=null, style=null, shade=false} = colSpec;
+            const {html = null, text = null, style = null, shade = false} = colSpec;
             const cell = row.append("td");
 
             if (shade !== false) {
@@ -162,7 +162,7 @@ class AmountTable {
                 if (text !== null) {
                     cell.text(d => text(d));
                 } else {
-                    throw new Error("Neither text nor html given for column"+ JSON.stringify(colSpec));
+                    throw new Error("Neither text nor html given for column" + JSON.stringify(colSpec));
                 }
             }
         }
@@ -219,19 +219,19 @@ class AmountTable {
      */
     toCSV() {
         const result = [this.header];
-        const htmlHelperSpan= document.createElement("span");
+        const htmlHelperSpan = document.createElement("span");
         for (const entry of this.data) {
             const values = [];
             for (const colSpec of this.contents) {
-                const {html=null, text=null} = colSpec;
+                const {html = null, text = null} = colSpec;
                 if (text !== null) {
                     values.push(text(entry));
                 } else {
                     if (html !== null) {
-                        htmlHelperSpan.innerHTML= html(entry);
+                        htmlHelperSpan.innerHTML = html(entry);
                         values.push(htmlHelperSpan.textContent);
                     } else {
-                        throw new Error("Neither text nor html given for column"+ JSON.stringify(colSpec));
+                        throw new Error("Neither text nor html given for column" + JSON.stringify(colSpec));
                     }
                 }
             }

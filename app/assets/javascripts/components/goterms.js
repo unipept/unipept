@@ -26,7 +26,7 @@ export default class GOTerms {
     constructor({numAnnotatedPeptides, data}) {
         this.numTotalSet = numAnnotatedPeptides;
         this.go = new Map();
-        Object.values(data).forEach(v=>v.forEach(goTerm => this.go.set(goTerm.code, goTerm)));
+        Object.values(data).forEach(v => v.forEach(goTerm => this.go.set(goTerm.code, goTerm)));
         GOTerms.addData(Array.from(this.go.values()));
 
         // Sort values to store and have every namespace
