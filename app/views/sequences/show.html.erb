@@ -101,7 +101,7 @@
         <div class="tab-pane" id="go">
           <h2>Gene Ontology annotations</h2>
           <%=@fa_summary[:go][:numAnnotatedPeptides] %> of the <%=@entries.length%> matched peptides (<%='%.1f' % (100*@fa_summary[:go][:numAnnotatedPeptides].fdiv(@entries.length))%>%) had a GO term annotation.
-          <div id="go-pannel">Please wait while we are building a summary</div>
+          <div id="go-panel">Please wait while we are building a summary</div>
         </div>
         <div class="tab-pane" id="ec">
           <div class="buttons-single">
