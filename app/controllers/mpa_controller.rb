@@ -28,7 +28,7 @@ class MpaController < ApplicationController
   end
 
   def pept2fa
-    equate_il = (params[:equate_il] == 'equateIL')
+    equate_il = params[:equate_il]
     peptides = params[:peptides] || []
 
     #Lookup the peptides
