@@ -177,8 +177,7 @@ function initSequenceShow(data) {
 
         if (ecResultSet != null) {
             const count = ecResultSet.getValueOf(ecNumber);
-            result += `<div class="tooltip-fa-text">Specificly assigned to ${numberToPercent(ecResultSet.getFractionOf(ecNumber), 1)} (${count}) of
-            annotated matches</div>`;
+            result += `<div class="tooltip-fa-text">Assigned to ${count} of ${ecResultSet.getTotalSetSize()} annotated matched proteins (${numberToPercent(ecResultSet.getFractionOf(ecNumber), 1)})</div>`;
         }
         return result;
     }
@@ -202,8 +201,7 @@ function initSequenceShow(data) {
                 if (d.data.self_count == 0) {
                     tip += "no specific annotations";
                 } else {
-                    tip += `specificly assigned to ${numberToPercent(d.data.self_count/ecResultSet.getTotalSetSize(), 1)} (${d.data.self_count})
-                            annotated matches`;
+                    tip += `Assigned to ${d.data.self_count} of ${ecResultSet.getTotalSetSize()} annotated matched proteins (${numberToPercent(d.data.self_count / ecResultSet.getTotalSetSize(), 1)})`;
                 }
 
                 tip += "</div>";
@@ -274,8 +272,7 @@ function initSequenceShow(data) {
 
         if (goResultSet != null) {
             const count = goResultSet.getValueOf(goTerm);
-            result += `<div class="tooltip-fa-text">Specificly assigned to ${numberToPercent(goResultSet.getFractionOf(goTerm), 1)} (${count}) of
-            annotated matches</div>`;
+            result += `<div class="tooltip-fa-text">Assigned to ${count} of ${goResultSet.getTotalSetSize()} annotated matched proteins (${numberToPercent(goResultSet.getFractionOf(goTerm), 1)})</div>`;
         }
         return result;
     }
