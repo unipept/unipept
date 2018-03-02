@@ -17,9 +17,9 @@
     <div class='card-title card-title-colored'>
       <div id="single-peptide-tabs">
         <ul class="nav nav-tabs">
-          <li class="active"><a href="#lineage-tree" id="lineage-tree-tab" data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+          <li class="active"><a href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
+          <li><a href="#lineage-tree" id="lineage-tree-tab" data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
           <li><a href="#lineage-table" id="lineage-table-tab" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
-          <li><a href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
           <li><a href="#go" data-toggle="tab">GO</a></li>
           <li><a href="#ec" data-toggle="tab">EC</a></li>
         </ul>
@@ -27,40 +27,7 @@
     </div>
     <div class='card-supporting-text'>
       <div class="tab-content">
-        <div class="tab-pane active" id="lineage-tree">
-          <div id="buttons-single" class="buttons-single"></div>
-          <div id="lineageTree"></div>
-        </div>
-        <div class="tab-pane" id="lineage-table">
-          <div id="sequence_table">
-            <% colors = Hash.new %>
-            <table class="table table-condensed">
-              <thead>
-                <tr>
-                  <% for rank in @table_ranks do%>
-                    <th><%= rank %></th>
-                  <% end %>
-                </tr>
-              </thead>
-              <% i = -1 %>
-              <% for lineage in @table_lineages do%>
-                <% i += 1 %>
-                <tr>
-                  <td><strong><%= lineage.delete_at(0) %></strong></td>
-                  <% for rank in lineage do%>
-                    <% if !rank.nil? %>
-                      <% colors.store(rank.id, "c"+(i%30).to_s) if !colors.has_key?(rank.id) %>
-                      <td class="<%= colors[rank.id] %>"><%= link_to rank.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + rank.id.to_s, :target => "_blank", :title => "Open in NCBI" %></td>
-                    <% else %>
-                      <td></td>
-                    <% end %>
-                  <% end %>
-                </tr>
-              <% end %>
-            </table>
-          </div>
-        </div>
-        <div class="tab-pane" id="proteins">
+        <div class="tab-pane active" id="proteins">
           <div class="buttons-single">
             <button id="clipboard-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-copy"></span> Copy to clipboard</button>
             <button id="open-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-new-window"></span> Open in UniProt</button>
@@ -97,6 +64,39 @@
               <% end %>
             <% end %>
           </table>
+        </div>
+        <div class="tab-pane" id="lineage-tree">
+          <div id="buttons-single" class="buttons-single"></div>
+          <div id="lineageTree"></div>
+        </div>
+        <div class="tab-pane" id="lineage-table">
+          <div id="sequence_table">
+            <% colors = Hash.new %>
+            <table class="table table-condensed">
+              <thead>
+                <tr>
+                  <% for rank in @table_ranks do%>
+                    <th><%= rank %></th>
+                  <% end %>
+                </tr>
+              </thead>
+              <% i = -1 %>
+              <% for lineage in @table_lineages do%>
+                <% i += 1 %>
+                <tr>
+                  <td><strong><%= lineage.delete_at(0) %></strong></td>
+                  <% for rank in lineage do%>
+                    <% if !rank.nil? %>
+                      <% colors.store(rank.id, "c"+(i%30).to_s) if !colors.has_key?(rank.id) %>
+                      <td class="<%= colors[rank.id] %>"><%= link_to rank.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + rank.id.to_s, :target => "_blank", :title => "Open in NCBI" %></td>
+                    <% else %>
+                      <td></td>
+                    <% end %>
+                  <% end %>
+                </tr>
+              <% end %>
+            </table>
+          </div>
         </div>
         <div class="tab-pane" id="go">
           <h2>Gene Ontology annotations</h2>
