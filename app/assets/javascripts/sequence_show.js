@@ -22,8 +22,8 @@ import "unipept-visualizations/src/treeview/treeview.js";
  */
 function initSequenceShow(data) {
     const $tooltip = $("#tooltip");
-    const pannelWidth = 916;
-    const pannelHeight = 600;
+    const panelWidth = 916;
+    const panelHeight = 600;
     // set up the fancy tree
     initLineageTree(data.tree);
 
@@ -121,8 +121,8 @@ function initSequenceShow(data) {
 
         function resizeFullScreen() {
             setTimeout(function () {
-                let width = pannelWidth,
-                    height = pannelHeight;
+                let width = panelWidth,
+                    height = panelHeight;
                 if (window.fullScreenApi.isFullScreen()) {
                     width = $(window).width();
                     height = $(window).height();
@@ -191,8 +191,8 @@ function initSequenceShow(data) {
      */
     function setUpECTree(ecResultSet) {
         const tree = ecResultSet.createTree("#ec-treeview", {
-            width: pannelWidth,
-            height: pannelHeight,
+            width: panelWidth,
+            height: panelHeight,
             getTooltip: d => {
                 const fullcode = (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
                 let tip = tooltipEC(fullcode);
@@ -283,18 +283,18 @@ function initSequenceShow(data) {
     function setUpGO({numAnnotatedPeptides, data}) {
         const goResultset = new GOTerms({numAnnotatedPeptides, data});
 
-        $("#go-pannel").empty();
-        const goPannel = d3.select("#go-pannel");
+        $("#go-panel").empty();
+        const goPanel = d3.select("#go-panel");
         for (const variant of GOTerms.NAMESPACES) {
             const variantName = stringTitleize(variant);
-            goPannel.append("h3").text(variantName);
+            goPanel.append("h3").text(variantName);
 
             if (variant in data) {
-                const article = goPannel.append("div").attr("class", "row");
+                const article = goPanel.append("div").attr("class", "row");
                 setUpGoTable(goResultset, variant, article);
                 setUpQuickGo(goResultset, variant, variantName, article);
             } else {
-                goPannel.append("span").text("No GO term annotations in this namespace.");
+                goPanel.append("span").text("No GO term annotations in this namespace.");
             }
         }
 
@@ -386,8 +386,8 @@ function initSequenceShow(data) {
                 bottom: 5,
                 left: 60,
             },
-            width = pannelWidth - margin.right - margin.left,
-            height = pannelHeight - margin.top - margin.bottom;
+            width = panelWidth - margin.right - margin.left,
+            height = panelHeight - margin.top - margin.bottom;
 
         let zoomEnd = 0,
             i = 0,
