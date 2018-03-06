@@ -1,8 +1,12 @@
 package org.unipept.storage;
 
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.io.IOException;
 import java.io.File;
@@ -82,8 +86,15 @@ public class TableWriter implements UniprotObserver {
         long uniprotEntryId = addUniprotEntry(entry.getUniprotAccessionNumber(), entry.getVersion(),
                 entry.getTaxonId(), entry.getType(), entry.getName(), entry.getSequence());
         if (uniprotEntryId != -1) { // failed to add entry
+
+            // todo make cleaner
+            String faSummary = Stream.of(
+                entry.getGOReferences().stream().map(UniprotGORef::getId),
+                entry.getECReferences().stream().map(x->"EC:"+x.getId())
+            ).flatMap(i -> i).collect(Collectors.joining(";"));
+            
             for(String sequence : entry.digest()) {
-                addData(sequence.replace('I', 'L'), uniprotEntryId, sequence);
+                addData(sequence.replace('I', 'L'), uniprotEntryId, sequence, faSummary);
             }
             for (UniprotDbRef ref : entry.getDbReferences())
                 addDbRef(ref, uniprotEntryId);
@@ -178,13 +189,16 @@ public class TableWriter implements UniprotObserver {
      *            retrieved.
      * @param originalSequence
      *            The original sequence of the peptide.
+     * @param functionalAnnotations
+     *            A semicollon separated list of allocated functional analysis terms
      */
-    public void addData(String unifiedSequence, long uniprotEntryId, String originalSequence) {
+    public void addData(String unifiedSequence, long uniprotEntryId, String originalSequence, String functionalAnnotations) {
         try {
             peptides.write(
                     unifiedSequence,
                     originalSequence,
-                    Long.toString(uniprotEntryId)
+                    Long.toString(uniprotEntryId),
+                    functionalAnnotations
                     );
         } catch(IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
