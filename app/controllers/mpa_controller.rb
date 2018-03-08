@@ -31,16 +31,10 @@ class MpaController < ApplicationController
     equate_il = params[:equate_il]
     peptides = params[:peptides] || []
 
-    #Lookup the peptides
-    @peptides = Sequence
-        .includes(Sequence.peptides_relation_name(equate_il) => { uniprot_entry: %i[go_cross_references ec_cross_references] })
-        .where(sequence: peptides)
-
-    @results_fa = Hash.new
-
+    @peptides = Sequence.where(sequence: peptides)
+    @results_fa = {}
     @peptides.each do |sequence|
-      entries = sequence.peptides(equate_il).map(&:uniprot_entry)
-      @results_fa[sequence.sequence] = UniprotEntry.summarize_fa(entries)
+      @results_fa[sequence.sequence] = sequence.calculate_fa(equate_il)
     end
   end
 

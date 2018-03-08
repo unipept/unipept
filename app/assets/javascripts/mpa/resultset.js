@@ -48,15 +48,9 @@ class Resultset {
             const faQuery = Dataset.postJSON(Dataset.PEPT2FA_URL, data);
 
             await Promise.all([lcaQuery, faQuery]).then(([lcaResult, faResult]) => {
-                let faMapping = new Map(faResult.peptides.map(v=>[v.sequence, v]));
-
                 for (let pept of lcaResult.peptides) {
-                    let faData = faMapping.get(pept.sequence);
-                    pept.fa = {
-                        numPeptides: faData.numPeptides,
-                        go: faData.go,
-                        ec: faData.ec,
-                    };
+                    let faData = faResult.peptides[pept.sequence];
+                    pept.fa = faData;
                 }
 
                 this.processedPeptides.push(...lcaResult.peptides);
@@ -156,14 +150,19 @@ class Resultset {
      * @param {number} [percent=50] ignore data weighing less (to be removed)
      */
     async summarizeGo(percent = 50) {
+        let usedGoTerms = Array.from(new Set([].concat(...this.processedPeptides.map(x=>Object.keys(x.fa.data).filter(x => x.startsWith("GO:"))))).values());
+        await GOTerms.addMissingNames(usedGoTerms);
+
         let res = {};
+        const countExtractor = pept => pept.fa.counts["GO"] || 0;
         for (let namespace of GOTerms.NAMESPACES) {
-            const dataExtractor = pept => (pept.fa.go.data || {})[namespace] || [];
-            const countExtractor = pept => pept.fa.go.numAnnotatedPeptides || 0;
+            const dataExtractor = pept => Object.entries(pept.fa.data)
+                .filter(([a, b]) => a.startsWith("GO") && GOTerms.namespaceOf(a) == namespace)
+                .map(([a, b])=>({code: a, value: b})) || [];
             res[namespace] = this.summarizeFa(dataExtractor, countExtractor, percent);
         }
         this.go = new GOTerms({data: res}, false);
-        await this.go.ensureData();
+        // await this.go.ensureData(); we already fetched everything
     }
 
     /**
@@ -173,8 +172,8 @@ class Resultset {
      * @param {number} [percent=50] ignore data weighing less (to be removed)
      */
     async summarizeEc(percent = 50) {
-        const dataExtractor = pept => pept.fa.ec.data || [];
-        const countExtractor = pept => pept.fa.ec.numAnnotatedPeptides || 0;
+        const dataExtractor = pept => Object.entries(pept.fa.data).filter(([a, b]) => a.startsWith("EC")).map(([a, b])=>({code: a.replace("EC:", ""), value: b})) || [];
+        const countExtractor = pept => pept.fa.counts["EC"] || 0;
         const result = this.summarizeFa(dataExtractor, countExtractor, percent);
         this.ec = new ECNumbers({data: result}, false);
         await this.ec.ensureData();

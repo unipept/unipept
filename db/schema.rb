@@ -163,6 +163,8 @@ ActiveRecord::Schema.define(version: 0) do
     t.string  "sequence", limit: 50, null: false
     t.integer "lca",      limit: 3
     t.integer "lca_il",   limit: 3
+    t.binary "fa"
+    t.binary "fa_il"
   end
 
   add_index "sequences", ["lca"], name: "fk_sequences_taxons", using: :btree

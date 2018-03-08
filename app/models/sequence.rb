@@ -6,6 +6,8 @@
 #  sequence :string(50)       not null
 #  lca      :integer
 #  lca_il   :integer
+#  fa       :blob
+#  fa_il    :blob
 #
 
 require 'ostruct'
@@ -50,6 +52,17 @@ class Sequence < ApplicationRecord
     else
       return lca_t if return_taxon
       lca
+    end
+  end
+
+  # Calculates thefor this sequence
+  def calculate_fa(equate_il = true)
+    data = equate_il ? fa_il : fa
+    data.presence || nil
+    if data.present?
+      Oj.load(data)
+    else
+      { 'num' => { 'all' => 0, 'EC' => 0, 'GO' => 0 }, 'data' => {} }
     end
   end
 
