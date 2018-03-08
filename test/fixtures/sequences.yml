@@ -6,6 +6,8 @@
 #  sequence :string(50)       not null
 #  lca      :integer
 #  lca_il   :integer
+#  fa       :blob
+#  fa_il    :blob
 #
 
 sequence1:
@@ -13,45 +15,60 @@ sequence1:
     sequence: "AALER"
     lca: 2
     lca_il: 1
+    fa: '{"num":{"all":1,"EC":1,"GO":1},"data":{"GO:0016569":1,"GO:0006281":1,"GO:0000781":1,"EC:2.7.11.1":1}}'
+    fa_il: '{"num":{"all":22,"EC":4,"GO":2},"data":{"EC:2.7.11.1":4,"GO:0004674":1,"GO:0005634":1,"GO:0005524":1,"GO:0016301":1}}'
 
 sequence2:
     id: 2
     sequence: "AAIER"
     lca: 2
     lca_il: 1
-
+    fa:
+    fa_il:
 sequence3:
     id: 3
     sequence: "RANDOM"
     lca: 1
     lca_il: 1
+    fa:
+    fa_il:
 
 sequence4:
     id: 4
     sequence: "AAILER"
     lca: 1
     lca_il: 2
+    fa:
+    fa_il:
 
 sequence5:
     id: 5
     sequence: "AALLER"
     lca: 2
     lca_il: 1
+    fa:
+    fa_il:
 
 sequence6:
     id: 6
     sequence: "AGGAR"
     lca: 1
     lca_il: 1
+    fa:
+    fa_il:
 
 sequence7:
     id: 7
     sequence: "TEST"
     lca: 13
     lca_il: 13
+    fa:
+    fa_il:
 
 sequence8:
     id: 8
     sequence: "TAST"
     lca: 13
     lca_il: 13
+    fa:
+    fa_il:

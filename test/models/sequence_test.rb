@@ -6,6 +6,8 @@
 #  sequence :string(50)       not null
 #  lca      :integer
 #  lca_il   :integer
+#  fa       :blob
+#  fa_il    :blob
 #
 
 require 'test_helper'
@@ -99,6 +101,20 @@ class SequenceTest < ActiveSupport::TestCase
     assert_equal taxon2, sequence1.calculate_lca(false, true)
     assert_equal taxon2.id, sequence1.calculate_lca(false, false)
   end
+
+  test 'should give correct result for calculate_fa' do
+    sequence1 = sequences(:sequence1)
+    sequence2 = sequences(:sequence2)
+    expected1_fa = {"num"=>{"all"=>1, "EC"=>1, "GO"=>1}, "data"=>{"GO:0016569"=>1, "GO:0006281"=>1, "GO:0000781"=>1, "EC:2.7.11.1"=>1}}
+    expected1_fa_il = {"num"=>{"all"=>22, "EC"=>4, "GO"=>2}, "data"=>{"EC:2.7.11.1"=>4, "GO:0004674"=>1, "GO:0005634"=>1, "GO:0005524"=>1, "GO:0016301"=>1}}
+    expected_nil_fallback = {"num"=>{"all"=>0, "EC"=>0, "GO"=>0}, "data"=>{}}
+    assert_equal expected1_fa, sequence1.calculate_fa(false)
+    assert_equal expected1_fa_il, sequence1.calculate_fa
+    assert_equal expected1_fa_il, sequence1.calculate_fa(true)
+    assert_equal   expected_nil_fallback, sequence2.calculate_fa(false)
+    assert_equal   expected_nil_fallback, sequence2.calculate_fa(true)
+  end
+
 
   test 'should give correct result for single_search' do
     sequence1 = sequences(:sequence1)
