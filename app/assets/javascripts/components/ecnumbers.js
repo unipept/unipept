@@ -7,6 +7,8 @@ import {postJSON} from "../utils.js";
  * @property {string} code  The code of the GO/EC number
  */
 
+const BATCH_SIZE = 1000;
+
 /**
  * Class to contain the results of a fetch of EC numbers.
  *
@@ -212,7 +214,7 @@ export default class ECNumbers {
         }
         return "Unknown";
     }
- 
+
     /**
      * Gets a list of ancestors of a given EC number.
      *
@@ -272,8 +274,12 @@ export default class ECNumbers {
     static async addMissingNames(codes) {
         const todo = codes.filter(c => !this.ecNames.has(c));
         if (todo.length > 0) {
-            const res = await postJSON("/private_api/ecnumbers", JSON.stringify({ecnumbers: todo}));
-            ECNumbers.addNames(res);
+            for (let i = 0; i < todo.length; i += BATCH_SIZE) {
+                const res = await postJSON("/private_api/ecnumbers", JSON.stringify({
+                    ecnumbers: todo.slice(i, i + BATCH_SIZE),
+                }));
+                ECNumbers.addNames(res);
+            }
         }
     }
 }
