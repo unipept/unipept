@@ -7,6 +7,7 @@ import {postJSON} from "../utils.js";
  * @property {string} code  The code of the GO/EC number
  */
 
+const BATCH_SIZE = 1000;
 const NAMESPACES = ["biological process", "cellular component", "molecular function"];
 
 /**
@@ -141,8 +142,12 @@ export default class GOTerms {
     static async addMissingNames(codes) {
         const todo = codes.filter(c => !this.goData.has(c));
         if (todo.length > 0) {
-            const res = await postJSON("/private_api/goterms", JSON.stringify({goterms: todo}));
-            GOTerms.addData(res);
+            for (let i = 0; i < todo.length; i += BATCH_SIZE) {
+                const res = await postJSON("/private_api/goterms", JSON.stringify({
+                    goterms: todo.slice(i, i + BATCH_SIZE),
+                }));
+                GOTerms.addData(res);
+            }
         }
     }
 
