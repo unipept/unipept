@@ -15,11 +15,15 @@ import {toCSVString, downloadDataByForm} from "../utils.js";
 
 /**
  * @typedef {Object} AmountTableColSpec
+ * @property {function(cell: d3.selection[]): string} [builder=null]
+ *           Function that builds the cells content using D3.
+ *           The argument is a cell that has the data about the row.
+ *           (Builder is only used when rendering the table and is preferred over html)
  * @property {function(data: Any): string} [html=null]
  *           Function that generates the HTML content of the cell
  *           (text is used if not supplied)
  * @property {function(data: Any): string} [text=null]
- *           Function that generates the HTML content of the cell
+ *           Function that generates the text content of the cell
  *           (html is preferred over text in when rendering a table, text is
  *           preferred when exporting to csv)
  * @property {object} [style=null]
@@ -139,7 +143,7 @@ class AmountTable {
 
         const row = rows.enter().append("tr");
         for (const colSpec of this.contents) {
-            const {html = null, text = null, style = null, shade = false} = colSpec;
+            const {html = null, text = null, builder = null, style = null, shade = false} = colSpec;
             const cell = row.append("td");
 
             if (shade !== false) {
@@ -156,13 +160,17 @@ class AmountTable {
                 }
             }
 
-            if (html !== null) {
-                cell.html(d => html(d));
+            if (builder != null) {
+                builder(cell);
             } else {
-                if (text !== null) {
-                    cell.text(d => text(d));
+                if (html !== null) {
+                    cell.html(d => html(d));
                 } else {
-                    throw new Error("Neither text nor html given for column" + JSON.stringify(colSpec));
+                    if (text !== null) {
+                        cell.text(d => text(d));
+                    } else {
+                        throw new Error("No text, html or builder given for column" + JSON.stringify(colSpec));
+                    }
                 }
             }
         }
