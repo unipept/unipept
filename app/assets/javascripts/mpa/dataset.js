@@ -157,6 +157,16 @@ class Dataset {
     }
 
     /**
+     * Returns a list of sequences that have the specified FA term
+     * @param {String} faName The name of the FA term (GO:000112, EC:1.5.4.1)
+     * @return {[{sequence, totalCount, relativeCount}]} A list of objects representing
+     *                                                   the matches
+     */
+    getPeptidesByFA(faName) {
+        return this.resultset.getPeptidesByFA(faName);
+    }
+
+    /**
      * Fetches the taxon info from the Unipept API for a list of taxon id's and
      * returns an Array of objects containing the id, name and rank for each
      * result.

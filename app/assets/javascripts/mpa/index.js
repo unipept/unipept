@@ -1,4 +1,4 @@
-import {addCopy, downloadDataByForm, logToGoogle, triggerDownloadModal, numberToPercent, stringTitleize} from "../utils.js";
+import {addCopy, downloadDataByForm, logToGoogle, triggerDownloadModal, numberToPercent, stringTitleize, toCSVString} from "../utils.js";
 import {Dataset} from "./dataset.js";
 import {constructSearchtree} from "./searchtree.js";
 import {showInfoModal} from "../modal.js";
@@ -60,6 +60,15 @@ class MPA {
         return dataset;
     }
 
+    downloadPeptidesFor(name) {
+        const dataset = this.datasets[0];
+        const result = [["sequence", "count", "evidence"]]
+            .concat(dataset.getPeptidesByFA(name).map(
+                x => [x.sequence, x.totalCount, x.relativeCount]
+            ));
+        downloadDataByForm(toCSVString(result), name+".csv", "text/csv");
+    }
+
     /**
      * Updates the search settings and reruns the analysis. Resolves when the
      * analysis is done.
@@ -112,7 +121,7 @@ class MPA {
         new AmountTable({
             title: `GO terms - ${variant}`,
             el: tablepart,
-            header: ["Score", "GO term", "Name"],
+            header: ["Score", "GO term", "Name", ""],
             data: goResultset.sortedTerms(variant),
             limit: 5,
             contents: [
@@ -129,6 +138,15 @@ class MPA {
                 },
                 { // name
                     text: d => GOTerms.nameOf(d.code),
+                },
+                { // List
+                    builder: cell => {
+                        const link = cell.append("a");
+                        link.on("click", d => this.downloadPeptidesFor(d.code));
+                        link.html("<span class='glyphicon glyphicon-download-alt'></span>");
+                    },
+                    text: d => "",
+                    style: {"width": "1.5em"},
                 },
             ],
             tooltip: d => this.tooltipGO(d.code, goResultset),
@@ -261,7 +279,7 @@ class MPA {
         new AmountTable({
             title: "EC numbers",
             el: target,
-            header: ["Score", "EC-Number", "Name"],
+            header: ["Score", "EC-Number", "Name", ""],
             data: ecResultSet.sortedTerms(),
             limit: 5,
             contents: [
@@ -281,6 +299,15 @@ class MPA {
                 },
                 { // name
                     text: d => ECNumbers.nameOf(d.code),
+                },
+                { // List
+                    builder: cell => {
+                        const link = cell.append("a");
+                        link.on("click", d => this.downloadPeptidesFor("EC:"+d.code));
+                        link.html("<span class='glyphicon glyphicon-download-alt'></span>");
+                    },
+                    text: d => "",
+                    style: {"width": "1.5em"},
                 },
             ],
             tooltip: d => this.tooltipEC(d.code, ecResultSet),
