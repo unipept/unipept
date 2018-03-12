@@ -144,13 +144,30 @@ class Resultset {
     }
 
     /**
+     * Returns a list of sequences that have the specified FA term
+     * @param {String} faName The name of the FA term (GO:000112, EC:1.5.4.1)
+     * @return {[{sequence, totalCount, relativeCount}]} A list of objects representing
+     *                                                   the matches
+     */
+    getPeptidesByFA(faName) {
+        const type = faName.split(":")[0];
+        return this.processedPeptides
+            .filter(pept => faName in pept.fa.data)
+            .map(pept => ({
+                sequence: pept.sequence,
+                totalCount: pept.fa.data[faName],
+                relativeCount: pept.fa.data[faName] / pept.fa.counts[type],
+            }));
+    }
+
+    /**
      * Fill `this.go` with a Map<string,GoInfo[]> per namespace. The values of the
      * maps have an additional `value` field that indicated the weight of that
      * GO number.
      * @param {number} [percent=50] ignore data weighing less (to be removed)
      */
     async summarizeGo(percent = 50) {
-        let usedGoTerms = Array.from(new Set([].concat(...this.processedPeptides.map(x=>Object.keys(x.fa.data).filter(x => x.startsWith("GO:"))))).values());
+        let usedGoTerms = Array.from(new Set([].concat(...this.processedPeptides.map(x => Object.keys(x.fa.data).filter(x => x.startsWith("GO:"))))).values());
         await GOTerms.addMissingNames(usedGoTerms);
 
         let res = {};
@@ -158,7 +175,7 @@ class Resultset {
         for (let namespace of GOTerms.NAMESPACES) {
             const dataExtractor = pept => Object.entries(pept.fa.data)
                 .filter(([a, b]) => a.startsWith("GO") && GOTerms.namespaceOf(a) == namespace)
-                .map(([a, b])=>({code: a, value: b})) || [];
+                .map(([a, b]) => ({code: a, value: b})) || [];
             res[namespace] = this.summarizeFa(dataExtractor, countExtractor, percent);
         }
         this.go = new GOTerms({data: res}, false);
@@ -172,7 +189,7 @@ class Resultset {
      * @param {number} [percent=50] ignore data weighing less (to be removed)
      */
     async summarizeEc(percent = 50) {
-        const dataExtractor = pept => Object.entries(pept.fa.data).filter(([a, b]) => a.startsWith("EC")).map(([a, b])=>({code: a.replace("EC:", ""), value: b})) || [];
+        const dataExtractor = pept => Object.entries(pept.fa.data).filter(([a, b]) => a.startsWith("EC")).map(([a, b]) => ({code: a.replace("EC:", ""), value: b})) || [];
         const countExtractor = pept => pept.fa.counts["EC"] || 0;
         const result = this.summarizeFa(dataExtractor, countExtractor, percent);
         this.ec = new ECNumbers({data: result}, false);
@@ -195,9 +212,9 @@ class Resultset {
      * @todo  take not found sequences into account
      * @todo  remove the cutoff
      */
-    summarizeFa(extract, countExtractor, cutoff=50) {
+    summarizeFa(extract, countExtractor, cutoff = 50) {
         const map = new Map();
-        const fraction = cutoff/100;
+        const fraction = cutoff / 100;
         let numAnnotations = 0;
         for (let pept of this.processedPeptides) {
             const divisor = countExtractor(pept);
@@ -207,7 +224,7 @@ class Resultset {
                     const weight = value / divisor;
                     if (weight < fraction) continue; // skip if insignificant TODO: remove
                     const count = map.get(code) || 0;
-                    const scaledWeight = weight*(pept.count);
+                    const scaledWeight = weight * (pept.count);
                     map.set(code, count + scaledWeight);
                     numAnnotations += scaledWeight;
                 }
