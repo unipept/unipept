@@ -23,7 +23,7 @@ class Resultset {
         this.dupes = dupes;
         this.missed = missed;
         this.preparedPeptides = this.preparePeptides(dataset.originalPeptides, il, dupes, missed);
-        this.processedPeptides = [];
+        this.processedPeptides = new Map();
         this.missedPeptides = [];
         this.ec = null;
         this.go = null;
@@ -36,8 +36,8 @@ class Resultset {
      */
     async process() {
         const peptideList = Array.from(this.preparedPeptides.keys());
-        this.processedPeptides = [];
-        this.setProgress(Dataset.BATCH_SIZE / peptideList.length);
+        this.processedPeptides = new Map();
+        this.setProgress(1/peptideList.length);
         for (let i = 0; i < peptideList.length; i += Dataset.BATCH_SIZE) {
             const data = JSON.stringify({
                 peptides: peptideList.slice(i, i + Dataset.BATCH_SIZE),
@@ -52,15 +52,14 @@ class Resultset {
                     let faData = faResult.peptides[pept.sequence];
                     pept.fa = faData;
                 }
-
-                this.processedPeptides.push(...lcaResult.peptides);
-                this.setProgress(this.progress + Dataset.BATCH_SIZE / peptideList.length);
+                lcaResult.peptides.forEach(p => this.processedPeptides.set(p.sequence, p));
+                this.setProgress((i + Dataset.BATCH_SIZE) / peptideList.length);
             });
         }
-        for (const peptide of this.processedPeptides) {
+        for (const peptide of this.processedPeptides.values()) {
             peptide.count = this.preparedPeptides.get(peptide.sequence);
         }
-        this.setMissedPeptides(peptideList, this.processedPeptides);
+        this.setMissedPeptides();
         await Promise.all([this.summarizeGo(), this.summarizeEc()]);
     }
 
@@ -79,8 +78,7 @@ class Resultset {
      * Calculates the missed peptides and sets the object property
      */
     setMissedPeptides() {
-        const foundPeptides = new Set(this.processedPeptides.map(p => p.sequence));
-        this.missedPeptides = Array.from(this.preparedPeptides.keys()).filter(p => !foundPeptides.has(p));
+        this.missedPeptides = [...this.preparedPeptides.keys()].filter(p => !this.processedPeptides.has(p));
     }
 
     /**
@@ -110,7 +108,7 @@ class Resultset {
      */
     toCSV() {
         let result = "peptide,lca," + MPA.RANKS + "\n";
-        for (const peptide of this.processedPeptides) {
+        for (const peptide of this.processedPeptides.values()) {
             let row = peptide.sequence + ",";
             row += this.dataset.taxonMap.get(peptide.lca).name + ",";
             row += peptide.lineage.map(e => {
@@ -130,7 +128,8 @@ class Resultset {
      * @return {number} The number of matched peptides
      */
     getNumberOfMatchedPeptides() {
-        return this.processedPeptides.map(p => p.count).reduce((a, b) => a + b, 0);
+        return [...this.processedPeptides.values()]
+            .reduce((a, b) => a.count + b.count, 0);
     }
 
     /**
@@ -140,7 +139,7 @@ class Resultset {
      * @return {number} The number of searched for peptides
      */
     getNumberOfSearchedForPeptides() {
-        return Array.from(this.preparedPeptides.values()).reduce((a, b) => a + b, 0);
+        return [...this.preparedPeptides.values()].reduce((a, b) => a + b, 0);
     }
 
     /**
@@ -151,7 +150,7 @@ class Resultset {
      */
     getPeptidesByFA(faName) {
         const type = faName.split(":")[0];
-        return this.processedPeptides
+        return [...this.processedPeptides.values()]
             .filter(pept => faName in pept.fa.data)
             .map(pept => ({
                 sequence: pept.sequence,
@@ -165,18 +164,27 @@ class Resultset {
      * maps have an additional `value` field that indicated the weight of that
      * GO number.
      * @param {number} [percent=50] ignore data weighing less (to be removed)
+     * @param {string[]} [sequences=null] subset of sequences to take into account,
+     *                                    null to consider all
      */
-    async summarizeGo(percent = 50) {
-        let usedGoTerms = Array.from(new Set([].concat(...this.processedPeptides.map(x => Object.keys(x.fa.data).filter(x => x.startsWith("GO:"))))).values());
-        await GOTerms.addMissingNames(usedGoTerms);
+    async summarizeGo(percent = 50, sequences=null) {
+        // Find used go term and fetch data about them
+        let usedGoTerms = new Set();
+        for (let peptide of this.processedPeptides.values()) {
+            Object.keys(peptide.fa.data)
+                .filter(x => x.startsWith("GO:"))
+                .forEach(x => usedGoTerms.add(x));
+        }
+        await GOTerms.addMissingNames([...usedGoTerms.values()]);
 
+        // Build summary
         let res = {};
         const countExtractor = pept => pept.fa.counts["GO"] || 0;
         for (let namespace of GOTerms.NAMESPACES) {
             const dataExtractor = pept => Object.entries(pept.fa.data)
-                .filter(([a, b]) => a.startsWith("GO") && GOTerms.namespaceOf(a) == namespace)
-                .map(([a, b]) => ({code: a, value: b})) || [];
-            res[namespace] = this.summarizeFa(dataExtractor, countExtractor, percent);
+                .filter(([term, count]) => term.startsWith("GO") && GOTerms.namespaceOf(term) == namespace)
+                .map(([term, count]) => ({code: term, value: count})) || [];
+            res[namespace] = this.summarizeFa(dataExtractor, countExtractor, percent, sequences);
         }
         this.go = new GOTerms({data: res}, false);
         // await this.go.ensureData(); we already fetched everything
@@ -187,11 +195,13 @@ class Resultset {
      * have an additional `value` field that indicated the weight of that
      * EC number.
      * @param {number} [percent=50] ignore data weighing less (to be removed)
+     * @param {string[]} [sequences=null] subset of sequences to take into account,
+     *                                    null to consider all
      */
-    async summarizeEc(percent = 50) {
+    async summarizeEc(percent = 50, sequences=null) {
         const dataExtractor = pept => Object.entries(pept.fa.data).filter(([a, b]) => a.startsWith("EC")).map(([a, b]) => ({code: a.replace("EC:", ""), value: b})) || [];
         const countExtractor = pept => pept.fa.counts["EC"] || 0;
-        const result = this.summarizeFa(dataExtractor, countExtractor, percent);
+        const result = this.summarizeFa(dataExtractor, countExtractor, percent, sequences);
         this.ec = new ECNumbers({data: result}, false);
         await this.ec.ensureData();
     }
@@ -209,14 +219,17 @@ class Resultset {
      * @param {number} cutoff  data with strictly lower weight is ignored
      *                         value should be given as percentage in [0,100]
      * @return {Map<string,number>} map  map to store the results in
-     * @todo  take not found sequences into account
+     * @param {Iterable.<string>} [sequences=null] subset of sequences to take into account,
+     *                                    null to consider all
      * @todo  remove the cutoff
      */
-    summarizeFa(extract, countExtractor, cutoff = 50) {
+    summarizeFa(extract, countExtractor, cutoff = 50, sequences=null) {
+        let iteratableOfSequences = sequences || this.processedPeptides.keys();
         const map = new Map();
         const fraction = cutoff / 100;
         let numAnnotations = 0;
-        for (let pept of this.processedPeptides) {
+        for (let sequence of iteratableOfSequences) {
+            const pept = this.processedPeptides.get(sequence);
             const divisor = countExtractor(pept);
             if (divisor !== 0) {
                 const counts = extract(pept);
@@ -230,10 +243,8 @@ class Resultset {
                 }
             }
         }
-        for (let [key, value] of map.entries()) {
-            map.set(key, value / numAnnotations);
-        }
-        return Array.from(map).map(x => ({code: x[0], value: x[1]}));
+
+        return Array.from(map).map(x => ({code: x[0], value: x[1] / numAnnotations}));
     }
 
     /**

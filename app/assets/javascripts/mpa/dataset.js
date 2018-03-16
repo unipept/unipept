@@ -56,7 +56,7 @@ class Dataset {
     async search({il, dupes, missed}) {
         this.resultset = new Resultset(this, {il, dupes, missed});
         await this.resultset.process();
-        const tree = this.buildTree(this.resultset.processedPeptides);
+        const tree = this.buildTree(this.resultset.processedPeptides.values());
         const taxonInfo = Dataset.getTaxonInfo(tree.getTaxa());
         tree.setCounts();
         tree.setTaxonNames(await taxonInfo);
@@ -71,9 +71,10 @@ class Dataset {
     /**
      * Reprocesses functional analysis data with other cutoff
      * @param {int} cutoff as percent (0-100)
+     * @param {string[]} sequences array of peptides to take into account
     */
-    async reprocessFA(cutoff) {
-        await Promise.all([this.resultset.summarizeGo(cutoff), this.resultset.summarizeEc(cutoff)]);
+    async reprocessFA(cutoff, sequences=null) {
+        await Promise.all([this.resultset.summarizeGo(cutoff, sequences), this.resultset.summarizeEc(cutoff, sequences)]);
         this.fa.go = this.resultset.go;
         this.fa.ec = this.resultset.ec;
     }
@@ -83,7 +84,7 @@ class Dataset {
      * Creates a hierarchic tree structure based on the input peptides. This is
      * also set as the tree property of the Dataset object.
      *
-     * @param  {PeptideInfo[]} peptides A list of peptides to build the tree
+     * @param  {Iterable<PeptideInfo>} peptides A list of peptides to build the tree
      *   from
      * @return {Tree} A taxon tree containing all peptides
      */
