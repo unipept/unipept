@@ -63,9 +63,8 @@ class MPA {
     downloadPeptidesFor(name) {
         const dataset = this.datasets[0];
         const result = [["sequence", "count", "evidence"]]
-            .concat(dataset.getPeptidesByFA(name).map(
-                x => [x.sequence, x.totalCount, x.relativeCount]
-            ));
+            .concat(dataset.getPeptidesByFA(name)
+                .map(x => [x.sequence, x.totalCount, x.relativeCount]));
         downloadDataByForm(toCSVString(result), name+".csv", "text/csv");
     }
 
@@ -166,8 +165,7 @@ class MPA {
             ],
             tooltip: d => this.tooltipGO(d.code, goResultset),
             tooltipID: "#tooltip",
-        }
-        ).draw();
+        }).draw();
     }
 
     setUpQuickGo(goResultset, variant, variantName, target) {
@@ -327,8 +325,7 @@ class MPA {
             ],
             tooltip: d => this.tooltipEC(d.code, ecResultSet),
             tooltipID: "#tooltip",
-        }
-        ).draw();
+        }).draw();
     }
 
     /**
