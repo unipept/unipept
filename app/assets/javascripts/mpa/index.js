@@ -94,6 +94,21 @@ class MPA {
     }
 
 
+    /**
+     * Recalculate the FA data to only use data of the specified taxon id.
+     *
+     * This automatically takes into account the selected percent level
+     *
+     * @param {int} [id=-1] the taxon id whose sequences should be taken into account
+     *                      use -1 to use everything (Organism)
+     */
+    redoFAcalculations(id=-1) {
+        const percent = $("#goFilterPerc").val()*1; // TODO remove
+        const dataset = this.datasets[0];
+        dataset.reprocessFA(percent, id > 0 ? dataset.tree.getAllSequences(id) : null)
+            .then(()=>this.setUpFAVisualisations(dataset.fa));
+    }
+
     setUpFAVisualisations({go, ec}) {
         this.setUpGo(go);
         this.setUpEC(ec);
@@ -464,7 +479,7 @@ class MPA {
             radius: 740 / 2,
             getTooltip: this.tooltipContent,
             getTitleText: d => `${d.name} (${d.rank})`,
-            rerootCallback: d => this.search(d.name, 1000),
+            rerootCallback: d => this.search(d.id, d.name, 1000),
         });
     }
 
@@ -477,7 +492,7 @@ class MPA {
             getTooltip: this.tooltipContent,
             getLabel: d => `${d.name} (${d.data.self_count}/${d.data.count})`,
             getLevel: d => MPA.RANKS.indexOf(d.rank),
-            rerootCallback: d => this.search(d.name),
+            rerootCallback: d => this.search(d.id, d.name),
         });
     }
 
@@ -493,7 +508,7 @@ class MPA {
                 if (d.name === "Viruses") return "#C62828"; // red
                 return d3.scale.category10().call(this, d);
             },
-            rerootCallback: d => this.search(d.name, 1000),
+            rerootCallback: d => this.search(d.id, d.name, 1000),
         });
     }
 
@@ -547,12 +562,22 @@ class MPA {
         }
     }
 
-    search(searchTerm, timeout = 500) {
+    /**
+     * Propagate selections in the visualisation to the search tree and
+     * The functional analysis data.
+     *
+     * @param {integer} id            Taxon id to inspect
+     * @param {string} searchTerm     Search term to put in box
+     * @param {integer} [timeout=500] timeout in ms to wait before processing
+     * @todo add search term to FA explanation to indicate filtering
+     */
+    search(id, searchTerm, timeout = 500) {
         let localTerm = searchTerm;
         if (localTerm === "Organism") {
             localTerm = "";
         }
         setTimeout(() => this.searchTree.search(localTerm), timeout);
+        setTimeout(() => this.redoFAcalculations(id), timeout);
     }
 
     static get RANKS() {
