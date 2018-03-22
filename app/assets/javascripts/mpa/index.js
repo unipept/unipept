@@ -101,7 +101,8 @@ class MPA {
      * @param {int} [id=-1] the taxon id whose sequences should be taken into account
      *                      use -1 to use everything (Organism)
      */
-    redoFAcalculations(id=-1) {
+    redoFAcalculations(name, id=-1) {
+        $(".mpa-scope").text(name);
         const percent = $("#goFilterPerc").val()*1; // TODO remove
         const dataset = this.datasets[0];
         dataset.reprocessFA(percent, id > 0 ? dataset.tree.getAllSequences(id) : null)
@@ -115,7 +116,7 @@ class MPA {
 
     /**
      * Create visualisations of the GO numbers
-     * @param {FAInfo} go Data about GO Terms
+     * @param {GOTerms} go Data about GO Terms
      */
     setUpGo(go) {
         const goPanel = d3.select("#goPanel");
@@ -574,7 +575,7 @@ class MPA {
             localTerm = "";
         }
         setTimeout(() => this.searchTree.search(localTerm), timeout);
-        setTimeout(() => this.redoFAcalculations(id), timeout);
+        setTimeout(() => this.redoFAcalculations(localTerm,id), timeout);
     }
 
     static get RANKS() {
