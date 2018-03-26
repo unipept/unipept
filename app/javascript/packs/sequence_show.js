@@ -1,3 +1,3 @@
-import {initSequenceShow} from "../../assets/javascripts/sequence_show.js";
+import {SPA} from "../../assets/javascripts/sequence_show.js";
 
-window.initSequenceShow = initSequenceShow;
+window.SPA = SPA;
