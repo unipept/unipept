@@ -118,7 +118,7 @@
   <div id="tooltip" class="tip"></div>
   <script type="text/javascript">
     $(function () {
-      initSequenceShow(<%= raw render(:template => "sequences/_data.json.jbuilder") %>);
+      new SPA(<%= raw render(:template => "sequences/_data.json.jbuilder") %>);
     });
   </script>
 <% end %>

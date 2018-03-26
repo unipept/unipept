@@ -6,7 +6,7 @@ import GOTerms from "./components/goterms.js";
 import "unipept-visualizations/src/treeview/treeview.js";
 
 /* eslint require-jsdoc: off */
-/* TODO: make  class */
+/* TODO: more documentation */
 
 /**
  * @typedef {Object} FACounts
@@ -20,41 +20,43 @@ import "unipept-visualizations/src/treeview/treeview.js";
  * @param {Object.<string, FACounts>} data.fa.go - GO data information
  * @param {FACounts} data.fa.uniprotEntries - EC data information
  */
-function initSequenceShow(data) {
-    const $tooltip = $("#tooltip");
-    const panelWidth = 916;
-    const panelHeight = 600;
-    // set up the fancy tree
-    initLineageTree(data.tree);
 
-    // set up the fullscreen stuff
-    setUpFullScreen();
+const panelWidth = 916;
+const panelHeight = 600;
 
-    // set up save image stuff
-    setUpImageSave();
-
-    // enable the external link popovers
-    addExternalLinks();
-
-    // enable the open in UniProt and clipboard buttons
-    setUpUniprotButtons(data.uniprotEntries);
-
-    // setup functional annotations tabs
-    setUpFA(data.fa);
-
-    // enable tooltips for EC and GO terms
-    initFAToolips();
-
-    // add the tab help
-    initHelp();
+class SPA {
+    constructor(data) {
+        this.$tooltip = $("#tooltip");
 
 
-    /** ***************** Functions ***********************/
+        this.peptide = data.peptide;
 
-    /**
-     * Initializes the help popups
-     */
-    function initHelp() {
+        // set up the fancy tree
+        this.initLineageTree(data.tree);
+
+        // set up the fullscreen stuff
+        this.setUpFullScreen();
+
+        // set up save image stuff
+        this.setUpImageSave();
+
+        // enable the external link popovers
+        this.addExternalLinks();
+
+        // enable the open in UniProt and clipboard buttons
+        this.setUpUniprotButtons(data.uniprotEntries);
+
+        // setup functional annotations tabs
+        this.setUpFA(data.fa);
+
+        // enable tooltips for EC and GO terms
+        this.initFAToolips();
+
+        // add the tab help
+        this.initHelp();
+    }
+
+    initHelp() {
         // tab help
         $(".nav-tabs li a span.help").click(function (e) {
             let title,
@@ -63,16 +65,17 @@ function initSequenceShow(data) {
             e.preventDefault();
             if ($(this).parent().attr("id") === "lineage-tree-tab") {
                 title = "Lineage tree";
-                content = "This interactive tree bundles the complete taxonomic lineages of all UniProt entries whose protein sequence contains " + data.peptide + ". You can click on nodes to expand them, scroll to zoom and drag to move the tree.";
+                content = "This interactive tree bundles the complete taxonomic lineages of all UniProt entries whose protein sequence contains " + this.peptide + ". You can click on nodes to expand them, scroll to zoom and drag to move the tree.";
             } else {
                 title = "Lineage table";
-                content = "This table shows the complete taxonomic lineages of all taxa associated with the UniProt entries whose protein sequence contains " + data.peptide + ". The first column contains the taxon name extracted from the UniProt entry, followed by columns representing taxonomic ranks ordered from superkingdom on the left to forma on the right.";
+                content = "This table shows the complete taxonomic lineages of all taxa associated with the UniProt entries whose protein sequence contains " + this.peptide + ". The first column contains the taxon name extracted from the UniProt entry, followed by columns representing taxonomic ranks ordered from superkingdom on the left to forma on the right.";
             }
             showInfoModal(title, content);
         });
     }
 
-    function addExternalLinks() {
+
+    addExternalLinks() {
         // Add handler to the external links buttons
         $(".externalLinks-button").parent().mouseenter(function () {
             if (!$(this).hasClass("open")) {
@@ -86,7 +89,7 @@ function initSequenceShow(data) {
         });
     }
 
-    function setUpUniprotButtons(entries) {
+    setUpUniprotButtons(entries) {
         $("#open-uniprot").click(function () {
             let url = "http://www.uniprot.org/uniprot/?query=accession%3A";
             url += entries.join("+OR+accession%3A");
@@ -98,7 +101,7 @@ function initSequenceShow(data) {
     /**
      * Sets up the image save stuff
      */
-    function setUpImageSave() {
+    setUpImageSave() {
         $("#buttons-single").prepend("<button id='save-btn-lineage' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>");
         $("#save-btn-lineage").click(function () {
             logToGoogle("Single Peptide", "Save Image");
@@ -109,7 +112,7 @@ function initSequenceShow(data) {
     /**
      * Sets up the full screen stuff
      */
-    function setUpFullScreen() {
+    setUpFullScreen() {
         if (fullScreenApi.supportsFullScreen) {
             $("#buttons-single").prepend("<button id='zoom-btn-lineage' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
             $("#zoom-btn-lineage").click(function () {
@@ -133,9 +136,17 @@ function initSequenceShow(data) {
         }
     }
 
-    function setUpFA(fa) {
-        const ecData = Object.entries(fa.data).filter(([a, b]) => a.startsWith("EC")).map(([a, b]) => ({code: a.substr(3), value: b})) || [];
-        setUpEC({numAnnotatedProteins: fa.counts.EC, data: ecData});
+    /**
+     * Transform the FA data form the server to the format ECNumber and GOTerm expect.
+     * Then render the visualisations
+     * @param {FAServerData} fa Inforamtin about functional analysis as provided by the server
+     */
+    setUpFA(fa) {
+        const ecData = new ECNumbers({
+            numAnnotatedProteins: fa.counts.EC,
+            data: Object.entries(fa.data).filter(([a, b]) => a.startsWith("EC")).map(([a, b]) => ({code: a.substr(3), value: b})) || []},
+        false);
+        ecData.ensureData().then(()=>this.setUpEC(ecData));
 
         const usedGoTerms = new Set();
         Object.keys(fa.data)
@@ -143,43 +154,25 @@ function initSequenceShow(data) {
             .forEach(x => usedGoTerms.add(x));
 
         GOTerms.addMissingNames([...usedGoTerms.values()]).then(()=>{
-            const goData = {};
+            const goCountsPerNamespace = {};
             for (let namespace of GOTerms.NAMESPACES) {
-                goData[namespace] = Object.entries(fa.data)
+                goCountsPerNamespace[namespace] = Object.entries(fa.data)
                     .filter(([term, count]) => term.startsWith("GO") && GOTerms.namespaceOf(term) == namespace)
                     .map(([term, count]) => ({code: term, value: count})) || [];
             }
-            setUpGO({numAnnotatedProteins: fa.counts.GO, data: goData});
+
+            const goData = new GOTerms({numAnnotatedProteins: fa.counts.GO, data: goCountsPerNamespace}, false);
+            this.setUpGO(goData);
         });
     }
 
-    function setUpEC({numAnnotatedProteins, data}) {
-        const ecResultset = new ECNumbers({numAnnotatedProteins, data});
-
-        if (numAnnotatedProteins > 0) {
-            ecResultset.ensureData().then(()=>{
-                setUpECTree(ecResultset);
-                setUpEcTable(ecResultset);
-            });
-            $(".ecNumberLink")
-                .mouseenter(function (e) {
-                    const ecNum = this.textContent;
-                    $tooltip.html(tooltipEC(ecNum, ecResultset));
-                    return false;
-                });
-        } else {
-            $("#ec-table").html("<span>No EC code annotations found.</span>");
-            $("#ec-treeview").remove();
-        }
-    }
-
     /**
-     * Generate a tooltip for an EC number
+     * Generate tooltip content for an EC number
      * @param  {string}    ecNumber   The Ec number to generate a tooltip for
      * @param  {ECNumbers} [ecResultSet=null]  A `ECNumbers` summary
      * @return {string}    HTML for the tooltip
      */
-    function tooltipEC(ecNumber, ecResultSet = null) {
+    tooltipEC(ecNumber, ecResultSet = null) {
         const fmt = x => `<div class="tooltip-ec-ancestor"><span class="tooltip-ec-term">EC ${x}</span><span class="tooltip-ec-name">${ECNumbers.nameOf(x)}</span></div>`;
 
         let result = `
@@ -200,18 +193,38 @@ function initSequenceShow(data) {
     }
 
     /**
-     * Create the EC treeview
+     * Render the EC table and tree and settup tooltip content
+     * @param {ECNumbers} ecResultset The resultset of the EC numbers
+     */
+    setUpEC(ecResultset) {
+        if (ecResultset.getTotalSetSize() > 0) {
+            this.setUpECTree(ecResultset);
+            this.setUpEcTable(ecResultset);
+        } else {
+            $("#ec-table").html("<span>No EC code annotations found.</span>");
+            $("#ec-treeview").remove();
+        }
+        $(".ecNumberLink")
+            .mouseenter(e => {
+                const ecNum = e.target.textContent;
+                this.$tooltip.html(this.tooltipEC(ecNum, ecResultset));
+                return false;
+            });
+    }
+
+    /**
+     * Let ECNumbers create an EC tree and alter the tooltip
      *
      * @param {ECNumbers} ecResultSet  A `ECNumbers` summary
      * @return {TreeView} The created treeview
      */
-    function setUpECTree(ecResultSet) {
+    setUpECTree(ecResultSet) {
         const tree = ecResultSet.createTree("#ec-treeview", {
             width: panelWidth,
             height: panelHeight,
             getTooltip: d => {
                 const fullcode = (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
-                let tip = tooltipEC(fullcode);
+                let tip = this.tooltipEC(fullcode);
                 tip += `<div class="tooltip-fa-text">
                         ${d.data.count}  occurrences, `;
 
@@ -240,11 +253,11 @@ function initSequenceShow(data) {
      *
      * @param {ECNumbers} ecResultSet  A `ECNumbers` summary
      */
-    function setUpEcTable(ecResultSet) {
+    setUpEcTable(ecResultSet) {
         const target = d3.select("#ec-table");
         target.html("");
         new AmountTable({
-            title: "EC numbers - " + data.peptide,
+            title: "EC numbers - " + this.peptide,
             el: target,
             header: ["Count", "EC-Number", "Name"],
             data: ecResultSet.sortedTerms(),
@@ -253,7 +266,7 @@ function initSequenceShow(data) {
                 { // Count
                     text: d => d.value.toString(),
                     style: {"width": "5em"},
-                    shade: d => 100 * d.value / ecResultSet.getTotalSetSize(),
+                    shade: d => 100*ecResultSet.getFractionOf(d.code),
                 },
                 { // EC-number
                     html: d => {
@@ -267,7 +280,7 @@ function initSequenceShow(data) {
                     text: d => ECNumbers.nameOf(d.code),
                 },
             ],
-            tooltip: d => tooltipEC(d.code, ecResultSet),
+            tooltip: d => this.tooltipEC(d.code, ecResultSet),
             tooltipID: "#tooltip",
         }).draw();
     }
@@ -278,7 +291,7 @@ function initSequenceShow(data) {
      * @param  {GOTerms} [goResultSet=null]  A `GOTerms` summary
      * @return {string}    HTML for the tooltip
      */
-    function tooltipGO(goTerm, goResultSet = null) {
+    tooltipGO(goTerm, goResultSet = null) {
         let result = `
             <h4 class="tooltip-fa-title">
                 <span class="tooltip-fa-title-name">${GOTerms.nameOf(goTerm)}</span>
@@ -293,19 +306,17 @@ function initSequenceShow(data) {
         return result;
     }
 
-    function setUpGO({numAnnotatedProteins, data}) {
-        const goResultset = new GOTerms({numAnnotatedProteins, data});
-
+    setUpGO(goResultset) {
         $("#go-panel").empty();
         const goPanel = d3.select("#go-panel");
         for (const variant of GOTerms.NAMESPACES) {
             const variantName = stringTitleize(variant);
             goPanel.append("h3").text(variantName);
 
-            if (variant in data) {
+            if (goResultset.sortedTerms(variant).length > 0) {
                 const article = goPanel.append("div").attr("class", "row");
-                setUpGoTable(goResultset, variant, article);
-                setUpQuickGo(goResultset, variant, variantName, article);
+                this.setUpGoTable(goResultset, variant, article);
+                this.setUpQuickGo(goResultset, variant, variantName, article);
             } else {
                 goPanel.append("span").text("No GO term annotations in this namespace.");
             }
@@ -313,19 +324,17 @@ function initSequenceShow(data) {
 
         // Add content to the tooltips of links
         $(".goTermLink")
-            .mouseenter(function (e) {
-                const goTerm = this.textContent;
-                $tooltip.html(tooltipGO(goTerm, goResultset));
+            .mouseenter(e => {
+                const goTerm = e.target.textContent;
+                this.$tooltip.html(this.tooltipGO(goTerm, goResultset));
                 return false;
             });
     }
 
-    function setUpGoTable(goResultset, variant, target) {
-        const numAnnotatedProteins = goResultset.getTotalSetSize();
-
+    setUpGoTable(goResultset, variant, target) {
         const tablepart = target.append("div").attr("class", "col-xs-8");
         new AmountTable({
-            title: `GO terms - ${variant} - ${data.peptide}`,
+            title: `GO terms - ${variant} - ${this.peptide}`,
             el: tablepart,
             header: ["Count", "GO term", "Name"],
             data: goResultset.sortedTerms(variant),
@@ -334,7 +343,7 @@ function initSequenceShow(data) {
                 { // Count
                     text: d => d.value,
                     style: {"width": "5em"},
-                    shade: d => 100 * d.value / numAnnotatedProteins,
+                    shade: d => 100*goResultset.getFractionOf(d.code),
                 },
                 { // Go term
                     html: d => `<a href="https://www.ebi.ac.uk/QuickGO/term/${d.code}" target="_blank">${d.code}</a>`,
@@ -345,12 +354,12 @@ function initSequenceShow(data) {
                     text: d => GOTerms.nameOf(d.code),
                 },
             ],
-            tooltip: d => tooltipGO(d.code, goResultset),
+            tooltip: d => this.tooltipGO(d.code, goResultset),
             tooltipID: "#tooltip",
         }).draw();
     }
 
-    function setUpQuickGo(goResultset, variant, variantName, target) {
+    setUpQuickGo(goResultset, variant, variantName, target) {
         const top5 = goResultset.sortedTerms(variant).slice(0, 5).map(x => x.code);
         const quickGoChartURL = GOTerms.quickGOChartURL(top5);
         const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${numberToPercent(goResultset.getFractionOf(x))})`);
@@ -375,423 +384,51 @@ function initSequenceShow(data) {
 
     /**
      * Enable show and hide of tooltips,
-     * The values are set in `setUpGO` and `setUpEC`
+     * The values are set in `this.setUpGO` and `setUpEC`
      */
-    function initFAToolips() {
+    initFAToolips() {
         /* eslint brace-style: "off" */
         const tooltipShowCSS = {"display": "block", "visibility": "visible"};
         const tooltipHideCSS = {"display": "none", "visibility": "hidden"};
 
         $(".ecNumberLink,.goTermLink")
-            .mouseenter(() => {$tooltip.css(tooltipShowCSS);})
-            .mouseleave(() => {$tooltip.css(tooltipHideCSS);})
-            .mousemove(function (e) {
-                $tooltip.css("top", e.pageY + 10);
-                $tooltip.css("left", e.pageX + 10);
+            .mouseenter(() => {this.$tooltip.css(tooltipShowCSS);})
+            .mouseleave(() => {this.$tooltip.css(tooltipHideCSS);})
+            .mousemove(e => {
+                this.$tooltip.css("top", e.pageY + 10);
+                this.$tooltip.css("left", e.pageX + 10);
             });
     }
 
-    function initLineageTree(jsonData) {
-        let margin = {
-                top: 5,
-                right: 5,
-                bottom: 5,
-                left: 60,
-            },
-            width = panelWidth - margin.right - margin.left,
-            height = panelHeight - margin.top - margin.bottom;
+    initLineageTree(jsonData) {
+        let colors = {
+            "Bacteria": "#1565C0", // blue
+            "Archaea": "#FF8F00", // orange
+            "Eukaryota": "#2E7D32", // green
+            "Viruses": "#C62828", // red
+        };
 
-        let zoomEnd = 0,
-            i = 0,
-            duration = 750,
-            root;
+        const tree = $("#lineageTree").empty().treeview(jsonData, {
+            width: panelWidth,
+            height: panelHeight,
+            colors: d => d.name in colors ? colors[d.name] : "#1565C0",
+        });
 
-        let tree = d3.layout.tree()
-            .nodeSize([2, 105])
-            .separation(function (a, b) {
-                let width = (nodeSize(a) + nodeSize(b)),
-                    distance = width / 2 + 4;
-                return (a.parent === b.parent) ? distance : distance + 4;
-            });
+        // Deselect the whole tree
+        const root = tree.getRoot();
+        root.setSelected(false);
 
-        let diagonal = d3.svg.diagonal()
-            .projection(function (d) {
-                return [d.y, d.x];
-            });
-
-        let widthScale = d3.scale.linear().range([2, 105]);
-
-        // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
-        let zoomListener = d3.behavior.zoom()
-            .scaleExtent([0.1, 3])
-            .on("zoom", zoom);
-
-        let svg = d3.select("#lineageTree").append("svg")
-            .attr("version", "1.1")
-            .attr("xmlns", "http://www.w3.org/2000/svg")
-            .attr("viewBox", "0 0 " + (width + margin.right + margin.left) + " " + (height + margin.top + margin.bottom))
-            .attr("width", width + margin.right + margin.left)
-            .attr("height", height + margin.top + margin.bottom)
-            .call(zoomListener)
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-            .append("g");
-
-        draw(jsonData);
-
-        function draw(data) {
-            root = data;
-
-            widthScale.domain([0, root.data.count]);
-
-            // set everything visible
-            function setVisible(d) {
-                d.selected = true;
-                if (d.children) {
-                    d.children.forEach(setVisible);
-                }
-            }
-            setVisible(root);
-
-            // set colors
-            function color(d, c) {
-                if (c) {
-                    d.color = c;
-                } else if (d.name === "Bacteria") {
-                    d.color = "#1565C0"; // blue
-                } else if (d.name === "Archaea") {
-                    d.color = "#FF8F00"; // orange
-                } else if (d.name === "Eukaryota") {
-                    d.color = "#2E7D32"; // green
-                } else if (d.name === "Viruses") {
-                    d.color = "#C62828"; // red
-                } else {
-                    d.color = "#1565C0"; // blue
-                }
-                if (d.children) {
-                    d.children.forEach(function (node) {
-                        color(node, d.color);
-                    });
-                }
-            }
-            root.children.forEach(function (node) {
-                color(node);
-            });
-
-            let LCA;
-
-            function findLCA(d) {
-                if (d.children && d.children.length === 1) {
-                    findLCA(d.children[0]);
-                } else {
-                    LCA = d;
-                }
-            }
-            findLCA(root);
-
-            // collapse everything
-            function collapseAll(d) {
-                if (d.children && d.children.length === 0) {
-                    d.children = null;
-                }
-                if (d.children) {
-                    d._children = d.children;
-                    d._children.forEach(collapseAll);
-                    d.children = null;
-                }
-            }
-            collapseAll(LCA);
-
-            update(root);
-            highlight(LCA);
+        // Select and expand the LCA
+        let curNode = root;
+        while (curNode.children.length === 1) {
+            curNode = curNode.children[0];
+            curNode.expand();
         }
-
-        d3.select(self.frameElement).style("height", "800px");
-
-        function update(source) {
-            // Compute the new tree layout.
-            let nodes = tree.nodes(root).reverse(),
-                links = tree.links(nodes);
-
-            // Normalize for fixed-depth.
-            nodes.forEach(function (d) {
-                d.y = d.depth * 180;
-            });
-
-            // Update the nodes
-            let node = svg.selectAll("g.node")
-                .data(nodes, function (d) {
-                    return d.id || (d.id = ++i);
-                });
-
-            // Enter any new nodes at the parent's previous position.
-            let nodeEnter = node.enter().append("g")
-                .attr("class", "node")
-                .style("cursor", "pointer")
-                .attr("transform", function (d) {
-                    return "translate(" + (source.y0 || 0) + "," + (source.x0 || 0) + ")";
-                })
-                .on("click", click);
-
-            nodeEnter.append("title").html(function (d) {
-                return "hits: " + d.data.count;
-            });
-
-            nodeEnter.append("circle")
-                .attr("r", 1e-6)
-                .style("stroke-width", "1.5px")
-                .style("stroke", function (d) {
-                    if (d.selected) {
-                        return d.color || "#aaa";
-                    } else {
-                        return "#aaa";
-                    }
-                })
-                .style("fill", function (d) {
-                    if (d.selected) {
-                        return d._children ? d.color || "#aaa" : "#fff";
-                    } else {
-                        return "#aaa";
-                    }
-                });
-
-            nodeEnter.append("text")
-                .attr("x", function (d) {
-                    return d.children || d._children ? -10 : 10;
-                })
-                .attr("dy", ".35em")
-                .attr("text-anchor", function (d) {
-                    return d.children || d._children ? "end" : "start";
-                })
-                .text(function (d) {
-                    return d.name;
-                })
-                .style("font", "10px sans-serif")
-                .style("fill-opacity", 1e-6);
-
-            // Transition nodes to their new position.
-            let nodeUpdate = node.transition()
-                .duration(duration)
-                .attr("transform", function (d) {
-                    return "translate(" + d.y + "," + d.x + ")";
-                });
-
-            nodeUpdate.select("circle")
-                .attr("r", nodeSize)
-                .style("fill-opacity", function (d) {
-                    return d._children ? 1 : 0;
-                })
-                .style("stroke", function (d) {
-                    if (d.selected) {
-                        return d.color || "#aaa";
-                    } else {
-                        return "#aaa";
-                    }
-                })
-                .style("fill", function (d) {
-                    if (d.selected) {
-                        return d._children ? d.color || "#aaa" : "#fff";
-                    } else {
-                        return "#aaa";
-                    }
-                });
-
-            nodeUpdate.select("text")
-                .style("fill-opacity", 1);
-
-            // Transition exiting nodes to the parent's new position.
-            let nodeExit = node.exit().transition()
-                .duration(duration)
-                .attr("transform", function (d) {
-                    return "translate(" + source.y + "," + source.x + ")";
-                })
-                .remove();
-
-            nodeExit.select("circle")
-                .attr("r", 1e-6);
-
-            nodeExit.select("text")
-                .style("fill-opacity", 1e-6);
-
-            // Update the links
-            let link = svg.selectAll("path.link")
-                .data(links, function (d) {
-                    return d.target.id;
-                });
-
-            // Enter any new links at the parent's previous position.
-            link.enter().insert("path", "g")
-                .attr("class", "link")
-                .style("fill", "none")
-                .style("stroke-opacity", "0.5")
-                .style("stroke-linecap", "round")
-                .style("stroke", function (d) {
-                    if (d.source.selected) {
-                        return d.target.color;
-                    } else {
-                        return "#aaa";
-                    }
-                })
-                .style("stroke-width", 1e-6)
-                .attr("d", function (d) {
-                    let o = {
-                        x: (source.x0 || 0),
-                        y: (source.y0 || 0),
-                    };
-                    return diagonal({
-                        source: o,
-                        target: o,
-                    });
-                });
-
-            // Transition links to their new position.
-            link.transition()
-                .duration(duration)
-                .attr("d", diagonal)
-                .style("stroke", function (d) {
-                    if (d.source.selected) {
-                        return d.target.color;
-                    } else {
-                        return "#aaa";
-                    }
-                })
-                .style("stroke-width", function (d) {
-                    if (d.source.selected) {
-                        return widthScale(d.target.data.count) + "px";
-                    } else {
-                        return "4px";
-                    }
-                });
-
-            // Transition exiting nodes to the parent's new position.
-            link.exit().transition()
-                .duration(duration)
-                .style("stroke-width", 1e-6)
-                .attr("d", function (d) {
-                    let o = {
-                        x: source.x,
-                        y: source.y,
-                    };
-                    return diagonal({
-                        source: o,
-                        target: o,
-                    });
-                })
-                .remove();
-
-            // Stash the old positions for transition.
-            nodes.forEach(function (d) {
-                d.x0 = d.x;
-                d.y0 = d.y;
-            });
-        }
-
-        // expands all children of a node
-        function expandAll(d) {
-            expand(d, 30);
-        }
-
-        // Expands a node for i levels
-        function expand(d, i) {
-            let localI = i;
-            if (typeof localI === "undefined") {
-                localI = 1;
-            }
-            if (localI > 0) {
-                if (d._children) {
-                    d.children = d._children;
-                    d._children = null;
-                }
-                if (d.children) {
-                    d.children.forEach(function (c) {
-                        expand(c, localI - 1);
-                    });
-                }
-            }
-        }
-
-        // Collapses a node
-        function collapse(d) {
-            if (d.children) {
-                d._children = d.children;
-                d.children = null;
-            }
-        }
-
-        function nodeSize(d) {
-            if (d.selected) {
-                return widthScale(d.data.count) / 2;
-            } else {
-                return 2;
-            }
-        }
-
-        // Toggle children on click.
-        function click(d) {
-            // check if click is triggered by panning on a node
-            if (Date.now() - zoomEnd < 200) return;
-
-            if (d3.event.shiftKey) {
-                expandAll(d);
-            } else if (d.children) {
-                collapse(d);
-            } else {
-                expand(d);
-            }
-
-            update(d);
-            centerNode(d);
-        }
-
-        // Sets the width of this node to 100%
-        function highlight(d) {
-            // set Selection properties
-            setSelected(root, false);
-            setSelected(d, true);
-
-            // scale the lines
-            widthScale.domain([0, d.data.count]);
-
-            expand(d, 4);
-
-            // redraw
-            update(d);
-            centerNode(d);
-
-            function setSelected(d, value) {
-                d.selected = value;
-                if (d.children) {
-                    d.children.forEach(function (c) {
-                        setSelected(c, value);
-                    });
-                } else if (d._children) {
-                    d._children.forEach(function (c) {
-                        setSelected(c, value);
-                    });
-                }
-            }
-        }
-
-        // Zoom function
-        function zoom() {
-            zoomEnd = Date.now();
-            svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-        }
-
-        // Center a node
-        function centerNode(source) {
-            let scale = zoomListener.scale(),
-                x = -source.y0,
-                y = -source.x0;
-            x = x * scale + width / 8;
-            y = y * scale + height / 2;
-            svg.transition()
-                .duration(duration)
-                .attr("transform", "translate(" + x + "," + y + ")scale(" + scale + ")");
-            zoomListener.scale(scale);
-            zoomListener.translate([x, y]);
-        }
+        curNode.setSelected(true);
+        tree.update(root);
+        tree.centerNode(curNode);
+        tree.update(root);
     }
 }
 
-export {initSequenceShow};
+export {SPA};
