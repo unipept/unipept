@@ -98,10 +98,11 @@ class MPA {
      *
      * This automatically takes into account the selected percent level
      *
+     * @param {string} [name="Organism"] The chosen name
      * @param {int} [id=-1] the taxon id whose sequences should be taken into account
      *                      use -1 to use everything (Organism)
      */
-    redoFAcalculations(name, id=-1) {
+    redoFAcalculations(name="Organism", id=-1) {
         $(".mpa-scope").text(name);
         const percent = $("#goFilterPerc").val()*1; // TODO remove
         const dataset = this.datasets[0];
@@ -156,7 +157,8 @@ class MPA {
                 },
                 { // List
                     builder: cell => {
-                        const link = cell.append("a");
+                        const link = cell.append("button");
+                        link.classed("btn btn-default btn-xs", true);
                         link.on("click", d => this.downloadPeptidesFor(d.code));
                         link.html("<span class='glyphicon glyphicon-download-alt'></span>");
                     },
@@ -207,7 +209,7 @@ class MPA {
             <span class="tooltip-go-domain">${stringTitleize(GOTerms.namespaceOf(goTerm))}</span>`;
 
         if (goResultSet != null) {
-            result += `<div class="tooltip-fa-text">Evidence score of ${numberToPercent(goResultSet.getValueOf(goTerm), 1)}</div>`;
+            result += `<div class="tooltip-fa-text">Evidence score of ${numberToPercent(goResultSet.getValueOf(goTerm), 2)}</div>`;
         }
         return result;
     }
@@ -237,7 +239,7 @@ class MPA {
         }
 
         if (ecResultSet != null) {
-            result += `<div class="tooltip-fa-text">Evidence score of ${numberToPercent(ecResultSet.getValueOf(ecNumber), 1)}</div>`;
+            result += `<div class="tooltip-fa-text">Evidence score of ${numberToPercent(ecResultSet.getValueOf(ecNumber), 2)}</div>`;
         }
         return result;
     }
@@ -256,7 +258,7 @@ class MPA {
                 const fullcode = (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
                 let tip = this.tooltipEC(fullcode);
                 tip += `<div class="tooltip-fa-text">
-                        Evidence score of ${numberToPercent(d.data.count, 1)} for this and child EC numbers, `;
+                        Evidence score of ${numberToPercent(d.data.count, 2)} for this and child EC numbers, `;
 
                 if (d.data.self_count == 0) {
                     tip += "no specific annotations";
@@ -264,7 +266,7 @@ class MPA {
                     if (d.data.self_count == d.data.count) {
                         tip += " all specifically for this number";
                     } else {
-                        tip += ` ${numberToPercent(d.data.self_count, 1)} specificly for this number`;
+                        tip += ` ${numberToPercent(d.data.self_count, 2)} specificly for this number`;
                     }
                 }
 
@@ -276,7 +278,7 @@ class MPA {
         // save tree button
         $("#save-btn-ec").click(() => {
             logToGoogle("Multi peptide", "Save EC Image");
-            triggerDownloadModal("#ecTreeview svg", null, "unipept_treeview");
+            triggerDownloadModal("#ecTreeView svg", null, "unipept_treeview");
         });
 
         return tree;
@@ -316,7 +318,8 @@ class MPA {
                 },
                 { // List
                     builder: cell => {
-                        const link = cell.append("a");
+                        const link = cell.append("button");
+                        link.classed("btn btn-default btn-xs", true);
                         link.on("click", d => this.downloadPeptidesFor("EC:"+d.code));
                         link.html("<span class='glyphicon glyphicon-download-alt'></span>");
                     },
@@ -407,11 +410,7 @@ class MPA {
         const $perSelector = $("#goFilterPerc");
         $perSelector.val(50);
         $perSelector.change(()=>{
-            const percent = $perSelector.val()*1;
-            this.datasets[0].reprocessFA(percent)
-                .then(()=>{
-                    this.setUpFAVisualisations(this.datasets[0].fa);
-                });
+            this.redoFAcalculations();
         });
 
         // copy to clipboard button for missed peptides
@@ -575,7 +574,7 @@ class MPA {
             localTerm = "";
         }
         setTimeout(() => this.searchTree.search(localTerm), timeout);
-        setTimeout(() => this.redoFAcalculations(localTerm,id), timeout);
+        setTimeout(() => this.redoFAcalculations(localTerm, id), timeout);
     }
 
     static get RANKS() {

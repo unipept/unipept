@@ -152,21 +152,26 @@
     <ul class="nav nav-tabs visualisations" id="viz-tabs">
       <li class="active"><a href="#goWrapper" data-toggle="tab">GO Terms</a></li>
       <li><a href="#ecWrapper" data-toggle="tab">EC Numbers</a></li>
-      <li> <input type="number" min="0" max="100" step="10" value="50" id="goFilterPerc" />%</li>
+      <li> <input type="number" min="0" max="100" step="5" value="50" id="goFilterPerc" style="border-radius: 3px;width: 4em;height: 2em;border: 1px solid #EEE;text-align: center;margin: 9px;"/>%</li>
     </ul>
   </div>
   <div class="tab-content multi-search">
     <div class="tab-pane active" id="goWrapper">
       <div class='card-supporting-text'>
-        The shown percentage indicates the fraction of the sequences that contain that GO term multiplied by the
-        probability that a sequence indicates that GO-term. The shown results are limited to peptites that are under <strong class="mpa-scope">Organism</strong>.
+        The score indicates the fraction of the sequences that contain that GO term multiplied by the
+        probability that a sequence indicates that GO-term. The shown results are limited to peptites
+        whose lowest <strong class="mpa-scope">Organism</strong>.
       </div>
       <div id="goPanel">Please wait while we are preparing your data...&nbsp;</div>
     </div>
     <div class="tab-pane" id="ecWrapper">
+      <div class="buttons-single">
+        <button id='save-btn-ec' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>
+      </div>
       <div class='card-supporting-text'>
-        The shown percentage indicates the fraction of the sequences that contain that EC code specifically multiplied by the
-        probability that a sequence indicates that EC-code. The shown results are limited to peptites that are under <strong class="mpa-scope">Organism</strong>.
+        The score indicates the fraction of the sequences that contain that EC code specifically
+        multiplied by the probability that a sequence indicates that EC-code. The shown results are
+        limited to peptites that are under <strong class="mpa-scope">Organism</strong>.
       </div>
       <div id="ecTable">Please wait while we are building a summary</div>
       <div id="ecTreeView">Please wait while we are building a summary</div></div>
