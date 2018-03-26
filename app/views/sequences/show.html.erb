@@ -100,7 +100,7 @@
         </div>
         <div class="tab-pane" id="go">
           <h2>Gene Ontology annotations</h2>
-          <%=@fa_summary[:go][:numAnnotatedPeptides] %> of the <%=@entries.length%> matched proteins (<%='%.1f' % (100*@fa_summary[:go][:numAnnotatedPeptides].fdiv(@entries.length))%>%) had a GO term annotation.
+          <%=@fa_summary['num']['GO'] %> of the <%=@fa_summary['num']['all']%>  matched proteins (<%='%.1f' % (100*@fa_summary['num']['GO'].fdiv(@fa_summary['num']['all']))%>%) had a GO term annotation.
           <div id="go-panel">Please wait while we are building a summary</div>
         </div>
         <div class="tab-pane" id="ec">
@@ -108,7 +108,7 @@
             <button id='save-btn-ec' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>
           </div>
           <h2>Enzyme Commission numbers</h2>
-          <%=@fa_summary[:ec][:numAnnotatedPeptides] %> of the <%=@entries.length%> matched proteins (<%='%.1f' % (100*@fa_summary[:ec][:numAnnotatedPeptides].fdiv(@entries.length))%>%) had an EC number annotation.
+          <%=@fa_summary['num']['EC'] %> of the <%=@fa_summary['num']['all']%> matched proteins (<%='%.1f' % (100*@fa_summary['num']['EC'].fdiv(@fa_summary['num']['all']))%>%) had an EC number annotation.
           <div id="ec-table">Please wait while we are building a summary</div>
           <div id="ec-treeview">Please wait while we are building a summary</div>
         </div>

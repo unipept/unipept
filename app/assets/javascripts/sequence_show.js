@@ -134,16 +134,33 @@ function initSequenceShow(data) {
     }
 
     function setUpFA(fa) {
-        setUpGO(fa.go);
-        setUpEC(fa.ec);
+        const ecData = Object.entries(fa.data).filter(([a, b]) => a.startsWith("EC")).map(([a, b]) => ({code: a.replace("EC:", ""), value: b})) || [];
+        setUpEC({numAnnotatedPeptides: fa.counts.EC, data: ecData});
+
+        const usedGoTerms = new Set();
+        Object.keys(fa.data)
+            .filter(x => x.startsWith("GO:"))
+            .forEach(x => usedGoTerms.add(x));
+
+        GOTerms.addMissingNames([...usedGoTerms.values()]).then(()=>{
+            const goData = {};
+            for (let namespace of GOTerms.NAMESPACES) {
+                goData[namespace] = Object.entries(fa.data)
+                    .filter(([term, count]) => term.startsWith("GO") && GOTerms.namespaceOf(term) == namespace)
+                    .map(([term, count]) => ({code: term, value: count})) || [];
+            }
+            setUpGO({numAnnotatedPeptides: fa.counts.GO, data: goData});
+        });
     }
 
     function setUpEC({numAnnotatedPeptides, data}) {
         const ecResultset = new ECNumbers({numAnnotatedPeptides, data});
-        if (numAnnotatedPeptides > 0) {
-            setUpECTree(ecResultset);
-            setUpEcTable(ecResultset);
 
+        if (numAnnotatedPeptides > 0) {
+            ecResultset.ensureData().then(()=>{
+                setUpECTree(ecResultset);
+                setUpEcTable(ecResultset);
+            });
             $(".ecNumberLink")
                 .mouseenter(function (e) {
                     const ecNum = this.textContent;
@@ -247,7 +264,7 @@ function initSequenceShow(data) {
                     style: {"width": "8em"},
                 },
                 { // name
-                    text: d => d.name,
+                    text: d => ECNumbers.nameOf(d.code),
                 },
             ],
             tooltip: d => tooltipEC(d.code, ecResultSet),
@@ -325,7 +342,7 @@ function initSequenceShow(data) {
                     style: {"width": "7em"},
                 },
                 { // name
-                    text: d => d.name,
+                    text: d => GOTerms.nameOf(d.code),
                 },
             ],
             tooltip: d => tooltipGO(d.code, goResultset),
