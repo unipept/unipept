@@ -26,8 +26,8 @@ export default class GOTerms {
      * @param {bool} [ensureData=true] fetch names for this resultset in the background,ss
      *                                 if false, you must call `ensureData()` on this object.
      */
-    constructor({numAnnotatedPeptides, data}, ensureData = true) {
-        this.numTotalSet = numAnnotatedPeptides;
+    constructor({numAnnotatedProteins, data}, ensureData = true) {
+        this.numTotalSet = numAnnotatedProteins;
         this.go = new Map();
         Object.values(data).forEach(v => v.forEach(goTerm => this.go.set(goTerm.code, goTerm)));
         GOTerms.addData(Array.from(this.go.values()));

@@ -134,8 +134,8 @@ function initSequenceShow(data) {
     }
 
     function setUpFA(fa) {
-        const ecData = Object.entries(fa.data).filter(([a, b]) => a.startsWith("EC")).map(([a, b]) => ({code: a.replace("EC:", ""), value: b})) || [];
-        setUpEC({numAnnotatedPeptides: fa.counts.EC, data: ecData});
+        const ecData = Object.entries(fa.data).filter(([a, b]) => a.startsWith("EC")).map(([a, b]) => ({code: a.substr(3), value: b})) || [];
+        setUpEC({numAnnotatedProteins: fa.counts.EC, data: ecData});
 
         const usedGoTerms = new Set();
         Object.keys(fa.data)
@@ -149,14 +149,14 @@ function initSequenceShow(data) {
                     .filter(([term, count]) => term.startsWith("GO") && GOTerms.namespaceOf(term) == namespace)
                     .map(([term, count]) => ({code: term, value: count})) || [];
             }
-            setUpGO({numAnnotatedPeptides: fa.counts.GO, data: goData});
+            setUpGO({numAnnotatedProteins: fa.counts.GO, data: goData});
         });
     }
 
-    function setUpEC({numAnnotatedPeptides, data}) {
-        const ecResultset = new ECNumbers({numAnnotatedPeptides, data});
+    function setUpEC({numAnnotatedProteins, data}) {
+        const ecResultset = new ECNumbers({numAnnotatedProteins, data});
 
-        if (numAnnotatedPeptides > 0) {
+        if (numAnnotatedProteins > 0) {
             ecResultset.ensureData().then(()=>{
                 setUpECTree(ecResultset);
                 setUpEcTable(ecResultset);
@@ -293,8 +293,8 @@ function initSequenceShow(data) {
         return result;
     }
 
-    function setUpGO({numAnnotatedPeptides, data}) {
-        const goResultset = new GOTerms({numAnnotatedPeptides, data});
+    function setUpGO({numAnnotatedProteins, data}) {
+        const goResultset = new GOTerms({numAnnotatedProteins, data});
 
         $("#go-panel").empty();
         const goPanel = d3.select("#go-panel");
@@ -321,7 +321,7 @@ function initSequenceShow(data) {
     }
 
     function setUpGoTable(goResultset, variant, target) {
-        const numAnnotatedPeptides = goResultset.getTotalSetSize();
+        const numAnnotatedProteins = goResultset.getTotalSetSize();
 
         const tablepart = target.append("div").attr("class", "col-xs-8");
         new AmountTable({
@@ -334,7 +334,7 @@ function initSequenceShow(data) {
                 { // Count
                     text: d => d.value,
                     style: {"width": "5em"},
-                    shade: d => 100 * d.value / numAnnotatedPeptides,
+                    shade: d => 100 * d.value / numAnnotatedProteins,
                 },
                 { // Go term
                     html: d => `<a href="https://www.ebi.ac.uk/QuickGO/term/${d.code}" target="_blank">${d.code}</a>`,
