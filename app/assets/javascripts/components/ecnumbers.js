@@ -171,7 +171,7 @@ export default class ECNumbers {
         const map = Object.create(null);
 
         // The root node
-        map["-.-.-.-"] = {id: 0, name: "-.-.-.-", children: [], data: {self_count: 0}};
+        map["-.-.-.-"] = {id: 0, name: "", children: [], data: {self_count: 0}};
 
         // Sort from general to specific
         const sortedEC = Array.from(this.ec.values())
@@ -183,7 +183,7 @@ export default class ECNumbers {
             // Create a node for the new EC-code and place it in the map
             const toInsert = {
                 id: code.split(".").map(x => ("0000" + x).slice(-4)).join("."),
-                name: code,
+                name: code.split(".").filter(x=>x!=="-").join("."),
                 children: [],
                 data: {self_count: count, count: count, data: data},
             };
