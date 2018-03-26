@@ -69,11 +69,11 @@ class UniprotEntry < ApplicationRecord
       numPeptides: entries.length,
       go: {
         data: go_summary,
-        numAnnotatedPeptides: entries.count { |e| !e.go_terms.empty? }
+        numAnnotatedProteins: entries.count { |e| !e.go_terms.empty? }
       },
       ec: {
         data: ec_summary,
-        numAnnotatedPeptides: entries.count { |e| !e.ec_numbers.empty? }
+        numAnnotatedProteins: entries.count { |e| !e.ec_numbers.empty? }
       }
     }
   end

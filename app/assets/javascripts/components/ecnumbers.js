@@ -31,8 +31,8 @@ export default class ECNumbers {
      * @param {bool} [ensureData=true] fetch names for this resultset in the background,ss
      *                                 if false, you must call `ensureData()` on this object.
      */
-    constructor({numAnnotatedPeptides = null, data}, ensureData = true) {
-        this.numTotalSet = numAnnotatedPeptides;
+    constructor({numAnnotatedProteins = null, data}, ensureData = true) {
+        this.numTotalSet = numAnnotatedProteins;
         this.data = Array.from(data).sort((a, b) => (b.value - a.value));
         this.ec = new this.addMissing(data);
         ECNumbers.addNames(data);
