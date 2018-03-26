@@ -177,7 +177,7 @@ class Resultset {
         }
         await GOTerms.addMissingNames([...usedGoTerms.values()]);
 
-        // Build summary
+        // Build summary per namespace
         let res = {};
         const countExtractor = pept => pept.fa.counts["GO"] || 0;
         for (let namespace of GOTerms.NAMESPACES) {
@@ -186,8 +186,8 @@ class Resultset {
                 .map(([term, count]) => ({code: term, value: count})) || [];
             res[namespace] = this.summarizeFa(dataExtractor, countExtractor, percent, sequences);
         }
+
         this.go = new GOTerms({data: res}, false);
-        // await this.go.ensureData(); we already fetched everything
     }
 
     /**
@@ -199,8 +199,14 @@ class Resultset {
      *                                    null to consider all
      */
     async summarizeEc(percent = 50, sequences=null) {
-        const dataExtractor = pept => Object.entries(pept.fa.data).filter(([a, b]) => a.startsWith("EC")).map(([a, b]) => ({code: a.replace("EC:", ""), value: b})) || [];
-        const countExtractor = pept => pept.fa.counts["EC"] || 0;
+        // Filter FA' staring with EC (+ remove "EC:")
+        const dataExtractor = pept =>
+            Object.entries(pept.fa.data)
+                .filter(([a, b]) => a.startsWith("EC"))
+                .map(([a, b]) => ({code: a.substr(3), value: b})) || [];
+
+        const countExtractor = pept => pept.fa.counts.EC || 0;
+
         const result = this.summarizeFa(dataExtractor, countExtractor, percent, sequences);
         this.ec = new ECNumbers({data: result}, false);
         await this.ec.ensureData();
