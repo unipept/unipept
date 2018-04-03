@@ -242,15 +242,27 @@ class Resultset {
                 for (const {code, value} of counts) {
                     const weight = value / divisor;
                     if (weight < fraction) continue; // skip if insignificant TODO: remove
-                    const count = map.get(code) || 0;
+                    const count = map.get(code) || [0, 0, 0, 0];
                     const scaledWeight = weight * (pept.count);
-                    map.set(code, count + scaledWeight);
+                    map.set(code, [
+                        count[0] + scaledWeight,
+                        count[1] + value,
+                        count[2] + value * pept.count,
+                        count[3] + pept.count,
+                    ]);
                     numAnnotations += scaledWeight;
                 }
             }
         }
 
-        return Array.from(map).map(x => ({code: x[0], value: x[1] / numAnnotations}));
+        return Array.from(map).map(x => ({
+            code: x[0],
+            weightedValue: x[1][0],
+            absoluteCountFiltered: x[1][1],
+            absoluteCount: x[1][2],
+            numberOfPepts: x[1][3],
+            value: x[1][0] / numAnnotations,
+        }));
     }
 
     /**
