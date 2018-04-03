@@ -106,8 +106,12 @@ class MPA {
         $(".mpa-scope").text(name);
         const percent = $("#goFilterPerc").val()*1; // TODO remove
         const dataset = this.datasets[0];
+
+        clearTimeout(this._redoFAcalculationsTimeout);
+        this._redoFAcalculationsTimeout = setTimeout(() => {
         dataset.reprocessFA(percent, id > 0 ? dataset.tree.getAllSequences(id) : null)
             .then(()=>this.setUpFAVisualisations(dataset.fa));
+        }, 500);
     }
 
     setUpFAVisualisations({go, ec}) {
@@ -418,7 +422,6 @@ class MPA {
 
         /* TODO remove*/
         const $perSelector = $("#goFilterPerc");
-        $perSelector.val(50);
         $perSelector.change(()=>{
             this.redoFAcalculations();
         });
