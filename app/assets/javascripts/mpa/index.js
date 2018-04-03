@@ -166,7 +166,7 @@ class MPA {
                     style: {"width": "1.5em"},
                 },
             ],
-            tooltip: d => this.tooltipGO(d.code, goResultset),
+            tooltip: d => this.tooltipGO(d.code, goResultset, d),
             tooltipID: "#tooltip",
         }).draw();
     }
@@ -198,9 +198,10 @@ class MPA {
      * Generate a tooltip for an GO term
      * @param  {string}    goTerm   The Ec term to generate a tooltip for
      * @param  {GOTerms} [goResultSet=null]  A `GOTerms` summary
+     * @param  {object} [allData=null]  all the data for debugging TODO remove
      * @return {string}    HTML for the tooltip
      */
-    tooltipGO(goTerm, goResultSet = null) {
+    tooltipGO(goTerm, goResultSet = null, allData = null) {
         let result = `
             <h4 class="tooltip-fa-title">
                 <span class="tooltip-fa-title-name">${GOTerms.nameOf(goTerm)}</span>
@@ -210,6 +211,10 @@ class MPA {
 
         if (goResultSet != null) {
             result += `<div class="tooltip-fa-text">Evidence score of ${numberToPercent(goResultSet.getValueOf(goTerm), 2)}</div>`;
+        }
+
+        if (allData != null) {
+            result += "<table class='table table-condensed'>"+Object.entries(allData).map( ([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("")+"</table>";
         }
         return result;
     }
@@ -223,9 +228,10 @@ class MPA {
      * Generate a tooltip for an EC number
      * @param  {string}    ecNumber   The Ec number to generate a tooltip for
      * @param  {ECNumbers} [ecResultSet=null]  A `ECNumbers` summary
+     * @param  {object} [allData=null]  all the data for debugging TODO remove
      * @return {string}    HTML for the tooltip
      */
-    tooltipEC(ecNumber, ecResultSet = null) {
+    tooltipEC(ecNumber, ecResultSet = null, allData=null) {
         const fmt= x=>`<div class="tooltip-ec-ancestor"><span class="tooltip-ec-term">EC ${x}</span><span class="tooltip-ec-name">${ECNumbers.nameOf(x)}</span></div>`;
 
         let result = `
@@ -240,6 +246,10 @@ class MPA {
 
         if (ecResultSet != null) {
             result += `<div class="tooltip-fa-text">Evidence score of ${numberToPercent(ecResultSet.getValueOf(ecNumber), 2)}</div>`;
+        }
+
+        if (allData != null) {
+            result += "<table class='table table-condensed'>"+Object.entries(allData).map( ([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("")+"</table>";
         }
         return result;
     }
@@ -327,7 +337,7 @@ class MPA {
                     style: {"width": "1.5em"},
                 },
             ],
-            tooltip: d => this.tooltipEC(d.code, ecResultSet),
+            tooltip: d => this.tooltipEC(d.code, ecResultSet, d),
             tooltipID: "#tooltip",
         }).draw();
     }
@@ -574,7 +584,7 @@ class MPA {
             localTerm = "";
         }
         setTimeout(() => this.searchTree.search(localTerm), timeout);
-        setTimeout(() => this.redoFAcalculations(localTerm, id), timeout);
+        setTimeout(() => this.redoFAcalculations(searchTerm, id), timeout);
     }
 
     static get RANKS() {
