@@ -22,11 +22,13 @@ export default class GOTerms {
 
     /**
      * Creates a new GOTerms
-     * @param  {[FACounts]} go list of GO terms with their counts
+     * TODO
+     * @param  {[FACounts]} [go=[]] list of GO terms with their counts
      * @param {bool} [ensureData=true] fetch names for this resultset in the background,ss
      *                                 if false, you must call `ensureData()` on this object.
      */
-    constructor({numAnnotatedProteins, data}, ensureData = true) {
+    constructor({numAnnotatedProteins=null, data=[]}, ensureData = true, clone=false) {
+        if (clone) return;
         this.numTotalSet = numAnnotatedProteins;
         this.go = new Map();
         Object.values(data).forEach(v => v.forEach(goTerm => this.go.set(goTerm.code, goTerm)));
@@ -47,6 +49,23 @@ export default class GOTerms {
         }
     }
 
+    /**
+     * Make a new ECNumbers form a clone
+     * @param {GOTerms} other
+     * @return {GOTerms} filled GOTerms instance
+     */
+    static clone(other, base=null) {
+        let go = base;
+        if (base === null) {
+            go = new GOTerms({}, true, true);
+        }
+        go.numTotalSet = other.numTotalSet;
+        go.data = other.data;
+        go.go = other.go;
+        return go;
+    }
+
+    /**
     /**
      * Fetch the names of the GO terms and await them
      */
@@ -149,6 +168,17 @@ export default class GOTerms {
                 GOTerms.addData(res);
             }
         }
+    }
+
+    /**
+     * Cone the GO Term information into the current GOTerm static value
+     *
+     * Needed to work properly with WebWorkers that do not share these statics
+     *
+     * @param {iteratable<FAInfo>} data inforamtion about GO Terms
+     */
+    static ingestData(data) {
+        GOTerms.goData = data;
     }
 
     /**

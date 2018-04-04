@@ -31,7 +31,8 @@ export default class ECNumbers {
      * @param {bool} [ensureData=true] fetch names for this resultset in the background,ss
      *                                 if false, you must call `ensureData()` on this object.
      */
-    constructor({numAnnotatedProteins = null, data}, ensureData = true) {
+    constructor({numAnnotatedProteins = null, data=[]}, ensureData = true, clone=false) {
+        if (clone) return;
         this.numTotalSet = numAnnotatedProteins;
         this.data = Array.from(data).sort((a, b) => (b.value - a.value));
         this.ec = new this.addMissing(data);
@@ -41,6 +42,21 @@ export default class ECNumbers {
         if (ensureData) {
             this.ensureData();
         }
+    }
+
+    /**
+     * Make a new ECNumbers form a clone
+     * @param {ECNumbers} other
+     */
+    static clone(other, base=null) {
+        let ec = base;
+        if (base === null) {
+            ec = new ECNumbers({}, true, true);
+        }
+        ec.numTotalSet = other.numTotalSet;
+        ec.data = other.data;
+        ec.ec = other.ec;
+        return ec;
     }
 
     /**
@@ -144,7 +160,7 @@ export default class ECNumbers {
         // iteratively open the leaf with the largest count
         if (autoExpand) {
             const root = tree.getRoot();
-            let allowedCount = root.data.count * 2;
+            let allowedCount = root.data.count * (root.data.count < 1000 ? 2 : 1.1);
             const pq = new PriorityQueue((a, b) => b.data.count - a.data.count);
             root.children.forEach(c => pq.add(c));
             while (allowedCount > 0) {
@@ -263,6 +279,14 @@ export default class ECNumbers {
                 this.ecNames.set(ec.code, ec.name);
             }
         });
+    }
+
+    /**
+     *
+     * @param {map of name} names
+     */
+    static ingestNames(names) {
+        ECNumbers.ecNames = names;
     }
 
     /**
