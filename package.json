@@ -17,6 +17,7 @@
     "babel-eslint": "^8.2.2",
     "eslint": "^4.3.0",
     "eslint-config-google": "^0.9.1",
-    "webpack-dev-server": "^2.9.4"
+    "webpack-dev-server": "^2.9.4",
+    "workerize-loader": "^1.0.2"
   }
 }

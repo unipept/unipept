@@ -34,6 +34,7 @@ class MPA {
      */
     async addDataset(peptides) {
         this.enableProgressBar(true, true);
+        this.enableProgressBar(true, false, "#progress-fa-analysis");
         let dataset = new Dataset(peptides);
         this.datasets.push(dataset);
         await this.analyse(this.searchSettings);
@@ -54,7 +55,6 @@ class MPA {
         const dataset = this.datasets[0];
         await dataset.search(this.searchSettings);
         this.setUpVisualisations(dataset.tree);
-        this.setUpFAVisualisations(dataset.fa);
         this.setUpMissedPeptides(dataset.getMissedPeptides());
         this.updateStats(dataset.getNumberOfMatchedPeptides(), dataset.getNumberOfSearchedForPeptides());
         return dataset;
@@ -79,6 +79,7 @@ class MPA {
     async updateSearchSettings({il, dupes, missed}) {
         this.searchSettings = {il: il, dupes: dupes, missed: missed};
         this.enableProgressBar(true, true);
+        this.enableProgressBar(true, false, "#progress-fa-analysis");
         $("#search-intro").text("Please wait while we process your data");
         await this.analyse(this.searchSettings);
         this.enableProgressBar(false);
@@ -103,14 +104,18 @@ class MPA {
      *                      use -1 to use everything (Organism)
      */
     redoFAcalculations(name="Organism", id=-1) {
-        $(".mpa-scope").text(name);
-        const percent = $("#goFilterPerc").val()*1; // TODO remove
-        const dataset = this.datasets[0];
-
         clearTimeout(this._redoFAcalculationsTimeout);
         this._redoFAcalculationsTimeout = setTimeout(() => {
-        dataset.reprocessFA(percent, id > 0 ? dataset.tree.getAllSequences(id) : null)
-            .then(()=>this.setUpFAVisualisations(dataset.fa));
+            this.enableProgressBar(true, false, "#progress-fa-analysis");
+            $(".mpa-scope").text(name);
+            const percent = this.$perSelector.val()*1; // TODO remove
+            const dataset = this.datasets[0];
+
+            dataset.reprocessFA(percent, id > 0 ? dataset.tree.getAllSequences(id) : null)
+                .then(()=>{
+                    this.setUpFAVisualisations(dataset.fa);
+                    this.enableProgressBar(false, false, "#progress-fa-analysis");
+                });
         }, 500);
     }
 
@@ -421,8 +426,8 @@ class MPA {
         }));
 
         /* TODO remove*/
-        const $perSelector = $("#goFilterPerc");
-        $perSelector.change(()=>{
+        this.$perSelector = $("#goFilterPerc");
+        this.$perSelector.change(()=>{
             this.redoFAcalculations();
         });
 
@@ -522,22 +527,23 @@ class MPA {
         });
     }
 
-    enableProgressBar(enable = true, determinate = false) {
+    enableProgressBar(enable = true, determinate = false, barSelector="#progress-analysis") {
+        const $bar = $(barSelector);
         if (enable) {
-            $("#progress-analysis").css("visibility", "visible");
-            $("#progress-analysis").toggleClass("unipept-progress-determinate", determinate);
-            $("#progress-analysis").toggleClass("unipept-progress-indeterminate", !determinate);
+            $bar.css("visibility", "visible");
+            $bar.toggleClass("unipept-progress-determinate", determinate);
+            $bar.toggleClass("unipept-progress-indeterminate", !determinate);
             this.setProgressValue(0);
             eventBus.on("dataset-progress", this.setProgressValue);
         } else {
-            $("#progress-analysis").css("visibility", "hidden");
+            $bar.css("visibility", "hidden");
             this.setProgressValue(0);
             eventBus.off("dataset-progress", this.setProgressValue);
         }
     }
 
-    setProgressValue(value = 0) {
-        $("#progress-analysis .progressbar").css("width", `${value * 100}%`);
+    setProgressValue(value = 0, barSelector="#progress-analysis") {
+        $(`${barSelector} .progressbar`).css("width", `${value * 100}%`);
     }
 
     tooltipContent(d) {
