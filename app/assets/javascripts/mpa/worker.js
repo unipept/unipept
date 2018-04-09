@@ -3,23 +3,28 @@ import GOTerms from "../components/goterms.js";
 import ECNumbers from "../components/ecnumbers.js";
 import {postJSON} from "../utils.js";
 
-// block for `time` ms, then return the number of loops we could run in that time:
+/* Worker global conaining processed peptides
+ * Keeping this here gives a huge perforamce boost
+ */
+let processedPeptides = new Map();
+
 /**
+ * Sends the list of peptides to the server and returns the proccesed results
  *
- * @param {*} peptides
+ * @param {*} preparedPeptides
  * @param {*} il
  * @param {*} missed
- * @param {*} preparedPeptides
+ * @return result
  */
-export async function getter(peptideList, il, missed, preparedPeptides) {
+export async function process(originalPeptides, il, dupes, missed) {
+    const preparedPeptides = preparePeptides(originalPeptides, il, dupes, missed);
+    const peptideList = Array.from(preparedPeptides.keys());
     const BATCH_SIZE = 100,
         PEPT2LCA_URL = "/mpa/pept2lca",
         PEPT2FA_URL = "/mpa/pept2fa";
 
     setProgress(1/peptideList.length);
 
-
-    const processedPeptides = new Map();
     for (let i = 0; i < peptideList.length; i += BATCH_SIZE) {
         const data = JSON.stringify({
             peptides: peptideList.slice(i, i + BATCH_SIZE),
@@ -40,11 +45,106 @@ export async function getter(peptideList, il, missed, preparedPeptides) {
         setProgress((i + BATCH_SIZE) / peptideList.length);
     }
 
+    let numMatched = 0;
     for (const peptide of processedPeptides.values()) {
         peptide.count = preparedPeptides.get(peptide.sequence);
+        numMatched += peptide.count;
     }
 
-    return processedPeptides;
+    return {
+        processed: processedPeptides,
+        missed: peptideList.filter(p => !processedPeptides.has(p)),
+        numMatched: numMatched,
+        numSearched: [...preparedPeptides.values()].reduce((a, b) => a + b, 0),
+    };
+}
+
+
+/**
+ * Prepares the list of originalPeptides for use in the application by
+ * cleaving, filtering, equating IL and finally generating a frequency table
+ *
+ * @param  {string[]} originalPeptides A list of peptides
+ * @param  {boolean} il should we equate I and L
+ * @param  {boolean} dupes should we filter duplicates?
+ * @param  {boolean} missed will we perform advancedMissedCleavageHandling
+ * @return {Map.<string, number>} A frequency table of the cleaned up
+ *   peptides
+ */
+function preparePeptides(originalPeptides, il, dupes, missed) {
+    let peptides = cleavePeptides(originalPeptides, missed);
+    peptides = filterShortPeptides(peptides);
+    peptides = equateIL(peptides, il);
+    peptides = indexPeptides(peptides, dupes);
+    return peptides;
+}
+
+
+/**
+ * Creates a frequency table for a list of peptides
+ *
+ * @param  {string[]} peptides A list of peptides
+ * @param  {boolean} dupes Filter duplicates
+ * @return {Map.<string, number>} A map containing the frequency of
+ *   each peptide
+ * @onlyhere
+ */
+function indexPeptides(peptides, dupes) {
+    const peptideMap = new Map();
+    for (const peptide of peptides) {
+        const count = peptideMap.get(peptide) || 0;
+        if (dupes) {
+            peptideMap.set(peptide, 1);
+        } else {
+            peptideMap.set(peptide, count + 1);
+        }
+    }
+    return peptideMap;
+}
+
+/**
+ * Splits all peptides after every K or R if not followed by P if
+ * advancedMissedCleavageHandling isn't set
+ *
+ * @param  {string[]} peptides The list of peptides
+ * @param  {boolean} advancedMissedCleavageHandling Should we do
+ *   advancedMissedCleavageHandling?
+ * @return {string[]} The list of cleaved peptides
+ */
+function cleavePeptides(peptides, advancedMissedCleavageHandling) {
+    if (!advancedMissedCleavageHandling) {
+        return peptides.join("+")
+            .replace(/([KR])([^P])/g, "$1+$2")
+            .replace(/([KR])([^P+])/g, "$1+$2")
+            .split("+");
+    }
+    return peptides;
+}
+
+/**
+ * Filters out all peptides with a length lower than 5
+ *
+ * @param  {string[]} peptides A list of peptides
+ * @return {string[]} A filtered list of peptides
+ * @onlyhere
+ */
+function filterShortPeptides(peptides) {
+    return peptides.filter(p => p.length >= 5);
+}
+
+/**
+ * Replaces every I with an L if equateIL is set to true
+ *
+ * @param  {string[]} peptides An array of peptides in upper case
+ * @param  {boolean}  equateIL Only makes the replacement if this is true
+ * @return {string[]} The peptides where the replacements are made
+ * @onlyhere
+ */
+function equateIL(peptides, equateIL) {
+    if (equateIL) {
+        return peptides.map(p => p.replace(/I/g, "L"));
+    }
+    return peptides;
 }
 
 
@@ -57,7 +157,7 @@ export async function getter(peptideList, il, missed, preparedPeptides) {
      * @param {string[]} [sequences=null] subset of sequences to take into account,
      *                                    null to consider all
      */
-export async function summarizeGo(processedPeptides, percent = 50, sequences=null) {
+export async function summarizeGo(percent = 50, sequences=null) {
     // Find used go term and fetch data about them
     let usedGoTerms = new Set();
     for (let peptide of processedPeptides.values()) {
@@ -74,7 +174,7 @@ export async function summarizeGo(processedPeptides, percent = 50, sequences=nul
         const dataExtractor = pept => Object.entries(pept.fa.data)
             .filter(([term, count]) => term.startsWith("GO") && GOTerms.namespaceOf(term) == namespace)
             .map(([term, count]) => ({code: term, value: count})) || [];
-        res[namespace] = summarizeFa(processedPeptides, dataExtractor, countExtractor, percent, sequences);
+        res[namespace] = summarizeFa(dataExtractor, countExtractor, percent, sequences);
     }
 
     return new GOTerms({data: res}, false);
@@ -89,7 +189,7 @@ export async function summarizeGo(processedPeptides, percent = 50, sequences=nul
      * @param {string[]} [sequences=null] subset of sequences to take into account,
      *                                    null to consider all
      */
-export async function summarizeEc(processedPeptides, percent = 50, sequences=null) {
+export async function summarizeEc(percent = 50, sequences=null) {
     // Filter FA' staring with EC (+ remove "EC:")
     const dataExtractor = pept =>
         Object.entries(pept.fa.data)
@@ -98,7 +198,7 @@ export async function summarizeEc(processedPeptides, percent = 50, sequences=nul
 
     const countExtractor = pept => pept.fa.counts.EC || 0;
 
-    const result = summarizeFa(processedPeptides, dataExtractor, countExtractor, percent, sequences);
+    const result = summarizeFa(dataExtractor, countExtractor, percent, sequences);
     let ec = new ECNumbers({data: result}, false);
     await ec.ensureData();
     return ec;
@@ -122,7 +222,7 @@ export async function summarizeEc(processedPeptides, percent = 50, sequences=nul
      *                                    null to consider all
      * @todo  remove the cutoff
      */
-function summarizeFa(processedPeptides, extract, countExtractor, cutoff = 50, sequences=null) {
+function summarizeFa(extract, countExtractor, cutoff = 50, sequences=null) {
     let iteratableOfSequences = sequences || processedPeptides.keys();
     const map = new Map();
     const fraction = cutoff / 100;
@@ -177,9 +277,5 @@ let progress = 0;
  */
 function setProgress(value) {
     progress = value;
+    self.postMessage({type: "progress", value: value});
 }
-
-export function getProgress() {
-    return progress;
-}
-
