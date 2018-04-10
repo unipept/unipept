@@ -5,7 +5,14 @@ import ECNumbers from "../components/ecnumbers.js";
 import worker from "workerize-loader!./worker.js";
 
 /**
- * Represents the resultset for a given dataset
+ * Represents the resultset for a given dataset.
+ *
+ * This is in fact a proxy for a worker thread that will be created
+ * upon the insatntiation of this class (one worker per ResultSet object).
+ *
+ * The final results of the worker is duplicated to here. Intermediate
+ * results saty in the worker to reduce the time taken to send data to
+ * the thread
  *
  * @type {Resultset}
  */
@@ -20,9 +27,7 @@ class Resultset {
      */
     constructor(dataset, {il, dupes, missed}) {
         this.dataset = dataset;
-        this.il = il;
-        this.dupes = dupes;
-        this.missed = missed;
+        this.config = {il, dupes, missed};
         this.processedPeptides = null;
         this.missedPeptides = [];
         this.fa = {ec: null, go: null};
@@ -40,7 +45,7 @@ class Resultset {
      * taxonomic tree.
      */
     async process() {
-        let {processed, missed, numMatched, numSearched} = await this.wrkr.process(this.dataset.originalPeptides, this.il, this.dupes, this.missed);
+        let {processed, missed, numMatched, numSearched} = await this.wrkr.process(this.dataset.originalPeptides, this.config);
         this.processedPeptides = processed;
         this.missedPeptides = missed;
         this.numberOfMatchedPeptides = numMatched;
