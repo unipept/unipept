@@ -62,16 +62,8 @@ export async function process(originalPeptides, config) {
             equate_il: config.il,
             missed: config.missed,
         });
-        const lcaQuery = postJSON(PEPT2LCA_URL, data);
-        const faQuery = postJSON(PEPT2FA_URL, data);
-
-        await Promise.all([lcaQuery, faQuery]).then(([lcaResult, faResult]) => {
-            for (let pept of lcaResult.peptides) {
-                let faData = faResult.peptides[pept.sequence];
-                pept.fa = faData;
-            }
-            lcaResult.peptides.forEach(p => processedPeptides.set(p.sequence, p));
-        });
+        const lcaResult = await postJSON(PEPT2DATA_URL, data);
+        lcaResult.peptides.forEach(p => processedPeptides.set(p.sequence, p));
 
         setProgress((i + BATCH_SIZE) / peptideList.length);
     }

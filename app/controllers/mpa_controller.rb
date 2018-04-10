@@ -12,7 +12,7 @@ class MpaController < ApplicationController
     @missed = params[:missed].present?
   end
 
-  def pept2lca
+  def pept2data
     peptides = params[:peptides] || []
     missed = params[:missed]
     @equate_il = params[:equate_il]
@@ -20,21 +20,16 @@ class MpaController < ApplicationController
                 .includes(Sequence.lca_t_relation_name(@equate_il) => :lineage)
                 .where(sequence: peptides)
                 .where.not(Sequence.lca_t_relation_name(@equate_il) => nil)
-    return unless missed
-    @peptides += peptides
-                 .to_set.subtract(@peptides.map(&:sequence))
-                 .map { |p| Sequence.missed_cleavage_lca(p, @equate_il) }
-                 .compact
-  end
+    if missed
+      @peptides += peptides
+                  .to_set.subtract(@peptides.map(&:sequence))
+                  .map { |p| Sequence.missed_cleavage_lca(p, @equate_il) }
+                  .compact
+    end
 
-  def pept2fa
-    equate_il = params[:equate_il]
-    peptides = params[:peptides] || []
-
-    @peptides = Sequence.where(sequence: peptides)
     @results_fa = {}
     @peptides.each do |sequence|
-      @results_fa[sequence.sequence] = sequence.calculate_fa(equate_il)
+      @results_fa[sequence.sequence] = sequence.calculate_fa(@equate_il)
     end
   end
 
