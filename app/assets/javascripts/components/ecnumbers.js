@@ -160,7 +160,7 @@ export default class ECNumbers {
         // iteratively open the leaf with the largest count
         if (autoExpand) {
             const root = tree.getRoot();
-            let allowedCount = root.data.count * (root.data.count < 1000 ? 2 : 1.1);
+            let allowedCount = root.data.count * .8;
             const pq = new PriorityQueue((a, b) => b.data.count - a.data.count);
             root.children.forEach(c => pq.add(c));
             while (allowedCount > 0) {

@@ -54,7 +54,7 @@ let processedPeptides = new Map();
 export async function process(originalPeptides, config) {
     const preparedPeptides = preparePeptides(originalPeptides, config);
     const peptideList = Array.from(preparedPeptides.keys());
-
+    setProgress(0.1);
 
     for (let i = 0; i < peptideList.length; i += BATCH_SIZE) {
         const data = JSON.stringify({
@@ -65,7 +65,7 @@ export async function process(originalPeptides, config) {
         const lcaResult = await postJSON(PEPT2DATA_URL, data);
         lcaResult.peptides.forEach(p => processedPeptides.set(p.sequence, p));
 
-        setProgress((i + BATCH_SIZE) / peptideList.length);
+        setProgress(0.1+0.9*((i + BATCH_SIZE) / peptideList.length));
     }
 
     let numMatched = 0;
