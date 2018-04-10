@@ -417,7 +417,7 @@ class MPA {
         $("#treeview-reset").click(() => this.treeview.reset());
 
         // download results
-        $("#mpa-download-results").click(() => downloadDataByForm(this.datasets[0].toCSV(), "mpa_result.csv"));
+        $("#mpa-download-results").click(() => downloadDataByForm(this.datasets[0].toCSV(), "mpa_result.csv", "text/csv"));
         // update settings
         $("#mpa-update-settings").click(() => this.updateSearchSettings({
             il: $("#il").prop("checked"),
