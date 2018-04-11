@@ -84,10 +84,11 @@ class AmountTable {
      * Make the table visualization
      */
     draw() {
-        const [thead, tbody] = this.buildTable();
+        const [thead, tbody, tfoot] = this.buildTable();
         this.buildHeader(thead);
         if (this.data.length !== 0) {
             this.buildRow(tbody);
+            this.addCollapseRow(tfoot, tbody);
         } else {
             // fallback in case there is no data
             tbody.append("tr").append("td")
@@ -108,7 +109,8 @@ class AmountTable {
         this.table.html(""); // empty the tables HTML
         const thead = this.table.append("thead");
         const tbody = this.table.append("tbody");
-        return [thead, tbody];
+        const tfoot = this.table.append("tfoot");
+        return [thead, tbody, tfoot];
     }
 
     /**
@@ -177,41 +179,54 @@ class AmountTable {
 
 
         this.addTooltips(row);
-        this.addCollapseRow(tbody);
     }
 
     /**
      * Add a row that to toggle collapsing
-     * @param {d3.selection} tbody the body to add the row to
+     * @param {d3.selection} tfoot the body to add the row to
+     * @param {d3.selection} tbody the body of the table (for content)
      */
-    addCollapseRow(tbody) {
-        if (this.limit >= this.data.length) return; // No collapse row if all rows shown
-        const collapseRow = tbody.append("tr").attr("class", "collapse-row");
+    addCollapseRow(tfoot, tbody) {
+        let numleft = Math.max(0, this.data.length - this.limit);
+        if (numleft <= 0) return; // No collapse row if all rows shown
+        const collapseRow = tfoot.append("tr").attr("class", "collapse-row");
         const collapseCell = collapseRow.append("td")
             .attr("colspan", this.header.length)
             .attr("tabindex", "0")
             .attr("aria-expanded", !this.collapsed)
             .attr("aria-pressed", !this.collapsed)
-            .attr("role", "button");
+            .attr("role", "button")
+            .html(`<span class="glyphicon glyphicon-chevron-down"></span> Show ${Math.min(numleft, 10)} more rows (${numleft} left)`);
 
-        if (this.collapsed) {
-            collapseCell.html(`<span class="glyphicon glyphicon-chevron-down"></span> Show ${this.data.length - this.limit} more rows`);
-        } else {
-            collapseCell.html(`<span class="glyphicon glyphicon-chevron-up"></span> Hide last ${this.data.length - this.limit} rows`);
-        }
+        let numClick = 0;
 
         // Collapse on click or on enter or on space (role button)
-        const toggler = () => {
-            collapseRow.remove();
-            this.collapsed = !this.collapsed;
+        const toggler = delta => {
+            this.limit = Math.max(0, Math.min( this.limit + delta, this.data.length+delta));
+            numleft = Math.max(0, this.data.length - this.limit);
+            if (numleft > 0) {
+                let cellHtml = `<span class="glyphicon glyphicon-chevron-down"></span> Show ${Math.min(numleft, 10)} more rows (${numleft} left)`;
+                if (numClick >= 3 && numleft > 100) {
+                    cellHtml += "<span style='float:right; opacity:.7;'><kbd>SHIFT+click</kbd> for 100</span>";
+                }
+                collapseCell.html(cellHtml);
+            } else {
+                collapseRow.remove();
+            }
+            this.showTooltip(false);
             this.buildRow(tbody);
             this.showTooltip(false);
+            numClick++;
         };
 
-        collapseRow.on("click", toggler);
+        const togglerDo = () => {
+            toggler(d3.event.shiftKey ? 100 : 10);
+        };
+
+        collapseRow.on("click", togglerDo);
         collapseRow.on("keydown", () => {
             if (d3.event.key === "Enter" || d3.event.key === " ") {
-                toggler();
+                togglerDo();
             }
         });
     }
