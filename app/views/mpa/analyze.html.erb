@@ -153,6 +153,16 @@
       <li class="active"><a href="#goWrapper" data-toggle="tab">GO Terms</a></li>
       <li><a href="#ecWrapper" data-toggle="tab">EC Numbers</a></li>
       <li> <input type="number" min="0" max="100" step="5" value="50" id="goFilterPerc" style="border-radius: 3px;width: 4em;height: 2em;border: 1px solid #EEE;text-align: center;margin: 9px;"/>%</li>
+      <li>
+        Sort by:
+        <select id="goField"  style="border-radius: 3px;width: 10em;height: 2em;border: 1px solid #EEE;text-align: center;margin: 9px;">
+          <option selected value="value" data-as="percent">Avg weight</option>
+          <option value="weightedValue" data-as="2pos">weight</option>
+          <option value="absoluteCountFiltered" data-as="int">#occur</option>
+          <option value="absoluteCount" data-as="int">#occur+dup</option>
+          <option value="numberOfPepts" data-as="int">#peptides</option>
+        </select>
+      </li>
     </ul>
   </div>
   <div id="progress-fa-analysis" class="unipept-progress unipept-progress-indeterminate">
