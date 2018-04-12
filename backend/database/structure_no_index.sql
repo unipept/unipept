@@ -120,6 +120,8 @@ COLLATE = ascii_general_ci;
 
 -- -----------------------------------------------------
 -- Table `unipept`.`sequences`
+-- BLOCKSIZE 16 IS DEFAULT BLOCKSIZE
+-- Only BLOBS will get compressed
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
@@ -131,6 +133,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
+ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=16 
 COLLATE = ascii_general_ci;
 
 
