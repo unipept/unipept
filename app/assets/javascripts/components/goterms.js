@@ -26,6 +26,7 @@ export default class GOTerms {
      * @param  {[FACounts]} [go=[]] list of GO terms with their counts
      * @param {bool} [ensureData=true] fetch names for this resultset in the background,ss
      *                                 if false, you must call `ensureData()` on this object.
+     * @param {bool} [clone=false] *for internal use*
      */
     constructor({numAnnotatedProteins=null, data=[]}, ensureData = true, clone=false) {
         if (clone) return;
@@ -50,8 +51,9 @@ export default class GOTerms {
     }
 
     /**
-     * Make a new ECNumbers form a clone
+     * Make a new GOTerms form a clone
      * @param {GOTerms} other
+     * @param {GOTerms} [base=null] optional GoTerms instance to reuse
      * @return {GOTerms} filled GOTerms instance
      */
     static clone(other, base=null) {

@@ -30,6 +30,7 @@ export default class ECNumbers {
      * @param  {[FACounts]} ec list of EC numbers with their counts
      * @param {bool} [ensureData=true] fetch names for this resultset in the background,ss
      *                                 if false, you must call `ensureData()` on this object.
+     * @param {bool} [clone=false] *for internal use*
      */
     constructor({numAnnotatedProteins = null, data=[]}, ensureData = true, clone=false) {
         if (clone) return;
@@ -47,6 +48,8 @@ export default class ECNumbers {
     /**
      * Make a new ECNumbers form a clone
      * @param {ECNumbers} other
+     * @param {ECNumbers} [base=null] optional ECNumbers instance to reuse
+     * @return {ECNumbers} filled ECNumbers instance
      */
     static clone(other, base=null) {
         let ec = base;
@@ -282,8 +285,11 @@ export default class ECNumbers {
     }
 
     /**
+     * Cone the ECNumbers information into the current ECNumbers static value
      *
-     * @param {map of name} names
+     * Needed to work properly with WebWorkers that do not share these statics
+     *
+     * @param {iteratable<FAInfo>} names inforamtion about GO Terms
      */
     static ingestNames(names) {
         ECNumbers.ecNames = names;
