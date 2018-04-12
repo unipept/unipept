@@ -142,17 +142,18 @@ class MPA {
     }
 
     setUpGoTable(goResultset, variant, target) {
+        const sortOrder = this.getFaSelector();
         const tablepart = target.append("div").attr("class", "col-xs-8");
         new AmountTable({
             title: `GO terms - ${variant}`,
             el: tablepart,
-            header: ["Score", "GO term", "Name", ""],
-            data: goResultset.sortedTerms(variant),
+            header: [sortOrder.name, "GO term", "Name", ""],
+            data: sortOrder.sort(goResultset.sortedTerms(variant)),
             limit: 5,
             contents: [
                 { // Count
-                    text: d => d.value.toString(),
-                    html: d => numberToPercent(d.value, 2),
+                    text: d => d[sortOrder.field].toString(),
+                    html: d => sortOrder.format(d),
                     style: {"width": "5em"},
                     shade: d=>100*d.value,
                 },
@@ -181,7 +182,7 @@ class MPA {
     }
 
     setUpQuickGo(goResultset, variant, variantName, target) {
-        const top5 = goResultset.sortedTerms(variant).slice(0, 5).map(x => x.code);
+        const top5 = this.getFaSelector().sort(goResultset.sortedTerms(variant)).slice(0, 5).map(x => x.code);
         const quickGoChartURL = GOTerms.quickGOChartURL(top5);
         const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${numberToPercent(goResultset.getValueOf(x))})`);
         const top5sentence = top5WithNames.slice(0, -1).join(", ")
@@ -309,18 +310,19 @@ class MPA {
      * @param {ECNumbers} ecResultSet  A `ECNumbers` summary
      */
     setUpECTable(ecResultSet) {
+        const sortOrder = this.getFaSelector();
         const target = d3.select("#ecTable");
         target.html("");
         new AmountTable({
             title: "EC numbers",
             el: target,
-            header: ["Score", "EC-Number", "Name", ""],
-            data: ecResultSet.sortedTerms(),
+            header: [sortOrder.name, "EC-Number", "Name", ""],
+            data: sortOrder.sort(ecResultSet.sortedTerms()),
             limit: 5,
             contents: [
                 { // Count
-                    text: d => d.value.toString(),
-                    html: d => numberToPercent(d.value),
+                    text: d => d[sortOrder.field].toString(),
+                    html: d => sortOrder.format(d),
                     style: {"width": "5em"},
                     shade: d=>100*d.value,
                 },
@@ -429,6 +431,28 @@ class MPA {
         this.$perSelector = $("#goFilterPerc");
         this.$perSelector.change(()=>{
             this.redoFAcalculations();
+        });
+
+        // TODO: remove or clean
+        this.$faTypeSelector = $("#goField");
+        this.getFaSelector = ()=> {
+            let selected = this.$faTypeSelector.find(":selected");
+            const formatters = {
+                "int": x=>x.toString(),
+                "percent": x=>numberToPercent(x),
+                "2pos": x=> x.toFixed(2).toString(),
+            };
+
+            const field = selected.val();
+            return {
+                format: x => formatters[selected.data("as")](x[field]),
+                field: field,
+                name: selected.text(),
+                sort: arr => arr.sort((a, b) => b[field] - a[field]),
+            };
+        };
+        this.$faTypeSelector.change(()=>{
+            this.setUpFAVisualisations(this.datasets[0].fa);
         });
 
         // copy to clipboard button for missed peptides
