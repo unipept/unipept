@@ -75,7 +75,7 @@ export async function process(originalPeptides, config) {
     }
 
     return {
-        processed: processedPeptides,
+        processed: Array.from(processedPeptides.entries()),
         missed: peptideList.filter(p => !processedPeptides.has(p)),
         numMatched: numMatched,
         numSearched: [...preparedPeptides.values()].reduce((a, b) => a + b, 0),

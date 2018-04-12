@@ -46,7 +46,7 @@ class Resultset {
      */
     async process() {
         let {processed, missed, numMatched, numSearched} = await this.wrkr.process(this.dataset.originalPeptides, this.config);
-        this.processedPeptides = processed;
+        this.processedPeptides = new Map(processed);
         this.missedPeptides = missed;
         this.numberOfMatchedPeptides = numMatched;
         this.numberOfSearchedForPeptides = numSearched;
