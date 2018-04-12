@@ -5608,9 +5608,9 @@ uid-number@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/uid-number/-/uid-number-0.0.6.tgz#0ea10e8035e8eb5b8e4449f06da1c730663baa81"
 
-unipept-visualizations@^1.6.0:
+"unipept-visualizations@git+ssh://git@github.ugent.be:unipept/unipept-visualizations.git#feature/addPublicInterface":
   version "1.6.0"
-  resolved "https://registry.yarnpkg.com/unipept-visualizations/-/unipept-visualizations-1.6.0.tgz#53beee76a5cdcd1a453daff167b244f816d6226d"
+  resolved "git+ssh://git@github.ugent.be:unipept/unipept-visualizations.git#cea7b97b8da6621d4123c78259070879a4e4e1e7"
 
 uniq@^1.0.1:
   version "1.0.1"
