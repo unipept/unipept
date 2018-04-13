@@ -165,8 +165,8 @@ export default class ECNumbers {
             const root = tree.getRoot();
             let allowedCount = root.data.count * .8;
             const pq = new PriorityQueue((a, b) => b.data.count - a.data.count);
-            root.children.forEach(c => pq.add(c));
-            while (allowedCount > 0) {
+            (root.children || []).forEach(c => pq.add(c));
+            while (allowedCount > 0 && pq.size > 0) {
                 const toExpand = pq.remove();
                 allowedCount -= toExpand.data.count;
                 toExpand.expand(1);
