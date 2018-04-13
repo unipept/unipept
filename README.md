@@ -32,9 +32,9 @@ We will probably use [docker](https://www.docker.io/) for this, and release a re
 ## Who made this app?
 
 Unipept is a research project of the computational biology group at Ghent University. If you use this application, please cite:
-* Mesuere et al. (2016) Bioinformatics [doi:10.1093/bioinformatics/btw039](http://dx.doi.org/10.1093/bioinformatics/btw039)
-* Mesuere et al. (2015) Proteomics [doi:10.1002/pmic.201400361](http://dx.doi.org/10.1002/pmic.201400361)
-* Mesuere et al. (2012) J. Proteome Res. [doi:10.1021/pr300576s](http://dx.doi.org/10.1021/pr300576s)
+* Mesuere et al. (2016) Bioinformatics [doi:10.1093/bioinformatics/btw039](https://doi.org/10.1093/bioinformatics/btw039)
+* Mesuere et al. (2015) Proteomics [doi:10.1002/pmic.201400361](https://doi.org/10.1002/pmic.201400361)
+* Mesuere et al. (2012) J. Proteome Res. [doi:10.1021/pr300576s](https://doi.org/10.1021/pr300576s)
 
 Current team:
 * Bart Mesuere ([@bmesuere](https://github.com/bmesuere)): PhD student and lead developer
