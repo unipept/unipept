@@ -152,15 +152,25 @@
     <ul class="nav nav-tabs visualisations" id="viz-tabs">
       <li class="active"><a href="#goWrapper" data-toggle="tab">GO Terms</a></li>
       <li><a href="#ecWrapper" data-toggle="tab">EC Numbers</a></li>
-      <li> <input type="number" min="0" max="100" step="5" value="50" id="goFilterPerc" style="border-radius: 3px;width: 4em;height: 2em;border: 1px solid #EEE;text-align: center;margin: 9px;"/>%</li>
-      <li>
-        Sort by:
-        <select id="goField"  style="border-radius: 3px;width: 10em;height: 2em;border: 1px solid #EEE;text-align: center;margin: 9px;">
-          <option selected value="value" data-as="percent">Avg weight</option>
-          <option value="weightedValue" data-as="2pos">weight</option>
-          <option value="absoluteCountFiltered" data-as="int">#occur</option>
-          <option value="absoluteCount" data-as="int">#occur+dup</option>
-          <option value="numberOfPepts" data-as="int">#peptides</option>
+      <li style="margin:5px;">
+        <span class='glyphicon glyphicon-filter' style="margin: 0 -20px 0 20px;">
+        </span><input type="number" min="0" max="100" step="5" value="5" class="js-has-hover-tooltip" title="Filer out annotations that occur in less than ...% of the Uniprot entries that correspond with a sequence"
+          id="goFilterPerc" style="width: 5em;height: 2em;border: 1px solid #EEE;text-align: center;padding-left: 15px;background: white;"
+        />
+
+        <span class='glyphicon glyphicon-sort-by-attributes-alt' style="margin: 0 -20px 0 20px;">
+          </span><select id="goField" style="background: white;width: 10em;height: 2em;border: 1px solid #EEE;text-align: center;padding-left:20px;">
+          <optgroup label="Sort by weighted number of occurences in related proteins">
+            <option selected value="value" data-as="percent">Weight (%)</option>
+            <option value="weightedValue" data-as="2pos">Weight</option>
+          </optgroup>
+          <optgroup label="Sort by total number of occurences in related proteins">
+            <option value="absoluteCountFiltered" data-as="int">#occur</option>
+            <option value="absoluteCount" data-as="int">#occur+dup</option>
+          </optgroup>
+          <optgroup label="Sort by number of peptides in related proteins">
+            <option value="numberOfPepts" data-as="int">#peptides</option>
+          </optgroup>
         </select>
       </li>
     </ul>
@@ -173,9 +183,9 @@
   <div class="tab-content multi-search">
     <div class="tab-pane active" id="goWrapper">
       <div class='card-supporting-text'>
-        The score indicates the fraction of the sequences that contain that GO term multiplied by the
-        probability that a sequence indicates that GO-term. The shown results are limited to peptites
-        whose lowest <strong class="mpa-scope">Organism</strong>.
+        The weight indicates the number of the sequences that contain a GO term multiplied by the
+        probability that a sequence indicates that GO-term. The shown results are limited to peptides
+        whose lowest common ancestor is lower or equal to <strong class="mpa-scope">Organism</strong>.
       </div>
       <div id="goPanel">Please wait while we are preparing your data...&nbsp;</div>
     </div>
@@ -184,9 +194,9 @@
         <button id='save-btn-ec' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>
       </div>
       <div class='card-supporting-text'>
-        The score indicates the fraction of the sequences that contain that EC code specifically
-        multiplied by the probability that a sequence indicates that EC-code. The shown results are
-        limited to peptites that are under <strong class="mpa-scope">Organism</strong>.
+        The weight indicates the number of the sequences that contain a EC code specifically
+        multiplied by the probability that a sequence indicates that EC-code. The shown results are limited to peptides
+        whose lowest common ancestor is lower or equal to <strong class="mpa-scope">Organism</strong>.
       </div>
       <div id="ecTable">Please wait while we are building a summary</div>
       <div id="ecTreeView">Please wait while we are building a summary</div></div>
