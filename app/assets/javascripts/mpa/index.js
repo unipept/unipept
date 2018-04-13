@@ -3,6 +3,7 @@ import {Dataset} from "./dataset.js";
 import {constructSearchtree} from "./searchtree.js";
 import {showInfoModal} from "../modal.js";
 import {AmountTable} from "../components/amounttable.js";
+import {showNotification} from "../notifications.js";
 import "unipept-visualizations/dist/unipept-visualizations.es5.js";
 import GOTerms from "../components/goterms.js";
 import ECNumbers from "../components/ecnumbers.js";
@@ -22,6 +23,10 @@ class MPA {
         this.setUpSaveImage();
         this.setUpFullScreen();
         this.setUpActionBar();
+
+        this.displaySettings = {
+            onlyStarredFA: false,
+        };
     }
 
     /**
@@ -141,14 +146,47 @@ class MPA {
         }
     }
 
+    getFAFavorite() {
+        return JSON.parse(localStorage.getItem("saved.fa") || "[]");
+    }
+
+    setFAFavorite(data) {
+        localStorage.setItem("saved.fa", JSON.stringify(data));
+    }
+
+    addFAFavorite(code, add) {
+        let notification = "Somthing went wrong.";
+        let curFavs = this.getFAFavorite();
+        if (add) {
+            if (!curFavs.includes(code)) {
+                curFavs.push(code);
+            }
+            notification = "Starred "+code;
+        } else {
+            curFavs = curFavs.filter(x => x !== code);
+            notification = "Unstarred " + code;
+        }
+        this.setFAFavorite(curFavs);
+        showNotification(notification, {
+            autoHide: true,
+            loading: false,
+        });
+    }
+
     setUpGoTable(goResultset, variant, target) {
         const sortOrder = this.getFaSelector();
         const tablepart = target.append("div").attr("class", "col-xs-8");
+        const starred = this.getFAFavorite();
+
+        let data = goResultset.sortedTerms(variant);
+        if (this.displaySettings.onlyStarredFA) {
+            data = data.filter(x => starred.includes(x.code));
+        }
         new AmountTable({
             title: `GO terms - ${variant}`,
             el: tablepart,
             header: [sortOrder.name, "GO term", "Name", ""],
-            data: sortOrder.sort(goResultset.sortedTerms(variant)),
+            data: sortOrder.sort(data),
             limit: 5,
             contents: [
                 { // Count
@@ -167,13 +205,23 @@ class MPA {
                 },
                 { // List
                     builder: cell => {
+                        const fav = cell.append("button");
+                        fav.classed("btn btn-default btn-xs save-fa-btn", true);
+                        fav.classed("saved", d=>starred.includes(d.code));
+                        const that=this;
+                        fav.on("click", function (d) {
+                            const classes = this.classList;
+                            classes.toggle("saved");
+                            that.addFAFavorite(d.code, classes.contains("saved"));
+                        });
+                        fav.html("<span class='glyphicon glyphicon-star'></span>");
                         const link = cell.append("button");
                         link.classed("btn btn-default btn-xs", true);
                         link.on("click", d => this.downloadPeptidesFor(d.code));
                         link.html("<span class='glyphicon glyphicon-download-alt'></span>");
                     },
                     text: d => "",
-                    style: {"width": "1.5em"},
+                    style: {"width": "5em", "text-align": "right"},
                 },
             ],
             tooltip: d => this.tooltipGO(d.code, goResultset, d),
@@ -310,14 +358,21 @@ class MPA {
      * @param {ECNumbers} ecResultSet  A `ECNumbers` summary
      */
     setUpECTable(ecResultSet) {
+        const starred = this.getFAFavorite();
         const sortOrder = this.getFaSelector();
+
+        let data = ecResultSet.sortedTerms();
+        if (this.displaySettings.onlyStarredFA) {
+            data = data.filter(x => starred.includes("EC:"+x.code));
+        }
+
         const target = d3.select("#ecTable");
         target.html("");
         new AmountTable({
             title: "EC numbers",
             el: target,
             header: [sortOrder.name, "EC-Number", "Name", ""],
-            data: sortOrder.sort(ecResultSet.sortedTerms()),
+            data: sortOrder.sort(data),
             limit: 5,
             contents: [
                 { // Count
@@ -339,13 +394,23 @@ class MPA {
                 },
                 { // List
                     builder: cell => {
+                        const fav = cell.append("button");
+                        fav.classed("btn btn-default btn-xs save-fa-btn", true);
+                        fav.classed("saved", d=>starred.includes("EC:"+d.code));
+                        const that=this;
+                        fav.on("click", function (d) {
+                            const classes = this.classList;
+                            classes.toggle("saved");
+                            that.addFAFavorite("EC:"+d.code, classes.contains("saved"));
+                        });
+                        fav.html("<span class='glyphicon glyphicon-star'></span>");
                         const link = cell.append("button");
                         link.classed("btn btn-default btn-xs", true);
                         link.on("click", d => this.downloadPeptidesFor("EC:"+d.code));
                         link.html("<span class='glyphicon glyphicon-download-alt'></span>");
                     },
                     text: d => "",
-                    style: {"width": "1.5em"},
+                    style: {"width": "5em", "text-align": "right"},
                 },
             ],
             tooltip: d => this.tooltipEC(d.code, ecResultSet, d),
@@ -452,6 +517,16 @@ class MPA {
             };
         };
         this.$faTypeSelector.change(()=>{
+            this.setUpFAVisualisations(this.datasets[0].fa);
+        });
+
+        $("#btn-clearFAfavorites").click(()=>{
+            this.setFAFavorite([]);
+            this.setUpFAVisualisations(this.datasets[0].fa);
+        });
+
+        $("#btn-onlyShowFAfavorites").click(()=>{
+            this.displaySettings.onlyStarredFA = !this.displaySettings.onlyStarredFA;
             this.setUpFAVisualisations(this.datasets[0].fa);
         });
 
