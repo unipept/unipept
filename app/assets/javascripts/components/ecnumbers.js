@@ -32,7 +32,7 @@ export default class ECNumbers {
      *                                 if false, you must call `ensureData()` on this object.
      * @param {bool} [clone=false] *for internal use*
      */
-    constructor({numAnnotatedProteins = null, data=[]}, ensureData = true, clone=false) {
+    constructor({numAnnotatedProteins = null, data = []}, ensureData = true, clone = false) {
         if (clone) return;
         this.numTotalSet = numAnnotatedProteins;
         this.data = Array.from(data).sort((a, b) => (b.value - a.value));
@@ -51,7 +51,7 @@ export default class ECNumbers {
      * @param {ECNumbers} [base=null] optional ECNumbers instance to reuse
      * @return {ECNumbers} filled ECNumbers instance
      */
-    static clone(other, base=null) {
+    static clone(other, base = null) {
         let ec = base;
         if (base === null) {
             ec = new ECNumbers({}, true, true);
@@ -202,7 +202,7 @@ export default class ECNumbers {
             // Create a node for the new EC-code and place it in the map
             const toInsert = {
                 id: code.split(".").map(x => ("0000" + x).slice(-4)).join("."),
-                name: code.split(".").filter(x=>x!=="-").join("."),
+                name: code.split(".").filter(x => x !== "-").join("."),
                 children: [],
                 data: {self_count: count, count: count, data: data},
             };

@@ -65,7 +65,7 @@ export async function process(originalPeptides, config) {
         const lcaResult = await postJSON(PEPT2DATA_URL, data);
         lcaResult.peptides.forEach(p => processedPeptides.set(p.sequence, p));
 
-        setProgress(0.1+0.9*((i + BATCH_SIZE) / peptideList.length));
+        setProgress(0.1 + 0.9 * ((i + BATCH_SIZE) / peptideList.length));
     }
 
     let numMatched = 0;
@@ -181,7 +181,7 @@ function equateIL(peptides, equateIL) {
  *                                    null to consider all
  * @return {GOTerms} GoTerms summary
  */
-export async function summarizeGo(percent = 50, sequences=null) {
+export async function summarizeGo(percent = 50, sequences = null) {
     // Find used go term and fetch data about them
     let usedGoTerms = new Set();
     for (let peptide of processedPeptides.values()) {
@@ -217,7 +217,7 @@ export async function summarizeGo(percent = 50, sequences=null) {
  *                                    null to consider all
  * @return {ECNumbers} ECNumbers summary
  */
-export async function summarizeEc(percent = 50, sequences=null) {
+export async function summarizeEc(percent = 50, sequences = null) {
     // Filter FA' staring with EC (+ remove "EC:")
     const dataExtractor = pept =>
         Object.entries(pept.fa.data)
@@ -248,7 +248,7 @@ export async function summarizeEc(percent = 50, sequences=null) {
  * @return {MPAFAResult[]} an array of MPAFAResult to be stored
  * @todo  remove the cutoff
  */
-function summarizeFa(extract, countExtractor, cutoff = 50, sequences=null) {
+function summarizeFa(extract, countExtractor, cutoff = 50, sequences = null) {
     let iteratableOfSequences = sequences || processedPeptides.keys();
 
     const map = new Map();

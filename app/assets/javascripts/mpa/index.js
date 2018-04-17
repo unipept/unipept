@@ -70,7 +70,7 @@ class MPA {
         const result = [["sequence", "count", "evidence"]]
             .concat(dataset.getPeptidesByFA(name)
                 .map(x => [x.sequence, x.totalCount, x.relativeCount]));
-        downloadDataByForm(toCSVString(result), name+".csv", "text/csv");
+        downloadDataByForm(toCSVString(result), name + ".csv", "text/csv");
     }
 
     /**
@@ -108,16 +108,16 @@ class MPA {
      * @param {int} [id=-1] the taxon id whose sequences should be taken into account
      *                      use -1 to use everything (Organism)
      */
-    redoFAcalculations(name="Organism", id=-1) {
+    redoFAcalculations(name = "Organism", id = -1) {
         clearTimeout(this._redoFAcalculationsTimeout);
         this._redoFAcalculationsTimeout = setTimeout(() => {
             this.enableProgressBar(true, false, "#progress-fa-analysis");
             $(".mpa-scope").text(name);
-            const percent = this.$perSelector.val()*1; // TODO remove
+            const percent = this.$perSelector.val() * 1; // TODO remove
             const dataset = this.datasets[0];
 
             dataset.reprocessFA(percent, id > 0 ? dataset.tree.getAllSequences(id) : null)
-                .then(()=>{
+                .then(() => {
                     this.setUpFAVisualisations(dataset.fa);
                     this.enableProgressBar(false, false, "#progress-fa-analysis");
                 });
@@ -161,7 +161,7 @@ class MPA {
             if (!curFavs.includes(code)) {
                 curFavs.push(code);
             }
-            notification = "Starred "+code;
+            notification = "Starred " + code;
         } else {
             curFavs = curFavs.filter(x => x !== code);
             notification = "Unstarred " + code;
@@ -193,7 +193,7 @@ class MPA {
                     text: d => d[sortOrder.field].toString(),
                     html: d => sortOrder.format(d),
                     style: {"width": "5em"},
-                    shade: d=>100*d.value,
+                    shade: d => 100 * d.value,
                 },
                 { // Go term
                     html: d => `<a href="https://www.ebi.ac.uk/QuickGO/term/${d.code}" target="_blank">${d.code}</a>`,
@@ -207,8 +207,8 @@ class MPA {
                     builder: cell => {
                         const fav = cell.append("button");
                         fav.classed("btn btn-default btn-xs save-fa-btn", true);
-                        fav.classed("saved", d=>starred.includes(d.code));
-                        const that=this;
+                        fav.classed("saved", d => starred.includes(d.code));
+                        const that = this;
                         fav.on("click", function (d) {
                             const classes = this.classList;
                             classes.toggle("saved");
@@ -275,7 +275,7 @@ class MPA {
         }
 
         if (allData != null) {
-            result += "<table class='table table-condensed'>"+Object.entries(allData).map( ([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("")+"</table>";
+            result += "<table class='table table-condensed'>" + Object.entries(allData).map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("") + "</table>";
         }
         return result;
     }
@@ -292,8 +292,8 @@ class MPA {
      * @param  {object} [allData=null]  all the data for debugging TODO remove
      * @return {string}    HTML for the tooltip
      */
-    tooltipEC(ecNumber, ecResultSet = null, allData=null) {
-        const fmt= x=>`<div class="tooltip-ec-ancestor"><span class="tooltip-ec-term">EC ${x}</span><span class="tooltip-ec-name">${ECNumbers.nameOf(x)}</span></div>`;
+    tooltipEC(ecNumber, ecResultSet = null, allData = null) {
+        const fmt = x => `<div class="tooltip-ec-ancestor"><span class="tooltip-ec-term">EC ${x}</span><span class="tooltip-ec-name">${ECNumbers.nameOf(x)}</span></div>`;
 
         let result = `
             <h4 class="tooltip-fa-title">
@@ -310,7 +310,7 @@ class MPA {
         }
 
         if (allData != null) {
-            result += "<table class='table table-condensed'>"+Object.entries(allData).map( ([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("")+"</table>";
+            result += "<table class='table table-condensed'>" + Object.entries(allData).map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("") + "</table>";
         }
         return result;
     }
@@ -366,7 +366,7 @@ class MPA {
 
         let data = ecResultSet.sortedTerms();
         if (this.displaySettings.onlyStarredFA) {
-            data = data.filter(x => starred.includes("EC:"+x.code));
+            data = data.filter(x => starred.includes("EC:" + x.code));
         }
 
         const target = d3.select("#ecTable");
@@ -382,7 +382,7 @@ class MPA {
                     text: d => d[sortOrder.field].toString(),
                     html: d => sortOrder.format(d),
                     style: {"width": "5em"},
-                    shade: d=>100*d.value,
+                    shade: d => 100 * d.value,
                 },
                 { // EC-number
                     html: d => {
@@ -399,17 +399,17 @@ class MPA {
                     builder: cell => {
                         const fav = cell.append("button");
                         fav.classed("btn btn-default btn-xs save-fa-btn", true);
-                        fav.classed("saved", d=>starred.includes("EC:"+d.code));
-                        const that=this;
+                        fav.classed("saved", d => starred.includes("EC:" + d.code));
+                        const that = this;
                         fav.on("click", function (d) {
                             const classes = this.classList;
                             classes.toggle("saved");
-                            that.addFAFavorite("EC:"+d.code, classes.contains("saved"));
+                            that.addFAFavorite("EC:" + d.code, classes.contains("saved"));
                         });
                         fav.html("<span class='glyphicon glyphicon-star'></span>");
                         const link = cell.append("button");
                         link.classed("btn btn-default btn-xs", true);
-                        link.on("click", d => this.downloadPeptidesFor("EC:"+d.code));
+                        link.on("click", d => this.downloadPeptidesFor("EC:" + d.code));
                         link.html("<span class='glyphicon glyphicon-download-alt'></span>");
                     },
                     text: d => "",
@@ -497,18 +497,18 @@ class MPA {
 
         /* TODO remove*/
         this.$perSelector = $("#goFilterPerc");
-        this.$perSelector.change(()=>{
+        this.$perSelector.change(() => {
             this.redoFAcalculations();
         });
 
         // TODO: remove or clean
         this.$faTypeSelector = $("#goField");
-        this.getFaSelector = ()=> {
+        this.getFaSelector = () => {
             let selected = this.$faTypeSelector.find(":selected");
             const formatters = {
-                "int": x=>x.toString(),
-                "percent": x=>numberToPercent(x),
-                "2pos": x=> x.toFixed(2).toString(),
+                "int": x => x.toString(),
+                "percent": x => numberToPercent(x),
+                "2pos": x => x.toFixed(2).toString(),
             };
 
             const field = selected.val();
@@ -519,16 +519,16 @@ class MPA {
                 sort: arr => arr.sort((a, b) => b[field] - a[field]),
             };
         };
-        this.$faTypeSelector.change(()=>{
+        this.$faTypeSelector.change(() => {
             this.setUpFAVisualisations(this.datasets[0].fa);
         });
 
-        $("#btn-clearFAfavorites").click(()=>{
+        $("#btn-clearFAfavorites").click(() => {
             this.setFAFavorite([]);
             this.setUpFAVisualisations(this.datasets[0].fa);
         });
 
-        $("#btn-onlyShowFAfavorites").click(()=>{
+        $("#btn-onlyShowFAfavorites").click(() => {
             this.displaySettings.onlyStarredFA = !this.displaySettings.onlyStarredFA;
             this.setUpFAVisualisations(this.datasets[0].fa);
         });
@@ -629,7 +629,7 @@ class MPA {
         });
     }
 
-    enableProgressBar(enable = true, determinate = false, barSelector="#progress-analysis") {
+    enableProgressBar(enable = true, determinate = false, barSelector = "#progress-analysis") {
         const $bar = $(barSelector);
         if (enable) {
             $bar.css("visibility", "visible");
@@ -644,7 +644,7 @@ class MPA {
         }
     }
 
-    setProgressValue(value = 0, barSelector="#progress-analysis") {
+    setProgressValue(value = 0, barSelector = "#progress-analysis") {
         $(`${barSelector} .progressbar`).css("width", `${value * 100}%`);
     }
 

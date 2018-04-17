@@ -26,6 +26,8 @@
         "asyncArrow": "always"
       }
     ],
+    "arrow-spacing": "error",
+    "space-infix-ops": "error",
     "no-param-reassign": [
       "error",
       {
