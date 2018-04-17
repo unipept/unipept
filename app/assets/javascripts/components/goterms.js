@@ -184,7 +184,7 @@ export default class GOTerms {
     }
 
     /**
-     * @param {[string]} terms the terms to show in the chart
+     * @param {[string]} terms the terms to show in the chart (at least one)
      * @return {string} The QuickGo chart URL of the given GO terms
      */
     static quickGOChartURL(terms) {
