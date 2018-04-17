@@ -11,6 +11,7 @@ import {toCSVString, downloadDataByForm} from "../utils.js";
  * @property {Number} [limit=Infinity]  The number of rows to show in collapsed state
  * @property {function(data: Any): string} tooltip  A function specifying the tooltip content given a datarow
  * @property {string}   tooltipID   A CSS selector of an existing tooltip element.
+ * @property {Number} [tooltipDelay=500]  Number of ms to wait before showing the tooltip
  */
 
 /**
@@ -34,6 +35,8 @@ import {toCSVString, downloadDataByForm} from "../utils.js";
  *           in this column. Should be in [0,100]
  */
 
+// Holds a timout to show the tooltip
+let tooltipTimeout = null;
 
 /**
  * A table representation of data
@@ -47,7 +50,7 @@ class AmountTable {
      *
      * @param {AmountTableSettings} settings
      */
-    constructor({el, title = null, header = null, data, contents = null, limit = Infinity, tooltip = null, tooltipID = null}) {
+    constructor({el, title = null, header = null, data, contents = null, limit = Infinity, tooltip = null, tooltipID = null, tooltipDelay = 500}) {
         this.el = el;
         this.title = title;
         this.header = header;
@@ -57,6 +60,7 @@ class AmountTable {
         this.collapsed = true;
         this.contents = contents;
         this.makeTooltip = tooltip;
+        this.tooltipDelay = tooltipDelay;
         if (tooltip !== null) {
             if (tooltipID === null) {
                 this.createTooltip();
@@ -76,8 +80,7 @@ class AmountTable {
         this.tooltip = d3.select("body")
             .append("div")
             .attr("class", "tip")
-            .style("visibility", "hidden")
-            .style("display", "none");
+            .style("visibility", "hidden");
     }
 
     /**
@@ -283,9 +286,9 @@ class AmountTable {
     addTooltips(row) {
         if (this.tooltip !== null) {
             row.on("mouseover", d => {
-                this.showTooltip(true);
-                this.positionTooltip(d3.event.pageX, d3.event.pageY);
                 this.tooltip.html(this.makeTooltip(d));
+                this.positionTooltip(d3.event.pageX, d3.event.pageY);
+                this.showTooltip(true);
             });
             row.on("mousemove", d => {
                 this.positionTooltip(d3.event.pageX, d3.event.pageY);
@@ -297,7 +300,8 @@ class AmountTable {
     }
 
     /**
-     * Position the tooltip
+     * Position the tooltip at the given coordinate. position it 3px form right
+     * if it overflows the page.
      * @param {number} x The x position of the cursor
      * @param {number} y The y position of the cursor
      */
@@ -305,24 +309,39 @@ class AmountTable {
         if (this.tooltip !== null) {
             this.tooltip
                 .style("top", (y + 10) + "px")
-                .style("left", (x + 15) + "px");
+                .style("left", (x + 15) + "px")
+                .style("display", "block")
+                .style("right", "auto");
+
+            // Reposition if needed
+            if (window.innerWidth - x - 25 - this.tooltip.node().offsetWidth < 0) {
+                this.tooltip
+                    .style("right", "3px")
+                    .style("left", "auto");
+            }
         }
     }
 
     /**
-     * Show/Hide the tooltip
+     * Show/Hide the tooltip (first wait tooltipDelay ms)
      * @param {bool} show show the tooltip
      */
     showTooltip(show) {
+        const doShow = ()=>{
+            this.tooltip
+                .style("visibility", "visible");
+        };
+
         if (this.tooltip !== null) {
             if (show) {
-                this.tooltip
-                    .style("visibility", "visible")
-                    .style("display", "block");
+                tooltipTimeout = setTimeout(doShow, this.tooltipDelay);
             } else {
+                clearTimeout(tooltipTimeout);
                 this.tooltip
-                    .style("visibility", "hidden")
-                    .style("display", "none");
+                    .style("top", 0)
+                    .style("left", 0)
+                    .style("right", "auto")
+                    .style("visibility", "hidden");
             }
         }
     }
