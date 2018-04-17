@@ -73,7 +73,7 @@ class Dataset {
      * @param {int} cutoff as percent (0-100)
      * @param {string[]} sequences array of peptides to take into account
     */
-    async reprocessFA(cutoff=50, sequences=null) {
+    async reprocessFA(cutoff = 50, sequences = null) {
         await this.resultset.proccessFA(cutoff, sequences);
         this.fa = this.resultset.fa;
     }

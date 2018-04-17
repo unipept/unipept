@@ -205,7 +205,7 @@ class AmountTable {
 
         // Collapse on click or on enter or on space (role button)
         const toggler = delta => {
-            this.limit = Math.max(0, Math.min( this.limit + delta, this.data.length+delta));
+            this.limit = Math.max(0, Math.min( this.limit + delta, this.data.length + delta));
             numleft = Math.max(0, this.data.length - this.limit);
             if (numleft > 0) {
                 let cellHtml = `<span class="glyphicon glyphicon-chevron-down"></span> Show ${Math.min(numleft, 10)} more rows (${numleft} left)`;
@@ -327,7 +327,7 @@ class AmountTable {
      * @param {bool} show show the tooltip
      */
     showTooltip(show) {
-        const doShow = ()=>{
+        const doShow = () => {
             this.tooltip
                 .style("visibility", "visible");
         };

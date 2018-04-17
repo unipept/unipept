@@ -33,8 +33,8 @@ class Resultset {
         this.fa = {ec: null, go: null};
         this.progress = 0;
         this.wrkr = worker();
-        this.wrkr.onmessage = m=>{
-            if (m.data.type=="progress") {
+        this.wrkr.onmessage = m => {
+            if (m.data.type == "progress") {
                 this.setProgress(m.data.value);
             }
         };
@@ -110,12 +110,12 @@ class Resultset {
      * @param {integer} cutoff
      * @param {itteratable} sequences
      */
-    async proccessFA(cutoff=50, sequences=null) {
+    async proccessFA(cutoff = 50, sequences = null) {
         await Promise.all([
             this.summarizeGo(cutoff, sequences),
             this.summarizeEc(cutoff, sequences),
         ])
-            .then(([go, ec])=>{
+            .then(([go, ec]) => {
                 this.fa.go = go;
                 this.fa.ec = ec;
             });
@@ -147,7 +147,7 @@ class Resultset {
      *                                    null to consider all
      * @return {GoTerms} GO term data
      */
-    async summarizeGo(percent = 50, sequences=null) {
+    async summarizeGo(percent = 50, sequences = null) {
         // Find used go term and fetch data about them
         const wrkrGO = await this.wrkr.summarizeGo(percent, sequences);
         const go = GOTerms.clone(wrkrGO, this.fa.go);
@@ -165,7 +165,7 @@ class Resultset {
      *                                    null to consider all
      * @return {ECNumbers} an EC resultset
      */
-    async summarizeEc(percent = 50, sequences=null) {
+    async summarizeEc(percent = 50, sequences = null) {
         const wrkrEC = await this.wrkr.summarizeEc(percent, sequences);
         const ec = ECNumbers.clone(wrkrEC, this.fa.ec);
         ECNumbers.ingestNames(await this.wrkr.getEcNames());

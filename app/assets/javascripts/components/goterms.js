@@ -28,7 +28,7 @@ export default class GOTerms {
      *                                 if false, you must call `ensureData()` on this object.
      * @param {bool} [clone=false] *for internal use*
      */
-    constructor({numAnnotatedProteins=null, data=[]}, ensureData = true, clone=false) {
+    constructor({numAnnotatedProteins = null, data = []}, ensureData = true, clone = false) {
         if (clone) return;
         this.numTotalSet = numAnnotatedProteins;
         this.go = new Map();
@@ -56,7 +56,7 @@ export default class GOTerms {
      * @param {GOTerms} [base=null] optional GoTerms instance to reuse
      * @return {GOTerms} filled GOTerms instance
      */
-    static clone(other, base=null) {
+    static clone(other, base = null) {
         let go = base;
         if (base === null) {
             go = new GOTerms({}, true, true);

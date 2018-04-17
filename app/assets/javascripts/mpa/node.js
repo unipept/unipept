@@ -18,7 +18,7 @@ class Node {
      * @param  {String} [name=""] The name of the organism
      * @param  {String} [rank="no rank"] The taxonomic rank of the organism
      */
-    constructor(id, name="", rank="no rank") {
+    constructor(id, name = "", rank = "no rank") {
         this.id = id;
         this.name = name;
         this.rank = rank;

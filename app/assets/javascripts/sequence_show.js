@@ -146,14 +146,14 @@ class SPA {
             numAnnotatedProteins: fa.counts.EC,
             data: Object.entries(fa.data).filter(([a, b]) => a.startsWith("EC")).map(([a, b]) => ({code: a.substr(3), value: b})) || []},
         false);
-        ecData.ensureData().then(()=>this.setUpEC(ecData));
+        ecData.ensureData().then(() => this.setUpEC(ecData));
 
         const usedGoTerms = new Set();
         Object.keys(fa.data)
             .filter(x => x.startsWith("GO:"))
             .forEach(x => usedGoTerms.add(x));
 
-        GOTerms.addMissingNames([...usedGoTerms.values()]).then(()=>{
+        GOTerms.addMissingNames([...usedGoTerms.values()]).then(() => {
             const goCountsPerNamespace = {};
             for (let namespace of GOTerms.NAMESPACES) {
                 goCountsPerNamespace[namespace] = Object.entries(fa.data)
@@ -266,7 +266,7 @@ class SPA {
                 { // Count
                     text: d => d.value.toString(),
                     style: {"width": "5em"},
-                    shade: d => 100*ecResultSet.getFractionOf(d.code),
+                    shade: d => 100 * ecResultSet.getFractionOf(d.code),
                 },
                 { // EC-number
                     html: d => {
@@ -343,7 +343,7 @@ class SPA {
                 { // Count
                     text: d => d.value,
                     style: {"width": "5em"},
-                    shade: d => 100*goResultset.getFractionOf(d.code),
+                    shade: d => 100 * goResultset.getFractionOf(d.code),
                 },
                 { // Go term
                     html: d => `<a href="https://www.ebi.ac.uk/QuickGO/term/${d.code}" target="_blank">${d.code}</a>`,
