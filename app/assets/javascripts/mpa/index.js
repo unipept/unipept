@@ -231,25 +231,28 @@ class MPA {
 
     setUpQuickGo(goResultset, variant, variantName, target) {
         const top5 = this.getFaSelector().sort(goResultset.sortedTerms(variant)).slice(0, 5).map(x => x.code);
-        const quickGoChartURL = GOTerms.quickGOChartURL(top5);
-        const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${numberToPercent(goResultset.getValueOf(x))})`);
-        const top5sentence = top5WithNames.slice(0, -1).join(", ")
-                             + (top5.length > 1 ? " and ": "")
-                             + top5WithNames[top5WithNames.length-1];
-        target
-            .append("div").attr("class", "col-xs-4")
-            .append("img")
-            .attr("src", quickGoChartURL)
-            .attr("class", "quickGoThumb")
-            .attr("title", `QuickGO chart of ${top5sentence}`)
-            .on("click", () => {
-                showInfoModal("QuickGo "+variantName, `
-                    This chart shows the realationship between the ${top5.length} most occuring GO terms: ${top5sentence}.<br/>
-                    <a href="${quickGoChartURL}" target="_blank" title="Click to enlarge in new tab"><img style="max-width:100%" src="${quickGoChartURL}" alt="QuickGO chart of ${top5sentence}"/></a>
-                    <br>
-                    Provided by <a href="https://www.ebi.ac.uk/QuickGO/annotations?goId=${top5.join(",")}" target="_blank">QuickGo</a>.`,
-                {wide: true});
-            });
+
+        if (top5.length > 0) {
+            const quickGoChartURL = GOTerms.quickGOChartURL(top5);
+            const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${numberToPercent(goResultset.getValueOf(x))})`);
+            const top5sentence = top5WithNames.slice(0, -1).join(", ")
+                + (top5.length > 1 ? " and " : "")
+                + top5WithNames[top5WithNames.length - 1];
+            target
+                .append("div").attr("class", "col-xs-4")
+                .append("img")
+                .attr("src", quickGoChartURL)
+                .attr("class", "quickGoThumb")
+                .attr("title", `QuickGO chart of ${top5sentence}`)
+                .on("click", () => {
+                    showInfoModal("QuickGo " + variantName, `
+                        This chart shows the realationship between the ${top5.length} most occuring GO terms: ${top5sentence}.<br/>
+                        <a href="${quickGoChartURL}" target="_blank" title="Click to enlarge in new tab"><img style="max-width:100%" src="${quickGoChartURL}" alt="QuickGO chart of ${top5sentence}"/></a>
+                        <br>
+                        Provided by <a href="https://www.ebi.ac.uk/QuickGO/annotations?goId=${top5.join(",")}" target="_blank">QuickGo</a>.`,
+                    {wide: true});
+                });
+        }
     }
 
     /**
