@@ -3,7 +3,7 @@ import {showInfoModal} from "./modal.js";
 import {AmountTable} from "./components/amounttable.js";
 import ECNumbers from "./components/ecnumbers.js";
 import GOTerms from "./components/goterms.js";
-import "unipept-visualizations/src/treeview/treeview.js";
+import "unipept-visualizations/dist/unipept-visualizations.es5.js";
 
 /* eslint require-jsdoc: off */
 /* TODO: more documentation */
