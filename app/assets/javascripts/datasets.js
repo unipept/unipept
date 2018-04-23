@@ -153,7 +153,7 @@ function constructDatasetLoader() {
      */
     that.checkDatasetSize = function checkDatasetSize() {
         let lines = $("#qs").val().split(/\n/).length;
-        if (lines > 10000) {
+        if (lines > 100000) {
             $(".multisearch-warning-amount").text(lines);
             $("#multisearch-warning").show("fast");
         } else {
