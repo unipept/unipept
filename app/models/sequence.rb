@@ -55,18 +55,20 @@ class Sequence < ApplicationRecord
     end
   end
 
-  # Calculates thefor this sequence
-  def calculate_fa(equate_il = true)
-    data = equate_il ? fa_il : fa
-    data.presence || nil
-    if data.present?
-      Oj.load(data)
-    else
-      { 'num' => { 'all' => 0, 'EC' => 0, 'GO' => 0 }, 'data' => {} }
-    end
+  def fa_il
+    unmarshall_fa(:fa_il)
   end
 
-  def self.missed_cleavage_lca(sequence, equate_il)
+  def fa
+    unmarshall_fa(:fa)
+  end
+
+  # Calculates thefor this sequence
+  def calculate_fa(equate_il = true)
+    equate_il ? fa_il : fa
+  end
+
+  def self.missed_cleavage(sequence, equate_il)
     sequences = sequence
                 .gsub(/([KR])([^P])/, "\\1\n\\2")
                 .gsub(/([KR])([^P])/, "\\1\n\\2")
@@ -91,15 +93,25 @@ class Sequence < ApplicationRecord
     lineages = entries.map(&:lineage).uniq.compact
     lca = Lineage.calculate_lca_taxon(lineages)
 
-    result = OpenStruct.new(sequence: sequence)
+    fadata = UniprotEntry.summarize_fa(entries)
+
     if equate_il
-      result.lca_il = lca.id
-      result.lca_il_t = lca
+      Sequence.new(
+        sequence: sequence,
+        lca_il: lca.id,
+        lca_il_t: lca,
+        fa: false,
+        fa_il: fadata
+      )
     else
-      result.lca = lca.id
-      result.lca_t = lca
+      Sequence.new(
+        sequence: sequence,
+        lca: lca.id,
+        lca_t: lca,
+        fa: fadata,
+        fa_il: false
+      )
     end
-    result
   end
 
   def self.peptides_relation_name(equate_il)
@@ -167,6 +179,18 @@ class Sequence < ApplicationRecord
 
   def self.boolean?(variable)
     variable.is_a?(TrueClass) || variable.is_a?(FalseClass)
+  end
+
+  private
+
+  # Parse the JSON in :fa of :fa_il
+  def unmarshall_fa(prop)
+    if self[prop].blank?
+      return nil if self[prop] == false
+      self[prop] = { 'num' => { 'all' => 0, 'EC' => 0, 'GO' => 0 }, 'data' => {} }
+    end
+    return self[prop] if self[prop].is_a?(Hash)
+    self[prop] = Oj.load(self[prop])
   end
 end
 

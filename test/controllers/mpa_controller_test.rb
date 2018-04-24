@@ -61,48 +61,39 @@ class MpaControllerTest < ActionController::TestCase
     assert_equal '["AALER","AALER","AAILER","MISSES"]', assigns(:peptides)
   end
 
-  test 'should get pept2lca' do
+  test 'should get pept2data' do
     @request.headers['Content-Type'] = 'application/json'
-    post :pept2lca, params: { peptides: %w[AALER AALER AAILER MISSES AALLERAGGAR], missed: false, equate_il: false }
+    post :pept2data, params: { peptides: %w[AALER AALER AAILER MISSES AALLERAGGAR], missed: false, equate_il: false }
     assert_response :success
-    assert_template :pept2lca
+    assert_template :pept2data
     assert_equal false, assigns(:equate_il)
-    assert_equal JSON.parse('{"peptides":[{"sequence":"AALER","lca":2,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},{"sequence":"AAILER","lca":1,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1,null,null,null]}]}'), JSON.parse(response.body)
+    assert_equal ({ 'peptides' => [{ 'sequence' => 'AALER', 'lca' => 2, 'lineage' => [nil, 2, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil], 'fa' => { 'counts' => { 'all' => 1, 'EC' => 1, 'GO' => 1 }, 'data' => { 'GO:0016569' => 1, 'GO:0006281' => 1, 'GO:0000781' => 1, 'EC:2.7.11.1' => 1 } } }, { 'sequence' => 'AAILER', 'lca' => 1, 'lineage' => [nil, 2, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1, nil, nil, nil], 'fa' => { 'counts' => { 'all' => 1, 'EC' => 1, 'GO' => 1 }, 'data' => { 'GO:0005576' => 1, 'GO:0000287' => 1, 'GO:0004634' => 1, 'GO:0000015' => 1, 'GO:0006096' => 1, 'EC:4.2.1.11' => 1, 'GO:0009986' => 1 } } }] }), JSON.parse(response.body)
   end
 
-  test 'should get pept2lca with missed' do
+  test 'should get pept2data with missed' do
     @request.headers['Content-Type'] = 'application/json'
-    post :pept2lca, params: { peptides: %w[AALER AALER AAILER MISSES AALLERAGGAR], missed: true, equate_il: false }
+    post :pept2data, params: { peptides: %w[AALER AALER AAILER MISSES AALLERAGGAR], missed: true, equate_il: false }
     assert_response :success
-    assert_template :pept2lca
+    assert_template :pept2data
     assert_equal false, assigns(:equate_il)
-    assert_equal JSON.parse('{"peptides":[{"sequence":"AALER","lca":2,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},{"sequence":"AAILER","lca":1,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1,null,null,null]}]}'), JSON.parse(response.body)
+    assert_equal ({ 'peptides' => [{ 'sequence' => 'AALER', 'lca' => 2, 'lineage' => [nil, 2, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil], 'fa' => { 'counts' => { 'all' => 1, 'EC' => 1, 'GO' => 1 }, 'data' => { 'GO:0016569' => 1, 'GO:0006281' => 1, 'GO:0000781' => 1, 'EC:2.7.11.1' => 1 } } }, { 'sequence' => 'AAILER', 'lca' => 1, 'lineage' => [nil, 2, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1, nil, nil, nil], 'fa' => { 'counts' => { 'all' => 1, 'EC' => 1, 'GO' => 1 }, 'data' => { 'GO:0005576' => 1, 'GO:0000287' => 1, 'GO:0004634' => 1, 'GO:0000015' => 1, 'GO:0006096' => 1, 'EC:4.2.1.11' => 1, 'GO:0009986' => 1 } } }] }), JSON.parse(response.body)
   end
 
-  test 'should get pept2lca with il' do
+  test 'should get pept2data with il' do
     @request.headers['Content-Type'] = 'application/json'
-    post :pept2lca, params: { peptides: %w[AALER AALER AAILER MISSES AALLERAGGAR], missed: false, equate_il: true }
+    post :pept2data, params: { peptides: %w[AALER AALER AAILER MISSES AALLERAGGAR], missed: false, equate_il: true }
     assert_response :success
-    assert_template :pept2lca
+    assert_template :pept2data
     assert_equal true, assigns(:equate_il)
-    assert_equal JSON.parse('{"peptides":[{"sequence":"AALER","lca":1,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1,null,null,null]},{"sequence":"AAILER","lca":2,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}]}'), JSON.parse(response.body)
+    assert_equal JSON.parse('{"peptides":[{"sequence":"AALER","lca":1,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1,null,null,null],"fa":{"counts":{"all":22,"EC":4,"GO":2},"data":{"EC:2.7.11.1":4,"GO:0004674":1,"GO:0005634":1,"GO:0005524":1,"GO:0016301":1}}},{"sequence":"AAILER","lca":2,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"fa":{"counts":{"all":0,"EC":0,"GO":0},"data":{}}}]}'), JSON.parse(response.body)
   end
 
-  test 'should get pept2lca with il and missed' do
+  test 'should get pept2data with il and missed' do
     @request.headers['Content-Type'] = 'application/json'
-    post :pept2lca, params: { peptides: %w[AALER AALER AAILER MISSES AALLERAGGAR], missed: true, equate_il: true }
+    post :pept2data, params: { peptides: %w[AALER AALER AAILER MISSES AALLERAGGAR], missed: true, equate_il: true }
     assert_response :success
-    assert_template :pept2lca
+    assert_template :pept2data
     assert_equal true, assigns(:equate_il)
-    assert_equal JSON.parse('{"peptides":[{"sequence":"AALER","lca":1,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1,null,null,null]},{"sequence":"AAILER","lca":2,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},{"sequence":"AALLERAGGAR","lca":2,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}]}
-'), JSON.parse(response.body)
-  end
-
-  test 'should get taxa' do
-    @request.headers['Content-Type'] = 'application/json'
-    post :taxa, params: { taxids: [1, 2, 3] }
-    assert_response :success
-    assert_template :taxa
-    assert_equal JSON.parse('[{"id":1,"name":"species1","rank":"species"},{"id":2,"name":"kingdom1","rank":"kingdom"}]'), JSON.parse(response.body)
+    assert_equal JSON.parse('{"peptides":[{"sequence":"AALER","lca":1,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1,null,null,null],"fa":{"counts":{"all":22,"EC":4,"GO":2},"data":{"EC:2.7.11.1":4,"GO:0004674":1,"GO:0005634":1,"GO:0005524":1,"GO:0016301":1}}},{"sequence":"AAILER","lca":2,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"fa":{"counts":{"all":0,"EC":0,"GO":0},"data":{}}},{"sequence":"AALLERAGGAR","lca":2,"lineage":[null,2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"fa":{"counts":{"all":1,"EC":0,"GO":0},"data":{}}}]}'), JSON.parse(response.body)
   end
 end
