@@ -52,19 +52,19 @@ class UniprotEntry < ApplicationRecord
   def self.summarize_fa(entries)
     # Count GO term occurences
     data = entries
-           .flat_map(&:go_terms)
-           .each_with_object(Hash.new(0)) { |term, acc| acc[term.code] += 1; }
+           .flat_map(&:go_cross_references)
+           .each_with_object(Hash.new(0)) { |term, acc| acc[term.go_term_code] += 1; }
 
     # Count EC numbers occurences
     data = entries
-           .flat_map(&:ec_numbers)
-           .each_with_object(data) { |num, acc| acc['EC:' + num.code] += 1; }
+           .flat_map(&:ec_cross_references)
+           .each_with_object(data) { |num, acc| acc['EC:' + num.ec_number_code] += 1; }
 
     {
       'num' => {
         'all' => entries.length,
-        'EC' => entries.count { |e| !e.ec_numbers.empty? },
-        'GO' => entries.count { |e| !e.go_terms.empty? }
+        'EC' => entries.count { |e| !e.ec_cross_references.empty? },
+        'GO' => entries.count { |e| !e.go_cross_references.empty? }
       },
       'data' => data
     }

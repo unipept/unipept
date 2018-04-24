@@ -83,7 +83,7 @@ class Sequence < ApplicationRecord
     return nil if p_counts.empty?
 
     entries = Sequence
-              .includes(Sequence.peptides_relation_name(equate_il) => { uniprot_entry: :lineage })
+              .includes(Sequence.peptides_relation_name(equate_il) => { uniprot_entry: %i[lineage ec_cross_references go_cross_references] })
               .find(p_counts.min_by(&:num_of_peptides).id)
               .peptides(equate_il).map(&:uniprot_entry).to_set
               .select { |e| e.protein_contains?(sequence, equate_il) }
@@ -130,7 +130,7 @@ class Sequence < ApplicationRecord
     raise SequenceTooShortError if sequence.length < 5
     sequence = sequence.tr('I', 'L') if equate_il
     # this solves the N+1 query problem
-    includes(peptides_relation_name(equate_il) => { uniprot_entry: %i[taxon ec_numbers go_terms] })
+    includes(peptides_relation_name(equate_il) => { uniprot_entry: %i[taxon ec_cross_references go_cross_references] })
       .find_by(sequence: sequence)
   end
 
