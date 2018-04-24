@@ -22,9 +22,9 @@ class MpaController < ApplicationController
                 .where.not(Sequence.lca_t_relation_name(@equate_il) => nil)
     if missed
       @peptides += peptides
-                  .to_set.subtract(@peptides.map(&:sequence))
-                  .map { |p| Sequence.missed_cleavage_lca(p, @equate_il) }
-                  .compact
+                   .to_set.subtract(@peptides.map(&:sequence))
+                   .map { |p| Sequence.missed_cleavage(p, @equate_il) }
+                   .compact
     end
 
     @results_fa = {}

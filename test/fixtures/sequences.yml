@@ -10,6 +10,8 @@
 #  fa_il    :blob
 #
 
+
+
 sequence1:
     id: 1
     sequence: "AALER"
@@ -23,8 +25,8 @@ sequence2:
     sequence: "AAIER"
     lca: 2
     lca_il: 1
-    fa:
-    fa_il:
+    fa: '{"num":{"all":3,"EC":0,"GO":3},"data":{"GO:0051301":3,"GO:0005525":3,"GO:0046872":3,"GO:0007049":3}}'
+    fa_il: '{"num":{"all":4,"EC":1,"GO":4},"data":{"GO:0005759":1,"GO:0004760":1,"GO:0051301":3,"GO:0005739":1}}'
 sequence3:
     id: 3
     sequence: "RANDOM"
@@ -38,7 +40,7 @@ sequence4:
     sequence: "AAILER"
     lca: 1
     lca_il: 2
-    fa:
+    fa: '{"num":{"all":1,"EC":1,"GO":1},"data":{"GO:0005576":1,"GO:0000287":1,"GO:0004634":1,"GO:0000015":1,"GO:0006096":1,"EC:4.2.1.11":1,"GO:0009986":1}}'
     fa_il:
 
 sequence5:
