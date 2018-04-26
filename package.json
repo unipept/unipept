@@ -14,10 +14,17 @@
     "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
-    "babel-eslint": "^8.2.2",
+    "babel-eslint": "^8.2.3",
+    "babel-jest": "^22.4.3",
     "eslint": "^4.3.0",
     "eslint-config-google": "^0.9.1",
+    "eslint-plugin-jest": "^21.15.1",
+    "jasmine": "^3.1.0",
+    "jest": "^22.4.3",
     "webpack-dev-server": "^2.9.4",
     "workerize-loader": "^1.0.2"
+  },
+  "scripts": {
+    "test": "jest"
   }
 }
