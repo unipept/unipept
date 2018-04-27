@@ -21,6 +21,12 @@ const setupFetch = (newFetchData = null) => {
 
                 if (found) {
                     resolve({
+                        headers: [],
+                        redirected: false,
+                        status: 200,
+                        statusText: "OK",
+                        url: url,
+                        useFinalURL: true,
                         ok: true,
                         Id: "123",
                         json: function () {

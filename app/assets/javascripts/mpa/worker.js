@@ -310,3 +310,10 @@ export function getEcNames() {
 function setProgress(value) {
     self.postMessage({type: "progress", value: value});
 }
+
+/**
+ * Reset the worker for an other dataset
+ */
+export function clean() {
+    processedPeptides = new Map();
+}
