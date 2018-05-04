@@ -185,25 +185,27 @@ class MPA {
         new AmountTable({
             title: `GO terms - ${variant}`,
             el: tablepart,
-            header: [sortOrder.name, "GO term", "Name", ""],
             data: sortOrder.sort(data),
             limit: 5,
             contents: [
-                { // Count
+                {
+                    title: sortOrder.name,
                     text: d => d[sortOrder.field].toString(),
                     html: d => sortOrder.format(d),
                     style: {"width": "5em"},
                     shade: d => 100 * d.value,
                 },
-                { // Go term
+                {
+                    title: "GO term",
                     html: d => `<a href="https://www.ebi.ac.uk/QuickGO/term/${d.code}" target="_blank">${d.code}</a>`,
                     text: d => d.code,
                     style: {"width": "7em"},
                 },
-                { // name
+                {
+                    title: "Name",
                     text: d => GOTerms.nameOf(d.code),
                 },
-                { // List
+                {
                     builder: cell => {
                         const fav = cell.append("button");
                         fav.classed("btn btn-default btn-xs save-fa-btn", true);
@@ -222,6 +224,7 @@ class MPA {
                     },
                     text: d => "",
                     style: {"width": "5em", "text-align": "right"},
+                    exported: false,
                 },
             ],
             tooltip: d => this.tooltipGO(d.code, goResultset, d),
@@ -374,17 +377,18 @@ class MPA {
         new AmountTable({
             title: "EC numbers",
             el: target,
-            header: [sortOrder.name, "EC-Number", "Name", ""],
             data: sortOrder.sort(data),
             limit: 5,
             contents: [
-                { // Count
+                {
+                    title: sortOrder.name,
                     text: d => d[sortOrder.field].toString(),
                     html: d => sortOrder.format(d),
                     style: {"width": "5em"},
                     shade: d => 100 * d.value,
                 },
-                { // EC-number
+                {
+                    title: "EC-Number",
                     html: d => {
                         const spans = d.code.split(".").map(e => `<span>${e}</span>`).join(".");
                         return `<a href="https://enzyme.expasy.org/EC/${d.code}" class="ec-number-formatted" target="_blank">${spans}</a>`;
@@ -392,10 +396,11 @@ class MPA {
                     text: d => d.code,
                     style: {"width": "8em"},
                 },
-                { // name
+                {
+                    title: "Name",
                     text: d => ECNumbers.nameOf(d.code),
                 },
-                { // List
+                {
                     builder: cell => {
                         const fav = cell.append("button");
                         fav.classed("btn btn-default btn-xs save-fa-btn", true);
@@ -414,6 +419,7 @@ class MPA {
                     },
                     text: d => "",
                     style: {"width": "5em", "text-align": "right"},
+                    exported: false,
                 },
             ],
             tooltip: d => this.tooltipEC(d.code, ecResultSet, d),
