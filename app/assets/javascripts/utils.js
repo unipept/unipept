@@ -248,7 +248,7 @@ function toCSVString(grid) {
             } else {
                 return content;
             }
-        }).join(",")).join("\n\r");
+        }).join(",")).join("\n\r") + "\n\r";
 }
 
 
