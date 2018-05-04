@@ -5,7 +5,6 @@ import {toCSVString, downloadDataByForm} from "../utils.js";
  * @typedef {Object} AmountTableSettings
  * @property {d3.selection[]}  el        The target container
  * @property {string}   title     A string naming the table (used for export name)
- * @property {string[]} header    An array of column names
  * @property {Any[]}    data      array of data to display (values are shown in order)
  * @property {AmountTableColSpec[]} contents  An array of settings for each column (see above)
  * @property {Number} [limit=Infinity]  The number of rows to show in collapsed state
@@ -16,6 +15,8 @@ import {toCSVString, downloadDataByForm} from "../utils.js";
 
 /**
  * @typedef {Object} AmountTableColSpec
+ * @property {string} [title=""]
+ *           The title of the collumn
  * @property {function(cell: d3.selection[]): string} [builder=null]
  *           Function that builds the cells content using D3.
  *           The argument is a cell that has the data about the row.
@@ -30,6 +31,8 @@ import {toCSVString, downloadDataByForm} from "../utils.js";
  * @property {object} [style=null]
  *           object whose keys will be transformed to CSS properties of the
  *           cells in the column
+ * @property {boolean} [exported=true]
+ *           if this collumn should be included in CSV export
  * @property {function(data: Any): number} [shade=false]
  *           Function that calculates the amount the shader is filled for cells
  *           in this column. Should be in [0,100]
@@ -50,10 +53,10 @@ class AmountTable {
      *
      * @param {AmountTableSettings} settings
      */
-    constructor({el, title = null, header = null, data, contents = null, limit = Infinity, tooltip = null, tooltipID = null, tooltipDelay = 500}) {
+    constructor({el, title = null, data, contents = null, limit = Infinity, tooltip = null, tooltipID = null, tooltipDelay = 500}) {
         this.el = el;
         this.title = title;
-        this.header = header;
+        this.header = contents.map(({title = ""}) => title);
         this.data = data || [];
         this.table = null;
         this.limit = limit;
@@ -244,12 +247,13 @@ class AmountTable {
      * @return {string} the CSV version of the table
      */
     toCSV() {
-        const result = [this.header];
+        const result = [this.contents.filter(({exported = true}) => exported).map(({title = ""}) => title)];
         const htmlHelperSpan = document.createElement("span");
         for (const entry of this.data) {
             const values = [];
             for (const colSpec of this.contents) {
-                const {html = null, text = null} = colSpec;
+                const {html = null, text = null, exported = true} = colSpec;
+                if (!exported) continue; // skip non-exported cols
                 if (text !== null) {
                     values.push(text(entry));
                 } else {

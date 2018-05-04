@@ -259,16 +259,17 @@ class SPA {
         new AmountTable({
             title: "EC numbers - " + this.peptide,
             el: target,
-            header: ["Count", "EC-Number", "Name"],
             data: ecResultSet.sortedTerms(),
             limit: 5,
             contents: [
-                { // Count
+                {
+                    title: "Count",
                     text: d => d.value.toString(),
                     style: {"width": "5em"},
                     shade: d => 100 * ecResultSet.getFractionOf(d.code),
                 },
-                { // EC-number
+                {
+                    title: "EC-number",
                     html: d => {
                         const spans = d.code.split(".").map(e => `<span>${e}</span>`).join(".");
                         return `<a href="https://enzyme.expasy.org/EC/${d.code}" class="ec-number-formatted" target="_blank">${spans}</a>`;
@@ -276,7 +277,8 @@ class SPA {
                     text: d => d.code,
                     style: {"width": "8em"},
                 },
-                { // name
+                {
+                    title: "Name",
                     text: d => ECNumbers.nameOf(d.code),
                 },
             ],
@@ -336,21 +338,23 @@ class SPA {
         new AmountTable({
             title: `GO terms - ${variant} - ${this.peptide}`,
             el: tablepart,
-            header: ["Count", "GO term", "Name"],
             data: goResultset.sortedTerms(variant),
             limit: 5,
             contents: [
-                { // Count
+                {
+                    title: "Count",
                     text: d => d.value,
                     style: {"width": "5em"},
                     shade: d => 100 * goResultset.getFractionOf(d.code),
                 },
-                { // Go term
+                {
+                    title: "GO Term",
                     html: d => `<a href="https://www.ebi.ac.uk/QuickGO/term/${d.code}" target="_blank">${d.code}</a>`,
                     text: d => d.code,
                     style: {"width": "7em"},
                 },
-                { // name
+                {
+                    title: "Name",
                     text: d => GOTerms.nameOf(d.code),
                 },
             ],
