@@ -61,7 +61,7 @@ public class CSV {
     }
 
     public static class IndexedWriter extends Writer {
-        private int index;
+        private long index;
         
         public IndexedWriter(String file) throws IOException {
             super(file);
@@ -70,14 +70,14 @@ public class CSV {
 
         @Override
         public void write(String... values) throws IOException {
-            buffer.write(Integer.toString(++index));
+            buffer.write(Long.toString(++index));
             for(int i = 0; i < values.length; i++) {
                 buffer.write("	" + (values[i] == null ? "\\N" : values[i]));
             }
             buffer.newLine();
         }
 
-        public int index() {
+        public long index() {
             return index;
         }
     }
