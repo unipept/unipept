@@ -121,9 +121,10 @@ function constructSearchtree(t, il) {
         $(this).addClass("clicked");
         innertext += " (" + d.rank + ")";
         infoPane = $("#tree_data").html("<h3>" + innertext + "</h3>");
-        $("#tree_data").css("-webkit-transform", "translateY(" + margin + "px)");
-        $("#tree_data").css("transform", "translateY(" + margin + "px)");
-        $("#tree_data").css("margin-bottom", margin + "px");
+        $("#tree_data").css({
+            "transform": "translateY(" + margin + "px)",
+            "margin-bottom": margin + "px",
+        });
         ownSequences = dataTree.getOwnSequences(d).sort();
         if (ownSequences && ownSequences.length > 0) {
             stringBuffer = "<h4 class='own'>Peptides specific for this taxon</h4><ul>";
