@@ -7,7 +7,7 @@ end
 
 gem 'rails', '5.1.4'
 
-gem 'mysql2'
+gem 'mysql2', '~> 0.3.18'
 
 gem 'webpacker'
 
@@ -30,7 +30,7 @@ gem 'therubyracer'
 
 # faster json
 # pinned on 2.17 because of an issue with 2.18: https://github.com/ohler55/oj/issues/325
-gem 'oj', '2.17.5'
+gem 'oj',  '2.17.5'
 
 gem 'multi_json'
 gem 'jbuilder'
