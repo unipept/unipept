@@ -110,7 +110,6 @@ function constructSearchtree(t, il) {
 
         let d = d3.select(this.parentElement).datum(),
             margin = this.offsetTop - 9,
-            innertext = "<a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + d.data.taxon_id + "' target='_blank'>" + d.name + "</a>",
             infoPane,
             ownSequences,
             allSequences,
@@ -119,8 +118,13 @@ function constructSearchtree(t, il) {
 
         $("span.clicked").removeClass("clicked");
         $(this).addClass("clicked");
-        innertext += " (" + d.rank + ")";
-        infoPane = $("#tree_data").html("<h3>" + innertext + "</h3>");
+        infoPane = $("#tree_data")
+            .html(`
+                <h3>
+                  <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=${d.id}' target='_blank'>
+                    ${d.name}
+                  </a> (${d.rank})
+                </h3>`);
         $("#tree_data").css({
             "transform": "translateY(" + margin + "px)",
             "margin-bottom": margin + "px",
@@ -129,7 +133,7 @@ function constructSearchtree(t, il) {
         if (ownSequences && ownSequences.length > 0) {
             stringBuffer = "<h4 class='own'>Peptides specific for this taxon</h4><ul>";
             for (i = 0; i < ownSequences.length; i++) {
-                stringBuffer += "<li><a href='/sequences/" + ownSequences[i] + "/" + equateIL + "' target='_blank'>" + ownSequences[i] + "</a></li>";
+                stringBuffer += `<li><a href='/sequences/${ownSequences[i]}/${equateIL}' target='_blank'>${ownSequences[i]}</a></li>`;
             }
             stringBuffer += "</ul>";
             infoPane.append(stringBuffer);
@@ -140,7 +144,7 @@ function constructSearchtree(t, il) {
         if (allSequences && allSequences.length > 0 && allSequences.length !== (ownSequences ? ownSequences.length : 0)) {
             stringBuffer = "<h4 class='all'>Peptides specific to this taxon or its subtaxa</h4><ul>";
             for (i = 0; i < allSequences.length; i++) {
-                stringBuffer += "<li><a href='/sequences/" + allSequences[i] + "/" + equateIL + "' target='_blank'>" + allSequences[i] + "</a></li>";
+                stringBuffer += `<li><a href='/sequences/${allSequences[i]}/${equateIL}' target='_blank'>${allSequences[i]}</a></li>`;
             }
             stringBuffer += "</ul>";
             infoPane.append(stringBuffer);
