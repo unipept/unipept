@@ -108,10 +108,10 @@ class MPA {
      * @param {int} [id=-1] the taxon id whose sequences should be taken into account
      *                      use -1 to use everything (Organism)
      */
-    redoFAcalculations(name = "Organism", id = -1) {
+    redoFAcalculations(name = "Organism", id = -1, timeout = 500) {
+        this.enableProgressBar(true, false, "#progress-fa-analysis");
         clearTimeout(this._redoFAcalculationsTimeout);
         this._redoFAcalculationsTimeout = setTimeout(() => {
-            this.enableProgressBar(true, false, "#progress-fa-analysis");
             $(".mpa-scope").text(name);
             const percent = this.$perSelector.val() * 1; // TODO remove
             const dataset = this.datasets[0];
@@ -121,7 +121,7 @@ class MPA {
                     this.setUpFAVisualisations(dataset.fa);
                     this.enableProgressBar(false, false, "#progress-fa-analysis");
                 });
-        }, 500);
+        }, timeout);
     }
 
     setUpFAVisualisations({go, ec}) {
@@ -701,7 +701,7 @@ class MPA {
             localTerm = "";
         }
         setTimeout(() => this.searchTree.search(localTerm), timeout);
-        setTimeout(() => this.redoFAcalculations(searchTerm, id), timeout);
+        this.redoFAcalculations(searchTerm, id, timeout);
     }
 
     static get RANKS() {
