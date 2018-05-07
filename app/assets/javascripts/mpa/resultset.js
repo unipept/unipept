@@ -138,7 +138,7 @@ class Resultset {
      */
     static indexPeptides(peptides, dupes) {
         const peptideMap = new Map();
-        for (let peptide of peptides) {
+        for (const peptide of peptides) {
             const count = peptideMap.get(peptide) || 0;
             if (dupes) {
                 peptideMap.set(peptide, 1);

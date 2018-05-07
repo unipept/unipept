@@ -38,17 +38,22 @@ function brightness(rgb) {
  *
  * @param {string} data The text you want in the file
  * @param {string} fileName The requested file name
+ * @param  {String}  [fileType] file type like "text/csv"
  * @return {Promise.<string>}
  */
-function downloadDataByForm(data, fileName) {
+function downloadDataByForm(data, fileName, fileType = null) {
     return new Promise(function (resolve, reject) {
         let nonce = Math.random();
         $("form.download").remove();
         $("body").append("<form class='download' method='post' action='/download'></form>");
         let $downloadForm = $("form.download").append("<input type='hidden' name='filename' value='" + fileName + "'/>");
         $downloadForm.append("<input type='hidden' name='data' class='data'/>");
+        if (fileType !== null) {
+            $downloadForm.append(`<input type='hidden' name='filetype' value='${fileType}'/>`);
+        }
         $downloadForm.append("<input type='hidden' name='nonce' value='" + nonce + "'/>");
-        $downloadForm.find(".data").val(data);
+        // The x-www-form-urlencoded spec replaces newlines with \n\r
+        $downloadForm.find(".data").val(data.replace(/\n\r/g, "\n"));
         let downloadTimer = setInterval(function checkCookie() {
             if (document.cookie.indexOf(nonce) !== -1) {
                 clearInterval(downloadTimer);
@@ -81,7 +86,7 @@ function downloadDataByLink(dataURL, fileName) {
 function get(url) {
     // Return a new promise.
     return new Promise(function (resolve, reject) {
-    // Do the usual XHR stuff
+        // Do the usual XHR stuff
         let req = new XMLHttpRequest();
         req.open("GET", url);
 
@@ -159,7 +164,7 @@ function logErrorToGoogle(errorMessage) {
  * Logs data to Google Analytics
  */
 function logToGoogle(page, action, name, value) {
-    if (typeof(_gaq) !== "undefined") {
+    if (typeof (_gaq) !== "undefined") {
         if (name === undefined) {
             _gaq.push(["_trackEvent", page, action]);
         } else if (value === undefined) {
@@ -207,6 +212,55 @@ function stringHash(s) {
         let r = ((a << 5) - a) + b.charCodeAt(0);
         return r & r;
     }, 0);
+}
+
+/**
+ * Change string to title cases
+ * https://stackoverflow.com/a/196991
+ */
+function stringTitleize(s) {
+    return s.replace(/\w\S*/g, function (txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+}
+
+/**
+ * Converts a javascript array of array to RFC 4180 complient CSV
+ *
+ * Each record is located on a separate line, delimited by a line break (CRLF)
+ *
+ * Fields containing line breaks (CRLF), double quotes, and commas should be
+ * enclosed in double-quotes; If double-quotes are used to enclose fields, then
+ * a double-quote appearing inside a field must be escaped by preceding it with
+ * another double quote.
+ *
+ * Prepending `data:text/csv,` makes a valid data url
+ * @param  {[[string]]} grid [description]
+ * @return {string}      The csv string
+ */
+function toCSVString(grid) {
+    return grid.map(line =>
+        line.map(cell => {
+            let content = cell.toString();
+            if (content.includes(",") || content.includes("\"") ||
+                content.includes("\n") || content.includes("\r")) {
+                return `"${content.replace(/"/g, "\"\"")}"`;
+            } else {
+                return content;
+            }
+        }).join(",")).join("\n\r");
+}
+
+
+/**
+ * Convert a number to a percentage,
+ * 0.1 => "10%".
+ * @param  {Number} number     [description]
+ * @param  {Number} [digits=0] [description]
+ * @return {string}            [description]
+ */
+function numberToPercent(number, digits = 0) {
+    return (100 * number).toFixed(digits) + "%";
 }
 
 /**
@@ -273,4 +327,23 @@ function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
     }
 }
 
-export {addCopy, brightness, downloadDataByForm, downloadDataByLink, get, getJSON, getReadableColorFor, highlight, iteratorToArray, logErrorToGoogle, logToGoogle, showError, showInfo, stringHash, triggerDownloadModal};
+/**
+ * Posts data to a url as JSON and returns a promise containing the parsed
+ * (JSON) response
+ *
+ * @param  {string} url The url to which we want to send the request
+ * @param  {string} data The data to post in JSON format
+ * @return {Promise} A Promise containing the parsed response data
+ */
+function postJSON(url, data) {
+    return fetch(url, {
+        method: "POST",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
+        body: data,
+    }).then(res => res.json());
+}
+
+export {addCopy, brightness, downloadDataByForm, downloadDataByLink, get, getJSON, getReadableColorFor, highlight, iteratorToArray, logErrorToGoogle, logToGoogle, showError, showInfo, stringHash, stringTitleize, toCSVString, numberToPercent, triggerDownloadModal, postJSON};

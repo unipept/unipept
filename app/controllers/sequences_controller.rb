@@ -14,7 +14,7 @@ class SequencesController < ApplicationController
 
     # process the input, convert seq to a valid @sequence
     if seq.match?(/\A[0-9]+\z/)
-      sequence = Sequence.includes(peptides: { uniprot_entry: %i[taxon ec_cross_references go_cross_references] }).find_by(id: seq)
+      sequence = Sequence.includes(peptides: { uniprot_entry: %i[taxon ec_numbers go_terms] }).find_by(id: seq)
       @original_sequence = sequence.sequence
     else
       sequence = Sequence.single_search(seq, equate_il)
@@ -87,7 +87,6 @@ class SequencesController < ApplicationController
 
     # don't show the root when we don't need it
     @root.sort_children
-    @root = Oj.dump(@root, mode: :compat)
 
     # Table stuff
     @table_lineages = []
@@ -113,6 +112,9 @@ class SequencesController < ApplicationController
     @entries = @entries.to_a.sort_by { |e| e.taxon.nil? ? '' : e.taxon.name }
 
     @title = "Tryptic peptide analysis of #{@original_sequence}"
+
+    # Make a summary of the GO terms
+    @fa_summary = UniprotEntry.summarize_fa(@entries)
 
     respond_to do |format|
       format.html # show.html.erb

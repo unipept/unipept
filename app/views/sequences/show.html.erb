@@ -2,7 +2,6 @@
   <%= javascript_pack_tag 'd3' %>
   <%= javascript_pack_tag 'sequence_show' %>
 <% end %>
-
 <h1><%= @title %></h1>
 <% if @lineages.empty? %>
   <p class="lead">No results were found for <%= @original_sequence %>.</p>
@@ -18,15 +17,55 @@
     <div class='card-title card-title-colored'>
       <div id="single-peptide-tabs">
         <ul class="nav nav-tabs">
-          <li class="active"><a href="#lineage-tree" id="lineage-tree-tab" data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+          <li class="active"><a href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
+          <li><a href="#lineage-tree" id="lineage-tree-tab" data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
           <li><a href="#lineage-table" id="lineage-table-tab" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
-          <li><a href="#proteins" data-toggle="tab">Protein matches <span class="badge"><%= @entries.size %></span></a></li>
+          <li><a href="#go" data-toggle="tab">GO</a></li>
+          <li><a href="#ec" data-toggle="tab">EC</a></li>
         </ul>
       </div>
     </div>
     <div class='card-supporting-text'>
       <div class="tab-content">
-        <div class="tab-pane active" id="lineage-tree">
+        <div class="tab-pane active" id="proteins">
+          <div class="buttons-single">
+            <button id="clipboard-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-copy"></span> Copy to clipboard</button>
+            <button id="open-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-new-window"></span> Open in UniProt</button>
+          </div>
+          <table class="table table-condensed table-hover protein-info">
+            <thead>
+              <tr>
+                <th class="id">Uniprot ID</th>
+                <th class="name">Name</th>
+                <th class="organism">Organism</th>
+                <th class="ec">EC number</th>
+                <th class="go">GO terms</th>
+              </tr>
+            </thead>
+            <% for entry in @entries do %>
+              <% unless entry.name.nil? %>
+                <tr>
+                  <td>
+                    <div class="btn-group">
+                      <a class="btn btn-default btn-xs dropdown-toggle externalLinks-button" data-toggle="dropdown"><%= entry.uniprot_accession_number %> <span class="caret"></span></a>
+                      <ul class="dropdown-menu">
+                        <li role="presentation" class="dropdown-header">Open on external site</li>
+                        <li><%= link_to "UniProt", "https://www.uniprot.org/uniprot/"+entry.uniprot_accession_number, :target => "_blank" %></li>
+                        <li><%= link_to "PRIDE", "https://www.ebi.ac.uk/pride/searchSummary.do?queryTypeSelected=identification%20accession%20number&identificationAccessionNumber="+entry.uniprot_accession_number, :target => "_blank" %></li>
+                        <li><%= link_to "PeptideAtlas", "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/Search?apply_action=GO&exact_match=exact_match%22&search_key="+entry.uniprot_accession_number, :target => "_blank" %></li>
+                      </ul>
+                    </div>
+                  </td>
+                  <td><%= entry.name %></td>
+                  <td><%= link_to entry.taxon.name, "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="+entry.taxon.id.to_s, :target => "_blank" %></td>
+                  <td><%= raw(entry.ec_cross_references.map{|ec| "<a href='https://enzyme.expasy.org/EC/"+ec.ec_number_code+"' class='ecNumberLink' target='_blank'>"+ec.ec_number_code+"</a>"}.join(", ")) %></td>
+                  <td><%= raw(entry.go_cross_references.map{|go| "<a href='https://www.ebi.ac.uk/QuickGO/term/"+go.go_term_code+"' class='goTermLink' target='_blank'>"+go.go_term_code+"</a>"}.join(", ")) %></td>
+                </tr>
+              <% end %>
+            <% end %>
+          </table>
+        </div>
+        <div class="tab-pane" id="lineage-tree">
           <div id="buttons-single" class="buttons-single"></div>
           <div id="lineageTree"></div>
         </div>
@@ -59,54 +98,27 @@
             </table>
           </div>
         </div>
-        <div class="tab-pane" id="proteins">
+        <div class="tab-pane" id="go">
+          <h2>Gene Ontology annotations</h2>
+          <%=@fa_summary[:go][:numAnnotatedPeptides] %> of the <%=@entries.length%> matched proteins (<%='%.1f' % (100*@fa_summary[:go][:numAnnotatedPeptides].fdiv(@entries.length))%>%) had a GO term annotation.
+          <div id="go-panel">Please wait while we are building a summary</div>
+        </div>
+        <div class="tab-pane" id="ec">
           <div class="buttons-single">
-            <button id="clipboard-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-copy"></span> Copy to clipboard</button>
-            <button id="open-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-new-window"></span> Open in UniProt</button>
+            <button id='save-btn-ec' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>
           </div>
-          <table class="table table-condensed table-hover protein-info">
-            <thead>
-              <tr>
-                <th class="id">Uniprot ID</th>
-                <th class="name">Name</th>
-                <th class="organism">Organism</th>
-                <th class="ec">EC number</th>
-                <th class="go">GO terms</th>
-              </tr>
-            </thead>
-            <% for entry in @entries do %>
-              <% unless entry.name.nil? %>
-                <tr>
-                  <td>
-                    <div class="btn-group">
-                      <a class="btn btn-default btn-xs dropdown-toggle externalLinks-button" data-toggle="dropdown"><%= entry.uniprot_accession_number %> <span class="caret"></span></a>
-                      <ul class="dropdown-menu">
-                        <li role="presentation" class="dropdown-header">Open on external site</li>
-                        <li><%= link_to "Uniprot", "http://www.uniprot.org/uniprot/"+entry.uniprot_accession_number, :target => "_blank" %></li>
-                        <li><%= link_to "PRIDE", "http://www.ebi.ac.uk/pride/searchSummary.do?queryTypeSelected=identification%20accession%20number&identificationAccessionNumber="+entry.uniprot_accession_number, :target => "_blank" %></li>
-                        <li><%= link_to "PeptideAtlas", "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/Search?apply_action=GO&exact_match=exact_match%22&search_key="+entry.uniprot_accession_number, :target => "_blank" %></li>
-                      </ul>
-                    </div>
-                  </td>
-                  <td><%= entry.name %></td>
-                  <td><%= link_to entry.taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id="+entry.taxon.id.to_s, :target => "_blank" %></td>
-                  <td><%= raw(entry.ec_cross_references.map{|ec| "<a href='http://enzyme.expasy.org/EC/"+ec.ec_number_code+"' target='_blank'>"+ec.ec_number_code+"</a>"}.join(", ")) %></td>
-                  <td><%= raw(entry.go_cross_references.map{|go| "<a href='http://amigo.geneontology.org/amigo/term/"+go.go_term_code+"' target='_blank'>"+go.go_term_code+"</a>"}.join(", ")) %></td>
-                </tr>
-              <% end %>
-            <% end %>
-          </table>
+          <h2>Enzyme Commission numbers</h2>
+          <%=@fa_summary[:ec][:numAnnotatedPeptides] %> of the <%=@entries.length%> matched proteins (<%='%.1f' % (100*@fa_summary[:ec][:numAnnotatedPeptides].fdiv(@entries.length))%>%) had an EC number annotation.
+          <div id="ec-table">Please wait while we are building a summary</div>
+          <div id="ec-treeview">Please wait while we are building a summary</div>
         </div>
       </div>
     </div>
   </div>
+  <div id="tooltip" class="tip"></div>
   <script type="text/javascript">
     $(function () {
-      initSequenceShow({
-        peptide: "<%= @original_sequence %>",
-        tree: <%= raw(@root) %>,
-        uniprotEntries: <%= raw(@entries.map(&:uniprot_accession_number).to_json) %>
-      });
+      initSequenceShow(<%= raw render(:template => "sequences/_data.json.jbuilder") %>);
     });
   </script>
 <% end %>

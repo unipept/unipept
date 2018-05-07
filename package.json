@@ -10,10 +10,11 @@
     "dragula": "^3.7.2",
     "jquery": "^3.2.1",
     "tiny-emitter": "^2.0.2",
-    "unipept-visualizations": "^1.5.0",
+    "unipept-visualizations": "^1.6.0",
     "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
+    "babel-eslint": "^8.2.2",
     "eslint": "^4.3.0",
     "eslint-config-google": "^0.9.1",
     "webpack-dev-server": "^2.9.4"

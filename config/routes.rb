@@ -21,6 +21,12 @@ UnipeptWeb::Application.routes.draw do
     end
   end
 
+  # General inforamtion
+  scope :private_api, as: 'private_api' do
+    match "goterms", via: [:get, :post], :to => "private_api#goterms"
+    match "ecnumbers",     via: [:get, :post], :to => "private_api#ecnumbers"
+  end
+
   # search
   get '/search/sequence', :to => 'sequences#search', :as => 'sequence_search'
 

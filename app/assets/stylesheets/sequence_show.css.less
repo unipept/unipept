@@ -132,3 +132,64 @@ table.protein-info .organism {
 table.protein-info .dropdown-menu {
     margin-top: 0;
 }
+
+/* EC treeview */
+#ec-treeview svg {
+  margin: 0 -16px -21px -16px;
+}
+
+/* Quick go images */
+.quickGoThumb {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    /* 7 rows of line-height 18 +  table padding  + 1px border */
+    max-height: 7*(18px+2*@table-condensed-cell-padding + 1px);
+    cursor: pointer;
+}
+
+
+/* Functional analysis tooltips */
+h4.tooltip-fa-title {
+    margin-top: 6px;
+    line-height: initial;
+}
+
+span.tooltip-go-domain, span.tooltip-go-title-term, span.tooltip-ec-term {
+    color: @black-secondary;
+    white-space: nowrap;
+}
+.tooltip-fa-text {
+    margin-top: 8px;
+}
+
+.tooltip-ec-ancestor{
+    color: @black-secondary;
+    margin-top: 0.3em;
+    line-height: initial;
+    display: table-row;
+  
+    .tooltip-ec-term{
+        display: table-cell;
+        min-width: 6em; 
+        /* estimated value for text like EC 4.2.1.-*/
+    }
+    
+    .tooltip-ec-name{
+        display: table-cell;
+    }
+}
+
+#go-panel h3{
+    margin-top: @line-height-computed;
+}
+
+/* Formating of EC numbers */
+.ec-number-formatted {
+    white-space: nowrap;
+    >span{
+        width:1.5em;
+        display:inline-block;
+        text-align: center;
+    }
+}

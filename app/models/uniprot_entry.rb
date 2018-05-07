@@ -43,4 +43,37 @@ class UniprotEntry < ApplicationRecord
       protein.include? sequence
     end
   end
+
+  # Summarises the fucntional annotations of a list of enteries
+  # Note: Will be precalculated and stored in the database in the future
+  def self.summarize_fa(entries)
+    # Count GO term occurences
+    go_counts =  entries
+                 .flat_map(&:go_terms)
+                 .each_with_object(Hash.new(0)) { |term, acc| acc[term] += 1; }
+
+    # Group them per namespace
+    go_summary = {}
+    go_counts.keys
+             .group_by(&:namespace)
+             .each do |namespace, go|
+      go_summary[namespace] = go.map { |term| [term, go_counts[term]] }.to_h
+    end
+
+    # Count EC numbers occurences
+    ec_summary = entries
+                 .flat_map(&:ec_numbers)
+                 .each_with_object(Hash.new(0)) { |num, acc| acc[num] += 1; }
+
+    {
+      go: {
+        data: go_summary,
+        numAnnotatedPeptides: entries.count { |e| !e.go_terms.empty? }
+      },
+      ec: {
+        data: ec_summary,
+        numAnnotatedPeptides: entries.count { |e| !e.ec_numbers.empty? }
+      }
+    }
+  end
 end
