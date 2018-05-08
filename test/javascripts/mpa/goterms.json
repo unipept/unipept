@@ -1,1 +1,58 @@
-[{"code": "GO:0005524", "name": "ATP binding", "namespace": "molecular function"}, {"code": "GO:0005737", "name": "cytoplasm", "namespace": "cellular component"}, {"code": "GO:0042026", "name": "protein refolding", "namespace": "biological process"}, {"code": "GO:0051082", "name": "unfolded protein binding", "namespace": "molecular function"}]
+[
+    {
+      "code": "GO:0000001",
+      "name": "The term GO:0000001",
+      "namespace": "molecular function"
+    },
+    {
+      "code": "GO:0000002",
+      "name": "The term GO:0000002",
+      "namespace": "molecular function"
+    },
+    {
+      "code": "GO:0000002",
+      "name": "The term GO:0000002",
+      "namespace": "molecular function"
+    },
+    {
+      "code": "GO:0000003",
+      "name": "The term GO:0000003",
+      "namespace": "molecular function"
+    },
+    {
+      "code": "GO:0000004",
+      "name": "The term GO:0000004",
+      "namespace": "cellular component"
+    },
+    {
+      "code": "GO:0000005",
+      "name": "The term GO:0000005",
+      "namespace": "cellular component"
+    },
+    {
+      "code": "GO:0000006",
+      "name": "The term GO:0000006",
+      "namespace": "cellular component"
+    },
+    {
+      "code": "GO:0000009",
+      "name": "The term GO:0000009",
+      "namespace": "biological process"
+    },
+    {
+      "code": "GO:0000011",
+      "name": "The term GO:0000011",
+      "namespace": "biological process"
+    },
+    {
+      "code": "GO:0000012",
+      "name": "The term GO:0000012",
+      "namespace": "biological process"
+    },
+    {
+      "code": "GO:0000017",
+      "name": "The term GO:0000017",
+      "namespace": "biological process"
+    },
+    {}
+  ]

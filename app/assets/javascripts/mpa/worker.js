@@ -185,7 +185,7 @@ export async function summarizeGo(percent = 50, sequences = null) {
     // Find used go term and fetch data about them
     let usedGoTerms = new Set();
     for (let peptide of processedPeptides.values()) {
-        Object.keys(peptide.fa.data)
+        Object.keys(peptide.fa.data || [])
             .filter(x => x.startsWith("GO:"))
             .forEach(x => usedGoTerms.add(x));
     }
@@ -197,7 +197,7 @@ export async function summarizeGo(percent = 50, sequences = null) {
     for (let namespace of GOTerms.NAMESPACES) {
         const dataExtractor = pept => Object.entries(pept.fa.data)
             .filter(([term, count]) => term.startsWith("GO") && GOTerms.namespaceOf(term) == namespace)
-            .map(([term, count]) => ({code: term, value: count})) || [];
+            .map(([term, count]) => ({code: term, value: count}));
         res[namespace] = summarizeFa(dataExtractor, countExtractor, percent, sequences);
     }
 
@@ -222,9 +222,9 @@ export async function summarizeEc(percent = 50, sequences = null) {
     const dataExtractor = pept =>
         Object.entries(pept.fa.data)
             .filter(([a, b]) => a.startsWith("EC"))
-            .map(([a, b]) => ({code: a.substr(3), value: b})) || [];
+            .map(([a, b]) => ({code: a.substr(3), value: b}));
 
-    const countExtractor = pept => pept.fa.counts.EC || 0;
+    const countExtractor = pept => pept.fa.counts["EC"] || 0;
 
     const result = summarizeFa(dataExtractor, countExtractor, percent, sequences);
     let ec = new ECNumbers({data: result}, false);

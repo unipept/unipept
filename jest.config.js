@@ -9,4 +9,5 @@ module.exports = {
         "^.+\\.js$": "babel-jest",
         "^workerize-loader!": "workerize-loader",
     },
+    coveragePathIgnorePatterns: ["/node_modules/", "/test/javascripts"],
 };
