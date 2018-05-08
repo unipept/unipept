@@ -87,7 +87,7 @@ export default class ECNumbers {
      * @access private
      */
     addMissing(newEC, map = null) {
-        const result = (map === null ? new Map(newEC.map(x => [x.code, x])) : map);
+        const result = (map === null ? new Map([...newEC].map(x => [x.code, x])) : map);
 
         for (const curEc of newEC) {
             const parts = curEc.code.split(".");
@@ -115,7 +115,10 @@ export default class ECNumbers {
      * @return {number}       The value of the EC number
      */
     getValueOf(ecNum) {
-        return this.ec.get(ecNum).value || 0;
+        if (this.ec.has(ecNum)) {
+            return this.ec.get(ecNum).value || 0;
+        }
+        return 0;
     }
 
     /**
@@ -190,7 +193,7 @@ export default class ECNumbers {
         const map = Object.create(null);
 
         // The root node
-        map["-.-.-.-"] = {id: 0, name: "", children: [], data: {self_count: 0}};
+        map["-.-.-.-"] = {id: 0, name: "", children: [], data: {self_count: 0, count: 0}};
 
         // Sort from general to specific
         const sortedEC = Array.from(this.ec.values())
@@ -277,11 +280,11 @@ export default class ECNumbers {
      * @access private
      */
     static addNames(newECs) {
-        newECs.forEach(ec => {
+        for (let ec of newECs) {
             if (!this.ecNames.has(ec.code) && ec.name) {
                 this.ecNames.set(ec.code, ec.name);
             }
-        });
+        }
     }
 
     /**
