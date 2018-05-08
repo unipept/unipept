@@ -1,11 +1,9 @@
 import {Resultset} from "./resultset.js";
 import {Node} from "./node.js";
 import {Tree} from "./tree.js";
+import {postJSON} from "../utils.js";
 
-const BATCH_SIZE = 100,
-    PEPT2LCA_URL = "/mpa/pept2lca",
-    PEPT2FA_URL = "/mpa/pept2fa",
-    TAXA_URL = "/private_api/taxa";
+const TAXA_URL = "/private_api/taxa";
 
 /**
  * @typedef TaxonInfo
@@ -176,7 +174,7 @@ class Dataset {
      * with id, name and rank fields
      */
     static getTaxonInfo(taxids) {
-        return Dataset.postJSON(TAXA_URL, JSON.stringify({taxids: taxids}));
+        return postJSON(TAXA_URL, JSON.stringify({taxids: taxids}));
     }
 
     /**
@@ -187,46 +185,6 @@ class Dataset {
      */
     static cleanPeptides(peptides) {
         return peptides.map(p => p.toUpperCase());
-    }
-
-    /**
-     * Posts data to a url as json and returns a promise containing the parsed
-     * (json) response
-     *
-     * @param  {string} url The url to which we want to send the request
-     * @param  {string} data The data to post in JSON format
-     * @return {Promise} A Promise containing the parsed response data
-     */
-    static postJSON(url, data) {
-        return fetch(url, {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-            },
-            body: data,
-        }).then(res => res.json());
-    }
-
-    /**
-     * The batch size to fetch peptides at a time
-     */
-    static get BATCH_SIZE() {
-        return BATCH_SIZE;
-    }
-
-    /**
-     * The URL to fetch lca info
-     */
-    static get PEPT2LCA_URL() {
-        return PEPT2LCA_URL;
-    }
-
-    /**
-     * The URL to fetch fa info
-     */
-    static get PEPT2FA_URL() {
-        return PEPT2FA_URL;
     }
 
     /**
