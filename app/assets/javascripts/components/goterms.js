@@ -32,7 +32,9 @@ export default class GOTerms {
         if (clone) return;
         this.numTotalSet = numAnnotatedProteins;
         this.go = new Map();
-        Object.values(data).forEach(v => v.forEach(goTerm => this.go.set(goTerm.code, goTerm)));
+        Object.entries(data).forEach(([ns, v]) => v.forEach(goTerm => {
+            this.go.set(goTerm.code, Object.assign({namespace: ns}, goTerm));
+        }));
         GOTerms.addData(Array.from(this.go.values()));
 
         // Sort values to store and have every namespace
@@ -146,6 +148,7 @@ export default class GOTerms {
     /**
      * Add GO terms to the global map
      * @param {[FACounts]} newTerms list of new GO Terms
+     * @access private
      */
     static addData(newTerms) {
         newTerms.forEach(go => {
