@@ -30,6 +30,6 @@
   },
   "scripts": {
     "test": "jest",
-    "test-puppeteer": "yarn test -c jest.pupeteer.config.js"
+    "test-puppeteer": "yarn test -c jest.puppeteer.config.js"
   }
 }
