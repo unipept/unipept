@@ -193,7 +193,7 @@ export default class ECNumbers {
         const map = Object.create(null);
 
         // The root node
-        map["-.-.-.-"] = {id: 0, name: "", children: [], data: {self_count: 0, count: 0}};
+        map["-.-.-.-"] = {id: 0, name: "-.-.-.-", children: [], data: {self_count: 0, count: 0}};
 
         // Sort from general to specific
         const sortedEC = Array.from(this.ec.values())
