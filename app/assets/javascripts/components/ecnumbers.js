@@ -1,4 +1,3 @@
-import PriorityQueue from "../utilities/PriorityQueue.js";
 import {postJSON} from "../utils.js";
 /**
  * @typedef {Object} FACounts
@@ -139,48 +138,6 @@ export default class ECNumbers {
      */
     getTotalSetSize() {
         return this.numTotalSet;
-    }
-
-    /**
-     * Create an EC tree
-     *
-     * The numbers are first sorted form general to specific (number of - at the
-     * end). Then the tree is built by adding the count to all ancestors.
-     *
-     * The tree is automatically expanded unless `treeViewOptions` contains the
-     * "levelsToExpand" option.
-     *
-     * @param {string} target the element to put the tree in (will be cleared)
-     * @param {object} treeViewOptions options to pass to the treeview
-     * @return {TreeView} the created tree
-     */
-    createTree(target, treeViewOptions) {
-        // We need one level expansion to be able to nicely expand it
-        const autoExpand = !("levelsToExpand" in treeViewOptions);
-        treeViewOptions["levelsToExpand"] = treeViewOptions["levelsToExpand"] || 1;
-
-        const rootData = this.treeData();
-        const tree = $(target).empty().treeview(rootData, treeViewOptions);
-
-        // expand certain nodes
-        // iteratively open the leaf with the largest count
-        if (autoExpand) {
-            const root = tree.getRoot();
-            let allowedCount = root.data.count * .8;
-            const pq = new PriorityQueue((a, b) => b.data.count - a.data.count);
-            (root.children || []).forEach(c => pq.add(c));
-            while (allowedCount > 0 && pq.size > 0) {
-                const toExpand = pq.remove();
-                allowedCount -= toExpand.data.count;
-                toExpand.expand(1);
-                (toExpand.children || []).forEach(c => pq.add(c));
-            }
-            tree.update(root);
-
-            // HACK: place the tree more to the left so everything is visible (after one second because there is a 750 ms delay)
-            setTimeout(() => d3.select(target + ">svg>g>g").attr("transform", `translate(85,${(treeViewOptions.height || 600) / 2})`), 1000);
-        }
-        return tree;
     }
 
     /**

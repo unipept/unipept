@@ -219,25 +219,27 @@ class SPA {
      * @return {TreeView} The created treeview
      */
     setUpECTree(ecResultSet) {
-        const tree = ecResultSet.createTree("#ec-treeview", {
-            width: panelWidth,
-            height: panelHeight,
-            getTooltip: d => {
-                const fullcode = (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
-                let tip = this.tooltipEC(fullcode);
-                tip += `<div class="tooltip-fa-text">
+        const tree = $("#ec-treeview")
+            .empty()
+            .treeview(ecResultSet.treeData(), {
+                width: panelWidth,
+                height: panelHeight,
+                getTooltip: d => {
+                    const fullcode = (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
+                    let tip = this.tooltipEC(fullcode);
+                    tip += `<div class="tooltip-fa-text">
                         ${d.data.count}  occurrences, `;
 
-                if (d.data.self_count == 0) {
-                    tip += "no specific annotations";
-                } else {
-                    tip += `Assigned to ${d.data.self_count} of ${ecResultSet.getTotalSetSize()} annotated matched proteins (${numberToPercent(d.data.self_count / ecResultSet.getTotalSetSize(), 1)})`;
-                }
+                    if (d.data.self_count == 0) {
+                        tip += "no specific annotations";
+                    } else {
+                        tip += `Assigned to ${d.data.self_count} of ${ecResultSet.getTotalSetSize()} annotated matched proteins (${numberToPercent(d.data.self_count / ecResultSet.getTotalSetSize(), 1)})`;
+                    }
 
-                tip += "</div>";
-                return tip;
-            },
-        });
+                    tip += "</div>";
+                    return tip;
+                },
+            });
 
         // save tree button
         $("#save-btn-ec").click(() => {

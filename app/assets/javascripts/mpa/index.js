@@ -325,29 +325,33 @@ class MPA {
      * @return {TreeView} The created treeview
      */
     setUpECTree(ecResultSet) {
-        const tree = ecResultSet.createTree("#ecTreeView", {
-            width: 916,
-            height: 500,
-            getTooltip: d => {
-                const fullcode = (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
-                let tip = this.tooltipEC(fullcode);
-                tip += `<div class="tooltip-fa-text">
+        const tree = $("#ecTreeView")
+            .empty()
+            .treeview(ecResultSet.treeData(), {
+                width: 916,
+                height: 500,
+                enableAutoExpand: true,
+                getTooltip: d => {
+                    const fullcode = (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
+                    let tip = this.tooltipEC(fullcode);
+                    tip += `<div class="tooltip-fa-text">
                         Evidence score of ${numberToPercent(d.data.count, 2)} for this and child EC numbers, `;
 
-                if (d.data.self_count == 0) {
-                    tip += "no specific annotations";
-                } else {
-                    if (d.data.self_count == d.data.count) {
-                        tip += " all specifically for this number";
+                    if (d.data.self_count == 0) {
+                        tip += "no specific annotations";
                     } else {
-                        tip += ` ${numberToPercent(d.data.self_count, 2)} specificly for this number`;
+                        if (d.data.self_count == d.data.count) {
+                            tip += " all specifically for this number";
+                        } else {
+                            tip += ` ${numberToPercent(d.data.self_count, 2)} specificly for this number`;
+                        }
                     }
-                }
 
-                tip += "</div>";
-                return tip;
-            },
-        });
+                    tip += "</div>";
+                    return tip;
+                },
+            });
+
 
         // save tree button
         $("#save-btn-ec").click(() => {
