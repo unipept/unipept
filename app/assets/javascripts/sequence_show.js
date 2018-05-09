@@ -424,7 +424,7 @@ class SPA {
 
         // Select and expand the LCA
         let curNode = root;
-        while (curNode.children.length === 1) {
+        while (curNode.children && curNode.children.length === 1) {
             curNode = curNode.children[0];
             curNode.expand();
         }
