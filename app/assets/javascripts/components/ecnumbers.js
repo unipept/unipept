@@ -81,12 +81,11 @@ export default class ECNumbers {
      * Create a map width all EC numbers given and their ancestors even if they
      * are not given.
      * @param {[FACounts]} newEC list of new EC data
-     * @param {Map} map map to start form
      * @return {Map}
      * @access private
      */
-    addMissing(newEC, map = null) {
-        const result = (map === null ? new Map([...newEC].map(x => [x.code, x])) : map);
+    addMissing(newEC) {
+        const result = new Map([...newEC].map(x => [x.code, x]));
 
         for (const curEc of newEC) {
             const parts = curEc.code.split(".");
