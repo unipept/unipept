@@ -207,20 +207,22 @@ class MPA {
                 },
                 {
                     builder: cell => {
-                        const fav = cell.append("button");
-                        fav.classed("btn btn-default btn-xs save-fa-btn", true);
-                        fav.classed("saved", d => starred.includes(d.code));
+                        const star = cell.append("button");
+                        star.classed("btn btn-default btn-xs save-fa-btn", true)
+                            .classed("saved", d => starred.includes(d.code))
+                            .html("<span class='glyphicon glyphicon-star'></span>");
+
                         const that = this;
-                        fav.on("click", function (d) {
-                            const classes = this.classList;
-                            classes.toggle("saved");
-                            that.addFAFavorite(d.code, classes.contains("saved"));
+                        star.on("click", function (d) {
+                            this.classList.toggle("saved");
+                            that.addFAFavorite(d.code, this.classList.contains("saved"));
                         });
-                        fav.html("<span class='glyphicon glyphicon-star'></span>");
-                        const link = cell.append("button");
-                        link.classed("btn btn-default btn-xs", true);
-                        link.on("click", d => this.downloadPeptidesFor(d.code));
-                        link.html("<span class='glyphicon glyphicon-download-alt'></span>");
+
+
+                        const downloadLink = cell.append("button");
+                        downloadLink.classed("btn btn-default btn-xs", true)
+                            .html("<span class='glyphicon glyphicon-download-alt'></span>")
+                            .on("click", d => this.downloadPeptidesFor(d.code));
                     },
                     text: d => "",
                     style: {"width": "5em", "text-align": "right"},
