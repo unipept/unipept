@@ -289,7 +289,7 @@ class AmountTable {
      */
     addTooltips(row) {
         if (this.tooltip !== null) {
-            row.on("mouseover", d => {
+            row.on("mouseenter", d => {
                 this.tooltip.html(this.makeTooltip(d));
                 this.positionTooltip(d3.event.pageX, d3.event.pageY);
                 this.showTooltip(true);
@@ -297,7 +297,7 @@ class AmountTable {
             row.on("mousemove", d => {
                 this.positionTooltip(d3.event.pageX, d3.event.pageY);
             });
-            row.on("mouseout", d => {
+            row.on("mouseleave", d => {
                 this.showTooltip(false);
             });
         }
