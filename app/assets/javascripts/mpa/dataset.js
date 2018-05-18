@@ -105,6 +105,23 @@ class Dataset {
     }
 
     /**
+     * Creates a tree like structure, that is this.tree where each node has an
+     * `included` property. This property indicaes if this node or any of its
+     * childs contain the saught for functional annlotation (code).
+     *
+     * @param  {string} code The FA term to look for
+     *   from
+     * @return {Object} A taxon tree-like object annotated with `included`
+     */
+    getFATree(code) {
+        const pepts = this.getPeptidesByFA(code).map(pept => pept.sequence);
+        return this.tree.getRoot().callRecursivelyPostOder((t, c) => {
+            const included = c.some(x => x.included) || t.values.some(pept => pepts.includes(pept.sequence));
+            return Object.assign(Object.assign({}, t), {included: included, children: c});
+        });
+    }
+
+    /**
      * Adds new taxon info to the global taxon map
      *
      * @param {TaxonInfo[]} taxonInfo A list of new taxon info

@@ -107,6 +107,20 @@ class Node {
             });
         }
     }
+
+    /**
+     * Recursively calls a function on this object and its children  + data of child
+     *
+     * @param  {function} f The function to call
+     */
+    callRecursivelyPostOder(f) {
+        let childResults = [];
+        if (this.children) {
+            childResults = this.children.map(c =>
+                c.callRecursivelyPostOder(f));
+        }
+        return f(this, childResults);
+    }
 }
 
 export {Node};

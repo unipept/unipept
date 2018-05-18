@@ -173,6 +173,31 @@ class MPA {
         });
     }
 
+
+    faMoreinfo(d, code, container) {
+        const dataset = this.datasets[0];
+
+        $(container).append(`<small>
+            <span class="glyphicon glyphicon-stats"></span>
+            Assinged to ${d.numberOfPepts} of the ${dataset.getNumberOfMatchedPeptides()} peptides (${numberToPercent(d.numberOfPepts / dataset.getNumberOfMatchedPeptides())}).
+            <br/>
+            <span class="glyphicon glyphicon-stats"></span>
+            The normalised occurrence score is ${numberToPercent(d.value)} (${d.weightedValue.toFixed(2)}).
+        
+            </small>`);
+
+        $(container).append("<div></div>").treeview(dataset.getFATree(code), {
+            width: 550,
+            height: 310,
+            getTooltip: this.tooltipContent,
+            colors: "#2196f3",
+            linkStrokeColor: ({target: d}) => (d.included ? d.color || "grey" : "grey"),
+            nodeStrokeColor: d => (d.included ? d.color || "grey" : "grey"),
+            nodeFillColor: d => (d.included ? d.color || "grey" : "grey"),
+            enableAutoExpand: 0.3,
+        });
+    }
+
     setUpGoTable(goResultset, variant, target) {
         const sortOrder = this.getFaSelector();
         const tablepart = target.append("div").attr("class", "col-xs-8");
@@ -207,17 +232,17 @@ class MPA {
                 },
                 {
                     builder: cell => {
+                        const that = this;
+
                         const star = cell.append("button");
                         star.classed("btn btn-default btn-xs save-fa-btn", true)
                             .classed("saved", d => starred.includes(d.code))
                             .html("<span class='glyphicon glyphicon-star'></span>");
 
-                        const that = this;
                         star.on("click", function (d) {
                             this.classList.toggle("saved");
                             that.addFAFavorite(d.code, this.classList.contains("saved"));
                         });
-
 
                         const downloadLink = cell.append("button");
                         downloadLink.classed("btn btn-default btn-xs", true)
@@ -225,10 +250,11 @@ class MPA {
                             .on("click", d => this.downloadPeptidesFor(d.code));
                     },
                     text: d => "",
-                    style: {"width": "5em", "text-align": "right"},
+                    style: {"width": "6em", "text-align": "right"},
                     exported: false,
                 },
             ],
+            more: (d, container) => this.faMoreinfo(d, d.code, container),
             tooltip: d => this.tooltipGO(d.code, goResultset, d),
             tooltipID: "#tooltip",
         }).draw();
@@ -428,6 +454,7 @@ class MPA {
                     exported: false,
                 },
             ],
+            more: (d, container) => this.faMoreinfo(d, "EC:" + d.code, container),
             tooltip: d => this.tooltipEC(d.code, ecResultSet, d),
             tooltipID: "#tooltip",
         }).draw();
@@ -630,6 +657,7 @@ class MPA {
             width: 916,
             height: 600,
             getTooltip: this.tooltipContent,
+            enableAutoExpand: true,
             colors: d => {
                 if (d.name === "Bacteria") return "#1565C0"; // blue
                 if (d.name === "Archaea") return "#FF8F00"; // orange
