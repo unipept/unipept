@@ -83,7 +83,7 @@ describe("/mpa (simple)",
             expect(downloaded).toHaveProperty("data");
             const downloadedRows = downloaded.data.split("\r\n");
             expect(downloadedRows).toHaveLength(1 /* header*/ + 4 /* results*/ + 1 /* newline*/);
-            expect(downloadedRows[0]).toBe("peptide,lca,superkingdom,kingdom,subkingdom,superphylum,phylum,subphylum,superclass,class,subclass,infraclass,superorder,order,suborder,infraorder,parvorder,superfamily,family,subfamily,tribe,subtribe,genus,subgenus,species group,species subgroup,species,subspecies,varietas,forma");
+            expect(downloadedRows[0]).toBe("peptide,lca,superkingdom,kingdom,subkingdom,superphylum,phylum,subphylum,superclass,class,subclass,infraclass,superorder,order,suborder,infraorder,parvorder,superfamily,family,subfamily,tribe,subtribe,genus,subgenus,species group,species subgroup,species,subspecies,varietas,forma,EC,GO (biological process),GO (cellular component),GO (molecular function)");
         });
     });
 
@@ -158,7 +158,7 @@ describe("/mpa (gut7)",
             expect(downloaded).toHaveProperty("data");
             const downloadedRows = downloaded.data.split("\r\n");
             expect(downloadedRows.length).toBeGreaterThanOrEqual(1000);
-            expect(downloadedRows[0]).toBe("peptide,lca,superkingdom,kingdom,subkingdom,superphylum,phylum,subphylum,superclass,class,subclass,infraclass,superorder,order,suborder,infraorder,parvorder,superfamily,family,subfamily,tribe,subtribe,genus,subgenus,species group,species subgroup,species,subspecies,varietas,forma");
+            expect(downloadedRows[0]).toBe("peptide,lca,superkingdom,kingdom,subkingdom,superphylum,phylum,subphylum,superclass,class,subclass,infraclass,superorder,order,suborder,infraorder,parvorder,superfamily,family,subfamily,tribe,subtribe,genus,subgenus,species group,species subgroup,species,subspecies,varietas,forma,EC,GO (biological process),GO (cellular component),GO (molecular function)");
             expect(downloaded.data).toContain("Homo sapiens");
         });
 

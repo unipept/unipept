@@ -1,6 +1,7 @@
 import {MPA} from "./index.js";
 import GOTerms from "../components/goterms.js";
 import ECNumbers from "../components/ecnumbers.js";
+import {numberToPercent} from "../utils.js";
 
 import worker from "workerize-loader!./worker.js";
 
@@ -71,14 +72,34 @@ class Resultset {
      * @return {string} The analysis result in csv format
      */
     toCSV() {
-        let result = "peptide,lca," + MPA.RANKS + "\n";
+        let result = "peptide,lca," +
+                    MPA.RANKS.join(",") + "," +
+                    "EC," +
+                    GOTerms.NAMESPACES.map(ns => `GO (${ns})`).join(",") +
+                    "\n";
         for (const peptide of this.processedPeptides.values()) {
             let row = peptide.sequence + ",";
             row += this.dataset.taxonMap.get(peptide.lca).name + ",";
             row += peptide.lineage.map(e => {
                 if (e === null) return "";
                 return this.dataset.taxonMap.get(e).name;
-            });
+            }).join(",");
+
+
+            row += ",";
+            row += peptide.faGrouped.EC.sort((a, b) => b.value - a.value)
+                .slice(0, 3)
+                .map(a => `${a.code} (${numberToPercent(a.value / peptide.fa.counts.EC)})`)
+                .join(";");
+            row += ",";
+            row += GOTerms.NAMESPACES.map(ns =>
+                (peptide.faGrouped.GO[ns] || [])
+                    .sort((a, b) => b.value - a.value)
+                    .slice(0, 3)
+                    .map(a => `${a.code} (${numberToPercent(a.value / peptide.fa.counts.GO)})`)
+                    .join(";"))
+                .join(",");
+
             row += "\n";
             result += row.repeat(peptide.count);
         }
