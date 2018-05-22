@@ -58,7 +58,7 @@ describe("Should be correct (default config)", () => {
         expect.assertions(3);
 
         let pepts = ["AALTER"];
-        await expect(wkr.process(pepts, {})).resolves.toEqual({
+        await expect(wkr.process(pepts, {})).resolves.toMatchObject({
             processed: [["AALTER", Object.assign({count: 1}, exDataAALTER)]],
             missed: [],
             numMatched: 1,
@@ -71,7 +71,7 @@ describe("Should be correct (default config)", () => {
 
     it("for NOFADATA (no FA data availible)", async () => {
         let pepts = ["NOFADATA"];
-        await expect(wkr.process(pepts, {})).resolves.toEqual({
+        await expect(wkr.process(pepts, {})).resolves.toMatchObject({
             "missed": [],
             "numMatched": 1,
             "numSearched": 1,
@@ -89,7 +89,7 @@ describe("Should be correct (default config)", () => {
         expect.assertions(3);
 
         let pepts = ["MISSES"];
-        await expect(wkr.process(pepts, {})).resolves.toEqual({
+        await expect(wkr.process(pepts, {})).resolves.toMatchObject({
             processed: [],
             missed: ["MISSES"],
             numMatched: 0,
@@ -106,7 +106,7 @@ describe("Should be correct (default config)", () => {
         expect.assertions(3);
 
         let pepts = ["AALT"];
-        await expect(wkr.process(pepts, {})).resolves.toEqual({
+        await expect(wkr.process(pepts, {})).resolves.toMatchObject({
             processed: [],
             missed: [],
             numMatched: 0,
@@ -135,7 +135,7 @@ describe("Should be correct (default config)", () => {
 describe("Should handle config correctly", () => {
     it("for IL", async () => {
         let pepts = ["AALTER"];
-        await expect(wkr.process(pepts, {il: true})).resolves.toEqual({
+        await expect(wkr.process(pepts, {il: true})).resolves.toMatchObject({
             processed: [["AALTER", Object.assign({count: 1}, exDataAALTER)]],
             missed: [],
             numMatched: 1,
@@ -150,7 +150,7 @@ describe("Should handle config correctly", () => {
     describe("for duplicates", () => {
         it("true", async () => {
             let pepts = ["AALTER", "AALTER", "AALTER", "AALTER"];
-            await expect(wkr.process(pepts, {dupes: true})).resolves.toEqual({
+            await expect(wkr.process(pepts, {dupes: true})).resolves.toMatchObject({
                 processed: [["AALTER", Object.assign({count: 1}, exDataAALTER)]],
                 missed: [],
                 numMatched: 1,
@@ -163,7 +163,7 @@ describe("Should handle config correctly", () => {
 
         it("false", async () => {
             let pepts = ["AALTER", "AALTER", "AALTER", "AALTER"];
-            await expect(wkr.process(pepts, {dupes: false})).resolves.toEqual({
+            await expect(wkr.process(pepts, {dupes: false})).resolves.toMatchObject({
                 processed: [["AALTER", Object.assign({count: 4}, exDataAALTER)]],
                 missed: [],
                 numMatched: 4,
@@ -179,7 +179,7 @@ describe("Should handle config correctly", () => {
     describe("for advanced missed cleavage handeling", () => {
         it("true", async () => {
             let pepts = ["AALTER"];
-            await expect(wkr.process(pepts, {missed: true})).resolves.toEqual({
+            await expect(wkr.process(pepts, {missed: true})).resolves.toMatchObject({
                 processed: [["AALTER", Object.assign({count: 1}, exDataAALTER)]],
                 missed: [],
                 numMatched: 1,
@@ -195,7 +195,7 @@ describe("Should handle config correctly", () => {
 
         it("false", async () => {
             let pepts = ["AALTER"];
-            await expect(wkr.process(pepts, {missed: false})).resolves.toEqual({
+            await expect(wkr.process(pepts, {missed: false})).resolves.toMatchObject({
                 processed: [["AALTER", Object.assign({count: 1}, exDataAALTER)]],
                 missed: [],
                 numMatched: 1,

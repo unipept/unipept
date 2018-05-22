@@ -68,10 +68,34 @@ export async function process(originalPeptides, config) {
         setProgress(0.1 + 0.9 * ((i + BATCH_SIZE) / peptideList.length));
     }
 
+    // TODO refactor
+    let usedGoTerms = new Set();
+    for (let peptide of processedPeptides.values()) {
+        Object.keys(peptide.fa.data || [])
+            .filter(x => x.startsWith("GO:"))
+            .forEach(x => usedGoTerms.add(x));
+    }
+    await GOTerms.addMissingNames([...usedGoTerms.values()]);
+
     let numMatched = 0;
     for (const peptide of processedPeptides.values()) {
         peptide.count = preparedPeptides.get(peptide.sequence);
         numMatched += peptide.count;
+        peptide.faGrouped = {"EC": [], "GO": {}};
+        for (const [annotation, count] of Object.entries(peptide.fa.data || {})) {
+            const type = annotation.split(":", 1)[0];
+            switch (type) {
+            case "EC": peptide.faGrouped["EC"].push({code: annotation.substr(3), value: count}); break;
+            case "GO": {
+                let ns = GOTerms.namespaceOf(annotation);
+                if (!(ns in peptide.faGrouped["GO"])) {
+                    peptide.faGrouped["GO"][ns] = [];
+                }
+                peptide.faGrouped["GO"][ns].push({code: annotation, value: count});
+                break;
+            }
+            }
+        }
     }
 
     return {
@@ -195,9 +219,7 @@ export async function summarizeGo(percent = 50, sequences = null) {
     let res = {};
     const countExtractor = pept => pept.fa.counts["GO"] || 0;
     for (let namespace of GOTerms.NAMESPACES) {
-        const dataExtractor = pept => Object.entries(pept.fa.data)
-            .filter(([term, count]) => term.startsWith("GO") && GOTerms.namespaceOf(term) == namespace)
-            .map(([term, count]) => ({code: term, value: count}));
+        const dataExtractor = pept => pept.faGrouped.GO[namespace] || [];
         res[namespace] = summarizeFa(dataExtractor, countExtractor, percent, sequences);
     }
 
@@ -219,10 +241,7 @@ export async function summarizeGo(percent = 50, sequences = null) {
  */
 export async function summarizeEc(percent = 50, sequences = null) {
     // Filter FA' staring with EC (+ remove "EC:")
-    const dataExtractor = pept =>
-        Object.entries(pept.fa.data)
-            .filter(([a, b]) => a.startsWith("EC"))
-            .map(([a, b]) => ({code: a.substr(3), value: b}));
+    const dataExtractor = pept => pept.faGrouped.EC;
 
     const countExtractor = pept => pept.fa.counts["EC"] || 0;
 
