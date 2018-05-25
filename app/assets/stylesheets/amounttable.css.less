@@ -23,3 +23,24 @@
     font-size: .9em;
     cursor: pointer;
 }
+
+.amounttable-expandrow {
+  box-shadow: inset 0 -2px 4px @table-border-color;
+}
+
+:not(.amounttable-expanded) + .amounttable-expandrow {
+  display: none;
+}
+
+
+
+.amounttable-expanded .glyphicon.amounttable-chevron:before {
+  content: "\e260"; // glyphicon-menu-down
+}
+.glyphicon.amounttable-chevron:before {
+  display: block;
+  content: "\e259"; // glyphicon-menu-up
+}
+.amounttable-chevron {
+  display: table-cell;
+}

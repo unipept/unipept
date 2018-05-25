@@ -3,14 +3,24 @@ import {toCSVString, downloadDataByForm} from "../utils.js";
 
 /**
  * @typedef {Object} AmountTableSettings
- * @property {d3.selection[]}  el        The target container
- * @property {string}   title     A string naming the table (used for export name)
- * @property {Any[]}    data      array of data to display (values are shown in order)
- * @property {AmountTableColSpec[]} contents  An array of settings for each column (see above)
- * @property {Number} [limit=Infinity]  The number of rows to show in collapsed state
- * @property {function(data: Any): string} tooltip  A function specifying the tooltip content given a datarow
- * @property {string}   tooltipID   A CSS selector of an existing tooltip element.
- * @property {Number} [tooltipDelay=500]  Number of ms to wait before showing the tooltip
+ * @property {d3.selection[]}  el
+ *     The target container
+ * @property {string}   title
+ *     A string naming the table (used for export name)
+ * @property {Any[]}    data
+ *     array of data to display (values are shown in order)
+ * @property {AmountTableColSpec[]} contents
+ *     An array of settings for each column (see above)
+ * @property {Number} [limit=Infinity]
+ *     The number of rows to show in collapsed state
+ * @property {function(data: Any, infoContainer: HTMLTableCellElement): Any}
+ *     function that fills the expanded infoContainer. (Only called once)
+ * @property {function(data: Any): string} tooltip
+ *     A function specifying the tooltip content given a datarow
+ * @property {string}   tooltipID
+ *     A CSS selector of an existing tooltip element.
+ * @property {Number} [tooltipDelay=500]
+ *     Number of ms to wait before showing the tooltip
  */
 
 /**
@@ -53,10 +63,13 @@ class AmountTable {
      *
      * @param {AmountTableSettings} settings
      */
-    constructor({el, title = null, data, contents = null, limit = Infinity, tooltip = null, tooltipID = null, tooltipDelay = 500}) {
+    constructor({el, title = null, data, more = null, contents = null, limit = Infinity, tooltip = null, tooltipID = null, tooltipDelay = 500}) {
         this.el = el;
         this.title = title;
         this.header = contents.map(({title = ""}) => title);
+        if (more !== null) {
+            this.header.push("");
+        }
         this.data = data || [];
         this.table = null;
         this.limit = limit;
@@ -64,6 +77,7 @@ class AmountTable {
         this.contents = contents;
         this.makeTooltip = tooltip;
         this.tooltipDelay = tooltipDelay;
+        this.more = more;
         if (tooltip !== null) {
             if (tooltipID === null) {
                 this.createTooltip();
@@ -181,6 +195,11 @@ class AmountTable {
                     }
                 }
             }
+        }
+        if (this.more !== null) {
+            const cheveron = row.append("td");
+            cheveron.classed("glyphicon amounttable-chevron", true);
+            cheveron.text(" ");
         }
 
 
@@ -300,6 +319,25 @@ class AmountTable {
             row.on("mouseleave", d => {
                 this.showTooltip(false);
             });
+
+            if (this.more !== null) {
+                const that = this;
+                row.on("click", function (d) {
+                    if (this.amountTableExpandRow) {
+                        this.classList.toggle("amounttable-expanded");
+                    } else {
+                        const tr = document.createElement("tr");
+                        tr.style.display = "";
+                        this.classList.add("amounttable-expanded");
+                        tr.classList.add("amounttable-expandrow");
+                        this.amountTableExpandRow = tr;
+                        const td = tr.insertCell();
+                        td.colSpan = that.header.length;
+                        that.more.call(td, d, td);
+                        this.parentNode.insertBefore(tr, this.nextSibling);
+                    }
+                });
+            }
         }
     }
 
