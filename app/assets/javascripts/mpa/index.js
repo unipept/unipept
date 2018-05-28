@@ -174,7 +174,7 @@ class MPA {
     }
 
 
-    faMoreinfo(d, code, container) {
+    faMoreinfo(d, code, container, width) {
         const dataset = this.datasets[0];
 
         $(container).append(`<small>
@@ -187,7 +187,7 @@ class MPA {
             </small>`);
 
         $(container).append("<div></div>").treeview(dataset.getFATree(code), {
-            width: 550,
+            width: width,
             height: 310,
             getTooltip: this.tooltipContent,
             colors: "#2196f3",
@@ -254,7 +254,7 @@ class MPA {
                     exported: false,
                 },
             ],
-            more: (d, container) => this.faMoreinfo(d, d.code, container),
+            more: (d, container) => this.faMoreinfo(d, d.code, container, 550),
             tooltip: d => this.tooltipGO(d.code, goResultset, d),
             tooltipID: "#tooltip",
         }).draw();
@@ -454,7 +454,7 @@ class MPA {
                     exported: false,
                 },
             ],
-            more: (d, container) => this.faMoreinfo(d, "EC:" + d.code, container),
+            more: (d, container) => this.faMoreinfo(d, "EC:" + d.code, container, 874),
             tooltip: d => this.tooltipEC(d.code, ecResultSet, d),
             tooltipID: "#tooltip",
         }).draw();
