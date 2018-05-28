@@ -272,7 +272,7 @@ function numberToPercent(number, digits = 0) {
  * A modal dialog is shown containing the image and buttons
  * to download the image as PNG and SVG if present.
  *
- * @param <String> svgSelector The DOM selector of the SVG
+ * @param <String> svgSelector The DOM selector of the SVG or jQuery object
  * @param <String> canvasSelector The DOM selector of the canvas
  * @param <String> baseFileName The requested file name
  */
