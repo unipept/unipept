@@ -73,7 +73,10 @@ class AmountTable {
         this.data = data || [];
         this.table = null;
         this.limit = limit;
-        this.collapsed = true;
+
+        // No collapse row if it would show "1 row left"
+        if (this.data.length === this.limit + 1) this.limit++;
+
         this.contents = contents;
         this.makeTooltip = tooltip;
         this.tooltipDelay = tooltipDelay;
@@ -158,8 +161,7 @@ class AmountTable {
      * @param {d3.selection} tbody table body
      */
     buildRow(tbody) {
-        const rows = tbody.selectAll("tr")
-            .data(this.collapsed ? this.data.slice(0, this.limit) : this.data);
+        const rows = tbody.selectAll("tr").data(this.data.slice(0, this.limit));
 
         rows.exit().remove(); // remove rows that are no longer needed
 
@@ -204,6 +206,7 @@ class AmountTable {
 
 
         this.addTooltips(row);
+        this.addExpandListener(row);
     }
 
     /**
@@ -218,8 +221,6 @@ class AmountTable {
         const collapseCell = collapseRow.append("td")
             .attr("colspan", this.header.length)
             .attr("tabindex", "0")
-            .attr("aria-expanded", !this.collapsed)
-            .attr("aria-pressed", !this.collapsed)
             .attr("role", "button")
             .html(`<span class="glyphicon glyphicon-chevron-down"></span> Show ${Math.min(numleft, 10)} more rows (${numleft} left)`);
 
@@ -231,7 +232,7 @@ class AmountTable {
             numleft = Math.max(0, this.data.length - this.limit);
             if (numleft > 0) {
                 let cellHtml = `<span class="glyphicon glyphicon-chevron-down"></span> Show ${Math.min(numleft, 10)} more rows (${numleft} left)`;
-                if (numClick >= 3 && numleft > 100) {
+                if (numClick >= 3 && numleft > 10) {
                     cellHtml += "<span style='float:right; opacity:.7;'><kbd>SHIFT+click</kbd> for 100</span>";
                 }
                 collapseCell.html(cellHtml);
@@ -301,6 +302,52 @@ class AmountTable {
         downloadDataByForm(this.toCSV(), filename, "text/csv");
     }
 
+    /**
+     * Setup expand on click, if needed
+     *
+     * The expanded row should act as a button, and should be reachable via tab.
+     *
+     * @param {d3.selection} row the rows to add the tooltip to.
+     */
+    addExpandListener(row) {
+        if (this.more !== null) {
+            row.style("cursor", "pointer");
+            row.attr("aria-expanded", false);
+            row.attr("tabindex", "0");
+            row.attr("role", "button");
+
+            const that = this;
+            const toggler = function (d) {
+                if (this.amountTableExpandRow) {
+                    this.classList.toggle("amounttable-expanded");
+                    this.attributes["aria-expanded"].nodeValue = this.classList.contains("amounttable-expanded");
+                } else {
+                    const tr = document.createElement("tr");
+                    tr.style.display = "";
+                    tr.classList.add("amounttable-expandrow");
+
+                    const td = tr.insertCell();
+                    td.colSpan = that.header.length;
+
+                    this.classList.add("amounttable-expanded");
+                    this.attributes["aria-expanded"].nodeValue = "true";
+
+                    this.amountTableExpandRow = tr;
+                    that.more.call(td, d, td);
+
+                    this.parentNode.insertBefore(tr, this.nextSibling);
+                }
+            };
+
+            row.on("click", toggler);
+            row.on("keydown", function (d) {
+                if (d3.event.key === "Enter" || d3.event.key === " ") {
+                    d3.event.preventDefault();
+                    toggler.call(this, d);
+                }
+            });
+        }
+    }
 
     /**
      * Setup tooltips
@@ -319,25 +366,6 @@ class AmountTable {
             row.on("mouseleave", d => {
                 this.showTooltip(false);
             });
-
-            if (this.more !== null) {
-                const that = this;
-                row.on("click", function (d) {
-                    if (this.amountTableExpandRow) {
-                        this.classList.toggle("amounttable-expanded");
-                    } else {
-                        const tr = document.createElement("tr");
-                        tr.style.display = "";
-                        this.classList.add("amounttable-expanded");
-                        tr.classList.add("amounttable-expandrow");
-                        this.amountTableExpandRow = tr;
-                        const td = tr.insertCell();
-                        td.colSpan = that.header.length;
-                        that.more.call(td, d, td);
-                        this.parentNode.insertBefore(tr, this.nextSibling);
-                    }
-                });
-            }
         }
     }
 
