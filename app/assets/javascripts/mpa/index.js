@@ -203,8 +203,17 @@ class MPA {
 
     faMoreinfo(d, code, container, width) {
         const dataset = this.datasets[0];
+        const $container = $(container);
 
-        $(container).append(`<small>
+        const $dlbtn = $(`
+        <button class='btn btn-default btn-xs btn-animate pull-right'>
+            <span class='glyphicon glyphicon-download down'></span>
+            Save as image
+        </button>`);
+
+        $container.append($dlbtn);
+
+        $container.append(`<small>
             <span class="glyphicon glyphicon-stats"></span>
             Assinged to ${d.numberOfPepts} of the ${dataset.getNumberOfMatchedPeptides()} peptides (${numberToPercent(d.numberOfPepts / dataset.getNumberOfMatchedPeptides())}).
             <br/>
@@ -213,7 +222,8 @@ class MPA {
         
             </small>`);
 
-        $(container).append("<div></div>").treeview(dataset.getFATree(code), {
+
+        $container.append("<div></div>").treeview(dataset.getFATree(code), {
             width: width,
             height: 310,
             getTooltip: this.tooltipContent,
@@ -222,6 +232,11 @@ class MPA {
             nodeStrokeColor: d => (d.included ? d.color || "grey" : "grey"),
             nodeFillColor: d => (d.included ? d.color || "grey" : "grey"),
             enableAutoExpand: 0.3,
+        });
+
+        $dlbtn.click(() => {
+            logToGoogle("Multi peptide", "Save Image for FA");
+            triggerDownloadModal($container.find("svg"), null, "unipept_treeview_" + code);
         });
     }
 
