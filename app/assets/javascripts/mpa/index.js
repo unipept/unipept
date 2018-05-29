@@ -330,11 +330,19 @@ class MPA {
             <span class="tooltip-go-domain">${stringTitleize(GOTerms.namespaceOf(goTerm))}</span>`;
 
         if (goResultSet != null) {
-            result += `<div class="tooltip-fa-text">Evidence score of ${numberToPercent(goResultSet.getValueOf(goTerm), 2)}</div>`;
+            const curdata = key => goResultSet.getValueOf(goTerm, key);
+            result += "<div class=\"tooltip-fa-text\">";
+            result += `Normailised evidence score of ${numberToPercent(curdata("value"), 2)}`;
+            if (this.datasets[0].baseFa.go != null) {
+                result += ` (was ${numberToPercent(this.datasets[0].baseFa.go.getValueOf(goTerm), 2)})`;
         }
+            result += "</div>";
 
-        if (allData != null) {
-            result += "<table class='table table-condensed'>" + Object.entries(allData).map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("") + "</table>";
+            result += "<div class=\"tooltip-fa-text\">";
+            result += `Assigned to <strong>${curdata("numberOfPepts")} peptides</strong>, <br>
+            with an average support ratio of ${numberToPercent(curdata("weightedValue") / curdata("numberOfPepts"))}.<br>
+            Thus an <strong>evidence score of ${curdata("weightedValue").toFixed(2)}</strong>.`;
+            result += "</div>";
         }
         return result;
     }
@@ -365,11 +373,19 @@ class MPA {
         }
 
         if (ecResultSet != null) {
-            result += `<div class="tooltip-fa-text">Evidence score of ${numberToPercent(ecResultSet.getValueOf(ecNumber), 2)}</div>`;
+            const curdata = key => ecResultSet.getValueOf(ecNumber, key);
+            result += "<div class=\"tooltip-fa-text\">";
+            result += `Normailised evidence score of ${numberToPercent(curdata("value"), 2)}`;
+            if (this.datasets[0].baseFa.go != null) {
+                result += ` (was ${numberToPercent(this.datasets[0].baseFa.ec.getValueOf(ecNumber), 2)})`;
         }
+            result += "</div>";
 
-        if (allData != null) {
-            result += "<table class='table table-condensed'>" + Object.entries(allData).map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("") + "</table>";
+            result += "<div class=\"tooltip-fa-text\">";
+            result += `Assigned to <strong>${curdata("numberOfPepts")} peptides</strong>, <br>
+            with an average support ratio of ${numberToPercent(curdata("weightedValue") / curdata("numberOfPepts"))}.<br>
+            Thus an <strong>evidence score of ${curdata("weightedValue").toFixed(2)}</strong>.`;
+            result += "</div>";
         }
         return result;
     }

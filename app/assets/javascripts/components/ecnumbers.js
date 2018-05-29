@@ -110,13 +110,19 @@ export default class ECNumbers {
      * Gets the value of the EC number
      *
      * @param  {string} ecNum The code of the EC number (like "2.3.-.-")
-     * @return {number}       The value of the EC number
+     * @param  {string} [key="value"] The key to return (form "GO:0005886")
+     * @param  {any} [fallback=0] the GO term (form "GO:0005886")
+     * @return {any}       The value of the EC numbers `key` property
      */
-    getValueOf(ecNum) {
+    getValueOf(ecNum, key = "value", fallback = 0) {
         if (this.ec.has(ecNum)) {
-            return this.ec.get(ecNum).value || 0;
+            const data = this.ec.get(ecNum);
+            if (!(key in data)) {
+                throw new Error(`Key ${key} not found in data for ${ecNum}`);
+            }
+            return data[key];
         }
-        return 0;
+        return fallback;
     }
 
     /**

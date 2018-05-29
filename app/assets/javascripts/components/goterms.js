@@ -97,13 +97,19 @@ export default class GOTerms {
     /**
      * Get the count of the GO term in the data set
      * @param  {string} goTerm the GO term (form "GO:0005886")
-     * @return {number}        count of the GO term
+     * @param  {string} [key="value"] The key to return (form "GO:0005886")
+     * @param  {any} [fallback=0] the GO term (form "GO:0005886")
+     * @return {any}        The GO terms `key` property
      */
-    getValueOf(goTerm) {
+    getValueOf(goTerm, key = "value", fallback = 0) {
         if (this.go.has(goTerm)) {
-            return this.go.get(goTerm).value;
+            const data = this.go.get(goTerm);
+            if (!(key in data)) {
+                throw new Error(`Key ${key} not found in data for ${goTerm}`);
+            }
+            return data[key];
         }
-        return 0;
+        return fallback;
     }
 
 
