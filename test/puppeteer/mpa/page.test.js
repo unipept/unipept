@@ -52,7 +52,7 @@ describe("/mpa (simple)",
             expect(downloaded).toHaveProperty("data");
             const downloadedRows = downloaded.data.split("\r\n");
             expect(downloadedRows.length).toBeGreaterThanOrEqual(1 /* header*/ + 1 /* results*/ + 1 /* newline*/);
-            expect(downloadedRows[0]).toBe("Weight (%),GO term,Name");
+            expect(downloadedRows[0]).toBe("Evidence (%),GO term,Name");
             expect(downloadedRows[1]).toContain("transcription, DNA-templated");
             expect(downloadedRows[1]).toContain("GO:0006351");
         });
@@ -67,7 +67,7 @@ describe("/mpa (simple)",
             expect(downloaded).toHaveProperty("data");
             const downloadedRows = downloaded.data.split("\r\n");
             expect(downloadedRows.length).toBeGreaterThanOrEqual(1 /* header*/ + 2 /* results*/ + 1 /* newline*/);
-            expect(downloadedRows[0]).toBe("Weight (%),EC-Number,Name");
+            expect(downloadedRows[0]).toBe("Evidence (%),EC-Number,Name");
             expect(downloadedRows[1]).toContain("DNA-directed RNA polymerase");
             expect(downloadedRows[1]).toContain("2.7.7.6");
         });
@@ -127,7 +127,7 @@ describe("/mpa (gut7)",
             expect(downloaded).toHaveProperty("data");
             const downloadedRows = downloaded.data.split("\r\n");
             expect(downloadedRows.length).toBeGreaterThanOrEqual(5);
-            expect(downloadedRows[0]).toBe("Weight (%),GO term,Name");
+            expect(downloadedRows[0]).toBe("Evidence (%),GO term,Name");
             expect(downloaded.data).toContain("transcription, DNA-templated");
             expect(downloaded.data).toContain("GO:0006351");
         });
@@ -141,7 +141,7 @@ describe("/mpa (gut7)",
             expect(downloaded).toHaveProperty("headers.content-type", expect.stringMatching("text/csv"));
             expect(downloaded).toHaveProperty("data");
             const downloadedRows = downloaded.data.split("\r\n");
-            expect(downloadedRows[0]).toBe("Weight (%),EC-Number,Name");
+            expect(downloadedRows[0]).toBe("Evidence (%),EC-Number,Name");
             expect(downloadedRows.length).toBeGreaterThanOrEqual(5);
             expect(downloadedRows[1]).toContain("DNA-directed RNA polymerase");
             expect(downloadedRows[1]).toContain("2.7.7.6");

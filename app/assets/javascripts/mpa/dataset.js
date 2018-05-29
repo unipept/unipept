@@ -1,4 +1,6 @@
 import {Resultset} from "./resultset.js";
+import GOTerms from "../components/goterms.js";
+import ECNumbers from "../components/ecnumbers.js";
 import {Node} from "./node.js";
 import {Tree} from "./tree.js";
 import {postJSON} from "../utils.js";
@@ -37,6 +39,7 @@ class Dataset {
         this.originalPeptides = Dataset.cleanPeptides(peptides);
         this.tree = null;
         this.fa = {go: null, ec: null};
+        this.baseFa = {go: null, ec: null};
         this.taxonMap = new Map();
         this.taxonMap.set(1, {id: 1, ranke: "no rank", name: "root"});
     }
@@ -73,9 +76,29 @@ class Dataset {
     */
     async reprocessFA(cutoff = 50, sequences = null) {
         await this.resultset.proccessFA(cutoff, sequences);
-        this.fa = this.resultset.fa;
+        this.fa = {
+            go: this.resultset.fa.go,
+            ec: this.resultset.fa.ec,
+            settings: {
+                cutoff: cutoff,
+                sequences: sequences,
+            },
+        };
     }
 
+    /**
+     * Sets the surrent FA summary as base, accesible trough baseFa.
+     */
+    setBaseFA() {
+        this.baseFa = {
+            go: GOTerms.clone(this.fa.go),
+            ec: ECNumbers.clone(this.fa.ec),
+            settings: {
+                cutoff: this.fa.settings.cutoff,
+                sequences: this.fa.settings.sequences,
+            },
+        };
+    }
 
     /**
      * Creates a hierarchic tree structure based on the input peptides. This is

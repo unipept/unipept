@@ -118,22 +118,25 @@ class MPA {
 
             dataset.reprocessFA(percent, id > 0 ? dataset.tree.getAllSequences(id) : null)
                 .then(() => {
-                    this.setUpFAVisualisations(dataset.fa);
+                    this.setUpFAVisualisations(dataset.fa, dataset.baseFa);
                     this.enableProgressBar(false, false, "#progress-fa-analysis");
+                    $("#snapshot-fa").prop("disabled", false);
+                    $("#fa-tabs").find("input, select").prop("disabled", false);
                 });
         }, timeout);
     }
 
-    setUpFAVisualisations({go, ec}) {
-        this.setUpGo(go);
-        this.setUpEC(ec);
+    setUpFAVisualisations({go, ec}, {go: goOld = null, ec: ecOld = null} = {}) {
+        this.setUpGo(go, goOld);
+        this.setUpEC(ec, ecOld);
     }
 
     /**
      * Create visualisations of the GO numbers
      * @param {GOTerms} go Data about GO Terms
+     * @param {GOTerms} [goOld=null] Data about GO Terms form snapshot
      */
-    setUpGo(go) {
+    setUpGo(go, goOld = null) {
         const goPanel = d3.select("#goPanel");
         goPanel.html("");
         for (let variant of GOTerms.NAMESPACES) {
@@ -141,7 +144,7 @@ class MPA {
 
             const article = goPanel.append("div").attr("class", "row");
             article.append("h3").text(variantName);
-            this.setUpGoTable(go, variant, article);
+            this.setUpGoTable(go, variant, article, goOld);
             this.setUpQuickGo(go, variant, variantName, article);
         }
     }
@@ -240,7 +243,7 @@ class MPA {
         });
     }
 
-    setUpGoTable(goResultset, variant, target) {
+    setUpGoTable(goResultset, variant, target, oldGoResultset = null) {
         const sortOrder = this.getFaSelector();
         const tablepart = target.append("div").attr("class", "col-xs-8");
         const starred = this.getFAFavorite();
@@ -283,7 +286,7 @@ class MPA {
                 },
             ],
             more: (d, container) => this.faMoreinfo(d, d.code, container, 550),
-            tooltip: d => this.tooltipGO(d.code, goResultset, d),
+            tooltip: d => this.tooltipGO(d.code, goResultset, oldGoResultset),
             tooltipID: "#tooltip",
         }).draw();
     }
@@ -314,14 +317,41 @@ class MPA {
         }
     }
 
+    tootipResultSet(thing, cur, old = null) {
+        const curdata = key => cur.getValueOf(thing, key);
+        let result = "";
+        if (cur !== null) {
+            result += "<div class=\"tooltip-fa-text\">";
+            if (old != null) {
+                const newValue = curdata("value");
+                const oldValue = old.getValueOf(thing);
+                const diff = (newValue - oldValue) / (newValue + oldValue);
+                if (Math.abs(diff) > 0.001) {
+                    result += `<span class='glyphicon glyphicon-arrow-${diff > 0 ? "up" : "down"}'></span> `;
+                }
+                result += `Normailised evidence score of ${numberToPercent(curdata("value"), 2)} (was ${numberToPercent(oldValue, 2)})`;
+            } else {
+                result += `Normailised evidence score of ${numberToPercent(curdata("value"), 2)}`;
+            }
+            result += "</div>";
+
+            result += "<div class=\"tooltip-fa-text\">";
+            result += `Assigned to <strong>${curdata("numberOfPepts")} peptides</strong>, <br>
+        with an average support ratio of ${numberToPercent(curdata("weightedValue") / curdata("numberOfPepts"))}.<br>
+        Thus an <strong>evidence score of ${curdata("weightedValue").toFixed(2)}</strong>.`;
+            result += "</div>";
+        }
+        return result;
+    }
+
     /**
      * Generate a tooltip for an GO term
      * @param  {string}    goTerm   The Ec term to generate a tooltip for
      * @param  {GOTerms} [goResultSet=null]  A `GOTerms` summary
-     * @param  {object} [allData=null]  all the data for debugging TODO remove
+     * @param  {object} [oldGoResultSet=null]  A `GOTerms` summary snapshot
      * @return {string}    HTML for the tooltip
      */
-    tooltipGO(goTerm, goResultSet = null, allData = null) {
+    tooltipGO(goTerm, goResultSet = null, oldGoResultSet = null) {
         let result = `
             <h4 class="tooltip-fa-title">
                 <span class="tooltip-fa-title-name">${GOTerms.nameOf(goTerm)}</span>
@@ -329,37 +359,23 @@ class MPA {
             </h4>
             <span class="tooltip-go-domain">${stringTitleize(GOTerms.namespaceOf(goTerm))}</span>`;
 
-        if (goResultSet != null) {
-            const curdata = key => goResultSet.getValueOf(goTerm, key);
-            result += "<div class=\"tooltip-fa-text\">";
-            result += `Normailised evidence score of ${numberToPercent(curdata("value"), 2)}`;
-            if (this.datasets[0].baseFa.go != null) {
-                result += ` (was ${numberToPercent(this.datasets[0].baseFa.go.getValueOf(goTerm), 2)})`;
-        }
-            result += "</div>";
-
-            result += "<div class=\"tooltip-fa-text\">";
-            result += `Assigned to <strong>${curdata("numberOfPepts")} peptides</strong>, <br>
-            with an average support ratio of ${numberToPercent(curdata("weightedValue") / curdata("numberOfPepts"))}.<br>
-            Thus an <strong>evidence score of ${curdata("weightedValue").toFixed(2)}</strong>.`;
-            result += "</div>";
-        }
+        result += this.tootipResultSet(goTerm, goResultSet, oldGoResultSet);
         return result;
     }
 
-    setUpEC(ecResultset) {
+    setUpEC(ecResultset, oldEcResultSet = null) {
         this.setUpECTree(ecResultset);
-        this.setUpECTable(ecResultset);
+        this.setUpECTable(ecResultset, oldEcResultSet);
     }
 
     /**
      * Generate a tooltip for an EC number
      * @param  {string}    ecNumber   The Ec number to generate a tooltip for
      * @param  {ECNumbers} [ecResultSet=null]  A `ECNumbers` summary
-     * @param  {object} [allData=null]  all the data for debugging TODO remove
+     * @param  {object} [oldEcResultSet=null]  A `ECNumbers` summary snapshot
      * @return {string}    HTML for the tooltip
      */
-    tooltipEC(ecNumber, ecResultSet = null, allData = null) {
+    tooltipEC(ecNumber, ecResultSet = null, oldEcResultSet = null) {
         const fmt = x => `<div class="tooltip-ec-ancestor"><span class="tooltip-ec-term">EC ${x}</span><span class="tooltip-ec-name">${ECNumbers.nameOf(x)}</span></div>`;
 
         let result = `
@@ -372,21 +388,7 @@ class MPA {
             result += `${ECNumbers.ancestorsOf(ecNumber).map(c => fmt(c)).join("\n")}`;
         }
 
-        if (ecResultSet != null) {
-            const curdata = key => ecResultSet.getValueOf(ecNumber, key);
-            result += "<div class=\"tooltip-fa-text\">";
-            result += `Normailised evidence score of ${numberToPercent(curdata("value"), 2)}`;
-            if (this.datasets[0].baseFa.go != null) {
-                result += ` (was ${numberToPercent(this.datasets[0].baseFa.ec.getValueOf(ecNumber), 2)})`;
-        }
-            result += "</div>";
-
-            result += "<div class=\"tooltip-fa-text\">";
-            result += `Assigned to <strong>${curdata("numberOfPepts")} peptides</strong>, <br>
-            with an average support ratio of ${numberToPercent(curdata("weightedValue") / curdata("numberOfPepts"))}.<br>
-            Thus an <strong>evidence score of ${curdata("weightedValue").toFixed(2)}</strong>.`;
-            result += "</div>";
-        }
+        result += this.tootipResultSet(ecNumber, ecResultSet, oldEcResultSet);
         return result;
     }
 
@@ -438,8 +440,9 @@ class MPA {
      * Create the EC amount table
      *
      * @param {ECNumbers} ecResultSet  A `ECNumbers` summary
+     * @param {ECNumbers} oldEcResultSet  A `ECNumbers` summary snapshot
      */
-    setUpECTable(ecResultSet) {
+    setUpECTable(ecResultSet, oldEcResultSet) {
         const starred = this.getFAFavorite();
         const sortOrder = this.getFaSelector();
 
@@ -487,7 +490,7 @@ class MPA {
                 },
             ],
             more: (d, container) => this.faMoreinfo(d, "EC:" + d.code, container, 874),
-            tooltip: d => this.tooltipEC(d.code, ecResultSet, d),
+            tooltip: d => this.tooltipEC(d.code, ecResultSet, oldEcResultSet),
             tooltipID: "#tooltip",
         }).draw();
     }
@@ -591,17 +594,25 @@ class MPA {
             };
         };
         this.$faTypeSelector.change(() => {
-            this.setUpFAVisualisations(this.datasets[0].fa);
+            this.setUpFAVisualisations(this.datasets[0].fa, this.datasets[0].baseFa);
         });
 
         $("#btn-clearFAfavorites").click(() => {
             this.setFAFavorite([]);
-            this.setUpFAVisualisations(this.datasets[0].fa);
+            this.setUpFAVisualisations(this.datasets[0].fa, this.datasets[0].baseFa);
         });
 
         $("#btn-onlyShowFAfavorites").click(() => {
             this.displaySettings.onlyStarredFA = !this.displaySettings.onlyStarredFA;
-            this.setUpFAVisualisations(this.datasets[0].fa);
+            this.setUpFAVisualisations(this.datasets[0].fa, this.datasets[0].baseFa);
+        });
+
+        $("#snapshot-fa").click(() => {
+            this.datasets[0].setBaseFA();
+            showNotification("Saved for comparing!", {
+                autoHide: true,
+                loading: false,
+            });
         });
 
         // copy to clipboard button for missed peptides

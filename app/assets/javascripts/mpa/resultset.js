@@ -32,6 +32,7 @@ class Resultset {
         this.processedPeptides = null;
         this.missedPeptides = [];
         this.fa = {ec: null, go: null};
+        this.baseFa = {ec: null, go: null};
         this.progress = 0;
         this.wrkr = worker();
         this.wrkr.onmessage = m => {
@@ -132,14 +133,13 @@ class Resultset {
      * @param {itteratable} sequences
      */
     async proccessFA(cutoff = 50, sequences = null) {
-        await Promise.all([
+        const [go, ec] = await Promise.all([
             this.summarizeGo(cutoff, sequences),
             this.summarizeEc(cutoff, sequences),
-        ])
-            .then(([go, ec]) => {
-                this.fa.go = go;
-                this.fa.ec = ec;
-            });
+        ]);
+
+        this.fa.go = go;
+        this.fa.ec = ec;
     }
 
     /**

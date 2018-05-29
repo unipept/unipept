@@ -154,12 +154,12 @@
       <li><a href="#ecWrapper" data-toggle="tab">EC Numbers</a></li>
       <li style="margin:5px;">
         <span class='glyphicon glyphicon-filter' style="margin: 0 -20px 0 20px;">
-        </span><input type="number" min="0" max="100" step="5" value="5" class="js-has-hover-tooltip" title="Filer out annotations that occur in less than ...% of the Uniprot entries that correspond with a sequence"
+        </span><input disabled=disabled type="number" min="0" max="100" step="5" value="5" class="js-has-hover-tooltip" title="Filer out annotations that occur in less than ...% of the Uniprot entries that correspond with a sequence"
           id="goFilterPerc" style="width: 5em;height: 2em;border: 1px solid #EEE;text-align: center;padding-left: 15px;background: white;"
         />
 
         <span class='glyphicon glyphicon-sort-by-attributes-alt' style="margin: 0 -20px 0 20px;">
-          </span><select id="goField" style="background: white;width: 10em;height: 2em;border: 1px solid #EEE;text-align: center;padding-left:20px;">
+          </span><select disabled=disabled id="goField" style="background: white;width: 10em;height: 2em;border: 1px solid #EEE;text-align: center;padding-left:20px;">
           <optgroup label="Sort by weighted number of occurences in related proteins">
             <option selected value="value" data-as="percent">Evidence (%)</option>
             <option value="weightedValue" data-as="2pos">Evidence</option>
@@ -172,6 +172,13 @@
             <option value="numberOfPepts" data-as="int">#Peptides</option>
           </optgroup>
         </select>
+
+      <button disabled=disabled id='snapshot-fa' class='btn btn-default btn-xs js-has-hover-tooltip'
+        title="Takes a snapshot of the current values. Change some settings so you can compare parts of the taxonomy tree.">
+        <span class='glyphicon glyphicon-camera'></span>
+        Use as base
+      </button>
+        
       </li>
     </ul>
   </div>

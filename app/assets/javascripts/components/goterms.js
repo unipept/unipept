@@ -53,7 +53,7 @@ export default class GOTerms {
     }
 
     /**
-     * Make a new GOTerms form a clone
+     * Make a new GOTerms form a clone, this performs a shallow coppy!
      * @param {GOTerms} other
      * @param {GOTerms} [base=null] optional GoTerms instance to reuse
      * @return {GOTerms} filled GOTerms instance
