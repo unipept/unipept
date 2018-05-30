@@ -91,6 +91,17 @@ Contains the tryptic peptides.
    equate the I and L amino acids.
  - ***lca***: The lowest common ancestor of all proteins containing
    this tryptic peptide. Refers to the taxon table.
+ - ***original fa***: A JSON summary of the functional annotations 
+   in case we did not equate the I and L amino acids.
+ - ***fa***: The JSON summary of the functional annotations of all 
+   proteins containing this tryptic peptide. Refers to the taxon table.
+
+The JSON summary has 2 fields:
+
+ - `num`: Showing statistics about the found annotations
+   - `all`: The total number of matched proteins
+   - `EC` : The number of matched proteins with ≥ 1 EC annotation
+   - `GO` : The number of matched proteins with ≥ 1 GO annotation
 
 Proteomes
 ---------
