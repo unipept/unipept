@@ -24,7 +24,7 @@ public class FunctionAnalysisPeptides {
 
         String[] row = null;
         String curPept = null;
-        int numPept = 0;
+        int numProt = 0;
         int numAnnotatedGO = 0;
         int numAnnotatedEC = 0;
         int done = 0;
@@ -33,16 +33,16 @@ public class FunctionAnalysisPeptides {
             if (!row[0].equals(curPept)) {
                 if (curPept != null) {
                     if (!m.isEmpty()) {
-                        writer.write(curPept, extracted(m, numPept, numAnnotatedGO, numAnnotatedEC));
+                        writer.write(curPept, extracted(m, numProt, numAnnotatedGO, numAnnotatedEC));
                     }
                 }
                 m.clear();
-                numPept = 0;
+                numProt = 0;
                 numAnnotatedGO = 0;
                 numAnnotatedEC = 0;
                 curPept = row[0];
             }
-            numPept++;
+            numProt++;
 
             if (row.length > 1) {
                 String[] terms = row[1].split(";");
@@ -62,7 +62,7 @@ public class FunctionAnalysisPeptides {
             }
         }
         if (!m.isEmpty()) {
-            writer.write(curPept, extracted(m, numPept, numAnnotatedGO, numAnnotatedEC));
+            writer.write(curPept, extracted(m, numProt, numAnnotatedGO, numAnnotatedEC));
         }
         writer.close();
     }
@@ -91,10 +91,10 @@ public class FunctionAnalysisPeptides {
      * But without spacing:
      * {"num":{"all":1,"EC":1,"GO":1},"data":{"GO:0016569":1,"GO:0006281":1,"GO:0000781":1,"2.7.11.1":1,"GO:0004674":1,"GO:0005634":1,"GO:0005524":1,"GO:0016301":1}}
      */
-    private static String extracted(Map<String, Integer> m, int numPept, int numAnnotatedGO, int numAnnotatedEC) {
+    private static String extracted(Map<String, Integer> m, int numProt, int numAnnotatedGO, int numAnnotatedEC) {
         StringBuilder sb = new StringBuilder();
         sb.append("{\"num\":{\"all\":");
-        sb.append(numPept);
+        sb.append(numProt);
         sb.append(",\"EC\":");
         sb.append(numAnnotatedEC);
         sb.append(",\"GO\":");
