@@ -170,6 +170,25 @@ class MPA {
         });
     }
 
+    /**
+     * Creates a line indicating the trust of the functioan annotations
+     * @param {FunctionalAnnotations} fa
+     * @param {String} kind Human readable word that fits in "To have at least one … assigned to it"
+     * @return {string}
+     */
+    trustLine(fa, kind) {
+        const trust = fa.getTrust();
+        if (trust.annotatedCount === 0) {
+            return `<strong>No peptide</strong> has a ${kind} assigned to it.`;
+        }
+        if (trust.annotatedCount === trust.totalCount) {
+            return `<strong>All peptides</strong> ${trust.annotatedCount <= 5 ? `(only ${trust.annotatedCount})` : ""} have at least one ${kind} assigned to them.`;
+        }
+        if (trust.annotatedCount === 1) {
+            return `Only <strong>one peptide</strong> (${numberToPercent(trust.annotaionAmount)}) has at least one ${kind} assigned to it.`;
+        }
+        return `<strong>${trust.annotatedCount} peptides</strong> (${numberToPercent(trust.annotaionAmount)}) have at least one ${kind} assigned to them.`;
+    }
 
     /**
      * Recalculate the FA data to only use data of the specified taxon id.
@@ -194,7 +213,7 @@ class MPA {
             if (id > 0) {
                 sequences = dataset.tree.getAllSequences(id);
                 $(".mpa-fa-scope").text(name);
-                $(".mpa-fa-numpepts").text(`${sequences.length} peptide${sequences.length === 1 ? "" : "s"}`);
+                $(".mpa-fa-numpepts").text("");
                 $("#fa-filter-warning").show();
             } else {
                 $("#fa-filter-warning").hide();
@@ -202,6 +221,8 @@ class MPA {
 
             dataset.reprocessFA(percent, sequences)
                 .then(() => {
+                    const num = dataset.fa.getTrust().totalCount;
+                    $(".mpa-fa-numpepts").text(` (${num} peptide${num === 1 ? "" : "s"})`);
                     this.setUpFAVisualisations(dataset.fa, dataset.baseFa);
                     this.enableProgressBar(false, false, "#progress-fa-analysis");
                     $("#snapshot-fa").prop("disabled", false);
@@ -232,6 +253,7 @@ class MPA {
         const go = fa.getGroup("GO");
         const goOld = oldFa === null ? null : oldFa.getGroup("GO");
 
+        $("#go-summary").html(this.trustLine(go, "GO Term"));
         const goPanel = d3.select("#goPanel");
         goPanel.html("");
         for (let variant of GOTerms.NAMESPACES) {
@@ -437,6 +459,12 @@ class MPA {
         with an average support ratio of ${numberToPercent(curdata("weightedValue") / curdata("numberOfPepts"))}.<br>
         Thus an <strong>evidence score of ${curdata("weightedValue").toFixed(2)}</strong>.`;
             result += "</div>";
+
+            if (window.showTrust) {
+                result += "<div class=\"tooltip-fa-text\">";
+                result += `trust: ${numberToPercent(curdata("trust"), 2)}`;
+                result += "</div>";
+            }
         }
         return result;
     }
@@ -466,8 +494,12 @@ class MPA {
      *     Snapshot of functional annotations for comparision
      */
     setUpEC(fa, oldFa = null) {
+        /** @type {ECNumbers} */
         // @ts-ignore
-        this.setUpECTree(/** @type {ECNumbers} */ fa.getGroup("EC"));
+        const faEC = fa.getGroup("EC");
+        $("#ec-summary").html(this.trustLine(faEC, "EC Number"));
+
+        this.setUpECTree(faEC);
         this.setUpECTable(fa, oldFa);
     }
 
@@ -503,9 +535,10 @@ class MPA {
      */
     setUpECTree(ecResultSet) {
         const $container = $("#ecTreeView");
-        const tree = $container
-            .empty()
-            .treeview(ecResultSet.treeData(), {
+        $("#save-btn-ec").unbind("click");
+        $container.empty();
+        if (ecResultSet.getTrust().annotatedCount > 0) {
+            const tree = $container.treeview(ecResultSet.treeData(), {
                 width: 916,
                 height: 500,
                 enableAutoExpand: true,
@@ -531,13 +564,19 @@ class MPA {
             });
 
 
-        // save tree button
-        $("#save-btn-ec").click(() => {
-            logToGoogle("Multi peptide", "Save EC Image");
-            triggerDownloadModal($container.find("svg"), null, "unipept_treeview");
-        });
+            // save tree button
+            $("#save-btn-ec").prop("disabled", false)
+                .click(() => {
+                    logToGoogle("Multi peptide", "Save EC Image");
+                    triggerDownloadModal($container.find("svg"), null, "unipept_treeview");
+                });
 
-        return tree;
+
+            return tree;
+        } else {
+            $("#save-btn-ec").prop("disabled", true);
+        }
+        return null;
     }
 
     /**

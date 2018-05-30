@@ -137,11 +137,11 @@
             <option value="fractionOfPepts" data-as="percent">Peptides (%)</option>
             <option value="numberOfPepts" data-as="int">Peptides</option>
           </optgroup>
-          <optgroup label="Sort by weighted number of occurences in related proteins">
+          <optgroup label="Sort by weighted number of occurrences in related proteins">
             <option selected value="value" data-as="percent">Evidence (%)</option>
             <option value="weightedValue" data-as="2pos">Evidence</option>
           </optgroup>
-          <optgroup label="Sort by total number of occurences in related proteins">
+          <optgroup label="Sort by total number of occurrences in related proteins">
             <option value="absoluteCountFiltered" data-as="int">#Occur</option>
             <option value="absoluteCount" data-as="int">#Occur+dup</option>
           </optgroup>
@@ -158,7 +158,7 @@
   </div>
   <div id="fa-filter-warning" class='card-supporting-text' style="display:none;">
     <strong>Filtered results: </strong>
-      These results are limited to peptides specific to <strong class="mpa-fa-scope">Organism</strong> (<span class="mpa-fa-numpepts">all peptides</span>).
+      These results are limited to peptides specific to <strong class="mpa-fa-scope">Organism</strong><span class="mpa-fa-numpepts">all peptides</span>.
     <button class="btn btn-default" id="fa-undo-filter">Undo</button>
   </div>
   <div id="progress-fa-analysis" class="unipept-progress unipept-progress-indeterminate">
@@ -169,8 +169,9 @@
   <div class="tab-content mpa-fa">
     <div class="tab-pane active" id="goWrapper">
       <div class='card-supporting-text'>
-        The evidence indicates the number of the sequences that contain a GO term multiplied by the
-        probability that a sequence indicates that GO-term.
+        This panel shows the Gene Ontology annotations that were matched to 
+        your peptides. <span id="go-summary"></span>
+        Click on a row in a table to see a taxonomy tree that highlights occurrences.
       </div>
       <div id="goPanel">Please wait while we are preparing your data...&nbsp;</div>
     </div>
@@ -179,8 +180,9 @@
         <button id='save-btn-ec' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>
       </div>
       <div class='card-supporting-text'>
-        The evidence indicates the number of the sequences that contain a EC code specifically
-        multiplied by the probability that a sequence indicates that EC-code.
+        This panel shows the Enzyme Commission numbers that were matched to 
+        your peptides. <span id="ec-summary"></span>
+        Click on a row in a table to see a taxonomy tree that highlights occurrences.
       </div>
       <div id="ecTable">Please wait while we are building a summary</div>
       <div id="ecTreeView">Please wait while we are building a summary</div></div>

@@ -34,10 +34,11 @@ export class FunctionalAnnotations {
      * @return {FATrustInfo}
      */
     getTrust() {
-        const data = Object.assign({}, this._trust);
-        data.totalTrust = this._trust.trustCount / this._trust.totalCount;
-        data.annotatedTrust = this._trust.trustCount / this._trust.annotatedCount || 0;
-        data.annotaionAmount = this._trust.annotatedCount / this._trust.totalCount || 0;
+        /** @type {FATrustInfo} */
+        let data = Object.assign({annotatedCount: 0, totalCount: 0, trustCount: 0}, this._trust || {});
+        data.totalTrust = data.trustCount / data.totalCount;
+        data.annotatedTrust = data.trustCount / data.annotatedCount || 0;
+        data.annotaionAmount = data.annotatedCount / data.totalCount || 0;
         return data;
     }
 
@@ -164,11 +165,39 @@ export class GroupedFA extends FunctionalAnnotations {
     /**
      *
      * @param {Object.<string, FunctionalAnnotations>} mapping
+     *   Function that determines in which group a key is
+     * @return {FATrustInfo}
+     */
+    static _agregateTrust(mapping) {
+        const result = {annotatedCount: 0, totalCount: null, trustCount: 0};
+        let sumAnnotated = 0;
+        for (const c of Object.values(mapping)) {
+            const {annotatedCount, totalCount, trustCount} = c.getTrust();
+            sumAnnotated += annotatedCount;
+            if (annotatedCount > result.annotatedCount) {
+                result.annotatedCount = annotatedCount;
+            }
+            if (result.totalCount === null) {
+                result.totalCount = totalCount;
+            }
+
+            if (totalCount !== result.totalCount) {
+                return null;
+            }
+
+            result.trustCount += trustCount;
+        }
+        result.trustCount = (result.trustCount / sumAnnotated) * result.annotatedCount;
+        return result;
+    }
+    /**
+     *
+     * @param {Object.<string, FunctionalAnnotations>} mapping
      * @param {function(string):string} locator
      *   Function that determines in which group a key is
      */
-    constructor(name, mapping, locator, trust = {trustCount: 0, annotatedCount: 0, totalCount: 0}) {
-        super(name, mapping, trust);
+    constructor(name, mapping, locator, trust = null) {
+        super(name, mapping, trust !== null ? trust : GroupedFA._agregateTrust(mapping));
         this._locator = locator;
     }
 

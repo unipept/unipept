@@ -4,8 +4,8 @@ interface Window {
 }
 
 interface Object {
-    values: any,
-    entries: any
+    values: function(Object<A,B>): B[],
+    entries: [A,B][]
 }
 
 declare var _gaq: any[];

@@ -38,7 +38,7 @@ export default class GOTerms extends GroupedFA {
     /**
      *
      * @param {Object<string,GOInfo[]>} results
-     * @param {FATrustInfo} trust
+     * @param {Object<string,FATrustInfo>} trust
      * @return {GOTerms} Go term overview of the data
      */
     static make(results, trust) {
@@ -46,15 +46,15 @@ export default class GOTerms extends GroupedFA {
         for (const ns of NAMESPACES) {
             const nsData = results[ns] || [];
             GOTerms._addData(nsData, ns);
-            d[ns] = new SingleFA(ns, nsData, trust);
+            d[ns] = new SingleFA(ns, nsData, trust[ns]);
         }
-        return new GOTerms(d, trust);
+        return new GOTerms(d, null);
     }
 
     /**
      *
      * @param {Object<String,any[]>} results
-     * @param {FATrustInfo} trust
+     * @param {Object<String,FATrustInfo>} trust
      * @return {Promise<GOTerms>} Go term overview of the data
      */
     static async makeAssured(results, trust) {

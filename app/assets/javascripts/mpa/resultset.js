@@ -138,7 +138,8 @@ class Resultset {
         // Find used go term and fetch data about them
 
         GOTerms.ingestGoData(await this.wrkr.getGoData());
-        const go = await GOTerms.makeAssured(await this.wrkr.summarizeGo(percent, sequences), null);
+        const {data, trust} = await this.wrkr.summarizeGo(percent, sequences);
+        const go = await GOTerms.makeAssured(data, trust);
         return go;
     }
 
@@ -152,8 +153,8 @@ class Resultset {
      * @return {Promise<ECNumbers>} an EC resultset
      */
     async summarizeEc(percent = 50, sequences = null) {
-        const wrkrEC = await this.wrkr.summarizeEc(percent, sequences);
-        const ec = ECNumbers.makeAssured(wrkrEC, null);
+        const {data, trust} = await this.wrkr.summarizeEc(percent, sequences);
+        const ec = ECNumbers.makeAssured(data, trust);
         return ec;
     }
 }

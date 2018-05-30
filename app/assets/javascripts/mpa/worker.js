@@ -221,7 +221,7 @@ function equateIL(peptides, equateIL) {
  * @param {number} [percent=50] ignore data weighing less (to be removed)
  * @param {Iterable<String>} [sequences=null] subset of sequences to take into account,
  *                                    null to consider all
- * @return {Promise<Object<String,MPAFAResult[]>>} Go terms summary
+ * @return {Promise<{data:Object<String,MPAFAResult[]>,trust:Object<String,object>}>} Go terms summary
  */
 export async function summarizeGo(percent = 50, sequences = null) {
     // Find used go term and fetch data about them
@@ -235,12 +235,17 @@ export async function summarizeGo(percent = 50, sequences = null) {
 
     // Build summary per namespace
     let res = {};
+    let trust = {};
     const countExtractor = pept => pept.fa.counts["GO"] || 0;
+    const trustExtractor = pept => countExtractor(pept) / pept.fa.counts["all"];
     for (let namespace of GOTerms.NAMESPACES) {
         const dataExtractor = pept => pept.faGrouped.GO[namespace] || [];
-        res[namespace] = summarizeFa(dataExtractor, countExtractor, percent, sequences);
+        const {data, trust: curStats} = summarizeFa(dataExtractor, countExtractor, trustExtractor, percent, sequences);
+        trust[namespace] = curStats;
+        res[namespace] = data;
     }
-    return res;
+
+    return {data: res, trust: trust};
 }
 
 /**
@@ -254,13 +259,14 @@ export async function summarizeGo(percent = 50, sequences = null) {
  * @param {number} [percent=50] ignore data weighing less (to be removed)
  * @param {string[]} [sequences=null] subset of sequences to take into account,
  *                                    null to consider all
- * @return {Promise<MPAFAResult[]>} ECNumbers summary
+ * @return {Promise<{data:MPAFAResult[],trust:object}>} ECNumbers summary
  */
 export async function summarizeEc(percent = 50, sequences = null) {
     const dataExtractor = pept => pept.faGrouped.EC;
     const countExtractor = pept => pept.fa.counts["EC"] || 0;
-    const result = summarizeFa(dataExtractor, countExtractor, percent, sequences);
-    return result;
+    const trustExtractor = pept => countExtractor(pept) / pept.fa.counts["all"];
+
+    return summarizeFa(dataExtractor, countExtractor, trustExtractor, percent, sequences);
 }
 
 /**
@@ -272,53 +278,75 @@ export async function summarizeEc(percent = 50, sequences = null) {
  * @param {function(MPAPeptide): number} countExtractor
  *            function extracting the the number of annotated (full)peptides
  *            form a peptide
+ * @param {function(MPAPeptide): number} trustExtractor
+ *            function calcualting a trust level in [0,1] for the annotaions
+ *            of a peptide.
  * @param {number} cutoff  data with strictly lower weight is ignored
  *                         value should be given as percentage in [0,100]
  * @param {Iterable.<string>} [sequences=null] subset of sequences to take into account,
  *                                    null to consider all
- * @return {MPAFAResult[]} an array of MPAFAResult to be stored
+ * @return {{data:MPAFAResult[],trust:FATrustInfo}} an array of MPAFAResult to be stored
  * @todo  remove the cutoff
  */
-function summarizeFa(extract, countExtractor, cutoff = 50, sequences = null) {
+function summarizeFa(extract, countExtractor, trustExtractor, cutoff = 50, sequences = null) {
     let iteratableOfSequences = sequences || processedPeptides.keys();
 
     const map = new Map();
     const fraction = cutoff / 100;
     let sumWeight = 0;
     let sumCount = 0;
+    let sumTrust = 0;
+    let numAnnotated = 0;
 
     for (let sequence of iteratableOfSequences) {
         const pept = processedPeptides.get(sequence);
         const totalNumAnnotations = countExtractor(pept);
+        const trust = trustExtractor(pept) || 0;
         sumCount += pept.count;
 
         if (totalNumAnnotations > 0) {
+            let atLeastOne = false;
             for (const {code, value} of extract(pept)) {
                 const weight = value / totalNumAnnotations;
                 if (weight < fraction) continue; // skip if insignificant weight TODO: remove
-
-                const count = map.get(code) || [0, 0, 0, 0];
-                const scaledWeight = weight * (pept.count);
+                atLeastOne = true;
+                const count = map.get(code) || [0, 0, 0, 0, 0];
+                const scaledWeight = weight * pept.count;
                 map.set(code, [
                     count[0] + scaledWeight,
                     count[1] + value,
                     count[2] + value * pept.count,
                     count[3] + pept.count,
+                    count[4] + trust * pept.count,
                 ]);
                 sumWeight += scaledWeight;
+            }
+
+            if (atLeastOne) {
+                sumTrust += trust * pept.count;
+                numAnnotated += pept.count;
             }
         }
     }
 
-    return Array.from(map).map(x => ({
-        code: x[0],
-        weightedValue: x[1][0],
-        absoluteCountFiltered: x[1][1],
-        absoluteCount: x[1][2],
-        numberOfPepts: x[1][3],
-        fractionOfPepts: x[1][3] / sumCount,
-        value: x[1][0] / sumWeight,
-    }));
+
+    return {
+        trust: {
+            trustCount: sumTrust,
+            annotatedCount: numAnnotated,
+            totalCount: sumCount,
+        },
+        data: Array.from(map).map(x => ({
+            code: x[0],
+            weightedValue: x[1][0],
+            absoluteCountFiltered: x[1][1],
+            absoluteCount: x[1][2],
+            numberOfPepts: x[1][3],
+            fractionOfPepts: x[1][3] / sumCount,
+            trust: x[1][4] / x[1][3],
+            value: x[1][0] / sumWeight,
+        })),
+    };
 }
 
 /**
