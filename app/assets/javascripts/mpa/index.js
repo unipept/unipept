@@ -243,19 +243,26 @@ class MPA {
         });
     }
 
+    /**
+     *
+     * @param {GOTerms} goResultset
+     * @param {*} variant
+     * @param {*} target
+     * @param {GOTerms} oldGoResultset
+     */
     setUpGoTable(goResultset, variant, target, oldGoResultset = null) {
         const sortOrder = this.getFaSelector();
         const tablepart = target.append("div").attr("class", "col-xs-8");
         const starred = this.getFAFavorite();
 
-        let data = goResultset.sortedTerms(variant);
+        let data = goResultset.getGroup(variant).getSortedBy(sortOrder.sortFunc);
         if (this.displaySettings.onlyStarredFA) {
             data = data.filter(x => starred.includes(x.code));
         }
         new AmountTable({
             title: `GO terms - ${variant}`,
             el: tablepart,
-            data: sortOrder.sort(data),
+            data: data,
             limit: 5,
             contents: [
                 {
@@ -291,12 +298,19 @@ class MPA {
         }).draw();
     }
 
+    /**
+     *
+     * @param {GOTerms} goResultset
+     * @param {*} variant
+     * @param {*} variantName
+     * @param {*} target
+     */
     setUpQuickGo(goResultset, variant, variantName, target) {
-        const top5 = this.getFaSelector().sort(goResultset.sortedTerms(variant)).slice(0, 5).map(x => x.code);
+        const top5 = goResultset.getGroup(variant).getSortedBy(this.getFaSelector().sortFunc).slice(0, 5).map(x => x.code);
 
         if (top5.length > 0) {
             const quickGoChartURL = GOTerms.quickGOChartURL(top5);
-            const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${numberToPercent(goResultset.getValueOf(x))})`);
+            const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${numberToPercent(goResultset.valueOf(x))})`);
             const top5sentence = top5WithNames.slice(0, -1).join(", ")
                 + (top5.length > 1 ? " and " : "")
                 + top5WithNames[top5WithNames.length - 1];
@@ -318,13 +332,13 @@ class MPA {
     }
 
     tootipResultSet(thing, cur, old = null) {
-        const curdata = key => cur.getValueOf(thing, key);
+        const curdata = key => cur.valueOf(thing, key);
         let result = "";
         if (cur !== null) {
             result += "<div class=\"tooltip-fa-text\">";
             if (old != null) {
                 const newValue = curdata("value");
-                const oldValue = old.getValueOf(thing);
+                const oldValue = old.valueOf(thing);
                 const diff = (newValue - oldValue) / (newValue + oldValue);
                 if (Math.abs(diff) > 0.001) {
                     result += `<span class='glyphicon glyphicon-arrow-${diff > 0 ? "up" : "down"}'></span> `;
@@ -372,7 +386,7 @@ class MPA {
      * Generate a tooltip for an EC number
      * @param  {string}    ecNumber   The Ec number to generate a tooltip for
      * @param  {ECNumbers} [ecResultSet=null]  A `ECNumbers` summary
-     * @param  {object} [oldEcResultSet=null]  A `ECNumbers` summary snapshot
+     * @param  {ECNumbers} [oldEcResultSet=null]  A `ECNumbers` summary snapshot
      * @return {string}    HTML for the tooltip
      */
     tooltipEC(ecNumber, ecResultSet = null, oldEcResultSet = null) {
@@ -446,7 +460,7 @@ class MPA {
         const starred = this.getFAFavorite();
         const sortOrder = this.getFaSelector();
 
-        let data = ecResultSet.sortedTerms();
+        let data = ecResultSet.getSortedBy(sortOrder.sortFunc);
         if (this.displaySettings.onlyStarredFA) {
             data = data.filter(x => starred.includes("EC:" + x.code));
         }
@@ -456,7 +470,7 @@ class MPA {
         new AmountTable({
             title: "EC numbers",
             el: target,
-            data: sortOrder.sort(data),
+            data: data,
             limit: 5,
             contents: [
                 {
@@ -591,6 +605,7 @@ class MPA {
                 field: field,
                 name: selected.text(),
                 sort: arr => arr.sort((a, b) => b[field] - a[field]),
+                sortFunc: (a, b) => b[field] - a[field],
             };
         };
         this.$faTypeSelector.change(() => {

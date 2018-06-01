@@ -16,19 +16,19 @@ import worker from "workerize-loader!./worker.js";
  * the thread
  *
  * @type {Resultset}
+ * @param {GOTerms} go
+ * @param {ECNumbers} ec
  */
 class Resultset {
     /**
      * Creates a resultset for a given dataset and search settings
      *
      * @param  {Dataset} dataset The dataset for which to create the resultset
-     * @param  {boolean} il equate il?
-     * @param  {boolean} dupes filter duplicates?
-     * @param  {boolean} missed advancedMissedCleavageHandling?
+     * @param  {MPAConfig} mpaConfig
      */
-    constructor(dataset, {il, dupes, missed}) {
+    constructor(dataset, mpaConfig) {
         this.dataset = dataset;
-        this.config = {il, dupes, missed};
+        this.config = mpaConfig;
         this.processedPeptides = null;
         this.missedPeptides = [];
         this.fa = {ec: null, go: null};
@@ -129,8 +129,8 @@ class Resultset {
 
     /**
      * Calculate functional analyis
-     * @param {integer} cutoff
-     * @param {itteratable} sequences
+     * @param {Number} cutoff
+     * @param {Iterable<String>} sequences
      */
     async proccessFA(cutoff = 50, sequences = null) {
         const [go, ec] = await Promise.all([
@@ -145,7 +145,7 @@ class Resultset {
     /**
      * Returns a list of sequences that have the specified FA term
      * @param {String} faName The name of the FA term (GO:000112, EC:1.5.4.1)
-     * @return {[{sequence, totalCount, relativeCount}]} A list of objects representing
+     * @return {{sequence, totalCount, relativeCount}[]} A list of objects representing
      *                                                   the matches
      */
     getPeptidesByFA(faName) {
@@ -163,17 +163,17 @@ class Resultset {
      * Fill `this.go` with a Map<string,GoInfo[]> per namespace. The values of the
      * maps have an additional `value` field that indicates the weight of that
      * GO number.
-     * @param {number} [percent=50] ignore data weighing less (to be removed)
-     * @param {string[]} [sequences=null] subset of sequences to take into account,
+     * @param {Number} [percent=50] ignore data weighing less (to be removed)
+     * @param {Iterable<String>} [sequences=null] subset of sequences to take into account,
      *                                    null to consider all
-     * @return {GoTerms} GO term data
+     * @return {Promise<GOTerms>} GO term data
      */
     async summarizeGo(percent = 50, sequences = null) {
         // Find used go term and fetch data about them
-        const wrkrGO = await this.wrkr.summarizeGo(percent, sequences);
-        const go = GOTerms.clone(wrkrGO, this.fa.go);
 
-        GOTerms.ingestData(await this.wrkr.getGoData());
+        GOTerms.ingestGoData(await this.wrkr.getGoData());
+        const go = await GOTerms.makeAssured({data: await this.wrkr.summarizeGo(percent, sequences)});
+        this.fa.go = go;
         return go;
     }
 
@@ -182,14 +182,14 @@ class Resultset {
      * have an additional `value` field that indicated the weight of that
      * EC number.
      * @param {number} [percent=50] ignore data weighing less (to be removed)
-     * @param {string[]} [sequences=null] subset of sequences to take into account,
+     * @param {Iterable<String>} [sequences=null] subset of sequences to take into account,
      *                                    null to consider all
-     * @return {ECNumbers} an EC resultset
+     * @return {Promise<ECNumbers>} an EC resultset
      */
     async summarizeEc(percent = 50, sequences = null) {
         const wrkrEC = await this.wrkr.summarizeEc(percent, sequences);
-        const ec = ECNumbers.clone(wrkrEC, this.fa.ec);
-        ECNumbers.ingestNames(await this.wrkr.getEcNames());
+        const ec = ECNumbers.makeAssured(wrkrEC);
+        this.fa.ec = ec;
         return ec;
     }
 }

@@ -48,14 +48,10 @@ class Dataset {
      * Processes the list of peptides set in the dataset and returns a
      * taxonomic tree.
      *
-     * @param  {boolean}  il should we equate I and L
-     * @param  {boolean}  dupes should we filter duplicates
-     * @param  {boolean}  missed should we perform
-     *   advancedMissedCleavageHandling
-     * @return {Promise.<Tree>} The taxonomic tree containing all peptides.
+     * @param  {MPAConfig}  mpaConfig
      */
-    async search({il, dupes, missed}) {
-        this.resultset = new Resultset(this, {il, dupes, missed});
+    async search(mpaConfig) {
+        this.resultset = new Resultset(this, mpaConfig);
         await this.resultset.process();
         const tree = this.buildTree(this.resultset.processedPeptides.values());
         const taxonInfo = Dataset.getTaxonInfo(tree.getTaxa());
@@ -91,8 +87,8 @@ class Dataset {
      */
     setBaseFA() {
         this.baseFa = {
-            go: GOTerms.clone(this.fa.go),
-            ec: ECNumbers.clone(this.fa.ec),
+            go: GOTerms.makeClone(this.fa.go),
+            ec: ECNumbers.makeClone(this.fa.ec),
             settings: {
                 cutoff: this.fa.settings.cutoff,
                 sequences: this.fa.settings.sequences,

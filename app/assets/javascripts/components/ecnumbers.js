@@ -1,4 +1,6 @@
 import {postJSON} from "../utils.js";
+import {SingleFA} from "../fa/FunctionalAnnotations.js";
+
 /**
  * @typedef {Object} FACounts
  * @property {number} value count
@@ -16,139 +18,71 @@ const BATCH_SIZE = 1000;
  *
  * The names associated with EC numbers are stored statically to prevent
  * useless queries
+ *
+ * @type {ECNumbers}
  */
-export default class ECNumbers {
+export default class ECNumbers extends SingleFA {
     /**
-     * Static cache of fetched EC names
+     * Static cache of EC number information
      * @access private
      */
-    static ecNames = new Map([["-.-.-.-", "Enzyme Commission Numbers"]]);
+    static ecData = new Map([["-.-.-.-", "Enzyme Commission Numbers"]]);
 
     /**
-     * Creates a summary of given EC numbers and their counts
-     * @param  {[FACounts]} ec list of EC numbers with their counts
-     * @param {bool} [ensureData=true] fetch names for this resultset in the background,ss
-     *                                 if false, you must call `ensureData()` on this object.
-     * @param {bool} [clone=false] *for internal use*
+     * Use ECNumbers.make() and ECNumbers.makeAssured()
+     * @param {*} data
+     * @param {*} trust
+     * @access private
      */
-    constructor({numAnnotatedProteins = null, data = []}, ensureData = true, clone = false) {
-        if (clone) return;
-        this.numTotalSet = numAnnotatedProteins;
-        this.data = Array.from(data).sort((a, b) => (b.value - a.value));
-        this.ec = new this.addMissing(data);
-        ECNumbers.addNames(data);
+    constructor(data, trust = {trustCount: 0, annotatedCount: 0, totalCount: 0}) {
+        super("EC numbers", data, trust);
+    }
 
-        // Fetch names in the background, not needed yet
-        if (ensureData) {
-            this.ensureData();
-        }
+    // -------------- Factories ------------------------------
+    /**
+     *
+     * @param {[FAInfo]} results
+     * @return {ECNumbers}
+     */
+    static make(results, trust) {
+        ECNumbers._addData(results);
+        return new ECNumbers(results);
     }
 
     /**
-     * Make a new ECNumbers form a clone
+     *
+     * @param {*} args
+     */
+    static async makeAssured(...args) {
+        const obj = ECNumbers.make(...args);
+        await obj.assureData();
+        return obj;
+    }
+
+    /**
+     * Clone an EC numbers instance
      * @param {ECNumbers} other
-     * @param {ECNumbers} [base=null] optional ECNumbers instance to reuse
-     * @return {ECNumbers} filled ECNumbers instance
      */
-    static clone(other, base = null) {
-        let ec = base;
-        if (base === null) {
-            ec = new ECNumbers({}, true, true);
+    static makeClone(other, newEcData = null) {
+        if (newEcData !== null) {
+            ECNumbers.ecData = new Map(newEcData);
         }
-        ec.numTotalSet = other.numTotalSet;
-        ec.data = other.data;
-        ec.ec = other.ec;
-        return ec;
+        ECNumbers._addData(other._data);
+        return new ECNumbers(other._data, other._trust);
     }
 
     /**
-     * Fetch the names of the GO terms and await them
-     */
-    async ensureData() {
-        await ECNumbers.addMissingNames(Array.from(this.ec.keys()));
-    }
-
-    /**
-     * Returns the originally supplied set of EC numbers
-     * sorted by value
-     * @return {[FACounts]} Sorted EC number
-     */
-    sortedTerms() {
-        return this.data;
-    }
-
-    /**
-     * Create a map width all EC numbers given and their ancestors even if they
-     * are not given.
-     * @param {[FACounts]} newEC list of new EC data
-     * @return {Map}
-     * @access private
-     */
-    addMissing(newEC) {
-        const result = new Map([...newEC].map(x => [x.code, x]));
-
-        for (const curEc of newEC) {
-            const parts = curEc.code.split(".");
-            const numSpecific = parts.includes("-") ? parts.indexOf("-") : parts.length;
-            result.set(curEc.code, curEc); // overrides if exists
-
-            for (let i = numSpecific - 1; i >= 1; i--) {
-                parts[i] = "-";
-                const newKey = parts.join(".");
-                if (!result.has(newKey)) {
-                    const parentEC = {code: newKey, name: null, value: 0};
-                    result.set(newKey, parentEC);
-                } else {
-                    break;// the key already exists (all following already done)
-                }
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Gets the value of the EC number
      *
-     * @param  {string} ecNum The code of the EC number (like "2.3.-.-")
-     * @param  {string} [key="value"] The key to return (form "GO:0005886")
-     * @param  {any} [fallback=0] the GO term (form "GO:0005886")
-     * @return {any}       The value of the EC numbers `key` property
      */
-    getValueOf(ecNum, key = "value", fallback = 0) {
-        if (this.ec.has(ecNum)) {
-            const data = this.ec.get(ecNum);
-            if (!(key in data)) {
-                throw new Error(`Key ${key} not found in data for ${ecNum}`);
-            }
-            return data[key];
-        }
-        return fallback;
+    async assureData() {
+        await ECNumbers.fetch(...[...this].map(c => c.code));
     }
 
-    /**
-     * Gets the value of the EC number as fraction of the number of
-     * the number of annotated peptides
-     *
-     * @param  {string} ecNum The code of the EC number (like "2.3.-.-")
-     * @return {string}       The name of the EC number
-     */
-    getFractionOf(ecNum) {
-        return this.getValueOf(ecNum) / this.numTotalSet;
-    }
-
-    /**
-     * Number of annotated peptides
-     *
-     * @return {number}       Number of annotated peptides
-     */
-    getTotalSetSize() {
-        return this.numTotalSet;
-    }
+    // ------------------ Instance methods -------------
 
     /**
      * Make a tree structure of the EC numbers in the resultset
      *
-     * @access private
      * @return {Node} a treeview data model
      */
     treeData() {
@@ -157,8 +91,22 @@ export default class ECNumbers {
         // The root node
         map["-.-.-.-"] = {id: 0, name: "-.-.-.-", children: [], data: {self_count: 0, count: 0}};
 
+        const getOrNew = key => {
+            if (!(key in map)) {
+                map[key] = {
+                    id: key.split(".").map(x => ("0000" + x).slice(-4)).join("."),
+                    name: key.split(".").filter(x => x !== "-").join("."),
+                    children: [],
+                    data: {self_count: 0, count: 0, data: {code: key, value: 0}},
+                };
+                const ancestors = ECNumbers.ancestorsOf(key, true);
+                getOrNew(ancestors[0]).children.push(map[key]);
+            }
+            return map[key];
+        };
+
         // Sort from general to specific
-        const sortedEC = Array.from(this.ec.values())
+        const sortedEC = Array.from(this._map.values())
             .sort((a, b) => ECNumbers.levelOf(a.code) - ECNumbers.levelOf(b.code));
 
         for (const data of sortedEC) {
@@ -175,9 +123,9 @@ export default class ECNumbers {
             map[code] = toInsert;
 
             const ancestors = ECNumbers.ancestorsOf(code, true);
-            map[ancestors[0]].children.push(toInsert);
+            getOrNew(ancestors[0]).children.push(toInsert);
             for (const a of ancestors) {
-                map[a].data.count += toInsert.data.count;
+                getOrNew(a).data.count += toInsert.data.count;
             }
         }
 
@@ -186,17 +134,17 @@ export default class ECNumbers {
         return map["-.-.-.-"]; // the root node
     }
 
+    // ------------------- Static getters ---------------
     /**
-     * Gets the name of associated with an EC number
-     *
-     * @param  {string} ecNum The code of the EC number (like "2.3.-.-")
-     * @return {string}       The name of the EC number
+     * @param {*} ecNum The EC number to get information on
+     * @param {*} fallback value to use ecNum not found
+     * @return {*} The value of the name property of `ecNum`
      */
-    static nameOf(ecNum) {
-        if (this.ecNames.has(ecNum)) {
-            return this.ecNames.get(ecNum);
+    static nameOf(ecNum, fallback = "Unknown") {
+        if (ECNumbers.ecData.has(ecNum)) {
+            return ECNumbers.ecData.get(ecNum);
         }
-        return "Unknown";
+        return fallback;
     }
 
     /**
@@ -205,8 +153,8 @@ export default class ECNumbers {
      * "2.1.3.-" would give ["2.1.-.-","2.-.-.-"]
      *
      * @param  {string} ecNum The code of the EC number
-     * @param {bool} [includeRoot=false] weather to include the root (-.-.-.-)
-     * @return {[string]}  Ancestors of the EC number (from specific to generic)
+     * @param {boolean} [includeRoot=false] weather to include the root (-.-.-.-)
+     * @return {string[]}  Ancestors of the EC number (from specific to generic)
      */
     static ancestorsOf(ecNum, includeRoot = false) {
         const result = [];
@@ -224,6 +172,7 @@ export default class ECNumbers {
         return result;
     }
 
+
     /**
      * Calculates how specific the EC number is as int form
      * 0 (generic) to 4 (specific). Counts the number of non "-" in
@@ -236,44 +185,52 @@ export default class ECNumbers {
         return (ecNum + ".-").split(".").indexOf("-");
     }
 
+
+    // ----------- FETCH ---------------
+
     /**
-     * Add EC data to the static internal map
-     * @param {[FACounts]} newECs list of new ec
-     * @access private
+     *
+     * @param {*} newECs
      */
-    static addNames(newECs) {
+    static _addData(newECs) {
         for (let ec of newECs) {
-            if (!this.ecNames.has(ec.code) && ec.name) {
-                this.ecNames.set(ec.code, ec.name);
+            if (!this.ecData.has(ec.code) && ec.name) {
+                ECNumbers.ecData.set(ec.code, ec.name);
             }
         }
     }
 
     /**
-     * Cone the ECNumbers information into the current ECNumbers static value
-     *
-     * Needed to work properly with WebWorkers that do not share these statics
-     *
-     * @param {iteratable<FAInfo>} names inforamtion about GO Terms
-     */
-    static ingestNames(names) {
-        ECNumbers.ecNames = names;
-    }
-
-    /**
      * Fetch the names and data of the EC numbers that are not yet in the static map of
      * names
-     * @param {[string]} codes array of EC numbers that should be in the cache
+     * @param {...string} codes array of EC numbers that should be in the cache
      * @access private
      */
-    static async addMissingNames(codes) {
-        const todo = codes.filter(c => !this.ecNames.has(c));
+    static async fetch(...codes) {
+        const todo = [];
+        for (const curEc of codes) {
+            if (!this.ecData.has(curEc)) {
+                todo.push(curEc);
+                const parts = curEc.split(".");
+                const numSpecific = parts.includes("-") ? parts.indexOf("-") : parts.length;
+                for (let i = numSpecific - 1; i >= 1; i--) {
+                    parts[i] = "-";
+                    const newKey = parts.join(".");
+                    if (!this.ecData.has(newKey)) {
+                        todo.push(newKey);
+                    } else {
+                        break;// the key already exists (all following already done)
+                    }
+                }
+            }
+        }
+
         if (todo.length > 0) {
             for (let i = 0; i < todo.length; i += BATCH_SIZE) {
                 const res = await postJSON("/private_api/ecnumbers", JSON.stringify({
                     ecnumbers: todo.slice(i, i + BATCH_SIZE),
                 }));
-                ECNumbers.addNames(res);
+                ECNumbers._addData(res);
             }
         }
     }

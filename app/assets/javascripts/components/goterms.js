@@ -1,19 +1,13 @@
+import {GroupedFA, SingleFA} from "../fa/FunctionalAnnotations";
 import {postJSON} from "../utils.js";
 
-/**
- * @typedef {Object} FACounts
- * @property {number} value count
- * @property {string} name  The name of the GO/EC number
- * @property {string} code  The code of the GO/EC number
- */
-
-const BATCH_SIZE = 1000;
 const NAMESPACES = ["biological process", "cellular component", "molecular function"];
+const BATCH_SIZE = 1000;
 
 /**
- * Class that helps organizing GO terms
+ *
  */
-export default class GOTerms {
+export default class GOTerms extends GroupedFA {
     /**
      * Static cache of GO term information
      * @access private
@@ -21,147 +15,113 @@ export default class GOTerms {
     static goData = new Map();
 
     /**
-     * Creates a new GOTerms
-     * TODO
-     * @param  {[FACounts]} [go=[]] list of GO terms with their counts
-     * @param {bool} [ensureData=true] fetch names for this resultset in the background,ss
-     *                                 if false, you must call `ensureData()` on this object.
-     * @param {bool} [clone=false] *for internal use*
+     * Use GOTerms.make() and GOTerms.makeAssured()
+     * @access private
      */
-    constructor({numAnnotatedProteins = null, data = []}, ensureData = true, clone = false) {
-        if (clone) return;
-        this.numTotalSet = numAnnotatedProteins;
-        this.go = new Map();
-        Object.entries(data).forEach(([ns, v]) => v.forEach(goTerm => {
-            this.go.set(goTerm.code, Object.assign({namespace: ns}, goTerm));
-        }));
-        GOTerms.addData(Array.from(this.go.values()));
+    constructor(data) {
+        super("GO Terms", data, t => GOTerms.namespaceOf(t, null));
+    }
 
-        // Sort values to store and have every namespace
-        this.data = {};
-        for (const namespace of NAMESPACES) {
-            if (namespace in data) {
-                this.data[namespace] = Array.from(data[namespace]).sort((a, b) => (b.value - a.value));
-            } else {
-                this.data[namespace] = [];
-            }
+    // -------------- Factories ------------------------------
+    /**
+     *
+     * @param {[FAInfo]} results
+     */
+    static make({data: results}, trust) {
+        const d = {};
+        for (const ns of NAMESPACES) {
+            const nsData = results[ns] || [];
+            GOTerms._addData(nsData, ns);
+            const nsTrust = {trustCount: 0, annotatedCount: 0, totalCount: 0};
+            d[ns] = new SingleFA(ns, nsData, nsTrust);
         }
+        return new GOTerms(d);
+    }
 
-        if (ensureData) {
-            this.ensureData();
+    /**
+     *
+     * @param {*} args
+     */
+    static async makeAssured(...args) {
+        const obj = GOTerms.make(...args);
+        await obj.assureData();
+        return obj;
+    }
+
+    /**
+     * Clone an EC numbers instance
+     * @param {ECNumbers} other
+     * @todo fix
+     */
+    static makeClone(other, newGoData = null) {
+        if (newGoData !== null) {
+            GOTerms.goData = new Map(newGoData);
         }
+        GOTerms._addData(other._data);
+        return new GOTerms(other._data, other._trust);
     }
 
-    /**
-     * Make a new GOTerms form a clone, this performs a shallow coppy!
-     * @param {GOTerms} other
-     * @param {GOTerms} [base=null] optional GoTerms instance to reuse
-     * @return {GOTerms} filled GOTerms instance
-     */
-    static clone(other, base = null) {
-        let go = base;
-        if (base === null) {
-            go = new GOTerms({}, true, true);
-        }
-        go.numTotalSet = other.numTotalSet;
-        go.data = other.data;
-        go.go = other.go;
-        return go;
+    static ingestGoData(newGoData) {
+        GOTerms.goData = new Map(newGoData);
     }
 
+    // ------------------- Static getters ---------------
     /**
-    /**
-     * Fetch the names of the GO terms and await them
+     * @param {*} goTerm
+     * @param {*} key
+     * @param {*} fallback value to use goTerm not found
+     * @return {*} The value of the `key` property of `goTerm`
+     * @access private
      */
-    async ensureData() {
-        await GOTerms.addMissingNames(Array.from(this.go.keys()));
-    }
-
-    /**
-     * @return {int} number of annotated peptides
-     */
-    getTotalSetSize() {
-        return this.numTotalSet;
-    }
-
-    /**
-     * Returns the originally supplied set of GO Terms
-     * sorted by value for a specific namespace
-     * @param  {String} namespace The namespace (one of GOTerms.NAMESPACES)
-     * @return {[FACounts]} Sorted GO Terms
-     */
-    sortedTerms(namespace) {
-        return this.data[namespace];
-    }
-
-    /**
-     * Get the count of the GO term in the data set
-     * @param  {string} goTerm the GO term (form "GO:0005886")
-     * @param  {string} [key="value"] The key to return (form "GO:0005886")
-     * @param  {any} [fallback=0] the GO term (form "GO:0005886")
-     * @return {any}        The GO terms `key` property
-     */
-    getValueOf(goTerm, key = "value", fallback = 0) {
-        if (this.go.has(goTerm)) {
-            const data = this.go.get(goTerm);
-            if (!(key in data)) {
-                throw new Error(`Key ${key} not found in data for ${goTerm}`);
-            }
-            return data[key];
+    static _staticOf(goTerm, key, fallback) {
+        if (GOTerms.goData.has(goTerm)) {
+            return this.goData.get(goTerm)[key];
         }
         return fallback;
     }
 
-
     /**
-     * Get the count of the GO term in the data set as fraction of the total size
-     * of the set
-     * @param  {string} goTerm the GO term (form "GO:0005886")
-     * @return {number}        fraction of the GO term
+     * @param {string} code
+     * @param {string} fallback value to use goTerm not found
+     * @return {string} The namespace of the given GO term
      */
-    getFractionOf(goTerm) {
-        return this.getValueOf(goTerm) / this.numTotalSet;
-    }
-
-
-    /**
-     * Gets the name of associated with an GO Term
-     *
-     * @param  {string} goTerm The code of the GO Term (like "GO:0006423")
-     * @return {string}       The name of the GO Term
-     */
-    static nameOf(goTerm) {
-        if (this.goData.has(goTerm)) {
-            return this.goData.get(goTerm).name;
-        }
-        return "Unknown";
+    static namespaceOf(code, fallback = "Unknown") {
+        return this._staticOf(code, "namespace", fallback);
     }
 
     /**
-     * Give the namespace of a GO term
-     *
-     * @param  {string} goTerm The code of the GO Term
-     * @return {[string]}  Ancestors of the GO Term (from specific to generic)
+     * @param {string} code
+     * @param {string} fallback value to use goTerm not found
+     * @return {string} The name of the given GO term
      */
-    static namespaceOf(goTerm) {
-        if (this.goData.has(goTerm)) {
-            return this.goData.get(goTerm).namespace;
-        }
-        return "Unknown";
+    static nameOf(code, fallback = "Unknown") {
+        return this._staticOf(code, "name", fallback);
     }
 
 
     /**
      * Add GO terms to the global map
      * @param {[FACounts]} newTerms list of new GO Terms
+     * @param {[FACounts]} [namespace = null] namsepace to use if not given
      * @access private
      */
-    static addData(newTerms) {
+    static _addData(newTerms, namespace = null) {
         newTerms.forEach(go => {
-            if (!this.goData.has(go.code) && go.namespace && go.name) {
-                this.goData.set(go.code, go);
+            if (!GOTerms.goData.has(go.code) && (namespace != null || go.namespace) && go.name) {
+                GOTerms.goData.set(go.code, {
+                    name: go.name,
+                    namespace: go.namespace || namespace,
+                    code: go.code,
+                });
             }
         });
+    }
+
+    /**
+     * Ensure that all data is availible
+     */
+    async assureData() {
+        await GOTerms.fetch(...[...this].map(x => x.code));
     }
 
     /**
@@ -169,28 +129,19 @@ export default class GOTerms {
      * names
      * @param {[string]} codes array of GO terms that should be in the cache
      */
-    static async addMissingNames(codes) {
+    static async fetch(...codes) {
         const todo = codes.filter(c => !this.goData.has(c));
         if (todo.length > 0) {
             for (let i = 0; i < todo.length; i += BATCH_SIZE) {
                 const res = await postJSON("/private_api/goterms", JSON.stringify({
                     goterms: todo.slice(i, i + BATCH_SIZE),
                 }));
-                GOTerms.addData(res);
+                GOTerms._addData(res);
             }
         }
     }
 
-    /**
-     * Cone the GO Term information into the current GOTerm static value
-     *
-     * Needed to work properly with WebWorkers that do not share these statics
-     *
-     * @param {iteratable<FAInfo>} data inforamtion about GO Terms
-     */
-    static ingestData(data) {
-        GOTerms.goData = data;
-    }
+    // ------------------ UTILITY ---------------------------
 
     /**
      * @param {[string]} terms the terms to show in the chart (at least one)

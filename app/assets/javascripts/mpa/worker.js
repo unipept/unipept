@@ -14,8 +14,17 @@ let processedPeptides = new Map();
 
 
 /**
- * @typedef {Object} MPAResult
+ * @typedef {Object} MPAPeptide
  * @property {Map}      processed   A map form pepides to information about them
+ * @property {string[]} missed      The list of peptides that could not be matched
+ * @property {number}   numMatched  Number of peptides that were matched
+ * @property {number}   numSearched Number of peptides that were matched
+ */
+
+
+/**
+ * @typedef {Object} MPAResult
+ * @property {[string,MPAPeptide][]}      processed   A map form pepides to information about them
  * @property {string[]} missed      The list of peptides that could not be matched
  * @property {number}   numMatched  Number of peptides that were matched
  * @property {number}   numSearched Number of peptides that were matched
@@ -49,7 +58,7 @@ let processedPeptides = new Map();
  *
  * @param  {string[]} originalPeptides The list of peptides to procces
  * @param {MPAConfig} config The configuration of the search
- * @return {MPAResult} The result of MPA analysis
+ * @return {Promise<MPAResult>} The result of MPA analysis
  */
 export async function process(originalPeptides, config) {
     const preparedPeptides = preparePeptides(originalPeptides, config);
@@ -75,7 +84,7 @@ export async function process(originalPeptides, config) {
             .filter(x => x.startsWith("GO:"))
             .forEach(x => usedGoTerms.add(x));
     }
-    await GOTerms.addMissingNames([...usedGoTerms.values()]);
+    await GOTerms.fetch(...usedGoTerms.values());
 
     let numMatched = 0;
     for (const peptide of processedPeptides.values()) {
@@ -119,8 +128,7 @@ function preparePeptides(originalPeptides, config) {
     let peptides = cleavePeptides(originalPeptides, config.missed);
     peptides = filterShortPeptides(peptides);
     peptides = equateIL(peptides, config.il);
-    peptides = indexPeptides(peptides, config.dupes);
-    return peptides;
+    return indexPeptides(peptides, config.dupes);
 }
 
 
@@ -201,9 +209,9 @@ function equateIL(peptides, equateIL) {
  * (see getGoData).
  *
  * @param {number} [percent=50] ignore data weighing less (to be removed)
- * @param {string[]} [sequences=null] subset of sequences to take into account,
+ * @param {Iterable<String>} [sequences=null] subset of sequences to take into account,
  *                                    null to consider all
- * @return {GOTerms} GoTerms summary
+ * @return {Promise<Object<String,MPAFAResult[]>>} Go terms summary
  */
 export async function summarizeGo(percent = 50, sequences = null) {
     // Find used go term and fetch data about them
@@ -213,7 +221,7 @@ export async function summarizeGo(percent = 50, sequences = null) {
             .filter(x => x.startsWith("GO:"))
             .forEach(x => usedGoTerms.add(x));
     }
-    await GOTerms.addMissingNames([...usedGoTerms.values()]);
+    await GOTerms.fetch(...usedGoTerms.values());
 
     // Build summary per namespace
     let res = {};
@@ -222,8 +230,7 @@ export async function summarizeGo(percent = 50, sequences = null) {
         const dataExtractor = pept => pept.faGrouped.GO[namespace] || [];
         res[namespace] = summarizeFa(dataExtractor, countExtractor, percent, sequences);
     }
-
-    return new GOTerms({data: res}, false);
+    return res;
 }
 
 /**
@@ -237,27 +244,24 @@ export async function summarizeGo(percent = 50, sequences = null) {
  * @param {number} [percent=50] ignore data weighing less (to be removed)
  * @param {string[]} [sequences=null] subset of sequences to take into account,
  *                                    null to consider all
- * @return {ECNumbers} ECNumbers summary
+ * @return {Promise<MPAFAResult[]>} ECNumbers summary
  */
 export async function summarizeEc(percent = 50, sequences = null) {
     // Filter FA' staring with EC (+ remove "EC:")
     const dataExtractor = pept => pept.faGrouped.EC;
 
     const countExtractor = pept => pept.fa.counts["EC"] || 0;
-
     const result = summarizeFa(dataExtractor, countExtractor, percent, sequences);
-    let ec = new ECNumbers({data: result}, false);
-    await ec.ensureData();
-    return ec;
+    return result;
 }
 
 /**
  * Create a mapping of functional analysis codes to a weight by aggregating
  * the counts of all peptides that have functional analysis tags.
  *
- * @param {function(pept:Peptide): {code, value}} extract
+ * @param {function(MPAPeptide): Iterator<{code, value}>} extract
  *            function extracting the FAInfo form a peptide
- * @param {function(pept:Peptide): int} countExtractor
+ * @param {function(MPAPeptide): number} countExtractor
  *            function extracting the the number of annotated (full)peptides
  *            form a peptide
  * @param {number} cutoff  data with strictly lower weight is ignored
@@ -317,7 +321,7 @@ export function getGoData() {
  * @return {object} ECNumbers.ecNames to perform `ECNumbers.ingestNames`
  */
 export function getEcNames() {
-    return ECNumbers.ecNames;
+    return ECNumbers.ecData;
 }
 
 
