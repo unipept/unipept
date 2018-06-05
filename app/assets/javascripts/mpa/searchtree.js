@@ -1,6 +1,11 @@
 import {addCopy, highlight, logToGoogle} from "../utils.js";
-
 /* eslint require-jsdoc: off */
+
+/**
+ * @typedef Searchtree
+ * @type {object}
+ * @property {function(string):any} search
+ */
 
 /**
  * Constructs a Searchtree object

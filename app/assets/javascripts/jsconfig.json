@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "lib": [
+                "dom",
+                "es7"
+        ],
+        "target": "es2015",
+        "checkJs": true,
+        "allowSyntheticDefaultImports" :true,
+        "module": "commonjs",
+        "noImplicitReturns": true,
+
+
+    },
+    "exclude": [
+        "node_modules"
+    ],
+    "typeAcquisition": {
+        "enable": true
+    }
+    
+}

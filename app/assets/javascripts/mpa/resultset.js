@@ -1,9 +1,13 @@
 import {MPA} from "./index.js";
-import GOTerms from "../components/goterms.js";
-import ECNumbers from "../components/ecnumbers.js";
+import GOTerms from "../fa/goterms.js";
+import ECNumbers from "../fa/ecnumbers.js";
 import {numberToPercent} from "../utils.js";
+// import {Dataset} from "./dataset.js";
+import "../fa/FunctionalAnnotations.js";
 
 import worker from "workerize-loader!./worker.js";
+import {GroupedFA} from "../fa/FunctionalAnnotations.js";
+import {Dataset} from "./dataset.js";
 
 /**
  * Represents the resultset for a given dataset.
@@ -16,8 +20,6 @@ import worker from "workerize-loader!./worker.js";
  * the thread
  *
  * @type {Resultset}
- * @param {GOTerms} go
- * @param {ECNumbers} ec
  */
 class Resultset {
     /**
@@ -31,7 +33,7 @@ class Resultset {
         this.config = mpaConfig;
         this.processedPeptides = null;
         this.missedPeptides = [];
-        this.fa = {ec: null, go: null};
+        this.fa = null;
         this.baseFa = {ec: null, go: null};
         this.progress = 0;
         this.wrkr = worker();
@@ -138,15 +140,17 @@ class Resultset {
             this.summarizeEc(cutoff, sequences),
         ]);
 
-        this.fa.go = go;
-        this.fa.ec = ec;
+        this.fa = new GroupedFA("Functional annotaions", {
+            "GO": go,
+            "EC": ec,
+        }, s => s.startsWith("GO:") ? "GO" : "EC");
     }
 
     /**
      * Returns a list of sequences that have the specified FA term
      * @param {String} faName The name of the FA term (GO:000112, EC:1.5.4.1)
      * @return {{sequence, totalCount, relativeCount}[]} A list of objects representing
-     *                                                   the matches
+     *                                                   the matchesFunctionalAnnotations
      */
     getPeptidesByFA(faName) {
         const type = faName.split(":")[0];
@@ -172,8 +176,7 @@ class Resultset {
         // Find used go term and fetch data about them
 
         GOTerms.ingestGoData(await this.wrkr.getGoData());
-        const go = await GOTerms.makeAssured({data: await this.wrkr.summarizeGo(percent, sequences)});
-        this.fa.go = go;
+        const go = await GOTerms.makeAssured(await this.wrkr.summarizeGo(percent, sequences), null);
         return go;
     }
 
@@ -188,8 +191,7 @@ class Resultset {
      */
     async summarizeEc(percent = 50, sequences = null) {
         const wrkrEC = await this.wrkr.summarizeEc(percent, sequences);
-        const ec = ECNumbers.makeAssured(wrkrEC);
-        this.fa.ec = ec;
+        const ec = ECNumbers.makeAssured(wrkrEC, null);
         return ec;
     }
 }

@@ -1,20 +1,22 @@
-import GOTerms from "../../../app/assets/javascripts/components/goterms";
+// @ts-nocheck
+import GOTerms from "../../../app/assets/javascripts/fa/goterms.js";
 
 
 describe("shoud be correct with num proteins", () => {
     let goTerms;
     beforeEach(() => {
         goTerms = GOTerms.make({
-            data: {
-                "biological process": [
-                    {value: 5, name: "Awesomeinase", code: "GO:12345"},
-                    {value: 2, name: "Coolnessine", code: "GO:421337"},
-                ],
-                "cellular component": [
-                    {value: 9, name: "Lol", code: "GO:000000"},
-                ],
-            },
-            numAnnotatedProteins: 10,
+            "biological process": [
+                {value: 5, name: "Awesomeinase", code: "GO:12345"},
+                {value: 2, name: "Coolnessine", code: "GO:421337"},
+            ],
+            "cellular component": [
+                {value: 9, name: "Lol", code: "GO:000000"},
+            ],
+        }, {
+            trustCount: 10,
+            annotatedCount: 10,
+            totalCount: 15,
         });
     });
 
@@ -70,6 +72,7 @@ describe("shoud be correct with num proteins", () => {
 describe("should fetch the correct data", () => {
     let fetchMock = require("../test_helpers/fetch_mock.js");
 
+    /** @type {GOTerms} */
     let goTerms;
     beforeEach( async () => {
         fetchMock.setup({
@@ -84,13 +87,15 @@ describe("should fetch the correct data", () => {
             }],
         });
 
-        goTerms = await new GOTerms.makeAssured({
-            data: {
-                "molecular function": [
-                    {value: 5, code: "GO:987654"},
-                    {value: 2, code: "GO:133742"},
-                ],
-            },
+        goTerms = await GOTerms.makeAssured({
+            "molecular function": [
+                {value: 5, code: "GO:987654"},
+                {value: 2, code: "GO:133742"},
+            ],
+        }, {
+            trustCount: 10,
+            annotatedCount: 10,
+            totalCount: 15,
         });
     });
 
@@ -106,7 +111,7 @@ describe("should fetch the correct data", () => {
     });
 
     it("for sortedTerms", () => {
-        expect(goTerms.getSortedBy(c => -c.value)).toEqual([{"code": "GO:987654", "value": 5}, {"code": "GO:133742", "value": 2}]);
+        expect(goTerms.getSorted()).toEqual([{"code": "GO:987654", "value": 5}, {"code": "GO:133742", "value": 2}]);
     });
 
     it("get static name (and allow fetching more)", async () => {
@@ -125,6 +130,7 @@ describe("should fetch the correct data", () => {
 
 
 describe("shoud work correctly on empty set", () => {
+    /** @type {GOTerms} */
     let goTerms;
     beforeEach(() => {
         goTerms = GOTerms.make({data: []}, null);
@@ -139,7 +145,7 @@ describe("shoud work correctly on empty set", () => {
         expect(goTerms.valueOf("GO:12345")).toBe(0);
     });
     it("for sortedTerms", () => {
-        expect(goTerms.getSortedBy(c => c.value)).toEqual([]);
+        expect(goTerms.getSorted()).toEqual([]);
     });
 
     it("get static name", () => {

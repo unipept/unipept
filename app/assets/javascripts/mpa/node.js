@@ -1,14 +1,6 @@
+
 /**
  * Node that represents a node in a (taxonomy)tree
- *
- * @typedef {Node}
- * @type {object}
- * @property {number} id The taxon id of the node
- * @property {string} name The name of the organism
- * @property {string} rank The rank of the organism
- * @property {Node[]} children The list of children of this node
- * @property {PeptideInfo[]} values The list of associated peptides
- * @property {object} data Additional information such as counts
  */
 class Node {
     /**
@@ -22,6 +14,7 @@ class Node {
         this.id = id;
         this.name = name;
         this.rank = rank;
+        /** @type Node[] */
         this.children = [];
         this.values = [];
         this.data = {
@@ -111,7 +104,8 @@ class Node {
     /**
      * Recursively calls a function on this object and its children  + data of child
      *
-     * @param  {function} f The function to call
+     * @param  {function(Node,any): any} f The function to call
+     * @return {any} cs
      */
     callRecursivelyPostOder(f) {
         let childResults = [];

@@ -1,28 +1,15 @@
 /* eslint valid-jsdoc: "off" */
 
-/**
- * @typedef {Object} FAInfo
- * @property {number}   value  Number of peptides that were matched
- * @property {string}   name Number of peptides that were matched
- */
-
 
 /**
- * @typedef {Object} FATrustInfo
- * @property {number}   trustCount  Number of peptides that were matched
- * @property {number}   annotatedCount  Number of peptides that were matched
- * @property {number}   totalCount  Number of peptides that were matched
+ * Abstract class that represents Functional annotaions either grouped or not.
+ * (Composite pattern)
  */
-
-
-/**
- * Abstract class that represents Functional annotaions either grouped or not
- */
-class FunctionalAnnotaions {
+export class FunctionalAnnotations {
     /**
      *
      * @param {string} name
-     * @param {Object<string, FunctionalAnnotaions>} childeren
+     * @param {Object<string, FunctionalAnnotations>} childeren
      * @param {FATrustInfo} trustInfo
      */
     constructor(name, childeren, trustInfo) {
@@ -32,7 +19,7 @@ class FunctionalAnnotaions {
     }
 
     /**
-     * Get the data for a certaian annotaion
+     * Get the data for a certain annotaion
      * @param {string} code
      * @param {string} key
      * @param {any} [fallback=0]
@@ -44,7 +31,7 @@ class FunctionalAnnotaions {
 
     /**
      * Get the trust level for this resultset
-     * @return {object}
+     * @return {FATrustInfo}
      */
     getTrust() {
         const data = Object.assign({}, this._trust);
@@ -66,9 +53,10 @@ class FunctionalAnnotaions {
     /**
      * Get an array of all annotaions in this set and sort them
      * by the goven function.
-     * @param {(a:any, b:any) => number} f
+     * @param {function(FAInfo, FAInfo): number} f
+     * @return {any[]}
      */
-    getSortedBy(f = x => x.code) {
+    getSorted(f = (a, b) => b.value - a.value) {
         return [...this].sort(f);
     }
 
@@ -82,7 +70,7 @@ class FunctionalAnnotaions {
     /**
      * Get a subgroup
      * @param {string} location
-     * @return {FunctionalAnnotaions} The subgroup
+     * @return {FunctionalAnnotations} The subgroup
      *
      */
     getGroup(location) {
@@ -91,13 +79,27 @@ class FunctionalAnnotaions {
         }
         throw new Error("Sugroup " + location + " Does not exist");
     }
+
+    /**
+     * @return {string} the human readable name of this set
+     */
+    getName() {
+        return this.name;
+    }
+
+    /**
+     * @return {FunctionalAnnotations} a clone of `this`
+     */
+    clone() {
+        throw new Error("Not implemented");
+    }
 }
 
 /**
  * Class that represents a simple functional annotaions database with
  * no substructures
  */
-export class SingleFA extends FunctionalAnnotaions {
+export class SingleFA extends FunctionalAnnotations {
     /**
      * Make a simple FA
      */
@@ -111,9 +113,11 @@ export class SingleFA extends FunctionalAnnotaions {
     }
 
     /**
-     * Get the data for a certaian annotaion
+     * Get the data for a certain annotaion
      * @param {string} code
-     * @return {object} The data for the annotaion of the code
+     * @param {string} key
+     * @param {any} [fallback=0]
+     * @return {any} The data for the annotaion of the code
      */
     valueOf(code, key = "value", fallback = 0) {
         if (this._map.has(code)) {
@@ -123,14 +127,14 @@ export class SingleFA extends FunctionalAnnotaions {
     }
 
     /**
-     * get data
+     * Itterate over the data in this FA data
      */
     * getData() {
         yield* this._data;
     }
 
     /**
-     * Get the group FunctionalAnnotaions of a code
+     * Get the group FunctionalAnnotations of a code
      * @param {string} code
      */
     groupOf(code) {
@@ -138,33 +142,42 @@ export class SingleFA extends FunctionalAnnotaions {
     }
 
     /**
-     * Get the group FunctionalAnnotaions of a code
+     * Get the group FunctionalAnnotations of a code
      * @param {string} code
      */
     groupNameOf(code) {
         return null;
     }
+
+    /**
+     * @returns {SingleFA}
+     */
+    clone() {
+        return new SingleFA(this.name, this._data, this._trust);
+    }
 }
 
 /**
- *
+ * Group of functional annotaions
  */
-export class GroupedFA extends FunctionalAnnotaions {
+export class GroupedFA extends FunctionalAnnotations {
     /**
      *
-     * @param {object} mapping
+     * @param {Object.<string, FunctionalAnnotations>} mapping
      * @param {function(string):string} locator
      *   Function that determines in which group a key is
      */
-    constructor(name, mapping, locator) {
-        super(name, mapping, {trustCount: 0, annotatedCount: 0, totalCount: 0});
+    constructor(name, mapping, locator, trust = {trustCount: 0, annotatedCount: 0, totalCount: 0}) {
+        super(name, mapping, trust);
         this._locator = locator;
     }
 
     /**
-     * Get the data for a certaian annotaion
+     * Get the data for a certain annotaion
      * @param {string} code
-     * @return {object} The data for the annotaion of the code
+     * @param {string} key
+     * @param {any} [fallback=0]
+     * @return {any} The data for the annotaion of the code
      */
     valueOf(code, key = "value", fallback = 0) {
         const location = this._locator(code);
@@ -175,7 +188,7 @@ export class GroupedFA extends FunctionalAnnotaions {
     }
 
     /**
-     * Get the FunctionalAnnotaions of a code
+     * Get the FunctionalAnnotations of a code
      * @param {string} code
      */
     groupOf(code) {
@@ -187,10 +200,23 @@ export class GroupedFA extends FunctionalAnnotaions {
     }
 
     /**
-     * Get the group FunctionalAnnotaions of a code
+     * Get the group FunctionalAnnotations of a code
      * @param {string} code
      */
     groupNameOf(code) {
         return this._locator(code);
+    }
+
+    /**
+     * @returns {GroupedFA}
+     */
+    clone() {
+        const clonedChilds = {};
+        for (const n in this._childeren) {
+            if (this.getGroup(n) !== null) {
+                clonedChilds[n] = this.getGroup(n).clone();
+            }
+        }
+        return new GroupedFA(this.name, this._childeren, this._locator);
     }
 }

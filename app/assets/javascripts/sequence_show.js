@@ -1,30 +1,24 @@
 import {addCopy, logToGoogle, triggerDownloadModal, stringTitleize, numberToPercent} from "./utils.js";
 import {showInfoModal} from "./modal.js";
 import {AmountTable} from "./components/amounttable.js";
-import ECNumbers from "./components/ecnumbers.js";
-import GOTerms from "./components/goterms.js";
+import ECNumbers from "./fa/ecnumbers.js";
+import GOTerms from "./fa/goterms.js";
 import "unipept-visualizations/dist/unipept-visualizations.es5.js";
 
-/* eslint require-jsdoc: off */
 /* TODO: more documentation */
-
-/**
- * @typedef {Object} FACounts
- * @property {number} value count
- * @property {string} name  The name of the GO/EC number
- * @property {string} code  The code of the GO/EC number
- */
-
-/**
- * @param {Object} data description of the data`
- * @param {Object.<string, FACounts>} data.fa.go - GO data information
- * @param {FACounts} data.fa.uniprotEntries - EC data information
- */
+/* eslint require-jsdoc: off */
 
 const panelWidth = 916;
 const panelHeight = 600;
 
+/**
+ * Single peptide analysis
+ */
 class SPA {
+    /**
+     *
+     * @param {{peptide:string, tree, uniprotEntries, fa:FAServerInfo}} data
+     */
     constructor(data) {
         this.$tooltip = $("#tooltip");
 
@@ -113,13 +107,13 @@ class SPA {
      * Sets up the full screen stuff
      */
     setUpFullScreen() {
-        if (fullScreenApi.supportsFullScreen) {
+        if (window.fullScreenApi.supportsFullScreen) {
             $("#buttons-single").prepend("<button id='zoom-btn-lineage' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
             $("#zoom-btn-lineage").click(function () {
                 logToGoogle("Single Peptide", "Full Screen");
                 window.fullScreenApi.requestFullScreen($("#lineageTree").get(0));
             });
-            $(document).bind(fullScreenApi.fullScreenEventName, resizeFullScreen);
+            $(document).bind(window.fullScreenApi.fullScreenEventName, resizeFullScreen);
         }
 
         function resizeFullScreen() {
@@ -139,21 +133,24 @@ class SPA {
     /**
      * Transform the FA data form the server to the format ECNumber and GOTerm expect.
      * Then render the visualisations
-     * @param {FAServerData} fa Inforamtin about functional analysis as provided by the server
+     * @param {FAServerInfo} fa
+     *     Information about functional analysis as provided by the server
      */
     setUpFA(fa) {
-        const ecData = new ECNumbers({
-            numAnnotatedProteins: fa.counts.EC,
-            data: Object.entries(fa.data).filter(([a, b]) => a.startsWith("EC")).map(([a, b]) => ({code: a.substr(3), value: b})) || []},
-        false);
-        ecData.ensureData().then(() => this.setUpEC(ecData));
+        const ecData = Object.entries(fa.data)
+            .filter(([a, b]) => a.startsWith("EC"))
+            .map(([a, b]) => ({code: a.substr(3), value: b})) || [];
+
+        ECNumbers.makeAssured(ecData,
+            {totalCount: fa.counts.all, annotatedCount: fa.counts.EC, trustCount: fa.counts.EC})
+            .then(fa => this.setUpEC(fa));
 
         const usedGoTerms = new Set();
         Object.keys(fa.data)
             .filter(x => x.startsWith("GO:"))
             .forEach(x => usedGoTerms.add(x));
 
-        GOTerms.addMissingNames([...usedGoTerms.values()]).then(() => {
+        GOTerms.fetch(...usedGoTerms.values()).then(() => {
             const goCountsPerNamespace = {};
             for (let namespace of GOTerms.NAMESPACES) {
                 goCountsPerNamespace[namespace] = Object.entries(fa.data)
@@ -161,8 +158,10 @@ class SPA {
                     .map(([term, count]) => ({code: term, value: count})) || [];
             }
 
-            const goData = new GOTerms({numAnnotatedProteins: fa.counts.GO, data: goCountsPerNamespace}, false);
-            this.setUpGO(goData);
+
+            GOTerms.makeAssured(goCountsPerNamespace,
+                {totalCount: fa.counts.all, annotatedCount: fa.counts.GO, trustCount: fa.counts.GO})
+                .then(fa => this.setUpGO(fa));
         });
     }
 
@@ -186,8 +185,8 @@ class SPA {
         }
 
         if (ecResultSet != null) {
-            const count = ecResultSet.getValueOf(ecNumber);
-            result += `<div class="tooltip-fa-text">Assigned to ${count} of ${ecResultSet.getTotalSetSize()} annotated matched proteins (${numberToPercent(ecResultSet.getFractionOf(ecNumber), 1)})</div>`;
+            const count = ecResultSet.valueOf(ecNumber);
+            result += `<div class="tooltip-fa-text">Assigned to ${count} of ${ecResultSet.getTrust().annotatedCount} annotated matched proteins (${numberToPercent(ecResultSet.valueOf(ecNumber) / ecResultSet.getTrust().annotatedCount, 1)})</div>`;
         }
         return result;
     }
@@ -197,7 +196,7 @@ class SPA {
      * @param {ECNumbers} ecResultset The resultset of the EC numbers
      */
     setUpEC(ecResultset) {
-        if (ecResultset.getTotalSetSize() > 0) {
+        if (ecResultset.getTrust().annotatedCount > 0) {
             this.setUpECTree(ecResultset);
             this.setUpEcTable(ecResultset);
         } else {
@@ -233,7 +232,7 @@ class SPA {
                     if (d.data.self_count == 0) {
                         tip += "no specific annotations";
                     } else {
-                        tip += `Assigned to ${d.data.self_count} of ${ecResultSet.getTotalSetSize()} annotated matched proteins (${numberToPercent(d.data.self_count / ecResultSet.getTotalSetSize(), 1)})`;
+                        tip += `Assigned to ${d.data.self_count} of ${ecResultSet.getTrust().annotatedCount} annotated matched proteins (${numberToPercent(d.data.self_count / ecResultSet.getTrust().annotatedCount, 1)})`;
                     }
 
                     tip += "</div>";
@@ -257,18 +256,19 @@ class SPA {
      */
     setUpEcTable(ecResultSet) {
         const target = d3.select("#ec-table");
+        const numAnnotated = ecResultSet.getTrust().annotatedCount;
         target.html("");
         new AmountTable({
             title: "EC numbers - " + this.peptide,
             el: target,
-            data: ecResultSet.sortedTerms(),
+            data: ecResultSet.getSorted(),
             limit: 5,
             contents: [
                 {
                     title: "Count",
                     text: d => d.value.toString(),
                     style: {"width": "5em"},
-                    shade: d => 100 * ecResultSet.getFractionOf(d.code),
+                    shade: d => 100 * ecResultSet.valueOf(d.code) / numAnnotated,
                 },
                 {
                     title: "EC-number",
@@ -304,12 +304,16 @@ class SPA {
             <span class="tooltip-go-domain">${stringTitleize(GOTerms.namespaceOf(goTerm))}</span>`;
 
         if (goResultSet != null) {
-            const count = goResultSet.getValueOf(goTerm);
-            result += `<div class="tooltip-fa-text">Assigned to ${count} of ${goResultSet.getTotalSetSize()} annotated matched proteins (${numberToPercent(goResultSet.getFractionOf(goTerm), 1)})</div>`;
+            const count = goResultSet.valueOf(goTerm);
+            result += `<div class="tooltip-fa-text">Assigned to ${count} of ${goResultSet.getTrust().annotatedCount} annotated matched proteins (${numberToPercent(goResultSet.valueOf(goTerm) / goResultSet.getTrust().annotatedCount, 1)})</div>`;
         }
         return result;
     }
 
+    /**
+     *
+     * @param {GOTerms} goResultset
+     */
     setUpGO(goResultset) {
         $("#go-panel").empty();
         const goPanel = d3.select("#go-panel");
@@ -317,7 +321,7 @@ class SPA {
             const variantName = stringTitleize(variant);
             goPanel.append("h3").text(variantName);
 
-            if (goResultset.sortedTerms(variant).length > 0) {
+            if (goResultset.getGroup(variant).getSorted().length > 0) {
                 const article = goPanel.append("div").attr("class", "row");
                 this.setUpGoTable(goResultset, variant, article);
                 this.setUpQuickGo(goResultset, variant, variantName, article);
@@ -335,19 +339,25 @@ class SPA {
             });
     }
 
+    /**
+     *
+     * @param {GOTerms} goResultset
+     * @param {string} variant
+     * @param {*} target
+     */
     setUpGoTable(goResultset, variant, target) {
         const tablepart = target.append("div").attr("class", "col-xs-8");
         new AmountTable({
             title: `GO terms - ${variant} - ${this.peptide}`,
             el: tablepart,
-            data: goResultset.sortedTerms(variant),
+            data: goResultset.getGroup(variant).getSorted(),
             limit: 5,
             contents: [
                 {
                     title: "Count",
                     text: d => d.value,
                     style: {"width": "5em"},
-                    shade: d => 100 * goResultset.getFractionOf(d.code),
+                    shade: d => 100 * goResultset.valueOf(d.code) / goResultset.getTrust().annotatedCount,
                 },
                 {
                     title: "GO Term",
@@ -365,10 +375,18 @@ class SPA {
         }).draw();
     }
 
+
+    /**
+     *
+     * @param {GOTerms} goResultset
+     * @param {string} variant
+     * @param {string} variantName
+     * @param {*} target
+     */
     setUpQuickGo(goResultset, variant, variantName, target) {
-        const top5 = goResultset.sortedTerms(variant).slice(0, 5).map(x => x.code);
+        const top5 = goResultset.getGroup(variant).getSorted().slice(0, 5).map(x => x.code);
         const quickGoChartURL = GOTerms.quickGOChartURL(top5);
-        const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${numberToPercent(goResultset.getFractionOf(x))})`);
+        const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${numberToPercent(goResultset.valueOf(x.code) / goResultset.getTrust().annotatedCount)})`);
         const top5sentence = top5WithNames.slice(0, -1).join(", ")
             + (top5.length > 1 ? " and " : "")
             + top5WithNames[top5WithNames.length - 1];

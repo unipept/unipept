@@ -1,6 +1,4 @@
 import {Resultset} from "./resultset.js";
-import GOTerms from "../components/goterms.js";
-import ECNumbers from "../components/ecnumbers.js";
 import {Node} from "./node.js";
 import {Tree} from "./tree.js";
 import {postJSON} from "../utils.js";
@@ -8,26 +6,10 @@ import {postJSON} from "../utils.js";
 const TAXA_URL = "/private_api/taxa";
 
 /**
- * @typedef TaxonInfo
- * @type {object}
- * @property {number} id The taxon id
- * @property {string} name The name of the taxon
- * @property {string} rank The rank of the taxon
- */
-
-/**
- * @typedef PeptideInfo
- * @type {object}
- * @property {string} sequence The peptide sequence
- * @property {number} count The number of times the peptide occurs
- * @property {number} lca The taxon id of the lca
- * @property {number[]} lineage The lineage of the lca
- */
-
-/**
  * Class that represents a single dataset containing a list of peptides.
  *
- * @type {Dataset}
+ *
+ *
  */
 class Dataset {
     /**
@@ -37,9 +19,11 @@ class Dataset {
      */
     constructor(peptides = []) {
         this.originalPeptides = Dataset.cleanPeptides(peptides);
+
+        /** @type {Tree} */
         this.tree = null;
-        this.fa = {go: null, ec: null};
-        this.baseFa = {go: null, ec: null};
+        this._fa = null;
+        this.baseFa = null;
         this.taxonMap = new Map();
         this.taxonMap.set(1, {id: 1, ranke: "no rank", name: "root"});
     }
@@ -49,6 +33,7 @@ class Dataset {
      * taxonomic tree.
      *
      * @param  {MPAConfig}  mpaConfig
+     * @return {Promise<Tree>} Taxonomic tree
      */
     async search(mpaConfig) {
         this.resultset = new Resultset(this, mpaConfig);
@@ -59,41 +44,26 @@ class Dataset {
         tree.setTaxonNames(await taxonInfo);
         tree.sortTree();
         this.tree = tree;
-        this.fa.go = this.resultset.go;
-        this.fa.ec = this.resultset.ec;
+        this._fa = null;
         this.addTaxonInfo(await taxonInfo);
         return tree;
     }
 
     /**
      * Reprocesses functional analysis data with other cutoff
-     * @param {int} cutoff as percent (0-100)
+     * @param {number} cutoff as percent (0-100)
      * @param {string[]} sequences array of peptides to take into account
     */
     async reprocessFA(cutoff = 50, sequences = null) {
         await this.resultset.proccessFA(cutoff, sequences);
-        this.fa = {
-            go: this.resultset.fa.go,
-            ec: this.resultset.fa.ec,
-            settings: {
-                cutoff: cutoff,
-                sequences: sequences,
-            },
-        };
+        this._fa = this.resultset.fa;
     }
 
     /**
      * Sets the surrent FA summary as base, accesible trough baseFa.
      */
     setBaseFA() {
-        this.baseFa = {
-            go: GOTerms.makeClone(this.fa.go),
-            ec: ECNumbers.makeClone(this.fa.ec),
-            settings: {
-                cutoff: this.fa.settings.cutoff,
-                sequences: this.fa.settings.sequences,
-            },
-        };
+        this.baseFa = this.fa.clone();
     }
 
     /**
@@ -193,7 +163,7 @@ class Dataset {
     /**
      * Returns a list of sequences that have the specified FA term
      * @param {String} faName The name of the FA term (GO:000112, EC:1.5.4.1)
-     * @return {[{sequence, totalCount, relativeCount}]} A list of objects representing
+     * @return {{sequence, totalCount, relativeCount}[]} A list of objects representing
      *                                                   the matches
      */
     getPeptidesByFA(faName) {
@@ -228,6 +198,14 @@ class Dataset {
      */
     static get TAXA_URL() {
         return TAXA_URL;
+    }
+
+    /**
+     *
+     * @return {GroupedFA} Functional annotaions
+     */
+    get fa() {
+        return this._fa;
     }
 }
 

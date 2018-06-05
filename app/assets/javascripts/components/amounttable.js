@@ -3,19 +3,19 @@ import {toCSVString, downloadDataByForm} from "../utils.js";
 
 /**
  * @typedef {Object} AmountTableSettings
- * @property {d3.selection[]}  el
+ * @property {D3.selection}  el
  *     The target container
  * @property {string}   title
  *     A string naming the table (used for export name)
- * @property {Any[]}    data
+ * @property {any[]}    data
  *     array of data to display (values are shown in order)
  * @property {AmountTableColSpec[]} contents
  *     An array of settings for each column (see above)
  * @property {Number} [limit=Infinity]
  *     The number of rows to show in collapsed state
- * @property {function(data: Any, infoContainer: HTMLTableCellElement): Any}
+ * @property {function(any, HTMLTableCellElement): any} [more]
  *     function that fills the expanded infoContainer. (Only called once)
- * @property {function(data: Any): string} tooltip
+ * @property {function(any): string} tooltip
  *     A function specifying the tooltip content given a datarow
  * @property {string}   tooltipID
  *     A CSS selector of an existing tooltip element.
@@ -27,14 +27,14 @@ import {toCSVString, downloadDataByForm} from "../utils.js";
  * @typedef {Object} AmountTableColSpec
  * @property {string} [title=""]
  *           The title of the collumn
- * @property {function(cell: d3.selection[]): string} [builder=null]
+ * @property {function(D3.selection): any} [builder=null]
  *           Function that builds the cells content using D3.
  *           The argument is a cell that has the data about the row.
  *           (Builder is only used when rendering the table and is preferred over html)
- * @property {function(data: Any): string} [html=null]
+ * @property {function(any): string} [html=null]
  *           Function that generates the HTML content of the cell
  *           (text is used if not supplied)
- * @property {function(data: Any): string} [text=null]
+ * @property {function(any): string} [text=null]
  *           Function that generates the text content of the cell
  *           (html is preferred over text in when rendering a table, text is
  *           preferred when exporting to csv)
@@ -43,7 +43,7 @@ import {toCSVString, downloadDataByForm} from "../utils.js";
  *           cells in the column
  * @property {boolean} [exported=true]
  *           if this collumn should be included in CSV export
- * @property {function(data: Any): number} [shade=false]
+ * @property {function(any): number} [shade=false]
  *           Function that calculates the amount the shader is filled for cells
  *           in this column. Should be in [0,100]
  */
@@ -63,7 +63,8 @@ class AmountTable {
      *
      * @param {AmountTableSettings} settings
      */
-    constructor({el, title = null, data, more = null, contents = null, limit = Infinity, tooltip = null, tooltipID = null, tooltipDelay = 500}) {
+    constructor(settings) {
+        const {el, title = null, data, more = null, contents = null, limit = Infinity, tooltip = null, tooltipID = null, tooltipDelay = 500} = settings;
         this.el = el;
         this.title = title;
         this.header = contents.map(({title = ""}) => title);
@@ -123,7 +124,7 @@ class AmountTable {
 
     /**
      * Create a table in the target element (without creating it first)
-     * @return {d3.selection[]}  Table head and table body
+     * @return {D3.selection}  Table head and table body
      */
     buildTable() {
         if (this.table === null) {
@@ -138,7 +139,7 @@ class AmountTable {
 
     /**
      * Make the table header
-     * @param {d3.selection} thead  table header
+     * @param {D3.selection} thead  table header
      */
     buildHeader(thead) {
         const headerCells = thead.append("tr")
@@ -158,7 +159,7 @@ class AmountTable {
 
     /**
      * Add rows to the table tbody
-     * @param {d3.selection} tbody table body
+     * @param {D3.selection} tbody table body
      */
     buildRow(tbody) {
         const rows = tbody.selectAll("tr").data(this.data.slice(0, this.limit));
@@ -211,8 +212,8 @@ class AmountTable {
 
     /**
      * Add a row that to toggle collapsing
-     * @param {d3.selection} tfoot the body to add the row to
-     * @param {d3.selection} tbody the body of the table (for content)
+     * @param {D3.selection} tfoot the body to add the row to
+     * @param {D3.selection} tbody the body of the table (for content)
      */
     addCollapseRow(tfoot, tbody) {
         let numleft = Math.max(0, this.data.length - this.limit);
@@ -307,7 +308,7 @@ class AmountTable {
      *
      * The expanded row should act as a button, and should be reachable via tab.
      *
-     * @param {d3.selection} row the rows to add the tooltip to.
+     * @param {D3.selection} row the rows to add the tooltip to.
      */
     addExpandListener(row) {
         if (this.more !== null) {
@@ -351,7 +352,7 @@ class AmountTable {
 
     /**
      * Setup tooltips
-     * @param {d3.selection} row the rows to add the tooltip to.
+     * @param {D3.selection} row the rows to add the tooltip to.
      */
     addTooltips(row) {
         if (this.tooltip !== null) {
@@ -394,7 +395,7 @@ class AmountTable {
 
     /**
      * Show/Hide the tooltip (first wait tooltipDelay ms)
-     * @param {bool} show show the tooltip
+     * @param {boolean} show show the tooltip
      */
     showTooltip(show) {
         const doShow = () => {

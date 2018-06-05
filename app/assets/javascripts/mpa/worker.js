@@ -1,7 +1,7 @@
 import "babel-polyfill"; // for async await webpacker support
 // TODO: also include other pollyfills?
-import GOTerms from "../components/goterms.js";
-import ECNumbers from "../components/ecnumbers.js";
+import GOTerms from "../fa/goterms.js";
+import ECNumbers from "../fa/ecnumbers.js";
 import {postJSON} from "../utils.js";
 
 const BATCH_SIZE = 100;
@@ -74,10 +74,10 @@ export async function process(originalPeptides, config) {
         const lcaResult = await postJSON(PEPT2DATA_URL, data);
         lcaResult.peptides.forEach(p => processedPeptides.set(p.sequence, p));
 
-        setProgress(0.1 + 0.9 * ((i + BATCH_SIZE) / peptideList.length));
+        setProgress(0.1 + 0.85 * ((i + BATCH_SIZE) / peptideList.length));
     }
 
-    // TODO refactor
+    // Prefetch GO term namespaces
     let usedGoTerms = new Set();
     for (let peptide of processedPeptides.values()) {
         Object.keys(peptide.fa.data || [])
@@ -90,23 +90,9 @@ export async function process(originalPeptides, config) {
     for (const peptide of processedPeptides.values()) {
         peptide.count = preparedPeptides.get(peptide.sequence);
         numMatched += peptide.count;
-        peptide.faGrouped = {"EC": [], "GO": {}};
-        for (const [annotation, count] of Object.entries(peptide.fa.data || {})) {
-            const type = annotation.split(":", 1)[0];
-            switch (type) {
-            case "EC": peptide.faGrouped["EC"].push({code: annotation.substr(3), value: count}); break;
-            case "GO": {
-                let ns = GOTerms.namespaceOf(annotation);
-                if (!(ns in peptide.faGrouped["GO"])) {
-                    peptide.faGrouped["GO"][ns] = [];
-                }
-                peptide.faGrouped["GO"][ns].push({code: annotation, value: count});
-                break;
-            }
-            }
-        }
+        makeFaGrouped(peptide);
     }
-
+    setProgress(1);
     return {
         processed: Array.from(processedPeptides.entries()),
         missed: peptideList.filter(p => !processedPeptides.has(p)),
@@ -115,6 +101,28 @@ export async function process(originalPeptides, config) {
     };
 }
 
+/**
+ * Add an faGrouped key to the peptides to find annotaions of a specific type
+ * faster
+ * @param {PeptideMPAInfo} peptide
+ */
+function makeFaGrouped(peptide) {
+    peptide.faGrouped = {"EC": [], "GO": {}};
+    for (const [annotation, count] of Object.entries(peptide.fa.data || {})) {
+        const type = annotation.split(":", 1)[0];
+        switch (type) {
+        case "EC": peptide.faGrouped["EC"].push({code: annotation.substr(3), value: count}); break;
+        case "GO": {
+            let ns = GOTerms.namespaceOf(annotation);
+            if (!(ns in peptide.faGrouped["GO"])) {
+                peptide.faGrouped["GO"][ns] = [];
+            }
+            peptide.faGrouped["GO"][ns].push({code: annotation, value: count});
+            break;
+        }
+        }
+    }
+}
 
 /**
  * Prepares the list of originalPeptides for use in the application by
@@ -247,9 +255,7 @@ export async function summarizeGo(percent = 50, sequences = null) {
  * @return {Promise<MPAFAResult[]>} ECNumbers summary
  */
 export async function summarizeEc(percent = 50, sequences = null) {
-    // Filter FA' staring with EC (+ remove "EC:")
     const dataExtractor = pept => pept.faGrouped.EC;
-
     const countExtractor = pept => pept.fa.counts["EC"] || 0;
     const result = summarizeFa(dataExtractor, countExtractor, percent, sequences);
     return result;
@@ -259,7 +265,7 @@ export async function summarizeEc(percent = 50, sequences = null) {
  * Create a mapping of functional analysis codes to a weight by aggregating
  * the counts of all peptides that have functional analysis tags.
  *
- * @param {function(MPAPeptide): Iterator<{code, value}>} extract
+ * @param {function(MPAPeptide): Iterable<{code, value}>} extract
  *            function extracting the FAInfo form a peptide
  * @param {function(MPAPeptide): number} countExtractor
  *            function extracting the the number of annotated (full)peptides

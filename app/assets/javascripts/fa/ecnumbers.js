@@ -19,6 +19,7 @@ const BATCH_SIZE = 1000;
  * The names associated with EC numbers are stored statically to prevent
  * useless queries
  *
+ * @todo allow EC in name for more consistency
  * @type {ECNumbers}
  */
 export default class ECNumbers extends SingleFA {
@@ -30,8 +31,8 @@ export default class ECNumbers extends SingleFA {
 
     /**
      * Use ECNumbers.make() and ECNumbers.makeAssured()
-     * @param {*} data
-     * @param {*} trust
+     * @param {FAInfo[]} data
+     * @param {FATrustInfo} trust
      * @access private
      */
     constructor(data, trust = {trustCount: 0, annotatedCount: 0, totalCount: 0}) {
@@ -41,20 +42,23 @@ export default class ECNumbers extends SingleFA {
     // -------------- Factories ------------------------------
     /**
      *
-     * @param {[FAInfo]} results
+     * @param {FAInfo[]} results
+     * @param {FATrustInfo} trust
      * @return {ECNumbers}
      */
     static make(results, trust) {
         ECNumbers._addData(results);
-        return new ECNumbers(results);
+        return new ECNumbers(results, trust);
     }
 
     /**
      *
-     * @param {*} args
+     * @param {FAInfo[]} results
+     * @param {FATrustInfo} trust
+     * @return {Promise<ECNumbers>}
      */
-    static async makeAssured(...args) {
-        const obj = ECNumbers.make(...args);
+    static async makeAssured(results, trust) {
+        const obj = ECNumbers.make(results, trust);
         await obj.assureData();
         return obj;
     }
@@ -62,23 +66,39 @@ export default class ECNumbers extends SingleFA {
     /**
      * Clone an EC numbers instance
      * @param {ECNumbers} other
+     * @return {ECNumbers}
      */
-    static makeClone(other, newEcData = null) {
-        if (newEcData !== null) {
-            ECNumbers.ecData = new Map(newEcData);
-        }
+    static makeClone(other) {
         ECNumbers._addData(other._data);
         return new ECNumbers(other._data, other._trust);
     }
 
     /**
-     *
+     * Ensure that all needed names are fetched (ancestors included).
      */
     async assureData() {
         await ECNumbers.fetch(...[...this].map(c => c.code));
     }
 
     // ------------------ Instance methods -------------
+
+    /**
+     * Get the data for a certain annotaion
+     * @param {string} code
+     * @param {string} key
+     * @param {any} [fallback=0]
+     * @return {any} The data for the annotaion of the code
+     */
+    valueOf(code, key = "value", fallback = 0) {
+        if (this._map.has(code)) {
+            return this._map.get(code)[key] || fallback;
+        } else {
+            if (code.startsWith("EC:")) {
+                return this._map.get(code)[key.substr(3)] || fallback;
+            }
+        }
+        return fallback;
+    }
 
     /**
      * Make a tree structure of the EC numbers in the resultset
@@ -179,7 +199,7 @@ export default class ECNumbers extends SingleFA {
      * the ec number
      *
      * @param  {string} ecNum an EC number (form "2.1.3.-")
-     * @return {int}  Ancestors of the EC number (from specific to generic)
+     * @return {number}  Ancestors of the EC number (from specific to generic)
      */
     static levelOf(ecNum) {
         return (ecNum + ".-").split(".").indexOf("-");
@@ -233,5 +253,12 @@ export default class ECNumbers extends SingleFA {
                 ECNumbers._addData(res);
             }
         }
+    }
+
+    /**
+     * @return {ECNumbers}
+     */
+    clone() {
+        return ECNumbers.makeClone(this);
     }
 }

@@ -1,14 +1,7 @@
 import {Node} from "./node.js";
 
 /**
- * Class representing a taxonomic tree that is composed of nodes
  *
- * @typedef {Tree}
- * @type {object}
- * @property {Node} root The root of the tree
- * @property {Map<number, Node>} nodes A mapping of taxon_id to node object of
- *   all nodes in the tree
- * @property {number[]} taxa A list of all taxon id's in the tree
  */
 class Tree {
     /**

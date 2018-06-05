@@ -5,7 +5,17 @@ const NAMESPACES = ["biological process", "cellular component", "molecular funct
 const BATCH_SIZE = 1000;
 
 /**
+ * @typedef {Object} GOInfo
+ * @property {number}   value  Number of peptides that were matched
+ * @property {string}   name Number of peptides that were matched
+ * @property {string}   code Number of peptides that were matched
+ * @property {string}   [namespace] Number of peptides that were matched
+ */
+
+/**
+ * A class representing GOTerms
  *
+ * Keeps a statc cache of GOTerm data (like namespaces)
  */
 export default class GOTerms extends GroupedFA {
     /**
@@ -16,61 +26,58 @@ export default class GOTerms extends GroupedFA {
 
     /**
      * Use GOTerms.make() and GOTerms.makeAssured()
+     * @param {Object.<string, SingleFA>} data
+     * @param {FATrustInfo} trust
      * @access private
      */
-    constructor(data) {
-        super("GO Terms", data, t => GOTerms.namespaceOf(t, null));
+    constructor(data, trust) {
+        super("GO Terms", data, t => GOTerms.namespaceOf(t, null), trust);
     }
 
     // -------------- Factories ------------------------------
     /**
      *
-     * @param {[FAInfo]} results
+     * @param {Object<string,GOInfo[]>} results
+     * @param {FATrustInfo} trust
+     * @return {GOTerms} Go term overview of the data
      */
-    static make({data: results}, trust) {
+    static make(results, trust) {
         const d = {};
         for (const ns of NAMESPACES) {
             const nsData = results[ns] || [];
             GOTerms._addData(nsData, ns);
-            const nsTrust = {trustCount: 0, annotatedCount: 0, totalCount: 0};
-            d[ns] = new SingleFA(ns, nsData, nsTrust);
+            d[ns] = new SingleFA(ns, nsData, trust);
         }
-        return new GOTerms(d);
+        return new GOTerms(d, trust);
     }
 
     /**
      *
-     * @param {*} args
+     * @param {Object<String,any[]>} results
+     * @param {FATrustInfo} trust
+     * @return {Promise<GOTerms>} Go term overview of the data
      */
-    static async makeAssured(...args) {
-        const obj = GOTerms.make(...args);
+    static async makeAssured(results, trust) {
+        const obj = GOTerms.make(results, trust);
         await obj.assureData();
         return obj;
     }
 
-    /**
-     * Clone an EC numbers instance
-     * @param {ECNumbers} other
-     * @todo fix
-     */
-    static makeClone(other, newGoData = null) {
-        if (newGoData !== null) {
-            GOTerms.goData = new Map(newGoData);
-        }
-        GOTerms._addData(other._data);
-        return new GOTerms(other._data, other._trust);
-    }
 
+    /**
+     * Ingest new GOTerm data, USE WITH CARE
+     * @param {Map} newGoData
+     */
     static ingestGoData(newGoData) {
         GOTerms.goData = new Map(newGoData);
     }
 
     // ------------------- Static getters ---------------
     /**
-     * @param {*} goTerm
-     * @param {*} key
-     * @param {*} fallback value to use goTerm not found
-     * @return {*} The value of the `key` property of `goTerm`
+     * @param {string} goTerm
+     * @param {string} key
+     * @param {any} fallback value to use goTerm not found
+     * @return {any} The value of the `key` property of `goTerm`
      * @access private
      */
     static _staticOf(goTerm, key, fallback) {
@@ -101,8 +108,8 @@ export default class GOTerms extends GroupedFA {
 
     /**
      * Add GO terms to the global map
-     * @param {[FACounts]} newTerms list of new GO Terms
-     * @param {[FACounts]} [namespace = null] namsepace to use if not given
+     * @param {GOInfo[]} newTerms list of new GO Terms
+     * @param {string} [namespace = null] namsepace to use if not given
      * @access private
      */
     static _addData(newTerms, namespace = null) {
@@ -127,7 +134,7 @@ export default class GOTerms extends GroupedFA {
     /**
      * Fetch the names and data of the GO terms that are not yet in the static map of
      * names
-     * @param {[string]} codes array of GO terms that should be in the cache
+     * @param {string[]} codes array of GO terms that should be in the cache
      */
     static async fetch(...codes) {
         const todo = codes.filter(c => !this.goData.has(c));
@@ -144,7 +151,7 @@ export default class GOTerms extends GroupedFA {
     // ------------------ UTILITY ---------------------------
 
     /**
-     * @param {[string]} terms the terms to show in the chart (at least one)
+     * @param {string[]} terms the terms to show in the chart (at least one)
      * @return {string} The QuickGo chart URL of the given GO terms
      */
     static quickGOChartURL(terms) {

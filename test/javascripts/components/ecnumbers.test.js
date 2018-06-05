@@ -1,4 +1,4 @@
-import ECNumbers from "../../../app/assets/javascripts/components/ecnumbers";
+import ECNumbers from "../../../app/assets/javascripts/fa/ecnumbers";
 afterEach(() => {
     // reset static data
     ECNumbers.ecData = new Map([["-.-.-.-", "Enzyme Commission Numbers"]]);
@@ -23,12 +23,13 @@ beforeEach( async () => {
 describe("shoud be correct with num", () => {
     let enNums;
     beforeEach(() => {
-        enNums = ECNumbers.make({
-            data: [
-                {value: 5, name: "Awesomeinase", code: "1.4.9.6"},
-                {value: 2, name: "Coolnessine", code: "1.3.3.7"},
-            ],
-            numAnnotatedProteins: 10,
+        enNums = ECNumbers.make([
+            {value: 5, name: "Awesomeinase", code: "1.4.9.6"},
+            {value: 2, name: "Coolnessine", code: "1.3.3.7"},
+        ], {
+            trustCount: 10,
+            annotatedCount: 10,
+            totalCount: 15,
         });
     });
 
@@ -50,13 +51,16 @@ describe("shoud be correct with num", () => {
 });
 
 describe("shoud be correct", () => {
+    /** @type {ECNumbers} */
     let enNums;
     beforeEach(() => {
-        enNums = ECNumbers.make({
-            data: [
-                {value: 2, name: "Coolnessine", code: "1.3.3.7"},
-                {value: 5, name: "Awesomeinase", code: "1.4.9.6"},
-            ],
+        enNums = ECNumbers.make( [
+            {value: 2, name: "Coolnessine", code: "1.3.3.7"},
+            {value: 5, name: "Awesomeinase", code: "1.4.9.6"},
+        ], {
+            trustCount: 10,
+            annotatedCount: 10,
+            totalCount: 15,
         });
     });
 
@@ -66,7 +70,7 @@ describe("shoud be correct", () => {
         expect(enNums.valueOf("9.8.7.6")).toBe(0);
     });
     it("for sortedTerms", () => {
-        expect(enNums.getSortedBy((a, b) => b.value - a.value)).toEqual([{"code": "1.4.9.6", "name": "Awesomeinase", "value": 5}, {"code": "1.3.3.7", "name": "Coolnessine", "value": 2}]);
+        expect(enNums.getSorted((a, b) => b.value - a.value)).toEqual([{"code": "1.4.9.6", "name": "Awesomeinase", "value": 5}, {"code": "1.3.3.7", "name": "Coolnessine", "value": 2}]);
     });
 
     it("get static name", () => {
@@ -78,7 +82,11 @@ describe("shoud be correct", () => {
 describe("shoud work correctly on empty set", () => {
     let enNums;
     beforeEach(() => {
-        enNums = ECNumbers.make({data: []});
+        enNums = ECNumbers.make([], {
+            trustCount: 0,
+            annotatedCount: 0,
+            totalCount: 15,
+        });
     });
 
     it("for valueOf", () => {
@@ -98,13 +106,15 @@ describe("shoud work correctly on empty set", () => {
 describe("should fetch the correct data", () => {
     let enNums;
     beforeEach( async () => {
-        enNums = await ECNumbers.makeAssured({
-            data: [
-                {value: 5, code: "1.3.4.3"},
-                {value: 2, code: "1.3.4.17"},
-                {code: "1.2.-.-"},
-            ],
-        }, false);
+        enNums = await ECNumbers.makeAssured( [
+            {value: 5, code: "1.3.4.3"},
+            {value: 2, code: "1.3.4.17"},
+            {code: "1.2.-.-"},
+        ], {
+            trustCount: 10,
+            annotatedCount: 10,
+            totalCount: 15,
+        });
     });
 
     it("for valueOf", () => {
@@ -116,7 +126,7 @@ describe("should fetch the correct data", () => {
     });
 
     it("for sortedTerms", () => {
-        expect(enNums.getSortedBy((a, b) => b.value - a.value)).toEqual([{"code": "1.3.4.3", "value": 5}, {"code": "1.3.4.17", "value": 2}, {code: "1.2.-.-"}]);
+        expect(enNums.getSorted((a, b) => b.value - a.value)).toEqual([{"code": "1.3.4.3", "value": 5}, {"code": "1.3.4.17", "value": 2}, {code: "1.2.-.-"}]);
     });
 
     it("get static name (and allow fetching more)", async () => {
@@ -140,19 +150,23 @@ describe("should fetch the correct data", () => {
 
 describe("treedata", () => {
     it("correct0", async () => {
-        let ecNums = await ECNumbers.makeAssured({
-            data: [],
-        }, false);
+        let ecNums = await ECNumbers.makeAssured([], {
+            trustCount: 10,
+            annotatedCount: 10,
+            totalCount: 15,
+        });
         expect(ecNums.treeData()).toMatchObject({"name": "-.-.-.-", "children": [], "data": {"self_count": 0, "count": 0}});
     });
 
     it("correct1", async () => {
-        let ecNums = await ECNumbers.makeAssured({
-            data: [
-                {value: 5, code: "1.3.4.3"},
-                {value: 2, code: "1.3.4.17"},
-            ],
-        }, false);
+        let ecNums = await ECNumbers.makeAssured([
+            {value: 5, code: "1.3.4.3"},
+            {value: 2, code: "1.3.4.17"},
+        ], {
+            trustCount: 10,
+            annotatedCount: 10,
+            totalCount: 15,
+        });
         expect(ecNums.treeData()).toMatchObject({"name": "-.-.-.-", "children": [
             {"name": "1", "children": [
                 {"name": "1.3", "children": [
@@ -167,13 +181,15 @@ describe("treedata", () => {
 
 
     it("correct3", async () => {
-        let ecNums = await ECNumbers.makeAssured({
-            data: [
-                {value: 5, code: "1.3.4.3"},
-                {value: 2, code: "1.3.4.17"},
-                {value: 1, code: "1.3.-.-"},
-            ],
-        }, false);
+        let ecNums = await ECNumbers.makeAssured( [
+            {value: 5, code: "1.3.4.3"},
+            {value: 2, code: "1.3.4.17"},
+            {value: 1, code: "1.3.-.-"},
+        ], {
+            trustCount: 10,
+            annotatedCount: 10,
+            totalCount: 15,
+        });
         expect(ecNums.treeData()).toMatchObject({"name": "-.-.-.-", "children": [
             {"name": "1", "children": [
                 {"name": "1.3", "children": [

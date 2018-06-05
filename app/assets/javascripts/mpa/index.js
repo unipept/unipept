@@ -1,32 +1,58 @@
-import {addCopy, downloadDataByForm, logToGoogle, triggerDownloadModal, numberToPercent, stringTitleize, toCSVString} from "../utils.js";
+import "unipept-visualizations/dist/unipept-visualizations.es5.js";
+import {AmountTable} from "../components/amounttable.js";
+import {FunctionalAnnotations} from "../fa/FunctionalAnnotations.js"; // eslint-disable-line no-unused-vars
+import ECNumbers from "../fa/ecnumbers.js";
+import GOTerms from "../fa/goterms.js";
+import {showInfoModal} from "../modal.js";
+import {showNotification} from "../notifications.js";
+import {addCopy, downloadDataByForm, logToGoogle, numberToPercent, stringTitleize, toCSVString, triggerDownloadModal} from "../utils.js";
 import {Dataset} from "./dataset.js";
 import {constructSearchtree} from "./searchtree.js";
-import {showInfoModal} from "../modal.js";
-import {AmountTable} from "../components/amounttable.js";
-import {showNotification} from "../notifications.js";
-import "unipept-visualizations/dist/unipept-visualizations.es5.js";
-import GOTerms from "../components/goterms.js";
-import ECNumbers from "../components/ecnumbers.js";
 
 /* eslint require-jsdoc: off */
+
+
+/**
+ * @typedef MPADisplaySettings
+ * @type {object}
+ * @property {{sortFunc,field,name,format, }} sortFA
+ * @property {boolean} onlyStarredFA
+ * @property {number} percentFA
+ */
+
+/**
+ * The Multi Peptide Analysis frontened class
+ */
 class MPA {
+    /**
+     * Setup the MPA gui
+     * @param {string[]} peptides List of peptides to analyse
+     * @param {boolean} il equate I and L
+     * @param {boolean} dupes Filter duplicate peptides
+     * @param {boolean} missed  Advanced missed cleavage handling
+     */
     constructor(peptides = [], il = true, dupes = true, missed = false) {
+        /** @type {Dataset[]} */
         this.datasets = [];
+        /** @type {MPAConfig} */
         this.searchSettings = {
             il: il,
             dupes: dupes,
             missed: missed,
         };
+
+        /** @type {MPADisplaySettings} */
+        // @ts-ignore because it will be filled by setUpButtons
+        this.displaySettings = {
+            onlyStarredFA: false,
+        };
+
         this.addDataset(peptides);
-        this.setUpForm(peptides, il, dupes, missed);
+        this.setUpForm(peptides);
         this.setUpButtons();
         this.setUpSaveImage();
         this.setUpFullScreen();
         this.setUpActionBar();
-
-        this.displaySettings = {
-            onlyStarredFA: false,
-        };
     }
 
     /**
@@ -77,12 +103,9 @@ class MPA {
      * Updates the search settings and reruns the analysis. Resolves when the
      * analysis is done.
      *
-     * @param  {boolean}  il equate il
-     * @param  {boolean}  dupes  filter duplicates
-     * @param  {boolean}  missed enable advancedMissedCleavageHandling
+     * @param  {MPAConfig}  searchSettings
      */
-    async updateSearchSettings({il, dupes, missed}) {
-        this.searchSettings = {il: il, dupes: dupes, missed: missed};
+    async updateSearchSettings(searchSettings) {
         this.enableProgressBar(true, true);
         this.enableProgressBar(true, false, "#progress-fa-analysis");
         $("#search-intro").text("Please wait while we process your data");
@@ -90,6 +113,10 @@ class MPA {
         this.enableProgressBar(false);
     }
 
+    /**
+     * Create the visualisations of the taxonomic tree
+     * @param {Tree} tree taxonomic tree
+     */
     setUpVisualisations(tree) {
         const data = JSON.stringify(tree.getRoot());
         this.sunburst = this.setUpSunburst(JSON.parse(data));
@@ -100,63 +127,24 @@ class MPA {
 
 
     /**
-     * Recalculate the FA data to only use data of the specified taxon id.
-     *
-     * This automatically takes into account the selected percent level
-     *
-     * @param {string} [name="Organism"] The chosen name
-     * @param {int} [id=-1] the taxon id whose sequences should be taken into account
-     *                      use -1 to use everything (Organism)
+     * @return {string[]} list of saved terms
      */
-    redoFAcalculations(name = "Organism", id = -1, timeout = 500) {
-        this.enableProgressBar(true, false, "#progress-fa-analysis");
-        clearTimeout(this._redoFAcalculationsTimeout);
-        this._redoFAcalculationsTimeout = setTimeout(() => {
-            $(".mpa-scope").text(name);
-            const percent = this.$perSelector.val() * 1; // TODO remove
-            const dataset = this.datasets[0];
-
-            dataset.reprocessFA(percent, id > 0 ? dataset.tree.getAllSequences(id) : null)
-                .then(() => {
-                    this.setUpFAVisualisations(dataset.fa, dataset.baseFa);
-                    this.enableProgressBar(false, false, "#progress-fa-analysis");
-                    $("#snapshot-fa").prop("disabled", false);
-                    $("#fa-tabs").find("input, select").prop("disabled", false);
-                });
-        }, timeout);
-    }
-
-    setUpFAVisualisations({go, ec}, {go: goOld = null, ec: ecOld = null} = {}) {
-        this.setUpGo(go, goOld);
-        this.setUpEC(ec, ecOld);
-    }
-
-    /**
-     * Create visualisations of the GO numbers
-     * @param {GOTerms} go Data about GO Terms
-     * @param {GOTerms} [goOld=null] Data about GO Terms form snapshot
-     */
-    setUpGo(go, goOld = null) {
-        const goPanel = d3.select("#goPanel");
-        goPanel.html("");
-        for (let variant of GOTerms.NAMESPACES) {
-            const variantName = stringTitleize(variant);
-
-            const article = goPanel.append("div").attr("class", "row");
-            article.append("h3").text(variantName);
-            this.setUpGoTable(go, variant, article, goOld);
-            this.setUpQuickGo(go, variant, variantName, article);
-        }
-    }
-
     getFAFavorite() {
         return JSON.parse(localStorage.getItem("saved.fa") || "[]");
     }
 
-    setFAFavorite(data) {
-        localStorage.setItem("saved.fa", JSON.stringify(data));
+    /**
+     * @param {string[]} favorites  (new) list of saved terms
+     */
+    setFAFavorite(favorites) {
+        localStorage.setItem("saved.fa", JSON.stringify(favorites));
     }
 
+    /**
+     * Add an annotaion to the favorites
+     * @param {string} code The code to add/remove form favorites
+     * @param {boolean} add true = add, false = delete
+     */
     addFAFavorite(code, add) {
         let notification = "Somthing went wrong.";
         let curFavs = this.getFAFavorite();
@@ -174,6 +162,70 @@ class MPA {
             autoHide: true,
             loading: false,
         });
+    }
+
+
+    /**
+     * Recalculate the FA data to only use data of the specified taxon id.
+     *
+     * This automatically takes into account the selected percent level
+     *
+     * @param {string} [name="Organism"] The chosen name
+     * @param {number} [id=-1]
+     *    the taxon id whose sequences should be taken into account use -1 to use everything (Organism)
+     * @param {number} [timeout=500]
+     *    Time to wait since last invocation to start the lookup procces (in ms)
+     */
+    redoFAcalculations(name = "Organism", id = -1, timeout = 500) {
+        this.enableProgressBar(true, false, "#progress-fa-analysis");
+        clearTimeout(this._redoFAcalculationsTimeout);
+        this._redoFAcalculationsTimeout = setTimeout(() => {
+            $(".mpa-scope").text(name);
+            const percent = this.displaySettings.percentFA;
+            const dataset = this.datasets[0];
+
+            dataset.reprocessFA(percent, id > 0 ? dataset.tree.getAllSequences(id) : null)
+                .then(() => {
+                    this.setUpFAVisualisations(dataset.fa, dataset.baseFa);
+                    this.enableProgressBar(false, false, "#progress-fa-analysis");
+                    $("#snapshot-fa").prop("disabled", false);
+                    $("#fa-tabs").find("input, select").prop("disabled", false);
+                });
+        }, timeout);
+    }
+
+
+    /**
+     * set up analysis pannel
+     * @param {FunctionalAnnotations} fa Functional annotations
+     * @param {FunctionalAnnotations} [oldFa=null]
+     *     Snapshot of functional annotations for comparision
+     */
+    setUpFAVisualisations(fa, oldFa = null) {
+        this.setUpGo(fa, oldFa);
+        this.setUpEC(fa, oldFa);
+    }
+
+    /**
+     * Create visualisations of the GO numbers
+     * @param {FunctionalAnnotations} fa Functional annotations
+     * @param {FunctionalAnnotations} [oldFa=null]
+     *     Snapshot of functional annotations for comparision
+     */
+    setUpGo(fa, oldFa = null) {
+        const go = fa.getGroup("GO");
+        const goOld = oldFa === null ? null : oldFa.getGroup("GO");
+
+        const goPanel = d3.select("#goPanel");
+        goPanel.html("");
+        for (let variant of GOTerms.NAMESPACES) {
+            const nsFagroup = go.getGroup(variant);
+            const oldNsFagroup = goOld === null ? null : goOld.getGroup(variant);
+            const article = goPanel.append("div").attr("class", "row");
+            article.append("h3").text(stringTitleize(variant));
+            this.setUpGoTable(nsFagroup, article, oldNsFagroup);
+            this.setUpQuickGo(nsFagroup, article);
+        }
     }
 
 
@@ -204,6 +256,13 @@ class MPA {
             });
     }
 
+    /**
+     * Generate the extra inforamtion when clicked on a row in FA tables
+     * @param {*} d
+     * @param {string} code
+     * @param {*} container
+     * @param {number} width
+     */
     faMoreinfo(d, code, container, width) {
         const dataset = this.datasets[0];
         const $container = $(container);
@@ -243,24 +302,24 @@ class MPA {
         });
     }
 
+
     /**
      *
-     * @param {GOTerms} goResultset
-     * @param {*} variant
+     * @param {FunctionalAnnotations} goResultset
      * @param {*} target
-     * @param {GOTerms} oldGoResultset
+     * @param {FunctionalAnnotations} oldGoResultset
      */
-    setUpGoTable(goResultset, variant, target, oldGoResultset = null) {
-        const sortOrder = this.getFaSelector();
+    setUpGoTable(goResultset, target, oldGoResultset = null) {
+        const sortOrder = this.displaySettings.sortFA;
         const tablepart = target.append("div").attr("class", "col-xs-8");
         const starred = this.getFAFavorite();
 
-        let data = goResultset.getGroup(variant).getSortedBy(sortOrder.sortFunc);
+        let data = goResultset.getSorted(sortOrder.sortFunc);
         if (this.displaySettings.onlyStarredFA) {
             data = data.filter(x => starred.includes(x.code));
         }
         new AmountTable({
-            title: `GO terms - ${variant}`,
+            title: `GO terms - ${goResultset.getName()}`,
             el: tablepart,
             data: data,
             limit: 5,
@@ -298,15 +357,15 @@ class MPA {
         }).draw();
     }
 
+
     /**
      *
-     * @param {GOTerms} goResultset
-     * @param {*} variant
-     * @param {*} variantName
+     * @param {FunctionalAnnotations} goResultset
      * @param {*} target
      */
-    setUpQuickGo(goResultset, variant, variantName, target) {
-        const top5 = goResultset.getGroup(variant).getSortedBy(this.getFaSelector().sortFunc).slice(0, 5).map(x => x.code);
+    setUpQuickGo(goResultset, target) {
+        /** @type {string[]} */
+        const top5 = goResultset.getSorted(this.displaySettings.sortFA.sortFunc).slice(0, 5).map(x => x.code);
 
         if (top5.length > 0) {
             const quickGoChartURL = GOTerms.quickGOChartURL(top5);
@@ -321,7 +380,7 @@ class MPA {
                 .attr("class", "quickGoThumb")
                 .attr("title", `QuickGO chart of ${top5sentence}`)
                 .on("click", () => {
-                    showInfoModal("QuickGo " + variantName, `
+                    showInfoModal("QuickGo " + goResultset.getName(), `
                         This chart shows the realationship between the ${top5.length} most occuring GO terms: ${top5sentence}.<br/>
                         <a href="${quickGoChartURL}" target="_blank" title="Click to enlarge in new tab"><img style="max-width:100%" src="${quickGoChartURL}" alt="QuickGO chart of ${top5sentence}"/></a>
                         <br>
@@ -331,6 +390,13 @@ class MPA {
         }
     }
 
+    /**
+     *
+     * @param {*} thing
+     * @param {FunctionalAnnotations} cur A FunctionalAnnotations that contains the term
+     * @param {FunctionalAnnotations} [old=null] A FunctionalAnnotations that contains the term
+     * @return {string} HTML content for tooltip
+     */
     tootipResultSet(thing, cur, old = null) {
         const curdata = key => cur.valueOf(thing, key);
         let result = "";
@@ -361,11 +427,11 @@ class MPA {
     /**
      * Generate a tooltip for an GO term
      * @param  {string}    goTerm   The Ec term to generate a tooltip for
-     * @param  {GOTerms} [goResultSet=null]  A `GOTerms` summary
-     * @param  {object} [oldGoResultSet=null]  A `GOTerms` summary snapshot
+     * @param  {FunctionalAnnotations} [faResultSet=null]  A `GOTerms` summary
+     * @param  {FunctionalAnnotations} [oldFaResultSet=null]  A `GOTerms` summary snapshot
      * @return {string}    HTML for the tooltip
      */
-    tooltipGO(goTerm, goResultSet = null, oldGoResultSet = null) {
+    tooltipGO(goTerm, faResultSet = null, oldFaResultSet = null) {
         let result = `
             <h4 class="tooltip-fa-title">
                 <span class="tooltip-fa-title-name">${GOTerms.nameOf(goTerm)}</span>
@@ -373,20 +439,27 @@ class MPA {
             </h4>
             <span class="tooltip-go-domain">${stringTitleize(GOTerms.namespaceOf(goTerm))}</span>`;
 
-        result += this.tootipResultSet(goTerm, goResultSet, oldGoResultSet);
+        result += this.tootipResultSet(goTerm, faResultSet, oldFaResultSet);
         return result;
     }
 
-    setUpEC(ecResultset, oldEcResultSet = null) {
-        this.setUpECTree(ecResultset);
-        this.setUpECTable(ecResultset, oldEcResultSet);
+    /**
+     *
+     * @param {FunctionalAnnotations} fa Functional annotations
+     * @param {FunctionalAnnotations} [oldFa=null]
+     *     Snapshot of functional annotations for comparision
+     */
+    setUpEC(fa, oldFa = null) {
+        // @ts-ignore
+        this.setUpECTree(/** @type {ECNumbers} */ fa.getGroup("EC"));
+        this.setUpECTable(fa, oldFa);
     }
 
     /**
      * Generate a tooltip for an EC number
      * @param  {string}    ecNumber   The Ec number to generate a tooltip for
-     * @param  {ECNumbers} [ecResultSet=null]  A `ECNumbers` summary
-     * @param  {ECNumbers} [oldEcResultSet=null]  A `ECNumbers` summary snapshot
+     * @param  {FunctionalAnnotations} [ecResultSet=null]  A `ECNumbers` summary
+     * @param  {FunctionalAnnotations} [oldEcResultSet=null]  A `ECNumbers` summary snapshot
      * @return {string}    HTML for the tooltip
      */
     tooltipEC(ecNumber, ecResultSet = null, oldEcResultSet = null) {
@@ -413,7 +486,8 @@ class MPA {
      * @return {TreeView} The created treeview
      */
     setUpECTree(ecResultSet) {
-        const tree = $("#ecTreeView")
+        const $container = $("#ecTreeView");
+        const tree = $container
             .empty()
             .treeview(ecResultSet.treeData(), {
                 width: 916,
@@ -444,7 +518,7 @@ class MPA {
         // save tree button
         $("#save-btn-ec").click(() => {
             logToGoogle("Multi peptide", "Save EC Image");
-            triggerDownloadModal("#ecTreeView svg", null, "unipept_treeview");
+            triggerDownloadModal($container.find("svg"), null, "unipept_treeview");
         });
 
         return tree;
@@ -453,14 +527,18 @@ class MPA {
     /**
      * Create the EC amount table
      *
-     * @param {ECNumbers} ecResultSet  A `ECNumbers` summary
-     * @param {ECNumbers} oldEcResultSet  A `ECNumbers` summary snapshot
+     * @param {FunctionalAnnotations} fa Functional annotations
+     * @param {FunctionalAnnotations} [oldFa=null]
+     *     Snapshot of functional annotations for comparision
      */
-    setUpECTable(ecResultSet, oldEcResultSet) {
+    setUpECTable(fa, oldFa = null) {
         const starred = this.getFAFavorite();
-        const sortOrder = this.getFaSelector();
+        const sortOrder = this.displaySettings.sortFA;
 
-        let data = ecResultSet.getSortedBy(sortOrder.sortFunc);
+        const ecResultSet = fa.getGroup("EC");
+        const oldEcResultSet = oldFa === null ? null : oldFa.getGroup("EC");
+
+        let data = ecResultSet.getSorted(sortOrder.sortFunc);
         if (this.displaySettings.onlyStarredFA) {
             data = data.filter(x => starred.includes("EC:" + x.code));
         }
@@ -523,17 +601,17 @@ class MPA {
      * Update the intro text to display the search stats.
      *
      * @param  {number} matches The number of matched peptides
-     * @param  {total} total The total number of peptides searched for
+     * @param  {number} total The total number of peptides searched for
      */
     updateStats(matches, total) {
         $("#search-intro").text(`We managed to match ${matches} of your ${total} peptides.`);
     }
 
-    setUpForm(peptides, il, dupes, missed) {
+    setUpForm(peptides) {
         $("#qs").text(peptides.join("\n"));
-        $("#il").prop("checked", il);
-        $("#dupes").prop("checked", dupes);
-        $("#missed").prop("checked", missed);
+        $("#il").prop("checked", this.searchSettings.il);
+        $("#dupes").prop("checked", this.searchSettings.dupes);
+        $("#missed").prop("checked", this.searchSettings.missed);
 
         // enable tooltips
         $(".js-has-hover-tooltip").tooltip({
@@ -583,16 +661,19 @@ class MPA {
             missed: $("#missed").prop("checked"),
         }));
 
-        /* TODO remove*/
-        this.$perSelector = $("#goFilterPerc");
-        this.$perSelector.change(() => {
+
+        // setup FA percent selector
+        const $perSelector = $("#goFilterPerc");
+        $perSelector.change(() => {
+            this.displaySettings.percentFA = $perSelector.val() * 1;
             this.redoFAcalculations();
         });
+        this.displaySettings.percentFA = $perSelector.val() * 1;
 
-        // TODO: remove or clean
-        this.$faTypeSelector = $("#goField");
-        this.getFaSelector = () => {
-            let selected = this.$faTypeSelector.find(":selected");
+        // setup FA sort by
+        const $faTypeSelector = $("#goField");
+        const setFaSort = () => {
+            let selected = $faTypeSelector.find(":selected");
             const formatters = {
                 "int": x => x.toString(),
                 "percent": x => numberToPercent(x),
@@ -600,17 +681,18 @@ class MPA {
             };
 
             const field = selected.val();
-            return {
+            this.displaySettings.sortFA = {
                 format: x => formatters[selected.data("as")](x[field]),
                 field: field,
                 name: selected.text(),
-                sort: arr => arr.sort((a, b) => b[field] - a[field]),
                 sortFunc: (a, b) => b[field] - a[field],
             };
         };
-        this.$faTypeSelector.change(() => {
+        $faTypeSelector.change(() => {
+            setFaSort();
             this.setUpFAVisualisations(this.datasets[0].fa, this.datasets[0].baseFa);
         });
+        setFaSort();
 
         $("#btn-clearFAfavorites").click(() => {
             this.setFAFavorite([]);
@@ -640,13 +722,13 @@ class MPA {
     }
 
     setUpFullScreen() {
-        if (fullScreenApi.supportsFullScreen) {
+        if (window.fullScreenApi.supportsFullScreen) {
             $("#buttons").prepend("<button id='zoom-btn' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
             $("#zoom-btn").click(() => {
                 logToGoogle("Multi Peptide", "Full Screen", this.getActiveTab());
                 window.fullScreenApi.requestFullScreen($(".full-screen-container").get(0));
             });
-            $(document).bind(fullScreenApi.fullScreenEventName, () => this.resizeFullScreen(this));
+            $(document).bind(window.fullScreenApi.fullScreenEventName, () => this.resizeFullScreen(this));
         }
     }
 
@@ -782,9 +864,9 @@ class MPA {
      * Propagate selections in the visualisation to the search tree and
      * The functional analysis data.
      *
-     * @param {integer} id            Taxon id to inspect
+     * @param {number} id            Taxon id to inspect
      * @param {string} searchTerm     Search term to put in box
-     * @param {integer} [timeout=500] timeout in ms to wait before processing
+     * @param {number} [timeout=500] timeout in ms to wait before processing
      * @todo add search term to FA explanation to indicate filtering
      */
     search(id, searchTerm, timeout = 500) {
