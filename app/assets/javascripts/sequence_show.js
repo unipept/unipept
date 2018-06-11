@@ -1,6 +1,6 @@
 import {addCopy, logToGoogle, triggerDownloadModal, stringTitleize, numberToPercent} from "./utils.js";
 import {showInfoModal} from "./modal.js";
-import {AmountTable} from "./components/amounttable.js";
+import {AmountTable} from "./components/amount_table.js";
 import ECNumbers from "./fa/ecnumbers.js";
 import GOTerms from "./fa/goterms.js";
 import "unipept-visualizations/dist/unipept-visualizations.es5.js";

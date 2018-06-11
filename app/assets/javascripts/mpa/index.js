@@ -1,5 +1,5 @@
 import "unipept-visualizations/dist/unipept-visualizations.es5.js";
-import {AmountTable} from "../components/amounttable.js";
+import {AmountTable} from "../components/amount_table.js";
 import {FunctionalAnnotations} from "../fa/FunctionalAnnotations.js"; // eslint-disable-line no-unused-vars
 import ECNumbers from "../fa/ecnumbers.js";
 import GOTerms from "../fa/goterms.js";
