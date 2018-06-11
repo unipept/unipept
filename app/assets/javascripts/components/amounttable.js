@@ -23,6 +23,19 @@ import {toCSVString, downloadDataByForm} from "../utils.js";
  *     Number of ms to wait before showing the tooltip
  */
 
+
+const DEFAULTS = {
+    title: null,
+    data: [],
+    more: null,
+    contents: null,
+    limit: Infinity,
+    tooltip: null,
+    tooltipDelay: 500,
+    tooltipID: null,
+};
+
+
 /**
  * @typedef {Object} AmountTableColSpec
  * @property {string} [title=""]
@@ -38,14 +51,14 @@ import {toCSVString, downloadDataByForm} from "../utils.js";
  *           Function that generates the text content of the cell
  *           (html is preferred over text in when rendering a table, text is
  *           preferred when exporting to csv)
- * @property {object} [style=null]
- *           object whose keys will be transformed to CSS properties of the
- *           cells in the column
  * @property {boolean} [exported=true]
  *           if this collumn should be included in CSV export
  * @property {function(any): number} [shade=false]
  *           Function that calculates the amount the shader is filled for cells
  *           in this column. Should be in [0,100]
+ * @property {Object.<String,any>} [style=null]
+ *           object whose keys will be transformed to CSS properties of the
+ *           cells in the column
  */
 
 // Holds a timout to show the tooltip
@@ -64,29 +77,24 @@ class AmountTable {
      * @param {AmountTableSettings} settings
      */
     constructor(settings) {
-        const {el, title = null, data, more = null, contents = null, limit = Infinity, tooltip = null, tooltipID = null, tooltipDelay = 500} = settings;
-        this.el = el;
-        this.title = title;
-        this.header = contents.map(({title = ""}) => title);
-        if (more !== null) {
+        /** @type {AmountTableSettings} */
+        this.settings = Object.assign({}, DEFAULTS, settings);
+
+        this.table = null;
+
+        this.header = this.settings.contents.map(({title = ""}) => title);
+        if (this.settings.more !== null) {
             this.header.push("");
         }
-        this.data = data || [];
-        this.table = null;
-        this.limit = limit;
 
         // No collapse row if it would show "1 row left"
-        if (this.data.length === this.limit + 1) this.limit++;
+        if (this.settings.data.length === this.settings.limit + 1) this.settings.limit++;
 
-        this.contents = contents;
-        this.makeTooltip = tooltip;
-        this.tooltipDelay = tooltipDelay;
-        this.more = more;
-        if (tooltip !== null) {
-            if (tooltipID === null) {
+        if (this.settings.tooltip !== null) {
+            if (this.settings.tooltipID === null) {
                 this.createTooltip();
             } else {
-                this.tooltip = d3.select(tooltipID);
+                this.tooltip = d3.select(this.settings.tooltipID);
             }
         } else {
             this.tooltip = null;
@@ -110,7 +118,7 @@ class AmountTable {
     draw() {
         const [thead, tbody, tfoot] = this.buildTable();
         this.buildHeader(thead);
-        if (this.data.length !== 0) {
+        if (this.settings.data.length !== 0) {
             this.buildRow(tbody);
             this.addCollapseRow(tfoot, tbody);
         } else {
@@ -128,7 +136,7 @@ class AmountTable {
      */
     buildTable() {
         if (this.table === null) {
-            this.table = this.el.append("table").attr("class", "table table-condensed table-amounttable");
+            this.table = this.settings.el.append("table").attr("class", "table table-condensed table-amounttable");
         }
         this.table.html(""); // empty the tables HTML
         const thead = this.table.append("thead");
@@ -162,12 +170,12 @@ class AmountTable {
      * @param {D3.selection} tbody table body
      */
     buildRow(tbody) {
-        const rows = tbody.selectAll("tr").data(this.data.slice(0, this.limit));
+        const rows = tbody.selectAll("tr").data(this.settings.data.slice(0, this.settings.limit));
 
         rows.exit().remove(); // remove rows that are no longer needed
 
         const row = rows.enter().append("tr");
-        for (const colSpec of this.contents) {
+        for (const colSpec of this.settings.contents) {
             const {html = null, text = null, builder = null, style = null, shade = false} = colSpec;
             const cell = row.append("td");
 
@@ -199,7 +207,7 @@ class AmountTable {
                 }
             }
         }
-        if (this.more !== null) {
+        if (this.settings.more !== null) {
             const cheveron = row.append("td");
             cheveron.classed("glyphicon amounttable-chevron", true);
             cheveron.text(" ");
@@ -216,7 +224,7 @@ class AmountTable {
      * @param {D3.selection} tbody the body of the table (for content)
      */
     addCollapseRow(tfoot, tbody) {
-        let numleft = Math.max(0, this.data.length - this.limit);
+        let numleft = Math.max(0, this.settings.data.length - this.settings.limit);
         if (numleft <= 0) return; // No collapse row if all rows shown
         const collapseRow = tfoot.append("tr").attr("class", "collapse-row");
         const collapseCell = collapseRow.append("td")
@@ -229,8 +237,8 @@ class AmountTable {
 
         // Collapse on click or on enter or on space (role button)
         const toggler = delta => {
-            this.limit = Math.max(0, Math.min( this.limit + delta, this.data.length + delta));
-            numleft = Math.max(0, this.data.length - this.limit);
+            this.settings.limit = Math.max(0, Math.min( this.settings.limit + delta, this.settings.data.length + delta));
+            numleft = Math.max(0, this.settings.data.length - this.settings.limit);
             if (numleft > 0) {
                 let cellHtml = `<span class="glyphicon glyphicon-chevron-down"></span> Show ${Math.min(numleft, 10)} more rows (${numleft} left)`;
                 if (numClick >= 3 && numleft > 10) {
@@ -268,11 +276,11 @@ class AmountTable {
      * @return {string} the CSV version of the table
      */
     toCSV() {
-        const result = [this.contents.filter(({exported = true}) => exported).map(({title = ""}) => title)];
+        const result = [this.settings.contents.filter(({exported = true}) => exported).map(({title = ""}) => title)];
         const htmlHelperSpan = document.createElement("span");
-        for (const entry of this.data) {
+        for (const entry of this.settings.data) {
             const values = [];
-            for (const colSpec of this.contents) {
+            for (const colSpec of this.settings.contents) {
                 const {html = null, text = null, exported = true} = colSpec;
                 if (!exported) continue; // skip non-exported cols
                 if (text !== null) {
@@ -297,8 +305,8 @@ class AmountTable {
      */
     downloadCSV() {
         let filename = "export.csv";
-        if (this.title !== null) {
-            filename = `${this.title.replace(/[^a-zA-Z -_]/gi, "").replace(/  *-  */g, "-").replace(/ /g, "_")}-export.csv`;
+        if (this.settings.title !== null) {
+            filename = `${this.settings.title.replace(/[^a-zA-Z -_]/gi, "").replace(/  *-  */g, "-").replace(/ /g, "_")}-export.csv`;
         }
         downloadDataByForm(this.toCSV(), filename, "text/csv");
     }
@@ -311,7 +319,7 @@ class AmountTable {
      * @param {D3.selection} row the rows to add the tooltip to.
      */
     addExpandListener(row) {
-        if (this.more !== null) {
+        if (this.settings.more !== null) {
             row.style("cursor", "pointer");
             row.attr("aria-expanded", false);
             row.attr("tabindex", "0");
@@ -334,7 +342,7 @@ class AmountTable {
                     this.attributes["aria-expanded"].nodeValue = "true";
 
                     this.amountTableExpandRow = tr;
-                    that.more.call(td, d, td);
+                    that.settings.more.call(td, d, td);
 
                     this.parentNode.insertBefore(tr, this.nextSibling);
                 }
@@ -357,7 +365,7 @@ class AmountTable {
     addTooltips(row) {
         if (this.tooltip !== null) {
             row.on("mouseenter", d => {
-                this.tooltip.html(this.makeTooltip(d));
+                this.tooltip.html(this.settings.tooltip(d));
                 this.positionTooltip(d3.event.pageX, d3.event.pageY);
                 this.showTooltip(true);
             });
@@ -405,7 +413,7 @@ class AmountTable {
 
         if (this.tooltip !== null) {
             if (show) {
-                tooltipTimeout = setTimeout(doShow, this.tooltipDelay);
+                tooltipTimeout = setTimeout(doShow, this.settings.tooltipDelay);
             } else {
                 clearTimeout(tooltipTimeout);
                 this.tooltip
