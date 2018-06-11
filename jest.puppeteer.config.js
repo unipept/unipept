@@ -2,9 +2,6 @@ module.exports = {
     verbose: true,
     roots: ["test/puppeteer"],
     moduleDirectories: ["app/assets/javascripts", "node_modules"],
-    moduleNameMapper: {
-        "^config$": "<rootDir>/path/to/App/config.js",
-    },
     transform: {
         "^.+\\.js$": "babel-jest",
         "^workerize-loader!": "workerize-loader",
