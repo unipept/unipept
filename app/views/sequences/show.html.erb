@@ -18,8 +18,8 @@
       <div id="single-peptide-tabs">
         <ul class="nav nav-tabs">
           <li class="active"><a href="#proteins" data-toggle="tab">Protein matches</a></li>
-          <li><a href="#lineage-tree" id="lineage-tree-tab" data-toggle="tab">Lineage tree <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
-          <li><a href="#lineage-table" id="lineage-table-tab" data-toggle="tab">Lineage table <span class="small glyphicon glyphicon-question-sign help btn-icon"></span></a></li>
+          <li><a href="#lineage-tree" id="lineage-tree-tab" data-toggle="tab">Lineage tree</a></li>
+          <li><a href="#lineage-table" id="lineage-table-tab" data-toggle="tab">Lineage table</a></li>
           <li><a href="#go" data-toggle="tab">GO</a></li>
           <li><a href="#ec" data-toggle="tab">EC</a></li>
         </ul>
@@ -32,6 +32,9 @@
             <button id="clipboard-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-copy"></span> Copy to clipboard</button>
             <button id="open-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-new-window"></span> Open in UniProt</button>
           </div>
+          <div class="panel-heading">
+          This table shows the UniProt entries whose protein sequence contains the tryptic peptide.
+          </div> 
           <table class="table table-condensed table-hover protein-info">
             <thead>
               <tr>
@@ -67,9 +70,15 @@
         </div>
         <div class="tab-pane" id="lineage-tree">
           <div id="buttons-single" class="buttons-single"></div>
+          <div class="panel-heading">
+          This interactive tree bundles the complete taxonomic lineages of all UniProt entries whose protein sequence contains undefined. You can click on nodes to expand them, scroll to zoom and drag to move the tree.
+          </div> 
           <div id="lineageTree"></div>
         </div>
         <div class="tab-pane" id="lineage-table">
+          <div class="panel-heading">
+          This table shows the complete taxonomic lineages of all taxa associated with the UniProt entries whose protein sequence contains undefined. The first column contains the taxon name extracted from the UniProt entry, followed by columns representing taxonomic ranks ordered from superkingdom on the left to forma on the right.
+          </div> 
           <div id="sequence_table">
             <% colors = Hash.new %>
             <table class="table table-condensed">
@@ -99,16 +108,18 @@
           </div>
         </div>
         <div class="tab-pane" id="go">
-          <h2>Gene Ontology annotations</h2>
-          <%=@fa_summary['num']['GO'] %> of the <%=@fa_summary['num']['all']%>  matched proteins (<%='%.1f' % (100*@fa_summary['num']['GO'].fdiv(@fa_summary['num']['all']))%>%) had a GO term annotation.
+          <div class="panel-heading">
+          At least one GO term was assigned to <%=@fa_summary['num']['GO'] %> of the <%=@fa_summary['num']['all']%>  matched proteins (<%='%.1f' % (100*@fa_summary['num']['GO'].fdiv(@fa_summary['num']['all']))%>%).
           <div id="go-panel">Please wait while we are building a summary</div>
+        </div>
         </div>
         <div class="tab-pane" id="ec">
           <div class="buttons-single">
             <button id='save-btn-ec' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>
           </div>
-          <h2>Enzyme Commission numbers</h2>
-          <%=@fa_summary['num']['EC'] %> of the <%=@fa_summary['num']['all']%> matched proteins (<%='%.1f' % (100*@fa_summary['num']['EC'].fdiv(@fa_summary['num']['all']))%>%) had an EC number annotation.
+          <div class="panel-heading">
+          At least one EC number was assigned to <%=@fa_summary['num']['EC'] %> of the <%=@fa_summary['num']['all']%> matched proteins (<%='%.1f' % (100*@fa_summary['num']['EC'].fdiv(@fa_summary['num']['all']))%>%).
+          </div>
           <div id="ec-table">Please wait while we are building a summary</div>
           <div id="ec-treeview">Please wait while we are building a summary</div>
         </div>
