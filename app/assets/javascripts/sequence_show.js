@@ -279,9 +279,8 @@ class SPA {
         let result = `
             <h4 class="tooltip-fa-title">
                 <span class="tooltip-fa-title-name">${GOTerms.nameOf(goTerm)}</span>
-                <span class="tooltip-go-title-term small"> ${goTerm}</span>
             </h4>
-            <span class="tooltip-go-domain">${stringTitleize(GOTerms.namespaceOf(goTerm))}</span>`;
+            <span class="tooltip-go-domain">${stringTitleize(GOTerms.namespaceOf(goTerm))}</span> - <span class="tooltip-go-title-term"> ${goTerm}</span>`;
 
         if (goResultSet != null) {
             const count = goResultSet.valueOf(goTerm);
