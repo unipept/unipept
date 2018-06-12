@@ -219,10 +219,12 @@ class SPA {
             });
 
         // save tree button
-        $("#save-btn-ec").click(() => {
-            logToGoogle("Single Peptide", "Save EC Image");
-            triggerDownloadModal("#ec-treeview svg", null, "unipept_treeview");
-        });
+        $("#save-btn-ec")
+            .click(() => {
+                logToGoogle("Single Peptide", "Save EC Image");
+                triggerDownloadModal("#ec-treeview svg", null, "unipept_treeview");
+            })
+            .attr("disabled", false);
 
         return tree;
     }

@@ -140,7 +140,7 @@
         </div>
         <div class="tab-pane" id="ec">
           <div class="buttons-single">
-            <button id='save-btn-ec' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>
+            <button id='save-btn-ec' disabled="disabled" class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>
           </div>
           <div class="panel-heading">
           At least one EC number was assigned to <%=@fa_summary['num']['EC'] %> of the <%=@fa_summary['num']['all']%> matched proteins (<%='%.1f' % (100*@fa_summary['num']['EC'].fdiv(@fa_summary['num']['all']))%>%).
