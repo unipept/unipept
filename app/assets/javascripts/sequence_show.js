@@ -245,7 +245,7 @@ class SPA {
             limit: 5,
             contents: [
                 {
-                    title: "Count",
+                    title: "Proteins",
                     text: d => d.value.toString(),
                     style: {"width": "5em"},
                     shade: d => 100 * ecResultSet.valueOf(d.code) / numAnnotated,
@@ -333,7 +333,7 @@ class SPA {
             limit: 5,
             contents: [
                 {
-                    title: "Count",
+                    title: "Proteins",
                     text: d => d.value,
                     style: {"width": "5em"},
                     shade: d => 100 * goResultset.valueOf(d.code) / goResultset.getTrust().annotatedCount,
