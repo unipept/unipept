@@ -5,7 +5,7 @@ import ECNumbers from "../fa/ecnumbers.js";
 import GOTerms from "../fa/goterms.js";
 import {showInfoModal} from "../modal.js";
 import {showNotification} from "../notifications.js";
-import {addCopy, downloadDataByForm, logToGoogle, numberToPercent, stringTitleize, toCSVString, triggerDownloadModal} from "../utils.js";
+import {addCopy, downloadDataByForm, logToGoogle, numberToPercent, stringTitleize, toCSVString, triggerDownloadModal, showError} from "../utils.js";
 import {Dataset} from "./dataset.js";
 import {constructSearchtree} from "./searchtree.js";
 
@@ -47,12 +47,19 @@ class MPA {
             onlyStarredFA: false,
         };
 
-        this.addDataset(peptides);
+        this.addDataset(peptides).catch(error => this.showError(error));
         this.setUpForm(peptides);
         this.setUpButtons();
         this.setUpSaveImage();
         this.setUpFullScreen();
         this.setUpActionBar();
+    }
+
+    showError(error) {
+        showError(error, `
+        An error occured while proccesing your peptides. 
+        Try resubmitting your peptides. 
+        Contact us if the problem persists.`);
     }
 
     /**
@@ -86,8 +93,7 @@ class MPA {
         const dataset = this.datasets[0];
         await dataset.search(this.searchSettings);
         this.setUpVisualisations(dataset.tree);
-        this.setUpMissedPeptides(dataset.getMissedPeptides());
-        this.updateStats(dataset.getNumberOfMatchedPeptides(), dataset.getNumberOfSearchedForPeptides());
+        this.updateStats(dataset);
         return dataset;
     }
 
@@ -109,7 +115,8 @@ class MPA {
         this.enableProgressBar(true, true);
         this.enableProgressBar(true, false, "#progress-fa-analysis");
         $("#search-intro").text("Please wait while we process your data");
-        await this.analyse(this.searchSettings);
+        await this.analyse(this.searchSettings)
+            .catch(error => this.showError(error));
         this.enableProgressBar(false);
     }
 
