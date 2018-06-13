@@ -144,6 +144,10 @@
 
         <span class='glyphicon glyphicon-sort-by-attributes-alt' style="margin: 0 -20px 0 20px;">
           </span><select disabled=disabled id="goField" style="background: white;width: 10em;height: 2em;border: 1px solid #EEE;text-align: center;padding-left:20px;">
+          <optgroup label="Sort by number of peptides in related proteins">
+            <option value="fractionOfPepts" data-as="percent">Peptides (%)</option>
+            <option value="numberOfPepts" data-as="int">Peptides</option>
+          </optgroup>
           <optgroup label="Sort by weighted number of occurences in related proteins">
             <option selected value="value" data-as="percent">Evidence (%)</option>
             <option value="weightedValue" data-as="2pos">Evidence</option>
@@ -151,9 +155,6 @@
           <optgroup label="Sort by total number of occurences in related proteins">
             <option value="absoluteCountFiltered" data-as="int">#Occur</option>
             <option value="absoluteCount" data-as="int">#Occur+dup</option>
-          </optgroup>
-          <optgroup label="Sort by number of peptides in related proteins">
-            <option value="numberOfPepts" data-as="int">#Peptides</option>
           </optgroup>
         </select>
 

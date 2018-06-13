@@ -283,10 +283,12 @@ function summarizeFa(extract, countExtractor, cutoff = 50, sequences = null) {
     const map = new Map();
     const fraction = cutoff / 100;
     let sumWeight = 0;
+    let sumCount = 0;
 
     for (let sequence of iteratableOfSequences) {
         const pept = processedPeptides.get(sequence);
         const totalNumAnnotations = countExtractor(pept);
+        sumCount += pept.count;
 
         if (totalNumAnnotations > 0) {
             for (const {code, value} of extract(pept)) {
@@ -312,6 +314,7 @@ function summarizeFa(extract, countExtractor, cutoff = 50, sequences = null) {
         absoluteCountFiltered: x[1][1],
         absoluteCount: x[1][2],
         numberOfPepts: x[1][3],
+        fractionOfPepts: x[1][3] / sumCount,
         value: x[1][0] / sumWeight,
     }));
 }
