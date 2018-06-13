@@ -5,14 +5,20 @@ import Clipboard from "clipboard";
  * @param {any} selector Anything that goes in $(...)
  * @param {*} textFunction Function to create te plan text to copy
  * @param {*} [tooltip= "Copy to clipboard"] Tooltip
+ * @param {HTMLElement} [container=null] Optional container of the copy button,
+ *   needed if used in a modal or other dynamicly created element.
  */
-export function addCopy(selector, textFunction, tooltip = "Copy to clipboard") {
+export function addCopy(selector, textFunction, tooltip = "Copy to clipboard", container = null) {
     const $el = $(selector).data("placement", "top")
         .attr("title", tooltip)
         .tooltip();
-    const clip = new Clipboard(selector, {
+    const clipSettings = {
         text: textFunction,
-    });
+    };
+    if (container !== null) {
+        clipSettings["container"] = container;
+    }
+    const clip = new Clipboard(selector, clipSettings);
     clip.on("success", e => {
         $el.attr("title", "Copied!")
             .tooltip("fixTitle")
