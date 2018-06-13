@@ -598,19 +598,39 @@ class MPA {
      *
      * @param {string[]} missedPeptides The list of missed peptides
      */
-    setUpMissedPeptides(missedPeptides) {
+    getBlastLinksForMissing(missedPeptides) {
         const missedHTML = missedPeptides.sort().map(p => `<li><a href="http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&amp;SET_SAVED_SEARCH=on&amp;USER_FORMAT_DEFAULTS=on&amp;PAGE=Proteins&amp;PROGRAM=blastp&amp;QUERY=${p}&amp;GAPCOSTS=11%201&amp;EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&amp;DATABASE=nr&amp;BLAST_PROGRAMS=blastp&amp;MAX_NUM_SEQ=100&amp;SHORT_QUERY_ADJUST=on&amp;EXPECT=10&amp;WORD_SIZE=3&amp;MATRIX_NAME=BLOSUM62&amp;COMPOSITION_BASED_STATISTICS=2&amp;SHOW_OVERVIEW=on&amp;SHOW_LINKOUT=on&amp;ALIGNMENT_VIEW=Pairwise&amp;MASK_CHAR=2&amp;MASK_COLOR=1&amp;GET_SEQUENCE=on&amp;NEW_VIEW=on&amp;NUM_OVERVIEW=100&amp;DESCRIPTIONS=100&amp;ALIGNMENTS=100&amp;FORMAT_OBJECT=Alignment&amp;FORMAT_TYPE=HTML&amp;OLD_BLAST=false" target="_blank">${p}</a> <span class="glyphicon glyphicon-share-alt"></span></li>`);
-        $(".mismatches").html(missedHTML.join(""));
+        return missedHTML.join("");
     }
 
     /**
      * Update the intro text to display the search stats.
      *
-     * @param  {number} matches The number of matched peptides
-     * @param  {number} total The total number of peptides searched for
+     * @param  {Dataset} dataset The dataset to display results for
      */
-    updateStats(matches, total) {
-        $("#search-intro").text(`We managed to match ${matches} of your ${total} peptides.`);
+    updateStats(dataset) {
+        const $searchIntro = $("#search-intro");
+        const total = dataset.getNumberOfSearchedForPeptides();
+        const matches = dataset.getNumberOfMatchedPeptides();
+        if (total === matches) {
+            $searchIntro.text(`We managed to match all of your ${total} peptides.`);
+        } else {
+            $searchIntro.html(`We managed to match ${matches} of your ${total} peptides. Unfortunately, <a href="#">${total - matches} peptides</a> couldn't be found.`);
+            $searchIntro.find("a").on("click", e => {
+                e.preventDefault();
+                const missed = dataset.getMissedPeptides();
+                const $content = $(`
+                <div class="card-supporting-text">
+                <button id="clipboard-missing" class="btn btn-default pull-right"><span class="glyphicon glyphicon-copy"></span> Copy to clipboard</button>
+                Sorry, we didn't manage to find some of your peptides. You can BLAST them by clicking the links or copy them by
+                using the button on the right.
+                </div>
+                <ul>${this.getBlastLinksForMissing(missed)}</ul>
+                `);
+                const $modal = showInfoModal(`${total - matches} Missed peptides`, $content);
+                addCopy($content.find("button")[0], () => missed.join("\n"), "Copy list to clipboard", $modal[0]);
+            });
+        }
     }
 
     setUpForm(peptides) {
