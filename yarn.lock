@@ -7118,9 +7118,9 @@ union-value@^1.0.0:
     is-extendable "^0.1.1"
     set-value "^0.4.3"
 
-unipept-visualizations@^1.7.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/unipept-visualizations/-/unipept-visualizations-1.7.0.tgz#3cf046b067759bae9401f1a00c7be6bc67418e3d"
+unipept-visualizations@^1.7.1:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/unipept-visualizations/-/unipept-visualizations-1.7.1.tgz#1591981ce46ca17ad0420025436f7f092892e4c1"
 
 uniq@^1.0.1:
   version "1.0.1"
