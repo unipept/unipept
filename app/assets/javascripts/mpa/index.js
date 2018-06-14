@@ -91,7 +91,7 @@ class MPA {
      */
     async analyse(searchSettings) {
         const dataset = this.datasets[0];
-        await dataset.search(this.searchSettings);
+        await dataset.search(this.searchSettings).catch(error => this.showError(error));
         this.setUpVisualisations(dataset.tree);
         this.updateStats(dataset);
         return dataset;
@@ -115,8 +115,7 @@ class MPA {
         this.enableProgressBar(true, true);
         this.enableProgressBar(true, false, "#progress-fa-analysis");
         $("#search-intro").text("Please wait while we process your data");
-        await this.analyse(this.searchSettings)
-            .catch(error => this.showError(error));
+        await this.analyse(this.searchSettings);
         this.enableProgressBar(false);
     }
 

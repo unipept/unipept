@@ -77,7 +77,7 @@ export default class ECNumbers extends SingleFA {
      * Ensure that all needed names are fetched (ancestors included).
      */
     async assureData() {
-        await ECNumbers.fetch(...[...this].map(c => c.code));
+        await ECNumbers.fetch([...this].map(c => c.code));
     }
 
     // ------------------ Instance methods -------------
@@ -223,10 +223,10 @@ export default class ECNumbers extends SingleFA {
     /**
      * Fetch the names and data of the EC numbers that are not yet in the static map of
      * names
-     * @param {...string} codes array of EC numbers that should be in the cache
+     * @param {string[]} codes array of EC numbers that should be in the cache
      * @access private
      */
-    static async fetch(...codes) {
+    static async fetch(codes) {
         const todo = [];
         for (const curEc of codes) {
             if (!this.ecData.has(curEc)) {

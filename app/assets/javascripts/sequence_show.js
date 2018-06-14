@@ -128,7 +128,7 @@ class SPA {
             .filter(x => x.startsWith("GO:"))
             .forEach(x => usedGoTerms.add(x));
 
-        GOTerms.fetch(...usedGoTerms.values()).then(() => {
+        GOTerms.fetch([...usedGoTerms.values()]).then(() => {
             const goCountsPerNamespace = {};
             for (let namespace of GOTerms.NAMESPACES) {
                 goCountsPerNamespace[namespace] = Object.entries(fa.data)

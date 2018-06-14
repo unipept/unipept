@@ -86,7 +86,7 @@ export async function process(originalPeptides, config) {
             .filter(x => x.startsWith("GO:"))
             .forEach(x => usedGoTerms.add(x));
     }
-    await GOTerms.fetch(...usedGoTerms.values());
+    await GOTerms.fetch([...usedGoTerms.values()]);
 
     let numMatched = 0;
     for (const peptide of processedPeptides.values()) {
@@ -231,7 +231,7 @@ export async function summarizeGo(percent = 50, sequences = null) {
             .filter(x => x.startsWith("GO:"))
             .forEach(x => usedGoTerms.add(x));
     }
-    await GOTerms.fetch(...usedGoTerms.values());
+    await GOTerms.fetch([...usedGoTerms.values()]);
 
     // Build summary per namespace
     let res = {};

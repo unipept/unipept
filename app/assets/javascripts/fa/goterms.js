@@ -128,7 +128,7 @@ export default class GOTerms extends GroupedFA {
      * Ensure that all data is availible
      */
     async assureData() {
-        await GOTerms.fetch(...[...this].map(x => x.code));
+        await GOTerms.fetch([...this].map(x => x.code));
     }
 
     /**
@@ -136,7 +136,7 @@ export default class GOTerms extends GroupedFA {
      * names
      * @param {string[]} codes array of GO terms that should be in the cache
      */
-    static async fetch(...codes) {
+    static async fetch(codes) {
         const todo = codes.filter(c => !this.goData.has(c));
         if (todo.length > 0) {
             for (let i = 0; i < todo.length; i += BATCH_SIZE) {
