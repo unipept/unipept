@@ -1,8 +1,5 @@
-import {MPA} from "./index.js";
 import GOTerms from "../fa/goterms.js";
 import ECNumbers from "../fa/ecnumbers.js";
-import {numberToPercent} from "../utils.js";
-// import {Dataset} from "./dataset.js";
 import "../fa/FunctionalAnnotations.js";
 
 import worker from "workerize-loader!./worker.js";
@@ -50,7 +47,10 @@ class Resultset {
      */
     async process() {
         let {processed, missed, numMatched, numSearched} = await this.wrkr.process(this.dataset.originalPeptides, this.config);
-        this.processedPeptides = new Map(processed);
+        this.processedPeptides = new Map();
+        for (const p of processed) {
+            this.processedPeptides.set(p.sequence, p);
+        }
         this.missedPeptides = missed;
         this.numberOfMatchedPeptides = numMatched;
         this.numberOfSearchedForPeptides = numSearched;
@@ -72,41 +72,10 @@ class Resultset {
      * Converts the current analysis to the csv format. Each row contains a
      * peptide and its lineage, with each column being a level in the taxonomy
      *
-     * @return {string} The analysis result in csv format
+     * @return {Promise<string>} The analysis result in csv format
      */
     toCSV() {
-        let result = "peptide,lca," +
-                    MPA.RANKS.join(",") + "," +
-                    "EC," +
-                    GOTerms.NAMESPACES.map(ns => `GO (${ns})`).join(",") +
-                    "\n";
-        for (const peptide of this.processedPeptides.values()) {
-            let row = peptide.sequence + ",";
-            row += this.dataset.taxonMap.get(peptide.lca).name + ",";
-            row += peptide.lineage.map(e => {
-                if (e === null) return "";
-                return this.dataset.taxonMap.get(e).name;
-            }).join(",");
-
-
-            row += ",";
-            row += peptide.faGrouped.EC.sort((a, b) => b.value - a.value)
-                .slice(0, 3)
-                .map(a => `${a.code} (${numberToPercent(a.value / peptide.fa.counts.EC)})`)
-                .join(";");
-            row += ",";
-            row += GOTerms.NAMESPACES.map(ns =>
-                (peptide.faGrouped.GO[ns] || [])
-                    .sort((a, b) => b.value - a.value)
-                    .slice(0, 3)
-                    .map(a => `${a.code} (${numberToPercent(a.value / peptide.fa.counts.GO)})`)
-                    .join(";"))
-                .join(",");
-
-            row += "\n";
-            result += row.repeat(peptide.count);
-        }
-        return result;
+        return this.wrkr.getCSV(this.dataset.taxonMap);
     }
 
     /**
@@ -149,18 +118,11 @@ class Resultset {
     /**
      * Returns a list of sequences that have the specified FA term
      * @param {String} faName The name of the FA term (GO:000112, EC:1.5.4.1)
-     * @return {{sequence, totalCount, relativeCount}[]} A list of objects representing
+     * @return {Promise<{sequence, totalCount, relativeCount}[]>} A list of objects representing
      *                                                   the matchesFunctionalAnnotations
      */
     getPeptidesByFA(faName) {
-        const type = faName.split(":")[0];
-        return [...this.processedPeptides.values()]
-            .filter(pept => faName in pept.fa.data)
-            .map(pept => ({
-                sequence: pept.sequence,
-                totalCount: pept.fa.data[faName],
-                relativeCount: pept.fa.data[faName] / pept.fa.counts[type],
-            }));
+        return this.wrkr.getPeptidesByFA(faName);
     }
 
     /**

@@ -97,10 +97,10 @@ class MPA {
         return dataset;
     }
 
-    downloadPeptidesFor(name) {
+    async downloadPeptidesFor(name) {
         const dataset = this.datasets[0];
         const result = [["sequence", "count", "evidence"]]
-            .concat(dataset.getPeptidesByFA(name)
+            .concat((await dataset.getPeptidesByFA(name))
                 .map(x => [x.sequence, x.totalCount, x.relativeCount]));
         downloadDataByForm(toCSVString(result), name + ".csv", "text/csv");
     }
@@ -302,7 +302,8 @@ class MPA {
             </small>`);
 
 
-        $container.append("<div></div>").treeview(dataset.getFATree(code), {
+        const $treediv = $container.append("<div></div>");
+        dataset.getFATree(code).then(faTree => $treediv.treeview(faTree, {
             width: width,
             height: 310,
             getTooltip: this.tooltipContent,
@@ -311,7 +312,7 @@ class MPA {
             nodeStrokeColor: d => (d.included ? d.color || "grey" : "grey"),
             nodeFillColor: d => (d.included ? d.color || "grey" : "grey"),
             enableAutoExpand: 0.3,
-        });
+        }));
 
         $dlbtn.click(() => {
             logToGoogle("Multi peptide", "Save Image for FA");
@@ -689,7 +690,7 @@ class MPA {
         $("#treeview-reset").click(() => this.treeview.reset());
 
         // download results
-        $("#mpa-download-results").click(() => downloadDataByForm(this.datasets[0].toCSV(), "mpa_result.csv", "text/csv"));
+        $("#mpa-download-results").click(async () => downloadDataByForm(await this.datasets[0].toCSV(), "mpa_result.csv", "text/csv"));
         // update settings
         $("#mpa-update-settings").click(() => this.updateSearchSettings({
             il: $("#il").prop("checked"),

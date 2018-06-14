@@ -100,10 +100,10 @@ class Dataset {
      *
      * @param  {string} code The FA term to look for
      *   from
-     * @return {Object} A taxon tree-like object annotated with `included`
+     * @return {Promise<Object>} A taxon tree-like object annotated with `included`
      */
-    getFATree(code) {
-        const pepts = this.getPeptidesByFA(code).map(pept => pept.sequence);
+    async getFATree(code) {
+        const pepts = (await this.getPeptidesByFA(code)).map(pept => pept.sequence);
         return this.tree.getRoot().callRecursivelyPostOder((t, c) => {
             const included = c.some(x => x.included) || t.values.some(pept => pepts.includes(pept.sequence));
             return Object.assign(Object.assign({}, t), {included: included, children: c});
@@ -125,7 +125,7 @@ class Dataset {
      * Converts the current analysis to the csv format. Each row contains a
      * peptide and its lineage, with each column being a level in the taxonomy
      *
-     * @return {string} The analysis result in csv format
+     * @return {Promise<string>} The analysis result in csv format
      */
     toCSV() {
         return this.resultset.toCSV();
@@ -163,7 +163,7 @@ class Dataset {
     /**
      * Returns a list of sequences that have the specified FA term
      * @param {String} faName The name of the FA term (GO:000112, EC:1.5.4.1)
-     * @return {{sequence, totalCount, relativeCount}[]} A list of objects representing
+     * @return {Promise<{sequence, totalCount, relativeCount}[]>} A list of objects representing
      *                                                   the matches
      */
     getPeptidesByFA(faName) {

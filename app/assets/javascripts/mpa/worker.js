@@ -2,13 +2,15 @@ import "babel-polyfill"; // for async await webpacker support
 // TODO: also include other pollyfills?
 import GOTerms from "../fa/goterms.js";
 import ECNumbers from "../fa/ecnumbers.js";
-import {postJSON} from "../utils.js";
+import {postJSON, numberToPercent} from "../utils.js";
 
 const BATCH_SIZE = 100;
 const PEPT2DATA_URL = "/mpa/pept2data";
 
-/* Worker global conaining processed peptides
+/**
+ * Worker global conaining processed peptides
  * Keeping this here gives a huge perforamce boost
+ * @type {Map<string, any>}
  */
 let processedPeptides = new Map();
 
@@ -24,7 +26,7 @@ let processedPeptides = new Map();
 
 /**
  * @typedef {Object} MPAResult
- * @property {[string,MPAPeptide][]}      processed   A map form pepides to information about them
+ * @property {MPAPeptide[]}      processed   A map form pepides to information about them
  * @property {string[]} missed      The list of peptides that could not be matched
  * @property {number}   numMatched  Number of peptides that were matched
  * @property {number}   numSearched Number of peptides that were matched
@@ -94,7 +96,7 @@ export async function process(originalPeptides, config) {
     }
     setProgress(1);
     return {
-        processed: Array.from(processedPeptides.entries()),
+        processed: [...processedPeptides.values()].map(({fa, faGrouped, ...y}) => y),
         missed: peptideList.filter(p => !processedPeptides.has(p)),
         numMatched: numMatched,
         numSearched: [...preparedPeptides.values()].reduce((a, b) => a + b, 0),
@@ -333,6 +335,73 @@ export function getEcNames() {
     return ECNumbers.ecData;
 }
 
+
+/**
+ * Copy of ranks from MPA ranks to not have to include MPA in the worker
+ * @type {string[]}
+ */
+const RANKS = ["superkingdom", "kingdom", "subkingdom", "superphylum", "phylum", "subphylum", "superclass", "class", "subclass", "infraclass", "superorder", "order", "suborder", "infraorder", "parvorder", "superfamily", "family", "subfamily", "tribe", "subtribe", "genus", "subgenus", "species group", "species subgroup", "species", "subspecies", "varietas", "forma"];
+
+/**
+ * Converts the current analysis to the csv format. Each row contains a
+ * peptide and its lineage, with each column being a level in the taxonomy
+ *
+ * @param {Map<number,TaxonInfo>} taxonMap map of taxon names
+ * @return {string} The analysis result in csv format
+ */
+export function getCSV(taxonMap) {
+    let result = "peptide,lca," +
+    RANKS.join(",") + "," +
+    "EC," +
+    GOTerms.NAMESPACES.map(ns => `GO (${ns})`).join(",") +
+    "\n";
+    for (const peptide of processedPeptides.values()) {
+        let row = peptide.sequence + ",";
+
+        row += taxonMap.get(peptide.lca).name + ",";
+        row += peptide.lineage.map(e => {
+            if (e === null) return "";
+            return taxonMap.get(e).name;
+        }).join(",");
+
+
+        row += ",";
+        row += peptide.faGrouped.EC.sort((a, b) => b.value - a.value)
+            .slice(0, 3)
+            .map(a => `${a.code} (${numberToPercent(a.value / peptide.fa.counts.EC)})`)
+            .join(";");
+        row += ",";
+
+        row += GOTerms.NAMESPACES.map(ns =>
+            (peptide.faGrouped.GO[ns] || [])
+                .sort((a, b) => b.value - a.value)
+                .slice(0, 3)
+                .map(a => `${a.code} (${numberToPercent(a.value / peptide.fa.counts.GO)})`)
+                .join(";"))
+            .join(",");
+
+        row += "\n";
+        result += row.repeat(peptide.count);
+    }
+    return result;
+}
+
+/**
+ * Returns a list of sequences that have the specified FA term
+ * @param {String} faName The name of the FA term (GO:000112, EC:1.5.4.1)
+ * @return {{sequence, totalCount, relativeCount}[]} A list of objects representing
+ *                                                   the matchesFunctionalAnnotations
+ */
+export function getPeptidesByFA(faName) {
+    const type = faName.split(":")[0];
+    return [...processedPeptides.values()]
+        .filter(pept => faName in pept.fa.data)
+        .map(pept => ({
+            sequence: pept.sequence,
+            totalCount: pept.fa.data[faName],
+            relativeCount: pept.fa.data[faName] / pept.fa.counts[type],
+        }));
+}
 
 /**
  * Send out a message to the calling procces that that the progress
