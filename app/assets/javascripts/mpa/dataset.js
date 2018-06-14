@@ -24,8 +24,10 @@ class Dataset {
         this.tree = null;
         this._fa = null;
         this.baseFa = null;
+
+        /** @type {Map<number,TaxonInfo>} */
         this.taxonMap = new Map();
-        this.taxonMap.set(1, {id: 1, ranke: "no rank", name: "root"});
+        this.taxonMap.set(1, {id: 1, rank: "no rank", name: "root"});
     }
 
     /**
