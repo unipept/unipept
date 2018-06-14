@@ -186,12 +186,22 @@ class MPA {
     redoFAcalculations(name = "Organism", id = -1, timeout = 500) {
         this.enableProgressBar(true, false, "#progress-fa-analysis");
         clearTimeout(this._redoFAcalculationsTimeout);
-        this._redoFAcalculationsTimeout = setTimeout(() => {
-            $(".mpa-scope").text(name);
-            const percent = this.displaySettings.percentFA;
-            const dataset = this.datasets[0];
 
-            dataset.reprocessFA(percent, id > 0 ? dataset.tree.getAllSequences(id) : null)
+        const percent = this.displaySettings.percentFA;
+        const dataset = this.datasets[0];
+        let sequences = null;
+
+        this._redoFAcalculationsTimeout = setTimeout(() => {
+            if (id > 0) {
+                sequences = dataset.tree.getAllSequences(id);
+                $(".mpa-fa-scope").text(name);
+                $(".mpa-fa-numpepts").text(`${sequences.length} peptide${sequences.length === 1 ? "" : "s"}`);
+                $("#fa-filter-warning").show();
+            } else {
+                $("#fa-filter-warning").hide();
+            }
+
+            dataset.reprocessFA(percent, sequences)
                 .then(() => {
                     this.setUpFAVisualisations(dataset.fa, dataset.baseFa);
                     this.enableProgressBar(false, false, "#progress-fa-analysis");
@@ -738,8 +748,7 @@ class MPA {
             });
         });
 
-        // copy to clipboard button for missed peptides
-        addCopy("#copy-missed span", () => $(".mismatches").text().replace(/ /g, "\n"));
+        $("#fa-undo-filter").click(() => this.redoFAcalculations(undefined, undefined, 0));
     }
 
     setUpSaveImage() {

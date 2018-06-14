@@ -167,17 +167,21 @@
       </li>
     </ul>
   </div>
+  <div id="fa-filter-warning" class='card-supporting-text' style="display:none;">
+    <strong>Filtered results: </strong>
+      These results are limited to peptides below <strong class="mpa-fa-scope">Organism</strong> (<span class="mpa-fa-numpepts">all peptides</span>) .
+    <button class="btn btn-default" id="fa-undo-filter">Undo</button>
+  </div>
   <div id="progress-fa-analysis" class="unipept-progress unipept-progress-indeterminate">
     <div class="progressbar bar bar1" style="width: 0%;"></div>
     <div class="bufferbar bar bar2" style="width: 100%;"></div>
-  <div class="auxbar bar bar3" style="width: 0%;"></div>
+    <div class="auxbar bar bar3" style="width: 0%;"></div>
   </div>
-  <div class="tab-content multi-search">
+  <div class="tab-content mpa-fa">
     <div class="tab-pane active" id="goWrapper">
       <div class='card-supporting-text'>
         The evidence indicates the number of the sequences that contain a GO term multiplied by the
-        probability that a sequence indicates that GO-term. The shown results are limited to peptides
-        whose lowest common ancestor is lower or equal to <strong class="mpa-scope">Organism</strong>.
+        probability that a sequence indicates that GO-term.
       </div>
       <div id="goPanel">Please wait while we are preparing your data...&nbsp;</div>
     </div>
@@ -187,8 +191,7 @@
       </div>
       <div class='card-supporting-text'>
         The evidence indicates the number of the sequences that contain a EC code specifically
-        multiplied by the probability that a sequence indicates that EC-code. The shown results are limited to peptides
-        whose lowest common ancestor is lower or equal to <strong class="mpa-scope">Organism</strong>.
+        multiplied by the probability that a sequence indicates that EC-code.
       </div>
       <div id="ecTable">Please wait while we are building a summary</div>
       <div id="ecTreeView">Please wait while we are building a summary</div></div>
