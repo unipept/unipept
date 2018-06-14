@@ -749,6 +749,16 @@ class MPA {
         });
 
         $("#fa-undo-filter").click(() => this.redoFAcalculations(undefined, undefined, 0));
+
+
+        /* Hide fullscreen button when in outline mode */
+        $("#viz-tabs a").on("shown.bs.tab", e => {
+            if ($(e.target).attr("href") === "#outline") {
+                $("#buttons").hide();
+            } else {
+                $("#buttons").show();
+            }
+        });
     }
 
     setUpSaveImage() {
