@@ -306,10 +306,10 @@ class MPA {
             width: width,
             height: 310,
             getTooltip: this.tooltipContent,
-            colors: "#2196f3",
-            linkStrokeColor: ({target: d}) => (d.included ? d.color || "grey" : "grey"),
-            nodeStrokeColor: d => (d.included ? d.color || "grey" : "grey"),
-            nodeFillColor: d => (d.included ? d.color || "grey" : "grey"),
+            colors: "#ffc107",
+            linkStrokeColor: ({target: d}) => (d.included ? d.color || "lightgrey" : "lightgrey"),
+            nodeStrokeColor: d => (d.included ? d.color || "grey" : "lightgrey"),
+            nodeFillColor: d => (d.included ? d.color || "grey" : "lightgrey"),
             enableAutoExpand: 0.3,
         }));
 
