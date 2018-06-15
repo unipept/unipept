@@ -313,16 +313,6 @@ class MPA {
 
         $container.append($dlbtn);
 
-        $container.append(`<small>
-            <span class="glyphicon glyphicon-stats"></span>
-            Assinged to ${d.numberOfPepts} of the ${dataset.getNumberOfMatchedPeptides()} peptides (${numberToPercent(d.numberOfPepts / dataset.getNumberOfMatchedPeptides())}).
-            <br/>
-            <span class="glyphicon glyphicon-stats"></span>
-            The normalised occurrence score is ${numberToPercent(d.value)} (${d.weightedValue.toFixed(2)}).
-        
-            </small>`);
-
-
         const $treediv = $container.append("<div></div>");
         dataset.getFATree(code).then(faTree => $treediv.treeview(faTree, {
             width: width,
