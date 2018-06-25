@@ -15,7 +15,7 @@ import {constructSearchtree} from "./searchtree.js";
 /**
  * @typedef MPADisplaySettings
  * @type {object}
- * @property {{sortFunc,field,name,format, }} sortFA
+ * @property {{sortFunc,field,name,format,shadeField}} sortFA
  * @property {boolean} onlyStarredFA
  * @property {number} percentFA
  */
@@ -99,7 +99,9 @@ class MPA {
 
     async downloadPeptidesFor(name) {
         const dataset = this.datasets[0];
-        const result = [["sequence", "count", "evidence"]]
+        const result = [
+            ["sequence", "count", "evidence"],
+        ]
             .concat((await dataset.getPeptidesByFA(name))
                 .map(x => [x.sequence, x.totalCount, x.relativeCount]));
         downloadDataByForm(toCSVString(result), name + ".csv", "text/csv");
@@ -226,6 +228,7 @@ class MPA {
                     this.setUpFAVisualisations(dataset.fa, dataset.baseFa);
                     this.enableProgressBar(false, false, "#progress-fa-analysis");
                     $("#snapshot-fa").prop("disabled", false);
+                    $("#mpa-fa-filter-precent").prop("disabled", false);
                     $("#fa-tabs").find("input, select").prop("disabled", false);
                 });
         }, timeout);
@@ -358,7 +361,7 @@ class MPA {
                     text: d => d[sortOrder.field].toString(),
                     html: d => sortOrder.format(d),
                     style: {"width": "5em"},
-                    shade: d => 100 * d.value,
+                    shade: d => 100 * d[sortOrder.shadeField],
                 },
                 {
                     title: "GO term",
@@ -691,7 +694,7 @@ class MPA {
     }
 
     setUpButtons() {
-        // sunburst reset
+        // sunburst resetsetUpFAVisualisations
         $("#sunburst-reset").click(() => this.sunburst.reset());
 
         // sunburst fixed colors
@@ -728,44 +731,75 @@ class MPA {
 
 
         // setup FA percent selector
-        const $perSelector = $("#goFilterPerc");
+        const $perSelector = $("#mpa-fa-filter-precent");
+        let $perResetLink = null;
         $perSelector.change(() => {
             this.displaySettings.percentFA = $perSelector.val() * 1;
             this.redoFAcalculations();
+
+            if (this.displaySettings.percentFA !== 5) {
+                if (!$perResetLink) {
+                    $perResetLink = $("<a class=\"pull-right\" href=\"#\">reset to 5%</a>").on("click", e => {
+                        e.preventDefault();
+                        $perSelector.val(5).trigger("change");
+                    });
+                    $perResetLink.insertAfter( "#mpa-fa-filter-precent-group" );
+                }
+            } else {
+                $perResetLink.remove();
+                $perResetLink = null;
+            }
         });
         this.displaySettings.percentFA = $perSelector.val() * 1;
 
-        // setup FA sort by
-        const $faTypeSelector = $("#goField");
-        const setFaSort = () => {
-            let selected = $faTypeSelector.find(":selected");
+
+        const $sortOptions = $("#mpa-select-fa-sort-items>li>a");
+        const setFaSort = ($selected, updateView = true) => {
             const formatters = {
                 "int": x => x.toString(),
                 "percent": x => numberToPercent(x),
                 "2pos": x => x.toFixed(2).toString(),
             };
 
-            const field = selected.val();
+            const field = $selected.data("field");
             this.displaySettings.sortFA = {
-                format: x => formatters[selected.data("as")](x[field]),
+                format: x => formatters[$selected.data("as")](x[field]),
                 field: field,
-                name: selected.text(),
+                shadeField: $selected.data("shade-field"),
+                name: $selected.text(),
                 sortFunc: (a, b) => b[field] - a[field],
             };
+
+            $sortOptions.removeClass("active");
+            $selected.addClass("active");
+
+            if (updateView) this.setUpFAVisualisations(this.datasets[0].fa, this.datasets[0].baseFa);
         };
-        $faTypeSelector.change(() => {
-            setFaSort();
+        setFaSort($("#mpa-select-fa-sort-default"), false);
+
+        const $sortNameContainer = $("#mpa-select-fa-sort-name");
+        $sortOptions.on("click", function (e) {
+            e.preventDefault();
+            const $this = $(this);
+            setFaSort($this);
+            $sortNameContainer.text($this.text());
+        });
+
+        const $onlyFavoritesCheckbox = $("#mpa-fa-only-favorites");
+        $onlyFavoritesCheckbox.change(() => {
+            this.displaySettings.onlyStarredFA = $onlyFavoritesCheckbox.prop("checked");
             this.setUpFAVisualisations(this.datasets[0].fa, this.datasets[0].baseFa);
         });
-        setFaSort();
 
-        $("#btn-clearFAfavorites").click(() => {
+        $("#mpa-fa-clear-favorites-btn").click(() => {
             this.setFAFavorite([]);
-            this.setUpFAVisualisations(this.datasets[0].fa, this.datasets[0].baseFa);
-        });
-
-        $("#btn-onlyShowFAfavorites").click(() => {
-            this.displaySettings.onlyStarredFA = !this.displaySettings.onlyStarredFA;
+            showNotification("Removed favorites!", {
+                autoHide: true,
+                loading: false,
+            });
+            // It does not make sense to only show favorites if there are none
+            $onlyFavoritesCheckbox.prop("checked", false);
+            this.displaySettings.onlyStarredFA = false;
             this.setUpFAVisualisations(this.datasets[0].fa, this.datasets[0].baseFa);
         });
 
@@ -787,6 +821,12 @@ class MPA {
             } else {
                 $("#buttons").show();
             }
+        });
+
+        $("#mpa-fa-advanced-options").on("click", function (event) {
+            // The event won't be propagated up to the document NODE and
+            // therefore delegated events won't be fired
+            event.stopPropagation();
         });
     }
 

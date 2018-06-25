@@ -125,48 +125,93 @@
     <ul class="nav nav-tabs visualisations" id="fa-tabs">
       <li class="active"><a href="#goWrapper" data-toggle="tab">GO Terms</a></li>
       <li><a href="#ecWrapper" data-toggle="tab">EC Numbers</a></li>
-      <li style="margin:5px;">
-        <span class='glyphicon glyphicon-filter' style="margin: 0 -20px 0 20px;">
-        </span><input disabled=disabled type="number" min="0" max="100" step="5" value="5" class="js-has-hover-tooltip" title="Filer out annotations that occur in less than ...% of the Uniprot entries that correspond with a sequence"
-          id="goFilterPerc" style="width: 5em;height: 2em;border: 1px solid #EEE;text-align: center;padding-left: 15px;background: white;"
-        />
-
-        <span class='glyphicon glyphicon-sort-by-attributes-alt' style="margin: 0 -20px 0 20px;">
-          </span><select disabled=disabled id="goField" style="background: white;width: 10em;height: 2em;border: 1px solid #EEE;text-align: center;padding-left:20px;">
-          <optgroup label="Sort by number of peptides in related proteins">
-            <option value="fractionOfPepts" data-as="percent">Peptides (%)</option>
-            <option value="numberOfPepts" data-as="int">Peptides</option>
-          </optgroup>
-          <optgroup label="Sort by weighted number of occurrences in related proteins">
-            <option selected value="value" data-as="percent">Evidence (%)</option>
-            <option value="weightedValue" data-as="2pos">Evidence</option>
-          </optgroup>
-          <optgroup label="Sort by total number of occurrences in related proteins">
-            <option value="absoluteCountFiltered" data-as="int">#Occur</option>
-            <option value="absoluteCount" data-as="int">#Occur+dup</option>
-          </optgroup>
-        </select>
-
-      <button disabled=disabled id='snapshot-fa' class='btn btn-default btn-xs js-has-hover-tooltip'
-        title="Takes a snapshot of the current values. Change some settings so you can compare parts of the taxonomy tree.">
-        <span class='glyphicon glyphicon-camera'></span>
-        Use as base
-      </button>
-        
-      </li>
     </ul>
-  </div>
-  <div id="fa-filter-warning" class='card-supporting-text' style="display:none;">
-    <strong>Filtered results: </strong>
-      These results are limited to peptides specific to <strong class="mpa-fa-scope">Organism</strong><span class="mpa-fa-numpepts">all peptides</span>.
-    <button class="btn btn-default" id="fa-undo-filter">Undo</button>
-  </div>
-  <div id="progress-fa-analysis" class="unipept-progress unipept-progress-indeterminate">
-    <div class="progressbar bar bar1" style="width: 0%;"></div>
-    <div class="bufferbar bar bar2" style="width: 100%;"></div>
-    <div class="auxbar bar bar3" style="width: 0%;"></div>
-  </div>
-  <div class="tab-content mpa-fa">
+    <div class="nav-right">
+      <div class="dropdown pull-right">
+        <button class="btn btn-default dropdown-toggle" type="button" id="mpa-select-fa-sort" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+          <span class='glyphicon glyphicon-sort-by-attributes-alt pull-left'></span> <span id="mpa-select-fa-sort-name">Peptides %</span>
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-right" id="mpa-select-fa-sort-items" aria-labelledby="mpa-selet-fa-sort">
+          <li class="dropdown-header">Sort by number of peptides in related proteins
+            <span class="small glyphicon glyphicon-question-sign help btn-icon"></span>
+          </li>
+          <li>
+            <a href="#" data-shade-field="fractionOfPepts" data-field="fractionOfPepts" data-as="percent">Peptides %</a>
+          </li>
+          <li>
+            <a href="#" data-shade-field="fractionOfPepts" data-field="numberOfPepts" data-as="int">Peptides</a>
+          </li>
+          <li class="dropdown-header">Sort by weighted number of occurrences in related proteins
+            <span class="small glyphicon glyphicon-question-sign help btn-icon"></span>
+          </li>
+          <li>
+            <a href="#" id="mpa-select-fa-sort-default" data-shade-field="value" data-field="value" data-as="percent">Evidence % </a>
+          </li>
+          <li>
+            <a href="#" data-shade-field="value" data-field="weightedValue" data-as="2pos">Evidence</a>
+          </li>
+        </ul>
+      </div>
+      </div>
+      </div>
+      <div id="fa-filter-warning" class='card-supporting-text' style="display:none;">
+        <strong>Filtered results: </strong>
+        These results are limited to peptides specific to
+        <strong class="mpa-fa-scope">Organism</strong>
+        <span class="mpa-fa-numpepts">all peptides</span>.
+        <button class="btn btn-default" id="fa-undo-filter">Undo</button>
+      </div>
+      <div id="progress-fa-analysis" class="unipept-progress unipept-progress-indeterminate">
+        <div class="progressbar bar bar1" style="width: 0%;"></div>
+        <div class="bufferbar bar bar2" style="width: 100%;"></div>
+        <div class="auxbar bar bar3" style="width: 0%;"></div>
+      </div>
+      <div class="tab-content mpa-fa">
+        <div>
+          <div class="btn-group" id="mpa-fa-advanced">
+            <a class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" id="mpa-fa-advanced-button">
+              <span class="glyphicon glyphicon-cog"></span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right card-supporting-text" id="mpa-fa-advanced-options">
+        
+              <div class="form-group">
+                <label>Compare taxonomy nodes</label>
+                <span class="small glyphicon glyphicon-question-sign help btn-icon"></span>
+                <button disabled=disabled id='snapshot-fa' class='btn btn-default'>
+                  <span class='glyphicon glyphicon-camera pull-left'></span>
+                  Set current view as base
+                </button>
+              </div>
+        
+        
+              <div class="form-group">
+                <label for="mpa-fa-filter-precent">Filtering</label>
+                <span class="small glyphicon glyphicon-question-sign help btn-icon"></span>
+                <div class="input-group" id="mpa-fa-filter-precent-group">
+                  <span class="input-group-addon">≥</span>
+                  <input disabled=disabled type="number" class="form-control" min="0" max="100" autocomplete="off" step="5" value="5" id="mpa-fa-filter-precent"
+                  />
+                  <span class="input-group-addon">% of annotated proteins</span>
+                </div>
+              </div> 
+        
+              <div class="form-group">
+                <label>Favorite annotations</label>
+                <span class="small glyphicon glyphicon-question-sign help btn-icon"></span>
+
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <input id="mpa-fa-only-favorites" type="checkbox" autocomplete="off">
+                  </span>
+                  <label class="form-control" for="mpa-fa-only-favorites">Only show starred</label>
+                </div>
+
+                <button id="mpa-fa-clear-favorites-btn" class="btn btn-default">Clear my favorites</button>
+              </div>
+            </div>
+          </div>
+        </div>
     <div class="tab-pane active" id="goWrapper">
       <div class='card-supporting-text'>
         This panel shows the Gene Ontology annotations that were matched to 
@@ -186,10 +231,6 @@
       </div>
       <div id="ecTable">Please wait while we are building a summary</div>
       <div id="ecTreeView">Please wait while we are building a summary</div></div>
-  </div>
-  <div>
-      <button id="btn-clearFAfavorites" class="btn btn-default btn-xs" style="float:right"><span class="glyphicon glyphicon-star-empty"></span>Clear all stars</button>
-      <button id="btn-onlyShowFAfavorites" class="btn btn-default btn-xs" style="float:right"><span class="glyphicon glyphicon-star"></span>Only show starred</button>
   </div>
 </div>
 
