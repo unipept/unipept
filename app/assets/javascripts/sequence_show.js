@@ -130,15 +130,16 @@ class SPA {
 
         GOTerms.fetch([...usedGoTerms.values()]).then(() => {
             const goCountsPerNamespace = {};
+            const goStatistics = {};
             for (let namespace of GOTerms.NAMESPACES) {
                 goCountsPerNamespace[namespace] = Object.entries(fa.data)
                     .filter(([term, count]) => term.startsWith("GO") && GOTerms.namespaceOf(term) == namespace)
                     .map(([term, count]) => ({code: term, value: count})) || [];
+                goStatistics[namespace] = {totalCount: fa.counts.all, annotatedCount: fa.counts.GO, trustCount: fa.counts.GO};
             }
 
 
-            GOTerms.makeAssured(goCountsPerNamespace,
-                {totalCount: fa.counts.all, annotatedCount: fa.counts.GO, trustCount: fa.counts.GO})
+            GOTerms.makeAssured(goCountsPerNamespace, goStatistics)
                 .then(fa => this.setUpGO(fa));
         });
     }
