@@ -13,6 +13,7 @@ import {toCSVString, downloadDataByForm} from "../utils.js";
  *     An array of settings for each column (see above)
  * @property {Number} [limit=Infinity]
  *     The number of rows to show in collapsed state
+ * @property {Number} [initialLimit=Infinity] Internal
  * @property {function(any, HTMLTableCellElement): any} [more]
  *     function that fills the expanded infoContainer. (Only called once)
  * @property {function(any): string} tooltip
@@ -30,6 +31,7 @@ const DEFAULTS = {
     more: null,
     contents: null,
     limit: Infinity,
+    initialLimit: Infinity,
     tooltip: null,
     tooltipDelay: 500,
     tooltipID: null,
@@ -89,6 +91,7 @@ class AmountTable {
 
         // No collapse row if it would show "1 row left"
         if (this.settings.data.length === this.settings.limit + 1) this.settings.limit++;
+        this.settings.initialLimit = this.settings.limit;
 
         if (this.settings.tooltip !== null) {
             if (this.settings.tooltipID === null) {
@@ -224,6 +227,10 @@ class AmountTable {
      * @param {D3.selection} tbody the body of the table (for content)
      */
     addCollapseRow(tfoot, tbody) {
+        const leftText = () => {
+            return ` Showing ${this.settings.limit} of ${this.settings.data.length} rows`;
+        };
+
         let numleft = Math.max(0, this.settings.data.length - this.settings.limit);
         if (numleft <= 0) return; // No collapse row if all rows shown
         const collapseRow = tfoot.append("tr").attr("class", "collapse-row");
@@ -231,37 +238,70 @@ class AmountTable {
             .attr("colspan", this.header.length)
             .attr("tabindex", "0")
             .attr("role", "button")
-            .html(`<span class="glyphicon glyphicon-chevron-down"></span> Show ${Math.min(numleft, 10)} more rows (${numleft} left)`);
+            .html(`<span class="glyphicon glyphicon-chevron-down"></span>${leftText()} — show ${Math.min(numleft, 10)} more`);
 
         let numClick = 0;
 
-        // Collapse on click or on enter or on space (role button)
-        const toggler = delta => {
-            this.settings.limit = Math.max(0, Math.min( this.settings.limit + delta, this.settings.data.length + delta));
-            numleft = Math.max(0, this.settings.data.length - this.settings.limit);
-            if (numleft > 0) {
-                let cellHtml = `<span class="glyphicon glyphicon-chevron-down"></span> Show ${Math.min(numleft, 10)} more rows (${numleft} left)`;
-                if (numClick >= 3 && numleft > 10) {
-                    cellHtml += "<span style='float:right; opacity:.7;'><kbd>SHIFT+click</kbd> for 100</span>";
-                }
-                collapseCell.html(cellHtml);
-            } else {
-                collapseRow.remove();
-            }
-            this.showTooltip(false);
-            this.buildRow(tbody);
-            this.showTooltip(false);
-            numClick++;
-        };
 
-        const togglerDo = () => {
+        // Add more rows
+        const toggleDown = () => {
             toggler(d3.event.shiftKey ? 100 : 10);
         };
 
-        collapseRow.on("click", togglerDo);
+        // Collapse rows, and scrol table back in to view if needed
+        const toggleUp = () => {
+            d3.event.stopPropagation();
+            toggler(false);
+            this.table.node().scrollIntoView();
+        };
+
+        // Collapse on click or on enter or on space (role button)
+        const toggler = delta => {
+            numClick++;
+            if (delta === false) {
+                this.settings.limit = this.settings.initialLimit;
+                numClick = 0;
+            } else {
+                this.settings.limit = Math.max(0, Math.min(this.settings.limit + delta, this.settings.data.length + delta));
+            }
+            numleft = Math.max(0, this.settings.data.length - this.settings.limit);
+            if (numleft > 0) {
+                let cellHtml = `<span class="glyphicon glyphicon-chevron-down"></span>${leftText()} — `;
+                if (numClick >= 2 && numleft > 10) {
+                    cellHtml += "<kbd>SHIFT+click</kbd> for 100</span>";
+                } else {
+                    cellHtml += `show ${Math.min(numleft, 10)} more`;
+                }
+                collapseCell.html(cellHtml);
+            } else {
+                collapseCell.html("Showing all");
+            }
+
+
+            if (this.settings.limit > this.settings.initialLimit) {
+                collapseCell
+                    .append("span")
+                    .classed("glyphicon glyphicon-chevron-up pull-right", true)
+                    .attr("title", "Collaps row")
+                    .attr("tabindex", "0")
+                    .attr("role", "button")
+                    .on("click", toggleUp)
+                    .on("keydown", () => {
+                        if (d3.event.key === "Enter" || d3.event.key === " ") {
+                            toggleUp();
+                        }
+                    });
+            }
+
+            this.showTooltip(false);
+            this.buildRow(tbody);
+            this.showTooltip(false);
+        };
+
+        collapseRow.on("click", toggleDown);
         collapseRow.on("keydown", () => {
             if (d3.event.key === "Enter" || d3.event.key === " ") {
-                togglerDo();
+                toggleDown();
             }
         });
     }
