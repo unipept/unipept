@@ -134,7 +134,7 @@
         </button>
         <ul class="dropdown-menu dropdown-menu-right" id="mpa-select-fa-sort-items" aria-labelledby="mpa-selet-fa-sort">
           <li class="dropdown-header">Sort by number of peptides in related proteins
-            <span class="small glyphicon glyphicon-question-sign help btn-icon"></span>
+            <span class="small glyphicon glyphicon-question-sign help btn-icon" data-help-id="mpa-help-sorting"></span>
           </li>
           <li>
             <a href="#" data-shade-field="fractionOfPepts" data-field="fractionOfPepts" data-as="percent">Peptides %</a>
@@ -143,7 +143,7 @@
             <a href="#" data-shade-field="fractionOfPepts" data-field="numberOfPepts" data-as="int">Peptides</a>
           </li>
           <li class="dropdown-header">Sort by weighted number of occurrences in related proteins
-            <span class="small glyphicon glyphicon-question-sign help btn-icon"></span>
+            <span class="small glyphicon glyphicon-question-sign help btn-icon" data-help-id="mpa-help-sorting"></span>
           </li>
           <li>
             <a href="#" id="mpa-select-fa-sort-default" data-shade-field="value" data-field="value" data-as="percent">Evidence % </a>
@@ -177,7 +177,7 @@
         
               <div class="form-group">
                 <label>Compare taxonomy nodes</label>
-                <span class="small glyphicon glyphicon-question-sign help btn-icon"></span>
+                <span class="small glyphicon glyphicon-question-sign help btn-icon" data-help-id="mpa-help-snapshot"></span>
                 <button disabled=disabled id='snapshot-fa' class='btn btn-default'>
                   <span class='glyphicon glyphicon-camera pull-left'></span>
                   Set current view as base
@@ -187,7 +187,7 @@
         
               <div class="form-group">
                 <label for="mpa-fa-filter-precent">Filtering</label>
-                <span class="small glyphicon glyphicon-question-sign help btn-icon"></span>
+                <span data-help-id="mpa-help-filtering" class="small glyphicon glyphicon-question-sign help btn-icon"></span>
                 <div class="input-group" id="mpa-fa-filter-precent-group">
                   <span class="input-group-addon">≥</span>
                   <input disabled=disabled type="number" class="form-control" min="0" max="100" autocomplete="off" step="5" value="5" id="mpa-fa-filter-precent"
@@ -198,7 +198,7 @@
         
               <div class="form-group">
                 <label>Favorite annotations</label>
-                <span class="small glyphicon glyphicon-question-sign help btn-icon"></span>
+                <span data-help-id="mpa-help-favorites" class="small glyphicon glyphicon-question-sign help btn-icon"></span>
 
                 <div class="input-group">
                   <span class="input-group-addon">
@@ -246,4 +246,52 @@
   $(function () {
       new MPA(peptides, il, dupes, missed);
   });
+</script>
+
+
+<script id="mpa-help-sorting" type="text/html" data-title="Sorting functional annotations">
+<p>The functional annotations can be sorted on two metrics:</p>
+<ul>
+<li><strong>Peptides</strong>: The absolute number of peptides that are associated with a given functional annotation. Note that the strength of this association is not taken into account, the result can thus be misleading.</li>
+<li><strong>Peptides%</strong>: Like peptides, but the reported value is represented as a percentage indicating the fraction of the total number of peptides.</li>
+<li><strong>Evidence</strong>: A score that indicate the likelihood that a certain annotation is implied by your set of peptides. The maximum value is the number of peptides. This value is similar to peptides, but the contribution of each peptide is weighted by the probability (empirical fraction) that that peptide indicates certain annotation.</li>
+<li><strong>Evidence%</strong>: Like evidence, but the reported value is represented as a percentage indicating the fraction of the sum of all evidence.</li>
+</ul>
+<p>Your “Filter duplicate peptides” setting is taken into account. If it is enabled,</p>
+<h3>So, which one should I use?</h3>
+<p>This depends on what you are trying to accomplish.</p>
+<p>However, we generally advice you to use “<strong>Evidence%</strong>” rather than “Peptides”, as “Evidence” is a less misleading metric.</p>
+<h3>What is evidence exactly?</h3>
+<p>If <var>S</var> is the set of peptide sequences you supplied, the evidence for the annotaion <code>annotation</code> is given by:</p>
+
+
+  <%= image_tag("mpa/evidence-formula.svg", alt:"") %>
+</script>
+<script id="mpa-help-snapshot" type="text/html" data-title="Comparative analysis on the taxonomy">
+<p>To compare the functional annotations between branches of the taxonomic tree. Go to a base view you want to compare to. This can be done by clicking on the sunburst.</p>
+<p>Once you are at the desired base point for a comparison, click <button class='btn btn-xs'><span class="glyphicon glyphicon-camera pull-left"></span>Set current view as base</button> in the advanced settings panel.</p>
+<p>Now you look at the results of another part of the tree. Every time you click in the sunburst, the table will be updated with the sequences found in that part of the taxonomic tree (or lower).</p>
+<p>The tool tip will show you the current and snapshotted value of each annotation</p>
+</script>
+<script id="mpa-help-filtering" type="text/html" data-title="Functional annotation filtering">
+The filtering functionality in the baba
+<p>
+  To determine what functional annotations to assign to a peptide we look at al 
+  the UniProt entries in which our peptide occurs. In UniProt proteins do have a
+  functional annotation.
+  <%= image_tag("mpa/proteoms.svg", class:"img-responsive") %>
+</p>
+<p>
+  We split up these proteins using tripsin, and the tags are inherited
+  <%= image_tag("mpa/matches.svg" , class:"img-responsive") %>
+</p>
+<p>
+  We now count the occurence of each tag.
+  <%= image_tag("mpa/annotations.svg" , class:"img-responsive") %>
+</p>
+
+</script>
+<script id="mpa-help-favorites" type="text/html" data-title="Functional annotation filtering">
+  By clicking on the <button class="btn btn-default btn-xs"><span class="glyphicon glyphicon-star"></span></button> next
+  to a functional annotaion, that annotaion will be added to your favorites.
 </script>

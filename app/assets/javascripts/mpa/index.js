@@ -8,9 +8,7 @@ import {showNotification} from "../notifications.js";
 import {addCopy, downloadDataByForm, logToGoogle, numberToPercent, stringTitleize, toCSVString, triggerDownloadModal, showError} from "../utils.js";
 import {Dataset} from "./dataset.js";
 import {constructSearchtree} from "./searchtree.js";
-
 /* eslint require-jsdoc: off */
-
 
 /**
  * @typedef MPADisplaySettings
@@ -50,6 +48,7 @@ class MPA {
         this.addDataset(peptides).catch(error => this.showError(error));
         this.setUpForm(peptides);
         this.setUpButtons();
+        this.setUpHelp();
         this.setUpSaveImage();
         this.setUpFullScreen();
         this.setUpActionBar();
@@ -830,6 +829,18 @@ class MPA {
         });
     }
 
+    setUpHelp() {
+        $(".help[data-help-id]").click(function (e) {
+            let title,
+                content;
+            e.stopPropagation();
+            e.preventDefault();
+            const $helpContent = $("#" + $(this).data("help-id"));
+            title = $helpContent.data("title");
+            content = $helpContent.html();
+            showInfoModal(title, content, {wide: true});
+        });
+    }
     setUpSaveImage() {
         $("#buttons").prepend("<button id='save-btn' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save as image</button>");
         $("#save-btn").click(() => this.saveImage());
