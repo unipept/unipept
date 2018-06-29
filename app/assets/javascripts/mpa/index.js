@@ -315,8 +315,7 @@ class MPA {
 
         $container.append($dlbtn);
 
-        const $treediv = $container.append("<div></div>");
-        dataset.getFATree(code).then(faTree => $treediv.treeview(faTree, {
+        dataset.getFATree(code).then(faTree => $container.treeview(faTree, {
             width: width,
             height: 310,
             getTooltip: this.tooltipContent,
@@ -382,7 +381,7 @@ class MPA {
                     exported: false,
                 },
             ],
-            more: (d, container) => this.faMoreinfo(d, d.code, container, 550),
+            more: (d, container) => this.faMoreinfo(d, d.code, container, 535),
             tooltip: d => this.tooltipGO(d.code, goResultset, oldGoResultset),
             tooltipID: "#tooltip",
         }).draw();
@@ -628,7 +627,7 @@ class MPA {
                     exported: false,
                 },
             ],
-            more: (d, container) => this.faMoreinfo(d, "EC:" + d.code, container, 874),
+            more: (d, container) => this.faMoreinfo(d, "EC:" + d.code, container, 840),
             tooltip: d => this.tooltipEC(d.code, ecResultSet, oldEcResultSet),
             tooltipID: "#tooltip",
         }).draw();

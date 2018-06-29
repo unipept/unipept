@@ -185,7 +185,7 @@ class AmountTable {
             if (shade !== false) {
                 cell.style("background-image", d => {
                     const prec = shade(d);
-                    return `linear-gradient(to right, transparent ${prec}%, white ${prec}%)`;
+                    return `linear-gradient(to right, #dddddd ${prec}%, transparent ${prec}%)`;
                 });
                 cell.classed("shaded-cell", true);
             }
@@ -378,11 +378,15 @@ class AmountTable {
                     const td = tr.insertCell();
                     td.colSpan = that.header.length;
 
+                    const tdContainer = document.createElement("div");
+                    td.appendChild(tdContainer);
+                    tdContainer.classList.add("amounttable-expandrow-content");
+
                     this.classList.add("amounttable-expanded");
                     this.attributes["aria-expanded"].nodeValue = "true";
 
                     this.amountTableExpandRow = tr;
-                    that.settings.more.call(td, d, td);
+                    that.settings.more.call(tdContainer, d, tdContainer);
 
                     this.parentNode.insertBefore(tr, this.nextSibling);
                 }
