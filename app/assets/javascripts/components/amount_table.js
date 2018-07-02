@@ -164,7 +164,7 @@ class AmountTable {
         lastCell
             .append("button")
             .classed("btn btn-default btn-xs btn-animate amounttable-download", true)
-            .html("<span class=\"glyphicon glyphicon-download down\"></span> Save CSV")
+            .html("<span class=\"glyphicon glyphicon-download down\"></span> Save table as CSV")
             .on("click", () => this.downloadCSV());
     }
 
