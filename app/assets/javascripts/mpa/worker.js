@@ -1,4 +1,5 @@
 import "babel-polyfill"; // for async await webpacker support
+import "whatwg-fetch";
 // TODO: also include other pollyfills?
 import GOTerms from "../fa/goterms.js";
 import ECNumbers from "../fa/ecnumbers.js";
@@ -359,7 +360,7 @@ function summarizeFa(extract, countExtractor, trustExtractor, cutoff = 50, seque
  * @return {object} GOTerms.goData to perform `GOTerms.ingestData`
  */
 export function getGoData() {
-    return GOTerms.goData;
+    return Array.from(GOTerms.goData.entries);
 }
 
 /**
