@@ -752,6 +752,7 @@ class MPA {
 
 
         const $sortOptions = $("#mpa-select-fa-sort-items>li>a");
+        const $sortNameContainer = $("#mpa-select-fa-sort-name");
         const setFaSort = ($selected, updateView = true) => {
             const formatters = {
                 "int": x => x.toString(),
@@ -770,17 +771,16 @@ class MPA {
 
             $sortOptions.removeClass("active");
             $selected.addClass("active");
+            $sortNameContainer.text($selected.text());
 
             if (updateView) this.setUpFAVisualisations(this.datasets[0].fa, this.datasets[0].baseFa);
         };
         setFaSort($("#mpa-select-fa-sort-default"), false);
 
-        const $sortNameContainer = $("#mpa-select-fa-sort-name");
         $sortOptions.on("click", function (e) {
             e.preventDefault();
             const $this = $(this);
             setFaSort($this);
-            $sortNameContainer.text($this.text());
         });
 
         const $onlyFavoritesCheckbox = $("#mpa-fa-only-favorites");
