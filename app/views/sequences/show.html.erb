@@ -9,7 +9,7 @@
   <p class="lead"><span class="initialism"><%= @original_sequence %></span> was found in <b><%= @entries.size %></b> <%= 'UniProt entry'.pluralize(@entries.size) %> with a lowest common ancestor of <b><%= @lca_taxon.name %></b>.</p>
 
 <div class="row">
-<div class="col-xs-6">
+<div class="col-xs-6" id="sequences-content">
    <h3>Taxonomy</h3>
   <p>
   The <strong>lowest common ancestor</strong> was 
@@ -139,14 +139,14 @@
         </div>
         </div>
         <div class="tab-pane" id="ec">
-          <div class="buttons-extra">
-            <button id='save-btn-ec' disabled="disabled" class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>
-          </div>
           <div class="panel-heading">
           At least one EC number was assigned to <%=@fa_summary['num']['EC'] %> of the <%=@fa_summary['num']['all']%> matched proteins (<%='%.1f' % (100*@fa_summary['num']['EC'].fdiv(@fa_summary['num']['all']))%>%).
           </div>
           <div id="ec-table">Please wait while we are building a summary</div>
-          <div id="ec-treeview">Please wait while we are building a summary</div>
+          <div id="ecTreeView">
+            <button id='save-btn-ec' disabled="disabled" class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>
+            <div>Please wait while we are building a summary</div>
+          </div>
         </div>
       </div>
     </div>

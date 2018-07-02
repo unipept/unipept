@@ -180,7 +180,7 @@ class SPA {
             this.setUpEcTable(ecResultset);
         } else {
             $("#ec-table").html("<span>No EC code annotations found.</span>");
-            $("#ec-treeview").remove();
+            $("#ecTreeView").remove();
         }
         $(".ecNumberLink")
             .mouseenter(e => {
@@ -197,7 +197,7 @@ class SPA {
      * @return {TreeView} The created treeview
      */
     setUpECTree(ecResultSet) {
-        const tree = $("#ec-treeview")
+        const tree = $("#ecTreeView div")
             .empty()
             .treeview(ecResultSet.treeData(), {
                 width: panelWidth,
@@ -217,13 +217,14 @@ class SPA {
                     tip += "</div>";
                     return tip;
                 },
+                enableAutoExpand: 0.8,
             });
 
         // save tree button
         $("#save-btn-ec")
             .click(() => {
                 logToGoogle("Single Peptide", "Save EC Image");
-                triggerDownloadModal("#ec-treeview svg", null, "unipept_treeview");
+                triggerDownloadModal("#ecTreeView svg", null, "unipept_treeview");
             })
             .attr("disabled", false);
 
