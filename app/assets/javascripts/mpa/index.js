@@ -525,7 +525,7 @@ class MPA {
      * @return {TreeView} The created treeview
      */
     setUpECTree(ecResultSet) {
-        const $container = $("#ecTreeView");
+        const $container = $("#ecTreeView div");
         $("#save-btn-ec").unbind("click");
         $container.empty();
         if (ecResultSet.getTrust().annotatedCount > 0) {

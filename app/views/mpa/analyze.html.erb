@@ -221,16 +221,18 @@
       <div id="goPanel">Please wait while we are preparing your data...&nbsp;</div>
     </div>
     <div class="tab-pane" id="ecWrapper">
-      <div class="buttons-single">
-        <button id='save-btn-ec' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>
-      </div>
       <div class='card-supporting-text'>
         This panel shows the Enzyme Commission numbers that were matched to 
         your peptides. <span id="ec-summary"></span>
         Click on a row in a table to see a taxonomy tree that highlights occurrences.
       </div>
       <div id="ecTable">Please wait while we are building a summary</div>
-      <div id="ecTreeView">Please wait while we are building a summary</div></div>
+      <div id="ecTreeView">
+        <button id='save-btn-ec' disabled=disabled class='btn btn-default btn-xs btn-animate'>
+          <span class='glyphicon glyphicon-download down'></span> Save tree as image
+        </button>
+        <div>Please wait while we are building a summary</div>
+      </div></div>
   </div>
 </div>
 
