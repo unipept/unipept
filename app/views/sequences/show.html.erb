@@ -12,15 +12,15 @@
 <div class="col-xs-6" id="sequences-content">
    <h3>Taxonomy</h3>
   <p>
-  The <strong>lowest common ancestor</strong> was 
-  <%= link_to @lca_taxon.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + @lca_taxon.id.to_s, :target => "_blank", :title => @lca_taxon.rank %> (<%=@lca_taxon.rank%>).
+  The <strong>lowest common ancestor</strong> is 
+  <%= link_to @lca_taxon.name, "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + @lca_taxon.id.to_s, :target => "_blank", :title => @lca_taxon.rank %> (<%=@lca_taxon.rank%>).
   </p>
   <p>The <strong>common lineage</strong> for all these proteins is: <% if @common_lineage.length > 1 %><br><% end %>
-  <%= raw @common_lineage.length==0 ? "nothing" : @common_lineage.map{|t| link_to t.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + t.id.to_s, :target => "_blank", :title => t.rank }.join(" > ") %>
+  <%= raw @common_lineage.length==0 ? "nothing" : @common_lineage.map{|t| link_to t.name, "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + t.id.to_s, :target => "_blank", :title => t.rank }.join(" > ") %>
   </p>
 </div>
 <div class="col-xs-6">
-   <h3>Functionality</h3>
+   <h3>Function</h3>
    <% {"GO" => "GO Term", "EC" => "EC number"}.each do |field,name| %>
    <p>
     <% case @fa_summary['num'][field] 
@@ -51,14 +51,14 @@
       </div>
     </div>
     <div class='card-supporting-text'>
-      <div class="tab-content">
+      <div class="tab-content" id="sequences-content">
         <div class="tab-pane active" id="proteins">
           <div class="buttons-extra">
             <button id="clipboard-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-copy"></span> Copy to clipboard</button>
             <button id="open-uniprot" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-new-window"></span> Open in UniProt</button>
           </div>
           <div class="panel-heading">
-          This table shows the UniProt entries whose protein sequence contains the tryptic peptide.
+          This table shows the UniProt entries whose protein sequence contains an exact match of the tryptic peptide.
           </div> 
           <table class="table table-condensed table-hover protein-info">
             <thead>
@@ -96,13 +96,13 @@
         <div class="tab-pane" id="lineage-tree">
           <div id="buttons-single" class="buttons-extra"></div>
           <div class="panel-heading">
-          This interactive tree bundles the complete taxonomic lineages of all UniProt entries whose protein sequence contains undefined. You can click on nodes to expand them, scroll to zoom and drag to move the tree.
+          This interactive tree bundles the complete taxonomic lineages of all UniProt entries whose protein sequence contains the tryptic peptide. You can click on nodes to expand them, scroll to zoom and drag to move the tree.
           </div> 
           <div id="lineageTree"></div>
         </div>
         <div class="tab-pane" id="lineage-table">
           <div class="panel-heading">
-          This table shows the complete taxonomic lineages of all taxa associated with the UniProt entries whose protein sequence contains undefined. The first column contains the taxon name extracted from the UniProt entry, followed by columns representing taxonomic ranks ordered from superkingdom on the left to forma on the right.
+          This table shows the complete taxonomic lineages of all taxa associated with the UniProt entries whose protein sequence contains the tryptic peptide. The first column contains the taxon name extracted from the UniProt entry, followed by columns representing taxonomic ranks ordered from superkingdom on the left to forma on the right.
           </div> 
           <div id="sequence_table">
             <% colors = Hash.new %>
@@ -122,7 +122,7 @@
                   <% for rank in lineage do%>
                     <% if !rank.nil? %>
                       <% colors.store(rank.id, "c"+(i%30).to_s) if !colors.has_key?(rank.id) %>
-                      <td class="<%= colors[rank.id] %>"><%= link_to rank.name, "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + rank.id.to_s, :target => "_blank", :title => "Open in NCBI" %></td>
+                      <td class="<%= colors[rank.id] %>"><%= link_to rank.name, "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + rank.id.to_s, :target => "_blank", :title => "Open in NCBI" %></td>
                     <% else %>
                       <td></td>
                     <% end %>

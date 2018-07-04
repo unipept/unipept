@@ -165,7 +165,7 @@ class SPA {
 
         if (ecResultSet != null) {
             const count = ecResultSet.valueOf(ecNumber);
-            result += `<div class="tooltip-fa-text">Assigned to ${count} of ${ecResultSet.getTrust().annotatedCount} annotated matched proteins (${numberToPercent(ecResultSet.valueOf(ecNumber) / ecResultSet.getTrust().annotatedCount, 1)})</div>`;
+            result += `<div class="tooltip-fa-text">Assigned to ${count} of ${ecResultSet.getTrust().annotatedCount} matched proteins with a EC annotation (${numberToPercent(ecResultSet.valueOf(ecNumber) / ecResultSet.getTrust().annotatedCount, 1)})</div>`;
         }
         return result;
     }
@@ -211,7 +211,7 @@ class SPA {
                     if (d.data.self_count == 0) {
                         tip += "no specific annotations";
                     } else {
-                        tip += `Assigned to ${d.data.self_count} of ${ecResultSet.getTrust().annotatedCount} annotated matched proteins (${numberToPercent(d.data.self_count / ecResultSet.getTrust().annotatedCount, 1)})`;
+                        tip += `Assigned to ${d.data.self_count} of ${ecResultSet.getTrust().annotatedCount} matched proteins with a EC annotation (${numberToPercent(d.data.self_count / ecResultSet.getTrust().annotatedCount, 1)})`;
                     }
 
                     tip += "</div>";
@@ -286,7 +286,7 @@ class SPA {
 
         if (goResultSet != null) {
             const count = goResultSet.valueOf(goTerm);
-            result += `<div class="tooltip-fa-text">Assigned to ${count} of ${goResultSet.getTrust().annotatedCount} annotated matched proteins (${numberToPercent(goResultSet.valueOf(goTerm) / goResultSet.getTrust().annotatedCount, 1)})</div>`;
+            result += `<div class="tooltip-fa-text">Assigned to ${count} of the ${goResultSet.getTrust().annotatedCount} matched proteins with a GO annotation (${numberToPercent(goResultSet.valueOf(goTerm) / goResultSet.getTrust().annotatedCount, 1)})</div>`;
         }
         return result;
     }
