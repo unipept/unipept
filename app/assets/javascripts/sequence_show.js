@@ -146,7 +146,7 @@ class SPA {
 
     /**
      * Generate tooltip content for an EC number
-     * @param  {string}    ecNumber   The Ec number to generate a tooltip for
+     * @param  {string}    ecNumber   The EC number to generate a tooltip for
      * @param  {ECNumbers} [ecResultSet=null]  A `ECNumbers` summary
      * @return {string}    HTML for the tooltip
      */
@@ -253,7 +253,7 @@ class SPA {
                     shade: d => 100 * ecResultSet.valueOf(d.code) / numAnnotated,
                 },
                 {
-                    title: "EC-number",
+                    title: "EC number",
                     html: d => {
                         const spans = d.code.split(".").map(e => `<span>${e}</span>`).join(".");
                         return `<a href="https://enzyme.expasy.org/EC/${d.code}" class="ec-number-formatted" target="_blank">${spans}</a>`;
@@ -341,7 +341,7 @@ class SPA {
                     shade: d => 100 * goResultset.valueOf(d.code) / goResultset.getTrust().annotatedCount,
                 },
                 {
-                    title: "GO Term",
+                    title: "GO term",
                     html: d => `<a href="https://www.ebi.ac.uk/QuickGO/term/${d.code}" target="_blank">${d.code}</a>`,
                     text: d => d.code,
                     style: {"width": "7em"},

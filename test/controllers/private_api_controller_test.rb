@@ -9,7 +9,7 @@ class PrivateApiControllerTest < ActionController::TestCase
     assert_equal JSON.parse('[{"id":1,"name":"species1","rank":"species"},{"id":2,"name":"kingdom1","rank":"kingdom"}]'), JSON.parse(response.body)
   end
 
-  test 'should get goterms' do
+  test 'should get go terms' do
     @request.headers['Content-Type'] = 'application/json'
     post :goterms, params: { goterms: ["go:12345"] }
     assert_response :success

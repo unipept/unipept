@@ -44,13 +44,13 @@ Taxons
  - ***parent***: The taxon id of the parent. Refers to another entry
    in this table (or itself, in case of the root taxon).
 
-EC Numbers
+EC numbers
 ----------
 - ***id***: A self-assigned id. Integral, incremental, no gaps.
-- ***code***: The ec number in the form of x.x.x.x.
-- ***name***: The full name of this ec number.
+- ***code***: The EC number in the form of x.x.x.x.
+- ***name***: The full name of this EC number.
 
-GO Terms
+GO terms
 ----------
 - ***id***: A self-assigned id. Integral, incremental, no gaps.
 - ***code***: The go term itself

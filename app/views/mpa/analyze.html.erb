@@ -123,8 +123,8 @@
 <div class='card card-nav'>
   <div class='card-title card-title-colored'>
     <ul class="nav nav-tabs visualisations" id="fa-tabs">
-      <li class="active"><a href="#goWrapper" data-toggle="tab">GO Terms</a></li>
-      <li><a href="#ecWrapper" data-toggle="tab">EC Numbers</a></li>
+      <li class="active"><a href="#goWrapper" data-toggle="tab">GO terms</a></li>
+      <li><a href="#ecWrapper" data-toggle="tab">EC numbers</a></li>
     </ul>
     <div class="nav-right">
       <div class="dropdown pull-right">
@@ -276,13 +276,21 @@
 <p>The tool tip will show you the current and snapshotted value of each annotation</p>
 </script>
 <script id="mpa-help-filtering" type="text/html" data-title="Functional annotation filtering">
-The filtering functionality in the baba
+<p>
+By default Unipept does not show all annotaions it finds. The hidden annotations
+are those annotaions that are underrepresented. In order to understand what 
+annotaions are filtered we need to explain how Unipept works at a hight level.
+</p>
+<p>
+The most important problem we face when deriving the functional annotaions that
+can be assigned to a set of peptides (the input), is that te 
+</p>
 <p>
   To determine what functional annotations to assign to a peptide we look at al 
   the UniProt entries in which our peptide occurs. In UniProt proteins do have a
-  functional annotation.
   <%= image_tag("mpa/proteoms.svg", class:"img-responsive") %>
 </p>
+  functional annotation.
 <p>
   We split up these proteins using tripsin, and the tags are inherited
   <%= image_tag("mpa/matches.svg" , class:"img-responsive") %>

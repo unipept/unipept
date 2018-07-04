@@ -31,7 +31,7 @@ export default class GOTerms extends GroupedFA {
      * @access private
      */
     constructor(data, trust) {
-        super("GO Terms", data, t => GOTerms.namespaceOf(t, null), trust);
+        super("GO terms", data, t => GOTerms.namespaceOf(t, null), trust);
     }
 
     // -------------- Factories ------------------------------
@@ -108,7 +108,7 @@ export default class GOTerms extends GroupedFA {
 
     /**
      * Add GO terms to the global map
-     * @param {GOInfo[]} newTerms list of new GO Terms
+     * @param {GOInfo[]} newTerms list of new GO terms
      * @param {string} [namespace = null] namsepace to use if not given
      * @access private
      */

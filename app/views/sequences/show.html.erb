@@ -21,7 +21,7 @@
 </div>
 <div class="col-xs-6">
    <h3>Function</h3>
-   <% {"GO" => "GO Term", "EC" => "EC number"}.each do |field,name| %>
+   <% {"GO" => "GO term", "EC" => "EC number"}.each do |field,name| %>
    <p>
     <% case @fa_summary['num'][field] 
        when 0 %>
@@ -45,8 +45,8 @@
           <li class="active"><a href="#proteins" data-toggle="tab">Protein matches</a></li>
           <li><a href="#lineage-tree" id="lineage-tree-tab" data-toggle="tab">Lineage tree</a></li>
           <li><a href="#lineage-table" id="lineage-table-tab" data-toggle="tab">Lineage table</a></li>
-          <li><a href="#go" data-toggle="tab">GO Terms</a></li>
-          <li><a href="#ec" data-toggle="tab">EC Numbers</a></li>
+          <li><a href="#go" data-toggle="tab">GO terms</a></li>
+          <li><a href="#ec" data-toggle="tab">EC numbers</a></li>
         </ul>
       </div>
     </div>
@@ -66,7 +66,7 @@
                 <th class="id">Uniprot ID</th>
                 <th class="name">Name</th>
                 <th class="organism">Organism</th>
-                <th class="ec">EC number</th>
+                <th class="ec">EC numbers</th>
                 <th class="go">GO terms</th>
               </tr>
             </thead>

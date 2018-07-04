@@ -43,7 +43,7 @@ describe("/mpa (simple)",
         it("should have a treeview", textTest("#mpa-treeview"));
         it("should have a searchtree", textTest("#searchtree"));
 
-        it("should allow downloading GO-term data summary", async () => {
+        it("should allow downloading GO term data summary", async () => {
             const downloadPromise = checkDownload(page);
             await page.click("#goPanel button.amounttable-download");
             const downloaded = await downloadPromise;
@@ -67,7 +67,7 @@ describe("/mpa (simple)",
             expect(downloaded).toHaveProperty("data");
             const downloadedRows = downloaded.data.split("\r\n");
             expect(downloadedRows.length).toBeGreaterThanOrEqual(1 /* header*/ + 2 /* results*/ + 1 /* newline*/);
-            expect(downloadedRows[0]).toBe("Evidence (%),EC-Number,Name");
+            expect(downloadedRows[0]).toBe("Evidence (%),EC number,Name");
             expect(downloadedRows[1]).toContain("DNA-directed RNA polymerase");
             expect(downloadedRows[1]).toContain("2.7.7.6");
         });
@@ -118,7 +118,7 @@ describe("/mpa (gut7)",
         it("should have a treeview", textTest("#mpa-treeview"));
         it("should have a searchtree", textTest("#searchtree"));
 
-        it("should allow downloading GO-term data summary", async () => {
+        it("should allow downloading GO term data summary", async () => {
             const downloadPromise = checkDownload(page);
             await page.click("#goPanel button.amounttable-download");
             const downloaded = await downloadPromise;
@@ -141,7 +141,7 @@ describe("/mpa (gut7)",
             expect(downloaded).toHaveProperty("headers.content-type", expect.stringMatching("text/csv"));
             expect(downloaded).toHaveProperty("data");
             const downloadedRows = downloaded.data.split("\r\n");
-            expect(downloadedRows[0]).toBe("Evidence (%),EC-Number,Name");
+            expect(downloadedRows[0]).toBe("Evidence (%),EC number,Name");
             expect(downloadedRows.length).toBeGreaterThanOrEqual(5);
             expect(downloadedRows[1]).toContain("DNA-directed RNA polymerase");
             expect(downloadedRows[1]).toContain("2.7.7.6");

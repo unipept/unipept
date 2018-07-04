@@ -255,7 +255,7 @@ class MPA {
         const go = fa.getGroup("GO");
         const goOld = oldFa === null ? null : oldFa.getGroup("GO");
 
-        $("#go-summary").html(this.trustLine(go, "GO Term"));
+        $("#go-summary").html(this.trustLine(go, "GO term"));
         const goPanel = d3.select("#goPanel");
         goPanel.html("");
         for (let variant of GOTerms.NAMESPACES) {
@@ -488,7 +488,7 @@ class MPA {
         /** @type {ECNumbers} */
         // @ts-ignore
         const faEC = fa.getGroup("EC");
-        $("#ec-summary").html(this.trustLine(faEC, "EC Number"));
+        $("#ec-summary").html(this.trustLine(faEC, "EC number"));
 
         this.setUpECTree(faEC);
         this.setUpECTable(fa, oldFa);
@@ -496,7 +496,7 @@ class MPA {
 
     /**
      * Generate a tooltip for an EC number
-     * @param  {string}    ecNumber   The Ec number to generate a tooltip for
+     * @param  {string}    ecNumber   The EC number to generate a tooltip for
      * @param  {FunctionalAnnotations} [ecResultSet=null]  A `ECNumbers` summary
      * @param  {FunctionalAnnotations} [oldEcResultSet=null]  A `ECNumbers` summary snapshot
      * @return {string}    HTML for the tooltip
@@ -605,7 +605,7 @@ class MPA {
                     shade: d => 100 * d.value,
                 },
                 {
-                    title: "EC-Number",
+                    title: "EC number",
                     html: d => {
                         const spans = d.code.split(".").map(e => `<span>${e}</span>`).join(".");
                         return `<a href="https://enzyme.expasy.org/EC/${d.code}" class="ec-number-formatted" target="_blank">${spans}</a>`;
