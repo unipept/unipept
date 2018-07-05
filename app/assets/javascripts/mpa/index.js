@@ -290,11 +290,15 @@ class MPA {
     addFADownloadBtn(cell, codeFn) {
         const downloadLink = cell.append("button");
         downloadLink.classed("btn btn-default btn-xs", true)
-            .html("<span class='glyphicon glyphicon-download-alt'></span>")
+            .attr("title", "Download CSV of the matched peptides")
+            .html("<span class='glyphicon glyphicon-download'></span>")
             .on("click", d => {
                 d3.event.stopPropagation();
                 this.downloadPeptidesFor(codeFn(d));
             });
+
+        // HACK: d3 to jQuery
+        $(downloadLink[0]).tooltip();
     }
 
     /**
