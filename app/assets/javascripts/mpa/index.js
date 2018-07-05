@@ -316,14 +316,16 @@ class MPA {
 
         $container.append($dlbtn);
 
+        const highlightColor = "#ffc107";
+        const highlightColorFunc = d => (d.included ? highlightColor : "lightgrey");
         dataset.getFATree(code).then(faTree => $container.treeview(faTree, {
             width: width,
             height: 310,
             getTooltip: this.tooltipContent,
-            colors: "#ffc107",
-            linkStrokeColor: ({target: d}) => (d.included ? d.color || "lightgrey" : "lightgrey"),
-            nodeStrokeColor: d => (d.included ? d.color || "grey" : "lightgrey"),
-            nodeFillColor: d => (d.included ? d.color || "grey" : "lightgrey"),
+            colors: highlightColor,
+            linkStrokeColor: ({target: d}) => highlightColorFunc(d),
+            nodeStrokeColor: highlightColorFunc,
+            nodeFillColor: highlightColorFunc,
             enableAutoExpand: 0.3,
         }));
 
