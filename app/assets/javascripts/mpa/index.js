@@ -723,14 +723,6 @@ class MPA {
             setFaSort($this);
         });
 
-        $("#snapshot-fa").click(() => {
-            this.datasets[0].setBaseFA();
-            showNotification("Saved for comparing!", {
-                autoHide: true,
-                loading: false,
-            });
-        });
-
         $("#fa-undo-filter").click(() => this.redoFAcalculations(undefined, undefined, 0));
 
 
