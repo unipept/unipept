@@ -655,7 +655,7 @@ class MPA {
         if (total === matches) {
             $searchIntro.text(`We managed to match all of your ${total} peptides.`);
         } else {
-            $searchIntro.html(`We managed to match ${matches} of your ${total} peptides. Unfortunately, <a href="#">${total - matches} peptides</a> couldn't be found.`);
+            $searchIntro.html(`We managed to match ${matches} of your ${total} peptides.<br>Unfortunately, <a href="#">${total - matches} peptides</a> couldn't be found.`);
             $searchIntro.find("a").on("click", e => {
                 e.preventDefault();
                 const missed = dataset.getMissedPeptides();
