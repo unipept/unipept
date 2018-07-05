@@ -13,7 +13,7 @@
     <div class="auxbar bar bar3" style="width: 0%;"></div>
   </div>
   <div class='card-supporting-text'>
-    <div class='col-md-6'>
+    <div class='col-xs-6'>
         <span id="search-intro">Please wait while we are preparing your data...</span>
         <hr>
         <div class="checkbox">
@@ -30,7 +30,7 @@
           <%= button_tag(raw("<span class='glyphicon glyphicon-download down'></span> Download results"), :class => "btn btn-animate", :id =>"mpa-download-results", :"data-loading-text" => "Loading...") %>
         </div>
     </div>
-    <div class='col-md-6'>
+    <div class='col-xs-6'>
       <div id="search_elements" class='form-group'>
         <%= text_area_tag(:qs, nil, rows: 8, spellcheck: false, class: "form-control", disabled: true) %>
       </div>
