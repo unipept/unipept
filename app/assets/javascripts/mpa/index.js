@@ -595,21 +595,23 @@ class MPA {
         if (total === matches) {
             $searchIntro.text(`We managed to match all of your ${total} peptides.`);
         } else {
-            $searchIntro.html(`We managed to match ${matches} of your ${total} peptides.<br>Unfortunately, <a href="#">${total - matches} peptides</a> couldn't be found.`);
-            $searchIntro.find("a").on("click", e => {
-                e.preventDefault();
-                const missed = dataset.getMissedPeptides();
-                const $content = $(`
-                <div class="card-supporting-text">
-                <button id="clipboard-missing" class="btn btn-default pull-right"><span class="glyphicon glyphicon-copy"></span> Copy to clipboard</button>
-                Sorry, we didn't manage to find some of your peptides. You can BLAST them by clicking the links or copy them by
-                using the button on the right.
-                </div>
-                <ul>${this.getBlastLinksForMissing(missed)}</ul>
-                `);
-                const $modal = showInfoModal(`${total - matches} Missed peptides`, $content);
-                addCopy($content.find("button")[0], () => missed.join("\n"), "Copy list to clipboard", $modal[0]);
-            });
+            $searchIntro.html(`We managed to match ${matches} of your ${total} peptides.<br>Unfortunately, <a href="#" title="Show list of mismatches">${total - matches} peptides</a> couldn't be found.`);
+            $searchIntro.find("a")
+                .tooltip()
+                .on("click", e => {
+                    e.preventDefault();
+                    const missed = dataset.getMissedPeptides();
+                    const $content = $(`
+                    <div class="card-supporting-text">
+                    <button id="clipboard-missing" class="btn btn-default pull-right"><span class="glyphicon glyphicon-copy"></span> Copy to clipboard</button>
+                    Sorry, we didn't manage to find some of your peptides. You can BLAST them by clicking the links or copy them by
+                    using the button on the right.
+                    </div>
+                    <ul>${this.getBlastLinksForMissing(missed)}</ul>
+                    `);
+                    const $modal = showInfoModal(`${total - matches} Missed peptides`, $content);
+                    addCopy($content.find("button")[0], () => missed.join("\n"), "Copy list to clipboard", $modal[0]);
+                });
         }
     }
 
