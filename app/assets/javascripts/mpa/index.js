@@ -212,8 +212,9 @@ class MPA {
 
         this._redoFAcalculationsTimeout = setTimeout(() => {
             if (id > 0) {
+                const taxonData = dataset.tree.nodes.get(id);
                 sequences = dataset.tree.getAllSequences(id);
-                $(".mpa-fa-scope").text(name);
+                $(".mpa-fa-scope").text(`${taxonData.name} (${taxonData.rank})`);
                 $(".mpa-fa-numpepts").text("");
                 $("#fa-filter-warning").show();
             } else {
@@ -223,7 +224,7 @@ class MPA {
             dataset.reprocessFA(percent, sequences)
                 .then(() => {
                     const num = dataset.fa.getTrust().totalCount;
-                    $(".mpa-fa-numpepts").text(` (${num} peptide${num === 1 ? "" : "s"})`);
+                    $(".mpa-fa-numpepts").text(`${num} peptide${num === 1 ? "" : "s"}`);
                     this.setUpFAVisualisations(dataset.fa, dataset.baseFa);
                     this.enableProgressBar(false, false, "#progress-fa-analysis");
                     $("#snapshot-fa").prop("disabled", false);
