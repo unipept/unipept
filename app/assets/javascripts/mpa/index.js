@@ -132,45 +132,6 @@ class MPA {
         this.searchTree = constructSearchtree(tree, this.searchSettings.il);
     }
 
-
-    /**
-     * @return {string[]} list of saved terms
-     */
-    getFAFavorite() {
-        return JSON.parse(localStorage.getItem("saved.fa") || "[]");
-    }
-
-    /**
-     * @param {string[]} favorites  (new) list of saved terms
-     */
-    setFAFavorite(favorites) {
-        localStorage.setItem("saved.fa", JSON.stringify(favorites));
-    }
-
-    /**
-     * Add an annotaion to the favorites
-     * @param {string} code The code to add/remove form favorites
-     * @param {boolean} add true = add, false = delete
-     */
-    addFAFavorite(code, add) {
-        let notification = "Somthing went wrong.";
-        let curFavs = this.getFAFavorite();
-        if (add) {
-            if (!curFavs.includes(code)) {
-                curFavs.push(code);
-            }
-            notification = "Starred " + code;
-        } else {
-            curFavs = curFavs.filter(x => x !== code);
-            notification = "Unstarred " + code;
-        }
-        this.setFAFavorite(curFavs);
-        showNotification(notification, {
-            autoHide: true,
-            loading: false,
-        });
-    }
-
     /**
      * Creates a line indicating the trust of the functioan annotations
      * @param {FunctionalAnnotations} fa
@@ -269,24 +230,6 @@ class MPA {
         }
     }
 
-
-    addFAFavoriteBtn(cell, codeFn) {
-        const starred = this.getFAFavorite();
-
-        const fav = cell.append("button");
-        fav.classed("btn btn-default btn-xs save-fa-btn", true);
-        fav.classed("saved", d => starred.includes(codeFn(d)));
-
-        const that = this;
-        fav.on("click", function (d) {
-            d3.event.stopPropagation();
-            const classes = this.classList;
-            classes.toggle("saved");
-            that.addFAFavorite(codeFn(d), classes.contains("saved"));
-        });
-        fav.html("<span class='glyphicon glyphicon-star'></span>");
-    }
-
     addFADownloadBtn(cell, codeFn) {
         const downloadLink = cell.append("button");
         downloadLink.classed("btn btn-default btn-xs", true)
@@ -349,12 +292,8 @@ class MPA {
     setUpGoTable(goResultset, target, oldGoResultset = null) {
         const sortOrder = this.displaySettings.sortFA;
         const tablepart = target.append("div").attr("class", "col-xs-8");
-        const starred = this.getFAFavorite();
 
         let data = goResultset.getSorted(sortOrder.sortFunc);
-        if (this.displaySettings.onlyStarredFA) {
-            data = data.filter(x => starred.includes(x.code));
-        }
         new AmountTable({
             title: `GO terms - ${goResultset.getName()}`,
             el: tablepart,
@@ -380,7 +319,6 @@ class MPA {
                 },
                 {
                     builder: cell => {
-                        this.addFAFavoriteBtn(cell, d => d.code);
                         this.addFADownloadBtn(cell, d => d.code);
                     },
                     text: d => "",
@@ -585,16 +523,12 @@ class MPA {
      *     Snapshot of functional annotations for comparision
      */
     setUpECTable(fa, oldFa = null) {
-        const starred = this.getFAFavorite();
         const sortOrder = this.displaySettings.sortFA;
 
         const ecResultSet = fa.getGroup("EC");
         const oldEcResultSet = oldFa === null ? null : oldFa.getGroup("EC");
 
         let data = ecResultSet.getSorted(sortOrder.sortFunc);
-        if (this.displaySettings.onlyStarredFA) {
-            data = data.filter(x => starred.includes("EC:" + x.code));
-        }
 
         const target = d3.select("#ecTable");
         target.html("");
@@ -626,7 +560,6 @@ class MPA {
                 },
                 {
                     builder: cell => {
-                        this.addFAFavoriteBtn(cell, d => "EC:" + d.code);
                         this.addFADownloadBtn(cell, d => "EC:" + d.code);
                     },
                     text: d => "",
@@ -788,24 +721,6 @@ class MPA {
             e.preventDefault();
             const $this = $(this);
             setFaSort($this);
-        });
-
-        const $onlyFavoritesCheckbox = $("#mpa-fa-only-favorites");
-        $onlyFavoritesCheckbox.change(() => {
-            this.displaySettings.onlyStarredFA = $onlyFavoritesCheckbox.prop("checked");
-            this.setUpFAVisualisations(this.datasets[0].fa, this.datasets[0].baseFa);
-        });
-
-        $("#mpa-fa-clear-favorites-btn").click(() => {
-            this.setFAFavorite([]);
-            showNotification("Removed favorites!", {
-                autoHide: true,
-                loading: false,
-            });
-            // It does not make sense to only show favorites if there are none
-            $onlyFavoritesCheckbox.prop("checked", false);
-            this.displaySettings.onlyStarredFA = false;
-            this.setUpFAVisualisations(this.datasets[0].fa, this.datasets[0].baseFa);
         });
 
         $("#snapshot-fa").click(() => {

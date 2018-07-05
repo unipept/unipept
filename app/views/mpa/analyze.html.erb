@@ -195,20 +195,6 @@
                   <span class="input-group-addon">% of annotated proteins</span>
                 </div>
               </div> 
-        
-              <div class="form-group">
-                <label>Favorite annotations</label>
-                <span data-help-id="mpa-help-favorites" class="small glyphicon glyphicon-question-sign help btn-icon"></span>
-
-                <div class="input-group">
-                  <span class="input-group-addon">
-                    <input id="mpa-fa-only-favorites" type="checkbox" autocomplete="off">
-                  </span>
-                  <label class="form-control" for="mpa-fa-only-favorites">Only show starred</label>
-                </div>
-
-                <button id="mpa-fa-clear-favorites-btn" class="btn btn-default">Clear my favorites</button>
-              </div>
             </div>
           </div>
         </div>
@@ -300,8 +286,4 @@ can be assigned to a set of peptides (the input), is that te
   <%= image_tag("mpa/annotations.svg" , class:"img-responsive") %>
 </p>
 
-</script>
-<script id="mpa-help-favorites" type="text/html" data-title="Functional annotation filtering">
-  By clicking on the <button class="btn btn-default btn-xs"><span class="glyphicon glyphicon-star"></span></button> next
-  to a functional annotaion, that annotaion will be added to your favorites.
 </script>
