@@ -121,6 +121,7 @@ class MPA {
      * @param  {MPAConfig}  searchSettings
      */
     async updateSearchSettings(searchSettings) {
+        this.searchSettings = searchSettings;
         this.enableProgressBar(true, true);
         this.enableProgressBar(true, false, "#progress-fa-analysis");
         $("#search-intro").text("Please wait while we process your data");
