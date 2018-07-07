@@ -292,6 +292,7 @@ function summarizeFa(extract, countExtractor, trustExtractor, cutoff = 50, seque
     let iteratableOfSequences = sequences || processedPeptides.keys();
 
     const map = new Map();
+    const seqMap = new Map();
     const fraction = cutoff / 100;
     let sumWeight = 0;
     let sumCount = 0;
@@ -311,6 +312,9 @@ function summarizeFa(extract, countExtractor, trustExtractor, cutoff = 50, seque
                 if (weight < fraction) continue; // skip if insignificant weight TODO: remove
                 atLeastOne = true;
                 const count = map.get(code) || [0, 0, 0, 0, 0];
+                const faSeqences = seqMap.get(code) || [];
+                faSeqences.push(sequence);
+                seqMap.set(code, faSeqences);
                 const scaledWeight = weight * pept.count;
                 map.set(code, [
                     count[0] + scaledWeight,
@@ -345,6 +349,7 @@ function summarizeFa(extract, countExtractor, trustExtractor, cutoff = 50, seque
             fractionOfPepts: x[1][3] / sumCount,
             trust: x[1][4] / x[1][3],
             value: x[1][0] / sumWeight,
+            sequences: seqMap.get(x[0]),
         })),
     };
 }
@@ -417,18 +422,31 @@ export function getCSV(taxonMap) {
 /**
  * Returns a list of sequences that have the specified FA term
  * @param {String} faName The name of the FA term (GO:000112, EC:1.5.4.1)
- * @return {{sequence, totalCount, relativeCount}[]} A list of objects representing
- *                                                   the matchesFunctionalAnnotations
+ * @param {String[]} sequences List of sequences to limit to
+ * @return {{sequence, hits, type, annotatedCount,allCount,relativeCount}[]}
+ *    A list of objects representing the matchesFunctionalAnnotations
  */
-export function getPeptidesByFA(faName) {
+export function getPeptidesByFA(faName, sequences = null) {
     const type = faName.split(":")[0];
-    return [...processedPeptides.values()]
-        .filter(pept => faName in pept.fa.data)
-        .map(pept => ({
-            sequence: pept.sequence,
-            totalCount: pept.fa.data[faName],
-            relativeCount: pept.fa.data[faName] / pept.fa.counts[type],
-        }));
+    let iteratableOfSequences = sequences || processedPeptides.keys();
+
+    const result = [];
+
+    for (const curSeq of iteratableOfSequences) {
+        const pept = processedPeptides.get(curSeq);
+        if (faName in pept.fa.data) {
+            result.push({
+                sequence: pept.sequence,
+                type: type,
+                hits: pept.fa.data[faName],
+                annotatedCount: pept.fa.counts[type],
+                allCount: pept.fa.counts["all"],
+                relativeCount: pept.fa.data[faName] / pept.fa.counts[type],
+            });
+        }
+    }
+
+    return result;
 }
 
 /**

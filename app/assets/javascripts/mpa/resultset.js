@@ -118,11 +118,12 @@ class Resultset {
     /**
      * Returns a list of sequences that have the specified FA term
      * @param {String} faName The name of the FA term (GO:000112, EC:1.5.4.1)
-     * @return {Promise<{sequence, totalCount, relativeCount}[]>} A list of objects representing
+     * @param {String[]} sequences List of sequences to limit to
+     * @return {Promise<{sequence, hits, type, annotatedCount,allCount,relativeCount}[]>} A list of objects representing
      *                                                   the matchesFunctionalAnnotations
      */
-    getPeptidesByFA(faName) {
-        return this.wrkr.getPeptidesByFA(faName);
+    getPeptidesByFA(faName, sequences) {
+        return this.wrkr.getPeptidesByFA(faName, sequences);
     }
 
     /**

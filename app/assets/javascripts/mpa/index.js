@@ -96,13 +96,21 @@ class MPA {
         return dataset;
     }
 
-    async downloadPeptidesFor(name) {
+    async downloadPeptidesFor(name, sequences) {
         const dataset = this.datasets[0];
-        const result = [
-            ["sequence", "count", "evidence"],
-        ]
-            .concat((await dataset.getPeptidesByFA(name))
-                .map(x => [x.sequence, x.totalCount, x.relativeCount]));
+        const result = [[
+            "peptide",
+            "matching proteins",
+            "matching proteins with " + name,
+            "percenage proteins with " + name,
+        ]]
+            .concat((await dataset.getPeptidesByFA(name, sequences))
+                .map(x => [
+                    x.sequence,
+                    x.allCount,
+                    x.hits,
+                    100 * x.hits / x.allCount,
+                ]));
         downloadDataByForm(toCSVString(result), name + ".csv", "text/csv");
     }
 
@@ -237,7 +245,7 @@ class MPA {
             .html("<span class='glyphicon glyphicon-download'></span>")
             .on("click", d => {
                 d3.event.stopPropagation();
-                this.downloadPeptidesFor(codeFn(d));
+                this.downloadPeptidesFor(codeFn(d), d.sequences);
             });
 
         // HACK: d3 to jQuery
