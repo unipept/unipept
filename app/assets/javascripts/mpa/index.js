@@ -195,9 +195,13 @@ class MPA {
 
             dataset.reprocessFA(percent, sequences)
                 .then(() => {
+                    if (dataset.baseFa === null) {
+                        dataset.setBaseFA();
+                    }
+
                     const num = dataset.fa.getTrust().totalCount;
                     $(".mpa-fa-numpepts").text(`${num} peptide${num === 1 ? "" : "s"}`);
-                    this.setUpFAVisualisations(dataset.fa, dataset.baseFa);
+                    this.setUpFAVisualisations(dataset.fa, id === -1 ? null : dataset.baseFa);
                     this.enableProgressBar(false, false, "#progress-fa-analysis");
                     $("#snapshot-fa").prop("disabled", false);
                     $("#mpa-fa-filter-precent").prop("disabled", false);
@@ -386,26 +390,25 @@ class MPA {
         let result = "";
         if (cur !== null) {
             result += "<div class=\"tooltip-fa-text\">";
+            result += `Assigned to <strong>${numberToPercent(curdata("fractionOfPepts"), 2)}</strong> of peptides (<strong>${curdata("numberOfPepts")}</strong>)`;
             if (old != null) {
+                result += "<div class=\"tooltip-extra\">";
                 const newValue = curdata("fractionOfPepts");
-                const oldValue = old.valueOf(thing);
+                const oldValue = old.valueOf(thing, "fractionOfPepts");
                 const diff = (newValue - oldValue) / (newValue + oldValue);
                 if (Math.abs(diff) > 0.001) {
-                    result += `<span class='glyphicon glyphicon-arrow-${diff > 0 ? "up" : "down"}'></span> `;
+                    result += `<span class='glyphicon glyphicon-inline glyphicon-arrow-${diff > 0 ? "up" : "down"}'></span> `;
                 }
-                result += `Assigned to ${numberToPercent(curdata("fractionOfPepts"), 2)} of peptides (was ${numberToPercent(oldValue, 2)})`;
-            } else {
-                result += `Assigned to  ${numberToPercent(curdata("fractionOfPepts"), 2)} of peptides`;
+                result += `was ${numberToPercent(oldValue, 2)} for entire dataset`;
+                result += "</div>";
             }
             result += "</div>";
 
-            result += "<div class=\"tooltip-fa-text\">";
-            result += `Assigned to <strong>${curdata("numberOfPepts")} peptides</strong>, <br>
-        with an average support ratio of ${numberToPercent(curdata("weightedValue") / curdata("numberOfPepts"))}.`;
-            result += "</div>";
-
             if (window.showTrust) {
-                result += "<div class=\"tooltip-fa-text\">";
+                result += "<br><div class=\"tooltip-extra\">";
+                result += `Average support ratio of ${numberToPercent(curdata("weightedValue") / curdata("numberOfPepts"))}.`;
+                result += "</div>";
+                result += "<div class=\"tooltip-extra\">";
                 result += `trust: ${numberToPercent(curdata("trust"), 2)}`;
                 result += "</div>";
             }
