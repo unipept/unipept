@@ -249,6 +249,8 @@ class MPA {
         const downloadLink = cell.append("span");
         downloadLink.classed("glyphicon glyphicon-download glyphicon-inline down btn-icon", true)
             .attr("title", "Download CSV of the matched peptides")
+            .attr("role", "button")
+            .attr("tabindex", 0)
             .on("click", d => {
                 d3.event.stopPropagation();
                 this.downloadPeptidesFor(codeFn(d), Object.keys(d.sequences));
