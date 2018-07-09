@@ -617,7 +617,7 @@ class MPA {
                     const $content = $(`
                     <div class="card-supporting-text">
                     <button id="clipboard-missing" class="btn btn-default pull-right"><span class="glyphicon glyphicon-copy"></span> Copy to clipboard</button>
-                    Sorry, we didn't manage to find some of your peptides. You can BLAST them by clicking the links or copy them by
+                    Sorry, we didn't manage to find ${total - matches} of your peptides${total - matches === missed.length ? "" : ` (${missed.length} ignoring duplicates)`}. You can BLAST them by clicking the links or copy them by
                     using the button on the right.
                     </div>
                     <ul>${this.getBlastLinksForMissing(missed)}</ul>
