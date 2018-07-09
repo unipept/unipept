@@ -100,6 +100,7 @@ class MPA {
         const dataset = this.datasets[0];
         const result = [[
             "peptide",
+            "spectral count",
             "matching proteins",
             "matching proteins with " + name,
             "percenage proteins with " + name,
@@ -107,6 +108,7 @@ class MPA {
             .concat((await dataset.getPeptidesByFA(name, sequences))
                 .map(x => [
                     x.sequence,
+                    x.count,
                     x.allCount,
                     x.hits,
                     100 * x.hits / x.allCount,
@@ -246,7 +248,7 @@ class MPA {
             .html("<span class='glyphicon glyphicon-download'></span>")
             .on("click", d => {
                 d3.event.stopPropagation();
-                this.downloadPeptidesFor(codeFn(d), d.sequences);
+                this.downloadPeptidesFor(codeFn(d), Object.keys(d.sequences));
             });
 
         // HACK: d3 to jQuery

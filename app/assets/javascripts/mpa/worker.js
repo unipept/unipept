@@ -424,7 +424,7 @@ export function getCSV(taxonMap) {
  * Returns a list of sequences that have the specified FA term
  * @param {String} faName The name of the FA term (GO:000112, EC:1.5.4.1)
  * @param {String[]} sequences List of sequences to limit to
- * @return {{sequence, hits, type, annotatedCount,allCount,relativeCount}[]}
+ * @return {{sequence, hits, type, annotatedCount,allCount,relativeCount, count}[]}
  *    A list of objects representing the matchesFunctionalAnnotations
  */
 export function getPeptidesByFA(faName, sequences = null) {
@@ -443,6 +443,7 @@ export function getPeptidesByFA(faName, sequences = null) {
                 annotatedCount: pept.fa.counts[type],
                 allCount: pept.fa.counts["all"],
                 relativeCount: pept.fa.data[faName] / pept.fa.counts[type],
+                count: pept.count,
             });
         }
     }
