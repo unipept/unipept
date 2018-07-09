@@ -360,16 +360,8 @@ function summarizeFa(extract, countExtractor, trustExtractor, cutoff = 50, seque
  * @return {object} GOTerms.goData to perform `GOTerms.ingestData`
  */
 export function getGoData() {
-    return Array.from(GOTerms.goData.entries);
+    return Array.from(GOTerms.goData.entries());
 }
-
-/**
- * @return {object} ECNumbers.ecNames to perform `ECNumbers.ingestNames`
- */
-export function getEcNames() {
-    return ECNumbers.ecData;
-}
-
 
 /**
  * Copy of ranks from MPA ranks to not have to include MPA in the worker

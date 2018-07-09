@@ -135,14 +135,14 @@ describe("should fetch the correct data", () => {
         expect(ECNumbers.nameOf("1.4.-.-")).toEqual("Unknown");
         expect(ECNumbers.nameOf("1.3.-.-")).toEqual("The number 1.3.-.-");
 
-        await ECNumbers.fetch("1.4.9.6");
+        await ECNumbers.fetch(["1.4.9.6"]);
         expect(ECNumbers.nameOf("1.4.9.6")).toEqual("The number 1.4.9.6");
         expect(ECNumbers.nameOf("9.8.7.6")).toEqual("Unknown");
         expect(ECNumbers.nameOf("1.4.-.-")).toEqual("The number 1.4.-.-"); // fetched because 1.4.9.6 was fetched
 
 
         const oldCount = fetchMock.getMock().calls.length;
-        await ECNumbers.fetch("1.4.9.6");
+        await ECNumbers.fetch(["1.4.9.6"]);
         expect(fetchMock.getMock().calls).toHaveLength(oldCount);
     });
 });

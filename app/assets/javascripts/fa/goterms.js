@@ -46,7 +46,7 @@ export default class GOTerms extends GroupedFA {
         for (const ns of NAMESPACES) {
             const nsData = results[ns] || [];
             GOTerms._addData(nsData, ns);
-            d[ns] = new SingleFA(ns, nsData, trust[ns]);
+            d[ns] = new SingleFA(ns, nsData, trust === null ? null : trust[ns]);
         }
         return new GOTerms(d, null);
     }

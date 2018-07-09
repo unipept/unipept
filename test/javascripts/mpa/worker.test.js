@@ -48,9 +48,8 @@ afterEach(function () {
     wkr.clean();
 });
 
-it("should have an GO and EC data should be empty", () => {
-    expect(wkr.getGoData()).toEqual(new Map());
-    expect(wkr.getEcNames()).toEqual(new Map([["-.-.-.-", "Enzyme Commission Numbers"]]));
+it("should have no GO data", () => {
+    expect(wkr.getGoData()).toEqual([]);
 });
 
 describe("Should be correct (default config)", () => {
@@ -59,14 +58,14 @@ describe("Should be correct (default config)", () => {
 
         let pepts = ["AALTER"];
         await expect(wkr.process(pepts, {})).resolves.toMatchObject({
-            processed: [["AALTER", Object.assign({count: 1}, exDataAALTER)]],
+            processed: [Object.assign({count: 1}, exDataAALTER)],
             missed: [],
             numMatched: 1,
             numSearched: 1,
         });
 
-        await expect(wkr.summarizeGo()).resolves.toEqual({"biological process": [], "cellular component": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000004", "numberOfPepts": 1, "value": 1, "weightedValue": 1}], "molecular function": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000001", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000002", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000003", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}]});
-        await expect(wkr.summarizeEc()).resolves.toEqual([{"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "1.2.3.4", "numberOfPepts": 1, "value": 0.5, "weightedValue": 0.5}, {"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "5.6.7.8", "numberOfPepts": 1, "value": 0.5, "weightedValue": 0.5}]);
+        await expect(wkr.summarizeGo()).resolves.toEqual({"data": {"biological process": [], "cellular component": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000004", "evidence": 1, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}], "molecular function": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000001", "evidence": 0.3333333333333333, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000002", "evidence": 0.3333333333333333, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000003", "evidence": 0.3333333333333333, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}]}, "trust": {"biological process": {"annotatedCount": 0, "totalCount": 1, "trustCount": 0}, "cellular component": {"annotatedCount": 1, "totalCount": 1, "trustCount": 1}, "molecular function": {"annotatedCount": 1, "totalCount": 1, "trustCount": 1}}});
+        await expect(wkr.summarizeEc()).resolves.toEqual({"data": [{"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "1.2.3.4", "evidence": 0.5, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 0.6666666666666666, "value": 1, "weightedValue": 0.5}, {"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "5.6.7.8", "evidence": 0.5, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 0.6666666666666666, "value": 1, "weightedValue": 0.5}], "trust": {"annotatedCount": 1, "totalCount": 1, "trustCount": 0.6666666666666666}});
     });
 
     it("for NOFADATA (no FA data availible)", async () => {
@@ -75,11 +74,11 @@ describe("Should be correct (default config)", () => {
             "missed": [],
             "numMatched": 1,
             "numSearched": 1,
-            "processed": [["NOFADATA", {"count": 1, "fa": {"counts": {"all": 0}}, "lca": 541000, "lineage": [2, null, null, null, 1239, null, null, 186801, null, null, null, 186802, null, null, null, null, 541000, null, null, null, null, null, null, null, null, null, null, null], "sequence": "NOFADATA"}]],
+            "processed": [{"count": 1, "lca": 541000, "lineage": [2, null, null, null, 1239, null, null, 186801, null, null, null, 186802, null, null, null, null, 541000, null, null, null, null, null, null, null, null, null, null, null], "sequence": "NOFADATA"}],
         });
         let r = await wkr.summarizeGo();
-        await expect(r).toEqual( {"biological process": [], "cellular component": [], "molecular function": []});
-        await expect(wkr.summarizeEc()).resolves.toEqual( []);
+        await expect(r).toEqual({"data": {"biological process": [], "cellular component": [], "molecular function": []}, "trust": {"biological process": {"annotatedCount": 0, "totalCount": 1, "trustCount": 0}, "cellular component": {"annotatedCount": 0, "totalCount": 1, "trustCount": 0}, "molecular function": {"annotatedCount": 0, "totalCount": 1, "trustCount": 0}}});
+        await expect(wkr.summarizeEc()).resolves.toEqual({"data": [], "trust": {"annotatedCount": 0, "totalCount": 1, "trustCount": 0}});
     });
 
 
@@ -94,14 +93,14 @@ describe("Should be correct (default config)", () => {
             numSearched: 1,
         });
 
-        await expect(wkr.summarizeEc()).resolves.toEqual( []);
-        await expect(wkr.summarizeGo()).resolves.toEqual( {"biological process": [], "cellular component": [], "molecular function": []});
+        await expect(wkr.summarizeEc()).resolves.toEqual( {"data": [], "trust": {"annotatedCount": 0, "totalCount": 0, "trustCount": 0}});
+        await expect(wkr.summarizeGo()).resolves.toEqual({"data": {"biological process": [], "cellular component": [], "molecular function": []}, "trust": {"biological process": {"annotatedCount": 0, "totalCount": 0, "trustCount": 0}, "cellular component": {"annotatedCount": 0, "totalCount": 0, "trustCount": 0}, "molecular function": {"annotatedCount": 0, "totalCount": 0, "trustCount": 0}}});
     });
 
     it("for shorter than 5 (empty result)", async () => {
         expect.assertions(3);
 
-        let pepts = ["AALT"];
+        let pepts = ["AALT", "GPL"];
         await expect(wkr.process(pepts, {})).resolves.toMatchObject({
             processed: [],
             missed: [],
@@ -109,8 +108,8 @@ describe("Should be correct (default config)", () => {
             numSearched: 0,
         });
 
-        await expect(wkr.summarizeEc()).resolves.toEqual( []);
-        await expect(wkr.summarizeGo()).resolves.toEqual( {"biological process": [], "cellular component": [], "molecular function": []});
+        await expect(wkr.summarizeEc()).resolves.toEqual( {"data": [], "trust": {"annotatedCount": 0, "totalCount": 0, "trustCount": 0}});
+        await expect(wkr.summarizeGo()).resolves.toEqual({"data": {"biological process": [], "cellular component": [], "molecular function": []}, "trust": {"biological process": {"annotatedCount": 0, "totalCount": 0, "trustCount": 0}, "cellular component": {"annotatedCount": 0, "totalCount": 0, "trustCount": 0}, "molecular function": {"annotatedCount": 0, "totalCount": 0, "trustCount": 0}}});
     });
 
     it("for a lot of data", async () => {
@@ -130,76 +129,75 @@ describe("Should handle config correctly", () => {
     it("for IL", async () => {
         let pepts = ["AALTER"];
         await expect(wkr.process(pepts, {il: true})).resolves.toMatchObject({
-            processed: [["AALTER", Object.assign({count: 1}, exDataAALTER)]],
+            processed: [Object.assign({count: 1}, exDataAALTER)],
             missed: [],
             numMatched: 1,
             numSearched: 1,
         });
 
 
-        await expect(wkr.summarizeGo()).resolves.toEqual({"biological process": [], "cellular component": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000004", "numberOfPepts": 1, "value": 1, "weightedValue": 1}], "molecular function": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000001", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000002", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000003", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}]});
-        await expect(wkr.summarizeEc()).resolves.toEqual([{"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "1.2.3.4", "numberOfPepts": 1, "value": 0.5, "weightedValue": 0.5}, {"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "5.6.7.8", "numberOfPepts": 1, "value": 0.5, "weightedValue": 0.5}]);
+        await expect(wkr.summarizeGo()).resolves.toEqual( {"data": {"biological process": [], "cellular component": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000004", "evidence": 1, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}], "molecular function": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000001", "evidence": 0.3333333333333333, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000002", "evidence": 0.3333333333333333, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000003", "evidence": 0.3333333333333333, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}]}, "trust": {"biological process": {"annotatedCount": 0, "totalCount": 1, "trustCount": 0}, "cellular component": {"annotatedCount": 1, "totalCount": 1, "trustCount": 1}, "molecular function": {"annotatedCount": 1, "totalCount": 1, "trustCount": 1}}});
+        await expect(wkr.summarizeEc()).resolves.toEqual( {"data": [{"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "1.2.3.4", "evidence": 0.5, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 0.6666666666666666, "value": 1, "weightedValue": 0.5}, {"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "5.6.7.8", "evidence": 0.5, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 0.6666666666666666, "value": 1, "weightedValue": 0.5}], "trust": {"annotatedCount": 1, "totalCount": 1, "trustCount": 0.6666666666666666}});
     });
 
     describe("for duplicates", () => {
         it("true", async () => {
             let pepts = ["AALTER", "AALTER", "AALTER", "AALTER"];
             await expect(wkr.process(pepts, {dupes: true})).resolves.toMatchObject({
-                processed: [["AALTER", Object.assign({count: 1}, exDataAALTER)]],
+                processed: [Object.assign({count: 1}, exDataAALTER)],
                 missed: [],
                 numMatched: 1,
                 numSearched: 1,
             });
 
-            await expect(wkr.summarizeGo()).resolves.toEqual({"biological process": [], "cellular component": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000004", "numberOfPepts": 1, "value": 1, "weightedValue": 1}], "molecular function": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000001", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000002", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000003", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}]});
-            await expect(wkr.summarizeEc()).resolves.toEqual([{"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "1.2.3.4", "numberOfPepts": 1, "value": 0.5, "weightedValue": 0.5}, {"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "5.6.7.8", "numberOfPepts": 1, "value": 0.5, "weightedValue": 0.5}]);
+            await expect(wkr.summarizeGo()).resolves.toEqual( {"data": {"biological process": [], "cellular component": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000004", "evidence": 1, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}], "molecular function": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000001", "evidence": 0.3333333333333333, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000002", "evidence": 0.3333333333333333, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000003", "evidence": 0.3333333333333333, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}]}, "trust": {"biological process": {"annotatedCount": 0, "totalCount": 1, "trustCount": 0}, "cellular component": {"annotatedCount": 1, "totalCount": 1, "trustCount": 1}, "molecular function": {"annotatedCount": 1, "totalCount": 1, "trustCount": 1}}});
+            await expect(wkr.summarizeEc()).resolves.toEqual( {"data": [{"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "1.2.3.4", "evidence": 0.5, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 0.6666666666666666, "value": 1, "weightedValue": 0.5}, {"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "5.6.7.8", "evidence": 0.5, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 0.6666666666666666, "value": 1, "weightedValue": 0.5}], "trust": {"annotatedCount": 1, "totalCount": 1, "trustCount": 0.6666666666666666}});
         });
 
         it("false", async () => {
             let pepts = ["AALTER", "AALTER", "AALTER", "AALTER"];
             await expect(wkr.process(pepts, {dupes: false})).resolves.toMatchObject({
-                processed: [["AALTER", Object.assign({count: 4}, exDataAALTER)]],
+                processed: [Object.assign({count: 4}, exDataAALTER)],
                 missed: [],
                 numMatched: 4,
                 numSearched: 4,
             });
 
 
-            await expect(wkr.summarizeGo()).resolves.toEqual({"biological process": [], "cellular component": [{"absoluteCount": 12, "absoluteCountFiltered": 3, "code": "GO:0000004", "numberOfPepts": 4, "value": 1, "weightedValue": 4}], "molecular function": [{"absoluteCount": 12, "absoluteCountFiltered": 3, "code": "GO:0000001", "numberOfPepts": 4, "value": 0.3333333333333333, "weightedValue": 4}, {"absoluteCount": 12, "absoluteCountFiltered": 3, "code": "GO:0000002", "numberOfPepts": 4, "value": 0.3333333333333333, "weightedValue": 4}, {"absoluteCount": 12, "absoluteCountFiltered": 3, "code": "GO:0000003", "numberOfPepts": 4, "value": 0.3333333333333333, "weightedValue": 4}]});
-            await expect(wkr.summarizeEc()).resolves.toEqual([{"absoluteCount": 4, "absoluteCountFiltered": 1, "code": "1.2.3.4", "numberOfPepts": 4, "value": 0.5, "weightedValue": 2}, {"absoluteCount": 4, "absoluteCountFiltered": 1, "code": "5.6.7.8", "numberOfPepts": 4, "value": 0.5, "weightedValue": 2}]);
+            await expect(wkr.summarizeGo()).resolves.toEqual( {"data": {"biological process": [], "cellular component": [{"absoluteCount": 12, "absoluteCountFiltered": 3, "code": "GO:0000004", "evidence": 1, "fractionOfPepts": 1, "numberOfPepts": 4, "sequences": {"AALTER": 4}, "trust": 1, "value": 4, "weightedValue": 4}], "molecular function": [{"absoluteCount": 12, "absoluteCountFiltered": 3, "code": "GO:0000001", "evidence": 0.3333333333333333, "fractionOfPepts": 1, "numberOfPepts": 4, "sequences": {"AALTER": 4}, "trust": 1, "value": 4, "weightedValue": 4}, {"absoluteCount": 12, "absoluteCountFiltered": 3, "code": "GO:0000002", "evidence": 0.3333333333333333, "fractionOfPepts": 1, "numberOfPepts": 4, "sequences": {"AALTER": 4}, "trust": 1, "value": 4, "weightedValue": 4}, {"absoluteCount": 12, "absoluteCountFiltered": 3, "code": "GO:0000003", "evidence": 0.3333333333333333, "fractionOfPepts": 1, "numberOfPepts": 4, "sequences": {"AALTER": 4}, "trust": 1, "value": 4, "weightedValue": 4}]}, "trust": {"biological process": {"annotatedCount": 0, "totalCount": 4, "trustCount": 0}, "cellular component": {"annotatedCount": 4, "totalCount": 4, "trustCount": 4}, "molecular function": {"annotatedCount": 4, "totalCount": 4, "trustCount": 4}}});
+            await expect(wkr.summarizeEc()).resolves.toEqual( {"data": [{"absoluteCount": 4, "absoluteCountFiltered": 1, "code": "1.2.3.4", "evidence": 0.5, "fractionOfPepts": 1, "numberOfPepts": 4, "sequences": {"AALTER": 4}, "trust": 0.6666666666666666, "value": 4, "weightedValue": 2}, {"absoluteCount": 4, "absoluteCountFiltered": 1, "code": "5.6.7.8", "evidence": 0.5, "fractionOfPepts": 1, "numberOfPepts": 4, "sequences": {"AALTER": 4}, "trust": 0.6666666666666666, "value": 4, "weightedValue": 2}], "trust": {"annotatedCount": 4, "totalCount": 4, "trustCount": 2.6666666666666665}});
         });
     });
 
     describe("for advanced missed cleavage handeling", () => {
+        const goRes = {"data": {"biological process": [], "cellular component": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000004", "evidence": 1, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}], "molecular function": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000001", "evidence": 0.3333333333333333, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000002", "evidence": 0.3333333333333333, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000003", "evidence": 0.3333333333333333, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}]}, "trust": {"biological process": {"annotatedCount": 0, "totalCount": 1, "trustCount": 0}, "cellular component": {"annotatedCount": 1, "totalCount": 1, "trustCount": 1}, "molecular function": {"annotatedCount": 1, "totalCount": 1, "trustCount": 1}}};
+        const ecRes = {"data": [{"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "1.2.3.4", "evidence": 0.5, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 0.6666666666666666, "value": 1, "weightedValue": 0.5}, {"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "5.6.7.8", "evidence": 0.5, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 0.6666666666666666, "value": 1, "weightedValue": 0.5}], "trust": {"annotatedCount": 1, "totalCount": 1, "trustCount": 0.6666666666666666}};
+        const peptidesRes = {
+            processed: [Object.assign({count: 1}, exDataAALTER)],
+            missed: [],
+            numMatched: 1,
+            numSearched: 1,
+        };
         it("true", async () => {
             let pepts = ["AALTER"];
-            await expect(wkr.process(pepts, {missed: true})).resolves.toMatchObject({
-                processed: [["AALTER", Object.assign({count: 1}, exDataAALTER)]],
-                missed: [],
-                numMatched: 1,
-                numSearched: 1,
-            });
+            await expect(wkr.process(pepts, {missed: true})).resolves.toMatchObject(peptidesRes);
 
             await expect(JSON.parse(fetchMock.getMock().calls[0][1].body)).toHaveProperty("missed", true);
 
 
-            await expect(wkr.summarizeGo()).resolves.toEqual({"biological process": [], "cellular component": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000004", "numberOfPepts": 1, "value": 1, "weightedValue": 1}], "molecular function": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000001", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000002", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000003", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}]});
-            await expect(wkr.summarizeEc()).resolves.toEqual([{"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "1.2.3.4", "numberOfPepts": 1, "value": 0.5, "weightedValue": 0.5}, {"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "5.6.7.8", "numberOfPepts": 1, "value": 0.5, "weightedValue": 0.5}]);
+            await expect(wkr.summarizeGo()).resolves.toEqual(goRes);
+            await expect(wkr.summarizeEc()).resolves.toEqual(ecRes);
         });
 
         it("false", async () => {
             let pepts = ["AALTER"];
-            await expect(wkr.process(pepts, {missed: false})).resolves.toMatchObject({
-                processed: [["AALTER", Object.assign({count: 1}, exDataAALTER)]],
-                missed: [],
-                numMatched: 1,
-                numSearched: 1,
-            });
+            await expect(wkr.process(pepts, {missed: false})).resolves.toMatchObject(peptidesRes);
 
             await expect(JSON.parse(fetchMock.getMock().calls[0][1].body)).toHaveProperty("missed", false);
 
-            await expect(wkr.summarizeGo()).resolves.toEqual({"biological process": [], "cellular component": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000004", "numberOfPepts": 1, "value": 1, "weightedValue": 1}], "molecular function": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000001", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000002", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000003", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}]});
-            await expect(wkr.summarizeEc()).resolves.toEqual([{"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "1.2.3.4", "numberOfPepts": 1, "value": 0.5, "weightedValue": 0.5}, {"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "5.6.7.8", "numberOfPepts": 1, "value": 0.5, "weightedValue": 0.5}]);
+
+            await expect(wkr.summarizeGo()).resolves.toEqual(goRes);
+            await expect(wkr.summarizeEc()).resolves.toEqual(ecRes);
         });
     });
 });
@@ -210,24 +208,24 @@ describe("Should get correct FAs", () => {
         await wkr.process(["AALTER", "AAYLFNALPTK"], {});
     });
     it("with cutoff 0", async () => {
-        await expect(wkr.summarizeGo(0)).resolves.toEqual({"biological process": [{"absoluteCount": 5, "absoluteCountFiltered": 5, "code": "GO:0000017", "numberOfPepts": 1, "value": 0.2631578947368421, "weightedValue": 1}, {"absoluteCount": 5, "absoluteCountFiltered": 5, "code": "GO:0000009", "numberOfPepts": 1, "value": 0.2631578947368421, "weightedValue": 1}, {"absoluteCount": 4, "absoluteCountFiltered": 4, "code": "GO:0000011", "numberOfPepts": 1, "value": 0.2105263157894737, "weightedValue": 0.8}, {"absoluteCount": 5, "absoluteCountFiltered": 5, "code": "GO:0000012", "numberOfPepts": 1, "value": 0.2631578947368421, "weightedValue": 1}], "cellular component": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000004", "numberOfPepts": 1, "value": 1, "weightedValue": 1}], "molecular function": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000001", "numberOfPepts": 1, "value": 0.3125, "weightedValue": 1}, {"absoluteCount": 4, "absoluteCountFiltered": 4, "code": "GO:0000002", "numberOfPepts": 2, "value": 0.37499999999999994, "weightedValue": 1.2}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000003", "numberOfPepts": 1, "value": 0.3125, "weightedValue": 1}]});
-        await expect(wkr.summarizeEc(0)).resolves.toEqual([{"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "1.2.3.4", "numberOfPepts": 1, "value": 0.5, "weightedValue": 0.5}, {"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "5.6.7.8", "numberOfPepts": 1, "value": 0.5, "weightedValue": 0.5}]);
+        await expect(wkr.summarizeGo(0)).resolves.toEqual({"data": {"biological process": [{"absoluteCount": 5, "absoluteCountFiltered": 5, "code": "GO:0000017", "evidence": 0.2631578947368421, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AAYLFNALPTK": 1}, "trust": 1, "value": 1, "weightedValue": 1}, {"absoluteCount": 5, "absoluteCountFiltered": 5, "code": "GO:0000009", "evidence": 0.2631578947368421, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AAYLFNALPTK": 1}, "trust": 1, "value": 1, "weightedValue": 1}, {"absoluteCount": 4, "absoluteCountFiltered": 4, "code": "GO:0000011", "evidence": 0.2105263157894737, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AAYLFNALPTK": 1}, "trust": 1, "value": 1, "weightedValue": 0.8}, {"absoluteCount": 5, "absoluteCountFiltered": 5, "code": "GO:0000012", "evidence": 0.2631578947368421, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AAYLFNALPTK": 1}, "trust": 1, "value": 1, "weightedValue": 1}], "cellular component": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000004", "evidence": 1, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}], "molecular function": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000001", "evidence": 0.3125, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}, {"absoluteCount": 4, "absoluteCountFiltered": 4, "code": "GO:0000002", "evidence": 0.37499999999999994, "fractionOfPepts": 1, "numberOfPepts": 2, "sequences": {"AALTER": 1, "AAYLFNALPTK": 1}, "trust": 1, "value": 2, "weightedValue": 1.2}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000003", "evidence": 0.3125, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}]}, "trust": {"biological process": {"annotatedCount": 1, "totalCount": 2, "trustCount": 1}, "cellular component": {"annotatedCount": 1, "totalCount": 2, "trustCount": 1}, "molecular function": {"annotatedCount": 2, "totalCount": 2, "trustCount": 2}}});
+        await expect(wkr.summarizeEc(0)).resolves.toEqual({"data": [{"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "1.2.3.4", "evidence": 0.5, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 0.6666666666666666, "value": 1, "weightedValue": 0.5}, {"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "5.6.7.8", "evidence": 0.5, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 0.6666666666666666, "value": 1, "weightedValue": 0.5}], "trust": {"annotatedCount": 1, "totalCount": 2, "trustCount": 0.6666666666666666}});
     });
 
     it("with cutoff 50", async () => {
-        await expect(wkr.summarizeGo(50)).resolves.toEqual({"biological process": [{"absoluteCount": 5, "absoluteCountFiltered": 5, "code": "GO:0000017", "numberOfPepts": 1, "value": 0.2631578947368421, "weightedValue": 1}, {"absoluteCount": 5, "absoluteCountFiltered": 5, "code": "GO:0000009", "numberOfPepts": 1, "value": 0.2631578947368421, "weightedValue": 1}, {"absoluteCount": 4, "absoluteCountFiltered": 4, "code": "GO:0000011", "numberOfPepts": 1, "value": 0.2105263157894737, "weightedValue": 0.8}, {"absoluteCount": 5, "absoluteCountFiltered": 5, "code": "GO:0000012", "numberOfPepts": 1, "value": 0.2631578947368421, "weightedValue": 1}], "cellular component": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000004", "numberOfPepts": 1, "value": 1, "weightedValue": 1}], "molecular function": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000001", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000002", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000003", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}]});
-        await expect(wkr.summarizeEc(50)).resolves.toEqual([{"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "1.2.3.4", "numberOfPepts": 1, "value": 0.5, "weightedValue": 0.5}, {"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "5.6.7.8", "numberOfPepts": 1, "value": 0.5, "weightedValue": 0.5}]);
+        await expect(wkr.summarizeGo(50)).resolves.toEqual({"data": {"biological process": [{"absoluteCount": 5, "absoluteCountFiltered": 5, "code": "GO:0000017", "evidence": 0.2631578947368421, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AAYLFNALPTK": 1}, "trust": 1, "value": 1, "weightedValue": 1}, {"absoluteCount": 5, "absoluteCountFiltered": 5, "code": "GO:0000009", "evidence": 0.2631578947368421, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AAYLFNALPTK": 1}, "trust": 1, "value": 1, "weightedValue": 1}, {"absoluteCount": 4, "absoluteCountFiltered": 4, "code": "GO:0000011", "evidence": 0.2105263157894737, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AAYLFNALPTK": 1}, "trust": 1, "value": 1, "weightedValue": 0.8}, {"absoluteCount": 5, "absoluteCountFiltered": 5, "code": "GO:0000012", "evidence": 0.2631578947368421, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AAYLFNALPTK": 1}, "trust": 1, "value": 1, "weightedValue": 1}], "cellular component": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000004", "evidence": 1, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}], "molecular function": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000001", "evidence": 0.3333333333333333, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000002", "evidence": 0.3333333333333333, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000003", "evidence": 0.3333333333333333, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}]}, "trust": {"biological process": {"annotatedCount": 1, "totalCount": 2, "trustCount": 1}, "cellular component": {"annotatedCount": 1, "totalCount": 2, "trustCount": 1}, "molecular function": {"annotatedCount": 1, "totalCount": 2, "trustCount": 1}}});
+        await expect(wkr.summarizeEc(50)).resolves.toEqual({"data": [{"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "1.2.3.4", "evidence": 0.5, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 0.6666666666666666, "value": 1, "weightedValue": 0.5}, {"absoluteCount": 1, "absoluteCountFiltered": 1, "code": "5.6.7.8", "evidence": 0.5, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 0.6666666666666666, "value": 1, "weightedValue": 0.5}], "trust": {"annotatedCount": 1, "totalCount": 2, "trustCount": 0.6666666666666666}});
     });
 
     it("with cutoff 100", async () => {
-        await expect(wkr.summarizeGo(100)).resolves.toEqual({"biological process": [{"absoluteCount": 5, "absoluteCountFiltered": 5, "code": "GO:0000017", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}, {"absoluteCount": 5, "absoluteCountFiltered": 5, "code": "GO:0000009", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}, {"absoluteCount": 5, "absoluteCountFiltered": 5, "code": "GO:0000012", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}], "cellular component": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000004", "numberOfPepts": 1, "value": 1, "weightedValue": 1}], "molecular function": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000001", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000002", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000003", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}]});
-        await expect(wkr.summarizeEc(100)).resolves.toEqual([]);
+        await expect(wkr.summarizeGo(100)).resolves.toEqual({"data": {"biological process": [{"absoluteCount": 5, "absoluteCountFiltered": 5, "code": "GO:0000017", "evidence": 0.3333333333333333, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AAYLFNALPTK": 1}, "trust": 1, "value": 1, "weightedValue": 1}, {"absoluteCount": 5, "absoluteCountFiltered": 5, "code": "GO:0000009", "evidence": 0.3333333333333333, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AAYLFNALPTK": 1}, "trust": 1, "value": 1, "weightedValue": 1}, {"absoluteCount": 5, "absoluteCountFiltered": 5, "code": "GO:0000012", "evidence": 0.3333333333333333, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AAYLFNALPTK": 1}, "trust": 1, "value": 1, "weightedValue": 1}], "cellular component": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000004", "evidence": 1, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}], "molecular function": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000001", "evidence": 0.3333333333333333, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000002", "evidence": 0.3333333333333333, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000003", "evidence": 0.3333333333333333, "fractionOfPepts": 0.5, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}]}, "trust": {"biological process": {"annotatedCount": 1, "totalCount": 2, "trustCount": 1}, "cellular component": {"annotatedCount": 1, "totalCount": 2, "trustCount": 1}, "molecular function": {"annotatedCount": 1, "totalCount": 2, "trustCount": 1}}});
+        await expect(wkr.summarizeEc(100)).resolves.toEqual({"data": [], "trust": {"annotatedCount": 0, "totalCount": 2, "trustCount": 0}});
     });
 
 
     it("Limited set of peptides", async () => {
-        await expect(wkr.summarizeGo(50, ["AALTER"])).resolves.toEqual({"biological process": [], "cellular component": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000004", "numberOfPepts": 1, "value": 1, "weightedValue": 1}], "molecular function": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000001", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000002", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000003", "numberOfPepts": 1, "value": 0.3333333333333333, "weightedValue": 1}]});
-        await expect(wkr.summarizeEc(100, ["AALTER"])).resolves.toEqual([]);
+        await expect(wkr.summarizeGo(50, ["AALTER"])).resolves.toEqual( {"data": {"biological process": [], "cellular component": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000004", "evidence": 1, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}], "molecular function": [{"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000001", "evidence": 0.3333333333333333, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000002", "evidence": 0.3333333333333333, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}, {"absoluteCount": 3, "absoluteCountFiltered": 3, "code": "GO:0000003", "evidence": 0.3333333333333333, "fractionOfPepts": 1, "numberOfPepts": 1, "sequences": {"AALTER": 1}, "trust": 1, "value": 1, "weightedValue": 1}]}, "trust": {"biological process": {"annotatedCount": 0, "totalCount": 1, "trustCount": 0}, "cellular component": {"annotatedCount": 1, "totalCount": 1, "trustCount": 1}, "molecular function": {"annotatedCount": 1, "totalCount": 1, "trustCount": 1}}});
+        await expect(wkr.summarizeEc(100, ["AALTER"])).resolves.toEqual({"data": [], "trust": {"annotatedCount": 0, "totalCount": 1, "trustCount": 0}});
     });
 });
 describe("Should fail with reject", () => {
@@ -235,13 +233,12 @@ describe("Should fail with reject", () => {
         fetchMock.setup({});
         await expect(wkr.process(["AALTER"], {})).rejects.toEqual("NOT FOUND /mpa/pept2data");
 
-        await expect(wkr.summarizeEc()).resolves.toEqual( []);
-        await expect(wkr.summarizeGo()).resolves.toEqual( {"biological process": [], "cellular component": [], "molecular function": []});
+        await expect(wkr.summarizeEc()).resolves.toEqual({"data": [], "trust": {"annotatedCount": 0, "totalCount": 0, "trustCount": 0}});
+        await expect(wkr.summarizeGo()).resolves.toEqual({"data": {"biological process": [], "cellular component": [], "molecular function": []}, "trust": {"biological process": {"annotatedCount": 0, "totalCount": 0, "trustCount": 0}, "cellular component": {"annotatedCount": 0, "totalCount": 0, "trustCount": 0}, "molecular function": {"annotatedCount": 0, "totalCount": 0, "trustCount": 0}}});
     });
 });
 
 const exDataAALTER = {
     "sequence": "AALTER", "lca": 541000,
     "lineage": [2, null, null, null, 1239, null, null, 186801, null, null, null, 186802, null, null, null, null, 541000, null, null, null, null, null, null, null, null, null, null, null],
-    "fa": {"counts": {"EC": 2, "GO": 3, "all": 3}, "data": {"EC:1.2.3.4": 1, "EC:5.6.7.8": 1, "GO:0000001": 3, "GO:0000002": 3, "GO:0000003": 3, "GO:0000004": 3}},
 };

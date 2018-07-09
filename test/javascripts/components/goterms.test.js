@@ -104,6 +104,10 @@ describe("should fetch the correct data", () => {
         GOTerms.goData = new Map();
     });
 
+    it("should have GO data", () => {
+        expect([...GOTerms.goData.entries()].sort()).toEqual([["GO:133742", {"code": "GO:133742", "name": "The term GO:133742", "namespace": "molecular function"}], ["GO:987654", {"code": "GO:987654", "name": "The term GO:987654", "namespace": "molecular function"}]]);
+    });
+
     it("for getValueOf", () => {
         expect(goTerms.valueOf("GO:987654")).toBe(5);
         expect(goTerms.valueOf("GO:133742")).toBe(2);
@@ -117,13 +121,13 @@ describe("should fetch the correct data", () => {
     it("get static name (and allow fetching more)", async () => {
         expect(GOTerms.nameOf("GO:987654")).toEqual("The term GO:987654");
         expect(GOTerms.nameOf("GO:12345")).toEqual("Unknown");
-        await GOTerms.fetch("GO:12345");
+        await GOTerms.fetch(["GO:12345"]);
         expect(GOTerms.nameOf("GO:12345")).toEqual("The term GO:12345");
         expect(GOTerms.nameOf("GO:YOLO")).toEqual("Unknown");
 
         // Check that there are no extra fetches for already looked up data
         const oldCount = fetchMock.getMock().calls.length;
-        await GOTerms.fetch("GO:12345");
+        await GOTerms.fetch(["GO:12345"]);
         expect(fetchMock.getMock().calls).toHaveLength(oldCount);
     });
 });
@@ -161,9 +165,16 @@ describe("shoud work correctly on empty set", () => {
 
 
 it("for GOChart", () => {
-    expect(GOTerms.quickGOChartURL(["GO:0", "GO:1"])).toEqual("https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/GO:0,GO:1/chart");
+    expect(GOTerms.quickGOChartURL(["GO:0", "GO:1"])).toEqual("https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/GO:0,GO:1/chart?showKey=true");
+    expect(GOTerms.quickGOChartURL(["GO:0", "GO:1"], true)).toEqual("https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/GO:0,GO:1/chart?showKey=true");
+    expect(GOTerms.quickGOChartURL(["GO:0", "GO:1"], false)).toEqual("https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/GO:0,GO:1/chart?showKey=false");
 });
 
+it("can ingest data", () => {
+    GOTerms.ingestGoData([["GO:987654", {"name": "The term GO:987654", "namespace": "molecular function", "code": "GO:987654"}], ["GO:133742", {"name": "The term GO:133742", "namespace": "molecular function", "code": "GO:133742"}]]);
+    expect(GOTerms.nameOf("GO:987654")).toEqual("The term GO:987654");
+    expect(GOTerms.nameOf("GO:12345")).toEqual("Unknown");
+});
 
 it("list namespaces", () => {
     expect(GOTerms.NAMESPACES).toEqual(["biological process", "cellular component", "molecular function"]);
