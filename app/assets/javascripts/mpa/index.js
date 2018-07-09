@@ -45,7 +45,7 @@ class MPA {
             onlyStarredFA: false,
         };
 
-        this.addDataset(peptides).catch(error => this.showError(error));
+        this.addDataset(peptides);
         this.setUpForm(peptides);
         this.setUpButtons();
         this.setUpHelp();
