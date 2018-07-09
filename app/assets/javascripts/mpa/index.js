@@ -303,7 +303,6 @@ class MPA {
     setUpGoTable(goResultset, target, oldGoResultset = null) {
         const sortOrder = this.displaySettings.sortFA;
         const tablepart = target.append("div").attr("class", "col-xs-8");
-
         let data = goResultset.getSorted(sortOrder.sortFunc);
         new AmountTable({
             title: `GO terms - ${goResultset.getName()}`,
@@ -553,7 +552,7 @@ class MPA {
                     text: d => d[sortOrder.field].toString(),
                     html: d => sortOrder.format(d),
                     style: {"width": "5em"},
-                    shade: d => 100 * d.value,
+                    shade: d => 100 * d[sortOrder.shadeField],
                 },
                 {
                     title: "EC number",
