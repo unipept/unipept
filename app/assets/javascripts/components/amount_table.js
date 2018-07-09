@@ -212,7 +212,7 @@ class AmountTable {
         }
         if (this.settings.more !== null) {
             const cheveron = row.append("td");
-            cheveron.classed("glyphicon amounttable-chevron", true);
+            cheveron.classed("glyphicon glyphicon-inline amounttable-chevron", true);
             cheveron.text(" ");
         }
 
