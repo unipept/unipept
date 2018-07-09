@@ -101,7 +101,90 @@ export default class ECNumbers extends SingleFA {
     }
 
     /**
-     * Make a tree structure of the EC numbers in the resultset
+     * Make a tree structure of the EC numbers in the resultset if
+     * for multiple sequences
+     *
+     * @return {Node} a treeview data model
+     */
+    treeSequencesData() {
+        const map = Object.create(null);
+
+        // The root node
+        map["-.-.-.-"] = {
+            id: 0, name: "-.-.-.-",
+            children: [],
+            data: {
+                self_count: 0,
+                count: 0,
+                data: {
+                    sequences: Object.create(null),
+                    self_sequences: Object.create(null),
+                },
+            },
+        };
+
+        const getOrNew = key => {
+            if (!(key in map)) {
+                map[key] = {
+                    id: key.split(".").map(x => ("0000" + x).slice(-4)).join("."),
+                    name: key.split(".").filter(x => x !== "-").join("."),
+                    children: [],
+                    data: {self_count: 0, count: 0, data: {
+                        code: key, value: 0,
+                        sequences: Object.create(null),
+                        self_sequences: Object.create(null),
+                    }},
+                };
+                const ancestors = ECNumbers.ancestorsOf(key, true);
+                getOrNew(ancestors[0]).children.push(map[key]);
+            }
+            return map[key];
+        };
+
+        // Sort from general to specific
+        const sortedEC = Array.from(this._map.values())
+            .sort((a, b) => ECNumbers.levelOf(a.code) - ECNumbers.levelOf(b.code));
+
+        for (const data of sortedEC) {
+            const {code, value: count, sequences} = data;
+
+            // Create a node for the new EC-code and place it in the map
+            const toInsert = {
+                id: code.split(".").map(x => ("0000" + x).slice(-4)).join("."),
+                name: code.split(".").filter(x => x !== "-").join("."),
+                children: [],
+                data: {
+                    self_count: count,
+                    count: count,
+                    data: Object.assign({}, data, {sequences: sequences, self_sequences: sequences})},
+            };
+
+            map[code] = toInsert;
+
+            const ancestors = ECNumbers.ancestorsOf(code, true);
+            getOrNew(ancestors[0]).children.push(toInsert);
+            for (const a of ancestors) {
+                const ancestor = getOrNew(a);
+                ancestor.data.count += toInsert.data.count;
+                Object.assign(ancestor.data.data.sequences, sequences);
+            }
+        }
+
+        // Order the nodes by their id (order by EC number)
+        Object.values(map).forEach(obj => {
+            obj.children.sort((a, b) => a.id.localeCompare(b.id));
+            obj.count = Object.values(obj.data.data.sequences).reduce((a, v) => a + v, 0);
+            obj.self_count = Object.values(obj.data.data.self_sequences).reduce((a, v) => a + v, 0);
+            obj.data.count = obj.count;
+            obj.data.self_count = obj.self_count;
+        });
+        return map["-.-.-.-"]; // the root node
+    }
+
+
+    /**
+     * Make a tree structure of the EC numbers in the resultset based
+     * on proteoms
      *
      * @return {Node} a treeview data model
      */

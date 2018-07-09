@@ -312,8 +312,8 @@ function summarizeFa(extract, countExtractor, trustExtractor, cutoff = 50, seque
                 if (weight < fraction) continue; // skip if insignificant weight TODO: remove
                 atLeastOne = true;
                 const count = map.get(code) || [0, 0, 0, 0, 0];
-                const faSeqences = seqMap.get(code) || [];
-                faSeqences.push(sequence);
+                const faSeqences = seqMap.get(code) || Object.create(null);
+                faSeqences[sequence] = pept.count;
                 seqMap.set(code, faSeqences);
                 const scaledWeight = weight * pept.count;
                 map.set(code, [
@@ -348,7 +348,8 @@ function summarizeFa(extract, countExtractor, trustExtractor, cutoff = 50, seque
             numberOfPepts: x[1][3],
             fractionOfPepts: x[1][3] / sumCount,
             trust: x[1][4] / x[1][3],
-            value: x[1][0] / sumWeight,
+            value: x[1][3],
+            evidence: x[1][0] / sumWeight,
             sequences: seqMap.get(x[0]),
         })),
     };

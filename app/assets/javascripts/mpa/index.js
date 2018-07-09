@@ -387,22 +387,21 @@ class MPA {
         if (cur !== null) {
             result += "<div class=\"tooltip-fa-text\">";
             if (old != null) {
-                const newValue = curdata("value");
+                const newValue = curdata("fractionOfPepts");
                 const oldValue = old.valueOf(thing);
                 const diff = (newValue - oldValue) / (newValue + oldValue);
                 if (Math.abs(diff) > 0.001) {
                     result += `<span class='glyphicon glyphicon-arrow-${diff > 0 ? "up" : "down"}'></span> `;
                 }
-                result += `Normailised evidence score of ${numberToPercent(curdata("value"), 2)} (was ${numberToPercent(oldValue, 2)})`;
+                result += `Assigned to ${numberToPercent(curdata("fractionOfPepts"), 2)} of peptides (was ${numberToPercent(oldValue, 2)})`;
             } else {
-                result += `Normailised evidence score of ${numberToPercent(curdata("value"), 2)}`;
+                result += `Assigned to  ${numberToPercent(curdata("fractionOfPepts"), 2)} of peptides`;
             }
             result += "</div>";
 
             result += "<div class=\"tooltip-fa-text\">";
             result += `Assigned to <strong>${curdata("numberOfPepts")} peptides</strong>, <br>
-        with an average support ratio of ${numberToPercent(curdata("weightedValue") / curdata("numberOfPepts"))}.<br>
-        Thus an <strong>evidence score of ${curdata("weightedValue").toFixed(2)}</strong>.`;
+        with an average support ratio of ${numberToPercent(curdata("weightedValue") / curdata("numberOfPepts"))}.`;
             result += "</div>";
 
             if (window.showTrust) {
@@ -483,7 +482,7 @@ class MPA {
         $("#save-btn-ec").unbind("click");
         $container.empty();
         if (ecResultSet.getTrust().annotatedCount > 0) {
-            const tree = $container.treeview(ecResultSet.treeData(), {
+            const tree = $container.treeview(ecResultSet.treeSequencesData(), {
                 width: 916,
                 height: 500,
                 enableAutoExpand: true,
@@ -491,15 +490,15 @@ class MPA {
                     const fullcode = (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
                     let tip = this.tooltipEC(fullcode);
                     tip += `<div class="tooltip-fa-text">
-                        Evidence score of ${numberToPercent(d.data.count, 2)} for this and child EC numbers, `;
+                        <strong>${d.data.count} peptides</strong> have at least one EC number within ${fullcode},<br>`;
 
                     if (d.data.self_count == 0) {
                         tip += "no specific annotations";
                     } else {
                         if (d.data.self_count == d.data.count) {
-                            tip += " all specifically for this number";
+                            tip += " <strong>all specifically</strong> for this number";
                         } else {
-                            tip += ` ${numberToPercent(d.data.self_count, 2)} specificly for this number`;
+                            tip += ` <strong>${d.data.self_count} specificly</strong> for this number`;
                         }
                     }
 

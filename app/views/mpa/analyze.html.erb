@@ -140,16 +140,7 @@
             <a href="#" data-shade-field="fractionOfPepts" data-field="fractionOfPepts" data-as="percent">Peptides %</a>
           </li>
           <li>
-            <a href="#" data-shade-field="fractionOfPepts" data-field="numberOfPepts" data-as="int">Peptides</a>
-          </li>
-          <li class="dropdown-header">Sort by weighted number of occurrences in related proteins
-            <span class="small glyphicon glyphicon-question-sign help btn-icon" data-help-id="mpa-help-sorting"></span>
-          </li>
-          <li>
-            <a href="#" id="mpa-select-fa-sort-default" data-shade-field="value" data-field="value" data-as="percent">Evidence % </a>
-          </li>
-          <li>
-            <a href="#" data-shade-field="value" data-field="weightedValue" data-as="2pos">Evidence</a>
+            <a href="#" id="mpa-select-fa-sort-default" data-shade-field="fractionOfPepts" data-field="numberOfPepts" data-as="int">Peptides</a>
           </li>
         </ul>
       </div>
@@ -231,18 +222,11 @@
 <ul>
 <li><strong>Peptides</strong>: The absolute number of peptides that are associated with a given functional annotation. Note that the strength of this association is not taken into account, the result can thus be misleading.</li>
 <li><strong>Peptides%</strong>: Like peptides, but the reported value is represented as a percentage indicating the fraction of the total number of peptides.</li>
-<li><strong>Evidence</strong>: A score that indicate the likelihood that a certain annotation is implied by your set of peptides. The maximum value is the number of peptides. This value is similar to peptides, but the contribution of each peptide is weighted by the probability (empirical fraction) that that peptide indicates certain annotation.</li>
-<li><strong>Evidence%</strong>: Like evidence, but the reported value is represented as a percentage indicating the fraction of the sum of all evidence.</li>
 </ul>
-<p>Your “Filter duplicate peptides” setting is taken into account. If it is enabled,</p>
-<h3>So, which one should I use?</h3>
-<p>This depends on what you are trying to accomplish.</p>
-<p>However, we generally advice you to use “<strong>Evidence%</strong>” rather than “Peptides”, as “Evidence” is a less misleading metric.</p>
-<h3>What is evidence exactly?</h3>
-<p>If <var>S</var> is the set of peptide sequences you supplied, the evidence for the annotaion <code>annotation</code> is given by:</p>
-
-
-  <%= image_tag("mpa/evidence-formula.svg", alt:"") %>
+<p>
+Your “Filter duplicate peptides” setting is taken into account. If it is enabled, peptides that occur multiple times 
+in your input list are counted that many times.
+</p>
 </script>
 <script id="mpa-help-filtering" type="text/html" data-title="Functional annotation filtering">
 <p>
