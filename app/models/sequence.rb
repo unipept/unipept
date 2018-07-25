@@ -14,6 +14,8 @@ require 'ostruct'
 
 class Sequence < ApplicationRecord
   include ReadOnlyModel
+  self.primary_key = 'id'
+
 
   has_many :peptides
   has_many :original_peptides, foreign_key: 'original_sequence_id', primary_key: 'id', class_name: 'Peptide'
