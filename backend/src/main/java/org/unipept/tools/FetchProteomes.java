@@ -17,9 +17,9 @@ import org.unipept.storage.CSV;
 import org.unipept.storage.CSV.Writer;
 
 /**
- * Get proteom data from ebi
+ * Get proteomes data from ebi
  */
-public class MakeProteoms {
+public class FetchProteomes {
 
   public static void main(String[] args) throws IOException {
     if (args.length != 2) {
