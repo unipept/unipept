@@ -81,7 +81,13 @@ public class FetchProteomes {
         }
       }
     }
-    writer.write(Long.toString(id), accession, obj.getString("name"), obj.getString("strain", null),
-        obj.getBoolean("isReferenceProteome") ? "1" : "0", assembly);
+    writer.write(
+      Long.toString(id), 
+      accession, 
+      obj.getString("name"), 
+      obj.getString("strain", null),
+      (obj.getBoolean("isReferenceProteome") || obj.getBoolean("isRepresentativeProteome")) ? "1" : "0", 
+      assembly
+    );
   }
 }
