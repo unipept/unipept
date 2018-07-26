@@ -29,9 +29,6 @@ class Proteome < ApplicationRecord
 
   def full_name
     return proteome_name if strain.nil?
-    return proteome_name if proteome_name.count(' ') > 1
-    return proteome_name if proteome_name.include?('(')
-    return proteome_name unless proteome_name.index(/[0-9]/).nil?
     proteome_name + ' ' + strain
   end
 

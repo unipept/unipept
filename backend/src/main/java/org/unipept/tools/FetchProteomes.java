@@ -81,11 +81,21 @@ public class FetchProteomes {
         }
       }
     }
+
+    String name = obj.getString("name");
+    String strain = obj.getString("strain", null);
+    if(strain != null && strain.length() > 1){
+      name = name.replace("("+strain+")", "");
+      name = name.replace("(strain "+strain+")", "");
+      name = name.replaceAll("  *", " ");
+      name = name.replaceAll(" *$", "");
+    }
+
     writer.write(
       Long.toString(id), 
       accession, 
-      obj.getString("name"), 
-      obj.getString("strain", null),
+      name, 
+      strain,
       (obj.getBoolean("isReferenceProteome") || obj.getBoolean("isRepresentativeProteome")) ? "1" : "0", 
       assembly
     );
