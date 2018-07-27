@@ -13,7 +13,7 @@ import {constructSearchtree} from "./searchtree.js";
 /**
  * @typedef MPADisplaySettings
  * @type {object}
- * @property {{sortFunc,field,name,format,shadeField}} sortFA
+ * @property {{sortFunc,field,name,format,formatData,shadeField}} sortFA
  * @property {boolean} onlyStarredFA
  * @property {number} percentFA
  */
@@ -354,12 +354,13 @@ class MPA {
      * @param {*} target
      */
     setUpQuickGo(goResultset, target) {
+        const sortOrder = this.displaySettings.sortFA;
         /** @type {string[]} */
-        const top5 = goResultset.getSorted(this.displaySettings.sortFA.sortFunc).slice(0, 5).map(x => x.code);
+        const top5 = goResultset.getSorted(sortOrder.sortFunc).slice(0, 5).map(x => x.code);
 
         if (top5.length > 0) {
             const quickGoChartURL = GOTerms.quickGOChartURL(top5);
-            const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${numberToPercent(goResultset.valueOf(x))})`);
+            const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${sortOrder.formatData(goResultset.valueOf(x, sortOrder.field))})`);
             const top5sentence = top5WithNames.slice(0, -1).join(", ")
                 + (top5.length > 1 ? " and " : "")
                 + top5WithNames[top5WithNames.length - 1];
@@ -718,6 +719,7 @@ class MPA {
             const field = $selected.data("field");
             this.displaySettings.sortFA = {
                 format: x => formatters[$selected.data("as")](x[field]),
+                formatData: x => formatters[$selected.data("as")](x),
                 field: field,
                 shadeField: $selected.data("shade-field"),
                 name: $selected.text(),
