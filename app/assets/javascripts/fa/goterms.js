@@ -152,10 +152,12 @@ export default class GOTerms extends GroupedFA {
 
     /**
      * @param {string[]} terms the terms to show in the chart (at least one)
+     * @param {boolean} showKey Show the legend of the colors
      * @return {string} The QuickGo chart URL of the given GO terms
      */
-    static quickGOChartURL(terms) {
-        return `https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/${terms.join(",")}/chart`;
+    static quickGOChartURL(terms, showKey = true) {
+        // sort the terms to improve caching
+        return `https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/${terms.sort().join(",")}/chart?showKey=${showKey}`;
     }
 
     /**

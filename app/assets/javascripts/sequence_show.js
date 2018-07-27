@@ -366,7 +366,10 @@ class SPA {
      */
     setUpQuickGo(goResultset, variant, variantName, target) {
         const top5 = goResultset.getGroup(variant).getSorted().slice(0, 5).map(x => x.code);
-        const quickGoChartURL = GOTerms.quickGOChartURL(top5);
+
+        const quickGoChartSmallURL = GOTerms.quickGOChartURL(top5, false);
+        const quickGoChartURL = GOTerms.quickGOChartURL(top5, true);
+
         const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${numberToPercent(goResultset.valueOf(x.code) / goResultset.getTrust().annotatedCount)})`);
         const top5sentence = top5WithNames.slice(0, -1).join(", ")
             + (top5.length > 1 ? " and " : "")
@@ -374,16 +377,22 @@ class SPA {
         target
             .append("div").attr("class", "col-xs-4")
             .append("img")
-            .attr("src", quickGoChartURL)
+            .attr("src", quickGoChartSmallURL)
             .attr("class", "quickGoThumb")
             .attr("title", `QuickGO chart of ${top5sentence}`)
             .on("click", () => {
-                showInfoModal("QuickGo " + variantName, `
+                const $modal = showInfoModal("QuickGo " + variantName, `
                     This chart shows the realationship between the ${top5.length} most occuring GO terms: ${top5sentence}.<br/>
-                    <a href="${quickGoChartURL}" target="_blank" title="Click to enlarge in new tab"><img style="max-width:100%" src="${quickGoChartURL}" alt="QuickGO chart of ${top5sentence}"/></a>
+                    <a href="${quickGoChartURL}" target="_blank" title="Click to enlarge in new tab"><img style="max-width:100%" src="${quickGoChartSmallURL}" alt="QuickGO chart of ${top5sentence}"/></a>
                     <br>
                     Provided by <a href="https://www.ebi.ac.uk/QuickGO/annotations?goId=${top5.join(",")}" target="_blank">QuickGo</a>.`,
                 {wide: true});
+
+                const fullImage = new Image();
+                fullImage.onload = () => {
+                    $modal.find("img").first().attr("src", quickGoChartURL);
+                };
+                fullImage.src = quickGoChartURL;
             });
     }
 
