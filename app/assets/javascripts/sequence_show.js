@@ -394,14 +394,20 @@ class SPA {
     initFAToolips() {
         /* eslint brace-style: "off" */
         const tooltipShowCSS = {"display": "block", "visibility": "visible"};
-        const tooltipHideCSS = {"display": "none", "visibility": "hidden"};
+        const tooltipHideCSS = {"display": "none", "visibility": "hidden", "top": 0, "left": 0};
 
         $(".ecNumberLink,.goTermLink")
             .mouseenter(() => {this.$tooltip.css(tooltipShowCSS);})
             .mouseleave(() => {this.$tooltip.css(tooltipHideCSS);})
             .mousemove(e => {
                 this.$tooltip.css("top", e.pageY + 10);
-                this.$tooltip.css("left", e.pageX + 10);
+                if (window.innerWidth - e.pageX - 25 - this.$tooltip.outerWidth() < 0) {
+                    this.$tooltip.css({"right": "3px", "left": "auto"});
+                }
+                else
+                {
+                    this.$tooltip.css({"right": "auto", "left": e.pageX + 10});
+                }
             });
     }
 
