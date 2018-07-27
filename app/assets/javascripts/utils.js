@@ -353,7 +353,7 @@ export function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) 
         if (svgSelector) {
             $buttons.append("<button id='download-svg' class='btn btn-primary btn-animate'><span class='glyphicon glyphicon-download down'></span> Download as SVG</button>");
             $("#download-svg").click(function () {
-                downloadDataByForm(svg, baseFileName + ".svg");
+                downloadDataByForm(svg, baseFileName + ".svg", "image/svg+xml");
             });
         }
         $buttons.append("<button id='download-png' class='btn btn-primary btn-animate'><span class='glyphicon glyphicon-download down'></span> Download as PNG</button>");
