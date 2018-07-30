@@ -1,6 +1,8 @@
 import {showNotification} from "./notifications.js";
 import {get, getJSON, highlight, logToGoogle, showError, showInfo} from "./utils.js";
 
+/* eslint-disable require-jsdoc */
+
 function initDatasets() {
     let datasetLoader = constructDatasetLoader();
 
@@ -17,10 +19,24 @@ function initDatasets() {
 
 
     // add progress bar when submitting form
-    $("#search-multi-form").click(function () {
+    $("#search-multi-form").click(function (e) {
         $("#search_button").hide();
         $("#form-progress").removeClass("hide");
-        showNotification("Sending peptides...", {
+
+        let sessionStorageSucceeded = false;
+        try {
+            let storage = window.sessionStorage;
+            storage.setItem("mpaData", $("#qs").val());
+            if (storage.getItem("mpaData") === $("#qs").val()) {
+                sessionStorageSucceeded = true;
+                $("#qs").removeAttr("name").attr("form", "nonexistentform"); // don't send qs over wire
+                $(this).closest("form").append("<input type='hidden' name='qs' value='sessionstorage'/>");
+            }
+        } catch (e) {
+            sessionStorageSucceeded = false;
+        }
+
+        showNotification(sessionStorageSucceeded ? "Starting analysis…" : "Sending peptides…", {
             autoHide: false,
             loading: true,
         });

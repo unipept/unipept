@@ -206,7 +206,12 @@
 <div id="tooltip" class="tip"></div>
 
 <script type="text/javascript">
-  var peptides = <%= raw(@peptides) %>;
+  var peptides = <%= raw(@peptides == '["sessionstorage"]' ? '[]' : @peptides) %>;
+<% if @peptides == '["sessionstorage"]' %>
+  var qs  = window.sessionStorage.getItem("mpaData");
+  $("#qs").val(qs);
+  peptides = qs.replace(/\r/g,"").split("\n");
+<% end %>
   var il = <%= @il %>;
   var dupes = <%= @dupes %>;
   var missed = <%= @missed %>;
