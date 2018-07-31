@@ -46,10 +46,11 @@ public class FetchProteomes {
   private static void performLookup(Map<String, Long> proteomIdMap, Writer writer) throws IOException {
     if (!proteomIdMap.isEmpty()) {
       String requested = proteomIdMap.keySet().stream().collect(Collectors.joining("%2C"/* comma */));
+      String url = "https://www.ebi.ac.uk/proteins/api/proteomes?offset=0&size=-1&upid=" + requested;
       try (
-        InputStream is = (new URL("https://www.ebi.ac.uk/proteins/api/proteomes?offset=0&size=-1&upid=" + requested)).openStream(); 
-        JsonReader rdr = Json.createReader(is)
-      ) {
+          InputStream is = (new URL(url)).openStream(); 
+          JsonReader rdr = Json.createReader(is)
+        ) {
 
         JsonArray results = rdr.readArray();
 
@@ -67,37 +68,36 @@ public class FetchProteomes {
   }
 
   private static void parseAndWrite(JsonObject obj, long id, String accession, CSV.Writer writer) throws IOException {
+    // Only Representative proteomes
+    if (obj.getBoolean("isRepresentativeProteome")) {
 
-    if ("viruses".equals(obj.getString("superregnum", null))) {
-      return; // Skip viruses
-    }
-
-    JsonArray dbRfs = obj.getJsonArray("dbReference");
-    String assembly = null;
-    if (dbRfs != null) {
-      for (JsonObject result : dbRfs.getValuesAs(JsonObject.class)) {
-        if ("GCSetAcc".equals(result.getString("type", null))) {
-          assembly = result.getString("id", null);
+      JsonArray dbRfs = obj.getJsonArray("dbReference");
+      String assembly = null;
+      if (dbRfs != null) {
+        for (JsonObject result : dbRfs.getValuesAs(JsonObject.class)) {
+          if ("GCSetAcc".equals(result.getString("type", null))) {
+            assembly = result.getString("id", null);
+          }
         }
       }
-    }
 
-    String name = obj.getString("name");
-    String strain = obj.getString("strain", null);
-    if(strain != null && strain.length() > 1){
-      name = name.replace("("+strain+")", "");
-      name = name.replace("(strain "+strain+")", "");
-      name = name.replaceAll("  *", " ");
-      name = name.replaceAll(" *$", "");
-    }
+      String name = obj.getString("name");
+      String strain = obj.getString("strain", null);
+      if (strain != null && strain.length() > 1) {
+        name = name.replace("(" + strain + ")", "");
+        name = name.replace("(strain " + strain + ")", "");
+        name = name.replaceAll("  *", " ");
+        name = name.replaceAll(" *$", "");
+      }
 
-    writer.write(
-      Long.toString(id), 
-      accession, 
-      name, 
-      strain,
-      (obj.getBoolean("isReferenceProteome") || obj.getBoolean("isRepresentativeProteome")) ? "1" : "0", 
-      assembly
-    );
+      writer.write(
+        Long.toString(id), 
+        accession, 
+        name, 
+        strain, 
+        obj.getBoolean("isReferenceProteome") ? "1" : "0",
+        assembly
+      );
+    }
   }
 }
