@@ -1,17 +1,21 @@
 package org.unipept.tools;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.unipept.storage.CSV;
 
+/**
+ * Creates a list of (peptide. functional JSON)-pairs separated by a \t.
+ * 
+ * Assumes the file to be sorted on the first col (peptide).
+ */
 public class FunctionAnalysisPeptides {
 
     public static void main(String[] args) throws IOException {
         if (args.length != 2) {
-            throw new RuntimeException("Please provide the parameters.");
+            throw new RuntimeException("Please provide 2 parameters. (input,output)");
         }
 
         String inputPepts = args[0];
@@ -27,7 +31,7 @@ public class FunctionAnalysisPeptides {
         int numProt = 0;
         int numAnnotatedGO = 0;
         int numAnnotatedEC = 0;
-        int done = 0;
+        long done = 0;
         while ((row = reader.read()) != null) {
 
             if (!row[0].equals(curPept)) {
@@ -58,7 +62,7 @@ public class FunctionAnalysisPeptides {
             }
             done++;
             if (done % 1000000 == 0) {
-                System.out.println(done);
+                System.out.println("FA " + done + " rows");
             }
         }
         if (!m.isEmpty()) {
