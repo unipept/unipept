@@ -81,14 +81,18 @@ public class FetchProteomes {
         }
       }
 
-      String name = obj.getString("name");
+      String name = obj.getString("name").replace("\t"," ");
+      String fullName = name;
       String strain = obj.getString("strain", null);
       if (strain != null && strain.length() > 1) {
         name = name.replace("(" + strain + ")", "");
         name = name.replace("(strain " + strain + ")", "");
         name = name.replaceAll("  *", " ");
         name = name.replaceAll(" *$", "");
+
+        fullName = name + " " + strain;
       }
+
 
       writer.write(
         Long.toString(id), 
@@ -96,7 +100,8 @@ public class FetchProteomes {
         name, 
         strain, 
         obj.getBoolean("isReferenceProteome") ? "1" : "0",
-        assembly
+        assembly,
+        fullName
       );
     }
   }
