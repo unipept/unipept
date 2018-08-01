@@ -234,13 +234,36 @@ $(TABLES): $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 # }}}
 
 # Proteomes {{{ ----------------------------------------------------------------
-<<<TABDIR>>>/proteomes.tsv.gz: <<<INTDIR>>>/proteomes.tsv.gz proteomes.sh type_strains.sh
-	echo "Starting fetching proteome info."
-	./proteomes.sh \
-		<<<INTDIR>>>/proteomes.tsv.gz \
-		<(ENTREZ_URL=<<<ENTREZ_URL>>> ENTREZ_BATCH_SIZE=<<<ENTREZ_BATCH_SIZE>>> ./type_strains.sh) \
-		<<<TABDIR>>>/proteomes.tsv.gz
-	echo "Finished fetching proteome info."
+
+<<<INTDIR>>>/proteomes_data.tsv.gz: $(JAR) <<<INTDIR>>>/proteomes.tsv.gz
+	echo "Starting fetching of proteome data."
+	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).FetchProteomes \
+		<(<<<CMD_ZCAT>>> <<<INTDIR>>>/proteomes.tsv.gz) \
+		>(<<<CMD_SORT>>> -t $$'\t' -k 6 | <<<CMD_GZIP>>> > $@) # sort by assembly
+	echo "Finished fetching of proteome data."
+
+<<<INTDIR>>>/proteomes_type_strains.tsv.gz: type_strains.sh
+	echo "Starting fetching of type strain data."
+	./type_strains.sh | <<<CMD_SED>>> 's/$$/\t1/' | <<<CMD_GZIP>>> > $@
+	echo "Finished fetching of type strain data."
+
+
+<<<TABDIR>>>/proteomes.tsv.gz: <<<INTDIR>>>/proteomes_data.tsv.gz <<<INTDIR>>>/proteomes_type_strains.tsv.gz 
+	echo "Starting adding type strain boolean to proteome data."
+	# tmp: 1)id 2)accession-id 3)name-str 4)reference-bool 5)strain-id 6)assembly-id
+	# strain: assembly-id
+
+	# join: 1)assembly-id 2)id 3)accession-id 4)name-str 5)reference-int 6)strain-id 7)strain-int
+	# awk: id accession-id name-str TAXON strain-bool reference-bool strain-id assembly-id
+	<<<CMD_JOIN>>> -1 6 -2 1 -a 1 -e"0" -t $$'\t' -o "1.1 1.2 1.3 2.2 1.5 1.4 1.6 1.7" \
+			<(<<<CMD_ZCAT>>> <<<INTDIR>>>/proteomes_data.tsv.gz) \
+			<(<<<CMD_ZCAT>>> <<<INTDIR>>>/proteomes_type_strains.tsv.gz) \
+		| <<<CMD_AWK>>> 'function b(a){if (a == 1)return "\x01"; return "\x00"} \
+		       BEGIN { FS = OFS = "\t" }{ print $$1,$$2,$$3,"\\N",b($$4),b($$5),$$6,$$7,$$8 }' \
+		| <<<CMD_SORT>>> -n \
+		| <<<CMD_GZIP>>> \
+		> $@
+	echo "Finished adding type strain boolean to proteome data."
 # }}}
 
 # Functional Data {{{ ----------------------------------------------------------
