@@ -84,9 +84,13 @@
           <span class="dir text">Click a slice to zoom in and the center node to zoom out</span>
         </h2>
         <div id="mpa-sunburst">
-          <div id="sunburstPanel"><div class="mpa-waiting">Please wait while we are preparing your data...</div></div>
-                </div>
+          <div id="sunburstPanel">
+              <div class="mpa-waiting">
+                  <%= image_tag("mpa/placeholder_sunburst.svg", alt:"Please wait while we are preparing your data...", class:"mpa-placeholder") %>
+              </div>
           </div>
+        </div>
+      </div>
       <div class="tab-pane" id="treemapWrapper">
         <h2 class="ghead">
           <span class="dir">
@@ -94,7 +98,9 @@
           </span>
           <span class="dir text">Click a square to zoom in and right click to zoom out</span>
         </h2>
-        <div id="mpa-treemap"><div class="mpa-waiting">Please wait while we are preparing your data...</div></div>
+        <div id="mpa-treemap"><div class="mpa-waiting">
+            <%= image_tag("mpa/placeholder_treemap.svg", alt:"Please wait while we are preparing your data...", class:"mpa-placeholder") %>
+        </div></div>
       </div>
       <div class="tab-pane" id="treeviewWrapper">
         <h2 class="ghead">
@@ -103,7 +109,11 @@
           </span>
           <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
         </h2>
-        <div id="mpa-treeview"><div class="mpa-waiting">Please wait while we are preparing your data...</div></div>
+        <div id="mpa-treeview">
+          <div class="mpa-waiting">
+              <%= image_tag("mpa/placeholder_treeview.svg", alt:"Please wait while we are preparing your data...", class:"mpa-placeholder") %>
+          </div>           
+        </div>
       </div>
       <div class="tab-pane card-supporting-text" id="outline">
         <div class="input-group" id="tree_search_group">
@@ -184,7 +194,16 @@
         your peptides. <span id="go-summary"></span>
         Click on a row in a table to see a taxonomy tree that highlights occurrences.
       </div>
-      <div id="goPanel">Please wait while we are preparing your data...&nbsp;</div>
+      <div id="goPanel">
+                <div class="mpa-waiting">
+                    <h3>Biological Process</h3>
+                    <%= image_tag("mpa/placeholder_GO.svg", alt:"Please wait while we are preparing your data...", class:"mpa-placeholder") %>
+                    <h3>Cellular Component</h3>
+                    <%= image_tag("mpa/placeholder_GO.svg", alt:"Please wait while we are preparing your data...", class:"mpa-placeholder") %>
+                    <h3>Molecular Function</h3>
+                    <%= image_tag("mpa/placeholder_GO.svg", alt:"Please wait while we are preparing your data...", class:"mpa-placeholder") %>
+              </div>
+      </div>
     </div>
     <div class="tab-pane" id="ecWrapper">
       <div class='card-supporting-text'>
@@ -197,7 +216,9 @@
         <button id='save-btn-ec' disabled=disabled class='btn btn-default btn-xs btn-animate'>
           <span class='glyphicon glyphicon-download down'></span> Save tree as image
         </button>
-        <div>Please wait while we are building a summary</div>
+        <div>          <div class="mpa-waiting">
+              <%= image_tag("mpa/placeholder_treeview.svg", alt:"Please wait while we are preparing your data...", class:"mpa-placeholder") %>
+          </div> </div>
       </div></div>
   </div>
 </div>

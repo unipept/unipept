@@ -42,8 +42,26 @@ span.dir.text {
     margin-top: 5px;
 }
 
-.mpa-waiting {
-    margin: 18px;
+.mpa-waiting{ 
+    
+    position: relative;
+    margin: 18px 0 0 0;
+
+    &::after {
+        content: "Please wait while we are preparing your data..";
+        position: absolute;
+        left: 0;
+        top: 64px;
+        font-size: 2em;
+        text-shadow: 0 0 5px white, 0 0 3px white;
+        width: 100%;
+        text-align: center;
+        display: block;
+    }
+
+    .mpa-placeholder {
+        filter: blur(2px);
+    }
 }
 
 // tooltip
