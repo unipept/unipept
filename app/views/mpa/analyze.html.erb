@@ -250,33 +250,71 @@
 <li><strong>Peptides%</strong>: Like peptides, but the reported value is represented as a percentage indicating the fraction of the total number of peptides.</li>
 </ul>
 <p>
-Your “Filter duplicate peptides” setting is taken into account. If it is enabled, peptides that occur multiple times 
+Your "Filter duplicate peptides" setting is taken into account. If it is enabled, peptides that occur multiple times 
 in your input list are counted that many times.
 </p>
 </script>
-<script id="mpa-help-filtering" type="text/html" data-title="Functional annotation filtering">
+<script id="mpa-help-filtering" type="text/html" data-title="Functional Annotation filtering">
+
+<h4 id="quick-explaination">Quick explaination</h4>
+<p>By default Unipept does not report all found annotations. It uses a clever filtering technique that removes untrustworthy annotations. The strength of This filter is expressed as a percentage.</p>
+<ul>
+<li><strong>0%</strong> means no filtering occurs. <br> 
+  We assign the annotation <var>A</var>. to a peptide sequence <var>P</var> if there is at least one protein that contains an exact match for <var>P</var> and has been assigned the annotation <var>A</var>..
+</li>
+<li><strong>100%</strong> is the strongest level of filtering. <br> In this case we require that every protein that contains a certain peptide sequence <var>P</var> has the annotation <var>A</var>. before we assign the annotation <var>A</var>. to the peptide.</li>
+</ul>
 <p>
-By default Unipept does not show all annotaions it finds. The hidden annotations
-are those annotaions that are underrepresented. In order to understand what 
-annotaions are filtered we need to explain how Unipept works at a hight level.
+  The default value is 5%. This means that a peptide sequence <var>P</var> is assumed to be annotated with a annotation <var>A<var> if at least 5% of the UniProt enteries<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> in which <var>P</var> occurs has been annotated with <var>A<var>.
 </p>
+<h4 id="in-more-depth">In more depth</h4>
 <p>
-The most important problem we face when deriving the functional annotaions that
-can be assigned to a set of peptides (the input), is that te 
+  When you suply a list of peptides to unipept, unipept needs to find out what functional annotations correspond to each of those peptides. To do this we look at the UniProt proteins that in which each of your peptides occurs.
 </p>
+<section class="row">
+  <div class="col-xs-5">
+      <p>
+          UniProt proteins are annotated with GO Terms and EC numbers. We want to project these on tryptic peptides.
+      </p>
+  </div>
+  <div class="col-xs-7">
+      <%= image_tag("mpa/proteoms.svg" , class:"img-responsive") %>
+  </div>
+</section>
+
+<section class="row">
+    <div class="col-xs-5">
+        <p>
+          We perform an in-scilo trypsin digest of the proteins. The annotations of the proteins are copied to the products of the digests.
+        </p>
+    </div>
+    <div class="col-xs-7">
+        <%= image_tag("mpa/matches.svg" , class:"img-responsive") %>
+    </div>
+</section>
+
+<section class="row">
+    <div class="col-xs-5">
+        <p>
+            We can now see the annotations that various proteins assigned to a supplied tryptic peptide.
+        </p>
+    </div>
+    <div class="col-xs-7">
+        <%= image_tag("mpa/annotations.svg" , class:"img-responsive") %>
+    </div>
+</section>
+
 <p>
-  To determine what functional annotations to assign to a peptide we look at al 
-  the UniProt entries in which our peptide occurs. In UniProt proteins do have a
-  <%= image_tag("mpa/proteoms.svg", class:"img-responsive") %>
+    In unipept we have done the above experiment for each tryptic peptide in UniProt in a precomputaion step. The number of occurrences of each annotation is stored in a database. When one of the sequences is used in an analysis we look up the results and only take annotations that occur in more than 5% of the matched Uniprot entries into account.
 </p>
-  functional annotation.
-<p>
-  We split up these proteins using tripsin, and the tags are inherited
-  <%= image_tag("mpa/matches.svg" , class:"img-responsive") %>
-</p>
-<p>
-  We now count the occurence of each tag.
-  <%= image_tag("mpa/annotations.svg" , class:"img-responsive") %>
-</p>
+<%= image_tag("mpa/summary.svg" , class:"img-responsive") %>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Only UniProt enteries with at least one annotation are taken into account.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+
+
 
 </script>
