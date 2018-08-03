@@ -268,7 +268,7 @@ class AmountTable {
             if (numleft > 0) {
                 let cellHtml = `<span class="glyphicon glyphicon-chevron-down"></span>${leftText()} — `;
                 if (numClick >= 2 && numleft > 10) {
-                    cellHtml += "<kbd>SHIFT+click</kbd> for 100</span>";
+                    cellHtml += "<kbd>SHIFT+click</kbd> to show 100 more</span>";
                 } else {
                     cellHtml += `show ${Math.min(numleft, 10)} more`;
                 }
@@ -281,8 +281,8 @@ class AmountTable {
             if (this.settings.limit > this.settings.initialLimit) {
                 collapseCell
                     .append("span")
-                    .classed("glyphicon glyphicon-chevron-up pull-right", true)
-                    .attr("title", "Collaps row")
+                    .classed("glyphicon glyphicon-chevron-up btn-icon pull-right", true)
+                    .attr("title", "Collapse row")
                     .attr("tabindex", "0")
                     .attr("role", "button")
                     .on("click", toggleUp)
