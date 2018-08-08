@@ -580,7 +580,8 @@ class MPA {
                 },
                 {
                     title: "Name",
-                    text: d => ECNumbers.nameOf(d.code),
+                    html: d => ECNumbers.nameOf(d.code),
+                    text: d => ECNumbers.fullNameOf(d.code),
                 },
                 {
                     builder: cell => {

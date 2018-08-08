@@ -263,7 +263,8 @@ class SPA {
                 },
                 {
                     title: "Name",
-                    text: d => ECNumbers.nameOf(d.code),
+                    html: d => ECNumbers.nameOf(d.code),
+                    text: d => ECNumbers.fullNameOf(d.code),
                 },
             ],
             tooltip: d => this.tooltipEC(d.code, ecResultSet),

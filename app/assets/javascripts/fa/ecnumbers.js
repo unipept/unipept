@@ -239,15 +239,40 @@ export default class ECNumbers extends SingleFA {
 
     // ------------------- Static getters ---------------
     /**
-     * @param {*} ecNum The EC number to get information on
-     * @param {*} fallback value to use ecNum not found
-     * @return {*} The value of the name property of `ecNum`
+     * @param {string} ecNum The EC number to get information on
+     * @param {?string} [fallback="Unknown"] value to use ecNum not found
+     * @return {?string} The value of the name property of `ecNum`
      */
     static nameOf(ecNum, fallback = "Unknown") {
         if (ECNumbers.ecData.has(ecNum)) {
             return ECNumbers.ecData.get(ecNum);
         }
         return fallback;
+    }
+
+    /**
+     * Gets the full name of an EC number.
+     *
+     * For classes, subclasses and sub-subclasses this means
+     * prepending the names of their ancestors.
+     *
+     * @param {string} ecNum The EC number to get information on
+     * @param {?string} [fallback="Unknown"] value to use ecNum not found
+     * @return {?string}
+     */
+    static fullNameOf(ecNum, fallback = "Unknown") {
+        if (ecNum.endsWith("-")) {
+            const ancestors = ECNumbers.ancestorsOf(ecNum).reverse();
+            ancestors.push(ecNum);
+            const result = ancestors.map(x => ECNumbers.nameOf(x, null)).filter(x => x !== null);
+            if (result.length > 0) {
+                return result.join(" ");
+            } else {
+                return fallback;
+            }
+        } else {
+            return ECNumbers.nameOf(ecNum, fallback);
+        }
     }
 
     /**
