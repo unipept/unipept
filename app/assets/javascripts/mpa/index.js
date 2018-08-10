@@ -140,7 +140,7 @@ class MPA {
         this.sunburst = this.setUpSunburst(JSON.parse(data));
         this.treemap = this.setUpTreemap(JSON.parse(data));
         this.treeview = this.setUpTreeview(JSON.parse(data));
-        this.searchTree = constructSearchtree(tree, this.searchSettings.il);
+        this.searchTree = constructSearchtree(tree, this.searchSettings.il, d => this.search(d.id, d.name, 1000));
     }
 
     /**

@@ -14,7 +14,7 @@ import {addCopy, highlight, logToGoogle} from "../utils.js";
  * @param  {boolean} il Whether IL were equated
  * @return {Searchtree} The constructed Searchtree object
  */
-function constructSearchtree(t, il) {
+function constructSearchtree(t, il, rerootCallback = x => {}) {
     /** ************* Private variables ***************/
 
     // parameters
@@ -26,6 +26,11 @@ function constructSearchtree(t, il) {
     let tree,
         items;
 
+    const infoPane = $("#tree_data");
+    const initialStyleInforpane = infoPane.attr("style") || "";
+    const initialHTMLInforpane = infoPane.html();
+
+
     /** ************* Private methods ***************/
 
     /**
@@ -35,11 +40,17 @@ function constructSearchtree(t, il) {
         redraw();
     }
 
+    function resetinfoPandAndClick() {
+        $("span.clicked").removeClass("clicked");
+        infoPane.html(initialHTMLInforpane);
+        infoPane.attr("style", initialStyleInforpane);
+    }
+
     function redraw() {
         let i;
-
         // clear all the things
         $("#searchtree").empty();
+        resetinfoPandAndClick();
 
         // Add the nested unordered lists to the page based on the data array
         tree = d3.select("#searchtree");
@@ -75,6 +86,7 @@ function constructSearchtree(t, il) {
         // Expand or collapse a node when clicked
         $("#searchtree li").click(function () {
             if (!$(this).hasClass("not")) {
+                resetinfoPandAndClick();
                 $(this).toggleClass("collapsibleListOpen collapsibleListClosed");
             }
             return false;
@@ -82,11 +94,16 @@ function constructSearchtree(t, il) {
 
         // Add click action
         $("#searchtree li span").click(clickAction);
+        $("#searchtree li span").dblclick(function () {
+            rerootCallback(Object.assign({}, d3.select(this.parentElement).datum()));
+        });
+
 
         // add search
         $("#tree_search").keyup(function () {
             let text = $(this).val().toLowerCase();
             delay(function () {
+                resetinfoPandAndClick();
                 $("#searchtree li").removeClass("match unmatch");
                 if (text !== "") {
                     let $matches = $("#searchtree li[data-search*='" + text + "']").addClass("match");
@@ -115,7 +132,6 @@ function constructSearchtree(t, il) {
 
         let d = d3.select(this.parentElement).datum(),
             margin = this.offsetTop - 9,
-            infoPane,
             ownSequences,
             allSequences,
             i,
@@ -123,7 +139,7 @@ function constructSearchtree(t, il) {
 
         $("span.clicked").removeClass("clicked");
         $(this).addClass("clicked");
-        infoPane = $("#tree_data")
+        infoPane
             .html(`
                 <h3>
                   <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=${d.id}' target='_blank'>
