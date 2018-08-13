@@ -127,7 +127,7 @@ function constructSearchtree(t, il) {
         if (ownSequences && ownSequences.length > 0) {
             stringBuffer = "<h4 class='own'>Peptides specific for this taxon</h4><ul>";
             for (i = 0; i < ownSequences.length; i++) {
-                stringBuffer += "<li><a href='/sequences/" + ownSequences[i] + "/" + equateIL + "' target='_blank'>" + ownSequences[i] + "</a></li>";
+                stringBuffer += "<li><a href='/sequences/" + ownSequences[i] + "/" + equateIL + "' title='Tryptic Peptide Analysis of "+ownSequences[i]+"' target='_blank'>" + ownSequences[i] + "</a></li>";
             }
             stringBuffer += "</ul>";
             infoPane.append(stringBuffer);
@@ -138,7 +138,7 @@ function constructSearchtree(t, il) {
         if (allSequences && allSequences.length > 0 && allSequences.length !== (ownSequences ? ownSequences.length : 0)) {
             stringBuffer = "<h4 class='all'>Peptides specific to this taxon or its subtaxa</h4><ul>";
             for (i = 0; i < allSequences.length; i++) {
-                stringBuffer += "<li><a href='/sequences/" + allSequences[i] + "/" + equateIL + "' target='_blank'>" + allSequences[i] + "</a></li>";
+                stringBuffer += "<li><a href='/sequences/" + allSequences[i] + "/" + equateIL + "' title='Tryptic Peptide Analysis of "+allSequences[i]+"' target='_blank'>" + allSequences[i] + "</a></li>";
             }
             stringBuffer += "</ul>";
             infoPane.append(stringBuffer);
