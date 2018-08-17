@@ -367,8 +367,7 @@ class SPA {
 
         const quickGoChartSmallURL = GOTerms.quickGOChartURL(top5, false);
         const quickGoChartURL = GOTerms.quickGOChartURL(top5, true);
-
-        const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${numberToPercent(goResultset.valueOf(x.code) / goResultset.getTrust().annotatedCount)})`);
+        const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${numberToPercent(goResultset.valueOf(x) / goResultset.getTrust().annotatedCount)})`);
         const top5sentence = top5WithNames.slice(0, -1).join(", ")
             + (top5.length > 1 ? " and " : "")
             + top5WithNames[top5WithNames.length - 1];
