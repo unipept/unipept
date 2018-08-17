@@ -79,10 +79,11 @@ by id. The code is as follows:
 These fields appear in the same order as the values of the taxonomic
 rank were mentioned before.
 
-Sequences
+Sequences (ore Sequences_compressed)
 ---------
 
-Contains the tryptic peptides.
+Contains the tryptic peptides. This table may be in compressed form as
+`squences_compressed` in this case the view `sequences` decompresses the data.
 
  - ***id***: A self-assigned id. Integral, incremental, no gaps.
  - ***sequence***: An Amino Acid sequence, more precisely a tryptic
