@@ -75,7 +75,7 @@ class Resultset {
      * @return {Promise<string>} The analysis result in csv format
      */
     toCSV() {
-        return this.wrkr.getCSV(this.dataset.taxonMap);
+        return this.wrkr.getCSV(Array.from(this.dataset.taxonMap.entries()));
     }
 
     /**

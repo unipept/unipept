@@ -373,10 +373,11 @@ const RANKS = ["superkingdom", "kingdom", "subkingdom", "superphylum", "phylum",
  * Converts the current analysis to the csv format. Each row contains a
  * peptide and its lineage, with each column being a level in the taxonomy
  *
- * @param {Map<number,TaxonInfo>} taxonMap map of taxon names
+ * @param {[[number,TaxonInfo]]} taxonMapEntries array of taxonnumber-taxoninfo pairs
  * @return {string} The analysis result in csv format
  */
-export function getCSV(taxonMap) {
+export function getCSV(taxonMapEntries) {
+    const taxonMap = new Map(taxonMapEntries);
     let result = "peptide,lca," +
     RANKS.join(",") + "," +
     "EC," +
