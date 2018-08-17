@@ -472,16 +472,14 @@ class MPA {
      */
     tooltipEC(ecNumber, ecResultSet = null, oldEcResultSet = null) {
         const fmt = x => `<div class="tooltip-ec-ancestor"><span class="tooltip-ec-term">EC ${x}</span><span class="tooltip-ec-name">${ECNumbers.nameOf(x)}</span></div>`;
+        const fmth = x => `<div class="tooltip-ec-ancestor tooltip-ec-current"><span class="tooltip-ec-term">EC ${x}</span><h4 class="tooltip-fa-title">${ECNumbers.nameOf(x)}</h4></div>`;
 
-        let result = `
-            <h4 class="tooltip-fa-title">
-                <span class="tooltip-fa-title-name">${ECNumbers.nameOf(ecNumber)}</span>
-                <span class="tooltip-ec-term small"> EC ${ecNumber}</span>
-            </h4>`;
+        let result = "";
 
         if (ECNumbers.ancestorsOf(ecNumber).length > 0) {
-            result += `${ECNumbers.ancestorsOf(ecNumber).map(c => fmt(c)).join("\n")}`;
+            result += `${ECNumbers.ancestorsOf(ecNumber).reverse().map(c => fmt(c)).join("\n")}`;
         }
+        result += fmth(ecNumber);
 
         result += this.tootipResultSet(ecNumber, ecResultSet, oldEcResultSet);
         return result;
@@ -494,7 +492,7 @@ class MPA {
      * @return {TreeView} The created treeview
      */
     setUpECTree(ecResultSet) {
-        const $container = $("#ecTreeView div");
+        const $container = $("#ecTreeView output");
         $("#save-btn-ec").unbind("click");
         $container.empty();
         if (ecResultSet.getTrust().annotatedCount > 0) {
@@ -530,7 +528,10 @@ class MPA {
                     logToGoogle("Multi peptide", "Save EC Image");
                     triggerDownloadModal($container.find("svg"), null, "unipept_treeview");
                 });
-
+            $("#reset-btn-ec").prop("disabled", false)
+                .click(() => {
+                    tree.reset();
+                });
 
             return tree;
         } else {

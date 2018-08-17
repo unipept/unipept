@@ -152,16 +152,14 @@ class SPA {
      */
     tooltipEC(ecNumber, ecResultSet = null) {
         const fmt = x => `<div class="tooltip-ec-ancestor"><span class="tooltip-ec-term">EC ${x}</span><span class="tooltip-ec-name">${ECNumbers.nameOf(x)}</span></div>`;
+        const fmth = x => `<div class="tooltip-ec-ancestor tooltip-ec-current"><span class="tooltip-ec-term">EC ${x}</span><h4 class="tooltip-fa-title">${ECNumbers.nameOf(x)}</h4></div>`;
 
-        let result = `
-            <h4 class="tooltip-fa-title">
-                <span class="tooltip-fa-title-name">${ECNumbers.nameOf(ecNumber)}</span>
-                <span class="tooltip-ec-term small"> EC ${ecNumber}</span>
-            </h4>`;
+        let result = "";
 
         if (ECNumbers.ancestorsOf(ecNumber).length > 0) {
-            result += `${ECNumbers.ancestorsOf(ecNumber).map(c => fmt(c)).join("\n")}`;
+            result += `${ECNumbers.ancestorsOf(ecNumber).reverse().map(c => fmt(c)).join("\n")}`;
         }
+        result += fmth(ecNumber);
 
         if (ecResultSet != null) {
             const count = ecResultSet.valueOf(ecNumber);

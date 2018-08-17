@@ -157,7 +157,6 @@ table.protein-info .dropdown-menu {
 
 /* Functional analysis tooltips */
 h4.tooltip-fa-title {
-    margin-top: 6px;
     line-height: initial;
 }
 
@@ -175,6 +174,10 @@ h4.tooltip-fa-title {
     line-height: initial;
     display: table-row;
   
+    &.tooltip-ec-current{
+        color: @black-text;
+    }
+
     .tooltip-ec-term{
         display: table-cell;
         min-width: 6em; 
@@ -185,6 +188,8 @@ h4.tooltip-fa-title {
         display: table-cell;
     }
 }
+
+extend
 
 #go-panel h3{
     margin-top: @line-height-computed;
