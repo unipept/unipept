@@ -2,7 +2,7 @@
 
 ## Backend web server
 
-The web server can be tested by using `'rails test` this will do the following
+The web server can be tested by using `rails test` this will do the following
 
 1. Setup a testing database from the data contained in [fixtures](./fixtures) and the schema in [/db/schema.rb](/db/schema.rb).
 2. Run the unit tests for the models in [models](./models)
@@ -14,7 +14,7 @@ The web server can be tested by using `'rails test` this will do the following
 
 ## Front end
 
-The front end can be tested with `yarn test`  and `yarn test-puppeteer`. Adding a filename as argument will limit a test to that file.
+The front end can be tested with `yarn test` and `yarn test-puppeteer`. Adding a filename as argument will limit a test to that file.
 
 The tests use the [jest API](https://facebook.github.io/jest/docs/en/api.html) and the [puppeteer API](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md).
 
@@ -49,7 +49,4 @@ To check downloads and their content, a global function `checkDownload(Page page
 
 The jest configuration file is located at [/jest.puppeteer.config.js](/jest.puppeteer.config.js) . This file references the setup and teardown files used to setup puppeteer.
 
-
-
 A file that checks `http://.../path` should be named `/test/puppeteer/path/page.test.js`. Other names than `page.test.js` may be used if the test is split up. In that case each filename should describe what is tested.
-
