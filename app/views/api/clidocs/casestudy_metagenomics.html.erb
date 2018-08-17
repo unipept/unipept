@@ -27,14 +27,24 @@
           As this dataset contains paired-end reads in FASTQ format, and UMGAP operates on FASTA data,
           we perform a first preprocessing step to convert the FASTQ into FASTA files.
         </p>
-        <pre>
-<!--   --><b>$</b> umgap fastq2fasta A1.fq A2.fq | sed '/^>/s_/[12]$__' > preprocessed.fa
+        <pre style="max-height: initial;">
+<!--   --><b>$</b> umgap fastq2fasta A1.fq A2.fq | tee preprocessed.fa
+<!--   -->>read1/1
+<!--   -->ATCGCGCACGCGGCCGATGCCCCAGAAGAGATTGACAGCGGTGGGGCGGGCGGCGGCGAGGTGGTCGCAGATCTCGGCGACCTCTGCGTTGAGGGTCGGG
+<!--   -->>read1/2
+<!--   -->AAGATGGCGACTGGATGATGATCGCGCGGCAGGCCACCATCTACGATCCCGCAGTGAAGCATTACTAACCATGATGCGCAACGACTCGCTGTCAGAGCTA
+<!--   -->>read2/1
+<!--   -->AGATTGCTGGTGCGGGTGCTCTGCCGGGCTTCTTCATCTCGGACCGCGCATCCGATGCGCACACGGCACAGTAGGTATGCGGTGAGAGCACCTCGCTTTT
+<!--   -->>read2/2
+<!--   -->CGCAATCTTGCGGCGCACCGCGATCAAATCGGGATAGTCCGGTGTGTAACGCGTGCTCAGGTCATCTGCCCGTACCCGCAATACATTCAACTGTGTTTTA
+<!--   -->>read3/1
+<!--   -->CCCTCAAGCCCGATCGAACTTTCCTACTGCCCGACCTCAGCGCGGAGCATTACCGAATCGTCGTCAACAATCTCCCCGATGGCTTCTATGTGAACTCCAT
+<!--   -->>read3/2
+<!--   -->CAAAATGGAGTGGGCGCTACTGCTCCGTGAGCAGGGTCAGTTGGAGGGATTGGGGCGTGCGCTCGGGGATGCTAATGGCGGTGCCCCTGGATTCCTGAGA
         </pre>
         <p>
           This command will interleave the given FASTQ files and output a FASTA stream,
           in which the paired-ends alternate each other.
-          We use a `sed` substitution to remove the "/1" or "/2" indicating the end,
-          as we will pool the ends later on anyway.
         </p>
       </div>
     </div>
@@ -68,14 +78,86 @@
 <!--   --><b>$</b> rm predicted-genes.fnn predicted-genes.out # we don't use these files
         </pre>
         <pre>
-<!--   --><b>$</b> FGSpp -s stdin -o stdout -w 0 -r train -t illumina_10 -p 16 -m 3000 < preprocessed.fa > predicted-genes.faa
+<!--   --><b>$</b> FGSpp -s stdin -o stdout -w 0 -r train -t illumina_10 -p 16 -m 3000 < preprocessed.fa | tee predicted-genes.faa
         </pre>
         <p>
           With our alternative six-frame translation option,
           we choose to translate all (<code>-a</code>) frames using the standard translation table.
         </p>
         <pre>
-<!--   --><b>$</b> umgap translate -a < preprocessed.fa > predicted-genes.faa
+<!--   --><b>$</b> umgap translate -a < preprocessed.fa | tee predicted-genes.faa
+<!--   -->>read1/1|1
+<!--   -->IAHAADAPEEIDSGGAGGGEVVADLGDLCVEGR
+<!--   -->>read1/1|2
+<!--   -->SRTRPMPQKRLTAVGRAAARWSQISATSALRVG
+<!--   -->>read1/1|3
+<!--   -->RARGRCPRRD*QRWGGRRRGGRRSRRPLR*GS
+<!--   -->>read1/1|1R
+<!--   -->PDPQRRGRRDLRPPRRRPPHRCQSLLGHRPRAR
+<!--   -->>read1/1|2R
+<!--   -->PTLNAEVAEICDHLAAARPTAVNLFWGIGRVRD
+<!--   -->>read1/1|3R
+<!--   -->RPSTQRSPRSATTSPPPAPPLSISSGASAACA
+<!--   -->>read1/2|1
+<!--   -->KMATG**SRGRPPSTIPQ*SITNHDAQRLAVRA
+<!--   -->>read1/2|2
+<!--   -->RWRLDDDRAAGHHLRSRSEALLTMMRNDSLSEL
+<!--   -->>read1/2|3
+<!--   -->DGDWMMIARQATIYDPAVKHY*P*CATTRCQS
+<!--   -->>read1/2|1R
+<!--   -->*L*QRVVAHHG**CFTAGS*MVACRAIIIQSPS
+<!--   -->>read1/2|2R
+<!--   -->SSDSESLRIMVSNASLRDRRWWPAARSSSSRHL
+<!--   -->>read1/2|3R
+<!--   -->ALTASRCASWLVMLHCGIVDGGLPRDHHPVAI
+<!--   -->>read2/1|1
+<!--   -->RLLVRVLCRASSSRTAHPMRTRHSRYAVRAPRF
+<!--   -->>read2/1|2
+<!--   -->DCWCGCSAGLLHLGPRIRCAHGTVGMR*EHLAF
+<!--   -->>read2/1|3
+<!--   -->IAGAGALPGFFISDRASDAHTAQ*VCGESTSL
+<!--   -->>read2/1|1R
+<!--   -->KSEVLSPHTYCAVCASDARSEMKKPGRAPAPAI
+<!--   -->>read2/1|2R
+<!--   -->KARCSHRIPTVPCAHRMRGPR*RSPAEHPHQQS
+<!--   -->>read2/1|3R
+<!--   -->KRGALTAYLLCRVRIGCAVRDEEARQSTRTSN
+<!--   -->>read2/2|1
+<!--   -->RNLAAHRDQIGIVRCVTRAQVICPYPQYIQLCF
+<!--   -->>read2/2|2
+<!--   -->AILRRTAIKSG*SGV*RVLRSSARTRNTFNCVL
+<!--   -->>read2/2|3
+<!--   -->QSCGAPRSNRDSPVCNACSGHLPVPAIHSTVF
+<!--   -->>read2/2|1R
+<!--   -->*NTVECIAGTGR*PEHALHTGLSRFDRGAPQDC
+<!--   -->>read2/2|2R
+<!--   -->KTQLNVLRVRADDLSTRYTPDYPDLIAVRRKIA
+<!--   -->>read2/2|3R
+<!--   -->KHS*MYCGYGQMT*ARVTHRTIPI*SRCAARL
+<!--   -->>read3/1|1
+<!--   -->PSSPIELSYCPTSARSITESSSTISPMASM*TP
+<!--   -->>read3/1|2
+<!--   -->PQARSNFPTARPQRGALPNRRQQSPRWLLCELH
+<!--   -->>read3/1|3
+<!--   -->LKPDRTFLLPDLSAEHYRIVVNNLPDGFYVNS
+<!--   -->>read3/1|1R
+<!--   -->MEFT*KPSGRLLTTIR*CSALRSGSRKVRSGLR
+<!--   -->>read3/1|2R
+<!--   -->WSSHRSHRGDC*RRFGNAPR*GRAVGKFDRA*G
+<!--   -->>read3/1|3R
+<!--   -->GVHIEAIGEIVDDDSVMLRAEVGQ*ESSIGLE
+<!--   -->>read3/2|1
+<!--   -->QNGVGATAP*AGSVGGIGACARGC*WRCPWIPE
+<!--   -->>read3/2|2
+<!--   -->KMEWALLLREQGQLEGLGRALGDANGGAPGFLR
+<!--   -->>read3/2|3
+<!--   -->KWSGRYCSVSRVSWRDWGVRSGMLMAVPLDS*
+<!--   -->>read3/2|1R
+<!--   -->SQESRGTAISIPERTPQSLQLTLLTEQ*RPLHF
+<!--   -->>read3/2|2R
+<!--   -->LRNPGAPPLASPSARPNPSN*PCSRSSSAHSIL
+<!--   -->>read3/2|3R
+<!--   -->SGIQGHRH*HPRAHAPIPPTDPAHGAVAPTPF
         </pre>
       </div>
     </div>
@@ -93,7 +175,79 @@
           in the NCBI taxonomy (2011) that is either a descendant or an ancestor of all taxa in that set.
         </p>
         <pre>
-<!--   --><b>$</b> umgap prot2kmer2lca -k9 9-mer.index < predicted-genes.faa > found-kmers.fa
+<!--   --><b>$</b> umgap prot2kmer2lca -o -k9 9-mer.index < predicted-genes.faa | tee found-kmers.fa
+<!--   -->>read1/1|1
+<!--   -->0 0 0 0 0 0 0 0 0 0 35725 2759 1 1 1 2 515393 201174 0 1 0 0 0 379 0
+<!--   -->>read1/1|2
+<!--   -->0 0 0 0 0 0 0 0 0 1185650 1185650 140110 0 0 0 0 0 0 0 0 0 36842 0 1 162425
+<!--   -->>read1/1|3
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 1773 47855 4530 1 1 1 1 1 0 35708 0 0 0
+<!--   -->>read1/1|1R
+<!--   -->0 0 0 0 2235 0 0 0 0 40674 1 1 2759 0 0 0 0 0 0 0 0 0 0 0 88724
+<!--   -->>read1/1|2R
+<!--   -->1 940557 1 940615 940615 940615 940615 940615 0 0 0 0 56 2 1 1 1 1 2 2 940615 940615 940615 940615 940615
+<!--   -->>read1/1|3R
+<!--   -->0 0 0 0 1036719 2 2759 0 2 1 1 1 2759 1 1 3916 3916 1760 0 237 1 2759 1 0
+<!--   -->>read1/2|1
+<!--   -->0 0 0 0 0 0 0 5627 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
+<!--   -->>read1/2|2
+<!--   -->0 52226 53355 1760 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 44471
+<!--   -->>read1/2|3
+<!--   -->940615 940615 940615 940615 940615 204434 204434 204434 204434 2 204434 204434 204434 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read1/2|1R
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read1/2|2R
+<!--   -->1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 4751 35708
+<!--   -->>read1/2|3R
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read2/1|1
+<!--   -->0 1813 546364 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read2/1|2
+<!--   -->0 68786 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read2/1|3
+<!--   -->2 392734 392734 392734 392734 0 0 0 0 0 0 0 0 0 392734 0 0 0 0 0 0 0 0 0
+<!--   -->>read2/1|1R
+<!--   -->0 0 0 0 0 0 0 0 36740 0 0 0 0 0 0 0 0 0 0 0 0 0 379 379 0
+<!--   -->>read2/1|2R
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read2/1|3R
+<!--   -->0 0 0 0 393310 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read2/2|1
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read2/2|2
+<!--   -->1534 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read2/2|3
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 1370023 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read2/2|1R
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 488447 0 0 0 0 0 0 0
+<!--   -->>read2/2|2R
+<!--   -->0 0 0 0 0 0 33882 4930 4930 0 392734 1 392734 392734 392734 392734 392734 392734 392734 392734 392733 392733 392733 392733 392734
+<!--   -->>read2/2|3R
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read3/1|1
+<!--   -->0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1754192 0 6282 0 7164 0 0 0 0 0
+<!--   -->>read3/1|2
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read3/1|3
+<!--   -->332163 332163 332163 2 1 332163 2 332163 332163 332163 332163 332163 1 332163 332163 332163 332163 332163 332163 332163 332163 332163 0 0
+<!--   -->>read3/1|1R
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 322865 7868 0 0 0 0 0 0
+<!--   -->>read3/1|2R
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read3/1|3R
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0
+<!--   -->>read3/2|1
+<!--   -->0 0 0 0 0 0 0 0 0 0 632569 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read3/2|2
+<!--   -->0 0 0 8839 0 0 40754 0 0 0 0 323415 0 286 1 1760 0 0 0 0 0 0 0 0 0
+<!--   -->>read3/2|3
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 28216 0 0 0 0 0 0 0
+<!--   -->>read3/2|1R
+<!--   -->332163 2 2 332163 332163 332163 332163 332163 332163 332163 1 332163 332163 332163 2 2 1 332163 332163 0 0 0 0 0 0
+<!--   -->>read3/2|2R
+<!--   -->67819 0 0 0 5855 1 1 2 519963 5206 0 1245748 0 0 0 0 0 0 0 0 0 101127 0 0 0
+<!--   -->>read3/2|3R
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 13687 0 0 0
         </pre>
         <p>
           This command will look up each 9-mer in the input data
@@ -101,6 +255,8 @@
           With the <code>-o</code> or <code>--one-on-one</code> flag,
           the unrecognized 9-mers will be included as a "0" taxon,
           the use of which will be clarified in the next step.
+          Note: the real output would contain newlines between taxa,
+          which have been replaced here by spaces for readability.
         </p>
       </div>
     </div>
@@ -115,13 +271,91 @@
           by selecting only 9-mer hits which are spatially close to other hits.
         </p>
         <pre>
-<!--   --><b>$</b> umgap seedextend -g2 -s4 taxons.tsv < found-kmers.fa | grep -v '^0$' > selected-seeds.fa
+<!--   --><b>$</b> umgap seedextend taxons.tsv < found-kmers.fa | tee selected-seeds.fa
+<!-- -->>read1/1|1
+<!-- -->35725 2759 1 1 1 2 515393 201174
+<!-- -->>read1/1|2
+<!-- -->1185650 1185650 140110
+<!-- -->>read1/1|3
+<!-- -->1773 47855 4530 1 1 1 1 1
+<!-- -->>read1/1|1R
+<!-- -->40674 1 1 2759
+<!-- -->>read1/1|2R
+<!-- -->1 940557 1 940615 940615 940615 940615 940615 56 2 1 1 1 1 2 2 940615 940615 940615 940615 940615
+<!-- -->>read1/1|3R
+<!-- -->2 1 1 1 2759 1 1 3916 3916 1760
+<!-- -->>read1/2|1
+<!-- -->
+<!-- -->>read1/2|2
+<!-- -->
+<!-- -->>read1/2|3
+<!-- -->940615 940615 940615 940615 940615 204434 204434 204434 204434 2 204434 204434 204434
+<!-- -->>read1/2|1R
+<!-- -->
+<!-- -->>read1/2|2R
+<!-- -->
+<!-- -->>read1/2|3R
+<!-- -->
+<!-- -->>read2/1|1
+<!-- -->
+<!-- -->>read2/1|2
+<!-- -->
+<!-- -->>read2/1|3
+<!-- -->2 392734 392734 392734 392734
+<!-- -->>read2/1|1R
+<!-- -->379 379
+<!-- -->>read2/1|2R
+<!-- -->
+<!-- -->>read2/1|3R
+<!-- -->
+<!-- -->>read2/2|1
+<!-- -->
+<!-- -->>read2/2|2
+<!-- -->
+<!-- -->>read2/2|3
+<!-- -->
+<!-- -->>read2/2|1R
+<!-- -->
+<!-- -->>read2/2|2R
+<!-- -->33882 4930 4930 392734 1 392734 392734 392734 392734 392734 392734 392734 392734 392733 392733 392733 392733 392734
+<!-- -->>read2/2|3R
+<!-- -->
+<!-- -->>read3/1|1
+<!-- -->
+<!-- -->>read3/1|2
+<!-- -->
+<!-- -->>read3/1|3
+<!-- -->332163 332163 332163 2 1 332163 2 332163 332163 332163 332163 332163 1 332163 332163 332163 332163 332163 332163 332163 332163 332163
+<!-- -->>read3/1|1R
+<!-- -->
+<!-- -->>read3/1|2R
+<!-- -->
+<!-- -->>read3/1|3R
+<!-- -->
+<!-- -->>read3/2|1
+<!-- -->
+<!-- -->>read3/2|2
+<!-- -->
+<!-- -->>read3/2|3
+<!-- -->
+<!-- -->>read3/2|1R
+<!-- -->332163 2 2 332163 332163 332163 332163 332163 332163 332163 1 332163 332163 332163 2 2 1 332163 332163
+<!-- -->>read3/2|2R
+<!-- -->5855 1 1 2 519963 5206
+<!-- -->>read3/2|3R
+<!-- -->
+        </pre>
+        <p>
+          Note: the real output would contain newlines between taxa,
+          which have been replaced here by spaces for readability.
+        </p>
+        <pre>
+<!--   --><b>$</b> mv selected-seeds.fa found-kmers.fa # optional step, same format
         </pre>
         <p>
           This algorithm requires spatial information which is provided
           by supplying the <code>-o</code> flag to the previous command.
           The <code>taxons.tsv</code> is a file describing the NCBI taxonomic tree.
-          The <code>grep</code> command filters out remaining unknown identifications.
         </p>
       </div>
     </div>
@@ -148,17 +382,24 @@
             </li>
             <li>
               A newly developed hybrid strategy,
-              which combines LCA* and MRTL based on a given scaling factor.
+              which combines LCA* and MRTL based on a given scaling factor (default 0.25).
               The hybrid method aims to ignore some outliers without compromising generality.
+              This strategy is the default and will therefore be used below.
             </li>
           </ul>
         </p>
         <p>
-          Before this aggregation, we combine the results of each reading frame
-          and paired-end with <code>uniq</code>.
+          Before this aggregation, we remove the markers from the headers with <code>sed</code>
+          and combine the results of each reading frame and paired-end with <code>uniq</code>.
         </p>
         <pre>
-<!--   --><b>$</b> umgap uniq < found-kmers.fa | umgap taxa2agg -m tree -a hybrid -f 0.75 taxons.tsv > classification.fa
+<!--   --><b>$</b> sed '/^>/s_/.*__' < found-kmers.fa | umgap uniq | umgap taxa2agg taxons.tsv | tee classification.fa
+<!--   -->>read1
+<!--   -->940615
+<!--   -->>read2
+<!--   -->392734
+<!--   -->>read3
+<!--   -->332163
         </pre>
         <p>
           Finally, the whole sample is summarized using e.g. a frequency table,
@@ -166,12 +407,16 @@
           or one of the many visualizations Unipept offers.
         </p>
         <pre>
-<!--   --><b>$</b> grep -v '^>' | umgap report -r species taxons.tsv
+<!--   --><b>$</b> grep -v '^>' < classification.fa | umgap report -r species taxons.tsv | tee report.csv
+<!--   -->1,332163,Candidatus Solibacter usitatus
+<!--   -->1,392734,Terriglobus roseus
+<!--   -->1,940615,Granulicella tundricola
         </pre>
         <p>
           The <code>grep</code> command will drop the FASTA headers,
           allowing the <code>report</code> command to snap each taxon to either a species or "unknown"
           and report the frequency table of the results.
+          This command will prove more useful with larger input.
         </p>
       </div>
     </div>
