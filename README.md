@@ -4,19 +4,17 @@
 [![Coverage Status](https://img.shields.io/coveralls/unipept/unipept.svg)](https://coveralls.io/r/unipept/unipept)
 [![Code Climate](https://codeclimate.com/github/unipept/unipept/badges/gpa.svg)](https://codeclimate.com/github/unipept/unipept)
 
-The [Unipept web application](http://unipept.ugent.be) supports biodiversity analysis of large and complex metaproteome samples and the analysis of peptidomes.
-The 3.1 release of Unipept has several main features:
-* Tryptic peptide analysis (previously single peptide analysis)
-* Metaproteomics analysis (previously multi-peptide analysis)
-* Unique peptide finder
-* Peptidome clustering
-* an API to retrieve all data
-* [a command line tool](http://github.com/unipept/unipept-cli)
+The [Unipept web application](http://unipept.ugent.be) supports biodiversity and functional analysis of large and complex metaproteome samples and the analysis of peptidomes.
+
+The 4.0 release of Unipept brings functional analysis to the tool.
+
+An [API](https://unipept.ugent.be/apidocs) and [command line tool](http://github.com/unipept/unipept-cli) are available
+for integration in other programs.
 
 ## Contributing
 
 Found a bug or have an idea for an awesome new feature?
-File an issue using the github issue tracker or drop us a line at [unipept@ugent.be](mailto:unipept@ugent.be).
+File an issue using the github [issue tracker](https://github.com/unipept/unipept/issues) or drop us a line at [unipept@ugent.be](mailto:unipept@ugent.be).
 
 If you're willing to get your hands dirty, you might of course also send us a pull request!
 
@@ -37,8 +35,9 @@ Unipept is a research project of the computational biology group at Ghent Univer
 * Mesuere et al. (2012) J. Proteome Res. [doi:10.1021/pr300576s](https://doi.org/10.1021/pr300576s)
 
 Current team:
-* Bart Mesuere ([@bmesuere](https://github.com/bmesuere)): PhD student and lead developer
+* Bart Mesuere ([@bmesuere](https://github.com/bmesuere)): Postdoc and lead developer
 * Felix Van der Jeugt ([@NoctuaNivalis](https://github.com/NoctuaNivalis)): PhD student and Master's student 2014-2015
+* Robbert Gurdeep Singh ([@beardhatcode](https://github.com/beardhatcode)): PhD student
 * Peter Dawyndt ([@pdawyndt](https://github.com/pdawyndt)): Group leader and PhD supervisor
 * Peter Vandamme: PhD co-supervisor
 * Bart Devreese: PhD co-supervisor
