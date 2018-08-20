@@ -1,7 +1,7 @@
 <div class="apidocs casestudies row">
   <div class="col-xs-9">
     <h1 class="api-title">Case Study: Unipept Metagenomics Analysis Pipeline</h1>
-    <p class="lead">This case study show how to use UMGAP for the taxonomic analysis of a metagenomics dataset.</p>
+    <p class="lead">This case study shows how to use UMGAP for the taxonomic analysis of a metagenomics dataset.</p>
     <div class="card">
       <div class="card-title card-title-colored"><h2 class="card-title-text">Introduction</h2></div>
       <div class="card-supporting-text">
@@ -56,20 +56,20 @@
           To convert the metagenomics reads into a metaproteomics problem,
           we have to perform some kind of gene prediction.
           While any gene prediction tool can be used, UMGAP was tested with FragGeneScan (2010) and FragGeneScan++,
-          our in-house improved version of FragGeneScanPlus (2015), a predictor using on Hiddem Markov Models.
-          On the other hand you can choose not to bother with prediction
-          and just translate all six reading frames completely with a builtin tool.
+          our in-house improved version of FragGeneScanPlus (2015), a predictor using Hidden Markov Models.
+          Alternatively, you can also try all possible translations and use the built-in six-frame translation tool.
         </p>
         <p>
-          This step in the pipeline limits our tool to the coding regions of the given DNA reads.
-          This caps the sensitivity of our predictions,
+          Using gene prediction limits our tool to the coding regions of the given DNA reads.
+          This limit caps the sensitivity of our predictions,
           as we can offer no prediction for a read from a non-coding region.
-          On the other hand, coding regions are less prone to mutation
+          On the other hand, coding regions are more conserved
           and the mutations that do occur often do not change the resulting amino acid.
         </p>
         <p>
-          For more options on the FragGeneScan and FragGeneScan++ commands,
-          read their respective documentation.
+          For more information about the available options for the gene predictors, the FragGeneScan and FragGeneScan++ commands,
+          we refer to the <a href="http://omics.informatics.indiana.edu/FragGeneScan/">FragGeneScan</a>
+          and <a href="https://github.com/unipept/FragGeneScanPlusPlus">FragGeneScan++</a> documentation.
           Here, it suffices to say that the commands below will write the predicted genes
           in FASTA format to a file called `predicted-genes.faa`.
         </p>
@@ -167,8 +167,10 @@
       <div class="card-supporting-text">
         <p>
           UMGAP uses exact substring matching to identify reads.
-          The next step of the pipeline fragments each amino acid sequence into 9-mers,
-          all of its substrings of length 9, and looks them up in our index.
+          The next step of the pipeline fragments each amino acid sequence into 9-mers.
+          The <i>k</i>-mers of a string are all possible substrings of length <i>k</i>.
+          For example, the 4-mers of the string "ABCDEFG" are "ABCD", "BCDE", "CDEF" and "DEFG".
+          After constructing all possible 9-mers, they are matched against our index.
           This index maps each 9-mer encountered in the UniProt's protein knowledgebase (2014)
           to the lowest common ancestor (LCA) of all the organisms it occured in.
           The LCA of a set of taxa is equal to the taxon of the most specific rank
@@ -266,7 +268,7 @@
       <div class="card-supporting-text">
         <p>
           Especially when running the pipeline with all six frames,
-          a lot of the translations are invalid.
+          a lot of the translations are invalid since we expect only one of the reading frames, rarely more, to yield a valid protein.
           The Seed-Extend step in the pipeline filters out most random hits
           by selecting only 9-mer hits which are spatially close to other hits.
         </p>
@@ -353,7 +355,7 @@
 <!--   --><b>$</b> mv selected-seeds.fa found-kmers.fa # optional step, same format
         </pre>
         <p>
-          This algorithm requires spatial information which is provided
+          The Seed-Extend algorithm requires spatial information which is provided
           by supplying the <code>-o</code> flag to the previous command.
           The <code>taxons.tsv</code> is a file describing the NCBI taxonomic tree.
         </p>
@@ -364,9 +366,9 @@
       <div class="card-title card-title-colored"><h2 class="card-title-text">Aggregation</h2></div>
       <div class="card-supporting-text">
         <p>
-          At this step of the pipeline, we have a list of taxon identifiers per protein read,
-          one protein read per reading frame and two paired-ends per metagenomics read.
-          To get a single taxon identification per read, we need to aggregate this list.
+          At this step of the pipeline, we have a list of taxon identifiers per protein,
+          one protein per reading frame, 6 reading frames per paired-end and 2 paired-ends per metagenomics read.
+          To get a single taxon identification per read, we need to aggregate these 12 lists.
           UMGAP offers 3 alternative aggregation strategies with varying speciality.
 
           <ul>
@@ -389,7 +391,7 @@
           </ul>
         </p>
         <p>
-          Before this aggregation, we remove the markers from the headers with <code>sed</code>
+          Before aggregation the results per read, we remove the markers from the headers with <code>sed</code>
           and combine the results of each reading frame and paired-end with <code>uniq</code>.
         </p>
         <pre>
