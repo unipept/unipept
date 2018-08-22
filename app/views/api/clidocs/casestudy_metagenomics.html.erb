@@ -273,7 +273,7 @@
           by selecting only 9-mer hits which are spatially close to other hits.
         </p>
         <pre>
-<!--   --><b>$</b> umgap seedextend taxons.tsv < found-kmers.fa | tee selected-seeds.fa
+<!--   --><b>$</b> umgap seedextend < found-kmers.fa | tee selected-seeds.fa
 <!-- -->>read1/1|1
 <!-- -->35725 2759 1 1 1 2 515393 201174
 <!-- -->>read1/1|2
@@ -395,7 +395,7 @@
           and combine the results of each reading frame and paired-end with <code>uniq</code>.
         </p>
         <pre>
-<!--   --><b>$</b> sed '/^>/s_/.*__' < found-kmers.fa | umgap uniq | umgap taxa2agg taxons.tsv | tee classification.fa
+<!--   --><b>$</b> sed '/^>/s_/.*__' found-kmers.fa | umgap uniq | umgap taxa2agg taxons.tsv | tee classification.fa
 <!--   -->>read1
 <!--   -->940615
 <!--   -->>read2
@@ -409,7 +409,7 @@
           or one of the many visualizations Unipept offers.
         </p>
         <pre>
-<!--   --><b>$</b> grep -v '^>' < classification.fa | umgap report -r species taxons.tsv | tee report.csv
+<!--   --><b>$</b> grep -v '^>' classification.fa | umgap report -r species taxons.tsv | tee report.csv
 <!--   -->1,332163,Candidatus Solibacter usitatus
 <!--   -->1,392734,Terriglobus roseus
 <!--   -->1,940615,Granulicella tundricola
@@ -419,6 +419,35 @@
           allowing the <code>report</code> command to snap each taxon to either a species or "unknown"
           and report the frequency table of the results.
           This command will prove more useful with larger input.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title card-title-colored"><h2 class="card-title-text">Recap</h2></div>
+      <div class="card-supporting-text">
+        <p>
+          The complete UMGAP can be written as a single command.
+          This allows the steps to run in parallel, further speeding up the final result.
+        </p>
+        <pre>
+<!--   --><b>$</b> umgap fastq2fasta A1.fq A2.fq |          # joining paired-end files
+<!--          -->  umgap translate -a |                     # translating all six frames
+<!--          -->  umgap prot2kmer2lca -o -k9 9-mer.index | # mapping each 9-mer onto a taxon or 0
+<!--          -->  umgap seedextend |                       # filtering extended seeds
+<!--          -->  sed '/^>/s_/.*__' |                      # dropping the paired-end and frame annotations
+<!--          -->  umgap uniq |                             # joining equal headers (all taxa of the same read)
+<!--          -->  umgap taxa2agg taxons.tsv |              # aggregating all taxa
+<!--          -->  grep -v '^>' |                           # dropping headers
+<!--          -->  umgap report taxons.tsv                  # make frequency table
+<!--   -->1,332163,Candidatus Solibacter usitatus
+<!--   -->1,392734,Terriglobus roseus
+<!--   -->1,940615,Granulicella tundricola
+        </pre>
+        <p>
+          This command processes the complete Metabenchmark A1 dataset on our computational server
+          (16 Intel Xeon CPU E5-2650 v2 at 2.60GHz, 20*16GB RDIMM x4 Data Width at 1866MHz, with the 9-mer index loaded in RAM)
+          in 4h22, that is 1840 reads per second.
         </p>
       </div>
     </div>
