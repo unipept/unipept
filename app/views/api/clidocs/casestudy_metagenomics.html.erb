@@ -445,9 +445,11 @@
 <!--   -->1,940615,Granulicella tundricola
         </pre>
         <p>
-          This command processes the complete Metabenchmark A1 dataset on our computational server
-          (16 Intel Xeon CPU E5-2650 v2 at 2.60GHz, 20*16GB RDIMM x4 Data Width at 1866MHz, with the 9-mer index loaded in RAM)
-          in 4h22, that is 1840 reads per second.
+          This command processes the complete Metabenchmark A1 dataset containing 116 million paired-end reads
+          in a VM (8 cores, 200GB RAM) on our computational server (16 Intel Xeon CPU E5-2650 v2 at 2.60GHz,
+          20*16GB RDIMM x4 Data Width at 1866MHz, with the 9-mer index loaded in RAM)
+          in 4h22, that is 1840 (paired-end) reads per second.
+          Using FragGeneScan++ speeds this up to 10100 reads per second.
         </p>
       </div>
     </div>
