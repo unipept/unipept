@@ -1,7 +1,20 @@
-import {MPA} from "./index.js";
+import GOTerms from "../fa/goterms.js";
+import ECNumbers from "../fa/ecnumbers.js";
+import "../fa/FunctionalAnnotations.js";
+
+import worker from "workerize-loader!./worker.js";
+import {GroupedFA} from "../fa/FunctionalAnnotations.js";
 import {Dataset} from "./dataset.js";
+
 /**
- * Represents the resultset for a given dataset
+ * Represents the resultset for a given dataset.
+ *
+ * This is in fact a proxy for a worker thread that will be created
+ * upon the insatntiation of this class (one worker per ResultSet object).
+ *
+ * The final results of the worker is duplicated to here. Intermediate
+ * results saty in the worker to reduce the time taken to send data to
+ * the thread
  *
  * @type {Resultset}
  */
@@ -10,19 +23,22 @@ class Resultset {
      * Creates a resultset for a given dataset and search settings
      *
      * @param  {Dataset} dataset The dataset for which to create the resultset
-     * @param  {boolean} il equate il?
-     * @param  {boolean} dupes filter duplicates?
-     * @param  {boolean} missed advancedMissedCleavageHandling?
+     * @param  {MPAConfig} mpaConfig
      */
-    constructor(dataset, {il, dupes, missed}) {
+    constructor(dataset, mpaConfig) {
         this.dataset = dataset;
-        this.il = il;
-        this.dupes = dupes;
-        this.missed = missed;
-        this.preparedPeptides = this.preparePeptides(dataset.originalPeptides, il, dupes, missed);
-        this.processedPeptides = [];
+        this.config = mpaConfig;
+        this.processedPeptides = null;
         this.missedPeptides = [];
+        this.fa = null;
+        this.baseFa = {ec: null, go: null};
         this.progress = 0;
+        this.wrkr = worker();
+        this.wrkr.onmessage = m => {
+            if (m.data.type == "progress") {
+                this.setProgress(m.data.value);
+            }
+        };
     }
 
     /**
@@ -30,23 +46,14 @@ class Resultset {
      * taxonomic tree.
      */
     async process() {
-        const peptideList = Array.from(this.preparedPeptides.keys());
-        this.processedPeptides = [];
-        this.setProgress(Dataset.BATCH_SIZE / peptideList.length);
-        for (let i = 0; i < peptideList.length; i += Dataset.BATCH_SIZE) {
-            const data = JSON.stringify({
-                peptides: peptideList.slice(i, i + Dataset.BATCH_SIZE),
-                equate_il: this.il,
-                missed: this.missed,
-            });
-            const result = await Dataset.postJSON(Dataset.PEPT2LCA_URL, data);
-            this.processedPeptides.push(...result.peptides);
-            this.setProgress(this.progress + Dataset.BATCH_SIZE / peptideList.length);
+        let {processed, missed, numMatched, numSearched} = await this.wrkr.process(this.dataset.originalPeptides, this.config);
+        this.processedPeptides = new Map();
+        for (const p of processed) {
+            this.processedPeptides.set(p.sequence, p);
         }
-        for (const peptide of this.processedPeptides) {
-            peptide.count = this.preparedPeptides.get(peptide.sequence);
-        }
-        this.setMissedPeptides(peptideList, this.processedPeptides);
+        this.missedPeptides = missed;
+        this.numberOfMatchedPeptides = numMatched;
+        this.numberOfSearchedForPeptides = numSearched;
     }
 
     /**
@@ -60,52 +67,15 @@ class Resultset {
         eventBus.emit("dataset-progress", value);
     }
 
-    /**
-     * Calculates the missed peptides and sets the object property
-     */
-    setMissedPeptides() {
-        const foundPeptides = new Set(this.processedPeptides.map(p => p.sequence));
-        this.missedPeptides = Array.from(this.preparedPeptides.keys()).filter(p => !foundPeptides.has(p));
-    }
-
-    /**
-     * Prepares the list of originalPeptides for use in the application by
-     * cleaving, filtering, equating IL and finally generating a frequence table
-     *
-     * @param  {string[]} originalPeptides A list of peptides
-     * @param  {boolean} il should we equate I and L
-     * @param  {boolean} dupes should we filter duplicates?
-     * @param  {boolean} missed will we perform advancedMissedCleavageHandling
-     * @return {Map.<string, number>} A frequency table of the cleaned up
-     *   peptides
-     */
-    preparePeptides(originalPeptides, il, dupes, missed) {
-        let peptides = Resultset.cleavePeptides(originalPeptides, missed);
-        peptides = Resultset.filterShortPeptides(peptides);
-        peptides = Resultset.equateIL(peptides, il);
-        peptides = Resultset.indexPeptides(peptides, dupes);
-        return peptides;
-    }
 
     /**
      * Converts the current analysis to the csv format. Each row contains a
      * peptide and its lineage, with each column being a level in the taxonomy
      *
-     * @return {string} The analysis result in csv format
+     * @return {Promise<string>} The analysis result in csv format
      */
     toCSV() {
-        let result = "peptide,lca," + MPA.RANKS + "\n";
-        for (const peptide of this.processedPeptides) {
-            let row = peptide.sequence + ",";
-            row += this.dataset.taxonMap.get(peptide.lca).name + ",";
-            row += peptide.lineage.map(e => {
-                if (e === null) return "";
-                return this.dataset.taxonMap.get(e).name;
-            });
-            row += "\n";
-            result += row.repeat(peptide.count);
-        }
-        return result;
+        return this.wrkr.getCSV(Array.from(this.dataset.taxonMap.entries()));
     }
 
     /**
@@ -115,7 +85,7 @@ class Resultset {
      * @return {number} The number of matched peptides
      */
     getNumberOfMatchedPeptides() {
-        return this.processedPeptides.map(p => p.count).reduce((a, b) => a + b, 0);
+        return this.numberOfMatchedPeptides;
     }
 
     /**
@@ -125,71 +95,68 @@ class Resultset {
      * @return {number} The number of searched for peptides
      */
     getNumberOfSearchedForPeptides() {
-        return Array.from(this.preparedPeptides.values()).reduce((a, b) => a + b, 0);
+        return this.numberOfSearchedForPeptides;
     }
 
     /**
-     * Creates a frequency table for a list of peptides
-     *
-     * @param  {string[]} peptides A list of peptides
-     * @param  {boolean} dupes Filter duplicates
-     * @return {Map.<string, number>} A map containing the frequency of
-     *   each peptide
+     * Calculate functional analyis
+     * @param {Number} cutoff
+     * @param {Iterable<String>} sequences
      */
-    static indexPeptides(peptides, dupes) {
-        const peptideMap = new Map();
-        for (let peptide of peptides) {
-            const count = peptideMap.get(peptide) || 0;
-            if (dupes) {
-                peptideMap.set(peptide, 1);
-            } else {
-                peptideMap.set(peptide, count + 1);
-            }
-        }
-        return peptideMap;
+    async proccessFA(cutoff = 50, sequences = null) {
+        const [go, ec] = await Promise.all([
+            this.summarizeGo(cutoff, sequences),
+            this.summarizeEc(cutoff, sequences),
+        ]);
+
+        this.fa = new GroupedFA("Functional annotaions", {
+            "GO": go,
+            "EC": ec,
+        }, s => s.startsWith("GO:") ? "GO" : "EC");
     }
 
     /**
-     * Splits all peptides after every K or R if not followed by P if
-     * advancedMissedCleavageHandling isn't set
-     *
-     * @param  {string[]} peptides The list of peptides
-     * @param  {boolean} advancedMissedCleavageHandling Should we do
-     *   advancedMissedCleavageHandling?
-     * @return {string[]} The list of cleaved peptides
+     * Returns a list of sequences that have the specified FA term
+     * @param {String} faName The name of the FA term (GO:000112, EC:1.5.4.1)
+     * @param {String[]} sequences List of sequences to limit to
+     * @return {Promise<{sequence, hits, type, annotatedCount,allCount,relativeCount,count}[]>} A list of objects representing
+     *                                                   the matchesFunctionalAnnotations
      */
-    static cleavePeptides(peptides, advancedMissedCleavageHandling) {
-        if (!advancedMissedCleavageHandling) {
-            return peptides.join("+")
-                .replace(/([KR])([^P])/g, "$1+$2")
-                .replace(/([KR])([^P+])/g, "$1+$2")
-                .split("+");
-        }
-        return peptides;
+    getPeptidesByFA(faName, sequences) {
+        return this.wrkr.getPeptidesByFA(faName, sequences);
     }
 
     /**
-     * Filters out all peptides with a length lower than 5
-     *
-     * @param  {string[]} peptides A list of peptides
-     * @return {string[]} A filtered list of peptides
+     * Fill `this.go` with a Map<string,GoInfo[]> per namespace. The values of the
+     * maps have an additional `value` field that indicates the weight of that
+     * GO number.
+     * @param {Number} [percent=50] ignore data weighing less (to be removed)
+     * @param {Iterable<String>} [sequences=null] subset of sequences to take into account,
+     *                                    null to consider all
+     * @return {Promise<GOTerms>} GO term data
      */
-    static filterShortPeptides(peptides) {
-        return peptides.filter(p => p.length >= 5);
+    async summarizeGo(percent = 50, sequences = null) {
+        // Find used go term and fetch data about them
+
+        GOTerms.ingestGoData(await this.wrkr.getGoData());
+        const {data, trust} = await this.wrkr.summarizeGo(percent, sequences);
+        const go = await GOTerms.makeAssured(data, trust);
+        return go;
     }
 
     /**
-     * Replaces every I with an L if equateIL is set to true
-     *
-     * @param  {string[]} peptides An array of peptides in upper case
-     * @param  {boolean}  equateIL Only makes the replacement if this is true
-     * @return {string[]} The peptides where the replacements are made
+     * Fill `this.ec` with a Map<string,EcInfo[]>. The values of the map
+     * have an additional `value` field that indicated the weight of that
+     * EC number.
+     * @param {number} [percent=50] ignore data weighing less (to be removed)
+     * @param {Iterable<String>} [sequences=null] subset of sequences to take into account,
+     *                                    null to consider all
+     * @return {Promise<ECNumbers>} an EC resultset
      */
-    static equateIL(peptides, equateIL) {
-        if (equateIL) {
-            return peptides.map(p => p.replace(/I/g, "L"));
-        }
-        return peptides;
+    async summarizeEc(percent = 50, sequences = null) {
+        const {data, trust} = await this.wrkr.summarizeEc(percent, sequences);
+        const ec = ECNumbers.makeAssured(data, trust);
+        return ec;
     }
 }
 

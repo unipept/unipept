@@ -132,6 +132,8 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
   `sequence` VARCHAR(50) NOT NULL ,
   `lca` MEDIUMINT UNSIGNED NULL ,
   `lca_il` MEDIUMINT UNSIGNED NULL ,
+  `fa` BLOB NULL ,
+  `fa_il` BLOB NULL ,
   PRIMARY KEY (`id`) ,
   UNIQUE INDEX `uidx_sequence` (`sequence` ASC) ,
   INDEX `fk_sequences_taxons` (`lca` ASC) ,
@@ -148,6 +150,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
+ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=16 
 COLLATE = ascii_general_ci;
 
 

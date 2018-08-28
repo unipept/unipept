@@ -14,7 +14,7 @@ class SequencesController < ApplicationController
 
     # process the input, convert seq to a valid @sequence
     if seq.match?(/\A[0-9]+\z/)
-      sequence = Sequence.includes(peptides: { uniprot_entry: %i[taxon ec_cross_references go_cross_references] }).find_by(id: seq)
+      sequence = Sequence.includes(peptides: { uniprot_entry: %i[taxon] }).find_by(id: seq)
       @original_sequence = sequence.sequence
     else
       sequence = Sequence.single_search(seq, equate_il)
@@ -37,11 +37,17 @@ class SequencesController < ApplicationController
       # check if the protein contains the startsequence
       @entries.select! { |e| e.protein_contains?(seq, equate_il) }
 
+      # Calculate fa summary
+      @fa_summary = UniprotEntry.summarize_fa(@entries)
+
       raise(NoMatchesFoundError, seq) if @entries.empty?
       @lineages = @entries.map(&:lineage).compact
     else
       @entries = sequence.peptides(equate_il).map(&:uniprot_entry)
       @lineages = sequence.lineages(equate_il, true).to_a
+
+      # Get FA summary form cache 
+      @fa_summary = sequence.calculate_fa(equate_il)
     end
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
@@ -87,7 +93,6 @@ class SequencesController < ApplicationController
 
     # don't show the root when we don't need it
     @root.sort_children
-    @root = Oj.dump(@root, mode: :compat)
 
     # Table stuff
     @table_lineages = []

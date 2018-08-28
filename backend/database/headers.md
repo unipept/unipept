@@ -44,13 +44,13 @@ Taxons
  - ***parent***: The taxon id of the parent. Refers to another entry
    in this table (or itself, in case of the root taxon).
 
-EC Numbers
+EC numbers
 ----------
 - ***id***: A self-assigned id. Integral, incremental, no gaps.
-- ***code***: The ec number in the form of x.x.x.x.
-- ***name***: The full name of this ec number.
+- ***code***: The EC number in the form of x.x.x.x.
+- ***name***: The full name of this EC number.
 
-GO Terms
+GO terms
 ----------
 - ***id***: A self-assigned id. Integral, incremental, no gaps.
 - ***code***: The go term itself
@@ -79,10 +79,11 @@ by id. The code is as follows:
 These fields appear in the same order as the values of the taxonomic
 rank were mentioned before.
 
-Sequences
+Sequences (ore Sequences_compressed)
 ---------
 
-Contains the tryptic peptides.
+Contains the tryptic peptides. This table may be in compressed form as
+`squences_compressed` in this case the view `sequences` decompresses the data.
 
  - ***id***: A self-assigned id. Integral, incremental, no gaps.
  - ***sequence***: An Amino Acid sequence, more precisely a tryptic
@@ -91,6 +92,17 @@ Contains the tryptic peptides.
    equate the I and L amino acids.
  - ***lca***: The lowest common ancestor of all proteins containing
    this tryptic peptide. Refers to the taxon table.
+ - ***original fa***: A JSON summary of the functional annotations 
+   in case we did not equate the I and L amino acids.
+ - ***fa***: The JSON summary of the functional annotations of all 
+   proteins containing this tryptic peptide. Refers to the taxon table.
+
+The JSON summary has 2 fields:
+
+ - `num`: Showing statistics about the found annotations
+   - `all`: The total number of matched proteins
+   - `EC` : The number of matched proteins with ≥ 1 EC annotation
+   - `GO` : The number of matched proteins with ≥ 1 GO annotation
 
 Proteomes
 ---------

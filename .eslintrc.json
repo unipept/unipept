@@ -1,0 +1,73 @@
+{
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 2017,
+    "sourceType": "module"
+  },
+  "extends": [
+    "eslint:recommended",
+    "google"
+  ],
+  //"plugins": ["import"],
+  "rules": {
+    "arrow-parens": [
+      "error",
+      "as-needed"
+    ],
+    "no-use-before-define": "off",
+    "no-plusplus": "off",
+    "one-var": "off",
+    "no-invalid-this": "off",
+    "space-before-function-paren": [
+      "error",
+      {
+        "anonymous": "always",
+        "named": "never",
+        "asyncArrow": "always"
+      }
+    ],
+    "arrow-spacing": "error",
+    "space-infix-ops": "error",
+    "no-param-reassign": [
+      "error",
+      {
+        "props": false
+      }
+    ],
+    "indent": [
+      "error",
+      4
+    ],
+    "max-len": "off",
+    "quotes": [
+      "error",
+      "double"
+    ],
+    "new-cap": "off",
+    "no-undef": "error",
+    "function-paren-newline": [
+      "error",
+      "never"
+    ],
+    "newline-per-chained-call": [
+      "error",
+      {
+        "ignoreChainWithDepth": 5
+      }
+    ]
+  },
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "globals": {
+    "d3": false,
+    "$": false,
+    "html2canvas": false,
+    "_gaq": false,
+    "fullScreenApi": false,
+    "delay": false,
+    "Newick": false,
+    "eventBus": false
+  }
+}

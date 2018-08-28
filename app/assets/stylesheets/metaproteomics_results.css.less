@@ -42,8 +42,26 @@ span.dir.text {
     margin-top: 5px;
 }
 
-.mpa-waiting {
-    margin: 18px;
+.mpa-waiting{ 
+    
+    position: relative;
+    margin: 18px 0 0 0;
+
+    &::after {
+        content: "Please wait while we are preparing your data..";
+        position: absolute;
+        left: 0;
+        top: 64px;
+        font-size: 2em;
+        text-shadow: 0 0 5px white, 0 0 3px white;
+        width: 100%;
+        text-align: center;
+        display: block;
+    }
+
+    .mpa-placeholder {
+        filter: blur(2px);
+    }
 }
 
 // tooltip
@@ -53,6 +71,8 @@ span.dir.text {
     visibility: hidden;
 }
 .tip {
+    top: 0;   // to be overwritten by JS
+    left: 0;  // to be overwritten by JS
     background-color: #fff;
     padding: 5px;
     border: 1px solid @hairlinegray;
@@ -106,22 +126,8 @@ span.dir.text {
     margin-right: 10px;
 }
 
-// d3 treemap
-#d3TreeMap {
-    width: 100%;
+.full-screen-container.full-screen {
     background-color: white;
-}
-#d3TreeMap svg {
-    margin: 0 auto;
-    display: block;
-}
-
-// treeview
-#d3TreeView {
-    background-color: white;
-}
-#d3TreeView svg {
-    margin-bottom: -5px;
 }
 
 /* lineage tree */
@@ -170,4 +176,95 @@ span.dir.text {
 #tree_search_group,
 #searchtree {
     max-width: 420px;
+}
+
+
+#goPanel {
+    >.row {
+        padding-bottom: 16px;
+
+        h3 {
+            padding-left: 16px;
+        }
+    }
+}
+
+#goPanel, #ecTable {
+    padding: 0 16px;
+}
+
+
+.save-fa-btn.saved{
+    color: @primary-500;
+}
+
+#fa-filter-warning {
+    padding: 16px;
+    background: @primary-A100;
+    line-height: 1em;
+    button {
+        float: right;
+        margin: (-@line-height-base/2)*1em 0;
+    }
+}
+
+#mpa-select-fa-sort-name {
+    width: 8em;
+    display: inline-block;
+}
+
+#mpa-select-fa-sort-items .active{
+    font-weight: bold;
+}
+
+#mpa-fa-advanced {
+    float: right;
+    margin-right: 16px;
+}
+
+
+
+#mpa-fa-advanced-options {
+    .form-group {
+        margin-bottom: 32px;
+
+        button, .input-group{
+            width: 19em;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 8px;
+
+            label{
+                font-weight: normal;
+            }
+        }
+        >:last-child{
+            margin-bottom: 0;
+        }
+    }
+    >:last-child{
+        margin-bottom: 0;
+    }
+}
+
+.mpa-fa .amounttable-expandrow-content{
+    >button{
+        position: absolute;
+        right: 0;
+    }
+}
+
+#ecTreeView {
+    margin-top: @padding-large-vertical;
+    border-top: 1px solid @black-divider;
+    position: relative;
+}
+
+#ec-btns {
+    position: absolute;
+    right: @padding-large-horizontal;
+    top: @padding-large-vertical;
+    :disabled {
+        display: none;
+    }
 }

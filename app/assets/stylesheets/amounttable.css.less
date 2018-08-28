@@ -1,0 +1,58 @@
+.table-amounttable {
+    /* Download button*/
+    .amounttable-download {
+        box-shadow: none;
+        position: absolute;
+        right: 1px;
+        bottom: 1px;
+    }
+    .shaded-cell {
+        border-right: 1px solid @table-border-color;
+    }
+}
+
+/* Show 10 more row */
+
+.collapse-row td {
+    &:hover {
+        background: @grey-100;
+    }
+    text-align: center;
+    font-size: .9em;
+    cursor: pointer;
+}
+
+/* Expanding row of table*/
+
+
+.table > tbody > tr.amounttable-expandrow > td {
+    border-top: none;
+}
+.amounttable-expandrow-content {
+    position: relative;
+    border: 1px solid  @table-border-color;
+    border-radius: 4px;
+    margin: @padding-large-vertical @padding-large-horizontal;
+    padding: 0;
+}
+
+:not(.amounttable-expanded)+.amounttable-expandrow {
+    display: none;
+}
+
+/* Cheveron for expaned rows */
+
+.amounttable-expanded .glyphicon.amounttable-chevron:before {
+    content: "\e260"; // glyphicon-menu-down
+}
+
+.glyphicon.amounttable-chevron:before {
+    display: block;
+    content: "\e259"; // glyphicon-menu-up
+}
+
+.amounttable-chevron {
+    display: table-cell;
+    color: @table-border-color;
+    width: 1em;
+}

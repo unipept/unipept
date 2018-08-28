@@ -1,6 +1,11 @@
 import {addCopy, highlight, logToGoogle} from "../utils.js";
-
 /* eslint require-jsdoc: off */
+
+/**
+ * @typedef Searchtree
+ * @type {object}
+ * @property {function(string):any} search
+ */
 
 /**
  * Constructs a Searchtree object
@@ -9,7 +14,7 @@ import {addCopy, highlight, logToGoogle} from "../utils.js";
  * @param  {boolean} il Whether IL were equated
  * @return {Searchtree} The constructed Searchtree object
  */
-function constructSearchtree(t, il) {
+function constructSearchtree(t, il, rerootCallback = x => {}) {
     /** ************* Private variables ***************/
 
     // parameters
@@ -21,6 +26,11 @@ function constructSearchtree(t, il) {
     let tree,
         items;
 
+    const infoPane = $("#tree_data");
+    const initialStyleInforpane = infoPane.attr("style") || "";
+    const initialHTMLInforpane = infoPane.html();
+
+
     /** ************* Private methods ***************/
 
     /**
@@ -30,11 +40,17 @@ function constructSearchtree(t, il) {
         redraw();
     }
 
+    function resetinfoPandAndClick() {
+        $("span.clicked").removeClass("clicked");
+        infoPane.html(initialHTMLInforpane);
+        infoPane.attr("style", initialStyleInforpane);
+    }
+
     function redraw() {
         let i;
-
         // clear all the things
         $("#searchtree").empty();
+        resetinfoPandAndClick();
 
         // Add the nested unordered lists to the page based on the data array
         tree = d3.select("#searchtree");
@@ -70,6 +86,7 @@ function constructSearchtree(t, il) {
         // Expand or collapse a node when clicked
         $("#searchtree li").click(function () {
             if (!$(this).hasClass("not")) {
+                resetinfoPandAndClick();
                 $(this).toggleClass("collapsibleListOpen collapsibleListClosed");
             }
             return false;
@@ -77,11 +94,16 @@ function constructSearchtree(t, il) {
 
         // Add click action
         $("#searchtree li span").click(clickAction);
+        $("#searchtree li span").dblclick(function () {
+            rerootCallback(Object.assign({}, d3.select(this.parentElement).datum()));
+        });
+
 
         // add search
         $("#tree_search").keyup(function () {
             let text = $(this).val().toLowerCase();
             delay(function () {
+                resetinfoPandAndClick();
                 $("#searchtree li").removeClass("match unmatch");
                 if (text !== "") {
                     let $matches = $("#searchtree li[data-search*='" + text + "']").addClass("match");
@@ -110,8 +132,6 @@ function constructSearchtree(t, il) {
 
         let d = d3.select(this.parentElement).datum(),
             margin = this.offsetTop - 9,
-            innertext = "<a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + d.data.taxon_id + "' target='_blank'>" + d.name + "</a>",
-            infoPane,
             ownSequences,
             allSequences,
             i,
@@ -119,15 +139,22 @@ function constructSearchtree(t, il) {
 
         $("span.clicked").removeClass("clicked");
         $(this).addClass("clicked");
-        innertext += " (" + d.rank + ")";
-        infoPane = $("#tree_data").html("<h3>" + innertext + "</h3>");
-        $("#tree_data").css("-webkit-transform", "translateY(" + margin + "px)");
-        $("#tree_data").css("transform", "translateY(" + margin + "px)");
+        infoPane
+            .html(`
+                <h3>
+                  <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=${d.id}' target='_blank'>
+                    ${d.name}
+                  </a> (${d.rank})
+                </h3>`);
+        $("#tree_data").css({
+            "transform": "translateY(" + margin + "px)",
+            "margin-bottom": margin + "px",
+        });
         ownSequences = dataTree.getOwnSequences(d).sort();
         if (ownSequences && ownSequences.length > 0) {
             stringBuffer = "<h4 class='own'>Peptides specific for this taxon</h4><ul>";
             for (i = 0; i < ownSequences.length; i++) {
-                stringBuffer += "<li><a href='/sequences/" + ownSequences[i] + "/" + equateIL + "' title='Tryptic Peptide Analysis of "+ownSequences[i]+"' target='_blank'>" + ownSequences[i] + "</a></li>";
+                stringBuffer += `<li><a href='/sequences/${ownSequences[i]}/${equateIL}' title='Tryptic Peptide Analysis of ${ownSequences[i]}' target='_blank'>${ownSequences[i]}</a></li>`;
             }
             stringBuffer += "</ul>";
             infoPane.append(stringBuffer);
@@ -138,7 +165,7 @@ function constructSearchtree(t, il) {
         if (allSequences && allSequences.length > 0 && allSequences.length !== (ownSequences ? ownSequences.length : 0)) {
             stringBuffer = "<h4 class='all'>Peptides specific to this taxon or its subtaxa</h4><ul>";
             for (i = 0; i < allSequences.length; i++) {
-                stringBuffer += "<li><a href='/sequences/" + allSequences[i] + "/" + equateIL + "' title='Tryptic Peptide Analysis of "+allSequences[i]+"' target='_blank'>" + allSequences[i] + "</a></li>";
+                stringBuffer += `<li><a href='/sequences/${allSequences[i]}/${equateIL}' title='Tryptic Peptide Analysis of ${allSequences[i]}' target='_blank'>${allSequences[i]}</a></li>`;
             }
             stringBuffer += "</ul>";
             infoPane.append(stringBuffer);

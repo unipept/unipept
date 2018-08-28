@@ -176,12 +176,29 @@ $(TABLES): $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 		>(<<<CMD_GZIP>>> > <<<INTDIR>>>/original_LCAs.tsv.gz)
 	echo "Finished the calculation of non-equalized LCA's."
 
-<<<TABDIR>>>/sequences.tsv.gz: <<<INTDIR>>>/sequences.tsv.gz <<<INTDIR>>>/LCAs.tsv.gz <<<INTDIR>>>/original_LCAs.tsv.gz
+<<<INTDIR>>>/FAs.tsv.gz: <<<INTDIR>>>/peptides.tsv.gz
+	echo "Starting the calculation of equalized FA's."
+	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).FunctionAnalysisPeptides \
+		<(<<<CMD_ZCAT>>> <<<INTDIR>>>/peptides.tsv.gz | cut -f2,5 | LC_ALL=C <<<CMD_SORT>>> -k 1b,1) \
+		>(<<<CMD_GZIP>>> - > <<<INTDIR>>>/FAs.tsv.gz)
+	echo "Finished the calculation of equalized FA's."
+	
+<<<INTDIR>>>/original_FAs.tsv.gz: <<<INTDIR>>>/peptides.tsv.gz
+	echo "Starting the calculation of non-equalized FA's."
+	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).FunctionAnalysisPeptides \
+		<(<<<CMD_ZCAT>>> <<<INTDIR>>>/peptides.tsv.gz | cut -f3,5 | LC_ALL=C <<<CMD_SORT>>> -k 1b,1) \
+		>(<<<CMD_GZIP>>> - > <<<INTDIR>>>/original_FAs.tsv.gz)
+	echo "Finished the calculation of non-equalized FA's."
+
+
+<<<TABDIR>>>/sequences.tsv.gz: <<<INTDIR>>>/sequences.tsv.gz <<<INTDIR>>>/LCAs.tsv.gz <<<INTDIR>>>/original_LCAs.tsv.gz <<<INTDIR>>>/original_FAs.tsv.gz <<<INTDIR>>>/FAs.tsv.gz
 	echo "Starting the creation of the sequences table."
 	<<<CMD_ZCAT>>> <<<INTDIR>>>/sequences.tsv.gz \
 		| <<<CMD_AWK>>> '{ printf("%012d\t%s\n", $$1, $$2) }' \
-		| <<<CMD_JOIN>>> --nocheck-order -a1 -e '\N' -t '	' -o "1.1 1.2 2.2" - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/original_LCAs.tsv.gz | <<<CMD_AWK>>> '{ printf("%012d\t%s\n", $$1, $$2) }') \
-		| <<<CMD_JOIN>>> --nocheck-order -a1 -e '\N' -t '	' -o "1.1 1.2 1.3 2.2" - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/LCAs.tsv.gz | <<<CMD_AWK>>> '{ printf("%012d\t%s\n", $$1, $$2) }') \
+		| <<<CMD_JOIN>>> --nocheck-order -a1 -e '\N' -t '	' -o "1.1 1.2 2.2"                       - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/original_LCAs.tsv.gz | <<<CMD_AWK>>> '{ printf("%012d\t%s\n", $$1, $$2) }') \
+		| <<<CMD_JOIN>>> --nocheck-order -a1 -e '\N' -t '	' -o "1.1 1.2 1.3 2.2"                   - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/LCAs.tsv.gz          | <<<CMD_AWK>>> '{ printf("%012d\t%s\n", $$1, $$2) }') \
+		| <<<CMD_JOIN>>> --nocheck-order -a1 -e '\N' -t '	' -o '1.1 1.2 1.3 1.4 2.2'     -1 2 -2 1 - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/original_FAs.tsv.gz) \
+		| <<<CMD_JOIN>>> --nocheck-order -a1 -e '\N' -t '	' -o '1.1 1.2 1.3 1.4 1.5 2.2' -1 2 -2 1 - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/FAs.tsv.gz) \
 		| <<<CMD_SED>>> 's/^0*//' \
 		| <<<CMD_GZIP>>> \
 		> $@
