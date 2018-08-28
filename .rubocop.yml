@@ -31,10 +31,6 @@ Style/Documentation:
   Enabled: false
 Style/RescueModifier:
   Enabled: false
-Style/AccessorMethodName:
-  Enabled: false
-Style/PredicateName:
-  Enabled: false
 Metrics/AbcSize:
   Enabled: false
 Metrics/ClassLength:
@@ -46,4 +42,8 @@ Metrics/MethodLength:
 Metrics/PerceivedComplexity:
   Enabled: false
 Metrics/CyclomaticComplexity:
+  Enabled: false
+Naming/AccessorMethodName:
+  Enabled: false
+Naming/PredicateName:
   Enabled: false

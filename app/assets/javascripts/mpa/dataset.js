@@ -1,32 +1,15 @@
 import {Resultset} from "./resultset.js";
 import {Node} from "./node.js";
 import {Tree} from "./tree.js";
+import {postJSON} from "../utils.js";
 
-const BATCH_SIZE = 100,
-    PEPT2LCA_URL = "/mpa/pept2lca",
-    TAXA_URL = "/mpa/taxa";
-
-/**
- * @typedef TaxonInfo
- * @type {object}
- * @property {number} id The taxon id
- * @property {string} name The name of the taxon
- * @property {string} rank The rank of the taxon
- */
-
-/**
- * @typedef PeptideInfo
- * @type {object}
- * @property {string} sequence The peptide sequence
- * @property {number} count The number of times the peptide occurs
- * @property {number} lca The taxon id of the lca
- * @property {number[]} lineage The lineage of the lca
- */
+const TAXA_URL = "/private_api/taxa";
 
 /**
  * Class that represents a single dataset containing a list of peptides.
  *
- * @type {Dataset}
+ *
+ *
  */
 class Dataset {
     /**
@@ -36,39 +19,60 @@ class Dataset {
      */
     constructor(peptides = []) {
         this.originalPeptides = Dataset.cleanPeptides(peptides);
+
+        /** @type {Tree} */
         this.tree = null;
+        this._fa = null;
+        this.baseFa = null;
+
+        /** @type {Map<number,TaxonInfo>} */
         this.taxonMap = new Map();
-        this.taxonMap.set(1, {id: 1, ranke: "no rank", name: "root"});
+        this.taxonMap.set(1, {id: 1, rank: "no rank", name: "root"});
     }
 
     /**
      * Processes the list of peptides set in the dataset and returns a
      * taxonomic tree.
      *
-     * @param  {boolean}  il should we equate I and L
-     * @param  {boolean}  dupes should we filter duplicates
-     * @param  {boolean}  missed should we perform
-     *   advancedMissedCleavageHandling
-     * @return {Promise.<Tree>} The taxonomic tree containing all peptides.
+     * @param  {MPAConfig}  mpaConfig
+     * @return {Promise<Tree>} Taxonomic tree
      */
-    async search({il, dupes, missed}) {
-        this.resultset = new Resultset(this, {il, dupes, missed});
+    async search(mpaConfig) {
+        this.resultset = new Resultset(this, mpaConfig);
         await this.resultset.process();
-        const tree = this.buildTree(this.resultset.processedPeptides);
+        const tree = this.buildTree(this.resultset.processedPeptides.values());
         const taxonInfo = Dataset.getTaxonInfo(tree.getTaxa());
         tree.setCounts();
         tree.setTaxonNames(await taxonInfo);
         tree.sortTree();
         this.tree = tree;
+        this._fa = null;
         this.addTaxonInfo(await taxonInfo);
         return tree;
+    }
+
+    /**
+     * Reprocesses functional analysis data with other cutoff
+     * @param {number} cutoff as percent (0-100)
+     * @param {string[]} sequences array of peptides to take into account
+    */
+    async reprocessFA(cutoff = 50, sequences = null) {
+        await this.resultset.proccessFA(cutoff, sequences);
+        this._fa = this.resultset.fa;
+    }
+
+    /**
+     * Sets the surrent FA summary as base, accesible trough baseFa.
+     */
+    setBaseFA() {
+        this.baseFa = this.fa.clone();
     }
 
     /**
      * Creates a hierarchic tree structure based on the input peptides. This is
      * also set as the tree property of the Dataset object.
      *
-     * @param  {PeptideInfo[]} peptides A list of peptides to build the tree
+     * @param  {Iterable<PeptideInfo>} peptides A list of peptides to build the tree
      *   from
      * @return {Tree} A taxon tree containing all peptides
      */
@@ -92,6 +96,23 @@ class Dataset {
     }
 
     /**
+     * Creates a tree like structure, that is this.tree where each node has an
+     * `included` property. This property indicaes if this node or any of its
+     * childs contain the saught for functional annlotation (code).
+     *
+     * @param  {string} code The FA term to look for
+     *   from
+     * @return {Promise<Object>} A taxon tree-like object annotated with `included`
+     */
+    async getFATree(code) {
+        const pepts = (await this.getPeptidesByFA(code)).map(pept => pept.sequence);
+        return this.tree.getRoot().callRecursivelyPostOder((t, c) => {
+            const included = c.some(x => x.included) || t.values.some(pept => pepts.includes(pept.sequence));
+            return Object.assign(Object.assign({}, t), {included: included, children: c});
+        });
+    }
+
+    /**
      * Adds new taxon info to the global taxon map
      *
      * @param {TaxonInfo[]} taxonInfo A list of new taxon info
@@ -106,7 +127,7 @@ class Dataset {
      * Converts the current analysis to the csv format. Each row contains a
      * peptide and its lineage, with each column being a level in the taxonomy
      *
-     * @return {string} The analysis result in csv format
+     * @return {Promise<string>} The analysis result in csv format
      */
     toCSV() {
         return this.resultset.toCSV();
@@ -142,6 +163,17 @@ class Dataset {
     }
 
     /**
+     * Returns a list of sequences that have the specified FA term
+     * @param {String} faName The name of the FA term (GO:000112, EC:1.5.4.1)
+     * @param {String[]} sequences List of sequences to limit to
+     * @return {Promise<{sequence, hits, type, annotatedCount,allCount,relativeCount,count}[]>} A list of objects representing
+     *                                                   the matches
+     */
+    getPeptidesByFA(faName, sequences) {
+        return this.resultset.getPeptidesByFA(faName, sequences);
+    }
+
+    /**
      * Fetches the taxon info from the Unipept API for a list of taxon id's and
      * returns an Array of objects containing the id, name and rank for each
      * result.
@@ -151,7 +183,7 @@ class Dataset {
      * with id, name and rank fields
      */
     static getTaxonInfo(taxids) {
-        return Dataset.postJSON(TAXA_URL, JSON.stringify({taxids: taxids}));
+        return postJSON(TAXA_URL, JSON.stringify({taxids: taxids}));
     }
 
     /**
@@ -165,43 +197,18 @@ class Dataset {
     }
 
     /**
-     * Posts data to a url as json and returns a promise containing the parsed
-     * (json) response
-     *
-     * @param  {string} url The url to which we want to send the request
-     * @param  {string} data The data to post in JSON format
-     * @return {Promise} A Promise containing the parsed response data
-     */
-    static postJSON(url, data) {
-        return fetch(url, {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-            },
-            body: data,
-        }).then(res => res.json());
-    }
-
-    /**
-     * The batch size to fetch peptides at a time
-     */
-    static get BATCH_SIZE() {
-        return BATCH_SIZE;
-    }
-
-    /**
-     * The URL to fetch lca info
-     */
-    static get PEPT2LCA_URL() {
-        return PEPT2LCA_URL;
-    }
-
-    /**
      * The URL to fetch taxon info
      */
     static get TAXA_URL() {
         return TAXA_URL;
+    }
+
+    /**
+     *
+     * @return {GroupedFA} Functional annotaions
+     */
+    get fa() {
+        return this._fa;
     }
 }
 

@@ -6,12 +6,16 @@
 #  sequence :string(50)       not null
 #  lca      :integer
 #  lca_il   :integer
+#  fa       :blob
+#  fa_il    :blob
 #
 
 require 'ostruct'
 
 class Sequence < ApplicationRecord
   include ReadOnlyModel
+  self.primary_key = 'id'
+
 
   has_many :peptides
   has_many :original_peptides, foreign_key: 'original_sequence_id', primary_key: 'id', class_name: 'Peptide'
@@ -53,7 +57,20 @@ class Sequence < ApplicationRecord
     end
   end
 
-  def self.missed_cleavage_lca(sequence, equate_il)
+  def fa_il
+    unmarshall_fa(:fa_il)
+  end
+
+  def fa
+    unmarshall_fa(:fa)
+  end
+
+  # Calculates thefor this sequence
+  def calculate_fa(equate_il = true)
+    equate_il ? fa_il : fa
+  end
+
+  def self.missed_cleavage(sequence, equate_il)
     sequences = sequence
                 .gsub(/([KR])([^P])/, "\\1\n\\2")
                 .gsub(/([KR])([^P])/, "\\1\n\\2")
@@ -61,32 +78,42 @@ class Sequence < ApplicationRecord
 
     # search the most unique sequence
     p_counts = Sequence.where(sequence: sequences)
-      .joins(equate_il ? :peptides : :original_peptides)
-      .group("sequences.id")
-      .select('sequences.id, count(*) as num_of_peptides')
+                       .joins(equate_il ? :peptides : :original_peptides)
+                       .group('sequences.id')
+                       .select('sequences.id, count(*) as num_of_peptides')
 
     return nil if p_counts.empty?
 
     entries = Sequence
-      .includes(Sequence.peptides_relation_name(equate_il) => { uniprot_entry: :lineage })
-      .find(p_counts.min_by(&:num_of_peptides).id)
-      .peptides(equate_il).map(&:uniprot_entry).to_set
-      .select { |e| e.protein_contains?(sequence, equate_il) }
+              .includes(Sequence.peptides_relation_name(equate_il) => { uniprot_entry: %i[lineage ec_cross_references go_cross_references] })
+              .find(p_counts.min_by(&:num_of_peptides).id)
+              .peptides(equate_il).map(&:uniprot_entry).to_set
+              .select { |e| e.protein_contains?(sequence, equate_il) }
 
     return nil if entries.empty?
 
     lineages = entries.map(&:lineage).uniq.compact
     lca = Lineage.calculate_lca_taxon(lineages)
 
-    result = OpenStruct.new(sequence: sequence)
+    fadata = UniprotEntry.summarize_fa(entries)
+
     if equate_il
-      result.lca_il = lca.id
-      result.lca_il_t = lca
+      Sequence.new(
+        sequence: sequence,
+        lca_il: lca.id,
+        lca_il_t: lca,
+        fa: false,
+        fa_il: fadata
+      )
     else
-      result.lca = lca.id
-      result.lca_t = lca
+      Sequence.new(
+        sequence: sequence,
+        lca: lca.id,
+        lca_t: lca,
+        fa: fadata,
+        fa_il: false
+      )
     end
-    result
   end
 
   def self.peptides_relation_name(equate_il)
@@ -154,6 +181,18 @@ class Sequence < ApplicationRecord
 
   def self.boolean?(variable)
     variable.is_a?(TrueClass) || variable.is_a?(FalseClass)
+  end
+
+  private
+
+  # Parse the JSON in :fa of :fa_il
+  def unmarshall_fa(prop)
+    if self[prop].blank?
+      return nil if self[prop] == false
+      self[prop] = { 'num' => { 'all' => 0, 'EC' => 0, 'GO' => 0 }, 'data' => {} }
+    end
+    return self[prop] if self[prop].is_a?(Hash)
+    self[prop] = Oj.load(self[prop])
   end
 end
 

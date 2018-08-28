@@ -5,7 +5,7 @@ server 'morty.ugent.be', user: 'unipept', roles: %i[web app], ssh_options: {
   port: 4840
 }
 
-set :branch, 'feature/es6'
+set :branch, 'feature/functionalAnalysisPept2FA'
 set :rails_env, :production
 
 namespace :deploy do

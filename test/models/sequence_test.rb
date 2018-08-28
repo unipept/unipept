@@ -6,6 +6,8 @@
 #  sequence :string(50)       not null
 #  lca      :integer
 #  lca_il   :integer
+#  fa       :blob
+#  fa_il    :blob
 #
 
 require 'test_helper'
@@ -17,6 +19,11 @@ class SequenceTest < ActiveSupport::TestCase
 
   test 'should raise error on save' do
     sequence = sequences(:sequence1)
+    assert_raises(ActiveRecord::ReadOnlyRecord) { sequence.save }
+  end
+
+  test 'should raise error on new save' do
+    sequence = Sequence.new(id: 20, sequence: 'NO', lca: 1, lca_il: 1, fa: '{}', fa_il: '{}')
     assert_raises(ActiveRecord::ReadOnlyRecord) { sequence.save }
   end
 
@@ -98,6 +105,62 @@ class SequenceTest < ActiveSupport::TestCase
     assert_equal taxon2.id, sequence1.calculate_lca(false)
     assert_equal taxon2, sequence1.calculate_lca(false, true)
     assert_equal taxon2.id, sequence1.calculate_lca(false, false)
+  end
+
+  test 'should give correct result for calculate_fa' do
+    expected_nil_fallback = { 'num' => { 'all' => 0, 'EC' => 0, 'GO' => 0 }, 'data' => {} }
+    data1 = { seq: sequences(:sequence1),
+              exp_fa: { 'num' => { 'all' => 1, 'EC' => 1, 'GO' => 1 }, 'data' => { 'GO:0016569' => 1, 'GO:0006281' => 1, 'GO:0000781' => 1, 'EC:2.7.11.1' => 1 } },
+              exp_il: { 'num' => { 'all' => 22, 'EC' => 4, 'GO' => 2 }, 'data' => { 'EC:2.7.11.1' => 4, 'GO:0004674' => 1, 'GO:0005634' => 1, 'GO:0005524' => 1, 'GO:0016301' => 1 } } }
+    data2 = { seq: sequences(:sequence2),
+              exp_fa: { 'num' => { 'all' => 3, 'EC' => 0, 'GO' => 3 }, 'data' => { 'GO:0051301' => 3, 'GO:0005525' => 3, 'GO:0046872' => 3, 'GO:0007049' => 3 } },
+              exp_il: { 'num' => { 'all' => 4, 'EC' => 1, 'GO' => 4 }, 'data' => { 'GO:0005759' => 1, 'GO:0004760' => 1, 'GO:0051301' => 3, 'GO:0005739' => 1 } } }
+    data3 = { seq: sequences(:sequence3),
+              exp_fa: expected_nil_fallback,
+              exp_il: expected_nil_fallback }
+    data4 = { seq: sequences(:sequence4),
+              exp_fa: { 'num' => { 'all' => 1, 'EC' => 1, 'GO' => 1 }, 'data' => { 'GO:0005576' => 1, 'GO:0000287' => 1, 'GO:0004634' => 1, 'GO:0000015' => 1, 'GO:0006096' => 1, 'EC:4.2.1.11' => 1, 'GO:0009986' => 1 } },
+              exp_il: expected_nil_fallback }
+
+    [data1, data2, data3, data4].each do |seq|
+      assert_equal seq[:exp_fa], seq[:seq].calculate_fa(false)
+      assert_equal seq[:exp_il], seq[:seq].calculate_fa(true)
+      assert_equal seq[:exp_il], seq[:seq].calculate_fa
+    end
+  end
+
+  test 'should give correct result for calculate_fa if hash, string given' do
+    sequence = Sequence.new(
+      fa: { 'num' => { 'all' => 1, 'EC' => 0, 'GO' => 0 }, 'data' => {} },
+      fa_il: { 'num' => { 'all' => 2, 'EC' => 0, 'GO' => 0 }, 'data' => {} }
+    )
+    sequenceStr = Sequence.new(
+      fa: '{"num":{"all":1, "EC" : 0, "GO" : 0 }, "data" : {} }',
+      fa_il: '{ "num" : { "all" : 2, "EC" : 0, "GO" : 0 }, "data" : {} }'
+    )
+    assert_equal ({ 'num' => { 'all' => 1, 'EC' => 0, 'GO' => 0 }, 'data' => {} }), sequence.calculate_fa(false)
+    assert_equal ({ 'num' => { 'all' => 2, 'EC' => 0, 'GO' => 0 }, 'data' => {} }), sequence.calculate_fa(true)
+
+    assert_equal sequence.calculate_fa(false), sequenceStr.calculate_fa(false)
+    assert_equal sequence.calculate_fa(true), sequenceStr.calculate_fa(true)
+
+    # Doube check because JSON decoding is cached
+    assert_equal ({ 'num' => { 'all' => 1, 'EC' => 0, 'GO' => 0 }, 'data' => {} }), sequenceStr.calculate_fa(false)
+    assert_equal ({ 'num' => { 'all' => 2, 'EC' => 0, 'GO' => 0 }, 'data' => {} }), sequenceStr.calculate_fa(true)
+  end
+
+  test 'should give correct result for calculate_fa if no data' do
+    sequence = Sequence.new(
+      fa: false,
+      fa_il: false
+    )
+
+    2.times do
+      assert_nil sequence.calculate_fa(false)
+      assert_nil sequence.calculate_fa(true)
+      assert_nil sequence.fa
+      assert_nil sequence.fa_il
+    end
   end
 
   test 'should give correct result for single_search' do
@@ -182,11 +245,18 @@ class SequenceTest < ActiveSupport::TestCase
     assert Sequence.boolean? false
   end
 
-  test 'should give correct result for missed_cleavage_lca' do
-    assert_equal 2, Sequence.missed_cleavage_lca('AAILERAGGAR', false).lca
-    assert_nil Sequence.missed_cleavage_lca('AAILERAGGAR', false).lca_il
-    assert_nil Sequence.missed_cleavage_lca('AAILERAGGAR', true)
-    assert_equal 2, Sequence.missed_cleavage_lca('AALLERAGGAR', true).lca_il
-    assert_nil Sequence.missed_cleavage_lca('AALLERAGGAR', true).lca
+  test 'should give correct result for missed_cleavage' do
+    assert_equal 2, Sequence.missed_cleavage('AAILERAGGAR', false).lca
+    assert_equal ({ 'num' => { 'all' => 1, 'EC' => 0, 'GO' => 0 }, 'data' => {} }), Sequence.missed_cleavage('AAILERAGGAR', false).fa
+    assert_nil Sequence.missed_cleavage('AAILERAGGAR', false).fa_il
+    assert_nil Sequence.missed_cleavage('AAILERAGGAR', false).lca_il
+    assert_equal 2, Sequence.missed_cleavage('AAILERAGGAR', true).lca_il
+    assert_nil Sequence.missed_cleavage('AAILERAGGAR', true).lca
+    assert_equal 2, Sequence.missed_cleavage('AALLERAGGAR', true).lca_il
+    assert_equal ({ 'num' => { 'all' => 1, 'EC' => 0, 'GO' => 0 }, 'data' => {} }), Sequence.missed_cleavage('AALLERAGGAR', true).fa_il
+    assert_nil      Sequence.missed_cleavage('AALLERAGGAR', true).lca
+    assert_nil      Sequence.missed_cleavage('AALLERAGGAR', true).fa
+    assert_nil      Sequence.missed_cleavage('AALLERAGGAR', false)
+    assert_nil      Sequence.missed_cleavage('AAIIERAGGAR', false)
   end
 end

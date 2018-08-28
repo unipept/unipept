@@ -132,6 +132,8 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
   `sequence` VARCHAR(50) NOT NULL ,
   `lca` MEDIUMINT UNSIGNED NULL ,
   `lca_il` MEDIUMINT UNSIGNED NULL ,
+  `fa` BLOB NULL ,
+  `fa_il` BLOB NULL ,
   PRIMARY KEY (`id`) ,
   UNIQUE INDEX `uidx_sequence` (`sequence` ASC) ,
   INDEX `fk_sequences_taxons` (`lca` ASC) ,
@@ -148,6 +150,7 @@ CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
+ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=16 
 COLLATE = ascii_general_ci;
 
 
@@ -341,13 +344,13 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `unipept`.`proteomes` (
   `id` MEDIUMINT UNSIGNED NOT NULL,
   `proteome_accession_number` CHAR(12) NOT NULL,
-  `proteome_name` VARCHAR(100) NOT NULL,
+  `proteome_name` VARCHAR(145) NOT NULL,
   `taxon_id` MEDIUMINT UNSIGNED NULL,
   `type_strain` BIT(1) NOT NULL DEFAULT b'0',
   `reference_proteome` BIT(1) NOT NULL DEFAULT b'0',
-  `strain` VARCHAR(45) NULL,
+  `strain` VARCHAR(120) NULL,
   `assembly` VARCHAR(45) NULL,
-  `name` VARCHAR(128) NULL DEFAULT NULL,
+  `name` VARCHAR(225) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_taxons_proteomes` (`taxon_id` ASC),
   CONSTRAINT `fk_taxons_proteomes`

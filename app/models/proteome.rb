@@ -27,20 +27,12 @@ class Proteome < ApplicationRecord
     raise ActiveRecord::ReadOnlyRecord
   end
 
-  def full_name
-    return proteome_name if strain.nil?
-    return proteome_name if proteome_name.count(' ') > 1
-    return proteome_name if proteome_name.include?('(')
-    return proteome_name unless proteome_name.index(/[0-9]/).nil?
-    proteome_name + ' ' + strain
-  end
-
   def type_strain
-    self[:type_strain] == "\x01" ? true : false
+    self[:type_strain] == "\x01"
   end
 
   def reference_proteome
-    self[:reference_proteome] == "\x01" ? true : false
+    self[:reference_proteome] == "\x01"
   end
 
   # returns a cached json object containing all proteomes
@@ -92,7 +84,6 @@ class Proteome < ApplicationRecord
         WHERE proteome_id = #{proteome.id}
         LIMIT 1")
       proteome.taxon_id = taxon_id
-      proteome.name = proteome.full_name
       proteome.save
     end
   end

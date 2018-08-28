@@ -39,8 +39,6 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal sequence.original_peptides.map(&:uniprot_entry).map(&:lineage).sort_by(&:taxon_id), assigns(:lineages).to_a.sort_by(&:taxon_id)
     assert_equal sequence.lca_t, assigns(:lca_taxon)
     assert_not_nil assigns(:root)
-    assert assigns(:root).start_with? '{'
-    assert assigns(:root).end_with? '}'
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
     assert_equal %w[Organism kingdom species], assigns(:table_ranks)
@@ -59,8 +57,6 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal sequence.original_peptides.map(&:uniprot_entry).map(&:lineage).sort_by(&:taxon_id), assigns(:lineages).to_a.sort_by(&:taxon_id)
     assert_equal sequence.lca_t, assigns(:lca_taxon)
     assert_not_nil assigns(:root)
-    assert assigns(:root).start_with? '{'
-    assert assigns(:root).end_with? '}'
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
     assert_equal %w[Organism kingdom species], assigns(:table_ranks)
@@ -85,8 +81,6 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal sequence.original_peptides.map(&:uniprot_entry).map(&:lineage).sort_by(&:taxon_id), assigns(:lineages).to_a.sort_by(&:taxon_id)
     assert_equal sequence.lca_t, assigns(:lca_taxon)
     assert_not_nil assigns(:root)
-    assert assigns(:root).start_with? '{'
-    assert assigns(:root).end_with? '}'
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
     assert_equal %w[Organism kingdom species], assigns(:table_ranks)
@@ -105,8 +99,6 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal sequence.peptides.map(&:uniprot_entry).map(&:lineage).sort_by(&:taxon_id), assigns(:lineages).to_a.sort_by(&:taxon_id)
     assert_equal sequence.lca_il_t, assigns(:lca_taxon)
     assert_not_nil assigns(:root)
-    assert assigns(:root).start_with? '{'
-    assert assigns(:root).end_with? '}'
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
     assert_equal %w[Organism kingdom species], assigns(:table_ranks)
@@ -125,8 +117,6 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal sequence.peptides.map(&:uniprot_entry).map(&:lineage).sort_by(&:taxon_id), assigns(:lineages).to_a.sort_by(&:taxon_id)
     assert_equal sequence.lca_il_t, assigns(:lca_taxon)
     assert_not_nil assigns(:root)
-    assert assigns(:root).start_with? '{'
-    assert assigns(:root).end_with? '}'
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
     assert_equal %w[Organism kingdom species], assigns(:table_ranks)
@@ -145,8 +135,6 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal sequence.peptides.map(&:uniprot_entry).map(&:lineage), assigns(:lineages).to_a
     assert_equal sequence.lca_il_t, assigns(:lca_taxon)
     assert_not_nil assigns(:root)
-    assert assigns(:root).start_with? '{'
-    assert assigns(:root).end_with? '}'
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, nil], [taxon2, taxon1]], assigns(:table_lineages)
     assert_equal %w[Organism kingdom species], assigns(:table_ranks)
@@ -165,8 +153,6 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal((sequence.peptides.map(&:uniprot_entry) & sequence6.peptides.map(&:uniprot_entry)).map(&:lineage), assigns(:lineages).to_a)
     assert_equal taxon2, assigns(:lca_taxon)
     assert_not_nil assigns(:root)
-    assert assigns(:root).start_with? '{'
-    assert assigns(:root).end_with? '}'
     assert_equal [taxon2], assigns(:common_lineage)
     assert_equal [[taxon2]], assigns(:table_lineages)
     assert_equal %w[Organism kingdom], assigns(:table_ranks)

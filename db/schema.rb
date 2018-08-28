@@ -14,7 +14,7 @@
 ActiveRecord::Schema.define(version: 0) do
 
   create_table "dataset_items", force: :cascade do |t|
-    t.integer "dataset_id", limit: 4
+    t.integer "dataset_id", limit: 5
     t.string  "name",       limit: 160
     t.text    "data",       limit: 16777215, null: false
     t.integer "order",      limit: 4
@@ -163,6 +163,8 @@ ActiveRecord::Schema.define(version: 0) do
     t.string  "sequence", limit: 50, null: false
     t.integer "lca",      limit: 3
     t.integer "lca_il",   limit: 3
+    t.binary "fa"
+    t.binary "fa_il"
   end
 
   add_index "sequences", ["lca"], name: "fk_sequences_taxons", using: :btree
