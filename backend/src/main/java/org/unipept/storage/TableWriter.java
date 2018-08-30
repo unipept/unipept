@@ -1,8 +1,12 @@
 package org.unipept.storage;
 
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.io.IOException;
 import java.io.File;
@@ -79,11 +83,18 @@ public class TableWriter implements UniprotObserver {
      *            the UniprotEntry to store
      */
     public void store(UniprotEntry entry) {
-        int uniprotEntryId = addUniprotEntry(entry.getUniprotAccessionNumber(), entry.getVersion(),
+        long uniprotEntryId = addUniprotEntry(entry.getUniprotAccessionNumber(), entry.getVersion(),
                 entry.getTaxonId(), entry.getType(), entry.getName(), entry.getSequence());
         if (uniprotEntryId != -1) { // failed to add entry
+
+            // todo make cleaner
+            String faSummary = Stream.of(
+                entry.getGOReferences().stream().map(UniprotGORef::getId),
+                entry.getECReferences().stream().map(x->"EC:"+x.getId())
+            ).flatMap(i -> i).collect(Collectors.joining(";"));
+            
             for(String sequence : entry.digest()) {
-                addData(sequence.replace('I', 'L'), uniprotEntryId, sequence);
+                addData(sequence.replace('I', 'L'), uniprotEntryId, sequence, faSummary);
             }
             for (UniprotDbRef ref : entry.getDbReferences())
                 addDbRef(ref, uniprotEntryId);
@@ -113,7 +124,7 @@ public class TableWriter implements UniprotObserver {
      *            The full sequence of the peptide.
      * @return The database ID of the uniprot entry.
      */
-    public int addUniprotEntry(String uniprotAccessionNumber, int version, int taxonId,
+    public long addUniprotEntry(String uniprotAccessionNumber, int version, int taxonId,
             String type, String name, String sequence) {
         if(0 <= taxonId && taxonId < taxonList.size() && taxonList.get(taxonId) != null) {
             try {
@@ -178,13 +189,16 @@ public class TableWriter implements UniprotObserver {
      *            retrieved.
      * @param originalSequence
      *            The original sequence of the peptide.
+     * @param functionalAnnotations
+     *            A semicollon separated list of allocated functional analysis terms
      */
-    public void addData(String unifiedSequence, int uniprotEntryId, String originalSequence) {
+    public void addData(String unifiedSequence, long uniprotEntryId, String originalSequence, String functionalAnnotations) {
         try {
             peptides.write(
                     unifiedSequence,
                     originalSequence,
-                    Integer.toString(uniprotEntryId)
+                    Long.toString(uniprotEntryId),
+                    functionalAnnotations
                     );
         } catch(IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
@@ -201,12 +215,12 @@ public class TableWriter implements UniprotObserver {
      * @param uniprotEntryId
      *            The uniprotEntry of the cross reference
      */
-    public void addDbRef(UniprotDbRef ref, int uniprotEntryId) {
+    public void addDbRef(UniprotDbRef ref, long uniprotEntryId) {
         try {
             CSV.Writer w = (ref.getType().equals("EMBL"))
                 ? emblCrossReferences
                 : refseqCrossReferences;
-            w.write(Integer.toString(uniprotEntryId),
+            w.write(Long.toString(uniprotEntryId),
                     ref.getProteinId(),
                     ref.getSequenceId());
         } catch (IOException e) {
@@ -224,9 +238,9 @@ public class TableWriter implements UniprotObserver {
      * @param uniprotEntryId
      *            The uniprotEntry of the cross reference
      */
-    public void addGORef(UniprotGORef ref, int uniprotEntryId) {
+    public void addGORef(UniprotGORef ref, long uniprotEntryId) {
         try {
-            goCrossReferences.write(Integer.toString(uniprotEntryId), ref.getId());
+            goCrossReferences.write(Long.toString(uniprotEntryId), ref.getId());
         } catch (IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + " Error adding this GO reference to the database.");
@@ -243,9 +257,9 @@ public class TableWriter implements UniprotObserver {
      * @param uniprotEntryId
      *            The uniprotEntry of the cross reference
      */
-    public void addECRef(UniprotECRef ref, int uniprotEntryId) {
+    public void addECRef(UniprotECRef ref, long uniprotEntryId) {
         try {
-            ecCrossReferences.write(Integer.toString(uniprotEntryId), ref.getId());
+            ecCrossReferences.write(Long.toString(uniprotEntryId), ref.getId());
         } catch (IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + " Error adding this EC reference to the database.");
@@ -262,9 +276,9 @@ public class TableWriter implements UniprotObserver {
      * @param uniprotEntryId
      *            The uniprotEntry of the cross reference
      */
-    public void addProteomeRef(UniprotProteomeRef ref, int uniprotEntryId) {
+    public void addProteomeRef(UniprotProteomeRef ref, long uniprotEntryId) {
         try {
-            proteomeCrossReferences.write(Integer.toString(uniprotEntryId), Integer.toString(getProteomeId(ref.getId())));
+            proteomeCrossReferences.write(Long.toString(uniprotEntryId), Integer.toString(getProteomeId(ref.getId())));
         } catch (IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
                     + " Error adding this Proteome reference to the database.");

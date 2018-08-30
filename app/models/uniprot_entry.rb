@@ -43,4 +43,30 @@ class UniprotEntry < ApplicationRecord
       protein.include? sequence
     end
   end
+
+  # Summarises the fucntional annotations of a list of enteries
+  # Note: this should only be used for peptides who's FA's have
+  # not been precalculated (because they were mot in the DB)
+  #
+  # @param entries list of UniprotEnteries that match the sequence
+  def self.summarize_fa(entries)
+    # Count GO term occurences
+    data = entries
+           .flat_map(&:go_cross_references)
+           .each_with_object(Hash.new(0)) { |term, acc| acc[term.go_term_code] += 1; }
+
+    # Count EC numbers occurences
+    data = entries
+           .flat_map(&:ec_cross_references)
+           .each_with_object(data) { |num, acc| acc['EC:' + num.ec_number_code] += 1; }
+
+    {
+      'num' => {
+        'all' => entries.length,
+        'EC' => entries.count { |e| !e.ec_cross_references.empty? },
+        'GO' => entries.count { |e| !e.go_cross_references.empty? }
+      },
+      'data' => data
+    }
+  end
 end

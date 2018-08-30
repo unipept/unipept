@@ -1,0 +1,52 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "modules": false,
+        "targets": {
+          "browsers": "> 1%",
+          "uglify": true
+        },
+        "useBuiltIns": true,
+        "debug": false
+      }
+    ]
+  ],
+  "env": {
+    "test": {
+      "presets": [
+        [
+          "env",
+          {
+            "modules": "commonjs",
+            "targets": {
+              "node": "current"
+            },
+            "debug": false,
+            "plugins": [
+              "syntax-dynamic-import",
+              "transform-object-rest-spread",
+              [
+                "transform-class-properties",
+                {
+                  "spec": true
+                }
+              ]
+            ]
+          }
+        ]
+      ]
+    }
+  },
+  "plugins": [
+    "syntax-dynamic-import",
+    "transform-object-rest-spread",
+    [
+      "transform-class-properties",
+      {
+        "spec": true
+      }
+    ]
+  ]
+}

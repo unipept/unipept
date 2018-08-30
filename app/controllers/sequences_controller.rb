@@ -14,7 +14,7 @@ class SequencesController < ApplicationController
 
     # process the input, convert seq to a valid @sequence
     if seq.match?(/\A[0-9]+\z/)
-      sequence = Sequence.includes(peptides: { uniprot_entry: %i[taxon ec_cross_references go_cross_references] }).find_by(id: seq)
+      sequence = Sequence.includes(peptides: { uniprot_entry: %i[taxon] }).find_by(id: seq)
       @original_sequence = sequence.sequence
     else
       sequence = Sequence.single_search(seq, equate_il)
@@ -37,11 +37,17 @@ class SequencesController < ApplicationController
       # check if the protein contains the startsequence
       @entries.select! { |e| e.protein_contains?(seq, equate_il) }
 
+      # Calculate fa summary
+      @fa_summary = UniprotEntry.summarize_fa(@entries)
+
       raise(NoMatchesFoundError, seq) if @entries.empty?
       @lineages = @entries.map(&:lineage).compact
     else
       @entries = sequence.peptides(equate_il).map(&:uniprot_entry)
       @lineages = sequence.lineages(equate_il, true).to_a
+
+      # Get FA summary form cache 
+      @fa_summary = sequence.calculate_fa(equate_il)
     end
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages) # calculate the LCA
@@ -73,7 +79,7 @@ class SequencesController < ApplicationController
         t = lineage.next_t
         next if t.nil?
         l << t.name # add the taxon name to the lineage
-        node = Node.find_by_id(t.id, @root)
+        node = Node.find_by_id(t.id, @root) # rubocop:disable Rails/DynamicFindBy
         if node.nil? # if the node isn't create yet
           node = Node.new(t.id, t.name, @root, t.rank)
           node.data['count'] = lineage.hits
@@ -87,7 +93,6 @@ class SequencesController < ApplicationController
 
     # don't show the root when we don't need it
     @root.sort_children
-    @root = Oj.dump(@root, mode: :compat)
 
     # Table stuff
     @table_lineages = []
@@ -136,168 +141,11 @@ class SequencesController < ApplicationController
 
   # redirects to show
   def search
-    if params[:q].empty?
+    if params[:q].blank?
       flash[:error] = 'Your query was empty, please try again.'
       redirect_to search_single_path
     else
       redirect_to "#{sequences_path}/#{params[:q]}/#{params[:il_s]}"
     end
   end
-
-  # processes a list of sequences
-  def multi_search
-    @header_class = 'MPA'
-    # save parameters
-    @p = params.to_h
-
-    # set search parameters
-    @equate_il = params[:il].present?
-    filter_duplicates = params[:dupes] == '1'
-    handle_missed = params[:missed] == '1'
-    export = params[:export] == '1'
-    search_name = params[:search_name]
-    query = params[:qs]
-    csv_string = ''
-
-    # quit if the query was empty
-    raise EmptyQueryError if query.blank?
-
-    # remove duplicates, filter shorts, substitute I by L, ...
-    data = query.upcase.delete('#').gsub(/\P{ASCII}/, '')
-    data = data.gsub(/([KR])([^P])/, "\\1\n\\2").gsub(/([KR])([^P])/, "\\1\n\\2") unless handle_missed
-    data = data.lines.map(&:strip).to_a.select { |l| l.size >= 5 }
-    sequence_mapping = Hash[data.map { |v| @equate_il ? [v.tr('I', 'L'), v] : [v, v] }]
-    data = data.map { |s| @equate_il ? s.tr('I', 'L') : s }
-    data_counts = Hash[data.group_by { |k| k }.map { |k, v| [k, v.length] }]
-    number_searched_for = data.length
-    data = data_counts.keys
-
-    # set metrics
-    number_searched_for = data.length if filter_duplicates
-    @number_found = 0
-
-    # build the resultset
-    matches = {}
-    misses = data.to_set
-    data.each_slice(1000) do |data_slice|
-      Sequence.includes(Sequence.lca_t_relation_name(@equate_il) => { lineage: Lineage::ORDER_T }).where(sequence: data_slice).each do |sequence|
-        lca_t = sequence.calculate_lca(@equate_il, true)
-        unless lca_t.nil?
-          num_of_seq = filter_duplicates ? 1 : data_counts[sequence.sequence]
-          @number_found += num_of_seq
-          matches[lca_t] = [] if matches[lca_t].nil?
-          num_of_seq.times do
-            matches[lca_t] << sequence_mapping[sequence.sequence]
-          end
-        end
-        misses.delete(sequence.sequence)
-      end
-    end
-
-    # handle the misses
-    if handle_missed
-      iter = misses.to_a
-      iter.each do |seq|
-        sequences = seq.gsub(/([KR])([^P])/, "\\1\n\\2").gsub(/([KR])([^P])/, "\\1\n\\2").lines.map(&:strip).to_a
-        next if sequences.size == 1
-        # heuristic optimization to evade short sequences with lots of matches
-        min_length = [8, sequences.max_by(&:length).length].min
-        sequences = sequences.select { |s| s.length >= min_length }
-
-        long_sequences = sequences.map { |s| Sequence.includes(Sequence.peptides_relation_name(@equate_il) => { uniprot_entry: :lineage }).find_by(sequence: s) }
-
-        # jump the loop if we don't have any matches
-        next if long_sequences.include? nil
-        next if long_sequences.empty?
-
-        # calculate possible uniprot entries
-        temp_entries = long_sequences.map { |s| s.peptides(@equate_il).map(&:uniprot_entry).to_set }
-        # take the intersection of all sets
-        entries = temp_entries.reduce(:&)
-        # check if the protein contains the startsequence
-        entries.select! { |e| e.protein_contains?(seq, @equate_il) }
-
-        # skip if nothing left
-        next if entries.empty?
-
-        seq_lins = entries.map(&:lineage).uniq.compact
-        lca_t = Lineage.calculate_lca_taxon(seq_lins) # calculate the LCA
-
-        unless lca_t.nil?
-          num_of_seq = filter_duplicates ? 1 : data_counts[seq]
-          @number_found += num_of_seq
-          matches[lca_t] = [] if matches[lca_t].nil?
-          num_of_seq.times do
-            matches[lca_t] << sequence_mapping[seq]
-          end
-        end
-        misses.delete(seq)
-      end
-    end
-
-    # prepare for output
-    @title = 'Metaproteomics analysis result'
-    @title += ' of ' + search_name unless search_name.nil? || search_name == ''
-    @pride_url = "http://www.ebi.ac.uk/pride/archive/assays/#{search_name[/[0-9]*$/]}" if search_name.include? 'PRIDE assay'
-
-    @intro_text = "#{@number_found} out of #{number_searched_for} #{'peptide'.send(number_searched_for != 1 ? :pluralize : :to_s)}  were matched"
-    if filter_duplicates || @equate_il
-      @intro_text += ' ('
-      @intro_text += 'peptides were deduplicated' if filter_duplicates
-      @intro_text += ', ' if filter_duplicates && @equate_il
-      @intro_text += 'I and L residues were equated' if @equate_il
-      @intro_text += ', ' if filter_duplicates || @equate_il
-      @intro_text += handle_missed ? 'advanced missed cleavage handling' : 'simple missed cleavage handling'
-      @intro_text += ')'
-    end
-    @intro_text += '.'
-
-    @json_missed = Oj.dump(misses.map { |m| sequence_mapping[m] }.to_a.sort, mode: :compat)
-
-    # construct treemap nodes
-    root = Node.new(1, 'Organism', nil, 'no rank')
-    matches.each do |taxon, seqs| # for every match
-      lca_l = taxon.lineage
-
-      # export stuff
-      if export
-        seqs.each do |sequence|
-          csv_string += CSV.generate_line [sequence].concat(lca_l.to_a)
-        end
-      end
-
-      last_node_loop = root
-      while !lca_l.nil? && lca_l.has_next? # process every rank in lineage
-        t = lca_l.next_t
-        next if t.nil?
-        node = Node.find_by_id(t.id, root)
-        if node.nil?
-          node = Node.new(t.id, t.name, root, t.rank)
-          last_node_loop = last_node_loop.add_child(node)
-        else
-          last_node_loop = node
-        end
-      end
-      node = taxon.id == 1 ? root : Node.find_by_id(taxon.id, root)
-      node&.set_sequences(seqs)
-    end
-
-    @json_sequences = Oj.dump(root.sequences, mode: :compat)
-    root&.prepare_for_multitree
-    root&.sort_children
-    @json_tree = Oj.dump(root, mode: :compat)
-
-    if export
-      csv_string = CSV.generate_line(['peptide'].concat(Lineage.ranks)) + csv_string
-
-      cookies['nonce'] = params[:nonce]
-      filename = search_name != '' ? search_name : 'export'
-      send_data csv_string, type: 'text/csv; charset=iso-8859-1; header=present', disposition: 'attachment; filename=' + filename + '.csv'
-    end
-  rescue EmptyQueryError
-    flash[:error] = 'Your query was empty, please try again.'
-    redirect_to datasets_path
-  end
 end
-
-class EmptyQueryError < StandardError; end

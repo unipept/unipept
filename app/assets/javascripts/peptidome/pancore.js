@@ -1,3 +1,14 @@
+import {logToGoogle, showError, showInfo, triggerDownloadModal} from "../utils.js";
+import {showInfoModal} from "../modal.js";
+import {showNotification} from "../notifications.js";
+
+import {constructGenomeSelector} from "./genomeSelector.js";
+import {constructGenomeTable} from "./genomeTable.js";
+import {constructPancoreGraph} from "./pancoreGraph.js";
+import {constructSimMatrix} from "./simMatrix.js";
+import {constructMyGenomes} from "./myGenomes.js";
+
+
 /**
  * Constructs a Pancore object that handles all JavaScript on the Unique
  * Peptide Finder page.
@@ -8,10 +19,10 @@
  * @param <String> args.version The uniprot version
  * @return <Pancore> that The constructed Pancore object
  */
-var constructPancore = function constructPancore(args) {
-    /*************** Private variables ***************/
+function constructPancore(args) {
+    /** ************* Private variables ***************/
 
-    var that = {},
+    let that = {},
         data = args.data,
         genomeData = new Map(),
         genomes = new Map(),
@@ -29,12 +40,12 @@ var constructPancore = function constructPancore(args) {
         worker;
 
     // notifications
-    var $loadingNotification,
+    let $loadingNotification,
         $pancoreNotification,
         $autosortNotification,
         $similarityNotification;
 
-    /*************** Private methods ***************/
+    /** ************* Private methods ***************/
 
     /**
      * Initializes pancore
@@ -47,45 +58,45 @@ var constructPancore = function constructPancore(args) {
 
         // Construct the genome selector
         genomeSelector = constructGenomeSelector({
-            data : data,
-            taxa : args.taxa,
+            data: data,
+            taxa: args.taxa,
             genomes: genomes,
-            pancore : that
+            pancore: that,
         });
 
         // Constructs the table
         table = constructGenomeTable({
-            genomes : genomes,
-            pancore : that
+            genomes: genomes,
+            pancore: that,
         });
 
         // Constructs the graph
         graph = constructPancoreGraph({
-            pancore : that,
-            table : table,
-            transitionDuration : 500,
-            width : 916,
-            height : 600,
-            genomes : genomes
+            pancore: that,
+            table: table,
+            transitionDuration: 500,
+            width: 916,
+            height: 600,
+            genomes: genomes,
         });
         graph.redraw();
 
         // Create the Javascript Worker for background data processing
         worker = new Worker("/assets/workers/pancore_worker.js");
-        worker.addEventListener('message', handleWorkerMessage, false);
-        worker.addEventListener('error', error, false);
+        worker.addEventListener("message", handleWorkerMessage, false);
+        worker.addEventListener("error", showError, false);
 
         // Constructs the matrix
         matrix = constructSimMatrix({
-            pancore : that,
-            table : table
+            pancore: that,
+            table: table,
         });
 
         // Constructs the myGenomes feature
         if (window.File && window.FileReader && window.FileList) {
             myGenomes = constructMyGenomes({
-                version : args.version,
-                pancore : that
+                version: args.version,
+                pancore: that,
             });
         } else {
             $("#my-genome-error").removeClass("hide");
@@ -99,7 +110,7 @@ var constructPancore = function constructPancore(args) {
 
         // IE10 message
         if (navigator.appVersion.indexOf("MSIE 10") !== -1) {
-            info("You're using Internet Explorer 10. Everything should work as expected, but for an optimal experience, please use a recent version of Mozilla Firefox or Google Chrome.");
+            showInfo("You're using Internet Explorer 10. Everything should work as expected, but for an optimal experience, please use a recent version of Mozilla Firefox or Google Chrome.");
         }
 
         window.onbeforeunload = that.saveStatus;
@@ -128,7 +139,7 @@ var constructPancore = function constructPancore(args) {
     function initHelp() {
         // tab help
         $("#tabs li a span.help").click(function (e) {
-            var title,
+            let title,
                 content;
             e.stopPropagation();
             e.preventDefault();
@@ -161,7 +172,7 @@ var constructPancore = function constructPancore(args) {
      * Gets called to handle the change from and to full screen mode.
      */
     function resizeFullScreen() {
-        var activeTab = getActiveTab(),
+        let activeTab = getActiveTab(),
             isFullScreen = window.fullScreenApi.isFullScreen();
 
         // sync tabs
@@ -194,7 +205,7 @@ var constructPancore = function constructPancore(args) {
      * Initializes the full screen buttons
      */
     function initActionBar() {
-        $(".fullScreenActions a").tooltip({placement: "bottom", delay: { "show": 300, "hide": 300 }});
+        $(".fullScreenActions a").tooltip({placement: "bottom", delay: {"show": 300, "hide": 300}});
         $(".fullScreenActions .download").click(saveImage);
         $(".fullScreenActions .exit").click(function () {
             window.fullScreenApi.cancelFullScreen();
@@ -216,7 +227,7 @@ var constructPancore = function constructPancore(args) {
 
         $("#buttons-pancore").prepend("<button id='save-data' class='btn btn-default btn-xs'><span class='glyphicon glyphicon-download'></span> Download data</button>");
         $("#save-data").click(function clickSaveData() {
-            var activeObject,
+            let activeObject,
                 tracking;
             if (getActiveTab() === "pancore_graph") {
                 activeObject = graph;
@@ -233,8 +244,8 @@ var constructPancore = function constructPancore(args) {
     /**
      * Triggers a modal to save an image of the active tab
      */
-    function saveImage () {
-        var activeTab = getActiveTab();
+    function saveImage() {
+        let activeTab = getActiveTab();
         logToGoogle("Pancore", "Save Image", activeTab);
         if (activeTab === "pancore_graph") {
             triggerDownloadModal("#pancore_graph svg", null, "unique_peptides_graph");
@@ -251,42 +262,44 @@ var constructPancore = function constructPancore(args) {
      * @param <Event> e The event we want to handle
      */
     function handleWorkerMessage(e) {
-        var data = e.data;
+        /* eslint-disable no-console */
+        let data = e.data;
         switch (data.type) {
-        case 'log':
+        case "log":
             console.log(data.msg);
             break;
-        case 'error':
+        case "error":
             groupErrors(data.msg.error, data.msg.msg);
             break;
-        case 'processLoadedGenome':
+        case "processLoadedGenome":
             processLoadedGenome(data.msg.data, data.msg.rank);
             break;
-        case 'processPancoreData':
+        case "processPancoreData":
             processPancoreData(data.msg.data, data.msg.lca, data.msg.rank);
             break;
-        case 'processDownloadedSequences':
+        case "processDownloadedSequences":
             processDownloadedSequences(data.msg);
             break;
-        case 'processClusteredMatrix':
+        case "processClusteredMatrix":
             processClusteredMatrix(data.msg.order, data.msg.newick);
             break;
-        case 'autoSorted':
+        case "autoSorted":
             processAutoSorted(data.msg);
             break;
-        case 'processSimilarityData':
+        case "processSimilarityData":
             processSimilarityData(data.msg);
             break;
         default:
             console.log(data.msg);
         }
+        /* eslint-enable no-console */
     }
 
     /**
      * Sends a command and message to the worker
      */
     function sendToWorker(command, message) {
-        worker.postMessage({'cmd': command, 'msg': message});
+        worker.postMessage({"cmd": command, "msg": message});
     }
 
     /**
@@ -300,11 +313,11 @@ var constructPancore = function constructPancore(args) {
         if (own) {
             myGenomes.getIds(id).then(
                 function (ids) {
-                    sendToWorker("loadUserData", {"id" : id, "name" : name, "ids" : ids});
+                    sendToWorker("loadUserData", {"id": id, "name": name, "ids": ids});
                 }
             );
         } else {
-            sendToWorker("loadData", {"id" : id, "name" : name});
+            sendToWorker("loadData", {"id": id, "name": name});
         }
         return new Promise(function (resolve, reject) {
             promisesLoading.set(id, function (proteome, requestRank) {
@@ -420,7 +433,7 @@ var constructPancore = function constructPancore(args) {
             table.setEnabled(false);
             $loadingNotification = showNotification("Loading proteomes...", {
                 loading: true,
-                autoHide: false
+                autoHide: false,
             });
         } else {
             table.setEnabled(true);
@@ -438,7 +451,6 @@ var constructPancore = function constructPancore(args) {
         setTimeout(function () {
             askRestore = true;
         }, 1000);
-
     }
 
     function hideRestore() {
@@ -456,38 +468,37 @@ var constructPancore = function constructPancore(args) {
      */
     function groupErrors(errorMsg, userMsg) {
         delay(function () {
-            error(errorMsg, userMsg);
+            showError(errorMsg, userMsg);
         }, 1000);
     }
 
     function getActiveTab() {
-        var activePane = $(".full-screen-container div.active").attr('id');
+        let activePane = $(".full-screen-container div.active").attr("id");
         return activePane.split("_wrapper")[0];
     }
 
-    /*************** Public methods ***************/
+    /** ************* Public methods ***************/
 
     /**
      * Adds genomes to the visualisation
      *
      * @param <Array> g Array of id's of the genomes we want to add
      */
-    that.addGenomes = function addGenomes(g, loadUnique) {
+    that.addGenomes = function addGenomes(g, loadUnique = true) {
         hideRestore();
-        var loadUnique = loadUnique === undefined ? true : loadUnique;
-        return Promise.all(g.map(function addGenome(genome, i){
+        return Promise.all(g.map(function addGenome(genome, i) {
             // only add new genomes
             if (genomes.has(genome.id)) return;
             setLoading(true);
-            var gen = that.getGenome(genome.id);
+            let gen = that.getGenome(genome.id);
             table.addGenome({
-                "id" : genome.id,
-                "name" : genome.name,
-                "own" : gen.own,
-                "proteome_id" : gen.proteome_accession,
-                "status" : "Loading",
-                "position" : 100 + i,
-                "abbreviation" : that.abbreviate(genome.name, gen.own)
+                "id": genome.id,
+                "name": genome.name,
+                "own": gen.own,
+                "proteome_id": gen.proteome_accession,
+                "status": "Loading",
+                "position": 100 + i,
+                "abbreviation": that.abbreviate(genome.name, gen.own),
             });
             return loadData(genome.id, genome.name, gen.own)
                 .then(function (genome) {
@@ -510,7 +521,7 @@ var constructPancore = function constructPancore(args) {
                 setLoading(false);
             }
             if (loadUnique) {
-                sendToWorker("getUniqueSequences", {order : table.getOrder(), force : false });
+                sendToWorker("getUniqueSequences", {order: table.getOrder(), force: false});
             }
         });
     };
@@ -526,10 +537,10 @@ var constructPancore = function constructPancore(args) {
         if (!$pancoreNotification) {
             $pancoreNotification = showNotification("Calculating peptidomes...", {
                 loading: true,
-                autoHide: false
+                autoHide: false,
             });
         }
-        var removeData = table.removeGenome(genome.id);
+        let removeData = table.removeGenome(genome.id);
         matrix.removeGenome(genome.id);
 
         sendToWorker("removeData", removeData);
@@ -564,7 +575,7 @@ var constructPancore = function constructPancore(args) {
         if (!$pancoreNotification) {
             $pancoreNotification = showNotification("Calculating peptidomes...", {
                 loading: true,
-                autoHide: false
+                autoHide: false,
             });
         }
         sendToWorker("recalculatePanCore", orderData);
@@ -579,13 +590,13 @@ var constructPancore = function constructPancore(args) {
      * @param <String> type The type of sequences we want
      */
     that.requestSequences = function requestSequences(id, type) {
-        var $notification = showNotification("Preparing sequences...", {
-                loading: true,
-                autoHide: false
-            });
+        let $notification = showNotification("Preparing sequences...", {
+            loading: true,
+            autoHide: false,
+        });
         sendToWorker("getSequences", {
-            "id" : id,
-            "type" : type
+            "id": id,
+            "type": type,
         });
         return new Promise(function (resolve, reject) {
             promisesDownload.set(id + type, function (data) {
@@ -602,7 +613,7 @@ var constructPancore = function constructPancore(args) {
         if (!$similarityNotification) {
             $similarityNotification = showNotification("Calculating similarities...", {
                 loading: true,
-                autoHide: false
+                autoHide: false,
             });
         }
         sendToWorker("calculateSimilarity");
@@ -612,7 +623,7 @@ var constructPancore = function constructPancore(args) {
      * Requests the clustering of the data
      */
     that.requestClustering = function requestClustering(similarity) {
-        sendToWorker("clusterMatrix", {similarity : similarity});
+        sendToWorker("clusterMatrix", {similarity: similarity});
     };
 
     /**
@@ -624,21 +635,21 @@ var constructPancore = function constructPancore(args) {
         if (!$autosortNotification) {
             $autosortNotification = showNotification("Sorting proteomes...", {
                 loading: true,
-                autoHide: false
+                autoHide: false,
             });
         }
-        sendToWorker("autoSort", {type : type});
+        sendToWorker("autoSort", {type: type});
     };
 
     /**
      * Saves the currently loaded genomes in local storage
      */
     that.saveStatus = function saveStatus() {
-        var proteomes = table.getOrder().map(function (as) {
+        let proteomes = table.getOrder().map(function (as) {
             return that.getGenome(as).proteome_accession;
         });
-        var status = JSON.stringify({
-            proteomes: proteomes
+        let status = JSON.stringify({
+            proteomes: proteomes,
         });
         if (status !== localStorage.pancoreStatus) {
             localStorage.pancoreStatus = status;
@@ -649,13 +660,12 @@ var constructPancore = function constructPancore(args) {
     /**
      * Loads a status. First loads all genomes, then sets the order
      */
-    that.loadStatus = function loadStatus(status) {
-        var status = status || JSON.parse(localStorage.pancoreStatus),
+    that.loadStatus = function loadStatus(state) {
+        let status = state || JSON.parse(localStorage.pancoreStatus),
             proteomeSet = new Set(),
             statusGenomes = new Map(),
             proteomes,
             proteomesOrder,
-            proteome,
             startPromise = myGenomes ? myGenomes.getGenomes() : Promise.resolve();
 
         // create the proteomes set manually because of stupid Safari
@@ -672,19 +682,19 @@ var constructPancore = function constructPancore(args) {
             data.forEach(function (value) {
                 if (proteomeSet.has(value.proteome_accession)) {
                     statusGenomes.set(value.proteome_accession, {
-                        id : value.id,
-                        name : value.name
+                        id: value.id,
+                        name: value.name,
                     });
                 }
             });
             if (myGenomes) {
                 status.proteomes.forEach(function (element) {
                     if (element.charAt(0) === "u") {
-                        var proteome = myGenomes.getGenome(element);
+                        let proteome = myGenomes.getGenome(element);
                         if (proteome) {
                             statusGenomes.set(proteome.id, {
-                                id : proteome.id,
-                                name : proteome.name
+                                id: proteome.id,
+                                name: proteome.name,
                             });
                         }
                     }
@@ -704,12 +714,12 @@ var constructPancore = function constructPancore(args) {
             // load the genomes and set the order
             that.addGenomes(proteomes, false).then(function () {
                 that.updateOrder({
-                    order : proteomesOrder,
-                    start : 0,
-                    stop : proteomesOrder.length - 1
+                    order: proteomesOrder,
+                    start: 0,
+                    stop: proteomesOrder.length - 1,
                 });
                 if (proteomeSet.size !== proteomes.length) {
-                    error(null, "We couldn't load one or more proteomes from your previous session.");
+                    showError(null, "We couldn't load one or more proteomes from your previous session.");
                 }
             });
         });
@@ -722,7 +732,7 @@ var constructPancore = function constructPancore(args) {
      * @param <Boolean> own Whether it's an own genome
      */
     that.abbreviate = function abbreviate(name, own) {
-        var split = name.split(" "),
+        let split = name.split(" "),
             i;
 
         // Don't abbreviat if it's a self-added genome
@@ -760,22 +770,22 @@ var constructPancore = function constructPancore(args) {
         // Abbreviate common words
         for (i = 1; i < split.length; i++) {
             switch (split[i]) {
-            case 'pathovar':
+            case "pathovar":
                 split[i] = "pv.";
                 break;
-            case 'serovar':
+            case "serovar":
                 split[i] = "sv.";
                 break;
-            case 'species':
+            case "species":
                 split[i] = "sp.";
                 break;
-            case 'genomovar':
+            case "genomovar":
                 split[i] = "gv.";
                 break;
-            case 'subspecies':
+            case "subspecies":
                 split[i] = "subsp.";
                 break;
-            case 'strain':
+            case "strain":
                 split[i] = "str.";
                 break;
             }
@@ -788,7 +798,7 @@ var constructPancore = function constructPancore(args) {
      * Retrieves the genome object for a given id
      */
     that.getGenome = function getGenome(id) {
-        var g;
+        let g;
         if (("" + id).charAt(0) === "u") {
             g = myGenomes.getGenome(id);
             g.proteome_accession = id;
@@ -804,4 +814,6 @@ var constructPancore = function constructPancore(args) {
     init();
 
     return that;
-};
+}
+
+export {constructPancore};

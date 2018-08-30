@@ -1,0 +1,71 @@
+[    {
+        "sequence": "NOFADATA",
+        "lca": 541000,
+        "lineage": [ 2, null, null, null, 1239, null, null, 186801, null, null, null, 186802, null, null, null, null, 541000, null, null, null, null, null, null, null, null, null, null, null ],
+        "fa": {
+            "counts": {
+                "all": 0
+            }
+        }
+    },
+    {
+        "sequence": "AALTER",
+        "lca": 541000,
+        "lineage": [ 2, null, null, null, 1239, null, null, 186801, null, null, null, 186802, null, null, null, null, 541000, null, null, null, null, null, null, null, null, null, null, null ],
+        "fa": {
+            "counts": {
+                "all": 3,
+                "EC": 2,
+                "GO": 3
+            },
+            "data": {
+                "GO:0000001": 3,
+                "GO:0000002": 3,
+                "GO:0000003": 3,
+                "GO:0000004": 3,
+                "EC:1.2.3.4": 1,
+                "EC:5.6.7.8": 1
+            }
+        }
+    },
+    {
+        "sequence": "AAANYLDLPLYR",
+        "lca": 816,
+        "lineage": [ 2, null, null, null, 976, null, null, 200643, null, null, null, 171549, null, null, null, null, 815, null, null, null, 816, null, null, null, null, null, null, null ],
+        "fa": {
+            "counts": {
+                "all": 3,
+                "EC": 3,
+                "GO": 3
+            },
+            "data": {
+                "GO:0": 3,
+                "GO:0000002": 3,
+                "EC:1.2.5.4": 3,
+                "GO:0000003": 3,
+                "GO:0000004": 3,
+                "GO:0000005": 3,
+                "GO:0000006": 3
+            }
+        }
+    },
+    {
+        "sequence": "AAYLFNALPTK",
+        "lca": 1678,
+        "lineage": [ 2, null, null, null, 201174, null, null, 1760, null, null, null, 85004, null, null, null, null, 31953, null, null, null, 1678, null, null, null, null, null, null, null ],
+        "fa": {
+            "counts": {
+                "all": 5,
+                "EC": 0,
+                "GO": 5
+            },
+            "data": {
+                "GO:0000017": 5,
+                "GO:0000009": 5,
+                "GO:0000002": 1,
+                "GO:0000011": 4,
+                "GO:0000012": 5
+            }
+        }
+    }
+]

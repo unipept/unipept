@@ -39,8 +39,6 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal sequence.original_peptides.map(&:uniprot_entry).map(&:lineage).sort_by(&:taxon_id), assigns(:lineages).to_a.sort_by(&:taxon_id)
     assert_equal sequence.lca_t, assigns(:lca_taxon)
     assert_not_nil assigns(:root)
-    assert assigns(:root).start_with? '{'
-    assert assigns(:root).end_with? '}'
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
     assert_equal %w[Organism kingdom species], assigns(:table_ranks)
@@ -59,8 +57,6 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal sequence.original_peptides.map(&:uniprot_entry).map(&:lineage).sort_by(&:taxon_id), assigns(:lineages).to_a.sort_by(&:taxon_id)
     assert_equal sequence.lca_t, assigns(:lca_taxon)
     assert_not_nil assigns(:root)
-    assert assigns(:root).start_with? '{'
-    assert assigns(:root).end_with? '}'
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
     assert_equal %w[Organism kingdom species], assigns(:table_ranks)
@@ -85,8 +81,6 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal sequence.original_peptides.map(&:uniprot_entry).map(&:lineage).sort_by(&:taxon_id), assigns(:lineages).to_a.sort_by(&:taxon_id)
     assert_equal sequence.lca_t, assigns(:lca_taxon)
     assert_not_nil assigns(:root)
-    assert assigns(:root).start_with? '{'
-    assert assigns(:root).end_with? '}'
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
     assert_equal %w[Organism kingdom species], assigns(:table_ranks)
@@ -105,8 +99,6 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal sequence.peptides.map(&:uniprot_entry).map(&:lineage).sort_by(&:taxon_id), assigns(:lineages).to_a.sort_by(&:taxon_id)
     assert_equal sequence.lca_il_t, assigns(:lca_taxon)
     assert_not_nil assigns(:root)
-    assert assigns(:root).start_with? '{'
-    assert assigns(:root).end_with? '}'
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
     assert_equal %w[Organism kingdom species], assigns(:table_ranks)
@@ -125,8 +117,6 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal sequence.peptides.map(&:uniprot_entry).map(&:lineage).sort_by(&:taxon_id), assigns(:lineages).to_a.sort_by(&:taxon_id)
     assert_equal sequence.lca_il_t, assigns(:lca_taxon)
     assert_not_nil assigns(:root)
-    assert assigns(:root).start_with? '{'
-    assert assigns(:root).end_with? '}'
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
     assert_equal %w[Organism kingdom species], assigns(:table_ranks)
@@ -145,8 +135,6 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal sequence.peptides.map(&:uniprot_entry).map(&:lineage), assigns(:lineages).to_a
     assert_equal sequence.lca_il_t, assigns(:lca_taxon)
     assert_not_nil assigns(:root)
-    assert assigns(:root).start_with? '{'
-    assert assigns(:root).end_with? '}'
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
     assert_equal [[taxon2, nil], [taxon2, taxon1]], assigns(:table_lineages)
     assert_equal %w[Organism kingdom species], assigns(:table_ranks)
@@ -165,8 +153,6 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal((sequence.peptides.map(&:uniprot_entry) & sequence6.peptides.map(&:uniprot_entry)).map(&:lineage), assigns(:lineages).to_a)
     assert_equal taxon2, assigns(:lca_taxon)
     assert_not_nil assigns(:root)
-    assert assigns(:root).start_with? '{'
-    assert assigns(:root).end_with? '}'
     assert_equal [taxon2], assigns(:common_lineage)
     assert_equal [[taxon2]], assigns(:table_lineages)
     assert_equal %w[Organism kingdom], assigns(:table_ranks)
@@ -188,164 +174,5 @@ class SequencesControllerTest < ActionController::TestCase
     get :show, params: { id: 'AA' }
     assert_equal 'The sequence you searched for is too short.', flash[:error]
     assert_redirected_to search_single_url
-  end
-
-  test 'should get multi_search' do
-    post :multi_search, params: { qs: "AALER\nAALER\nAAILER\nMISSES", search_name: '' }
-    assert_response :success
-    assert_template :multi_search
-    assert_equal 'Metaproteomics analysis result', assigns(:title)
-    assert_equal @request.parameters, assigns(:p)
-    assert_not assigns(:equate_il)
-    assert_equal 3, assigns(:number_found)
-    assert assigns(:json_missed).include?('MISSES')
-    assert_nil assigns(:pride_url)
-    assert_not assigns(:intro_text).include?('deduplicated')
-    assert_not assigns(:intro_text).include?('equated')
-    assert_not assigns(:intro_text).include?('missed cleavage handling')
-    assert_not_nil assigns(:json_tree)
-    assert_not_nil assigns(:json_sequences)
-    assert assigns(:json_sequences).include?('AALER')
-    assert assigns(:json_sequences).include?('AAILER')
-  end
-
-  test 'should get multi_search with il' do
-    post :multi_search, params: { qs: "AALER\nAAILER\nMISSES", search_name: '', il: 1 }
-    assert_response :success
-    assert_template :multi_search
-    assert_equal 'Metaproteomics analysis result', assigns(:title)
-    assert_equal @request.parameters, assigns(:p)
-    assert assigns(:equate_il)
-    assert_equal 2, assigns(:number_found)
-    assert assigns(:json_missed).include?('MISSES')
-    assert_nil assigns(:pride_url)
-    assert_not assigns(:intro_text).include?('deduplicated')
-    assert assigns(:intro_text).include?('equated')
-    assert assigns(:intro_text).include?('missed cleavage handling')
-    assert_not_nil assigns(:json_tree)
-    assert_not_nil assigns(:json_sequences)
-    assert assigns(:json_sequences).include?('AALER')
-    assert assigns(:json_sequences).include?('AAILER')
-  end
-
-  test 'should get multi_search with dupes' do
-    post :multi_search, params: { qs: "AALER\nAALER\nAAILER\nMISSES", search_name: '', dupes: 1 }
-    assert_response :success
-    assert_template :multi_search
-    assert_equal 'Metaproteomics analysis result', assigns(:title)
-    assert_equal @request.parameters, assigns(:p)
-    assert_not assigns(:equate_il)
-    assert_equal 2, assigns(:number_found)
-    assert assigns(:json_missed).include?('MISSES')
-    assert_nil assigns(:pride_url)
-    assert assigns(:intro_text).include?('deduplicated')
-    assert_not assigns(:intro_text).include?('equated')
-    assert assigns(:intro_text).include?('missed cleavage handling')
-    assert_not_nil assigns(:json_tree)
-    assert_not_nil assigns(:json_sequences)
-    assert assigns(:json_sequences).include?('AALER')
-    assert assigns(:json_sequences).include?('AAILER')
-  end
-
-  test 'should get multi_search without advanced' do
-    post :multi_search, params: { qs: 'AAILERAGGAR', search_name: '' }
-    assert_response :success
-    assert_template :multi_search
-    assert_equal 'Metaproteomics analysis result', assigns(:title)
-    assert_equal @request.parameters, assigns(:p)
-    assert_not assigns(:equate_il)
-    assert_equal 2, assigns(:number_found)
-    assert_equal '[]', assigns(:json_missed)
-    assert_nil assigns(:pride_url)
-    assert_not assigns(:intro_text).include?('deduplicated')
-    assert_not assigns(:intro_text).include?('equated')
-    assert_not assigns(:intro_text).include?('missed cleavage handling')
-    assert_not_nil assigns(:json_tree)
-    assert_not_nil assigns(:json_sequences)
-    assert assigns(:json_sequences).include?('AAILER')
-    assert assigns(:json_sequences).include?('AGGAR')
-  end
-
-  test 'should get multi_search with advanced' do
-    post :multi_search, params: { qs: 'AAILERAGGAR', search_name: '', missed: 1 }
-    assert_response :success
-    assert_template :multi_search
-    assert_equal 'Metaproteomics analysis result', assigns(:title)
-    assert_equal @request.parameters, assigns(:p)
-    assert_not assigns(:equate_il)
-    assert_equal 1, assigns(:number_found)
-    assert_equal '[]', assigns(:json_missed)
-    assert_nil assigns(:pride_url)
-    assert_not assigns(:intro_text).include?('deduplicated')
-    assert_not assigns(:intro_text).include?('equated')
-    assert_not assigns(:intro_text).include?('missed cleavage handling')
-    assert_not_nil assigns(:json_tree)
-    assert_not_nil assigns(:json_sequences)
-    assert assigns(:json_sequences).include?('AAILERAGGAR')
-  end
-
-  test 'multi_search should return csv with export' do
-    post :multi_search, params: { qs: "AALER\nAALER\nAAILER\nMISSES", search_name: 'exp', export: 1, nonce: 'nonce01' }
-    assert_response :success
-    assert_equal 'nonce01', @response.cookies['nonce']
-    assert_equal 'attachment; filename=exp.csv', @response.headers['Content-Disposition']
-    assert @response.body.include?('AALER')
-    assert @response.body.include?('AAILER')
-    assert_not @response.body.include?('MISSES')
-  end
-
-  test 'multi_search should return csv with export and IL' do
-    post :multi_search, params: { qs: "AALER\nAALER\nAAILER\nMISSES", search_name: 'exp', il: 1, export: 1, nonce: 'nonce01' }
-    assert_response :success
-    assert_equal 'nonce01', @response.cookies['nonce']
-    assert_equal 'attachment; filename=exp.csv', @response.headers['Content-Disposition']
-    assert @response.body.include?('AALER')
-    assert @response.body.include?('AAILER')
-    assert_not @response.body.include?('MISSES')
-  end
-
-  test 'multi_search should return csv with export and advanced' do
-    post :multi_search, params: { qs: 'AAILERAGGAR', search_name: 'exp', missed: 1, export: 1, nonce: 'nonce01' }
-    assert_response :success
-    assert_equal 'nonce01', @response.cookies['nonce']
-    assert_equal 'attachment; filename=exp.csv', @response.headers['Content-Disposition']
-    assert @response.body.include?('AAILERAGGAR')
-  end
-
-  test 'multi_search should return csv with export and without advanced' do
-    post :multi_search, params: { qs: 'AAILERAGGAR', search_name: 'exp', export: 1, nonce: 'nonce01' }
-    assert_response :success
-    assert_equal 'nonce01', @response.cookies['nonce']
-    assert_equal 'attachment; filename=exp.csv', @response.headers['Content-Disposition']
-    assert @response.body.include?('AGGAR')
-    assert @response.body.include?('AAILER')
-    assert_not @response.body.include?('AAILERAGGAR')
-  end
-
-  test 'multi_search should add pride url is data comes from pride' do
-    post :multi_search, params: { qs: 'AALER', search_name: 'PRIDE assay 123456' }
-    assert_response :success
-    assert_template :multi_search
-    assert assigns(:pride_url).include?('123456')
-    assert_equal 'Metaproteomics analysis result of PRIDE assay 123456', assigns(:title)
-  end
-
-  test 'multi_search should include name in title' do
-    post :multi_search, params: { qs: "AALER\nAAILER\nMISSES", search_name: 'title' }
-    assert_response :success
-    assert_template :multi_search
-    assert_equal 'Metaproteomics analysis result of title', assigns(:title)
-  end
-
-  test 'multi_search should error when input is empty' do
-    post :multi_search, params: { qs: '', search_name: '' }
-    assert_equal 'Your query was empty, please try again.', flash[:error]
-    assert_redirected_to datasets_path
-  end
-
-  test 'multi_search should error when input is missing' do
-    post :multi_search
-    assert_equal 'Your query was empty, please try again.', flash[:error]
-    assert_redirected_to datasets_path
   end
 end
