@@ -10,7 +10,7 @@
 
 <div class="row">
 <div class="col-xs-6" id="sequences-content">
-   <h3>Taxonomy</h3>
+   <h3>Biodiversity</h3>
   <p>
   The <strong>lowest common ancestor</strong> is 
   <%= link_to @lca_taxon.name, "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + @lca_taxon.id.to_s, :target => "_blank", :title => @lca_taxon.rank %> (<%=@lca_taxon.rank%>).
