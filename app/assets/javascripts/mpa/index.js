@@ -104,6 +104,7 @@ class MPA {
             "matching proteins",
             "matching proteins with " + name,
             "percenage proteins with " + name,
+            "lca",
         ]]
             .concat((await dataset.getPeptidesByFA(name, sequences))
                 .map(x => [
@@ -112,6 +113,7 @@ class MPA {
                     x.allCount,
                     x.hits,
                     100 * x.hits / x.allCount,
+                    x.lcaName,
                 ]));
         downloadDataByForm(toCSVString(result), name + ".csv", "text/csv");
     }
