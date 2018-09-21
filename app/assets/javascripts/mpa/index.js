@@ -103,7 +103,7 @@ class MPA {
             "spectral count",
             "matching proteins",
             "matching proteins with " + name,
-            "percenage proteins with " + name,
+            "percentage proteins with " + name,
             "lca",
         ]]
             .concat((await dataset.getPeptidesByFA(name, sequences))
