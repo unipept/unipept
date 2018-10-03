@@ -1,0 +1,32 @@
+<%=
+  if @extra_info
+    Oj.dump(
+      @result[:output].map do |k, v|
+        {
+          "peptide" => k,
+          "go" => v.sort_by { |_key, value| -value }.map do |k1, v1|
+            {
+              "proteins" => v1,
+              "go_term_code" => k1,
+              "name" => @result[:go_mapping][k1]
+            }
+          end
+        }
+      end
+    ).html_safe
+  else
+    Oj.dump(
+      @result[:output].map do |k, v|
+        {
+          "peptide" => k,
+          "go" => v.sort_by { |_key, value| -value }.map do |k1, v1|
+            {
+              "proteins" => v1,
+              "go_term_code" => k1
+            }
+          end
+        }
+      end
+    ).html_safe
+  end
+%>

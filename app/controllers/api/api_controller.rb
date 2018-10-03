@@ -1,12 +1,12 @@
 class Api::ApiController < ApplicationController
   respond_to :json
 
-  before_action :set_headers, only: %i[pept2taxa pept2lca pept2prot taxa2lca taxonomy]
-  before_action :set_params, only: %i[pept2taxa pept2lca pept2prot taxa2lca taxonomy]
-  before_action :set_query, only: %i[pept2taxa pept2lca taxonomy]
+  before_action :set_headers, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go taxa2lca taxonomy]
+  before_action :set_params, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go taxa2lca taxonomy]
+  before_action :set_query, only: %i[pept2taxa pept2lca pept2funct taxonomy]
   before_action :set_sequences, only: %i[pept2taxa pept2prot]
 
-  before_action :log, only: %i[pept2taxa pept2lca pept2prot taxa2lca taxonomy]
+  before_action :log, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go taxa2lca taxonomy]
 
   # sends a message to the ruby cli
   def messages
@@ -51,6 +51,7 @@ class Api::ApiController < ApplicationController
     end
 
     filter_input_order
+
     respond_with(@result)
   end
 
@@ -109,6 +110,93 @@ class Api::ApiController < ApplicationController
     filter_input_order
 
     respond_with(@result)
+  end
+
+  # Returns the functional GO terms and EC numbers for a given tryptic peptide
+  # param[input]: Array, required, List of input peptides
+  # param[equate_il]: "true" or "false", Indicate if you want to equate I and L
+  # param[extra]: "true" or "false", optional, Output extra info?
+  def pept2funct
+    @result = Hash.new
+    @result[:ec] = pept2ec_helper
+    @result[:go] = pept2go_helper
+
+    puts @result.inspect
+
+    respond_with(@result)
+  end
+
+  # Returns the functional EC numbers for a given tryptic peptide
+  # param[input]: Array, required, List of input peptides
+  # param[equate_il]: "true" of "false", Indicate if you want to equate I and L
+  # param[extra]: "true" or "false", optional, Output extra info?
+  def pept2ec
+    @result = pept2ec_helper
+    respond_with(@result)
+  end
+
+  def pept2ec_helper
+    output = Hash.new
+    output[:output] = Hash.new
+    output[:ec_mapping] = Hash.new
+
+    @sequences = Sequence.where(sequence: @input)
+
+    if @extra_info
+      ec_numbers = Set.new
+      @sequences.each do |seq|
+        output[:output][seq.sequence] = seq.fa["data"].select { |k, v| k.start_with?("EC:") }
+        puts output[:output].inspect
+        ec_numbers = ec_numbers.merge(output[:output][seq.sequence].keys.map do |value|
+          value[3..-1]
+        end)
+      end
+
+      EcNumber.where(code: ec_numbers.to_a).each do |ec_term|
+        output[:ec_mapping]["EC:" + ec_term.code] = ec_term.name
+      end
+    else
+      @sequences.each do |seq|
+        output[:output][seq.sequence] = seq.fa["data"].select { |k, v| k.start_with?("EC:") }
+      end
+    end
+
+    output
+  end
+
+  # Returns the functional GO terms for a given tryptic peptide
+  # param[input]: Array, required, List of input peptides
+  # param[equate_il]: "true" of "false", Indicate if you want to equate I and L
+  # param[extra]: "true" or "false", optional, Output extra info?
+  def pept2go
+    @result = pept2go_helper
+    respond_with(@result)
+  end
+
+  def pept2go_helper
+    output = Hash.new
+    output[:output] = Hash.new
+    output[:go_mapping] = Hash.new
+
+    @sequences = Sequence.where(sequence: @input)
+
+    if @extra_info
+      go_terms = Set.new
+      @sequences.each do |seq|
+        output[:output][seq.sequence] = seq.fa["data"].select { |k, v| k.start_with?("GO:") }
+        go_terms = go_terms.merge(output[:output][seq.sequence].keys)
+      end
+
+      GoTerm.where(code: go_terms.to_a).each do |go_term|
+        output[:go_mapping][go_term.code] = go_term.name
+      end
+    else
+      @sequences.each do |seq|
+        output[:output][seq.sequence] = seq.fa["data"].select { |k, v| k.start_with?("GO:") }
+      end
+    end
+
+    output
   end
 
   # Returns the lowest common ancestor for a given list of taxon id's
