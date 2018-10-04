@@ -188,8 +188,18 @@ class Api::ApiController < ApplicationController
       end
 
       GoTerm.where(code: go_terms.to_a).each do |go_term|
-        output[:go_mapping][go_term.code] = go_term.name
+        # go_mapping maps a GO term onto the corresponding go term database record
+        output[:go_mapping][go_term.code] = go_term
       end
+
+      # For every sequence in the output we have to split all GO-terms into different categories
+      output[:output].map do |k, v|
+        splitted = Hash.new { |h, k1| h[k1] = [] }
+        v.map do |go, amount|
+          splitted[output[:go_mapping][go].namespace] <<
+        end
+      end
+
     else
       @sequences.each do |seq|
         output[:output][seq.sequence] = seq.fa["data"].select { |k, v| k.start_with?("GO:") }
@@ -197,6 +207,16 @@ class Api::ApiController < ApplicationController
     end
 
     output
+  end
+
+  # Returns all information available about a given tryptic peptide
+  # param[input]: Array, required, List of input peptides
+  # param[equate_il]: "true" or "false", Indicate if you want to equate I and L
+  # param[extra]: "true" or "false", optional, Output extra info?
+  def peptinfo
+    output = Hash.new
+
+    @sequences = Sequence.where(sequence: @input)
   end
 
   # Returns the lowest common ancestor for a given list of taxon id's
