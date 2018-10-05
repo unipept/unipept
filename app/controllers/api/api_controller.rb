@@ -116,6 +116,7 @@ class Api::ApiController < ApplicationController
   # param[input]: Array, required, List of input peptides
   # param[equate_il]: "true" or "false", Indicate if you want to equate I and L
   # param[extra]: "true" or "false", optional, Output extra info?
+  # param[split]: "true" or "false", optional, Should GO_terms be split according to namespace?
   def pept2funct
     @result = Hash.new
     @result[:ec] = pept2ec_helper
@@ -126,6 +127,11 @@ class Api::ApiController < ApplicationController
     respond_with(@result)
   end
 
+  # Returns both the lca, ec and go information for a given tryptic peptide
+  # param[input]: Array, required, List of input peptides
+  # param[equate_il]: "true" or "false", Indicate if you want to equate I and L
+  # param[extra]: "true" or "false", optional, Output extra info?
+  # param[split]: "true" or "false", optional, Should GO_terms be split according to namespace?
   def peptinfo
 
   end
@@ -149,11 +155,14 @@ class Api::ApiController < ApplicationController
     if @extra_info
       ec_numbers = Set.new
       @sequences.each do |seq|
-        output[:output][seq.sequence] = seq.fa["data"].select { |k, v| k.start_with?("EC:") }
+        seq_data = @equate_il ? seq.fa_il : seq.fa
+        output[:output][seq.sequence] = seq_data["data"].select { |k, v| k.start_with?("EC:") }
         puts output[:output].inspect
-        ec_numbers = ec_numbers.merge(output[:output][seq.sequence].keys.map do |value|
-          value[3..-1]
-        end)
+        ec_numbers = ec_numbers.merge(
+            output[:output][seq.sequence].keys.map do |value|
+              value[3..-1]
+            end
+        )
       end
 
       EcNumber.where(code: ec_numbers.to_a).each do |ec_term|
@@ -161,7 +170,8 @@ class Api::ApiController < ApplicationController
       end
     else
       @sequences.each do |seq|
-        output[:output][seq.sequence] = seq.fa["data"].select { |k, v| k.start_with?("EC:") }
+        seq_data = @equate_il ? seq.fa_il : seq.fa
+        output[:output][seq.sequence] = seq_data["data"].select { |k, v| k.start_with?("EC:") }
       end
     end
 
@@ -221,7 +231,6 @@ class Api::ApiController < ApplicationController
       end
     end
 
-    puts output.inspect
     output
   end
 
