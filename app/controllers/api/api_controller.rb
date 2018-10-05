@@ -197,7 +197,8 @@ class Api::ApiController < ApplicationController
     if @extra_info
       go_terms = Set.new
       @sequences.each do |seq|
-        output[:output][seq.sequence] = seq.fa["data"].select { |k, v| k.start_with?("GO:") }
+        seq_data = @equate_il ? seq.fa_il : seq.fa
+        output[:output][seq.sequence] = seq_data["data"].select { |k, v| k.start_with?("GO:") }
         go_terms = go_terms.merge(output[:output][seq.sequence].keys)
       end
 
@@ -227,7 +228,8 @@ class Api::ApiController < ApplicationController
       end
     else
       @sequences.each do |seq|
-        output[:output][seq.sequence] = seq.fa["data"].select { |k, v| k.start_with?("GO:") }
+        seq_data = @equate_il ? seq.fa_il : seq.fa
+        output[:output][seq.sequence] = seq_data["data"].select { |k, v| k.start_with?("GO:") }
       end
     end
 
