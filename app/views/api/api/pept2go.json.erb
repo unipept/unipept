@@ -1,19 +1,34 @@
 <%=
   if @extra_info
-    Oj.dump(
-      @result[:output].map do |k, v|
-        {
-          "peptide" => k,
-          "go" => v.sort_by { |_key, value| -value }.map do |k1, v1|
-            {
-              "proteins" => v1,
-              "go_term_code" => k1,
-              "name" => @result[:go_mapping][k1]
+    if @split
+      Oj.dump(
+        @result[:output].map do |k, v|
+          {
+            "peptide" => k,
+            "go" => {
+              "biological_process" => v["biological process"].sort_by { |value| -value[:proteins] },
+              "molecular_function" => v["molecular function"].sort_by { |value| -value[:proteins] },
+              "cellular_component" => v["cellular component"].sort_by { |value| -value[:proteins] },
             }
-          end
-        }
-      end
-    ).html_safe
+          }
+        end
+      ).html_safe
+    else
+      Oj.dump(
+        @result[:output].map do |k, v|
+          {
+            "peptide" => k,
+            "go" => v.sort_by { |_key, value| -value }.map do |k1, v1|
+              {
+                "proteins" => v1,
+                "go_term_code" => k1,
+                "name" => @result[:go_mapping][k1].name
+              }
+            end
+          }
+        end
+      ).html_safe
+    end
   else
     Oj.dump(
       @result[:output].map do |k, v|

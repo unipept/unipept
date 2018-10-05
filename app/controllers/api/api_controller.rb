@@ -168,6 +168,7 @@ class Api::ApiController < ApplicationController
   # param[input]: Array, required, List of input peptides
   # param[equate_il]: "true" of "false", Indicate if you want to equate I and L
   # param[extra]: "true" or "false", optional, Output extra info?
+  # param[split]: "true" or "false", optional, Should GO_terms be split according to namespace?
   def pept2go
     @result = pept2go_helper
     respond_with(@result)
@@ -192,20 +193,24 @@ class Api::ApiController < ApplicationController
         go_mapping[go_term.code] = go_term
       end
 
-      # For every sequence in the output we have to split all GO-terms into different categories
-      output[:output].map do |k, v|
-        splitted = Hash.new { |h, k1| h[k1] = [] }
-        v.map do |go, amount|
-          splitted[go_mapping[go].namespace] << {
-              :go_term_code => go,
-              :proteins => amount
-          }
+      if @split
+        # For every sequence in the output we have to split all GO-terms into different categories
+        output[:output].map do |k, v|
+          splitted = Hash.new { |h, k1| h[k1] = [] }
+          v.map do |go, amount|
+            go_term = go_mapping[go]
+            splitted[go_term.namespace] << {
+                :go_term_code => go,
+                :proteins => amount,
+                :name => go_term.name
+            }
+          end
+          output[:output][k] = splitted
+
         end
-
-        output[:output][k] = splitted
+      else
+        output[:go_mapping] = go_mapping
       end
-
-      puts output.inspect
     else
       @sequences.each do |seq|
         output[:output][seq.sequence] = seq.fa["data"].select { |k, v| k.start_with?("GO:") }
@@ -290,6 +295,7 @@ class Api::ApiController < ApplicationController
     @equate_il = params[:equate_il] == 'true'
     @extra_info = params[:extra] == 'true'
     @names = params[:names] == 'true'
+    @split = params[:split] == 'true'
 
     @input = @input.map { |s| s.tr('I', 'L') } if @equate_il
   end
