@@ -217,6 +217,7 @@ class Api::ApiController < ApplicationController
       end
     end
 
+    puts output.inspect
     output
   end
 
