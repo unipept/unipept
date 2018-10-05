@@ -176,7 +176,6 @@ class Api::ApiController < ApplicationController
   def pept2go_helper
     output = Hash.new
     output[:output] = Hash.new
-    output[:go_mapping] = Hash.new
 
     @sequences = Sequence.where(sequence: @input)
 
@@ -187,19 +186,26 @@ class Api::ApiController < ApplicationController
         go_terms = go_terms.merge(output[:output][seq.sequence].keys)
       end
 
+      go_mapping = Hash.new
       GoTerm.where(code: go_terms.to_a).each do |go_term|
         # go_mapping maps a GO term onto the corresponding go term database record
-        output[:go_mapping][go_term.code] = go_term
+        go_mapping[go_term.code] = go_term
       end
 
       # For every sequence in the output we have to split all GO-terms into different categories
       output[:output].map do |k, v|
         splitted = Hash.new { |h, k1| h[k1] = [] }
         v.map do |go, amount|
-          splitted[output[:go_mapping][go].namespace] <<
+          splitted[go_mapping[go].namespace] << {
+              :go_term_code => go,
+              :proteins => amount
+          }
         end
+
+        output[:output][k] = splitted
       end
 
+      puts output.inspect
     else
       @sequences.each do |seq|
         output[:output][seq.sequence] = seq.fa["data"].select { |k, v| k.start_with?("GO:") }
