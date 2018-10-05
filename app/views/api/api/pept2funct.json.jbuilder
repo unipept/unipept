@@ -8,11 +8,10 @@ json.array!(@result[:ec][:output]) do |k, v|
     end
   end
 
-  json.go @result[:go][:output][k].sort_by { |_key, value| -value } do |k1, v1|
-    json.proteins v1
-    json.go_term_code k1
-    if @extra_info
-      json.name @result[:go][:go_mapping][k1].name
-    end
-  end
+  json.partial! partial: 'api/api/pept2go', locals: {
+      split: @split,
+      go_mapping: @result[:go][:go_mapping],
+      extra_info: @extra_info,
+      value: @result[:go][:output][k]
+  }
 end

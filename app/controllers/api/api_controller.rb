@@ -126,6 +126,10 @@ class Api::ApiController < ApplicationController
     respond_with(@result)
   end
 
+  def peptinfo
+
+  end
+
   # Returns the functional EC numbers for a given tryptic peptide
   # param[input]: Array, required, List of input peptides
   # param[equate_il]: "true" of "false", Indicate if you want to equate I and L
