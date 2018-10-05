@@ -1,4 +1,4 @@
-json.array!(@result[:output]) do |peptide, value|
+json.array! @result[:output] do |peptide, value|
   json.peptide peptide
   json.ec value.sort_by { |_key, v| -v } do |k1, v1|
     json.proteins v1

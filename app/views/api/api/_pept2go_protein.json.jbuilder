@@ -1,3 +1,3 @@
-json.proteins v[:proteins]
-json.go_term_code v[:go_term_code]
-json.name v[:name]
+json.proteins go_term[:proteins]
+json.go_term_code go_term[:go_term_code]
+json.name go_term[:name]

@@ -1,23 +1,17 @@
-json.array!(@result[:output]) do |peptide, value|
+json.array! @result[:output] do |peptide, value|
   json.peptide peptide
   if @split
     json.go do
       json.biological_process value["biological process"].sort_by { |v| -v[:proteins] } do |v|
-        json.proteins v[:proteins]
-        json.go_term_code v[:go_term_code]
-        json.name v[:name]
-      end
+        json.partial! partial: 'api/api/pept2go_protein', locals: {go_term: v}
+    end
 
       json.molecular_function value["molecular function"].sort_by { |v| -v[:proteins] } do |v|
-        json.proteins v[:proteins]
-        json.go_term_code v[:go_term_code]
-        json.name v[:name]
+        json.partial! partial: 'api/api/pept2go_protein', locals: {go_term: v}
       end
 
       json.cellular_component value["cellular component"].sort_by { |v| -v[:proteins] } do |v|
-        json.proteins v[:proteins]
-        json.go_term_code v[:go_term_code]
-        json.name v[:name]
+        json.partial! partial: 'api/api/pept2go_protein', locals: {go_term: v}
       end
     end
   else
