@@ -3,7 +3,7 @@ class Api::ApiController < ApplicationController
 
   before_action :set_headers, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go taxa2lca taxonomy]
   before_action :set_params, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go taxa2lca taxonomy]
-  before_action :set_query, only: %i[pept2taxa pept2lca pept2funct taxonomy]
+  before_action :set_query, only: %i[pept2taxa pept2lca taxonomy]
   before_action :set_sequences, only: %i[pept2taxa pept2prot]
 
   before_action :log, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go taxa2lca taxonomy]
@@ -112,6 +112,10 @@ class Api::ApiController < ApplicationController
     respond_with(@result)
   end
 
+  def pept2lca_helper
+
+  end
+
   # Returns the functional GO terms and EC numbers for a given tryptic peptide
   # param[input]: Array, required, List of input peptides
   # param[equate_il]: "true" or "false", Indicate if you want to equate I and L
@@ -119,8 +123,16 @@ class Api::ApiController < ApplicationController
   # param[split]: "true" or "false", optional, Should GO_terms be split according to namespace?
   def pept2funct
     @result = Hash.new
-    @result[:ec] = pept2ec_helper
-    @result[:go] = pept2go_helper
+
+    ec_result = pept2ec_helper
+    go_result = pept2go_helper
+
+    @input_order.each do |seq|
+      @result[seq] = {
+          :go => go_result[seq][:go],
+          :ec => ec_result[seq][:ec]
+      }
+    end
 
     puts @result.inspect
 
@@ -133,7 +145,11 @@ class Api::ApiController < ApplicationController
   # param[extra]: "true" or "false", optional, Output extra info?
   # param[split]: "true" or "false", optional, Should GO_terms be split according to namespace?
   def peptinfo
+    @result = Hash.new
+    @result[:ec] = petp2ec_helper
+    @result[:go] = pept2go_helper
 
+    respond_with(@result)
   end
 
   # Returns the functional EC numbers for a given tryptic peptide
@@ -142,36 +158,46 @@ class Api::ApiController < ApplicationController
   # param[extra]: "true" or "false", optional, Output extra info?
   def pept2ec
     @result = pept2ec_helper
+    filter_input_order
     respond_with(@result)
   end
 
   def pept2ec_helper
     output = Hash.new
-    output[:output] = Hash.new
-    output[:ec_mapping] = Hash.new
 
     @sequences = Sequence.where(sequence: @input)
+    seq_field = @equate_il ? :fa_il : :fa
+
+    ec_numbers = []
+
+    @sequences.pluck(:sequence, seq_field).each do |seq, fa_il|
+      ecs = (JSON.parse! fa_il)["data"].select { |k, v| k.start_with?("EC:") }
+
+      output[seq] = {
+          :ec => ecs.map do |k, v|
+            {
+                :ec_number_code => k,
+                :proteins => v
+            }
+          end
+      }
+
+      ec_numbers.push *(ecs.map { |k, _v| k[3..-1] })
+    end
 
     if @extra_info
-      ec_numbers = Set.new
-      @sequences.each do |seq|
-        seq_data = @equate_il ? seq.fa_il : seq.fa
-        output[:output][seq.sequence] = seq_data["data"].select { |k, v| k.start_with?("EC:") }
-        puts output[:output].inspect
-        ec_numbers = ec_numbers.merge(
-            output[:output][seq.sequence].keys.map do |value|
-              value[3..-1]
-            end
-        )
+      ec_numbers = ec_numbers.uniq.compact.sort
+
+      ec_mapping = Hash.new
+
+      EcNumber.where(code: ec_numbers).each do |ec_term|
+        ec_mapping[ec_term.code] = ec_term.name
       end
 
-      EcNumber.where(code: ec_numbers.to_a).each do |ec_term|
-        output[:ec_mapping]["EC:" + ec_term.code] = ec_term.name
-      end
-    else
-      @sequences.each do |seq|
-        seq_data = @equate_il ? seq.fa_il : seq.fa
-        output[:output][seq.sequence] = seq_data["data"].select { |k, v| k.start_with?("EC:") }
+      output.each do |_k, v|
+        v[:ec].each do |value|
+          value[:name] = ec_mapping[value[:ec_number_code][3..-1]]
+        end
       end
     end
 
@@ -185,65 +211,66 @@ class Api::ApiController < ApplicationController
   # param[split]: "true" or "false", optional, Should GO_terms be split according to namespace?
   def pept2go
     @result = pept2go_helper
+    filter_input_order
     respond_with(@result)
   end
 
   def pept2go_helper
     output = Hash.new
-    output[:output] = Hash.new
 
     @sequences = Sequence.where(sequence: @input)
+    seq_field = @equate_il ? :fa_il : :fa
+
+    go_terms = []
+
+    @sequences.pluck(:sequence, seq_field).each do |seq, fa_il|
+      gos = (JSON.parse! fa_il)["data"].select { |k, v| k.start_with?("GO:") }
+
+      output[seq] = {
+          :go => gos.map do |k, v|
+            {
+                :go_term_code => k,
+                :proteins => v
+            }
+          end
+      }
+
+      go_terms.push *(gos.keys)
+    end
 
     if @extra_info
-      go_terms = Set.new
-      @sequences.each do |seq|
-        seq_data = @equate_il ? seq.fa_il : seq.fa
-        output[:output][seq.sequence] = seq_data["data"].select { |k, v| k.start_with?("GO:") }
-        go_terms = go_terms.merge(output[:output][seq.sequence].keys)
-      end
+      go_terms = go_terms.uniq.compact.sort
+
+      puts go_terms.inspect
 
       go_mapping = Hash.new
-      GoTerm.where(code: go_terms.to_a).each do |go_term|
-        # go_mapping maps a GO term onto the corresponding go term database record
+      GoTerm.where(code: go_terms).each do |go_term|
         go_mapping[go_term.code] = go_term
       end
 
       if @split
-        # For every sequence in the output we have to split all GO-terms into different categories
-        output[:output].map do |k, v|
+        # We have to transform the input so that the different GO-terms are split per namespace
+        output.each do |k, v|
           splitted = Hash.new { |h, k1| h[k1] = [] }
-          v.map do |go, amount|
-            go_term = go_mapping[go]
-            splitted[go_term.namespace] << {
-                :go_term_code => go,
-                :proteins => amount,
-                :name => go_term.name
-            }
-          end
-          output[:output][k] = splitted
 
+          v[:go].each do |value|
+            go_term = go_mapping[value[:go_term_code]]
+            value[:name] = go_term.name
+            splitted[go_term.namespace] << value
+          end
+
+          v[:go] = splitted
         end
       else
-        output[:go_mapping] = go_mapping
-      end
-    else
-      @sequences.each do |seq|
-        seq_data = @equate_il ? seq.fa_il : seq.fa
-        output[:output][seq.sequence] = seq_data["data"].select { |k, v| k.start_with?("GO:") }
+        output.map do |_k, v|
+          v[:go].each do |value|
+            value[:name] = go_mapping[value[:go_term_code]].name
+          end
+        end
       end
     end
 
     output
-  end
-
-  # Returns all information available about a given tryptic peptide
-  # param[input]: Array, required, List of input peptides
-  # param[equate_il]: "true" or "false", Indicate if you want to equate I and L
-  # param[extra]: "true" or "false", optional, Output extra info?
-  def peptinfo
-    output = Hash.new
-
-    @sequences = Sequence.where(sequence: @input)
   end
 
   # Returns the lowest common ancestor for a given list of taxon id's
@@ -309,9 +336,9 @@ class Api::ApiController < ApplicationController
     @input_order = @input.dup
 
     @equate_il = params[:equate_il] == 'true'
-    @extra_info = params[:extra] == 'true'
     @names = params[:names] == 'true'
     @split = params[:split] == 'true'
+    @extra_info = params[:extra] == 'true' || @split
 
     @input = @input.map { |s| s.tr('I', 'L') } if @equate_il
   end

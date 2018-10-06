@@ -1,23 +1,7 @@
-if split
-  json.go do
-    json.biological_process value["biological process"].sort_by { |v| -v[:proteins] } do |v|
-      json.partial! partial: 'api/api/pept2go_protein', locals: {go_term: v}
-    end
-
-    json.molecular_function value["molecular function"].sort_by { |v| -v[:proteins] } do |v|
-      json.partial! partial: 'api/api/pept2go_protein', locals: {go_term: v}
-    end
-
-    json.cellular_component value["cellular component"].sort_by { |v| -v[:proteins] } do |v|
-      json.partial! partial: 'api/api/pept2go_protein', locals: {go_term: v}
-    end
+if @split
+  json.go data.each do |k, v|
+    json.set!(k, v.sort_by { |v1| -v1[:proteins] })
   end
 else
-  json.go value.sort_by { |_key, v| -v } do |k1, v1|
-    json.proteins v1
-    json.go_term_code k1
-    if extra_info
-      json.name go_mapping[k1].name
-    end
-  end
+  json.go data.sort_by { |v| -v[:proteins] }
 end

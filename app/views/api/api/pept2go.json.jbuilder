@@ -1,9 +1,4 @@
-json.array! @result[:output] do |peptide, value|
+json.array! @result do |peptide, data|
   json.peptide peptide
-  json.partial! partial: 'api/api/pept2go', locals: {
-      split: @split,
-      go_mapping: @result[:go_mapping],
-      extra_info: @extra_info,
-      value: value
-  }
+  json.partial! partial: 'api/api/pept2go', locals: { data: data[:go] }
 end
