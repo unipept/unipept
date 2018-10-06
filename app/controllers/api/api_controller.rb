@@ -134,8 +134,6 @@ class Api::ApiController < ApplicationController
       }
     end
 
-    puts @result.inspect
-
     respond_with(@result)
   end
 
@@ -241,8 +239,6 @@ class Api::ApiController < ApplicationController
     if @extra_info
       go_terms = go_terms.uniq.compact.sort
 
-      puts go_terms.inspect
-
       go_mapping = Hash.new
       GoTerm.where(code: go_terms).each do |go_term|
         go_mapping[go_term.code] = go_term
@@ -250,7 +246,7 @@ class Api::ApiController < ApplicationController
 
       if @split
         # We have to transform the input so that the different GO-terms are split per namespace
-        output.each do |k, v|
+        output.each do |_k, v|
           splitted = Hash.new { |h, k1| h[k1] = [] }
 
           v[:go].each do |value|
