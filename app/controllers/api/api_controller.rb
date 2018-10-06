@@ -1,12 +1,12 @@
 class Api::ApiController < ApplicationController
   respond_to :json
 
-  before_action :set_headers, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go taxa2lca taxonomy]
-  before_action :set_params, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go taxa2lca taxonomy]
-  before_action :set_query, only: %i[pept2taxa pept2lca taxonomy]
+  before_action :set_headers, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go peptinfo taxa2lca taxonomy]
+  before_action :set_params, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go peptinfo taxa2lca taxonomy]
+  before_action :set_query, only: %i[pept2taxa pept2lca peptinfo taxonomy]
   before_action :set_sequences, only: %i[pept2taxa pept2prot]
 
-  before_action :log, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go taxa2lca taxonomy]
+  before_action :log, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go peptinfo taxa2lca taxonomy]
 
   # sends a message to the ruby cli
   def messages
@@ -147,11 +147,17 @@ class Api::ApiController < ApplicationController
   def peptinfo
     @result = Hash.new
 
-    ec_result = petp2ec_helper
-    go_result  = pept2go_helper
     lca_result = pept2lca_helper
+    ec_result = pept2ec_helper
+    go_result  = pept2go_helper
 
-    
+    @input_order.each do |seq|
+      @result[seq] = {
+          :go => go_result[seq][:go],
+          :ec => ec_result[seq][:ec],
+          :lca => lca_result[seq]
+      }
+    end
 
     respond_with(@result)
   end
