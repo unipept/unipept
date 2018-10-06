@@ -89,7 +89,15 @@ class Api::ApiController < ApplicationController
   # param[extra]: "true" or "false", Include lineage
   # param[names]: "true" or "false", Include the lineage names
   def pept2lca
-    @result = {}
+    @result = pept2lca_helper
+
+    filter_input_order
+
+    respond_with(@result)
+  end
+
+  def pept2lca_helper
+    output = {}
     lookup = Hash.new { |h, k| h[k] = Set.new }
     ids = []
     @sequences = Sequence.where(sequence: @input)
@@ -103,17 +111,11 @@ class Api::ApiController < ApplicationController
 
     @query.where(id: ids).find_in_batches do |group|
       group.each do |t|
-        lookup[t.id].each { |s| @result[s] = t }
+        lookup[t.id].each { |s| output[s] = t }
       end
     end
 
-    filter_input_order
-
-    respond_with(@result)
-  end
-
-  def pept2lca_helper
-
+    output
   end
 
   # Returns the functional GO terms and EC numbers for a given tryptic peptide
@@ -144,8 +146,12 @@ class Api::ApiController < ApplicationController
   # param[split]: "true" or "false", optional, Should GO_terms be split according to namespace?
   def peptinfo
     @result = Hash.new
-    @result[:ec] = petp2ec_helper
-    @result[:go] = pept2go_helper
+
+    ec_result = petp2ec_helper
+    go_result  = pept2go_helper
+    lca_result = pept2lca_helper
+
+    
 
     respond_with(@result)
   end
@@ -156,7 +162,9 @@ class Api::ApiController < ApplicationController
   # param[extra]: "true" or "false", optional, Output extra info?
   def pept2ec
     @result = pept2ec_helper
+
     filter_input_order
+
     respond_with(@result)
   end
 
@@ -209,7 +217,9 @@ class Api::ApiController < ApplicationController
   # param[split]: "true" or "false", optional, Should GO_terms be split according to namespace?
   def pept2go
     @result = pept2go_helper
+
     filter_input_order
+
     respond_with(@result)
   end
 
