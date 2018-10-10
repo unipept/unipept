@@ -252,7 +252,7 @@ class Api::ApiController < ApplicationController
       go_terms.push *(gos.keys)
     end
 
-    if @extra_info
+    if @extra_info or @split
       go_terms = go_terms.uniq.compact.sort
 
       go_mapping = Hash.new
@@ -267,7 +267,6 @@ class Api::ApiController < ApplicationController
 
           v[:go].each do |value|
             go_term = go_mapping[value[:go_term_code]]
-            value[:name] = go_term.name
             splitted[go_term.namespace] << value
           end
 
@@ -350,7 +349,7 @@ class Api::ApiController < ApplicationController
     @equate_il = params[:equate_il] == 'true'
     @names = params[:names] == 'true'
     @split = params[:split] == 'true'
-    @extra_info = params[:extra] == 'true' || @split
+    @extra_info = params[:extra] == 'true'
 
     @input = @input.map { |s| s.tr('I', 'L') } if @equate_il
   end
