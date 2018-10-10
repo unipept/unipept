@@ -23,6 +23,16 @@ class Api::ApidocsController < ApplicationController
     @sidebar_name = 'pept2lca'
   end
 
+  def pept2ec
+    @title = 'pept2ec'
+    @sidebar_name = 'pept2ec'
+  end
+
+  def pept2go
+    @title = 'pept2go'
+    @sidebar_name = 'pept2go'
+  end
+
   def taxa2lca
     @title = 'taxa2lca'
     @sidebar_name = 'taxa2lca'
@@ -41,6 +51,8 @@ class Api::ApidocsController < ApplicationController
       { name: 'pept2prot', path: api_apidocs_pept2prot_path },
       { name: 'pept2taxa', path: api_apidocs_pept2taxa_path },
       { name: 'pept2lca',  path: api_apidocs_pept2lca_path },
+      { name: 'pept2ec', path: api_apidocs_pept2ec_path },
+      { name: 'pept2go', path: api_apidocs_pept2go_path },
       { name: 'taxa2lca',  path: api_apidocs_taxa2lca_path },
       { name: 'taxonomy',  path: api_apidocs_taxonomy_path }
     ]
