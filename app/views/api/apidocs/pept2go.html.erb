@@ -7,7 +7,7 @@
       </h1>
     </div>
     <p>
-      This method returns the fucntional GO-terms associated with a given tryptic peptide. This is the same information as provided when performing a search with the <%= link_to("Tryptic Peptide Analysis", search_single_path) %> in the web interface.
+      This method returns the functional GO-terms associated with a given tryptic peptide. This is the same information as provided when performing a search with the <%= link_to("Tryptic Peptide Analysis", search_single_path) %> in the web interface.
     </p>
     <div class='card'>
       <div class='card-title card-title-colored'>
@@ -53,7 +53,7 @@
         </p>
         <ul>
           <li><code>peptide</code>: the peptide that was searched for</li>
-          <li><code>go</code>: A list of <span class="initialism">JSON</span> objects that each represent an EC-number associated with the current tryptic peptide
+          <li><code>go</code>: A list of <span class="initialism">JSON</span> objects that each represent a GO-term associated with the current tryptic peptide
             <ul>
               <li><code>go_term_code</code>: The GO-term associated with the current tryptic peptide.</li>
               <li><code>proteins</code>: The amount of proteins matched with the given tryptic peptide that are labeled with the current GO-term.</li>
@@ -64,7 +64,7 @@
         <ul>
           <li><code>name</code>: The name of the associated GO-term.</li>
         </ul>
-        <p>When the <code>split</code> parameter is set to <code>true</code>, objects are placed in a group corresponding to their namespace and the objects are nested in an additional object. See the examples for more information.</p>
+        <p>When the <code>split</code> parameter is set to <code>true</code>, objects are placed in a group corresponding to their namespace and the objects are nested in an additional object. See the examples for more information on how to use this.</p>
       </div>
     </div>
     <div class='card'>
@@ -98,7 +98,7 @@
                 name: "split",
                 required: false,
                 optional: true,
-                description: "Separates GO-namespaces and places objects in group associated with current namespace.",
+                description: "Separates GO-namespaces and places objects in group associated with current namespace when <code>true</code>.",
                 value: "Must be <code>true</code> or <code>false</code> (default)"
             }
         ]

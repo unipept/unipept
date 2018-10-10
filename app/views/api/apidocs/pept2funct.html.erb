@@ -3,11 +3,11 @@
     <div class='page-header'>
       <h1 class='api-title'><span class="initialism">POST</span> /api/v1/pept2ec
         <br>
-        <small>Returns the functional EC-numbers associated with a given tryptic peptide.</small>
+        <small>Returns both the functional EC-numbers and GO-terms associated with a given tryptic peptide.</small>
       </h1>
     </div>
     <p>
-      This method returns the functional EC-numbers associated with a given tryptic peptide. This is the same information as provided when performing a search with the <%= link_to("Tryptic Peptide Analysis", search_single_path) %> in the web interface.
+      This method returns the functional EC-numbers and GO-terms associated with a given tryptic peptide. This is the same information as provided when performing a search with the <%= link_to("Tryptic Peptide Analysis", search_single_path) %> in the web interface.
     </p>
     <div class='card'>
       <div class='card-title card-title-colored'>
@@ -15,11 +15,11 @@
       </div>
       <div class='card-supporting-text'>
         <p>
-          The pept2ec method can be used by doing a <span class="initialism">HTTP</span> <span class="initialism">POST</span>-request (preferred) or <span class="initialism">GET</span>-request to <code>http://<%= Rails.application.config.api_host %>/api/v1/pept2ec</code>. <a href="#parameters">Parameters</a> can be included in the request body (<span class="initialism">POST</span>) or in the query string (<span class="initialism">GET</span>). The only required parameter is <code>input[]</code>, which takes one or more tryptic peptides.
+          The pept2funct method can be used by doing a <span class="initialism">HTTP</span> <span class="initialism">POST</span>-request (preferred) or <span class="initialism">GET</span>-request to <code>http://<%= Rails.application.config.api_host %>/api/v1/pept2go</code>. <a href="#parameters">Parameters</a> can be included in the request body (<span class="initialism">POST</span>) or in the query string (<span class="initialism">GET</span>). The only required parameter is <code>input[]</code>, which takes one or more tryptic peptides.
         </p>
         <h3>input</h3>
         <p>
-          <code>input[]</code> is a required parameter that takes one or more tryptic peptides. Unipept will return the functional EC-numbers associated with each of the <code>input[]</code> peptides based on their occurence in UniProt entries. To pass multiple peptides at once, simply add multiple <code>input[]</code> parameters (see <a href="#apidocs-example-multiple">example</a>).
+          <code>input[]</code> is a required parameter that takes one or more tryptic peptides. Unipept will return the functional EC-numbers and GO-terms associated with each of the <code>input[]</code> peptides based on their occurence in UniProt entries. To pass multiple peptides at once, simply add multiple <code>input[]</code> parameters (see <a href="#apidocs-example-multiple">example</a>).
         </p>
         <div class="apidocs-callout apidocs-callout-warning">
           <h4>Input size</h4>
@@ -31,11 +31,15 @@
         </p>
         <h3>extra</h3>
         <p>
-          <code>extra</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, Unipept will also return the name associated with an EC-number. See the <a href="#response">response</a> section for an overview of the information fields returned.
+          <code>extra</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, Unipept will also return the name associated with a GO-term. See the <a href="#response">response</a> section for an overview of the information fields returned.
+        </p>
+        <h3>split</h3>
+        <p>
+          <code>split</code> is an optional parameter that can be used to order the GO-terms in groups according to their namespace (cellular component, molecular function, biological process).
         </p>
         <div class="apidocs-callout apidocs-callout-warning">
           <h4>Performance penalty</h4>
-          <p>Setting <code>extra</code> to <code>true</code> has a performance penalty inferred from additional database queries. Do not use this parameter unless the extra information fields are needed.</p>
+          <p>Setting <code>extra</code> or <code>split</code> to <code>true</code> has a performance penalty inferred from additional database queries. Do not use this parameter unless the extra information fields are needed.</p>
         </div>
       </div>
     </div>
@@ -49,17 +53,24 @@
         </p>
         <ul>
           <li><code>peptide</code>: the peptide that was searched for</li>
-          <li><code>ec</code>: A list of <span class="initialism">JSON</span> objects that each represent an EC-number associated with the current tryptic peptide
+          <li><code>ec</code>: A list of <span class="initialism">JSON</span> objects that each represent an EC-number associated with the current tryptic peptide.
             <ul>
               <li><code>ec_number_code</code>: The EC-number associated with the current tryptic peptide.</li>
               <li><code>proteins</code>: The amount of proteins matched with the given tryptic peptide that are labeled with the current EC-number.</li>
             </ul>
           </li>
+          <li><code>go</code>: A list of <span class="initialism">JSON</span> objects that each represent a GO-term associated with the current tryptic peptide.
+            <ul>
+              <li><code>go_term_code</code>: The GO-term associated with the current tryptic peptide.</li>
+              <li><code>proteins</code>: The amount of proteins matched with the given tryptic peptide that are labeled with the current GO-term.</li>
+            </ul>
+          </li>
         </ul>
-        <p>When the <code>extra</code> parameter is set to <code>true</code>, objects also contain the name associated with an EC-number. These additional fields are provided as part of the nested EC-number objects:</p>
+        <p>When the <code>extra</code> parameter is set to <code>true</code>, objects also contain the name associated with a GO-term. These additional fields are provided as part of the nested GO-term objects:</p>
         <ul>
-          <li><code>name</code>: The name of the associated EC-number.</li>
+          <li><code>name</code>: The name of the associated GO-term.</li>
         </ul>
+        <p>When the <code>split</code> parameter is set to <code>true</code>, objects are placed in a group corresponding to their namespace and the objects are nested in an additional object. See the examples for more information.</p>
       </div>
     </div>
     <div class='card'>
@@ -87,6 +98,13 @@
                 required: false,
                 optional: true,
                 description: "Return additional information fields if <code>true</code>.",
+                value: "Must be <code>true</code> or <code>false</code> (default)"
+            },
+            {
+                name: "split",
+                required: false,
+                optional: true,
+                description: "Separates GO-namespaces and places objects in group associated with current namespace when <code>true</code>.",
                 value: "Must be <code>true</code> or <code>false</code> (default)"
             }
         ]
