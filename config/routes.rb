@@ -87,6 +87,7 @@ UnipeptWeb::Application.routes.draw do
     get "pept2ec",    :to => "apidocs#pept2ec",    :as => 'apidocs/pept2ec'
     get 'pept2go',    :to => "apidocs#pept2go",    :as => 'apidocs/pept2go'
     get 'pept2funct', :to => "apidocs#pept2funct", :as => 'apidocs/pept2funct'
+    get 'peptinfo',   :to => "apidocs#peptinfo",   :as => 'apidocs/peptinfo'
     get "taxonomy",   :to => "apidocs#taxonomy",   :as => 'apidocs/taxonomy'
   end
 
