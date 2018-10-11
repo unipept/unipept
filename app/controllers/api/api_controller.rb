@@ -131,6 +131,7 @@ class Api::ApiController < ApplicationController
 
     @input_order.each do |seq|
       @result[seq] = {
+          :total => go_result[seq][:total],
           :go => go_result[seq][:go],
           :ec => ec_result[seq][:ec]
       }
@@ -153,6 +154,7 @@ class Api::ApiController < ApplicationController
 
     @input_order.each do |seq|
       @result[seq] = {
+          :total => go_result[seq][:total],
           :go => go_result[seq][:go],
           :ec => ec_result[seq][:ec],
           :lca => lca_result[seq]
@@ -186,6 +188,7 @@ class Api::ApiController < ApplicationController
       ecs = (JSON.parse! fa_il)["data"].select { |k, v| k.start_with?("EC:") }
 
       output[seq] = {
+          :total => (JSON.parse! fa_il)["num"]["all"],
           :ec => ecs.map do |k, v|
             {
                 :ec_number_code => k,
@@ -241,6 +244,7 @@ class Api::ApiController < ApplicationController
       gos = (JSON.parse! fa_il)["data"].select { |k, v| k.start_with?("GO:") }
 
       output[seq] = {
+          :total => (JSON.parse! fa_il)["num"]["all"],
           :go => gos.map do |k, v|
             {
                 :go_term_code => k,
