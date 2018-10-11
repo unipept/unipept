@@ -340,7 +340,7 @@ class Api::ApiController < ApplicationController
 
     @sequences.each do |seq|
       fa = seq.calculate_fa(@equate_il)
-      gos = fa["data"].select { |k, v| k.start_with?("GO:") }
+      gos = fa["data"].select { |k, _v| k.start_with?("GO:") }
 
       output[seq.sequence] = {
           :total => fa["num"]["all"],
@@ -355,6 +355,8 @@ class Api::ApiController < ApplicationController
       go_terms.push *(gos.keys)
     end
 
+
+
     if @extra_info or @domains
       go_terms = go_terms.uniq.compact.sort
 
@@ -366,10 +368,10 @@ class Api::ApiController < ApplicationController
       if @domains
 
         if @extra_info
-          set_name = lambda { |value| value[:name] = go_mapping[value[:go_term]].name}
+          set_name = lambda { |value| value[:name] = go_mapping[value[:go_term]].name }
         else
           # Do nothing
-          set_name = lambda { }
+          set_name = lambda { |value| }
         end
 
         # We have to transform the input so that the different GO-terms are split per namespace
