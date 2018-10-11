@@ -222,7 +222,7 @@ class Api::ApiController < ApplicationController
       @input = if @input[0] == '[' # parse json
                  JSON.parse @input
                else # comma separated
-                 @input.domains(',')
+                 @input.split(',')
                end
     end
     @input = [] if @input.nil?
@@ -296,20 +296,26 @@ class Api::ApiController < ApplicationController
 
     ec_numbers = []
 
-    @sequences.pluck(:sequence, seq_field).each do |seq, fa_il|
-      ecs = (JSON.parse! fa_il)["data"].select { |k, v| k.start_with?("EC:") }
+    @sequences.pluck(:sequence, seq_field).each do |seq, fa|
+      if fa
+        ecs = (JSON.parse! fa)["data"].select { |k, v| k.start_with?("EC:") }
 
-      output[seq] = {
-          :total => (JSON.parse! fa_il)["num"]["all"],
-          :ec => ecs.map do |k, v|
-            {
-                :ec_number => k[3..-1],
-                :protein_count => v
-            }
-          end
-      }
+        output[seq] = {
+            :total => (JSON.parse! fa)["num"]["all"],
+            :ec => ecs.map do |k, v|
+              {
+                  :ec_number => k[3..-1],
+                  :protein_count => v
+              }
+            end
+        }
 
-      ec_numbers.push *(ecs.map { |k, _v| k[3..-1] })
+        ec_numbers.push *(ecs.map { |k, _v| k[3..-1] })
+      else
+        output[seq] = {
+            :total => (JSON.parse! fa)["num"]["all"]
+        }
+      end
     end
 
     if @extra_info
