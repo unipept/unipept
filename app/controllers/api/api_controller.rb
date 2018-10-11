@@ -96,28 +96,6 @@ class Api::ApiController < ApplicationController
     respond_with(@result)
   end
 
-  def pept2lca_helper
-    output = {}
-    lookup = Hash.new { |h, k| h[k] = Set.new }
-    ids = []
-    @sequences = Sequence.where(sequence: @input)
-    lca_field = @equate_il ? :lca_il : :lca
-    @sequences.pluck(:sequence, lca_field).each do |sequence, lca_il|
-      ids.append lca_il
-      lookup[lca_il] << sequence
-    end
-
-    ids = ids.uniq.compact.sort
-
-    @query.where(id: ids).find_in_batches do |group|
-      group.each do |t|
-        lookup[t.id].each { |s| output[s] = t }
-      end
-    end
-
-    output
-  end
-
   # Returns the functional GO terms and EC numbers for a given tryptic peptide
   # param[input]: Array, required, List of input peptides
   # param[equate_il]: "true" or "false", Indicate if you want to equate I and L
@@ -176,49 +154,6 @@ class Api::ApiController < ApplicationController
     respond_with(@result)
   end
 
-  def pept2ec_helper
-    output = Hash.new
-
-    @sequences = Sequence.where(sequence: @input)
-    seq_field = @equate_il ? :fa_il : :fa
-
-    ec_numbers = []
-
-    @sequences.pluck(:sequence, seq_field).each do |seq, fa_il|
-      ecs = (JSON.parse! fa_il)["data"].select { |k, v| k.start_with?("EC:") }
-
-      output[seq] = {
-          :total => (JSON.parse! fa_il)["num"]["all"],
-          :ec => ecs.map do |k, v|
-            {
-                :ec_number_code => k,
-                :proteins => v
-            }
-          end
-      }
-
-      ec_numbers.push *(ecs.map { |k, _v| k[3..-1] })
-    end
-
-    if @extra_info
-      ec_numbers = ec_numbers.uniq.compact.sort
-
-      ec_mapping = Hash.new
-
-      EcNumber.where(code: ec_numbers).each do |ec_term|
-        ec_mapping[ec_term.code] = ec_term.name
-      end
-
-      output.each do |_k, v|
-        v[:ec].each do |value|
-          value[:name] = ec_mapping[value[:ec_number_code][3..-1]]
-        end
-      end
-    end
-
-    output
-  end
-
   # Returns the functional GO terms for a given tryptic peptide
   # param[input]: Array, required, List of input peptides
   # param[equate_il]: "true" of "false", Indicate if you want to equate I and L
@@ -230,62 +165,6 @@ class Api::ApiController < ApplicationController
     filter_input_order
 
     respond_with(@result)
-  end
-
-  def pept2go_helper
-    output = Hash.new
-
-    @sequences = Sequence.where(sequence: @input)
-    seq_field = @equate_il ? :fa_il : :fa
-
-    go_terms = []
-
-    @sequences.pluck(:sequence, seq_field).each do |seq, fa_il|
-      gos = (JSON.parse! fa_il)["data"].select { |k, v| k.start_with?("GO:") }
-
-      output[seq] = {
-          :total => (JSON.parse! fa_il)["num"]["all"],
-          :go => gos.map do |k, v|
-            {
-                :go_term_code => k,
-                :proteins => v
-            }
-          end
-      }
-
-      go_terms.push *(gos.keys)
-    end
-
-    if @extra_info or @split
-      go_terms = go_terms.uniq.compact.sort
-
-      go_mapping = Hash.new
-      GoTerm.where(code: go_terms).each do |go_term|
-        go_mapping[go_term.code] = go_term
-      end
-
-      if @split
-        # We have to transform the input so that the different GO-terms are split per namespace
-        output.each do |_k, v|
-          splitted = Hash.new { |h, k1| h[k1] = [] }
-
-          v[:go].each do |value|
-            go_term = go_mapping[value[:go_term_code]]
-            splitted[go_term.namespace] << value
-          end
-
-          v[:go] = splitted
-        end
-      else
-        output.map do |_k, v|
-          v[:go].each do |value|
-            value[:name] = go_mapping[value[:go_term_code]].name
-          end
-        end
-      end
-    end
-
-    output
   end
 
   # Returns the lowest common ancestor for a given list of taxon id's
@@ -343,7 +222,7 @@ class Api::ApiController < ApplicationController
       @input = if @input[0] == '[' # parse json
                  JSON.parse @input
                else # comma separated
-                 @input.split(',')
+                 @input.domains(',')
                end
     end
     @input = [] if @input.nil?
@@ -352,7 +231,7 @@ class Api::ApiController < ApplicationController
 
     @equate_il = params[:equate_il] == 'true'
     @names = params[:names] == 'true'
-    @split = params[:split] == 'true'
+    @domains = params[:domains] == 'true'
     @extra_info = params[:extra] == 'true'
 
     @input = @input.map { |s| s.tr('I', 'L') } if @equate_il
@@ -385,4 +264,127 @@ class Api::ApiController < ApplicationController
       @result.key? key
     end
   end
+
+  def pept2lca_helper
+    output = {}
+    lookup = Hash.new { |h, k| h[k] = Set.new }
+    ids = []
+    @sequences = Sequence.where(sequence: @input)
+    lca_field = @equate_il ? :lca_il : :lca
+    @sequences.pluck(:sequence, lca_field).each do |sequence, lca_il|
+      ids.append lca_il
+      lookup[lca_il] << sequence
+    end
+
+    ids = ids.uniq.compact.sort
+
+    @query.where(id: ids).find_in_batches do |group|
+      group.each do |t|
+        lookup[t.id].each { |s| output[s] = t }
+      end
+    end
+
+    output
+  end
+
+
+  def pept2ec_helper
+    output = Hash.new
+
+    @sequences = Sequence.where(sequence: @input)
+    seq_field = @equate_il ? :fa_il : :fa
+
+    ec_numbers = []
+
+    @sequences.pluck(:sequence, seq_field).each do |seq, fa_il|
+      ecs = (JSON.parse! fa_il)["data"].select { |k, v| k.start_with?("EC:") }
+
+      output[seq] = {
+          :total => (JSON.parse! fa_il)["num"]["all"],
+          :ec => ecs.map do |k, v|
+            {
+                :ec_number => k[3..-1],
+                :protein_count => v
+            }
+          end
+      }
+
+      ec_numbers.push *(ecs.map { |k, _v| k[3..-1] })
+    end
+
+    if @extra_info
+      ec_numbers = ec_numbers.uniq.compact.sort
+
+      ec_mapping = Hash.new
+
+      EcNumber.where(code: ec_numbers).each do |ec_term|
+        ec_mapping[ec_term.code] = ec_term.name
+      end
+
+      output.each do |_k, v|
+        v[:ec].each do |value|
+          value[:name] = ec_mapping[value[:ec_number]]
+        end
+      end
+    end
+
+    output
+  end
+
+  def pept2go_helper
+    output = Hash.new
+
+    @sequences = Sequence.where(sequence: @input)
+    seq_field = @equate_il ? :fa_il : :fa
+
+    go_terms = []
+
+    @sequences.pluck(:sequence, seq_field).each do |seq, fa_il|
+      gos = (JSON.parse! fa_il)["data"].select { |k, v| k.start_with?("GO:") }
+
+      output[seq] = {
+          :total => (JSON.parse! fa_il)["num"]["all"],
+          :go => gos.map do |k, v|
+            {
+                :go_term => k,
+                :protein_count => v
+            }
+          end
+      }
+
+      go_terms.push *(gos.keys)
+    end
+
+    if @extra_info or @domains
+      go_terms = go_terms.uniq.compact.sort
+
+      go_mapping = Hash.new
+      GoTerm.where(code: go_terms).each do |go_term|
+        go_mapping[go_term.code] = go_term
+      end
+
+      if @domains
+        # We have to transform the input so that the different GO-terms are split per namespace
+        output.each do |_k, v|
+          splitted = Hash.new { |h, k1| h[k1] = [] }
+
+          v[:go].each do |value|
+            go_term = go_mapping[value[:go_term]]
+            splitted[go_term.namespace] << value
+          end
+
+          v[:go] = splitted
+        end
+      else
+        output.map do |_k, v|
+          v[:go].each do |value|
+            value[:name] = go_mapping[value[:go_term]].name
+          end
+        end
+      end
+    end
+
+    output
+  end
+
 end
