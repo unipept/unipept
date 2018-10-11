@@ -69,7 +69,7 @@ UnipeptWeb::Application.routes.draw do
     match 'pept2lca' => "api#pept2lca", via: [:get, :post]
     match 'taxa2lca' => 'api#taxa2lca', via: [:get, :post]
     match 'pept2prot' => 'api#pept2prot', via: [:get, :post]
-	  match 'pept2funct' => 'api#pept2funct', via: [:get, :post]
+    match 'pept2funct' => 'api#pept2funct', via: [:get, :post]
     match 'pept2ec' => 'api#pept2ec', via: [:get, :post]
     match 'pept2go' => 'api#pept2go', via: [:get, :post]
     match 'peptinfo' => 'api#peptinfo', via: [:get, :post]
