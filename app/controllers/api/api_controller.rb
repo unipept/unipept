@@ -292,30 +292,24 @@ class Api::ApiController < ApplicationController
     output = Hash.new
 
     @sequences = Sequence.where(sequence: @input)
-    seq_field = @equate_il ? :fa_il : :fa
 
     ec_numbers = []
 
-    @sequences.pluck(:sequence, seq_field).each do |seq, fa|
-      if fa
-        ecs = (JSON.parse! fa)["data"].select { |k, v| k.start_with?("EC:") }
+    @sequences.each do |seq|
+      fa = seq.calculate_fa(@equate_il)
+      ecs = fa["data"].select { |k, v| k.start_with?("EC:") }
 
-        output[seq] = {
-            :total => (JSON.parse! fa)["num"]["all"],
-            :ec => ecs.map do |k, v|
-              {
-                  :ec_number => k[3..-1],
-                  :protein_count => v
-              }
-            end
-        }
+      output[seq.sequence] = {
+          :total => fa["num"]["all"],
+          :ec => ecs.map do |k, v|
+            {
+                :ec_number => k[3..-1],
+                :protein_count => v
+            }
+          end
+      }
 
-        ec_numbers.push *(ecs.map { |k, _v| k[3..-1] })
-      else
-        output[seq] = {
-            :total => (JSON.parse! fa)["num"]["all"]
-        }
-      end
+      ec_numbers.push *(ecs.map { |k, _v| k[3..-1] })
     end
 
     if @extra_info
@@ -341,15 +335,15 @@ class Api::ApiController < ApplicationController
     output = Hash.new
 
     @sequences = Sequence.where(sequence: @input)
-    seq_field = @equate_il ? :fa_il : :fa
 
     go_terms = []
 
-    @sequences.pluck(:sequence, seq_field).each do |seq, fa_il|
-      gos = (JSON.parse! fa_il)["data"].select { |k, v| k.start_with?("GO:") }
+    @sequences.each do |seq|
+      fa = seq.calculate_fa(@equate_il)
+      gos = fa["data"].select { |k, v| k.start_with?("GO:") }
 
-      output[seq] = {
-          :total => (JSON.parse! fa_il)["num"]["all"],
+      output[seq.sequence] = {
+          :total => fa["num"]["all"],
           :go => gos.map do |k, v|
             {
                 :go_term => k,
@@ -374,7 +368,8 @@ class Api::ApiController < ApplicationController
         if @extra_info
           set_name = lambda { |value| value[:name] = go_mapping[value[:go_term]].name}
         else
-          set_name = lambda { |value| }
+          # Do nothing
+          set_name = lambda { }
         end
 
         # We have to transform the input so that the different GO-terms are split per namespace
