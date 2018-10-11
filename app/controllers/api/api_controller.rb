@@ -364,12 +364,20 @@ class Api::ApiController < ApplicationController
       end
 
       if @domains
+
+        if @extra_info
+          set_name = lambda { |value| value[:name] = go_mapping[value[:go_term]].name}
+        else
+          set_name = lambda { |value| }
+        end
+
         # We have to transform the input so that the different GO-terms are split per namespace
         output.each do |_k, v|
           splitted = Hash.new { |h, k1| h[k1] = [] }
 
           v[:go].each do |value|
             go_term = go_mapping[value[:go_term]]
+            set_name[value]
             splitted[go_term.namespace] << value
           end
 
