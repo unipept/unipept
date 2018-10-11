@@ -90,9 +90,6 @@ class Api::ApiController < ApplicationController
   # param[names]: "true" or "false", Include the lineage names
   def pept2lca
     @result = pept2lca_helper
-
-    filter_input_order
-
     respond_with(@result)
   end
 
@@ -108,10 +105,11 @@ class Api::ApiController < ApplicationController
     go_result = pept2go_helper
 
     @input_order.each do |seq|
-      @result[seq] = {
-          :total => go_result[seq][:total],
-          :go => go_result[seq][:go],
-          :ec => ec_result[seq][:ec]
+      seq_index = @equate_il ? seq.gsub(/I/,'L') : seq
+      @result[seq_index] = {
+          :total => go_result[seq_index][:total],
+          :go => go_result[seq_index][:go],
+          :ec => ec_result[seq_index][:ec]
       }
     end
 
@@ -131,11 +129,12 @@ class Api::ApiController < ApplicationController
     go_result  = pept2go_helper
 
     @input_order.each do |seq|
-      @result[seq] = {
-          :total => go_result[seq][:total],
-          :go => go_result[seq][:go],
-          :ec => ec_result[seq][:ec],
-          :lca => lca_result[seq]
+      seq_index = @equate_il ? seq.gsub(/I/,'L') : seq
+      @result[seq_index] = {
+          :total => go_result[seq_index][:total],
+          :go => go_result[seq_index][:go],
+          :ec => ec_result[seq_index][:ec],
+          :lca => lca_result[seq_index]
       }
     end
 
@@ -148,9 +147,6 @@ class Api::ApiController < ApplicationController
   # param[extra]: "true" or "false", optional, Output extra info?
   def pept2ec
     @result = pept2ec_helper
-
-    filter_input_order
-
     respond_with(@result)
   end
 
@@ -161,9 +157,6 @@ class Api::ApiController < ApplicationController
   # param[split]: "true" or "false", optional, Should GO_terms be split according to namespace?
   def pept2go
     @result = pept2go_helper
-
-    filter_input_order
-
     respond_with(@result)
   end
 

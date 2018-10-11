@@ -97,3 +97,39 @@ goterm15:
     code: "GO:0005739"
     namespace: "biological process"
     name: "some function 15"
+
+goterm16:
+    id: 16
+    code: "GO:0005576"
+    namespace: "cellular component"
+    name: "some function 16"
+
+goterm17:
+    id: 17
+    code: "GO:0000287"
+    namespace: "molecular function"
+    name: "some function 17"
+
+goterm18:
+    id: 18
+    code: "GO:0004634"
+    namespace: "biological process"
+    name: "some function 18"
+
+goterm19:
+    id: 19
+    code: "GO:0000015"
+    namespace: "molecular function"
+    name: "some function 19"
+
+goterm20:
+    id: 20
+    code: "GO:0006096"
+    namespace: "biological process"
+    name: "some function 20"
+
+goterm21:
+    id: 21
+    code: "GO:0009986"
+    namespace: "cellular component"
+    name: "some function 21"
