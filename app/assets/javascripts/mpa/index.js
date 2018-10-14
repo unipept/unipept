@@ -19,7 +19,7 @@ import {constructSearchtree} from "./searchtree.js";
  */
 
 /**
- * The Multi Peptide Analysis frontened class
+ * The Multi Peptide Analysis frontend class
  */
 class MPA {
     /**

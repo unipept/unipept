@@ -10,10 +10,10 @@ import {Dataset} from "./dataset.js";
  * Represents the resultset for a given dataset.
  *
  * This is in fact a proxy for a worker thread that will be created
- * upon the insatntiation of this class (one worker per ResultSet object).
+ * upon the instantiation of this class (one worker per ResultSet object).
  *
  * The final results of the worker is duplicated to here. Intermediate
- * results saty in the worker to reduce the time taken to send data to
+ * results stay in the worker to reduce the time taken to send data to
  * the thread
  *
  * @type {Resultset}
