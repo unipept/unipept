@@ -35,23 +35,22 @@ class MPA {
         /** @type {MPAConfig[]} */
         this.searchSettings = [];
 
-        /** @type {MPAConfig} */
         this.searchSettings.push({
             il: il,
             dupes: dupes,
             missed: missed,
         });
 
+        this.displaySettings = [];
+        this.displaySettings.push(
+            // @ts-ignore because it will be filled by setUpButtons
+            {
+                onlyStarredFA: false,
+            }
+        );
+
         // Stores the current dataset that's being worked with
         this.currentDataSet = 0;
-
-
-
-        /** @type {MPADisplaySettings} */
-        // @ts-ignore because it will be filled by setUpButtons
-        this.displaySettings = {
-            onlyStarredFA: false,
-        };
 
         this.addDataset(peptides);
         this.setUpForm(peptides);
@@ -82,6 +81,8 @@ class MPA {
         this.enableProgressBar(true, false, "#progress-fa-analysis");
         let dataset = new Dataset(peptides);
         this.datasets.push(dataset);
+        this.currentDataSet = this.datasets.length - 1;
+        console.log(this.datasets[this.currentDataSet]);
         await this.analyse(this.searchSettings[this.currentDataSet]);
         this.enableProgressBar(false);
         return dataset;
@@ -314,7 +315,7 @@ class MPA {
      * @param {FunctionalAnnotations} oldGoResultset
      */
     setUpGoTable(goResultset, target, oldGoResultset = null) {
-        const sortOrder = this.displaySettings.sortFA;
+        const sortOrder = this.displaySettings[this.currentDataSet].sortFA;
         const tablepart = target.append("div").attr("class", "col-xs-8");
         let data = goResultset.getSorted(sortOrder.sortFunc);
         new AmountTable({
@@ -362,7 +363,7 @@ class MPA {
      * @param {*} target
      */
     setUpQuickGo(goResultset, target) {
-        const sortOrder = this.displaySettings.sortFA;
+        const sortOrder = this.displaySettings[this.currentDataSet].sortFA;
         /** @type {string[]} */
         const top5 = goResultset.getSorted(sortOrder.sortFunc).slice(0, 5).map(x => x.code);
 
@@ -556,7 +557,7 @@ class MPA {
      *     Snapshot of functional annotations for comparision
      */
     setUpECTable(fa, oldFa = null) {
-        const sortOrder = this.displaySettings.sortFA;
+        const sortOrder = this.displaySettings[this.currentDataSet].sortFA;
 
         const ecResultSet = fa.getGroup("EC");
         const oldEcResultSet = oldFa === null ? null : oldFa.getGroup("EC");
@@ -706,10 +707,10 @@ class MPA {
         const $perSelector = $("#mpa-fa-filter-precent");
         let $perResetLink = null;
         $perSelector.change(() => {
-            this.displaySettings.percentFA = $perSelector.val() * 1;
+            this.displaySettings[this.currentDataSet].percentFA = $perSelector.val() * 1;
             this.redoFAcalculations();
 
-            if (this.displaySettings.percentFA !== 5) {
+            if (this.displaySettings[this.currentDataSet].percentFA !== 5) {
                 if (!$perResetLink) {
                     $perResetLink = $("<a class=\"pull-right\" href=\"#\">reset to 5%</a>").on("click", e => {
                         e.preventDefault();
@@ -722,7 +723,7 @@ class MPA {
                 $perResetLink = null;
             }
         });
-        this.displaySettings.percentFA = $perSelector.val() * 1;
+        this.displaySettings[this.currentDataSet].percentFA = $perSelector.val() * 1;
 
 
         const $sortOptions = $("#mpa-select-fa-sort-items>li>a");
@@ -735,7 +736,7 @@ class MPA {
             };
 
             const field = $selected.data("field");
-            this.displaySettings.sortFA = {
+            this.displaySettings[this.currentDataSet].sortFA = {
                 format: x => formatters[$selected.data("as")](x[field]),
                 formatData: x => formatters[$selected.data("as")](x),
                 field: field,
@@ -776,7 +777,29 @@ class MPA {
             event.stopPropagation();
         });
 
-        $("#mpa-add-dataset").click(() => console.log("Add data!"));
+        $("#mpa-add-dataset").click(() => {
+            let peptides = $("#form-peptide-list").val().split("\n");
+            let searchName = $("#form-search-name").val();
+            let equateIl = $("#il").is(':checked');
+            let filterDuplicates = $("#dupes").is(':checked');
+            let handleMissingCleavage = $("#missed").is(':checked');
+
+            this.searchSettings.push({
+                il: equateIl,
+                dupes: filterDuplicates,
+                missed: handleMissingCleavage,
+            });
+
+            this.displaySettings.push(
+                // @ts-ignore because it will be filled by setUpButtons
+                {
+                    onlyStarredFA: false,
+                }
+            );
+
+            // Stores the current dataset that's being worked with
+            this.addDataset(peptides);
+        });
     }
 
     setUpHelp() {
