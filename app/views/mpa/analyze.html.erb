@@ -5,7 +5,36 @@
 
 <div id="dataset-selection-buttons" style="margin-bottom: 10px;">
   <%= button_tag(raw("Dataset 1"), :class => "btn btn-primary", :id => "mpa-add-dataset-1") %>
-  <%= button_tag(raw("<span class='glyphicon glyphicon-plus'></span> Add Dataset"), :class => "btn btn-primary", :id => "mpa-add-dataset") %>
+</div>
+
+<!-- TODO: This should be merged with the code in shared/_sequence_multi_search.html.erb -->
+<div class='card'>
+  <div class='card-title card-title-colored'>
+    <h2 class='card-title-text'>Add dataset</h2>
+  </div>
+  <div class='card-supporting-text'>
+    <div id="search_elements" class='form-group'>
+      <label for="qs">Peptide list</label>
+      <%= text_area_tag(:qs, nil, :rows => 7, :spellcheck => "false", :class => "form-control", autofocus: "true") %>
+    </div>
+    <div class="form-group">
+      <label for="search_name">Name this search <small class='secondary-text'>optional</small></label>
+      <%= text_field_tag('search_name', nil, :placeholder => 'e.g. Sample B5', :class => "form-control js-has-focus-tooltip", title: "This name will be shown on the results page. Handy if you have many open tabs.")%>
+    </div>
+    <div class="checkbox">
+      <%= label_tag(:il, check_box_tag(:il, 1, true) + " Equate I and L", title: "Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries.", class: 'js-has-hover-tooltip') %>
+    </div>
+    <div class="checkbox">
+      <%= label_tag(:dupes, check_box_tag(:dupes, 1, true) + " Filter duplicate peptides", title: "Remove duplicate peptides from the input before searching.", class:'js-has-hover-tooltip') %>
+    </div>
+    <div class="checkbox">
+      <%= label_tag(:missed, check_box_tag(:missed, 1, false) + " Advanced missed cleavage handling", title: "Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!", class: 'js-has-hover-tooltip') %>
+    </div>
+
+    <div id="search_button" class='search-buttons-centered'>
+      <%= button_tag(raw("<span class='glyphicon glyphicon-plus grow'></span> Add"), :type => "submit", :class => "btn btn-primary btn-animate", :id =>"mpa-add-dataset", :"data-loading-text" => "Loading...") %>
+    </div>
+  </div>
 </div>
 
 <div class='card'>

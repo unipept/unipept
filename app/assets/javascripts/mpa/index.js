@@ -32,14 +32,20 @@ class MPA {
     constructor(peptides = [], il = true, dupes = true, missed = false) {
         /** @type {Dataset[]} */
         this.datasets = [];
-        // Stores the current dataset that's being worked with
-        this.currentDataSet = 0;
+        /** @type {MPAConfig[]} */
+        this.searchSettings = [];
+
         /** @type {MPAConfig} */
-        this.searchSettings = {
+        this.searchSettings.push({
             il: il,
             dupes: dupes,
             missed: missed,
-        };
+        });
+
+        // Stores the current dataset that's being worked with
+        this.currentDataSet = 0;
+
+
 
         /** @type {MPADisplaySettings} */
         // @ts-ignore because it will be filled by setUpButtons
@@ -76,7 +82,7 @@ class MPA {
         this.enableProgressBar(true, false, "#progress-fa-analysis");
         let dataset = new Dataset(peptides);
         this.datasets.push(dataset);
-        await this.analyse(this.searchSettings);
+        await this.analyse(this.searchSettings[this.currentDataSet]);
         this.enableProgressBar(false);
         return dataset;
     }
@@ -92,7 +98,7 @@ class MPA {
      */
     async analyse(searchSettings) {
         const dataset = this.datasets[this.currentDataSet];
-        await dataset.search(this.searchSettings).catch(error => this.showError(error));
+        await dataset.search(this.searchSettings[this.currentDataSet]).catch(error => this.showError(error));
         this.setUpVisualisations(dataset.tree);
         this.updateStats(dataset);
         return dataset;
@@ -125,11 +131,11 @@ class MPA {
      * @param  {MPAConfig}  searchSettings
      */
     async updateSearchSettings(searchSettings) {
-        this.searchSettings = searchSettings;
+        this.searchSettings[this.currentDataSet] = searchSettings;
         this.enableProgressBar(true, true);
         this.enableProgressBar(true, false, "#progress-fa-analysis");
         $("#search-intro").text("Please wait while we process your data");
-        await this.analyse(this.searchSettings);
+        await this.analyse(this.searchSettings[this.currentDataSet]);
         this.enableProgressBar(false);
     }
 
@@ -142,7 +148,7 @@ class MPA {
         this.sunburst = this.setUpSunburst(JSON.parse(data));
         this.treemap = this.setUpTreemap(JSON.parse(data));
         this.treeview = this.setUpTreeview(JSON.parse(data));
-        this.searchTree = constructSearchtree(tree, this.searchSettings.il, d => this.search(d.id, d.name, 1000));
+        this.searchTree = constructSearchtree(tree, this.searchSettings[this.currentDataSet].il, d => this.search(d.id, d.name, 1000));
     }
 
     /**
@@ -644,9 +650,9 @@ class MPA {
 
     setUpForm(peptides) {
         $("#qs").text(peptides.join("\n"));
-        $("#il").prop("checked", this.searchSettings.il);
-        $("#dupes").prop("checked", this.searchSettings.dupes);
-        $("#missed").prop("checked", this.searchSettings.missed);
+        $("#il").prop("checked", this.searchSettings[this.currentDataSet].il);
+        $("#dupes").prop("checked", this.searchSettings[this.currentDataSet].dupes);
+        $("#missed").prop("checked", this.searchSettings[this.currentDataSet].missed);
 
         // enable tooltips
         $(".js-has-hover-tooltip").tooltip({
@@ -695,9 +701,6 @@ class MPA {
             dupes: $("#dupes").prop("checked"),
             missed: $("#missed").prop("checked"),
         }));
-
-        $("#mpa-add-dataset").click(() => console.log("Add dataset!"));
-
 
         // setup FA percent selector
         const $perSelector = $("#mpa-fa-filter-precent");
@@ -772,6 +775,8 @@ class MPA {
             // therefore delegated events won't be fired
             event.stopPropagation();
         });
+
+        $("#mpa-add-dataset").click(() => console.log("Add data!"));
     }
 
     setUpHelp() {
