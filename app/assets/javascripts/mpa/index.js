@@ -32,6 +32,8 @@ class MPA {
     constructor(peptides = [], il = true, dupes = true, missed = false) {
         /** @type {Dataset[]} */
         this.datasets = [];
+        // Stores the current dataset that's being worked with
+        this.currentDataSet = 0;
         /** @type {MPAConfig} */
         this.searchSettings = {
             il: il,
@@ -89,7 +91,7 @@ class MPA {
      *   performed
      */
     async analyse(searchSettings) {
-        const dataset = this.datasets[0];
+        const dataset = this.datasets[this.currentDataSet];
         await dataset.search(this.searchSettings).catch(error => this.showError(error));
         this.setUpVisualisations(dataset.tree);
         this.updateStats(dataset);
@@ -97,7 +99,7 @@ class MPA {
     }
 
     async downloadPeptidesFor(name, sequences) {
-        const dataset = this.datasets[0];
+        const dataset = this.datasets[this.currentDataSet];
         const result = [[
             "peptide",
             "spectral count",
@@ -179,7 +181,7 @@ class MPA {
         clearTimeout(this._redoFAcalculationsTimeout);
 
         const percent = this.displaySettings.percentFA;
-        const dataset = this.datasets[0];
+        const dataset = this.datasets[this.currentDataSet];
         let sequences = null;
 
         this._redoFAcalculationsTimeout = setTimeout(() => {
@@ -268,7 +270,7 @@ class MPA {
      * @param {number} width
      */
     faMoreinfo(d, code, container, width) {
-        const dataset = this.datasets[0];
+        const dataset = this.datasets[this.currentDataSet];
         const $container = $(container);
 
         const $dlbtn = $(`
@@ -686,13 +688,15 @@ class MPA {
         $("#treeview-reset").click(() => this.treeview.reset());
 
         // download results
-        $("#mpa-download-results").click(async () => downloadDataByForm(await this.datasets[0].toCSV(), "mpa_result.csv", "text/csv"));
+        $("#mpa-download-results").click(async () => downloadDataByForm(await this.datasets[this.currentDataSet].toCSV(), "mpa_result.csv", "text/csv"));
         // update settings
         $("#mpa-update-settings").click(() => this.updateSearchSettings({
             il: $("#il").prop("checked"),
             dupes: $("#dupes").prop("checked"),
             missed: $("#missed").prop("checked"),
         }));
+
+        $("#mpa-add-dataset").click(() => console.log("Add dataset!"));
 
 
         // setup FA percent selector
@@ -741,7 +745,7 @@ class MPA {
             $selected.addClass("active");
             $sortNameContainer.text($selected.text());
 
-            if (updateView) this.setUpFAVisualisations(this.datasets[0].fa, this.datasets[0].baseFa);
+            if (updateView) this.setUpFAVisualisations(this.datasets[this.currentDataSet].fa, this.datasets[this.currentDataSet].baseFa);
         };
         setFaSort($("#mpa-select-fa-sort-default"), false);
 
