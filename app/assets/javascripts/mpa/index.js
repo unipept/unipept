@@ -28,10 +28,13 @@ class MPA {
      * @param {boolean} il equate I and L
      * @param {boolean} dupes Filter duplicate peptides
      * @param {boolean} missed  Advanced missed cleavage handling
+     * @param {string} name The current dataset name
      */
-    constructor(peptides = [], il = true, dupes = true, missed = false) {
+    constructor(peptides = [], il = true, dupes = true, missed = false, name = '') {
         /** @type {Dataset[]} */
         this.datasets = [];
+        console.log(name);
+        this.names = [name];
         /** @type {MPAConfig[]} */
         this.searchSettings = [];
 
@@ -76,12 +79,14 @@ class MPA {
     async addDataset(peptides) {
         this.enableProgressBar(true, true);
         this.enableProgressBar(true, false, "#progress-fa-analysis");
+        this.disableGui();
         let dataset = new Dataset(peptides);
         this.datasets.push(dataset);
         this.currentDataSet = this.datasets.length - 1;
         this.setUpDatasetButtons();
         await this.analyse(this.searchSettings[this.currentDataSet]);
         this.enableProgressBar(false);
+        this.disableGui(false);
         return dataset;
     }
 
@@ -668,9 +673,14 @@ class MPA {
      * Create buttons that allow the user to switch between the different datasets loaded.
      */
     setUpDatasetButtons() {
+        let dataSetName = this.names[this.currentDataSet];
+        if (dataSetName === '') {
+            dataSetName = 'Dataset ' + (this.currentDataSet + 1)
+        }
+
         // Generate button for switching to dataset
         $("#dataset_selection_buttons").append(
-            "<button class='btn btn-primary mpa-select-dataset' data-dataset='" + this.currentDataSet + "'>Dataset " + (this.currentDataSet + 1) + "</button>"
+            "<button class='btn btn-primary mpa-select-dataset' style='margin-right: 5px;' data-dataset='" + this.currentDataSet + "' disabled>" + dataSetName + "</button>"
         );
 
         let that = this;
@@ -678,11 +688,19 @@ class MPA {
         $mpaButtons.unbind("click");
         $mpaButtons.click(function() {
             that.currentDataSet = $(this).data("dataset");
-            // TODO: Check that dataset tree has been computed before
+
+            that.enableProgressBar(true, true);
+            that.enableProgressBar(true, false, "#progress-fa-analysis");
+
             let dataset = that.datasets[that.currentDataSet];
+
+            // TODO check that tree in dataset has been computed before
+
             that.setUpForm(dataset.originalPeptides);
             that.setUpVisualisations(dataset.tree);
             that.updateStats(dataset);
+
+            that.enableProgressBar(false);
         })
     }
 
@@ -695,6 +713,14 @@ class MPA {
 
             addDatasetForm.toggle();
         });
+    }
+
+    disableGui(state = true) {
+        let $switchButtons = $(".mpa-select-dataset");
+        let $addDatasetButton = $("#mpa-add-dataset");
+
+        $switchButtons.prop("disabled", state);
+        $addDatasetButton.prop("disabled", state);
     }
 
     setUpButtons() {
@@ -819,6 +845,8 @@ class MPA {
                 dupes: filterDuplicates,
                 missed: handleMissingCleavage,
             });
+
+            this.names.push(searchName);
 
             // Stores the current dataset that's being worked with
             this.addDataset(peptides);

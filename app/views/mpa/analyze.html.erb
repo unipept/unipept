@@ -31,7 +31,7 @@
     </div>
 
     <div id="search_button" class='search-buttons-centered'>
-      <%= button_tag(raw("<span class='glyphicon glyphicon-plus grow'></span> Add"), :type => "submit", :class => "btn btn-primary btn-animate", :id =>"mpa-add-dataset", :"data-loading-text" => "Loading...") %>
+      <%= button_tag(raw("<span class='glyphicon glyphicon-plus grow'></span> Add"), :type => "submit", :class => "btn btn-primary btn-animate", :id =>"mpa-add-dataset") %>
     </div>
   </div>
 </div>
@@ -280,9 +280,10 @@
   var il = <%= @il %>;
   var dupes = <%= @dupes %>;
   var missed = <%= @missed %>;
+  var name = '<%= @name %>';
 
   $(function () {
-      new MPA(peptides, il, dupes, missed);
+      new MPA(peptides, il, dupes, missed, name);
   });
 </script>
 
