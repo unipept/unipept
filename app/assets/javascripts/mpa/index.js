@@ -649,7 +649,7 @@ class MPA {
     }
 
     setUpForm(peptides) {
-        $("#qs").text(peptides.join("\n"));
+        $("#qs").val(peptides.join("\n"));
         $("#il").prop("checked", this.searchSettings[this.currentDataSet].il);
         $("#dupes").prop("checked", this.searchSettings[this.currentDataSet].dupes);
         $("#missed").prop("checked", this.searchSettings[this.currentDataSet].missed);
@@ -671,7 +671,7 @@ class MPA {
      */
     setUpDatasetButtons() {
         // Generate button for switching to dataset
-        $("#dataset-selection-buttons").append(
+        $("#dataset_selection_buttons").append(
             "<button class='btn btn-primary mpa-select-dataset' data-dataset='" + this.currentDataSet + "'>Dataset " + (this.currentDataSet + 1) + "</button>"
         );
 
@@ -680,8 +680,23 @@ class MPA {
         $mpaButtons.unbind("click");
         $mpaButtons.click(function() {
             that.currentDataSet = $(this).data("dataset");
-
+            // TODO: Check that dataset tree has been computed before
+            let dataset = that.datasets[that.currentDataSet];
+            that.setUpForm(dataset.originalPeptides);
+            that.setUpVisualisations(dataset.tree);
+            that.updateStats(dataset);
         })
+    }
+
+    setUpExpandDatasetButton() {
+        let datasetChevron = $("#add_dataset_chevron");
+        let addDatasetForm = $("#add_dataset_form_content");
+        $("#expand_add_dataset_button").click(() => {
+            datasetChevron.toggleClass("glyphicon-chevron-right");
+            datasetChevron.toggleClass("glyphicon-chevron-down");
+
+            addDatasetForm.toggle();
+        });
     }
 
     setUpButtons() {
@@ -797,9 +812,9 @@ class MPA {
         $("#mpa-add-dataset").click(() => {
             let peptides = $("#form-peptide-list").val().split("\n");
             let searchName = $("#form-search-name").val();
-            let equateIl = $("#il").is(':checked');
-            let filterDuplicates = $("#dupes").is(':checked');
-            let handleMissingCleavage = $("#missed").is(':checked');
+            let equateIl = $("#form_equate_il").is(':checked');
+            let filterDuplicates = $("#form_duplicates").is(':checked');
+            let handleMissingCleavage = $("#form_missing_cleavage").is(':checked');
 
             this.searchSettings.push({
                 il: equateIl,
@@ -809,7 +824,10 @@ class MPA {
 
             // Stores the current dataset that's being worked with
             this.addDataset(peptides);
+            this.setUpForm(peptides);
         });
+
+        this.setUpExpandDatasetButton();
     }
 
     setUpHelp() {
