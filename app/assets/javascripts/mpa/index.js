@@ -33,10 +33,13 @@ class MPA {
     constructor(peptides = [], il = true, dupes = true, missed = false, name = '') {
         /** @type {Dataset[]} */
         this.datasets = [];
-        console.log(name);
         this.names = [name];
         /** @type {MPAConfig[]} */
         this.searchSettings = [];
+        this.searchTerms = [{
+            id: 1,
+            term: "Organism"
+        }];
 
         this.searchSettings.push({
             il: il,
@@ -155,7 +158,7 @@ class MPA {
     }
 
     /**
-     * Creates a line indicating the trust of the functioan annotations
+     * Creates a line indicating the trust of the function annotations
      * @param {FunctionalAnnotations} fa
      * @param {String} kind Human readable word that fits in "To have at least one … assigned to it"
      * @return {string}
@@ -183,7 +186,7 @@ class MPA {
      * @param {number} [id=-1]
      *    the taxon id whose sequences should be taken into account use -1 to use everything (Organism)
      * @param {number} [timeout=500]
-     *    Time to wait since last invocation to start the lookup procces (in ms)
+     *    Time to wait since last invocation to start the lookup process (in ms)
      */
     redoFAcalculations(name = "Organism", id = -1, timeout = 500) {
         this.enableProgressBar(true, false, "#progress-fa-analysis");
@@ -226,7 +229,7 @@ class MPA {
      * set up analysis pannel
      * @param {FunctionalAnnotations} fa Functional annotations
      * @param {FunctionalAnnotations} [oldFa=null]
-     *     Snapshot of functional annotations for comparision
+     *     Snapshot of functional annotations for comparison
      */
     setUpFAVisualisations(fa, oldFa = null) {
         this.setUpGo(fa, oldFa);
@@ -237,7 +240,7 @@ class MPA {
      * Create visualisations of the GO numbers
      * @param {FunctionalAnnotations} fa Functional annotations
      * @param {FunctionalAnnotations} [oldFa=null]
-     *     Snapshot of functional annotations for comparision
+     *     Snapshot of functional annotations for comparison
      */
     setUpGo(fa, oldFa = null) {
         const go = fa.getGroup("GO");
@@ -680,7 +683,7 @@ class MPA {
 
         // Generate button for switching to dataset
         $("#dataset_selection_buttons").append(
-            "<button class='btn btn-primary mpa-select-dataset' style='margin-right: 5px;' data-dataset='" + this.currentDataSet + "' disabled>" + dataSetName + "</button>"
+            "<button class='btn btn-primary mpa-select-dataset gui-item' style='margin-right: 5px;' data-dataset='" + this.currentDataSet + "' disabled>" + dataSetName + "</button>"
         );
 
         let that = this;
@@ -694,10 +697,10 @@ class MPA {
 
             let dataset = that.datasets[that.currentDataSet];
 
-            // TODO check that tree in dataset has been computed before
-
             that.setUpForm(dataset.originalPeptides);
             that.setUpVisualisations(dataset.tree);
+            let searchTerm = that.searchTerms[that.currentDataSet];
+            that.search(searchTerm.id, searchTerm.term);
             that.updateStats(dataset);
 
             that.enableProgressBar(false);
@@ -716,11 +719,7 @@ class MPA {
     }
 
     disableGui(state = true) {
-        let $switchButtons = $(".mpa-select-dataset");
-        let $addDatasetButton = $("#mpa-add-dataset");
-
-        $switchButtons.prop("disabled", state);
-        $addDatasetButton.prop("disabled", state);
+        $(".gui-item").prop("disabled", state);
     }
 
     setUpButtons() {
@@ -1022,6 +1021,11 @@ class MPA {
      * @todo add search term to FA explanation to indicate filtering
      */
     search(id, searchTerm, timeout = 500) {
+        this.searchTerms[this.currentDataSet] = {
+            id: id,
+            term: searchTerm
+        };
+
         let localTerm = searchTerm;
         if (localTerm === "Organism") {
             localTerm = "";
