@@ -53,16 +53,19 @@
         </p>
         <ul>
           <li><code>peptide</code>: the peptide that was searched for</li>
+          <li><code>total_protein_count</code>: Total amount of proteins matched with the given peptide.</li>
           <li><code>ec</code>: A list of <span class="initialism">JSON</span> objects that each represent an EC-number associated with the current tryptic peptide.
             <ul>
-              <li><code>ec_number_code</code>: The EC-number associated with the current tryptic peptide.</li>
-              <li><code>proteins</code>: The amount of proteins matched with the given tryptic peptide that are labeled with the current EC-number.</li>
+              <li><code>ec_number</code>: The EC-number associated with the current tryptic peptide.</li>
+              <li><code>protein_count</code>: The amount of proteins matched with the given tryptic peptide that are labeled with the current EC-number.</li>
+              <li><code>name</code>: Optional, name of the EC-number. Included when the <code>extra</code> parameter is set to <code>true</code>.</li>
             </ul>
           </li>
           <li><code>go</code>: A list of <span class="initialism">JSON</span> objects that each represent a GO-term associated with the current tryptic peptide.
             <ul>
               <li><code>go_term_code</code>: The GO-term associated with the current tryptic peptide.</li>
-              <li><code>proteins</code>: The amount of proteins matched with the given tryptic peptide that are labeled with the current GO-term.</li>
+              <li><code>protein_count</code>: The amount of proteins matched with the given tryptic peptide that are labeled with the current GO-term.</li>
+              <li><code>name</code>: Optional, name of the GO-term. Included when the <code>extra</code> parameter is set to <code>true</code>.</li>
             </ul>
           </li>
           <li><code>taxon_id</code>: the <span class="initialism">NCBI</span> taxon id of the taxonomic lowest common ancestor</li>

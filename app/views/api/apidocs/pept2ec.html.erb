@@ -48,17 +48,15 @@
           A list of  <span class="initialism">JSON</span> objects is returned. By default, each object contains the following information fields:
         </p>
         <ul>
-          <li><code>peptide</code>: the peptide that was searched for</li>
-          <li><code>ec</code>: A list of <span class="initialism">JSON</span> objects that each represent an EC-number associated with the current tryptic peptide
+          <li><code>peptide</code>: The peptide that was searched for.</li>
+          <li><code>total_protein_count</code>: Total amount of proteins matched with the given peptide.</li>
+          <li><code>ec</code>: A list of <span class="initialism">JSON</span> objects that each represent an EC-number associated with the current tryptic peptide.
             <ul>
-              <li><code>ec_number_code</code>: The EC-number associated with the current tryptic peptide.</li>
-              <li><code>proteins</code>: The amount of proteins matched with the given tryptic peptide that are labeled with the current EC-number.</li>
+              <li><code>ec_number</code>: EC-number associated with the current tryptic peptide.</li>
+              <li><code>protein_count</code>: amount of proteins matched with the given tryptic peptide that are labeled with the current EC-number.</li>
+              <li><code>name</code>: Optional, name of the EC-number. Included when the <code>extra</code> parameter is set to <code>true</code>.</li>
             </ul>
           </li>
-        </ul>
-        <p>When the <code>extra</code> parameter is set to <code>true</code>, objects also contain the name associated with an EC-number. These additional fields are provided as part of the nested EC-number objects:</p>
-        <ul>
-          <li><code>name</code>: The name of the associated EC-number.</li>
         </ul>
       </div>
     </div>
