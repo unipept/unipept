@@ -112,7 +112,7 @@ function constructDatasetLoader() {
     /**
      * Returns a list of peptides from an internal dataset as a promise
      *
-     * @param <Integer> id The id of the dataset(item) we want to load
+     * @param {Integer} id The id of the dataset(item) we want to load
      */
     function loadInternalDataset(id) {
         return get("/dataset_items/" + id);
@@ -121,7 +121,7 @@ function constructDatasetLoader() {
     /**
      * Returns a list of peptide from a pride experiment as a promise
      *
-     * @param <Integer> id The id of the assay we want to load
+     * @param {Integer} id The id of the assay we want to load
      */
     function loadPrideDataset(id) {
         let batchSize = 1000,
@@ -180,10 +180,10 @@ function constructDatasetLoader() {
     /**
      * Public method to load a dataset
      *
-     * @param <String> type The type of the dataset to load: internal or pride
-     * @param <Integer> id The id of the dataset to load
-     * @param <String> name The name of the dataset
-     * @param <DOM element> button The button that was clicked to load the
+     * @param {String} type The type of the dataset to load: internal or pride
+     * @param {Integer} id The id of the dataset to load
+     * @param {String} name The name of the dataset
+     * @param {HTMLButtonElement} button The button that was clicked to load the
      *          dataset. Can be nil.
      */
     that.loadDataset = function loadDataset(type, id, name, button) {
@@ -213,7 +213,7 @@ function constructDatasetLoader() {
         };
 
         let fail = function (error) {
-            // track is something goes wrong
+            // track if something goes wrong
             logToGoogle("Datasets", "Failed", name, error);
 
             // reset the form elements
