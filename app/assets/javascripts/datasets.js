@@ -1,10 +1,13 @@
 import {showNotification} from "./notifications.js";
+import {DatasetManager} from "./mpa/datasetManager.js";
 import {get, getJSON, highlight, logToGoogle, showError, showInfo} from "./utils.js";
 
 /* eslint-disable require-jsdoc */
 
 function initDatasets() {
     let datasetLoader = constructDatasetLoader();
+    let dataSetManager = new DatasetManager();
+    renderLocalStorageItems(dataSetManager);
 
     // enable tooltips
     $(".js-has-hover-tooltip").tooltip({
@@ -23,23 +26,40 @@ function initDatasets() {
         $("#search_button").hide();
         $("#form-progress").removeClass("hide");
 
-        let sessionStorageSucceeded = false;
-        try {
-            let storage = window.sessionStorage;
-            storage.setItem("mpaData", $("#qs").val());
-            if (storage.getItem("mpaData") === $("#qs").val()) {
-                sessionStorageSucceeded = true;
-                $("#qs").removeAttr("name").attr("form", "nonexistentform"); // don't send qs over wire
-                $(this).closest("form").append("<input type='hidden' name='qs' value='sessionstorage'/>");
-            }
-        } catch (e) {
-            sessionStorageSucceeded = false;
-        }
+        let peptides = $("#qs").val().split("\n");
+        let equateIl = $("#il").is(":checked");
+        let dupes = $("#dupes").is(":checked");
+        let missed = $("#missed").is(":checked");
+        let search = $("#search_name").val();
 
-        showNotification(sessionStorageSucceeded ? "Starting analysis…" : "Sending peptides…", {
-            autoHide: false,
-            loading: true,
-        });
+        dataSetManager.storeDataset(peptides, {
+            il: equateIl,
+            dupes: dupes,
+            missed: missed
+        }, search);
+
+        renderLocalStorageItems(dataSetManager);
+
+        // TODO (pverscha): remove session storage once local storage is fully implemented
+        // let sessionStorageSucceeded = false;
+        // try {
+        //     let storage = window.sessionStorage;
+        //     storage.setItem("mpaData", $("#qs").val());
+        //     if (storage.getItem("mpaData") === $("#qs").val()) {
+        //         sessionStorageSucceeded = true;
+        //         $("#qs").removeAttr("name").attr("form", "nonexistentform"); // don't send qs over wire
+        //         $(this).closest("form").append("<input type='hidden' name='qs' value='sessionstorage'/>");
+        //     }
+        // } catch (e) {
+        //     sessionStorageSucceeded = false;
+        // }
+        //
+        // showNotification(sessionStorageSucceeded ? "Starting analysis…" : "Sending peptides…", {
+        //     autoHide: false,
+        //     loading: true,
+        // });
+        //
+        // $("#")
     });
 
     // track the use of the export checkbox
@@ -101,6 +121,41 @@ function initPreload(type, id) {
         datasetLoader.loadDataset("internal", id, "Dataset " + id);
     } else {
         datasetLoader.loadDataset("pride", id, "Pride assay " + id);
+    }
+}
+
+function renderLocalStorageItems(datasetManager) {
+    let $body = $("#localstorage-table-body");
+    $body.html("");
+
+    let allDatasets = datasetManager.listDatasets();
+    for (let i = 0; i < allDatasets.length; i++) {
+        // Use jQuery to build elements to prevent XSS attacks
+        let $row = $("<tr>");
+        $row.append($("<td>").append("<span class='glyphicon glyphicon-plus select-dataset-button' data-dataset='" + allDatasets[i] + "'></span>"));
+        $row.append($("<td>").text(allDatasets[i]));
+        $body.append($row);
+    }
+
+    let $selectButtons = $(".select-dataset-button");
+    $selectButtons.unbind("click");
+    $selectButtons.click(function() {
+        let datasetName = $(this).data("dataset");
+        datasetManager.selectDataset(datasetName);
+        renderSelectedItems(datasetManager);
+    });
+}
+
+function renderSelectedItems(datasetManager) {
+    let $selectedBody = $("#selected-items-body");
+    $selectedBody.html("");
+
+    let selectedItems = datasetManager.getSelectedDatasets();
+    for (let i = 0; i < selectedItems.length; i++) {
+        let td = $("<td>");
+        td.append(document.createTextNode(selectedItems[i]));
+        td.append("<span class='glyphicon glyphicon-remove deselect-dataset-button' data-dataset='" + selectedItems[i] + "'></span>");
+        $selectedBody.append($("<tr>").append(td));
     }
 }
 

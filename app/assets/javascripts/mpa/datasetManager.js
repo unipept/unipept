@@ -1,5 +1,3 @@
-import {Dataset} from "dataset"
-
 /**
  * Class that manages all dataset's stored by the user in local storage and the ability to serialize or restore them.
  */
@@ -8,49 +6,82 @@ class DatasetManager {
         this.localStorage = window.localStorage;
         // The prefix that's used to identify the mpa-datasets in local storage.
         this.prefix = 'mpa-';
+        this._selectedDatasets = [];
+    }
+
+    /**
+     * Mark a specific dataset as selected.
+     *
+     * @param name Unique name of the dataset that should be selected.
+     * @param selected True if item is selected, false otherwise
+     */
+    selectDataset(name, selected = true) {
+        if (selected && this._selectedDatasets.indexOf(name) === -1) {
+            this._selectedDatasets.push(name);
+            return;
+        }
+
+        if (!selected) {
+            this._selectedDatasets = this._selectedDatasets.splice(this._selectedDatasets.indexOf(name), 1);
+        }
+    }
+
+    getSelectedDatasets() {
+        return this._selectedDatasets;
     }
 
     /**
      * List all datasets that are stored in local storage memory.
      *
-     * @return {Dataset[]} Al list of dataset-objects as found in memory.
+     * @return {String[]} A list containing all names of the datasets stored in local storage.
      */
     listDatasets() {
         let output = [];
         for (let i = 0; i < this.localStorage.length; i++) {
             let key = this.localStorage.key(i);
             if (key.startsWith(this.prefix)) {
-                let data = this.localStorage.getItem(key);
-                console.log(data);
+                output.push(key.substr(this.prefix.length))
             }
         }
+        return output
     }
 
     /**
-     * Serialize and store the given dataset to local storage.
+     * Serialize and store given peptides (and corresponding configuration) in local storage.
      *
-     * @param {Dataset} dataset The dataset that should be saved to local storage.
+     * @param {String[]} peptides List of peptides that should be stored in local storage.
+     * @param {MPAConfig} configuration Configuration containing the current state of the search settings.
+     * @param {String} name Optional, name of the dataset.
      */
-    storeDataset(dataset) {
-        let serialized = this.serialize(dataset);
+    storeDataset(peptides, configuration, name = "") {
+        // TODO how should we name nameless datasets?
+        if (!name) {
+            name = "Dataset"
+        }
+
+        let serialized = this.serialize(peptides, configuration, name);
+        this.localStorage.setItem(this.prefix + name, serialized);
     }
 
     /**
      * Transforms the given Dataset object into a JSON-string.
      *
-     * @param {Dataset} dataset The dataset that should be serialized.
+     * @param {String[]} peptides List of peptides that should be stored in local storage.
+     * @param {MPAConfig} configuration Configuration containing the current state of the search settings.
+     * @param {String} name Optional, name of the dataset.
      * @return {String} A JSON-string representing the object.
      */
-    serialize(dataset) {
-        let config = dataset.resultset.config;
-
+    serialize(peptides, configuration, name) {
         return JSON.stringify({
-            "peptides": dataset.originalPeptides,
-            "configuration": {
-                "il": config.il,
-                "dupes": config.dupes,
-                "missed": config.missed
-            }
+            peptides: peptides,
+            configuration: {
+                il: configuration.il,
+                dupes: configuration.dupes,
+                missed: configuration.missed
+            },
+            name: name
         });
     }
 }
+
+export {DatasetManager};

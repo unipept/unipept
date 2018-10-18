@@ -3,6 +3,16 @@
     <h2 class='card-title-text'>Selected datasets</h2>
   </div>
   <div class='card-supporting-text'>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id='selected-items-body'>
+      </tbody>
+    </table>
     <div class='search-buttons-centered' id='search-button'>
       <%= button_tag(raw("<span class='glyphicon glyphicon-search grow'></span> Search"), :type => "submit", :class => "btn btn-primary btn-animate", :id =>"search_selected_datasets_button", :"data-loading-text" => "Loading...") %>
       <%= button_tag(raw("<span class='glyphicon glyphicon-repeat spin'></span> Start Over"), { :name => 'reset', :id => 'reset_selected_datasets_button', :type => "reset", :class => "btn btn-default btn-animate" }) %>
