@@ -3,25 +3,8 @@
     <h2 class='card-title-text'>Metaproteomics Analysis</h2>
   </div>
   <div class='card-supporting-text'>
-    <%= form_tag(:mpa, :method => "post", :authenticity_token => false) do %>
-      <div id="search_elements" class='form-group'>
-        <label for="qs">Peptide list</label>
-        <%= text_area_tag(:qs, nil, :rows => 7, :spellcheck => "false", :class => "form-control", autofocus: "true") %>
-      </div>
-      <div id="multisearch-warning" class='alert alert-warning' role='alert'><strong>Oh snap!</strong> You're trying to analyse <strong class="multisearch-warning-amount">a lot of</strong> peptides. Searching for this many peptides might take a while and the resulting visualisations will probably be suboptimal. Our <a href="<%= api_apidocs_path %>">webservices</a> are a great alternative.</div>
-      <div class="form-group">
-        <label for="search_name">Name this search <small class='secondary-text'>optional</small></label>
-        <%= text_field_tag('search_name', nil, :placeholder => 'e.g. Sample B5', :class => "form-control js-has-focus-tooltip", title: "This name will be shown on the results page. Handy if you have many open tabs.")%>
-      </div>
-      <div class="checkbox">
-        <%= label_tag(:il, check_box_tag(:il, 1, true) + " Equate I and L", title: "Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries.", class: 'js-has-hover-tooltip') %>
-      </div>
-      <div class="checkbox">
-        <%= label_tag(:dupes, check_box_tag(:dupes, 1, true) + " Filter duplicate peptides", title: "Remove duplicate peptides from the input before searching.", class:'js-has-hover-tooltip') %>
-      </div>
-      <div class="checkbox">
-        <%= label_tag(:missed, check_box_tag(:missed, 1, false) + " Advanced missed cleavage handling", title: "Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!", class: 'js-has-hover-tooltip') %>
-      </div>
+    <%= form_tag(:mpa, :method => "post") do %>
+      <%= render "shared/sequence_multi_search_form" %>
       <div id="search_button" class='search-buttons-centered'>
         <%= button_tag(raw("<span class='glyphicon glyphicon-search grow'></span> Search"), :type => "submit", :class => "btn btn-primary btn-animate", :id =>"search-multi-form", :"data-loading-text" => "Loading...") %>
         <%= button_tag(raw("<span class='glyphicon glyphicon-repeat spin'></span> Start Over"), { :name => 'reset', :id => 'reset_button', :type => "reset", :class => "btn btn-default btn-animate" }) %>
