@@ -20,7 +20,6 @@ function initDatasets() {
         placement: "right",
     });
 
-
     // add progress bar when submitting form
     $("#search-multi-form").click(function (e) {
         $("#search_button").hide();
@@ -32,13 +31,13 @@ function initDatasets() {
         let missed = $("#missed").is(":checked");
         let search = $("#search_name").val();
 
-        dataSetManager.storeDataset(peptides, {
+        let name = dataSetManager.storeDataset(peptides, {
             il: equateIl,
             dupes: dupes,
             missed: missed
         }, search);
 
-        renderLocalStorageItems(dataSetManager);
+        renderLocalStorageItem(name, dataSetManager);
 
         // TODO (pverscha): remove session storage once local storage is fully implemented
         // let sessionStorageSucceeded = false;
@@ -60,6 +59,11 @@ function initDatasets() {
         // });
         //
         // $("#")
+    });
+
+    $("#remove_all_datasets_button").click(function() {
+        dataSetManager.clearStorage();
+        renderLocalStorageItems();
     });
 
     // track the use of the export checkbox
@@ -138,6 +142,7 @@ function renderLocalStorageItem(name, datasetManager) {
     let $body = $("#selected-items-body");
     let $row = $("<tr>");
     let $checkBox = $("<input type='checkbox' class='select-dataset-button' data-dataset='" + name + "' />");
+    $checkBox.prop("checked", datasetManager.isDatasetSelected(name));
     $checkBox.click(function() {
         let datasetName = $(this).data("dataset");
         let selected = datasetManager.toggleDataset(datasetName);
@@ -145,10 +150,14 @@ function renderLocalStorageItem(name, datasetManager) {
     });
     $row.append($("<td>").append($checkBox));
     $row.append($("<td>").text(name));
-    $row.append($("<td>").append("<span class='glyphicon glyphicon-remove' title='Remove dataset'></span>"));
+    let $removeButton = $("<span class='glyphicon glyphicon-remove' title='Remove dataset' data-dataset='" + name + "'></span>");
+    $removeButton.click(function() {
+        let datasetName = $(this).data("dataset");
+        datasetManager.removeDataset(datasetName);
+        renderLocalStorageItems(datasetManager);
+    });
+    $row.append($("<td>").append($removeButton));
     $body.append($row);
-
-
 }
 
 function constructDatasetLoader() {
@@ -281,6 +290,8 @@ function constructDatasetLoader() {
                 button.button("reset");
             }
             toast.hide();
+            $("#search_button").show();
+            $("#form-progress").addClass("hide");
         };
 
         let request = type === "internal" ? loadInternalDataset(id) : loadPrideDataset(id);

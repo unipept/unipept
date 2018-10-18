@@ -31,6 +31,10 @@ class DatasetManager {
         return this._selectedDatasets;
     }
 
+    isDatasetSelected(name) {
+        return this._selectedDatasets.indexOf(name) !== -1;
+    }
+
     /**
      * List all datasets that are stored in local storage memory.
      *
@@ -53,6 +57,7 @@ class DatasetManager {
      * @param {String[]} peptides List of peptides that should be stored in local storage.
      * @param {MPAConfig} configuration Configuration containing the current state of the search settings.
      * @param {String} name Optional, name of the dataset.
+     * @return {String} The name that was eventually used to store this dataset.
      */
     storeDataset(peptides, configuration, name = "") {
         // TODO how should we name nameless datasets?
@@ -60,8 +65,32 @@ class DatasetManager {
             name = "Dataset"
         }
 
-        let serialized = this.serialize(peptides, configuration, name);
+        let serialized = this._serialize(peptides, configuration, name);
         this.localStorage.setItem(this.prefix + name, serialized);
+        return name;
+    }
+
+    /**
+     * Remove a specific dataset from local storage.
+     *
+     * @param name Name of the dataset that should be removed from local storage.
+     */
+    removeDataset(name) {
+        this.localStorage.removeItem(this.prefix + name);
+    }
+
+    /**
+     * Removes all datasets from local storage.
+     */
+    clearStorage() {
+        for (let i = 0; i < this.localStorage.length; i++) {
+            let key = this.localStorage.key(i);
+            if (key.startsWith(this.prefix)) {
+                this.localStorage.removeItem(key);
+            }
+        }
+
+        this._selectedDatasets = [];
     }
 
     /**
@@ -72,7 +101,7 @@ class DatasetManager {
      * @param {String} name Optional, name of the dataset.
      * @return {String} A JSON-string representing the object.
      */
-    serialize(peptides, configuration, name) {
+    _serialize(peptides, configuration, name) {
         return JSON.stringify({
             peptides: peptides,
             configuration: {
