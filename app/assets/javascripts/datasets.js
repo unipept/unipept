@@ -125,38 +125,30 @@ function initPreload(type, id) {
 }
 
 function renderLocalStorageItems(datasetManager) {
-    let $body = $("#localstorage-table-body");
-    $body.html("");
+    $("#selected-items-body").html("");
 
     let allDatasets = datasetManager.listDatasets();
     for (let i = 0; i < allDatasets.length; i++) {
-        // Use jQuery to build elements to prevent XSS attacks
-        let $row = $("<tr>");
-        $row.append($("<td>").append("<span class='glyphicon glyphicon-plus select-dataset-button' data-dataset='" + allDatasets[i] + "'></span>"));
-        $row.append($("<td>").text(allDatasets[i]));
-        $body.append($row);
+        renderLocalStorageItem(allDatasets[i], datasetManager);
     }
-
-    let $selectButtons = $(".select-dataset-button");
-    $selectButtons.unbind("click");
-    $selectButtons.click(function() {
-        let datasetName = $(this).data("dataset");
-        datasetManager.selectDataset(datasetName);
-        renderSelectedItems(datasetManager);
-    });
 }
 
-function renderSelectedItems(datasetManager) {
-    let $selectedBody = $("#selected-items-body");
-    $selectedBody.html("");
+function renderLocalStorageItem(name, datasetManager) {
+    // Use jQuery to build elements to prevent XSS attacks
+    let $body = $("#selected-items-body");
+    let $row = $("<tr>");
+    let $checkBox = $("<input type='checkbox' class='select-dataset-button' data-dataset='" + name + "' />");
+    $checkBox.click(function() {
+        let datasetName = $(this).data("dataset");
+        let selected = datasetManager.toggleDataset(datasetName);
+        $(this).prop("checked", selected);
+    });
+    $row.append($("<td>").append($checkBox));
+    $row.append($("<td>").text(name));
+    $row.append($("<td>").append("<span class='glyphicon glyphicon-remove' title='Remove dataset'></span>"));
+    $body.append($row);
 
-    let selectedItems = datasetManager.getSelectedDatasets();
-    for (let i = 0; i < selectedItems.length; i++) {
-        let td = $("<td>");
-        td.append(document.createTextNode(selectedItems[i]));
-        td.append("<span class='glyphicon glyphicon-remove deselect-dataset-button' data-dataset='" + selectedItems[i] + "'></span>");
-        $selectedBody.append($("<tr>").append(td));
-    }
+
 }
 
 function constructDatasetLoader() {

@@ -3,7 +3,6 @@
     <ul class="nav nav-tabs">
       <li class="active"><a href="#database" data-toggle="tab">Sample data</a></li>
       <li><a href="#pride" data-toggle="tab">PRIDE</a></li>
-      <li><a href="#localstorage" data-toggle="tab">Local storage</a></li>
     </ul>
   </div>
   <div class='card-supporting-text'>
@@ -22,18 +21,6 @@
         <div class='search-buttons-centered'>
           <%= button_tag(raw("Load PRIDE dataset"), { :type => "button", :class => "load-pride btn btn-default" , :"data-loading-text" => "Loading..."}) %>
         </div>
-      </div>
-      <div class="tab-pane" id="localstorage">
-        <table>
-          <thead>
-            <tr>
-              <th>Action</th>
-              <th>Name</th>
-            </tr>
-          </thead>
-          <tbody id='localstorage-table-body'>
-          </tbody>
-        </table>
       </div>
     </div>
   </div>
