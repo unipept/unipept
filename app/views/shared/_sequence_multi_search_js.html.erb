@@ -1,0 +1,16 @@
+<div class='card'>
+  <div class='card-title card-title-colored'>
+    <h2 class='card-title-text'>Metaproteomics Analysis</h2>
+  </div>
+  <div class='card-supporting-text'>
+    <%= render "shared/sequence_multi_search_form" %>
+    <div id="search_button" class='search-buttons-centered'>
+      <%= button_tag(raw("<span class='glyphicon glyphicon-plus grow'></span> Add"), :type => "submit", :class => "btn btn-primary btn-animate", :id =>"search-multi-form", :"data-loading-text" => "Loading...") %>
+    </div>
+    <div id="form-progress" class="progress hide">
+      <div class="progress-bar progress-bar-striped active"  role="progressbar" style="width: 100%">
+        <span>Processing data...</span>
+      </div>
+    </div>
+  </div>
+</div>
