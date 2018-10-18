@@ -10,20 +10,21 @@ class DatasetManager {
     }
 
     /**
-     * Mark a specific dataset as selected.
+     * Toggle the selected property of a dataset.
      *
      * @param name Unique name of the dataset that should be selected.
-     * @param selected True if item is selected, false otherwise
+     * @return {boolean} Current checked status of the dataset.
      */
-    selectDataset(name, selected = true) {
-        if (selected && this._selectedDatasets.indexOf(name) === -1) {
+    toggleDataset(name) {
+        let index = this._selectedDatasets.indexOf(name);
+
+        if (index === -1) {
             this._selectedDatasets.push(name);
-            return;
+            return true;
         }
 
-        if (!selected) {
-            this._selectedDatasets = this._selectedDatasets.splice(this._selectedDatasets.indexOf(name), 1);
-        }
+        this._selectedDatasets.splice(index, 1);
+        return false;
     }
 
     getSelectedDatasets() {
