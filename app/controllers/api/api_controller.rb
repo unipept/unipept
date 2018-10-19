@@ -321,6 +321,13 @@ class Api::ApiController < ApplicationController
       end
     end
 
+    (@input_order - output.keys).each do |seq|
+      output[seq] = {
+          :total => 0,
+          :ec => []
+      }
+    end
+
     output
   end
 
@@ -364,7 +371,7 @@ class Api::ApiController < ApplicationController
           set_name = lambda { |value| value[:name] = go_mapping[value[:go_term]].name }
         else
           # Do nothing
-          set_name = lambda { |value| }
+          set_name = lambda { |_value| }
         end
 
         # We have to transform the input so that the different GO-terms are split per namespace
@@ -386,6 +393,13 @@ class Api::ApiController < ApplicationController
           end
         end
       end
+    end
+
+    (@input_order - output.keys).each do |seq|
+      output[seq] = {
+          :total => 0,
+          :go => []
+      }
     end
 
     output
