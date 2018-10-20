@@ -107,15 +107,13 @@ class Api::ApiController < ApplicationController
     @input_order.each do |seq|
       seq_index = @equate_il ? seq.gsub(/I/,'L') : seq
 
-      total_data = (go_result.key? seq_index) ? go_result[seq_index][:total] : 0
-      go_data = (go_result.key? seq_index) ? go_result[seq_index][:go] : []
-      ec_data = (ec_result.key? seq_index) ? ec_result[seq_index][:ec] : []
-
-      @result[seq_index] = {
-          :total => total_data,
-          :go => go_data,
-          :ec => ec_data
-      }
+      if go_result.key? seq_index
+        @result[seq_index] = {
+            :total => go_result[seq_index][:total],
+            :go => go_result[seq_index][:go],
+            :ec => ec_result[seq_index][:ec]
+        }
+      end
     end
 
     respond_with(@result)
@@ -136,17 +134,14 @@ class Api::ApiController < ApplicationController
     @input_order.each do |seq|
       seq_index = @equate_il ? seq.gsub(/I/,'L') : seq
 
-      total_data = (go_result.key? seq_index) ? go_result[seq_index][:total] : 0
-      go_data = (go_result.key? seq_index) ? go_result[seq_index][:go] : []
-      ec_data = (ec_result.key? seq_index) ? ec_result[seq_index][:ec] : []
-      lca_data = (lca_result.key? seq_index) ? lca_result[seq_index][:lca] : []
-
-      @result[seq_index] = {
-          :total => total_data,
-          :go => go_data,
-          :ec => ec_data,
-          :lca => lca_data
-      }
+      if go_result.key? seq_index
+        @result[seq_index] = {
+            :total => go_result[seq_index][:total],
+            :go => go_result[seq_index][:go],
+            :ec => ec_result[seq_index][:ec],
+            :lca => lca_result[seq_index]
+        }
+      end
     end
 
 
@@ -169,7 +164,6 @@ class Api::ApiController < ApplicationController
   # param[split]: "true" or "false", optional, Should GO_terms be split according to namespace?
   def pept2go
     @result = pept2go_helper
-    puts @input_order.inspect
     respond_with(@result)
   end
 
@@ -342,9 +336,6 @@ class Api::ApiController < ApplicationController
     go_terms = []
 
     @sequences = Sequence.where(sequence: @input)
-
-    puts @input.inspect
-    puts @sequences.inspect
 
     @sequences.each do |seq|
       fa = seq.calculate_fa(@equate_il)
