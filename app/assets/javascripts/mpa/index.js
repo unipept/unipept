@@ -43,26 +43,32 @@ class MPA {
             onlyStarredFA: false,
         };
 
-        for (let name of selectedDatasets) {
-            let dataset = this.datasetManager.loadDataset(name);
-
-            this.searchTerms.push({
-                id: 1,
-                term: "Organism"
-            });
-
-            this.searchSettings.push({
-                il: il,
-                dupes: dupes,
-                missed: missed,
-            });
-        }
-
         // Stores the current dataset that's being worked with
         this.currentDataSet = 0;
 
-        this.addDataset(peptides);
-        this.setUpForm(peptides);
+        let peptideLists = [];
+        for (let name of selectedDatasets) {
+            let dataset = this.datasetManager.loadDataset(name);
+
+            // Check if dataset does indeed exist in the local storage
+            if (dataset) {
+                this.searchTerms.push({
+                    id: 1,
+                    term: "Organism"
+                });
+
+                this.searchSettings.push(dataset.configuration);
+                this.names.push(dataset.name);
+                peptideLists.push(dataset.peptides);
+            } else {
+                // TODO show an appropriate error message
+            }
+        }
+
+        this.processDatasets(peptideLists);
+
+        // TODO fix form for multiple datasets
+        //this.setUpForm(peptides);
         this.setUpButtons();
         this.setUpHelp();
         this.setUpSaveImage();
