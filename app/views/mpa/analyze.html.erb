@@ -271,19 +271,10 @@
 <div id="tooltip" class="tip"></div>
 
 <script type="text/javascript">
-  var peptides = <%= raw(@peptides == '["sessionstorage"]' ? '[]' : @peptides) %>;
-<% if @peptides == '["sessionstorage"]' %>
-  var qs  = window.sessionStorage.getItem("mpaData");
-  $("#qs").val(qs);
-  peptides = qs.replace(/\r/g,"").split("\n");
-<% end %>
-  var il = <%= @il %>;
-  var dupes = <%= @dupes %>;
-  var missed = <%= @missed %>;
-  var name = '<%= @name %>';
+  var selectedDatasets = <%= @selected_datasets %>;
 
   $(function () {
-      new MPA(peptides, il, dupes, missed, name);
+      new MPA(selectedDatasets);
   });
 </script>
 

@@ -8,6 +8,7 @@ import {showNotification} from "../notifications.js";
 import {addCopy, downloadDataByForm, logToGoogle, numberToPercent, stringTitleize, toCSVString, triggerDownloadModal, showError} from "../utils.js";
 import {Dataset} from "./dataset.js";
 import {constructSearchtree} from "./searchtree.js";
+import {DatasetManager} from "./datasetManager";
 /* eslint require-jsdoc: off */
 
 /**
@@ -24,33 +25,38 @@ import {constructSearchtree} from "./searchtree.js";
 class MPA {
     /**
      * Setup the MPA gui
-     * @param {string[]} peptides List of peptides to analyse
-     * @param {boolean} il equate I and L
-     * @param {boolean} dupes Filter duplicate peptides
-     * @param {boolean} missed  Advanced missed cleavage handling
-     * @param {string} name The current dataset name
+     * @param {string[]} selectedDatasets List of all datasets that should be compared and loaded
      */
-    constructor(peptides = [], il = true, dupes = true, missed = false, name = '') {
+    constructor(selectedDatasets = []) {
+        this.datasetManager = new DatasetManager();
+
         /** @type {Dataset[]} */
         this.datasets = [];
-        this.names = [name];
+        this.names = [];
+
         /** @type {MPAConfig[]} */
         this.searchSettings = [];
-        this.searchTerms = [{
-            id: 1,
-            term: "Organism"
-        }];
-
-        this.searchSettings.push({
-            il: il,
-            dupes: dupes,
-            missed: missed,
-        });
+        this.searchTerms = [];
 
         // @ts-ignore because it will be filled by setUpButtons
         this.displaySettings = {
             onlyStarredFA: false,
         };
+
+        for (let name of selectedDatasets) {
+            let dataset = this.datasetManager.loadDataset(name);
+
+            this.searchTerms.push({
+                id: 1,
+                term: "Organism"
+            });
+
+            this.searchSettings.push({
+                il: il,
+                dupes: dupes,
+                missed: missed,
+            });
+        }
 
         // Stores the current dataset that's being worked with
         this.currentDataSet = 0;
@@ -72,6 +78,34 @@ class MPA {
     }
 
     /**
+     * This function processes all given lists of peptides one by one and creates a new Dataset for each of them. The
+     * GUI is disabled while this operation is running to avoid synchronization issues caused by the user.
+     *
+     * @param {String[][]} peptideLists A list of lists of peptides. Every list of peptides corresponds with one
+     *        dataset.
+     * @returns {Promise<void>}
+     */
+    async processDatasets(peptideLists) {
+        this.enableProgressBar(true, true);
+        this.enableProgressBar(true, false, "#progress-fa-analysis");
+        this.disableGui();
+        for (let peptideList of peptideLists) {
+            await this.processDataset(peptideList);
+        }
+        this.setUpDatasetButtons();
+        this.enableProgressBar(false);
+        this.disableGui(false);
+    }
+
+    async processDataset(peptides) {
+        let dataset = new Dataset(peptides);
+        this.datasets.push(dataset);
+        this.currentDataSet = this.datasets.length - 1;
+        this.setUpDatasetButtons();
+        await this.analyse(this.searchSettings[this.currentDataSet]);
+    }
+
+    /**
      * Creates a new dataset based on a list of peptides. After creating, an
      * analysis is run with the current search settings. The returned Promise
      * contains the new dataset and resolves after the analysis is complete.
@@ -83,11 +117,7 @@ class MPA {
         this.enableProgressBar(true, true);
         this.enableProgressBar(true, false, "#progress-fa-analysis");
         this.disableGui();
-        let dataset = new Dataset(peptides);
-        this.datasets.push(dataset);
-        this.currentDataSet = this.datasets.length - 1;
-        this.setUpDatasetButtons();
-        await this.analyse(this.searchSettings[this.currentDataSet]);
+        await this.processDataset(peptides);
         this.enableProgressBar(false);
         this.disableGui(false);
         return dataset;

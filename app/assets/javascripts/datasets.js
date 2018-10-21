@@ -25,7 +25,7 @@ function initDatasets() {
         $("#search_button").hide();
         $("#form-progress").removeClass("hide");
 
-        let peptides = $("#qs").val().split("\n");
+        let peptides = $("#qs").val().replace(/\r/g,"").split("\n");
         let equateIl = $("#il").is(":checked");
         let dupes = $("#dupes").is(":checked");
         let missed = $("#missed").is(":checked");
