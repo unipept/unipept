@@ -98,7 +98,6 @@ class MPA {
         for (let peptideList of peptideLists) {
             await this.processDataset(peptideList);
         }
-        this.setUpDatasetButtons();
         this.enableProgressBar(false);
         this.disableGui(false);
     }

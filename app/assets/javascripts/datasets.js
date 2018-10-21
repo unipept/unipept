@@ -21,9 +21,11 @@ function initDatasets() {
     });
 
     // add progress bar when submitting form
-    $("#search-multi-form").click(function (e) {
-        $("#search_button").hide();
-        $("#form-progress").removeClass("hide");
+    $("#add_button").click(function (e) {
+        let $searchButton = $("#search-button");
+        let $formProgress = $("#form-progress");
+        $searchButton.hide();
+        $formProgress.removeClass("hide");
 
         let peptides = $("#qs").val().replace(/\r/g,"").split("\n");
         let equateIl = $("#il").is(":checked");
@@ -38,6 +40,9 @@ function initDatasets() {
         }, search);
 
         renderLocalStorageItem(name, dataSetManager);
+
+        $searchButton.show();
+        $formProgress.addClass("hide");
 
         // TODO (pverscha): remove session storage once local storage is fully implemented
         // let sessionStorageSucceeded = false;
