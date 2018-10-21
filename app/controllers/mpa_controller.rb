@@ -5,13 +5,7 @@ class MpaController < ApplicationController
   def analyze
     @header_class = 'MPA'
     @title = 'Metaproteomics analysis result'
-    @input_data = JSON.parse!(params[:data])
-    puts @input_data.inspect
-    # @peptides = (params[:qs] || '').lines.map(&:strip).to_json
-    # @name = params[:search_name]
-    # @il = params[:il].present?
-    # @dupes = params[:dupes].present?
-    # @missed = params[:missed].present?
+    @selected_datasets = params[:data]
   end
 
   def pept2data

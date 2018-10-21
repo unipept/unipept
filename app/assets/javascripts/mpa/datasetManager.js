@@ -71,6 +71,21 @@ class DatasetManager {
     }
 
     /**
+     * Look up the given name in local storage and load all data associated with it.
+     *
+     * @param {String} name The name of the data set that should be looked up.
+     * @return An object containing the name, the peptides and the configuration of the dataset associated with the
+     *         given name. Returns null when a dataset with the given name was not found in local storage.
+     */
+    loadDataset(name) {
+        let serializedData = this.localStorage.getItem(this.prefix + name);
+        if (serializedData != null) {
+            return JSON.parse(serializedData);
+        }
+        return null;
+    }
+
+    /**
      * Remove a specific dataset from local storage.
      *
      * @param name Name of the dataset that should be removed from local storage.
