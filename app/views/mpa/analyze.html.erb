@@ -271,7 +271,7 @@
 <div id="tooltip" class="tip"></div>
 
 <script type="text/javascript">
-  var selectedDatasets = <%= @selected_datasets %>;
+  var selectedDatasets = <%= raw(@selected_datasets) %>;
 
   $(function () {
       new MPA(selectedDatasets);

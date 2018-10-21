@@ -5,7 +5,13 @@ class MpaController < ApplicationController
   def analyze
     @header_class = 'MPA'
     @title = 'Metaproteomics analysis result'
-    @selected_datasets = params[:data]
+    @selected_datasets = JSON.parse!(params[:data])
+    # Sanitize data here before embedding it in the HTML-template to avoid XSS
+    @selected_datasets.map do |value|
+      ActionController::Base.helpers.sanitize(value)
+    end
+
+
   end
 
   def pept2data
