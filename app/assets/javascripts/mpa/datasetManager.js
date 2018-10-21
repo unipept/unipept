@@ -97,11 +97,16 @@ class DatasetManager {
      * Removes all datasets from local storage.
      */
     async clearStorage() {
+        let toRemove = [];
         for (let i = 0; i < window.localStorage.length; i++) {
             let key = window.localStorage.key(i);
             if (key.startsWith(this.prefix)) {
-                window.localStorage.removeItem(key);
+                toRemove.push(key);
             }
+        }
+
+        for (let key of toRemove) {
+            window.localStorage.removeItem(key);
         }
 
         this._selectedDatasets = [];

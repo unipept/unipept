@@ -5,12 +5,26 @@ import {get, getJSON, highlight, logToGoogle, showError, showInfo} from "./utils
 /* eslint-disable require-jsdoc */
 
 function enableProgressIndicators(enable = true) {
+    let $searchName = $("#search_name");
+    let $searchButton = $("#search_button");
+    let $formProgress = $("#form-progress");
+    let $qs = $("#qs");
+    let $il = $("#il");
+    let $dupes = $("#dupes");
+    let $missed = $("#missed");
+
+    $searchName.prop('disabled', enable);
+    $qs.prop('disabled', enable);
+    $il.prop('disabled', enable);
+    $dupes.prop('disabled', enable);
+    $missed.prop('disabled', enable);
+
     if (enable) {
-        $("#search-button").hide();
-        $("#form-progress").removeClass("hide");
+        $searchButton.hide();
+        $formProgress.removeClass("hide");
     } else {
-        $("#search-button").show();
-        $("#form-progress").addClass("hide");
+        $searchButton.show();
+        $formProgress.addClass("hide");
     }
 }
 
@@ -45,7 +59,7 @@ function initDatasets() {
             dupes: dupes,
             missed: missed
         }, search)
-            .then(name => renderLocalStorageItems(name, dataSetManager))
+            .then(name => renderLocalStorageItem(name, dataSetManager))
             .catch(err => {
                 showError(err, "Something went wrong while storing your peptides. Check whether local storage is enabled and supported by your browser.")
             })
@@ -258,7 +272,6 @@ function constructDatasetLoader() {
     that.loadDataset = function loadDataset(type, id, name, button) {
         // expand the search options and prepare the form
         $("#qs").val("Please wait while we load the dataset...");
-        $("#qs").attr("disabled", "disabled");
         enableProgressIndicators();
         $("#search-multi-form").button("loading");
         let startTimer = new Date().getTime();
@@ -298,7 +311,6 @@ function constructDatasetLoader() {
 
         let always = function () {
             // enable the form elements
-            $("#qs").attr("disabled", false);
             $("#search-multi-form").button("reset");
             if (button) {
                 button.button("reset");
