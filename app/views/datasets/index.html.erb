@@ -16,6 +16,10 @@
 
 <%= render 'shared/multi_search_intro' %>
 
+<form id='send_data_form' action='<%= :mpa %>' method='post'>
+  <input id='data_input' type='hidden' name='data' value='' />
+</form>
+
 <script type="text/javascript">
   $(document).ready(initDatasets);
 </script>

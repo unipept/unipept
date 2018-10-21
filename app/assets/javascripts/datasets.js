@@ -66,6 +66,16 @@ function initDatasets() {
         renderLocalStorageItems();
     });
 
+    $("#search_selected_datasets_button").click(function() {
+        let content = dataSetManager.getSelectedDatasets();
+
+        let $dataForm = $("#send_data_form");
+        let $dataInput = $("#data_input");
+
+        $dataInput.val(JSON.stringify(content));
+        $dataForm.submit();
+    });
+
     // track the use of the export checkbox
     $("#export").change(function () {
         logToGoogle("Multi Peptide", "Export");
