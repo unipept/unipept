@@ -5,7 +5,7 @@ import ECNumbers from "../fa/ecnumbers.js";
 import GOTerms from "../fa/goterms.js";
 import {showInfoModal} from "../modal.js";
 import {showNotification} from "../notifications.js";
-import {addCopy, downloadDataByForm, logToGoogle, numberToPercent, stringTitleize, toCSVString, triggerDownloadModal, showError} from "../utils.js";
+import {addCopy, downloadDataByForm, logToGoogle, numberToPercent, stringTitleize, toCSVString, triggerDownloadModal, showError, showInfo} from "../utils.js";
 import {Dataset} from "./dataset.js";
 import {constructSearchtree} from "./searchtree.js";
 import {DatasetManager} from "./datasetManager";
@@ -46,26 +46,7 @@ class MPA {
         // Stores the current dataset that's being worked with
         this.currentDataSet = 0;
 
-        let peptideLists = [];
-        for (let name of selectedDatasets) {
-            let dataset = this.datasetManager.loadDataset(name);
-
-            // Check if dataset does indeed exist in the local storage
-            if (dataset) {
-                this.searchTerms.push({
-                    id: 1,
-                    term: "Organism"
-                });
-
-                this.searchSettings.push(dataset.configuration);
-                this.names.push(dataset.name);
-                peptideLists.push(dataset.peptides);
-            } else {
-                // TODO show an appropriate error message
-            }
-        }
-
-        this.processDatasets(peptideLists);
+        this.processDatasets(selectedDatasets);
 
         // TODO fix form for multiple datasets
         //this.setUpForm(peptides);
@@ -84,19 +65,35 @@ class MPA {
     }
 
     /**
-     * This function processes all given lists of peptides one by one and creates a new Dataset for each of them. The
-     * GUI is disabled while this operation is running to avoid synchronization issues caused by the user.
+     * This function processes every dataset indicated by name from the given list of dataset names.
      *
-     * @param {String[][]} peptideLists A list of lists of peptides. Every list of peptides corresponds with one
-     *        dataset.
+     * @param {String[]} names A list of names of all datasets that should be processed.
      * @returns {Promise<void>}
      */
-    async processDatasets(peptideLists) {
+    async processDatasets(names) {
         this.enableProgressBar(true, true);
         this.enableProgressBar(true, false, "#progress-fa-analysis");
         this.disableGui();
-        for (let peptideList of peptideLists) {
-            await this.processDataset(peptideList);
+        for (let name of names) {
+            try {
+                let dataset = await this.datasetManager.loadDataset(name);
+
+                // Check if dataset does indeed exist in the local storage
+                if (dataset) {
+                    this.searchTerms.push({
+                        id: 1,
+                        term: "Organism"
+                    });
+
+                    this.searchSettings.push(dataset.configuration);
+                    this.names.push(dataset.name);
+                    await this.processDataset(dataset.peptides);
+                } else {
+                    showInfo("Dataset " + name + " was not found in local storage and is not included in the comparison.");
+                }
+            } catch(err) {
+                showError(err, "Something went wrong while loading dataset " + name + ".");
+            }
         }
         this.enableProgressBar(false);
         this.disableGui(false);

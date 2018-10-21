@@ -4,6 +4,16 @@ import {get, getJSON, highlight, logToGoogle, showError, showInfo} from "./utils
 
 /* eslint-disable require-jsdoc */
 
+function enableProgressIndicators(enable = true) {
+    if (enable) {
+        $("#search-button").hide();
+        $("#form-progress").removeClass("hide");
+    } else {
+        $("#search-button").show();
+        $("#form-progress").addClass("hide");
+    }
+}
+
 function initDatasets() {
     let datasetLoader = constructDatasetLoader();
     let dataSetManager = new DatasetManager();
@@ -22,10 +32,7 @@ function initDatasets() {
 
     // add progress bar when submitting form
     $("#add_button").click(function (e) {
-        let $searchButton = $("#search-button");
-        let $formProgress = $("#form-progress");
-        $searchButton.hide();
-        $formProgress.removeClass("hide");
+        enableProgressIndicators();
 
         let peptides = $("#qs").val().replace(/\r/g,"").split("\n");
         let equateIl = $("#il").is(":checked");
@@ -33,42 +40,25 @@ function initDatasets() {
         let missed = $("#missed").is(":checked");
         let search = $("#search_name").val();
 
-        let name = dataSetManager.storeDataset(peptides, {
+        dataSetManager.storeDataset(peptides, {
             il: equateIl,
             dupes: dupes,
             missed: missed
-        }, search);
-
-        renderLocalStorageItem(name, dataSetManager);
-
-        $searchButton.show();
-        $formProgress.addClass("hide");
-
-        // TODO (pverscha): remove session storage once local storage is fully implemented
-        // let sessionStorageSucceeded = false;
-        // try {
-        //     let storage = window.sessionStorage;
-        //     storage.setItem("mpaData", $("#qs").val());
-        //     if (storage.getItem("mpaData") === $("#qs").val()) {
-        //         sessionStorageSucceeded = true;
-        //         $("#qs").removeAttr("name").attr("form", "nonexistentform"); // don't send qs over wire
-        //         $(this).closest("form").append("<input type='hidden' name='qs' value='sessionstorage'/>");
-        //     }
-        // } catch (e) {
-        //     sessionStorageSucceeded = false;
-        // }
-        //
-        // showNotification(sessionStorageSucceeded ? "Starting analysis…" : "Sending peptides…", {
-        //     autoHide: false,
-        //     loading: true,
-        // });
-        //
-        // $("#")
+        }, search)
+            .then(name => renderLocalStorageItems(name, dataSetManager))
+            .catch(err => {
+                showError(err, "Something went wrong while storing your peptides. Check whether local storage is enabled and supported by your browser.")
+            })
+            .finally(() => enableProgressIndicators(false))
     });
 
     $("#remove_all_datasets_button").click(function() {
-        dataSetManager.clearStorage();
-        renderLocalStorageItems();
+        dataSetManager.clearStorage()
+            .catch(err => showError(err, "Unable to clear local storage. Check whether local storage is enabled and supported by your browser."))
+            .finally(() => {
+                renderLocalStorageItems(dataSetManager);
+                enableProgressIndicators(false);
+            });
     });
 
     $("#search_selected_datasets_button").click(function() {
@@ -145,11 +135,16 @@ function initPreload(type, id) {
 
 function renderLocalStorageItems(datasetManager) {
     $("#selected-items-body").html("");
+    enableProgressIndicators();
 
-    let allDatasets = datasetManager.listDatasets();
-    for (let i = 0; i < allDatasets.length; i++) {
-        renderLocalStorageItem(allDatasets[i], datasetManager);
-    }
+    datasetManager.listDatasets()
+        .then(allDatasets => {
+            for (let i = 0; i < allDatasets.length; i++) {
+                renderLocalStorageItem(allDatasets[i], datasetManager);
+            }
+        })
+        .catch(err => showError(err, "Something went wrong while loading your datasets. Check whether local storage is enabled and supported by your browser."))
+        .finally(enableProgressIndicators(false));
 }
 
 function renderLocalStorageItem(name, datasetManager) {
@@ -168,8 +163,10 @@ function renderLocalStorageItem(name, datasetManager) {
     let $removeButton = $("<span class='glyphicon glyphicon-remove' title='Remove dataset' data-dataset='" + name + "'></span>");
     $removeButton.click(function() {
         let datasetName = $(this).data("dataset");
-        datasetManager.removeDataset(datasetName);
-        renderLocalStorageItems(datasetManager);
+        enableProgressIndicators();
+        datasetManager.removeDataset(datasetName)
+            .catch(err => showError(err, "Something went wrong while removing a dataset. Check whether local storage is enabled and supported by your browser."))
+            .finally(() => renderLocalStorageItems(datasetManager));
     });
     $row.append($("<td>").append($removeButton));
     $body.append($row);
@@ -198,6 +195,7 @@ function constructDatasetLoader() {
         let batchSize = 1000,
             peptides = [],
             e;
+
 
         $("#pride-progress").show("fast");
         $("#pride-progress .progress-bar").css("width", "10%");
@@ -261,6 +259,7 @@ function constructDatasetLoader() {
         // expand the search options and prepare the form
         $("#qs").val("Please wait while we load the dataset...");
         $("#qs").attr("disabled", "disabled");
+        enableProgressIndicators();
         $("#search-multi-form").button("loading");
         let startTimer = new Date().getTime();
         let toast = showNotification("Loading dataset...", {
@@ -305,8 +304,7 @@ function constructDatasetLoader() {
                 button.button("reset");
             }
             toast.hide();
-            $("#search_button").show();
-            $("#form-progress").addClass("hide");
+            enableProgressIndicators(false);
         };
 
         let request = type === "internal" ? loadInternalDataset(id) : loadPrideDataset(id);

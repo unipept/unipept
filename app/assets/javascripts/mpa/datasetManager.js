@@ -3,7 +3,6 @@
  */
 class DatasetManager {
     constructor() {
-        this.localStorage = window.localStorage;
         // The prefix that's used to identify the mpa-datasets in local storage.
         this.prefix = 'mpa-';
         this._selectedDatasets = [];
@@ -40,10 +39,10 @@ class DatasetManager {
      *
      * @return {String[]} A list containing all names of the datasets stored in local storage.
      */
-    listDatasets() {
+    async listDatasets() {
         let output = [];
-        for (let i = 0; i < this.localStorage.length; i++) {
-            let key = this.localStorage.key(i);
+        for (let i = 0; i < window.localStorage.length; i++) {
+            let key = window.localStorage.key(i);
             if (key.startsWith(this.prefix)) {
                 output.push(key.substr(this.prefix.length))
             }
@@ -59,14 +58,14 @@ class DatasetManager {
      * @param {String} name Optional, name of the dataset.
      * @return {String} The name that was eventually used to store this dataset.
      */
-    storeDataset(peptides, configuration, name = "") {
+    async storeDataset(peptides, configuration, name = "") {
         // TODO how should we name nameless datasets?
         if (!name) {
             name = "Dataset"
         }
 
         let serialized = this._serialize(peptides, configuration, name);
-        this.localStorage.setItem(this.prefix + name, serialized);
+        window.localStorage.setItem(this.prefix + name, serialized);
         return name;
     }
 
@@ -77,8 +76,8 @@ class DatasetManager {
      * @return An object containing the name, the peptides and the configuration of the dataset associated with the
      *         given name. Returns null when a dataset with the given name was not found in local storage.
      */
-    loadDataset(name) {
-        let serializedData = this.localStorage.getItem(this.prefix + name);
+    async loadDataset(name) {
+        let serializedData = window.localStorage.getItem(this.prefix + name);
         if (serializedData != null) {
             return JSON.parse(serializedData);
         }
@@ -90,18 +89,18 @@ class DatasetManager {
      *
      * @param name Name of the dataset that should be removed from local storage.
      */
-    removeDataset(name) {
-        this.localStorage.removeItem(this.prefix + name);
+    async removeDataset(name) {
+        window.localStorage.removeItem(this.prefix + name);
     }
 
     /**
      * Removes all datasets from local storage.
      */
-    clearStorage() {
-        for (let i = 0; i < this.localStorage.length; i++) {
-            let key = this.localStorage.key(i);
+    async clearStorage() {
+        for (let i = 0; i < window.localStorage.length; i++) {
+            let key = window.localStorage.key(i);
             if (key.startsWith(this.prefix)) {
-                this.localStorage.removeItem(key);
+                window.localStorage.removeItem(key);
             }
         }
 
