@@ -3,77 +3,41 @@
   <%= javascript_pack_tag 'mpa' %>
 <% end %>
 
-<!-- TODO: This should be merged with the code in shared/_sequence_multi_search.html.erb -->
-<div class='card' id='add_dataset_form'>
-  <div class='card-title card-title-colored' id='expand_add_dataset_button'>
-    <h2 class='card-title-text'>
-      <span class='glyphicon glyphicon-chevron-right' id='add_dataset_chevron' style='margin-right: 5px'></span>
-      Add dataset
-    </h2>
-  </div>
-  <div class='card-supporting-text' id='add_dataset_form_content' style='display: none;'>
-    <div id="search_elements" class='form-group'>
-      <label for="form_peptide_list">Peptide list</label>
-      <%= text_area_tag(:form_peptide_list, nil, :rows => 7, :spellcheck => "false", :class => "form-control", :id => "form-peptide-list", autofocus: "true") %>
+<div class='row'>
+  <div class='col-xs-6'>
+    <div class='card'>
+      <div class='card-title card-title-colored' id='expand_add_dataset_button'>
+      <h2 class='card-title-text'>
+        Metaproteomics Analysis
+      </h2>
     </div>
-    <div class="form-group">
-      <label for="search_name">Name this search <small class='secondary-text'>optional</small></label>
-      <%= text_field_tag('search_name', nil, :placeholder => 'e.g. Sample B5', :class => "form-control js-has-focus-tooltip", :id => "form-search-name", title: "This name will be shown on the results page. Handy if you have many open tabs.")%>
-    </div>
-    <div class="checkbox">
-      <%= label_tag(:form_equate_il, check_box_tag(:form_equate_il, 1, true) + " Equate I and L", title: "Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries.", class: 'js-has-hover-tooltip') %>
-    </div>
-    <div class="checkbox">
-      <%= label_tag(:form_duplicates, check_box_tag(:form_duplicates, 1, true) + " Filter duplicate peptides", title: "Remove duplicate peptides from the input before searching.", class:'js-has-hover-tooltip') %>
-    </div>
-    <div class="checkbox">
-      <%= label_tag(:form_missing_cleavage, check_box_tag(:form_missing_cleavage, 1, false) + " Advanced missed cleavage handling", title: "Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!", class: 'js-has-hover-tooltip') %>
-    </div>
-
-    <div id="search_button" class='search-buttons-centered'>
-      <%= button_tag(raw("<span class='glyphicon glyphicon-plus grow'></span> Add"), :type => "submit", :class => "btn btn-primary btn-animate gui-item", :id =>"mpa-add-dataset") %>
-    </div>
-  </div>
-</div>
-
-<div id='dataset_selection_buttons' style='margin-bottom: 10px'>
-</div>
-
-<div class='card'>
-  <div class='card-title card-title-colored'>
-    <h2 class='card-title-text'>Metaproteomics Analysis<%= " — #{@name}" if @name.present? %></h2>
-  </div>
-  <div id="progress-analysis" class="unipept-progress unipept-progress-indeterminate">
-    <div class="progressbar bar bar1" style="width: 0%;"></div>
-    <div class="bufferbar bar bar2" style="width: 100%;"></div>
-    <div class="auxbar bar bar3" style="width: 0%;"></div>
-  </div>
-  <div class='card-supporting-text'>
-    <div class='col-xs-6'>
-        <span id="search-intro">Please wait while we are preparing your data...</span>
-        <hr>
-        <div class="checkbox">
-          <%= label_tag(:il, check_box_tag(:il, 1, false, :class => 'gui-item') + " Equate I and L", title: "Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries.", class: 'js-has-hover-tooltip') %>
+      <div id="progress-analysis" class="unipept-progress unipept-progress-indeterminate">
+        <div class="progressbar bar bar1" style="width: 0;"></div>
+        <div class="bufferbar bar bar2" style="width: 100%;"></div>
+        <div class="auxbar bar bar3" style="width: 0;"></div>
+      </div>
+      <div class='card-supporting-text' id='add_dataset_form_content'>
+        <div class='col-xs-6' id='dataset_selection_buttons'>
         </div>
-        <div class="checkbox">
-          <%= label_tag(:dupes, check_box_tag(:dupes, 1, false, :class => 'gui-item') + " Filter duplicate peptides", title: "Remove duplicate peptides from the input before searching.", class:'js-has-hover-tooltip') %>
-        </div>
-        <div class="checkbox">
-          <%= label_tag(:missed, check_box_tag(:missed, 1, false, :class => 'gui-item') + " Advanced missed cleavage handling", title: "Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!", class: 'js-has-hover-tooltip') %>
-        </div>
+      </div>
+    </div>
+  </div>
+  <div class='col-xs-6'>
+    <div class='card' id='add_dataset_form'>
+      <div class='card-title card-title-colored' id='expand_add_dataset_button'>
+        <h2 class='card-title-text'>
+          Dataset
+        </h2>
+      </div>
+      <div class='card-supporting-text'>
+        <%= render('shared/sequence_multi_search_form') %>
         <div id="search_button" class='search-buttons-centered'>
-          <%= button_tag(raw("<span class='glyphicon glyphicon-refresh spin'></span> Update"), :class => "btn btn-primary btn-animate gui-item", :id =>"mpa-update-settings", :"data-loading-text" => "Loading...") %>
-          <%= button_tag(raw("<span class='glyphicon glyphicon-download down'></span> Download results"), :class => "btn btn-animate gui-item", :id =>"mpa-download-results", :"data-loading-text" => "Loading...") %>
+          <%= button_tag(raw("<span class='glyphicon glyphicon-plus grow'></span> Add"), :class => "btn btn-primary btn-animate input-item", :id =>"mpa-add-dataset") %>
         </div>
-    </div>
-    <div class='col-xs-6'>
-      <div id="search_elements" class='form-group'>
-        <%= text_area_tag(:qs, nil, rows: 8, spellcheck: false, class: "form-control", disabled: true) %>
       </div>
     </div>
   </div>
 </div>
-
 
 <div class='card card-nav'>
   <div class='card-title card-title-colored'>
