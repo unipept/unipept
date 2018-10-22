@@ -46,10 +46,9 @@ class MPA {
         // Stores the current dataset that's being worked with
         this.currentDataSet = 0;
 
+        this.enableMultipleDatasetsProgress(false);
         this.processDatasets(selectedDatasets);
 
-        // TODO fix form for multiple datasets
-        //this.setUpForm(peptides);
         this.setUpButtons();
         this.setUpHelp();
         this.setUpSaveImage();
@@ -73,10 +72,13 @@ class MPA {
     async processDatasets(names) {
         this.enableProgressBar(true, true);
         this.enableProgressBar(true, false, "#progress-fa-analysis");
+        this.enableMultipleDatasetsProgress(true, names.length);
         this.disableGui();
-        for (let name of names) {
+        for (let i = 0; i < names.length; i++) {
+            let name = names[i];
             try {
                 let dataset = await this.datasetManager.loadDataset(name);
+                eventBus.emit('progress-multiple-datasets', i + 1);
 
                 // Check if dataset does indeed exist in the local storage
                 if (dataset) {
@@ -97,6 +99,7 @@ class MPA {
         }
         this.enableProgressBar(false);
         this.disableGui(false);
+        this.enableMultipleDatasetsProgress(false);
     }
 
     // TODO Add special class for local storage data.
@@ -720,6 +723,9 @@ class MPA {
         let $listItem = $("<div class='list-item--three-lines'>");
         let $primaryAction = $("<span class='list-item-primary-action'>");
         let $sampleCheckbox = $("<input type='radio' value='' class='input-item select-dataset-radio-button' disabled>");
+        // Disable other radio buttons of list and enable current one.
+        $(".select-dataset-radio-button").prop("checked", false);
+        $sampleCheckbox.prop("checked", true);
         $primaryAction.append($sampleCheckbox);
         $listItem.append($primaryAction);
         let $primaryContent = $("<span class='list-item-primary-content'>");
@@ -1040,6 +1046,24 @@ class MPA {
 
     setProgressValue(value = 0, barSelector = "#progress-analysis") {
         $(`${barSelector} .progressbar`).css("width", `${value * 100}%`);
+    }
+
+    enableMultipleDatasetsProgress(enable = true, total = 0) {
+        console.log("Multiple datasets with " + enable);
+
+        $("#multiple-datasets-progress-total").text(total);
+
+        if (enable) {
+            $("#multiple-datasets-progress").show();
+            eventBus.on("progress-multiple-datasets", this.setMultipleDatasetsProgressValue);
+        } else {
+            $("#multiple-datasets-progress").hide();
+            eventBus.off("progress-multiple-datasets", this.setMultipleDatasetsProgressValue);
+        }
+    }
+
+    setMultipleDatasetsProgressValue(value = 0) {
+        $("#multiple-datasets-progress-current").text(value);
     }
 
     tooltipContent(d) {
