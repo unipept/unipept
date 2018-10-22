@@ -37,17 +37,21 @@ class DatasetManager {
     /**
      * List all datasets that are stored in local storage memory.
      *
-     * @return {String[]} A list containing all names of the datasets stored in local storage.
+     * // TODO specific local storage dataset class
+     * @return A list containing all datasets stored in local storage and sorted alphabetically by name.
      */
     async listDatasets() {
         let output = [];
         for (let i = 0; i < window.localStorage.length; i++) {
             let key = window.localStorage.key(i);
             if (key.startsWith(this.prefix)) {
-                output.push(key.substr(this.prefix.length))
+                let dataset = await this.loadDataset(key.substr(this.prefix.length));
+                output.push(dataset)
             }
         }
-        return output
+        return output.sort(function(a, b) {
+            return a.name < b.name;
+        })
     }
 
     /**

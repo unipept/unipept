@@ -50,7 +50,7 @@ function initDatasets() {
             dupes: dupes,
             missed: missed
         }, search)
-            .then(name => renderLocalStorageItem(name, dataSetManager))
+            .then(dataset => renderLocalStorageItem(dataset, dataSetManager))
             .catch(err => {
                 showError(err, "Something went wrong while storing your peptides. Check whether local storage is enabled and supported by your browser.")
             })
@@ -152,20 +152,21 @@ function renderLocalStorageItems(datasetManager) {
         .finally(enableProgressIndicators(false));
 }
 
-function renderLocalStorageItem(name, datasetManager) {
+function renderLocalStorageItem(dataset, datasetManager) {
     // Use jQuery to build elements to prevent XSS attacks
     let $body = $("#selected-items-body");
     let $row = $("<tr>");
-    let $checkBox = $("<input type='checkbox' class='select-dataset-button' data-dataset='" + name + "' />");
-    $checkBox.prop("checked", datasetManager.isDatasetSelected(name));
+    let $checkBox = $("<input type='checkbox' class='select-dataset-button' data-dataset='" + dataset.name + "' />");
+    $checkBox.prop("checked", datasetManager.isDatasetSelected(dataset.name));
     $checkBox.click(function() {
         let datasetName = $(this).data("dataset");
         let selected = datasetManager.toggleDataset(datasetName);
         $(this).prop("checked", selected);
     });
     $row.append($("<td>").append($checkBox));
-    $row.append($("<td>").text(name));
-    let $removeButton = $("<span class='glyphicon glyphicon-remove' title='Remove dataset' data-dataset='" + name + "'></span>");
+    $row.append($("<td>").text(dataset.name));
+    $row.append($("<td>").text(dataset.date));
+    let $removeButton = $("<span class='glyphicon glyphicon-remove' title='Remove dataset' data-dataset='" + dataset.name + "'></span>");
     $removeButton.click(function() {
         let datasetName = $(this).data("dataset");
         enableProgressIndicators();
