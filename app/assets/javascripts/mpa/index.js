@@ -99,6 +99,7 @@ class MPA {
         this.disableGui(false);
     }
 
+    // TODO Add special class for local storage data.
     async processDataset(data) {
         let dataset = new Dataset(data.peptides);
         this.datasets.push(dataset);
@@ -106,6 +107,7 @@ class MPA {
 
         this.setUpDatasetButton(data);
         await this.analyse(this.searchSettings[this.currentDataSet]);
+        return dataset;
     }
 
     /**
@@ -120,7 +122,7 @@ class MPA {
         this.enableProgressBar(true, true);
         this.enableProgressBar(true, false, "#progress-fa-analysis");
         this.disableGui();
-        await this.processDataset(peptides);
+        let dataset = await this.processDataset(peptides);
         this.enableProgressBar(false);
         this.disableGui(false);
         return dataset;
@@ -734,7 +736,6 @@ class MPA {
 
         $("#dataset_list").append($listItem);
 
-        // TODO Fix click handlers!
         let that = this;
         $sampleCheckbox.click(function() {
             $(".select-dataset-radio-button").prop("checked", false);
@@ -881,23 +882,37 @@ class MPA {
         });
 
         $("#mpa-add-dataset").click(() => {
-            let peptides = $("#qs").val().split("\n");
+            this.enableProgressBar(true, true);
+            this.enableProgressBar(true, false, "#progress-fa-analysis");
+            this.disableGui();
+
+            let peptides = $("#qs").val().replace(/\r/g,"").split("\n");
             let searchName = $("#search_name").val();
             let equateIl = $("#il").is(':checked');
             let filterDuplicates = $("#dupes").is(':checked');
             let handleMissingCleavage = $("#missed").is(':checked');
 
-            this.searchSettings.push({
+            let config = {
                 il: equateIl,
                 dupes: filterDuplicates,
                 missed: handleMissingCleavage,
-            });
+            };
 
-            this.names.push(searchName);
-
-            // Stores the current dataset that's being worked with
-            this.addDataset(peptides);
-            this.setUpForm(peptides);
+            // TODO what to do with empty searchnames?
+            this.datasetManager.storeDataset(peptides, config, searchName)
+                .then((dataset) => {
+                    this.searchSettings.push(config);
+                    this.names.push(searchName);
+                    this.processDataset(dataset).finally(() => {
+                        this.disableGui(false);
+                        this.enableProgressBar(false);
+                    });
+                })
+                .catch(err => {
+                    this.disableGui(false);
+                    this.enableProgressBar(false);
+                    this.showError(err, "Something went wrong while processing the dataset.")
+                });
         });
     }
 
