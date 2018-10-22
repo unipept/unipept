@@ -5,19 +5,10 @@ import {get, getJSON, highlight, logToGoogle, showError, showInfo} from "./utils
 /* eslint-disable require-jsdoc */
 
 function enableProgressIndicators(enable = true) {
-    let $searchName = $("#search_name");
     let $searchButton = $("#search_button");
     let $formProgress = $("#form-progress");
-    let $qs = $("#qs");
-    let $il = $("#il");
-    let $dupes = $("#dupes");
-    let $missed = $("#missed");
 
-    $searchName.prop('disabled', enable);
-    $qs.prop('disabled', enable);
-    $il.prop('disabled', enable);
-    $dupes.prop('disabled', enable);
-    $missed.prop('disabled', enable);
+    $(".input-item").prop('disabled', enable);
 
     if (enable) {
         $searchButton.hide();

@@ -739,19 +739,8 @@ class MPA {
         })
     }
 
-    setUpExpandDatasetButton() {
-        let datasetChevron = $("#add_dataset_chevron");
-        let addDatasetForm = $("#add_dataset_form_content");
-        $("#expand_add_dataset_button").click(() => {
-            datasetChevron.toggleClass("glyphicon-chevron-right");
-            datasetChevron.toggleClass("glyphicon-chevron-down");
-
-            addDatasetForm.toggle();
-        });
-    }
-
     disableGui(state = true) {
-        $(".gui-item").prop("disabled", state);
+        $(".input-item").prop("disabled", state);
     }
 
     setUpButtons() {
@@ -865,11 +854,11 @@ class MPA {
         });
 
         $("#mpa-add-dataset").click(() => {
-            let peptides = $("#form-peptide-list").val().split("\n");
-            let searchName = $("#form-search-name").val();
-            let equateIl = $("#form_equate_il").is(':checked');
-            let filterDuplicates = $("#form_duplicates").is(':checked');
-            let handleMissingCleavage = $("#form_missing_cleavage").is(':checked');
+            let peptides = $("#qs").val().split("\n");
+            let searchName = $("#search_name").val();
+            let equateIl = $("#il").is(':checked');
+            let filterDuplicates = $("#dupes").is(':checked');
+            let handleMissingCleavage = $("#missed").is(':checked');
 
             this.searchSettings.push({
                 il: equateIl,
@@ -883,8 +872,6 @@ class MPA {
             this.addDataset(peptides);
             this.setUpForm(peptides);
         });
-
-        this.setUpExpandDatasetButton();
     }
 
     setUpHelp() {
