@@ -276,6 +276,58 @@
 .unipept-progress.unipept-progress-indeterminate>.bar1{
     animation-name: indeterminate1;
 }
+
+.list {
+    display: flex;
+    flex-direction: column;
+}
+
+.list > .list-item--three-lines {
+    height: 88px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+.list > .list-item--three-lines > span.list-item-primary-content {
+    height: 52px;
+    display: block;
+    order: 0;
+    flex-grow: 2;
+}
+
+.list > .list-item--three-lines > span.list-item-primary-action {
+    display: flex;
+    margin-right: 16px;
+    height: 52px;
+    align-items: center;
+}
+
+.list > .list-item--three-lines > span.list-item-secondary-action {
+    display: flex;
+    margin-left: 16px;
+    align-items: center;
+    height: 52px;
+}
+
+.list > .list-item--three-lines > span.list-item-primary-content > span {
+    font-size: 16px;
+    color: #202020;
+    line-height: 20px;
+}
+
+.list > .list-item--three-lines > span.list-item-primary-content > span.list-item-date {
+    float: right;
+    font-size: 14px;
+    color: #202020;
+}
+
+.list > .list-item--three-lines > span.list-item-primary-content > span.list-item-body {
+    display: block;
+    font-size: 14px;
+    color: #737373;
+}
+
 @keyframes indeterminate1 {
     0% {
         left: 0%;
