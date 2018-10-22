@@ -721,6 +721,7 @@ class MPA {
         let $listItem = $("<div class='list-item--three-lines'>");
         let $primaryAction = $("<span class='list-item-primary-action'>");
         let $sampleCheckbox = $("<input type='radio' value='' class='input-item select-dataset-radio-button' disabled>");
+        $sampleCheckbox.data("name", data.name);
         // Disable other radio buttons of list and enable current one.
         $(".select-dataset-radio-button").prop("checked", false);
         $sampleCheckbox.prop("checked", true);
@@ -747,6 +748,11 @@ class MPA {
             $(".select-dataset-radio-button").prop("checked", false);
             $sampleCheckbox.prop("checked", true);
             that.currentDataSet = that.names.indexOf($(this).data("name"));
+
+            console.log(that.currentDataSet);
+            console.log($(this).data("name"));
+            console.log(that.names);
+            console.log(that.datasets);
 
             that.enableProgressBar(true, true);
             that.enableProgressBar(true, false, "#progress-fa-analysis");
