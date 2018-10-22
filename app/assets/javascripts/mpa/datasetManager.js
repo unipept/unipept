@@ -56,7 +56,8 @@ class DatasetManager {
      * @param {String[]} peptides List of peptides that should be stored in local storage.
      * @param {MPAConfig} configuration Configuration containing the current state of the search settings.
      * @param {String} name Optional, name of the dataset.
-     * @return {String} The name that was eventually used to store this dataset.
+     * // TODO special class for local storage data
+     * @return The object that was stored in local storage.
      */
     async storeDataset(peptides, configuration, name = "") {
         // TODO how should we name nameless datasets?
@@ -66,7 +67,7 @@ class DatasetManager {
 
         let serialized = this._serialize(peptides, configuration, name);
         window.localStorage.setItem(this.prefix + name, serialized);
-        return name;
+        return JSON.parse(serialized);
     }
 
     /**
