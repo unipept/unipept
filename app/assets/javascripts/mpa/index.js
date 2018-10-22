@@ -87,7 +87,7 @@ class MPA {
 
                     this.searchSettings.push(dataset.configuration);
                     this.names.push(dataset.name);
-                    await this.processDataset(dataset.peptides);
+                    await this.processDataset(dataset);
                 } else {
                     showInfo("Dataset " + name + " was not found in local storage and is not included in the comparison.");
                 }
@@ -99,11 +99,12 @@ class MPA {
         this.disableGui(false);
     }
 
-    async processDataset(peptides) {
-        let dataset = new Dataset(peptides);
+    async processDataset(data) {
+        let dataset = new Dataset(data.peptides);
         this.datasets.push(dataset);
         this.currentDataSet = this.datasets.length - 1;
-        this.setUpDatasetButtons();
+
+        this.setUpDatasetButton(data);
         await this.analyse(this.searchSettings[this.currentDataSet]);
     }
 
@@ -705,24 +706,40 @@ class MPA {
     }
 
     /**
-     * Create buttons that allow the user to switch between the different datasets loaded.
+     * Add a new button to the dataset list, based on the information found in local storage, that allows the user to
+     * switch between datasets.
+     *
+     * TODO: Create new JavaScript-object for a dataset as it is represented in local storage.
+     * @param data A dataset object containing the information from local storage.
      */
-    setUpDatasetButtons() {
-        let dataSetName = this.names[this.currentDataSet];
-        if (dataSetName === '') {
-            dataSetName = 'Dataset ' + (this.currentDataSet + 1)
-        }
-
-        // Generate button for switching to dataset
-        $("#dataset_selection_buttons").append(
-            "<button class='btn btn-primary mpa-select-dataset gui-item' style='margin-right: 5px;' data-dataset='" + this.currentDataSet + "' disabled>" + dataSetName + "</button>"
+    setUpDatasetButton(data) {
+        let $listItem = $("<div class='list-item--three-lines'>");
+        let $primaryAction = $("<span class='list-item-primary-action'>");
+        let $sampleCheckbox = $("<input type='radio' value='' class='input-item select-dataset-radio-button' disabled>");
+        $primaryAction.append($sampleCheckbox);
+        $listItem.append($primaryAction);
+        let $primaryContent = $("<span class='list-item-primary-content'>");
+        $primaryContent.append($("<span>").text(data.name));
+        $primaryContent.append($("<span class='list-item-date'>").text(data.date));
+        $primaryContent.append(
+            $("<span class='list-item-body'>")
+                .append($("<div>").text(data.peptides.length + " peptides"))
+                .append($("<div>").text("Deduplicate peptides, equate IL"))
         );
+        $listItem.append($primaryContent);
+        let $secondaryAction = $("<span class='list-item-secondary-action'>");
+        $secondaryAction.data("name", data.name);
+        $secondaryAction.append($("<span class='glyphicon glyphicon-chevron-right'>"));
+        $listItem.append($secondaryAction);
 
+        $("#dataset_list").append($listItem);
+
+        // TODO Fix click handlers!
         let that = this;
-        let $mpaButtons = $(".mpa-select-dataset");
-        $mpaButtons.unbind("click");
-        $mpaButtons.click(function() {
-            that.currentDataSet = $(this).data("dataset");
+        $sampleCheckbox.click(function() {
+            $(".select-dataset-radio-button").prop("checked", false);
+            $sampleCheckbox.prop("checked", true);
+            that.currentDataSet = that.names.indexOf($(this).data("name"));
 
             that.enableProgressBar(true, true);
             that.enableProgressBar(true, false, "#progress-fa-analysis");
@@ -736,7 +753,17 @@ class MPA {
             that.updateStats(dataset);
 
             that.enableProgressBar(false);
-        })
+        });
+
+        $secondaryAction.click(function() {
+            let datasetName = $(this).data('name');
+            let dataset = that.datasets[that.names.indexOf(datasetName)];
+            $("#qs").val(dataset.originalPeptides.join("\n"));
+            $("#il").prop("checked", dataset.resultset.config.il);
+            $("#dupes").prop("checked", dataset.resultset.config.dupes);
+            $("#missed").prop("checked", dataset.resultset.config.missed);
+            $("#search_name").val(datasetName);
+        });
     }
 
     disableGui(state = true) {

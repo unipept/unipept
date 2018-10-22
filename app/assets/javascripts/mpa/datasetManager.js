@@ -121,6 +121,7 @@ class DatasetManager {
      * @return {String} A JSON-string representing the object.
      */
     _serialize(peptides, configuration, name) {
+        let currentDate = new Date();
         return JSON.stringify({
             peptides: peptides,
             configuration: {
@@ -128,7 +129,8 @@ class DatasetManager {
                 dupes: configuration.dupes,
                 missed: configuration.missed
             },
-            name: name
+            name: name,
+            date: currentDate.getFullYear() + "/" + (currentDate.getMonth() + 1) + "/" + currentDate.getDay()
         });
     }
 }
