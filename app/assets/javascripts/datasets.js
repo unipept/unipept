@@ -1,6 +1,8 @@
 import {showNotification} from "./notifications.js";
 import {DatasetManager} from "./mpa/datasetManager.js";
 import {get, getJSON, highlight, logToGoogle, showError, showInfo} from "./utils.js";
+import {PeptideContainer} from "./mpa/peptideContainer";
+import {MPAAnalysisContainer} from "./mpa/mpaAnaylsisContainer";
 
 /* eslint-disable require-jsdoc */
 
@@ -39,17 +41,10 @@ function initDatasets() {
     $("#add_button").click(function (e) {
         enableProgressIndicators();
 
-        let peptides = $("#qs").val().replace(/\r/g,"").split("\n");
-        let equateIl = $("#il").is(":checked");
-        let dupes = $("#dupes").is(":checked");
-        let missed = $("#missed").is(":checked");
-        let search = $("#search_name").val();
+        let peptideContainer = getPeptideContainerFromUserInput();
+        let config = peptideContainer.getConfiguration();
 
-        dataSetManager.storeDataset(peptides, {
-            il: equateIl,
-            dupes: dupes,
-            missed: missed
-        }, search)
+        dataSetManager.storeDataset(peptideContainer.getPeptides(), config.il, config.dupes, config.missed, peptideContainer.getName())
             .then(dataset => renderLocalStorageItem(dataset, dataSetManager))
             .catch(err => {
                 showError(err, "Something went wrong while storing your peptides. Check whether local storage is enabled and supported by your browser.")
@@ -72,7 +67,21 @@ function initDatasets() {
         let $dataForm = $("#send_data_form");
         let $dataInput = $("#data_input");
 
-        $dataInput.val(JSON.stringify(content));
+        $dataInput.val(JSON.stringify(new MPAAnalysisContainer('local_storage', content)));
+        $dataForm.submit();
+    });
+
+    $("#quick_search_button").click(function() {
+        let $dataForm = $("#send_data_form");
+        let $dataInput = $("#data_input");
+
+        $dataInput.val(JSON.stringify(
+            new MPAAnalysisContainer(
+                'quick_search',
+                getPeptideContainerFromUserInput()
+            )
+        ));
+
         $dataForm.submit();
     });
 
@@ -156,17 +165,17 @@ function renderLocalStorageItem(dataset, datasetManager) {
     // Use jQuery to build elements to prevent XSS attacks
     let $body = $("#selected-items-body");
     let $row = $("<tr>");
-    let $checkBox = $("<input type='checkbox' class='select-dataset-button' data-dataset='" + dataset.name + "' />");
-    $checkBox.prop("checked", datasetManager.isDatasetSelected(dataset.name));
+    let $checkBox = $("<input type='checkbox' class='select-dataset-button' data-dataset='" + dataset.getName() + "' />");
+    $checkBox.prop("checked", datasetManager.isDatasetSelected(dataset.getName()));
     $checkBox.click(function() {
         let datasetName = $(this).data("dataset");
         let selected = datasetManager.toggleDataset(datasetName);
         $(this).prop("checked", selected);
     });
     $row.append($("<td>").append($checkBox));
-    $row.append($("<td>").text(dataset.name));
-    $row.append($("<td>").text(dataset.date));
-    let $removeButton = $("<span class='glyphicon glyphicon-remove' title='Remove dataset' data-dataset='" + dataset.name + "'></span>");
+    $row.append($("<td>").text(dataset.getName()));
+    $row.append($("<td>").text(dataset.getDate()));
+    let $removeButton = $("<span class='glyphicon glyphicon-remove' title='Remove dataset' data-dataset='" + dataset.getName() + "'></span>");
     $removeButton.click(function() {
         let datasetName = $(this).data("dataset");
         enableProgressIndicators();
@@ -176,6 +185,16 @@ function renderLocalStorageItem(dataset, datasetManager) {
     });
     $row.append($("<td>").append($removeButton));
     $body.append($row);
+}
+
+function getPeptideContainerFromUserInput() {
+    let peptides = $("#qs").val().replace(/\r/g,"").split("\n");
+    let equateIl = $("#il").is(":checked");
+    let dupes = $("#dupes").is(":checked");
+    let missed = $("#missed").is(":checked");
+    let search = $("#search_name").val();
+
+    return new PeptideContainer(peptides, equateIl, dupes, missed, search);
 }
 
 function constructDatasetLoader() {

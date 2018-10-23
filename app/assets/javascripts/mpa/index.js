@@ -9,6 +9,7 @@ import {addCopy, downloadDataByForm, logToGoogle, numberToPercent, stringTitleiz
 import {Dataset} from "./dataset.js";
 import {constructSearchtree} from "./searchtree.js";
 import {DatasetManager} from "./datasetManager";
+import {MPAAnalysisContainer} from "./mpaAnaylsisContainer";
 /* eslint require-jsdoc: off */
 
 /**
@@ -25,7 +26,7 @@ import {DatasetManager} from "./datasetManager";
 class MPA {
     /**
      * Setup the MPA gui
-     * @param {string[]} selectedDatasets List of all datasets that should be compared and loaded
+     * @param selectedDatasets List of all datasets that should be compared and loaded
      */
     constructor(selectedDatasets = []) {
         this.datasetManager = new DatasetManager();
@@ -47,6 +48,7 @@ class MPA {
         this.currentDataSet = 0;
 
         this.enableMultipleDatasetsProgress(false);
+        selectedDatasets = new MPAAnalysisContainer(selectedDatasets.type, selectedDatasets.names, selectedDatasets.data);
         this.processDatasets(selectedDatasets);
 
         this.setUpButtons();
@@ -66,45 +68,70 @@ class MPA {
     /**
      * This function processes every dataset indicated by name from the given list of dataset names.
      *
-     * @param {String[]} names A list of names of all datasets that should be processed.
+     * @param {MPAAnalysisContainer} datasets All datasets that should be processed and added to the current analysis.
      * @returns {Promise<void>}
      */
-    async processDatasets(names) {
+    async processDatasets(datasets) {
         this.enableProgressBar(true, true);
         this.enableProgressBar(true, false, "#progress-fa-analysis");
-        this.enableMultipleDatasetsProgress(true, names.length);
         this.disableGui();
-        for (let i = 0; i < names.length; i++) {
-            let name = names[i];
-            try {
-                let dataset = await this.datasetManager.loadDataset(name);
-                eventBus.emit('progress-multiple-datasets', i + 1);
 
-                // Check if dataset does indeed exist in the local storage
-                if (dataset) {
-                    this.searchTerms.push({
-                        id: 1,
-                        term: "Organism"
-                    });
+        if (datasets.isLocalStorage()) {
+            let names = datasets.getNames();
+            this.enableMultipleDatasetsProgress(true, names.length);
 
-                    this.searchSettings.push(dataset.configuration);
-                    this.names.push(dataset.name);
-                    await this.processDataset(dataset);
-                } else {
-                    showInfo("Dataset " + name + " was not found in local storage and is not included in the comparison.");
+            for (let i = 0; i < names.length; i++) {
+                let name = names[i];
+                try {
+                    let dataset = await this.datasetManager.loadDataset(name);
+                    eventBus.emit('progress-multiple-datasets', i + 1);
+
+                    // Check if dataset does indeed exist in the local storage
+                    if (dataset) {
+                        this.searchTerms.push({
+                            id: 1,
+                            term: "Organism"
+                        });
+
+                        this.searchSettings.push(dataset.getConfiguration());
+                        this.names.push(dataset.getName());
+                        await this.processDataset(dataset);
+                    } else {
+                        showInfo("Dataset " + name + " was not found in local storage and is not included in the comparison.");
+                    }
+                } catch (err) {
+                    showError(err, "Something went wrong while loading dataset " + name + ".");
                 }
-            } catch(err) {
-                showError(err, "Something went wrong while loading dataset " + name + ".");
             }
+        } else {
+            this.enableMultipleDatasetsProgress(true, 1);
+
+            let dataset = datasets.getPeptideContainer();
+            eventBus.emit('progress-multiple-datasets', 1);
+
+            this.searchTerms.push({
+                id: 1,
+                term: "Organism"
+            });
+
+            this.searchSettings.push(dataset.getConfiguration());
+            this.names.push(dataset.getName());
+            await this.processDataset(dataset);
         }
+
         this.enableProgressBar(false);
         this.disableGui(false);
         this.enableMultipleDatasetsProgress(false);
     }
 
-    // TODO Add special class for local storage data.
+    /**
+     * Process one dataset and visualize it.
+     *
+     * @param {PeptideContainer} data
+     * @returns {Promise<Dataset>}
+     */
     async processDataset(data) {
-        let dataset = new Dataset(data.peptides);
+        let dataset = new Dataset(data.getPeptides());
         this.datasets.push(dataset);
         this.currentDataSet = this.datasets.length - 1;
 
@@ -118,14 +145,14 @@ class MPA {
      * analysis is run with the current search settings. The returned Promise
      * contains the new dataset and resolves after the analysis is complete.
      *
-     * @param  {string[]}  peptides The list of peptides to analyse
+     * @param  {PeptideContainer}  data The list of peptides to analyse
      * @return {Promise<Dataset>} Promise of the created dataset object.
      */
-    async addDataset(peptides) {
+    async addDataset(data) {
         this.enableProgressBar(true, true);
         this.enableProgressBar(true, false, "#progress-fa-analysis");
         this.disableGui();
-        let dataset = await this.processDataset(peptides);
+        let dataset = await this.processDataset(data);
         this.enableProgressBar(false);
         this.disableGui(false);
         return dataset;
@@ -172,7 +199,7 @@ class MPA {
      * Updates the search settings and reruns the analysis. Resolves when the
      * analysis is done.
      *
-     * @param  {MPAConfig}  searchSettings
+     * @param {MPAConfig} searchSettings
      */
     async updateSearchSettings(searchSettings) {
         this.searchSettings[this.currentDataSet] = searchSettings;
@@ -692,52 +719,33 @@ class MPA {
         }
     }
 
-    setUpForm(peptides) {
-        $("#qs").val(peptides.join("\n"));
-        $("#il").prop("checked", this.searchSettings[this.currentDataSet].il);
-        $("#dupes").prop("checked", this.searchSettings[this.currentDataSet].dupes);
-        $("#missed").prop("checked", this.searchSettings[this.currentDataSet].missed);
-
-        // enable tooltips
-        $(".js-has-hover-tooltip").tooltip({
-            container: "body",
-            placement: "right",
-        });
-        $(".js-has-focus-tooltip").tooltip({
-            trigger: "focus",
-            container: "body",
-            placement: "right",
-        });
-    }
-
     /**
      * Add a new button to the dataset list, based on the information found in local storage, that allows the user to
      * switch between datasets.
      *
-     * TODO: Create new JavaScript-object for a dataset as it is represented in local storage.
-     * @param data A dataset object containing the information from local storage.
+     * @param {PeptideContainer} data A dataset object containing the information from local storage.
      */
     setUpDatasetButton(data) {
         let $listItem = $("<div class='list-item--three-lines'>");
         let $primaryAction = $("<span class='list-item-primary-action'>");
         let $sampleCheckbox = $("<input type='radio' value='' class='input-item select-dataset-radio-button' disabled>");
-        $sampleCheckbox.data("name", data.name);
+        $sampleCheckbox.data("name", data.getName());
         // Disable other radio buttons of list and enable current one.
         $(".select-dataset-radio-button").prop("checked", false);
         $sampleCheckbox.prop("checked", true);
         $primaryAction.append($sampleCheckbox);
         $listItem.append($primaryAction);
         let $primaryContent = $("<span class='list-item-primary-content'>");
-        $primaryContent.append($("<span>").text(data.name));
-        $primaryContent.append($("<span class='list-item-date'>").text(data.date));
+        $primaryContent.append($("<span>").text(data.getName()));
+        $primaryContent.append($("<span class='list-item-date'>").text(data.getDate()));
         $primaryContent.append(
             $("<span class='list-item-body'>")
-                .append($("<div>").text(data.peptides.length + " peptides"))
+                .append($("<div>").text(data.getPeptides().length + " peptides"))
                 .append($("<div>").text("Deduplicate peptides, equate IL"))
         );
         $listItem.append($primaryContent);
         let $secondaryAction = $("<span class='list-item-secondary-action'>");
-        $secondaryAction.data("name", data.name);
+        $secondaryAction.data("name", data.getName());
         $secondaryAction.append($("<span class='glyphicon glyphicon-chevron-right'>"));
         $listItem.append($secondaryAction);
 
@@ -749,17 +757,11 @@ class MPA {
             $sampleCheckbox.prop("checked", true);
             that.currentDataSet = that.names.indexOf($(this).data("name"));
 
-            console.log(that.currentDataSet);
-            console.log($(this).data("name"));
-            console.log(that.names);
-            console.log(that.datasets);
-
             that.enableProgressBar(true, true);
             that.enableProgressBar(true, false, "#progress-fa-analysis");
 
             let dataset = that.datasets[that.currentDataSet];
 
-            that.setUpForm(dataset.originalPeptides);
             that.setUpVisualisations(dataset.tree);
             let searchTerm = that.searchTerms[that.currentDataSet];
             that.search(searchTerm.id, searchTerm.term);
@@ -1053,8 +1055,6 @@ class MPA {
     }
 
     enableMultipleDatasetsProgress(enable = true, total = 0) {
-        console.log("Multiple datasets with " + enable);
-
         $("#multiple-datasets-progress-total").text(total);
 
         if (enable) {
