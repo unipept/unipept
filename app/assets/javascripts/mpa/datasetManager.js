@@ -1,6 +1,8 @@
 /**
  * Class that manages all dataset's stored by the user in local storage and the ability to serialize or restore them.
  */
+import {PeptideContainer} from "./peptideContainer";
+
 class DatasetManager {
     constructor() {
         // The prefix that's used to identify the mpa-datasets in local storage.
@@ -37,8 +39,7 @@ class DatasetManager {
     /**
      * List all datasets that are stored in local storage memory.
      *
-     * // TODO specific local storage dataset class
-     * @return A list containing all datasets stored in local storage and sorted alphabetically by name.
+     * @return {PeptideContainer[]} A list containing all datasets stored in local storage and sorted alphabetically by name.
      */
     async listDatasets() {
         let output = [];
@@ -58,33 +59,42 @@ class DatasetManager {
      * Serialize and store given peptides (and corresponding configuration) in local storage.
      *
      * @param {String[]} peptides List of peptides that should be stored in local storage.
-     * @param {MPAConfig} configuration Configuration containing the current state of the search settings.
+     * @param {boolean} equateIl Should IL be equalised in the analysis?
+     * @param {boolean} dupes Should duplicates be filtered from the results?
+     * @param {boolean} missed Is advanced missing cleavage enabled?
      * @param {String} name Optional, name of the dataset.
-     * // TODO special class for local storage data
-     * @return The object that was stored in local storage.
+     * @return {PeptideContainer} All information found about the dataset associated with the given name.
      */
-    async storeDataset(peptides, configuration, name = "") {
+    async storeDataset(peptides, equateIl, dupes, missed, name = "") {
         // TODO how should we name nameless datasets?
         if (!name) {
             name = "Dataset"
         }
 
-        let serialized = this._serialize(peptides, configuration, name);
-        window.localStorage.setItem(this.prefix + name, serialized);
-        return JSON.parse(serialized);
+        let peptideContainer = new PeptideContainer(peptides, equateIl, dupes, missed, name);
+        window.localStorage.setItem(this.prefix + name, JSON.stringify(peptideContainer));
+        return peptideContainer;
     }
 
     /**
      * Look up the given name in local storage and load all data associated with it.
      *
      * @param {String} name The name of the data set that should be looked up.
-     * @return An object containing the name, the peptides and the configuration of the dataset associated with the
+     * @return{?PeptideContainer} An object containing the name, the peptides and the configuration of the dataset associated with the
      *         given name. Returns null when a dataset with the given name was not found in local storage.
      */
     async loadDataset(name) {
         let serializedData = window.localStorage.getItem(this.prefix + name);
         if (serializedData != null) {
-            return JSON.parse(serializedData);
+            let deserializedData = JSON.parse(serializedData);
+            let config = deserializedData.configuration;
+            return new PeptideContainer(
+                deserializedData.peptides,
+                config.il,
+                config.dupes,
+                config.missed,
+                deserializedData.name
+            );
         }
         return null;
     }
@@ -115,28 +125,6 @@ class DatasetManager {
         }
 
         this._selectedDatasets = [];
-    }
-
-    /**
-     * Transforms the given Dataset object into a JSON-string.
-     *
-     * @param {String[]} peptides List of peptides that should be stored in local storage.
-     * @param {MPAConfig} configuration Configuration containing the current state of the search settings.
-     * @param {String} name Optional, name of the dataset.
-     * @return {String} A JSON-string representing the object.
-     */
-    _serialize(peptides, configuration, name) {
-        let currentDate = new Date();
-        return JSON.stringify({
-            peptides: peptides,
-            configuration: {
-                il: configuration.il,
-                dupes: configuration.dupes,
-                missed: configuration.missed
-            },
-            name: name,
-            date: currentDate.getFullYear() + "/" + (currentDate.getMonth() + 1) + "/" + currentDate.getDay()
-        });
     }
 }
 
