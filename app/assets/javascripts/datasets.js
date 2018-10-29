@@ -141,9 +141,11 @@ function renderLocalStorageItems(datasetManager) {
 
 function renderLocalStorageItem(dataset) {
     // Use jQuery to build elements to prevent XSS attacks
-    let $listItem = $("<div class='list-item'>");
+    let $listItem = $("<div class='list-item--two-lines'>");
     let $primaryAction = $("<span class='list-item-primary-action'>").append($("<input type='checkbox' class='dataset-checkbox' data-dataset='" + dataset.getName() + "'>"));
     let $primaryContent = $("<span class='list-item-primary-content'>").text(dataset.getName());
+    let $primaryBody = $("<span class='list-item--two-lines list-item-body'>").text(dataset.getPeptides().length + " peptides");
+    $primaryContent.append($primaryBody);
     $listItem.append($primaryAction);
     $listItem.append($primaryContent);
     return $listItem;
@@ -152,16 +154,24 @@ function renderLocalStorageItem(dataset) {
 function renderSelectedDatasets(datasetManager) {
     let $body = $("#selected-datasets-list");
     $body.html("");
+    enableProgressIndicators();
 
-    for (let selectedDataset of datasetManager.getSelectedDatasets()) {
-        $body.append(renderSelectedDataset(selectedDataset));
-    }
+    datasetManager.getSelectedDatasets()
+        .then(selectedDatasets => {
+            for (let selectedDataset of selectedDatasets) {
+                $body.append(renderSelectedDataset(selectedDataset));
+            }
+        })
+        .catch(err => showError(err, "Something went wrong while selecting some datasets. Check whether local storage is enabled and supported by your browser."))
+        .finally(enableProgressIndicators(false));
 }
 
 function renderSelectedDataset(dataset) {
     // Use jQuery to build elements and prevent XSS attacks
-    let $listItem = $("<div class='list-item'>");
-    let $primaryContent = $("<span class='list-item-primary-content'>").text(dataset);
+    let $listItem = $("<div class='list-item--two-lines'>");
+    let $primaryContent = $("<span class='list-item-primary-content'>").append("<span>").text(dataset.getName());
+    let $primaryBody = $("<span class='list-item-body'>").text(dataset.getPeptides().length + " peptides");
+    $primaryContent.append($primaryBody);
     $listItem.append($primaryContent);
     return $listItem;
 }
