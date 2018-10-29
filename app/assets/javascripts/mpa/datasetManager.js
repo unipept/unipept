@@ -13,7 +13,7 @@ class DatasetManager {
     /**
      * Toggle the selected property of a dataset.
      *
-     * @param name Unique name of the dataset that should be selected.
+     * @param {string} name Unique name of the dataset that should be selected.
      * @return {boolean} Current checked status of the dataset.
      */
     toggleDataset(name) {
@@ -26,6 +26,25 @@ class DatasetManager {
 
         this._selectedDatasets.splice(index, 1);
         return false;
+    }
+
+
+    /**
+     * Set the current selected status of the dataset with the given name.
+     *
+     * @param {string} name Unique name of the dataset whose selection status should be changed.
+     * @param {boolean} select Current selection status of the dataset.
+     */
+    selectDataset(name, select = true) {
+        let index = this._selectedDatasets.indexOf(name);
+
+        if (index === -1) {
+            if (select) {
+                this._selectedDatasets.push(name);
+            } else {
+                this._selectedDatasets.splice(index, 1);
+            }
+        }
     }
 
     getSelectedDatasets() {
