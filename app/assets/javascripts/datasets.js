@@ -37,38 +37,15 @@ function initDatasets() {
         placement: "right",
     });
 
-    // add progress bar when submitting form
-    $("#add_button").click(function (e) {
-        enableProgressIndicators();
+    $("#select_datasets_button").click(function() {
+        // Retrieve all selected datasets through the selected checkboxes
+        $(".dataset-checkbox").each(function() {
+            if ($(this).prop("checked")) {
+                dataSetManager.selectDataset($(this).data("dataset"));
+            }
+        });
 
-        let peptideContainer = getPeptideContainerFromUserInput();
-        let config = peptideContainer.getConfiguration();
-
-        dataSetManager.storeDataset(peptideContainer.getPeptides(), config.il, config.dupes, config.missed, peptideContainer.getName())
-            .then(dataset => renderLocalStorageItem(dataset, dataSetManager))
-            .catch(err => {
-                showError(err, "Something went wrong while storing your peptides. Check whether local storage is enabled and supported by your browser.")
-            })
-            .finally(() => enableProgressIndicators(false))
-    });
-
-    $("#remove_all_datasets_button").click(function() {
-        dataSetManager.clearStorage()
-            .catch(err => showError(err, "Unable to clear local storage. Check whether local storage is enabled and supported by your browser."))
-            .finally(() => {
-                renderLocalStorageItems(dataSetManager);
-                enableProgressIndicators(false);
-            });
-    });
-
-    $("#search_selected_datasets_button").click(function() {
-        let content = dataSetManager.getSelectedDatasets();
-
-        let $dataForm = $("#send_data_form");
-        let $dataInput = $("#data_input");
-
-        $dataInput.val(JSON.stringify(new MPAAnalysisContainer('local_storage', content)));
-        $dataForm.submit();
+        renderSelectedDatasets(dataSetManager);
     });
 
     $("#quick_search_button").click(function() {
@@ -148,34 +125,45 @@ function initPreload(type, id) {
 }
 
 function renderLocalStorageItems(datasetManager) {
-    $("#selected-items-body").html("");
+    let $body = $("#local-storage-datasets");
+    $body.html("");
     enableProgressIndicators();
 
     datasetManager.listDatasets()
         .then(allDatasets => {
             for (let i = 0; i < allDatasets.length; i++) {
-                renderLocalStorageItem(allDatasets[i], datasetManager);
+                $body.append(renderLocalStorageItem(allDatasets[i]));
             }
         })
         .catch(err => showError(err, "Something went wrong while loading your datasets. Check whether local storage is enabled and supported by your browser."))
         .finally(enableProgressIndicators(false));
 }
 
-function renderLocalStorageItem(dataset, datasetManager) {
+function renderLocalStorageItem(dataset) {
     // Use jQuery to build elements to prevent XSS attacks
-    let $body = $("#selected-items-body");
-    let $row = $("<tr>");
-    let $checkBox = $("<input type='checkbox' class='select-dataset-button' data-dataset='" + dataset.getName() + "' />");
-    $checkBox.prop("checked", datasetManager.isDatasetSelected(dataset.getName()));
-    $checkBox.click(function() {
-        let datasetName = $(this).data("dataset");
-        let selected = datasetManager.toggleDataset(datasetName);
-        $(this).prop("checked", selected);
-    });
-    $row.append($("<td>").append($checkBox));
-    $row.append($("<td>").text(dataset.getName()));
-    $row.append($("<td>").text(dataset.getDate()));
-    $body.append($row);
+    let $listItem = $("<div class='list-item'>");
+    let $primaryAction = $("<span class='list-item-primary-action'>").append($("<input type='checkbox' class='dataset-checkbox' data-dataset='" + dataset.getName() + "'>"));
+    let $primaryContent = $("<span class='list-item-primary-content'>").text(dataset.getName());
+    $listItem.append($primaryAction);
+    $listItem.append($primaryContent);
+    return $listItem;
+}
+
+function renderSelectedDatasets(datasetManager) {
+    let $body = $("#selected-datasets-list");
+    $body.html("");
+
+    for (let selectedDataset of datasetManager.getSelectedDatasets()) {
+        $body.append(renderSelectedDataset(selectedDataset));
+    }
+}
+
+function renderSelectedDataset(dataset) {
+    // Use jQuery to build elements and prevent XSS attacks
+    let $listItem = $("<div class='list-item'>");
+    let $primaryContent = $("<span class='list-item-primary-content'>").text(dataset);
+    $listItem.append($primaryContent);
+    return $listItem;
 }
 
 function getPeptideContainerFromUserInput() {
