@@ -47,8 +47,15 @@ class DatasetManager {
         }
     }
 
-    getSelectedDatasets() {
-        return this._selectedDatasets;
+    /**
+     * @returns {Promise<PeptideContainer[]>} All peptide container objects that are currently selected by the user.
+     */
+    async getSelectedDatasets() {
+        let output = [];
+        for (let selectedName of this._selectedDatasets) {
+            output.push(await this.loadDataset(selectedName));
+        }
+        return output;
     }
 
     isDatasetSelected(name) {
