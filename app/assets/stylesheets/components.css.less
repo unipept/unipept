@@ -278,8 +278,29 @@
 }
 
 .list {
+    display: block;
+}
+
+.list > .list-item {
+    height: 48px;
     display: flex;
-    flex-direction: column;
+}
+
+.list > .list-item > span.list-item-primary-content {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.list > .list-item > span.list-item-primary-action {
+    display: flex;
+    margin-right: 16px;
+    align-items: center;
+}
+
+.list > .list-item > span.list-item-primary-action input {
+    margin-top: 0 !important;
 }
 
 .list > .list-item--three-lines {

@@ -1,8 +1,9 @@
-<div class='card card-nav datasets'>
+<div class='card card-nav datasets' style="height: 100%;">
   <div class='card-title card-title-colored'>
     <ul class="nav nav-tabs">
       <li class="active"><a href="#database" data-toggle="tab">Sample data</a></li>
       <li><a href="#pride" data-toggle="tab">PRIDE</a></li>
+      <li><a href="#local-storage" data-toggle="tab">Local storage</a></li>
     </ul>
   </div>
   <div class='card-supporting-text'>
@@ -20,6 +21,21 @@
         <%= render 'pride_progress' %>
         <div class='search-buttons-centered'>
           <%= button_tag(raw("Load PRIDE dataset"), { :type => "button", :class => "load-pride btn btn-default" , :"data-loading-text" => "Loading..."}) %>
+        </div>
+      </div>
+      <div class="tab-pane" id="local-storage">
+        <div class="list">
+          <div class="list-item">
+            <span class="list-item-primary-action">
+              <input type="checkbox" />
+            </span>
+            <span class="list-item-primary-content">
+              PRIDE assay 8500
+            </span>
+          </div>
+        </div>
+        <div class='search-buttons-centered' id='search-button'>
+          <%= button_tag(raw("<span class='glyphicon glyphicon-plus grow'></span> Select"), :type => "submit", :class => "btn btn-primary btn-animate", :id =>"search_selected_datasets_button", :"data-loading-text" => "Loading...") %>
         </div>
       </div>
     </div>
