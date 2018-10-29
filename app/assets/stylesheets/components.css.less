@@ -297,10 +297,44 @@
     display: flex;
     margin-right: 16px;
     align-items: center;
+    cursor: pointer;
 }
 
 .list > .list-item > span.list-item-primary-action input {
     margin-top: 0 !important;
+}
+
+.list > .list-item--two-lines {
+    height: 72px;
+    display: flex;
+    align-items: center;
+}
+
+.list > .list-item--two-lines > span.list-item-primary-content {
+    height: 36px;
+    display: block;
+    order: 0;
+    flex-grow: 2;
+}
+
+.list > .list-item--two-lines > span.list-item-primary-content > span {
+    font-size: 16px;
+    color: #202020;
+    line-height: 20px;
+}
+
+.list > .list-item--two-lines > span.list-item-primary-content > span.list-item-body {
+    display: block;
+    font-size: 14px;
+    color: #737373;
+}
+
+.list > .list-item--two-lines > span.list-item-primary-action {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-right: 16px;
+    height: 36px;
 }
 
 .list > .list-item--three-lines {
