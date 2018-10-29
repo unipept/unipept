@@ -134,11 +134,6 @@ class MPA {
         let dataset = new Dataset(data.getPeptides());
         this.datasets.push(dataset);
         this.currentDataSet = this.datasets.length - 1;
-        console.log(this.datasets);
-        console.log(this.names);
-        console.log(this.searchSettings);
-        console.log(this.searchTerms);
-        console.log(this.currentDataSet);
 
         this.setUpDatasetButton(data);
         await this.analyse(this.searchSettings[this.currentDataSet]);

@@ -175,15 +175,6 @@ function renderLocalStorageItem(dataset, datasetManager) {
     $row.append($("<td>").append($checkBox));
     $row.append($("<td>").text(dataset.getName()));
     $row.append($("<td>").text(dataset.getDate()));
-    let $removeButton = $("<span class='glyphicon glyphicon-remove' title='Remove dataset' data-dataset='" + dataset.getName() + "'></span>");
-    $removeButton.click(function() {
-        let datasetName = $(this).data("dataset");
-        enableProgressIndicators();
-        datasetManager.removeDataset(datasetName)
-            .catch(err => showError(err, "Something went wrong while removing a dataset. Check whether local storage is enabled and supported by your browser."))
-            .finally(() => renderLocalStorageItems(datasetManager));
-    });
-    $row.append($("<td>").append($removeButton));
     $body.append($row);
 }
 
