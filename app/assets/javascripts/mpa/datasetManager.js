@@ -7,6 +7,8 @@ class DatasetManager {
     constructor() {
         // The prefix that's used to identify the mpa-datasets in local storage.
         this.prefix = 'mpa-';
+        this.metadataPrefix = this.prefix + 'metadata-';
+        this.peptidePrefix = this.prefix + 'peptide-';
         this._selectedDatasets = [];
     }
 
@@ -48,16 +50,23 @@ class DatasetManager {
     }
 
     /**
-     * @returns {Promise<PeptideContainer[]>} All peptide container objects that are currently selected by the user.
+     * @returns {Promise<PeptideContainer[]>} All peptide container objects that are currently selected by the user,
+     *          sorted by name.
      */
     async getSelectedDatasets() {
         let output = [];
         for (let selectedName of this._selectedDatasets) {
             output.push(await this.loadDataset(selectedName));
         }
-        return output;
+        return output.sort(function(a, b) {
+            return a.name < b.name;
+        })
     }
 
+    /**
+     * @param name Unique name of the dataset for which it should be checked if he is currently selected.
+     * @returns {boolean} True if selected, false otherwise.
+     */
     isDatasetSelected(name) {
         return this._selectedDatasets.indexOf(name) !== -1;
     }
@@ -89,20 +98,14 @@ class DatasetManager {
      * Serialize and store given peptides (and corresponding configuration) in local storage.
      *
      * @param {String[]} peptides List of peptides that should be stored in local storage.
-     * @param {boolean} equateIl Should IL be equalised in the analysis?
-     * @param {boolean} dupes Should duplicates be filtered from the results?
-     * @param {boolean} missed Is advanced missing cleavage enabled?
-     * @param {String} name Optional, name of the dataset.
+     * @param {String} name Name of the dataset.
      * @return {PeptideContainer} All information found about the dataset associated with the given name.
      */
-    async storeDataset(peptides, equateIl, dupes, missed, name = "") {
-        // TODO how should we name nameless datasets?
-        if (!name) {
-            name = "Dataset"
-        }
-
-        let peptideContainer = new PeptideContainer(peptides, equateIl, dupes, missed, name);
-        window.localStorage.setItem(this.prefix + name, JSON.stringify(peptideContainer));
+    async storeDataset(peptides, name) {
+        let date = new Date();
+        let peptideContainer = new PeptideContainer(peptides, name, date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDay());
+        window.localStorage.setItem(this.metadataPrefix + name, JSON.stringify(peptideContainer.getMetadataJSON()));
+        window.localStorage.setItem(this.peptidePrefix + name, JSON.stringify(peptideContainer.getDataJSON()));
         return peptideContainer;
     }
 
@@ -114,19 +117,24 @@ class DatasetManager {
      *         given name. Returns null when a dataset with the given name was not found in local storage.
      */
     async loadDataset(name) {
-        let serializedData = window.localStorage.getItem(this.prefix + name);
+        let serializedData = window.localStorage.getItem(this.metadataPrefix + name);
         if (serializedData != null) {
             let deserializedData = JSON.parse(serializedData);
-            let config = deserializedData.configuration;
+
             return new PeptideContainer(
-                deserializedData.peptides,
-                config.il,
-                config.dupes,
-                config.missed,
-                deserializedData.name
+                deserializedData.name,
+                deserializedData.date
             );
         }
         return null;
+    }
+
+    async loadPeptides(peptideContainer) {
+        let serializedData = window.localStorage.getItem(this.metadataPrefix + name);
+        if (serializedData != null) {
+            let deserializedData = JSON.parse(serializedData);
+            peptideContainer.setPeptides(deserializedData.peptides);
+        }
     }
 
     /**
@@ -135,7 +143,8 @@ class DatasetManager {
      * @param name Name of the dataset that should be removed from local storage.
      */
     async removeDataset(name) {
-        window.localStorage.removeItem(this.prefix + name);
+        window.localStorage.removeItem(this.metadataPrefix + name);
+        window.localStorage.removeItem(this.peptidePrefix + name);
     }
 
     /**

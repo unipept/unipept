@@ -1,27 +1,31 @@
+import {DatasetManager} from "./datasetManager";
+
 class PeptideContainer {
-    constructor(peptides, equateIl, dupes, missed, name, date = new Date()) {
-        this._peptides = peptides;
-        this._configuration = {
-            il: equateIl,
-            dupes: dupes,
-            missed: missed
-        };
+    constructor(name, peptideAmount, date) {
+        this._peptides = undefined;
         this._name = name;
-        this._date = date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDay()
+        this._peptideAmount = peptideAmount;
+        this._date = date;
+    }
+
+    setPeptides(peptides) {
+        this._peptides = peptides;
     }
 
     /**
-     * @returns {string[]}
+     * @returns {Promise<string[]>} The peptides that are stored in this container.
      */
-    getPeptides() {
+    async getPeptides() {
+        if (this._peptides === undefined) {
+            let datasetManager = new DatasetManager();
+            await datasetManager.loadPeptides(this);
+        }
+
         return this._peptides;
     }
 
-    /**
-     * @return {MPAConfig}
-     */
-    getConfiguration() {
-        return this._configuration;
+    getAmountOfPeptides() {
+        return this._peptideAmount;
     }
 
     /**
@@ -38,13 +42,25 @@ class PeptideContainer {
         return this._date;
     }
 
+    getMetadataJSON() {
+        return {
+            name: this._name,
+            date: this._date
+        };
+    }
+
+    getDataJSON() {
+        return {
+            peptides: this._peptides
+        };
+    }
+
     /**
      * @return {String} JSON representation of this object
      */
     toJSON() {
         return {
             peptides: this._peptides,
-            configuration: this._configuration,
             name: this._name,
             date: this._date
         };
