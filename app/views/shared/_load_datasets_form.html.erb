@@ -3,7 +3,7 @@
     <ul class="nav nav-tabs">
       <li class="active"><a href="#database" data-toggle="tab">Sample data</a></li>
       <li><a href="#pride" data-toggle="tab">PRIDE</a></li>
-      <li><a href="#local-storage" data-toggle="tab">Local storage</a></li>
+      <li><a href="#local-storage" data-toggle="tab">Local datasets</a></li>
     </ul>
   </div>
   <div class='card-supporting-text'>
@@ -25,17 +25,9 @@
       </div>
       <div class="tab-pane" id="local-storage">
         <div class="list" id="local-storage-datasets">
-          <div class="list-item">
-            <span class="list-item-primary-action">
-              <input type="checkbox" />
-            </span>
-            <span class="list-item-primary-content">
-              PRIDE assay 8500
-            </span>
-          </div>
         </div>
         <div class='search-buttons-centered' id='search-button'>
-          <%= button_tag(raw("<span class='glyphicon glyphicon-plus grow'></span> Select"), :type => "submit", :class => "btn btn-primary btn-animate", :id =>"select_datasets_button", :"data-loading-text" => "Loading...") %>
+          <%= button_tag(raw("<span class='glyphicon glyphicon-ok grow'></span> Select"), :type => "submit", :class => "btn btn-default btn-animate", :id =>"select_datasets_button", :"data-loading-text" => "Loading...") %>
         </div>
       </div>
     </div>

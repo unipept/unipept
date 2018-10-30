@@ -48,18 +48,33 @@ function initDatasets() {
         renderSelectedDatasets(dataSetManager);
     });
 
-    $("#quick_search_button").click(function() {
+    $("#search_multi-form").click(function() {
         let $dataForm = $("#send_data_form");
         let $dataInput = $("#data_input");
 
-        $dataInput.val(JSON.stringify(
-            new MPAAnalysisContainer(
-                'quick_search',
-                getPeptideContainerFromUserInput()
-            )
-        ));
+        if (dataSetManager.getAmountOfSelectedDatasets() > 0) {
+            let content = dataSetManager.getSelectedDatasets();
+
+            $dataInput.val(JSON.stringify(
+                new MPAAnalysisContainer(
+                    'local_storage',
+                    content
+                )
+            ));
+        } else {
+            $dataInput.val(JSON.stringify(
+                new MPAAnalysisContainer(
+                    'quick_search',
+                    getPeptideContainerFromUserInput()
+                )
+            ));
+        }
 
         $dataForm.submit();
+    });
+
+    $("#add_dataset_button").click(function() {
+
     });
 
     // track the use of the export checkbox

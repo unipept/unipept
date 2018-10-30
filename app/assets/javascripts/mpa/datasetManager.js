@@ -62,6 +62,10 @@ class DatasetManager {
         return this._selectedDatasets.indexOf(name) !== -1;
     }
 
+    getAmountOfSelectedDatasets() {
+        return this._selectedDatasets.length;
+    }
+
     /**
      * List all datasets that are stored in local storage memory.
      *
