@@ -17,7 +17,7 @@
       <%= label_tag(:save_dataset, check_box_tag(:save_dataset, 1, true, class: "input-item") + " Save dataset", title: "Store dataset in browser's local storage", class: 'js-has-hover-tooltip') %>
     </div>
     <div class='search-buttons-centered'>
-      <%= button_tag(raw("<span class='glyphicon glyphicon-plus grow'></span> Add"), { :name => 'add', :id => 'add_dataset_button', :class => "btn btn-default btn-animate" }) %>
+      <%= button_tag(raw("<span class='glyphicon glyphicon-plus grow'></span> Add"), { :name => 'add', :id => 'add_dataset_button', :class => "btn btn-default btn-animate input-item" }) %>
     </div>
     <hr/>
     <div id="selected-datasets">
@@ -36,8 +36,8 @@
       <%= label_tag(:missed, check_box_tag(:missed, 1, false, class: "input-item") + " Advanced missed cleavage handling", title: "Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!", class: 'js-has-hover-tooltip') %>
     </div>
     <div id="search_button" class='search-buttons-centered'>
-      <%= button_tag(raw("<span class='glyphicon glyphicon-search grow'></span> Search"), :type => "submit", :class => "btn btn-primary btn-animate", :id =>"search-multi-form", :"data-loading-text" => "Loading...") %>
-      <%= button_tag(raw("<span class='glyphicon glyphicon-repeat spin'></span> Start Over"), { :name => 'reset', :id => 'reset_button', :type => "reset", :class => "btn btn-default btn-animate" }) %>
+      <%= button_tag(raw("<span class='glyphicon glyphicon-search grow'></span> Search"), :type => "submit", :class => "btn btn-primary btn-animate input-item", :id =>"search-multi-form", :"data-loading-text" => "Loading...") %>
+      <%= button_tag(raw("<span class='glyphicon glyphicon-repeat spin'></span> Start Over"), { :name => 'reset', :id => 'reset_button', :type => "reset", :class => "btn btn-default btn-animate input-item" }) %>
     </div>
     <div id="form-progress" class="progress hide">
       <div class="progress-bar progress-bar-striped active"  role="progressbar" style="width: 100%">
