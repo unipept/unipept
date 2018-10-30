@@ -198,6 +198,7 @@ function renderLocalStorageItem(dataset) {
     let $listItem = $("<div class='list-item--two-lines'>");
     let $primaryAction = $("<span class='list-item-primary-action'>").append($("<input type='checkbox' class='dataset-checkbox' data-dataset='" + dataset.getName() + "'>"));
     let $primaryContent = $("<span class='list-item-primary-content'>").text(dataset.getName());
+    $primaryContent.append($("<span class='list-item-date'>").text(dataset.getDate()));
     let $primaryBody = $("<span class='list-item--two-lines list-item-body'>").text(dataset.getAmountOfPeptides() + " peptides");
     $primaryContent.append($primaryBody);
     $listItem.append($primaryAction);
@@ -224,8 +225,8 @@ function renderSelectedDataset(dataset) {
     // Use jQuery to build elements and prevent XSS attacks
     let $listItem = $("<div class='list-item--two-lines'>");
     let $primaryContent = $("<span class='list-item-primary-content'>").append("<span>").text(dataset.getName());
-    let $primaryBody = $("<span class='list-item-body'>").text(dataset.getPeptides().length + " peptides");
-    $primaryContent.append($primaryBody);
+    $primaryContent.append($("<span class='list-item-date'>").text(dataset.getDate()));
+    $primaryContent.append($("<span class='list-item-body'>").text(dataset.getAmountOfPeptides() + " peptides"));
     $listItem.append($primaryContent);
     return $listItem;
 }
