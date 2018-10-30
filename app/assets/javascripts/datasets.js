@@ -54,7 +54,11 @@ function initDatasets() {
 
     $("#search-multi-form").click(function() {
         enableProgressIndicators();
+
+        let $dataForm = $("#send_data_form");
+
         searchSelectedDatasets(dataSetManager, quickSearchItems)
+            .then(() => $dataForm.submit())
             .catch(err => {
                 showError(err, "An unknown error occurred. Please try again.");
                 enableProgressIndicators(false);
@@ -178,7 +182,6 @@ function enableSearchNameError(state = true) {
  * @returns {Promise<void>}
  */
 async function searchSelectedDatasets(dataSetManager, quickSearchItems) {
-    let $dataForm = $("#send_data_form");
     let $dataInput = $("#data_input");
 
     let output = [];
@@ -211,8 +214,6 @@ async function searchSelectedDatasets(dataSetManager, quickSearchItems) {
         },
         data: output
     }));
-
-    $dataForm.submit();
 }
 
 function renderLocalStorageItems(datasetManager) {
