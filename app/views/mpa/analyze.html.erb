@@ -3,13 +3,16 @@
   <%= javascript_pack_tag 'mpa' %>
 <% end %>
 
-<div class='row'>
+<div class='row equal-height-row'>
   <div class='col-xs-6'>
-    <div class='card'>
-      <div class='card-title card-title-colored' id='expand_add_dataset_button'>
-      <h2 class='card-title-text'>
-        Metaproteomics Analysis
-      </h2>
+    <div class='card' style="height: 775px;">
+      <div class='card-title card-title-colored' style="flex-direction: row;">
+        <h2 class='card-title-text'>
+          Metaproteomics Analysis
+        </h2>
+        <div class="card-title-action" style="">
+          <span class="glyphicon glyphicon-plus" style="color: white;"></span>
+        </div>
       </div>
       <div id="progress-analysis" class="unipept-progress unipept-progress-indeterminate">
         <div class="progressbar bar bar1" style="width: 0;"></div>
@@ -26,19 +29,7 @@
     </div>
   </div>
   <div class='col-xs-6'>
-    <div class='card' id='add_dataset_form'>
-      <div class='card-title card-title-colored' id='expand_add_dataset_button'>
-        <h2 class='card-title-text'>
-          Dataset
-        </h2>
-      </div>
-      <div class='card-supporting-text'>
-        <%= render('shared/sequence_multi_search') %>
-        <div id="search_button" class='search-buttons-centered'>
-          <%= button_tag(raw("<span class='glyphicon glyphicon-plus grow'></span> Add"), :class => "btn btn-primary btn-animate input-item", :id =>"mpa-add-dataset") %>
-        </div>
-      </div>
-    </div>
+    <%= render("experiment_settings_summary") %>
   </div>
 </div>
 

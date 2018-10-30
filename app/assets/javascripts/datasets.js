@@ -24,6 +24,7 @@ function enableProgressIndicators(enable = true) {
 function initDatasets() {
     let datasetLoader = constructDatasetLoader();
     let dataSetManager = new DatasetManager();
+    showSelectedDatasetsPlaceholder();
     renderLocalStorageItems(dataSetManager);
 
     // Stores all datasets that are not saved in local storage, but that should be analysed anyways
@@ -99,6 +100,7 @@ function initDatasets() {
         dataSetManager.clearSelection();
         quickSearchItems = [];
         renderSelectedDatasets(dataSetManager, quickSearchItems);
+        showSelectedDatasetsPlaceholder();
     });
 
     // track the use of the export checkbox
@@ -161,6 +163,10 @@ function initPreload(type, id) {
     } else {
         datasetLoader.loadDataset("pride", id, "Pride assay " + id);
     }
+}
+
+function showSelectedDatasetsPlaceholder() {
+    $("#selected-datasets-list").append($("<span>No datasets currently selected...</span>"));
 }
 
 function enableSearchNameError(state = true) {
