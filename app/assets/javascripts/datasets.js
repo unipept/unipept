@@ -27,8 +27,6 @@ function initDatasets() {
     renderLocalStorageItems(dataSetManager);
 
     let $saveDatasetCheckbox = $("#save_dataset");
-    let $searchInputGroup = $("#search-input-group");
-    let $helpBlockName = $("#help-block-name");
 
     // enable tooltips
     $(".js-has-hover-tooltip").tooltip({
@@ -81,32 +79,28 @@ function initDatasets() {
         enableSearchNameError(false);
 
         let $searchName = $("#search_name");
+        let searchName = $searchName.val();
         let save = $saveDatasetCheckbox.prop("checked");
 
-        if (save && $searchName.val() === "") {
+        if (save && searchName === "") {
             enableSearchNameError();
         } else {
             enableProgressIndicators();
             let peptideContainer = getPeptideContainerFromUserInput();
             peptideContainer.getPeptides()
                 .then(peptides => {
-                    console.log(peptides);
-                    dataSetManager.storeDataset(peptides, $searchName.val())
+                    dataSetManager.storeDataset(peptides, searchName)
                         .catch(err => showError(err, "Something went wrong while storing your dataset. Please check if local storage is enabled and supported by your browser."))
-                        .finally(() => {
-                            console.log("finally!");
+                        .then(() => {
+                            dataSetManager.selectDataset(searchName);
                             renderLocalStorageItems(dataSetManager);
-                            enableProgressIndicators(false)
+                            renderSelectedDatasets(dataSetManager);
                         });
                 }).catch(err => {
                     showError(err, "Something went wrong while reading your dataset. Please check if local storage is enabled and supported by your browser.");
                     enableProgressIndicators(false);
             });
         }
-    });
-
-    $saveDatasetCheckbox.click(function() {
-        toggleSearchNameOptional();
     });
 
     // track the use of the export checkbox
@@ -184,15 +178,6 @@ function enableSearchNameError(state = true) {
     }
 }
 
-function toggleSearchNameOptional() {
-    let $optionalNameText = $("#name_optional_text");
-
-    $optionalNameText.toggleClass("hidden");
-    if ($optionalNameText.hasClass("hidden")) {
-        enableSearchNameError(false);
-    }
-}
-
 function renderLocalStorageItems(datasetManager) {
     let $body = $("#local-storage-datasets");
     $body.html("");
@@ -205,7 +190,7 @@ function renderLocalStorageItems(datasetManager) {
             }
         })
         .catch(err => showError(err, "Something went wrong while loading your datasets. Check whether local storage is enabled and supported by your browser."))
-        .finally(() => enableProgressIndicators(false));
+        .then(() => enableProgressIndicators(false));
 }
 
 function renderLocalStorageItem(dataset) {
@@ -232,7 +217,7 @@ function renderSelectedDatasets(datasetManager) {
             }
         })
         .catch(err => showError(err, "Something went wrong while selecting some datasets. Check whether local storage is enabled and supported by your browser."))
-        .finally(enableProgressIndicators(false));
+        .then(enableProgressIndicators(false));
 }
 
 function renderSelectedDataset(dataset) {
