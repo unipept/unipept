@@ -26,6 +26,10 @@ function initDatasets() {
     let dataSetManager = new DatasetManager();
     renderLocalStorageItems(dataSetManager);
 
+    let $saveDatasetCheckbox = $("#save_dataset");
+    let $searchInputGroup = $("#search-input-group");
+    let $helpBlockName = $("#help-block-name");
+
     // enable tooltips
     $(".js-has-hover-tooltip").tooltip({
         container: "body",
@@ -74,7 +78,18 @@ function initDatasets() {
     });
 
     $("#add_dataset_button").click(function() {
+        enableSearchNameError(false);
 
+        let $searchName = $("#search_name");
+        let save = $saveDatasetCheckbox.prop("checked");
+
+        if (save && $searchName.val() === "") {
+            enableSearchNameError();
+        }
+    });
+
+    $saveDatasetCheckbox.click(function() {
+        toggleSearchNameOptional();
     });
 
     // track the use of the export checkbox
@@ -136,6 +151,28 @@ function initPreload(type, id) {
         datasetLoader.loadDataset("internal", id, "Dataset " + id);
     } else {
         datasetLoader.loadDataset("pride", id, "Pride assay " + id);
+    }
+}
+
+function enableSearchNameError(state = true) {
+    let $searchInputGroup = $("#search-input-group");
+    let $helpBlockName = $("#help-block-name");
+
+    if (state) {
+        $searchInputGroup.addClass("has-error");
+        $helpBlockName.removeClass("hidden");
+    } else {
+        $searchInputGroup.removeClass("has-error");
+        $helpBlockName.addClass("hidden");
+    }
+}
+
+function toggleSearchNameOptional() {
+    let $optionalNameText = $("#name_optional_text");
+
+    $optionalNameText.toggleClass("hidden");
+    if ($optionalNameText.hasClass("hidden")) {
+        enableSearchNameError(false);
     }
 }
 
