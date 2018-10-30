@@ -2,7 +2,7 @@ import {showNotification} from "./notifications.js";
 import {DatasetManager} from "./mpa/datasetManager.js";
 import {get, getJSON, highlight, logToGoogle, showError, showInfo} from "./utils.js";
 import {PeptideContainer} from "./mpa/peptideContainer";
-import {MPAAnalysisContainer} from "./mpa/mpaAnaylsisContainer";
+import {LOCAL_STORAGE_TYPE, MPAAnalysisContainer, QUICK_SEARCH_TYPE} from "./mpa/mpaAnaylsisContainer";
 
 /* eslint-disable require-jsdoc */
 
@@ -26,6 +26,8 @@ function initDatasets() {
     let dataSetManager = new DatasetManager();
     renderLocalStorageItems(dataSetManager);
 
+    // Stores all datasets that are not saved in local storage, but that should be analysed anyways
+    let quickSearchItems = [];
     let $saveDatasetCheckbox = $("#save_dataset");
 
     // enable tooltips
@@ -47,32 +49,16 @@ function initDatasets() {
             }
         });
 
-        renderSelectedDatasets(dataSetManager);
+        renderSelectedDatasets(dataSetManager, quickSearchItems);
     });
 
-    $("#search_multi-form").click(function() {
-        let $dataForm = $("#send_data_form");
-        let $dataInput = $("#data_input");
-
-        if (dataSetManager.getAmountOfSelectedDatasets() > 0) {
-            let content = dataSetManager.getSelectedDatasets();
-
-            $dataInput.val(JSON.stringify(
-                new MPAAnalysisContainer(
-                    'local_storage',
-                    content
-                )
-            ));
-        } else {
-            $dataInput.val(JSON.stringify(
-                new MPAAnalysisContainer(
-                    'quick_search',
-                    getPeptideContainerFromUserInput()
-                )
-            ));
-        }
-
-        $dataForm.submit();
+    $("#search-multi-form").click(function() {
+        enableProgressIndicators();
+        searchSelectedDatasets(dataSetManager, quickSearchItems)
+            .catch(err => {
+                showError(err, "An unknown error occurred. Please try again.");
+                enableProgressIndicators(false);
+            });
     });
 
     $("#add_dataset_button").click(function() {
@@ -90,17 +76,25 @@ function initDatasets() {
             peptideContainer.getPeptides()
                 .then(peptides => {
                     dataSetManager.storeDataset(peptides, searchName)
-                        .catch(err => showError(err, "Something went wrong while storing your dataset. Please check if local storage is enabled and supported by your browser."))
+                        .catch(err => showError(err, "Something went wrong while storing your dataset. Check whether local storage is enabled and supported by your browser."))
                         .then(() => {
                             dataSetManager.selectDataset(searchName);
                             renderLocalStorageItems(dataSetManager);
-                            renderSelectedDatasets(dataSetManager);
+                            renderSelectedDatasets(dataSetManager, quickSearchItems);
                         });
                 }).catch(err => {
-                    showError(err, "Something went wrong while reading your dataset. Please check if local storage is enabled and supported by your browser.");
+                    showError(err, "Something went wrong while reading your dataset. Check whether local storage is enabled and supported by your browser.");
                     enableProgressIndicators(false);
             });
         }
+    });
+
+    $("#reset_button").click(function() {
+        $("#qs").val("");
+        $("#search_name").val("");
+        dataSetManager.clearSelection();
+        quickSearchItems = [];
+        renderSelectedDatasets(dataSetManager, quickSearchItems);
     });
 
     // track the use of the export checkbox
@@ -178,6 +172,49 @@ function enableSearchNameError(state = true) {
     }
 }
 
+/**
+ * Build a representation of the currently selected datasets in JSON, send it to the MPA analysis page and proceed.
+ *
+ * @returns {Promise<void>}
+ */
+async function searchSelectedDatasets(dataSetManager, quickSearchItems) {
+    let $dataForm = $("#send_data_form");
+    let $dataInput = $("#data_input");
+
+    let output = [];
+
+    if (dataSetManager.getAmountOfSelectedDatasets() === 0 && quickSearchItems.length === 0) {
+        let peptideContainer = getPeptideContainerFromUserInput();
+        let peptides = await peptideContainer.getPeptides();
+        output.push(new MPAAnalysisContainer(QUICK_SEARCH_TYPE, peptides))
+    } else {
+        let selectedDatasets = await dataSetManager.getSelectedDatasets();
+        for (let selectedDataset of selectedDatasets) {
+            output.push(new MPAAnalysisContainer(LOCAL_STORAGE_TYPE, selectedDataset));
+        }
+
+        for (let quickSearchItem of quickSearchItems) {
+            let peptides = await quickSearchItem.getPeptides();
+            output.push(new MPAAnalysisContainer(QUICK_SEARCH_TYPE, peptides));
+        }
+    }
+
+    let il = $("#il").prop("checked");
+    let dupes = $("#dupes").prop("checked");
+    let missed = $("#missed").prop("checked");
+
+    $dataInput.val(JSON.stringify({
+        settings: {
+            il: il,
+            dupes: dupes,
+            missed: missed
+        },
+        data: output
+    }));
+
+    $dataForm.submit();
+}
+
 function renderLocalStorageItems(datasetManager) {
     let $body = $("#local-storage-datasets");
     $body.html("");
@@ -206,16 +243,17 @@ function renderLocalStorageItem(dataset) {
     return $listItem;
 }
 
-function renderSelectedDatasets(datasetManager) {
+function renderSelectedDatasets(datasetManager, quickSearchDatasets) {
     let $body = $("#selected-datasets-list");
     $body.html("");
     enableProgressIndicators();
 
     datasetManager.getSelectedDatasets()
         .then(selectedDatasets => {
-            for (let selectedDataset of selectedDatasets) {
+            for (let selectedDataset of selectedDatasets.concat(quickSearchDatasets)) {
                 $body.append(renderSelectedDataset(selectedDataset));
             }
+
         })
         .catch(err => showError(err, "Something went wrong while selecting some datasets. Check whether local storage is enabled and supported by your browser."))
         .then(enableProgressIndicators(false));

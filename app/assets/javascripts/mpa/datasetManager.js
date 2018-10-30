@@ -10,8 +10,6 @@ class DatasetManager {
         this.metadataPrefix = this.prefix + 'metadata-';
         this.peptidePrefix = this.prefix + 'peptide-';
         this._selectedDatasets = [];
-
-        console.log("CONSTRUCTOR!");
     }
 
     /**
@@ -30,6 +28,10 @@ class DatasetManager {
 
         this._selectedDatasets.splice(index, 1);
         return false;
+    }
+
+    clearSelection() {
+        this._selectedDatasets = [];
     }
 
 
