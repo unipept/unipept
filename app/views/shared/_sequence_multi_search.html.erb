@@ -12,8 +12,11 @@
       <label for="search_name">Name this search <small class='secondary-text'>optional</small></label>
       <%= text_field_tag('search_name', nil, :placeholder => 'e.g. Sample B5', :class => "form-control js-has-focus-tooltip input-item", title: "This name will be shown on the results page. Handy if you have many open tabs.")%>
     </div>
+    <div class="checkbox">
+      <%= label_tag(:il, check_box_tag(:il, 1, true, class: "input-item") + " Save dataset", title: "Store dataset in browser's local storage", class: 'js-has-hover-tooltip') %>
+    </div>
     <div class='search-buttons-centered'>
-      <%= button_tag(raw("<span class='glyphicon glyphicon-plus grow'></span> Add"), { :name => 'add', :id => 'add_button', :class => "btn btn-primary btn-animate" }) %>
+      <%= button_tag(raw("<span class='glyphicon glyphicon-plus grow'></span> Add"), { :name => 'add', :id => 'add_dataset_button', :class => "btn btn-default btn-animate" }) %>
     </div>
     <hr/>
     <div id="selected-datasets">
