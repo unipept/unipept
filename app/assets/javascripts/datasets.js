@@ -85,6 +85,23 @@ function initDatasets() {
 
         if (save && $searchName.val() === "") {
             enableSearchNameError();
+        } else {
+            enableProgressIndicators();
+            let peptideContainer = getPeptideContainerFromUserInput();
+            peptideContainer.getPeptides()
+                .then(peptides => {
+                    console.log(peptides);
+                    dataSetManager.storeDataset(peptides, $searchName.val())
+                        .catch(err => showError(err, "Something went wrong while storing your dataset. Please check if local storage is enabled and supported by your browser."))
+                        .finally(() => {
+                            console.log("finally!");
+                            renderLocalStorageItems(dataSetManager);
+                            enableProgressIndicators(false)
+                        });
+                }).catch(err => {
+                    showError(err, "Something went wrong while reading your dataset. Please check if local storage is enabled and supported by your browser.");
+                    enableProgressIndicators(false);
+            });
         }
     });
 
@@ -188,7 +205,7 @@ function renderLocalStorageItems(datasetManager) {
             }
         })
         .catch(err => showError(err, "Something went wrong while loading your datasets. Check whether local storage is enabled and supported by your browser."))
-        .finally(enableProgressIndicators(false));
+        .finally(() => enableProgressIndicators(false));
 }
 
 function renderLocalStorageItem(dataset) {
@@ -196,7 +213,7 @@ function renderLocalStorageItem(dataset) {
     let $listItem = $("<div class='list-item--two-lines'>");
     let $primaryAction = $("<span class='list-item-primary-action'>").append($("<input type='checkbox' class='dataset-checkbox' data-dataset='" + dataset.getName() + "'>"));
     let $primaryContent = $("<span class='list-item-primary-content'>").text(dataset.getName());
-    let $primaryBody = $("<span class='list-item--two-lines list-item-body'>").text(dataset.getPeptides().length + " peptides");
+    let $primaryBody = $("<span class='list-item--two-lines list-item-body'>").text(dataset.getAmountOfPeptides() + " peptides");
     $primaryContent.append($primaryBody);
     $listItem.append($primaryAction);
     $listItem.append($primaryContent);
@@ -230,12 +247,12 @@ function renderSelectedDataset(dataset) {
 
 function getPeptideContainerFromUserInput() {
     let peptides = $("#qs").val().replace(/\r/g,"").split("\n");
-    let equateIl = $("#il").is(":checked");
-    let dupes = $("#dupes").is(":checked");
-    let missed = $("#missed").is(":checked");
     let search = $("#search_name").val();
 
-    return new PeptideContainer(peptides, equateIl, dupes, missed, search);
+    let date = new Date();
+    let peptideContainer = new PeptideContainer(search, peptides.length, date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDay());
+    peptideContainer.setPeptides(peptides);
+    return peptideContainer;
 }
 
 function constructDatasetLoader() {

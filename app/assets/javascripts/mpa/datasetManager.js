@@ -10,6 +10,8 @@ class DatasetManager {
         this.metadataPrefix = this.prefix + 'metadata-';
         this.peptidePrefix = this.prefix + 'peptide-';
         this._selectedDatasets = [];
+
+        console.log("CONSTRUCTOR!");
     }
 
     /**
@@ -58,8 +60,9 @@ class DatasetManager {
         for (let selectedName of this._selectedDatasets) {
             output.push(await this.loadDataset(selectedName));
         }
+
         return output.sort(function(a, b) {
-            return a.name < b.name;
+            return a.getName() < b.getName();
         })
     }
 
@@ -78,19 +81,19 @@ class DatasetManager {
     /**
      * List all datasets that are stored in local storage memory.
      *
-     * @return {PeptideContainer[]} A list containing all datasets stored in local storage and sorted alphabetically by name.
+     * @return {Promise<PeptideContainer[]>} A list containing all datasets stored in local storage and sorted alphabetically by name.
      */
     async listDatasets() {
         let output = [];
         for (let i = 0; i < window.localStorage.length; i++) {
             let key = window.localStorage.key(i);
-            if (key.startsWith(this.prefix)) {
-                let dataset = await this.loadDataset(key.substr(this.prefix.length));
+            if (key.startsWith(this.metadataPrefix)) {
+                let dataset = await this.loadDataset(key.substr(this.metadataPrefix.length));
                 output.push(dataset)
             }
         }
         return output.sort(function(a, b) {
-            return a.name < b.name;
+            return a.getName() < b.getName();
         })
     }
 
@@ -103,7 +106,8 @@ class DatasetManager {
      */
     async storeDataset(peptides, name) {
         let date = new Date();
-        let peptideContainer = new PeptideContainer(peptides, name, date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDay());
+        let peptideContainer = new PeptideContainer(name, peptides.length, date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDay());
+        peptideContainer.setPeptides(peptides);
         window.localStorage.setItem(this.metadataPrefix + name, JSON.stringify(peptideContainer.getMetadataJSON()));
         window.localStorage.setItem(this.peptidePrefix + name, JSON.stringify(peptideContainer.getDataJSON()));
         return peptideContainer;
@@ -123,17 +127,18 @@ class DatasetManager {
 
             return new PeptideContainer(
                 deserializedData.name,
+                deserializedData.amount,
                 deserializedData.date
             );
         }
         return null;
     }
 
-    async loadPeptides(peptideContainer) {
+    async loadPeptides(name) {
         let serializedData = window.localStorage.getItem(this.metadataPrefix + name);
         if (serializedData != null) {
             let deserializedData = JSON.parse(serializedData);
-            peptideContainer.setPeptides(deserializedData.peptides);
+            return deserializedData.peptides;
         }
     }
 
@@ -163,7 +168,7 @@ class DatasetManager {
             window.localStorage.removeItem(key);
         }
 
-        this._selectedDatasets = [];
+        this.t_selectedDatasets = [];
     }
 }
 

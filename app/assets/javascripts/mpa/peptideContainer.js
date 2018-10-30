@@ -1,4 +1,3 @@
-import {DatasetManager} from "./datasetManager";
 
 class PeptideContainer {
     constructor(name, peptideAmount, date) {
@@ -17,8 +16,9 @@ class PeptideContainer {
      */
     async getPeptides() {
         if (this._peptides === undefined) {
-            let datasetManager = new DatasetManager();
-            await datasetManager.loadPeptides(this);
+            let serializedData = window.localStorage.getItem('mpa-peptide-'  + this._name);
+            let parsed = JSON.parse(serializedData);
+            this._peptides = parsed.peptides;
         }
 
         return this._peptides;
@@ -45,6 +45,7 @@ class PeptideContainer {
     getMetadataJSON() {
         return {
             name: this._name,
+            amount: this._peptideAmount,
             date: this._date
         };
     }
