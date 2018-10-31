@@ -234,6 +234,7 @@
   var selectedDatasets = <%= raw(@selected_datasets) %>;
 
   $(function () {
+      console.log(selectedDatasets);
       new MPA(selectedDatasets);
   });
 </script>

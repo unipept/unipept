@@ -199,7 +199,7 @@ async function searchSelectedDatasets(dataSetManager, quickSearchItems) {
     } else {
         let selectedDatasets = await dataSetManager.getSelectedDatasets();
         for (let selectedDataset of selectedDatasets) {
-            output.push(new MPAAnalysisContainer(LOCAL_STORAGE_TYPE, selectedDataset));
+            output.push(new MPAAnalysisContainer(LOCAL_STORAGE_TYPE, selectedDataset.getName()));
         }
 
         for (let quickSearchItem of quickSearchItems) {
