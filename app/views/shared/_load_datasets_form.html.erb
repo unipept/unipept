@@ -1,14 +1,18 @@
 <div class='card card-nav datasets' style="height: 100%;">
   <div class='card-title card-title-colored'>
     <ul class="nav nav-tabs">
-      <li class="active"><a href="#database" data-toggle="tab">Sample data</a></li>
+      <li class="active"><a href="#create" data-toggle="tab">Create</a></li>
+      <li><a href="#database" data-toggle="tab">Sample data</a></li>
       <li><a href="#pride" data-toggle="tab">PRIDE</a></li>
-      <li><a href="#local-storage" data-toggle="tab">Local datasets</a></li>
+      <li><a href="#local-storage" data-toggle="tab">Local data</a></li>
     </ul>
   </div>
   <div class='card-supporting-text'>
     <div class="tab-content">
-      <div class="tab-pane active" id="database">
+      <div class="tab-pane active" id="create">
+        <%= render("shared/create_dataset_form") %>
+      </div>
+      <div class="tab-pane" id="database">
         <%= render @datasets, :load => true, :edit => true %>
       </div>
       <div class="tab-pane" id="pride">

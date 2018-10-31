@@ -1,0 +1,19 @@
+<div id="selected-datasets">
+  <label>Selected datasets</label>
+  <div class="list" id="selected-datasets-list" style="height: 150px; overflow-y: auto;">
+  </div>
+</div>
+<label>Search settings</label>
+<div class="checkbox">
+  <%= label_tag(:il, check_box_tag(:il, 1, true, class: "input-item") + " Equate I and L", title: "Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries.", class: 'js-has-hover-tooltip') %>
+</div>
+<div class="checkbox">
+  <%= label_tag(:dupes, check_box_tag(:dupes, 1, true, class: "input-item") + " Filter duplicate peptides", title: "Remove duplicate peptides from the input before searching.", class:'js-has-hover-tooltip') %>
+</div>
+<div class="checkbox">
+  <%= label_tag(:missed, check_box_tag(:missed, 1, false, class: "input-item") + " Advanced missed cleavage handling", title: "Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!", class: 'js-has-hover-tooltip') %>
+</div>
+<div id="search_button" class='search-buttons-centered'>
+  <%= button_tag(raw("<span class='glyphicon glyphicon-search grow'></span> Search"), :type => "submit", :class => "btn btn-primary btn-animate input-item", :id =>"search-multi-form", :"data-loading-text" => "Loading...") %>
+  <%= button_tag(raw("<span class='glyphicon glyphicon-repeat spin'></span> Start Over"), { :name => 'reset', :id => 'reset_button', :type => "reset", :class => "btn btn-default btn-animate input-item" }) %>
+</div>
