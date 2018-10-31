@@ -26,9 +26,20 @@ import {MPAAnalysisContainer} from "./mpaAnaylsisContainer";
 class MPA {
     /**
      * Setup the MPA gui
-     * @param selectedDatasets List of all datasets that should be compared and loaded
+     * @param selectedDatasets An object containing a list of all items that should be processed, as well as the current
+     *        search settings.
      */
-    constructor(selectedDatasets = []) {
+    constructor(selectedDatasets) {
+        // First we have to convert the selectedDatasets parameter from deserialized JSON-objects to the proper class
+        let datasets = [];
+        // We have to reconvert the deserialized JSON-objects into objects of the proper class
+        for (let dataset of selectedDatasets.data) {
+            console.log(dataset.name);
+            datasets.push(new MPAAnalysisContainer(dataset.type, dataset.name, dataset.data))
+        }
+        selectedDatasets.data = datasets;
+        console.log(selectedDatasets);
+
         this.datasetManager = new DatasetManager();
 
         /** @type {Dataset[]} */
@@ -36,7 +47,7 @@ class MPA {
         this.names = [];
 
         /** @type {MPAConfig[]} */
-        this.searchSettings = [];
+        this.searchSettings = selectedDatasets.settings;
         this.searchTerms = [];
 
         // @ts-ignore because it will be filled by setUpButtons
@@ -48,75 +59,70 @@ class MPA {
         this.currentDataSet = 0;
 
         this.enableMultipleDatasetsProgress(false);
-        selectedDatasets = new MPAAnalysisContainer(selectedDatasets.type, selectedDatasets.names, selectedDatasets.data);
-        this.processDatasets(selectedDatasets);
 
-        this.setUpButtons();
-        this.setUpHelp();
-        this.setUpSaveImage();
-        this.setUpFullScreen();
-        this.setUpActionBar();
+        this.processDatasets(selectedDatasets.data);
+        // this.setUpButtons();
+        // this.setUpHelp();
+        // this.setUpSaveImage();
+        // this.setUpFullScreen();
+        // this.setUpActionBar();
     }
 
     showError(error) {
         showError(error, `
-        An error occured while proccesing your peptides. 
-        Try resubmitting your peptides. 
-        Contact us if the problem persists.`);
+            An error occured while proccesing your peptides. 
+            Try resubmitting your peptides. 
+            Contact us if the problem persists.
+        `);
     }
 
     /**
-     * This function processes every dataset indicated by name from the given list of dataset names.
+     * This function processes every dataset from the given list of MPAAnalysisContainer-objects.
      *
-     * @param {MPAAnalysisContainer} datasets All datasets that should be processed and added to the current analysis.
+     * @param {MPAAnalysisContainer[]} datasets All datasets that should be processed and added to the current analysis.
      * @returns {Promise<void>}
      */
     async processDatasets(datasets) {
         this.enableProgressBar(true, true);
         this.enableProgressBar(true, false, "#progress-fa-analysis");
+        this.enableMultipleDatasetsProgress(true, datasets.length);
         this.disableGui();
 
-        if (datasets.isLocalStorage()) {
-            let names = datasets.getNames();
-            this.enableMultipleDatasetsProgress(true, names.length);
+        let processed = 0;
+        for (let dataset of datasets) {
+            eventBus.emit('progress-multiple-datasets', ++processed);
 
-            for (let i = 0; i < names.length; i++) {
-                let name = names[i];
+            if (dataset.isLocalStorage()) {
                 try {
-                    let dataset = await this.datasetManager.loadDataset(name);
-                    eventBus.emit('progress-multiple-datasets', i + 1);
+                    let name = dataset.getName();
+                    let peptideContainer = await this.datasetManager.loadDataset(name);
 
-                    // Check if dataset does indeed exist in the local storage
-                    if (dataset) {
+                    if (peptideContainer) {
                         this.searchTerms.push({
                             id: 1,
                             term: "Organism"
                         });
 
-                        this.searchSettings.push(dataset.getConfiguration());
-                        this.names.push(dataset.getName());
-                        await this.processDataset(dataset);
+                        this.names.push(name);
+                        await this.processDataset(peptideContainer);
                     } else {
                         showInfo("Dataset " + name + " was not found in local storage and is not included in the comparison.");
                     }
+
                 } catch (err) {
                     showError(err, "Something went wrong while loading dataset " + name + ".");
                 }
+
+            } else {
+                let peptideContainer = dataset.getPeptideContainer();
+                this.searchTerms.push({
+                    id: 1,
+                    term: "Organism"
+                });
+
+                this.names.push(dataset.getName());
+                await this.processDataset(peptideContainer);
             }
-        } else {
-            this.enableMultipleDatasetsProgress(true, 1);
-
-            let dataset = datasets.getPeptideContainer();
-            eventBus.emit('progress-multiple-datasets', 1);
-
-            this.searchTerms.push({
-                id: 1,
-                term: "Organism"
-            });
-
-            this.searchSettings.push(dataset.getConfiguration());
-            this.names.push(dataset.getName());
-            await this.processDataset(dataset);
         }
 
         this.enableProgressBar(false);
@@ -131,12 +137,13 @@ class MPA {
      * @returns {Promise<Dataset>}
      */
     async processDataset(data) {
-        let dataset = new Dataset(data.getPeptides());
+        let peptides = await data.getPeptides();
+        let dataset = new Dataset(peptides);
         this.datasets.push(dataset);
         this.currentDataSet = this.datasets.length - 1;
 
         this.setUpDatasetButton(data);
-        await this.analyse(this.searchSettings[this.currentDataSet]);
+        await this.analyse(this.searchSettings);
         return dataset;
     }
 
@@ -169,7 +176,7 @@ class MPA {
      */
     async analyse(searchSettings) {
         const dataset = this.datasets[this.currentDataSet];
-        await dataset.search(this.searchSettings[this.currentDataSet]).catch(error => this.showError(error));
+        await dataset.search(this.searchSettings).catch(error => this.showError(error));
         this.setUpVisualisations(dataset.tree);
         this.updateStats(dataset);
         return dataset;
@@ -202,11 +209,11 @@ class MPA {
      * @param {MPAConfig} searchSettings
      */
     async updateSearchSettings(searchSettings) {
-        this.searchSettings[this.currentDataSet] = searchSettings;
+        this.searchSettings = searchSettings;
         this.enableProgressBar(true, true);
         this.enableProgressBar(true, false, "#progress-fa-analysis");
         $("#search-intro").text("Please wait while we process your data");
-        await this.analyse(this.searchSettings[this.currentDataSet]);
+        await this.analyse(this.searchSettings);
         this.enableProgressBar(false);
     }
 
@@ -219,7 +226,7 @@ class MPA {
         this.sunburst = this.setUpSunburst(JSON.parse(data));
         this.treemap = this.setUpTreemap(JSON.parse(data));
         this.treeview = this.setUpTreeview(JSON.parse(data));
-        this.searchTree = constructSearchtree(tree, this.searchSettings[this.currentDataSet].il, d => this.search(d.id, d.name, 1000));
+        this.searchTree = constructSearchtree(tree, this.searchSettings.il, d => this.search(d.id, d.name, 1000));
     }
 
     /**
