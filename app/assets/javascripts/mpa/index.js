@@ -895,39 +895,44 @@ class MPA {
             event.stopPropagation();
         });
 
-        $("#mpa-add-dataset").click(() => {
-            this.enableProgressBar(true, true);
-            this.enableProgressBar(true, false, "#progress-fa-analysis");
-            this.disableGui();
-
-            let peptides = $("#qs").val().replace(/\r/g,"").split("\n");
-            let searchName = $("#search_name").val();
-            let equateIl = $("#il").is(':checked');
-            let filterDuplicates = $("#dupes").is(':checked');
-            let handleMissingCleavage = $("#missed").is(':checked');
-
-            let config = {
-                il: equateIl,
-                dupes: filterDuplicates,
-                missed: handleMissingCleavage,
-            };
-
-            // TODO what to do with empty searchnames?
-            this.datasetManager.storeDataset(peptides, config, searchName)
-                .then((dataset) => {
-                    this.searchSettings.push(config);
-                    this.names.push(searchName);
-                    this.processDataset(dataset).finally(() => {
-                        this.disableGui(false);
-                        this.enableProgressBar(false);
-                    });
-                })
-                .catch(err => {
-                    this.disableGui(false);
-                    this.enableProgressBar(false);
-                    this.showError(err, "Something went wrong while processing the dataset.")
-                });
+        $("#add-dataset-button").click(function() {
+            $("#experiment-summary-card").toggleClass("hidden");
+            $("#load-datasets-card").toggleClass("hidden");
         });
+
+        // $("#mpa-add-dataset").click(() => {
+        //     this.enableProgressBar(true, true);
+        //     this.enableProgressBar(true, false, "#progress-fa-analysis");
+        //     this.disableGui();
+        //
+        //     let peptides = $("#qs").val().replace(/\r/g,"").split("\n");
+        //     let searchName = $("#search_name").val();
+        //     let equateIl = $("#il").is(':checked');
+        //     let filterDuplicates = $("#dupes").is(':checked');
+        //     let handleMissingCleavage = $("#missed").is(':checked');
+        //
+        //     let config = {
+        //         il: equateIl,
+        //         dupes: filterDuplicates,
+        //         missed: handleMissingCleavage,
+        //     };
+        //
+        //     // TODO what to do with empty searchnames?
+        //     this.datasetManager.storeDataset(peptides, config, searchName)
+        //         .then((dataset) => {
+        //             this.searchSettings.push(config);
+        //             this.names.push(searchName);
+        //             this.processDataset(dataset).finally(() => {
+        //                 this.disableGui(false);
+        //                 this.enableProgressBar(false);
+        //             });
+        //         })
+        //         .catch(err => {
+        //             this.disableGui(false);
+        //             this.enableProgressBar(false);
+        //             this.showError(err, "Something went wrong while processing the dataset.")
+        //         });
+        // });
     }
 
     setUpHelp() {

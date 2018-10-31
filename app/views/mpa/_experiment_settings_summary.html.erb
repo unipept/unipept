@@ -3,13 +3,33 @@
     <h2 class="card-title-text">Experiment summary</h2>
   </div>
   <div class="card-supporting-text">
-    <label>Configuration</label>
-    <ul>
-      <li>Equate I and L</li>
-      <li>Filter duplicate peptides</li>
-    </ul>
-    <label>Data summary</label>
-    <div>Datasets: 5</div>
-    <div>Total peptides: 4782</div>
+    <label>Search settings</label>
+    <div class="checkbox">
+      <%= label_tag(:il, check_box_tag(:il, 1, true, class: "input-item") + " Equate I and L", title: "Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries.", class: 'js-has-hover-tooltip') %>
+    </div>
+    <div class="checkbox">
+      <%= label_tag(:dupes, check_box_tag(:dupes, 1, true, class: "input-item") + " Filter duplicate peptides", title: "Remove duplicate peptides from the input before searching.", class:'js-has-hover-tooltip') %>
+    </div>
+    <div class="checkbox">
+      <%= label_tag(:missed, check_box_tag(:missed, 1, false, class: "input-item") + " Advanced missed cleavage handling", title: "Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!", class: 'js-has-hover-tooltip') %>
+    </div>
+    <div class="search-buttons-centered">
+      <%= button_tag(raw("<span class='glyphicon glyphicon-repeat spin'></span> Update"), :type => "submit", :class => "btn btn-primary btn-animate input-item", :id =>"update-button") %>
+    </div>
+    <label>Statistics</label>
+    <div class="list">
+      <div class="list-item--two-lines">
+        <span class="list-item-primary-content">
+          Datasets
+          <span class="list-item-body">5</span>
+        </span>
+      </div>
+      <div class="list-item--two-lines">
+        <span class="list-item-primary-content">
+          Total peptides
+          <span class="list-item-body">1487</span>
+        </span>
+      </div>
+    </div>
   </div>
 </div>

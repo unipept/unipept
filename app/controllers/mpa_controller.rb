@@ -6,6 +6,7 @@ class MpaController < ApplicationController
     @header_class = 'MPA'
     @title = 'Metaproteomics analysis result'
     @selected_datasets = params[:data]
+    @datasets = Dataset.includes(:dataset_items).all
   end
 
   def pept2data
