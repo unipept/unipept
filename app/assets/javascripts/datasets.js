@@ -78,19 +78,26 @@ function initDatasets() {
         } else {
             enableProgressIndicators();
             let peptideContainer = getPeptideContainerFromUserInput();
-            peptideContainer.getPeptides()
-                .then(peptides => {
-                    dataSetManager.storeDataset(peptides, searchName)
-                        .catch(err => showError(err, "Something went wrong while storing your dataset. Check whether local storage is enabled and supported by your browser."))
-                        .then(() => {
-                            dataSetManager.selectDataset(searchName);
-                            renderLocalStorageItems(dataSetManager);
-                            renderSelectedDatasets(dataSetManager, quickSearchItems);
-                        });
-                }).catch(err => {
-                    showError(err, "Something went wrong while reading your dataset. Check whether local storage is enabled and supported by your browser.");
-                    enableProgressIndicators(false);
-            });
+            if (save) {
+                peptideContainer.getPeptides()
+                    .then(peptides => {
+                        dataSetManager.storeDataset(peptides, searchName)
+                            .catch(err => showError(err, "Something went wrong while storing your dataset. Check whether local storage is enabled and supported by your browser."))
+                            .then(() => {
+                                dataSetManager.selectDataset(searchName);
+                                renderLocalStorageItems(dataSetManager);
+                                renderSelectedDatasets(dataSetManager, quickSearchItems);
+                            });
+                    })
+                    .catch(err => {
+                        showError(err, "Something went wrong while reading your dataset. Check whether local storage is enabled and supported by your browser.");
+                        enableProgressIndicators(false);
+                    });
+            } else {
+                quickSearchItems.push(peptideContainer);
+                renderSelectedDatasets(dataSetManager, quickSearchItems);
+                enableProgressIndicators(false);
+            }
         }
     });
 
@@ -194,8 +201,7 @@ async function searchSelectedDatasets(dataSetManager, quickSearchItems) {
 
     if (dataSetManager.getAmountOfSelectedDatasets() === 0 && quickSearchItems.length === 0) {
         let peptideContainer = getPeptideContainerFromUserInput();
-        let peptides = await peptideContainer.getPeptides();
-        output.push(new MPAAnalysisContainer(QUICK_SEARCH_TYPE, peptides))
+        output.push(new MPAAnalysisContainer(QUICK_SEARCH_TYPE, undefined, peptideContainer))
     } else {
         let selectedDatasets = await dataSetManager.getSelectedDatasets();
         for (let selectedDataset of selectedDatasets) {
@@ -203,8 +209,7 @@ async function searchSelectedDatasets(dataSetManager, quickSearchItems) {
         }
 
         for (let quickSearchItem of quickSearchItems) {
-            let peptides = await quickSearchItem.getPeptides();
-            output.push(new MPAAnalysisContainer(QUICK_SEARCH_TYPE, peptides));
+            output.push(new MPAAnalysisContainer(QUICK_SEARCH_TYPE, undefined, quickSearchItem));
         }
     }
 
