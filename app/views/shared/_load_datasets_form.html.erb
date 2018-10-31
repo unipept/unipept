@@ -18,7 +18,7 @@
           <label for="pride_exp_id">Assay id</label>
           <%= text_field_tag('pride_exp_id', nil, :placeholder => 'e.g. 8500', :class => "form-control input-item")%>
         </div>
-        <%= render 'pride_progress' %>
+        <%= render 'shared/pride_progress' %>
         <div class='search-buttons-centered'>
           <%= button_tag(raw("Load PRIDE dataset"), { :type => "button", :class => "load-pride btn btn-default input-item" , :"data-loading-text" => "Loading..."}) %>
         </div>
