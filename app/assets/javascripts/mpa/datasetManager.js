@@ -106,7 +106,7 @@ class DatasetManager {
      */
     async storeDataset(peptides, name) {
         let date = new Date();
-        let peptideContainer = new PeptideContainer(name, peptides.length, date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDay());
+        let peptideContainer = new PeptideContainer(name, peptides.length, date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getUTCDate());
         peptideContainer.setPeptides(peptides);
         window.localStorage.setItem(this.metadataPrefix + name, JSON.stringify(peptideContainer.getMetadataJSON()));
         window.localStorage.setItem(this.peptidePrefix + name, JSON.stringify(peptideContainer.getDataJSON()));
