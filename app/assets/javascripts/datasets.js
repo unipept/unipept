@@ -10,7 +10,8 @@ function enableProgressIndicators(enable = true) {
     let $searchButton = $("#search_button");
     let $formProgress = $("#form-progress");
 
-    $(".input-item").prop('disabled', enable);
+    $(".input-item")
+        .prop('disabled', enable);
 
     if (enable) {
         $searchButton.hide();
