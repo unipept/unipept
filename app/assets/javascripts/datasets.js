@@ -312,7 +312,7 @@ function getPeptideContainerFromUserInput() {
     let search = $("#search_name").val();
 
     let date = new Date();
-    let peptideContainer = new PeptideContainer(search, peptides.length, date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDay());
+    let peptideContainer = new PeptideContainer(search, peptides.length, date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getUTCDate());
     peptideContainer.setPeptides(peptides);
     return peptideContainer;
 }
