@@ -30,7 +30,6 @@ function initDatasets() {
 
     // Stores all datasets that are not saved in local storage, but that should be analysed anyways
     let quickSearchItems = [];
-    let $saveDatasetCheckbox = $("#save_dataset");
 
     // enable tooltips
     $(".js-has-hover-tooltip").tooltip({
@@ -68,38 +67,11 @@ function initDatasets() {
     });
 
     $("#add_dataset_button").click(function() {
-        enableSearchNameError(false);
+        addDataset("", dataSetManager, quickSearchItems);
+    });
 
-        let $searchName = $("#search_name");
-        let searchName = $searchName.val();
-        let save = $saveDatasetCheckbox.prop("checked");
-
-        if (save && searchName === "") {
-            enableSearchNameError();
-        } else {
-            enableProgressIndicators();
-            let peptideContainer = getPeptideContainerFromUserInput();
-            if (save) {
-                peptideContainer.getPeptides()
-                    .then(peptides => {
-                        dataSetManager.storeDataset(peptides, searchName)
-                            .catch(err => showError(err, "Something went wrong while storing your dataset. Check whether local storage is enabled and supported by your browser."))
-                            .then(() => {
-                                dataSetManager.selectDataset(searchName);
-                                renderLocalStorageItems(dataSetManager);
-                                renderSelectedDatasets(dataSetManager, quickSearchItems);
-                            });
-                    })
-                    .catch(err => {
-                        showError(err, "Something went wrong while reading your dataset. Check whether local storage is enabled and supported by your browser.");
-                        enableProgressIndicators(false);
-                    });
-            } else {
-                quickSearchItems.push(peptideContainer);
-                renderSelectedDatasets(dataSetManager, quickSearchItems);
-                enableProgressIndicators(false);
-            }
-        }
+    $("#add_pride_dataset_button").click(function() {
+        addDataset("pride-", dataSetManager, quickSearchItems);
     });
 
     $("#reset_button").click(function() {
@@ -173,13 +145,60 @@ function initPreload(type, id) {
     }
 }
 
+/**
+ * Retrieve all information about a dataset from the appropriate form. The form that should be used as a source for the
+ * dataset information should be indicated by id-prefix.
+ *
+ * @param {string} idPrefix Unique identifier by which all id's of the corresponding form are preceded.
+ * @param {DatasetManager} dataSetManager The DataSetManager that's currently used to indicate the selected datasets.
+ * @param {PeptideContainer[]} quickSearchItems The list of items that are not stored in local storage and thus not
+ *        managed by the DataSetManager, but that should however also be selected.
+ * @return {void}
+ */
+function addDataset(idPrefix, dataSetManager, quickSearchItems) {
+    enableSearchNameError(false, idPrefix);
+
+    let $searchName = $("#" + idPrefix + "search_name");
+    let $saveDataSetCheckbox = $("#" + idPrefix + "save_dataset");
+
+    let searchName = $searchName.val();
+    let save = $saveDataSetCheckbox.prop("checked");
+
+    if (save && searchName === "") {
+        enableSearchNameError(true, idPrefix);
+    } else {
+        enableProgressIndicators();
+        let peptideContainer = getPeptideContainerFromUserInput();
+        if (save) {
+            peptideContainer.getPeptides()
+                .then(peptides => {
+                    dataSetManager.storeDataset(peptides, searchName)
+                        .catch(err => showError(err, "Something went wrong while storing your dataset. Check whether local storage is enabled and supported by your browser."))
+                        .then(() => {
+                            dataSetManager.selectDataset(searchName);
+                            renderLocalStorageItems(dataSetManager);
+                            renderSelectedDatasets(dataSetManager, quickSearchItems);
+                        });
+                })
+                .catch(err => {
+                    showError(err, "Something went wrong while reading your dataset. Check whether local storage is enabled and supported by your browser.");
+                    enableProgressIndicators(false);
+                });
+        } else {
+            quickSearchItems.push(peptideContainer);
+            renderSelectedDatasets(dataSetManager, quickSearchItems);
+            enableProgressIndicators(false);
+        }
+    }
+}
+
 function showSelectedDatasetsPlaceholder() {
     $("#selected-datasets-list").append($("<span>No datasets currently selected...</span>"));
 }
 
-function enableSearchNameError(state = true) {
-    let $searchInputGroup = $("#search-input-group");
-    let $helpBlockName = $("#help-block-name");
+function enableSearchNameError(state = true, idPrefix = "") {
+    let $searchInputGroup = $("#" + idPrefix + "search-input-group");
+    let $helpBlockName = $("#" + idPrefix + "help-block-name");
 
     if (state) {
         $searchInputGroup.addClass("has-error");
@@ -316,7 +335,6 @@ function constructDatasetLoader() {
             peptides = [],
             e;
 
-
         $("#pride-progress").show("fast");
         $("#pride-progress .progress-bar").css("width", "10%");
 
@@ -376,8 +394,13 @@ function constructDatasetLoader() {
      *          dataset. Can be nil.
      */
     that.loadDataset = function loadDataset(type, id, name, button) {
+        let idPrefix = "";
+        if (type === "pride") {
+            idPrefix = "pride-";
+        }
+
         // expand the search options and prepare the form
-        $("#qs").val("Please wait while we load the dataset...");
+        $("#" + idPrefix + "qs").val("Please wait while we load the dataset...");
         enableProgressIndicators();
         $("#search-multi-form").button("loading");
         let startTimer = new Date().getTime();
@@ -392,13 +415,13 @@ function constructDatasetLoader() {
             logToGoogle("Datasets", "Loaded", name, loadTime);
 
             // fill in the data
-            $("#search_name").val(name);
-            $("#qs").val(data);
+            $("#" + idPrefix + "search_name").val(name);
+            $("#" + idPrefix + "qs").val(data);
             that.checkDatasetSize();
 
             // highlight what happend to the user
-            highlight("#qs");
-            highlight("#search_name");
+            highlight("#" + idPrefix + "qs");
+            highlight("#" + idPrefix + "search_name");
         };
 
         let fail = function (error) {
@@ -406,7 +429,7 @@ function constructDatasetLoader() {
             logToGoogle("Datasets", "Failed", name, error);
 
             // reset the form elements
-            $("#qs").val("");
+            $("#" + idPrefix + "qs").val("");
 
             // highlight what pappend to the user
             showError(error, "Something went wrong while loading the datasets.");
