@@ -25,11 +25,12 @@ function enableProgressIndicators(enable = true) {
 function initDatasets() {
     let datasetLoader = constructDatasetLoader();
     let dataSetManager = new DatasetManager();
-    showSelectedDatasetsPlaceholder();
-    renderLocalStorageItems(dataSetManager);
 
     // Stores all datasets that are not saved in local storage, but that should be analysed anyways
     let quickSearchItems = [];
+
+    renderLocalStorageItems(dataSetManager, quickSearchItems);
+    renderSelectedDatasets(dataSetManager, quickSearchItems);
 
     // enable tooltips
     $(".js-has-hover-tooltip").tooltip({
@@ -40,17 +41,6 @@ function initDatasets() {
         trigger: "focus",
         container: "body",
         placement: "right",
-    });
-
-    $("#select_datasets_button").click(function() {
-        // Retrieve all selected datasets through the selected checkboxes
-        $(".dataset-checkbox").each(function() {
-            if ($(this).prop("checked")) {
-                dataSetManager.selectDataset($(this).data("dataset"));
-            }
-        });
-
-        renderSelectedDatasets(dataSetManager, quickSearchItems);
     });
 
     $("#search-multi-form").click(function() {
@@ -176,7 +166,7 @@ function addDataset(idPrefix, dataSetManager, quickSearchItems) {
                         .catch(err => showError(err, "Something went wrong while storing your dataset. Check whether local storage is enabled and supported by your browser."))
                         .then(() => {
                             dataSetManager.selectDataset(searchName);
-                            renderLocalStorageItems(dataSetManager);
+                            renderLocalStorageItems(dataSetManager, quickSearchItems);
                             renderSelectedDatasets(dataSetManager, quickSearchItems);
                         });
                 })
@@ -193,7 +183,7 @@ function addDataset(idPrefix, dataSetManager, quickSearchItems) {
 }
 
 function showSelectedDatasetsPlaceholder() {
-    $("#selected-datasets-list").append($("<span>No datasets currently selected...</span>"));
+    $("#selected-datasets-list").append($("<span>Please select one or more datasets from the right hand panel to continue the analysis...</span>"));
 }
 
 function enableSearchNameError(state = true, idPrefix = "") {
@@ -247,57 +237,73 @@ async function searchSelectedDatasets(dataSetManager, quickSearchItems) {
     }));
 }
 
-function renderLocalStorageItems(datasetManager) {
+function renderLocalStorageItems(dataSetManager, quickSearchItems) {
     let $body = $("#local-storage-datasets");
     $body.html("");
     enableProgressIndicators();
 
-    datasetManager.listDatasets()
+    dataSetManager.listDatasets()
         .then(allDatasets => {
             for (let i = 0; i < allDatasets.length; i++) {
-                $body.append(renderLocalStorageItem(allDatasets[i]));
+                $body.append(renderLocalStorageItem(allDatasets[i], dataSetManager, quickSearchItems));
             }
         })
         .catch(err => showError(err, "Something went wrong while loading your datasets. Check whether local storage is enabled and supported by your browser."))
         .then(() => enableProgressIndicators(false));
 }
 
-function renderLocalStorageItem(dataset) {
+function renderLocalStorageItem(dataset, dataSetManager, quickSearchItems) {
     // Use jQuery to build elements to prevent XSS attacks
     let $listItem = $("<div class='list-item--two-lines'>");
-    let $primaryAction = $("<span class='list-item-primary-action'>").append($("<input type='checkbox' class='dataset-checkbox' data-dataset='" + dataset.getName() + "'>"));
+    let $primaryAction = $("<span class='list-item-primary-action'>").append($("<span class='glyphicon glyphicon-arrow-left select-dataset-button'>"));
     let $primaryContent = $("<span class='list-item-primary-content'>").text(dataset.getName());
     $primaryContent.append($("<span class='list-item-date'>").text(dataset.getDate()));
     let $primaryBody = $("<span class='list-item--two-lines list-item-body'>").text(dataset.getAmountOfPeptides() + " peptides");
     $primaryContent.append($primaryBody);
     $listItem.append($primaryAction);
     $listItem.append($primaryContent);
+    $primaryAction.click(function() {
+        dataSetManager.selectDataset(dataset.getName());
+        renderSelectedDatasets(dataSetManager, quickSearchItems);
+    });
     return $listItem;
 }
 
-function renderSelectedDatasets(datasetManager, quickSearchDatasets) {
+function renderSelectedDatasets(dataSetManager, quickSearchDatasets) {
     let $body = $("#selected-datasets-list");
     $body.html("");
     enableProgressIndicators();
 
-    datasetManager.getSelectedDatasets()
+    if (dataSetManager.getAmountOfSelectedDatasets() === 0 && quickSearchDatasets.length === 0){
+        showSelectedDatasetsPlaceholder();
+    }
+
+    dataSetManager.getSelectedDatasets()
         .then(selectedDatasets => {
             for (let selectedDataset of selectedDatasets.concat(quickSearchDatasets)) {
-                $body.append(renderSelectedDataset(selectedDataset));
+                $body.append(renderSelectedDataset(selectedDataset, dataSetManager, quickSearchDatasets));
             }
 
         })
         .catch(err => showError(err, "Something went wrong while selecting some datasets. Check whether local storage is enabled and supported by your browser."))
-        .then(enableProgressIndicators(false));
+        .then(() => enableProgressIndicators(false));
 }
 
-function renderSelectedDataset(dataset) {
+function renderSelectedDataset(dataset, dataSetManager, quickSearchItems) {
     // Use jQuery to build elements and prevent XSS attacks
     let $listItem = $("<div class='list-item--two-lines'>");
     let $primaryContent = $("<span class='list-item-primary-content'>").append("<span>").text(dataset.getName());
     $primaryContent.append($("<span class='list-item-date'>").text(dataset.getDate()));
     $primaryContent.append($("<span class='list-item-body'>").text(dataset.getAmountOfPeptides() + " peptides"));
     $listItem.append($primaryContent);
+    let $secondaryAction = $("<span class='list-item-secondary-action'>").append("<span class='glyphicon glyphicon-remove'>");
+    $listItem.append($secondaryAction);
+
+    $secondaryAction.click(function() {
+        dataSetManager.selectDataset(dataset.getName(), false);
+        renderSelectedDatasets(dataSetManager, quickSearchItems);
+    });
+
     return $listItem;
 }
 

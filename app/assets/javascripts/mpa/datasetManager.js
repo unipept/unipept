@@ -44,12 +44,10 @@ class DatasetManager {
     selectDataset(name, select = true) {
         let index = this._selectedDatasets.indexOf(name);
 
-        if (index === -1) {
-            if (select) {
-                this._selectedDatasets.push(name);
-            } else {
-                this._selectedDatasets.splice(index, 1);
-            }
+        if (index === -1 && select) {
+            this._selectedDatasets.push(name);
+        } else if (!select) {
+            this._selectedDatasets.splice(index, 1);
         }
     }
 
