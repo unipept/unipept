@@ -2,14 +2,20 @@
  * Class that manages all dataset's stored by the user in local storage and the ability to serialize or restore them.
  */
 import {PeptideContainer} from "./peptideContainer";
+import {LOCAL_STORAGE_TYPE} from "./storageTypeConstants";
 
 class DatasetManager {
-    constructor() {
+    constructor(type = LOCAL_STORAGE_TYPE) {
         // The prefix that's used to identify the mpa-datasets in local storage.
         this.prefix = 'mpa-';
         this.metadataPrefix = this.prefix + 'metadata-';
         this.peptidePrefix = this.prefix + 'peptide-';
         this._selectedDatasets = [];
+        if (type === LOCAL_STORAGE_TYPE) {
+            this.storage = window.localStorage;
+        } else {
+            this.storage = window.sessionStorage;
+        }
     }
 
     /**
@@ -85,8 +91,8 @@ class DatasetManager {
      */
     async listDatasets() {
         let output = [];
-        for (let i = 0; i < window.localStorage.length; i++) {
-            let key = window.localStorage.key(i);
+        for (let i = 0; i < this.storage.length; i++) {
+            let key = this.storage.key(i);
             if (key.startsWith(this.metadataPrefix)) {
                 let dataset = await this.loadDataset(key.substr(this.metadataPrefix.length));
                 output.push(dataset)
@@ -105,11 +111,10 @@ class DatasetManager {
      * @return {PeptideContainer} All information found about the dataset associated with the given name.
      */
     async storeDataset(peptides, name) {
-        let date = new Date();
-        let peptideContainer = new PeptideContainer(name, peptides.length, date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getUTCDate());
+        let peptideContainer = new PeptideContainer(name, peptides.length, new Date());
         peptideContainer.setPeptides(peptides);
-        window.localStorage.setItem(this.metadataPrefix + name, JSON.stringify(peptideContainer.getMetadataJSON()));
-        window.localStorage.setItem(this.peptidePrefix + name, JSON.stringify(peptideContainer.getDataJSON()));
+        this.storage.setItem(this.metadataPrefix + name, JSON.stringify(peptideContainer.getMetadataJSON()));
+        this.storage.setItem(this.peptidePrefix + name, JSON.stringify(peptideContainer.getDataJSON()));
         return peptideContainer;
     }
 
@@ -121,21 +126,15 @@ class DatasetManager {
      *         given name. Returns null when a dataset with the given name was not found in local storage.
      */
     async loadDataset(name) {
-        let serializedData = window.localStorage.getItem(this.metadataPrefix + name);
+        let serializedData = this.storage.getItem(this.metadataPrefix + name);
         if (serializedData != null) {
-            let deserializedData = JSON.parse(serializedData);
-
-            return new PeptideContainer(
-                deserializedData.name,
-                deserializedData.amount,
-                deserializedData.date
-            );
+            return PeptideContainer.fromJSON(serializedData);
         }
         return null;
     }
 
     async loadPeptides(name) {
-        let serializedData = window.localStorage.getItem(this.metadataPrefix + name);
+        let serializedData = this.storage.getItem(this.peptidePrefix + name);
         if (serializedData != null) {
             let deserializedData = JSON.parse(serializedData);
             return deserializedData.peptides;
@@ -148,8 +147,8 @@ class DatasetManager {
      * @param name Name of the dataset that should be removed from local storage.
      */
     async removeDataset(name) {
-        window.localStorage.removeItem(this.metadataPrefix + name);
-        window.localStorage.removeItem(this.peptidePrefix + name);
+        this.storage.removeItem(this.metadataPrefix + name);
+        this.storage.removeItem(this.peptidePrefix + name);
     }
 
     /**
@@ -157,15 +156,15 @@ class DatasetManager {
      */
     async clearStorage() {
         let toRemove = [];
-        for (let i = 0; i < window.localStorage.length; i++) {
-            let key = window.localStorage.key(i);
+        for (let i = 0; i < this.storage.length; i++) {
+            let key = this.storage.key(i);
             if (key.startsWith(this.prefix)) {
                 toRemove.push(key);
             }
         }
 
         for (let key of toRemove) {
-            window.localStorage.removeItem(key);
+            this.storage.removeItem(key);
         }
 
         this.t_selectedDatasets = [];

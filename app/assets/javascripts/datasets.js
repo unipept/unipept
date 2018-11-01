@@ -1,8 +1,8 @@
 import {showNotification} from "./notifications.js";
 import {DatasetManager} from "./mpa/datasetManager.js";
 import {get, getJSON, highlight, logToGoogle, showError, showInfo} from "./utils.js";
-import {PeptideContainer} from "./mpa/peptideContainer";
-import {LOCAL_STORAGE_TYPE, MPAAnalysisContainer, QUICK_SEARCH_TYPE} from "./mpa/mpaAnaylsisContainer";
+import {MPAAnalysisContainer} from "./mpa/mpaAnaylsisContainer";
+import {LOCAL_STORAGE_TYPE, SESSION_STORAGE_TYPE} from "./mpa/storageTypeConstants";
 
 /* eslint-disable require-jsdoc */
 
@@ -24,13 +24,11 @@ function enableProgressIndicators(enable = true) {
 
 function initDatasets() {
     let datasetLoader = constructDatasetLoader();
-    let dataSetManager = new DatasetManager();
+    let localStorageManager = new DatasetManager();
+    let sessionStorageManager = new DatasetManager(SESSION_STORAGE_TYPE);
 
-    // Stores all datasets that are not saved in local storage, but that should be analysed anyways
-    let quickSearchItems = [];
-
-    renderLocalStorageItems(dataSetManager, quickSearchItems);
-    renderSelectedDatasets(dataSetManager, quickSearchItems);
+    renderLocalStorageItems(localStorageManager, sessionStorageManager);
+    renderSelectedDatasets(localStorageManager, sessionStorageManager);
 
     // enable tooltips
     $(".js-has-hover-tooltip").tooltip({
@@ -48,7 +46,7 @@ function initDatasets() {
 
         let $dataForm = $("#send_data_form");
 
-        searchSelectedDatasets(dataSetManager, quickSearchItems)
+        searchSelectedDatasets(localStorageManager, sessionStorageManager)
             .then(() => $dataForm.submit())
             .catch(err => {
                 showError(err, "An unknown error occurred. Please try again.");
@@ -57,19 +55,19 @@ function initDatasets() {
     });
 
     $("#add_dataset_button").click(function() {
-        addDataset("", dataSetManager, quickSearchItems);
+        addDataset("", localStorageManager, sessionStorageManager);
     });
 
     $("#add_pride_dataset_button").click(function() {
-        addDataset("pride-", dataSetManager, quickSearchItems);
+        addDataset("pride-", localStorageManager, sessionStorageManager);
     });
 
     $("#reset_button").click(function() {
         $("#qs").val("");
         $("#search_name").val("");
-        dataSetManager.clearSelection();
-        quickSearchItems = [];
-        renderSelectedDatasets(dataSetManager, quickSearchItems);
+        localStorageManager.clearSelection();
+        sessionStorageManager.clearSelection();
+        renderSelectedDatasets(localStorageManager, sessionStorageManager);
         showSelectedDatasetsPlaceholder();
     });
 
@@ -140,13 +138,15 @@ function initPreload(type, id) {
  * dataset information should be indicated by id-prefix.
  *
  * @param {string} idPrefix Unique identifier by which all id's of the corresponding form are preceded.
- * @param {DatasetManager} dataSetManager The DataSetManager that's currently used to indicate the selected datasets.
- * @param {PeptideContainer[]} quickSearchItems The list of items that are not stored in local storage and thus not
- *        managed by the DataSetManager, but that should however also be selected.
+ * @param {DatasetManager} localStorageManager DatasetManager that's currently used to select datasets that are situated
+ *        in the browser's local storage.
+ * @param {DatasetManager} sessionStorageManager DatasetManager that's currently used to select datasets that are
+ *        situated in the browser's session storage.
  * @return {void}
  */
-function addDataset(idPrefix, dataSetManager, quickSearchItems) {
+function addDataset(idPrefix, localStorageManager, sessionStorageManager) {
     enableSearchNameError(false, idPrefix);
+    enableProgressIndicators();
 
     let $searchName = $("#" + idPrefix + "search_name");
     let $saveDataSetCheckbox = $("#" + idPrefix + "save_dataset");
@@ -157,28 +157,19 @@ function addDataset(idPrefix, dataSetManager, quickSearchItems) {
     if (save && searchName === "") {
         enableSearchNameError(true, idPrefix);
     } else {
-        enableProgressIndicators();
-        let peptideContainer = getPeptideContainerFromUserInput();
-        if (save) {
-            peptideContainer.getPeptides()
-                .then(peptides => {
-                    dataSetManager.storeDataset(peptides, searchName)
-                        .catch(err => showError(err, "Something went wrong while storing your dataset. Check whether local storage is enabled and supported by your browser."))
-                        .then(() => {
-                            dataSetManager.selectDataset(searchName);
-                            renderLocalStorageItems(dataSetManager, quickSearchItems);
-                            renderSelectedDatasets(dataSetManager, quickSearchItems);
-                        });
-                })
-                .catch(err => {
-                    showError(err, "Something went wrong while reading your dataset. Check whether local storage is enabled and supported by your browser.");
-                    enableProgressIndicators(false);
-                });
-        } else {
-            quickSearchItems.push(peptideContainer);
-            renderSelectedDatasets(dataSetManager, quickSearchItems);
-            enableProgressIndicators(false);
-        }
+        let peptides = $("#qs").val().replace(/\r/g,"").split("\n");
+        console.log(save);
+        console.log($saveDataSetCheckbox);
+        let storageManager = save ? localStorageManager : sessionStorageManager;
+
+        storageManager.storeDataset(peptides, searchName)
+            .catch(err => showError(err, "Something went wrong while storing your dataset. Check whether local storage is enabled and supported by your browser."))
+            .then(() => {
+                storageManager.selectDataset(searchName);
+                renderLocalStorageItems(localStorageManager, sessionStorageManager);
+                renderSelectedDatasets(localStorageManager, sessionStorageManager);
+                enableProgressIndicators(false);
+            });
     }
 }
 
@@ -204,28 +195,37 @@ function enableSearchNameError(state = true, idPrefix = "") {
  *
  * @returns {Promise<void>}
  */
-async function searchSelectedDatasets(dataSetManager, quickSearchItems) {
+async function searchSelectedDatasets(localStorageManager, sessionStorageManager) {
     let $dataInput = $("#data_input");
 
     let output = [];
 
-    if (dataSetManager.getAmountOfSelectedDatasets() === 0 && quickSearchItems.length === 0) {
-        let peptideContainer = getPeptideContainerFromUserInput();
-        output.push(new MPAAnalysisContainer(QUICK_SEARCH_TYPE, undefined, peptideContainer))
+    if (localStorageManager.getAmountOfSelectedDatasets() === 0 && sessionStorageManager.getAmountOfSelectedDatasets() === 0) {
+        showInfo("You must select at least one dataset to start the analysis.");
     } else {
-        let selectedDatasets = await dataSetManager.getSelectedDatasets();
+        let selectedDatasets = await localStorageManager.getSelectedDatasets();
         for (let selectedDataset of selectedDatasets) {
             output.push(new MPAAnalysisContainer(LOCAL_STORAGE_TYPE, selectedDataset.getName()));
         }
 
-        for (let quickSearchItem of quickSearchItems) {
-            output.push(new MPAAnalysisContainer(QUICK_SEARCH_TYPE, undefined, quickSearchItem));
+        selectedDatasets = await sessionStorageManager.getSelectedDatasets();
+        for (let quickSearchItem of selectedDatasets) {
+            output.push(new MPAAnalysisContainer(SESSION_STORAGE_TYPE, quickSearchItem.getName()));
         }
     }
 
     let il = $("#il").prop("checked");
     let dupes = $("#dupes").prop("checked");
     let missed = $("#missed").prop("checked");
+
+    console.log(JSON.stringify({
+        settings: {
+            il: il,
+            dupes: dupes,
+            missed: missed
+        },
+        data: output
+    }));
 
     $dataInput.val(JSON.stringify({
         settings: {
@@ -237,22 +237,22 @@ async function searchSelectedDatasets(dataSetManager, quickSearchItems) {
     }));
 }
 
-function renderLocalStorageItems(dataSetManager, quickSearchItems) {
+function renderLocalStorageItems(localStorageManager, sessionStorageManager) {
     let $body = $("#local-storage-datasets");
     $body.html("");
     enableProgressIndicators();
 
-    dataSetManager.listDatasets()
+    localStorageManager.listDatasets()
         .then(allDatasets => {
             for (let i = 0; i < allDatasets.length; i++) {
-                $body.append(renderLocalStorageItem(allDatasets[i], dataSetManager, quickSearchItems));
+                $body.append(renderLocalStorageItem(allDatasets[i], localStorageManager, sessionStorageManager));
             }
         })
         .catch(err => showError(err, "Something went wrong while loading your datasets. Check whether local storage is enabled and supported by your browser."))
         .then(() => enableProgressIndicators(false));
 }
 
-function renderLocalStorageItem(dataset, dataSetManager, quickSearchItems) {
+function renderLocalStorageItem(dataset, localStorageManager, sessionStorageManager) {
     // Use jQuery to build elements to prevent XSS attacks
     let $listItem = $("<div class='list-item--two-lines'>");
     let $primaryAction = $("<span class='list-item-primary-action'>").append($("<span class='glyphicon glyphicon-arrow-left select-dataset-button'>"));
@@ -263,33 +263,33 @@ function renderLocalStorageItem(dataset, dataSetManager, quickSearchItems) {
     $listItem.append($primaryAction);
     $listItem.append($primaryContent);
     $primaryAction.click(function() {
-        dataSetManager.selectDataset(dataset.getName());
-        renderSelectedDatasets(dataSetManager, quickSearchItems);
+        localStorageManager.selectDataset(dataset.getName());
+        renderSelectedDatasets(localStorageManager, sessionStorageManager);
     });
     return $listItem;
 }
 
-function renderSelectedDatasets(dataSetManager, quickSearchDatasets) {
+function renderSelectedDatasets(localStorageManager, sessionStorageManager) {
+    enableProgressIndicators();
     let $body = $("#selected-datasets-list");
     $body.html("");
-    enableProgressIndicators();
 
-    if (dataSetManager.getAmountOfSelectedDatasets() === 0 && quickSearchDatasets.length === 0){
+    if (localStorageManager.getAmountOfSelectedDatasets() === 0 && sessionStorageManager.getAmountOfSelectedDatasets() === 0){
         showSelectedDatasetsPlaceholder();
     }
 
-    dataSetManager.getSelectedDatasets()
-        .then(selectedDatasets => {
-            for (let selectedDataset of selectedDatasets.concat(quickSearchDatasets)) {
-                $body.append(renderSelectedDataset(selectedDataset, dataSetManager, quickSearchDatasets));
+    Promise.all([localStorageManager.getSelectedDatasets(), sessionStorageManager.getSelectedDatasets()])
+        .then(values => {
+            let selectedDatasets = values[0].concat(values[1]);
+            for (let selectedDataset of selectedDatasets) {
+                $body.append(renderSelectedDataset(selectedDataset, localStorageManager, sessionStorageManager));
             }
-
         })
         .catch(err => showError(err, "Something went wrong while selecting some datasets. Check whether local storage is enabled and supported by your browser."))
         .then(() => enableProgressIndicators(false));
 }
 
-function renderSelectedDataset(dataset, dataSetManager, quickSearchItems) {
+function renderSelectedDataset(dataset, localStorageManager, sessionStorageManager) {
     // Use jQuery to build elements and prevent XSS attacks
     let $listItem = $("<div class='list-item--two-lines'>");
     let $primaryContent = $("<span class='list-item-primary-content'>").append("<span>").text(dataset.getName());
@@ -300,21 +300,11 @@ function renderSelectedDataset(dataset, dataSetManager, quickSearchItems) {
     $listItem.append($secondaryAction);
 
     $secondaryAction.click(function() {
-        dataSetManager.selectDataset(dataset.getName(), false);
-        renderSelectedDatasets(dataSetManager, quickSearchItems);
+        localStorageManager.selectDataset(dataset.getName(), false);
+        renderSelectedDatasets(localStorageManager, sessionStorageManager);
     });
 
     return $listItem;
-}
-
-function getPeptideContainerFromUserInput() {
-    let peptides = $("#qs").val().replace(/\r/g,"").split("\n");
-    let search = $("#search_name").val();
-
-    let date = new Date();
-    let peptideContainer = new PeptideContainer(search, peptides.length, date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getUTCDate());
-    peptideContainer.setPeptides(peptides);
-    return peptideContainer;
 }
 
 function constructDatasetLoader() {
