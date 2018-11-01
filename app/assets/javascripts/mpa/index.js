@@ -34,14 +34,14 @@ class MPA {
         // First we have to convert the selectedDatasets parameter from deserialized JSON-objects to the proper class
         let datasets = [];
         // We have to reconvert the deserialized JSON-objects into objects of the proper class
-        for (let dataset of selectedDatasets.data) {
-            if (dataset.type === QUICK_SEARCH_TYPE) {
-                let peptides = dataset.data.peptides;
-                dataset.data = new PeptideContainer(dataset.data.name, peptides.length, dataset.data.date);
-                dataset.data.setPeptides(peptides);
-            }
-            datasets.push(new MPAAnalysisContainer(dataset.type, dataset.name, dataset.data))
-        }
+        // for (let dataset of selectedDatasets.data) {
+        //     if (dataset.type === QUICK_SEARCH_TYPE) {
+        //         let peptides = dataset.data.peptides;
+        //         dataset.data = new PeptideContainer(dataset.data.name, peptides.length, dataset.data.date);
+        //         dataset.data.setPeptides(peptides);
+        //     }
+        //     datasets.push(new MPAAnalysisContainer(dataset.type, dataset.name, dataset.data))
+        // }
         selectedDatasets.data = datasets;
         console.log(selectedDatasets);
 

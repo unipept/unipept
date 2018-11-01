@@ -1,26 +1,26 @@
-const LOCAL_STORAGE_TYPE = 'local_storage';
-const QUICK_SEARCH_TYPE = 'quick_search';
+import {LOCAL_STORAGE_TYPE, SESSION_STORAGE_TYPE} from "./storageTypeConstants";
 
 class MPAAnalysisContainer {
-    constructor(type, name = undefined, peptideContainer = undefined) {
+    /**
+     * @param {string} jsonData A valid JSON-representation of an MPAAnalysisContainer-object.
+     * @returns {MPAAnalysisContainer}
+     */
+    static fromJSON(jsonData) {
+        let deserialized = JSON.parse(jsonData);
+        return new MPAAnalysisContainer(deserialized.type, deserialized.name);
+    }
+
+    constructor(type, name) {
         this._type = type;
         this._name = name;
-        this._peptideContainer = peptideContainer;
     }
 
     isLocalStorage() {
         return this._type === LOCAL_STORAGE_TYPE;
     }
 
-    isQuickSearch() {
-        return this._type === QUICK_SEARCH_TYPE;
-    }
-
-    /**
-     * @returns {PeptideContainer}
-     */
-    getPeptideContainer() {
-        return this._peptideContainer;
+    isSessionStorage() {
+        return this._type === SESSION_STORAGE_TYPE;
     }
 
     getName() {
@@ -28,18 +28,11 @@ class MPAAnalysisContainer {
     }
 
     toJSON() {
-        if (this._type === 'local_storage') {
-            return {
-                type: 'local_storage',
-                name: this._name
-            }
-        } else {
-            return {
-                type: 'quick_search',
-                data: this._peptideContainer
-            }
+        return {
+            type: this._type,
+            name: this._name
         }
     }
 }
 
-export {MPAAnalysisContainer, LOCAL_STORAGE_TYPE, QUICK_SEARCH_TYPE};
+export {MPAAnalysisContainer};

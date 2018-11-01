@@ -1,10 +1,39 @@
+import {DatasetManager} from "./datasetManager";
 
 class PeptideContainer {
-    constructor(name, peptideAmount, date) {
+    /**
+     * Create a new PeptideContainer from a given JSON-representation of a valid container.
+     *
+     * @param {string} metaData JSON-representation of the metadata that's associated with the given list of peptides.
+     * @param {?string} peptideData JSON-representation of the list of peptides that's associated with the given metadata.
+     * @return {PeptideContainer} A PeptideContainer that's the living counterpart of the given JSON-string.
+     */
+    static fromJSON(metaData, peptideData = undefined) {
+        let meta = JSON.parse(metaData);
+        let splitDate = meta.date.split("/");
+        let output = new PeptideContainer(meta.name, meta.amount, new Date(splitDate[0], splitDate[1], splitDate[2]), meta.type);
+        if (peptideData !== undefined) {
+            let peptides = JSON.parse(peptideData);
+            output.setPeptides(peptides);
+        }
+        return output;
+    }
+
+    /**
+     * Create a new PeptideContainer. A PeptideContainer is actually a representation of a dataset that can be
+     * serialized to local storage.
+     *
+     * @param {string} name The name of the stored dataset.
+     * @param {int} peptideAmount The amount of peptides that are to be stored in this container.
+     * @param {Date} date The date at which the dataset was first created.
+     * @param {string} storageType One of 'local_storage' or 'session_storage' (defined in storageTypeConstants)
+     */
+    constructor(name, peptideAmount, date, storageType) {
         this._peptides = undefined;
         this._name = name;
         this._peptideAmount = peptideAmount;
         this._date = date;
+        this._type = storageType
     }
 
     setPeptides(peptides) {
@@ -16,9 +45,8 @@ class PeptideContainer {
      */
     async getPeptides() {
         if (this._peptides === undefined) {
-            let serializedData = window.localStorage.getItem('mpa-peptide-'  + this._name);
-            let parsed = JSON.parse(serializedData);
-            this._peptides = parsed.peptides;
+            let dataSetManager = new DatasetManager(this._type);
+            this._peptides = await dataSetManager.loadPeptides(this._name);
         }
 
         return this._peptides;
@@ -39,14 +67,15 @@ class PeptideContainer {
      * @returns {string}
      */
     getDate() {
-        return this._date;
+        return this._date.getFullYear() + "/" + (this._date.getMonth() + 1) + "/" + this._date.getUTCDate();
     }
 
     getMetadataJSON() {
         return {
             name: this._name,
             amount: this._peptideAmount,
-            date: this._date
+            date: this._date.getFullYear() + "/" + this._date.getMonth() + "/" + this._date.getUTCDate(),
+            type: this._type
         };
     }
 
@@ -63,7 +92,7 @@ class PeptideContainer {
         return {
             peptides: this._peptides,
             name: this._name,
-            date: this._date
+            date: this._date.getFullYear() + "/" + this._date.getMonth() + "/" + this._date.getUTCDate()
         };
     }
 }
