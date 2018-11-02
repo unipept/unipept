@@ -142,8 +142,16 @@ class MPA {
 
         // Then we process each and every peptide container in parallel without visualizing the results yet.
         if (peptideContainers.length > 0) {
-            // The first dataset should automatically be selected once it completes
-            this.processDataset(peptideContainers[0], $listItems[0], () => this.selectListItem($listItems[0]));
+            // The first dataset should automatically be selected once it completes (and the user did not select any
+            // other radio buttons in the meantime)
+            $listItems[0].find(".select-dataset-radio-button").prop("checked", true);
+            this.processDataset(peptideContainers[0], $listItems[0], () => {
+                // Check if the user did not select any other radio button.
+                let $checkedRadiobutton = $(".select-dataset-radio-button:checked");
+                if ($checkedRadiobutton.data("name") === peptideContainers[0].getName()) {
+                    this.selectListItem($listItems[0]);
+                }
+            });
         }
 
         for (let i = 1; i < peptideContainers.length; i++) {
