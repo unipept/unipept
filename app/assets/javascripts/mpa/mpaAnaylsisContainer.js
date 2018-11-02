@@ -27,6 +27,10 @@ class MPAAnalysisContainer {
         return this._name;
     }
 
+    getType() {
+        return this._type;
+    }
+
     toJSON() {
         return {
             type: this._type,

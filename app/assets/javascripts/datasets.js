@@ -218,15 +218,6 @@ async function searchSelectedDatasets(localStorageManager, sessionStorageManager
     let dupes = $("#dupes").prop("checked");
     let missed = $("#missed").prop("checked");
 
-    console.log(JSON.stringify({
-        settings: {
-            il: il,
-            dupes: dupes,
-            missed: missed
-        },
-        data: output
-    }));
-
     $dataInput.val(JSON.stringify({
         settings: {
             il: il,
@@ -235,6 +226,7 @@ async function searchSelectedDatasets(localStorageManager, sessionStorageManager
         },
         data: output
     }));
+
 }
 
 function renderLocalStorageItems(localStorageManager, sessionStorageManager) {

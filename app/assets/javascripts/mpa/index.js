@@ -9,8 +9,9 @@ import {addCopy, downloadDataByForm, logToGoogle, numberToPercent, stringTitleiz
 import {Dataset} from "./dataset.js";
 import {constructSearchtree} from "./searchtree.js";
 import {DatasetManager} from "./datasetManager";
-import {MPAAnalysisContainer, QUICK_SEARCH_TYPE} from "./mpaAnaylsisContainer";
+import {MPAAnalysisContainer} from "./mpaAnaylsisContainer";
 import {PeptideContainer} from "./peptideContainer";
+import {SESSION_STORAGE_TYPE} from "./storageTypeConstants";
 /* eslint require-jsdoc: off */
 
 /**
@@ -31,46 +32,27 @@ class MPA {
      *        search settings.
      */
     constructor(selectedDatasets) {
-        // First we have to convert the selectedDatasets parameter from deserialized JSON-objects to the proper class
-        let datasets = [];
-        // We have to reconvert the deserialized JSON-objects into objects of the proper class
-        // for (let dataset of selectedDatasets.data) {
-        //     if (dataset.type === QUICK_SEARCH_TYPE) {
-        //         let peptides = dataset.data.peptides;
-        //         dataset.data = new PeptideContainer(dataset.data.name, peptides.length, dataset.data.date);
-        //         dataset.data.setPeptides(peptides);
-        //     }
-        //     datasets.push(new MPAAnalysisContainer(dataset.type, dataset.name, dataset.data))
-        // }
-        selectedDatasets.data = datasets;
-        console.log(selectedDatasets);
-
-        this.datasetManager = new DatasetManager();
+        selectedDatasets = this.parseInput(selectedDatasets);
 
         /** @type {Dataset[]} */
         this.datasets = [];
-        this.names = [];
+        this.dataset = undefined;
 
-        /** @type {MPAConfig[]} */
+        /** @type {MPAConfig} */
         this.searchSettings = selectedDatasets.settings;
-        this.searchTerms = [];
 
         // @ts-ignore because it will be filled by setUpButtons
         this.displaySettings = {
             onlyStarredFA: false,
         };
 
-        // Stores the current dataset that's being worked with
-        this.currentDataSet = 0;
-
-        this.enableMultipleDatasetsProgress(false);
+        this.setUpButtons();
+        this.setUpHelp();
+        this.setUpSaveImage();
+        this.setUpFullScreen();
+        this.setUpActionBar();
 
         this.processDatasets(selectedDatasets.data);
-        this.setUpButtons();
-        // this.setUpHelp();
-        // this.setUpSaveImage();
-        // this.setUpFullScreen();
-        // this.setUpActionBar();
     }
 
     showError(error) {
@@ -82,74 +64,137 @@ class MPA {
     }
 
     /**
-     * This function processes every dataset from the given list of MPAAnalysisContainer-objects.
+     * Parses the given input and returns an Array of objects fully equivalent to the input, but of the proper class.
      *
-     * @param {MPAAnalysisContainer[]} datasets All datasets that should be processed and added to the current analysis.
-     * @returns {Promise<void>}
+     * @param selectedDatasets
      */
-    async processDatasets(datasets) {
-        this.enableProgressBar(true, true);
-        this.enableProgressBar(true, false, "#progress-fa-analysis");
-        this.enableMultipleDatasetsProgress(true, datasets.length);
-        this.disableGui();
+    parseInput(selectedDatasets) {
+        let datasets = [];
+        for (let dataset of selectedDatasets.data) {
+            datasets.push(new MPAAnalysisContainer(dataset.type, dataset.name));
+        }
+        selectedDatasets.data = datasets;
+        return selectedDatasets;
+    }
 
-        let processed = 0;
-        for (let dataset of datasets) {
-            eventBus.emit('progress-multiple-datasets', ++processed);
-
-            if (dataset.isLocalStorage()) {
-                try {
-                    let name = dataset.getName();
-                    let peptideContainer = await this.datasetManager.loadDataset(name);
-
-                    if (peptideContainer) {
-                        this.searchTerms.push({
-                            id: 1,
-                            term: "Organism"
-                        });
-
-                        this.names.push(name);
-                        await this.processDataset(peptideContainer);
-                    } else {
-                        showInfo("Dataset " + name + " was not found in local storage and is not included in the comparison.");
-                    }
-
-                } catch (err) {
-                    showError(err, "Something went wrong while loading dataset " + name + ".");
-                }
-
-            } else {
-                let peptideContainer = dataset.getPeptideContainer();
-                this.searchTerms.push({
-                    id: 1,
-                    term: "Organism"
-                });
-
-                this.names.push(dataset.getName());
-                await this.processDataset(peptideContainer);
+    getDatasetByName(datasetName) {
+        for (let dataset of this.datasets) {
+            if (dataset.name === datasetName) {
+                return dataset;
             }
         }
-
-        this.enableProgressBar(false);
-        this.disableGui(false);
-        this.enableMultipleDatasetsProgress(false);
+        return undefined;
     }
 
     /**
-     * Process one dataset and visualize it.
      *
-     * @param {PeptideContainer} data
-     * @returns {Promise<Dataset>}
+     * @param {PeptideContainer} peptideContainer
+     * @param $listItem The DOM-element in the selection list corresponding with the peptide container that should be
+     *        rendered.
+     * @param callback Optional, a function that's called when the dataset is fully processed.
+     * @returns {Promise<void>}
      */
-    async processDataset(data) {
-        let peptides = await data.getPeptides();
-        let dataset = new Dataset(peptides);
+    async processDataset(peptideContainer, $listItem, callback = undefined) {
+        console.log("Started processing " + peptideContainer.getName());
+        let peptides = await peptideContainer.getPeptides();
+        let dataset = new Dataset(peptides, peptideContainer.getName());
+        await this.analyse(dataset);
         this.datasets.push(dataset);
-        this.currentDataSet = this.datasets.length - 1;
 
-        this.setUpDatasetButton(data);
-        await this.analyse(this.searchSettings);
-        return dataset;
+        let $radioButton = $listItem.find(".select-dataset-radio-button");
+        $radioButton.prop("disabled", false);
+
+        if (callback) {
+            callback();
+        }
+
+        console.log("Done processing " + peptideContainer.getName());
+    }
+
+    /**
+     * This function processes every dataset from the given list of MPAAnalysisContainer-objects.
+     *
+     * @param {MPAAnalysisContainer[]} analysisContainers All analysis containers that should be processed and added to the current analysis.
+     * @returns {Promise<void>}
+     */
+    async processDatasets(analysisContainers) {
+        // First render all dataset buttons, disable them, then analyse each dataset in parallel using a worker
+        // We have to convert the analysis containers to peptide containers which do contain all information about a
+        // dataset before we can continue.
+        let peptideContainers = [];
+        let $listItems = [];
+        for (let container of analysisContainers) {
+            try {
+                let name = container.getName();
+                let dataSetManager = new DatasetManager(container.getType());
+                let peptideContainer = await dataSetManager.loadDataset(name);
+
+                if (peptideContainer) {
+                    peptideContainers.push(peptideContainer);
+                    $listItems.push(await this.renderDatasetButton(peptideContainer));
+                } else {
+                    showInfo("Dataset " + name + " was not found in local storage and is not included in the comparison.");
+                }
+            } catch (err) {
+                showError(err, "Something went wrong while loading dataset " + name + ".");
+            }
+        }
+
+        // Then we process each and every peptide container in parallel without visualizing the results yet.
+        if (peptideContainers.length > 0) {
+            // The first dataset should automatically be selected once it completes
+            this.processDataset(peptideContainers[0], $listItems[0], () => this.selectListItem($listItems[0]));
+        }
+
+        for (let i = 1; i < peptideContainers.length; i++) {
+            this.processDataset(peptideContainers[i], $listItems[i]);
+        }
+    }
+
+    /**
+     * Render the dataset button for a specific peptide container.
+     *
+     * @param {PeptideContainer} peptideContainer The peptideContainer for whom a button should be rendered.
+     */
+    async renderDatasetButton(peptideContainer) {
+        let $list = $("#dataset_list");
+
+        let $listItem = $("<div class='list-item--two-lines'>");
+        let $primaryAction = $("<span class='list-item-primary-action'>");
+        let $itemRadioButton = $("<input type='radio' value='' class='input-item select-dataset-radio-button' disabled>");
+        $itemRadioButton.data("name", peptideContainer.getName());
+        $primaryAction.append($itemRadioButton);
+        $listItem.append($primaryAction);
+
+        // The current dataset view should be switched when a radio button is clicked.
+        let that = this;
+        $itemRadioButton.click(function() {
+            that.selectListItem($listItem);
+        });
+
+        let $primaryContent = $("<span class='list-item-primary-content'>");
+        $primaryContent.append($("<span>").text(peptideContainer.getName()));
+        $primaryContent.append($("<span class='list-item-date'>").text(peptideContainer.getDate()));
+        let $contentBody = $("<span class='list-item-body'>");
+        $contentBody.append($("<div>").text(peptideContainer.getAmountOfPeptides() + " peptides"));
+        $primaryContent.append($contentBody);
+        $listItem.append($primaryContent);
+
+        $list.append($listItem);
+        return $listItem
+    }
+
+    selectListItem($listItem) {
+        let $radioButton = $listItem.find(".select-dataset-radio-button");
+
+        // Select this radio button and deselect the other radiobuttons
+        $(".select-dataset-radio-button").prop("checked", false);
+        $radioButton.prop("checked", true);
+
+        let datasetName = $radioButton.data("name");
+        this.dataset = this.getDatasetByName(datasetName);
+        this.setUpVisualisations(this.dataset.tree);
+        this.updateStats(this.dataset);
     }
 
     /**
@@ -174,21 +219,15 @@ class MPA {
      * Analyses the current dataset for a given set of search settings. Returns
      * an empty Promise that resolves when the analysis is done.
      *
-     * @param  {object}  searchSettings The searchsettings (il, dupes, missed)
-     *   to use.
-     * @return {Promise<Dataset>} The dataset on which the analysis was
-     *   performed
+     * @param {Dataset} dataset
+     * @return {Promise<void>}
      */
-    async analyse(searchSettings) {
-        const dataset = this.datasets[this.currentDataSet];
+    async analyse(dataset) {
         await dataset.search(this.searchSettings).catch(error => this.showError(error));
-        this.setUpVisualisations(dataset.tree);
-        this.updateStats(dataset);
-        return dataset;
     }
 
     async downloadPeptidesFor(name, sequences) {
-        const dataset = this.datasets[this.currentDataSet];
+        const dataset = this.dataset;
         const result = [[
             "peptide",
             "spectral count",
@@ -272,7 +311,7 @@ class MPA {
         clearTimeout(this._redoFAcalculationsTimeout);
 
         const percent = this.displaySettings.percentFA;
-        const dataset = this.datasets[this.currentDataSet];
+        const dataset = this.dataset;
         let sequences = null;
 
         this._redoFAcalculationsTimeout = setTimeout(() => {
@@ -354,14 +393,14 @@ class MPA {
     }
 
     /**
-     * Generate the extra inforamtion when clicked on a row in FA tables
+     * Generate the extra information when clicked on a row in FA tables
      * @param {*} d
      * @param {string} code
      * @param {*} container
      * @param {number} width
      */
     faMoreinfo(d, code, container, width) {
-        const dataset = this.datasets[this.currentDataSet];
+        const dataset = this.dataset;
         const $container = $(container);
 
         const $dlbtn = $(`
@@ -827,7 +866,7 @@ class MPA {
         $("#treeview-reset").click(() => this.treeview.reset());
 
         // download results
-        $("#mpa-download-results").click(async () => downloadDataByForm(await this.datasets[this.currentDataSet].toCSV(), "mpa_result.csv", "text/csv"));
+        $("#mpa-download-results").click(async () => downloadDataByForm(await this.dataset.toCSV(), "mpa_result.csv", "text/csv"));
         // update settings
         $("#mpa-update-settings").click(() => this.updateSearchSettings({
             il: $("#il").prop("checked"),
@@ -881,7 +920,7 @@ class MPA {
             $selected.addClass("active");
             $sortNameContainer.text($selected.text());
 
-            if (updateView) this.setUpFAVisualisations(this.datasets[this.currentDataSet].fa, this.datasets[this.currentDataSet].baseFa);
+            if (updateView) this.setUpFAVisualisations(this.dataset.fa, this.dataset.baseFa);
         };
         setFaSort($("#mpa-select-fa-sort-default"), false);
 
@@ -908,11 +947,6 @@ class MPA {
             // therefore delegated events won't be fired
             event.stopPropagation();
         });
-
-        $("#add-dataset-button").click(function() {
-            $("#experiment-summary-card").toggleClass("hidden");
-            $("#load-datasets-card").toggleClass("hidden");
-        });
     }
 
     setUpHelp() {
@@ -927,6 +961,7 @@ class MPA {
             showInfoModal(title, content, {wide: true});
         });
     }
+
     setUpSaveImage() {
         $("#buttons").prepend("<button id='save-btn' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save as image</button>");
         $("#save-btn").click(() => this.saveImage());
@@ -1097,11 +1132,6 @@ class MPA {
      * @todo add search term to FA explanation to indicate filtering
      */
     search(id, searchTerm, timeout = 500) {
-        this.searchTerms[this.currentDataSet] = {
-            id: id,
-            term: searchTerm
-        };
-
         let localTerm = searchTerm;
         if (localTerm === "Organism") {
             localTerm = "";
