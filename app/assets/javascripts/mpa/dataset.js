@@ -15,15 +15,17 @@ class Dataset {
     /**
      * Creates a Dataset object based on a list of peptides
      *
-     * @param  {string[]}  [peptides=[]] A list of peptides (strings)
+     * @param {string[]} [peptides=[]] A list of peptides (strings)
+     * @param {string} name The name associated with this Dataset.
      */
-    constructor(peptides = []) {
+    constructor(peptides = [], name) {
         this.originalPeptides = Dataset.cleanPeptides(peptides);
 
         /** @type {Tree} */
         this.tree = null;
         this._fa = null;
         this.baseFa = null;
+        this.name = name;
 
         /** @type {Map<number,TaxonInfo>} */
         this.taxonMap = new Map();
@@ -62,7 +64,7 @@ class Dataset {
     }
 
     /**
-     * Sets the surrent FA summary as base, accesible trough baseFa.
+     * Sets the surrent FA summary as base, accessible trough baseFa.
      */
     setBaseFA() {
         this.baseFa = this.fa.clone();

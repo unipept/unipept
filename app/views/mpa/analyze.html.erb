@@ -5,7 +5,7 @@
 
 <div class='row equal-height-row'>
   <div class='col-xs-6'>
-    <div class='card' style="height: 775px;">
+    <div class='card'>
       <div class='card-title card-title-colored' style="flex-direction: row;">
         <h2 class='card-title-text'>
           Metaproteomics Analysis
@@ -13,14 +13,6 @@
         <div class="card-title-action">
           <span class="glyphicon glyphicon-plus" id="add-dataset-button" style="color: white;"></span>
         </div>
-      </div>
-      <div id="progress-analysis" class="unipept-progress unipept-progress-indeterminate">
-        <div class="progressbar bar bar1" style="width: 0;"></div>
-        <div class="bufferbar bar bar2" style="width: 100%;"></div>
-        <div class="auxbar bar bar3" style="width: 0;"></div>
-      </div>
-      <div id='multiple-datasets-progress' style='font-size: 12px; margin-left: 5px;'>
-        <p>Processing dataset <span id='multiple-datasets-progress-current'>0</span> from <span id='multiple-datasets-progress-total'>0</span>.</p>
       </div>
       <div class='card-supporting-text' >
         <div class='list' id='dataset_list'>
@@ -32,7 +24,7 @@
     <%= render("experiment_settings_summary") %>
   </div>
   <div class="col-xs-6 hidden" id="load-datasets-card">
-    <%= render("shared/load_datasets_form") %>
+    <%= render("shared/load_datasets_card") %>
   </div>
 </div>
 
