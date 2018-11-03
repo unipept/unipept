@@ -11,6 +11,7 @@ class DatasetManager {
         this.metadataPrefix = this.prefix + 'metadata-';
         this.peptidePrefix = this.prefix + 'peptide-';
         this._selectedDatasets = [];
+        this.storageType = type;
         if (type === LOCAL_STORAGE_TYPE) {
             this.storage = window.localStorage;
         } else {
@@ -18,40 +19,21 @@ class DatasetManager {
         }
     }
 
-    /**
-     * Toggle the selected property of a dataset.
-     *
-     * @param {string} name Unique name of the dataset that should be selected.
-     * @return {boolean} Current checked status of the dataset.
-     */
-    toggleDataset(name) {
-        let index = this._selectedDatasets.indexOf(name);
-
-        if (index === -1) {
-            this._selectedDatasets.push(name);
-            return true;
-        }
-
-        this._selectedDatasets.splice(index, 1);
-        return false;
-    }
-
     clearSelection() {
         this._selectedDatasets = [];
     }
 
-
     /**
      * Set the current selected status of the dataset with the given name.
      *
-     * @param {string} name Unique name of the dataset whose selection status should be changed.
+     * @param {string} id Unique identifier of the dataset whose selection status should be changed.
      * @param {boolean} select Current selection status of the dataset.
      */
-    selectDataset(name, select = true) {
-        let index = this._selectedDatasets.indexOf(name);
+    selectDataset(id, select = true) {
+        let index = this._selectedDatasets.indexOf(id);
 
         if (index === -1 && select) {
-            this._selectedDatasets.push(name);
+            this._selectedDatasets.push(id);
         } else if (!select) {
             this._selectedDatasets.splice(index, 1);
         }
@@ -63,8 +45,8 @@ class DatasetManager {
      */
     async getSelectedDatasets() {
         let output = [];
-        for (let selectedName of this._selectedDatasets) {
-            output.push(await this.loadDataset(selectedName));
+        for (let selectedId of this._selectedDatasets) {
+            output.push(await this.loadDataset(selectedId));
         }
 
         return output.sort(function(a, b) {
@@ -73,11 +55,11 @@ class DatasetManager {
     }
 
     /**
-     * @param name Unique name of the dataset for which it should be checked if he is currently selected.
+     * @param id Unique identifier of the dataset for which it should be checked if he is currently selected.
      * @returns {boolean} True if selected, false otherwise.
      */
-    isDatasetSelected(name) {
-        return this._selectedDatasets.indexOf(name) !== -1;
+    isDatasetSelected(id) {
+        return this._selectedDatasets.indexOf(id) !== -1;
     }
 
     getAmountOfSelectedDatasets() {
@@ -111,30 +93,31 @@ class DatasetManager {
      * @return {PeptideContainer} All information found about the dataset associated with the given name.
      */
     async storeDataset(peptides, name) {
-        let peptideContainer = new PeptideContainer(name, peptides.length, new Date());
+        let id = await this._generateUniqueId();
+        let peptideContainer = new PeptideContainer(id, name, peptides.length, new Date(), this.storageType);
         peptideContainer.setPeptides(peptides);
-        this.storage.setItem(this.metadataPrefix + name, JSON.stringify(peptideContainer.getMetadataJSON()));
-        this.storage.setItem(this.peptidePrefix + name, JSON.stringify(peptideContainer.getDataJSON()));
+        this.storage.setItem(this.metadataPrefix + id, JSON.stringify(peptideContainer.getMetadataJSON()));
+        this.storage.setItem(this.peptidePrefix + id, JSON.stringify(peptideContainer.getDataJSON()));
         return peptideContainer;
     }
 
     /**
-     * Look up the given name in local storage and load all data associated with it.
+     * Look up the given id in local storage and load all data associated with it.
      *
-     * @param {String} name The name of the data set that should be looked up.
+     * @param {String} id The unique identifier of the data set that should be looked up.
      * @return{?PeptideContainer} An object containing the name, the peptides and the configuration of the dataset associated with the
      *         given name. Returns null when a dataset with the given name was not found in local storage.
      */
-    async loadDataset(name) {
-        let serializedData = this.storage.getItem(this.metadataPrefix + name);
+    async loadDataset(id) {
+        let serializedData = this.storage.getItem(this.metadataPrefix + id);
         if (serializedData != null) {
             return PeptideContainer.fromJSON(serializedData);
         }
         return null;
     }
 
-    async loadPeptides(name) {
-        let serializedData = this.storage.getItem(this.peptidePrefix + name);
+    async loadPeptides(id) {
+        let serializedData = this.storage.getItem(this.peptidePrefix + id);
         if (serializedData != null) {
             let deserializedData = JSON.parse(serializedData);
             return deserializedData.peptides;
@@ -144,11 +127,11 @@ class DatasetManager {
     /**
      * Remove a specific dataset from local storage.
      *
-     * @param name Name of the dataset that should be removed from local storage.
+     * @param {string} id Unique identifier of the dataset that should be removed from local storage.
      */
-    async removeDataset(name) {
-        this.storage.removeItem(this.metadataPrefix + name);
-        this.storage.removeItem(this.peptidePrefix + name);
+    async removeDataset(id) {
+        this.storage.removeItem(this.metadataPrefix + id);
+        this.storage.removeItem(this.peptidePrefix + id);
     }
 
     /**
@@ -168,6 +151,25 @@ class DatasetManager {
         }
 
         this.t_selectedDatasets = [];
+    }
+
+    /**
+     * This function looks for the highest id that's been used so far in the storage and creates a new unique id by
+     * incrementing the previous highest id by one.
+     *
+     * @returns {Promise<int>} A newly generated unique identifier that can be used for storing a dataset.
+     * @private
+     */
+    async _generateUniqueId() {
+        let counter = window.localStorage.getItem(this.prefix + "unique-id-counter");
+        if (counter) {
+            counter = parseInt(counter);
+            counter++;
+        } else {
+            counter = 0;
+        }
+        window.localStorage.setItem(this.prefix + "unique-id-counter", counter);
+        return counter;
     }
 }
 

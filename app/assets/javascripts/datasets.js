@@ -158,18 +158,16 @@ function addDataset(idPrefix, localStorageManager, sessionStorageManager) {
         enableSearchNameError(true, idPrefix);
     } else {
         let peptides = $("#qs").val().replace(/\r/g,"").split("\n");
-        console.log(save);
-        console.log($saveDataSetCheckbox);
         let storageManager = save ? localStorageManager : sessionStorageManager;
 
         storageManager.storeDataset(peptides, searchName)
-            .catch(err => showError(err, "Something went wrong while storing your dataset. Check whether local storage is enabled and supported by your browser."))
-            .then(() => {
-                storageManager.selectDataset(searchName);
+            .then((dataset) => {
+                storageManager.selectDataset(dataset.getId());
                 renderLocalStorageItems(localStorageManager, sessionStorageManager);
                 renderSelectedDatasets(localStorageManager, sessionStorageManager);
-                enableProgressIndicators(false);
-            });
+            })
+            .catch(err => showError(err, "Something went wrong while storing your dataset. Check whether local storage is enabled and supported by your browser."))
+            .then(() => enableProgressIndicators(false));
     }
 }
 
@@ -205,12 +203,12 @@ async function searchSelectedDatasets(localStorageManager, sessionStorageManager
     } else {
         let selectedDatasets = await localStorageManager.getSelectedDatasets();
         for (let selectedDataset of selectedDatasets) {
-            output.push(new MPAAnalysisContainer(LOCAL_STORAGE_TYPE, selectedDataset.getName()));
+            output.push(new MPAAnalysisContainer(LOCAL_STORAGE_TYPE, selectedDataset.getId()));
         }
 
         selectedDatasets = await sessionStorageManager.getSelectedDatasets();
         for (let quickSearchItem of selectedDatasets) {
-            output.push(new MPAAnalysisContainer(SESSION_STORAGE_TYPE, quickSearchItem.getName()));
+            output.push(new MPAAnalysisContainer(SESSION_STORAGE_TYPE, quickSearchItem.getId()));
         }
     }
 
@@ -255,7 +253,7 @@ function renderLocalStorageItem(dataset, localStorageManager, sessionStorageMana
     $listItem.append($primaryAction);
     $listItem.append($primaryContent);
     $primaryAction.click(function() {
-        localStorageManager.selectDataset(dataset.getName());
+        localStorageManager.selectDataset(dataset.getId());
         renderSelectedDatasets(localStorageManager, sessionStorageManager);
     });
     return $listItem;
@@ -292,7 +290,7 @@ function renderSelectedDataset(dataset, localStorageManager, sessionStorageManag
     $listItem.append($secondaryAction);
 
     $secondaryAction.click(function() {
-        localStorageManager.selectDataset(dataset.getName(), false);
+        localStorageManager.selectDataset(dataset.getId(), false);
         renderSelectedDatasets(localStorageManager, sessionStorageManager);
     });
 
