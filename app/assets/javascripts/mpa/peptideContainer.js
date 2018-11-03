@@ -11,7 +11,7 @@ class PeptideContainer {
     static fromJSON(metaData, peptideData = undefined) {
         let meta = JSON.parse(metaData);
         let splitDate = meta.date.split("/");
-        let output = new PeptideContainer(meta.name, meta.amount, new Date(splitDate[0], splitDate[1], splitDate[2]), meta.type);
+        let output = new PeptideContainer(meta.id, meta.name, meta.amount, new Date(splitDate[0], splitDate[1], splitDate[2]), meta.type);
         if (peptideData !== undefined) {
             let peptides = JSON.parse(peptideData);
             output.setPeptides(peptides);
@@ -23,12 +23,14 @@ class PeptideContainer {
      * Create a new PeptideContainer. A PeptideContainer is actually a representation of a dataset that can be
      * serialized to local storage.
      *
+     * @param {string} id The unique id of the stored dataset.
      * @param {string} name The name of the stored dataset.
      * @param {int} peptideAmount The amount of peptides that are to be stored in this container.
      * @param {Date} date The date at which the dataset was first created.
      * @param {string} storageType One of 'local_storage' or 'session_storage' (defined in storageTypeConstants)
      */
-    constructor(name, peptideAmount, date, storageType) {
+    constructor(id, name, peptideAmount, date, storageType) {
+        this._id = id;
         this._peptides = undefined;
         this._name = name;
         this._peptideAmount = peptideAmount;
@@ -46,7 +48,7 @@ class PeptideContainer {
     async getPeptides() {
         if (this._peptides === undefined) {
             let dataSetManager = new DatasetManager(this._type);
-            this._peptides = await dataSetManager.loadPeptides(this._name);
+            this._peptides = await dataSetManager.loadPeptides(this._id);
         }
 
         return this._peptides;
@@ -54,6 +56,13 @@ class PeptideContainer {
 
     getAmountOfPeptides() {
         return this._peptideAmount;
+    }
+
+    /**
+     * @returns {string}
+     */
+    getId() {
+        return this._id;
     }
 
     /**
@@ -72,6 +81,7 @@ class PeptideContainer {
 
     getMetadataJSON() {
         return {
+            id: this._id,
             name: this._name,
             amount: this._peptideAmount,
             date: this._date.getFullYear() + "/" + this._date.getMonth() + "/" + this._date.getUTCDate(),
@@ -90,8 +100,10 @@ class PeptideContainer {
      */
     toJSON() {
         return {
+            id: this._id,
             peptides: this._peptides,
             name: this._name,
+            amount: this._peptideAmount,
             date: this._date.getFullYear() + "/" + this._date.getMonth() + "/" + this._date.getUTCDate()
         };
     }

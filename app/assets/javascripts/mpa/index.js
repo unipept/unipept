@@ -34,6 +34,9 @@ class MPA {
     constructor(selectedDatasets) {
         selectedDatasets = this.parseInput(selectedDatasets);
 
+        /** @type{PeptideContainer[]} */
+        this.peptideContainers = [];
+
         /** @type {Dataset[]} */
         this.datasets = [];
         this.dataset = undefined;
@@ -71,7 +74,7 @@ class MPA {
     parseInput(selectedDatasets) {
         let datasets = [];
         for (let dataset of selectedDatasets.data) {
-            datasets.push(new MPAAnalysisContainer(dataset.type, dataset.name));
+            datasets.push(new MPAAnalysisContainer(dataset.type, dataset.id));
         }
         selectedDatasets.data = datasets;
         return selectedDatasets;
@@ -125,18 +128,18 @@ class MPA {
         let $listItems = [];
         for (let container of analysisContainers) {
             try {
-                let name = container.getName();
+                let id = container.getId();
                 let dataSetManager = new DatasetManager(container.getType());
-                let peptideContainer = await dataSetManager.loadDataset(name);
+                let peptideContainer = await dataSetManager.loadDataset(id);
 
                 if (peptideContainer) {
                     peptideContainers.push(peptideContainer);
                     $listItems.push(await this.renderDatasetButton(peptideContainer));
                 } else {
-                    showInfo("Dataset " + name + " was not found in local storage and is not included in the comparison.");
+                    showInfo("At least one dataset was not found in local storage and is not included in the comparison.");
                 }
             } catch (err) {
-                showError(err, "Something went wrong while loading dataset " + name + ".");
+                showError(err, "Something went wrong while loading a dataset.");
             }
         }
 
@@ -255,18 +258,25 @@ class MPA {
     }
 
     /**
-     * Updates the search settings and reruns the analysis. Resolves when the
-     * analysis is done.
-     *
-     * @param {MPAConfig} searchSettings
+     * Updates the search settings and rerun all analysis.
      */
-    async updateSearchSettings(searchSettings) {
-        this.searchSettings = searchSettings;
-        this.enableProgressBar(true, true);
-        this.enableProgressBar(true, false, "#progress-fa-analysis");
-        $("#search-intro").text("Please wait while we process your data");
-        await this.analyse(this.searchSettings);
-        this.enableProgressBar(false);
+    async updateSearchSettings() {
+        let $il = $("#il");
+        let $dupes = $("#dupes");
+        let $missed = $("#missed");
+
+        this.searchSettings = {
+            il: $il.prop("checked"),
+            dupes: $dupes.prop("checked"),
+            missed: $missed.prop("checked")
+        };
+
+        $(".select-dataset-radio-button").prop("disabled", true);
+        this.datasets = [];
+        for (let container of this.peptideContainers) {
+            // TODO make sure that id is used for dataset storage and retrieve list item using id.
+            this.processDataset(container);
+        }
     }
 
     /**
@@ -952,6 +962,10 @@ class MPA {
             // The event won't be propagated up to the document NODE and
             // therefore delegated events won't be fired
             event.stopPropagation();
+        });
+
+        $("#update-button").click(function() {
+
         });
     }
 

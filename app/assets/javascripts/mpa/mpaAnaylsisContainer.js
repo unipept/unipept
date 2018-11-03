@@ -7,12 +7,12 @@ class MPAAnalysisContainer {
      */
     static fromJSON(jsonData) {
         let deserialized = JSON.parse(jsonData);
-        return new MPAAnalysisContainer(deserialized.type, deserialized.name);
+        return new MPAAnalysisContainer(deserialized.type, deserialized.id);
     }
 
-    constructor(type, name) {
+    constructor(type, id) {
         this._type = type;
-        this._name = name;
+        this._id = id;
     }
 
     isLocalStorage() {
@@ -23,8 +23,8 @@ class MPAAnalysisContainer {
         return this._type === SESSION_STORAGE_TYPE;
     }
 
-    getName() {
-        return this._name;
+    getId() {
+        return this._id;
     }
 
     getType() {
@@ -34,7 +34,7 @@ class MPAAnalysisContainer {
     toJSON() {
         return {
             type: this._type,
-            name: this._name
+            id: this._id
         }
     }
 }
