@@ -72,6 +72,9 @@
 .card-title-colored .card-title-text {
     color: @white-text;
 }
+.card-title-colored .glyphicon {
+    color: @white-text;
+}
 .card-title-image {
     background: rgba(0, 0, 0, 0.5);
     color: @white-text;
@@ -89,6 +92,16 @@
 }
 .card-title-colored .card-subtitle-text {
     color: @white-secondary;
+}
+.card-title-interactive {
+    flex-direction: row !important;
+}
+.card-title-interactive .card-title-text {
+    flex-grow: 1;
+}
+.card-title-interactive .card-title-action {
+    align-self: center;
+    cursor: pointer;
 }
 .card-supporting-text {
     color: @black-text;
