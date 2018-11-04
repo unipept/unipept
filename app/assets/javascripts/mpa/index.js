@@ -94,10 +94,9 @@ class MPA {
      * @param {PeptideContainer} peptideContainer
      * @param $listItem The DOM-element in the selection list corresponding with the peptide container that should be
      *        rendered.
-     * @param callback Optional, a function that's called when the dataset is fully processed.
      * @returns {Promise<void>}
      */
-    async processDataset(peptideContainer, $listItem, callback = undefined) {
+    async processDataset(peptideContainer, $listItem) {
         console.log("Started processing " + peptideContainer.getName());
         let peptides = await peptideContainer.getPeptides();
         let dataset = new Dataset(peptides, peptideContainer.getName());
@@ -106,10 +105,6 @@ class MPA {
 
         let $radioButton = $listItem.find(".select-dataset-radio-button");
         $radioButton.prop("disabled", false);
-
-        if (callback) {
-            callback();
-        }
 
         console.log("Done processing " + peptideContainer.getName());
     }
@@ -124,7 +119,6 @@ class MPA {
         // First render all dataset buttons, disable them, then analyse each dataset in parallel using a worker
         // We have to convert the analysis containers to peptide containers which do contain all information about a
         // dataset before we can continue.
-        let peptideContainers = [];
         let $listItems = [];
         for (let container of analysisContainers) {
             try {
@@ -133,7 +127,7 @@ class MPA {
                 let peptideContainer = await dataSetManager.loadDataset(id);
 
                 if (peptideContainer) {
-                    peptideContainers.push(peptideContainer);
+                    this.peptideContainers.push(peptideContainer);
                     $listItems.push(await this.renderDatasetButton(peptideContainer));
                 } else {
                     showInfo("At least one dataset was not found in local storage and is not included in the comparison.");
@@ -144,21 +138,22 @@ class MPA {
         }
 
         // Then we process each and every peptide container in parallel without visualizing the results yet.
-        if (peptideContainers.length > 0) {
+        if (this.peptideContainers.length > 0) {
             // The first dataset should automatically be selected once it completes (and the user did not select any
             // other radio buttons in the meantime)
             $listItems[0].find(".select-dataset-radio-button").prop("checked", true);
-            this.processDataset(peptideContainers[0], $listItems[0], () => {
-                // Check if the user did not select any other radio button.
-                let $checkedRadiobutton = $(".select-dataset-radio-button:checked");
-                if ($checkedRadiobutton.data("name") === peptideContainers[0].getName()) {
-                    this.selectListItem($listItems[0]);
-                }
-            });
+            this.processDataset(this.peptideContainers[0], $listItems[0])
+                .then(() => {
+                    // Check if the user did not select any other radio button.
+                    let $checkedRadiobutton = $(".select-dataset-radio-button:checked");
+                    if ($checkedRadiobutton.data("name") === this.peptideContainers[0].getName()) {
+                        this.selectListItem($listItems[0]);
+                    }
+                });
         }
 
-        for (let i = 1; i < peptideContainers.length; i++) {
-            this.processDataset(peptideContainers[i], $listItems[i]);
+        for (let i = 1; i < this.peptideContainers.length; i++) {
+            this.processDataset(this.peptideContainers[i], $listItems[i]);
         }
     }
 
@@ -170,7 +165,7 @@ class MPA {
     async renderDatasetButton(peptideContainer) {
         let $list = $("#dataset_list");
 
-        let $listItem = $("<div class='list-item--two-lines'>");
+        let $listItem = $("<div class='list-item--two-lines' id='list-item-" + peptideContainer.getId() + "'>");
         let $primaryAction = $("<span class='list-item-primary-action'>");
         let $itemRadioButton = $("<input type='radio' value='' class='input-item select-dataset-radio-button' disabled>");
         $itemRadioButton.data("name", peptideContainer.getName());
@@ -209,24 +204,6 @@ class MPA {
     }
 
     /**
-     * Creates a new dataset based on a list of peptides. After creating, an
-     * analysis is run with the current search settings. The returned Promise
-     * contains the new dataset and resolves after the analysis is complete.
-     *
-     * @param  {PeptideContainer}  data The list of peptides to analyse
-     * @return {Promise<Dataset>} Promise of the created dataset object.
-     */
-    async addDataset(data) {
-        this.enableProgressBar(true, true);
-        this.enableProgressBar(true, false, "#progress-fa-analysis");
-        this.disableGui();
-        let dataset = await this.processDataset(data);
-        this.enableProgressBar(false);
-        this.disableGui(false);
-        return dataset;
-    }
-
-    /**
      * Analyses the current dataset for a given set of search settings. Returns
      * an empty Promise that resolves when the analysis is done.
      *
@@ -260,7 +237,7 @@ class MPA {
     }
 
     /**
-     * Updates the search settings and rerun all analysis.
+     * Updates the search settings and reruns all analysis.
      */
     async updateSearchSettings() {
         let $il = $("#il");
@@ -275,9 +252,22 @@ class MPA {
 
         $(".select-dataset-radio-button").prop("disabled", true);
         this.datasets = [];
+
+        let $checkedRadiobutton = $(".select-dataset-radio-button:checked");
+        let checkedName = $checkedRadiobutton.data("name");
+
         for (let container of this.peptideContainers) {
-            // TODO make sure that id is used for dataset storage and retrieve list item using id.
-            this.processDataset(container);
+            let $listItem = $("#list-item-" + container.getId());
+
+            this.processDataset(container, $listItem)
+                .then(() => {
+                    // Make sure that the radio button that was selected before is now recomputed once were done. This
+                    // will only be performed when no other dataset has been selected by the user in the mean time.
+                    let $checkedRadiobutton = $(".select-dataset-radio-button:checked");
+                    if ($checkedRadiobutton.data("name") === checkedName) {
+                        this.selectListItem($listItem);
+                    }
+                });
         }
     }
 
@@ -790,68 +780,6 @@ class MPA {
         }
     }
 
-    /**
-     * Add a new button to the dataset list, based on the information found in local storage, that allows the user to
-     * switch between datasets.
-     *
-     * @param {PeptideContainer} data A dataset object containing the information from local storage.
-     */
-    setUpDatasetButton(data) {
-        let $listItem = $("<div class='list-item--three-lines'>");
-        let $primaryAction = $("<span class='list-item-primary-action'>");
-        let $sampleCheckbox = $("<input type='radio' value='' class='input-item select-dataset-radio-button' disabled>");
-        $sampleCheckbox.data("name", data.getName());
-        // Disable other radio buttons of list and enable current one.
-        $(".select-dataset-radio-button").prop("checked", false);
-        $sampleCheckbox.prop("checked", true);
-        $primaryAction.append($sampleCheckbox);
-        $listItem.append($primaryAction);
-        let $primaryContent = $("<span class='list-item-primary-content'>");
-        $primaryContent.append($("<span>").text(data.getName()));
-        $primaryContent.append($("<span class='list-item-date'>").text(data.getDate()));
-        $primaryContent.append(
-            $("<span class='list-item-body'>")
-                .append($("<div>").text(data.getPeptides().length + " peptides"))
-                .append($("<div>").text("Deduplicate peptides, equate IL"))
-        );
-        $listItem.append($primaryContent);
-        let $secondaryAction = $("<span class='list-item-secondary-action'>");
-        $secondaryAction.data("name", data.getName());
-        $secondaryAction.append($("<span class='glyphicon glyphicon-chevron-right'>"));
-        $listItem.append($secondaryAction);
-
-        $("#dataset_list").append($listItem);
-
-        let that = this;
-        $sampleCheckbox.click(function() {
-            $(".select-dataset-radio-button").prop("checked", false);
-            $sampleCheckbox.prop("checked", true);
-            that.currentDataSet = that.names.indexOf($(this).data("name"));
-
-            that.enableProgressBar(true, true);
-            that.enableProgressBar(true, false, "#progress-fa-analysis");
-
-            let dataset = that.datasets[that.currentDataSet];
-
-            that.setUpVisualisations(dataset.tree);
-            let searchTerm = that.searchTerms[that.currentDataSet];
-            that.search(searchTerm.id, searchTerm.term);
-            that.updateStats(dataset);
-
-            that.enableProgressBar(false);
-        });
-
-        $secondaryAction.click(function() {
-            let datasetName = $(this).data('name');
-            let dataset = that.datasets[that.names.indexOf(datasetName)];
-            $("#qs").val(dataset.originalPeptides.join("\n"));
-            $("#il").prop("checked", dataset.resultset.config.il);
-            $("#dupes").prop("checked", dataset.resultset.config.dupes);
-            $("#missed").prop("checked", dataset.resultset.config.missed);
-            $("#search_name").val(datasetName);
-        });
-    }
-
     disableGui(state = true) {
         $(".input-item").prop("disabled", state);
     }
@@ -885,12 +813,6 @@ class MPA {
 
         // download results
         $("#mpa-download-results").click(async () => downloadDataByForm(await this.dataset.toCSV(), "mpa_result.csv", "text/csv"));
-        // update settings
-        $("#mpa-update-settings").click(() => this.updateSearchSettings({
-            il: $("#il").prop("checked"),
-            dupes: $("#dupes").prop("checked"),
-            missed: $("#missed").prop("checked"),
-        }));
 
         // setup FA percent selector
         const $perSelector = $("#mpa-fa-filter-precent");
@@ -966,9 +888,7 @@ class MPA {
             event.stopPropagation();
         });
 
-        $("#update-button").click(function() {
-
-        });
+        $("#update-button").click(() => this.updateSearchSettings());
     }
 
     setUpHelp() {
