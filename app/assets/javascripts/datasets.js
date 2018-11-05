@@ -1,7 +1,6 @@
 import {showNotification} from "./notifications.js";
 import {DatasetManager} from "./mpa/datasetManager.js";
 import {get, getJSON, highlight, logToGoogle, showError, showInfo} from "./utils.js";
-import {MPAAnalysisContainer} from "./mpa/mpaAnaylsisContainer";
 import {LOCAL_STORAGE_TYPE, SESSION_STORAGE_TYPE} from "./mpa/storageTypeConstants";
 
 /* eslint-disable require-jsdoc */

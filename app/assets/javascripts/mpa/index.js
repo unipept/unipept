@@ -56,15 +56,8 @@ class MPA {
         this.setUpFullScreen();
         this.setUpActionBar();
 
-        // TODO ask what to do with updating while processes are still running? How does JavaScript handle async
-        // TODO functions?
-        // All JavaScript-code (except for workers) is guaranteed to be handled by the same thread, making it impossible
-        // for synchronization issues to occur when keeping track of which async function is executing at what moment in
-        // time. All datasets can execute simultaneously, but the same dataset cannot be processed with different search
-        // settings at the same time. When a user presses the update-button, while other datasets are still executing,
-        // we need to reprocess them after there done.
-        // this.datasetsQueue = {};
-        // this.processIdentifier = 0;
+        // Keeps how many datasets are currently in progress of being started
+        this.processing = 0;
 
         this.processDatasets();
     }
@@ -86,6 +79,10 @@ class MPA {
         return undefined;
     }
 
+    enableSearchSettingsInterface(enable = true) {
+        $(".settings-input-item").prop("disabled", !enable);
+    }
+
     /**
      *
      * @param {PeptideContainer} peptideContainer
@@ -94,6 +91,12 @@ class MPA {
      * @returns {Promise<void>}
      */
     async processDataset(peptideContainer, $listItem) {
+        if (this.processing === 0) {
+            // Disable the search settings interface
+            this.enableSearchSettingsInterface(false);
+        }
+
+        this.processing++;
         console.log("Started processing " + peptideContainer.getName());
 
         let peptides = await peptideContainer.getPeptides();
@@ -105,6 +108,12 @@ class MPA {
         $radioButton.prop("disabled", false);
 
         console.log("Done processing " + peptideContainer.getName());
+        this.processing--;
+
+        if (this.processing === 0) {
+            // Enable the search settings interface
+            this.enableSearchSettingsInterface();
+        }
     }
 
     /**
