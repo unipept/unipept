@@ -9,7 +9,6 @@ import {addCopy, downloadDataByForm, logToGoogle, numberToPercent, stringTitleiz
 import {Dataset} from "./dataset.js";
 import {constructSearchtree} from "./searchtree.js";
 import {DatasetManager} from "./datasetManager";
-import {MPAAnalysisContainer} from "./mpaAnaylsisContainer";
 import {PeptideContainer} from "./peptideContainer";
 import {SESSION_STORAGE_TYPE} from "./storageTypeConstants";
 /* eslint require-jsdoc: off */
@@ -27,12 +26,14 @@ import {SESSION_STORAGE_TYPE} from "./storageTypeConstants";
  */
 class MPA {
     /**
-     * Setup the MPA gui
-     * @param selectedDatasets An object containing a list of all items that should be processed, as well as the current
-     *        search settings.
+     * Setup the MPA gui,
+     *
+     * @param {string} selectedDatasets An object containing the search settings that should be used for the initial analysis and
+     *        two serialized DatasetManager's: one for local storage and one for session storage.
      */
     constructor(selectedDatasets) {
-        selectedDatasets = this.parseInput(selectedDatasets);
+        this.localStorageManager = DatasetManager.fromJSON(JSON.stringify(selectedDatasets.local_storage));
+        this.sessionStorageManager = DatasetManager.fromJSON(JSON.stringify(selectedDatasets.session_storage));
 
         /** @type{PeptideContainer[]} */
         this.peptideContainers = [];
@@ -55,7 +56,17 @@ class MPA {
         this.setUpFullScreen();
         this.setUpActionBar();
 
-        this.processDatasets(selectedDatasets.data);
+        // TODO ask what to do with updating while processes are still running? How does JavaScript handle async
+        // TODO functions?
+        // All JavaScript-code (except for workers) is guaranteed to be handled by the same thread, making it impossible
+        // for synchronization issues to occur when keeping track of which async function is executing at what moment in
+        // time. All datasets can execute simultaneously, but the same dataset cannot be processed with different search
+        // settings at the same time. When a user presses the update-button, while other datasets are still executing,
+        // we need to reprocess them after there done.
+        // this.datasetsQueue = {};
+        // this.processIdentifier = 0;
+
+        this.processDatasets();
     }
 
     showError(error) {
@@ -64,20 +75,6 @@ class MPA {
             Try resubmitting your peptides. 
             Contact us if the problem persists.
         `);
-    }
-
-    /**
-     * Parses the given input and returns an Array of objects fully equivalent to the input, but of the proper class.
-     *
-     * @param selectedDatasets
-     */
-    parseInput(selectedDatasets) {
-        let datasets = [];
-        for (let dataset of selectedDatasets.data) {
-            datasets.push(new MPAAnalysisContainer(dataset.type, dataset.id));
-        }
-        selectedDatasets.data = datasets;
-        return selectedDatasets;
     }
 
     getDatasetByName(datasetName) {
@@ -98,6 +95,7 @@ class MPA {
      */
     async processDataset(peptideContainer, $listItem) {
         console.log("Started processing " + peptideContainer.getName());
+
         let peptides = await peptideContainer.getPeptides();
         let dataset = new Dataset(peptides, peptideContainer.getName());
         await this.analyse(dataset);
@@ -110,51 +108,43 @@ class MPA {
     }
 
     /**
-     * This function processes every dataset from the given list of MPAAnalysisContainer-objects.
+     * This function processes every dataset is marked as selected in both the local storage and session storage
+     * DatasetManager.
      *
-     * @param {MPAAnalysisContainer[]} analysisContainers All analysis containers that should be processed and added to the current analysis.
      * @returns {Promise<void>}
      */
-    async processDatasets(analysisContainers) {
+    async processDatasets() {
         // First render all dataset buttons, disable them, then analyse each dataset in parallel using a worker
         // We have to convert the analysis containers to peptide containers which do contain all information about a
         // dataset before we can continue.
         let $listItems = [];
-        for (let container of analysisContainers) {
-            try {
-                let id = container.getId();
-                let dataSetManager = new DatasetManager(container.getType());
-                let peptideContainer = await dataSetManager.loadDataset(id);
-
-                if (peptideContainer) {
-                    this.peptideContainers.push(peptideContainer);
+        Promise.all([this.localStorageManager.getSelectedDatasets(), this.sessionStorageManager.getSelectedDatasets()])
+            .then(async (values) => {
+                this.peptideContainers = values[0].concat(values[1]);
+                for (let peptideContainer of this.peptideContainers) {
                     $listItems.push(await this.renderDatasetButton(peptideContainer));
-                } else {
-                    showInfo("At least one dataset was not found in local storage and is not included in the comparison.");
                 }
-            } catch (err) {
-                showError(err, "Something went wrong while loading a dataset.");
-            }
-        }
 
-        // Then we process each and every peptide container in parallel without visualizing the results yet.
-        if (this.peptideContainers.length > 0) {
-            // The first dataset should automatically be selected once it completes (and the user did not select any
-            // other radio buttons in the meantime)
-            $listItems[0].find(".select-dataset-radio-button").prop("checked", true);
-            this.processDataset(this.peptideContainers[0], $listItems[0])
-                .then(() => {
-                    // Check if the user did not select any other radio button.
-                    let $checkedRadiobutton = $(".select-dataset-radio-button:checked");
-                    if ($checkedRadiobutton.data("name") === this.peptideContainers[0].getName()) {
-                        this.selectListItem($listItems[0]);
-                    }
-                });
-        }
+                // Then we process each and every peptide container in parallel without visualizing the results yet.
+                if (this.peptideContainers.length > 0) {
+                    // The first dataset should automatically be selected once it completes (and the user did not select any
+                    // other radio buttons in the meantime)
+                    $listItems[0].find(".select-dataset-radio-button").prop("checked", true);
+                    this.processDataset(this.peptideContainers[0], $listItems[0])
+                        .then(() => {
+                            // Check if the user did not select any other radio button.
+                            let $checkedRadiobutton = $(".select-dataset-radio-button:checked");
+                            if ($checkedRadiobutton.data("name") === this.peptideContainers[0].getName()) {
+                                this.selectListItem($listItems[0]);
+                            }
+                        });
+                }
 
-        for (let i = 1; i < this.peptideContainers.length; i++) {
-            this.processDataset(this.peptideContainers[i], $listItems[i]);
-        }
+                for (let i = 1; i < this.peptideContainers.length; i++) {
+                    this.processDataset(this.peptideContainers[i], $listItems[i]);
+                }
+            })
+            .catch(err => showError(err, "Something went wrong while analysing the selected datasets."));
     }
 
     /**
@@ -240,6 +230,8 @@ class MPA {
      * Updates the search settings and reruns all analysis.
      */
     async updateSearchSettings() {
+
+
         let $il = $("#il");
         let $dupes = $("#dupes");
         let $missed = $("#missed");
@@ -889,6 +881,11 @@ class MPA {
         });
 
         $("#update-button").click(() => this.updateSearchSettings());
+
+        $("#add-dataset-button").click(() => {
+            $("#experiment-summary-card").toggleClass("hidden");
+            $("#load-datasets-card").toggleClass("hidden");
+        })
     }
 
     setUpHelp() {
