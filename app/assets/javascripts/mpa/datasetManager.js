@@ -5,6 +5,19 @@ import {PeptideContainer} from "./peptideContainer";
 import {LOCAL_STORAGE_TYPE} from "./storageTypeConstants";
 
 class DatasetManager {
+    /**
+     * Deserializes a DatasetManager in JSON-format and returns the corresponding real DatasetManager-object.
+     *
+     * @param {string} input The serialized DatasetManager in JSON-format.
+     * @return {DatasetManager}
+     */
+    static fromJSON(input) {
+        let deserialized = JSON.parse(input);
+        let output = new DatasetManager(deserialized.storageType);
+        output._selectedDatasets = deserialized.selectedDatasets;
+        return output;
+    }
+
     constructor(type = LOCAL_STORAGE_TYPE) {
         // The prefix that's used to identify the mpa-datasets in local storage.
         this.prefix = 'mpa-';
@@ -170,6 +183,16 @@ class DatasetManager {
         }
         window.localStorage.setItem(this.prefix + "unique-id-counter", counter);
         return counter;
+    }
+
+    /**
+     * Serialize the current DatasetManager to JSON.
+     */
+    toJSON() {
+        return {
+            selectedDatasets: this._selectedDatasets,
+            storageType: this.storageType
+        };
     }
 }
 

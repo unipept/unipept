@@ -196,20 +196,8 @@ function enableSearchNameError(state = true, idPrefix = "") {
 async function searchSelectedDatasets(localStorageManager, sessionStorageManager) {
     let $dataInput = $("#data_input");
 
-    let output = [];
-
     if (localStorageManager.getAmountOfSelectedDatasets() === 0 && sessionStorageManager.getAmountOfSelectedDatasets() === 0) {
         showInfo("You must select at least one dataset to start the analysis.");
-    } else {
-        let selectedDatasets = await localStorageManager.getSelectedDatasets();
-        for (let selectedDataset of selectedDatasets) {
-            output.push(new MPAAnalysisContainer(LOCAL_STORAGE_TYPE, selectedDataset.getId()));
-        }
-
-        selectedDatasets = await sessionStorageManager.getSelectedDatasets();
-        for (let quickSearchItem of selectedDatasets) {
-            output.push(new MPAAnalysisContainer(SESSION_STORAGE_TYPE, quickSearchItem.getId()));
-        }
     }
 
     let il = $("#il").prop("checked");
@@ -222,7 +210,8 @@ async function searchSelectedDatasets(localStorageManager, sessionStorageManager
             dupes: dupes,
             missed: missed
         },
-        data: output
+        local_storage: localStorageManager,
+        session_storage: sessionStorageManager
     }));
 
 }
