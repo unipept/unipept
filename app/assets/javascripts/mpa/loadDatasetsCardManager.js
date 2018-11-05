@@ -15,9 +15,63 @@ class LoadDatasetsCardManager {
         this._sessionStorageManager = sessionStorageManager;
 
         this.renderLocalStorageItems();
-        this.renderSelectedDatasets();
-
         this.initializeDatasetLoader();
+    }
+
+    /**
+     * @param listener A function with two parameters that's called whenever the rendering of datasets starts. This
+     *        listener should be used to clear previously rendered datasets in the GUI.
+     *        Parameters: * localStorageManager
+     *                    * sessionStorageManager
+     *
+     */
+    setClearRenderedDatasetsListener(listener) {
+        this._clearRenderedDatasetsListener = listener;
+    }
+
+    _clearRenderedDatasets() {
+        if (this._clearRenderedDatasetsListener) {
+            this._clearRenderedDatasetsListener(this._localStorageManager, this._sessionStorageManager);
+        }
+    }
+
+    /**
+     * @param listener A function with one parameters that's called when a dataset should be rendered. The parameter is
+     *        the dataset that should be rendered.
+     */
+    setRenderSelectedDataset(listener) {
+        this._renderSelectedDatasetListener = listener;
+    }
+
+    _renderSelectedDataset(dataset) {
+        if (this._renderSelectedDatasetListener) {
+            this._renderSelectedDatasetListener(dataset, () => {
+                this._localStorageManager.selectDataset(dataset.getId(), false);
+                this._sessionStorageManager.selectDataset(dataset.getId(), false);
+                this.renderSelectedDatasets();
+            });
+        }
+    }
+
+    renderSelectedDatasets() {
+        this.enableProgressIndicators();
+        this._clearRenderedDatasets();
+
+        Promise.all([this._localStorageManager.getSelectedDatasets(), this._sessionStorageManager.getSelectedDatasets()])
+            .then(values => {
+                let selectedDatasets = values[0].concat(values[1]);
+                for (let selectedDataset of selectedDatasets) {
+                    this._renderSelectedDataset(selectedDataset, () => {
+                        this._localStorageManager.selectDataset(selectedDataset.getId(), false);
+                        this._sessionStorageManager.selectDataset(selectedDataset.getId(), false);
+                        this.renderSelectedDatasets();
+                    });
+                }
+            })
+            .catch(err => showError(err, "Something went wrong while selecting some datasets. Check whether local storage is enabled and supported by your browser."))
+            .then(() => this.enableProgressIndicators(false));
+
+        this.enableProgressIndicators(false);
     }
 
     initializeDatasetLoader() {
@@ -48,11 +102,11 @@ class LoadDatasetsCardManager {
         });
 
         $("#add_dataset_button").click(() => {
-            addDataset("");
+            this.addDataset("");
         });
 
         $("#add_pride_dataset_button").click(() => {
-            addDataset("pride-");
+            this.addDataset("pride-");
         });
 
         $("#reset_button").click(() => {
@@ -131,15 +185,11 @@ class LoadDatasetsCardManager {
      * dataset information should be indicated by id-prefix.
      *
      * @param {string} idPrefix Unique identifier by which all id's of the corresponding form are preceded.
-     * @param {DatasetManager} localStorageManager DatasetManager that's currently used to select datasets that are situated
-     *        in the browser's local storage.
-     * @param {DatasetManager} sessionStorageManager DatasetManager that's currently used to select datasets that are
-     *        situated in the browser's session storage.
      * @return {void}
      */
-    addDataset(idPrefix, localStorageManager, sessionStorageManager) {
-        enableSearchNameError(false, idPrefix);
-        enableProgressIndicators();
+    addDataset(idPrefix) {
+        this.enableSearchNameError(false, idPrefix);
+        this.enableProgressIndicators();
 
         let $searchName = $("#" + idPrefix + "search_name");
         let $saveDataSetCheckbox = $("#" + idPrefix + "save_dataset");
@@ -148,19 +198,19 @@ class LoadDatasetsCardManager {
         let save = $saveDataSetCheckbox.prop("checked");
 
         if (save && searchName === "") {
-            enableSearchNameError(true, idPrefix);
+            this.enableSearchNameError(true, idPrefix);
         } else {
             let peptides = $("#qs").val().replace(/\r/g,"").split("\n");
-            let storageManager = save ? localStorageManager : sessionStorageManager;
+            let storageManager = save ? this._localStorageManager : this._sessionStorageManager;
 
             storageManager.storeDataset(peptides, searchName)
                 .then((dataset) => {
                     storageManager.selectDataset(dataset.getId());
-                    renderLocalStorageItems(localStorageManager, sessionStorageManager);
-                    renderSelectedDatasets(localStorageManager, sessionStorageManager);
+                    this.renderSelectedDatasets();
+                    this.renderLocalStorageItems();
                 })
                 .catch(err => showError(err, "Something went wrong while storing your dataset. Check whether local storage is enabled and supported by your browser."))
-                .then(() => enableProgressIndicators(false));
+                .then(() => this.enableProgressIndicators(false));
         }
     }
 
@@ -221,44 +271,6 @@ class LoadDatasetsCardManager {
             this._localStorageManager.selectDataset(dataset.getId());
             this.renderSelectedDatasets();
         });
-        return $listItem;
-    }
-
-    renderSelectedDatasets() {
-        this.enableProgressIndicators();
-        let $body = $("#selected-datasets-list");
-        $body.html("");
-
-        if (this._localStorageManager.getAmountOfSelectedDatasets() === 0 && this._sessionStorageManager.getAmountOfSelectedDatasets() === 0){
-            this.showSelectedDatasetsPlaceholder();
-        }
-
-        Promise.all([this._localStorageManager.getSelectedDatasets(), this._sessionStorageManager.getSelectedDatasets()])
-            .then(values => {
-                let selectedDatasets = values[0].concat(values[1]);
-                for (let selectedDataset of selectedDatasets) {
-                    $body.append(this.renderSelectedDataset(selectedDataset));
-                }
-            })
-            .catch(err => showError(err, "Something went wrong while selecting some datasets. Check whether local storage is enabled and supported by your browser."))
-            .then(() => this.enableProgressIndicators(false));
-    }
-
-    renderSelectedDataset(dataset) {
-        // Use jQuery to build elements and prevent XSS attacks
-        let $listItem = $("<div class='list-item--two-lines'>");
-        let $primaryContent = $("<span class='list-item-primary-content'>").append("<span>").text(dataset.getName());
-        $primaryContent.append($("<span class='list-item-date'>").text(dataset.getDate()));
-        $primaryContent.append($("<span class='list-item-body'>").text(dataset.getAmountOfPeptides() + " peptides"));
-        $listItem.append($primaryContent);
-        let $secondaryAction = $("<span class='list-item-secondary-action'>").append("<span class='glyphicon glyphicon-remove'>");
-        $listItem.append($secondaryAction);
-
-        $secondaryAction.click(() => {
-            this._localStorageManager.selectDataset(dataset.getId(), false);
-            this.renderSelectedDatasets();
-        });
-
         return $listItem;
     }
 
