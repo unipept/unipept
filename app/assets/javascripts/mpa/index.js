@@ -11,6 +11,7 @@ import {constructSearchtree} from "./searchtree.js";
 import {DatasetManager} from "./datasetManager";
 import {PeptideContainer} from "./peptideContainer";
 import {SESSION_STORAGE_TYPE} from "./storageTypeConstants";
+import {LoadDatasetsCardManager} from "./loadDatasetsCardManager";
 /* eslint require-jsdoc: off */
 
 /**
@@ -32,8 +33,10 @@ class MPA {
      *        two serialized DatasetManager's: one for local storage and one for session storage.
      */
     constructor(selectedDatasets) {
-        this.localStorageManager = DatasetManager.fromJSON(JSON.stringify(selectedDatasets.local_storage));
-        this.sessionStorageManager = DatasetManager.fromJSON(JSON.stringify(selectedDatasets.session_storage));
+        this._localStorageManager = DatasetManager.fromJSON(JSON.stringify(selectedDatasets.local_storage));
+        this._sessionStorageManager = DatasetManager.fromJSON(JSON.stringify(selectedDatasets.session_storage));
+
+        this._loadCardsManager = new LoadDatasetsCardManager(this._localStorageManager, this._sessionStorageManager);
 
         /** @type{PeptideContainer[]} */
         this.peptideContainers = [];
@@ -127,7 +130,7 @@ class MPA {
         // We have to convert the analysis containers to peptide containers which do contain all information about a
         // dataset before we can continue.
         let $listItems = [];
-        Promise.all([this.localStorageManager.getSelectedDatasets(), this.sessionStorageManager.getSelectedDatasets()])
+        Promise.all([this._localStorageManager.getSelectedDatasets(), this._sessionStorageManager.getSelectedDatasets()])
             .then(async (values) => {
                 this.peptideContainers = values[0].concat(values[1]);
                 for (let peptideContainer of this.peptideContainers) {
