@@ -107,7 +107,7 @@ class DatasetManager {
      */
     async storeDataset(peptides, name) {
         let id = await this._generateUniqueId();
-        let peptideContainer = new PeptideContainer(id, name, peptides.length, new Date(), this.storageType);
+        let peptideContainer = new PeptideContainer(id, name, peptides.length, new Date());
         peptideContainer.setPeptides(peptides);
         this.storage.setItem(this.metadataPrefix + id, JSON.stringify(peptideContainer.getMetadataJSON()));
         this.storage.setItem(this.peptidePrefix + id, JSON.stringify(peptideContainer.getDataJSON()));
