@@ -39,8 +39,9 @@ class LoadDatasetsCardManager {
      * @param listener A function with one parameters that's called when a dataset should be rendered. The parameter is
      *        the dataset that should be rendered.
      */
-    setRenderSelectedDataset(listener) {
+    setRenderSelectedDatasetListener(listener) {
         this._renderSelectedDatasetListener = listener;
+        this.renderSelectedDatasets();
     }
 
     _renderSelectedDataset(dataset) {
@@ -206,7 +207,7 @@ class LoadDatasetsCardManager {
             storageManager.storeDataset(peptides, searchName)
                 .then((dataset) => {
                     storageManager.selectDataset(dataset.getId());
-                    this.renderSelectedDatasets();
+                    this._renderSelectedDataset(dataset);
                     this.renderLocalStorageItems();
                 })
                 .catch(err => showError(err, "Something went wrong while storing your dataset. Check whether local storage is enabled and supported by your browser."))
@@ -309,6 +310,7 @@ class LoadDatasetsCardManager {
 
     constructDatasetLoader() {
         let that = {};
+        let outerScope = this;
 
         /** ************ private methods *************/
 
@@ -397,7 +399,7 @@ class LoadDatasetsCardManager {
 
             // expand the search options and prepare the form
             $("#" + idPrefix + "qs").val("Please wait while we load the dataset...");
-            enableProgressIndicators();
+            outerScope.enableProgressIndicators();
             $("#search-multi-form").button("loading");
             let startTimer = new Date().getTime();
             let toast = showNotification("Loading dataset...", {
@@ -441,7 +443,7 @@ class LoadDatasetsCardManager {
                     button.button("reset");
                 }
                 toast.hide();
-                enableProgressIndicators(false);
+                outerScope.enableProgressIndicators(false);
             };
 
             let request = type === "internal" ? loadInternalDataset(id) : loadPrideDataset(id);
