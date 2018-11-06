@@ -44,7 +44,7 @@ function initDatasets() {
 
     let loadDatasetsCardManager = new LoadDatasetsCardManager(localStorageManager, sessionStorageManager);
     loadDatasetsCardManager.setClearRenderedDatasetsListener(renderSelectedDatasets);
-    loadDatasetsCardManager.setRenderSelectedDataset(renderSelectedDataset)
+    loadDatasetsCardManager.setRenderSelectedDatasetListener(renderSelectedDataset)
 }
 
 export {initDatasets};
