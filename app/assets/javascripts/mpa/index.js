@@ -12,6 +12,7 @@ import {DatasetManager} from "./datasetManager";
 import {PeptideContainer} from "./peptideContainer";
 import {SESSION_STORAGE_TYPE} from "./storageTypeConstants";
 import {LoadDatasetsCardManager} from "./loadDatasetsCardManager";
+import {initializeDeterminateCircles, setDeterminateCirclesProgress} from "../progressBar";
 /* eslint require-jsdoc: off */
 
 /**
@@ -46,8 +47,7 @@ class MPA {
         });
 
         this._loadCardsManager.setRenderSelectedDatasetListener((dataset, secondaryActionCallback) => {
-            // TODO fix secondaryActionCallback
-            let $listItem = this.renderDatasetButton(dataset);
+            let $listItem = this.renderDatasetButton(dataset, secondaryActionCallback);
             this.$listItems.push($listItem);
             this.processedPeptideContainers.push(dataset);
 
@@ -85,6 +85,10 @@ class MPA {
 
         // Keeps how many datasets are currently in progress of being started
         this.processing = 0;
+
+        initializeDeterminateCircles($(".circular-progress"));
+        setDeterminateCirclesProgress($(".circular-progress"), 0.5);
+
     }
 
     showError(error) {
@@ -142,51 +146,11 @@ class MPA {
     }
 
     /**
-     * This function processes every dataset is marked as selected in both the local storage and session storage
-     * DatasetManager.
-     *
-     * @returns {Promise<void>}
-     */
-    // async processDatasets() {
-    //     // First render all dataset buttons, disable them, then analyse each dataset in parallel using a worker
-    //     // We have to convert the analysis containers to peptide containers which do contain all information about a
-    //     // dataset before we can continue.
-    //     let $listItems = [];
-    //     Promise.all([this._localStorageManager.getSelectedDatasets(), this._sessionStorageManager.getSelectedDatasets()])
-    //         .then(async (values) => {
-    //             this.peptideContainers = values[0].concat(values[1]);
-    //             for (let peptideContainer of this.peptideContainers) {
-    //                 $listItems.push(this.renderDatasetButton(peptideContainer));
-    //             }
-    //
-    //             // Then we process each and every peptide container in parallel without visualizing the results yet.
-    //             if (this.peptideContainers.length > 0) {
-    //                 // The first dataset should automatically be selected once it completes (and the user did not select any
-    //                 // other radio buttons in the meantime)
-    //                 $listItems[0].find(".select-dataset-radio-button").prop("checked", true);
-    //                 this.processDataset(this.peptideContainers[0], $listItems[0])
-    //                     .then(() => {
-    //                         // Check if the user did not select any other radio button.
-    //                         let $checkedRadiobutton = $(".select-dataset-radio-button:checked");
-    //                         if ($checkedRadiobutton.data("name") === this.peptideContainers[0].getName()) {
-    //                             this.selectListItem($listItems[0]);
-    //                         }
-    //                     });
-    //             }
-    //
-    //             for (let i = 1; i < this.peptideContainers.length; i++) {
-    //                 this.processDataset(this.peptideContainers[i], $listItems[i]);
-    //             }
-    //         })
-    //         .catch(err => showError(err, "Something went wrong while analysing the selected datasets."));
-    // }
-
-    /**
      * Render the dataset button for a specific peptide container.
      *
      * @param {PeptideContainer} peptideContainer The peptideContainer for whom a button should be rendered.
      */
-    renderDatasetButton(peptideContainer) {
+    renderDatasetButton(peptideContainer, secondaryActionCallback) {
         let $list = $("#dataset_list");
 
         let $listItem = $("<div class='list-item--two-lines' id='list-item-" + peptideContainer.getId() + "'>");
@@ -209,6 +173,11 @@ class MPA {
         $contentBody.append($("<div>").text(peptideContainer.getAmountOfPeptides() + " peptides"));
         $primaryContent.append($contentBody);
         $listItem.append($primaryContent);
+
+        let $secondaryAction = $("<span class='list-item-secondary-action'>").append("<span class='glyphicon glyphicon-remove'>");
+        $listItem.append($secondaryAction);
+
+        $secondaryAction.click(secondaryActionCallback);
 
         $list.append($listItem);
         return $listItem
