@@ -133,8 +133,10 @@ class MPA {
         await this.analyse(dataset);
         this.datasets.push(dataset);
 
+        let $circularProgress = $listItem.find(".circular-progress");
+        $circularProgress.addClass("hidden");
         let $radioButton = $listItem.find(".select-dataset-radio-button");
-        $radioButton.prop("disabled", false);
+        $radioButton.removeClass("hidden");
 
         console.log("Done processing " + peptideContainer.getName());
         this.processing--;
@@ -155,9 +157,16 @@ class MPA {
 
         let $listItem = $("<div class='list-item--two-lines' id='list-item-" + peptideContainer.getId() + "'>");
         let $primaryAction = $("<span class='list-item-primary-action'>");
-        let $itemRadioButton = $("<input type='radio' value='' class='input-item select-dataset-radio-button' disabled>");
+
+        let $itemRadioButton = $("<input type='radio' value='' class='input-item select-dataset-radio-button hidden'>");
         $itemRadioButton.data("name", peptideContainer.getName());
         $primaryAction.append($itemRadioButton);
+
+        let $circularProgress = $("<div class='circular-progress' data-size='24'>");
+        $primaryAction.append($circularProgress);
+        initializeDeterminateCircles($circularProgress);
+        setDeterminateCirclesProgress($circularProgress, 0.5);
+
         $listItem.append($primaryAction);
 
         // The current dataset view should be switched when a radio button is clicked.
