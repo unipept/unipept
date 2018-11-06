@@ -14,8 +14,6 @@ function renderSelectedDatasets(localStorageManager, sessionStorageManager) {
     let $body = $("#selected-datasets-list");
     $body.html("");
 
-    console.log(localStorageManager);
-
     if (localStorageManager.getAmountOfSelectedDatasets() === 0 && sessionStorageManager.getAmountOfSelectedDatasets() === 0){
         showSelectedDatasetsPlaceholder();
     }
@@ -30,7 +28,7 @@ function renderSelectedDataset(dataset, secondaryActionCallback) {
     $primaryContent.append($("<span class='list-item-date'>").text(dataset.getDate()));
     $primaryContent.append($("<span class='list-item-body'>").text(dataset.getAmountOfPeptides() + " peptides"));
     $listItem.append($primaryContent);
-    let $secondaryAction = $("<span class='list-item-secondary-action'>").append("<span class='glyphicon glyphicon-remove'>");
+    let $secondaryAction = $("<span class='list-item-secondary-action'>").append("<span class='glyphicon glyphicon-trash'>");
     $listItem.append($secondaryAction);
 
     $secondaryAction.click(secondaryActionCallback);
