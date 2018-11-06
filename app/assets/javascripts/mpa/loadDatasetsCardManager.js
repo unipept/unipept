@@ -16,6 +16,10 @@ class LoadDatasetsCardManager {
 
         this.renderLocalStorageItems();
         this.initializeDatasetLoader();
+
+        // Automatically check required content when user changes input fields
+        this.initializeAutomaticRequiredContentChecks();
+        this.initializeAutomaticRequiredContentChecks("pride-");
     }
 
     /**
@@ -52,6 +56,14 @@ class LoadDatasetsCardManager {
                 this.renderSelectedDatasets();
             });
         }
+    }
+
+    initializeAutomaticRequiredContentChecks(idPrefix = "") {
+        let $qs = $("#" + idPrefix + "qs");
+        let $name = $("#" + idPrefix + "search_name");
+
+        $qs.change(() => this.checkRequiredContent(idPrefix));
+        $name.change(() => this.checkRequiredContent(idPrefix));
     }
 
     renderSelectedDatasets() {
@@ -145,7 +157,7 @@ class LoadDatasetsCardManager {
         // load a PRIDE dataset
         $(".load-pride").click(loadPride);
         $("#pride_exp_id").keypress(function (event) {
-            if (event.which == "13") {
+            if (event.which === "13") {
                 loadPride();
             }
         });
@@ -189,7 +201,6 @@ class LoadDatasetsCardManager {
      * @return {void}
      */
     addDataset(idPrefix) {
-        this.enableSearchNameError(false, idPrefix);
         this.enableProgressIndicators();
 
         let $searchName = $("#" + idPrefix + "search_name");
@@ -198,10 +209,15 @@ class LoadDatasetsCardManager {
         let searchName = $searchName.val();
         let save = $saveDataSetCheckbox.prop("checked");
 
+        if (!this.checkRequiredContent(idPrefix)) {
+            this.enableProgressIndicators(false);
+            return;
+        }
+
         if (save && searchName === "") {
-            this.enableSearchNameError(true, idPrefix);
+            this.enableProgressIndicators(false);
         } else {
-            let peptides = $("#qs").val().replace(/\r/g,"").split("\n");
+            let peptides = $("#" + idPrefix + "qs").val().replace(/\r/g,"").split("\n");
             let storageManager = save ? this._localStorageManager : this._sessionStorageManager;
 
             storageManager.storeDataset(peptides, searchName)
@@ -291,16 +307,45 @@ class LoadDatasetsCardManager {
         }
     }
 
-    enableSearchNameError(state = true, idPrefix = "") {
-        let $searchInputGroup = $("#" + idPrefix + "search-input-group");
-        let $helpBlockName = $("#" + idPrefix + "help-block-name");
+    /**
+     * Checks whether all required content is filled in and returns this checks result.
+     *
+     * @param {string} idPrefix Optional
+     * @return {boolean} True when all required content is set by the user.
+     */
+    checkRequiredContent(idPrefix = "") {
+        // First reset the previous checks
+        this.enableError(false, "name", idPrefix);
+        this.enableError(false, "qs", idPrefix);
+
+        let $searchName = $("#" + idPrefix + "search_name");
+        let $qs = $("#" + idPrefix + "qs");
+
+        let result = true;
+
+        if ($qs.val().trim() === "") {
+            this.enableError(true, "qs", idPrefix);
+            result = false;
+        }
+
+        if ($searchName.val().trim() === "") {
+            this.enableError(true, "name", idPrefix);
+            result = false;
+        }
+
+        return result;
+    }
+
+    enableError(state = true, fieldName, idPrefix = "") {
+        let $inputGroup = $("#" + idPrefix + fieldName + "-input-group");
+        let $helpBlock = $("#" + idPrefix + "help-block-" + fieldName);
 
         if (state) {
-            $searchInputGroup.addClass("has-error");
-            $helpBlockName.removeClass("hidden");
+            $inputGroup.addClass("has-error");
+            $helpBlock.removeClass("hidden");
         } else {
-            $searchInputGroup.removeClass("has-error");
-            $helpBlockName.addClass("hidden");
+            $inputGroup.removeClass("has-error");
+            $helpBlock.addClass("hidden");
         }
     }
 
