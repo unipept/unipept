@@ -7,23 +7,27 @@ import {LoadDatasetsCardManager} from "./mpa/loadDatasetsCardManager";
 /* eslint-disable require-jsdoc */
 
 function showSelectedDatasetsPlaceholder() {
-    $("#selected-datasets-list").append($("<span>Please select one or more datasets from the right hand panel to continue the analysis...</span>"));
+    $("#selected-datasets-list").append($("<span id='selected-datasets-placeholder'>Please select one or more datasets from the right hand panel to continue the analysis...</span>"));
 }
 
-function renderSelectedDatasets(localStorageManager, sessionStorageManager) {
-    let $body = $("#selected-datasets-list");
-    $body.html("");
+function clearSelectedDatasets() {
+    $("#selected-datasets-list").html("");
+    showSelectedDatasetsPlaceholder();
+}
 
-    if (localStorageManager.getAmountOfSelectedDatasets() === 0 && sessionStorageManager.getAmountOfSelectedDatasets() === 0){
+function removeSelectedDataset(dataset) {
+    $("#list-item-dataset-" + dataset.getId()).remove();
+    // Check if there are more datasets in the list
+    if ($(".dataset-list-item").length === 0) {
         showSelectedDatasetsPlaceholder();
     }
 }
 
-function renderSelectedDataset(dataset, secondaryActionCallback) {
+function addSelectedDataset(dataset, secondaryActionCallback) {
     let $body = $("#selected-datasets-list");
 
     // Use jQuery to build elements and prevent XSS attacks
-    let $listItem = $("<div class='list-item--two-lines'>");
+    let $listItem = $("<div class='list-item--two-lines dataset-list-item' id='list-item-dataset-" + dataset.getId() + "'>");
     let $primaryContent = $("<span class='list-item-primary-content'>").append("<span>").text(dataset.getName());
     $primaryContent.append($("<span class='list-item-date'>").text(dataset.getDate()));
     $primaryContent.append($("<span class='list-item-body'>").text(dataset.getAmountOfPeptides() + " peptides"));
@@ -40,9 +44,15 @@ function initDatasets() {
     let localStorageManager = new DatasetManager();
     let sessionStorageManager = new DatasetManager(SESSION_STORAGE_TYPE);
 
-    let loadDatasetsCardManager = new LoadDatasetsCardManager(localStorageManager, sessionStorageManager);
-    loadDatasetsCardManager.setClearRenderedDatasetsListener(renderSelectedDatasets);
-    loadDatasetsCardManager.setRenderSelectedDatasetListener(renderSelectedDataset)
+    showSelectedDatasetsPlaceholder();
+
+    let loadDatasetsCardManager = new LoadDatasetsCardManager(
+        localStorageManager,
+        sessionStorageManager,
+        clearSelectedDatasets,
+        removeSelectedDataset,
+        addSelectedDataset
+    );
 }
 
 export {initDatasets};
