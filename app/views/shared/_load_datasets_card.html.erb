@@ -13,7 +13,7 @@
       <div class="tab-pane active" id="create">
         <%= render :partial => "shared/create_dataset_form", :locals => {:id_prefix => ""} %>
         <div class='search-buttons-centered'>
-          <%= button_tag(raw("<span class='glyphicon glyphicon-arrow-left grow'></span> Add to selected datasets"), { :name => 'add', :id => 'add_dataset_button', :class => "btn btn-default btn-animate load-datasets-input-item" }) %>
+          <%= button_tag(raw("<span class='glyphicon glyphicon-plus'></span> Add to selected datasets"), { :name => 'add', :id => 'add_dataset_button', :class => "btn btn-default btn-animate load-datasets-input-item" }) %>
         </div>
       </div>
       <div class="tab-pane" id="database">
@@ -28,11 +28,11 @@
         </div>
         <%= render 'shared/pride_progress' %>
         <div class='search-buttons-centered'>
-          <%= button_tag(raw("Fetch PRIDE dataset"), { :type => "button", :class => "load-pride btn btn-default load-datasets-input-item" , :"data-loading-text" => "Loading..."}) %>
+          <%= button_tag(raw("<span class='glyphicon glyphicon-cloud-download'></span> Fetch PRIDE dataset"), { :type => "button", :class => "load-pride btn btn-default load-datasets-input-item" , :"data-loading-text" => "Loading..."}) %>
         </div>
         <%= render :partial => "shared/create_dataset_form", :locals => {:id_prefix => "pride-"} %>
         <div class="search-buttons-centered">
-          <%= button_tag(raw("<span class='glyphicon glyphicon-arrow-left grow'></span> Add to selected datasets"), { :name => 'add', :id => 'add_pride_dataset_button', :class => "btn btn-default btn-animate load-datasets-input-item" }) %>
+          <%= button_tag(raw("<span class='glyphicon glyphicon-plus'></span> Add to selected datasets"), { :name => 'add', :id => 'add_pride_dataset_button', :class => "btn btn-default btn-animate load-datasets-input-item" }) %>
         </div>
       </div>
       <div class="tab-pane" id="local-storage">

@@ -186,7 +186,7 @@ class MPA {
         $primaryContent.append($contentBody);
         $listItem.append($primaryContent);
 
-        let $secondaryAction = $("<span class='list-item-secondary-action'>").append("<span class='glyphicon glyphicon-remove'>");
+        let $secondaryAction = $("<span class='list-item-secondary-action'>").append("<span class='glyphicon glyphicon-trash'>");
         $listItem.append($secondaryAction);
 
         $secondaryAction.click(secondaryActionCallback);
