@@ -65,6 +65,7 @@ class Resultset {
     setProgress(value) {
         this.progress = value;
         eventBus.emit("dataset-progress", value);
+        eventBus.emit("dataset-" + this.dataset.id + "-progress", value);
     }
 
 

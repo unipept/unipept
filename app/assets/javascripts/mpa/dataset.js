@@ -17,8 +17,9 @@ class Dataset {
      *
      * @param {string[]} [peptides=[]] A list of peptides (strings)
      * @param {string} name The name associated with this Dataset.
+     * @param {string} id Unique identifier associated with this Dataset.
      */
-    constructor(peptides = [], name) {
+    constructor(peptides = [], name, id) {
         this.originalPeptides = Dataset.cleanPeptides(peptides);
 
         /** @type {Tree} */
@@ -26,6 +27,7 @@ class Dataset {
         this._fa = null;
         this.baseFa = null;
         this.name = name;
+        this.id = id;
 
         /** @type {Map<number,TaxonInfo>} */
         this.taxonMap = new Map();

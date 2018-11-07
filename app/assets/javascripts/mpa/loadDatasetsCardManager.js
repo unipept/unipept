@@ -39,6 +39,16 @@ class LoadDatasetsCardManager {
         }
     }
 
+    setRemoveRenderedDatasetListener(listener) {
+        this._removeRenderedDatasetListener = listener;
+    }
+
+    _removeSelectedDataset(dataset) {
+        if (this._removeRenderedDatasetListener) {
+            this._removeRenderedDatasetListener(dataset);
+        }
+    }
+
     /**
      * @param listener A function with one parameters that's called when a dataset should be rendered. The parameter is
      *        the dataset that should be rendered.
