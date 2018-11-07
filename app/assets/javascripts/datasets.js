@@ -24,6 +24,12 @@ function removeSelectedDataset(dataset) {
 }
 
 function addSelectedDataset(dataset, secondaryActionCallback) {
+    if ($("#list-item-dataset-" + dataset.getId()).length > 0) {
+        return;
+    }
+
+    $("#selected-datasets-placeholder").remove();
+
     let $body = $("#selected-datasets-list");
 
     // Use jQuery to build elements and prevent XSS attacks
