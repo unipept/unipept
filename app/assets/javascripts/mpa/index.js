@@ -37,23 +37,38 @@ class MPA {
         this._localStorageManager = DatasetManager.fromJSON(JSON.stringify(selectedDatasets.local_storage));
         this._sessionStorageManager = DatasetManager.fromJSON(JSON.stringify(selectedDatasets.session_storage));
 
-        this._loadCardsManager = new LoadDatasetsCardManager(this._localStorageManager, this._sessionStorageManager);
-        this._loadCardsManager.setClearRenderedDatasetsListener(() => {
+        let clearDatasetsListener = () => {
             $("#dataset_list").html("");
-        });
+        };
 
-        this._loadCardsManager.setRenderSelectedDatasetListener((dataset, secondaryActionCallback) => {
+        let addDatasetListener = (dataset, secondaryActionCallback) => {
+            // Check if the dataset that should be added already exists.
+            if ($("#list-item-" + dataset.getId()).length > 0) {
+                return;
+            }
+
             let $listItem = this.renderDatasetButton(dataset, secondaryActionCallback);
-
             this.processDataset(dataset, $listItem)
                 .then(() => {
                     let $selectedRadioButtons = $(".select-dataset-radio-button:checked");
                     if ($selectedRadioButtons.length === 0) {
-                        let $radioButton = $listItem.find(".select-dataset-radio-button").prop("checked", true);
+                        $listItem.find(".select-dataset-radio-button").prop("checked", true);
                         this.selectListItem($listItem);
                     }
                 });
-        });
+        };
+
+        let removeDatasetListener = (dataset) => {
+            $("#list-item-" + dataset.getId()).remove();
+        };
+
+        this._loadCardsManager = new LoadDatasetsCardManager(
+            this._localStorageManager,
+            this._sessionStorageManager,
+            clearDatasetsListener,
+            removeDatasetListener,
+            addDatasetListener
+        );
 
         /** @type {Dataset[]} */
         this.datasets = [];
