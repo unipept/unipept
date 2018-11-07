@@ -9,8 +9,19 @@ class LoadDatasetsCardManager {
     /**
      * @param {DatasetManager} localStorageManager A DatasetManager whose storage type is set to local_storage.
      * @param {DatasetManager} sessionStorageManager A DatasetManager whose storage type is set to session_storage.
+     * @param clearDatasetsListener A function that's called when the selection of datasets is cleared.
+     * @param removeDatasetListener A function that's given a dataset (PeptideContainer) as parameter which indicates
+     *        that the given dataset was removed from the selection.
+     * @param addDatasetListener A function that's given a dataset (PeptideContainer) as parameter which indicates that
+     *        the given dataset was added to the selection.
      */
-    constructor(localStorageManager, sessionStorageManager) {
+    constructor(
+        localStorageManager,
+        sessionStorageManager,
+        clearDatasetsListener,
+        removeDatasetListener,
+        addDatasetListener
+    ) {
         this._localStorageManager = localStorageManager;
         this._sessionStorageManager = sessionStorageManager;
 
@@ -20,32 +31,27 @@ class LoadDatasetsCardManager {
         // Automatically check required content when user changes input fields
         this.initializeAutomaticRequiredContentChecks();
         this.initializeAutomaticRequiredContentChecks("pride-");
+
+        this._clearDatasetsListener = clearDatasetsListener;
+        this._removeDatasetListener = removeDatasetListener;
+        this._addDatasetListener = addDatasetListener;
     }
 
-    /**
-     * @param listener A function with two parameters that's called whenever the rendering of datasets starts. This
-     *        listener should be used to clear previously rendered datasets in the GUI.
-     *        Parameters: * localStorageManager
-     *                    * sessionStorageManager
-     *
-     */
-    setClearRenderedDatasetsListener(listener) {
-        this._clearRenderedDatasetsListener = listener;
-    }
-
-    _clearRenderedDatasets() {
-        if (this._clearRenderedDatasetsListener) {
-            this._clearRenderedDatasetsListener(this._localStorageManager, this._sessionStorageManager);
+    clearSelectedDatasets() {
+        if (this._clearDatasetsListener) {
+            this._clearDatasetsListener();
         }
     }
 
-    setRemoveRenderedDatasetListener(listener) {
-        this._removeRenderedDatasetListener = listener;
+    removeSelectedDataset(dataset) {
+        if (this._removeDatasetListener) {
+            this._removeDatasetListener(dataset);
+        }
     }
 
-    _removeSelectedDataset(dataset) {
-        if (this._removeRenderedDatasetListener) {
-            this._removeRenderedDatasetListener(dataset);
+    addSelectedDataset(dataset) {
+        if (this._addDatasetListener) {
+            this._addDatasetListener(dataset);
         }
     }
 
@@ -78,7 +84,7 @@ class LoadDatasetsCardManager {
 
     renderSelectedDatasets() {
         this.enableProgressIndicators();
-        this._clearRenderedDatasets();
+        this.clearSelectedDatasets();
 
         Promise.all([this._localStorageManager.getSelectedDatasets(), this._sessionStorageManager.getSelectedDatasets()])
             .then(values => {
@@ -137,7 +143,7 @@ class LoadDatasetsCardManager {
             $("#search_name").val("");
             this._localStorageManager.clearSelection();
             this._sessionStorageManager.clearSelection();
-            this.renderSelectedDatasets();
+            this.clearSelectedDatasets();
             this.showSelectedDatasetsPlaceholder();
         });
 
