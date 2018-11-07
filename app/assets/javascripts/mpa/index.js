@@ -38,29 +38,19 @@ class MPA {
         this._sessionStorageManager = DatasetManager.fromJSON(JSON.stringify(selectedDatasets.session_storage));
 
         this._loadCardsManager = new LoadDatasetsCardManager(this._localStorageManager, this._sessionStorageManager);
-        this.processedPeptideContainers = [];
-        this.$listItems = [];
         this._loadCardsManager.setClearRenderedDatasetsListener(() => {
             $("#dataset_list").html("");
-            this.processedPeptideContainers = [];
-            this.$listItems = [];
         });
 
         this._loadCardsManager.setRenderSelectedDatasetListener((dataset, secondaryActionCallback) => {
             let $listItem = this.renderDatasetButton(dataset, secondaryActionCallback);
-            this.$listItems.push($listItem);
-            this.processedPeptideContainers.push(dataset);
-
-            if (this.processedPeptideContainers.length === 1) {
-                this.$listItems[0].find(".select-dataset-radio-button").prop("checked", true);
-            }
 
             this.processDataset(dataset, $listItem)
                 .then(() => {
-                    // Check if the user did not select any other radio button.
-                    let $checkedRadiobutton = $(".select-dataset-radio-button:checked");
-                    if ($checkedRadiobutton.data("name") === this.processedPeptideContainers[0].getName()) {
-                        this.selectListItem(this.$listItems[0]);
+                    let $selectedRadioButtons = $(".select-dataset-radio-button:checked");
+                    if ($selectedRadioButtons.length === 0) {
+                        let $radioButton = $listItem.find(".select-dataset-radio-button").prop("checked", true);
+                        this.selectListItem($listItem);
                     }
                 });
         });
@@ -85,10 +75,6 @@ class MPA {
 
         // Keeps how many datasets are currently in progress of being started
         this.processing = 0;
-
-        initializeDeterminateCircles($(".circular-progress"));
-        setDeterminateCirclesProgress($(".circular-progress"), 0.5);
-
     }
 
     showError(error) {
@@ -129,7 +115,7 @@ class MPA {
         console.log("Started processing " + peptideContainer.getName());
 
         let peptides = await peptideContainer.getPeptides();
-        let dataset = new Dataset(peptides, peptideContainer.getName());
+        let dataset = new Dataset(peptides, peptideContainer.getName(), peptideContainer.getId());
         await this.analyse(dataset);
         this.datasets.push(dataset);
 
@@ -158,14 +144,16 @@ class MPA {
         let $listItem = $("<div class='list-item--two-lines' id='list-item-" + peptideContainer.getId() + "'>");
         let $primaryAction = $("<span class='list-item-primary-action'>");
 
-        let $itemRadioButton = $("<input type='radio' value='' class='input-item select-dataset-radio-button hidden'>");
+        let $itemRadioButton = $("<input type='radio' value='' class='input-item select-dataset-radio-button hidden' style='width: 24px;'>");
         $itemRadioButton.data("name", peptideContainer.getName());
         $primaryAction.append($itemRadioButton);
 
         let $circularProgress = $("<div class='circular-progress' data-size='24'>");
         $primaryAction.append($circularProgress);
         initializeDeterminateCircles($circularProgress);
-        setDeterminateCirclesProgress($circularProgress, 0.5);
+        eventBus.on("dataset-" + peptideContainer.getId() + "-progress", (progress) => {
+            setDeterminateCirclesProgress($circularProgress, progress);
+        });
 
         $listItem.append($primaryAction);
 
@@ -1024,18 +1012,6 @@ class MPA {
 
     setProgressValue(value = 0, barSelector = "#progress-analysis") {
         $(`${barSelector} .progressbar`).css("width", `${value * 100}%`);
-    }
-
-    enableMultipleDatasetsProgress(enable = true, total = 0) {
-        $("#multiple-datasets-progress-total").text(total);
-
-        if (enable) {
-            $("#multiple-datasets-progress").show();
-            eventBus.on("progress-multiple-datasets", this.setMultipleDatasetsProgressValue);
-        } else {
-            $("#multiple-datasets-progress").hide();
-            eventBus.off("progress-multiple-datasets", this.setMultipleDatasetsProgressValue);
-        }
     }
 
     setMultipleDatasetsProgressValue(value = 0) {

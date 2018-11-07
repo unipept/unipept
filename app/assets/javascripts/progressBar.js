@@ -28,7 +28,8 @@ function setDeterminateCirclesProgress($element, progress) {
 
     // Get progress value and update the SVG accordingly
     let strokeDashOffset = (1 - progress) * strokeDashArray + size;
-    $element.find("circle").css("stroke-dashoffset", strokeDashOffset);
+    let $circle = $element.find("circle");
+    $circle.css("stroke-dashoffset", strokeDashOffset);
 }
 
 export {initializeDeterminateCircles, setDeterminateCirclesProgress}
