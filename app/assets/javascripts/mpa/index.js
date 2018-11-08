@@ -127,7 +127,6 @@ class MPA {
         }
 
         this.processing++;
-        console.log("Started processing " + peptideContainer.getName());
 
         let peptides = await peptideContainer.getPeptides();
         let dataset = new Dataset(peptides, peptideContainer.getName(), peptideContainer.getId());
@@ -139,7 +138,6 @@ class MPA {
         let $radioButton = $listItem.find(".select-dataset-radio-button");
         $radioButton.removeClass("hidden");
 
-        console.log("Done processing " + peptideContainer.getName());
         this.processing--;
 
         if (this.processing === 0) {

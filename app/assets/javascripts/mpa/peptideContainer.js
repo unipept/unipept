@@ -11,7 +11,7 @@ class PeptideContainer {
     static fromJSON(metaData, peptideData = undefined) {
         let meta = JSON.parse(metaData);
         let splitDate = meta.date.split("/");
-        let output = new PeptideContainer(meta.id, meta.name, meta.amount, new Date(splitDate[0], splitDate[1], splitDate[2]));
+        let output = new PeptideContainer(meta.id, meta.name, meta.amount, new Date(splitDate[0], splitDate[1], splitDate[2]), meta.type);
         if (peptideData !== undefined) {
             let peptides = JSON.parse(peptideData);
             output.setPeptides(peptides);
@@ -27,13 +27,15 @@ class PeptideContainer {
      * @param {string} name The name of the stored dataset.
      * @param {int} peptideAmount The amount of peptides that are to be stored in this container.
      * @param {Date} date The date at which the dataset was first created.
+     * @param {string} type One of "local_storage" and "session_storage"
      */
-    constructor(id, name, peptideAmount, date) {
+    constructor(id, name, peptideAmount, date, type) {
         this._id = id;
         this._peptides = undefined;
         this._name = name;
         this._peptideAmount = peptideAmount;
         this._date = date;
+        this._type = type;
     }
 
     setPeptides(peptides) {
@@ -74,7 +76,11 @@ class PeptideContainer {
      * @returns {string}
      */
     getDate() {
-        return this._date.getFullYear() + "/" + (this._date.getMonth() + 1) + "/" + this._date.getUTCDate();
+        return this._date.getFullYear() + "/" + (this._date.getMonth() + 1) + "/" + this._date.getDate();
+    }
+
+    getType() {
+        return this._type;
     }
 
     getMetadataJSON() {
@@ -82,7 +88,8 @@ class PeptideContainer {
             id: this._id,
             name: this._name,
             amount: this._peptideAmount,
-            date: this._date.getFullYear() + "/" + this._date.getMonth() + "/" + this._date.getUTCDate()
+            date: this.getDate(),
+            type: this._type
         };
     }
 
@@ -101,7 +108,8 @@ class PeptideContainer {
             peptides: this._peptides,
             name: this._name,
             amount: this._peptideAmount,
-            date: this._date.getFullYear() + "/" + this._date.getMonth() + "/" + this._date.getUTCDate()
+            date: this.getDate(),
+            type: this._type
         };
     }
 }
