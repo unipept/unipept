@@ -10,5 +10,5 @@
   <span class="help-block hidden" id="<%= id_prefix + "help-block-name" %>">Name is required when the dataset is set to be saved</span>
 </div>
 <div class="checkbox">
-  <%= label_tag(:save_dataset, check_box_tag(id_prefix + 'save_dataset', 1, true, class: "input-item") + " Save dataset", title: "Store dataset in browser's local storage", class: 'js-has-hover-tooltip') %>
+  <%= label_tag(:save_dataset, check_box_tag(id_prefix + 'save_dataset', 1, true, class: "input-item") + " Store dataset in browser's local storage", title: "Store dataset in local storage and reuse it later on", class: 'js-has-hover-tooltip') %>
 </div>

@@ -3,6 +3,20 @@
   <%= javascript_pack_tag 'mpa' %>
 <% end %>
 
+<!-- Hack that allows us to place a triangle in the spacing between bootstrap columns -->
+<div id="add-dataset-triangle" class="hidden" style="
+    width: 0;
+    height: 0;
+    border-top: 30px solid transparent;
+    border-bottom: 30px solid transparent;
+    border-right: 30px solid #2196F3;
+    position: absolute;
+    left: 937px;
+    top: 173px;
+    z-index: 10;
+">
+</div>
+
 <div class='row equal-height-row'>
   <div class='col-xs-6'>
     <div class='card' style="height: 100%;">
