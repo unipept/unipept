@@ -50,6 +50,7 @@ class MPA {
             let $listItem = this.renderDatasetButton(dataset, secondaryActionCallback);
             this.processDataset(dataset, $listItem)
                 .then(() => {
+                    console.log("CALLED LISTENER!");
                     let $selectedRadioButtons = $(".select-dataset-radio-button:checked");
                     if ($selectedRadioButtons.length === 0) {
                         $listItem.find(".select-dataset-radio-button").prop("checked", true);
