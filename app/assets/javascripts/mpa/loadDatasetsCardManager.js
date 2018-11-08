@@ -268,7 +268,7 @@ class LoadDatasetsCardManager {
 
     renderLocalStorageItem(dataset) {
         // Use jQuery to build elements to prevent XSS attacks
-        let $listItem = $("<div class='list-item--two-lines'>");
+        let $listItem = $("<div class='list-item--two-lines' style='cursor: pointer;'>");
         let $primaryAction = $("<span class='list-item-primary-action'>").append($("<span class='glyphicon glyphicon-plus select-dataset-button'>"));
         let $primaryContent = $("<span class='list-item-primary-content'>").text(dataset.getName());
         $primaryContent.append($("<span class='list-item-date'>").text(dataset.getDate()));
@@ -276,7 +276,7 @@ class LoadDatasetsCardManager {
         $primaryContent.append($primaryBody);
         $listItem.append($primaryAction);
         $listItem.append($primaryContent);
-        $primaryAction.click(() => {
+        $listItem.click(() => {
             this._localStorageManager.selectDataset(dataset.getId());
             this.addSelectedDataset(dataset);
         });
@@ -291,10 +291,10 @@ class LoadDatasetsCardManager {
             .prop('disabled', enable);
 
         if (enable) {
-            $searchButton.addClass("hide");
+            $searchButton.prop("disabled", true);
             $formProgress.removeClass("hide");
         } else {
-            $searchButton.removeClass("hide");
+            $searchButton.removeClass("disabled", false);
             $formProgress.addClass("hide");
         }
     }

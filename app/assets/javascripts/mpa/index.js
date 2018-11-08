@@ -159,6 +159,8 @@ class MPA {
         let $listItem = $("<div class='list-item--two-lines' id='list-item-" + peptideContainer.getId() + "'>");
         let $primaryAction = $("<span class='list-item-primary-action'>");
 
+        $primaryAction.append($("<div class='hidden selected-list-item-bar' style='background-color: #2196F3; height: 72px; width: 5px; position: relative; left: -11px;'>"));
+
         let $itemRadioButton = $("<input type='radio' value='' class='input-item select-dataset-radio-button hidden' style='width: 24px;'>");
         $itemRadioButton.data("name", peptideContainer.getName());
         $primaryAction.append($itemRadioButton);
@@ -201,6 +203,10 @@ class MPA {
         // Select this radio button and deselect the other radiobuttons
         $(".select-dataset-radio-button").prop("checked", false);
         $radioButton.prop("checked", true);
+        $(".selected-list-item-bar").addClass("hidden");
+        $("#dataset_list .list-item--two-lines").css("margin-left", "0");
+        $listItem.find(".selected-list-item-bar").removeClass("hidden");
+        $listItem.css("margin-left", "-5px");
 
         let datasetName = $radioButton.data("name");
         this.dataset = this.getDatasetByName(datasetName);
@@ -897,6 +903,7 @@ class MPA {
         $("#update-button").click(() => this.updateSearchSettings());
 
         $("#add-dataset-button").click(() => {
+            $("#add-dataset-triangle").toggleClass("hidden");
             $("#experiment-summary-card").toggleClass("hidden");
             $("#load-datasets-card").toggleClass("hidden");
         })
