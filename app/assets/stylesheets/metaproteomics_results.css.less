@@ -6,7 +6,7 @@
     overflow: visible;
 }
 .card-supporting-text.multi-results {
-    padding: 0px;
+    padding: 0;
 }
 .multi-search .buttons-single {
     margin-right: 16px;
@@ -267,4 +267,37 @@ span.dir.text {
     :disabled {
         display: none;
     }
+}
+
+#add-dataset-triangle {
+    width: 0;
+    height: 0;
+    border-top: 30px solid transparent;
+    border-bottom: 30px solid transparent;
+    border-right: 30px solid #2196F3;
+    position: absolute;
+    left: 937px;
+    top: 173px;
+    z-index: 10;
+}
+
+.equal-height-row .card {
+    height: 100%;
+}
+
+.equal-height-row .card .card-title-colored {
+    min-height: 61px;
+}
+
+#dataset-list-container {
+    height: 100%;
+}
+
+#dataset_list {
+    max-height: 620px;
+    overflow: auto;
+}
+
+#visualizations-card {
+    margin-top: 10px;
 }
