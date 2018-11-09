@@ -60,6 +60,10 @@ class MPA {
 
         let removeDatasetListener = (dataset) => {
             $("#list-item-" + dataset.getId()).remove();
+
+            if ($("#dataset_list .list-item--two-lines").length === 0) {
+                $("#dataset_list").text("Please select a dataset from the right to continue the analysis.");
+            }
         };
 
         this._loadCardsManager = new LoadDatasetsCardManager(
@@ -199,6 +203,12 @@ class MPA {
                 $("#mpa-sunburst").addClass("hidden");
                 $("#mpa-treemap").addClass("hidden");
                 $("#mpa-treeview").addClass("hidden");
+                $("#goPanel").addClass("hidden");
+                $("#go-summary").html("");
+                $("#ecTreeView").addClass("hidden");
+                $("#ec-summary").html("");
+                $("#ecTable").html("");
+                $("#searchtree").html("");
 
                 secondaryActionCallback();
 
@@ -227,7 +237,9 @@ class MPA {
 
         let datasetName = $radioButton.data("name");
         this.dataset = this.getDatasetByName(datasetName);
+
         $(".mpa-unavailable").addClass("hidden");
+        $("#goPanel").removeClass("hidden");
         this.setUpVisualisations(this.dataset.tree);
         this.updateStats(this.dataset);
     }
@@ -404,7 +416,9 @@ class MPA {
         const go = fa.getGroup("GO");
         const goOld = oldFa === null ? null : oldFa.getGroup("GO");
 
-        $("#go-summary").html(this.trustLine(go, "GO term"));
+        if ($(".select-dataset-radio-button").length > 0) {
+            $("#go-summary").html(this.trustLine(go, "GO term"));
+        }
         const goPanel = d3.select("#goPanel");
         goPanel.html("");
         for (let variant of GOTerms.NAMESPACES) {
@@ -629,7 +643,10 @@ class MPA {
         /** @type {ECNumbers} */
         // @ts-ignore
         const faEC = fa.getGroup("EC");
-        $("#ec-summary").html(this.trustLine(faEC, "EC number"));
+        if ($(".select-dataset-radio-button").length > 0) {
+            $("#ec-summary")
+                .html(this.trustLine(faEC, "EC number"));
+        }
 
         this.setUpECTree(faEC);
         this.setUpECTable(fa, oldFa);
@@ -664,6 +681,10 @@ class MPA {
      * @return {TreeView} The created treeview
      */
     setUpECTree(ecResultSet) {
+        if ($(".select-dataset-radio-button").length > 0) {
+            $("#ecTreeView").removeClass("hidden");
+        }
+
         const $container = $("#ecTreeView output");
         $("#save-btn-ec").unbind("click");
         $container.empty();
@@ -720,6 +741,10 @@ class MPA {
      *     Snapshot of functional annotations for comparision
      */
     setUpECTable(fa, oldFa = null) {
+        if ($(".select-dataset-radio-button").length === 0) {
+            return;
+        }
+
         const sortOrder = this.displaySettings.sortFA;
 
         const ecResultSet = fa.getGroup("EC");
@@ -810,10 +835,6 @@ class MPA {
                     addCopy($content.find("button")[0], () => missed.join("\n"), "Copy list to clipboard", $modal[0]);
                 });
         }
-    }
-
-    disableGui(state = true) {
-        $(".input-item").prop("disabled", state);
     }
 
     setUpButtons() {
