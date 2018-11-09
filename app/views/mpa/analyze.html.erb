@@ -86,11 +86,14 @@
           </span>
           <span class="dir text">Click a slice to zoom in and the center node to zoom out</span>
         </h2>
+        <div class="mpa-unavailable hidden">
+          <%= image_tag("mpa/placeholder_sunburst.svg", class:"mpa-placeholder") %>
+        </div>
         <div id="mpa-sunburst">
           <output id="sunburstPanel">
-              <div class="mpa-waiting">
-                  <%= image_tag("mpa/placeholder_sunburst.svg", alt:"Please wait while we are preparing your data...", class:"mpa-placeholder") %>
-              </div>
+            <div class="mpa-waiting">
+              <%= image_tag("mpa/placeholder_sunburst.svg", alt:"Please wait while we are preparing your data...", class:"mpa-placeholder") %>
+            </div>
           </output>
         </div>
       </div>
@@ -101,9 +104,16 @@
           </span>
           <span class="dir text">Click a square to zoom in and right click to zoom out</span>
         </h2>
-        <output id="mpa-treemap"><div class="mpa-waiting">
-            <%= image_tag("mpa/placeholder_treemap.svg", alt:"Please wait while we are preparing your data...", class:"mpa-placeholder") %>
-        </div></output>
+        <div class="mpa-unavailable hidden">
+          <%= image_tag("mpa/placeholder_treemap.svg", class:"mpa-placeholder") %>
+        </div>
+        <div id="mpa-treemap">
+          <output id="treemapPanel">
+            <div class="mpa-waiting">
+              <%= image_tag("mpa/placeholder_treemap.svg", alt:"Please wait while we are preparing your data...", class:"mpa-placeholder") %>
+            </div>
+          </output>
+        </div>
       </div>
       <div class="tab-pane" id="treeviewWrapper">
         <h2 class="ghead">
@@ -112,11 +122,16 @@
           </span>
           <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
         </h2>
-        <output id="mpa-treeview">
-          <div class="mpa-waiting">
+        <div class="mpa-unavailable hidden">
+          <%= image_tag("mpa/placeholder_treeview.svg", class:"mpa-placeholder") %>
+        </div>
+        <div id="mpa-treeview">
+          <output id="treeviewPanel">
+            <div class="mpa-waiting">
               <%= image_tag("mpa/placeholder_treeview.svg", alt:"Please wait while we are preparing your data...", class:"mpa-placeholder") %>
-          </div>
-        </output>
+            </div>
+          </output>
+        </div>
       </div>
       <div class="tab-pane card-supporting-text" id="outline">
         <div class="input-group" id="tree_search_group">

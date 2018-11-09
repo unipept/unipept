@@ -50,7 +50,6 @@ class MPA {
             let $listItem = this.renderDatasetButton(dataset, secondaryActionCallback);
             this.processDataset(dataset, $listItem)
                 .then(() => {
-                    console.log("CALLED LISTENER!");
                     let $selectedRadioButtons = $(".select-dataset-radio-button:checked");
                     if ($selectedRadioButtons.length === 0) {
                         $listItem.find(".select-dataset-radio-button").prop("checked", true);
@@ -151,6 +150,8 @@ class MPA {
      * Render the dataset button for a specific peptide container.
      *
      * @param {PeptideContainer} peptideContainer The peptideContainer for whom a button should be rendered.
+     * @param secondaryActionCallback The function that's executed when the secondary action button of this list item
+     *        is clicked.
      */
     renderDatasetButton(peptideContainer, secondaryActionCallback) {
         let $list = $("#dataset_list");
@@ -158,7 +159,7 @@ class MPA {
         let $listItem = $("<div class='list-item--two-lines' id='list-item-" + peptideContainer.getId() + "'>");
         let $primaryAction = $("<span class='list-item-primary-action'>");
 
-        $primaryAction.append($("<div class='hidden selected-list-item-bar' style='background-color: #2196F3; height: 72px; width: 5px; position: relative; left: -11px;'>"));
+        $primaryAction.append($("<div class='hidden selected-list-item-bar' style='background-color: #2196F3; height: 72px; width: 5px; position: absolute; left: 0;'>"));
 
         let $itemRadioButton = $("<input type='radio' value='' class='input-item select-dataset-radio-button hidden' style='width: 24px;'>");
         $itemRadioButton.data("name", peptideContainer.getName());
@@ -190,7 +191,26 @@ class MPA {
         let $secondaryAction = $("<span class='list-item-secondary-action'>").append("<span class='glyphicon glyphicon-trash'>");
         $listItem.append($secondaryAction);
 
-        $secondaryAction.click(secondaryActionCallback);
+        $secondaryAction.click(() => {
+            // Check whether item that's being deleted is currently selected
+            if ($(".select-dataset-radio-button:checked").get(0) === $itemRadioButton.get(0)) {
+                // Dataset that's currently active is no longer available. Switch to different view
+                $(".mpa-unavailable").removeClass("hidden");
+                $("#mpa-sunburst").addClass("hidden");
+                $("#mpa-treemap").addClass("hidden");
+                $("#mpa-treeview").addClass("hidden");
+
+                secondaryActionCallback();
+
+                // Switch to next available dataset
+                let $selectedRadioButtons = $(".select-dataset-radio-button:not(.hidden)");
+                if ($selectedRadioButtons.length > 0) {
+                    this.selectListItem($selectedRadioButtons.first().closest(".list-item--two-lines"));
+                }
+            } else {
+                secondaryActionCallback();
+            }
+        });
 
         $list.append($listItem);
         return $listItem
@@ -203,12 +223,11 @@ class MPA {
         $(".select-dataset-radio-button").prop("checked", false);
         $radioButton.prop("checked", true);
         $(".selected-list-item-bar").addClass("hidden");
-        $("#dataset_list .list-item--two-lines").css("margin-left", "0");
         $listItem.find(".selected-list-item-bar").removeClass("hidden");
-        $listItem.css("margin-left", "-5px");
 
         let datasetName = $radioButton.data("name");
         this.dataset = this.getDatasetByName(datasetName);
+        $(".mpa-unavailable").addClass("hidden");
         this.setUpVisualisations(this.dataset.tree);
         this.updateStats(this.dataset);
     }
@@ -974,7 +993,9 @@ class MPA {
     }
 
     setUpSunburst(data) {
-        return $("#mpa-sunburst").sunburst(data, {
+        let $mpaSunburst = $("#mpa-sunburst");
+        $mpaSunburst.removeClass("hidden");
+        return $mpaSunburst.sunburst(data, {
             width: 740,
             height: 740,
             radius: 740 / 2,
@@ -985,7 +1006,8 @@ class MPA {
     }
 
     setUpTreemap(data) {
-        return $("#mpa-treemap").treemap(data, {
+        $("#mpa-treemap").removeClass("hidden");
+        return $("#treemapPanel").treemap(data, {
             width: 916,
             height: 600,
             levels: 28,
@@ -998,7 +1020,8 @@ class MPA {
     }
 
     setUpTreeview(data) {
-        return $("#mpa-treeview").html("").treeview(data, {
+        $("#mpa-treeview").removeClass("hidden");
+        return $("#treeviewPanel").html("").treeview(data, {
             width: 916,
             height: 600,
             getTooltip: this.tooltipContent,
@@ -1063,9 +1086,9 @@ class MPA {
             triggerDownloadModal("#mpa-sunburst > svg", null, "unipept_sunburst");
             d3.selectAll(".hidden").attr("class", "arc toHide");
         } else if (activeTab === "treemap") {
-            triggerDownloadModal(null, "#mpa-treemap", "unipept_treemap");
+            triggerDownloadModal(null, "#treemapPanel", "unipept_treemap");
         } else {
-            triggerDownloadModal("#mpa-treeview svg", null, "unipept_treeview");
+            triggerDownloadModal("#treeviewPanel svg", null, "unipept_treeview");
         }
     }
 
