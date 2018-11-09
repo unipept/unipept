@@ -4,23 +4,13 @@
 <% end %>
 
 <!-- Hack that allows us to place a triangle in the spacing between bootstrap columns -->
-<div id="add-dataset-triangle" class="hidden" style="
-width: 0;
-    height: 0;
-    border-top: 30px solid transparent;
-    border-bottom: 30px solid transparent;
-    border-right: 30px solid #2196F3;
-    position: absolute;
-    left: 937px;
-    top: 173px;
-    z-index: 10;
-">
+<div id="add-dataset-triangle" class="hidden">
 </div>
 
 <div class='row equal-height-row'>
   <div class='col-xs-6'>
-    <div class='card' style="height: 100%;">
-      <div class='card-title card-title-colored card-title-interactive' style="min-height: 61px;">
+    <div class='card'>
+      <div class='card-title card-title-colored card-title-interactive'>
         <h2 class='card-title-text'>
           Metaproteomics Analysis
         </h2>
@@ -28,8 +18,8 @@ width: 0;
           <span class="glyphicon glyphicon-plus" id="add-dataset-button"></span>
         </div>
       </div>
-      <div class='card-supporting-text' style="height: 100%;">
-        <div class='list' id='dataset_list' style="max-height: 620px; overflow: auto;">
+      <div class='card-supporting-text' id="dataset-list-container">
+        <div class='list' id='dataset_list'>
         </div>
       </div>
     </div>
@@ -42,7 +32,7 @@ width: 0;
   </div>
 </div>
 
-<div class='card card-nav' style="margin-top: 10px;">
+<div class='card card-nav' id="visualizations-card">
   <div class='card-title card-title-colored'>
     <ul class="nav nav-tabs visualisations" id="viz-tabs">
       <li class="active"><a href="#sunburstWrapper" data-toggle="tab">Sunburst</a></li>
