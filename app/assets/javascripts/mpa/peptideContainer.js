@@ -11,7 +11,7 @@ class PeptideContainer {
     static fromJSON(metaData, peptideData = undefined) {
         let meta = JSON.parse(metaData);
         let splitDate = meta.date.split("/");
-        let output = new PeptideContainer(meta.id, meta.name, meta.amount, new Date(splitDate[0], splitDate[1], splitDate[2]), meta.type);
+        let output = new PeptideContainer(meta.id, meta.name, meta.amount, new Date(splitDate[0], splitDate[1] - 1, splitDate[2]), meta.type);
         if (peptideData !== undefined) {
             let peptides = JSON.parse(peptideData);
             output.setPeptides(peptides);
