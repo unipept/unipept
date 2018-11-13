@@ -230,7 +230,7 @@ class MPA {
             peptideContainer.getPeptides().then((peptides) => {
                 let $content = $("<div>");
                 $content.append($("<label for='#peptide-list'>").text("Peptide list"));
-                $content.append($("<textarea disabled style='width: 100%' rows='15' name='peptide-list' id='peptide-list'>").text(peptides.join('\n')));
+                $content.append($("<textarea disabled style='min-width:100%; max-width: 100%' rows='15' name='peptide-list' id='peptide-list'>").text(peptides.join('\n')));
 
                 showInfoModal(
                     peptideContainer.getName(),
