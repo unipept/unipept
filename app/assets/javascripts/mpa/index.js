@@ -192,10 +192,11 @@ class MPA {
         $primaryContent.append($contentBody);
         $listItem.append($primaryContent);
 
-        let $secondaryAction = $("<span class='list-item-secondary-action'>").append("<span class='glyphicon glyphicon-trash'>");
-        $listItem.append($secondaryAction);
+        let $secondaryAction = $("<span class='list-item-secondary-action'>");
+        let $trashAction = $("<span class='glyphicon glyphicon-trash'>");
+        $secondaryAction.append($trashAction);
 
-        $secondaryAction.click(() => {
+        $trashAction.click(() => {
             // Check whether item that's being deleted is currently selected
             if ($(".select-dataset-radio-button:checked").get(0) === $itemRadioButton.get(0)) {
                 // Dataset that's currently active is no longer available. Switch to different view
@@ -221,6 +222,24 @@ class MPA {
                 secondaryActionCallback();
             }
         });
+
+        let $infoAction = $("<span class='glyphicon glyphicon-info-sign' style='margin-left: 5px;'>");
+        $secondaryAction.append($infoAction);
+
+        $infoAction.click(() => {
+            peptideContainer.getPeptides().then((peptides) => {
+                let $content = $("<div>");
+                $content.append($("<label for='#peptide-list'>").text("Peptide list"));
+                $content.append($("<textarea disabled style='width: 100%' rows='15' name='peptide-list' id='peptide-list'>").text(peptides.join('\n')));
+
+                showInfoModal(
+                    peptideContainer.getName(),
+                    $content
+                );
+            });
+        });
+
+        $listItem.append($secondaryAction);
 
         $list.append($listItem);
         return $listItem
