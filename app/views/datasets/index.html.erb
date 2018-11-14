@@ -1,6 +1,11 @@
 <% content_for :javascripts do %>
   <%= javascript_pack_tag 'datasets' %>
+  <%= javascript_pack_tag 'mpa' %>
 <% end %>
+
+<div id="mpa-app">
+  <mpa></mpa>
+</div>
 
 <div class="row equal-height-row">
   <div class="col-xs-6">
