@@ -961,7 +961,6 @@ class MPA {
         $("#update-button").click(() => this.updateSearchSettings());
 
         $("#add-dataset-button").click(() => {
-            $("#add-dataset-triangle").toggleClass("hidden");
             $("#experiment-summary-card").toggleClass("hidden");
             $("#load-datasets-card").toggleClass("hidden");
         })
