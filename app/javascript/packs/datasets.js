@@ -1,4 +1,3 @@
-import {initDatasets, initPreload} from "../../assets/javascripts/datasets.js";
+import {initDatasets} from "../../assets/javascripts/datasets.js";
 
 window.initDatasets = initDatasets;
-window.initPreload = initPreload;

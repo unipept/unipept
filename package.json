@@ -14,6 +14,9 @@
     "jquery": "^3.2.1",
     "tiny-emitter": "^2.0.2",
     "unipept-visualizations": "^1.7.2",
+    "vue": "^2.5.17",
+    "vue-loader": "14.2.2",
+    "vue-template-compiler": "^2.5.17",
     "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
