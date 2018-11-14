@@ -42,6 +42,10 @@ class MPA {
         };
 
         let addDatasetListener = (dataset, secondaryActionCallback) => {
+            if ($("#dataset_list .list-item--two-lines").length === 0) {
+                $("#dataset_list").html("");
+            }
+
             // Check if the dataset that should be added already exists.
             if ($("#list-item-" + dataset.getId()).length > 0) {
                 return;
