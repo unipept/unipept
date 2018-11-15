@@ -1,8 +1,11 @@
 <template>
     <card title="Metaproteomics Analysis">
         <label>Select datasets</label>
-        <span>Please select one or more datasets from the right hand panel to continue the analysis...</span>
+        <list class="list" placeholder="Please select one or more datasets from the right hand panel to continue the analysis..">
+            <div class="list-item--two-lines">
 
+            </div>
+        </list>
         <label>Search settings</label>
         <checkbox label="Equate I and L" placeholder="Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries."></checkbox>
     </card>
@@ -14,12 +17,12 @@
     import {Prop, Watch} from "vue-property-decorator";
     import Card from "../components/card/card";
     import Checkbox from "../components/input/checkbox";
+    import List from "../components/list/list";
 
     @Component({
-        components: {Checkbox, Card}
+        components: {Checkbox, Card, List}
     })
     export default class SelectDatasetsCard extends Vue {
-
     }
 </script>
 
