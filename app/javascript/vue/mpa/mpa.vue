@@ -1,13 +1,10 @@
 <template>
-    <load-datasets-card></load-datasets-card>
+    <p>HELLO FROM TYPESCRIPT VUE!</p>
 </template>
 
-<script>
-    import LoadDatasetsCard from "./load-datasets-card";
-
+<script lang="ts">
     export default {
         name: "mpa",
-        components: {LoadDatasetsCard},
     };
 </script>
 
