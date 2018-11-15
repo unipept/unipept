@@ -6,43 +6,25 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: "checkbox",
-        data: function() {
-            return {
-                content: this.value,
-                valid: true
-            }
-        },
-        props: {
-            value: {
-                type: Boolean,
-                default: true
-            },
-            name: {
-                type: String
-            },
-            label: {
-                type: String
-            },
-            autofocus: {
-                type: Boolean,
-                default: false
-            },
-            placeholder: {
-                type: String,
-                deafult: ""
-            },
-            tooltip: {
-                type: String,
-                default: ""
-            }
-        },
-        watch: {
-            content(val) {
-                this.$emit('input', val);
-            }
+<script lang="ts">
+    import Vue from "vue";
+    import Component from "vue-class-component";
+    import {Prop, Watch} from "vue-property-decorator";
+
+    @Component
+    export default class Checkbox extends Vue {
+        @Prop({default: false}) value: boolean;
+        @Prop() name: string;
+        @Prop() label: string;
+        @Prop({default: false}) autofocus: boolean;
+        @Prop({default: ""}) placeholder: string;
+        @Prop({default: ""}) tooltip: string;
+
+        valid: boolean = true;
+        content: boolean = this.value;
+
+        @Watch('content') onContentChanged(oldContent: string, newContent: string) {
+            this.$emit('input', newContent);
         }
     };
 </script>

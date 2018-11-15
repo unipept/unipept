@@ -26,12 +26,16 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+    import Vue from "vue";
+
+    import Component from "vue-class-component";
     import DatasetForm from "./dataset-form";
 
-    export default {
-        name: "load-datasets-card",
-        components: {DatasetForm},
+    @Component({
+        components: {DatasetForm}
+    })
+    export default class LoadDatasetsCard extends Vue {
     };
 </script>
 

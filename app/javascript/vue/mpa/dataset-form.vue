@@ -6,25 +6,25 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+    import Vue from "vue";
+    import Component from "vue-class-component"
+
     import ValidatedTextarea from "../components/validated-textarea";
     import ValidatedTextfield from "../components/validated-textfield"
     import Checkbox from "../components/checkbox";
 
-    export default {
-        name: "dataset-form",
-        components: {Checkbox, ValidatedTextarea, ValidatedTextfield},
-        data:  function() {
-            return {
-                peptides: "",
-                name: "",
-                checked: true
-            }
-        },
-        methods: {
-            validate: function(content) {
-                return content !== '';
-            }
+    @Component({
+        components: {Checkbox, ValidatedTextfield, ValidatedTextarea}
+    })
+    export default class DatasetForm extends Vue {
+
+        peptides: string = "";
+        name: string = "";
+        checked: boolean = true;
+
+        validate(content) {
+            return content !== '';
         }
     };
 </script>

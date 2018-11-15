@@ -1,10 +1,17 @@
 <template>
-    <p>HELLO FROM TYPESCRIPT VUE!</p>
+    <load-datasets-card></load-datasets-card>
 </template>
 
 <script lang="ts">
-    export default {
-        name: "mpa",
+    import Vue from "vue";
+    import Component from "vue-class-component";
+    import LoadDatasetsCard from "./load-datasets-card";
+
+    @Component({
+        components: {LoadDatasetsCard}
+    })
+    export default class Mpa extends Vue {
+
     };
 </script>
 
