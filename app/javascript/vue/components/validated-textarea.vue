@@ -8,7 +8,7 @@
 
 <script>
     export default {
-        name: "material-textarea",
+        name: "validated-textarea",
         data: function() {
             return {
                 content: '',
@@ -35,7 +35,6 @@
                 default: false
             },
             validation: {
-                type: Function(),
                 default: function(value) {
                     return true;
                 }
@@ -47,7 +46,6 @@
         },
         methods: {
             validate: function() {
-                console.log("VALIDATING...");
                 this.valid = this.validation(this.content);
             }
         }
