@@ -18,6 +18,8 @@
     "dragula": "^3.7.2",
     "jquery": "^3.2.1",
     "tiny-emitter": "^2.0.2",
+    "ts-loader": "3.5.0",
+    "typescript": "^3.1.6",
     "unipept-visualizations": "^1.7.3",
     "vue": "^2.5.17",
     "vue-loader": "14.2.2",
