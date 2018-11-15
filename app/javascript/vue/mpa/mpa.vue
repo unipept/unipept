@@ -1,12 +1,13 @@
 <template>
-    <peptide-form></peptide-form>
+    <load-datasets-card></load-datasets-card>
 </template>
 
 <script>
-    import PeptideForm from "./peptide-form";
+    import LoadDatasetsCard from "./load-datasets-card";
+
     export default {
         name: "mpa",
-        components: {PeptideForm},
+        components: {LoadDatasetsCard},
     };
 </script>
 

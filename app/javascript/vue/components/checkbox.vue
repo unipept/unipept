@@ -1,7 +1,7 @@
 <template>
     <div class="checkbox">
         <label title="" class="js-has-hover-tooltip" :for="name" :data-original-title="tooltip">
-            <input type="checkbox" :name="name" :id="name" checked="checked"> {{ label }}
+            <input v-model="content" type="checkbox" :name="name" :id="name"> {{ label }}
         </label>
     </div>
 </template>
@@ -11,11 +11,15 @@
         name: "checkbox",
         data: function() {
             return {
-                content: '',
+                content: this.value,
                 valid: true
             }
         },
         props: {
+            value: {
+                type: Boolean,
+                default: true
+            },
             name: {
                 type: String
             },
@@ -33,6 +37,11 @@
             tooltip: {
                 type: String,
                 default: ""
+            }
+        },
+        watch: {
+            content(val) {
+                this.$emit('input', val);
             }
         }
     };

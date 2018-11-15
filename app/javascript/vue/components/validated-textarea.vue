@@ -11,11 +11,15 @@
         name: "validated-textarea",
         data: function() {
             return {
-                content: '',
+                content: this.value,
                 valid: true
             }
         },
         props: {
+            value: {
+                type: String,
+                default: ""
+            },
             name: {
                 type: String
             },
@@ -47,6 +51,11 @@
         methods: {
             validate: function() {
                 this.valid = this.validation(this.content);
+            }
+        },
+        watch: {
+            content(val) {
+                this.$emit('input', val);
             }
         }
     };
