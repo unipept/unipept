@@ -6,57 +6,31 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: "validated-textfield",
-        data: function() {
-            return {
-                content: this.value,
-                valid: true
-            }
-        },
-        props: {
-            value: {
-                type: String,
-                default: ''
-            },
-            name: {
-                type: String
-            },
-            label: {
-                type: String
-            },
-            autofocus: {
-                type: Boolean,
-                default: false
-            },
-            placeholder: {
-                type: String,
-                deafult: ""
-            },
-            tooltip: {
-                type: String,
-                default: ""
-            },
-            validation: {
-                default: function(value) {
-                    return true;
-                }
-            },
-            validationError: {
-                type: String,
-                default: ""
-            }
-        },
-        methods: {
-            validate: function() {
-                this.valid = this.validation(this.content);
-            }
-        },
-        watch: {
-            content(val) {
-                this.$emit('input', val);
-            }
+<script lang="ts">
+    import Vue from "vue";
+    import Component from "vue-class-component";
+    import {Prop, Watch} from "vue-property-decorator";
+
+    @Component
+    export default class ValidatedTextfield extends Vue {
+        @Prop({default: ""}) value: string;
+        @Prop() name: string;
+        @Prop() label: string;
+        @Prop({default: ""}) placeholder: string;
+        @Prop({default: ""}) tooltip: string;
+        @Prop({default: false}) autofocus: boolean;
+        @Prop({default: function(content) {return true;}}) validation: (string) => boolean;
+        @Prop({default: ""}) validationError: string;
+
+        content: string = this.value;
+        valid: boolean = true;
+
+        validate() {
+            this.valid = this.validation(this.content);
+        }
+
+        @Watch('content') onContentChanged(oldContent: string, newContent: string) {
+            this.$emit('input', newContent);
         }
     };
 </script>
