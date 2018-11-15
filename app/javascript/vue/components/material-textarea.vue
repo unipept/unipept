@@ -2,7 +2,7 @@
     <div class="form-group" v-bind:class="[valid ? '' : 'has-error']">
         <label class="control-label" :for="name">{{ label }}</label>
         <textarea v-model="content" class="form-control" :name="name" :id="name" :rows="rows" :spellcheck="spellcheck" :autofocus="autofocus" @input="validate"></textarea>
-        <span class="help-block" v-if="!valid">{{ error }}</span>
+        <span class="help-block" v-if="!valid">{{ validationError }}</span>
     </div>
 </template>
 
@@ -35,7 +35,7 @@
                 default: false
             },
             validation: {
-                type: Function(String),
+                type: Function(),
                 default: function(value) {
                     return true;
                 }
@@ -47,6 +47,7 @@
         },
         methods: {
             validate: function() {
+                console.log("VALIDATING...");
                 this.valid = this.validation(this.content);
             }
         }
