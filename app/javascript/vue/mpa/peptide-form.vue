@@ -1,6 +1,6 @@
 <template>
     <div>
-        <material-textarea name="qs" label="Peptide list" :rows="7" :spellcheck="false"></material-textarea>
+        <material-textarea name="qs" label="Peptide list" :rows="7" :spellcheck="false" :validation="validate" validation-error="At least one peptide is required"></material-textarea>
 
         <div class="form-group">
             <label for="search_name">Name this dataset</label>
@@ -16,7 +16,12 @@
     import MaterialTextarea from "../components/material-textarea";
     export default {
         name: "peptide-form",
-        components: {MaterialTextarea}
+        components: {MaterialTextarea},
+        methods: {
+            validate: function(content) {
+                return content !== '';
+            }
+        }
     };
 </script>
 
