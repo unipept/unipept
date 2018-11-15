@@ -10,9 +10,9 @@
     import Vue from "vue";
     import Component from "vue-class-component"
 
-    import ValidatedTextarea from "../components/validated-textarea";
-    import ValidatedTextfield from "../components/validated-textfield"
-    import Checkbox from "../components/checkbox";
+    import ValidatedTextarea from "../components/input/validated-textarea";
+    import ValidatedTextfield from "../components/input/validated-textfield"
+    import Checkbox from "../components/input/checkbox";
 
     @Component({
         components: {Checkbox, ValidatedTextfield, ValidatedTextarea}
