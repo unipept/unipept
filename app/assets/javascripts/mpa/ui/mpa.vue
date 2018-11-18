@@ -19,7 +19,6 @@
         components: {LoadDatasetsCard, SelectDatasetsCard}
     })
     export default class Mpa extends Vue {
-
     };
 </script>
 

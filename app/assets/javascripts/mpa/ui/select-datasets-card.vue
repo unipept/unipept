@@ -25,9 +25,6 @@
         components: {Checkbox, Card, List}
     })
     export default class SelectDatasetsCard extends Vue {
-        datasetManager: DatasetManager = new DatasetManager();
-
-
     }
 </script>
 
