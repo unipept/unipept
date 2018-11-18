@@ -3,8 +3,8 @@ import {StorageType} from "./StorageType";
 
 export default class NewDatasetManager {
     private readonly prefix: string = "mpa-";
-    private readonly metaDataPrefix: string = "metadata-";
-    private readonly peptidePrefix: string = "peptide-";
+    private readonly metaDataPrefix: string = this.prefix + "metadata-";
+    private readonly peptidePrefix: string = this.prefix + "peptide-";
     private type: StorageType;
     private storage: Storage;
 

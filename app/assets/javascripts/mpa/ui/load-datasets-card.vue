@@ -18,7 +18,19 @@
         </tab>
         <tab label="Local data">
             <list placeholder="There are currently no datasets present in your browser's local storage.">
-                <div class="list-item--two-lines" >
+                <div class="list-item--two-lines" v-for="dataset of storedDatasets" style="cursor: pointer;">
+                    <span class="list-item-primary-action">
+                        <span class="glyphicon glyphicon-plus select-dataset-button"></span>
+                    </span>
+                    <span class="list-item-primary-content">
+                        {{ dataset.getName() }}
+                        <span class="list-item-date">
+                            {{ dataset.getDateFormatted() }}
+                        </span>
+                        <span class="list-item-body">
+                            {{ dataset.getAmountOfPeptides() }} peptides
+                        </span>
+                    </span>
                 </div>
             </list>
         </tab>
@@ -39,9 +51,7 @@
         components: {SimpleButton, CardNav, DatasetForm, Tab, List}
     })
     export default class LoadDatasetsCard extends Vue {
-        created() {
-
-        }
+        storedDatasets = this.$root.$store.getters.storedDatasets;
     };
 </script>
 
