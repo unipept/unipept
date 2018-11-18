@@ -1,10 +1,10 @@
 /**
  * Class that manages all dataset's stored by the user in local storage and the ability to serialize or restore them.
  */
-import {PeptideContainer} from "./peptideContainer";
+import PeptideContainer from "./peptideContainer";
 import {LOCAL_STORAGE_TYPE} from "./storageTypeConstants";
 
-class DatasetManager {
+export default class DatasetManager {
     /**
      * Deserializes a DatasetManager in JSON-format and returns the corresponding real DatasetManager-object.
      *
@@ -170,18 +170,16 @@ class DatasetManager {
      * This function looks for the highest id that's been used so far in the storage and creates a new unique id by
      * incrementing the previous highest id by one.
      *
-     * @returns {Promise<int>} A newly generated unique identifier that can be used for storing a dataset.
+     * @returns {Promise<string>} A newly generated unique identifier that can be used for storing a dataset.
      * @private
      */
     async _generateUniqueId() {
         let counter = window.localStorage.getItem(this.prefix + "unique-id-counter");
+        let counterValue = 0;
         if (counter) {
-            counter = parseInt(counter);
-            counter++;
-        } else {
-            counter = 0;
+            counterValue = parseInt(counter) + 1;
         }
-        window.localStorage.setItem(this.prefix + "unique-id-counter", counter);
+        window.localStorage.setItem(this.prefix + "unique-id-counter", counterValue);
         return counter;
     }
 
@@ -195,5 +193,3 @@ class DatasetManager {
         };
     }
 }
-
-export {DatasetManager};

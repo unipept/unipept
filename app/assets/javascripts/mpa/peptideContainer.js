@@ -1,6 +1,6 @@
-import {DatasetManager} from "./datasetManager";
+import DatasetManager from "./datasetManager";
 
-class PeptideContainer {
+export default class PeptideContainer {
     /**
      * Create a new PeptideContainer from a given JSON-representation of a valid container.
      *
@@ -25,7 +25,7 @@ class PeptideContainer {
      *
      * @param {string} id The unique id of the stored dataset.
      * @param {string} name The name of the stored dataset.
-     * @param {int} peptideAmount The amount of peptides that are to be stored in this container.
+     * @param {number} peptideAmount The amount of peptides that are to be stored in this container.
      * @param {Date} date The date at which the dataset was first created.
      * @param {string} type One of "local_storage" and "session_storage"
      */
@@ -75,7 +75,7 @@ class PeptideContainer {
     /**
      * @returns {string}
      */
-    getDate() {
+    getDateFormatted() {
         return this._date.getFullYear() + "/" + (this._date.getMonth() + 1) + "/" + this._date.getDate();
     }
 
@@ -113,5 +113,3 @@ class PeptideContainer {
         };
     }
 }
-
-export {PeptideContainer};
