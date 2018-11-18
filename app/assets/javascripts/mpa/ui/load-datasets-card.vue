@@ -34,17 +34,14 @@
     import CardNav from "../../components/card/card-nav";
     import SimpleButton from "../../components/button/simple-button";
     import List from "../../components/list/list";
-    import NewDatasetManager from "../NewDatasetManager";
-    import {StorageType} from "../StorageType";
 
     @Component({
         components: {SimpleButton, CardNav, DatasetForm, Tab, List}
     })
     export default class LoadDatasetsCard extends Vue {
-        localStorageManager: NewDatasetManager = new NewDatasetManager();
-        sessionStorageManager: NewDatasetManager = new NewDatasetManager(StorageType.SessionStorage);
+        created() {
 
-
+        }
     };
 </script>
 
