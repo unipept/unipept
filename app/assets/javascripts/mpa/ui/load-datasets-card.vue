@@ -17,6 +17,10 @@
             </div>
         </tab>
         <tab label="Local data">
+            <list placeholder="There are currently no datasets present in your browser's local storage.">
+                <div class="list-item--two-lines" >
+                </div>
+            </list>
         </tab>
     </card-nav>
 </template>
@@ -26,14 +30,21 @@
 
     import Component from "vue-class-component";
     import DatasetForm from "./dataset-form";
-    import Tab from "../components/card/tab"
-    import CardNav from "../components/card/card-nav";
-    import SimpleButton from "../components/button/simple-button";
+    import Tab from "../../components/card/tab"
+    import CardNav from "../../components/card/card-nav";
+    import SimpleButton from "../../components/button/simple-button";
+    import List from "../../components/list/list";
+    import NewDatasetManager from "../NewDatasetManager";
+    import {StorageType} from "../StorageType";
 
     @Component({
-        components: {SimpleButton, CardNav, DatasetForm, Tab}
+        components: {SimpleButton, CardNav, DatasetForm, Tab, List}
     })
     export default class LoadDatasetsCard extends Vue {
+        localStorageManager: NewDatasetManager = new NewDatasetManager();
+        sessionStorageManager: NewDatasetManager = new NewDatasetManager(StorageType.SessionStorage);
+
+
     };
 </script>
 

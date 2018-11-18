@@ -8,8 +8,8 @@ import {showNotification} from "../notifications.js";
 import {addCopy, downloadDataByForm, logToGoogle, numberToPercent, stringTitleize, toCSVString, triggerDownloadModal, showError, showInfo} from "../utils.js";
 import {Dataset} from "./dataset.js";
 import {constructSearchtree} from "./searchtree.js";
-import {DatasetManager} from "./datasetManager";
-import {PeptideContainer} from "./peptideContainer";
+import DatasetManager from "./datasetManager";
+import PeptideContainer from "./peptideContainer";
 import {SESSION_STORAGE_TYPE} from "./storageTypeConstants";
 import {LoadDatasetsCardManager} from "./loadDatasetsCardManager";
 import {initializeDeterminateCircles, setDeterminateCirclesProgress} from "../progressBar";
@@ -190,7 +190,7 @@ class MPA {
 
         let $primaryContent = $("<span class='list-item-primary-content'>");
         $primaryContent.append($("<span>").text(peptideContainer.getName()));
-        $primaryContent.append($("<span class='list-item-date'>").text(peptideContainer.getDate()));
+        $primaryContent.append($("<span class='list-item-date'>").text(peptideContainer.getDateFormatted()));
         let $contentBody = $("<span class='list-item-body'>");
         $contentBody.append($("<div>").text(peptideContainer.getAmountOfPeptides() + " peptides"));
         $primaryContent.append($contentBody);

@@ -69,16 +69,3 @@ interface PeptideMPAInfo {
     fa: FAServerInfo
     faGrouped?: any
 }
-
-// interface PeptideContainer {
-//     peptides: string[],
-//     configuration: MPAConfig,
-//     name: string,
-//     date: string
-// }
-//
-// interface LocalStorageContainer {
-//     type: string,
-//     names?: string[],
-//     data?: PeptideContainer
-// }

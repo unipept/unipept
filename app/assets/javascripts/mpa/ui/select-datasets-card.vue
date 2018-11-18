@@ -1,7 +1,7 @@
 <template>
     <card title="Metaproteomics Analysis">
         <label>Select datasets</label>
-        <list class="list" placeholder="Please select one or more datasets from the right hand panel to continue the analysis..">
+        <list placeholder="Please select one or more datasets from the right hand panel to continue the analysis..">
             <div class="list-item--two-lines">
 
             </div>
@@ -15,14 +15,19 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import Card from "../components/card/card";
-    import Checkbox from "../components/input/checkbox";
-    import List from "../components/list/list";
+    import Card from "../../components/card/card";
+    import Checkbox from "../../components/input/checkbox";
+    import List from "../../components/list/list";
+    import PeptideContainer from "../peptideContainer";
+    import DatasetManager from "../datasetManager"
 
     @Component({
         components: {Checkbox, Card, List}
     })
     export default class SelectDatasetsCard extends Vue {
+        datasetManager: DatasetManager = new DatasetManager();
+
+
     }
 </script>
 

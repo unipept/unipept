@@ -1,5 +1,5 @@
 import {showNotification} from "./notifications.js";
-import {DatasetManager} from "./mpa/datasetManager.js";
+import DatasetManager from "./mpa/datasetManager";
 import {get, getJSON, highlight, logToGoogle, showError, showInfo} from "./utils.js";
 import {LOCAL_STORAGE_TYPE, SESSION_STORAGE_TYPE} from "./mpa/storageTypeConstants";
 import {LoadDatasetsCardManager} from "./mpa/loadDatasetsCardManager";
@@ -35,7 +35,7 @@ function addSelectedDataset(dataset, secondaryActionCallback) {
     // Use jQuery to build elements and prevent XSS attacks
     let $listItem = $("<div class='list-item--two-lines dataset-list-item' id='list-item-dataset-" + dataset.getId() + "'>");
     let $primaryContent = $("<span class='list-item-primary-content'>").append("<span>").text(dataset.getName());
-    $primaryContent.append($("<span class='list-item-date'>").text(dataset.getDate()));
+    $primaryContent.append($("<span class='list-item-date'>").text(dataset.getDateFormatted()));
     $primaryContent.append($("<span class='list-item-body'>").text(dataset.getAmountOfPeptides() + " peptides"));
     $listItem.append($primaryContent);
     let $secondaryAction = $("<span class='list-item-secondary-action'>").append("<span class='glyphicon glyphicon-trash'>");

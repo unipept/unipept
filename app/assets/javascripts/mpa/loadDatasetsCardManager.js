@@ -271,7 +271,7 @@ class LoadDatasetsCardManager {
         let $listItem = $("<div class='list-item--two-lines' style='cursor: pointer;'>");
         let $primaryAction = $("<span class='list-item-primary-action'>").append($("<span class='glyphicon glyphicon-plus select-dataset-button'>"));
         let $primaryContent = $("<span class='list-item-primary-content'>").text(dataset.getName());
-        $primaryContent.append($("<span class='list-item-date'>").text(dataset.getDate()));
+        $primaryContent.append($("<span class='list-item-date'>").text(dataset.getDateFormatted()));
         let $primaryBody = $("<span class='list-item--two-lines list-item-body'>").text(dataset.getAmountOfPeptides() + " peptides");
         $primaryContent.append($primaryBody);
         $listItem.append($primaryAction);
