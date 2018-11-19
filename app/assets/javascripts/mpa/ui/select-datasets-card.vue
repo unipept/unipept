@@ -2,8 +2,19 @@
     <card title="Metaproteomics Analysis">
         <label>Select datasets</label>
         <list placeholder="Please select one or more datasets from the right hand panel to continue the analysis..">
-            <div class="list-item--two-lines">
-
+            <div class="list-item--two-lines" v-for="dataset of selectedDatasets">
+                <span class="list-item-primary-content">
+                    {{ dataset.getName() }}
+                    <span class="list-item-date">
+                        {{ dataset.getDateFormatted() }}
+                    </span>
+                    <span class="list-item-body">
+                        {{ dataset.getAmountOfPeptides() }} peptides
+                    </span>
+                </span>
+                <span class="list-item-secondary-action">
+                    <span class="glyphicon glyphicon-trash" @click="deselectDataset(dataset)"></span>
+                </span>
             </div>
         </list>
         <label>Search settings</label>
@@ -20,11 +31,17 @@
     import List from "../../components/list/list";
     import PeptideContainer from "../peptideContainer";
     import DatasetManager from "../datasetManager"
+    import NewPeptideContainer from "../NewPeptideContainer";
 
     @Component({
         components: {Checkbox, Card, List}
     })
     export default class SelectDatasetsCard extends Vue {
+        selectedDatasets = this.$root.$store.getters.selectedDatasets;
+
+        deselectDataset(dataset: NewPeptideContainer) {
+            this.$root.$store.dispatch('deselectDataset', dataset);
+        }
     }
 </script>
 

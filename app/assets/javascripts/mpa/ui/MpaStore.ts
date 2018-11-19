@@ -25,20 +25,37 @@ export const mpaGetters: GetterTree<MpaState, any> = {
 
 export const mpaMutations: MutationTree<MpaState> = {
     SELECT_DATASET(state: MpaState, dataset: NewPeptideContainer) {
-        state.selectedDatasets.push(dataset);
+        let index: number = state.selectedDatasets.findIndex((value: NewPeptideContainer, index: number, arr: NewPeptideContainer[]) => {
+            return value.getId() === dataset.getId();
+        });
+
+        if (index === -1) {
+            state.selectedDatasets.push(dataset);
+        }
+    },
+    DESELECT_DATASET(state: MpaState, dataset: NewPeptideContainer) {
+        let index: number = state.selectedDatasets.findIndex((value: NewPeptideContainer, index: number, arr: NewPeptideContainer[]) => {
+            return value.getId() === dataset.getId();
+        });
+
+        if (index !== -1) {
+            state.selectedDatasets.splice(index, 1);
+        }
     },
     ADD_STORED_DATASET(state: MpaState, dataset: NewPeptideContainer) {
         state.storedDatasets.push(dataset);
     },
     ADD_STORED_DATASET_BATCH(state: MpaState, datasets: NewPeptideContainer[]) {
         state.storedDatasets.push(...datasets);
-        console.log(state.storedDatasets);
     }
 };
 
 export const mpaActions: ActionTree<MpaState, any> = {
     selectDataset(store: ActionContext<MpaState, any>, dataset: NewPeptideContainer) {
         store.commit('SELECT_DATASET', dataset);
+    },
+    deselectDataset(store: ActionContext<MpaState, any>, dataset: NewPeptideContainer) {
+        store.commit('DESELECT_DATASET', dataset);
     },
     addStoredDataset(store: ActionContext<MpaState, any>, dataset: NewPeptideContainer) {
         store.commit('ADD_STORED_DATASET', dataset);

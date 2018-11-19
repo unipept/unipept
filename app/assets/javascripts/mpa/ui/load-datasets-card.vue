@@ -18,7 +18,7 @@
         </tab>
         <tab label="Local data">
             <list placeholder="There are currently no datasets present in your browser's local storage.">
-                <div class="list-item--two-lines" v-for="dataset of storedDatasets" style="cursor: pointer;">
+                <div class="list-item--two-lines" v-for="dataset of storedDatasets" style="cursor: pointer;" @click="selectDataset(dataset)">
                     <span class="list-item-primary-action">
                         <span class="glyphicon glyphicon-plus select-dataset-button"></span>
                     </span>
@@ -46,12 +46,17 @@
     import CardNav from "../../components/card/card-nav";
     import SimpleButton from "../../components/button/simple-button";
     import List from "../../components/list/list";
+    import NewPeptideContainer from "../NewPeptideContainer";
 
     @Component({
         components: {SimpleButton, CardNav, DatasetForm, Tab, List}
     })
     export default class LoadDatasetsCard extends Vue {
         storedDatasets = this.$root.$store.getters.storedDatasets;
+
+        selectDataset(dataset: NewPeptideContainer): void {
+            this.$root.$store.dispatch('selectDataset', dataset);
+        }
     };
 </script>
 
