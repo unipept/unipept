@@ -1,7 +1,7 @@
 <template>
     <div class="form-group" v-bind:class="[valid ? '' : 'has-error']">
         <label class="control-label" :for="name">{{ label }}</label>
-        <textarea v-model="content" class="form-control" :name="name" :id="name" :rows="rows" :spellcheck="spellcheck" :autofocus="autofocus" @input="validate"></textarea>
+        <textarea v-model="data" class="form-control" :name="name" :id="name" :rows="rows" :spellcheck="spellcheck" :autofocus="autofocus" @input="validate"></textarea>
         <span class="help-block" v-if="!valid">{{ validationError }}</span>
     </div>
 </template>
@@ -11,7 +11,18 @@
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
 
-    @Component
+    @Component({
+        computed: {
+            data: {
+                get() {
+                    return this.value
+                },
+                set(val) {
+                    this.$emit('input', val);
+                }
+            }
+        }
+    })
     export default class ValidatedTextarea extends Vue {
         @Prop({default: ""}) value: string;
         @Prop() name: string;
@@ -30,8 +41,8 @@
             this.valid = this.validation(this.content);
         }
 
-        @Watch('content') onContentChanged(oldContent: string, newContent: string) {
-            this.$emit('input', newContent);
+        @Watch('value') onContentChanged(newContent: string, oldContent: string) {
+            this.content = newContent;
         }
     };
 </script>

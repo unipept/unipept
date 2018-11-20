@@ -11,7 +11,18 @@
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
 
-    @Component
+    @Component({
+        computed: {
+            model: {
+                get() {
+                    return this.value;
+                },
+                set(val) {
+                    this.$emit('input', val);
+                }
+            }
+        }
+    })
     export default class Checkbox extends Vue {
         @Prop({default: false}) value: boolean;
         @Prop() name: string;
@@ -23,8 +34,8 @@
         valid: boolean = true;
         content: boolean = this.value;
 
-        @Watch('content') onContentChanged(oldContent: string, newContent: string) {
-            this.$emit('input', newContent);
+        @Watch('value') onValueChanged(newValue: boolean, oldValue: boolean) {
+            this.content = newValue;
         }
     };
 </script>
