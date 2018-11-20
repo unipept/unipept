@@ -45,6 +45,8 @@ export default class NewDatasetManager {
      * @return A list of peptides associated with the given pride assay.
      */
     async loadPrideDataset(id: number, progressCallback: (number) => void = (n) => {}): Promise<string[]> {
+        progressCallback(0);
+
         let batchSize: number = 1000;
         let peptides: string[] = [];
 

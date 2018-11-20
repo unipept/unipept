@@ -1,11 +1,9 @@
-import {StorageType} from "../StorageType";
-import {StorageType} from "../StorageType";
 <template>
-    <card-nav>
+    <card-nav class="load-datasets-card">
         <tab label="Create" :active="true">
             <dataset-form @click="storeCreateDataset()" :peptides="createPeptides" :name="createName" :save="createSave" :loading="pendingStore"></dataset-form>
             <div class="search-buttons-centered">
-                <simple-button label="Add to selected datasets" glyphicon="plus"></simple-button>
+                <simple-button label="Add to selected datasets" glyphicon="plus" :disabled="pendingStore"></simple-button>
             </div>
         </tab>
         <tab label="Sample data">
@@ -21,7 +19,7 @@ import {StorageType} from "../StorageType";
             <dataset-form :peptides="pridePeptides" :name="prideName" :save="prideSave" :loading="prideLoading || pendingStore"></dataset-form>
             <p>{{ prideLoading }}</p>
             <div class="search-buttons-centered">
-                <simple-button @click="storePrideDataset()" label="Add to selected datasets" glyphicon="plus"></simple-button>
+                <simple-button @click="storePrideDataset()" label="Add to selected datasets" glyphicon="plus" :disabled="prideLoading || pendingStore"></simple-button>
             </div>
         </tab>
         <tab label="Local data">

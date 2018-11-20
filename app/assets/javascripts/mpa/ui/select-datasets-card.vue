@@ -1,7 +1,7 @@
 <template>
-    <card title="Metaproteomics Analysis">
+    <card title="Metaproteomics Analysis" class="select-datasets-card">
         <label>Select datasets</label>
-        <list placeholder="Please select one or more datasets from the right hand panel to continue the analysis..">
+        <list class="select-datasets-list" placeholder="Please select one or more datasets from the right hand panel to continue the analysis..">
             <div class="list-item--two-lines" v-for="dataset of selectedDatasets">
                 <span class="list-item-primary-content">
                     {{ dataset.getName() }}
