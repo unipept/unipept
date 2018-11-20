@@ -1,7 +1,7 @@
 <template>
     <div class="checkbox">
         <label title="" class="js-has-hover-tooltip" :for="name" :data-original-title="tooltip">
-            <input v-model="content" type="checkbox" :name="name" :id="name"> {{ label }}
+            <input v-model="content" type="checkbox" :name="name" :id="name" :disabled="disabled"> {{ label }}
         </label>
     </div>
 </template>
@@ -31,6 +31,7 @@
         @Prop({default: false}) autofocus: boolean;
         @Prop({default: ""}) placeholder: string;
         @Prop({default: ""}) tooltip: string;
+        @Prop({default: false}) disabled: boolean;
 
         valid: boolean = true;
         content: boolean = this.value;
