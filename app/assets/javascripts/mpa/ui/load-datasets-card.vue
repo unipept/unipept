@@ -15,7 +15,7 @@
             <div class="search-buttons-centered">
                 <simple-button glyphicon="cloud-download" label="Fetch PRIDE dataset" @click="fetchPrideAssay()"></simple-button>
             </div>
-            <dataset-form :peptides="pridePeptides"></dataset-form>
+            <dataset-form :peptides="pridePeptides" :name="prideName"></dataset-form>
             <div class="search-buttons-centered">
                 <simple-button label="Add to selected datasets" glyphicon="plus"></simple-button>
             </div>
@@ -62,7 +62,7 @@
         prideAssay: string = "";
 
         pridePeptides: string = "";
-        datasetName: string = "";
+        prideName: string = "";
 
         selectDataset(dataset: NewPeptideContainer): void {
             this.$store.dispatch('selectDataset', dataset);
@@ -72,9 +72,10 @@
             let datasetManager: NewDatasetManager = new NewDatasetManager();
             let prideNumber: number = parseInt(this.prideAssay);
 
+            this.prideName = 'PRIDE assay ' + prideNumber.toString();
+
             datasetManager.loadPrideDataset(prideNumber)
                 .then((peptides) => {
-                    console.log("PEPTIDES: " + peptides);
                     this.pridePeptides = peptides.join("\n");
                 });
         }

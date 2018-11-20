@@ -1,7 +1,7 @@
 <template>
     <div>
-        <validated-textarea v-model="peptidesData" name="qs" label="Peptide list" :rows="7" :spellcheck="false" :validation="validate" validation-error="At least one peptide is required"></validated-textarea>
-        <validated-textfield v-model="nameData" name="search_name" label="Name this dataset" :validation="validate" validation-error="Name is required when the dataset is set to be saved." placeholder="e.g. Sample B5" tooltip="This name will be shown on the results page. Handy if you have many open tabs."></validated-textfield>
+        <validated-textarea v-model="peptideModel" name="qs" label="Peptide list" :rows="7" :spellcheck="false" :validation="validate" validation-error="At least one peptide is required"></validated-textarea>
+        <validated-textfield v-model="nameModel" name="search_name" label="Name this dataset" :validation="validate" validation-error="Name is required when the dataset is set to be saved." placeholder="e.g. Sample B5" tooltip="This name will be shown on the results page. Handy if you have many open tabs."></validated-textfield>
         <checkbox v-model="saveData" name="save_dataset" label="Store dataset in browser's local storage" tooltip="Store dataset in local storage and reuse it later on"></checkbox>
     </div>
 </template>
@@ -17,7 +17,33 @@
     import NewPeptideContainer from "../NewPeptideContainer";
 
     @Component({
-        components: {Checkbox, ValidatedTextfield, ValidatedTextarea}
+        components: {Checkbox, ValidatedTextfield, ValidatedTextarea},
+        computed: {
+            peptideModel: {
+                get() {
+                    return this.peptides;
+                },
+                set(val) {
+                    this.$emit('input', val);
+                }
+            },
+            nameModel: {
+                get() {
+                    return this.name;
+                },
+                set(val) {
+                    this.$emit('input', val);
+                }
+            },
+            saveModel: {
+                get() {
+                    return this.save;
+                },
+                set(val) {
+                    this.$emit('input', val);
+                }
+            }
+        }
     })
     export default class DatasetForm extends Vue {
         @Prop({default: "" }) peptides;
@@ -28,8 +54,16 @@
         nameData: string = this.name;
         saveData: boolean = this.save;
 
-        @Watch('peptidesData') onPeptideContainerDataChange(oldPeptides: string, newPeptides: string) {
-            this.$emit('input', newPeptides);
+        @Watch('peptides') onPeptidesChange(newPeptides: string, oldPeptides: string) {
+            this.peptidesData = newPeptides;
+        }
+
+        @Watch('name') onNameChange(newName: string, oldName: string) {
+            this.nameData = newName;
+        }
+
+        @Watch('save') onSaveChanged(newSave: boolean, oldSave: boolean) {
+            this.saveData = newSave;
         }
 
         validate(content) {
