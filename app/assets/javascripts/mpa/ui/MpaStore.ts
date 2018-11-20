@@ -64,14 +64,12 @@ export const mpaActions: ActionTree<MpaState, any> = {
      * Load all datasets stored in the browser's local storage and update the current Vuex's store accordingly.
      */
     loadStoredDatasets(store: ActionContext<MpaState, any>) {
-        let localStorageManager: NewDatasetManager = new NewDatasetManager();
-        let sessionStorageManager: NewDatasetManager = new NewDatasetManager();
+        let datasetManager: NewDatasetManager = new NewDatasetManager();
 
-        Promise.all([localStorageManager.listDatasets(), sessionStorageManager.listDatasets()])
+        datasetManager.listDatasets()
             .then((values) => {
-                let datasets: NewPeptideContainer[] = values[0].concat(values[1]);
-                store.commit('ADD_STORED_DATASET_BATCH', datasets);
-            })
+                store.commit('ADD_STORED_DATASET_BATCH', values);
+            });
     }
 };
 
