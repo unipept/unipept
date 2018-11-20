@@ -3,7 +3,7 @@ import {StorageType} from "../StorageType";
 <template>
     <card-nav>
         <tab label="Create" :active="true">
-            <dataset-form @click="storeCreateDataset()" :peptides="createPeptides" :name="createName" :save="createSave"></dataset-form>
+            <dataset-form @click="storeCreateDataset()" :peptides="createPeptides" :name="createName" :save="createSave" :loading="pendingStore"></dataset-form>
             <div class="search-buttons-centered">
                 <simple-button label="Add to selected datasets" glyphicon="plus"></simple-button>
             </div>
@@ -17,9 +17,11 @@ import {StorageType} from "../StorageType";
             <div class="search-buttons-centered">
                 <simple-button glyphicon="cloud-download" label="Fetch PRIDE dataset" @click="fetchPrideAssay()"></simple-button>
             </div>
-            <dataset-form :peptides="pridePeptides" :name="prideName" :save="prideSave"></dataset-form>
+            <dataset-form :peptides="pridePeptides" :name="prideName" :save="prideSave" :loading="prideLoading || pendingStore"></dataset-form>
+            <p>{{ prideLoading }}</p>
             <div class="search-buttons-centered">
-                <simple-button @click="storePrideDataset()" label="Add to selected datasets" glyphicon="plus"></simple-button>
+                <simple-button v-if="!prideLoading" @click="storePrideDataset()" label="Add to selected datasets" glyphicon="plus"></simple-button>
+                <determinate-striped-progress-bar v-if="prideLoading" :progress="prideProgress"></determinate-striped-progress-bar>
             </div>
         </tab>
         <tab label="Local data">
@@ -56,9 +58,10 @@ import {StorageType} from "../StorageType";
     import ValidatedTextfield from "../../components/input/validated-textfield";
     import NewDatasetManager from "../NewDatasetManager";
     import {StorageType} from "../StorageType";
+    import DeterminateStripedProgressBar from "../../components/progress/determinate-striped-progress-bar";
 
     @Component({
-        components: {ValidatedTextfield, SimpleButton, CardNav, DatasetForm, Tab, List}
+        components: {DeterminateStripedProgressBar, ValidatedTextfield, SimpleButton, CardNav, DatasetForm, Tab, List}
     })
     export default class LoadDatasetsCard extends Vue {
         storedDatasets = this.$store.getters.storedDatasets;
@@ -71,20 +74,26 @@ import {StorageType} from "../StorageType";
         pridePeptides: string = "";
         prideName: string = "";
         prideSave: boolean = true;
+        prideLoading: boolean = false;
+        prideProgress: number = 0;
+
+        pendingStore: boolean = false;
 
         selectDataset(dataset: NewPeptideContainer): void {
             this.$store.dispatch('selectDataset', dataset);
         }
 
         fetchPrideAssay(): void {
+            this.prideLoading = true;
             let datasetManager: NewDatasetManager = new NewDatasetManager();
             let prideNumber: number = parseInt(this.prideAssay);
 
             this.prideName = 'PRIDE assay ' + prideNumber.toString();
 
-            datasetManager.loadPrideDataset(prideNumber)
+            datasetManager.loadPrideDataset(prideNumber, (progress) => this.prideProgress = progress)
                 .then((peptides) => {
                     this.pridePeptides = peptides.join("\n");
+                    this.prideLoading = false;
                 });
         }
 
@@ -96,7 +105,8 @@ import {StorageType} from "../StorageType";
             this.storeDataset(this.createPeptides, this.createName, this.createSave);
         }
 
-        private storeDataset(peptides: string, name: string, save: boolean) {
+        private storeDataset(peptides: string, name: string, save: boolean): void {
+            this.pendingStore = true;
             let peptideContainer: NewPeptideContainer = new NewPeptideContainer();
             peptideContainer.setPeptides(peptides.split('\n'));
             peptideContainer.setDate(new Date());
@@ -106,6 +116,7 @@ import {StorageType} from "../StorageType";
                 () => {
                     this.$store.dispatch('selectDataset', peptideContainer);
                     this.$store.dispatch('addStoredDataset', peptideContainer);
+                    this.pendingStore = false;
                 }
             );
         }

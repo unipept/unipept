@@ -41,15 +41,17 @@ export default class NewDatasetManager {
      * Returns a dataset that was fetched from the Pride-archive.
      *
      * @param id The Pride-assay id that's associated with the requested dataset.
+     * @param progressCallback Callback that's invoked with new progress when available.
      * @return A list of peptides associated with the given pride assay.
      */
-    async loadPrideDataset(id: number): Promise<string[]> {
+    async loadPrideDataset(id: number, progressCallback: (number) => void = (n) => {}): Promise<string[]> {
         let batchSize: number = 1000;
         let peptides: string[] = [];
 
         let datasetSize: number = await get("https://www.ebi.ac.uk/pride/ws/archive/peptide/count/assay/" + id);
         let urls: string[] = [];
         let page: number;
+
 
         for (page = 0; page * batchSize < datasetSize; page++) {
             urls.push("https://www.ebi.ac.uk/pride/ws/archive/peptide/list/assay/" + id + "?show=" + batchSize + "&page=" + page);
@@ -63,6 +65,7 @@ export default class NewDatasetManager {
                 }).then(function (response: any) {
                     page++;
 
+                    progressCallback((10 + (90 * page * batchSize) / datasetSize) / 100);
                     peptides = peptides.concat(response.list.map(function (d) {
                         return d.sequence;
                     }));

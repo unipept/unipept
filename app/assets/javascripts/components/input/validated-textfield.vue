@@ -1,7 +1,7 @@
 <template>
     <div class="form-group" v-bind:class="[valid ? '' : 'has-error']">
         <label class="control-label" :for="name">{{ label }}</label>
-        <input type="text" v-model="model" class="form-control js-has-focus-tooltip" :data-original-title="tooltip" :name="name" :id="name" :autofocus="autofocus" :placeholder="placeholder" @input="validate"/>
+        <input type="text" v-model="model" class="form-control js-has-focus-tooltip" :data-original-title="tooltip" :name="name" :id="name" :autofocus="autofocus" :placeholder="placeholder" :disabled="disabled" @input="validate"/>
         <span class="help-block" v-if="!valid">{{ validationError }}</span>
     </div>
 </template>
@@ -33,6 +33,7 @@
         @Prop({default: false}) autofocus: boolean;
         @Prop({default: () => ((content) => true) }) validation: (string) => boolean;
         @Prop({default: ""}) validationError: string;
+        @Prop({default: false}) disabled: boolean;
 
         content: string = this.value;
         valid: boolean = true;
