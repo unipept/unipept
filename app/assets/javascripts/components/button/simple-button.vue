@@ -1,5 +1,5 @@
 <template>
-    <button class="btn" v-bind:class="'btn-' + type" @click="$emit('click')">
+    <button class="btn" v-bind:class="'btn-' + type" @click="$emit('click')" :disabled="disabled">
         <span v-if="glyphicon !== ''" class="glyphicon" v-bind:class="'glyphicon-' + glyphicon"></span>
         {{ label }}
     </button>
@@ -15,6 +15,7 @@
         @Prop() label: string;
         @Prop({default: ""}) glyphicon: string;
         @Prop({default: "default"}) type: string;
+        @Prop({default: false}) disabled: boolean;
     }
 </script>
 

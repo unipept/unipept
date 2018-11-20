@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+    <div class="row equal-height-row">
         <div class="col-md-6">
             <select-datasets-card></select-datasets-card>
         </div>
