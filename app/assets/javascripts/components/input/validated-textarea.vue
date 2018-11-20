@@ -1,7 +1,7 @@
 <template>
     <div class="form-group" v-bind:class="[valid ? '' : 'has-error']">
         <label class="control-label" :for="name">{{ label }}</label>
-        <textarea v-model="data" class="form-control" :name="name" :id="name" :rows="rows" :spellcheck="spellcheck" :autofocus="autofocus" @input="validate"></textarea>
+        <textarea v-model="model" class="form-control" :name="name" :id="name" :rows="rows" :spellcheck="spellcheck" :autofocus="autofocus" @input="validate"></textarea>
         <span class="help-block" v-if="!valid">{{ validationError }}</span>
     </div>
 </template>
@@ -13,11 +13,12 @@
 
     @Component({
         computed: {
-            data: {
+            model: {
                 get() {
-                    return this.value
+                    return this.content
                 },
                 set(val) {
+                    this.content = val;
                     this.$emit('input', val);
                 }
             }
@@ -41,8 +42,9 @@
             this.valid = this.validation(this.content);
         }
 
-        @Watch('value') onContentChanged(newContent: string, oldContent: string) {
-            this.content = newContent;
+        @Watch('value') onContentChanged(newValue: string, oldValue: string) {
+            this.content = newValue;
+            this.validate();
         }
     };
 </script>

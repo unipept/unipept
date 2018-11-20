@@ -3,7 +3,7 @@ import {StorageType} from "../StorageType";
 <template>
     <card-nav>
         <tab label="Create" :active="true">
-            <dataset-form></dataset-form>
+            <dataset-form @click="storeCreateDataset()" :peptides="createPeptides" :name="createName" :save="createSave"></dataset-form>
             <div class="search-buttons-centered">
                 <simple-button label="Add to selected datasets" glyphicon="plus"></simple-button>
             </div>
@@ -64,6 +64,10 @@ import {StorageType} from "../StorageType";
         storedDatasets = this.$store.getters.storedDatasets;
         prideAssay: string = "";
 
+        createPeptides: string = "";
+        createName: string = "";
+        createSave: boolean = true;
+
         pridePeptides: string = "";
         prideName: string = "";
         prideSave: boolean = true;
@@ -85,11 +89,19 @@ import {StorageType} from "../StorageType";
         }
 
         storePrideDataset() {
+            this.storeDataset(this.pridePeptides, this.prideName, this.prideSave);
+        }
+
+        storeCreateDataset() {
+            this.storeDataset(this.createPeptides, this.createName, this.createSave);
+        }
+
+        private storeDataset(peptides: string, name: string, save: boolean) {
             let peptideContainer: NewPeptideContainer = new NewPeptideContainer();
-            peptideContainer.setPeptides(this.pridePeptides.split('\n'));
+            peptideContainer.setPeptides(peptides.split('\n'));
             peptideContainer.setDate(new Date());
-            peptideContainer.setType(this.prideSave ? StorageType.LocalStorage : StorageType.SessionStorage);
-            peptideContainer.setName(this.prideName);
+            peptideContainer.setType(save ? StorageType.LocalStorage : StorageType.SessionStorage);
+            peptideContainer.setName(name);
             peptideContainer.store().then(
                 () => {
                     this.$store.dispatch('selectDataset', peptideContainer);
