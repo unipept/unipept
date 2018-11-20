@@ -58,14 +58,14 @@
         components: {ValidatedTextfield, SimpleButton, CardNav, DatasetForm, Tab, List}
     })
     export default class LoadDatasetsCard extends Vue {
-        storedDatasets = this.$root.$store.getters.storedDatasets;
+        storedDatasets = this.$store.getters.storedDatasets;
         prideAssay: string = "";
 
         pridePeptides: string = "";
         datasetName: string = "";
 
         selectDataset(dataset: NewPeptideContainer): void {
-            this.$root.$store.dispatch('selectDataset', dataset);
+            this.$store.dispatch('selectDataset', dataset);
         }
 
         fetchPrideAssay(): void {

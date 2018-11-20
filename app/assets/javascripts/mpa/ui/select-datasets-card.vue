@@ -44,14 +44,14 @@
         components: {SimpleButton, Checkbox, Card, List}
     })
     export default class SelectDatasetsCard extends Vue {
-        selectedDatasets = this.$root.$store.getters.selectedDatasets;
+        selectedDatasets = this.$store.getters.selectedDatasets;
 
         equateIl: boolean = true;
         filterDuplicates: boolean = true;
         missingCleavage: boolean = false;
 
         deselectDataset(dataset: NewPeptideContainer) {
-            this.$root.$store.dispatch('deselectDataset', dataset);
+            this.$store.dispatch('deselectDataset', dataset);
         }
     }
 </script>
