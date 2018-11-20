@@ -1,4 +1,4 @@
-import Vue from 'vue/dist/vue.esm'
+import Vue from 'vue'
 import Vuex from 'vuex'
 import Mpa from '../../assets/javascripts/mpa/ui/mpa.vue'
 import {mpaActions, mpaGetters, mpaMutations, mpaState} from "../../assets/javascripts/mpa/ui/MpaStore";
