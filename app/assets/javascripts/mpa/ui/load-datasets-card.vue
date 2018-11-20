@@ -13,15 +13,15 @@ import {StorageType} from "../StorageType";
         <tab label="Pride">
             <h3>Load data from the PRIDE archive</h3>
             <p>You can easily load data from the <a href="http://www.ebi.ac.uk/pride/" target="_blank">PRIDE</a> data repository. Simply enter an assay id (e.g. 8500) in the field below and click the 'Load PRIDE Dataset' button. The corresponding dataset will then be fetched using the PRIDE API and loaded into the search form on the left.</p>
-            <validated-textfield v-model="prideAssay" label="Assay id" placeholder="e.g. 8500"></validated-textfield>
+            <validated-textfield v-model="prideAssay" label="Assay id" placeholder="e.g. 8500" :disabled="prideLoading || pendingStore"></validated-textfield>
             <div class="search-buttons-centered">
-                <simple-button glyphicon="cloud-download" label="Fetch PRIDE dataset" @click="fetchPrideAssay()"></simple-button>
+                <simple-button v-if="!prideLoading" glyphicon="cloud-download" label="Fetch PRIDE dataset" @click="fetchPrideAssay()"></simple-button>
+                <determinate-striped-progress-bar v-if="prideLoading" :progress="prideProgress"></determinate-striped-progress-bar>
             </div>
             <dataset-form :peptides="pridePeptides" :name="prideName" :save="prideSave" :loading="prideLoading || pendingStore"></dataset-form>
             <p>{{ prideLoading }}</p>
             <div class="search-buttons-centered">
-                <simple-button v-if="!prideLoading" @click="storePrideDataset()" label="Add to selected datasets" glyphicon="plus"></simple-button>
-                <determinate-striped-progress-bar v-if="prideLoading" :progress="prideProgress"></determinate-striped-progress-bar>
+                <simple-button @click="storePrideDataset()" label="Add to selected datasets" glyphicon="plus"></simple-button>
             </div>
         </tab>
         <tab label="Local data">
