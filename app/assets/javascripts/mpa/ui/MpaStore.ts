@@ -65,7 +65,7 @@ export const mpaActions: ActionTree<MpaState, any> = {
      */
     loadStoredDatasets(store: ActionContext<MpaState, any>) {
         let localStorageManager: NewDatasetManager = new NewDatasetManager();
-        let sessionStorageManager: NewDatasetManager = new NewDatasetManager(StorageType.SessionStorage);
+        let sessionStorageManager: NewDatasetManager = new NewDatasetManager();
 
         Promise.all([localStorageManager.listDatasets(), sessionStorageManager.listDatasets()])
             .then((values) => {
