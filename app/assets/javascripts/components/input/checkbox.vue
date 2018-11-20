@@ -18,6 +18,7 @@
                     return this.value;
                 },
                 set(val) {
+                    this.content = val;
                     this.$emit('input', val);
                 }
             }
