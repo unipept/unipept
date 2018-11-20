@@ -1,3 +1,5 @@
+import {StorageType} from "../StorageType";
+import {StorageType} from "../StorageType";
 <template>
     <card-nav>
         <tab label="Create" :active="true">
@@ -15,9 +17,9 @@
             <div class="search-buttons-centered">
                 <simple-button glyphicon="cloud-download" label="Fetch PRIDE dataset" @click="fetchPrideAssay()"></simple-button>
             </div>
-            <dataset-form :peptides="pridePeptides" :name="prideName"></dataset-form>
+            <dataset-form :peptides="pridePeptides" :name="prideName" :save="prideSave"></dataset-form>
             <div class="search-buttons-centered">
-                <simple-button label="Add to selected datasets" glyphicon="plus"></simple-button>
+                <simple-button @click="storePrideDataset()" label="Add to selected datasets" glyphicon="plus"></simple-button>
             </div>
         </tab>
         <tab label="Local data">
@@ -53,6 +55,7 @@
     import NewPeptideContainer from "../NewPeptideContainer";
     import ValidatedTextfield from "../../components/input/validated-textfield";
     import NewDatasetManager from "../NewDatasetManager";
+    import {StorageType} from "../StorageType";
 
     @Component({
         components: {ValidatedTextfield, SimpleButton, CardNav, DatasetForm, Tab, List}
@@ -63,6 +66,7 @@
 
         pridePeptides: string = "";
         prideName: string = "";
+        prideSave: boolean = true;
 
         selectDataset(dataset: NewPeptideContainer): void {
             this.$store.dispatch('selectDataset', dataset);
@@ -78,6 +82,20 @@
                 .then((peptides) => {
                     this.pridePeptides = peptides.join("\n");
                 });
+        }
+
+        storePrideDataset() {
+            let peptideContainer: NewPeptideContainer = new NewPeptideContainer();
+            peptideContainer.setPeptides(this.pridePeptides.split('\n'));
+            peptideContainer.setDate(new Date());
+            peptideContainer.setType(this.prideSave ? StorageType.LocalStorage : StorageType.SessionStorage);
+            peptideContainer.setName(this.prideName);
+            peptideContainer.store().then(
+                () => {
+                    this.$store.dispatch('selectDataset', peptideContainer);
+                    this.$store.dispatch('addStoredDataset', peptideContainer);
+                }
+            );
         }
     };
 </script>
