@@ -1,24 +1,16 @@
 import NewPeptideContainer from "./NewPeptideContainer";
 import {StorageType} from "./StorageType";
+import {get, getJSON} from "../utils";
 
 export default class NewDatasetManager {
-    private readonly prefix: string = "mpa-";
-    private readonly metaDataPrefix: string = this.prefix + "metadata-";
-    private readonly peptidePrefix: string = this.prefix + "peptide-";
-    private type: StorageType;
-    private storage: Storage;
+    public static readonly MPA_STORAGE_PREFIX: string = "mpa-";
+    public static readonly MPA_METADATA_PREFIX: string = NewDatasetManager.MPA_STORAGE_PREFIX + "metadata-";
+    public static readonly MPA_PEPTIDE_PREFIX: string = NewDatasetManager.MPA_STORAGE_PREFIX + "peptide-";
 
     public datasets: NewPeptideContainer[] = [];
     public selectedDatasets: NewPeptideContainer[] = [];
 
-    constructor(type: StorageType = StorageType.LocalStorage) {
-        this.type = type;
-        if (this.type === StorageType.LocalStorage) {
-            this.storage = window.localStorage;
-        } else {
-            this.storage = window.sessionStorage;
-        }
-    }
+    private storageTypes: StorageType[] = [StorageType.LocalStorage, StorageType.SessionStorage];
 
     /**
      * List all datasets that are stored in local storage memory.
@@ -27,33 +19,86 @@ export default class NewDatasetManager {
      *         alphabetically by name.
      */
     async listDatasets(): Promise<NewPeptideContainer[]> {
-        let output = [];
-        for (let i = 0; i < this.storage.length; i++) {
-            let key = this.storage.key(i);
-            if (key.startsWith(this.metaDataPrefix)) {
-                let dataset = await this.loadDataset(key.substr(this.metaDataPrefix.length));
-                if (dataset) {
-                    output.push(dataset)
+        let output: NewPeptideContainer[] = [];
+        for (let storageType of this.storageTypes) {
+            let storage = this.getStorage(storageType);
+            for (let i = 0; i < storage.length; i++) {
+                let key = storage.key(i);
+                if (key.startsWith(NewDatasetManager.MPA_METADATA_PREFIX)) {
+                    let dataset = new NewPeptideContainer(key.substr(NewDatasetManager.MPA_METADATA_PREFIX.length));
+                    await dataset.deserialize(storageType);
+                    output.push(dataset);
                 }
             }
         }
+
         return output.sort(function(a, b) {
             return a.getName() < b.getName()? -1 : 1;
         })
     }
 
     /**
-     * Look up the given id in local storage and load all data associated with it.
+     * Returns a dataset that was fetched from the Pride-archive.
      *
-     * @param id The unique identifier of the data set that should be looked up.
-     * @return An object containing the name, the peptides and the configuration of the dataset associated with the
-     *         given name. Returns null when a dataset with the given name was not found in local storage.
+     * @param id The Pride-assay id that's associated with the requested dataset.
+     * @return A list of peptides associated with the given pride assay.
      */
-    async loadDataset(id: string): Promise<NewPeptideContainer | undefined> {
-        let serializedData = this.storage.getItem(this.metaDataPrefix + id);
-        if (serializedData != null) {
-            return NewPeptideContainer.fromJSON(serializedData);
+    async loadPrideDataset(id: number): Promise<string[]> {
+        let batchSize: number = 1000;
+        let peptides: string[] = [];
+
+        let datasetSize: number = await get("https://www.ebi.ac.uk/pride/ws/archive/peptide/count/assay/" + id);
+        let urls: string[] = [];
+        let page: number;
+
+        for (page = 0; page * batchSize < datasetSize; page++) {
+            urls.push("https://www.ebi.ac.uk/pride/ws/archive/peptide/list/assay/" + id + "?show=" + batchSize + "&page=" + page);
         }
-        return undefined;
+
+        page = 0;
+        await urls.map(getJSON).reduce(
+            function (sequence: Promise<void>, batchPromise) {
+                return sequence.then(function () {
+                    return batchPromise;
+                }).then(function (response: any) {
+                    page++;
+
+                    peptides = peptides.concat(response.list.map(function (d) {
+                        return d.sequence;
+                    }));
+                });
+            }, Promise.resolve()
+        );
+
+        return peptides;
+    }
+
+    /**
+     * Removes all datasets from the browser's storage.
+     */
+    async clearStorage(): Promise<void> {
+        for (let storageType of this.storageTypes) {
+            let storage = this.getStorage(storageType);
+            let toRemove = [];
+
+            for (let i = 0; i < storage.length; i++) {
+                let key = storage.key(i);
+                if (key.startsWith(NewDatasetManager.MPA_STORAGE_PREFIX)) {
+                    toRemove.push(key);
+                }
+            }
+
+            for (let key of toRemove) {
+                storage.removeItem(key);
+            }
+        }
+    }
+
+    private getStorage(storageType: StorageType): Storage {
+        if (storageType === StorageType.LocalStorage) {
+            return window.localStorage;
+        } else {
+            return window.sessionStorage;
+        }
     }
 }

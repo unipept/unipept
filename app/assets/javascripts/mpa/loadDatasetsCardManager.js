@@ -381,7 +381,10 @@ class LoadDatasetsCardManager {
                         return sequence.then(function () {
                             return batchPromise;
                         }).then(function (response) {
+                            console.log(response);
+
                             page++;
+
                             $("#pride-progress .progress-bar").css("width", 10 + (90 * page * batchSize) / datasetSize + "%");
                             peptides = peptides.concat(response.list.map(function (d) {
                                 return d.sequence;
