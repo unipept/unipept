@@ -17,13 +17,10 @@
                 </span>
             </div>
         </list>
-        <label>Search settings</label>
-        <checkbox v-model="equateIl" label="Equate I and L" placeholder="Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries."></checkbox>
-        <checkbox v-model="filterDuplicates" label="Filter duplicate peptides" placeholder="Remove duplicate peptides from the input before searching."></checkbox>
-        <checkbox v-model="missingCleavage" label="Advanced missing cleavage handling" placeholder="Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!"></checkbox>
+        <search-settings-form :equate-il="equateIl" :filter-duplicates="filterDuplicates" :missing-cleavage="missingCleavage"></search-settings-form>
         <div class="search-buttons-centered">
-            <simple-button label="Search" glyphicon="search" type="primary"></simple-button>
-            <simple-button label="Start Over" glyphicon="repeat spin"></simple-button>
+            <simple-button label="Search" glyphicon="search" type="primary" @click="search()"></simple-button>
+            <simple-button label="Start Over" glyphicon="repeat spin" @click="reset()"></simple-button>
         </div>
     </card>
 </template>
@@ -39,9 +36,10 @@
     import DatasetManager from "../datasetManager"
     import NewPeptideContainer from "../NewPeptideContainer";
     import SimpleButton from "../../components/button/simple-button";
+    import SearchSettingsForm from "./search-settings-form.vue";
 
     @Component({
-        components: {SimpleButton, Checkbox, Card, List}
+        components: {SearchSettingsForm, SimpleButton, Checkbox, Card, List}
     })
     export default class SelectDatasetsCard extends Vue {
         selectedDatasets = this.$store.getters.selectedDatasets;
@@ -52,6 +50,17 @@
 
         deselectDataset(dataset: NewPeptideContainer) {
             this.$store.dispatch('deselectDataset', dataset);
+        }
+
+        search(): void {
+            this.$store.dispatch('setAnalysis', true);
+        }
+
+        reset(): void {
+            this.$store.dispatch('clearSelectedDatasets');
+            this.equateIl = true;
+            this.filterDuplicates = true;
+            this.missingCleavage = false;
         }
     }
 </script>
