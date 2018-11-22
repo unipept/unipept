@@ -1,17 +1,17 @@
 import NewPeptideContainer from "../NewPeptideContainer";
-import {ActionContext, ActionTree, GetterTree, MutationTree, StoreOptions} from "vuex";
+import {ActionContext, ActionTree, GetterTree, MutationTree} from "vuex";
 import NewDatasetManager from "../NewDatasetManager";
-import {StorageType} from "../StorageType";
-import Vuex from "vuex";
 
 export interface MpaState {
     selectedDatasets: NewPeptideContainer[],
-    storedDatasets: NewPeptideContainer[]
+    storedDatasets: NewPeptideContainer[],
+    analysis: boolean
 }
 
 export const mpaState: MpaState = {
     storedDatasets: [],
-    selectedDatasets: []
+    selectedDatasets: [],
+    analysis: false
 };
 
 export const mpaGetters: GetterTree<MpaState, any> = {
@@ -20,6 +20,9 @@ export const mpaGetters: GetterTree<MpaState, any> = {
     },
     storedDatasets(state: MpaState): NewPeptideContainer[] {
         return state.storedDatasets;
+    },
+    isAnalysis(state: MpaState): boolean {
+        return state.analysis;
     }
 };
 
@@ -47,6 +50,9 @@ export const mpaMutations: MutationTree<MpaState> = {
     },
     ADD_STORED_DATASET_BATCH(state: MpaState, datasets: NewPeptideContainer[]) {
         state.storedDatasets.push(...datasets);
+    },
+    SET_ANALYSIS(state: MpaState, isAnalysing: boolean) {
+        state.analysis = isAnalysing;
     }
 };
 
@@ -70,6 +76,9 @@ export const mpaActions: ActionTree<MpaState, any> = {
             .then((values) => {
                 store.commit('ADD_STORED_DATASET_BATCH', values);
             });
+    },
+    setAnalysis(store: ActionContext<MpaState, any>, isAnalysing: boolean) {
+        store.commit('SET_ANALYSIS', isAnalysing);
     }
 };
 
