@@ -5,13 +5,15 @@ import NewDatasetManager from "../NewDatasetManager";
 export interface MpaState {
     selectedDatasets: NewPeptideContainer[],
     storedDatasets: NewPeptideContainer[],
-    analysis: boolean
+    analysis: boolean,
+    selectedDataset: NewPeptideContainer
 }
 
 export const mpaState: MpaState = {
     storedDatasets: [],
     selectedDatasets: [],
-    analysis: false
+    analysis: false,
+    selectedDataset: undefined
 };
 
 export const mpaGetters: GetterTree<MpaState, any> = {
@@ -23,6 +25,9 @@ export const mpaGetters: GetterTree<MpaState, any> = {
     },
     isAnalysis(state: MpaState): boolean {
         return state.analysis;
+    },
+    getSelectedDataset(state: MpaState): NewPeptideContainer | undefined {
+        return state.selectedDataset;
     }
 };
 
@@ -45,6 +50,9 @@ export const mpaMutations: MutationTree<MpaState> = {
             state.selectedDatasets.splice(index, 1);
         }
     },
+    CLEAR_SELECTED_DATASETS(state: MpaState) {
+        state.selectedDatasets.splice(0, state.selectedDatasets.length);
+    },
     ADD_STORED_DATASET(state: MpaState, dataset: NewPeptideContainer) {
         state.storedDatasets.push(dataset);
     },
@@ -53,6 +61,9 @@ export const mpaMutations: MutationTree<MpaState> = {
     },
     SET_ANALYSIS(state: MpaState, isAnalysing: boolean) {
         state.analysis = isAnalysing;
+    },
+    SET_SELECTED_DATASET(state: MpaState, dataset: NewPeptideContainer | undefined) {
+        state.selectedDataset = dataset;
     }
 };
 
@@ -62,6 +73,9 @@ export const mpaActions: ActionTree<MpaState, any> = {
     },
     deselectDataset(store: ActionContext<MpaState, any>, dataset: NewPeptideContainer) {
         store.commit('DESELECT_DATASET', dataset);
+    },
+    clearSelectedDatasets(store: ActionContext<MpaState, any>) {
+        store.commit('CLEAR_SELECTED_DATASETS');
     },
     addStoredDataset(store: ActionContext<MpaState, any>, dataset: NewPeptideContainer) {
         store.commit('ADD_STORED_DATASET', dataset);
@@ -79,6 +93,9 @@ export const mpaActions: ActionTree<MpaState, any> = {
     },
     setAnalysis(store: ActionContext<MpaState, any>, isAnalysing: boolean) {
         store.commit('SET_ANALYSIS', isAnalysing);
+    },
+    setSelectedDataset(store: ActionContext<MpaState, any>, dataset: NewPeptideContainer | undefined) {
+        store.commit('SET_SELECTED_DATASET', dataset);
     }
 };
 
