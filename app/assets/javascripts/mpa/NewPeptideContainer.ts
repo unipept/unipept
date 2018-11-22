@@ -114,7 +114,8 @@ export default class NewPeptideContainer {
     }
 
     getDateFormatted(): string {
-        return this.date.getFullYear() + "/" + (this.date.getMonth() + 1) + "/" + this.date.getDate();
+        // @ts-ignore
+        return this.date.getFullYear() + "/" + (this.date.getMonth() + 1).toString().padStart(2, '0') + "/" + this.date.getDate().toString().padStart(2, '0');
     }
 
     /**
