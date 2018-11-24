@@ -5,7 +5,11 @@
             <simple-button label="Update" glyphicon="repeat" type="primary"></simple-button>
         </div>
         <hr>
-
+        <span v-if="this.$store.getters.activeDataset">No dataset is selected... Wait for at least one dataset to be loaded or select one.</span>
+        <span v-else>
+            We managed to match xx of your xx peptides.
+            Unfortunately, xx peptides couldn't be found.
+        </span>
     </card>
 </template>
 
@@ -23,8 +27,6 @@
         equateIl: boolean = true;
         filterDuplicates: boolean = true;
         missingCleavage: boolean = true;
-
-
     }
 </script>
 
