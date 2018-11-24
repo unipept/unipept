@@ -5,16 +5,17 @@
         </template>
 
         <list class="switch-dataset-list" placeholder="Please add one or more datasets by clicking the plus button above... ">
-            <div class="list-item--two-lines" v-for="dataset of selectedDatasets">
+            <div class="list-item--two-lines" v-for="dataset of this.$store.getters.selectedDatasets">
                 <span class="list-item-primary-action">
-                    <input type="radio" class="input-item select-dataset-radio-button" style="width: 24px;" />
+                    <input  type="radio" class="input-item select-dataset-radio-button" style="width: 24px;" />
                 </span>
                 <span class="list-item-primary-content">
-                    <span class="list-item-body">
-                        {{ dataset.getAmountOfPeptides() }} peptides
-                    </span>
+                    {{ dataset.getName() }}
                     <span class="list-item-date">
                         {{ dataset.getDateFormatted() }}
+                    </span>
+                    <span class="list-item-body">
+                        {{ dataset.getAmountOfPeptides() }} peptides
                     </span>
                 </span>
                 <span class="list-item-secondary-action" @click="deselectDataset(dataset)">
@@ -40,6 +41,10 @@
     export default class SwitchDatasetCard extends Vue {
         deselectDataset(dataset: NewPeptideContainer): void {
             this.$store.dispatch('deselectDataset', dataset);
+        }
+
+        addDataset(): void {
+            this.$store.dispatch('setDatasetSelectionInProgress', !this.$store.getters.isDatasetSelectionInProgress);
         }
     }
 </script>

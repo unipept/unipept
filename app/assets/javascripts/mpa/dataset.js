@@ -16,17 +16,15 @@ class Dataset {
      * Creates a Dataset object based on a list of peptides
      *
      * @param {string[]} [peptides=[]] A list of peptides (strings)
-     * @param {string} name The name associated with this Dataset.
      * @param {string} id Unique identifier associated with this Dataset.
      */
-    constructor(peptides = [], name, id) {
+    constructor(peptides = [], id) {
         this.originalPeptides = Dataset.cleanPeptides(peptides);
 
         /** @type {Tree} */
         this.tree = null;
         this._fa = null;
         this.baseFa = null;
-        this.name = name;
         this.id = id;
 
         /** @type {Map<number,TaxonInfo>} */
