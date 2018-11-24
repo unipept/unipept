@@ -1,15 +1,16 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Mpa from '../../assets/javascripts/mpa/ui/mpa.vue'
-import {mpaActions, mpaGetters, mpaMutations, mpaState} from "../../assets/javascripts/mpa/ui/MpaStore";
+import {globalStore} from "../../assets/javascripts/mpa/ui/state/GlobalStore";
+import {analysisStore} from "../../assets/javascripts/mpa/ui/state/AnalysisStore";
 
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
-    state: mpaState,
-    getters: mpaGetters,
-    mutations: mpaMutations,
-    actions: mpaActions
+    modules: {
+        global: globalStore,
+        analysis: analysisStore
+    }
 });
 
 document.addEventListener('DOMContentLoaded', () => {

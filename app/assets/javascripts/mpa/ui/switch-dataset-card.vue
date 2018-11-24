@@ -1,5 +1,9 @@
 <template>
-    <card title="Metaproteomics Analysis">
+    <card title="Metaproteomics Analysis" :interactive="true">
+        <template slot="card-title-action">
+            <span class="glyphicon glyphicon-plus" @click="addDataset()"></span>
+        </template>
+
         <list class="switch-dataset-list" placeholder="Please add one or more datasets by clicking the plus button above... ">
             <div class="list-item--two-lines" v-for="dataset of selectedDatasets">
                 <span class="list-item-primary-action">
