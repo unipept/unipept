@@ -1,20 +1,23 @@
 import NewPeptideContainer from "../../NewPeptideContainer";
 import {ActionContext, ActionTree, GetterTree, MutationTree} from "vuex";
 import NewDatasetManager from "../../NewDatasetManager";
+import SearchSettings from "../../SearchSettings";
 
 
 export interface GlobalState {
     selectedDatasets: NewPeptideContainer[],
     storedDatasets: NewPeptideContainer[],
     analysis: boolean,
-    selectedDataset: NewPeptideContainer
+    selectedDataset: NewPeptideContainer,
+    searchSettings: SearchSettings
 }
 
 const mpaState: GlobalState = {
     storedDatasets: [],
     selectedDatasets: [],
     analysis: false,
-    selectedDataset: undefined
+    selectedDataset: undefined,
+    searchSettings: new SearchSettings(true, true, false)
 };
 
 const mpaGetters: GetterTree<GlobalState, any> = {
@@ -27,8 +30,11 @@ const mpaGetters: GetterTree<GlobalState, any> = {
     isAnalysis(state: GlobalState): boolean {
         return state.analysis;
     },
-    getSelectedDataset(state: GlobalState): NewPeptideContainer | undefined {
+    selectedDataset(state: GlobalState): NewPeptideContainer | undefined {
         return state.selectedDataset;
+    },
+    searchSettings(state: GlobalState): SearchSettings {
+        return state.searchSettings;
     }
 };
 
@@ -65,6 +71,9 @@ const mpaMutations: MutationTree<GlobalState> = {
     },
     SET_SELECTED_DATASET(state: GlobalState, dataset: NewPeptideContainer | undefined) {
         state.selectedDataset = dataset;
+    },
+    SET_SEARCH_SETTINGS(state: GlobalState, searchSettings: SearchSettings): void {
+        this.searchSettings = searchSettings;
     }
 };
 
@@ -97,6 +106,9 @@ const mpaActions: ActionTree<GlobalState, any> = {
     },
     setSelectedDataset(store: ActionContext<GlobalState, any>, dataset: NewPeptideContainer | undefined) {
         store.commit('SET_SELECTED_DATASET', dataset);
+    },
+    setSearchSettings(store: ActionContext<GlobalState, any>, searchSettings: SearchSettings): void {
+        store.commit('SET_SEARCH_SETTINGS', searchSettings);
     }
 };
 
