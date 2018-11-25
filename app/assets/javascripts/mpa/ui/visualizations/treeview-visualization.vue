@@ -7,35 +7,38 @@
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import NewPeptideContainer from "../../NewPeptideContainer";
-    import MpaAnalysisManager from "../../MpaAnalysisManager";
     import {Tree} from "../../tree";
     import {tooltipContent} from "./VisualizationHelper";
 
     @Component
-    export default class TreemapVisualization extends Vue {
+    export default class TreeviewVisualization extends Vue {
         @Prop({default: null}) dataset: NewPeptideContainer | null;
 
         mounted() {
-            this.initTreeMap();
+            this.initTreeview();
         }
 
         @Watch('dataset') onDatasetChanged() {
-            this.initTreeMap();
+            this.initTreeview();
         }
 
-        private initTreeMap() {
+        private initTreeview() {
             if (this.dataset != null && this.dataset.getDataset() != null) {
                 let tree: Tree = this.dataset.getDataset().getTree();
                 const data = JSON.stringify(tree.getRoot());
 
-                $(this.$el).treemap(JSON.parse(data), {
+                $(this.$el).treeview(JSON.parse(data), {
                     width: 916,
                     height: 600,
-                    levels: 28,
-                    getBreadcrumbTooltip: d => d.rank,
                     getTooltip: tooltipContent,
-                    getLabel: d => `${d.name} (${d.data.self_count}/${d.data.count})`,
-                    getLevel: d => MpaAnalysisManager.RANKS.indexOf(d.rank)
+                    enableAutoExpand: true,
+                    colors: d => {
+                        if (d.name === "Bacteria") return "#1565C0"; // blue
+                        if (d.name === "Archaea") return "#FF8F00"; // orange
+                        if (d.name === "Eukaryota") return "#2E7D32"; // green
+                        if (d.name === "Viruses") return "#C62828"; // red
+                        return d3.scale.category10().call(this, d);
+                    }
                 });
             }
         }
