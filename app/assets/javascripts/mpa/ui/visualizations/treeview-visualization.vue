@@ -27,7 +27,7 @@
                 let tree: Tree = this.dataset.getDataset().getTree();
                 const data = JSON.stringify(tree.getRoot());
 
-                $(this.$el).treeview(JSON.parse(data), {
+                $(this.$el).html("").treeview(JSON.parse(data), {
                     width: 916,
                     height: 600,
                     getTooltip: tooltipContent,
