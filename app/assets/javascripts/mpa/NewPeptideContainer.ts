@@ -38,7 +38,7 @@ export default class NewPeptideContainer {
         this.name = parsedMeta.name;
         let splitDate = parsedMeta.date.split("/");
         this.date = new Date(splitDate[0], splitDate[1] - 1, splitDate[2]);
-        this.peptideAmount = parsedMeta.peptideAmount;
+        this.peptideAmount = parsedMeta.amount;
     }
 
     async store(): Promise<void> {
@@ -161,7 +161,6 @@ export default class NewPeptideContainer {
 
     setProgress(p: number) {
         this.progress = p;
-        console.log(this.name + " --> " + this.progress);
     }
 
     private getMetadataJSON(): string {

@@ -64,6 +64,13 @@ class Dataset {
     }
 
     /**
+     * @returns {Tree}
+     */
+    getTree() {
+        return this.tree;
+    }
+
+    /**
      * Sets the surrent FA summary as base, accessible trough baseFa.
      */
     setBaseFA() {

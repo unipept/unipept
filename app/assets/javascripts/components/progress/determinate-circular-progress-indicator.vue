@@ -7,7 +7,7 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Prop} from "vue-property-decorator";
+    import {Prop, Watch} from "vue-property-decorator";
 
     @Component
     export default class DeterminateCircularProgressIndicator extends Vue {
@@ -17,11 +17,19 @@
         middle: number = this.size / 2;
         radius: number = this.middle - 2;
         strokeDashArray: number = Math.floor(2 * this.radius * 3.14);
-        strokeDashOffset: number = (1 - this.progress) * this.strokeDashArray + this.size;
 
         circleStyle = {
-            strokeDashoffset: this.strokeDashOffset
+            strokeDasharray: this.strokeDashArray,
+            strokeDashoffset: (1 - this.progress) * this.strokeDashArray
         };
+
+        @Watch('progress') onProgressChange() {
+            this.updateProgress()
+        }
+
+        private updateProgress() {
+            this.circleStyle.strokeDashoffset = (1 - this.progress) * this.strokeDashArray;
+        }
     };
 </script>
 

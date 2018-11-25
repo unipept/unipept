@@ -31,12 +31,14 @@
         private analysisManager: MpaAnalysisManager = new MpaAnalysisManager();
 
         created() {
-            if (this.$store.getters.selectedDatasets.length > 0) {
-                this.$store.dispatch('setActiveDataset', this.$store.getters.selectedDatasets[0]);
-            }
-
             for (let dataset of this.$store.getters.selectedDatasets) {
-                this.analysisManager.processDataset(dataset, this.$store.getters.searchSettings);
+                this.analysisManager.processDataset(dataset, this.$store.getters.searchSettings).then(
+                    () => {
+                        if (this.$store.getters.activeDataset == null) {
+                            this.$store.dispatch('setActiveDataset', dataset);
+                        }
+                    }
+                );
             }
         }
     }
