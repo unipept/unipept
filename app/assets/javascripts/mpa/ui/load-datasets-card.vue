@@ -1,9 +1,9 @@
 <template>
     <card-nav class="load-datasets-card">
         <tab label="Create" :active="true">
-            <dataset-form @click="storeCreateDataset()" :peptides="createPeptides" :name="createName" :save="createSave" :loading="pendingStore"></dataset-form>
+            <dataset-form v-on:peptide-change="createPeptides = $event" :peptides="createPeptides" v-on:name-change="createName = $event" :name="createName" v-on:save-change="createSave = $event" :save="createSave" :loading="pendingStore"></dataset-form>
             <div class="search-buttons-centered">
-                <simple-button label="Add to selected datasets" glyphicon="plus" :disabled="pendingStore"></simple-button>
+                <simple-button @click="storeCreateDataset()" label="Add to selected datasets" glyphicon="plus" :disabled="pendingStore"></simple-button>
             </div>
         </tab>
         <tab label="Sample data">
@@ -16,7 +16,7 @@
                 <simple-button v-if="!prideLoading" glyphicon="cloud-download" label="Fetch PRIDE dataset" @click="fetchPrideAssay()"></simple-button>
                 <determinate-striped-progress-bar v-if="prideLoading" :progress="prideProgress"></determinate-striped-progress-bar>
             </div>
-            <dataset-form :peptides="pridePeptides" :name="prideName" :save="prideSave" :loading="prideLoading || pendingStore"></dataset-form>
+            <dataset-form v-on:peptide-change="pridePeptides = $event" :peptides="pridePeptides" v-on:name-change="prideName = $event" :name="prideName" v-on:save-change="prideSave = $event" :save="prideSave" :loading="prideLoading || pendingStore"></dataset-form>
             <p>{{ prideLoading }}</p>
             <div class="search-buttons-centered">
                 <simple-button @click="storePrideDataset()" label="Add to selected datasets" glyphicon="plus" :disabled="prideLoading || pendingStore"></simple-button>
@@ -100,6 +100,8 @@
         }
 
         storeCreateDataset() {
+            console.log(this.createPeptides);
+            console.log(this.createName);
             this.storeDataset(this.createPeptides, this.createName, this.createSave);
         }
 

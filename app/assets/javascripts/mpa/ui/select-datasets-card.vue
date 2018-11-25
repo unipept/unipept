@@ -37,6 +37,7 @@
     import NewPeptideContainer from "../NewPeptideContainer";
     import SimpleButton from "../../components/button/simple-button";
     import SearchSettingsForm from "./search-settings-form.vue";
+    import SearchSettings from "../SearchSettings";
 
     @Component({
         components: {SearchSettingsForm, SimpleButton, Checkbox, Card, List}
@@ -53,6 +54,8 @@
         }
 
         search(): void {
+            let searchSettings: SearchSettings = new SearchSettings(this.equateIl, this.filterDuplicates, this.missingCleavage);
+            this.$store.dispatch('setSearchSettings', searchSettings);
             this.$store.dispatch('setAnalysis', true);
         }
 

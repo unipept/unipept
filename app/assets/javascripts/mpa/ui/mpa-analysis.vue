@@ -21,12 +21,24 @@
     import SwitchDatasetCard from "./switch-dataset-card.vue";
     import LoadDatasetsCard from "./load-datasets-card.vue";
     import SingleDatasetVisualizationsCard from "./single-dataset-visualizations-card.vue";
+    import NewPeptideContainer from "../NewPeptideContainer";
+    import MpaAnalysisManager from "../MpaAnalysisManager";
 
     @Component({
         components: {SingleDatasetVisualizationsCard, LoadDatasetsCard, SwitchDatasetCard, ExperimentSummaryCard}
     })
     export default class MpaAnalysis extends Vue {
+        private analysisManager: MpaAnalysisManager = new MpaAnalysisManager();
 
+        created() {
+            if (this.$store.getters.selectedDatasets.length > 0) {
+                this.$store.dispatch('setActiveDataset', this.$store.getters.selectedDatasets[0]);
+            }
+
+            for (let dataset of this.$store.getters.selectedDatasets) {
+                this.analysisManager.processDataset(dataset, this.$store.getters.searchSettings);
+            }
+        }
     }
 </script>
 

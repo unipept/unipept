@@ -1,5 +1,6 @@
 import NewDatasetManager from "./NewDatasetManager";
 import {StorageType} from "./StorageType";
+import {Dataset} from "./dataset";
 
 
 export default class NewPeptideContainer {
@@ -9,6 +10,8 @@ export default class NewPeptideContainer {
     private peptideAmount: number;
     private date: Date;
     private type: StorageType;
+    private dataset: Dataset | null;
+    private progress: number = 0;
 
     /**
      * Create a new PeptideContainer. A PeptideContainer is actually a representation of a dataset that can be
@@ -65,6 +68,10 @@ export default class NewPeptideContainer {
      * @returns The peptides that are stored in this container.
      */
     async getPeptides(): Promise<string[]> {
+        return this.getPeptidesSync();
+    }
+
+    getPeptidesSync(): string[] {
         if (this.peptides === undefined) {
             let peptidesSerialized = this.getStorage().getItem(NewDatasetManager.MPA_PEPTIDE_PREFIX + this.id);
 
@@ -138,6 +145,23 @@ export default class NewPeptideContainer {
      */
     setType(type: StorageType): void {
         this.type = type;
+    }
+
+    getDataset(): Dataset {
+        return this.dataset;
+    }
+
+    setDataset(dataset: Dataset | null): void {
+        this.dataset = dataset;
+    }
+
+    getProgress(): number {
+        return this.progress;
+    }
+
+    setProgress(p: number) {
+        this.progress = p;
+        console.log(this.name + " --> " + this.progress);
     }
 
     private getMetadataJSON(): string {

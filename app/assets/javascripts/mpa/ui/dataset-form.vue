@@ -24,7 +24,8 @@
                     return this.peptides;
                 },
                 set(val) {
-                    this.$emit('input', val);
+                    this.peptidesData = val;
+                    this.$emit('peptide-change', val);
                 }
             },
             nameModel: {
@@ -32,7 +33,8 @@
                     return this.name;
                 },
                 set(val) {
-                    this.$emit('input', val);
+                    this.nameData = val;
+                    this.$emit('name-change', val);
                 }
             },
             saveModel: {
@@ -40,7 +42,8 @@
                     return this.save;
                 },
                 set(val) {
-                    this.$emit('input', val);
+                    this.saveData = val;
+                    this.$emit('save-change', val);
                 }
             }
         }
