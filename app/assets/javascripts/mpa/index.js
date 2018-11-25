@@ -12,7 +12,6 @@ import DatasetManager from "./datasetManager";
 import PeptideContainer from "./peptideContainer";
 import {SESSION_STORAGE_TYPE} from "./storageTypeConstants";
 import {LoadDatasetsCardManager} from "./loadDatasetsCardManager";
-import {initializeDeterminateCircles, setDeterminateCirclesProgress} from "../progressBar";
 /* eslint require-jsdoc: off */
 
 /**
@@ -175,10 +174,7 @@ class MPA {
 
         let $circularProgress = $("<div class='circular-progress' data-size='24'>");
         $primaryAction.append($circularProgress);
-        initializeDeterminateCircles($circularProgress);
-        eventBus.on("dataset-" + peptideContainer.getId() + "-progress", (progress) => {
-            setDeterminateCirclesProgress($circularProgress, progress);
-        });
+
 
         $listItem.append($primaryAction);
 
