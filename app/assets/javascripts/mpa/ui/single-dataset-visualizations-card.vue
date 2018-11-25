@@ -4,6 +4,7 @@
             <sunburst-visualization :dataset="$store.getters.activeDataset"></sunburst-visualization>
         </tab>
         <tab label="Treemap">
+            <treemap-visualization :dataset="$store.getters.activeDataset"></treemap-visualization>
         </tab>
         <tab label="Treeview">
         </tab>
@@ -19,9 +20,10 @@
     import CardNav from "../../components/card/card-nav.vue";
     import Tab from "../../components/card/tab.vue";
     import SunburstVisualization from "./visualizations/sunburst-visualization.vue";
+    import TreemapVisualization from "./visualizations/treemap-visualization.vue";
 
     @Component({
-        components: {SunburstVisualization, CardNav, Tab}
+        components: {TreemapVisualization, SunburstVisualization, CardNav, Tab}
     })
     export default class SingleDatasetVisualizationsCard extends Vue {
 
