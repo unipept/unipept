@@ -20,12 +20,28 @@
             <sunburst-visualization :dataset="$store.getters.activeDataset"></sunburst-visualization>
         </tab>
         <tab label="Treemap" id="treemapWrapper">
+            <h2 class="ghead">
+                <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate" id="treemap-reset" title="reset visualisation">
+                        <span class="glyphicon glyphicon-repeat spin"></span>
+                    </a>
+                </span>
+                <span class="dir text">Click a square to zoom in and right click to zoom out</span>
+            </h2>
             <treemap-visualization :dataset="$store.getters.activeDataset"></treemap-visualization>
         </tab>
         <tab label="Treeview" id="treeviewWrapper">
+            <h2 class="ghead">
+                <span class="dir">
+                    <a class="btn btn-xs btn-default btn-animate" id="treeview-reset" title="reset visualisation">
+                        <span class="glyphicon glyphicon-repeat spin"></span>
+                    </a>
+                </span>
+                <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
+            </h2>
             <treeview-visualization :dataset="$store.getters.activeDataset"></treeview-visualization>
         </tab>
-        <tab label="Hierarchical outline">
+        <tab label="Hierarchical outline" class="card-supporting-text">
             <hierarchical-outline-visualization :dataset="$store.getters.activeDataset"></hierarchical-outline-visualization>
         </tab>
     </card-nav>
