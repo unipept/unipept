@@ -1,5 +1,15 @@
 <template>
-    <div></div>
+    <div>
+        <h2 class="ghead">
+            <span class="dir">
+                <a class="btn btn-xs btn-default btn-animate" id="treeview-reset" title="reset visualisation">
+                    <span class="glyphicon glyphicon-repeat spin"></span>
+                </a>
+            </span>
+            <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
+        </h2>
+        <div ref="visualization"></div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -27,7 +37,7 @@
                 let tree: Tree = this.dataset.getDataset().getTree();
                 const data = JSON.stringify(tree.getRoot());
 
-                $(this.$el).html("").treeview(JSON.parse(data), {
+                $(this.$refs.visualization).html("").treeview(JSON.parse(data), {
                     width: 916,
                     height: 600,
                     getTooltip: tooltipContent,

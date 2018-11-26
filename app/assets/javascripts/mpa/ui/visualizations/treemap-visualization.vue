@@ -1,5 +1,15 @@
 <template>
-    <div></div>
+    <div>
+        <h2 class="ghead">
+            <span class="dir">
+                <a class="btn btn-xs btn-default btn-animate" id="treemap-reset" title="reset visualisation">
+                    <span class="glyphicon glyphicon-repeat spin"></span>
+                </a>
+            </span>
+            <span class="dir text">Click a square to zoom in and right click to zoom out</span>
+        </h2>
+        <div ref="visualization"></div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -28,7 +38,7 @@
                 let tree: Tree = this.dataset.getDataset().getTree();
                 const data = JSON.stringify(tree.getRoot());
 
-                $(this.$el).treemap(JSON.parse(data), {
+                $(this.$refs.visualization).treemap(JSON.parse(data), {
                     width: 916,
                     height: 600,
                     levels: 28,
