@@ -59,9 +59,29 @@
                     height: 740,
                     radius: 740 / 2,
                     getTooltip: tooltipContent,
-                    getTitleText: d => `${d.name} (${d.rank})`
+                    getTitleText: d => `${d.name} (${d.rank})`,
+                    rerootCallback: d => this.search(d.id, d.name, 1000),
                 });
             }
+        }
+
+        /**
+         * Propagate selections in the visualisation to the search tree and
+         * The functional analysis data.
+         *
+         * @param id Taxon id to inspect
+         * @param searchTerm Search term to put in box
+         * @param [timeout=500] timeout in ms to wait before processing
+         * @todo add search term to FA explanation to indicate filtering
+         */
+        private search(id: number, searchTerm, timeout = 500) {
+            let localTerm = searchTerm;
+            if (localTerm === "Organism") {
+                localTerm = "";
+            }
+            setTimeout(() => {
+                this.$store.dispatch('setSelectedTerm', localTerm);
+            });
         }
     }
 </script>

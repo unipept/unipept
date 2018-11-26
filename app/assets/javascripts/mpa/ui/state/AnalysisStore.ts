@@ -7,14 +7,14 @@ export interface AnalysisState {
     datasetSelectionInProgress: boolean,
     activeDataset: NewPeptideContainer | null,
     displaySettings: DisplaySettings,
-    selectedTerm: string
+    selectedTerm: string,
 }
 
 const analysisState: AnalysisState = {
     datasetSelectionInProgress: false,
     activeDataset: null,
     displaySettings: new DisplaySettings(true),
-    selectedTerm: 'organism'
+    selectedTerm: ''
 };
 
 const analysisGetters: GetterTree<AnalysisState, any>  = {
@@ -26,6 +26,9 @@ const analysisGetters: GetterTree<AnalysisState, any>  = {
     },
     displaySettings(state: AnalysisState): DisplaySettings {
         return state.displaySettings;
+    },
+    selectedTerm(state: AnalysisState): string {
+        return state.selectedTerm;
     }
 };
 
@@ -37,7 +40,10 @@ const analysisMutations: MutationTree<AnalysisState> = {
         state.activeDataset = dataset;
     },
     SET_DISPLAY_SETTINGS(state: AnalysisState, displaySettings: DisplaySettings): void {
-        this.displaySettings = displaySettings;
+        state.displaySettings = displaySettings;
+    },
+    SET_SELECTED_TERM(state: AnalysisState, value: string): void {
+        state.selectedTerm = value;
     }
 };
 
@@ -50,6 +56,9 @@ const analysisActions: ActionTree<AnalysisState, any> = {
     },
     setDisplaySettings(store: ActionContext<AnalysisState, any>, displaySettings: DisplaySettings): void {
         store.commit('SET_DISPLAY_SETTINGS', displaySettings);
+    },
+    setSelectedTerm(store: ActionContext<AnalysisState, any>, term: string): void {
+        store.commit('SET_SELECTED_TERM', term);
     }
 };
 

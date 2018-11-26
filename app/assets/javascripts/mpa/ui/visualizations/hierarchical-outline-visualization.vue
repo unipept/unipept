@@ -1,10 +1,12 @@
 <template>
     <div>
-        <validated-textfield placeholder="search for an organism..." id="tree_search_group">
-            <template slot="addonButton">
-                <simple-button glyphicon="search"></simple-button>
-            </template>
-        </validated-textfield>
+        <!-- We cannot use the pre-built simple-button here because we need to attach a specific id to the input-field to allow the non-Vue searchTree to work -->
+        <div class="input-group" id="tree_search_group">
+            <input type="search" name="tree_search" id="tree_search" value="" placeholder="search for an organism..." class="form-control">
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-search"></span>
+            </span>
+        </div>
         <div id="searchtree" class="treeView multi"></div>
         <div id="tree_data">
             <p>
@@ -26,10 +28,19 @@
     import ValidatedTextfield from "../../../components/input/validated-textfield.vue";
 
     @Component({
-        components: {ValidatedTextfield, SimpleButton}
+        components: {ValidatedTextfield, SimpleButton},
+        computed: {
+            activeSearchTerm: {
+                get() {
+                    return this.$store.getters.selectedTerm;
+                }
+            }
+        }
     })
     export default class HierarchicalOutlineVisualization extends Vue {
         @Prop({default: null}) dataset: NewPeptideContainer | null;
+
+        searchTree!: any;
 
         mounted() {
             this.initSearchTree();
@@ -39,12 +50,22 @@
             this.initSearchTree();
         }
 
+        @Watch('activeSearchTerm') onSearchTermChanged(newSearchTerm: string, oldSearchTerm: string) {
+            console.log(this.searchTree);
+            console.log(newSearchTerm);
+            if (this.searchTree && newSearchTerm !== "") {
+                setTimeout(() => {
+                    console.log("START SEARCH!");
+                    this.searchTree.search(newSearchTerm);
+                }, 500);
+            }
+        }
+
         private initSearchTree() {
             if (this.dataset != null && this.dataset.getDataset() != null) {
+                console.log("REDRAW TREE!");
                 let tree: Tree = this.dataset.getDataset().getTree();
-                const data = JSON.stringify(tree.getRoot());
-
-                constructSearchtree(tree, this.$store.getters.searchSettings.isEquateIl(), () => {});
+                this.searchTree = constructSearchtree(tree, this.$store.getters.searchSettings.isEquateIl(), () => {});
             }
         }
     }
