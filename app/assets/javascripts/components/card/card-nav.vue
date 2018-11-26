@@ -20,9 +20,12 @@
     import Component from "vue-class-component";
 
     import Tab from "./tab";
+    import {Prop} from "vue-property-decorator";
 
     @Component
     export default class CardNav extends Vue {
+        @Prop({default: false}) interactive: boolean;
+
         tabs: Tab[] = [];
 
         created() {
