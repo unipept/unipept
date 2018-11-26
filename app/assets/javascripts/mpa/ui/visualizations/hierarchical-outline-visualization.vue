@@ -1,6 +1,10 @@
 <template>
     <div>
-
+        <validated-textfield placeholder="search for an organism..." id="tree_search_group">
+            <template slot="addonButton">
+                <simple-button glyphicon="search"></simple-button>
+            </template>
+        </validated-textfield>
         <div id="searchtree" class="treeView multi"></div>
         <div id="tree_data">
             <p>
@@ -18,8 +22,12 @@
     import NewPeptideContainer from "../../NewPeptideContainer";
     import {Tree} from "../../tree";
     import {constructSearchtree} from "../../searchtree";
+    import SimpleButton from "../../../components/button/simple-button.vue";
+    import ValidatedTextfield from "../../../components/input/validated-textfield.vue";
 
-    @Component
+    @Component({
+        components: {ValidatedTextfield, SimpleButton}
+    })
     export default class HierarchicalOutlineVisualization extends Vue {
         @Prop({default: null}) dataset: NewPeptideContainer | null;
 
