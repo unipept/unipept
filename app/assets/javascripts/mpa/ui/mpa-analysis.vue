@@ -10,6 +10,7 @@
             </div>
         </div>
         <single-dataset-visualizations-card id="visualizations-card"></single-dataset-visualizations-card>
+        <functional-summary-card></functional-summary-card>
     </div>
 </template>
 
@@ -23,9 +24,12 @@
     import SingleDatasetVisualizationsCard from "./single-dataset-visualizations-card.vue";
     import NewPeptideContainer from "../NewPeptideContainer";
     import MpaAnalysisManager from "../MpaAnalysisManager";
+    import FunctionalSummaryCard from "./functional-summary-card.vue";
 
     @Component({
-        components: {SingleDatasetVisualizationsCard, LoadDatasetsCard, SwitchDatasetCard, ExperimentSummaryCard}
+        components: {
+            FunctionalSummaryCard,
+            SingleDatasetVisualizationsCard, LoadDatasetsCard, SwitchDatasetCard, ExperimentSummaryCard}
     })
     export default class MpaAnalysis extends Vue {
         private analysisManager: MpaAnalysisManager = new MpaAnalysisManager();
