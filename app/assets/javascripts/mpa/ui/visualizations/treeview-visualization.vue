@@ -2,7 +2,7 @@
     <div>
         <h2 class="ghead">
             <span class="dir">
-                <a class="btn btn-xs btn-default btn-animate" id="treeview-reset" title="reset visualisation">
+                <a class="btn btn-xs btn-default btn-animate" @click="reset()" title="reset visualisation">
                     <span class="glyphicon glyphicon-repeat spin"></span>
                 </a>
             </span>
@@ -24,6 +24,8 @@
     export default class TreeviewVisualization extends Vue {
         @Prop({default: null}) dataset: NewPeptideContainer | null;
 
+        treeview!: any;
+
         mounted() {
             this.initTreeview();
         }
@@ -32,12 +34,18 @@
             this.initTreeview();
         }
 
+        reset() {
+            if (this.treeview) {
+                this.treeview.reset();
+            }
+        }
+
         private initTreeview() {
             if (this.dataset != null && this.dataset.getDataset() != null) {
                 let tree: Tree = this.dataset.getDataset().getTree();
                 const data = JSON.stringify(tree.getRoot());
 
-                $(this.$refs.visualization).html("").treeview(JSON.parse(data), {
+                this.treeview = $(this.$refs.visualization).html("").treeview(JSON.parse(data), {
                     width: 916,
                     height: 600,
                     getTooltip: tooltipContent,
