@@ -6,13 +6,15 @@ import DisplaySettings from "../../DisplaySettings";
 export interface AnalysisState {
     datasetSelectionInProgress: boolean,
     activeDataset: NewPeptideContainer | null,
-    displaySettings: DisplaySettings
+    displaySettings: DisplaySettings,
+    selectedTerm: string
 }
 
 const analysisState: AnalysisState = {
     datasetSelectionInProgress: false,
     activeDataset: null,
-    displaySettings: new DisplaySettings(true)
+    displaySettings: new DisplaySettings(true),
+    selectedTerm: 'organism'
 };
 
 const analysisGetters: GetterTree<AnalysisState, any>  = {

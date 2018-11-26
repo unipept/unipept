@@ -214,7 +214,7 @@ class Dataset {
 
     /**
      *
-     * @return {GroupedFA} Functional annotaions
+     * @return Functional annotations
      */
     get fa() {
         return this._fa;

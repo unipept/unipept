@@ -45,6 +45,29 @@
                 );
             }
         }
+
+        /**
+         * Propagate selections in the visualisation to the search tree and
+         * The functional analysis data.
+         *
+         * @param id Taxon id to inspect
+         * @param searchTerm Search term to put in box
+         * @param [timeout=500] timeout in ms to wait before processing
+         * @todo add search term to FA explanation to indicate filtering
+         */
+        search(id: number, searchTerm, timeout = 500) {
+            let localTerm = searchTerm;
+            if (localTerm === "Organism") {
+                localTerm = "";
+            }
+            setTimeout(() => {
+                let dataset: NewPeptideContainer = this.$store.getters.activeDataset;
+                if (dataset && dataset.getDataset()) {
+                    // searchTree.search(localTerm);
+                    // this.redoFAcalculations(searchTerm, id, timeout);
+                }
+            });
+        }
     }
 </script>
 
