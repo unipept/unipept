@@ -2,7 +2,7 @@
     <div>
         <h2 class="ghead">
             <span class="dir">
-                <a class="btn btn-xs btn-default btn-animate" id="treemap-reset" title="reset visualisation">
+                <a class="btn btn-xs btn-default btn-animate" @click="reset()" title="reset visualisation">
                     <span class="glyphicon glyphicon-repeat spin"></span>
                 </a>
             </span>
@@ -25,6 +25,9 @@
     export default class TreemapVisualization extends Vue {
         @Prop({default: null}) dataset: NewPeptideContainer | null;
 
+        // Make field non-reactive by not setting the value here, but only after created() has been fired.
+        treemap!: any;
+
         mounted() {
             this.initTreeMap();
         }
@@ -33,12 +36,18 @@
             this.initTreeMap();
         }
 
+        reset() {
+            if (this.treemap) {
+                this.treemap.reset();
+            }
+        }
+
         private initTreeMap() {
             if (this.dataset != null && this.dataset.getDataset() != null) {
                 let tree: Tree = this.dataset.getDataset().getTree();
                 const data = JSON.stringify(tree.getRoot());
 
-                $(this.$refs.visualization).treemap(JSON.parse(data), {
+                this.treemap = $(this.$refs.visualization).treemap(JSON.parse(data), {
                     width: 916,
                     height: 600,
                     levels: 28,
