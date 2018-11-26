@@ -1,6 +1,6 @@
 <template>
     <card-nav>
-        <tab label="Sunburst" :active="true">
+        <tab label="Sunburst" :active="true" id="sunburstWrapper">
             <h2 class="ghead">
                 <span class="dir">
                     <a class="btn btn-xs btn-default btn-animate" id="sunburst-reset" title="reset visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
@@ -19,10 +19,10 @@
             </h2>
             <sunburst-visualization :dataset="$store.getters.activeDataset"></sunburst-visualization>
         </tab>
-        <tab label="Treemap">
+        <tab label="Treemap" id="treemapWrapper">
             <treemap-visualization :dataset="$store.getters.activeDataset"></treemap-visualization>
         </tab>
-        <tab label="Treeview">
+        <tab label="Treeview" id="treeviewWrapper">
             <treeview-visualization :dataset="$store.getters.activeDataset"></treeview-visualization>
         </tab>
         <tab label="Hierarchical outline">
