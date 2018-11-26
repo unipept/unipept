@@ -1,8 +1,11 @@
 <template>
-    <div class="form-group" v-bind:class="[valid ? '' : 'has-error']">
+    <div class="input-group" v-bind:class="[valid ? '' : 'has-error']">
         <label class="control-label" :for="name">{{ label }}</label>
         <input type="text" v-model="model" class="form-control js-has-focus-tooltip" :data-original-title="tooltip" :name="name" :id="name" :autofocus="autofocus" :placeholder="placeholder" :disabled="disabled" @input="validate"/>
         <span class="help-block" v-if="!valid">{{ validationError }}</span>
+        <span class="input-group-btn" v-if="this.$slots.addonButton">
+            <slot name="addonButton"></slot>
+        </span>
     </div>
 </template>
 
