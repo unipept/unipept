@@ -1,6 +1,17 @@
 <template>
     <card-nav>
         <tab label="GO terms" :active="true">
+            <div v-if="!this.$store.getters.activeDataset" class="mpa-unavailable hidden go">
+                <h3>Biological Process</h3>
+                <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we ware preparing your data..." class="mpa-placeholder">
+                <h3>Cellular Component</h3>
+                <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we ware preparing your data..." class="mpa-placeholder">
+                <h3>Molecular Function</h3>
+                <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we ware preparing your data..." class="mpa-placeholder">
+            </div>
+            <div v-else v-for="variant in namespaces">
+                <go-terms-summary :namespace="variant"></go-terms-summary>
+            </div>
         </tab>
         <tab label="EC numbers">
         </tab>
@@ -13,11 +24,14 @@
     import {Prop, Watch} from "vue-property-decorator";
     import CardNav from "../../components/card/card-nav.vue";
     import Tab from "../../components/card/tab.vue";
+    import GoTermsSummary from "./tables/go-terms-summary.vue";
+    import MpaAnalysisManager from "../MpaAnalysisManager";
+
     @Component({
-        components: {Tab, CardNav}
+        components: {GoTermsSummary, Tab, CardNav}
     })
     export default class FunctionalSummaryCard extends Vue {
-
+        namespaces: string[] = MpaAnalysisManager.GO_NAMESPACES;
     }
 </script>
 

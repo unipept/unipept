@@ -3,6 +3,7 @@
  */
 export default class DisplaySettings {
     private readonly onlyStarredFa: boolean;
+    private readonly sortFa: any;
 
     constructor(onlyStarredFa: boolean) {
         this.onlyStarredFa = onlyStarredFa;

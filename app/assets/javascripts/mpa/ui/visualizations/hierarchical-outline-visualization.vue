@@ -51,11 +51,8 @@
         }
 
         @Watch('activeSearchTerm') onSearchTermChanged(newSearchTerm: string, oldSearchTerm: string) {
-            console.log(this.searchTree);
-            console.log(newSearchTerm);
             if (this.searchTree && newSearchTerm !== "") {
                 setTimeout(() => {
-                    console.log("START SEARCH!");
                     this.searchTree.search(newSearchTerm);
                 }, 500);
             }
@@ -63,7 +60,6 @@
 
         private initSearchTree() {
             if (this.dataset != null && this.dataset.getDataset() != null) {
-                console.log("REDRAW TREE!");
                 let tree: Tree = this.dataset.getDataset().getTree();
                 this.searchTree = constructSearchtree(tree, this.$store.getters.searchSettings.isEquateIl(), () => {});
             }
