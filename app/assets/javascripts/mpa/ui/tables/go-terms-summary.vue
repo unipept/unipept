@@ -36,7 +36,7 @@
         private name: string = "Peptides";
 
         private faSortSettings: FaSortSettings = new FaSortSettings(
-            (x: string) => this.formatters[this.formatType](x["field"]),
+            (x: string) => this.formatters[this.formatType](x[this.fieldType]),
             (x: string) => this.formatters[this.formatType](x),
             this.fieldType,
             this.shadeFieldType,
