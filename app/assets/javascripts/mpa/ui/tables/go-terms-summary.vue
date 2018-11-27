@@ -12,13 +12,39 @@
     import {FunctionalAnnotations} from "../../../fa/FunctionalAnnotations";
     import NewPeptideContainer from "../../NewPeptideContainer";
     import {Dataset} from "../../dataset";
+    import FaPercentSettings from "./FaPercentSettings";
+    import FaSortSettings from "./FaSortSettings";
 
     @Component
     export default class GoTermsSummary extends Vue {
         @Prop() namespace: string;
         @Prop({default: null}) peptideContainer: NewPeptideContainer | null;
 
-        @Watch('dataset') onDatasetChanged() {
+        // TODO fix redo timeout
+        private redoTimeout: number;
+        private percentSettings: FaPercentSettings = new FaPercentSettings(5);
+
+        private readonly formatters = {
+            "int": x => x.toString(),
+            "percent": x => numberToPercent(x),
+            "2pos": x => x.toFixed(2).toString(),
+        };
+
+        private formatType: string = "int";
+        private fieldType: string = "numberOfPepts";
+        private shadeFieldType: string = "fractionOfPepts";
+        private name: string = "Peptides";
+
+        private faSortSettings: FaSortSettings = new FaSortSettings(
+            (x: string) => this.formatters[this.formatType](x["field"]),
+            (x: string) => this.formatters[this.formatType](x),
+            this.fieldType,
+            this.shadeFieldType,
+            this.name,
+            (a, b) => b[this.fieldType] - a[this.fieldType]
+        );
+
+        @Watch('peptideContainer') onPeptideContainerChanged() {
             this.initGoTable();
         }
 
@@ -26,14 +52,17 @@
             this.initGoTable();
         }
 
-        initGoTable(): void {
+        async initGoTable(): Promise<void> {
             const goPanel = d3.select(this.$el);
             goPanel.html("");
+
+            await this.redoFAcalculations();
 
             if (this.peptideContainer && this.peptideContainer.getDataset()) {
                 let dataset: Dataset = this.peptideContainer.getDataset();
 
                 let fa = dataset.fa;
+                console.log(fa);
                 const go = fa.getGroup("GO");
                 // TODO what does oldFa do here?
                 //const goOld = oldFa === null ? null : oldFa.getGroup("GO");
@@ -49,7 +78,7 @@
         }
 
         private setUpGoTable(goResultset, target, oldGoResultset = null) {
-            const sortOrder = this.$store.getters.displaySettings.isOnlyStarredFa();
+            const sortOrder = this.faSortSettings;
             const tablepart: D3.selection = target.append("div").attr("class", "col-xs-8");
             let data = goResultset.getSorted(sortOrder.sortFunc);
             // TODO fix type annotations in future!
@@ -189,6 +218,31 @@
                 (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
                 (!d.data.count ? "0" : d.data.count) +
                 (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower";
+        }
+
+        private async redoFAcalculations(name = "Organism", id = -1, timeout = 500): Promise<void> {
+
+            if (this.peptideContainer && this.peptideContainer.getDataset()) {
+                let dataset: Dataset = this.peptideContainer.getDataset();
+
+                const percent = this.percentSettings.percentFa;
+                let sequences = null;
+
+                if (id > 0) {
+                    const taxonData = dataset.getTree().nodes.get(id);
+                    sequences = dataset.getTree().getAllSequences(id);
+                    $(".mpa-fa-scope").text(`${taxonData.name} (${taxonData.rank})`);
+                    $(".mpa-fa-numpepts").text("");
+                    $("#fa-filter-warning").show();
+                } else {
+                    $("#fa-filter-warning").hide();
+                }
+
+                await dataset.reprocessFA(percent, sequences);
+                if (dataset.baseFa === null) {
+                    dataset.setBaseFA();
+                }
+            }
         }
     }
 </script>

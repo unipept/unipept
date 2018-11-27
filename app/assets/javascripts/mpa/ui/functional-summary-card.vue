@@ -1,7 +1,7 @@
 <template>
     <card-nav>
         <tab label="GO terms" :active="true">
-            <div v-if="!this.$store.getters.activeDataset" class="mpa-unavailable hidden go">
+            <div v-if="!$store.getters.activeDataset" class="mpa-unavailable hidden go">
                 <h3>Biological Process</h3>
                 <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we ware preparing your data..." class="mpa-placeholder">
                 <h3>Cellular Component</h3>
@@ -10,7 +10,7 @@
                 <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we ware preparing your data..." class="mpa-placeholder">
             </div>
             <div v-else v-for="variant in namespaces">
-                <go-terms-summary :namespace="variant"></go-terms-summary>
+                <go-terms-summary :namespace="variant" :peptide-container="$store.getters.activeDataset"></go-terms-summary>
             </div>
         </tab>
         <tab label="EC numbers">

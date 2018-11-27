@@ -1,5 +1,5 @@
-import {FunctionalAnnotations} from "../fa/FunctionalAnnotations";
-import {numberToPercent} from "../utils";
+import {FunctionalAnnotations} from "../../../fa/FunctionalAnnotations";
+import {numberToPercent} from "../../../utils";
 
 export default class FaSortSettings {
     public readonly format: (x: string) => string;
@@ -7,14 +7,15 @@ export default class FaSortSettings {
     public readonly field: string;
     public readonly shadeField: string;
     public readonly name: string;
-    public readonly sortFunc: (a: FunctionalAnnotations, b: FunctionalAnnotations) => boolean;
+    public readonly sortFunc: (a: FAInfo, b: FAInfo) => number;
 
     constructor(
         format: (x: string) => string,
         formatData: (x: string) => string,
-        field: string, shadeField: string,
+        field: string,
+        shadeField: string,
         name: string,
-        sortFunc: (a: FunctionalAnnotations, b: FunctionalAnnotations) => boolean
+        sortFunc: (a: FAInfo, b: FAInfo) => number
     ) {
         this.format = format;
         this.formatData = formatData;

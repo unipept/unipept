@@ -1,19 +1,19 @@
 <template>
     <card-nav>
         <tab label="Sunburst" :active="true" id="sunburstWrapper">
-            <sunburst-visualization v-if="this.$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></sunburst-visualization>
+            <sunburst-visualization v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></sunburst-visualization>
             <div v-else class="mpa-waiting">
                 <img alt="Please wait while we are preparing your data..." class="mpa-placeholder" src="/images/mpa/placeholder_sunburst.svg">
             </div>
         </tab>
         <tab label="Treemap" id="treemapWrapper">
-            <treemap-visualization v-if="this.$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></treemap-visualization>
+            <treemap-visualization v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></treemap-visualization>
             <div v-else class="mpa-waiting">
                 <img alt="Please wait while we are preparing your data..." class="mpa-placeholder" src="/images/mpa/placeholder_treemap.svg">
             </div>
         </tab>
         <tab label="Treeview" id="treeviewWrapper">
-            <treeview-visualization v-if="this.$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></treeview-visualization>
+            <treeview-visualization v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></treeview-visualization>
             <div v-else class="mpa-waiting">
                 <img alt="Please wait while we are preparing your data..." class="mpa-placeholder" src="/images/mpa/placeholder_treeview.svg">
             </div>
