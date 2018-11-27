@@ -50,7 +50,7 @@
                 const article = goPanel.append("div").attr("class", "row");
                 article.append("h3").text(stringTitleize(this.namespace));
                 this.setUpGoTable(nsFagroup, article, oldNsFagroup);
-                // this.setUpQuickGo(nsFagroup, article);
+                this.setUpQuickGo(nsFagroup, article);
             }
         }
 
@@ -195,6 +195,45 @@
                 (d.data.self_count && d.data.self_count === 1 ? " sequence" : " sequences") + " specific to this level<br/>" +
                 (!d.data.count ? "0" : d.data.count) +
                 (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower";
+        }
+
+        private setUpQuickGo(goResultset: FunctionalAnnotations, target: any) {
+            const sortOrder = this.sortSettings;
+            /** @type {string[]} */
+            const top5 = goResultset.getSorted(sortOrder.sortFunc).slice(0, 5).map(x => x.code);
+
+            if (top5.length > 0) {
+                const quickGoChartSmallURL = GOTerms.quickGOChartURL(top5, false);
+                const quickGoChartURL = GOTerms.quickGOChartURL(top5, true);
+
+                const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${sortOrder.formatData(goResultset.valueOf(x, sortOrder.field) as string)})`);
+                const top5sentence = top5WithNames.slice(0, -1).join(", ")
+                    + (top5.length > 1 ? " and " : "")
+                    + top5WithNames[top5WithNames.length - 1];
+                target
+                    .append("div").attr("class", "col-xs-4")
+                    .append("img")
+                    .attr("src", quickGoChartSmallURL)
+                    .attr("class", "quickGoThumb")
+                    .attr("title", `QuickGO chart of ${top5sentence}`)
+                    // TODO fix click with modal!
+                    // .on("click", () => {
+                    //     // Content with thumbnail image
+                    //     const $modal = showInfoModal("QuickGo " + goResultset.getName(), `
+                    //     This chart shows the realationship between the ${top5.length} most occuring GO terms: ${top5sentence}.<br/>
+                    //     <a href="${quickGoChartURL}" target="_blank" title="Click to enlarge in new tab"><img style="max-width:100%" src="${quickGoChartSmallURL}" alt="QuickGO chart of ${top5sentence}"/></a>
+                    //     <br>
+                    //     Provided by <a href="https://www.ebi.ac.uk/QuickGO/annotations?goId=${top5.join(",")}" target="_blank">QuickGo</a>.`,
+                    //         {wide: true});
+                    //
+                    //     // load full image, once loaded, replace src
+                    //     const fullImage = new Image();
+                    //     fullImage.onload = () => {
+                    //         $modal.find("img").first().attr("src", quickGoChartURL);
+                    //     };
+                    //     fullImage.src = quickGoChartURL;
+                    // });
+            }
         }
     }
 </script>
