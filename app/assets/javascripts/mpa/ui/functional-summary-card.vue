@@ -1,7 +1,7 @@
 <template>
     <card-nav>
         <tab label="GO terms" :active="true">
-            <div v-if="!$store.getters.activeDataset" class="mpa-unavailable hidden go">
+            <div v-if="!$store.getters.activeDataset" class="mpa-unavailable go">
                 <h3>Biological Process</h3>
                 <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we ware preparing your data..." class="mpa-placeholder">
                 <h3>Cellular Component</h3>
