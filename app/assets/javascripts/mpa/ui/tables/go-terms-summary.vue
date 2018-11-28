@@ -34,11 +34,11 @@
             this.initGoTable();
         }
 
-        async initGoTable(): Promise<void> {
+        private async initGoTable(): Promise<void> {
             const goPanel = d3.select(this.$el);
             goPanel.html("");
 
-            if (this.fa) {
+            if (this.fa && this.namespace) {
                 const go = this.fa.getGroup("GO");
 
                 // TODO what does oldFa do here?

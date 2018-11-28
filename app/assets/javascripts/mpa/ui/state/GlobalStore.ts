@@ -85,7 +85,6 @@ const mpaMutations: MutationTree<GlobalState> = {
         this.searchSettings = searchSettings;
     },
     SET_ACTIVE_DATASET(state: GlobalState, dataset: NewPeptideContainer | null): void {
-        console.log(dataset);
         state.activeDataset = dataset;
     },
 };

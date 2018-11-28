@@ -16,6 +16,7 @@
             </div>
         </tab>
         <tab label="EC numbers">
+            <ec-numbers-summary :fa="fa" :peptide-container="$store.getters.activeDataset" :sort-settings="faSortSettings"></ec-numbers-summary>
         </tab>
     </card-nav>
 </template>
@@ -34,9 +35,10 @@
     import {Dataset} from "../dataset";
     import NewPeptideContainer from "../NewPeptideContainer";
     import {FunctionalAnnotations} from "../../fa/FunctionalAnnotations";
+    import EcNumbersSummary from "./tables/ec-numbers-summary.vue";
 
     @Component({
-        components: {GoTermsSummary, Tab, CardNav},
+        components: {EcNumbersSummary, GoTermsSummary, Tab, CardNav},
         computed: {
             watchableDataset: {
                 get(): NewPeptideContainer {
