@@ -36,7 +36,6 @@
     import GOTerms from "../../../fa/goterms";
     import {FunctionalAnnotations} from "../../../fa/FunctionalAnnotations";
     import NewPeptideContainer from "../../NewPeptideContainer";
-    import {Dataset} from "../../dataset";
     import FaPercentSettings from "./FaPercentSettings";
     import FaSortSettings from "./FaSortSettings";
     import Modal from "../../../components/modal/modal.vue";
@@ -60,15 +59,15 @@
         // TODO fix redo timeout
         private redoTimeout: number;
 
-        @Watch('fa') onFaChanged() {
-            this.initGoTable();
+        @Watch('fa') onFaChanged(newFa: FunctionalAnnotations, oldFa: FunctionalAnnotations): void {
+            this.initGoTable(oldFa);
         }
 
         mounted() {
             this.initGoTable();
         }
 
-        private async initGoTable(): Promise<void> {
+        private async initGoTable(oldFa = null): Promise<void> {
             const goPanel = d3.select(this.$refs.panel);
             goPanel.html("");
 
@@ -77,10 +76,8 @@
                 console.log(this.namespace);
                 console.log(this.fa);
 
-                // TODO what does oldFa do here?
-                //const goOld = oldFa === null ? null : oldFa.getGroup("GO");
-                //const oldNsFagroup = goOld === null ? null : goOld.getGroup(this.faNamespace);
-                const oldNsFagroup = null;
+                const goOld = oldFa === null ? null : oldFa.getGroup("GO");
+                const oldNsFagroup = goOld === null ? null : goOld.getGroup(this.namespace);
 
                 const nsFagroup = go.getGroup(this.namespace);
                 const article = goPanel.append("div").attr("class", "row");
@@ -283,7 +280,7 @@
             $(downloadLink[0]).tooltip();
         }
 
-        async downloadPeptidesFor(name, sequences) {
+        private async downloadPeptidesFor(name, sequences) {
             let container = this.peptideContainer;
 
             if (container && container.getDataset()) {
