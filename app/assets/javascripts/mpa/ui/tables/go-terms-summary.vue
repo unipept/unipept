@@ -24,7 +24,14 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import {logToGoogle, numberToPercent, stringTitleize, triggerDownloadModal} from "../../../utils";
+    import {
+        downloadDataByForm,
+        logToGoogle,
+        numberToPercent,
+        stringTitleize,
+        toCSVString,
+        triggerDownloadModal
+    } from "../../../utils";
     import {AmountTable} from "../../../components/amount_table";
     import GOTerms from "../../../fa/goterms";
     import {FunctionalAnnotations} from "../../../fa/FunctionalAnnotations";
@@ -112,8 +119,7 @@
                     },
                     {
                         builder: cell => {
-                            // TODO Fix download!
-                            //this.addFADownloadBtn(cell, d => d.code);
+                            this.addFADownloadBtn(cell, d => d.code);
                         },
                         text: d => "",
                         style: {"width": "6em", "text-align": "right"},
@@ -243,7 +249,6 @@
                     .attr("src", quickGoChartSmallURL)
                     .attr("class", "quickGoThumb")
                     .attr("title", `QuickGO chart of ${top5sentence}`)
-                    // TODO fix click with modal!
                     .on("click", () => {
                         this.top5 = top5;
                         this.top5Sentence = top5sentence;
@@ -258,6 +263,46 @@
 
                         this.chartImageModalActive = true;
                     });
+            }
+        }
+
+        private addFADownloadBtn(cell, codeFn) {
+            const downloadLink = cell.append("span");
+            downloadLink.classed("glyphicon glyphicon-download glyphicon-inline down btn-icon", true)
+                .attr("title", "Download CSV of the matched peptides")
+                .attr("role", "button")
+                .attr("tabindex", 0)
+                .on("click", d => {
+                    d3.event.stopPropagation();
+                    this.downloadPeptidesFor(codeFn(d), Object.keys(d.sequences));
+                });
+
+            // HACK: d3 to jQuery
+            $(downloadLink[0]).tooltip();
+        }
+
+        async downloadPeptidesFor(name, sequences) {
+            let container = this.peptideContainer;
+
+            if (container && container.getDataset()) {
+                let dataset = container.getDataset();
+
+                const result = [[
+                    "peptide",
+                    "spectral count",
+                    "matching proteins",
+                    "matching proteins with " + name,
+                    "percenage proteins with " + name,
+                ]]
+                    .concat((await dataset.getPeptidesByFA(name, sequences))
+                        .map(x => [
+                            x.sequence,
+                            x.count,
+                            x.allCount,
+                            x.hits,
+                            100 * x.hits / x.allCount,
+                        ]));
+                downloadDataByForm(toCSVString(result), name + ".csv", "text/csv");
             }
         }
     }
