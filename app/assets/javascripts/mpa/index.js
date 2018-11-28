@@ -5,9 +5,14 @@ import ECNumbers from "../fa/ecnumbers.js";
 import GOTerms from "../fa/goterms.js";
 import {showInfoModal} from "../modal.js";
 import {showNotification} from "../notifications.js";
-import {addCopy, downloadDataByForm, logToGoogle, numberToPercent, stringTitleize, toCSVString, triggerDownloadModal, showError} from "../utils.js";
+import {addCopy, downloadDataByForm, logToGoogle, numberToPercent, stringTitleize, toCSVString, triggerDownloadModal, showError, showInfo} from "../utils.js";
 import {Dataset} from "./dataset.js";
 import {constructSearchtree} from "./searchtree.js";
+import {DatasetManager} from "./datasetManager";
+import {PeptideContainer} from "./peptideContainer";
+import {SESSION_STORAGE_TYPE} from "./storageTypeConstants";
+import {LoadDatasetsCardManager} from "./loadDatasetsCardManager";
+import {initializeDeterminateCircles, setDeterminateCirclesProgress} from "../progressBar";
 /* eslint require-jsdoc: off */
 
 /**
@@ -19,85 +24,262 @@ import {constructSearchtree} from "./searchtree.js";
  */
 
 /**
- * The Multi Peptide Analysis frontened class
+ * The Multi Peptide Analysis frontend class
  */
 class MPA {
     /**
-     * Setup the MPA gui
-     * @param {string[]} peptides List of peptides to analyse
-     * @param {boolean} il equate I and L
-     * @param {boolean} dupes Filter duplicate peptides
-     * @param {boolean} missed  Advanced missed cleavage handling
+     * Setup the MPA gui,
+     *
+     * @param {string} selectedDatasets An object containing the search settings that should be used for the initial analysis and
+     *        two serialized DatasetManager's: one for local storage and one for session storage.
      */
-    constructor(peptides = [], il = true, dupes = true, missed = false) {
-        /** @type {Dataset[]} */
-        this.datasets = [];
-        /** @type {MPAConfig} */
-        this.searchSettings = {
-            il: il,
-            dupes: dupes,
-            missed: missed,
+    constructor(selectedDatasets) {
+        this._localStorageManager = DatasetManager.fromJSON(JSON.stringify(selectedDatasets.local_storage));
+        this._sessionStorageManager = DatasetManager.fromJSON(JSON.stringify(selectedDatasets.session_storage));
+
+        let clearDatasetsListener = () => {
+            $("#dataset_list").html("");
         };
 
-        /** @type {MPADisplaySettings} */
+        let addDatasetListener = (dataset, secondaryActionCallback) => {
+            if ($("#dataset_list .list-item--two-lines").length === 0) {
+                $("#dataset_list").html("");
+            }
+
+            // Check if the dataset that should be added already exists.
+            if ($("#list-item-" + dataset.getId()).length > 0) {
+                return;
+            }
+
+            let $listItem = this.renderDatasetButton(dataset, secondaryActionCallback);
+            this.processDataset(dataset, $listItem)
+                .then(() => {
+                    let $selectedRadioButtons = $(".select-dataset-radio-button:checked");
+                    if ($selectedRadioButtons.length === 0) {
+                        $listItem.find(".select-dataset-radio-button").prop("checked", true);
+                        this.selectListItem($listItem);
+                    }
+                });
+        };
+
+        let removeDatasetListener = (dataset) => {
+            $("#list-item-" + dataset.getId()).remove();
+
+            if ($("#dataset_list .list-item--two-lines").length === 0) {
+                $("#dataset_list").text("Please select a dataset from the right to continue the analysis.");
+            }
+        };
+
+        this._loadCardsManager = new LoadDatasetsCardManager(
+            this._localStorageManager,
+            this._sessionStorageManager,
+            clearDatasetsListener,
+            removeDatasetListener,
+            addDatasetListener
+        );
+
+        /** @type {Dataset[]} */
+        this.datasets = [];
+        this.dataset = undefined;
+
+        /** @type {MPAConfig} */
+        this.searchSettings = selectedDatasets.settings;
+
         // @ts-ignore because it will be filled by setUpButtons
         this.displaySettings = {
             onlyStarredFA: false,
         };
 
-        this.addDataset(peptides);
-        this.setUpForm(peptides);
         this.setUpButtons();
         this.setUpHelp();
         this.setUpSaveImage();
         this.setUpFullScreen();
         this.setUpActionBar();
+
+        // Keeps how many datasets are currently in progress of being started
+        this.processing = 0;
     }
 
     showError(error) {
         showError(error, `
-        An error occured while proccesing your peptides. 
-        Try resubmitting your peptides. 
-        Contact us if the problem persists.`);
+            An error occured while proccesing your peptides. 
+            Try resubmitting your peptides. 
+            Contact us if the problem persists.
+        `);
+    }
+
+    getDatasetByName(datasetName) {
+        for (let dataset of this.datasets) {
+            if (dataset.name === datasetName) {
+                return dataset;
+            }
+        }
+        return undefined;
+    }
+
+    enableSearchSettingsInterface(enable = true) {
+        $(".settings-input-item").prop("disabled", !enable);
     }
 
     /**
-     * Creates a new dataset based on a list of peptides. After creating, an
-     * analysis is run with the current search settings. The returned Promise
-     * contains the new dataset and resolves after the analysis is complete.
      *
-     * @param  {string[]}  peptides The list of peptides to analyse
-     * @return {Promise<Dataset>} Promise of the created dataset object.
+     * @param {PeptideContainer} peptideContainer
+     * @param $listItem The DOM-element in the selection list corresponding with the peptide container that should be
+     *        rendered.
+     * @returns {Promise<void>}
      */
-    async addDataset(peptides) {
-        this.enableProgressBar(true, true);
-        this.enableProgressBar(true, false, "#progress-fa-analysis");
-        let dataset = new Dataset(peptides);
+    async processDataset(peptideContainer, $listItem) {
+        if (this.processing === 0) {
+            // Disable the search settings interface
+            this.enableSearchSettingsInterface(false);
+        }
+
+        this.processing++;
+
+        let peptides = await peptideContainer.getPeptides();
+        let dataset = new Dataset(peptides, peptideContainer.getName(), peptideContainer.getId());
+        await this.analyse(dataset);
         this.datasets.push(dataset);
-        await this.analyse(this.searchSettings);
-        this.enableProgressBar(false);
-        return dataset;
+
+        let $circularProgress = $listItem.find(".circular-progress");
+        $circularProgress.addClass("hidden");
+        let $radioButton = $listItem.find(".select-dataset-radio-button");
+        $radioButton.removeClass("hidden");
+
+        this.processing--;
+
+        if (this.processing === 0) {
+            // Enable the search settings interface
+            this.enableSearchSettingsInterface();
+        }
+    }
+
+    /**
+     * Render the dataset button for a specific peptide container.
+     *
+     * @param {PeptideContainer} peptideContainer The peptideContainer for whom a button should be rendered.
+     * @param secondaryActionCallback The function that's executed when the secondary action button of this list item
+     *        is clicked.
+     */
+    renderDatasetButton(peptideContainer, secondaryActionCallback) {
+        let $list = $("#dataset_list");
+
+        let $listItem = $("<div class='list-item--two-lines' id='list-item-" + peptideContainer.getId() + "'>");
+        let $primaryAction = $("<span class='list-item-primary-action'>");
+
+        $primaryAction.append($("<div class='hidden selected-list-item-bar' style='background-color: #2196F3; height: 72px; width: 5px; position: absolute; left: 0;'>"));
+
+        let $itemRadioButton = $("<input type='radio' value='' class='input-item select-dataset-radio-button hidden' style='width: 24px;'>");
+        $itemRadioButton.data("name", peptideContainer.getName());
+        $primaryAction.append($itemRadioButton);
+
+        let $circularProgress = $("<div class='circular-progress' data-size='24'>");
+        $primaryAction.append($circularProgress);
+        initializeDeterminateCircles($circularProgress);
+        eventBus.on("dataset-" + peptideContainer.getId() + "-progress", (progress) => {
+            setDeterminateCirclesProgress($circularProgress, progress);
+        });
+
+        $listItem.append($primaryAction);
+
+        // The current dataset view should be switched when a radio button is clicked.
+        let that = this;
+        $itemRadioButton.click(function() {
+            that.selectListItem($listItem);
+        });
+
+        let $primaryContent = $("<span class='list-item-primary-content'>");
+        $primaryContent.append($("<span>").text(peptideContainer.getName()));
+        $primaryContent.append($("<span class='list-item-date'>").text(peptideContainer.getDate()));
+        let $contentBody = $("<span class='list-item-body'>");
+        $contentBody.append($("<div>").text(peptideContainer.getAmountOfPeptides() + " peptides"));
+        $primaryContent.append($contentBody);
+        $listItem.append($primaryContent);
+
+        let $secondaryAction = $("<span class='list-item-secondary-action'>");
+        let $trashAction = $("<span class='glyphicon glyphicon-trash'>");
+        $secondaryAction.append($trashAction);
+
+        $trashAction.click(() => {
+            // Check whether item that's being deleted is currently selected
+            if ($(".select-dataset-radio-button:checked").get(0) === $itemRadioButton.get(0)) {
+                // Dataset that's currently active is no longer available. Switch to different view
+                $(".mpa-unavailable").removeClass("hidden");
+                $("#mpa-sunburst").addClass("hidden");
+                $("#mpa-treemap").addClass("hidden");
+                $("#mpa-treeview").addClass("hidden");
+                $("#goPanel").addClass("hidden");
+                $("#go-summary").html("");
+                $("#ecTreeView").addClass("hidden");
+                $("#ec-summary").html("");
+                $("#ecTable").html("");
+                $("#searchtree").html("");
+
+                secondaryActionCallback();
+
+                // Switch to next available dataset
+                let $selectedRadioButtons = $(".select-dataset-radio-button:not(.hidden)");
+                if ($selectedRadioButtons.length > 0) {
+                    this.selectListItem($selectedRadioButtons.first().closest(".list-item--two-lines"));
+                }
+            } else {
+                secondaryActionCallback();
+            }
+        });
+
+        let $infoAction = $("<span class='glyphicon glyphicon-info-sign' style='margin-left: 5px;'>");
+        $secondaryAction.append($infoAction);
+
+        $infoAction.click(() => {
+            peptideContainer.getPeptides().then((peptides) => {
+                let $content = $("<div>");
+                $content.append($("<label for='#peptide-list'>").text("Peptide list"));
+                $content.append($("<textarea disabled style='min-width:100%; max-width: 100%' rows='15' name='peptide-list' id='peptide-list'>").text(peptides.join('\n')));
+
+                showInfoModal(
+                    peptideContainer.getName(),
+                    $content
+                );
+            });
+        });
+
+        $listItem.append($secondaryAction);
+
+        $list.append($listItem);
+        return $listItem
+    }
+
+    selectListItem($listItem) {
+        let $radioButton = $listItem.find(".select-dataset-radio-button");
+
+        // Select this radio button and deselect the other radiobuttons
+        $(".select-dataset-radio-button").prop("checked", false);
+        $radioButton.prop("checked", true);
+        $(".selected-list-item-bar").addClass("hidden");
+        $listItem.find(".selected-list-item-bar").removeClass("hidden");
+
+        let datasetName = $radioButton.data("name");
+        this.dataset = this.getDatasetByName(datasetName);
+
+        $(".mpa-unavailable").addClass("hidden");
+        $("#goPanel").removeClass("hidden");
+        this.setUpVisualisations(this.dataset.tree);
+        this.updateStats(this.dataset);
     }
 
     /**
      * Analyses the current dataset for a given set of search settings. Returns
      * an empty Promise that resolves when the analysis is done.
      *
-     * @param  {object}  searchSettings The searchsettings (il, dupes, missed)
-     *   to use.
-     * @return {Promise<Dataset>} The dataset on which the analysis was
-     *   performed
+     * @param {Dataset} dataset
+     * @return {Promise<void>}
      */
-    async analyse(searchSettings) {
-        const dataset = this.datasets[0];
+    async analyse(dataset) {
         await dataset.search(this.searchSettings).catch(error => this.showError(error));
-        this.setUpVisualisations(dataset.tree);
-        this.updateStats(dataset);
-        return dataset;
     }
 
     async downloadPeptidesFor(name, sequences) {
-        const dataset = this.datasets[0];
+        const dataset = this.dataset;
         const result = [[
             "peptide",
             "spectral count",
@@ -117,18 +299,41 @@ class MPA {
     }
 
     /**
-     * Updates the search settings and reruns the analysis. Resolves when the
-     * analysis is done.
-     *
-     * @param  {MPAConfig}  searchSettings
+     * Updates the search settings and reruns all analysis.
      */
-    async updateSearchSettings(searchSettings) {
-        this.searchSettings = searchSettings;
-        this.enableProgressBar(true, true);
-        this.enableProgressBar(true, false, "#progress-fa-analysis");
-        $("#search-intro").text("Please wait while we process your data");
-        await this.analyse(this.searchSettings);
-        this.enableProgressBar(false);
+    async updateSearchSettings() {
+        let $il = $("#il");
+        let $dupes = $("#dupes");
+        let $missed = $("#missed");
+
+        this.searchSettings = {
+            il: $il.prop("checked"),
+            dupes: $dupes.prop("checked"),
+            missed: $missed.prop("checked")
+        };
+
+        $(".select-dataset-radio-button").prop("disabled", true);
+        this.datasets = [];
+
+        let $checkedRadiobutton = $(".select-dataset-radio-button:checked");
+        let checkedName = $checkedRadiobutton.data("name");
+
+        let selectedDatasets = await this._localStorageManager.getSelectedDatasets();
+        selectedDatasets = selectedDatasets.concat(await this._sessionStorageManager.getSelectedDatasets());
+
+        for (let container of selectedDatasets) {
+            let $listItem = $("#list-item-" + container.getId());
+
+            this.processDataset(container, $listItem)
+                .then(() => {
+                    // Make sure that the radio button that was selected before is now recomputed once were done. This
+                    // will only be performed when no other dataset has been selected by the user in the mean time.
+                    let $checkedRadiobutton = $(".select-dataset-radio-button:checked");
+                    if ($checkedRadiobutton.data("name") === checkedName) {
+                        this.selectListItem($listItem);
+                    }
+                });
+        }
     }
 
     /**
@@ -144,7 +349,7 @@ class MPA {
     }
 
     /**
-     * Creates a line indicating the trust of the functioan annotations
+     * Creates a line indicating the trust of the function annotations
      * @param {FunctionalAnnotations} fa
      * @param {String} kind Human readable word that fits in "To have at least one … assigned to it"
      * @return {string}
@@ -172,14 +377,14 @@ class MPA {
      * @param {number} [id=-1]
      *    the taxon id whose sequences should be taken into account use -1 to use everything (Organism)
      * @param {number} [timeout=500]
-     *    Time to wait since last invocation to start the lookup procces (in ms)
+     *    Time to wait since last invocation to start the lookup process (in ms)
      */
     redoFAcalculations(name = "Organism", id = -1, timeout = 500) {
         this.enableProgressBar(true, false, "#progress-fa-analysis");
         clearTimeout(this._redoFAcalculationsTimeout);
 
         const percent = this.displaySettings.percentFA;
-        const dataset = this.datasets[0];
+        const dataset = this.dataset;
         let sequences = null;
 
         this._redoFAcalculationsTimeout = setTimeout(() => {
@@ -215,7 +420,7 @@ class MPA {
      * set up analysis pannel
      * @param {FunctionalAnnotations} fa Functional annotations
      * @param {FunctionalAnnotations} [oldFa=null]
-     *     Snapshot of functional annotations for comparision
+     *     Snapshot of functional annotations for comparison
      */
     setUpFAVisualisations(fa, oldFa = null) {
         this.setUpGo(fa, oldFa);
@@ -226,13 +431,15 @@ class MPA {
      * Create visualisations of the GO numbers
      * @param {FunctionalAnnotations} fa Functional annotations
      * @param {FunctionalAnnotations} [oldFa=null]
-     *     Snapshot of functional annotations for comparision
+     *     Snapshot of functional annotations for comparison
      */
     setUpGo(fa, oldFa = null) {
         const go = fa.getGroup("GO");
         const goOld = oldFa === null ? null : oldFa.getGroup("GO");
 
-        $("#go-summary").html(this.trustLine(go, "GO term"));
+        if ($(".select-dataset-radio-button").length > 0) {
+            $("#go-summary").html(this.trustLine(go, "GO term"));
+        }
         const goPanel = d3.select("#goPanel");
         goPanel.html("");
         for (let variant of GOTerms.NAMESPACES) {
@@ -261,14 +468,14 @@ class MPA {
     }
 
     /**
-     * Generate the extra inforamtion when clicked on a row in FA tables
+     * Generate the extra information when clicked on a row in FA tables
      * @param {*} d
      * @param {string} code
      * @param {*} container
      * @param {number} width
      */
     faMoreinfo(d, code, container, width) {
-        const dataset = this.datasets[0];
+        const dataset = this.dataset;
         const $container = $(container);
 
         const $dlbtn = $(`
@@ -457,7 +664,10 @@ class MPA {
         /** @type {ECNumbers} */
         // @ts-ignore
         const faEC = fa.getGroup("EC");
-        $("#ec-summary").html(this.trustLine(faEC, "EC number"));
+        if ($(".select-dataset-radio-button").length > 0) {
+            $("#ec-summary")
+                .html(this.trustLine(faEC, "EC number"));
+        }
 
         this.setUpECTree(faEC);
         this.setUpECTable(fa, oldFa);
@@ -492,6 +702,10 @@ class MPA {
      * @return {TreeView} The created treeview
      */
     setUpECTree(ecResultSet) {
+        if ($(".select-dataset-radio-button").length > 0) {
+            $("#ecTreeView").removeClass("hidden");
+        }
+
         const $container = $("#ecTreeView output");
         $("#save-btn-ec").unbind("click");
         $container.empty();
@@ -548,6 +762,10 @@ class MPA {
      *     Snapshot of functional annotations for comparision
      */
     setUpECTable(fa, oldFa = null) {
+        if ($(".select-dataset-radio-button").length === 0) {
+            return;
+        }
+
         const sortOrder = this.displaySettings.sortFA;
 
         const ecResultSet = fa.getGroup("EC");
@@ -640,24 +858,6 @@ class MPA {
         }
     }
 
-    setUpForm(peptides) {
-        $("#qs").text(peptides.join("\n"));
-        $("#il").prop("checked", this.searchSettings.il);
-        $("#dupes").prop("checked", this.searchSettings.dupes);
-        $("#missed").prop("checked", this.searchSettings.missed);
-
-        // enable tooltips
-        $(".js-has-hover-tooltip").tooltip({
-            container: "body",
-            placement: "right",
-        });
-        $(".js-has-focus-tooltip").tooltip({
-            trigger: "focus",
-            container: "body",
-            placement: "right",
-        });
-    }
-
     setUpButtons() {
         // sunburst resetsetUpFAVisualisations
         $("#sunburst-reset").click(() => this.sunburst.reset());
@@ -686,14 +886,7 @@ class MPA {
         $("#treeview-reset").click(() => this.treeview.reset());
 
         // download results
-        $("#mpa-download-results").click(async () => downloadDataByForm(await this.datasets[0].toCSV(), "mpa_result.csv", "text/csv"));
-        // update settings
-        $("#mpa-update-settings").click(() => this.updateSearchSettings({
-            il: $("#il").prop("checked"),
-            dupes: $("#dupes").prop("checked"),
-            missed: $("#missed").prop("checked"),
-        }));
-
+        $("#mpa-download-results").click(async () => downloadDataByForm(await this.dataset.toCSV(), "mpa_result.csv", "text/csv"));
 
         // setup FA percent selector
         const $perSelector = $("#mpa-fa-filter-precent");
@@ -741,7 +934,7 @@ class MPA {
             $selected.addClass("active");
             $sortNameContainer.text($selected.text());
 
-            if (updateView) this.setUpFAVisualisations(this.datasets[0].fa, this.datasets[0].baseFa);
+            if (updateView) this.setUpFAVisualisations(this.dataset.fa, this.dataset.baseFa);
         };
         setFaSort($("#mpa-select-fa-sort-default"), false);
 
@@ -768,6 +961,13 @@ class MPA {
             // therefore delegated events won't be fired
             event.stopPropagation();
         });
+
+        $("#update-button").click(() => this.updateSearchSettings());
+
+        $("#add-dataset-button").click(() => {
+            $("#experiment-summary-card").toggleClass("hidden");
+            $("#load-datasets-card").toggleClass("hidden");
+        })
     }
 
     setUpHelp() {
@@ -782,6 +982,7 @@ class MPA {
             showInfoModal(title, content, {wide: true});
         });
     }
+
     setUpSaveImage() {
         $("#buttons").prepend("<button id='save-btn' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save as image</button>");
         $("#save-btn").click(() => this.saveImage());
@@ -835,7 +1036,9 @@ class MPA {
     }
 
     setUpSunburst(data) {
-        return $("#mpa-sunburst").sunburst(data, {
+        let $mpaSunburst = $("#mpa-sunburst");
+        $mpaSunburst.removeClass("hidden");
+        return $mpaSunburst.sunburst(data, {
             width: 740,
             height: 740,
             radius: 740 / 2,
@@ -846,7 +1049,8 @@ class MPA {
     }
 
     setUpTreemap(data) {
-        return $("#mpa-treemap").treemap(data, {
+        $("#mpa-treemap").removeClass("hidden");
+        return $("#treemapPanel").treemap(data, {
             width: 916,
             height: 600,
             levels: 28,
@@ -859,7 +1063,8 @@ class MPA {
     }
 
     setUpTreeview(data) {
-        return $("#mpa-treeview").html("").treeview(data, {
+        $("#mpa-treeview").removeClass("hidden");
+        return $("#treeviewPanel").html("").treeview(data, {
             width: 916,
             height: 600,
             getTooltip: this.tooltipContent,
@@ -894,6 +1099,10 @@ class MPA {
         $(`${barSelector} .progressbar`).css("width", `${value * 100}%`);
     }
 
+    setMultipleDatasetsProgressValue(value = 0) {
+        $("#multiple-datasets-progress-current").text(value);
+    }
+
     tooltipContent(d) {
         return "<b>" + d.name + "</b> (" + d.rank + ")<br/>" +
             (!d.data.self_count ? "0" : d.data.self_count) +
@@ -920,9 +1129,9 @@ class MPA {
             triggerDownloadModal("#mpa-sunburst > svg", null, "unipept_sunburst");
             d3.selectAll(".hidden").attr("class", "arc toHide");
         } else if (activeTab === "treemap") {
-            triggerDownloadModal(null, "#mpa-treemap", "unipept_treemap");
+            triggerDownloadModal(null, "#treemapPanel", "unipept_treemap");
         } else {
-            triggerDownloadModal("#mpa-treeview svg", null, "unipept_treeview");
+            triggerDownloadModal("#treeviewPanel svg", null, "unipept_treeview");
         }
     }
 

@@ -31,7 +31,7 @@ interface FATrustInfo {
     totalTrust?: number,
     annotatedTrust?:number,
     annotaionAmount?: number
-} 
+}
 
 interface FAServerInfo {
     data: FAInfo[],
@@ -46,7 +46,7 @@ interface FAInfo {
     code: string,
     value : number,
     name: string
-} 
+}
 
 interface TaxonInfo {
     id: number,
@@ -69,3 +69,16 @@ interface PeptideMPAInfo {
     fa: FAServerInfo
     faGrouped?: any
 }
+
+// interface PeptideContainer {
+//     peptides: string[],
+//     configuration: MPAConfig,
+//     name: string,
+//     date: string
+// }
+//
+// interface LocalStorageContainer {
+//     type: string,
+//     names?: string[],
+//     data?: PeptideContainer
+// }

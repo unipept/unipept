@@ -46,7 +46,6 @@
 .card-title {
     align-items: flex-start;
     color: rgb(0,0,0);
-    display: block;
     display: flex;
     justify-content: stretch;
     line-height: normal;
@@ -62,7 +61,6 @@
 }
 .card-title-text {
     color: inherit;
-    display: block;
     display: flex;
     font-size: 24px;
     font-weight: 300;
@@ -70,7 +68,11 @@
     overflow: hidden;
     margin: 0;
 }
+
 .card-title-colored .card-title-text {
+    color: @white-text;
+}
+.card-title-colored .card-title-action .glyphicon {
     color: @white-text;
 }
 .card-title-image {
@@ -90,6 +92,16 @@
 }
 .card-title-colored .card-subtitle-text {
     color: @white-secondary;
+}
+.card-title-interactive {
+    flex-direction: row !important;
+}
+.card-title-interactive .card-title-text {
+    flex-grow: 1;
+}
+.card-title-interactive .card-title-action {
+    align-self: center;
+    cursor: pointer;
 }
 .card-supporting-text {
     color: @black-text;
@@ -276,6 +288,135 @@
 .unipept-progress.unipept-progress-indeterminate>.bar1{
     animation-name: indeterminate1;
 }
+
+.list {
+    display: block;
+}
+
+.list > .list-item {
+    height: 48px;
+    display: flex;
+}
+
+.list > .list-item > span.list-item-primary-content {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.list > .list-item > span.list-item-primary-action {
+    display: flex;
+    margin-right: 16px;
+    align-items: center;
+    cursor: pointer;
+}
+
+.list > .list-item--two-lines {
+    height: 72px;
+    display: flex;
+    align-items: center;
+}
+
+.list > .list-item--two-lines > span.list-item-primary-content {
+    height: 36px;
+    display: block;
+    order: 0;
+    flex-grow: 2;
+}
+
+.list > .list-item--two-lines > span.list-item-primary-content > span {
+    font-size: 16px;
+    color: #202020;
+    line-height: 20px;
+}
+
+.list > .list-item--two-lines > span.list-item-primary-content > span.list-item-body {
+    display: block;
+    font-size: 14px;
+    color: #737373;
+}
+
+.list > .list-item--two-lines > span.list-item-primary-content > span.list-item-date {
+    float: right;
+    font-size: 14px;
+    color: #202020;
+    margin-right: 16px;
+}
+
+.list > .list-item--two-lines > span.list-item-primary-action {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-right: 16px;
+    height: 36px;
+}
+
+.list > .list-item--two-lines > span.list-item-secondary-action {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-left: 16px;
+    margin-right: 16px;
+    height: 36px;
+}
+
+.list > .list-item--three-lines {
+    height: 88px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+.list > .list-item--three-lines > span.list-item-primary-content {
+    height: 52px;
+    display: block;
+    order: 0;
+    flex-grow: 2;
+}
+
+.list > .list-item--three-lines > span.list-item-primary-action {
+    display: flex;
+    margin-right: 16px;
+    height: 52px;
+    align-items: center;
+}
+
+.list > .list-item--three-lines > span.list-item-secondary-action {
+    display: flex;
+    margin-left: 16px;
+    margin-right: 16px;
+    align-items: center;
+    height: 52px;
+    cursor: pointer;
+}
+
+.list > .list-item--three-lines > span.list-item-primary-content > span {
+    font-size: 16px;
+    color: #202020;
+    line-height: 20px;
+}
+
+.list > .list-item--three-lines > span.list-item-primary-content > span.list-item-date {
+    float: right;
+    font-size: 14px;
+    color: #202020;
+    margin-right: 16px;
+}
+
+.list > .list-item--three-lines > span.list-item-primary-content > span.list-item-body {
+    display: block;
+    font-size: 14px;
+    color: #737373;
+}
+
+.circular-progress circle {
+    fill: none;
+    stroke: @accent-500;
+    stroke-width: 4;
+    transition: stroke-dashoffset 0.5s;
+}
+
 @keyframes indeterminate1 {
     0% {
         left: 0%;

@@ -15,15 +15,19 @@ class Dataset {
     /**
      * Creates a Dataset object based on a list of peptides
      *
-     * @param  {string[]}  [peptides=[]] A list of peptides (strings)
+     * @param {string[]} [peptides=[]] A list of peptides (strings)
+     * @param {string} name The name associated with this Dataset.
+     * @param {string} id Unique identifier associated with this Dataset.
      */
-    constructor(peptides = []) {
+    constructor(peptides = [], name, id) {
         this.originalPeptides = Dataset.cleanPeptides(peptides);
 
         /** @type {Tree} */
         this.tree = null;
         this._fa = null;
         this.baseFa = null;
+        this.name = name;
+        this.id = id;
 
         /** @type {Map<number,TaxonInfo>} */
         this.taxonMap = new Map();
@@ -55,14 +59,14 @@ class Dataset {
      * Reprocesses functional analysis data with other cutoff
      * @param {number} cutoff as percent (0-100)
      * @param {string[]} sequences array of peptides to take into account
-    */
+     */
     async reprocessFA(cutoff = 50, sequences = null) {
         await this.resultset.proccessFA(cutoff, sequences);
         this._fa = this.resultset.fa;
     }
 
     /**
-     * Sets the surrent FA summary as base, accesible trough baseFa.
+     * Sets the surrent FA summary as base, accessible trough baseFa.
      */
     setBaseFA() {
         this.baseFa = this.fa.clone();

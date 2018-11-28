@@ -2,16 +2,27 @@
   <%= javascript_pack_tag 'datasets' %>
 <% end %>
 
-<div class="row">
+<div class="row equal-height-row">
   <div class="col-xs-6">
-    <%= render 'shared/sequence_multi_search' %>
+    <div class='card' style="height: 100%;">
+      <div class='card-title card-title-colored' style="min-height: 61px;">
+        <h2 class='card-title-text'>Metaproteomics Analysis</h2>
+      </div>
+      <div class='card-supporting-text' style="height: 100%;">
+        <%= render 'shared/selected_datasets' %>
+      </div>
+    </div>
   </div>
   <div class="col-xs-6">
-    <%= render 'shared/load_datasets_form' %>
+    <%= render 'shared/load_datasets_card' %>
   </div>
 </div>
 
 <%= render 'shared/multi_search_intro' %>
+
+<form id='send_data_form' action='<%= :mpa %>' method='post'>
+  <input id='data_input' type='hidden' name='data' value='' />
+</form>
 
 <script type="text/javascript">
   $(document).ready(initDatasets);
