@@ -42,9 +42,11 @@
     import NewPeptideContainer from "../NewPeptideContainer";
     import {FunctionalAnnotations} from "../../fa/FunctionalAnnotations";
     import EcNumbersSummary from "./tables/ec-numbers-summary.vue";
+    import Modal from "../../components/modal/modal.vue";
+    import SimpleButton from "../../components/button/simple-button.vue";
 
     @Component({
-        components: {EcNumbersSummary, GoTermsSummary, Tab, CardNav},
+        components: {SimpleButton, EcNumbersSummary, GoTermsSummary, Tab, CardNav, Modal},
         computed: {
             watchableDataset: {
                 get(): NewPeptideContainer {

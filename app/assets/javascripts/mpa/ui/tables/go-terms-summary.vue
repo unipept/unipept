@@ -1,5 +1,23 @@
 <template>
-    <div class="goPanel"></div>
+    <div>
+        <div class="goPanel" ref="panel"></div>
+        <modal :active="chartImageModalActive" :wide="true">
+            <template slot="header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" @click="chartImageModalActive = false">×</button>
+                <h4 class="modal-title">QuickGo {{ this.namespace }}</h4>
+            </template>
+            <template slot="body">
+                This chart shows the relationship between the {{ top5.length }} most occurring GO terms: {{ top5Sentence }}.
+                <br/>
+                <a :href="quickGoChartUrl" target="_blank" title="Click to enlarge in new tab">
+                    <img style="max-width: 100%;" :src="quickGoChartSmallUrl" :alt="'QuickGO chart of ' + top5Sentence"/>
+                </a>
+                <div>
+                    Provided by <a :href="'https://www.ebi.ac.uk/QuickGO/annotations?goId=' + top5.join(',')" target="_blank">QuickGO</a>.
+                </div>
+            </template>
+        </modal>
+    </div>
 </template>
 
 <script lang="ts">
@@ -14,14 +32,23 @@
     import {Dataset} from "../../dataset";
     import FaPercentSettings from "./FaPercentSettings";
     import FaSortSettings from "./FaSortSettings";
+    import Modal from "../../../components/modal/modal.vue";
 
-    @Component
+    @Component({
+        components: {Modal}
+    })
     export default class GoTermsSummary extends Vue {
         @Prop() namespace: string;
         @Prop({default: null}) peptideContainer: NewPeptideContainer | null;
         @Prop() sortSettings: FaSortSettings;
         @Prop() percentSettings: FaPercentSettings;
         @Prop() fa: FunctionalAnnotations;
+
+        top5: string[] = [];
+        top5Sentence: string = "";
+        quickGoChartUrl: string = "";
+        quickGoChartSmallUrl: string = "";
+        chartImageModalActive: boolean = false;
 
         // TODO fix redo timeout
         private redoTimeout: number;
@@ -35,7 +62,7 @@
         }
 
         private async initGoTable(): Promise<void> {
-            const goPanel = d3.select(this.$el);
+            const goPanel = d3.select(this.$refs.panel);
             goPanel.html("");
 
             if (this.fa && this.namespace) {
@@ -217,22 +244,20 @@
                     .attr("class", "quickGoThumb")
                     .attr("title", `QuickGO chart of ${top5sentence}`)
                     // TODO fix click with modal!
-                    // .on("click", () => {
-                    //     // Content with thumbnail image
-                    //     const $modal = showInfoModal("QuickGo " + goResultset.getName(), `
-                    //     This chart shows the realationship between the ${top5.length} most occuring GO terms: ${top5sentence}.<br/>
-                    //     <a href="${quickGoChartURL}" target="_blank" title="Click to enlarge in new tab"><img style="max-width:100%" src="${quickGoChartSmallURL}" alt="QuickGO chart of ${top5sentence}"/></a>
-                    //     <br>
-                    //     Provided by <a href="https://www.ebi.ac.uk/QuickGO/annotations?goId=${top5.join(",")}" target="_blank">QuickGo</a>.`,
-                    //         {wide: true});
-                    //
-                    //     // load full image, once loaded, replace src
-                    //     const fullImage = new Image();
-                    //     fullImage.onload = () => {
-                    //         $modal.find("img").first().attr("src", quickGoChartURL);
-                    //     };
-                    //     fullImage.src = quickGoChartURL;
-                    // });
+                    .on("click", () => {
+                        this.top5 = top5;
+                        this.top5Sentence = top5sentence;
+                        this.quickGoChartSmallUrl = quickGoChartURL;
+                        this.quickGoChartUrl = quickGoChartURL;
+
+                        // load full image, once loaded, replace src
+                        const fullImage = new Image();
+                        fullImage.onload = () => {
+                            this.quickGoChartUrl = quickGoChartURL;
+                        };
+
+                        this.chartImageModalActive = true;
+                    });
             }
         }
     }
