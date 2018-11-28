@@ -2,12 +2,12 @@ import {FunctionalAnnotations} from "../../../fa/FunctionalAnnotations";
 import {numberToPercent} from "../../../utils";
 
 export default class FaSortSettings {
-    public readonly format: (x: string) => string;
-    public readonly formatData: (x: string) => string;
-    public readonly field: string;
-    public readonly shadeField: string;
-    public readonly name: string;
-    public readonly sortFunc: (a: FAInfo, b: FAInfo) => number;
+    public format: (x: string) => string;
+    public formatData: (x: string) => string;
+    public field: string;
+    public shadeField: string;
+    public name: string;
+    public sortFunc: (a: FAInfo, b: FAInfo) => number;
 
     constructor(
         format: (x: string) => string,

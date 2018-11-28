@@ -1,30 +1,69 @@
 <template>
-    <card-nav>
-        <tab label="GO terms" :active="true">
-            This panel shows the Gene Ontology annotations that were matched to
-            your peptides. <span v-if="fa && $store.getters.activeDataset" v-html="this.trustLine(fa, 'GO term')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
-            <div v-if="!$store.getters.activeDataset" class="mpa-unavailable go">
-                <h3>Biological Process</h3>
-                <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
-                <h3>Cellular Component</h3>
-                <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
-                <h3>Molecular Function</h3>
-                <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
-            </div>
-            <div v-else v-for="variant in namespaces">
-                <go-terms-summary :percent-settings="percentSettings" :sort-settings="faSortSettings" :fa="fa" :namespace="variant" :peptide-container="$store.getters.activeDataset"></go-terms-summary>
-            </div>
-        </tab>
-        <tab label="EC numbers">
-            This panel shows the Enzyme Commission numbers that were matched to your peptides. <span v-if="fa && $store.getters.activeDataset" v-html="this.trustLine(fa, 'EC number')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
-            <ec-numbers-summary style="margin-top: 10px" v-if="$store.getters.activeDataset" :fa="fa" :peptide-container="$store.getters.activeDataset" :sort-settings="faSortSettings"></ec-numbers-summary>
-            <div v-else style="margin-top: 10px;">
-                <span style="font-weight: 600;">Please wait while we are preparing your data...</span>
-                <hr>
-                <img src="/images/mpa/placeholder_treeview.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
-            </div>
-        </tab>
-    </card-nav>
+    <div>
+        <modal :active="sortSettingsModalActive">
+            <template slot="header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" @click="sortSettingsModalActive = false">×</button>
+                <h4 class="modal-title">Sorting functional annotations</h4>
+            </template>
+            <template slot="body">
+                <p>The functional annotations can be sorted on two metrics:</p>
+                <ul>
+                    <li><strong>Peptides</strong>: The absolute number of peptides that are associated with a given functional annotation.</li>
+                    <li><strong>Peptides%</strong>: Like peptides, but the reported value is represented as a percentage indicating the fraction of the total number of peptides.</li>
+                </ul>
+                <p>
+                    Your "Filter duplicate peptides" setting is taken into account. If it is enabled, peptides that occur multiple times
+                    in your input list are counted that many times.
+                </p>
+            </template>
+        </modal>
+
+        <card-nav>
+            <template slot="interactiveTitle">
+                <div class="dropdown pull-right">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="mpa-select-fa-sort" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="glyphicon glyphicon-sort-by-attributes-alt pull-left"></span><span id="mpa-select-fa-sort-name">{{ faSortSettings.name}}</span>
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right" id="mpa-select-fa-sort-items" aria-labelledby="mpa-selet-fa-sort">
+                        <li class="dropdown-header">Sort by number of peptides in related proteins
+                            <span class="small glyphicon glyphicon-question-sign btn-icon" @click="sortSettingsModalActive = true"></span>
+                        </li>
+                        <li>
+                            <a :class="formatType === 'percent' ? 'active' : ''" @click="setFormatSettings('percent', 'fractionOfPepts', 'fractionOfPepts', 'Peptides %')">Peptides %</a>
+                        </li>
+                        <li>
+                            <a :class="formatType === 'int' ? 'active' : ''" @click="setFormatSettings('int', 'numberOfPepts', 'fractionOfPepts', 'Peptides')">Peptides</a>
+                        </li>
+                    </ul>
+                </div>
+            </template>
+            <tab label="GO terms" :active="true">
+                This panel shows the Gene Ontology annotations that were matched to
+                your peptides. <span v-if="fa && $store.getters.activeDataset" v-html="this.trustLine(fa, 'GO term')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
+                <div v-if="!$store.getters.activeDataset" class="mpa-unavailable go">
+                    <h3>Biological Process</h3>
+                    <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
+                    <h3>Cellular Component</h3>
+                    <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
+                    <h3>Molecular Function</h3>
+                    <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
+                </div>
+                <div v-else v-for="variant in namespaces">
+                    <go-terms-summary :percent-settings="percentSettings" :sort-settings="faSortSettings" :fa="fa" :namespace="variant" :peptide-container="$store.getters.activeDataset"></go-terms-summary>
+                </div>
+            </tab>
+            <tab label="EC numbers">
+                This panel shows the Enzyme Commission numbers that were matched to your peptides. <span v-if="fa && $store.getters.activeDataset" v-html="this.trustLine(fa, 'EC number')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
+                <ec-numbers-summary style="margin-top: 10px" v-if="$store.getters.activeDataset" :fa="fa" :peptide-container="$store.getters.activeDataset" :sort-settings="faSortSettings"></ec-numbers-summary>
+                <div v-else style="margin-top: 10px;">
+                    <span style="font-weight: 600;">Please wait while we are preparing your data...</span>
+                    <hr>
+                    <img src="/images/mpa/placeholder_treeview.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
+                </div>
+            </tab>
+        </card-nav>
+    </div>
 </template>
 
 <script lang="ts">
@@ -82,13 +121,30 @@
 
         fa: FunctionalAnnotations | null = null;
 
+        sortSettingsModalActive: boolean = false;
+
         @Watch('watchableDataset') onWatchableDatasetChanged() {
+            this.onPeptideContainerChanged();
+        }
+
+        setFormatSettings(formatType: string, fieldType: string, shadeFieldType: string, name: string): void {
+            this.formatType = formatType;
+
+            this.faSortSettings.format = (x:string) => this.formatters[this.formatType](x[fieldType]);
+            this.faSortSettings.formatData = (x:string) => this.formatters[this.formatType](x);
+            this.faSortSettings.field = fieldType;
+            this.faSortSettings.shadeField = shadeFieldType;
+            this.faSortSettings.name = name;
+            this.faSortSettings.sortFunc = (a, b) => b[fieldType] - a[fieldType];
+
+            // Recalculate stuff
             this.onPeptideContainerChanged();
         }
 
         private async onPeptideContainerChanged() {
             let container: NewPeptideContainer = this.$store.getters.activeDataset;
             if (container && container.getDataset()) {
+                console.log("RECALCULATE FA's");
                 await this.redoFAcalculations();
                 this.fa = this.$store.getters.activeDataset.getDataset().fa;
             }
@@ -102,16 +158,6 @@
 
                 const percent = this.percentSettings.percentFa;
                 let sequences = null;
-
-                if (id > 0) {
-                    const taxonData = dataset.getTree().nodes.get(id);
-                    sequences = dataset.getTree().getAllSequences(id);
-                    $(".mpa-fa-scope").text(`${taxonData.name} (${taxonData.rank})`);
-                    $(".mpa-fa-numpepts").text("");
-                    $("#fa-filter-warning").show();
-                } else {
-                    $("#fa-filter-warning").hide();
-                }
 
                 await dataset.reprocessFA(percent, sequences);
                 if (dataset.baseFa === null) {

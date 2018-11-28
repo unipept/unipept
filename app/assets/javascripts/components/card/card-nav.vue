@@ -6,6 +6,9 @@
                     <a>{{ tab.label }}</a>
                 </li>
             </ul>
+            <div class="nav-right" v-if="$slots.interactiveTitle">
+                <slot name="interactiveTitle"></slot>
+            </div>
         </div>
         <div class="card-supporting-text">
             <div class="tab-content">
