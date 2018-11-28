@@ -85,6 +85,7 @@ const mpaMutations: MutationTree<GlobalState> = {
         this.searchSettings = searchSettings;
     },
     SET_ACTIVE_DATASET(state: GlobalState, dataset: NewPeptideContainer | null): void {
+        console.log(dataset);
         state.activeDataset = dataset;
     },
 };
@@ -93,8 +94,7 @@ const mpaActions: ActionTree<GlobalState, any> = {
     selectDataset(store: ActionContext<GlobalState, any>, dataset: NewPeptideContainer) {
         store.commit('SELECT_DATASET', dataset);
         if (store.getters.isAnalysis) {
-            let mpaManager = new MpaAnalysisManager();
-            mpaManager.processDataset(dataset, store.getters.searchSettings);
+            store.dispatch('processDataset', dataset);
         }
     },
     deselectDataset(store: ActionContext<GlobalState, any>, dataset: NewPeptideContainer) {
@@ -143,6 +143,15 @@ const mpaActions: ActionTree<GlobalState, any> = {
     setActiveDataset(store: ActionContext<GlobalState, any>, dataset: NewPeptideContainer | null): void {
         store.commit('SET_ACTIVE_DATASET', dataset);
     },
+    processDataset(store: ActionContext<GlobalState, any>, dataset: NewPeptideContainer): void {
+        let mpaManager = new MpaAnalysisManager();
+        mpaManager.processDataset(dataset, store.getters.searchSettings).then(
+        () => {
+            if (store.getters.activeDataset === null) {
+                store.dispatch('setActiveDataset', dataset);
+            }
+        });
+    }
 };
 
 export const globalStore = {

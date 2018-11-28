@@ -77,8 +77,11 @@
         }
 
         private async onPeptideContainerChanged() {
-            await this.redoFAcalculations();
-            this.fa = this.$store.getters.activeDataset.getDataset().fa;
+            let container: NewPeptideContainer = this.$store.getters.activeDataset;
+            if (container && container.getDataset()) {
+                await this.redoFAcalculations();
+                this.fa = this.$store.getters.activeDataset.getDataset().fa;
+            }
         }
 
         private async redoFAcalculations(name = "Organism", id = -1, timeout = 500): Promise<void> {
