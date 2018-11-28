@@ -27,9 +27,14 @@
     import FunctionalSummaryCard from "./functional-summary-card.vue";
 
     @Component({
-        components: {
-            FunctionalSummaryCard,
-            SingleDatasetVisualizationsCard, LoadDatasetsCard, SwitchDatasetCard, ExperimentSummaryCard}
+        components: {FunctionalSummaryCard, SingleDatasetVisualizationsCard, LoadDatasetsCard, SwitchDatasetCard, ExperimentSummaryCard},
+        computed: {
+            selectedDatasets: {
+                get() {
+                    return this.$store.getters.selectedDatasets;
+                }
+            }
+        }
     })
     export default class MpaAnalysis extends Vue {
         private analysisManager: MpaAnalysisManager = new MpaAnalysisManager();

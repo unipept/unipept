@@ -2,7 +2,7 @@
     <card-nav>
         <tab label="GO terms" :active="true">
             This panel shows the Gene Ontology annotations that were matched to
-            your peptides. <span v-if="fa" v-html="this.trustLine(fa, 'GO term')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
+            your peptides. <span v-if="fa && $store.getters.activeDataset" v-html="this.trustLine(fa, 'GO term')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
             <div v-if="!$store.getters.activeDataset" class="mpa-unavailable go">
                 <h3>Biological Process</h3>
                 <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we ware preparing your data..." class="mpa-placeholder">
