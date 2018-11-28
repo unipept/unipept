@@ -5,18 +5,24 @@
             your peptides. <span v-if="fa && $store.getters.activeDataset" v-html="this.trustLine(fa, 'GO term')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
             <div v-if="!$store.getters.activeDataset" class="mpa-unavailable go">
                 <h3>Biological Process</h3>
-                <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we ware preparing your data..." class="mpa-placeholder">
+                <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
                 <h3>Cellular Component</h3>
-                <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we ware preparing your data..." class="mpa-placeholder">
+                <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
                 <h3>Molecular Function</h3>
-                <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we ware preparing your data..." class="mpa-placeholder">
+                <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
             </div>
             <div v-else v-for="variant in namespaces">
                 <go-terms-summary :percent-settings="percentSettings" :sort-settings="faSortSettings" :fa="fa" :namespace="variant" :peptide-container="$store.getters.activeDataset"></go-terms-summary>
             </div>
         </tab>
         <tab label="EC numbers">
-            <ec-numbers-summary :fa="fa" :peptide-container="$store.getters.activeDataset" :sort-settings="faSortSettings"></ec-numbers-summary>
+            This panel shows the Enzyme Commission numbers that were matched to your peptides. <span v-if="fa && $store.getters.activeDataset" v-html="this.trustLine(fa, 'EC number')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
+            <ec-numbers-summary style="margin-top: 10px" v-if="$store.getters.activeDataset" :fa="fa" :peptide-container="$store.getters.activeDataset" :sort-settings="faSortSettings"></ec-numbers-summary>
+            <div v-else style="margin-top: 10px;">
+                <span style="font-weight: 600;">Please wait while we are preparing your data...</span>
+                <hr>
+                <img src="/images/mpa/placeholder_treeview.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
+            </div>
         </tab>
     </card-nav>
 </template>
@@ -121,15 +127,15 @@
         private trustLine(fa, kind) {
             const trust = fa.getTrust();
             if (trust.annotatedCount === 0) {
-                return `<strong>No peptide</strong> has a ${kind} assigned to it.`;
+                return `<strong>No peptide</strong> has a ${kind} assigned to it. `;
             }
             if (trust.annotatedCount === trust.totalCount) {
-                return `<strong>All peptides</strong> ${trust.annotatedCount <= 5 ? `(only ${trust.annotatedCount})` : ""} have at least one ${kind} assigned to them.`;
+                return `<strong>All peptides</strong> ${trust.annotatedCount <= 5 ? `(only ${trust.annotatedCount})` : ""} have at least one ${kind} assigned to them. `;
             }
             if (trust.annotatedCount === 1) {
-                return `Only <strong>one peptide</strong> (${numberToPercent(trust.annotaionAmount)}) has at least one ${kind} assigned to it.`;
+                return `Only <strong>one peptide</strong> (${numberToPercent(trust.annotaionAmount)}) has at least one ${kind} assigned to it. `;
             }
-            return `<strong>${trust.annotatedCount} peptides</strong> (${numberToPercent(trust.annotaionAmount)}) have at least one ${kind} assigned to them.`;
+            return `<strong>${trust.annotatedCount} peptides</strong> (${numberToPercent(trust.annotaionAmount)}) have at least one ${kind} assigned to them. `;
         }
     }
 </script>
