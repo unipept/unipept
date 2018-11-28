@@ -13,6 +13,9 @@
             <output>
             </output>
         </div>
+        <modal :active="chartImageModalActive">
+
+        </modal>
     </div>
 </template>
 
@@ -22,16 +25,20 @@
     import {Prop, Watch} from "vue-property-decorator";
     import {FunctionalAnnotations} from "../../../fa/FunctionalAnnotations";
     import ECNumbers from "../../../fa/ecnumbers";
-    import {logToGoogle, numberToPercent} from "../../../utils";
+    import {logToGoogle, numberToPercent, triggerDownloadModal} from "../../../utils";
     import {AmountTable} from "../../../components/amount_table";
     import FaSortSettings from "./FaSortSettings";
     import NewPeptideContainer from "../../NewPeptideContainer";
-
-    @Component
+    import Modal from "../../../components/modal/modal.vue";
+    @Component({
+        components: {Modal}
+    })
     export default class EcNumbersSummary extends Vue {
         @Prop() fa: FunctionalAnnotations | null;
         @Prop({default: null}) peptideContainer: NewPeptideContainer | null;
         @Prop() sortSettings: FaSortSettings;
+
+        chartImageModalActive: boolean = false;
 
         mounted() {
             this.initECTable();
@@ -87,8 +94,7 @@
                 $("#save-btn-ec").prop("disabled", false)
                     .click(() => {
                         logToGoogle("Multi peptide", "Save EC Image");
-                        // TODO fix modals!
-                        //triggerDownloadModal($container.find("svg"), null, "unipept_treeview");
+                        triggerDownloadModal($container.find("svg"), null, "unipept_treeview");
                     });
                 $("#reset-btn-ec").prop("disabled", false)
                     .click(() => {
@@ -250,8 +256,7 @@
 
             $dlbtn.click(() => {
                 logToGoogle("Multi peptide", "Save Image for FA");
-                // TODO fix modal and download!
-                //triggerDownloadModal($container.find("svg"), null, "unipept_treeview_" + code);
+                triggerDownloadModal($container.find("svg"), null, "unipept_treeview_" + code);
             });
         }
 
