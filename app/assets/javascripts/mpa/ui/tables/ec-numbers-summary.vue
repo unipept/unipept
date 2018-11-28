@@ -25,7 +25,7 @@
     import {Prop, Watch} from "vue-property-decorator";
     import {FunctionalAnnotations} from "../../../fa/FunctionalAnnotations";
     import ECNumbers from "../../../fa/ecnumbers";
-    import {logToGoogle, numberToPercent, triggerDownloadModal} from "../../../utils";
+    import {downloadDataByForm, logToGoogle, numberToPercent, toCSVString, triggerDownloadModal} from "../../../utils";
     import {AmountTable} from "../../../components/amount_table";
     import FaSortSettings from "./FaSortSettings";
     import NewPeptideContainer from "../../NewPeptideContainer";
@@ -44,19 +44,18 @@
             this.initECTable();
         }
 
-        @Watch('fa') onFaChanged() {
-            this.initECTable();
+        @Watch('fa') onFaChanged(newFa: FunctionalAnnotations, oldFa: FunctionalAnnotations) {
+            this.initECTable(oldFa);
         }
 
-        private initECTable(): void {
+        private initECTable(oldFa: FunctionalAnnotations = null): void {
             if (!this.fa) {
                 return;
             }
 
             const faEC: ECNumbers = this.fa.getGroup("EC") as ECNumbers;
             this.setUpECTree(faEC);
-            // TODO fix oldfa here! (what to do with oldfa?)
-            this.setUpECTable(this.fa, null);
+            this.setUpECTable(this.fa, oldFa);
         }
 
         private setUpECTree(ecResultSet: ECNumbers): void {
@@ -152,8 +151,7 @@
                     },
                     {
                         builder: cell => {
-                            // TODO fix download!
-                            //this.addFADownloadBtn(cell, d => "EC:" + d.code);
+                            this.addFADownloadBtn(cell, d => "EC:" + d.code);
                         },
                         text: d => "",
                         style: {"width": "5em", "text-align": "right"},
@@ -267,6 +265,47 @@
                 (!d.data.count ? "0" : d.data.count) +
                 (d.data.count && d.data.count === 1 ? " sequence" : " sequences") + " specific to this level or lower";
         }
+
+        private addFADownloadBtn(cell, codeFn) {
+            const downloadLink = cell.append("span");
+            downloadLink.classed("glyphicon glyphicon-download glyphicon-inline down btn-icon", true)
+                .attr("title", "Download CSV of the matched peptides")
+                .attr("role", "button")
+                .attr("tabindex", 0)
+                .on("click", d => {
+                    d3.event.stopPropagation();
+                    this.downloadPeptidesFor(codeFn(d), Object.keys(d.sequences));
+                });
+
+            // HACK: d3 to jQuery
+            $(downloadLink[0]).tooltip();
+        }
+
+        private async downloadPeptidesFor(name, sequences) {
+            let container = this.peptideContainer;
+
+            if (container && container.getDataset()) {
+                let dataset = container.getDataset();
+
+                const result = [[
+                    "peptide",
+                    "spectral count",
+                    "matching proteins",
+                    "matching proteins with " + name,
+                    "percenage proteins with " + name,
+                ]]
+                    .concat((await dataset.getPeptidesByFA(name, sequences))
+                        .map(x => [
+                            x.sequence,
+                            x.count,
+                            x.allCount,
+                            x.hits,
+                            100 * x.hits / x.allCount,
+                        ]));
+                downloadDataByForm(toCSVString(result), name + ".csv", "text/csv");
+            }
+        }
+
     }
 </script>
 
