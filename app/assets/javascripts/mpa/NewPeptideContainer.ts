@@ -152,6 +152,9 @@ export default class NewPeptideContainer {
     }
 
     setDataset(dataset: Dataset | null): void {
+        if (dataset === null) {
+            this.progress = 0;
+        }
         this.dataset = dataset;
     }
 
