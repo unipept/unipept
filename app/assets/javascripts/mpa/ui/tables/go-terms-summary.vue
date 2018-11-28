@@ -74,6 +74,8 @@
 
             if (this.fa && this.namespace) {
                 const go = this.fa.getGroup("GO");
+                console.log(this.namespace);
+                console.log(this.fa);
 
                 // TODO what does oldFa do here?
                 //const goOld = oldFa === null ? null : oldFa.getGroup("GO");

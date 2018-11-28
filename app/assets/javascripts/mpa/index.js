@@ -415,7 +415,7 @@ class MPA {
 
 
     /**
-     * set up analysis pannel
+     * set up analysis panel
      * @param {FunctionalAnnotations} fa Functional annotations
      * @param {FunctionalAnnotations} [oldFa=null]
      *     Snapshot of functional annotations for comparison
