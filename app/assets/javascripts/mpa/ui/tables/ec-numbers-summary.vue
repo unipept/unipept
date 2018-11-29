@@ -13,9 +13,6 @@
             <output>
             </output>
         </div>
-        <modal :active="chartImageModalActive">
-
-        </modal>
     </div>
 </template>
 

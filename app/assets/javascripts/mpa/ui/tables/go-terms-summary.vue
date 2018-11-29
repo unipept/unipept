@@ -36,7 +36,6 @@
     import GOTerms from "../../../fa/goterms";
     import {FunctionalAnnotations} from "../../../fa/FunctionalAnnotations";
     import NewPeptideContainer from "../../NewPeptideContainer";
-    import FaPercentSettings from "./FaPercentSettings";
     import FaSortSettings from "./FaSortSettings";
     import Modal from "../../../components/modal/modal.vue";
 
@@ -47,7 +46,6 @@
         @Prop() namespace: string;
         @Prop({default: null}) peptideContainer: NewPeptideContainer | null;
         @Prop() sortSettings: FaSortSettings;
-        @Prop() percentSettings: FaPercentSettings;
         @Prop() fa: FunctionalAnnotations;
 
         top5: string[] = [];
