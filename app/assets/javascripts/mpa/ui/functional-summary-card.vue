@@ -77,7 +77,6 @@
     import MpaAnalysisManager from "../MpaAnalysisManager";
     import FaSortSettings from "./tables/FaSortSettings";
     import {numberToPercent} from "../../utils";
-    import FaPercentSettings from "./tables/FaPercentSettings";
     import {Dataset} from "../dataset";
     import NewPeptideContainer from "../NewPeptideContainer";
     import {FunctionalAnnotations} from "../../fa/FunctionalAnnotations";

@@ -1,5 +1,5 @@
 <template>
-    <div class="modal" :class="active ? 'fade in modal-active': 'fade'" :style="active ? 'display: block;' : 'display: none;'">
+    <div class="modal" :class="active ? 'fade in vue-modal-backdrop': 'fade'" :style="active ? 'display: block;' : 'display: none;'">
         <div class="modal-dialog" :class="wide ? 'modal-lg' : 'modal-small'">
             <div class="modal-content" v-if="$slots.header">
                 <div class="modal-header">
