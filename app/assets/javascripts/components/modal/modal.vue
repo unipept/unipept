@@ -38,10 +38,12 @@
             if (newActive) {
                 if (!this.body.classList.contains("modal-open")) {
                     this.body.className += ' modal-open';
+                    this.body.style.paddingRight = "17px";
                 }
             } else {
                 if (this.body.classList.contains("modal-open")) {
                     this.body.classList.remove("modal-open");
+                    this.body.style.paddingRight = "";
                 }
             }
         }

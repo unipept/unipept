@@ -113,7 +113,6 @@ class AmountTable {
             .append("div")
             .attr("class", "tip")
             .style("visibility", "hidden");
-        console.log(this.tooltip);
     }
 
     /**
@@ -436,6 +435,9 @@ class AmountTable {
                 .style("left", (x + 15) + "px")
                 .style("display", "block")
                 .style("right", "auto");
+
+            console.log("POSITION TOOLTIP!");
+            console.log(this.tooltip);
 
             // Reposition if needed
             if (window.innerWidth - x - 25 - this.tooltip.node().offsetWidth < 0) {

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="content" class="unipept-progress unipept-progress-indeterminate">
+    <div class="unipept-progress unipept-progress-indeterminate" :style="active ? 'visibility: visible;' : 'visibility: hidden;'">
         <div class="progressbar bar bar1" style="width: 0;"></div>
         <div class="bufferbar bar bar2" style="width: 100%;"></div>
         <div class="auxbar bar bar3" style="width: 0;"></div>
