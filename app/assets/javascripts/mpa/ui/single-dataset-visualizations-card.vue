@@ -1,5 +1,12 @@
 <template>
     <card-nav>
+        <template slot="interactiveTitle">
+            <div style="position: relative; top: 4px;">
+                <button id="zoom-btn" class="btn btn-default btn-xs btn-animate"><span class="glyphicon glyphicon-resize-full grow"></span> Enter full screen</button>
+                <button id="save-btn" class="btn btn-default btn-xs btn-animate"><span class="glyphicon glyphicon-download down"></span> Save as image</button>
+            </div>
+        </template>
+
         <tab label="Sunburst" :active="true" id="sunburstWrapper">
             <sunburst-visualization v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></sunburst-visualization>
             <div v-else class="mpa-waiting">
