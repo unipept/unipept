@@ -2,7 +2,7 @@
     <div class="card card-nav">
         <div class="card-title card-title-colored">
             <ul class="nav nav-tabs">
-                <li v-for="tab in tabs" v-bind:class="{ active: tab.activated }" @click="changeActiveTab(tab)">
+                <li v-for="tab in tabs" v-if="tab.constructor.name === 'Tab'" v-bind:class="{ active: tab.activated }" @click="changeActiveTab(tab)">
                     <a>{{ tab.label }}</a>
                 </li>
             </ul>

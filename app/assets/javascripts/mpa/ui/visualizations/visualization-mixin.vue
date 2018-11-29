@@ -22,5 +22,9 @@
                 this.$store.dispatch('setSelectedTaxonId', id);
             }, timeout);
         }
+
+        get watchableTaxonId() {
+            return this.$store.getters.selectedTaxonId;
+        }
     }
 </script>

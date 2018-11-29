@@ -42,6 +42,12 @@
             this.initTree();
         }
 
+        @Watch('watchableTaxonId') onWatchableTaxonIdChanged() {
+            if (this.watchableTaxonId === -1) {
+                this.reset();
+            }
+        }
+
         reset() {
             if (this.sunburst) {
                 this.sunburst.reset();
