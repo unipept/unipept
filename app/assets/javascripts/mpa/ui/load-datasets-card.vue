@@ -100,8 +100,6 @@
         }
 
         storeCreateDataset() {
-            console.log(this.createPeptides);
-            console.log(this.createName);
             this.storeDataset(this.createPeptides, this.createName, this.createSave);
         }
 

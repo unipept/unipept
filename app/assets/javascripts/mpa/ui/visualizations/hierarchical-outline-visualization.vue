@@ -2,7 +2,7 @@
     <div>
         <!-- We cannot use the pre-built simple-button here because we need to attach a specific id to the input-field to allow the non-Vue searchTree to work -->
         <div class="input-group" id="tree_search_group">
-            <input type="search" name="tree_search" id="tree_search" value="" placeholder="search for an organism..." class="form-control">
+            <input type="search" name="tree_search" id="tree_search" v-model="searchTerm" placeholder="search for an organism..." class="form-control">
             <span class="input-group-addon">
                 <span class="glyphicon glyphicon-search"></span>
             </span>
@@ -30,9 +30,16 @@
     @Component({
         components: {ValidatedTextfield, SimpleButton},
         computed: {
-            activeSearchTerm: {
+            searchTerm: {
                 get() {
-                    return this.$store.getters.selectedTerm;
+                    let term = this.$store.getters.selectedTerm;
+                    if (term === 'Organism') {
+                        return '';
+                    }
+                    return term;
+                },
+                set(val) {
+                    // should do nothing!
                 }
             }
         }
@@ -50,8 +57,10 @@
             this.initSearchTree();
         }
 
-        @Watch('activeSearchTerm') onSearchTermChanged(newSearchTerm: string, oldSearchTerm: string) {
+        @Watch('activeSearchTerm') onActiveSearchTermChanged(newSearchTerm: string, oldSearchTerm: string) {
+            console.log(newSearchTerm);
             if (this.searchTree && newSearchTerm !== "") {
+                console.log(newSearchTerm);
                 setTimeout(() => {
                     this.searchTree.search(newSearchTerm);
                 }, 500);
@@ -63,6 +72,10 @@
                 let tree: Tree = this.dataset.getDataset().getTree();
                 this.searchTree = constructSearchtree(tree, this.$store.getters.searchSettings.isEquateIl(), () => {});
             }
+        }
+
+        get activeSearchTerm() {
+            return this.$store.getters.selectedTerm;
         }
     }
 </script>

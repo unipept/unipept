@@ -65,7 +65,7 @@
                     radius: 740 / 2,
                     getTooltip: tooltipContent,
                     getTitleText: d => `${d.name} (${d.rank})`,
-                    rerootCallback: d => this.search(d.id, d.na0me, 1000),
+                    rerootCallback: d => this.search(d.id, d.name, 1000),
                 });
             }
         }
