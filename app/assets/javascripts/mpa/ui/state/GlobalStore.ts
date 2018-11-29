@@ -107,6 +107,10 @@ const mpaMutations: MutationTree<GlobalState> = {
 
 const mpaActions: ActionTree<GlobalState, any> = {
     selectDataset(store: ActionContext<GlobalState, any>, dataset: NewPeptideContainer) {
+        if (store.getters.selectedDatasets.indexOf(dataset) !== -1) {
+            return;
+        }
+
         store.commit('SELECT_DATASET', dataset);
         if (store.getters.isAnalysis) {
             store.dispatch('processDataset', dataset);
