@@ -109,11 +109,11 @@ class AmountTable {
      * @todo Make general code for creation of tooltips
      */
     createTooltip() {
-        // TODO this probably gets overwritten by Vue
         this.tooltip = d3.select("body")
             .append("div")
             .attr("class", "tip")
             .style("visibility", "hidden");
+        console.log(this.tooltip);
     }
 
     /**
