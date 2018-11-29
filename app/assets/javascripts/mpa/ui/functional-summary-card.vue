@@ -38,10 +38,14 @@
                     </ul>
                 </div>
             </template>
+
+            <template slot="sharedContent">
+            </template>
+
             <tab label="GO terms" :active="true">
+                <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
                 This panel shows the Gene Ontology annotations that were matched to
                 your peptides. <span v-if="fa && $store.getters.activeDataset" v-html="this.trustLine(fa, 'GO term')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
-                <sort-functional-annotations-dropdown v-model="percentSettings"></sort-functional-annotations-dropdown>
                 <div v-if="!$store.getters.activeDataset" class="mpa-unavailable go">
                     <h3>Biological Process</h3>
                     <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
@@ -55,6 +59,7 @@
                 </div>
             </tab>
             <tab label="EC numbers">
+                <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
                 This panel shows the Enzyme Commission numbers that were matched to your peptides. <span v-if="fa && $store.getters.activeDataset" v-html="this.trustLine(fa, 'EC number')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
                 <ec-numbers-summary style="margin-top: 10px" v-if="$store.getters.activeDataset" :fa="fa" :peptide-container="$store.getters.activeDataset" :sort-settings="faSortSettings"></ec-numbers-summary>
                 <div v-else style="margin-top: 10px;">
@@ -83,11 +88,11 @@
     import EcNumbersSummary from "./tables/ec-numbers-summary.vue";
     import Modal from "../../components/modal/modal.vue";
     import SimpleButton from "../../components/button/simple-button.vue";
-    import SortFunctionalAnnotationsDropdown from "./sort-functional-annotations-dropdown.vue";
+    import FilterFunctionalAnnotationsDropdown from "./filter-functional-annotations-dropdown.vue";
 
     @Component({
         components: {
-            SortFunctionalAnnotationsDropdown,
+            FilterFunctionalAnnotationsDropdown,
             SimpleButton, EcNumbersSummary, GoTermsSummary, Tab, CardNav, Modal},
         computed: {
             watchableDataset: {

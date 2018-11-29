@@ -11,7 +11,6 @@ import {constructSearchtree} from "./searchtree.js";
 import DatasetManager from "./datasetManager";
 import PeptideContainer from "./peptideContainer";
 import {SESSION_STORAGE_TYPE} from "./storageTypeConstants";
-import {LoadDatasetsCardManager} from "./loadDatasetsCardManager";
 /* eslint require-jsdoc: off */
 
 /**
@@ -69,13 +68,13 @@ class MPA {
             }
         };
 
-        this._loadCardsManager = new LoadDatasetsCardManager(
-            this._localStorageManager,
-            this._sessionStorageManager,
-            clearDatasetsListener,
-            removeDatasetListener,
-            addDatasetListener
-        );
+        // this._loadCardsManager = new LoadDatasetsCardManager(
+        //     this._localStorageManager,
+        //     this._sessionStorageManager,
+        //     clearDatasetsListener,
+        //     removeDatasetListener,
+        //     addDatasetListener
+        // );
 
         /** @type {Dataset[]} */
         this.datasets = [];

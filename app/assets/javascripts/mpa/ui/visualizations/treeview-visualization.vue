@@ -14,16 +14,15 @@
 
 <script lang="ts">
     import Vue from "vue";
-    import Component from "vue-class-component";
+    import Component, {mixins} from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import NewPeptideContainer from "../../NewPeptideContainer";
     import {Tree} from "../../tree";
     import {tooltipContent} from "./VisualizationHelper";
+    import VisualizationMixin from "./visualization-mixin.vue";
 
     @Component
-    export default class TreeviewVisualization extends Vue {
-        @Prop({default: null}) dataset: NewPeptideContainer | null;
-
+    export default class TreeviewVisualization extends mixins(VisualizationMixin) {
         treeview!: any;
 
         mounted() {
@@ -56,7 +55,8 @@
                         if (d.name === "Eukaryota") return "#2E7D32"; // green
                         if (d.name === "Viruses") return "#C62828"; // red
                         return d3.scale.category10().call(this, d);
-                    }
+                    },
+                    rerootCallback: d => this.search(d.id, d.name, 1000)
                 });
             }
         }
