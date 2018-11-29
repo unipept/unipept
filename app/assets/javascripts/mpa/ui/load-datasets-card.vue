@@ -17,7 +17,6 @@
                 <determinate-striped-progress-bar v-if="prideLoading" :progress="prideProgress"></determinate-striped-progress-bar>
             </div>
             <dataset-form v-on:peptide-change="pridePeptides = $event" :peptides="pridePeptides" v-on:name-change="prideName = $event" :name="prideName" v-on:save-change="prideSave = $event" :save="prideSave" :loading="prideLoading || pendingStore"></dataset-form>
-            <p>{{ prideLoading }}</p>
             <div class="search-buttons-centered">
                 <simple-button @click="storePrideDataset()" label="Add to selected datasets" glyphicon="plus" :disabled="prideLoading || pendingStore"></simple-button>
             </div>
