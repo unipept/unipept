@@ -94,6 +94,16 @@
                 get(): NewPeptideContainer {
                     return this.$store.getters.activeDataset
                 }
+            },
+            watchableSelectedSearchTerm: {
+                get(): string {
+                    return this.$store.getters.selectedTerm
+                }
+            },
+            watchableSelectedTaxonId: {
+                get(): string {
+                    return this.$store.getters.selectedTaxonId;
+                }
             }
         }
     })
@@ -131,7 +141,14 @@
         }
 
         @Watch('percentSettings') onPercentSettingsChanged() {
-            console.log("PERCENTSETTINGS!");
+            this.onPeptideContainerChanged();
+        }
+
+        @Watch('watchableSelectedSearchTerm') onWatchableSelectedSearchTermChanged() {
+            this.onPeptideContainerChanged();
+        }
+
+        @Watch('watchableSelectedTaxonId') onWatchableSelectedTaxonIdChanged() {
             this.onPeptideContainerChanged();
         }
 
@@ -158,7 +175,7 @@
             }
         }
 
-        private async redoFAcalculations(name = "Organism", id = -1, timeout = 500): Promise<void> {
+        private async redoFAcalculations(): Promise<void> {
             let peptideContainer = this.$store.getters.activeDataset;
 
             if (peptideContainer && peptideContainer.getDataset()) {
@@ -166,6 +183,12 @@
 
                 const percent = parseInt(this.percentSettings);
                 let sequences = null;
+
+                let taxonId = this.$store.getters.selectedTaxonId;
+
+                if (taxonId > 0) {
+                    sequences = dataset.tree.getAllSequences(taxonId);
+                }
 
                 await dataset.reprocessFA(percent, sequences);
                 if (dataset.baseFa === null) {
