@@ -55,7 +55,6 @@
         waitString = "Please wait while we are preparing your data...";
 
         @Watch('datasetsChosen') onDatasetsChosenChanged(newValue: boolean, oldValue: boolean) {
-            console.log(newValue);
             if (newValue) {
                 this.waitString = "Please wait while we are preparing your data...";
             } else {

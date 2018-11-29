@@ -71,8 +71,6 @@
 
             if (this.fa && this.namespace) {
                 const go = this.fa.getGroup("GO");
-                console.log(this.namespace);
-                console.log(this.fa);
 
                 const goOld = oldFa === null ? null : oldFa.getGroup("GO");
                 const oldNsFagroup = goOld === null ? null : goOld.getGroup(this.namespace);
