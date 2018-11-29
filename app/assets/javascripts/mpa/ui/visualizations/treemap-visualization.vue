@@ -35,6 +35,12 @@
             this.initTreeMap();
         }
 
+        @Watch('watchableTaxonId') onWatchableTaxonIdChanged() {
+            if (this.watchableTaxonId === -1) {
+                this.reset();
+            }
+        }
+
         reset() {
             if (this.treemap) {
                 this.treemap.reset();
@@ -54,7 +60,7 @@
                     getTooltip: tooltipContent,
                     getLabel: d => `${d.name} (${d.data.self_count}/${d.data.count})`,
                     getLevel: d => MpaAnalysisManager.RANKS.indexOf(d.rank),
-                    rerootCallbak: d => this.search(d.id, d.name, 1000)
+                    rerootCallback: d => this.search(d.id, d.name, 1000)
                 });
             }
         }
