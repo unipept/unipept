@@ -40,11 +40,11 @@
             </template>
 
             <template slot="sharedContent">
-                <indeterminate-progress-bar :active="faCalculationsInProgress"></indeterminate-progress-bar>
                 <div id="fa-filter-warning" class="card-supporting-text" v-if="watchableSelectedTaxonId !== -1">
                     <strong>Filtered results:</strong> These results are limited to the {{ numOfFilteredPepts }} specific to <strong>{{ filteredScope}}</strong>
                     <simple-button id="fa-undo-filter" label="Undo" @click="reset()"></simple-button>
                 </div>
+                <indeterminate-progress-bar :active="faCalculationsInProgress"></indeterminate-progress-bar>
             </template>
 
             <tab label="GO terms" :active="true">
