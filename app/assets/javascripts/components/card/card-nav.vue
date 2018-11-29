@@ -10,8 +10,8 @@
                 <slot name="interactiveTitle"></slot>
             </div>
         </div>
+        <slot name="sharedContent"></slot>
         <div class="card-supporting-text">
-            <slot name="sharedContent"></slot>
             <div class="tab-content">
                 <slot></slot>
             </div>

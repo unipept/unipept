@@ -40,6 +40,10 @@
             </template>
 
             <template slot="sharedContent">
+                <div id="fa-filter-warning" class="card-supporting-text" v-if="watchableSelectedTaxonId !== -1">
+                    <strong>Filtered results:</strong> These results are limited to the {{ numOfFilteredPepts }} specific to <strong>{{ filteredScope}}</strong>
+                    <simple-button id="fa-undo-filter" label="Undo" @click="reset()"></simple-button>
+                </div>
             </template>
 
             <tab label="GO terms" :active="true">
@@ -141,6 +145,9 @@
 
         sortSettingsModalActive: boolean = false;
 
+        filteredScope: string = "";
+        numOfFilteredPepts: string = "";
+
         @Watch('watchableDataset') onWatchableDatasetChanged() {
             this.onPeptideContainerChanged();
         }
@@ -171,10 +178,14 @@
             this.onPeptideContainerChanged();
         }
 
+        reset() {
+            this.$store.dispatch('setSelectedTerm', 'Organism');
+            this.$store.dispatch('setSelectedTaxonId', -1);
+        }
+
         private async onPeptideContainerChanged() {
             let container: NewPeptideContainer = this.$store.getters.activeDataset;
             if (container && container.getDataset()) {
-                console.log("RECALCULATE FA's");
                 await this.redoFAcalculations();
                 this.fa = this.$store.getters.activeDataset.getDataset().fa;
             }
@@ -193,12 +204,17 @@
 
                 if (taxonId > 0) {
                     sequences = dataset.tree.getAllSequences(taxonId);
+                    let taxonData = dataset.tree.nodes.get(taxonId);
+                    this.filteredScope = `${taxonData.name} (${taxonData.rank})`;
                 }
 
                 await dataset.reprocessFA(percent, sequences);
                 if (dataset.baseFa === null) {
                     dataset.setBaseFA();
                 }
+
+                const num = dataset.fa.getTrust().totalCount;
+                this.numOfFilteredPepts = `${num} peptide${num === 1 ? "" : "s"}`;
             }
         }
 
