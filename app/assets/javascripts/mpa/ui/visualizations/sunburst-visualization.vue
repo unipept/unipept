@@ -72,16 +72,12 @@
          * @param id Taxon id to inspect
          * @param searchTerm Search term to put in box
          * @param [timeout=500] timeout in ms to wait before processing
-         * @todo add search term to FA explanation to indicate filtering
          */
         private search(id: number, searchTerm, timeout = 500) {
-            let localTerm = searchTerm;
-            if (localTerm === "Organism") {
-                localTerm = "";
-            }
             setTimeout(() => {
-                this.$store.dispatch('setSelectedTerm', localTerm);
-            });
+                this.$store.dispatch('setSelectedTerm', searchTerm);
+                this.$store.dispatch('setSelectedTaxonId', id);
+            }, timeout);
         }
     }
 </script>

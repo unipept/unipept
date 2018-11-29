@@ -7,12 +7,14 @@ export interface AnalysisState {
     datasetSelectionInProgress: boolean,
     displaySettings: DisplaySettings,
     selectedTerm: string,
+    selectedTaxonId: number
 }
 
 const analysisState: AnalysisState = {
     datasetSelectionInProgress: false,
     displaySettings: new DisplaySettings(true),
-    selectedTerm: ''
+    selectedTerm: 'Organism',
+    selectedTaxonId: -1
 };
 
 const analysisGetters: GetterTree<AnalysisState, any>  = {
@@ -24,6 +26,9 @@ const analysisGetters: GetterTree<AnalysisState, any>  = {
     },
     selectedTerm(state: AnalysisState): string {
         return state.selectedTerm;
+    },
+    selectedTaxonId(state: AnalysisState): number {
+        return state.selectedTaxonId;
     }
 };
 
@@ -36,6 +41,9 @@ const analysisMutations: MutationTree<AnalysisState> = {
     },
     SET_SELECTED_TERM(state: AnalysisState, value: string): void {
         state.selectedTerm = value;
+    },
+    SET_SELECTED_TAXON_ID(state: AnalysisState, value: number): void {
+        state.selectedTaxonId = value;
     }
 };
 
@@ -48,6 +56,9 @@ const analysisActions: ActionTree<AnalysisState, any> = {
     },
     setSelectedTerm(store: ActionContext<AnalysisState, any>, term: string): void {
         store.commit('SET_SELECTED_TERM', term);
+    },
+    setSelectedTaxonId(store: ActionContext<AnalysisState, any>, taxonId: number): void {
+        store.commit('SET_SELECTED_TAXON_ID', taxonId);
     }
 };
 
