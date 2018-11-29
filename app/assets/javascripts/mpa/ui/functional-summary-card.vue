@@ -40,6 +40,7 @@
             </template>
 
             <template slot="sharedContent">
+                <indeterminate-progress-bar :active="faCalculationsInProgress"></indeterminate-progress-bar>
                 <div id="fa-filter-warning" class="card-supporting-text" v-if="watchableSelectedTaxonId !== -1">
                     <strong>Filtered results:</strong> These results are limited to the {{ numOfFilteredPepts }} specific to <strong>{{ filteredScope}}</strong>
                     <simple-button id="fa-undo-filter" label="Undo" @click="reset()"></simple-button>
@@ -93,9 +94,11 @@
     import Modal from "../../components/modal/modal.vue";
     import SimpleButton from "../../components/button/simple-button.vue";
     import FilterFunctionalAnnotationsDropdown from "./filter-functional-annotations-dropdown.vue";
+    import IndeterminateProgressBar from "../../components/progress/indeterminate-progress-bar.vue";
 
     @Component({
         components: {
+            IndeterminateProgressBar,
             FilterFunctionalAnnotationsDropdown,
             SimpleButton, EcNumbersSummary, GoTermsSummary, Tab, CardNav, Modal},
         computed: {
@@ -147,6 +150,7 @@
 
         filteredScope: string = "";
         numOfFilteredPepts: string = "";
+        faCalculationsInProgress: boolean = false;
 
         @Watch('watchableDataset') onWatchableDatasetChanged() {
             this.onPeptideContainerChanged();
@@ -184,11 +188,13 @@
         }
 
         private async onPeptideContainerChanged() {
+            this.faCalculationsInProgress = true;
             let container: NewPeptideContainer = this.$store.getters.activeDataset;
             if (container && container.getDataset()) {
                 await this.redoFAcalculations();
                 this.fa = this.$store.getters.activeDataset.getDataset().fa;
             }
+            this.faCalculationsInProgress = false;
         }
 
         private async redoFAcalculations(): Promise<void> {
