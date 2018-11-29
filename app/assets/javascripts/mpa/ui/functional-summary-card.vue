@@ -41,6 +41,7 @@
             <tab label="GO terms" :active="true">
                 This panel shows the Gene Ontology annotations that were matched to
                 your peptides. <span v-if="fa && $store.getters.activeDataset" v-html="this.trustLine(fa, 'GO term')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
+                <sort-functional-annotations-dropdown v-model="percentSettings"></sort-functional-annotations-dropdown>
                 <div v-if="!$store.getters.activeDataset" class="mpa-unavailable go">
                     <h3>Biological Process</h3>
                     <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
@@ -50,7 +51,7 @@
                     <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
                 </div>
                 <div v-else v-for="variant in namespaces">
-                    <go-terms-summary :percent-settings="percentSettings" :sort-settings="faSortSettings" :fa="fa" :namespace="variant" :peptide-container="$store.getters.activeDataset"></go-terms-summary>
+                    <go-terms-summary :sort-settings="faSortSettings" :fa="fa" :namespace="variant" :peptide-container="$store.getters.activeDataset"></go-terms-summary>
                 </div>
             </tab>
             <tab label="EC numbers">
@@ -83,9 +84,12 @@
     import EcNumbersSummary from "./tables/ec-numbers-summary.vue";
     import Modal from "../../components/modal/modal.vue";
     import SimpleButton from "../../components/button/simple-button.vue";
+    import SortFunctionalAnnotationsDropdown from "./sort-functional-annotations-dropdown.vue";
 
     @Component({
-        components: {SimpleButton, EcNumbersSummary, GoTermsSummary, Tab, CardNav, Modal},
+        components: {
+            SortFunctionalAnnotationsDropdown,
+            SimpleButton, EcNumbersSummary, GoTermsSummary, Tab, CardNav, Modal},
         computed: {
             watchableDataset: {
                 get(): NewPeptideContainer {
@@ -117,13 +121,18 @@
             (a, b) => b[this.fieldType] - a[this.fieldType]
         );
 
-        percentSettings: FaPercentSettings = new FaPercentSettings(5);
+        percentSettings: string = "5";
 
         fa: FunctionalAnnotations | null = null;
 
         sortSettingsModalActive: boolean = false;
 
         @Watch('watchableDataset') onWatchableDatasetChanged() {
+            this.onPeptideContainerChanged();
+        }
+
+        @Watch('percentSettings') onPercentSettingsChanged() {
+            console.log("PERCENTSETTINGS!");
             this.onPeptideContainerChanged();
         }
 
@@ -156,7 +165,7 @@
             if (peptideContainer && peptideContainer.getDataset()) {
                 let dataset: Dataset = peptideContainer.getDataset();
 
-                const percent = this.percentSettings.percentFa;
+                const percent = parseInt(this.percentSettings);
                 let sequences = null;
 
                 await dataset.reprocessFA(percent, sequences);
