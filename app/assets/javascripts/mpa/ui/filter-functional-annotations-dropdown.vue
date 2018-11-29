@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="btn-group">
+        <div class="btn-group mpa-fa-advanced">
             <a class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                 <span class="glyphicon glyphicon-cog"></span>
             </a>
@@ -117,7 +117,7 @@
             }
         }
     })
-    export default class SortFunctionalAnnotationsDropdown extends Vue {
+    export default class FilterFunctionalAnnotationsDropdown extends Vue {
         @Prop({default: "5"}) value: string;
 
         content: string = this.value;

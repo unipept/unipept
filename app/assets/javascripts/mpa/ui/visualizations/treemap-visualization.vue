@@ -14,17 +14,16 @@
 
 <script lang="ts">
     import Vue from "vue";
-    import Component from "vue-class-component";
+    import Component, {mixins} from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import NewPeptideContainer from "../../NewPeptideContainer";
     import MpaAnalysisManager from "../../MpaAnalysisManager";
     import {Tree} from "../../tree";
     import {tooltipContent} from "./VisualizationHelper";
+    import VisualizationMixin from "./visualization-mixin.vue";
 
     @Component
-    export default class TreemapVisualization extends Vue {
-        @Prop({default: null}) dataset: NewPeptideContainer | null;
-
+    export default class TreemapVisualization extends mixins(VisualizationMixin) {
         // Make field non-reactive by not setting the value here, but only after created() has been fired.
         treemap!: any;
 
@@ -54,7 +53,8 @@
                     getBreadcrumbTooltip: d => d.rank,
                     getTooltip: tooltipContent,
                     getLabel: d => `${d.name} (${d.data.self_count}/${d.data.count})`,
-                    getLevel: d => MpaAnalysisManager.RANKS.indexOf(d.rank)
+                    getLevel: d => MpaAnalysisManager.RANKS.indexOf(d.rank),
+                    rerootCallbak: d => this.search(d.id, d.name, 1000)
                 });
             }
         }

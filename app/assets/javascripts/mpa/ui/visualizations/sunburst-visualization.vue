@@ -22,16 +22,15 @@
 
 <script lang="ts">
     import Vue from "vue";
-    import Component from "vue-class-component";
+    import Component, {mixins} from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import {Tree} from "../../tree";
     import NewPeptideContainer from "../../NewPeptideContainer";
     import {tooltipContent} from "./VisualizationHelper";
+    import VisualizationMixin from "./visualization-mixin.vue";
 
     @Component
-    export default class SunburstVisualization extends Vue {
-        @Prop({default: null}) dataset: NewPeptideContainer | null;
-
+    export default class SunburstVisualization extends mixins(VisualizationMixin) {
         // Make field non-reactive by not setting it here, but only after created has been called for the first time.
         sunburst!: any;
 
@@ -60,24 +59,9 @@
                     radius: 740 / 2,
                     getTooltip: tooltipContent,
                     getTitleText: d => `${d.name} (${d.rank})`,
-                    rerootCallback: d => this.search(d.id, d.name, 1000),
+                    rerootCallback: d => this.search(d.id, d.na0me, 1000),
                 });
             }
-        }
-
-        /**
-         * Propagate selections in the visualisation to the search tree and
-         * The functional analysis data.
-         *
-         * @param id Taxon id to inspect
-         * @param searchTerm Search term to put in box
-         * @param [timeout=500] timeout in ms to wait before processing
-         */
-        private search(id: number, searchTerm, timeout = 500) {
-            setTimeout(() => {
-                this.$store.dispatch('setSelectedTerm', searchTerm);
-                this.$store.dispatch('setSelectedTaxonId', id);
-            }, timeout);
         }
     }
 </script>

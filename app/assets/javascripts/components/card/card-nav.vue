@@ -11,6 +11,7 @@
             </div>
         </div>
         <div class="card-supporting-text">
+            <slot name="sharedContent"></slot>
             <div class="tab-content">
                 <slot></slot>
             </div>
