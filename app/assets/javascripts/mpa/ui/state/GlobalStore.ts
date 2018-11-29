@@ -13,6 +13,8 @@ export interface GlobalState {
     selectedDataset: NewPeptideContainer,
     searchSettings: SearchSettings,
     activeDataset: NewPeptideContainer | null,
+    selectedTerm: string,
+    selectedTaxonId: number
 }
 
 const mpaState: GlobalState = {
@@ -22,6 +24,8 @@ const mpaState: GlobalState = {
     selectedDataset: undefined,
     searchSettings: new SearchSettings(true, true, false),
     activeDataset: null,
+    selectedTerm: 'Organism',
+    selectedTaxonId: -1
 };
 
 const mpaGetters: GetterTree<GlobalState, any> = {
@@ -42,6 +46,12 @@ const mpaGetters: GetterTree<GlobalState, any> = {
     },
     activeDataset(state: GlobalState): NewPeptideContainer | null {
         return state.activeDataset;
+    },
+    selectedTerm(state: GlobalState): string {
+        return state.selectedTerm;
+    },
+    selectedTaxonId(state: GlobalState): number {
+        return state.selectedTaxonId;
     }
 };
 
@@ -87,6 +97,12 @@ const mpaMutations: MutationTree<GlobalState> = {
     SET_ACTIVE_DATASET(state: GlobalState, dataset: NewPeptideContainer | null): void {
         state.activeDataset = dataset;
     },
+    SET_SELECTED_TERM(state: GlobalState, value: string): void {
+        state.selectedTerm = value;
+    },
+    SET_SELECTED_TAXON_ID(state: GlobalState, value: number): void {
+        state.selectedTaxonId = value;
+    }
 };
 
 const mpaActions: ActionTree<GlobalState, any> = {
@@ -141,6 +157,8 @@ const mpaActions: ActionTree<GlobalState, any> = {
     },
     setActiveDataset(store: ActionContext<GlobalState, any>, dataset: NewPeptideContainer | null): void {
         store.commit('SET_ACTIVE_DATASET', dataset);
+        store.dispatch('setSelectedTerm', 'Organism');
+        store.dispatch('setSelectedTaxonId', -1);
     },
     processDataset(store: ActionContext<GlobalState, any>, dataset: NewPeptideContainer): void {
         let mpaManager = new MpaAnalysisManager();
@@ -150,6 +168,12 @@ const mpaActions: ActionTree<GlobalState, any> = {
                 store.dispatch('setActiveDataset', dataset);
             }
         });
+    },
+    setSelectedTerm(store: ActionContext<GlobalState, any>, term: string): void {
+        store.commit('SET_SELECTED_TERM', term);
+    },
+    setSelectedTaxonId(store: ActionContext<GlobalState, any>, taxonId: number): void {
+        store.commit('SET_SELECTED_TAXON_ID', taxonId);
     }
 };
 
