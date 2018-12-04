@@ -9,7 +9,7 @@
             <div class="nav-right">
                 <div style="position: relative; top: 4px;">
                     <button id="zoom-btn" class="btn btn-default btn-xs btn-animate" @click="switchToFullScreen()"><span class="glyphicon glyphicon-resize-full grow"></span> Enter full screen</button>
-                    <button id="save-btn" class="btn btn-default btn-xs btn-animate"><span class="glyphicon glyphicon-download down"></span> Save as image</button>
+                    <button id="save-btn" class="btn btn-default btn-xs btn-animate" @click="saveAsImage()"><span class="glyphicon glyphicon-download down"></span> Save as image</button>
                 </div>
             </div>
         </card-header>
@@ -27,7 +27,7 @@
                     </nav>
                     <div class="fullScreenActions">
                         <a title="" class="btn-animate reset" data-original-title="Reset the visualisation" @click="reset()"><span class="glyphicon glyphicon-repeat spin"></span></a>
-                        <a title="" class="btn-animate download" data-original-title="Download the current view as an svg or png image"><span class="glyphicon glyphicon-download down"></span></a>
+                        <a title="" class="btn-animate download" data-original-title="Download the current view as an svg or png image" @click="saveAsImage()"><span class="glyphicon glyphicon-download down"></span></a>
                         <a title="" class="btn-animate exit" data-original-title="Exit full screen mode" @click="cancelFullScreen()"><span class="glyphicon glyphicon-resize-small shrink"></span></a>
                     </div>
                 </div>
@@ -38,7 +38,7 @@
                     </div>
                 </tab>
                 <tab label="Treemap" id="treemapWrapper" class="visualization-wrapper">
-                    <treemap-visualization ref="treemap" :full-screen="isFullScreen" v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></treemap-visualization>
+                    <treemap-visualization ref="treemap" id="treemap" :full-screen="isFullScreen" v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></treemap-visualization>
                     <div v-else class="mpa-waiting">
                         <img :alt="waitString" class="mpa-placeholder" src="/images/mpa/placeholder_treemap.svg">
                     </div>
@@ -74,7 +74,7 @@
     import Tabs from "../../components/card/tabs.vue";
     import CardHeader from "../../components/card/card-header.vue";
     import CardBody from "../../components/card/card-body.vue";
-    import {logToGoogle} from "../../utils";
+    import {logToGoogle, triggerDownloadModal} from "../../utils";
 
     @Component({
         components: {
@@ -99,6 +99,7 @@
         mounted() {
             this.tabs = this.$children[0].$children[1].$children as Tab[];
             $(document).bind(window.fullScreenApi.fullScreenEventName, () => this.exitFullScreen());
+            $(".fullScreenActions a").tooltip({placement: "bottom", delay: {"show": 300, "hide": 300}});
         }
 
         @Watch('datasetsChosen') onDatasetsChosenChanged(newValue: boolean, oldValue: boolean) {
@@ -122,6 +123,8 @@
             if (window.fullScreenApi.supportsFullScreen) {
                 this.isFullScreen = true;
                 window.fullScreenApi.requestFullScreen(this.$refs.fullScreenContainer);
+
+                $(".tip").appendTo(".full-screen-container");
             }
         }
 
@@ -132,6 +135,7 @@
         exitFullScreen() {
             if (!window.fullScreenApi.isFullScreen()) {
                 this.isFullScreen = false;
+                $(".tip").appendTo("body");
             }
         }
 
@@ -142,7 +146,22 @@
         }
 
         saveAsImage() {
+            let activeTab = "";
+            for (let tab of this.tabs) {
+                if (tab.activated) {
+                    activeTab = tab.label;
+                }
+            }
 
+            if (activeTab === "Sunburst") {
+                d3.selectAll(".toHide").attr("class", "arc hidden");
+                triggerDownloadModal("#sunburstWrapper svg", null, "unipept_sunburst");
+                d3.selectAll(".hidden").attr("class", "arc toHide");
+            } else if (activeTab === "Treemap") {
+                triggerDownloadModal(null, "#treemap", "unipept_treemap");
+            } else {
+                triggerDownloadModal("#treeviewWrapper svg", null, "unipept_treeview");
+            }
         }
     }
 </script>
