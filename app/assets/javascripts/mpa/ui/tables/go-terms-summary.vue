@@ -213,6 +213,7 @@
 
             $dlbtn.click(() => {
                 logToGoogle("Multi peptide", "Save Image for FA");
+                console.log($container.find("svg"));
                 triggerDownloadModal($container.find("svg"), null, "unipept_treeview_" + code);
             });
         }
