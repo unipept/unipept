@@ -1,15 +1,20 @@
 <template>
-    <card title="Experiment summary">
-        <search-settings-form></search-settings-form>
-        <div class="search-buttons-centered">
-            <simple-button label="Update" glyphicon="repeat" type="primary"></simple-button>
-        </div>
-        <hr>
-        <span v-if="!this.$store.getters.activeDataset">No dataset is selected... Wait for at least one dataset to be loaded or select one.</span>
-        <span v-else>
-            We managed to match xx of your {{ this.$store.getters.activeDataset.getAmountOfPeptides() }} peptides.
-            Unfortunately, xx peptides couldn't be found.
-        </span>
+    <card>
+        <card-header>
+            <card-title>Experiment summary</card-title>
+        </card-header>
+        <card-body>
+            <search-settings-form></search-settings-form>
+            <div class="search-buttons-centered">
+                <simple-button label="Update" glyphicon="repeat" type="primary"></simple-button>
+            </div>
+            <hr>
+            <span v-if="!this.$store.getters.activeDataset">No dataset is selected... Wait for at least one dataset to be loaded or select one.</span>
+            <span v-else>
+                We managed to match xx of your {{ this.$store.getters.activeDataset.getAmountOfPeptides() }} peptides.
+                Unfortunately, xx peptides couldn't be found.
+            </span>
+        </card-body>
     </card>
 </template>
 
@@ -20,8 +25,11 @@
     import Card from "../../components/card/card.vue";
     import SearchSettingsForm from "./search-settings-form.vue";
     import SimpleButton from "../../components/button/simple-button.vue";
+    import CardHeader from "../../components/card/card-header.vue";
+    import CardTitle from "../../components/card/card-title.vue";
+    import CardBody from "../../components/card/card-body.vue";
     @Component({
-        components: {SimpleButton, SearchSettingsForm, Card}
+        components: {CardBody, CardTitle, CardHeader, SimpleButton, SearchSettingsForm, Card}
     })
     export default class ExperimentSummaryCard extends Vue {
         equateIl: boolean = true;
