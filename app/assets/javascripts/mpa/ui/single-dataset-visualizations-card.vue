@@ -2,7 +2,7 @@
     <card-nav>
         <card-header class="card-title-interactive">
             <ul class="nav nav-tabs">
-                <li v-for="tab in tabs" v-if="tab.constructor.name === 'Tab'" v-bind:class="{ active: tab.activated }" @click="changeActiveTab(tab)">
+                <li v-for="tab in tabs" v-bind:class="{ active: tab.activated }" @click="changeActiveTab(tab)">
                     <a>{{ tab.label }}</a>
                 </li>
             </ul>
@@ -90,6 +90,14 @@
                 this.waitString = "Please select at least one dataset to continue the analysis...";
             }
             console.log(this.waitString);
+        }
+
+        changeActiveTab(tab: Tab) {
+            for (let currentTab of this.tabs) {
+                currentTab.activated = false;
+            }
+
+            tab.activated = true;
         }
     }
 </script>

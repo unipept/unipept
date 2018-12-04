@@ -436,9 +436,6 @@ class AmountTable {
                 .style("display", "block")
                 .style("right", "auto");
 
-            console.log("POSITION TOOLTIP!");
-            console.log(this.tooltip);
-
             // Reposition if needed
             if (window.innerWidth - x - 25 - this.tooltip.node().offsetWidth < 0) {
                 this.tooltip

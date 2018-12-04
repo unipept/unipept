@@ -19,60 +19,69 @@
         </modal>
 
         <card-nav>
-            <template slot="interactiveTitle">
-                <div class="dropdown pull-right">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="mpa-select-fa-sort" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="glyphicon glyphicon-sort-by-attributes-alt pull-left"></span><span id="mpa-select-fa-sort-name">{{ faSortSettings.name}}</span>
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-right" id="mpa-select-fa-sort-items" aria-labelledby="mpa-selet-fa-sort">
-                        <li class="dropdown-header">Sort by number of peptides in related proteins
-                            <span class="small glyphicon glyphicon-question-sign btn-icon" @click="sortSettingsModalActive = true"></span>
-                        </li>
-                        <li>
-                            <a :class="formatType === 'percent' ? 'active' : ''" @click="setFormatSettings('percent', 'fractionOfPepts', 'fractionOfPepts', 'Peptides %')">Peptides %</a>
-                        </li>
-                        <li>
-                            <a :class="formatType === 'int' ? 'active' : ''" @click="setFormatSettings('int', 'numberOfPepts', 'fractionOfPepts', 'Peptides')">Peptides</a>
-                        </li>
-                    </ul>
+            <card-header class="card-title-interactive">
+                <ul class="nav nav-tabs">
+                    <li v-for="tab in tabs" v-bind:class="{ active: tab.activated }" @click="changeActiveTab(tab)">
+                        <a>{{ tab.label }}</a>
+                    </li>
+                </ul>
+                <div class="nav-right">
+                    <div class="dropdown pull-right">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="mpa-select-fa-sort" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="glyphicon glyphicon-sort-by-attributes-alt pull-left"></span><span id="mpa-select-fa-sort-name">{{ faSortSettings.name}}</span>
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right" id="mpa-select-fa-sort-items" aria-labelledby="mpa-selet-fa-sort">
+                            <li class="dropdown-header">Sort by number of peptides in related proteins
+                                <span class="small glyphicon glyphicon-question-sign btn-icon" @click="sortSettingsModalActive = true"></span>
+                            </li>
+                            <li>
+                                <a :class="formatType === 'percent' ? 'active' : ''" @click="setFormatSettings('percent', 'fractionOfPepts', 'fractionOfPepts', 'Peptides %')">Peptides %</a>
+                            </li>
+                            <li>
+                                <a :class="formatType === 'int' ? 'active' : ''" @click="setFormatSettings('int', 'numberOfPepts', 'fractionOfPepts', 'Peptides')">Peptides</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </template>
+            </card-header>
 
-            <template slot="sharedContent">
-                <div id="fa-filter-warning" class="card-supporting-text" v-if="watchableSelectedTaxonId !== -1">
-                    <strong>Filtered results:</strong> These results are limited to the {{ numOfFilteredPepts }} specific to <strong>{{ filteredScope}}</strong>
-                    <simple-button id="fa-undo-filter" label="Undo" @click="reset()"></simple-button>
-                </div>
-                <indeterminate-progress-bar :active="faCalculationsInProgress"></indeterminate-progress-bar>
-            </template>
+            <div id="fa-filter-warning" class="card-supporting-text" v-if="watchableSelectedTaxonId !== -1">
+                <strong>Filtered results:</strong> These results are limited to the {{ numOfFilteredPepts }} specific to <strong>{{ filteredScope}}</strong>
+                <simple-button id="fa-undo-filter" label="Undo" @click="reset()"></simple-button>
+            </div>
+            <indeterminate-progress-bar :active="faCalculationsInProgress"></indeterminate-progress-bar>
 
-            <tab label="GO terms" :active="true">
-                <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
-                This panel shows the Gene Ontology annotations that were matched to
-                your peptides. <span v-if="fa && $store.getters.activeDataset" v-html="this.trustLine(fa, 'GO term')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
-                <div v-if="!$store.getters.activeDataset" class="mpa-unavailable go">
-                    <h3>Biological Process</h3>
-                    <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
-                    <h3>Cellular Component</h3>
-                    <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
-                    <h3>Molecular Function</h3>
-                    <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
+            <card-body>
+                <div class="tab-content">
+                    <tab label="GO terms" :active="true">
+                        <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
+                        This panel shows the Gene Ontology annotations that were matched to
+                        your peptides. <span v-if="fa && $store.getters.activeDataset" v-html="this.trustLine(fa, 'GO term')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
+                        <div v-if="!$store.getters.activeDataset" class="mpa-unavailable go">
+                            <h3>Biological Process</h3>
+                            <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
+                            <h3>Cellular Component</h3>
+                            <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
+                            <h3>Molecular Function</h3>
+                            <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
+                        </div>
+                        <div v-else v-for="variant in namespaces">
+                            <go-terms-summary :sort-settings="faSortSettings" :fa="fa" :namespace="variant" :peptide-container="$store.getters.activeDataset"></go-terms-summary>
+                        </div>
+                    </tab>
+                    <tab label="EC numbers">
+                        <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
+                        This panel shows the Enzyme Commission numbers that were matched to your peptides. <span v-if="fa && $store.getters.activeDataset" v-html="this.trustLine(fa, 'EC number')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
+                        <ec-numbers-summary style="margin-top: 10px" v-if="$store.getters.activeDataset" :fa="fa" :peptide-container="$store.getters.activeDataset" :sort-settings="faSortSettings"></ec-numbers-summary>
+                        <div v-else style="margin-top: 10px;">
+                            <span style="font-weight: 600;">Please wait while we are preparing your data...</span>
+                            <hr>
+                            <img src="/images/mpa/placeholder_treeview.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
+                        </div>
+                    </tab>
                 </div>
-                <div v-else v-for="variant in namespaces">
-                    <go-terms-summary :sort-settings="faSortSettings" :fa="fa" :namespace="variant" :peptide-container="$store.getters.activeDataset"></go-terms-summary>
-                </div>
-            </tab>
-            <tab label="EC numbers">
-                <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
-                This panel shows the Enzyme Commission numbers that were matched to your peptides. <span v-if="fa && $store.getters.activeDataset" v-html="this.trustLine(fa, 'EC number')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
-                <ec-numbers-summary style="margin-top: 10px" v-if="$store.getters.activeDataset" :fa="fa" :peptide-container="$store.getters.activeDataset" :sort-settings="faSortSettings"></ec-numbers-summary>
-                <div v-else style="margin-top: 10px;">
-                    <span style="font-weight: 600;">Please wait while we are preparing your data...</span>
-                    <hr>
-                    <img src="/images/mpa/placeholder_treeview.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
-                </div>
-            </tab>
+            </card-body>
         </card-nav>
         <!-- TODO When the AmountTable is converted to Vue, this should be automatically managed! -->
         <div id="tooltip" class="tip"></div>
@@ -97,9 +106,13 @@
     import SimpleButton from "../../components/button/simple-button.vue";
     import FilterFunctionalAnnotationsDropdown from "./filter-functional-annotations-dropdown.vue";
     import IndeterminateProgressBar from "../../components/progress/indeterminate-progress-bar.vue";
+    import CardHeader from "../../components/card/card-header.vue";
+    import CardBody from "../../components/card/card-body.vue";
 
     @Component({
         components: {
+            CardBody,
+            CardHeader,
             IndeterminateProgressBar,
             FilterFunctionalAnnotationsDropdown,
             SimpleButton, EcNumbersSummary, GoTermsSummary, Tab, CardNav, Modal},
@@ -123,6 +136,7 @@
     })
     export default class FunctionalSummaryCard extends Vue {
         namespaces: string[] = MpaAnalysisManager.GO_NAMESPACES;
+        tabs: Tab[] = [];
 
         private formatType: string = "int";
         private fieldType: string = "numberOfPepts";
@@ -154,6 +168,12 @@
         numOfFilteredPepts: string = "";
         faCalculationsInProgress: boolean = false;
 
+        mounted() {
+            console.log(this.$children);
+            this.tabs = this.$children[1].$children[2].$children as Tab[];
+            // console.log(this.tabs);
+        }
+
         @Watch('watchableDataset') onWatchableDatasetChanged() {
             this.onPeptideContainerChanged();
         }
@@ -168,6 +188,14 @@
 
         @Watch('watchableSelectedTaxonId') onWatchableSelectedTaxonIdChanged() {
             this.onPeptideContainerChanged();
+        }
+
+        changeActiveTab(tab: Tab) {
+            for (let currentTab of this.tabs) {
+                currentTab.activated = false;
+            }
+
+            tab.activated = true;
         }
 
         setFormatSettings(formatType: string, fieldType: string, shadeFieldType: string, name: string): void {
