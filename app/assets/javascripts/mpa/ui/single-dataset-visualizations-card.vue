@@ -26,25 +26,25 @@
                         </ul>
                     </nav>
                     <div class="fullScreenActions">
-                        <a title="" class="btn-animate reset" data-original-title="Reset the visualisation"><span class="glyphicon glyphicon-repeat spin"></span></a>
+                        <a title="" class="btn-animate reset" data-original-title="Reset the visualisation" @click="reset()"><span class="glyphicon glyphicon-repeat spin"></span></a>
                         <a title="" class="btn-animate download" data-original-title="Download the current view as an svg or png image"><span class="glyphicon glyphicon-download down"></span></a>
-                        <a title="" class="btn-animate exit" data-original-title="Exit full screen mode"><span class="glyphicon glyphicon-resize-small shrink"></span></a>
+                        <a title="" class="btn-animate exit" data-original-title="Exit full screen mode" @click="cancelFullScreen()"><span class="glyphicon glyphicon-resize-small shrink"></span></a>
                     </div>
                 </div>
                 <tab label="Sunburst" :active="true" id="sunburstWrapper" class="visualization-wrapper">
-                    <sunburst-visualization :full-screen="isFullScreen" class="unipept-sunburst" v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></sunburst-visualization>
+                    <sunburst-visualization ref="sunburst" :full-screen="isFullScreen" class="unipept-sunburst" v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></sunburst-visualization>
                     <div v-else class="mpa-waiting">
                         <img :alt="waitString" class="mpa-placeholder" src="/images/mpa/placeholder_sunburst.svg">
                     </div>
                 </tab>
                 <tab label="Treemap" id="treemapWrapper" class="visualization-wrapper">
-                    <treemap-visualization :full-screen="isFullScreen" v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></treemap-visualization>
+                    <treemap-visualization ref="treemap" :full-screen="isFullScreen" v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></treemap-visualization>
                     <div v-else class="mpa-waiting">
                         <img :alt="waitString" class="mpa-placeholder" src="/images/mpa/placeholder_treemap.svg">
                     </div>
                 </tab>
                 <tab label="Treeview" id="treeviewWrapper" class="visualization-wrapper">
-                    <treeview-visualization :full-screen="isFullScreen" v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></treeview-visualization>
+                    <treeview-visualization ref="treeview" :full-screen="isFullScreen" v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></treeview-visualization>
                     <div v-else class="mpa-waiting">
                         <img :alt="waitString" class="mpa-placeholder" src="/images/mpa/placeholder_treeview.svg">
                     </div>
@@ -125,10 +125,24 @@
             }
         }
 
+        cancelFullScreen() {
+            window.fullScreenApi.cancelFullScreen();
+        }
+
         exitFullScreen() {
             if (!window.fullScreenApi.isFullScreen()) {
                 this.isFullScreen = false;
             }
+        }
+
+        reset() {
+            (this.$refs.sunburst as SunburstVisualization).reset();
+            (this.$refs.treeview as TreeviewVisualization).reset();
+            (this.$refs.treemap as TreemapVisualization).reset();
+        }
+
+        saveAsImage() {
+
         }
     }
 </script>
