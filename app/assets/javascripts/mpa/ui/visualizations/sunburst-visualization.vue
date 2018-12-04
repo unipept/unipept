@@ -34,6 +34,8 @@
         // Make field non-reactive by not setting it here, but only after created has been called for the first time.
         sunburst!: any;
 
+        @Prop({default: false}) fullScreen: false;
+
         mounted() {
             this.initTree();
         }
@@ -46,6 +48,10 @@
             if (this.watchableTaxonId === -1) {
                 this.reset();
             }
+        }
+
+        @Watch('fullScreen') onFullScreenChanged(newFullScreen: boolean, oldFullScreen: boolean) {
+            this.sunburst.setFullScreen(newFullScreen)
         }
 
         reset() {

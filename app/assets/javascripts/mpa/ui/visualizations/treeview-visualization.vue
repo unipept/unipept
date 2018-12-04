@@ -25,6 +25,8 @@
     export default class TreeviewVisualization extends mixins(VisualizationMixin) {
         treeview!: any;
 
+        @Prop({default: false}) fullScreen: boolean;
+
         mounted() {
             this.initTreeview();
         }
@@ -37,6 +39,10 @@
             if (this.watchableTaxonId === -1) {
                 this.reset();
             }
+        }
+
+        @Watch('fullScreen') onFullScreenChanged(newFullScreen: boolean, oldFullScreen: boolean) {
+            this.treeview.setFullScreen(newFullScreen)
         }
 
         reset() {

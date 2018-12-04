@@ -91,6 +91,7 @@ textarea#qs {
     overflow: hidden;
 }
 
+
 h2.ghead {
     margin-bottom: 8px;
     margin-top: 5px;
@@ -109,6 +110,10 @@ h2.ghead::after {
     display: block;
     visibility: hidden;
     clear: both;
+}
+
+.unipept-sunburst h2.ghead {
+    margin-right: 32px;
 }
 
 #visualizations-card > .card-supporting-text {
@@ -160,4 +165,40 @@ h2.ghead::after {
     border: 1px solid @hairlinegray;
     border-radius: 2px;
     .shadow-z5();
+}
+
+.full-screen .unipept-sunburst {
+    width: 100%;
+}
+.unipept-sunburst {
+    background-color: white;
+}
+.full-screen .unipept-sunburst > svg {
+    overflow: visible;
+}
+.unipept-sunburst .toHide {
+    pointer-events: none;
+}
+.unipept-sunburst > svg .arc {
+    cursor: pointer;
+}
+.unipept-sunburst > svg .arc:hover {
+    fill-opacity: 0.9;
+}
+.full-screen .unipept-sunburst .sunburst-breadcrumbs {
+    width: 250px;
+    margin-right: 10px;
+}
+
+.full-screen-container.full-screen {
+    background-color: white;
+}
+
+.full-screen .visualization-wrapper {
+    width: 100%;
+}
+
+.fullScreenActions {
+    position: relative;
+    top: -45px;
 }

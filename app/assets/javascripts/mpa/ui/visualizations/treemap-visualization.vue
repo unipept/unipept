@@ -27,6 +27,8 @@
         // Make field non-reactive by not setting the value here, but only after created() has been fired.
         treemap!: any;
 
+        @Prop({default: false}) fullScreen: boolean;
+
         mounted() {
             this.initTreeMap();
         }
@@ -39,6 +41,10 @@
             if (this.watchableTaxonId === -1) {
                 this.reset();
             }
+        }
+
+        @Watch('fullScreen') onFullScreenChanged(newFullScreen: boolean, oldFullScreen: boolean) {
+            this.treemap.setFullScreen(newFullScreen)
         }
 
         reset() {
