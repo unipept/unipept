@@ -22,14 +22,15 @@
     import CardHeader from "./card-header.vue";
     import CardBody from "./card-body.vue";
     import Tab from "./tab.vue";
+
     @Component({
         components: {CardBody, CardHeader}
     })
     export default class Tabs extends Vue {
         tabs: Tab[] = [];
 
-        created() {
-            this.tabs = this.$children as Tab[];
+        mounted() {
+            this.tabs = this.$children[1].$children as Tab[];
         }
 
         changeActiveTab(tab: Tab) {
