@@ -9,7 +9,11 @@
                     <a class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" id="colorswap-button"><span class="glyphicon glyphicon-cog"></span></a>
                     <ul class="dropdown-menu dropdown-menu-right dropdown-menu-form">
                         <li title="Enabling this will assign fixed colors to taxa making it easier to compare samples.">
-                            <div class="checkbox"><label class="checkbox"><input type="checkbox" id="colorswap-checkbox">Use fixed colors</label></div>
+                            <div class="checkbox">
+                                <label class="checkbox">
+                                    <input type="checkbox" id="colorswap-checkbox" v-model="isFixedColors">Use fixed colors
+                                </label>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -34,6 +38,8 @@
         // Make field non-reactive by not setting it here, but only after created has been called for the first time.
         sunburst!: any;
 
+        isFixedColors: boolean = false;
+
         @Prop({default: false}) fullScreen: false;
 
         mounted() {
@@ -52,6 +58,11 @@
 
         @Watch('fullScreen') onFullScreenChanged(newFullScreen: boolean, oldFullScreen: boolean) {
             this.sunburst.setFullScreen(newFullScreen)
+        }
+
+        @Watch('isFixedColors') onIsFixedColorsChanged(newFixedColors: boolean, oldFixedColors: boolean) {
+            this.sunburst.settings.useFixedColors = newFixedColors;
+            this.sunburst.redrawColors();
         }
 
         reset() {
