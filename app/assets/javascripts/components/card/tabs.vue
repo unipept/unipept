@@ -1,36 +1,31 @@
 <template>
-    <div class="card card-nav">
-        <slot></slot>
-        <div class="card-title card-title-colored">
+    <div>
+        <card-header>
             <ul class="nav nav-tabs">
                 <li v-for="tab in tabs" v-if="tab.constructor.name === 'Tab'" v-bind:class="{ active: tab.activated }" @click="changeActiveTab(tab)">
                     <a>{{ tab.label }}</a>
                 </li>
             </ul>
-            <div class="nav-right" v-if="$slots.interactiveTitle">
-                <slot name="interactiveTitle"></slot>
-            </div>
-        </div>
-        <slot name="sharedContent"></slot>
-        <div class="card-supporting-text">
+        </card-header>
+        <card-body>
             <div class="tab-content">
                 <slot></slot>
             </div>
-        </div>
+        </card-body>
     </div>
 </template>
 
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-
-    import Tab from "./tab";
-    import {Prop} from "vue-property-decorator";
-
-    @Component
-    export default class CardNav extends Vue {
-        @Prop({default: false}) interactive: boolean;
-
+    import {Prop, Watch} from "vue-property-decorator";
+    import CardHeader from "./card-header.vue";
+    import CardBody from "./card-body.vue";
+    import Tab from "./tab.vue";
+    @Component({
+        components: {CardBody, CardHeader}
+    })
+    export default class Tabs extends Vue {
         tabs: Tab[] = [];
 
         created() {
@@ -48,4 +43,5 @@
 </script>
 
 <style scoped>
+
 </style>
