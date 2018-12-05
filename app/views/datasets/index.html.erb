@@ -1,7 +1,5 @@
 <% content_for :javascripts do %>
   <%= javascript_pack_tag 'd3' %>
-  <%= javascript_pack_tag 'datasets' %>
-  <%#= javascript_pack_tag 'mpa' %>
   <%= javascript_pack_tag 'mpa_app' %>
 <% end %>
 
@@ -14,7 +12,3 @@
 <form id='send_data_form' action='<%= :mpa %>' method='post'>
   <input id='data_input' type='hidden' name='data' value='' />
 </form>
-
-<script type="text/javascript">
-  $(document).ready(initDatasets);
-</script>

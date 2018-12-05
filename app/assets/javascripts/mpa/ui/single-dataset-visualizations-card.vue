@@ -108,7 +108,6 @@
             } else {
                 this.waitString = "Please select at least one dataset to continue the analysis...";
             }
-            console.log(this.waitString);
         }
 
         changeActiveTab(tab: Tab) {

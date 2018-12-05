@@ -169,9 +169,7 @@
         faCalculationsInProgress: boolean = false;
 
         mounted() {
-            console.log(this.$children);
             this.tabs = this.$children[1].$children[2].$children as Tab[];
-            // console.log(this.tabs);
         }
 
         @Watch('watchableDataset') onWatchableDatasetChanged() {
