@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import Mpa from '../../assets/javascripts/mpa/ui/mpa.vue'
 import {globalStore} from "../../assets/javascripts/mpa/ui/state/GlobalStore";
 import {analysisStore} from "../../assets/javascripts/mpa/ui/state/AnalysisStore";
+import "unipept-visualizations/dist/unipept-visualizations.es5.js";
 
 Vue.use(Vuex);
 
