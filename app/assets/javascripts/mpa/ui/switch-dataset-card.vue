@@ -40,7 +40,7 @@
     import {Prop, Watch} from "vue-property-decorator";
     import Card from "../../components/card/card.vue";
     import List from "../../components/list/list.vue";
-    import NewPeptideContainer from "../NewPeptideContainer";
+    import PeptideContainer from "../PeptideContainer";
     import DeterminateCircularProgressIndicator from "../../components/progress/determinate-circular-progress-indicator.vue";
     import CardHeader from "../../components/card/card-header.vue";
     import CardTitle from "../../components/card/card-title.vue";
@@ -53,14 +53,14 @@
                 get() {
                     return this.$store.getters.activeDataset;
                 },
-                set(dataset: NewPeptideContainer) {
+                set(dataset: PeptideContainer) {
                     this.$store.dispatch('setActiveDataset', dataset);
                 }
             }
         }
     })
     export default class SwitchDatasetCard extends Vue {
-        deselectDataset(dataset: NewPeptideContainer): void {
+        deselectDataset(dataset: PeptideContainer): void {
             this.$store.dispatch('deselectDataset', dataset);
         }
 

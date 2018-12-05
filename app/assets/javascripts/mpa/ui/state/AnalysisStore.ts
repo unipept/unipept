@@ -1,6 +1,6 @@
-import NewPeptideContainer from "../../NewPeptideContainer";
+import PeptideContainer from "../../PeptideContainer";
 import {ActionContext, ActionTree, GetterTree, MutationTree} from "vuex";
-import NewDatasetManager from "../../NewDatasetManager";
+import DatasetManager from "../../DatasetManager";
 import DisplaySettings from "../../DisplaySettings";
 
 export interface AnalysisState {

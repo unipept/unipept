@@ -29,7 +29,7 @@
     import Component, {mixins} from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import {Tree} from "../../tree";
-    import NewPeptideContainer from "../../NewPeptideContainer";
+    import PeptideContainer from "../../PeptideContainer";
     import {tooltipContent} from "./VisualizationHelper";
     import VisualizationMixin from "./visualization-mixin.vue";
 

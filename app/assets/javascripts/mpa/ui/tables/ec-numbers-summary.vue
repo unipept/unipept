@@ -25,14 +25,14 @@
     import {downloadDataByForm, logToGoogle, numberToPercent, toCSVString, triggerDownloadModal} from "../../../utils";
     import {AmountTable} from "../../../components/amount_table";
     import FaSortSettings from "./FaSortSettings";
-    import NewPeptideContainer from "../../NewPeptideContainer";
+    import PeptideContainer from "../../PeptideContainer";
     import Modal from "../../../components/modal/modal.vue";
     @Component({
         components: {Modal}
     })
     export default class EcNumbersSummary extends Vue {
         @Prop() fa: FunctionalAnnotations | null;
-        @Prop({default: null}) peptideContainer: NewPeptideContainer | null;
+        @Prop({default: null}) peptideContainer: PeptideContainer | null;
         @Prop() sortSettings: FaSortSettings;
 
         chartImageModalActive: boolean = false;

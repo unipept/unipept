@@ -53,9 +53,9 @@
     import CardNav from "../../components/card/card-nav";
     import SimpleButton from "../../components/button/simple-button";
     import List from "../../components/list/list";
-    import NewPeptideContainer from "../NewPeptideContainer";
+    import PeptideContainer from "../PeptideContainer";
     import ValidatedTextfield from "../../components/input/validated-textfield";
-    import NewDatasetManager from "../NewDatasetManager";
+    import DatasetManager from "../DatasetManager";
     import {StorageType} from "../StorageType";
     import DeterminateStripedProgressBar from "../../components/progress/determinate-striped-progress-bar";
     import Tabs from "../../components/card/tabs.vue";
@@ -81,13 +81,13 @@
 
         pendingStore: boolean = false;
 
-        selectDataset(dataset: NewPeptideContainer): void {
+        selectDataset(dataset: PeptideContainer): void {
             this.$store.dispatch('selectDataset', dataset);
         }
 
         fetchPrideAssay(): void {
             this.prideLoading = true;
-            let datasetManager: NewDatasetManager = new NewDatasetManager();
+            let datasetManager: DatasetManager = new DatasetManager();
             let prideNumber: number = parseInt(this.prideAssay);
 
             this.prideName = 'PRIDE assay ' + prideNumber.toString();
@@ -109,7 +109,7 @@
 
         private storeDataset(peptides: string, name: string, save: boolean): void {
             this.pendingStore = true;
-            let peptideContainer: NewPeptideContainer = new NewPeptideContainer();
+            let peptideContainer: PeptideContainer = new PeptideContainer();
             peptideContainer.setPeptides(peptides.split('\n'));
             peptideContainer.setDate(new Date());
             peptideContainer.setType(save ? StorageType.LocalStorage : StorageType.SessionStorage);

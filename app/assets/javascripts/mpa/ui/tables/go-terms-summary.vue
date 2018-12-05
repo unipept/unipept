@@ -35,7 +35,7 @@
     import {AmountTable} from "../../../components/amount_table";
     import GOTerms from "../../../fa/goterms";
     import {FunctionalAnnotations} from "../../../fa/FunctionalAnnotations";
-    import NewPeptideContainer from "../../NewPeptideContainer";
+    import PeptideContainer from "../../PeptideContainer";
     import FaSortSettings from "./FaSortSettings";
     import Modal from "../../../components/modal/modal.vue";
 
@@ -44,7 +44,7 @@
     })
     export default class GoTermsSummary extends Vue {
         @Prop() namespace: string;
-        @Prop({default: null}) peptideContainer: NewPeptideContainer | null;
+        @Prop({default: null}) peptideContainer: PeptideContainer | null;
         @Prop() sortSettings: FaSortSettings;
         @Prop() fa: FunctionalAnnotations;
 

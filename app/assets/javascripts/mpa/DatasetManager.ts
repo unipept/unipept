@@ -1,14 +1,14 @@
-import NewPeptideContainer from "./NewPeptideContainer";
+import PeptideContainer from "./PeptideContainer";
 import {StorageType} from "./StorageType";
 import {get, getJSON} from "../utils";
 
-export default class NewDatasetManager {
+export default class DatasetManager {
     public static readonly MPA_STORAGE_PREFIX: string = "mpa-";
-    public static readonly MPA_METADATA_PREFIX: string = NewDatasetManager.MPA_STORAGE_PREFIX + "metadata-";
-    public static readonly MPA_PEPTIDE_PREFIX: string = NewDatasetManager.MPA_STORAGE_PREFIX + "peptide-";
+    public static readonly MPA_METADATA_PREFIX: string = DatasetManager.MPA_STORAGE_PREFIX + "metadata-";
+    public static readonly MPA_PEPTIDE_PREFIX: string = DatasetManager.MPA_STORAGE_PREFIX + "peptide-";
 
-    public datasets: NewPeptideContainer[] = [];
-    public selectedDatasets: NewPeptideContainer[] = [];
+    public datasets: PeptideContainer[] = [];
+    public selectedDatasets: PeptideContainer[] = [];
 
     private storageTypes: StorageType[] = [StorageType.LocalStorage, StorageType.SessionStorage];
 
@@ -18,14 +18,14 @@ export default class NewDatasetManager {
      * @return A list containing all datasets stored in this manager's corresponding storage type and sorted
      *         alphabetically by name.
      */
-    async listDatasets(): Promise<NewPeptideContainer[]> {
-        let output: NewPeptideContainer[] = [];
+    async listDatasets(): Promise<PeptideContainer[]> {
+        let output: PeptideContainer[] = [];
         for (let storageType of this.storageTypes) {
             let storage = this.getStorage(storageType);
             for (let i = 0; i < storage.length; i++) {
                 let key = storage.key(i);
-                if (key.startsWith(NewDatasetManager.MPA_METADATA_PREFIX)) {
-                    let dataset = new NewPeptideContainer(key.substr(NewDatasetManager.MPA_METADATA_PREFIX.length));
+                if (key.startsWith(DatasetManager.MPA_METADATA_PREFIX)) {
+                    let dataset = new PeptideContainer(key.substr(DatasetManager.MPA_METADATA_PREFIX.length));
                     await dataset.deserialize(storageType);
                     output.push(dataset);
                 }
@@ -88,7 +88,7 @@ export default class NewDatasetManager {
 
             for (let i = 0; i < storage.length; i++) {
                 let key = storage.key(i);
-                if (key.startsWith(NewDatasetManager.MPA_STORAGE_PREFIX)) {
+                if (key.startsWith(DatasetManager.MPA_STORAGE_PREFIX)) {
                     toRemove.push(key);
                 }
             }

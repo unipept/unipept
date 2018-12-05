@@ -37,7 +37,7 @@
     import Card from "../../components/card/card";
     import Checkbox from "../../components/input/checkbox";
     import List from "../../components/list/list";
-    import NewPeptideContainer from "../NewPeptideContainer";
+    import PeptideContainer from "../PeptideContainer";
     import SimpleButton from "../../components/button/simple-button";
     import SearchSettingsForm from "./search-settings-form.vue";
     import SearchSettings from "../SearchSettings";
@@ -55,7 +55,7 @@
         filterDuplicates: boolean = true;
         missingCleavage: boolean = false;
 
-        deselectDataset(dataset: NewPeptideContainer) {
+        deselectDataset(dataset: PeptideContainer) {
             this.$store.dispatch('deselectDataset', dataset);
         }
 

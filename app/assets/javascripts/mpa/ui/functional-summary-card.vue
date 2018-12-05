@@ -99,7 +99,7 @@
     import FaSortSettings from "./tables/FaSortSettings";
     import {numberToPercent} from "../../utils";
     import {Dataset} from "../dataset";
-    import NewPeptideContainer from "../NewPeptideContainer";
+    import PeptideContainer from "../PeptideContainer";
     import {FunctionalAnnotations} from "../../fa/FunctionalAnnotations";
     import EcNumbersSummary from "./tables/ec-numbers-summary.vue";
     import Modal from "../../components/modal/modal.vue";
@@ -118,7 +118,7 @@
             SimpleButton, EcNumbersSummary, GoTermsSummary, Tab, CardNav, Modal},
         computed: {
             watchableDataset: {
-                get(): NewPeptideContainer {
+                get(): PeptideContainer {
                     return this.$store.getters.activeDataset
                 }
             },
@@ -217,7 +217,7 @@
 
         private async onPeptideContainerChanged() {
             this.faCalculationsInProgress = true;
-            let container: NewPeptideContainer = this.$store.getters.activeDataset;
+            let container: PeptideContainer = this.$store.getters.activeDataset;
             if (container && container.getDataset()) {
                 await this.redoFAcalculations();
                 this.fa = this.$store.getters.activeDataset.getDataset().fa;
