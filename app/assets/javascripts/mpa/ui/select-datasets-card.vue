@@ -37,8 +37,6 @@
     import Card from "../../components/card/card";
     import Checkbox from "../../components/input/checkbox";
     import List from "../../components/list/list";
-    import PeptideContainer from "../peptideContainer";
-    import DatasetManager from "../datasetManager"
     import NewPeptideContainer from "../NewPeptideContainer";
     import SimpleButton from "../../components/button/simple-button";
     import SearchSettingsForm from "./search-settings-form.vue";

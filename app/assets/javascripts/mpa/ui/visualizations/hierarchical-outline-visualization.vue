@@ -58,9 +58,7 @@
         }
 
         @Watch('activeSearchTerm') onActiveSearchTermChanged(newSearchTerm: string, oldSearchTerm: string) {
-            console.log(newSearchTerm);
             if (this.searchTree && newSearchTerm !== "") {
-                console.log(newSearchTerm);
                 setTimeout(() => {
                     this.searchTree.search(newSearchTerm);
                 }, 500);
