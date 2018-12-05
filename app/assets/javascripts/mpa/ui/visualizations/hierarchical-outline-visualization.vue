@@ -21,7 +21,7 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import NewPeptideContainer from "../../NewPeptideContainer";
+    import PeptideContainer from "../../PeptideContainer";
     import {Tree} from "../../tree";
     import {constructSearchtree} from "../../searchtree";
     import SimpleButton from "../../../components/button/simple-button.vue";
@@ -45,7 +45,7 @@
         }
     })
     export default class HierarchicalOutlineVisualization extends Vue {
-        @Prop({default: null}) dataset: NewPeptideContainer | null;
+        @Prop({default: null}) dataset: PeptideContainer | null;
 
         searchTree!: any;
 

@@ -14,7 +14,7 @@
     import ValidatedTextfield from "../../components/input/validated-textfield"
     import Checkbox from "../../components/input/checkbox";
     import {Prop, Watch} from "vue-property-decorator";
-    import NewPeptideContainer from "../NewPeptideContainer";
+    import PeptideContainer from "../PeptideContainer";
 
     @Component({
         components: {Checkbox, ValidatedTextfield, ValidatedTextarea},
