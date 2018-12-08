@@ -57,8 +57,8 @@
                     <tab label="GO terms" :active="true">
                         <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
                         This panel shows the Gene Ontology annotations that were matched to
-                        your peptides. <span v-if="fa && $store.getters.activeDataset" v-html="this.trustLine(fa, 'GO term')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
-                        <div v-if="!$store.getters.activeDataset" class="mpa-unavailable go">
+                        your peptides. <span v-if="fa && $store.getters.activeDataset && $store.getters.activeDataset.getProgress() === 1" v-html="this.trustLine(fa, 'GO term')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
+                        <div v-if="!$store.getters.activeDataset || $store.getters.activeDataset.getProgress() !== 1" class="mpa-unavailable go">
                             <h3>Biological Process</h3>
                             <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
                             <h3>Cellular Component</h3>
@@ -73,7 +73,7 @@
                     <tab label="EC numbers">
                         <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
                         This panel shows the Enzyme Commission numbers that were matched to your peptides. <span v-if="fa && $store.getters.activeDataset" v-html="this.trustLine(fa, 'EC number')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
-                        <ec-numbers-summary style="margin-top: 10px" v-if="$store.getters.activeDataset" :fa="fa" :peptide-container="$store.getters.activeDataset" :sort-settings="faSortSettings"></ec-numbers-summary>
+                        <ec-numbers-summary style="margin-top: 10px" v-if="$store.getters.activeDataset && $store.getters.activeDataset.getProgress() === 1" :fa="fa" :peptide-container="$store.getters.activeDataset" :sort-settings="faSortSettings"></ec-numbers-summary>
                         <div v-else style="margin-top: 10px;">
                             <span style="font-weight: 600;">Please wait while we are preparing your data...</span>
                             <hr>
