@@ -21,7 +21,7 @@
                 </span>
                 </div>
             </list>
-            <search-settings-form :equate-il="equateIl" :filter-duplicates="filterDuplicates" :missing-cleavage="missingCleavage"></search-settings-form>
+            <search-settings-form></search-settings-form>
             <div class="search-buttons-centered">
                 <simple-button label="Search" glyphicon="search" type="primary" @click="search()"></simple-button>
                 <simple-button label="Start Over" glyphicon="repeat spin" @click="reset()"></simple-button>
@@ -50,26 +50,16 @@
     })
     export default class SelectDatasetsCard extends Vue {
         selectedDatasets = this.$store.getters.selectedDatasets;
-
-        equateIl: boolean = true;
-        filterDuplicates: boolean = true;
-        missingCleavage: boolean = false;
-
         deselectDataset(dataset: PeptideContainer) {
             this.$store.dispatch('deselectDataset', dataset);
         }
 
         search(): void {
-            let searchSettings: SearchSettings = new SearchSettings(this.equateIl, this.filterDuplicates, this.missingCleavage);
-            this.$store.dispatch('setSearchSettings', searchSettings);
             this.$store.dispatch('setAnalysis', true);
         }
 
         reset(): void {
             this.$store.dispatch('clearSelectedDatasets');
-            this.equateIl = true;
-            this.filterDuplicates = true;
-            this.missingCleavage = false;
         }
     }
 </script>

@@ -17,7 +17,9 @@
         <card-body class="multi-results">
             <div class="tab-content full-screen-container multi-search" :class="[isFullScreen ? 'full-screen' : 'not-full-screen']" ref="fullScreenContainer">
                 <div class="full-screen-bar">
-                    <div class="logo"><img src="/images/trans_logo.png" alt="logo" width="40" height="40"></div>
+                    <div class="logo">
+                        <img src="/images/trans_logo.png" alt="logo" width="40" height="40">
+                    </div>
                     <nav class="fullScreenNav">
                         <ul class="visualisations">
                             <li v-for="tab in tabs" v-bind:class="{ active: tab.activated }" @click="changeActiveTab(tab)">
@@ -32,19 +34,19 @@
                     </div>
                 </div>
                 <tab label="Sunburst" :active="true" id="sunburstWrapper" class="visualization-wrapper">
-                    <sunburst-visualization ref="sunburst" :full-screen="isFullScreen" class="unipept-sunburst" v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></sunburst-visualization>
+                    <sunburst-visualization ref="sunburst" :full-screen="isFullScreen" class="unipept-sunburst" v-if="$store.getters.activeDataset && $store.getters.activeDataset.getProgress() === 1" :dataset="$store.getters.activeDataset"></sunburst-visualization>
                     <div v-else class="mpa-waiting">
                         <img :alt="waitString" class="mpa-placeholder" src="/images/mpa/placeholder_sunburst.svg">
                     </div>
                 </tab>
                 <tab label="Treemap" id="treemapWrapper" class="visualization-wrapper">
-                    <treemap-visualization ref="treemap" id="treemap" :full-screen="isFullScreen" v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></treemap-visualization>
+                    <treemap-visualization ref="treemap" id="treemap" :full-screen="isFullScreen" v-if="$store.getters.activeDataset && $store.getters.activeDataset.getProgress() === 1" :dataset="$store.getters.activeDataset"></treemap-visualization>
                     <div v-else class="mpa-waiting">
                         <img :alt="waitString" class="mpa-placeholder" src="/images/mpa/placeholder_treemap.svg">
                     </div>
                 </tab>
                 <tab label="Treeview" id="treeviewWrapper" class="visualization-wrapper">
-                    <treeview-visualization ref="treeview" :full-screen="isFullScreen" v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></treeview-visualization>
+                    <treeview-visualization ref="treeview" :full-screen="isFullScreen" v-if="$store.getters.activeDataset && $store.getters.activeDataset.getProgress() === 1" :dataset="$store.getters.activeDataset"></treeview-visualization>
                     <div v-else class="mpa-waiting">
                         <img :alt="waitString" class="mpa-placeholder" src="/images/mpa/placeholder_treeview.svg">
                     </div>

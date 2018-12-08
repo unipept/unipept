@@ -1,7 +1,7 @@
 <template>
     <div class="checkbox">
         <label title="" class="js-has-hover-tooltip" :for="name" :data-original-title="tooltip">
-            <input v-model="content" type="checkbox" :name="name" :id="name" :disabled="disabled"> {{ label }}
+            <input v-model="model" type="checkbox" :name="name" :id="name" :disabled="disabled"> {{ label }}
         </label>
     </div>
 </template>
@@ -15,7 +15,7 @@
         computed: {
             model: {
                 get() {
-                    return this.value;
+                    return this.content;
                 },
                 set(val) {
                     this.content = val;

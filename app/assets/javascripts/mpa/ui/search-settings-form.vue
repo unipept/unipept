@@ -1,9 +1,9 @@
 <template>
     <div>
         <label>Search settings</label>
-        <checkbox v-model="equateIlModel" label="Equate I and L" placeholder="Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries."></checkbox>
-        <checkbox v-model="filterDuplicatesModel" label="Filter duplicate peptides" placeholder="Remove duplicate peptides from the input before searching."></checkbox>
-        <checkbox v-model="missingCleavageModel" label="Advanced missing cleavage handling" placeholder="Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!"></checkbox>
+        <checkbox :disabled="disabled" v-model="equateIlModel" label="Equate I and L" placeholder="Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries."></checkbox>
+        <checkbox :disabled="disabled" v-model="filterDuplicatesModel" label="Filter duplicate peptides" placeholder="Remove duplicate peptides from the input before searching."></checkbox>
+        <checkbox :disabled="disabled" v-model="missingCleavageModel" label="Advanced missing cleavage handling" placeholder="Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!"></checkbox>
     </div>
 </template>
 
@@ -12,56 +12,39 @@
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import Checkbox from "../../components/input/checkbox.vue";
+    import SearchSettings from "../SearchSettings";
 
     @Component({
         components: {Checkbox},
         computed: {
             equateIlModel: {
                 get() {
-                    return this.equateIl;
+                    return this.$store.getters.searchSettings.isEquateIl();
                 },
                 set(val) {
-                    this.$emit('input', val);
+                    this.$store.dispatch('setSearchSettings', new SearchSettings(val, this.filterDuplicatesModel, this.missingCleavageModel));
                 }
             },
             filterDuplicatesModel: {
                 get() {
-                    return this.filterDuplicates;
+                    return this.$store.getters.searchSettings.isFilterDuplicates();
                 },
                 set(val) {
-                    this.$emit('input', val);
+                    this.$store.dispatch('setSearchSettings', new SearchSettings(this.equateIlModel, val, this.missingCleavageModel));
                 }
             },
             missingCleavageModel: {
                 get() {
-                    return this.missingCleavage;
+                    return this.$store.getters.searchSettings.isHandleMissingCleavage();
                 },
                 set(val) {
-                    this.$emit('input', val);
+                    this.$store.dispatch('setSearchSettings', new SearchSettings(this.equateIlModel, this.filterDuplicatesModel, val));
                 }
             }
         }
     })
-    export default class SearchSettingsForm extends Vue {
-        @Prop({default: true}) equateIl: boolean;
-        @Prop({default: true}) filterDuplicates: boolean;
-        @Prop({default: true}) missingCleavage: boolean;
-
-        equateIlData: boolean = this.equateIl;
-        filterDuplicatesData: boolean = this.filterDuplicates;
-        missingCleavageData: boolean = this.missingCleavage;
-
-        @Watch('equateIl') onEquateIlChanged(newEquateIl: boolean, oldEquateIl: boolean) {
-            this.equateIlData = newEquateIl;
-        }
-
-        @Watch('filterDuplicates') onFilterDuplicatesChanged(newFilterDuplicates: boolean, oldFilterDuplicates: boolean) {
-            this.filterDuplicatesData = newFilterDuplicates;
-        }
-
-        @Watch('missingCleavage') onMissingCleavageChanged(newMissingCleavage: boolean, oldMissingCleavage: boolean) {
-            this.missingCleavageData = newMissingCleavage;
-        }
+    export default class SearchSetingsForm extends Vue {
+        @Prop({default: false}) disabled: boolean;
     }
 </script>
 
