@@ -427,6 +427,37 @@
 }
 
 
+.vue-snackbar-container {
+    bottom: 24px;
+    left: 24px;
+    position: fixed;
+    z-index: 1000;
+}
+
+.vue-snackbar {
+    background-color: #323232;
+    border-radius: 3px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.12),0 2px 4px rgba(0, 0, 0, 0.24);
+    color: #fff;
+    display: inline-block;
+    line-height: 20px;
+    margin-top: 8px;
+    padding: 16px;
+    transition-duration: 1s;
+    transition-property: transform, opacity;
+    transition-timing-function: ease-out;
+}
+
+.vue-snackbar .spinner {
+    width: 20px;
+    height: 20px;
+    float: right;
+    margin-left: 10px;
+    background-color: #fff;
+}
+
+
+
 @keyframes indeterminate1 {
     0% {
         left: 0%;
