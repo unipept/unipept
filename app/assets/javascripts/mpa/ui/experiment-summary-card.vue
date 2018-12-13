@@ -4,7 +4,15 @@
             <card-title>Experiment summary</card-title>
         </card-header>
         <card-body>
-            <search-settings-form :disabled="$store.getters.selectedDatasets.some(el => el.getProgress() !== 1)"></search-settings-form>
+            <search-settings-form
+                    :disabled="$store.getters.selectedDatasets.some(el => el.getProgress() !== 1)"
+                    :equate-il="equateIl"
+                    v-on:equate-il-change="equateIl = $event"
+                    :filter-duplicates="filterDuplicates"
+                    v-on:filter-duplicates-change="filterDuplicates = $event"
+                    :missing-cleavage="missingCleavage"
+                    v-on:missing-cleavage="missingCleavage = $event"
+            ></search-settings-form>
             <div class="search-buttons-centered">
                 <simple-button label="Update" glyphicon="repeat" type="primary" @click="reprocess()"></simple-button>
             </div>
@@ -33,7 +41,19 @@
         components: {CardBody, CardTitle, CardHeader, SimpleButton, SearchSettingsForm, Card}
     })
     export default class ExperimentSummaryCard extends Vue {
+        equateIl: boolean = true;
+        filterDuplicates: boolean = true;
+        missingCleavage: boolean = false;
+
+        created() {
+            this.equateIl = this.$store.getters.searchSettings.isEquateIl();
+            this.filterDuplicates = this.$store.getters.searchSettings.isFilterDuplicates();
+            this.missingCleavage = this.$store.getters.searchSettings.isHandleMissingCleavage();
+        }
+
         reprocess(): void {
+            this.$store.dispatch('setSearchSettings', new SearchSettings(this.equateIl, this.filterDuplicates, this.missingCleavage));
+
             this.$store.dispatch('setActiveDataset', null);
             for (let dataset of this.$store.getters.selectedDatasets) {
                 this.$store.dispatch('processDataset', dataset);

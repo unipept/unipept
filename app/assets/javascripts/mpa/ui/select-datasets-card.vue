@@ -21,8 +21,14 @@
                 </span>
                 </div>
             </list>
-            <search-settings-form></search-settings-form>
-            <div class="search-buttons-centered">
+            <search-settings-form
+                    :equate-il="equateIl"
+                    v-on:equate-il-change="equateIl = $event"
+                    :filter-duplicates="filterDuplicates"
+                    v-on:filter-duplicates-change="filterDuplicates = $event"
+                    :missing-cleavage="missingCleavage"
+                    v-on:missing-cleavage="missingCleavage = $event"
+            ></search-settings-form>            <div class="search-buttons-centered">
                 <simple-button label="Search" glyphicon="search" type="primary" @click="search()"></simple-button>
                 <simple-button label="Start Over" glyphicon="repeat spin" @click="reset()"></simple-button>
             </div>
@@ -50,15 +56,30 @@
     })
     export default class SelectDatasetsCard extends Vue {
         selectedDatasets = this.$store.getters.selectedDatasets;
+
+        equateIl: boolean = true;
+        filterDuplicates: boolean = true;
+        missingCleavage: boolean = false;
+
+        created() {
+            this.equateIl = this.$store.getters.searchSettings.isEquateIl();
+            this.filterDuplicates = this.$store.getters.searchSettings.isFilterDuplicates();
+            this.missingCleavage = this.$store.getters.searchSettings.isHandleMissingCleavage();
+        }
+
         deselectDataset(dataset: PeptideContainer) {
             this.$store.dispatch('deselectDataset', dataset);
         }
 
         search(): void {
+            this.$store.dispatch('setSearchSettings', new SearchSettings(this.equateIl, this.filterDuplicates, this.missingCleavage));
             this.$store.dispatch('setAnalysis', true);
         }
 
         reset(): void {
+            this.equateIl = true;
+            this.filterDuplicates = true;
+            this.missingCleavage = false;
             this.$store.dispatch('clearSelectedDatasets');
         }
     }

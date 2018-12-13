@@ -19,32 +19,54 @@
         computed: {
             equateIlModel: {
                 get() {
-                    return this.$store.getters.searchSettings.isEquateIl();
+                    return this.equateIl;
                 },
                 set(val) {
-                    this.$store.dispatch('setSearchSettings', new SearchSettings(val, this.filterDuplicatesModel, this.missingCleavageModel));
+                    this.equateIlData = val;
+                    this.$emit('equate-il-change', val);
                 }
             },
             filterDuplicatesModel: {
                 get() {
-                    return this.$store.getters.searchSettings.isFilterDuplicates();
+                    return this.filterDuplicates;
                 },
                 set(val) {
-                    this.$store.dispatch('setSearchSettings', new SearchSettings(this.equateIlModel, val, this.missingCleavageModel));
+                    this.filterDuplicates = val;
+                    this.$emit('filter-duplicates-change', val);
                 }
             },
             missingCleavageModel: {
                 get() {
-                    return this.$store.getters.searchSettings.isHandleMissingCleavage();
+                    return this.missingCleavage;
                 },
                 set(val) {
-                    this.$store.dispatch('setSearchSettings', new SearchSettings(this.equateIlModel, this.filterDuplicatesModel, val));
+                    this.missingCleavage = val;
+                    this.$emit('missing-cleavage-change', val);
                 }
             }
         }
     })
     export default class SearchSetingsForm extends Vue {
         @Prop({default: false}) disabled: boolean;
+        @Prop({default: true}) equateIl: boolean;
+        @Prop({default: true}) filterDuplicates: boolean;
+        @Prop({default: false}) missingCleavage: boolean;
+
+        equateIlData: boolean = this.equateIl;
+        filterDuplicatesData: boolean = this.filterDuplicates;
+        missingCleavageData: boolean = this.missingCleavage;
+
+        @Watch('equateIl') onEquateIlChanged() {
+            this.equateIlData = this.equateIl;
+        }
+
+        @Watch('filterDuplicates') onFilterDuplicatesChanged() {
+            this.filterDuplicatesData = this.filterDuplicates;
+        }
+
+        @Watch('missingCleavage') onMissingCleavageChanged() {
+            this.missingCleavageData = this.missingCleavage;
+        }
     }
 </script>
 
