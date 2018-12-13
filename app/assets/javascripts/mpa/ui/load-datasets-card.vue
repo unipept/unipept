@@ -21,6 +21,7 @@
                 <div class="search-buttons-centered">
                     <simple-button @click="storePrideDataset()" label="Add to selected datasets" glyphicon="plus" :disabled="prideLoading || pendingStore"></simple-button>
                 </div>
+                <snackbar :timeout="0" ref="prideSnackbar">Loading dataset... <div class="spinner"></div></snackbar>
             </tab>
             <tab label="Local data">
                 <list placeholder="There are currently no datasets present in your browser's local storage.">
@@ -59,9 +60,11 @@
     import {StorageType} from "../StorageType";
     import DeterminateStripedProgressBar from "../../components/progress/determinate-striped-progress-bar";
     import Tabs from "../../components/card/tabs.vue";
+    import Snackbar from "../../components/snackbar/Snackbar.vue";
 
     @Component({
         components: {
+            Snackbar,
             Tabs,
             DeterminateStripedProgressBar, ValidatedTextfield, SimpleButton, CardNav, DatasetForm, Tab, List}
     })
@@ -92,10 +95,12 @@
 
             this.prideName = 'PRIDE assay ' + prideNumber.toString();
 
+            (this.$refs.prideSnackbar as Snackbar).show();
             datasetManager.loadPrideDataset(prideNumber, (progress) => this.prideProgress = progress)
                 .then((peptides) => {
                     this.pridePeptides = peptides.join("\n");
                     this.prideLoading = false;
+                    (this.$refs.prideSnackbar as Snackbar).destroy();
                 });
         }
 
