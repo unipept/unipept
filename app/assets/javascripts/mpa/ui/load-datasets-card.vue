@@ -60,7 +60,7 @@
     import {StorageType} from "../StorageType";
     import DeterminateStripedProgressBar from "../../components/progress/determinate-striped-progress-bar";
     import Tabs from "../../components/card/tabs.vue";
-    import Snackbar from "../../components/snackbar/Snackbar.vue";
+    import Snackbar from "../../components/snackbar/snackbar.vue";
 
     @Component({
         components: {
