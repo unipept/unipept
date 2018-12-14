@@ -31,7 +31,7 @@
                     return this.filterDuplicates;
                 },
                 set(val) {
-                    this.filterDuplicates = val;
+                    this.filterDuplicatesData = val;
                     this.$emit('filter-duplicates-change', val);
                 }
             },
@@ -40,7 +40,7 @@
                     return this.missingCleavage;
                 },
                 set(val) {
-                    this.missingCleavage = val;
+                    this.missingCleavageData = val;
                     this.$emit('missing-cleavage-change', val);
                 }
             }

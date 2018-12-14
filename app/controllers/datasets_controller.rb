@@ -1,4 +1,5 @@
 class DatasetsController < ApplicationController
+  before_action :default_format_json, only: %i[sampledata]
   before_action :authorize, only: %i[new edit create update destroy]
 
   # GET /datasets
@@ -90,5 +91,16 @@ class DatasetsController < ApplicationController
     @header_class = 'MPA'
     @type = params[:type]
     @id = params[:id]
+  end
+
+  def sampledata
+    @datasets = Dataset.includes(:dataset_items).all
+    puts @datasets.inspect
+  end
+
+  private
+
+  def default_format_json
+    request.format = 'json'
   end
 end
