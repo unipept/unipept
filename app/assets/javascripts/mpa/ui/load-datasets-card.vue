@@ -8,7 +8,27 @@
                 </div>
             </tab>
             <tab label="Sample data">
-
+                <p v-for="dataset of sampleDatasets">
+                    <b>Environment:</b> {{ dataset.environment }}
+                    <br>
+                    <b>Reference:</b>
+                    <small>
+                        {{ dataset.reference }}
+                        <a target="_blank" title="Article website" :href="dataset.url">
+                            <span class="glyphicon glyphicon-link"></span>
+                        </a>
+                        <a target="_blank" title="Project website" :href="dataset.projectWebsite">
+                            <span class="glyphicon glyphicon-share-alt"></span>
+                        </a>
+                    </small>
+                    <br>
+                    <span class="form-inline">
+                        <select class="form-control dataset" v-model="selectedSampleDataset[dataset.id]">
+                            <option v-for="data of dataset.datasets" v-bind:value="data">{{ data.name }}</option>
+                        </select>
+                        <simple-button label="Load dataset" type="default" @click="storeSampleDataset(dataset.id)"></simple-button>
+                    </span>
+                </p>
             </tab>
             <tab label="Pride">
                 <h3>Load data from the PRIDE archive</h3>
@@ -62,6 +82,8 @@
     import DeterminateStripedProgressBar from "../../components/progress/determinate-striped-progress-bar";
     import Tabs from "../../components/card/tabs.vue";
     import Snackbar from "../../components/snackbar/snackbar.vue";
+    import axios from "axios"
+    import SampleDataset from "../SampleDataset";
 
     @Component({
         components: {
@@ -71,6 +93,7 @@
     })
     export default class LoadDatasetsCard extends Vue {
         storedDatasets = this.$store.getters.storedDatasets;
+        sampleDatasets: SampleDataset[] = [];
         prideAssay: string = "";
 
         createPeptides: string = "";
@@ -84,6 +107,35 @@
         prideProgress: number = 0;
 
         pendingStore: boolean = false;
+
+        selectedSampleDataset = {};
+
+        mounted() {
+            axios.post("/datasets/sampledata")
+                .then(result => {
+                    for (let item of result.data.sample_data) {
+                        let itemDatasets = item.datasets;
+                        itemDatasets = itemDatasets.sort((a, b) => {
+                            return a.order < b.order;
+                        });
+                        this.sampleDatasets.push(new SampleDataset(
+                            item.id,
+                            item.environment,
+                            item.project_website,
+                            item.reference,
+                            item.url,
+                            itemDatasets
+                        ));
+                        this.selectedSampleDataset[item.id] = itemDatasets[0];
+                    }
+                });
+        }
+
+        storeSampleDataset(datasetId: string) {
+            if (this.selectedSampleDataset[datasetId]) {
+                this.storeDataset(this.selectedSampleDataset[datasetId].data.join("\n"), this.selectedSampleDataset[datasetId].name, true);
+            }
+        }
 
         selectDataset(dataset: PeptideContainer): void {
             this.$store.dispatch('selectDataset', dataset);

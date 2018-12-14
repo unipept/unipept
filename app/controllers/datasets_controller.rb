@@ -96,6 +96,9 @@ class DatasetsController < ApplicationController
   def sampledata
     @datasets = Dataset.includes(:dataset_items).all
     puts @datasets.inspect
+    @datasets.map do |dataset|
+      puts dataset.dataset_items.inspect
+    end
   end
 
   private
