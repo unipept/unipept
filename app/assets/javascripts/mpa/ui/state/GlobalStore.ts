@@ -92,7 +92,7 @@ const mpaMutations: MutationTree<GlobalState> = {
         state.selectedDataset = dataset;
     },
     SET_SEARCH_SETTINGS(state: GlobalState, searchSettings: SearchSettings): void {
-        this.searchSettings = searchSettings;
+        state.searchSettings = searchSettings;
     },
     SET_ACTIVE_DATASET(state: GlobalState, dataset: PeptideContainer | null): void {
         state.activeDataset = dataset;

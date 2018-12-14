@@ -8,6 +8,7 @@
                 </div>
             </tab>
             <tab label="Sample data">
+
             </tab>
             <tab label="Pride">
                 <h3>Load data from the PRIDE archive</h3>
