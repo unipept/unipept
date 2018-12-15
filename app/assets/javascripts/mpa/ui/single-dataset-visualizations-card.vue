@@ -123,6 +123,8 @@
         switchToFullScreen() {
             if (window.fullScreenApi.supportsFullScreen) {
                 this.isFullScreen = true;
+                let activatedTab = this.tabs.filter(tab => tab.activated)[0];
+                logToGoogle("Multi Peptide", "Full Screen", activatedTab.label);
                 window.fullScreenApi.requestFullScreen(this.$refs.fullScreenContainer);
 
                 $(".tip").appendTo(".full-screen-container");
@@ -154,6 +156,8 @@
                 }
             }
 
+            let activatedTab = this.tabs.filter(tab => tab.activated)[0];
+            logToGoogle("Multi Peptide", "Save Image", activatedTab.label);
             if (activeTab === "Sunburst") {
                 d3.selectAll(".toHide").attr("class", "arc hidden");
                 triggerDownloadModal("#sunburstWrapper svg", null, "unipept_sunburst");
