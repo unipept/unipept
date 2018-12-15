@@ -1,9 +1,9 @@
 <template>
     <div>
         <label>Search settings</label>
-        <checkbox :disabled="disabled" v-model="equateIlModel" label="Equate I and L" placeholder="Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries."></checkbox>
-        <checkbox :disabled="disabled" v-model="filterDuplicatesModel" label="Filter duplicate peptides" placeholder="Remove duplicate peptides from the input before searching."></checkbox>
-        <checkbox :disabled="disabled" v-model="missingCleavageModel" label="Advanced missing cleavage handling" placeholder="Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!"></checkbox>
+        <checkbox :disabled="disabled" v-model="equateIlModel" label="Equate I and L" tooltip="Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries."></checkbox>
+        <checkbox :disabled="disabled" v-model="filterDuplicatesModel" label="Filter duplicate peptides" tooltip="Remove duplicate peptides from the input before searching."></checkbox>
+        <checkbox :disabled="disabled" v-model="missingCleavageModel" label="Advanced missing cleavage handling" tooltip="Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!"></checkbox>
     </div>
 </template>
 

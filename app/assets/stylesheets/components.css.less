@@ -362,6 +362,32 @@
     height: 36px;
 }
 
+@selection-bar-width: 4px;
+
+.list-item--two-lines.selected:before {
+    content: ' ';
+    background-color: @accent-500;
+    width: @selection-bar-width;
+    height: 100%;
+    position: relative;
+    left: -12px;
+}
+
+.list-item--two-lines.selected {
+    position: relative;
+    left: -@selection-bar-width;
+}
+
+.list-item--two-lines.selected > span.list-item-secondary-action {
+    position: relative;
+    left: @selection-bar-width;
+}
+
+.list-item--two-lines.selected > span.list-item-primary-content > span.list-item-date {
+    position: relative;
+    left: @selection-bar-width;
+}
+
 .list > .list-item--three-lines {
     height: 88px;
     display: flex;
@@ -446,6 +472,7 @@
     transition-duration: 1s;
     transition-property: transform, opacity;
     transition-timing-function: ease-out;
+    z-index: 10000;
 }
 
 .vue-snackbar .spinner {

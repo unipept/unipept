@@ -1,6 +1,6 @@
 <template>
     <div class="checkbox">
-        <label title="" class="js-has-hover-tooltip" :for="name" :data-original-title="tooltip">
+        <label title="" class="js-has-hover-tooltip" :for="name" :data-toggle="tooltip ? 'tooltip' : ''" data-placement="right" :data-original-title="tooltip">
             <input v-model="model" type="checkbox" :name="name" :id="name" :disabled="disabled"> {{ label }}
         </label>
     </div>
@@ -38,6 +38,10 @@
 
         @Watch('value') onValueChanged(newValue: boolean, oldValue: boolean) {
             this.content = newValue;
+        }
+
+        mounted() {
+            $('[data-toggle="tooltip"]').tooltip();
         }
     };
 </script>

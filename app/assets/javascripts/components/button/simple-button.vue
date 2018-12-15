@@ -1,5 +1,5 @@
 <template>
-    <button class="btn" v-bind:class="'btn-' + type" @click="$emit('click')" :disabled="disabled" type="button">
+    <button class="btn" v-bind:class="'btn-' + type" @click="$emit('click')" :data-toggle="tooltip ? 'tooltip' : ''" data-placement="right" :data-original-title="tooltip" :disabled="disabled" type="button">
         <span v-if="glyphicon !== ''" class="glyphicon" v-bind:class="'glyphicon-' + glyphicon"></span>
         {{ label }}
     </button>
@@ -16,6 +16,11 @@
         @Prop({default: ""}) glyphicon: string;
         @Prop({default: "default"}) type: string;
         @Prop({default: false}) disabled: boolean;
+        @Prop({default: ""}) tooltip: string;
+
+        mounted() {
+            $('[data-toggle="tooltip"]').tooltip();
+        }
     }
 </script>
 

@@ -7,9 +7,6 @@ const TAXA_URL = "/private_api/taxa";
 
 /**
  * Class that represents a single dataset containing a list of peptides.
- *
- *
- *
  */
 class Dataset {
     /**
@@ -71,7 +68,7 @@ class Dataset {
     }
 
     /**
-     * Sets the surrent FA summary as base, accessible trough baseFa.
+     * Sets the current FA summary as base, accessible trough baseFa.
      */
     setBaseFA() {
         this.baseFa = this.fa.clone();
