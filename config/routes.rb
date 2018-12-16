@@ -74,18 +74,26 @@ UnipeptWeb::Application.routes.draw do
     match 'pept2lca' => "api#pept2lca", via: [:get, :post]
     match 'taxa2lca' => 'api#taxa2lca', via: [:get, :post]
     match 'pept2prot' => 'api#pept2prot', via: [:get, :post]
+    match 'pept2funct' => 'api#pept2funct', via: [:get, :post]
+    match 'pept2ec' => 'api#pept2ec', via: [:get, :post]
+    match 'pept2go' => 'api#pept2go', via: [:get, :post]
+    match 'peptinfo' => 'api#peptinfo', via: [:get, :post]
     match 'taxonomy' => 'api#taxonomy', via: [:get, :post]
     match 'messages' => 'api#messages', via: [:get, :post]
   end
 
   # API docs
   namespace :api, path: "apidocs" do
-    get "/",          :to => "apidocs#index",     :as => 'apidocs'
-    get "pept2prot",  :to => "apidocs#pept2prot", :as => 'apidocs/pept2prot'
-    get "pept2taxa",  :to => "apidocs#pept2taxa", :as => 'apidocs/pept2taxa'
-    get "pept2lca",   :to => "apidocs#pept2lca",  :as => 'apidocs/pept2lca'
-    get "taxa2lca",   :to => "apidocs#taxa2lca",  :as => 'apidocs/taxa2lca'
-    get "taxonomy",   :to => "apidocs#taxonomy",  :as => 'apidocs/taxonomy'
+    get "/",          :to => "apidocs#index",      :as => 'apidocs'
+    get "pept2prot",  :to => "apidocs#pept2prot",  :as => 'apidocs/pept2prot'
+    get "pept2taxa",  :to => "apidocs#pept2taxa",  :as => 'apidocs/pept2taxa'
+    get "pept2lca",   :to => "apidocs#pept2lca",   :as => 'apidocs/pept2lca'
+    get "taxa2lca",   :to => "apidocs#taxa2lca",   :as => 'apidocs/taxa2lca'
+    get "pept2ec",    :to => "apidocs#pept2ec",    :as => 'apidocs/pept2ec'
+    get 'pept2go',    :to => "apidocs#pept2go",    :as => 'apidocs/pept2go'
+    get 'pept2funct', :to => "apidocs#pept2funct", :as => 'apidocs/pept2funct'
+    get 'peptinfo',   :to => "apidocs#peptinfo",   :as => 'apidocs/peptinfo'
+    get "taxonomy",   :to => "apidocs#taxonomy",   :as => 'apidocs/taxonomy'
   end
 
   # CLI docs
