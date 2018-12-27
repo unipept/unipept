@@ -7,23 +7,22 @@ const TAXA_URL = "/private_api/taxa";
 
 /**
  * Class that represents a single dataset containing a list of peptides.
- *
- *
- *
  */
 class Dataset {
     /**
      * Creates a Dataset object based on a list of peptides
      *
-     * @param  {string[]}  [peptides=[]] A list of peptides (strings)
+     * @param {string[]} [peptides=[]] A list of peptides (strings)
+     * @param {string} id Unique identifier associated with this Dataset.
      */
-    constructor(peptides = []) {
+    constructor(peptides = [], id) {
         this.originalPeptides = Dataset.cleanPeptides(peptides);
 
         /** @type {Tree} */
         this.tree = null;
         this._fa = null;
         this.baseFa = null;
+        this.id = id;
 
         /** @type {Map<number,TaxonInfo>} */
         this.taxonMap = new Map();
@@ -55,14 +54,21 @@ class Dataset {
      * Reprocesses functional analysis data with other cutoff
      * @param {number} cutoff as percent (0-100)
      * @param {string[]} sequences array of peptides to take into account
-    */
+     */
     async reprocessFA(cutoff = 50, sequences = null) {
         await this.resultset.proccessFA(cutoff, sequences);
         this._fa = this.resultset.fa;
     }
 
     /**
-     * Sets the surrent FA summary as base, accesible trough baseFa.
+     * @returns {Tree}
+     */
+    getTree() {
+        return this.tree;
+    }
+
+    /**
+     * Sets the current FA summary as base, accessible trough baseFa.
      */
     setBaseFA() {
         this.baseFa = this.fa.clone();
@@ -205,7 +211,7 @@ class Dataset {
 
     /**
      *
-     * @return {GroupedFA} Functional annotaions
+     * @return Functional annotations
      */
     get fa() {
         return this._fa;

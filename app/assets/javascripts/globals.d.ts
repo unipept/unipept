@@ -31,7 +31,7 @@ interface FATrustInfo {
     totalTrust?: number,
     annotatedTrust?:number,
     annotaionAmount?: number
-} 
+}
 
 interface FAServerInfo {
     data: FAInfo[],
@@ -46,7 +46,7 @@ interface FAInfo {
     code: string,
     value : number,
     name: string
-} 
+}
 
 interface TaxonInfo {
     id: number,

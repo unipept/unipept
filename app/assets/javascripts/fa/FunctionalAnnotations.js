@@ -2,7 +2,7 @@
 
 
 /**
- * Abstract class that represents Functional annotaions either grouped or not.
+ * Abstract class that represents Functional annotations either grouped or not.
  * (Composite pattern)
  */
 export class FunctionalAnnotations {
@@ -19,11 +19,11 @@ export class FunctionalAnnotations {
     }
 
     /**
-     * Get the data for a certain annotaion
+     * Get the data for a certain annotation
      * @param {string} code
      * @param {string} key
      * @param {any} [fallback=0]
-     * @return {any} The data for the annotaion of the code
+     * @return {any} The data for the annotation of the code
      */
     valueOf(code, key = "value", fallback = 0) {
         throw new Error("valueOf not implemented");
@@ -52,8 +52,8 @@ export class FunctionalAnnotations {
     }
 
     /**
-     * Get an array of all annotaions in this set and sort them
-     * by the goven function.
+     * Get an array of all annotations in this set and sort them
+     * by the given function.
      * @param {function(FAInfo, FAInfo): number} f
      * @return {any[]}
      */
