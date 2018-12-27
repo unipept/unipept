@@ -1,22 +1,6 @@
 <template>
     <div>
         <div class="goPanel" ref="panel"></div>
-        <modal :active="chartImageModalActive" :wide="true">
-            <template slot="header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" @click="chartImageModalActive = false">×</button>
-                <h4 class="modal-title">QuickGo {{ this.namespace }}</h4>
-            </template>
-            <template slot="body">
-                This chart shows the relationship between the {{ top5.length }} most occurring GO terms: {{ top5Sentence }}.
-                <br/>
-                <a :href="quickGoChartUrl" target="_blank" title="Click to enlarge in new tab">
-                    <img style="max-width: 100%;" :src="quickGoChartSmallUrl" :alt="'QuickGO chart of ' + top5Sentence"/>
-                </a>
-                <div>
-                    Provided by <a :href="'https://www.ebi.ac.uk/QuickGO/annotations?goId=' + top5.join(',')" target="_blank">QuickGO</a>.
-                </div>
-            </template>
-        </modal>
     </div>
 </template>
 
@@ -27,7 +11,7 @@
     import {
         downloadDataByForm,
         logToGoogle,
-        numberToPercent,
+        numberToPercent, showInfo,
         stringTitleize,
         toCSVString,
         triggerDownloadModal
@@ -38,6 +22,7 @@
     import PeptideContainer from "../../PeptideContainer";
     import FaSortSettings from "./FaSortSettings";
     import Modal from "../../../components/modal/modal.vue";
+    import {showInfoModal} from "../../../modal";
 
     @Component({
         components: {Modal}
@@ -52,10 +37,6 @@
         top5Sentence: string = "";
         quickGoChartUrl: string = "";
         quickGoChartSmallUrl: string = "";
-        chartImageModalActive: boolean = false;
-
-        // TODO fix redo timeout
-        private redoTimeout: number;
 
         @Watch('fa') onFaChanged(newFa: FunctionalAnnotations, oldFa: FunctionalAnnotations): void {
             this.initGoTable(oldFa);
@@ -256,7 +237,18 @@
                             this.quickGoChartUrl = quickGoChartURL;
                         };
 
-                        this.chartImageModalActive = true;
+                        let modalContent = `
+                            This chart shows the relationship between the ${this.top5.length} most occurring GO terms: ${this.top5Sentence}.
+                            <br/>
+                            <a href="${this.quickGoChartUrl}" target="_blank" title="Click to enlarge in new tab">
+                                <img style="max-width: 100%;" src="${this.quickGoChartSmallUrl}" alt="QuickGO chart of ${this.top5Sentence}"/>
+                            </a>
+                            <div>
+                                Provided by <a href="https://www.ebi.ac.uk/QuickGO/annotations?goId=${this.top5.join(',')}" target="_blank">QuickGO</a>.
+                            </div>
+                        `;
+
+                        showInfoModal("QuickGo " + this.namespace, modalContent);
                     });
             }
         }

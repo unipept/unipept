@@ -1,23 +1,5 @@
 <template>
     <div>
-        <modal :active="sortSettingsModalActive">
-            <template slot="header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" @click="sortSettingsModalActive = false">×</button>
-                <h4 class="modal-title">Sorting functional annotations</h4>
-            </template>
-            <template slot="body">
-                <p>The functional annotations can be sorted on two metrics:</p>
-                <ul>
-                    <li><strong>Peptides</strong>: The absolute number of peptides that are associated with a given functional annotation.</li>
-                    <li><strong>Peptides%</strong>: Like peptides, but the reported value is represented as a percentage indicating the fraction of the total number of peptides.</li>
-                </ul>
-                <p>
-                    Your "Filter duplicate peptides" setting is taken into account. If it is enabled, peptides that occur multiple times
-                    in your input list are counted that many times.
-                </p>
-            </template>
-        </modal>
-
         <card-nav>
             <card-header class="card-title-interactive">
                 <ul class="nav nav-tabs">
@@ -31,9 +13,9 @@
                             <span class="glyphicon glyphicon-sort-by-attributes-alt pull-left"></span><span id="mpa-select-fa-sort-name">{{ faSortSettings.name}}</span>
                             <span class="caret"></span>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-right" id="mpa-select-fa-sort-items" aria-labelledby="mpa-selet-fa-sort">
+                        <ul class="dropdown-menu dropdown-menu-right" id="mpa-select-fa-sort-items" aria-labelledby="mpa-select-fa-sort">
                             <li class="dropdown-header">Sort by number of peptides in related proteins
-                                <span class="small glyphicon glyphicon-question-sign btn-icon" @click="sortSettingsModalActive = true"></span>
+                                <span class="small glyphicon glyphicon-question-sign btn-icon" @click="showSortSettingsModal"></span>
                             </li>
                             <li>
                                 <a :class="formatType === 'percent' ? 'active' : ''" @click="setFormatSettings('percent', 'fractionOfPepts', 'fractionOfPepts', 'Peptides %')">Peptides %</a>
@@ -102,12 +84,12 @@
     import PeptideContainer from "../PeptideContainer";
     import {FunctionalAnnotations} from "../../fa/FunctionalAnnotations";
     import EcNumbersSummary from "./tables/ec-numbers-summary.vue";
-    import Modal from "../../components/modal/modal.vue";
     import SimpleButton from "../../components/button/simple-button.vue";
     import FilterFunctionalAnnotationsDropdown from "./filter-functional-annotations-dropdown.vue";
     import IndeterminateProgressBar from "../../components/progress/indeterminate-progress-bar.vue";
     import CardHeader from "../../components/card/card-header.vue";
     import CardBody from "../../components/card/card-body.vue";
+    import {showInfoModal} from "../../modal";
 
     @Component({
         components: {
@@ -115,7 +97,7 @@
             CardHeader,
             IndeterminateProgressBar,
             FilterFunctionalAnnotationsDropdown,
-            SimpleButton, EcNumbersSummary, GoTermsSummary, Tab, CardNav, Modal},
+            SimpleButton, EcNumbersSummary, GoTermsSummary, Tab, CardNav},
         computed: {
             watchableDataset: {
                 get(): PeptideContainer {
@@ -162,14 +144,13 @@
 
         fa: FunctionalAnnotations | null = null;
 
-        sortSettingsModalActive: boolean = false;
 
         filteredScope: string = "";
         numOfFilteredPepts: string = "";
         faCalculationsInProgress: boolean = false;
 
         mounted() {
-            this.tabs = this.$children[1].$children[2].$children as Tab[];
+            this.tabs = this.$children[0].$children[2].$children as Tab[];
         }
 
         @Watch('watchableDataset') onWatchableDatasetChanged() {
@@ -213,6 +194,22 @@
         reset() {
             this.$store.dispatch('setSelectedTerm', 'Organism');
             this.$store.dispatch('setSelectedTaxonId', -1);
+        }
+
+        showSortSettingsModal() {
+            let modalContent = `
+                <p>The functional annotations can be sorted on two metrics:</p>
+                <ul>
+                    <li><strong>Peptides</strong>: The absolute number of peptides that are associated with a given functional annotation.</li>
+                    <li><strong>Peptides%</strong>: Like peptides, but the reported value is represented as a percentage indicating the fraction of the total number of peptides.</li>
+                </ul>
+                <p>
+                    Your "Filter duplicate peptides" setting is taken into account. If it is enabled, peptides that occur multiple times
+                    in your input list are counted that many times.
+                </p>
+            `;
+
+            showInfoModal("Sorting functional annotations", modalContent);
         }
 
         private async onPeptideContainerChanged() {
