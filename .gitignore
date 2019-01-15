@@ -30,3 +30,7 @@ coverage/
 /public/packs
 /public/packs-test
 /node_modules
+
+/storage/*
+!/storage/.keep
+/public/assets

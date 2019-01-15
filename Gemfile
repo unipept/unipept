@@ -1,18 +1,15 @@
 source 'http://rubygems.org'
 
-git_source(:github) do |repo_name|
-  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
-  "https://github.com/#{repo_name}.git"
-end
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-gem 'rails', '~> 5.1.6', '>= 5.1.6.1'
+gem 'rails', '~> 5.2.2'
 
 gem 'mysql2', '~> 0.5.2'
 
 gem 'webpacker'
 
 # Use Puma as the app server
-gem 'puma', '~> 3.7'
+gem 'puma', '~> 3.11'
 
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
@@ -27,6 +24,8 @@ gem 'responders', '>= 2.0'
 
 # needed for asset creation
 gem 'therubyracer', platforms: :ruby
+
+gem 'bootsnap', '>= 1.1.0', require: false
 
 # faster json
 gem 'oj',  '~> 3.7'
