@@ -26,7 +26,7 @@ gem 'devise_cas_authenticatable'
 gem 'responders', '>= 2.0'
 
 # needed for asset creation
-gem 'therubyracer'
+gem 'therubyracer', platforms: :ruby
 
 # faster json
 gem 'oj',  '~> 3.7'

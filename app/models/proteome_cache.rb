@@ -16,7 +16,7 @@ class ProteomeCache < ApplicationRecord
     cache = ProteomeCache.find_by(proteome_id: proteome_id)
     if cache.nil?
       result = ProteomeCache.delta_encode(ProteomeCrossReference.get_sequence_ids(proteome_id))
-      json = Oj.dump(result, mode: :compat)
+      json = Oj.dump(result, mode: :rails)
       cache = ProteomeCache.create(proteome_id: proteome_id, json_sequences: json)
     end
     cache

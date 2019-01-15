@@ -123,7 +123,7 @@ class SequencesController < ApplicationController
       format.html # show.html.erb
       format.json { render json: @entries.to_json(only: :uniprot_accession_number, include: [{ ec_cross_references: { only: :ec_number_code } }, { go_cross_references: { only: :go_term_code } }]) }
       # TODO: switch to OJ for higher performance
-      # format.json { render json: Oj.dump(@entries, :include => :name, :mode => :compat) }
+      # format.json { render json: Oj.dump(@entries, :include => :name, :mode => :rails) }
     end
   rescue SequenceTooShortError
     flash[:error] = 'The sequence you searched for is too short.'
