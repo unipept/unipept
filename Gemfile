@@ -5,7 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'rails', '5.1.4'
+gem 'rails', '~> 5.1.6', '>= 5.1.6.1'
 
 gem 'mysql2', '~> 0.5.2'
 
@@ -15,7 +15,7 @@ gem 'webpacker'
 gem 'puma', '~> 3.7'
 
 # Use Redis adapter to run Action Cable in production
-# gem 'redis', '~> 3.0'
+# gem 'redis', '~> 4.0'
 
 # pagination
 gem 'will_paginate'
