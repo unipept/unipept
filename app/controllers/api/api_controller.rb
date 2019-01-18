@@ -99,21 +99,21 @@ class Api::ApiController < ApplicationController
   # param[extra]: "true" or "false", optional, Output extra info?
   # param[split]: "true" or "false", optional, Should GO_terms be split according to namespace?
   def pept2funct
-    @result = Hash.new
+    @result = {}
 
     ec_result = pept2ec_helper
     go_result = pept2go_helper
 
     @input_order.each do |seq|
-      seq_index = @equate_il ? seq.gsub(/I/,'L') : seq
+      seq_index = @equate_il ? seq.tr('I', 'L') : seq
 
-      if go_result.key? seq_index
-        @result[seq_index] = {
-            :total => go_result[seq_index][:total],
-            :go => go_result[seq_index][:go],
-            :ec => ec_result[seq_index][:ec]
-        }
-      end
+      next unless go_result.key? seq_index
+
+      @result[seq_index] = {
+        total: go_result[seq_index][:total],
+        go: go_result[seq_index][:go],
+        ec: ec_result[seq_index][:ec]
+      }
     end
 
     respond_with(@result)
@@ -125,25 +125,24 @@ class Api::ApiController < ApplicationController
   # param[extra]: "true" or "false", optional, Output extra info?
   # param[split]: "true" or "false", optional, Should GO_terms be split according to namespace?
   def peptinfo
-    @result = Hash.new
+    @result = {}
 
     lca_result = pept2lca_helper
     ec_result = pept2ec_helper
-    go_result  = pept2go_helper
+    go_result = pept2go_helper
 
     @input_order.each do |seq|
-      seq_index = @equate_il ? seq.gsub(/I/,'L') : seq
+      seq_index = @equate_il ? seq.tr('I', 'L') : seq
 
-      if go_result.key? seq_index
-        @result[seq_index] = {
-            :total => go_result[seq_index][:total],
-            :go => go_result[seq_index][:go],
-            :ec => ec_result[seq_index][:ec],
-            :lca => lca_result[seq_index]
-        }
-      end
+      next unless go_result.key? seq_index
+
+      @result[seq_index] = {
+        total: go_result[seq_index][:total],
+        go: go_result[seq_index][:go],
+        ec: ec_result[seq_index][:ec],
+        lca: lca_result[seq_index]
+      }
     end
-
 
     respond_with(@result)
   end
@@ -200,6 +199,7 @@ class Api::ApiController < ApplicationController
   # log all api calls to stathat
   def log
     return unless Rails.application.config.unipept_API_logging
+
     StatHat::API.ez_post_count('API - ' + action_name, Rails.application.config.unipept_stathat_key, 1)
   end
 
@@ -287,9 +287,8 @@ class Api::ApiController < ApplicationController
     output
   end
 
-
   def pept2ec_helper
-    output = Hash.new
+    output = {}
 
     @sequences = Sequence.where(sequence: @input)
 
@@ -297,16 +296,16 @@ class Api::ApiController < ApplicationController
 
     @sequences.each do |seq|
       fa = seq.calculate_fa(@equate_il)
-      ecs = fa["data"].select { |k, v| k.start_with?("EC:") }
+      ecs = fa['data'].select { |k, _v| k.start_with?('EC:') }
 
       output[seq.sequence] = {
-          :total => fa["num"]["all"],
-          :ec => ecs.map do |k, v|
-            {
-                :ec_number => k[3..-1],
-                :protein_count => v
-            }
-          end
+        total: fa['num']['all'],
+        ec: ecs.map do |k, v|
+              {
+                ec_number: k[3..-1],
+                protein_count: v
+              }
+            end
       }
 
       ec_numbers.push *(ecs.map { |k, _v| k[3..-1] })
@@ -315,7 +314,7 @@ class Api::ApiController < ApplicationController
     if @extra_info
       ec_numbers = ec_numbers.uniq.compact.sort
 
-      ec_mapping = Hash.new
+      ec_mapping = {}
 
       EcNumber.where(code: ec_numbers).each do |ec_term|
         ec_mapping[ec_term.code] = ec_term.name
@@ -332,44 +331,44 @@ class Api::ApiController < ApplicationController
   end
 
   def pept2go_helper
-    output = Hash.new
+    output = {}
     go_terms = []
 
     @sequences = Sequence.where(sequence: @input)
 
     @sequences.each do |seq|
       fa = seq.calculate_fa(@equate_il)
-      gos = fa["data"].select { |k, _v| k.start_with?("GO:") }
+      gos = fa['data'].select { |k, _v| k.start_with?('GO:') }
 
       output[seq.sequence] = {
-          :total => fa["num"]["all"],
-          :go => gos.map do |k, v|
-            {
-                :go_term => k,
-                :protein_count => v
-            }
-          end
+        total: fa['num']['all'],
+        go: gos.map do |k, v|
+              {
+                go_term: k,
+                protein_count: v
+              }
+            end
       }
 
-      go_terms.push *(gos.keys)
+      go_terms.push *gos.keys
     end
 
-    if @extra_info or @domains
+    if @extra_info || @domains
       go_terms = go_terms.uniq.compact.sort
 
-      go_mapping = Hash.new
+      go_mapping = {}
       GoTerm.where(code: go_terms).each do |go_term|
         go_mapping[go_term.code] = go_term
       end
 
       if @domains
 
-        if @extra_info
-          set_name = lambda { |value| value[:name] = go_mapping[value[:go_term]].name }
-        else
-          # Do nothing
-          set_name = lambda { |_value| }
-        end
+        set_name = if @extra_info
+                     ->(value) { value[:name] = go_mapping[value[:go_term]].name }
+                   else
+                     # Do nothing
+                     ->(_value) {}
+                   end
 
         # We have to transform the input so that the different GO-terms are split per namespace
         output.each do |_k, v|
@@ -394,5 +393,4 @@ class Api::ApiController < ApplicationController
 
     output
   end
-
 end

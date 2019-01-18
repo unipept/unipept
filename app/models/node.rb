@@ -22,6 +22,7 @@ class Node
 
     # root node
     return unless root?
+
     @nodes = []
   end
 
