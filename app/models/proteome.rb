@@ -40,7 +40,7 @@ class Proteome < ApplicationRecord
     versions = Rails.application.config.versions
     cache_key = "proteomes_#{versions[:unipept]}_#{versions[:uniprot]}"
     Rails.cache.fetch(cache_key, expires_in: 1.year) do
-      Oj.dump(Proteome.proteomes, mode: :compat)
+      Oj.dump(Proteome.proteomes, mode: :rails)
     end
   end
 
@@ -51,7 +51,7 @@ class Proteome < ApplicationRecord
     cache_key = "taxa_#{versions[:unipept]}_#{versions[:uniprot]}"
     Rails.cache.fetch(cache_key, expires_in: 1.year) do
       Proteome.precompute_taxa
-      Oj.dump(Proteome.taxa, mode: :compat)
+      Oj.dump(Proteome.taxa, mode: :rails)
     end
   end
 

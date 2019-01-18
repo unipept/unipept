@@ -2,7 +2,7 @@ const {environment} = require("@rails/webpacker");
 
 const webpack = require("webpack");
 
-environment.plugins.set(
+environment.plugins.prepend(
     "CommonsChunkVendor",
     new webpack.optimize.CommonsChunkPlugin({
         name: "commons",
