@@ -39,7 +39,7 @@ module UnipeptWeb
 
     config.versions = {
       unipept: '4.1.0',
-      gem: '1.3.0',
+      gem: '1.4.1',
       uniprot: '2018.06'
     }
 
