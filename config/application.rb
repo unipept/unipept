@@ -38,7 +38,7 @@ module UnipeptWeb
     config.filter_parameters += [:password]
 
     config.versions = {
-      unipept: '4.1.0',
+      unipept: '4.1.1',
       gem: '1.4.1',
       uniprot: '2018.06'
     }
