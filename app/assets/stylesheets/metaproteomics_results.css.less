@@ -10,7 +10,7 @@
 }
 .multi-search .buttons-single {
     margin-right: 16px;
-    margin-top: -46px;
+    margin-top: -41px;
 }
 h2.ghead {
     margin-bottom: 8px;
@@ -42,6 +42,28 @@ span.dir.text {
     margin-top: 5px;
 }
 
+.mpa-waiting{ 
+    
+    position: relative;
+    margin: 18px 0 0 0;
+
+    &::after {
+        content: "Please wait while we are preparing your data..";
+        position: absolute;
+        left: 0;
+        top: 64px;
+        font-size: 2em;
+        text-shadow: 0 0 5px white, 0 0 3px white;
+        width: 100%;
+        text-align: center;
+        display: block;
+    }
+
+    .mpa-placeholder {
+        filter: blur(2px);
+    }
+}
+
 // tooltip
 #tooltip.tip {
     position: absolute;
@@ -49,35 +71,37 @@ span.dir.text {
     visibility: hidden;
 }
 .tip {
+    top: 0;   // to be overwritten by JS
+    left: 0;  // to be overwritten by JS
     background-color: #fff;
     padding: 5px;
     border: 1px solid @hairlinegray;
     border-radius: 2px;
     .shadow-z5();
 }
-.tip-title {
-    text-align: center;
-}
 
+#sunburstWrapper,
+#treemapWrapper,
+#treeviewWrapper {
+    overflow: hidden;
+}
 // sunburst
-#sunburst {
+.full-screen .unipept-sunburst {
     width: 100%;
+}
+.unipept-sunburst {
     background-color: white;
 }
-#sunburst > svg {
-    margin: 0 auto;
-    display: block;
-}
-.full-screen #sunburst > svg {
+.full-screen .unipept-sunburst > svg {
     overflow: visible;
 }
-#sunburst .toHide {
+.unipept-sunburst .toHide {
     pointer-events: none;
 }
-#sunburst > svg .arc {
+.unipept-sunburst > svg .arc {
     cursor: pointer;
 }
-#sunburst > svg .arc:hover {
+.unipept-sunburst > svg .arc:hover {
     fill-opacity: 0.9;
 }
 .dropdown-menu-form div.checkbox {
@@ -97,88 +121,13 @@ span.dir.text {
     padding-top: 0;
     min-width: 135px;
 }
-#sunburstPanel {
-    width: 176px;
-    float: right;
-    margin-top: 10px;
-    padding-left: 5px;
-}
-.full-screen #sunburstPanel {
+.full-screen .unipept-sunburst .sunburst-breadcrumbs {
     width: 250px;
     margin-right: 10px;
 }
-#sunburstPanel ul {
-    padding-left: 0;
-    list-style: none;
-}
-.crumb {
-    margin-bottom: 5px;
-    cursor: pointer;
-}
-.crumb svg {
-    float: left;
-    margin-right: 3px;
-}
-.crumb p {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    margin: 0;
-    font-size: 14px;
-}
-.crumb .percentage {
-    font-size: 11px;
-}
 
-// d3 treemap
-#d3TreeMap {
-    width: 100%;
+.full-screen-container.full-screen {
     background-color: white;
-}
-#d3TreeMap svg {
-    margin: 0 auto;
-    display: block;
-}
-#d3TreeMap .node {
-    font-size: 9px;
-    line-height: 10px;
-    overflow: hidden;
-    position: absolute;
-    text-indent: 2px;
-    text-align: center;
-    text-overflow: ellipsis;
-    cursor: pointer;
-}
-#d3TreeMap .node:hover {
-    outline: 1px solid white;
-}
-#d3TreeMap .breadcrumbs {
-    font-size: 11px;
-    line-height: 20px;
-    padding-left: 5px;
-    font-weight: bold;
-    color: white;
-}
-.full-screen #d3TreeMap .breadcrumbs {
-    width: 100% !important;
-}
-#d3TreeMap .crumb {
-    cursor: pointer;
-}
-#d3TreeMap .crumb .link:hover {
-    text-decoration: underline;
-}
-#d3TreeMap .breadcrumbs .crumb + .crumb::before {
-    content: " > ";
-    cursor: default;
-}
-
-// treeview
-#d3TreeView {
-    background-color: white;
-}
-#d3TreeView svg {
-    margin-bottom: -5px;
 }
 
 /* lineage tree */
@@ -191,6 +140,12 @@ span.dir.text {
     border-radius: 2px;
     .transition(all 1s ease-in-out);
     .shadow-z5();
+
+    a{
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: block;
+    }
 }
 #tree_data::before {
     content: "";
@@ -221,4 +176,95 @@ span.dir.text {
 #tree_search_group,
 #searchtree {
     max-width: 420px;
+}
+
+
+#goPanel {
+    >.row {
+        padding-bottom: 16px;
+
+        h3 {
+            padding-left: 16px;
+        }
+    }
+}
+
+#goPanel, #ecTable {
+    padding: 0 16px;
+}
+
+
+.save-fa-btn.saved{
+    color: @primary-500;
+}
+
+#fa-filter-warning {
+    padding: 16px;
+    background: @primary-A100;
+    line-height: 1em;
+    button {
+        float: right;
+        margin: (-@line-height-base/2)*1em 0;
+    }
+}
+
+#mpa-select-fa-sort-name {
+    width: 8em;
+    display: inline-block;
+}
+
+#mpa-select-fa-sort-items .active{
+    font-weight: bold;
+}
+
+#mpa-fa-advanced {
+    float: right;
+    margin-right: 16px;
+}
+
+
+
+#mpa-fa-advanced-options {
+    .form-group {
+        margin-bottom: 32px;
+
+        button, .input-group{
+            width: 19em;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 8px;
+
+            label{
+                font-weight: normal;
+            }
+        }
+        >:last-child{
+            margin-bottom: 0;
+        }
+    }
+    >:last-child{
+        margin-bottom: 0;
+    }
+}
+
+.mpa-fa .amounttable-expandrow-content{
+    >button{
+        position: absolute;
+        right: 0;
+    }
+}
+
+#ecTreeView {
+    margin-top: @padding-large-vertical;
+    border-top: 1px solid @black-divider;
+    position: relative;
+}
+
+#ec-btns {
+    position: absolute;
+    right: @padding-large-horizontal;
+    top: @padding-large-vertical;
+    :disabled {
+        display: none;
+    }
 }

@@ -38,13 +38,13 @@ class PeptidomeController < ApplicationController
       lca = 'undefined'
       result = []
     end
-    render json: Oj.dump([lca, result], mode: :compat)
+    render json: Oj.dump([lca, result], mode: :rails)
   end
 
   # Returns a list of sequences
   def get_sequences
     ids = ProteomeCache.delta_decode(JSON(params[:sequence_ids]))
-    render json: Oj.dump(Sequence.list_sequences(ids).join("\n"), mode: :compat)
+    render json: Oj.dump(Sequence.list_sequences(ids).join("\n"), mode: :rails)
   end
 
   # Returns a list of proteins
@@ -58,14 +58,14 @@ class PeptidomeController < ApplicationController
         csv_string += CSV.generate_line [sequence.sequence, sequence.lca, uniprot_entry.uniprot_accession_number, uniprot_entry.name]
       end
     end
-    render json: Oj.dump(csv_string, mode: :compat)
+    render json: Oj.dump(csv_string, mode: :rails)
   end
 
   # Converts a list of peptides to id's
   def convert_peptides
     peptides = JSON(params[:peptides]) rescue ''
     ids = Sequence.where(sequence: peptides).pluck(:id)
-    render json: Oj.dump(ids, mode: :compat)
+    render json: Oj.dump(ids, mode: :rails)
   end
 
   # Calculates the LCA of a list of bioproject id's
@@ -77,6 +77,6 @@ class PeptidomeController < ApplicationController
     else
       lca = { name: 'undefined' }
     end
-    render json: Oj.dump(lca, mode: :compat)
+    render json: Oj.dump(lca, mode: :rails)
   end
 end

@@ -49,6 +49,18 @@
           </div>
         </div>
       <% end %>
+      <% if domains %>
+        <div class="form-group">
+          <label for="input" class="col-xs-2 control-label">domains</label>
+          <div class="col-xs-10">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" id="try-domains"> set to true
+              </label>
+            </div>
+          </div>
+        </div>
+      <% end %>
       <div class="form-group">
         <div class="col-xs-offset-2 col-xs-10">
           <button type="submit" class="btn btn-primary" id="try-it-submit">Try it!</button>
@@ -72,6 +84,7 @@
         equate_il = <%= equate_il %>,
         extra = <%= extra %>,
         names = "<%= names %>";
+        domains = <%= domains %>;
     $("#try-it-form").submit(function (e) {
       e.preventDefault();
 
@@ -80,6 +93,7 @@
       var valEquate = $("#try-equate_il").prop('checked');
       var valExtra = $("#try-extra").prop('checked');
       var valNames = $("#try-names").prop('checked');
+      var valDomains = $("#try-domains").prop('checked');
 
       var url = "http://" + server + "/api/v1/" + name + ".json?";
 
@@ -107,10 +121,14 @@
         url += "&names=true"
       }
 
+      if (domains && valDomains) {
+          url += "&domains=true"
+      }
+
 
       $("#try-it-request").html("<a href='" + url + "' target='_blank'>" + url + "</a>");
       $("#try-it-response").text("loading...");
-      $.get(url, function (data) {
+      $.get(url.replace("http", "https"), function (data) {
         $("#try-it-response").text(data);
       }, "html")
       .fail(function (e) {

@@ -12,6 +12,12 @@
     background: white;
 }
 
+.buttons-extra {
+    line-height: 3em;
+     float: right;
+    margin-top: initial;
+ }
+
 #lineageTree {
     background-color: white;
 }
@@ -131,4 +137,70 @@ table.protein-info .organism {
 }
 table.protein-info .dropdown-menu {
     margin-top: 0;
+}
+
+/* EC treeview */
+#sequences-content #ecTreeView {
+  margin: 0 -16px -21px -16px;
+}
+
+/* Quick go images */
+.quickGoThumb {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    /* 7 rows of line-height 18 +  table padding  + 1px border */
+    max-height: 7*(18px+2*@table-condensed-cell-padding + 1px);
+    cursor: pointer;
+}
+
+
+/* Functional analysis tooltips */
+h4.tooltip-fa-title {
+    line-height: initial;
+}
+
+.tooltip-go-domain, .tooltip-go-title-term, .tooltip-ec-term, .tooltip-extra {
+    color: @black-secondary;
+    white-space: nowrap;
+}
+.tooltip-fa-text {
+    margin-top: 8px;
+}
+
+.tooltip-ec-ancestor{
+    color: @black-secondary;
+    margin-top: 0.3em;
+    line-height: initial;
+    display: table-row;
+  
+    &.tooltip-ec-current{
+        color: @black-text;
+    }
+
+    .tooltip-ec-term{
+        display: table-cell;
+        min-width: 6em; 
+        /* estimated value for text like EC 4.2.1.-*/
+    }
+    
+    .tooltip-ec-name{
+        display: table-cell;
+    }
+}
+
+extend
+
+#go-panel h3{
+    margin-top: @line-height-computed;
+}
+
+/* Formating of EC numbers */
+.ec-number-formatted {
+    white-space: nowrap;
+    >span{
+        width:1.5em;
+        display:inline-block;
+        text-align: center;
+    }
 }

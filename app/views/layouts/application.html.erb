@@ -6,7 +6,11 @@
       <%=title%>
     </title>
     <%= render 'layouts/stylesheets' %>
+    <%= javascript_pack_tag 'commons' %>
+    <%= javascript_pack_tag 'application' %>
     <%= javascript_include_tag "application" %>
+    <%= yield :javascripts %>
+    <link rel="prefetch" href="<%= asset_pack_path 'd3.js' %>" />
     <%= csrf_meta_tag %>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="application-name" content="Unipept">
@@ -16,6 +20,7 @@
     <link rel="icon" sizes="192x192" href="/logo.png">
     <link rel="apple-touch-icon-precomposed" href="/logo.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
+    <meta name="referrer" content="origin">
     <% if Rails.application.config.unipept_analytics %>
       <!-- Google Analytics -->
       <script type="text/javascript">

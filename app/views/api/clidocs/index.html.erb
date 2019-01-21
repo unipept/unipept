@@ -38,13 +38,13 @@
         </div>
         <div class='card-supporting-text'>
     <p>
-      To use the Unipept command line tools, Ruby needs to be installed on your system. We recommend using Ruby 2.2, but all versions since Ruby 1.9.3, as well as JRuby are supported. To check if you have the correct Ruby version installed, open a terminal and run
+      To use the Unipept command line tools, Ruby needs to be installed on your system. We recommend using Ruby 2.6, but all versions since Ruby 2.3 are supported. To check if you have the correct Ruby version installed, open a terminal and run
       <code>ruby --version</code>.
     </p>
 
     <pre>
 <b>$</b> ruby --version
-ruby 2.2.2p95 (2015-04-13 revision 50295) [x86_64-darwin14]</pre>
+ruby 2.6.0p0 (2018-12-25 revision 66547) [x86_64-darwin18]</pre>
 
     <div class="apidocs-callout apidocs-callout-info">
       <h4>Installing Ruby</h4>
@@ -58,7 +58,7 @@ ruby 2.2.2p95 (2015-04-13 revision 50295) [x86_64-darwin14]</pre>
     </div>
 
     <p>
-      The Unipept CLI is available as a <a href='http://rubygems.com/gems/unipept' target='_blank'><i>gem</i></a>. This means it can easily be installed with the <code>gem install unipept</code> command:
+      The Unipept CLI is available as a <a href='http://rubygems.org/gems/unipept' target='_blank'><i>gem</i></a>. This means it can easily be installed with the <code>gem install unipept</code> command:
     </p>
 
     <pre>
@@ -89,6 +89,13 @@ Done installing documentation for unipept after 0 seconds
       <h4>Permission problems</h4>
       <p>
         When trying to install a gem, you might run into permission problems if you don't have write access to the default installation directory. This can be fixed by doing a <i>user install</i>, which installs the gem in your home directory. Simply run <code>gem install unipept --user-install</code> instead of the normal installation command. More  information can be found on the <a href='http://guides.rubygems.org/faqs/#user-install' target='_blank'>RubyGems website</a>.
+      </p>
+    </div>
+    <div class="apidocs-callout apidocs-callout-info">
+      <h4>Windows support</h4>
+      <p>
+        Unipept CLI should work on Unix, Mac, and Windows. However, because of one of our underlying dependencies (curl), some windows users experience issues during installation.
+        In case of such issues, we recommend using the Unix Subsystem of Windows 10 instead. More information can be found on the <a href="https://docs.microsoft.com/en-us/windows/wsl/about" target="_blank"> Microsoft website</a>.
       </p>
     </div>
   </div>

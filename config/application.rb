@@ -1,6 +1,7 @@
 require_relative 'boot'
 
 require 'rails/all'
+require 'multi_json'
 
 if defined?(Bundler)
   # Require the gems listed in Gemfile, including any gems
@@ -10,6 +11,9 @@ end
 
 module UnipeptWeb
   class Application < Rails::Application
+    # Initialize configuration defaults for originally generated Rails version.
+    config.load_defaults 5.2
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -34,11 +38,13 @@ module UnipeptWeb
     config.filter_parameters += [:password]
 
     config.versions = {
-      unipept: '3.2',
-      gem: '1.1.0',
-      uniprot: '2017.05'
+      unipept: '4.1.0',
+      gem: '1.4.1',
+      uniprot: '2018.06'
     }
 
     config.api_host = 'api.unipept.ugent.be'
+
+    MultiJson.use :Oj
   end
 end

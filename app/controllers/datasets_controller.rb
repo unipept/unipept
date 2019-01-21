@@ -63,7 +63,7 @@ class DatasetsController < ApplicationController
     @dataset = Dataset.find(params[:id])
 
     respond_to do |format|
-      if @dataset.update_attributes(params[:dataset])
+      if @dataset.update(params[:dataset])
         format.html { redirect_to(@dataset, flash: { success: 'Dataset was successfully updated.' }) }
         format.xml  { head :ok }
       else

@@ -1,121 +1,467 @@
 <div class="apidocs casestudies row">
   <div class="col-xs-9">
-    <h1 class='api-title'>Case study: Metagenomics</h1>
-    <p class='lead'>
-      This case study describes how the Unipept command line tools can be used for the taxonomic analysis of metagenomics.
-    </p>
-    <div class="apidocs-callout apidocs-callout-danger" style="background-color: white">
-      <h4>Warning</h4>
-      <p>This is an (very incomplete) draft of how Unipept could be used for metagenomics. Proceed at your own risk.</p>
-    </div>
-    <div class='card'>
-      <div class='card-supporting-text'>
+    <h1 class="api-title">Case Study: Unipept Metagenomics Analysis Pipeline</h1>
+    <p class="lead">This case study shows how to use UMGAP for the taxonomic analysis of a metagenomics dataset.</p>
+    <div class="card">
+      <div class="card-title card-title-colored"><h2 class="card-title-text">Introduction</h2></div>
+      <div class="card-supporting-text">
         <p>
-          This is a short report on analysing the data from a shotgun metagenomics data set. For the moment, we have omitted the steps involved in quality filtering and mate pair assembly of the raw DNA reads, as well as gene prediction using <code>FragGeneScan</code>. The end result of all these steps are two files:
-    </p>
-        <ul>
-          <li><code>joined_proteins.fasta.faa</code>: predicted protein fragments on assembled reads that passed the quality filtering.</li>
-          <li><code>single_proteins.fasta.faa</code>: predicted protein fragments on non-assembled reads that passed the quality filtering.</li>
-        </ul>
-        <p>
-          In a first step, we process all protein fragments (both from the assembled and single reads) by splitting them into tryptic peptides (filtered to length in the range [5, 50]) and merging the peptides coming from the same DNA read into a single FASTA record <i>(timing: 12 mins 22 secs)</i>.
-    </p>
-        <pre>
-<b>$</b> cat joined_proteins.fasta.faa singles_proteins.fasta.faa | prot2pept | peptfilter | python3 join_reads.py > peptides.fst</pre>
-        <p>
-          This makes use of the following Python3 script that merges all peptides coming from the same DNA read into a single FASTA record.
-    </p>
-        <pre>
-import sys
-
-prevheader = None
-skipped = 0
-for line in sys.stdin:
-
-    if line.startswith('>'):
-        header = line.split('_')[0]
-        if header != prevheader:
-            prevheader = header
-            sys.stdout.write('{}\n'.format(header))
-        else:
-            skipped += 1
-            sys.stderr.write('{}: skipped {}\n'.format(skipped, header.rstrip()))
-    else:
-        sys.stdout.write(line)</pre>
-        <p>
-          <b>NOTE</b>: The file <code>singles_proteins.fasta.faa</code> may contain two mates coming from the same clone, but that are not consecutive in the file. Since we know that the protein fragments from both mates come from the same organism, the processing could be improved if we also join the peptides from the protein fragments of the same clone. This is not yet covered by the python script. This could be done by sorting the results after the next step (after <code>unipept pept2lca</code>).
-    </p>
-        <p>
-          Then we compute the LCA for all individual tryptic peptides <i>(timing: 37 mins 17 secs)</i>.
-    </p>
-        <pre>
-<b>$</b> unipept pept2lca < peptides.fst > peptides.lca.fst</pre>
-        <p>
-          Instead of deriving the biodiversity distribution from the individual peptides, we can aggregate the identifications of all peptides coming from the same DNA read into a consensus identification. To do so, we use a special version of the lowest common ancestor algorithm (LCA*) that takes the most specific node in the taxonomic tree if both nodes are on the same lineage <i>(timing: 6 mins 36 secs)</i>.
-    </p>
-        <pre>
-<b>$</b> python3 /work/unipept-metagenomics-scripts/tree-of-life/pept2lca2lca.py < peptides.lca.fst > reads.lca.fst</pre>
-        <p>
-          <b>NOTE</b>: if we do not need all the intermediate results of the steps leading into the DNA read identifications, we can merge all command that lead to the generation of the file <code>reads.lca.fst</code> into a single piped command.
-    </p>
-        <pre>
-<b>$</b> sort -T /work peptides.lca.fst > peptides.lca.sorted.fst</pre>
-        <p>
-          Then we can compute the biodiversity distribution of a sample by counting the number of occurrences of each taxon <i>(timing: 4.8 secs)</i>.
-    </p>
-        <pre>
-<b>$</b> tail -n +2 < reads.lca.fst | awk -F, '{print $2}' | sort | uniq -c | sed 's/^[\t ]*//g' | sed 's/\([^ ]*\) \(.*\)/\2,\1/' | sort > distribution.csv</pre>
-        <p>
-          As the analysis only reports the taxon IDs, we now lookup the names and ranks of all taxa found in the sample <i>(timing: 1.3 secs)</i>.
-    </p>
-        <pre>
-<b>$</b> cat distribution.csv | awk -F, '{print $1}'| unipept taxonomy | tail -n +2 | sort > taxons.csv</pre>
-        <p>
-          This allows us to determine the most abundant species-level identifications in the sample <i>(timing: 0 secs)</i>.
-    </p>
-        <pre>
-<b>$</b> join -t, -1 1 -2 1 distribution.csv taxons.csv | sort -t, -k2,2nr | grep species | head -n30</pre>
-        <p>
-          The 30 most dominant species are:
-    </p>
-        <pre>
-411153,63403,Gramella forsetii,species
-248452,29568,Psychrobacter aquaticus,species
-195907,24491,Gillisia limnaea,species
-72228,18734,Ophiocordyceps sinensis,species
-1165841,16102,Sulfurovum sp. AR,species
-1789,11623,Mycobacterium xenopi,species
-7897,10129,Latimeria chalumnae,species
-225422,10043,Oceanibulbus indolifex,species
-562,7295,Escherichia coli,species
-7668,7059,Strongylocentrotus purpuratus,species
-228,6819,Pseudoalteromonas haloplanktis,species
-60137,5755,Sulfitobacter pontiacus,species
-930802,5417,Nonlabens marinus,species
-5888,5067,Paramecium tetraurelia,species
-398743,5041,Zunongwangia profunda,species
-197222,4994,Glaciecola mesophila,species
-5911,4619,Tetrahymena thermophila,species
-340170,4499,Spathaspora passalidarum,species
-7029,4448,Acyrthosiphon pisum,species
-8022,4414,Oncorhynchus mykiss,species
-180542,4068,Salinisphaera shabanensis,species
-29760,3840,Vitis vinifera,species
-6412,3821,Helobdella robusta,species
-8128,3574,Oreochromis niloticus,species
-5786,3529,Dictyostelium purpureum,species
-46433,3501,Reticulomyxa filosa,species
-1172189,3486,Oxytricha trifallax,species
-334543,3472,Psychrobacter arcticus,species
-5949,3255,Stylonychia lemnae,species
-588596,3152,Rhizophagus irregularis,species</pre>
-        <p>
-          We can also summarize the biodiversity distribution in a tree. The following code converts the distribution into a JSON file that maps the counts onto the tree of life <i>(timing: 33.5 secs)</i>.
-    </p>
-        <pre>
-<b>$</b> tail -n +2 < reads.lca.fst | awk -F, '{print $2}' | python3 /work/unipept-metagenomics-scripts/tree-of-life/tax2tree.py tree.json</pre>
+          The Unipept Metagenomics Analysis Pipeline (UMGAP) is a tool for mapping (short) metagenomics reads to taxa,
+          rivalling state of the art alternatives such as Kraken (2014)
+          with the additional benefit of species level identification.
+          UMGAP achieves this by transforming the mapping task into a metaproteomics problem
+          by using various alternative gene predictors on the metagenomics reads
+          and processing the resulting data with the existing Unipept Metaproteomics Analysis Pipeline.
+          Each step in UMGAP is highly configurable.
+        </p>
       </div>
     </div>
+
+    <div class="card">
+      <div class="card-title card-title-colored"><h2 class="card-title-text">Preprocessing</h2></div>
+      <div class="card-supporting-text">
+        <p>
+          Throughout this overview of UMGAP, all steps will have examples to demonstrate the exact usage.
+          For this, we have sampled 100 paired-end DNA reads from a dataset
+          generated by Lindgreen <i>et al.</i> (2016) for their metabenchmark.
+          As this dataset contains paired-end reads in FASTQ format, and UMGAP operates on FASTA data,
+          we perform a first preprocessing step to convert the FASTQ into FASTA files.
+        </p>
+        <pre style="max-height: initial;">
+<!--   --><b>$</b> umgap fastq2fasta A1.fq A2.fq | tee preprocessed.fa
+<!--   -->>read1/1
+<!--   -->ATCGCGCACGCGGCCGATGCCCCAGAAGAGATTGACAGCGGTGGGGCGGGCGGCGGCGAGGTGGTCGCAGATCTCGGCGACCTCTGCGTTGAGGGTCGGG
+<!--   -->>read1/2
+<!--   -->AAGATGGCGACTGGATGATGATCGCGCGGCAGGCCACCATCTACGATCCCGCAGTGAAGCATTACTAACCATGATGCGCAACGACTCGCTGTCAGAGCTA
+<!--   -->>read2/1
+<!--   -->AGATTGCTGGTGCGGGTGCTCTGCCGGGCTTCTTCATCTCGGACCGCGCATCCGATGCGCACACGGCACAGTAGGTATGCGGTGAGAGCACCTCGCTTTT
+<!--   -->>read2/2
+<!--   -->CGCAATCTTGCGGCGCACCGCGATCAAATCGGGATAGTCCGGTGTGTAACGCGTGCTCAGGTCATCTGCCCGTACCCGCAATACATTCAACTGTGTTTTA
+<!--   -->>read3/1
+<!--   -->CCCTCAAGCCCGATCGAACTTTCCTACTGCCCGACCTCAGCGCGGAGCATTACCGAATCGTCGTCAACAATCTCCCCGATGGCTTCTATGTGAACTCCAT
+<!--   -->>read3/2
+<!--   -->CAAAATGGAGTGGGCGCTACTGCTCCGTGAGCAGGGTCAGTTGGAGGGATTGGGGCGTGCGCTCGGGGATGCTAATGGCGGTGCCCCTGGATTCCTGAGA
+        </pre>
+        <p>
+          This command will interleave the given FASTQ files and output a FASTA stream,
+          in which the paired-ends alternate each other.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title card-title-colored"><h2 class="card-title-text">Gene prediction</h2></div>
+      <div class="card-supporting-text">
+        <p>
+          To convert the metagenomics reads into a metaproteomics problem,
+          we have to perform some kind of gene prediction.
+          While any gene prediction tool can be used, UMGAP was tested with FragGeneScan (2010) and FragGeneScan++,
+          our in-house improved version of FragGeneScanPlus (2015), a predictor using Hidden Markov Models.
+          Alternatively, you can also try all possible translations and use the built-in six-frame translation tool.
+        </p>
+        <p>
+          Using gene prediction limits our tool to the coding regions of the given DNA reads.
+          This limit caps the sensitivity of our predictions,
+          as we can offer no prediction for a read from a non-coding region.
+          On the other hand, coding regions are more conserved
+          and the mutations that do occur often do not change the resulting amino acid.
+        </p>
+        <p>
+          For more information about the available options for the gene predictors, the FragGeneScan and FragGeneScan++ commands,
+          we refer to the <a href="http://omics.informatics.indiana.edu/FragGeneScan/">FragGeneScan</a>
+          and <a href="https://github.com/unipept/FragGeneScanPlusPlus">FragGeneScan++</a> documentation.
+          Here, it suffices to say that the commands below will write the predicted genes
+          in FASTA format to a file called `predicted-genes.faa`.
+        </p>
+        <pre>
+<!--   --><b>$</b> FGS -s preprocessed.fa -o predicted-genes -w0 -t illumina_10 -p 16 > /dev/null
+<!--   --><b>$</b> rm predicted-genes.fnn predicted-genes.out # we don't use these files
+        </pre>
+        <pre>
+<!--   --><b>$</b> FGSpp -s stdin -o stdout -w 0 -r train -t illumina_10 -p 16 -m 3000 < preprocessed.fa | tee predicted-genes.faa
+        </pre>
+        <p>
+          With our alternative six-frame translation option,
+          we choose to translate all (<code>-a</code>) frames using the standard translation table.
+        </p>
+        <pre>
+<!--   --><b>$</b> umgap translate -a < preprocessed.fa | tee predicted-genes.faa
+<!--   -->>read1/1|1
+<!--   -->IAHAADAPEEIDSGGAGGGEVVADLGDLCVEGR
+<!--   -->>read1/1|2
+<!--   -->SRTRPMPQKRLTAVGRAAARWSQISATSALRVG
+<!--   -->>read1/1|3
+<!--   -->RARGRCPRRD*QRWGGRRRGGRRSRRPLR*GS
+<!--   -->>read1/1|1R
+<!--   -->PDPQRRGRRDLRPPRRRPPHRCQSLLGHRPRAR
+<!--   -->>read1/1|2R
+<!--   -->PTLNAEVAEICDHLAAARPTAVNLFWGIGRVRD
+<!--   -->>read1/1|3R
+<!--   -->RPSTQRSPRSATTSPPPAPPLSISSGASAACA
+<!--   -->>read1/2|1
+<!--   -->KMATG**SRGRPPSTIPQ*SITNHDAQRLAVRA
+<!--   -->>read1/2|2
+<!--   -->RWRLDDDRAAGHHLRSRSEALLTMMRNDSLSEL
+<!--   -->>read1/2|3
+<!--   -->DGDWMMIARQATIYDPAVKHY*P*CATTRCQS
+<!--   -->>read1/2|1R
+<!--   -->*L*QRVVAHHG**CFTAGS*MVACRAIIIQSPS
+<!--   -->>read1/2|2R
+<!--   -->SSDSESLRIMVSNASLRDRRWWPAARSSSSRHL
+<!--   -->>read1/2|3R
+<!--   -->ALTASRCASWLVMLHCGIVDGGLPRDHHPVAI
+<!--   -->>read2/1|1
+<!--   -->RLLVRVLCRASSSRTAHPMRTRHSRYAVRAPRF
+<!--   -->>read2/1|2
+<!--   -->DCWCGCSAGLLHLGPRIRCAHGTVGMR*EHLAF
+<!--   -->>read2/1|3
+<!--   -->IAGAGALPGFFISDRASDAHTAQ*VCGESTSL
+<!--   -->>read2/1|1R
+<!--   -->KSEVLSPHTYCAVCASDARSEMKKPGRAPAPAI
+<!--   -->>read2/1|2R
+<!--   -->KARCSHRIPTVPCAHRMRGPR*RSPAEHPHQQS
+<!--   -->>read2/1|3R
+<!--   -->KRGALTAYLLCRVRIGCAVRDEEARQSTRTSN
+<!--   -->>read2/2|1
+<!--   -->RNLAAHRDQIGIVRCVTRAQVICPYPQYIQLCF
+<!--   -->>read2/2|2
+<!--   -->AILRRTAIKSG*SGV*RVLRSSARTRNTFNCVL
+<!--   -->>read2/2|3
+<!--   -->QSCGAPRSNRDSPVCNACSGHLPVPAIHSTVF
+<!--   -->>read2/2|1R
+<!--   -->*NTVECIAGTGR*PEHALHTGLSRFDRGAPQDC
+<!--   -->>read2/2|2R
+<!--   -->KTQLNVLRVRADDLSTRYTPDYPDLIAVRRKIA
+<!--   -->>read2/2|3R
+<!--   -->KHS*MYCGYGQMT*ARVTHRTIPI*SRCAARL
+<!--   -->>read3/1|1
+<!--   -->PSSPIELSYCPTSARSITESSSTISPMASM*TP
+<!--   -->>read3/1|2
+<!--   -->PQARSNFPTARPQRGALPNRRQQSPRWLLCELH
+<!--   -->>read3/1|3
+<!--   -->LKPDRTFLLPDLSAEHYRIVVNNLPDGFYVNS
+<!--   -->>read3/1|1R
+<!--   -->MEFT*KPSGRLLTTIR*CSALRSGSRKVRSGLR
+<!--   -->>read3/1|2R
+<!--   -->WSSHRSHRGDC*RRFGNAPR*GRAVGKFDRA*G
+<!--   -->>read3/1|3R
+<!--   -->GVHIEAIGEIVDDDSVMLRAEVGQ*ESSIGLE
+<!--   -->>read3/2|1
+<!--   -->QNGVGATAP*AGSVGGIGACARGC*WRCPWIPE
+<!--   -->>read3/2|2
+<!--   -->KMEWALLLREQGQLEGLGRALGDANGGAPGFLR
+<!--   -->>read3/2|3
+<!--   -->KWSGRYCSVSRVSWRDWGVRSGMLMAVPLDS*
+<!--   -->>read3/2|1R
+<!--   -->SQESRGTAISIPERTPQSLQLTLLTEQ*RPLHF
+<!--   -->>read3/2|2R
+<!--   -->LRNPGAPPLASPSARPNPSN*PCSRSSSAHSIL
+<!--   -->>read3/2|3R
+<!--   -->SGIQGHRH*HPRAHAPIPPTDPAHGAVAPTPF
+        </pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title card-title-colored"><h2 class="card-title-text">Taxonomic Identification</h2></div>
+      <div class="card-supporting-text">
+        <p>
+          UMGAP uses exact substring matching to identify reads.
+          The next step of the pipeline fragments each amino acid sequence into 9-mers.
+          The <i>k</i>-mers of a string are all possible substrings of length <i>k</i>.
+          For example, the 4-mers of the string "ABCDEFG" are "ABCD", "BCDE", "CDEF" and "DEFG".
+          After constructing all possible 9-mers, they are matched against our index.
+          This index maps each 9-mer encountered in the UniProt's protein knowledgebase (2014)
+          to the lowest common ancestor (LCA) of all the organisms it occured in.
+          The LCA of a set of taxa is equal to the taxon of the most specific rank
+          in the NCBI taxonomy (2011) that is either a descendant or an ancestor of all taxa in that set.
+        </p>
+        <pre>
+<!--   --><b>$</b> umgap prot2kmer2lca -o -k9 9-mer.index < predicted-genes.faa | tee found-kmers.fa
+<!--   -->>read1/1|1
+<!--   -->0 0 0 0 0 0 0 0 0 0 35725 2759 1 1 1 2 515393 201174 0 1 0 0 0 379 0
+<!--   -->>read1/1|2
+<!--   -->0 0 0 0 0 0 0 0 0 1185650 1185650 140110 0 0 0 0 0 0 0 0 0 36842 0 1 162425
+<!--   -->>read1/1|3
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 1773 47855 4530 1 1 1 1 1 0 35708 0 0 0
+<!--   -->>read1/1|1R
+<!--   -->0 0 0 0 2235 0 0 0 0 40674 1 1 2759 0 0 0 0 0 0 0 0 0 0 0 88724
+<!--   -->>read1/1|2R
+<!--   -->1 940557 1 940615 940615 940615 940615 940615 0 0 0 0 56 2 1 1 1 1 2 2 940615 940615 940615 940615 940615
+<!--   -->>read1/1|3R
+<!--   -->0 0 0 0 1036719 2 2759 0 2 1 1 1 2759 1 1 3916 3916 1760 0 237 1 2759 1 0
+<!--   -->>read1/2|1
+<!--   -->0 0 0 0 0 0 0 5627 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
+<!--   -->>read1/2|2
+<!--   -->0 52226 53355 1760 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 44471
+<!--   -->>read1/2|3
+<!--   -->940615 940615 940615 940615 940615 204434 204434 204434 204434 2 204434 204434 204434 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read1/2|1R
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read1/2|2R
+<!--   -->1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 4751 35708
+<!--   -->>read1/2|3R
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read2/1|1
+<!--   -->0 1813 546364 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read2/1|2
+<!--   -->0 68786 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read2/1|3
+<!--   -->2 392734 392734 392734 392734 0 0 0 0 0 0 0 0 0 392734 0 0 0 0 0 0 0 0 0
+<!--   -->>read2/1|1R
+<!--   -->0 0 0 0 0 0 0 0 36740 0 0 0 0 0 0 0 0 0 0 0 0 0 379 379 0
+<!--   -->>read2/1|2R
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read2/1|3R
+<!--   -->0 0 0 0 393310 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read2/2|1
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read2/2|2
+<!--   -->1534 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read2/2|3
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 1370023 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read2/2|1R
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 488447 0 0 0 0 0 0 0
+<!--   -->>read2/2|2R
+<!--   -->0 0 0 0 0 0 33882 4930 4930 0 392734 1 392734 392734 392734 392734 392734 392734 392734 392734 392733 392733 392733 392733 392734
+<!--   -->>read2/2|3R
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read3/1|1
+<!--   -->0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1754192 0 6282 0 7164 0 0 0 0 0
+<!--   -->>read3/1|2
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read3/1|3
+<!--   -->332163 332163 332163 2 1 332163 2 332163 332163 332163 332163 332163 1 332163 332163 332163 332163 332163 332163 332163 332163 332163 0 0
+<!--   -->>read3/1|1R
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 322865 7868 0 0 0 0 0 0
+<!--   -->>read3/1|2R
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read3/1|3R
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0
+<!--   -->>read3/2|1
+<!--   -->0 0 0 0 0 0 0 0 0 0 632569 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+<!--   -->>read3/2|2
+<!--   -->0 0 0 8839 0 0 40754 0 0 0 0 323415 0 286 1 1760 0 0 0 0 0 0 0 0 0
+<!--   -->>read3/2|3
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 28216 0 0 0 0 0 0 0
+<!--   -->>read3/2|1R
+<!--   -->332163 2 2 332163 332163 332163 332163 332163 332163 332163 1 332163 332163 332163 2 2 1 332163 332163 0 0 0 0 0 0
+<!--   -->>read3/2|2R
+<!--   -->67819 0 0 0 5855 1 1 2 519963 5206 0 1245748 0 0 0 0 0 0 0 0 0 101127 0 0 0
+<!--   -->>read3/2|3R
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 13687 0 0 0
+        </pre>
+        <p>
+          This command will look up each 9-mer in the input data
+          and output the associated taxon if any is found.
+          With the <code>-o</code> or <code>--one-on-one</code> flag,
+          the unrecognized 9-mers will be included as a "0" taxon,
+          the use of which will be clarified in the next step.
+          Note: the real output would contain newlines between taxa,
+          which have been replaced here by spaces for readability.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title card-title-colored"><h2 class="card-title-text">(Optional) Filtering</h2></div>
+      <div class="card-supporting-text">
+        <p>
+          Especially when running the pipeline with all six frames,
+          a lot of the translations are invalid since we expect only one of the reading frames, rarely more, to yield a valid protein.
+          The Seed-Extend step in the pipeline filters out most random hits
+          by selecting only 9-mer hits which are spatially close to other hits.
+        </p>
+        <pre>
+<!--   --><b>$</b> umgap seedextend < found-kmers.fa | tee selected-seeds.fa
+<!-- -->>read1/1|1
+<!-- -->35725 2759 1 1 1 2 515393 201174
+<!-- -->>read1/1|2
+<!-- -->1185650 1185650 140110
+<!-- -->>read1/1|3
+<!-- -->1773 47855 4530 1 1 1 1 1
+<!-- -->>read1/1|1R
+<!-- -->40674 1 1 2759
+<!-- -->>read1/1|2R
+<!-- -->1 940557 1 940615 940615 940615 940615 940615 56 2 1 1 1 1 2 2 940615 940615 940615 940615 940615
+<!-- -->>read1/1|3R
+<!-- -->2 1 1 1 2759 1 1 3916 3916 1760
+<!-- -->>read1/2|1
+<!-- -->
+<!-- -->>read1/2|2
+<!-- -->
+<!-- -->>read1/2|3
+<!-- -->940615 940615 940615 940615 940615 204434 204434 204434 204434 2 204434 204434 204434
+<!-- -->>read1/2|1R
+<!-- -->
+<!-- -->>read1/2|2R
+<!-- -->
+<!-- -->>read1/2|3R
+<!-- -->
+<!-- -->>read2/1|1
+<!-- -->
+<!-- -->>read2/1|2
+<!-- -->
+<!-- -->>read2/1|3
+<!-- -->2 392734 392734 392734 392734
+<!-- -->>read2/1|1R
+<!-- -->379 379
+<!-- -->>read2/1|2R
+<!-- -->
+<!-- -->>read2/1|3R
+<!-- -->
+<!-- -->>read2/2|1
+<!-- -->
+<!-- -->>read2/2|2
+<!-- -->
+<!-- -->>read2/2|3
+<!-- -->
+<!-- -->>read2/2|1R
+<!-- -->
+<!-- -->>read2/2|2R
+<!-- -->33882 4930 4930 392734 1 392734 392734 392734 392734 392734 392734 392734 392734 392733 392733 392733 392733 392734
+<!-- -->>read2/2|3R
+<!-- -->
+<!-- -->>read3/1|1
+<!-- -->
+<!-- -->>read3/1|2
+<!-- -->
+<!-- -->>read3/1|3
+<!-- -->332163 332163 332163 2 1 332163 2 332163 332163 332163 332163 332163 1 332163 332163 332163 332163 332163 332163 332163 332163 332163
+<!-- -->>read3/1|1R
+<!-- -->
+<!-- -->>read3/1|2R
+<!-- -->
+<!-- -->>read3/1|3R
+<!-- -->
+<!-- -->>read3/2|1
+<!-- -->
+<!-- -->>read3/2|2
+<!-- -->
+<!-- -->>read3/2|3
+<!-- -->
+<!-- -->>read3/2|1R
+<!-- -->332163 2 2 332163 332163 332163 332163 332163 332163 332163 1 332163 332163 332163 2 2 1 332163 332163
+<!-- -->>read3/2|2R
+<!-- -->5855 1 1 2 519963 5206
+<!-- -->>read3/2|3R
+<!-- -->
+        </pre>
+        <p>
+          Note: the real output would contain newlines between taxa,
+          which have been replaced here by spaces for readability.
+        </p>
+        <pre>
+<!--   --><b>$</b> mv selected-seeds.fa found-kmers.fa # optional step, same format
+        </pre>
+        <p>
+          The Seed-Extend algorithm requires spatial information which is provided
+          by supplying the <code>-o</code> flag to the previous command.
+          The <code>taxons.tsv</code> is a file describing the NCBI taxonomic tree.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title card-title-colored"><h2 class="card-title-text">Aggregation</h2></div>
+      <div class="card-supporting-text">
+        <p>
+          At this step of the pipeline, we have a list of taxon identifiers per protein,
+          one protein per reading frame, 6 reading frames per paired-end and 2 paired-ends per metagenomics read.
+          To get a single taxon identification per read, we need to aggregate these 12 lists.
+          UMGAP offers 3 alternative aggregation strategies with varying speciality.
+
+          <ul>
+            <li>
+              Unipept's lowest common ancestor strategy (LCA*),
+              where the consensus taxon is, as before, the taxon of most specific rank
+              which is either descendant or ancestor of every given taxon;
+            </li>
+            <li>
+              Kraken's maximum root-to-leaf path (MRTL),
+              where the consensus taxon is the taxon in the given list
+              which has the most ancestors in the given list;
+            </li>
+            <li>
+              A newly developed hybrid strategy,
+              which combines LCA* and MRTL based on a given scaling factor (default 0.25).
+              The hybrid method aims to ignore some outliers without compromising generality.
+              This strategy is the default and will therefore be used below.
+            </li>
+          </ul>
+        </p>
+        <p>
+          Before aggregating the results per read, we remove the markers from the headers with <code>sed</code>
+          and combine the results of each reading frame and paired-end with <code>uniq</code>.
+        </p>
+        <pre>
+<!--   --><b>$</b> sed '/^>/s_/.*__' found-kmers.fa | umgap uniq | umgap taxa2agg taxons.tsv | tee classification.fa
+<!--   -->>read1
+<!--   -->940615
+<!--   -->>read2
+<!--   -->392734
+<!--   -->>read3
+<!--   -->332163
+        </pre>
+        <p>
+          Finally, the whole sample is summarized using e.g. a frequency table,
+          showing the number of reads mapping to each taxon,
+          or one of the many visualizations Unipept offers.
+        </p>
+        <pre>
+<!--   --><b>$</b> grep -v '^>' classification.fa | umgap report -r species taxons.tsv | tee report.csv
+<!--   -->1,332163,Candidatus Solibacter usitatus
+<!--   -->1,392734,Terriglobus roseus
+<!--   -->1,940615,Granulicella tundricola
+        </pre>
+        <p>
+          The <code>grep</code> command will drop the FASTA headers,
+          allowing the <code>report</code> command to snap each taxon to either a species or "unknown"
+          and report the frequency table of the results.
+          This command will prove more useful with larger input.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title card-title-colored"><h2 class="card-title-text">Recap</h2></div>
+      <div class="card-supporting-text">
+        <p>
+          The complete UMGAP can be written as a single command.
+          This allows the steps to run in parallel, further speeding up the final result.
+        </p>
+        <pre>
+<!--   --><b>$</b> umgap fastq2fasta A1.fq A2.fq |          # joining paired-end files
+<!--          -->  umgap translate -a |                     # translating all six frames
+<!--          -->  umgap prot2kmer2lca -o -k9 9-mer.index | # mapping each 9-mer onto a taxon or 0
+<!--          -->  umgap seedextend |                       # filtering extended seeds
+<!--          -->  sed '/^>/s_/.*__' |                      # dropping the paired-end and frame annotations
+<!--          -->  umgap uniq |                             # joining equal headers (all taxa of the same read)
+<!--          -->  umgap taxa2agg taxons.tsv |              # aggregating all taxa
+<!--          -->  grep -v '^>' |                           # dropping headers
+<!--          -->  umgap report taxons.tsv                  # make frequency table
+<!--   -->1,332163,Candidatus Solibacter usitatus
+<!--   -->1,392734,Terriglobus roseus
+<!--   -->1,940615,Granulicella tundricola
+        </pre>
+        <p>
+          This command processes the complete Metabenchmark A1 dataset containing 116 million paired-end reads
+          in a VM (8 cores, 200GB RAM) on our computational server (16 Intel Xeon CPU E5-2650 v2 at 2.60GHz,
+          20*16GB RDIMM x4 Data Width at 1866MHz, with the 9-mer index loaded in RAM)
+          in 4h22, that is 1840 (paired-end) reads per second.
+          Using FragGeneScan++ speeds this up to 10100 reads per second.
+        </p>
+      </div>
+    </div>
+    <h2>References</h2>
+    <ul>
+      <li>Wood, D. E., &amp; Salzberg, S. L. (2014). Kraken: ultrafast metagenomic sequence classification using exact alignments. <em>Genome biology</em>, 15(3), R46.</li>
+      <li>Lindgreen, S., Adair, K. L., &amp; Gardner, P. P. (2016). An evaluation of the accuracy and speed of metagenome analysis tools. <em>Scientific reports</em>, 6, 19233.</li>
+      <li>Rho, M., Tang, H., &amp; Ye, Y. (2010). FragGeneScan: predicting genes in short and error-prone reads. <em>Nucleic acids research</em>, 38(20), e191-e191.</li>
+      <li>Kim, D., Hahn, A. S., Wu, S. J., Hanson, N. W., Konwar, K. M., & Hallam, S. J. (2015, August). FragGeneScan-Plus for scalable high-throughput short-read open reading frame prediction. <em>Computational Intelligence in Bioinformatics and Computational Biology (CIBCB)</em>, 2015 IEEE Conference on (pp. 1-8), IEEE.</li>
+      <li>UniProt Consortium. (2014). UniProt: a hub for protein information. <em>Nucleic acids research</em>, 43(D1), D204-D212.</li>
+      <li>Federhen, S. (2011). The NCBI taxonomy database. <em>Nucleic acids research</em>, 40(D1), D136-D143.</li>
+    </ul>
   </div>
   <div class="col-xs-3">
     <%= render 'api/shared/sidebar' %>

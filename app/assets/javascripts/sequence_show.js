@@ -1,48 +1,53 @@
-function init_sequence_show(data) {
+import {addCopy, logToGoogle, triggerDownloadModal, stringTitleize, numberToPercent} from "./utils.js";
+import {showInfoModal} from "./modal.js";
+import {AmountTable} from "./components/amount_table.js";
+import ECNumbers from "./fa/ecnumbers.js";
+import GOTerms from "./fa/goterms.js";
+import "unipept-visualizations/dist/unipept-visualizations.es5.js";
 
-    // set up the fancy tree
-    initLineageTree(data.tree);
+/* TODO: more documentation */
+/* eslint require-jsdoc: off */
 
-    // set up the fullscreen stuff
-    setUpFullScreen();
+const panelWidth = 916;
+const panelHeight = 600;
 
-    // set up save image stuff
-    setUpImageSave();
-
-    // enable the external link popovers
-    addExternalLinks();
-
-    // enable the open in UniProt and clipboard buttons
-    setUpUniprotButtons(data.uniprotEntries);
-
-    // add the tab help
-    initHelp();
-
-
-    /******************* Functions ***********************/
-
+/**
+ * Single peptide analysis
+ */
+class SPA {
     /**
-     * Initializes the help popups
+     *
+     * @param {{peptide:string, tree, uniprotEntries, fa:FAServerInfo}} data
      */
-    function initHelp() {
-        // tab help
-        $(".nav-tabs li a span.help").click(function (e) {
-            var title,
-                content;
-            e.stopPropagation();
-            e.preventDefault();
-            if ($(this).parent().attr("id") === "lineage-tree-tab") {
-                title = "Lineage tree";
-                content = "This interactive tree bundles the complete taxonomic lineages of all UniProt entries whose protein sequence contains " + data.peptide + ". You can click on nodes to expand them, scroll to zoom and drag to move the tree.";
-            } else {
-                title = "Lineage table";
-                content = "This table shows the complete taxonomic lineages of all taxa associated with the UniProt entries whose protein sequence contains " + data.peptide + ". The first column contains the taxon name extracted from the UniProt entry, followed by columns representing taxonomic ranks ordered from superkingdom on the left to forma on the right.";
-            }
-            showInfoModal(title, content);
-        });
+    constructor(data) {
+        this.$tooltip = $("#tooltip");
+
+
+        this.peptide = data.peptide;
+
+        // set up the fancy tree
+        this.initLineageTree(data.tree);
+
+        // set up the fullscreen stuff
+        this.setUpFullScreen();
+
+        // set up save image stuff
+        this.setUpImageSave();
+
+        // enable the external link popovers
+        this.addExternalLinks();
+
+        // enable the open in UniProt and clipboard buttons
+        this.setUpUniprotButtons(data.uniprotEntries);
+
+        // setup functional annotations tabs
+        this.setUpFA(data.fa);
+
+        // enable tooltips for EC and GO terms
+        this.initFAToolips();
     }
 
-    function addExternalLinks() {
+    addExternalLinks() {
         // Add handler to the external links buttons
         $(".externalLinks-button").parent().mouseenter(function () {
             if (!$(this).hasClass("open")) {
@@ -56,21 +61,19 @@ function init_sequence_show(data) {
         });
     }
 
-    function setUpUniprotButtons(entries) {
+    setUpUniprotButtons(entries) {
         $("#open-uniprot").click(function () {
-            var url = "http://www.uniprot.org/uniprot/?query=accession%3A";
+            let url = "http://www.uniprot.org/uniprot/?query=accession%3A";
             url += entries.join("+OR+accession%3A");
-            window.open(url, '_blank');
+            window.open(url, "_blank");
         });
-        addCopy($("#clipboard-uniprot").first(), function () {
-            return entries.join("\n");
-        }, "Copy UniProt IDs to clipboard");
+        addCopy("#clipboard-uniprot", () => entries.join("\n"), "Copy UniProt IDs to clipboard");
     }
 
     /**
      * Sets up the image save stuff
      */
-    function setUpImageSave() {
+    setUpImageSave() {
         $("#buttons-single").prepend("<button id='save-btn-lineage' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-download down'></span> Save tree as image</button>");
         $("#save-btn-lineage").click(function () {
             logToGoogle("Single Peptide", "Save Image");
@@ -81,20 +84,20 @@ function init_sequence_show(data) {
     /**
      * Sets up the full screen stuff
      */
-    function setUpFullScreen() {
-        if (fullScreenApi.supportsFullScreen) {
+    setUpFullScreen() {
+        if (window.fullScreenApi.supportsFullScreen) {
             $("#buttons-single").prepend("<button id='zoom-btn-lineage' class='btn btn-default btn-xs btn-animate'><span class='glyphicon glyphicon-resize-full grow'></span> Enter full screen</button>");
             $("#zoom-btn-lineage").click(function () {
                 logToGoogle("Single Peptide", "Full Screen");
                 window.fullScreenApi.requestFullScreen($("#lineageTree").get(0));
             });
-            $(document).bind(fullScreenApi.fullScreenEventName, resizeFullScreen);
+            $(document).bind(window.fullScreenApi.fullScreenEventName, resizeFullScreen);
         }
 
         function resizeFullScreen() {
             setTimeout(function () {
-                var width = 916,
-                    height = 600;
+                let width = panelWidth,
+                    height = panelHeight;
                 if (window.fullScreenApi.isFullScreen()) {
                     width = $(window).width();
                     height = $(window).height();
@@ -106,409 +109,343 @@ function init_sequence_show(data) {
     }
 
     /**
-     * Inits the lineage tree
+     * Transform the FA data form the server to the format ECNumber and GOTerm expect.
+     * Then render the visualisations
+     * @param {FAServerInfo} fa
+     *     Information about functional analysis as provided by the server
      */
-    function initLineageTree(jsonData) {
-        var margin = {
-                top: 5,
-                right: 5,
-                bottom: 5,
-                left: 60
-            },
-            width = 916 - margin.right - margin.left,
-            height = 600 - margin.top - margin.bottom;
+    setUpFA(fa) {
+        const ecData = Object.entries(fa.data)
+            .filter(([a, b]) => a.startsWith("EC"))
+            .map(([a, b]) => ({code: a.substr(3), value: b})) || [];
 
-        var zoomEnd = 0,
-            i = 0,
-            duration = 750,
-            root;
+        ECNumbers.makeAssured(ecData,
+            {totalCount: fa.counts.all, annotatedCount: fa.counts.EC, trustCount: fa.counts.EC})
+            .then(fa => this.setUpEC(fa));
 
-        var tree = d3.layout.tree()
-            .nodeSize([2, 105])
-            .separation(function (a, b) {
-                var width = (nodeSize(a) + nodeSize(b)),
-                    distance = width / 2 + 4;
-                return (a.parent === b.parent) ? distance : distance + 4;
-            });
+        const usedGoTerms = new Set();
+        Object.keys(fa.data)
+            .filter(x => x.startsWith("GO:"))
+            .forEach(x => usedGoTerms.add(x));
 
-        var diagonal = d3.svg.diagonal()
-            .projection(function (d) {
-                return [d.y, d.x];
-            });
-
-        var widthScale = d3.scale.linear().range([2, 105]);
-
-        // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
-        var zoomListener = d3.behavior.zoom()
-            .scaleExtent([0.1, 3])
-            .on("zoom", zoom);
-
-        var svg = d3.select("#lineageTree").append("svg")
-            .attr("version", "1.1")
-            .attr("xmlns", "http://www.w3.org/2000/svg")
-            .attr("viewBox", "0 0 " + (width + margin.right + margin.left) + " " + (height + margin.top + margin.bottom))
-            .attr("width", width + margin.right + margin.left)
-            .attr("height", height + margin.top + margin.bottom)
-            .call(zoomListener)
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-            .append("g");
-
-        draw(jsonData);
-
-        function draw(data) {
-            root = data;
-
-            widthScale.domain([0, root.data.count]);
-
-            // set everything visible
-            function setVisible(d) {
-                d.selected = true;
-                if (d.children) {
-                    d.children.forEach(setVisible);
-                }
+        GOTerms.fetch([...usedGoTerms.values()]).then(() => {
+            const goCountsPerNamespace = {};
+            const goStatistics = {};
+            for (let namespace of GOTerms.NAMESPACES) {
+                goCountsPerNamespace[namespace] = Object.entries(fa.data)
+                    .filter(([term, count]) => term.startsWith("GO") && GOTerms.namespaceOf(term) == namespace)
+                    .map(([term, count]) => ({code: term, value: count})) || [];
+                goStatistics[namespace] = {totalCount: fa.counts.all, annotatedCount: fa.counts.GO, trustCount: fa.counts.GO};
             }
-            setVisible(root);
 
-            // set colors
-            function color(d, c) {
-                if (c) {
-                    d.color = c;
-                } else if (d.name === "Bacteria") {
-                    d.color = "#1565C0"; // blue
-                } else if (d.name === "Archaea") {
-                    d.color = "#FF8F00"; // orange
-                } else if (d.name === "Eukaryota") {
-                    d.color = "#2E7D32"; // green
-                } else if (d.name === "Viruses") {
-                    d.color = "#C62828"; // red
-                } else {
-                    d.color = "#1565C0"; // blue
-                }
-                if (d.children) {
-                    d.children.forEach(function (node) {
-                        color(node, d.color);
-                    });
-                }
-            }
-            root.children.forEach(function (node) {
-                color(node);
-            });
 
-            var LCA;
+            GOTerms.makeAssured(goCountsPerNamespace, goStatistics)
+                .then(fa => this.setUpGO(fa));
+        });
+    }
 
-            function findLCA(d) {
-                if (d.children && d.children.length === 1) {
-                    findLCA(d.children[0]);
-                } else {
-                    LCA = d;
-                }
-            }
-            findLCA(root);
+    /**
+     * Generate tooltip content for an EC number
+     * @param  {string}    ecNumber   The EC number to generate a tooltip for
+     * @param  {ECNumbers} [ecResultSet=null]  A `ECNumbers` summary
+     * @return {string}    HTML for the tooltip
+     */
+    tooltipEC(ecNumber, ecResultSet = null) {
+        const fmt = x => `<div class="tooltip-ec-ancestor"><span class="tooltip-ec-term">EC ${x}</span><span class="tooltip-ec-name">${ECNumbers.nameOf(x)}</span></div>`;
+        const fmth = x => `<div class="tooltip-ec-ancestor tooltip-ec-current"><span class="tooltip-ec-term">EC ${x}</span><h4 class="tooltip-fa-title">${ECNumbers.nameOf(x)}</h4></div>`;
 
-            // collapse everything
-            function collapseAll(d) {
-                if (d.children && d.children.length === 0) {
-                    d.children = null;
-                }
-                if (d.children) {
-                    d._children = d.children;
-                    d._children.forEach(collapseAll);
-                    d.children = null;
-                }
-            }
-            collapseAll(LCA);
+        let result = "";
 
-            update(root);
-            highlight(LCA);
+        if (ECNumbers.ancestorsOf(ecNumber).length > 0) {
+            result += `${ECNumbers.ancestorsOf(ecNumber).reverse().map(c => fmt(c)).join("\n")}`;
         }
+        result += fmth(ecNumber);
 
-        d3.select(self.frameElement).style("height", "800px");
+        if (ecResultSet != null) {
+            const count = ecResultSet.valueOf(ecNumber);
+            result += `<div class="tooltip-fa-text">Assigned to ${count} of ${ecResultSet.getTrust().annotatedCount} matched proteins with a EC annotation (${numberToPercent(ecResultSet.valueOf(ecNumber) / ecResultSet.getTrust().annotatedCount, 1)})</div>`;
+        }
+        return result;
+    }
 
-        function update(source) {
+    /**
+     * Render the EC table and tree and settup tooltip content
+     * @param {ECNumbers} ecResultset The resultset of the EC numbers
+     */
+    setUpEC(ecResultset) {
+        if (ecResultset.getTrust().annotatedCount > 0) {
+            this.setUpECTree(ecResultset);
+            this.setUpEcTable(ecResultset);
+        } else {
+            $("#ec-table").html("<span>No EC code annotations found.</span>");
+            $("#ecTreeView").remove();
+        }
+        $(".ecNumberLink")
+            .mouseenter(e => {
+                const ecNum = e.target.textContent;
+                this.$tooltip.html(this.tooltipEC(ecNum, ecResultset));
+                return false;
+            });
+    }
 
-            // Compute the new tree layout.
-            var nodes = tree.nodes(root).reverse(),
-                links = tree.links(nodes);
+    /**
+     * Let ECNumbers create an EC tree and alter the tooltip
+     *
+     * @param {ECNumbers} ecResultSet  A `ECNumbers` summary
+     * @return {TreeView} The created treeview
+     */
+    setUpECTree(ecResultSet) {
+        const tree = $("#ecTreeView div")
+            .empty()
+            .treeview(ecResultSet.treeData(), {
+                width: panelWidth,
+                height: panelHeight,
+                getTooltip: d => {
+                    const fullcode = (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
+                    let tip = this.tooltipEC(fullcode);
+                    tip += `<div class="tooltip-fa-text">
+                        ${d.data.count}  occurrences, `;
 
-            // Normalize for fixed-depth.
-            nodes.forEach(function (d) {
-                d.y = d.depth * 180;
+                    if (d.data.self_count == 0) {
+                        tip += "no specific annotations";
+                    } else {
+                        tip += `Assigned to ${d.data.self_count} of ${ecResultSet.getTrust().annotatedCount} matched proteins with a EC annotation (${numberToPercent(d.data.self_count / ecResultSet.getTrust().annotatedCount, 1)})`;
+                    }
+
+                    tip += "</div>";
+                    return tip;
+                },
+                enableAutoExpand: 0.8,
             });
 
-            // Update the nodes
-            var node = svg.selectAll("g.node")
-                .data(nodes, function (d) {
-                    return d.id || (d.id = ++i);
-                });
+        // save tree button
+        $("#save-btn-ec")
+            .click(() => {
+                logToGoogle("Single Peptide", "Save EC Image");
+                triggerDownloadModal("#ecTreeView svg", null, "unipept_treeview");
+            })
+            .attr("disabled", false);
 
-            // Enter any new nodes at the parent's previous position.
-            var nodeEnter = node.enter().append("g")
-                .attr("class", "node")
-                .style("cursor", "pointer")
-                .attr("transform", function (d) {
-                    return "translate(" + (source.y0 || 0) + "," + (source.x0 || 0) + ")";
-                })
-                .on("click", click);
+        return tree;
+    }
 
-            nodeEnter.append("title").html(function (d) {
-                return "hits: " + d.data.count;
-            });
+    /**
+     * Create the EC amount table
+     *
+     * @param {ECNumbers} ecResultSet  A `ECNumbers` summary
+     */
+    setUpEcTable(ecResultSet) {
+        const target = d3.select("#ec-table");
+        const numAnnotated = ecResultSet.getTrust().annotatedCount;
+        target.html("");
+        new AmountTable({
+            title: "EC numbers - " + this.peptide,
+            el: target,
+            data: ecResultSet.getSorted(),
+            limit: 5,
+            contents: [
+                {
+                    title: "Proteins",
+                    text: d => d.value.toString(),
+                    style: {"width": "5em"},
+                    shade: d => 100 * ecResultSet.valueOf(d.code) / numAnnotated,
+                },
+                {
+                    title: "EC number",
+                    html: d => {
+                        const spans = d.code.split(".").map(e => `<span>${e}</span>`).join(".");
+                        return `<a href="https://enzyme.expasy.org/EC/${d.code}" class="ec-number-formatted" target="_blank">${spans}</a>`;
+                    },
+                    text: d => d.code,
+                    style: {"width": "8em"},
+                },
+                {
+                    title: "Name",
+                    text: d => ECNumbers.fullNameOf(d.code),
+                },
+            ],
+            tooltip: d => this.tooltipEC(d.code, ecResultSet),
+            tooltipID: "#tooltip",
+        }).draw();
+    }
 
-            nodeEnter.append("circle")
-                .attr("r", 1e-6)
-                .style("stroke-width", "1.5px")
-                .style("stroke", function (d) {
-                    if (d.selected) {
-                        return d.color || "#aaa";
-                    } else {
-                        return "#aaa";
-                    }
-                })
-                .style("fill", function (d) {
-                    if (d.selected) {
-                        return d._children ? d.color || "#aaa" : "#fff";
-                    } else {
-                        return "#aaa";
-                    }
-                });
+    /**
+     * Generate a tooltip for an GO term
+     * @param  {string}    goTerm   The Ec term to generate a tooltip for
+     * @param  {GOTerms} [goResultSet=null]  A `GOTerms` summary
+     * @return {string}    HTML for the tooltip
+     */
+    tooltipGO(goTerm, goResultSet = null) {
+        let result = `
+            <h4 class="tooltip-fa-title">
+                <span class="tooltip-fa-title-name">${GOTerms.nameOf(goTerm)}</span>
+            </h4>
+            <span class="tooltip-go-domain">${stringTitleize(GOTerms.namespaceOf(goTerm))}</span> - <span class="tooltip-go-title-term"> ${goTerm}</span>`;
 
-            nodeEnter.append("text")
-                .attr("x", function (d) {
-                    return d.children || d._children ? -10 : 10;
-                })
-                .attr("dy", ".35em")
-                .attr("text-anchor", function (d) {
-                    return d.children || d._children ? "end" : "start";
-                })
-                .text(function (d) {
-                    return d.name;
-                })
-                .style("font", "10px sans-serif")
-                .style("fill-opacity", 1e-6);
-
-            // Transition nodes to their new position.
-            var nodeUpdate = node.transition()
-                .duration(duration)
-                .attr("transform", function (d) {
-                    return "translate(" + d.y + "," + d.x + ")";
-                });
-
-            nodeUpdate.select("circle")
-                .attr("r", nodeSize)
-                .style("fill-opacity", function (d) {
-                    return d._children ? 1 : 0;
-                })
-                .style("stroke", function (d) {
-                    if (d.selected) {
-                        return d.color || "#aaa";
-                    } else {
-                        return "#aaa";
-                    }
-                })
-                .style("fill", function (d) {
-                    if (d.selected) {
-                        return d._children ? d.color || "#aaa" : "#fff";
-                    } else {
-                        return "#aaa";
-                    }
-
-                });
-
-            nodeUpdate.select("text")
-                .style("fill-opacity", 1);
-
-            // Transition exiting nodes to the parent's new position.
-            var nodeExit = node.exit().transition()
-                .duration(duration)
-                .attr("transform", function (d) {
-                    return "translate(" + source.y + "," + source.x + ")";
-                })
-                .remove();
-
-            nodeExit.select("circle")
-                .attr("r", 1e-6);
-
-            nodeExit.select("text")
-                .style("fill-opacity", 1e-6);
-
-            // Update the links
-            var link = svg.selectAll("path.link")
-                .data(links, function (d) {
-                    return d.target.id;
-                });
-
-            // Enter any new links at the parent's previous position.
-            link.enter().insert("path", "g")
-                .attr("class", "link")
-                .style("fill", "none")
-                .style("stroke-opacity", "0.5")
-                .style("stroke-linecap", "round")
-                .style("stroke", function (d) {
-                    if (d.source.selected) {
-                        return d.target.color;
-                    } else {
-                        return "#aaa";
-                    }
-                })
-                .style("stroke-width", 1e-6)
-                .attr("d", function (d) {
-                    var o = {
-                        x: (source.x0 || 0),
-                        y: (source.y0 || 0)
-                    };
-                    return diagonal({
-                        source: o,
-                        target: o
-                    });
-                });
-
-            // Transition links to their new position.
-            link.transition()
-                .duration(duration)
-                .attr("d", diagonal)
-                .style("stroke", function (d) {
-                    if (d.source.selected) {
-                        return d.target.color;
-                    } else {
-                        return "#aaa";
-                    }
-                })
-                .style("stroke-width", function (d) {
-                    if (d.source.selected) {
-                        return widthScale(d.target.data.count) + "px";
-                    } else {
-                        return "4px";
-                    }
-                });
-
-            // Transition exiting nodes to the parent's new position.
-            link.exit().transition()
-                .duration(duration)
-                .style("stroke-width", 1e-6)
-                .attr("d", function (d) {
-                    var o = {
-                        x: source.x,
-                        y: source.y
-                    };
-                    return diagonal({
-                        source: o,
-                        target: o
-                    });
-                })
-                .remove();
-
-            // Stash the old positions for transition.
-            nodes.forEach(function (d) {
-                d.x0 = d.x;
-                d.y0 = d.y;
-            });
+        if (goResultSet != null) {
+            const count = goResultSet.valueOf(goTerm);
+            result += `<div class="tooltip-fa-text">Assigned to ${count} of the ${goResultSet.getTrust().annotatedCount} matched proteins with a GO annotation (${numberToPercent(goResultSet.valueOf(goTerm) / goResultSet.getTrust().annotatedCount, 1)})</div>`;
         }
+        return result;
+    }
 
-        // expands all children of a node
-        function expandAll(d) {
-            expand(d, 30);
-        }
+    /**
+     *
+     * @param {GOTerms} goResultset
+     */
+    setUpGO(goResultset) {
+        $("#go-panel").empty();
+        const goPanel = d3.select("#go-panel");
+        for (const variant of GOTerms.NAMESPACES) {
+            const variantName = stringTitleize(variant);
+            goPanel.append("h3").text(variantName);
 
-        // Expands a node for i levels
-        function expand(d, i) {
-            var local_i = i;
-            if (typeof local_i === "undefined") {
-                local_i = 1;
-            }
-            if (local_i > 0) {
-                if (d._children) {
-                    d.children = d._children;
-                    d._children = null;
-                }
-                if (d.children) {
-                    d.children.forEach(function (c) {
-                        expand(c, local_i - 1);
-                    });
-                }
-            }
-        }
-
-        // Collapses a node
-        function collapse(d) {
-            if (d.children) {
-                d._children = d.children;
-                d.children = null;
-            }
-        }
-
-        function nodeSize(d) {
-            if (d.selected) {
-                return widthScale(d.data.count) / 2;
+            if (goResultset.getGroup(variant).getSorted().length > 0) {
+                const article = goPanel.append("div").attr("class", "row");
+                this.setUpGoTable(goResultset, variant, article);
+                this.setUpQuickGo(goResultset, variant, variantName, article);
             } else {
-                return 2;
+                goPanel.append("span").text("No GO term annotations in this namespace.");
             }
         }
 
-        // Toggle children on click.
-        function click(d) {
-            // check if click is triggered by panning on a node
-            if (Date.now() - zoomEnd < 200) return;
+        // Add content to the tooltips of links
+        $(".goTermLink")
+            .mouseenter(e => {
+                const goTerm = e.target.textContent;
+                this.$tooltip.html(this.tooltipGO(goTerm, goResultset));
+                return false;
+            });
+    }
 
-            if (d3.event.shiftKey) {
-                expandAll(d);
-            } else if (d.children) {
-                collapse(d);
-            } else {
-                expand(d);
-            }
+    /**
+     *
+     * @param {GOTerms} goResultset
+     * @param {string} variant
+     * @param {*} target
+     */
+    setUpGoTable(goResultset, variant, target) {
+        const tablepart = target.append("div").attr("class", "col-xs-8");
+        new AmountTable({
+            title: `GO terms - ${variant} - ${this.peptide}`,
+            el: tablepart,
+            data: goResultset.getGroup(variant).getSorted(),
+            limit: 5,
+            contents: [
+                {
+                    title: "Proteins",
+                    text: d => d.value,
+                    style: {"width": "5em"},
+                    shade: d => 100 * goResultset.valueOf(d.code) / goResultset.getTrust().annotatedCount,
+                },
+                {
+                    title: "GO term",
+                    html: d => `<a href="https://www.ebi.ac.uk/QuickGO/term/${d.code}" target="_blank">${d.code}</a>`,
+                    text: d => d.code,
+                    style: {"width": "7em"},
+                },
+                {
+                    title: "Name",
+                    text: d => GOTerms.nameOf(d.code),
+                },
+            ],
+            tooltip: d => this.tooltipGO(d.code, goResultset),
+            tooltipID: "#tooltip",
+        }).draw();
+    }
 
-            update(d);
-            centerNode(d);
-        }
 
-        // Sets the width of this node to 100%
-        function highlight(d) {
-            // set Selection properties
-            setSelected(root, false);
-            setSelected(d, true);
+    /**
+     *
+     * @param {GOTerms} goResultset
+     * @param {string} variant
+     * @param {string} variantName
+     * @param {*} target
+     */
+    setUpQuickGo(goResultset, variant, variantName, target) {
+        const top5 = goResultset.getGroup(variant).getSorted().slice(0, 5).map(x => x.code);
 
-            // scale the lines
-            widthScale.domain([0, d.data.count]);
+        const quickGoChartSmallURL = GOTerms.quickGOChartURL(top5, false);
+        const quickGoChartURL = GOTerms.quickGOChartURL(top5, true);
+        const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${numberToPercent(goResultset.valueOf(x) / goResultset.getTrust().annotatedCount)})`);
+        const top5sentence = top5WithNames.slice(0, -1).join(", ")
+            + (top5.length > 1 ? " and " : "")
+            + top5WithNames[top5WithNames.length - 1];
+        target
+            .append("div").attr("class", "col-xs-4")
+            .append("img")
+            .attr("src", quickGoChartSmallURL)
+            .attr("class", "quickGoThumb")
+            .attr("title", `QuickGO chart of ${top5sentence}`)
+            .on("click", () => {
+                const $modal = showInfoModal("QuickGo " + variantName, `
+                    This chart shows the realationship between the ${top5.length} most occuring GO terms: ${top5sentence}.<br/>
+                    <a href="${quickGoChartURL}" target="_blank" title="Click to enlarge in new tab"><img style="max-width:100%" src="${quickGoChartSmallURL}" alt="QuickGO chart of ${top5sentence}"/></a>
+                    <br>
+                    Provided by <a href="https://www.ebi.ac.uk/QuickGO/annotations?goId=${top5.join(",")}" target="_blank">QuickGo</a>.`,
+                {wide: true});
 
-            expand(d, 4);
+                const fullImage = new Image();
+                fullImage.onload = () => {
+                    $modal.find("img").first().attr("src", quickGoChartURL);
+                };
+                fullImage.src = quickGoChartURL;
+            });
+    }
 
-            // redraw
-            update(d);
-            centerNode(d);
+    /**
+     * Enable show and hide of tooltips,
+     * The values are set in `this.setUpGO` and `setUpEC`
+     */
+    initFAToolips() {
+        /* eslint brace-style: "off" */
+        const tooltipShowCSS = {"display": "block", "visibility": "visible"};
+        const tooltipHideCSS = {"display": "none", "visibility": "hidden", "top": 0, "left": 0};
 
-            function setSelected(d, value) {
-                d.selected = value;
-                if (d.children) {
-                    d.children.forEach(function (c) {
-                        setSelected(c, value);
-                    });
-                } else if (d._children) {
-                    d._children.forEach(function (c) {
-                        setSelected(c, value);
-                    });
+        $(".ecNumberLink,.goTermLink")
+            .mouseenter(() => {this.$tooltip.css(tooltipShowCSS);})
+            .mouseleave(() => {this.$tooltip.css(tooltipHideCSS);})
+            .mousemove(e => {
+                this.$tooltip.css("top", e.pageY + 10);
+                if (window.innerWidth - e.pageX - 25 - this.$tooltip.outerWidth() < 0) {
+                    this.$tooltip.css({"right": "3px", "left": "auto"});
                 }
-            }
-        }
+                else
+                {
+                    this.$tooltip.css({"right": "auto", "left": e.pageX + 10});
+                }
+            });
+    }
 
-        // Zoom function
-        function zoom() {
-            zoomEnd = Date.now();
-            svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-        }
+    initLineageTree(jsonData) {
+        let colors = {
+            "Bacteria": "#1565C0", // blue
+            "Archaea": "#FF8F00", // orange
+            "Eukaryota": "#2E7D32", // green
+            "Viruses": "#C62828", // red
+        };
 
-        // Center a node
-        function centerNode(source) {
-            var scale = zoomListener.scale(),
-                x = -source.y0,
-                y = -source.x0;
-            x = x * scale + width / 8;
-            y = y * scale + height / 2;
-            svg.transition()
-                .duration(duration)
-                .attr("transform", "translate(" + x + "," + y + ")scale(" + scale + ")");
-            zoomListener.scale(scale);
-            zoomListener.translate([x, y]);
+        const tree = $("#lineageTree").empty().treeview(jsonData, {
+            width: panelWidth,
+            height: panelHeight,
+            colors: d => d.name in colors ? colors[d.name] : "#1565C0",
+        });
+
+        // Deselect the whole tree
+        const root = tree.getRoot();
+        root.setSelected(false);
+
+        // Select and expand the LCA
+        let curNode = root;
+        while (curNode.children && curNode.children.length === 1) {
+            curNode = curNode.children[0];
+            curNode.expand();
         }
+        curNode.setSelected(true);
+        tree.update(root);
+        tree.centerNode(curNode);
+        tree.update(root);
     }
 }
+
+export {SPA};

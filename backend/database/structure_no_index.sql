@@ -43,7 +43,7 @@ COLLATE = ascii_general_ci;
 CREATE TABLE IF NOT EXISTS `unipept`.`ec_numbers` (
   `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `code` VARCHAR(15) NOT NULL,
-  `name` VARCHAR(140) NOT NULL,
+  `name` VARCHAR(155) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
@@ -120,15 +120,20 @@ COLLATE = ascii_general_ci;
 
 -- -----------------------------------------------------
 -- Table `unipept`.`sequences`
+-- BLOCKSIZE 16 IS DEFAULT BLOCKSIZE
+-- Only BLOBS will get compressed
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `unipept`.`sequences` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `sequence` VARCHAR(50) NOT NULL ,
   `lca` MEDIUMINT UNSIGNED NULL ,
   `lca_il` MEDIUMINT UNSIGNED NULL ,
+  `fa`  MEDIUMBLOB NULL ,
+  `fa_il`  MEDIUMBLOB NULL ,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = ascii
+ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=16 
 COLLATE = ascii_general_ci;
 
 
@@ -279,13 +284,13 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `unipept`.`proteomes` (
   `id` MEDIUMINT UNSIGNED NOT NULL,
   `proteome_accession_number` CHAR(12) NOT NULL,
-  `proteome_name` VARCHAR(100) NOT NULL,
+  `proteome_name` VARCHAR(145) NOT NULL,
   `taxon_id` MEDIUMINT UNSIGNED NULL,
   `type_strain` BIT(1) NOT NULL DEFAULT b'0',
   `reference_proteome` BIT(1) NOT NULL DEFAULT b'0',
-  `strain` VARCHAR(45) NULL,
+  `strain` VARCHAR(120) NULL,
   `assembly` VARCHAR(45) NULL,
-  `name` VARCHAR(128) NULL DEFAULT NULL,
+  `name` VARCHAR(225) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8

@@ -23,6 +23,8 @@ rename table unipept2.lineages to unipept.lineages;
 rename table unipept2.peptides to unipept.peptides;
 rename table unipept2.refseq_cross_references to unipept.refseq_cross_references;
 rename table unipept2.sequences to unipept.sequences;
+# rename table unipept2.sequences_compressed to unipept.sequences_compressed;
+# NOTE: a view cannot be renamed! Create it separately (see structure_no_index_compress.sql)
 rename table unipept2.taxons to unipept.taxons;
 rename table unipept2.uniprot_entries to unipept.uniprot_entries;
 rename table unipept2.proteomes to unipept.proteomes;

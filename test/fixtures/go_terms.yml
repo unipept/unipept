@@ -10,6 +10,126 @@
 
 goterm1:
     id: 1
-    code: "go:12345"
+    code: "GO:12345"
     namespace: "cellular component"
     name: "some function"
+
+goterm2:
+    id: 2
+    code: "GO:0016569"
+    namespace: "cellular component"
+    name: "some function 2"
+
+goterm3:
+    id: 3
+    code: "GO:0006281"
+    namespace: "molecular function"
+    name: "some function 3"
+
+goterm4:
+    id: 4
+    code: "GO:0000781"
+    namespace: "biological process"
+    name: "some function 4"
+
+goterm5:
+    id: 5
+    code: "GO:0004674"
+    namespace: "biological process"
+    name: "some function 5"
+
+goterm6:
+    id: 6
+    code: "GO:0005634"
+    namespace: "molecular function"
+    name: "some function 6"
+
+goterm7:
+    id: 7
+    code: "GO:0005524"
+    namespace: "cellular component"
+    name: "some function 7"
+
+goterm8:
+    id: 8
+    code: "GO:0016301"
+    namespace: "biological process"
+    name: "some function 8"
+
+goterm9:
+    id: 9
+    code: "GO:0051301"
+    namespace: "molecular function"
+    name: "some function 9"
+
+goterm10:
+    id: 10
+    code: "GO:0005525"
+    namespace: "cellular component"
+    name: "some function 10"
+
+goterm11:
+    id: 11
+    code: "GO:0046872"
+    namespace: "biological process"
+    name: "some function 11"
+
+goterm12:
+    id: 12
+    code: "GO:0007049"
+    namespace: "molecular function"
+    name: "some function 12"
+
+goterm13:
+    id: 13
+    code: "GO:0005759"
+    namespace: "cellular component"
+    name: "some function 13"
+
+goterm14:
+    id: 14
+    code: "GO:0004760"
+    namespace: "biological process"
+    name: "some function 14"
+
+goterm15:
+    id: 15
+    code: "GO:0005739"
+    namespace: "biological process"
+    name: "some function 15"
+
+goterm16:
+    id: 16
+    code: "GO:0005576"
+    namespace: "cellular component"
+    name: "some function 16"
+
+goterm17:
+    id: 17
+    code: "GO:0000287"
+    namespace: "molecular function"
+    name: "some function 17"
+
+goterm18:
+    id: 18
+    code: "GO:0004634"
+    namespace: "biological process"
+    name: "some function 18"
+
+goterm19:
+    id: 19
+    code: "GO:0000015"
+    namespace: "molecular function"
+    name: "some function 19"
+
+goterm20:
+    id: 20
+    code: "GO:0006096"
+    namespace: "biological process"
+    name: "some function 20"
+
+goterm21:
+    id: 21
+    code: "GO:0009986"
+    namespace: "cellular component"
+    name: "some function 21"
