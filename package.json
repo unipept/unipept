@@ -18,7 +18,7 @@
     "dragula": "^3.7.2",
     "jquery": "^3.2.1",
     "tiny-emitter": "^2.0.2",
-    "unipept-visualizations": "^1.7.2",
+    "unipept-visualizations": "^1.7.3",
     "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
