@@ -36,13 +36,14 @@ Unipept is a research project of the computational biology group at Ghent Univer
 
 Current team:
 * Bart Mesuere ([@bmesuere](https://github.com/bmesuere)): Postdoc and lead developer
-* Felix Van der Jeugt ([@NoctuaNivalis](https://github.com/NoctuaNivalis)): PhD student and Master's student 2014-2015
-* Robbert Gurdeep Singh ([@beardhatcode](https://github.com/beardhatcode)): PhD student
+* Pieter Verschaffelt: Master's student 2018-2019
+* Felix Van der Jeugt ([@NoctuaNivalis](https://github.com/NoctuaNivalis)): PhD student
 * Peter Dawyndt ([@pdawyndt](https://github.com/pdawyndt)): Group leader and PhD supervisor
 * Peter Vandamme: PhD co-supervisor
 * Bart Devreese: PhD co-supervisor
 
 Other contributions from:
+* Robbert Gurdeep Singh ([@beardhatcode](https://github.com/beardhatcode)): Developer 2017-2018
 * Tom Naessens ([@silox](https://github.com/silox)): Master's student 2014-2015
 * Toon Willems ([@nudded](https://github.com/nudded)): Master's student 2013-2014
 * Ewan Higgs ([@ehiggs](https://github.com/ehiggs)): Ghent University HPC team

@@ -16,7 +16,6 @@ class Sequence < ApplicationRecord
   include ReadOnlyModel
   self.primary_key = 'id'
 
-
   has_many :peptides
   has_many :original_peptides, foreign_key: 'original_sequence_id', primary_key: 'id', class_name: 'Peptide'
 
@@ -50,9 +49,11 @@ class Sequence < ApplicationRecord
   def calculate_lca(equate_il = true, return_taxon = false)
     if equate_il
       return lca_il_t if return_taxon
+
       lca_il
     else
       return lca_t if return_taxon
+
       lca
     end
   end
@@ -118,11 +119,13 @@ class Sequence < ApplicationRecord
 
   def self.peptides_relation_name(equate_il)
     raise(ArgumentError, ':equate_il must be a boolean') unless boolean?(equate_il)
+
     equate_il ? :peptides : :original_peptides
   end
 
   def self.lca_t_relation_name(equate_il)
     raise(ArgumentError, ':equate_il must be a boolean') unless boolean?(equate_il)
+
     equate_il ? :lca_il_t : :lca_t
   end
 
@@ -130,6 +133,7 @@ class Sequence < ApplicationRecord
   def self.single_search(sequence, equate_il = true)
     raise(ArgumentError, ':equate_il must be a boolean') unless boolean?(equate_il)
     raise SequenceTooShortError if sequence.length < 5
+
     sequence = sequence.tr('I', 'L') if equate_il
     # this solves the N+1 query problem
     includes(peptides_relation_name(equate_il) => { uniprot_entry: %i[taxon ec_cross_references go_cross_references] })
@@ -164,6 +168,7 @@ class Sequence < ApplicationRecord
   # Constructing the query manually is many times faster.
   def self.list_sequences(ids)
     return [] if ids.empty?
+
     connection.select_values("select sequence from sequences where id in (#{ids.join(',')})")
   end
 
@@ -189,9 +194,11 @@ class Sequence < ApplicationRecord
   def unmarshall_fa(prop)
     if self[prop].blank?
       return nil if self[prop] == false
+
       self[prop] = { 'num' => { 'all' => 0, 'EC' => 0, 'GO' => 0 }, 'data' => {} }
     end
     return self[prop] if self[prop].is_a?(Hash)
+
     self[prop] = Oj.load(self[prop])
   end
 end
