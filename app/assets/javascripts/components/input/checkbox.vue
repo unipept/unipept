@@ -29,7 +29,6 @@
         @Prop() name: string;
         @Prop() label: string;
         @Prop({default: false}) autofocus: boolean;
-        @Prop({default: ""}) placeholder: string;
         @Prop({default: ""}) tooltip: string;
         @Prop({default: false}) disabled: boolean;
 

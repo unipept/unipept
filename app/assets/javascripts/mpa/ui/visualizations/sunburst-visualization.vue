@@ -20,7 +20,7 @@
             </span>
             <span class="dir text">Click a slice to zoom in and the center node to zoom out</span>
         </h2>
-        <div ref="visualization"></div>
+        <div v-once ref="visualization"></div>
     </div>
 </template>
 

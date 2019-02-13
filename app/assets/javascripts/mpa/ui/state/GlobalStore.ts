@@ -10,7 +10,6 @@ export interface GlobalState {
     selectedDatasets: PeptideContainer[],
     storedDatasets: PeptideContainer[],
     analysis: boolean,
-    selectedDataset: PeptideContainer,
     searchSettings: SearchSettings,
     activeDataset: PeptideContainer | null,
     selectedTerm: string,
@@ -21,7 +20,6 @@ const mpaState: GlobalState = {
     storedDatasets: [],
     selectedDatasets: [],
     analysis: false,
-    selectedDataset: undefined,
     searchSettings: new SearchSettings(true, true, false),
     activeDataset: null,
     selectedTerm: 'Organism',
@@ -37,9 +35,6 @@ const mpaGetters: GetterTree<GlobalState, any> = {
     },
     isAnalysis(state: GlobalState): boolean {
         return state.analysis;
-    },
-    selectedDataset(state: GlobalState): PeptideContainer | undefined {
-        return state.selectedDataset;
     },
     searchSettings(state: GlobalState): SearchSettings {
         return state.searchSettings;
@@ -87,9 +82,6 @@ const mpaMutations: MutationTree<GlobalState> = {
     },
     SET_ANALYSIS(state: GlobalState, isAnalysing: boolean) {
         state.analysis = isAnalysing;
-    },
-    SET_SELECTED_DATASET(state: GlobalState, dataset: PeptideContainer | undefined) {
-        state.selectedDataset = dataset;
     },
     SET_SEARCH_SETTINGS(state: GlobalState, searchSettings: SearchSettings): void {
         state.searchSettings = searchSettings;
@@ -152,9 +144,6 @@ const mpaActions: ActionTree<GlobalState, any> = {
     },
     setAnalysis(store: ActionContext<GlobalState, any>, isAnalysing: boolean) {
         store.commit('SET_ANALYSIS', isAnalysing);
-    },
-    setSelectedDataset(store: ActionContext<GlobalState, any>, dataset: PeptideContainer | undefined) {
-        store.commit('SET_SELECTED_DATASET', dataset);
     },
     setSearchSettings(store: ActionContext<GlobalState, any>, searchSettings: SearchSettings): void {
         store.commit('SET_SEARCH_SETTINGS', searchSettings);

@@ -8,7 +8,7 @@
             </span>
             <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
         </h2>
-        <div ref="visualization"></div>
+        <div v-once ref="visualization"></div>
     </div>
 </template>
 
