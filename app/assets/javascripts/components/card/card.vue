@@ -1,16 +1,6 @@
 <template>
     <div class="card">
         <slot></slot>
-        <!--<div class="card-title card-title-colored" :class="interactive ? 'card-title-interactive' : ''">-->
-            <!--<h2 class="card-title-text">{{ title }}</h2>-->
-            <!--<div v-if="interactive" class="card-title-action">-->
-                <!--<slot name="card-title-action"></slot>-->
-            <!--</div>-->
-        <!--</div>-->
-
-        <!--<div class="card-supporting-text">-->
-            <!--<slot></slot>-->
-        <!--</div>-->
     </div>
 </template>
 

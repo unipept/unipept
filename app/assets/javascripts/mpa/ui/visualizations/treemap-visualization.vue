@@ -8,7 +8,7 @@
             </span>
             <span class="dir text">Click a square to zoom in and right click to zoom out</span>
         </h2>
-        <div ref="visualization"></div>
+        <div v-once ref="visualization"></div>
     </div>
 </template>
 
