@@ -8,7 +8,7 @@
                 <span class="glyphicon glyphicon-plus" @click="addDataset()"></span>
             </div>
         </card-header>
-        <card-body>
+        <card-body id="switch-dataset-card-body">
             <list class="switch-dataset-list" placeholder="Please add one or more datasets by clicking the plus button above... ">
                 <div class="list-item--two-lines" v-for="dataset of this.$store.getters.selectedDatasets" :class="activeDataset === dataset ? 'selected' : ''">
                 <span class="list-item-primary-action">

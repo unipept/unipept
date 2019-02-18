@@ -1,5 +1,5 @@
 <template>
-    <card-nav class="load-datasets-card">
+    <card-nav id="load-datasets-card">
         <tabs>
             <tab label="Create" :active="true">
                 <dataset-form v-on:peptide-change="createPeptides = $event" :peptides="createPeptides" v-on:name-change="createName = $event" :name="createName" v-on:save-change="createSave = $event" :save="createSave" :loading="pendingStore"></dataset-form>
