@@ -218,13 +218,13 @@ $(TABLES): $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 #                    <- directly from ori_aa_seq_tax by counting aa_seq along te way?
 #                       and we can output sequences at the same time?
 #                       (or output sequences instead of numbers wait isn't that sequences.tsv.gz?)
-# - tab/peptides.index <- build-index on the output of above (without the enumeration?
+# - tab/peptides.index <- umgap buildindex on the output of above (without the enumeration?
 #
 # optimal:
 # uniprot-entries from tryptic peptides
 # | cut taxon-id and sequence and split in k-mers (|sort)
 # | with lineages, the old java-way but with sequences in stead of numbers
-# | build-index
+# | umgap buildindex
 
 <<<INTDIR>>>/<<<KMER_LENGTH>>>-mer_sequence_taxon.tsv.gz: <<<TABDIR>>>/uniprot_entries.tsv.gz
 	echo "Starting the enumeration of <<<KMER_LENGTH>>>-mers."
@@ -246,7 +246,7 @@ $(TABLES): $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 
 <<<TABDIR>>>/<<<KMER_LENGTH>>>-mer.index: <<<INTDIR>>>/<<<KMER_LENGTH>>>-mer_LCAs.tsv.gz
 	echo "Starting the construction of the <<<KMER_LENGTH>>>-mer index."
-	build-index <(<<<CMD_ZCAT>>> $<) $@
+	umgap buildindex <(<<<CMD_ZCAT>>> $<) $@
 	echo "Finishing the construction of the <<<KMER_LENGTH>>>-mer index."
 # }}}
 
