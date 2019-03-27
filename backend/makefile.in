@@ -246,7 +246,7 @@ $(TABLES): $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 
 <<<TABDIR>>>/<<<KMER_LENGTH>>>-mer.index: <<<INTDIR>>>/<<<KMER_LENGTH>>>-mer_LCAs.tsv.gz
 	echo "Starting the construction of the <<<KMER_LENGTH>>>-mer index."
-	umgap buildindex <(<<<CMD_ZCAT>>> $<) $@
+	<<<CMD_ZCAT>>> $< | umgap buildindex > $@
 	echo "Finishing the construction of the <<<KMER_LENGTH>>>-mer index."
 # }}}
 
