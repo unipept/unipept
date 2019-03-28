@@ -111,6 +111,7 @@ class Dataset {
      * @return {Promise<Object>} A taxon tree-like object annotated with `included`
      */
     async getFATree(code) {
+        // @ts-ignore
         const pepts = (await this.getPeptidesByFA(code)).map(pept => pept.sequence);
         return this.tree.getRoot().callRecursivelyPostOder((t, c) => {
             const included = c.some(x => x.included) || t.values.some(pept => pepts.includes(pept.sequence));

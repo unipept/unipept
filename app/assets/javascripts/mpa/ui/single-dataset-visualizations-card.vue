@@ -57,6 +57,12 @@
                         {{ waitString }}
                     </div>
                 </tab>
+                <tab label="Heatmap" class="card-supporting-text">
+                    <heatmap-visualization v-if="$store.getters.activeDataset"></heatmap-visualization>
+                    <div v-else>
+                        {{ waitString }}
+                    </div>
+                </tab>
             </div>
         </card-body>
     </card-nav>
@@ -77,9 +83,11 @@
     import CardHeader from "../../components/card/card-header.vue";
     import CardBody from "../../components/card/card-body.vue";
     import {logToGoogle, triggerDownloadModal} from "../../utils";
+    import HeatmapVisualization from "./visualizations/heatmap-visualization.vue";
 
     @Component({
         components: {
+            HeatmapVisualization,
             CardBody,
             CardHeader,
             Tabs,
