@@ -3,10 +3,10 @@
 # Editting this file does not configure the unipept backend run, it will
 # only change the suggested configuration when you run `./configure`.
 CONFIG_KMER_LENGTH="9"
-CONFIG_TABDIR="/user/data/gent/gvo000/gvo00038/vsc41079/data/tables"
-CONFIG_INTDIR="/user/data/gent/gvo000/gvo00038/vsc41079/data/intermediate"
-CONFIG_TAXDIR="/user/data/gent/gvo000/gvo00038/vsc41079/data/sources"
-CONFIG_SRCDIR="/user/data/gent/gvo000/gvo00038/vsc41079/data/sources"
+CONFIG_TABDIR="/data/gent/vo/000/gvo00038/vsc41079/data/tables"
+CONFIG_INTDIR="/data/gent/vo/000/gvo00038/vsc41079/data/intermediate"
+CONFIG_TAXDIR="/data/gent/vo/000/gvo00038/vsc41079/data/sources"
+CONFIG_SRCDIR="/data/gent/vo/000/gvo00038/vsc41079/data/sources"
 CONFIG_JAVA_MEM="8g"
 CONFIG_ENTREZ_BATCH_SIZE="1000"
 CONFIG_CMD_SORT="sort --parallel=24"
