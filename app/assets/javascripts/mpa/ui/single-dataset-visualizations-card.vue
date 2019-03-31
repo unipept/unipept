@@ -58,7 +58,7 @@
                     </div>
                 </tab>
                 <tab label="Heatmap" class="card-supporting-text">
-                    <heatmap-visualization v-if="$store.getters.activeDataset"></heatmap-visualization>
+                    <heatmap-visualization v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></heatmap-visualization>
                     <div v-else>
                         {{ waitString }}
                     </div>

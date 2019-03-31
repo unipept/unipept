@@ -49,6 +49,33 @@ class Tree {
     }
 
     /**
+     * @param depth number
+     * @return {Node[]}
+     */
+    getNodesAtDepth(depth) {
+        let output = [];
+
+        let todo = [this.root];
+        let currentDepth = 0;
+        while (todo.length > 0 && currentDepth < depth) {
+            currentDepth++;
+            if (currentDepth === depth) {
+                for (let top of todo) {
+                    output.push(...top.children);
+                }
+            } else {
+                let temp = [];
+                for (let top of todo) {
+                    temp.push(...top.children);
+                }
+                todo = temp;
+            }
+        }
+
+        return output;
+    }
+
+    /**
      * Composes a list of sequences that were added to a node with a given taxon
      * id.
      *
