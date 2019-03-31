@@ -14,7 +14,7 @@
     import {Node} from "../../node";
     import {HeatmapData, HeatmapElement, HeatmapValue} from "unipept-heatmap/heatmap/input";
     import GOTerms from "../../../fa/goterms";
-    import NewResultSet from "../../NewResultSet";
+    import Resultset from "../../Resultset";
 
     @Component
     export default class HeatmapVisualization extends mixins(VisualizationMixin) {
@@ -41,8 +41,8 @@
                 let tree: Tree = this.dataset.getDataset().getTree();
                 let nodes: Node[] = tree.getNodesAtDepth(2);
 
-                let resultset: NewResultSet = this.dataset.getDataset().resultSet;
-                await resultset.proccessFA();
+                let resultset: Resultset = this.dataset.getDataset().resultSet;
+                await resultset.processFA();
                 let go: GOTerms = await resultset.summarizeGo();
                 let topGos = go._childeren["biological process"]["_data"].slice(0, 20);
 
@@ -64,10 +64,7 @@
 
                     rows.push(row);
 
-                    console.log("HEATMAP REPROCESS: ");
-                    await resultset.proccessFA(50, tree.getAllSequences(node.id));
-                    let processedGo: GOTerms = await resultset.summarizeGo();
-                    console.info(processedGo);
+                    let processedGo: GOTerms = await resultset.summarizeGo(50, tree.getAllSequences(node.id));
                     let rowValues = [];
                     for (let go of topGos) {
                         let val: number = this.getGoCount(processedGo._childeren["biological process"]["_data"], go["code"]);
@@ -75,19 +72,19 @@
                     }
 
                     console.log(rowValues);
-
                     grid.push(rowValues);
                 }
 
-                console.log(grid);
 
                 // Normalize values to be clustered
                 for (let row of grid) {
                     let minValue = Math.min(...row);
                     let maxValue = Math.max(...row);
 
-                    for (let i = 0; i < row.length; i++) {
-                        row[i] = (row[i] - minValue) / maxValue;
+                    if (maxValue != 0){
+                        for (let i = 0; i < row.length; i++) {
+                            row[i] = (row[i] - minValue) / maxValue;
+                        }
                     }
                 }
 

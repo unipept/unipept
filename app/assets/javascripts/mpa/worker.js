@@ -57,7 +57,7 @@ let processedPeptides = new Map();
  */
 
 /**
- * Fetches inforamtaion of the list of
+ * Fetches information of the list of
  *
  * @param  {string[]} originalPeptides The list of peptides to procces
  * @param {MPAConfig} config The configuration of the search
@@ -111,6 +111,7 @@ export async function process(originalPeptides, config) {
  */
 function makeFaGrouped(peptide) {
     peptide.faGrouped = {"EC": [], "GO": {}};
+    // @ts-ignore
     for (const [annotation, count] of Object.entries(peptide.fa.data || {})) {
         const type = annotation.split(":", 1)[0];
         switch (type) {
@@ -212,11 +213,11 @@ function equateIL(peptides, equateIL) {
 
 
 /**
- * Creates a `GOTerms` summary of the go terms avalible in the dataset.
- * Optinally limited to a list of sequences and/or a tresshold of acceptance
+ * Creates a `GOTerms` summary of the go terms available in the dataset.
+ * Optionally limited to a list of sequences and/or a threshold of acceptance
  *
  * After using this function you should synchronise the contents of the GOTerms
- * data as static inforamtin about these terms is not shared over threads.
+ * data as static information about these terms is not shared over threads.
  * (see getGoData).
  *
  * @param {number} [percent=50] ignore data weighing less (to be removed)
@@ -290,7 +291,7 @@ export async function summarizeEc(percent = 50, sequences = null) {
  * @todo  remove the cutoff
  */
 function summarizeFa(extract, countExtractor, trustExtractor, cutoff = 50, sequences = null) {
-    let iteratableOfSequences = sequences || processedPeptides.keys();
+    let iterableOfSequences = sequences || processedPeptides.keys();
 
     const map = new Map();
     const seqMap = new Map();
@@ -300,7 +301,7 @@ function summarizeFa(extract, countExtractor, trustExtractor, cutoff = 50, seque
     let sumTrust = 0;
     let numAnnotated = 0;
 
-    for (let sequence of iteratableOfSequences) {
+    for (let sequence of iterableOfSequences) {
         const pept = processedPeptides.get(sequence);
         const totalNumAnnotations = countExtractor(pept);
         const trust = trustExtractor(pept) || 0;
@@ -447,11 +448,12 @@ export function getPeptidesByFA(faName, sequences = null) {
 }
 
 /**
- * Send out a message to the calling procces that that the progress
+ * Send out a message to the calling process that that the progress
  * has changed
- * @param {number} value progrress in [0,1]
+ * @param {number} value progress in [0,1]
  */
 function setProgress(value) {
+    // @ts-ignore
     self.postMessage({type: "progress", value: value});
 }
 

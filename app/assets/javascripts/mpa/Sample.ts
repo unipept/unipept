@@ -1,6 +1,6 @@
 import {Tree} from "./tree";
 import {FunctionalAnnotations} from "../fa/FunctionalAnnotations";
-import NewResultSet from "./NewResultSet";
+import Resultset from "./Resultset";
 import {Node} from "./node";
 import {postJSON} from "../utils";
 
@@ -13,7 +13,7 @@ export default class Sample {
     public baseFa: FunctionalAnnotations;
     public id: string;
     public taxonMap: Map<number, TaxonInfo>;
-    public resultSet: NewResultSet;
+    public resultSet: Resultset;
 
     /**
      * Creates a Dataset object based on a list of peptides
@@ -41,7 +41,7 @@ export default class Sample {
      * @return Taxonomic tree
      */
     async search(mpaConfig: MPAConfig): Promise<Tree> {
-        this.resultSet = new NewResultSet(this, mpaConfig);
+        this.resultSet = new Resultset(this, mpaConfig);
         await this.resultSet.process();
         const tree = this.buildTree(this.resultSet.processedPeptides.values());
         const taxonInfo = Sample.getTaxonInfo(tree.getTaxa());
@@ -60,8 +60,12 @@ export default class Sample {
      * @param sequences array of peptides to take into account
      */
     async reprocessFA(cutoff: number = 50, sequences: string[] = null) {
-        await this.resultSet.proccessFA(cutoff, sequences);
+        await this.resultSet.processFA(cutoff, sequences);
         this.fa = this.resultSet.fa;
+    }
+
+    async processFA(cutoff: number = 50, sequences: string[] = null) {
+
     }
 
     getTree(): Tree {
@@ -105,7 +109,7 @@ export default class Sample {
     /**
      * Creates a tree like structure, that is this.tree where each node has an
      * `included` property. This property indicates if this node or any of its
-     * childs contain the sought for functional annotation (code).
+     * children contain the, sought for, functional annotation (code).
      *
      * @param code The FA term to look for
      * @return A taxon tree-like object annotated with `included`
