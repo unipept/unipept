@@ -5,7 +5,7 @@ import worker from "workerize-loader!./worker.js";
 import GOTerms from "../fa/goterms";
 import ECNumbers from "../fa/ecnumbers";
 
-export default class NewResultSet {
+export default class Resultset {
     public dataset: Sample;
     public config: MPAConfig;
     // TODO set correct MAP type
@@ -22,8 +22,8 @@ export default class NewResultSet {
     /**
      * Creates a result set for a given dataset and search settings
      *
-     * @param  {Dataset} dataset The dataset for which to create the result set
-     * @param  {MPAConfig} mpaConfig
+     * @param dataset The dataset for which to create the result set
+     * @param mpaConfig
      */
     constructor(dataset: Sample, mpaConfig: MPAConfig) {
         this.dataset = dataset;
@@ -46,8 +46,7 @@ export default class NewResultSet {
     }
 
     /**
-     * Processes the list of peptides set in the dataset and returns a
-     * taxonomic tree.
+     * Processes the list of peptides set in the dataset and builds a taxonomic tree.
      */
     async process() {
         let {processed, missed, numMatched, numSearched} = await this.wrkr.process(this.dataset.originalPeptides, this.config);
@@ -61,8 +60,7 @@ export default class NewResultSet {
     }
 
     /**
-     * Sets the progress of processing the result and emits the value on the
-     * event bus.
+     * Sets the progress of processing the result and emits the value on the event bus.
      *
      * @param value The new progress value
      */
@@ -73,8 +71,8 @@ export default class NewResultSet {
     }
 
     /**
-     * Converts the current analysis to the csv format. Each row contains a
-     * peptide and its lineage, with each column being a level in the taxonomy
+     * Converts the current analysis to the csv format. Each row contains a peptide and its lineage, with each column
+     * being a level in the taxonomy
      *
      * @return The analysis result in csv format
      */
@@ -83,8 +81,7 @@ export default class NewResultSet {
     }
 
     /**
-     * Returns the number of matched peptides, taking the deduplication setting
-     * into account.
+     * Returns the number of matched peptides, taking the deduplication setting into account.
      *
      * @return The number of matched peptides
      */
@@ -93,8 +90,7 @@ export default class NewResultSet {
     }
 
     /**
-     * Returns the number of searched for peptides, taking the deduplication
-     * setting into account.
+     * Returns the number of searched for peptides, taking the deduplication setting into account.
      *
      * @return The number of searched for peptides
      */
@@ -103,12 +99,12 @@ export default class NewResultSet {
     }
 
     /**
-     * Calculate functional analysis
+     * Calculate functional analysis results.
+     *
      * @param cutoff
      * @param sequences
      */
-    async proccessFA(cutoff: number = 50, sequences: Iterable<string> = null) {
-        console.log('RESULTSET REPROCESS');
+    async processFA(cutoff: number = 50, sequences: Iterable<string> = null) {
         const [go, ec] = await Promise.all([
             this.summarizeGo(cutoff, sequences),
             this.summarizeEc(cutoff, sequences),
@@ -122,11 +118,12 @@ export default class NewResultSet {
 
     /**
      * Returns a list of sequences that have the specified FA term
+     *
      * @param faName The name of the FA term (GO:000112, EC:1.5.4.1)
      * @param sequences List of sequences to limit to
      * @return A list of objects representing the matchesFunctionalAnnotations
      */
-    getPeptidesByFA(faName: string, sequences: string[]): Promise<{sequence, hits, type, annotatedCount,allCount,relativeCount,count}[]> {
+    getPeptidesByFA(faName: string, sequences: string[]): Promise<{ sequence, hits, type, annotatedCount, allCount, relativeCount, count }[]> {
         return this.wrkr.getPeptidesByFA(faName, sequences);
     }
 
@@ -134,6 +131,7 @@ export default class NewResultSet {
      * Fill `this.go` with a Map<string,GoInfo[]> per namespace. The values of the
      * maps have an additional `value` field that indicates the weight of that
      * GO number.
+     *
      * @param percent ignore data weighing less (to be removed)
      * @param sequences subset of sequences to take into account, null to consider all
      * @return GO term data
@@ -142,23 +140,20 @@ export default class NewResultSet {
         // Find used go term and fetch data about them
         GOTerms.ingestGoData(await this.wrkr.getGoData());
         const {data, trust} = await this.wrkr.summarizeGo(percent, sequences);
-        console.log("DATA");
-        console.log(data);
-        const go = await GOTerms.makeAssured(data, trust);
-        return go;
+        return await GOTerms.makeAssured(data, trust);
     }
 
     /**
      * Fill `this.ec` with a Map<string,EcInfo[]>. The values of the map
      * have an additional `value` field that indicated the weight of that
      * EC number.
+     *
      * @param percent ignore data weighing less (to be removed)
      * @param sequences subset of sequences to take into account, null to consider all
      * @return an EC result set
      */
     async summarizeEc(percent: number = 50, sequences: Iterable<String> = null): Promise<ECNumbers> {
         const {data, trust} = await this.wrkr.summarizeEc(percent, sequences);
-        const ec = ECNumbers.makeAssured(data, trust);
-        return ec;
+        return ECNumbers.makeAssured(data, trust);
     }
 }

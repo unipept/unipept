@@ -1,5 +1,3 @@
-import PeptideContainer from "./PeptideContainer";
-
 export default class SampleDataset {
     public id: string;
     public environment: string;
