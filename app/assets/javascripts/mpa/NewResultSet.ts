@@ -1,37 +1,39 @@
-import GOTerms from "../fa/goterms.js";
-import ECNumbers from "../fa/ecnumbers.js";
-import "../fa/FunctionalAnnotations.js";
+import Sample from "./Sample";
+import {FunctionalAnnotations, GroupedFA} from "../fa/FunctionalAnnotations";
+import worker from "./worker";
+import GOTerms from "../fa/goterms";
+import ECNumbers from "../fa/ecnumbers";
 
-import worker from "workerize-loader!./worker.js";
-import {GroupedFA} from "../fa/FunctionalAnnotations.js";
-import {Dataset} from "./dataset.js";
+export default class NewResultSet {
+    private dataset: Sample;
+    private config: MPAConfig;
+    // TODO set correct MAP type
+    private processedPeptides;
+    private missedPeptides: string[];
+    private fa: FunctionalAnnotations;
+    private baseFa: GroupedFA;
+    private progress: number;
+    private wrkr;
 
-/**
- * Represents the resultset for a given dataset.
- *
- * This is in fact a proxy for a worker thread that will be created
- * upon the instantiation of this class (one worker per ResultSet object).
- *
- * The final results of the worker is duplicated to here. Intermediate
- * results stay in the worker to reduce the time taken to send data to
- * the thread
- *
- * @type {Resultset}
- */
-class Resultset {
+    private numberOfMatchedPeptides: number;
+    private numberOfSearchedForPeptides: number;
+
     /**
-     * Creates a resultset for a given dataset and search settings
+     * Creates a result set for a given dataset and search settings
      *
-     * @param  {Dataset} dataset The dataset for which to create the resultset
+     * @param  {Dataset} dataset The dataset for which to create the result set
      * @param  {MPAConfig} mpaConfig
      */
-    constructor(dataset, mpaConfig) {
+    constructor(dataset: Sample, mpaConfig: MPAConfig) {
         this.dataset = dataset;
         this.config = mpaConfig;
         this.processedPeptides = null;
         this.missedPeptides = [];
         this.fa = null;
-        this.baseFa = {ec: null, go: null};
+        this.baseFa = {
+            ec: null,
+            go: null
+        };
         this.progress = 0;
         this.wrkr = worker();
         this.wrkr.onmessage = m => {
@@ -60,22 +62,21 @@ class Resultset {
      * Sets the progress of processing the result and emits the value on the
      * event bus.
      *
-     * @param {number} value The new progress value
+     * @param value The new progress value
      */
-    setProgress(value) {
+    setProgress(value: number) {
         this.progress = value;
         eventBus.emit("dataset-progress", value);
         eventBus.emit("dataset-" + this.dataset.id + "-progress", value);
     }
 
-
     /**
      * Converts the current analysis to the csv format. Each row contains a
      * peptide and its lineage, with each column being a level in the taxonomy
      *
-     * @return {Promise<string>} The analysis result in csv format
+     * @return The analysis result in csv format
      */
-    toCSV() {
+    toCSV(): Promise<string> {
         return this.wrkr.getCSV(Array.from(this.dataset.taxonMap.entries()));
     }
 
@@ -83,9 +84,9 @@ class Resultset {
      * Returns the number of matched peptides, taking the deduplication setting
      * into account.
      *
-     * @return {number} The number of matched peptides
+     * @return The number of matched peptides
      */
-    getNumberOfMatchedPeptides() {
+    getNumberOfMatchedPeptides(): number {
         return this.numberOfMatchedPeptides;
     }
 
@@ -93,18 +94,18 @@ class Resultset {
      * Returns the number of searched for peptides, taking the deduplication
      * setting into account.
      *
-     * @return {number} The number of searched for peptides
+     * @return The number of searched for peptides
      */
-    getNumberOfSearchedForPeptides() {
+    getNumberOfSearchedForPeptides(): number {
         return this.numberOfSearchedForPeptides;
     }
 
     /**
      * Calculate functional analysis
-     * @param {Number} cutoff
-     * @param {Iterable<String>} sequences
+     * @param cutoff
+     * @param sequences
      */
-    async proccessFA(cutoff = 50, sequences = null) {
+    async proccessFA(cutoff: number = 50, sequences: Iterable<string> = null) {
         console.log('RESULTSET REPROCESS');
         const [go, ec] = await Promise.all([
             this.summarizeGo(cutoff, sequences),
@@ -119,12 +120,11 @@ class Resultset {
 
     /**
      * Returns a list of sequences that have the specified FA term
-     * @param {String} faName The name of the FA term (GO:000112, EC:1.5.4.1)
-     * @param {String[]} sequences List of sequences to limit to
-     * @return {Promise<{sequence, hits, type, annotatedCount,allCount,relativeCount,count}[]>} A list of objects representing
-     *                                                   the matchesFunctionalAnnotations
+     * @param faName The name of the FA term (GO:000112, EC:1.5.4.1)
+     * @param sequences List of sequences to limit to
+     * @return A list of objects representing the matchesFunctionalAnnotations
      */
-    getPeptidesByFA(faName, sequences) {
+    getPeptidesByFA(faName: string, sequences: string[]): Promise<{sequence, hits, type, annotatedCount,allCount,relativeCount,count}[]> {
         return this.wrkr.getPeptidesByFA(faName, sequences);
     }
 
@@ -132,12 +132,11 @@ class Resultset {
      * Fill `this.go` with a Map<string,GoInfo[]> per namespace. The values of the
      * maps have an additional `value` field that indicates the weight of that
      * GO number.
-     * @param {Number} [percent=50] ignore data weighing less (to be removed)
-     * @param {Iterable<String>} [sequences=null] subset of sequences to take into account,
-     *                                    null to consider all
-     * @return {Promise<GOTerms>} GO term data
+     * @param percent ignore data weighing less (to be removed)
+     * @param sequences subset of sequences to take into account, null to consider all
+     * @return GO term data
      */
-    async summarizeGo(percent = 50, sequences = null) {
+    async summarizeGo(percent: number = 50, sequences: Iterable<string> = null): Promise<GOTerms> {
         // Find used go term and fetch data about them
         GOTerms.ingestGoData(await this.wrkr.getGoData());
         const {data, trust} = await this.wrkr.summarizeGo(percent, sequences);
@@ -151,16 +150,13 @@ class Resultset {
      * Fill `this.ec` with a Map<string,EcInfo[]>. The values of the map
      * have an additional `value` field that indicated the weight of that
      * EC number.
-     * @param {number} [percent=50] ignore data weighing less (to be removed)
-     * @param {Iterable<String>} [sequences=null] subset of sequences to take into account,
-     *                                    null to consider all
-     * @return {Promise<ECNumbers>} an EC resultset
+     * @param percent ignore data weighing less (to be removed)
+     * @param sequences subset of sequences to take into account, null to consider all
+     * @return an EC result set
      */
-    async summarizeEc(percent = 50, sequences = null) {
+    async summarizeEc(percent: number = 50, sequences: Iterable<String> = null): Promise<ECNumbers> {
         const {data, trust} = await this.wrkr.summarizeEc(percent, sequences);
         const ec = ECNumbers.makeAssured(data, trust);
         return ec;
     }
 }
-
-export {Resultset};

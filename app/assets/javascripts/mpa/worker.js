@@ -9,8 +9,8 @@ const BATCH_SIZE = 100;
 const PEPT2DATA_URL = "/mpa/pept2data";
 
 /**
- * Worker global conaining processed peptides
- * Keeping this here gives a huge perforamce boost
+ * Worker global containing processed peptides
+ * Keeping this here gives a huge performance boost
  * @type {Map<string, any>}
  */
 let processedPeptides = new Map();
@@ -18,7 +18,7 @@ let processedPeptides = new Map();
 
 /**
  * @typedef {Object} MPAPeptide
- * @property {Map}      processed   A map form pepides to information about them
+ * @property {Map}      processed   A map form peptides to information about them
  * @property {string[]} missed      The list of peptides that could not be matched
  * @property {number}   numMatched  Number of peptides that were matched
  * @property {number}   numSearched Number of peptides that were matched
@@ -27,7 +27,7 @@ let processedPeptides = new Map();
 
 /**
  * @typedef {Object} MPAResult
- * @property {MPAPeptide[]}      processed   A map form pepides to information about them
+ * @property {MPAPeptide[]}      processed   A map form peptides to information about them
  * @property {string[]} missed      The list of peptides that could not be matched
  * @property {number}   numMatched  Number of peptides that were matched
  * @property {number}   numSearched Number of peptides that were matched
@@ -46,12 +46,12 @@ let processedPeptides = new Map();
  * @property  {number} weightedValue
  *  The sum of the relative weights of the GOTerm in each sequence it occurs in
  * @property  {number} absoluteCount
- *   The number of occurences of this annotation in a protein that was matched by a
+ *   The number of occurrences of this annotation in a protein that was matched by a
  *   sequence taking dupes into account (only if il=false)
  * @property  {number} absoluteCountFiltered
  *   `absoluteCount` not taking dupes into account
  * @property  {number} numberOfPepts
- *   Number of peptides this annotiation occurs at least once in (taking dupes into account)
+ *   Number of peptides this annotation occurs at least once in (taking dupes into account)
  * @property  {number} value
  *   weightedValue / sumWeightedValue
  */
