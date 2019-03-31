@@ -80,7 +80,6 @@
     import MpaAnalysisManager from "../MpaAnalysisManager";
     import FaSortSettings from "./tables/FaSortSettings";
     import {numberToPercent} from "../../utils";
-    import {Dataset} from "../dataset";
     import PeptideContainer from "../PeptideContainer";
     import {FunctionalAnnotations} from "../../fa/FunctionalAnnotations";
     import EcNumbersSummary from "./tables/ec-numbers-summary.vue";
@@ -90,6 +89,7 @@
     import CardHeader from "../../components/card/card-header.vue";
     import CardBody from "../../components/card/card-body.vue";
     import {showInfoModal} from "../../modal";
+    import Sample from "../Sample";
 
     @Component({
         components: {
@@ -226,7 +226,7 @@
             let peptideContainer = this.$store.getters.activeDataset;
 
             if (peptideContainer && peptideContainer.getDataset()) {
-                let dataset: Dataset = peptideContainer.getDataset();
+                let dataset: Sample = peptideContainer.getDataset();
 
                 const percent = parseInt(this.percentSettings);
                 let sequences = null;

@@ -11,7 +11,6 @@
     import {Heatmap} from "unipept-heatmap";
     import VisualizationMixin from "./visualization-mixin.vue";
     import {Tree} from "../../tree";
-    import {Resultset} from "../../resultset";
     import {Node} from "../../node";
     import {HeatmapData, HeatmapElement, HeatmapValue} from "unipept-heatmap/heatmap/input";
     import GOTerms from "../../../fa/goterms";

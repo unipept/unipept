@@ -1,6 +1,5 @@
 import DatasetManager from "./DatasetManager";
 import {StorageType} from "./StorageType";
-import {Dataset} from "./dataset";
 import Sample from "./Sample";
 
 
