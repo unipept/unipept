@@ -1,5 +1,4 @@
 import PeptideContainer from "./PeptideContainer";
-import {Dataset} from "./dataset";
 import SearchSettings from "./SearchSettings";
 import Sample from "./Sample";
 
