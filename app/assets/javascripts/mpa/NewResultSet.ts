@@ -1,22 +1,23 @@
 import Sample from "./Sample";
 import {FunctionalAnnotations, GroupedFA} from "../fa/FunctionalAnnotations";
-import worker from "./worker";
+// @ts-ignore
+import worker from "workerize-loader!./worker.js";
 import GOTerms from "../fa/goterms";
 import ECNumbers from "../fa/ecnumbers";
 
 export default class NewResultSet {
-    private dataset: Sample;
-    private config: MPAConfig;
+    public dataset: Sample;
+    public config: MPAConfig;
     // TODO set correct MAP type
-    private processedPeptides;
-    private missedPeptides: string[];
-    private fa: FunctionalAnnotations;
-    private baseFa: GroupedFA;
-    private progress: number;
-    private wrkr;
+    public processedPeptides;
+    public missedPeptides: string[];
+    public fa: FunctionalAnnotations;
+    public baseFa: GroupedFA;
+    public progress: number;
+    public wrkr;
 
-    private numberOfMatchedPeptides: number;
-    private numberOfSearchedForPeptides: number;
+    public numberOfMatchedPeptides: number;
+    public numberOfSearchedForPeptides: number;
 
     /**
      * Creates a result set for a given dataset and search settings
@@ -31,6 +32,7 @@ export default class NewResultSet {
         this.missedPeptides = [];
         this.fa = null;
         this.baseFa = {
+            // @ts-ignore
             ec: null,
             go: null
         };

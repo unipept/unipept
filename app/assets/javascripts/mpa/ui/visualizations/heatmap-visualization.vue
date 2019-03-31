@@ -15,6 +15,7 @@
     import {Node} from "../../node";
     import {HeatmapData, HeatmapElement, HeatmapValue} from "unipept-heatmap/heatmap/input";
     import GOTerms from "../../../fa/goterms";
+    import NewResultSet from "../../NewResultSet";
 
     @Component
     export default class HeatmapVisualization extends mixins(VisualizationMixin) {
@@ -41,7 +42,7 @@
                 let tree: Tree = this.dataset.getDataset().getTree();
                 let nodes: Node[] = tree.getNodesAtDepth(2);
 
-                let resultset: Resultset = this.dataset.getDataset().resultset;
+                let resultset: NewResultSet = this.dataset.getDataset().resultSet;
                 await resultset.proccessFA();
                 let go: GOTerms = await resultset.summarizeGo();
                 let topGos = go._childeren["biological process"]["_data"].slice(0, 20);
