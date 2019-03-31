@@ -57,6 +57,7 @@
 
                 let grid: number[][] = [];
 
+                let out = "";
                 for (let node of nodes) {
                     let row: HeatmapElement = {
                         name: node.name
@@ -71,10 +72,11 @@
                         rowValues.push(val);
                     }
 
-                    console.log(rowValues);
+                    out += node.name + "," + rowValues.join(",") + "\n";
                     grid.push(rowValues);
                 }
 
+                console.log(out);
 
                 // Normalize values to be clustered
                 for (let row of grid) {
