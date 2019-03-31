@@ -1,6 +1,7 @@
 import DatasetManager from "./DatasetManager";
 import {StorageType} from "./StorageType";
 import {Dataset} from "./dataset";
+import Sample from "./Sample";
 
 
 export default class PeptideContainer {
@@ -10,7 +11,7 @@ export default class PeptideContainer {
     private peptideAmount: number;
     private date: Date;
     private type: StorageType;
-    private dataset: Dataset | null;
+    private dataset: Sample | null;
     private progress: number = 0;
 
     /**
@@ -147,11 +148,11 @@ export default class PeptideContainer {
         this.type = type;
     }
 
-    getDataset(): Dataset {
+    getDataset(): Sample {
         return this.dataset;
     }
 
-    setDataset(dataset: Dataset | null): void {
+    setDataset(dataset: Sample | null): void {
         if (dataset === null) {
             this.progress = 0;
         }
