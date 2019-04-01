@@ -8,7 +8,7 @@
     import Vue from "vue";
     import Component, {mixins} from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import {Heatmap} from "unipept-heatmap";
+    import {Heatmap, HeatmapSettings} from "unipept-heatmap";
     import VisualizationMixin from "./visualization-mixin.vue";
     import {Tree} from "../../tree";
     import {Node} from "../../node";
@@ -72,11 +72,8 @@
                         rowValues.push(val);
                     }
 
-                    out += node.name + "," + rowValues.join(",") + "\n";
                     grid.push(rowValues);
                 }
-
-                console.log(out);
 
                 // Normalize values to be clustered
                 for (let row of grid) {
@@ -90,11 +87,15 @@
                     }
                 }
 
+                let settings: HeatmapSettings = new HeatmapSettings();
+                settings.getTooltip = (cell: HeatmapValue, row: HeatmapElement, column: HeatmapElement) => {
+                    return `<h3 class='tip-title'>${row.name}</h3><p>${cell.value * 100}</p>`
+                };
                 this.heatmap = new Heatmap(heatmapElement, {
                     rows: rows,
                     columns: cols,
                     values: grid
-                });
+                }, settings);
                 this.heatmap.cluster();
             }
         }
