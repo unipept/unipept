@@ -35,6 +35,9 @@
         }
 
         private async initHeatmap() {
+            // Maps each row (first index) and column (second index) onto a specific GO-term and all of it's metadata.
+             let rowMappings: {absoluteCount: number, numberOfPepts: number}[][] = [];
+
             if (this.dataset != null && this.dataset.getDataset() != null) {
                 let heatmapElement: HTMLElement = <HTMLElement> this.$refs.heatmapElement;
 
@@ -67,11 +70,14 @@
 
                     let processedGo: GOTerms = await resultset.summarizeGo(50, tree.getAllSequences(node.id));
                     let rowValues = [];
+                    let rowMapping = [];
                     for (let go of topGos) {
-                        let val: number = this.getGoCount(processedGo._childeren["biological process"]["_data"], go["code"]);
-                        rowValues.push(val);
+                        let val: {absoluteCount: number, numberOfPepts: number} = this.getGoCount(processedGo._childeren["biological process"]["_data"], go["code"]);
+                        rowValues.push(val.absoluteCount);
+                        rowMapping.push(val);
                     }
 
+                    rowMappings.push(rowMapping);
                     grid.push(rowValues);
                 }
 
@@ -88,9 +94,8 @@
                 }
 
                 let settings: HeatmapSettings = new HeatmapSettings();
-                settings.getTooltip = (cell: HeatmapValue, row: HeatmapElement, column: HeatmapElement) => {
-                    return `<h3 class='tip-title'>${row.name}</h3><p>${cell.value * 100}</p>`
-                };
+                settings.getTooltip = (cell: HeatmapValue, row: HeatmapElement, column: HeatmapElement) =>
+                    `<b>${row.name}</b><br>Absolute count: ${rowMappings[row.idx][column.idx].absoluteCount}<br>${rowMappings[row.idx][column.idx].numberOfPepts} matched peptides`;
                 this.heatmap = new Heatmap(heatmapElement, {
                     rows: rows,
                     columns: cols,
@@ -100,13 +105,19 @@
             }
         }
 
-        private getGoCount(goValues, goTerm: string): number {
+        private getGoCount(goValues, goTerm: string): {absoluteCount: number, numberOfPepts: number} {
             for (let go of goValues) {
                 if (go["code"] === goTerm) {
-                    return go["absoluteCount"];
+                    return {
+                        absoluteCount: go["absoluteCount"],
+                        numberOfPepts: go["numberOfPepts"]
+                    };
                 }
             }
-            return 0;
+            return {
+                absoluteCount: 0,
+                numberOfPepts: 0
+            }
         }
     }
 </script>
