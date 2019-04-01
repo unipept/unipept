@@ -8682,10 +8682,10 @@ union-value@^1.0.0:
     is-extendable "^0.1.1"
     set-value "^0.4.3"
 
-unipept-heatmap@^1.0.12:
-  version "1.0.12"
-  resolved "https://registry.yarnpkg.com/unipept-heatmap/-/unipept-heatmap-1.0.12.tgz#02e643474944803bfb36525748e94ef50748b182"
-  integrity sha512-BzZEwMxHFFfUGKNk63L+U1mvdAAGVc6QnbYNvuZpipiSD7XJQWdvYbuX2r4B9KFMPURHOfwFb6KLfLo8Pm9O4A==
+unipept-heatmap@^1.0.15:
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/unipept-heatmap/-/unipept-heatmap-1.0.15.tgz#7c6c6d3805e1dbf20f1842bf8bf28e5d2ec6297f"
+  integrity sha512-edqGJ0tS7Z6JtSOjxIiTHOt66c77Ou6or54pvpAjdBsccJEj01UaZLaxzkor23BFRNRgVyXz74f+CT+5RTJJpw==
   dependencies:
     d3 "^5.7.0"
 

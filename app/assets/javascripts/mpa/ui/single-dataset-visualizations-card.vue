@@ -51,18 +51,19 @@
                         <img :alt="waitString" class="mpa-placeholder" src="/images/mpa/placeholder_treeview.svg">
                     </div>
                 </tab>
+                <tab label="Heatmap" id="heatmapWrapper" class="card-supporting-text">
+                    <heatmap-visualization ref="heatmap" :full-screen="isFullScreen" v-if="$store.getters.activeDataset && $store.getters.activeDataset.getProgress() === 1" :dataset="$store.getters.activeDataset"></heatmap-visualization>
+                    <div v-else class="mpa-waiting">
+                        {{ waitString }}
+                    </div>
+                </tab>
                 <tab label="Hierarchical outline" class="card-supporting-text">
                     <hierarchical-outline-visualization v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></hierarchical-outline-visualization>
                     <div v-else>
                         {{ waitString }}
                     </div>
                 </tab>
-                <tab label="Heatmap" class="card-supporting-text">
-                    <heatmap-visualization v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></heatmap-visualization>
-                    <div v-else>
-                        {{ waitString }}
-                    </div>
-                </tab>
+
             </div>
         </card-body>
     </card-nav>
@@ -108,6 +109,7 @@
 
         mounted() {
             this.tabs = this.$children[0].$children[1].$children as Tab[];
+            console.log(this.tabs);
             $(document).bind(window.fullScreenApi.fullScreenEventName, () => this.exitFullScreen());
             $(".fullScreenActions a").tooltip({placement: "bottom", delay: {"show": 300, "hide": 300}});
         }
@@ -154,6 +156,7 @@
             (this.$refs.sunburst as SunburstVisualization).reset();
             (this.$refs.treeview as TreeviewVisualization).reset();
             (this.$refs.treemap as TreemapVisualization).reset();
+            (this.$refs.heatmap as HeatmapVisualization).reset();
         }
 
         saveAsImage() {
