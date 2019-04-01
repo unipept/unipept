@@ -53,7 +53,7 @@
                 </tab>
                 <tab label="Heatmap" id="heatmapWrapper" class="card-supporting-text">
                     <heatmap-visualization ref="heatmap" :full-screen="isFullScreen" v-if="$store.getters.activeDataset && $store.getters.activeDataset.getProgress() === 1" :dataset="$store.getters.activeDataset"></heatmap-visualization>
-                    <div v-else class="mpa-waiting">
+                    <div v-else>
                         {{ waitString }}
                     </div>
                 </tab>

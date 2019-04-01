@@ -1,6 +1,6 @@
 <template>
     <div v-once>
-        <div id="heatmap" ref="heatmapElement"></div>
+        <div ref="heatmapElement"></div>
     </div>
 </template>
 
