@@ -17,7 +17,7 @@
     import Component, {mixins} from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import PeptideContainer from "../../PeptideContainer";
-    import {Tree} from "../../tree";
+    import Tree from "../../Tree";
     import {tooltipContent} from "./VisualizationHelper";
     import VisualizationMixin from "./visualization-mixin.vue";
 

@@ -10,8 +10,8 @@
     import {Prop, Watch} from "vue-property-decorator";
     import {Heatmap, HeatmapSettings} from "unipept-heatmap";
     import VisualizationMixin from "./visualization-mixin.vue";
-    import {Tree} from "../../tree";
-    import {Node} from "../../node";
+    import Tree from "../../Tree";
+    import Node from "../../Node";
     import {HeatmapData, HeatmapElement, HeatmapValue} from "unipept-heatmap/heatmap/input";
     import GOTerms from "../../../fa/goterms";
     import Resultset from "../../Resultset";
