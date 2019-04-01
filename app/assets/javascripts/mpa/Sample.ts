@@ -1,8 +1,8 @@
-import {Tree} from "./tree";
 import {FunctionalAnnotations} from "../fa/FunctionalAnnotations";
 import Resultset from "./Resultset";
-import {Node} from "./node";
 import {postJSON} from "../utils";
+import Tree from "./Tree";
+import Node from "./Node"
 
 export default class Sample {
     public static readonly TAXA_URL: string = "/private_api/taxa";

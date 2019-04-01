@@ -22,7 +22,7 @@
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import PeptideContainer from "../../PeptideContainer";
-    import {Tree} from "../../tree";
+    import Tree from "../../Tree";
     import {constructSearchtree} from "../../searchtree";
     import SimpleButton from "../../../components/button/simple-button.vue";
     import ValidatedTextfield from "../../../components/input/validated-textfield.vue";
