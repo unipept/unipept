@@ -8,7 +8,7 @@
                 </div>
             </tab>
             <tab label="Sample data">
-                <p v-for="dataset of sampleDatasets">
+                <p v-for="dataset of sampleDatasets" v-bind:key="dataset.id">
                     <b>Environment:</b> {{ dataset.environment }}
                     <br>
                     <b>Reference:</b>
@@ -24,7 +24,7 @@
                     <br>
                     <span class="form-inline">
                         <select class="form-control dataset" v-model="selectedSampleDataset[dataset.id]">
-                            <option v-for="data of dataset.datasets" v-bind:value="data">{{ data.name }}</option>
+                            <option v-for="data of dataset.datasets" v-bind:value="data" v-bind:key="data.id">{{ data.name }}</option>
                         </select>
                         <simple-button label="Load dataset" type="default" @click="storeSampleDataset(dataset.id)"></simple-button>
                     </span>
@@ -46,7 +46,7 @@
             </tab>
             <tab label="Local data">
                 <list placeholder="There are currently no datasets present in your browser's local storage.">
-                    <div class="list-item--two-lines" v-for="dataset of storedDatasets" style="cursor: pointer;" @click="selectDataset(dataset)">
+                    <div class="list-item--two-lines" v-for="dataset of storedDatasets" v-bind:key="dataset.id" style="cursor: pointer;" @click="selectDataset(dataset)">
                     <span class="list-item-primary-action">
                         <span class="glyphicon glyphicon-plus select-dataset-button"></span>
                     </span>
@@ -70,16 +70,16 @@
     import Vue from "vue";
 
     import Component from "vue-class-component";
-    import DatasetForm from "./dataset-form";
-    import Tab from "../../components/card/tab"
-    import CardNav from "../../components/card/card-nav";
-    import SimpleButton from "../../components/button/simple-button";
-    import List from "../../components/list/list";
+    import DatasetForm from "./dataset-form.vue";
+    import Tab from "../../components/card/tab.vue"
+    import CardNav from "../../components/card/card-nav.vue";
+    import SimpleButton from "../../components/button/simple-button.vue";
+    import List from "../../components/list/list.vue";
     import PeptideContainer from "../PeptideContainer";
-    import ValidatedTextfield from "../../components/input/validated-textfield";
+    import ValidatedTextfield from "../../components/input/validated-textfield.vue";
     import DatasetManager from "../DatasetManager";
     import {StorageType} from "../StorageType";
-    import DeterminateStripedProgressBar from "../../components/progress/determinate-striped-progress-bar";
+    import DeterminateStripedProgressBar from "../../components/progress/determinate-striped-progress-bar.vue";
     import Tabs from "../../components/card/tabs.vue";
     import Snackbar from "../../components/snackbar/snackbar.vue";
     import axios from "axios"

@@ -2,7 +2,7 @@
     <card-nav>
         <card-header class="card-title-interactive">
             <ul class="nav nav-tabs">
-                <li v-for="tab in tabs" v-bind:class="{ active: tab.activated }" @click="changeActiveTab(tab)">
+                <li v-for="tab in tabs" v-bind:class="{ active: tab.activated }" v-bind:key="tab.label" @click="changeActiveTab(tab)">
                     <a>{{ tab.label }}</a>
                 </li>
             </ul>
@@ -22,7 +22,7 @@
                     </div>
                     <nav class="fullScreenNav">
                         <ul class="visualisations">
-                            <li v-for="tab in tabs" v-bind:class="{ active: tab.activated }" @click="changeActiveTab(tab)">
+                            <li v-for="tab in tabs" v-bind:class="{ active: tab.activated }" v-bind:key="tab.label" @click="changeActiveTab(tab)">
                                 <a>{{ tab.label }}</a>
                             </li>
                         </ul>
@@ -53,8 +53,8 @@
                 </tab>
                 <tab label="Heatmap" id="heatmapWrapper" class="card-supporting-text">
                     <heatmap-visualization ref="heatmap" :full-screen="isFullScreen" v-if="$store.getters.activeDataset && $store.getters.activeDataset.getProgress() === 1" :dataset="$store.getters.activeDataset"></heatmap-visualization>
-                    <div v-else>
-                        {{ waitString }}
+                    <div v-else class="mpa-waiting">
+                        <img :alt="waitString" class="mpa-placeholder" src="/images/mpa/placeholder_heatmap.svg">
                     </div>
                 </tab>
                 <tab label="Hierarchical outline" class="card-supporting-text">

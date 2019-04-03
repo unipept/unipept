@@ -6,7 +6,7 @@
         <card-body>
             <label>Select datasets</label>
             <list class="select-datasets-list" placeholder="Please select one or more datasets from the right hand panel to continue the analysis..">
-                <div class="list-item--two-lines" v-for="dataset of selectedDatasets">
+                <div class="list-item--two-lines" v-for="dataset of selectedDatasets" v-bind:key="dataset.id">
                 <span class="list-item-primary-content">
                     {{ dataset.getName() }}
                     <span class="list-item-date">
@@ -40,11 +40,11 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import Card from "../../components/card/card";
-    import Checkbox from "../../components/input/checkbox";
-    import List from "../../components/list/list";
+    import Card from "../../components/card/card.vue";
+    import Checkbox from "../../components/input/checkbox.vue";
+    import List from "../../components/list/list.vue";
     import PeptideContainer from "../PeptideContainer";
-    import SimpleButton from "../../components/button/simple-button";
+    import SimpleButton from "../../components/button/simple-button.vue";
     import SearchSettingsForm from "./search-settings-form.vue";
     import SearchSettings from "../SearchSettings";
     import CardTitle from "../../components/card/card-title.vue";
