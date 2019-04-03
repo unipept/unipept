@@ -25,6 +25,8 @@ database: \
 
 index: <<<TABDIR>>>/<<<KMER_LENGTH>>>-mer.index
 
+ecindex: <<<TABDIR>>>/kmer_ec_ids.tsv.gz
+
 taxons: \
 	<<<TABDIR>>>/taxons.tsv.gz \
 	<<<TABDIR>>>/lineages.tsv.gz
@@ -293,6 +295,20 @@ $(TABLES): $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 	<<<LOGADD>>> "Started creating GO terms"
 	./createGoTerms.sh | <<<CMD_GZIP>>> > $@
 	<<<LOGADD>>> "Finished creating GO terms."
+# }}}
+
+# EC Index {{{ ----------------------------------------------------------------
+#
+
+<<<TABDIR>>>/kmer_ec_ids.tsv.gz: <<<TABDIR>>>/ec_numbers.tsv.gz <<<TABDIR>>>/ec_cross_references.tsv.gz <<<TABDIR>>>/uniprot_entries.tsv.gz
+	<<<LOGADD>>> "Started creating Kmer-EC index"
+	./create_kmer_ec.rb <<<KMER_LENGTH>>> \
+		<(<<<CMD_ZCAT>>> <<<TABDIR>>>/ec_numbers.tsv.gz) \
+		<(<<<CMD_ZCAT>>> <<<TABDIR>>>/ec_cross_references.tsv.gz) \
+		<(<<<CMD_ZCAT>>> <<<TABDIR>>>/uniprot_entries.tsv.gz) \
+		| <<<CMD_GZIP>>> > $@
+	<<<LOGADD>>> "Finished creating Kmer-EC index"
+
 # }}}
 
 .PHONY: clean_intermediates
