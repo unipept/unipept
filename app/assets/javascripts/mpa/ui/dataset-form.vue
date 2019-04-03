@@ -10,9 +10,9 @@
     import Vue from "vue";
     import Component from "vue-class-component"
 
-    import ValidatedTextarea from "../../components/input/validated-textarea";
-    import ValidatedTextfield from "../../components/input/validated-textfield"
-    import Checkbox from "../../components/input/checkbox";
+    import ValidatedTextarea from "../../components/input/validated-textarea.vue";
+    import ValidatedTextfield from "../../components/input/validated-textfield.vue"
+    import Checkbox from "../../components/input/checkbox.vue";
     import {Prop, Watch} from "vue-property-decorator";
     import PeptideContainer from "../PeptideContainer";
 

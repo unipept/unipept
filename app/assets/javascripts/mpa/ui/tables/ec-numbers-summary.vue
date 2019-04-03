@@ -27,6 +27,7 @@
     import FaSortSettings from "./FaSortSettings";
     import PeptideContainer from "../../PeptideContainer";
     import Modal from "../../../components/modal/modal.vue";
+    
     @Component({
         components: {Modal}
     })
