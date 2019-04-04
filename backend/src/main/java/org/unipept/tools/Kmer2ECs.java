@@ -18,7 +18,6 @@ public class Kmer2ECs {
         Path crossrefFile = Paths.get(args[2]);
         Path uniprotFile = Paths.get(args[3]);
 
-        System.err.println("Mapping EC numbers to EC ids");
         Map<String, String> ecIds = Files.lines(ecFile)
                 .map(s -> s.split("\t"))
                 .collect(Collectors.toMap(
@@ -26,7 +25,6 @@ public class Kmer2ECs {
                         (String[] s) -> s[0] // ID
                 ));
 
-        System.err.println("Mapping sequences to EC ids");
         Map<String, Set<String>> sequenceECs = Files.lines(crossrefFile)
                 .map(s -> s.split("\t"))
                 .collect(Collectors.toMap(
@@ -38,7 +36,6 @@ public class Kmer2ECs {
                         }
                 ));
 
-        System.err.println("Writing kmers and their EC ids");
         Files.lines(uniprotFile)
                 .parallel()
                 .forEach(line -> {
