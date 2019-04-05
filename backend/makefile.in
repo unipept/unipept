@@ -56,7 +56,7 @@ $(JAR): $(SRC)
 # Taxons and Lineages {{{ ------------------------------------------------------
 <<<TAXDIR>>>/taxdmp.zip:
 	<<<LOGADD>>> "Started taxon dump download."
-	mkdir -p <<<TAXDIR>>>
+	mkdir -p $(dir $@)
 	-rm -f $@
 	wget --no-verbose "<<<TAXON_URL>>>" -O $@
 	<<<LOGADD>>> "Finished taxon dump download."
@@ -288,6 +288,7 @@ $(TABLES): $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 # Functional Data {{{ ----------------------------------------------------------
 <<<TABDIR>>>/ec_numbers.tsv.gz: createEcNumbers.sh
 	<<<LOGADD>>> "Started creating EC numbers"
+	mkdir -p $(dir $@)
 	./createEcNumbers.sh | <<<CMD_GZIP>>> > $@
 	<<<LOGADD>>> "Finished creating EC numbers."
 
