@@ -9,6 +9,7 @@
     import Component, {mixins} from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import {Heatmap, HeatmapSettings} from "unipept-heatmap";
+    
     import VisualizationMixin from "./visualization-mixin.vue";
     import Tree from "../../Tree";
     import Node from "../../Node";
@@ -18,6 +19,8 @@
 
     @Component
     export default class HeatmapVisualization extends mixins(VisualizationMixin) {
+        @Prop({default: false}) fullScreen: false;
+
         private heatmap: Heatmap;
 
         mounted() {
@@ -34,6 +37,10 @@
             this.initHeatmap();
         }
 
+        @Watch('fullScreen') onFullScreenChanged(newFullScreen: boolean, oldFullScreen: boolean) {
+            this.heatmap.setFullScreen(newFullScreen)
+        }
+
         private async initHeatmap() {
             // Maps each row (first index) and column (second index) onto a specific GO-term and all of it's metadata.
              let rowMappings: {absoluteCount: number, numberOfPepts: number}[][] = [];
@@ -42,12 +49,13 @@
                 let heatmapElement: HTMLElement = <HTMLElement> this.$refs.heatmapElement;
 
                 let tree: Tree = this.dataset.getDataset().getTree();
-                let nodes: Node[] = tree.getNodesAtDepth(2);
+                let nodes: Node[] = tree.getNodesWithRank("phylum");
 
                 let resultset: Resultset = this.dataset.getDataset().resultSet;
                 await resultset.processFA();
                 let go: GOTerms = await resultset.summarizeGo();
-                let topGos = go._childeren["biological process"]["_data"].slice(0, 20);
+                console.log(go);
+                let topGos = go._childeren["cellular component"]["_data"].slice(0, 20);
 
                 let rows: HeatmapElement[] = [];
                 let cols: HeatmapElement[] = [];
@@ -68,11 +76,14 @@
 
                     rows.push(row);
 
-                    let processedGo: GOTerms = await resultset.summarizeGo(50, tree.getAllSequences(node.id));
+                    let processedGo: GOTerms = await resultset.summarizeGo(0, tree.getAllSequences(node.id));
                     let rowValues = [];
                     let rowMapping = [];
                     for (let go of topGos) {
-                        let val: {absoluteCount: number, numberOfPepts: number} = this.getGoCount(processedGo._childeren["biological process"]["_data"], go["code"]);
+                        let val: {
+                            absoluteCount: number,
+                            numberOfPepts: number
+                        } = this.getGoCount(processedGo._childeren["cellular component"]["_data"], go["code"]);
                         rowValues.push(val.absoluteCount);
                         rowMapping.push(val);
                     }
