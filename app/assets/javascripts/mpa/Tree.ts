@@ -5,6 +5,9 @@ export default class Tree {
     public nodes: Map<number, Node>;
     public taxa: number[];
 
+    // Maps a rank upon a list of all nodes associated with this rank.
+    private rankNodeMap: Map<string, Node[]>;
+
     /**
      * Constructs an empty tree object with just the root. The values of the
      * node are passed as parameters.
@@ -16,6 +19,7 @@ export default class Tree {
         this.root = new Node(id, name);
         this.nodes = new Map();
         this.taxa = [];
+        this.rankNodeMap = new Map();
     }
 
     /**
@@ -79,8 +83,17 @@ export default class Tree {
     }
 
     /**
-     * Composes a list of sequences that were added to a node with a given taxon
-     * id.
+     * Returns a list of nodes that are associated with the given rank. This method might return undefined when the 
+     * given rank does not exist.
+     * 
+     * @param rank A string representing the rank for whome nodes should be queried.
+     */
+    getNodesWithRank(rank: string): Node[] {
+        return this.rankNodeMap.get(rank);
+    }
+
+    /**
+     * Composes a list of sequences that were added to a node with a given taxon id.
      *
      * @param nodeId the taxon id for which we want the sequences
      * @return a list of peptides (strings)
@@ -125,6 +138,12 @@ export default class Tree {
             const t = this.nodes.get(taxon.id);
             t.name = taxon.name;
             t.rank = taxon.rank;
+
+            if (!this.rankNodeMap.has(t.rank)) {
+                this.rankNodeMap.set(t.rank, []);
+            }
+            let nodesForRank: Node[] = this.rankNodeMap.get(t.rank);
+            nodesForRank.push(t);
         }
     }
 

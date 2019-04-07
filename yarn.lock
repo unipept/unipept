@@ -1886,9 +1886,9 @@ combined-stream@^1.0.6, combined-stream@~1.0.5, combined-stream@~1.0.6:
     delayed-stream "~1.0.0"
 
 commander@2:
-  version "2.19.0"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-2.19.0.tgz#f6198aa84e5b83c46054b94ddedbfed5ee9ff12a"
-  integrity sha512-6tvAOO+D6OENvRAh524Dh9jcfKTYDQAqvqezbCW82xj5X0pSrcpxtvRKHLG0yBY6SD7PSDrJaj+0AiOcKVd1Xg==
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.0.tgz#d58bb2b5c1ee8f87b0d340027e9e94e222c5a422"
+  integrity sha512-7j2y+40w61zy6YC2iRNpUe/NwhNyoXrYpHMrSunaMG64nRnaf96zO/KMQR4OyN/UnE5KLyEBnKHd4aG3rskjpQ==
 
 commander@~2.13.0:
   version "2.13.0"
@@ -8682,10 +8682,10 @@ union-value@^1.0.0:
     is-extendable "^0.1.1"
     set-value "^0.4.3"
 
-unipept-heatmap@^1.0.16:
-  version "1.0.16"
-  resolved "https://registry.yarnpkg.com/unipept-heatmap/-/unipept-heatmap-1.0.16.tgz#426f4cf714ac963114ec52740d2f7abfebb16905"
-  integrity sha512-rPZHiyGNiIoOEs6KlcQJsW9Gv2NOtyO/IrrDP/nx/moQ9Xa3+o/Wo+GcjSDNrAHweIz9l6qTCOqhA1ARe8Sm2A==
+unipept-heatmap@^1.0.18:
+  version "1.0.18"
+  resolved "https://registry.yarnpkg.com/unipept-heatmap/-/unipept-heatmap-1.0.18.tgz#573efc71bc69868931bf6555f770f8e67a384f27"
+  integrity sha512-Vhk4aebsrcwExbrYoB5RaS3AFCobl1sz8VSTbbeu5FMccdXNoGHr2kZFvDWqWqxEz9qLVnIzidlxdx99Ydbl9A==
   dependencies:
     d3 "^5.7.0"
 
