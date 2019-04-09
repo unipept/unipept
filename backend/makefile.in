@@ -299,7 +299,7 @@ $(TABLES): $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 # }}}
 
 # EC Index {{{ ----------------------------------------------------------------
-<<<INTDIR>>>/kmer_ec_data.tsv: <<<TABDIR>>>/ec_numbers.tsv.gz <<<TABDIR>>>/ec_cross_references.tsv.gz <<<TABDIR>>>/uniprot_entries.tsv.gz
+<<<INTDIR>>>/kmer_ec_data.tsv.gz: <<<TABDIR>>>/ec_numbers.tsv.gz <<<TABDIR>>>/ec_cross_references.tsv.gz <<<TABDIR>>>/uniprot_entries.tsv.gz
 	<<<LOGADD>>> "Started creating intermediate kmer-ec data"
 	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).Kmer2ECs \
 		<<<KMER_LENGTH>>> \
@@ -309,9 +309,10 @@ $(TABLES): $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 		| <<<CMD_GZIP>>> > $@
 	<<<LOGADD>>> "Finished creating intermediate kmer-ec data"
 
-<<<INTDIR>>>/kmer_ec_data_sorted.tsv.gz: <<<INTDIR>>>/kmer_ec_data.tsv
+<<<INTDIR>>>/kmer_ec_data_sorted.tsv.gz: <<<INTDIR>>>/kmer_ec_data.tsv.gz
 	<<<LOGADD>>> "Started sorting intermediate kmer-ec data"
-	LC_ALL=C <<<CMD_SORT>>> -k1 $< \
+	LC_ALL=C <<<CMD_SORT>>> -k1 \
+		<(<<<CMD_ZCAT>>> $<) \
 		| <<<CMD_GZIP>>> > $@
 	<<<LOGADD>>> "Finished sorting intermediate kmer-ec data"
 
