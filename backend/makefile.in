@@ -319,7 +319,7 @@ $(TABLES): $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 <<<TABDIR>>>/kmer_ec_ids.tsv.gz: <<<INTDIR>>>/kmer_ec_data_sorted.tsv.gz
 	<<<LOGADD>>> "Started creating kmer-ec index"
 	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).CollectKmerECs \
-		<(pv $< | <<<CMD_ZCAT>>>) \
+		<(<<<CMD_ZCAT>>> $<) \
 		| <<<CMD_GZIP>>> > $@
 	<<<LOGADD>>> "Finished creating kmer-ec index"
 
