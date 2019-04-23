@@ -1,6 +1,8 @@
 <template>
-    <mpa-home v-if="!this.$store.getters.isAnalysis"></mpa-home>
-    <mpa-analysis v-else></mpa-analysis>
+    <v-app>
+        <mpa-home v-if="!this.$store.getters.isAnalysis"></mpa-home>
+        <mpa-analysis v-else></mpa-analysis>
+    </v-app>
 </template>
 
 <script lang="ts">

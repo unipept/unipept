@@ -9,6 +9,7 @@
                 <load-datasets-card v-else id="analysis-add-dataset-card"></load-datasets-card>
             </div>
         </div>
+        <heatmap-wizard></heatmap-wizard>
         <single-dataset-visualizations-card id="visualizations-card"></single-dataset-visualizations-card>
         <functional-summary-card></functional-summary-card>
     </div>
@@ -23,9 +24,12 @@
     import LoadDatasetsCard from "./load-datasets-card.vue";
     import SingleDatasetVisualizationsCard from "./single-dataset-visualizations-card.vue";
     import FunctionalSummaryCard from "./functional-summary-card.vue";
+    import HeatmapWizard from "./heatmap/heatmap-wizard.vue";
 
     @Component({
-        components: {FunctionalSummaryCard, SingleDatasetVisualizationsCard, LoadDatasetsCard, SwitchDatasetCard, ExperimentSummaryCard},
+        components: {
+            HeatmapWizard,
+            FunctionalSummaryCard, SingleDatasetVisualizationsCard, LoadDatasetsCard, SwitchDatasetCard, ExperimentSummaryCard},
         computed: {
             selectedDatasets: {
                 get() {
