@@ -5,9 +5,18 @@ import Mpa from '../../assets/javascripts/mpa/ui/mpa.vue'
 import {globalStore} from "../../assets/javascripts/mpa/ui/state/GlobalStore";
 import {analysisStore} from "../../assets/javascripts/mpa/ui/state/AnalysisStore";
 import "unipept-visualizations/dist/unipept-visualizations.es5.js";
+import Vuetify from "vuetify";
+import 'vuetify/dist/vuetify.min.css';
 
 Vue.use(VueClipboard);
 Vue.use(Vuex);
+
+Vue.use(Vuetify, {
+    theme: {
+        primary: "#2196F3",
+        accent: "#FFC107"
+    }
+});
 
 const store = new Vuex.Store({
     modules: {
