@@ -36,30 +36,64 @@ import {NormalizationType} from "./NormalizationType";
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Watch} from "vue-property-decorator";
+    import {Watch, Prop} from "vue-property-decorator";
     import SimpleButton from "../../../components/button/simple-button.vue";
     import HeatmapConfiguration from "./HeatmapConfiguration";
-    import DataSource from "../../heatmap/DataSource";
+    import DataSource from "../../DataSource";
     import TaxaDataSource from "../../heatmap/TaxaDataSource";
-    import EcDataSource from "../../heatmap/EcDataSource";
-    import GoDataSource from "../../heatmap/GoDataSource";
+    import EcDataSource from "../../EcDataSource";
+    import GoDataSource from "../../GoDataSource";
     import AllNormalizer from "../../heatmap/AllNormalizer";
     import RowNormalizer from "../../heatmap/RowNormalizer";
     import ColumnNormalizer from "../../heatmap/ColumnNormalizer";
-import { Normalizer } from "../../heatmap/Normalizer";
+    import { Normalizer } from "../../heatmap/Normalizer";
+    import Sample from "../../Sample";
+import SearchSettings from "../../SearchSettings";
 
     @Component({
         components: {SimpleButton}
     })
     export default class HeatmapWizard extends Vue {
+        @Prop()
+        private sample: Sample;
+        @Prop()
+        private searchSettings: SearchSettings;
+
+        private mpaConfig: MPAConfig;
         private currentStep: number = 1;
         private heatmapConfiguration: HeatmapConfiguration = new HeatmapConfiguration();
 
-        private dataSources: Map<string, () => DataSource> = new Map([
-            ["Taxa", () => new TaxaDataSource()],
-            ["EC-Numbers", () => new EcDataSource],
-            ["GO-Terms", () => new GoDataSource]
-        ]);
+        private dataSources: Map<string, () => DataSource>;
+
+        created() {
+            this.mpaConfig = {
+                il: this.searchSettings.isEquateIl(),
+                dupes: this.searchSettings.isFilterDuplicates(),
+                missed: this.searchSettings.isHandleMissingCleavage()
+            }
+
+            console.log("CREATED:");
+            console.log(this.sample);
+
+            this.dataSources = new Map([
+                ["Taxa", () => new TaxaDataSource(this.sample, this.mpaConfig, "superkingdom")],
+                ["EC-Numbers", () => new EcDataSource(this.sample, this.mpaConfig)],
+                ["GO-Terms", () => new GoDataSource(this.sample, this.mpaConfig)]
+            ]);
+
+            this.horizontalDataSource = this.dataSources.keys().next().value;
+            this.verticalDataSource = this.dataSources.keys().next().value;
+            this.normalizer = this.normalizationTypes.keys().next().value;
+        }
+        
+
+        mounted() {
+            this.onHorizontalSelection(this.horizontalDataSource);
+            this.onVerticalSelection(this.verticalDataSource);
+            this.onNormalizerChange(this.normalizer);
+
+            this.heatmapConfiguration.horizontalDataSource.getTopItems(20);
+        }
 
         private normalizationTypes: Map<string, {information: string, factory: () => Normalizer}> = new Map([
             [
@@ -85,9 +119,9 @@ import { Normalizer } from "../../heatmap/Normalizer";
             ]
         ]);
 
-        private horizontalDataSource: string = this.dataSources.keys().next().value;
-        private verticalDataSource: string = this.dataSources.keys().next().value;
-        private normalizer: string = this.normalizationTypes.keys().next().value;
+        private horizontalDataSource: string;
+        private verticalDataSource: string;
+        private normalizer: string;
 
         @Watch("horizontalDataSource") onHorizontalSelection(newValue: string){
             this.heatmapConfiguration.horizontalDataSource = this.dataSources.get(newValue)();
@@ -98,7 +132,6 @@ import { Normalizer } from "../../heatmap/Normalizer";
         }
 
         @Watch("normalizer") onNormalizerChange(newValue: string) {
-            console.log("NORMALIZER CHANGED --> " + newValue);
             this.heatmapConfiguration.normalizer = this.normalizationTypes.get(newValue).factory();
         }
     }

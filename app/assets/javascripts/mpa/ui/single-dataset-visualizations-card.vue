@@ -86,7 +86,13 @@
             CardHeader,
             Tabs,
             HierarchicalOutlineVisualization,
-            SimpleButton, TreeviewVisualization, TreemapVisualization, SunburstVisualization, CardNav, Tab},
+            SimpleButton,
+            TreeviewVisualization,
+            TreemapVisualization,
+            SunburstVisualization,
+            CardNav,
+            Tab
+        },
         computed: {
             datasetsChosen: {
                 get(): boolean {
