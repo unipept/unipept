@@ -1,11 +1,11 @@
 import {Normalizer} from "../../heatmap/Normalizer";
-import DataSource from "../../heatmap/DataSource";
+import DataSource from "../../DataSource";
 import TaxaDataSource from "../../heatmap/TaxaDataSource";
-import GoDataSource from "../../heatmap/GoDataSource";
+import GoDataSource from "../../GoDataSource";
 import AllNormalizer from "../../heatmap/AllNormalizer";
 
 export default class HeatmapConfiguration {
-    public normalizer: Normalizer = new AllNormalizer();
-    public horizontalDataSource: DataSource = new TaxaDataSource();
-    public verticalDataSource: DataSource = new TaxaDataSource();
+    public normalizer: Normalizer;
+    public horizontalDataSource: DataSource;
+    public verticalDataSource: DataSource;
 }

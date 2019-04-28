@@ -105,8 +105,9 @@ export async function process(originalPeptides, config) {
 }
 
 /**
- * Add an faGrouped key to the peptides to find annotaions of a specific type
+ * Add an faGrouped key to the peptides to find annotations of a specific type
  * faster
+ * 
  * @param {PeptideMPAInfo} peptide
  */
 function makeFaGrouped(peptide) {

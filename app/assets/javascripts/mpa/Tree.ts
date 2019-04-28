@@ -12,14 +12,32 @@ export default class Tree {
      * Constructs an empty tree object with just the root. The values of the
      * node are passed as parameters.
      *
-     * @param  {Number} [id=-1] The taxon id of the root
-     * @param  {String} [name="Organism"] The name of the root
+     * @param peptides A list of processed peptides that should be used to construct this tree.
+     * @param id The taxon id of the root
+     * @param name The name of the root
      */
-    constructor(id: number = -1, name: string = "Organism") {
+    constructor(peptides: Iterable<PeptideInfo>, id: number = -1, name: string = "Organism") {
         this.root = new Node(id, name);
         this.nodes = new Map();
         this.taxa = [];
         this.rankNodeMap = new Map();
+
+        for (const peptide of peptides) {
+            let currentNode = this.getRoot();
+            for (const taxid of peptide.lineage) {
+                if (taxid !== null) {
+                    let newNode = currentNode.getChild(taxid);
+                    if (newNode === null) {
+                        newNode = new Node(taxid);
+                        this.addChild(currentNode, newNode);
+                    }
+                    currentNode = newNode;
+                }
+            }
+            currentNode.addValue(peptide);
+        }
+
+        this.root.getCounts();
     }
 
     /**
@@ -38,7 +56,7 @@ export default class Tree {
      * @param node The node to which we want to add the child
      * @param child The child we want to add
      */
-    addChild(node: Node, child: Node) {
+    private addChild(node: Node, child: Node) {
         this.nodes.set(child.id, child);
         this.taxa.push(child.id);
         node.addChild(child);
@@ -145,13 +163,6 @@ export default class Tree {
             let nodesForRank: Node[] = this.rankNodeMap.get(t.rank);
             nodesForRank.push(t);
         }
-    }
-
-    /**
-     * Sets the counts of the root of the tree.
-     */
-    setCounts() {
-        this.root.getCounts();
     }
 
     /**

@@ -43,15 +43,13 @@ export default class Sample {
     async search(mpaConfig: MPAConfig): Promise<Tree> {
         this.resultSet = new Resultset(this, mpaConfig);
         await this.resultSet.process();
-        const tree = this.buildTree(this.resultSet.processedPeptides.values());
-        const taxonInfo = Sample.getTaxonInfo(tree.getTaxa());
-        tree.setCounts();
-        tree.setTaxonNames(await taxonInfo);
-        tree.sortTree();
-        this.tree = tree;
+        this.tree = new Tree(this.resultSet.processedPeptides.values());
+        const taxonInfo = await Sample.getTaxonInfo(this.tree.getTaxa());
+        this.tree.setTaxonNames(taxonInfo);
+        this.tree.sortTree();
         this.fa = null;
-        this.addTaxonInfo(await taxonInfo);
-        return tree;
+        this.addTaxonInfo(taxonInfo);
+        return this.tree;
     }
 
     /**
@@ -64,10 +62,6 @@ export default class Sample {
         this.fa = this.resultSet.fa;
     }
 
-    async processFA(cutoff: number = 50, sequences: string[] = null) {
-
-    }
-
     getTree(): Tree {
         return this.tree;
     }
@@ -77,33 +71,6 @@ export default class Sample {
      */
     setBaseFA() {
         this.baseFa = this.fa.clone();
-    }
-
-    /**
-     * Creates a hierarchic tree structure based on the input peptides. This is
-     * also set as the tree property of the Dataset object.
-     *
-     * @param peptides A list of peptides to build the tree
-     *   from
-     * @return A taxon tree containing all peptides
-     */
-    buildTree(peptides: Iterable<PeptideInfo>): Tree {
-        const tree = new Tree();
-        for (const peptide of peptides) {
-            let currentNode = tree.getRoot();
-            for (const taxid of peptide.lineage) {
-                if (taxid !== null) {
-                    let newNode = currentNode.getChild(taxid);
-                    if (newNode === null) {
-                        newNode = new Node(taxid);
-                        tree.addChild(currentNode, newNode);
-                    }
-                    currentNode = newNode;
-                }
-            }
-            currentNode.addValue(peptide);
-        }
-        return tree;
     }
 
     /**
