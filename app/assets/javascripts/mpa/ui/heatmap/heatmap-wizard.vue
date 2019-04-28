@@ -1,31 +1,33 @@
 import {NormalizationType} from "./NormalizationType";
+
 <template>
     <v-stepper v-model="currentStep" style="margin-top: 15px;">
         <v-stepper-header>
-            <v-stepper-step :complete="currentStep > 1" step="1">Select axes</v-stepper-step>
+            <v-stepper-step editable :complete="currentStep > 1" step="1">Axis</v-stepper-step>
             <v-divider></v-divider>
-            <v-stepper-step :complete="currentStep > 2" step="2">First axis</v-stepper-step>
+            <v-stepper-step editable :complete="currentStep > 2" step="2">Normalisation</v-stepper-step>
             <v-divider></v-divider>
-            <v-stepper-step :complete="currentStep > 3" step="3">Second axis</v-stepper-step>
+            <v-stepper-step editable :complete="currentStep > 3" step="3">Datasources</v-stepper-step>
+            <v-divider></v-divider>
+            <v-stepper-step editable :complete="currentStep > 4" step="4">Heatmap</v-stepper-step>
         </v-stepper-header>
         <v-stepper-items>
             <v-stepper-content step="1">
-                <v-alert :value="true" color="info" outline icon="info" style="margin-bottom: 10px;">
-                    This wizard will guide you through the process of automatically constructing a Heatmap. Before we
-                    can generate a Heatmap, we need to know a few configuration details. Please select the type of data
-                    that should be displayed on either axis of the Heatmap.
-                </v-alert>
-                <v-select :items="datasources" :item-value="(item) => item.name" v-model="heatmapConfiguration.horizontalDataSource" label="Horizontal axis">
-                </v-select>
-                <!--<v-select :items="datasources" v-model="heatmapConfiguration.verticalDataSource" label="Vertical axis">-->
-                <!--</v-select>-->
+                <p>Please select the type of data points that should be visualized for each axis of the heatmap.</p>
+                <v-select :items="Array.from(dataSources.keys())" v-model="horizontalDataSource" label="Horizontal axis"></v-select>
+                <v-select :items="Array.from(dataSources.keys())" v-model="verticalDataSource" label="Vertical axis"></v-select>
                 <simple-button style="float: right;" label="Continue" type="primary" @click="currentStep++"></simple-button>
             </v-stepper-content>
             <v-stepper-content step="2">
-                Select the type of normalization that should be performed for your new heatmap.
-                <v-select :items="NormalizationType.entries" v-model="heatmapConfiguration.normalizationType" label="normalization"></v-select>
-                <p></p>
+                <p>Please chose the type of normalization that should be performed before visualizing data points.</p>
+                <v-select :items="Array.from(normalizationTypes.keys())" v-model="normalizer" label="Normalization type"></v-select>
+                <p>{{ normalizationTypes.get(normalizer).information }}</p>
                 <simple-button style="float: right;" label="Continue" type="primary" @click="currentStep++"></simple-button>
+            </v-stepper-content>
+            <v-stepper-content step="3">
+                <p>Choose a set of data points that should visualized as part of the final heatmap.</p>
+            </v-stepper-content>
+            <v-stepper-content step="4">
             </v-stepper-content>
         </v-stepper-items>
     </v-stepper>
@@ -36,12 +38,15 @@ import {NormalizationType} from "./NormalizationType";
     import Component from "vue-class-component";
     import {Watch} from "vue-property-decorator";
     import SimpleButton from "../../../components/button/simple-button.vue";
-    import {NormalizationType} from "../../heatmap/NormalizationType";
     import HeatmapConfiguration from "./HeatmapConfiguration";
     import DataSource from "../../heatmap/DataSource";
     import TaxaDataSource from "../../heatmap/TaxaDataSource";
     import EcDataSource from "../../heatmap/EcDataSource";
     import GoDataSource from "../../heatmap/GoDataSource";
+    import AllNormalizer from "../../heatmap/AllNormalizer";
+    import RowNormalizer from "../../heatmap/RowNormalizer";
+    import ColumnNormalizer from "../../heatmap/ColumnNormalizer";
+import { Normalizer } from "../../heatmap/Normalizer";
 
     @Component({
         components: {SimpleButton}
@@ -50,16 +55,52 @@ import {NormalizationType} from "./NormalizationType";
         private currentStep: number = 1;
         private heatmapConfiguration: HeatmapConfiguration = new HeatmapConfiguration();
 
-        private datasources: {name: string, factory: () => DataSource}[] = [{
-            name: "Taxa",
-            factory: () => new TaxaDataSource()
-        }, {
-            name: "EC-Numbers",
-            factory: () => new EcDataSource()
-        }, {
-            name: "GO-Terms",
-            factory: () => new GoDataSource()
-        }];
+        private dataSources: Map<string, () => DataSource> = new Map([
+            ["Taxa", () => new TaxaDataSource()],
+            ["EC-Numbers", () => new EcDataSource],
+            ["GO-Terms", () => new GoDataSource]
+        ]);
+
+        private normalizationTypes: Map<string, {information: string, factory: () => Normalizer}> = new Map([
+            [
+                "All",
+                {
+                    information: "Normalize over all data points of the input.",
+                    factory: () => new AllNormalizer()
+                }
+            ],
+            [
+                "Rows",
+                {
+                    information: "Normalize values on a row-per-row basis.",
+                    factory: () => new RowNormalizer()
+                }
+            ],
+            [
+                "Columns",
+                {
+                    information: "Normalize values on a column-per-column basis.",
+                    factory: () => new ColumnNormalizer()
+                }
+            ]
+        ]);
+
+        private horizontalDataSource: string = this.dataSources.keys().next().value;
+        private verticalDataSource: string = this.dataSources.keys().next().value;
+        private normalizer: string = this.normalizationTypes.keys().next().value;
+
+        @Watch("horizontalDataSource") onHorizontalSelection(newValue: string){
+            this.heatmapConfiguration.horizontalDataSource = this.dataSources.get(newValue)();
+        }
+
+        @Watch("verticalDataSource") onVerticalSelection(newValue: string) {
+            this.heatmapConfiguration.verticalDataSource = this.dataSources.get(newValue)();
+        }
+
+        @Watch("normalizer") onNormalizerChange(newValue: string) {
+            console.log("NORMALIZER CHANGED --> " + newValue);
+            this.heatmapConfiguration.normalizer = this.normalizationTypes.get(newValue).factory();
+        }
     }
 </script>
 
