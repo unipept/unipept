@@ -176,5 +176,3 @@ export const globalStore = {
     getters: mpaGetters,
     actions: mpaActions
 };
-
-
