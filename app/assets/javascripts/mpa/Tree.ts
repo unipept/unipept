@@ -1,4 +1,5 @@
 import Node from "./Node";
+import PeptideInfo from "./PeptideInfo";
 
 export default class Tree {
     public root: Node;

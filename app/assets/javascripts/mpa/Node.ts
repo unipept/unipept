@@ -1,3 +1,5 @@
+import PeptideInfo from "./PeptideInfo";
+
 export default class Node {
     public id: number;
     public name: string;

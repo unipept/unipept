@@ -54,13 +54,6 @@ interface TaxonInfo {
     rank: string,
 }
 
-interface PeptideInfo {
-    sequence: string, // The peptide sequence
-    count: number,    // The number of times the peptide occurs
-    lca: number,      // The taxon id of the lca
-    lineage: number[] // The lineage of the lca
-}
-
 interface PeptideMPAInfo {
     sequence: string, // The peptide sequence
     count: number,    // The number of times the peptide occurs
