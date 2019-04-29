@@ -1,6 +1,6 @@
 import {Normalizer} from "../../heatmap/Normalizer";
 import DataSource from "../../DataSource";
-import TaxaDataSource from "../../heatmap/TaxaDataSource";
+import TaxaDataSource from "../../TaxaDataSource";
 import GoDataSource from "../../GoDataSource";
 import AllNormalizer from "../../heatmap/AllNormalizer";
 

@@ -1,19 +1,21 @@
 import DataElement from "./DataElement";
 import Sample from "./Sample";
 import ProgressListener from "./ProgressListener";
+import DataRepository from "./DataRepository";
 
 export default abstract class DataSource {
-    protected sample: Sample;
-    protected progressListeners: ProgressListener[] = [];
-    protected mpaConfig: MPAConfig;
+    protected _repository: DataRepository;
 
     /**
-     * @param sample This is the sample containing all peptides that should be considered for this DataSource.
-     * @param mpaConfig A configuration that determines what search settings are used during processing of a dataset.
+     * Construct a new DataSource. This is typically done by calling the appropriate construct function on the
+     * DataRepository class.
+     * 
+     * @see DataRepository
+     * 
+     * @param repository The DataRepository that's used to retrieve data from in this DataSource.
      */
-    constructor(sample: Sample, mpaConfig: MPAConfig) {
-        this.sample = sample;
-        this.mpaConfig = mpaConfig;
+    constructor(repository: DataRepository) {
+        this._repository = repository;
     }
 
     /**
@@ -25,8 +27,4 @@ export default abstract class DataSource {
      * each item.
      */
     public abstract async getTopItems(n: number): Promise<DataElement[]>;
-
-    public registerProgressListener(listener: ProgressListener): void {
-        this.progressListeners.push(listener);
-    }
 }

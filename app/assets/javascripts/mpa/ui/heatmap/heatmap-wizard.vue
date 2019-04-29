@@ -40,7 +40,7 @@ import {NormalizationType} from "./NormalizationType";
     import SimpleButton from "../../../components/button/simple-button.vue";
     import HeatmapConfiguration from "./HeatmapConfiguration";
     import DataSource from "../../DataSource";
-    import TaxaDataSource from "../../heatmap/TaxaDataSource";
+    import TaxaDataSource from "../../TaxaDataSource";
     import EcDataSource from "../../EcDataSource";
     import GoDataSource from "../../GoDataSource";
     import AllNormalizer from "../../heatmap/AllNormalizer";
@@ -75,11 +75,11 @@ import SearchSettings from "../../SearchSettings";
             console.log("CREATED:");
             console.log(this.sample);
 
-            this.dataSources = new Map([
-                ["Taxa", () => new TaxaDataSource(this.sample, this.mpaConfig, "superkingdom")],
-                ["EC-Numbers", () => new EcDataSource(this.sample, this.mpaConfig)],
-                ["GO-Terms", () => new GoDataSource(this.sample, this.mpaConfig)]
-            ]);
+            // this.dataSources = new Map([
+            //     ["Taxa", () => new TaxaDataSource(this.sample, this.mpaConfig, "superkingdom")],
+            //     ["EC-Numbers", () => new EcDataSource(this.sample, this.mpaConfig)],
+            //     ["GO-Terms", () => new GoDataSource(this.sample, this.mpaConfig)]
+            // ]);
 
             this.horizontalDataSource = this.dataSources.keys().next().value;
             this.verticalDataSource = this.dataSources.keys().next().value;
