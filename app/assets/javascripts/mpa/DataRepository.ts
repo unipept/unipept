@@ -9,6 +9,7 @@ import Tree from "./Tree";
 import worker from "workerize-loader!./worker.js";
 import PeptideInfo from "./PeptideInfo";
 import { postJSON } from "../utils";
+import NewGoTerms from "../fa/NewGoTerms";
 
 
 export default class DataRepository {
@@ -18,6 +19,7 @@ export default class DataRepository {
     private _mpaConfig: MPAConfig;
     // Maps a namespace onto a GoDataSource object. This map functions as a cache for these DataSources.
     private _goDataSources: Map<string, GoDataSource> = new Map();
+    private _goData: NewGoTerms;
 
     public constructor(sample: Sample, mpaConfig: MPAConfig) {
         this._sample = sample;
@@ -86,6 +88,8 @@ export default class DataRepository {
         const taxonInfo = await Sample.getTaxonInfo(this._tree.getTaxa());
         this._tree.setTaxonNames(taxonInfo);
         this._tree.sortTree();
+
+        let goTerms: NewGoTerms = new NewGoTerms();
     }
 
     /**

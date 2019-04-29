@@ -1,9 +1,10 @@
 import "babel-polyfill"; // for async await webpacker support
 import "whatwg-fetch";
 // TODO: also include other pollyfills?
-import GOTerms from "../fa/goterms.js";
+import GOTerms from "../fa/goterms";
 import ECNumbers from "../fa/ecnumbers.js";
 import {postJSON, numberToPercent} from "../utils.js";
+import NewGoTerms from "../fa/NewGoTerms";
 
 const BATCH_SIZE = 100;
 const PEPT2DATA_URL = "/mpa/pept2data";
@@ -87,6 +88,8 @@ export async function process(originalPeptides, config) {
             .filter(x => x.startsWith("GO:"))
             .forEach(x => usedGoTerms.add(x));
     }
+    // TODO!
+    let goTerms: NewGoTerms = new NewGoTerms();
     await GOTerms.fetch([...usedGoTerms.values()]);
 
     let numMatched = 0;
@@ -100,7 +103,7 @@ export async function process(originalPeptides, config) {
         processed: [...processedPeptides.values()].map(({fa, faGrouped, ...y}) => y),
         missed: peptideList.filter(p => !processedPeptides.has(p)),
         numMatched: numMatched,
-        numSearched: [...preparedPeptides.values()].reduce((a, b) => a + b, 0),
+        numSearched: [...preparedPeptides.values()].reduce((a, b) => a + b, 0)
     };
 }
 

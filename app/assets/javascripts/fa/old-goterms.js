@@ -5,14 +5,6 @@ const NAMESPACES = ["biological process", "cellular component", "molecular funct
 const BATCH_SIZE = 1000;
 
 /**
- * @typedef {Object} GOInfo
- * @property {number}   value  Number of peptides that were matched
- * @property {string}   name Number of peptides that were matched
- * @property {string}   code Number of peptides that were matched
- * @property {string}   [namespace] Number of peptides that were matched
- */
-
-/**
  * A class representing GOTerms
  *
  * Keeps a statc cache of GOTerm data (like namespaces)
