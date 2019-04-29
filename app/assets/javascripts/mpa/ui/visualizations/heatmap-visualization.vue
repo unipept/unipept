@@ -54,7 +54,6 @@
                 let resultset: Resultset = this.dataset.getDataset().resultSet;
                 await resultset.processFA();
                 let go: GOTerms = await resultset.summarizeGo();
-                console.log(go);
                 let topGos = go._childeren["cellular component"]["_data"].slice(0, 20);
 
                 let rows: HeatmapElement[] = [];
