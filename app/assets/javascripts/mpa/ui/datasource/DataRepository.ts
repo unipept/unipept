@@ -1,15 +1,17 @@
-import Resultset from "./Resultset";
+import Resultset from "../../Resultset";
 import GoDataSource from "./GoDataSource";
-import Sample from "./Sample";
+import Sample from "../../Sample";
 import TaxaDataSource from "./TaxaDataSource";
-import ProgressListener from "./ProgressListener";
-import Tree from "./Tree";
+import ProgressListener from "../../ProgressListener";
+import Tree from "../../Tree";
 
 // @ts-ignore
 import worker from "workerize-loader!./worker.js";
-import PeptideInfo from "./PeptideInfo";
-import { postJSON } from "../utils";
-import NewGoTerms from "../fa/NewGoTerms";
+import PeptideInfo from "../../PeptideInfo";
+import { postJSON } from "../../../utils";
+import NewGoTerms from "../../../fa/NewGoTerms";
+import GoTerm from "../../../fa/GoTerm";
+import { GoNameSpace } from "../../../fa/GoNameSpace";
 
 
 export default class DataRepository {
@@ -19,7 +21,7 @@ export default class DataRepository {
     private _mpaConfig: MPAConfig;
     // Maps a namespace onto a GoDataSource object. This map functions as a cache for these DataSources.
     private _goDataSources: Map<string, GoDataSource> = new Map();
-    private _goData: NewGoTerms;
+    private _goTerms: Map<GoNameSpace, GoTerm> = new Map();
 
     public constructor(sample: Sample, mpaConfig: MPAConfig) {
         this._sample = sample;
@@ -30,9 +32,9 @@ export default class DataRepository {
         this._progressListeners.push(listener);
     }
 
-    public async createTaxaDataSource(taxumRank: string): Promise<TaxaDataSource> {
+    public async createTaxaDataSource(): Promise<TaxaDataSource> {
         await this.process();
-        return new TaxaDataSource(this, taxumRank);
+        return new TaxaDataSource(this);
     }
 
     /**
@@ -40,7 +42,7 @@ export default class DataRepository {
      * 
      * @param namespace The GO-namespace for which a new DataSource should be constructed.
      */
-    public async createGoDataSource(namespace: "cellular component"|"biological process"|"molecular function"): Promise<GoDataSource> {
+    public async createGoDataSource(namespace: GoNameSpace): Promise<GoDataSource> {
         await this.process();
         let source: GoDataSource = this._goDataSources.get(namespace);
         if (source) {
@@ -88,8 +90,6 @@ export default class DataRepository {
         const taxonInfo = await Sample.getTaxonInfo(this._tree.getTaxa());
         this._tree.setTaxonNames(taxonInfo);
         this._tree.sortTree();
-
-        let goTerms: NewGoTerms = new NewGoTerms();
     }
 
     /**
