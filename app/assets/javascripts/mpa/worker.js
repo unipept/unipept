@@ -88,8 +88,6 @@ export async function process(originalPeptides, config) {
             .filter(x => x.startsWith("GO:"))
             .forEach(x => usedGoTerms.add(x));
     }
-    // TODO!
-    let goTerms: NewGoTerms = new NewGoTerms();
     await GOTerms.fetch([...usedGoTerms.values()]);
 
     let numMatched = 0;
