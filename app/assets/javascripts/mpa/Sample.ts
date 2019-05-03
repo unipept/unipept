@@ -50,15 +50,6 @@ export default class Sample {
         this._dataRepository.registerProgressListener(progressListener);
         let taxaDataSource: TaxaDataSource = await this.dataRepository.createTaxaDataSource();
         return taxaDataSource.getTree();
-        // this.resultSet = new Resultset(this, mpaConfig);
-        // await this.resultSet.process();
-        // this.tree = new Tree(this.resultSet.processedPeptides.values());
-        // const taxonInfo = await Sample.getTaxonInfo(this.tree.getTaxa());
-        // this.tree.setTaxonNames(taxonInfo);
-        // this.tree.sortTree();
-        // this.fa = null;
-        // this.addTaxonInfo(taxonInfo);
-        // return this.tree;
     }
 
     /**

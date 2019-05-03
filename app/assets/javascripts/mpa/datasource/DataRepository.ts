@@ -12,6 +12,8 @@ import { postJSON } from "../../utils";
 import NewGoTerms from "../../fa/NewGoTerms";
 import GoTerm from "../../fa/GoTerm";
 import { GoNameSpace } from "../../fa/GoNameSpace";
+import FATrust from "../../fa/FATrust";
+import { MPAFAResult } from "../newworker";
 
 
 export default class DataRepository {
@@ -20,6 +22,7 @@ export default class DataRepository {
     private _tree: Tree;
     private _mpaConfig: MPAConfig;
     private _goTerms: Map<GoNameSpace, GoTerm> = new Map();
+    private _worker;
 
     public constructor(sample: Sample, mpaConfig: MPAConfig) {
         this._sample = sample;
@@ -61,15 +64,15 @@ export default class DataRepository {
             return;
         }
 
-        let wrkr = newworker();
-        wrkr.onmessage = m => {
+        this._worker = newworker();
+        this._worker.onmessage = m => {
             if (m.data.type == "progress") {
                 this.setWorkerProgress(m.data.value);
             }
         };
 
         let {processed, missed, numMatched, numSearched}: {processed: PeptideInfo[], missed: string[], numMatched: number, numSearched: number} 
-            = await wrkr.process(this._sample.originalPeptides, this._mpaConfig);
+            = await this._worker.process(this._sample.originalPeptides, this._mpaConfig);
         let processedPeptides: Map<string, PeptideInfo> = new Map();
         for (const p of processed) {
             processedPeptides.set(p.sequence, p);
@@ -81,13 +84,49 @@ export default class DataRepository {
         this._tree.sortTree();
     }
 
+    public async computeGoTerms(percent = 50, sequences = null): Promise<[Map<GoNameSpace, GoTerm[]>, Map<GoNameSpace, FATrust>]> {
+        let {data, trust} = await this._worker.summarizeGo(percent, sequences);
+
+        let dataOutput: Map<GoNameSpace, GoTerm[]> = new Map();
+        for (let namespace of Object.values(GoNameSpace)) {
+            let items: MPAFAResult[] = data[namespace];
+            let convertedItems: GoTerm[] = [];
+            for (let item of items) {
+                let namespace: GoNameSpace;
+
+                if (item.namespace === GoNameSpace.BiologicalProcess.toString()) {
+                    namespace = GoNameSpace.BiologicalProcess;
+                } else if (item.namespace === GoNameSpace.CellularComponent.toString()) {
+                    namespace = GoNameSpace.CellularComponent;
+                } else {
+                    namespace = GoNameSpace.MolecularFunction;
+                }
+
+                convertedItems.push(new GoTerm(item.code, item.name, namespace, item.numberOfPepts));
+            }
+            dataOutput.set(namespace, convertedItems);
+        }
+
+        let trustOutput: Map<GoNameSpace, FATrust> = new Map();
+        for (let namespace of Object.values(GoNameSpace)) {
+            let originalTrust: {trustCount: number, annotatedCount: number, totalCount: number} = trust[namespace];
+            let convertedTrust: FATrust = new FATrust();
+            convertedTrust.trustCount = originalTrust.trustCount;
+            convertedTrust.annotatedCount = originalTrust.annotatedCount;
+            convertedTrust.totalCount = originalTrust.totalCount;
+
+            trustOutput.set(namespace, convertedTrust);
+        }
+        
+        return [dataOutput, trustOutput];
+    }
+
     /**
      * Fetches the taxon info from the Unipept API for a list of taxon id's and returns an Array of objects containing 
      * the id, name and rank for each result.
      *
      * @param taxids Array containing taxon id integers
-     * @return containing an array of result objects
-     * with id, name and rank fields
+     * @return containing an array of result objects with id, name and rank fields
      */
     private static getTaxonInfo(taxids: number[]): Promise<TaxonInfo[]> {
         return postJSON(Sample.TAXA_URL, JSON.stringify({taxids: taxids}));
