@@ -14,7 +14,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr aria-expanded="false" tabindex="0" role="button" style="cursor: pointer;" v-for="goTerm of items" v-bind:key="goTerm.code">
+            <tr aria-expanded="false" tabindex="0" role="button" style="cursor: pointer;" v-for="goTerm of items.slice(0, itemsVisible)" v-bind:key="goTerm.code">
                 <td class="shaded-cell" :style="`background-image: linear-gradient(to right, rgb(221, 221, 221) ${goTerm.fractionOfPepts * 100}%, transparent ${goTerm.fractionOfPepts * 100}%); width: 5em;`">
                     {{ goTerm.popularity }}
                 </td>
@@ -33,6 +33,15 @@
                 </td>
             </tr>
         </tbody>
+        <tfoot>
+            <tr class="collapse-row">
+                <td colspan="5" tabindex="0" role="button" @click.left.exact="expandView(visibilityStep)" @click.shift.left.exact="expandView(100)">
+                    <span class="glyphicon glyphicon-chevron-down"></span> 
+                    Showing {{ itemsVisible }} of {{ items.length }} rows — <span v-if="itemsVisible >= initialItemsVisible + 2 * visibilityStep"><kbd>SHIFT+click</kbd> to</span> show {{ itemsVisible >= initialItemsVisible + 2 * visibilityStep ? 100 : visibilityStep }} more
+                    <span v-if="itemsVisible > initialItemsVisible" class="glyphicon glyphicon-chevron-up btn-icon pull-right" title="Collapse row" tabindex="0" role="button" @click.left.exact="shrinkView(visibilityStep)" @click.shift.left.exact="shrinkView(100)" v-on:click.stop></span>
+                </td>
+            </tr>
+        </tfoot>
     </table>
 </template>
 
@@ -48,6 +57,29 @@
     export default class GoAmountTable extends Vue {
         @Prop({required: true})
         private items: GoTerm[];
+
+        // The amount of items that's always visible in the table (thus the table's minimum length)
+        private initialItemsVisible: number = 5;
+        // The amount of items that's currently visible in this table
+        private itemsVisible: number = this.initialItemsVisible;
+        // The amount of items that are shown extra when expanding the table
+        private visibilityStep: number = 10;
+
+        private expandView(amount): void {
+            if (this.itemsVisible + amount > this.items.length) {
+                this.itemsVisible = this.items.length;
+            } else {
+                this.itemsVisible += amount;
+            }
+        }
+
+        private shrinkView(amount): void {
+            if (this.itemsVisible - amount < this.initialItemsVisible) {
+                this.itemsVisible = this.initialItemsVisible;
+            } else {
+                this.itemsVisible -= amount;
+            }
+        }
     }
 </script>
 
