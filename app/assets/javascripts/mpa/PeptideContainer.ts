@@ -1,9 +1,9 @@
 import DatasetManager from "./DatasetManager";
 import {StorageType} from "./StorageType";
 import Sample from "./Sample";
+import ProgressListener from "./ProgressListener";
 
-
-export default class PeptideContainer {
+export default class PeptideContainer implements ProgressListener {
     private id: string;
     private peptides: string[];
     private name: string;
@@ -11,7 +11,7 @@ export default class PeptideContainer {
     private date: Date;
     private type: StorageType;
     private dataset: Sample | null;
-    private progress: number = 0;
+    private _progress: number;
 
     /**
      * Create a new PeptideContainer. A PeptideContainer is actually a representation of a dataset that can be
@@ -58,6 +58,19 @@ export default class PeptideContainer {
         let storage: Storage = this.getStorage();
         storage.removeItem(DatasetManager.MPA_METADATA_PREFIX + this.id);
         storage.removeItem(DatasetManager.MPA_PEPTIDE_PREFIX + this.id);
+    }
+
+    onProgressUpdate(p: number) {
+        console.log("ON PROGRESS UPDATE! --> " + p);
+        this.progress = p;
+    }
+
+    get progress(): number {
+        return this._progress;
+    }
+
+    set progress(val: number) {
+        this._progress = val;
     }
 
     getId(): string {
@@ -152,18 +165,7 @@ export default class PeptideContainer {
     }
 
     setDataset(dataset: Sample | null): void {
-        if (dataset === null) {
-            this.progress = 0;
-        }
         this.dataset = dataset;
-    }
-
-    getProgress(): number {
-        return this.progress;
-    }
-
-    setProgress(p: number) {
-        this.progress = p;
     }
 
     private getMetadataJSON(): string {

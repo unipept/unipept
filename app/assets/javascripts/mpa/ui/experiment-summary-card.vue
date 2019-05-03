@@ -6,7 +6,7 @@
             </card-header>
             <card-body>
                 <search-settings-form
-                        :disabled="$store.getters.selectedDatasets.some(el => el.getProgress() !== 1)"
+                        :disabled="$store.getters.selectedDatasets.some(el => el.progress !== 1)"
                         :equate-il="equateIl"
                         v-on:equate-il-change="equateIl = $event"
                         :filter-duplicates="filterDuplicates"
@@ -15,7 +15,7 @@
                         v-on:missing-cleavage="missingCleavage = $event"
                 ></search-settings-form>
                 <div class="search-buttons-centered">
-                    <simple-button :disabled="$store.getters.selectedDatasets.some(el => el.getProgress() !== 1)" label="Update" glyphicon="repeat" type="primary" @click="reprocess()"></simple-button>
+                    <simple-button :disabled="$store.getters.selectedDatasets.some(el => el.progress !== 1)" label="Update" glyphicon="repeat" type="primary" @click="reprocess()"></simple-button>
                 </div>
                 <hr>
                 <span v-if="!this.$store.getters.activeDataset">No dataset is selected... Wait for at least one dataset to be loaded or select one.</span>

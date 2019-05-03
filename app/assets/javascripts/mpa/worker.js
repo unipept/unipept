@@ -1,7 +1,7 @@
 import "babel-polyfill"; // for async await webpacker support
 import "whatwg-fetch";
 // TODO: also include other pollyfills?
-import GOTerms from "../fa/goterms";
+import GOTerms from "../fa/old-goterms";
 import ECNumbers from "../fa/ecnumbers.js";
 import {postJSON, numberToPercent} from "../utils.js";
 import NewGoTerms from "../fa/NewGoTerms";

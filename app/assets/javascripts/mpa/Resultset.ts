@@ -2,7 +2,7 @@ import Sample from "./Sample";
 import {FunctionalAnnotations, GroupedFA} from "../fa/FunctionalAnnotations";
 // @ts-ignore
 import worker from "workerize-loader!./worker.js";
-import GOTerms from "../fa/goterms";
+import GOTerms from "../fa/old-goterms";
 import ECNumbers from "../fa/ecnumbers";
 
 export default class Resultset {
@@ -49,6 +49,7 @@ export default class Resultset {
      * Processes the list of peptides set in the dataset and builds a taxonomic tree.
      */
     async process() {
+        console.log(this.wrkr);
         let {processed, missed, numMatched, numSearched} = await this.wrkr.process(this.dataset.originalPeptides, this.config);
         this.processedPeptides = new Map();
         for (const p of processed) {

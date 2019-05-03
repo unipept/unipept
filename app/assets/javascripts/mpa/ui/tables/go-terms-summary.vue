@@ -17,7 +17,7 @@
         triggerDownloadModal
     } from "../../../utils";
     import {AmountTable} from "../../../components/amount_table";
-    import GOTerms from "../../../fa/goterms";
+    import GOTerms from "../../../fa/old-goterms";
     import {FunctionalAnnotations} from "../../../fa/FunctionalAnnotations";
     import PeptideContainer from "../../PeptideContainer";
     import FaSortSettings from "./FaSortSettings";

@@ -21,6 +21,7 @@
     import Tree from "../../Tree";
     import {tooltipContent} from "./VisualizationHelper";
     import VisualizationMixin from "./visualization-mixin.vue";
+    import TaxaDataSource from "./../../datasource/TaxaDataSource";
 
     @Component
     export default class TreemapVisualization extends mixins(VisualizationMixin) {
@@ -53,9 +54,10 @@
             }
         }
 
-        private initTreeMap() {
+        private async initTreeMap() {
             if (this.dataset != null && this.dataset.getDataset() != null) {
-                let tree: Tree = this.dataset.getDataset().getTree();
+                let taxaSource: TaxaDataSource = await this.dataset.getDataset().dataRepository.createTaxaDataSource();
+                let tree: Tree = await taxaSource.getTree();
                 const data = JSON.stringify(tree.getRoot());
 
                 this.treemap = $(this.$refs.visualization).treemap(JSON.parse(data), {
@@ -74,5 +76,4 @@
 </script>
 
 <style scoped>
-
 </style>
