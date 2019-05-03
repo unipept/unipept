@@ -11,23 +11,23 @@
         <card-body id="switch-dataset-card-body">
             <list class="switch-dataset-list" placeholder="Please add one or more datasets by clicking the plus button above... ">
                 <div class="list-item--two-lines" v-for="dataset of this.$store.getters.selectedDatasets" :class="activeDataset === dataset ? 'selected' : ''">
-                <span class="list-item-primary-action">
-                    <input v-if="dataset.getProgress() === 1" v-model="activeDataset" :value="dataset" type="radio" class="input-item select-dataset-radio-button" style="width: 24px;" />
-                    <determinate-circular-progress-indicator v-else :progress="dataset.getProgress()" :size="24"></determinate-circular-progress-indicator>
-                </span>
-                    <span class="list-item-primary-content">
-                    {{ dataset.getName() }}
-                    <span class="list-item-date">
-                        {{ dataset.getDateFormatted() }}
+                    <span class="list-item-primary-action">
+                        <input v-if="dataset.progress === 1" v-model="activeDataset" :value="dataset" type="radio" class="input-item select-dataset-radio-button" style="width: 24px;" />
+                        <determinate-circular-progress-indicator v-else :progress="dataset.progress" :size="24"></determinate-circular-progress-indicator>
                     </span>
-                    <span class="list-item-body">
-                        {{ dataset.getAmountOfPeptides() }} peptides
+                        <span class="list-item-primary-content">
+                        {{ dataset.getName() }}
+                        <span class="list-item-date">
+                            {{ dataset.getDateFormatted() }}
+                        </span>
+                        <span class="list-item-body">
+                            {{ dataset.getAmountOfPeptides() }} peptides
+                        </span>
                     </span>
-                </span>
-                    <span class="list-item-secondary-action" @click="deselectDataset(dataset)">
-                    <span class="glyphicon glyphicon-trash">
+                        <span class="list-item-secondary-action" @click="deselectDataset(dataset)">
+                        <span class="glyphicon glyphicon-trash">
+                        </span>
                     </span>
-                </span>
                 </div>
             </list>
         </card-body>

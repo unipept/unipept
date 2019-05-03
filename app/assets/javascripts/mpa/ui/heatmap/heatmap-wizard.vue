@@ -39,10 +39,10 @@ import {NormalizationType} from "./NormalizationType";
     import {Watch, Prop} from "vue-property-decorator";
     import SimpleButton from "../../../components/button/simple-button.vue";
     import HeatmapConfiguration from "./HeatmapConfiguration";
-    import DataSource from "../../DataSource";
-    import TaxaDataSource from "../../TaxaDataSource";
-    import EcDataSource from "../../EcDataSource";
-    import GoDataSource from "../../GoDataSource";
+    import DataSource from "../../datasource/DataSource";
+    import TaxaDataSource from "../../datasource/TaxaDataSource";
+    import EcDataSource from "../../datasource/EcDataSource";
+    import GoDataSource from "../../datasource/GoDataSource";
     import AllNormalizer from "../../heatmap/AllNormalizer";
     import RowNormalizer from "../../heatmap/RowNormalizer";
     import ColumnNormalizer from "../../heatmap/ColumnNormalizer";
@@ -92,7 +92,7 @@ import SearchSettings from "../../SearchSettings";
             this.onVerticalSelection(this.verticalDataSource);
             this.onNormalizerChange(this.normalizer);
 
-            this.heatmapConfiguration.horizontalDataSource.getTopItems(20);
+            // this.heatmapConfiguration.horizontalDataSource.getTopItems(20);
         }
 
         private normalizationTypes: Map<string, {information: string, factory: () => Normalizer}> = new Map([

@@ -11,18 +11,16 @@ export default class MpaAnalysisManager {
         let peptides = await peptideContainer.getPeptides();
         let dataset: Sample = new Sample(peptides, peptideContainer.getId());
 
-        eventBus.on('dataset-' + peptideContainer.getId() + "-progress", (p) => peptideContainer.setProgress(p));
-
-        await this.analyse(dataset, searchSettings);
         peptideContainer.setDataset(dataset);
+        await this.analyse(dataset, searchSettings, peptideContainer);
     }
 
-    private async analyse(dataset: Sample, searchSettings: SearchSettings): Promise<void> {
+    private async analyse(dataset: Sample, searchSettings: SearchSettings, peptideContainer: PeptideContainer): Promise<void> {
         let mpaConfig = {
             il: searchSettings.isEquateIl(),
             dupes: searchSettings.isFilterDuplicates(),
             missed: searchSettings.isHandleMissingCleavage()
         };
-        await dataset.search(mpaConfig);
+        await dataset.search(mpaConfig, peptideContainer);
     }
 }

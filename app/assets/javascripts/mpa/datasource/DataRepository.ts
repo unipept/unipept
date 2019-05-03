@@ -1,17 +1,17 @@
-import Resultset from "../../Resultset";
+import Resultset from "../Resultset";
 import GoDataSource from "./GoDataSource";
-import Sample from "../../Sample";
+import Sample from "../Sample";
 import TaxaDataSource from "./TaxaDataSource";
-import ProgressListener from "../../ProgressListener";
-import Tree from "../../Tree";
+import ProgressListener from "../ProgressListener";
+import Tree from "../Tree";
 
 // @ts-ignore
-import worker from "workerize-loader!./worker.js";
-import PeptideInfo from "../../PeptideInfo";
-import { postJSON } from "../../../utils";
-import NewGoTerms from "../../../fa/NewGoTerms";
-import GoTerm from "../../../fa/GoTerm";
-import { GoNameSpace } from "../../../fa/GoNameSpace";
+import newworker from "workerize-loader!./../newworker.js";
+import PeptideInfo from "../PeptideInfo";
+import { postJSON } from "../../utils";
+import NewGoTerms from "../../fa/NewGoTerms";
+import GoTerm from "../../fa/GoTerm";
+import { GoNameSpace } from "../../fa/GoNameSpace";
 
 
 export default class DataRepository {
@@ -19,8 +19,6 @@ export default class DataRepository {
     private _progressListeners: ProgressListener[] = [];
     private _tree: Tree;
     private _mpaConfig: MPAConfig;
-    // Maps a namespace onto a GoDataSource object. This map functions as a cache for these DataSources.
-    private _goDataSources: Map<string, GoDataSource> = new Map();
     private _goTerms: Map<GoNameSpace, GoTerm> = new Map();
 
     public constructor(sample: Sample, mpaConfig: MPAConfig) {
@@ -39,19 +37,10 @@ export default class DataRepository {
 
     /**
      * Creates a new GoDataSource, or returns one from the cache if the requested namespace was already queried.
-     * 
-     * @param namespace The GO-namespace for which a new DataSource should be constructed.
      */
-    public async createGoDataSource(namespace: GoNameSpace): Promise<GoDataSource> {
+    public async createGoDataSource(): Promise<GoDataSource> {
         await this.process();
-        let source: GoDataSource = this._goDataSources.get(namespace);
-        if (source) {
-            return source;
-        } else {
-            source = new GoDataSource(this, namespace);
-            this._goDataSources.set(namespace, source);
-            return source;
-        }
+        return new GoDataSource(this);
     }
 
     public get tree(): Tree {
@@ -72,7 +61,7 @@ export default class DataRepository {
             return;
         }
 
-        let wrkr = worker();
+        let wrkr = newworker();
         wrkr.onmessage = m => {
             if (m.data.type == "progress") {
                 this.setWorkerProgress(m.data.value);

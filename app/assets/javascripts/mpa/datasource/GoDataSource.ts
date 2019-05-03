@@ -1,6 +1,6 @@
 import DataElement from "./DataElement";
 import DataRepository from "./DataRepository";
-import { GoNameSpace } from "../../../fa/GoNameSpace";
+import { GoNameSpace } from "../../fa/GoNameSpace";
 import DataSource from "./DataSource";
 
 export default class GoDataSource extends DataSource  {

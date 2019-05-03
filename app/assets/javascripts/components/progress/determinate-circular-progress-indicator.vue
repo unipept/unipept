@@ -24,6 +24,7 @@
         };
 
         @Watch('progress') onProgressChange() {
+            console.log("PROGRESS UPDATED!");
             this.updateProgress()
         }
 

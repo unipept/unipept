@@ -2,10 +2,15 @@ import {FunctionalAnnotations} from "../fa/FunctionalAnnotations";
 import Resultset from "./Resultset";
 import {postJSON} from "../utils";
 import Tree from "./Tree";
-import Node from "./Node"
+import DataRepository from "./datasource/DataRepository";
+import TaxaDataSource from "./datasource/TaxaDataSource";
+import ProgressListener from "./ProgressListener";
 
 export default class Sample {
     public static readonly TAXA_URL: string = "/private_api/taxa";
+
+    private _dataRepository: DataRepository;
+    private _progress: number;
 
     public tree: Tree;
     public originalPeptides: string[];
@@ -40,16 +45,20 @@ export default class Sample {
      * @param mpaConfig
      * @return Taxonomic tree
      */
-    async search(mpaConfig: MPAConfig): Promise<Tree> {
-        this.resultSet = new Resultset(this, mpaConfig);
-        await this.resultSet.process();
-        this.tree = new Tree(this.resultSet.processedPeptides.values());
-        const taxonInfo = await Sample.getTaxonInfo(this.tree.getTaxa());
-        this.tree.setTaxonNames(taxonInfo);
-        this.tree.sortTree();
-        this.fa = null;
-        this.addTaxonInfo(taxonInfo);
-        return this.tree;
+    async search(mpaConfig: MPAConfig, progressListener: ProgressListener): Promise<Tree> {
+        this._dataRepository = new DataRepository(this, mpaConfig);
+        this._dataRepository.registerProgressListener(progressListener);
+        let taxaDataSource: TaxaDataSource = await this.dataRepository.createTaxaDataSource();
+        return taxaDataSource.getTree();
+        // this.resultSet = new Resultset(this, mpaConfig);
+        // await this.resultSet.process();
+        // this.tree = new Tree(this.resultSet.processedPeptides.values());
+        // const taxonInfo = await Sample.getTaxonInfo(this.tree.getTaxa());
+        // this.tree.setTaxonNames(taxonInfo);
+        // this.tree.sortTree();
+        // this.fa = null;
+        // this.addTaxonInfo(taxonInfo);
+        // return this.tree;
     }
 
     /**
@@ -60,6 +69,10 @@ export default class Sample {
     async reprocessFA(cutoff: number = 50, sequences: string[] = null) {
         await this.resultSet.processFA(cutoff, sequences);
         this.fa = this.resultSet.fa;
+    }
+
+    get dataRepository(): DataRepository {
+        return this._dataRepository;
     }
 
     getTree(): Tree {

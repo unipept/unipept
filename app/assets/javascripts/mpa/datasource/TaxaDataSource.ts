@@ -1,11 +1,11 @@
 import DataSource from "./DataSource";
 import DataElement from "./DataElement";
-import Sample from "../../Sample";
-import Resultset from "../../Resultset";
+import Sample from "../Sample";
+import Resultset from "../Resultset";
 // @ts-ignore
 import TaxaElement from "./TaxaElement";
-import Tree from "../../Tree";
-import Node from "../../Node";
+import Tree from "../Tree";
+import Node from "../Node";
 import DataRepository from "./DataRepository";
 
 export default class TaxaDataSource extends DataSource {

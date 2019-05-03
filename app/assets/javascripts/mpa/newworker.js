@@ -2,7 +2,6 @@ import "babel-polyfill"; // for async await webpacker support
 import "whatwg-fetch";
 // TODO: also include other pollyfills?
 import {postJSON, numberToPercent} from "../utils.js";
-import NewGoTerms from "../fa/NewGoTerms.js";
 
 const BATCH_SIZE = 100;
 const PEPT2DATA_URL = "/mpa/pept2data";
