@@ -102,7 +102,7 @@ export default class DataRepository {
                     namespace = GoNameSpace.MolecularFunction;
                 }
 
-                convertedItems.push(new GoTerm(item.code, item.name, namespace, item.numberOfPepts));
+                convertedItems.push(new GoTerm(item.code, item.name, namespace, item.numberOfPepts, item.fractionOfPepts));
             }
             dataOutput.set(namespace, convertedItems);
         }

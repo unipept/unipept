@@ -41,8 +41,6 @@ export default class GoDataSource extends DataSource  {
             }
         }
 
-        console.log(result);
-        console.log(namespace);
         return result[0].get(namespace);
     }
 

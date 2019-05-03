@@ -14,8 +14,8 @@
             </tr>
         </thead>
         <tbody>
-            <tr aria-expanded="false" tabindex="0" role="button" style="cursor: pointer;" v-for="goTerm of goTerms" v-bind:key="goTerm.code">
-                <td class="shaded-cell" style="background-image: linear-gradient(to right, rgb(221, 221, 221) 10.0301%, transparent 10.0301%); width: 5em;">
+            <tr aria-expanded="false" tabindex="0" role="button" style="cursor: pointer;" v-for="goTerm of items" v-bind:key="goTerm.code">
+                <td class="shaded-cell" :style="`background-image: linear-gradient(to right, rgb(221, 221, 221) ${goTerm.fractionOfPepts * 100}%, transparent ${goTerm.fractionOfPepts * 100}%); width: 5em;`">
                     {{ goTerm.popularity }}
                 </td>
                 <td style="width: 7em;">
@@ -40,14 +40,14 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-import GoTerm from "../../../fa/GoTerm";
+    	import GoTerm from "../../../fa/GoTerm";
 
     @Component({
         components: {}
     })
-    export default class AmountTable extends Vue {
+    export default class GoAmountTable extends Vue {
         @Prop({required: true})
-        private goTerms: GoTerm[];
+        private items: GoTerm[];
     }
 </script>
 
