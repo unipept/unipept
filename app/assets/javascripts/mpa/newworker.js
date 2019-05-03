@@ -6,14 +6,58 @@ import {postJSON, numberToPercent} from "../utils.js";
 const BATCH_SIZE = 100;
 const PEPT2DATA_URL = "/mpa/pept2data";
 
+const NAMESPACES = ["biological process", "cellular component", "molecular function"];
+
+/**
+ * @type {Map<string, GoTermCache>}
+ */
 const goTermsCache = new Map();
+const processedPeptides = new Map();
+
+ /**
+  * TODO Convert to TypeScript
+  * @typedef {Object} MPAPeptide
+  * @property {Map}      processed   A map form peptides to information about them
+  * @property {string[]} missed      The list of peptides that could not be matched
+  * @property {number}   numMatched  Number of peptides that were matched
+  * @property {number}   numSearched Number of peptides that were matched
+  */
+
+ /**
+  * TODO convert to TypeScript
+  * 
+  * @typedef {Object} MPAFAResult
+  * @property  {number} weightedValue
+  *  The sum of the relative weights of the GOTerm in each sequence it occurs in
+  * @property  {number} absoluteCount
+  *   The number of occurrences of this annotation in a protein that was matched by a
+  *   sequence taking dupes into account (only if il=false)
+  * @property  {number} absoluteCountFiltered
+  *   `absoluteCount` not taking dupes into account
+  * @property  {number} numberOfPepts
+  *   Number of peptides this annotation occurs at least once in (taking dupes into account)
+  * @property  {number} value
+  *   weightedValue / sumWeightedValue
+  * @property {string} code
+  * @property {string} name
+  * @property {string} namespace
+  */ 
+
+  /**
+   * TODO convert to TypeScript
+   * 
+   * @typedef {Object} GoTermCache
+   * @property {string} name 
+   * @property {string} namespace 
+   * @property {string} code 
+   */
+
 
 export async function process(originalPeptides, config, goRequester) {
     const preparedPeptides = preparePeptides(originalPeptides, config);
     const peptideList = Array.from(preparedPeptides.keys());
     setProgress(0.1);
 
-    let processedPeptides = new Map();
     for (let i = 0; i < peptideList.length; i += BATCH_SIZE) {
         const data = JSON.stringify({
             peptides: peptideList.slice(i, i + BATCH_SIZE),
@@ -33,13 +77,14 @@ export async function process(originalPeptides, config, goRequester) {
             .filter(x => x.startsWith("GO:"))
             .forEach(x => usedGoTerms.add(x));
     }
+    await cache(Array.from(usedGoTerms.values()));
 
     let numMatched = 0;
     for (const peptide of processedPeptides.values()) {
         peptide.count = preparedPeptides.get(peptide.sequence);
         numMatched += peptide.count;
         // TODO fix grouped!
-        //makeFaGrouped(peptide);
+        makeFaGrouped(peptide);
     }
     setProgress(1);
     return {
@@ -78,6 +123,153 @@ async function addToCache(newTerms, namespace = null) {
             });
         }
     });
+}
+
+/**
+ * Add an faGrouped key to the peptides to find annotations of a specific type
+ * faster
+ * 
+ * @param {PeptideMPAInfo} peptide
+ */
+function makeFaGrouped(peptide) {
+    peptide.faGrouped = {"EC": [], "GO": {}};
+    // @ts-ignore
+    for (const [annotation, count] of Object.entries(peptide.fa.data || {})) {
+        const type = annotation.split(":", 1)[0];
+        switch (type) {
+            case "EC": peptide.faGrouped["EC"].push({code: annotation.substr(3), value: count}); break;
+            case "GO": {
+                let ns = "Unknown";
+                if (goTermsCache.has(annotation)) {
+                    ns = goTermsCache.get(annotation)["namespace"];
+                }
+                if (!(ns in peptide.faGrouped["GO"])) {
+                    peptide.faGrouped["GO"][ns] = [];
+                }
+                peptide.faGrouped["GO"][ns].push({code: annotation, value: count});
+                break;
+            }
+        }
+    }
+}
+
+/**
+ * 
+ * @param {number} percent 
+ * @param {Iterable<String>} sequences 
+ * @return {Promise<{data, trust}>}
+ */
+export async function summarizeGo(percent = 50, sequences = null) {
+    let goData = Array.from(goTermsCache.entries());
+
+    let usedGoTerms = new Set();
+    for (let peptide of processedPeptides.values()) {
+        Object.keys(peptide.fa.data || [])
+            .filter(x => x.startsWith("GO:"))
+            .forEach(x => usedGoTerms.add(x));
+    }
+
+    await cache(Array.from(usedGoTerms.values()));
+
+    let res = {};
+    let trust = {};
+    const countExtractor = pept => pept.fa.counts["GO"] || 0;
+    const trustExtractor = pept => countExtractor(pept) / pept.fa.counts["all"];
+    for (let namespace of NAMESPACES) {
+        const dataExtractor = pept => pept.faGrouped.GO[namespace] || [];
+        const {data, trust: curStats} = summarizeFa(dataExtractor, countExtractor, trustExtractor, percent, sequences);
+        trust[namespace] = curStats;
+        res[namespace] = data;
+    }
+
+    return {data: res, trust: trust}
+}
+
+/**
+ * Create a mapping of functional analysis codes to a weight by aggregating
+ * the counts of all peptides that have functional analysis tags.
+ *
+ * @param {function(MPAPeptide): Iterable<{code, value}>} extract
+ *            function extracting the FAInfo form a peptide
+ * @param {function(MPAPeptide): number} countExtractor
+ *            function extracting the the number of annotated (full)peptides
+ *            form a peptide
+ * @param {function(MPAPeptide): number} trustExtractor
+ *            function calcualting a trust level in [0,1] for the annotaions
+ *            of a peptide.
+ * @param {number} cutoff  data with strictly lower weight is ignored
+ *                         value should be given as percentage in [0,100]
+ * @param {Iterable.<string>} [sequences=null] subset of sequences to take into account,
+ *                                    null to consider all
+ * @return {{data:MPAFAResult[],trust:FATrustInfo}} an array of MPAFAResult to be stored
+ * @todo  remove the cutoff
+ */
+function summarizeFa(extract, countExtractor, trustExtractor, cutoff = 50, sequences = null) {
+    let iterableOfSequences = sequences || processedPeptides.keys();
+
+    const map = new Map();
+    const seqMap = new Map();
+    const fraction = cutoff / 100;
+    let sumWeight = 0;
+    let sumCount = 0;
+    let sumTrust = 0;
+    let numAnnotated = 0;
+
+    for (let sequence of iterableOfSequences) {
+        const pept = processedPeptides.get(sequence);
+        const totalNumAnnotations = countExtractor(pept);
+        const trust = trustExtractor(pept) || 0;
+        sumCount += pept.count;
+
+        if (totalNumAnnotations > 0) {
+            let atLeastOne = false;
+            for (const {code, value} of extract(pept)) {
+                const weight = value / totalNumAnnotations;
+                if (weight < fraction) continue; // skip if insignificant weight TODO: remove
+                atLeastOne = true;
+                const count = map.get(code) || [0, 0, 0, 0, 0];
+                const faSeqences = seqMap.get(code) || Object.create(null);
+                faSeqences[sequence] = pept.count;
+                seqMap.set(code, faSeqences);
+                const scaledWeight = weight * pept.count;
+                map.set(code, [
+                    count[0] + scaledWeight,
+                    count[1] + value,
+                    count[2] + value * pept.count,
+                    count[3] + pept.count,
+                    count[4] + trust * pept.count,
+                ]);
+                sumWeight += scaledWeight;
+            }
+
+            if (atLeastOne) {
+                sumTrust += trust * pept.count;
+                numAnnotated += pept.count;
+            }
+        }
+    }
+
+    return {
+        trust: {
+            trustCount: sumTrust,
+            annotatedCount: numAnnotated,
+            totalCount: sumCount,
+        },
+        data: Array.from(map).map(x => ({
+            name: goTermsCache.get(x[0]).name,
+            namespace: goTermsCache.get(x[0]).namespace,
+            code: x[0],
+            weightedValue: x[1][0],
+            absoluteCountFiltered: x[1][1],
+            absoluteCount: x[1][2],
+            numberOfPepts: x[1][3],
+            fractionOfPepts: x[1][3] / sumCount,
+            trust: x[1][4] / x[1][3],
+            value: x[1][3],
+            evidence: x[1][0] / sumWeight,
+            sequences: seqMap.get(x[0]),
+        })),
+    };
 }
 
 /**

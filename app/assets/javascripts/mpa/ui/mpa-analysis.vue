@@ -11,7 +11,7 @@
         </div>
         <!-- <heatmap-wizard v-if="$store.getters.activeDataset && $store.getters.activeDataset.getProgress() === 1" :sample="$store.getters.activeDataset.dataset" :search-settings="$store.getters.searchSettings"></heatmap-wizard> -->
         <single-dataset-visualizations-card id="visualizations-card"></single-dataset-visualizations-card>
-        <!-- <functional-summary-card></functional-summary-card> -->
+        <new-functional-summary-card></new-functional-summary-card>
     </div>
 </template>
 
@@ -23,13 +23,13 @@
     import SwitchDatasetCard from "./switch-dataset-card.vue";
     import LoadDatasetsCard from "./load-datasets-card.vue";
     import SingleDatasetVisualizationsCard from "./single-dataset-visualizations-card.vue";
-    import FunctionalSummaryCard from "./functional-summary-card.vue";
+    import NewFunctionalSummaryCard from "./new-functional-summary-card.vue";
     import HeatmapWizard from "./heatmap/heatmap-wizard.vue";
 
     @Component({
         components: {
             HeatmapWizard,
-            FunctionalSummaryCard, SingleDatasetVisualizationsCard, LoadDatasetsCard, SwitchDatasetCard, ExperimentSummaryCard},
+            NewFunctionalSummaryCard, SingleDatasetVisualizationsCard, LoadDatasetsCard, SwitchDatasetCard, ExperimentSummaryCard},
         computed: {
             selectedDatasets: {
                 get() {

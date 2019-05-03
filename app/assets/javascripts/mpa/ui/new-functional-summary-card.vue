@@ -10,7 +10,7 @@
                 <div class="nav-right">
                     <div class="dropdown pull-right">
                         <button class="btn btn-default dropdown-toggle" type="button" id="mpa-select-fa-sort" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="glyphicon glyphicon-sort-by-attributes-alt pull-left"></span><span id="mpa-select-fa-sort-name">{{ faSortSettings.name}}</span>
+                            <span class="glyphicon glyphicon-sort-by-attributes-alt pull-left"></span><span id="mpa-select-fa-sort-name">{{ faSortSettings.name }}</span>
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-right" id="mpa-select-fa-sort-items" aria-labelledby="mpa-select-fa-sort">
@@ -90,6 +90,8 @@
     import CardBody from "../../components/card/card-body.vue";
     import {showInfoModal} from "../../modal";
     import Sample from "../Sample";
+import GoDataSource from "../datasource/GoDataSource";
+import { GoNameSpace } from "../../fa/GoNameSpace";
 
     @Component({
         components: {
@@ -116,7 +118,7 @@
             }
         }
     })
-    export default class FunctionalSummaryCard extends Vue {
+    export default class NewFunctionalSummaryCard extends Vue {
         namespaces: string[] = MpaAnalysisManager.GO_NAMESPACES;
         tabs: Tab[] = [];
 
@@ -226,27 +228,33 @@
             let peptideContainer = this.$store.getters.activeDataset;
 
             if (peptideContainer && peptideContainer.getDataset()) {
-                let dataset: Sample = peptideContainer.getDataset();
-
-                const percent = parseInt(this.percentSettings);
-                let sequences = null;
-
-                let taxonId = this.$store.getters.selectedTaxonId;
-
-                if (taxonId > 0) {
-                    sequences = dataset.tree.getAllSequences(taxonId);
-                    let taxonData = dataset.tree.nodes.get(taxonId);
-                    this.filteredScope = `${taxonData.name} (${taxonData.rank})`;
-                }
-
-                await dataset.reprocessFA(percent, sequences);
-                if (dataset.baseFa === null) {
-                    dataset.setBaseFA();
-                }
-
-                const num = dataset.fa.getTrust().totalCount;
-                this.numOfFilteredPepts = `${num} peptide${num === 1 ? "" : "s"}`;
+                let sample: Sample = peptideContainer.getDataset();
+                let goSource: GoDataSource = await sample.dataRepository.createGoDataSource();
+                console.log(await goSource.getGoTerms(GoNameSpace.BiologicalProcess));
             }
+
+            // if (peptideContainer && peptideContainer.getDataset()) {
+            //     let dataset: Sample = peptideContainer.getDataset();
+
+            //     const percent = parseInt(this.percentSettings);
+            //     let sequences = null;
+
+            //     let taxonId = this.$store.getters.selectedTaxonId;
+
+            //     if (taxonId > 0) {
+            //         sequences = dataset.tree.getAllSequences(taxonId);
+            //         let taxonData = dataset.tree.nodes.get(taxonId);
+            //         this.filteredScope = `${taxonData.name} (${taxonData.rank})`;
+            //     }
+
+            //     await dataset.reprocessFA(percent, sequences);
+            //     if (dataset.baseFa === null) {
+            //         dataset.setBaseFA();
+            //     }
+
+            //     const num = dataset.fa.getTrust().totalCount;
+            //     this.numOfFilteredPepts = `${num} peptide${num === 1 ? "" : "s"}`;
+            // }
         }
 
         /**
@@ -255,19 +263,19 @@
          * @param {String} kind Human readable word that fits in "To have at least one … assigned to it"
          * @return {string}
          */
-        private trustLine(fa, kind) {
-            const trust = fa.getTrust();
-            if (trust.annotatedCount === 0) {
-                return `<strong>No peptide</strong> has a ${kind} assigned to it. `;
-            }
-            if (trust.annotatedCount === trust.totalCount) {
-                return `<strong>All peptides</strong> ${trust.annotatedCount <= 5 ? `(only ${trust.annotatedCount})` : ""} have at least one ${kind} assigned to them. `;
-            }
-            if (trust.annotatedCount === 1) {
-                return `Only <strong>one peptide</strong> (${numberToPercent(trust.annotaionAmount)}) has at least one ${kind} assigned to it. `;
-            }
-            return `<strong>${trust.annotatedCount} peptides</strong> (${numberToPercent(trust.annotaionAmount)}) have at least one ${kind} assigned to them. `;
-        }
+        // private trustLine(fa, kind) {
+        //     const trust = fa.getTrust();
+        //     if (trust.annotatedCount === 0) {
+        //         return `<strong>No peptide</strong> has a ${kind} assigned to it. `;
+        //     }
+        //     if (trust.annotatedCount === trust.totalCount) {
+        //         return `<strong>All peptides</strong> ${trust.annotatedCount <= 5 ? `(only ${trust.annotatedCount})` : ""} have at least one ${kind} assigned to them. `;
+        //     }
+        //     if (trust.annotatedCount === 1) {
+        //         return `Only <strong>one peptide</strong> (${numberToPercent(trust.annotaionAmount)}) has at least one ${kind} assigned to it. `;
+        //     }
+        //     return `<strong>${trust.annotatedCount} peptides</strong> (${numberToPercent(trust.annotaionAmount)}) have at least one ${kind} assigned to them. `;
+        // }
     }
 </script>
 

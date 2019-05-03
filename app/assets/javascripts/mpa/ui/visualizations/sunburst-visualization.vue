@@ -44,7 +44,6 @@
         @Prop({default: false}) fullScreen: false;
 
         mounted() {
-            console.log("MOUNTED");
             this.initTree();
         }
 
@@ -75,12 +74,9 @@
 
         private async initTree() {
             if (this.dataset != null && this.dataset.getDataset() != null) {
-                console.log("INITING TREE!");
                 let taxaDataSource: TaxaDataSource = await this.dataset.getDataset().dataRepository.createTaxaDataSource();
                 let tree: Tree = await taxaDataSource.getTree();
                 const data = JSON.stringify(tree.getRoot());
-
-                console.log(data);
 
                 this.sunburst = $(this.$refs.visualization).sunburst(JSON.parse(data), {
                     width: 740,
