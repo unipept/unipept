@@ -41,6 +41,7 @@ const processedPeptides = new Map();
   * @property {string} code
   * @property {string} name
   * @property {string} namespace
+  * @property {number} fractionOfPepts
   */ 
 
   /**
@@ -83,7 +84,6 @@ export async function process(originalPeptides, config, goRequester) {
     for (const peptide of processedPeptides.values()) {
         peptide.count = preparedPeptides.get(peptide.sequence);
         numMatched += peptide.count;
-        // TODO fix grouped!
         makeFaGrouped(peptide);
     }
     setProgress(1);
@@ -182,6 +182,12 @@ export async function summarizeGo(percent = 50, sequences = null) {
         res[namespace] = data;
     }
 
+    // Sort all terms per namespace by popularity
+    for (let namespace of NAMESPACES) {
+        res[namespace] = res[namespace].sort((a, b) => b.numberOfPepts - a.numberOfPepts);
+    }
+
+    console.log(res);
     return {data: res, trust: trust}
 }
 

@@ -37,10 +37,10 @@
             <card-body>
                 <div class="tab-content">
                     <tab label="GO terms" :active="true">
-                        <!-- <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
+                        <!-- <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown> -->
                         This panel shows the Gene Ontology annotations that were matched to
-                        your peptides. <span v-if="fa && $store.getters.activeDataset && $store.getters.activeDataset.getProgress() === 1" v-html="this.trustLine(fa, 'GO term')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
-                        <div v-if="!$store.getters.activeDataset || $store.getters.activeDataset.getProgress() !== 1" class="mpa-unavailable go">
+                        your peptides. <span v-if="fa && $store.getters.activeDataset && $store.getters.activeDataset.progress === 1" v-html="this.trustLine(fa, 'GO term')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
+                        <div v-if="!$store.getters.activeDataset || $store.getters.activeDataset.progress !== 1" class="mpa-unavailable go">
                             <h3>Biological Process</h3>
                             <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
                             <h3>Cellular Component</h3>
@@ -48,9 +48,15 @@
                             <h3>Molecular Function</h3>
                             <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
                         </div>
-                        <div v-else v-for="variant in namespaces" v-bind:key="variant">
-                            <go-terms-summary :sort-settings="faSortSettings" :fa="fa" :namespace="variant" :peptide-container="$store.getters.activeDataset"></go-terms-summary>
-                        </div> -->
+                        <div v-else >
+                            <h3>Biological Process</h3>
+                            <go-amount-table :items="biologicalGOTerms"></go-amount-table>
+                            <h3>Cellular Component</h3>
+                            <go-amount-table :items="cellularGoTerms"></go-amount-table>
+                            <h3>Molecular Function</h3>
+                            <go-amount-table :items="molecularGoTerms"></go-amount-table>
+                            <!-- <go-terms-summary :sort-settings="faSortSettings" :fa="fa" :namespace="variant" :peptide-container="$store.getters.activeDataset"></go-terms-summary> -->
+                        </div>
                     </tab>
                     <tab label="EC numbers">
                         <!-- <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
@@ -90,8 +96,10 @@
     import CardBody from "../../components/card/card-body.vue";
     import {showInfoModal} from "../../modal";
     import Sample from "../Sample";
-import GoDataSource from "../datasource/GoDataSource";
-import { GoNameSpace } from "../../fa/GoNameSpace";
+    import GoDataSource from "../datasource/GoDataSource";
+    import { GoNameSpace } from "../../fa/GoNameSpace";
+    import GoTerm from "../../fa/GoTerm";
+    import GoAmountTable from "./tables/go-amount-table.vue";
 
     @Component({
         components: {
@@ -99,7 +107,7 @@ import { GoNameSpace } from "../../fa/GoNameSpace";
             CardHeader,
             IndeterminateProgressBar,
             FilterFunctionalAnnotationsDropdown,
-            SimpleButton, EcNumbersSummary, GoTermsSummary, Tab, CardNav},
+            SimpleButton, EcNumbersSummary, GoTermsSummary, Tab, CardNav, GoAmountTable},
         computed: {
             watchableDataset: {
                 get(): PeptideContainer {
@@ -119,13 +127,18 @@ import { GoNameSpace } from "../../fa/GoNameSpace";
         }
     })
     export default class NewFunctionalSummaryCard extends Vue {
-        namespaces: string[] = MpaAnalysisManager.GO_NAMESPACES;
         tabs: Tab[] = [];
 
         private formatType: string = "int";
         private fieldType: string = "numberOfPepts";
         private shadeFieldType: string = "fractionOfPepts";
         private name: string = "Peptides";
+
+        private goNamespaces: GoNameSpace[] = Object.values(GoNameSpace);
+
+        private biologicalGOTerms = [];
+        private cellularGoTerms = [];
+        private molecularGoTerms = [];
 
         private readonly formatters = {
             "int": x => x.toString(),
@@ -230,31 +243,13 @@ import { GoNameSpace } from "../../fa/GoNameSpace";
             if (peptideContainer && peptideContainer.getDataset()) {
                 let sample: Sample = peptideContainer.getDataset();
                 let goSource: GoDataSource = await sample.dataRepository.createGoDataSource();
-                console.log(await goSource.getGoTerms(GoNameSpace.BiologicalProcess));
+                this.biologicalGOTerms.splice(0);
+                this.biologicalGOTerms.push(... await goSource.getGoTerms(GoNameSpace.BiologicalProcess));
+                this.cellularGoTerms.splice(0);
+                this.cellularGoTerms.push(... await goSource.getGoTerms(GoNameSpace.CellularComponent));
+                this.molecularGoTerms.splice(0);
+                this.molecularGoTerms.push(... await goSource.getGoTerms(GoNameSpace.MolecularFunction));
             }
-
-            // if (peptideContainer && peptideContainer.getDataset()) {
-            //     let dataset: Sample = peptideContainer.getDataset();
-
-            //     const percent = parseInt(this.percentSettings);
-            //     let sequences = null;
-
-            //     let taxonId = this.$store.getters.selectedTaxonId;
-
-            //     if (taxonId > 0) {
-            //         sequences = dataset.tree.getAllSequences(taxonId);
-            //         let taxonData = dataset.tree.nodes.get(taxonId);
-            //         this.filteredScope = `${taxonData.name} (${taxonData.rank})`;
-            //     }
-
-            //     await dataset.reprocessFA(percent, sequences);
-            //     if (dataset.baseFa === null) {
-            //         dataset.setBaseFA();
-            //     }
-
-            //     const num = dataset.fa.getTrust().totalCount;
-            //     this.numOfFilteredPepts = `${num} peptide${num === 1 ? "" : "s"}`;
-            // }
         }
 
         /**
