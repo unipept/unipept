@@ -12,7 +12,6 @@
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import Checkbox from "../../components/input/checkbox.vue";
-    import SearchSettings from "../SearchSettings";
 
     @Component({
         components: {Checkbox},

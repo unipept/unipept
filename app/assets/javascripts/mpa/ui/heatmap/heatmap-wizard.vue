@@ -48,7 +48,6 @@ import {NormalizationType} from "./NormalizationType";
     import ColumnNormalizer from "../../heatmap/ColumnNormalizer";
     import { Normalizer } from "../../heatmap/Normalizer";
     import Sample from "../../Sample";
-import SearchSettings from "../../SearchSettings";
 
     @Component({
         components: {SimpleButton}
@@ -57,21 +56,14 @@ import SearchSettings from "../../SearchSettings";
         @Prop()
         private sample: Sample;
         @Prop()
-        private searchSettings: SearchSettings;
+        private searchSettings: MPAConfig;
 
-        private mpaConfig: MPAConfig;
         private currentStep: number = 1;
         private heatmapConfiguration: HeatmapConfiguration = new HeatmapConfiguration();
 
         private dataSources: Map<string, () => DataSource>;
 
         created() {
-            this.mpaConfig = {
-                il: this.searchSettings.isEquateIl(),
-                dupes: this.searchSettings.isFilterDuplicates(),
-                missed: this.searchSettings.isHandleMissingCleavage()
-            }
-
             console.log("CREATED:");
             console.log(this.sample);
 

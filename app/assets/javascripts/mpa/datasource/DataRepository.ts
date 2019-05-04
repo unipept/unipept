@@ -19,10 +19,11 @@ import { MPAFAResult } from "../newworker";
 export default class DataRepository {
     private readonly _sample: Sample;
     private _progressListeners: ProgressListener[] = [];
-    private _tree: Tree;
-    private _mpaConfig: MPAConfig;
-    private _goTerms: Map<GoNameSpace, GoTerm> = new Map();
     private _worker;
+    private _mpaConfig: MPAConfig;
+
+    private _taxaSourceCache: TaxaDataSource;
+    private _goSourceCache: GoDataSource;
 
     public constructor(sample: Sample, mpaConfig: MPAConfig) {
         this._sample = sample;
@@ -34,20 +35,20 @@ export default class DataRepository {
     }
 
     public async createTaxaDataSource(): Promise<TaxaDataSource> {
-        await this.process();
-        return new TaxaDataSource(this);
+        if (!this._taxaSourceCache) {
+            this._taxaSourceCache = new TaxaDataSource(this);
+        }
+        return this._taxaSourceCache;
     }
 
     /**
      * Creates a new GoDataSource, or returns one from the cache if the requested namespace was already queried.
      */
     public async createGoDataSource(): Promise<GoDataSource> {
-        await this.process();
-        return new GoDataSource(this);
-    }
-
-    public get tree(): Tree {
-        return this._tree;
+        if (!this._goSourceCache) {
+            this._goSourceCache = new GoDataSource(this);
+        }
+        return this._goSourceCache;
     }
 
     public setWorkerProgress(value: number): void {
@@ -59,11 +60,7 @@ export default class DataRepository {
     /**
      * Compute all necessary data for the given sample using a worker thread.
      */
-    private async process() {
-        if (this._tree) {
-            return;
-        }
-
+    public async computeTaxa(): Promise<[Tree, string[], number, number]> {
         this._worker = newworker();
         this._worker.onmessage = m => {
             if (m.data.type == "progress") {
@@ -78,10 +75,12 @@ export default class DataRepository {
             processedPeptides.set(p.sequence, p);
         }
 
-        this._tree = new Tree(processed);
-        const taxonInfo = await Sample.getTaxonInfo(this._tree.getTaxa());
-        this._tree.setTaxonNames(taxonInfo);
-        this._tree.sortTree();
+        let tree = new Tree(processed);
+        const taxonInfo = await Sample.getTaxonInfo(tree.getTaxa());
+        tree.setTaxonNames(taxonInfo);
+        tree.sortTree();
+
+        return [tree, missed, numMatched, numSearched];
     }
 
     public async computeGoTerms(percent = 50, sequences = null): Promise<[Map<GoNameSpace, GoTerm[]>, Map<GoNameSpace, FATrust>]> {

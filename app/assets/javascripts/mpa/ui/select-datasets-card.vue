@@ -46,7 +46,6 @@
     import PeptideContainer from "../PeptideContainer";
     import SimpleButton from "../../components/button/simple-button.vue";
     import SearchSettingsForm from "./search-settings-form.vue";
-    import SearchSettings from "../SearchSettings";
     import CardTitle from "../../components/card/card-title.vue";
     import CardHeader from "../../components/card/card-header.vue";
     import CardBody from "../../components/card/card-body.vue";
@@ -62,9 +61,9 @@
         missingCleavage: boolean = false;
 
         created() {
-            this.equateIl = this.$store.getters.searchSettings.isEquateIl();
-            this.filterDuplicates = this.$store.getters.searchSettings.isFilterDuplicates();
-            this.missingCleavage = this.$store.getters.searchSettings.isHandleMissingCleavage();
+            this.equateIl = this.$store.getters.searchSettings.il;
+            this.filterDuplicates = this.$store.getters.searchSettings.dupes;
+            this.missingCleavage = this.$store.getters.searchSettings.missed;
         }
 
         deselectDataset(dataset: PeptideContainer) {
@@ -72,7 +71,7 @@
         }
 
         search(): void {
-            this.$store.dispatch('setSearchSettings', new SearchSettings(this.equateIl, this.filterDuplicates, this.missingCleavage));
+            this.$store.dispatch('setSearchSettings', {il: this.equateIl, dupes: this.filterDuplicates, missed: this.missingCleavage});
             this.$store.dispatch('setAnalysis', true);
         }
 
