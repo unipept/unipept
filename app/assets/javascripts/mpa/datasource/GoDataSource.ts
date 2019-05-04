@@ -117,17 +117,14 @@ export default class GoDataSource extends DataSource  {
                 sequenceHash = sha256(sequences.toString()).toString() + cutoff;
             }
 
-            console.log("SEQUENCE HASH ---> " + sequenceHash);
             let idx: number = this._cachedSequencesLRU.indexOf(sequenceHash);
             
             if (idx >= 0) {
-                console.log("RETURNED FROM CACHE!");
                 // We just need to retrieve the item from the cache, mark it as used, and return it
                 this._cachedSequencesLRU.splice(idx, 1);
                 this._cachedSequencesLRU.unshift(sequenceHash);
                 return this._cache.get(sequenceHash).get(namespace);
             } else {
-                console.log("ADDING TO CACHE!");
                 // The item is not currently stored in the cache. We need to get it.
                 let result: [Map<GoNameSpace, GoTerm[]>, Map<GoNameSpace, FATrust>] = await this.computeGoTerms(cutoff, sequences);
                 // Enter the item into the cache
