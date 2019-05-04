@@ -8,7 +8,7 @@
             </span>
             <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
         </h2>
-        <div v-once ref="visualization"></div>
+        <treeview ref="treeview" :data="data" :width="916" :height="600" :tooltip="tooltip" :colors="colors" :rerootCallback="rerootCallback"></treeview>
     </div>
 </template>
 
@@ -20,12 +20,34 @@
     import Tree from "../../Tree";
     import {tooltipContent} from "./VisualizationHelper";
     import VisualizationMixin from "./visualization-mixin.vue";
+    import TaxaDataSource from "../../datasource/TaxaDataSource";
+    import Treeview from "./treeview.vue";
+    import Node from "./../../Node";
 
-    @Component
+    @Component({
+        components: {
+            Treeview
+        }
+    })
     export default class TreeviewVisualization extends mixins(VisualizationMixin) {
-        treeview!: any;
+        $refs: {
+            treeview: Treeview
+        }
 
-        @Prop({default: false}) fullScreen: boolean;
+        @Prop({default: false}) 
+        private fullScreen: boolean;
+
+        private colors: (d: any) => string = (d: any) => {
+            if (d.name === "Bacteria") return "#1565C0"; // blue
+            if (d.name === "Archaea") return "#FF8F00"; // orange
+            if (d.name === "Eukaryota") return "#2E7D32"; // green
+            if (d.name === "Viruses") return "#C62828"; // red
+            return d3.scale.category10().call(this, d);
+        };
+
+        private rerootCallback: (d: any) => void  = (d: any) => this.search(d.id, d.name, 1000);
+        private data: Node = null;
+        private tooltip: (d: any) => string = tooltipContent; 
 
         mounted() {
             this.initTreeview();
@@ -42,34 +64,18 @@
         }
 
         @Watch('fullScreen') onFullScreenChanged(newFullScreen: boolean, oldFullScreen: boolean) {
-            this.treeview.setFullScreen(newFullScreen)
+            this.$refs.treeview.setFullScreen(newFullScreen)
         }
 
         reset() {
-            if (this.treeview) {
-                this.treeview.reset();
-            }
+            this.$refs.treeview.reset();
         }
 
-        private initTreeview() {
+        private async initTreeview() {
             if (this.dataset != null && this.dataset.getDataset() != null) {
-                let tree: Tree = this.dataset.getDataset().getTree();
-                const data = JSON.stringify(tree.getRoot());
-
-                this.treeview = $(this.$refs.visualization).html("").treeview(JSON.parse(data), {
-                    width: 916,
-                    height: 600,
-                    getTooltip: tooltipContent,
-                    enableAutoExpand: true,
-                    colors: d => {
-                        if (d.name === "Bacteria") return "#1565C0"; // blue
-                        if (d.name === "Archaea") return "#FF8F00"; // orange
-                        if (d.name === "Eukaryota") return "#2E7D32"; // green
-                        if (d.name === "Viruses") return "#C62828"; // red
-                        return d3.scale.category10().call(this, d);
-                    },
-                    rerootCallback: d => this.search(d.id, d.name, 1000)
-                });
+                let taxaDataSource: TaxaDataSource = await this.dataset.getDataset().dataRepository.createTaxaDataSource();
+                let tree: Tree = await taxaDataSource.getTree();
+                this.data = tree.getRoot();
             }
         }
     }

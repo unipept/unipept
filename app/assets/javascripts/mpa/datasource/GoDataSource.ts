@@ -24,7 +24,7 @@ export default class GoDataSource extends DataSource  {
     private _cache: Map<string, Map<GoNameSpace, [GoTerm[], FATrust]>> = new Map(); 
     // This list is used to check what the 5 last requested items were. This list contains (in order) the hashes of
     // the 5 last requested sequence lists. Note that the original terms are not accounted as one item in the cache.
-    private _cachedSequencesLRU: string[];
+    private _cachedSequencesLRU: string[] = [];
 
     private static readonly MAX_CACHE_SIZE: number = 5;
 
@@ -70,7 +70,13 @@ export default class GoDataSource extends DataSource  {
             } 
             return [this._originalTerms.get(namespace), this._originalTrust.get(namespace)];
         } else {
-            let sequenceHash = sha256(sequences.toString()).toString() + cutoff;
+            let sequenceHash: string;
+            if (sequences === null) {
+                sequenceHash = cutoff.toString();
+            } else {
+                sequenceHash = sha256(sequences.toString()).toString() + cutoff;
+            }
+
             console.log("SEQUENCE HASH ---> " + sequenceHash);
             let idx: number = this._cachedSequencesLRU.indexOf(sequenceHash);
             
@@ -79,7 +85,7 @@ export default class GoDataSource extends DataSource  {
                 // We just need to retrieve the item from the cache, mark it as used, and return it
                 this._cachedSequencesLRU.splice(idx, 1);
                 this._cachedSequencesLRU.unshift(sequenceHash);
-                return this._cache[sequenceHash][namespace];
+                return this._cache.get(sequenceHash).get(namespace);
             } else {
                 console.log("ADDING TO CACHE!");
                 // The item is not currently stored in the cache. We need to get it.
@@ -99,7 +105,7 @@ export default class GoDataSource extends DataSource  {
                 }
 
                 // Now return the item we have just put into the cache
-                return this._cache[sequenceHash][namespace];
+                return this._cache.get(sequenceHash).get(namespace);
             }
         }        
     }
