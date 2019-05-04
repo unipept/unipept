@@ -99,11 +99,9 @@ export async function process(originalPeptides, config) {
         numMatched: numMatched,
         numSearched: [...preparedPeptides.values()].reduce((a, b) => a + b, 0)
     };
-
-    return result;
 }
 
-export function getResult() {
+export async function getResult() {
     return result;
 }
 

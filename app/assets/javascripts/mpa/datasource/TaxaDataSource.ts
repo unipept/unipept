@@ -51,15 +51,15 @@ export default class TaxaDataSource extends DataSource {
      * @param term The GO-Term that should be used for filtering the peptides that are part of the tree.
      * @return A new Tree that represents the taxonomic lineage of the given GO-term.
      */
-    public async getTreeByGoTerm(term: GoTerm): Promise<Tree> {
+    public async getTreeByGoTerm(term: GoTerm): Promise<Node> {
         await this.process();
+        let pepts = await (await this._repository.getWorker()).getPeptidesByFA(term.code, null);
+        let sequences = pepts.map(pept => pept.sequence);
         
-        // this._tree.getRoot().callRecursivelyPostOder((t: Node, c: any) => {
-        //     const included = c.some(x => x.included) || t.values.some(pept => pepts.includes(pept.sequence));
-
-        // });
-
-        return null;
+        return this._tree.getRoot().callRecursivelyPostOder((t: Node, c: any) => {
+            const included = c.some(x => x.included) || t.values.some(pept => sequences.includes(pept.sequence));
+            return Object.assign(Object.assign({}, t), {included: included, children: c});
+        });
     }
 
     public async getMissedPeptides(): Promise<string[]> {
@@ -81,7 +81,7 @@ export default class TaxaDataSource extends DataSource {
         if (!this._tree || !this._missedPeptides || this._matchedPeptides === undefined || this._searchedPeptides === undefined) {
             let worker = await this._repository.getWorker();
             let {processed, missed, numMatched, numSearched}: {processed: PeptideInfo[], missed: string[], numMatched: number, numSearched: number} 
-                = worker.getResult();
+                = await worker.getResult();
 
             let processedPeptides: Map<string, PeptideInfo> = new Map();
             for (const p of processed) {
