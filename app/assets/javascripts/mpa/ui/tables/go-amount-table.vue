@@ -15,7 +15,7 @@
         </thead>
         <tbody>
             <template v-for="goTerm of items.slice(0, itemsVisible)">
-                <tr aria-expanded="false" tabindex="0" role="button" style="cursor: pointer;" v-bind:key="goTerm.code + '-1'">
+                <tr aria-expanded="false" tabindex="0" role="button" style="cursor: pointer;" v-bind:key="goTerm.code + '-1'" @click="toggleTerm(goTerm)">
                     <td class="shaded-cell" :style="`background-image: linear-gradient(to right, rgb(221, 221, 221) ${goTerm.fractionOfPepts * 100}%, transparent ${goTerm.fractionOfPepts * 100}%); width: 5em;`">
                         {{ goTerm.popularity }}
                     </td>
@@ -60,6 +60,8 @@
     import {Prop, Watch} from "vue-property-decorator";
     import GoTerm from "../../../fa/GoTerm";
     import { tooltipContent } from "../visualizations/VisualizationHelper";
+import Sample from "../../Sample";
+import TaxaDataSource from "../../datasource/TaxaDataSource";
 
     @Component({
         components: {}
@@ -98,6 +100,16 @@
             } else {
                 this.itemsVisible -= amount;
             }
+        }
+
+        private async toggleTerm(term: GoTerm): Promise<void> {
+            let sample: Sample = this.$store.getters.activeDataset.getDataset();
+            let taxaDataSource: TaxaDataSource = await sample.dataRepository.createTaxaDataSource();
+
+            this.expandedItems.set(term, {
+                expanded: true,
+                root: 
+            });
         }
 
         // TODO implement

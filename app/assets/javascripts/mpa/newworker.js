@@ -11,13 +11,17 @@ const NAMESPACES = ["biological process", "cellular component", "molecular funct
 /**
  * @type {Map<string, GoTermCache>}
  */
-const goTermsCache = new Map();
-const processedPeptides = new Map();
+let goTermsCache = new Map();
+let processedPeptides = new Map();
+/**
+ * @type {MPAPeptide}
+ */
+let result;
 
  /**
   * TODO Convert to TypeScript
   * @typedef {Object} MPAPeptide
-  * @property {Map}      processed   A map form peptides to information about them
+  * @property {any}      processed   A map from peptides to information about them
   * @property {string[]} missed      The list of peptides that could not be matched
   * @property {number}   numMatched  Number of peptides that were matched
   * @property {number}   numSearched Number of peptides that were matched
@@ -54,7 +58,7 @@ const processedPeptides = new Map();
    */
 
 
-export async function process(originalPeptides, config, goRequester) {
+export async function process(originalPeptides, config) {
     const preparedPeptides = preparePeptides(originalPeptides, config);
     const peptideList = Array.from(preparedPeptides.keys());
     setProgress(0.1);
@@ -86,13 +90,21 @@ export async function process(originalPeptides, config, goRequester) {
         numMatched += peptide.count;
         makeFaGrouped(peptide);
     }
+
     setProgress(1);
-    return {
+
+    result = {
         processed: [...processedPeptides.values()].map(({fa, faGrouped, ...y}) => y),
         missed: peptideList.filter(p => !processedPeptides.has(p)),
         numMatched: numMatched,
         numSearched: [...preparedPeptides.values()].reduce((a, b) => a + b, 0)
     };
+
+    return result;
+}
+
+export function getResult() {
+    return result;
 }
 
 /**
@@ -275,6 +287,38 @@ function summarizeFa(extract, countExtractor, trustExtractor, cutoff = 50, seque
             sequences: seqMap.get(x[0]),
         })),
     };
+}
+
+/**
+ * Returns a list of sequences that have the specified FA term
+ * 
+ * @param {String} faName The name of the FA term (GO:000112, EC:1.5.4.1)
+ * @param {String[]} sequences List of sequences to limit to
+ * @return {{sequence, hits, type, annotatedCount,allCount,relativeCount, count}[]} A list of objects representing the 
+ * matchesFunctionalAnnotations
+ */
+export function getPeptidesByFA(faName, sequences = null) {
+    const type = faName.split(":")[0];
+    let iteratableOfSequences = sequences || processedPeptides.keys();
+
+    const result = [];
+
+    for (const curSeq of iteratableOfSequences) {
+        const pept = processedPeptides.get(curSeq);
+        if (faName in pept.fa.data) {
+            result.push({
+                sequence: pept.sequence,
+                type: type,
+                hits: pept.fa.data[faName],
+                annotatedCount: pept.fa.counts[type],
+                allCount: pept.fa.counts["all"],
+                relativeCount: pept.fa.data[faName] / pept.fa.counts[type],
+                count: pept.count,
+            });
+        }
+    }
+
+    return result;
 }
 
 /**
