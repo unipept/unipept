@@ -21,7 +21,7 @@
                                 <a :class="formatType === 'percent' ? 'active' : ''" @click="setFormatSettings('percent', 'fractionOfPepts', 'fractionOfPepts', 'Peptides %')">Peptides %</a>
                             </li>
                             <li>
-                                <a :class="formatType === 'int' ? 'active' : ''" @click="setFormatSettings('int', 'numberOfPepts', 'fractionOfPepts', 'Peptides')">Peptides</a>
+                                <a :class="formatType === 'int' ? 'active' : ''" @click="setFormatSettings('int', 'popularity', 'fractionOfPepts', 'Peptides')">Peptides</a>
                             </li>
                         </ul>
                     </div>
@@ -39,7 +39,7 @@
                     <tab label="GO terms" :active="true">
                         <!-- <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown> -->
                         This panel shows the Gene Ontology annotations that were matched to
-                        your peptides. <span v-if="fa && $store.getters.activeDataset && $store.getters.activeDataset.progress === 1" v-html="this.trustLine(fa, 'GO term')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
+                        your peptides. <span v-if="$store.getters.activeDataset && $store.getters.activeDataset.progress === 1" v-html="this.trustLine('GO term')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
                         <div v-if="!$store.getters.activeDataset || $store.getters.activeDataset.progress !== 1" class="mpa-unavailable go">
                             <h3>Biological Process</h3>
                             <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
@@ -48,13 +48,16 @@
                             <h3>Molecular Function</h3>
                             <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
                         </div>
-                        <div v-else >
-                            <h3>Biological Process</h3>
-                            <go-amount-table :items="biologicalGOTerms"></go-amount-table>
-                            <h3>Cellular Component</h3>
-                            <go-amount-table :items="cellularGoTerms"></go-amount-table>
-                            <h3>Molecular Function</h3>
-                            <go-amount-table :items="molecularGoTerms"></go-amount-table>
+                        <div v-else>
+                            <div class="row" v-for="(namespace, idx) of goNamespaces" v-bind:key="namespace">
+                                <h3>{{ goData[idx].title }}</h3>
+                                <div class="col-xs-8">
+                                    <go-amount-table :items="goData[idx].goTerms"></go-amount-table>
+                                </div>
+                                <div class="col-xs-4">
+                                    <img :src="getQuickGoSmallUrl(goNamespaces[0])" class="quickGoThumb" @click="showGoModal(goNamespaces[0])">
+                                </div>
+                            </div>
                         </div>
                     </tab>
                     <tab label="EC numbers">
@@ -84,7 +87,7 @@
     import GoTermsSummary from "./tables/go-terms-summary.vue";
     import MpaAnalysisManager from "../MpaAnalysisManager";
     import FaSortSettings from "./tables/FaSortSettings";
-    import {numberToPercent} from "../../utils";
+    import {numberToPercent, stringTitleize} from "../../utils";
     import PeptideContainer from "../PeptideContainer";
     import {FunctionalAnnotations} from "../../fa/FunctionalAnnotations";
     import EcNumbersSummary from "./tables/ec-numbers-summary.vue";
@@ -99,7 +102,7 @@
     import { GoNameSpace } from "../../fa/GoNameSpace";
     import GoTerm from "../../fa/GoTerm";
     import GoAmountTable from "./tables/go-amount-table.vue";
-import TaxaDataSource from "../datasource/TaxaDataSource";
+    import TaxaDataSource from "../datasource/TaxaDataSource";
 
     @Component({
         components: {
@@ -134,11 +137,10 @@ import TaxaDataSource from "../datasource/TaxaDataSource";
         private shadeFieldType: string = "fractionOfPepts";
         private name: string = "Peptides";
 
-        private goNamespaces: GoNameSpace[] = Object.values(GoNameSpace);
-
-        private biologicalGOTerms = [];
-        private cellularGoTerms = [];
-        private molecularGoTerms = [];
+        // We need to define all namespaces as a list here, as Vue templates cannot access the GoNameSpace class 
+        // directly
+        private goNamespaces: GoNameSpace[] = Object.values(GoNameSpace).sort();
+        private goData: {goTerms: GoTerm[], title: string}[] = [];
 
         private readonly formatters = {
             "int": x => x.toString(),
@@ -146,26 +148,28 @@ import TaxaDataSource from "../datasource/TaxaDataSource";
             "2pos": x => x.toFixed(2).toString(),
         };
 
-        faSortSettings: FaSortSettings = new FaSortSettings(
-            (x: string) => this.formatters[this.formatType](x[this.fieldType]),
-            (x: string) => this.formatters[this.formatType](x),
+        private faSortSettings: FaSortSettings = new FaSortSettings(
+            (x: GoTerm) => this.formatters[this.formatType](x[this.fieldType]),
             this.fieldType,
             this.shadeFieldType,
             this.name,
             (a, b) => b[this.fieldType] - a[this.fieldType]
         );
 
-        percentSettings: string = "5";
+        private percentSettings: string = "5";
 
-        fa: FunctionalAnnotations | null = null;
-
-
-        filteredScope: string = "";
-        numOfFilteredPepts: string = "";
-        faCalculationsInProgress: boolean = false;
+        private filteredScope: string = "";
+        private numOfFilteredPepts: string = "";
+        private faCalculationsInProgress: boolean = false;
 
         mounted() {
             this.tabs = this.$children[0].$children[2].$children as Tab[];
+            for (let ns of this.goNamespaces) {
+                this.goData.push({
+                    goTerms: [],
+                    title: stringTitleize(ns.toString())
+                });
+            }
         }
 
         @Watch('watchableDataset') onWatchableDatasetChanged() {
@@ -195,8 +199,7 @@ import TaxaDataSource from "../datasource/TaxaDataSource";
         setFormatSettings(formatType: string, fieldType: string, shadeFieldType: string, name: string): void {
             this.formatType = formatType;
 
-            this.faSortSettings.format = (x:string) => this.formatters[this.formatType](x[fieldType]);
-            this.faSortSettings.formatData = (x:string) => this.formatters[this.formatType](x);
+            this.faSortSettings.format = (x: GoTerm) => this.formatters[this.formatType](x[fieldType]);
             this.faSortSettings.field = fieldType;
             this.faSortSettings.shadeField = shadeFieldType;
             this.faSortSettings.name = name;
@@ -227,12 +230,60 @@ import TaxaDataSource from "../datasource/TaxaDataSource";
             showInfoModal("Sorting functional annotations", modalContent);
         }
 
+        private getQuickGoSmallUrl(ns: GoNameSpace): string {
+            let goTerms: GoTerm[] = this.goData[this.goNamespaces.indexOf(ns)].goTerms;
+            // TODO reorder when using different sort function when chosen
+            const top5: string[] = goTerms.slice(0, 5).map(x => x.code);
+
+            if (top5.length > 0) {
+                return this.quickGOChartURL(top5, false);
+            }
+            return null;
+        }
+
+        private showGoModal(ns: GoNameSpace): void {
+            let goTerms: GoTerm[] = this.goData[this.goNamespaces.indexOf(ns)].goTerms;
+            // TODO reorder when using different sort function when chosen
+            const top5: GoTerm[] = goTerms.slice(0, 5);
+
+            if (top5.length > 0) {
+                const top5WithNames = top5.map(x => `${x.name} (${this.faSortSettings.format(x)})`);
+                const top5Sentence = top5WithNames.slice(0, -1).join(", ")
+                    + (top5.length > 1 ? " and " : "")
+                    + top5WithNames[top5WithNames.length - 1];
+                const quickGoChartSmallUrl: string = this.quickGOChartURL(top5, false);
+                const quickGoChartURL: string = this.quickGOChartURL(top5, true);
+                
+                let modalContent = `
+                    This chart shows the relationship between the ${top5.length} most occurring GO terms: ${top5Sentence}.
+                    <br/>
+                    <a href="${quickGoChartURL}" target="_blank" title="Click to enlarge in new tab">
+                        <img style="max-width: 100%;" src="${quickGoChartSmallUrl}" alt="QuickGO chart of ${top5Sentence}"/>
+                    </a>
+                    <div>
+                        Provided by <a href="https://www.ebi.ac.uk/QuickGO/annotations?goId=${top5.join(',')}" target="_blank">QuickGO</a>.
+                    </div>
+                `;
+
+                showInfoModal("QuickGo " + ns, modalContent);
+            }
+        }
+
+        /**
+         * @param {string[]} terms the terms to show in the chart (at least one)
+         * @param {boolean} showKey Show the legend of the colors
+         * @return {string} The QuickGo chart URL of the given GO terms
+         */
+        private quickGOChartURL(terms, showKey = true): string {
+            // sort the terms to improve caching
+            return `https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/${terms.sort().join(",")}/chart?showKey=${showKey}`;
+        }
+
         private async onPeptideContainerChanged() {
             this.faCalculationsInProgress = true;
             let container: PeptideContainer = this.$store.getters.activeDataset;
             if (container && container.getDataset()) {
                 await this.redoFAcalculations();
-                this.fa = this.$store.getters.activeDataset.getDataset().fa;
             }
             this.faCalculationsInProgress = false;
         }
@@ -256,12 +307,10 @@ import TaxaDataSource from "../datasource/TaxaDataSource";
                     this.filteredScope = `${taxonData.name} (${taxonData.rank})`;
                 }
 
-                this.biologicalGOTerms.splice(0);
-                this.biologicalGOTerms.push(... await goSource.getGoTerms(GoNameSpace.BiologicalProcess, percent, sequences));
-                this.cellularGoTerms.splice(0);
-                this.cellularGoTerms.push(... await goSource.getGoTerms(GoNameSpace.CellularComponent, percent, sequences));
-                this.molecularGoTerms.splice(0);
-                this.molecularGoTerms.push(... await goSource.getGoTerms(GoNameSpace.MolecularFunction, percent, sequences));
+                for (let i = 0; i < this.goNamespaces.length; i++) {
+                    let namespace: GoNameSpace = this.goNamespaces[i];
+                    this.goData[i].goTerms = await goSource.getGoTerms(namespace, percent, sequences);
+                }
             }
         }
 
@@ -272,18 +321,20 @@ import TaxaDataSource from "../datasource/TaxaDataSource";
          * @param {String} kind Human readable word that fits in "To have at least one … assigned to it"
          * @return {string}
          */
-        private trustLine(fa, kind) {
-            const trust = fa.getTrust();
-            if (trust.annotatedCount === 0) {
-                return `<strong>No peptide</strong> has a ${kind} assigned to it. `;
-            }
-            if (trust.annotatedCount === trust.totalCount) {
-                return `<strong>All peptides</strong> ${trust.annotatedCount <= 5 ? `(only ${trust.annotatedCount})` : ""} have at least one ${kind} assigned to them. `;
-            }
-            if (trust.annotatedCount === 1) {
-                return `Only <strong>one peptide</strong> (${numberToPercent(trust.annotaionAmount)}) has at least one ${kind} assigned to it. `;
-            }
-            return `<strong>${trust.annotatedCount} peptides</strong> (${numberToPercent(trust.annotaionAmount)}) have at least one ${kind} assigned to them. `;
+        private trustLine(kind) {
+            // TODO fix and implement!
+            return "";
+            // const trust = fa.getTrust();
+            // if (trust.annotatedCount === 0) {
+            //     return `<strong>No peptide</strong> has a ${kind} assigned to it. `;
+            // }
+            // if (trust.annotatedCount === trust.totalCount) {
+            //     return `<strong>All peptides</strong> ${trust.annotatedCount <= 5 ? `(only ${trust.annotatedCount})` : ""} have at least one ${kind} assigned to them. `;
+            // }
+            // if (trust.annotatedCount === 1) {
+            //     return `Only <strong>one peptide</strong> (${numberToPercent(trust.annotaionAmount)}) has at least one ${kind} assigned to it. `;
+            // }
+            // return `<strong>${trust.annotatedCount} peptides</strong> (${numberToPercent(trust.annotaionAmount)}) have at least one ${kind} assigned to them. `;
         }
     }
 </script>

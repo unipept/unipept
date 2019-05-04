@@ -207,50 +207,50 @@
         }
 
         private setUpQuickGo(goResultset: FunctionalAnnotations, target: any) {
-            const sortOrder = this.sortSettings;
-            /** @type {string[]} */
-            const top5 = goResultset.getSorted(sortOrder.sortFunc).slice(0, 5).map(x => x.code);
+            // const sortOrder = this.sortSettings;
+            // /** @type {string[]} */
+            // const top5 = goResultset.getSorted(sortOrder.sortFunc).slice(0, 5).map(x => x.code);
 
-            if (top5.length > 0) {
-                const quickGoChartSmallURL = GOTerms.quickGOChartURL(top5, false);
-                const quickGoChartURL = GOTerms.quickGOChartURL(top5, true);
+            // if (top5.length > 0) {
+            //     const quickGoChartSmallURL = GOTerms.quickGOChartURL(top5, false);
+            //     const quickGoChartURL = GOTerms.quickGOChartURL(top5, true);
 
-                const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${sortOrder.formatData(goResultset.valueOf(x, sortOrder.field) as string)})`);
-                const top5sentence = top5WithNames.slice(0, -1).join(", ")
-                    + (top5.length > 1 ? " and " : "")
-                    + top5WithNames[top5WithNames.length - 1];
-                target
-                    .append("div").attr("class", "col-xs-4")
-                    .append("img")
-                    .attr("src", quickGoChartSmallURL)
-                    .attr("class", "quickGoThumb")
-                    .attr("title", `QuickGO chart of ${top5sentence}`)
-                    .on("click", () => {
-                        this.top5 = top5;
-                        this.top5Sentence = top5sentence;
-                        this.quickGoChartSmallUrl = quickGoChartURL;
-                        this.quickGoChartUrl = quickGoChartURL;
+            //     const top5WithNames = top5.map(x => `${GOTerms.nameOf(x)} (${sortOrder.format(goResultset.valueOf(x, sortOrder.field) as string)})`);
+            //     const top5sentence = top5WithNames.slice(0, -1).join(", ")
+            //         + (top5.length > 1 ? " and " : "")
+            //         + top5WithNames[top5WithNames.length - 1];
+            //     target
+            //         .append("div").attr("class", "col-xs-4")
+            //         .append("img")
+            //         .attr("src", quickGoChartSmallURL)
+            //         .attr("class", "quickGoThumb")
+            //         .attr("title", `QuickGO chart of ${top5sentence}`)
+            //         .on("click", () => {
+            //             this.top5 = top5;
+            //             this.top5Sentence = top5sentence;
+            //             this.quickGoChartSmallUrl = quickGoChartURL;
+            //             this.quickGoChartUrl = quickGoChartURL;
 
-                        // load full image, once loaded, replace src
-                        const fullImage = new Image();
-                        fullImage.onload = () => {
-                            this.quickGoChartUrl = quickGoChartURL;
-                        };
+            //             // load full image, once loaded, replace src
+            //             const fullImage = new Image();
+            //             fullImage.onload = () => {
+            //                 this.quickGoChartUrl = quickGoChartURL;
+            //             };
 
-                        let modalContent = `
-                            This chart shows the relationship between the ${this.top5.length} most occurring GO terms: ${this.top5Sentence}.
-                            <br/>
-                            <a href="${this.quickGoChartUrl}" target="_blank" title="Click to enlarge in new tab">
-                                <img style="max-width: 100%;" src="${this.quickGoChartSmallUrl}" alt="QuickGO chart of ${this.top5Sentence}"/>
-                            </a>
-                            <div>
-                                Provided by <a href="https://www.ebi.ac.uk/QuickGO/annotations?goId=${this.top5.join(',')}" target="_blank">QuickGO</a>.
-                            </div>
-                        `;
+            //             let modalContent = `
+            //                 This chart shows the relationship between the ${this.top5.length} most occurring GO terms: ${this.top5Sentence}.
+            //                 <br/>
+            //                 <a href="${this.quickGoChartUrl}" target="_blank" title="Click to enlarge in new tab">
+            //                     <img style="max-width: 100%;" src="${this.quickGoChartSmallUrl}" alt="QuickGO chart of ${this.top5Sentence}"/>
+            //                 </a>
+            //                 <div>
+            //                     Provided by <a href="https://www.ebi.ac.uk/QuickGO/annotations?goId=${this.top5.join(',')}" target="_blank">QuickGO</a>.
+            //                 </div>
+            //             `;
 
-                        showInfoModal("QuickGo " + this.namespace, modalContent);
-                    });
-            }
+            //             showInfoModal("QuickGo " + this.namespace, modalContent);
+            //         });
+            // }
         }
 
         private addFADownloadBtn(cell, codeFn) {

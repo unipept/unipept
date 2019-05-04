@@ -23,7 +23,6 @@
                     We managed to match {{ $store.getters.matchedPeptides }} of your {{ $store.getters.searchedPeptides }} peptides.
                     Unfortunately, <a style="cursor: pointer;" @click="showNotFoundPeptidesModal">{{ $store.getters.missedPeptides.length }}</a> peptides couldn't be found.
                 </span>
-
             </card-body>
         </card>
     </div>
