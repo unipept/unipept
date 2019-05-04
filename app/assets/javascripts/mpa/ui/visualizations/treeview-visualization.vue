@@ -8,7 +8,7 @@
             </span>
             <span class="dir text">Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root</span>
         </h2>
-        <treeview ref="treeview" :data="data" :width="916" :height="600" :tooltip="tooltip" :colors="colors" :rerootCallback="rerootCallback"></treeview>
+        <treeview ref="treeview" :data="data" :width="916" :height="600" :enableAutoExpand="true" :tooltip="tooltip" :colors="colors" :rerootCallback="rerootCallback"></treeview>
     </div>
 </template>
 

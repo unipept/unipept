@@ -18,12 +18,27 @@
         private height: number;
         @Prop()
         private tooltip: (d: any) => string; 
-        @Prop()
-        private enableAutoExpand: boolean;
+        @Prop({default: false})
+        private enableAutoExpand: number | boolean;
         @Prop()
         private colors: (d: any) => string;
         @Prop()
         private rerootCallback: (d: any) => void;
+        @Prop()
+        private linkStrokeColor: (d: any) => string;
+        @Prop()
+        private nodeStrokeColor: (d: any) => string
+        @Prop()
+        private nodeFillColor: (d: any) => string;
+
+        private settingNames: [string, string][] = [
+            ["getTooltip", "tooltip"],
+            ["colors", "colors"],
+            ["rerootCallback", "rerootCallback"],
+            ["linkStrokeColor", "linkStrokeColor"],
+            ["nodeStrokeColor", "nodeStrokeColor"],
+            ["nodeFillColor", "nodeFillColor"]
+        ];
 
         private treeview!: any;
 
@@ -50,17 +65,25 @@
         @Watch("enableAutoExpand")
         @Watch("colors")
         @Watch("rerootCallback")
+        @Watch("nodeFillColor")
+        @Watch("linkStrokeColor")
+        @Watch("nodeStrokeColor")
         private async initVisualization() {
             if (this.data) {
-                this.treeview = $(this.$refs.visualization).html("").treeview(JSON.parse(JSON.stringify(this.data)), {
+                let settings = {
                     width: this.width,
                     height: this.height,
-                    getTooltip: this.tooltip,
-                    // The boolean value here needs to be copied, as it is mutated by the treeview
-                    enableAutoExpand: this.enableAutoExpand ? true : false,
-                    colors: this.colors,
-                    rerootCallback: this.rerootCallback
-                });
+                    enableAutoExpand: this.enableAutoExpand,
+                }
+
+                // Only these settings that are explicitly filled in should to be passed as an option
+                for (let [settingsName, funcName] of this.settingNames) {
+                    if (this[funcName]) {
+                        settings[settingsName] = this[funcName];
+                    }
+                }
+
+                this.treeview = $(this.$refs.visualization).html("").treeview(JSON.parse(JSON.stringify(this.data)), settings);
             }
         }
     }
