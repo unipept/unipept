@@ -58,66 +58,21 @@ export default class DataRepository {
     }
 
     /**
-     * Compute all necessary data for the given sample using a worker thread.
+     * Returns a fully prepared worker. The worker is initialized with the required state and has already processed
+     * all peptides found in this repository's associated sample.
      */
-    public async computeTaxa(): Promise<[Tree, string[], number, number]> {
-        this._worker = newworker();
-        this._worker.onmessage = m => {
-            if (m.data.type == "progress") {
-                this.setWorkerProgress(m.data.value);
-            }
-        };
-
-        let {processed, missed, numMatched, numSearched}: {processed: PeptideInfo[], missed: string[], numMatched: number, numSearched: number} 
-            = await this._worker.process(this._sample.originalPeptides, this._mpaConfig);
-        let processedPeptides: Map<string, PeptideInfo> = new Map();
-        for (const p of processed) {
-            processedPeptides.set(p.sequence, p);
-        }
-
-        let tree = new Tree(processed);
-        const taxonInfo = await Sample.getTaxonInfo(tree.getTaxa());
-        tree.setTaxonNames(taxonInfo);
-        tree.sortTree();
-
-        return [tree, missed, numMatched, numSearched];
-    }
-
-    public async computeGoTerms(percent = 50, sequences = null): Promise<[Map<GoNameSpace, GoTerm[]>, Map<GoNameSpace, FATrust>]> {
-        let {data, trust} = await this._worker.summarizeGo(percent, sequences);
-
-        let dataOutput: Map<GoNameSpace, GoTerm[]> = new Map();
-        for (let namespace of Object.values(GoNameSpace)) {
-            let items: MPAFAResult[] = data[namespace];
-            let convertedItems: GoTerm[] = [];
-            for (let item of items) {
-                let namespace: GoNameSpace;
-
-                if (item.namespace === GoNameSpace.BiologicalProcess.toString()) {
-                    namespace = GoNameSpace.BiologicalProcess;
-                } else if (item.namespace === GoNameSpace.CellularComponent.toString()) {
-                    namespace = GoNameSpace.CellularComponent;
-                } else {
-                    namespace = GoNameSpace.MolecularFunction;
+    public async getWorker(): Promise<any> {
+        if (!this._worker) {
+            this._worker = newworker();
+            this._worker.onmessage = m => {
+                if (m.data.type == "progress") {
+                    this.setWorkerProgress(m.data.value);
                 }
+            };
 
-                convertedItems.push(new GoTerm(item.code, item.name, namespace, item.numberOfPepts, item.fractionOfPepts));
-            }
-            dataOutput.set(namespace, convertedItems);
+            await this._worker.process(this._sample.originalPeptides, this._mpaConfig);
         }
-
-        let trustOutput: Map<GoNameSpace, FATrust> = new Map();
-        for (let namespace of Object.values(GoNameSpace)) {
-            let originalTrust: {trustCount: number, annotatedCount: number, totalCount: number} = trust[namespace];
-            let convertedTrust: FATrust = new FATrust();
-            convertedTrust.trustCount = originalTrust.trustCount;
-            convertedTrust.annotatedCount = originalTrust.annotatedCount;
-            convertedTrust.totalCount = originalTrust.totalCount;
-
-            trustOutput.set(namespace, convertedTrust);
-        }
-        
-        return [dataOutput, trustOutput];
+        return this._worker;
     }
 
     /**

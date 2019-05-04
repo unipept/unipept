@@ -5,6 +5,7 @@ import DataSource from "./DataSource";
 import GoTerm from "../../fa/GoTerm";
 import FATrust from "../../fa/FATrust";
 import sha256 from "crypto-js/sha256";
+import { MPAFAResult } from "../newworker";
 
 /**
  * A GoDataSource can be used to access all GoTerms associated with a specific Sample. Note that this class contains
@@ -57,12 +58,51 @@ export default class GoDataSource extends DataSource  {
         return result[1];
     }
 
+    private async computeGoTerms(percent = 50, sequences = null): Promise<[Map<GoNameSpace, GoTerm[]>, Map<GoNameSpace, FATrust>]> {
+        let worker = await this._repository.getWorker();
+
+        let {data, trust} = await worker.summarizeGo(percent, sequences);
+
+        let dataOutput: Map<GoNameSpace, GoTerm[]> = new Map();
+        for (let namespace of Object.values(GoNameSpace)) {
+            let items: MPAFAResult[] = data[namespace];
+            let convertedItems: GoTerm[] = [];
+            for (let item of items) {
+                let namespace: GoNameSpace;
+
+                if (item.namespace === GoNameSpace.BiologicalProcess.toString()) {
+                    namespace = GoNameSpace.BiologicalProcess;
+                } else if (item.namespace === GoNameSpace.CellularComponent.toString()) {
+                    namespace = GoNameSpace.CellularComponent;
+                } else {
+                    namespace = GoNameSpace.MolecularFunction;
+                }
+
+                convertedItems.push(new GoTerm(item.code, item.name, namespace, item.numberOfPepts, item.fractionOfPepts));
+            }
+            dataOutput.set(namespace, convertedItems);
+        }
+
+        let trustOutput: Map<GoNameSpace, FATrust> = new Map();
+        for (let namespace of Object.values(GoNameSpace)) {
+            let originalTrust: {trustCount: number, annotatedCount: number, totalCount: number} = trust[namespace];
+            let convertedTrust: FATrust = new FATrust();
+            convertedTrust.trustCount = originalTrust.trustCount;
+            convertedTrust.annotatedCount = originalTrust.annotatedCount;
+            convertedTrust.totalCount = originalTrust.totalCount;
+
+            trustOutput.set(namespace, convertedTrust);
+        }
+        
+        return [dataOutput, trustOutput];
+    }
+
     private async getFromCache(namespace: GoNameSpace, cutoff: number = 50, sequences: string[] = null): Promise<[GoTerm[], FATrust]> {
         // If no sequences are given, we need to check the original cache
         if ((sequences === null || sequences.length === 0) && cutoff == 50) {
             if (!this._originalTerms.has(namespace)) {
                 // If it's not in the cache, add it!
-                let result: [Map<GoNameSpace, GoTerm[]>, Map<GoNameSpace, FATrust>] = await this._repository.computeGoTerms(cutoff, sequences);
+                let result: [Map<GoNameSpace, GoTerm[]>, Map<GoNameSpace, FATrust>] = await this.computeGoTerms(cutoff, sequences);
                 for (let ns of Object.values(GoNameSpace)) {
                     this._originalTerms.set(ns, result[0].get(ns));
                     this._originalTrust.set(ns, result[1].get(ns));
@@ -89,7 +129,7 @@ export default class GoDataSource extends DataSource  {
             } else {
                 console.log("ADDING TO CACHE!");
                 // The item is not currently stored in the cache. We need to get it.
-                let result: [Map<GoNameSpace, GoTerm[]>, Map<GoNameSpace, FATrust>] = await this._repository.computeGoTerms(cutoff, sequences);
+                let result: [Map<GoNameSpace, GoTerm[]>, Map<GoNameSpace, FATrust>] = await this.computeGoTerms(cutoff, sequences);
                 // Enter the item into the cache
                 this._cachedSequencesLRU.unshift(sequenceHash);
                 let cacheMap: Map<GoNameSpace, [GoTerm[], FATrust]> = new Map();
