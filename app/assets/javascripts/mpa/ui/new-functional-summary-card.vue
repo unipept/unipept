@@ -55,7 +55,6 @@
                             <go-amount-table :items="cellularGoTerms"></go-amount-table>
                             <h3>Molecular Function</h3>
                             <go-amount-table :items="molecularGoTerms"></go-amount-table>
-                            <!-- <go-terms-summary :sort-settings="faSortSettings" :fa="fa" :namespace="variant" :peptide-container="$store.getters.activeDataset"></go-terms-summary> -->
                         </div>
                     </tab>
                     <tab label="EC numbers">
@@ -100,6 +99,7 @@
     import { GoNameSpace } from "../../fa/GoNameSpace";
     import GoTerm from "../../fa/GoTerm";
     import GoAmountTable from "./tables/go-amount-table.vue";
+import TaxaDataSource from "../datasource/TaxaDataSource";
 
     @Component({
         components: {
@@ -243,34 +243,48 @@
             if (peptideContainer && peptideContainer.getDataset()) {
                 let sample: Sample = peptideContainer.getDataset();
                 let goSource: GoDataSource = await sample.dataRepository.createGoDataSource();
+                let taxaSource: TaxaDataSource = await sample.dataRepository.createTaxaDataSource();
+
+                const percent = parseInt(this.percentSettings);
+                const taxonId = this.$store.getters.selectedTaxonId;
+
+                let sequences = null;
+                if (taxonId > 0) {
+                    let tree = await taxaSource.getTree();
+                    sequences = tree.getAllSequences(taxonId);
+                    let taxonData = tree.nodes.get(taxonId);
+                    this.filteredScope = `${taxonData.name} (${taxonData.rank})`;
+                }
+
                 this.biologicalGOTerms.splice(0);
-                this.biologicalGOTerms.push(... await goSource.getGoTerms(GoNameSpace.BiologicalProcess));
+                this.biologicalGOTerms.push(... await goSource.getGoTerms(GoNameSpace.BiologicalProcess, percent, sequences));
                 this.cellularGoTerms.splice(0);
-                this.cellularGoTerms.push(... await goSource.getGoTerms(GoNameSpace.CellularComponent));
+                this.cellularGoTerms.push(... await goSource.getGoTerms(GoNameSpace.CellularComponent, percent, sequences));
                 this.molecularGoTerms.splice(0);
-                this.molecularGoTerms.push(... await goSource.getGoTerms(GoNameSpace.MolecularFunction));
+                this.molecularGoTerms.push(... await goSource.getGoTerms(GoNameSpace.MolecularFunction, percent, sequences));
             }
         }
 
         /**
+         * TODO replace with new code!
          * Creates a line indicating the trust of the function annotations
          * @param {FunctionalAnnotations} fa
          * @param {String} kind Human readable word that fits in "To have at least one … assigned to it"
          * @return {string}
          */
-        // private trustLine(fa, kind) {
-        //     const trust = fa.getTrust();
-        //     if (trust.annotatedCount === 0) {
-        //         return `<strong>No peptide</strong> has a ${kind} assigned to it. `;
-        //     }
-        //     if (trust.annotatedCount === trust.totalCount) {
-        //         return `<strong>All peptides</strong> ${trust.annotatedCount <= 5 ? `(only ${trust.annotatedCount})` : ""} have at least one ${kind} assigned to them. `;
-        //     }
-        //     if (trust.annotatedCount === 1) {
-        //         return `Only <strong>one peptide</strong> (${numberToPercent(trust.annotaionAmount)}) has at least one ${kind} assigned to it. `;
-        //     }
-        //     return `<strong>${trust.annotatedCount} peptides</strong> (${numberToPercent(trust.annotaionAmount)}) have at least one ${kind} assigned to them. `;
-        // }
+        private trustLine(fa, kind) {
+            const trust = fa.getTrust();
+            if (trust.annotatedCount === 0) {
+                return `<strong>No peptide</strong> has a ${kind} assigned to it. `;
+            }
+            if (trust.annotatedCount === trust.totalCount) {
+                return `<strong>All peptides</strong> ${trust.annotatedCount <= 5 ? `(only ${trust.annotatedCount})` : ""} have at least one ${kind} assigned to them. `;
+            }
+            if (trust.annotatedCount === 1) {
+                return `Only <strong>one peptide</strong> (${numberToPercent(trust.annotaionAmount)}) has at least one ${kind} assigned to it. `;
+            }
+            return `<strong>${trust.annotatedCount} peptides</strong> (${numberToPercent(trust.annotaionAmount)}) have at least one ${kind} assigned to them. `;
+        }
     }
 </script>
 

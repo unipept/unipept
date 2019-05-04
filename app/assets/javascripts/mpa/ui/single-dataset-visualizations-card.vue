@@ -45,7 +45,7 @@
                         <img :alt="waitString" class="mpa-placeholder" src="/images/mpa/placeholder_treemap.svg">
                     </div>
                 </tab>
-                <!-- <tab label="Treeview" id="treeviewWrapper" class="visualization-wrapper">
+                <tab label="Treeview" id="treeviewWrapper" class="visualization-wrapper">
                     <treeview-visualization ref="treeview" :full-screen="isFullScreen" v-if="$store.getters.activeDataset && $store.getters.activeDataset.progress === 1" :dataset="$store.getters.activeDataset"></treeview-visualization>
                     <div v-else class="mpa-waiting">
                         <img :alt="waitString" class="mpa-placeholder" src="/images/mpa/placeholder_treeview.svg">
@@ -56,7 +56,7 @@
                     <div v-else>
                         {{ waitString }}
                     </div>
-                </tab> -->
+                </tab>
             </div>
         </card-body>
     </card-nav>

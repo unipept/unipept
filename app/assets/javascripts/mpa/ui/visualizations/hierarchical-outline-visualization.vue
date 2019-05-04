@@ -26,6 +26,7 @@
     import {constructSearchtree} from "../../searchtree";
     import SimpleButton from "../../../components/button/simple-button.vue";
     import ValidatedTextfield from "../../../components/input/validated-textfield.vue";
+import TaxaDataSource from "../../datasource/TaxaDataSource";
 
     @Component({
         components: {ValidatedTextfield, SimpleButton},
@@ -65,10 +66,11 @@
             }
         }
 
-        private initSearchTree() {
+        private async initSearchTree() {
             if (this.dataset != null && this.dataset.getDataset() != null) {
-                let tree: Tree = this.dataset.getDataset().getTree();
-                this.searchTree = constructSearchtree(tree, this.$store.getters.searchSettings.isEquateIl(), () => {});
+                let taxaDataSource: TaxaDataSource = await this.dataset.getDataset().dataRepository.createTaxaDataSource();
+                let tree: Tree = await taxaDataSource.getTree();
+                this.searchTree = constructSearchtree(tree, this.$store.getters.searchSettings.il, () => {});
             }
         }
 

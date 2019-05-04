@@ -14,24 +14,33 @@
             </tr>
         </thead>
         <tbody>
-            <tr aria-expanded="false" tabindex="0" role="button" style="cursor: pointer;" v-for="goTerm of items.slice(0, itemsVisible)" v-bind:key="goTerm.code">
-                <td class="shaded-cell" :style="`background-image: linear-gradient(to right, rgb(221, 221, 221) ${goTerm.fractionOfPepts * 100}%, transparent ${goTerm.fractionOfPepts * 100}%); width: 5em;`">
-                    {{ goTerm.popularity }}
-                </td>
-                <td style="width: 7em;">
-                    <a :href="`https://www.ebi.ac.uk/QuickGO/term/${goTerm.code}`" target="_blank">
-                        {{ goTerm.code }}
-                    </a>
-                </td>
-                <td>
-                    {{ goTerm.name }}
-                </td>
-                <td style="width: 6em; text-align: right;">
-                    <span class="glyphicon glyphicon-download glyphicon-inline down btn-icon" title="" role="button" tabindex="0" data-original-title="Download CSV of the matched peptides"></span>
-                </td>
-                <td class="glyphicon glyphicon-inline amounttable-chevron">
-                </td>
-            </tr>
+            <template v-for="goTerm of items.slice(0, itemsVisible)">
+                <tr aria-expanded="false" tabindex="0" role="button" style="cursor: pointer;" v-bind:key="goTerm.code + '-1'">
+                    <td class="shaded-cell" :style="`background-image: linear-gradient(to right, rgb(221, 221, 221) ${goTerm.fractionOfPepts * 100}%, transparent ${goTerm.fractionOfPepts * 100}%); width: 5em;`">
+                        {{ goTerm.popularity }}
+                    </td>
+                    <td style="width: 7em;">
+                        <a :href="`https://www.ebi.ac.uk/QuickGO/term/${goTerm.code}`" target="_blank">
+                            {{ goTerm.code }}
+                        </a>
+                    </td>
+                    <td>
+                        {{ goTerm.name }}
+                    </td>
+                    <td style="width: 6em; text-align: right;">
+                        <span class="glyphicon glyphicon-download glyphicon-inline down btn-icon" title="" role="button" tabindex="0" data-original-title="Download CSV of the matched peptides"></span>
+                    </td>
+                    <td class="glyphicon glyphicon-inline amounttable-chevron">
+                    </td>
+                </tr>
+                <tr v-bind:key="goTerm.code + '-2'" class="amounttable-exandrow">
+                    <button class="btn btn-default btn-xs btn-animate pull-right" @click="saveImage()">
+                        <span class="glyphicon glyphicon-download down"></span>
+                        Save as image
+                    </button>
+                    
+                </tr>
+            </template>
         </tbody>
         <tfoot>
             <tr class="collapse-row">
@@ -79,6 +88,10 @@
             } else {
                 this.itemsVisible -= amount;
             }
+        }
+
+        private saveImage(): void {
+
         }
     }
 </script>
