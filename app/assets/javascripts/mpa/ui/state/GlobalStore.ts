@@ -1,29 +1,35 @@
 import PeptideContainer from "../../PeptideContainer";
 import {ActionContext, ActionTree, GetterTree, MutationTree} from "vuex";
 import DatasetManager from "../../DatasetManager";
-import SearchSettings from "../../SearchSettings";
 import MpaAnalysisManager from "../../MpaAnalysisManager";
 import {AnalysisState} from "./AnalysisStore";
+import TaxaDataSource from "../../datasource/TaxaDataSource";
 
 
 export interface GlobalState {
     selectedDatasets: PeptideContainer[],
     storedDatasets: PeptideContainer[],
     analysis: boolean,
-    searchSettings: SearchSettings,
+    searchSettings: MPAConfig,
     activeDataset: PeptideContainer | null,
     selectedTerm: string,
-    selectedTaxonId: number
+    selectedTaxonId: number,
+    matchedPeptides: number,
+    searchedPeptides: number,
+    missedPeptides: string[]
 }
 
 const mpaState: GlobalState = {
     storedDatasets: [],
     selectedDatasets: [],
     analysis: false,
-    searchSettings: new SearchSettings(true, true, false),
+    searchSettings: {il: true, dupes: true, missed: false},
     activeDataset: null,
     selectedTerm: 'Organism',
-    selectedTaxonId: -1
+    selectedTaxonId: -1,
+    matchedPeptides: 0,
+    searchedPeptides: 0,
+    missedPeptides: []
 };
 
 const mpaGetters: GetterTree<GlobalState, any> = {
@@ -36,7 +42,7 @@ const mpaGetters: GetterTree<GlobalState, any> = {
     isAnalysis(state: GlobalState): boolean {
         return state.analysis;
     },
-    searchSettings(state: GlobalState): SearchSettings {
+    searchSettings(state: GlobalState): MPAConfig {
         return state.searchSettings;
     },
     activeDataset(state: GlobalState): PeptideContainer | null {
@@ -47,6 +53,15 @@ const mpaGetters: GetterTree<GlobalState, any> = {
     },
     selectedTaxonId(state: GlobalState): number {
         return state.selectedTaxonId;
+    },
+    searchedPeptides(state: GlobalState): number {
+        return state.searchedPeptides;
+    },
+    matchedPeptides(state: GlobalState): number {
+        return state.matchedPeptides;
+    },
+    missedPeptides(state: GlobalState): string[] {
+        return state.missedPeptides;
     }
 };
 
@@ -83,7 +98,7 @@ const mpaMutations: MutationTree<GlobalState> = {
     SET_ANALYSIS(state: GlobalState, isAnalysing: boolean) {
         state.analysis = isAnalysing;
     },
-    SET_SEARCH_SETTINGS(state: GlobalState, searchSettings: SearchSettings): void {
+    SET_SEARCH_SETTINGS(state: GlobalState, searchSettings: MPAConfig): void {
         state.searchSettings = searchSettings;
     },
     SET_ACTIVE_DATASET(state: GlobalState, dataset: PeptideContainer | null): void {
@@ -94,6 +109,15 @@ const mpaMutations: MutationTree<GlobalState> = {
     },
     SET_SELECTED_TAXON_ID(state: GlobalState, value: number): void {
         state.selectedTaxonId = value;
+    },
+    SET_SEARCHED_PEPTIDES(state: GlobalState, value: number): void {
+        state.searchedPeptides = value;
+    },
+    SET_MATCHED_PEPTIDES(state: GlobalState, value: number): void {
+        state.matchedPeptides = value;
+    },
+    SET_MISSED_PEPTIDES(state: GlobalState, value: string[]): void {
+        state.missedPeptides = value;
     }
 };
 
@@ -145,13 +169,24 @@ const mpaActions: ActionTree<GlobalState, any> = {
     setAnalysis(store: ActionContext<GlobalState, any>, isAnalysing: boolean) {
         store.commit('SET_ANALYSIS', isAnalysing);
     },
-    setSearchSettings(store: ActionContext<GlobalState, any>, searchSettings: SearchSettings): void {
+    setSearchSettings(store: ActionContext<GlobalState, any>, searchSettings: MPAConfig): void {
         store.commit('SET_SEARCH_SETTINGS', searchSettings);
     },
     setActiveDataset(store: ActionContext<GlobalState, any>, dataset: PeptideContainer | null): void {
         store.commit('SET_ACTIVE_DATASET', dataset);
         store.dispatch('setSelectedTerm', 'Organism');
         store.dispatch('setSelectedTaxonId', -1);
+        dataset.getDataset().dataRepository.createTaxaDataSource().then((taxaDataSource) => {
+            Promise.all([
+                taxaDataSource.getAmountOfMatchedPeptides(),
+                taxaDataSource.getAmountOfSearchedPeptides(),
+                taxaDataSource.getMissedPeptides()
+            ]).then((result) => {
+                store.commit('SET_MATCHED_PEPTIDES', result[0]);
+                store.commit('SET_SEARCHED_PEPTIDES', result[1]);
+                store.commit('SET_MISSED_PEPTIDES', result[2]);
+            })
+        });
     },
     processDataset(store: ActionContext<GlobalState, any>, dataset: PeptideContainer): void {
         let mpaManager = new MpaAnalysisManager();

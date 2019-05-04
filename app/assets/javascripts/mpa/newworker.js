@@ -187,7 +187,6 @@ export async function summarizeGo(percent = 50, sequences = null) {
         res[namespace] = res[namespace].sort((a, b) => b.numberOfPepts - a.numberOfPepts);
     }
 
-    console.log(res);
     return {data: res, trust: trust}
 }
 
