@@ -33,12 +33,16 @@
                     <td class="glyphicon glyphicon-inline amounttable-chevron">
                     </td>
                 </tr>
-                <tr v-bind:key="goTerm.code + '-2'" class="amounttable-exandrow" v-if="expandedItems.has(goTerm) && expandedItems.get(goTerm).expanded">
-                    <button class="btn btn-default btn-xs btn-animate pull-right" @click="saveImage()">
-                        <span class="glyphicon glyphicon-download down"></span>
-                        Save as image
-                    </button>
-                    <treeview :height="310" :width="535" :tooltip="tooltip" :colors="highlightColorFunc" :enableAutoExpand="0.3" :linkStrokeColor="linkStrokeColor" :nodeStrokeColor="highlightColorFunc" :nodeFillColor="highlightColorFunc"></treeview>
+                <tr v-bind:key="goTerm.code + '-2'" v-if="expandedItemsList.indexOf(goTerm) >= 0">
+                    <td colspan="5">
+                        <div class="amounttable-expandrow-content">
+                            <button class="btn btn-default btn-xs btn-animate pull-right" @click="saveImage()">
+                                <span class="glyphicon glyphicon-download down"></span>
+                                Save as image
+                            </button>
+                            <treeview :data="expandedItems.get(goTerm)" :height="310" :width="535" :tooltip="tooltip" :colors="highlightColorFunc" :enableAutoExpand="0.3" :linkStrokeColor="linkStrokeColor" :nodeStrokeColor="highlightColorFunc" :nodeFillColor="highlightColorFunc"></treeview>
+                        </div>
+                    </td>
                 </tr>
             </template>
         </tbody>
@@ -60,11 +64,15 @@
     import {Prop, Watch} from "vue-property-decorator";
     import GoTerm from "../../../fa/GoTerm";
     import { tooltipContent } from "../visualizations/VisualizationHelper";
-import Sample from "../../Sample";
-import TaxaDataSource from "../../datasource/TaxaDataSource";
+    import Sample from "../../Sample";
+    import TaxaDataSource from "../../datasource/TaxaDataSource";
+    import Node from "../../Node";
+    import Treeview from "../visualizations/treeview.vue";
 
     @Component({
-        components: {}
+        components: {
+            Treeview
+        }
     })
     export default class GoAmountTable extends Vue {
         @Prop({required: true})
@@ -78,7 +86,8 @@ import TaxaDataSource from "../../datasource/TaxaDataSource";
         private visibilityStep: number = 10;
 
         // Keeps track of which rows are expanded and which trees should be shown in that case.
-        private expandedItems: Map<GoTerm, {expanded: boolean, root: Node}> = new Map();
+        private expandedItems: Map<GoTerm, Node> = new Map();
+        private expandedItemsList: GoTerm[] = [];
 
         // All settings for each Treeview that remain the same
         private tooltip: (d: any) => string = tooltipContent;
@@ -103,13 +112,20 @@ import TaxaDataSource from "../../datasource/TaxaDataSource";
         }
 
         private async toggleTerm(term: GoTerm): Promise<void> {
-            let sample: Sample = this.$store.getters.activeDataset.getDataset();
-            let taxaDataSource: TaxaDataSource = await sample.dataRepository.createTaxaDataSource();
+            let idx: number = this.expandedItemsList.indexOf(term);
+            if (idx >= 0) {
+                this.expandedItemsList.splice(idx, 1);
+            } else {
+                if (!this.expandedItems.has(term)) {
+                    let sample: Sample = this.$store.getters.activeDataset.getDataset();
+                    let taxaDataSource: TaxaDataSource = await sample.dataRepository.createTaxaDataSource();
+                    this.expandedItems.set(term, await taxaDataSource.getTreeByGoTerm(term));
+                }
 
-            this.expandedItems.set(term, {
-                expanded: true,
-                root: 
-            });
+                this.expandedItemsList.push(term);
+            }
+
+            console.log(this.expandedItemsList);
         }
 
         // TODO implement
