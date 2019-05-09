@@ -61,6 +61,7 @@
                         </div>
                     </tab>
                     <tab label="EC numbers">
+                        <ec-amount-table :items="ecData" :searchSettings="faSortSettings"></ec-amount-table>
                         <!-- <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
                         This panel shows the Enzyme Commission numbers that were matched to your peptides. <span v-if="fa && $store.getters.activeDataset" v-html="this.trustLine(fa, 'EC number')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
                         <ec-numbers-summary style="margin-top: 10px" v-if="$store.getters.activeDataset && $store.getters.activeDataset.getProgress() === 1" :fa="fa" :peptide-container="$store.getters.activeDataset" :sort-settings="faSortSettings"></ec-numbers-summary>
@@ -84,7 +85,6 @@
     import {Prop, Watch} from "vue-property-decorator";
     import CardNav from "../../components/card/card-nav.vue";
     import Tab from "../../components/card/tab.vue";
-    import GoTermsSummary from "./tables/go-terms-summary.vue";
     import MpaAnalysisManager from "../MpaAnalysisManager";
     import FaSortSettings from "./tables/FaSortSettings";
     import {numberToPercent, stringTitleize} from "../../utils";
@@ -103,6 +103,9 @@
     import GoTerm from "../../fa/GoTerm";
     import GoAmountTable from "./tables/go-amount-table.vue";
     import TaxaDataSource from "../datasource/TaxaDataSource";
+    import EcNumber from "../../fa/EcNumber";
+    import EcDataSource from "../datasource/EcDataSource";
+    import EcAmountTable from "./tables/ec-amount-table.vue";
 
     @Component({
         components: {
@@ -110,7 +113,13 @@
             CardHeader,
             IndeterminateProgressBar,
             FilterFunctionalAnnotationsDropdown,
-            SimpleButton, EcNumbersSummary, GoTermsSummary, Tab, CardNav, GoAmountTable},
+            SimpleButton, 
+            EcNumbersSummary, 
+            Tab, 
+            CardNav, 
+            GoAmountTable,
+            EcAmountTable
+        },
         computed: {
             watchableDataset: {
                 get(): PeptideContainer {
@@ -141,6 +150,8 @@
         // directly
         private goNamespaces: GoNameSpace[] = Object.values(GoNameSpace).sort();
         private goData: {goTerms: GoTerm[], title: string}[] = [];
+
+        private ecData: EcNumber[] = [];
 
         private readonly formatters = {
             "int": x => x.toString(),
@@ -233,7 +244,6 @@
 
         private getQuickGoSmallUrl(ns: GoNameSpace): string {
             let goTerms: GoTerm[] = this.goData[this.goNamespaces.indexOf(ns)].goTerms;
-            // TODO reorder when using different sort function when chosen
             const top5: string[] = goTerms.slice(0, 5).map(x => x.code);
 
             if (top5.length > 0) {
@@ -244,7 +254,6 @@
 
         private showGoModal(ns: GoNameSpace): void {
             let goTerms: GoTerm[] = this.goData[this.goNamespaces.indexOf(ns)].goTerms;
-            // TODO reorder when using different sort function when chosen
             const top5: GoTerm[] = goTerms.slice(0, 5);
 
             if (top5.length > 0) {
@@ -311,6 +320,9 @@
                     let namespace: GoNameSpace = this.goNamespaces[i];
                     this.goData[i].goTerms = await goSource.getGoTerms(namespace, percent, sequences);
                 }
+
+                let ecSource: EcDataSource = await sample.dataRepository.createEcDataSource();
+                this.ecData = await ecSource.getEcNumbers()
             }
         }
 

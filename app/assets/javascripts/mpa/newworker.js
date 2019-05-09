@@ -164,10 +164,12 @@ function makeFaGrouped(peptide) {
 }
 
 /**
+ * Creates a `GOTerms` summary of the go terms available in the dataset. Optionally limited to a list of sequences 
+ * and/or a threshold of acceptance.
  * 
- * @param {number} percent 
- * @param {Iterable<String>} sequences 
- * @return {Promise<{data, trust}>}
+ * @param {number} percent ignore data weighing less (to be removed)
+ * @param {Iterable<String>} sequences subset of sequences to take into account, null to consider all
+ * @return {Promise<{data, trust}>} Go terms summary
  */
 export async function summarizeGo(percent = 50, sequences = null) {
     let goData = Array.from(goTermsCache.entries());
@@ -198,6 +200,25 @@ export async function summarizeGo(percent = 50, sequences = null) {
     }
 
     return {data: res, trust: trust}
+}
+
+/**
+ * Creates a `ECNumbers` summary of the go terms available in the dataset.
+ * Optionally limited to a list of sequences and/or a threshold of acceptance
+ *
+ * @param {number} [percent=50] ignore data weighing less (to be removed)
+ * @param {string[]} [sequences=null] subset of sequences to take into account, null to consider all
+ * @return {Promise<{data: MPAFAResult[], trust}>} ECNumbers summary
+ */
+export async function summarizeEc(percent = 50, sequences = null) {
+    const dataExtractor = pept => {
+        console.log(pept);
+        return pept.faGrouped.EC;
+    }
+    const countExtractor = pept => pept.fa.counts["EC"] || 0;
+    const trustExtractor = pept => countExtractor(pept) / pept.fa.counts["all"];
+
+    return summarizeFa(dataExtractor, countExtractor, trustExtractor, percent, sequences);
 }
 
 /**
@@ -263,6 +284,8 @@ function summarizeFa(extract, countExtractor, trustExtractor, cutoff = 50, seque
             }
         }
     }
+
+    console.log(map);
 
     return {
         trust: {
