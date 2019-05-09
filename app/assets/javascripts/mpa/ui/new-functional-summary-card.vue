@@ -37,7 +37,7 @@
             <card-body>
                 <div class="tab-content">
                     <tab label="GO terms" :active="true">
-                        <!-- <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown> -->
+                        <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
                         This panel shows the Gene Ontology annotations that were matched to
                         your peptides. <span v-if="$store.getters.activeDataset && $store.getters.activeDataset.progress === 1" v-html="this.trustLine('GO term')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
                         <div v-if="!$store.getters.activeDataset || $store.getters.activeDataset.progress !== 1" class="mpa-unavailable go">
@@ -52,7 +52,7 @@
                             <div class="row" v-for="(namespace, idx) of goNamespaces" v-bind:key="namespace">
                                 <h3 style="padding-left: 16px;">{{ goData[idx].title }}</h3>
                                 <div class="col-xs-8">
-                                    <go-amount-table :items="goData[idx].goTerms" :namespace="namespace"></go-amount-table>
+                                    <go-amount-table :items="goData[idx].goTerms" :namespace="namespace" :searchSettings="faSortSettings"></go-amount-table>
                                 </div>
                                 <div class="col-xs-4">
                                     <img :src="getQuickGoSmallUrl(goNamespaces[idx])" class="quickGoThumb" @click="showGoModal(goNamespaces[idx])">
@@ -197,6 +197,7 @@
         }
 
         setFormatSettings(formatType: string, fieldType: string, shadeFieldType: string, name: string): void {
+            console.log("SETTING FORMAT SETTINGS!");
             this.formatType = formatType;
 
             this.faSortSettings.format = (x: GoTerm) => this.formatters[this.formatType](x[fieldType]);

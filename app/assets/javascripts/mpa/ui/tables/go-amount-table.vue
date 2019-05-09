@@ -17,7 +17,7 @@
             <template v-for="goTerm of items.slice(0, itemsVisible)">
                 <tr aria-expanded="false" tabindex="0" role="button" style="cursor: pointer;" v-bind:key="goTerm.code + '-1'" @click="toggleTerm(goTerm)">
                     <td class="shaded-cell" :style="`background-image: linear-gradient(to right, rgb(221, 221, 221) ${goTerm.fractionOfPepts * 100}%, transparent ${goTerm.fractionOfPepts * 100}%); width: 5em;`">
-                        {{ goTerm.popularity }}
+                        {{ searchSettings.field === "fractionOfPepts" ?  (goTerm.fractionOfPepts * 100).toFixed(0) + '%' : goTerm.popularity }}
                     </td>
                     <td style="width: 7em;">
                         <a :href="`https://www.ebi.ac.uk/QuickGO/term/${goTerm.code}`" target="_blank">
@@ -71,6 +71,7 @@
     import AmountTable from "./amount-table.vue";
     import { downloadDataByForm, logToGoogle, triggerDownloadModal } from "../../../utils";
     import { GoNameSpace } from "../../../fa/GoNameSpace";
+    import FaSortSettings from "./FaSortSettings";
 
 
     @Component({
@@ -83,6 +84,8 @@
         private items: GoTerm[];
         @Prop({required: true})
         private namespace: GoNameSpace;
+        @Prop({required: true})
+        private searchSettings: FaSortSettings;
 
         // The amount of items that's always visible in the table (thus the table's minimum length)
         private initialItemsVisible: number = 5;
@@ -132,11 +135,9 @@
             }
         }
 
-        // TODO implement
         private saveImage(goTerm: GoTerm): void {
             logToGoogle("Multi peptide", "Save Image for FA");
             // Hack to get a reference to the SVG DOM-element
-            console.log(document.getElementById(`TreeView-${goTerm.code}`).getElementsByTagName("svg")[0]);
             //@ts-ignore
             triggerDownloadModal(document.getElementById(`TreeView-${goTerm.code}`).getElementsByTagName("svg")[0], null, `unipept_treeview_${goTerm.code}`);
         }
@@ -145,6 +146,11 @@
             let columnNames: string[] = ["Peptides", "GO term", "Name"];
             let grid: string[][] = this.items.map(term => [term.popularity.toString(), term.code, term.name]);
             downloadDataByForm(this.toCSV(columnNames, grid), "GO_terms-" + this.namespace.replace(" ", "_") + "-export.csv", "text/csv");
+        }
+
+        @Watch("searchSettings", {deep: true})
+        onSortSettingsChanged() {
+            console.log(JSON.stringify(this.searchSettings));
         }
     }
 </script>
