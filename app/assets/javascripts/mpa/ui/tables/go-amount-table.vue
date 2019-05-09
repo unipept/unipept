@@ -7,7 +7,7 @@
                 <th scope="col">Name</th>
                 <th scope="col"></th>
                 <th scope="col">
-                    <button class="btn btn-default btn-xs btn-animate amounttable-download">
+                    <button class="btn btn-default btn-xs btn-animate amounttable-download" @click="saveTableAsCSV()">
                         <span class="glyphicon glyphicon-download down"></span> Save table as CSV
                     </button>
                 </th>
@@ -36,11 +36,11 @@
                 <tr v-bind:key="goTerm.code + '-2'" v-if="expandedItemsList.indexOf(goTerm) >= 0">
                     <td colspan="5">
                         <div class="amounttable-expandrow-content">
-                            <button class="btn btn-default btn-xs btn-animate pull-right" @click="saveImage()">
+                            <button class="btn btn-default btn-xs btn-animate pull-right" @click="saveImage(goTerm)">
                                 <span class="glyphicon glyphicon-download down"></span>
                                 Save as image
                             </button>
-                            <treeview :data="expandedItems.get(goTerm)" :height="310" :width="535" :tooltip="tooltip" :colors="highlightColorFunc" :enableAutoExpand="0.3" :linkStrokeColor="linkStrokeColor" :nodeStrokeColor="highlightColorFunc" :nodeFillColor="highlightColorFunc"></treeview>
+                            <treeview :id="`TreeView-${goTerm.code}`" :data="expandedItems.get(goTerm)" :height="310" :width="535" :tooltip="tooltip" :colors="highlightColorFunc" :enableAutoExpand="0.3" :linkStrokeColor="linkStrokeColor" :nodeStrokeColor="highlightColorFunc" :nodeFillColor="highlightColorFunc"></treeview>
                         </div>
                     </td>
                 </tr>
@@ -68,15 +68,21 @@
     import TaxaDataSource from "../../datasource/TaxaDataSource";
     import Node from "../../Node";
     import Treeview from "../visualizations/treeview.vue";
+    import AmountTable from "./amount-table.vue";
+    import { downloadDataByForm, logToGoogle, triggerDownloadModal } from "../../../utils";
+    import { GoNameSpace } from "../../../fa/GoNameSpace";
+
 
     @Component({
         components: {
             Treeview
         }
     })
-    export default class GoAmountTable extends Vue {
+    export default class GoAmountTable extends AmountTable {
         @Prop({required: true})
         private items: GoTerm[];
+        @Prop({required: true})
+        private namespace: GoNameSpace;
 
         // The amount of items that's always visible in the table (thus the table's minimum length)
         private initialItemsVisible: number = 5;
@@ -124,13 +130,21 @@
 
                 this.expandedItemsList.push(term);
             }
-
-            console.log(this.expandedItemsList);
         }
 
         // TODO implement
-        private saveImage(): void {
+        private saveImage(goTerm: GoTerm): void {
+            logToGoogle("Multi peptide", "Save Image for FA");
+            // Hack to get a reference to the SVG DOM-element
+            console.log(document.getElementById(`TreeView-${goTerm.code}`).getElementsByTagName("svg")[0]);
+            //@ts-ignore
+            triggerDownloadModal(document.getElementById(`TreeView-${goTerm.code}`).getElementsByTagName("svg")[0], null, `unipept_treeview_${goTerm.code}`);
+        }
 
+        private saveTableAsCSV(): void {
+            let columnNames: string[] = ["Peptides", "GO term", "Name"];
+            let grid: string[][] = this.items.map(term => [term.popularity.toString(), term.code, term.name]);
+            downloadDataByForm(this.toCSV(columnNames, grid), "GO_terms-" + this.namespace.replace(" ", "_") + "-export.csv", "text/csv");
         }
     }
 </script>

@@ -50,12 +50,12 @@
                         </div>
                         <div v-else>
                             <div class="row" v-for="(namespace, idx) of goNamespaces" v-bind:key="namespace">
-                                <h3>{{ goData[idx].title }}</h3>
+                                <h3 style="padding-left: 16px;">{{ goData[idx].title }}</h3>
                                 <div class="col-xs-8">
-                                    <go-amount-table :items="goData[idx].goTerms"></go-amount-table>
+                                    <go-amount-table :items="goData[idx].goTerms" :namespace="namespace"></go-amount-table>
                                 </div>
                                 <div class="col-xs-4">
-                                    <img :src="getQuickGoSmallUrl(goNamespaces[0])" class="quickGoThumb" @click="showGoModal(goNamespaces[0])">
+                                    <img :src="getQuickGoSmallUrl(goNamespaces[idx])" class="quickGoThumb" @click="showGoModal(goNamespaces[idx])">
                                 </div>
                             </div>
                         </div>
@@ -133,7 +133,7 @@
         tabs: Tab[] = [];
 
         private formatType: string = "int";
-        private fieldType: string = "numberOfPepts";
+        private fieldType: string = "popularity";
         private shadeFieldType: string = "fractionOfPepts";
         private name: string = "Peptides";
 
@@ -251,21 +251,20 @@
                 const top5Sentence = top5WithNames.slice(0, -1).join(", ")
                     + (top5.length > 1 ? " and " : "")
                     + top5WithNames[top5WithNames.length - 1];
-                const quickGoChartSmallUrl: string = this.quickGOChartURL(top5, false);
-                const quickGoChartURL: string = this.quickGOChartURL(top5, true);
+                const quickGoChartURL: string = this.quickGOChartURL(top5.map(x => x.code), true);
                 
                 let modalContent = `
                     This chart shows the relationship between the ${top5.length} most occurring GO terms: ${top5Sentence}.
                     <br/>
                     <a href="${quickGoChartURL}" target="_blank" title="Click to enlarge in new tab">
-                        <img style="max-width: 100%;" src="${quickGoChartSmallUrl}" alt="QuickGO chart of ${top5Sentence}"/>
+                        <img style="max-width: 100%;" src="${quickGoChartURL}" alt="QuickGO chart of ${top5Sentence}"/>
                     </a>
                     <div>
-                        Provided by <a href="https://www.ebi.ac.uk/QuickGO/annotations?goId=${top5.join(',')}" target="_blank">QuickGO</a>.
+                        Provided by <a href="https://www.ebi.ac.uk/QuickGO/annotations?goId=${top5.map(x => x.code).join(',')}" target="_blank">QuickGO</a>.
                     </div>
                 `;
 
-                showInfoModal("QuickGo " + ns, modalContent);
+                showInfoModal("QuickGo " + ns, modalContent, {wide: true});
             }
         }
 
