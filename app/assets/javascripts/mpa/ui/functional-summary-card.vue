@@ -131,14 +131,14 @@
             "2pos": x => x.toFixed(2).toString(),
         };
 
-        faSortSettings: FaSortSettings = new FaSortSettings(
-            (x: string) => this.formatters[this.formatType](x[this.fieldType]),
-            (x: string) => this.formatters[this.formatType](x),
-            this.fieldType,
-            this.shadeFieldType,
-            this.name,
-            (a, b) => b[this.fieldType] - a[this.fieldType]
-        );
+        // faSortSettings: FaSortSettings = new FaSortSettings(
+        //     (x: string) => this.formatters[this.formatType](x[this.fieldType]),
+        //     (x: string) => this.formatters[this.formatType](x),
+        //     this.fieldType,
+        //     this.shadeFieldType,
+        //     this.name,
+        //     (a, b) => b[this.fieldType] - a[this.fieldType]
+        // );
 
         percentSettings: string = "5";
 
@@ -180,12 +180,12 @@
         setFormatSettings(formatType: string, fieldType: string, shadeFieldType: string, name: string): void {
             this.formatType = formatType;
 
-            this.faSortSettings.format = (x:string) => this.formatters[this.formatType](x[fieldType]);
-            this.faSortSettings.formatData = (x:string) => this.formatters[this.formatType](x);
-            this.faSortSettings.field = fieldType;
-            this.faSortSettings.shadeField = shadeFieldType;
-            this.faSortSettings.name = name;
-            this.faSortSettings.sortFunc = (a, b) => b[fieldType] - a[fieldType];
+            // this.faSortSettings.format = (x:string) => this.formatters[this.formatType](x[fieldType]);
+            // this.faSortSettings.formatData = (x:string) => this.formatters[this.formatType](x);
+            // this.faSortSettings.field = fieldType;
+            // this.faSortSettings.shadeField = shadeFieldType;
+            // this.faSortSettings.name = name;
+            // this.faSortSettings.sortFunc = (a, b) => b[fieldType] - a[fieldType];
 
             // Recalculate stuff
             this.onPeptideContainerChanged();
