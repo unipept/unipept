@@ -9,6 +9,7 @@ import Node from "../Node";
 import DataRepository from "./DataRepository";
 import GoTerm from "../../fa/GoTerm";
 import PeptideInfo from "../PeptideInfo";
+import EcNumber from "../../fa/EcNumber";
 
 export default class TaxaDataSource extends DataSource {
     private _tree: Tree;
@@ -49,11 +50,29 @@ export default class TaxaDataSource extends DataSource {
      * the given GO-term are taken into account here.
      * 
      * @param term The GO-Term that should be used for filtering the peptides that are part of the tree.
-     * @return A new Tree that represents the taxonomic lineage of the given GO-term.
+     * @return A new Node (root of the tree) that represents the taxonomic lineage of the given GO-term.
      */
     public async getTreeByGoTerm(term: GoTerm): Promise<Node> {
         await this.process();
         let pepts = await (await this._repository.getWorker()).getPeptidesByFA(term.code, null);
+        let sequences = pepts.map(pept => pept.sequence);
+        
+        return this._tree.getRoot().callRecursivelyPostOder((t: Node, c: any) => {
+            const included = c.some(x => x.included) || t.values.some(pept => sequences.includes(pept.sequence));
+            return Object.assign(Object.assign({}, t), {included: included, children: c});
+        });
+    }
+
+    /**
+     * Returns a tree based on the taxonomic lineage of a specific EC-number. Only the peptides that are associated with
+     * the given EC-number are taken into account here.
+     * 
+     * @param number The EC-Number that should be used for filtering the peptides that are part of the tree.
+     * @return A new Node (root of the tree) that represents the taxonomic lineage of the given EC-Number.
+     */
+    public async getTreeByEcNumber(number: EcNumber): Promise<Node> {
+        await this.process();
+        let pepts = await (await this._repository.getWorker()).getPeptidesByFA(number.code, null);
         let sequences = pepts.map(pept => pept.sequence);
         
         return this._tree.getRoot().callRecursivelyPostOder((t: Node, c: any) => {

@@ -1,6 +1,6 @@
 import DataRepository from "./DataRepository";
 
-export default class DataSource {
+export default abstract class DataSource {
     protected _repository: DataRepository;
 
     public constructor(repository: DataRepository) {

@@ -14,6 +14,7 @@ import GoTerm from "../../fa/GoTerm";
 import { GoNameSpace } from "../../fa/GoNameSpace";
 import FATrust from "../../fa/FATrust";
 import { MPAFAResult } from "../newworker";
+import EcDataSource from "./EcDataSource";
 
 
 export default class DataRepository {
@@ -24,6 +25,7 @@ export default class DataRepository {
 
     private _taxaSourceCache: TaxaDataSource;
     private _goSourceCache: GoDataSource;
+    private _ecSourceCache: EcDataSource;
 
     public constructor(sample: Sample, mpaConfig: MPAConfig) {
         this._sample = sample;
@@ -49,6 +51,13 @@ export default class DataRepository {
             this._goSourceCache = new GoDataSource(this);
         }
         return this._goSourceCache;
+    }
+
+    public async createEcDataSource(): Promise<EcDataSource> {
+        if (!this._ecSourceCache) {
+            this._ecSourceCache = new EcDataSource(this);
+        }
+        return this._ecSourceCache;
     }
 
     public setWorkerProgress(value: number): void {
