@@ -36,18 +36,11 @@ export default class EcDataSource extends CachedDataSource<EcNameSpace, EcNumber
         } else {
             let output: EcNumber[] = [];
             for (let ns of Object.values(EcNameSpace)) {
-                let result: [EcNumber[], FATrust] = await this.getFromCache(namespace, Object.values(EcNameSpace), cutoff, sequences);
+                let result: [EcNumber[], FATrust] = await this.getFromCache(ns, Object.values(EcNameSpace), cutoff, sequences);
+                console.log(result);
                 output.push(... result[0]);
             }
-            output.sort((a: EcNumber, b: EcNumber) => {
-                if (a.popularity < b.popularity) {
-                    return -1;
-                } else if (a.popularity === b.popularity) {
-                    return 0;
-                } else {
-                    return 1;
-                }
-            });
+            output.sort((a: EcNumber, b: EcNumber) => b.popularity - a.popularity);
             return output;
         }
     }
@@ -57,18 +50,21 @@ export default class EcDataSource extends CachedDataSource<EcNameSpace, EcNumber
 
         let {data, trust} = await worker.summarizeEc(percent, sequences);
         let dataOutput: Map<EcNameSpace, EcNumber[]> = new Map();
-        for (let item of data) {
-            let convertedItem = new EcNumber(item.code, item.name, convertEcNumberToEcNameSpace(item.code), item.numberOfPepts, item.fractionOfPepts);
-            if (!dataOutput.has(convertedItem.namespace)) {
-                dataOutput.set(convertedItem.namespace, []);
+        for (let namespace of Object.values(EcNameSpace)) {
+            let items: MPAFAResult[] = data[namespace];
+            let convertedItems: EcNumber[] = [];
+            for (let item of items) {
+                convertedItems.push(new EcNumber(item.code, item.name, namespace, item.numberOfPepts, item.fractionOfPepts));
             }
-            
-            dataOutput.get(convertedItem.namespace).push(convertedItem);
+            dataOutput.set(namespace, convertedItems);
         }
 
-        // TODO complete this here!
         let trustOutput: Map<EcNameSpace, FATrust> = new Map();
-        
+        for (let namespace of Object.values(EcNameSpace)) {
+            let originalTrust: {trustCount: number, annotatedCount: number, totalCount: number} = trust[namespace];
+            let convertedTrust: FATrust = new FATrust(originalTrust.annotatedCount, originalTrust.totalCount, originalTrust.trustCount);
+            trustOutput.set(namespace, convertedTrust);
+        }
 
         return [dataOutput, trustOutput];
     }

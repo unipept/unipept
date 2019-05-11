@@ -6,12 +6,17 @@ import {postJSON, numberToPercent} from "../utils.js";
 const BATCH_SIZE = 100;
 const PEPT2DATA_URL = "/mpa/pept2data";
 
-const NAMESPACES = ["biological process", "cellular component", "molecular function"];
+const GO_NAMESPACES = ["biological process", "cellular component", "molecular function"];
+const EC_NAMESPACES = ["oxidoreductases", "transferases", "hydrolases", "lyases", "isomerases", "ligases", "translocases"];
 
 /**
  * @type {Map<string, GoTermCache>}
  */
 let goTermsCache = new Map();
+/**
+ * @type {Map<string, EcNumberCache>}
+ */
+let ecNumbersCache = new Map();
 let processedPeptides = new Map();
 /**
  * @type {MPAPeptide}
@@ -57,6 +62,15 @@ let result;
    * @property {string} code 
    */
 
+   /**
+    * TODO convert to TypeScript
+    * 
+    * @typedef {Object} EcNumberCache
+    * @property {string} name
+    * @property {string} namespace
+    * @property {string} code
+    */
+
 
 export async function process(originalPeptides, config) {
     const preparedPeptides = preparePeptides(originalPeptides, config);
@@ -82,7 +96,16 @@ export async function process(originalPeptides, config) {
             .filter(x => x.startsWith("GO:"))
             .forEach(x => usedGoTerms.add(x));
     }
-    await cache(Array.from(usedGoTerms.values()));
+    await cacheGoTerms(Array.from(usedGoTerms.values()));
+
+    // Prefetch the required EC-numbers.
+    let usedEcNumbers = new Set();
+    for (let peptide of processedPeptides.values()) {
+        Object.keys(peptide.fa.data || [])
+            .filter(x => x.startsWith("EC:"))
+            .forEach(x => usedEcNumbers.add(x));
+    }
+    await cacheEcNumbers(Array.from(usedEcNumbers.values()));
 
     let numMatched = 0;
     for (const peptide of processedPeptides.values()) {
@@ -110,7 +133,7 @@ export async function getResult() {
  * 
  * @param {string[]} goTerms 
  */
-async function cache(goTerms) {
+async function cacheGoTerms(goTerms) {
     // Check which goTerms have already been downloaded
     const todo = goTerms.filter(c => !goTermsCache.has(c));
     if (todo.length > 0) {
@@ -118,12 +141,12 @@ async function cache(goTerms) {
             const res = await postJSON("/private_api/goterms", JSON.stringify({
                 goterms: todo.slice(i, i + BATCH_SIZE),
             }));
-            addToCache(res);
+            await addGoTermsToCache(res);
         }
     }
 }
 
-async function addToCache(newTerms, namespace = null) {
+async function addGoTermsToCache(newTerms, namespace = null) {
     newTerms.forEach(go => {
         if (!goTermsCache.has(go.code) && (namespace != null || go.namespace) && go.name) {
             goTermsCache.set(go.code, {
@@ -133,6 +156,52 @@ async function addToCache(newTerms, namespace = null) {
             });
         }
     });
+}
+
+/**
+ * Fetch the names and data of the EC numbers that are not yet in the cache of names
+ * @param {string[]} ecNumbers array of EC numbers that should be in the cache
+ * @access private
+ */
+async function cacheEcNumbers(ecNumbers) {
+    const todo = [];
+    for (const curEc of ecNumbers.map(el => el.substr(3))) {
+        if (!ecNumbersCache.has(curEc)) {
+            todo.push(curEc);
+            const parts = curEc.split(".");
+            const numSpecific = parts.includes("-") ? parts.indexOf("-") : parts.length;
+            for (let i = numSpecific - 1; i >= 1; i--) {
+                parts[i] = "-";
+                const newKey = parts.join(".");
+                if (!ecNumbersCache.has(newKey)) {
+                    todo.push(newKey);
+                } else {
+                    break; // the key already exists (all following already done)
+                }
+            }
+        }
+    }
+
+    if (todo.length > 0) {
+        for (let i = 0; i < todo.length; i += BATCH_SIZE) {
+            const res = await postJSON("/private_api/ecnumbers", JSON.stringify({
+                ecnumbers: todo.slice(i, i + BATCH_SIZE),
+            }));
+            await addEcNumbersToCache(res);
+        }
+    }
+}
+
+async function addEcNumbersToCache(newECs) {
+    for (let ec of newECs) {
+        if (ec.name) {
+            ecNumbersCache.set(ec.code, {
+                name: ec.name,
+                namespace: convertToEcNameSpace(ec.code),
+                code: ec
+            });
+        }
+    }
 }
 
 /**
@@ -172,8 +241,6 @@ function makeFaGrouped(peptide) {
  * @return {Promise<{data, trust}>} Go terms summary
  */
 export async function summarizeGo(percent = 50, sequences = null) {
-    let goData = Array.from(goTermsCache.entries());
-
     let usedGoTerms = new Set();
     for (let peptide of processedPeptides.values()) {
         Object.keys(peptide.fa.data || [])
@@ -181,22 +248,21 @@ export async function summarizeGo(percent = 50, sequences = null) {
             .forEach(x => usedGoTerms.add(x));
     }
 
-    await cache(Array.from(usedGoTerms.values()));
+    await cacheGoTerms(Array.from(usedGoTerms.values()));
 
     let res = {};
     let trust = {};
     const countExtractor = pept => pept.fa.counts["GO"] || 0;
     const trustExtractor = pept => countExtractor(pept) / pept.fa.counts["all"];
-    for (let namespace of NAMESPACES) {
+    const nameExtractor = code => goTermsCache.get(code).name;
+    const namespaceExtractor = code => goTermsCache.get(code).namespace;
+    for (let namespace of GO_NAMESPACES) {
         const dataExtractor = pept => pept.faGrouped.GO[namespace] || [];
-        const {data, trust: curStats} = summarizeFa(dataExtractor, countExtractor, trustExtractor, percent, sequences);
+        const {data, trust: curStats} = summarizeFa(dataExtractor, countExtractor, trustExtractor, nameExtractor, namespaceExtractor, percent, sequences);
+        
         trust[namespace] = curStats;
-        res[namespace] = data;
-    }
-
-    // Sort all terms per namespace by popularity
-    for (let namespace of NAMESPACES) {
-        res[namespace] = res[namespace].sort((a, b) => b.numberOfPepts - a.numberOfPepts);
+        // Sort all terms per namespace by popularity
+        res[namespace] = data.sort((a, b) => b.numberOfPepts - a.numberOfPepts);
     }
 
     return {data: res, trust: trust}
@@ -208,39 +274,62 @@ export async function summarizeGo(percent = 50, sequences = null) {
  *
  * @param {number} [percent=50] ignore data weighing less (to be removed)
  * @param {string[]} [sequences=null] subset of sequences to take into account, null to consider all
- * @return {Promise<{data: MPAFAResult[], trust}>} ECNumbers summary
+ * @return {Promise<{data, trust}>} ECNumbers summary
  */
 export async function summarizeEc(percent = 50, sequences = null) {
-    const dataExtractor = pept => {
-        console.log(pept);
-        return pept.faGrouped.EC;
+    let usedEcNumbers = new Set();
+    for (let peptide of processedPeptides.values()) {
+        Object.keys(peptide.fa.data || [])
+            .filter(x => x.startsWith("EC:"))
+            .forEach(x => usedEcNumbers.add(x));
     }
+    await cacheEcNumbers(Array.from(usedEcNumbers.values()));
+
+    let res = {};
+    let trust = {};
     const countExtractor = pept => pept.fa.counts["EC"] || 0;
     const trustExtractor = pept => countExtractor(pept) / pept.fa.counts["all"];
+    const nameExtractor = code => ecNumbersCache.get(code).name;
+    const namespaceExtractor = code => ecNumbersCache.get(code).namespace;
+    for (let namespace of EC_NAMESPACES) {
+        const dataExtractor = pept => pept.faGrouped.EC.filter(el => convertToEcNameSpace(el.code) === namespace);
+        const {data, trust: curStats} = summarizeFa(dataExtractor, countExtractor, trustExtractor, nameExtractor, namespaceExtractor, percent, sequences);
+        
+        trust[namespace] = curStats;
+        res[namespace] = data.sort((a, b) => b.numberOfPepts - a.numberOfPepts);;
+    }
 
-    return summarizeFa(dataExtractor, countExtractor, trustExtractor, percent, sequences);
+    return {data: res, trust: trust};
+}
+
+/**
+ * Converts a EC-code to the corresponding EC-namespace. E.g. 1.x.x.x => "oxidoreductases"
+ * @param {string} ecCode 
+ * @return {string}
+ */
+function convertToEcNameSpace(ecCode) {
+    return EC_NAMESPACES[parseInt(ecCode.substr(0, 1)) - 1];
 }
 
 /**
  * Create a mapping of functional analysis codes to a weight by aggregating
  * the counts of all peptides that have functional analysis tags.
  *
- * @param {function(MPAPeptide): Iterable<{code, value}>} extract
- *            function extracting the FAInfo form a peptide
- * @param {function(MPAPeptide): number} countExtractor
- *            function extracting the the number of annotated (full)peptides
- *            form a peptide
- * @param {function(MPAPeptide): number} trustExtractor
- *            function calcualting a trust level in [0,1] for the annotaions
- *            of a peptide.
- * @param {number} cutoff  data with strictly lower weight is ignored
- *                         value should be given as percentage in [0,100]
- * @param {Iterable.<string>} [sequences=null] subset of sequences to take into account,
- *                                    null to consider all
+ * @param {function(MPAPeptide): Iterable<{code, value}>} extract function extracting the FAInfo form a peptide
+ * @param {function(MPAPeptide): number} countExtractor function extracting the the number of annotated (full) peptides
+ * form a peptide
+ * @param {function(MPAPeptide): number} trustExtractor function calcualting a trust level in [0,1] for the annotations 
+ * of a peptide.
+ * @param {function(string): string} nameByCode A function that must return the name that's associated with the given
+ * code.
+ * @param {function(string): string} namespaceByCode A function that must return the namespace that's associated with 
+ * the given code.
+ * @param {number} cutoff  data with strictly lower weight is ignored value should be given as percentage in [0,100]
+ * @param {Iterable.<string>} [sequences=null] subset of sequences to take into account,  to consider all
  * @return {{data:MPAFAResult[],trust:FATrustInfo}} an array of MPAFAResult to be stored
  * @todo  remove the cutoff
  */
-function summarizeFa(extract, countExtractor, trustExtractor, cutoff = 50, sequences = null) {
+function summarizeFa(extract, countExtractor, trustExtractor, nameByCode, namespaceByCode, cutoff = 50, sequences = null) {
     let iterableOfSequences = sequences || processedPeptides.keys();
 
     const map = new Map();
@@ -285,8 +374,6 @@ function summarizeFa(extract, countExtractor, trustExtractor, cutoff = 50, seque
         }
     }
 
-    console.log(map);
-
     return {
         trust: {
             trustCount: sumTrust,
@@ -294,8 +381,8 @@ function summarizeFa(extract, countExtractor, trustExtractor, cutoff = 50, seque
             totalCount: sumCount,
         },
         data: Array.from(map).map(x => ({
-            name: goTermsCache.get(x[0]).name,
-            namespace: goTermsCache.get(x[0]).namespace,
+            name: nameByCode(x[0]),
+            namespace: namespaceByCode(x[0]),
             code: x[0],
             weightedValue: x[1][0],
             absoluteCountFiltered: x[1][1],

@@ -347,7 +347,7 @@ export default class ECNumbers extends SingleFA {
                     if (!this.ecData.has(newKey)) {
                         todo.push(newKey);
                     } else {
-                        break;// the key already exists (all following already done)
+                        break; // the key already exists (all following already done)
                     }
                 }
             }
