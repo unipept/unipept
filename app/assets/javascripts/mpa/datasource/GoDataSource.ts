@@ -38,17 +38,7 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm> 
                 output.push(...result[0].slice(0, Math.min(n, result[0].length)));
             }
 
-            output.sort((a: GoTerm, b: GoTerm) => {
-                if (a.popularity < b.popularity) {
-                    return -1;
-                } else if (a.popularity === b.popularity) {
-                    return 0;
-                } else {
-                    return 1;
-                }
-            })
-
-            return output.slice(0, Math.min(n, output.length));
+            return output.sort((a: GoTerm, b: GoTerm) => b.popularity - a.popularity).slice(0, Math.min(n, output.length));
         }
     }
 
