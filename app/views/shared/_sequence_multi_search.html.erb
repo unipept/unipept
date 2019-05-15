@@ -3,7 +3,7 @@
     <h2 class='card-title-text'>Metaproteomics Analysis</h2>
   </div>
   <div class='card-supporting-text'>
-    <%= form_tag(:mpa, :method => "post") do %>
+    <%= form_tag(:mpa, :method => "post", :authenticity_token => false) do %>
       <div id="search_elements" class='form-group'>
         <label for="qs">Peptide list</label>
         <%= text_area_tag(:qs, nil, :rows => 7, :spellcheck => "false", :class => "form-control", autofocus: "true") %>
