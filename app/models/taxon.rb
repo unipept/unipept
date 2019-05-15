@@ -19,6 +19,7 @@ class Taxon < ApplicationRecord
   # sorting order
   def <=>(other)
     return -1 if other.nil?
+
     id <=> other.id
   end
 end

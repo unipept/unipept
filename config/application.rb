@@ -12,7 +12,7 @@ end
 module UnipeptWeb
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 5.1
+    config.load_defaults 5.2
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -38,8 +38,8 @@ module UnipeptWeb
     config.filter_parameters += [:password]
 
     config.versions = {
-      unipept: '4.0.0',
-      gem: '1.3.0',
+      unipept: '4.1.1',
+      gem: '1.4.1',
       uniprot: '2018.06'
     }
 

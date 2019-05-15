@@ -49,6 +49,9 @@ UnipeptWeb::Application.configure do
   # enable API logging
   config.unipept_API_logging = false
 
+  # Store uploaded files on the local file system in a temporary directory
+  config.active_storage.service = :test
+
   # enable error emails
   config.unipept_error_mails = false
 end

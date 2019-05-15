@@ -1,21 +1,18 @@
 source 'http://rubygems.org'
 
-git_source(:github) do |repo_name|
-  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
-  "https://github.com/#{repo_name}.git"
-end
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-gem 'rails', '5.1.4'
+gem 'rails', '~> 5.2.2'
 
-gem 'mysql2', '~> 0.3.18'
+gem 'mysql2', '~> 0.5.2'
 
 gem 'webpacker'
 
 # Use Puma as the app server
-gem 'puma', '~> 3.7'
+gem 'puma', '~> 3.11'
 
 # Use Redis adapter to run Action Cable in production
-# gem 'redis', '~> 3.0'
+# gem 'redis', '~> 4.0'
 
 # pagination
 gem 'will_paginate'
@@ -26,11 +23,12 @@ gem 'devise_cas_authenticatable'
 gem 'responders', '>= 2.0'
 
 # needed for asset creation
-gem 'therubyracer'
+gem 'therubyracer', platforms: :ruby
+
+gem 'bootsnap', '>= 1.1.0', require: false
 
 # faster json
-# pinned on 2.17 because of an issue with 2.18: https://github.com/ohler55/oj/issues/325
-gem 'oj',  '2.17.5'
+gem 'oj',  '~> 3.7'
 
 gem 'multi_json'
 gem 'jbuilder'
