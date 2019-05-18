@@ -31,6 +31,7 @@ export default class TaxaDataSource extends DataSource {
      * @param level The TaxumRank with whome the returned TaxaElement's must be associated. 
      */
     public async getTopItems(n: number, level: string): Promise<TaxaElement[]> {
+        console.log("GET TAXA ITEMS --> " + level);
         //let tree = this._repository.tree;
         //let nodes: Node[] = tree.getNodesWithRank(level);
         // TODO complete implementation here!

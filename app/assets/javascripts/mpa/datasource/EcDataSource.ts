@@ -19,6 +19,8 @@ export default class EcDataSource extends CachedDataSource<EcNameSpace, EcNumber
      * @return A list of EC-Numbers, sorted by popularity.
      */
     public async getTopItems(n: number, namespace: EcNameSpace = null): Promise<EcNumber[]> {
+        console.log("GETTING EC NUMBERS --> " + namespace);
+        console.log(namespace);
         if (namespace) {
             let result: [EcNumber[], FATrust] = await this.getFromCache(namespace, Object.values(EcNameSpace));
             return result[0].slice(0, Math.min(n, result[0].length));
