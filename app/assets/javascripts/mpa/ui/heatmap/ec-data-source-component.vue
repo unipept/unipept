@@ -59,7 +59,7 @@
             }
         ];
 
-        private pagination = {'sortBy': 'column2', 'descending': true, 'rowsPerPage': 5}
+        private pagination = {'sortBy': 'popularity', 'descending': true, 'rowsPerPage': 5}
 
         mounted() {
             this.onSelectedNameSpaceChanged();

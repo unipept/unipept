@@ -4,8 +4,8 @@ import Element from "./Element";
 export default class TaxaElement extends Element {
     public rank: TaxumRank;
 
-    constructor(name: string, rank: TaxumRank) {
-        super(name);
+    constructor(name: string, rank: TaxumRank, popularity: number) {
+        super(name, popularity);
         this.rank = rank;
     }
 }
