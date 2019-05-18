@@ -112,6 +112,17 @@ export default class Tree {
     }
 
     /**
+     * Returns all nodes in this tree of all different ranks.
+     */
+    getAllNodes(): Node[] {
+        let output: Node[] = [];
+        for (let nodeList of this.rankNodeMap.values()) {
+            output = output.concat(nodeList);
+        }
+        return output;
+    }
+
+    /**
      * Composes a list of sequences that were added to a node with a given taxon id.
      *
      * @param nodeId the taxon id for which we want the sequences

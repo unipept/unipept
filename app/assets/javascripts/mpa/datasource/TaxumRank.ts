@@ -26,5 +26,15 @@ export enum TaxumRank {
     Species = "species",
     Subspecies = "subspecies",
     Varietas = "varietas",
-    Forma = "forma"
+    Forma = "forma",
+    Unknown = "unknown"
+}
+
+export function convertStringToTaxumRank(rank: string): TaxumRank {
+    for (let ns of Object.values(TaxumRank)) {
+        if (ns === rank) {
+            return ns;
+        }
+    }
+    return TaxumRank.Unknown;
 }
