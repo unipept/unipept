@@ -27,9 +27,15 @@ import {NormalizationType} from "./NormalizationType";
             <v-stepper-content step="3">
                 <p>Choose a set of data points that should visualized as part of the final heatmap.</p>
                 <span>Horizontal data:</span>
-                <component v-if="heatmapConfiguration.horizontalDataSource" :is="dataSources.get(horizontalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.horizontalDataSource"></component>
+                <div>
+                    <component v-if="heatmapConfiguration.horizontalDataSource" :is="dataSources.get(horizontalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.horizontalDataSource"></component>
+                    <v-progress-circular v-else indeterminate color="primary"></v-progress-circular>
+                </div>
                 <span>Vertical data:</span>
-                <component v-if="heatmapConfiguration.verticalDataSource" :is="dataSources.get(verticalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.verticalDataSource"></component>
+                <div>
+                    <component v-if="heatmapConfiguration.verticalDataSource" :is="dataSources.get(verticalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.verticalDataSource"></component>
+                    <v-progress-circular v-else indeterminate color="primary"></v-progress-circular>
+                </div>
             </v-stepper-content>
             <v-stepper-content step="4">
             </v-stepper-content>
@@ -128,16 +134,12 @@ import {NormalizationType} from "./NormalizationType";
             ]
         ]);
 
-        private horizontalDataSource: string;
-        private verticalDataSource: string;
-        private normalizer: string;
+        private horizontalDataSource: string = "";
+        private verticalDataSource: string = "";
+        private normalizer: string = "";
 
         created() {
-            let iterator = this.dataSources.keys();
-            iterator.next();
-            iterator.next();
-
-            this.horizontalDataSource = iterator.next().value;
+            this.horizontalDataSource = this.dataSources.keys().next().value;
             this.verticalDataSource = this.dataSources.keys().next().value;
             this.normalizer = this.normalizationTypes.keys().next().value;
         }
@@ -146,17 +148,17 @@ import {NormalizationType} from "./NormalizationType";
             this.onHorizontalSelection(this.horizontalDataSource);
             this.onVerticalSelection(this.verticalDataSource);
             this.onNormalizerChange(this.normalizer);
-
-            // this.heatmapConfiguration.horizontalDataSource.getTopItems(20);
         }
 
         @Watch("horizontalDataSource") 
         async onHorizontalSelection(newValue: string){
+            this.heatmapConfiguration.horizontalDataSource = null;
             this.heatmapConfiguration.horizontalDataSource = await this.dataSources.get(newValue).factory();
         }
 
         @Watch("verticalDataSource") 
         async onVerticalSelection(newValue: string) {
+            this.heatmapConfiguration.verticalDataSource = null;
             this.heatmapConfiguration.verticalDataSource = await this.dataSources.get(newValue).factory();
         }
 

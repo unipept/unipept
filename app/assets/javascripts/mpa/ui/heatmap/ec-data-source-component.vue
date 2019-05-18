@@ -65,11 +65,17 @@
 
         @Watch("selectedNameSpace")
         async onSelectedNameSpaceChanged() {
-            // Reset lists without changing the list-object reference.
-            this.items.length = 0;
-            this.selectedItems.length = 0;
-            let result: EcNumber[] = await (this.dataSource as EcDataSource).getTopItems(30, this.selectedNameSpace);
-            this.items.push(...result);
+            setTimeout(() => {
+                console.log(this.dataSource);
+                console.log(this.selectedNameSpace);
+                // Reset lists without changing the list-object reference.
+                this.items.length = 0;
+                this.selectedItems.length = 0;
+                (this.dataSource as EcDataSource).getTopItems(30, this.selectedNameSpace).then(result => {
+                    this.items.push(...result);
+                });
+            }, 500);
+            
         }
     }
 </script>
