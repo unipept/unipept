@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-select :items="goNameSpaces" v-model="selectedNameSpace" label="Namespace"></v-select>
+        <v-select :items="ecNameSpaces" v-model="selectedNameSpace" label="Namespace"></v-select>
         <v-data-table v-model="selectedItems" :headers="headers" :items="items" select-all item-key="code" v-bind:pagination.sync="pagination">
             <template v-slot:items="props">
                 <tr :active="props.selected" @click="props.selected = !props.selected">
@@ -24,20 +24,22 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import {GoNameSpace} from "./../../../fa/GoNameSpace";
-    import GoDataSource from "../../datasource/GoDataSource";
-    import GoTerm from "../../../fa/GoTerm";
+    import EcDataSource from "../../datasource/EcDataSource";
+    import { EcNameSpace } from "../../../fa/EcNameSpace";
+    import EcNumber from "../../../fa/EcNumber";
 
     @Component
-    export default class GoDataSourceComponent extends Vue {
+    export default class EcDataSourceComponent extends Vue {
+        // TODO This component should be merged with the GoDataSourceComponent to reduce code duplication
+
         @Prop({required: true})
-        private goDataSource: GoDataSource;
+        private ecDataSource: EcDataSource;
 
-        private goNameSpaces: GoNameSpace[] = Object.values(GoNameSpace);
-        private selectedNameSpace: GoNameSpace = this.goNameSpaces[0];
+        private ecNameSpaces: EcNameSpace[] = Object.values(EcNameSpace);
+        private selectedNameSpace: EcNameSpace = this.ecNameSpaces[0];
 
-        private items: GoTerm[] = [];
-        private selectedItems: GoTerm[] = [];
+        private items: EcNumber[] = [];
+        private selectedItems: EcNumber[] = [];
 
         private headers = [
             {
@@ -59,7 +61,6 @@
 
         private pagination = {'sortBy': 'column2', 'descending': true, 'rowsPerPage': 5}
 
-
         mounted() {
             this.onSelectedNameSpaceChanged();
         }
@@ -69,7 +70,7 @@
             // Reset lists without changing the list-object reference.
             this.items.length = 0;
             this.selectedItems.length = 0;
-            let result: GoTerm[] = await this.goDataSource.getTopItems(30, this.selectedNameSpace);
+            let result: EcNumber[] = await this.ecDataSource.getTopItems(30, this.selectedNameSpace);
             this.items.push(...result);
         }
     }
