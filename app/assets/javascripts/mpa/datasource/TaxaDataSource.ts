@@ -10,6 +10,7 @@ import DataRepository from "./DataRepository";
 import GoTerm from "../../fa/GoTerm";
 import PeptideInfo from "../PeptideInfo";
 import EcNumber from "../../fa/EcNumber";
+import { TaxumRank } from "./TaxumRank";
 
 export default class TaxaDataSource extends DataSource {
     private _tree: Tree;
@@ -30,8 +31,16 @@ export default class TaxaDataSource extends DataSource {
      * each item.
      * @param level The TaxumRank with whome the returned TaxaElement's must be associated. 
      */
-    public async getTopItems(n: number, level: string): Promise<TaxaElement[]> {
+    public async getTopItems(n: number, level: TaxumRank = null): Promise<TaxaElement[]> {
         console.log("GET TAXA ITEMS --> " + level);
+        await this.process();
+        if (!level) {
+            level = TaxumRank.Superkingdom;
+        }
+        let output: TaxaElement[] = [];
+        for (let node of this._tree.getNodesWithRank(level)) {
+            output.push(new TaxaElement());
+        }
         //let tree = this._repository.tree;
         //let nodes: Node[] = tree.getNodesWithRank(level);
         // TODO complete implementation here!
