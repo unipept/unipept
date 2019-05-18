@@ -6,12 +6,12 @@
     import Vue from "vue";
     import Component, {mixins} from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import Node from "./../../Node";
+    import TreeViewNode from "./TreeViewNode";
 
     @Component
     export default class Treeview extends Vue {
         @Prop({required: true})
-        private data: Node;
+        private data: TreeViewNode;
         @Prop({required: true})
         private width: number;
         @Prop({required: true})
@@ -69,7 +69,11 @@
         @Watch("linkStrokeColor")
         @Watch("nodeStrokeColor")
         private async initVisualization() {
+            console.log(this.data);
+
             if (this.data) {
+                console.log("RECEIVED VALID DATA!");
+
                 let settings = {
                     width: this.width,
                     height: this.height,
