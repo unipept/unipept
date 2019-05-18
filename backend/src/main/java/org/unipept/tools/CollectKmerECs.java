@@ -8,6 +8,11 @@ import java.util.*;
 
 public class CollectKmerECs {
 
+    /**
+     * Takes a sorted kmer-ec file and combines lines starting with the same
+     * kmer, merging the lists of associated EC-number ids.
+     * The result is written to stdout.
+     */
     public static void main(String[] args) throws IOException {
         if (args.length != 1) {
             throw new RuntimeException("Expected 1 argument: [sorted kmer ec file]");
