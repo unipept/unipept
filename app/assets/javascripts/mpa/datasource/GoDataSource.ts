@@ -28,7 +28,7 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm> 
         if (namespace) {
             let result: [GoTerm[], FATrust] = await this.getFromCache(namespace, Object.values(GoNameSpace));
             // The GO-Terms in the cache are sorted per namespace from high to low popularity. We can just return the first
-            // n items of the found result
+            // n items of the found 
             let list: GoTerm[] = result[0];
             return list.slice(0, Math.min(n, list.length));
         } else {
