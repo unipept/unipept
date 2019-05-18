@@ -24,7 +24,7 @@
         private heatmap: Heatmap;
 
         mounted() {
-            this.initHeatmap();
+            // this.initHeatmap();
         }
 
         reset() {
@@ -34,86 +34,86 @@
         }
 
         @Watch('dataset') onDatasetChanged() {
-            this.initHeatmap();
+            // this.initHeatmap();
         }
 
         @Watch('fullScreen') onFullScreenChanged(newFullScreen: boolean, oldFullScreen: boolean) {
             this.heatmap.setFullScreen(newFullScreen)
         }
 
-        private async initHeatmap() {
-            // Maps each row (first index) and column (second index) onto a specific GO-term and all of it's metadata.
-             let rowMappings: {absoluteCount: number, numberOfPepts: number}[][] = [];
+        // private async initHeatmap() {
+        //     // Maps each row (first index) and column (second index) onto a specific GO-term and all of it's metadata.
+        //     let rowMappings: {absoluteCount: number, numberOfPepts: number}[][] = [];
 
-            if (this.dataset != null && this.dataset.getDataset() != null) {
-                let heatmapElement: HTMLElement = <HTMLElement> this.$refs.heatmapElement;
+        //     if (this.dataset != null && this.dataset.getDataset() != null) {
+        //         let heatmapElement: HTMLElement = <HTMLElement> this.$refs.heatmapElement;
 
-                let tree: Tree = this.dataset.getDataset().getTree();
-                let nodes: Node[] = tree.getNodesWithRank("phylum");
+        //         let tree: Tree = this.dataset.getDataset().getTree();
+        //         let nodes: Node[] = tree.getNodesWithRank("phylum");
 
-                let resultset: Resultset = this.dataset.getDataset().resultSet;
-                await resultset.processFA();
-                let go: GOTerms = await resultset.summarizeGo();
-                let topGos = go._childeren["cellular component"]["_data"].slice(0, 20);
+        //         let resultset: Resultset = this.dataset.getDataset().resultSet;
+        //         await resultset.processFA();
+        //         let go: GOTerms = await resultset.summarizeGo();
+        //         let topGos = go._childeren["cellular component"]["_data"].slice(0, 20);
 
-                let rows: HeatmapElement[] = [];
-                let cols: HeatmapElement[] = [];
+        //         let rows: HeatmapElement[] = [];
+        //         let cols: HeatmapElement[] = [];
 
-                for (let go of topGos) {
-                    cols.push({
-                        name: go["code"]
-                    })
-                }
+        //         for (let go of topGos) {
+        //             cols.push({
+        //                 name: go["code"]
+        //             })
+        //         }
 
-                let grid: number[][] = [];
+        //         let grid: number[][] = [];
 
-                let out = "";
-                for (let node of nodes) {
-                    let row: HeatmapElement = {
-                        name: node.name
-                    };
+        //         let out = "";
+        //         for (let node of nodes) {
+        //             let row: HeatmapElement = {
+        //                 name: node.name
+        //             };
 
-                    rows.push(row);
+        //             rows.push(row);
 
-                    let processedGo: GOTerms = await resultset.summarizeGo(0, tree.getAllSequences(node.id));
-                    let rowValues = [];
-                    let rowMapping = [];
-                    for (let go of topGos) {
-                        let val: {
-                            absoluteCount: number,
-                            numberOfPepts: number
-                        } = this.getGoCount(processedGo._childeren["cellular component"]["_data"], go["code"]);
-                        rowValues.push(val.absoluteCount);
-                        rowMapping.push(val);
-                    }
+        //             let processedGo: GOTerms = await resultset.summarizeGo(0, tree.getAllSequences(node.id));
+        //             let rowValues = [];
+        //             let rowMapping = [];
+        //             for (let go of topGos) {
+        //                 let val: {
+        //                     absoluteCount: number,
+        //                     numberOfPepts: number
+        //                 } = this.getGoCount(processedGo._childeren["cellular component"]["_data"], go["code"]);
+        //                 rowValues.push(val.absoluteCount);
+        //                 rowMapping.push(val);
+        //             }
 
-                    rowMappings.push(rowMapping);
-                    grid.push(rowValues);
-                }
+        //             rowMappings.push(rowMapping);
+        //             grid.push(rowValues);
+        //         }
 
-                // Normalize values to be clustered
-                for (let row of grid) {
-                    let minValue = Math.min(...row);
-                    let maxValue = Math.max(...row);
+        //         // Normalize values to be clustered
+        //         for (let row of grid) {
+        //             let minValue = Math.min(...row);
+        //             let maxValue = Math.max(...row);
 
-                    if (maxValue != 0){
-                        for (let i = 0; i < row.length; i++) {
-                            row[i] = (row[i] - minValue) / maxValue;
-                        }
-                    }
-                }
+        //             if (maxValue != 0){
+        //                 for (let i = 0; i < row.length; i++) {
+        //                     row[i] = (row[i] - minValue) / maxValue;
+        //                 }
+        //             }
+        //         }
 
-                let settings: HeatmapSettings = new HeatmapSettings();
-                settings.getTooltip = (cell: HeatmapValue, row: HeatmapElement, column: HeatmapElement) =>
-                    `<b>${row.name}</b><br>Absolute count: ${rowMappings[row.idx][column.idx].absoluteCount}<br>${rowMappings[row.idx][column.idx].numberOfPepts} matched peptides`;
-                this.heatmap = new Heatmap(heatmapElement, {
-                    rows: rows,
-                    columns: cols,
-                    values: grid
-                }, settings);
-                this.heatmap.cluster();
-            }
-        }
+        //         let settings: HeatmapSettings = new HeatmapSettings();
+        //         settings.getTooltip = (cell: HeatmapValue, row: HeatmapElement, column: HeatmapElement) =>
+        //             `<b>${row.name}</b><br>Absolute count: ${rowMappings[row.idx][column.idx].absoluteCount}<br>${rowMappings[row.idx][column.idx].numberOfPepts} matched peptides`;
+        //         this.heatmap = new Heatmap(heatmapElement, {
+        //             rows: rows,
+        //             columns: cols,
+        //             values: grid
+        //         }, settings);
+        //         this.heatmap.cluster();
+        //     }
+        // }
 
         private getGoCount(goValues, goTerm: string): {absoluteCount: number, numberOfPepts: number} {
             for (let go of goValues) {

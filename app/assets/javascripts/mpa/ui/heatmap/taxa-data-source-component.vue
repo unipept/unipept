@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-select :items="taxaRanks" v-model="selectedRank" label="Rank"></v-select>
-        <v-data-table v-model="selectedItems" :headers="headers" :items="items" select-all item-key="code" v-bind:pagination.sync="pagination" :loading="loading">
+        <v-data-table v-model="selectedItems" :headers="headers" :items="items" select-all item-key="name" v-bind:pagination.sync="pagination" :loading="loading">
             <template v-slot:items="props">
                 <tr :active="props.selected" @click="props.selected = !props.selected">
                     <td>
