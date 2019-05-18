@@ -22,18 +22,16 @@
 
 <script lang="ts">
     import Vue from "vue";
-    import Component from "vue-class-component";
+    import Component, { mixins } from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import EcDataSource from "../../datasource/EcDataSource";
     import { EcNameSpace } from "../../../fa/EcNameSpace";
     import EcNumber from "../../../fa/EcNumber";
+    import DataSourceMixin from "./data-source-mixin.vue";
 
     @Component
-    export default class EcDataSourceComponent extends Vue {
+    export default class EcDataSourceComponent extends mixins(DataSourceMixin) {
         // TODO This component should be merged with the GoDataSourceComponent to reduce code duplication
-
-        @Prop({required: true})
-        private ecDataSource: EcDataSource;
 
         private ecNameSpaces: EcNameSpace[] = Object.values(EcNameSpace);
         private selectedNameSpace: EcNameSpace = this.ecNameSpaces[0];
@@ -70,7 +68,7 @@
             // Reset lists without changing the list-object reference.
             this.items.length = 0;
             this.selectedItems.length = 0;
-            let result: EcNumber[] = await this.ecDataSource.getTopItems(30, this.selectedNameSpace);
+            let result: EcNumber[] = await (this.dataSource as EcDataSource).getTopItems(30, this.selectedNameSpace);
             this.items.push(...result);
         }
     }

@@ -22,17 +22,15 @@
 
 <script lang="ts">
     import Vue from "vue";
-    import Component from "vue-class-component";
+    import Component, { mixins } from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import {GoNameSpace} from "./../../../fa/GoNameSpace";
     import GoDataSource from "../../datasource/GoDataSource";
     import GoTerm from "../../../fa/GoTerm";
+    import DataSourceMixin from "./data-source-mixin.vue";
 
     @Component
-    export default class GoDataSourceComponent extends Vue {
-        @Prop({required: true})
-        private goDataSource: GoDataSource;
-
+    export default class GoDataSourceComponent extends mixins(DataSourceMixin) {
         private goNameSpaces: GoNameSpace[] = Object.values(GoNameSpace);
         private selectedNameSpace: GoNameSpace = this.goNameSpaces[0];
 
@@ -69,7 +67,7 @@
             // Reset lists without changing the list-object reference.
             this.items.length = 0;
             this.selectedItems.length = 0;
-            let result: GoTerm[] = await this.goDataSource.getTopItems(30, this.selectedNameSpace);
+            let result: GoTerm[] = await (this.dataSource as GoDataSource).getTopItems(30, this.selectedNameSpace);
             this.items.push(...result);
         }
     }
