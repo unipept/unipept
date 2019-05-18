@@ -3,14 +3,12 @@ import Resultset from "./Resultset";
 import {postJSON} from "../utils";
 import Tree from "./Tree";
 import DataRepository from "./datasource/DataRepository";
-import TaxaDataSource from "./datasource/TaxaDataSource";
 import ProgressListener from "./ProgressListener";
 
 export default class Sample {
     public static readonly TAXA_URL: string = "/private_api/taxa";
 
     private _dataRepository: DataRepository;
-    private _progress: number;
 
     public tree: Tree;
     public originalPeptides: string[];
@@ -26,7 +24,7 @@ export default class Sample {
      * @param {string[]} [peptides=[]] A list of peptides (strings)
      * @param {string} id Unique identifier associated with this Dataset.
      */
-    constructor(peptides: string[], id: string) {
+    constructor(peptides: string[], id: string, mpaConfig: MPAConfig, progressListener: ProgressListener) {
         this.originalPeptides = Sample.cleanPeptides(peptides);
 
         this.tree = null;
@@ -36,30 +34,9 @@ export default class Sample {
 
         this.taxonMap = new Map();
         this.taxonMap.set(1, {id: 1, rank: "no rank", name: "root"});
-    }
 
-    /**
-     * Processes the list of peptides set in the dataset and returns a
-     * taxonomic tree.
-     *
-     * @param mpaConfig
-     * @return Taxonomic tree
-     */
-    async search(mpaConfig: MPAConfig, progressListener: ProgressListener): Promise<Tree> {
         this._dataRepository = new DataRepository(this, mpaConfig);
         this._dataRepository.registerProgressListener(progressListener);
-        let taxaDataSource: TaxaDataSource = await this.dataRepository.createTaxaDataSource();
-        return taxaDataSource.getTree();
-    }
-
-    /**
-     * Reprocesses functional analysis data with other cutoff
-     * @param cutoff as percent (0-100)
-     * @param sequences array of peptides to take into account
-     */
-    async reprocessFA(cutoff: number = 50, sequences: string[] = null) {
-        await this.resultSet.processFA(cutoff, sequences);
-        this.fa = this.resultSet.fa;
     }
 
     get dataRepository(): DataRepository {
