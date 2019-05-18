@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-select :items="goNameSpaces" v-model="selectedNameSpace" label="namespace"></v-select>
-        <v-data-table v-model="selectedItems" :headers="headers" :items="items" select-all item-key="code">
+        <v-data-table v-model="selectedItems" :headers="headers" :items="items" select-all item-key="code" v-bind:pagination.sync="pagination">
             <template v-slot:items="props">
                 <tr :active="props.selected" @click="props.selected = !props.selected">
                     <td>
@@ -11,7 +11,7 @@
                             hide-details
                         ></v-checkbox>
                     </td>
-                    <td>{{ props.item.popularity }}</td>
+                    <td class="text-xs-right">{{ props.item.popularity }}</td>
                     <td>{{ props.item.code }}</td>
                     <td>{{ props.item.name }}</td>
                 </tr>
@@ -56,6 +56,9 @@
                 value: 'name'
             }
         ];
+
+        private pagination = {'sortBy': 'column2', 'descending': true, 'rowsPerPage': 5}
+
 
         mounted() {
             this.onSelectedNameSpaceChanged();
