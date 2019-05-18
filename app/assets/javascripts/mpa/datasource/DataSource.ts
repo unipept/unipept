@@ -6,4 +6,6 @@ export default abstract class DataSource {
     public constructor(repository: DataRepository) {
         this._repository = repository;
     }
+
+    
 }

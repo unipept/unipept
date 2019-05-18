@@ -8,13 +8,10 @@ export default class MpaAnalysisManager {
     async processDataset(peptideContainer: PeptideContainer, searchSettings: MPAConfig): Promise<void> {
         peptideContainer.setDataset(null);
         let peptides = await peptideContainer.getPeptides();
-        let dataset: Sample = new Sample(peptides, peptideContainer.getId());
+        let dataset: Sample = new Sample(peptides, peptideContainer.getId(), searchSettings, peptideContainer);
 
         peptideContainer.setDataset(dataset);
-        await this.analyse(dataset, searchSettings, peptideContainer);
-    }
-
-    private async analyse(dataset: Sample, searchSettings: MPAConfig, peptideContainer: PeptideContainer): Promise<void> {
-        await dataset.search(searchSettings, peptideContainer);
+        // Force early analysis here
+        await dataset.dataRepository.getWorker();
     }
 }

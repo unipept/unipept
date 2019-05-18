@@ -19,13 +19,16 @@ import {NormalizationType} from "./NormalizationType";
                 <simple-button style="float: right;" label="Continue" type="primary" @click="currentStep++"></simple-button>
             </v-stepper-content>
             <v-stepper-content step="2">
-                <p>Please chose the type of normalization that should be performed before visualizing data points.</p>
+                <p>Please select the type of normalization that should be performed before visualizing data points.</p>
                 <v-select :items="Array.from(normalizationTypes.keys())" v-model="normalizer" label="Normalization type"></v-select>
                 <p>{{ normalizationTypes.get(normalizer).information }}</p>
                 <simple-button style="float: right;" label="Continue" type="primary" @click="currentStep++"></simple-button>
             </v-stepper-content>
             <v-stepper-content step="3">
                 <p>Choose a set of data points that should visualized as part of the final heatmap.</p>
+                <span>Horizontal data:</span>
+                <go-data-source></go-data-source>
+                <span>Vertical data:</span>
             </v-stepper-content>
             <v-stepper-content step="4">
             </v-stepper-content>
@@ -48,44 +51,44 @@ import {NormalizationType} from "./NormalizationType";
     import ColumnNormalizer from "../../heatmap/ColumnNormalizer";
     import { Normalizer } from "../../heatmap/Normalizer";
     import Sample from "../../Sample";
+    import PeptideContainer from "../../PeptideContainer";
+    import GoDataSourceComponent from "./go-data-source-component.vue";
 
     @Component({
-        components: {SimpleButton}
+        components: {SimpleButton, GoDataSourceComponent}
     })
     export default class HeatmapWizard extends Vue {
         @Prop()
-        private sample: Sample;
+        private dataset: PeptideContainer;
         @Prop()
         private searchSettings: MPAConfig;
 
         private currentStep: number = 1;
         private heatmapConfiguration: HeatmapConfiguration = new HeatmapConfiguration();
 
-        private dataSources: Map<string, () => DataSource>;
-
-        created() {
-            console.log("CREATED:");
-            console.log(this.sample);
-
-            // this.dataSources = new Map([
-            //     ["Taxa", () => new TaxaDataSource(this.sample, this.mpaConfig, "superkingdom")],
-            //     ["EC-Numbers", () => new EcDataSource(this.sample, this.mpaConfig)],
-            //     ["GO-Terms", () => new GoDataSource(this.sample, this.mpaConfig)]
-            // ]);
-
-            this.horizontalDataSource = this.dataSources.keys().next().value;
-            this.verticalDataSource = this.dataSources.keys().next().value;
-            this.normalizer = this.normalizationTypes.keys().next().value;
-        }
-        
-
-        mounted() {
-            this.onHorizontalSelection(this.horizontalDataSource);
-            this.onVerticalSelection(this.verticalDataSource);
-            this.onNormalizerChange(this.normalizer);
-
-            // this.heatmapConfiguration.horizontalDataSource.getTopItems(20);
-        }
+        private dataSources: Map<string, () => Promise<DataSource>> = new Map<string, () => Promise<DataSource>>([
+            [
+                "Taxa", 
+                () => {
+                    let dataRepository = this.dataset.getDataset().dataRepository;
+                    return dataRepository.createTaxaDataSource();
+                }
+            ],
+            [
+                "EC-Numbers", 
+                () => {
+                    let dataRepository = this.dataset.getDataset().dataRepository;
+                    return dataRepository.createEcDataSource();
+                }
+            ],
+            [
+                "GO-Terms", 
+                () => {
+                    let dataRepository = this.dataset.getDataset().dataRepository;
+                    return dataRepository.createGoDataSource();
+                }
+            ]
+        ]);
 
         private normalizationTypes: Map<string, {information: string, factory: () => Normalizer}> = new Map([
             [
@@ -111,20 +114,31 @@ import {NormalizationType} from "./NormalizationType";
             ]
         ]);
 
-        private horizontalDataSource: string;
-        private verticalDataSource: string;
-        private normalizer: string;
+        private horizontalDataSource: string = this.dataSources.keys().next().value;
+        private verticalDataSource: string = this.dataSources.keys().next().value;
+        private normalizer: string = this.normalizationTypes.keys().next().value;
 
-        @Watch("horizontalDataSource") onHorizontalSelection(newValue: string){
-            this.heatmapConfiguration.horizontalDataSource = this.dataSources.get(newValue)();
+        mounted() {
+            this.onHorizontalSelection(this.horizontalDataSource);
+            this.onVerticalSelection(this.verticalDataSource);
+            this.onNormalizerChange(this.normalizer);
+
+            // this.heatmapConfiguration.horizontalDataSource.getTopItems(20);
         }
 
-        @Watch("verticalDataSource") onVerticalSelection(newValue: string) {
-            this.heatmapConfiguration.verticalDataSource = this.dataSources.get(newValue)();
+        @Watch("horizontalDataSource") 
+        async onHorizontalSelection(newValue: string){
+            this.heatmapConfiguration.horizontalDataSource = await this.dataSources.get(newValue)();
         }
 
-        @Watch("normalizer") onNormalizerChange(newValue: string) {
-            this.heatmapConfiguration.normalizer = this.normalizationTypes.get(newValue).factory();
+        @Watch("verticalDataSource") 
+        async onVerticalSelection(newValue: string) {
+            this.heatmapConfiguration.verticalDataSource = await this.dataSources.get(newValue)();
+        }
+
+        @Watch("normalizer") 
+        async onNormalizerChange(newValue: string) {
+            this.heatmapConfiguration.normalizer = await this.normalizationTypes.get(newValue).factory();
         }
     }
 </script>

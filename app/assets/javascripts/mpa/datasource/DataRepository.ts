@@ -1,19 +1,11 @@
-import Resultset from "../Resultset";
 import GoDataSource from "./GoDataSource";
 import Sample from "../Sample";
 import TaxaDataSource from "./TaxaDataSource";
 import ProgressListener from "../ProgressListener";
-import Tree from "../Tree";
 
 // @ts-ignore
 import newworker from "workerize-loader!./../newworker.js";
-import PeptideInfo from "../PeptideInfo";
 import { postJSON } from "../../utils";
-import NewGoTerms from "../../fa/NewGoTerms";
-import GoTerm from "../../fa/GoTerm";
-import { GoNameSpace } from "../../fa/GoNameSpace";
-import FATrust from "../../fa/FATrust";
-import { MPAFAResult } from "../newworker";
 import EcDataSource from "./EcDataSource";
 
 
@@ -21,6 +13,7 @@ export default class DataRepository {
     private readonly _sample: Sample;
     private _progressListeners: ProgressListener[] = [];
     private _worker;
+    private _workerPromise: Promise<any>;
     private _mpaConfig: MPAConfig;
 
     private _taxaSourceCache: TaxaDataSource;
@@ -71,7 +64,7 @@ export default class DataRepository {
      * all peptides found in this repository's associated sample.
      */
     public async getWorker(): Promise<any> {
-        if (!this._worker) {
+        if (!this._workerPromise) {
             this._worker = newworker();
             this._worker.onmessage = m => {
                 if (m.data.type == "progress") {
@@ -79,8 +72,9 @@ export default class DataRepository {
                 }
             };
 
-            await this._worker.process(this._sample.originalPeptides, this._mpaConfig);
+            this._workerPromise = this._worker.process(this._sample.originalPeptides, this._mpaConfig);
         }
+        await this._workerPromise;
         return this._worker;
     }
 
