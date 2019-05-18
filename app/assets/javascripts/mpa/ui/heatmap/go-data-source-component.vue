@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-select :items="goNameSpaces" v-model="selectedNameSpace" label="Namespace"></v-select>
-        <v-data-table v-model="selectedItems" :headers="headers" :items="items" select-all item-key="code" v-bind:pagination.sync="pagination">
+        <v-data-table v-model="selectedItems" :headers="headers" :items="items" select-all item-key="code" v-bind:pagination.sync="pagination" :loading="loading">
             <template v-slot:items="props">
                 <tr :active="props.selected" @click="props.selected = !props.selected">
                     <td>
@@ -37,6 +37,8 @@
         private items: GoTerm[] = [];
         private selectedItems: GoTerm[] = [];
 
+        private loading: boolean = true;
+
         private headers = [
             {
                 text: 'Popularity (# peptides)',
@@ -64,11 +66,13 @@
 
         @Watch("selectedNameSpace")
         async onSelectedNameSpaceChanged() {
+            this.loading = true;
             // Reset lists without changing the list-object reference.
             this.items.length = 0;
             this.selectedItems.length = 0;
             let result: GoTerm[] = await (this.dataSource as GoDataSource).getTopItems(30, this.selectedNameSpace);
             this.items.push(...result);
+            this.loading = false;
         }
     }
 </script>
