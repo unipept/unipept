@@ -27,8 +27,9 @@ import {NormalizationType} from "./NormalizationType";
             <v-stepper-content step="3">
                 <p>Choose a set of data points that should visualized as part of the final heatmap.</p>
                 <span>Horizontal data:</span>
-                <go-data-source-component v-if="heatmapConfiguration.horizontalDataSource" :goDataSource="heatmapConfiguration.horizontalDataSource"></go-data-source-component>
+                <component v-if="heatmapConfiguration.horizontalDataSource" :is="dataSources.get(horizontalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.horizontalDataSource"></component>
                 <span>Vertical data:</span>
+                <component v-if="heatmapConfiguration.verticalDataSource" :is="dataSources.get(verticalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.verticalDataSource"></component>
             </v-stepper-content>
             <v-stepper-content step="4">
             </v-stepper-content>
@@ -53,9 +54,11 @@ import {NormalizationType} from "./NormalizationType";
     import Sample from "../../Sample";
     import PeptideContainer from "../../PeptideContainer";
     import GoDataSourceComponent from "./go-data-source-component.vue";
+    import EcDataSourceComponent from "./ec-data-source-component.vue";
+    import TaxaDataSourceComponent from "./taxa-data-source-component.vue";
 
     @Component({
-        components: {SimpleButton, GoDataSourceComponent}
+        components: {SimpleButton, GoDataSourceComponent, EcDataSourceComponent, TaxaDataSourceComponent}
     })
     export default class HeatmapWizard extends Vue {
         @Prop()
@@ -66,26 +69,37 @@ import {NormalizationType} from "./NormalizationType";
         private currentStep: number = 1;
         private heatmapConfiguration: HeatmapConfiguration = new HeatmapConfiguration();
 
-        private dataSources: Map<string, () => Promise<DataSource>> = new Map<string, () => Promise<DataSource>>([
+        private dataSources: Map<string, {dataSourceComponent: string, factory: () => Promise<DataSource>}> = new Map([
             [
-                "Taxa", 
-                () => {
-                    let dataRepository = this.dataset.getDataset().dataRepository;
-                    return dataRepository.createTaxaDataSource();
+                "Taxa",
+                {
+                    dataSourceComponent: "taxa-data-source-component",
+                    factory: () => {
+                        let dataRepository = this.dataset.getDataset().dataRepository;
+                        return dataRepository.createTaxaDataSource();
+                    }
                 }
+                
             ],
             [
                 "EC-Numbers", 
-                () => {
-                    let dataRepository = this.dataset.getDataset().dataRepository;
-                    return dataRepository.createEcDataSource();
+                {
+                    dataSourceComponent: "ec-data-source-component",
+                    factory: () => {
+                        let dataRepository = this.dataset.getDataset().dataRepository;
+                        return dataRepository.createEcDataSource();
+                    }
                 }
+                
             ],
             [
                 "GO-Terms", 
-                () => {
-                    let dataRepository = this.dataset.getDataset().dataRepository;
-                    return dataRepository.createGoDataSource();
+                {
+                    dataSourceComponent: "go-data-source-component",
+                    factory: () => {
+                        let dataRepository = this.dataset.getDataset().dataRepository;
+                        return dataRepository.createGoDataSource();
+                    }
                 }
             ]
         ]);
@@ -138,12 +152,12 @@ import {NormalizationType} from "./NormalizationType";
 
         @Watch("horizontalDataSource") 
         async onHorizontalSelection(newValue: string){
-            this.heatmapConfiguration.horizontalDataSource = await this.dataSources.get(newValue)();
+            this.heatmapConfiguration.horizontalDataSource = await this.dataSources.get(newValue).factory();
         }
 
         @Watch("verticalDataSource") 
         async onVerticalSelection(newValue: string) {
-            this.heatmapConfiguration.verticalDataSource = await this.dataSources.get(newValue)();
+            this.heatmapConfiguration.verticalDataSource = await this.dataSources.get(newValue).factory();
         }
 
         @Watch("normalizer") 
