@@ -1,4 +1,3 @@
-import DataElement from "./DataElement";
 import DataRepository from "./DataRepository";
 import { GoNameSpace } from "../../fa/GoNameSpace";
 import DataSource from "./DataSource";

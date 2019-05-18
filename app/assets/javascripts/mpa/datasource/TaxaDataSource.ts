@@ -1,5 +1,4 @@
 import DataSource from "./DataSource";
-import DataElement from "./DataElement";
 import Sample from "../Sample";
 import Resultset from "../Resultset";
 // @ts-ignore
@@ -10,7 +9,7 @@ import DataRepository from "./DataRepository";
 import GoTerm from "../../fa/GoTerm";
 import PeptideInfo from "../PeptideInfo";
 import EcNumber from "../../fa/EcNumber";
-import { TaxumRank } from "./TaxumRank";
+import { TaxumRank, convertStringToTaxumRank } from "./TaxumRank";
 
 export default class TaxaDataSource extends DataSource {
     private _tree: Tree;
@@ -32,19 +31,20 @@ export default class TaxaDataSource extends DataSource {
      * @param level The TaxumRank with whome the returned TaxaElement's must be associated. 
      */
     public async getTopItems(n: number, level: TaxumRank = null): Promise<TaxaElement[]> {
-        console.log("GET TAXA ITEMS --> " + level);
         await this.process();
-        if (!level) {
-            level = TaxumRank.Superkingdom;
+        if (level) {
+            let output: TaxaElement[] = [];
+            for (let node of this._tree.getNodesWithRank(level)) {
+                output.push(new TaxaElement(node.name, level));
+            }
+            return output;
+        } else {
+            let output: TaxaElement[] = [];
+            for (let node of this._tree.getAllNodes()) {
+                output.push(new TaxaElement(node.name, convertStringToTaxumRank(node.rank)));
+            }
+            return output;
         }
-        let output: TaxaElement[] = [];
-        for (let node of this._tree.getNodesWithRank(level)) {
-            output.push(new TaxaElement());
-        }
-        //let tree = this._repository.tree;
-        //let nodes: Node[] = tree.getNodesWithRank(level);
-        // TODO complete implementation here!
-        return null;
     }
 
     /**

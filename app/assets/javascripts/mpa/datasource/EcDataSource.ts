@@ -1,5 +1,4 @@
 import DataSource from "./DataSource";
-import DataElement from "./DataElement";
 import EcNumber from "../../fa/EcNumber";
 import { EcNameSpace, convertEcNumberToEcNameSpace } from "../../fa/EcNameSpace";
 import FATrust from "../../fa/FATrust";
