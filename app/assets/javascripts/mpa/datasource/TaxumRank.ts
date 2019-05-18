@@ -26,8 +26,7 @@ export enum TaxumRank {
     Species = "species",
     Subspecies = "subspecies",
     Varietas = "varietas",
-    Forma = "forma",
-    Unknown = "unknown"
+    Forma = "forma"
 }
 
 export function convertStringToTaxumRank(rank: string): TaxumRank {
@@ -36,5 +35,5 @@ export function convertStringToTaxumRank(rank: string): TaxumRank {
             return ns;
         }
     }
-    return TaxumRank.Unknown;
+    return null;
 }

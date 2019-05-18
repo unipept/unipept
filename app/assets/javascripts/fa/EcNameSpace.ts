@@ -23,3 +23,12 @@ export enum EcNameSpace {
 export function convertEcNumberToEcNameSpace(code: string): EcNameSpace {
     return Object.values(EcNameSpace)[parseInt(code.substr(0, 1)) - 1];
 }
+
+export function convertStringToEcNameSpace(ns: string): EcNameSpace {
+    for (let space of Object.values(EcNameSpace)) {
+        if (ns === space) {
+            return space;
+        }
+    }
+    return null;
+}

@@ -24,15 +24,15 @@
     import Vue from "vue";
     import Component, { mixins } from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import {GoNameSpace} from "./../../../fa/GoNameSpace";
+    import {GoNameSpace, convertStringToGoNameSpace} from "./../../../fa/GoNameSpace";
     import GoDataSource from "../../datasource/GoDataSource";
     import GoTerm from "../../../fa/GoTerm";
     import DataSourceMixin from "./data-source-mixin.vue";
 
     @Component
     export default class GoDataSourceComponent extends mixins(DataSourceMixin) {
-        private goNameSpaces: GoNameSpace[] = Object.values(GoNameSpace);
-        private selectedNameSpace: GoNameSpace = this.goNameSpaces[0];
+        private goNameSpaces: string[] = ["all"].concat(Object.values(GoNameSpace));
+        private selectedNameSpace: string = this.goNameSpaces[0];
 
         private items: GoTerm[] = [];
         private selectedItems: GoTerm[] = [];
@@ -70,7 +70,8 @@
             // Reset lists without changing the list-object reference.
             this.items.length = 0;
             this.selectedItems.length = 0;
-            let result: GoTerm[] = await (this.dataSource as GoDataSource).getTopItems(30, this.selectedNameSpace);
+
+            let result: GoTerm[] = await (this.dataSource as GoDataSource).getTopItems(30, convertStringToGoNameSpace(this.selectedNameSpace));
             this.items.push(...result);
             this.loading = false;
         }

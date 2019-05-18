@@ -25,7 +25,7 @@
     import Component, { mixins } from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import EcDataSource from "../../datasource/EcDataSource";
-    import { EcNameSpace } from "../../../fa/EcNameSpace";
+    import { EcNameSpace, convertEcNumberToEcNameSpace, convertStringToEcNameSpace } from "../../../fa/EcNameSpace";
     import EcNumber from "../../../fa/EcNumber";
     import DataSourceMixin from "./data-source-mixin.vue";
 
@@ -33,8 +33,8 @@
     export default class EcDataSourceComponent extends mixins(DataSourceMixin) {
         // TODO This component should be merged with the GoDataSourceComponent to reduce code duplication
 
-        private ecNameSpaces: EcNameSpace[] = Object.values(EcNameSpace);
-        private selectedNameSpace: EcNameSpace = this.ecNameSpaces[0];
+        private ecNameSpaces: string[] = ["all"].concat(Object.values(EcNameSpace));
+        private selectedNameSpace: string = this.ecNameSpaces[0];
 
         private items: EcNumber[] = [];
         private selectedItems: EcNumber[] = [];
@@ -71,7 +71,8 @@
             // Reset lists without changing the list-object reference.
             this.items.length = 0;
             this.selectedItems.length = 0;
-            let result: EcNumber[] = await (this.dataSource as EcDataSource).getTopItems(30, this.selectedNameSpace);
+
+            let result: EcNumber[] = await (this.dataSource as EcDataSource).getTopItems(30, convertStringToEcNameSpace(this.selectedNameSpace));
             this.items.push(...result);
             this.loading = false;
         }

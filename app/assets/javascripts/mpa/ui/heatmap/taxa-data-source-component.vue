@@ -27,13 +27,13 @@
     import TaxaDataSource from "../../datasource/TaxaDataSource";
     import DataSourceComponent from "./data-source-component.vue";
     import DataSourceMixin from "./data-source-mixin.vue";
-    import { TaxumRank } from "../../datasource/TaxumRank";
+    import { TaxumRank, convertStringToTaxumRank } from "../../datasource/TaxumRank";
     import TaxaElement from "../../datasource/TaxaElement";
 
     @Component
     export default class TaxaDataSourceComponent extends mixins(DataSourceMixin) {
-        private taxaRanks: TaxumRank[] = Object.values(TaxumRank);
-        private selectedRank: TaxumRank = this.taxaRanks[0];
+        private taxaRanks: string[] = ["all"].concat(Object.values(TaxumRank));
+        private selectedRank: string = this.taxaRanks[0];
         
         private items: TaxaElement[] = [];
         private selectedItems: TaxaElement[] = [];
@@ -70,7 +70,9 @@
             // Reset lists without changing the list-object reference.
             this.items.length = 0;
             this.selectedItems.length = 0;
-            let result: TaxaElement[] = await (this.dataSource as TaxaDataSource).getTopItems(30, this.selectedRank);
+            let rank: TaxumRank;
+
+            let result: TaxaElement[] = await (this.dataSource as TaxaDataSource).getTopItems(30, convertStringToTaxumRank(this.selectedRank));
             this.items.push(...result);
             this.loading = false;
         }
