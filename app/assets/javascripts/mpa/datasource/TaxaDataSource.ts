@@ -35,13 +35,15 @@ export default class TaxaDataSource extends DataSource {
         if (level) {
             let output: TaxaElement[] = [];
             for (let node of this._tree.getNodesWithRank(level)) {
-                output.push(new TaxaElement(node.name, level));
+                // TODO: should we use count or self_count here?
+                output.push(new TaxaElement(node.name, level, node.data.count));
             }
             return output;
         } else {
             let output: TaxaElement[] = [];
             for (let node of this._tree.getAllNodes()) {
-                output.push(new TaxaElement(node.name, convertStringToTaxumRank(node.rank)));
+                // TODO: should we use count or self_count here?
+                output.push(new TaxaElement(node.name, convertStringToTaxumRank(node.rank), node.data.count));
             }
             return output;
         }

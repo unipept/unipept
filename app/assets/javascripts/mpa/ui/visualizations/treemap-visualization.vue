@@ -22,6 +22,7 @@
     import {tooltipContent} from "./VisualizationHelper";
     import VisualizationMixin from "./visualization-mixin.vue";
     import TaxaDataSource from "./../../datasource/TaxaDataSource";
+import { TaxumRank } from "../../datasource/TaxumRank";
 
     @Component
     export default class TreemapVisualization extends mixins(VisualizationMixin) {
@@ -67,7 +68,7 @@
                     getBreadcrumbTooltip: d => d.rank,
                     getTooltip: tooltipContent,
                     getLabel: d => `${d.name} (${d.data.self_count}/${d.data.count})`,
-                    getLevel: d => MpaAnalysisManager.RANKS.indexOf(d.rank),
+                    getLevel: d => Object.values(TaxumRank).indexOf(d.rank),
                     rerootCallback: d => this.search(d.id, d.name, 1000)
                 });
             }
