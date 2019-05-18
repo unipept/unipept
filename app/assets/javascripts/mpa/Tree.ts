@@ -7,7 +7,7 @@ export default class Tree {
     public taxa: number[];
 
     // Maps a rank upon a list of all nodes associated with this rank.
-    private rankNodeMap: Map<string, Node[]>;
+    private rankNodeMap: Map<string, Set<Node>>;
 
     /**
      * Constructs an empty tree object with just the root. The values of the
@@ -78,8 +78,8 @@ export default class Tree {
      * @param depth The level in the tree from which all nodes should be returned.
      * @return All nodes that were found at this specific level.
      */
-    getNodesAtDepth(depth: number): Node[] {
-        let output = [];
+    getNodesAtDepth(depth: number): Set<Node> {
+        let output: Set<Node> = new Set();
 
         let todo = [this.root];
         let currentDepth = 0;
@@ -87,7 +87,9 @@ export default class Tree {
             currentDepth++;
             if (currentDepth === depth) {
                 for (let top of todo) {
-                    output.push(...top.children);
+                    for (let child of top.children) {
+                        output.add(child);
+                    }
                 }
             } else {
                 let temp = [];
@@ -107,17 +109,19 @@ export default class Tree {
      * 
      * @param rank A string representing the rank for whome nodes should be queried.
      */
-    getNodesWithRank(rank: string): Node[] {
+    getNodesWithRank(rank: string): Set<Node> {
         return this.rankNodeMap.get(rank);
     }
 
     /**
      * Returns all nodes in this tree of all different ranks.
      */
-    getAllNodes(): Node[] {
-        let output: Node[] = [];
+    getAllNodes(): Set<Node> {
+        let output: Set<Node> = new Set();
         for (let nodeList of this.rankNodeMap.values()) {
-            output = output.concat(nodeList);
+            for (let node of nodeList) {
+                output.add(node);
+            }
         }
         return output;
     }
@@ -170,10 +174,10 @@ export default class Tree {
             t.rank = taxon.rank;
 
             if (!this.rankNodeMap.has(t.rank)) {
-                this.rankNodeMap.set(t.rank, []);
+                this.rankNodeMap.set(t.rank, new Set());
             }
-            let nodesForRank: Node[] = this.rankNodeMap.get(t.rank);
-            nodesForRank.push(t);
+            let nodesForRank: Set<Node> = this.rankNodeMap.get(t.rank);
+            nodesForRank.add(t);
         }
     }
 

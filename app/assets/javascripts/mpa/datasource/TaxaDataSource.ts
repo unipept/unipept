@@ -33,6 +33,7 @@ export default class TaxaDataSource extends DataSource {
     public async getTopItems(n: number, level: TaxumRank = null): Promise<TaxaElement[]> {
         await this.process();
         if (level) {
+            console.log("GETTING TAXA WITH RANK " + level);
             let output: TaxaElement[] = [];
             for (let node of this._tree.getNodesWithRank(level)) {
                 // TODO: should we use count or self_count here?
