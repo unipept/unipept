@@ -32,7 +32,7 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm> 
             let list: GoTerm[] = result[0];
             return list.slice(0, Math.min(n, list.length));
         } else {
-            let output: GoTerm[];
+            let output: GoTerm[] = [];
             for (let ns of Object.values(GoNameSpace)) {
                 let result: [GoTerm[], FATrust] = await this.getFromCache(ns, Object.values(GoNameSpace));
                 output.push(...result[0].slice(0, Math.min(n, result[0].length)));

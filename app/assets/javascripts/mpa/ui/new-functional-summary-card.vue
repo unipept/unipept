@@ -62,6 +62,9 @@
                     </tab>
                     <tab label="EC numbers">
                         <ec-amount-table :items="ecData" :searchSettings="faSortSettings"></ec-amount-table>
+                        <div v-if="computed">
+                            <treeview :data="ecTreeData" :height="500" :width="916" :tooltip="ecTreeTooltip" :enableAutoExpand="true"></treeview>
+                        </div>
                         <!-- <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
                         This panel shows the Enzyme Commission numbers that were matched to your peptides. <span v-if="fa && $store.getters.activeDataset" v-html="this.trustLine(fa, 'EC number')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
                         <ec-numbers-summary style="margin-top: 10px" v-if="$store.getters.activeDataset && $store.getters.activeDataset.getProgress() === 1" :fa="fa" :peptide-container="$store.getters.activeDataset" :sort-settings="faSortSettings"></ec-numbers-summary>
@@ -106,6 +109,8 @@
     import EcNumber from "../../fa/EcNumber";
     import EcDataSource from "../datasource/EcDataSource";
     import EcAmountTable from "./tables/ec-amount-table.vue";
+    import TreeViewNode from "./visualizations/TreeViewNode";
+    import Treeview from "./visualizations/treeview-visualization.vue";
 
     @Component({
         components: {
@@ -118,7 +123,8 @@
             Tab, 
             CardNav, 
             GoAmountTable,
-            EcAmountTable
+            EcAmountTable,
+            Treeview
         },
         computed: {
             watchableDataset: {
@@ -152,6 +158,30 @@
         private goData: {goTerms: GoTerm[], title: string}[] = [];
 
         private ecData: EcNumber[] = [];
+        private ecTreeData: TreeViewNode;
+        private computed: boolean = false;
+
+        private ecTreeTooltip: (d: any) => string = (d: any) => {
+            const fullCode = (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
+            console.log(fullCode);
+            // let tip = this.tooltipEC(fullCode);
+            let tip = "";
+            tip += `<div class="tooltip-fa-text">
+                        <strong>${d.data.count} peptides</strong> have at least one EC number within ${fullCode},<br>`;
+
+            if (d.data.self_count == 0) {
+                tip += "no specific annotations";
+            } else {
+                if (d.data.self_count == d.data.count) {
+                    tip += " <strong>all specifically</strong> for this number";
+                } else {
+                    tip += ` <strong>${d.data.self_count} specificly</strong> for this number`;
+                }
+            }
+
+            tip += "</div>";
+            return tip;
+        };
 
         private readonly formatters = {
             "int": x => x.toString(),
@@ -208,7 +238,6 @@
         }
 
         setFormatSettings(formatType: string, fieldType: string, shadeFieldType: string, name: string): void {
-            console.log("SETTING FORMAT SETTINGS!");
             this.formatType = formatType;
 
             this.faSortSettings.format = (x: GoTerm) => this.formatters[this.formatType](x[fieldType]);
@@ -322,8 +351,35 @@
                 }
 
                 let ecSource: EcDataSource = await sample.dataRepository.createEcDataSource();
-                this.ecData = await ecSource.getEcNumbers()
+                this.ecData = await ecSource.getEcNumbers();
+                this.ecTreeData = await ecSource.getEcTree();
+                setTimeout(() => {
+                    console.log("COMPUTED");
+                    console.log(this.ecTreeData);
+                    this.computed = true;
+                }, 1000);
             }
+        }
+
+        /**
+         * Generate a tooltip for an EC number
+         * @param  ecNumber   The EC number to generate a tooltip for
+         * @return {string}    HTML for the tooltip
+         */
+        private tooltipEC(ecNumber: EcNumber) {
+            // const fmt = x => `<div class="tooltip-ec-ancestor"><span class="tooltip-ec-term">EC ${x}</span><span class="tooltip-ec-name">${ECNumbers.nameOf(x)}</span></div>`;
+            // const fmth = x => `<div class="tooltip-ec-ancestor tooltip-ec-current"><span class="tooltip-ec-term">EC ${x}</span><h4 class="tooltip-fa-title">${ECNumbers.nameOf(x)}</h4></div>`;
+
+            // let result = "";
+
+            // if (ECNumbers.ancestorsOf(ecNumber).length > 0) {
+            //     result += `${ECNumbers.ancestorsOf(ecNumber).reverse().map(c => fmt(c)).join("\n")}`;
+            // }
+            // result += fmth(ecNumber);
+
+            // result += this.tootipResultSet(ecNumber, ecResultSet, oldEcResultSet);
+            // return result;
+            return "";
         }
 
         /**

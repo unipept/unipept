@@ -10,7 +10,7 @@
         </card-header>
         <card-body id="switch-dataset-card-body">
             <list class="switch-dataset-list" placeholder="Please add one or more datasets by clicking the plus button above... ">
-                <div class="list-item--two-lines" v-for="dataset of this.$store.getters.selectedDatasets" :class="activeDataset === dataset ? 'selected' : ''">
+                <div class="list-item--two-lines" v-for="dataset of this.$store.getters.selectedDatasets" v-bind:key="dataset.id" :class="activeDataset === dataset ? 'selected' : ''">
                     <span class="list-item-primary-action">
                         <input v-if="dataset.progress === 1" v-model="activeDataset" :value="dataset" type="radio" class="input-item select-dataset-radio-button" style="width: 24px;" />
                         <determinate-circular-progress-indicator v-else :progress="dataset.progress" :size="24"></determinate-circular-progress-indicator>
