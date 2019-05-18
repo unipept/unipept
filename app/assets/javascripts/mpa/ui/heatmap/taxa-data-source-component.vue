@@ -11,6 +11,7 @@
 
     @Component
     export default class TaxaDataSourceComponent extends mixins(DataSourceMixin) {
+        
     }
 </script>
 
