@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-select :items="ecNameSpaces" v-model="selectedNameSpace" label="Namespace"></v-select>
-        <v-data-table v-model="selectedItems" :headers="headers" :items="items" select-all item-key="code" v-bind:pagination.sync="pagination">
+        <v-data-table v-model="selectedItems" :headers="headers" :items="items" select-all item-key="code" v-bind:pagination.sync="pagination" :loading="loading">
             <template v-slot:items="props">
                 <tr :active="props.selected" @click="props.selected = !props.selected">
                     <td>
@@ -39,6 +39,8 @@
         private items: EcNumber[] = [];
         private selectedItems: EcNumber[] = [];
 
+        private loading: boolean = true;
+
         private headers = [
             {
                 text: 'Popularity (# peptides)',
@@ -65,17 +67,13 @@
 
         @Watch("selectedNameSpace")
         async onSelectedNameSpaceChanged() {
-            setTimeout(() => {
-                console.log(this.dataSource);
-                console.log(this.selectedNameSpace);
-                // Reset lists without changing the list-object reference.
-                this.items.length = 0;
-                this.selectedItems.length = 0;
-                (this.dataSource as EcDataSource).getTopItems(30, this.selectedNameSpace).then(result => {
-                    this.items.push(...result);
-                });
-            }, 500);
-            
+            this.loading = true;
+            // Reset lists without changing the list-object reference.
+            this.items.length = 0;
+            this.selectedItems.length = 0;
+            let result: EcNumber[] = await (this.dataSource as EcDataSource).getTopItems(30, this.selectedNameSpace);
+            this.items.push(...result);
+            this.loading = false;
         }
     }
 </script>
