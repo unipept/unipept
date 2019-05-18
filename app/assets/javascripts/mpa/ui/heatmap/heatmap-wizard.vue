@@ -27,7 +27,7 @@ import {NormalizationType} from "./NormalizationType";
             <v-stepper-content step="3">
                 <p>Choose a set of data points that should visualized as part of the final heatmap.</p>
                 <span>Horizontal data:</span>
-                <go-data-source></go-data-source>
+                <go-data-source-component v-if="heatmapConfiguration.horizontalDataSource" :goDataSource="heatmapConfiguration.horizontalDataSource"></go-data-source-component>
                 <span>Vertical data:</span>
             </v-stepper-content>
             <v-stepper-content step="4">
@@ -114,9 +114,19 @@ import {NormalizationType} from "./NormalizationType";
             ]
         ]);
 
-        private horizontalDataSource: string = this.dataSources.keys().next().value;
-        private verticalDataSource: string = this.dataSources.keys().next().value;
-        private normalizer: string = this.normalizationTypes.keys().next().value;
+        private horizontalDataSource: string;
+        private verticalDataSource: string;
+        private normalizer: string;
+
+        created() {
+            let iterator = this.dataSources.keys();
+            iterator.next();
+            iterator.next();
+
+            this.horizontalDataSource = iterator.next().value;
+            this.verticalDataSource = this.dataSources.keys().next().value;
+            this.normalizer = this.normalizationTypes.keys().next().value;
+        }
 
         mounted() {
             this.onHorizontalSelection(this.horizontalDataSource);
