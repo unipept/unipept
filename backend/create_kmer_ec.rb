@@ -1,5 +1,10 @@
 #!/bin/env ruby
 
+# Creates the kmer-EC index
+# Has linear time complexity, but also uses space linear to the size of the
+# amount of protein sequences. Will need 400GiB+ RAM for the whole UniProtKB
+# database. Use the makefile and java unipept tools if your memory is limited.
+
 require 'set'
 
 K = ARGV[0].to_i
