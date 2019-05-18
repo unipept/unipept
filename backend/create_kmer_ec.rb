@@ -34,14 +34,13 @@ end
 
 STDERR.puts "Creating {kmer => EC number} hash"
 kmer_ecs = Hash.new{ |hash, k| hash[k] = []  }
-uniprot_lines = File.read(UNIPROT_FILE).lines
-line_count = uniprot_lines.count
 i = 0
-uniprot_lines
+File.read(UNIPROT_FILE)
+  .lines
   .map{ |line| line.strip.split("\t") }
   .each do |id, _uniprot_id,  _version, _taxon, _type, _name, sequence|
   i += 1
-  STDERR.puts "Progress: #{(i * 100)/line_count}%" if i % 10000 == 0
+  STDERR.puts "Progress: #{i}" if i % 10000 == 0
 
   ecs = seq_ecs[id.to_i].to_a
   next if ecs.empty?
