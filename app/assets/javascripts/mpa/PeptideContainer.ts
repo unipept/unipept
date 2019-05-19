@@ -11,7 +11,7 @@ export default class PeptideContainer implements ProgressListener {
     private date: Date;
     private type: StorageType;
     private dataset: Sample | null;
-    private _progress: number;
+    public progress: number = 0;
 
     /**
      * Create a new PeptideContainer. A PeptideContainer is actually a representation of a dataset that can be
@@ -61,16 +61,7 @@ export default class PeptideContainer implements ProgressListener {
     }
 
     onProgressUpdate(p: number) {
-        console.log("ON PROGRESS UPDATE! --> " + p);
         this.progress = p;
-    }
-
-    get progress(): number {
-        return this._progress;
-    }
-
-    set progress(val: number) {
-        this._progress = val;
     }
 
     getId(): string {
