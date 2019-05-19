@@ -23,8 +23,7 @@
             strokeDashoffset: (1 - this.progress) * this.strokeDashArray
         };
 
-        @Watch('progress') onProgressChange() {
-            console.log("PROGRESS UPDATED!");
+        @Watch('progress', {deep: true}) onProgressChange() {
             this.updateProgress()
         }
 
