@@ -5,6 +5,7 @@ export enum GoNameSpace {
 }
 
 export function convertStringToGoNameSpace(input: string): GoNameSpace {
+    input = input.toLowerCase();
     for (let space of Object.values(GoNameSpace)) {
         if (space === input) {
             return space;

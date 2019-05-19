@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-select :items="taxaRanks" v-model="selectedRank" label="Rank"></v-select>
+        <v-select :items="taxaRanks" v-model="selectedRank" label="Rank" :item-text="item => capitalize(item)"></v-select>
         <v-data-table v-model="selectedItems" :headers="headers" :items="items" select-all item-key="name" v-bind:pagination.sync="pagination" :loading="loading">
             <template v-slot:items="props">
                 <tr :active="props.selected" @click="props.selected = !props.selected">
@@ -32,7 +32,7 @@
 
     @Component
     export default class TaxaDataSourceComponent extends mixins(DataSourceMixin) {
-        private taxaRanks: string[] = ["all"].concat(Object.values(TaxumRank));
+        private taxaRanks: string[] = ["all"].concat(Object.values(TaxumRank)).map(el => this.capitalize(el));
         private selectedRank: string = this.taxaRanks[0];
         
         private items: TaxaElement[] = [];
