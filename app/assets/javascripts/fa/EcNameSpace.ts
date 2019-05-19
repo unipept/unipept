@@ -25,6 +25,7 @@ export function convertEcNumberToEcNameSpace(code: string): EcNameSpace {
 }
 
 export function convertStringToEcNameSpace(ns: string): EcNameSpace {
+    ns = ns.toLowerCase();
     for (let space of Object.values(EcNameSpace)) {
         if (ns === space) {
             return space;

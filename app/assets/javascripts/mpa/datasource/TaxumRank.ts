@@ -30,6 +30,7 @@ export enum TaxumRank {
 }
 
 export function convertStringToTaxumRank(rank: string): TaxumRank {
+    rank = rank.toLowerCase();
     for (let ns of Object.values(TaxumRank)) {
         if (ns === rank) {
             return ns;

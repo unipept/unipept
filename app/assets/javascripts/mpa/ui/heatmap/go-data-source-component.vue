@@ -31,7 +31,7 @@
 
     @Component
     export default class GoDataSourceComponent extends mixins(DataSourceMixin) {
-        private goNameSpaces: string[] = ["all"].concat(Object.values(GoNameSpace));
+        private goNameSpaces: string[] = ["all"].concat(Object.values(GoNameSpace)).map(el => this.capitalize(el));
         private selectedNameSpace: string = this.goNameSpaces[0];
 
         private items: GoTerm[] = [];

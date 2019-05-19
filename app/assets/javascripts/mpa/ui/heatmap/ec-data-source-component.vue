@@ -33,7 +33,7 @@
     export default class EcDataSourceComponent extends mixins(DataSourceMixin) {
         // TODO This component should be merged with the GoDataSourceComponent to reduce code duplication
 
-        private ecNameSpaces: string[] = ["all"].concat(Object.values(EcNameSpace));
+        private ecNameSpaces: string[] = ["all"].concat(Object.values(EcNameSpace)).map(el => this.capitalize(el));
         private selectedNameSpace: string = this.ecNameSpaces[0];
 
         private items: EcNumber[] = [];
