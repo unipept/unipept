@@ -33,16 +33,27 @@ export default class TaxaDataSource extends DataSource {
     public async getTopItems(n: number, level: TaxumRank = null): Promise<TaxaElement[]> {
         await this.process();
         if (level) {
-            console.log("GETTING TAXA WITH RANK " + level);
             let output: TaxaElement[] = [];
-            for (let node of this._tree.getNodesWithRank(level)) {
+
+            let nodes: Set<Node> = this._tree.getNodesWithRank(level);
+            if (!nodes) {
+                return [];
+            }
+
+            for (let node of nodes) {
                 // TODO: should we use count or self_count here?
                 output.push(new TaxaElement(node.name, level, node.data.count));
             }
             return output;
         } else {
             let output: TaxaElement[] = [];
-            for (let node of this._tree.getAllNodes()) {
+
+            let nodes: Set<Node> = this._tree.getAllNodes();
+            if (!nodes) {
+                return [];
+            }
+
+            for (let node of nodes) {
                 // TODO: should we use count or self_count here?
                 output.push(new TaxaElement(node.name, convertStringToTaxumRank(node.rank), node.data.count));
             }
