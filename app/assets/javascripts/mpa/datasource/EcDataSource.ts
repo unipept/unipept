@@ -27,7 +27,9 @@ export default class EcDataSource extends CachedDataSource<EcNameSpace, EcNumber
             let output: EcNumber[] = [];
             for (let ns of Object.values(EcNameSpace)) {
                 let result: [EcNumber[], FATrust] = await this.getFromCache(ns, Object.values(EcNameSpace));
-                output.push(...result[0].slice(0, Math.min(n, result[0].length)));
+                if (result && result[0] && result[0].length > 0) {
+                    output.push(...result[0].slice(0, Math.min(n, result[0].length)));
+                }
             }
 
             return output.sort((a: EcNumber, b: EcNumber) => b.popularity - a.popularity).slice(0, Math.min(n, output.length));

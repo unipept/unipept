@@ -35,7 +35,9 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm> 
             let output: GoTerm[] = [];
             for (let ns of Object.values(GoNameSpace)) {
                 let result: [GoTerm[], FATrust] = await this.getFromCache(ns, Object.values(GoNameSpace));
-                output.push(...result[0].slice(0, Math.min(n, result[0].length)));
+                if (result && result[0] && result[0].length > 0) {
+                    output.push(...result[0].slice(0, Math.min(n, result[0].length)));
+                }
             }
 
             return output.sort((a: GoTerm, b: GoTerm) => b.popularity - a.popularity).slice(0, Math.min(n, output.length));
