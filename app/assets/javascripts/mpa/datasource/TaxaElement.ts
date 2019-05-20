@@ -15,8 +15,8 @@ export default class TaxaElement extends Element {
     public async computeCrossPopularity(x: Element, sample: Sample): Promise<number> {
         let dataRepository: DataRepository = sample.dataRepository;
         let taxaDataSource: TaxaDataSource = await dataRepository.createTaxaDataSource();
-        let affectedPeptides: string[] = await x.getAffectedPeptides(sample);
         await taxaDataSource.getTree();
+        // TODO implement
         return 0;
     }
 
