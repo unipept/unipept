@@ -60,10 +60,6 @@ export default class EcNumber extends FAElement {
         return EcNumber.computeLevel(this.code);
     }
 
-    public async computeCrossPopularity(x: Element, sample: Sample): Promise<number> {
-        return 0;
-    }
-
     public static computeLevel(code: string): number {
         return (code + ".-").split(".").indexOf("-");
     }
