@@ -14,14 +14,14 @@ export default abstract class FAElement extends Element {
         this.fractionOfPepts = fractionOfPepts;
         this.affectedPeptides = affectedPeptides;
     }
-    
+
     public async computeCrossPopularity(x: Element, sample: Sample): Promise<number> {
         // We need to count how many of the affected peptides of the element x are also annotated with this GO-term.
         let otherAffectedPeptides: string[] = await x.getAffectedPeptides(sample);
         // Count how many items from x's affected peptides are also part of these affected peptides.
         // TODO If we are certain that all affected peptides are always sorted, we can implement a more efficient 
         // approach to this problem
-        return otherAffectedPeptides.reduce((acc: number, current: string) => this.affectedPeptides.includes(current) ? 1 : 0, 0);
+        return otherAffectedPeptides.reduce((acc: number, current: string) => acc + (this.affectedPeptides.includes(current) ? 1 : 0), 0);
     }
 
     public async getAffectedPeptides(sample: Sample): Promise<string[]> {

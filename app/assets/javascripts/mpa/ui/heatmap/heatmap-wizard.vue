@@ -28,16 +28,18 @@ import {NormalizationType} from "./NormalizationType";
                 <p>Choose a set of data points that should visualized as part of the final heatmap.</p>
                 <span>Horizontal data:</span>
                 <div>
-                    <component v-if="heatmapConfiguration.horizontalDataSource" :is="dataSources.get(horizontalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.horizontalDataSource"></component>
+                    <component v-if="heatmapConfiguration.horizontalDataSource" :is="dataSources.get(horizontalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.horizontalDataSource" v-on:selected-items="updateHorizontalSelectedItems"></component>
                     <v-progress-circular v-else indeterminate color="primary"></v-progress-circular>
                 </div>
                 <span>Vertical data:</span>
                 <div>
-                    <component v-if="heatmapConfiguration.verticalDataSource" :is="dataSources.get(verticalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.verticalDataSource"></component>
+                    <component v-if="heatmapConfiguration.verticalDataSource" :is="dataSources.get(verticalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.verticalDataSource" v-on:selected-items="updateVerticalSelectedItems"></component>
                     <v-progress-circular v-else indeterminate color="primary"></v-progress-circular>
                 </div>
             </v-stepper-content>
             <v-stepper-content step="4">
+                <simple-button label="compute" type="primary" @click="computeHeatmap()"></simple-button>
+                <heatmap-visualization v-if="heatmapData" :data="heatmapData"></heatmap-visualization>
             </v-stepper-content>
         </v-stepper-items>
     </v-stepper>
@@ -62,9 +64,12 @@ import {NormalizationType} from "./NormalizationType";
     import GoDataSourceComponent from "./go-data-source-component.vue";
     import EcDataSourceComponent from "./ec-data-source-component.vue";
     import TaxaDataSourceComponent from "./taxa-data-source-component.vue";
+    import { HeatmapData, HeatmapElement } from "unipept-heatmap/heatmap/input";
+    import HeatmapVisualization from "../visualizations/heatmap-visualization.vue";
+    import Element from "../../datasource/Element";
 
     @Component({
-        components: {SimpleButton, GoDataSourceComponent, EcDataSourceComponent, TaxaDataSourceComponent}
+        components: {SimpleButton, GoDataSourceComponent, EcDataSourceComponent, TaxaDataSourceComponent, HeatmapVisualization}
     })
     export default class HeatmapWizard extends Vue {
         @Prop()
@@ -74,6 +79,8 @@ import {NormalizationType} from "./NormalizationType";
 
         private currentStep: number = 1;
         private heatmapConfiguration: HeatmapConfiguration = new HeatmapConfiguration();
+
+        private heatmapData: HeatmapData = null;
 
         private dataSources: Map<string, {dataSourceComponent: string, factory: () => Promise<DataSource>}> = new Map([
             [
@@ -165,6 +172,59 @@ import {NormalizationType} from "./NormalizationType";
         @Watch("normalizer") 
         async onNormalizerChange(newValue: string) {
             this.heatmapConfiguration.normalizer = await this.normalizationTypes.get(newValue).factory();
+        }
+
+        updateHorizontalSelectedItems(newItems: Element[]) {
+            this.heatmapConfiguration.horizontalSelectedItems = newItems;
+        }
+
+        updateVerticalSelectedItems(newItems: Element[]) {
+            this.heatmapConfiguration.verticalSelectedItems = newItems;
+        }
+
+        private async computeHeatmap() {
+            let rows: HeatmapElement[] = [];
+            let cols: HeatmapElement[] = [];
+
+            let grid: number[][] = [];
+
+            let min: number = Infinity;
+            let max: number = 0;
+
+            for (let i = 0; i < this.heatmapConfiguration.verticalSelectedItems.length; i++) {
+                let vertical: Element = this.heatmapConfiguration.verticalSelectedItems[i];
+                rows.push({id: i.toString(), name: vertical.name});
+            }
+
+            for (let i = 0; i < this.heatmapConfiguration.horizontalSelectedItems.length; i++) {
+                let horizontal: Element = this.heatmapConfiguration.horizontalSelectedItems[i];
+                cols.push({id: i.toString(), name: horizontal.name});
+            }
+
+            for (let vertical of this.heatmapConfiguration.verticalSelectedItems) {
+                let gridRow: number[] = [];
+                for (let horizontal of this.heatmapConfiguration.horizontalSelectedItems) {
+                    let value: number = await vertical.computeCrossPopularity(horizontal, this.dataset.getDataset());
+                    min = Math.min(value, min);
+                    max = Math.max(value, max);
+                    gridRow.push(value);
+                }
+                grid.push(gridRow);
+            }
+
+            for (let row = 0; row < grid.length; row++) {
+                for (let col = 0; col < grid[row].length; col++) {
+                    grid[row][col] = (grid[row][col] - min) / (max - min);
+                }
+            }
+
+            this.heatmapData = {
+                rows: rows,
+                columns: cols,
+                values: grid
+            };
+
+            console.log(this.heatmapData);
         }
     }
 </script>

@@ -3,6 +3,7 @@ import Element from "./Element";
 import Sample from "../Sample";
 import DataRepository from "./DataRepository";
 import TaxaDataSource from "./TaxaDataSource";
+import Tree from "../Tree";
 
 export default class TaxaElement extends Element {
     public rank: TaxumRank;
@@ -15,8 +16,7 @@ export default class TaxaElement extends Element {
     public async computeCrossPopularity(x: Element, sample: Sample): Promise<number> {
         let dataRepository: DataRepository = sample.dataRepository;
         let taxaDataSource: TaxaDataSource = await dataRepository.createTaxaDataSource();
-        await taxaDataSource.getTree();
-        // TODO implement
+        let tree: Tree = await taxaDataSource.getTree();
         return 0;
     }
 
