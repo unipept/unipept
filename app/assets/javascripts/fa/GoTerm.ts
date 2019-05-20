@@ -13,9 +13,4 @@ export default class GoTerm extends FAElement {
         super(code, name, popularity, fractionOfPepts, affectedPeptides);
         this.namespace = namespace; 
     }
-
-    public async computeCrossPopularity(x: Element, sample: Sample): Promise<number> {
-        let dataRepository: DataRepository = sample.dataRepository;
-        return 0;
-    }
 }
