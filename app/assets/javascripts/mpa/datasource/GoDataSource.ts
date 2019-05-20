@@ -69,11 +69,6 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm> 
         return result[1];
     }
 
-    public async getAffectedPeptides(term: GoTerm): Promise<string[]> {
-        // let result: [GoTerm[], FATrust] = await this.getFromCache(null, Object.values(GoNameSpace), cutoff, sequences);
-        return [];
-    }
-
     protected async computeTerms(percent = 50, sequences = null): Promise<[Map<GoNameSpace, GoTerm[]>, Map<GoNameSpace, FATrust>]> {
         let worker = await this._repository.getWorker();
 
@@ -82,10 +77,9 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm> 
         let dataOutput: Map<GoNameSpace, GoTerm[]> = new Map();
         for (let namespace of Object.values(GoNameSpace)) {
             let items: MPAFAResult[] = data[namespace];
-            console.log(items);
             let convertedItems: GoTerm[] = [];
             for (let item of items) {
-                convertedItems.push(new GoTerm(item.code, item.name, namespace, item.numberOfPepts, item.fractionOfPepts, Array.from(item.sequences.keys())));
+                convertedItems.push(new GoTerm(item.code, item.name, namespace, item.numberOfPepts, item.fractionOfPepts, Array.from(Object.keys(item.sequences))));
             }
             dataOutput.set(namespace, convertedItems);
         }

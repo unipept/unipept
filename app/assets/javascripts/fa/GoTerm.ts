@@ -1,9 +1,5 @@
 import { GoNameSpace } from "./GoNameSpace";
 import FAElement from "./FAElement";
-import Sample from "../mpa/Sample";
-import DataRepository from "../mpa/datasource/DataRepository";
-import GoDataSource from "../mpa/datasource/GoDataSource";
-import Element from "../mpa/datasource/Element";
 
 export default class GoTerm extends FAElement {
     // The GO-namespace associated with this code. Must be a valid namespace!

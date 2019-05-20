@@ -10,7 +10,6 @@
         protected dataSource: DataSource;
 
         protected capitalize(input: string): string {
-            console.log("Capital result: " + input.split(" ").map(el => el.length > 0 ? el.substr(0, 1).toUpperCase() + el.substr(1) : el).join(" "));
             return input.split(" ").map(el => el.length > 0 ? el.substr(0, 1).toUpperCase() + el.substr(1) : el).join(" ");
         }
     }

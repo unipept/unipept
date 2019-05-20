@@ -142,10 +142,9 @@ export default class EcDataSource extends CachedDataSource<EcNameSpace, EcNumber
         let dataOutput: Map<EcNameSpace, EcNumber[]> = new Map();
         for (let namespace of Object.values(EcNameSpace)) {
             let items: MPAFAResult[] = data[namespace];
-            console.log(items);
             let convertedItems: EcNumber[] = [];
             for (let item of items) {
-                convertedItems.push(new EcNumber(item.code, item.name, namespace, item.numberOfPepts, item.fractionOfPepts, Array.from(item.sequences.keys())));
+                convertedItems.push(new EcNumber(item.code, item.name, namespace, item.numberOfPepts, item.fractionOfPepts, Array.from(Object.keys(item.sequences))));
             }
             dataOutput.set(namespace, convertedItems);
         }

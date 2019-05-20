@@ -36,7 +36,7 @@
         private selectedRank: string = this.taxaRanks[0];
         
         private items: TaxaElement[] = [];
-        private selectedItems: TaxaElement[] = [];
+        private selectedItems: Element[] = [];
 
         private loading: boolean = true;
 
@@ -75,6 +75,11 @@
             let result: TaxaElement[] = await (this.dataSource as TaxaDataSource).getTopItems(30, convertStringToTaxumRank(this.selectedRank));
             this.items.push(...result);
             this.loading = false;
+        }
+
+        @Watch("selectedItems")
+        async onSelectedItemsChanged() {
+            this.$emit("selected-items", this.selectedItems);
         }
     }
 </script>

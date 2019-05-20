@@ -37,7 +37,7 @@
         private selectedNameSpace: string = this.ecNameSpaces[0];
 
         private items: EcNumber[] = [];
-        private selectedItems: EcNumber[] = [];
+        private selectedItems: Element[] = [];
 
         private loading: boolean = true;
 
@@ -75,6 +75,13 @@
             let result: EcNumber[] = await (this.dataSource as EcDataSource).getTopItems(30, convertStringToEcNameSpace(this.selectedNameSpace));
             this.items.push(...result);
             this.loading = false;
+        }
+
+        @Watch("selectedItems", {deep: true})
+        async onSelectedItemsChanged() {
+            console.log("ITEMS SELECTED!!!");
+            console.log(this.selectedItems);
+            this.$emit("selected-items", this.selectedItems);
         }
     }
 </script>

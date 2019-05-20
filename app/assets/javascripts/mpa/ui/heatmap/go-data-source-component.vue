@@ -35,7 +35,7 @@
         private selectedNameSpace: string = this.goNameSpaces[0];
 
         private items: GoTerm[] = [];
-        private selectedItems: GoTerm[] = [];
+        private selectedItems: Element[] = [];
 
         private loading: boolean = true;
 
@@ -74,6 +74,11 @@
             let result: GoTerm[] = await (this.dataSource as GoDataSource).getTopItems(30, convertStringToGoNameSpace(this.selectedNameSpace));
             this.items.push(...result);
             this.loading = false;
+        }
+
+        @Watch("selectedItems")
+        async onSelectedItemsChanged() {
+            this.$emit("selected-items", this.selectedItems);
         }
     }
 </script>
