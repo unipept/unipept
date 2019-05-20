@@ -1,3 +1,5 @@
+import Sample from "../Sample";
+
 export default abstract class Element {
     // The name associated with this element
     public name: string;
@@ -8,4 +10,7 @@ export default abstract class Element {
         this.name = name;
         this.popularity = popularity;
     }
+
+    public abstract async computeCrossPopularity(x: Element, sample: Sample): Promise<number>;
+    public abstract async getAffectedPeptides(sample: Sample): Promise<string[]>;
 }
