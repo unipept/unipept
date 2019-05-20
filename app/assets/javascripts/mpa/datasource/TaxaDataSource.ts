@@ -105,6 +105,18 @@ export default class TaxaDataSource extends DataSource {
         });
     }
 
+    public async getAffectedPeptides(element: TaxaElement): Promise<string[]> {
+        await this.process();
+        // TODO enumerating all nodes here should not be necessary!
+        let nodesForRank: Set<Node> = this._tree.getNodesWithRank(element.rank);
+        for (let node of nodesForRank) {
+            if (node.name === element.name) {
+                return this._tree.getAllSequences(node.id);
+            }
+        }
+        return [];
+    }
+
     public async getMissedPeptides(): Promise<string[]> {
         await this.process();
         return this._missedPeptides;

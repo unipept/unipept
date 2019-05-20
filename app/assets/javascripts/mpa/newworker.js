@@ -51,6 +51,7 @@ let result;
   * @property {string} name
   * @property {string} namespace
   * @property {number} fractionOfPepts
+  * @property {Map<string, number>} sequences
   */ 
 
   /**

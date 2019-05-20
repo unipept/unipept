@@ -1,5 +1,9 @@
 import FAElement from "./FAElement";
 import { EcNameSpace } from "./EcNameSpace";
+import Sample from "../mpa/Sample";
+import DataRepository from "../mpa/datasource/DataRepository";
+import TaxaDataSource from "../mpa/datasource/TaxaDataSource";
+import Element from "../mpa/datasource/Element";
 
 export default class EcNumber extends FAElement {
     public namespace: EcNameSpace;
@@ -13,8 +17,8 @@ export default class EcNumber extends FAElement {
      * @param popularity The amount of peptides that's associated with this EC-number in the associated sample.
      * @param fractionOfPepts The fraction of the total amount of peptides that's associated with this EC-number.
      */
-    constructor(code: string, name: string, namespace: EcNameSpace, popularity: number, fractionOfPepts: number) {
-        super(code, name, popularity, fractionOfPepts);
+    constructor(code: string, name: string, namespace: EcNameSpace, popularity: number, fractionOfPepts: number, affectedPeptides: string[]) {
+        super(code, name, popularity, fractionOfPepts, affectedPeptides);
         this.namespace = namespace;
     }
 
@@ -54,6 +58,10 @@ export default class EcNumber extends FAElement {
      */
     public get level(): number {
         return EcNumber.computeLevel(this.code);
+    }
+
+    public async computeCrossPopularity(x: Element, sample: Sample): Promise<number> {
+        return 0;
     }
 
     public static computeLevel(code: string): number {

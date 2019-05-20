@@ -18,8 +18,6 @@ export default class EcDataSource extends CachedDataSource<EcNameSpace, EcNumber
      * @return A list of EC-Numbers, sorted by popularity.
      */
     public async getTopItems(n: number, namespace: EcNameSpace = null): Promise<EcNumber[]> {
-        console.log("GETTING EC NUMBERS --> " + namespace);
-        console.log(namespace);
         if (namespace) {
             let result: [EcNumber[], FATrust] = await this.getFromCache(namespace, Object.values(EcNameSpace));
             return result[0].slice(0, Math.min(n, result[0].length));
@@ -144,9 +142,10 @@ export default class EcDataSource extends CachedDataSource<EcNameSpace, EcNumber
         let dataOutput: Map<EcNameSpace, EcNumber[]> = new Map();
         for (let namespace of Object.values(EcNameSpace)) {
             let items: MPAFAResult[] = data[namespace];
+            console.log(items);
             let convertedItems: EcNumber[] = [];
             for (let item of items) {
-                convertedItems.push(new EcNumber(item.code, item.name, namespace, item.numberOfPepts, item.fractionOfPepts));
+                convertedItems.push(new EcNumber(item.code, item.name, namespace, item.numberOfPepts, item.fractionOfPepts, Array.from(item.sequences.keys())));
             }
             dataOutput.set(namespace, convertedItems);
         }
