@@ -144,7 +144,15 @@ export default class EcDataSource extends CachedDataSource<EcNameSpace, EcNumber
             let items: MPAFAResult[] = data[namespace];
             let convertedItems: EcNumber[] = [];
             for (let item of items) {
-                convertedItems.push(new EcNumber(item.code, item.name, namespace, item.numberOfPepts, item.fractionOfPepts, Array.from(Object.keys(item.sequences))));
+                let affectedPeptides: string[] = [];
+                for (let seq of Object.keys(item.sequences)) {
+                    if (item.sequences.hasOwnProperty(seq)) {
+                        for (let i = 0; i < item.sequences[seq]; i++) {
+                            affectedPeptides.push(seq);
+                        }
+                    }
+                }
+                convertedItems.push(new EcNumber(item.code, item.name, namespace, item.numberOfPepts, item.fractionOfPepts, affectedPeptides));
             }
             dataOutput.set(namespace, convertedItems);
         }

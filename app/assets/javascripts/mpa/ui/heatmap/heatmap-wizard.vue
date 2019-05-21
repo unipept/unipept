@@ -191,14 +191,11 @@ import {NormalizationType} from "./NormalizationType";
 
         private async computeHeatmapAndProceed() {
             let newHash = sha256(this.normalizer + this.horizontalDataSource + this.verticalDataSource + this.heatmapConfiguration.horizontalSelectedItems.toString() + this.heatmapConfiguration.verticalSelectedItems.toString()).toString();
-            console.log("NEW --> " + newHash);
-            console.log("OLD --> " + this.previouslyComputed);
 
             if (newHash === this.previouslyComputed) {
                 return;
             }
 
-            console.log("COMPUTING!");
             this.previouslyComputed = newHash;
 
             // Go the next step in the wizard.
