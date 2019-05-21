@@ -69,6 +69,7 @@ import {NormalizationType} from "./NormalizationType";
     import { HeatmapData, HeatmapElement } from "unipept-heatmap/heatmap/input";
     import HeatmapVisualization from "../visualizations/heatmap-visualization.vue";
     import Element from "../../datasource/Element";
+    import sha256 from "crypto-js/sha256";
 
     @Component({
         components: {SimpleButton, GoDataSourceComponent, EcDataSourceComponent, TaxaDataSourceComponent, HeatmapVisualization}
@@ -83,6 +84,8 @@ import {NormalizationType} from "./NormalizationType";
         private heatmapConfiguration: HeatmapConfiguration = new HeatmapConfiguration();
 
         private heatmapData: HeatmapData = null;
+        // Keeps track of a hash of the previously computed data for the heatmap
+        private previouslyComputed: string = "";
 
         private dataSources: Map<string, {dataSourceComponent: string, factory: () => Promise<DataSource>}> = new Map([
             [
@@ -187,6 +190,17 @@ import {NormalizationType} from "./NormalizationType";
         }
 
         private async computeHeatmapAndProceed() {
+            let newHash = sha256(this.normalizer + this.horizontalDataSource + this.verticalDataSource + this.heatmapConfiguration.horizontalSelectedItems.toString() + this.heatmapConfiguration.verticalSelectedItems.toString()).toString();
+            console.log("NEW --> " + newHash);
+            console.log("OLD --> " + this.previouslyComputed);
+
+            if (newHash === this.previouslyComputed) {
+                return;
+            }
+
+            console.log("COMPUTING!");
+            this.previouslyComputed = newHash;
+
             // Go the next step in the wizard.
             this.currentStep = 4;
 
