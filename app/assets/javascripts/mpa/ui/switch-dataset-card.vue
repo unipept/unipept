@@ -1,51 +1,48 @@
 <template>
-    <div>
-        <card title="Metaproteomics Analysis" :interactive="true">
-            <card-header class="card-title-interactive">
-                <card-title>
-                    Metaproteomics Analysis
-                </card-title>
-                <div class="card-title-action">
-                    <span class="glyphicon glyphicon-plus" @click="addDataset()"></span>
+    <card title="Metaproteomics Analysis" :interactive="true">
+        <card-header class="card-title-interactive">
+            <card-title>
+                Metaproteomics Analysis
+            </card-title>
+            <div class="card-title-action">
+                <span class="glyphicon glyphicon-plus" @click="addDataset()"></span>
+            </div>
+        </card-header>
+        <card-body id="switch-dataset-card-body">
+            <list class="switch-dataset-list" placeholder="Please add one or more datasets by clicking the plus button above... ">
+                <div class="list-item--two-lines" v-for="dataset of this.$store.getters.selectedDatasets" v-bind:key="dataset.id" :class="activeDataset === dataset ? 'selected' : ''">
+                    <span class="list-item-primary-action">
+                        <input v-if="dataset.progress === 1" v-model="activeDataset" :value="dataset" type="radio" class="input-item select-dataset-radio-button" style="width: 24px;" />
+                        <determinate-circular-progress-indicator v-else :progress="dataset.progress" :size="24"></determinate-circular-progress-indicator>
+                    </span>
+                    <span class="list-item-primary-content">
+                        {{ dataset.getName() }}
+                        <span class="list-item-date">
+                            {{ dataset.getDateFormatted() }}
+                        </span>
+                        <span class="list-item-body">
+                            {{ dataset.getAmountOfPeptides() }} peptides
+                        </span>
+                    </span>
+                    <span class="list-item-secondary-action">
+                        <span class="glyphicon glyphicon-trash" @click="deselectDataset(dataset)">
+                        </span>
+                        <span class="glyphicon glyphicon-equalizer" style="margin-left: 10px;" @click="openHeatmapWizard(dataset)">
+                        </span>
+                    </span>
                 </div>
-            </card-header>
-            <card-body id="switch-dataset-card-body">
-                <list class="switch-dataset-list" placeholder="Please add one or more datasets by clicking the plus button above... ">
-                    <div class="list-item--two-lines" v-for="dataset of this.$store.getters.selectedDatasets" v-bind:key="dataset.id" :class="activeDataset === dataset ? 'selected' : ''">
-                        <span class="list-item-primary-action">
-                            <input v-if="dataset.progress === 1" v-model="activeDataset" :value="dataset" type="radio" class="input-item select-dataset-radio-button" style="width: 24px;" />
-                            <determinate-circular-progress-indicator v-else :progress="dataset.progress" :size="24"></determinate-circular-progress-indicator>
-                        </span>
-                        <span class="list-item-primary-content">
-                            {{ dataset.getName() }}
-                            <span class="list-item-date">
-                                {{ dataset.getDateFormatted() }}
-                            </span>
-                            <span class="list-item-body">
-                                {{ dataset.getAmountOfPeptides() }} peptides
-                            </span>
-                        </span>
-                        <span class="list-item-secondary-action">
-                            <span class="glyphicon glyphicon-trash" @click="deselectDataset(dataset)">
-                            </span>
-                            <span class="glyphicon glyphicon-equalizer" style="margin-left: 10px;" @click="openHeatmapWizard(dataset)">
-                            </span>
-                        </span>
+            </list>
+            <v-dialog v-model="dialogOpen" width="1000px">
+                <div style="min-height: 600px; background-color: white;">
+                    <div class="modal-header" >
+                        <button type="button" class="close" @click="dialogOpen = false"><span aria-hidden="true">×</span></button>
+                        <h4 class="modal-title">Heatmap wizard</h4>
                     </div>
-                </list>
-            </card-body>
-        </card>
-        <v-dialog v-model="dialogOpen" width="1000px">
-            <v-card>
-                <v-card-title>
-                    <span class="headline">Heatmap wizard</span>
-                </v-card-title>
-                <v-card-text style="min-height: 600px;">
                     <heatmap-wizard v-if="selectedDataset" :dataset="selectedDataset"></heatmap-wizard>
-                </v-card-text>
-            </v-card>
-        </v-dialog>
-    </div>
+                </div>
+            </v-dialog>
+        </card-body>
+    </card>
 </template>
 
 <script lang="ts">

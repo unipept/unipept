@@ -1,7 +1,7 @@
 import {NormalizationType} from "./NormalizationType";
 
 <template>
-    <v-stepper v-model="currentStep" style="margin-top: 15px;">
+    <v-stepper v-model="currentStep" style="margin-top: 15px;" class="heatmap-wizard">
         <v-stepper-header>
             <v-stepper-step editable :complete="currentStep > 1" step="1">Horizontal axis</v-stepper-step>
             <v-divider></v-divider>
@@ -13,28 +13,28 @@ import {NormalizationType} from "./NormalizationType";
         </v-stepper-header>
         <v-stepper-items>
             <v-stepper-content step="1">
-                <p>Please select the datapoint that should be visualised on the horizontal axis of the heatmap.</p>
+                <p>Please select the items that should be visualised on the horizontal axis of the heatmap.</p>
                 <v-select :items="Array.from(dataSources.keys())" v-model="horizontalDataSource" label="Datasource"></v-select>
                 <div>
                     <component v-if="!heatmapConfiguration.horizontalLoading" :is="dataSources.get(horizontalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.horizontalDataSource" v-on:selected-items="updateHorizontalSelectedItems"></component>
                     <v-progress-circular v-else indeterminate color="primary"></v-progress-circular>
                 </div>
-                <simple-button style="float: right;" label="Continue" type="primary" @click="currentStep++"></simple-button>
+                <simple-button style="float: right;" label="Continue" type="primary" class="wizard-action" @click="currentStep++"></simple-button>
             </v-stepper-content>
             <v-stepper-content step="2">
-                <p>Please select the datapoint that should be visualised on the vertical axis of the heatmap.</p>
+                <p>Please select the items that should be visualised on the vertical axis of the heatmap.</p>
                 <v-select :items="Array.from(dataSources.keys())" v-model="verticalDataSource" label="Datasource"></v-select>
                 <div>
                     <component v-if="!heatmapConfiguration.verticalLoading" :is="dataSources.get(verticalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.verticalDataSource" v-on:selected-items="updateVerticalSelectedItems"></component>
                     <v-progress-circular v-else indeterminate color="primary"></v-progress-circular>
                 </div>
-                <simple-button style="float: right;" label="Continue" type="primary" @click="currentStep++"></simple-button>
+                <simple-button style="float: right;" label="Continue" type="primary" class="wizard-action" @click="currentStep++"></simple-button>
             </v-stepper-content>
             <v-stepper-content step="3">
                 <p>Please select the type of normalization that should be performed before visualizing data points.</p>
                 <v-select :items="Array.from(normalizationTypes.keys())" v-model="normalizer" label="Normalization type"></v-select>
                 <p>{{ normalizationTypes.get(normalizer).information }}</p>
-                <simple-button style="float: right;" label="Continue" type="primary" @click="computeHeatmapAndProceed()"></simple-button>
+                <simple-button style="float: right;" label="Continue" type="primary" class="wizard-action" @click="computeHeatmapAndProceed()"></simple-button>
             </v-stepper-content>
             <v-stepper-content step="4">
                 <div v-if="heatmapConfiguration.horizontalSelectedItems.length === 0 || heatmapConfiguration.verticalSelectedItems.length === 0">
@@ -237,5 +237,4 @@ import {NormalizationType} from "./NormalizationType";
 </script>
 
 <style scoped>
-
 </style>
