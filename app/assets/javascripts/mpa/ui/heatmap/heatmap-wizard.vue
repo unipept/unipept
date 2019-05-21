@@ -9,7 +9,7 @@ import {NormalizationType} from "./NormalizationType";
             <v-divider></v-divider>
             <v-stepper-step editable :complete="currentStep > 3" step="3">Normalisation</v-stepper-step>
             <v-divider></v-divider>
-            <v-stepper-step editable :complete="currentStep > 4" step="4">Heatmap</v-stepper-step>
+            <v-stepper-step editable :complete="currentStep > 4" step="4" @click="computeHeatmapAndProceed()">Heatmap</v-stepper-step>
         </v-stepper-header>
         <v-stepper-items>
             <v-stepper-content step="1">
@@ -195,9 +195,6 @@ import {NormalizationType} from "./NormalizationType";
 
             let grid: number[][] = [];
 
-            let min: number = Infinity;
-            let max: number = 0;
-
             for (let i = 0; i < this.heatmapConfiguration.verticalSelectedItems.length; i++) {
                 let vertical: Element = this.heatmapConfiguration.verticalSelectedItems[i];
                 rows.push({id: i.toString(), name: vertical.name});
@@ -212,26 +209,16 @@ import {NormalizationType} from "./NormalizationType";
                 let gridRow: number[] = [];
                 for (let horizontal of this.heatmapConfiguration.horizontalSelectedItems) {
                     let value: number = await vertical.computeCrossPopularity(horizontal, this.dataset.getDataset());
-                    min = Math.min(value, min);
-                    max = Math.max(value, max);
                     gridRow.push(value);
                 }
                 grid.push(gridRow);
             }
 
-            for (let row = 0; row < grid.length; row++) {
-                for (let col = 0; col < grid[row].length; col++) {
-                    grid[row][col] = (grid[row][col] - min) / (max - min);
-                }
-            }
-
             this.heatmapData = {
                 rows: rows,
                 columns: cols,
-                values: grid
+                values: this.heatmapConfiguration.normalizer.normalize(grid)
             };
-
-            console.log(this.heatmapData);
         }
     }
 </script>
