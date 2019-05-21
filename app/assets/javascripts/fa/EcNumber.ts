@@ -1,9 +1,5 @@
 import FAElement from "./FAElement";
 import { EcNameSpace } from "./EcNameSpace";
-import Sample from "../mpa/Sample";
-import DataRepository from "../mpa/datasource/DataRepository";
-import TaxaDataSource from "../mpa/datasource/TaxaDataSource";
-import Element from "../mpa/datasource/Element";
 
 export default class EcNumber extends FAElement {
     public namespace: EcNameSpace;

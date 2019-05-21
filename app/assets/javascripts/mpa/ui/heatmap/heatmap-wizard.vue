@@ -3,43 +3,45 @@ import {NormalizationType} from "./NormalizationType";
 <template>
     <v-stepper v-model="currentStep" style="margin-top: 15px;">
         <v-stepper-header>
-            <v-stepper-step editable :complete="currentStep > 1" step="1">Axis</v-stepper-step>
+            <v-stepper-step editable :complete="currentStep > 1" step="1">Horizontal axis</v-stepper-step>
             <v-divider></v-divider>
-            <v-stepper-step editable :complete="currentStep > 2" step="2">Normalisation</v-stepper-step>
+            <v-stepper-step editable :complete="currentStep > 2" step="2">Vertical axis</v-stepper-step>
             <v-divider></v-divider>
-            <v-stepper-step editable :complete="currentStep > 3" step="3">Datasources</v-stepper-step>
+            <v-stepper-step editable :complete="currentStep > 3" step="3">Normalisation</v-stepper-step>
             <v-divider></v-divider>
             <v-stepper-step editable :complete="currentStep > 4" step="4">Heatmap</v-stepper-step>
         </v-stepper-header>
         <v-stepper-items>
             <v-stepper-content step="1">
-                <p>Please select the type of data points that should be visualized for each axis of the heatmap.</p>
-                <v-select :items="Array.from(dataSources.keys())" v-model="horizontalDataSource" label="Horizontal axis"></v-select>
-                <v-select :items="Array.from(dataSources.keys())" v-model="verticalDataSource" label="Vertical axis"></v-select>
+                <p>Please select the datapoint that should be visualised on the horizontal axis of the heatmap.</p>
+                <v-select :items="Array.from(dataSources.keys())" v-model="horizontalDataSource" label="Datasource"></v-select>
+                <div>
+                    <component v-if="!heatmapConfiguration.horizontalLoading" :is="dataSources.get(horizontalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.horizontalDataSource" v-on:selected-items="updateHorizontalSelectedItems"></component>
+                    <v-progress-circular v-else indeterminate color="primary"></v-progress-circular>
+                </div>
                 <simple-button style="float: right;" label="Continue" type="primary" @click="currentStep++"></simple-button>
             </v-stepper-content>
             <v-stepper-content step="2">
-                <p>Please select the type of normalization that should be performed before visualizing data points.</p>
-                <v-select :items="Array.from(normalizationTypes.keys())" v-model="normalizer" label="Normalization type"></v-select>
-                <p>{{ normalizationTypes.get(normalizer).information }}</p>
+                <p>Please select the datapoint that should be visualised on the vertical axis of the heatmap.</p>
+                <v-select :items="Array.from(dataSources.keys())" v-model="verticalDataSource" label="Datasource"></v-select>
+                <div>
+                    <component v-if="!heatmapConfiguration.verticalLoading" :is="dataSources.get(verticalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.verticalDataSource" v-on:selected-items="updateVerticalSelectedItems"></component>
+                    <v-progress-circular v-else indeterminate color="primary"></v-progress-circular>
+                </div>
                 <simple-button style="float: right;" label="Continue" type="primary" @click="currentStep++"></simple-button>
             </v-stepper-content>
             <v-stepper-content step="3">
-                <p>Choose a set of data points that should visualized as part of the final heatmap.</p>
-                <span>Horizontal data:</span>
-                <div>
-                    <component v-if="heatmapConfiguration.horizontalDataSource" :is="dataSources.get(horizontalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.horizontalDataSource" v-on:selected-items="updateHorizontalSelectedItems"></component>
-                    <v-progress-circular v-else indeterminate color="primary"></v-progress-circular>
-                </div>
-                <span>Vertical data:</span>
-                <div>
-                    <component v-if="heatmapConfiguration.verticalDataSource" :is="dataSources.get(verticalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.verticalDataSource" v-on:selected-items="updateVerticalSelectedItems"></component>
-                    <v-progress-circular v-else indeterminate color="primary"></v-progress-circular>
-                </div>
+                <p>Please select the type of normalization that should be performed before visualizing data points.</p>
+                <v-select :items="Array.from(normalizationTypes.keys())" v-model="normalizer" label="Normalization type"></v-select>
+                <p>{{ normalizationTypes.get(normalizer).information }}</p>
+                <simple-button style="float: right;" label="Continue" type="primary" @click="computeHeatmapAndProceed()"></simple-button>
             </v-stepper-content>
             <v-stepper-content step="4">
-                <simple-button label="compute" type="primary" @click="computeHeatmap()"></simple-button>
-                <heatmap-visualization v-if="heatmapData" :data="heatmapData"></heatmap-visualization>
+                <div v-if="heatmapConfiguration.horizontalSelectedItems.length === 0 || heatmapConfiguration.verticalSelectedItems.length === 0">
+                    Please select at least one item for both axis of the heatmap.
+                </div>
+                <v-progress-circular v-if="!heatmapData && heatmapConfiguration.horizontalSelectedItems.length !== 0  && heatmapConfiguration.verticalSelectedItems.length !== 0" indeterminate color="primary"></v-progress-circular>
+                <heatmap-visualization v-if="heatmapData && heatmapConfiguration.horizontalSelectedItems.length !== 0  && heatmapConfiguration.verticalSelectedItems.length !== 0" :data="heatmapData"></heatmap-visualization>
             </v-stepper-content>
         </v-stepper-items>
     </v-stepper>
@@ -159,14 +161,16 @@ import {NormalizationType} from "./NormalizationType";
 
         @Watch("horizontalDataSource") 
         async onHorizontalSelection(newValue: string){
-            this.heatmapConfiguration.horizontalDataSource = null;
+            this.heatmapConfiguration.horizontalLoading = true;
             this.heatmapConfiguration.horizontalDataSource = await this.dataSources.get(newValue).factory();
+            this.heatmapConfiguration.horizontalLoading = false;
         }
 
         @Watch("verticalDataSource") 
         async onVerticalSelection(newValue: string) {
-            this.heatmapConfiguration.verticalDataSource = null;
+            this.heatmapConfiguration.verticalLoading = true;
             this.heatmapConfiguration.verticalDataSource = await this.dataSources.get(newValue).factory();
+            this.heatmapConfiguration.verticalLoading = false;
         }
 
         @Watch("normalizer") 
@@ -182,7 +186,10 @@ import {NormalizationType} from "./NormalizationType";
             this.heatmapConfiguration.verticalSelectedItems = newItems;
         }
 
-        private async computeHeatmap() {
+        private async computeHeatmapAndProceed() {
+            // Go the next step in the wizard.
+            this.currentStep = 4;
+
             let rows: HeatmapElement[] = [];
             let cols: HeatmapElement[] = [];
 

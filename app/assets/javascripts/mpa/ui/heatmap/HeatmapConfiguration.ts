@@ -4,8 +4,10 @@ import Element from "../../datasource/Element";
 
 export default class HeatmapConfiguration {
     public normalizer: Normalizer;
-    public horizontalDataSource: DataSource;
-    public verticalDataSource: DataSource;
+    public horizontalDataSource: DataSource = null;
+    public horizontalLoading: boolean = false;
+    public verticalDataSource: DataSource = null;
+    public verticalLoading: boolean = false;
 
     public horizontalSelectedItems: Element[] = [];
     public verticalSelectedItems: Element[] = [];

@@ -40,6 +40,11 @@
             this.heatmap.setFullScreen(newFullScreen)
         }
 
+        @Watch("data")
+        private onDataChanged() {
+            this.initHeatmap();
+        }
+
         private async initHeatmap() {
             if (this.data) {
                 // let settings: HeatmapSettings = new HeatmapSettings();

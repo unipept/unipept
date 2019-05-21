@@ -9,7 +9,6 @@
                 <load-datasets-card v-else id="analysis-add-dataset-card"></load-datasets-card>
             </div>
         </div>
-        <heatmap-wizard v-if="$store.getters.activeDataset && $store.getters.activeDataset.progress === 1" :dataset="$store.getters.activeDataset" :search-settings="$store.getters.searchSettings"></heatmap-wizard>
         <single-dataset-visualizations-card id="visualizations-card"></single-dataset-visualizations-card>
         <new-functional-summary-card></new-functional-summary-card>
     </div>
