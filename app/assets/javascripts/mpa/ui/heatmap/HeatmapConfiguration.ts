@@ -3,7 +3,7 @@ import DataSource from "../../datasource/DataSource";
 import Element from "../../datasource/Element";
 
 export default class HeatmapConfiguration {
-    public normalizer: Normalizer;
+    public normalizer: Normalizer = null;
     public horizontalDataSource: DataSource = null;
     public horizontalLoading: boolean = false;
     public verticalDataSource: DataSource = null;
