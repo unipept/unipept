@@ -20,6 +20,7 @@ export default class TaxaDataSource extends DataSource {
     // The amount of peptides that have been looked up in the database. This is the total amount of peptides that were
     // searched.
     private _searchedPeptides: number;
+    private _computationStarted: boolean = false
 
     /**
      * Get the n most popular items from this DataSource. The popularity is based on the amount of peptides that
@@ -144,8 +145,8 @@ export default class TaxaDataSource extends DataSource {
             }
 
             this._tree = new Tree(processed);
+            
             const taxonInfo = await Sample.getTaxonInfo(this._tree.getTaxa());
-            this._tree.setTaxonNames(taxonInfo);
             this._tree.sortTree();
 
             this._missedPeptides = missed;
