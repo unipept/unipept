@@ -37,6 +37,10 @@
             <card-body>
                 <div class="tab-content">
                     <tab label="GO terms" :active="true">
+                        <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
+                        This panel shows the Gene Ontology annotations that were matched to
+                        your peptides.
+                        <span v-html="goTrustLine"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
                         <div v-if="!$store.getters.activeDataset || $store.getters.activeDataset.progress !== 1" class="mpa-unavailable go">
                             <h3>Biological Process</h3>
                             <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
@@ -62,7 +66,15 @@
                         </div>
                     </tab>
                     <tab label="EC numbers">
-                        <div v-if="!$store.getters.activeDataset || $store.getters.activeDataset.progress !== 1" style="margin-top: 10px;">
+                        <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
+                        This panel shows the Enzyme Commission numbers that were matched to your peptides. 
+                        <span v-html="ecTrustLine"></span>
+                        Click on a row in a table to see a taxonomy tree that highlights occurrences.
+                        <ec-amount-table :items="ecData" :searchSettings="faSortSettings"></ec-amount-table>
+                        <div v-if="ecTreeData">
+                            <treeview :data="ecTreeData" :height="500" :width="916" :tooltip="ecTreeTooltip" :enableAutoExpand="true" style="position: relative; left: -16px; bottom: -16px;"></treeview>
+                        </div>
+                        <!-- <div v-else style="margin-top: 10px;">
                             <span style="font-weight: 600;">Please wait while we are preparing your data...</span>
                             <hr>
                             <img src="/images/mpa/placeholder_treeview.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">

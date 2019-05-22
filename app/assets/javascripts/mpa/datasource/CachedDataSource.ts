@@ -36,7 +36,7 @@ export abstract class CachedDataSource<T, S extends FAElement> extends DataSourc
             if (!this._originalTerms.has(namespace)) {
                 // If it's not in the cache, add it!
 
-                let result: [Map<T, S[]>, Map<T, FATrust>] = await this.computeTerms(cutoff, sequences);
+                let result: [Map<T, S[]>, Map<T, FATrust>] = await this.computeIfNecessary(cutoff, sequences);
 
                 for (let ns of existingNamespaces) {
                     this._originalTerms.set(ns, result[0].get(ns));
@@ -61,7 +61,7 @@ export abstract class CachedDataSource<T, S extends FAElement> extends DataSourc
                 return this._cache.get(sequenceHash).get(namespace);
             } else {
                 // The item is not currently stored in the cache. We need to get it.
-                let result: [Map<T, S[]>, Map<T, FATrust>] = await this.computeTerms(cutoff, sequences);
+                let result: [Map<T, S[]>, Map<T, FATrust>] = await this.computeIfNecessary(cutoff, sequences);
 
                 // Enter the item into the cache
                 this._cachedSequencesLRU.unshift(sequenceHash);
@@ -81,6 +81,23 @@ export abstract class CachedDataSource<T, S extends FAElement> extends DataSourc
                 return this._cache.get(sequenceHash).get(namespace);
             }
         }
+    }
+
+    private computeIfNecessary(cutoff: number, sequences: string[]): Promise<[Map<T, S[]>, Map<T, FATrust>]> {
+        console.log("CUTOFF --> " + cutoff);
+        console.log("SEQUENCES");
+        console.log(sequences);
+
+        let computeHash: string;
+        if (sequences) {
+            computeHash = sha256(cutoff + sequences.toString()).toString();
+        } else {
+            computeHash = sha256(cutoff + "empty").toString();
+        }
+        if (!this._inProgress.has(computeHash)) {
+            this._inProgress.set(computeHash, this.computeTerms(cutoff, sequences));
+        }
+        return this._inProgress.get(computeHash);
     }
 
     protected agregateTrust(trusts: FATrust[]): FATrust {
