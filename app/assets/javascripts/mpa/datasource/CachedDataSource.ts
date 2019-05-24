@@ -35,7 +35,6 @@ export abstract class CachedDataSource<T, S extends FAElement> extends DataSourc
         if ((sequences === null || sequences.length === 0) && cutoff == 50) {
             if (!this._originalTerms.has(namespace)) {
                 // If it's not in the cache, add it!
-
                 let result: [Map<T, S[]>, Map<T, FATrust>] = await this.computeTerms(cutoff, sequences);
 
                 for (let ns of existingNamespaces) {
