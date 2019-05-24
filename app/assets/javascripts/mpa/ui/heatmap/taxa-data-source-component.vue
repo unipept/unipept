@@ -5,15 +5,11 @@
             <template v-slot:items="props">
                 <tr :active="props.selected" @click="props.selected = !props.selected">
                     <td>
-                        <v-checkbox
-                            :input-value="props.selected"
-                            primary
-                            hide-details
-                        ></v-checkbox>
+                        <v-checkbox :input-value="props.selected" primary hide-details></v-checkbox>
                     </td>
-                    <td class="text-xs-right">{{ props.item.popularity }}</td>
                     <td>{{ props.item.name }}</td>
                     <td>{{ props.item.rank }}</td>
+                    <td class="text-xs-right">{{ props.item.popularity }}</td>
                 </tr>
             </template>
         </v-data-table>
@@ -42,11 +38,6 @@
 
         private headers = [
             {
-                text: 'Popularity (# peptides)',
-                align: 'left',
-                value: 'popularity'
-            },
-            {
                 text: 'Name',
                 align: 'left',
                 value: 'name'
@@ -55,6 +46,11 @@
                 text: 'Rank',
                 align: 'left',
                 value: 'rank'
+            },
+            {
+                text: 'Popularity (# peptides)',
+                align: 'left',
+                value: 'popularity'
             }
         ];
 
