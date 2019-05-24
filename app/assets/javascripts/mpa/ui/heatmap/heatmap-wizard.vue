@@ -16,7 +16,7 @@ import {NormalizationType} from "./NormalizationType";
                 <p>Please select the items that should be visualised on the horizontal axis of the heatmap.</p>
                 <v-select :items="Array.from(dataSources.keys())" v-model="horizontalDataSource" label="Datasource"></v-select>
                 <div>
-                    <component v-if="!heatmapConfiguration.horizontalLoading" :is="dataSources.get(horizontalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.horizontalDataSource" v-on:selected-items="updateHorizontalSelectedItems"></component>
+                    <component v-if="!heatmapConfiguration.horizontalLoading && heatmapConfiguration.horizontalDataSource" :is="dataSources.get(horizontalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.horizontalDataSource" v-on:selected-items="updateHorizontalSelectedItems"></component>
                     <v-progress-circular v-else indeterminate color="primary"></v-progress-circular>
                 </div>
                 <simple-button style="float: right;" label="Continue" type="primary" class="wizard-action" @click="currentStep++"></simple-button>
@@ -25,7 +25,7 @@ import {NormalizationType} from "./NormalizationType";
                 <p>Please select the items that should be visualised on the vertical axis of the heatmap.</p>
                 <v-select :items="Array.from(dataSources.keys())" v-model="verticalDataSource" label="Datasource"></v-select>
                 <div>
-                    <component v-if="!heatmapConfiguration.verticalLoading" :is="dataSources.get(verticalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.verticalDataSource" v-on:selected-items="updateVerticalSelectedItems"></component>
+                    <component v-if="!heatmapConfiguration.verticalLoading && heatmapConfiguration.verticalDataSource" :is="dataSources.get(verticalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.verticalDataSource" v-on:selected-items="updateVerticalSelectedItems"></component>
                     <v-progress-circular v-else indeterminate color="primary"></v-progress-circular>
                 </div>
                 <simple-button style="float: right;" label="Continue" type="primary" class="wizard-action" @click="currentStep++"></simple-button>

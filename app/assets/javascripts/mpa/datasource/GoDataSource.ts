@@ -64,9 +64,19 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm> 
      * @param cutoff 
      * @param sequences 
      */
-    public async getTrust(namespace: GoNameSpace, cutoff: number = 50, sequences: string[] = null): Promise<FATrust> {
-        let result: [GoTerm[], FATrust] = await this.getFromCache(namespace, Object.values(GoNameSpace), cutoff, sequences);
-        return result[1];
+    public async getTrust(namespace: GoNameSpace = null, cutoff: number = 50, sequences: string[] = null): Promise<FATrust> {
+        if (namespace) {
+            let result: [GoTerm[], FATrust] = await this.getFromCache(namespace, Object.values(GoNameSpace), cutoff, sequences);
+            return result[1];
+        } else {
+            let trusts: FATrust[] = [];
+            for (let ns of Object.values(GoNameSpace)) {
+                let result: [GoTerm[], FATrust] = await this.getFromCache(ns, Object.values(GoNameSpace), cutoff, sequences);
+                trusts.push(result[1]);
+            }
+            return this.agregateTrust(trusts);
+        }
+        
     }
 
     protected async computeTerms(percent = 50, sequences = null): Promise<[Map<GoNameSpace, GoTerm[]>, Map<GoNameSpace, FATrust>]> {

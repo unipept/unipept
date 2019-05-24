@@ -16,7 +16,7 @@ environment.plugins.append(
 
 environment.config.merge(resolveConfig);
 
-environment.loaders.append("vue", vue);
+environment.loaders.append('vue', vue);
 environment.loaders.append('typescript', typescript);
 environment.loaders.append('css', css);
 module.exports = environment;
