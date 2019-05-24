@@ -24,6 +24,8 @@ export abstract class CachedDataSource<T, S extends FAElement> extends DataSourc
     // the 5 last requested sequence lists. Note that the original terms are not accounted as one item in the cache.
     protected _cachedSequencesLRU: string[] = [];
 
+    protected _inProgress: Map<string, Promise<[Map<T, S[]>, Map<T, FATrust>]>> = new Map();
+
     protected static readonly MAX_CACHE_SIZE: number = 5;
 
     protected abstract async computeTerms(percent: number, sequences: string[]): Promise<[Map<T, S[]>, Map<T, FATrust>]>;
@@ -33,7 +35,9 @@ export abstract class CachedDataSource<T, S extends FAElement> extends DataSourc
         if ((sequences === null || sequences.length === 0) && cutoff == 50) {
             if (!this._originalTerms.has(namespace)) {
                 // If it's not in the cache, add it!
+
                 let result: [Map<T, S[]>, Map<T, FATrust>] = await this.computeTerms(cutoff, sequences);
+
                 for (let ns of existingNamespaces) {
                     this._originalTerms.set(ns, result[0].get(ns));
                     this._originalTrust.set(ns, result[1].get(ns));
@@ -58,6 +62,7 @@ export abstract class CachedDataSource<T, S extends FAElement> extends DataSourc
             } else {
                 // The item is not currently stored in the cache. We need to get it.
                 let result: [Map<T, S[]>, Map<T, FATrust>] = await this.computeTerms(cutoff, sequences);
+
                 // Enter the item into the cache
                 this._cachedSequencesLRU.unshift(sequenceHash);
                 let cacheMap: Map<T, [S[], FATrust]> = new Map();
@@ -76,5 +81,29 @@ export abstract class CachedDataSource<T, S extends FAElement> extends DataSourc
                 return this._cache.get(sequenceHash).get(namespace);
             }
         }
+    }
+
+    protected agregateTrust(trusts: FATrust[]): FATrust {
+        // TODO this should be fixed!
+        const result = {annotatedCount: 0, totalCount: null, trustCount: 0};
+        let sumAnnotated = 0;
+        for (const c of trusts) {
+            console.log(c.annotatedCount);
+            sumAnnotated += c.annotatedCount;
+            if (c.annotatedCount > result.annotatedCount) {
+                result.annotatedCount = c.annotatedCount;
+            }
+            if (result.totalCount === null) {
+                result.totalCount = c.totalCount;
+            }
+
+            if (c.totalCount !== result.totalCount) {
+                return null;
+            }
+
+            result.trustCount += c.trustCount;
+        }
+        result.trustCount = (result.trustCount / sumAnnotated) * result.annotatedCount;
+        return new FATrust(result.annotatedCount, result.totalCount, result.trustCount);
     }
 }

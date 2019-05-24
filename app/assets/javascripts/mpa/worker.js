@@ -15,6 +15,7 @@ const PEPT2DATA_URL = "/mpa/pept2data";
  * @type {Map<string, any>}
  */
 let processedPeptides = new Map();
+let preparedPeptidesLength = 0;
 
 
 /**
@@ -67,6 +68,7 @@ let processedPeptides = new Map();
 export async function process(originalPeptides, config) {
     const preparedPeptides = preparePeptides(originalPeptides, config);
     const peptideList = Array.from(preparedPeptides.keys());
+    preparedPeptidesLength = peptideList.length;
     setProgress(0.1);
 
     for (let i = 0; i < peptideList.length; i += BATCH_SIZE) {
@@ -342,7 +344,7 @@ function summarizeFa(extract, countExtractor, trustExtractor, cutoff = 50, seque
         trust: {
             trustCount: sumTrust,
             annotatedCount: numAnnotated,
-            totalCount: sumCount,
+            totalCount: preparedPeptidesLength,
         },
         data: Array.from(map).map(x => ({
             code: x[0],

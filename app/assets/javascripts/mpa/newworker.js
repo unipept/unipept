@@ -4,6 +4,7 @@ import "whatwg-fetch";
 import {postJSON, numberToPercent} from "../utils.js";
 
 const BATCH_SIZE = 100;
+const FA_BATCH_SIZE = 1000;
 const PEPT2DATA_URL = "/mpa/pept2data";
 
 const GO_NAMESPACES = ["biological process", "cellular component", "molecular function"];
@@ -138,9 +139,9 @@ async function cacheGoTerms(goTerms) {
     // Check which goTerms have already been downloaded
     const todo = goTerms.filter(c => !goTermsCache.has(c));
     if (todo.length > 0) {
-        for (let i = 0; i < todo.length; i += BATCH_SIZE) {
+        for (let i = 0; i < todo.length; i += FA_BATCH_SIZE) {
             const res = await postJSON("/private_api/goterms", JSON.stringify({
-                goterms: todo.slice(i, i + BATCH_SIZE),
+                goterms: todo.slice(i, i + FA_BATCH_SIZE),
             }));
             await addGoTermsToCache(res);
         }
@@ -165,17 +166,17 @@ async function addGoTermsToCache(newTerms, namespace = null) {
  * @access private
  */
 async function cacheEcNumbers(ecNumbers) {
-    const todo = [];
+    const todo = new Set();
     for (const curEc of ecNumbers.map(el => el.substr(3))) {
         if (!ecNumbersCache.has(curEc)) {
-            todo.push(curEc);
+            todo.add(curEc);
             const parts = curEc.split(".");
             const numSpecific = parts.includes("-") ? parts.indexOf("-") : parts.length;
             for (let i = numSpecific - 1; i >= 1; i--) {
                 parts[i] = "-";
                 const newKey = parts.join(".");
                 if (!ecNumbersCache.has(newKey)) {
-                    todo.push(newKey);
+                    todo.add(newKey);
                 } else {
                     break; // the key already exists (all following already done)
                 }
@@ -183,10 +184,12 @@ async function cacheEcNumbers(ecNumbers) {
         }
     }
 
-    if (todo.length > 0) {
-        for (let i = 0; i < todo.length; i += BATCH_SIZE) {
+    let todoList = Array.from(todo);
+
+    if (todoList.length > 0) {
+        for (let i = 0; i < todoList.length; i += FA_BATCH_SIZE) {
             const res = await postJSON("/private_api/ecnumbers", JSON.stringify({
-                ecnumbers: todo.slice(i, i + BATCH_SIZE),
+                ecnumbers: todoList.slice(i, i + FA_BATCH_SIZE),
             }));
             await addEcNumbersToCache(res);
         }
@@ -295,9 +298,9 @@ export async function summarizeEc(percent = 50, sequences = null) {
     for (let namespace of EC_NAMESPACES) {
         const dataExtractor = pept => pept.faGrouped.EC.filter(el => convertToEcNameSpace(el.code) === namespace);
         const {data, trust: curStats} = summarizeFa(dataExtractor, countExtractor, trustExtractor, nameExtractor, namespaceExtractor, percent, sequences);
-        
+
         trust[namespace] = curStats;
-        res[namespace] = data.sort((a, b) => b.numberOfPepts - a.numberOfPepts);;
+        res[namespace] = data.sort((a, b) => b.numberOfPepts - a.numberOfPepts);
     }
 
     return {data: res, trust: trust};
@@ -354,9 +357,9 @@ function summarizeFa(extract, countExtractor, trustExtractor, nameByCode, namesp
                 if (weight < fraction) continue; // skip if insignificant weight TODO: remove
                 atLeastOne = true;
                 const count = map.get(code) || [0, 0, 0, 0, 0];
-                const faSeqences = seqMap.get(code) || Object.create(null);
-                faSeqences[sequence] = pept.count;
-                seqMap.set(code, faSeqences);
+                const faSequences = seqMap.get(code) || Object.create(null);
+                faSequences[sequence] = pept.count;
+                seqMap.set(code, faSequences);
                 const scaledWeight = weight * pept.count;
                 map.set(code, [
                     count[0] + scaledWeight,

@@ -57,6 +57,20 @@ export default class EcDataSource extends CachedDataSource<EcNameSpace, EcNumber
         }
     }
 
+    public async getTrust(namespace: EcNameSpace = null, cutoff: number = 50, sequences: string[] = null): Promise<FATrust> {
+        if (namespace) {
+            let result: [EcNumber[], FATrust] = await this.getFromCache(namespace, Object.values(EcNameSpace), cutoff, sequences);
+            return result[1];
+        } else {
+            let trusts: FATrust[] = [];
+            for (let ns of Object.values(EcNameSpace)) {
+                let result: [EcNumber[], FATrust] = await this.getFromCache(ns, Object.values(EcNameSpace), cutoff, sequences);
+                trusts.push(result[1]);
+            }
+            return this.agregateTrust(trusts);
+        }
+    }
+
     /**
      * Query the EC-datasource and directly convert the found results into an EC-tree.
      * 

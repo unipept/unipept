@@ -36,6 +36,7 @@ export default class TaxaDataSource extends DataSource {
             let output: TaxaElement[] = [];
 
             let nodes: Set<Node> = this._tree.getNodesWithRank(level);
+            console.log(this._tree);
             if (!nodes) {
                 return [];
             }
@@ -44,6 +45,7 @@ export default class TaxaDataSource extends DataSource {
                 // TODO: should we use count or self_count here?
                 output.push(new TaxaElement(node.name, level, node.data.count));
             }
+            console.log(output);
             return output;
         } else {
             let output: TaxaElement[] = [];
@@ -57,6 +59,7 @@ export default class TaxaDataSource extends DataSource {
                 // TODO: should we use count or self_count here?
                 output.push(new TaxaElement(node.name, convertStringToTaxumRank(node.rank), node.data.count));
             }
+            console.log(output);
             return output;
         }
     }
@@ -144,6 +147,7 @@ export default class TaxaDataSource extends DataSource {
             }
 
             this._tree = new Tree(processed);
+            
             const taxonInfo = await Sample.getTaxonInfo(this._tree.getTaxa());
             this._tree.setTaxonNames(taxonInfo);
             this._tree.sortTree();

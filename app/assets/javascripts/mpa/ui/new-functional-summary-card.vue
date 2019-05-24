@@ -37,9 +37,6 @@
             <card-body>
                 <div class="tab-content">
                     <tab label="GO terms" :active="true">
-                        <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
-                        This panel shows the Gene Ontology annotations that were matched to
-                        your peptides. <span v-if="$store.getters.activeDataset && $store.getters.activeDataset.progress === 1" v-html="this.trustLine('GO term')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
                         <div v-if="!$store.getters.activeDataset || $store.getters.activeDataset.progress !== 1" class="mpa-unavailable go">
                             <h3>Biological Process</h3>
                             <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
@@ -49,6 +46,10 @@
                             <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
                         </div>
                         <div v-else>
+                            <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
+                            This panel shows the Gene Ontology annotations that were matched to
+                            your peptides.
+                            <span v-html="goTrustLine"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
                             <div class="row" v-for="(namespace, idx) of goNamespaces" v-bind:key="namespace">
                                 <h3 style="padding-left: 16px;">{{ goData[idx].title }}</h3>
                                 <div class="col-xs-8">
@@ -61,18 +62,21 @@
                         </div>
                     </tab>
                     <tab label="EC numbers">
-                        <ec-amount-table :items="ecData" :searchSettings="faSortSettings"></ec-amount-table>
-                        <div v-if="computed">
-                            <treeview :data="ecTreeData" :height="500" :width="916" :tooltip="ecTreeTooltip" :enableAutoExpand="true"></treeview>
-                        </div>
-                        <!-- <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
-                        This panel shows the Enzyme Commission numbers that were matched to your peptides. <span v-if="fa && $store.getters.activeDataset" v-html="this.trustLine(fa, 'EC number')"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
-                        <ec-numbers-summary style="margin-top: 10px" v-if="$store.getters.activeDataset && $store.getters.activeDataset.getProgress() === 1" :fa="fa" :peptide-container="$store.getters.activeDataset" :sort-settings="faSortSettings"></ec-numbers-summary>
-                        <div v-else style="margin-top: 10px;">
+                        <div v-if="!$store.getters.activeDataset || $store.getters.activeDataset.progress !== 1" style="margin-top: 10px;">
                             <span style="font-weight: 600;">Please wait while we are preparing your data...</span>
                             <hr>
                             <img src="/images/mpa/placeholder_treeview.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
-                        </div> -->
+                        </div>
+                        <div v-else>
+                            <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
+                            This panel shows the Enzyme Commission numbers that were matched to your peptides. 
+                            <span v-html="ecTrustLine"></span>
+                            Click on a row in a table to see a taxonomy tree that highlights occurrences.
+                            <ec-amount-table :items="ecData" :searchSettings="faSortSettings"></ec-amount-table>
+                            <div v-if="ecTreeData">
+                                <treeview :data="ecTreeData" :height="500" :width="916" :tooltip="ecTreeTooltip" :enableAutoExpand="true" style="position: relative; left: -16px; bottom: -16px;"></treeview>
+                            </div>
+                        </div>
                     </tab>
                 </div>
             </card-body>
@@ -110,7 +114,8 @@
     import EcDataSource from "../datasource/EcDataSource";
     import EcAmountTable from "./tables/ec-amount-table.vue";
     import TreeViewNode from "./visualizations/TreeViewNode";
-    import Treeview from "./visualizations/treeview-visualization.vue";
+    import Treeview from "./visualizations/treeview.vue";
+    import FATrust from "../../fa/FATrust";
 
     @Component({
         components: {
@@ -158,8 +163,10 @@
         private goData: {goTerms: GoTerm[], title: string}[] = [];
 
         private ecData: EcNumber[] = [];
-        private ecTreeData: TreeViewNode;
-        private computed: boolean = false;
+        private ecTreeData: TreeViewNode = null;
+
+        private ecTrustLine: string = "";
+        private goTrustLine: string = "";
 
         private ecTreeTooltip: (d: any) => string = (d: any) => {
             const fullCode = (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
@@ -350,19 +357,18 @@
                     this.goData[i].goTerms = await goSource.getGoTerms(namespace, percent, sequences);
                 }
 
+                this.goTrustLine = this.computeTrustLine(await goSource.getTrust(), "GO term");
+
                 let ecSource: EcDataSource = await sample.dataRepository.createEcDataSource();
                 this.ecData = await ecSource.getEcNumbers();
+                this.ecTrustLine = this.computeTrustLine(await ecSource.getTrust(), "EC number");
                 this.ecTreeData = await ecSource.getEcTree();
-                setTimeout(() => {
-                    console.log("COMPUTED");
-                    console.log(this.ecTreeData);
-                    this.computed = true;
-                }, 1000);
             }
         }
 
         /**
          * Generate a tooltip for an EC number
+         * 
          * @param  ecNumber   The EC number to generate a tooltip for
          * @return {string}    HTML for the tooltip
          */
@@ -383,26 +389,23 @@
         }
 
         /**
-         * TODO replace with new code!
          * Creates a line indicating the trust of the function annotations
-         * @param {FunctionalAnnotations} fa
-         * @param {String} kind Human readable word that fits in "To have at least one … assigned to it"
-         * @return {string}
+         * 
+         * @param trust The FATrust object that contains all necessary trust information.
+         * @param kind Human readable word that fits in "To have at least one … assigned to it"
+         * @return
          */
-        private trustLine(kind) {
-            // TODO fix and implement!
-            return "";
-            // const trust = fa.getTrust();
-            // if (trust.annotatedCount === 0) {
-            //     return `<strong>No peptide</strong> has a ${kind} assigned to it. `;
-            // }
-            // if (trust.annotatedCount === trust.totalCount) {
-            //     return `<strong>All peptides</strong> ${trust.annotatedCount <= 5 ? `(only ${trust.annotatedCount})` : ""} have at least one ${kind} assigned to them. `;
-            // }
-            // if (trust.annotatedCount === 1) {
-            //     return `Only <strong>one peptide</strong> (${numberToPercent(trust.annotaionAmount)}) has at least one ${kind} assigned to it. `;
-            // }
-            // return `<strong>${trust.annotatedCount} peptides</strong> (${numberToPercent(trust.annotaionAmount)}) have at least one ${kind} assigned to them. `;
+        private computeTrustLine(trust: FATrust, kind: string): string {
+            if (trust.annotatedCount === 0) {
+                return `<strong>No peptide</strong> has a ${kind} assigned to it. `;
+            }
+            if (trust.annotatedCount === trust.totalCount) {
+                return `<strong>All peptides</strong> ${trust.annotatedCount <= 5 ? `(only ${trust.annotatedCount})` : ""} have at least one ${kind} assigned to them. `;
+            }
+            if (trust.annotatedCount === 1) {
+                return `Only <strong>one peptide</strong> (${numberToPercent(trust.annotatedCount / trust.totalCount)}) has at least one ${kind} assigned to it. `;
+            }
+            return `<strong>${trust.annotatedCount} peptides</strong> (${numberToPercent(trust.annotatedCount / trust.totalCount)}) have at least one ${kind} assigned to them. `;
         }
     }
 </script>

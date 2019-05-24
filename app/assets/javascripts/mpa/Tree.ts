@@ -110,6 +110,8 @@ export default class Tree {
      * @param rank A string representing the rank for whome nodes should be queried.
      */
     getNodesWithRank(rank: string): Set<Node> {
+        console.log("ranknodemap");
+        console.log(this.rankNodeMap);
         return this.rankNodeMap.get(rank);
     }
 
