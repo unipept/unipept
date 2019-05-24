@@ -5,6 +5,9 @@
                 <li v-for="tab in tabs" v-bind:class="{ active: tab.activated }" v-bind:key="tab.label" @click="changeActiveTab(tab)">
                     <a>{{ tab.label }}</a>
                 </li>
+                <li @click="openHeatmapWizard()">
+                    <a>Heatmap</a>
+                </li>
             </ul>
             <div class="nav-right">
                 <div style="position: relative; top: 4px;">
@@ -58,6 +61,20 @@
                     </div>
                 </tab>
             </div>
+            <v-dialog v-model="dialogOpen" width="1000px">
+                <div style="min-height: 600px; background-color: white;">
+                    <div class="modal-header" >
+                        <button type="button" class="close" @click="dialogOpen = false"><span aria-hidden="true">×</span></button>
+                        <h4 class="modal-title">Heatmap wizard</h4>
+                    </div>
+                    <heatmap-wizard v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></heatmap-wizard>
+                    <div v-else>
+                        <div class="text-xs-center" style="margin-top: 25px;">
+                            <v-progress-circular indeterminate color="primary"></v-progress-circular>
+                        </div>
+                    </div>
+                </div>
+            </v-dialog>
         </card-body>
     </card-nav>
 </template>
@@ -78,6 +95,8 @@
     import CardBody from "../../components/card/card-body.vue";
     import {logToGoogle, triggerDownloadModal} from "../../utils";
     import HeatmapVisualization from "./visualizations/heatmap-visualization.vue";
+    import PeptideContainer from "../PeptideContainer";
+    import HeatmapWizard from "./heatmap/heatmap-wizard.vue";
 
     @Component({
         components: {
@@ -91,7 +110,8 @@
             TreemapVisualization,
             SunburstVisualization,
             CardNav,
-            Tab
+            Tab,
+            HeatmapWizard
         },
         computed: {
             datasetsChosen: {
@@ -102,12 +122,14 @@
         }
     })
     export default class SingleDatasetVisualizationsCard extends Vue {
-        waitString = "Please wait while we are preparing your data...";
-        tabs: Tab[] = [];
-        isFullScreen: boolean = false;
+        private waitString = "Please wait while we are preparing your data...";
+        private tabs: Tab[] = [];
+        private isFullScreen: boolean = false;
+
+        private dialogOpen: boolean = false;
 
         mounted() {
-            this.tabs = this.$children[0].$children[1].$children as Tab[];
+            this.tabs = (this.$children[0].$children[1].$children as Tab[]).slice(0, -1);
             $(document).bind(window.fullScreenApi.fullScreenEventName, () => this.exitFullScreen());
             $(".fullScreenActions a").tooltip({placement: "bottom", delay: {"show": 300, "hide": 300}});
         }
@@ -176,6 +198,10 @@
             } else {
                 triggerDownloadModal("#treeviewWrapper svg", null, "unipept_treeview");
             }
+        }
+
+        private openHeatmapWizard(): void {
+            this.dialogOpen = true;
         }
     }
 </script>
