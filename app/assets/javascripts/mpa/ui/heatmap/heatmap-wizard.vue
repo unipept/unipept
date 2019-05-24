@@ -32,8 +32,14 @@ import {NormalizationType} from "./NormalizationType";
             </v-stepper-content>
             <v-stepper-content step="3">
                 <p>Please select the type of normalization that should be performed before visualizing data points.</p>
-                <v-select :items="Array.from(normalizationTypes.keys())" v-model="normalizer" label="Normalization type"></v-select>
-                <p>{{ normalizationTypes.get(normalizer).information }}</p>
+                <v-radio-group v-model="normalizer">
+                    <div v-for="normalizationType in Array.from(normalizationTypes.keys())" :key="normalizationType" style="margin-bottom: 8px;">
+                        <v-radio :label="normalizationType" :value="normalizationType"></v-radio>
+                        <div style="margin-left: 32px;">{{ normalizationTypes.get(normalizationType).information }}</div>
+                    </div>
+                </v-radio-group>
+                <!-- <v-select :items="Array.from(normalizationTypes.keys())" v-model="normalizer" label="Normalization type"></v-select> -->
+                <!-- <p>{{ normalizationTypes.get(normalizer).information }}</p> -->
                 <simple-button style="float: right;" label="Continue" type="primary" class="wizard-action" @click="computeHeatmapAndProceed()"></simple-button>
             </v-stepper-content>
             <v-stepper-content step="4">
