@@ -1,7 +1,7 @@
 import {NormalizationType} from "./NormalizationType";
 
 <template>
-    <v-stepper v-model="currentStep" style="margin-top: 15px;" class="heatmap-wizard">
+    <v-stepper v-model="currentStep" class="heatmap-wizard">
         <v-stepper-header>
             <v-stepper-step editable :complete="currentStep > 1" step="1">Horizontal axis</v-stepper-step>
             <v-divider></v-divider>

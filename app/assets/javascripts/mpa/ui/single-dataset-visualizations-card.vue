@@ -61,16 +61,19 @@
                     </div>
                 </tab>
             </div>
+
             <v-dialog v-model="dialogOpen" width="1000px">
                 <div style="min-height: 600px; background-color: white;">
                     <div class="modal-header" >
                         <button type="button" class="close" @click="dialogOpen = false"><span aria-hidden="true">×</span></button>
                         <h4 class="modal-title">Heatmap wizard</h4>
                     </div>
-                    <heatmap-wizard v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></heatmap-wizard>
-                    <div v-else>
-                        <div class="text-xs-center" style="margin-top: 25px;">
-                            <v-progress-circular indeterminate color="primary"></v-progress-circular>
+                    <div class="single-dataset-wizard">
+                        <heatmap-wizard v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></heatmap-wizard>
+                        <div v-else>
+                            <div class="text-xs-center" style="margin-top: 25px;">
+                                <v-progress-circular indeterminate color="primary"></v-progress-circular>
+                            </div>
                         </div>
                     </div>
                 </div>
