@@ -37,11 +37,6 @@
             <card-body>
                 <div class="tab-content">
                     <tab label="GO terms" :active="true">
-
-                        <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
-                        This panel shows the Gene Ontology annotations that were matched to
-                        your peptides.
-                        <span v-html="goTrustLine"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
                         <div v-if="!$store.getters.activeDataset || $store.getters.activeDataset.progress !== 1" class="mpa-unavailable go">
                             <h3>Biological Process</h3>
                             <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">

@@ -4,9 +4,6 @@
             <card-title>
                 Metaproteomics Analysis
             </card-title>
-            <div class="card-title-action">
-                <span class="glyphicon glyphicon-plus" @click="addDataset()"></span>
-            </div>
         </card-header>
         <card-body id="switch-dataset-card-body">
             <list class="switch-dataset-list" placeholder="Please add one or more datasets by clicking the plus button above... ">
@@ -27,20 +24,9 @@
                     <span class="list-item-secondary-action">
                         <span class="glyphicon glyphicon-trash" @click="deselectDataset(dataset)">
                         </span>
-                        <span class="glyphicon glyphicon-equalizer" style="margin-left: 10px;" @click="openHeatmapWizard(dataset)">
-                        </span>
                     </span>
                 </div>
             </list>
-            <v-dialog v-model="dialogOpen" width="1000px">
-                <div style="min-height: 600px; background-color: white;">
-                    <div class="modal-header" >
-                        <button type="button" class="close" @click="dialogOpen = false"><span aria-hidden="true">×</span></button>
-                        <h4 class="modal-title">Heatmap wizard</h4>
-                    </div>
-                    <heatmap-wizard v-if="selectedDataset" :dataset="selectedDataset"></heatmap-wizard>
-                </div>
-            </v-dialog>
         </card-body>
     </card>
 </template>
@@ -72,20 +58,12 @@
         }
     })
     export default class SwitchDatasetCard extends Vue {
-        private dialogOpen: boolean = false;
-        private selectedDataset: PeptideContainer = null;
-
         private deselectDataset(dataset: PeptideContainer): void {
             this.$store.dispatch('deselectDataset', dataset);
         }
 
         private addDataset(): void {
             this.$store.dispatch('setDatasetSelectionInProgress', !this.$store.getters.isDatasetSelectionInProgress);
-        }
-
-        private openHeatmapWizard(dataset: PeptideContainer): void {
-            this.selectedDataset = dataset;
-            this.dialogOpen = true;
         }
     }
 </script>
