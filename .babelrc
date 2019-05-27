@@ -24,8 +24,8 @@
             },
             "debug": false,
             "plugins": [
-              "syntax-dynamic-import",
-              "@babel/plugin-proposal-object-rest-spread",
+              "@babel/syntax-dynamic-import",
+              "@babel/transform-object-rest-spread",
               [
                 "@babel/plugin-proposal-class-properties",
                 {
@@ -39,8 +39,8 @@
     }
   },
   "plugins": [
-    "syntax-dynamic-import",
-    "@babel/plugin-proposal-object-rest-spread",
+    "@babel/syntax-dynamic-import",
+    "@babel/transform-object-rest-spread",
     [
       "@babel/plugin-proposal-class-properties",
       {

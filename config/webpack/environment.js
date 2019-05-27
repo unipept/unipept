@@ -6,13 +6,13 @@ const vue = require("./loaders/vue");
 const typescript = require("./loaders/typescript");
 const css = require("./loaders/css");
 
-environment.plugins.append(
-    "CommonsChunkVendor",
-    new webpack.optimize.CommonsChunkPlugin({
-        name: "commons",
-        minChunks: 2,
-    })
-);
+// environment.plugins.append(
+//     "CommonsChunkVendor",
+//     new webpack.optimize.CommonsChunkPlugin({
+//         name: "commons",
+//         minChunks: 2,
+//     })
+// );
 
 environment.config.merge(resolveConfig);
 
