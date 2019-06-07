@@ -119,6 +119,7 @@ class SPA {
             .filter(([a, b]) => a.startsWith("EC"))
             .map(([a, b]) => ({code: a.substr(3), value: b})) || [];
 
+        // @ts-ignore
         ECNumbers.makeAssured(ecData,
             {totalCount: fa.counts.all, annotatedCount: fa.counts.EC, trustCount: fa.counts.EC})
             .then(fa => this.setUpEC(fa));
