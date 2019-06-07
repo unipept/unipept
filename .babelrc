@@ -1,14 +1,14 @@
 {
   "presets": [
     [
-      "@babel/preset-env",
+      "env",
       {
         "modules": false,
         "targets": {
           "browsers": "> 1%",
           "uglify": true
         },
-        "useBuiltIns": "entry",
+        "useBuiltIns": true,
         "debug": false
       }
     ]
@@ -17,7 +17,7 @@
     "test": {
       "presets": [
         [
-          "@babel/preset-env",
+          "env",
           {
             "modules": "commonjs",
             "targets": {
@@ -26,9 +26,9 @@
             "debug": false,
             "plugins": [
               "@babel/syntax-dynamic-import",
-              "transform-object-rest-spread",
+              "@babel/transform-object-rest-spread",
               [
-                "@babel/plugin-proposal-class-properties",
+                "transform-class-properties",
                 {
                   "spec": true
                 }
@@ -41,9 +41,9 @@
   },
   "plugins": [
     "@babel/syntax-dynamic-import",
-    "transform-object-rest-spread",
+    "@babel/transform-object-rest-spread",
     [
-      "@babel/plugin-proposal-class-properties",
+      "transform-class-properties",
       {
         "spec": true
       }

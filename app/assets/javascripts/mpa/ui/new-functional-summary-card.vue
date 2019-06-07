@@ -97,6 +97,7 @@
     import {numberToPercent, stringTitleize} from "../../utils";
     import PeptideContainer from "../PeptideContainer";
     import {FunctionalAnnotations} from "../../fa/FunctionalAnnotations";
+    import EcNumbersSummary from "./tables/ec-numbers-summary.vue";
     import SimpleButton from "../../components/button/simple-button.vue";
     import FilterFunctionalAnnotationsDropdown from "./filter-functional-annotations-dropdown.vue";
     import IndeterminateProgressBar from "../../components/progress/indeterminate-progress-bar.vue";
@@ -123,6 +124,7 @@
             IndeterminateProgressBar,
             FilterFunctionalAnnotationsDropdown,
             SimpleButton, 
+            EcNumbersSummary, 
             Tab, 
             CardNav, 
             GoAmountTable,
