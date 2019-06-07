@@ -24,7 +24,11 @@ export default class ColumnNormalizer implements Normalizer {
             console.log(max);
 
             for (let row = 0; row < data.length; row++) {
-                output[row].push((data[row][col] - min) / (max - min));
+                if (max - min != 0) {
+                    output[row].push((data[row][col] - min) / (max - min));
+                } else {
+                    output[row].push(0);
+                }
             }
         }
 

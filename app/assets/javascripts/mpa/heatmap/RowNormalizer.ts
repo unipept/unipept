@@ -13,7 +13,11 @@ export default class RowNormalizer implements Normalizer {
 
             let newRow = [];
             for (let item of row) {
-                newRow.push((item - min) / (max - min));
+                if (max - min != 0) {
+                    newRow.push((item - min) / (max - min));
+                } else {
+                    newRow.push(0);
+                }
             }
             output.push(newRow);
         }

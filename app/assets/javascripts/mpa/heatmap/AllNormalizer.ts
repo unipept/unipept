@@ -21,7 +21,11 @@ export default class AllNormalizer implements Normalizer {
         for (let row of data) {
             let newRow: number[] = [];
             for (let value of row) {
-                newRow.push((value - min) / (max - min));
+                if (max - min != 0) {
+                    newRow.push((value - min) / (max - min));
+                } else {
+                    newRow.push(0);
+                }
             }
             output.push(newRow);
         }
