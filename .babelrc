@@ -7,7 +7,7 @@
         "targets": {
           "browsers": "> 1%"
         },
-        "useBuiltIns": "usage",
+        "useBuiltIns": "entry",
         "debug": false
       }
     ]
@@ -25,7 +25,7 @@
             "debug": false,
             "plugins": [
               "@babel/syntax-dynamic-import",
-              "@babel/transform-object-rest-spread",
+              "transform-object-rest-spread",
               [
                 "@babel/plugin-proposal-class-properties",
                 {
@@ -40,7 +40,7 @@
   },
   "plugins": [
     "@babel/syntax-dynamic-import",
-    "@babel/transform-object-rest-spread",
+    "transform-object-rest-spread",
     [
       "@babel/plugin-proposal-class-properties",
       {
