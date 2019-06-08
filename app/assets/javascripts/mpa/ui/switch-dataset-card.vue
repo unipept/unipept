@@ -4,6 +4,9 @@
             <card-title>
                 Metaproteomics Analysis
             </card-title>
+            <div class="card-title-action">
+                <span class="glyphicon glyphicon-plus" @click="addDataset()"></span>
+            </div>
         </card-header>
         <card-body id="switch-dataset-card-body">
             <list class="switch-dataset-list" placeholder="Please add one or more datasets by clicking the plus button above... ">
