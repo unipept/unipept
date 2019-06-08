@@ -69,7 +69,7 @@
                         <h4 class="modal-title">Heatmap wizard</h4>
                     </div>
                     <div class="single-dataset-wizard">
-                        <heatmap-wizard v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></heatmap-wizard>
+                        <heatmap-wizard-single-sample v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></heatmap-wizard-single-sample>
                         <div v-else>
                             <div class="text-xs-center" style="margin-top: 25px;">
                                 <v-progress-circular indeterminate color="primary"></v-progress-circular>
@@ -99,7 +99,7 @@
     import {logToGoogle, triggerDownloadModal} from "../../utils";
     import HeatmapVisualization from "./visualizations/heatmap-visualization.vue";
     import PeptideContainer from "../PeptideContainer";
-    import HeatmapWizard from "./heatmap/heatmap-wizard.vue";
+    import HeatmapWizardSingleSample from "./heatmap/heatmap-wizard-single-sample.vue";
 
     @Component({
         components: {
@@ -114,7 +114,7 @@
             SunburstVisualization,
             CardNav,
             Tab,
-            HeatmapWizard
+            HeatmapWizardSingleSample
         },
         computed: {
             datasetsChosen: {

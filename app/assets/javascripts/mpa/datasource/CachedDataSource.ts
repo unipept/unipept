@@ -7,7 +7,7 @@ import sha256 from "crypto-js/sha256";
  * This abstract class provides a generic caching mechanism that can be used for each kind of functional annotation
  * with support for some kind of namespace.
  * 
- * @template T This is the type of namespace that's for caching.
+ * @template T This is the type of namespace that's used for caching.
  * @template S This is the type of FAElement that's used for caching.
  */
 export abstract class CachedDataSource<T, S extends FAElement> extends DataSource {
@@ -105,7 +105,6 @@ export abstract class CachedDataSource<T, S extends FAElement> extends DataSourc
         const result = {annotatedCount: 0, totalCount: null, trustCount: 0};
         let sumAnnotated = 0;
         for (const c of trusts) {
-            console.log(c.annotatedCount);
             sumAnnotated += c.annotatedCount;
             if (c.annotatedCount > result.annotatedCount) {
                 result.annotatedCount = c.annotatedCount;

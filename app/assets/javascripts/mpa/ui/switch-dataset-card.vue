@@ -5,6 +5,7 @@
                 Metaproteomics Analysis
             </card-title>
             <div class="card-title-action">
+                <span class="glyphicon glyphicon-equalizer" @click="compareDatasets()" style="margin-right: 5px;"></span>
                 <span class="glyphicon glyphicon-plus" @click="addDataset()"></span>
             </div>
         </card-header>
@@ -30,6 +31,24 @@
                     </span>
                 </div>
             </list>
+
+            <v-dialog v-model="dialogOpen" width="1000px">
+                <div style="min-height: 600px; background-color: white;">
+                    <div class="modal-header" >
+                        <button type="button" class="close" @click="dialogOpen = false"><span aria-hidden="true">×</span></button>
+                        <h4 class="modal-title">Heatmap wizard</h4>
+                    </div>
+                    <div class="single-dataset-wizard">
+                        <heatmap-wizard-multi-sample v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></heatmap-wizard-multi-sample>
+                        <div v-else>
+                            <div class="text-xs-center" style="margin-top: 25px;">
+                                <v-progress-circular indeterminate color="primary"></v-progress-circular>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </v-dialog>
+
         </card-body>
     </card>
 </template>
@@ -45,10 +64,10 @@
     import CardHeader from "../../components/card/card-header.vue";
     import CardTitle from "../../components/card/card-title.vue";
     import CardBody from "../../components/card/card-body.vue";
-    import HeatmapWizard from "./heatmap/heatmap-wizard.vue";
+    import HeatmapWizardMultiSample from "./heatmap/heatmap-wizard-multi-sample.vue";
 
     @Component({
-        components: {CardBody, CardTitle, CardHeader, DeterminateCircularProgressIndicator, Card, List, HeatmapWizard},
+        components: {CardBody, CardTitle, CardHeader, DeterminateCircularProgressIndicator, Card, List, HeatmapWizardMultiSample},
         computed: {
             activeDataset: {
                 get() {
@@ -61,12 +80,18 @@
         }
     })
     export default class SwitchDatasetCard extends Vue {
+        private dialogOpen: boolean = false;
+
         private deselectDataset(dataset: PeptideContainer): void {
             this.$store.dispatch('deselectDataset', dataset);
         }
 
         private addDataset(): void {
             this.$store.dispatch('setDatasetSelectionInProgress', !this.$store.getters.isDatasetSelectionInProgress);
+        }
+
+        private compareDatasets(): void {
+            this.dialogOpen = true;
         }
     }
 </script>
