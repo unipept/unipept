@@ -2,7 +2,7 @@
     <div>
         <validated-textarea :disabled="loading" v-model="peptideModel" name="qs" label="Peptide list" :rows="7" :spellcheck="false" :validation="validate" validation-error="At least one peptide is required"></validated-textarea>
         <validated-textfield :disabled="loading" v-model="nameModel" name="search_name" label="Name this dataset" :validation="validate" validation-error="Name is required when the dataset is set to be saved." placeholder="e.g. Sample B5" tooltip="This name will be shown on the results page. Handy if you have many open tabs."></validated-textfield>
-        <checkbox :disabled="loading" v-model="saveData" name="save_dataset" label="Store dataset in browser's local storage" tooltip="Store dataset in local storage and reuse it later on"></checkbox>
+        <checkbox :disabled="loading" v-model="saveModel" name="save_dataset" label="Store dataset in browser's local storage" tooltip="Store dataset in local storage and reuse it later on"></checkbox>
     </div>
 </template>
 
@@ -43,6 +43,7 @@
                 },
                 set(val) {
                     this.saveData = val;
+                    console.log("EMITTING " + val);
                     this.$emit('save-change', val);
                 }
             }

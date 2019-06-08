@@ -20,15 +20,13 @@ export default class DatasetManager {
      */
     async listDatasets(): Promise<PeptideContainer[]> {
         let output: PeptideContainer[] = [];
-        for (let storageType of this.storageTypes) {
-            let storage = this.getStorage(storageType);
-            for (let i = 0; i < storage.length; i++) {
-                let key = storage.key(i);
-                if (key.startsWith(DatasetManager.MPA_METADATA_PREFIX)) {
-                    let dataset = new PeptideContainer(key.substr(DatasetManager.MPA_METADATA_PREFIX.length));
-                    await dataset.deserialize(storageType);
-                    output.push(dataset);
-                }
+        let storage = this.getStorage(StorageType.LocalStorage);
+        for (let i = 0; i < storage.length; i++) {
+            let key = storage.key(i);
+            if (key.startsWith(DatasetManager.MPA_METADATA_PREFIX)) {
+                let dataset = new PeptideContainer(key.substr(DatasetManager.MPA_METADATA_PREFIX.length));
+                await dataset.deserialize(StorageType.LocalStorage);
+                output.push(dataset);
             }
         }
 
