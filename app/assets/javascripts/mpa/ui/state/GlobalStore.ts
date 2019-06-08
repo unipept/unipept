@@ -2,9 +2,6 @@ import PeptideContainer from "../../PeptideContainer";
 import {ActionContext, ActionTree, GetterTree, MutationTree} from "vuex";
 import DatasetManager from "../../DatasetManager";
 import MpaAnalysisManager from "../../MpaAnalysisManager";
-import {AnalysisState} from "./AnalysisStore";
-import TaxaDataSource from "../../datasource/TaxaDataSource";
-
 
 export interface GlobalState {
     selectedDatasets: PeptideContainer[],

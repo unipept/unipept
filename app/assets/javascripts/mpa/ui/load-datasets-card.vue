@@ -175,7 +175,9 @@
             peptideContainer.store().then(
                 () => {
                     this.$store.dispatch('selectDataset', peptideContainer);
-                    this.$store.dispatch('addStoredDataset', peptideContainer);
+                    if (save) {
+                        this.$store.dispatch('addStoredDataset', peptideContainer);
+                    }
                     this.pendingStore = false;
                 }
             );
