@@ -23,11 +23,9 @@
     import LoadDatasetsCard from "./load-datasets-card.vue";
     import SingleDatasetVisualizationsCard from "./single-dataset-visualizations-card.vue";
     import NewFunctionalSummaryCard from "./new-functional-summary-card.vue";
-    import HeatmapWizard from "./heatmap/heatmap-wizard.vue";
 
     @Component({
         components: {
-            HeatmapWizard,
             NewFunctionalSummaryCard, SingleDatasetVisualizationsCard, LoadDatasetsCard, SwitchDatasetCard, ExperimentSummaryCard},
         computed: {
             selectedDatasets: {

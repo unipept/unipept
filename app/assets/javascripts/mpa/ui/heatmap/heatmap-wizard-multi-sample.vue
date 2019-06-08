@@ -3,34 +3,23 @@ import {NormalizationType} from "./NormalizationType";
 <template>
     <v-stepper v-model="currentStep" class="heatmap-wizard">
         <v-stepper-header>
-            <v-stepper-step editable :complete="currentStep > 1" step="1">Horizontal axis</v-stepper-step>
+            <v-stepper-step editable :complete="currentStep > 1" step="1">Data source</v-stepper-step>
             <v-divider></v-divider>
-            <v-stepper-step editable :complete="currentStep > 2" step="2">Vertical axis</v-stepper-step>
+            <v-stepper-step editable :complete="currentStep > 2" step="2">Normalisation</v-stepper-step>
             <v-divider></v-divider>
-            <v-stepper-step editable :complete="currentStep > 3" step="3">Normalisation</v-stepper-step>
-            <v-divider></v-divider>
-            <v-stepper-step editable :complete="currentStep > 4" step="4" @click="computeHeatmapAndProceed()">Heatmap</v-stepper-step>
+            <v-stepper-step editable :complete="currentStep > 3" step="3" @click="computeHeatmapAndProceed()">Heatmap</v-stepper-step>
         </v-stepper-header>
         <v-stepper-items>
             <v-stepper-content step="1">
-                <p>Please select the items that should be visualised on the horizontal axis of the heatmap.</p>
-                <v-select :items="Array.from(dataSources.keys())" v-model="horizontalDataSource" label="Datasource"></v-select>
+                <p>Please select type of data that should be compared between samples.</p>
+                <v-select :items="Array.from(dataSources.keys())" v-model="dataSource" label="Datasource"></v-select>
                 <div>
-                    <component v-if="!heatmapConfiguration.horizontalLoading && heatmapConfiguration.horizontalDataSource" :is="dataSources.get(horizontalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.horizontalDataSource" v-on:selected-items="updateHorizontalSelectedItems"></component>
+                    <component v-if="!dataSourceLoading && dataSourceItem" :is="dataSources.get(dataSource).dataSourceComponent" :dataSource="dataSourceItem" v-on:selected-items="updateSelectedItems"></component>
                     <v-progress-circular v-else indeterminate color="primary"></v-progress-circular>
                 </div>
                 <simple-button style="float: right;" label="Continue" type="primary" class="wizard-action" @click="currentStep++"></simple-button>
             </v-stepper-content>
             <v-stepper-content step="2">
-                <p>Please select the items that should be visualised on the vertical axis of the heatmap.</p>
-                <v-select :items="Array.from(dataSources.keys())" v-model="verticalDataSource" label="Datasource"></v-select>
-                <div>
-                    <component v-if="!heatmapConfiguration.verticalLoading && heatmapConfiguration.verticalDataSource" :is="dataSources.get(verticalDataSource).dataSourceComponent" :dataSource="heatmapConfiguration.verticalDataSource" v-on:selected-items="updateVerticalSelectedItems"></component>
-                    <v-progress-circular v-else indeterminate color="primary"></v-progress-circular>
-                </div>
-                <simple-button style="float: right;" label="Continue" type="primary" class="wizard-action" @click="currentStep++"></simple-button>
-            </v-stepper-content>
-            <v-stepper-content step="3">
                 <p>Please select the type of normalization that should be performed before visualizing data points.</p>
                 <v-radio-group v-model="normalizer">
                     <div v-for="normalizationType in Array.from(normalizationTypes.keys())" :key="normalizationType" style="margin-bottom: 8px;">
@@ -38,16 +27,14 @@ import {NormalizationType} from "./NormalizationType";
                         <div style="margin-left: 32px;">{{ normalizationTypes.get(normalizationType).information }}</div>
                     </div>
                 </v-radio-group>
-                <!-- <v-select :items="Array.from(normalizationTypes.keys())" v-model="normalizer" label="Normalization type"></v-select> -->
-                <!-- <p>{{ normalizationTypes.get(normalizer).information }}</p> -->
                 <simple-button style="float: right;" label="Continue" type="primary" class="wizard-action" @click="computeHeatmapAndProceed()"></simple-button>
             </v-stepper-content>
-            <v-stepper-content step="4">
-                <div v-if="heatmapConfiguration.horizontalSelectedItems.length === 0 || heatmapConfiguration.verticalSelectedItems.length === 0">
+            <v-stepper-content step="3">
+                <div v-if="selectedItems.length === 0">
                     Please select at least one item for both axis of the heatmap.
                 </div>
-                <v-progress-circular v-if="!heatmapData && heatmapConfiguration.horizontalSelectedItems.length !== 0  && heatmapConfiguration.verticalSelectedItems.length !== 0" indeterminate color="primary"></v-progress-circular>
-                <heatmap-visualization v-if="heatmapData && heatmapConfiguration.horizontalSelectedItems.length !== 0  && heatmapConfiguration.verticalSelectedItems.length !== 0" :data="heatmapData"></heatmap-visualization>
+                <v-progress-circular v-if="!heatmapData && selectedItems.length !== 0" indeterminate color="primary"></v-progress-circular>
+                <heatmap-visualization v-if="heatmapData && selectedItems.length !== 0" :data="heatmapData"></heatmap-visualization>
             </v-stepper-content>
         </v-stepper-items>
     </v-stepper>
@@ -80,7 +67,7 @@ import {NormalizationType} from "./NormalizationType";
     @Component({
         components: {SimpleButton, GoDataSourceComponent, EcDataSourceComponent, TaxaDataSourceComponent, HeatmapVisualization}
     })
-    export default class HeatmapWizard extends Vue {
+    export default class HeatmapWizardMultiSample extends Vue {
         @Prop()
         private dataset: PeptideContainer;
         @Prop()
@@ -152,34 +139,27 @@ import {NormalizationType} from "./NormalizationType";
             ]
         ]);
 
-        private horizontalDataSource: string = "";
-        private verticalDataSource: string = "";
+        private dataSource: string = "";
+        private dataSourceItem: DataSource = null;
+        private dataSourceLoading: boolean = false;
+        private selectedItems: Element[] = [];
         private normalizer: string = "";
 
         created() {
-            this.horizontalDataSource = this.dataSources.keys().next().value;
-            this.verticalDataSource = this.dataSources.keys().next().value;
+            this.dataSource = this.dataSources.keys().next().value;
             this.normalizer = this.normalizationTypes.keys().next().value;
         }
 
         mounted() {
-            this.onHorizontalSelection(this.horizontalDataSource);
-            this.onVerticalSelection(this.verticalDataSource);
+            this.onHorizontalSelection(this.dataSource);
             this.onNormalizerChange(this.normalizer);
         }
 
-        @Watch("horizontalDataSource") 
+        @Watch("dataSource") 
         async onHorizontalSelection(newValue: string){
-            this.heatmapConfiguration.horizontalLoading = true;
-            this.heatmapConfiguration.horizontalDataSource = await this.dataSources.get(newValue).factory();
-            this.heatmapConfiguration.horizontalLoading = false;
-        }
-
-        @Watch("verticalDataSource") 
-        async onVerticalSelection(newValue: string) {
-            this.heatmapConfiguration.verticalLoading = true;
-            this.heatmapConfiguration.verticalDataSource = await this.dataSources.get(newValue).factory();
-            this.heatmapConfiguration.verticalLoading = false;
+            this.dataSourceLoading = true;
+            this.dataSourceItem = await this.dataSources.get(newValue).factory();
+            this.dataSourceLoading = false;
         }
 
         @Watch("normalizer") 
@@ -187,16 +167,12 @@ import {NormalizationType} from "./NormalizationType";
             this.heatmapConfiguration.normalizer = await this.normalizationTypes.get(newValue).factory();
         }
 
-        updateHorizontalSelectedItems(newItems: Element[]) {
-            this.heatmapConfiguration.horizontalSelectedItems = newItems;
-        }
-
-        updateVerticalSelectedItems(newItems: Element[]) {
-            this.heatmapConfiguration.verticalSelectedItems = newItems;
+        updateSelectedItems(newItems: Element[]) {
+            this.selectedItems = newItems;
         }
 
         private async computeHeatmapAndProceed() {
-            let newHash = sha256(this.normalizer + this.horizontalDataSource + this.verticalDataSource + this.heatmapConfiguration.horizontalSelectedItems.toString() + this.heatmapConfiguration.verticalSelectedItems.toString()).toString();
+            let newHash = sha256(this.normalizer + this.dataSource + this.selectedItems.toString()).toString();
 
             if (newHash === this.previouslyComputed) {
                 return;
@@ -205,27 +181,27 @@ import {NormalizationType} from "./NormalizationType";
             this.previouslyComputed = newHash;
 
             // Go the next step in the wizard.
-            this.currentStep = 4;
+            this.currentStep = 3;
 
             let rows: HeatmapElement[] = [];
             let cols: HeatmapElement[] = [];
 
             let grid: number[][] = [];
-
-            for (let i = 0; i < this.heatmapConfiguration.verticalSelectedItems.length; i++) {
-                let vertical: Element = this.heatmapConfiguration.verticalSelectedItems[i];
-                rows.push({id: i.toString(), name: vertical.name});
+            
+            for (let i = 0; i < this.selectedItems.length; i++) {
+                let item: Element = this.selectedItems[i];
+                rows.push({id: i.toString(), name: item.name});
             }
 
-            for (let i = 0; i < this.heatmapConfiguration.horizontalSelectedItems.length; i++) {
-                let horizontal: Element = this.heatmapConfiguration.horizontalSelectedItems[i];
-                cols.push({id: i.toString(), name: horizontal.name});
+            for (let i = 0; i < this.$store.getters.selectedDatasets.length; i++) {
+                let item: PeptideContainer = this.$store.getters.selectedDatasets[i];
+                cols.push({id: i.toString(), name: item.getName()});
             }
 
-            for (let vertical of this.heatmapConfiguration.verticalSelectedItems) {
+            for (let item of this.selectedItems) {
                 let gridRow: number[] = [];
-                for (let horizontal of this.heatmapConfiguration.horizontalSelectedItems) {
-                    let value: number = await vertical.computeCrossPopularity(horizontal, this.dataset.getDataset());
+                for (let container of this.$store.getters.selectedDatasets) {
+                    let value: number = (await item.getAffectedPeptides(container.getDataset())).length;
                     gridRow.push(value);
                 }
                 grid.push(gridRow);

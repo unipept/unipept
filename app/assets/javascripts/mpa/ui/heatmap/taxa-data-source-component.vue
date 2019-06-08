@@ -48,7 +48,7 @@
                 value: 'rank'
             },
             {
-                text: 'Popularity (# peptides)',
+                text: '# peptides',
                 align: 'left',
                 value: 'popularity'
             }
