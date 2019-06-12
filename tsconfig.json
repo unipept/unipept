@@ -9,7 +9,8 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "target": "es5",
-    "allowJs": true
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true
   },
   "exclude": [
     "**/*.spec.ts",
@@ -17,6 +18,5 @@
     "vendor",
     "public"
   ],
-  "compileOnSave": false,
-  "allowSyntheticDefaultImports": true
+  "compileOnSave": false
 }
