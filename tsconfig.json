@@ -17,5 +17,6 @@
     "vendor",
     "public"
   ],
-  "compileOnSave": false
+  "compileOnSave": false,
+  "allowSyntheticDefaultImports": true
 }
