@@ -33,8 +33,18 @@ import {NormalizationType} from "./NormalizationType";
                 <div v-if="selectedItems.length === 0">
                     Please select at least one item for both axis of the heatmap.
                 </div>
-                <v-progress-circular v-if="!heatmapData && selectedItems.length !== 0" indeterminate color="primary"></v-progress-circular>
-                <heatmap-visualization v-if="heatmapData && selectedItems.length !== 0" :data="heatmapData"></heatmap-visualization>
+                <div v-else class="reorder-heatmap-buttons">
+                    <v-layout wrap>
+                        <v-flex xs12 sm6 md6>
+                            <v-checkbox v-model="clusterRows" label="Reorder rows?" :disabled="heatmapLoading"></v-checkbox>
+                        </v-flex>
+                        <v-flex xs12 sm6 md6>
+                            <v-checkbox v-model="clusterColumns" label="Reorder columns?" :disabled="heatmapLoading"></v-checkbox>
+                        </v-flex>
+                    </v-layout>
+                    <v-progress-circular v-if="!heatmapData && selectedItems.length !== 0" indeterminate color="primary"></v-progress-circular>
+                    <heatmap-visualization v-if="heatmapData && selectedItems.length !== 0" :data="heatmapData" :clusterRows="clusterRows" :clusterColumns="clusterColumns"></heatmap-visualization>
+                </div>
             </v-stepper-content>
         </v-stepper-items>
     </v-stepper>
@@ -72,6 +82,11 @@ import {NormalizationType} from "./NormalizationType";
         private dataset: PeptideContainer;
         @Prop()
         private searchSettings: MPAConfig;
+
+        private clusterRows: boolean = true;
+        private clusterColumns: boolean = true;
+
+        private heatmapLoading: boolean = false;
 
         private currentStep: number = 1;
         private heatmapConfiguration: HeatmapConfiguration = new HeatmapConfiguration();
@@ -169,6 +184,20 @@ import {NormalizationType} from "./NormalizationType";
 
         updateSelectedItems(newItems: Element[]) {
             this.selectedItems = newItems;
+        }
+
+        @Watch("clusterRows")
+        async onClusterRows() {
+            this.heatmapLoading = true;
+            await this.computeHeatmapAndProceed();
+            this.heatmapLoading = false;
+        }
+
+        @Watch("clusterColumns")
+        async onClusterColumns() {
+            this.heatmapLoading = true;
+            await this.computeHeatmapAndProceed();
+            this.heatmapLoading = false;
         }
 
         private async computeHeatmapAndProceed() {

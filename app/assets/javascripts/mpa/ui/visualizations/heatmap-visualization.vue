@@ -23,6 +23,10 @@
         private fullScreen: false;
         @Prop({required: true})
         private data: HeatmapData;
+        @Prop({required: false, default: true})
+        private clusterRows: boolean;
+        @Prop({required: false, default: true})
+        private clusterColumns: boolean;
 
         private heatmap: Heatmap;
 
@@ -45,6 +49,12 @@
             this.initHeatmap();
         }
 
+        @Watch("clusterRows")
+        @Watch("clusterColumns")
+        async compute() {
+            this.initHeatmap();
+        }
+
         private async initHeatmap() {
             if (this.data) {
                 // let settings: HeatmapSettings = new HeatmapSettings();
@@ -52,7 +62,16 @@
                     // `<b>${row.name}</b><br>Absolute count: ${rowMappings[row.idx][column.idx].absoluteCount}<br>${rowMappings[row.idx][column.idx].numberOfPepts} matched peptides`;
                 let heatmapElement: HTMLElement = <HTMLElement> this.$refs.heatmapElement;
                 this.heatmap = new Heatmap(heatmapElement, this.data);
-                this.heatmap.cluster();
+
+                let clusterType: "all" | "columns" | "rows" | "none" = "all";
+                if (this.clusterRows && !this.clusterColumns) {
+                    clusterType = "rows";
+                } else if (!this.clusterRows && this.clusterColumns) {
+                    clusterType = "columns";
+                } else if (!this.clusterRows && !this.clusterColumns) {
+                    clusterType = "none";
+                }
+                this.heatmap.cluster(clusterType);
             }
         }
     }

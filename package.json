@@ -17,7 +17,7 @@
     "tiny-emitter": "^2.0.2",
     "ts-loader": "3.5.0",
     "typescript": "^3.5.1",
-    "unipept-heatmap": "^1.0.18",
+    "unipept-heatmap": "^1.0.25",
     "unipept-visualizations": "^1.7.2",
     "vue": "^2.5.18",
     "vue-class-component": "^6.3.2",
