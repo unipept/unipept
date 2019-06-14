@@ -2,7 +2,7 @@
     <div>
         <card-header>
             <ul class="nav nav-tabs">
-                <li v-for="tab in tabs" v-if="tab.constructor.name === 'Tab'" v-bind:class="{ active: tab.activated }" @click="changeActiveTab(tab)">
+                <li v-for="tab in tabs" v-bind:class="{ active: tab.activated }" @click="changeActiveTab(tab)" :key="tab.label">
                     <a>{{ tab.label }}</a>
                 </li>
             </ul>
