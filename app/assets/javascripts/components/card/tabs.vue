@@ -31,6 +31,9 @@
 
         mounted() {
             this.tabs = this.$children[1].$children as Tab[];
+
+            console.log("TABS:");
+            console.log(this.tabs);
         }
 
         changeActiveTab(tab: Tab) {
