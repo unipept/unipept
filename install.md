@@ -1,7 +1,38 @@
 # Installing Unipept
-This installation guide documents the process of installing Unipept on a Ubuntu 18.04 (LTS) machine, but should also be applicable for other system configurations. 
+Starting development on Unipept
+
+Before starting to work on Unipept, some things need to be installed, configured and tested. This guide provides you with the different steps that can be followed to start work on Unipept as fast as possible (with a minimum of configuration details).
 
 Note: This guide does not install the Unipept-Metagenomics-Pipeline.
+
+# Developing with VS Code and Docker (Recommended)
+The Unipept Web Application is written in Ruby-On-Rails in combination with JavaScript, TypeScript and Vue. Unipept also requires access to a complex database. All of these things make it somewhat hard to start development of Unipept straight away. This guide provides a very easy way of developing new Unipept features by leveraging the "Remote Docker Development" feature from Visual Studio Code. You can just download the most recent unipept-db and unipept-application Docker containers and start from there. No need to install a whole bunch of utilities, tools, extensions, packages, etc. Visual Studio Code and Docker Desktop is all you need.
+
+## Preparing your computer
+1. Install [Visual Studio Code](https://code.visualstudio.com/)
+2. Install some required extensions:
+	* [Vetur](https://marketplace.visualstudio.com/items?itemName=octref.vetur)
+	* [Remote Development](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
+	* [Ruby](https://marketplace.visualstudio.com/items?itemName=rebornix.Ruby)
+	* [HTML CSS Support](https://marketplace.visualstudio.com/items?itemName=ecmel.vscode-html-css)
+	* [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+	* [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)
+3. You can optionally install these extensions, for a better user experience:
+	* [Debugger for Chrome](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome)
+	* [Spell Right](https://marketplace.visualstudio.com/items?itemName=ban.spellright)
+	* [TODO Highlight](https://marketplace.visualstudio.com/items?itemName=wayou.vscode-todo-highlight)
+4. Install [Docker Desktop](https://www.docker.com/products/docker-desktop) (NOTE: Docker Desktop on Windows requires Windows 10 Pro or better!). The steps presented here *might* also work with the older [Docker Toolbox](https://docs.docker.com/toolbox/toolbox_install_windows/) which is also available on Windows 10 Home, but this is not tested.
+	
+## Preparing the repository
+1. Pull the most recent Unipept repository from GitHub: `git clone https://github.com/unipept/unipept`.
+2. If you're on Windows, make sure you disable git's automatic line ending conversion. Visual Studio Code needs to convert the files from Windows to Unix line endings before being able to run the code inside the containers. Run `git config --global core.autocrlf input` to disable automatic line ending conversion.
+
+## Download the required Docker containers
+
+# Starting from scratch (Not recommended)
+If, for some reason, you would like to configure and build Unipept from the start, you can follow the following steps to completely initialize all necessary depedencies and configurations on your own computer.
+
+This installation guide documents the process of installing Unipept on a Ubuntu 18.04 (LTS) machine, but should also be applicable for other system configurations. 
 
 ## Requirements
 * Ruby 2.4 (and Rails)
