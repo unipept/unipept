@@ -68,9 +68,10 @@ $(JAR): $(SRC)
 	echo "Starting cleaning unknown ranks form nodes."
 	<<<CMD_SED>>> < "$<" \
 		-e 's/subcohort/no rank/' \
+		-e 's/cohort/no rank/' \
+		-e 's/subsection/no rank/' \
 		-e 's/section/no rank/' \
 		-e 's/series/no rank/' \
-		-e 's/cohort/no rank/' \
 		> "$@"
 	echo "Finished cleaning unknown ranks form nodes."
 
