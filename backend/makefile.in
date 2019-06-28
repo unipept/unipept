@@ -64,12 +64,21 @@ $(JAR): $(SRC)
 	<<<CMD_UNZIP>>> -o $< $(notdir $@) -d $(dir $@)
 	echo "Finished unzipping names and nodes from the taxon dump."
 
-<<<TABDIR>>>/taxons.tsv.gz <<<TABDIR>>>/lineages.tsv.gz: $(JAR) <<<INTDIR>>>/names.dmp <<<INTDIR>>>/nodes.dmp
+<<<INTDIR>>>/clean-nodes.dmp: <<<INTDIR>>>/nodes.dmp
+	echo "Starting cleaning unknown ranks form nodes."
+	<<<CMD_SED>>> < "$<" \
+		-e 's/subcohort/no rank/' \
+		-e 's/section/no rank/' \
+		-e 's/cohort/no rank/' \
+		> "$@"
+	echo "Finished cleaning unknown ranks form nodes."
+
+<<<TABDIR>>>/taxons.tsv.gz <<<TABDIR>>>/lineages.tsv.gz: $(JAR) <<<INTDIR>>>/names.dmp <<<INTDIR>>>/clean-nodes.dmp
 	echo "Starting calculation of taxons and lineages tables."
 	mkdir -p $(dir $@)
 	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).NamesNodes2TaxonsLineages \
 		--names <<<INTDIR>>>/names.dmp \
-		--nodes <(<<<CMD_SED>>> 's/\(sub\)*cohort/no rank/' <<<INTDIR>>>/nodes.dmp) \
+		--nodes <(<<<CMD_SED>>> 's/\(sub\)*cohort/no rank/' <<<INTDIR>>>/clean-nodes.dmp) \
 		--taxons >(<<<CMD_GZIP>>> > <<<TABDIR>>>/taxons.tsv.gz) \
 		--lineages >(<<<CMD_GZIP>>> > <<<TABDIR>>>/lineages.tsv.gz)
 	echo "Finished calculation of taxons and lineages tables."
