@@ -1,6 +1,4 @@
 AllCops:
-  Include:
-    - ''
   Exclude:
     - 'Gemfile'
     - 'Guardfile'
@@ -8,6 +6,8 @@ AllCops:
     - 'Rakefile'
     - 'db/schema.rb'
     - 'config/**/*'
+    - 'script/**/*'
+    - 'test/**/*'
     - 'bin/**/*'
     - 'lib/**/*'
     - 'node_modules/**/*'

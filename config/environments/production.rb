@@ -65,6 +65,9 @@ UnipeptWeb::Application.configure do
   # Generate digests for assets URLs
   config.assets.digest = true
 
+  # Store uploaded files on the local file system (see config/storage.yml for options)
+  config.active_storage.service = :local
+
   # Action Cable endpoint configuration
   # Mount Action Cable outside main process or domain
   # config.action_cable.mount_path = nil

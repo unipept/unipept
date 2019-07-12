@@ -16,6 +16,7 @@ class PrivateApiController < ApplicationController
     taxids = params[:taxids] || []
     @taxa = Taxon.where(id: taxids)
   end
+
   private
 
   def default_format_json

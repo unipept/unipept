@@ -31,3 +31,7 @@ coverage/
 /public/packs-test
 /node_modules
 .vscode/*
+
+/storage/*
+!/storage/.keep
+/public/assets

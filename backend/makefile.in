@@ -64,12 +64,23 @@ $(JAR): $(SRC)
 	<<<CMD_UNZIP>>> -o $< $(notdir $@) -d $(dir $@)
 	echo "Finished unzipping names and nodes from the taxon dump."
 
-<<<TABDIR>>>/taxons.tsv.gz <<<TABDIR>>>/lineages.tsv.gz: $(JAR) <<<INTDIR>>>/names.dmp <<<INTDIR>>>/nodes.dmp
+<<<INTDIR>>>/clean-nodes.dmp: <<<INTDIR>>>/nodes.dmp
+	echo "Starting cleaning unknown ranks form nodes."
+	<<<CMD_SED>>> < "$<" \
+		-e 's/subcohort/no rank/' \
+		-e 's/cohort/no rank/' \
+		-e 's/subsection/no rank/' \
+		-e 's/section/no rank/' \
+		-e 's/series/no rank/' \
+		> "$@"
+	echo "Finished cleaning unknown ranks form nodes."
+
+<<<TABDIR>>>/taxons.tsv.gz <<<TABDIR>>>/lineages.tsv.gz: $(JAR) <<<INTDIR>>>/names.dmp <<<INTDIR>>>/clean-nodes.dmp
 	echo "Starting calculation of taxons and lineages tables."
 	mkdir -p $(dir $@)
 	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).NamesNodes2TaxonsLineages \
 		--names <<<INTDIR>>>/names.dmp \
-		--nodes <(<<<CMD_SED>>> 's/cohort/no rank/' <<<INTDIR>>>/nodes.dmp) \
+		--nodes <(<<<CMD_SED>>> 's/\(sub\)*cohort/no rank/' <<<INTDIR>>>/clean-nodes.dmp) \
 		--taxons >(<<<CMD_GZIP>>> > <<<TABDIR>>>/taxons.tsv.gz) \
 		--lineages >(<<<CMD_GZIP>>> > <<<TABDIR>>>/lineages.tsv.gz)
 	echo "Finished calculation of taxons and lineages tables."
@@ -218,13 +229,13 @@ $(TABLES): $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 #                    <- directly from ori_aa_seq_tax by counting aa_seq along te way?
 #                       and we can output sequences at the same time?
 #                       (or output sequences instead of numbers wait isn't that sequences.tsv.gz?)
-# - tab/peptides.index <- build-index on the output of above (without the enumeration?
+# - tab/peptides.index <- umgap buildindex on the output of above (without the enumeration?
 #
 # optimal:
 # uniprot-entries from tryptic peptides
 # | cut taxon-id and sequence and split in k-mers (|sort)
 # | with lineages, the old java-way but with sequences in stead of numbers
-# | build-index
+# | umgap buildindex
 
 <<<INTDIR>>>/<<<KMER_LENGTH>>>-mer_sequence_taxon.tsv.gz: <<<TABDIR>>>/uniprot_entries.tsv.gz
 	echo "Starting the enumeration of <<<KMER_LENGTH>>>-mers."
@@ -246,7 +257,7 @@ $(TABLES): $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 
 <<<TABDIR>>>/<<<KMER_LENGTH>>>-mer.index: <<<INTDIR>>>/<<<KMER_LENGTH>>>-mer_LCAs.tsv.gz
 	echo "Starting the construction of the <<<KMER_LENGTH>>>-mer index."
-	build-index <(<<<CMD_ZCAT>>> $<) $@
+	<<<CMD_ZCAT>>> $< | umgap buildindex > $@
 	echo "Finishing the construction of the <<<KMER_LENGTH>>>-mer index."
 # }}}
 

@@ -40,7 +40,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal sequence.lca_t, assigns(:lca_taxon)
     assert_not_nil assigns(:root)
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
-    assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
+    assert_equal [[taxon2, nil], [taxon2, taxon1]].to_set, assigns(:table_lineages).to_set
     assert_equal %w[Organism kingdom species], assigns(:table_ranks)
   end
 
@@ -58,7 +58,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal sequence.lca_t, assigns(:lca_taxon)
     assert_not_nil assigns(:root)
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
-    assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
+    assert_equal [[taxon2, nil], [taxon2, taxon1]].to_set, assigns(:table_lineages).to_set
     assert_equal %w[Organism kingdom species], assigns(:table_ranks)
   end
 
@@ -82,7 +82,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal sequence.lca_t, assigns(:lca_taxon)
     assert_not_nil assigns(:root)
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
-    assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
+    assert_equal [[taxon2, nil], [taxon2, taxon1]].to_set, assigns(:table_lineages).to_set
     assert_equal %w[Organism kingdom species], assigns(:table_ranks)
   end
 
@@ -100,7 +100,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal sequence.lca_il_t, assigns(:lca_taxon)
     assert_not_nil assigns(:root)
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
-    assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
+    assert_equal [[taxon2, nil], [taxon2, taxon1]].to_set, assigns(:table_lineages).to_set
     assert_equal %w[Organism kingdom species], assigns(:table_ranks)
   end
 
@@ -118,7 +118,7 @@ class SequencesControllerTest < ActionController::TestCase
     assert_equal sequence.lca_il_t, assigns(:lca_taxon)
     assert_not_nil assigns(:root)
     assert_equal [taxon2, taxon1], assigns(:common_lineage)
-    assert_equal [[taxon2, taxon1], [taxon2, nil]], assigns(:table_lineages)
+    assert_equal [[taxon2, nil], [taxon2, taxon1]].to_set, assigns(:table_lineages).to_set
     assert_equal %w[Organism kingdom species], assigns(:table_ranks)
   end
 

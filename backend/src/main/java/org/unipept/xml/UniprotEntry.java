@@ -102,7 +102,7 @@ public class UniprotEntry {
     }
 
     public void setSequence(String sequence) {
-        this.sequence = sequence;
+        this.sequence = sequence.replace(" ", "");
     }
 
     public void addDbRef(UniprotDbRef ref) {

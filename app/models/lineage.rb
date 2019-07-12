@@ -145,6 +145,7 @@ class Lineage < ApplicationRecord
   # you shouldn't call this method directly but the calculate_lca method on the sequence
   def self.calculate_lca(lineages)
     return -1 if lineages.empty?
+
     lca = 1 # default lca
     ORDER.each do |rank|
       # only filter nil at species and genus
@@ -154,6 +155,7 @@ class Lineage < ApplicationRecord
                   lineages.map(&rank).find_all { |n| n.nil? || n > 0 }.uniq
                 end
       return lca if current.length > 1 # more than one distinct element
+
       lca = current[0] unless current[0].nil? # save lca if this rank isn't nil
     end
     lca
@@ -163,6 +165,7 @@ class Lineage < ApplicationRecord
   # up the getters. This method fixes that error.
   def self.instance_method_already_implemented?(method_name)
     return true if method_name == 'class'
+
     super
   end
 

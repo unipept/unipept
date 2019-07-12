@@ -41,12 +41,13 @@ class SequencesController < ApplicationController
       @fa_summary = UniprotEntry.summarize_fa(@entries)
 
       raise(NoMatchesFoundError, seq) if @entries.empty?
+
       @lineages = @entries.map(&:lineage).compact
     else
       @entries = sequence.peptides(equate_il).map(&:uniprot_entry)
       @lineages = sequence.lineages(equate_il, true).to_a
 
-      # Get FA summary form cache 
+      # Get FA summary form cache
       @fa_summary = sequence.calculate_fa(equate_il)
     end
 
@@ -63,6 +64,7 @@ class SequencesController < ApplicationController
     while !found && l.has_next?
       t = l.next_t
       next if t.nil?
+
       found = (@lca_taxon.id == t.id)
       @common_lineage << t
       node = Node.new(t.id, t.name, @root, t.rank)
@@ -78,6 +80,7 @@ class SequencesController < ApplicationController
       while lineage.has_next?
         t = lineage.next_t
         next if t.nil?
+
         l << t.name # add the taxon name to the lineage
         node = Node.find_by_id(t.id, @root) # rubocop:disable Rails/DynamicFindBy
         if node.nil? # if the node isn't create yet
@@ -123,7 +126,7 @@ class SequencesController < ApplicationController
       format.html # show.html.erb
       format.json { render json: @entries.to_json(only: :uniprot_accession_number, include: [{ ec_cross_references: { only: :ec_number_code } }, { go_cross_references: { only: :go_term_code } }]) }
       # TODO: switch to OJ for higher performance
-      # format.json { render json: Oj.dump(@entries, :include => :name, :mode => :compat) }
+      # format.json { render json: Oj.dump(@entries, :include => :name, :mode => :rails) }
     end
   rescue SequenceTooShortError
     flash[:error] = 'The sequence you searched for is too short.'

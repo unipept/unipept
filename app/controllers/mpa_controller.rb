@@ -1,6 +1,6 @@
 class MpaController < ApplicationController
   before_action :default_format_json, except: ['analyze']
-  skip_before_action :verify_authenticity_token, except: ['analyze']
+  skip_before_action :verify_authenticity_token
 
   def analyze
     @header_class = 'MPA'

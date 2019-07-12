@@ -1,18 +1,22 @@
 // See https://aka.ms/vscode-remote/devcontainer.json for format details.
 {
-	"name": "Ruby 2",
-	"dockerFile": "Dockerfile",
+	"name": "Unipept",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "app",
 
 	// Uncomment the next line if you want to publish any ports.
-	// "appPort": [],
+	"appPort": [5000, 8080],
 
 	// Uncomment the next line if you want to add in default container specific settings.json values
 	// "settings":  { "workbench.colorTheme": "Quiet Light" },
 
 	// Uncomment the next line to run commands after the container is created.
 	// "postCreateCommand": "ruby --version",
-
+	"workspaceFolder": "/workspace",
 	"extensions": [
-		"rebornix.Ruby"
+		"rebornix.Ruby",
+		"octref.vetur",
+		"ecmel.vscode-html-css",
+		"vscode-eslint"
 	]
 }
