@@ -8,7 +8,7 @@ development:
   <<: *default
   database: unipept
   # setup local port forwarding for this to work
-  host: 127.0.0.1
+  host: db
   port: 3306
 
 # Warning: The database defined as "test" will be erased and

@@ -5,7 +5,7 @@
 	"service": "app",
 
 	// Uncomment the next line if you want to publish any ports.
-	"appPort": [5000, 8080],
+	"appPort": [3306, 5000, 8080],
 
 	// Uncomment the next line if you want to add in default container specific settings.json values
 	// "settings":  { "workbench.colorTheme": "Quiet Light" },

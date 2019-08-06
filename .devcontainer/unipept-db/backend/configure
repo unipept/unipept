@@ -35,7 +35,6 @@ checkdep uniq
 checkdep wc
 checkdep wget
 checkdep xargs
-checkdep umgap "umgap crate (for umgap buildindex)"
 
 # --------------------------------------------------------------------
 # Prompt functions
