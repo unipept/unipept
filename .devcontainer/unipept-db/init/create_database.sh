@@ -5,7 +5,9 @@ cd /backend
 cp database/structure_no_index.sql /docker-entrypoint-initdb.d/1.sql
 
 # Then, we start processing all data for the database
-if find /tables -mindepth 1 | read; then
+if test -f "/tables/peptides.tsv.gz"; then
+    echo "No need to regenerate data. Previously generated data encountered."
+else
     echo "Data needs to be regenerated."
     sed -i '/checkdep umgap/d' configure
     ./script.exp

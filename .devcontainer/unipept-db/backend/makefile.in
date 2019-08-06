@@ -19,7 +19,7 @@ database: \
 	$(TABLES) \
 	<<<TABDIR>>>/sequences.tsv.gz \
 	<<<TABDIR>>>/peptides.tsv.gz \
-#	<<<TABDIR>>>/proteomes.tsv.gz \
+	<<<TABDIR>>>/proteomes.tsv.gz \
 	<<<TABDIR>>>/ec_numbers.tsv.gz \
 	<<<TABDIR>>>/go_terms.tsv.gz
 
