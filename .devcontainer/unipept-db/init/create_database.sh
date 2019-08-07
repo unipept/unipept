@@ -13,7 +13,7 @@ else
     ./script.exp
     make
 
-    mv -a /backend/data/tables/. /tables/.
+    mv /backend/data/tables/* /tables
 fi
 
 # All necessary data has been generated at this point, and data can be inserted into the database when the container starts.

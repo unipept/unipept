@@ -89,7 +89,7 @@ What's my sed executable (e.g. sed, gsed)? \[sed\] "
 send -- "\r"
 expect -exact "\r
 What's my gnu awk executable (e.g. awk, gawk)? \[awk\] "
-send -- "\r"
+send -- "gawk\r"
 expect -exact "\r
 What's my gnu mktemp executable (e.g. mktemp, gmktemp)? \[mktemp\] "
 send -- "\r"
