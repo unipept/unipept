@@ -5,12 +5,13 @@
     "yarn": ">= 1.0.0"
   },
   "dependencies": {
-    "axios": "^0.18.0",
     "@babel/core": "^7.2.2",
     "@babel/plugin-proposal-class-properties": "^7.2.3",
     "@babel/plugin-proposal-object-rest-spread": "^7.2.0",
     "@babel/preset-env": "^7.2.3",
+    "@mdi/font": "^3.9.97",
     "@rails/webpacker": "^3.5.5",
+    "axios": "^0.18.0",
     "babel-loader": "^8.0.5",
     "clipboard": "^1.7.1",
     "coffeescript": "1.12.7",
@@ -23,15 +24,15 @@
     "ts-loader": "3.5.0",
     "typescript": "^3.5.1",
     "unipept-heatmap": "^1.0.26",
+    "unipept-visualizations": "^1.7.3",
     "vue": "^2.5.18",
     "vue-class-component": "^6.3.2",
     "vue-clipboard2": "^0.2.1",
     "vue-loader": "14.2.2",
     "vue-property-decorator": "^7.2.0",
     "vue-template-compiler": "^2.5.18",
-    "vuetify": "^1.5.9",
+    "vuetify": "^1.5.16",
     "vuex": "^3.0.1",
-    "unipept-visualizations": "^1.7.3",
     "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
