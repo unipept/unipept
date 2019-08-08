@@ -14,3 +14,6 @@ RUN dos2unix init/create_database.sh init/fill_database.sh backend/makefile.in
 RUN bash ./init/create_database.sh
 RUN mv /init/fill_database.sh /docker-entrypoint-initdb.d/2.sh
 RUN cp /backend/database/load.sh /tables/load.sh
+RUN cp /backend/database/index.sh /tables/index.sh
+
+USER root

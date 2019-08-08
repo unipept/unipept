@@ -59,11 +59,11 @@ print "adding index to ec_cross_references"
 doCmd "ALTER TABLE ec_cross_references ADD INDEX fk_ec_reference_uniprot_entries (uniprot_entry_id ASC);"
 # doCmd "ALTER TABLE ec_cross_references ADD INDEX fk_ec_terms_reference_go_terms_idx (ec_number_code ASC);"
 
-print "adding index to proteomes"
-doCmd "ALTER TABLE proteomes ADD INDEX fk_taxons_proteomes (taxon_id ASC);"
+# print "adding index to proteomes"
+# doCmd "ALTER TABLE proteomes ADD INDEX fk_taxons_proteomes (taxon_id ASC);"
 
-print "adding index to proteome_cross_references"
-doCmd "ALTER TABLE proteome_cross_references ADD INDEX fk_proteome_cross_references_uniprot_entries (uniprot_entry_id ASC);"
-doCmd "ALTER TABLE proteome_cross_references ADD INDEX fk_proteome_cross_references (proteome_id ASC);"
+# print "adding index to proteome_cross_references"
+# doCmd "ALTER TABLE proteome_cross_references ADD INDEX fk_proteome_cross_references_uniprot_entries (uniprot_entry_id ASC);"
+# doCmd "ALTER TABLE proteome_cross_references ADD INDEX fk_proteome_cross_references (proteome_id ASC);"
 
 print "Done"
