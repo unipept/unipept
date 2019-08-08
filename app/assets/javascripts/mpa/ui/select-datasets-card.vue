@@ -21,17 +21,30 @@
                 </span>
                 </div>
             </list>
-            <search-settings-form
-                    :equate-il="equateIl"
-                    v-on:equate-il-change="equateIl = $event"
-                    :filter-duplicates="filterDuplicates"
-                    v-on:filter-duplicates-change="filterDuplicates = $event"
-                    :missing-cleavage="missingCleavage"
-                    v-on:missing-cleavage="missingCleavage = $event"
-            ></search-settings-form>            <div class="search-buttons-centered">
-                <simple-button label="Search" glyphicon="search" type="primary" @click="search()"></simple-button>
-                <simple-button label="Start Over" glyphicon="repeat spin" @click="reset()"></simple-button>
-            </div>
+
+                <search-settings-form
+                        :equate-il="equateIl"
+                        v-on:equate-il-change="equateIl = $event"
+                        :filter-duplicates="filterDuplicates"
+                        v-on:filter-duplicates-change="filterDuplicates = $event"
+                        :missing-cleavage="missingCleavage"
+                        v-on:missing-cleavage="missingCleavage = $event"
+                        class="selected-dataset-settings"
+                ></search-settings-form>            
+                <div class="search-buttons-centered">
+                    <v-btn @click="search()" color="primary">
+                        <v-icon left>
+                            mdi-magnify
+                        </v-icon>
+                        Search
+                    </v-btn>
+                    <v-btn @click="reset()">
+                        <v-icon left>
+                            mdi-restore
+                        </v-icon>
+                        Start over
+                    </v-btn>
+                </div>
         </card-body>
     </card>
 </template>
@@ -44,14 +57,13 @@
     import Checkbox from "../../components/input/checkbox.vue";
     import List from "../../components/list/list.vue";
     import PeptideContainer from "../PeptideContainer";
-    import SimpleButton from "../../components/button/simple-button.vue";
     import SearchSettingsForm from "./search-settings-form.vue";
     import CardTitle from "../../components/card/card-title.vue";
     import CardHeader from "../../components/card/card-header.vue";
     import CardBody from "../../components/card/card-body.vue";
 
     @Component({
-        components: {CardBody, CardHeader, CardTitle, SearchSettingsForm, SimpleButton, Checkbox, Card, List}
+        components: {CardBody, CardHeader, CardTitle, SearchSettingsForm, Checkbox, Card, List}
     })
     export default class SelectDatasetsCard extends Vue {
         selectedDatasets = this.$store.getters.selectedDatasets;
@@ -84,6 +96,17 @@
     }
 </script>
 
-<style scoped>
+<style>
+    .v-input__control {
+        margin-bottom: -30px;
+        margin-top: -10px;
+    }
 
+    .v-input__control label {
+        margin-bottom: 0px;
+    }
+
+    .selected-dataset-settings {
+        margin-bottom: 5px;
+    }
 </style>
