@@ -4,7 +4,10 @@
             <tab label="Create" :active="true">
                 <dataset-form v-on:peptide-change="createPeptides = $event" :peptides="createPeptides" v-on:name-change="createName = $event" :name="createName" v-on:save-change="createSave = $event" :save="createSave" :loading="pendingStore"></dataset-form>
                 <div class="search-buttons-centered">
-                    <simple-button @click="storeCreateDataset()" label="Add to selected datasets" glyphicon="plus" :disabled="pendingStore"></simple-button>
+                    <v-btn :disabled="pendingStore" @click="storeCreatedDataset()">
+                        <v-icon left>mdi-plus</v-icon>
+                        Add to selected datasets
+                    </v-btn>
                 </div>
             </tab>
             <tab label="Sample data">
@@ -26,7 +29,9 @@
                         <select class="form-control dataset" v-model="selectedSampleDataset[dataset.id]">
                             <option v-for="data of dataset.datasets" v-bind:value="data" v-bind:key="data.id">{{ data.name }}</option>
                         </select>
-                        <simple-button label="Load dataset" type="default" @click="storeSampleDataset(dataset.id)"></simple-button>
+                        <v-btn @click="storeSampleDataset(dataset.id)">
+                            Load dataset
+                        </v-btn>
                     </span>
                 </p>
             </tab>
@@ -35,12 +40,18 @@
                 <p>You can easily load data from the <a href="http://www.ebi.ac.uk/pride/" target="_blank">PRIDE</a> data repository. Simply enter an assay id (e.g. 8500) in the field below and click the 'Load PRIDE Dataset' button. The corresponding dataset will then be fetched using the PRIDE API and loaded into the search form on the left.</p>
                 <validated-textfield v-model="prideAssay" label="Assay id" placeholder="e.g. 8500" :disabled="prideLoading || pendingStore"></validated-textfield>
                 <div class="search-buttons-centered">
-                    <simple-button v-if="!prideLoading" glyphicon="cloud-download" label="Fetch PRIDE dataset" @click="fetchPrideAssay()"></simple-button>
+                    <v-btn v-if="!prideLoading" @click="fetchPrideAssay()">
+                        <v-icon left>mdi-cloud-download</v-icon>
+                        Fetch PRIDE dataset
+                    </v-btn>
                     <determinate-striped-progress-bar v-if="prideLoading" :progress="prideProgress"></determinate-striped-progress-bar>
                 </div>
                 <dataset-form v-on:peptide-change="pridePeptides = $event" :peptides="pridePeptides" v-on:name-change="prideName = $event" :name="prideName" v-on:save-change="prideSave = $event" :save="prideSave" :loading="prideLoading || pendingStore"></dataset-form>
                 <div class="search-buttons-centered">
-                    <simple-button @click="storePrideDataset()" label="Add to selected datasets" glyphicon="plus" :disabled="prideLoading || pendingStore"></simple-button>
+                    <v-btn :disabled="prideLoading || pendingStore" @click="storePrideDataset()">
+                        <v-icon left>mdi-plus</v-icon>
+                        Add to selected datasets
+                    </v-btn>
                 </div>
                 <snackbar :timeout="0" ref="prideSnackbar">Loading dataset... <div class="spinner"></div></snackbar>
             </tab>
@@ -73,7 +84,6 @@
     import DatasetForm from "./dataset-form.vue";
     import Tab from "../../components/card/tab.vue"
     import CardNav from "../../components/card/card-nav.vue";
-    import SimpleButton from "../../components/button/simple-button.vue";
     import List from "../../components/list/list.vue";
     import PeptideContainer from "../PeptideContainer";
     import ValidatedTextfield from "../../components/input/validated-textfield.vue";
@@ -89,7 +99,7 @@
         components: {
             Snackbar,
             Tabs,
-            DeterminateStripedProgressBar, ValidatedTextfield, SimpleButton, CardNav, DatasetForm, Tab, List}
+            DeterminateStripedProgressBar, ValidatedTextfield, CardNav, DatasetForm, Tab, List}
     })
     export default class LoadDatasetsCard extends Vue {
         storedDatasets = this.$store.getters.storedDatasets;
@@ -161,7 +171,7 @@
             this.storeDataset(this.pridePeptides, this.prideName, this.prideSave);
         }
 
-        storeCreateDataset() {
+        storeCreatedDataset() {
             this.storeDataset(this.createPeptides, this.createName, this.createSave);
         }
 

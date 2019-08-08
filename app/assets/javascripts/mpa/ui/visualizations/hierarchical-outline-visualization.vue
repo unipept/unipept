@@ -24,12 +24,11 @@
     import PeptideContainer from "../../PeptideContainer";
     import Tree from "../../Tree";
     import {constructSearchtree} from "../../searchtree";
-    import SimpleButton from "../../../components/button/simple-button.vue";
     import ValidatedTextfield from "../../../components/input/validated-textfield.vue";
-import TaxaDataSource from "../../datasource/TaxaDataSource";
+    import TaxaDataSource from "../../datasource/TaxaDataSource";
 
     @Component({
-        components: {ValidatedTextfield, SimpleButton},
+        components: {ValidatedTextfield},
         computed: {
             searchTerm: {
                 get() {

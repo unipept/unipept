@@ -30,7 +30,9 @@
 
             <div id="fa-filter-warning" class="card-supporting-text" v-if="watchableSelectedTaxonId !== -1">
                 <strong>Filtered results:</strong> These results are limited to the {{ numOfFilteredPepts }} specific to <strong>{{ filteredScope}}</strong>
-                <simple-button id="fa-undo-filter" label="Undo" @click="reset()"></simple-button>
+                <v-btn id="fa-undo-filter" @click="reset()">
+                    Undo
+                </v-btn>
             </div>
             <indeterminate-progress-bar :active="faCalculationsInProgress"></indeterminate-progress-bar>
 
@@ -98,7 +100,6 @@
     import PeptideContainer from "../PeptideContainer";
     import {FunctionalAnnotations} from "../../fa/FunctionalAnnotations";
     import EcNumbersSummary from "./tables/ec-numbers-summary.vue";
-    import SimpleButton from "../../components/button/simple-button.vue";
     import FilterFunctionalAnnotationsDropdown from "./filter-functional-annotations-dropdown.vue";
     import IndeterminateProgressBar from "../../components/progress/indeterminate-progress-bar.vue";
     import CardHeader from "../../components/card/card-header.vue";
@@ -123,7 +124,6 @@
             CardHeader,
             IndeterminateProgressBar,
             FilterFunctionalAnnotationsDropdown,
-            SimpleButton, 
             EcNumbersSummary, 
             Tab, 
             CardNav, 
