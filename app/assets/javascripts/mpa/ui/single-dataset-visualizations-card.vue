@@ -76,15 +76,11 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import CardNav from "../../components/card/card-nav.vue";
-    import Tab from "../../components/card/tab.vue";
     import SunburstVisualization from "./visualizations/sunburst-visualization.vue";
     import TreemapVisualization from "./visualizations/treemap-visualization.vue";
     import TreeviewVisualization from "./visualizations/treeview-visualization.vue";
     import HierarchicalOutlineVisualization from "./visualizations/hierarchical-outline-visualization.vue";
-    import Tabs from "../../components/card/tabs.vue";
     import CardHeader from "../../components/card/card-header.vue";
-    import CardBody from "../../components/card/card-body.vue";
     import {logToGoogle, triggerDownloadModal} from "../../utils";
     import HeatmapVisualization from "./visualizations/heatmap-visualization.vue";
     import PeptideContainer from "../PeptideContainer";
@@ -93,15 +89,11 @@
     @Component({
         components: {
             HeatmapVisualization,
-            CardBody,
             CardHeader,
-            Tabs,
             HierarchicalOutlineVisualization,
             TreeviewVisualization,
             TreemapVisualization,
             SunburstVisualization,
-            CardNav,
-            Tab,
             HeatmapWizardSingleSample
         },
         computed: {
@@ -114,13 +106,11 @@
     })
     export default class SingleDatasetVisualizationsCard extends Vue {
         private waitString = "Please wait while we are preparing your data...";
-        private tabs: Tab[] = [];
         private isFullScreen: boolean = false;
 
         private dialogOpen: boolean = false;
 
         mounted() {
-            this.tabs = (this.$children[0].$children[1].$children as Tab[]).slice(0, -1);
             $(document).bind(window.fullScreenApi.fullScreenEventName, () => this.exitFullScreen());
             $(".fullScreenActions a").tooltip({placement: "bottom", delay: {"show": 300, "hide": 300}});
         }
@@ -133,23 +123,16 @@
             }
         }
 
-        changeActiveTab(tab: Tab) {
-            for (let currentTab of this.tabs) {
-                currentTab.activated = false;
-            }
-
-            tab.activated = true;
-        }
-
         switchToFullScreen() {
-            if (window.fullScreenApi.supportsFullScreen) {
-                this.isFullScreen = true;
-                let activatedTab = this.tabs.filter(tab => tab.activated)[0];
-                logToGoogle("Multi Peptide", "Full Screen", activatedTab.label);
-                window.fullScreenApi.requestFullScreen(this.$refs.fullScreenContainer);
+            // TODO needs to be re-implemented
+            // if (window.fullScreenApi.supportsFullScreen) {
+            //     this.isFullScreen = true;
+            //     let activatedTab = this.tabs.filter(tab => tab.activated)[0];
+            //     logToGoogle("Multi Peptide", "Full Screen", activatedTab.label);
+            //     window.fullScreenApi.requestFullScreen(this.$refs.fullScreenContainer);
 
-                $(".tip").appendTo(".full-screen-container");
-            }
+            //     $(".tip").appendTo(".full-screen-container");
+            // }
         }
 
         cancelFullScreen() {
@@ -171,24 +154,25 @@
         }
 
         saveAsImage() {
-            let activeTab = "";
-            for (let tab of this.tabs) {
-                if (tab.activated) {
-                    activeTab = tab.label;
-                }
-            }
+            // TODO needs to be reimplemented
+            // let activeTab = "";
+            // for (let tab of this.tabs) {
+            //     if (tab.activated) {
+            //         activeTab = tab.label;
+            //     }
+            // }
 
-            let activatedTab = this.tabs.filter(tab => tab.activated)[0];
-            logToGoogle("Multi Peptide", "Save Image", activatedTab.label);
-            if (activeTab === "Sunburst") {
-                d3.selectAll(".toHide").attr("class", "arc hidden");
-                triggerDownloadModal("#sunburstWrapper svg", null, "unipept_sunburst");
-                d3.selectAll(".hidden").attr("class", "arc toHide");
-            } else if (activeTab === "Treemap") {
-                triggerDownloadModal(null, "#treemap", "unipept_treemap");
-            } else {
-                triggerDownloadModal("#treeviewWrapper svg", null, "unipept_treeview");
-            }
+            // let activatedTab = this.tabs.filter(tab => tab.activated)[0];
+            // logToGoogle("Multi Peptide", "Save Image", activatedTab.label);
+            // if (activeTab === "Sunburst") {
+            //     d3.selectAll(".toHide").attr("class", "arc hidden");
+            //     triggerDownloadModal("#sunburstWrapper svg", null, "unipept_sunburst");
+            //     d3.selectAll(".hidden").attr("class", "arc toHide");
+            // } else if (activeTab === "Treemap") {
+            //     triggerDownloadModal(null, "#treemap", "unipept_treemap");
+            // } else {
+            //     triggerDownloadModal("#treeviewWrapper svg", null, "unipept_treeview");
+            // }
         }
 
         private openHeatmapWizard(): void {

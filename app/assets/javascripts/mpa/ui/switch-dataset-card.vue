@@ -62,15 +62,13 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import Card from "../../components/card/card.vue";
     import PeptideContainer from "../PeptideContainer";
     import CardHeader from "../../components/card/card-header.vue";
     import CardTitle from "../../components/card/card-title.vue";
-    import CardBody from "../../components/card/card-body.vue";
     import HeatmapWizardMultiSample from "./heatmap/heatmap-wizard-multi-sample.vue";
 
     @Component({
-        components: {CardBody, CardTitle, CardHeader, Card, HeatmapWizardMultiSample},
+        components: {CardTitle, CardHeader, HeatmapWizardMultiSample},
         computed: {
             activeDataset: {
                 get() {
