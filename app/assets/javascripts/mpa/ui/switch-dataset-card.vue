@@ -1,6 +1,5 @@
 <template>
-    <div>
-    <v-card>
+    <v-card style="min-height: 100%;">
          <card-header class="card-title-interactive">
             <card-title>
                 Metaproteomics Analysis
@@ -55,7 +54,6 @@
             </div>
         </v-dialog>
     </v-card>
-    </div>
 </template>
 
 <script lang="ts">
