@@ -6,7 +6,7 @@
         <card-body>
             <label>Selected datasets</label>
             <span v-if="selectedDatasets.length === 0">Please select one or more datasets from the right hand panel to continue the analysis..</span>
-            <v-list two-line>
+            <v-list two-line class="switch-datasets-list">
                 <template v-for="dataset of selectedDatasets">
                     <v-list-tile :key="dataset.id" ripple @click="deselectDataset(dataset)">
                         <v-list-tile-content>
@@ -111,5 +111,9 @@
 
     .selected-dataset-settings {
         margin-bottom: 5px;
+    }
+
+    .switch-datasets-list {
+        flex-grow: 1;
     }
 </style>
