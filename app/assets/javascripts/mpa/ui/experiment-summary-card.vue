@@ -34,13 +34,10 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import Card from "../../components/card/card.vue";
     import SearchSettingsForm from "./search-settings-form.vue";
     import SimpleButton from "../../components/button/simple-button.vue";
     import CardHeader from "../../components/card/card-header.vue";
     import CardTitle from "../../components/card/card-title.vue";
-    import CardBody from "../../components/card/card-body.vue";
-    import Modal from "../../components/modal/modal.vue";
     import {addCopy} from "../../utils";
     import {showInfoModal} from "../../modal";
     import TaxaDataSource from "../datasource/TaxaDataSource";
@@ -48,7 +45,7 @@
     import PeptideContainer from "../PeptideContainer";
 
     @Component({
-        components: {Modal, CardBody, CardTitle, CardHeader, SimpleButton, SearchSettingsForm, Card}
+        components: {CardTitle, CardHeader, SearchSettingsForm}
     })
     export default class ExperimentSummaryCard extends Vue {
         private equateIl: boolean = true;

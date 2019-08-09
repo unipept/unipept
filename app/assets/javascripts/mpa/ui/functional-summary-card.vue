@@ -116,8 +116,6 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import CardNav from "../../components/card/card-nav.vue";
-    import Tab from "../../components/card/tab.vue";
     import MpaAnalysisManager from "../MpaAnalysisManager";
     import FaSortSettings from "./tables/FaSortSettings";
     import {numberToPercent, stringTitleize} from "../../utils";
@@ -127,7 +125,6 @@
     import FilterFunctionalAnnotationsDropdown from "./filter-functional-annotations-dropdown.vue";
     import IndeterminateProgressBar from "../../components/progress/indeterminate-progress-bar.vue";
     import CardHeader from "../../components/card/card-header.vue";
-    import CardBody from "../../components/card/card-body.vue";
     import {showInfoModal} from "../../modal";
     import Sample from "../Sample";
     import GoDataSource from "../datasource/GoDataSource";
@@ -144,13 +141,10 @@
 
     @Component({
         components: {
-            CardBody,
             CardHeader,
             IndeterminateProgressBar,
             FilterFunctionalAnnotationsDropdown,
             EcNumbersSummary, 
-            Tab, 
-            CardNav, 
             GoAmountTable,
             EcAmountTable,
             Treeview
@@ -174,8 +168,6 @@
         }
     })
     export default class FunctionalSummaryCard extends Vue {
-        tabs: Tab[] = [];
-
         private formatType: string = "int";
         private fieldType: string = "popularity";
         private shadeFieldType: string = "fractionOfPepts";
@@ -235,7 +227,6 @@
         private faCalculationsInProgress: boolean = false;
 
         mounted() {
-            this.tabs = this.$children[0].$children[2].$children as Tab[];
             for (let ns of this.goNamespaces) {
                 this.goData.push({
                     goTerms: [],
@@ -258,14 +249,6 @@
 
         @Watch('watchableSelectedTaxonId') onWatchableSelectedTaxonIdChanged() {
             this.onPeptideContainerChanged();
-        }
-
-        changeActiveTab(tab: Tab) {
-            for (let currentTab of this.tabs) {
-                currentTab.activated = false;
-            }
-
-            tab.activated = true;
         }
 
         setFormatSettings(formatType: string, fieldType: string, shadeFieldType: string, name: string): void {

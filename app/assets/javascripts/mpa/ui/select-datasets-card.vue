@@ -64,16 +64,13 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import Card from "../../components/card/card.vue";
-    import List from "../../components/list/list.vue";
     import PeptideContainer from "../PeptideContainer";
     import SearchSettingsForm from "./search-settings-form.vue";
     import CardTitle from "../../components/card/card-title.vue";
     import CardHeader from "../../components/card/card-header.vue";
-    import CardBody from "../../components/card/card-body.vue";
 
     @Component({
-        components: {CardBody, CardHeader, CardTitle, SearchSettingsForm, Card, List}
+        components: {CardHeader, CardTitle, SearchSettingsForm}
     })
     export default class SelectDatasetsCard extends Vue {
         selectedDatasets = this.$store.getters.selectedDatasets;

@@ -119,22 +119,16 @@
 
     import Component from "vue-class-component";
     import DatasetForm from "./dataset-form.vue";
-    import Tab from "../../components/card/tab.vue"
-    import CardNav from "../../components/card/card-nav.vue";
-    import List from "../../components/list/list.vue";
     import PeptideContainer from "../PeptideContainer";
     import DatasetManager from "../DatasetManager";
     import {StorageType} from "../StorageType";
-    import Tabs from "../../components/card/tabs.vue";
     import Snackbar from "../../components/snackbar/snackbar.vue";
     import axios from "axios"
     import SampleDataset from "../SampleDataset";
 
     @Component({
         components: {
-            Snackbar,
-            Tabs,
-            CardNav, DatasetForm, Tab}
+            Snackbar, DatasetForm}
     })
     export default class LoadDatasetsCard extends Vue {
         $refs!: {

@@ -2,11 +2,11 @@
     <div>
         <div class="row equal-height-row">
             <div class="col-md-6">
-                <switch-dataset-card></switch-dataset-card>
+                <switch-dataset-card style="min-height: 100%;"></switch-dataset-card>
             </div>
             <div class="col-md-6">
-                <experiment-summary-card v-if="!this.$store.getters.isDatasetSelectionInProgress"></experiment-summary-card>
-                <load-datasets-card v-else id="analysis-add-dataset-card"></load-datasets-card>
+                <experiment-summary-card style="min-height: 100%;" v-if="!this.$store.getters.isDatasetSelectionInProgress"></experiment-summary-card>
+                <load-datasets-card style="min-height: 100%;" v-else id="analysis-add-dataset-card"></load-datasets-card>
             </div>
         </div>
         <single-dataset-visualizations-card id="visualizations-card"></single-dataset-visualizations-card>
