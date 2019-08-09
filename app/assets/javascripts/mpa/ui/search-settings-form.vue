@@ -1,7 +1,7 @@
 <template>
     <div>
         <label>Search settings</label>
-        <v-tooltip bottom>
+        <v-tooltip top>
             <template v-slot:activator="{ on }">
                 <div v-on="on">
                     <v-checkbox :disabled="disabled" v-model="equateIlModel" label="Equate I and L"></v-checkbox>
@@ -9,7 +9,7 @@
             </template>
             <span>Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries.</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip top>
             <template v-slot:activator="{ on }">
                 <div v-on="on">
                     <v-checkbox :disabled="disabled" v-model="filterDuplicatesModel" label="Filter duplicate peptides"></v-checkbox>
@@ -17,7 +17,7 @@
             </template>
             <span>Remove duplicate peptides from the input before searching.</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip top>
             <template v-slot:activator="{ on }">
                 <div v-on="on">
                     <v-checkbox :disabled="disabled" v-model="missingCleavageModel" label="Advanced missing cleavage handling"></v-checkbox>
@@ -32,10 +32,9 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import Checkbox from "../../components/input/checkbox.vue";
 
     @Component({
-        components: {Checkbox},
+        components: {},
         computed: {
             equateIlModel: {
                 get() {

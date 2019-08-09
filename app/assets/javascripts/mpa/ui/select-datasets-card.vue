@@ -53,7 +53,6 @@
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import Card from "../../components/card/card.vue";
-    import Checkbox from "../../components/input/checkbox.vue";
     import List from "../../components/list/list.vue";
     import PeptideContainer from "../PeptideContainer";
     import SearchSettingsForm from "./search-settings-form.vue";
@@ -62,7 +61,7 @@
     import CardBody from "../../components/card/card-body.vue";
 
     @Component({
-        components: {CardBody, CardHeader, CardTitle, SearchSettingsForm, Checkbox, Card, List}
+        components: {CardBody, CardHeader, CardTitle, SearchSettingsForm, Card, List}
     })
     export default class SelectDatasetsCard extends Vue {
         selectedDatasets = this.$store.getters.selectedDatasets;
