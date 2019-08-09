@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <v-form ref="datasetForm">
         <v-textarea name="qs" label="Peptide list" :rows="7" v-model="peptideModel" :disabled="loading" :rules="[value => !!value || 'At least one peptide is required']"></v-textarea>
         <v-tooltip top>
             <template v-slot:activator="{ on }">
@@ -15,7 +15,7 @@
             </template>
             <span>Store dataset in local storage and reuse it later on.</span>
         </v-tooltip>
-    </div>
+    </v-form>
 </template>
 
 <script lang="ts">
@@ -64,24 +64,30 @@
         @Prop({default: true}) save;
         @Prop({default: false}) loading;
 
-        peptidesData: string = this.peptides;
-        nameData: string = this.name;
-        saveData: boolean = this.save;
+        private peptidesData: string = this.peptides;
+        private nameData: string = this.name;
+        private saveData: boolean = this.save;
 
-        @Watch('peptides') onPeptidesChange(newPeptides: string, oldPeptides: string) {
+        @Watch('peptides') 
+        private onPeptidesChange(newPeptides: string, oldPeptides: string) {
             this.peptidesData = newPeptides;
         }
 
-        @Watch('name') onNameChange(newName: string, oldName: string) {
+        @Watch('name') 
+        private onNameChange(newName: string, oldName: string) {
             this.nameData = newName;
         }
 
-        @Watch('save') onSaveChanged(newSave: boolean, oldSave: boolean) {
+        @Watch('save') 
+        private onSaveChanged(newSave: boolean, oldSave: boolean) {
             this.saveData = newSave;
         }
 
-        validate(content) {
-            return content !== '';
+        public isValid(): boolean {
+            //@ts-ignore
+            console.log("IS VALID? " + this.$refs.datasetForm.validate());
+            //@ts-ignore
+            return this.$refs.datasetForm.validate();
         }
     };
 </script>
