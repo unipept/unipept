@@ -1,16 +1,16 @@
 <template>
-    <div>
-        <v-card>
-            <card-header>
-                <card-title>
-                    Metaproteomics Analysis
-                </card-title>
-            </card-header>
+    <v-card style="display: flex; flex-direction: column;">
+        <card-header>
+            <card-title>
+                Metaproteomics Analysis
+            </card-title>
+        </card-header>
+        <div style="display: flex; flex-direction: column; flex-grow: 1;">
             <v-card-text style="padding-bottom: 0;">
                 <label style="display: block;">Selected datasets</label>
                 <span v-if="selectedDatasets.length === 0">Please select one or more datasets from the right hand panel to continue the analysis..</span>
             </v-card-text>
-            <v-list two-line class="switch-datasets-list">
+            <v-list two-line class="switch-datasets-list" style="flex-grow: 1;">
                 <template v-for="dataset of selectedDatasets">
                     <v-list-tile :key="dataset.id" ripple @click="deselectDataset(dataset)">
                         <v-list-tile-content>
@@ -56,8 +56,8 @@
                     </v-btn>
                 </div>
             </v-card-text>
-        </v-card>
-    </div>
+        </div>
+    </v-card>
 </template>
 
 <script lang="ts">

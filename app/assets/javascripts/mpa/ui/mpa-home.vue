@@ -1,10 +1,10 @@
 <template>
     <div class="row equal-height-row">
         <div class="col-md-6">
-            <select-datasets-card></select-datasets-card>
+            <select-datasets-card style="min-height: 100%;"></select-datasets-card>
         </div>
         <div class="col-md-6">
-            <load-datasets-card></load-datasets-card>
+            <load-datasets-card style="min-height: 100%;"></load-datasets-card>
         </div>
     </div>
 </template>
