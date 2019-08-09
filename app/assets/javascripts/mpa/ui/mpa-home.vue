@@ -14,10 +14,9 @@
     import Component from "vue-class-component";
     import LoadDatasetsCard from "./load-datasets-card.vue";
     import SelectDatasetsCard from "./select-datasets-card.vue";
-    import ValidatedTextfield from "../../components/input/validated-textfield.vue";
 
     @Component({
-        components: {ValidatedTextfield, LoadDatasetsCard, SelectDatasetsCard}
+        components: {LoadDatasetsCard, SelectDatasetsCard}
     })
     export default class MpaHome extends Vue {
     };

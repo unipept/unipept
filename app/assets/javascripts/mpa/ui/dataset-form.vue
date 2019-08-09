@@ -22,13 +22,11 @@
     import Vue from "vue";
     import Component from "vue-class-component"
 
-    import ValidatedTextarea from "../../components/input/validated-textarea.vue";
-    import ValidatedTextfield from "../../components/input/validated-textfield.vue"
     import {Prop, Watch} from "vue-property-decorator";
     import PeptideContainer from "../PeptideContainer";
 
     @Component({
-        components: {ValidatedTextfield, ValidatedTextarea},
+        components: {},
         computed: {
             peptideModel: {
                 get() {
