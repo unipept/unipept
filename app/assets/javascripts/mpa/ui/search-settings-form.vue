@@ -4,7 +4,7 @@
         <v-tooltip top>
             <template v-slot:activator="{ on }">
                 <div v-on="on">
-                    <v-checkbox :disabled="disabled" v-model="equateIlModel" label="Equate I and L"></v-checkbox>
+                    <v-checkbox :disabled="disabled" v-model="equateIlModel" label="Equate I and L" hide-details></v-checkbox>
                 </div>
             </template>
             <span>Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries.</span>
@@ -12,7 +12,7 @@
         <v-tooltip top>
             <template v-slot:activator="{ on }">
                 <div v-on="on">
-                    <v-checkbox :disabled="disabled" v-model="filterDuplicatesModel" label="Filter duplicate peptides"></v-checkbox>
+                    <v-checkbox :disabled="disabled" v-model="filterDuplicatesModel" label="Filter duplicate peptides" hide-details></v-checkbox>
                 </div>
             </template>
             <span>Remove duplicate peptides from the input before searching.</span>
@@ -20,7 +20,7 @@
         <v-tooltip top>
             <template v-slot:activator="{ on }">
                 <div v-on="on">
-                    <v-checkbox :disabled="disabled" v-model="missingCleavageModel" label="Advanced missing cleavage handling"></v-checkbox>
+                    <v-checkbox :disabled="disabled" v-model="missingCleavageModel" label="Advanced missing cleavage handling" hide-details></v-checkbox>
                 </div>
             </template>
             <span>Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!</span>

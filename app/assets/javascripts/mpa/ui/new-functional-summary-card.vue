@@ -90,7 +90,7 @@
                     </tab>
                 </div>
             </card-body>
-        </card-nav>
+        </card-nav> -->
         <!-- TODO When the AmountTable is converted to Vue, this should be automatically managed! -->
         <div id="tooltip" class="tip"></div>
     </div>

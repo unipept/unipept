@@ -101,11 +101,6 @@
 </script>
 
 <style>
-    .v-input__control {
-        margin-bottom: -30px;
-        margin-top: -10px;
-    }
-
     .v-input__control label {
         margin-bottom: 0px;
     }
