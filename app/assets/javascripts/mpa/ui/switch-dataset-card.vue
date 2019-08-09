@@ -10,28 +10,33 @@
             </div>
         </card-header>
         <card-body id="switch-dataset-card-body">
-            <list class="switch-dataset-list" placeholder="Please add one or more datasets by clicking the plus button above... ">
-                <div class="list-item--two-lines" v-for="dataset of this.$store.getters.selectedDatasets" v-bind:key="dataset.id" :class="activeDataset === dataset ? 'selected' : ''">
-                    <span class="list-item-primary-action">
-                        <input v-if="dataset.progress === 1" v-model="activeDataset" :value="dataset" type="radio" class="input-item select-dataset-radio-button" style="width: 24px;" />
-                        <determinate-circular-progress-indicator v-else :progress="dataset.progress" :size="24"></determinate-circular-progress-indicator>
-                    </span>
-                    <span class="list-item-primary-content">
-                        {{ dataset.getName() }}
-                        <span class="list-item-date">
-                            {{ dataset.getDateFormatted() }}
-                        </span>
-                        <span class="list-item-body">
-                            {{ dataset.getAmountOfPeptides() }} peptides
-                        </span>
-                    </span>
-                    <span class="list-item-secondary-action">
-                        <span class="glyphicon glyphicon-trash" @click="deselectDataset(dataset)">
-                        </span>
-                    </span>
-                </div>
-            </list>
+            <span v-if="this.$store.getters.selectedDatasets.length === 0">Please add one or more datasets by clicking the plus button above...</span>
+            <v-list two-line>
+                <template v-for="dataset of this.$store.getters.selectedDatasets">
+                    <!-- Empty onClick required for ripple attribute -->
+                    <v-list-tile :key="dataset.id" ripple @click="() => activeDataset = dataset" :class="activeDataset === dataset ? 'selected-list-tile' : ''">
+                        <v-list-tile-action>
+                            <v-radio-group v-if="dataset.progress === 1" v-model="activeDataset"><v-radio :value="dataset"></v-radio></v-radio-group>
+                            <v-progress-circular v-else :rotate="-90" :size="24" :value="dataset.progress * 100" color="primary"></v-progress-circular>
+                        </v-list-tile-action>
+                        <v-list-tile-content>
+                            <v-list-tile-title>
+                                {{ dataset.getName() }}
+                            </v-list-tile-title>
+                            <v-list-tile-sub-title>
+                                {{ dataset.getAmountOfPeptides() }} peptides
+                            </v-list-tile-sub-title>
+                        </v-list-tile-content>
 
+                        <v-list-tile-action>
+                            <v-list-tile-action-text>
+                                {{ dataset.getDateFormatted() }}
+                            </v-list-tile-action-text>
+                            <v-icon @click="deselectDataset(dataset)" v-on:click.stop>mdi-delete-outline</v-icon>
+                        </v-list-tile-action>
+                    </v-list-tile>
+                </template>
+            </v-list>
             <v-dialog v-model="dialogOpen" width="1000px">
                 <div style="min-height: 600px; background-color: white;">
                     <div class="modal-header" >
@@ -58,7 +63,6 @@
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import Card from "../../components/card/card.vue";
-    import List from "../../components/list/list.vue";
     import PeptideContainer from "../PeptideContainer";
     import DeterminateCircularProgressIndicator from "../../components/progress/determinate-circular-progress-indicator.vue";
     import CardHeader from "../../components/card/card-header.vue";
@@ -67,7 +71,7 @@
     import HeatmapWizardMultiSample from "./heatmap/heatmap-wizard-multi-sample.vue";
 
     @Component({
-        components: {CardBody, CardTitle, CardHeader, DeterminateCircularProgressIndicator, Card, List, HeatmapWizardMultiSample},
+        components: {CardBody, CardTitle, CardHeader, DeterminateCircularProgressIndicator, Card, HeatmapWizardMultiSample},
         computed: {
             activeDataset: {
                 get() {
@@ -96,6 +100,18 @@
     }
 </script>
 
-<style scoped>
+<style>
+    .selected-list-tile .v-list__tile:before {
+        content: ' ';
+        background-color: #2196F3;
+        width: 4px;
+        height: 100%;
+        position: relative;
+        left: -12px;
+    }
 
+    .selected-list-tile .v-list__tile {
+        position: relative;
+        left: -4px;
+    }
 </style>

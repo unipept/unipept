@@ -2,7 +2,6 @@
     <card-nav id="load-datasets-card">
         <tabs>
             <tab label="Create" :active="true">
-
                 <dataset-form v-on:peptide-change="createPeptides = $event" :peptides="createPeptides" v-on:name-change="createName = $event" :name="createName" v-on:save-change="createSave = $event" :save="createSave" :loading="pendingStore"></dataset-form>
                 <div class="search-buttons-centered">
                     <v-btn :disabled="pendingStore" @click="storeCreatedDataset()">
@@ -57,32 +56,31 @@
                 <snackbar :timeout="0" ref="prideSnackbar">Loading dataset... <div class="spinner"></div></snackbar>
             </tab>
             <tab label="Local data">
-                <list placeholder="There are currently no datasets present in your browser's local storage.">
-                    <v-list two-line>
-                        <template v-for="dataset of storedDatasets">
-                            <v-list-tile :key="dataset.id" ripple @click="selectDataset(dataset)">
-                                <v-list-tile-action>
-                                    <v-icon>mdi-plus</v-icon>
-                                </v-list-tile-action>
-                                <v-list-tile-content>
-                                    <v-list-tile-title>
-                                        {{ dataset.getName() }}
-                                    </v-list-tile-title>
-                                    <v-list-tile-sub-title>
-                                        {{ dataset.getAmountOfPeptides() }} peptides
-                                    </v-list-tile-sub-title>
-                                </v-list-tile-content>
+                <span v-if="storedDatasets.length === 0">There are currently no datasets present in your browser's local storage.</span>
+                <v-list two-line>
+                    <template v-for="dataset of storedDatasets">
+                        <v-list-tile :key="dataset.id" ripple @click="selectDataset(dataset)">
+                            <v-list-tile-action>
+                                <v-icon>mdi-plus</v-icon>
+                            </v-list-tile-action>
+                            <v-list-tile-content>
+                                <v-list-tile-title>
+                                    {{ dataset.getName() }}
+                                </v-list-tile-title>
+                                <v-list-tile-sub-title>
+                                    {{ dataset.getAmountOfPeptides() }} peptides
+                                </v-list-tile-sub-title>
+                            </v-list-tile-content>
 
-                                <v-list-tile-action>
-                                    <v-list-tile-action-text>
-                                        {{ dataset.getDateFormatted() }}
-                                    </v-list-tile-action-text>
-                                    <v-icon @click="deleteDataset(dataset)" v-on:click.stop>mdi-close</v-icon>
-                                </v-list-tile-action>
-                            </v-list-tile>
-                        </template>
-                    </v-list>
-                </list>
+                            <v-list-tile-action>
+                                <v-list-tile-action-text>
+                                    {{ dataset.getDateFormatted() }}
+                                </v-list-tile-action-text>
+                                <v-icon @click="deleteDataset(dataset)" v-on:click.stop>mdi-close</v-icon>
+                            </v-list-tile-action>
+                        </v-list-tile>
+                    </template>
+                </v-list>
             </tab>
         </tabs>
     </card-nav>
@@ -95,7 +93,6 @@
     import DatasetForm from "./dataset-form.vue";
     import Tab from "../../components/card/tab.vue"
     import CardNav from "../../components/card/card-nav.vue";
-    import List from "../../components/list/list.vue";
     import PeptideContainer from "../PeptideContainer";
     import ValidatedTextfield from "../../components/input/validated-textfield.vue";
     import DatasetManager from "../DatasetManager";
@@ -110,7 +107,7 @@
         components: {
             Snackbar,
             Tabs,
-            DeterminateStripedProgressBar, ValidatedTextfield, CardNav, DatasetForm, Tab, List}
+            DeterminateStripedProgressBar, ValidatedTextfield, CardNav, DatasetForm, Tab}
     })
     export default class LoadDatasetsCard extends Vue {
         storedDatasets = this.$store.getters.storedDatasets;
