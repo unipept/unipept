@@ -89,6 +89,12 @@ const mpaMutations: MutationTree<GlobalState> = {
     ADD_STORED_DATASET(state: GlobalState, dataset: PeptideContainer) {
         state.storedDatasets.push(dataset);
     },
+    REMOVE_STORED_DATASET(state: GlobalState, dataset: PeptideContainer) {
+        let index: number = state.storedDatasets.findIndex((value: PeptideContainer, index: number) => value.getId() === dataset.getId());
+        if (index !== -1) {
+            state.storedDatasets.splice(index, 1);
+        }
+    },
     ADD_STORED_DATASET_BATCH(state: GlobalState, datasets: PeptideContainer[]) {
         state.storedDatasets.push(...datasets);
     },
@@ -144,6 +150,11 @@ const mpaActions: ActionTree<GlobalState, any> = {
 
             store.commit('SET_ACTIVE_DATASET', newActiveDataset);
         }
+    },
+    deleteDataset(store: ActionContext<GlobalState, any>, dataset: PeptideContainer) {
+        store.dispatch('deselectDataset', dataset);
+        let datasetManager: DatasetManager = new DatasetManager();
+        datasetManager.deleteDatasetFromStorage(dataset).then(() => store.commit('REMOVE_STORED_DATASET', dataset));
     },
     clearSelectedDatasets(store: ActionContext<GlobalState, any>) {
         store.commit('CLEAR_SELECTED_DATASETS');

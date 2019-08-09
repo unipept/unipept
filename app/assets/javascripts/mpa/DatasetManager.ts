@@ -97,6 +97,12 @@ export default class DatasetManager {
         }
     }
 
+    async deleteDatasetFromStorage(dataSet: PeptideContainer): Promise<void> {
+        let storage: Storage = this.getStorage(dataSet.getType());
+        storage.removeItem(DatasetManager.MPA_PEPTIDE_PREFIX + dataSet.getId());
+        storage.removeItem(DatasetManager.MPA_METADATA_PREFIX + dataSet.getId());
+    }
+
     private getStorage(storageType: StorageType): Storage {
         if (storageType === StorageType.LocalStorage) {
             return window.localStorage;

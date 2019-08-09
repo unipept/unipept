@@ -2,6 +2,7 @@
     <card-nav id="load-datasets-card">
         <tabs>
             <tab label="Create" :active="true">
+
                 <dataset-form v-on:peptide-change="createPeptides = $event" :peptides="createPeptides" v-on:name-change="createName = $event" :name="createName" v-on:save-change="createSave = $event" :save="createSave" :loading="pendingStore"></dataset-form>
                 <div class="search-buttons-centered">
                     <v-btn :disabled="pendingStore" @click="storeCreatedDataset()">
@@ -57,20 +58,30 @@
             </tab>
             <tab label="Local data">
                 <list placeholder="There are currently no datasets present in your browser's local storage.">
-                    <div class="list-item--two-lines" v-for="dataset of storedDatasets" v-bind:key="dataset.id" style="cursor: pointer;" @click="selectDataset(dataset)">
-                    <span class="list-item-primary-action">
-                        <span class="glyphicon glyphicon-plus select-dataset-button"></span>
-                    </span>
-                        <span class="list-item-primary-content">
-                        {{ dataset.getName() }}
-                        <span class="list-item-date">
-                            {{ dataset.getDateFormatted() }}
-                        </span>
-                        <span class="list-item-body">
-                            {{ dataset.getAmountOfPeptides() }} peptides
-                        </span>
-                    </span>
-                    </div>
+                    <v-list two-line>
+                        <template v-for="dataset of storedDatasets">
+                            <v-list-tile :key="dataset.id" ripple @click="selectDataset(dataset)">
+                                <v-list-tile-action>
+                                    <v-icon>mdi-plus</v-icon>
+                                </v-list-tile-action>
+                                <v-list-tile-content>
+                                    <v-list-tile-title>
+                                        {{ dataset.getName() }}
+                                    </v-list-tile-title>
+                                    <v-list-tile-sub-title>
+                                        {{ dataset.getAmountOfPeptides() }} peptides
+                                    </v-list-tile-sub-title>
+                                </v-list-tile-content>
+
+                                <v-list-tile-action>
+                                    <v-list-tile-action-text>
+                                        {{ dataset.getDateFormatted() }}
+                                    </v-list-tile-action-text>
+                                    <v-icon @click="deleteDataset(dataset)" v-on:click.stop>mdi-close</v-icon>
+                                </v-list-tile-action>
+                            </v-list-tile>
+                        </template>
+                    </v-list>
                 </list>
             </tab>
         </tabs>
@@ -151,6 +162,10 @@
             this.$store.dispatch('selectDataset', dataset);
         }
 
+        deleteDataset(dataset: PeptideContainer): void {
+            this.$store.dispatch('deleteDataset', dataset);
+        }
+
         fetchPrideAssay(): void {
             this.prideLoading = true;
             let datasetManager: DatasetManager = new DatasetManager();
@@ -195,5 +210,15 @@
     };
 </script>
 
-<style scoped>
+<style>
+    .peptide-amount-wrapper {
+        display: flex !important;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .v-list__tile {
+        padding: 0 !important;
+        /*margin: 8px 0;*/
+    }
 </style>
