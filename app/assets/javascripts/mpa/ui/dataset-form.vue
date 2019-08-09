@@ -1,11 +1,16 @@
 <template>
     <div>
-        <validated-textarea :disabled="loading" v-model="peptideModel" name="qs" label="Peptide list" :rows="7" :spellcheck="false" :validation="validate" validation-error="At least one peptide is required"></validated-textarea>
-        <validated-textfield :disabled="loading" v-model="nameModel" name="search_name" label="Name this dataset" :validation="validate" validation-error="Name is required when the dataset is set to be saved." placeholder="e.g. Sample B5" tooltip="This name will be shown on the results page. Handy if you have many open tabs."></validated-textfield>
+        <v-textarea name="qs" label="Peptide list" :rows="7" v-model="peptideModel" :disabled="loading" :rules="[value => !!value || 'At least one peptide is required']"></v-textarea>
+        <v-tooltip top>
+            <template v-slot:activator="{ on }">
+                <v-text-field v-on="on" name="search_name" label="Name this dataset"  :disabled="loading" placeholder="e.g. Sample B5" v-model="nameModel" :rules="[value => !!value || 'Name is required when the dataset is set to be saved']" clearable></v-text-field>
+            </template>
+            <span>This name will be shown on the results page. Handy if you have many open tabs.</span>
+        </v-tooltip>
         <v-tooltip top>
             <template v-slot:activator="{ on }">
                 <div v-on="on">
-                    <v-checkbox :disabled="loading" v-model="saveModel" label="Store dataset in browser's local storage"></v-checkbox>
+                    <v-checkbox :disabled="loading" v-model="saveModel" label="Store dataset in browser's local storage" hide-details></v-checkbox>
                 </div>
             </template>
             <span>Store dataset in local storage and reuse it later on.</span>
