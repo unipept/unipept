@@ -107,11 +107,10 @@
         width: 4px;
         height: 100%;
         position: relative;
-        left: -16px;
+        left: -12px;
     }
 
-    /* .selected-list-tile .v-list__tile {
-        position: relative;
-        left: -4px;
-    } */
+    .selected-list-tile .v-list__tile {
+        margin-left: -4px;
+    }
 </style>
