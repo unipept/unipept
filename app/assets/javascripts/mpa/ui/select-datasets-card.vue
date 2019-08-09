@@ -21,30 +21,29 @@
                 </span>
                 </div>
             </list>
-
-                <search-settings-form
-                        :equate-il="equateIl"
-                        v-on:equate-il-change="equateIl = $event"
-                        :filter-duplicates="filterDuplicates"
-                        v-on:filter-duplicates-change="filterDuplicates = $event"
-                        :missing-cleavage="missingCleavage"
-                        v-on:missing-cleavage="missingCleavage = $event"
-                        class="selected-dataset-settings"
-                ></search-settings-form>            
-                <div class="search-buttons-centered">
-                    <v-btn @click="search()" color="primary">
-                        <v-icon left>
-                            mdi-magnify
-                        </v-icon>
-                        Search
-                    </v-btn>
-                    <v-btn @click="reset()">
-                        <v-icon left>
-                            mdi-restore
-                        </v-icon>
-                        Start over
-                    </v-btn>
-                </div>
+            <search-settings-form
+                    :equate-il="equateIl"
+                    v-on:equate-il-change="equateIl = $event"
+                    :filter-duplicates="filterDuplicates"
+                    v-on:filter-duplicates-change="filterDuplicates = $event"
+                    :missing-cleavage="missingCleavage"
+                    v-on:missing-cleavage="missingCleavage = $event"
+                    class="selected-dataset-settings"
+            ></search-settings-form>            
+            <div class="search-buttons-centered">
+                <v-btn @click="search()" color="primary">
+                    <v-icon left>
+                        mdi-magnify
+                    </v-icon>
+                    Search
+                </v-btn>
+                <v-btn @click="reset()">
+                    <v-icon left>
+                        mdi-restore
+                    </v-icon>
+                    Start over
+                </v-btn>
+            </div>
         </card-body>
     </card>
 </template>
