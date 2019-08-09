@@ -1,11 +1,15 @@
 <template>
-    <card class="select-datasets-card">
-        <card-header>
-            <card-title>Metaproteomics Analysis</card-title>
-        </card-header>
-        <card-body>
-            <label>Selected datasets</label>
-            <span v-if="selectedDatasets.length === 0">Please select one or more datasets from the right hand panel to continue the analysis..</span>
+    <div>
+        <v-card>
+            <card-header>
+                <card-title>
+                    Metaproteomics Analysis
+                </card-title>
+            </card-header>
+            <v-card-text style="padding-bottom: 0;">
+                <label style="display: block;">Selected datasets</label>
+                <span v-if="selectedDatasets.length === 0">Please select one or more datasets from the right hand panel to continue the analysis..</span>
+            </v-card-text>
             <v-list two-line class="switch-datasets-list">
                 <template v-for="dataset of selectedDatasets">
                     <v-list-tile :key="dataset.id" ripple @click="deselectDataset(dataset)">
@@ -27,31 +31,33 @@
                     </v-list-tile>
                 </template>
             </v-list>
-            <search-settings-form
+            <v-card-text>
+                <search-settings-form
                     :equate-il="equateIl"
                     v-on:equate-il-change="equateIl = $event"
                     :filter-duplicates="filterDuplicates"
                     v-on:filter-duplicates-change="filterDuplicates = $event"
                     :missing-cleavage="missingCleavage"
                     v-on:missing-cleavage="missingCleavage = $event"
-                    class="selected-dataset-settings"
-            ></search-settings-form>            
-            <div class="search-buttons-centered">
-                <v-btn @click="search()" color="primary">
-                    <v-icon left>
-                        mdi-magnify
-                    </v-icon>
-                    Search
-                </v-btn>
-                <v-btn @click="reset()">
-                    <v-icon left>
-                        mdi-restore
-                    </v-icon>
-                    Start over
-                </v-btn>
-            </div>
-        </card-body>
-    </card>
+                    class="selected-dataset-settings">
+                </search-settings-form>            
+                <div class="search-buttons-centered">
+                    <v-btn @click="search()" color="primary">
+                        <v-icon left>
+                            mdi-magnify
+                        </v-icon>
+                        Search
+                    </v-btn>
+                    <v-btn @click="reset()">
+                        <v-icon left>
+                            mdi-restore
+                        </v-icon>
+                        Start over
+                    </v-btn>
+                </div>
+            </v-card-text>
+        </v-card>
+    </div>
 </template>
 
 <script lang="ts">

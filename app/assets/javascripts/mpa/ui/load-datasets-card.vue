@@ -65,7 +65,7 @@
                                 <v-icon left>mdi-cloud-download</v-icon>
                                 Fetch PRIDE dataset
                             </v-btn>
-                            <determinate-striped-progress-bar v-if="prideLoading" :progress="prideProgress"></determinate-striped-progress-bar>
+                            <v-progress-linear v-if="prideLoading" v-model="prideProgress"></v-progress-linear>
                         </div>
                         <dataset-form ref="prideDatasetForm" v-on:peptide-change="pridePeptides = $event" :peptides="pridePeptides" v-on:name-change="prideName = $event" :name="prideName" v-on:save-change="prideSave = $event" :save="prideSave" :loading="prideLoading || pendingStore"></dataset-form>
                         <div class="search-buttons-centered">
@@ -125,7 +125,6 @@
     import PeptideContainer from "../PeptideContainer";
     import DatasetManager from "../DatasetManager";
     import {StorageType} from "../StorageType";
-    import DeterminateStripedProgressBar from "../../components/progress/determinate-striped-progress-bar.vue";
     import Tabs from "../../components/card/tabs.vue";
     import Snackbar from "../../components/snackbar/snackbar.vue";
     import axios from "axios"
@@ -135,7 +134,7 @@
         components: {
             Snackbar,
             Tabs,
-            DeterminateStripedProgressBar, CardNav, DatasetForm, Tab}
+            CardNav, DatasetForm, Tab}
     })
     export default class LoadDatasetsCard extends Vue {
         $refs!: {
@@ -205,7 +204,7 @@
 
                 this.$refs.prideSnackbar.show();
                 datasetManager
-                    .loadPrideDataset(prideNumber, (progress) => this.prideProgress = progress)
+                    .loadPrideDataset(prideNumber, (progress) => this.prideProgress = progress * 100)
                     .then((peptides) => {
                         this.pridePeptides = peptides.join("\n");
                         this.prideLoading = false;
