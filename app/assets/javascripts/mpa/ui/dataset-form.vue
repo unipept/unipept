@@ -2,7 +2,14 @@
     <div>
         <validated-textarea :disabled="loading" v-model="peptideModel" name="qs" label="Peptide list" :rows="7" :spellcheck="false" :validation="validate" validation-error="At least one peptide is required"></validated-textarea>
         <validated-textfield :disabled="loading" v-model="nameModel" name="search_name" label="Name this dataset" :validation="validate" validation-error="Name is required when the dataset is set to be saved." placeholder="e.g. Sample B5" tooltip="This name will be shown on the results page. Handy if you have many open tabs."></validated-textfield>
-        <checkbox :disabled="loading" v-model="saveModel" name="save_dataset" label="Store dataset in browser's local storage" tooltip="Store dataset in local storage and reuse it later on"></checkbox>
+        <v-tooltip top>
+            <template v-slot:activator="{ on }">
+                <div v-on="on">
+                    <v-checkbox :disabled="loading" v-model="saveModel" label="Store dataset in browser's local storage"></v-checkbox>
+                </div>
+            </template>
+            <span>Store dataset in local storage and reuse it later on.</span>
+        </v-tooltip>
     </div>
 </template>
 
@@ -12,12 +19,11 @@
 
     import ValidatedTextarea from "../../components/input/validated-textarea.vue";
     import ValidatedTextfield from "../../components/input/validated-textfield.vue"
-    import Checkbox from "../../components/input/checkbox.vue";
     import {Prop, Watch} from "vue-property-decorator";
     import PeptideContainer from "../PeptideContainer";
 
     @Component({
-        components: {Checkbox, ValidatedTextfield, ValidatedTextarea},
+        components: {ValidatedTextfield, ValidatedTextarea},
         computed: {
             peptideModel: {
                 get() {
