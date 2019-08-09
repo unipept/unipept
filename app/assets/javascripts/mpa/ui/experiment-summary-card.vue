@@ -1,10 +1,12 @@
 <template>
     <div style="height: 100%;">
-        <card style="margin-bottom: 0">
+        <v-card>
             <card-header>
-                <card-title>Experiment summary</card-title>
+                <card-title>
+                    Experiment Summary
+                </card-title>
             </card-header>
-            <card-body>
+            <v-card-text>
                 <search-settings-form
                         :disabled="$store.getters.selectedDatasets.some(el => el.progress !== 1)"
                         :equate-il="equateIl"
@@ -23,8 +25,8 @@
                     We managed to match {{ $store.getters.matchedPeptides }} of your {{ $store.getters.searchedPeptides }} peptides.
                     Unfortunately, <a style="cursor: pointer;" @click="showNotFoundPeptidesModal">{{ $store.getters.missedPeptides.length }}</a> peptides couldn't be found.
                 </span>
-            </card-body>
-        </card>
+            </v-card-text>
+        </v-card>
     </div>
 </template>
 
