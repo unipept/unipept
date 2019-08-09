@@ -94,7 +94,6 @@
     import Tab from "../../components/card/tab.vue"
     import CardNav from "../../components/card/card-nav.vue";
     import PeptideContainer from "../PeptideContainer";
-    import ValidatedTextfield from "../../components/input/validated-textfield.vue";
     import DatasetManager from "../DatasetManager";
     import {StorageType} from "../StorageType";
     import DeterminateStripedProgressBar from "../../components/progress/determinate-striped-progress-bar.vue";
@@ -107,7 +106,7 @@
         components: {
             Snackbar,
             Tabs,
-            DeterminateStripedProgressBar, ValidatedTextfield, CardNav, DatasetForm, Tab}
+            DeterminateStripedProgressBar, CardNav, DatasetForm, Tab}
     })
     export default class LoadDatasetsCard extends Vue {
         storedDatasets = this.$store.getters.storedDatasets;
