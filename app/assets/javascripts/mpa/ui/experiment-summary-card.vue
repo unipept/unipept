@@ -37,7 +37,6 @@
     import CardHeader from "../../components/card/card-header.vue";
     import CardTitle from "../../components/card/card-title.vue";
     import CardBody from "../../components/card/card-body.vue";
-    import Modal from "../../components/modal/modal.vue";
     import {addCopy} from "../../utils";
     import {showInfoModal} from "../../modal";
     import TaxaDataSource from "../datasource/TaxaDataSource";
@@ -45,7 +44,7 @@
     import PeptideContainer from "../PeptideContainer";
 
     @Component({
-        components: {Modal, CardBody, CardTitle, CardHeader, SearchSettingsForm, Card}
+        components: {CardBody, CardTitle, CardHeader, SearchSettingsForm, Card}
     })
     export default class ExperimentSummaryCard extends Vue {
         private equateIl: boolean = true;

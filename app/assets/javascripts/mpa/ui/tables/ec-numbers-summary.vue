@@ -26,10 +26,9 @@
     import {AmountTable} from "../../../components/amount_table";
     import FaSortSettings from "./FaSortSettings";
     import PeptideContainer from "../../PeptideContainer";
-    import Modal from "../../../components/modal/modal.vue";
     
     @Component({
-        components: {Modal}
+        components: {}
     })
     export default class EcNumbersSummary extends Vue {
         @Prop() fa: FunctionalAnnotations | null;
