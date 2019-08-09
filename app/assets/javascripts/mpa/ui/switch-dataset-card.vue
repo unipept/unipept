@@ -60,14 +60,13 @@
     import Card from "../../components/card/card.vue";
     import List from "../../components/list/list.vue";
     import PeptideContainer from "../PeptideContainer";
-    import DeterminateCircularProgressIndicator from "../../components/progress/determinate-circular-progress-indicator.vue";
     import CardHeader from "../../components/card/card-header.vue";
     import CardTitle from "../../components/card/card-title.vue";
     import CardBody from "../../components/card/card-body.vue";
     import HeatmapWizardMultiSample from "./heatmap/heatmap-wizard-multi-sample.vue";
 
     @Component({
-        components: {CardBody, CardTitle, CardHeader, DeterminateCircularProgressIndicator, Card, List, HeatmapWizardMultiSample},
+        components: {CardBody, CardTitle, CardHeader, Card, HeatmapWizardMultiSample},
         computed: {
             activeDataset: {
                 get() {
