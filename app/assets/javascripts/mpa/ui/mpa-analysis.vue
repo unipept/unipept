@@ -21,7 +21,7 @@
     import ExperimentSummaryCard from "./experiment-summary-card.vue";
     import SwitchDatasetCard from "./switch-dataset-card.vue";
     import LoadDatasetsCard from "./load-datasets-card.vue";
-    import SingleDatasetVisualizationsCard from "./single-dataset-visualizations-card.vue";
+    import SingleDatasetVisualizationsCard from "./visualizations/single-dataset-visualizations-card.vue";
     import FunctionalSummaryCard from "./functional-summary-card.vue";
 
     @Component({

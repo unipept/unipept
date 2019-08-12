@@ -29,7 +29,8 @@ import { TaxumRank } from "../../datasource/TaxumRank";
         // Make field non-reactive by not setting the value here, but only after created() has been fired.
         treemap!: any;
 
-        @Prop({default: false}) fullScreen: boolean;
+        @Prop({default: false}) 
+        private fullScreen: boolean;
 
         mounted() {
             this.initTreeMap();
@@ -45,7 +46,9 @@ import { TaxumRank } from "../../datasource/TaxumRank";
             }
         }
 
-        @Watch('fullScreen') onFullScreenChanged(newFullScreen: boolean, oldFullScreen: boolean) {
+        @Watch('fullScreen')
+        private onFullScreenChanged(newFullScreen: boolean, oldFullScreen: boolean) {
+            console.log("TREEMAP WRAPPER HAS FULLSCREEN SET TO --> " + newFullScreen);
             this.treemap.setFullScreen(newFullScreen)
         }
 
