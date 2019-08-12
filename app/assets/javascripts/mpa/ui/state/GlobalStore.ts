@@ -182,24 +182,27 @@ const mpaActions: ActionTree<GlobalState, any> = {
     },
     setActiveDataset(store: ActionContext<GlobalState, any>, dataset: PeptideContainer | null): void {
         store.commit('SET_ACTIVE_DATASET', dataset);
-        store.dispatch('setSelectedTerm', 'Organism');
-        store.dispatch('setSelectedTaxonId', -1);
-        dataset.getDataset().dataRepository.createTaxaDataSource().then((taxaDataSource) => {
-            Promise.all([
-                taxaDataSource.getAmountOfMatchedPeptides(),
-                taxaDataSource.getAmountOfSearchedPeptides(),
-                taxaDataSource.getMissedPeptides()
-            ]).then((result) => {
-                store.commit('SET_MATCHED_PEPTIDES', result[0]);
-                store.commit('SET_SEARCHED_PEPTIDES', result[1]);
-                store.commit('SET_MISSED_PEPTIDES', result[2]);
-            })
-        });
+        if (dataset !== null) {
+            store.dispatch('setSelectedTerm', 'Organism');
+            store.dispatch('setSelectedTaxonId', -1);
+            dataset.getDataset().dataRepository.createTaxaDataSource().then((taxaDataSource) => {
+                Promise.all([
+                    taxaDataSource.getAmountOfMatchedPeptides(),
+                    taxaDataSource.getAmountOfSearchedPeptides(),
+                    taxaDataSource.getMissedPeptides()
+                ]).then((result) => {
+                    store.commit('SET_MATCHED_PEPTIDES', result[0]);
+                    store.commit('SET_SEARCHED_PEPTIDES', result[1]);
+                    store.commit('SET_MISSED_PEPTIDES', result[2]);
+                })
+            });
+        }
+    
     },
     processDataset(store: ActionContext<GlobalState, any>, dataset: PeptideContainer): void {
         let mpaManager = new MpaAnalysisManager();
-        mpaManager.processDataset(dataset, store.getters.searchSettings).then(
-        () => {
+        mpaManager.processDataset(dataset, store.getters.searchSettings)
+        .then(() => {
             if (store.getters.activeDataset === null) {
                 store.dispatch('setActiveDataset', dataset);
             }

@@ -8,14 +8,14 @@
             </card-header>
             <v-card-text>
                 <search-settings-form
-                        :disabled="$store.getters.selectedDatasets.some(el => el.progress !== 1)"
-                        :equate-il="equateIl"
-                        v-on:equate-il-change="equateIl = $event"
-                        :filter-duplicates="filterDuplicates"
-                        v-on:filter-duplicates-change="filterDuplicates = $event"
-                        :missing-cleavage="missingCleavage"
-                        v-on:missing-cleavage="missingCleavage = $event"
-                ></search-settings-form>
+                    :disabled="$store.getters.selectedDatasets.some(el => el.progress !== 1)"
+                    :equate-il="equateIl"
+                    v-on:equate-il-change="equateIl = $event"
+                    :filter-duplicates="filterDuplicates"
+                    v-on:filter-duplicates-change="filterDuplicates = $event"
+                    :missing-cleavage="missingCleavage"
+                    v-on:missing-cleavage="missingCleavage = $event">
+                </search-settings-form>
                 <div class="search-buttons-centered">
                     <v-btn :disabled="$store.getters.selectedDatasets.some(el => el.progress !== 1)" @click="reprocess()" color="primary"><v-icon left>mdi-restore</v-icon>Update</v-btn>
                 </div>
