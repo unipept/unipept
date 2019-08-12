@@ -7,7 +7,9 @@ import {analysisStore} from "../../assets/javascripts/mpa/ui/state/AnalysisStore
 import "unipept-visualizations/dist/unipept-visualizations.es5.js";
 import Vuetify from "vuetify";
 import 'vuetify/dist/vuetify.min.css';
+import fullscreen from 'vue-fullscreen';
 
+Vue.use(fullscreen);
 Vue.use(VueClipboard);
 Vue.use(Vuex);
 
