@@ -9063,6 +9063,10 @@ vue-clipboard2@^0.2.1:
   dependencies:
     clipboard "^2.0.0"
 
+vue-fullscreen@^2.1.5:
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/vue-fullscreen/-/vue-fullscreen-2.1.5.tgz#b1b65092f75eb967331aa90b778f05752dd5541b"
+
 vue-hot-reload-api@^2.2.0:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/vue-hot-reload-api/-/vue-hot-reload-api-2.3.1.tgz#b2d3d95402a811602380783ea4f566eb875569a2"
