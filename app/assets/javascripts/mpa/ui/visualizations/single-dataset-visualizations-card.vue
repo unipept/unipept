@@ -14,7 +14,7 @@
                 <v-tab>
                     Treeview
                 </v-tab>
-                <v-tab>
+                <v-tab v-if="!isFullScreen">
                     Hierarchical Outline
                 </v-tab>
                 <v-tab v-if="!isFullScreen" @click="openHeatmapWizard()" v-on:click.stop>
@@ -22,7 +22,7 @@
                 </v-tab>
                 <v-spacer>
                 </v-spacer>
-                <v-menu v-if="!isFullScreen" bottom left>
+                <v-menu v-if="!isFullScreen && this.tab < 3" bottom left>
                     <template v-slot:activator="{ on }">
                         <v-btn text class="align-self-center mr-4" v-on="on">
                             More
@@ -49,6 +49,23 @@
                         </v-list-tile>
                     </v-list>
                 </v-menu>
+                <div v-if="isFullScreen">
+                    <v-btn icon text @click="reset()">
+                        <v-icon color="white">
+                            mdi-restore
+                        </v-icon>
+                    </v-btn>
+                    <v-btn icon text @click="saveAsImage()">
+                        <v-icon color="white">
+                            mdi-download
+                        </v-icon>
+                    </v-btn>
+                    <v-btn icon text @click="exitFullScreen()">
+                        <v-icon color="white">
+                            mdi-fullscreen-exit
+                        </v-icon>
+                    </v-btn>
+                </div>
             </v-tabs>
             <v-tabs-items v-model="tab">
                 <v-tab-item>
@@ -157,6 +174,8 @@
 
         private tab = null;
 
+        private readonly tabs: string[] = ["Sunburst", "Treemap", "Treeview", "Hierarchical outline", "Heatmap"];
+
         mounted() {
             $(document).bind(window.fullScreenApi.fullScreenEventName, () => this.exitFullScreen());
             $(".fullScreenActions a").tooltip({placement: "bottom", delay: {"show": 300, "hide": 300}});
@@ -175,24 +194,15 @@
             if (window.fullScreenApi.supportsFullScreen) {
                 this.isFullScreen = true;
                 this.$refs.fullScreenContainer.toggle();
-                // let activatedTab = this.tabs.filter(tab => tab.activated)[0];
-                // logToGoogle("Multi Peptide", "Full Screen", activatedTab.label);
-                // console.log(this.$refs.fullScreenContainer);
-                // window.fullScreenApi.requestFullScreen(this.$refs.fullScreenContainer);
+                logToGoogle("Multi Peptide", "Full Screen", this.tabs[this.tab]);
                 $(".tip").appendTo(".full-screen-container");
             }
         }
 
-        private cancelFullScreen() {
-            this.isFullScreen = false;
-            window.fullScreenApi.cancelFullScreen();
-        }
-
         private exitFullScreen() {
-            if (!window.fullScreenApi.isFullScreen()) {
-                this.isFullScreen = false;
-                $(".tip").appendTo("body");
-            }
+            this.isFullScreen = false;
+            this.$refs.fullScreenContainer.toggle();
+            $(".tip").appendTo("body");
         }
 
         private fullScreenChange(state: boolean) {
@@ -206,17 +216,17 @@
             (this.$refs.heatmap as HeatmapVisualization).reset();
         }
 
-        private saveAsImage() {  
-            // logToGoogle("Multi Peptide", "Save Image", activatedTab.label);
-            // if (activeTab === "Sunburst") {
-            //     d3.selectAll(".toHide").attr("class", "arc hidden");
-            //     triggerDownloadModal("#sunburstWrapper svg", null, "unipept_sunburst");
-            //     d3.selectAll(".hidden").attr("class", "arc toHide");
-            // } else if (activeTab === "Treemap") {
-            //     triggerDownloadModal(null, "#treemap", "unipept_treemap");
-            // } else {
-            //     triggerDownloadModal("#treeviewWrapper svg", null, "unipept_treeview");
-            // }
+        private saveAsImage() {
+            logToGoogle("Multi Peptide", "Save Image", this.tabs[this.tab]);
+            if (this.tabs[this.tab] === "Sunburst") {
+                d3.selectAll(".toHide").attr("class", "arc hidden");
+                triggerDownloadModal("#sunburstWrapper svg", null, "unipept_sunburst");
+                d3.selectAll(".hidden").attr("class", "arc toHide");
+            } else if (this.tabs[this.tab] === "Treemap") {
+                triggerDownloadModal(null, "#treemap", "unipept_treemap");
+            } else {
+                triggerDownloadModal("#treeviewWrapper svg", null, "unipept_treeview");
+            }
         }
 
         private openHeatmapWizard(): void {
