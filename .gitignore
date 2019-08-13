@@ -34,3 +34,5 @@ coverage/
 /storage/*
 !/storage/.keep
 /public/assets
+
+.devcontainer/unipept-db/data/*
