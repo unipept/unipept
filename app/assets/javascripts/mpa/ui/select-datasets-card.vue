@@ -8,7 +8,7 @@
         <div style="display: flex; flex-direction: column; flex-grow: 1;">
             <v-card-text style="padding-bottom: 0;">
                 <label style="display: block;">Selected datasets</label>
-                <span v-if="selectedDatasets.length === 0">Please select one or more datasets from the right hand panel to continue the analysis..</span>
+                <span v-if="selectedDatasets.length === 0" :class="{'shaking': shaking, 'selected-placeholder': true}">Please select one or more datasets from the right hand panel to continue the analysis..</span>
             </v-card-text>
             <v-list two-line class="switch-datasets-list" style="flex-grow: 1;">
                 <template v-for="dataset of selectedDatasets">
@@ -73,11 +73,13 @@
         components: {CardHeader, CardTitle, SearchSettingsForm}
     })
     export default class SelectDatasetsCard extends Vue {
-        selectedDatasets = this.$store.getters.selectedDatasets;
+        private selectedDatasets = this.$store.getters.selectedDatasets;
 
-        equateIl: boolean = true;
-        filterDuplicates: boolean = true;
-        missingCleavage: boolean = false;
+        private equateIl: boolean = true;
+        private filterDuplicates: boolean = true;
+        private missingCleavage: boolean = false;
+
+        private shaking: boolean = false;
 
         created() {
             this.equateIl = this.$store.getters.searchSettings.il;
@@ -90,8 +92,14 @@
         }
 
         search(): void {
-            this.$store.dispatch('setSearchSettings', {il: this.equateIl, dupes: this.filterDuplicates, missed: this.missingCleavage});
-            this.$store.dispatch('setAnalysis', true);
+            if (this.$store.getters.selectedDatasets.length === 0) {
+                this.shaking = true;
+                // Disable the shaking effect after 300ms
+                setTimeout(() => this.shaking = false, 300);
+            } else {
+                this.$store.dispatch('setSearchSettings', {il: this.equateIl, dupes: this.filterDuplicates, missed: this.missingCleavage});
+                this.$store.dispatch('setAnalysis', true);
+            }
         }
 
         reset(): void {
@@ -114,5 +122,22 @@
 
     .switch-datasets-list {
         flex-grow: 1;
+    }
+
+    .shaking {
+        animation-name: shaker;
+        animation-duration: 0.2s;
+        transform-origin: 50% 50%;
+        animation-timing-function: linear;
+    }
+
+    @keyframes shaker {
+        0% { transform: translate(5px, 0); }
+        50% { transform: translate(-5px, 0); }
+        100% { transform: translate(5px, 0); }
+    }
+
+    .selected-placeholder {
+        display: inline-block;
     }
 </style>
