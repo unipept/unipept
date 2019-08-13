@@ -41,7 +41,6 @@ export default class DataRepository {
      */
     public async createGoDataSource(): Promise<GoDataSource> {
         if (!this._goSourceCache) {
-            console.log("CREATED GO SOURCE");
             this._goSourceCache = new GoDataSource(this);
         }
         return this._goSourceCache;
@@ -49,7 +48,6 @@ export default class DataRepository {
 
     public async createEcDataSource(): Promise<EcDataSource> {
         if (!this._ecSourceCache) {
-            console.log("CREATED EC SOURCE");
             this._ecSourceCache = new EcDataSource(this);
         }
         return this._ecSourceCache;

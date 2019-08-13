@@ -69,12 +69,7 @@
         @Watch("linkStrokeColor")
         @Watch("nodeStrokeColor")
         private async initVisualization() {
-            console.log("TREEVIEW DATA: ");
-            console.log(this.data);
-
             if (this.data) {
-                console.log("RECEIVED VALID DATA!");
-
                 let settings = {
                     width: this.width,
                     height: this.height,

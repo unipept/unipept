@@ -75,8 +75,6 @@
 
         @Watch("selectedItems", {deep: true})
         async onSelectedItemsChanged() {
-            console.log("ITEMS SELECTED!!!");
-            console.log(this.selectedItems);
             this.$emit("selected-items", this.selectedItems);
         }
     }

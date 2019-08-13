@@ -52,7 +52,6 @@
                 },
                 set(val) {
                     this.saveData = val;
-                    console.log("EMITTING " + val);
                     this.$emit('save-change', val);
                 }
             }
@@ -84,8 +83,6 @@
         }
 
         public isValid(): boolean {
-            //@ts-ignore
-            console.log("IS VALID? " + this.$refs.datasetForm.validate());
             //@ts-ignore
             return this.$refs.datasetForm.validate();
         }
