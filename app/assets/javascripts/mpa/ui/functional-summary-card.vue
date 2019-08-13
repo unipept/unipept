@@ -1,10 +1,46 @@
 <template>
     <div>
         <v-card>
-            <v-tabs color="primary" dark>
+            <v-tabs color="primary" dark v-model="currentTab">
                 <v-tab>
                     GO Terms
                 </v-tab>
+                <v-tab>
+                    EC Numbers
+                </v-tab>
+                <v-spacer>
+                </v-spacer>
+                <v-menu bottom left>
+                    <template v-slot:activator="{ on }">
+                        <v-btn text class="align-self-center mr-4" v-on="on">
+                            <v-icon left>mdi-sort-descending</v-icon>
+                            {{ faSortSettings.name }}
+                            <v-icon right>arrow_drop_down</v-icon>
+                        </v-btn>
+                    </template>
+
+                    <v-list class="grey lighten-3">
+                        <v-list-tile class="menu-header" @click="showSortSettingsModal()">
+                            <v-list-tile-title>
+                                Sort by number of peptides in related proteins
+                                <v-icon right>mdi-help-circle</v-icon>
+                            </v-list-tile-title>
+                        </v-list-tile>
+                        <v-list-tile @click="setFormatSettings('percent', 'fractionOfPepts', 'fractionOfPepts', 'Peptides %')">
+                            <v-list-tile-title>
+                                Peptides %
+                            </v-list-tile-title>
+                            
+                        </v-list-tile>
+                        <v-list-tile @click="setFormatSettings('int', 'popularity', 'fractionOfPepts', 'Peptides')">
+                            <v-list-tile-title>
+                                Peptides
+                            </v-list-tile-title>
+                        </v-list-tile>
+                    </v-list>
+                </v-menu>
+            </v-tabs>
+            <v-tabs-items v-model="currentTab">
                 <v-tab-item>
                     <v-card flat>
                         <v-card-text>
@@ -34,9 +70,6 @@
                         </v-card-text>
                     </v-card>
                 </v-tab-item>
-                <v-tab>
-                    EC Numbers
-                </v-tab>
                 <v-tab-item>
                     <v-card flat>
                         <v-card-text>
@@ -58,56 +91,8 @@
                         </v-card-text>
                     </v-card>
                 </v-tab-item>
-            </v-tabs>
+            </v-tabs-items>
         </v-card>
-        <!-- <card-nav>
-            <card-header class="card-title-interactive">
-                <ul class="nav nav-tabs">
-                    <li v-for="tab in tabs" v-bind:class="{ active: tab.activated }" @click="changeActiveTab(tab)" v-bind:key="tab.id">
-                        <a>{{ tab.label }}</a>
-                    </li>
-                </ul>
-                <div class="nav-right">
-                    <div class="dropdown pull-right">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="mpa-select-fa-sort" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="glyphicon glyphicon-sort-by-attributes-alt pull-left"></span><span id="mpa-select-fa-sort-name">{{ faSortSettings.name }}</span>
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-right" id="mpa-select-fa-sort-items" aria-labelledby="mpa-select-fa-sort">
-                            <li class="dropdown-header">Sort by number of peptides in related proteins
-                                <span class="small glyphicon glyphicon-question-sign btn-icon" @click="showSortSettingsModal"></span>
-                            </li>
-                            <li>
-                                <a :class="formatType === 'percent' ? 'active' : ''" @click="setFormatSettings('percent', 'fractionOfPepts', 'fractionOfPepts', 'Peptides %')">Peptides %</a>
-                            </li>
-                            <li>
-                                <a :class="formatType === 'int' ? 'active' : ''" @click="setFormatSettings('int', 'popularity', 'fractionOfPepts', 'Peptides')">Peptides</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </card-header>
-
-            <div id="fa-filter-warning" class="card-supporting-text" v-if="watchableSelectedTaxonId !== -1">
-                <strong>Filtered results:</strong> These results are limited to the {{ numOfFilteredPepts }} specific to <strong>{{ filteredScope}}</strong>
-                <v-btn id="fa-undo-filter" @click="reset()">
-                    Undo
-                </v-btn>
-            </div>
-            <indeterminate-progress-bar :active="faCalculationsInProgress"></indeterminate-progress-bar>
-
-            <card-body>
-                <div class="tab-content">
-                    <tab label="GO terms" :active="true">
-                        
-                    </tab>
-                    <tab label="EC numbers">
-                        
-                    </tab>
-                </div>
-            </card-body>
-        </card-nav> -->
-        <!-- TODO When the AmountTable is converted to Vue, this should be automatically managed! -->
         <div id="tooltip" class="tip"></div>
     </div>
 </template>
@@ -168,11 +153,6 @@
         }
     })
     export default class FunctionalSummaryCard extends Vue {
-        private formatType: string = "int";
-        private fieldType: string = "popularity";
-        private shadeFieldType: string = "fractionOfPepts";
-        private name: string = "Peptides";
-
         // We need to define all namespaces as a list here, as Vue templates cannot access the GoNameSpace class 
         // directly
         private goNamespaces: GoNameSpace[] = Object.values(GoNameSpace).sort();
@@ -184,10 +164,12 @@
         private ecTrustLine: string = "";
         private goTrustLine: string = "";
 
+        private formatType: string = "int";
+
+        private currentTab: number = 0;
+
         private ecTreeTooltip: (d: any) => string = (d: any) => {
             const fullCode = (d.name + ".-.-.-.-").split(".").splice(0, 4).join(".");
-            console.log(fullCode);
-            // let tip = this.tooltipEC(fullCode);
             let tip = "";
             tip += `<div class="tooltip-fa-text">
                         <strong>${d.data.count} peptides</strong> have at least one EC number within ${fullCode},<br>`;
@@ -213,11 +195,11 @@
         };
 
         private faSortSettings: FaSortSettings = new FaSortSettings(
-            (x: GoTerm) => this.formatters[this.formatType](x[this.fieldType]),
-            this.fieldType,
-            this.shadeFieldType,
-            this.name,
-            (a, b) => b[this.fieldType] - a[this.fieldType]
+            (x: GoTerm) => this.formatters[this.formatType](x["popularity"]),
+            "popularity",
+            "fractionOfPepts",
+            "Peptides",
+            (a, b) => b["popularity"] - a["popularity"]
         );
 
         private percentSettings: string = "5";
@@ -417,6 +399,17 @@
     }
 </script>
 
-<style scoped>
+<style>
+    .menu-header .v-list__tile {
+        height: 28px;
+    }
 
+    .menu-header .v-list__tile__title {
+        font-size: 12px;
+        color: #777;
+    }
+
+    .menu-header .v-icon {
+        font-size: 16px;
+    }
 </style>
