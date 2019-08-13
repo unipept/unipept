@@ -1,6 +1,6 @@
 <template>
     <fullscreen ref="fullScreenContainer" @change="fullScreenChange">
-        <v-card style="overflow: hidden;">
+        <v-card style="overflow: hidden; min-height: 100%;" :class="{'full-screen': isFullScreen, 'full-screen-container': true}">
             <v-tabs :color="isFullScreen ? 'accent' : 'primary'" :slider-color="isFullScreen ? 'white' : 'accent'" dark :fixed-tabs="isFullScreen" v-model="tab">
                 <div v-if="isFullScreen" class="unipept-logo">
                     <img src="/images/trans_logo.png" alt="logo" width="40" height="40">
