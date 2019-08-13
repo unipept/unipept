@@ -192,7 +192,6 @@ export default class PeptideContainer implements ProgressListener {
     }
 
     private getStorage(): Storage {
-        console.log("GET STORAGE AND TYPE IS " + this.type);
         if (this.type === StorageType.LocalStorage) {
             return window.localStorage;
         } else {

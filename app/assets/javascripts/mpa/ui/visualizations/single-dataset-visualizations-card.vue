@@ -22,7 +22,7 @@
                 </v-tab>
                 <v-spacer>
                 </v-spacer>
-                <v-menu v-if="!isFullScreen && this.tab < 3" bottom left>
+                <v-menu v-if="!isFullScreen && this.tab < 3" bottom left :disabled="!this.$store.getters.activeDataset || $store.getters.activeDataset.progress !== 1">
                     <template v-slot:activator="{ on }">
                         <v-btn text class="align-self-center mr-4" v-on="on">
                             More

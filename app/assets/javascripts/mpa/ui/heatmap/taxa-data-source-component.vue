@@ -74,7 +74,8 @@
         }
 
         @Watch("selectedItems")
-        async onSelectedItemsChanged() {
+        async onSelectedItemsChanged(newItems: Element[], oldItems: Element[]) {
+            
             this.$emit("selected-items", this.selectedItems);
         }
     }

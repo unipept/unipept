@@ -24,7 +24,6 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm> 
      * popular terms over all namespaces must be returned.
      */
     public async getTopItems(n: number, namespace: GoNameSpace = null): Promise<GoTerm[]> {
-        console.log("GET GO ITEMS --> " + namespace);
         if (namespace) {
             let result: [GoTerm[], FATrust] = await this.getFromCache(namespace, Object.values(GoNameSpace));
             // The GO-Terms in the cache are sorted per namespace from high to low popularity. We can just return the first
