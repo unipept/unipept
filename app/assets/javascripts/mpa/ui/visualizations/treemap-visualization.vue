@@ -22,7 +22,7 @@
     import {tooltipContent} from "./VisualizationHelper";
     import VisualizationMixin from "./visualization-mixin.vue";
     import TaxaDataSource from "./../../datasource/TaxaDataSource";
-import { TaxumRank } from "../../datasource/TaxumRank";
+    import { TaxumRank } from "../../datasource/TaxumRank";
 
     @Component
     export default class TreemapVisualization extends mixins(VisualizationMixin) {
@@ -47,9 +47,8 @@ import { TaxumRank } from "../../datasource/TaxumRank";
         }
 
         @Watch('fullScreen')
-        private onFullScreenChanged(newFullScreen: boolean, oldFullScreen: boolean) {
-            console.log("TREEMAP WRAPPER HAS FULLSCREEN SET TO --> " + newFullScreen);
-            this.treemap.setFullScreen(newFullScreen)
+        private onFullScreenChanged(isFullScreen: boolean) {
+            this.treemap.setFullScreen(isFullScreen);
         }
 
         reset() {
