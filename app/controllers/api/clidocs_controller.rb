@@ -50,6 +50,11 @@ class Api::ClidocsController < ApplicationController
     @sidebar_name = 'unipept pept2taxa'
   end
 
+  def pept2ec
+    @title = 'The unipept pept2ec command'
+    @sidebar_name = 'unipept pept2ec'
+  end
+
   def taxa2lca
     @title = 'The unipept taxa2lca command'
     @sidebar_name = 'unipept taxa2lca'
@@ -89,6 +94,7 @@ class Api::ClidocsController < ApplicationController
       { name: 'unipept pept2lca',   path: api_clidocs_pept2lca_path },
       { name: 'unipept pept2prot',  path: api_clidocs_pept2prot_path },
       { name: 'unipept pept2taxa',  path: api_clidocs_pept2taxa_path },
+      { name: 'unipept pept2ec',    path: api_clidocs_pept2ec_path},
       { name: 'unipept taxa2lca',   path: api_clidocs_taxa2lca_path },
       { name: 'unipept taxonomy',   path: api_clidocs_taxonomy_path }
     ]
