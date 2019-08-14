@@ -7,7 +7,7 @@
       </h1>
     </div>
     <p>
-      The <code>unipept pept2ec</code> command takes one or more tryptic peptides as input and returns a list of EC-numbers for each of them as output. The EC-numbers is calculated from all taxa associated with the UniProt entries that contain the given peptide. All this information is fetched by doing <a href='<%= api_apidocs_pept2ec_path %>' target='_blank'><span class="initialism">API</span>-requests</a> to the Unipept server.
+      The <code>unipept pept2ec</code> command takes one or more tryptic peptides as input and returns a list of EC-numbers for each of them as output. The EC-numbers are calculated from all taxa associated with the UniProt entries that contain the given peptide. All this information is fetched by doing <a href='<%= api_apidocs_pept2ec_path %>' target='_blank'><span class="initialism">API</span>-requests</a> to the Unipept server.
     </p>
     <div class='card'>
       <div class='card-title card-title-colored'>
@@ -83,7 +83,7 @@ MDGTEYIIVK,4,,</pre>
 peptide,total_protein_count,ec_number,ec_protein_count
 AALTER,1425,2.3.2.27 2.7.13.3 6.2.1.3 6.1.1.6 6.3.2.13 2.7.4.25 6.1.1.22 3.1.26.- 2.3.1.29 2.7.1.15 2.3.1.234 2.1.1.13 4.2.1.17 6.3.2.8 3.1.3.3 2.7.4.16 2.4.-.- 5.3.1.1 3.1.4.- 2.8.1.7 6.5.1.2 6.1.1.2 3.4.11.10 3.4.11.1 1.1.1.100 6.3.2.10 3.6.4.- 6.1.1.23 3.1.1.61 3.1.1.4 2.7.1.50 2.7.1.48 1.8.1.2 2.6.1.- 3.4.-.- 2.4.1.227 6.3.4.2 6.3.4.4 4.1.2.- 1.10.9.1 1.14.13.- 2.5.1.- 2.6.1.16 3.1.-.- 4.2.1.153 3.1.2.6 4.6.1.17 2.4.1.- 2.5.1.75 4.2.1.3 6.3.2.31 6.3.2.34 6.3.3.2 1.2.1.2 5.2.1.8 4.99.1.1 2.3.2.2 2.-.-.- 2.7.3.9 4.1.3.27 1.1.1.262 5.4.99.2 2.7.7.59 3.1.21.3 4.2.99.20 6.1.1.12 1.7.99.4,111 11 11 8 8 7 6 4 4 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
 MDGTEYIIVK,4,,
-<b>$</b> unipept pept2lca AALTER MDGTEYIIVK > output.txt
+<b>$</b> unipept pept2go AALTER MDGTEYIIVK > output.txt
 <b>$</b> cat output.txt
 peptide,total_protein_count,ec_number,ec_protein_count
 AALTER,1425,2.3.2.27 2.7.13.3 6.2.1.3 6.1.1.6 6.3.2.13 2.7.4.25 6.1.1.22 3.1.26.- 2.3.1.29 2.7.1.15 2.3.1.234 2.1.1.13 4.2.1.17 6.3.2.8 3.1.3.3 2.7.4.16 2.4.-.- 5.3.1.1 3.1.4.- 2.8.1.7 6.5.1.2 6.1.1.2 3.4.11.10 3.4.11.1 1.1.1.100 6.3.2.10 3.6.4.- 6.1.1.23 3.1.1.61 3.1.1.4 2.7.1.50 2.7.1.48 1.8.1.2 2.6.1.- 3.4.-.- 2.4.1.227 6.3.4.2 6.3.4.4 4.1.2.- 1.10.9.1 1.14.13.- 2.5.1.- 2.6.1.16 3.1.-.- 4.2.1.153 3.1.2.6 4.6.1.17 2.4.1.- 2.5.1.75 4.2.1.3 6.3.2.31 6.3.2.34 6.3.3.2 1.2.1.2 5.2.1.8 4.99.1.1 2.3.2.2 2.-.-.- 2.7.3.9 4.1.3.27 1.1.1.262 5.4.99.2 2.7.7.59 3.1.21.3 4.2.99.20 6.1.1.12 1.7.99.4,111 11 11 8 8 7 6 4 4 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
@@ -125,7 +125,7 @@ fasta_header,peptide,total_protein_count,ec_number,ec_protein_count
         <h5>Example</h5>
         <pre>
 <b>$</b> unipept pept2ec LLELGAPDLLVR
-<b>$</b> unipept pept2lca <b>--equate</b> LLELGAPDLLVR
+<b>$</b> unipept pept2go <b>--equate</b> LLELGAPDLLVR
 peptide,total_protein_count,ec_number,ec_protein_count
 LLELGAPDLLVR,499,2.7.7.6,495</pre>
         <h3><samp>--input</samp> / <samp>-i</samp> <small>Specify an input file</small></h3>
