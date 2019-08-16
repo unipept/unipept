@@ -1,63 +1,105 @@
-# Ruby CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-ruby/ for more details
-#
-version: 2
-jobs:
-  build:
-    docker:
-      # specify the version you desire here
-      - image: circleci/ruby:2.4.1-node-browsers
+version: 2.1
 
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
+references:
+  docker_ruby_config: &docker_ruby_config
+    image: circleci/ruby:2.6.0-node
+    environment:
+      RAILS_ENV: "test"
+      DATABASE_URL: "mysql2://unipept:unipept@127.0.0.1:3306/unipept_test"
+      BUNDLE_PATH: vendor/bundle
+  docker_db_config: &docker_db_config
+    image: circleci/mariadb:10.4.6
+    environment:
+      MYSQL_DATABASE: "unipept_test"
+      MYSQL_USER: "unipept"
+      MYSQL_PASSWORD: "unipept"
+      MYSQL_RANDOM_ROOT_PASSWORD: true
+      MYSQL_HOST: "localhost"
 
-    working_directory: ~/repo
-
+commands:
+  setup:
+    description: "Set up repo and dependencies"
     steps:
       - checkout
-
-      # Download and cache dependencies
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "Gemfile.lock" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-
+            - unipept-bundle-{{ checksum "Gemfile.lock" }}
+            - unipept-bundle-
       - run:
-          name: install dependencies
-          command: |
-            bundle install --jobs=4 --retry=3 --path vendor/bundle
-
+          name: Bundle install
+          command: bundle check || bundle install
       - save_cache:
+          key: unipept-bundle-{{ checksum "Gemfile.lock" }}
           paths:
-            - ./vendor/bundle
-          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
-
-      # Database setup
-      - run: bundle exec rake db:create
-      - run: bundle exec rake db:schema:load
-
-      # run tests!
+            - vendor/bundle
+      - restore_cache:
+          keys:
+            - unipept-yarn-{{ checksum "yarn.lock" }}
+            - unipept-yarn-
       - run:
-          name: run tests
-          command: |
-            mkdir /tmp/test-results
-            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | \
-              circleci tests split --split-by=timings)"
-
-            bundle exec rspec \
-              --format progress \
-              --format RspecJunitFormatter \
-              --out /tmp/test-results/rspec.xml \
-              --format progress \
-              $TEST_FILES
-
-      # collect reports
+          name: Yarn install
+          command: yarn install --cache-folder ~/.cache/yarn
+      - save_cache:
+          key: unipept-yarn-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+jobs:
+  test_ruby:
+    docker:
+      - *docker_ruby_config
+      - *docker_db_config
+    working_directory: ~/repo
+    steps:
+      - setup
+      - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
+      - run:
+          name: install mysql client
+          command: sudo apt install -y mysql-client
+      - run:
+          name: Database setup
+          command: cat backend/database/structure_no_index.sql | sed 's/unipept/unipept_test/' | mysql -h 127.0.0.1 -u unipept -punipept unipept_test
+      - run:
+          name: Run tests
+          command: bundle exec rails test
       - store_test_results:
           path: /tmp/test-results
+
+  test_js:
+    docker:
+      - *docker_ruby_config
+    working_directory: ~/repo
+    steps:
+      - setup
+      - run:
+          name: Run tests
+          command: yarn test --ci --runInBand --reporters=default
+          environment:
+            JEST_JUNIT_OUTPUT: "reports/jest/js-test-results.xml"
+      - store_test_results:
+          path: reports/jest
       - store_artifacts:
-          path: /tmp/test-results
-          destination: test-results
+          path: reports/jest
+
+  lint:
+    docker:
+      - *docker_ruby_config
+    working_directory: ~/repo
+    steps:
+      - setup
+      - run:
+          name: Run RuboCop
+          command: bundle exec rubocop -c ./.rubocop.yml ~/repo/app
+      - store_test_results:
+          path: ~/reports
+
+workflows:
+  version: 2
+  lint:
+    jobs:
+      - lint
+  test:
+    jobs:
+      - test_ruby
+#      - test_js

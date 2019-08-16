@@ -36,9 +36,6 @@ gem 'jbuilder'
 # imagemagick bindings
 gem 'rmagick', require: false
 
-# coveralls
-gem 'coveralls', require: false
-
 # The dynamic stylesheet language for the Rails asset pipeline.
 # Allows other gems to extend Less load path.
 gem 'less-rails'
@@ -96,8 +93,6 @@ group :development do
   gem 'guard'
   gem 'guard-minitest' # auto run tests
   gem 'rubocop', require: false
-  # gem 'terminal-notifier-guard', git: 'git://github.com/unipept/terminal-notifier-guard.git' # mac notifications
   gem 'rake'
   gem 'sprockets'
-  gem 'terminal-notifier'
 end
