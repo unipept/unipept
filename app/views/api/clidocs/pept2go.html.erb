@@ -158,23 +158,22 @@ AALTER,1425,GO:0003677 GO:0006351 GO:0005524 GO:0006355 GO:0016021 GO:0005622 GO
     </p>
         <h5>Example</h5>
         <pre>
-<b>$</b> unipept pept2lca <b>--select</b> peptide,taxon_id AALTER
-peptide,taxon_id
-AALTER,1
-<b>$</b> unipept pept2lca <b>--select</b> peptide <b>--select</b> *name AALTER
-peptide,taxon_name
-AALTER,root</pre>
+<b>$</b> unipept pept2go <b>--select</b> peptide,go_term AALTER
+go_term,peptide
+GO:0003677 GO:0006351 GO:0005524 GO:0006355 GO:0016021 GO:0005622 GO:0004842 GO:0000160,AALTER
+<b>$</b> unipept pept2go <b>--select</b> peptide <b>--select</b> *term AALTER
+go_term,peptide
+GO:0003677 GO:0006351 GO:0005524 GO:0006355 GO:0016021 GO:0005622 GO:0004842 GO:0000160,AALTER</pre>
         <h3 id='param-format'><samp>--format</samp> / <samp>-f</samp> <small>Specify the output format</small></h3>
         <p>
           By default, the Unipept <span class='initialism'>CLI</span> commands return their output in <samp>csv</samp> format. The <code>--format</code> option allows you to select another format. Supported formats are <samp>csv</samp>, <samp>json</samp>, and <samp>xml</samp>.
     </p>
         <h5>Example</h5>
         <pre>
-<b>$</b> unipept pept2lca <b>--format</b> json AALTER MDGTEYIIVK
-[{"peptide":"AALTER","taxon_id":1,"taxon_name":"root","taxon_rank":"no rank"},{"peptide":"MDGTEYIIVK","taxon_id":1263,"taxon_name":"Ruminococcus","taxon_rank":"genus"}]
-<b>$</b> unipept pept2lca <b>--format</b> xml AALTER MDGTEYIIVK
-&lt;results&gt;&lt;result&gt;&lt;peptide&gt;AALTER&lt;/peptide&gt;&lt;taxon_id&gt;1&lt;/taxon_id&gt;&lt;taxon_name&gt;root&lt;/taxon_name&gt;&lt;taxon_rank&gt;no rank&lt;/taxon_rank&gt;&lt;/result&gt;&lt;result&gt;&lt;peptide&gt;MDGTEYIIVK&lt;/peptide&gt;&lt;taxon_id&gt;1263&lt;/taxon_id&gt;&lt;taxon_name&gt;Ruminococcus&lt;/taxon_name&gt;&lt;taxon_rank&gt;genus&lt;/taxon_rank&gt;&lt;/result&gt;&lt;/results&gt;</pre>
-        <h3 id='param-all'><samp>--all</samp> / <samp>-a</samp> <small>Request additional information</small></h3>
+<b>$</b> unipept pept2go <b>--format</b> json AALTER MDGTEYIIVK
+[{"go":[{"go_term":"GO:0003677","protein_count":268},{"go_term":"GO:0006351","protein_count":189},{"go_term":"GO:0005524","protein_count":151},{"go_term":"GO:0006355","protein_count":148},{"go_term":"GO:0016021","protein_count":136},{"go_term":"GO:0005622","protein_count":110},{"go_term":"GO:0004842","protein_count":108},{"go_term":"GO:0000160","protein_count":88}],"peptide":"AALTER","total_protein_count":1425},{"go":[{"go_term":"GO:0006457","protein_count":4},{"go_term":"GO:0005737","protein_count":4},{"go_term":"GO:0005524","protein_count":4},{"go_term":null,"protein_count":null},{"go_term":null,"protein_count":null},{"go_term":null,"protein_count":null},{"go_term":null,"protein_count":null},{"go_term":null,"protein_count":null}],"peptide":"MDGTEYIIVK","total_protein_count":4}]
+<b>$</b> unipept pept2go <b>--format</b> xml AALTER MDGTEYIIVK
+&lt;results&gt;&lt;result&gt;&lt;go&gt;&lt;item&gt;&lt;go_term&gt;GO:0003677&lt;/go_term&gt;&lt;protein_count&gt;268&lt;/protein_count&gt;&lt;/item&gt;&lt;item&gt;&lt;go_term&gt;GO:0006351&lt;/go_term&gt;&lt;protein_count&gt;189&lt;/protein_count&gt;&lt;/item&gt;&lt;item&gt;&lt;go_term&gt;GO:0005524&lt;/go_term&gt;&lt;protein_count&gt;151&lt;/protein_count&gt;&lt;/item&gt;&lt;item&gt;&lt;go_term&gt;GO:0006355&lt;/go_term&gt;&lt;protein_count&gt;148&lt;/protein_count&gt;&lt;/item&gt;&lt;item&gt;&lt;go_term&gt;GO:0016021&lt;/go_term&gt;&lt;protein_count&gt;136&lt;/protein_count&gt;&lt;/item&gt;&lt;item&gt;&lt;go_term&gt;GO:0005622&lt;/go_term&gt;&lt;protein_count&gt;110&lt;/protein_count&gt;&lt;/item&gt;&lt;item&gt;&lt;go_term&gt;GO:0004842&lt;/go_term&gt;&lt;protein_count&gt;108&lt;/protein_count&gt;&lt;/item&gt;&lt;item&gt;&lt;go_term&gt;GO:0000160&lt;/go_term&gt;&lt;protein_count&gt;88&lt;/protein_count&gt;&lt;/item&gt;&lt;/go&gt;&lt;peptide&gt;AALTER&lt;/peptide&gt;&lt;total_protein_count&gt;1425&lt;/total_protein_count&gt;&lt;/result&gt;&lt;result&gt;&lt;go&gt;&lt;item&gt;&lt;go_term&gt;GO:0006457&lt;/go_term&gt;&lt;protein_count&gt;4&lt;/protein_count&gt;&lt;/item&gt;&lt;item&gt;&lt;go_term&gt;GO:0005737&lt;/go_term&gt;&lt;protein_count&gt;4&lt;/protein_count&gt;&lt;/item&gt;&lt;item&gt;&lt;go_term&gt;GO:0005524&lt;/go_term&gt;&lt;protein_count&gt;4&lt;/protein_count&gt;&lt;/item&gt;&lt;item&gt;&lt;go_term&gt;&lt;/go_term&gt;&lt;protein_count&gt;&lt;/protein_count&gt;&lt;/item&gt;&lt;item&gt;&lt;go_term&gt;&lt;/go_term&gt;&lt;protein_count&gt;&lt;/protein_count&gt;&lt;/item&gt;&lt;item&gt;&lt;go_term&gt;&lt;/go_term&gt;&lt;protein_count&gt;&lt;/protein_count&gt;&lt;/item&gt;&lt;item&gt;&lt;go_term&gt;&lt;/go_term&gt;&lt;protein_count&gt;&lt;/protein_count&gt;&lt;/item&gt;&lt;item&gt;&lt;go_term&gt;&lt;/go_term&gt;&lt;protein_count&gt;&lt;/protein_count&gt;&lt;/item&gt;&lt;/go&gt;&lt;peptide&gt;MDGTEYIIVK&lt;/peptide&gt;&lt;total_protein_count&gt;4&lt;/total_protein_count&gt;&lt;/result&gt;&lt;/results&gt;        <h3 id='param-all'><samp>--all</samp> / <samp>-a</samp> <small>Request additional information</small></h3>
         <p>
           By default, the Unipept <span class='initialism'>CLI</span> commands only request basic information from the Unipept server. By using the <code>--all</code> flag, you can request additional information fields such as the lineage of the returned taxa. You can use the <code>--select</code> option to select which fields are included in the output.
     </p>
@@ -184,9 +183,9 @@ AALTER,root</pre>
         </div>
         <h5>Example</h5>
         <pre>
-<b>$</b> unipept pept2lca <b>--all</b> --select peptide,taxon_id,order* MDGTEYIIVK
-peptide,taxon_id,order_id,order_name
-MDGTEYIIVK,1263,186802,Clostridiales</pre>
+<b>$</b> unipept pept2go <b>--all</b> --select peptide,go_term,*name AALTER
+go_term,go_name,peptide
+GO:0003677 GO:0006351 GO:0005524 GO:0006355 GO:0016021 GO:0005622 GO:0004842 GO:0000160,"DNA binding transcription, DNA-templated ATP binding regulation of transcription, DNA-templated integral component of membrane intracellular ubiquitin-protein transferase activity phosphorelay signal transduction system",AALTER</pre>
         <h3><samp>--help</samp> / <samp>-h</samp> <small>Display help</small></h3>
         <p>
           This flag displays the help.
