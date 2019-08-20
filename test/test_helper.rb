@@ -1,10 +1,6 @@
-require 'coveralls'
-Coveralls.wear!
-
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
 require 'rails/test_help'
-require 'minitest/pride'
 
 require 'capybara/rails'
 require 'capybara/poltergeist'

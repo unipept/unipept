@@ -88,7 +88,9 @@
                         <template v-for="dataset of storedDatasets">
                             <v-list-tile :key="dataset.id" ripple @click="selectDataset(dataset)">
                                 <v-list-tile-action>
-                                    <v-icon>mdi-plus</v-icon>
+                                    <tooltip message="Select this dataset for analysis.">
+                                        <v-icon>mdi-plus</v-icon>
+                                    </tooltip>
                                 </v-list-tile-action>
                                 <v-list-tile-content>
                                     <v-list-tile-title>
@@ -103,7 +105,9 @@
                                     <v-list-tile-action-text>
                                         {{ dataset.getDateFormatted() }}
                                     </v-list-tile-action-text>
-                                    <v-icon @click="deleteDataset(dataset)" v-on:click.stop>mdi-close</v-icon>
+                                    <tooltip message="Delete this sample from local storage.">
+                                        <v-icon @click="deleteDataset(dataset)" v-on:click.stop>mdi-close</v-icon>
+                                    </tooltip>
                                 </v-list-tile-action>
                             </v-list-tile>
                         </template>
@@ -125,10 +129,14 @@
     import Snackbar from "../../components/snackbar/snackbar.vue";
     import axios from "axios"
     import SampleDataset from "../SampleDataset";
+    import Tooltip from "./custom/tooltip.vue";
 
     @Component({
         components: {
-            Snackbar, DatasetForm}
+            Snackbar,
+            DatasetForm,
+            Tooltip
+        }
     })
     export default class LoadDatasetsCard extends Vue {
         $refs!: {

@@ -1,0 +1,105 @@
+version: 2.1
+
+references:
+  docker_ruby_config: &docker_ruby_config
+    image: circleci/ruby:2.6.0-node
+    environment:
+      RAILS_ENV: "test"
+      DATABASE_URL: "mysql2://unipept:unipept@127.0.0.1:3306/unipept_test"
+      BUNDLE_PATH: vendor/bundle
+  docker_db_config: &docker_db_config
+    image: circleci/mariadb:10.4.6
+    environment:
+      MYSQL_DATABASE: "unipept_test"
+      MYSQL_USER: "unipept"
+      MYSQL_PASSWORD: "unipept"
+      MYSQL_RANDOM_ROOT_PASSWORD: true
+      MYSQL_HOST: "localhost"
+
+commands:
+  setup:
+    description: "Set up repo and dependencies"
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - unipept-bundle-{{ checksum "Gemfile.lock" }}
+            - unipept-bundle-
+      - run:
+          name: Bundle install
+          command: bundle check || bundle install
+      - save_cache:
+          key: unipept-bundle-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+      - restore_cache:
+          keys:
+            - unipept-yarn-{{ checksum "yarn.lock" }}
+            - unipept-yarn-
+      - run:
+          name: Yarn install
+          command: yarn install --cache-folder ~/.cache/yarn
+      - save_cache:
+          key: unipept-yarn-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+jobs:
+  test_ruby:
+    docker:
+      - *docker_ruby_config
+      - *docker_db_config
+    working_directory: ~/repo
+    steps:
+      - setup
+      - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
+      - run:
+          name: install mysql client
+          command: sudo apt install -y mysql-client
+      - run:
+          name: Database setup
+          command: cat backend/database/structure_no_index.sql | sed 's/unipept/unipept_test/' | mysql -h 127.0.0.1 -u unipept -punipept unipept_test
+      - run:
+          name: Run tests
+          command: bundle exec rails test
+      - store_test_results:
+          path: /tmp/test-results
+
+  test_js:
+    docker:
+      - *docker_ruby_config
+    working_directory: ~/repo
+    steps:
+      - setup
+      - run:
+          name: Run tests
+          command: yarn test --ci --runInBand --reporters=default
+          environment:
+            JEST_JUNIT_OUTPUT: "reports/jest/js-test-results.xml"
+      - store_test_results:
+          path: reports/jest
+      - store_artifacts:
+          path: reports/jest
+
+  lint:
+    docker:
+      - *docker_ruby_config
+    working_directory: ~/repo
+    steps:
+      - setup
+      - run:
+          name: Run RuboCop
+          command: bundle exec rubocop -c ./.rubocop.yml ~/repo/app
+      - store_test_results:
+          path: ~/reports
+
+workflows:
+  version: 2
+  lint:
+    jobs:
+      - lint
+  test:
+    jobs:
+      - test_ruby
+#      - test_js

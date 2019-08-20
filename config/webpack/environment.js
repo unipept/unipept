@@ -6,7 +6,7 @@ const vue = require("./loaders/vue");
 const typescript = require("./loaders/typescript");
 const css = require("./loaders/css");
 
-environment.plugins.prepend(
+environment.plugins.append(
     "CommonsChunkVendor",
     new webpack.optimize.CommonsChunkPlugin({
         name: "commons",

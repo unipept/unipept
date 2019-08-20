@@ -17,7 +17,9 @@
                     v-on:missing-cleavage="missingCleavage = $event">
                 </search-settings-form>
                 <div class="search-buttons-centered">
-                    <v-btn :disabled="$store.getters.selectedDatasets.some(el => el.progress !== 1)" @click="reprocess()" color="primary"><v-icon left>mdi-restore</v-icon>Update</v-btn>
+                    <tooltip message="Restart search with selected samples using the settings chosen above.">
+                        <v-btn :disabled="$store.getters.selectedDatasets.some(el => el.progress !== 1)" @click="reprocess()" color="primary"><v-icon left>mdi-restore</v-icon>Update</v-btn>
+                    </tooltip>
                 </div>
                 <hr>
                 <span v-if="!$store.getters.activeDataset">No dataset is selected... Wait for at least one dataset to be loaded or select one.</span>
@@ -42,9 +44,10 @@
     import TaxaDataSource from "../datasource/TaxaDataSource";
     import Sample from "../Sample";
     import PeptideContainer from "../PeptideContainer";
+    import Tooltip from "./custom/tooltip.vue";
 
     @Component({
-        components: {CardTitle, CardHeader, SearchSettingsForm}
+        components: {CardTitle, CardHeader, SearchSettingsForm, Tooltip}
     })
     export default class ExperimentSummaryCard extends Vue {
         private equateIl: boolean = true;

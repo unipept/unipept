@@ -1,42 +1,55 @@
 <template>
-    <v-card style="min-height: 100%;">
+    <v-card style="min-height: 100%; display: flex; flex-direction: column;">
          <card-header class="card-title-interactive">
             <card-title>
                 Metaproteomics Analysis
             </card-title>
             <div class="card-title-action">
-                <v-icon @click="compareDatasets()" color="white">mdi-chart-bubble</v-icon>
-                <v-icon @click="addDataset()" color="white">mdi-plus</v-icon>
+                <tooltip message="Add another dataset to the selection.">
+                    <v-icon @click="addDataset()" color="white">mdi-plus</v-icon>
+                </tooltip>
             </div>
         </card-header>
         <v-card-text v-if="this.$store.getters.selectedDatasets.length === 0">
             <span>Please add one or more datasets by clicking the plus button above...</span>
         </v-card-text>
-         <v-list two-line>
-            <template v-for="dataset of this.$store.getters.selectedDatasets">
-                <v-list-tile :key="dataset.id" ripple @click="() => activeDataset = dataset" :class="activeDataset === dataset ? 'selected-list-tile' : ''">
-                    <v-list-tile-action>
-                        <v-radio-group v-if="dataset.progress === 1" v-model="activeDataset"><v-radio :value="dataset"></v-radio></v-radio-group>
-                        <v-progress-circular v-else :rotate="-90" :size="24" :value="dataset.progress * 100" color="primary"></v-progress-circular>
-                    </v-list-tile-action>
-                    <v-list-tile-content>
-                        <v-list-tile-title>
-                            {{ dataset.getName() }}
-                        </v-list-tile-title>
-                        <v-list-tile-sub-title>
-                            {{ dataset.getAmountOfPeptides() }} peptides
-                        </v-list-tile-sub-title>
-                    </v-list-tile-content>
+        <div class="growing-list">
+            <v-list two-line>
+                <template v-for="dataset of this.$store.getters.selectedDatasets">
+                    <v-list-tile :key="dataset.id" ripple @click="() => activeDataset = dataset" :class="activeDataset === dataset ? 'selected-list-tile' : ''">
+                        <v-list-tile-action>
+                            <v-radio-group v-if="dataset.progress === 1" v-model="activeDataset"><v-radio :value="dataset"></v-radio></v-radio-group>
+                            <v-progress-circular v-else :rotate="-90" :size="24" :value="dataset.progress * 100" color="primary"></v-progress-circular>
+                        </v-list-tile-action>
+                        <v-list-tile-content>
+                            <v-list-tile-title>
+                                {{ dataset.getName() }}
+                            </v-list-tile-title>
+                            <v-list-tile-sub-title>
+                                {{ dataset.getAmountOfPeptides() }} peptides
+                            </v-list-tile-sub-title>
+                        </v-list-tile-content>
 
-                    <v-list-tile-action>
-                        <v-list-tile-action-text>
-                            {{ dataset.getDateFormatted() }}
-                        </v-list-tile-action-text>
-                        <v-icon @click="deselectDataset(dataset)" v-on:click.stop>mdi-delete-outline</v-icon>
-                    </v-list-tile-action>
-                </v-list-tile>
-            </template>
-        </v-list>
+                        <v-list-tile-action>
+                            <v-list-tile-action-text>
+                                {{ dataset.getDateFormatted() }}
+                            </v-list-tile-action-text>
+                            <tooltip message="Deselect this dataset.">
+                                <v-icon @click="deselectDataset(dataset)" v-on:click.stop>mdi-delete-outline</v-icon>
+                            </tooltip>
+                        </v-list-tile-action>
+                    </v-list-tile>
+                </template>
+            </v-list>
+            <v-card-text>
+                <hr>
+                <div class="search-buttons-centered">
+                    <tooltip message="Comparse the samples selected above using a heatmap.">
+                        <v-btn @click="compareDatasets()">Compare samples</v-btn>
+                    </tooltip>
+                </div>
+            </v-card-text>
+        </div>
         <v-dialog v-model="dialogOpen" width="1000px">
             <div style="min-height: 600px; background-color: white;">
                 <div class="modal-header" >
@@ -64,9 +77,10 @@
     import CardHeader from "../../components/card/card-header.vue";
     import CardTitle from "../../components/card/card-title.vue";
     import HeatmapWizardMultiSample from "./heatmap/heatmap-wizard-multi-sample.vue";
+    import Tooltip from "./custom/tooltip.vue";
 
     @Component({
-        components: {CardTitle, CardHeader, HeatmapWizardMultiSample},
+        components: {CardTitle, CardHeader, HeatmapWizardMultiSample, Tooltip},
         computed: {
             activeDataset: {
                 get() {
@@ -107,5 +121,13 @@
 
     .selected-list-tile .v-list__tile {
         margin-left: -4px;
+    }
+
+    .growing-list {
+        min-height: 100%;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 </style>

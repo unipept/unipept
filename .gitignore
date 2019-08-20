@@ -37,3 +37,4 @@ coverage/
 /public/assets
 
 .devcontainer/unipept-db/data/*
+.vscode/*
