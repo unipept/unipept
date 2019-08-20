@@ -1,5 +1,5 @@
 <template>
-    <v-card style="min-height: 100%;">
+    <v-card style="min-height: 100%; display: flex; flex-direction: column;">
          <card-header class="card-title-interactive">
             <card-title>
                 Metaproteomics Analysis
@@ -11,37 +11,39 @@
         <v-card-text v-if="this.$store.getters.selectedDatasets.length === 0">
             <span>Please add one or more datasets by clicking the plus button above...</span>
         </v-card-text>
-        <v-list two-line>
-            <template v-for="dataset of this.$store.getters.selectedDatasets">
-                <v-list-tile :key="dataset.id" ripple @click="() => activeDataset = dataset" :class="activeDataset === dataset ? 'selected-list-tile' : ''">
-                    <v-list-tile-action>
-                        <v-radio-group v-if="dataset.progress === 1" v-model="activeDataset"><v-radio :value="dataset"></v-radio></v-radio-group>
-                        <v-progress-circular v-else :rotate="-90" :size="24" :value="dataset.progress * 100" color="primary"></v-progress-circular>
-                    </v-list-tile-action>
-                    <v-list-tile-content>
-                        <v-list-tile-title>
-                            {{ dataset.getName() }}
-                        </v-list-tile-title>
-                        <v-list-tile-sub-title>
-                            {{ dataset.getAmountOfPeptides() }} peptides
-                        </v-list-tile-sub-title>
-                    </v-list-tile-content>
+        <div class="growing-list">
+            <v-list two-line>
+                <template v-for="dataset of this.$store.getters.selectedDatasets">
+                    <v-list-tile :key="dataset.id" ripple @click="() => activeDataset = dataset" :class="activeDataset === dataset ? 'selected-list-tile' : ''">
+                        <v-list-tile-action>
+                            <v-radio-group v-if="dataset.progress === 1" v-model="activeDataset"><v-radio :value="dataset"></v-radio></v-radio-group>
+                            <v-progress-circular v-else :rotate="-90" :size="24" :value="dataset.progress * 100" color="primary"></v-progress-circular>
+                        </v-list-tile-action>
+                        <v-list-tile-content>
+                            <v-list-tile-title>
+                                {{ dataset.getName() }}
+                            </v-list-tile-title>
+                            <v-list-tile-sub-title>
+                                {{ dataset.getAmountOfPeptides() }} peptides
+                            </v-list-tile-sub-title>
+                        </v-list-tile-content>
 
-                    <v-list-tile-action>
-                        <v-list-tile-action-text>
-                            {{ dataset.getDateFormatted() }}
-                        </v-list-tile-action-text>
-                        <v-icon @click="deselectDataset(dataset)" v-on:click.stop>mdi-delete-outline</v-icon>
-                    </v-list-tile-action>
-                </v-list-tile>
-            </template>
-        </v-list>
-        <v-card-text>
-            <hr>
-            <div class="search-buttons-centered">
-                <v-btn @click="compareDatasets()">Heatmap</v-btn>
-            </div>
-        </v-card-text>
+                        <v-list-tile-action>
+                            <v-list-tile-action-text>
+                                {{ dataset.getDateFormatted() }}
+                            </v-list-tile-action-text>
+                            <v-icon @click="deselectDataset(dataset)" v-on:click.stop>mdi-delete-outline</v-icon>
+                        </v-list-tile-action>
+                    </v-list-tile>
+                </template>
+            </v-list>
+            <v-card-text>
+                <hr>
+                <div class="search-buttons-centered">
+                    <v-btn @click="compareDatasets()">Heatmap</v-btn>
+                </div>
+            </v-card-text>
+        </div>
         <v-dialog v-model="dialogOpen" width="1000px">
             <div style="min-height: 600px; background-color: white;">
                 <div class="modal-header" >
@@ -112,5 +114,13 @@
 
     .selected-list-tile .v-list__tile {
         margin-left: -4px;
+    }
+
+    .growing-list {
+        min-height: 100%;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 </style>

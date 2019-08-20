@@ -3,6 +3,10 @@
   <%= javascript_pack_tag 'mpa_app' %>
 <% end %>
 
+<% content_for :javascripts do%>
+  <%= stylesheet_pack_tag 'mpa_app' %>
+<% end %>
+
 <div id="mpa-app">
   <mpa></mpa>
 </div>

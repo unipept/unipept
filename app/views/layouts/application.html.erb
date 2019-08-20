@@ -10,6 +10,7 @@
     <%= javascript_pack_tag 'application' %>
     <%= javascript_include_tag "application" %>
     <%= yield :javascripts %>
+    <%= yield :stylesheets %>
     <link rel="prefetch" href="<%= asset_pack_path 'd3.js' %>" />
     <%= csrf_meta_tag %>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
