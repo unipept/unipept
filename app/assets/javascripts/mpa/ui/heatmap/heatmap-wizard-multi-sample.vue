@@ -17,7 +17,7 @@ import {NormalizationType} from "./NormalizationType";
                     <component v-if="!dataSourceLoading && dataSourceItem" :is="dataSources.get(dataSource).dataSourceComponent" :dataSource="dataSourceItem" v-on:selected-items="updateSelectedItems"></component>
                     <v-progress-circular v-else indeterminate color="primary"></v-progress-circular>
                 </div>
-                <simple-button style="float: right;" label="Continue" type="primary" class="wizard-action" @click="currentStep++"></simple-button>
+                <v-btn class="continue-button" color="primary" @click="currentStep++">Continue</v-btn>
             </v-stepper-content>
             <v-stepper-content step="2">
                 <p>Please select the type of normalization that should be performed before visualizing data points.</p>
@@ -27,7 +27,7 @@ import {NormalizationType} from "./NormalizationType";
                         <div style="margin-left: 32px;">{{ normalizationTypes.get(normalizationType).information }}</div>
                     </div>
                 </v-radio-group>
-                <simple-button style="float: right;" label="Continue" type="primary" class="wizard-action" @click="computeHeatmapAndProceed()"></simple-button>
+                <v-btn class="continue-button" color="primary" @click="computeHeatmapAndProceed()">Continue</v-btn>
             </v-stepper-content>
             <v-stepper-content step="3">
                 <div v-if="selectedItems.length === 0">
@@ -54,7 +54,6 @@ import {NormalizationType} from "./NormalizationType";
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Watch, Prop} from "vue-property-decorator";
-    import SimpleButton from "../../../components/button/simple-button.vue";
     import HeatmapConfiguration from "./HeatmapConfiguration";
     import DataSource from "../../datasource/DataSource";
     import TaxaDataSource from "../../datasource/TaxaDataSource";
@@ -75,7 +74,7 @@ import {NormalizationType} from "./NormalizationType";
     import sha256 from "crypto-js/sha256";
 
     @Component({
-        components: {SimpleButton, GoDataSourceComponent, EcDataSourceComponent, TaxaDataSourceComponent, HeatmapVisualization}
+        components: {GoDataSourceComponent, EcDataSourceComponent, TaxaDataSourceComponent, HeatmapVisualization}
     })
     export default class HeatmapWizardMultiSample extends Vue {
         @Prop()
@@ -245,5 +244,13 @@ import {NormalizationType} from "./NormalizationType";
     }
 </script>
 
-<style scoped>
+<style>
+    .v-stepper__wrapper {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .continue-button {
+        align-self: flex-end;
+    }
 </style>

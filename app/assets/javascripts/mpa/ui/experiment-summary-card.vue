@@ -17,7 +17,7 @@
                     v-on:missing-cleavage="missingCleavage = $event">
                 </search-settings-form>
                 <div class="search-buttons-centered">
-                    <simple-button :disabled="$store.getters.selectedDatasets.some(el => el.progress !== 1)" label="Update" glyphicon="repeat" type="primary" @click="reprocess()"></simple-button>
+                    <v-btn :disabled="$store.getters.selectedDatasets.some(el => el.progress !== 1)" @click="reprocess()" color="primary"><v-icon left>mdi-restore</v-icon>Update</v-btn>
                 </div>
                 <hr>
                 <span v-if="!$store.getters.activeDataset">No dataset is selected... Wait for at least one dataset to be loaded or select one.</span>
@@ -35,7 +35,6 @@
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import SearchSettingsForm from "./search-settings-form.vue";
-    import SimpleButton from "../../components/button/simple-button.vue";
     import CardHeader from "../../components/card/card-header.vue";
     import CardTitle from "../../components/card/card-title.vue";
     import {addCopy} from "../../utils";
