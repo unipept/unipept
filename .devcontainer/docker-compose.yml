@@ -22,15 +22,15 @@ services:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: unipept
     restart: always
-  app:
-    depends_on:
-      - db
-    build: ./unipept-application
-    command: sleep infinity
-    ports:
-      - '5000:5000'
-    network_mode: "host"
-    volumes:
-      - ~/.gitconfig:/root/.gitconfig
-      - ..:/workspace
+  # app:
+  #   depends_on:
+  #     - db
+  #   build: ./unipept-application
+  #   command: sleep infinity
+  #   ports:
+  #     - '5000:5000'
+  #   network_mode: "host"
+  #   volumes:
+  #     - ~/.gitconfig:/root/.gitconfig
+  #     - ..:/workspace
   

@@ -5,14 +5,13 @@
                 Metaproteomics Analysis
             </card-title>
             <div class="card-title-action">
-                <v-icon @click="compareDatasets()" color="white">mdi-chart-bubble</v-icon>
                 <v-icon @click="addDataset()" color="white">mdi-plus</v-icon>
             </div>
         </card-header>
         <v-card-text v-if="this.$store.getters.selectedDatasets.length === 0">
             <span>Please add one or more datasets by clicking the plus button above...</span>
         </v-card-text>
-         <v-list two-line>
+        <v-list two-line>
             <template v-for="dataset of this.$store.getters.selectedDatasets">
                 <v-list-tile :key="dataset.id" ripple @click="() => activeDataset = dataset" :class="activeDataset === dataset ? 'selected-list-tile' : ''">
                     <v-list-tile-action>
@@ -37,6 +36,12 @@
                 </v-list-tile>
             </template>
         </v-list>
+        <v-card-text>
+            <hr>
+            <div class="search-buttons-centered">
+                <v-btn @click="compareDatasets()">Heatmap</v-btn>
+            </div>
+        </v-card-text>
         <v-dialog v-model="dialogOpen" width="1000px">
             <div style="min-height: 600px; background-color: white;">
                 <div class="modal-header" >
