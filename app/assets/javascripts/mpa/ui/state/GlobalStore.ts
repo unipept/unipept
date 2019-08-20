@@ -137,11 +137,13 @@ const mpaActions: ActionTree<GlobalState, any> = {
             let newActiveDataset: PeptideContainer = null;
 
             for (let current of store.getters.selectedDatasets) {
-                if (current.getProgress() === 1) {
+                if (current.progress === 1) {
                     newActiveDataset = current;
                 }
             }
 
+            console.log("SETTING ACTIVE DATASET TO ");
+            console.log(newActiveDataset);
             store.commit('SET_ACTIVE_DATASET', newActiveDataset);
         }
     },
