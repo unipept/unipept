@@ -5,7 +5,9 @@
                 Metaproteomics Analysis
             </card-title>
             <div class="card-title-action">
-                <v-icon @click="addDataset()" color="white">mdi-plus</v-icon>
+                <tooltip message="Add another dataset to the selection.">
+                    <v-icon @click="addDataset()" color="white">mdi-plus</v-icon>
+                </tooltip>
             </div>
         </card-header>
         <v-card-text v-if="this.$store.getters.selectedDatasets.length === 0">
@@ -32,7 +34,9 @@
                             <v-list-tile-action-text>
                                 {{ dataset.getDateFormatted() }}
                             </v-list-tile-action-text>
-                            <v-icon @click="deselectDataset(dataset)" v-on:click.stop>mdi-delete-outline</v-icon>
+                            <tooltip message="Deselect this dataset.">
+                                <v-icon @click="deselectDataset(dataset)" v-on:click.stop>mdi-delete-outline</v-icon>
+                            </tooltip>
                         </v-list-tile-action>
                     </v-list-tile>
                 </template>
@@ -40,7 +44,9 @@
             <v-card-text>
                 <hr>
                 <div class="search-buttons-centered">
-                    <v-btn @click="compareDatasets()">Compare samples</v-btn>
+                    <tooltip message="Comparse the samples selected above using a heatmap.">
+                        <v-btn @click="compareDatasets()">Compare samples</v-btn>
+                    </tooltip>
                 </div>
             </v-card-text>
         </div>
@@ -71,9 +77,10 @@
     import CardHeader from "../../components/card/card-header.vue";
     import CardTitle from "../../components/card/card-title.vue";
     import HeatmapWizardMultiSample from "./heatmap/heatmap-wizard-multi-sample.vue";
+    import Tooltip from "./custom/tooltip.vue";
 
     @Component({
-        components: {CardTitle, CardHeader, HeatmapWizardMultiSample},
+        components: {CardTitle, CardHeader, HeatmapWizardMultiSample, Tooltip},
         computed: {
             activeDataset: {
                 get() {
