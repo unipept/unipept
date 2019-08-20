@@ -40,7 +40,7 @@
             <v-card-text>
                 <hr>
                 <div class="search-buttons-centered">
-                    <v-btn @click="compareDatasets()">Heatmap</v-btn>
+                    <v-btn @click="compareDatasets()">Compare samples</v-btn>
                 </div>
             </v-card-text>
         </div>
