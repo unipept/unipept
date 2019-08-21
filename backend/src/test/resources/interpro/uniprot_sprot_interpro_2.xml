@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uniprot xmlns="http://uniprot.org/uniprot" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://uniprot.org/uniprot http://www.uniprot.org/support/docs/uniprot.xsd">
+    <entry dataset="Swiss-Prot" created="2009-03-24" modified="2019-05-08" version="83">
+        <accession>Q2NQJ2</accession>
+        <name>AROB_SODGM</name>
+        <protein>
+            <recommendedName>
+                <fullName evidence="1">3-dehydroquinate synthase</fullName>
+                <shortName evidence="1">DHQS</shortName>
+                <ecNumber evidence="1">4.2.3.4</ecNumber>
+            </recommendedName>
+        </protein>
+        <gene>
+            <name type="primary" evidence="1">aroB</name>
+            <name type="ordered locus">SG2308</name>
+        </gene>
+        <organism>
+            <name type="scientific">Sodalis glossinidius (strain morsitans)</name>
+            <dbReference type="NCBI Taxonomy" id="343509"/>
+            <lineage>
+                <taxon>Bacteria</taxon>
+                <taxon>Proteobacteria</taxon>
+                <taxon>Gammaproteobacteria</taxon>
+                <taxon>Enterobacterales</taxon>
+                <taxon>Pectobacteriaceae</taxon>
+                <taxon>Sodalis</taxon>
+            </lineage>
+        </organism>
+        <reference key="1">
+            <citation type="journal article" date="2006" name="Genome Res." volume="16" first="149" last="156">
+                <title>Massive genome erosion and functional adaptations provide insights into the symbiotic lifestyle
+                    of Sodalis glossinidius in the tsetse host.
+                </title>
+                <authorList>
+                    <person name="Toh H."/>
+                    <person name="Weiss B.L."/>
+                    <person name="Perkin S.A.H."/>
+                    <person name="Yamashita A."/>
+                    <person name="Oshima K."/>
+                    <person name="Hattori M."/>
+                    <person name="Aksoy S."/>
+                </authorList>
+                <dbReference type="PubMed" id="16365377"/>
+                <dbReference type="DOI" id="10.1101/gr.4106106"/>
+            </citation>
+            <scope>NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]</scope>
+            <source>
+                <strain>morsitans</strain>
+            </source>
+        </reference>
+        <comment type="function">
+            <text evidence="1">Catalyzes the conversion of 3-deoxy-D-arabino-heptulosonate 7-phosphate (DAHP) to
+                dehydroquinate (DHQ).
+            </text>
+        </comment>
+        <comment type="catalytic activity">
+            <reaction evidence="1">
+                <text>7-phospho-2-dehydro-3-deoxy-D-arabino-heptonate = 3-dehydroquinate + phosphate</text>
+                <dbReference type="Rhea" id="RHEA:21968"/>
+                <dbReference type="ChEBI" id="CHEBI:32364"/>
+                <dbReference type="ChEBI" id="CHEBI:43474"/>
+                <dbReference type="ChEBI" id="CHEBI:58394"/>
+                <dbReference type="EC" id="4.2.3.4"/>
+            </reaction>
+        </comment>
+        <comment type="cofactor">
+            <cofactor evidence="1">
+                <name>Co(2+)</name>
+                <dbReference type="ChEBI" id="CHEBI:48828"/>
+            </cofactor>
+            <cofactor evidence="1">
+                <name>Zn(2+)</name>
+                <dbReference type="ChEBI" id="CHEBI:29105"/>
+            </cofactor>
+            <text evidence="1">Binds 1 divalent metal cation per subunit. Can use either Co(2+) or Zn(2+).</text>
+        </comment>
+        <comment type="cofactor">
+            <cofactor evidence="1">
+                <name>NAD(+)</name>
+                <dbReference type="ChEBI" id="CHEBI:57540"/>
+            </cofactor>
+        </comment>
+        <comment type="pathway" evidence="1">
+            <text>Metabolic intermediate biosynthesis; chorismate biosynthesis; chorismate from D-erythrose 4-phosphate
+                and phosphoenolpyruvate: step 2/7.
+            </text>
+        </comment>
+        <comment type="subcellular location">
+            <subcellularLocation>
+                <location evidence="1">Cytoplasm</location>
+            </subcellularLocation>
+        </comment>
+        <comment type="similarity">
+            <text evidence="1">Belongs to the sugar phosphate cyclases superfamily. Dehydroquinate synthase family.
+            </text>
+        </comment>
+        <dbReference type="EC" id="4.2.3.4" evidence="1"/>
+        <dbReference type="EMBL" id="AP008232">
+            <property type="protein sequence ID" value="BAE75583.1"/>
+            <property type="molecule type" value="Genomic_DNA"/>
+        </dbReference>
+        <dbReference type="RefSeq" id="WP_011412116.1">
+            <property type="nucleotide sequence ID" value="NC_007712.1"/>
+        </dbReference>
+        <dbReference type="SMR" id="Q2NQJ2"/>
+        <dbReference type="STRING" id="343509.SG2308"/>
+        <dbReference type="EnsemblBacteria" id="BAE75583">
+            <property type="protein sequence ID" value="BAE75583"/>
+            <property type="gene ID" value="SG2308"/>
+        </dbReference>
+        <dbReference type="KEGG" id="sgl:SG2308"/>
+        <dbReference type="eggNOG" id="ENOG4105D49">
+            <property type="taxonomic scope" value="Bacteria"/>
+        </dbReference>
+        <dbReference type="eggNOG" id="COG0337">
+            <property type="taxonomic scope" value="LUCA"/>
+        </dbReference>
+        <dbReference type="HOGENOM" id="HOG000007970"/>
+        <dbReference type="KO" id="K01735"/>
+        <dbReference type="OMA" id="CGFIADP"/>
+        <dbReference type="OrthoDB" id="1677032at2"/>
+        <dbReference type="UniPathway" id="UPA00053">
+            <property type="reaction ID" value="UER00085"/>
+        </dbReference>
+        <dbReference type="Proteomes" id="UP000001932">
+            <property type="component" value="Chromosome"/>
+        </dbReference>
+        <dbReference type="GO" id="GO:0005737">
+            <property type="term" value="C:cytoplasm"/>
+            <property type="evidence" value="ECO:0000501"/>
+            <property type="project" value="UniProtKB-SubCell"/>
+        </dbReference>
+        <dbReference type="GO" id="GO:0003856">
+            <property type="term" value="F:3-dehydroquinate synthase activity"/>
+            <property type="evidence" value="ECO:0000501"/>
+            <property type="project" value="UniProtKB-UniRule"/>
+        </dbReference>
+        <dbReference type="GO" id="GO:0046872">
+            <property type="term" value="F:metal ion binding"/>
+            <property type="evidence" value="ECO:0000501"/>
+            <property type="project" value="UniProtKB-KW"/>
+        </dbReference>
+        <dbReference type="GO" id="GO:0000166">
+            <property type="term" value="F:nucleotide binding"/>
+            <property type="evidence" value="ECO:0000501"/>
+            <property type="project" value="UniProtKB-KW"/>
+        </dbReference>
+        <dbReference type="GO" id="GO:0009073">
+            <property type="term" value="P:aromatic amino acid family biosynthetic process"/>
+            <property type="evidence" value="ECO:0000501"/>
+            <property type="project" value="UniProtKB-UniRule"/>
+        </dbReference>
+        <dbReference type="GO" id="GO:0009423">
+            <property type="term" value="P:chorismate biosynthetic process"/>
+            <property type="evidence" value="ECO:0000501"/>
+            <property type="project" value="UniProtKB-UniPathway"/>
+        </dbReference>
+        <dbReference type="CDD" id="cd08195">
+            <property type="entry name" value="DHQS"/>
+            <property type="match status" value="1"/>
+        </dbReference>
+        <dbReference type="HAMAP" id="MF_00110">
+            <property type="entry name" value="DHQ_synthase"/>
+            <property type="match status" value="1"/>
+        </dbReference>
+        <dbReference type="InterPro" id="IPR016037">
+            <property type="entry name" value="DHQ_synth_AroB"/>
+        </dbReference>
+        <dbReference type="InterPro" id="IPR030963">
+            <property type="entry name" value="DHQ_synth_fam"/>
+        </dbReference>
+        <dbReference type="InterPro" id="IPR030960">
+            <property type="entry name" value="DHQS/DOIS"/>
+        </dbReference>
+        <dbReference type="Pfam" id="PF01761">
+            <property type="entry name" value="DHQ_synthase"/>
+            <property type="match status" value="1"/>
+        </dbReference>
+        <dbReference type="PIRSF" id="PIRSF001455">
+            <property type="entry name" value="DHQ_synth"/>
+            <property type="match status" value="1"/>
+        </dbReference>
+        <dbReference type="TIGRFAMs" id="TIGR01357">
+            <property type="entry name" value="aroB"/>
+            <property type="match status" value="1"/>
+        </dbReference>
+        <proteinExistence type="inferred from homology"/>
+        <keyword id="KW-0028">Amino-acid biosynthesis</keyword>
+        <keyword id="KW-0057">Aromatic amino acid biosynthesis</keyword>
+        <keyword id="KW-0170">Cobalt</keyword>
+        <keyword id="KW-0181">Complete proteome</keyword>
+        <keyword id="KW-0963">Cytoplasm</keyword>
+        <keyword id="KW-0456">Lyase</keyword>
+        <keyword id="KW-0479">Metal-binding</keyword>
+        <keyword id="KW-0520">NAD</keyword>
+        <keyword id="KW-0547">Nucleotide-binding</keyword>
+        <keyword id="KW-1185">Reference proteome</keyword>
+        <keyword id="KW-0862">Zinc</keyword>
+        <feature type="chain" description="3-dehydroquinate synthase" id="PRO_1000094624">
+            <location>
+                <begin position="1"/>
+                <end position="361"/>
+            </location>
+        </feature>
+        <feature type="nucleotide phosphate-binding region" description="NAD" evidence="1">
+            <location>
+                <begin position="71"/>
+                <end position="76"/>
+            </location>
+        </feature>
+        <feature type="nucleotide phosphate-binding region" description="NAD" evidence="1">
+            <location>
+                <begin position="105"/>
+                <end position="109"/>
+            </location>
+        </feature>
+        <feature type="nucleotide phosphate-binding region" description="NAD" evidence="1">
+            <location>
+                <begin position="129"/>
+                <end position="130"/>
+            </location>
+        </feature>
+        <feature type="nucleotide phosphate-binding region" description="NAD" evidence="1">
+            <location>
+                <begin position="169"/>
+                <end position="172"/>
+            </location>
+        </feature>
+        <feature type="metal ion-binding site" description="Cobalt or zinc" evidence="1">
+            <location>
+                <position position="184"/>
+            </location>
+        </feature>
+        <feature type="metal ion-binding site" description="Cobalt or zinc; via tele nitrogen" evidence="1">
+            <location>
+                <position position="247"/>
+            </location>
+        </feature>
+        <feature type="metal ion-binding site" description="Cobalt or zinc; via tele nitrogen" evidence="1">
+            <location>
+                <position position="264"/>
+            </location>
+        </feature>
+        <feature type="binding site" description="NAD; via carbonyl oxygen" evidence="1">
+            <location>
+                <position position="142"/>
+            </location>
+        </feature>
+        <feature type="binding site" description="NAD" evidence="1">
+            <location>
+                <position position="151"/>
+            </location>
+        </feature>
+        <evidence key="1" type="ECO:0000255">
+            <source>
+                <dbReference type="HAMAP-Rule" id="MF_00110"/>
+            </source>
+        </evidence>
+        <sequence length="361" mass="38884" checksum="D2FA5FA8CD1FA809" modified="2006-02-07" version="1">
+            MERITVTLGERSYPITIAAGLFNDPASFWPLTRGDSAMLVTNDRLAPLYLESLCERLTQA
+            GVKVDRVVLPDGEQNKSLTVLDQVFTALLAKSHGRDTTLIALGGGVIGDLAGFAAASYQR
+            GVRFIQAPTTLLSQVDSSVGGKTAVNHSLGKNMIGAFYQPASVVIDLDCLNTLPRRELSS
+            GLAEVIKYGIILDAAFFAWLEDNLEALLALEPQALAYCIRRCCELKADVVAADEREQGQR
+            ALLNLGHTYGHAIETHMGYGNWLHGEAVAAGMMMAVRAARRLGQFSDADAERVSALLQRA
+            GLTMSGPAEMAPEDYLPHMMRDKKVIAGRLRLVLPVTLGNAEVRTGVADDMVVASIKDCQ
+            A
+        </sequence>
+    </entry>
+    <copyright>
+        Copyrighted by the UniProt Consortium, see https://www.uniprot.org/terms
+        Distributed under the Creative Commons Attribution (CC BY 4.0) License
+    </copyright>
+</uniprot>

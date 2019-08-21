@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uniprot xmlns="http://uniprot.org/uniprot" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://uniprot.org/uniprot http://www.uniprot.org/support/docs/uniprot.xsd">
+    <entry dataset="Swiss-Prot" created="2008-01-15" modified="2019-07-31" version="75">
+        <accession>A1WYA9</accession>
+        <name>COBQ_HALHL</name>
+        <protein>
+            <recommendedName>
+                <fullName evidence="1">Cobyric acid synthase</fullName>
+            </recommendedName>
+        </protein>
+        <gene>
+            <name type="primary" evidence="1">cobQ</name>
+            <name type="ordered locus">Hhal_1907</name>
+        </gene>
+        <organism>
+            <name type="scientific">Halorhodospira halophila (strain DSM 244 / SL1)</name>
+            <name type="synonym">Ectothiorhodospira halophila (strain DSM 244 / SL1)</name>
+            <dbReference type="NCBI Taxonomy" id="349124"/>
+            <lineage>
+                <taxon>Bacteria</taxon>
+                <taxon>Proteobacteria</taxon>
+                <taxon>Gammaproteobacteria</taxon>
+                <taxon>Chromatiales</taxon>
+                <taxon>Ectothiorhodospiraceae</taxon>
+                <taxon>Halorhodospira</taxon>
+            </lineage>
+        </organism>
+        <reference key="1">
+            <citation type="submission" date="2006-12" db="EMBL/GenBank/DDBJ databases">
+                <title>Complete sequence of Halorhodospira halophila SL1.</title>
+                <authorList>
+                    <consortium name="US DOE Joint Genome Institute"/>
+                    <person name="Copeland A."/>
+                    <person name="Lucas S."/>
+                    <person name="Lapidus A."/>
+                    <person name="Barry K."/>
+                    <person name="Detter J.C."/>
+                    <person name="Glavina del Rio T."/>
+                    <person name="Hammon N."/>
+                    <person name="Israni S."/>
+                    <person name="Dalin E."/>
+                    <person name="Tice H."/>
+                    <person name="Pitluck S."/>
+                    <person name="Saunders E."/>
+                    <person name="Brettin T."/>
+                    <person name="Bruce D."/>
+                    <person name="Han C."/>
+                    <person name="Tapia R."/>
+                    <person name="Schmutz J."/>
+                    <person name="Larimer F."/>
+                    <person name="Land M."/>
+                    <person name="Hauser L."/>
+                    <person name="Kyrpides N."/>
+                    <person name="Mikhailova N."/>
+                    <person name="Hoff W."/>
+                    <person name="Richardson P."/>
+                </authorList>
+            </citation>
+            <scope>NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]</scope>
+            <source>
+                <strain>DSM 244 / SL1</strain>
+            </source>
+        </reference>
+        <comment type="function">
+            <text evidence="1">Catalyzes amidations at positions B, D, E, and G on adenosylcobyrinic A,C-diamide. NH(2)
+                groups are provided by glutamine, and one molecule of ATP is hydrogenolyzed for each amidation.
+            </text>
+        </comment>
+        <comment type="pathway" evidence="1">
+            <text>Cofactor biosynthesis; adenosylcobalamin biosynthesis.</text>
+        </comment>
+        <comment type="similarity">
+            <text evidence="1">Belongs to the CobB/CobQ family. CobQ subfamily.</text>
+        </comment>
+        <dbReference type="EMBL" id="CP000544">
+            <property type="protein sequence ID" value="ABM62671.1"/>
+            <property type="molecule type" value="Genomic_DNA"/>
+        </dbReference>
+        <dbReference type="SMR" id="A1WYA9"/>
+        <dbReference type="STRING" id="349124.Hhal_1907"/>
+        <dbReference type="EnsemblBacteria" id="ABM62671">
+            <property type="protein sequence ID" value="ABM62671"/>
+            <property type="gene ID" value="Hhal_1907"/>
+        </dbReference>
+        <dbReference type="KEGG" id="hha:Hhal_1907"/>
+        <dbReference type="eggNOG" id="ENOG4105CAA">
+            <property type="taxonomic scope" value="Bacteria"/>
+        </dbReference>
+        <dbReference type="eggNOG" id="COG1492">
+            <property type="taxonomic scope" value="LUCA"/>
+        </dbReference>
+        <dbReference type="HOGENOM" id="HOG000224803"/>
+        <dbReference type="KO" id="K02232"/>
+        <dbReference type="OMA" id="QVIIHGR"/>
+        <dbReference type="UniPathway" id="UPA00148"/>
+        <dbReference type="Proteomes" id="UP000000647">
+            <property type="component" value="Chromosome"/>
+        </dbReference>
+        <dbReference type="GO" id="GO:0015420">
+            <property type="term" value="F:ATPase-coupled vitamin B12 transmembrane transporter activity"/>
+            <property type="evidence" value="ECO:0000501"/>
+            <property type="project" value="UniProtKB-UniRule"/>
+        </dbReference>
+        <dbReference type="GO" id="GO:0003824">
+            <property type="term" value="F:catalytic activity"/>
+            <property type="evidence" value="ECO:0000501"/>
+            <property type="project" value="InterPro"/>
+        </dbReference>
+        <dbReference type="GO" id="GO:0009236">
+            <property type="term" value="P:cobalamin biosynthetic process"/>
+            <property type="evidence" value="ECO:0000501"/>
+            <property type="project" value="UniProtKB-UniPathway"/>
+        </dbReference>
+        <dbReference type="GO" id="GO:0006541">
+            <property type="term" value="P:glutamine metabolic process"/>
+            <property type="evidence" value="ECO:0000501"/>
+            <property type="project" value="UniProtKB-KW"/>
+        </dbReference>
+        <dbReference type="CDD" id="cd01750">
+            <property type="entry name" value="GATase1_CobQ"/>
+            <property type="match status" value="1"/>
+        </dbReference>
+        <dbReference type="Gene3D" id="3.40.50.880">
+            <property type="match status" value="1"/>
+        </dbReference>
+        <dbReference type="HAMAP" id="MF_00028">
+            <property type="entry name" value="CobQ"/>
+            <property type="match status" value="1"/>
+        </dbReference>
+        <dbReference type="InterPro" id="IPR029062">
+            <property type="entry name" value="Class_I_gatase-like"/>
+        </dbReference>
+        <dbReference type="InterPro" id="IPR017929">
+            <property type="entry name" value="CobB/CobQ_GATase"/>
+        </dbReference>
+        <dbReference type="InterPro" id="IPR033949">
+            <property type="entry name" value="CobQ_GATase1"/>
+        </dbReference>
+        <dbReference type="InterPro" id="IPR004459">
+            <property type="entry name" value="CobQ_synth"/>
+        </dbReference>
+        <dbReference type="InterPro" id="IPR011698">
+            <property type="entry name" value="GATase_3"/>
+        </dbReference>
+        <dbReference type="InterPro" id="IPR027417">
+            <property type="entry name" value="P-loop_NTPase"/>
+        </dbReference>
+        <dbReference type="PANTHER" id="PTHR21343:SF1">
+            <property type="entry name" value="PTHR21343:SF1"/>
+            <property type="match status" value="1"/>
+        </dbReference>
+        <dbReference type="Pfam" id="PF07685">
+            <property type="entry name" value="GATase_3"/>
+            <property type="match status" value="1"/>
+        </dbReference>
+        <dbReference type="SUPFAM" id="SSF52317">
+            <property type="entry name" value="SSF52317"/>
+            <property type="match status" value="1"/>
+        </dbReference>
+        <dbReference type="SUPFAM" id="SSF52540">
+            <property type="entry name" value="SSF52540"/>
+            <property type="match status" value="1"/>
+        </dbReference>
+        <dbReference type="TIGRFAMs" id="TIGR00313">
+            <property type="entry name" value="cobQ"/>
+            <property type="match status" value="1"/>
+        </dbReference>
+        <dbReference type="PROSITE" id="PS51274">
+            <property type="entry name" value="GATASE_COBBQ"/>
+            <property type="match status" value="1"/>
+        </dbReference>
+        <proteinExistence type="inferred from homology"/>
+        <keyword id="KW-0169">Cobalamin biosynthesis</keyword>
+        <keyword id="KW-0181">Complete proteome</keyword>
+        <keyword id="KW-0315">Glutamine amidotransferase</keyword>
+        <keyword id="KW-1185">Reference proteome</keyword>
+        <feature type="chain" description="Cobyric acid synthase" id="PRO_1000002359">
+            <location>
+                <begin position="1"/>
+                <end position="483"/>
+            </location>
+        </feature>
+        <feature type="domain" description="GATase cobBQ-type" evidence="1">
+            <location>
+                <begin position="252"/>
+                <end position="430"/>
+            </location>
+        </feature>
+        <feature type="active site" description="Nucleophile" evidence="1">
+            <location>
+                <position position="333"/>
+            </location>
+        </feature>
+        <feature type="active site" evidence="1">
+            <location>
+                <position position="422"/>
+            </location>
+        </feature>
+        <evidence key="1" type="ECO:0000255">
+            <source>
+                <dbReference type="HAMAP-Rule" id="MF_00028"/>
+            </source>
+        </evidence>
+        <sequence length="483" mass="51459" checksum="536DB4E8A7732652" modified="2007-02-06" version="1">
+            MVRARTLMLQGTCSGAGKTALVAGLCRLLARHGVRVAPFKPQNMSNNAAVTADGGEIGRG
+            QWLQALAAGLPAHTDMNPVLLKPEAERTAQVVVQGHVTGRLEARAFREARQPLLPPVLES
+            FQRLCAAYDVVLVEGAGSPAEPNLRQGDIANMGFAEAADVPVWLVGDIDRGGVFASLLGT
+            LEWLDDADRRRVEALIINRFRGSPELLGEAPAQLEARGGVPVIGVVPAVPDLHLPEEDAP
+            YRMAGPRGSGGALQVVAVAYPRMSNHDDLDALDAESGVHVRFARQPRELDGADLIVLPGS
+            KHVFSDLAWLRESGMAEALYRHCRYGGRVVGLCGGLQMLGEGIEDPEGVEGGGSAPGLGL
+            LPVHTRLAPTKQLAEVHGHAEWPAPVAVTGYEIHHGVTGAQEGLFPFVARSDDGRVLGSY
+            LHRLFDSGPFRRALLVEWFALEGEGGDEQARIEAELDRLADTLEQALEPGWLKALGVPAR
+            PST
+        </sequence>
+    </entry>
+    <copyright>
+        Copyrighted by the UniProt Consortium, see https://www.uniprot.org/terms
+        Distributed under the Creative Commons Attribution (CC BY 4.0) License
+    </copyright>
+</uniprot>
