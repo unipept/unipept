@@ -10,7 +10,7 @@
                 </v-tab>
                 <v-spacer>
                 </v-spacer>
-                <v-menu bottom left>
+                <v-menu bottom left ref="sortMenu">
                     <template v-slot:activator="{ on }">
                         <v-btn text class="align-self-center mr-4" v-on="on">
                             <v-icon left>mdi-sort-descending</v-icon>
@@ -40,7 +40,7 @@
                     </v-list>
                 </v-menu>
             </v-tabs>
-            <v-tabs-items v-model="currentTab">
+            <v-tabs-items>
                 <v-tab-item>
                     <v-card flat>
                         <v-card-text>
