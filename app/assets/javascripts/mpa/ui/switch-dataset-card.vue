@@ -6,7 +6,7 @@
             </card-title>
             <div class="card-title-action">
                 <tooltip message="Add another dataset to the selection.">
-                    <v-icon @click="addDataset()" color="white">mdi-plus</v-icon>
+                    <v-icon @click="addDataset()" color="white">{{ this.$store.getters.isDatasetSelectionInProgress ? 'mdi-plus-circle' : 'mdi-plus' }}</v-icon>
                 </tooltip>
             </div>
         </card-header>
