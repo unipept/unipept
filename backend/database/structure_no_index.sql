@@ -286,6 +286,7 @@ COLLATE = ascii_general_ci;
 CREATE TABLE IF NOT EXISTS `unipept`.`interpro_entries` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `interpro_code` VARCHAR(15) NOT NULL,
+  `type` VARCHAR(32) NOT NULL,
   `name` VARCHAR(160) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
