@@ -27,8 +27,8 @@
                                 {{ dataset.getDateFormatted() }}
                             </v-list-tile-action-text>
                             <tooltip message="Deselect dataset">
-                                <v-btn text icon @click="deselectDataset(dataset)">
-                                    <v-icon class="fix-icon-list-position" color="grey darken-1">mdi-delete-outline</v-icon>
+                                <v-btn class="fix-icon-list-position" text icon @click="deselectDataset(dataset)">
+                                    <v-icon color="grey darken-1">mdi-delete-outline</v-icon>
                                 </v-btn>
                             </tooltip>
                         </v-list-tile-action>

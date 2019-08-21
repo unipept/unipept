@@ -11,9 +11,7 @@
         </v-tooltip>
         <v-tooltip top>
             <template v-slot:activator="{ on }">
-                <div v-on="on">
-                    <v-checkbox :disabled="disabled" v-model="filterDuplicatesModel" label="Filter duplicate peptides" hide-details></v-checkbox>
-                </div>
+                <v-checkbox v-on="on" :disabled="disabled" v-model="filterDuplicatesModel" label="Filter duplicate peptides" hide-details></v-checkbox>
             </template>
             <span>Remove duplicate peptides from the input before searching.</span>
         </v-tooltip>
