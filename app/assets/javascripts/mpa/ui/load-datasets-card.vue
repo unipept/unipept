@@ -106,7 +106,9 @@
                                         {{ dataset.getDateFormatted() }}
                                     </v-list-tile-action-text>
                                     <tooltip message="Delete this sample from local storage.">
-                                        <v-icon @click="deleteDataset(dataset)" v-on:click.stop>mdi-close</v-icon>
+                                        <v-btn icon text @click="deleteDataset(dataset)" v-on:click.stop>
+                                            <v-icon color="grey darken-1">mdi-close</v-icon>
+                                        </v-btn>
                                     </tooltip>
                                 </v-list-tile-action>
                             </v-list-tile>

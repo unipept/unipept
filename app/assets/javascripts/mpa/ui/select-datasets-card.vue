@@ -27,7 +27,9 @@
                                 {{ dataset.getDateFormatted() }}
                             </v-list-tile-action-text>
                             <tooltip message="Deselect dataset">
-                                <v-icon @click="deselectDataset(dataset)" class="fix-icon-list-position">mdi-delete-outline</v-icon>
+                                <v-btn text icon @click="deselectDataset(dataset)">
+                                    <v-icon class="fix-icon-list-position" color="grey darken-1">mdi-delete-outline</v-icon>
+                                </v-btn>
                             </tooltip>
                         </v-list-tile-action>
                     </v-list-tile>
@@ -70,9 +72,10 @@
     import SearchSettingsForm from "./search-settings-form.vue";
     import CardTitle from "../../components/card/card-title.vue";
     import CardHeader from "../../components/card/card-header.vue";
+    import Tooltip from "./custom/tooltip.vue";
 
     @Component({
-        components: {CardHeader, CardTitle, SearchSettingsForm}
+        components: {CardHeader, CardTitle, SearchSettingsForm, Tooltip}
     })
     export default class SelectDatasetsCard extends Vue {
         private selectedDatasets = this.$store.getters.selectedDatasets;
