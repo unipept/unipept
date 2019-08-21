@@ -12,7 +12,7 @@
             </v-card-text>
             <v-list two-line class="switch-datasets-list" style="flex-grow: 1;">
                 <template v-for="dataset of selectedDatasets">
-                    <v-list-tile :key="dataset.id" ripple @click="deselectDataset(dataset)">
+                    <v-list-tile :key="dataset.id" >
                         <v-list-tile-content>
                             <v-list-tile-title>
                                 {{ dataset.getName() }}
@@ -26,7 +26,9 @@
                             <v-list-tile-action-text>
                                 {{ dataset.getDateFormatted() }}
                             </v-list-tile-action-text>
-                            <v-icon>mdi-delete-outline</v-icon>
+                            <tooltip message="Deselect dataset">
+                                <v-icon @click="deselectDataset(dataset)" class="fix-icon-list-position">mdi-delete-outline</v-icon>
+                            </tooltip>
                         </v-list-tile-action>
                     </v-list-tile>
                 </template>

@@ -18,6 +18,13 @@
     };
 </script>
 
-<style scoped>
+<style>
+    .v-list__tile__action .fix-icon-list-position {
+        position: relative;
+        bottom: 2px;
+    }
 
+    .v-input--checkbox {
+        margin-top: 0;
+    }
 </style>
