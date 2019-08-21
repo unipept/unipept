@@ -28,6 +28,12 @@ ALTER TABLE go_terms ADD UNIQUE INDEX idx_go_code (code ASC);
 
 
 -- -----------------------------------------------------
+-- Table `unipept`.`interpro`
+-- -----------------------------------------------------
+ALTER TABLE interpro ADD UNIQUE INDEX idx_interpro (code ASC);
+
+
+-- -----------------------------------------------------
 -- Table `unipept`.`sequences`
 -- -----------------------------------------------------
 ALTER TABLE sequences ADD UNIQUE INDEX idx_sequences (sequence ASC);
@@ -65,6 +71,13 @@ ALTER TABLE go_cross_references ADD INDEX fk_go_reference_uniprot_entries (unipr
 -- -----------------------------------------------------
 ALTER TABLE ec_cross_references ADD INDEX fk_ec_reference_uniprot_entries (uniprot_entry_id ASC);
 -- ALTER TABLE ec_cross_references ADD INDEX fk_ec_terms_reference_go_terms_idx (ec_number_code ASC);
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`ec_cross_references`
+-- -----------------------------------------------------
+ALTER TABLE interpro_cross_references ADD INDEX fk_interpro_reference_uniprot_entries (uniprot_entry_id ASC);
+
 
 -- -----------------------------------------------------
 -- Table `unipept`.`proteomes`

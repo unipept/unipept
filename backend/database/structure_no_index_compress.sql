@@ -288,6 +288,31 @@ COLLATE = ascii_general_ci;
 
 
 -- -----------------------------------------------------
+-- Table `unipept`.`interpro_cross_references`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `unipept`.`interpro_cross_references` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `uniprot_entry_id` INT UNSIGNED NOT NULL ,
+  `interpro_code` VARCHAR(15) NOT NULL ,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
+
+
+-- -----------------------------------------------------
+-- Table `unipept`.`interpro`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `unipept`.`interpro` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `interpro_code` VARCHAR(15) NOT NULL,
+  `name` VARCHAR(160) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = ascii
+COLLATE = ascii_general_ci;
+
+-- -----------------------------------------------------
 -- Table `unipept`.`users`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `unipept`.`users` (
