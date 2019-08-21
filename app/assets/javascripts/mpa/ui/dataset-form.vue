@@ -9,9 +9,9 @@
         </v-tooltip>
         <v-tooltip top>
             <template v-slot:activator="{ on }">
-                <div v-on="on">
-                    <v-checkbox :disabled="loading" v-model="saveModel" label="Store dataset in browser's local storage" hide-details></v-checkbox>
-                </div>
+                <v-checkbox v-on="on" :disabled="loading" v-model="saveModel" hide-details>
+                    <span slot="label" v-on="on">Store dataset in browser's local storage</span>
+                </v-checkbox>
             </template>
             <span>Store dataset in local storage and reuse it later on.</span>
         </v-tooltip>
