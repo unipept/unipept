@@ -1,0 +1,15 @@
+#!/bin/bash
+# Parses the interpro entries
+
+set -o pipefail -e
+exec 3>&1
+
+entries="ftp://ftp.ebi.ac.uk/pub/databases/interpro/entry.list"
+
+lines="$(wget -q "$entries" -O -                \
+       | grep "^IPR"                            \
+       | sed "s/\(IPR[0-9]*\)\t[a-zA-Z_]*/\1/"  \
+       | sort                                   \
+       | nl -s "	"                           \
+       | tee >(cat >&3)                         \
+       )"
