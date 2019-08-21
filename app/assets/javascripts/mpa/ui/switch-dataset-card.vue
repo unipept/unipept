@@ -34,7 +34,7 @@
                             <v-list-tile-action-text>
                                 {{ dataset.getDateFormatted() }}
                             </v-list-tile-action-text>
-                            <tooltip message="Deselect this dataset.">
+                            <tooltip message="Remove dataset from analysis.">
                                 <v-icon @click="deselectDataset(dataset)" v-on:click.stop>mdi-delete-outline</v-icon>
                             </tooltip>
                         </v-list-tile-action>
@@ -44,7 +44,7 @@
             <v-card-text>
                 <hr>
                 <div class="search-buttons-centered">
-                    <tooltip message="Comparse the samples selected above using a heatmap.">
+                    <tooltip message="Compare samples above using a heatmap.">
                         <v-btn @click="compareDatasets()">Compare samples</v-btn>
                     </tooltip>
                 </div>
