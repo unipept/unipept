@@ -30,7 +30,7 @@ ALTER TABLE go_terms ADD UNIQUE INDEX idx_go_code (code ASC);
 -- -----------------------------------------------------
 -- Table `unipept`.`interpro`
 -- -----------------------------------------------------
-ALTER TABLE interpro ADD UNIQUE INDEX idx_interpro (code ASC);
+ALTER TABLE interpro_entries ADD UNIQUE INDEX idx_interpro_code (code ASC);
 
 
 -- -----------------------------------------------------

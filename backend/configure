@@ -88,7 +88,7 @@ fi
 cat > "latest-config" <<"HERE"
 # Run `./configure` to configure the unipept backend makefile.
 #
-# Editting this file does not configure the unipept backend run, it will
+# Editing this file does not configure the unipept backend run, it will
 # only change the suggested configuration when you run `./configure`.
 HERE
 
@@ -202,8 +202,10 @@ backup_if_changed "makefile"           "$tmpmakefile"
 backup_if_changed "type_strains.sh"    <($CONFIG_CMD_SED -f "$sedscript" type_strains.sh.in)
 backup_if_changed "createEcNumbers.sh" <($CONFIG_CMD_SED -f "$sedscript" createEcNumbers.sh.in)
 backup_if_changed "createGoTerms.sh"   <($CONFIG_CMD_SED -f "$sedscript" createGoTerms.sh.in)
+backup_if_changed "createInterProEntries.sh"   <($CONFIG_CMD_SED -f "$sedscript" createInterProEntries.sh.in)
 
 rm "$tmpmakefile"
 chmod a+x type_strains.sh
 chmod a+x createEcNumbers.sh
 chmod a+x createGoTerms.sh
+chmod a+x createInterProEntries.sh
