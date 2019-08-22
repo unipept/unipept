@@ -91,8 +91,9 @@ public class TableWriter implements UniprotObserver {
 
             // todo make cleaner
             String faSummary = Stream.of(
-                entry.getGOReferences().stream().map(UniprotGORef::getId),
-                entry.getECReferences().stream().map(x->"EC:"+x.getId())
+                    entry.getGOReferences().stream().map(UniprotGORef::getId),
+                    entry.getECReferences().stream().map(x->"EC:"+x.getId()),
+                    entry.getInterProReferences().stream().map(x->"IPR:"+x.getId())
             ).flatMap(i -> i).collect(Collectors.joining(";"));
             
             for(String sequence : entry.digest()) {
