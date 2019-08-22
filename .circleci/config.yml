@@ -43,6 +43,9 @@ commands:
           key: unipept-yarn-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache/yarn
+      - run:
+          name: Install bundler
+          command: gem install bundler:2.0.2
 jobs:
   test_ruby:
     docker:
