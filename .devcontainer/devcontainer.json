@@ -1,7 +1,7 @@
 // See https://aka.ms/vscode-remote/devcontainer.json for format details.
 {
 	"name": "Unipept",
-	"dockerComposeFile": "docker-compose-app-phpmyadmin.yml",
+	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
 
 	// Uncomment the next line if you want to publish any ports.
