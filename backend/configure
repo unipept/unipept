@@ -154,6 +154,10 @@ echo "s|<<<ENTREZ_URL>>>|$ENTREZ_URL|g" >> "$sedscript"
 TAXON_URL="http://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip"
 echo "s|<<<TAXON_URL>>>|$TAXON_URL|g" >> "$sedscript"
 
+LOGADD='echo $$(date +"[%s (%F %T)]")'
+echo "s|^\t<<<LOGADD>>>|\t@$LOGADD|" >> "$sedscript"
+echo "s|<<<LOGADD>>>|echo|g" >> "$sedscript"
+
 # --------------------------------------------------------------------
 # Writing the configured files
 
@@ -189,11 +193,11 @@ for (( i = 0 ; i < sources_count ; i += 2 )); do
     url="${CONFIG_SOURCES[$((i + 1))]}"
     cat >> "$tmpmakefile" <<HERE
 $file:
-	echo "Starting downloading $name."
+	$LOGADD "Started downloading $name."
 	mkdir -p $CONFIG_SRCDIR
 	rm -f $file
 	wget --progress=dot:giga "$url" -O $file
-	echo "Finished downloading $name."
+	$LOGADD "Finished downloading $name."
 
 HERE
 done
