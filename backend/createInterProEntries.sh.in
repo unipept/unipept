@@ -4,7 +4,7 @@
 set -o pipefail -e
 exec 3>&1
 
-entries="ftp://ftp.ebi.ac.uk/pub/databases/interpro/entry.list"
+entries="http://ftp.ebi.ac.uk/pub/databases/interpro/entry.list"
 
 lines="$(wget -q "$entries" -O -                               \
        | grep "^IPR"                                           \
