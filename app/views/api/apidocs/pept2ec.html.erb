@@ -19,7 +19,7 @@
         </p>
         <h3>input</h3>
         <p>
-          <code>input[]</code> is a required parameter that takes one or more tryptic peptides. Unipept will return the functional EC-numbers associated with each of the <code>input[]</code> peptides based on their occurence in UniProt entries. To pass multiple peptides at once, simply add multiple <code>input[]</code> parameters (see <a href="#apidocs-example-multiple">example</a>).
+          <code>input[]</code> is a required parameter that takes one or more tryptic peptides. Unipept will return the functional EC-numbers associated with each of the <code>input[]</code> peptides based on their occurrence in UniProt entries. To pass multiple peptides at once, simply add multiple <code>input[]</code> parameters (see <a href="#apidocs-example-multiple">example</a>).
         </p>
         <div class="apidocs-callout apidocs-callout-warning">
           <h4>Input size</h4>
@@ -194,7 +194,7 @@
                example_id: "apidocs-example-extra",
                title: "Retrieve the functional ec-numbers associated with a single tryptic peptide, with extra information enabled",
                explanation: "<p>This example retrieves the functional ec-numbers associated with the tryptic peptide <i class='initialism'>AAAAA</i> including the name of each ec-number. The result is the same as " + link_to("this search", sequence_path("AAAAA")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
-               post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2lca \\
+               post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2ec \\
 -d <span class='s1'>'input[]=AAAAA'</span> \\
 -d <span class='s1'>'extra=true'</span>",
                get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/pept2ec.json?input[]=AAAAA&extra=true' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/pept2ec.json?input[]=AAAAA&amp;extra=true</a>",

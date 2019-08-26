@@ -423,7 +423,7 @@ class Api::ApiController < ApplicationController
           total: fa['num']['all'],
           ipr: iprs.map do |k, v|
             {
-                interpro_code: k[4..-1],
+                code: k[4..-1],
                 protein_count: v
             }
           end
@@ -443,8 +443,8 @@ class Api::ApiController < ApplicationController
 
       output.each do |_k, v|
         v[:ipr].each do |value|
-          value[:name] = ipr_mapping[value[:interpro_code]][:name]
-          value[:type] = ipr_mapping[value[:interpro_code]][:type]
+          value[:name] = ipr_mapping[value[:code]][:name]
+          value[:type] = ipr_mapping[value[:code]][:type]
         end
       end
     end
