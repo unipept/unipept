@@ -3,11 +3,11 @@
     <div class='page-header'>
       <h1 class='api-title'><span class="initialism">POST</span> /api/v1/pept2funct
         <br>
-        <small>Returns both the functional EC-numbers and GO-terms associated with a given tryptic peptide.</small>
+        <small>Returns the functional EC-numbers, GO-terms and InterPro entries associated with a given tryptic peptide.</small>
       </h1>
     </div>
     <p>
-      This method returns the functional EC-numbers and GO-terms associated with a given tryptic peptide. This is the same information as provided when performing a search with the <%= link_to("Tryptic Peptide Analysis", search_single_path) %> in the web interface.
+      This method returns the functional EC-numbers, GO-terms and InterPro entries associated with a given tryptic peptide. This is the same information as provided when performing a search with the <%= link_to("Tryptic Peptide Analysis", search_single_path) %> in the web interface.
     </p>
     <div class='card'>
       <div class='card-title card-title-colored'>
@@ -19,7 +19,7 @@
         </p>
         <h3>input</h3>
         <p>
-          <code>input[]</code> is a required parameter that takes one or more tryptic peptides. Unipept will return the functional EC-numbers and GO-terms associated with each of the <code>input[]</code> peptides based on their occurrence in UniProt entries. To pass multiple peptides at once, simply add multiple <code>input[]</code> parameters (see <a href="#apidocs-example-multiple">example</a>).
+          <code>input[]</code> is a required parameter that takes one or more tryptic peptides. Unipept will return the functional EC-numbers, GO-terms and InterPro entries associated with each of the <code>input[]</code> peptides based on their occurrence in UniProt entries. To pass multiple peptides at once, simply add multiple <code>input[]</code> parameters (see <a href="#apidocs-example-multiple">example</a>).
         </p>
         <div class="apidocs-callout apidocs-callout-warning">
           <h4>Input size</h4>
@@ -31,7 +31,7 @@
         </p>
         <h3>extra</h3>
         <p>
-          <code>extra</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, Unipept will also return the name associated with a GO-term and an EC-number. See the <a href="#response">response</a> section for an overview of the information fields returned.
+          <code>extra</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, Unipept will also return the name associated with a GO-term and an EC-number and the name and type associated with an InterPro entry. See the <a href="#response">response</a> section for an overview of the information fields returned.
         </p>
         <h3>split</h3>
         <p>
@@ -66,6 +66,14 @@
               <li><code>go_term</code>: The GO-term associated with the current tryptic peptide.</li>
               <li><code>protein_count</code>: The amount of proteins matched with the given tryptic peptide that are labeled with the current GO-term.</li>
               <li><code>name</code>: Optional, name of the GO-term. Included when the <code>extra</code> parameter is set to <code>true</code>.</li>
+            </ul>
+          </li>
+          <li><code>ipr</code>: A list of <span class="initialism">JSON</span> objects that each represent an InterPro entry associated with the current tryptic peptide.
+            <ul>
+              <li><code>code</code>: InterPro entry code associated with the current tryptic peptide.</li>
+              <li><code>protein_count</code>: amount of proteins matched with the given tryptic peptide that are labeled with the current InterPro code.</li>
+              <li><code>name</code>: Optional, name of the InterPro entry. Included when the <code>extra</code> parameter is set to <code>true</code>.</li>
+              <li><code>type</code>: Optional, type of the InterPro entry. Included when the <code>extra</code> parameter is set to <code>true</code>.</li>
             </ul>
           </li>
         </ul>
@@ -113,8 +121,8 @@
     <h2 id="examples">Examples</h2>
     <%= render 'example',
                example_id: "apidocs-example-single",
-               title: "Retrieve the functional ec-numbers and go-terms associated with a given tryptic peptide",
-               explanation: "<p>This example retrieves all functional ec-numbers and go-terms associated with the tryptic peptide <i class='initialism'>AAAAA</i>. The result is the same as " + link_to('this search', sequence_path('AAAAA')) + " with the Tryptic Peptide Analysis in the web interface.</p>",
+               title: "Retrieve the functional ec-numbers, go-terms and InterPro entries associated with a given tryptic peptide",
+               explanation: "<p>This example retrieves all functional ec-numbers, go-terms and InterPro entries associated with the tryptic peptide <i class='initialism'>AAAAA</i>. The result is the same as " + link_to('this search', sequence_path('AAAAA')) + " with the Tryptic Peptide Analysis in the web interface.</p>",
                post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2funct \\
 -d <span class='s1'>'input[]=AAAAA'</span>",
                get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/pept2funct.json?input[]=AAAAA' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/pept2funct.json?input[]=AAAAA</a>",
@@ -225,14 +233,76 @@
                 <span class='nt'>'go_term'</span><span class='p'>:</span> <span class='s2'>'GO:0033201'</span><span class='p'>,</span>
                 <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
             <span class='p'>}</span>
+        <span class='p'>],</span>
+        <span class='nt'>'ipr'</span><span class='p'>:</span> <span class='p'>[</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR020867'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span>
+            <span class='p'>},</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR036291'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span>
+            <span class='p'>},</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR020630'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR020631'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR000672'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR007634'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR038709'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR001296'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR000394'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR003181'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR013534'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR029053'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR007046'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR011835'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR003182'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
         <span class='p'>]</span>
     <span class='p'>}</span>
 <span class='p'>]</span>"
     %>
     <%= render 'example',
                example_id: "apidocs-example-multiple",
-               title: "Retrieve the functional ec-numbers and go-terms associated with each of multiple tryptic peptides",
-               explanation: "<p>This example retrieves the functional ec-numbers and go-terms for both the tryptic peptides <i class='initialism'>AAAAA</i> and <i class='initialism'>AAAYGMR</i>. The result is the same as the combination of " + link_to("this search", sequence_path("AAAAA")) + " and " + link_to("this search", sequence_path("AAAYGMR")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
+               title: "Retrieve the functional ec-numbers, go-terms and InterPro entries associated with each of multiple tryptic peptides",
+               explanation: "<p>This example retrieves the functional ec-numbers, go-terms and InterPro entries for both the tryptic peptides <i class='initialism'>AAAAA</i> and <i class='initialism'>AAAYGMR</i>. The result is the same as the combination of " + link_to("this search", sequence_path("AAAAA")) + " and " + link_to("this search", sequence_path("AAAYGMR")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
                post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2funct \\
 -d <span class='s1'>'input[]=AAAAA'</span> \\
 -d <span class='s1'>'input[]=AAAYGMR'</span>",
@@ -344,6 +414,68 @@
                 <span class='nt'>'go_term'</span><span class='p'>:</span> <span class='s2'>'GO:0033201'</span><span class='p'>,</span>
                 <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
             <span class='p'>}</span>
+        <span class='p'>],</span>
+        <span class='nt'>'ipr'</span><span class='p'>:</span> <span class='p'>[</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR020867'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span>
+            <span class='p'>},</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR036291'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span>
+            <span class='p'>},</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR020630'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR020631'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR000672'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR007634'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR038709'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR001296'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR000394'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR003181'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR013534'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR029053'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR007046'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR011835'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR003182'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
         <span class='p'>]</span>
     <span class='p'>},</span>
     <span class='p'>{</span>
@@ -388,14 +520,64 @@
                 <span class='nt'>'go_term'</span><span class='p'>:</span> <span class='s2'>'GO:0009039'</span><span class='p'>,</span>
                 <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
             <span class='p'>}</span>
+        <span class='p'>],</span>
+        <span class='nt'>'ipr'</span><span class='p'>:</span> <span class='p'>[</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR027417'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR000185'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR011130'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR036670'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR036463'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR036461'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR011115'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR008223'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR002019'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR002026'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR014018'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR020937'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
         <span class='p'>]</span>
     <span class='p'>}</span>
 <span class='p'>]</span>"
     %>
     <%= render 'example',
                example_id: "apidocs-example-equate_il",
-               title: "Retrieve the functional ec-numbers and go-terms associated with a single tryptic peptide, while equating I and L",
-               explanation: "<p>This example retrieves the functional ec-numbers and go-terms associated with the tryptic peptide <i class='initialism'>AAAAA</i>. In searching, isoleucine (I) and leucinge (L) are considered equal. The result is the same as " + link_to("this search", sequence_path("AAAAA") + "/equate_il") + " with the Tryptic Peptide Analysis in the web interface.</p>",
+               title: "Retrieve the functional ec-numbers, go-terms and InterPro entries associated with a single tryptic peptide, while equating I and L",
+               explanation: "<p>This example retrieves the functional ec-numbers, go-terms and InterPro entries associated with the tryptic peptide <i class='initialism'>AAAAA</i>. In searching, isoleucine (I) and leucinge (L) are considered equal. The result is the same as " + link_to("this search", sequence_path("AAAAA") + "/equate_il") + " with the Tryptic Peptide Analysis in the web interface.</p>",
                post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2funct \\
 -d <span class='s1'>'input[]=AAAAA'</span> \\
 -d <span class='s1'>'equate_il=true'</span>",
@@ -507,14 +689,76 @@
                 <span class='nt'>'go_term'</span><span class='p'>:</span> <span class='s2'>'GO:0033201'</span><span class='p'>,</span>
                 <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
             <span class='p'>}</span>
+        <span class='p'>],</span>
+        <span class='nt'>'ipr'</span><span class='p'>:</span> <span class='p'>[</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR020867'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span>
+            <span class='p'>},</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR036291'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span>
+            <span class='p'>},</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR020630'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR020631'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR000672'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR007634'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR038709'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR001296'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR000394'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR003181'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR013534'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR029053'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR007046'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR011835'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR003182'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
         <span class='p'>]</span>
     <span class='p'>}</span>
 <span class='p'>]</span>"
     %>
     <%= render 'example',
                example_id: "apidocs-example-extra",
-               title: "Retrieve the functional ec-numbers and go-terms associated with a single tryptic peptide, with extra information enabled",
-               explanation: "<p>This example retrieves the functional ec-numbers and go-terms associated with the tryptic peptide <i class='initialism'>AAAAA</i> including the name of each ec-number and go-term. The result is the same as " + link_to("this search", sequence_path("AAAAA")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
+               title: "Retrieve the functional ec-numbers, go-terms and InterPro entries associated with a single tryptic peptide, with extra information enabled",
+               explanation: "<p>This example retrieves the functional ec-numbers, go-terms and InterPro entries associated with the tryptic peptide <i class='initialism'>AAAAA</i> including the name of each ec-number and go-term and the name and type of each InterPro entry. The result is the same as " + link_to("this search", sequence_path("AAAAA")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
                post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2funct \\
 -d <span class='s1'>'input[]=AAAAA'</span> \\
 -d <span class='s1'>'extra=true'</span>",
@@ -651,14 +895,106 @@
                 <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span><span class='p'>,</span>
                 <span class='nt'>'name'</span><span class='p'>:</span> <span class='s2'>'alpha-1,4-glucan synthase activity'</span>
             <span class='p'>}</span>
+        <span class='p'>],</span>
+        <span class='nt'>'ipr'</span><span class='p'>:</span> <span class='p'>[</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR020867'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span><span class='p'>,</span>
+                <span class='nt'>'name'</span><span class='p'>:</span> <span class='s2'>'Tetrahydrofolate dehydrogenase/cyclohydrolase, conserved site'</span><span class='p'>,</span>
+                <span class='nt'>'type'</span><span class='p'>:</span> <span class='s2'>'Conserved_site'</span>
+            <span class='p'>},</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR036291'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>: </span> <span class='mi'>14</span><span class='p'>,</span>
+                <span class='nt'>'name'</span><span class='p'>:</span> <span class='s2'>'NAD(P)-binding domain superfamily'</span><span class='p'>,</span>
+                <span class='nt'>'type'</span><span class='p'>:</span> <span class='s2'>'Homologous_superfamily'</span>
+            <span class='p'>},</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR020630'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span><span class='p'>,</span>
+                <span class='nt'>'name'</span><span class='p'>:</span> <span class='s2'>'Tetrahydrofolate dehydrogenase/cyclohydrolase, conserved site'</span><span class='p'>,</span>
+                <span class='nt'>'type'</span><span class='p'>:</span> <span class='s2'>'Conserved_site'</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR020631'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span><span class='p'>,</span>
+                <span class='nt'>'name'</span><span class='p'>:</span> <span class='s2'>'Tetrahydrofolate dehydrogenase/cyclohydrolase, NAD(P)-binding domain'</span><span class='p'>,</span>
+                <span class='nt'>'type'</span><span class='p'>:</span> <span class='s2'>'Domain'</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR000672'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span><span class='p'>,</span>
+                <span class='nt'>'name'</span><span class='p'>:</span> <span class='s2'>'Tetrahydrofolate dehydrogenase/cyclohydrolase'</span><span class='p'>,</span>
+                <span class='nt'>'type'</span><span class='p'>:</span> <span class='s2'>'Family'</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR007634'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+                <span class='nt'>'name'</span><span class='p'>:</span> <span class='s2'>'RNA polymerase sigma factor 54, DNA-binding'</span><span class='p'>,</span>
+                <span class='nt'>'type'</span><span class='p'>:</span> <span class='s2'>'Domain'</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR038709'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+                <span class='nt'>'name'</span><span class='p'>:</span> <span class='s2'>'RNA polymerase sigma-54 factor, core-binding domain superfamily'</span><span class='p'>,</span>
+                <span class='nt'>'type'</span><span class='p'>:</span> <span class='s2'>'Homologous_superfamily'</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR001296'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+                <span class='nt'>'name'</span><span class='p'>:</span> <span class='s2'>'Glycosyl transferase, family 1'</span><span class='p'>,</span>
+                <span class='nt'>'type'</span><span class='p'>:</span> <span class='s2'>'Domain'</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR000394'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+                <span class='nt'>'name'</span><span class='p'>:</span> <span class='s2'>'RNA polymerase sigma factor 54'</span><span class='p'>,</span>
+                <span class='nt'>'type'</span><span class='p'>:</span> <span class='s2'>'Family'</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR003181'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+                <span class='nt'>'name'</span><span class='p'>:</span> <span class='s2'>'Large coat protein'</span><span class='p'>,</span>
+                <span class='nt'>'type'</span><span class='p'>:</span> <span class='s2'>'Family'</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR013534'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+                <span class='nt'>'name'</span><span class='p'>:</span> <span class='s2'>'Starch synthase, catalytic domain'</span><span class='p'>,</span>
+                <span class='nt'>'type'</span><span class='p'>:</span> <span class='s2'>'Domain'</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR029053'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+                <span class='nt'>'name'</span><span class='p'>:</span> <span class='s2'>'Viral coat protein subunit'</span><span class='p'>,</span>
+                <span class='nt'>'type'</span><span class='p'>:</span> <span class='s2'>'Homologous_superfamily'</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR007046'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+                <span class='nt'>'name'</span><span class='p'>:</span> <span class='s2'>'RNA polymerase sigma factor 54, core-binding domain'</span><span class='p'>,</span>
+                <span class='nt'>'type'</span><span class='p'>:</span> <span class='s2'>'Domain'</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR011835'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+                <span class='nt'>'name'</span><span class='p'>:</span> <span class='s2'>'Bacterial/plant glycogen synthase'</span><span class='p'>,</span>
+                <span class='nt'>'type'</span><span class='p'>:</span> <span class='s2'>'Family'</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR003182'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span><span class='p'>,</span>
+                <span class='nt'>'name'</span><span class='p'>:</span> <span class='s2'>'RNA2 polyprotein'</span><span class='p'>,</span>
+                <span class='nt'>'type'</span><span class='p'>:</span> <span class='s2'>'Family'</span>
+            <span class='p'>}</span>
         <span class='p'>]</span>
     <span class='p'>}</span>
 <span class='p'>]</span>"
     %>
     <%= render 'example',
                example_id: "apidocs-example-domains",
-               title: "Retrieve the functional ec-numbers and go-terms associated with a single tryptic peptide, making a distinction between different go-domains",
-               explanation: "<p>This example retrieves the functional ec-numbers and go-terms associated with the tryptic peptide <i class='initialism'>AAAAA</i> distributed over the distinct go-domains. The result is the same as " + link_to("this search", sequence_path("AAAAA")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
+               title: "Retrieve the functional ec-numbers, go-terms and InterPro entries associated with a single tryptic peptide, making a distinction between different go-domains",
+               explanation: "<p>This example retrieves the functional ec-numbers, go-terms and InterPro entries associated with the tryptic peptide <i class='initialism'>AAAAA</i> distributed over the distinct go-domains. The result is the same as " + link_to("this search", sequence_path("AAAAA")) + " with the Tryptic Peptide Analysis in the web interface.</p>",
                post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/pept2funct \\
 -d <span class='s1'>'input[]=AAAAA'</span> \\
 -d <span class='s1'>'domains=true'</span>",
@@ -781,6 +1117,68 @@
                         <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
                     <span class='p'>}</span>
                 <span class='p'>]</span>
+            <span class='p'>}</span>
+        <span class='p'>],</span>
+        <span class='nt'>'ipr'</span><span class='p'>:</span> <span class='p'>[</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR020867'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span>
+            <span class='p'>},</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR036291'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span>
+            <span class='p'>},</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR020630'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR020631'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR000672'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>14</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR007634'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR038709'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR001296'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR000394'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR003181'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR013534'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR029053'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR007046'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR011835'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
+            <span class='p'>}</span>
+            <span class='p'>{</span>
+                <span class='nt'>'code'</span><span class='p'>:</span> <span class='s2'>'IPR003182'</span><span class='p'>,</span>
+                <span class='nt'>'protein_count'</span><span class='p'>:</span> <span class='mi'>1</span>
             <span class='p'>}</span>
         <span class='p'>]</span>
     <span class='p'>}</span>
