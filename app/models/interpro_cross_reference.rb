@@ -11,5 +11,5 @@ class InterproCrossReference < ApplicationRecord
   include ReadOnlyModel
 
   belongs_to :uniprot_entry
-  belongs_to :interpro_entry, foreign_key: 'interpro_code', primary_key: 'code', class_name: 'InterproEntry'
+  belongs_to :interpro_entry, foreign_key: 'interpro_entry_code', primary_key: 'code', class_name: 'InterproEntry'
 end

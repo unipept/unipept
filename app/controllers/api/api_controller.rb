@@ -1,12 +1,12 @@
 class Api::ApiController < ApplicationController
   respond_to :json
 
-  before_action :set_headers, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go peptinfo taxa2lca taxonomy]
-  before_action :set_params, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go peptinfo taxa2lca taxonomy]
+  before_action :set_headers, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go pept2interpro peptinfo taxa2lca taxonomy]
+  before_action :set_params, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go pept2interpro peptinfo taxa2lca taxonomy]
   before_action :set_query, only: %i[pept2taxa pept2lca peptinfo taxonomy]
   before_action :set_sequences, only: %i[pept2taxa pept2prot]
 
-  before_action :log, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go peptinfo taxa2lca taxonomy]
+  before_action :log, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go pept2interpro peptinfo taxa2lca taxonomy]
 
   # sends a message to the ruby cli
   def messages
@@ -103,16 +103,20 @@ class Api::ApiController < ApplicationController
 
     ec_result = pept2ec_helper
     go_result = pept2go_helper
+    interpro_result = pept2interpro_helper
 
     @input_order.each do |seq|
       seq_index = @equate_il ? seq.tr('I', 'L') : seq
 
       next unless go_result.key? seq_index
 
+      puts interpro_result[seq_index][:ipr]
+
       @result[seq_index] = {
         total: go_result[seq_index][:total],
         go: go_result[seq_index][:go],
-        ec: ec_result[seq_index][:ec]
+        ec: ec_result[seq_index][:ec],
+        ipr: interpro_result[seq_index][:ipr]
       }
     end
 
@@ -130,6 +134,7 @@ class Api::ApiController < ApplicationController
     lca_result = pept2lca_helper
     ec_result = pept2ec_helper
     go_result = pept2go_helper
+    interpro_result = pept2interpro_helper
 
     @input_order.each do |seq|
       seq_index = @equate_il ? seq.tr('I', 'L') : seq
@@ -140,6 +145,7 @@ class Api::ApiController < ApplicationController
         total: go_result[seq_index][:total],
         go: go_result[seq_index][:go],
         ec: ec_result[seq_index][:ec],
+        ipr: interpro_result[seq_index][:ipr],
         lca: lca_result[seq_index]
       }
     end
@@ -163,6 +169,15 @@ class Api::ApiController < ApplicationController
   # param[split]: "true" or "false", optional, Should GO_terms be split according to namespace?
   def pept2go
     @result = pept2go_helper
+    respond_with(@result)
+  end
+
+  # Returns the functional interpro entries for given tryptic peptides
+  # param[input]: Array, required, List of input peptides
+  # param[equate_il]: "true" of "false", Indicate if you want to equate I and L
+  # param[extra]: "true" or "false", optional, Output extra info?
+  def pept2interpro
+    @result = pept2interpro_helper
     respond_with(@result)
   end
 
@@ -387,6 +402,49 @@ class Api::ApiController < ApplicationController
           v[:go].each do |value|
             value[:name] = go_mapping[value[:go_term]].name
           end
+        end
+      end
+    end
+
+    output
+  end
+
+  def pept2interpro_helper
+    output = {}
+    ipr_entries = []
+
+    @sequences = Sequence.where(sequence: @input)
+
+    @sequences.each do |seq|
+      fa = seq.calculate_fa(@equate_il)
+      iprs = fa['data'].select { |k, _v| k.start_with?('IPR:') }
+
+      output[seq.sequence] = {
+          total: fa['num']['all'],
+          ipr: iprs.map do |k, v|
+            {
+                interpro_code: k[4..-1],
+                protein_count: v
+            }
+          end
+      }
+
+      ipr_entries.push *(iprs.map { |k, _v| k[4..-1] })
+    end
+
+    if @extra_info
+      ipr_entries = ipr_entries.uniq.compact.sort
+
+      ipr_mapping = {}
+
+      InterproEntry.where(code: ipr_entries).each do |ipr_entry|
+        ipr_mapping[ipr_entry.code] = {name: ipr_entry.name, type: ipr_entry.category}
+      end
+
+      output.each do |_k, v|
+        v[:ipr].each do |value|
+          value[:name] = ipr_mapping[value[:interpro_code]][:name]
+          value[:type] = ipr_mapping[value[:interpro_code]][:type]
         end
       end
     end
