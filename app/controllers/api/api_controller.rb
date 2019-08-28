@@ -25,7 +25,6 @@ class Api::ApiController < ApplicationController
   # params[:extra]: "true" or "false" (default), optional, Output extra info?
   def pept2prot
     lookup = Hash.new { |h, k| h[k] = Set.new }
-
     if @extra_info
       @result = {}
       # Perform joins and load objects (expensive)

@@ -124,7 +124,7 @@ function constructSearchtree(t, il, rerootCallback = x => {}) {
     /**
     * Loads the peptides corresponding with the clicked node and moves the
     * info div to the corresponding position
-    *      *
+    *
      * @return {false} prevent default
      */
     function clickAction() {

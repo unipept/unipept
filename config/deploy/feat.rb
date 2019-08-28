@@ -5,7 +5,7 @@ server 'morty.ugent.be', user: 'unipept', roles: %i[web app], ssh_options: {
   port: 4840
 }
 
-set :branch, 'develop'
+set :branch, 'feature/heatmap'
 set :rails_env, :development
 
 namespace :deploy do

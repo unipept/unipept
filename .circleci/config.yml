@@ -26,6 +26,9 @@ commands:
             - unipept-bundle-{{ checksum "Gemfile.lock" }}
             - unipept-bundle-
       - run:
+          name: Install bundler
+          command: gem install bundler:2.0.2
+      - run:
           name: Bundle install
           command: bundle check || bundle install
       - save_cache:
@@ -43,6 +46,7 @@ commands:
           key: unipept-yarn-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache/yarn
+      
 jobs:
   test_ruby:
     docker:

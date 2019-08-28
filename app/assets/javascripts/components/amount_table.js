@@ -54,7 +54,7 @@ const DEFAULTS = {
  *           (html is preferred over text in when rendering a table, text is
  *           preferred when exporting to csv)
  * @property {boolean} [exported=true]
- *           if this collumn should be included in CSV export
+ *           if this column should be included in CSV export
  * @property {function(any): number} [shade=false]
  *           Function that calculates the amount the shader is filled for cells
  *           in this column. Should be in [0,100]

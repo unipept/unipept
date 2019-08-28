@@ -31,7 +31,7 @@ interface FATrustInfo {
     totalTrust?: number,
     annotatedTrust?:number,
     annotaionAmount?: number
-} 
+}
 
 interface FAServerInfo {
     data: FAInfo[],
@@ -46,19 +46,12 @@ interface FAInfo {
     code: string,
     value : number,
     name: string
-} 
+}
 
 interface TaxonInfo {
     id: number,
     name: string,
     rank: string,
-}
-
-interface PeptideInfo {
-    sequence: string, // The peptide sequence
-    count: number,    // The number of times the peptide occurs
-    lca: number,      // The taxon id of the lca
-    lineage: number[] // The lineage of the lca
 }
 
 interface PeptideMPAInfo {

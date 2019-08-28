@@ -6,7 +6,7 @@
     overflow: visible;
 }
 .card-supporting-text.multi-results {
-    padding: 0px;
+    padding: 0;
 }
 .multi-search .buttons-single {
     margin-right: 16px;
@@ -42,8 +42,8 @@ span.dir.text {
     margin-top: 5px;
 }
 
-.mpa-waiting{ 
-    
+.mpa-waiting{
+
     position: relative;
     margin: 18px 0 0 0;
 
@@ -88,6 +88,7 @@ span.dir.text {
 // sunburst
 .full-screen .unipept-sunburst {
     width: 100%;
+    max-height: calc(100% - 59px);
 }
 .unipept-sunburst {
     background-color: white;
@@ -128,6 +129,11 @@ span.dir.text {
 
 .full-screen-container.full-screen {
     background-color: white;
+}
+
+.heatmap svg {
+    display: block;
+    margin: auto;
 }
 
 /* lineage tree */
@@ -179,7 +185,7 @@ span.dir.text {
 }
 
 
-#goPanel {
+.go {
     >.row {
         padding-bottom: 16px;
 
@@ -189,7 +195,7 @@ span.dir.text {
     }
 }
 
-#goPanel, #ecTable {
+.go, #ecTable {
     padding: 0 16px;
 }
 
@@ -267,4 +273,103 @@ span.dir.text {
     :disabled {
         display: none;
     }
+}
+
+#add-dataset-triangle {
+    width: 0;
+    height: 0;
+    border-top: 30px solid transparent;
+    border-bottom: 30px solid transparent;
+    border-right: 30px solid #2196F3;
+    position: absolute;
+    left: 937px;
+    top: 173px;
+    z-index: 10;
+}
+
+.application--wrap {
+    min-height: 0 !important;
+}
+
+.equal-height-row .card {
+    height: 100%;
+}
+
+.equal-height-row .card .card-title-colored {
+    min-height: 61px;
+}
+
+#dataset-list-container {
+    height: 100%;
+}
+
+#dataset_list {
+    max-height: 655px;
+    overflow: auto;
+}
+
+#visualizations-card {
+    margin-top: 10px;
+}
+
+#switch-dataset-card-body {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+#load-datasets-card .card-supporting-text {
+    max-height: 655px;
+    overflow-y: auto;
+}
+
+#analysis-add-dataset-card .card-supporting-text {
+    max-height: 655px;
+    overflow-y: auto;
+}
+
+.heatmap-wizard .v-stepper__wrapper {
+    min-height: 570px;
+}
+
+.wizard-action {
+    position: absolute;
+    bottom: 16px;
+    right: 24px;
+}
+
+// Hack to center the labels for checkboxes in the heatmap
+.reorder-heatmap-buttons label {
+    position: relative;
+    top: 3px !important;
+}
+
+.tip {
+    z-index: 10000 !important;
+}
+
+.single-dataset-wizard .v-stepper {
+    box-shadow: none !important;
+}
+
+.single-dataset-wizard .v-stepper__header {
+    box-shadow: none !important;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.single-dataset-wizard .v-stepper_wrapper {
+    box-shadow: none !important;
+}
+
+// TODO Fix underlining in selects
+.v-list__tile:hover {
+    text-decoration: none !important;
+}
+
+.single-dataset-wizard .v-input--radio-group--column .v-radio:not(:last-child):not(:only-child)  {
+    margin-bottom: 0 !important;
+}
+
+.v-input--checkbox label {
+    font-weight: 400 !important;
+    color: black !important;
 }

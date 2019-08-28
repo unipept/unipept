@@ -30,9 +30,11 @@ coverage/
 /public/packs
 /public/packs-test
 /node_modules
+.vscode/*
 
 /storage/*
 !/storage/.keep
 /public/assets
 
 .devcontainer/unipept-db/data/*
+.vscode/*

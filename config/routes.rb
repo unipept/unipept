@@ -21,6 +21,11 @@ UnipeptWeb::Application.routes.draw do
     end
   end
 
+  scope :datasets, as: 'datasets' do
+    match "sampledata", via: [:post], :to => "datasets#sampledata"
+  end
+
+
   # General inforamtion
   scope :private_api, as: 'private_api' do
     match "goterms", via: [:get, :post], :to => "private_api#goterms"
