@@ -33,13 +33,13 @@
         <p>
           <code>extra</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, Unipept will also return the name associated with a GO-term. See the <a href="#response">response</a> section for an overview of the information fields returned.
         </p>
-        <h3>split</h3>
+        <h3>domains</h3>
         <p>
-          <code>split</code> is an optional parameter that can be used to order the GO-terms in groups according to their namespace (cellular component, molecular function, biological process).
+          <code>domains</code> is an optional parameter that can be used to order the GO-terms in groups according to their namespace (cellular component, molecular function, biological process).
         </p>
         <div class="apidocs-callout apidocs-callout-warning">
           <h4>Performance penalty</h4>
-          <p>Setting <code>extra</code> or <code>split</code> to <code>true</code> has a performance penalty inferred from additional database queries. Do not use this parameter unless the extra information fields are needed.</p>
+          <p>Setting <code>extra</code> or <code>domains</code> to <code>true</code> has a performance penalty inferred from additional database queries. Do not use this parameter unless the extra information fields are needed.</p>
         </div>
       </div>
     </div>
@@ -62,7 +62,7 @@
             </ul>
           </li>
         </ul>
-        <p>When the <code>split</code> parameter is set to <code>true</code>, objects are placed in a group corresponding to their namespace and the objects are nested in an additional object. See the examples for more information on how to use this.</p>
+        <p>When the <code>domains</code> parameter is set to <code>true</code>, objects are placed in a group corresponding to their namespace and the objects are nested in an additional object. See the examples for more information on how to use this.</p>
       </div>
     </div>
     <div class='card'>
@@ -93,7 +93,7 @@
                 value: "Must be <code>true</code> or <code>false</code> (default)"
             },
             {
-                name: "split",
+                name: "domains",
                 required: false,
                 optional: true,
                 description: "Separates GO-namespaces and places objects in group associated with current namespace when <code>true</code>.",
