@@ -38,9 +38,13 @@
             dataset.setPeptides(this.peptides.split(/\\n/));
             dataset.setDate(new Date());
             dataset.setType(StorageType.SessionStorage);
-            dataset.getPeptides().then((peptides) => {
-                console.log(peptides);
+
+            this.$store.dispatch('setSearchSettings', {
+                il: this.il,
+                dupes: this.dupes,
+                missed: this.missed
             })
+
             dataset.store().then(() => {
                 this.$store.dispatch('selectDataset', dataset);
                 this.$store.dispatch('setAnalysis', true);
