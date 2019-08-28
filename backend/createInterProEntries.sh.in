@@ -8,7 +8,6 @@ entries="http://ftp.ebi.ac.uk/pub/databases/interpro/entry.list"
 
 lines="$(wget -q "$entries" -O -                               \
        | grep "^IPR"                                           \
-       | sort                                                  \
-       | nl -s "	"                                         \
+       | nl -s "	"                                            \
        | tee >(cat >&3)                                        \
        )"

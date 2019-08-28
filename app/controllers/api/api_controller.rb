@@ -97,7 +97,7 @@ class Api::ApiController < ApplicationController
   # param[input]: Array, required, List of input peptides
   # param[equate_il]: "true" or "false", Indicate if you want to equate I and L
   # param[extra]: "true" or "false", optional, Output extra info?
-  # param[split]: "true" or "false", optional, Should GO_terms be split according to namespace?
+  # param[domains]: "true" or "false", optional, Should GO_terms be split according to namespace?
   def pept2funct
     @result = {}
 
@@ -109,8 +109,6 @@ class Api::ApiController < ApplicationController
       seq_index = @equate_il ? seq.tr('I', 'L') : seq
 
       next unless go_result.key? seq_index
-
-      puts interpro_result[seq_index][:ipr]
 
       @result[seq_index] = {
         total: go_result[seq_index][:total],
@@ -127,7 +125,7 @@ class Api::ApiController < ApplicationController
   # param[input]: Array, required, List of input peptides
   # param[equate_il]: "true" or "false", Indicate if you want to equate I and L
   # param[extra]: "true" or "false", optional, Output extra info?
-  # param[split]: "true" or "false", optional, Should GO_terms be split according to namespace?
+  # param[domains]: "true" or "false", optional, Should GO_terms be split according to namespace?
   def peptinfo
     @result = {}
 
@@ -166,7 +164,7 @@ class Api::ApiController < ApplicationController
   # param[input]: Array, required, List of input peptides
   # param[equate_il]: "true" of "false", Indicate if you want to equate I and L
   # param[extra]: "true" or "false", optional, Output extra info?
-  # param[split]: "true" or "false", optional, Should GO_terms be split according to namespace?
+  # param[domains]: "true" or "false", optional, Should GO_terms be split according to namespace?
   def pept2go
     @result = pept2go_helper
     respond_with(@result)
@@ -176,6 +174,7 @@ class Api::ApiController < ApplicationController
   # param[input]: Array, required, List of input peptides
   # param[equate_il]: "true" of "false", Indicate if you want to equate I and L
   # param[extra]: "true" or "false", optional, Output extra info?
+  # param[domains]: "true" or "false", optional, Should InterPro entries be split according to type?
   def pept2interpro
     @result = pept2interpro_helper
     respond_with(@result)
@@ -432,19 +431,42 @@ class Api::ApiController < ApplicationController
       ipr_entries.push *(iprs.map { |k, _v| k[4..-1] })
     end
 
-    if @extra_info
+    if @extra_info || @domains
       ipr_entries = ipr_entries.uniq.compact.sort
-
       ipr_mapping = {}
 
       InterproEntry.where(code: ipr_entries).each do |ipr_entry|
-        ipr_mapping[ipr_entry.code] = {name: ipr_entry.name, type: ipr_entry.category}
+        ipr_mapping[ipr_entry.code] = ipr_entry
       end
 
-      output.each do |_k, v|
-        v[:ipr].each do |value|
-          value[:name] = ipr_mapping[value[:code]][:name]
-          value[:type] = ipr_mapping[value[:code]][:type]
+      set_info = if @extra_info
+                   ->(value) {
+                     value[:name] = ipr_mapping[value[:code]].name
+                     value[:type] = ipr_mapping[value[:code]].category
+                   }
+                 else
+                   # Do nothing
+                   ->(_value) {}
+                 end
+
+      if @domains
+        # We have to transform the input so that the different InterPro entries are split per type
+        output.each do |_k, v|
+          splitted = Hash.new { |h, k1| h[k1] = [] }
+
+          v[:ipr].each do |value|
+            ipr_entry = ipr_mapping[value[:code]]
+            set_info[value]
+            splitted[ipr_entry.category] << value
+          end
+
+          v[:ipr] = splitted
+        end
+      else
+        output.map do |_k, v|
+          v[:ipr].each do |value|
+            set_info[value]
+          end
         end
       end
     end
