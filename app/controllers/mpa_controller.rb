@@ -5,8 +5,11 @@ class MpaController < ApplicationController
   def analyze
     @header_class = 'MPA'
     @title = 'Metaproteomics analysis result'
-    @selected_datasets = params[:data]
-    @datasets = Dataset.includes(:dataset_items).all
+    @peptides = (params[:qs] || '')
+    @name = params[:search_name]
+    @il = params[:il].present?
+    @dupes = params[:dupes].present?
+    @missed = params[:missed].present?
   end
 
   def pept2data

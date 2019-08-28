@@ -1,0 +1,14 @@
+<% content_for :javascripts do %>
+  <%= javascript_pack_tag 'd3' %>
+  <%= javascript_pack_tag 'mpa_app' %>
+<% end %>
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_pack_tag 'mpa_app' %>
+<% end %>
+
+<div id="mpa-app">
+  <mpa peptides="<%= @peptides %>" il="<%= @il %>" dupes="<%= @dupes %>" missed="<%= @missed %>" search-name="<%= @name %>" ></mpa>
+</div>
+
+
