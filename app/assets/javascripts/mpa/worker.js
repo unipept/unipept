@@ -1,24 +1,26 @@
 import "babel-polyfill"; // for async await webpacker support
 import "whatwg-fetch";
 // TODO: also include other pollyfills?
-import GOTerms from "../fa/goterms.js";
+import GOTerms from "../fa/old-goterms";
 import ECNumbers from "../fa/ecnumbers.js";
 import {postJSON, numberToPercent} from "../utils.js";
+import NewGoTerms from "../fa/NewGoTerms";
 
 const BATCH_SIZE = 100;
 const PEPT2DATA_URL = "/mpa/pept2data";
 
 /**
- * Worker global conaining processed peptides
- * Keeping this here gives a huge perforamce boost
+ * Worker global containing processed peptides
+ * Keeping this here gives a huge performance boost
  * @type {Map<string, any>}
  */
 let processedPeptides = new Map();
+let preparedPeptidesLength = 0;
 
 
 /**
  * @typedef {Object} MPAPeptide
- * @property {Map}      processed   A map form pepides to information about them
+ * @property {Map}      processed   A map form peptides to information about them
  * @property {string[]} missed      The list of peptides that could not be matched
  * @property {number}   numMatched  Number of peptides that were matched
  * @property {number}   numSearched Number of peptides that were matched
@@ -27,7 +29,7 @@ let processedPeptides = new Map();
 
 /**
  * @typedef {Object} MPAResult
- * @property {MPAPeptide[]}      processed   A map form pepides to information about them
+ * @property {MPAPeptide[]}      processed   A map form peptides to information about them
  * @property {string[]} missed      The list of peptides that could not be matched
  * @property {number}   numMatched  Number of peptides that were matched
  * @property {number}   numSearched Number of peptides that were matched
@@ -46,18 +48,18 @@ let processedPeptides = new Map();
  * @property  {number} weightedValue
  *  The sum of the relative weights of the GOTerm in each sequence it occurs in
  * @property  {number} absoluteCount
- *   The number of occurences of this annotation in a protein that was matched by a
+ *   The number of occurrences of this annotation in a protein that was matched by a
  *   sequence taking dupes into account (only if il=false)
  * @property  {number} absoluteCountFiltered
  *   `absoluteCount` not taking dupes into account
  * @property  {number} numberOfPepts
- *   Number of peptides this annotiation occurs at least once in (taking dupes into account)
+ *   Number of peptides this annotation occurs at least once in (taking dupes into account)
  * @property  {number} value
  *   weightedValue / sumWeightedValue
  */
 
 /**
- * Fetches inforamtaion of the list of
+ * Fetches information of the list of
  *
  * @param  {string[]} originalPeptides The list of peptides to procces
  * @param {MPAConfig} config The configuration of the search
@@ -66,6 +68,7 @@ let processedPeptides = new Map();
 export async function process(originalPeptides, config) {
     const preparedPeptides = preparePeptides(originalPeptides, config);
     const peptideList = Array.from(preparedPeptides.keys());
+    preparedPeptidesLength = peptideList.length;
     setProgress(0.1);
 
     for (let i = 0; i < peptideList.length; i += BATCH_SIZE) {
@@ -100,17 +103,19 @@ export async function process(originalPeptides, config) {
         processed: [...processedPeptides.values()].map(({fa, faGrouped, ...y}) => y),
         missed: peptideList.filter(p => !processedPeptides.has(p)),
         numMatched: numMatched,
-        numSearched: [...preparedPeptides.values()].reduce((a, b) => a + b, 0),
+        numSearched: [...preparedPeptides.values()].reduce((a, b) => a + b, 0)
     };
 }
 
 /**
- * Add an faGrouped key to the peptides to find annotaions of a specific type
+ * Add an faGrouped key to the peptides to find annotations of a specific type
  * faster
+ * 
  * @param {PeptideMPAInfo} peptide
  */
 function makeFaGrouped(peptide) {
     peptide.faGrouped = {"EC": [], "GO": {}};
+    // @ts-ignore
     for (const [annotation, count] of Object.entries(peptide.fa.data || {})) {
         const type = annotation.split(":", 1)[0];
         switch (type) {
@@ -212,11 +217,11 @@ function equateIL(peptides, equateIL) {
 
 
 /**
- * Creates a `GOTerms` summary of the go terms avalible in the dataset.
- * Optinally limited to a list of sequences and/or a tresshold of acceptance
+ * Creates a `GOTerms` summary of the go terms available in the dataset.
+ * Optionally limited to a list of sequences and/or a threshold of acceptance
  *
  * After using this function you should synchronise the contents of the GOTerms
- * data as static inforamtin about these terms is not shared over threads.
+ * data as static information about these terms is not shared over threads.
  * (see getGoData).
  *
  * @param {number} [percent=50] ignore data weighing less (to be removed)
@@ -290,7 +295,7 @@ export async function summarizeEc(percent = 50, sequences = null) {
  * @todo  remove the cutoff
  */
 function summarizeFa(extract, countExtractor, trustExtractor, cutoff = 50, sequences = null) {
-    let iteratableOfSequences = sequences || processedPeptides.keys();
+    let iterableOfSequences = sequences || processedPeptides.keys();
 
     const map = new Map();
     const seqMap = new Map();
@@ -300,7 +305,7 @@ function summarizeFa(extract, countExtractor, trustExtractor, cutoff = 50, seque
     let sumTrust = 0;
     let numAnnotated = 0;
 
-    for (let sequence of iteratableOfSequences) {
+    for (let sequence of iterableOfSequences) {
         const pept = processedPeptides.get(sequence);
         const totalNumAnnotations = countExtractor(pept);
         const trust = trustExtractor(pept) || 0;
@@ -339,7 +344,7 @@ function summarizeFa(extract, countExtractor, trustExtractor, cutoff = 50, seque
         trust: {
             trustCount: sumTrust,
             annotatedCount: numAnnotated,
-            totalCount: sumCount,
+            totalCount: preparedPeptidesLength,
         },
         data: Array.from(map).map(x => ({
             code: x[0],
@@ -447,11 +452,12 @@ export function getPeptidesByFA(faName, sequences = null) {
 }
 
 /**
- * Send out a message to the calling procces that that the progress
+ * Send out a message to the calling process that that the progress
  * has changed
- * @param {number} value progrress in [0,1]
+ * @param {number} value progress in [0,1]
  */
 function setProgress(value) {
+    // @ts-ignore
     self.postMessage({type: "progress", value: value});
 }
 

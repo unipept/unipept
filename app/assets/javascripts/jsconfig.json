@@ -8,9 +8,7 @@
         "checkJs": true,
         "allowSyntheticDefaultImports" :true,
         "module": "commonjs",
-        "noImplicitReturns": true,
-
-
+        "noImplicitReturns": true
     },
     "exclude": [
         "node_modules"
@@ -18,5 +16,5 @@
     "typeAcquisition": {
         "enable": true
     }
-    
+
 }

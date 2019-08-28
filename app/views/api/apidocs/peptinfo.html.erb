@@ -33,13 +33,13 @@
         <p>
           <code>extra</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, Unipept will also return the name associated with a GO-term and an EC-number, the name and type associated with an InterPro Entry, and the complete lineage of the taxonomic lowest common ancestor. See the <a href="#response">response</a> section for an overview of the information fields returned.
         </p>
-        <h3>split</h3>
+        <h3>domains</h3>
         <p>
-          <code>split</code> is an optional parameter that can be used to order the GO-terms in groups according to their namespace (cellular component, molecular function, biological process) and order the InterPro entries in groups according to their type (domain, family, homologous superfamily, repeat, conserved site, active site, binding site, PTM).
+          <code>domains</code> is an optional parameter that can be used to order the GO-terms in groups according to their namespace (cellular component, molecular function, biological process).
         </p>
         <div class="apidocs-callout apidocs-callout-warning">
           <h4>Performance penalty</h4>
-          <p>Setting <code>extra</code> or <code>split</code> to <code>true</code> has a performance penalty inferred from additional database queries. Do not use this parameter unless the extra information fields are needed.</p>
+          <p>Setting <code>extra</code> or <code>domains</code> to <code>true</code> has a performance penalty inferred from additional database queries. Do not use this parameter unless the extra information fields are needed.</p>
         </div>
       </div>
     </div>
@@ -124,7 +124,7 @@
           </div>
         </div>
         <p>The <code>name</code> associated with a GO-term and an EC-number, and the name and type of an InterPro entry, are also provided when the <code>extra</code> parameter is set to true. </p>
-        <p>When the <code>split</code> parameter is set to <code>true</code>, objects are placed in a group corresponding to their namespace and the objects are nested in an additional object. See the examples for more information.</p>
+        <p>When the <code>domains</code> parameter is set to <code>true</code>, objects are placed in a group corresponding to their namespace and the objects are nested in an additional object. See the examples for more information.</p>
       </div>
     </div>
     <div class='card'>
@@ -155,7 +155,7 @@
                 value: "Must be <code>true</code> or <code>false</code> (default)"
             },
             {
-                name: "split",
+                name: "domains",
                 required: false,
                 optional: true,
                 description: "Separates GO-namespaces and InterPro types and places objects in group associated with current namespace or type when <code>true</code>.",
