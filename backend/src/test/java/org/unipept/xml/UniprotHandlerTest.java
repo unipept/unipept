@@ -43,6 +43,22 @@ public class UniprotHandlerTest extends Assert {
         assertEquals(s.entries, 3);
         assertEquals(s.sequences, 3);
     }
+
+    @Test
+    public void testHandlerSwissProt_InterPro_1() {
+        Stats s = new Stats();
+        runHandler(new UniprotHandler(5, 50, "swissprot"), s, "../../../interpro/uniprot_sprot_interpro_1.xml");
+        assertEquals(s.entries, 1);
+        assertEquals(s.sequences, 1);
+    }
+
+    @Test
+    public void testHandlerSwissProt_InterPro_2() {
+        Stats s = new Stats();
+        runHandler(new UniprotHandler(5, 50, "swissprot"), s, "../../../interpro/uniprot_sprot_interpro_2.xml");
+        assertEquals(s.entries, 1);
+        assertEquals(s.sequences, 1);
+    }
     
     public void runHandler(UniprotHandler handler, UniprotObserver s, String path) {
         try {

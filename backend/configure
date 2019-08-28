@@ -88,7 +88,7 @@ fi
 cat > "latest-config" <<"HERE"
 # Run `./configure` to configure the unipept backend makefile.
 #
-# Editting this file does not configure the unipept backend run, it will
+# Editing this file does not configure the unipept backend run, it will
 # only change the suggested configuration when you run `./configure`.
 HERE
 
@@ -154,6 +154,10 @@ echo "s|<<<ENTREZ_URL>>>|$ENTREZ_URL|g" >> "$sedscript"
 TAXON_URL="http://ftp.ncbi.nih.gov/pub/taxonomy/taxdmp.zip"
 echo "s|<<<TAXON_URL>>>|$TAXON_URL|g" >> "$sedscript"
 
+LOGADD='echo $$(date +"[%s (%F %T)]")'
+echo "s|^\t<<<LOGADD>>>|\t@$LOGADD|" >> "$sedscript"
+echo "s|<<<LOGADD>>>|echo|g" >> "$sedscript"
+
 # --------------------------------------------------------------------
 # Writing the configured files
 
@@ -189,11 +193,11 @@ for (( i = 0 ; i < sources_count ; i += 2 )); do
     url="${CONFIG_SOURCES[$((i + 1))]}"
     cat >> "$tmpmakefile" <<HERE
 $file:
-	echo "Starting downloading $name."
+	$LOGADD "Started downloading $name."
 	mkdir -p $CONFIG_SRCDIR
 	rm -f $file
 	wget --progress=dot:giga "$url" -O $file
-	echo "Finished downloading $name."
+	$LOGADD "Finished downloading $name."
 
 HERE
 done
@@ -202,8 +206,10 @@ backup_if_changed "makefile"           "$tmpmakefile"
 backup_if_changed "type_strains.sh"    <($CONFIG_CMD_SED -f "$sedscript" type_strains.sh.in)
 backup_if_changed "createEcNumbers.sh" <($CONFIG_CMD_SED -f "$sedscript" createEcNumbers.sh.in)
 backup_if_changed "createGoTerms.sh"   <($CONFIG_CMD_SED -f "$sedscript" createGoTerms.sh.in)
+backup_if_changed "createInterProEntries.sh"   <($CONFIG_CMD_SED -f "$sedscript" createInterProEntries.sh.in)
 
 rm "$tmpmakefile"
 chmod a+x type_strains.sh
 chmod a+x createEcNumbers.sh
 chmod a+x createGoTerms.sh
+chmod a+x createInterProEntries.sh

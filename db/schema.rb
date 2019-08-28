@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -13,187 +12,155 @@
 
 ActiveRecord::Schema.define(version: 0) do
 
-  create_table "dataset_items", force: :cascade do |t|
-    t.integer "dataset_id", limit: 5
-    t.string  "name",       limit: 160
-    t.text    "data",       limit: 16777215, null: false
-    t.integer "order",      limit: 4
+  create_table "dataset_items", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "dataset_id", unsigned: true
+    t.string "name", limit: 160
+    t.text "data", limit: 16777215, null: false, collation: "ascii_general_ci"
+    t.integer "order"
+    t.index ["dataset_id"], name: "fk_dataset_items_datasets"
   end
 
-  add_index "dataset_items", ["dataset_id"], name: "fk_dataset_items_datasets", using: :btree
-
-  create_table "datasets", force: :cascade do |t|
-    t.string "environment",     limit: 160
-    t.string "reference",       limit: 500
-    t.string "url",             limit: 200
+  create_table "datasets", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "environment", limit: 160
+    t.string "reference", limit: 500
+    t.string "url", limit: 200
     t.string "project_website", limit: 200
   end
 
-  create_table "ec_cross_references", force: :cascade do |t|
-    t.integer "uniprot_entry_id", limit: 4,  null: false
-    t.string  "ec_number_code",   limit: 15, null: false
+  create_table "ec_cross_references", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=ascii", force: :cascade do |t|
+    t.integer "uniprot_entry_id", null: false, unsigned: true
+    t.string "ec_number_code", limit: 15, null: false
   end
 
-  add_index "ec_cross_references", ["uniprot_entry_id"], name: "fk_ec_reference_uniprot_entries", using: :btree
-
-  create_table "ec_numbers", force: :cascade do |t|
-    t.string "code", limit: 15,  null: false
-    t.string "name", limit: 140, null: false
+  create_table "ec_numbers", id: :integer, limit: 2, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "code", limit: 15, null: false
+    t.string "name", limit: 155, null: false
   end
 
-  add_index "ec_numbers", ["code"], name: "ec_number_UNIQUE", unique: true, using: :btree
-
-  create_table "embl_cross_references", force: :cascade do |t|
-    t.integer "uniprot_entry_id", limit: 4,  null: false
-    t.string  "protein_id",       limit: 25
-    t.string  "sequence_id",      limit: 25
+  create_table "embl_cross_references", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=ascii", force: :cascade do |t|
+    t.integer "uniprot_entry_id", null: false, unsigned: true
+    t.string "protein_id", limit: 25
+    t.string "sequence_id", limit: 25
   end
 
-  add_index "embl_cross_references", ["sequence_id"], name: "idx_sequence_id", using: :btree
-  add_index "embl_cross_references", ["uniprot_entry_id"], name: "fk_embl_reference_uniprot_entries", using: :btree
-
-  create_table "go_cross_references", force: :cascade do |t|
-    t.integer "uniprot_entry_id", limit: 4,  null: false
-    t.string  "go_term_code",     limit: 15, null: false
+  create_table "go_cross_references", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=ascii", force: :cascade do |t|
+    t.integer "uniprot_entry_id", null: false, unsigned: true
+    t.string "go_term_code", limit: 15, null: false
   end
 
-  add_index "go_cross_references", ["uniprot_entry_id"], name: "fk_go_reference_uniprot_entries", using: :btree
-
-  create_table "go_terms", force: :cascade do |t|
-    t.string "code",      limit: 15,  null: false
-    t.string "namespace", limit: 18,  null: false
-    t.string "name",      limit: 200, null: false
+  create_table "go_terms", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.string "code", limit: 15, null: false
+    t.string "namespace", limit: 18, null: false
+    t.string "name", limit: 200, null: false
   end
 
-  add_index "go_terms", ["code"], name: "uidx_code", unique: true, using: :btree
-
-  create_table "kegg_pathway_mappings", force: :cascade do |t|
-    t.integer "ec_number_id",    limit: 3, null: false
-    t.integer "kegg_pathway_id", limit: 4, null: false
+  create_table "interpro_cross_references", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=ascii", force: :cascade do |t|
+    t.integer "uniprot_entry_id", null: false, unsigned: true
+    t.string "interpro_entry_code", limit: 9, null: false
   end
 
-  create_table "kegg_pathways", force: :cascade do |t|
-    t.string "long_id", limit: 12,  null: false
-    t.string "name",    limit: 128, null: false
+  create_table "interpro_entries", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=ascii", force: :cascade do |t|
+    t.string "code", limit: 9, null: false
+    t.string "category", limit: 32, null: false
+    t.string "name", limit: 160, null: false
   end
 
-  create_table "lineages", primary_key: "taxon_id", force: :cascade do |t|
-    t.integer "superkingdom",     limit: 3
-    t.integer "kingdom",          limit: 3
-    t.integer "subkingdom",       limit: 3
-    t.integer "superphylum",      limit: 3
-    t.integer "phylum",           limit: 3
-    t.integer "subphylum",        limit: 3
-    t.integer "superclass",       limit: 3
-    t.integer "class",            limit: 3
-    t.integer "subclass",         limit: 3
-    t.integer "infraclass",       limit: 3
-    t.integer "superorder",       limit: 3
-    t.integer "order",            limit: 3
-    t.integer "suborder",         limit: 3
-    t.integer "infraorder",       limit: 3
-    t.integer "parvorder",        limit: 3
-    t.integer "superfamily",      limit: 3
-    t.integer "family",           limit: 3
-    t.integer "subfamily",        limit: 3
-    t.integer "tribe",            limit: 3
-    t.integer "subtribe",         limit: 3
-    t.integer "genus",            limit: 3
-    t.integer "subgenus",         limit: 3
-    t.integer "species_group",    limit: 3
+  create_table "lineages", primary_key: "taxon_id", id: :integer, limit: 3, unsigned: true, default: nil, options: "ENGINE=InnoDB DEFAULT CHARSET=ascii", force: :cascade do |t|
+    t.integer "superkingdom", limit: 3
+    t.integer "kingdom", limit: 3
+    t.integer "subkingdom", limit: 3
+    t.integer "superphylum", limit: 3
+    t.integer "phylum", limit: 3
+    t.integer "subphylum", limit: 3
+    t.integer "superclass", limit: 3
+    t.integer "class", limit: 3
+    t.integer "subclass", limit: 3
+    t.integer "infraclass", limit: 3
+    t.integer "superorder", limit: 3
+    t.integer "order", limit: 3
+    t.integer "suborder", limit: 3
+    t.integer "infraorder", limit: 3
+    t.integer "parvorder", limit: 3
+    t.integer "superfamily", limit: 3
+    t.integer "family", limit: 3
+    t.integer "subfamily", limit: 3
+    t.integer "tribe", limit: 3
+    t.integer "subtribe", limit: 3
+    t.integer "genus", limit: 3
+    t.integer "subgenus", limit: 3
+    t.integer "species_group", limit: 3
     t.integer "species_subgroup", limit: 3
-    t.integer "species",          limit: 3
-    t.integer "subspecies",       limit: 3
-    t.integer "varietas",         limit: 3
-    t.integer "forma",            limit: 3
+    t.integer "species", limit: 3
+    t.integer "subspecies", limit: 3
+    t.integer "varietas", limit: 3
+    t.integer "forma", limit: 3
   end
 
-  add_index "lineages", ["species"], name: "idx_species", using: :btree
-
-  create_table "peptides", force: :cascade do |t|
-    t.integer "sequence_id",          limit: 4, null: false
-    t.integer "original_sequence_id", limit: 4, null: false
-    t.integer "uniprot_entry_id",     limit: 4, null: false
+  create_table "peptides", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=ascii", force: :cascade do |t|
+    t.integer "sequence_id", null: false, unsigned: true
+    t.integer "original_sequence_id", null: false, unsigned: true
+    t.integer "uniprot_entry_id", null: false, unsigned: true
   end
 
-  add_index "peptides", ["original_sequence_id"], name: "fk_peptides_original_sequences", using: :btree
-  add_index "peptides", ["sequence_id"], name: "fk_peptides_sequences", using: :btree
-  add_index "peptides", ["uniprot_entry_id"], name: "fk_peptides_uniprot_entries", using: :btree
-
-  create_table "posts", force: :cascade do |t|
-    t.string "title",   limit: 100,   null: false
-    t.text   "content", limit: 65535, null: false
-    t.date   "date",                  null: false
+  create_table "posts", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "title", limit: 100, null: false
+    t.text "content", null: false
+    t.date "date", null: false
   end
 
-  create_table "proteome_caches", primary_key: "proteome_id", force: :cascade do |t|
+  create_table "proteome_caches", primary_key: "proteome_id", id: :integer, limit: 3, unsigned: true, default: nil, options: "ENGINE=InnoDB DEFAULT CHARSET=ascii", force: :cascade do |t|
     t.text "json_sequences", limit: 16777215, null: false
   end
 
-  create_table "proteome_cross_references", force: :cascade do |t|
-    t.integer "uniprot_entry_id", limit: 4, null: false
-    t.integer "proteome_id",      limit: 3, null: false
+  create_table "proteome_cross_references", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.integer "uniprot_entry_id", null: false, unsigned: true
+    t.integer "proteome_id", limit: 3, null: false, unsigned: true
   end
 
-  add_index "proteome_cross_references", ["proteome_id"], name: "fk_proteome_cross_references", using: :btree
-  add_index "proteome_cross_references", ["uniprot_entry_id"], name: "fk_proteome_cross_references_uniprot_entries", using: :btree
-
-  create_table "proteomes", force: :cascade do |t|
-    t.string  "proteome_accession_number", limit: 12,                   null: false
-    t.string  "proteome_name",             limit: 100,                  null: false
-    t.integer "taxon_id",                  limit: 3
-    t.binary  "type_strain",               limit: 1,   default: 0b0, null: false
-    t.binary  "reference_proteome",        limit: 1,   default: 0b0, null: false
-    t.string  "strain",                    limit: 45
-    t.string  "assembly",                  limit: 45
-    t.string  "name",                      limit: 128
+  create_table "proteomes", id: :integer, limit: 3, unsigned: true, default: nil, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "proteome_accession_number", limit: 12, null: false
+    t.string "proteome_name", limit: 145, null: false
+    t.integer "taxon_id", limit: 3, unsigned: true
+    t.binary "type_strain", limit: 1, default: "b'0'", null: false
+    t.binary "reference_proteome", limit: 1, default: "b'0'", null: false
+    t.string "strain", limit: 120
+    t.string "assembly", limit: 45
+    t.string "name", limit: 225
   end
 
-  add_index "proteomes", ["taxon_id"], name: "fk_taxons_proteomes", using: :btree
-
-  create_table "refseq_cross_references", force: :cascade do |t|
-    t.integer "uniprot_entry_id", limit: 4,  null: false
-    t.string  "protein_id",       limit: 25
-    t.string  "sequence_id",      limit: 25
+  create_table "refseq_cross_references", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=ascii", force: :cascade do |t|
+    t.integer "uniprot_entry_id", null: false, unsigned: true
+    t.string "protein_id", limit: 25
+    t.string "sequence_id", limit: 25
   end
 
-  add_index "refseq_cross_references", ["uniprot_entry_id"], name: "fk_refseq_reference_uniprot_entries", using: :btree
-
-  create_table "sequences", force: :cascade do |t|
-    t.string  "sequence", limit: 50, null: false
-    t.integer "lca",      limit: 3
-    t.integer "lca_il",   limit: 3
-    t.binary "fa"
-    t.binary "fa_il"
+  create_table "sequences", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=ascii ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=16", force: :cascade do |t|
+    t.string "sequence", limit: 50, null: false
+    t.integer "lca", limit: 3, unsigned: true
+    t.integer "lca_il", limit: 3, unsigned: true
+    t.binary "fa", limit: 16777215
+    t.binary "fa_il", limit: 16777215
   end
 
-  add_index "sequences", ["lca"], name: "fk_sequences_taxons", using: :btree
-  add_index "sequences", ["lca_il"], name: "fk_sequences_taxons_2", using: :btree
-  add_index "sequences", ["sequence"], name: "idx_sequences", unique: true, using: :btree
-
-  create_table "taxons", force: :cascade do |t|
-    t.string  "name",        limit: 120,                  null: false
-    t.string  "rank",        limit: 16
-    t.integer "parent_id",   limit: 3
-    t.binary  "valid_taxon", limit: 1,   default: 0b1, null: false
+  create_table "taxons", id: :integer, limit: 3, unsigned: true, default: nil, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name", limit: 120, null: false
+    t.string "rank", limit: 16
+    t.integer "parent_id", limit: 3, unsigned: true
+    t.binary "valid_taxon", limit: 1, default: "b'1'", null: false
   end
 
-  add_index "taxons", ["parent_id"], name: "fk_taxon_taxon", using: :btree
-
-  create_table "uniprot_entries", force: :cascade do |t|
-    t.string  "uniprot_accession_number", limit: 10,    null: false
-    t.integer "version",                  limit: 2,     null: false
-    t.integer "taxon_id",                 limit: 3,     null: false
-    t.string  "type",                     limit: 9,     null: false
-    t.string  "name",                     limit: 150,   null: false
-    t.text    "protein",                  limit: 65535, null: false
+  create_table "uniprot_entries", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=ascii", force: :cascade do |t|
+    t.string "uniprot_accession_number", limit: 10, null: false, collation: "latin1_swedish_ci"
+    t.integer "version", limit: 2, null: false, unsigned: true
+    t.integer "taxon_id", limit: 3, null: false, unsigned: true
+    t.string "type", limit: 9, null: false
+    t.string "name", limit: 150, null: false
+    t.text "protein", null: false
   end
 
-  add_index "uniprot_entries", ["taxon_id"], name: "fk_uniprot_entries_taxons", using: :btree
-
-  create_table "users", force: :cascade do |t|
-    t.string  "username", limit: 8,             null: false
-    t.integer "admin",    limit: 1, default: 0, null: false
+  create_table "users", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.string "username", limit: 8, null: false
+    t.integer "admin", limit: 1, default: 0, null: false
   end
 
   add_foreign_key "dataset_items", "datasets", name: "fk_dataset_items_datasets"

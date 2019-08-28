@@ -77,6 +77,7 @@ UnipeptWeb::Application.routes.draw do
     match 'pept2funct' => 'api#pept2funct', via: [:get, :post]
     match 'pept2ec' => 'api#pept2ec', via: [:get, :post]
     match 'pept2go' => 'api#pept2go', via: [:get, :post]
+    match 'pept2interpro' => 'api#pept2interpro', via: [:get, :post]
     match 'peptinfo' => 'api#peptinfo', via: [:get, :post]
     match 'taxonomy' => 'api#taxonomy', via: [:get, :post]
     match 'messages' => 'api#messages', via: [:get, :post]
@@ -91,6 +92,7 @@ UnipeptWeb::Application.routes.draw do
     get "taxa2lca",   :to => "apidocs#taxa2lca",   :as => 'apidocs/taxa2lca'
     get "pept2ec",    :to => "apidocs#pept2ec",    :as => 'apidocs/pept2ec'
     get 'pept2go',    :to => "apidocs#pept2go",    :as => 'apidocs/pept2go'
+    get 'pept2interpro', :to => "apidocs#pept2interpro", :as => 'apidocs/pept2interpro'
     get 'pept2funct', :to => "apidocs#pept2funct", :as => 'apidocs/pept2funct'
     get 'peptinfo',   :to => "apidocs#peptinfo",   :as => 'apidocs/peptinfo'
     get "taxonomy",   :to => "apidocs#taxonomy",   :as => 'apidocs/taxonomy'
