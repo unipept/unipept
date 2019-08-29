@@ -2,7 +2,7 @@
 #
 # Table name: proteome_caches
 #
-#  proteome_id    :integer          not null, primary key
+#  proteome_id    :integer          unsigned, not null, primary key
 #  json_sequences :text(16777215)   not null
 #
 

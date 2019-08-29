@@ -2,12 +2,12 @@
 #
 # Table name: sequences
 #
-#  id       :integer          not null, primary key
+#  id       :integer          unsigned, not null, primary key
 #  sequence :string(50)       not null
-#  lca      :integer
-#  lca_il   :integer
-#  fa       :blob
-#  fa_il    :blob
+#  lca      :integer          unsigned
+#  lca_il   :integer          unsigned
+#  fa       :binary(16777215)
+#  fa_il    :binary(16777215)
 #
 
 require 'test_helper'

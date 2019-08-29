@@ -2,10 +2,10 @@
 #
 # Table name: peptides
 #
-#  id                   :integer          not null, primary key
-#  sequence_id          :integer          not null
-#  original_sequence_id :integer          not null
-#  uniprot_entry_id     :integer          not null
+#  id                   :integer          unsigned, not null, primary key
+#  sequence_id          :integer          unsigned, not null
+#  original_sequence_id :integer          unsigned, not null
+#  uniprot_entry_id     :integer          unsigned, not null
 #
 
 require 'test_helper'

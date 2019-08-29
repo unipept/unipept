@@ -2,8 +2,8 @@
 #
 # Table name: dataset_items
 #
-#  id         :integer          not null, primary key
-#  dataset_id :integer
+#  id         :integer          unsigned, not null, primary key
+#  dataset_id :integer          unsigned
 #  name       :string(160)
 #  data       :text(16777215)   not null
 #  order      :integer

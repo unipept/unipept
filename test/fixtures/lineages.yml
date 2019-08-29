@@ -2,7 +2,7 @@
 #
 # Table name: lineages
 #
-#  taxon_id         :integer          not null, primary key
+#  taxon_id         :integer          unsigned, not null, primary key
 #  superkingdom     :integer
 #  kingdom          :integer
 #  subkingdom       :integer

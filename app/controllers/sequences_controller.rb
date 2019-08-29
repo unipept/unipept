@@ -82,7 +82,7 @@ class SequencesController < ApplicationController
         next if t.nil?
 
         l << t.name # add the taxon name to the lineage
-        node = Node.find_by_id(t.id, @root) # rubocop:disable Rails/DynamicFindBy
+        node = Node.find_by_id(t.id, @root)
         if node.nil? # if the node isn't create yet
           node = Node.new(t.id, t.name, @root, t.rank)
           node.data['count'] = lineage.hits

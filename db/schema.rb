@@ -121,8 +121,8 @@ ActiveRecord::Schema.define(version: 0) do
     t.string "proteome_accession_number", limit: 12, null: false
     t.string "proteome_name", limit: 145, null: false
     t.integer "taxon_id", limit: 3, unsigned: true
-    t.binary "type_strain", limit: 1, default: "b'0'", null: false
-    t.binary "reference_proteome", limit: 1, default: "b'0'", null: false
+    t.binary "type_strain", limit: 1, default: 0b0, null: false
+    t.binary "reference_proteome", limit: 1, default: 0b0, null: false
     t.string "strain", limit: 120
     t.string "assembly", limit: 45
     t.string "name", limit: 225
@@ -146,7 +146,7 @@ ActiveRecord::Schema.define(version: 0) do
     t.string "name", limit: 120, null: false
     t.string "rank", limit: 16
     t.integer "parent_id", limit: 3, unsigned: true
-    t.binary "valid_taxon", limit: 1, default: "b'1'", null: false
+    t.binary "valid_taxon", limit: 1, default: 0b1, null: false
   end
 
   create_table "uniprot_entries", id: :integer, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=ascii", force: :cascade do |t|

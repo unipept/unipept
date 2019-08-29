@@ -321,7 +321,7 @@ class Api::ApiController < ApplicationController
             end
       }
 
-      ec_numbers.push *(ecs.map { |k, _v| k[3..-1] })
+      ec_numbers.push(*(ecs.map { |k, _v| k[3..-1] }))
     end
 
     if @extra_info
@@ -363,7 +363,7 @@ class Api::ApiController < ApplicationController
             end
       }
 
-      go_terms.push *gos.keys
+      go_terms.push(*gos.keys)
     end
 
     if @extra_info || @domains
@@ -418,16 +418,16 @@ class Api::ApiController < ApplicationController
       iprs = fa['data'].select { |k, _v| k.start_with?('IPR:') }
 
       output[seq.sequence] = {
-          total: fa['num']['all'],
-          ipr: iprs.map do |k, v|
-            {
-                code: k[4..-1],
-                protein_count: v
-            }
-          end
+        total: fa['num']['all'],
+        ipr: iprs.map do |k, v|
+               {
+                 code: k[4..-1],
+                 protein_count: v
+               }
+             end
       }
 
-      ipr_entries.push *(iprs.map { |k, _v| k[4..-1] })
+      ipr_entries.push(*(iprs.map { |k, _v| k[4..-1] }))
     end
 
     if @extra_info || @domains
@@ -439,7 +439,7 @@ class Api::ApiController < ApplicationController
       end
 
       set_info = if @extra_info
-                   ->(value) {
+                   lambda { |value|
                      value[:name] = ipr_mapping[value[:code]].name
                      value[:type] = ipr_mapping[value[:code]].category
                    }
