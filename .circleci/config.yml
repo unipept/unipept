@@ -2,7 +2,7 @@ version: 2.1
 
 references:
   docker_ruby_config: &docker_ruby_config
-    image: circleci/ruby:2.6.3-node
+    image: circleci/ruby:2.6.3-stretch-node
     environment:
       RAILS_ENV: "test"
       DATABASE_URL: "mysql2://unipept:unipept@127.0.0.1:3306/unipept_test"
@@ -60,7 +60,7 @@ jobs:
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
       - run:
           name: install mysql client
-          command: sudo apt install -y mysql-client
+          command: sudo apt install -y default-mysql-client
       - run:
           name: Database setup
           command: cat backend/database/structure_no_index.sql | sed 's/unipept/unipept_test/' | mysql -h 127.0.0.1 -u unipept -punipept unipept_test
