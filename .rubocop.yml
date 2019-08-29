@@ -1,23 +1,20 @@
 AllCops:
   Exclude:
-    - 'Gemfile'
-    - 'Guardfile'
-    - 'Capfile'
-    - 'Rakefile'
-    - 'db/schema.rb'
-    - 'config/**/*'
-    - 'script/**/*'
-    - 'test/**/*'
-    - 'bin/**/*'
-    - 'lib/**/*'
-    - 'node_modules/**/*'
+    - "Gemfile"
+    - "Guardfile"
+    - "Capfile"
+    - "Rakefile"
+    - "db/schema.rb"
+    - "config/**/*"
+    - "script/**/*"
+    - "test/**/*"
+    - "bin/**/*"
+    - "lib/**/*"
+    - "node_modules/**/*"
 
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact
   Enabled: false
-
-Rails:
-  Enabled: true
 
 Style/FrozenStringLiteralComment:
   Enabled: false
@@ -46,4 +43,6 @@ Metrics/CyclomaticComplexity:
 Naming/AccessorMethodName:
   Enabled: false
 Naming/PredicateName:
+  Enabled: false
+Naming/UncommunicativeMethodParamName:
   Enabled: false
