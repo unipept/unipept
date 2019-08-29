@@ -2,8 +2,8 @@
 #
 # Table name: ec_cross_references
 #
-#  id               :integer          not null, primary key
-#  uniprot_entry_id :integer          not null
+#  id               :integer          unsigned, not null, primary key
+#  uniprot_entry_id :integer          unsigned, not null
 #  ec_number_code   :string(15)       not null
 #
 

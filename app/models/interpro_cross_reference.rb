@@ -2,9 +2,9 @@
 #
 # Table name: interpro_cross_references
 #
-#  id               :integer          not null, primary key
-#  uniprot_entry_id :integer          not null
-#  interpro_code    :string(9)        not null
+#  id                  :integer          unsigned, not null, primary key
+#  uniprot_entry_id    :integer          unsigned, not null
+#  interpro_entry_code :string(9)        not null
 #
 
 class InterproCrossReference < ApplicationRecord

@@ -2,9 +2,9 @@
 #
 # Table name: proteome_cross_references
 #
-#  id               :integer          not null, primary key
-#  uniprot_entry_id :integer          not null
-#  proteome_id      :integer          not null
+#  id               :integer          unsigned, not null, primary key
+#  uniprot_entry_id :integer          unsigned, not null
+#  proteome_id      :integer          unsigned, not null
 #
 
 proteomecrossreference1:
