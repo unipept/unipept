@@ -2,7 +2,7 @@ version: 2.1
 
 references:
   docker_ruby_config: &docker_ruby_config
-    image: circleci/ruby:2.6.0-node
+    image: circleci/ruby:2.6.3-node
     environment:
       RAILS_ENV: "test"
       DATABASE_URL: "mysql2://unipept:unipept@127.0.0.1:3306/unipept_test"
@@ -46,7 +46,7 @@ commands:
           key: unipept-yarn-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache/yarn
-      
+
 jobs:
   test_ruby:
     docker:

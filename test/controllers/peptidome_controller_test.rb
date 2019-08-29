@@ -67,7 +67,7 @@ class PeptidomeControllerTest < ActionController::TestCase
   test 'should get convert_peptides' do
     get :convert_peptides, params: { peptides: '["AALER", "AAIER", "FOO"]' }
     assert_response :success
-    assert_equal '[2,1]', @response.body
+    assert_equal '[1,2]', @response.body
   end
 
   test 'should get get_lca' do
