@@ -89,7 +89,7 @@ gem 'stathat', '~> 0.1.7'
 
 group :development do
   gem 'annotate', '~> 2.7.5' # annotate models with database info
-  gem 'guard', '~> 2.15.0'
+  gem 'guard', '~> 2.15.1'
   gem 'guard-minitest', '~> 2.4.6' # auto run tests
   gem 'rubocop', '~> 0.74.0'
   gem 'rake', '~> 12.3.3'
