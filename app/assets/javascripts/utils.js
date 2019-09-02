@@ -1,4 +1,4 @@
-import Clipboard from "clipboard";
+import ClipboardJS from "clipboard";
 
 /**
  * Make clicking on the selector copy to the user clipboard
@@ -18,7 +18,7 @@ export function addCopy(selector, textFunction, tooltip = "Copy to clipboard", c
     if (container !== null) {
         clipSettings["container"] = container;
     }
-    const clip = new Clipboard(selector, clipSettings);
+    const clip = new ClipboardJS(selector, clipSettings);
     clip.on("success", e => {
         $el.attr("title", "Copied!")
             .tooltip("fixTitle")
@@ -328,7 +328,7 @@ export function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) 
         $element = $(svgSelector);
         svg = $element.wrap("<div></div>").parent().html();
         $element.unwrap();
-        $.post("/convert", {image: svg}, showImage);
+        $.post("/convert", { image: svg }, showImage);
     }
     if (canvasSelector) {
         // Use html2canvas to convert canvas to dataURL
