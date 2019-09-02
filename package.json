@@ -14,7 +14,7 @@
     "coffeescript": "1.12.7",
     "corejs-typeahead": "^1.1.1",
     "crypto-js": "^3.1.9-1",
-    "d3": "3.5.17",
+    "d3": "5.11.0",
     "dragula": "^3.7.2",
     "jquery": "^3.2.1",
     "tiny-emitter": "^2.0.2",
