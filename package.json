@@ -6,7 +6,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
-    "@mdi/font": "^3.9.97",
+    "@mdi/font": "^4.2.95",
     "@rails/webpacker": "^4.0.7",
     "axios": "^0.19.0",
     "babel-loader": "^8.0.5",
