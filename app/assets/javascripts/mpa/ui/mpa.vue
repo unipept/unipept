@@ -32,23 +32,25 @@
         public searchName: string;
 
         mounted() {
-            const storageManager: DatasetManager = new DatasetManager();
-            const dataset: PeptideContainer = new PeptideContainer();
-            dataset.setName(this.searchName);
-            dataset.setPeptides(this.peptides.split(/\\n/));
-            dataset.setDate(new Date());
-            dataset.setType(StorageType.SessionStorage);
+            if (this.peptides != "") {
+                const storageManager: DatasetManager = new DatasetManager();
+                const dataset: PeptideContainer = new PeptideContainer();
+                dataset.setName(this.searchName);
+                dataset.setPeptides(this.peptides.split(/\\n/));
+                dataset.setDate(new Date());
+                dataset.setType(StorageType.SessionStorage);
 
-            this.$store.dispatch('setSearchSettings', {
-                il: this.il,
-                dupes: this.dupes,
-                missed: this.missed
-            })
+                this.$store.dispatch('setSearchSettings', {
+                    il: this.il,
+                    dupes: this.dupes,
+                    missed: this.missed
+                })
 
-            dataset.store().then(() => {
-                this.$store.dispatch('selectDataset', dataset);
-                this.$store.dispatch('setAnalysis', true);
-            });
+                dataset.store().then(() => {
+                    this.$store.dispatch('selectDataset', dataset);
+                    this.$store.dispatch('setAnalysis', true);
+                });
+            }
         }
     };
 </script>
