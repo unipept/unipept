@@ -28,7 +28,7 @@
     "vue-loader": "^15.7.1",
     "vue-property-decorator": "^8.2.2",
     "vue-template-compiler": "^2.6.10",
-    "vuetify": "^1.5.16",
+    "vuetify": "^1.5.18",
     "vuex": "^3.0.1",
     "whatwg-fetch": "^2.0.3"
   },
