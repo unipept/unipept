@@ -9,7 +9,7 @@ gem 'mysql2', '~> 0.5.2'
 gem 'webpacker', '~> 4.0.7'
 
 # Use Puma as the app server
-gem 'puma', '~> 3.11'
+gem 'puma', '~> 4.1'
 
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
