@@ -438,16 +438,6 @@ class Api::ApiController < ApplicationController
         ipr_mapping[ipr_entry.code] = ipr_entry
       end
 
-      set_info = if @extra_info
-                   lambda { |value|
-                     value[:name] = ipr_mapping[value[:code]].name
-                     value[:type] = ipr_mapping[value[:code]].category
-                   }
-                 else
-                   # Do nothing
-                   ->(_value) {}
-                 end
-
       if @domains
         # We have to transform the input so that the different InterPro entries are split per type
         output.each do |_k, v|
@@ -455,7 +445,11 @@ class Api::ApiController < ApplicationController
 
           v[:ipr].each do |value|
             ipr_entry = ipr_mapping[value[:code]]
-            set_info[value]
+
+            if @extra_info
+              value[:name] = ipr_entry.name
+            end
+
             splitted[ipr_entry.category] << value
           end
 
@@ -464,7 +458,10 @@ class Api::ApiController < ApplicationController
       else
         output.map do |_k, v|
           v[:ipr].each do |value|
-            set_info[value]
+            ipr_entry = ipr_mapping[value[:code]]
+
+            value[:name] = ipr_entry.name
+            value[:type] = ipr_entry.category
           end
         end
       end
