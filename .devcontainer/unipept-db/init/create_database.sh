@@ -10,6 +10,8 @@ if test -f "/tables/peptides.tsv.gz"; then
 else
     echo "Data needs to be regenerated."
     sed -i '/checkdep umgap/d' configure
+    chmod +x script.exp
+    chmod +x configure
     ./script.exp
     make
 

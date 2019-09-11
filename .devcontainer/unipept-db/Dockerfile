@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y default-jdk git dos2unix curl maven mak
 
 COPY "init" "init"
 COPY "backend" "backend"
-COPY "data/tables" "tables"
+# COPY "data/tables" "tables"
 
 RUN dos2unix init/create_database.sh init/fill_database.sh backend/makefile.in
 RUN bash ./init/create_database.sh

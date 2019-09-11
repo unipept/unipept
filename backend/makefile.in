@@ -9,10 +9,7 @@ TABLES= \
 	<<<TABDIR>>>/refseq_cross_references.tsv.gz \
 	<<<TABDIR>>>/ec_cross_references.tsv.gz \
 	<<<TABDIR>>>/embl_cross_references.tsv.gz \
-	<<<TABDIR>>>/go_cross_references.tsv.gz \
-	<<<TABDIR>>>/interpro_cross_references.tsv.gz \
-	<<<INTDIR>>>/proteomes.tsv.gz \
-	<<<TABDIR>>>/proteome_cross_references.tsv.gz
+	<<<TABDIR>>>/go_cross_references.tsv.gz
 
 database: \
 	<<<TABDIR>>>/taxons.tsv.gz \
@@ -20,10 +17,8 @@ database: \
 	$(TABLES) \
 	<<<TABDIR>>>/sequences.tsv.gz \
 	<<<TABDIR>>>/peptides.tsv.gz \
-	<<<TABDIR>>>/proteomes.tsv.gz \
 	<<<TABDIR>>>/ec_numbers.tsv.gz \
-	<<<TABDIR>>>/go_terms.tsv.gz \
-	<<<TABDIR>>>/interpro_entries.tsv.gz
+	<<<TABDIR>>>/go_terms.tsv.gz
 
 index: <<<TABDIR>>>/<<<KMER_LENGTH>>>-mer.index
 
@@ -102,7 +97,6 @@ $(TABLES): $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 		--ec              >(<<<CMD_GZIP>>> > <<<TABDIR>>>/ec_cross_references.tsv.gz) \
 		--embl            >(<<<CMD_GZIP>>> > <<<TABDIR>>>/embl_cross_references.tsv.gz) \
 		--go              >(<<<CMD_GZIP>>> > <<<TABDIR>>>/go_cross_references.tsv.gz) \
-		--interpro        >(<<<CMD_GZIP>>> > <<<TABDIR>>>/interpro_cross_references.tsv.gz) \
 		--proteomes       >(<<<CMD_GZIP>>> > <<<INTDIR>>>/proteomes.tsv.gz) \
 		--proteomes-ref   >(<<<CMD_GZIP>>> > <<<TABDIR>>>/proteome_cross_references.tsv.gz) \
 		<<<SOURCE_INPUTS>>>
@@ -264,39 +258,6 @@ $(TABLES): $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 	<<<LOGADD>>> "Finished the construction of the <<<KMER_LENGTH>>>-mer index."
 # }}}
 
-# Proteomes {{{ ----------------------------------------------------------------
-
-<<<INTDIR>>>/proteomes_data.tsv.gz: $(JAR) <<<INTDIR>>>/proteomes.tsv.gz
-	<<<LOGADD>>> "Started fetching of proteome data."
-	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).FetchProteomes \
-		<(<<<CMD_ZCAT>>> <<<INTDIR>>>/proteomes.tsv.gz) \
-		>(<<<CMD_SORT>>> -t $$'\t' -k 6 | <<<CMD_GZIP>>> > $@) # sort by assembly
-	<<<LOGADD>>> "Finished fetching of proteome data."
-
-<<<INTDIR>>>/proteomes_type_strains.tsv.gz: type_strains.sh
-	<<<LOGADD>>> "Started fetching of type strain data."
-	./type_strains.sh | <<<CMD_SED>>> 's/$$/\t1/' | <<<CMD_GZIP>>> > $@
-	<<<LOGADD>>> "Finished fetching of type strain data."
-
-
-<<<TABDIR>>>/proteomes.tsv.gz: <<<INTDIR>>>/proteomes_data.tsv.gz <<<INTDIR>>>/proteomes_type_strains.tsv.gz 
-	<<<LOGADD>>> "Started adding type strain boolean to proteome data."
-	# tmp: 1)id 2)accession-id 3)name-str 4)reference-bool 5)strain-id 6)assembly-id
-	# strain: assembly-id
-
-	# join: 1)assembly-id 2)id 3)accession-id 4)name-str 5)reference-int 6)strain-id 7)strain-int
-	# awk: id accession-id name-str TAXON strain-bool reference-bool strain-id assembly-id
-	<<<CMD_JOIN>>> -1 6 -2 1 -a 1 -e"0" -t $$'\t' -o "1.1 1.2 1.3 2.2 1.5 1.4 1.6 1.7" \
-			<(<<<CMD_ZCAT>>> <<<INTDIR>>>/proteomes_data.tsv.gz) \
-			<(<<<CMD_ZCAT>>> <<<INTDIR>>>/proteomes_type_strains.tsv.gz) \
-		| <<<CMD_AWK>>> 'function b(a){if (a == 1)return "\x01"; return "\x00"} \
-		       BEGIN { FS = OFS = "\t" }{ print $$1,$$2,$$3,"\\N",b($$4),b($$5),$$6,$$7,$$8 }' \
-		| <<<CMD_SORT>>> -n \
-		| <<<CMD_GZIP>>> \
-		> $@
-	<<<LOGADD>>> "Finished adding type strain boolean to proteome data."
-# }}}
-
 # Functional Data {{{ ----------------------------------------------------------
 <<<TABDIR>>>/ec_numbers.tsv.gz: createEcNumbers.sh
 	<<<LOGADD>>> "Started creating EC numbers"
@@ -307,12 +268,6 @@ $(TABLES): $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 	<<<LOGADD>>> "Started creating GO terms"
 	./createGoTerms.sh | <<<CMD_GZIP>>> > $@
 	<<<LOGADD>>> "Finished creating GO terms."
-# }}}
-
-<<<TABDIR>>>/interpro_entries.tsv.gz: createInterProEntries.sh
-	<<<LOGADD>>> "Starting creating InterPro entries"
-	./createInterProEntries.sh | <<<CMD_GZIP>>> > $@
-	<<<LOGADD>>> "Finished creating InterPro entries."
 # }}}
 
 .PHONY: clean_intermediates
