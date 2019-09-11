@@ -188,14 +188,14 @@ $(TABLES): $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 	<<<LOGADD>>> "Started the calculation of equalized FA's."
 	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).FunctionAnalysisPeptides \
 		<(<<<CMD_ZCAT>>> <<<INTDIR>>>/peptides.tsv.gz | cut -f2,5 | LC_ALL=C <<<CMD_SORT>>> -k 1b,1) \
-		>(<<<CMD_GZIP>>> - > <<<INTDIR>>>/FAs.tsv.gz)
+		>(<<<CMD_GZIP>>> > <<<INTDIR>>>/FAs.tsv.gz)
 	<<<LOGADD>>> "Finished the calculation of equalized FA's."
 	
 <<<INTDIR>>>/original_FAs.tsv.gz: <<<INTDIR>>>/peptides.tsv.gz
 	<<<LOGADD>>> "Started the calculation of non-equalized FA's."
 	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).FunctionAnalysisPeptides \
 		<(<<<CMD_ZCAT>>> <<<INTDIR>>>/peptides.tsv.gz | cut -f3,5 | LC_ALL=C <<<CMD_SORT>>> -k 1b,1) \
-		>(<<<CMD_GZIP>>> - > <<<INTDIR>>>/original_FAs.tsv.gz)
+		>(<<<CMD_GZIP>>> > <<<INTDIR>>>/original_FAs.tsv.gz)
 	<<<LOGADD>>> "Finished the calculation of non-equalized FA's."
 
 
