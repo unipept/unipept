@@ -445,11 +445,7 @@ class Api::ApiController < ApplicationController
 
           v[:ipr].each do |value|
             ipr_entry = ipr_mapping[value[:code]]
-
-            if @extra_info
-              value[:name] = ipr_entry.name
-            end
-
+            value[:name] = ipr_entry.name if @extra_info
             splitted[ipr_entry.category] << value
           end
 
