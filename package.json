@@ -18,7 +18,7 @@
     "jquery": "^3.2.1",
     "tiny-emitter": "^2.0.2",
     "ts-loader": "6.0.4",
-    "typescript": "^3.6.2",
+    "typescript": "^3.6.3",
     "unipept-heatmap": "^1.0.26",
     "unipept-visualizations": "^1.7.3",
     "vue": "^2.6.10",
