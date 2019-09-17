@@ -41,7 +41,7 @@ commands:
             - unipept-yarn-
       - run:
           name: Yarn install
-          command: yarn install --cache-folder ~/.cache/yarn
+          command: yarn install --verbose --cache-folder ~/.cache/yarn
       - save_cache:
           key: unipept-yarn-{{ checksum "yarn.lock" }}
           paths:
