@@ -1,5 +1,6 @@
 #!/bin/sh
 #PBS -N unipept-backend
+#PBS -m abe
 #PBS -l nodes=1:ppn=24
 #PBS -l walltime=72:00:00
 #PBS -l vmem=480gb

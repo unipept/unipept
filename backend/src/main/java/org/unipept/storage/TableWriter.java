@@ -46,7 +46,6 @@ public class TableWriter implements UniprotObserver {
     private CSV.IndexedWriter emblCrossReferences;
     private CSV.IndexedWriter goCrossReferences;
     private CSV.IndexedWriter ecCrossReferences;
-    private CSV.IndexedWriter interProCrossReferences;
     private CSV.IndexedWriter proteomeCrossReferences;
     private CSV.IndexedWriter proteomes;
 
@@ -67,7 +66,6 @@ public class TableWriter implements UniprotObserver {
             ecCrossReferences = new CSV.IndexedWriter(args.ecCrossReferencesFile);
             emblCrossReferences = new CSV.IndexedWriter(args.emblCrossReferencesFile);
             goCrossReferences = new CSV.IndexedWriter(args.goCrossReferencesFile);
-            interProCrossReferences = new CSV.IndexedWriter(args.interProCrossReferencesFile);
             proteomeCrossReferences = new CSV.IndexedWriter(args.proteomeCrossReferencesFile);
         } catch(IOException e) {
             System.err.println(new Timestamp(System.currentTimeMillis())
@@ -105,8 +103,6 @@ public class TableWriter implements UniprotObserver {
                 addGORef(ref, uniprotEntryId);
             for (UniprotECRef ref : entry.getECReferences())
                 addECRef(ref, uniprotEntryId);
-            for (UniprotInterProRef ref : entry.getInterProReferences())
-                addInterProRef(ref, uniprotEntryId);
             for (UniprotProteomeRef ref : entry.getProtReferences())
                 addProteomeRef(ref, uniprotEntryId);
         }
@@ -274,24 +270,6 @@ public class TableWriter implements UniprotObserver {
     }
 
     /**
-     * Adds a uniprot entry InterPro reference to the database
-     *
-     * @param ref
-     *            The uniprot InterPro reference to add
-     * @param uniprotEntryId
-     *            The uniprotEntry of the cross reference
-     */
-    public void addInterProRef(UniprotInterProRef ref, long uniprotEntryId) {
-        try {
-            interProCrossReferences.write(Long.toString(uniprotEntryId), ref.getId());
-        } catch (IOException e) {
-            System.err.println(new Timestamp(System.currentTimeMillis())
-                    + " Error adding this InterPro reference to the database.");
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Adds a uniprot proteome reference to the database
      *
      * @param ref
@@ -324,7 +302,6 @@ public class TableWriter implements UniprotObserver {
             emblCrossReferences.close();
             goCrossReferences.close();
             ecCrossReferences.close();
-            interProCrossReferences.close();
             proteomeCrossReferences.close();
             proteomes.close();
         } catch(IOException e) {
