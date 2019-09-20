@@ -5,7 +5,7 @@ LABEL maintainer="Pieter Verschaffelt <pieter.verschaffelt@ugent.be>"
 RUN mkdir -p /usr/share/man/man1
 RUN apt-get update && apt-get install -y default-jdk git dos2unix curl maven make wget unzip expect gawk
 # The files needed to build the database are part of the unipept repository
-RUN git clone "https://github.com/unipept/unipept" && git checkout develop
+RUN git clone "https://github.com/unipept/unipept" && cd unipept && git checkout develop && cd /
 
 COPY "scripts" "scripts"
 
