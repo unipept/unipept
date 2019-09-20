@@ -76,7 +76,7 @@ $(JAR): $(SRC)
 <<<TABDIR>>>/lineages.tsv.gz: lineage_taxons
 lineage_taxons: $(JAR) <<<INTDIR>>>/names.dmp <<<INTDIR>>>/clean-nodes.dmp
 	<<<LOGADD>>> "Starting calculation of taxons and lineages tables."
-	@mkdir -p $(dir $@)
+	@mkdir -p <<<TABDIR>>>
 	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).NamesNodes2TaxonsLineages \
 		--names <<<INTDIR>>>/names.dmp \
 		--nodes <(<<<CMD_SED>>> 's/\(sub\)*cohort/no rank/' <<<INTDIR>>>/clean-nodes.dmp) \
@@ -95,7 +95,7 @@ lineage_taxons: $(JAR) <<<INTDIR>>>/names.dmp <<<INTDIR>>>/clean-nodes.dmp
 <<<TABDIR>>>/go_cross_references.tsv.: tables
 tables: $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 	<<<LOGADD>>> "Started calculation of most tables."
-	@mkdir -p $(dir $@)
+	@mkdir -p <<<TABDIR>>>
 	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).TaxonsUniprots2Tables \
 		--peptide-min     <<<PEPTIDE_MIN_LENGTH>>> \
 		--peptide-max     <<<PEPTIDE_MAX_LENGTH>>> \
