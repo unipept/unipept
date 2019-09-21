@@ -11,7 +11,7 @@ cp database/structure_no_index.sql /docker-entrypoint-initdb.d/1.sql
 # Then, we start processing all data for the database. If the required data files have been generated before, we don't
 # need to redo these! (TODO: we could check if *all* required .tsv.gz files are present in case the database format
 # was changed!)
-if test -f "/tables/peptides.tsv.gz"; then
+if test -f "/tables/uniprot_entries.tsv.gz"; then
     echo "No need to regenerate data. Previously generated data encountered."
 else
     echo "Data needs to be regenerated."

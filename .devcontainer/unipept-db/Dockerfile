@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y default-jdk git dos2unix curl maven mak
 RUN git clone "https://github.com/unipept/unipept" && cd unipept && git checkout develop && cd /
 
 COPY "scripts" "scripts"
+COPY "data" "tables"
 
 # These files sometimes give problems when being used on Windows-machines.
 RUN dos2unix scripts/*.sh scripts/*.exp
@@ -20,5 +21,4 @@ RUN mv /scripts/fill_database.sh /docker-entrypoint-initdb.d/2.sh
 # These files are run automatically when the container is started by the fill_database-script.
 RUN cp /unipept/backend/database/load.sh /tables/load.sh
 RUN cp /unipept/backend/database/index.sh /tables/index.sh
-
-USER root
+RUN chmod u+x /tables/load.sh && chmod u+x /tables/index.sh
