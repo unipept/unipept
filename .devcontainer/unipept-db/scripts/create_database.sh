@@ -3,6 +3,8 @@
 # Move to the backend-folder in which all database-generation files live.
 cd /unipept/backend
 
+mkdir -p data/tables
+
 # First the database structure should be initialized when the container starts up for the first time
 cp database/structure_no_index.sql /docker-entrypoint-initdb.d/1.sql
 
@@ -24,7 +26,8 @@ else
 
     # Move the data that has been generated to the tables volume. If this file is rerun afterwards, the data does not
     # need to be regenerated.
-    mv /backend/data/tables/* /tables
+    mkdir /tables
+    mv /unipept/backend/data/tables/* /tables
 fi
 
 # All necessary data has been generated at this point, and data can be inserted into the database when the container 
