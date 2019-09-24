@@ -12,6 +12,8 @@ services:
     ports:
       - "3306:3306"
     hostname: mysql
+    volumes:
+      - ./data:/data
   phpmyadmin:
     depends_on:
       - db
