@@ -2,6 +2,11 @@ class PrivateApiController < ApplicationController
   before_action :default_format_json
   skip_before_action :verify_authenticity_token
 
+  def lineages
+    taxa = params[:taxa] || []
+    @lineages = Lineage.where(taxon_id: taxa)
+  end
+
   def goterms
     go_terms = params[:goterms] || []
     @goterms = GoTerm.where(code: go_terms)

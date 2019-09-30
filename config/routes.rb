@@ -28,6 +28,7 @@ UnipeptWeb::Application.routes.draw do
 
   # General inforamtion
   scope :private_api, as: 'private_api' do
+    match "lineages", via: [:get, :post], :to => "private_api#lineages"
     match "goterms", via: [:get, :post], :to => "private_api#goterms"
     match "ecnumbers",     via: [:get, :post], :to => "private_api#ecnumbers"
     match "taxa",     via: [:get, :post], :to => "private_api#taxa"

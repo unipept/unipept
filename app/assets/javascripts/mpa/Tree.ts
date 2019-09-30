@@ -1,5 +1,5 @@
 import Node from "./Node";
-import PeptideInfo from "./PeptideInfo";
+import {PeptideData} from "./api/pept2data/Response";
 
 export default class Tree {
     public root: Node;
@@ -17,15 +17,16 @@ export default class Tree {
      * @param id The taxon id of the root
      * @param name The name of the root
      */
-    constructor(peptides: Iterable<PeptideInfo>, id: number = -1, name: string = "Organism") {
+    constructor(peptides: Map<string, PeptideData>, id: number = -1, name: string = "Organism") {
         this.root = new Node(id, name);
         this.nodes = new Map();
         this.taxa = [];
         this.rankNodeMap = new Map();
 
-        for (const peptide of peptides) {
+        peptides.forEach((data, peptide, _) => 
+        {
             let currentNode = this.getRoot();
-            for (const taxid of peptide.lineage) {
+            for (const taxid of data.lineage) {
                 if (taxid !== null) {
                     let newNode = currentNode.getChild(taxid);
                     if (newNode === null) {
@@ -36,7 +37,7 @@ export default class Tree {
                 }
             }
             currentNode.addValue(peptide);
-        }
+        })
 
         this.root.getCounts();
     }

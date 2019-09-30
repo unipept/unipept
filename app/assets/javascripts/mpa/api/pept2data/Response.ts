@@ -1,4 +1,4 @@
-type PeptideData = 
+export type PeptideData = 
 {
     lca: number, 
     lineage: [number], 

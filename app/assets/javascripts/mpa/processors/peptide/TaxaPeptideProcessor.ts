@@ -1,11 +1,10 @@
-import {PeptideProcessor} from "./PeptideProcessor";
 import {ProcessedPeptideContainer} from '../../ProcessedPeptideContainer';
 import {TaxaCountTable} from '../../counts/TaxaCountTable';
 import {Count} from '../../counts/CountTable';
 
-export class TaxaPeptideProcessor implements PeptideProcessor<TaxaCountTable>
+export namespace TaxaPeptideProcessor
 {
-    process(processedPeptides: ProcessedPeptideContainer): TaxaCountTable 
+    export function process(processedPeptides: ProcessedPeptideContainer): TaxaCountTable 
     {
         var peptideCounts = processedPeptides.countTable;
         var pept2dataResponse = processedPeptides.response;

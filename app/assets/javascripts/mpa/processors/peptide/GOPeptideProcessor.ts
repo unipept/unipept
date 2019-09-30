@@ -1,11 +1,10 @@
-import {PeptideProcessor} from "./PeptideProcessor";
 import {ProcessedPeptideContainer} from '../../ProcessedPeptideContainer';
 import { Count } from '../../counts/CountTable';
 import { GOCountTable } from '../../counts/GOCountTable';
 
-export class GOPeptideProcessor implements PeptideProcessor<GOCountTable>
+export namespace GOPeptideProcessor
 {
-    process(processedPeptides: ProcessedPeptideContainer): GOCountTable 
+    export function process(processedPeptides: ProcessedPeptideContainer): GOCountTable 
     {
         var peptideCounts = processedPeptides.countTable;
         var pept2dataResponse = processedPeptides.response;

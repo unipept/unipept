@@ -3,18 +3,19 @@ import Sample from "../Sample";
 import TaxaDataSource from "./TaxaDataSource";
 import ProgressListener from "../ProgressListener";
 
-import { postJSON } from "../../utils";
 import EcDataSource from "./EcDataSource";
 
 import {PeptideContainerProcessor} from '../processors/peptide/container/PeptideContainerProcessor';
 import { ProcessedPeptideContainer } from "../ProcessedPeptideContainer";
+
+import { TaxaPeptideProcessor } from '../processors/peptide/TaxaPeptideProcessor'
 
 export default class DataRepository {
     private readonly _sample: Sample;
     private _progressListeners: ProgressListener[] = [];
 
     private _processor: PeptideContainerProcessor;
-    private _processedPeptideContainer: ProcessedPeptideContainer;
+    private _processedPeptideContainer: Promise<ProcessedPeptideContainer>;
 
     private _mpaConfig: MPAConfig;
 
@@ -35,7 +36,9 @@ export default class DataRepository {
 
     public async createTaxaDataSource(): Promise<TaxaDataSource> {
         if (!this._taxaSourceCache) {
-            this._taxaSourceCache = new TaxaDataSource(this);
+            let processedPeptideContainer = await this._processedPeptideContainer;
+            this._taxaSourceCache = new TaxaDataSource(
+                TaxaPeptideProcessor.process(processedPeptideContainer), this);
         }
         return this._taxaSourceCache;
     }
@@ -67,9 +70,10 @@ export default class DataRepository {
      * Returns a fully prepared worker. The worker is initialized with the required state and has already processed
      * all peptides found in this repository's associated sample.
      */
-    public async processPeptideContainer() {
+    public async getProcessedPeptideContainer() : Promise<ProcessedPeptideContainer>{
         if (!this._processedPeptideContainer) {
-            this._processedPeptideContainer = await this._processor.process(this._sample.peptideContainer, this._mpaConfig);
+            this._processedPeptideContainer = this._processor.process(this._sample.peptideContainer, this._mpaConfig);
         }
+        return this._processedPeptideContainer;
     }
 }

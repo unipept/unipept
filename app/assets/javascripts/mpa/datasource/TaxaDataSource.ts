@@ -6,11 +6,16 @@ import Tree from "../Tree";
 import Node from "../Node";
 import DataRepository from "./DataRepository";
 import GoTerm from "../../fa/GoTerm";
-import PeptideInfo from "../PeptideInfo";
 import EcNumber from "../../fa/EcNumber";
 import { TaxumRank, convertStringToTaxumRank } from "./TaxumRank";
+import { TaxaCountTable } from "../counts/TaxaCountTable";
+import { ProcessedPeptideContainer } from "../ProcessedPeptideContainer";
+import { TaxaPeptideProcessor } from "../processors/peptide/TaxaPeptideProcessor";
 
-export default class TaxaDataSource extends DataSource {
+export default class TaxaDataSource extends DataSource 
+{
+    private _countTable: TaxaCountTable;
+
     private _tree: Tree;
     // These are the peptides that couldn't be matched with the database.
     private _missedPeptides: string[];
@@ -19,6 +24,12 @@ export default class TaxaDataSource extends DataSource {
     // The amount of peptides that have been looked up in the database. This is the total amount of peptides that were
     // searched.
     private _searchedPeptides: number;
+ 
+    constructor(countTable: TaxaCountTable, repository: DataRepository)
+    {
+        super(repository);
+        this._countTable = countTable;
+    }
 
     /**
      * Get the n most popular items from this DataSource. The popularity is based on the amount of peptides that
@@ -133,24 +144,20 @@ export default class TaxaDataSource extends DataSource {
 
     private async process(): Promise<void> {
         if (!this._tree || !this._missedPeptides || this._matchedPeptides === undefined || this._searchedPeptides === undefined) {
-            let worker = await this._repository.getWorker();
-            let {processed, missed, numMatched, numSearched}: {processed: PeptideInfo[], missed: string[], numMatched: number, numSearched: number} 
-                = await worker.getResult();
+            let processedPeptideContainer = await this._repository.getProcessedPeptideContainer();
 
-            let processedPeptides: Map<string, PeptideInfo> = new Map();
-            for (const p of processed) {
-                processedPeptides.set(p.sequence, p);
-            }
-
-            this._tree = new Tree(processed);
+            // TODO: convert count table to Tree with TaxaCountTableProcessor 
             
-            const taxonInfo = await Sample.getTaxonInfo(this._tree.getTaxa());
-            this._tree.setTaxonNames(taxonInfo);
-            this._tree.sortTree();
+            
 
-            this._missedPeptides = missed;
-            this._matchedPeptides = numMatched;
-            this._searchedPeptides = numSearched;
+            /*const taxonInfo = await Sample.getTaxonInfo(this._tree.getTaxa());
+            this._tree.setTaxonNames(taxonInfo);
+            this._tree.sortTree();*/
+
+            // TODO: these values shouldn't be stored here
+            this._missedPeptides = processedPeptideContainer.missed;
+            this._matchedPeptides = processedPeptideContainer.numMatched;
+            this._searchedPeptides = processedPeptideContainer.numSearched;
         }
     }
 }

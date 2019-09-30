@@ -1,11 +1,10 @@
-import {PeptideProcessor} from "./PeptideProcessor";
 import {ProcessedPeptideContainer} from '../../ProcessedPeptideContainer';
 import {Count} from '../../counts/CountTable';
 import { ECCountTable } from '../../counts/ECCountTable';
 
-export class ECPeptideProcessor implements PeptideProcessor<ECCountTable>
+export namespace ECPeptideProcessor
 {
-    process(processedPeptides: ProcessedPeptideContainer): ECCountTable 
+    export function process(processedPeptides: ProcessedPeptideContainer): ECCountTable 
     {
         var peptideCounts = processedPeptides.countTable;
         var pept2dataResponse = processedPeptides.response;
