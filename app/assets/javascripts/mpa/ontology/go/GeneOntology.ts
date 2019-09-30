@@ -5,7 +5,7 @@ type OntologyId = string;
 
 export class GeneOntology extends Ontology<OntologyId, GOTerm>
 {
-    fetchDefinitions(): Promise<void> {
+    fetchDefinitions(ids: OntologyId[]){
         throw new Error("Method not implemented.");
     }
 }

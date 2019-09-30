@@ -3,7 +3,7 @@ class PrivateApiController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def lineages
-    taxa = params[:taxa] || []
+    taxids = params[:taxids] || []
     @lineages = Lineage.where(taxon_id: taxa)
   end
 

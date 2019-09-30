@@ -10,5 +10,10 @@ export abstract class CountTable<Ontology, OntologyId>
         readonly peptide2ontology: Map<Peptide, Set<OntologyId>> = undefined)
     {}
 
+    GetOntologyIds() : OntologyId[]
+    {
+        return Array.from(this.counts.keys());
+    }
+
     abstract GetOntology() : Ontology;
 }

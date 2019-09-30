@@ -9,8 +9,7 @@ import GoTerm from "../../fa/GoTerm";
 import EcNumber from "../../fa/EcNumber";
 import { TaxumRank, convertStringToTaxumRank } from "./TaxumRank";
 import { TaxaCountTable } from "../counts/TaxaCountTable";
-import { ProcessedPeptideContainer } from "../ProcessedPeptideContainer";
-import { TaxaPeptideProcessor } from "../processors/peptide/TaxaPeptideProcessor";
+import { TaxaCountProcessor } from "../processors/count/TaxaCountProcessor";
 
 export default class TaxaDataSource extends DataSource 
 {
@@ -146,13 +145,7 @@ export default class TaxaDataSource extends DataSource
         if (!this._tree || !this._missedPeptides || this._matchedPeptides === undefined || this._searchedPeptides === undefined) {
             let processedPeptideContainer = await this._repository.getProcessedPeptideContainer();
 
-            // TODO: convert count table to Tree with TaxaCountTableProcessor 
-            
-            
-
-            /*const taxonInfo = await Sample.getTaxonInfo(this._tree.getTaxa());
-            this._tree.setTaxonNames(taxonInfo);
-            this._tree.sortTree();*/
+            this._tree = await TaxaCountProcessor.process(this._countTable);
 
             // TODO: these values shouldn't be stored here
             this._missedPeptides = processedPeptideContainer.missed;

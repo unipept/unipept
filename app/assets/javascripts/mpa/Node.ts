@@ -1,12 +1,10 @@
-import PeptideInfo from "./PeptideInfo";
-
 export default class Node {
     public id: number;
     public name: string;
     public rank: string;
 
     public children: Node[];
-    public values: {sequence: string, count: number, lca: number}[];
+    public values: string[];
     public data: {count: number, self_count: number};
 
     /**
@@ -58,20 +56,6 @@ export default class Node {
      */
     addChild(node: Node) {
         this.children.push(node);
-    }
-
-    /**
-     * Adds a peptide value to this node and updates its self_count
-     *
-     * @param peptide The peptide value to add
-     */
-    addValue(peptide: PeptideInfo) {
-        this.values.push({
-            sequence: peptide.sequence,
-            count: peptide.count,
-            lca: peptide.lca,
-        });
-        this.data.self_count += peptide.count;
     }
 
     /**

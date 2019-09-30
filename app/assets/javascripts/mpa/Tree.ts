@@ -1,5 +1,5 @@
 import Node from "./Node";
-import {PeptideData} from "./api/pept2data/Response";
+import { TaxaCountTable } from "./counts/TaxaCountTable";
 
 export default class Tree {
     public root: Node;
@@ -17,16 +17,19 @@ export default class Tree {
      * @param id The taxon id of the root
      * @param name The name of the root
      */
-    constructor(peptides: Map<string, PeptideData>, id: number = -1, name: string = "Organism") {
+    constructor(taxaCountTable: TaxaCountTable, id: number = -1, name: string = "Organism") {
         this.root = new Node(id, name);
         this.nodes = new Map();
         this.taxa = [];
         this.rankNodeMap = new Map();
 
-        peptides.forEach((data, peptide, _) => 
+        let ontology = taxaCountTable.GetOntology();
+
+        taxaCountTable.counts.forEach((count, id) => 
         {
             let currentNode = this.getRoot();
-            for (const taxid of data.lineage) {
+            let taxonDef = ontology.getDefinition(id);
+            for (const taxid of taxonDef.lineage) {
                 if (taxid !== null) {
                     let newNode = currentNode.getChild(taxid);
                     if (newNode === null) {
@@ -36,7 +39,9 @@ export default class Tree {
                     currentNode = newNode;
                 }
             }
-            currentNode.addValue(peptide);
+            
+            currentNode.values = Array.from(taxaCountTable.ontology2peptide.get(id));
+            currentNode.data.self_count = count;
         })
 
         this.root.getCounts();
