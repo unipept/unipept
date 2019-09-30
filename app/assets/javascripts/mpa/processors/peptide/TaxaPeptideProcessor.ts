@@ -1,4 +1,5 @@
 import {ProcessedPeptideContainer} from '../../ProcessedPeptideContainer';
+import {Pept2DataResponse} from '../../api/pept2data/Response';
 import {TaxaCountTable} from '../../counts/TaxaCountTable';
 import {Count} from '../../counts/CountTable';
 
@@ -7,12 +8,11 @@ export namespace TaxaPeptideProcessor
     export function process(processedPeptides: ProcessedPeptideContainer): TaxaCountTable 
     {
         var peptideCounts = processedPeptides.countTable;
-        var pept2dataResponse = processedPeptides.response;
 
         var lcaCounts = new Map<number, Count>();
         var lca2peptides = new Map<number, Set<string>>();
 
-        pept2dataResponse.GetResponse().forEach((data, peptide, _) => 
+        processedPeptides.response.response.forEach((data, peptide, _) => 
             {
                 let lca = data.lca
                 let peptideCount = peptideCounts.get(peptide)

@@ -145,7 +145,7 @@ export default class Tree {
         } else {
             node = nodeId;
         }
-        return node.values.map(d => d.sequence);
+        return node.values;
     }
 
     /**

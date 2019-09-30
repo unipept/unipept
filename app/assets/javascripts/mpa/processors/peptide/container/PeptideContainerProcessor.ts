@@ -3,7 +3,7 @@ import { ProcessedPeptideContainer } from '../../../ProcessedPeptideContainer';
 
 import Worker from 'worker-loader!./PeptideContainerProcessor.worker';
 
-import "babel-polyfill"; // for async await support
+// import "babel-polyfill"; for async await support
 
 export class PeptideContainerProcessor
 {

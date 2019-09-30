@@ -86,14 +86,7 @@ export default class TaxaDataSource extends DataSource
      * @return A new Node (root of the tree) that represents the taxonomic lineage of the given GO-term.
      */
     public async getTreeByGoTerm(term: GoTerm): Promise<Node> {
-        await this.process();
-        let pepts = await (await this._repository.getWorker()).getPeptidesByFA(term.code, null);
-        let sequences = pepts.map(pept => pept.sequence);
-        
-        return this._tree.getRoot().callRecursivelyPostOder((t: Node, c: any) => {
-            const included = c.some(x => x.included) || t.values.some(pept => sequences.includes(pept.sequence));
-            return Object.assign(Object.assign({}, t), {included: included, children: c});
-        });
+        return this.getTreeByFA(term.code);
     }
 
     /**
@@ -104,12 +97,16 @@ export default class TaxaDataSource extends DataSource
      * @return A new Node (root of the tree) that represents the taxonomic lineage of the given EC-Number.
      */
     public async getTreeByEcNumber(number: EcNumber): Promise<Node> {
+        return this.getTreeByFA(number.code);
+    }
+
+    public async getTreeByFA(code: string) : Promise<Node> {
         await this.process();
-        let pepts = await (await this._repository.getWorker()).getPeptidesByFA(number.code, null);
+        let pepts = await (await this._repository.getWorker()).getPeptidesByFA(code, null);
         let sequences = pepts.map(pept => pept.sequence);
         
         return this._tree.getRoot().callRecursivelyPostOder((t: Node, c: any) => {
-            const included = c.some(x => x.included) || t.values.some(pept => sequences.includes(pept.sequence));
+            const included = c.some(x => x.included) || t.values.some(pept => sequences.includes(pept));
             return Object.assign(Object.assign({}, t), {included: included, children: c});
         });
     }

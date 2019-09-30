@@ -9,5 +9,6 @@ export default class MpaAnalysisManager {
         peptideContainer.setDataset(dataset);
         // Force early analysis here
         await dataset.dataRepository.getProcessedPeptideContainer();
+        await dataset.dataRepository.getWorker();
     }
 }

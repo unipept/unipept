@@ -282,7 +282,7 @@
             let container = this.peptideContainer;
 
             if (container && container.getDataset()) {
-                let dataset = container.getDataset();
+                let dataset = container.getDataset().dataRepository;
 
                 const result = [[
                     "peptide",
@@ -291,7 +291,7 @@
                     "matching proteins with " + name,
                     "percenage proteins with " + name,
                 ]]
-                    .concat((await dataset.getPeptidesByFA(name, sequences))
+                    .concat((await (await dataset.getWorker()).getPeptidesByFA(name, sequences))
                         .map(x => [
                             x.sequence,
                             x.count,

@@ -15,7 +15,6 @@
     import Node from "../../Node";
     import {HeatmapData, HeatmapElement, HeatmapValue} from "unipept-heatmap/heatmap/input";
     import GOTerms from "../../../fa/old-goterms";
-    import Resultset from "../../Resultset";
 
     @Component
     export default class HeatmapVisualization extends mixins(VisualizationMixin) {

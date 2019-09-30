@@ -337,6 +337,7 @@
                 if (taxonId > 0) {
                     let tree = await taxaSource.getTree();
                     sequences = tree.getAllSequences(taxonId);
+                    console.log(sequences);
                     let taxonData = tree.nodes.get(taxonId);
                     this.filteredScope = `${taxonData.name} (${taxonData.rank})`;
                 }

@@ -10,12 +10,19 @@ import { ProcessedPeptideContainer } from "../ProcessedPeptideContainer";
 
 import { TaxaPeptideProcessor } from '../processors/peptide/TaxaPeptideProcessor'
 
+// @ts-ignore
+import newworker from "workerize-loader!./../newworker.js";
+
 export default class DataRepository {
     private readonly _sample: Sample;
     private _progressListeners: ProgressListener[] = [];
 
     private _processor: PeptideContainerProcessor;
     private _processedPeptideContainer: Promise<ProcessedPeptideContainer>;
+
+    // TODO: get rid of this worker
+    private _worker;
+    private _workerPromise: Promise<any>;
 
     private _mpaConfig: MPAConfig;
 
@@ -75,5 +82,23 @@ export default class DataRepository {
             this._processedPeptideContainer = this._processor.process(this._sample.peptideContainer, this._mpaConfig);
         }
         return this._processedPeptideContainer;
+    }
+
+    public async getWorker(): Promise<any> {
+        if (!this._workerPromise) {
+            let peptides = await this._sample.peptideContainer.getPeptides();
+            peptides = Sample.cleanPeptides(peptides);
+
+            this._worker = newworker();
+            this._worker.onmessage = m => {
+                if (m.data.type == "progress") {
+                    this.setWorkerProgress(m.data.value);
+                }
+            };
+
+            this._workerPromise = this._worker.process(peptides, this._mpaConfig);
+        }
+        await this._workerPromise;
+        return this._worker;
     }
 }

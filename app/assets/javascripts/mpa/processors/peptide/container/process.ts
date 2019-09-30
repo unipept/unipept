@@ -1,6 +1,6 @@
 import { ProcessedPeptideContainer } from '../../../ProcessedPeptideContainer';
 import { postJSON } from "../../../../utils";
-import { pept2dataResponse } from '../../../api/pept2data/Response';
+import { Pept2DataResponse } from '../../../api/pept2data/Response';
 
 const BATCH_SIZE = 100;
 const API_ENDPOINT = "/mpa/pept2data";
@@ -13,7 +13,7 @@ export default async function process(peptides: string[], config: MPAConfig) : P
     var numSearched = [...preparedPeptides.values()].reduce((a, b) => a + b, 0);
     var numMatched = 0;
 
-    var response = new pept2dataResponse();
+    var response = new Pept2DataResponse();
 
     for (let i = 0; i < peptideList.length; i += BATCH_SIZE) 
     {

@@ -2,6 +2,8 @@ import {postJSON} from "../utils";
 import DataRepository from "./datasource/DataRepository";
 import ProgressListener from "./ProgressListener";
 import PeptideContainer from './PeptideContainer'
+import TaxaDataSource from './datasource/TaxaDataSource';
+
 
 export default class Sample {
     public static readonly TAXA_URL: string = "/private_api/taxa";
@@ -41,5 +43,28 @@ export default class Sample {
      */
     static getTaxonInfo(taxids: number[]): Promise<TaxonInfo[]> {
         return postJSON(Sample.TAXA_URL, JSON.stringify({taxids: taxids}));
+    }
+
+    /**
+     * Converts a list of peptides to uppercase
+     *
+     * @param peptides a list of peptides
+     * @return The converted list
+     */
+    static cleanPeptides(peptides: string[]): string[] {
+        return peptides.map(p => p.toUpperCase());
+    }
+
+    /**
+     * Creates a tree like structure, that is this.tree where each node has an
+     * `included` property. This property indicates if this node or any of its
+     * children contain the, sought for, functional annotation (code).
+     *
+     * @param code The FA term to look for
+     * @return A taxon tree-like object annotated with `included`
+     */
+    async getFATree(code: string): Promise<object> {
+        let taxaDataSource: TaxaDataSource = await this._dataRepository.createTaxaDataSource();
+        return taxaDataSource.getTreeByFA(code);
     }
 }
