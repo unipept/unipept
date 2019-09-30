@@ -1,6 +1,5 @@
 import DataSource from "./DataSource";
 import Sample from "../Sample";
-import Resultset from "../Resultset";
 // @ts-ignore
 import TaxaElement from "./TaxaElement";
 import Tree from "../Tree";

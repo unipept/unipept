@@ -3,17 +3,19 @@ import Sample from "../Sample";
 import TaxaDataSource from "./TaxaDataSource";
 import ProgressListener from "../ProgressListener";
 
-// @ts-ignore
-import newworker from "workerize-loader!./../newworker.js";
 import { postJSON } from "../../utils";
 import EcDataSource from "./EcDataSource";
 
+import {PeptideContainerProcessor} from '../processors/peptide/container/PeptideContainerProcessor';
+import { ProcessedPeptideContainer } from "../ProcessedPeptideContainer";
 
 export default class DataRepository {
     private readonly _sample: Sample;
     private _progressListeners: ProgressListener[] = [];
-    private _worker;
-    private _workerPromise: Promise<any>;
+
+    private _processor: PeptideContainerProcessor;
+    private _processedPeptideContainer: ProcessedPeptideContainer;
+
     private _mpaConfig: MPAConfig;
 
     private _taxaSourceCache: TaxaDataSource;
@@ -21,6 +23,8 @@ export default class DataRepository {
     private _ecSourceCache: EcDataSource;
 
     public constructor(sample: Sample, mpaConfig: MPAConfig) {
+        this._processor = new PeptideContainerProcessor();
+
         this._sample = sample;
         this._mpaConfig = mpaConfig;
     }
@@ -63,29 +67,9 @@ export default class DataRepository {
      * Returns a fully prepared worker. The worker is initialized with the required state and has already processed
      * all peptides found in this repository's associated sample.
      */
-    public async getWorker(): Promise<any> {
-        if (!this._workerPromise) {
-            this._worker = newworker();
-            this._worker.onmessage = m => {
-                if (m.data.type == "progress") {
-                    this.setWorkerProgress(m.data.value);
-                }
-            };
-
-            this._workerPromise = this._worker.process(this._sample.originalPeptides, this._mpaConfig);
+    public async processPeptideContainer() {
+        if (!this._processedPeptideContainer) {
+            this._processedPeptideContainer = await this._processor.process(this._sample.peptideContainer, this._mpaConfig);
         }
-        await this._workerPromise;
-        return this._worker;
-    }
-
-    /**
-     * Fetches the taxon info from the Unipept API for a list of taxon id's and returns an Array of objects containing 
-     * the id, name and rank for each result.
-     *
-     * @param taxids Array containing taxon id integers
-     * @return containing an array of result objects with id, name and rank fields
-     */
-    private static getTaxonInfo(taxids: number[]): Promise<TaxonInfo[]> {
-        return postJSON(Sample.TAXA_URL, JSON.stringify({taxids: taxids}));
     }
 }
