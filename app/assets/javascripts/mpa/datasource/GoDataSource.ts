@@ -93,7 +93,7 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm>
         
     }
 
-    protected async computeTerms(percent = 50, sequences = null): Promise<[Map<GoNameSpace, GoTerm[]>, Map<GoNameSpace, FATrust>]> 
+    protected async computeTerms(percent = 50, sequences: string[] = null): Promise<[Map<GoNameSpace, GoTerm[]>, Map<GoNameSpace, FATrust>]> 
     {
         if(!this._processedPeptideContainer)
         {
@@ -112,10 +112,10 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm>
 
         if(sequences == null)
         {
-            sequences = this._processedPeptideContainer.countTable.keys()
+            sequences = Array.from(this._processedPeptideContainer.countTable.keys())
         }
 
-        for(let namespace in Object.values(GoNameSpace))
+        for(let namespace of Object.values(GoNameSpace))
         {
             let totalCount = 0;
             let annotatedCount = 0;
@@ -125,6 +125,11 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm>
 
             for(const pept of sequences)
             {
+                if(!this._countTable.peptide2ontology.has(pept))
+                {
+                    continue;
+                }
+
                 let peptCount = peptideCountTable.get(pept)
                 let terms = this._countTable.peptide2ontology.get(pept)
                 .filter(term => ontology.getDefinition(term).namespace === namespace)
@@ -144,20 +149,25 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm>
                     annotatedCount += peptCount
                 }
             }
-
+            
             // convert calculated data to GoTerms and FATrusts
-            let convertedItems: GoTerm[] = []
-            termCounts.forEach((count, term) => {
-                let ontologyData = ontology.getDefinition(term)
-                let fractionOfPepts = count / totalCount
-                convertedItems.push(new GoTerm(term, ontologyData.name, (namespace as GoNameSpace), count, fractionOfPepts, affectedPeptides.get(term)))
-            })
+            let convertedItems: GoTerm[] = [...termCounts].sort((a, b) => b[1] - a[1])
+                .map(term => 
+                    {
+                        let code = term[0]
+                        let count = term[1]
+                        let ontologyData = ontology.getDefinition(code)
+                        let fractionOfPepts = count / totalCount
+                        return new GoTerm(code, ontologyData.name, namespace, count, fractionOfPepts, affectedPeptides.get(code))
+                    })
 
-            dataOutput.set((namespace as GoNameSpace), convertedItems);
+            dataOutput.set(namespace, convertedItems);
             // convert calculated data to FATrust
-            trustOutput.set((namespace as GoNameSpace), new FATrust(annotatedCount, totalCount, 0));
+            trustOutput.set(namespace, new FATrust(annotatedCount, totalCount, 0));
         }
 
         return [dataOutput, trustOutput];
+    
+    
     }
 }
