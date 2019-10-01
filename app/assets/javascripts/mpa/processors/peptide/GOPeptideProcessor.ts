@@ -10,9 +10,9 @@ export namespace GOPeptideProcessor
         var pept2dataResponse = processedPeptides.response;
 
         var goCounts = new Map<string, Count>();
-        var peptide2go = new Map<string, Set<string>>();
+        var peptide2go = new Map<string, string[]>();
 
-        pept2dataResponse.GetResponse().forEach((data, peptide, _) => 
+        pept2dataResponse.response.forEach((data, peptide, _) => 
         {
             let fas = data.fa.data || [];
             let peptideCount = peptideCounts.get(peptide)
@@ -24,8 +24,8 @@ export namespace GOPeptideProcessor
                         goCounts.set(term, (goCounts.get(term) || 0) + peptideCount)
                         
                         if(!peptide2go.has(peptide))
-                            peptide2go.set(peptide, new Set())
-                        peptide2go.get(peptide).add(term)
+                            peptide2go.set(peptide, [])
+                        peptide2go.get(peptide).push(term)
                     });
         })
 

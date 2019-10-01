@@ -7,8 +7,8 @@ import EcDataSource from "./EcDataSource";
 
 import {PeptideContainerProcessor} from '../processors/peptide/container/PeptideContainerProcessor';
 import { ProcessedPeptideContainer } from "../ProcessedPeptideContainer";
-
 import { TaxaPeptideProcessor } from '../processors/peptide/TaxaPeptideProcessor'
+import { GOPeptideProcessor } from "../processors/peptide/GOPeptideProcessor";
 
 // @ts-ignore
 import newworker from "workerize-loader!./../newworker.js";
@@ -55,7 +55,11 @@ export default class DataRepository {
      */
     public async createGoDataSource(): Promise<GoDataSource> {
         if (!this._goSourceCache) {
-            this._goSourceCache = new GoDataSource(this);
+            let processedPeptideContainer = await this._processedPeptideContainer;
+            this._goSourceCache = new GoDataSource(
+                GOPeptideProcessor.process(processedPeptideContainer),
+                processedPeptideContainer, 
+                this);
         }
         return this._goSourceCache;
     }

@@ -10,7 +10,7 @@ export namespace ECPeptideProcessor
         var pept2dataResponse = processedPeptides.response;
 
         var ecCounts = new Map<string, Count>();
-        var peptide2ec = new Map<string, Set<string>>();
+        var peptide2ec = new Map<string, string[]>();
 
         pept2dataResponse.GetResponse().forEach((data, peptide, _) => 
         {
@@ -24,8 +24,8 @@ export namespace ECPeptideProcessor
                         ecCounts.set(term, (ecCounts.get(term) || 0) + peptideCount)
                         
                         if(!peptide2ec.has(peptide))
-                            peptide2ec.set(peptide, new Set())
-                        peptide2ec.get(peptide).add(term)
+                            peptide2ec.set(peptide, [])
+                        peptide2ec.get(peptide).push(term)
                     });
         })
 

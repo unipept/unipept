@@ -116,8 +116,7 @@ export default class TaxaDataSource extends DataSource
         // TODO enumerating all nodes here should not be necessary!
         let nodesForRank: Set<Node> = this._tree.getNodesWithRank(element.rank);
         for (let node of nodesForRank) {
-            if (node.name === element.name) {
-                return this._tree.getAllSequences(node.id);
+            if (node.name === element.name) {                return this._tree.getAllSequences(node.id);
             }
         }
         return [];
