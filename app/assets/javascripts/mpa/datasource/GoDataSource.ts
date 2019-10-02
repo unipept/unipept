@@ -1,15 +1,11 @@
 import DataRepository from "./DataRepository";
 import { GoNameSpace } from "../../fa/GoNameSpace";
-import DataSource from "./DataSource";
 import GoTerm from "../../fa/GoTerm";
 import FATrust from "../../fa/FATrust";
-import sha256 from "crypto-js/sha256";
-import { MPAFAResult } from "../newworker";
 import { CachedDataSource } from "./CachedDataSource";
 import { GOCountTable } from "../counts/GOCountTable";
 import { GeneOntology } from "../ontology/go/GeneOntology";
 import { ProcessedPeptideContainer } from "../ProcessedPeptideContainer";
-import { stringLiteral } from "@babel/types";
 
 /**
  * A GoDataSource can be used to access all GoTerms associated with a specific Sample. Note that this class contains
@@ -27,7 +23,12 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm>
     {
         super(repository)
         this._countTable = countTable;
-        this._processedPeptideContainer = processedPeptideContainer;
+        //this._processedPeptideContainer = processedPeptideContainer;
+    }
+
+    public getPeptidesByGoTerm(term: GoTerm): string[]
+    {
+        return Array.from(this._countTable.ontology2peptide.get(term.code) || [])
     }
 
     /**
@@ -132,6 +133,12 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm>
                 let goTerm = new GoTerm(def.code, def.name, goNameSpace, count, count / namespaceCount, [])
                 dataOutput.get(goNameSpace).push(goTerm);
             })
+
+            // sort the GoTerms for each namespace
+            for(let namespace of Object.values(GoNameSpace))
+            {
+                dataOutput.set(namespace, dataOutput.get(namespace).sort((a, b) => b.popularity - a.popularity))
+            }
 
             return [dataOutput, trustOutput];
         }

@@ -17,6 +17,7 @@
     import FaSortSettings from "./FaSortSettings";
     import Node from "../../Node";
     import FAElement from "../../../fa/FAElement";
+import GoDataSource from "../../datasource/GoDataSource";
 
     @Component({
         components: {
@@ -36,7 +37,9 @@
         private async getTaxaTreeByTerm(term: GoTerm): Promise<Node> {
             let sample: Sample = this.$store.getters.activeDataset.getDataset();
             let taxaDataSource: TaxaDataSource = await sample.dataRepository.createTaxaDataSource();
-            return taxaDataSource.getTreeByGoTerm(term);
+            let goDataSource: GoDataSource = await sample.dataRepository.createGoDataSource();
+
+            return taxaDataSource.getTreeByPeptides(goDataSource.getPeptidesByGoTerm(term));
         }
     }
 </script>

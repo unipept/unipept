@@ -12,6 +12,7 @@ import { GOPeptideProcessor } from "../processors/peptide/GOPeptideProcessor";
 
 // @ts-ignore
 import newworker from "workerize-loader!./../newworker.js";
+import { ECPeptideProcessor } from "../processors/peptide/ECPeptideProcessor";
 
 export default class DataRepository {
     private readonly _sample: Sample;
@@ -42,7 +43,8 @@ export default class DataRepository {
     }
 
     public async createTaxaDataSource(): Promise<TaxaDataSource> {
-        if (!this._taxaSourceCache) {
+        if (!this._taxaSourceCache) 
+        {
             let processedPeptideContainer = await this._processedPeptideContainer;
             this._taxaSourceCache = new TaxaDataSource(
                 TaxaPeptideProcessor.process(processedPeptideContainer), this);
@@ -54,19 +56,27 @@ export default class DataRepository {
      * Creates a new GoDataSource, or returns one from the cache if the requested namespace was already queried.
      */
     public async createGoDataSource(): Promise<GoDataSource> {
-        if (!this._goSourceCache) {
+        if (!this._goSourceCache) 
+        {
             let processedPeptideContainer = await this._processedPeptideContainer;
             this._goSourceCache = new GoDataSource(
                 GOPeptideProcessor.process(processedPeptideContainer),
                 processedPeptideContainer, 
-                this);
+                this
+            );
         }
         return this._goSourceCache;
     }
 
     public async createEcDataSource(): Promise<EcDataSource> {
-        if (!this._ecSourceCache) {
-            this._ecSourceCache = new EcDataSource(this);
+        if (!this._ecSourceCache) 
+        {
+            let processedPeptideContainer = await this._processedPeptideContainer;
+            this._ecSourceCache = new EcDataSource(
+                ECPeptideProcessor.process(processedPeptideContainer),
+                processedPeptideContainer,
+                this
+            );
         }
         return this._ecSourceCache;
     }

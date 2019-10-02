@@ -77,36 +77,11 @@ export default class TaxaDataSource extends DataSource
         await this.process();
         return this._tree;
     }
-
-    /**
-     * Returns a tree based on the taxonomic lineage of a specific GO-term. Only the peptides that are associated with
-     * the given GO-term are taken into account here.
-     * 
-     * @param term The GO-Term that should be used for filtering the peptides that are part of the tree.
-     * @return A new Node (root of the tree) that represents the taxonomic lineage of the given GO-term.
-     */
-    public async getTreeByGoTerm(term: GoTerm): Promise<Node> {
-        return this.getTreeByFA(term.code);
-    }
-
-    /**
-     * Returns a tree based on the taxonomic lineage of a specific EC-number. Only the peptides that are associated with
-     * the given EC-number are taken into account here.
-     * 
-     * @param number The EC-Number that should be used for filtering the peptides that are part of the tree.
-     * @return A new Node (root of the tree) that represents the taxonomic lineage of the given EC-Number.
-     */
-    public async getTreeByEcNumber(number: EcNumber): Promise<Node> {
-        return this.getTreeByFA(number.code);
-    }
-
-    public async getTreeByFA(code: string) : Promise<Node> {
+    
+    public async getTreeByPeptides(peptides: string[]) : Promise<Node> {
         await this.process();
-        let pepts = await (await this._repository.getWorker()).getPeptidesByFA(code, null);
-        let sequences = pepts.map(pept => pept.sequence);
-        
         return this._tree.getRoot().callRecursivelyPostOder((t: Node, c: any) => {
-            const included = c.some(x => x.included) || t.values.some(pept => sequences.includes(pept));
+            const included = c.some(x => x.included) || t.values.some(pept => peptides.includes(pept));
             return Object.assign(Object.assign({}, t), {included: included, children: c});
         });
     }
@@ -116,7 +91,8 @@ export default class TaxaDataSource extends DataSource
         // TODO enumerating all nodes here should not be necessary!
         let nodesForRank: Set<Node> = this._tree.getNodesWithRank(element.rank);
         for (let node of nodesForRank) {
-            if (node.name === element.name) {                return this._tree.getAllSequences(node.id);
+            if (node.name === element.name) {                
+                return this._tree.getAllSequences(node.id);
             }
         }
         return [];

@@ -54,17 +54,4 @@ export default class Sample {
     static cleanPeptides(peptides: string[]): string[] {
         return peptides.map(p => p.toUpperCase());
     }
-
-    /**
-     * Creates a tree like structure, that is this.tree where each node has an
-     * `included` property. This property indicates if this node or any of its
-     * children contain the, sought for, functional annotation (code).
-     *
-     * @param code The FA term to look for
-     * @return A taxon tree-like object annotated with `included`
-     */
-    async getFATree(code: string): Promise<object> {
-        let taxaDataSource: TaxaDataSource = await this._dataRepository.createTaxaDataSource();
-        return taxaDataSource.getTreeByFA(code);
-    }
 }

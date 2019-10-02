@@ -13,7 +13,7 @@ export class GeneOntology extends Ontology<OntologyId, GOTerm>
     {
         ids = ids.filter(id => !this._definitions.has(id))
 
-        // get taxa info
+        // get GO info
         for (let i = 0; i < ids.length; i += GO_BATCH_SIZE) 
         {
             const data = JSON.stringify({

@@ -104,7 +104,6 @@
     import {numberToPercent, stringTitleize} from "../../utils";
     import PeptideContainer from "../PeptideContainer";
     import {FunctionalAnnotations} from "../../fa/FunctionalAnnotations";
-    import EcNumbersSummary from "./tables/ec-numbers-summary.vue";
     import IndeterminateProgressBar from "../../components/progress/indeterminate-progress-bar.vue";
     import CardHeader from "../../components/card/card-header.vue";
     import {showInfoModal} from "../../modal";
@@ -125,7 +124,6 @@
         components: {
             CardHeader,
             IndeterminateProgressBar,
-            EcNumbersSummary, 
             GoAmountTable,
             EcAmountTable,
             Treeview

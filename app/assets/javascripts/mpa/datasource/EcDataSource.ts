@@ -1,12 +1,35 @@
-import DataSource from "./DataSource";
 import EcNumber from "../../fa/EcNumber";
-import { EcNameSpace, convertEcNumberToEcNameSpace } from "../../fa/EcNameSpace";
+import { EcNameSpace } from "../../fa/EcNameSpace";
 import FATrust from "../../fa/FATrust";
-import { MPAFAResult } from "../newworker";
 import { CachedDataSource } from "./CachedDataSource";
 import TreeViewNode from "../ui/visualizations/TreeViewNode";
+import { ECOntology } from "../ontology/ec/ECOntology";
+import { ECCountTable } from "../counts/ECCountTable";
+import { ProcessedPeptideContainer } from "../ProcessedPeptideContainer";
+import DataRepository from "./DataRepository";
 
-export default class EcDataSource extends CachedDataSource<EcNameSpace, EcNumber> {
+export default class EcDataSource extends CachedDataSource<EcNameSpace, EcNumber> 
+{
+    private _countTable: ECCountTable;
+    private _processedPeptideContainer: ProcessedPeptideContainer;
+
+    constructor(countTable: ECCountTable, processedPeptideContainer: ProcessedPeptideContainer, repository: DataRepository)
+    {
+        super(repository)
+        this._countTable = countTable;
+        this._processedPeptideContainer = processedPeptideContainer;
+    }
+
+    public getPeptidesByEcNumber(number: EcNumber): string[]
+    {
+        return Array.from(this._countTable.ontology2peptide.get(number.code) || [])
+    }
+
+    public getPeptidesByEcCode(code: string)
+    {
+        return Array.from(this._countTable.ontology2peptide.get(code) || [])
+    }
+
     /**
      * Retrieve the top n EC-Numbers for a specific namespace. If the namespace is not specified (null), the resulting
      * EC-Numbers will not be restricted to a specific namespace.
@@ -149,33 +172,111 @@ export default class EcDataSource extends CachedDataSource<EcNameSpace, EcNumber
         return codeNodeMap.get("-.-.-.-");
     }
 
-    protected async computeTerms(sequences = null): Promise<[Map<EcNameSpace, EcNumber[]>, Map<EcNameSpace, FATrust>]> {
-        let worker = await this._repository.getWorker();
+    protected async computeTerms(sequences = null): Promise<[Map<EcNameSpace, EcNumber[]>, Map<EcNameSpace, FATrust>]> 
+    {
+        // first fetch Ontology data if needed
+        var ontology: ECOntology = this._countTable.GetOntology()
+        await ontology.fetchDefinitions(this._countTable.GetOntologyIds())
 
-        let {data, trust} = await worker.summarizeEc(50, sequences);
-        let dataOutput: Map<EcNameSpace, EcNumber[]> = new Map();
-        for (let namespace of Object.values(EcNameSpace)) {
-            let items: MPAFAResult[] = data[namespace];
-            let convertedItems: EcNumber[] = [];
-            for (let item of items) {
-                let affectedPeptides: string[] = [];
-                for (let seq of Object.keys(item.sequences)) {
-                    if (item.sequences.hasOwnProperty(seq)) {
-                        for (let i = 0; i < item.sequences[seq]; i++) {
-                            affectedPeptides.push(seq);
-                        }
-                    }
-                }
-                convertedItems.push(new EcNumber(item.code, item.name, namespace, item.numberOfPepts, item.fractionOfPepts, affectedPeptides));
+        var dataOutput: Map<EcNameSpace, EcNumber[]> = new Map()
+        var trustOutput: Map<EcNameSpace, FATrust> = new Map()
+
+        // calculate terms without peptide information if it is not available
+        if(!this._processedPeptideContainer)
+        {
+            let namespaceCounts = new Map<string, number>()
+
+            // first calculated the total counts for each namespace
+            this._countTable.counts.forEach((count, term) => 
+            {
+                let namespace = ontology.getDefinition(term).namespace
+                namespaceCounts.set(namespace, (namespaceCounts.get(namespace) || 0) + count)
+            })
+
+            // create FATrusts for each namespace, at the same time init dataOutput arrays
+            for(let namespace of Object.values(EcNameSpace))
+            {
+                let namespaceCount = namespaceCounts.get(namespace) || 0
+                trustOutput.set(namespace, new FATrust(namespaceCount, namespaceCount));
+                dataOutput.set(namespace, [])
             }
-            dataOutput.set(namespace, convertedItems);
+
+            // create EcNumbers
+            this._countTable.counts.forEach((count, term) => 
+            {
+                let def = ontology.getDefinition(term)
+                let namespaceCount = namespaceCounts.get(def.namespace)
+                let ecNameSpace: EcNameSpace = def.namespace as EcNameSpace
+
+                let ecNumber = new EcNumber(def.code, def.name, ecNameSpace, count, count / namespaceCount, [])
+                dataOutput.get(ecNameSpace).push(ecNumber);
+            })
+
+            // sort the EcNumbers for each namespace
+            for(let namespace of Object.values(EcNameSpace))
+            {
+                dataOutput.set(namespace, dataOutput.get(namespace).sort((a, b) => b.popularity - a.popularity))
+            }
+
+            return [dataOutput, trustOutput];
         }
 
-        let trustOutput: Map<EcNameSpace, FATrust> = new Map();
-        for (let namespace of Object.values(EcNameSpace)) {
-            let originalTrust: {trustCount: number, annotatedCount: number, totalCount: number} = trust[namespace];
-            let convertedTrust: FATrust = new FATrust(originalTrust.annotatedCount, originalTrust.totalCount);
-            trustOutput.set(namespace, convertedTrust);
+        var peptideCountTable = this._processedPeptideContainer.countTable
+
+        if(sequences == null)
+        {
+            sequences = Array.from(this._processedPeptideContainer.countTable.keys())
+        }
+
+        for(let namespace of Object.values(EcNameSpace))
+        {
+            let totalCount = 0;
+            let annotatedCount = 0;
+            let termCounts = new Map<string, number>()
+            // TODO: this shouldn't be calculated here, but only when needed for the heatmap
+            let affectedPeptides = new Map<string, string[]>()
+
+            for(const pept of sequences)
+            {
+                if(!this._countTable.peptide2ontology.has(pept))
+                {
+                    continue;
+                }
+
+                let peptCount = peptideCountTable.get(pept)
+                let terms = this._countTable.peptide2ontology.get(pept)
+                .filter(term => ontology.getDefinition(term).namespace === namespace)
+
+                totalCount += peptCount
+
+                let peptArray: string[] = Array(peptCount).fill(pept)
+
+                for(const term of terms)
+                {
+                    termCounts.set(term, (termCounts.get(term) || 0) + peptCount)
+                    affectedPeptides.set(term, (affectedPeptides.get(term) || []).concat(peptArray))
+                }
+
+                if(terms.length > 0)
+                {
+                    annotatedCount += peptCount
+                }
+            }
+            
+            // convert calculated data to GoTerms
+            let convertedItems: EcNumber[] = [...termCounts].sort((a, b) => b[1] - a[1])
+                .map(term => 
+                    {
+                        let code = term[0]
+                        let count = term[1]
+                        let ontologyData = ontology.getDefinition(code)
+                        let fractionOfPepts = count / totalCount
+                        return new EcNumber(code, ontologyData.name, namespace, count, fractionOfPepts, affectedPeptides.get(code))
+                    })
+
+            dataOutput.set(namespace, convertedItems);
+            // convert calculated data to FATrust
+            trustOutput.set(namespace, new FATrust(annotatedCount, totalCount));
         }
 
         return [dataOutput, trustOutput];

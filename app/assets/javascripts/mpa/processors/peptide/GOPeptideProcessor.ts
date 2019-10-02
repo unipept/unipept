@@ -1,6 +1,7 @@
 import {ProcessedPeptideContainer} from '../../ProcessedPeptideContainer';
 import { Count } from '../../counts/CountTable';
 import { GOCountTable } from '../../counts/GOCountTable';
+import { stringLiteral } from '@babel/types';
 
 export namespace GOPeptideProcessor
 {
@@ -10,6 +11,7 @@ export namespace GOPeptideProcessor
         var pept2dataResponse = processedPeptides.response;
 
         var goCounts = new Map<string, Count>();
+        var go2peptide = new Map<string, Set<string>>();
         var peptide2go = new Map<string, string[]>();
 
         pept2dataResponse.response.forEach((data, peptide, _) => 
@@ -26,9 +28,13 @@ export namespace GOPeptideProcessor
                         if(!peptide2go.has(peptide))
                             peptide2go.set(peptide, [])
                         peptide2go.get(peptide).push(term)
+
+                        if(!go2peptide.has(term))
+                            go2peptide.set(term, new Set())
+                        go2peptide.get(term).add(peptide)
                     });
         })
 
-        return new GOCountTable(goCounts, peptide2go);
+        return new GOCountTable(goCounts, go2peptide, peptide2go);
     }
 }

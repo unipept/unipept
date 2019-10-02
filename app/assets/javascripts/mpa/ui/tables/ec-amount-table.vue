@@ -14,6 +14,7 @@
     import Sample from "../../Sample";
     import TaxaDataSource from "../../datasource/TaxaDataSource";
     import FaSortSettings from "./FaSortSettings";
+import EcDataSource from "../../datasource/EcDataSource";
 
     @Component({
         components: {
@@ -28,10 +29,12 @@
 
         private taxaRetriever: (term: EcNumber) => Promise<Node> = (term: EcNumber) => this.getTaxaTreeByTerm(term);
 
-        protected async getTaxaTreeByTerm(term: EcNumber): Promise<Node> {
+        protected async getTaxaTreeByTerm(number: EcNumber): Promise<Node> {
             let sample: Sample = this.$store.getters.activeDataset.getDataset();
             let taxaDataSource: TaxaDataSource = await sample.dataRepository.createTaxaDataSource();
-            return taxaDataSource.getTreeByEcNumber(term);
+            let ecDataSource: EcDataSource = await sample.dataRepository.createEcDataSource();
+
+            return taxaDataSource.getTreeByPeptides(ecDataSource.getPeptidesByEcNumber(number));
         }
     }
 </script>
