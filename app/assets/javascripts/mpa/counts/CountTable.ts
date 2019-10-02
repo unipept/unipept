@@ -11,7 +11,8 @@ export abstract class CountTable<Ontology, OntologyId>
         readonly ontology2peptide: Map<OntologyId, Set<Peptide>> = undefined, 
         readonly peptide2ontology: Map<Peptide, OntologyId[]> = undefined)
     {
-        this.totalCount = [...counts.values()].reduce((a, b) => a + b)
+        let ontologyCounts = [...counts.values()]
+        this.totalCount = ontologyCounts.length? [...counts.values()].reduce((a, b) => a + b) : 0
     }
 
     GetOntologyIds() : OntologyId[]

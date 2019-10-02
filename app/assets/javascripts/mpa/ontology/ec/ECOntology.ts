@@ -1,6 +1,7 @@
 import {Ontology} from '../Ontology'
 import {ECNumber} from './ECNumber';
 import {postJSON} from "../../../utils";
+import {convertEcNumberToEcNameSpace} from "../../../fa/EcNameSpace";
 
 type OntologyId = string;
 
@@ -48,11 +49,16 @@ export class ECOntology extends Ontology<OntologyId, ECNumber>
 
             const res = await postJSON(EC_URL, data);
             
-            res.forEach(number => {
-                let prefixedNumber = "EC:" + number.code
+            res.forEach(ecNumber => {
+                let prefixedNumber = "EC:" + ecNumber.code
                 if(!this._definitions.has(prefixedNumber))
                 {
-                    this._definitions.set(prefixedNumber, number)
+                    this._definitions.set(prefixedNumber, 
+                        {
+                            code: ecNumber.code, 
+                            name: ecNumber.name, 
+                            namespace: convertEcNumberToEcNameSpace(ecNumber.code)
+                        })
                 }
             })
         }

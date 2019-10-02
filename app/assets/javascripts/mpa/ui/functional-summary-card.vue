@@ -40,7 +40,7 @@
                     </v-list>
                 </v-menu>
             </v-tabs>
-            <v-tabs-items>
+            <v-tabs-items v-model="currentTab">
                 <v-tab-item>
                     <v-card flat>
                         <v-card-text>

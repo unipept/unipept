@@ -23,7 +23,7 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm>
     {
         super(repository)
         this._countTable = countTable;
-        //this._processedPeptideContainer = processedPeptideContainer;
+        this._processedPeptideContainer = processedPeptideContainer;
     }
 
     public getPeptidesByGoTerm(term: GoTerm): string[]
@@ -80,18 +80,39 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm>
      * @param sequences 
      */
     public async getTrust(namespace: GoNameSpace = null, sequences: string[] = null): Promise<FATrust> {
-        if (namespace) {
+        if (namespace) 
+        {
             let result: [GoTerm[], FATrust] = await this.getFromCache(namespace, Object.values(GoNameSpace), sequences);
             return result[1];
-        } else {
-            let trusts: FATrust[] = [];
-            for (let ns of Object.values(GoNameSpace)) {
-                let result: [GoTerm[], FATrust] = await this.getFromCache(ns, Object.values(GoNameSpace), sequences);
-                trusts.push(result[1]);
+        } 
+        else
+        {
+            if(!this._processedPeptideContainer)
+            {
+                // TODO: fix this?
+                return new FATrust(0, 0)
             }
-            return this.agregateTrust(trusts);
+
+            if(sequences == null)
+            {
+                sequences = Array.from(this._processedPeptideContainer.countTable.keys())
+            }
+
+            let totalCount = 0
+            let annotatedCount = 0
+
+            for(const seq of sequences)
+            {
+                let count = this._processedPeptideContainer.countTable.get(seq)
+                totalCount += count
+                if(this._countTable.peptide2ontology.has(seq))
+                {
+                    annotatedCount += count
+                }
+            }
+
+            return new FATrust(annotatedCount, totalCount)
         }
-        
     }
 
     protected async computeTerms(sequences: string[] = null): Promise<[Map<GoNameSpace, GoTerm[]>, Map<GoNameSpace, FATrust>]> 
@@ -160,17 +181,15 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm>
 
             for(const pept of sequences)
             {
+                let peptCount = peptideCountTable.get(pept)
+                totalCount += peptCount
+
                 if(!this._countTable.peptide2ontology.has(pept))
                 {
                     continue;
                 }
 
-                let peptCount = peptideCountTable.get(pept)
-                let terms = this._countTable.peptide2ontology.get(pept)
-                .filter(term => ontology.getDefinition(term).namespace === namespace)
-
-                totalCount += peptCount
-
+                let terms = this._countTable.peptide2ontology.get(pept).filter(term => ontology.getDefinition(term).namespace === namespace)
                 let peptArray: string[] = Array(peptCount).fill(pept)
 
                 for(const term of terms)

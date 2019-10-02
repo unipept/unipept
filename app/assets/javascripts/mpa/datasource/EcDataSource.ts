@@ -84,13 +84,34 @@ export default class EcDataSource extends CachedDataSource<EcNameSpace, EcNumber
         if (namespace) {
             let result: [EcNumber[], FATrust] = await this.getFromCache(namespace, Object.values(EcNameSpace), sequences);
             return result[1];
-        } else {
-            let trusts: FATrust[] = [];
-            for (let ns of Object.values(EcNameSpace)) {
-                let result: [EcNumber[], FATrust] = await this.getFromCache(ns, Object.values(EcNameSpace), sequences);
-                trusts.push(result[1]);
+        } 
+        else 
+        {
+            if(!this._processedPeptideContainer)
+            {
+                // TODO: fix this?
+                return new FATrust(0, 0)
             }
-            return this.agregateTrust(trusts);
+
+            if(sequences == null)
+            {
+                sequences = Array.from(this._processedPeptideContainer.countTable.keys())
+            }
+
+            let totalCount = 0
+            let annotatedCount = 0
+
+            for(const seq of sequences)
+            {
+                let count = this._processedPeptideContainer.countTable.get(seq)
+                totalCount += count
+                if(this._countTable.peptide2ontology.has(seq))
+                {
+                    annotatedCount += count
+                }
+            }
+
+            return new FATrust(annotatedCount, totalCount)
         }
     }
 
@@ -238,17 +259,15 @@ export default class EcDataSource extends CachedDataSource<EcNameSpace, EcNumber
 
             for(const pept of sequences)
             {
+                let peptCount = peptideCountTable.get(pept)
+                totalCount += peptCount
+
                 if(!this._countTable.peptide2ontology.has(pept))
                 {
                     continue;
                 }
 
-                let peptCount = peptideCountTable.get(pept)
-                let terms = this._countTable.peptide2ontology.get(pept)
-                .filter(term => ontology.getDefinition(term).namespace === namespace)
-
-                totalCount += peptCount
-
+                let terms = this._countTable.peptide2ontology.get(pept).filter(term => ontology.getDefinition(term).namespace === namespace)
                 let peptArray: string[] = Array(peptCount).fill(pept)
 
                 for(const term of terms)
@@ -274,9 +293,8 @@ export default class EcDataSource extends CachedDataSource<EcNameSpace, EcNumber
                         return new EcNumber(code, ontologyData.name, namespace, count, fractionOfPepts, affectedPeptides.get(code))
                     })
 
-            dataOutput.set(namespace, convertedItems);
-            // convert calculated data to FATrust
-            trustOutput.set(namespace, new FATrust(annotatedCount, totalCount));
+            dataOutput.set(namespace, convertedItems)
+            trustOutput.set(namespace, new FATrust(annotatedCount, totalCount))
         }
 
         return [dataOutput, trustOutput];

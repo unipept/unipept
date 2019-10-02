@@ -75,15 +75,4 @@ export abstract class CachedDataSource<T, S extends FAElement> extends DataSourc
             }
         }
     }
-
-    protected agregateTrust(trusts: FATrust[]): FATrust 
-    {
-        const result = {annotatedCount: 0, totalCount: null};
-        for (const c of trusts) {
-            result.annotatedCount += c.annotatedCount;
-            result.totalCount += c.totalCount;
-        }
-
-        return new FATrust(result.annotatedCount, result.totalCount);
-    }
 }
