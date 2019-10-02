@@ -5,7 +5,7 @@ import { Pept2DataResponse } from '../../../api/pept2data/Response';
 const BATCH_SIZE = 100;
 const API_ENDPOINT = "/mpa/pept2data";
 
-export default async function process(peptides: string[], config: MPAConfig) : Promise<ProcessedPeptideContainer>
+export default async function process(peptides: string[], config: MPAConfig, setProgress: (number) => void) : Promise<ProcessedPeptideContainer>
 {
     var preparedPeptides = preparePeptides(peptides, config);
     const peptideList = Array.from(preparedPeptides.keys());
@@ -14,6 +14,8 @@ export default async function process(peptides: string[], config: MPAConfig) : P
     var numMatched = 0;
 
     var response = new Pept2DataResponse();
+
+    setProgress(0.1);
 
     for (let i = 0; i < peptideList.length; i += BATCH_SIZE) 
     {
@@ -29,9 +31,13 @@ export default async function process(peptides: string[], config: MPAConfig) : P
             response.setPeptideData(p.sequence, {lca: p.lca, lineage: p.lineage, fa: p.fa})
             numMatched += preparedPeptides.get(p.sequence);
         })
+
+        setProgress(0.1 + 0.85 * ((i + BATCH_SIZE) / peptideList.length));
     }
 
     var missedPeptides = peptideList.filter(p => !response.HasPeptide(p))
+
+    setProgress(1)
 
     return new ProcessedPeptideContainer(
         preparedPeptides,

@@ -10,20 +10,15 @@ import { ProcessedPeptideContainer } from "../ProcessedPeptideContainer";
 import { TaxaPeptideProcessor } from '../processors/peptide/TaxaPeptideProcessor'
 import { GOPeptideProcessor } from "../processors/peptide/GOPeptideProcessor";
 
-// @ts-ignore
-import newworker from "workerize-loader!./../newworker.js";
 import { ECPeptideProcessor } from "../processors/peptide/ECPeptideProcessor";
+import ProgressPublisher from "../ProgressPublisher";
 
-export default class DataRepository {
+export default class DataRepository extends ProgressPublisher implements ProgressListener
+{
     private readonly _sample: Sample;
-    private _progressListeners: ProgressListener[] = [];
 
     private _processor: PeptideContainerProcessor;
     private _processedPeptideContainer: Promise<ProcessedPeptideContainer>;
-
-    // TODO: get rid of this worker
-    private _worker;
-    private _workerPromise: Promise<any>;
 
     private _mpaConfig: MPAConfig;
 
@@ -31,15 +26,15 @@ export default class DataRepository {
     private _goSourceCache: GoDataSource;
     private _ecSourceCache: EcDataSource;
 
-    public constructor(sample: Sample, mpaConfig: MPAConfig) {
+    public constructor(sample: Sample, mpaConfig: MPAConfig) 
+    {
+        super()
+        
         this._processor = new PeptideContainerProcessor();
+        this._processor.registerProgressListener(this);
 
         this._sample = sample;
         this._mpaConfig = mpaConfig;
-    }
-
-    public registerProgressListener(listener: ProgressListener): void {
-        this._progressListeners.push(listener);
     }
 
     public async createTaxaDataSource(): Promise<TaxaDataSource> {
@@ -81,12 +76,6 @@ export default class DataRepository {
         return this._ecSourceCache;
     }
 
-    public setWorkerProgress(value: number): void {
-        for (let listener of this._progressListeners) {
-            listener.onProgressUpdate(value);
-        }
-    }
-
     /**
      * Returns a fully prepared worker. The worker is initialized with the required state and has already processed
      * all peptides found in this repository's associated sample.
@@ -98,21 +87,8 @@ export default class DataRepository {
         return this._processedPeptideContainer;
     }
 
-    public async getWorker(): Promise<any> {
-        if (!this._workerPromise) {
-            let peptides = await this._sample.peptideContainer.getPeptides();
-            peptides = Sample.cleanPeptides(peptides);
-
-            this._worker = newworker();
-            this._worker.onmessage = m => {
-                if (m.data.type == "progress") {
-                    this.setWorkerProgress(m.data.value);
-                }
-            };
-
-            this._workerPromise = this._worker.process(peptides, this._mpaConfig);
-        }
-        await this._workerPromise;
-        return this._worker;
+    onProgressUpdate(progress: number): void 
+    {
+        this.updateProgress(progress)
     }
 }
