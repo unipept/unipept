@@ -66,8 +66,8 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm>
      * @param cutoff as percent (0-100)
      * @param sequences array of peptides to take into account
      */
-    public async getGoTerms(namespace: GoNameSpace, cutoff: number = 50, sequences: string[] = null): Promise<GoTerm[]> {
-        let result: [GoTerm[], FATrust] = await this.getFromCache(namespace, Object.values(GoNameSpace), cutoff, sequences);
+    public async getGoTerms(namespace: GoNameSpace, sequences: string[] = null): Promise<GoTerm[]> {
+        let result: [GoTerm[], FATrust] = await this.getFromCache(namespace, Object.values(GoNameSpace), sequences);
         return result[0];
     }
 
@@ -78,14 +78,14 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm>
      * @param cutoff 
      * @param sequences 
      */
-    public async getTrust(namespace: GoNameSpace = null, cutoff: number = 50, sequences: string[] = null): Promise<FATrust> {
+    public async getTrust(namespace: GoNameSpace = null, sequences: string[] = null): Promise<FATrust> {
         if (namespace) {
-            let result: [GoTerm[], FATrust] = await this.getFromCache(namespace, Object.values(GoNameSpace), cutoff, sequences);
+            let result: [GoTerm[], FATrust] = await this.getFromCache(namespace, Object.values(GoNameSpace), sequences);
             return result[1];
         } else {
             let trusts: FATrust[] = [];
             for (let ns of Object.values(GoNameSpace)) {
-                let result: [GoTerm[], FATrust] = await this.getFromCache(ns, Object.values(GoNameSpace), cutoff, sequences);
+                let result: [GoTerm[], FATrust] = await this.getFromCache(ns, Object.values(GoNameSpace), sequences);
                 trusts.push(result[1]);
             }
             return this.agregateTrust(trusts);
@@ -93,22 +93,50 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm>
         
     }
 
-    protected async computeTerms(percent = 50, sequences: string[] = null): Promise<[Map<GoNameSpace, GoTerm[]>, Map<GoNameSpace, FATrust>]> 
+    protected async computeTerms(sequences: string[] = null): Promise<[Map<GoNameSpace, GoTerm[]>, Map<GoNameSpace, FATrust>]> 
     {
+        // first fetch Ontology data if needed
+        var ontology: GeneOntology = this._countTable.GetOntology()
+        await ontology.fetchDefinitions(this._countTable.GetOntologyIds())
+
+        var dataOutput: Map<GoNameSpace, GoTerm[]> = new Map()
+        var trustOutput: Map<GoNameSpace, FATrust> = new Map()
+
+        // calculate terms without peptide information if it is not available
         if(!this._processedPeptideContainer)
         {
-            // TODO: how do we define peptide counts if there are no peptides with counts?
-            throw new Error("Aggregation of GO-terms without peptide counts not implemented yet.");
+            let namespaceCounts = new Map<string, number>()
+
+            // first calculated the total counts for each namespace
+            this._countTable.counts.forEach((count, term) => 
+            {
+                let namespace = ontology.getDefinition(term).namespace
+                namespaceCounts.set(namespace, (namespaceCounts.get(namespace) || 0) + count)
+            })
+
+            // create FATrusts for each namespace, at the same time init dataOutput arrays
+            for(let namespace of Object.values(GoNameSpace))
+            {
+                let namespaceCount = namespaceCounts.get(namespace) || 0
+                trustOutput.set(namespace, new FATrust(namespaceCount, namespaceCount));
+                dataOutput.set(namespace, [])
+            }
+
+            // create GoTerms
+            this._countTable.counts.forEach((count, term) => 
+            {
+                let def = ontology.getDefinition(term)
+                let namespaceCount = namespaceCounts.get(def.namespace)
+                let goNameSpace: GoNameSpace = def.namespace as GoNameSpace
+
+                let goTerm = new GoTerm(def.code, def.name, goNameSpace, count, count / namespaceCount, [])
+                dataOutput.get(goNameSpace).push(goTerm);
+            })
+
+            return [dataOutput, trustOutput];
         }
 
-        // first fetch Ontology data if needed
-        var ontology: GeneOntology = this._countTable.GetOntology();
-        await ontology.fetchDefinitions(this._countTable.GetOntologyIds());
-
-        var peptideCountTable = this._processedPeptideContainer.countTable;
-        
-        var dataOutput: Map<GoNameSpace, GoTerm[]> = new Map();
-        var trustOutput: Map<GoNameSpace, FATrust> = new Map();
+        var peptideCountTable = this._processedPeptideContainer.countTable
 
         if(sequences == null)
         {
@@ -150,7 +178,7 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm>
                 }
             }
             
-            // convert calculated data to GoTerms and FATrusts
+            // convert calculated data to GoTerms
             let convertedItems: GoTerm[] = [...termCounts].sort((a, b) => b[1] - a[1])
                 .map(term => 
                     {
@@ -163,11 +191,9 @@ export default class GoDataSource extends CachedDataSource<GoNameSpace, GoTerm>
 
             dataOutput.set(namespace, convertedItems);
             // convert calculated data to FATrust
-            trustOutput.set(namespace, new FATrust(annotatedCount, totalCount, 0));
+            trustOutput.set(namespace, new FATrust(annotatedCount, totalCount));
         }
 
         return [dataOutput, trustOutput];
-    
-    
     }
 }

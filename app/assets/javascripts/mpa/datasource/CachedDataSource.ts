@@ -28,14 +28,14 @@ export abstract class CachedDataSource<T, S extends FAElement> extends DataSourc
 
     protected static readonly MAX_CACHE_SIZE: number = 5;
 
-    protected abstract async computeTerms(percent: number, sequences: string[]): Promise<[Map<T, S[]>, Map<T, FATrust>]>;
+    protected abstract async computeTerms(sequences: string[]): Promise<[Map<T, S[]>, Map<T, FATrust>]>;
 
-    protected async getFromCache(namespace: T, existingNamespaces: T[], cutoff: number = 50, sequences: string[] = null): Promise<[S[], FATrust]> {
+    protected async getFromCache(namespace: T, existingNamespaces: T[], sequences: string[] = null): Promise<[S[], FATrust]> {
         // If no sequences are given, we need to check the original cache
-        if ((sequences === null || sequences.length === 0) && cutoff == 50) {
+        if (sequences === null) {
             if (!this._originalTerms.has(namespace)) {
                 // If it's not in the cache, add it!
-                let result: [Map<T, S[]>, Map<T, FATrust>] = await this.computeTerms(cutoff, sequences);
+                let result: [Map<T, S[]>, Map<T, FATrust>] = await this.computeTerms(sequences);
 
                 for (let ns of existingNamespaces) {
                     this._originalTerms.set(ns, result[0].get(ns));
@@ -44,13 +44,7 @@ export abstract class CachedDataSource<T, S extends FAElement> extends DataSourc
             } 
             return [this._originalTerms.get(namespace), this._originalTrust.get(namespace)];
         } else {
-            let sequenceHash: string;
-            if (sequences === null) {
-                sequenceHash = cutoff.toString();
-            } else {
-                sequenceHash = sha256(sequences.toString()).toString() + cutoff;
-            }
-
+            let sequenceHash: string = sha256(sequences.toString()).toString();
             let idx: number = this._cachedSequencesLRU.indexOf(sequenceHash);
             
             if (idx >= 0) {
@@ -60,7 +54,7 @@ export abstract class CachedDataSource<T, S extends FAElement> extends DataSourc
                 return this._cache.get(sequenceHash).get(namespace);
             } else {
                 // The item is not currently stored in the cache. We need to get it.
-                let result: [Map<T, S[]>, Map<T, FATrust>] = await this.computeTerms(cutoff, sequences);
+                let result: [Map<T, S[]>, Map<T, FATrust>] = await this.computeTerms(sequences);
 
                 // Enter the item into the cache
                 this._cachedSequencesLRU.unshift(sequenceHash);
@@ -82,26 +76,14 @@ export abstract class CachedDataSource<T, S extends FAElement> extends DataSourc
         }
     }
 
-    protected agregateTrust(trusts: FATrust[]): FATrust {
-        // TODO this should be fixed!
-        const result = {annotatedCount: 0, totalCount: null, trustCount: 0};
-        let sumAnnotated = 0;
+    protected agregateTrust(trusts: FATrust[]): FATrust 
+    {
+        const result = {annotatedCount: 0, totalCount: null};
         for (const c of trusts) {
-            sumAnnotated += c.annotatedCount;
-            if (c.annotatedCount > result.annotatedCount) {
-                result.annotatedCount = c.annotatedCount;
-            }
-            if (result.totalCount === null) {
-                result.totalCount = c.totalCount;
-            }
-
-            if (c.totalCount !== result.totalCount) {
-                return null;
-            }
-
-            result.trustCount += c.trustCount;
+            result.annotatedCount += c.annotatedCount;
+            result.totalCount += c.totalCount;
         }
-        result.trustCount = (result.trustCount / sumAnnotated) * result.annotatedCount;
-        return new FATrust(result.annotatedCount, result.totalCount, result.trustCount);
+
+        return new FATrust(result.annotatedCount, result.totalCount);
     }
 }

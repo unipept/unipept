@@ -42,14 +42,14 @@ export default class EcDataSource extends CachedDataSource<EcNameSpace, EcNumber
      * @param cutoff 
      * @param sequences 
      */
-    public async getEcNumbers(namespace: EcNameSpace = null, cutoff: number = 50, sequences: string[] = null): Promise<EcNumber[]> {
+    public async getEcNumbers(namespace: EcNameSpace = null, sequences: string[] = null): Promise<EcNumber[]> {
         if (namespace) {
-            let result: [EcNumber[], FATrust] = await this.getFromCache(namespace, Object.values(EcNameSpace), cutoff, sequences);
+            let result: [EcNumber[], FATrust] = await this.getFromCache(namespace, Object.values(EcNameSpace), sequences);
             return result[0];
         } else {
             let output: EcNumber[] = [];
             for (let ns of Object.values(EcNameSpace)) {
-                let result: [EcNumber[], FATrust] = await this.getFromCache(ns, Object.values(EcNameSpace), cutoff, sequences);
+                let result: [EcNumber[], FATrust] = await this.getFromCache(ns, Object.values(EcNameSpace), sequences);
                 output.push(... result[0]);
             }
             output.sort((a: EcNumber, b: EcNumber) => b.popularity - a.popularity);
@@ -57,14 +57,14 @@ export default class EcDataSource extends CachedDataSource<EcNameSpace, EcNumber
         }
     }
 
-    public async getTrust(namespace: EcNameSpace = null, cutoff: number = 50, sequences: string[] = null): Promise<FATrust> {
+    public async getTrust(namespace: EcNameSpace = null, sequences: string[] = null): Promise<FATrust> {
         if (namespace) {
-            let result: [EcNumber[], FATrust] = await this.getFromCache(namespace, Object.values(EcNameSpace), cutoff, sequences);
+            let result: [EcNumber[], FATrust] = await this.getFromCache(namespace, Object.values(EcNameSpace), sequences);
             return result[1];
         } else {
             let trusts: FATrust[] = [];
             for (let ns of Object.values(EcNameSpace)) {
-                let result: [EcNumber[], FATrust] = await this.getFromCache(ns, Object.values(EcNameSpace), cutoff, sequences);
+                let result: [EcNumber[], FATrust] = await this.getFromCache(ns, Object.values(EcNameSpace), sequences);
                 trusts.push(result[1]);
             }
             return this.agregateTrust(trusts);
@@ -79,8 +79,8 @@ export default class EcDataSource extends CachedDataSource<EcNameSpace, EcNumber
      * @param sequences 
      * @return A data model that can be used for a treeview.
      */
-    public async getEcTree(namespace: EcNameSpace = null, cutoff: number = 50, sequences: string[] = null): Promise<TreeViewNode> {
-        let result: EcNumber[] = await this.getEcNumbers(namespace, cutoff, sequences);
+    public async getEcTree(namespace: EcNameSpace = null, sequences: string[] = null): Promise<TreeViewNode> {
+        let result: EcNumber[] = await this.getEcNumbers(namespace, sequences);
         // Maps an EC-code onto a Node.
         let codeNodeMap: Map<string, TreeViewNode> = new Map();
 
@@ -149,10 +149,10 @@ export default class EcDataSource extends CachedDataSource<EcNameSpace, EcNumber
         return codeNodeMap.get("-.-.-.-");
     }
 
-    protected async computeTerms(percent = 50, sequences = null): Promise<[Map<EcNameSpace, EcNumber[]>, Map<EcNameSpace, FATrust>]> {
+    protected async computeTerms(sequences = null): Promise<[Map<EcNameSpace, EcNumber[]>, Map<EcNameSpace, FATrust>]> {
         let worker = await this._repository.getWorker();
 
-        let {data, trust} = await worker.summarizeEc(percent, sequences);
+        let {data, trust} = await worker.summarizeEc(50, sequences);
         let dataOutput: Map<EcNameSpace, EcNumber[]> = new Map();
         for (let namespace of Object.values(EcNameSpace)) {
             let items: MPAFAResult[] = data[namespace];
@@ -174,7 +174,7 @@ export default class EcDataSource extends CachedDataSource<EcNameSpace, EcNumber
         let trustOutput: Map<EcNameSpace, FATrust> = new Map();
         for (let namespace of Object.values(EcNameSpace)) {
             let originalTrust: {trustCount: number, annotatedCount: number, totalCount: number} = trust[namespace];
-            let convertedTrust: FATrust = new FATrust(originalTrust.annotatedCount, originalTrust.totalCount, originalTrust.trustCount);
+            let convertedTrust: FATrust = new FATrust(originalTrust.annotatedCount, originalTrust.totalCount);
             trustOutput.set(namespace, convertedTrust);
         }
 

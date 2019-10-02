@@ -53,7 +53,6 @@
                                 <img src="/images/mpa/placeholder_GO.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
                             </div>
                             <div v-else>
-                                <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
                                 This panel shows the Gene Ontology annotations that were matched to
                                 your peptides.
                                 <span v-html="goTrustLine"></span>Click on a row in a table to see a taxonomy tree that highlights occurrences.
@@ -79,7 +78,6 @@
                                 <img src="/images/mpa/placeholder_treeview.svg" alt="Please wait while we are preparing your data..." class="mpa-placeholder">
                             </div>
                             <div v-else>
-                                <filter-functional-annotations-dropdown v-model="percentSettings"></filter-functional-annotations-dropdown>
                                 This panel shows the Enzyme Commission numbers that were matched to your peptides. 
                                 <span v-html="ecTrustLine"></span>
                                 Click on a row in a table to see a taxonomy tree that highlights occurrences.
@@ -107,7 +105,6 @@
     import PeptideContainer from "../PeptideContainer";
     import {FunctionalAnnotations} from "../../fa/FunctionalAnnotations";
     import EcNumbersSummary from "./tables/ec-numbers-summary.vue";
-    import FilterFunctionalAnnotationsDropdown from "./filter-functional-annotations-dropdown.vue";
     import IndeterminateProgressBar from "../../components/progress/indeterminate-progress-bar.vue";
     import CardHeader from "../../components/card/card-header.vue";
     import {showInfoModal} from "../../modal";
@@ -128,7 +125,6 @@
         components: {
             CardHeader,
             IndeterminateProgressBar,
-            FilterFunctionalAnnotationsDropdown,
             EcNumbersSummary, 
             GoAmountTable,
             EcAmountTable,
@@ -202,8 +198,6 @@
             (a, b) => b["popularity"] - a["popularity"]
         );
 
-        private percentSettings: string = "5";
-
         private filteredScope: string = "";
         private numOfFilteredPepts: string = "";
         private faCalculationsInProgress: boolean = false;
@@ -218,10 +212,6 @@
         }
 
         @Watch('watchableDataset') onWatchableDatasetChanged() {
-            this.onPeptideContainerChanged();
-        }
-
-        @Watch('percentSettings') onPercentSettingsChanged() {
             this.onPeptideContainerChanged();
         }
 
@@ -330,7 +320,6 @@
                 let goSource: GoDataSource = await sample.dataRepository.createGoDataSource();
                 let taxaSource: TaxaDataSource = await sample.dataRepository.createTaxaDataSource();
 
-                const percent = parseInt(this.percentSettings);
                 const taxonId = this.$store.getters.selectedTaxonId;
 
                 let sequences = null;
@@ -344,7 +333,7 @@
 
                 for (let i = 0; i < this.goNamespaces.length; i++) {
                     let namespace: GoNameSpace = this.goNamespaces[i];
-                    this.goData[i].goTerms = await goSource.getGoTerms(namespace, percent, sequences);
+                    this.goData[i].goTerms = await goSource.getGoTerms(namespace, sequences);
                 }
 
                 this.goTrustLine = this.computeTrustLine(await goSource.getTrust(), "GO term");
