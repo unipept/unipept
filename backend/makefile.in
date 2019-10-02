@@ -8,7 +8,12 @@ all: makefile database index
 database: \
 	<<<TABDIR>>>/taxons.tsv.gz \
 	<<<TABDIR>>>/lineages.tsv.gz \
-	tables \
+	<<<INTDIR>>>/peptides.tsv.gz \
+	<<<TABDIR>>>/uniprot_entries.tsv.gz \
+	<<<TABDIR>>>/refseq_cross_references.tsv.gz \
+	<<<TABDIR>>>/ec_cross_references.tsv.gz \
+	<<<TABDIR>>>/embl_cross_references.tsv.gz \
+	<<<TABDIR>>>/go_cross_references.tsv.gz \
 	<<<TABDIR>>>/sequences.tsv.gz \
 	<<<TABDIR>>>/peptides.tsv.gz \
 	<<<TABDIR>>>/ec_numbers.tsv.gz \
@@ -71,7 +76,7 @@ $(JAR): $(SRC)
 		> "$@"
 	<<<LOGADD>>> "Finished cleaning unknown ranks form nodes."
 
-.PHONY: lineage_taxons
+.INTERMEDIATE: lineage_taxons
 <<<TABDIR>>>/taxons.tsv.gz: lineage_taxons
 <<<TABDIR>>>/lineages.tsv.gz: lineage_taxons
 lineage_taxons: $(JAR) <<<INTDIR>>>/names.dmp <<<INTDIR>>>/clean-nodes.dmp
@@ -86,13 +91,13 @@ lineage_taxons: $(JAR) <<<INTDIR>>>/names.dmp <<<INTDIR>>>/clean-nodes.dmp
 # }}}
 
 # Uniprot entries, peptides, sequences and cross references {{{ ----------------
-.PHONY: tables
+.INTERMEDIATE: tables
 <<<INTDIR>>>/peptides.tsv.gz: tables
 <<<TABDIR>>>/uniprot_entries.tsv.gz: tables
 <<<TABDIR>>>/refseq_cross_references.tsv.gz: tables
 <<<TABDIR>>>/ec_cross_references.tsv.gz: tables
 <<<TABDIR>>>/embl_cross_references.tsv.gz: tables
-<<<TABDIR>>>/go_cross_references.tsv.: tables
+<<<TABDIR>>>/go_cross_references.tsv.gz: tables
 tables: $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 	<<<LOGADD>>> "Started calculation of most tables."
 	@mkdir -p <<<TABDIR>>>
@@ -148,18 +153,34 @@ tables: $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 		> $@
 	<<<LOGADD>>> "Finished the numbering of sequences."
 
-<<<TABDIR>>>/peptides.tsv.gz: <<<INTDIR>>>/peptides.tsv.gz <<<INTDIR>>>/sequences.tsv.gz
-	<<<LOGADD>>> "Started the substitution of AA's by ID's for the peptides."
+<<<INTDIR>>>/peptides_by_equalized.tsv.gz: <<<INTDIR>>>/peptides.tsv.gz <<<INTDIR>>>/sequences.tsv.gz
+	<<<LOGADD>>> "Started the substitution of equalized AA's by ID's for the peptides."
 	@mkdir -p $(dir $@)
 	<<<CMD_ZCAT>>> <<<INTDIR>>>/peptides.tsv.gz \
 		| LC_ALL=C <<<CMD_SORT>>> -k 2b,2 \
-		| <<<CMD_JOIN>>> -t '	' -o '1.1,2.1,1.3,1.4' -1 2 -2 2 - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/sequences.tsv.gz) \
+		| <<<CMD_JOIN>>> -t '	' -o '1.1,2.1,1.3,1.4,1.5' -1 2 -2 2 - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/sequences.tsv.gz) \
+		| <<<CMD_GZIP>>> \
+		> $@
+	<<<LOGADD>>> "Finished the substitution of equalized AA's by ID's for the peptides."
+
+<<<INTDIR>>>/peptides_by_original.tsv.gz: <<<INTDIR>>>/peptides_by_equalized.tsv.gz <<<INTDIR>>>/sequences.tsv.gz
+	<<<LOGADD>>> "Started the substitution of original AA's by ID's for the peptides."
+	@mkdir -p $(dir $@)
+	<<<CMD_ZCAT>>> <<<INTDIR>>>/peptides_by_equalized.tsv.gz \
 		| LC_ALL=C <<<CMD_SORT>>> -k 3b,3 \
-		| <<<CMD_JOIN>>> -t '	' -o '1.1,1.2,2.1,1.4' -1 3 -2 2 - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/sequences.tsv.gz) \
+		| <<<CMD_JOIN>>> -t '	' -o '1.1,1.2,2.1,1.4,1.5' -1 3 -2 2 - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/sequences.tsv.gz) \
+		| <<<CMD_GZIP>>> \
+		> $@
+	<<<LOGADD>>> "Finished the substitution of original AA's by ID's for the peptides."
+
+<<<TABDIR>>>/peptides.tsv.gz: <<<INTDIR>>>/peptides_by_original.tsv.gz
+	<<<LOGADD>>> "Started sorting the peptides table."
+	@mkdir -p $(dir $@)
+	<<<CMD_ZCAT>>> <<<INTDIR>>>/peptides_by_original.tsv.gz \
 		| LC_ALL=C <<<CMD_SORT>>> -n \
 		| <<<CMD_GZIP>>> \
 		> $@
-	<<<LOGADD>>> "Finished the substitution of AA's by ID's for the peptides."
+	<<<LOGADD>>> "Finished sorting the peptides table."
 
 <<<INTDIR>>>/sequence_taxon.tsv.gz: <<<INTDIR>>>/sequences.tsv.gz <<<INTDIR>>>/aa_sequence_taxon.tsv.gz
 	<<<LOGADD>>> "Started the substitution of AA's by ID's for the sequences"
@@ -199,22 +220,21 @@ tables: $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 		>(<<<CMD_GZIP>>> > <<<INTDIR>>>/original_LCAs.tsv.gz)
 	<<<LOGADD>>> "Finished the calculation of non-equalized LCA's."
 
-<<<INTDIR>>>/FAs.tsv.gz: <<<INTDIR>>>/peptides.tsv.gz
+<<<INTDIR>>>/FAs.tsv.gz: <<<INTDIR>>>/peptides_by_equalized.tsv.gz
 	<<<LOGADD>>> "Started the calculation of equalized FA's."
 	@mkdir -p $(dir $@)
 	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).FunctionAnalysisPeptides \
-		<(<<<CMD_ZCAT>>> <<<INTDIR>>>/peptides.tsv.gz | cut -f2,5 | LC_ALL=C <<<CMD_SORT>>> -k 1b,1) \
+		<(<<<CMD_ZCAT>>> <<<INTDIR>>>/peptides_by_equalized.tsv.gz | cut -f2,5) \
 		>(<<<CMD_GZIP>>> > <<<INTDIR>>>/FAs.tsv.gz)
 	<<<LOGADD>>> "Finished the calculation of equalized FA's."
-	
-<<<INTDIR>>>/original_FAs.tsv.gz: <<<INTDIR>>>/peptides.tsv.gz
+
+<<<INTDIR>>>/original_FAs.tsv.gz: <<<INTDIR>>>/peptides_by_original.tsv.gz
 	<<<LOGADD>>> "Started the calculation of non-equalized FA's."
 	@mkdir -p $(dir $@)
 	java -Xms<<<JAVA_MEM>>> -Xmx<<<JAVA_MEM>>> -cp $(JAR) $(PAC).FunctionAnalysisPeptides \
-		<(<<<CMD_ZCAT>>> <<<INTDIR>>>/peptides.tsv.gz | cut -f3,5 | LC_ALL=C <<<CMD_SORT>>> -k 1b,1) \
+		<(<<<CMD_ZCAT>>> <<<INTDIR>>>/peptides_by_original.tsv.gz | cut -f3,5) \
 		>(<<<CMD_GZIP>>> > <<<INTDIR>>>/original_FAs.tsv.gz)
 	<<<LOGADD>>> "Finished the calculation of non-equalized FA's."
-
 
 <<<TABDIR>>>/sequences.tsv.gz: <<<INTDIR>>>/sequences.tsv.gz <<<INTDIR>>>/LCAs.tsv.gz <<<INTDIR>>>/original_LCAs.tsv.gz <<<INTDIR>>>/original_FAs.tsv.gz <<<INTDIR>>>/FAs.tsv.gz
 	<<<LOGADD>>> "Started the creation of the sequences table."

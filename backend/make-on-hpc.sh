@@ -17,7 +17,7 @@ module load Maven
 pushd "$PBS_O_WORKDIR"
 
 # Running the makefile
-make --debug=v
+make
 
 # Reset the directory
 popd
