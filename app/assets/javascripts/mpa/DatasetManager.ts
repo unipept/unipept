@@ -2,14 +2,8 @@ import PeptideContainer from "./PeptideContainer";
 import {StorageType} from "./StorageType";
 import {get, getJSON} from "../utils";
 
-export default class DatasetManager {
-    public static readonly MPA_STORAGE_PREFIX: string = "mpa-";
-    public static readonly MPA_METADATA_PREFIX: string = DatasetManager.MPA_STORAGE_PREFIX + "metadata-";
-    public static readonly MPA_PEPTIDE_PREFIX: string = DatasetManager.MPA_STORAGE_PREFIX + "peptide-";
-
-    public datasets: PeptideContainer[] = [];
-    public selectedDatasets: PeptideContainer[] = [];
-
+export default class DatasetManager 
+{
     private storageTypes: StorageType[] = [StorageType.LocalStorage, StorageType.SessionStorage];
 
     /**

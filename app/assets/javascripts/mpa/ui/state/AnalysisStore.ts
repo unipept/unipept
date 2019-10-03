@@ -1,7 +1,4 @@
-import PeptideContainer from "../../PeptideContainer";
 import {ActionContext, ActionTree, GetterTree, MutationTree} from "vuex";
-import DatasetManager from "../../DatasetManager";
-import DisplaySettings from "../../DisplaySettings";
 
 export interface AnalysisState {
     datasetSelectionInProgress: boolean,

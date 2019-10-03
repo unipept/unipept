@@ -1,14 +1,14 @@
-import PeptideContainer from "../../PeptideContainer";
 import {ActionContext, ActionTree, GetterTree, MutationTree} from "vuex";
 import DatasetManager from "../../DatasetManager";
 import MpaAnalysisManager from "../../MpaAnalysisManager";
+import { Assay } from "../../assay/Assay";
 
 export interface GlobalState {
-    selectedDatasets: PeptideContainer[],
-    storedDatasets: PeptideContainer[],
+    selectedDatasets: Assay[],
+    storedDatasets: Assay[],
     analysis: boolean,
     searchSettings: MPAConfig,
-    activeDataset: PeptideContainer | null,
+    activeDataset: Assay | null,
     selectedTerm: string,
     selectedTaxonId: number,
     matchedPeptides: number,
@@ -30,10 +30,10 @@ const mpaState: GlobalState = {
 };
 
 const mpaGetters: GetterTree<GlobalState, any> = {
-    selectedDatasets(state: GlobalState): PeptideContainer[] {
+    selectedDatasets(state: GlobalState): Assay[] {
         return state.selectedDatasets;
     },
-    storedDatasets(state: GlobalState): PeptideContainer[] {
+    storedDatasets(state: GlobalState): Assay[] {
         return state.storedDatasets;
     },
     isAnalysis(state: GlobalState): boolean {
@@ -42,7 +42,7 @@ const mpaGetters: GetterTree<GlobalState, any> = {
     searchSettings(state: GlobalState): MPAConfig {
         return state.searchSettings;
     },
-    activeDataset(state: GlobalState): PeptideContainer | null {
+    activeDataset(state: GlobalState): Assay | null {
         return state.activeDataset;
     },
     selectedTerm(state: GlobalState): string {
@@ -63,39 +63,37 @@ const mpaGetters: GetterTree<GlobalState, any> = {
 };
 
 const mpaMutations: MutationTree<GlobalState> = {
-    SELECT_DATASET(state: GlobalState, dataset: PeptideContainer) {
-        let index: number = state.selectedDatasets.findIndex((value: PeptideContainer, index: number, arr: PeptideContainer[]) => {
-            return value.getId() === dataset.getId();
+    SELECT_DATASET(state: GlobalState, dataset: Assay) {
+        let index: number = state.selectedDatasets.findIndex((value: Assay, index: number, arr: Assay[]) => {
+            return value.id === dataset.id;
         });
 
         if (index === -1) {
             state.selectedDatasets.push(dataset);
         }
     },
-    DESELECT_DATASET(state: GlobalState, dataset: PeptideContainer) {
-        let index: number = state.selectedDatasets.findIndex((value: PeptideContainer, index: number, arr: PeptideContainer[]) => {
-            return value.getId() === dataset.getId();
+    DESELECT_DATASET(state: GlobalState, dataset: Assay) {
+        let index: number = state.selectedDatasets.findIndex((value: Assay, index: number, arr: Assay[]) => {
+            return value.id === dataset.id;
         });
 
         if (index !== -1) {
             state.selectedDatasets.splice(index, 1);
         }
-
-        dataset.setDataset(null);
     },
     CLEAR_SELECTED_DATASETS(state: GlobalState) {
         state.selectedDatasets.splice(0, state.selectedDatasets.length);
     },
-    ADD_STORED_DATASET(state: GlobalState, dataset: PeptideContainer) {
+    ADD_STORED_DATASET(state: GlobalState, dataset: Assay) {
         state.storedDatasets.push(dataset);
     },
-    REMOVE_STORED_DATASET(state: GlobalState, dataset: PeptideContainer) {
-        let index: number = state.storedDatasets.findIndex((value: PeptideContainer, index: number) => value.getId() === dataset.getId());
+    REMOVE_STORED_DATASET(state: GlobalState, dataset: Assay) {
+        let index: number = state.storedDatasets.findIndex((value: Assay, index: number) => value.getId() === dataset.getId());
         if (index !== -1) {
             state.storedDatasets.splice(index, 1);
         }
     },
-    ADD_STORED_DATASET_BATCH(state: GlobalState, datasets: PeptideContainer[]) {
+    ADD_STORED_DATASET_BATCH(state: GlobalState, datasets: Assay[]) {
         state.storedDatasets.push(...datasets);
     },
     SET_ANALYSIS(state: GlobalState, isAnalysing: boolean) {
@@ -104,7 +102,7 @@ const mpaMutations: MutationTree<GlobalState> = {
     SET_SEARCH_SETTINGS(state: GlobalState, searchSettings: MPAConfig): void {
         state.searchSettings = searchSettings;
     },
-    SET_ACTIVE_DATASET(state: GlobalState, dataset: PeptideContainer | null): void {
+    SET_ACTIVE_DATASET(state: GlobalState, dataset: Assay | null): void {
         state.activeDataset = dataset;
     },
     SET_SELECTED_TERM(state: GlobalState, value: string): void {
@@ -125,7 +123,7 @@ const mpaMutations: MutationTree<GlobalState> = {
 };
 
 const mpaActions: ActionTree<GlobalState, any> = {
-    selectDataset(store: ActionContext<GlobalState, any>, dataset: PeptideContainer) {
+    selectDataset(store: ActionContext<GlobalState, any>, dataset: Assay) {
         if (store.getters.selectedDatasets.indexOf(dataset) !== -1) {
             return;
         }
@@ -135,12 +133,12 @@ const mpaActions: ActionTree<GlobalState, any> = {
             store.dispatch('processDataset', dataset);
         }
     },
-    deselectDataset(store: ActionContext<GlobalState, any>, dataset: PeptideContainer) {
+    deselectDataset(store: ActionContext<GlobalState, any>, dataset: Assay) {
         store.commit('DESELECT_DATASET', dataset);
 
         if (dataset === store.getters.activeDataset) {
             // Find first processed dataset that could replace the previous active dataset
-            let newActiveDataset: PeptideContainer = null;
+            let newActiveDataset: Assay = null;
 
             for (let current of store.getters.selectedDatasets) {
                 if (current.progress === 1) {
@@ -151,7 +149,7 @@ const mpaActions: ActionTree<GlobalState, any> = {
             store.commit('SET_ACTIVE_DATASET', newActiveDataset);
         }
     },
-    deleteDataset(store: ActionContext<GlobalState, any>, dataset: PeptideContainer) {
+    deleteDataset(store: ActionContext<GlobalState, any>, dataset: Assay) {
         store.dispatch('deselectDataset', dataset);
         let datasetManager: DatasetManager = new DatasetManager();
         datasetManager.deleteDatasetFromStorage(dataset).then(() => store.commit('REMOVE_STORED_DATASET', dataset));
@@ -160,7 +158,7 @@ const mpaActions: ActionTree<GlobalState, any> = {
         store.commit('CLEAR_SELECTED_DATASETS');
         store.commit('SET_ACTIVE_DATASET', null);
     },
-    addStoredDataset(store: ActionContext<GlobalState, any>, dataset: PeptideContainer) {
+    addStoredDataset(store: ActionContext<GlobalState, any>, dataset: Assay) {
         store.commit('ADD_STORED_DATASET', dataset);
     },
     /**
@@ -180,12 +178,12 @@ const mpaActions: ActionTree<GlobalState, any> = {
     setSearchSettings(store: ActionContext<GlobalState, any>, searchSettings: MPAConfig): void {
         store.commit('SET_SEARCH_SETTINGS', searchSettings);
     },
-    setActiveDataset(store: ActionContext<GlobalState, any>, dataset: PeptideContainer | null): void {
+    setActiveDataset(store: ActionContext<GlobalState, any>, dataset: Assay | null): void {
         store.commit('SET_ACTIVE_DATASET', dataset);
         if (dataset !== null) {
             store.dispatch('setSelectedTerm', 'Organism');
             store.dispatch('setSelectedTaxonId', -1);
-            dataset.getDataset().dataRepository.createTaxaDataSource().then((taxaDataSource) => {
+            dataset.dataRepository.createTaxaDataSource().then((taxaDataSource) => {
                 Promise.all([
                     taxaDataSource.getAmountOfMatchedPeptides(),
                     taxaDataSource.getAmountOfSearchedPeptides(),
@@ -199,7 +197,7 @@ const mpaActions: ActionTree<GlobalState, any> = {
         }
     
     },
-    processDataset(store: ActionContext<GlobalState, any>, dataset: PeptideContainer): void {
+    processDataset(store: ActionContext<GlobalState, any>, dataset: Assay): void {
         let mpaManager = new MpaAnalysisManager();
         mpaManager.processDataset(dataset, store.getters.searchSettings)
         .then(() => {
