@@ -1,6 +1,5 @@
 import { TaxumRank } from "./TaxumRank";
 import Element from "./Element";
-import Sample from "../Sample";
 import DataRepository from "./DataRepository";
 import TaxaDataSource from "./TaxaDataSource";
 import Tree from "../Tree";
@@ -13,14 +12,13 @@ export default class TaxaElement extends Element {
         this.rank = rank;
     }
 
-    public async computeCrossPopularity(x: Element, sample: Sample): Promise<number> {
-        let ownAffectedPeptides: string[] = await this.getAffectedPeptides(sample);
-        let otherAffectedPeptides: string[] = await x.getAffectedPeptides(sample);
+    public async computeCrossPopularity(x: Element, dataRepository: DataRepository): Promise<number> {
+        let ownAffectedPeptides: string[] = await this.getAffectedPeptides(dataRepository);
+        let otherAffectedPeptides: string[] = await x.getAffectedPeptides(dataRepository);
         return otherAffectedPeptides.reduce((acc: number, current: string) => acc + (ownAffectedPeptides.includes(current) ? 1: 0), 0);
     }
 
-    public async getAffectedPeptides(sample: Sample): Promise<string[]> {
-        let dataRepository: DataRepository = sample.dataRepository;
+    public async getAffectedPeptides(dataRepository: DataRepository): Promise<string[]> {
         let taxaDataSource: TaxaDataSource = await dataRepository.createTaxaDataSource();
         return taxaDataSource.getAffectedPeptides(this);
     }

@@ -11,10 +11,11 @@
     import MpaHome from "./mpa-home.vue";
     import {Prop} from "vue-property-decorator";
     import MpaAnalysis from "./mpa-analysis.vue";
-    import PeptideContainer from "../PeptideContainer";
+    import MetaProteomicsAssay from "../assay/MetaProteomicsAssay";
     import MpaAnalysisManager from "../MpaAnalysisManager";
     import DatasetManager from "../DatasetManager";
     import { StorageType } from "../StorageType";
+    import BrowserStorageWriter from "../visitors/storage/BrowserStorageWriter";
 
     @Component({
         components: {MpaAnalysis, MpaHome}
@@ -32,13 +33,16 @@
         public searchName: string;
 
         mounted() {
-            if (this.peptides != "") {
+            if (this.peptides != "") 
+            {
                 const storageManager: DatasetManager = new DatasetManager();
-                const dataset: PeptideContainer = new PeptideContainer();
-                dataset.setName(this.searchName);
-                dataset.setPeptides(this.peptides.split(/\\n/));
-                dataset.setDate(new Date());
-                dataset.setType(StorageType.SessionStorage);
+                const metaProteomicsAssay: MetaProteomicsAssay = new MetaProteomicsAssay();
+                const browserStorageWriter: BrowserStorageWriter = new BrowserStorageWriter(StorageType.SessionStorage);
+
+                metaProteomicsAssay.setName(this.searchName);
+                metaProteomicsAssay.peptideContainer.setPeptides(this.peptides.split(/\\n/));
+                metaProteomicsAssay.setDate(new Date());
+                metaProteomicsAssay.setStorageType(StorageType.SessionStorage);
 
                 this.$store.dispatch('setSearchSettings', {
                     il: this.il,
@@ -46,8 +50,8 @@
                     missed: this.missed
                 })
 
-                dataset.store().then(() => {
-                    this.$store.dispatch('selectDataset', dataset);
+                metaProteomicsAssay.visit(browserStorageWriter).then(() => {
+                    this.$store.dispatch('selectDataset', metaProteomicsAssay);
                     this.$store.dispatch('setAnalysis', true);
                 });
             }

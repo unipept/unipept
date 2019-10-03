@@ -32,7 +32,7 @@ export class PeptideContainerProcessor extends ProgressPublisher
                         break;
                 }
             };
-            this._worker.postMessage({peptides: peptides.getPeptidesSync(), config: mpaConfig});
+            this._worker.postMessage({peptides: peptides.getPeptides(), config: mpaConfig});
         });
     }
 }

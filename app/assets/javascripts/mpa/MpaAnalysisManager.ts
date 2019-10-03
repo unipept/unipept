@@ -1,5 +1,4 @@
-import Sample from "./Sample";
-import { Assay } from "./assay/Assay";
+import Assay from "./assay/Assay";
 
 export default class MpaAnalysisManager 
 {

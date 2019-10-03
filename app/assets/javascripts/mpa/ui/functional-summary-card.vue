@@ -102,12 +102,11 @@
     import MpaAnalysisManager from "../MpaAnalysisManager";
     import FaSortSettings from "./tables/FaSortSettings";
     import {numberToPercent, stringTitleize} from "../../utils";
-    import PeptideContainer from "../PeptideContainer";
+    import Assay from "../assay/Assay";
     import {FunctionalAnnotations} from "../../fa/FunctionalAnnotations";
     import IndeterminateProgressBar from "../../components/progress/indeterminate-progress-bar.vue";
     import CardHeader from "../../components/card/card-header.vue";
     import {showInfoModal} from "../../modal";
-    import Sample from "../Sample";
     import GoDataSource from "../datasource/GoDataSource";
     import { GoNameSpace } from "../../fa/GoNameSpace";
     import GoTerm from "../../fa/GoTerm";
@@ -130,7 +129,7 @@
         },
         computed: {
             watchableDataset: {
-                get(): PeptideContainer {
+                get(): Assay {
                     return this.$store.getters.activeDataset
                 }
             },
@@ -210,15 +209,15 @@
         }
 
         @Watch('watchableDataset') onWatchableDatasetChanged() {
-            this.onPeptideContainerChanged();
+            this.onAssayChanged();
         }
 
         @Watch('watchableSelectedSearchTerm') onWatchableSelectedSearchTermChanged() {
-            this.onPeptideContainerChanged();
+            this.onAssayChanged();
         }
 
         @Watch('watchableSelectedTaxonId') onWatchableSelectedTaxonIdChanged() {
-            this.onPeptideContainerChanged();
+            this.onAssayChanged();
         }
 
         setFormatSettings(formatType: string, fieldType: string, shadeFieldType: string, name: string): void {
@@ -231,7 +230,7 @@
             this.faSortSettings.sortFunc = (a, b) => b[fieldType] - a[fieldType];
 
             // Recalculate stuff
-            this.onPeptideContainerChanged();
+            this.onAssayChanged();
         }
 
         reset() {
@@ -301,22 +300,21 @@
             return `https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/${terms.sort().join(",")}/chart?showKey=${showKey}`;
         }
 
-        private async onPeptideContainerChanged() {
+        private async onAssayChanged() {
             this.faCalculationsInProgress = true;
-            let container: PeptideContainer = this.$store.getters.activeDataset;
-            if (container && container.getDataset()) {
+            let assay: Assay = this.$store.getters.activeDataset;
+            if (assay && assay.dataRepository) {
                 await this.redoFAcalculations();
             }
             this.faCalculationsInProgress = false;
         }
 
         private async redoFAcalculations(): Promise<void> {
-            let peptideContainer = this.$store.getters.activeDataset;
+            let assay = this.$store.getters.activeDataset;
 
-            if (peptideContainer && peptideContainer.getDataset()) {
-                let sample: Sample = peptideContainer.getDataset();
-                let goSource: GoDataSource = await sample.dataRepository.createGoDataSource();
-                let taxaSource: TaxaDataSource = await sample.dataRepository.createTaxaDataSource();
+            if (assay && assay.dataRepository) {
+                let goSource: GoDataSource = await assay.dataRepositor.createGoDataSource();
+                let taxaSource: TaxaDataSource = await assay.dataRepository.createTaxaDataSource();
 
                 const taxonId = this.$store.getters.selectedTaxonId;
 
@@ -336,7 +334,7 @@
 
                 this.goTrustLine = this.computeTrustLine(await goSource.getTrust(), "GO term");
 
-                let ecSource: EcDataSource = await sample.dataRepository.createEcDataSource();
+                let ecSource: EcDataSource = await assay.dataRepository.createEcDataSource();
                 this.ecData = await ecSource.getEcNumbers();
                 this.ecTrustLine = this.computeTrustLine(await ecSource.getTrust(), "EC number");
                 this.ecTreeData = await ecSource.getEcTree();

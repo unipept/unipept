@@ -1,12 +1,12 @@
 import { StorageType } from "../../StorageType";
 import Visitor from "../Visitor";
-import { MetaGenomicsAssay } from "../../assay/MetaGenomicsAssay";
-import { MetaProteomicsAssay } from "../../assay/MetaProteomicsAssay";
+import MetaGenomicsAssay from "../../assay/MetaGenomicsAssay";
+import MetaProteomicsAssay from "../../assay/MetaProteomicsAssay";
 import { BrowserStorageConsts } from "./BrowserStorageConsts";
 
 export default abstract class BrowserStorageVisitor implements Visitor
 {
-    private _storageType: StorageType;
+    protected _storageType: StorageType;
 
     constructor(storageType: StorageType)
     {

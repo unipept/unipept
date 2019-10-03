@@ -67,7 +67,6 @@
     import Node from "../../Node";
     import FaSortSettings from "./FaSortSettings";
     import FAElement from "../../../fa/FAElement";
-    import Sample from "../../Sample";
     import TaxaDataSource from "../../datasource/TaxaDataSource";
     import Tree from "../../Tree";
     import Treeview from "../visualizations/treeview.vue";

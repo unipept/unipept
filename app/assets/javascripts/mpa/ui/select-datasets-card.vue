@@ -68,7 +68,7 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import PeptideContainer from "../PeptideContainer";
+    import Assay from "../assay/Assay";
     import SearchSettingsForm from "./search-settings-form.vue";
     import CardTitle from "../../components/card/card-title.vue";
     import CardHeader from "../../components/card/card-header.vue";
@@ -92,7 +92,7 @@
             this.missingCleavage = this.$store.getters.searchSettings.missed;
         }
 
-        deselectDataset(dataset: PeptideContainer) {
+        deselectDataset(dataset: Assay) {
             this.$store.dispatch('deselectDataset', dataset);
         }
 

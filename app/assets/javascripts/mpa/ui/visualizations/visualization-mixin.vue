@@ -2,11 +2,11 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import PeptideContainer from "../../PeptideContainer";
+    import Assay from "../../assay/Assay";
 
     @Component
     export default class VisualizationMixin extends Vue {
-        @Prop({default: null}) dataset: PeptideContainer | null;
+        @Prop({default: null}) dataset: Assay | null;
 
         /**
          * Propagate selections in the visualisation to the search tree and

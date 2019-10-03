@@ -125,13 +125,15 @@
 
     import Component from "vue-class-component";
     import DatasetForm from "./dataset-form.vue";
-    import PeptideContainer from "../PeptideContainer";
+    import Assay from "../assay/Assay";
+    import MetaProteomicsAssay from "../assay/MetaProteomicsAssay";
     import DatasetManager from "../DatasetManager";
     import {StorageType} from "../StorageType";
     import Snackbar from "../../components/snackbar/snackbar.vue";
     import axios from "axios"
     import SampleDataset from "../SampleDataset";
     import Tooltip from "./custom/tooltip.vue";
+    import BrowserStorageWriter from "../visitors/storage/BrowserStorageWriter";
 
     @Component({
         components: {
@@ -194,11 +196,11 @@
             }
         }
 
-        selectDataset(dataset: PeptideContainer): void {
+        selectDataset(dataset: Assay): void {
             this.$store.dispatch('selectDataset', dataset);
         }
 
-        deleteDataset(dataset: PeptideContainer): void {
+        deleteDataset(dataset: Assay): void {
             this.$store.dispatch('deleteDataset', dataset);
         }
 
@@ -237,16 +239,20 @@
 
         private storeDataset(peptides: string, name: string, save: boolean): void {
             this.pendingStore = true;
-            let peptideContainer: PeptideContainer = new PeptideContainer();
-            peptideContainer.setPeptides(peptides.split('\n'));
-            peptideContainer.setDate(new Date());
-            peptideContainer.setType(save ? StorageType.LocalStorage : StorageType.SessionStorage);
-            peptideContainer.setName(name);
-            peptideContainer.store().then(
+            let metaproteomicsAssay: MetaProteomicsAssay = new MetaProteomicsAssay();
+            let storageType = save ? StorageType.LocalStorage : StorageType.SessionStorage;
+            let browserStorageWriter: BrowserStorageWriter = new BrowserStorageWriter(storageType);
+
+            metaproteomicsAssay.peptideContainer.setPeptides(peptides.split('\n'));
+            metaproteomicsAssay.setDate(new Date());
+            metaproteomicsAssay.setStorageType(storageType);
+            metaproteomicsAssay.setName(name);
+
+            metaproteomicsAssay.visit(browserStorageWriter).then(
                 () => {
-                    this.$store.dispatch('selectDataset', peptideContainer);
+                    this.$store.dispatch('selectDataset', metaproteomicsAssay);
                     if (save) {
-                        this.$store.dispatch('addStoredDataset', peptideContainer);
+                        this.$store.dispatch('addStoredDataset', metaproteomicsAssay);
                     }
                     this.pendingStore = false;
                 }

@@ -1,14 +1,16 @@
-import { Assay } from "./Assay";
+import Assay from "./Assay";
 import PeptideContainer from "../PeptideContainer";
 import Visitor from "../visitors/Visitor";
+import DataRepository from "../datasource/DataRepository";
 
-export class MetaProteomicsAssay extends Assay
+export default class MetaProteomicsAssay extends Assay
 {
     public peptideContainer: PeptideContainer = new PeptideContainer();
 
     async initDataRepository(mpaConfig: MPAConfig) 
     {
-        throw new Error("Method not implemented.");
+        this._dataRepository = new DataRepository(this.peptideContainer, mpaConfig);
+        await this._dataRepository.getProcessedPeptideContainer()
     }
 
     async visit(visitor: Visitor): Promise<void> 

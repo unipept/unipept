@@ -1,11 +1,11 @@
-import { Assay } from "./Assay";
+import Assay from "./Assay";
 import { TaxaCountTable } from "../counts/TaxaCountTable";
 import { GOCountTable } from "../counts/GOCountTable";
 import { ECCountTable } from "../counts/ECCountTable";
 
 import Visitor from "../visitors/Visitor";
 
-export class MetaGenomicsAssay extends Assay
+export default class MetaGenomicsAssay extends Assay
 {
     private _taxaCountTable: TaxaCountTable;
     private _goCountTable: GOCountTable;

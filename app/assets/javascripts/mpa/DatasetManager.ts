@@ -1,25 +1,32 @@
-import PeptideContainer from "./PeptideContainer";
 import {StorageType} from "./StorageType";
 import {get, getJSON} from "../utils";
+import Assay from "./assay/Assay";
+import MetaProteomicsAssay from "./assay/MetaProteomicsAssay";
+import { BrowserStorageConsts } from "./visitors/storage/BrowserStorageConsts";
+import BrowserStorageMetadataReader from "./visitors/storage/BrowserStorageMetadataReader";
+import BrowserStorageRemover from "./visitors/storage/BrowserStorageRemover";
 
 export default class DatasetManager 
 {
-    private storageTypes: StorageType[] = [StorageType.LocalStorage, StorageType.SessionStorage];
-
     /**
      * List all datasets that are stored in local storage memory.
      *
      * @return A list containing all datasets stored in this manager's corresponding storage type and sorted
      *         alphabetically by name.
      */
-    async listDatasets(): Promise<PeptideContainer[]> {
-        let output: PeptideContainer[] = [];
-        let storage = this.getStorage(StorageType.LocalStorage);
-        for (let i = 0; i < storage.length; i++) {
+    async listDatasets(): Promise<Assay[]> 
+    {
+        let output: MetaProteomicsAssay[] = [];
+        let metadataReader: BrowserStorageMetadataReader = new BrowserStorageMetadataReader(StorageType.LocalStorage)
+        let storage = window.localStorage;
+
+        for (let i = 0; i < storage.length; i++) 
+        {
             let key = storage.key(i);
-            if (key.startsWith(DatasetManager.MPA_METADATA_PREFIX)) {
-                let dataset = new PeptideContainer(key.substr(DatasetManager.MPA_METADATA_PREFIX.length));
-                await dataset.deserialize(StorageType.LocalStorage);
+            if (key.startsWith(BrowserStorageConsts.MPA_METADATA_PREFIX)) 
+            {
+                let dataset = new MetaProteomicsAssay(key.substr(BrowserStorageConsts.MPA_METADATA_PREFIX.length), StorageType.LocalStorage);
+                await dataset.visit(metadataReader)
                 output.push(dataset);
             }
         }
@@ -70,38 +77,9 @@ export default class DatasetManager
         return peptides;
     }
 
-    /**
-     * Removes all datasets from the browser's storage.
-     */
-    async clearStorage(): Promise<void> {
-        for (let storageType of this.storageTypes) {
-            let storage = this.getStorage(storageType);
-            let toRemove = [];
-
-            for (let i = 0; i < storage.length; i++) {
-                let key = storage.key(i);
-                if (key.startsWith(DatasetManager.MPA_STORAGE_PREFIX)) {
-                    toRemove.push(key);
-                }
-            }
-
-            for (let key of toRemove) {
-                storage.removeItem(key);
-            }
-        }
-    }
-
-    async deleteDatasetFromStorage(dataSet: PeptideContainer): Promise<void> {
-        let storage: Storage = this.getStorage(dataSet.getType());
-        storage.removeItem(DatasetManager.MPA_PEPTIDE_PREFIX + dataSet.getId());
-        storage.removeItem(DatasetManager.MPA_METADATA_PREFIX + dataSet.getId());
-    }
-
-    private getStorage(storageType: StorageType): Storage {
-        if (storageType === StorageType.LocalStorage) {
-            return window.localStorage;
-        } else {
-            return window.sessionStorage;
-        }
+    async deleteDatasetFromStorage(dataSet: Assay): Promise<void> 
+    {
+        let browserStorageRemover = new BrowserStorageRemover(dataSet.getStorageType())
+        dataSet.visit(browserStorageRemover);
     }
 }

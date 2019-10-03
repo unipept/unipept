@@ -16,7 +16,7 @@
     import Vue from "vue";
     import Component, {mixins} from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import PeptideContainer from "../../PeptideContainer";
+    import Assay from "../../assay/Assay";
     import MpaAnalysisManager from "../../MpaAnalysisManager";
     import Tree from "../../Tree";
     import {tooltipContent} from "./VisualizationHelper";
@@ -58,8 +58,8 @@
         }
 
         private async initTreeMap() {
-            if (this.dataset != null && this.dataset.getDataset() != null) {
-                let taxaSource: TaxaDataSource = await this.dataset.getDataset().dataRepository.createTaxaDataSource();
+            if (this.dataset != null && this.dataset.dataRepository != null) {
+                let taxaSource: TaxaDataSource = await this.dataset.dataRepository.createTaxaDataSource();
                 let tree: Tree = await taxaSource.getTree();
                 const data = JSON.stringify(tree.getRoot());
 

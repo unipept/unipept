@@ -1,7 +1,7 @@
 import {ActionContext, ActionTree, GetterTree, MutationTree} from "vuex";
 import DatasetManager from "../../DatasetManager";
 import MpaAnalysisManager from "../../MpaAnalysisManager";
-import { Assay } from "../../assay/Assay";
+import Assay from "../../assay/Assay";
 
 export interface GlobalState {
     selectedDatasets: Assay[],
@@ -65,7 +65,7 @@ const mpaGetters: GetterTree<GlobalState, any> = {
 const mpaMutations: MutationTree<GlobalState> = {
     SELECT_DATASET(state: GlobalState, dataset: Assay) {
         let index: number = state.selectedDatasets.findIndex((value: Assay, index: number, arr: Assay[]) => {
-            return value.id === dataset.id;
+            return value.getId() === dataset.getId();
         });
 
         if (index === -1) {
@@ -74,7 +74,7 @@ const mpaMutations: MutationTree<GlobalState> = {
     },
     DESELECT_DATASET(state: GlobalState, dataset: Assay) {
         let index: number = state.selectedDatasets.findIndex((value: Assay, index: number, arr: Assay[]) => {
-            return value.id === dataset.id;
+            return value.getId() === dataset.getId();
         });
 
         if (index !== -1) {

@@ -3,31 +3,61 @@ import Visitable from "../visitors/Visitable";
 import Visitor from "../visitors/Visitor";
 import { StorageType } from "../StorageType";
 
-export abstract class Assay implements Visitable
+export default abstract class Assay implements Visitable
 {
     private _id: string;
+    private _name: string;
+    private _date: Date;
     private _storageType: StorageType;
-    private _dataRepository: DataRepository;
 
-    public name: string;
-    public date: Date;
+    protected _dataRepository: DataRepository;
 
-    constructor(id: string, storageType: StorageType, name: string = undefined, date: Date = undefined)
+    constructor(id: string = undefined, storageType: StorageType = undefined, name: string = undefined, date: Date = undefined)
     {
         this._id = id;
-        this.name = name;
-        this.date = date;
+        this._name = name;
+        this._date = date;
         this._storageType = storageType;
     }
 
-    get id()
+    getId()
     {
         return this._id;
     }
 
-    get storageType()
+    setId(id: string)
+    {
+        this._id = id;
+    }
+
+    getName()
+    {
+        return this._name;
+    }
+
+    setName(name: string)
+    {
+        this._name = name;
+    }
+
+    getDate()
+    {
+        return this._date;
+    }
+
+    setDate(date: Date)
+    {
+        this._date = date;
+    }
+
+    getStorageType()
     {
         return this._storageType;
+    }
+
+    setStorageType(storageType: StorageType)
+    {
+        this._storageType = storageType;
     }
 
     get dataRepository()

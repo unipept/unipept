@@ -11,10 +11,10 @@
     import { EcNameSpace } from "../../../fa/EcNameSpace";
     import Treeview from "../visualizations/treeview.vue";
     import AmountTable from "./amount-table.vue";
-    import Sample from "../../Sample";
     import TaxaDataSource from "../../datasource/TaxaDataSource";
     import FaSortSettings from "./FaSortSettings";
-import EcDataSource from "../../datasource/EcDataSource";
+    import DataRepository from "../../datasource/DataRepository";
+    import EcDataSource from "../../datasource/EcDataSource";
 
     @Component({
         components: {
@@ -30,9 +30,9 @@ import EcDataSource from "../../datasource/EcDataSource";
         private taxaRetriever: (term: EcNumber) => Promise<Node> = (term: EcNumber) => this.getTaxaTreeByTerm(term);
 
         protected async getTaxaTreeByTerm(number: EcNumber): Promise<Node> {
-            let sample: Sample = this.$store.getters.activeDataset.getDataset();
-            let taxaDataSource: TaxaDataSource = await sample.dataRepository.createTaxaDataSource();
-            let ecDataSource: EcDataSource = await sample.dataRepository.createEcDataSource();
+            let dataRepository: DataRepository = this.$store.getters.activeDataset.dataRepository;
+            let taxaDataSource: TaxaDataSource = await dataRepository.createTaxaDataSource();
+            let ecDataSource: EcDataSource = await dataRepository.createEcDataSource();
 
             return taxaDataSource.getTreeByPeptides(ecDataSource.getPeptidesByEcNumber(number));
         }

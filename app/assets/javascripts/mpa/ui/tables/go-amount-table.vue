@@ -8,7 +8,6 @@
     import {Prop, Watch} from "vue-property-decorator";
     import GoTerm from "../../../fa/GoTerm";
     import { tooltipContent } from "../visualizations/VisualizationHelper";
-    import Sample from "../../Sample";
     import TaxaDataSource from "../../datasource/TaxaDataSource";
     import Treeview from "../visualizations/treeview.vue";
     import AmountTable from "./amount-table.vue";
@@ -17,7 +16,8 @@
     import FaSortSettings from "./FaSortSettings";
     import Node from "../../Node";
     import FAElement from "../../../fa/FAElement";
-import GoDataSource from "../../datasource/GoDataSource";
+    import DataRepository from "../../datasource/DataRepository";
+    import GoDataSource from "../../datasource/GoDataSource";
 
     @Component({
         components: {
@@ -35,9 +35,9 @@ import GoDataSource from "../../datasource/GoDataSource";
         private taxaRetriever: (term: GoTerm) => Promise<Node> = (term: GoTerm) => this.getTaxaTreeByTerm(term);
 
         private async getTaxaTreeByTerm(term: GoTerm): Promise<Node> {
-            let sample: Sample = this.$store.getters.activeDataset.getDataset();
-            let taxaDataSource: TaxaDataSource = await sample.dataRepository.createTaxaDataSource();
-            let goDataSource: GoDataSource = await sample.dataRepository.createGoDataSource();
+            let dataRepository: DataRepository = this.$store.getters.activeDataset.dataRepository;
+            let taxaDataSource: TaxaDataSource = await dataRepository.createTaxaDataSource();
+            let goDataSource: GoDataSource = await dataRepository.createGoDataSource();
 
             return taxaDataSource.getTreeByPeptides(goDataSource.getPeptidesByGoTerm(term));
         }

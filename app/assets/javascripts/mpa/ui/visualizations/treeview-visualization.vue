@@ -16,7 +16,7 @@
     import Vue from "vue";
     import Component, {mixins} from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import PeptideContainer from "../../PeptideContainer";
+    import Assay from "../../assay/Assay";
     import Tree from "../../Tree";
     import {tooltipContent} from "./VisualizationHelper";
     import VisualizationMixin from "./visualization-mixin.vue";
@@ -72,8 +72,8 @@
         }
 
         private async initTreeview() {
-            if (this.dataset != null && this.dataset.getDataset() != null) {
-                let taxaDataSource: TaxaDataSource = await this.dataset.getDataset().dataRepository.createTaxaDataSource();
+            if (this.dataset != null && this.dataset.dataRepository != null) {
+                let taxaDataSource: TaxaDataSource = await this.dataset.dataRepository.createTaxaDataSource();
                 let tree: Tree = await taxaDataSource.getTree();
                 this.data = tree.getRoot();
             }

@@ -1,12 +1,9 @@
 import DataSource from "./DataSource";
-import Sample from "../Sample";
 // @ts-ignore
 import TaxaElement from "./TaxaElement";
 import Tree from "../Tree";
 import Node from "../Node";
 import DataRepository from "./DataRepository";
-import GoTerm from "../../fa/GoTerm";
-import EcNumber from "../../fa/EcNumber";
 import { TaxumRank, convertStringToTaxumRank } from "./TaxumRank";
 import { TaxaCountTable } from "../counts/TaxaCountTable";
 import { TaxaCountProcessor } from "../processors/count/TaxaCountProcessor";

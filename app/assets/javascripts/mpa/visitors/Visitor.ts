@@ -1,5 +1,5 @@
-import { MetaGenomicsAssay } from "../assay/MetaGenomicsAssay";
-import { MetaProteomicsAssay } from "../assay/MetaProteomicsAssay";
+import MetaGenomicsAssay from "../assay/MetaGenomicsAssay";
+import MetaProteomicsAssay from "../assay/MetaProteomicsAssay";
 
 export default interface Visitor
 {

@@ -21,7 +21,7 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import PeptideContainer from "../../PeptideContainer";
+    import Assay from "../../assay/Assay";
     import Tree from "../../Tree";
     import {constructSearchtree} from "../../searchtree";
     import TaxaDataSource from "../../datasource/TaxaDataSource";
@@ -44,7 +44,7 @@
         }
     })
     export default class HierarchicalOutlineVisualization extends Vue {
-        @Prop({default: null}) dataset: PeptideContainer | null;
+        @Prop({default: null}) dataset: Assay | null;
 
         searchTree!: any;
 
@@ -65,8 +65,8 @@
         }
 
         private async initSearchTree() {
-            if (this.dataset != null && this.dataset.getDataset() != null) {
-                let taxaDataSource: TaxaDataSource = await this.dataset.getDataset().dataRepository.createTaxaDataSource();
+            if (this.dataset != null && this.dataset.dataRepository != null) {
+                let taxaDataSource: TaxaDataSource = await this.dataset.dataRepository.createTaxaDataSource();
                 let tree: Tree = await taxaDataSource.getTree();
                 this.searchTree = constructSearchtree(tree, this.$store.getters.searchSettings.il, () => {});
             }

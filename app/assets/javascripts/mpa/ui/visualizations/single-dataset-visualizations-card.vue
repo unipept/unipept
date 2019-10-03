@@ -136,7 +136,7 @@
     import CardHeader from "../../../components/card/card-header.vue";
     import {logToGoogle, triggerDownloadModal} from "../../../utils";
     import HeatmapVisualization from "./heatmap-visualization.vue";
-    import PeptideContainer from "../../PeptideContainer";
+    import Assay from "../../assay/Assay";
     import HeatmapWizardSingleSample from "./../heatmap/heatmap-wizard-single-sample.vue";
     import DatasetVisualizations from "./dataset-visualizations.vue";
     import fullscreen from 'vue-fullscreen';

@@ -1,5 +1,4 @@
 import GoDataSource from "./GoDataSource";
-import Sample from "../Sample";
 import TaxaDataSource from "./TaxaDataSource";
 import ProgressListener from "../ProgressListener";
 
@@ -12,10 +11,11 @@ import { GOPeptideProcessor } from "../processors/peptide/GOPeptideProcessor";
 
 import { ECPeptideProcessor } from "../processors/peptide/ECPeptideProcessor";
 import ProgressPublisher from "../ProgressPublisher";
+import PeptideContainer from "../PeptideContainer";
 
 export default class DataRepository extends ProgressPublisher implements ProgressListener
 {
-    private readonly _sample: Sample;
+    private _peptideContainer: PeptideContainer;
 
     private _processor: PeptideContainerProcessor;
     private _processedPeptideContainer: Promise<ProcessedPeptideContainer>;
@@ -26,14 +26,15 @@ export default class DataRepository extends ProgressPublisher implements Progres
     private _goSourceCache: GoDataSource;
     private _ecSourceCache: EcDataSource;
 
-    public constructor(sample: Sample, mpaConfig: MPAConfig) 
+    public constructor(peptideContainer: PeptideContainer, mpaConfig: MPAConfig) 
     {
         super()
         
+        this._peptideContainer = peptideContainer;
+
         this._processor = new PeptideContainerProcessor();
         this._processor.registerProgressListener(this);
 
-        this._sample = sample;
         this._mpaConfig = mpaConfig;
     }
 
@@ -82,7 +83,7 @@ export default class DataRepository extends ProgressPublisher implements Progres
      */
     public async getProcessedPeptideContainer() : Promise<ProcessedPeptideContainer>{
         if (!this._processedPeptideContainer) {
-            this._processedPeptideContainer = this._processor.process(this._sample.peptideContainer, this._mpaConfig);
+            this._processedPeptideContainer = this._processor.process(this._peptideContainer, this._mpaConfig);
         }
         return this._processedPeptideContainer;
     }

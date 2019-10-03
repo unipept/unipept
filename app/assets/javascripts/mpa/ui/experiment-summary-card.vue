@@ -42,7 +42,6 @@
     import {addCopy} from "../../utils";
     import {showInfoModal} from "../../modal";
     import TaxaDataSource from "../datasource/TaxaDataSource";
-    import Sample from "../Sample";
     import PeptideContainer from "../PeptideContainer";
     import Tooltip from "./custom/tooltip.vue";
 

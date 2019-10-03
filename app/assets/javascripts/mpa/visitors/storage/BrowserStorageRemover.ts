@@ -1,6 +1,6 @@
 import BrowserStorageVisitor from "./BrowserStorageVisitor";
-import { MetaGenomicsAssay } from "../../assay/MetaGenomicsAssay";
-import { MetaProteomicsAssay } from "../../assay/MetaProteomicsAssay";
+import MetaGenomicsAssay from "../../assay/MetaGenomicsAssay";
+import MetaProteomicsAssay from "../../assay/MetaProteomicsAssay";
 import { BrowserStorageConsts } from "./BrowserStorageConsts";
 
 export default class BrowserStorageRemover extends BrowserStorageVisitor
@@ -13,7 +13,7 @@ export default class BrowserStorageRemover extends BrowserStorageVisitor
     async visitMetaProteomicsAssay(mpAssay: MetaProteomicsAssay): Promise<void> 
     {
         let storage: Storage = this.getStorage();
-        storage.removeItem(BrowserStorageConsts.MPA_METADATA_PREFIX + mpAssay.id);
-        storage.removeItem(BrowserStorageConsts.MPA_PEPTIDE_PREFIX + mpAssay.id);
+        storage.removeItem(BrowserStorageConsts.MPA_METADATA_PREFIX + mpAssay.getId());
+        storage.removeItem(BrowserStorageConsts.MPA_PEPTIDE_PREFIX + mpAssay.getId());
     }
 }
