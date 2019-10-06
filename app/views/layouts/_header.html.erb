@@ -18,6 +18,7 @@
     <nav class="header-navigation">
       <%= link_to("Tryptic Peptide Analysis", search_single_path, class: "header-navigation-link" + (@header_class == "TPA" ? ' active' : '')) %>
       <%= link_to("Metaproteomics Analysis", datasets_path, class: "header-navigation-link" + (@header_class == "MPA" ? ' active' : '')) %>
+      <%= link_to("Metagenomics Analysis", mga_path, class: "header-navigation-link" + (@header_class == "MGA" ? ' active' : '')) %>
       <%= link_to("Peptidome Analysis", pancore_analyze_path, class: "header-navigation-link" + (@header_class == "peptidome" ? ' active' : '')) %>
       <%= link_to("API", api_apidocs_path, class: "header-navigation-link" + (@header_class == "API" ? ' active' : '')) %>
       <%= link_to("CLI", api_clidocs_path, class: "header-navigation-link" + (@header_class == "CLI" ? ' active' : '')) %>

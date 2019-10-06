@@ -42,6 +42,8 @@ UnipeptWeb::Application.routes.draw do
     match "pept2data", via: [:get, :post], :to => "mpa#pept2data"
   end
 
+  get '/mga', :to => 'mga#analyze'
+
   get '/sequences/:id/:equate_il', :to => 'sequences#show', :as => 'sequence_show'
   get '/search/single', :to => 'search#single'
 
