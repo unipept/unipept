@@ -313,7 +313,7 @@
             let assay = this.$store.getters.activeDataset;
 
             if (assay && assay.dataRepository) {
-                let goSource: GoDataSource = await assay.dataRepositor.createGoDataSource();
+                let goSource: GoDataSource = await assay.dataRepository.createGoDataSource();
                 let taxaSource: TaxaDataSource = await assay.dataRepository.createTaxaDataSource();
 
                 const taxonId = this.$store.getters.selectedTaxonId;

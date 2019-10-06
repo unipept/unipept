@@ -11,15 +11,7 @@ import { TaxaCountProcessor } from "../processors/count/TaxaCountProcessor";
 export default class TaxaDataSource extends DataSource 
 {
     private _countTable: TaxaCountTable;
-
     private _tree: Tree;
-    // These are the peptides that couldn't be matched with the database.
-    private _missedPeptides: string[];
-    // The amount of peptides that were found in the database.
-    private _matchedPeptides: number;
-    // The amount of peptides that have been looked up in the database. This is the total amount of peptides that were
-    // searched.
-    private _searchedPeptides: number;
  
     constructor(countTable: TaxaCountTable, repository: DataRepository)
     {
@@ -95,31 +87,10 @@ export default class TaxaDataSource extends DataSource
         return [];
     }
 
-    public async getMissedPeptides(): Promise<string[]> {
-        await this.process();
-        return this._missedPeptides;
-    }
-
-    public async getAmountOfMatchedPeptides(): Promise<number> {
-        await this.process();
-        return this._matchedPeptides;
-    }
-
-    public async getAmountOfSearchedPeptides(): Promise<number> {
-        await this.process();
-        return this._searchedPeptides;
-    }
-
     private async process(): Promise<void> {
-        if (!this._tree || !this._missedPeptides || this._matchedPeptides === undefined || this._searchedPeptides === undefined) {
-            let processedPeptideContainer = await this._repository.getProcessedPeptideContainer();
-
+        if (!this._tree) 
+        {
             this._tree = await TaxaCountProcessor.process(this._countTable);
-
-            // TODO: these values shouldn't be stored here
-            this._missedPeptides = processedPeptideContainer.missed;
-            this._matchedPeptides = processedPeptideContainer.numMatched;
-            this._searchedPeptides = processedPeptideContainer.numSearched;
         }
     }
 }

@@ -12,6 +12,8 @@ export default abstract class Assay implements Visitable
 
     protected _dataRepository: DataRepository;
 
+    public progress: number = 0;
+
     constructor(id: string = undefined, storageType: StorageType = undefined, name: string = undefined, date: Date = undefined)
     {
         this._id = id;
@@ -68,7 +70,7 @@ export default abstract class Assay implements Visitable
     getDateFormatted(): string 
     {
         // @ts-ignore
-        return this.date.getFullYear() + "/" + (this.date.getMonth() + 1).toString().padStart(2, '0') + "/" + this.date.getDate().toString().padStart(2, '0');
+        return this._date.getFullYear() + "/" + (this._date.getMonth() + 1).toString().padStart(2, '0') + "/" + this._date.getDate().toString().padStart(2, '0');
     }
 
     abstract async initDataRepository(mpaConfig: MPAConfig);

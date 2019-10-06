@@ -183,7 +183,7 @@ const mpaActions: ActionTree<GlobalState, any> = {
         if (dataset !== null) {
             store.dispatch('setSelectedTerm', 'Organism');
             store.dispatch('setSelectedTaxonId', -1);
-            dataset.dataRepository.createTaxaDataSource().then((taxaDataSource) => {
+            /*dataset.dataRepository.createTaxaDataSource().then((taxaDataSource) => {
                 Promise.all([
                     taxaDataSource.getAmountOfMatchedPeptides(),
                     taxaDataSource.getAmountOfSearchedPeptides(),
@@ -193,7 +193,7 @@ const mpaActions: ActionTree<GlobalState, any> = {
                     store.commit('SET_SEARCHED_PEPTIDES', result[1]);
                     store.commit('SET_MISSED_PEPTIDES', result[2]);
                 })
-            });
+            });*/
         }
     
     },
