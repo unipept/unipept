@@ -19,7 +19,7 @@ export namespace BrowserStorageWriter
 
         if(!mpAssay.getId())
         {
-            mpAssay.setId(this.generateUniqueId())
+            mpAssay.setId(BrowserStorageCommon.generateUniqueId())
         }
 
         let metadata = JSON.stringify({
@@ -27,7 +27,7 @@ export namespace BrowserStorageWriter
             name: mpAssay.getName(),
             amount: peptideContainer.getAmountOfPeptides(),
             date: mpAssay.getDateFormatted(),
-            type: this._storageType
+            type: storageType
         });
 
         storage.setItem(BrowserStorageConsts.MPA_METADATA_PREFIX + mpAssay.getId(), metadata);
