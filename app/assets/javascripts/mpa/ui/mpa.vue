@@ -15,7 +15,7 @@
     import MpaAnalysisManager from "../MpaAnalysisManager";
     import DatasetManager from "../DatasetManager";
     import { StorageType } from "../StorageType";
-    import BrowserStorageWriter from "../visitors/storage/BrowserStorageWriter";
+    import StorageWriter from "../visitors/storage/StorageWriter";
 
     @Component({
         components: {MpaAnalysis, MpaHome}
@@ -37,7 +37,7 @@
             {
                 const storageManager: DatasetManager = new DatasetManager();
                 const metaProteomicsAssay: MetaProteomicsAssay = new MetaProteomicsAssay();
-                const browserStorageWriter: BrowserStorageWriter = new BrowserStorageWriter(StorageType.SessionStorage);
+                const storageWriter: StorageWriter = new StorageWriter();
 
                 metaProteomicsAssay.setName(this.searchName);
                 metaProteomicsAssay.peptideContainer.setPeptides(this.peptides.split(/\\n/));
@@ -50,7 +50,7 @@
                     missed: this.missed
                 })
 
-                metaProteomicsAssay.visit(browserStorageWriter).then(() => {
+                metaProteomicsAssay.visit(storageWriter).then(() => {
                     this.$store.dispatch('selectDataset', metaProteomicsAssay);
                     this.$store.dispatch('setAnalysis', true);
                 });

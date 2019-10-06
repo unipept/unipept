@@ -2,9 +2,9 @@ import {StorageType} from "./StorageType";
 import {get, getJSON} from "../utils";
 import Assay from "./assay/Assay";
 import MetaProteomicsAssay from "./assay/MetaProteomicsAssay";
-import { BrowserStorageConsts } from "./visitors/storage/BrowserStorageConsts";
-import BrowserStorageMetadataReader from "./visitors/storage/BrowserStorageMetadataReader";
-import BrowserStorageRemover from "./visitors/storage/BrowserStorageRemover";
+import { BrowserStorageConsts } from "./visitors/storage/browser/BrowserStorageConsts";
+import StorageMetadataReader from "./visitors/storage/StorageMetadataReader";
+import StorageRemover from "./visitors/storage/StorageRemover";
 
 export default class DatasetManager 
 {
@@ -17,7 +17,7 @@ export default class DatasetManager
     async listDatasets(): Promise<Assay[]> 
     {
         let output: MetaProteomicsAssay[] = [];
-        let metadataReader: BrowserStorageMetadataReader = new BrowserStorageMetadataReader(StorageType.LocalStorage)
+        let metadataReader: StorageMetadataReader = new StorageMetadataReader()
         let storage = window.localStorage;
 
         for (let i = 0; i < storage.length; i++) 
@@ -79,7 +79,7 @@ export default class DatasetManager
 
     async deleteDatasetFromStorage(dataSet: Assay): Promise<void> 
     {
-        let browserStorageRemover = new BrowserStorageRemover(dataSet.getStorageType())
-        dataSet.visit(browserStorageRemover);
+        let storageRemover = new StorageRemover();
+        dataSet.visit(storageRemover);
     }
 }

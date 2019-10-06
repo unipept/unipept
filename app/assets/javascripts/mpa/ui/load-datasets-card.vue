@@ -133,7 +133,7 @@
     import axios from "axios"
     import SampleDataset from "../SampleDataset";
     import Tooltip from "./custom/tooltip.vue";
-    import BrowserStorageWriter from "../visitors/storage/BrowserStorageWriter";
+    import StorageWriter from "../visitors/storage/StorageWriter";
 
     @Component({
         components: {
@@ -241,14 +241,14 @@
             this.pendingStore = true;
             let metaproteomicsAssay: MetaProteomicsAssay = new MetaProteomicsAssay();
             let storageType = save ? StorageType.LocalStorage : StorageType.SessionStorage;
-            let browserStorageWriter: BrowserStorageWriter = new BrowserStorageWriter(storageType);
+            let storageWriter: StorageWriter = new StorageWriter();
 
             metaproteomicsAssay.peptideContainer.setPeptides(peptides.split('\n'));
             metaproteomicsAssay.setDate(new Date());
             metaproteomicsAssay.setStorageType(storageType);
             metaproteomicsAssay.setName(name);
 
-            metaproteomicsAssay.visit(browserStorageWriter).then(
+            metaproteomicsAssay.visit(storageWriter).then(
                 () => {
                     this.$store.dispatch('selectDataset', metaproteomicsAssay);
                     if (save) {

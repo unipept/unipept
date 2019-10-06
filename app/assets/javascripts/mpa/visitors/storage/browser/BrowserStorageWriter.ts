@@ -1,19 +1,20 @@
-import MetaGenomicsAssay from "../../assay/MetaGenomicsAssay";
-import MetaProteomicsAssay from "../../assay/MetaProteomicsAssay";
+import MetaGenomicsAssay from "../../../assay/MetaGenomicsAssay";
+import MetaProteomicsAssay from "../../../assay/MetaProteomicsAssay";
+import PeptideContainer from "../../../PeptideContainer";
 import { BrowserStorageConsts } from "./BrowserStorageConsts";
-import PeptideContainer from "../../PeptideContainer";
-import BrowserStorageVisitor from "./BrowserStorageVisitor";
+import { BrowserStorageCommon } from "./BrowserStorageCommon";
+import { StorageType } from "../../../StorageType";
 
-export default class BrowserStorageWriter extends BrowserStorageVisitor
+export namespace BrowserStorageWriter
 {
-    async visitMetaGenomicsAssay(mgAssay: MetaGenomicsAssay): Promise<void> 
+    export async function writeMetaGenomicsAssay(mgAssay: MetaGenomicsAssay, storageType: StorageType): Promise<void> 
     {
         throw new Error("Method not implemented.");
-    }    
+    }
     
-    async visitMetaProteomicsAssay(mpAssay: MetaProteomicsAssay): Promise<void> 
+    export async function writeMetaProteomicsAssay(mpAssay: MetaProteomicsAssay, storageType: StorageType): Promise<void> 
     {
-        let storage: Storage = this.getStorage();
+        let storage: Storage = BrowserStorageCommon.getStorage(storageType);
         let peptideContainer: PeptideContainer = mpAssay.peptideContainer;
 
         if(!mpAssay.getId())
