@@ -228,7 +228,7 @@ import {NormalizationType} from "./NormalizationType";
             for (let item of this.selectedItems) {
                 let gridRow: number[] = [];
                 for (let container of this.$store.getters.selectedDatasets) {
-                    let value: number = (await item.getAffectedPeptides(container.getDataset())).length;
+                    let value: number = (await item.getAffectedPeptides(container.dataRepository)).length;
                     gridRow.push(value);
                 }
                 grid.push(gridRow);
