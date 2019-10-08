@@ -4,7 +4,7 @@ class PrivateApiController < ApplicationController
 
   def lineages
     taxids = params[:taxids] || []
-    @lineages = Lineage.where(taxon_id: taxa)
+    @lineages = Lineage.where(taxon_id: taxids)
   end
 
   def goterms
