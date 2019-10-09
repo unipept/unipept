@@ -15,7 +15,7 @@ gem 'puma', '~> 3.11'
 # gem 'redis', '~> 4.0'
 
 # pagination
-gem 'will_paginate', '~>3.1.7'
+gem 'will_paginate', '~>3.2.0'
 
 # cas auth
 gem 'devise', '~> 4.7.0'
