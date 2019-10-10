@@ -243,8 +243,8 @@ tables: $(JAR) <<<TABDIR>>>/taxons.tsv.gz <<<SOURCE_FILES>>>
 		| <<<CMD_AWK>>> '{ printf("%012d\t%s\n", $$1, $$2) }' \
 		| <<<CMD_JOIN>>> --nocheck-order -a1 -e '\N' -t '	' -o "1.1 1.2 2.2"                       - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/original_LCAs.tsv.gz | <<<CMD_AWK>>> '{ printf("%012d\t%s\n", $$1, $$2) }') \
 		| <<<CMD_JOIN>>> --nocheck-order -a1 -e '\N' -t '	' -o "1.1 1.2 1.3 2.2"                   - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/LCAs.tsv.gz          | <<<CMD_AWK>>> '{ printf("%012d\t%s\n", $$1, $$2) }') \
-		| <<<CMD_JOIN>>> --nocheck-order -a1 -e '\N' -t '	' -o '1.1 1.2 1.3 1.4 2.2'     -1 2 -2 1 - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/original_FAs.tsv.gz) \
-		| <<<CMD_JOIN>>> --nocheck-order -a1 -e '\N' -t '	' -o '1.1 1.2 1.3 1.4 1.5 2.2' -1 2 -2 1 - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/FAs.tsv.gz) \
+		| <<<CMD_JOIN>>> --nocheck-order -a1 -e '\N' -t '	' -o '1.1 1.2 1.3 1.4 2.2'               - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/original_FAs.tsv.gz  | <<<CMD_AWK>>> '{ printf("%012d\t%s\n", $$1, $$2) }') \
+		| <<<CMD_JOIN>>> --nocheck-order -a1 -e '\N' -t '	' -o '1.1 1.2 1.3 1.4 1.5 2.2'           - <(<<<CMD_ZCAT>>> <<<INTDIR>>>/FAs.tsv.gz           | <<<CMD_AWK>>> '{ printf("%012d\t%s\n", $$1, $$2) }') \
 		| <<<CMD_SED>>> 's/^0*//' \
 		| <<<CMD_GZIP>>> \
 		> $@
