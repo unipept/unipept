@@ -50,7 +50,7 @@ gem 'uglifier',  '~> 4.1.20'
 gem 'exception_notification',  '~> 4.4.0'
 
 # Deploy with Capistrano
-gem 'capistrano', '~> 3.11.1'
+gem 'capistrano', '~> 3.11.2'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
