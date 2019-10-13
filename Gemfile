@@ -44,7 +44,7 @@ gem 'autoprefixer-rails',  '~> 9.6.4'
 
 # Uglifier minifies JavaScript files by wrapping UglifyJS to be accessible
 # in Ruby
-gem 'uglifier',  '~> 4.1.20'
+gem 'uglifier',  '~> 4.2.0'
 
 # Exception emails
 gem 'exception_notification',  '~> 4.4.0'
