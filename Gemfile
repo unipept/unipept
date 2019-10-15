@@ -29,7 +29,7 @@ gem 'bootsnap', '~>  1.4.4', require: false
 # faster json
 gem 'oj',  '~> 3.9.2'
 
-gem 'multi_json',  '~> 1.13.1'
+gem 'multi_json',  '~> 1.14.0'
 gem 'jbuilder',  '~> 2.9.1'
 
 # imagemagick bindings
