@@ -21,6 +21,9 @@ commands:
     description: "Set up repo and dependencies"
     steps:
       - checkout
+      - run:
+          name: Update submodules
+          command: git submodule update --recursive --init
       - restore_cache:
           keys:
             - unipept-bundle-{{ checksum "Gemfile.lock" }}
