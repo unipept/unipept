@@ -24,7 +24,7 @@
     "unipept-visualizations": "^1.7.3",
     "vue": "^2.6.10",
     "vue-class-component": "^7.1.0",
-    "vue-clipboard2": "^0.2.1",
+    "vue-clipboard2": "^0.3.1",
     "vue-fullscreen": "^2.1.5",
     "vue-loader": "^15.7.1",
     "vue-property-decorator": "^8.2.2",
