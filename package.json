@@ -18,7 +18,7 @@
     "jquery": "^3.2.1",
     "regenerator-runtime": "^0.13.3",
     "tiny-emitter": "^2.0.2",
-    "ts-loader": "6.0.4",
+    "ts-loader": "6.2.1",
     "typescript": "^3.6.4",
     "unipept-heatmap": "^1.0.26",
     "unipept-visualizations": "^1.7.3",
