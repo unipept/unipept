@@ -40,7 +40,7 @@
     "css-loader": "^3.2.0",
     "eslint": "^6.5.1",
     "eslint-config-google": "^0.14.0",
-    "eslint-plugin-jest": "^22.19.0",
+    "eslint-plugin-jest": "^22.20.1",
     "jasmine": "^3.5.0",
     "jest": "^24.9.0",
     "puppeteer": "^2.0.0",
