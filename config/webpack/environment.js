@@ -6,6 +6,7 @@ const webpack = require("webpack");
 const vue = require("./loaders/vue");
 const typescript = require("./loaders/typescript");
 const css = require("./loaders/css");
+const less = require("./loaders/less");
 const workerLoader = require("./loaders/worker-loader");
 
 const WebpackAssetsManifest = require("webpack-assets-manifest");
@@ -17,6 +18,7 @@ environment.config.merge(resolveConfig);
 
 environment.loaders.append("typescript", typescript);
 environment.loaders.append("css", css);
+environment.loaders.append("less", less);
 environment.plugins.prepend("VueLoaderPlugin", new VueLoaderPlugin());
 environment.loaders.prepend("vue", vue);
 environment.loaders.prepend("worker-loader", workerLoader);

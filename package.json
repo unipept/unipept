@@ -18,6 +18,8 @@
     "dragula": "^3.7.2",
     "html2canvas": "^1.0.0-rc.5",
     "jquery": "^3.2.1",
+    "less": "^3.10.3",
+    "less-loader": "^5.0.0",
     "regenerator-runtime": "^0.13.3",
     "tiny-emitter": "^2.0.2",
     "ts-loader": "6.2.1",
