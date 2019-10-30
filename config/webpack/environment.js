@@ -6,6 +6,7 @@ const webpack = require("webpack");
 const vue = require("./loaders/vue");
 const typescript = require("./loaders/typescript");
 const css = require("./loaders/css");
+const workerLoader = require("./loaders/worker-loader");
 
 const WebpackAssetsManifest = require("webpack-assets-manifest");
 
@@ -18,4 +19,11 @@ environment.loaders.append("typescript", typescript);
 environment.loaders.append("css", css);
 environment.plugins.prepend("VueLoaderPlugin", new VueLoaderPlugin());
 environment.loaders.prepend("vue", vue);
+environment.loaders.prepend("worker-loader", workerLoader);
+// The unipept-web-components library contains some requires for electron, which are only required when it's being used
+// in an electron-environment. We can thus safely ignore these here.
+environment.plugins.prepend("IgnorePlugin", new webpack.IgnorePlugin({
+    resourceRegExp: /^(electron|fs)/,
+    contextRegExp: /.*/ 
+}));
 module.exports = environment;

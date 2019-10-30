@@ -10,7 +10,14 @@
     "sourceMap": true,
     "target": "es5",
     "allowJs": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "types": [
+      "custom"
+    ],
+    "typeRoots": [
+      "node_modules/@types",
+      "./typings"
+    ]
   },
   "exclude": [
     "**/*.spec.ts",

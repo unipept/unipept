@@ -2,12 +2,14 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import VueClipboard from 'vue-clipboard2'
 import Mpa from '../../assets/javascripts/mpa/ui/mpa.vue'
-import {globalStore} from "../../assets/javascripts/mpa/ui/state/GlobalStore";
-import {analysisStore} from "../../assets/javascripts/mpa/ui/state/AnalysisStore";
+import {GlobalStore} from "unipept-web-components/src/state/GlobalStore";
+import {AnalysisStore} from "unipept-web-components/src/state/AnalysisStore";
 import "unipept-visualizations/dist/unipept-visualizations.es5.js";
 import Vuetify from "vuetify";
 import 'vuetify/dist/vuetify.min.css';
 import fullscreen from 'vue-fullscreen';
+// import { globalStore } from '../../assets/javascripts/mpa/ui/state/GlobalStore';
+// import { analysisStore } from '../../assets/javascripts/mpa/ui/state/AnalysisStore';
 
 Vue.use(fullscreen);
 Vue.use(VueClipboard);
@@ -22,8 +24,8 @@ Vue.use(Vuetify, {
 
 const store = new Vuex.Store({
     modules: {
-        global: globalStore,
-        analysis: analysisStore
+        global: GlobalStore,
+        analysis: AnalysisStore
     }
 });
 
