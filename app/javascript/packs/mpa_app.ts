@@ -1,24 +1,17 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import VueClipboard from 'vue-clipboard2'
-import App from '../../assets/javascripts/mpa/components/App.vue';
-import {GlobalStore} from "unipept-web-components/src/state/GlobalStore";
-import {AnalysisStore} from "unipept-web-components/src/state/AnalysisStore";
+import App from '../../assets/javascripts/mpa/components/App.vue'
+import {GlobalStore} from "./../../assets/javascripts/web-components/state/GlobalStore";
+import {AnalysisStore} from "./../../assets/javascripts/web-components/state/AnalysisStore";
 import "unipept-visualizations/dist/unipept-visualizations.es5.js";
-import Vuetify from "vuetify";
-import 'vuetify/dist/vuetify.min.css';
 import fullscreen from 'vue-fullscreen';
+import vuetify from './../../assets/javascripts/web-components/plugins/vuetify';
+
 
 Vue.use(fullscreen);
 Vue.use(VueClipboard);
 Vue.use(Vuex);
-
-Vue.use(Vuetify, {
-    theme: {
-        primary: "#2196F3",
-        accent: "#FFC107"
-    }
-});
 
 const store = new Vuex.Store({
     modules: {
@@ -31,7 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const app = new Vue({
         el: '#mpa-app',
         components: { App },
-        store,
+        store: store,
+        // @ts-ignore
+        vuetify: vuetify,
         created: function() {
             this.$store.dispatch('loadStoredDatasets')
         }

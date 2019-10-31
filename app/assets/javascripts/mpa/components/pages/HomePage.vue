@@ -22,10 +22,10 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import LoadDatasetsCard from "unipept-web-components/src/components/dataset/LoadDatasetsCard.vue";
-import SelectDatasetsCard from "unipept-web-components/src/components/dataset/SelectDatasetsCard.vue";
+import LoadDatasetsCard from "../../../web-components/components/dataset/LoadDatasetsCard.vue";
+import SelectDatasetsCard from "../../../web-components/components/dataset/SelectDatasetsCard.vue";
 import SearchHelp from "./../miscellaneous/SearchHelp.vue";
-import PeptideContainer from "unipept-web-components/src/logic/data-management/PeptideContainer";
+import PeptideContainer from "../../../web-components/logic/data-management/PeptideContainer";
 
 @Component({
     components: {
