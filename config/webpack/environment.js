@@ -16,12 +16,18 @@ const WebpackAssetsManifest = require("webpack-assets-manifest");
 
 environment.config.merge(resolveConfig);
 
+// Compile TypeScript and Vue
+environment.loaders.append("worker-loader", workerLoader);
+environment.loaders.append("vue", vue);
 environment.loaders.append("typescript", typescript);
+
+// Compile less and css
 environment.loaders.append("css", css);
 environment.loaders.append("less", less);
+
+// This plugin is required by the Vue-loader
 environment.plugins.prepend("VueLoaderPlugin", new VueLoaderPlugin());
-environment.loaders.prepend("vue", vue);
-environment.loaders.prepend("worker-loader", workerLoader);
+
 // The unipept-web-components library contains some requires for electron, which are only required when it's being used
 // in an electron-environment. We can thus safely ignore these here.
 environment.plugins.prepend("IgnorePlugin", new webpack.IgnorePlugin({

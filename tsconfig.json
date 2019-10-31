@@ -5,10 +5,10 @@
     "experimentalDecorators": true,
     "downlevelIteration": true,
     "lib": ["es2017", "dom"],
-    "module": "es6",
+    "module": "esnext",
     "moduleResolution": "node",
     "sourceMap": true,
-    "target": "es5",
+    "target": "esnext",
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "types": [

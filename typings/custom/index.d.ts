@@ -6,3 +6,9 @@ declare module "worker-loader!*"
 
     export default WebpackWorker;
 }
+
+// declare module "*.vue" {
+//     import Vue from "vue";
+//     export default Vue;
+// }
+

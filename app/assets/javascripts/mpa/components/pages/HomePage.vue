@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="row equal-height-row">
-            <div class="col-md-6">
+            <!-- <div class="col-md-6">
                 <select-datasets-card 
                     style="min-height: 100%;">
                 </select-datasets-card>
@@ -13,7 +13,7 @@
                     v-on:select-dataset="onSelectDataset"
                     style="min-height: 100%;">
                 </load-datasets-card>
-            </div>
+            </div> -->
         </div>
         <search-help></search-help>
     </div>
@@ -30,7 +30,7 @@ import PeptideContainer from "unipept-web-components/src/logic/data-management/P
 @Component({
     components: {
         LoadDatasetsCard, 
-        SelectDatasetsCard, 
+        // SelectDatasetsCard, 
         SearchHelp
     }
 })

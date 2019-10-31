@@ -1,7 +1,7 @@
 <template>
     <v-app>
-        <mpa-home></mpa-home>
-        <mpa-analysis></mpa-analysis>
+        <home-page></home-page>
+        <analysis-page></analysis-page>
     </v-app>
 </template>
 
