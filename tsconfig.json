@@ -12,16 +12,22 @@
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "types": [
-      "custom"
+      "custom",
+      "jquery",
+      "d3",
+      "node"
     ],
     "typeRoots": [
       "node_modules/@types",
       "./typings"
     ]
   },
+  // "include": [
+  //   "node_modules/web-components/**/*"
+  // ],
   "exclude": [
     "**/*.spec.ts",
-    "node_modules",
+    // "node_modules",
     "vendor",
     "public"
   ],

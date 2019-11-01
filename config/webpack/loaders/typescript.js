@@ -3,7 +3,8 @@ module.exports = {
     use: [{
         loader: 'ts-loader',
         options: {
-            appendTsSuffixTo: [/\.vue$/]
+            appendTsSuffixTo: [/\.vue$/],
+            allowTsInNodeModules: true
         }
     }]
 };

@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="row equal-height-row">
-            <!-- <div class="col-md-6">
+            <div class="col-md-6">
                 <select-datasets-card 
                     style="min-height: 100%;">
                 </select-datasets-card>
@@ -13,7 +13,7 @@
                     v-on:select-dataset="onSelectDataset"
                     style="min-height: 100%;">
                 </load-datasets-card>
-            </div> -->
+            </div>
         </div>
         <search-help></search-help>
     </div>
@@ -22,15 +22,15 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import LoadDatasetsCard from "../../../web-components/components/dataset/LoadDatasetsCard.vue";
-import SelectDatasetsCard from "../../../web-components/components/dataset/SelectDatasetsCard.vue";
+import LoadDatasetsCard from "unipept-web-components/src/components/dataset/LoadDatasetsCard.vue";
+import SelectDatasetsCard from "unipept-web-components/src/components/dataset/SelectDatasetsCard.vue";
 import SearchHelp from "./../miscellaneous/SearchHelp.vue";
-import PeptideContainer from "../../../web-components/logic/data-management/PeptideContainer";
+import PeptideContainer from "unipept-web-components/src/logic/data-management/PeptideContainer";
 
 @Component({
     components: {
         LoadDatasetsCard, 
-        // SelectDatasetsCard, 
+        SelectDatasetsCard, 
         SearchHelp
     }
 })
