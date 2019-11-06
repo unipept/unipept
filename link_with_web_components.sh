@@ -9,6 +9,12 @@
 # This script assumes that the unipept-web-components project and the unipept project
 # live in the same parent folder.
 
+# First remove previously initiated content
+rm -R node_modules/unipept-web-components
+
+# Recreate an empty directory
 mkdir node_modules/unipept-web-components
-ln -s ../../../unipept-web-components/src ./node_modules/unipept-web-components/src
-ln -s ../../../unipept-web-components/package.json ./node_modules/unipept-web-components/package.json
+
+# Then, start a watcher that automatically applies changes made to the original web components into our local copy
+# inside of node_modules
+node link_with_web_components_watch.js

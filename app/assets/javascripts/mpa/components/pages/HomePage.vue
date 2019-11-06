@@ -2,7 +2,8 @@
     <div>
         <div class="row equal-height-row">
             <div class="col-md-6">
-                <select-datasets-card 
+                <select-datasets-card
+                    :selected-datasets="this.$store.getters.selectedDatasets"
                     style="min-height: 100%;">
                 </select-datasets-card>
             </div>

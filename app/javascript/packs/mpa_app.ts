@@ -7,8 +7,10 @@ import {AnalysisStore} from "unipept-web-components/src/state/AnalysisStore";
 import "unipept-visualizations/dist/unipept-visualizations.es5.js";
 import fullscreen from 'vue-fullscreen';
 import vuetify from 'unipept-web-components/src/plugins/vuetify';
+import VueRouter from 'vue-router';
 
 
+Vue.use(VueRouter);
 Vue.use(fullscreen);
 Vue.use(VueClipboard);
 Vue.use(Vuex);
