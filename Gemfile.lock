@@ -147,7 +147,7 @@ GEM
     mimemagic (0.3.3)
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
-    minitest (5.12.2)
+    minitest (5.13.0)
     msgpack (1.3.1)
     multi_json (1.14.1)
     mysql2 (0.5.2)
@@ -156,7 +156,7 @@ GEM
       net-ssh (>= 2.6.5, < 6.0.0)
     net-ssh (5.2.0)
     nio4r (2.5.1)
-    nokogiri (1.10.4)
+    nokogiri (1.10.5)
       mini_portile2 (~> 2.4.0)
     notiffany (0.1.3)
       nenv (~> 0.1)
@@ -266,7 +266,7 @@ GEM
       activemodel (>= 5.0)
       bindex (>= 0.4.0)
       railties (>= 5.0)
-    webpacker (4.0.7)
+    webpacker (4.1.0)
       activesupport (>= 4.2)
       rack-proxy (>= 0.6.1)
       railties (>= 4.2)
@@ -319,7 +319,7 @@ DEPENDENCIES
   tzinfo-data
   uglifier (~> 4.2.0)
   web-console (>= 3.3.0)
-  webpacker (~> 4.0.7)
+  webpacker (~> 4.1.0)
   will_paginate (~> 3.2.1)
 
 BUNDLED WITH
