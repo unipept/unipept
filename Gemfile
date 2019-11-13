@@ -6,7 +6,7 @@ gem 'rails', '~> 5.2.2'
 
 gem 'mysql2', '~> 0.5.2'
 
-gem 'webpacker', '~> 4.0.7'
+gem 'webpacker', '~> 4.2.0'
 
 # Use Puma as the app server
 gem 'puma', '~> 3.11'
