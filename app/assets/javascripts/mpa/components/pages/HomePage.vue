@@ -43,7 +43,6 @@ export default class HomePage extends Vue {
     private initializeEventListeners() {
         EventBus.$on("select-dataset", (dataset: PeptideContainer) => {
             this.$store.dispatch('selectDataset', dataset);
-            this.$store.dispatch('processDataset', dataset);
         })
         
         EventBus.$on("activate-dataset", (dataset: PeptideContainer) => {

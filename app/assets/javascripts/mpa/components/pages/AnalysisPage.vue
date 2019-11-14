@@ -44,11 +44,11 @@ import PeptideContainer from "unipept-web-components/src/logic/data-management/P
     }
 })
 export default class AnalysisPage extends Vue {
-    // created() {
-    //     for (let dataset of this.$store.getters.selectedDatasets) {
-    //         this.$store.dispatch('processDataset', dataset);
-    //     }
-    // }
+    created() {
+        for (let dataset of this.$store.getters.selectedDatasets) {
+            this.$store.dispatch('processDataset', dataset);
+        }
+    }
 
     private mounted() {
         this.initializeEventListeners();

@@ -1,5 +1,5 @@
 <template>
-    <v-app>
+    <v-app v-if="!this.loading">
         <home-page v-if="!isAnalysis"></home-page>
         <analysis-page v-else></analysis-page>
     </v-app>
@@ -31,10 +31,15 @@ export default class App extends Vue {
     public missed: boolean;
     @Prop({default: ""})
     public searchName: string;
-    private isAnalysis: boolean = false;
 
-    mounted() {
+    private isAnalysis: boolean = false;
+    private loading: boolean = true;
+
+    async mounted() {
+        this.loading = true;
         EventBus.$on("start-analysis", () => this.isAnalysis = true);
+        this.$store.dispatch('setBaseUrl', "");
+        this.loading = false;
     }
 };
 </script>
@@ -48,4 +53,31 @@ export default class App extends Vue {
     .v-input--checkbox {
         margin-top: 0;
     }
+
+    .v-application--wrap {
+        /* Fix too high application content */
+        min-height: 0 !important;
+    }
+
+    /* Reset header styling */
+    h1, h2, h3, h4, h5 {
+        font-weight: 700;
+        letter-spacing: initial;
+        line-height: initial;
+        margin: 0;
+        color: rgb(85, 85, 85);
+    }
+
+    h2 {
+        font-size: 21px;
+    }
+
+    h3 {
+        font-size: 16px;
+    }
+
+    .theme--light.v-card > .v-card__text, .theme--light.v-label  {
+        color: rgb(85, 85, 85);
+    }
+
 </style>
