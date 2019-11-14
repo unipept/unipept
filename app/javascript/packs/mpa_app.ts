@@ -3,7 +3,6 @@ import Vuex from 'vuex'
 import VueClipboard from 'vue-clipboard2'
 import App from '../../assets/javascripts/mpa/components/App.vue'
 import {GlobalStore} from "unipept-web-components/src/state/GlobalStore";
-import {AnalysisStore} from "unipept-web-components/src/state/AnalysisStore";
 import {ConfigurationStore} from "unipept-web-components/src/state/ConfigurationStore";
 import "unipept-visualizations/dist/unipept-visualizations.es5.js";
 import fullscreen from 'vue-fullscreen';
@@ -19,7 +18,6 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
     modules: {
         global: GlobalStore,
-        analysis: AnalysisStore,
         configuration: ConfigurationStore
     }
 });

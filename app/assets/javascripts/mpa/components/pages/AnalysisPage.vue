@@ -5,8 +5,8 @@
                 <switch-dataset-card :selected-datasets="this.$store.getters.selectedDatasets" :active-dataset="this.$store.getters.activeDataset" style="min-height: 100%;"></switch-dataset-card>
             </div>
             <div class="col-md-6">
-                <experiment-summary-card style="min-height: 100%;" v-if="!this.$store.getters.isDatasetSelectionInProgress"></experiment-summary-card>
-                <load-datasets-card :selected-datasets="this.$store.getters.selectedDatasets" style="min-height: 100%;" v-else id="analysis-add-dataset-card"></load-datasets-card>
+                <experiment-summary-card style="min-height: 100%;" v-if="!datasetSelectionInProgress"></experiment-summary-card>
+                <load-datasets-card :selected-datasets="this.$store.getters.selectedDatasets" :stored-datasets="this.$store.getters.storedDatasets" style="min-height: 100%;" v-else id="analysis-add-dataset-card"></load-datasets-card>
             </div>
         </div>
         <single-dataset-visualizations-card id="visualizations-card" :dataRepository="this.$store.getters.activeDataset ? this.$store.getters.activeDataset.dataRepository : null" :analysisInProgress="$store.getters.datasetsInProgress > 0"></single-dataset-visualizations-card>
@@ -44,6 +44,8 @@ import PeptideContainer from "unipept-web-components/src/logic/data-management/P
     }
 })
 export default class AnalysisPage extends Vue {
+    private datasetSelectionInProgress: boolean = false;
+
     created() {
         for (let dataset of this.$store.getters.selectedDatasets) {
             this.$store.dispatch('processDataset', dataset);
@@ -58,14 +60,31 @@ export default class AnalysisPage extends Vue {
         EventBus.$on("select-dataset", (dataset: PeptideContainer) => {
             this.$store.dispatch('selectDataset', dataset);
             this.$store.dispatch('processDataset', dataset);
-        })
+        });
         
         EventBus.$on("activate-dataset", (dataset: PeptideContainer) => {
             this.$store.dispatch("setActiveDataset", dataset);
-        })
+        });
+
+        EventBus.$on("toggle-dataset-selection", (value: boolean) => {
+            this.datasetSelectionInProgress = value;
+        });
     }
 }
 </script>
 
-<style scoped>
+<style>
+    #analysis-add-dataset-card::before {
+        content:"\A";
+        border-top: 24px solid transparent;
+        border-bottom: 24px solid transparent;
+        border-right: 24px solid #2196F3;
+        z-index: 5;
+        position: absolute;
+        left: -24px;
+    }
+
+    #analysis-add-dataset-card {
+        border-top-left-radius: 0px;
+    }
 </style>
