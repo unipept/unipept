@@ -11,7 +11,6 @@
                 <load-datasets-card 
                     :selected-datasets="this.$store.getters.selectedDatasets" 
                     :stored-datasets="this.$store.getters.storedDatasets"
-                    v-on:select-dataset="onSelectDataset"
                     style="min-height: 100%;">
                 </load-datasets-card>
             </div>
@@ -27,6 +26,7 @@ import LoadDatasetsCard from "unipept-web-components/src/components/dataset/Load
 import SelectDatasetsCard from "unipept-web-components/src/components/dataset/SelectDatasetsCard.vue";
 import SearchHelp from "./../miscellaneous/SearchHelp.vue";
 import PeptideContainer from "unipept-web-components/src/logic/data-management/PeptideContainer";
+import { EventBus } from "unipept-web-components/src/components/EventBus";
 
 @Component({
     components: {
@@ -36,9 +36,19 @@ import PeptideContainer from "unipept-web-components/src/logic/data-management/P
     }
 })
 export default class HomePage extends Vue {
-    private onSelectDataset(dataset: PeptideContainer) {
-        this.$store.dispatch('selectDataset', dataset);
-        this.$store.dispatch('processDataset', dataset);
+    private mounted() {
+        this.initializeEventListeners();
+    }
+
+    private initializeEventListeners() {
+        EventBus.$on("select-dataset", (dataset: PeptideContainer) => {
+            this.$store.dispatch('selectDataset', dataset);
+            this.$store.dispatch('processDataset', dataset);
+        })
+        
+        EventBus.$on("activate-dataset", (dataset: PeptideContainer) => {
+            this.$store.dispatch("setActiveDataset", dataset);
+        })
     }
 };
 </script>
