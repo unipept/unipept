@@ -1,14 +1,14 @@
 <template>
     <div>
-        <div class="row equal-height-row">
-            <div class="col-md-6">
+        <v-row class="equal-height-row">
+            <v-col>
                 <switch-dataset-card :selected-datasets="this.$store.getters.selectedDatasets" :active-dataset="this.$store.getters.activeDataset" style="min-height: 100%;"></switch-dataset-card>
-            </div>
-            <div class="col-md-6">
+            </v-col>
+            <v-col>
                 <experiment-summary-card style="min-height: 100%;" v-if="!datasetSelectionInProgress"></experiment-summary-card>
                 <load-datasets-card :selected-datasets="this.$store.getters.selectedDatasets" :stored-datasets="this.$store.getters.storedDatasets" style="min-height: 100%;" v-else id="analysis-add-dataset-card"></load-datasets-card>
-            </div>
-        </div>
+            </v-col>
+        </v-row>
         <single-dataset-visualizations-card id="visualizations-card" :dataRepository="this.$store.getters.activeDataset ? this.$store.getters.activeDataset.dataRepository : null" :analysisInProgress="$store.getters.datasetsInProgress > 0"></single-dataset-visualizations-card>
         <functional-summary-card style="margin-top: 12px;" :dataRepository="this.$store.getters.activeDataset ? this.$store.getters.activeDataset.dataRepository : null" :analysisInProgress="$store.getters.datasetsInProgress > 0"></functional-summary-card>
     </div>
@@ -59,7 +59,9 @@ export default class AnalysisPage extends Vue {
 
     private initializeEventListeners() {
         EventBus.$on("select-dataset", (dataset: PeptideContainer) => {
-            if (this.$store.getters.selectedDatasets.index(dataset) === -1) {
+            console.log("SELECTED A DATASET");
+            if (this.$store.getters.selectedDatasets.indexOf(dataset) === -1) {
+                console.log("IS NOT SELECTED");
                 this.$store.dispatch('selectDataset', dataset);
                 this.$store.dispatch('processDataset', dataset);
             }

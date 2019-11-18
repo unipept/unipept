@@ -37,24 +37,51 @@ import Assay from "unipept-web-components/src/logic/data-management/assay/Assay"
     }
 })
 export default class HomePage extends Vue {
+    private listeners: {type: string, listener: any} [] = [];
+
     private mounted() {
         this.initializeEventListeners();
     }
 
+    private beforeDestroy() {
+        this.destroyEventListeners();
+    }
+
     private initializeEventListeners() {
-        EventBus.$on("select-dataset", (dataset: PeptideContainer) => {
-            this.$store.dispatch('selectDataset', dataset);
+        this.listeners.push({
+            type: "select-dataset", 
+            listener: (dataset: PeptideContainer) => {
+                console.log("SELECT IN HOME...");
+                this.$store.dispatch('selectDataset', dataset);
+            }
         });
 
-        EventBus.$on("deselect-dataset", (dataset: Assay) => {
-            console.log("Deselecting dataset...");
-            this.$store.dispatch("deselectDataset", dataset);
+        this.listeners.push({
+            type: "deselect-dataset",
+            listener: (dataset: Assay) => {
+                console.log("Deselecting dataset...");
+                this.$store.dispatch("deselectDataset", dataset);
+            }
         });
 
-        EventBus.$on("store-dataset", (dataset: PeptideContainer) => {
-            console.log("On store dataset");
-            this.$store.dispatch("storeDataset", dataset);
+        this.listeners.push({
+            type: "store-dataset",
+            listener: (dataset: PeptideContainer) => {
+                console.log("On store dataset");
+                this.$store.dispatch("storeDataset", dataset);
+            }
         });
+
+        for (let listener of this.listeners) {
+            EventBus.$on(listener.type, listener.listener);
+        }
+    }
+    
+    private destroyEventListeners() {
+        // Deregister event listeners
+        for (let listener of this.listeners) {
+            EventBus.$off(listener.type, listener.listener);
+        }
     }
 };
 </script>
