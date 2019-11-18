@@ -27,6 +27,7 @@ import SelectDatasetsCard from "unipept-web-components/src/components/dataset/Se
 import SearchHelp from "./../miscellaneous/SearchHelp.vue";
 import PeptideContainer from "unipept-web-components/src/logic/data-management/PeptideContainer";
 import { EventBus } from "unipept-web-components/src/components/EventBus";
+import Assay from "unipept-web-components/src/logic/data-management/assay/Assay";
 
 @Component({
     components: {
@@ -43,11 +44,17 @@ export default class HomePage extends Vue {
     private initializeEventListeners() {
         EventBus.$on("select-dataset", (dataset: PeptideContainer) => {
             this.$store.dispatch('selectDataset', dataset);
-        })
-        
-        EventBus.$on("activate-dataset", (dataset: PeptideContainer) => {
-            this.$store.dispatch("setActiveDataset", dataset);
-        })
+        });
+
+        EventBus.$on("deselect-dataset", (dataset: Assay) => {
+            console.log("Deselecting dataset...");
+            this.$store.dispatch("deselectDataset", dataset);
+        });
+
+        EventBus.$on("store-dataset", (dataset: PeptideContainer) => {
+            console.log("On store dataset");
+            this.$store.dispatch("storeDataset", dataset);
+        });
     }
 };
 </script>

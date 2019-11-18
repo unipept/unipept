@@ -12,6 +12,8 @@ import HomePage from "./pages/HomePage.vue";
 import AnalysisPage from "./pages/AnalysisPage.vue";
 import {Prop} from "vue-property-decorator";
 import { EventBus } from "unipept-web-components/src/components/EventBus";
+import PeptideContainer from "unipept-web-components/src/logic/data-management/PeptideContainer";
+import Assay from "unipept-web-components/src/logic/data-management/assay/Assay";
 
 
 @Component({

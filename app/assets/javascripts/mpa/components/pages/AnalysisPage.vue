@@ -25,6 +25,7 @@ import SwitchDatasetCard from "unipept-web-components/src/components/dataset/Swi
 import ExperimentSummaryCard from "unipept-web-components/src/components/analysis/functional/ExperimentSummaryCard.vue";
 import { EventBus } from "unipept-web-components/src/components/EventBus";
 import PeptideContainer from "unipept-web-components/src/logic/data-management/PeptideContainer";
+import Assay from "unipept-web-components/src/logic/data-management/assay/Assay";
 
 
 @Component({
@@ -63,13 +64,23 @@ export default class AnalysisPage extends Vue {
                 this.$store.dispatch('processDataset', dataset);
             }
         });
-        
+
+        EventBus.$on("toggle-dataset-selection", (value: boolean) => {
+            this.datasetSelectionInProgress = value;
+        });
+
         EventBus.$on("activate-dataset", (dataset: PeptideContainer) => {
             this.$store.dispatch("setActiveDataset", dataset);
         });
 
-        EventBus.$on("toggle-dataset-selection", (value: boolean) => {
-            this.datasetSelectionInProgress = value;
+        EventBus.$on("deselect-dataset", (dataset: Assay) => {
+            console.log("Deselecting dataset...");
+            this.$store.dispatch("deselectDataset", dataset);
+        });
+
+        EventBus.$on("store-dataset", (dataset: PeptideContainer) => {
+            console.log("On store dataset");
+            this.$store.dispatch("storeDataset", dataset);
         });
     }
 }
