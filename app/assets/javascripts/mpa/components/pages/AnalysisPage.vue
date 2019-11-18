@@ -58,8 +58,10 @@ export default class AnalysisPage extends Vue {
 
     private initializeEventListeners() {
         EventBus.$on("select-dataset", (dataset: PeptideContainer) => {
-            this.$store.dispatch('selectDataset', dataset);
-            this.$store.dispatch('processDataset', dataset);
+            if (this.$store.getters.selectedDatasets.index(dataset) === -1) {
+                this.$store.dispatch('selectDataset', dataset);
+                this.$store.dispatch('processDataset', dataset);
+            }
         });
         
         EventBus.$on("activate-dataset", (dataset: PeptideContainer) => {
