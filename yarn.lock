@@ -2512,10 +2512,10 @@ core-util-is@1.0.2, core-util-is@~1.0.0:
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
   integrity sha1-tf1UIgqivFq1eqtxQMlAdUUDwac=
 
-corejs-typeahead@^1.1.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/corejs-typeahead/-/corejs-typeahead-1.2.1.tgz#345a8afe664cc494075b59b64777807f0b3f132b"
-  integrity sha1-NFqK/mZMxJQHW1m2R3eAfws/Eys=
+corejs-typeahead@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/corejs-typeahead/-/corejs-typeahead-1.3.0.tgz#9f21c1fcdcb2db12438cdcbfa50cb8dd2cf56e2c"
+  integrity sha512-ORegDATzQ3IfNNNj+J+CKaFabPYmFdsbH7Ki4ci/a/8QFM1GBauP7my0VA9h88lcmthV1pUNshO+TXvhEYF7Dw==
   dependencies:
     jquery ">=1.11"
 
