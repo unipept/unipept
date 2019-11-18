@@ -1,20 +1,20 @@
 <template>
     <div>
-        <div class="row equal-height-row">
-            <div class="col-md-6">
+        <v-row>
+            <v-col>
                 <select-datasets-card
                     :selected-datasets="this.$store.getters.selectedDatasets"
                     style="min-height: 100%;">
                 </select-datasets-card>
-            </div>
-            <div class="col-md-6">
+            </v-col>
+            <v-col class="col-md-6">
                 <load-datasets-card 
                     :selected-datasets="this.$store.getters.selectedDatasets" 
                     :stored-datasets="this.$store.getters.storedDatasets"
                     style="min-height: 100%;">
                 </load-datasets-card>
-            </div>
-        </div>
+            </v-col>
+        </v-row>
         <search-help></search-help>
     </div>
 </template>
