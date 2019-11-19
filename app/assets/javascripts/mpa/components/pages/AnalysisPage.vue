@@ -98,7 +98,7 @@ export default class AnalysisPage extends Vue {
         this.eventListeners.push({
             type: "store-dataset",
             listener: (dataset: PeptideContainer) => {
-                this.$store.dispatch("storeDataset", dataset);
+                this.$store.dispatch("addStoredDataset", dataset);
             }
         });
 

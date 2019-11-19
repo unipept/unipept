@@ -65,7 +65,7 @@ export default class HomePage extends Vue {
         this.listeners.push({
             type: "store-dataset",
             listener: (dataset: PeptideContainer) => {
-                this.$store.dispatch("storeDataset", dataset);
+                this.$store.dispatch("addStoredDataset", dataset);
             }
         });
 
