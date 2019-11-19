@@ -51,7 +51,6 @@ export default class HomePage extends Vue {
         this.listeners.push({
             type: "select-dataset", 
             listener: (dataset: PeptideContainer) => {
-                console.log("SELECT IN HOME...");
                 this.$store.dispatch('selectDataset', dataset);
             }
         });
@@ -59,7 +58,6 @@ export default class HomePage extends Vue {
         this.listeners.push({
             type: "deselect-dataset",
             listener: (dataset: Assay) => {
-                console.log("Deselecting dataset...");
                 this.$store.dispatch("deselectDataset", dataset);
             }
         });
@@ -67,7 +65,6 @@ export default class HomePage extends Vue {
         this.listeners.push({
             type: "store-dataset",
             listener: (dataset: PeptideContainer) => {
-                console.log("On store dataset");
                 this.$store.dispatch("storeDataset", dataset);
             }
         });

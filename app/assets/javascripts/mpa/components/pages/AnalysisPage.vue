@@ -46,6 +46,7 @@ import Assay from "unipept-web-components/src/logic/data-management/assay/Assay"
 })
 export default class AnalysisPage extends Vue {
     private datasetSelectionInProgress: boolean = false;
+    private eventListeners: {type: string, listener: any}[] = [];
 
     created() {
         for (let dataset of this.$store.getters.selectedDatasets) {
@@ -57,33 +58,59 @@ export default class AnalysisPage extends Vue {
         this.initializeEventListeners();
     }
 
+    private beforeDestroy() {
+        this.destroyEventListeners();
+    }
+
     private initializeEventListeners() {
-        EventBus.$on("select-dataset", (dataset: PeptideContainer) => {
-            console.log("SELECTED A DATASET");
-            if (this.$store.getters.selectedDatasets.indexOf(dataset) === -1) {
-                console.log("IS NOT SELECTED");
-                this.$store.dispatch('selectDataset', dataset);
-                this.$store.dispatch('processDataset', dataset);
+        this.eventListeners.push({
+            type: "select-dataset",
+            listener: (dataset: PeptideContainer) => {
+                if (this.$store.getters.selectedDatasets.indexOf(dataset) === -1) {
+                    this.$store.dispatch('selectDataset', dataset);
+                    this.$store.dispatch('processDataset', dataset);
+                }
             }
         });
 
-        EventBus.$on("toggle-dataset-selection", (value: boolean) => {
-            this.datasetSelectionInProgress = value;
+        this.eventListeners.push({
+            type: "toggle-dataset-selection",
+            listener: (value: boolean) => {
+                this.datasetSelectionInProgress = value;
+            }
         });
 
-        EventBus.$on("activate-dataset", (dataset: PeptideContainer) => {
-            this.$store.dispatch("setActiveDataset", dataset);
+        this.eventListeners.push({
+            type: "activate-dataset",
+            listener: (dataset: PeptideContainer) => {
+                this.$store.dispatch("setActiveDataset", dataset);
+            }
         });
 
-        EventBus.$on("deselect-dataset", (dataset: Assay) => {
-            console.log("Deselecting dataset...");
-            this.$store.dispatch("deselectDataset", dataset);
+        this.eventListeners.push({
+            type: "deselect-dataset",
+            listener: (dataset: Assay) => {
+                console.log("DESELECT DATASET...");
+                this.$store.dispatch("deselectDataset", dataset);
+            }
         });
 
-        EventBus.$on("store-dataset", (dataset: PeptideContainer) => {
-            console.log("On store dataset");
-            this.$store.dispatch("storeDataset", dataset);
+        this.eventListeners.push({
+            type: "store-dataset",
+            listener: (dataset: PeptideContainer) => {
+                this.$store.dispatch("storeDataset", dataset);
+            }
         });
+
+        for (let listener of this.eventListeners) {
+            EventBus.$on(listener.type, listener.listener);
+        }
+    }
+
+    private destroyEventListeners() {
+        for (let listener of this.eventListeners) {
+            EventBus.$off(listener.type, listener.listener);
+        }
     }
 }
 </script>
