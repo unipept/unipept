@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import VueClipboard from 'vue-clipboard2'
 import App from '../../assets/javascripts/mpa/components/App.vue'
 import {GlobalStore} from "unipept-web-components/src/state/GlobalStore";
 import {ConfigurationStore} from "unipept-web-components/src/state/ConfigurationStore";
@@ -12,7 +11,6 @@ import VueRouter from 'vue-router';
 
 Vue.use(VueRouter);
 Vue.use(fullscreen);
-Vue.use(VueClipboard);
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
