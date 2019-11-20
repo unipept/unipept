@@ -6,7 +6,7 @@ server 'morty.ugent.be', user: 'unipept', roles: %i[web app], ssh_options: {
 }
 
 set :branch, 'feature/web-components-integration'
-set :rails_env, :development
+set :rails_env, :production
 
 # Perform yarn install before precompiling the assets in order to pass the
 # integrity check.
