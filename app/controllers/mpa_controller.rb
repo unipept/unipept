@@ -7,6 +7,7 @@ class MpaController < ApplicationController
     @title = 'Metaproteomics analysis result'
     @peptides = (params[:qs] || '')
     @name = params[:search_name]
+    puts @name
     @il = params[:il].present?
     @dupes = params[:dupes].present?
     @missed = params[:missed].present?
