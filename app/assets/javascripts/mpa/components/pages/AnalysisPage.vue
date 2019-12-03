@@ -22,7 +22,7 @@ import FunctionalSummaryCard from "unipept-web-components/src/components/analysi
 import SingleDatasetVisualizationsCard from "unipept-web-components/src/components/visualizations/SingleDatasetVisualizationsCard.vue";
 import LoadDatasetsCard from "unipept-web-components/src/components/dataset/LoadDatasetsCard.vue";
 import SwitchDatasetCard from "unipept-web-components/src/components/dataset/SwitchDatasetCard.vue";
-import ExperimentSummaryCard from "unipept-web-components/src/components/analysis/statistics/ExperimentSummaryCard.vue";
+import ExperimentSummaryCard from "unipept-web-components/src/components/analysis/functional/ExperimentSummaryCard.vue";
 import { EventBus } from "unipept-web-components/src/components/EventBus";
 import PeptideContainer from "unipept-web-components/src/logic/data-management/PeptideContainer";
 import Assay from "unipept-web-components/src/logic/data-management/assay/Assay";
