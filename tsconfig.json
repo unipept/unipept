@@ -5,16 +5,29 @@
     "experimentalDecorators": true,
     "downlevelIteration": true,
     "lib": ["es2017", "dom"],
-    "module": "es6",
+    "module": "esnext",
     "moduleResolution": "node",
     "sourceMap": true,
-    "target": "es5",
+    "target": "esnext",
     "allowJs": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "types": [
+      "custom",
+      "jquery",
+      "d3",
+      "node"
+    ],
+    "typeRoots": [
+      "node_modules/@types",
+      "./typings"
+    ]
   },
+  // "include": [
+  //   "node_modules/web-components/**/*"
+  // ],
   "exclude": [
     "**/*.spec.ts",
-    "node_modules",
+    // "node_modules",
     "vendor",
     "public"
   ],
