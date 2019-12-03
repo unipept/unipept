@@ -3483,7 +3483,7 @@ core-js@^2.4.0, core-js@^2.5.0:
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.10.tgz#8a5b8391f8cc7013da703411ce5b585706300d7f"
   integrity sha512-I39t74+4t+zau64EN1fE5v2W31Adtc/REhzWN+gWRRXg6WH5qAsZm62DHpQ1+Yhe4047T55jvzz7MUqF/dBBlA==
 
-core-js@^3.3.5, core-js@^3.4.0:
+core-js@^3.4.0:
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.4.1.tgz#76dd6828412900ab27c8ce0b22e6114d7ce21b18"
   integrity sha512-KX/dnuY/J8FtEwbnrzmAjUYgLqtk+cxM86hfG60LGiW3MmltIc2yAmDgBgEkfm0blZhUrdr1Zd84J2Y14mLxzg==
@@ -4605,10 +4605,10 @@ eslint-config-google@^0.14.0:
   resolved "https://registry.yarnpkg.com/eslint-config-google/-/eslint-config-google-0.14.0.tgz#4f5f8759ba6e11b424294a219dbfa18c508bcc1a"
   integrity sha512-WsbX4WbjuMvTdeVL6+J3rK1RGhCTqjsFjX7UMSMgZiyxxaNLkoJENbrGExzERFeoTpGw3F3FypTiWAP9ZXzkEw==
 
-eslint-plugin-jest@^23.0.2:
-  version "23.0.4"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-23.0.4.tgz#1ab81ffe3b16c5168efa72cbd4db14d335092aa0"
-  integrity sha512-OaP8hhT8chJNodUPvLJ6vl8gnalcsU/Ww1t9oR3HnGdEWjm/DdCCUXLOral+IPGAeWu/EwgVQCK/QtxALpH1Yw==
+eslint-plugin-jest@^23.1.1:
+  version "23.1.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-23.1.1.tgz#1220ab53d5a4bf5c3c4cd07c0dabc6199d4064dd"
+  integrity sha512-2oPxHKNh4j1zmJ6GaCBuGcb8FVZU7YjFUOJzGOPnl9ic7VA/MGAskArLJiRIlnFUmi1EUxY+UiATAy8dv8s5JA==
   dependencies:
     "@typescript-eslint/experimental-utils" "^2.5.0"
 
@@ -11142,7 +11142,7 @@ vuetify@^2.1.7:
   resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.1.10.tgz#ff2107bf1a5f227b18dbe31e08d92753ad68a15b"
   integrity sha512-hFc6XNYc2YE3HisxCH5VezRFtGQ2RwTvBy7eN+b67UuiGIhvEUR9h3uO4NUuulmvKPKJ4rONN+L9sVszgMBlJQ==
 
-vuex@^3.1.2:
+vuex@^3.0.1, vuex@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/vuex/-/vuex-3.1.2.tgz#a2863f4005aa73f2587e55c3fadf3f01f69c7d4d"
   integrity sha512-ha3jNLJqNhhrAemDXcmMJMKf1Zu4sybMPr9KxJIuOpVcsDQlTBYLLladav2U+g1AvdYDG5Gs0xBTb0M5pXXYFQ==
