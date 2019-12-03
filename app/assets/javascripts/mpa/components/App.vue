@@ -14,6 +14,9 @@ import {Prop} from "vue-property-decorator";
 import { EventBus } from "unipept-web-components/src/components/EventBus";
 import PeptideContainer from "unipept-web-components/src/logic/data-management/PeptideContainer";
 import Assay from "unipept-web-components/src/logic/data-management/assay/Assay";
+import MetaProteomicsAssay from "unipept-web-components/src/logic/data-management/assay/MetaProteomicsAssay";
+import StorageWriter from "unipept-web-components/src/logic/data-management/visitors/storage/StorageWriter";
+import { StorageType } from "unipept-web-components/src/logic/data-management/StorageType";
 
 
 @Component({
@@ -25,12 +28,13 @@ import Assay from "unipept-web-components/src/logic/data-management/assay/Assay"
 export default class App extends Vue {
     @Prop({default: ""})
     public peptides: string;
+    // Cannot get boolean value directly from incoming string
     @Prop({default: true})
-    public il: boolean;
+    public il: string;
     @Prop({default: true})
-    public dupes: boolean;
+    public dupes: string;
     @Prop({default: false})
-    public missed: boolean;
+    public missed: string;
     @Prop({default: ""})
     public searchName: string;
 
@@ -42,6 +46,33 @@ export default class App extends Vue {
         EventBus.$on("start-analysis", () => this.isAnalysis = true);
         this.$store.dispatch('setBaseUrl', "");
         this.loading = false;
+
+        if (this.peptides != "") {
+            let name;
+            if (this.searchName === "") {
+                name = "Unnamed";
+            } else {
+                name = this.searchName;
+            }
+
+            let assay: MetaProteomicsAssay = new MetaProteomicsAssay();
+            let storageWriter: StorageWriter = new StorageWriter();
+            assay.setPeptides(this.peptides.trimRight().split(/\n/));
+            assay.setDate(new Date());
+            assay.setStorageType(StorageType.SessionStorage);
+            assay.setName(name);
+            
+            this.$store.dispatch('setSearchSettings', {
+                il: this.il.toLowerCase() === "true",
+                dupes: this.dupes.toLowerCase() === "true",
+                missed: this.missed.toLowerCase() === "true"
+            });
+            
+            await assay.visit(storageWriter);
+
+            EventBus.$emit("select-dataset", assay);
+            this.isAnalysis = true;
+        }
     }
 };
 </script>
