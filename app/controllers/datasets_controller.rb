@@ -1,4 +1,5 @@
-class DatasetsController < ApplicationController
+class DatasetsController < HandleOptionsController
+  before_action :set_headers, only: %i[sampledata]
   before_action :default_format_json, only: %i[sampledata]
   before_action :authorize, only: %i[new edit create update destroy]
 

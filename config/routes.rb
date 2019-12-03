@@ -28,6 +28,7 @@ UnipeptWeb::Application.routes.draw do
 
   # General inforamtion
   scope :private_api, as: 'private_api' do
+    match "/*path", via: [:options], :to => "handle_options#handle_options_request"
     match "goterms", via: [:get, :post], :to => "private_api#goterms"
     match "ecnumbers",     via: [:get, :post], :to => "private_api#ecnumbers"
     match "taxa",     via: [:get, :post], :to => "private_api#taxa"
@@ -37,6 +38,7 @@ UnipeptWeb::Application.routes.draw do
   get '/search/sequence', :to => 'sequences#search', :as => 'sequence_search'
 
   scope :mpa, as: 'mpa' do
+    match "/*path", via: [:options], :to => "handle_options#handle_options_request"
     match "/",        via: [:get, :post], :to => "mpa#analyze"
     match "pept2data", via: [:get, :post], :to => "mpa#pept2data"
   end
