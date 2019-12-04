@@ -6,6 +6,11 @@ body {
 #page-wrapper {
     min-height: 100%;
     position: relative;
+    display: flex;
+    flex-direction: column;
+}
+.grow {
+    flex-grow: 1;
 }
 .header {
     display: flex;
@@ -92,9 +97,6 @@ a.header-navigation-link {
 }
 /* footer */
 .footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
