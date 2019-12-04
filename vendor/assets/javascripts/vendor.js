@@ -3,8 +3,10 @@
 // = require bootstrap/bootstrap.min.js
 
 //  pancore
+// = require corejs-typeahead/dist/typeahead.bundle.js
 //  http://sliptree.github.io/bootstrap-tokenfield/
 // = require bootstrap-tokenfield/bootstrap-tokenfield.min.js
+
 
 //  export treemap to png
 //  0.4.1
