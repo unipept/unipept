@@ -1,6 +1,5 @@
 <template>
     <v-app v-if="!this.loading">
-        <p>It is compiled...</p>
         <home-page v-if="!isAnalysis"></home-page>
         <analysis-page v-else></analysis-page>
     </v-app>
