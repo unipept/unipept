@@ -848,10 +848,10 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@mdi/font@^4.5.95":
-  version "4.6.95"
-  resolved "https://registry.yarnpkg.com/@mdi/font/-/font-4.6.95.tgz#f97ecbdfd59c183d19f3a24a6fe4f84f579cf287"
-  integrity sha512-m5AjVnVS9Xi4xbQQt2rh+ClVcWT9oFqSmo8mZs7teOGbAmUrZ9km1RuNRNKIr7LV3vy/zCeEfMc154Z9l+ab0g==
+"@mdi/font@^4.7.95":
+  version "4.7.95"
+  resolved "https://registry.yarnpkg.com/@mdi/font/-/font-4.7.95.tgz#46fddf35aad64dd623a8b1837f78ca4ed7bc48b1"
+  integrity sha512-/SWooHIFz2dXkQJk3VhEXSbBplOU1lIkGSELAmw0peFEgR8KPqyM//M3vD8WDZETuEOSRVhVqLevP3okrsM5dw==
 
 "@rails/webpacker@^4.0.7":
   version "4.2.0"
