@@ -2882,10 +2882,15 @@ core-js-compat@^3.1.1:
     browserslist "^4.8.0"
     semver "^6.3.0"
 
-core-js@^2.4.0, core-js@^2.5.0:
+core-js@^2.4.0:
   version "2.6.10"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.10.tgz#8a5b8391f8cc7013da703411ce5b585706300d7f"
   integrity sha512-I39t74+4t+zau64EN1fE5v2W31Adtc/REhzWN+gWRRXg6WH5qAsZm62DHpQ1+Yhe4047T55jvzz7MUqF/dBBlA==
+
+core-js@^2.5.0:
+  version "2.6.11"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.11.tgz#38831469f9922bded8ee21c9dc46985e0399308c"
+  integrity sha512-5wjnpaT/3dV+XB4borEsnAYQchn00XSgTAWKDkEqv+K8KevjbzmofK6hfJ9TZIlpj2N0xQpazy7PiRQiWHqzWg==
 
 core-js@^3.4.0:
   version "3.4.7"
@@ -10232,10 +10237,10 @@ unipept-visualizations@^1.7.3:
   resolved "https://registry.yarnpkg.com/unipept-visualizations/-/unipept-visualizations-1.7.3.tgz#10a4c6f4cf745b88aaf353fbb74ddf2cb9b6584e"
   integrity sha512-g9AM+44twT+qQpg4kHhupamMoBr4QscjqjQY8Pdk7cdWHvZs5HuIVTNtH44IbAtN08x9+U3BTT+lp+ZEJpaoFw==
 
-unipept-web-components@^0.1.5:
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/unipept-web-components/-/unipept-web-components-0.1.5.tgz#5f96fb7848da97c606ba731c19a82a13dd202eed"
-  integrity sha512-mjy+1EwqXbu39aUhBmEn1AnRPYu/KQTsicJnJsLeQJP+hDTibTbE6aPV4bRBCG3ZjN35tAMhHVaAgBBoRhSS8A==
+unipept-web-components@^0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/unipept-web-components/-/unipept-web-components-0.1.6.tgz#946984cf498a84a82300620eedc975870253f30b"
+  integrity sha512-PtBeWc5jjxpXUhocDnJy0orMDfe4G2CXr+GegwLPVb3xOgo8ML/AagvlJM+cxGpA3rIKrxJ6+mTY7id7WeSrww==
   dependencies:
     axios "^0.19.0"
     babel-polyfill "^6.26.0"
