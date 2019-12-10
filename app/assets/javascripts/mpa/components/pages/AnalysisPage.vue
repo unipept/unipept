@@ -5,7 +5,7 @@
                 <switch-datasets-card :selected-datasets="this.$store.getters.selectedDatasets" :active-dataset="this.$store.getters.activeDataset" style="min-height: 100%;"></switch-datasets-card>
             </v-col>
             <v-col>
-                <experiment-summary-card style="min-height: 100%;" v-if="!datasetSelectionInProgress"></experiment-summary-card>
+                <experiment-summary-card style="min-height: 100%;" v-if="!datasetSelectionInProgress" :disabled="$store.getters.selectedDatasets.some(el => el.progress !== 1)"></experiment-summary-card>
                 <load-datasets-card :selected-datasets="this.$store.getters.selectedDatasets" :stored-datasets="this.$store.getters.storedDatasets" style="min-height: 100%;" v-else id="analysis-add-dataset-card"></load-datasets-card>
             </v-col>
         </v-row>
@@ -90,7 +90,6 @@ export default class AnalysisPage extends Vue {
         this.eventListeners.push({
             type: "deselect-dataset",
             listener: (dataset: Assay) => {
-                console.log("DESELECT DATASET...");
                 this.$store.dispatch("deselectDataset", dataset);
             }
         });
