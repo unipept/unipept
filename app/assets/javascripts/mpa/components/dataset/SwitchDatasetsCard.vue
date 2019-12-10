@@ -47,7 +47,11 @@
                 <v-divider></v-divider>
                 <div class="card-actions">
                     <tooltip message="Compare samples above using a heatmap.">
-                        <v-btn :disabled="$store.getters.selectedDatasets.some(el => el.progress !== 1)" @click="compareDatasets()">Compare samples</v-btn>
+                        <v-btn 
+                            :disabled="$store.getters.selectedDatasets.some(el => el.progress !== 1)"
+                            @click="compareDatasets()">
+                            Compare samples
+                        </v-btn>
                     </tooltip>
                 </div>
             </v-card-text>
@@ -55,11 +59,17 @@
         <v-dialog v-model="dialogOpen" width="1000px">
             <div style="min-height: 600px; background-color: white;">
                 <div class="modal-header" >
-                    <button type="button" class="close" @click="dialogOpen = false"><span aria-hidden="true">×</span></button>
+                    <button type="button" class="close" @click="dialogOpen = false">
+                        <span aria-hidden="true">×</span>
+                    </button>
                     <h4 class="modal-title">Heatmap wizard</h4>
                 </div>
                 <div class="single-dataset-wizard">
-                    <heatmap-wizard-multi-sample v-if="$store.getters.activeDataset" :dataset="$store.getters.activeDataset"></heatmap-wizard-multi-sample>
+                    <heatmap-wizard-multi-sample 
+                        v-if="$store.getters.activeDataset" 
+                        :dataset="$store.getters.activeDataset" 
+                        :selected-datasets="$store.getters.selectedDatasets">
+                    </heatmap-wizard-multi-sample>
                     <div v-else>
                         <div class="text-xs-center" style="margin-top: 25px;">
                             <v-progress-circular indeterminate color="primary"></v-progress-circular>
