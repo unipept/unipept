@@ -23,7 +23,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import LoadDatasetsCard from "unipept-web-components/src/components/dataset/LoadDatasetsCard.vue";
-import SelectDatasetsCard from "unipept-web-components/src/components/dataset/SelectDatasetsCard.vue";
+import SelectDatasetsCard from "./../dataset/SelectDatasetsCard.vue";
 import SearchHelp from "./../miscellaneous/SearchHelp.vue";
 import PeptideContainer from "unipept-web-components/src/logic/data-management/PeptideContainer";
 import { EventBus } from "unipept-web-components/src/components/EventBus";

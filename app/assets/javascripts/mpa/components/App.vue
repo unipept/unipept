@@ -1,5 +1,5 @@
 <template>
-    <v-app v-if="!this.loading">
+    <v-app v-if="!this.loading" class="unipept-web-app">
         <home-page v-if="!isAnalysis"></home-page>
         <analysis-page v-else></analysis-page>
     </v-app>

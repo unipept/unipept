@@ -2,7 +2,7 @@
     <div>
         <v-row class="equal-height-row">
             <v-col>
-                <switch-dataset-card :selected-datasets="this.$store.getters.selectedDatasets" :active-dataset="this.$store.getters.activeDataset" style="min-height: 100%;"></switch-dataset-card>
+                <switch-datasets-card :selected-datasets="this.$store.getters.selectedDatasets" :active-dataset="this.$store.getters.activeDataset" style="min-height: 100%;"></switch-datasets-card>
             </v-col>
             <v-col>
                 <experiment-summary-card style="min-height: 100%;" v-if="!datasetSelectionInProgress"></experiment-summary-card>
@@ -21,7 +21,7 @@ import {Prop, Watch} from "vue-property-decorator";
 import FunctionalSummaryCard from "unipept-web-components/src/components/analysis/functional/FunctionalSummaryCard.vue";
 import SingleDatasetVisualizationsCard from "unipept-web-components/src/components/visualizations/SingleDatasetVisualizationsCard.vue";
 import LoadDatasetsCard from "unipept-web-components/src/components/dataset/LoadDatasetsCard.vue";
-import SwitchDatasetCard from "unipept-web-components/src/components/dataset/SwitchDatasetCard.vue";
+import SwitchDatasetsCard from "./../dataset/SwitchDatasetsCard.vue";
 import ExperimentSummaryCard from "unipept-web-components/src/components/analysis/statistics/ExperimentSummaryCard.vue";
 import { EventBus } from "unipept-web-components/src/components/EventBus";
 import PeptideContainer from "unipept-web-components/src/logic/data-management/PeptideContainer";
@@ -33,7 +33,7 @@ import Assay from "unipept-web-components/src/logic/data-management/assay/Assay"
         FunctionalSummaryCard, 
         SingleDatasetVisualizationsCard, 
         LoadDatasetsCard, 
-        SwitchDatasetCard, 
+        SwitchDatasetsCard, 
         ExperimentSummaryCard
     },
     computed: {
