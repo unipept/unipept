@@ -21,6 +21,7 @@ const WebpackAssetsManifest = require("webpack-assets-manifest");
 environment.config.merge(resolveConfig);
 environment.config.merge(optimizeConfig);
 
+
 // Compile TypeScript and Vue
 environment.loaders.append("worker-loader", workerLoader);
 environment.loaders.append("vue", vue);
