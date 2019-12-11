@@ -28,6 +28,7 @@
     "regenerator-runtime": "^0.13.3",
     "sass": "^1.23.2",
     "sass-loader": "^8.0.0",
+    "terser-webpack-plugin": "^2.2.3",
     "tiny-emitter": "^2.0.2",
     "ts-loader": "6.2.1",
     "typescript": "^3.6.4",

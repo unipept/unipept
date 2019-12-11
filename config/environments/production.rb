@@ -56,6 +56,7 @@ UnipeptWeb::Application.configure do
   config.active_support.deprecation = :notify
 
   # Compress JavaScripts and CSS
+  # This is now handled by webpack itself and needs to be changed in the webpack config
   config.assets.compress = false
   #config.assets.js_compressor = Uglifier.new(harmony: true, :mangle => false, :compress => false)
 
