@@ -11,7 +11,7 @@ module.exports = {
                 terserOptions: {
                     // https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
                     mangle: false,
-                    keep_classnames: true
+                    compress: false
                 }
             }),
         ],

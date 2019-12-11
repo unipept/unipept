@@ -11,8 +11,6 @@ const less = require("./loaders/less");
 const sass = require("./loaders/sass");
 const workerLoader = require("./loaders/worker-loader");
 const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
-
-
 const WebpackAssetsManifest = require("webpack-assets-manifest");
 
 // Enable the default config
