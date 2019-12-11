@@ -74,6 +74,16 @@ import MPAConfig from "unipept-web-components/src/logic/data-management/MPAConfi
 @Component({
     components: { CardHeader, CardTitle, SearchSettingsForm, Tooltip }
 })
+/**
+ * This component shows a summary of all assays that are currently selected by the user for analysis. It allows the user
+ * to deselect these datasets, or to start analysis. The set of selected datasets is not updated by this component
+ * itself. That is the responsibility of the parent component, which should properly react to the events emitted and
+ * update the set of selected datasets accordingly.
+ * 
+ * @vue-event {Assay} deselect-dataset Emitted when user deselects a previously chosen assay.
+ * @vue-event {void} start-analysis Emitted when user indicates that he wants to start analysis of the chosen 
+ *            assays.
+ */
 export default class SelectDatasetsCard extends Vue {
     @Prop({ required: true })
     private selectedDatasets: Assay[];
@@ -108,11 +118,11 @@ export default class SelectDatasetsCard extends Vue {
     }
 
     private startAnalysis() {
-        EventBus.$emit("start-analysis");
+        this.$emit("start-analysis");
     }
 
     private deselectDataset(dataset: Assay) {
-        EventBus.$emit("deselect-dataset", dataset);
+        this.$emit("deselect-dataset", dataset);
     }
 
     @Watch("equateIl")

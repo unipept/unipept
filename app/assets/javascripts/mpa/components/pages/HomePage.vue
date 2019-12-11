@@ -4,6 +4,8 @@
             <v-col>
                 <select-datasets-card
                     :selected-datasets="this.$store.getters.selectedDatasets"
+                    v-on:deselect-dataset="onDeselectDataset"
+                    v-on:start-analysis="onStartAnalysis"
                     style="min-height: 100%;">
                 </select-datasets-card>
             </v-col>
@@ -36,49 +38,19 @@ import Assay from "unipept-web-components/src/logic/data-management/assay/Assay"
         SearchHelp
     }
 })
+/**
+ * @vue-event {void} start-analysis Emitted when the user indicates that he wants to start analysis of the chosen 
+ *            assays.
+ */
 export default class HomePage extends Vue {
     private listeners: {type: string, listener: any} [] = [];
 
-    private mounted() {
-        this.initializeEventListeners();
+    private onDeselectDataset(assay: Assay) {
+        this.$store.dispatch('deselectDataset', assay);
     }
 
-    private beforeDestroy() {
-        this.destroyEventListeners();
-    }
-
-    private initializeEventListeners() {
-        this.listeners.push({
-            type: "select-dataset", 
-            listener: (dataset: PeptideContainer) => {
-                this.$store.dispatch('selectDataset', dataset);
-            }
-        });
-
-        this.listeners.push({
-            type: "deselect-dataset",
-            listener: (dataset: Assay) => {
-                this.$store.dispatch("deselectDataset", dataset);
-            }
-        });
-
-        this.listeners.push({
-            type: "store-dataset",
-            listener: (dataset: PeptideContainer) => {
-                this.$store.dispatch("addStoredDataset", dataset);
-            }
-        });
-
-        for (let listener of this.listeners) {
-            EventBus.$on(listener.type, listener.listener);
-        }
-    }
-    
-    private destroyEventListeners() {
-        // Deregister event listeners
-        for (let listener of this.listeners) {
-            EventBus.$off(listener.type, listener.listener);
-        }
+    private onStartAnalysis() {
+        this.$emit("start-analysis");
     }
 };
 </script>

@@ -108,37 +108,43 @@ import Assay from "unipept-web-components/src/logic/data-management/assay/Assay"
         }
     }
 })
+/**
+ * This component does not keep track of which datasets are currently selected itself. This is the responsibility of the
+ * parent component, which should properly react to the events emitted by this component and that allow him to stay up
+ * to date.
+ * 
+ * @vue-event {Assay} deselect-dataset Emitted when user deselects a previously chosen assay.
+ * @vue-event {Assay} activate-dataset Emitted when the user switches to a different dataset as being the active one.
+ * @vue-event {Assay} select-dataset Emitted when the user selects a specific assay.
+ * @vue-event {boolean} assay-selection-in-progress Emitted when the user indicates that he wants to add a dataset to
+ *            the current selection. True if the selection started, false if it ended.
+ */
 export default class SwitchDatasetsCard extends Vue {
     @Prop({ required: true })
     private selectedDatasets: PeptideContainer[];
     @Prop({ required: true })
     private activeDataset: PeptideContainer;
 
+    private isAssaySelectionInProgress: boolean = false;
     private dialogOpen: boolean = false;
-    private isDatasetSelectionInProgress: boolean = false;
 
     private deselectDataset(dataset: PeptideContainer) {
         let idx: number = this.selectedDatasets.indexOf(dataset);
         this.selectedDatasets.splice(idx, 1);
-        this.updateSelectedDatasets();
-        EventBus.$emit("deselect-dataset", dataset);
+        this.$emit("deselect-dataset", dataset);
     }
 
     private toggleDatasetSelection(): void {
-        this.isDatasetSelectionInProgress = !this.isDatasetSelectionInProgress;
-        EventBus.$emit("toggle-dataset-selection", this.isDatasetSelectionInProgress);
+        this.isAssaySelectionInProgress = !this.isAssaySelectionInProgress;
+        this.$emit("assay-selection-in-progress", this.isAssaySelectionInProgress);
     }
 
     private compareDatasets(): void {
         this.dialogOpen = true;
     }
 
-    private updateSelectedDatasets() {
-        EventBus.$emit("update-selected-datasets", this.selectedDatasets);
-    }
-
     private selectDataset(container: PeptideContainer) {
-        EventBus.$emit("select-dataset", container);
+        this.$emit("select-dataset", container);
     }
 
     /**
@@ -147,9 +153,9 @@ export default class SwitchDatasetsCard extends Vue {
      * 
      * @param container The dataset that's currently activated by the user.
      */
-    private activateDataset(container: Assay) {
-        if (container.progress === 1) {
-            EventBus.$emit("activate-dataset", container); 
+    private activateDataset(assay: Assay) {
+        if (assay.progress === 1) {
+            this.$emit("activate-dataset", assay)
         }
     }
 }

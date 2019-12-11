@@ -2,7 +2,15 @@
     <div>
         <v-row class="equal-height-row">
             <v-col>
-                <switch-datasets-card :selected-datasets="this.$store.getters.selectedDatasets" :active-dataset="this.$store.getters.activeDataset" style="min-height: 100%;"></switch-datasets-card>
+                <switch-datasets-card 
+                    :selected-datasets="this.$store.getters.selectedDatasets" 
+                    :active-dataset="this.$store.getters.activeDataset"
+                    v-on:deselect-dataset="onDeselectDataset"
+                    v-on:activate-dataset="onActivateDataset"
+                    v-on:select-dataset="onSelectDataset"
+                    v-on:assay-selection-in-progress="onAssaySelection"
+                    style="min-height: 100%;">
+                </switch-datasets-card>
             </v-col>
             <v-col>
                 <experiment-summary-card style="min-height: 100%;" v-if="!datasetSelectionInProgress" :disabled="$store.getters.selectedDatasets.some(el => el.progress !== 1)"></experiment-summary-card>
@@ -54,62 +62,21 @@ export default class AnalysisPage extends Vue {
         }
     }
 
-    private mounted() {
-        this.initializeEventListeners();
+    private onDeselectDataset(assay: Assay) {
+        this.$store.dispatch("deselectDataset", assay);
     }
 
-    private beforeDestroy() {
-        this.destroyEventListeners();
+    private onActivateDataset(assay: Assay) {
+        this.$store.dispatch("setActiveDataset", assay);
     }
 
-    private initializeEventListeners() {
-        this.eventListeners.push({
-            type: "select-dataset",
-            listener: (dataset: PeptideContainer) => {
-                if (this.$store.getters.selectedDatasets.indexOf(dataset) === -1) {
-                    this.$store.dispatch('selectDataset', dataset);
-                    this.$store.dispatch('processDataset', dataset);
-                }
-            }
-        });
-
-        this.eventListeners.push({
-            type: "toggle-dataset-selection",
-            listener: (value: boolean) => {
-                this.datasetSelectionInProgress = value;
-            }
-        });
-
-        this.eventListeners.push({
-            type: "activate-dataset",
-            listener: (dataset: PeptideContainer) => {
-                this.$store.dispatch("setActiveDataset", dataset);
-            }
-        });
-
-        this.eventListeners.push({
-            type: "deselect-dataset",
-            listener: (dataset: Assay) => {
-                this.$store.dispatch("deselectDataset", dataset);
-            }
-        });
-
-        this.eventListeners.push({
-            type: "store-dataset",
-            listener: (dataset: PeptideContainer) => {
-                this.$store.dispatch("addStoredDataset", dataset);
-            }
-        });
-
-        for (let listener of this.eventListeners) {
-            EventBus.$on(listener.type, listener.listener);
-        }
+    private onSelectDataset(assay: Assay) {
+        this.$store.dispatch("selectDataset", assay);
+        this.$store.dispatch("processDataset", assay);
     }
 
-    private destroyEventListeners() {
-        for (let listener of this.eventListeners) {
-            EventBus.$off(listener.type, listener.listener);
-        }
+    private onAssaySelection(status: boolean) {
+        this.datasetSelectionInProgress = status;
     }
 }
 </script>
