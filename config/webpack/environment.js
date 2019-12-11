@@ -1,5 +1,6 @@
 const {environment} = require("@rails/webpacker");
 const resolveConfig = require("./resolves");
+const optimizeConfig = require("./optimization");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
 
 const webpack = require("webpack");
@@ -18,6 +19,7 @@ const WebpackAssetsManifest = require("webpack-assets-manifest");
 // environment.splitChunks();
 
 environment.config.merge(resolveConfig);
+environment.config.merge(optimizeConfig);
 
 // Compile TypeScript and Vue
 environment.loaders.append("worker-loader", workerLoader);
