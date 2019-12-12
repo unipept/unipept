@@ -28,7 +28,7 @@ import Component from "vue-class-component";
 import {Prop, Watch} from "vue-property-decorator";
 import FunctionalSummaryCard from "unipept-web-components/src/components/analysis/functional/FunctionalSummaryCard.vue";
 import SingleDatasetVisualizationsCard from "unipept-web-components/src/components/visualizations/SingleDatasetVisualizationsCard.vue";
-import LoadDatasetsCard from "unipept-web-components/src/components/dataset/LoadDatasetsCard.vue";
+import LoadDatasetsCard from "./../dataset/LoadDatasetsCard.vue";
 import SwitchDatasetsCard from "./../dataset/SwitchDatasetsCard.vue";
 import ExperimentSummaryCard from "unipept-web-components/src/components/analysis/statistics/ExperimentSummaryCard.vue";
 import { EventBus } from "unipept-web-components/src/components/EventBus";
