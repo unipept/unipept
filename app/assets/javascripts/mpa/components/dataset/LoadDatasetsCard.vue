@@ -1,6 +1,11 @@
 <template>
     <v-card>
-        <v-tabs grow :dark="isDark" :color="tabsTextColor" :background-color="tabsColor" :slider-color="tabsSliderColor" v-model="currentTab">
+        <v-tabs grow 
+            :dark="isDark" 
+            :color="tabsTextColor" 
+            :background-color="tabsColor" 
+            :slider-color="tabsSliderColor" 
+            v-model="currentTab">
             <v-tab>
                 Create
             </v-tab>
@@ -24,15 +29,28 @@
             </v-tab-item>
             
             <v-tab-item>
-                <load-sample-dataset-card :selected-datasets="selectedDatasets"></load-sample-dataset-card>
+                <load-sample-dataset-card 
+                    v-on:create-assay="onCreateAssay"
+                    v-on:destroy-assay="onDestroyAssay"
+                    v-on:store-assay="onStoreAssay">
+                </load-sample-dataset-card>
             </v-tab-item>
             
             <v-tab-item>
-                <load-pride-dataset-card></load-pride-dataset-card>
+                <load-pride-dataset-card
+                    v-on:create-assay="onCreateAssay"
+                    v-on:destroy-assay="onDestroyAssay"
+                    v-on:store-assay="onStoreAssay">
+                </load-pride-dataset-card>
             </v-tab-item>
             
             <v-tab-item>
-                <load-local-dataset-card :stored-datasets="storedDatasets"></load-local-dataset-card>
+                <load-local-dataset-card
+                    v-on:create-assay="onCreateAssay"
+                    v-on:destroy-assay="onDestroyAssay"
+                    v-on:store-assay="onStoreAssay"
+                    :stored-datasets="$store.getters.getStoredDatasets">
+                </load-local-dataset-card>
             </v-tab-item>
         </v-tabs-items>
     </v-card>
@@ -53,6 +71,8 @@ import SampleDataset from "unipept-web-components/src/logic/data-management/Samp
 import Tooltip from "unipept-web-components/src/custom/Tooltip.vue";
 import SampleDatasetCollection from "unipept-web-components/src/logic/data-management/SampleDatasetCollection";
 import StorageWriter from "unipept-web-components/src/logic/data-management/visitors/storage/StorageWriter";
+import { StorageType } from "unipept-web-components/src/logic/data-management/StorageType";
+import StorageRemover from "unipept-web-components/src/logic/data-management/visitors/storage/StorageRemover";
 
 @Component({
     components: {
@@ -79,7 +99,38 @@ export default class LoadDatasetsCard extends Vue {
     private currentTab: number = 0;
 
     private onCreateAssay(assay: Assay) {
-        this.$store.dispatch('')
+        this.$store.dispatch('selectAssay', assay);
+    }
+
+    private onDestroyAssay(assay: Assay) {
+        // Remove the assay from the store, then also delete it from local storage.
+        this.$store.dispatch('removeStoredAssay', assay);
+    }
+
+    /**
+     * Remove all data about an assay from persistent storage.
+     * 
+     * @param assay Assay for which all data should be removed from persistent storage.
+     */
+    private deleteAssayFromStorage(assay: Assay) {
+        this.$store.dispatch('removeStoredAssay', assay);
+        const storageRemover: StorageRemover = new StorageRemover();
+        assay.visit(storageRemover);
+    }
+
+    /**
+     * Write all data related to the given assay to persistent storage.
+     * 
+     * @param assay Assay for which all data should be written to persisten storage.
+     */
+    private storeAssayInStorage(assay: Assay) {
+        const storageWriter: StorageWriter = new StorageWriter();
+        assay.visit(storageWriter).then(() => {
+            // We only need to add the assay to the store, if it's explicitly written to local storage.
+            if (assay.getStorageType() === StorageType.LocalStorage) {
+                this.$store.dispatch('addStoredAssay', assay);
+            }
+        });
     }
 }
 </script>

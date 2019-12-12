@@ -12,13 +12,16 @@ export interface AssayState {
     // Which assay are stored in this browser's local storage?
     storedAssays: Assay[],
     // Did the user already start with the analysis of the samples?
-    analysisStarted: boolean
+    analysisStarted: boolean,
+    // The assay that's currently set to be active. Null when no assay is currently set to be active.
+    activeAssay: Assay
 }
 
 const assayState: AssayState = {
     selectedAssays: [],
     storedAssays: [],
-    analysisStarted: false
+    analysisStarted: false,
+    activeAssay: null
 }
 
 const assayGetters: GetterTree<AssayState, any> = {
@@ -106,6 +109,17 @@ const assayMutations: MutationTree<AssayState> = {
         if (idx !== -1) {
             state.storedAssays.splice(idx, 1);
         }
+    },
+
+    /**
+     * Set the given assay to be the currently active one. This mutation does not perform any additional checks. Assays
+     * previously set to be active, will no longer be marked as active.
+     * 
+     * @param state The state for which the active assay should be updated.
+     * @param newActive The assay that should be marked as active. Pass null to select no assay.
+     */
+    SET_ACTIVE_ASSAY(state: AssayState, newActive: Assay) {
+        state.activeAssay = newActive;
     }
 }
 
@@ -118,6 +132,58 @@ const assayActions: ActionTree<AssayState, any> = {
     },
 
     deselectAssay(store: ActionContext<AssayState, any>, assay: Assay) {
-        
+        store.commit("DESELECT_ASSAY", assay);
+        store.dispatch("resetActiveAssay", assay);
+    },
+
+    /**
+     * Sets the first fully processed assay to be the active one, only if no active assay is currently set. This
+     * action checks whether the currently active assay is indeed a member of the selected assays. If not, another one
+     * will be elected to be the active assay.
+     * 
+     * @param store Instance of the store for which the active dataset should be reset.
+     */
+    resetActiveAssay(store: ActionContext<AssayState, any>) {
+        let shouldReselect: boolean = true;
+        if (store.getters.activeAssay !== null) {
+            const idx: number = findAssayIndex(store.getters.activeAssay, store.getters.selectedAssays);
+            shouldReselect = idx === -1;
+        }
+
+        if (shouldReselect) {
+            let newActive: Assay = null;
+            for (let current of store.getters.selectedAssays) {
+                if (current.progress == 1) {
+                    newActive = current;
+                    break;
+                }
+            }
+
+            store.commit('SET_ACTIVE_ASSAY', newActive);
+        }
+    },
+
+    addStoredAssay(store: ActionContext<AssayState, any>, assay) {
+        store.commit('ADD_STORED_ASSAY', assay);
+    },
+
+    /**
+     * Remove an assay from the list of stored assays. If the assay was also selected for analysis, it will also be
+     * removed from the analysis. This action does not persistently store the assay itself, that is the responsibility
+     * of the caller.
+     * 
+     * @param store Instance of the store to which a new stored assay should be added. 
+     * @param assay The assay that should be added to the list of stored assays.
+     */
+    removeStoredAssay(store: ActionContext<AssayState, any>, assay) {
+        store.dispatch('deselectAssay', assay);
+        store.commit('REMOVE_STORED_ASSAY', assay);
     }
+}
+
+export const AssayStore = {
+    state: assayState,
+    mutations: assayMutations,
+    getters: assayGetters,
+    actions: assayActions
 }
