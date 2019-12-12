@@ -136,9 +136,9 @@ export default class LoadDatasetsCard extends Vue {
 </script>
 
 <style lang="less">
-    @import './../../assets/style/layout.css.less';
-    @import './../../assets/style/tabs.css.less';
-    @import './../../assets/style/card.css.less';
+    // @import './../../assets/style/layout.css.less';
+    // @import './../../assets/style/tabs.css.less';
+    // @import './../../assets/style/card.css.less';
 
     .peptide-amount-wrapper {
         display: flex !important;
