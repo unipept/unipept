@@ -16,6 +16,7 @@ import Assay from "unipept-web-components/src/logic/data-management/assay/Assay"
 import MetaProteomicsAssay from "unipept-web-components/src/logic/data-management/assay/MetaProteomicsAssay";
 import StorageWriter from "unipept-web-components/src/logic/data-management/visitors/storage/StorageWriter";
 import { StorageType } from "unipept-web-components/src/logic/data-management/StorageType";
+import DatasetManager from "unipept-web-components/src/logic/data-management/DatasetManager";
 
 
 @Component({
@@ -43,6 +44,7 @@ export default class App extends Vue {
     async mounted() {
         this.loading = true;
         this.$store.dispatch('setBaseUrl', "");
+        await this.readStoredAssays();
         this.loading = false;
 
         // Code that's processed when the application is called with a POST-request containing all required data.
@@ -76,6 +78,14 @@ export default class App extends Vue {
 
     private onStartAnalysis(status: boolean) {
         this.isAnalysis = status;
+    }
+    
+    private async readStoredAssays() {
+        const datasetManager: DatasetManager = new DatasetManager();
+        const assays = await datasetManager.listDatasets();
+        for (let assay of assays) {
+            this.$store.dispatch("addStoredAssay", assay);
+        }
     }
 };
 </script>
