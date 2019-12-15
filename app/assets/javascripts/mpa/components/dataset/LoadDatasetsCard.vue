@@ -49,7 +49,7 @@
                     v-on:create-assay="onCreateAssay"
                     v-on:destroy-assay="onDestroyAssay"
                     v-on:store-assay="onStoreAssay"
-                    :stored-datasets="$store.getters.getStoredDatasets">
+                    :stored-assays="$store.getters.getStoredAssays">
                 </load-local-dataset-card>
             </v-tab-item>
         </v-tabs-items>
@@ -84,9 +84,9 @@ import StorageRemover from "unipept-web-components/src/logic/data-management/vis
 })
 export default class LoadDatasetsCard extends Vue {
     @Prop({ required: true })
-    private selectedDatasets: Assay[];
+    private storedAssays: Assay[];
     @Prop({ required: true })
-    private storedDatasets: Assay[];
+    private selectedAssays: Assay[];
     @Prop({ required: false, default: "primary" })
     private tabsColor: string;
     @Prop({ required: false, default: "secondary" })
@@ -105,6 +105,10 @@ export default class LoadDatasetsCard extends Vue {
     private onDestroyAssay(assay: Assay) {
         // Remove the assay from the store, then also delete it from local storage.
         this.$store.dispatch('removeStoredAssay', assay);
+    }
+
+    private onStoreAssay(assay: Assay) {
+        this.storeAssayInStorage(assay);
     }
 
     /**
@@ -136,10 +140,6 @@ export default class LoadDatasetsCard extends Vue {
 </script>
 
 <style lang="less">
-    // @import './../../assets/style/layout.css.less';
-    // @import './../../assets/style/tabs.css.less';
-    // @import './../../assets/style/card.css.less';
-
     .peptide-amount-wrapper {
         display: flex !important;
         flex-direction: row;

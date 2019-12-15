@@ -1,6 +1,6 @@
 <template>
     <v-app v-if="!this.loading" class="unipept-web-app">
-        <home-page v-if="!isAnalysis"></home-page>
+        <home-page v-if="!isAnalysis" v-on:start-analysis="onStartAnalysis"></home-page>
         <analysis-page v-else></analysis-page>
     </v-app>
 </template>
@@ -11,7 +11,6 @@ import Component from "vue-class-component";
 import HomePage from "./pages/HomePage.vue";
 import AnalysisPage from "./pages/AnalysisPage.vue";
 import {Prop} from "vue-property-decorator";
-import { EventBus } from "unipept-web-components/src/components/EventBus";
 import PeptideContainer from "unipept-web-components/src/logic/data-management/PeptideContainer";
 import Assay from "unipept-web-components/src/logic/data-management/assay/Assay";
 import MetaProteomicsAssay from "unipept-web-components/src/logic/data-management/assay/MetaProteomicsAssay";
@@ -43,10 +42,10 @@ export default class App extends Vue {
 
     async mounted() {
         this.loading = true;
-        EventBus.$on("start-analysis", () => this.isAnalysis = true);
         this.$store.dispatch('setBaseUrl', "");
         this.loading = false;
 
+        // Code that's processed when the application is called with a POST-request containing all required data.
         if (this.peptides != "") {
             let name;
             if (this.searchName === "") {
@@ -70,9 +69,13 @@ export default class App extends Vue {
             
             await assay.visit(storageWriter);
 
-            EventBus.$emit("select-dataset", assay);
+            this.$store.dispatch('selectAssay', assay);
             this.isAnalysis = true;
         }
+    }
+
+    private onStartAnalysis(status: boolean) {
+        this.isAnalysis = status;
     }
 };
 </script>

@@ -3,16 +3,16 @@
         <v-row>
             <v-col>
                 <select-datasets-card
-                    :selected-datasets="this.$store.getters.selectedDatasets"
-                    v-on:deselect-dataset="onDeselectDataset"
+                    :selected-assays="this.$store.getters.getSelectedAssays"
+                    v-on:deselect-assay="onDeselectAssay"
                     v-on:start-analysis="onStartAnalysis"
                     style="min-height: 100%;">
                 </select-datasets-card>
             </v-col>
             <v-col class="col-md-6">
                 <load-datasets-card 
-                    :selected-datasets="this.$store.getters.selectedDatasets" 
-                    :stored-datasets="this.$store.getters.storedDatasets"
+                    :selected-assays="this.$store.getters.getSelectedAssays" 
+                    :stored-assays="this.$store.getters.getStoredAssays"
                     style="min-height: 100%;">
                 </load-datasets-card>
             </v-col>
@@ -24,7 +24,7 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import LoadDatasetsCard from "unipept-web-components/src/components/dataset/LoadDatasetsCard.vue";
+import LoadDatasetsCard from "./../dataset/LoadDatasetsCard.vue";
 import SelectDatasetsCard from "./../dataset/SelectDatasetsCard.vue";
 import SearchHelp from "./../miscellaneous/SearchHelp.vue";
 import PeptideContainer from "unipept-web-components/src/logic/data-management/PeptideContainer";
@@ -38,15 +38,11 @@ import Assay from "unipept-web-components/src/logic/data-management/assay/Assay"
         SearchHelp
     }
 })
-/**
- * @vue-event {void} start-analysis Emitted when the user indicates that he wants to start analysis of the chosen 
- *            assays.
- */
 export default class HomePage extends Vue {
     private listeners: {type: string, listener: any} [] = [];
 
-    private onDeselectDataset(assay: Assay) {
-        this.$store.dispatch('deselectDataset', assay);
+    private onDeselectAssay(assay: Assay) {
+        this.$store.dispatch('deselectAssay', assay);
     }
 
     private onStartAnalysis() {

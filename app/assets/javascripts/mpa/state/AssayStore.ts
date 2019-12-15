@@ -33,6 +33,9 @@ const assayGetters: GetterTree<AssayState, any> = {
     },
     isAnalysisStarted(state: AssayState): boolean {
         return state.analysisStarted;
+    },
+    getActiveAssay(state: AssayState): Assay {
+        return state.activeAssay;
     }
 }
 
@@ -146,13 +149,13 @@ const assayActions: ActionTree<AssayState, any> = {
     resetActiveAssay(store: ActionContext<AssayState, any>) {
         let shouldReselect: boolean = true;
         if (store.getters.activeAssay !== null) {
-            const idx: number = findAssayIndex(store.getters.activeAssay, store.getters.selectedAssays);
+            const idx: number = findAssayIndex(store.getters.getActiveAssay, store.getters.getSelectedAssays);
             shouldReselect = idx === -1;
         }
 
         if (shouldReselect) {
             let newActive: Assay = null;
-            for (let current of store.getters.selectedAssays) {
+            for (let current of store.getters.getSelectedAssays) {
                 if (current.progress == 1) {
                     newActive = current;
                     break;

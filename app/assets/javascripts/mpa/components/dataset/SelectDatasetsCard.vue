@@ -8,10 +8,10 @@
         <v-card-text style="display: flex; flex-direction: column; flex-grow: 1; padding: 0;">
             <div style="padding-top: 16px; padding-left: 16px; padding-right: 16px;">
                 <h3>Selected datasets</h3>
-                <span v-if="selectedDatasets.length === 0" :class="{'shaking': shaking, 'selected-placeholder': true}">Please select one or more datasets from the right hand panel to continue the analysis..</span>
+                <span v-if="selectedAssays.length === 0" :class="{'shaking': shaking, 'selected-placeholder': true}">Please select one or more datasets from the right hand panel to continue the analysis..</span>
             </div>
             <v-list two-line class="switch-datasets-list" style="flex-grow: 1;">
-                <v-list-item v-for="dataset of selectedDatasets" two-line :key="dataset.id" >
+                <v-list-item v-for="dataset of selectedAssays" two-line :key="dataset.id" >
                     <v-list-item-content>
                         <v-list-item-title>
                             {{ dataset.getName() }}
@@ -86,7 +86,7 @@ import MPAConfig from "unipept-web-components/src/logic/data-management/MPAConfi
  */
 export default class SelectDatasetsCard extends Vue {
     @Prop({ required: true })
-    private selectedDatasets: Assay[];
+    private selectedAssays: Assay[];
 
     private equateIl: boolean = true;
     private filterDuplicates: boolean = true;
@@ -102,7 +102,7 @@ export default class SelectDatasetsCard extends Vue {
     }
 
     public search(): void {
-        if (this.selectedDatasets.length === 0) {
+        if (this.selectedAssays.length === 0) {
             this.shaking = true;
             // Disable the shaking effect after 300ms
             setTimeout(() => this.shaking = false, 300);
@@ -112,7 +112,7 @@ export default class SelectDatasetsCard extends Vue {
     }
 
     private reset(): void {
-        for (let dataset of this.selectedDatasets) {
+        for (let dataset of this.selectedAssays) {
             this.deselectDataset(dataset);
         }
     }
@@ -121,8 +121,8 @@ export default class SelectDatasetsCard extends Vue {
         this.$emit("start-analysis");
     }
 
-    private deselectDataset(dataset: Assay) {
-        this.$emit("deselect-dataset", dataset);
+    private deselectDataset(assay: Assay) {
+        this.$emit("deselect-assay", assay);
     }
 
     @Watch("equateIl")

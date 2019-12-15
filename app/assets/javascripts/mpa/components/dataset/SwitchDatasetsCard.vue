@@ -5,7 +5,7 @@
                 Metaproteomics Analysis
             </card-title>
             <div class="card-title-action">
-                <tooltip message="Add another dataset to the selection.">
+                <tooltip message="Add another assay to the selection.">
                     <v-icon @click="toggleDatasetSelection()" color="white">{{ this.isDatasetSelectionInProgress ? 'mdi-plus-circle' : 'mdi-plus' }}</v-icon>
                 </tooltip>
             </div>
@@ -15,7 +15,7 @@
         </v-card-text>
         <div class="growing-list">
             <v-list two-line>
-                <v-list-item v-for="dataset of this.selectedDatasets" :key="dataset.id" ripple @click="activateDataset(dataset)" :class="activeDataset === dataset ? 'selected-list-item' : ''">
+                <v-list-item v-for="dataset of this.selectedAssays" :key="dataset.id" ripple @click="activateAssay(dataset)" :class="activeAssay === dataset ? 'selected-list-item' : ''">
                     <v-list-item-action>
                         <div class="select-dataset-radio" v-if="dataset.progress === 1">
                             <v-radio-group v-model="activeDatasetModel">
@@ -38,7 +38,7 @@
                             {{ dataset.getDateFormatted() }}
                         </v-list-item-action-text>
                         <tooltip message="Remove dataset from analysis.">
-                            <v-icon @click="deselectDataset(dataset)" v-on:click.stop>mdi-delete-outline</v-icon>
+                            <v-icon @click="deselectAssay(dataset)" v-on:click.stop>mdi-delete-outline</v-icon>
                         </tooltip>
                     </v-list-item-action>
                 </v-list-item>
@@ -48,8 +48,8 @@
                 <div class="card-actions">
                     <tooltip message="Compare samples above using a heatmap.">
                         <v-btn 
-                            :disabled="$store.getters.selectedDatasets.some(el => el.progress !== 1)"
-                            @click="compareDatasets()">
+                            :disabled="$store.getters.getSelectedAssays.some(el => el.progress !== 1)"
+                            @click="compareAssays">
                             Compare samples
                         </v-btn>
                     </tooltip>
@@ -67,8 +67,8 @@
                 <div class="single-dataset-wizard">
                     <heatmap-wizard-multi-sample 
                         v-if="$store.getters.activeDataset" 
-                        :dataset="$store.getters.activeDataset" 
-                        :selected-datasets="$store.getters.selectedDatasets">
+                        :dataset="$store.getters.getActiveAssay" 
+                        :selected-datasets="$store.getters.getSelectedAssays">
                     </heatmap-wizard-multi-sample>
                     <div v-else>
                         <div class="text-xs-center" style="margin-top: 25px;">
@@ -121,17 +121,17 @@ import Assay from "unipept-web-components/src/logic/data-management/assay/Assay"
  */
 export default class SwitchDatasetsCard extends Vue {
     @Prop({ required: true })
-    private selectedDatasets: PeptideContainer[];
+    private selectedAssays: PeptideContainer[];
     @Prop({ required: true })
-    private activeDataset: PeptideContainer;
+    private activeAssay: PeptideContainer;
 
     private isAssaySelectionInProgress: boolean = false;
     private dialogOpen: boolean = false;
 
     private deselectDataset(dataset: PeptideContainer) {
-        let idx: number = this.selectedDatasets.indexOf(dataset);
-        this.selectedDatasets.splice(idx, 1);
-        this.$emit("deselect-dataset", dataset);
+        let idx: number = this.selectedAssays.indexOf(dataset);
+        this.selectedAssays.splice(idx, 1);
+        this.$emit("deselect-assay", dataset);
     }
 
     private toggleDatasetSelection(): void {
@@ -144,7 +144,7 @@ export default class SwitchDatasetsCard extends Vue {
     }
 
     private selectDataset(container: PeptideContainer) {
-        this.$emit("select-dataset", container);
+        this.$emit("select-assay", container);
     }
 
     /**
@@ -155,7 +155,7 @@ export default class SwitchDatasetsCard extends Vue {
      */
     private activateDataset(assay: Assay) {
         if (assay.progress === 1) {
-            this.$emit("activate-dataset", assay)
+            this.$emit("activate-assay", assay)
         }
     }
 }
