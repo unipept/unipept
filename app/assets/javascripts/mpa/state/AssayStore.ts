@@ -181,6 +181,10 @@ const assayActions: ActionTree<AssayState, any> = {
     removeStoredAssay(store: ActionContext<AssayState, any>, assay) {
         store.dispatch('deselectAssay', assay);
         store.commit('REMOVE_STORED_ASSAY', assay);
+    },
+    
+    setActiveAssay(store: ActionContext<AssayState, any>, assay) {
+        store.commit('SET_ACTIVE_ASSAY', assay);
     }
 }
 

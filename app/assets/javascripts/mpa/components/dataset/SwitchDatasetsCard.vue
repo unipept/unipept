@@ -6,11 +6,11 @@
             </card-title>
             <div class="card-title-action">
                 <tooltip message="Add another assay to the selection.">
-                    <v-icon @click="toggleDatasetSelection()" color="white">{{ this.isDatasetSelectionInProgress ? 'mdi-plus-circle' : 'mdi-plus' }}</v-icon>
+                    <v-icon @click="toggleAssaySelection()" color="white">{{ this.isAssaySelectionInProgress ? 'mdi-plus-circle' : 'mdi-plus' }}</v-icon>
                 </tooltip>
             </div>
         </card-header>
-        <v-card-text v-if="this.selectedDatasets.length === 0">
+        <v-card-text v-if="this.selectedAssays.length === 0">
             <span>Please add one or more datasets by clicking the plus button above...</span>
         </v-card-text>
         <div class="growing-list">
@@ -121,39 +121,42 @@ import Assay from "unipept-web-components/src/logic/data-management/assay/Assay"
  */
 export default class SwitchDatasetsCard extends Vue {
     @Prop({ required: true })
-    private selectedAssays: PeptideContainer[];
+    private selectedAssays: Assay[];
     @Prop({ required: true })
-    private activeAssay: PeptideContainer;
+    private activeAssay: Assay;
 
     private isAssaySelectionInProgress: boolean = false;
     private dialogOpen: boolean = false;
 
-    private deselectDataset(dataset: PeptideContainer) {
+    private deselectAssay(dataset: Assay) {
         let idx: number = this.selectedAssays.indexOf(dataset);
         this.selectedAssays.splice(idx, 1);
+        /**
+         * @event
+         */
         this.$emit("deselect-assay", dataset);
     }
 
-    private toggleDatasetSelection(): void {
+    private toggleAssaySelection(): void {
         this.isAssaySelectionInProgress = !this.isAssaySelectionInProgress;
         this.$emit("assay-selection-in-progress", this.isAssaySelectionInProgress);
     }
 
-    private compareDatasets(): void {
+    private compareAssays(): void {
         this.dialogOpen = true;
     }
 
-    private selectDataset(container: PeptideContainer) {
+    private selectAssay(container: Assay) {
         this.$emit("select-assay", container);
     }
 
     /**
-     * This function gets called whenever the user changes the currently active dataset. The active dataset is the 
+     * This function gets called whenever the user changes the currently active assay. The assay dataset is the 
      * dataset for which the visualizations are currently shown.
      * 
-     * @param container The dataset that's currently activated by the user.
+     * @param assay The assay that's currently activated by the user.
      */
-    private activateDataset(assay: Assay) {
+    private activateAssay(assay: Assay) {
         if (assay.progress === 1) {
             this.$emit("activate-assay", assay)
         }

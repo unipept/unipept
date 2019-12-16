@@ -105,6 +105,7 @@ export default class LoadDatasetsCard extends Vue {
     private onDestroyAssay(assay: Assay) {
         // Remove the assay from the store, then also delete it from local storage.
         this.$store.dispatch('removeStoredAssay', assay);
+        this.deleteAssayFromStorage(assay);
     }
 
     private onStoreAssay(assay: Assay) {

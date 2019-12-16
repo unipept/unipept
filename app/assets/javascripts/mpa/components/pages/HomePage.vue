@@ -45,8 +45,8 @@ export default class HomePage extends Vue {
         this.$store.dispatch('deselectAssay', assay);
     }
 
-    private onStartAnalysis() {
-        this.$emit("start-analysis");
+    private onStartAnalysis(status: boolean) {
+        this.$emit("start-analysis", status);
     }
 };
 </script>

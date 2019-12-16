@@ -3,22 +3,22 @@
         <v-row class="equal-height-row">
             <v-col>
                 <switch-datasets-card 
-                    :selected-datasets="this.$store.getters.selectedDatasets" 
-                    :active-dataset="this.$store.getters.activeDataset"
-                    v-on:deselect-dataset="onDeselectDataset"
-                    v-on:activate-dataset="onActivateDataset"
-                    v-on:select-dataset="onSelectDataset"
+                    :selected-assays="this.$store.getters.getSelectedAssays" 
+                    :active-assay="this.$store.getters.getActiveAssay"
+                    v-on:deselect-assay="onDeselectAssay"
+                    v-on:activate-assay="onActivateAssay"
+                    v-on:select-assay="onSelectAssay"
                     v-on:assay-selection-in-progress="onAssaySelection"
                     style="min-height: 100%;">
                 </switch-datasets-card>
             </v-col>
             <v-col>
-                <experiment-summary-card style="min-height: 100%;" v-if="!datasetSelectionInProgress" :disabled="$store.getters.selectedDatasets.some(el => el.progress !== 1)"></experiment-summary-card>
-                <load-datasets-card :selected-datasets="this.$store.getters.selectedDatasets" :stored-datasets="this.$store.getters.storedDatasets" style="min-height: 100%;" v-else id="analysis-add-dataset-card"></load-datasets-card>
+                <experiment-summary-card style="min-height: 100%;" v-if="!datasetSelectionInProgress" :disabled="$store.getters.getSelectedAssays.some(el => el.progress !== 1)"></experiment-summary-card>
+                <load-datasets-card :selected-datasets="this.$store.getters.getSelectedAssays" :stored-datasets="this.$store.getters.getStoredAssays" style="min-height: 100%;" v-else id="analysis-add-dataset-card"></load-datasets-card>
             </v-col>
         </v-row>
-        <single-dataset-visualizations-card id="visualizations-card" :dataRepository="this.$store.getters.activeDataset ? this.$store.getters.activeDataset.dataRepository : null" :analysisInProgress="$store.getters.datasetsInProgress > 0"></single-dataset-visualizations-card>
-        <functional-summary-card style="margin-top: 12px;" :dataRepository="this.$store.getters.activeDataset ? this.$store.getters.activeDataset.dataRepository : null" :analysisInProgress="$store.getters.datasetsInProgress > 0"></functional-summary-card>
+        <single-dataset-visualizations-card id="visualizations-card" :dataRepository="this.$store.getters.getActiveAssay ? this.$store.getters.getActiveAssay.dataRepository : null" :analysisInProgress="$store.getters.datasetsInProgress > 0"></single-dataset-visualizations-card>
+        <functional-summary-card style="margin-top: 12px;" :dataRepository="this.$store.getters.getActiveAssay ? this.$store.getters.getActiveAssay.dataRepository : null" :analysisInProgress="$store.getters.datasetsInProgress > 0"></functional-summary-card>
     </div>
 </template>
 
@@ -62,17 +62,16 @@ export default class AnalysisPage extends Vue {
         }
     }
 
-    private onDeselectDataset(assay: Assay) {
-        this.$store.dispatch("deselectDataset", assay);
+    private onDeselectAssay(assay: Assay) {
+        this.$store.dispatch("deselectAssay", assay);
     }
 
-    private onActivateDataset(assay: Assay) {
-        this.$store.dispatch("setActiveDataset", assay);
+    private onActivateAssay(assay: Assay) {
+        this.$store.dispatch("setActiveAssay", assay);
     }
 
-    private onSelectDataset(assay: Assay) {
-        this.$store.dispatch("selectDataset", assay);
-        this.$store.dispatch("processDataset", assay);
+    private onSelectAssay(assay: Assay) {
+        this.$store.dispatch("selectAssay", assay);
     }
 
     private onAssaySelection(status: boolean) {

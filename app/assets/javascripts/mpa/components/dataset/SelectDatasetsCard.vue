@@ -118,7 +118,7 @@ export default class SelectDatasetsCard extends Vue {
     }
 
     private startAnalysis() {
-        this.$emit("start-analysis");
+        this.$emit("start-analysis", true);
     }
 
     private deselectDataset(assay: Assay) {
