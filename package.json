@@ -33,7 +33,7 @@
     "typescript": "^3.6.4",
     "unipept-heatmap": "^1.0.26",
     "unipept-visualizations": "^1.7.3",
-    "unipept-web-components": "^0.1.5",
+    "unipept-web-components": "^0.1.8",
     "vue": "^2.6.10",
     "vue-class-component": "^7.1.0",
     "vue-fullscreen": "^2.1.5",
