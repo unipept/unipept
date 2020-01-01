@@ -10489,10 +10489,10 @@ vuetify-loader@^1.3.0:
   dependencies:
     loader-utils "^1.2.0"
 
-vuetify@^2.0.0, vuetify@^2.1.7:
-  version "2.1.13"
-  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.1.13.tgz#58610027b8014c640510eb76e02c5a94e56bef04"
-  integrity sha512-wy7RfNmRW60sPNRxl0C7TwRcLRw2Yw+ofGlJTAcoQZnWDtDOriSq0p3Uk8X0jb6tzkeU5Ed0JY6zL0Rb0ZL3lw==
+vuetify@^2.0.0, vuetify@^2.1.16:
+  version "2.1.16"
+  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.1.16.tgz#e460c1dd782516f334c6a8adaad32467aba9b5ab"
+  integrity sha512-NfpC85utIQMbBDiunNbwblLXteWscYci6mYJRUvAD6s2Mx4ddFin59vjYolAkMtNXDF/cPzyU7hv4kvrY8MJCQ==
 
 vuex@^3.0.1, vuex@^3.1.2:
   version "3.1.2"
