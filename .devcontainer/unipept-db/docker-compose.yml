@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  db:
+    build: .
+    environment:
+      MYSQL_ROOT_PASSWORD: unipept
+      MYSQL_DATABASE: unipept
+      MYSQL_USER: unipept
+      MYSQL_PASSWORD: unipept
+    restart: always
+    ports:
+      - "3306:3306"
+    hostname: mysql
+    volumes:
+      - ./data:/data
+  phpmyadmin:
+    depends_on:
+      - db
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - '8080:80'
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: unipept
+    restart: always

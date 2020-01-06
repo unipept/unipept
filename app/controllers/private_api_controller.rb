@@ -1,15 +1,16 @@
-class PrivateApiController < ApplicationController
+class PrivateApiController < HandleOptionsController
+  before_action :set_headers, only: %i[goterms ecnumbers taxa]
   before_action :default_format_json
   skip_before_action :verify_authenticity_token
 
   def goterms
-    goTerms = params[:goterms] || []
-    @goterms = GoTerm.where(code: goTerms)
+    go_terms = params[:goterms] || []
+    @goterms = GoTerm.where(code: go_terms)
   end
 
   def ecnumbers
-    ecNrs = params[:ecnumbers]
-    @ecnumbers = EcNumber.where(code: ecNrs)
+    ec_nrs = params[:ecnumbers]
+    @ecnumbers = EcNumber.where(code: ec_nrs)
   end
 
   def taxa

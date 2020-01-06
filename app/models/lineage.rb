@@ -2,7 +2,7 @@
 #
 # Table name: lineages
 #
-#  taxon_id         :integer          not null, primary key
+#  taxon_id         :integer          unsigned, not null, primary key
 #  superkingdom     :integer
 #  kingdom          :integer
 #  subkingdom       :integer
@@ -149,10 +149,10 @@ class Lineage < ApplicationRecord
     lca = 1 # default lca
     ORDER.each do |rank|
       # only filter nil at species and genus
-      current = if rank == :species || rank == :genus
-                  lineages.map(&rank).find_all { |n| n.nil? || n > 0 }.uniq.compact
+      current = if %i[species genus].include?(rank)
+                  lineages.map(&rank).find_all { |n| n.nil? || n.positive? }.uniq.compact
                 else
-                  lineages.map(&rank).find_all { |n| n.nil? || n > 0 }.uniq
+                  lineages.map(&rank).find_all { |n| n.nil? || n.positive? }.uniq
                 end
       return lca if current.length > 1 # more than one distinct element
 

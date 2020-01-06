@@ -1,18 +1,14 @@
 <% content_for :javascripts do %>
-  <%= javascript_pack_tag 'datasets' %>
+  <%= javascript_pack_tag 'mpa_app' %>
 <% end %>
 
-<div class="row">
-  <div class="col-xs-6">
-    <%= render 'shared/sequence_multi_search' %>
-  </div>
-  <div class="col-xs-6">
-    <%= render 'shared/load_datasets_form' %>
-  </div>
+<% content_for :stylesheets do %>
+<% end %>
+
+<div id="mpa-app">
+  <app></app>
 </div>
 
-<%= render 'shared/multi_search_intro' %>
-
-<script type="text/javascript">
-  $(document).ready(initDatasets);
-</script>
+<form id='send_data_form' action='<%= :mpa %>' method='post'>
+  <input id='data_input' type='hidden' name='data' value='' />
+</form>

@@ -2,10 +2,10 @@
 #
 # Table name: uniprot_entries
 #
-#  id                       :integer          not null, primary key
+#  id                       :integer          unsigned, not null, primary key
 #  uniprot_accession_number :string(10)       not null
-#  version                  :integer          not null
-#  taxon_id                 :integer          not null
+#  version                  :integer          unsigned, not null
+#  taxon_id                 :integer          unsigned, not null
 #  type                     :string(9)        not null
 #  name                     :string(150)      not null
 #  protein                  :text(65535)      not null

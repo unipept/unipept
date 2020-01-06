@@ -2,7 +2,7 @@
 #
 # Table name: posts
 #
-#  id      :integer          not null, primary key
+#  id      :integer          unsigned, not null, primary key
 #  title   :string(100)      not null
 #  content :text(65535)      not null
 #  date    :date             not null

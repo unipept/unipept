@@ -53,3 +53,142 @@ textarea#qs {
 .card.datasets .card-supporting-text {
     min-height: 423px;
 }
+.load-datasets-card {
+    min-height: 100%;
+}
+.select-datasets-card {
+    min-height: 100%;
+}
+.select-datasets-card .card-supporting-text {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.select-datasets-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    max-height: 408px;
+}
+
+#visualizations-card {
+    margin-top: 15px;
+}
+
+#sunburstWrapper,
+#treemapWrapper,
+#treeviewWrapper {
+    overflow: hidden;
+}
+
+
+h2.ghead {
+    margin-bottom: 8px;
+    margin-top: 5px;
+    margin-right: 16px;
+    font-weight: bold;
+    padding: 0;
+    border: 0;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #333;
+}
+
+h2.ghead::after {
+    content: ".";
+    height: 0;
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+
+.unipept-sunburst h2.ghead {
+    margin-right: 32px;
+}
+
+#visualizations-card > .card-supporting-text {
+    padding: 0;
+}
+
+.goPanel {
+    >.row {
+        padding-bottom: 16px;
+
+        h3 {
+            padding-left: 16px;
+        }
+    }
+}
+
+.btn-group {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.mpa-fa-advanced {
+    float: right;
+    margin-right: 16px;
+}
+
+#fa-filter-warning {
+    padding: 16px;
+    background: @primary-A100;
+    line-height: 1em;
+    button {
+        float: right;
+        margin: (-@line-height-base/2)*1em 0;
+    }
+}
+
+// tooltip
+#tooltip.tip {
+    position: absolute;
+    z-index: 10;
+    visibility: hidden;
+}
+.tip {
+    top: 0;   // to be overwritten by JS
+    left: 0;  // to be overwritten by JS
+    background-color: #fff;
+    padding: 5px;
+    border: 1px solid @hairlinegray;
+    border-radius: 2px;
+    .shadow-z5();
+}
+
+.full-screen .unipept-sunburst {
+    width: 100%;
+}
+.unipept-sunburst {
+    background-color: white;
+}
+.full-screen .unipept-sunburst > svg {
+    overflow: visible;
+}
+.unipept-sunburst .toHide {
+    pointer-events: none;
+}
+.unipept-sunburst > svg .arc {
+    cursor: pointer;
+}
+.unipept-sunburst > svg .arc:hover {
+    fill-opacity: 0.9;
+}
+.full-screen .unipept-sunburst .sunburst-breadcrumbs {
+    width: 250px;
+    margin-right: 10px;
+}
+
+.full-screen-container.full-screen {
+    background-color: white;
+}
+
+.full-screen .visualization-wrapper {
+    width: 100%;
+}
+
+.fullScreenActions {
+    position: relative;
+    top: -45px;
+}

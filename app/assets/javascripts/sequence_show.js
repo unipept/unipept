@@ -2,7 +2,7 @@ import {addCopy, logToGoogle, triggerDownloadModal, stringTitleize, numberToPerc
 import {showInfoModal} from "./modal.js";
 import {AmountTable} from "./components/amount_table.js";
 import ECNumbers from "./fa/ecnumbers.js";
-import GOTerms from "./fa/goterms.js";
+import GOTerms from "./fa/old-goterms.js";
 import "unipept-visualizations/dist/unipept-visualizations.es5.js";
 
 /* TODO: more documentation */

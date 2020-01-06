@@ -21,8 +21,14 @@ UnipeptWeb::Application.routes.draw do
     end
   end
 
+  scope :datasets, as: 'datasets' do
+    match "sampledata", via: [:post], :to => "datasets#sampledata"
+  end
+
+
   # General inforamtion
   scope :private_api, as: 'private_api' do
+    match "/*path", via: [:options], :to => "handle_options#handle_options_request"
     match "goterms", via: [:get, :post], :to => "private_api#goterms"
     match "ecnumbers",     via: [:get, :post], :to => "private_api#ecnumbers"
     match "taxa",     via: [:get, :post], :to => "private_api#taxa"
@@ -32,6 +38,7 @@ UnipeptWeb::Application.routes.draw do
   get '/search/sequence', :to => 'sequences#search', :as => 'sequence_search'
 
   scope :mpa, as: 'mpa' do
+    match "/*path", via: [:options], :to => "handle_options#handle_options_request"
     match "/",        via: [:get, :post], :to => "mpa#analyze"
     match "pept2data", via: [:get, :post], :to => "mpa#pept2data"
   end
@@ -72,6 +79,7 @@ UnipeptWeb::Application.routes.draw do
     match 'pept2funct' => 'api#pept2funct', via: [:get, :post]
     match 'pept2ec' => 'api#pept2ec', via: [:get, :post]
     match 'pept2go' => 'api#pept2go', via: [:get, :post]
+    match 'pept2interpro' => 'api#pept2interpro', via: [:get, :post]
     match 'peptinfo' => 'api#peptinfo', via: [:get, :post]
     match 'taxonomy' => 'api#taxonomy', via: [:get, :post]
     match 'messages' => 'api#messages', via: [:get, :post]
@@ -86,6 +94,7 @@ UnipeptWeb::Application.routes.draw do
     get "taxa2lca",   :to => "apidocs#taxa2lca",   :as => 'apidocs/taxa2lca'
     get "pept2ec",    :to => "apidocs#pept2ec",    :as => 'apidocs/pept2ec'
     get 'pept2go',    :to => "apidocs#pept2go",    :as => 'apidocs/pept2go'
+    get 'pept2interpro', :to => "apidocs#pept2interpro", :as => 'apidocs/pept2interpro'
     get 'pept2funct', :to => "apidocs#pept2funct", :as => 'apidocs/pept2funct'
     get 'peptinfo',   :to => "apidocs#peptinfo",   :as => 'apidocs/peptinfo'
     get "taxonomy",   :to => "apidocs#taxonomy",   :as => 'apidocs/taxonomy'
@@ -104,6 +113,10 @@ UnipeptWeb::Application.routes.draw do
     get "pept2lca",    :to => "clidocs#pept2lca",    :as => 'clidocs/pept2lca'
     get "pept2prot",   :to => "clidocs#pept2prot",   :as => 'clidocs/pept2prot'
     get "pept2taxa",   :to => "clidocs#pept2taxa",   :as => 'clidocs/pept2taxa'
+    get "pept2ec",     :to => "clidocs#pept2ec",     :as => 'clidocs/pept2ec'
+    get "pept2go",     :to => "clidocs#pept2go",     :as => 'clidocs/pept2go'
+    get "pept2funct",  :to => "clidocs#pept2funct",  :as => 'clidocs/pept2funct'
+    get "peptinfo",    :to => "clidocs#peptinfo",    :as => 'clidocs/peptinfo'
     get "taxa2lca",    :to => "clidocs#taxa2lca",    :as => 'clidocs/taxa2lca'
     get "taxonomy",    :to => "clidocs#taxonomy",    :as => 'clidocs/taxonomy'
   end
