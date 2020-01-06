@@ -3972,10 +3972,10 @@ eslint-config-google@^0.14.0:
   resolved "https://registry.yarnpkg.com/eslint-config-google/-/eslint-config-google-0.14.0.tgz#4f5f8759ba6e11b424294a219dbfa18c508bcc1a"
   integrity sha512-WsbX4WbjuMvTdeVL6+J3rK1RGhCTqjsFjX7UMSMgZiyxxaNLkoJENbrGExzERFeoTpGw3F3FypTiWAP9ZXzkEw==
 
-eslint-plugin-jest@^23.0.3:
-  version "23.1.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-23.1.1.tgz#1220ab53d5a4bf5c3c4cd07c0dabc6199d4064dd"
-  integrity sha512-2oPxHKNh4j1zmJ6GaCBuGcb8FVZU7YjFUOJzGOPnl9ic7VA/MGAskArLJiRIlnFUmi1EUxY+UiATAy8dv8s5JA==
+eslint-plugin-jest@^23.3.0:
+  version "23.3.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-23.3.0.tgz#b1443d0c46d6a0de9ef3de78176dd6688c7d5326"
+  integrity sha512-GE6CR4ESJeu6Huw7vfZfaXHmX2R2kCFvf2X9OMcOxfP158yLKgLWz7PqLYTwRDACi84IhpmRxO8lK7GGwG05UQ==
   dependencies:
     "@typescript-eslint/experimental-utils" "^2.5.0"
 
