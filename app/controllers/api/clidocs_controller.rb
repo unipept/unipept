@@ -50,6 +50,26 @@ class Api::ClidocsController < ApplicationController
     @sidebar_name = 'unipept pept2taxa'
   end
 
+  def pept2ec
+    @title = 'The unipept pept2ec command'
+    @sidebar_name = 'unipept pept2ec'
+  end
+
+  def pept2go
+    @title = 'The unipept pept2go command'
+    @sidebar_name = 'unipept pept2go'
+  end
+
+  def pept2funct
+    @title = 'The unipept pept2funct command'
+    @sidebar_name = 'unipept pept2funct'
+  end
+
+  def peptinfo
+    @title = 'The unipept peptinfo command'
+    @sidebar_name = 'unipept peptinfo'
+  end
+
   def taxa2lca
     @title = 'The unipept taxa2lca command'
     @sidebar_name = 'unipept taxa2lca'
@@ -89,6 +109,10 @@ class Api::ClidocsController < ApplicationController
       { name: 'unipept pept2lca',   path: api_clidocs_pept2lca_path },
       { name: 'unipept pept2prot',  path: api_clidocs_pept2prot_path },
       { name: 'unipept pept2taxa',  path: api_clidocs_pept2taxa_path },
+      { name: 'unipept pept2ec',    path: api_clidocs_pept2ec_path },
+      { name: 'unipept pept2go',    path: api_clidocs_pept2go_path },
+      { name: 'unipept pept2funct', path: api_clidocs_pept2funct_path },
+      { name: 'unipept peptinfo',   path: api_clidocs_peptinfo_path },
       { name: 'unipept taxa2lca',   path: api_clidocs_taxa2lca_path },
       { name: 'unipept taxonomy',   path: api_clidocs_taxonomy_path }
     ]

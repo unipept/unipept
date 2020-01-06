@@ -2,10 +2,10 @@
 #
 # Table name: taxons
 #
-#  id          :integer          not null, primary key
+#  id          :integer          unsigned, not null, primary key
 #  name        :string(120)      not null
 #  rank        :string(16)
-#  parent_id   :integer
+#  parent_id   :integer          unsigned
 #  valid_taxon :binary(1)        default("b'1'"), not null
 #
 

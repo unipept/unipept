@@ -56,8 +56,9 @@ UnipeptWeb::Application.configure do
   config.active_support.deprecation = :notify
 
   # Compress JavaScripts and CSS
-  config.assets.compress = true
-  config.assets.js_compressor = :uglifier
+  # This is now handled by webpack itself and needs to be changed in the webpack config
+  config.assets.compress = false
+  #config.assets.js_compressor = Uglifier.new(harmony: true, :mangle => false, :compress => false)
 
   # Don't fallback to assets pipeline if a precompiled asset is missed
   config.assets.compile = false
@@ -105,13 +106,9 @@ end
 
 if Rails.application.config.unipept_error_mails
   UnipeptWeb::Application.config.middleware.use ExceptionNotification::Rack,
-  :throttle => {
-    :notifier => "email",
-    :notifier_options => {
-      :email_prefix => "[Unipept-api] ",
-      :sender_address => %{"Unipept" <unipept@ugent.be>},
-      :exception_recipients => Rails.application.config.unipept_error_mails_addresses
-    },
-    :per_hour => 1
+  email: {
+    email_prefix: '[Unipept-API] ',
+    sender_address: %("Unipept" <unipept@ugent.be>),
+    exception_recipients: Rails.application.config.unipept_error_mails_addresses
   }
 end

@@ -1,8 +1,0 @@
-target/
-data/
-makefile
-proteomes.sh
-createEcNumbers.sh
-createGoTerms.sh
-type_strains.sh
-latest-config

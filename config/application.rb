@@ -38,9 +38,9 @@ module UnipeptWeb
     config.filter_parameters += [:password]
 
     config.versions = {
-      unipept: '4.1.0',
+      unipept: '4.2',
       gem: '1.4.1',
-      uniprot: '2018.06'
+      uniprot: '2019.09'
     }
 
     config.api_host = 'api.unipept.ugent.be'

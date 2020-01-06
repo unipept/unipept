@@ -2,15 +2,15 @@
 #
 # Table name: proteomes
 #
-#  id                        :integer          not null, primary key
+#  id                        :integer          unsigned, not null, primary key
 #  proteome_accession_number :string(12)       not null
-#  proteome_name             :string(100)      not null
-#  taxon_id                  :integer
+#  proteome_name             :string(145)      not null
+#  taxon_id                  :integer          unsigned
 #  type_strain               :binary(1)        default("b'0'"), not null
 #  reference_proteome        :binary(1)        default("b'0'"), not null
-#  strain                    :string(45)
+#  strain                    :string(120)
 #  assembly                  :string(45)
-#  name                      :string(128)
+#  name                      :string(225)
 #
 
 proteome1:

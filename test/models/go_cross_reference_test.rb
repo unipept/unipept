@@ -2,8 +2,8 @@
 #
 # Table name: go_cross_references
 #
-#  id               :integer          not null, primary key
-#  uniprot_entry_id :integer          not null
+#  id               :integer          unsigned, not null, primary key
+#  uniprot_entry_id :integer          unsigned, not null
 #  go_term_code     :string(15)       not null
 #
 
