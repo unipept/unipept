@@ -2882,10 +2882,15 @@ core-js-compat@^3.1.1:
     browserslist "^4.8.0"
     semver "^6.3.0"
 
-core-js@^2.4.0, core-js@^2.5.0:
+core-js@^2.4.0:
   version "2.6.10"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.10.tgz#8a5b8391f8cc7013da703411ce5b585706300d7f"
   integrity sha512-I39t74+4t+zau64EN1fE5v2W31Adtc/REhzWN+gWRRXg6WH5qAsZm62DHpQ1+Yhe4047T55jvzz7MUqF/dBBlA==
+
+core-js@^2.5.0:
+  version "2.6.11"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.11.tgz#38831469f9922bded8ee21c9dc46985e0399308c"
+  integrity sha512-5wjnpaT/3dV+XB4borEsnAYQchn00XSgTAWKDkEqv+K8KevjbzmofK6hfJ9TZIlpj2N0xQpazy7PiRQiWHqzWg==
 
 core-js@^3.4.0:
   version "3.4.7"
@@ -4435,7 +4440,7 @@ find-cache-dir@^2.0.0, find-cache-dir@^2.1.0:
     make-dir "^2.0.0"
     pkg-dir "^3.0.0"
 
-find-cache-dir@^3.0.0:
+find-cache-dir@^3.0.0, find-cache-dir@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/find-cache-dir/-/find-cache-dir-3.1.0.tgz#9935894999debef4cf9f677fdf646d002c4cdecb"
   integrity sha512-zw+EFiNBNPgI2NTrKkDd1xd7q0cs6wr/iWnr/oUkI0yF9K9GqQ+riIt4aiyFaaqpaWbxPrJXHI+QvmNUQbX+0Q==
@@ -9185,7 +9190,7 @@ schema-utils@^1.0.0:
     ajv-errors "^1.0.0"
     ajv-keywords "^3.1.0"
 
-schema-utils@^2.0.1, schema-utils@^2.1.0, schema-utils@^2.2.0, schema-utils@^2.5.0, schema-utils@^2.6.0:
+schema-utils@^2.0.1, schema-utils@^2.1.0, schema-utils@^2.2.0, schema-utils@^2.5.0, schema-utils@^2.6.0, schema-utils@^2.6.1:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/schema-utils/-/schema-utils-2.6.1.tgz#eb78f0b945c7bcfa2082b3565e8db3548011dc4f"
   integrity sha512-0WXHDs1VDJyo+Zqs9TKLKyD/h7yDpHUhEFsM2CzkICFdoX1av+GBq/J2xRTFfsQO5kBfhZzANf2VcIm84jqDbg==
@@ -9261,6 +9266,11 @@ serialize-javascript@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-2.1.0.tgz#9310276819efd0eb128258bb341957f6eb2fc570"
   integrity sha512-a/mxFfU00QT88umAJQsNWOnUKckhNCqOl028N48e7wFmo2/EHpTo9Wso+iJJCMrQnmFvcjto5RJdAHEvVhcyUQ==
+
+serialize-javascript@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-2.1.2.tgz#ecec53b0e0317bdc95ef76ab7074b7384785fa61"
+  integrity sha512-rs9OggEUF0V4jUSecXazOYsLfu7OGK2qIn3c7IPBiffz32XniEp/TX9Xmc9LQfK2nQ2QKHvZ2oygKUGU0lG4jQ==
 
 serve-index@^1.9.1:
   version "1.9.1"
@@ -9918,7 +9928,21 @@ terser-webpack-plugin@^2.2.1:
     terser "^4.3.9"
     webpack-sources "^1.4.3"
 
-terser@^4.1.2, terser@^4.3.9:
+terser-webpack-plugin@^2.2.3:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/terser-webpack-plugin/-/terser-webpack-plugin-2.2.3.tgz#7b070b40e39ef177ca062a4b6d70c3acdd85defc"
+  integrity sha512-R8cqQDld4BjVKaIR0D9Q0O/QzfgXzME3wXfSxxW23ZGv5xpMDUt1NEnCuG94y1+bKASLvc5TjIHLlNo0eK8GLA==
+  dependencies:
+    cacache "^13.0.1"
+    find-cache-dir "^3.1.0"
+    jest-worker "^24.9.0"
+    schema-utils "^2.6.1"
+    serialize-javascript "^2.1.2"
+    source-map "^0.6.1"
+    terser "^4.4.2"
+    webpack-sources "^1.4.3"
+
+terser@^4.1.2, terser@^4.3.9, terser@^4.4.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/terser/-/terser-4.4.2.tgz#448fffad0245f4c8a277ce89788b458bfd7706e8"
   integrity sha512-Uufrsvhj9O1ikwgITGsZ5EZS6qPokUOkCegS7fYOdGTv+OA90vndUbU6PEjr5ePqHfNUbGyMO7xyIZv2MhsALQ==
@@ -10232,10 +10256,10 @@ unipept-visualizations@^1.7.3:
   resolved "https://registry.yarnpkg.com/unipept-visualizations/-/unipept-visualizations-1.7.3.tgz#10a4c6f4cf745b88aaf353fbb74ddf2cb9b6584e"
   integrity sha512-g9AM+44twT+qQpg4kHhupamMoBr4QscjqjQY8Pdk7cdWHvZs5HuIVTNtH44IbAtN08x9+U3BTT+lp+ZEJpaoFw==
 
-unipept-web-components@^0.1.5:
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/unipept-web-components/-/unipept-web-components-0.1.5.tgz#5f96fb7848da97c606ba731c19a82a13dd202eed"
-  integrity sha512-mjy+1EwqXbu39aUhBmEn1AnRPYu/KQTsicJnJsLeQJP+hDTibTbE6aPV4bRBCG3ZjN35tAMhHVaAgBBoRhSS8A==
+unipept-web-components@^0.1.8:
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/unipept-web-components/-/unipept-web-components-0.1.8.tgz#da99f2dbfadd90477fafc71806693ed6151505f5"
+  integrity sha512-cwbm+jLZskJ2XkVn3iQoBMdj3Fqd9T6Cd0R0FBMAyK6wHQOd8JX6MtApvHR6/XNIlDDKwkJ6jJIX1CVk4oMJrA==
   dependencies:
     axios "^0.19.0"
     babel-polyfill "^6.26.0"
