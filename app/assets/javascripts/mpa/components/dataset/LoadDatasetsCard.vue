@@ -99,17 +99,20 @@ export default class LoadDatasetsCard extends Vue {
     private currentTab: number = 0;
 
     private onCreateAssay(assay: Assay) {
-        this.$store.dispatch('selectAssay', assay);
+        this.$store.dispatch("selectAssay", assay);
+        this.$emit("create-assay", assay);
     }
 
     private onDestroyAssay(assay: Assay) {
         // Remove the assay from the store, then also delete it from local storage.
         this.$store.dispatch('removeStoredAssay', assay);
         this.deleteAssayFromStorage(assay);
+        this.$emit("destroy-assay", assay);
     }
 
     private onStoreAssay(assay: Assay) {
         this.storeAssayInStorage(assay);
+        this.$emit("store-assay", assay);
     }
 
     /**
@@ -126,7 +129,7 @@ export default class LoadDatasetsCard extends Vue {
     /**
      * Write all data related to the given assay to persistent storage.
      * 
-     * @param assay Assay for which all data should be written to persisten storage.
+     * @param assay Assay for which all data should be written to persistent storage.
      */
     private storeAssayInStorage(assay: Assay) {
         const storageWriter: StorageWriter = new StorageWriter();

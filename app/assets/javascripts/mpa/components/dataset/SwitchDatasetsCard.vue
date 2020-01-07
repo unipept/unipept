@@ -1,3 +1,9 @@
+<docs>
+This component does not keep track of which datasets are currently selected itself. This is the responsibility of the
+parent component, which should properly react to the events emitted by this component and that allow him to stay up
+to date.
+</docs>
+
 <template>
     <v-card style="min-height: 100%; display: flex; flex-direction: column;">
          <card-header class="card-title-interactive">
@@ -15,30 +21,30 @@
         </v-card-text>
         <div class="growing-list">
             <v-list two-line>
-                <v-list-item v-for="dataset of this.selectedAssays" :key="dataset.id" ripple @click="activateAssay(dataset)" :class="activeAssay === dataset ? 'selected-list-item' : ''">
+                <v-list-item v-for="assay of this.selectedAssays" :key="assay.id" ripple @click="activateAssay(assay)" :class="activeAssay === assay ? 'selected-list-item' : ''">
                     <v-list-item-action>
-                        <div class="select-dataset-radio" v-if="dataset.progress === 1">
+                        <div class="select-dataset-radio" v-if="assay.progress === 1">
                             <v-radio-group v-model="activeDatasetModel">
-                                <v-radio :value="dataset"></v-radio>
+                                <v-radio :value="assay"></v-radio>
                             </v-radio-group>
                         </div>
-                        <v-progress-circular v-else :rotate="-90" :size="24" :value="dataset.progress * 100" color="primary"></v-progress-circular>
+                        <v-progress-circular v-else :rotate="-90" :size="24" :value="assay.progress * 100" color="primary"></v-progress-circular>
                     </v-list-item-action>
                     <v-list-item-content>
                         <v-list-item-title>
-                            {{ dataset.getName() }}
+                            {{ assay.getName() }}
                         </v-list-item-title>
                         <v-list-item-subtitle>
-                            {{ dataset.getAmountOfPeptides() }} peptides
+                            {{ assay.getAmountOfPeptides() }} peptides
                         </v-list-item-subtitle>
                     </v-list-item-content>
 
                     <v-list-item-action>
                         <v-list-item-action-text>
-                            {{ dataset.getDateFormatted() }}
+                            {{ assay.getDateFormatted() }}
                         </v-list-item-action-text>
-                        <tooltip message="Remove dataset from analysis.">
-                            <v-icon @click="deselectAssay(dataset)" v-on:click.stop>mdi-delete-outline</v-icon>
+                        <tooltip message="Remove assay from analysis.">
+                            <v-icon @click="deselectAssay(assay)" v-on:click.stop>mdi-delete-outline</v-icon>
                         </tooltip>
                     </v-list-item-action>
                 </v-list-item>
@@ -99,7 +105,7 @@ import Assay from "unipept-web-components/src/logic/data-management/assay/Assay"
     computed: {
         activeDatasetModel: {
             get(): PeptideContainer {
-                return this.activeDataset;
+                return this.activeAssay;
             },
             set(dataset: PeptideContainer): void {
                 // Nothing to do here!
@@ -107,17 +113,6 @@ import Assay from "unipept-web-components/src/logic/data-management/assay/Assay"
         }
     }
 })
-/**
- * This component does not keep track of which datasets are currently selected itself. This is the responsibility of the
- * parent component, which should properly react to the events emitted by this component and that allow him to stay up
- * to date.
- * 
- * @vue-event {Assay} deselect-dataset Emitted when user deselects a previously chosen assay.
- * @vue-event {Assay} activate-dataset Emitted when the user switches to a different dataset as being the active one.
- * @vue-event {Assay} select-dataset Emitted when the user selects a specific assay.
- * @vue-event {boolean} assay-selection-in-progress Emitted when the user indicates that he wants to add a dataset to
- *            the current selection. True if the selection started, false if it ended.
- */
 export default class SwitchDatasetsCard extends Vue {
     @Prop({ required: true })
     private selectedAssays: Assay[];
@@ -130,9 +125,6 @@ export default class SwitchDatasetsCard extends Vue {
     private deselectAssay(dataset: Assay) {
         let idx: number = this.selectedAssays.indexOf(dataset);
         this.selectedAssays.splice(idx, 1);
-        /**
-         * @event
-         */
         this.$emit("deselect-assay", dataset);
     }
 
@@ -143,10 +135,6 @@ export default class SwitchDatasetsCard extends Vue {
 
     private compareAssays(): void {
         this.dialogOpen = true;
-    }
-
-    private selectAssay(container: Assay) {
-        this.$emit("select-assay", container);
     }
 
     /**

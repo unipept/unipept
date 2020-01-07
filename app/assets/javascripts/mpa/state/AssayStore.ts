@@ -1,5 +1,5 @@
 import Assay from "unipept-web-components/src/logic/data-management/assay/Assay";
-import { GetterTree, MutationTree, ActionTree, ActionContext } from "vuex";
+import { GetterTree, MutationTree, ActionTree, ActionContext, Store } from "vuex";
 import MpaAnalysisManager from "unipept-web-components/src/logic/data-management/MpaAnalysisManager";
 
 /**
@@ -15,14 +15,21 @@ export interface AssayState {
     // Did the user already start with the analysis of the samples?
     analysisStarted: boolean,
     // The assay that's currently set to be active. Null when no assay is currently set to be active.
-    activeAssay: Assay
+    activeAssay: Assay,
+    // What settings did the user choose to perform analysis?
+    searchSettings: MPAConfig
 }
 
 const assayState: AssayState = {
     selectedAssays: [],
     storedAssays: [],
     analysisStarted: false,
-    activeAssay: null
+    activeAssay: null,
+    searchSettings: {
+        il: true,
+        dupes: true,
+        missed: false
+    }
 }
 
 const assayGetters: GetterTree<AssayState, any> = {
@@ -37,6 +44,9 @@ const assayGetters: GetterTree<AssayState, any> = {
     },
     getActiveAssay(state: AssayState): Assay {
         return state.activeAssay;
+    },
+    getSearchSettings(state: AssayState): MPAConfig {
+        return state.searchSettings;
     }
 }
 
@@ -52,7 +62,7 @@ const findAssayIndex = function(item: Assay, list: Assay[]): number {
     if (!item) {
         return -1;
     }
-    
+
     return list.findIndex((value: Assay) => value.getId() === item.getId());
 }
 
@@ -128,6 +138,17 @@ const assayMutations: MutationTree<AssayState> = {
      */
     SET_ACTIVE_ASSAY(state: AssayState, newActive: Assay) {
         state.activeAssay = newActive;
+    },
+
+    /**
+     * Update the currently active search settings for assay analysis. Reprocessing of assays is not handled by this
+     * mutation.
+     * 
+     * @param state The state for which the search settings should be updated. 
+     * @param settings A new set of settings that replace the previously set.
+     */
+    SET_SEARCH_SETTINGS(state: AssayState, settings: MPAConfig) {
+        state.searchSettings = settings;
     }
 }
 
@@ -206,6 +227,16 @@ const assayActions: ActionTree<AssayState, any> = {
             .then(() => {
                 store.dispatch("resetActiveAssay");
             });
+    },
+
+    updateSearchSettings(store: ActionContext<AssayState, any>, settings: MPAConfig) {
+        store.commit('SET_SEARCH_SETTINGS', settings);
+        store.commit('SET_ACTIVE_ASSAY', null);
+
+        // Reprocess all currently selected assays.
+        for (let assay of store.getters.getSelectedAssays) {
+            store.dispatch('processAssay', assay);
+        }
     }
 }
 
