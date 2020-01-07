@@ -28,7 +28,6 @@ import LoadDatasetsCard from "./../dataset/LoadDatasetsCard.vue";
 import SelectDatasetsCard from "./../dataset/SelectDatasetsCard.vue";
 import SearchHelp from "./../miscellaneous/SearchHelp.vue";
 import PeptideContainer from "unipept-web-components/src/logic/data-management/PeptideContainer";
-import { EventBus } from "unipept-web-components/src/components/EventBus";
 import Assay from "unipept-web-components/src/logic/data-management/assay/Assay";
 
 @Component({

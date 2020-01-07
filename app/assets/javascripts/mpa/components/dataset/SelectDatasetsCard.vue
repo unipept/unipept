@@ -68,7 +68,6 @@ import SearchSettingsForm from "unipept-web-components/src/components/analysis/S
 import CardTitle from "unipept-web-components/src/components/custom/CardTitle.vue";
 import CardHeader from "unipept-web-components/src/components/custom/CardHeader.vue";
 import Tooltip from "unipept-web-components/src/components/custom/Tooltip.vue";
-import { EventBus } from "unipept-web-components/src/components/EventBus";
 import MPAConfig from "unipept-web-components/src/logic/data-management/MPAConfig";
 
 @Component({

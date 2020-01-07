@@ -1,5 +1,6 @@
 import Assay from "unipept-web-components/src/logic/data-management/assay/Assay";
 import { GetterTree, MutationTree, ActionTree, ActionContext } from "vuex";
+import MpaAnalysisManager from "unipept-web-components/src/logic/data-management/MpaAnalysisManager";
 
 /**
  * The AssayState keeps track of which assays are currently selected by the user for analysis, and which assays are
@@ -48,6 +49,10 @@ const assayGetters: GetterTree<AssayState, any> = {
  * @return Position of the given item, in the given list. -1 if the item was not found.
  */
 const findAssayIndex = function(item: Assay, list: Assay[]): number {
+    if (!item) {
+        return -1;
+    }
+    
     return list.findIndex((value: Assay) => value.getId() === item.getId());
 }
 
@@ -148,7 +153,7 @@ const assayActions: ActionTree<AssayState, any> = {
      */
     resetActiveAssay(store: ActionContext<AssayState, any>) {
         let shouldReselect: boolean = true;
-        if (store.getters.activeAssay !== null) {
+        if (!store.getters.activeAssay) {
             const idx: number = findAssayIndex(store.getters.getActiveAssay, store.getters.getSelectedAssays);
             shouldReselect = idx === -1;
         }
@@ -166,7 +171,7 @@ const assayActions: ActionTree<AssayState, any> = {
         }
     },
 
-    addStoredAssay(store: ActionContext<AssayState, any>, assay) {
+    addStoredAssay(store: ActionContext<AssayState, any>, assay: Assay) {
         store.commit('ADD_STORED_ASSAY', assay);
     },
 
@@ -178,13 +183,29 @@ const assayActions: ActionTree<AssayState, any> = {
      * @param store Instance of the store to which a new stored assay should be added. 
      * @param assay The assay that should be added to the list of stored assays.
      */
-    removeStoredAssay(store: ActionContext<AssayState, any>, assay) {
+    removeStoredAssay(store: ActionContext<AssayState, any>, assay: Assay) {
         store.dispatch('deselectAssay', assay);
         store.commit('REMOVE_STORED_ASSAY', assay);
     },
     
-    setActiveAssay(store: ActionContext<AssayState, any>, assay) {
+    setActiveAssay(store: ActionContext<AssayState, any>, assay: Assay) {
         store.commit('SET_ACTIVE_ASSAY', assay);
+    },
+
+    /**
+     * Start the analysis for the given assay. If this assay finishes, and no active assay has been selected at that
+     * point, this assay will be set to be the active one.
+     * 
+     * @param store The store for which we are currently processing 
+     * @param assay 
+     */
+    processAssay(store: ActionContext<AssayState, any>, assay: Assay) {
+        let mpaManager = new MpaAnalysisManager();
+
+        mpaManager.processDataset(assay, store.getters.searchSettings, store.getters.baseUrl)
+            .then(() => {
+                store.dispatch("resetActiveAssay");
+            });
     }
 }
 

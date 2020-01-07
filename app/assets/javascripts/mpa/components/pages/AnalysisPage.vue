@@ -31,7 +31,6 @@ import SingleDatasetVisualizationsCard from "unipept-web-components/src/componen
 import LoadDatasetsCard from "./../dataset/LoadDatasetsCard.vue";
 import SwitchDatasetsCard from "./../dataset/SwitchDatasetsCard.vue";
 import ExperimentSummaryCard from "unipept-web-components/src/components/analysis/statistics/ExperimentSummaryCard.vue";
-import { EventBus } from "unipept-web-components/src/components/EventBus";
 import PeptideContainer from "unipept-web-components/src/logic/data-management/PeptideContainer";
 import Assay from "unipept-web-components/src/logic/data-management/assay/Assay";
 
@@ -57,8 +56,8 @@ export default class AnalysisPage extends Vue {
     private eventListeners: {type: string, listener: any}[] = [];
 
     created() {
-        for (let dataset of this.$store.getters.selectedDatasets) {
-            this.$store.dispatch('processDataset', dataset);
+        for (let assay of this.$store.getters.getSelectedAssays) {
+            this.$store.dispatch('processAssay', assay);
         }
     }
 
@@ -72,6 +71,7 @@ export default class AnalysisPage extends Vue {
 
     private onSelectAssay(assay: Assay) {
         this.$store.dispatch("selectAssay", assay);
+        this.$store.dispatch("processAssay", assay);
     }
 
     private onAssaySelection(status: boolean) {

@@ -92,7 +92,6 @@ import CardTitle from "unipept-web-components/src/components/custom/CardTitle.vu
 
 import HeatmapWizardMultiSample from "unipept-web-components/src/components/heatmap/HeatmapWizardMultiSample.vue";
 import Tooltip from "unipept-web-components/src/components/custom/Tooltip.vue";
-import { EventBus } from "unipept-web-components/src/components/EventBus";
 import Assay from "unipept-web-components/src/logic/data-management/assay/Assay";
 
 @Component({
