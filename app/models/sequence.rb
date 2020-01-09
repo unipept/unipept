@@ -118,20 +118,20 @@ class Sequence < ApplicationRecord
   end
 
   def self.peptides_relation_name(equate_il)
-    raise(ArgumentError, ':equate_il must be a boolean') unless boolean?(equate_il)
+    raise(ArgumentError, ':equate_il must be a boolean') unless self.boolean?(equate_il)
 
     equate_il ? :peptides : :original_peptides
   end
 
   def self.lca_t_relation_name(equate_il)
-    raise(ArgumentError, ':equate_il must be a boolean') unless boolean?(equate_il)
+    raise(ArgumentError, ':equate_il must be a boolean') unless self.boolean?(equate_il)
 
     equate_il ? :lca_il_t : :lca_t
   end
 
   # search for a single sequence, include information through join tables
   def self.single_search(sequence, equate_il = true)
-    raise(ArgumentError, ':equate_il must be a boolean') unless boolean?(equate_il)
+    raise(ArgumentError, ':equate_il must be a boolean') unless self.boolean?(equate_il)
     raise SequenceTooShortError if sequence.length < 5
 
     sequence = sequence.tr('I', 'L') if equate_il
@@ -142,7 +142,7 @@ class Sequence < ApplicationRecord
 
   # try to find multiple matches for a single sequence
   def self.advanced_single_search(sequence, equate_il = true)
-    raise(ArgumentError, ':equate_il must be a boolean') unless boolean?(equate_il)
+    raise(ArgumentError, ':equate_il must be a boolean') unless self.boolean?(equate_il)
     # sanity check
     raise(NoMatchesFoundError, sequence) if sequence.index(/([KR])([^P])/).nil?
 

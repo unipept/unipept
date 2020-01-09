@@ -73,7 +73,7 @@ UnipeptWeb::Application.configure do
   config.unipept_stathat_key = 'unipept@ugent.be'
 
   # enable error emails
-  config.unipept_error_mails = true
+  config.unipept_error_mails = false
   config.unipept_error_mails_addresses = ['bart.mesuere@ugent.be']
 end
 
