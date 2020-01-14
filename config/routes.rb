@@ -37,6 +37,10 @@ UnipeptWeb::Application.routes.draw do
   # search
   get '/search/sequence', :to => 'sequences#search', :as => 'sequence_search'
 
+  scope :export, as: 'export' do
+    match "/", via: [:get, :post], :to => "mpa#analyze"
+  end
+
   scope :mpa, as: 'mpa' do
     match "/*path", via: [:options], :to => "handle_options#handle_options_request"
     match "/",        via: [:get, :post], :to => "mpa#analyze"
