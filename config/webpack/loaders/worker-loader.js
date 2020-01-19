@@ -1,5 +1,5 @@
 module.exports = {
-    test: /\.worker\.ts$/,
-    use: { loader: 'worker-loader' }
-  }
+  test: /\.worker\.ts$/,
+  use: { loader: 'worker-loader' }
+}
   

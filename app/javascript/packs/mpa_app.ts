@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import App from '../../assets/javascripts/mpa/components/App.vue'
+import {AssayStore} from "../../assets/javascripts/mpa/state/AssayStore";
 import {GlobalStore} from "unipept-web-components/src/state/GlobalStore";
 import {ConfigurationStore} from "unipept-web-components/src/state/ConfigurationStore";
 import "unipept-visualizations/dist/unipept-visualizations.es5.js";
@@ -15,6 +16,7 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
     modules: {
+        assay: AssayStore,
         global: GlobalStore,
         configuration: ConfigurationStore
     }

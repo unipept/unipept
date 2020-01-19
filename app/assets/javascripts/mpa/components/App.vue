@@ -1,6 +1,6 @@
 <template>
-    <v-app v-if="!this.loading">
-        <home-page v-if="!isAnalysis"></home-page>
+    <v-app v-if="!this.loading" class="unipept-web-app">
+        <home-page v-if="!isAnalysis" v-on:start-analysis="onStartAnalysis"></home-page>
         <analysis-page v-else></analysis-page>
     </v-app>
 </template>
@@ -11,12 +11,12 @@ import Component from "vue-class-component";
 import HomePage from "./pages/HomePage.vue";
 import AnalysisPage from "./pages/AnalysisPage.vue";
 import {Prop} from "vue-property-decorator";
-import { EventBus } from "unipept-web-components/src/components/EventBus";
 import PeptideContainer from "unipept-web-components/src/logic/data-management/PeptideContainer";
 import Assay from "unipept-web-components/src/logic/data-management/assay/Assay";
 import MetaProteomicsAssay from "unipept-web-components/src/logic/data-management/assay/MetaProteomicsAssay";
 import StorageWriter from "unipept-web-components/src/logic/data-management/visitors/storage/StorageWriter";
 import { StorageType } from "unipept-web-components/src/logic/data-management/StorageType";
+import DatasetManager from "unipept-web-components/src/logic/data-management/DatasetManager";
 
 
 @Component({
@@ -43,10 +43,11 @@ export default class App extends Vue {
 
     async mounted() {
         this.loading = true;
-        EventBus.$on("start-analysis", () => this.isAnalysis = true);
         this.$store.dispatch('setBaseUrl', "");
+        await this.readStoredAssays();
         this.loading = false;
 
+        // Code that's processed when the application is called with a POST-request containing all required data.
         if (this.peptides != "") {
             let name;
             if (this.searchName === "") {
@@ -70,8 +71,20 @@ export default class App extends Vue {
             
             await assay.visit(storageWriter);
 
-            EventBus.$emit("select-dataset", assay);
+            this.$store.dispatch('selectAssay', assay);
             this.isAnalysis = true;
+        }
+    }
+
+    private onStartAnalysis(status: boolean) {
+        this.isAnalysis = status;
+    }
+    
+    private async readStoredAssays() {
+        const datasetManager: DatasetManager = new DatasetManager();
+        const assays = await datasetManager.listDatasets();
+        for (let assay of assays) {
+            this.$store.dispatch("addStoredAssay", assay);
         }
     }
 };
