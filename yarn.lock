@@ -3415,11 +3415,6 @@ core-js@^2.5.0:
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.11.tgz#38831469f9922bded8ee21c9dc46985e0399308c"
   integrity sha512-5wjnpaT/3dV+XB4borEsnAYQchn00XSgTAWKDkEqv+K8KevjbzmofK6hfJ9TZIlpj2N0xQpazy7PiRQiWHqzWg==
 
-core-js@^3.3.5:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.5.0.tgz#66df8e49be4bd775e6f952a9d083b756ad41c1ed"
-  integrity sha512-Ifh3kj78gzQ7NAoJXeTu+XwzDld0QRIwjBLRqAMhuLhP3d2Av5wmgE9ycfnvK6NAEjTkQ1sDPeoEZAWO3Hx1Uw==
-
 core-js@^3.4.0:
   version "3.4.7"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.4.7.tgz#57c35937da80fe494fbc3adcf9cf3dc00eb86b34"
@@ -5167,7 +5162,7 @@ find-cache-dir@^2.0.0, find-cache-dir@^2.1.0:
     make-dir "^2.0.0"
     pkg-dir "^3.0.0"
 
-find-cache-dir@^3.0.0:
+find-cache-dir@^3.0.0, find-cache-dir@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/find-cache-dir/-/find-cache-dir-3.1.0.tgz#9935894999debef4cf9f677fdf646d002c4cdecb"
   integrity sha512-zw+EFiNBNPgI2NTrKkDd1xd7q0cs6wr/iWnr/oUkI0yF9K9GqQ+riIt4aiyFaaqpaWbxPrJXHI+QvmNUQbX+0Q==
@@ -12011,7 +12006,7 @@ terser-webpack-plugin@^2.2.1:
     terser "^4.3.9"
     webpack-sources "^1.4.3"
 
-terser-webpack-plugin@^2.2.2:
+terser-webpack-plugin@^2.2.3:
   version "2.2.3"
   resolved "https://registry.yarnpkg.com/terser-webpack-plugin/-/terser-webpack-plugin-2.2.3.tgz#7b070b40e39ef177ca062a4b6d70c3acdd85defc"
   integrity sha512-R8cqQDld4BjVKaIR0D9Q0O/QzfgXzME3wXfSxxW23ZGv5xpMDUt1NEnCuG94y1+bKASLvc5TjIHLlNo0eK8GLA==
