@@ -91,7 +91,7 @@ class DatasetsControllerTest < ActionController::TestCase
     assert_redirected_to root_url
 
     delete :destroy, params: { 'id' => '1' }
-    assert_equal 'xxxPlease log in to use this feature', flash[:error]
+    assert_equal 'Please log in to use this feature', flash[:error]
     assert_redirected_to root_url
   end
 
