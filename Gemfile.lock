@@ -58,7 +58,7 @@ GEM
     bootsnap (1.4.5)
       msgpack (~> 1.0)
     builder (3.2.3)
-    byebug (11.0.1)
+    byebug (11.1.0)
     capistrano (3.11.2)
       airbrussh (>= 1.0.0)
       i18n
@@ -284,7 +284,7 @@ DEPENDENCIES
   annotate (~> 2.7.5)
   autoprefixer-rails (~> 9.7.4)
   bootsnap (~> 1.4.4)
-  byebug (~> 11.0.1)
+  byebug (~> 11.1.0)
   capistrano (~> 3.11.2)
   capistrano-bundler (~> 1.6.0)
   capistrano-rails (~> 1.4.0)
