@@ -24,7 +24,7 @@
     "html2canvas": "^1.0.0-rc.5",
     "jquery": "^3.2.1",
     "jsdoc": "^3.6.3",
-    "jsdoc-vuejs": "^3.0.5",
+    "jsdoc-vuejs": "^3.0.8",
     "less": "^3.10.3",
     "less-loader": "^5.0.0",
     "null-loader": "^3.0.0",
