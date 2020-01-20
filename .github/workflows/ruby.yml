@@ -19,12 +19,6 @@ jobs:
           MYSQL_HOST: "localhost"
     steps:
     - uses: actions/checkout@v2
-    - name: Checkout submodules
-      shell: bash
-      run: |
-        auth_header="$(git config --local --get http.https://github.com/.extraheader)"
-        git submodule sync --recursive
-        git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
     - name: Install node and yarn
       run: |
         apt-get update
@@ -34,12 +28,6 @@ jobs:
         curl -sL https://deb.nodesource.com/setup_12.x | bash -
         apt-get update
         apt-get -y --no-install-recommends install nodejs yarn
-    - name: Install mysql
-      run: |
-        apt-get -y install --no-install-recommends default-mysql-client
-    - name: Set up database
-      run: |
-        cat backend/database/structure_no_index.sql | sed 's/unipept/unipept_test/' | mysql -h mysql -u root -punipept unipept_test
     - name: Cache Ruby dependencies
       uses: actions/cache@v1
       with:
