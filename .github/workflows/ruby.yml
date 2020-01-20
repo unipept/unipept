@@ -33,7 +33,7 @@ jobs:
         apt-get -y install --no-install-recommends default-mysql-client
     - name: Set up database
       run: |
-        cat backend/database/structure_no_index.sql | sed 's/unipept/unipept_test/' | mysql -h 127.0.0.1 -u unipept -punipept unipept_test
+        cat backend/database/structure_no_index.sql | sed 's/unipept/unipept_test/' | mysql -h mysql -u root -punipept unipept_test
     - name: Cache Ruby dependencies
       uses: actions/cache@v1
       with:
