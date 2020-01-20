@@ -91,7 +91,7 @@ class DatasetsControllerTest < ActionController::TestCase
     assert_redirected_to root_url
 
     delete :destroy, params: { 'id' => '1' }
-    assert_equal 'Please log in to use this feature', flash[:error]
+    assert_equal 'xxxPlease log in to use this feature', flash[:error]
     assert_redirected_to root_url
   end
 
@@ -118,13 +118,13 @@ class DatasetsControllerTest < ActionController::TestCase
     assert_redirected_to root_url
   end
 
-   test 'should preload' do
-     skip
-     get :preload, params: { id: 1, type: 'type' }
-     assert_response :success
-     assert_template :preload
-     assert_equal 'Load dataset', assigns(:title)
-     assert_equal '1', assigns(:id)
-     assert_equal 'type', assigns(:type)
-   end
+  test 'should preload' do
+    skip
+    get :preload, params: { id: 1, type: 'type' }
+    assert_response :success
+    assert_template :preload
+    assert_equal 'Load dataset', assigns(:title)
+    assert_equal '1', assigns(:id)
+    assert_equal 'type', assigns(:type)
+  end
 end

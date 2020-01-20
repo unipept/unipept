@@ -49,7 +49,7 @@ jobs:
     - name: Cache node modules
       uses: actions/cache@v1
       with:
-        path: /__w/dodona/dodona/node_modules
+        path: /__w/unipept/unipept/node_modules
         key: ${{ runner.os }}-node_modules-fix-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
         restore-keys: |
           ${{ runner.os }}-node_modules-fix-
@@ -87,4 +87,4 @@ jobs:
       env:
         RAILS_ENV: "test"
       run: |
-        bundle exec rubocop -c  .rubocop.yml app
+        bundle exec rubocop -c .rubocop.yml app
