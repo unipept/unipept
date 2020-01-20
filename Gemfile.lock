@@ -174,7 +174,7 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
     public_suffix (4.0.1)
-    puma (3.12.1)
+    puma (3.12.2)
     rack (2.0.7)
     rack-proxy (0.6.5)
       rack
@@ -304,7 +304,7 @@ DEPENDENCIES
   mysql2 (~> 0.5.3)
   oj (~> 3.9.2)
   poltergeist (~> 1.18.1)
-  puma (~> 3.11)
+  puma (~> 3.12)
   rails (~> 5.2.2)
   rails-controller-testing (~> 1.0.4)
   rake (~> 12.3.3)
