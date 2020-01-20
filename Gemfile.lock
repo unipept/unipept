@@ -230,7 +230,7 @@ GEM
     rubycas-client (2.3.9)
       activesupport
     rubyzip (2.0.0)
-    selenium-webdriver (3.142.6)
+    selenium-webdriver (3.142.7)
       childprocess (>= 0.5, < 4.0)
       rubyzip (>= 1.2.2)
     shellany (0.0.1)
@@ -310,7 +310,7 @@ DEPENDENCIES
   rake (~> 12.3.3)
   rmagick (~> 4.1.0.rc2)
   rubocop (~> 0.76.0)
-  selenium-webdriver (~> 3.142.6)
+  selenium-webdriver (~> 3.142.7)
   spring (~> 2.1.0)
   spring-watcher-listen (~> 2.0.1)
   sprockets (~> 3.7.2)
