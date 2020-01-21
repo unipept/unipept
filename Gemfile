@@ -88,7 +88,7 @@ gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 gem 'stathat', '~> 0.1.7'
 
 group :development do
-  gem 'annotate', '~> 2.7.5' # annotate models with database info
+  gem 'annotate', '~> 3.0.3' # annotate models with database info
   gem 'guard', '~> 2.16.1'
   gem 'guard-minitest', '~> 2.4.6' # auto run tests
   gem 'rubocop', '~> 0.76.0'
