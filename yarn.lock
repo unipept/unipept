@@ -244,10 +244,15 @@
   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.7.4.tgz#75ab2d7110c2cf2fa949959afb05fa346d2231bb"
   integrity sha512-jIwvLO0zCL+O/LmEJQjWA75MQTWwx3c3u2JOTDK5D3/9egrWRRA0/0hk9XXywYnXZVVpzrBYeIQTmhwUaePI9g==
 
-"@babel/parser@^7.2.3", "@babel/parser@^7.4.4", "@babel/parser@^7.7.5":
+"@babel/parser@^7.4.4", "@babel/parser@^7.7.5":
   version "7.7.5"
   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.7.5.tgz#cbf45321619ac12d83363fcf9c94bb67fa646d71"
   integrity sha512-KNlOe9+/nk4i29g0VXgl8PEXIRms5xKLJeuZ6UptN0fHv+jDiriG+y94X6qAgWTR0h3KaoM1wK5G5h7MHFRSig==
+
+"@babel/parser@^7.6.0":
+  version "7.8.3"
+  resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.8.3.tgz#790874091d2001c9be6ec426c2eed47bc7679081"
+  integrity sha512-/V72F4Yp/qmHaTALizEm9Gf2eQHV3QyTL3K0cNfijwnMnb1L+LDlAubb/ZnSdGAVzVSWakujHYs1I26x66sMeQ==
 
 "@babel/plugin-proposal-async-generator-functions@^7.7.4":
   version "7.7.4"
@@ -694,6 +699,15 @@
   version "7.7.4"
   resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.7.4.tgz#516570d539e44ddf308c07569c258ff94fde9193"
   integrity sha512-cz5Ji23KCi4T+YIE/BolWosrJuSmoZeN1EFnRtBwF+KKLi8GG/Z2c2hOJJeCXPk4mwk4QFvTmwIodJowXgttRA==
+  dependencies:
+    esutils "^2.0.2"
+    lodash "^4.17.13"
+    to-fast-properties "^2.0.0"
+
+"@babel/types@^7.6.0":
+  version "7.8.3"
+  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.8.3.tgz#5a383dffa5416db1b73dedffd311ffd0788fb31c"
+  integrity sha512-jBD+G8+LWpMBBWvVcdr4QysjUE4mU/syrhN17o1u3gx0/WzJB1kwiVZAXRtWbsIPOwW8pF/YJV5+nmetPzepXg==
   dependencies:
     esutils "^2.0.2"
     lodash "^4.17.13"
@@ -1957,7 +1971,7 @@ ast-types@0.12.4, ast-types@^0.12.2:
   resolved "https://registry.yarnpkg.com/ast-types/-/ast-types-0.12.4.tgz#71ce6383800f24efc9a1a3308f3a6e420a0974d1"
   integrity sha512-ky/YVYCbtVAS8TdMIaTiPFHwEpRB5z1hctepJplTr3UW5q8TDrpIMCILyk8pmLxGtn2KCtC/lSn7zOsaI7nzDw==
 
-ast-types@0.13.2, ast-types@~0.13.2:
+ast-types@0.13.2, ast-types@^0.13.2, ast-types@~0.13.2:
   version "0.13.2"
   resolved "https://registry.yarnpkg.com/ast-types/-/ast-types-0.13.2.tgz#df39b677a911a83f3a049644fb74fdded23cea48"
   integrity sha512-uWMHxJxtfj/1oZClOxDEV1sQ1HCDkA4MG8Gr69KKeBjEVH0R84WlejZ0y2DcwyBlpAEMltmVYkVgqfLFb2oyiA==
@@ -5716,6 +5730,11 @@ hash-sum@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/hash-sum/-/hash-sum-1.0.2.tgz#33b40777754c6432573c120cc3808bbd10d47f04"
   integrity sha1-M7QHd3VMZDJXPBIMw4CLvRDUfwQ=
+
+hash-sum@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/hash-sum/-/hash-sum-2.0.0.tgz#81d01bb5de8ea4a214ad5d6ead1b523460b0b45a"
+  integrity sha512-WdZTbAByD+pHfl/g9QSsBIIwy8IT+EsPiKDs0KNX+zSHhdDLFKdZu0BQHljvO+0QI/BasbMSUa8wYNCZTvhslg==
 
 hash.js@^1.0.0, hash.js@^1.0.3:
   version "1.1.7"
@@ -10316,10 +10335,10 @@ react-simple-code-editor@^0.9.4:
   resolved "https://registry.yarnpkg.com/react-simple-code-editor/-/react-simple-code-editor-0.9.15.tgz#59e3583832e9e98992d3674b2d7673b4cd1c5709"
   integrity sha512-M8iKgjBTBZK92tZYgOEfMuR7c3zZ0q0v3QYllSxIPx3SU+w003VofH50txXQSBTu92pSOm2tidON1HbQ1l8BDA==
 
-react-styleguidist@^10.2.1:
-  version "10.3.2"
-  resolved "https://registry.yarnpkg.com/react-styleguidist/-/react-styleguidist-10.3.2.tgz#702f97ef894496f2cd20891b22880441fd9fcf59"
-  integrity sha512-sD7/cVFABQ/FFLC9GtDQzQOhLnhiDcyIOHI/Yl3m8ZMK70T+CYiEOM4ca2XwY3RejgFrWzlWsgwto5YksGL8gA==
+react-styleguidist@^10.5.0:
+  version "10.6.1"
+  resolved "https://registry.yarnpkg.com/react-styleguidist/-/react-styleguidist-10.6.1.tgz#e0489bd1e58a99625d599f210b01ca156d14bc04"
+  integrity sha512-rmJ1SJC1TW4KSk/BdZ/gvpUQWQGyCuQm7DT2cqRlcd35/IBV8zEqgIR+pP0TuGpqwvB/4/8lfT2Vto5oMTunbA==
   dependencies:
     "@vxna/mini-html-webpack-template" "^1.0.0"
     acorn "~6.4.0"
@@ -10342,6 +10361,7 @@ react-styleguidist@^10.2.1:
     github-slugger "^1.2.1"
     glob "^7.1.5"
     glogg "^1.0.2"
+    hash-sum "^2.0.0"
     is-directory "^0.3.1"
     javascript-stringify "^2.0.0"
     jss "^10.0.0"
@@ -12620,13 +12640,13 @@ vue-class-component@^7.1.0:
   resolved "https://registry.yarnpkg.com/vue-class-component/-/vue-class-component-7.1.0.tgz#b33efcb10e17236d684f70b1e96f1946ec793e87"
   integrity sha512-G9152NzUkz0i0xTfhk0Afc8vzdXxDR1pfN4dTwE72cskkgJtdXfrKBkMfGvDuxUh35U500g5Ve4xL8PEGdWeHg==
 
-vue-docgen-api@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/vue-docgen-api/-/vue-docgen-api-4.2.0.tgz#c693e0133ca3f8d15154e766c777aa3109e692ad"
-  integrity sha512-8EbK+QYRHJzy4t6Lx89vqS2pAwbFp/+N2r51LE/8bPG4N4mYaA7Xuv0dV90hJED0wt5icRTkyUYrwkVnqXTaNA==
+vue-docgen-api@^4.7.0:
+  version "4.7.0"
+  resolved "https://registry.yarnpkg.com/vue-docgen-api/-/vue-docgen-api-4.7.0.tgz#efb0e37cc675fe19c53a2d1c7a5dc3426bb49ece"
+  integrity sha512-yAzaM5NNuJKouzAaUeLdopcRW4J2BmD+aNXJGTyFVhr83yyTjDQz4QuwugcTJXGpStGGAXR1mOcAOitx59DC0g==
   dependencies:
-    "@babel/parser" "^7.2.3"
-    "@babel/types" "^7.0.0"
+    "@babel/parser" "^7.6.0"
+    "@babel/types" "^7.6.0"
     ast-types "^0.12.2"
     hash-sum "^1.0.2"
     lru-cache "^4.1.5"
@@ -12652,10 +12672,10 @@ vue-inbrowser-compiler-utils@^4.0.1:
   dependencies:
     camelcase "^5.3.1"
 
-vue-inbrowser-compiler@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/vue-inbrowser-compiler/-/vue-inbrowser-compiler-4.0.1.tgz#31c1bb6a4e22a6dccfaa72a13ed427e6a0956745"
-  integrity sha512-Wr3DKmYOY1AP04yC773PaXSM6zxR7vlX2b1DgFxaXStyUUlqKTo/rFr/8Lf9PX3xs/qWntaHZ7FlvcN6sDWfkA==
+vue-inbrowser-compiler@^4.2.2:
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/vue-inbrowser-compiler/-/vue-inbrowser-compiler-4.2.2.tgz#51deea6eababcca33518328fd619841de8ef6348"
+  integrity sha512-hg8faywHUV7rGFS1jGBTAFKBbgXW5jpLbMK1dRGLZvdnC53vvFNyR7+6VAzcR41vAiXsMHl8sDVJcgRumoZ6Lw==
   dependencies:
     acorn "^6.1.1"
     acorn-jsx "^5.0.1"
@@ -12695,13 +12715,13 @@ vue-style-loader@^4.1.0:
     hash-sum "^1.0.2"
     loader-utils "^1.0.2"
 
-vue-styleguidist@^4.2.1:
-  version "4.2.1"
-  resolved "https://registry.yarnpkg.com/vue-styleguidist/-/vue-styleguidist-4.2.1.tgz#e669fdb78506b9ed0b6a42d742444f9caabbf161"
-  integrity sha512-RenK+bkVqSmAmIDphdz2+NBtsQV9vQogWP1OWZwX96ergeXHv6eZTq2o1ch5aQeOknd+Pd3E0goPFaWIzY68Sg==
+vue-styleguidist@^4.7.2:
+  version "4.7.2"
+  resolved "https://registry.yarnpkg.com/vue-styleguidist/-/vue-styleguidist-4.7.2.tgz#60e2a24008bd238f3c1a0d0920757a4a2eaa3698"
+  integrity sha512-Wh66U4XOvslyrpHHuHep3itTXYEOPKSL6X7bknnUZG7V7GupcXz1//CrQniJ3lC7YIFSGs5ZZ1h2Jy5v1XsGgQ==
   dependencies:
     "@vxna/mini-html-webpack-template" "^1.0.0"
-    ast-types "^0.12.2"
+    ast-types "^0.13.2"
     classnames "^2.2.6"
     clean-webpack-plugin "^3.0.0"
     cli-progress "^3.0.0"
@@ -12721,6 +12741,7 @@ vue-styleguidist@^4.2.1:
     hash-sum "^1.0.2"
     is-directory "^0.3.1"
     javascript-stringify "^1.6.0"
+    jss "^10.0.0"
     kleur "^2.0.1"
     leven "^2.1.0"
     loader-utils "^1.1.0"
@@ -12740,13 +12761,13 @@ vue-styleguidist@^4.2.1:
     react-icons "^3.7.0"
     react-lifecycles-compat "^3.0.4"
     react-simple-code-editor "^0.9.4"
-    react-styleguidist "^10.2.1"
+    react-styleguidist "^10.5.0"
     rewrite-imports "^2.0.3"
     style-loader "^1.0.0"
     terser-webpack-plugin "^2.2.2"
     to-ast "^1.0.0"
-    vue-docgen-api "^4.2.0"
-    vue-inbrowser-compiler "^4.0.1"
+    vue-docgen-api "^4.7.0"
+    vue-inbrowser-compiler "^4.2.2"
     vue-inbrowser-compiler-utils "^4.0.1"
     webpack-dev-server "^3.7.1"
     webpack-merge "^4.0.0"
