@@ -27,7 +27,7 @@ gem 'therubyracer', '~> 0.12.3', platforms: :ruby
 gem 'bootsnap', '~>  1.4.4', require: false
 
 # faster json
-gem 'oj',  '~> 3.9.2'
+gem 'oj',  '~> 3.10.1'
 
 gem 'multi_json',  '~> 1.14.1'
 gem 'jbuilder',  '~> 2.9.1'
@@ -54,9 +54,9 @@ gem 'capistrano', '~> 3.11.2'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug', '~> 11.0.1', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'byebug', '~> 11.1.0', platforms: [:mri, :mingw, :x64_mingw]
   # Adds support for Capybara system testing and selenium driver
-  gem 'capybara', '~> 3.29.0'
+  gem 'capybara', '~> 3.30.0'
   gem 'selenium-webdriver', '~> 3.142.7'
 
   gem 'poltergeist', '~> 1.18.1'
@@ -88,7 +88,7 @@ gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 gem 'stathat', '~> 0.1.7'
 
 group :development do
-  gem 'annotate', '~> 2.7.5' # annotate models with database info
+  gem 'annotate', '~> 3.0.3' # annotate models with database info
   gem 'guard', '~> 2.16.1'
   gem 'guard-minitest', '~> 2.4.6' # auto run tests
   gem 'rubocop', '~> 0.79.0'
