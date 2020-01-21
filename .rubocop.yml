@@ -20,6 +20,8 @@ Style/FrozenStringLiteralComment:
   Enabled: false
 
 # disable for now
+Layout/LineLength:
+  Enabled: false
 Lint/NestedMethodDefinition:
   Enabled: false
 Style/ClassVars:
@@ -32,8 +34,6 @@ Metrics/AbcSize:
   Enabled: false
 Metrics/ClassLength:
   Enabled: false
-Metrics/LineLength:
-  Enabled: false
 Metrics/MethodLength:
   Enabled: false
 Metrics/PerceivedComplexity:
@@ -44,5 +44,5 @@ Naming/AccessorMethodName:
   Enabled: false
 Naming/PredicateName:
   Enabled: false
-Naming/UncommunicativeMethodParamName:
+Naming/MethodParameterName:
   Enabled: false
