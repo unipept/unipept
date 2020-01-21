@@ -12358,10 +12358,10 @@ unipept-visualizations@^1.7.3:
   resolved "https://registry.yarnpkg.com/unipept-visualizations/-/unipept-visualizations-1.7.3.tgz#10a4c6f4cf745b88aaf353fbb74ddf2cb9b6584e"
   integrity sha512-g9AM+44twT+qQpg4kHhupamMoBr4QscjqjQY8Pdk7cdWHvZs5HuIVTNtH44IbAtN08x9+U3BTT+lp+ZEJpaoFw==
 
-unipept-web-components@^0.1.9:
-  version "0.1.9"
-  resolved "https://registry.yarnpkg.com/unipept-web-components/-/unipept-web-components-0.1.9.tgz#4c57ffb794b7e90f28011f54e243de8cfa46abf7"
-  integrity sha512-xK3f9yF4oHakDranZt0ILqETyLmChhMQAbDOo5w7dQ86fzF9rIwuu6L3caQfdPb2zrXh3FETx/t4spFnd+W5lw==
+unipept-web-components@^0.1.10:
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/unipept-web-components/-/unipept-web-components-0.1.10.tgz#e997c6a9ee43867c9f0c85b0581657e5e3a3e465"
+  integrity sha512-4BilbyTVwj0pc02o1C8N+oTRpdGf2NJ9wxXjQtgBnfOdk1paUHDWEytBeeM/73W8frECvFsou5sepbAlS20g7g==
   dependencies:
     axios "^0.19.0"
     babel-polyfill "^6.26.0"
