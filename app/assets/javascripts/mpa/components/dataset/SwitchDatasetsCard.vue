@@ -72,11 +72,11 @@ to date.
                 </div>
                 <div class="single-dataset-wizard">
                     <heatmap-wizard-multi-sample 
-                        v-if="$store.getters.activeDataset" 
+                        v-if="$store.getters.getActiveAssay" 
                         :dataset="$store.getters.getActiveAssay" 
                         :selected-datasets="$store.getters.getSelectedAssays">
                     </heatmap-wizard-multi-sample>
-                    <div v-else>
+                    <div v-else style="display: flex; justify-content: center;">
                         <div class="text-xs-center" style="margin-top: 25px;">
                             <v-progress-circular indeterminate color="primary"></v-progress-circular>
                         </div>
