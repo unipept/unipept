@@ -92,6 +92,6 @@ group :development do
   gem 'guard', '~> 2.16.1'
   gem 'guard-minitest', '~> 2.4.6' # auto run tests
   gem 'rubocop', '~> 0.79.0'
-  gem 'rake', '~> 12.3.3'
+  gem 'rake', '~> 13.0.1'
   gem 'sprockets', '~> 3.7.2'
 end
