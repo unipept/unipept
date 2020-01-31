@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import App from '../../assets/javascripts/mpa/components/App.vue'
 import {AssayStore} from "../../assets/javascripts/mpa/state/AssayStore";
-import {GlobalStore} from "unipept-web-components/src/state/GlobalStore";
+import {FilterStore} from "unipept-web-components/src/state/FilterStore";
 import {ConfigurationStore} from "unipept-web-components/src/state/ConfigurationStore";
 import "unipept-visualizations/dist/unipept-visualizations.es5.js";
 import fullscreen from 'vue-fullscreen';
@@ -17,7 +17,7 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
     modules: {
         assay: AssayStore,
-        global: GlobalStore,
+        filter: FilterStore,
         configuration: ConfigurationStore
     }
 });
@@ -28,9 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
         components: { App },
         store: store,
         // @ts-ignore
-        vuetify: vuetify,
-        created: function() {
-            this.$store.dispatch('loadStoredDatasets')
-        }
+        vuetify: vuetify
     })
 });
