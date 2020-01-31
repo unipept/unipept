@@ -54,9 +54,9 @@ gem 'capistrano', '~> 3.11.2'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug', '~> 11.1.0', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'byebug', '~> 11.1.1', platforms: [:mri, :mingw, :x64_mingw]
   # Adds support for Capybara system testing and selenium driver
-  gem 'capybara', '~> 3.30.0'
+  gem 'capybara', '~> 3.31.0'
   gem 'selenium-webdriver', '~> 3.142.7'
 
   gem 'poltergeist', '~> 1.18.1'
@@ -92,6 +92,6 @@ group :development do
   gem 'guard', '~> 2.16.1'
   gem 'guard-minitest', '~> 2.4.6' # auto run tests
   gem 'rubocop', '~> 0.79.0'
-  gem 'rake', '~> 12.3.3'
+  gem 'rake', '~> 13.0.1'
   gem 'sprockets', '~> 3.7.2'
 end
