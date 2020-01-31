@@ -1322,9 +1322,9 @@
   integrity sha512-u/SJDyXwuihpwjXy7hOOghagLEV1KdAST6syfnOk6QZAMzZuWZqXy5aYYZbh8Jdpd4escVFP0MvftHNDb9pruA==
 
 "@types/node@^12.0.12":
-  version "12.12.25"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.25.tgz#792c0afb798f1dd681dce9c4b4c431f7245a0a42"
-  integrity sha512-nf1LMGZvgFX186geVZR1xMZKKblJiRfiASTHw85zED2kI1yDKHDwTKMdkaCbTlXoRKlGKaDfYywt+V0As30q3w==
+  version "12.12.26"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.26.tgz#213e153babac0ed169d44a6d919501e68f59dea9"
+  integrity sha512-UmUm94/QZvU5xLcUlNR8hA7Ac+fGpO1EG/a8bcWVz0P0LqtxFmun9Y2bbtuckwGboWJIT70DoWq1r3hb56n3DA==
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
@@ -2051,7 +2051,14 @@ aws4@^1.8.0:
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.9.0.tgz#24390e6ad61386b0a747265754d2a17219de862c"
   integrity sha512-Uvq6hVe90D0B2WEnUqtdgY1bATGz3mw33nH9Y+dmA+w5DHvUmBgkr5rM/KCHpCsiFNRUfokW/szpPPgMK2hm4A==
 
-axios@^0.19.0, axios@^0.19.1:
+axios@^0.19.0:
+  version "0.19.2"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.2.tgz#3ea36c5d8818d0d5f8a8a97a6d36b86cdc00cb27"
+  integrity sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==
+  dependencies:
+    follow-redirects "1.5.10"
+
+axios@^0.19.1:
   version "0.19.1"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.1.tgz#8a6a04eed23dfe72747e1dd43c604b8f1677b5aa"
   integrity sha512-Yl+7nfreYKaLRvAvjNPkvfjnQHJM1yLBY3zhqAwcJSwR/6ETkanUgylgtIvkvz0xJ+p/vZuNw8X7Hnb7Whsbpw==
@@ -2741,18 +2748,22 @@ caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000929, caniuse-lite@^1.0.30000981, can
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001015.tgz#15a7ddf66aba786a71d99626bc8f2b91c6f0f5f0"
   integrity sha512-/xL2AbW/XWHNu1gnIrO8UitBGoFthcsDgU9VLK1/dpsoxbaD5LscHozKze05R6WLsBvLhqv78dAPozMFQBYLbQ==
 
-canvg@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/canvg/-/canvg-2.0.0.tgz#9ff77bf8837106e358a12fb3d2bf11aeb60e5b46"
-  integrity sha512-PiKa+sjzzAv8HONsBaJZRhZ3eCM5uJkpFgF0rSzcamOrdXdls81ukjNxtz7JYyxucj6WpIkZwk9j7Jku0+ivqQ==
-  dependencies:
-    rgbcolor "^1.0.1"
-    stackblur-canvas "^2.0.0"
-
 canvg@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/canvg/-/canvg-3.0.4.tgz#b0107a70cbde348d3999a81df4a0b3a21dac1480"
   integrity sha512-kHVcM7yDtmklXgt6CTUARUqraRfSsncH3djAEcF5/f45P32MszMyhFMNu+UTPUQjvPdYkIFWy4BQNS5BNVIl7Q==
+  dependencies:
+    "@babel/runtime" "^7.6.3"
+    "@types/raf" "^3.4.0"
+    core-js "3"
+    raf "^3.4.1"
+    rgbcolor "^1.0.1"
+    stackblur-canvas "^2.0.0"
+
+canvg@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/canvg/-/canvg-3.0.5.tgz#73accf63be5a214674356f605f724a6973d6e2de"
+  integrity sha512-oIfE6EUhIxR6+jC76sAATLbcKtwYZTfdU6AEUpWOJfzL02Oh4fTnsdfph3fE5KPM9v2bCK8mcPsFoq0IGOV79g==
   dependencies:
     "@babel/runtime" "^7.6.3"
     "@types/raf" "^3.4.0"
@@ -4126,9 +4137,9 @@ defaults@^1.0.3:
     clone "^1.0.2"
 
 defer-to-connect@^1.0.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/defer-to-connect/-/defer-to-connect-1.1.1.tgz#88ae694b93f67b81815a2c8c769aef6574ac8f2f"
-  integrity sha512-J7thop4u3mRTkYRQ+Vpfwy2G5Ehoy82I14+14W4YMDLKdWloI9gSzRbV30s/NckQGVJtPkWNcW4oMAUigTdqiQ==
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/defer-to-connect/-/defer-to-connect-1.1.3.tgz#331ae050c08dcf789f8c83a7b81f0ed94f4ac591"
+  integrity sha512-0ISdNousHvZT2EiFlZeZAHBUvSxmKswVCEf8hW7KWgG4a8MVEu/3Vb6uWYozkjylyCxe0JBIiRB1jV45S70WVQ==
 
 define-properties@^1.1.2, define-properties@^1.1.3:
   version "1.1.3"
@@ -4405,9 +4416,9 @@ electron-to-chromium@^1.3.103, electron-to-chromium@^1.3.247, electron-to-chromi
   integrity sha512-Tc8JQEfGQ1MzfSzI/bTlSr7btJv/FFO7Yh6tanqVmIWOuNCu6/D1MilIEgLtmWqIrsv+o4IjpLAhgMBr/ncNAA==
 
 electron@^7.1.4:
-  version "7.1.9"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-7.1.9.tgz#5053195d2e476a3ecd881ece4edf64f0a8c32fa3"
-  integrity sha512-gkzDr08XxRaNZhwPLRXYNXDaPuiAeCrRPcClowlDVfCLKi+kRNhzekZpfYUBq8DdZCD29D3rCtgc9IHjD/xuHw==
+  version "7.1.11"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-7.1.11.tgz#3a95e35804af083d58b590513afea5e2290c4b66"
+  integrity sha512-YDXfnovKY+8iZ5ISQh1kRqYIRKbpOSxGXCx2WVxPFPutEQ7Q/Xzr3h4GePEY25/NXMytMfhKaAZAYjtWUm3r9Q==
   dependencies:
     "@electron/get" "^1.0.1"
     "@types/node" "^12.0.12"
@@ -5828,6 +5839,11 @@ html-entities@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/html-entities/-/html-entities-1.2.1.tgz#0df29351f0721163515dfb9e5543e5f6eed5162f"
   integrity sha1-DfKTUfByEWNRXfueVUPl9u7VFi8=
+
+html-to-image-no-fonts@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/html-to-image-no-fonts/-/html-to-image-no-fonts-0.1.2.tgz#dc49914b5c4a783e09791be7d43b0afb22e4dfec"
+  integrity sha512-ydCALOnrQV7Rg3g9+peWZ+//k8uMz6nVZ68nIf0AMpDwP1dP5xf73AO7/9pPzWmbzqxA/ZaQ2d82JdEIcUb5jQ==
 
 html2canvas@^1.0.0-rc.5:
   version "1.0.0-rc.5"
@@ -12358,20 +12374,21 @@ unipept-visualizations@^1.7.3:
   resolved "https://registry.yarnpkg.com/unipept-visualizations/-/unipept-visualizations-1.7.3.tgz#10a4c6f4cf745b88aaf353fbb74ddf2cb9b6584e"
   integrity sha512-g9AM+44twT+qQpg4kHhupamMoBr4QscjqjQY8Pdk7cdWHvZs5HuIVTNtH44IbAtN08x9+U3BTT+lp+ZEJpaoFw==
 
-unipept-web-components@^0.1.10:
-  version "0.1.10"
-  resolved "https://registry.yarnpkg.com/unipept-web-components/-/unipept-web-components-0.1.10.tgz#e997c6a9ee43867c9f0c85b0581657e5e3a3e465"
-  integrity sha512-4BilbyTVwj0pc02o1C8N+oTRpdGf2NJ9wxXjQtgBnfOdk1paUHDWEytBeeM/73W8frECvFsou5sepbAlS20g7g==
+unipept-web-components@^0.1.12:
+  version "0.1.12"
+  resolved "https://registry.yarnpkg.com/unipept-web-components/-/unipept-web-components-0.1.12.tgz#d463057ebc3b29d54c34df5aa0f21375db89ceae"
+  integrity sha512-smvnm6UGOXXnQcZWPh4bOp1nIJsjoIQxehslEMxemymwV3GrY2YnEFjs6yDnMKSsjIIv2a6kUAozNwdn8DvXVA==
   dependencies:
     axios "^0.19.0"
     babel-polyfill "^6.26.0"
-    canvg "^2.0.0"
+    canvg "^3.0.5"
     clipboard-polyfill "^2.8.6"
     convert-svg-to-png "^0.5.0"
     crypto-js "^3.1.9-1"
     d3 "^5.11.0"
     d3-selection "^1.4.0"
     electron "^7.1.4"
+    html-to-image-no-fonts "^0.1.2"
     html2canvas "^1.0.0-rc.5"
     jquery "^3.4.1"
     less "^3.10.3"
@@ -12808,7 +12825,12 @@ vuetify-loader@^1.3.0:
   dependencies:
     loader-utils "^1.2.0"
 
-vuetify@^2.0.0, vuetify@^2.2.4:
+vuetify@^2.0.0:
+  version "2.2.8"
+  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.2.8.tgz#9e9105503d38e66c0fad27aba08de5e65ff6ba99"
+  integrity sha512-qeN+X/6L1Xi3Mmog9PMDUKYjC2ZOk3trl7/vDMuP0gcH1QReKb9tqpLjAyP8niOgnvZcUQw4jSc7e4Esju8Seg==
+
+vuetify@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.2.4.tgz#3f82cb1694a306aac7c88bda815ad812df555bf9"
   integrity sha512-jhSdCeatWgHrY4Bb2FTi1sFfGDrVHLmkvI7pkG9FEF9TmZ+Qq7Ts85XAft9ucwU8ybB5nDmN6s+oeHJgvL+4tA==
