@@ -24,4 +24,12 @@ class PrivateApiControllerTest < ActionController::TestCase
     assert_template :ecnumbers
     assert_equal [{"code"=>"1.2.3.4", "name"=>"Some Enzyme"}], JSON.parse(response.body)
   end
+
+  test 'should get interpro entries' do
+    @request.headers['Content-Type'] = 'application/json'
+    post :ecnumbers, params: { interpros: ["IPR000126"] }
+    assert_response :success
+    assert_template :ecnumbers
+    assert_equal [{"code"=>"IPR000126", "name"=>"Serine proteases, V8 family, serine active site", "category"=>"Active_site"}], JSON.parse(response.body)
+  end
 end
