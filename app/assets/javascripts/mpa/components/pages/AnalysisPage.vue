@@ -31,7 +31,9 @@
         </v-row>
         <single-dataset-visualizations-card id="visualizations-card" 
             :dataRepository="this.$store.getters.getActiveAssay ? this.$store.getters.getActiveAssay.dataRepository : null" 
-            :analysisInProgress="$store.getters.datasetsInProgress > 0">
+            :analysisInProgress="$store.getters.datasetsInProgress > 0"
+            v-on:update-selected-term="onUpdateSelectedTerm"
+            v-on:update-selected-taxon-id="onUpdateSelectedTaxonId">
         </single-dataset-visualizations-card>
         <functional-summary-card style="margin-top: 12px;" 
             :dataRepository="this.$store.getters.getActiveAssay ? this.$store.getters.getActiveAssay.dataRepository : null" 
@@ -99,7 +101,14 @@ export default class AnalysisPage extends Vue {
     private onUpdateSearchSettings(settings: MPAConfig) {
         // We need to reprocess all assays with the new search settings.
         this.$store.dispatch("updateSearchSettings", settings);
-        
+    }
+
+    private onUpdateSelectedTerm(term: string) {
+        this.$store.dispatch('setSelectedTerm', term);
+    }
+
+    private onUpdateSelectedTaxonId(id: string) {
+        this.$store.dispatch('setSelectedTaxonId', id);
     }
 }
 </script>
