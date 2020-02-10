@@ -101,7 +101,7 @@ UnipeptWeb::Application.configure do
 
   # enable error emails
   config.unipept_error_mails = true
-  config.unipept_error_mails_addresses = ['bart.mesuere@ugent.be']
+  config.unipept_error_mails_addresses = ['unipept@ugent.be']
 end
 
 if Rails.application.config.unipept_error_mails
