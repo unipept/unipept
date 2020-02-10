@@ -29,8 +29,15 @@
                 </load-datasets-card>
             </v-col>
         </v-row>
-        <single-dataset-visualizations-card id="visualizations-card" :dataRepository="this.$store.getters.getActiveAssay ? this.$store.getters.getActiveAssay.dataRepository : null" :analysisInProgress="$store.getters.datasetsInProgress > 0"></single-dataset-visualizations-card>
-        <functional-summary-card style="margin-top: 12px;" :dataRepository="this.$store.getters.getActiveAssay ? this.$store.getters.getActiveAssay.dataRepository : null" :analysisInProgress="$store.getters.datasetsInProgress > 0"></functional-summary-card>
+        <single-dataset-visualizations-card id="visualizations-card" 
+            :dataRepository="this.$store.getters.getActiveAssay ? this.$store.getters.getActiveAssay.dataRepository : null" 
+            :analysisInProgress="$store.getters.datasetsInProgress > 0">
+        </single-dataset-visualizations-card>
+        <functional-summary-card style="margin-top: 12px;" 
+            :dataRepository="this.$store.getters.getActiveAssay ? this.$store.getters.getActiveAssay.dataRepository : null" 
+            :analysisInProgress="$store.getters.datasetsInProgress > 0"
+            :selected-taxon-id="$store.getters.getSelectedTaxonId">
+        </functional-summary-card>
     </div>
 </template>
 
