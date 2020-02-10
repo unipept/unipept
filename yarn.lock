@@ -12723,10 +12723,10 @@ vue-class-component@^7.0.2, vue-class-component@^7.1.0, vue-class-component@^7.2
   resolved "https://registry.yarnpkg.com/vue-class-component/-/vue-class-component-7.2.2.tgz#aecc6d28801f64c61eb04407cf3a5476da26b0c0"
   integrity sha512-QjVfjRffux0rUBNtxr1hvUxDrfifDvk9q/OSdB/sKIlfxAudDF2E1YTeiEC+qOYIOOBGWkgSKQSnast6H+S38w==
 
-vue-docgen-api@^4.7.6:
-  version "4.7.6"
-  resolved "https://registry.yarnpkg.com/vue-docgen-api/-/vue-docgen-api-4.7.6.tgz#1db24bce8e3119a29603361ca5ce6d73c93fffc3"
-  integrity sha512-eB4cVAVliiQVQIwvbhWs0t6RAFIdVabyGlDAxjtq3ghgtOQdUiVKMQsJPi+YxbMlWS99nrWLp+kC8TdMIuh6+g==
+vue-docgen-api@^4.7.7:
+  version "4.7.7"
+  resolved "https://registry.yarnpkg.com/vue-docgen-api/-/vue-docgen-api-4.7.7.tgz#685366830a8620a390d4bddd9afcd660757a7631"
+  integrity sha512-gwoqCM8NPKY6HE39fs8orpzWp9oTXpWVVUFGMFimAO+EPraqVB1dezv/g2c9s5E21hb0qryCEkeSsNmUpoRiCA==
   dependencies:
     "@babel/parser" "^7.6.0"
     "@babel/types" "^7.6.0"
@@ -12798,10 +12798,10 @@ vue-style-loader@^4.1.0:
     hash-sum "^1.0.2"
     loader-utils "^1.0.2"
 
-vue-styleguidist@^4.7.6:
-  version "4.7.6"
-  resolved "https://registry.yarnpkg.com/vue-styleguidist/-/vue-styleguidist-4.7.6.tgz#ad54d4720504f2bfeedc60b2442dee087a29dff3"
-  integrity sha512-AVe/h30mIuIa+g0EXh9ttt3kyc/u9O4eEAHqkicCi28gPz2t1anD5U57ofCvcG2VMfEyKjJyiv92Xj8IlDb8rA==
+vue-styleguidist@^4.7.7:
+  version "4.7.7"
+  resolved "https://registry.yarnpkg.com/vue-styleguidist/-/vue-styleguidist-4.7.7.tgz#bb1c95fc725b0709bcaa84d86b8bef703744196e"
+  integrity sha512-r91TxvZa37zpp/69EiauTP5G7vGeaFd9mkAT6izELAzPqh9K5Z5JFF6tUDrtxxTbsJjYRQDTdiz3vRphH63/VQ==
   dependencies:
     "@vxna/mini-html-webpack-template" "^1.0.0"
     ast-types "^0.13.2"
@@ -12849,7 +12849,7 @@ vue-styleguidist@^4.7.6:
     style-loader "^1.0.0"
     terser-webpack-plugin "^2.2.2"
     to-ast "^1.0.0"
-    vue-docgen-api "^4.7.6"
+    vue-docgen-api "^4.7.7"
     vue-inbrowser-compiler "^4.2.2"
     vue-inbrowser-compiler-utils "^4.0.1"
     webpack-dev-server "^3.7.1"
