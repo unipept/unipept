@@ -40,6 +40,8 @@ Metrics/PerceivedComplexity:
   Enabled: false
 Metrics/CyclomaticComplexity:
   Enabled: false
+Metrics/BlockNesting:
+  Enabled: false
 Naming/AccessorMethodName:
   Enabled: false
 Naming/PredicateName:
