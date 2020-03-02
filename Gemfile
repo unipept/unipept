@@ -91,7 +91,7 @@ group :development do
   gem 'annotate', '~> 3.0.3' # annotate models with database info
   gem 'guard', '~> 2.16.1'
   gem 'guard-minitest', '~> 2.4.6' # auto run tests
-  gem 'rubocop', '~> 0.79.0'
+  gem 'rubocop', '~> 0.80.1'
   gem 'rake', '~> 13.0.1'
   gem 'sprockets', '~> 3.7.2'
 end
