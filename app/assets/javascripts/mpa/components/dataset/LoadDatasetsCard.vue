@@ -70,9 +70,10 @@ import LoadLocalDatasetCard from "unipept-web-components/src/components/dataset/
 import SampleDataset from "unipept-web-components/src/logic/data-management/SampleDataset";
 import Tooltip from "unipept-web-components/src/custom/Tooltip.vue";
 import SampleDatasetCollection from "unipept-web-components/src/logic/data-management/SampleDatasetCollection";
-import StorageWriter from "unipept-web-components/src/logic/data-management/visitors/storage/StorageWriter";
 import { StorageType } from "unipept-web-components/src/logic/data-management/StorageType";
-import StorageRemover from "unipept-web-components/src/logic/data-management/visitors/storage/StorageRemover";
+import BrowserStorageRemover from "unipept-web-components/src/logic/data-management/assay/browser/BrowserStorageRemover";
+import BrowserStorageWriter from "unipept-web-components/src/logic/data-management/assay/browser/BrowserStorageWriter";
+
 
 @Component({
     components: {
@@ -122,8 +123,8 @@ export default class LoadDatasetsCard extends Vue {
      */
     private deleteAssayFromStorage(assay: Assay) {
         this.$store.dispatch('removeStoredAssay', assay);
-        const storageRemover: StorageRemover = new StorageRemover();
-        assay.visit(storageRemover);
+        const storageRemover: BrowserStorageRemover = new BrowserStorageRemover();
+        assay.accept(storageRemover);
     }
 
     /**
@@ -132,8 +133,8 @@ export default class LoadDatasetsCard extends Vue {
      * @param assay Assay for which all data should be written to persistent storage.
      */
     private storeAssayInStorage(assay: Assay) {
-        const storageWriter: StorageWriter = new StorageWriter();
-        assay.visit(storageWriter).then(() => {
+        const storageWriter: BrowserStorageWriter = new BrowserStorageWriter();
+        assay.accept(storageWriter).then(() => {
             // We only need to add the assay to the store, if it's explicitly written to local storage.
             if (assay.getStorageType() === StorageType.LocalStorage) {
                 this.$store.dispatch('addStoredAssay', assay);

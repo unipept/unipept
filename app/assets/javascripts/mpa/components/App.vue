@@ -14,9 +14,10 @@ import {Prop} from "vue-property-decorator";
 import PeptideContainer from "unipept-web-components/src/logic/data-management/PeptideContainer";
 import Assay from "unipept-web-components/src/logic/data-management/assay/Assay";
 import MetaProteomicsAssay from "unipept-web-components/src/logic/data-management/assay/MetaProteomicsAssay";
-import StorageWriter from "unipept-web-components/src/logic/data-management/visitors/storage/StorageWriter";
+import BrowserStorageWriter from "unipept-web-components/src/logic/data-management/assay/browser/BrowserStorageWriter";
 import { StorageType } from "unipept-web-components/src/logic/data-management/StorageType";
 import DatasetManager from "unipept-web-components/src/logic/data-management/DatasetManager";
+import { v4 as uuidv4 } from "uuid";
 
 
 @Component({
@@ -43,7 +44,7 @@ export default class App extends Vue {
 
     async mounted() {
         this.loading = true;
-        this.$store.dispatch('setBaseUrl', "");
+        await this.$store.dispatch('setBaseUrl', "");
         await this.readStoredAssays();
         this.loading = false;
 
@@ -56,22 +57,22 @@ export default class App extends Vue {
                 name = this.searchName;
             }
 
-            let assay: MetaProteomicsAssay = new MetaProteomicsAssay();
-            let storageWriter: StorageWriter = new StorageWriter();
+            let assay: MetaProteomicsAssay = new MetaProteomicsAssay([], uuidv4());
+            let storageWriter: BrowserStorageWriter = new BrowserStorageWriter();
             assay.setPeptides(this.peptides.trimRight().split(/\n/));
             assay.setDate(new Date());
             assay.setStorageType(StorageType.SessionStorage);
             assay.setName(name);
             
-            this.$store.dispatch('setSearchSettings', {
+            await this.$store.dispatch('setSearchSettings', {
                 il: this.il.toLowerCase() === "true",
                 dupes: this.dupes.toLowerCase() === "true",
                 missed: this.missed.toLowerCase() === "true"
             });
             
-            await assay.visit(storageWriter);
+            await assay.accept(storageWriter);
 
-            this.$store.dispatch('selectAssay', assay);
+            await this.$store.dispatch('selectAssay', assay);
             this.isAnalysis = true;
         }
     }
@@ -84,7 +85,7 @@ export default class App extends Vue {
         const datasetManager: DatasetManager = new DatasetManager();
         const assays = await datasetManager.listDatasets();
         for (let assay of assays) {
-            this.$store.dispatch("addStoredAssay", assay);
+            await this.$store.dispatch("addStoredAssay", assay);
         }
     }
 };

@@ -1,4 +1,4 @@
-const TerserPlugin = require('terser-webpack-plugin');
+const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
     optimization: {
@@ -11,6 +11,6 @@ module.exports = {
                 terserOptions: {}
             }),
         ],
-        nodeEnv: 'production'
+        nodeEnv: "production"
     }
 }
