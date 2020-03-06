@@ -10380,15 +10380,15 @@ react-simple-code-editor@^0.10.0:
   resolved "https://registry.yarnpkg.com/react-simple-code-editor/-/react-simple-code-editor-0.10.0.tgz#73e7ac550a928069715482aeb33ccba36efe2373"
   integrity sha512-bL5W5mAxSW6+cLwqqVWY47Silqgy2DKDTR4hDBrLrUqC5BXc29YVx17l2IZk5v36VcDEq1Bszu2oHm1qBwKqBA==
 
-react-simple-code-editor@^0.9.4:
-  version "0.9.15"
-  resolved "https://registry.yarnpkg.com/react-simple-code-editor/-/react-simple-code-editor-0.9.15.tgz#59e3583832e9e98992d3674b2d7673b4cd1c5709"
-  integrity sha512-M8iKgjBTBZK92tZYgOEfMuR7c3zZ0q0v3QYllSxIPx3SU+w003VofH50txXQSBTu92pSOm2tidON1HbQ1l8BDA==
+react-simple-code-editor@^0.11.0:
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/react-simple-code-editor/-/react-simple-code-editor-0.11.0.tgz#bb57c7c29b570f2ab229872599eac184f5bc673c"
+  integrity sha512-xGfX7wAzspl113ocfKQAR8lWPhavGWHL3xSzNLeseDRHysT+jzRBi/ExdUqevSMos+7ZtdfeuBOXtgk9HTwsrw==
 
-react-styleguidist@^10.5.0:
-  version "10.6.1"
-  resolved "https://registry.yarnpkg.com/react-styleguidist/-/react-styleguidist-10.6.1.tgz#e0489bd1e58a99625d599f210b01ca156d14bc04"
-  integrity sha512-rmJ1SJC1TW4KSk/BdZ/gvpUQWQGyCuQm7DT2cqRlcd35/IBV8zEqgIR+pP0TuGpqwvB/4/8lfT2Vto5oMTunbA==
+react-styleguidist@^10.6.2:
+  version "10.6.2"
+  resolved "https://registry.yarnpkg.com/react-styleguidist/-/react-styleguidist-10.6.2.tgz#2be036b64de0f381c427e88e3bd008ffe3118b44"
+  integrity sha512-wDvhklJAHiE/oBIxBg3nAxzGCfmO/V//5WC7DSLEzs+Z+wM5ynLnhgSldJgtqusoU3lAyyHYz8FOshNUbajsMw==
   dependencies:
     "@vxna/mini-html-webpack-template" "^1.0.0"
     acorn "~6.4.0"
@@ -12723,10 +12723,10 @@ vue-class-component@^7.0.2, vue-class-component@^7.1.0, vue-class-component@^7.2
   resolved "https://registry.yarnpkg.com/vue-class-component/-/vue-class-component-7.2.2.tgz#aecc6d28801f64c61eb04407cf3a5476da26b0c0"
   integrity sha512-QjVfjRffux0rUBNtxr1hvUxDrfifDvk9q/OSdB/sKIlfxAudDF2E1YTeiEC+qOYIOOBGWkgSKQSnast6H+S38w==
 
-vue-docgen-api@^4.7.6:
-  version "4.7.6"
-  resolved "https://registry.yarnpkg.com/vue-docgen-api/-/vue-docgen-api-4.7.6.tgz#1db24bce8e3119a29603361ca5ce6d73c93fffc3"
-  integrity sha512-eB4cVAVliiQVQIwvbhWs0t6RAFIdVabyGlDAxjtq3ghgtOQdUiVKMQsJPi+YxbMlWS99nrWLp+kC8TdMIuh6+g==
+vue-docgen-api@^4.13.1:
+  version "4.13.1"
+  resolved "https://registry.yarnpkg.com/vue-docgen-api/-/vue-docgen-api-4.13.1.tgz#dd79e3afd34a31e47302888ad51dbb2de3e60070"
+  integrity sha512-4mElJfcv5cyApPHbJ+1CWbH0PChih7OKQSaTfAHuS8dx3UbWKt0zGMEzV1jipQ+oVnbi4tfbmsMSh+9R0dekSQ==
   dependencies:
     "@babel/parser" "^7.6.0"
     "@babel/types" "^7.6.0"
@@ -12798,10 +12798,10 @@ vue-style-loader@^4.1.0:
     hash-sum "^1.0.2"
     loader-utils "^1.0.2"
 
-vue-styleguidist@^4.7.6:
-  version "4.7.6"
-  resolved "https://registry.yarnpkg.com/vue-styleguidist/-/vue-styleguidist-4.7.6.tgz#ad54d4720504f2bfeedc60b2442dee087a29dff3"
-  integrity sha512-AVe/h30mIuIa+g0EXh9ttt3kyc/u9O4eEAHqkicCi28gPz2t1anD5U57ofCvcG2VMfEyKjJyiv92Xj8IlDb8rA==
+vue-styleguidist@^4.13.1:
+  version "4.13.1"
+  resolved "https://registry.yarnpkg.com/vue-styleguidist/-/vue-styleguidist-4.13.1.tgz#cf4e4981f93eda8ae779340d41c34d831c79cb8e"
+  integrity sha512-LF/XEEL3mlLEPIUWlfhNil1CM2Lch0gQpBJKp1bwiE2ECmDXEWlBu3UVlye/lzDn1T8U/fw/cK8Q9n/CHN54dg==
   dependencies:
     "@vxna/mini-html-webpack-template" "^1.0.0"
     ast-types "^0.13.2"
@@ -12843,16 +12843,16 @@ vue-styleguidist@^4.7.6:
     react-group "^1.0.6"
     react-icons "^3.7.0"
     react-lifecycles-compat "^3.0.4"
-    react-simple-code-editor "^0.9.4"
-    react-styleguidist "^10.5.0"
+    react-simple-code-editor "^0.11.0"
+    react-styleguidist "^10.6.2"
     rewrite-imports "^2.0.3"
     style-loader "^1.0.0"
     terser-webpack-plugin "^2.2.2"
     to-ast "^1.0.0"
-    vue-docgen-api "^4.7.6"
+    vue-docgen-api "^4.13.1"
     vue-inbrowser-compiler "^4.2.2"
     vue-inbrowser-compiler-utils "^4.0.1"
-    webpack-dev-server "^3.7.1"
+    webpack-dev-server "^3.10.3"
     webpack-merge "^4.0.0"
 
 vue-template-compiler@^2.0.0, vue-template-compiler@^2.6.11:
@@ -12987,10 +12987,10 @@ webpack-dev-middleware@^3.7.2:
     range-parser "^1.2.1"
     webpack-log "^2.0.0"
 
-webpack-dev-server@^3.10.1, webpack-dev-server@^3.7.1, webpack-dev-server@^3.9.0:
-  version "3.10.1"
-  resolved "https://registry.yarnpkg.com/webpack-dev-server/-/webpack-dev-server-3.10.1.tgz#1ff3e5cccf8e0897aa3f5909c654e623f69b1c0e"
-  integrity sha512-AGG4+XrrXn4rbZUueyNrQgO4KGnol+0wm3MPdqGLmmA+NofZl3blZQKxZ9BND6RDNuvAK9OMYClhjOSnxpWRoA==
+webpack-dev-server@^3.10.1, webpack-dev-server@^3.10.3, webpack-dev-server@^3.9.0:
+  version "3.10.3"
+  resolved "https://registry.yarnpkg.com/webpack-dev-server/-/webpack-dev-server-3.10.3.tgz#f35945036813e57ef582c2420ef7b470e14d3af0"
+  integrity sha512-e4nWev8YzEVNdOMcNzNeCN947sWJNd43E5XvsJzbAL08kGc2frm1tQ32hTJslRS+H65LCb/AaUCYU7fjHCpDeQ==
   dependencies:
     ansi-html "0.0.7"
     bonjour "^3.5.0"
