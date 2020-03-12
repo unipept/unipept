@@ -43,7 +43,7 @@ UnipeptWeb::Application.configure do
 
   # Highlight code that triggered database queries in logs.
   config.active_record.verbose_query_logs = true
-  
+
   # Do not compress assets
   config.assets.compress = false
 
@@ -73,7 +73,7 @@ UnipeptWeb::Application.configure do
   config.unipept_stathat_key = 'unipept@ugent.be'
 
   # enable error emails
-  config.unipept_error_mails = true
+  config.unipept_error_mails = false
   config.unipept_error_mails_addresses = ['unipept@ugent.be']
 end
 
