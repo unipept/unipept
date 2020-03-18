@@ -1,7 +1,7 @@
 <template>
     <v-app v-if="!this.loading" class="unipept-web-app">
         <home-page v-if="!isAnalysis" v-on:start-analysis="onStartAnalysis"></home-page>
-        <analysis-page v-else></analysis-page>
+<!--        <analysis-page v-else></analysis-page>-->
     </v-app>
 </template>
 
@@ -11,18 +11,13 @@ import Component from "vue-class-component";
 import HomePage from "./pages/HomePage.vue";
 import AnalysisPage from "./pages/AnalysisPage.vue";
 import {Prop} from "vue-property-decorator";
-import PeptideContainer from "unipept-web-components/src/logic/data-management/PeptideContainer";
-import Assay from "unipept-web-components/src/logic/data-management/assay/Assay";
-import MetaProteomicsAssay from "unipept-web-components/src/logic/data-management/assay/MetaProteomicsAssay";
-import BrowserStorageWriter from "unipept-web-components/src/logic/data-management/assay/browser/BrowserStorageWriter";
-import { StorageType } from "unipept-web-components/src/logic/data-management/StorageType";
-import DatasetManager from "unipept-web-components/src/logic/data-management/DatasetManager";
 import { v4 as uuidv4 } from "uuid";
-
+import ProteomicsAssay from "unipept-web-components/src/business/entities/assay/ProteomicsAssay";
+import BrowserStorageWriter from "unipept-web-components/dist/business/storage/browser/assay/BrowserStorageWriter";
 
 @Component({
     components: {
-        HomePage, 
+        HomePage,
         AnalysisPage
     }
 })
@@ -38,6 +33,7 @@ export default class App extends Vue {
     public missed: string;
     @Prop({default: ""})
     public searchName: string;
+
 
     private isAnalysis: boolean = false;
     private loading: boolean = true;
@@ -57,20 +53,19 @@ export default class App extends Vue {
                 name = this.searchName;
             }
 
-            let assay: MetaProteomicsAssay = new MetaProteomicsAssay([], uuidv4());
+            let assay: ProteomicsAssay = new ProteomicsAssay([], uuidv4());
             let storageWriter: BrowserStorageWriter = new BrowserStorageWriter();
             assay.setPeptides(this.peptides.trimRight().split(/\n/));
             assay.setDate(new Date());
             assay.setStorageType(StorageType.SessionStorage);
             assay.setName(name);
-            
+
             await this.$store.dispatch('setSearchSettings', {
                 il: this.il.toLowerCase() === "true",
                 dupes: this.dupes.toLowerCase() === "true",
                 missed: this.missed.toLowerCase() === "true"
             });
-            
-            await assay.accept(storageWriter);
+            await assay.visit(storageWriter);
 
             await this.$store.dispatch('selectAssay', assay);
             this.isAnalysis = true;
@@ -80,7 +75,7 @@ export default class App extends Vue {
     private onStartAnalysis(status: boolean) {
         this.isAnalysis = status;
     }
-    
+
     private async readStoredAssays() {
         const datasetManager: DatasetManager = new DatasetManager();
         const assays = await datasetManager.listDatasets();

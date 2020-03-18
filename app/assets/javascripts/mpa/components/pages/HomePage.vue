@@ -10,8 +10,8 @@
                 </select-datasets-card>
             </v-col>
             <v-col class="col-md-6">
-                <load-datasets-card 
-                    :selected-assays="this.$store.getters.getSelectedAssays" 
+                <load-datasets-card
+                    :selected-assays="this.$store.getters.getSelectedAssays"
                     :stored-assays="this.$store.getters.getStoredAssays"
                     style="min-height: 100%;">
                 </load-datasets-card>
@@ -27,13 +27,12 @@ import Component from "vue-class-component";
 import LoadDatasetsCard from "./../dataset/LoadDatasetsCard.vue";
 import SelectDatasetsCard from "./../dataset/SelectDatasetsCard.vue";
 import SearchHelp from "./../miscellaneous/SearchHelp.vue";
-import PeptideContainer from "unipept-web-components/src/logic/data-management/PeptideContainer";
 import Assay from "unipept-web-components/src/logic/data-management/assay/Assay";
 
 @Component({
     components: {
-        LoadDatasetsCard, 
-        SelectDatasetsCard, 
+        LoadDatasetsCard,
+        SelectDatasetsCard,
         SearchHelp
     }
 })
