@@ -1,0 +1,39 @@
+# == Schema Information
+#
+# Table name: interpro_entries
+#
+#  id        :integer          unsigned, not null, primary key
+#  code      :string(15)       not null
+#  category  :string(18)       not null
+#  name      :string(200)      not null
+#
+
+interpro1:
+    id: 1
+    code: "IPR000126"
+    category: "Active_site"
+    name: "Serine proteases, V8 family, serine active site"
+
+interpro2:
+    id: 2
+    code: "IPR000169"
+    category: "Active_site"
+    name: "Cysteine peptidase, cysteine active site"
+
+interpro3:
+    id: 3
+    code: "IPR013516"
+    category: "Binding_site"
+    name: "Phytochrome chromophore binding site"
+
+interpro4:
+    id: 4
+    code: "IPR015881"
+    category: "Binding_site"
+    name: "Aromatic-ring-hydroxylating dioxygenase, 2Fe-2S-binding site"
+
+interpro5:
+    id: 5
+    code: "IPR018220"
+    category: "Binding_site"
+    name: "Adenylosuccinate synthase, GTP-binding site"

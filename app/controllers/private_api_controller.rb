@@ -13,6 +13,11 @@ class PrivateApiController < HandleOptionsController
     @ecnumbers = EcNumber.where(code: ec_nrs)
   end
 
+  def interpros
+    interpro_entries = params[:interpros]
+    @interpros = InterproEntry.where(code: interpro_entries)
+  end
+
   def taxa
     taxids = params[:taxids] || []
     @taxa = Taxon.includes(:lineage).where(id: taxids)

@@ -32,6 +32,7 @@ UnipeptWeb::Application.routes.draw do
     match "goterms", via: [:get, :post], :to => "private_api#goterms"
     match "ecnumbers",     via: [:get, :post], :to => "private_api#ecnumbers"
     match "taxa",     via: [:get, :post], :to => "private_api#taxa"
+    match "interpros", via: [:get, :post], :to => "private_api#interpros"
   end
 
   # search
