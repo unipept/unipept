@@ -15,7 +15,7 @@ class PrivateApiController < HandleOptionsController
 
   def taxa
     taxids = params[:taxids] || []
-    @taxa = Taxon.where(id: taxids)
+    @taxa = Taxon.includes(:lineage).where(id: taxids)
   end
 
   private
