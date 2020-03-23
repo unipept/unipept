@@ -6,7 +6,7 @@
   },
   "dependencies": {
     "@mdi/font": "^4.8.95",
-    "@rails/webpacker": "^4.2.2",
+    "@rails/webpacker": "^5.0.0",
     "@types/d3": "^5.7.2",
     "@types/jquery": "^3.3.31",
     "axios": "^0.19.2",
