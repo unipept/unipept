@@ -1,5 +1,5 @@
 class PrivateApiController < HandleOptionsController
-  before_action :set_headers, only: %i[goterms ecnumbers taxa]
+  before_action :set_headers, only: %i[goterms ecnumbers interpros taxa]
   before_action :default_format_json
   skip_before_action :verify_authenticity_token
 
