@@ -16,45 +16,23 @@ to date.
                 </tooltip>
             </div>
         </card-header>
-        <v-card-text v-if="this.selectedAssays.length === 0">
+        <v-card-text v-if="$store.getters.getAssays.length === 0">
             <span>Please add one or more datasets by clicking the plus button above...</span>
         </v-card-text>
         <div class="growing-list">
             <v-list two-line>
-                <v-list-item v-for="assay of this.selectedAssays" :key="assay.id" ripple @click="activateAssay(assay)" :class="activeAssay === assay ? 'selected-list-item' : ''">
-                    <v-list-item-action>
-                        <div class="select-dataset-radio" v-if="assay.progress === 1">
-                            <v-radio-group v-model="activeDatasetModel">
-                                <v-radio :value="assay"></v-radio>
-                            </v-radio-group>
-                        </div>
-                        <v-progress-circular v-else :rotate="-90" :size="24" :value="assay.progress * 100" color="primary"></v-progress-circular>
-                    </v-list-item-action>
-                    <v-list-item-content>
-                        <v-list-item-title>
-                            {{ assay.getName() }}
-                        </v-list-item-title>
-                        <v-list-item-subtitle>
-                            {{ assay.getAmountOfPeptides() }} peptides
-                        </v-list-item-subtitle>
-                    </v-list-item-content>
-
-                    <v-list-item-action>
-                        <v-list-item-action-text>
-                            {{ assay.getDateFormatted() }}
-                        </v-list-item-action-text>
-                        <tooltip message="Remove assay from analysis.">
-                            <v-icon @click="deselectAssay(assay)" v-on:click.stop>mdi-delete-outline</v-icon>
-                        </tooltip>
-                    </v-list-item-action>
-                </v-list-item>
+                <assay-item
+                    v-for="assay of $store.getters.getAssays"
+                    :assay="assay"
+                    :key="assay.getId()">
+                </assay-item>
             </v-list>
             <v-card-text>
                 <v-divider></v-divider>
                 <div class="card-actions">
                     <tooltip message="Compare samples above using a heatmap.">
-                        <v-btn 
-                            :disabled="$store.getters.getSelectedAssays.some(el => el.progress !== 1)"
+                        <v-btn
+                            :disabled="$store.getters.isInProgress"
                             @click="compareAssays">
                             Compare samples
                         </v-btn>
@@ -71,10 +49,10 @@ to date.
                     <h4 class="modal-title">Heatmap wizard</h4>
                 </div>
                 <div class="single-dataset-wizard">
-                    <heatmap-wizard-multi-sample 
-                        v-if="$store.getters.getActiveAssay" 
-                        :dataset="$store.getters.getActiveAssay" 
-                        :selected-datasets="$store.getters.getSelectedAssays">
+                    <heatmap-wizard-multi-sample
+                        v-if="this.$store.getters.getActiveAssay"
+                        :dataset="this.$store.getters.getActiveAssay"
+                        :selected-datasets="this.$store.getters.getAssays">
                     </heatmap-wizard-multi-sample>
                     <div v-else style="display: flex; justify-content: center;">
                         <div class="text-xs-center" style="margin-top: 25px;">
@@ -91,40 +69,21 @@ to date.
 import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop, Watch } from "vue-property-decorator";
-import PeptideContainer from "unipept-web-components/src/logic/data-management/PeptideContainer";
-
 import CardHeader from "unipept-web-components/src/components/custom/CardHeader.vue";
 import CardTitle from "unipept-web-components/src/components/custom/CardTitle.vue";
-
 import HeatmapWizardMultiSample from "unipept-web-components/src/components/heatmap/HeatmapWizardMultiSample.vue";
 import Tooltip from "unipept-web-components/src/components/custom/Tooltip.vue";
-import Assay from "unipept-web-components/src/logic/data-management/assay/Assay";
+import ProteomicsAssay from "unipept-web-components/src/business/entities/assay/ProteomicsAssay";
+import AssayItem from "./AssayItem.vue";
 
 @Component({
-    components: { CardTitle, CardHeader, HeatmapWizardMultiSample, Tooltip },
-    computed: {
-        activeDatasetModel: {
-            get(): PeptideContainer {
-                return this.activeAssay;
-            },
-            set(dataset: PeptideContainer): void {
-                // Nothing to do here!
-            }
-        }
-    }
+    components: { CardTitle, CardHeader, HeatmapWizardMultiSample, Tooltip, AssayItem }
 })
 export default class SwitchDatasetsCard extends Vue {
-    @Prop({ required: true })
-    private selectedAssays: Assay[];
-    @Prop({ required: true })
-    private activeAssay: Assay;
-
     private isAssaySelectionInProgress: boolean = false;
     private dialogOpen: boolean = false;
 
-    private deselectAssay(dataset: Assay) {
-        let idx: number = this.selectedAssays.indexOf(dataset);
-        this.selectedAssays.splice(idx, 1);
+    private deselectAssay(dataset: ProteomicsAssay) {
         this.$emit("deselect-assay", dataset);
     }
 
@@ -138,13 +97,13 @@ export default class SwitchDatasetsCard extends Vue {
     }
 
     /**
-     * This function gets called whenever the user changes the currently active assay. The assay dataset is the 
+     * This function gets called whenever the user changes the currently active assay. The assay dataset is the
      * dataset for which the visualizations are currently shown.
-     * 
+     *
      * @param assay The assay that's currently activated by the user.
      */
-    private activateAssay(assay: Assay) {
-        if (assay.progress === 1) {
+    private activateAssay(assay: ProteomicsAssay) {
+        if (this.$store.getters.getProgressStatesMap[assay.getId()].progress === 1) {
             this.$emit("activate-assay", assay)
         }
     }
@@ -152,19 +111,6 @@ export default class SwitchDatasetsCard extends Vue {
 </script>
 
 <style lang="less">
-    .selected-list-tile .v-list__tile:before {
-        content: ' ';
-        background-color: #2196F3;
-        width: 4px;
-        height: 100%;
-        position: relative;
-        left: -12px;
-    }
-
-    .selected-list-tile .v-list__tile {
-        margin-left: -4px;
-    }
-
     .growing-list {
         min-height: 100%;
         flex-grow: 1;

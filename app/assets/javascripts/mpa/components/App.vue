@@ -1,7 +1,10 @@
 <template>
     <v-app v-if="!this.loading" class="unipept-web-app">
-        <home-page v-if="!isAnalysis" v-on:start-analysis="onStartAnalysis"></home-page>
-<!--        <analysis-page v-else></analysis-page>-->
+        <home-page
+            v-if="!isAnalysis"
+            v-on:start-analysis="onStartAnalysis">
+        </home-page>
+        <analysis-page v-else :project="project"></analysis-page>
     </v-app>
 </template>
 
@@ -13,7 +16,9 @@ import AnalysisPage from "./pages/AnalysisPage.vue";
 import {Prop} from "vue-property-decorator";
 import { v4 as uuidv4 } from "uuid";
 import ProteomicsAssay from "unipept-web-components/src/business/entities/assay/ProteomicsAssay";
-import BrowserStorageWriter from "unipept-web-components/dist/business/storage/browser/assay/BrowserStorageWriter";
+import BrowserStorageWriter from "unipept-web-components/src/business/storage/browser/assay/BrowserStorageWriter";
+import BrowserAssayManager from "unipept-web-components/src/business/storage/browser/assay/BrowserAssayManager";
+import NetworkConfiguration from "unipept-web-components/src/business/communication/NetworkConfiguration";
 
 @Component({
     components: {
@@ -23,24 +28,23 @@ import BrowserStorageWriter from "unipept-web-components/dist/business/storage/b
 })
 export default class App extends Vue {
     @Prop({default: ""})
-    public peptides: string;
+    private peptides: string;
     // Cannot get boolean value directly from incoming string
     @Prop({default: true})
-    public il: string;
+    private il: string;
     @Prop({default: true})
-    public dupes: string;
+    private dupes: string;
     @Prop({default: false})
-    public missed: string;
+    private missed: string;
     @Prop({default: ""})
-    public searchName: string;
-
+    private searchName: string;
 
     private isAnalysis: boolean = false;
     private loading: boolean = true;
 
     async mounted() {
         this.loading = true;
-        await this.$store.dispatch('setBaseUrl', "");
+        NetworkConfiguration.BASE_URL = "http://localhost:5000";
         await this.readStoredAssays();
         this.loading = false;
 
@@ -54,20 +58,18 @@ export default class App extends Vue {
             }
 
             let assay: ProteomicsAssay = new ProteomicsAssay([], uuidv4());
-            let storageWriter: BrowserStorageWriter = new BrowserStorageWriter();
+            let storageWriter: BrowserStorageWriter = new BrowserStorageWriter(window.sessionStorage);
             assay.setPeptides(this.peptides.trimRight().split(/\n/));
             assay.setDate(new Date());
-            assay.setStorageType(StorageType.SessionStorage);
             assay.setName(name);
-
-            await this.$store.dispatch('setSearchSettings', {
-                il: this.il.toLowerCase() === "true",
-                dupes: this.dupes.toLowerCase() === "true",
-                missed: this.missed.toLowerCase() === "true"
+            assay.setSearchConfiguration({
+                equateIl: this.il.toLowerCase() === "true",
+                filterDuplicates: this.dupes.toLowerCase() === "true",
+                enableMissingCleavageHandling: this.missed.toLowerCase() === "true"
             });
-            await assay.visit(storageWriter);
+            await assay.accept(storageWriter);
 
-            await this.$store.dispatch('selectAssay', assay);
+            await this.$store.dispatch("addAssay", assay);
             this.isAnalysis = true;
         }
     }
@@ -77,9 +79,8 @@ export default class App extends Vue {
     }
 
     private async readStoredAssays() {
-        const datasetManager: DatasetManager = new DatasetManager();
-        const assays = await datasetManager.listDatasets();
-        for (let assay of assays) {
+        const browserManager = new BrowserAssayManager();
+        for (const assay of await browserManager.listAssays()) {
             await this.$store.dispatch("addStoredAssay", assay);
         }
     }
@@ -120,6 +121,10 @@ export default class App extends Vue {
 
     .theme--light.v-card > .v-card__text, .theme--light.v-label  {
         color: rgb(85, 85, 85);
+    }
+
+    .theme--light.v-application {
+        background-color: #FAFAFA !important;
     }
 
 </style>

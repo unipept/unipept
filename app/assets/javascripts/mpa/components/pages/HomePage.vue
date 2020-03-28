@@ -3,17 +3,13 @@
         <v-row>
             <v-col>
                 <select-datasets-card
-                    :selected-assays="this.$store.getters.getSelectedAssays"
                     v-on:deselect-assay="onDeselectAssay"
                     v-on:start-analysis="onStartAnalysis"
                     style="min-height: 100%;">
                 </select-datasets-card>
             </v-col>
             <v-col class="col-md-6">
-                <load-datasets-card
-                    :selected-assays="this.$store.getters.getSelectedAssays"
-                    :stored-assays="this.$store.getters.getStoredAssays"
-                    style="min-height: 100%;">
+                <load-datasets-card style="min-height: 100%;">
                 </load-datasets-card>
             </v-col>
         </v-row>
@@ -27,7 +23,8 @@ import Component from "vue-class-component";
 import LoadDatasetsCard from "./../dataset/LoadDatasetsCard.vue";
 import SelectDatasetsCard from "./../dataset/SelectDatasetsCard.vue";
 import SearchHelp from "./../miscellaneous/SearchHelp.vue";
-import Assay from "unipept-web-components/src/logic/data-management/assay/Assay";
+import { Prop } from "vue-property-decorator";
+import ProteomicsAssay from "unipept-web-components/src/business/entities/assay/ProteomicsAssay";
 
 @Component({
     components: {
@@ -37,15 +34,15 @@ import Assay from "unipept-web-components/src/logic/data-management/assay/Assay"
     }
 })
 export default class HomePage extends Vue {
-    private listeners: {type: string, listener: any} [] = [];
-
-    private onDeselectAssay(assay: Assay) {
-        this.$store.dispatch('deselectAssay', assay);
+    private onDeselectAssay(assay: ProteomicsAssay) {
+        this.$store.dispatch("removeAssay", assay);
     }
 
     private onStartAnalysis(status: boolean) {
         this.$emit("start-analysis", status);
     }
+
+
 };
 </script>
 
