@@ -8,7 +8,7 @@
     "@mdi/font": "^4.8.95",
     "@rails/webpacker": "^4.2.2",
     "@types/d3": "^5.7.2",
-    "@types/jquery": "^3.3.31",
+    "@types/jquery": "^3.3.34",
     "axios": "^0.19.2",
     "babel-loader": "^8.0.5",
     "canvg": "^3.0.4",
