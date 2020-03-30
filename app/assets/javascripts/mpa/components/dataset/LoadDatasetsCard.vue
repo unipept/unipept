@@ -53,6 +53,13 @@
                 </load-local-dataset-card>
             </v-tab-item>
         </v-tabs-items>
+        <v-snackbar v-model="errorSnackbar" color="error" multi-line :timeout="0" top>
+            Could not save this assay due to storage restrictions. You can still analyse the assay now, but you will not
+            be able to restore it in future sessions. Please delete some unused assays to make space for this one.
+            <v-btn color="white" text @click="errorSnackbar = false">
+                Close
+            </v-btn>
+        </v-snackbar>
     </v-card>
 </template>
 
@@ -89,6 +96,7 @@ export default class LoadDatasetsCard extends Vue {
     private isDark: boolean;
 
     private currentTab: number = 0;
+    private errorSnackbar: boolean = false;
 
     private onCreateAssay(assay: ProteomicsAssay) {
         this.$store.dispatch("addAssay", assay);
@@ -122,10 +130,15 @@ export default class LoadDatasetsCard extends Vue {
      * @param assay Assay for which all data should be written to persistent storage.
      */
     private async storeAssayInStorage(assay: ProteomicsAssay, localStorage: boolean) {
-        const storageWriter: BrowserStorageWriter = new BrowserStorageWriter(localStorage ? window.localStorage : window.sessionStorage);
-        await assay.accept(storageWriter);
-        // We only need to add the assay to the store, if it's explicitly written to local storage.
         if (localStorage) {
+            const storageWriter: BrowserStorageWriter = new BrowserStorageWriter(window.localStorage);
+            try {
+                await assay.accept(storageWriter);
+            } catch (err) {
+                console.error(err);
+                this.errorSnackbar = true;
+            }
+            // We only need to add the assay to the store, if it's explicitly written to local storage.
             await this.$store.dispatch('addStoredAssay', assay);
         }
     }

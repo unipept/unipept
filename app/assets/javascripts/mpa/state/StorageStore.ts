@@ -165,8 +165,8 @@ const storageMutations: MutationTree<StorageState> = {
         state.searchConfiguration = config;
     },
 
-    SET_PROGRESS(state: StorageState, progress: boolean) {
-        state.inProgress = progress;
+    UPDATE_PROGRESS(state: StorageState, progress: boolean) {
+        state.inProgress = state.progressStates.some(p => p.progress < 1);
     }
 }
 
@@ -184,7 +184,7 @@ const storageActions: ActionTree<StorageState, any> = {
      * @param assay The assay that should be added to the list of stored assays.
      */
     async removeStoredAssay(store: ActionContext<StorageState, any>, assay: ProteomicsAssay) {
-        await store.dispatch("deleteAssay", assay);
+        await store.dispatch("removeAssay", assay);
         store.commit("REMOVE_STORED_ASSAY", assay);
     },
 
@@ -234,7 +234,7 @@ const storageActions: ActionTree<StorageState, any> = {
         const processedItem = store.getters.getProgressStatesMap.find(p => p.assay.getId() === assay.getId());
 
         processedItem.progress = 0;
-        store.commit("SET_PROGRESS", true);
+        store.commit("UPDATE_PROGRESS");
         processedItem.errorStatus = undefined;
         processedItem.countTable = undefined;
 
@@ -253,7 +253,7 @@ const storageActions: ActionTree<StorageState, any> = {
         }
 
         processedItem.countTable = countTable;
-        store.commit("SET_PROGRESS", store.getters.getProgressStatesMap.some(p => p.progress < 1));
+        store.commit("UPDATE_PROGRESS");
         await store.dispatch("resetActiveAssay");
     },
 

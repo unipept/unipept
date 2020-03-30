@@ -58,7 +58,6 @@ export default class App extends Vue {
             }
 
             let assay: ProteomicsAssay = new ProteomicsAssay([], uuidv4());
-            let storageWriter: BrowserStorageWriter = new BrowserStorageWriter(window.sessionStorage);
             assay.setPeptides(this.peptides.trimRight().split(/\n/));
             assay.setDate(new Date());
             assay.setName(name);
@@ -67,7 +66,6 @@ export default class App extends Vue {
                 filterDuplicates: this.dupes.toLowerCase() === "true",
                 enableMissingCleavageHandling: this.missed.toLowerCase() === "true"
             });
-            await assay.accept(storageWriter);
 
             await this.$store.dispatch("addAssay", assay);
             this.isAnalysis = true;

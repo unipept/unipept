@@ -13,7 +13,7 @@
                 <experiment-summary-card
                     v-if="!datasetSelectionInProgress"
                     style="min-height: 100%;"
-                    :disabled="$store.getters.isInProgress"
+                    :disabled="inProgress"
                     :activeAssay="$store.getters.getActiveAssay"
                     :searchConfiguration="$store.getters.getSearchConfiguration"
                     v-on:update-search-settings="onUpdateSearchSettings">
@@ -80,6 +80,11 @@ import { Peptide } from "unipept-web-components/src/business/ontology/raw/Peptid
                 } else {
                     return undefined;
                 }
+            }
+        },
+        inProgress: {
+            get(): boolean {
+                return this.$store.getters.getProgressStatesMap.some(p => p.progress < 1);
             }
         }
     }
