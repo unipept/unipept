@@ -92,6 +92,7 @@ export default class LoadDatasetsCard extends Vue {
 
     private onCreateAssay(assay: ProteomicsAssay) {
         this.$store.dispatch("addAssay", assay);
+        this.$emit("create-assay", assay);
     }
 
     private onDestroyAssay(assay: ProteomicsAssay) {

@@ -9,7 +9,8 @@ import { Peptide } from "unipept-web-components/src/business/ontology/raw/Peptid
 type ProgressState = {
     progress: number,
     countTable: CountTable<Peptide>,
-    errorStatus: Error
+    errorStatus: Error,
+    assay: ProteomicsAssay
 };
 
 /**
@@ -23,7 +24,9 @@ export interface StorageState {
     searchConfiguration: SearchConfiguration,
     // Which assay are stored in this browser's local storage?
     storedAssays: ProteomicsAssay[],
-    progressStates: {},
+    // Unfortunately this needs to be an array as changes to an object or map are not tracked by Vue's reactivity
+    // system.
+    progressStates: ProgressState[],
     inProgress: boolean
 }
 
@@ -32,7 +35,7 @@ const storageState: StorageState = {
     activeAssay: null,
     searchConfiguration: new SearchConfiguration(),
     storedAssays: [],
-    progressStates: {},
+    progressStates: [],
     inProgress: false
 };
 
@@ -147,8 +150,15 @@ const storageMutations: MutationTree<StorageState> = {
         state.activeAssay = newActive;
     },
 
-    ADD_PROGRESS_STATE(state: StorageState, data: [ProgressState, ProteomicsAssay]) {
-        state.progressStates[data[1].getId()] = data[0];
+    ADD_PROGRESS_STATE(state: StorageState, progress: ProgressState) {
+        state.progressStates.push(progress);
+    },
+
+    REMOVE_PROGRESS_STATE(state: StorageState, assay: ProteomicsAssay) {
+        const idx: number = state.progressStates.findIndex(p => p.assay.getId() === assay.getId());
+        if (idx >= 0) {
+            state.progressStates.splice(idx, 1);
+        }
     },
 
     SET_SEARCH_CONFIGURATION(state: StorageState, config: SearchConfiguration) {
@@ -174,16 +184,26 @@ const storageActions: ActionTree<StorageState, any> = {
      * @param assay The assay that should be added to the list of stored assays.
      */
     async removeStoredAssay(store: ActionContext<StorageState, any>, assay: ProteomicsAssay) {
-        await store.dispatch("deselectAssay", assay);
+        await store.dispatch("deleteAssay", assay);
         store.commit("REMOVE_STORED_ASSAY", assay);
     },
 
     addAssay(store: ActionContext<StorageState, any>, assay: ProteomicsAssay) {
+        if (store.getters.getProgressStatesMap.findIndex(p => p.assay.getId() === assay.getId()) === -1) {
+            this.commit("ADD_PROGRESS_STATE", {
+                progress: 0,
+                countTable: undefined,
+                errorStatus: undefined,
+                assay: assay
+            });
+        }
         store.commit("SELECT_ASSAY", assay);
     },
 
-    removeAssay(store: ActionContext<StorageState, any>, assay: ProteomicsAssay) {
+    async removeAssay(store: ActionContext<StorageState, any>, assay: ProteomicsAssay) {
         store.commit("DESELECT_ASSAY", assay);
+        store.commit("REMOVE_PROGRESS_STATE", assay);
+        await store.dispatch("resetActiveAssay");
     },
 
     setActiveAssay(store: ActionContext<StorageState, any>, assay: ProteomicsAssay) {
@@ -203,14 +223,16 @@ const storageActions: ActionTree<StorageState, any> = {
      */
     async processAssay(store: ActionContext<StorageState, any>, assay: ProteomicsAssay) {
         // First read all peptides from storage for this assay, and then process the assay.
-        if (!(assay.getId() in store.getters.getProgressStatesMap)) {
-            this.commit("ADD_PROGRESS_STATE", [{
+        if (store.getters.getProgressStatesMap.findIndex(p => p.assay.getId() === assay.getId()) === -1) {
+            this.commit("ADD_PROGRESS_STATE", {
                 progress: 0,
                 countTable: undefined,
-                errorStatus: undefined
-            }, assay])
+                errorStatus: undefined,
+                assay: assay
+            });
         }
-        const processedItem = store.getters.getProgressStatesMap[assay.getId()];
+        const processedItem = store.getters.getProgressStatesMap.find(p => p.assay.getId() === assay.getId());
+
         processedItem.progress = 0;
         store.commit("SET_PROGRESS", true);
         processedItem.errorStatus = undefined;
@@ -231,7 +253,7 @@ const storageActions: ActionTree<StorageState, any> = {
         }
 
         processedItem.countTable = countTable;
-        store.commit("SET_PROGRESS", store.getters.getAssays.some(a => store.getters.getProgressStatesMap[a.getId()].progress < 1));
+        store.commit("SET_PROGRESS", store.getters.getProgressStatesMap.some(p => p.progress < 1));
         await store.dispatch("resetActiveAssay");
     },
 
@@ -262,7 +284,7 @@ const storageActions: ActionTree<StorageState, any> = {
         if (shouldReselect) {
             let newActive: ProteomicsAssay = null;
             for (let current of (store.getters.getAssays as ProteomicsAssay[])) {
-                if (store.getters.getProgressStatesMap[current.getId()].progress === 1) {
+                if (store.getters.getProgressStatesMap.find(p => p.assay.getId() === current.getId()).progress === 1) {
                     newActive = current;
                     break;
                 }

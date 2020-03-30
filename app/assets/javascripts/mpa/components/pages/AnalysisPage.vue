@@ -74,8 +74,9 @@ import { Peptide } from "unipept-web-components/src/business/ontology/raw/Peptid
         },
         countTable: {
             get(): CountTable<Peptide> {
-                if (this.$store.getters.getActiveAssay) {
-                    return this.$store.getters.getProgressStatesMap[this.$store.getters.getActiveAssay.getId()].countTable;
+                const activeAssay: ProteomicsAssay = this.$store.getters.getActiveAssay;
+                if (activeAssay) {
+                    return this.$store.getters.getProgressStatesMap.find(p => p.assay.getId() === activeAssay.getId()).countTable;
                 } else {
                     return undefined;
                 }
@@ -85,7 +86,6 @@ import { Peptide } from "unipept-web-components/src/business/ontology/raw/Peptid
 })
 export default class AnalysisPage extends Vue {
     private datasetSelectionInProgress: boolean = false;
-    private eventListeners: {type: string, listener: any}[] = [];
 
     created() {
         this.reprocessAssays();

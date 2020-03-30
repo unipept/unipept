@@ -103,7 +103,7 @@ export default class SwitchDatasetsCard extends Vue {
      * @param assay The assay that's currently activated by the user.
      */
     private activateAssay(assay: ProteomicsAssay) {
-        if (this.$store.getters.getProgressStatesMap[assay.getId()].progress === 1) {
+        if (this.$store.getters.getProgressStatesMap.find(p => p.assay.getId() === assay.getId()).progress === 1) {
             this.$emit("activate-assay", assay)
         }
     }

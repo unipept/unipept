@@ -50,7 +50,7 @@ import Tooltip from "unipept-web-components/src/components/custom/Tooltip.vue";
         },
         progress: {
             get() {
-                return this.$store.getters.getProgressStatesMap[this.assay.getId()].progress;
+                return this.$store.getters.getProgressStatesMap.find(p => p.assay.getId() === this.assay.getId()).progress;
             }
         }
     }
@@ -64,7 +64,7 @@ export default class AssayItem extends Vue {
     }
 
     private deselectAssay(assay: ProteomicsAssay): void {
-        this.$emit("deselect-assay", assay);
+        this.$store.dispatch("removeAssay", assay);
     }
 }
 </script>
