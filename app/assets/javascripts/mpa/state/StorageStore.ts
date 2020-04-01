@@ -167,6 +167,8 @@ const storageMutations: MutationTree<StorageState> = {
 
     UPDATE_PROGRESS(state: StorageState, progress: boolean) {
         state.inProgress = state.progressStates.some(p => p.progress < 1);
+        console.log("UPDATED PROGRESS");
+        console.log(JSON.stringify(state.progressStates));
     }
 }
 
@@ -189,6 +191,7 @@ const storageActions: ActionTree<StorageState, any> = {
     },
 
     addAssay(store: ActionContext<StorageState, any>, assay: ProteomicsAssay) {
+        assay.setSearchConfiguration(store.getters.getSearchConfiguration);
         if (store.getters.getProgressStatesMap.findIndex(p => p.assay.getId() === assay.getId()) === -1) {
             this.commit("ADD_PROGRESS_STATE", {
                 progress: 0,
@@ -211,6 +214,9 @@ const storageActions: ActionTree<StorageState, any> = {
     },
 
     setSearchConfiguration(store: ActionContext<StorageState, any>, config: SearchConfiguration) {
+        for (const assay of store.getters.getAssays) {
+            assay.setSearchConfiguration(config);
+        }
         store.commit("SET_SEARCH_CONFIGURATION", config);
     },
 

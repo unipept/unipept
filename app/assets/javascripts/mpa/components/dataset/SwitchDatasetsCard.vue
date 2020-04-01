@@ -54,7 +54,7 @@ to date.
                 </div>
                 <div>
                     <heatmap-wizard-multi-sample
-                        v-if="this.$store.getters.inProgress"
+                        v-if="!this.$store.getters.inProgress"
                         :assays="this.$store.getters.getAssays">
                     </heatmap-wizard-multi-sample>
                     <div v-else style="display: flex; justify-content: center;">
