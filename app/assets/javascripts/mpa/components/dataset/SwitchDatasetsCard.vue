@@ -12,7 +12,11 @@ to date.
             </card-title>
             <div class="card-title-action">
                 <tooltip message="Add another assay to the selection.">
-                    <v-icon @click="toggleAssaySelection()" color="white">{{ this.isAssaySelectionInProgress ? 'mdi-plus-circle' : 'mdi-plus' }}</v-icon>
+                    <v-icon
+                        @click="toggleAssaySelection()"
+                        color="white">
+                        {{ this.isAssaySelectionInProgress ? 'mdi-plus-circle' : 'mdi-plus' }}
+                    </v-icon>
                 </tooltip>
             </div>
         </card-header>
@@ -48,11 +52,10 @@ to date.
                     </button>
                     <h4 class="modal-title">Heatmap wizard</h4>
                 </div>
-                <div class="single-dataset-wizard">
+                <div>
                     <heatmap-wizard-multi-sample
-                        v-if="this.$store.getters.getActiveAssay"
-                        :dataset="this.$store.getters.getActiveAssay"
-                        :selected-datasets="this.$store.getters.getAssays">
+                        v-if="this.$store.getters.inProgress"
+                        :assays="this.$store.getters.getAssays">
                     </heatmap-wizard-multi-sample>
                     <div v-else style="display: flex; justify-content: center;">
                         <div class="text-xs-center" style="margin-top: 25px;">
@@ -77,7 +80,10 @@ import ProteomicsAssay from "unipept-web-components/src/business/entities/assay/
 import AssayItem from "./AssayItem.vue";
 
 @Component({
-    components: { CardTitle, CardHeader, HeatmapWizardMultiSample, Tooltip, AssayItem }
+    components: { CardTitle, CardHeader, HeatmapWizardMultiSample, Tooltip, AssayItem },
+    computed: {
+
+    }
 })
 export default class SwitchDatasetsCard extends Vue {
     private isAssaySelectionInProgress: boolean = false;
