@@ -1479,6 +1479,11 @@
   resolved "https://registry.yarnpkg.com/@types/unist/-/unist-2.0.3.tgz#9c088679876f374eb5983f150d4787aa6fb32d7e"
   integrity sha512-FvUupuM3rlRsRtCN+fDudtmytGO6iHJuuRKS1Ss0pG5z8oX0diNEw94UEL7hgDbpN94rgaK5R7sWm6RrSkZuAQ==
 
+"@types/uuid@^3.4.7":
+  version "3.4.8"
+  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-3.4.8.tgz#4ba887fcef88bd9a7515ca2de336d691e3e18318"
+  integrity sha512-zHWce3allXWSmRx6/AGXKCtSOA7JjeWd2L3t4aHfysNk8mouQnWCocveaT7a4IEIlPVHp81jzlnknqTgCjCLXA==
+
 "@types/webpack-sources@*":
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/@types/webpack-sources/-/webpack-sources-0.1.6.tgz#3d21dfc2ec0ad0c77758e79362426a9ba7d7cbcb"
@@ -12498,11 +12503,11 @@ unipept-visualizations@^1.7.3:
   resolved "https://registry.yarnpkg.com/unipept-visualizations/-/unipept-visualizations-1.7.3.tgz#10a4c6f4cf745b88aaf353fbb74ddf2cb9b6584e"
   integrity sha512-g9AM+44twT+qQpg4kHhupamMoBr4QscjqjQY8Pdk7cdWHvZs5HuIVTNtH44IbAtN08x9+U3BTT+lp+ZEJpaoFw==
 
-unipept-web-components@0.1.13:
+"unipept-web-components@https://github.com/unipept/unipept-web-components#feature/restructure-processing":
   version "0.1.13"
-  resolved "https://registry.yarnpkg.com/unipept-web-components/-/unipept-web-components-0.1.13.tgz#b70bda93ffb52d426f815d20b3f782a6012dc002"
-  integrity sha512-XRYibjzHB9S8Hv9B+kU98A3gw9pB9tgrpvy0U4h6Die9aph2jrS9F+jKAaR7FVA8S39dnBeN5B/hrY1osd97ZA==
+  resolved "https://github.com/unipept/unipept-web-components#3c3339ae857a7abfec8b2bfef8087c902a73d53a"
   dependencies:
+    "@types/uuid" "^3.4.7"
     axios "^0.19.0"
     babel-polyfill "^6.26.0"
     canvg "^3.0.5"
@@ -12519,6 +12524,7 @@ unipept-web-components@0.1.13:
     schema-utils "^2.2.0"
     unipept-heatmap "^1.0.26"
     unipept-visualizations "^1.7.3"
+    uuid "^3.4.0"
     vue "^2.6.10"
     vue-class-component "^7.0.2"
     vue-fullscreen "^2.1.5"
@@ -12713,7 +12719,7 @@ utils-merge@1.0.1:
   resolved "https://registry.yarnpkg.com/utils-merge/-/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
   integrity sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=
 
-uuid@^3.0.1, uuid@^3.3.2:
+uuid@^3.0.1, uuid@^3.3.2, uuid@^3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
   integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
