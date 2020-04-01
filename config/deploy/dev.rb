@@ -5,7 +5,7 @@ server 'morty.ugent.be', user: 'unipept', roles: %i[web app], ssh_options: {
   port: 4840
 }
 
-set :branch, 'feature/unipept-web-components-0.2'
+set :branch, 'feature/unipept-web-component-0.2'
 set :rails_env, :production
 
 # Perform yarn install before precompiling the assets in order to pass the
