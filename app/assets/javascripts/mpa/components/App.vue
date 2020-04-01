@@ -44,7 +44,7 @@ export default class App extends Vue {
 
     async mounted() {
         this.loading = true;
-        NetworkConfiguration.BASE_URL = "http://localhost:5000";
+        NetworkConfiguration.BASE_URL = "";
         await this.readStoredAssays();
         this.loading = false;
 
