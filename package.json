@@ -63,7 +63,7 @@
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-jest": "^23.6.0",
     "jasmine": "^3.5.0",
-    "jest": "^25.1.0",
+    "jest": "^25.2.7",
     "puppeteer": "^2.0.0",
     "webpack-dev-server": "^3.10.1"
   },
