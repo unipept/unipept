@@ -1,3 +1,8 @@
+/**
+ * MetaProteomics Analysis app entrypoint. This app appears under the "Metaproteomics Analysis"-tab on the Unipept
+ * web app.
+ */
+
 import Vue from 'vue'
 import Vuex from 'vuex'
 import App from "../../assets/javascripts/mpa/components/App.vue";

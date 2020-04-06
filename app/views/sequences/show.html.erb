@@ -1,7 +1,7 @@
 <% content_for :javascripts do %>
   <%= javascript_pack_tag 'sequence_show' %>
 <% end %>
-<h1><%= @title %></h1>
+<h1><%= @title %> - content</h1>
 <% if @lineages.empty? %>
   <p class="lead">No results were found for <%= @original_sequence %>.</p>
 <% else %>
@@ -11,7 +11,7 @@
 <div class="col-xs-6" id="sequences-content">
    <h3>Biodiversity</h3>
   <p>
-  The <strong>lowest common ancestor</strong> is 
+  The <strong>lowest common ancestor</strong> is
   <%= link_to @lca_taxon.name, "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=" + @lca_taxon.id.to_s, :target => "_blank", :title => @lca_taxon.rank %> (<%=@lca_taxon.rank%>).
   </p>
   <p>The <strong>common lineage</strong> for all these proteins is: <% if @common_lineage.length > 1 %><br><% end %>
@@ -22,13 +22,13 @@
    <h3>Function</h3>
    <% {"GO" => "GO term", "EC" => "EC number"}.each do |field,name| %>
    <p>
-    <% case @fa_summary['num'][field] 
+    <% case @fa_summary['num'][field]
        when 0 %>
-    <b>No proteins</b> have a 
+    <b>No proteins</b> have a
     <% when @fa_summary['num']['all'] %>
     <b>All proteins</b> have at least one
     <% else %>
-    <b><%=@fa_summary['num'][field] %> proteins</b> (<%='%.1f' % (100*@fa_summary['num'][field].fdiv(@fa_summary['num']['all']))%>%) have at least one 
+    <b><%=@fa_summary['num'][field] %> proteins</b> (<%='%.1f' % (100*@fa_summary['num'][field].fdiv(@fa_summary['num']['all']))%>%) have at least one
     <% end %>
     <b><%=name%></b> assigned to them.
   </p><% end %>
@@ -58,7 +58,7 @@
           </div>
           <div class="panel-heading">
           This table shows the UniProt entries whose protein sequence contains an exact match of the tryptic peptide.
-          </div> 
+          </div>
           <table class="table table-condensed table-hover protein-info">
             <thead>
               <tr>
@@ -96,13 +96,13 @@
           <div id="buttons-single" class="buttons-extra"></div>
           <div class="panel-heading">
           This interactive tree bundles the complete taxonomic lineages of all UniProt entries whose protein sequence contains the tryptic peptide. You can click on nodes to expand them, scroll to zoom and drag to move the tree.
-          </div> 
+          </div>
           <div id="lineageTree"></div>
         </div>
         <div class="tab-pane" id="lineage-table">
           <div class="panel-heading">
           This table shows the complete taxonomic lineages of all taxa associated with the UniProt entries whose protein sequence contains the tryptic peptide. The first column contains the taxon name extracted from the UniProt entry, followed by columns representing taxonomic ranks ordered from superkingdom on the left to forma on the right.
-          </div> 
+          </div>
           <div id="sequence_table">
             <% colors = Hash.new %>
             <table class="table table-condensed">
