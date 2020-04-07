@@ -44,7 +44,7 @@
     "vue-fullscreen": "^2.1.6",
     "vue-loader": "^15.8.3",
     "vue-property-decorator": "^8.4.1",
-    "vue-router": "^3.1.5",
+    "vue-router": "^3.1.6",
     "vue-styleguidist": "^4.15.2",
     "vue-template-compiler": "^2.6.11",
     "vuetify": "^2.2.20",
