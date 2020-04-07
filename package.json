@@ -16,7 +16,7 @@
     "clipboard-polyfill": "^2.8.6",
     "core-js": "^3.6.4",
     "corejs-typeahead": "^1.1.1",
-    "crypto-js": "^3.1.9-1",
+    "crypto-js": "^4.0.0",
     "d3": "5.15.1",
     "deepmerge": "^4.2.2",
     "dragula": "^3.7.2",
