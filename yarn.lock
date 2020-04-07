@@ -12767,10 +12767,10 @@ vue-docgen-api@^4.7.6:
     ts-map "^1.0.3"
     vue-template-compiler "^2.0.0"
 
-vue-fullscreen@^2.1.5:
-  version "2.1.5"
-  resolved "https://registry.yarnpkg.com/vue-fullscreen/-/vue-fullscreen-2.1.5.tgz#b1b65092f75eb967331aa90b778f05752dd5541b"
-  integrity sha512-M8wx+OV7uCGOQ/iLi5d2WHbWW9ad9uBPsW50iezV7LDrZ6iuXkDJSCmTaQgnRKJWOOfPsQrgNFME1LKMRrFmgg==
+vue-fullscreen@^2.1.5, vue-fullscreen@^2.1.6:
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/vue-fullscreen/-/vue-fullscreen-2.1.6.tgz#2f4924dd630f6246bc780405a0e9cd3ecf3015f5"
+  integrity sha512-p2lJYm/RgTHOqARlnljZlOGW/+sQFuSkV20Tje0lfzYoZnqSVR+vC0ytOX5aE0iebMUze63RBNPwpxuxjv6ucA==
 
 vue-hot-reload-api@^2.3.0:
   version "2.3.4"
