@@ -1,105 +1,82 @@
 <div class="apidocs row">
   <div class="col-xs-9">
-    <h1 class='api-title'>Unipept
-      <span class="initialism">CLI</span>
+    <h1 class='api-title'>
+      <span class="initialism">UMGAP</span>
       documentation
-      <small>v<%= Rails.application.config.versions[:gem] %></small>
     </h1>
     <p class='lead'>
-      The Unipept command line interface (<span class='initialism'>CLI</span>) offers an easy way to integrate Unipept metaproteomics functionality into your data processing pipelines and scripts.
+      The Unipept Metagenomics Analysis Pipeline can analyse metagenomic samples and return a frequency table of the taxons it detected for each read. 
     </p>
     <p>
-      These tools provide a command line interface to the <%= link_to("Unipept web services", api_apidocs_path) %> and a few utility commands for handling proteins using the command line. All tools support fasta and plain text input, multiple output formats (csv, xml and json) and parallel web requests for improved performance.
+      TODO: intro
     </p>
     <p>
-      The Unipept command line tools are open source under the <span class='initialism'>MIT</span> License and all code is available on <a href='https://github.com/unipept/unipept-cli' target='_blank'>Github</a>. Changes between releases are listed in the <a href='https://github.com/unipept/unipept-cli/releases' target='_blank'>changelog</a>. In case you have encountered an issue using these tools, have feature requests or found a bug, don't hesitate to contact us by email (<a href='mailto:unipept@ugent.be'>unipept@ugent.be</a>), or <a href='https://github.com/unipept/unipept-cli/issues' target='_blank'>create an issue</a> on Github.
+      The Unipept Metagenomics Analysis Pipeline is open source under the <span class='initialism'>MIT</span> License and all code is available on <a href='https://github.com/unipept/umgap' target='_blank'>Github</a>. Changes between releases are listed in the <a href='https://github.com/unipept/umgap/releases' target='_blank'>changelog</a>. In case you have encountered an issue using these tools, have feature requests or found a bug, don't hesitate to contact us by email (<a href='mailto:unipept@ugent.be'>unipept@ugent.be</a>), or <a href='https://github.com/unipept/umgap/issues' target='_blank'>create an issue</a> on Github.
     </p>
-    <dl class='dl-horizontal'>
-      <dt>uniprot</dt>
-      <dd>Fetches UniProt entries based on their accession numbers.</dd>
-      <dt>prot2pept</dt>
-      <dd>Splits proteins into peptides based on (trypsin) digest.</dd>
-      <dt>peptfilter</dt>
-      <dd>Filters peptides based on length and amino acid occurrence.</dd>
-      <dt>unipept pept2prot</dt>
-      <dd>Returns the set of UniProt entries containing a given tryptic peptide.</dd>
-      <dt>unipept pept2taxa</dt>
-      <dd>Returns the set of taxa extracted from the UniProt entries containing a given tryptic peptide.</dd>
-      <dt>unipept pept2lca</dt>
-      <dd>Returns the taxonomic lowest common ancestor for a given tryptic peptide.</dd>
-      <dt>unipept pept2ec</dt>
-      <dd>Returns all EC-numbers associated with a given tryptic peptide</dd>
-      <dt>unipept taxa2lca</dt>
-      <dd>Returns the taxonomic lowest common ancestor of a given list of taxon identifiers.</dd>
-      <dt>unipept taxonomy</dt>
-      <dd>Returns the taxonomic information for a given <span class='initialism'>NCBI</span> taxon identifier.</dd>
-    </dl>
     <div class='card'>
         <div class='card-title card-title-colored'>
           <h2 id="installation" class='card-title-text'>Installation</h2>
         </div>
         <div class='card-supporting-text'>
     <p>
-      To use the Unipept command line tools, Ruby needs to be installed on your system. We recommend using Ruby 2.6, but all versions since Ruby 2.3 are supported. To check if you have the correct Ruby version installed, open a terminal and run
-      <code>ruby --version</code>.
+      To use <span class='initialism'>UMGAP</span>, Rust needs to be installed on your system. We recommend the lastest version, but all versions since Rust 1.35 are supported. To check if you have the correct Ruby version installed, open a terminal and run
+      <code>rustc --version</code>.
     </p>
 
     <pre>
-<b>$</b> ruby --version
-ruby 2.6.0p0 (2018-12-25 revision 66547) [x86_64-darwin18]</pre>
+<b>$</b> rustc --version
+rustc 1.42.0</pre>
 
     <div class="apidocs-callout apidocs-callout-info">
-      <h4>Installing Ruby</h4>
+      <h4>Installing Rust</h4>
       <p>
         If the
-        <code>ruby --version</code>
+        <code>rustc --version</code>
         command returns
-        <samp>command not found</samp>, Ruby is not yet installed on your system. More information on installing Ruby can be found at
-        <a href='https://www.ruby-lang.org/en/installation/' target='_blank'>https://www.ruby-lang.org/en/installation/</a>.
+        <samp>command not found</samp>, Rust is not yet installed on your system. More information on installing Rust can be found at
+        <a href='https://www.rust-lang.org/tools/install' target='_blank'>https://www.rust-lang.org/tools/install</a>.
       </p>
     </div>
 
     <p>
-      The Unipept CLI is available as a <a href='http://rubygems.org/gems/unipept' target='_blank'><i>gem</i></a>. This means it can easily be installed with the <code>gem install unipept</code> command:
+      The next step is to download the <span class='initialism'>UMGAP</span> source code. The easiest way to do this, is by cloning our git repository using <code>git clone https://github.com/unipept/umgap.git</code>. Alternatively, you can also click the download button on <a href="https://github.com/unipept/umgap" target="_blank">GitHub</a>.
     </p>
-
-    <pre>
-<b>$</b> gem install unipept
-Fetching: unipept-<%= Rails.application.config.versions[:gem] %>.gem (100%)
-Successfully installed unipept-<%= Rails.application.config.versions[:gem] %>
-Parsing documentation for unipept-<%= Rails.application.config.versions[:gem] %>
-Installing ri documentation for unipept-<%= Rails.application.config.versions[:gem] %>
-Done installing documentation for unipept after 0 seconds
-1 gem installed</pre>
 
     <p>
-      After successful installation, the unipept command should be available. To check if unipept was installed correctly, run
-      <code>unipept --version</code>. This should print the version number:
+      Next, we're ready to compile and install <span class='initialism'>UMGAP</span>. First navigate to the directory where you cloned or downloaded the code, then run <code>cargo install --path .</code>. The output should look like this:
     </p>
 
     <pre>
-<b>$</b> unipept --version
-<%= Rails.application.config.versions[:gem] %></pre>
+<b>$</b> cargo install --path .
+ Installing umgap v0.3.5 (/Users/unipept/Downloads/umgap)
+    Updating crates.io index
+  Downloaded num-traits v0.2.11
+  Downloaded error-chain v0.12.2
+  ...
+  Compiling structopt v0.3.13
+  Compiling umgap v0.3.5 (/Users/bart/Downloads/umgap)
+ Finished release [optimized] target(s) in 1m 50s
+ Installed package `umgap v0.3.5 (/Users/unipept/Downloads/umgap)` (executable `umgap`)
+ warning: be sure to add `/Users/unipept/.cargo/bin` to your PATH to be able to run the installed binaries</pre>
+
+    <p>
+      <span class='initialism'>UMGAP</span> should now be installed to the <code>~/.cargo/bin</code> directory. To access it everywhere, be sure to add it to your <code>$PATH</code>.
+    </p>
+
+    <p>
+      After successful installation, the <span class='initialism'>UMGAP</span> command should be available. To check if it was installed correctly, run
+      <code>umgap --version</code>. This should print the version number:
+    </p>
+
+    <pre>
+<b>$</b> umgap --version
+umgap 0.3.5</pre>
 
     <p>
       More information about the installed command can be found on these pages, or by running the
-      <code>unipept -h</code>
+      <code>umgap --help</code>
       command.
     </p>
-
-    <div class="apidocs-callout apidocs-callout-info">
-      <h4>Permission problems</h4>
-      <p>
-        When trying to install a gem, you might run into permission problems if you don't have write access to the default installation directory. This can be fixed by doing a <i>user install</i>, which installs the gem in your home directory. Simply run <code>gem install unipept --user-install</code> instead of the normal installation command. More  information can be found on the <a href='http://guides.rubygems.org/faqs/#user-install' target='_blank'>RubyGems website</a>.
-      </p>
-    </div>
-    <div class="apidocs-callout apidocs-callout-info">
-      <h4>Windows support</h4>
-      <p>
-        Unipept CLI should work on Unix, Mac, and Windows. However, because of one of our underlying dependencies (curl), some windows users experience issues during installation.
-        In case of such issues, we recommend using the Unix Subsystem of Windows 10 instead. More information can be found on the <a href="https://docs.microsoft.com/en-us/windows/wsl/about" target="_blank"> Microsoft website</a>.
-      </p>
-    </div>
   </div>
 </div>
 <div class='card'>
@@ -108,19 +85,8 @@ Done installing documentation for unipept after 0 seconds
     </div>
     <div class='card-supporting-text'>
     <p>
-      To update the Unipept command line tools to the latest version, simply run <code>gem update unipept</code>. The changes between releases are listed in the <a href='https://github.com/unipept/unipept-cli/releases' target='_blank'>changelog</a>.
+      To update <span class='initialism'>UMGAP</span>, simply repeat the install instructions and be sure to redownload the source code. The changes between releases are listed in the <a href='https://github.com/unipept/umgap/releases' target='_blank'>changelog</a>.
     </p>
-    <pre>
-<b>$</b> gem update unipept
-Updating installed gems
-Updating unipept
-Fetching: unipept-<%= Rails.application.config.versions[:gem] %>.gem (100%)
-Successfully installed unipept-<%= Rails.application.config.versions[:gem] %>
-Parsing documentation for unipept-<%= Rails.application.config.versions[:gem] %>
-Installing ri documentation for unipept-<%= Rails.application.config.versions[:gem] %>
-Installing darkfish documentation for unipept-<%= Rails.application.config.versions[:gem] %>
-Done installing documentation for unipept after 0 seconds
-Gems updated: unipept</pre>
 </div>
 </div>
 
@@ -130,23 +96,19 @@ Gems updated: unipept</pre>
     </div>
     <div class='card-supporting-text'>
     <p>
-      The Unipept command line tools require no additional configuration and can be used immediately after installation. By default, the public Unipept server will be used for all commands. If you have a local Unipept server running, and wish to use it with the command line tools, simply run the
-      <code>unipept config host http://local.server</code>
-      command, where you substitute
-      <code>http://local.server</code>
-      with the address of your local Unipept server:
+      If you want to use FragGeneScanPlusPlus as gene predictor, this needs to be installed as well. Instructions can be found at <a href="https://github.com/unipept/FragGeneScanPlusPlus" target="_blank">https://github.com/unipept/FragGeneScanPlusPlus</a>.
     </p>
-
+    <p>
+      Run the configuration script at <code>scripts/umgap-setup.sh</code> to interactively configure <span class='initialism'>UMGAP</span> and download the data files required for some steps of the pipeline.
+    </p>
+    <p>
+      Depending on which type of analysis you are planning, you will need the tryptic index file (less powerfull, but runs on any decent laptop) and the 9-mer index file (uses about 100GB disk space for storage and as much RAM during operation. The exact size depends on the version.)
+    </p>
+    <p>
+      To check if the configuration was successful, you can run a sample analysis with some include test data. The following command should show you a FASTA-like file with a taxon id per header.
+    </p>
     <pre>
-$ unipept config host http://local.server
-host was set to http://local.server</pre>
-
-    <div class="apidocs-callout apidocs-callout-info">
-      <h4>Default settings</h4>
-      <p>If you changed the host settings and wish to return to the default host, simply run
-        <code>unipept config host http://api.unipept.ugent.be</code>.
-      </p>
-    </div>
+<b>$</b> ./scripts/umgap-analyse.sh -1 testdata/A1.fq -2 testdata/A2.fq -t tryptic-sensitivity -o - | tee output.fa</pre>
   </div>
 </div>
   </div>
