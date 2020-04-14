@@ -167,8 +167,6 @@ const storageMutations: MutationTree<StorageState> = {
 
     UPDATE_PROGRESS(state: StorageState, progress: boolean) {
         state.inProgress = state.progressStates.some(p => p.progress < 1);
-        console.log("UPDATED PROGRESS");
-        console.log(JSON.stringify(state.progressStates));
     }
 }
 

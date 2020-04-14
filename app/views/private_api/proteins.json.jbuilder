@@ -1,4 +1,6 @@
-json.array! @entries do |entry|
+json.lca @lca_taxon ? @lca_taxon.id : -1
+json.common_lineage @common_lineage.map { |entry| entry.id }
+json.proteins @entries do |entry|
   json.uniprotAccessionId entry.uniprot_accession_number
   json.name entry.name
   json.organism entry.taxon_id

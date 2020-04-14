@@ -20,6 +20,7 @@ class SPA {
      * @param {{peptide:string, tree, uniprotEntries, fa:FAServerInfo}} data
      */
     constructor(data) {
+        console.log(data);
         this.$tooltip = $("#tooltip");
 
 
