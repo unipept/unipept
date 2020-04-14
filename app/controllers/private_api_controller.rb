@@ -28,7 +28,7 @@ class PrivateApiController < HandleOptionsController
     # the sequence or id of the peptide (filter out all characters that are non-ASCII)
     seq = params[:peptide].upcase.gsub(/\P{ASCII}/, '')
     # should we equate I and L? (true by default)
-    equate_il = params.has_key?(:equate_il) ? params[:equate_il] : true
+    equate_il = params.key?(:equate_il) ? params[:equate_il] : true
 
     # process the input, convert seq to a valid @sequence
     sequence = Sequence.single_search(seq, equate_il)
@@ -48,7 +48,7 @@ class PrivateApiController < HandleOptionsController
       begin
         # we didn't find the sequence in the database, so let's try to split it
         long_sequences = Sequence.advanced_single_search(seq, equate_il)
-      rescue
+      rescue NoMatchesFoundError
         return
       end
       # calculate possible uniprot entries
