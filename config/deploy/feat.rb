@@ -5,7 +5,7 @@ server 'morty.ugent.be', user: 'unipept', roles: %i[web app], ssh_options: {
   port: 4840
 }
 
-set :branch, 'feature/web-components-integration'
+set :branch, 'feature/migrate-spa'
 set :rails_env, :production
 
 # Perform yarn install before precompiling the assets in order to pass the

@@ -1,4 +1,4 @@
-declare module "worker-loader!*" 
+declare module "worker-loader!*"
 {
     class WebpackWorker extends Worker {
         constructor();
@@ -6,9 +6,4 @@ declare module "worker-loader!*"
 
     export default WebpackWorker;
 }
-
-// declare module "*.vue" {
-//     import Vue from "vue";
-//     export default Vue;
-// }
 
