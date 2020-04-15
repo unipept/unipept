@@ -7,7 +7,7 @@
 #  interpro_entry_code     :string(15)       not null
 #
 
-gocrossreference1:
+interprocrossreference1:
     id: 1
     uniprot_entry_id: 1
-    go_term_code: "IPR000126"
+    interpro_entry_code: "IPR000126"
