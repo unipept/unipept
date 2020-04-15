@@ -25,7 +25,6 @@ UnipeptWeb::Application.routes.draw do
     match "sampledata", via: [:post], :to => "datasets#sampledata"
   end
 
-
   # General inforamtion
   scope :private_api, as: 'private_api' do
     match "/*path", via: [:options], :to => "handle_options#handle_options_request"
