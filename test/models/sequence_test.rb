@@ -247,13 +247,13 @@ class SequenceTest < ActiveSupport::TestCase
 
   test 'should give correct result for missed_cleavage' do
     assert_equal 2, Sequence.missed_cleavage('AAILERAGGAR', false).lca
-    assert_equal ({ 'num' => { 'all' => 1, 'EC' => 0, 'GO' => 0 }, 'data' => {} }), Sequence.missed_cleavage('AAILERAGGAR', false).fa
+    assert_equal ({ 'num' => { 'all' => 1, 'EC' => 0, 'GO' => 0, 'IPR' => 0 }, 'data' => {} }), Sequence.missed_cleavage('AAILERAGGAR', false).fa
     assert_nil Sequence.missed_cleavage('AAILERAGGAR', false).fa_il
     assert_nil Sequence.missed_cleavage('AAILERAGGAR', false).lca_il
     assert_equal 2, Sequence.missed_cleavage('AAILERAGGAR', true).lca_il
     assert_nil Sequence.missed_cleavage('AAILERAGGAR', true).lca
     assert_equal 2, Sequence.missed_cleavage('AALLERAGGAR', true).lca_il
-    assert_equal ({ 'num' => { 'all' => 1, 'EC' => 0, 'GO' => 0 }, 'data' => {} }), Sequence.missed_cleavage('AALLERAGGAR', true).fa_il
+    assert_equal ({ 'num' => { 'all' => 1, 'EC' => 0, 'GO' => 0, 'IPR' => 0 }, 'data' => {} }), Sequence.missed_cleavage('AALLERAGGAR', true).fa_il
     assert_nil      Sequence.missed_cleavage('AALLERAGGAR', true).lca
     assert_nil      Sequence.missed_cleavage('AALLERAGGAR', true).fa
     assert_nil      Sequence.missed_cleavage('AALLERAGGAR', false)

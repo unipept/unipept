@@ -6,7 +6,7 @@ class PrivateApiControllerTest < ActionController::TestCase
     post :taxa, params: { taxids: [1, 2, 3] }
     assert_response :success
     assert_template :taxa
-    assert_equal JSON.parse('[{"id":1,"name":"species1","rank":"species"},{"id":2,"name":"kingdom1","rank":"kingdom"}]'), JSON.parse(response.body)
+    assert_equal JSON.parse('[{"id":1, "name":"species1", "rank":"species", "lineage":[null, 2, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1, null, null, null]}, {"id":2, "name":"kingdom1", "rank":"kingdom", "lineage":[null, 2, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]}]'), JSON.parse(response.body)
   end
 
   test 'should get go terms' do
@@ -27,9 +27,9 @@ class PrivateApiControllerTest < ActionController::TestCase
 
   test 'should get interpro entries' do
     @request.headers['Content-Type'] = 'application/json'
-    post :ecnumbers, params: { interpros: ["IPR000126"] }
+    post :interpros, params: { interpros: ["IPR000126"] }
     assert_response :success
-    assert_template :ecnumbers
+    assert_template :interpros
     assert_equal [{"code"=>"IPR000126", "name"=>"Serine proteases, V8 family, serine active site", "category"=>"Active_site"}], JSON.parse(response.body)
   end
 end
