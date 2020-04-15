@@ -18,11 +18,13 @@ class UniprotEntry < ApplicationRecord
   has_many :embl_cross_references
   has_many :ec_cross_references
   has_many :go_cross_references
+  has_many :interpro_cross_references
   has_many :proteome_cross_references
 
   has_many :peptides
   has_many :ec_numbers, through: :ec_cross_references
   has_many :go_terms, through: :go_cross_references
+  has_many :interpro_entries, through: :interpro_cross_references
 
   belongs_to :taxon,            foreign_key: 'taxon_id',
                                 primary_key: 'id',
@@ -44,7 +46,7 @@ class UniprotEntry < ApplicationRecord
     end
   end
 
-  # Summarises the fucntional annotations of a list of enteries
+  # Summarises the functional annotations of a list of entries
   # Note: this should only be used for peptides who's FA's have
   # not been precalculated (because they were mot in the DB)
   #
@@ -64,7 +66,8 @@ class UniprotEntry < ApplicationRecord
       'num' => {
         'all' => entries.length,
         'EC' => entries.count { |e| !e.ec_cross_references.empty? },
-        'GO' => entries.count { |e| !e.go_cross_references.empty? }
+        'GO' => entries.count { |e| !e.go_cross_references.empty? },
+        'IPR' => entries.count { |e| !e.interpro_cross_references.empty? }
       },
       'data' => data
     }

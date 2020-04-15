@@ -8,10 +8,12 @@
         <v-card-text style="display: flex; flex-direction: column; flex-grow: 1; padding: 0;">
             <div style="padding-top: 16px; padding-left: 16px; padding-right: 16px;">
                 <h3>Selected datasets</h3>
-                <span v-if="selectedAssays.length === 0" :class="{'shaking': shaking, 'selected-placeholder': true}">Please select one or more datasets from the right hand panel to continue the analysis..</span>
+                <span v-if="$store.getters.getAssays.length === 0" :class="{'shaking': shaking, 'selected-placeholder': true}">
+                    Please select one or more datasets from the right hand panel to continue the analysis.
+                </span>
             </div>
             <v-list two-line class="switch-datasets-list" style="flex-grow: 1;">
-                <v-list-item v-for="dataset of selectedAssays" two-line :key="dataset.id" >
+                <v-list-item v-for="dataset of $store.getters.getAssays" two-line :key="dataset.id" >
                     <v-list-item-content>
                         <v-list-item-title>
                             {{ dataset.getName() }}
@@ -23,7 +25,7 @@
 
                     <v-list-item-action>
                         <v-list-item-action-text>
-                            {{ dataset.getDateFormatted() }}
+                            {{ dataset.getDate().toLocaleDateString() }}
                         </v-list-item-action-text>
                         <tooltip message="Remove dataset from analysis.">
                             <v-btn class="fix-icon-list-position" text icon @click="deselectDataset(dataset)">
@@ -39,7 +41,7 @@
                     :filter-duplicates.sync="filterDuplicates"
                     :missing-cleavage.sync="missingCleavage"
                     class="selected-dataset-settings">
-                </search-settings-form>            
+                </search-settings-form>
                 <div class="card-actions">
                     <v-btn @click="search()" color="primary">
                         <v-icon left>
@@ -63,12 +65,12 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop, Watch } from "vue-property-decorator";
-import Assay from "unipept-web-components/src/logic/data-management/assay/Assay";
 import SearchSettingsForm from "unipept-web-components/src/components/analysis/SearchSettingsForm.vue";
 import CardTitle from "unipept-web-components/src/components/custom/CardTitle.vue";
 import CardHeader from "unipept-web-components/src/components/custom/CardHeader.vue";
 import Tooltip from "unipept-web-components/src/components/custom/Tooltip.vue";
-import MPAConfig from "unipept-web-components/src/logic/data-management/MPAConfig";
+import SearchConfiguration from "unipept-web-components/src/business/configuration/SearchConfiguration";
+import ProteomicsAssay from "unipept-web-components/src/business/entities/assay/ProteomicsAssay";
 
 @Component({
     components: { CardHeader, CardTitle, SearchSettingsForm, Tooltip }
@@ -78,15 +80,13 @@ import MPAConfig from "unipept-web-components/src/logic/data-management/MPAConfi
  * to deselect these datasets, or to start analysis. The set of selected datasets is not updated by this component
  * itself. That is the responsibility of the parent component, which should properly react to the events emitted and
  * update the set of selected datasets accordingly.
- * 
+ *
  * @vue-event {Assay} deselect-dataset Emitted when user deselects a previously chosen assay.
- * @vue-event {void} start-analysis Emitted when user indicates that he wants to start analysis of the chosen 
+ * @vue-event {void} start-analysis Emitted when user indicates that he wants to start analysis of the chosen
  *            assays.
+ * @vue-event {SearchConfiguration} update-search-settings
  */
 export default class SelectDatasetsCard extends Vue {
-    @Prop({ required: true })
-    private selectedAssays: Assay[];
-
     private equateIl: boolean = true;
     private filterDuplicates: boolean = true;
     private missingCleavage: boolean = false;
@@ -94,14 +94,14 @@ export default class SelectDatasetsCard extends Vue {
     private shaking: boolean = false;
 
     private mounted() {
-        const settings: MPAConfig = this.$store.getters.searchSettings;
-        this.equateIl = settings.il;
-        this.filterDuplicates = settings.dupes;
-        this.missingCleavage = settings.missed;
+        const searchConfig = this.$store.getters.getSearchConfiguration;
+        this.equateIl = searchConfig.equateIl;
+        this.filterDuplicates = searchConfig.filterDuplicates;
+        this.missingCleavage = searchConfig.enableMissingCleavageHandling;
     }
 
     public search(): void {
-        if (this.selectedAssays.length === 0) {
+        if (this.$store.getters.getAssays.length === 0) {
             this.shaking = true;
             // Disable the shaking effect after 300ms
             setTimeout(() => this.shaking = false, 300);
@@ -111,7 +111,7 @@ export default class SelectDatasetsCard extends Vue {
     }
 
     private reset(): void {
-        for (let dataset of this.selectedAssays) {
+        for (let dataset of this.$store.getters.getAssays) {
             this.deselectDataset(dataset);
         }
     }
@@ -120,7 +120,7 @@ export default class SelectDatasetsCard extends Vue {
         this.$emit("start-analysis", true);
     }
 
-    private deselectDataset(assay: Assay) {
+    private deselectDataset(assay: ProteomicsAssay) {
         this.$emit("deselect-assay", assay);
     }
 
@@ -128,13 +128,12 @@ export default class SelectDatasetsCard extends Vue {
     @Watch("filterDuplicates")
     @Watch("missingCleavage")
     private updateSearchSettings() {
-        const settings: MPAConfig = {
-            il: this.equateIl,
-            dupes: this.filterDuplicates,
-            missed: this.missingCleavage
-        }
-
-        this.$store.dispatch("setSearchSettings", settings);
+        this.$store.dispatch("setSearchConfiguration", new SearchConfiguration(
+            this.equateIl,
+            this.filterDuplicates,
+            this.missingCleavage
+        ));
+        this.$emit("update-search-settings")
     }
 }
 </script>

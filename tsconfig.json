@@ -7,6 +7,7 @@
     "lib": ["es2017", "dom"],
     "module": "esnext",
     "moduleResolution": "node",
+    "importHelpers": true,
     "sourceMap": true,
     "target": "esnext",
     "allowJs": true,
@@ -22,9 +23,9 @@
       "./typings"
     ]
   },
-  // "include": [
-  //   "node_modules/web-components/**/*"
-  // ],
+//  "files": [
+//    "app/**/*"
+//  ],
   "exclude": [
     "**/*.spec.ts",
     // "node_modules",

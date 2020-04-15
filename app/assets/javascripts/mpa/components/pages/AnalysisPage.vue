@@ -2,9 +2,7 @@
     <div>
         <v-row class="equal-height-row">
             <v-col>
-                <switch-datasets-card 
-                    :selected-assays="this.$store.getters.getSelectedAssays" 
-                    :active-assay="this.$store.getters.getActiveAssay"
+                <switch-datasets-card
                     v-on:deselect-assay="onDeselectAssay"
                     v-on:activate-assay="onActivateAssay"
                     v-on:assay-selection-in-progress="onAssaySelection"
@@ -12,25 +10,37 @@
                 </switch-datasets-card>
             </v-col>
             <v-col>
-                <experiment-summary-card 
+                <experiment-summary-card
                     v-if="!datasetSelectionInProgress"
                     style="min-height: 100%;"
-                    :disabled="$store.getters.getSelectedAssays.some(el => el.progress !== 1)" 
+                    :disabled="inProgress"
                     :activeAssay="$store.getters.getActiveAssay"
+                    :searchConfiguration="$store.getters.getSearchConfiguration"
                     v-on:update-search-settings="onUpdateSearchSettings">
                 </experiment-summary-card>
-                <load-datasets-card 
+                <load-datasets-card
                     v-else
-                    :selected-assays="this.$store.getters.getSelectedAssays" 
-                    :stored-assays="this.$store.getters.getStoredAssays"
                     v-on:create-assay="onCreateAssay"
-                    style="min-height: 100%;" 
+                    style="min-height: 100%;"
                     id="analysis-add-dataset-card">
                 </load-datasets-card>
             </v-col>
         </v-row>
-        <single-dataset-visualizations-card id="visualizations-card" :dataRepository="this.$store.getters.getActiveAssay ? this.$store.getters.getActiveAssay.dataRepository : null" :analysisInProgress="$store.getters.datasetsInProgress > 0"></single-dataset-visualizations-card>
-        <functional-summary-card style="margin-top: 12px;" :dataRepository="this.$store.getters.getActiveAssay ? this.$store.getters.getActiveAssay.dataRepository : null" :analysisInProgress="$store.getters.datasetsInProgress > 0"></functional-summary-card>
+        <single-dataset-visualizations-card
+            id="visualizations-card"
+            :peptide-count-table="countTable"
+            :search-configuration="$store.getters.getSearchConfiguration"
+            :analysisInProgress="$store.getters.getAssays.length > 0"
+            v-on:update-selected-term="onUpdateSelectedTerm"
+            v-on:update-selected-taxon-id="onUpdateSelectedTaxonId">
+        </single-dataset-visualizations-card>
+        <functional-summary-card
+            style="margin-top: 12px;"
+            :peptide-count-table="countTable"
+            :search-configuration="$store.getters.getSearchConfiguration"
+            :analysisInProgress="$store.getters.getAssays.length > 0"
+            :selected-taxon-id="$store.getters.getSelectedTaxonId">
+        </functional-summary-card>
     </div>
 </template>
 
@@ -43,45 +53,58 @@ import SingleDatasetVisualizationsCard from "unipept-web-components/src/componen
 import LoadDatasetsCard from "./../dataset/LoadDatasetsCard.vue";
 import SwitchDatasetsCard from "./../dataset/SwitchDatasetsCard.vue";
 import ExperimentSummaryCard from "unipept-web-components/src/components/analysis/statistics/ExperimentSummaryCard.vue";
-import PeptideContainer from "unipept-web-components/src/logic/data-management/PeptideContainer";
-import Assay from "unipept-web-components/src/logic/data-management/assay/Assay";
-
+import ProteomicsAssay from "unipept-web-components/src/business/entities/assay/ProteomicsAssay";
+import SearchConfiguration from "unipept-web-components/src/business/configuration/SearchConfiguration";
+import { CountTable } from "unipept-web-components/src/business/counts/CountTable";
+import { Peptide } from "unipept-web-components/src/business/ontology/raw/Peptide";
 
 @Component({
     components: {
-        FunctionalSummaryCard, 
-        SingleDatasetVisualizationsCard, 
-        LoadDatasetsCard, 
-        SwitchDatasetsCard, 
+        FunctionalSummaryCard,
+        SingleDatasetVisualizationsCard,
+        LoadDatasetsCard,
+        SwitchDatasetsCard,
         ExperimentSummaryCard
     },
     computed: {
         selectedDatasets: {
             get() {
-                return this.$store.getters.selectedDatasets;
+                return this.$store.getters.getAssays;
+            }
+        },
+        countTable: {
+            get(): CountTable<Peptide> {
+                const activeAssay: ProteomicsAssay = this.$store.getters.getActiveAssay;
+                if (activeAssay) {
+                    return this.$store.getters.getProgressStatesMap.find(p => p.assay.getId() === activeAssay.getId()).countTable;
+                } else {
+                    return undefined;
+                }
+            }
+        },
+        inProgress: {
+            get(): boolean {
+                return this.$store.getters.getProgressStatesMap.some(p => p.progress < 1);
             }
         }
     }
 })
 export default class AnalysisPage extends Vue {
     private datasetSelectionInProgress: boolean = false;
-    private eventListeners: {type: string, listener: any}[] = [];
 
     created() {
-        for (let assay of this.$store.getters.getSelectedAssays) {
-            this.$store.dispatch('processAssay', assay);
-        }
+        this.reprocessAssays();
     }
 
-    private onDeselectAssay(assay: Assay) {
-        this.$store.dispatch("deselectAssay", assay);
+    private onDeselectAssay(assay: ProteomicsAssay) {
+        this.$store.dispatch("removeAssay", assay);
     }
 
-    private onActivateAssay(assay: Assay) {
+    private onActivateAssay(assay: ProteomicsAssay) {
         this.$store.dispatch("setActiveAssay", assay);
     }
 
-    private onCreateAssay(assay: Assay) {
+    private onCreateAssay(assay: ProteomicsAssay) {
         this.$store.dispatch("processAssay", assay);
     }
 
@@ -89,10 +112,24 @@ export default class AnalysisPage extends Vue {
         this.datasetSelectionInProgress = status;
     }
 
-    private onUpdateSearchSettings(settings: MPAConfig) {
+    private onUpdateSearchSettings(settings: SearchConfiguration) {
         // We need to reprocess all assays with the new search settings.
-        this.$store.dispatch("updateSearchSettings", settings);
-        
+        this.$store.dispatch("setSearchConfiguration", settings);
+        this.reprocessAssays();
+    }
+
+    private reprocessAssays() {
+        for (const assay of this.$store.getters.getAssays) {
+            this.$store.dispatch("processAssay", assay);
+        }
+    }
+
+    private onUpdateSelectedTerm(term: string) {
+        this.$store.dispatch('setSelectedTerm', term);
+    }
+
+    private onUpdateSelectedTaxonId(id: string) {
+        this.$store.dispatch('setSelectedTaxonId', id);
     }
 }
 </script>
