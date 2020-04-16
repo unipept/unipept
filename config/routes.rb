@@ -25,13 +25,14 @@ UnipeptWeb::Application.routes.draw do
     match "sampledata", via: [:post], :to => "datasets#sampledata"
   end
 
-
   # General inforamtion
   scope :private_api, as: 'private_api' do
     match "/*path", via: [:options], :to => "handle_options#handle_options_request"
     match "goterms", via: [:get, :post], :to => "private_api#goterms"
     match "ecnumbers",     via: [:get, :post], :to => "private_api#ecnumbers"
     match "taxa",     via: [:get, :post], :to => "private_api#taxa"
+    match "interpros", via: [:get, :post], :to => "private_api#interpros"
+    match "proteins", via: [:get, :post], :to => "private_api#proteins"
   end
 
   # search

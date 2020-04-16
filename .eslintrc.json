@@ -54,7 +54,8 @@
       {
         "ignoreChainWithDepth": 5
       }
-    ]
+    ],
+    "valid-jsdoc": "off"
   },
   "env": {
     "browser": true,
