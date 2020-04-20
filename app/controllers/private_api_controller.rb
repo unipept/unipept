@@ -62,6 +62,8 @@ class PrivateApiController < HandleOptionsController
       @fa_summary = UniprotEntry.summarize_fa(@entries)
 
       return if @entries.empty?
+
+      @lineages = @entries.map(&:lineage).compact
     else
       @entries = sequence.peptides(equate_il).map(&:uniprot_entry)
       @lineages = sequence.lineages(equate_il, true).to_a
@@ -72,6 +74,9 @@ class PrivateApiController < HandleOptionsController
 
     # sort entries
     @entries = @entries.to_a.sort_by { |e| e.taxon.nil? ? '' : e.taxon.name }
+
+    # puts @entries.inspect
+    puts @lineages.inspect
 
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages)
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree
