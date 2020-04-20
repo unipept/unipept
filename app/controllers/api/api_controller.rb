@@ -1,3 +1,5 @@
+require 'octokit'
+
 class Api::ApiController < ApplicationController
   respond_to :json
 
@@ -204,7 +206,7 @@ class Api::ApiController < ApplicationController
     if @counts
       # Convert @counts into a hash with default values and integer keys.
       @counts.each do |k, v|
-        frequencies[k.to_i] = v
+        frequencies[k.to_i] = v.to_i
       end
     else
       @input.each do |id|
@@ -213,6 +215,24 @@ class Api::ApiController < ApplicationController
     end
 
     @root = Lineage.build_tree(frequencies)
+
+    if @link
+      contents = render_to_string(:template => 'api/api/taxa2tree.html', layout: false)
+
+      client = Octokit::Client.new(:access_token => ENV["TAXA2TREE_AT"])
+      result = client.create_gist(
+        {
+          :files =>
+            {
+              'index.html' => {:content => contents}
+            },
+          :public => false
+        }
+      )
+
+      @gist = result[:html_url]
+    end
+
     render layout: false
   end
 
@@ -264,6 +284,7 @@ class Api::ApiController < ApplicationController
     @input_order = @input.dup
 
     @counts = unsafe_hash[:counts]
+    @link = params[:link] == 'true'
 
     @equate_il = params[:equate_il] == 'true'
     @names = params[:names] == 'true'
