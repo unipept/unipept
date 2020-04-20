@@ -75,9 +75,6 @@ class PrivateApiController < HandleOptionsController
     # sort entries
     @entries = @entries.to_a.sort_by { |e| e.taxon.nil? ? '' : e.taxon.name }
 
-    # puts @entries.inspect
-    puts @lineages.inspect
-
     @lca_taxon = Lineage.calculate_lca_taxon(@lineages)
     @root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree
     common_hits = @lineages.map(&:hits).reduce(:+)
