@@ -15,8 +15,8 @@ class MpaController < HandleOptionsController
 
   def pept2data
     peptides = params[:peptides] || []
-    missed = params[:missed]
-    @equate_il = params[:equate_il]
+    missed = params[:missed] || false
+    @equate_il = params[:equate_il].nil? ? true : params[:equate_il]
     @peptides = Sequence
                 .includes(Sequence.lca_t_relation_name(@equate_il) => :lineage)
                 .where(sequence: peptides)
