@@ -62,6 +62,8 @@ class PrivateApiController < HandleOptionsController
       @fa_summary = UniprotEntry.summarize_fa(@entries)
 
       return if @entries.empty?
+
+      @lineages = @entries.map(&:lineage).compact
     else
       @entries = sequence.peptides(equate_il).map(&:uniprot_entry)
       @lineages = sequence.lineages(equate_il, true).to_a
