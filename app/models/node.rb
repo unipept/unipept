@@ -54,7 +54,7 @@ class Node
   end
 
   def do_count
-    @children.each { |c| c.do_count }
+    @children.each(&:do_count)
     count = @children.reduce(0) { |sum, c| sum + c.data['count'] } + @data['self_count']
     @data['count'] = count
   end

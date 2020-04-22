@@ -217,16 +217,16 @@ class Api::ApiController < ApplicationController
     @root = Lineage.build_tree(frequencies)
 
     if @link
-      contents = render_to_string(:template => 'api/api/taxa2tree.html', layout: false)
+      contents = render_to_string(template: 'api/api/taxa2tree.html', layout: false)
 
-      client = Octokit::Client.new(:access_token => ENV["TAXA2TREE_AT"])
+      client = Octokit::Client.new(access_token: ENV['TAXA2TREE_AT'])
       result = client.create_gist(
         {
-          :files =>
+          files:
             {
-              'index.html' => {:content => contents}
+              'index.html' => { content: contents }
             },
-          :public => false
+          public: false
         }
       )
 

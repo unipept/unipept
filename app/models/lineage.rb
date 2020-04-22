@@ -172,24 +172,25 @@ class Lineage < ApplicationRecord
 
       Lineage.ranks.each do |rank|
         lineage_id = taxon.lineage.send(rank)
-        if lineage_id and lineage_id >= 0
-          child = current_node.get_child(lineage_id)
 
-          unless child
-            taxon_info = Taxon.find(lineage_id)
-            child = Node.new(lineage_id, taxon_info.name, root, rank)
-            current_node.add_child(child)
-          end
+        next unless lineage_id && lineage_id >= 0
 
-          current_node = child
+        child = current_node.get_child(lineage_id)
+
+        unless child
+          taxon_info = Taxon.find(lineage_id)
+          child = Node.new(lineage_id, taxon_info.name, root, rank)
+          current_node.add_child(child)
         end
+
+        current_node = child
       end
 
       current_node.data['self_count'] += frequencies.fetch(taxon.id, 0)
     end
 
     root.do_count
-    return root
+    root
   end
 
   # there's a column 'class' in the database which screws
