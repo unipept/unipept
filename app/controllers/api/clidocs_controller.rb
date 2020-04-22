@@ -76,6 +76,11 @@ class Api::ClidocsController < ApplicationController
     @sidebar_subnav.delete('Fasta')
   end
 
+  def taxa2tree
+    @title = 'The unipept taxa2tree command'
+    @sidebar_name = 'unipept taxa2tree'
+  end
+
   def taxonomy
     @title = 'The unipept taxonomy command'
     @sidebar_name = 'unipept taxonomy'
@@ -114,6 +119,7 @@ class Api::ClidocsController < ApplicationController
       { name: 'unipept pept2funct', path: api_clidocs_pept2funct_path },
       { name: 'unipept peptinfo',   path: api_clidocs_peptinfo_path },
       { name: 'unipept taxa2lca',   path: api_clidocs_taxa2lca_path },
+      { name: 'unipept taxa2tree',  path: api_clidocs_taxa2tree_path },
       { name: 'unipept taxonomy',   path: api_clidocs_taxonomy_path }
     ]
   end
