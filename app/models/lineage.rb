@@ -165,7 +165,7 @@ class Lineage < ApplicationRecord
   def self.build_tree(frequencies)
     taxa_with_lineage = Taxon.includes(:lineage).where(id: frequencies.keys)
 
-    root = Node.new(1, 'Organism', nil, 'root') # start constructing the tree
+    root = Node.new(1, 'Organism', nil, 'no rank') # start constructing the tree
     taxa_with_lineage.each do |taxon|
       current_node = root
       puts taxon.inspect

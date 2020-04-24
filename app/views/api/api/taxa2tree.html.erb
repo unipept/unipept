@@ -269,19 +269,19 @@
         height: 600
     };
 
-    $("#sunburst-visualisation").sunburst(data, {
+    $("#sunburst-visualisation").sunburst(JSON.parse(JSON.stringify(data)), {
         getTooltip: tooltipContent,
         width: 960,
         height: 600
     });
 
-    $("#treemap-visualisation").treemap(data, {
+    $("#treemap-visualisation").treemap(JSON.parse(JSON.stringify(data)), {
         getTooltip: tooltipContent,
         width: 958,
         height: 584
     });
 
-    $("#treeview-visualisation").treeview(data, {
+    $("#treeview-visualisation").treeview(JSON.parse(JSON.stringify(data)), {
         getTooltip: tooltipContent,
         width: 958,
         height: 600,
