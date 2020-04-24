@@ -217,14 +217,15 @@ class Api::ApiController < ApplicationController
     @root = Lineage.build_tree(frequencies)
 
     if @link
-      contents = render_to_string(template: 'api/api/taxa2tree.html', layout: false)
-
       client = Octokit::Client.new(access_token: ENV['TAXA2TREE_AT'])
       result = client.create_gist(
         {
+          description: 'Unipept Taxa2Tree results',
           files:
             {
-              'index.html' => { content: contents }
+              'index.html' => { content: render_to_string(template: 'api/api/taxa2tree.html', layout: false) },
+              'readme.md' => { content: render_to_string(template: 'api/api/taxa2tree_readme.md', layout: false) },
+              '.block' => { content: 'height: 710' }
             },
           public: false
         }
