@@ -93,7 +93,7 @@ group :development do
   gem 'guard-minitest', '~> 2.4.6' # auto run tests
   gem 'rubocop', '~> 0.81.0'
   gem 'rake', '~> 13.0.1'
-  gem 'sprockets', '~> 3.7.2'
+  gem 'sprockets', '~> 4.0.0'
 end
 
 gem "octokit", "~> 4.18"
