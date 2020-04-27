@@ -161,6 +161,38 @@ class Lineage < ApplicationRecord
     lca
   end
 
+  # builds a tree for a list of lineages. The root node always has id = 1.
+  def self.build_tree(frequencies)
+    taxa_with_lineage = Taxon.includes(:lineage).where(id: frequencies.keys)
+
+    root = Node.new(1, 'Organism', nil, 'no rank') # start constructing the tree
+    taxa_with_lineage.each do |taxon|
+      current_node = root
+      puts taxon.inspect
+
+      Lineage.ranks.each do |rank|
+        lineage_id = taxon.lineage.send(rank)
+
+        next unless lineage_id && lineage_id >= 0
+
+        child = current_node.get_child(lineage_id)
+
+        unless child
+          taxon_info = Taxon.find(lineage_id)
+          child = Node.new(lineage_id, taxon_info.name, root, rank)
+          current_node.add_child(child)
+        end
+
+        current_node = child
+      end
+
+      current_node.data['self_count'] += frequencies.fetch(taxon.id, 0)
+    end
+
+    root.do_count
+    root
+  end
+
   # there's a column 'class' in the database which screws
   # up the getters. This method fixes that error.
   def self.instance_method_already_implemented?(method_name)

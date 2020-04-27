@@ -1,14 +1,16 @@
+require 'octokit'
+
 class Api::ApiController < ApplicationController
   respond_to :json
 
   skip_before_action :disable_website
 
-  before_action :set_headers, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go pept2interpro peptinfo taxa2lca taxonomy]
-  before_action :set_params, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go pept2interpro peptinfo taxa2lca taxonomy]
+  before_action :set_headers, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go pept2interpro peptinfo taxa2lca taxonomy taxa2tree]
+  before_action :set_params, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go pept2interpro peptinfo taxa2lca taxonomy taxa2tree]
   before_action :set_query, only: %i[pept2taxa pept2lca peptinfo taxonomy]
   before_action :set_sequences, only: %i[pept2taxa pept2prot]
 
-  before_action :log, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go pept2interpro peptinfo taxa2lca taxonomy]
+  before_action :log, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go pept2interpro peptinfo taxa2lca taxonomy taxa2tree]
 
   # sends a message to the ruby cli
   def messages
@@ -197,6 +199,46 @@ class Api::ApiController < ApplicationController
     respond_with(@result)
   end
 
+  # Returns a tree with all taxa aggregated over the complete lineage.
+  # param[input]: Array, required, List of input taxon ids
+  # param[extra]: "true" or "false", Include lineage
+  # param[names]: "true" or "false", Include the lineage names
+  def taxa2tree
+    frequencies = Hash.new 0
+    if @counts
+      # Convert @counts into a hash with default values and integer keys.
+      @counts.each do |k, v|
+        frequencies[k.to_i] = v.to_i
+      end
+    else
+      @input.each do |id|
+        frequencies[id.to_i] += 1
+      end
+    end
+
+    @root = Lineage.build_tree(frequencies)
+
+    if @link
+      client = Octokit::Client.new(access_token: ENV['TAXA2TREE_AT'])
+      result = client.create_gist(
+        {
+          description: 'Unipept Taxa2Tree results',
+          files:
+            {
+              'index.html' => { content: render_to_string(template: 'api/api/taxa2tree.html', layout: false) },
+              'readme.md' => { content: render_to_string(template: 'api/api/taxa2tree_readme.md', layout: false) },
+              '.block' => { content: 'height: 710' }
+            },
+          public: false
+        }
+      )
+
+      @gist = result[:html_url]
+    end
+
+    render layout: false
+  end
+
   # Returns the taxonomic information for a given list of taxon id's
   # param[input]: Array, required, List of input taxon ids
   # param[extra]: "true" or "false", Include lineage
@@ -243,6 +285,9 @@ class Api::ApiController < ApplicationController
     @input = [] if @input.nil?
     @input = @input.compact.map(&:chomp)
     @input_order = @input.dup
+
+    @counts = unsafe_hash[:counts]
+    @link = params[:link] == 'true'
 
     @equate_il = params[:equate_il] == 'true'
     @names = params[:names] == 'true'

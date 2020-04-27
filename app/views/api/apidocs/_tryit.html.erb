@@ -61,6 +61,18 @@
           </div>
         </div>
       <% end %>
+      <% if defined?(link) && link %>
+        <div class="form-group">
+          <label for="input" class="col-xs-2 control-label">link</label>
+          <div class="col-xs-10">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" id="try-link"> set to true
+              </label>
+            </div>
+          </div>
+        </div>
+      <% end %>
       <div class="form-group">
         <div class="col-xs-offset-2 col-xs-10">
           <button type="submit" class="btn btn-primary" id="try-it-submit">Try it!</button>
@@ -83,8 +95,10 @@
         input = <%= input %>,
         equate_il = <%= equate_il %>,
         extra = <%= extra %>,
-        names = "<%= names %>";
-        domains = <%= domains %>;
+        names = "<%= names %>",
+        domains = <%= domains %>,
+        link = <%= defined?(link) && link %>;
+
     $("#try-it-form").submit(function (e) {
       e.preventDefault();
 
@@ -94,6 +108,7 @@
       var valExtra = $("#try-extra").prop('checked');
       var valNames = $("#try-names").prop('checked');
       var valDomains = $("#try-domains").prop('checked');
+      var valLink = $("#try-link").prop('checked');
 
       var url = "http://" + server + "/api/v1/" + name + ".json?";
 
@@ -123,6 +138,10 @@
 
       if (domains && valDomains) {
           url += "&domains=true"
+      }
+
+      if (link && valLink) {
+          url += "&link=true"
       }
 
 
