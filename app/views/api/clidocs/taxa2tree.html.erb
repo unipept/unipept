@@ -1,0 +1,163 @@
+<div class="apidocs row">
+  <div class="col-xs-9">
+    <div class='page-header'>
+      <h1 class='api-title'>
+        <samp>unipept taxa2tree</samp><br>
+        <small>Returns the taxonomic tree of a given list of taxon identifiers.</small>
+      </h1>
+    </div>
+    <p>
+      The <code>unipept taxa2tree</code> command takes one or more <span class="initialism">NCBI</span> taxon id's as input and returns the taxonomic tree of these taxa as output. All this information is fetched by doing <a href='<%= api_apidocs_taxa2tree_path %>' target='_blank'><span class="initialism">API</span>-requests</a> to the Unipept server.
+    </p>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='input'>Input</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>
+          The <code>unipept taxa2tree</code> command expects <span class="initialism">NCBI</span> taxon id's as input. The source of this input can be command line arguments, a file, or <i>standard input</i>. If input is supplied using multiple sources at the same time, the order of priority as described above is used.
+    </p>
+        <h4>Command line arguments</h4>
+        <p>
+          If input is supplied using command line arguments, the taxon id's must be separated by spaces.
+    </p>
+        <h5>Example</h5>
+        <pre>
+<b>$</b> unipept taxa2tree 817 329854 1099853
+[{"id":1,"name":"Organism","rank":"root","data":{"count":3,"self_count":0},"children":[{"id":2,"name":"Bacteria","rank":"superkingdom","data":{"count":3,"self_count":0},"children":[{"id":976,"name":"Bacteroidetes","rank":"phylum","data":{"count":3,"self_count":0},"children":[{"id":200643,"name":"Bacteroidia","rank":"class_","data":{"count":3,"self_count":0},"children":[{"id":171549,"name":"Bacteroidales","rank":"order","data":{"count":3,"self_count":0},"children":[{"id":815,"name":"Bacteroidaceae","rank":"family","data":{"count":2,"self_count":0},"children":[{"id":816,"name":"Bacteroides","rank":"genus","data":{"count":2,"self_count":0},"children":[{"id":817,"name":"Bacteroides fragilis","rank":"species","data":{"count":1,"self_count":1},"children":[]},{"id":329854,"name":"Bacteroides intestinalis","rank":"species","data":{"count":1,"self_count":1},"children":[]}]}]},{"id":2005519,"name":"Barnesiellaceae","rank":"family","data":{"count":1,"self_count":0},"children":[{"id":1348911,"name":"Coprobacter","rank":"genus","data":{"count":1,"self_count":0},"children":[{"id":1099853,"name":"Coprobacter fastidiosus","rank":"species","data":{"count":1,"self_count":1},"children":[]}]}]}]}]}]}]}]}]
+</pre>
+        <h4>File input</h4>
+        <p>
+          Use the <a href='#param-input'><samp>--input</samp> parameter</a> to specify a file to use as input. If input is supplied using a file, a single taxon id (and optionally the occurrences of this taxon, delimited by comma) per line is expected.
+    </p>
+        <h5>Example</h5>
+        <pre>
+<b>$</b> cat input.txt
+817,5
+329854,4
+1099853,78
+<b>$</b> unipept taxa2tree --input input.txt
+[{"id":1,"name":"Organism","rank":"root","data":{"count":3,"self_count":0},"children":[{"id":2,"name":"Bacteria","rank":"superkingdom","data":{"count":3,"self_count":0},"children":[{"id":976,"name":"Bacteroidetes","rank":"phylum","data":{"count":3,"self_count":0},"children":[{"id":200643,"name":"Bacteroidia","rank":"class_","data":{"count":3,"self_count":0},"children":[{"id":171549,"name":"Bacteroidales","rank":"order","data":{"count":3,"self_count":0},"children":[{"id":815,"name":"Bacteroidaceae","rank":"family","data":{"count":2,"self_count":0},"children":[{"id":816,"name":"Bacteroides","rank":"genus","data":{"count":2,"self_count":0},"children":[{"id":817,"name":"Bacteroides fragilis","rank":"species","data":{"count":1,"self_count":1},"children":[]},{"id":329854,"name":"Bacteroides intestinalis","rank":"species","data":{"count":1,"self_count":1},"children":[]}]}]},{"id":2005519,"name":"Barnesiellaceae","rank":"family","data":{"count":1,"self_count":0},"children":[{"id":1348911,"name":"Coprobacter","rank":"genus","data":{"count":1,"self_count":0},"children":[{"id":1099853,"name":"Coprobacter fastidiosus","rank":"species","data":{"count":1,"self_count":1},"children":[]}]}]}]}]}]}]}]}]</pre>
+        <h4>Standard input</h4>
+        <p>
+          If the command is run without arguments and no file is specified, <code>unipept taxa2tree</code> will read its input from <i>standard input</i>. When <i>standard input</i> is used, a single taxon id per line is expected.
+    </p>
+        <h5>Example</h5>
+        <pre>
+<b>$</b> cat input.txt
+817,5
+329854,4
+1099853,78
+<b>$</b> cat input | unipept taxa2tree --input input.txt
+[{"id":1,"name":"Organism","rank":"root","data":{"count":3,"self_count":0},"children":[{"id":2,"name":"Bacteria","rank":"superkingdom","data":{"count":3,"self_count":0},"children":[{"id":976,"name":"Bacteroidetes","rank":"phylum","data":{"count":3,"self_count":0},"children":[{"id":200643,"name":"Bacteroidia","rank":"class_","data":{"count":3,"self_count":0},"children":[{"id":171549,"name":"Bacteroidales","rank":"order","data":{"count":3,"self_count":0},"children":[{"id":815,"name":"Bacteroidaceae","rank":"family","data":{"count":2,"self_count":0},"children":[{"id":816,"name":"Bacteroides","rank":"genus","data":{"count":2,"self_count":0},"children":[{"id":817,"name":"Bacteroides fragilis","rank":"species","data":{"count":1,"self_count":1},"children":[]},{"id":329854,"name":"Bacteroides intestinalis","rank":"species","data":{"count":1,"self_count":1},"children":[]}]}]},{"id":2005519,"name":"Barnesiellaceae","rank":"family","data":{"count":1,"self_count":0},"children":[{"id":1348911,"name":"Coprobacter","rank":"genus","data":{"count":1,"self_count":0},"children":[{"id":1099853,"name":"Coprobacter fastidiosus","rank":"species","data":{"count":1,"self_count":1},"children":[]}]}]}]}]}]}]}]}]
+</pre>
+      </div>
+    </div>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='output'>Output</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>
+          The <code>unipept taxa2tree</code> command outputs the taxonomic tree for a given set of taxon id's. By default, the NCBI taxon id, taxon name, taxonomic rank, count and self count of each node in the tree are returned in the json format. Consult the <a href='<%= api_apidocs_taxa2tree_path %>#response' target='_blank'><span class="initialism">API</span> documentation</a> for a detailed list of output fields. By default, output is generated in json format. By using the <a href='#param-format'><samp>--format</samp> parameter</a>, the format can be changed into html or an url. The output can be written to a file or to <i>standard output</i>.
+    </p>
+        <h4>File output</h4>
+        <p>
+          Use the <a href='#param-input'><samp>--output</samp> parameter</a> to specify an output file. If the file aready exists, the output will be appended to the end of the file.
+    </p>
+        <pre>
+<b>$</b> unipept taxa2tree --output output.txt 817 329854 1099853
+<b>$</b> cat output.txt
+[{"id":1,"name":"Organism","rank":"root","data":{"count":3,"self_count":0},"children":[{"id":2,"name":"Bacteria","rank":"superkingdom","data":{"count":3,"self_count":0},"children":[{"id":976,"name":"Bacteroidetes","rank":"phylum","data":{"count":3,"self_count":0},"children":[{"id":200643,"name":"Bacteroidia","rank":"class_","data":{"count":3,"self_count":0},"children":[{"id":171549,"name":"Bacteroidales","rank":"order","data":{"count":3,"self_count":0},"children":[{"id":815,"name":"Bacteroidaceae","rank":"family","data":{"count":2,"self_count":0},"children":[{"id":816,"name":"Bacteroides","rank":"genus","data":{"count":2,"self_count":0},"children":[{"id":817,"name":"Bacteroides fragilis","rank":"species","data":{"count":1,"self_count":1},"children":[]},{"id":329854,"name":"Bacteroides intestinalis","rank":"species","data":{"count":1,"self_count":1},"children":[]}]}]},{"id":2005519,"name":"Barnesiellaceae","rank":"family","data":{"count":1,"self_count":0},"children":[{"id":1348911,"name":"Coprobacter","rank":"genus","data":{"count":1,"self_count":0},"children":[{"id":1099853,"name":"Coprobacter fastidiosus","rank":"species","data":{"count":1,"self_count":1},"children":[]}]}]}]}]}]}]}]}]
+</pre>
+        <h4>Standard output</h4>
+        <p>
+          If no output file is specified, <code>unipept taxa2tree</code> will write its output to <i>standard output</i>.
+    </p>
+        <h5>Example</h5>
+        <pre>
+<b>$</b> unipept taxa2tree 817 329854 1099853
+[{"id":1,"name":"Organism","rank":"root","data":{"count":3,"self_count":0},"children":[{"id":2,"name":"Bacteria","rank":"superkingdom","data":{"count":3,"self_count":0},"children":[{"id":976,"name":"Bacteroidetes","rank":"phylum","data":{"count":3,"self_count":0},"children":[{"id":200643,"name":"Bacteroidia","rank":"class_","data":{"count":3,"self_count":0},"children":[{"id":171549,"name":"Bacteroidales","rank":"order","data":{"count":3,"self_count":0},"children":[{"id":815,"name":"Bacteroidaceae","rank":"family","data":{"count":2,"self_count":0},"children":[{"id":816,"name":"Bacteroides","rank":"genus","data":{"count":2,"self_count":0},"children":[{"id":817,"name":"Bacteroides fragilis","rank":"species","data":{"count":1,"self_count":1},"children":[]},{"id":329854,"name":"Bacteroides intestinalis","rank":"species","data":{"count":1,"self_count":1},"children":[]}]}]},{"id":2005519,"name":"Barnesiellaceae","rank":"family","data":{"count":1,"self_count":0},"children":[{"id":1348911,"name":"Coprobacter","rank":"genus","data":{"count":1,"self_count":0},"children":[{"id":1099853,"name":"Coprobacter fastidiosus","rank":"species","data":{"count":1,"self_count":1},"children":[]}]}]}]}]}]}]}]}]
+<b>$</b> unipept taxa2lca 817 329854 1099853 > output.txt
+<b>$</b> cat output.txt
+[{"id":1,"name":"Organism","rank":"root","data":{"count":3,"self_count":0},"children":[{"id":2,"name":"Bacteria","rank":"superkingdom","data":{"count":3,"self_count":0},"children":[{"id":976,"name":"Bacteroidetes","rank":"phylum","data":{"count":3,"self_count":0},"children":[{"id":200643,"name":"Bacteroidia","rank":"class_","data":{"count":3,"self_count":0},"children":[{"id":171549,"name":"Bacteroidales","rank":"order","data":{"count":3,"self_count":0},"children":[{"id":815,"name":"Bacteroidaceae","rank":"family","data":{"count":2,"self_count":0},"children":[{"id":816,"name":"Bacteroides","rank":"genus","data":{"count":2,"self_count":0},"children":[{"id":817,"name":"Bacteroides fragilis","rank":"species","data":{"count":1,"self_count":1},"children":[]},{"id":329854,"name":"Bacteroides intestinalis","rank":"species","data":{"count":1,"self_count":1},"children":[]}]}]},{"id":2005519,"name":"Barnesiellaceae","rank":"family","data":{"count":1,"self_count":0},"children":[{"id":1348911,"name":"Coprobacter","rank":"genus","data":{"count":1,"self_count":0},"children":[{"id":1099853,"name":"Coprobacter fastidiosus","rank":"species","data":{"count":1,"self_count":1},"children":[]}]}]}]}]}]}]}]}]
+</pre>
+      </div>
+    </div>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='options'>Command-line options</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <h3><samp>--input</samp> / <samp>-i</samp> <small>Specify an input file</small></h3>
+        <p>
+          All Unipept <span class='initialism'>CLI</span> commands can process input from 3 sources: command line arguments, a file, or <i>standard input</i>. The optional <code>--input</code> option allows you to specify an input file. The file should contain a single taxon per line, or a taxon and the associated count (comma delimited).
+    </p>
+        <h5>Example</h5>
+        <pre>
+<b>$</b> cat input.txt
+817,5
+329854,4
+1099853,78
+<b>$</b> unipept taxa2tree <b>--input</b> input.txt
+[{"id":1,"name":"Organism","rank":"root","data":{"count":3,"self_count":0},"children":[{"id":2,"name":"Bacteria","rank":"superkingdom","data":{"count":3,"self_count":0},"children":[{"id":976,"name":"Bacteroidetes","rank":"phylum","data":{"count":3,"self_count":0},"children":[{"id":200643,"name":"Bacteroidia","rank":"class_","data":{"count":3,"self_count":0},"children":[{"id":171549,"name":"Bacteroidales","rank":"order","data":{"count":3,"self_count":0},"children":[{"id":815,"name":"Bacteroidaceae","rank":"family","data":{"count":2,"self_count":0},"children":[{"id":816,"name":"Bacteroides","rank":"genus","data":{"count":2,"self_count":0},"children":[{"id":817,"name":"Bacteroides fragilis","rank":"species","data":{"count":1,"self_count":1},"children":[]},{"id":329854,"name":"Bacteroides intestinalis","rank":"species","data":{"count":1,"self_count":1},"children":[]}]}]},{"id":2005519,"name":"Barnesiellaceae","rank":"family","data":{"count":1,"self_count":0},"children":[{"id":1348911,"name":"Coprobacter","rank":"genus","data":{"count":1,"self_count":0},"children":[{"id":1099853,"name":"Coprobacter fastidiosus","rank":"species","data":{"count":1,"self_count":1},"children":[]}]}]}]}]}]}]}]}]
+</pre>
+        <h3 id='param-output'><samp>--output</samp> / <samp>-o</samp> <small>Specify an output file</small></h3>
+        <p>
+          By default, the unipept commands write their output to <i>standard output</i>. Using the optional <code>--output</code> option allows you to specify a file to write the output to. If the file already exists, the output will be appended; if it doesn't, a new file will be created.
+    </p>
+        <h5>Example</h5>
+        <pre>
+<b>$</b> unipept taxa2tree <b>--output</b> output.txt 817 329854 1099853
+<b>$</b> cat output.txt
+[{"id":1,"name":"Organism","rank":"root","data":{"count":3,"self_count":0},"children":[{"id":2,"name":"Bacteria","rank":"superkingdom","data":{"count":3,"self_count":0},"children":[{"id":976,"name":"Bacteroidetes","rank":"phylum","data":{"count":3,"self_count":0},"children":[{"id":200643,"name":"Bacteroidia","rank":"class_","data":{"count":3,"self_count":0},"children":[{"id":171549,"name":"Bacteroidales","rank":"order","data":{"count":3,"self_count":0},"children":[{"id":815,"name":"Bacteroidaceae","rank":"family","data":{"count":2,"self_count":0},"children":[{"id":816,"name":"Bacteroides","rank":"genus","data":{"count":2,"self_count":0},"children":[{"id":817,"name":"Bacteroides fragilis","rank":"species","data":{"count":1,"self_count":1},"children":[]},{"id":329854,"name":"Bacteroides intestinalis","rank":"species","data":{"count":1,"self_count":1},"children":[]}]}]},{"id":2005519,"name":"Barnesiellaceae","rank":"family","data":{"count":1,"self_count":0},"children":[{"id":1348911,"name":"Coprobacter","rank":"genus","data":{"count":1,"self_count":0},"children":[{"id":1099853,"name":"Coprobacter fastidiosus","rank":"species","data":{"count":1,"self_count":1},"children":[]}]}]}]}]}]}]}]}]
+        </pre>
+        <h3 id='param-format'><samp>--format</samp> / <samp>-f</samp> <small>Specify the output format</small></h3>
+        <p>
+          By default, the Unipept <span class='initialism'>CLI</span> taxa2tree command returns its output in <samp>json</samp> format. The <code>--format</code> option allows you to select another format. Supported formats are <samp>json</samp>, <samp>html</samp>, and <samp>url</samp>.
+    </p>
+        <h5>Example</h5>
+        <pre>
+<b>$</b> unipept taxa2tree <b>--format</b> url 817 329854 1099853
+https://bl.ocks.org/2c8279c53874528aa3f1ddd018953e60
+<b>$</b> unipept taxa2lca <b>--format</b> html 817 329854 1099853
+<span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://code.jquery.com/jquery-3.5.0.slim.min.js&quot;</span> <span class="na">integrity</span><span class="o">=</span><span class="s">&quot;sha256-MlusDLJIP1GRgLrOflUQtshyP0TwT/RHXsI1wWGnQhs=&quot;</span> <span class="na">crossorigin</span><span class="o">=</span><span class="s">&quot;anonymous&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js&quot;</span> <span class="na">integrity</span><span class="o">=</span><span class="s">&quot;sha256-dsOXGNHAo/syFnazt+KTBsCQeRmlcW1XKL0bCK4Baec=&quot;</span> <span class="na">crossorigin</span><span class="o">=</span><span class="s">&quot;anonymous&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://cdn.jsdelivr.net/npm/unipept-visualizations@1.7.3/dist/unipept-visualizations.min.js&quot;</span> <span class="na">integrity</span><span class="o">=</span><span class="s">&quot;sha256-X40vVFfGbi55N33QuZEMmw3nxi7Swljq5OJ1UHWdBhQ=&quot;</span> <span class="na">crossorigin</span><span class="o">=</span><span class="s">&quot;anonymous&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;sunburst&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="kr">const</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;Organism&quot;</span><span class="p">,</span><span class="s2">&quot;rank&quot;</span><span class="o">:</span><span class="s2">&quot;root&quot;</span><span class="p">,</span><span class="s2">&quot;data&quot;</span><span class="o">:</span><span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="o">:</span><span class="mi">3</span><span class="p">,</span><span class="s2">&quot;self_count&quot;</span><span class="o">:</span><span class="mi">0</span><span class="p">},</span><span class="s2">&quot;children&quot;</span><span class="o">:</span><span class="p">[{</span><span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="mi">2</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;Bacteria&quot;</span><span class="p">,</span><span class="s2">&quot;rank&quot;</span><span class="o">:</span><span class="s2">&quot;superkingdom&quot;</span><span class="p">,</span><span class="s2">&quot;data&quot;</span><span class="o">:</span><span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="o">:</span><span class="mi">3</span><span class="p">,</span><span class="s2">&quot;self_count&quot;</span><span class="o">:</span><span class="mi">0</span><span class="p">},</span><span class="s2">&quot;children&quot;</span><span class="o">:</span><span class="p">[{</span><span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="mi">976</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;Bacteroidetes&quot;</span><span class="p">,</span><span class="s2">&quot;rank&quot;</span><span class="o">:</span><span class="s2">&quot;phylum&quot;</span><span class="p">,</span><span class="s2">&quot;data&quot;</span><span class="o">:</span><span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="o">:</span><span class="mi">3</span><span class="p">,</span><span class="s2">&quot;self_count&quot;</span><span class="o">:</span><span class="mi">0</span><span class="p">},</span><span class="s2">&quot;children&quot;</span><span class="o">:</span><span class="p">[{</span><span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="mi">200643</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;Bacteroidia&quot;</span><span class="p">,</span><span class="s2">&quot;rank&quot;</span><span class="o">:</span><span class="s2">&quot;class_&quot;</span><span class="p">,</span><span class="s2">&quot;data&quot;</span><span class="o">:</span><span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="o">:</span><span class="mi">3</span><span class="p">,</span><span class="s2">&quot;self_count&quot;</span><span class="o">:</span><span class="mi">0</span><span class="p">},</span><span class="s2">&quot;children&quot;</span><span class="o">:</span><span class="p">[{</span><span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="mi">171549</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;Bacteroidales&quot;</span><span class="p">,</span><span class="s2">&quot;rank&quot;</span><span class="o">:</span><span class="s2">&quot;order&quot;</span><span class="p">,</span><span class="s2">&quot;data&quot;</span><span class="o">:</span><span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="o">:</span><span class="mi">3</span><span class="p">,</span><span class="s2">&quot;self_count&quot;</span><span class="o">:</span><span class="mi">0</span><span class="p">},</span><span class="s2">&quot;children&quot;</span><span class="o">:</span><span class="p">[{</span><span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="mi">815</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;Bacteroidaceae&quot;</span><span class="p">,</span><span class="s2">&quot;rank&quot;</span><span class="o">:</span><span class="s2">&quot;family&quot;</span><span class="p">,</span><span class="s2">&quot;data&quot;</span><span class="o">:</span><span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="o">:</span><span class="mi">2</span><span class="p">,</span><span class="s2">&quot;self_count&quot;</span><span class="o">:</span><span class="mi">0</span><span class="p">},</span><span class="s2">&quot;children&quot;</span><span class="o">:</span><span class="p">[{</span><span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="mi">816</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;Bacteroides&quot;</span><span class="p">,</span><span class="s2">&quot;rank&quot;</span><span class="o">:</span><span class="s2">&quot;genus&quot;</span><span class="p">,</span><span class="s2">&quot;data&quot;</span><span class="o">:</span><span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="o">:</span><span class="mi">2</span><span class="p">,</span><span class="s2">&quot;self_count&quot;</span><span class="o">:</span><span class="mi">0</span><span class="p">},</span><span class="s2">&quot;children&quot;</span><span class="o">:</span><span class="p">[{</span><span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="mi">817</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;Bacteroides fragilis&quot;</span><span class="p">,</span><span class="s2">&quot;rank&quot;</span><span class="o">:</span><span class="s2">&quot;species&quot;</span><span class="p">,</span><span class="s2">&quot;data&quot;</span><span class="o">:</span><span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;self_count&quot;</span><span class="o">:</span><span class="mi">1</span><span class="p">},</span><span class="s2">&quot;children&quot;</span><span class="o">:</span><span class="p">[]},{</span><span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="mi">329854</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;Bacteroides intestinalis&quot;</span><span class="p">,</span><span class="s2">&quot;rank&quot;</span><span class="o">:</span><span class="s2">&quot;species&quot;</span><span class="p">,</span><span class="s2">&quot;data&quot;</span><span class="o">:</span><span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;self_count&quot;</span><span class="o">:</span><span class="mi">1</span><span class="p">},</span><span class="s2">&quot;children&quot;</span><span class="o">:</span><span class="p">[]}]}]},{</span><span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="mi">2005519</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;Barnesiellaceae&quot;</span><span class="p">,</span><span class="s2">&quot;rank&quot;</span><span class="o">:</span><span class="s2">&quot;family&quot;</span><span class="p">,</span><span class="s2">&quot;data&quot;</span><span class="o">:</span><span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;self_count&quot;</span><span class="o">:</span><span class="mi">0</span><span class="p">},</span><span class="s2">&quot;children&quot;</span><span class="o">:</span><span class="p">[{</span><span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="mi">1348911</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;Coprobacter&quot;</span><span class="p">,</span><span class="s2">&quot;rank&quot;</span><span class="o">:</span><span class="s2">&quot;genus&quot;</span><span class="p">,</span><span class="s2">&quot;data&quot;</span><span class="o">:</span><span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;self_count&quot;</span><span class="o">:</span><span class="mi">0</span><span class="p">},</span><span class="s2">&quot;children&quot;</span><span class="o">:</span><span class="p">[{</span><span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="mi">1099853</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;Coprobacter fastidiosus&quot;</span><span class="p">,</span><span class="s2">&quot;rank&quot;</span><span class="o">:</span><span class="s2">&quot;species&quot;</span><span class="p">,</span><span class="s2">&quot;data&quot;</span><span class="o">:</span><span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;self_count&quot;</span><span class="o">:</span><span class="mi">1</span><span class="p">},</span><span class="s2">&quot;children&quot;</span><span class="o">:</span><span class="p">[]}]}]}]}]}]}]}]};</span>
+
+    <span class="kd">function</span> <span class="nx">tooltipContent</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;b&gt;&#39;</span> <span class="o">+</span> <span class="nx">d</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;&lt;/b&gt; (&#39;</span> <span class="o">+</span> <span class="nx">d</span><span class="p">.</span><span class="nx">rank</span> <span class="o">+</span> <span class="s1">&#39;)&lt;br/&gt;&#39;</span> <span class="o">+</span>
+            <span class="p">(</span><span class="o">!</span><span class="nx">d</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">self_count</span> <span class="o">?</span> <span class="s1">&#39;0&#39;</span> <span class="o">:</span> <span class="nx">d</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">self_count</span><span class="p">)</span> <span class="o">+</span>
+            <span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">self_count</span> <span class="o">&amp;&amp;</span> <span class="nx">d</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">self_count</span> <span class="o">===</span> <span class="mi">1</span> <span class="o">?</span> <span class="s1">&#39; sequence&#39;</span> <span class="o">:</span> <span class="s1">&#39; sequences&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; specific to this level&lt;br/&gt;&#39;</span> <span class="o">+</span>
+            <span class="p">(</span><span class="o">!</span><span class="nx">d</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">count</span> <span class="o">?</span> <span class="s1">&#39;0&#39;</span> <span class="o">:</span> <span class="nx">d</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">count</span><span class="p">)</span> <span class="o">+</span>
+            <span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">count</span> <span class="o">&amp;&amp;</span> <span class="nx">d</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">count</span> <span class="o">===</span> <span class="mi">1</span> <span class="o">?</span> <span class="s1">&#39; sequence&#39;</span> <span class="o">:</span> <span class="s1">&#39; sequences&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; specific to this level or lower&#39;</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="kr">const</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">getTooltip</span><span class="o">:</span> <span class="nx">tooltipContent</span>
+    <span class="p">};</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#sunburst&quot;</span><span class="p">).</span><span class="nx">sunburst</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre>
+        <h3><samp>--help</samp> / <samp>-h</samp> <small>Display help</small></h3>
+        <p>
+          This flag displays the help.
+    </p>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-3">
+    <%= render 'api/shared/sidebar' %>
+  </div>
+</div>

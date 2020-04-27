@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.5.0.slim.min.js" integrity="sha256-MlusDLJIP1GRgLrOflUQtshyP0TwT/RHXsI1wWGnQhs=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js" integrity="sha256-dsOXGNHAo/syFnazt+KTBsCQeRmlcW1XKL0bCK4Baec=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/unipept-visualizations@1.7.3/dist/unipept-visualizations.min.js" integrity="sha256-X40vVFfGbi55N33QuZEMmw3nxi7Swljq5OJ1UHWdBhQ=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvg@3.0.6/lib/umd.js" integrity="sha256-ON7+EJ/AcKrvDbgReGrEuEEi8sx4tKIYbDgul267KAo=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dom-to-image@2.6.0/src/dom-to-image.min.js"></script>
+  <style>
+    p {
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .tab button {
+      background-color: inherit;
+      float: left;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 14px 16px;
+      transition: 0.3s;
+      font-size: 17px;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .tab {
+      overflow: hidden;
+      border: 1px solid #ccc;
+      background-color: #f1f1f1;
+    }
+
+    .tab button:hover {
+      background-color: #ddd;
+    }
+
+    .tab button.active {
+      background-color: #ccc;
+    }
+
+    .visualization-buttons {
+      display: flex;
+      justify-content: center;
+      margin-top: 8px;
+    }
+
+    /* Make sunburst appear clickable */
+    #path-0, #path-1, #path-2, #path-3 {
+      cursor: pointer;
+    }
+
+    .tabcontent {
+      display: none;
+      height: 660px;
+      border: 1px solid #ccc;
+      border-top: none;
+    }
+
+    .alert-primary {
+      color: #212a5e;
+      background-color: #d9dcf0;
+      padding: .75rem 1.25rem;
+      margin-bottom: 1rem;
+      margin-left: 12px;
+      margin-right: 12px;
+    }
+
+    .visualization-box {
+      width: 200px;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      cursor: pointer;
+    }
+
+    .visualization-box .pure-material-button-contained {
+      margin-top: 8px;
+    }
+
+    .pure-material-button-contained {
+      position: relative;
+      display: inline-block;
+      box-sizing: border-box;
+      border: none;
+      border-radius: 4px;
+      padding: 0 16px;
+      min-width: 64px;
+      height: 36px;
+      vertical-align: middle;
+      text-align: center;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+      color: rgb(var(--pure-material-onprimary-rgb, 255, 255, 255));
+      background-color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+      box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+      font-family: var(--pure-material-font, "Roboto", "Segoe UI", BlinkMacSystemFont, system-ui, -apple-system);
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 36px;
+      overflow: hidden;
+      outline: none;
+      cursor: pointer;
+      transition: box-shadow 0.2s;
+    }
+
+    .pure-material-button-contained::-moz-focus-inner {
+      border: none;
+    }
+
+
+    /* Overlay */
+
+    .pure-material-button-contained::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: rgb(var(--pure-material-onprimary-rgb, 255, 255, 255));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+
+    /* Ripple */
+
+    .pure-material-button-contained::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      border-radius: 50%;
+      padding: 50%;
+      width: 32px;
+      /* Safari */
+      height: 32px;
+      /* Safari */
+      background-color: rgb(var(--pure-material-onprimary-rgb, 255, 255, 255));
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(1);
+      transition: opacity 1s, transform 0.5s;
+    }
+
+
+    /* Hover, Focus */
+
+    .pure-material-button-contained:hover,
+    .pure-material-button-contained:focus {
+      box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
+    }
+
+    .pure-material-button-contained:hover::before {
+      opacity: 0.08;
+    }
+
+    .pure-material-button-contained:focus::before {
+      opacity: 0.24;
+    }
+
+    .pure-material-button-contained:hover:focus::before {
+      opacity: 0.3;
+    }
+
+
+    /* Active */
+
+    .pure-material-button-contained:active {
+      box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+    }
+
+    .pure-material-button-contained:active::after {
+      opacity: 0.32;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0s;
+    }
+  </style>
+</head>
+<body>
+<div style="width: 960px; height: 660px;">
+  <div class="tab">
+    <button class="tablinks" id="info-button" onclick="openTab('info')">Info</button>
+    <button class="tablinks" id="sunburst-button" onclick="openTab('sunburst')">Sunburst</button>
+    <button class="tablinks" id="treemap-button" onclick="openTab('treemap')">Treemap</button>
+    <button class="tablinks" id="treeview-button" onclick="openTab('treeview')">Treeview</button>
+  </div>
+  <div id="info" class="tabcontent">
+    <div style="display: flex; align-items: center; flex-direction: column;">
+      <p class="alert-primary">
+        Based upon the list of taxa you sent us, we've constructed a taxonomic tree. The following 3 interactive visualizations are automatically generated and represent this tree. If you decide to use one of these interactive visualizations, please cite <a href="https://unipept.ugent.be">Unipept</a> (<a href="doi:10.1021/acs.jproteome.8b00716">doi:10.1021/acs.jproteome.8b00716</a>).
+      </p>
+      <div style="width: 800px; display: flex; justify-content: space-between;">
+        <div class="visualization-box">
+          <svg onclick="openTab('sunburst')" viewBox="0 0 67 67" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+            <rect id="Artboard1" x="0" y="0" width="67" height="67" style="fill:none;"/>
+            <path d="M62.7,35.65c-0.1,-0.1 -0.2,-0.2 -0.3,-0.2l-4.6,-0.6c0,-0.2 0.1,-0.4 0.1,-0.6c0,-0.4 0.1,-0.8 0.1,-1.1l0,-0.4l0,-1.6l0,-0.4c0,-0.1 -0.1,-0.3 -0.2,-0.3l0,-0.8c0,-0.2 -0.1,-0.5 -0.1,-0.8l0,-0.4c0,-0.3 -0.1,-0.7 -0.1,-1l0,-0.2c-0.1,-0.4 -0.1,-0.8 -0.2,-1.1c-0.1,-0.4 -0.2,-0.7 -0.3,-1.1c-0.1,-0.3 -0.3,-0.4 -0.6,-0.3l-4.6,1.3c-0.5,-1.6 -1.1,-3.1 -2,-4.6c-0.8,-1.4 -1.8,-2.8 -3,-4l3.3,-3.3c0.2,-0.2 0.2,-0.5 0,-0.7c-0.2,-0.2 -0.4,-0.3 -0.6,-0.5l-0.3,-0.3c-0.2,-0.2 -0.3,-0.3 -0.5,-0.4l3,-3.6c0.1,-0.1 0.1,-0.2 0.1,-0.4c0,-0.1 -0.1,-0.3 -0.2,-0.3c-0.3,-0.3 -0.7,-0.6 -1.1,-0.8l-1.1,-0.8c-0.4,-0.3 -0.8,-0.5 -1.1,-0.8c-0.3,-0.3 -0.8,-0.5 -1.2,-0.7c-0.4,-0.2 -0.8,-0.5 -1.2,-0.7c-0.2,-0.1 -0.5,0 -0.7,0.2l-2.2,4.2l-0.5,-0.3l-0.1,-0.2c-0.3,-0.1 -0.5,-0.2 -0.8,-0.4l-0.6,-0.2l-0.5,-0.2l-0.3,0l-0.1,0l-0.7,-0.2l-0.6,-0.3l-0.5,-0.1l-0.4,-0.1c-0.1,0 -0.3,-0.1 -0.4,-0.1c-0.1,-0.1 -0.2,-0.2 -0.3,-0.2c-0.2,0 -0.4,-0.1 -0.6,-0.1l0.8,-4.6c0,-0.1 0,-0.3 -0.1,-0.4c-0.1,-0.1 -0.2,-0.2 -0.3,-0.2l-0.1,0l-1.3,-0.2c-0.4,-0.1 -1,-0.1 -1.3,-0.1l-0.8,0l-0.5,0l-0.5,0l-0.8,0c-0.1,0 -0.2,0 -0.2,0.1l-0.6,0l-0.5,0l-0.5,0l-0.9,0c-0.3,0 -0.5,0.3 -0.5,0.5l0.4,4.7c-0.2,0 -0.4,0 -0.6,0.1c-0.3,0 -0.5,0.3 -0.4,0.6l0.6,4.7c-0.6,0.1 -1.2,0.2 -1.8,0.4l-1.3,-4.7l0,-0.1l-1.3,-5c-0.1,-0.3 -0.3,-0.4 -0.6,-0.3l-0.1,0c-0.4,0.1 -0.8,0.2 -1.2,0.3c-0.4,0.1 -0.9,0.3 -1.3,0.5l-0.3,0.1c-0.4,0.1 -0.7,0.2 -1,0.4c-0.2,0.1 -0.4,0.4 -0.3,0.7l1.8,4.3l-0.5,0.1l-0.2,0.1l-1,0.5c-0.3,0.2 -0.7,0.4 -1,0.6c-0.2,0.1 -0.3,0.4 -0.2,0.7l2.4,4.1c-0.5,0.3 -1,0.6 -1.4,1l-2.9,-3.8c-0.2,-0.2 -0.5,-0.3 -0.7,-0.1c-0.3,0.2 -0.6,0.4 -0.9,0.7c-0.3,0.2 -0.6,0.5 -0.8,0.8l-0.3,0.3c-0.1,0.1 -0.1,0.1 -0.2,0.2l-3.3,-3.3c-0.1,-0.1 -0.2,-0.1 -0.4,-0.1c-0.1,0 -0.3,0.1 -0.4,0.1l-0.6,0.6l-0.7,0.6l-0.6,0.7c-0.1,0.1 -0.1,0.2 -0.1,0.4c0,0.1 0.1,0.3 0.2,0.3l3.6,3c-0.1,0.1 -0.1,0.2 -0.2,0.3l-0.2,0.3c-0.1,0.2 -0.3,0.3 -0.4,0.5l-4.2,-2.9l-0.3,0.3c-0.3,0.4 -0.5,0.8 -0.8,1.2c-0.2,0.4 -0.5,0.8 -0.7,1.1l-0.2,0.4l4.4,2.6l-0.3,0.6c-0.2,0.3 -0.3,0.7 -0.5,1l-0.1,0.2c-0.1,0.3 -0.2,0.5 -0.4,0.8l-0.2,0.6l-0.2,0.5l-0.1,0.4c-0.1,0.2 -0.2,0.5 -0.2,0.7l-0.1,0.5c0,0.1 -0.1,0.2 -0.1,0.3l-0.2,0.8c-0.1,0.2 -0.2,0.5 -0.2,0.7c-0.1,0.3 0.1,0.5 0.4,0.6l4.6,1c-0.2,1.2 -0.4,2.3 -0.4,3.5l-4.7,0c-0.3,0 -0.5,0.2 -0.5,0.5l0,1.1c0.1,0.4 0,0.8 0.1,1.1c0,0.4 0.1,0.8 0.1,1.1c0,0.4 0.1,0.7 0.2,1.1c0.1,0.4 0.1,0.8 0.2,1.1c0,0.3 0.1,0.5 0.2,0.8l0.1,0.3l0,0.1l0.1,0.4c0.1,0.2 0.1,0.5 0.2,0.7c0.1,0.2 0.2,0.5 0.2,0.7l0.1,0.4l0.2,0.5c0.1,0.2 0.2,0.4 0.2,0.6l0.5,1c0.2,0.3 0.4,0.8 0.5,1c0.1,0.2 0.2,0.4 0.4,0.7l0.8,1.3c0.1,0.1 0.2,0.2 0.3,0.2l0.1,0c0.1,0 0.2,0 0.3,-0.1l4,-2.5c0.7,1 1.4,1.9 2.3,2.8l-3.4,3.3c-0.1,0.3 -0.2,0.4 -0.2,0.5c0,0.1 0.1,0.3 0.2,0.3l0.8,0.8c0.3,0.3 0.6,0.5 0.8,0.8c0.2,0.2 0.5,0.4 0.7,0.6c0,0.1 0.1,0.1 0.1,0.2c0.3,0.2 0.7,0.5 0.9,0.7c0.2,0.2 0.5,0.3 0.7,0.5l0.3,0.2l1.5,0.9l-2,4l0,0.4c0,0.1 0.1,0.2 0.2,0.3l1.6,0.8c0.3,0.1 0.5,0.2 0.8,0.3c0.3,0.1 0.7,0.3 1,0.4l0.3,0.1l0.2,0c0.2,0 0.4,-0.1 0.5,-0.3l1.6,-4.3c0.2,0.1 0.4,0.2 0.6,0.2c0.2,0.1 0.5,0.1 0.7,0.2l0.4,0.1l0.1,0l0.3,0.1l0.7,0.2c0.4,0.1 0.8,0.2 1.2,0.2c0.3,0 0.6,0.1 0.8,0.1c0.1,0.1 0.2,0.1 0.3,0.1c0.4,0.1 0.8,0.2 1.2,0.2l2.4,0c0.3,0 0.5,-0.1 0.7,-0.1l1.4,0c0.4,0 0.7,-0.1 1.1,-0.1c0.4,0 0.8,-0.1 1.1,-0.2c0.2,0 0.4,-0.1 0.6,-0.1l1,4.5c0,0.1 0.1,0.2 0.2,0.3c0.1,0.1 0.2,0.1 0.3,0.1l0.1,0c0.4,-0.1 0.8,-0.2 1.1,-0.3l0.3,-0.1c0.4,-0.1 0.9,-0.2 1.2,-0.3c0.3,-0.1 0.5,-0.2 0.8,-0.3l1.6,4.4c0,0.1 0.1,0.2 0.2,0.3l0.4,0l3,-1.2c0.5,-0.2 1,-0.5 1.4,-0.7c0.2,-0.1 0.3,-0.4 0.2,-0.7l-2.4,-4.5l0,-0.1l-2.2,-4.2c0.2,-0.1 0.3,-0.2 0.5,-0.3l1,-0.6l0.2,-0.1c0.3,-0.2 0.5,-0.3 0.8,-0.5c0.3,-0.2 0.6,-0.4 0.9,-0.6l0.2,0c0.3,-0.2 0.5,-0.4 0.9,-0.7c0.3,-0.2 0.6,-0.5 0.9,-0.8l0.3,-0.3c0.2,-0.2 0.3,-0.3 0.5,-0.5c0.2,-0.2 0.3,-0.4 0.5,-0.5l0.3,-0.3c0.3,-0.3 0.5,-0.6 0.8,-0.9c0.2,-0.3 0.5,-0.7 0.7,-0.9c0.2,-0.3 0.5,-0.6 0.7,-0.9c0.2,-0.2 0.1,-0.5 -0.1,-0.7l-3.9,-2.8c0.2,-0.2 0.3,-0.5 0.4,-0.7l0.3,-0.4c0.1,-0.1 0.1,-0.2 0.2,-0.4l4.2,2.2c0.1,0 0.1,0.1 0.2,0.1l0.2,0c0.1,0 0.2,-0.1 0.3,-0.2c0.2,-0.3 0.3,-0.7 0.5,-1l0.1,-0.3c0,-0.1 0.1,-0.2 0.2,-0.3l4.3,1.8l0.2,0c0.2,0 0.3,-0.1 0.4,-0.2c0.1,-0.4 0.2,-0.7 0.4,-1l0.1,-0.3l0.2,-0.5c0.1,-0.3 0.2,-0.5 0.3,-0.8c0.1,-0.3 0.2,-0.5 0.2,-0.8c0,-0.2 0.1,-0.3 0.1,-0.5l0.1,-0.2c0.1,-0.3 0.2,-0.6 0.2,-0.9c0.1,-0.1 0.1,-0.1 0.1,-0.2c0.1,-0.4 0.1,-0.8 0.2,-1.1l0.1,-0.4c0.1,-0.4 0.2,-0.8 0.2,-1.2c0,-0.3 0,-0.4 -0.1,-0.6Zm-6,-7l0.1,0.4c0.1,0.2 0.1,0.5 0.1,0.7l0,0.6l-4.1,0.2l0,-0.1l0,-0.3c0,-0.2 0,-0.3 -0.1,-0.5l-0.1,-0.8l0.8,-0.1l3.3,-0.6l0,0.5Zm-4.3,7.4l0,-0.3c0.3,-1.4 0.4,-2.8 0.3,-4.2l4.1,-0.2l0,2.8c0,0.2 -0.1,0.5 -0.1,0.7l-0.1,0.4c0,0.4 -0.1,0.9 -0.2,1.1c0,0.2 -0.1,0.4 -0.1,0.6l-1.7,-0.4l-2.2,-0.5Zm9.2,1l-0.1,0.4c0,0.2 -0.1,0.4 -0.1,0.6l-4,-0.9c0,-0.2 0.1,-0.4 0.1,-0.6c0,-0.2 0.1,-0.4 0.1,-0.7l4,0.5c0.1,0.3 0,0.5 0,0.7Zm-5.5,-11.1c0.1,0.2 0.1,0.4 0.2,0.6l0.1,0.6l-4.1,0.7c0,-0.1 -0.1,-0.2 -0.1,-0.3l0,-0.1l-0.1,-0.4l4,-1.1Zm-5.1,0.8c0.9,3.4 0.9,7 0,10.4c-0.4,1.5 -1,3 -1.8,4.4l-2.6,-1.5l-0.8,-0.5c0.6,-1.1 1,-2.2 1.3,-3.4c0.7,-2.7 0.7,-5.5 0,-8.2c-0.7,-2.6 -2,-4.9 -3.8,-6.8l0.5,-0.5l2.4,-2.4c1.1,1.1 2,2.4 2.8,3.8c0.9,1.4 1.5,3 2,4.7Zm-7.6,14.4c-0.2,0.3 -0.5,0.6 -0.8,0.9c-0.1,0.2 -0.3,0.3 -0.4,0.5c-0.9,0.9 -2,1.7 -3.1,2.4c-1,0.6 -2,1 -3.1,1.3l-1.1,-4c0.7,-0.2 1.4,-0.5 2.1,-0.9c0.8,-0.5 1.6,-1 2.2,-1.7c0.5,-0.6 1,-1.2 1.4,-1.8l3.6,2.1c-0.2,0.3 -0.3,0.5 -0.5,0.8c-0.1,0 -0.2,0.2 -0.3,0.4Zm-6.8,-34l-0.9,4.1l-1.3,-0.2l-0.4,0l-0.5,0l-0.6,0l-0.6,0l-0.1,0l0,-2l0,-2.3l0.6,0c0.4,0 0.7,0.1 1.1,0.1c0.3,0 0.7,0.1 1,0.1c0.4,0 0.7,0.1 1.1,0.2l0.6,0Zm-22.6,34.4c-2.4,-4.4 -3,-9.4 -1.9,-14.2l4,1c-0.3,1.2 -0.4,2.4 -0.4,3.6c0,1.2 0.2,2.4 0.4,3.6l0.2,1c0.1,0.3 0.2,0.6 0.3,0.8c0.3,0.7 0.5,1.4 0.9,2.1l-0.9,0.5l-2.6,1.6Zm11.1,-23c0.3,-0.2 0.7,-0.3 1,-0.4c0.3,-0.1 0.6,-0.2 0.8,-0.3c0.1,0 0.2,-0.1 0.3,-0.1c0.4,-0.1 0.7,-0.2 1.1,-0.3c2.2,-0.5 4.4,-0.5 6.6,0l-1.1,4c-1.7,-0.4 -3.4,-0.3 -5,0.1c-0.8,0.2 -1.5,0.4 -2.2,0.8l-2.1,-3.5c0.3,-0.1 0.4,-0.2 0.6,-0.3l0,0Zm20.9,17.3c-0.3,1.1 -0.7,2.1 -1.2,3.1l-3.6,-2.1c0.3,-0.7 0.6,-1.4 0.8,-2.2c0.5,-1.8 0.5,-3.7 0,-5.6c-0.2,-0.9 -0.6,-1.8 -1.1,-2.6c-0.5,-0.8 -1,-1.6 -1.7,-2.2c-0.7,-0.7 -1.4,-1.2 -2.2,-1.7c-0.7,-0.4 -1.4,-0.7 -2.1,-0.9l1.1,-4c2.3,0.7 4.4,2 6.2,3.7c0.9,0.9 1.7,2 2.4,3.1c0.6,1.1 1.1,2.3 1.5,3.6c0.6,2.6 0.6,5.2 -0.1,7.8Zm-12,-19.6c-0.4,-0.1 -0.8,-0.1 -1.3,-0.1l-0.1,0l-0.5,0l0,-4.1l0.4,0c1.3,0.1 2.6,0.2 3.8,0.5l-0.1,0.4l-1,3.6c-0.2,0 -0.4,-0.1 -0.6,-0.1c-0.1,-0.1 -0.3,-0.2 -0.6,-0.2Zm5.7,2c-0.5,-0.3 -1.1,-0.6 -1.7,-0.8l-0.1,0c-0.4,-0.2 -0.9,-0.3 -1.3,-0.5c-0.1,0 -0.3,-0.1 -0.4,-0.1l1.1,-4c1.5,0.4 3,1.1 4.4,1.9c1.4,0.8 2.6,1.7 3.8,2.8l-2.9,2.9c-0.9,-0.9 -1.9,-1.6 -2.9,-2.2Zm-16,21l-1.5,1.5l-1.4,1.4c-0.7,-0.7 -1.2,-1.5 -1.8,-2.3l3.6,-2c0.3,0.5 0.7,0.9 1.1,1.4Zm2.6,2c0.7,0.4 1.4,0.7 2.1,0.9l-1.1,4c-1.1,-0.3 -2.1,-0.8 -3.1,-1.3c-0.3,-0.2 -0.7,-0.4 -1,-0.6c-0.2,-0.1 -0.3,-0.2 -0.5,-0.3c-0.2,-0.2 -0.4,-0.3 -0.6,-0.5c-0.2,-0.2 -0.4,-0.4 -0.6,-0.6l2.3,-2.4l0.6,-0.6c0.6,0.6 1.2,1 1.9,1.4Zm7.6,1.2l1.1,4c-2.2,0.5 -4.5,0.5 -6.8,0l1.1,-4c1.6,0.4 3.1,0.4 4.6,0Zm-13.1,-4.8l-2.3,1.3c0,0 0,-0.1 -0.1,-0.1c-0.4,-0.8 -0.8,-1.6 -1,-2.5l0,-0.1l4,-1.1c0.2,0.6 0.4,1.1 0.7,1.7l-1.3,0.8Zm13.4,3.7c-1.7,0.5 -3.4,0.5 -5.1,0l-0.5,-0.1c-0.7,-0.2 -1.3,-0.5 -1.9,-0.8c-0.7,-0.4 -1.4,-1 -2,-1.5l-0.2,-0.2c-0.4,-0.4 -0.8,-0.9 -1.1,-1.4l-0.2,-0.4c-0.4,-0.6 -0.6,-1.2 -0.9,-1.9l-0.1,-0.5c-0.2,-0.8 -0.3,-1.7 -0.3,-2.5c0,-0.9 0.1,-1.7 0.4,-2.5c0.2,-0.8 0.6,-1.6 1,-2.4c0.4,-0.7 0.9,-1.4 1.5,-2c0.6,-0.6 1.3,-1.1 2,-1.5l0.4,-0.2c0.6,-0.3 1.2,-0.6 1.9,-0.8c1.5,-0.4 3.1,-0.4 4.7,-0.1l0.5,0.1c0.8,0.2 1.6,0.6 2.4,1c0.7,0.4 1.4,0.9 2,1.5c0.6,0.6 1.1,1.3 1.5,2c0.4,0.7 0.8,1.5 1,2.3c0.4,1.6 0.4,3.4 0,5c-0.2,0.7 -0.5,1.3 -0.8,1.9l-0.2,0.4c-0.4,0.7 -0.9,1.4 -1.5,2c-0.6,0.6 -1.3,1.1 -2,1.6c-0.9,0.5 -1.7,0.8 -2.5,1Zm-3.1,-29.4l0,4.1c-0.4,0 -0.9,0.1 -1.3,0.1l-0.3,0c-0.3,0 -0.5,0.1 -0.8,0.1c-0.3,0.1 -0.6,0.1 -1,0.2l-0.2,0c-0.1,0 -0.3,0.1 -0.4,0.1c-0.3,0.1 -0.7,0.2 -1,0.3c-0.2,0.1 -0.5,0.2 -0.7,0.3c-0.3,0.1 -0.7,0.3 -1,0.5c-0.1,0.1 -0.2,0.1 -0.4,0.2l-1.5,-2.8l-0.4,-0.7c1.4,-0.7 2.9,-1.3 4.4,-1.8c1.5,-0.4 3.1,-0.6 4.6,-0.6Zm-7.9,6.5c-0.9,0.6 -1.7,1.2 -2.5,1.9l-2.9,-2.9c1,-1 2.1,-1.8 3.4,-2.6l2,3.6Zm-10.9,-2.7c0.2,-0.3 0.6,-0.7 0.7,-0.8c0.1,-0.1 0.2,-0.2 0.3,-0.4l0.1,-0.1l2.9,2.9l-0.1,0.1l-0.2,0.2l-0.2,0.4l-0.3,0.4l-0.3,0.3l-3.3,-2.6l0.4,-0.4Zm2.3,26.7l1.9,-1.1l1.7,-1c0.4,0.6 0.8,1.2 1.3,1.8c0.2,0.3 0.4,0.5 0.6,0.7l0.7,0.7c0.8,0.7 1.6,1.4 2.5,1.9l-2.1,3.6c-1.4,-0.8 -2.6,-1.8 -3.7,-2.9c-1.2,-1.1 -2.1,-2.4 -2.9,-3.7Zm14.6,9.5c0,-0.1 0,-0.1 0,0l-1,-0.2l-0.5,-0.1l-0.6,-0.1l-0.6,-0.2l-0.1,0c-1.5,-0.4 -3,-1 -4.4,-1.8l2.1,-3.6c1.1,0.6 2.2,1 3.4,1.3c2.7,0.7 5.5,0.7 8.2,0c1.2,-0.3 2.3,-0.8 3.4,-1.3l2.1,3.6c-1.4,0.8 -2.9,1.3 -4.4,1.8c-1.6,0.4 -3.3,0.7 -5,0.7l-0.4,0c-0.7,0 -1.4,-0.1 -2.2,-0.1Zm15.9,7.3l-0.2,0.1l-0.4,0.2c-0.2,0.1 -0.3,0.1 -0.4,0.2c-0.2,0.1 -0.5,0.2 -0.8,0.3c-0.1,0.1 -0.3,0.1 -0.4,0.2c-0.1,0 -0.2,0.1 -0.4,0.1l-1.4,-3.9l0.6,-0.2l0.8,-0.4l0.2,-0.1l0.6,-0.3l1.9,3.7c0,0.1 -0.1,0.1 -0.1,0.1Zm4,-45.5l-2.9,2.9l-0.1,-0.1l-0.2,-0.2l-0.3,-0.3l-0.3,-0.3l-0.7,-0.6l-0.4,-0.1c-0.2,-0.1 -0.3,-0.2 -0.5,-0.4c-0.2,-0.2 -0.5,-0.3 -0.8,-0.5l-0.4,-0.2l2.1,-3.6l0.5,0.3l0.2,0.2c0.2,0.1 0.4,0.3 0.7,0.5c0.3,0.2 0.6,0.4 0.9,0.7c0.3,0.2 0.6,0.4 0.9,0.7c0.3,0.2 0.5,0.5 0.8,0.7l0.3,0.3l0.2,0Zm1.7,-5.4l-2.7,3.2l-0.5,-0.4l-0.5,-0.4l2.4,-3.4l0.7,0.5l0.6,0.5Zm-4.6,-3.1l0.7,0.4c0.4,0.2 0.9,0.6 1.1,0.7c0.2,0.1 0.5,0.3 0.7,0.4l-2.4,3.4l-0.2,-0.2l-0.3,-0.2c-0.3,-0.2 -0.8,-0.5 -1,-0.6c-0.2,-0.1 -0.4,-0.2 -0.6,-0.3l2,-3.6Zm-5,3.3c0.3,0.1 0.5,0.2 0.8,0.4l1.2,0.6l0.5,0.3l-2.1,3.6l-0.4,-0.2c-0.3,-0.1 -0.6,-0.3 -0.8,-0.4l-0.2,-0.1c-0.2,-0.1 -0.4,-0.2 -0.6,-0.3l-0.3,-0.1l1.4,-3.9l0.5,0.1Zm-3,-1l0.5,0.1c0.2,0 0.4,0.1 0.6,0.2c0.2,0 0.4,0.1 0.6,0.2l-1.4,3.9l-0.4,-0.1l-1,-0.3l-0.3,-0.1l0.9,-4.1l0.2,0.1l0.3,0.1Zm-5.3,-6l1.3,0c0.4,0 0.8,0.1 1.3,0.1l0.8,0.1l-0.7,4.1c-0.2,0 -0.4,-0.1 -0.6,-0.1c-0.4,-0.1 -0.8,-0.1 -1.2,-0.1c-0.4,-0.1 -0.7,-0.1 -1.1,-0.1l-0.4,0l-0.2,0l0,-4.1l0.8,0l0,0.1Zm-3.1,0l1.4,0l0,4.2l-0.3,0l-0.5,0l-0.2,0l-0.3,0l-0.4,-4.1l0.3,-0.1Zm0.6,9.4l-0.6,0l-0.4,0l-0.5,-4.1c0.2,0 0.3,-0.1 0.5,-0.1l0.1,0c0.4,-0.1 0.7,-0.1 1.1,-0.1l0.6,0l0,4.1c-0.3,0.2 -0.5,0.2 -0.8,0.2Zm-9.5,-7.4l0.4,-0.1c0.4,-0.2 0.8,-0.3 1.2,-0.5l0.8,-0.2l1.1,4c-0.2,0.1 -0.4,0.1 -0.6,0.2c-0.2,0.1 -0.5,0.2 -0.7,0.2l-0.4,0.1l-0.5,0.2l-0.2,0.1l-1.6,-3.8l0.5,-0.2Zm-0.9,6l1,-0.5l0.2,-0.1c0.2,-0.1 0.4,-0.2 0.7,-0.3l0.1,0l0.6,-0.2l0.4,-0.2l0.4,-0.1c0.2,-0.1 0.4,-0.2 0.6,-0.2c0.2,-0.1 0.4,-0.1 0.6,-0.2l1.1,4l-0.4,0.1c-0.2,0.1 -0.5,0.2 -0.7,0.2l-0.4,0.2l-0.6,0.2c-0.3,0.1 -0.6,0.2 -0.9,0.4c-0.3,0.1 -0.5,0.2 -0.8,0.4l-0.4,0.2l-2.1,-3.6l0.6,-0.3Zm-5.8,4.1l0.4,-0.3c0.3,-0.2 0.5,-0.5 0.8,-0.7l0.5,-0.4l2.5,3.3c-0.1,0.1 -0.2,0.2 -0.3,0.3l-0.3,0.2l-0.3,0.3l-0.2,0.2l-0.1,0.1l-3,-2.9l0,-0.1Zm-5.2,-1.9l0.3,-0.3c0.1,-0.1 0.2,-0.3 0.4,-0.4l0.2,-0.2l2.9,3c0,0.1 -0.1,0.1 -0.1,0.2l-0.3,0.3c-0.1,0.1 -0.3,0.3 -0.4,0.4l-3.3,-2.7l0.3,-0.3Zm-1.9,14.1l0.1,-0.3c0,-0.1 0.1,-0.3 0.1,-0.4l0,-0.2l4,1.2l-0.2,0.8l-4,-0.9l0,-0.2Zm-0.7,6.7l0,-0.1l4.2,0c0,0.4 0,0.7 0.1,1.1l0,0.3c0,0.3 0.1,0.5 0.1,0.8l0,0.2l0.1,0.9l0,0.4c0,0.1 0.1,0.3 0.1,0.5l0.1,0.4l-4,1.1c0,-0.2 0,-0.2 -0.1,-0.6c-0.1,-0.3 -0.1,-0.7 -0.2,-1.1c-0.1,-0.3 -0.1,-0.8 -0.2,-1.1c-0.1,-0.3 -0.1,-0.7 -0.1,-1.1c0,-0.4 -0.1,-0.7 -0.1,-1.1l0,-0.6Zm3.7,12.6l-0.5,-0.8c-0.1,-0.2 -0.2,-0.3 -0.3,-0.6c-0.2,-0.3 -0.3,-0.7 -0.5,-1l-0.1,-0.3c-0.1,-0.2 -0.2,-0.5 -0.3,-0.7c-0.1,-0.2 -0.2,-0.4 -0.2,-0.6l-0.3,-0.6c0,-0.1 -0.1,-0.2 -0.2,-0.4c-0.1,-0.2 -0.1,-0.5 -0.2,-0.6c-0.1,-0.1 -0.1,-0.4 -0.2,-0.6l4,-1l0.5,1.5c0.1,0.2 0.1,0.4 0.2,0.6c0.1,0.2 0.2,0.4 0.3,0.7l0.1,0.2c0.1,0.3 0.3,0.6 0.4,0.8c0.1,0.2 0.3,0.5 0.5,0.8l0.2,0.4l-3.4,2.2Zm4.5,5.4l-0.4,-0.3l-0.1,-0.1l2.9,-2.9l0.6,0.6l0.4,0.3l0.3,0.3l-2.4,3.2l-0.5,-0.4c-0.3,-0.2 -0.5,-0.4 -0.8,-0.7Zm3.5,2.7l-0.3,-0.2c-0.2,-0.1 -0.4,-0.3 -0.7,-0.5l-0.5,-0.3l1.9,-2.5l0.6,-0.8c0.1,0.1 0.2,0.2 0.3,0.2l0.8,0.5c0.2,0.2 0.5,0.3 0.8,0.5l0.4,0.2l-0.4,0.8l-1.5,2.9l-0.5,-0.3c-0.3,-0.1 -0.6,-0.3 -0.9,-0.5Zm2.7,7.1c-0.2,-0.1 -0.5,-0.2 -0.8,-0.3c-0.3,-0.1 -0.5,-0.2 -0.8,-0.3l-0.5,-0.2l-0.4,-0.2l-0.3,-0.1l1.9,-3.7l0.5,0.3l1,0.5l0.6,0.2l-1.2,3.8Zm3.2,-4.3c-0.2,-0.1 -0.4,-0.1 -0.6,-0.2l-0.4,-0.1l-0.5,-0.2l-0.6,-0.2c-0.3,-0.1 -0.5,-0.2 -0.8,-0.4l-0.2,-0.1l-0.5,-0.2l1.9,-3.7l0.3,0.1c0.3,0.2 0.6,0.3 0.9,0.4c0.2,0.1 0.4,0.2 0.6,0.2l0.4,0.2c0.2,0.1 0.5,0.2 0.7,0.2c0.1,0.1 0.3,0.1 0.4,0.1l-1.1,4c-0.1,0 -0.3,0 -0.5,-0.1Zm2.2,0.6l-0.6,-0.1l0.1,-0.5l0.9,-3.5l0.1,0l0.7,0.1l0.5,0.1l0.4,0l-0.4,4.2l-0.7,-0.1c-0.4,-0.1 -0.7,-0.1 -1,-0.2Zm9.8,0.2l-1.1,0.1c-0.4,0 -0.7,0.1 -1.1,0.1l-0.7,0l-0.4,0l-1.7,0l-0.5,0l-0.4,0l-0.8,0l-0.4,0l0.5,-4l2.3,0c0.6,0 1.1,0 1.7,-0.1l0.2,0l0.5,-0.1l0.1,0c0.4,-0.1 0.8,-0.1 1.3,-0.2l0.3,0l0.9,4.1l-0.7,0.1Zm4.8,4.1c-0.4,0.1 -0.8,0.2 -1.1,0.3l-0.4,0.1l-0.6,0.2l-0.9,-4.1l0.3,-0.1l0.4,-0.1l0.4,-0.1c0.2,-0.1 0.4,-0.1 0.7,-0.2c0.3,-0.1 0.4,-0.1 0.6,-0.2l1.4,3.9c-0.3,0.2 -0.5,0.2 -0.8,0.3Zm5.9,3.3c-0.4,0.2 -0.9,0.4 -1.4,0.6c-0.3,0.1 -0.7,0.3 -1,0.4l-1.4,-3.9c0.2,-0.1 0.5,-0.2 0.8,-0.3c0.3,-0.1 0.5,-0.2 0.8,-0.4l0.5,-0.2l0.4,-0.2l0.4,-0.2l2,3.7l-1.1,0.5Zm-1.3,-11.1l-0.2,0.1c-0.3,0.2 -0.6,0.4 -0.9,0.6l-1,0.5l-1,0.5l-0.2,0.1l-0.8,0.4l-0.6,0.2l-0.4,0.1c-0.1,0 -0.2,0.1 -0.4,0.1c-0.2,0.1 -0.4,0.2 -0.6,0.2c-0.2,0.1 -0.4,0.1 -0.6,0.1l-0.5,0.1l-0.4,0.1l-0.2,0l-0.9,-4l0.1,0l0.3,-0.1l0.1,0l0.8,-0.2l0.6,-0.2l0.5,-0.2l0.5,-0.2c0.2,-0.1 0.4,-0.2 0.6,-0.3l0.3,-0.1c0.2,-0.1 0.3,-0.2 0.5,-0.2l0.3,-0.2l0.8,-0.5c0.3,-0.1 0.5,-0.3 0.8,-0.5l0.3,-0.2l0.4,-0.3l0.3,-0.2l0.8,1l1.8,2.3c-0.1,0.1 -0.3,0.2 -0.5,0.3c-0.1,0.4 -0.3,0.6 -0.6,0.7Zm6.3,-5.8c-0.2,0.3 -0.4,0.6 -0.7,0.9c-0.2,0.3 -0.5,0.5 -0.7,0.8l-0.3,0.3c-0.1,0.2 -0.3,0.3 -0.5,0.5c-0.1,0.2 -0.3,0.3 -0.5,0.5l-0.3,0.3c-0.3,0.2 -0.7,0.6 -0.8,0.7c-0.1,0.1 -0.3,0.2 -0.5,0.4l-0.5,-0.8l-2,-2.6l0.4,-0.3l0.3,-0.3c0.1,-0.1 0.2,-0.2 0.3,-0.3l0.2,-0.2c0.2,-0.1 0.3,-0.3 0.5,-0.4l0.4,-0.5l0.2,-0.2l0.3,-0.3c0.1,-0.1 0.1,-0.1 0.3,-0.3c0.2,-0.2 0.4,-0.5 0.6,-0.7l0.2,-0.2l0.1,-0.1l3.4,2.4l-0.4,0.4Zm-5.9,-1.2c-1.1,1.1 -2.4,2.1 -3.7,2.9l-2.1,-3.6c0,0 0.1,0 0.1,-0.1c0.5,-0.3 0.9,-0.6 1.4,-1l0.1,-0.1c0.4,-0.4 0.9,-0.7 1.3,-1.1c0.5,-0.5 0.9,-1 1.3,-1.5c0.2,-0.2 0.3,-0.5 0.5,-0.7c0.2,-0.2 0.3,-0.5 0.5,-0.7l3.6,2.1c-0.9,1.4 -1.9,2.7 -3,3.8Zm8.9,-3.8l-0.1,0.3l-0.2,0.5l-3.7,-1.9l0.2,-0.3l0.1,-0.2c0.1,-0.2 0.2,-0.4 0.3,-0.6c0.1,-0.2 0.2,-0.4 0.2,-0.6l0.2,-0.4c0.1,-0.2 0.2,-0.5 0.2,-0.7c0,-0.2 0.1,-0.5 0.2,-0.7l0.1,-0.6l2.1,0.4l2,0.4c0,0.2 -0.1,0.4 -0.2,0.6l0,0.2c-0.1,0.3 -0.2,0.6 -0.2,0.9c-0.1,0.2 -0.2,0.5 -0.2,0.6c0,0.1 -0.2,0.3 -0.2,0.4l-0.3,0.4c-0.1,0.2 -0.1,0.3 -0.2,0.6c-0.1,0.2 -0.2,0.5 -0.3,0.7Zm6.3,-2.7l0,0.2c0,0.2 -0.1,0.3 -0.1,0.5c0,0.2 -0.1,0.5 -0.2,0.8c-0.1,0.3 -0.2,0.5 -0.3,0.8l-0.2,0.5l-0.1,0.3l-0.2,0.4l-3.8,-1.6c0,-0.1 0,-0.1 0.1,-0.2l0.2,-0.5c0.1,-0.1 0.1,-0.2 0.1,-0.4c0.1,-0.2 0.2,-0.4 0.2,-0.7c0.1,-0.3 0.2,-0.6 0.2,-0.9l0.1,-0.2c0.1,-0.2 0.1,-0.4 0.2,-0.6l4,0.9c-0.1,0.3 -0.2,0.5 -0.2,0.7Z" style="fill-rule:nonzero;"/>
+          </svg>
+          <button onclick="openTab('sunburst')" class="pure-material-button-contained">Sunburst</button>
+        </div>
+        <div class="visualization-box">
+          <svg onclick="openTab('treemap')" viewBox="0 0 94 94" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+            <rect id="Artboard1" x="0" y="0" width="94" height="94" style="fill:none;"/>
+            <path d="M89,2l-84,0c-1.646,0 -3,1.354 -3,3l0,84c0,1.646 1.354,3 3,3l84,0c1.646,0 3,-1.354 3,-3l0,-84c0,-1.646 -1.354,-3 -3,-3Zm0.33,3l0,18.84l-41,0l0,-19.2l40.67,0c0.01,-0.001 0.021,-0.002 0.032,-0.002c0.181,0 0.33,0.149 0.33,0.33c0,0.011 -0.001,0.022 -0.002,0.032l-0.03,0Zm-21.81,84.36l-19.2,0l0,-62.61l19.2,0l0,62.61Zm2.64,-62.88l19.2,0l0,41.35l-19.2,0l0,-41.35Zm-65.16,-21.84l40.68,0l0,41l-41,0l0,-40.64c-0.001,-0.01 -0.001,-0.02 -0.001,-0.03c0,-0.178 0.143,-0.325 0.321,-0.33Zm-0.36,84.36l0,-40.68l41,0l0,41l-40.64,0c-0.01,0.001 -0.02,0.001 -0.03,0.001c-0.178,0 -0.325,-0.143 -0.33,-0.321Zm84.4,0.33l-18.88,0l0,-18.86l19.2,0l0,18.53c0.001,0.01 0.002,0.021 0.002,0.032c0,0.181 -0.149,0.33 -0.33,0.33c-0.011,0 -0.022,-0.001 -0.032,-0.002l0.04,-0.03Z" style="fill-rule:nonzero;"/>
+          </svg>
+          <button onclick="openTab('treemap')" class="pure-material-button-contained">Treemap</button>
+        </div>
+        <div class="visualization-box">
+          <svg onclick="openTab('treeview')" viewBox="0 0 93 93" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+            <rect id="Artboard1" x="0" y="0" width="93" height="93" style="fill:none;"/>
+            <path d="M83.35,72.8c-2.8,0 -5.3,1.5 -6.6,3.8l-13.9,-7.7c1.1,-1.9 1.8,-4.2 1.8,-6.5c0,-7.1 -5.8,-12.9 -12.9,-12.9c-5.8,0 -10.7,3.8 -12.3,9.1l-14.2,-3.1c0.1,-0.5 0.2,-1.1 0.2,-1.6c0,-4.6 -3.8,-8.4 -8.4,-8.4l-0.9,0l-2.9,-15.2c2.9,-0.6 5.3,-2.7 6.4,-5.4l27.7,5.2c0,4.1 3.3,7.4 7.4,7.4c4.1,0 7.4,-3.3 7.4,-7.4c0,-1.8 -0.6,-3.4 -1.6,-4.6l11.3,-11.2c1.3,1.2 3.1,2 5,2c4,0 7.3,-3.2 7.3,-7.3c0,-4.1 -3.2,-7.3 -7.3,-7.3c-4.1,0 -7.3,3.2 -7.3,7.3c0,1.8 0.7,3.5 1.8,4.7l-11.3,11.2c-1.3,-1.4 -3.2,-2.3 -5.3,-2.3c-3.9,0 -7,3 -7.4,6.7l-27.5,-5.1c0.2,-0.8 0.4,-1.6 0.4,-2.5c0,-4.9 -3.9,-8.8 -8.8,-8.8c-4.9,0 -8.8,3.9 -8.8,8.8c0,4.9 3.9,8.8 8.8,8.8c0.4,0 0.7,0 1.1,-0.1l2.9,15.3c-3.9,0.7 -6.8,4.1 -6.8,8.2c0,3.6 2.3,6.7 5.5,7.9l-5,17.2c-0.4,-0.1 -0.7,-0.1 -1.1,-0.1c-3.4,0 -6.2,2.8 -6.2,6.2c0,3.4 2.8,6.2 6.2,6.2c3.4,0 6.2,-2.8 6.2,-6.2c0,-2.8 -1.9,-5.2 -4.4,-5.9l5,-17.2c0.7,0.2 1.4,0.3 2.2,0.3c3.8,0 7.1,-2.6 8.1,-6.1l14.1,2.9c-0.3,1 -0.4,2.1 -0.4,3.2c0,7.1 5.8,12.9 12.9,12.9c4.5,0 8.4,-2.3 10.7,-5.8l14,7.8c-0.5,1 -0.7,2.1 -0.7,3.2c0,4.2 3.4,7.7 7.7,7.7c4.2,0 7.7,-3.4 7.7,-7.7c-0.1,-4.2 -3.5,-7.6 -7.8,-7.6Z" style="fill-rule:nonzero;"/>
+          </svg>
+          <button onclick="openTab('treeview')" class="pure-material-button-contained">Treeview</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="sunburst" class="tabcontent">
+    <div id="sunburst-visualisation"></div>
+    <div class="visualization-buttons">
+      <button onclick="downloadSunburst()" class="pure-material-button-contained">Download as PNG</button>
+    </div>
+  </div>
+  <div id="treemap" class="tabcontent">
+    <div id="treemap-visualisation"></div>
+    <div class="visualization-buttons">
+      <button onclick="downloadTreemap()" class="pure-material-button-contained">Download as PNG</button>
+    </div>
+  </div>
+  <div id="treeview" class="tabcontent">
+    <div id="treeview-visualisation"></div>
+    <div class="visualization-buttons">
+      <button onclick="downloadTreeview()" class="pure-material-button-contained">Download as PNG</button>
+    </div>
+  </div>
+</div>
+
+<script>
+    function openTab(tabName) {
+        let tabcontent = document.getElementsByClassName("tabcontent");
+
+        for (let i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        let tablinks = document.getElementsByClassName("tablinks");
+        for (let i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        document.getElementById(tabName).style.display = "block";
+        document.getElementById(tabName + '-button').className += " active";
+    }
+
+    openTab('info');
+
+    const data = <%= raw render(:template => "api/api/taxa2tree.json", :locals => { item: @root }) %>;
+
+    function tooltipContent(d) {
+        return '<b>' + d.name + '</b> (' + d.rank + ')<br/>' +
+            (!d.data.self_count ? '0' : d.data.self_count) +
+            (d.data.self_count && d.data.self_count === 1 ? ' sequence' : ' sequences') + ' specific to this level<br/>' +
+            (!d.data.count ? '0' : d.data.count) +
+            (d.data.count && d.data.count === 1 ? ' sequence' : ' sequences') + ' specific to this level or lower';
+    }
+
+    const options = {
+        getTooltip: tooltipContent,
+        width: 960,
+        height: 600
+    };
+
+    $("#sunburst-visualisation").sunburst(JSON.parse(JSON.stringify(data)), {
+        getTooltip: tooltipContent,
+        width: 960,
+        height: 600
+    });
+
+    $("#treemap-visualisation").treemap(JSON.parse(JSON.stringify(data)), {
+        getTooltip: tooltipContent,
+        width: 958,
+        height: 584
+    });
+
+    $("#treeview-visualisation").treeview(JSON.parse(JSON.stringify(data)), {
+        getTooltip: tooltipContent,
+        width: 958,
+        height: 600,
+        levelsToExpand: 5
+    });
+
+    async function downloadSvgAsPng(element, name) {
+        const canvas = new OffscreenCanvas(960, 600);
+        const ctx = canvas.getContext('2d');
+        const v = await canvg.Canvg.fromString(ctx, element.outerHTML, canvg.presets.offscreen());
+
+        v.resize(canvas.width * 4, canvas.height * 4);
+
+
+        await v.render();
+
+        const blob = await canvas.convertToBlob();
+        const pngUrl = URL.createObjectURL(blob);
+
+        downloadDataByLink(pngUrl, name + ".png");
+    }
+
+    async function downloadHtmlAsPng(element, name) {
+        downloadDataByLink(await domtoimage.toPng(element), name + ".png");
+    }
+
+    function downloadSunburst() {
+        downloadSvgAsPng(document.getElementById("sunburst-visualisation").getElementsByTagName("svg")[0], 'sunburst');
+    }
+
+    function downloadTreemap() {
+        downloadHtmlAsPng(document.getElementById("treemap-visualisation"), "treemap");
+    }
+
+    function downloadTreeview() {
+        downloadSvgAsPng(document.getElementById("treeview-visualisation").getElementsByTagName("svg")[0], 'treeview');
+    }
+
+    function downloadDataByLink(dataURL, fileName) {
+        $("a.downloadLink").remove();
+        $("body").append("<a class='downloadLink' style='display:none;' download='" + fileName + "' target='_blank'/>");
+        let $downloadLink = $("a.downloadLink").attr("href", dataURL);
+        $downloadLink[0].click();
+    }
+
+</script>
+</body>
+</html>

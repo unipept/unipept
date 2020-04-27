@@ -1,3 +1,5 @@
+require 'json'
+
 # Overview of the data in a Node
 # - id
 # - name
@@ -18,6 +20,7 @@ class Node
 
     @data = {}
     @data['count'] = 0
+    @data['self_count'] = 0
     @data['rank'] = rank
 
     # root node
@@ -44,6 +47,16 @@ class Node
   def sort_children
     @children.sort_by!(&:name)
     @children.map(&:sort_children)
+  end
+
+  def get_child(id)
+    @children.find { |c| c.id == id }
+  end
+
+  def do_count
+    @children.each(&:do_count)
+    count = @children.reduce(0) { |sum, c| sum + c.data['count'] } + @data['self_count']
+    @data['count'] = count
   end
 
   # used by Oj.dump to exclude the root

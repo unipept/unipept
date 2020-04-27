@@ -85,6 +85,7 @@ UnipeptWeb::Application.routes.draw do
     match 'pept2ec' => 'api#pept2ec', via: [:get, :post]
     match 'pept2go' => 'api#pept2go', via: [:get, :post]
     match 'pept2interpro' => 'api#pept2interpro', via: [:get, :post]
+    match 'taxa2tree' => 'api#taxa2tree', via: [:get, :post]
     match 'peptinfo' => 'api#peptinfo', via: [:get, :post]
     match 'taxonomy' => 'api#taxonomy', via: [:get, :post]
     match 'messages' => 'api#messages', via: [:get, :post]
@@ -97,6 +98,7 @@ UnipeptWeb::Application.routes.draw do
     get "pept2taxa",  :to => "apidocs#pept2taxa",  :as => 'apidocs/pept2taxa'
     get "pept2lca",   :to => "apidocs#pept2lca",   :as => 'apidocs/pept2lca'
     get "taxa2lca",   :to => "apidocs#taxa2lca",   :as => 'apidocs/taxa2lca'
+    get 'taxa2tree',  :to => 'apidocs#taxa2tree',  :as => 'apidocs/taxa2tree'
     get "pept2ec",    :to => "apidocs#pept2ec",    :as => 'apidocs/pept2ec'
     get 'pept2go',    :to => "apidocs#pept2go",    :as => 'apidocs/pept2go'
     get 'pept2interpro', :to => "apidocs#pept2interpro", :as => 'apidocs/pept2interpro'
@@ -123,6 +125,7 @@ UnipeptWeb::Application.routes.draw do
     get "pept2funct",  :to => "clidocs#pept2funct",  :as => 'clidocs/pept2funct'
     get "peptinfo",    :to => "clidocs#peptinfo",    :as => 'clidocs/peptinfo'
     get "taxa2lca",    :to => "clidocs#taxa2lca",    :as => 'clidocs/taxa2lca'
+    get "taxa2tree",   :to => "clidocs#taxa2tree",   :as => 'clidocs/taxa2tree'
     get "taxonomy",    :to => "clidocs#taxonomy",    :as => 'clidocs/taxonomy'
   end
 
