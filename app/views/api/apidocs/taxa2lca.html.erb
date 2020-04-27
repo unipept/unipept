@@ -1,13 +1,13 @@
 <div class="apidocs row">
   <div class="col-xs-9">
     <div class='page-header'>
-      <h1 class='api-title'><span class="initialism">POST</span> /api/v1/taxa2tree
+      <h1 class='api-title'><span class="initialism">POST</span> /api/v1/taxa2lca
         <br>
-        <small>Returns a taxonomic tree (or a visualised variant of this tree) for a given list of taxon identifiers.</small>
+        <small>Returns the taxonomic lowest common ancestor for a given list of taxon identifiers.</small>
       </h1>
     </div>
     <p>
-      This method constructs and returns a taxonomic tree for a given list of <span class="initialism">NCBI</span> taxon identifiers.
+      This method calculates and returns the taxonomic lowest common ancestor for a given list of <span class="initialism">NCBI</span> taxon identifiers.
     </p>
     <div class='card'>
       <div class='card-title card-title-colored'>
@@ -15,7 +15,7 @@
       </div>
       <div class='card-supporting-text'>
         <p>
-          The taxa2lca method can be used by doing a <span class="initialism">HTTP</span> <span class="initialism">POST</span>-request (preferred) or <span class="initialism">GET</span>-request to <code>http://<%= Rails.application.config.api_host %>/api/v1/taxa2lca</code>. <a href="#parameters">Parameters</a> can be included in the request body (<span class="initialism">POST</span>) or in the query string (<span class="initialism">GET</span>). The only required parameter is <code>input[]</code>, which takes at least two taxon identifiers.
+          The pept2taxa method can be used by doing a <span class="initialism">HTTP</span> <span class="initialism">POST</span>-request (preferred) or <span class="initialism">GET</span>-request to <code>http://<%= Rails.application.config.api_host %>/api/v1/pept2lca</code>. <a href="#parameters">Parameters</a> can be included in the request body (<span class="initialism">POST</span>) or in the query string (<span class="initialism">GET</span>). The only required parameter is <code>input[]</code>, which takes at least two taxon identifiers.
         </p>
         <h3>input</h3>
         <p>
