@@ -16,19 +16,19 @@
       <div class='card-supporting-text'>
         <p>
           The pept2taxa method can be used by doing a <span class="initialism">HTTP</span> <span class="initialism">POST</span>-request (preferred) or <span class="initialism">GET</span>-request to <code>http://<%= Rails.application.config.api_host %>/api/v1/pept2lca</code>. <a href="#parameters">Parameters</a> can be included in the request body (<span class="initialism">POST</span>) or in the query string (<span class="initialism">GET</span>). The only required parameter is <code>input[]</code>, which takes at least two taxon identifiers.
-    </p>
+        </p>
         <h3>input</h3>
         <p>
           <code>input[]</code> is a required parameter that takes at least two taxon identifiers. Unipept will calculate and return the taxonomic lowest common ancestor of the given taxa. To pass multiple taxon identifiers, simply add multiple <code>input[]</code> parameters (see <a href="#apidocs-example-multiple">example</a>).
-    </p>
+        </p>
         <h3>extra</h3>
         <p>
           <code>extra</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When the parameter is set to <code>true</code>, Unipept will return the complete lineage of the taxonomic lowest common ancestor. See the <a href="#response">response</a> section for an overview of the information fields returned.
-    </p>
+        </p>
         <h3>names</h3>
         <p>
           <code>names</code> is an optional parameter and can either be <code>true</code> or <code>false</code>. When not set explicitly, the parameter defaults to <code>false</code>. When both <code>names</code> and <code>extra</code> are set to <code>true</code>, Unipept will return the names of all ranks in the lineage of the taxonomic lowest common ancestor. Setting only <code>names</code> to <code>true</code> will not result in additional information fields being returned. See the <a href="#response">response</a> section for an overview of the information fields returned.
-    </p>
+        </p>
         <div class="apidocs-callout apidocs-callout-warning">
           <h4>Performance penalty</h4>
           <p>Setting <code>names</code> to <code>true</code> has a performance penalty inferred from additional database queries. Do not use this parameter unless the extra information fields are needed.</p>
@@ -42,7 +42,7 @@
       <div class='card-supporting-text'>
         <p>
           The taxonomic lowest common ancestor for the given list of taxon identifiers is returned as a <span class="initialism">JSON</span> object. By default, the object contains the following information fields extracted from the <span class="initialism">NCBI</span> taxonomy:
-    </p>
+        </p>
         <ul>
           <li><code>taxon_id</code>: the <span class="initialism">NCBI</span> taxon id of the taxonomic lowest common ancestor</li>
           <li><code>taxon_name</code>: the name of the taxonomic lowest common ancestor</li>
@@ -142,58 +142,58 @@
       </div>
       <div class='card-supporting-text'>
         <%= render "parameters", parameters: [
-      {
-        name: "input[]",
-        required: true,
-        optional: false,
-        description: "List of taxon identifiers to calculate the lowest common ancestor for. Add multiple parameters to specify multiple taxon id's.",
-        value: "Integer"
-      },
-      {
-        name: "extra",
-        required: false,
-        optional: true,
-        description: "Return additional lineage information fields if <code>true</code>.",
-        value: "Must be <code>true</code> or <code>false</code> (default)"
-      },
-      {
-        name: "names",
-        required: false,
-        optional: true,
-        description: "Return names of ranks in the lineage if <code>true</code>.",
-        value: "Must be <code>true</code> or <code>false</code> (default)"
-      }
-    ]
-    %>
+            {
+                name: "input[]",
+                required: true,
+                optional: false,
+                description: "List of taxon identifiers to calculate the lowest common ancestor for. Add multiple parameters to specify multiple taxon id's.",
+                value: "Integer"
+            },
+            {
+                name: "extra",
+                required: false,
+                optional: true,
+                description: "Return additional lineage information fields if <code>true</code>.",
+                value: "Must be <code>true</code> or <code>false</code> (default)"
+            },
+            {
+                name: "names",
+                required: false,
+                optional: true,
+                description: "Return names of ranks in the lineage if <code>true</code>.",
+                value: "Must be <code>true</code> or <code>false</code> (default)"
+            }
+        ]
+        %>
       </div>
     </div>
     <h2 id="examples">Examples</h2>
     <%= render 'example',
-      example_id: "apidocs-example-multiple",
-      title: "Calculate the taxonomic lowest common ancestor for a given list of taxon identifiers",
-      explanation: "<p>This example calculates and retrieves the taxonomic lowest common ancestor of <i>Bacteroides fragilis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=817' target='_blank' title='Open in NCBI'>817</a>), <i>Bacteroides intestinalis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=329854' target='_blank' title='Open in NCBI'>329854</a>) and <i>Coprobacter fastidiosus</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=1099853' target='_blank' title='Open in NCBI'>1099853</a>).</p>",
-      post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/taxa2lca \\
+               example_id: "apidocs-example-multiple",
+               title: "Calculate the taxonomic lowest common ancestor for a given list of taxon identifiers",
+               explanation: "<p>This example calculates and retrieves the taxonomic lowest common ancestor of <i>Bacteroides fragilis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=817' target='_blank' title='Open in NCBI'>817</a>), <i>Bacteroides intestinalis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=329854' target='_blank' title='Open in NCBI'>329854</a>) and <i>Coprobacter fastidiosus</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=1099853' target='_blank' title='Open in NCBI'>1099853</a>).</p>",
+               post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/taxa2lca \\
 -d <span class='s1'>'input[]=817'</span> \\
 -d <span class='s1'>'input[]=329854'</span> \\
 -d <span class='s1'>'input[]=1099853'</span>",
-      get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/taxa2lca.json?input[]=817&amp;input[]=329854&amp;input[]=1099853</a>",
-      response: "<span class='p'>{</span>
+               get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/taxa2lca.json?input[]=817&amp;input[]=329854&amp;input[]=1099853</a>",
+               response: "<span class='p'>{</span>
   <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>171549</span><span class='p'>,</span>
   <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Bacteroidales'</span><span class='p'>,</span>
   <span class='nx'>taxon_rank</span><span class='o'>:</span> <span class='s2'>'order'</span>
 <span class='p'>}</span>"
     %>
     <%= render 'example',
-      example_id: "apidocs-example-extra",
-      title: "Retrieve the taxonomic lowest common ancestor and its lineage for a given list of taxon identifiers",
-      explanation: "<p>This example calculates and retrieves the taxonomic lowest common ancestor of <i>Bacteroides fragilis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=817' target='_blank' title='Open in NCBI'>817</a>), <i>Bacteroides intestinalis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=329854' target='_blank' title='Open in NCBI'>329854</a>) and <i>Coprobacter fastidiosus</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=1099853' target='_blank' title='Open in NCBI'>1099853</a>), including its complete lineage.</p>",
-      post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/taxa2lca \\
+               example_id: "apidocs-example-extra",
+               title: "Retrieve the taxonomic lowest common ancestor and its lineage for a given list of taxon identifiers",
+               explanation: "<p>This example calculates and retrieves the taxonomic lowest common ancestor of <i>Bacteroides fragilis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=817' target='_blank' title='Open in NCBI'>817</a>), <i>Bacteroides intestinalis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=329854' target='_blank' title='Open in NCBI'>329854</a>) and <i>Coprobacter fastidiosus</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=1099853' target='_blank' title='Open in NCBI'>1099853</a>), including its complete lineage.</p>",
+               post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/taxa2lca \\
 -d <span class='s1'>'input[]=817'</span> \\
 -d <span class='s1'>'input[]=329854'</span> \\
 -d <span class='s1'>'input[]=1099853'</span> \\
 -d <span class='s1'>'extra=true'</span>",
-      get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853&extra=true' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/taxa2lca.json?input[]=817&amp;input[]=329854&amp;input[]=1099853&amp;extra=true</a>",
-      response: "<span class='p'>{</span>
+               get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853&extra=true' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/taxa2lca.json?input[]=817&amp;input[]=329854&amp;input[]=1099853&amp;extra=true</a>",
+               response: "<span class='p'>{</span>
   <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>171549</span><span class='p'>,</span>
   <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Bacteroidales'</span><span class='p'>,</span>
   <span class='nx'>taxon_rank</span><span class='o'>:</span> <span class='s2'>'order'</span><span class='p'>,</span>
@@ -228,17 +228,17 @@
 <span class='p'>}</span>"
     %>
     <%= render 'example',
-      example_id: "apidocs-example-names",
-      title: "Retrieve the taxonomic lowest common ancestor and its lineage and names for a given list of taxon identifiers",
-      explanation: "<p>This example retrieves the taxonomic lowest common ancestor of <i>Bacteroides fragilis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=817' target='_blank' title='Open in NCBI'>817</a>), <i>Bacteroides intestinalis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=329854' target='_blank' title='Open in NCBI'>329854</a>) and <i>Coprobacter fastidiosus</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=1099853' target='_blank' title='Open in NCBI'>1099853</a>), including its complete lineage with names.</p>",
-      post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/taxa2lca \\
+               example_id: "apidocs-example-names",
+               title: "Retrieve the taxonomic lowest common ancestor and its lineage and names for a given list of taxon identifiers",
+               explanation: "<p>This example retrieves the taxonomic lowest common ancestor of <i>Bacteroides fragilis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=817' target='_blank' title='Open in NCBI'>817</a>), <i>Bacteroides intestinalis</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=329854' target='_blank' title='Open in NCBI'>329854</a>) and <i>Coprobacter fastidiosus</i> (taxon id <a href='http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&amp;id=1099853' target='_blank' title='Open in NCBI'>1099853</a>), including its complete lineage with names.</p>",
+               post_request: "<span class='gp'>$</span> curl -X POST -H <span class='s2'>'Accept: application/json'</span> #{Rails.application.config.api_host}/api/v1/taxa2lca \\
 -d <span class='s1'>'input[]=817'</span> \\
 -d <span class='s1'>'input[]=329854'</span> \\
 -d <span class='s1'>'input[]=1099853'</span> \\
 -d <span class='s1'>'extra=true'</span> \\
 -d <span class='s1'>'names=true'</span>",
-      get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853&extra=true&names=true' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/taxa2lca.json?input[]=817&amp;input[]=329854&amp;input[]=1099853&amp;extra=true&amp;names=true</a>",
-      response: "<span class='p'>{</span>
+               get_request: "<a href='http://#{Rails.application.config.api_host}/api/v1/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853&extra=true&names=true' target='_blank'>http://#{Rails.application.config.api_host}/api/v1/taxa2lca.json?input[]=817&amp;input[]=329854&amp;input[]=1099853&amp;extra=true&amp;names=true</a>",
+               response: "<span class='p'>{</span>
   <span class='nx'>taxon_id</span><span class='o'>:</span> <span class='mi'>171549</span><span class='p'>,</span>
   <span class='nx'>taxon_name</span><span class='o'>:</span> <span class='s2'>'Bacteroidales'</span><span class='p'>,</span>
   <span class='nx'>taxon_rank</span><span class='o'>:</span> <span class='s2'>'order'</span><span class='p'>,</span>
@@ -301,12 +301,12 @@
 <span class='p'>}</span>"
     %>
     <%= render 'tryit',
-      name: "taxa2lca",
-      input: true,
-      equate_il: false,
-      extra: true,
-      names: true,
-      domains: false
+               name: "taxa2lca",
+               input: true,
+               equate_il: false,
+               extra: true,
+               names: true,
+               domains: false
     %>
   </div>
   <div class="col-xs-3">

@@ -1,7 +1,7 @@
 class Api::ApidocsController < ApplicationController
   before_action :set_header
   before_action :set_sidebar_nav
-  before_action :set_sidebar_subnav, only: %i[pept2prot pept2taxa pept2lca pept2ec pept2go pept2interpro pept2funct peptinfo taxa2lca taxonomy]
+  before_action :set_sidebar_subnav, only: %i[pept2prot pept2taxa pept2lca pept2ec pept2go pept2interpro pept2funct peptinfo taxa2lca taxa2tree taxonomy]
 
   def index
     @title = 'Unipept API'
@@ -53,6 +53,11 @@ class Api::ApidocsController < ApplicationController
     @sidebar_name = 'taxa2lca'
   end
 
+  def taxa2tree
+    @title = 'taxa2tree'
+    @sidebar_name = 'taxa2tree'
+  end
+
   def taxonomy
     @title = 'taxonomy'
     @sidebar_name = 'taxonomy'
@@ -72,6 +77,7 @@ class Api::ApidocsController < ApplicationController
       { name: 'pept2funct', path: api_apidocs_pept2funct_path },
       { name: 'peptinfo', path: api_apidocs_peptinfo_path },
       { name: 'taxa2lca',  path: api_apidocs_taxa2lca_path },
+      { name: 'taxa2tree', path: api_apidocs_taxa2tree_path },
       { name: 'taxonomy',  path: api_apidocs_taxonomy_path }
     ]
   end
