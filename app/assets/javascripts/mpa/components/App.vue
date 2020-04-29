@@ -4,7 +4,7 @@
             v-if="!isAnalysis"
             v-on:start-analysis="onStartAnalysis">
         </home-page>
-        <analysis-page v-else :project="project"></analysis-page>
+        <analysis-page v-else></analysis-page>
     </v-app>
 </template>
 
