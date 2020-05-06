@@ -52,6 +52,11 @@ gem 'exception_notification',  '~> 4.4.0'
 # Deploy with Capistrano
 gem 'capistrano', '~> 3.12.1'
 
+# Profiling
+gem 'flamegraph', '~> 0.9.5'
+gem 'rack-mini-profiler', '~> 2.0.1'
+gem 'stackprof', '~> 0.2.15'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', '~> 11.1.1', platforms: [:mri, :mingw, :x64_mingw]
