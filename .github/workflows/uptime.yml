@@ -11,8 +11,13 @@ jobs:
       - name: Install Unipept Gem
         run: |
           gem install unipept
+      - name: Install required utilities
+        run: |
+          apt-get update
+          apt-get -y install bc
       - uses: actions/checkout@v2
       - name: Run uptime check
+        shell: bash
         run: |
           chmod u+x ./test/uptime/check_uptime_api.sh
           ./test/uptime/check_uptime_api.sh
