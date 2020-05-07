@@ -3,7 +3,7 @@ name: Uptime
 on: [push]
 
 jobs:
-  test:
+  uptime:
     runs-on: ubuntu-latest
     container:
       image: ruby:2.6.5

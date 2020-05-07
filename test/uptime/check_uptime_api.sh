@@ -16,11 +16,7 @@ then
 fi
 
 # Check timing of specific results
-TIMEFORMAT=%R
-RUNTIME=$(time unipept pept2taxa AAAAALTER)
-
-bc --version
-echo "$RUNTIME > $RUNTIME_TRESHOLD"
+RUNTIME=$(time unipept pept2taxa AAAAALTER &> /dev/null)
 
 if [[ $(echo "$RUNTIME > $RUNTIME_TRESHOLD" | bc -l) ]]
 then
