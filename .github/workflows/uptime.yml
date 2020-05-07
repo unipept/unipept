@@ -11,8 +11,8 @@ jobs:
     steps:
       - name: Install required utilities
         run: |
-          apt-get update
-          apt-get -y install bc
+          sudo apt-get update
+          sudo apt-get -y install bc
       - uses: actions/checkout@v2
       - name: Run uptime check
         shell: bash
