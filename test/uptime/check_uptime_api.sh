@@ -12,6 +12,7 @@ RESULTS=$(curl -s --request GET "api.unipept.ugent.be/api/v1/taxa2tree.json?inpu
 # Check that the command returns a valid URL
 if ! [[ $RESULTS =~ gist\.github\.com ]]
 then
+  echo "Taxa2Tree did not return a valid URL." >&2
   exit 1
 fi
 
@@ -24,6 +25,7 @@ RUNTIME=$((END-START))
 
 if [[ $(echo "$RUNTIME > $RUNTIME_TRESHOLD" | bc -l) ]]
 then
+  echo "Server seems to be slow." >&2
   exit 1
 fi
 
