@@ -232,6 +232,11 @@ class Api::ApiController < ApplicationController
       )
 
       @gist = result[:html_url]
+
+      if @remove
+        # Immediately delete the gist again. This is used for testing the uptime of the API server
+        client.delete_gist(result[:id])
+      end
     end
 
     render layout: false
@@ -291,6 +296,7 @@ class Api::ApiController < ApplicationController
     @names = params[:names] == 'true'
     @domains = params[:domains] == 'true'
     @extra_info = params[:extra] == 'true'
+    @remove = params[:remove] == 'true'
 
     @input = @input.map { |s| s.tr('I', 'L') } if @equate_il
   end

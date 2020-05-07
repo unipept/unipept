@@ -1,6 +1,9 @@
 name: Uptime
 
-on: [push]
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '0 * * * *'
 
 jobs:
   uptime:
@@ -8,9 +11,6 @@ jobs:
     container:
       image: ruby:2.6.5
     steps:
-      - name: Install Unipept Gem
-        run: |
-          gem install unipept
       - name: Install required utilities
         run: |
           apt-get update
