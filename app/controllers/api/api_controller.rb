@@ -66,7 +66,7 @@ class Api::ApiController < ApplicationController
     lookup = Hash.new { |h, k| h[k] = Set.new }
     ids = Set.new
 
-    seqid2seq = Hash.new
+    seqid2seq = {}
     Sequence.where(sequence: @input).select(:id, :sequence).each do |seq|
       seqid2seq[seq[:id]] = seq[:sequence]
       @result[seq[:sequence]] = Set.new
