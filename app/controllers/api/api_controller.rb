@@ -6,7 +6,7 @@ class Api::ApiController < ApplicationController
   before_action :set_headers, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go pept2interpro peptinfo taxa2lca taxonomy taxa2tree]
   before_action :set_params, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go pept2interpro peptinfo taxa2lca taxonomy taxa2tree]
   before_action :set_query, only: %i[pept2taxa pept2lca peptinfo taxonomy]
-  before_action :set_sequences, only: %i[pept2taxa pept2prot]
+  before_action :set_sequences, only: %i[pept2prot]
 
   before_action :log, only: %i[pept2taxa pept2lca pept2prot pept2funct pept2ec pept2go pept2interpro peptinfo taxa2lca taxonomy taxa2tree]
 
@@ -64,14 +64,29 @@ class Api::ApiController < ApplicationController
   def pept2taxa
     @result = {}
     lookup = Hash.new { |h, k| h[k] = Set.new }
-    ids = []
-    @sequences.pluck(:sequence, :taxon_id).each do |sequence, taxon_id|
-      lookup[taxon_id] << sequence
-      ids.append(taxon_id)
-      @result[sequence] = Set.new
+    ids = Set.new
+
+    seqid2seq = Hash.new
+    Sequence.where(sequence: @input).select(:id, :sequence).each do |seq|
+      seqid2seq[seq[:id]] = seq[:sequence]
+      @result[seq[:sequence]] = Set.new
     end
 
-    ids = ids.uniq.compact.sort
+    rel_name = @equate_il ? :sequence_id : :original_sequence_id
+    Peptide.where(rel_name => seqid2seq.keys).select(:id, rel_name, :uniprot_entry_id).find_in_batches do |items|
+      uniprot2seqid = Hash.new
+      items.each { |i| uniprot2seqid[i[:uniprot_entry_id]] = i[rel_name] }
+
+      UniprotEntry.where(id: uniprot2seqid.keys).select(:id, :taxon_id).each do |entry|
+        seqid = uniprot2seqid[entry[:id]]
+        sequence = seqid2seq[seqid]
+        lookup[entry[:taxon_id]] << sequence
+        ids << entry[:taxon_id]
+      end
+    end
+
+    ids.delete nil
+    ids = ids.to_a.sort
 
     @query.where(id: ids).find_in_batches do |group|
       group.each do |t|
