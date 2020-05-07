@@ -8,8 +8,6 @@ on:
 jobs:
   uptime:
     runs-on: ubuntu-latest
-    container:
-      image: ruby:2.6.5
     steps:
       - name: Install required utilities
         run: |
