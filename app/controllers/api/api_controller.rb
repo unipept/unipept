@@ -74,14 +74,15 @@ class Api::ApiController < ApplicationController
 
     rel_name = @equate_il ? :sequence_id : :original_sequence_id
     Peptide.where(rel_name => seqid2seq.keys).select(:id, rel_name, :uniprot_entry_id).find_in_batches do |items|
-      uniprot2seqid = Hash.new
-      items.each { |i| uniprot2seqid[i[:uniprot_entry_id]] = i[rel_name] }
+      uniprot2seqids = Hash.new { |h, k| h[k] = [] }
+      items.each { |i| uniprot2seqids[i[:uniprot_entry_id]] << i[rel_name] }
 
-      UniprotEntry.where(id: uniprot2seqid.keys).select(:id, :taxon_id).each do |entry|
-        seqid = uniprot2seqid[entry[:id]]
-        sequence = seqid2seq[seqid]
-        lookup[entry[:taxon_id]] << sequence
-        ids << entry[:taxon_id]
+      UniprotEntry.where(id: uniprot2seqids.keys).select(:id, :taxon_id).each do |entry|
+        uniprot2seqids[entry[:id]].each do |seqid|
+          sequence = seqid2seq[seqid]
+          lookup[entry[:taxon_id]] << sequence
+          ids << entry[:taxon_id]
+        end
       end
     end
 
