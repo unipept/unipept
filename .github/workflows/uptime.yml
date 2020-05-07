@@ -15,4 +15,4 @@ jobs:
       - name: Run uptime check
         run: |
           chmod u+x ./test/uptime/check_uptime_api.sh
-          ./check_uptime_api.sh
+          ./test/uptime/check_uptime_api.sh
