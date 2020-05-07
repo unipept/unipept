@@ -5,7 +5,7 @@ set -e
 set -o pipefail
 
 # How long should a call to the CLI take before we mark it as slow? (in seconds)
-RUNTIME_TRESHOLD="1.0"
+RUNTIME_TRESHOLD="2.0"
 
 RESULTS=$(unipept taxa2tree 14 78 56 38 --format url)
 
@@ -15,6 +15,7 @@ then
   exit 1
 fi
 
+TIMEFORMAT=%R
 # Check timing of specific results
 RUNTIME=$(time unipept pept2taxa AAAAALTER &> /dev/null)
 
