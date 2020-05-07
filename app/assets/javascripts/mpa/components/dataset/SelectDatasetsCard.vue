@@ -36,6 +36,7 @@
                 </v-list-item>
             </v-list>
             <div style="padding-bottom: 16px; padding-left: 16px; padding-right: 16px;">
+                <div class="subtitle-1">Search settings</div>
                 <search-settings-form
                     :equate-il.sync="equateIl"
                     :filter-duplicates.sync="filterDuplicates"

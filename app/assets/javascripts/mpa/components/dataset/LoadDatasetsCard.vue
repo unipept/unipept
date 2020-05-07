@@ -76,6 +76,7 @@ import ProteomicsAssay from "unipept-web-components/src/business/entities/assay/
 import Tooltip from "unipept-web-components/src/custom/Tooltip.vue";
 import BrowserStorageRemover from "unipept-web-components/src/business/storage/browser/assay/BrowserStorageRemover";
 import BrowserStorageWriter from "unipept-web-components/src/business/storage/browser/assay/BrowserStorageWriter";
+import BrowserStorageDataReader from "unipept-web-components/src/business/storage/browser/assay/BrowserStorageDataReader";
 
 @Component({
     components: {
@@ -98,8 +99,12 @@ export default class LoadDatasetsCard extends Vue {
     private currentTab: number = 0;
     private errorSnackbar: boolean = false;
 
-    private onCreateAssay(assay: ProteomicsAssay) {
-        this.$store.dispatch("addAssay", assay);
+    private async onCreateAssay(assay: ProteomicsAssay) {
+        if (!assay.getPeptides()) {
+            const browserStorageDataReader = new BrowserStorageDataReader(window.localStorage);
+            await assay.accept(browserStorageDataReader);
+        }
+        await this.$store.dispatch("addAssay", assay);
         this.$emit("create-assay", assay);
     }
 
