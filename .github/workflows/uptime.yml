@@ -1,0 +1,18 @@
+name: Uptime
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: ruby:2.6.5
+    steps:
+      - name: Install Unipept Gem
+        run: |
+          gem install unipept
+      - uses: actions/checkout@v2
+      - name: Run uptime check
+        run: |
+          chmod u+x ./test/uptime/check_uptime_api.sh
+          ./check_uptime_api.sh
