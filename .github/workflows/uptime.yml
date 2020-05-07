@@ -1,0 +1,21 @@
+name: Uptime
+
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '0 * * * *'
+
+jobs:
+  uptime:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install required utilities
+        run: |
+          apt-get update
+          apt-get -y install bc
+      - uses: actions/checkout@v2
+      - name: Run uptime check
+        shell: bash
+        run: |
+          chmod u+x ./test/uptime/check_uptime_api.sh
+          ./test/uptime/check_uptime_api.sh
