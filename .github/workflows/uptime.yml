@@ -6,7 +6,7 @@ on:
     - cron:  '0 * * * *'
 
 jobs:
-  uptime:
+  api_available:
     runs-on: ubuntu-latest
     steps:
       - name: Install required utilities
@@ -17,5 +17,19 @@ jobs:
       - name: Run uptime check
         shell: bash
         run: |
-          chmod u+x ./test/uptime/check_uptime_api.sh
-          ./test/uptime/check_uptime_api.sh
+          chmod u+x ./test/uptime/check_api_response.sh
+          ./test/uptime/check_api_response.sh
+
+  api_performance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install required utilities
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install bc
+      - uses: actions/checkout@v2
+      - name: Run performance
+        shell: bash
+        run: |
+          chmod u+x ./test/uptime/check_api_performance.sh
+          ./test/uptime/check_api_performance.sh
