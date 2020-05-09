@@ -31,5 +31,5 @@ jobs:
       - name: Run performance
         shell: bash
         run: |
-          chmod u+x ./test/uptime/check_api_performance.sh
-          ./test/uptime/check_api_performance.sh
+          chmod u+x ./test/uptime/check_uptime_performance.sh
+          ./test/uptime/check_uptime_performance.sh
