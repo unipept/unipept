@@ -14,7 +14,7 @@ END=$(date +%s)
 
 RUNTIME=$((END-START))
 
-if [[ $(echo "$RUNTIME > $RUNTIME_TRESHOLD" | bc -l) ]]
+if (( $(echo "$RUNTIME > $RUNTIME_TRESHOLD" | bc -l) ))
 then
   echo "It took $RUNTIME seconds for the server to produce a valid response." >&2
   exit 1
