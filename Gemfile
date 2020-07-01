@@ -47,7 +47,7 @@ gem 'autoprefixer-rails',  '~> 9.7.6'
 gem 'uglifier',  '~> 4.2.0'
 
 # Exception emails
-gem 'exception_notification',  '~> 4.4.0'
+gem 'exception_notification',  '~> 4.4.3'
 
 # Deploy with Capistrano
 gem 'capistrano', '~> 3.12.1'
