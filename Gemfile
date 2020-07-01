@@ -60,7 +60,7 @@ group :development, :test do
   gem 'selenium-webdriver', '~> 3.142.7'
 
   gem 'poltergeist', '~> 1.18.1'
-  gem 'rails-controller-testing', '~> 1.0.4'
+  gem 'rails-controller-testing', '~> 1.0.5'
 end
 
 gem 'listen', '~> 3.2.1'
