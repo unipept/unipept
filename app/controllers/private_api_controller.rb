@@ -25,8 +25,8 @@ class PrivateApiController < HandleOptionsController
 
   def proteins
     unless params[:peptide]
-      @error_name = "Invalid peptide provided"
-      @error_message = "No peptide sequence was provided. Please provide a valid peptide sequence."
+      @error_name = 'Invalid peptide provided'
+      @error_message = 'No peptide sequence was provided. Please provide a valid peptide sequence.'
       render 'private_api/error'
       return
     end
@@ -41,9 +41,9 @@ class PrivateApiController < HandleOptionsController
       # process the input, convert seq to a valid @sequence
       sequence = Sequence.single_search(seq, equate_il)
       @original_sequence = seq
-    rescue SequenceTooShortError => ex
-      @error_name = "Sequence too short"
-      @error_message = "The peptide sequence you provided is too short. It should contain at least 5 valid amino acids."
+    rescue SequenceTooShortError
+      @error_name = 'Sequence too short'
+      @error_message = 'The peptide sequence you provided is too short. It should contain at least 5 valid amino acids.'
       render 'private_api/error'
       return
     end
