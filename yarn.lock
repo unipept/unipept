@@ -12658,9 +12658,9 @@ void-elements@^2.0.1:
   integrity sha1-wGavtYK7HLQSjWDqkjkulNXp2+w=
 
 vue-class-component@^7.0.2, vue-class-component@^7.1.0:
-  version "7.2.3"
-  resolved "https://registry.yarnpkg.com/vue-class-component/-/vue-class-component-7.2.3.tgz#a5b1abd53513a72ad51098752e2dedd499807cca"
-  integrity sha512-oEqYpXKaFN+TaXU+mRLEx8dX0ah85aAJEe61mpdoUrq0Bhe/6sWhyZX1JjMQLhVsHAkncyhedhmCdDVSasUtDw==
+  version "7.2.5"
+  resolved "https://registry.yarnpkg.com/vue-class-component/-/vue-class-component-7.2.5.tgz#212b3548c4fdd3314774c4adbc1c3792a40b52d0"
+  integrity sha512-0CSftHY0bDTD+4FbYkuFf6+iKDjZ4h2in2YYJDRMk5daZIjrgT9LjFHvP7Rzqy9/s1pij3zDtTSLRUjsPWMwqg==
 
 vue-docgen-api@^4.28.1:
   version "4.28.1"
@@ -12718,9 +12718,9 @@ vue-loader@^15.9.1:
     vue-style-loader "^4.1.0"
 
 vue-property-decorator@^8.1.0:
-  version "8.4.1"
-  resolved "https://registry.yarnpkg.com/vue-property-decorator/-/vue-property-decorator-8.4.1.tgz#fd8045b8678e1348fed57f9149279e00e404ed38"
-  integrity sha512-8R4Us7DxFO0rwAL/2fv6vaZL8Oa4n/HGanHODYGTcvQHwT0FYJr9UuuFm2GoWAIXQu1mDO03HNeHswFp9vmTVA==
+  version "8.5.1"
+  resolved "https://registry.yarnpkg.com/vue-property-decorator/-/vue-property-decorator-8.5.1.tgz#571a91cf8d2b507f537d79bf8275af3184572fff"
+  integrity sha512-O6OUN2OMsYTGPvgFtXeBU3jPnX5ffQ9V4I1WfxFQ6dqz6cOUbR3Usou7kgFpfiXDvV7dJQSFcJ5yUPgOtPPm1Q==
   dependencies:
     vue-class-component "^7.1.0"
 
