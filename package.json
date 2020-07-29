@@ -51,7 +51,7 @@
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-jest": "^23.8.2",
     "jasmine": "^3.5.0",
-    "jest": "^25.2.7",
+    "jest": "^26.1.0",
     "puppeteer": "^2.1.1",
     "webpack-dev-server": "^3.10.3"
   },
