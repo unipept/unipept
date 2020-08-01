@@ -55,7 +55,7 @@ GEM
       execjs
     bcrypt (3.1.13)
     bindex (0.8.1)
-    bootsnap (1.4.6)
+    bootsnap (1.4.7)
       msgpack (~> 1.0)
     builder (3.2.4)
     byebug (11.1.1)
@@ -294,7 +294,7 @@ PLATFORMS
 DEPENDENCIES
   annotate (~> 3.1.1)
   autoprefixer-rails (~> 9.7.6)
-  bootsnap (~> 1.4.6)
+  bootsnap (~> 1.4.7)
   byebug (~> 11.1.1)
   capistrano (~> 3.12.1)
   capistrano-bundler (~> 1.6.0)
