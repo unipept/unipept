@@ -97,7 +97,7 @@
         extra = <%= extra %>,
         names = "<%= names %>",
         domains = <%= domains %>,
-        link = <%= defined?(link) && link %>;
+        link = <%= defined?(link) != nil && link %>;
 
     $("#try-it-form").submit(function (e) {
       e.preventDefault();
