@@ -55,7 +55,8 @@ to date.
                 <div>
                     <heatmap-wizard-multi-sample
                         v-if="!this.$store.getters.inProgress"
-                        :assays="this.$store.getters.getAssays">
+                        :assays="this.$store.getters.getAssays"
+                        :tree="tree">
                     </heatmap-wizard-multi-sample>
                     <div v-else style="display: flex; justify-content: center;">
                         <div class="text-xs-center" style="margin-top: 25px;">
@@ -77,17 +78,48 @@ import CardTitle from "unipept-web-components/src/components/custom/CardTitle.vu
 import HeatmapWizardMultiSample from "unipept-web-components/src/components/heatmap/HeatmapWizardMultiSample.vue";
 import Tooltip from "unipept-web-components/src/components/custom/Tooltip.vue";
 import ProteomicsAssay from "unipept-web-components/src/business/entities/assay/ProteomicsAssay";
+import Tree from "unipept-web-components/src/business/ontology/taxonomic/Tree";
 import AssayItem from "./AssayItem.vue";
+import { CountTable } from "unipept-web-components/src/business/counts/CountTable";
+import { Peptide } from "unipept-web-components/src/business/ontology/raw/Peptide";
+import LcaCountTableProcessor from "unipept-web-components/src/business/processors/taxonomic/ncbi/LcaCountTableProcessor";
+import NcbiOntologyProcessor from "unipept-web-components/src/business/ontology/taxonomic/ncbi/NcbiOntologyProcessor";
 
 @Component({
     components: { CardTitle, CardHeader, HeatmapWizardMultiSample, Tooltip, AssayItem },
-    computed: {
-
-    }
+    computed: {}
 })
 export default class SwitchDatasetsCard extends Vue {
     private isAssaySelectionInProgress: boolean = false;
     private dialogOpen: boolean = false;
+    private tree: Tree = null;
+
+    get countTable(): CountTable<Peptide> {
+        const activeAssay: ProteomicsAssay = this.$store.getters.getActiveAssay;
+        if (activeAssay) {
+            return this.$store.getters.getProgressStatesMap.find(p => p.assay.getId() === activeAssay.getId()).countTable;
+        } else {
+            return undefined;
+        }
+    }
+
+    get activeAssay(): ProteomicsAssay {
+        return this.$store.getters.getActiveAssay;
+    }
+
+    @Watch("countTable")
+    @Watch("activeAssay")
+    private async onCountTableChanged() {
+        if (this.activeAssay && this.countTable) {
+            const taxaCountProcessor = new LcaCountTableProcessor(this.countTable, this.activeAssay.getSearchConfiguration());
+            const taxaCounts = await taxaCountProcessor.getCountTable();
+
+            const taxaOntologyProcessor = new NcbiOntologyProcessor();
+            const taxaOntology = await taxaOntologyProcessor.getOntology(taxaCounts);
+
+            this.tree = new Tree(taxaCounts, taxaOntology, await taxaCountProcessor.getAnnotationPeptideMapping(), 1);
+        }
+    }
 
     private deselectAssay(dataset: ProteomicsAssay) {
         this.$emit("deselect-assay", dataset);
