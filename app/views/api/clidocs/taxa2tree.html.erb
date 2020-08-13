@@ -7,7 +7,7 @@
       </h1>
     </div>
     <p>
-      The <code>unipept taxa2tree</code> command takes one or more <span class="initialism">NCBI</span> taxon ID's as input and returns the taxonomic tree of these taxa as output. All this information is fetched by doing <a href='<%= api_apidocs_taxa2tree_path %>' target='_blank'><span class="initialism">API</span>-requests</a> to the Unipept server.
+      The <code>unipept taxa2tree</code> command takes one or more <span class="initialism">NCBI</span> taxon IDs as input and returns the taxonomic tree of these taxa as output. All this information is fetched by doing <a href='<%= api_apidocs_taxa2tree_path %>' target='_blank'><span class="initialism">API</span>-requests</a> to the Unipept server.
     </p>
     <div class='card'>
       <div class='card-title card-title-colored'>
@@ -15,11 +15,11 @@
       </div>
       <div class='card-supporting-text'>
         <p>
-          The <code>unipept taxa2tree</code> command expects <span class="initialism">NCBI</span> taxon ID's as input. The source of this input can be command line arguments, a file, or <i>standard input</i>. If input is supplied using multiple sources at the same time, the order of priority as described above is used.
+          The <code>unipept taxa2tree</code> command expects <span class="initialism">NCBI</span> taxon IDs as input. The source of this input can be command line arguments, a file, or <i>standard input</i>. If input is supplied using multiple sources at the same time, the order of priority as described above is used.
     </p>
         <h4>Command line arguments</h4>
         <p>
-          If input is supplied using command line arguments, the taxon ID's must be separated by spaces.
+          If input is supplied using command line arguments, the taxon IDs must be separated by spaces.
     </p>
         <h5>Example</h5>
         <pre>
@@ -59,7 +59,7 @@
       </div>
       <div class='card-supporting-text'>
         <p>
-          The <code>unipept taxa2tree</code> command outputs the taxonomic tree for a given set of taxon ID's. By default, the NCBI taxon id, taxon name, taxonomic rank, count and self count of each node in the tree are returned in the json format. Consult the <a href='<%= api_apidocs_taxa2tree_path %>#response' target='_blank'><span class="initialism">API</span> documentation</a> for a detailed list of output fields. By default, output is generated in json format. By using the <a href='#param-format'><samp>--format</samp> parameter</a>, the format can be changed into html or an url. The output can be written to a file or to <i>standard output</i>.
+          The <code>unipept taxa2tree</code> command outputs the taxonomic tree for a given set of taxon IDs. By default, the NCBI taxon id, taxon name, taxonomic rank, count and self count of each node in the tree are returned in the json format. Consult the <a href='<%= api_apidocs_taxa2tree_path %>#response' target='_blank'><span class="initialism">API</span> documentation</a> for a detailed list of output fields. By default, output is generated in json format. By using the <a href='#param-format'><samp>--format</samp> parameter</a>, the format can be changed into html or an url. The output can be written to a file or to <i>standard output</i>.
     </p>
         <h4>File output</h4>
         <p>
