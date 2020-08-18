@@ -12214,10 +12214,10 @@ trough@^1.0.0:
   dependencies:
     glob "^7.1.2"
 
-ts-loader@6.2.2:
-  version "6.2.2"
-  resolved "https://registry.yarnpkg.com/ts-loader/-/ts-loader-6.2.2.tgz#dffa3879b01a1a1e0a4b85e2b8421dc0dfff1c58"
-  integrity sha512-HDo5kXZCBml3EUPcc7RlZOV/JGlLHwppTLEHb3SHnr5V7NXD4klMEkrhJe5wgRbaWsSXi+Y1SIBN/K9B6zWGWQ==
+ts-loader@8.0.2:
+  version "8.0.2"
+  resolved "https://registry.yarnpkg.com/ts-loader/-/ts-loader-8.0.2.tgz#ee73ca9350f745799396fff8578ba29b1e95616b"
+  integrity sha512-oYT7wOTUawYXQ8XIDsRhziyW0KUEV38jISYlE+9adP6tDtG+O5GkRe4QKQXrHVH4mJJ88DysvEtvGP65wMLlhg==
   dependencies:
     chalk "^2.3.0"
     enhanced-resolve "^4.0.0"
@@ -12382,10 +12382,10 @@ unipept-visualizations@^1.7.3:
   resolved "https://registry.yarnpkg.com/unipept-visualizations/-/unipept-visualizations-1.7.3.tgz#10a4c6f4cf745b88aaf353fbb74ddf2cb9b6584e"
   integrity sha512-g9AM+44twT+qQpg4kHhupamMoBr4QscjqjQY8Pdk7cdWHvZs5HuIVTNtH44IbAtN08x9+U3BTT+lp+ZEJpaoFw==
 
-unipept-web-components@1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/unipept-web-components/-/unipept-web-components-1.0.4.tgz#43c1e8ffa9cfa09b6d863909f39bbc040f5b6bf3"
-  integrity sha512-TlbJ5S+iSUSuEDKS4XrrdSKblYcjXrZGMyWpKDpM2rpj/z0t1bKKbmOOiGvt8GgJ2vZ807vqU2pnsorylVTiOw==
+unipept-web-components@1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/unipept-web-components/-/unipept-web-components-1.0.5.tgz#5445f3ed70af9d66fc25b2aa8d580765e9539bad"
+  integrity sha512-9ulvdK1pASMmz19sO9R1hSVXfNKgulnjfcEOFifhtAbZ7s45aTk2Ls0gfUcKc4KWl4Wv1p5G+RHFpShlRTy6Ow==
   dependencies:
     "@types/uuid" "^3.4.7"
     axios "^0.19.0"

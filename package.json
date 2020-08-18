@@ -25,7 +25,7 @@
     "sass-loader": "^8.0.2",
     "terser-webpack-plugin": "^2.3.5",
     "tiny-emitter": "^2.0.2",
-    "ts-loader": "6.2.2",
+    "ts-loader": "8.0.2",
     "typescript": "^3.8.3",
     "unipept-visualizations": "^1.7.3",
     "unipept-web-components": "1.0.5",
