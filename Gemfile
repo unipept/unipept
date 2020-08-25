@@ -2,14 +2,16 @@ source 'http://rubygems.org'
 
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-gem 'rails', '~> 5.2.2'
+ruby '2.7.1'
+
+gem 'rails', '~> 6.0.3', '>= 6.0.3.2'
 
 gem 'mysql2', '~> 0.5.3'
 
 gem 'webpacker', '~> 4.2.2'
 
 # Use Puma as the app server
-gem 'puma', '~> 3.12'
+gem 'puma', '~> 4.1'
 
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
@@ -47,7 +49,7 @@ gem 'autoprefixer-rails',  '~> 9.7.6'
 gem 'uglifier',  '~> 4.2.0'
 
 # Exception emails
-gem 'exception_notification',  '~> 4.4.0'
+gem 'exception_notification',  '~> 4.4.3'
 
 # Deploy with Capistrano
 gem 'capistrano', '~> 3.12.1'
