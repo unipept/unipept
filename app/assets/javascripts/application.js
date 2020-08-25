@@ -11,7 +11,6 @@ String.prototype.capitalizeFirstLetter = function () {
     return this.charAt(0).toUpperCase() + this.slice(1);
 };
 
-
 /*
  * Function to delay some other function until it isn't
  * called for "ms" ms
