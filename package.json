@@ -16,7 +16,7 @@
     "deepmerge": "^4.2.2",
     "dragula": "^3.7.2",
     "fibers": "^4.0.2",
-    "jquery": "^3.2.1",
+    "jquery": "^3.5.1",
     "less": "^3.11.1",
     "less-loader": "^5.0.0",
     "null-loader": "^3.0.0",

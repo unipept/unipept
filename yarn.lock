@@ -7233,10 +7233,10 @@ jest@^25.2.7:
     import-local "^3.0.2"
     jest-cli "^25.5.4"
 
-jquery@>=1.11, jquery@^3.2.1, jquery@^3.4.1:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.5.0.tgz#9980b97d9e4194611c36530e7dc46a58d7340fc9"
-  integrity sha512-Xb7SVYMvygPxbFMpTFQiHh1J7HClEaThguL15N/Gg37Lri/qKyhRGZYzHRyLH8Stq3Aow0LsHO2O2ci86fCrNQ==
+jquery@>=1.11, jquery@^3.4.1, jquery@^3.5.1:
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.5.1.tgz#d7b4d08e1bfdb86ad2f1a3d039ea17304717abb5"
+  integrity sha512-XwIBPqcMn57FxfT+Go5pzySnm4KWkT1Tv7gjrpT1srtf8Weynl6R273VJ5GjkRb51IzMp5nbaPjJXMWeju2MKg==
 
 js-base64@^2.1.8:
   version "2.5.2"
@@ -12382,10 +12382,10 @@ unipept-visualizations@^1.7.3:
   resolved "https://registry.yarnpkg.com/unipept-visualizations/-/unipept-visualizations-1.7.3.tgz#10a4c6f4cf745b88aaf353fbb74ddf2cb9b6584e"
   integrity sha512-g9AM+44twT+qQpg4kHhupamMoBr4QscjqjQY8Pdk7cdWHvZs5HuIVTNtH44IbAtN08x9+U3BTT+lp+ZEJpaoFw==
 
-unipept-web-components@1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/unipept-web-components/-/unipept-web-components-1.0.4.tgz#43c1e8ffa9cfa09b6d863909f39bbc040f5b6bf3"
-  integrity sha512-TlbJ5S+iSUSuEDKS4XrrdSKblYcjXrZGMyWpKDpM2rpj/z0t1bKKbmOOiGvt8GgJ2vZ807vqU2pnsorylVTiOw==
+unipept-web-components@1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/unipept-web-components/-/unipept-web-components-1.0.5.tgz#5445f3ed70af9d66fc25b2aa8d580765e9539bad"
+  integrity sha512-9ulvdK1pASMmz19sO9R1hSVXfNKgulnjfcEOFifhtAbZ7s45aTk2Ls0gfUcKc4KWl4Wv1p5G+RHFpShlRTy6Ow==
   dependencies:
     "@types/uuid" "^3.4.7"
     axios "^0.19.0"
