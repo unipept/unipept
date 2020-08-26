@@ -11,19 +11,6 @@ String.prototype.capitalizeFirstLetter = function () {
     return this.charAt(0).toUpperCase() + this.slice(1);
 };
 
-// function used to remove fields in the datasets form
-function remove_fields(link) {
-    $(link).prev("input[type=hidden]").val("1");
-    $(link).closest(".fields").hide();
-}
-
-// function used to add field in the datasets form
-function add_fields(link, association, content) {
-    var new_id = new Date().getTime();
-    var regexp = new RegExp("new_" + association, "g");
-    $(link).parent().parent().before(content.replace(regexp, new_id));
-}
-
 /*
  * Function to delay some other function until it isn't
  * called for "ms" ms
