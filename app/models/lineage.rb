@@ -90,7 +90,7 @@ class Lineage < ApplicationRecord
   module ActiveRecord::Type
     class UnsignedInteger
       def ensure_in_range(_value)
-        true
+        return _value
       end
     end
   end
