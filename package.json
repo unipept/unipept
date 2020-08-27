@@ -54,7 +54,7 @@
     "jasmine": "^3.6.1",
     "jest": "^26.4.2",
     "puppeteer": "^5.2.1",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.11.0"
   },
   "scripts": {
     "test": "jest",
