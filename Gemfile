@@ -31,7 +31,7 @@ gem 'bootsnap', '~> 1.4.6', require: false
 # faster json
 gem 'oj',  '~> 3.10.6'
 
-gem 'multi_json',  '~> 1.14.1'
+gem 'multi_json',  '~> 1.15.0'
 gem 'jbuilder',  '~> 2.10.0'
 
 # imagemagick bindings
@@ -42,7 +42,7 @@ gem 'rmagick',  '~> 4.1.1', require: false
 gem 'less-rails',  '~> 4.0.0'
 
 # auto css prefixer
-gem 'autoprefixer-rails',  '~> 9.7.6'
+gem 'autoprefixer-rails',  '~> 9.8.6'
 
 # Uglifier minifies JavaScript files by wrapping UglifyJS to be accessible
 # in Ruby
@@ -52,13 +52,13 @@ gem 'uglifier',  '~> 4.2.0'
 gem 'exception_notification',  '~> 4.4.3'
 
 # Deploy with Capistrano
-gem 'capistrano', '~> 3.12.1'
+gem 'capistrano', '~> 3.14.1'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', '~> 11.1.1', platforms: [:mri, :mingw, :x64_mingw]
   # Adds support for Capybara system testing and selenium driver
-  gem 'capybara', '~> 3.32.1'
+  gem 'capybara', '~> 3.33.0'
   gem 'selenium-webdriver', '~> 3.142.7'
 
   gem 'poltergeist', '~> 1.18.1'
@@ -93,7 +93,7 @@ group :development do
   gem 'annotate', '~> 3.1.1' # annotate models with database info
   gem 'guard', '~> 2.16.2'
   gem 'guard-minitest', '~> 2.4.6' # auto run tests
-  gem 'rubocop', '~> 0.81.0'
+  gem 'rubocop', '~> 0.89.1'
   gem 'rake', '~> 13.0.1'
   gem 'sprockets', '~> 3.7.2'
 end
