@@ -77,7 +77,7 @@ group :development do
 end
 
 group :development do
-  gem 'capistrano-bundler', '~> 1.6.0', require: false
+  gem 'capistrano-bundler', '~> 2.0.1', require: false
   gem 'capistrano-rails',   '~> 1.6.1', require: false
   gem 'capistrano-rvm', '~> 0.1.2', require: false
   gem 'capistrano-yarn', '~> 2.0.2'
