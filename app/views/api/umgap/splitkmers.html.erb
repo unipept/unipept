@@ -1,0 +1,54 @@
+<div class="apidocs row">
+  <div class="col-xs-9">
+    <div class='page-header'>
+      <h1 class='api-title'>
+        <samp>umgap splitkmers</samp><br>
+        <small>Splits peptides in a <span class='initialism'>TSV</span> stream into K-mers duplicating the records.</small>
+      </h1>
+    </div>
+    <p>The <code>umgap splitkmers</code> command takes tab-separated taxon IDs and protein sequences and outputs
+    the k-mers mapped to the taxon IDs.</p>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='input'>Usage</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>The input is given on <em>standard input</em> and should be a <span class='initialism'>TSV</span> formatted stream of taxon IDs and a
+        protein sequence from this taxon. The output will be written to <em>standard output</em> and consists
+        of a <span class='initialism'>TSV</span> formatted stream of K-mers (<em>K</em> is configurable with <samp>-k</samp> and is 9 by default) mapped
+        to the taxa in which they occur.</p>
+        <p>This output stream is ready to be grouped by K-mer by sorting and than aggregated into a
+        searchable index, with the <code>sort</code>, <a href='<%= api_umgap_joinkmers_path %>'><samp>umgap joinkmers</samp> and <a href='<%= api_umgap_buildindex_path %>'><samp>umgap buildindex</samp></a> commands.</p>
+        <pre>
+<b>$</b> cat input.fa
+654924	MNAKYDTDQGVGRMLFLGTIGLAVVVGGLMAYGYYYDGKTPSSGTSFHTASPSFSSRYRY
+176652	MIKLFCVLAAFISINSACQSSHQQREEFTVATYHSSSICTTYCYSNCVVASQHKGLNVESYTCDKPDPYGRETVCKCTLIKCHDI
+<b>$</b> umgap splitkmers &lt; input.fa
+MNAKYDTDQ	654924
+NAKYDTDQG	654924
+AKYDTDQGV	654924
+KYDTDQGVG	654924
+YDTDQGVGR	654924
+...
+SPSFSSRYR	654924
+PSFSSRYRY	654924
+MIKLFCVLA	176652
+IKLFCVLAA	176652
+KLFCVLAAF	176652
+...
+        </pre>
+        <dl class='dl-horizontal'>
+          <dt><samp>-h</samp> / <samp>--help</samp></dt><dd>Prints help information</dd>
+          <dt><samp>-V</samp> / <samp>--version</samp></dt><dd>Prints version information</dd>
+        </dl>
+        <dl class='dl-horizontal'>
+          <dt><samp>-k</samp> / <samp>--length <em>length</em></samp></dt><dd>The K in K-mers [default: 9]</dd>
+          <dt><samp>-p</samp> / <samp>--prefix <em>prefix</em></samp></dt><dd>Print only the <em>(K-1)</em>-mer suffixes of the K-mers starting with this character</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-3">
+    <%= render 'api/shared/sidebar' %>
+  </div>
+</div>
