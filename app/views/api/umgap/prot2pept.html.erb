@@ -1,0 +1,53 @@
+<div class="apidocs row">
+  <div class="col-xs-9">
+    <div class='page-header'>
+      <h1 class='api-title'>
+        <samp>umgap prot2pept</samp><br>
+        <small>Splits a <span class='initialism'>FASTA</span> stream into tryptic peptides.</small>
+      </h1>
+    </div>
+    <p>The <code>umgap prot2pept</code> command takes one or more Amino Acid sequences as input, applies an <em>in
+    silico</em> peptide digest and outputs the result.</p>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='input'>Usage</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>The input is given on <em>standard input</em>, in a <span class='initialism'>FASTA</span> format. Per <span class='initialism'>FASTA</span> header, it should contain
+        one sequence, possibly wrapped with newlines. It will write to <em>standard output</em>, in <span class='initialism'>FASTA</span>
+        format, the peptides resulting from the digest. Per <span class='initialism'>FASTA</span> header, there will be multiple
+        peptides, separated by newlines.</p>
+        <pre>
+<b>$</b> cat input.fa
+&gt;header1
+AYKKAGVSGHVWQSDGITNCLLRGLTRVKEAVANRDSGNGYINKVYYWTVDKRATTRDALDAGVDGIMTNYPDVITDVLN
+<b>$</b> umgap prot2tryp2lca tryptic-lca.index &lt; input.fa
+&gt;header1
+AYK
+K
+AGVSGHVWQSDGITNCLLR
+GLTR
+VK
+EAVANR
+DSGNGYINK
+VYYWTVDK
+R
+ATTR
+DALDAGVDGIMTNYPDVITDVLN
+        </pre>
+        <p>Using the <samp>-p</samp> flag, you can change the splitting pattern (<code>([KR])([^P])</code>, so between a <code>K</code> and <code>R</code>
+        and before something that's not a <code>P</code>) to something else.</p>
+        <dl class='dl-horizontal'>
+          <dt><samp>-h</samp> / <samp>--help</samp></dt><dd>Prints help information</dd>
+          <dt><samp>-V</samp> / <samp>--version</samp></dt><dd>Prints version information</dd>
+        </dl>
+        <dl class='dl-horizontal'>
+          <dt><samp>-p</samp> / <samp>--pattern <em>pattern</em></samp></dt><dd>The cleavage-pattern (regex), i.e. the pattern after which the next peptide will be cleaved for tryptic peptides) [default: <code>([KR])([^P])</code>]</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-3">
+    <%= render 'api/shared/sidebar' %>
+  </div>
+</div>
