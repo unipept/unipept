@@ -131,9 +131,29 @@ UnipeptWeb::Application.routes.draw do
 
   # UMGAP docs
   namespace :api, path: 'umgap' do
-    get '/',           to: 'umgap#index', as: 'umgap'
-    get 'casestudies', to: 'umgap#casestudies', as: 'umgap/casestudies'
+    get '/',                        to: 'umgap#index',                  as: 'umgap'
+    get 'casestudies',              to: 'umgap#casestudies',            as: 'umgap/casestudies'
     get 'casestudies/metagenomics', to: 'umgap#casestudy_metagenomics', as: 'umgap/casestudy_metagenomics'
+    get 'fastq2fasta',              to: 'umgap#fastq2fasta',            as: 'umgap/fastq2fasta'
+    get 'translate',                to: 'umgap#translate',              as: 'umgap/translate'
+    get 'prot2pept',                to: 'umgap#prot2pept',              as: 'umgap/prot2pept'
+    get 'prot2kmer',                to: 'umgap#prot2kmer',              as: 'umgap/prot2kmer'
+    get 'filter',                   to: 'umgap#filter',                 as: 'umgap/filter'
+    get 'pept2lca',                 to: 'umgap#pept2lca',               as: 'umgap/pept2lca'
+    get 'prot2tryp2lca',            to: 'umgap#prot2tryp2lca',          as: 'umgap/prot2tryp2lca'
+    get 'prot2kmer2lca',            to: 'umgap#prot2kmer2lca',          as: 'umgap/prot2kmer2lca'
+    get 'bestof',                   to: 'umgap#bestof',                 as: 'umgap/bestof'
+    get 'seedextend',               to: 'umgap#seedextend',             as: 'umgap/seedextend'
+    get 'uniq',                     to: 'umgap#uniq',                   as: 'umgap/uniq'
+    get 'taxa2agg',                 to: 'umgap#taxa2agg',               as: 'umgap/taxa2agg'
+    get 'snaptaxon',                to: 'umgap#snaptaxon',              as: 'umgap/snaptaxon'
+    get 'report',                   to: 'umgap#report',                 as: 'umgap/report'
+    get 'visualize',                to: 'umgap#visualize',              as: 'umgap/visualize'
+    get 'taxonomy',                 to: 'umgap#taxonomy',               as: 'umgap/taxonomy'
+    get 'splitkmers',               to: 'umgap#splitkmers',             as: 'umgap/splitkmers'
+    get 'joinkmers',                to: 'umgap#joinkmers',              as: 'umgap/joinkmers'
+    get 'buildindex',               to: 'umgap#buildindex',             as: 'umgap/buildindex'
+    get 'printindex',               to: 'umgap#printindex',             as: 'umgap/printindex'
   end
 
   # The priority is based upon order of creation:
