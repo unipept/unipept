@@ -1,0 +1,56 @@
+<div class="apidocs row">
+  <div class="col-xs-9">
+    <div class='page-header'>
+      <h1 class='api-title'>
+        <samp>umgap report</samp><br>
+        <small>Counts and reports on a stream of taxon IDs.</small>
+      </h1>
+    </div>
+    <p>The <code>umgap report</code> command creates a frequency table of a list of taxa.</p>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='input'>Usage</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>The input is given on <em>standard input</em>, a single taxon ID on each line. Each taxon at least as
+        specific as a species is counted towards that species, each taxon above species rank is counted
+        as root. The command outputs a <span class="initialism">CSV</span> table of counts, species taxon IDs and their names.</p>
+        <p>For operation, the command requires to be passed a small database created from the uniprot
+        taxonomy as argument.</p>
+        <pre>
+<b>$</b> cat input.txt
+9606
+9606
+2759
+9606
+9606
+9606
+9606
+9606
+9606
+9606
+8287
+<b>$</b> umgap report taxons.tsv &lt; input.txt
+2,1,root
+9,9606,Homo sapiens
+        </pre>
+        <p>With the <samp>-r</samp> option, the default species rank can be set to any named rank.</p>
+        <pre>
+<b>$</b> umgap report -r phylum taxons.tsv &lt; input.txt
+10,7711,Chordata
+        </pre>
+        <dl class='dl-horizontal'>
+          <dt><samp>-h</samp> / <samp>--help</samp></dt><dd>Prints help information</dd>
+          <dt><samp>-V</samp> / <samp>--version</samp></dt><dd>Prints version information</dd>
+        </dl>
+        <dl class='dl-horizontal'>
+          <dt><samp>-f</samp> / <samp>--frequency <em>min-frequency</em></samp></dt><dd>The minimum frequency to be reported [default: 1]</dd>
+          <dt><samp>-r</samp> / <samp>--rank <em>rank</em></samp></dt><dd>The rank to show [default: species]</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-3">
+    <%= render 'api/shared/sidebar' %>
+  </div>
+</div>
