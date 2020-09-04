@@ -1,0 +1,52 @@
+<div class="apidocs row">
+  <div class="col-xs-9">
+    <div class='page-header'>
+      <h1 class='api-title'>
+        <samp>umgap prot2tryp2lca</samp><br>
+        <small>Digests a <span class='initialism'>FASTA</span> stream of peptides and maps all tryptic peptides to taxon IDs.</small>
+      </h1>
+    </div>
+    <p>The <code>umgap prot2tryp2lca</code> command takes one or more peptides as input, splits those into
+    tryptic peptides, possibly filtering them, and outputs their lowest common ancestors. It is a
+    combination of the <a href='<%= api_umgap_prot2pept_path %>'><samp>umgap prot2pept</samp></a>, <a href='<%= api_umgap_filter_path %>'><samp>umgap filter</samp></a> and <a href='<%= api_umgap_pept2lca_path %>'><samp>umgap pept2lca</samp></a> commands to allow more
+    efficient parallel computing (c.f. their documentation for details).</p>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='input'>Usage</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>The input is given on <em>standard input</em> in a <span class='initialism'>FASTA</span> format. Per <span class='initialism'>FASTA</span> header should be a single
+        peptide, which may be hardwrapped with newlines. The command prints the lowest common ancestors
+        for each tryptic peptide found in this peptide to standard output.</p>
+        <pre>
+<b>$</b> cat input.fa
+&gt;header1
+AYKKAGVSGHVWQSDGITNCLLRGLTRVKEAVANRDSGNGYINKVYYWTVDKRATTRDALDAGVDGIMTNYPDVITDVLN
+<b>$</b> umgap prot2tryp2lca tryptic-lca.index &lt; input.fa
+&gt;header1
+571525
+1
+571525
+6920
+        </pre>
+        <dl class='dl-horizontal'>
+          <dt><samp>-m</samp> / <samp>--in-memory</samp></dt><dd>Load <span class="initialism">FST</span> in memory instead of mmap'ing the file contents. This makes querying significantly faster, but requires some time to load the <span class="initialism">FST</span> into memory</dd>
+          <dt><samp>-h</samp> / <samp>--help</samp></dt><dd>Prints help information</dd>
+          <dt><samp>-o</samp> / <samp>--one-on-one</samp></dt><dd>Map unknown sequences to 0 instead of ignoring them</dd>
+          <dt><samp>-V</samp> / <samp>--version</samp></dt><dd>Prints version information</dd>
+        </dl>
+        <dl class='dl-horizontal'>
+          <dt><samp>-c</samp> / <samp>--chunksize <em>chunk-size</em></samp></dt><dd>How much reads to group together in one chunk, bigger chunks decrease the overhead caused by multithreading. Because the output order is not necessarily the same as the input order, having a chunk size which is a multiple of 12 (all 6 translations multiplied by the two paired-end reads) will keep <span class="initialism">FASTA</span> records of the same reads together [default: 240]</dd>
+          <dt><samp>-k</samp> / <samp>--keep <em>contains</em></samp></dt><dd>The letters that a sequence must contain [none by default]</dd>
+          <dt><samp>-d</samp> / <samp>--drop <em>lacks</em></samp></dt><dd>The letters that a sequence mustn't contain [none by default]</dd>
+          <dt><samp>-L</samp> / <samp>--maxlen <em>max-length</em></samp></dt><dd>Maximum length allowed [default: 50]</dd>
+          <dt><samp>-l</samp> / <samp>--minlen <em>min-length</em></samp></dt><dd>Minimum length required [default: 5]</dd>
+          <dt><samp>-p</samp> / <samp>--pattern <em>pattern</em></samp></dt><dd>The cleavage-pattern (regex), i.e. the pattern after which the next peptide will be cleaved for tryptic peptides) [default: <code>([KR])([^P])</code>]</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-3">
+    <%= render 'api/shared/sidebar' %>
+  </div>
+</div>
