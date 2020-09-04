@@ -1,0 +1,56 @@
+<div class="apidocs row">
+  <div class="col-xs-9">
+    <div class='page-header'>
+      <h1 class='api-title'>
+        <samp>umgap fastq2fasta</samp><br>
+        <small>Interleaves <span class='initialism'>FASTQ</span> files into a <span class="initialism">FASTA</span> stream</small>
+      </h1>
+    </div>
+    <p>
+      <p>The <code>umgap fastq2fasta</code> command takes a number of <span class="initialism">FASTQ</span> files and interleaves them into a single <span class="initialism">FASTA</span> file.</p>
+    </p>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='input'>Usage</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>The <span class="initialism">FASTQ</span> input files are given as command line arguments. In order, a single record is taken
+        from each of these files, and the record header and sequence are written to <em>standard output</em> in
+        <span class="initialism">FASTA</span> format, dropping the quality scores, until any of the files runs out or records.</p>
+        <p>This command is generally used to combine two paired-end <span class="initialism">FASTQ</span> files into a single <span class="initialism">FASTA</span> file.</p>
+        <pre>
+<b>$</b> cat input_1.fq
+@record1/1
+GATAGCCGTCGAGCGTCCCGACATCCATATACAGCTCGCCGCAGTGCGTCGCCCGCACGGCATCGCGCGCCGCGATGTACGCATTCAACCAGCGTCCGAG
++
+AADGGGG&lt;GI@IIKJKKKKH4EIJCHJ9:IJHKIKDIKDKGDJD@C@&lt;&gt;KD=;FEA:DA=I$EEED$&gt;C@1EDE?D:CEAC;CDE:E$D$=D$EAD?AEE
+@record2/1
+CCCAGGTCCCCGGCATCGTCGCGGCCTCGCCCATGATCCAGCTCCACGACCAGATCCCCGTTCCCGGCGGTAAAGAGCGCGGCGTGCTCATCCTCGGAGT
++
+ADDEEG@GIGIIHKCJKH@HHGKHHKHKKJJBA.GFIGK(IHKKEKECBEEEEDIKC@H&lt;EDBJDEA36;6EE$E:G6C=E$E@CE?EE9FEE?E:F$?$
+<b>$</b> cat input_2.fq
+@record1/2
+CATTGTTCGCTACTTTGCGGAGCGCAATTATGCCGCGGAGATCTTCTACGTGGTGCAGCAGAAGCTGGCGGGCTGGTGCGATGCGTTGTATCGGCCCGAG
++
+DDDEGGG?HIHIIKHK?@2KBHGDCJKI(JEJJKKHKKHBHKKFICEICECCFFEICCCC$E6ED$?CEEDDED$DEDCFFECEEEEFB$CCEC$6C=CA
+@record2/2
+GGACACGCTCTCAGGACGATGGCGCGATTGCAGGACTTGCTGGATCTCCTCCGTCGCCAAGGGGACGCGCTCGGAGTGGCTCATGGAGCAGACGAGTTCT
++
+AADGGGEGIIIHIJKGCK&lt;KD:KKHI?HIHHJKFJEKKJIGE$CKHE$EE$FEEEI=EAE8EAIKFBEE$EADEEDB$DEEDE=?B6C$C$6$A$$=BEE
+<b>$</b> umgap fastq2fasta input_1.fq input_2.fq
+&gt;record1/1
+GATAGCCGTCGAGCGTCCCGACATCCATATACAGCTCGCCGCAGTGCGTCGCCCGCACGGCATCGCGCGCCGCGATGTACGCATTCAACCAGCGTCCGAG
+&gt;record1/2
+CATTGTTCGCTACTTTGCGGAGCGCAATTATGCCGCGGAGATCTTCTACGTGGTGCAGCAGAAGCTGGCGGGCTGGTGCGATGCGTTGTATCGGCCCGAG
+&gt;record2/1
+CCCAGGTCCCCGGCATCGTCGCGGCCTCGCCCATGATCCAGCTCCACGACCAGATCCCCGTTCCCGGCGGTAAAGAGCGCGGCGTGCTCATCCTCGGAGT
+&gt;record2/2
+GGACACGCTCTCAGGACGATGGCGCGATTGCAGGACTTGCTGGATCTCCTCCGTCGCCAAGGGGACGCGCTCGGAGTGGCTCATGGAGCAGACGAGTTCT
+        </code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-3">
+    <%= render 'api/shared/sidebar' %>
+  </div>
+</div>
