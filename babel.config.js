@@ -34,9 +34,11 @@ module.exports = function(api) {
                     modules: false,
                     exclude: ['transform-typeof-symbol']
                 }
-            ]
+            ],
+            ["babel-preset-typescript-vue", { "allExtensions": true, "isTSX": true }]
         ].filter(Boolean),
         plugins: [
+            ["@babel/plugin-proposal-decorators", { "legacy": true }],
             'babel-plugin-macros',
             '@babel/plugin-syntax-dynamic-import',
             isTestEnv && 'babel-plugin-dynamic-import-node',

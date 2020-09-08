@@ -6,6 +6,8 @@
         "downlevelIteration": true,
         "allowSyntheticDefaultImports": true,
         "strict": false,
+        "strictPropertyInitialization": false,
+        "useDefineForClassFields": false,
         "allowJs": true,
         "lib": ["es6", "dom"],
         "module": "es6",
