@@ -4,35 +4,35 @@
       <span class="initialism">UMGAP</span> documentation
     </h1>
     <p class='lead'>
-      The Unipept Metagenomics Analysis Pipeline can analyse metagenomic samples and return a frequency table of the taxons it detected for each read. 
+      Use the Unipept Metagenomics Analysis Pipeline (<span class='initialism'>UMGAP</span>) to analyse and present your findings using frequency tables and interactive visualizations. 
     </p>
     <p>
-      TODO: intro
+      The <span class='initialism'>UMGAP</span> is a collection of tools to build powerful pipelines for your metagenomics analyses.
     </p>
     <p>
-      The Unipept Metagenomics Analysis Pipeline is free and open-source software under the <span class='initialism'>MIT</span> License and all code is available on <a href='https://github.com/unipept/umgap' target='_blank'>Github</a>. In case you have encountered an issue using these tools, have feature requests or found a bug, don't hesitate to contact us by email (<a href='mailto:unipept@ugent.be'>unipept@ugent.be</a>), or <a href='https://github.com/unipept/umgap/issues' target='_blank'>create an issue</a> on Github.
+      The <span class='initialism'>UMGAP</span> is free and open-source software under the <span class='initialism'>MIT</span> License and all code is available on <a href='https://github.com/unipept/umgap' target='_blank'>Github</a>. In case you have encountered an issue using these tools, have feature requests or found a bug, don't hesitate to contact us by email (<a href='mailto:unipept@ugent.be'>unipept@ugent.be</a>), or <a href='https://github.com/unipept/umgap/issues' target='_blank'>create an issue</a> on Github.
     </p>
     <dl class='dl-horizontal'>
-      <dt>umgap fastq2fasta</dt><dd>Interleaves a number of FASTQ files into a single FASTA output</dd>
-      <dt>umgap translate</dt><dd>Translates DNA into Amino Acid Sequences</dd>
-      <dt>umgap prot2pept</dt><dd>Splits each protein sequence in a FASTA format into a list of (tryptic) peptides</dd>
-      <dt>umgap filter</dt><dd>Filter peptides in a FASTA format based on specific criteria</dd>
-      <dt>umgap prot2kmer</dt><dd>Splits each protein sequence in a FASTA format into a list of kmers</dd>
-      <dt>umgap pept2lca</dt><dd>Looks up each line of input in a given FST index and outputs the result. Lines starting with a '>' are copied. Lines for which no mapping is found are ignored</dd>
-      <dt>umgap prot2tryp2lca</dt><dd>Reads all the records in a specified FASTA file and queries the tryptic peptides in an FST for the LCA's</dd>
-      <dt>umgap prot2kmer2lca</dt><dd>Reads all the records in a specified FASTA file and queries the k-mers in an FST for the LCA's</dd>
-      <dt>umgap bestof</dt><dd>Pick the frame with the most none-root hits</dd>
-      <dt>umgap seedextend</dt><dd>Seed and extend</dd>
-      <dt>umgap uniq</dt><dd>Concatenates the data strings of all consecutive FASTA entries with the same header</dd>
-      <dt>umgap taxa2agg</dt><dd>Aggregates taxa to a single taxon</dd>
-      <dt>umgap snaptaxon</dt><dd>Snap taxa to a specified rank or one of the specified taxa</dd>
-      <dt>umgap report</dt><dd>Count and report on a list of taxon ids</dd>
-      <dt>umgap visualize</dt><dd>Visualizes the given list of taxons using the Unipept API</dd>
-      <dt>umgap taxonomy</dt><dd>Show taxonomy info</dd>
-      <dt>umgap splitkmers</dt><dd>Splits each protein sequence in a CSV format into a list of kmers</dd>
-      <dt>umgap joinkmers</dt><dd>Groups a CSV by equal first fields (Kmers) and aggregates the second fields (taxon ids)</dd>
-      <dt>umgap buildindex</dt><dd>Write an FST index of stdin on stdout</dd>
-      <dt>umgap printindex</dt><dd>Print the values in an FST index to stdout</dd>
+      <dt>fastq2fasta</dt><dd>Interleaves a number of <span class='initialism'>FASTQ</span> files into a single <span class='initialism'>FASTA</span> output</dd>
+      <dt>translate</dt><dd>Translates <span class='initialism'>DNA</span> into Amino Acid Sequences</dd>
+      <dt>prot2pept</dt><dd>Splits each protein sequence in a <span class='initialism'>FASTA</span> format into a list of (tryptic) peptides</dd>
+      <dt>filter</dt><dd>Filter peptides in a <span class='initialism'>FASTA</span> format based on specific criteria</dd>
+      <dt>prot2kmer</dt><dd>Splits each protein sequence in a <span class='initialism'>FASTA</span> format into a list of kmers</dd>
+      <dt>pept2lca</dt><dd>Looks up each line of input in a given <span class='initialism'>FST</span> index and outputs the result. Lines starting with a '>' are copied. Lines for which no mapping is found are ignored</dd>
+      <dt>prot2tryp2lca</dt><dd>Reads all the records in a specified <span class='initialism'>FASTA</span> file and queries the tryptic peptides in an <span class='initialism'>FST</span> for the <span class='initialism'>LCA</span>s</dd>
+      <dt>prot2kmer2lca</dt><dd>Reads all the records in a specified <span class='initialism'>FASTA</span> file and queries the k-mers in an <span class='initialism'>FST</span> for the <span class='initialism'>LCA</span>s</dd>
+      <dt>bestof</dt><dd>Pick the frame with the most none-root hits</dd>
+      <dt>seedextend</dt><dd>Seed and extend</dd>
+      <dt>uniq</dt><dd>Concatenates the data strings of all consecutive <span class='initialism'>FASTA</span> entries with the same header</dd>
+      <dt>taxa2agg</dt><dd>Aggregates taxa to a single taxon</dd>
+      <dt>snaptaxon</dt><dd>Snap taxa to a specified rank or one of the specified taxa</dd>
+      <dt>report</dt><dd>Count and report on a list of taxon IDs</dd>
+      <dt>visualize</dt><dd>Visualizes the given list of taxons using the Unipept API</dd>
+      <dt>taxonomy</dt><dd>Show taxonomy info</dd>
+      <dt>splitkmers</dt><dd>Splits each protein sequence in a <span class='initialism'>CSV</span> format into a list of kmers</dd>
+      <dt>joinkmers</dt><dd>Groups a <span class='initialism'>CSV</span> by equal first fields (K-mers) and aggregates the second fields (taxon IDs)</dd>
+      <dt>buildindex</dt><dd>Write an <span class='initialism'>FST</span> index of stdin on stdout</dd>
+      <dt>printindex</dt><dd>Print the values in an <span class='initialism'>FST</span> index to stdout</dd>
     </dl>
     <div class='card'>
         <div class='card-title card-title-colored'>
@@ -126,7 +126,7 @@ umgap 0.3.5</pre>
       Depending on which type of analysis you are planning, you will need the tryptic index file (less powerfull, but runs on any decent laptop) and the 9-mer index file (uses about 100GB disk space for storage and as much RAM during operation. The exact size depends on the version.)
     </p>
     <p>
-      To check if the configuration was successful, you can run a sample analysis with some include test data. The following command should show you a FASTA-like file with a taxon id per header.
+      To check if the configuration was successful, you can run a sample analysis with some include test data. The following command should show you a <span class="initialism">FASTA</span>-like file with a taxon ID per header.
     </p>
     <pre>
 <b>$</b> ./scripts/umgap-analyse.sh -1 testdata/A1.fq -2 testdata/A2.fq -t tryptic-sensitivity -o - | tee output.fa</pre>
