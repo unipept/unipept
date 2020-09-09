@@ -37,11 +37,11 @@ AYKKAGVSGHVWQSDGITNCLLRGLTRVKEAVANRDSGNGYINKVYYWTVDKRATTRDALDAGVDGIMTNYPDVITDVLN
         </dl>
         <dl class='dl-horizontal'>
           <dt><samp>-c</samp> / <samp>--chunksize <em>chunk-size</em></samp></dt><dd>How much reads to group together in one chunk, bigger chunks decrease the overhead caused by multithreading. Because the output order is not necessarily the same as the input order, having a chunk size which is a multiple of 12 (all 6 translations multiplied by the two paired-end reads) will keep <span class="initialism">FASTA</span> records of the same reads together [default: 240]</dd>
-          <dt><samp>-k</samp> / <samp>--keep <em>contains</em></samp></dt><dd>The letters that a sequence must contain [none by default]</dd>
-          <dt><samp>-d</samp> / <samp>--drop <em>lacks</em></samp></dt><dd>The letters that a sequence mustn't contain [none by default]</dd>
-          <dt><samp>-L</samp> / <samp>--maxlen <em>max-length</em></samp></dt><dd>Maximum length allowed [default: 50]</dd>
-          <dt><samp>-l</samp> / <samp>--minlen <em>min-length</em></samp></dt><dd>Minimum length required [default: 5]</dd>
-          <dt><samp>-p</samp> / <samp>--pattern <em>pattern</em></samp></dt><dd>The cleavage-pattern (regex), i.e. the pattern after which the next peptide will be cleaved for tryptic peptides) [default: <code>([KR])([^P])</code>]</dd>
+          <dt><samp>-k</samp> / <samp>--keep <em>k</em></samp></dt><dd>The letters that a sequence must contain [none by default]</dd>
+          <dt><samp>-d</samp> / <samp>--drop <em>d</em></samp></dt><dd>The letters that a sequence mustn't contain [none by default]</dd>
+          <dt><samp>-L</samp> / <samp>--maxlen <em>L</em></samp></dt><dd>Maximum length allowed [default: 50]</dd>
+          <dt><samp>-l</samp> / <samp>--minlen <em>l</em></samp></dt><dd>Minimum length required [default: 5]</dd>
+          <dt><samp>-p</samp> / <samp>--pattern <em>p</em></samp></dt><dd>The cleavage-pattern (regex), i.e. the pattern after which the next peptide will be cleaved for tryptic peptides) [default: <code>([KR])([^P])</code>]</dd>
         </dl>
       </div>
     </div>

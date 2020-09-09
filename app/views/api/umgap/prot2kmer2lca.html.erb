@@ -57,9 +57,9 @@ DAIGDVAKAYKKAG*S
           <dt><samp>-V</samp> / <samp>--version</samp></dt><dd>Prints version information</dd>
         </dl>
         <dl class='dl-horizontal'>
-          <dt><samp>-c</samp> / <samp>--chunksize <em>chunk-size</em></samp></dt><dd>How much reads to group together in one chunk, bigger chunks decrease the overhead caused by multithreading. Because the output order is not necessarily the same as the input order, having a chunk size which is a multiple of 12 (all 6 translations multiplied by the two paired-end reads) will keep <span class="initialism">FASTA</span> records of the same reads together [default: 240]</dd>
-          <dt><samp>-l</samp> / <samp>--length <em>length</em></samp></dt><dd>The length of the K-mers in the <span class="initialism">FST</span> [default: 9]</dd>
-          <dt><samp>-s</samp> / <samp>--socket <em>socket</em></samp></dt><dd>Instead of reading from <em>stdin</em> and writing to <em>stdout</em>, create a Unix socket to communicate with using <a href='http://man.openbsd.org/nc'>OpenBSD's netcat</a> (<samp>nc -NU <em>socket</em></samp>). This is especially useful in combination with the <samp>--in-memory</samp> flag: you only have to load the <span class="initialism">FST</span> in memory once, after which you can query it without having the loading time overhead each time</dd>
+          <dt><samp>-c</samp> / <samp>--chunksize <em>c</em></samp></dt><dd>How much reads to group together in one chunk, bigger chunks decrease the overhead caused by multithreading. Because the output order is not necessarily the same as the input order, having a chunk size which is a multiple of 12 (all 6 translations multiplied by the two paired-end reads) will keep <span class="initialism">FASTA</span> records of the same reads together [default: 240]</dd>
+          <dt><samp>-l</samp> / <samp>--length <em>l</em></samp></dt><dd>The length of the K-mers in the <span class="initialism">FST</span> [default: 9]</dd>
+          <dt><samp>-s</samp> / <samp>--socket <em>s</em></samp></dt><dd>Instead of reading from <em>stdin</em> and writing to <em>stdout</em>, create a Unix socket to communicate with using <a href='http://man.openbsd.org/nc'>OpenBSD's netcat</a> (<samp>nc -NU <em>socket</em></samp>). This is especially useful in combination with the <samp>--in-memory</samp> flag: you only have to load the <span class="initialism">FST</span> in memory once, after which you can query it without having the loading time overhead each time</dd>
         </dl>
       </div>
     </div>
