@@ -2,11 +2,11 @@
   <div class="col-xs-9">
     <div class='page-header'>
       <h1 class='api-title'>
-        <samp>umgap report</samp><br>
+        <samp>umgap taxa2freq</samp><br>
         <small>Counts and reports on a stream of taxon IDs.</small>
       </h1>
     </div>
-    <p>The <code>umgap report</code> command creates a frequency table of a list of taxa.</p>
+    <p>The <code>umgap taxa2freq</code> command creates a frequency table of a list of taxa.</p>
     <div class='card'>
       <div class='card-title card-title-colored'>
         <h2 class='card-title-text' id='input'>Usage</h2>
@@ -30,13 +30,13 @@
 9606
 9606
 8287
-<b>$</b> umgap report taxons.tsv &lt; input.txt
+<b>$</b> umgap taxa2freq taxons.tsv &lt; input.txt
 2,1,root
 9,9606,Homo sapiens
         </pre>
         <p>With the <samp>-r</samp> option, the default species rank can be set to any named rank.</p>
         <pre>
-<b>$</b> umgap report -r phylum taxons.tsv &lt; input.txt
+<b>$</b> umgap taxa2freq -r phylum taxons.tsv &lt; input.txt
 10,7711,Chordata
         </pre>
         <dl class='dl-horizontal'>

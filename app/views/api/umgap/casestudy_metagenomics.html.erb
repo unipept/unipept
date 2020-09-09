@@ -409,7 +409,7 @@
           or one of the many visualizations Unipept offers.
         </p>
         <pre>
-<!--   --><b>$</b> grep -v '^>' classification.fa | umgap report -r species taxons.tsv | tee report.csv
+<!--   --><b>$</b> grep -v '^>' classification.fa | umgap taxa2freq -r species taxons.tsv | tee report.csv
 <!--   -->1,332163,Candidatus Solibacter usitatus
 <!--   -->1,392734,Terriglobus roseus
 <!--   -->1,940615,Granulicella tundricola
@@ -439,7 +439,7 @@
 <!--          -->  umgap uniq |                             # joining equal headers (all taxa of the same read)
 <!--          -->  umgap taxa2agg taxons.tsv |              # aggregating all taxa
 <!--          -->  grep -v '^>' |                           # dropping headers
-<!--          -->  umgap report taxons.tsv                  # make frequency table
+<!--          -->  umgap taxa2freq taxons.tsv               # make frequency table
 <!--   -->1,332163,Candidatus Solibacter usitatus
 <!--   -->1,392734,Terriglobus roseus
 <!--   -->1,940615,Granulicella tundricola

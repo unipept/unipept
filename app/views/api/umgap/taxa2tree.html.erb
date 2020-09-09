@@ -2,11 +2,11 @@
   <div class="col-xs-9">
     <div class='page-header'>
       <h1 class='api-title'>
-        <samp>umgap visualize</samp><br>
+        <samp>umgap taxa2tree</samp><br>
         <small>Visualizes a stream of taxon IDs using the <a href='<%= api_apidocs_taxa2tree_path %>'>Unipept <span class='initialism'>API</span></a>.</small>
       </h1>
     </div>
-    <p>The <code>umgap visualize</code> command, similar to the <a href='<%= api_clidocs_taxa2tree_path %>'><samp>unipept taxa2tree</samp> command</a>, takes one or more
+    <p>The <code>umgap taxa2tree</code> command, similar to the <a href='<%= api_clidocs_taxa2tree_path %>'><samp>unipept taxa2tree</samp> command</a>, takes one or more
     taxon IDs as input and returns the taxonomic tree of there taxa as output. It uses the <a href='<%= api_apidocs_taxa2tree_path %>'>Unipept <span class='initialism'>API</span> server</a>.</p>
     <div class='card'>
       <div class='card-title card-title-colored'>
@@ -23,8 +23,8 @@
 817
 329854
 1099853
-<b>$</b> umgap visualize &lt; input.txt &gt; output.html
-<b>$</b> umgap visualize --url &lt; input.txt
+<b>$</b> umgap taxa2tree &lt; input.txt &gt; output.html
+<b>$</b> umgap taxa2tree --url &lt; input.txt
 https://bl.ocks.org/a686a37e1dcd43dd4ec7d467487bd6a1
         </pre>
         <dl class='dl-horizontal'>
