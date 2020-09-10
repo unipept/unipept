@@ -40,8 +40,7 @@
 <!--   -->>read3/1
 <!--   -->CCCTCAAGCCCGATCGAACTTTCCTACTGCCCGACCTCAGCGCGGAGCATTACCGAATCGTCGTCAACAATCTCCCCGATGGCTTCTATGTGAACTCCAT
 <!--   -->>read3/2
-<!--   -->CAAAATGGAGTGGGCGCTACTGCTCCGTGAGCAGGGTCAGTTGGAGGGATTGGGGCGTGCGCTCGGGGATGCTAATGGCGGTGCCCCTGGATTCCTGAGA
-        </pre>
+<!--   -->CAAAATGGAGTGGGCGCTACTGCTCCGTGAGCAGGGTCAGTTGGAGGGATTGGGGCGTGCGCTCGGGGATGCTAATGGCGGTGCCCCTGGATTCCTGAGA</pre>
         <p>
           This command will interleave the given FASTQ files and output a FASTA stream,
           in which the paired-ends alternate each other.
@@ -75,11 +74,9 @@
         </p>
         <pre>
 <!--   --><b>$</b> FGS -s preprocessed.fa -o predicted-genes -w0 -t illumina_10 -p 16 > /dev/null
-<!--   --><b>$</b> rm predicted-genes.fnn predicted-genes.out # we don't use these files
-        </pre>
+<!--   --><b>$</b> rm predicted-genes.fnn predicted-genes.out # we don't use these files</pre>
         <pre>
-<!--   --><b>$</b> FGSpp -s stdin -o stdout -w 0 -r train -t illumina_10 -p 16 -m 3000 < preprocessed.fa | tee predicted-genes.faa
-        </pre>
+<!--   --><b>$</b> FGSpp -s stdin -o stdout -w 0 -r train -t illumina_10 -p 16 -m 3000 < preprocessed.fa | tee predicted-genes.faa</pre>
         <p>
           With our alternative six-frame translation option,
           we choose to translate all (<code>-a</code>) frames using the standard translation table.
@@ -157,8 +154,7 @@
 <!--   -->>read3/2|2R
 <!--   -->LRNPGAPPLASPSARPNPSN*PCSRSSSAHSIL
 <!--   -->>read3/2|3R
-<!--   -->SGIQGHRH*HPRAHAPIPPTDPAHGAVAPTPF
-        </pre>
+<!--   -->SGIQGHRH*HPRAHAPIPPTDPAHGAVAPTPF</pre>
       </div>
     </div>
 
@@ -249,8 +245,7 @@
 <!--   -->>read3/2|2R
 <!--   -->67819 0 0 0 5855 1 1 2 519963 5206 0 1245748 0 0 0 0 0 0 0 0 0 101127 0 0 0
 <!--   -->>read3/2|3R
-<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 13687 0 0 0
-        </pre>
+<!--   -->0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 13687 0 0 0</pre>
         <p>
           This command will look up each 9-mer in the input data
           and output the associated taxon if any is found.
@@ -345,15 +340,13 @@
 <!-- -->>read3/2|2R
 <!-- -->5855 1 1 2 519963 5206
 <!-- -->>read3/2|3R
-<!-- -->
-        </pre>
+<!-- --></pre>
         <p>
           Note: the real output would contain newlines between taxa,
           which have been replaced here by spaces for readability.
         </p>
         <pre>
-<!--   --><b>$</b> mv selected-seeds.fa found-kmers.fa # optional step, same format
-        </pre>
+<!--   --><b>$</b> mv selected-seeds.fa found-kmers.fa # optional step, same format</pre>
         <p>
           The Seed-Extend algorithm requires spatial information which is provided
           by supplying the <code>-o</code> flag to the previous command.
@@ -401,8 +394,7 @@
 <!--   -->>read2
 <!--   -->392734
 <!--   -->>read3
-<!--   -->332163
-        </pre>
+<!--   -->332163</pre>
         <p>
           Finally, the whole sample is summarized using e.g. a frequency table,
           showing the number of reads mapping to each taxon,
@@ -412,8 +404,7 @@
 <!--   --><b>$</b> grep -v '^>' classification.fa | umgap taxa2freq -r species taxons.tsv | tee report.csv
 <!--   -->1,332163,Candidatus Solibacter usitatus
 <!--   -->1,392734,Terriglobus roseus
-<!--   -->1,940615,Granulicella tundricola
-        </pre>
+<!--   -->1,940615,Granulicella tundricola</pre>
         <p>
           The <code>grep</code> command will drop the FASTA headers,
           allowing the <code>report</code> command to snap each taxon to either a species or "unknown"
@@ -442,8 +433,7 @@
 <!--          -->  umgap taxa2freq taxons.tsv               # make frequency table
 <!--   -->1,332163,Candidatus Solibacter usitatus
 <!--   -->1,392734,Terriglobus roseus
-<!--   -->1,940615,Granulicella tundricola
-        </pre>
+<!--   -->1,940615,Granulicella tundricola</pre>
         <p>
           This command processes the complete Metabenchmark A1 dataset containing 116 million paired-end reads
           in a VM (8 cores, 200GB RAM) on our computational server (16 Intel Xeon CPU E5-2650 v2 at 2.60GHz,
