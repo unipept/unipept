@@ -3,18 +3,18 @@
     <div class='page-header'>
       <h1 class='api-title'>
         <samp>umgap builtindex</samp><br>
-        <small>Builds an index mapping strings to taxa</small>
+        <small>Builds an index mapping short strings to taxon IDs</small>
       </h1>
     </div>
     <p>The <code>umgap buildindex</code> command takes tab-separated strings and taxon IDs, and creates a
-    searchable <span class="initialism">FST</span> index of this mapping.</p>
+    finite state transducer (<span class="initialism">FST</span>) of this mapping.</p>
     <div class='card'>
       <div class='card-title card-title-colored'>
         <h2 class='card-title-text' id='input'>Usage</h2>
       </div>
       <div class='card-supporting-text'>
         <p>The input is given on <em>standard input</em>. It should be in a <span class="initialism">TSV</span> format with two columns, ordered
-        by the first. The unique strings in the first column are to be mapped to the integers (taxon
+        by the first. The unique strings in the first column should be mapped to the integers (taxon
         IDs) in the second column. A binary file with a compressed mapping is written to <em>standard
         output</em>.</p>
         <pre>

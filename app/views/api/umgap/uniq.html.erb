@@ -13,9 +13,11 @@
         <h2 class='card-title-text' id='input'>Usage</h2>
       </div>
       <div class='card-supporting-text'>
-        <p>The input is given on <em>standard input</em> in a <span class="initialism">FASTA</span> format. The content of all consecutive records
+        <p>The input is given in a <span class="initialism">FASTA</span> format on <em>standard input</em>. The content of all consecutive records
         with the same <span class="initialism">FASTA</span> header is joined under a single header, separated by newlines (or another
         separated set with <samp>-s</samp>).</p>
+        <p>A delimiter can be passed with the <samp>-d</samp> option to drop this delimiter and everything after it
+        from the <span class='initialism'>FASTA</span> header before comparing it.</p>
         <pre>
 <b>$</b> cat input.fa
 &gt;header1/1
@@ -26,7 +28,7 @@
 1
 1883
 1883
-<b>$</b> sed '/^&gt;/s_/.*__' input.fa | umgap uniq
+<b>$</b> umgap uniq -d / < input.fa
 &gt;header1
 147206
 240495
@@ -42,6 +44,7 @@
         </dl>
         <dl class='dl-horizontal'>
           <dt><samp>-s</samp> / <samp>--separator <em>s</em></samp></dt><dd>Separator between output items [default: newline]</dd>
+          <dt><samp>-d</samp> / <samp>--delimiter <em>d</em></samp></dt><dd>Strip <span class='initialism'>FASTA</span> headers after this string</dd>
         </dl>
       </div>
     </div>

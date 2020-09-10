@@ -7,18 +7,19 @@
       </h1>
     </div>
     <p>
-      <p>The <code>umgap bestof</code> command takes groups of numbers as input and outputs for each group the one
-      with the most non-root identifications.</p>
+      <p>The <code>umgap bestof</code> command takes groups of taxon IDs as input and outputs for each group the
+      taxon ID with the most non-root identifications.</p>
     </p>
     <div class='card'>
       <div class='card-title card-title-colored'>
         <h2 class='card-title-text' id='input'>Usage</h2>
       </div>
       <div class='card-supporting-text'>
-        <p>The input is given on <em>standard input</em>, in a <span class="initialism">FASTA</span> format. Per <span class="initialism">FASTA</span> header, there should be
-        multiple numbers (taxon IDs). Per 6 records (or whichever number you specify with <samp>-f</samp>), the
-        best record is selected and written to <em>standard output</em>. If the input is a series of identified
-        reads for each of the 6 reading frames, the output will be the actual coding frame.</p>
+        <p>The input is given in <span class="initialism">FASTA</span> format on <em>standard input</em>. Per <span class="initialism">FASTA</span> header, there should be
+        multiple numbers (taxon IDs). Per 6 <span class="initialism">FASTA</span> records (or whichever number you specify with <samp>-f</samp>),
+        the best record is selected and written to <em>standard output</em>. If the input is a series of
+        identified taxon IDs for each of the 6 translations of a read, the output will most likely come
+        from the actual coding frame.</p>
         <pre>
 <b>$</b> cat dna.fa
 &gt;header1
@@ -39,7 +40,8 @@ CGCAGAGACGGGTAGAACCTCAGTAATCCGAAAAGCCGGGATCGACCGCCCCTTGCTTGCAGCCGGGCACTACAGGACCC
 &gt;header1|1
 9606 9606 2759 9606 9606 9606 9606 9606 9606 9606 8287
         </pre>
-        <p>(Number-separating newlines in the output have been replaced by spaces for this example.)</p>
+        <p>Taxon IDs are separated by newlines in the actual output, but are separated by spaces in this
+        example.</p>
         <dl class='dl-horizontal'>
           <dt><samp>-h</samp> / <samp>--help</samp></dt><dd>Prints help information</dd>
           <dt><samp>-V</samp> / <samp>--version</samp></dt><dd>Prints version information</dd>

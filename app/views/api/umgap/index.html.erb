@@ -10,6 +10,11 @@
       The <span class='initialism'>UMGAP</span> is a collection of tools to build powerful pipelines for your metagenomics analyses.
     </p>
     <p>
+      Throughout this documentation, the term peptides is used for both tryptic peptides and k-mers.
+      The term taxon ID refers to an identifier of an <span class='initialism'>NCBI</span> taxonomy (which should be the same version
+      in the whole pipeline).
+    </p>
+    <p>
       The <span class='initialism'>UMGAP</span> is free and open-source software under the <span class='initialism'>MIT</span> License and all code is available on <a href='https://github.com/unipept/umgap' target='_blank'>Github</a>. In case you have encountered an issue using these tools, have feature requests or found a bug, don't hesitate to contact us by email (<a href='mailto:unipept@ugent.be'>unipept@ugent.be</a>), or <a href='https://github.com/unipept/umgap/issues' target='_blank'>create an issue</a> on Github.
     </p>
     <dl class='dl-horizontal'>
@@ -30,7 +35,7 @@
       <dt>taxa2tree</dt><dd>Visualizes the given list of taxons using the Unipept API</dd>
       <dt>taxonomy</dt><dd>Show taxonomy info</dd>
       <dt>splitkmers</dt><dd>Splits each protein sequence in a <span class='initialism'>CSV</span> format into a list of kmers</dd>
-      <dt>joinkmers</dt><dd>Groups a <span class='initialism'>CSV</span> by equal first fields (K-mers) and aggregates the second fields (taxon IDs)</dd>
+      <dt>joinkmers</dt><dd>Groups a <span class='initialism'>CSV</span> by equal first fields (k-mers) and aggregates the second fields (taxon IDs)</dd>
       <dt>buildindex</dt><dd>Write an <span class='initialism'>FST</span> index of stdin on stdout</dd>
       <dt>printindex</dt><dd>Print the values in an <span class='initialism'>FST</span> index to stdout</dd>
     </dl>

@@ -6,8 +6,10 @@
         <small>Snaps taxon IDs to a rank or specified taxa.</small>
       </h1>
     </div>
-    <p>The <code>umgap snaptaxon</code> command takes one or more taxon IDs as input, snaps them to a given rank
-    and outputs the resulting taxon IDs.</p>
+    <p>The <code>umgap snaptaxon</code> command takes one or more taxon IDs. For each taxon, it searches amongst
+    its ancestors if any are of the specified rank (e.g., <samp>-r species</samp>), or are one of the listed
+    taxa (e.g., <samp>-t 1598 -t 1883</samp>). If so, the taxon is replaced by the most specific of these
+    matching taxa. Otherwise, it is mapped to the root of the taxonomy.</p>
     <div class='card'>
       <div class='card-title card-title-colored'>
         <h2 class='card-title-text' id='input'>Usage</h2>
@@ -15,10 +17,9 @@
       <div class='card-supporting-text'>
         <p>The input is given on <em>standard input</em> and may be any sequence of <span class="initialism">FASTA</span> headers and/or lines
         containing a single taxon ID. The <span class="initialism">FASTA</span> headers (if any) are just copied over to <em>standard
-        output</em>. All taxa of a given rank (if any, e.g. <samp>-r species</samp>) and all taxa whose IDs are given
-        (e.g. <samp>-t 1598 -t 1883</samp>) are marked. Each of the taxon IDs on the other lines are lookup up in
-        a taxonomy. If the taxon has an ancestor amongst the marked taxa, it is replaced by the most
-        specific of these ancestors. Otherwise, it is mapped to the taxonomy root.</p>
+        output</em>.</p>
+        <p>The taxonomy to be used is passed as an argument to this command. This is a preprocessed version
+        of the <span class="initialism">NCBI</span> taxonomy.</p>
         <pre>
 <b>$</b> cat input.fa
 &gt;header1
@@ -45,7 +46,7 @@
           <dt><samp>-V</samp> / <samp>--version</samp></dt><dd>Prints version information</dd>
         </dl>
         <dl class='dl-horizontal'>
-          <dt><samp>-r</samp> / <samp>--rank <em>r</em></samp></dt><dd>The rank to snap towards</dd>
+          <dt><samp>-r</samp> / <samp>--rank <em>r</em></samp></dt><dd>The rank to snap towards [possible values: superkingdom, kingdom, subkingdom, superphylum, phylum, subphylum, superclass, class, subclass, infraclass, superorder, order, suborder, infraorder, parvorder, superfamily, family, subfamily, tribe, subtribe, genus, subgenus, species group, species subgroup, species, subspecies, varietas, forma]</dd>
           <dt><samp>-t</samp> / <samp>--taxons <em>t...</em></samp></dt><dd>A taxon to snap towards (allow multiple times)</dd>
         </dl>
       </div>

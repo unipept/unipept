@@ -6,18 +6,17 @@
         <small>Selects promising regions in sequences of taxon IDs.</small>
       </h1>
     </div>
-    <p>The <code>umgap seedextend</code> command takes one or more sequences of taxon IDs, selects regions of
-    consecutive predictions and outputs only those. It can be used to filter out accidental matches
-    of incorrect taxa.</p>
+    <p>The <code>umgap seedextend</code> command takes one or more sequences of taxon IDs and selects regions of
+    consecutive predictions. It can be used to filter out accidental matches of incorrect taxa.</p>
     <div class='card'>
       <div class='card-title card-title-colored'>
         <h2 class='card-title-text' id='input'>Usage</h2>
       </div>
       <div class='card-supporting-text'>
-        <p>The input is given on <em>standard input</em>, in a <span class="initialism">FASTA</span> format. It should consist of taxon IDs
+        <p>The input is given in a <span class="initialism">FASTA</span> format on <em>standard input</em>. It should consist of taxon IDs
         separated by newlines, and the order of these taxa should reflect their location on a peptide,
         such as output by the <a href='<%= api_umgap_prot2kmer2lca_path %>'><samp>umgap prot2kmer2lca -o</samp> command</a>. As such, 3 consecutive equal IDs
-        representing 9-mers, for instance, indicate a 12-mer match. This so-called seed could still be
+        representing 9-mers, for instance, indicate a 11-mer match. This so-called seed could still be
         extended with other taxa, forming an extended seed. The command writes all taxa in any of these
         extended seeds to <em>standard output</em>.</p>
         <pre>
@@ -45,14 +44,15 @@ CGCAGAGACGGGTAGAACCTCAGTAATCCGAAAAGCCGGGATCGACCGCCCCTTGCTTGCAGCCGGGCACTACAGGACCC
 &gt;header1|2R
 &gt;header1|3R
         </pre>
-        <p>(Number-separating newlines in the output have been replaced by spaces for this example.)</p>
+        <p>Taxon IDs are separated by newlines in the actual output, but are separated by spaces in this
+        example.</p>
         <p>The number of consecutive equal IDs to start a seed is 2 by default, and can be changed using
-        the <samp>-s</samp> option. The maximum length of gaps between to seeds to join in an extension can be set
+        the <samp>-s</samp> option. The maximum length of gaps between seeds to join in an extension can be set
         with <samp>-g</samp>, no gaps are allowed by default.</p>
-        <p>The command can be altered to print only the extended seed with the highest score among them.
-        Pass a taxonomy using the <samp>-r taxon.tsv</samp> option to activate this. In this scored mode, extended
-        seeds with gaps are given a penalty of 5, which can be made more or less severe (higher or
-        lower) with the <samp>-p</samp> option.</p>
+        <p>The command can be altered to print only the extended seed with the highest score among all
+        extended seeds. Pass a taxonomy using the <samp>-r taxon.tsv</samp> option to activate this. In this scored
+        mode, extended seeds with gaps are given a penalty of 5, which can be made more or less severe
+        (higher or lower) with the <samp>-p</samp> option.</p>
         <dl class='dl-horizontal'>
           <dt><samp>-h</samp> / <samp>--help</samp></dt><dd>Prints help information</dd>
           <dt><samp>-V</samp> / <samp>--version</samp></dt><dd>Prints version information</dd>

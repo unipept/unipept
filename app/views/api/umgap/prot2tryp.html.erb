@@ -6,22 +6,22 @@
         <small>Splits a <span class='initialism'>FASTA</span> stream into tryptic peptides.</small>
       </h1>
     </div>
-    <p>The <code>umgap prot2tryp</code> command takes one or more Amino Acid sequences as input, applies an <em>in
-    silico</em> peptide digest and outputs the result.</p>
+    <p>The <code>umgap prot2tryp</code> command takes one or more amino acid sequences as input and applies an <em>in
+    silico</em> peptide digest.</p>
     <div class='card'>
       <div class='card-title card-title-colored'>
         <h2 class='card-title-text' id='input'>Usage</h2>
       </div>
       <div class='card-supporting-text'>
-        <p>The input is given on <em>standard input</em>, in a <span class='initialism'>FASTA</span> format. Per <span class='initialism'>FASTA</span> header, it should contain
-        one sequence, possibly wrapped with newlines. It will write to <em>standard output</em>, in <span class='initialism'>FASTA</span>
-        format, the peptides resulting from the digest. Per <span class='initialism'>FASTA</span> header, there will be multiple
-        peptides, separated by newlines.</p>
+        <p>The input is given in a <span class='initialism'>FASTA</span> format on <em>standard input</em> with a single peptide per <span class='initialism'>FASTA</span> header,
+        which may be hardwrapped with newlines. The peptides resulting from the digest are written
+        in <span class='initialism'>FASTA</span> format to <em>standard output</em>, with multiple peptides per <span class='initialism'>FASTA</span> header, separated by
+        newlines.</p>
         <pre>
 <b>$</b> cat input.fa
 &gt;header1
 AYKKAGVSGHVWQSDGITNCLLRGLTRVKEAVANRDSGNGYINKVYYWTVDKRATTRDALDAGVDGIMTNYPDVITDVLN
-<b>$</b> umgap prot2tryp2lca tryptic-lca.index &lt; input.fa
+<b>$</b> umgap prot2tryp tryptic-lca.index &lt; input.fa
 &gt;header1
 AYK
 K
@@ -35,8 +35,9 @@ R
 ATTR
 DALDAGVDGIMTNYPDVITDVLN
         </pre>
-        <p>Using the <samp>-p</samp> flag, you can change the splitting pattern (<code>([KR])([^P])</code>, so between a <code>K</code> and <code>R</code>
-        and before something that's not a <code>P</code>) to something else.</p>
+        <p>Using the <samp>-p</samp> flag, you can change the splitting pattern. The default pattern <code>([KR])([^P])</code>
+        splits between any Lysine (K) or Arginine (R), followed by any amino acid that is not Proline
+        (P).</p>
         <dl class='dl-horizontal'>
           <dt><samp>-h</samp> / <samp>--help</samp></dt><dd>Prints help information</dd>
           <dt><samp>-V</samp> / <samp>--version</samp></dt><dd>Prints version information</dd>

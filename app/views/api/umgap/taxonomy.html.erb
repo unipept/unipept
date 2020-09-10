@@ -3,11 +3,11 @@
     <div class='page-header'>
       <h1 class='api-title'>
         <samp>umgap taxonomy</samp><br>
-        <small>Includes the taxonomic information in a stream of <span class='initialism'>NCBI</span> taxon identifiers.</small>
+        <small>Includes the taxonomic information in a stream of <span class='initialism'>NCBI</span> taxon IDs.</small>
       </h1>
     </div>
     <p>
-      The <code>umgap taxonomy</code> command takes one or more <span class="initialism">NCBI</span> taxon IDs as input, searches for them in the taxonomy and outputs more information about them in a <span class="initialism">CSV</span> format.
+      The <code>umgap taxonomy</code> command takes one or more <span class="initialism">NCBI</span> taxon IDs as input, searches for them in the taxonomy and outputs more information about them in a <span class="initialism">TSV</span> format.
     </p>
     <div class='card'>
       <div class='card-title card-title-colored'>
@@ -15,7 +15,7 @@
       </div>
       <div class='card-supporting-text'>
         <p>
-          The input is given on <i>standard input</i> and may be any sequence of <span class="initialism">FASTA</span> headers and/or lines containing a single <span class="initialism">NCBI</span> taxon ID. A <span class="initialism">CSV</span> header is printed to <i>standard output</i>. The <span class="initialism">FASTA</span> headers (any line starting with a <code>&gt;</code>) are just copied over. Each of the taxon IDs on the other lines is looked up in a taxonomy, and the ID, name and rank of the taxon are written out separated by commas.
+          The input is given on <i>standard input</i> and may be any sequence of <span class="initialism">FASTA</span> headers and/or lines containing a single <span class="initialism">NCBI</span> taxon ID. A <span class="initialism">TSV</span> header is printed to <i>standard output</i>. The <span class="initialism">FASTA</span> headers (any line starting with a <code>&gt;</code>) are just copied over. Each of the taxon IDs on the other lines is looked up in a taxonomy, and the ID, name and rank of the taxon are written out separated by tabs.
         </p>
         <p>A taxonomy file must be passed as argument.</p>
         <pre>
@@ -26,14 +26,14 @@
 1598
 1883
 <b>$</b> umgap taxonomy taxons.tsv &lt; input.fa
-taxon_id,taxon_name,taxon_rank
-2026807,Zetaproteobacteria bacterium,species
-888268,Dichanthelium oligosanthes,species
-186802,Clostridiales,order
-1598,Lactobacillus reuteri,species
-1883,Streptomyces,genus
+taxon_id	taxon_name	taxon_rank
+2026807	Zetaproteobacteria bacterium	species
+888268	Dichanthelium oligosanthes	species
+186802	Clostridiales	order
+1598	Lactobacillus reuteri	species
+1883	Streptomyces	genus
         </pre>
-        <p>The <samp>-H</samp> flag can be used to suppress the <span class="initialism">CSV</span> header, for instance when dealing with <span class="initialism">FASTA</span> input.</p>
+        <p>The <samp>-H</samp> flag can be used to suppress the <span class="initialism">TSV</span> header, for instance when dealing with <span class="initialism">FASTA</span> input.</p>
         <pre>
 <b>$</b> cat input2.fa
 &gt;header1
@@ -44,24 +44,24 @@ taxon_id,taxon_name,taxon_rank
 1883
 <b>$</b> umgap taxonomy -H taxons.tsv &lt; input2.fa
 &gt;header1
-2026807,Zetaproteobacteria bacterium,species
-888268,Dichanthelium oligosanthes,species
-186802,Clostridiales,order
-1598,Lactobacillus reuteri,species
-1883,Streptomyces,genus
+2026807	Zetaproteobacteria bacterium	species
+888268	Dichanthelium oligosanthes	species
+186802	Clostridiales	order
+1598	Lactobacillus reuteri	species
+1883	Streptomyces	genus
         </pre>
         <p>The <samp>-a</samp> flag can be used to request a complete ranked lineage.</p>
         <pre>
 <b>$</b> cat input3.fa
 888268
 <b>$</b> umgap taxonomy -a taxons.tsv &lt; input3.fa
-taxon_id,taxon_name,taxon_rank,superkingdom_id,superkingdom_name,kingdom_id,kingdom_name,subkingdom_id,subkingdom_name,superphylum_id,superphylum_name,phylum_id,phylum_name,subphylum_id,subphylum_name,superclass_id,superclass_name,class_id,class_name,subclass_id,subclass_name,infraclass_id,infraclass_name,superorder_id,superorder_name,order_id,order_name,suborder_id,suborder_name,infraorder_id,infraorder_name,parvorder_id,parvorder_name,superfamily_id,superfamily_name,family_id,family_name,subfamily_id,subfamily_name,tribe_id,tribe_name,subtribe_id,subtribe_name,genus_id,genus_name,subgenus_id,subgenus_name,species_group_id,species_group_name,species_subgroup_id,species_subgroup_name,species_id,species_name,subspecies_id,subspecies_name,varietas_id,varietas_name,forma_id,forma_name
-888268,Dichanthelium oligosanthes,species,2759,Eukaryota,33090,Viridiplantae,,,,,35493,Streptophyta,131221,Streptophytina,,,3398,Magnoliopsida,1437197,Petrosaviidae,,,,,38820,Poales,,,,,,,,,4479,Poaceae,147369,Panicoideae,147428,Paniceae,1648011,Dichantheliinae,161620,Dichanthelium,,,,,,,888268,Dichanthelium oligosanthes,,,,,,
+taxon_id	taxon_name	taxon_rank	superkingdom_id	superkingdom_name	kingdom_id	kingdom_name	subkingdom_id	subkingdom_name	superphylum_id	superphylum_name	phylum_id	phylum_name	subphylum_id	subphylum_name	superclass_id	superclass_name	class_id	class_name	subclass_id	subclass_name	infraclass_id	infraclass_name	superorder_id	superorder_name	order_id	order_name	suborder_id	suborder_name	infraorder_id	infraorder_name	parvorder_id	parvorder_name	superfamily_id	superfamily_name	family_id	family_name	subfamily_id	subfamily_name	tribe_id	tribe_name	subtribe_id	subtribe_name	genus_id	genus_name	subgenus_id	subgenus_name	species_group_id	species_group_name	species_subgroup_id	species_subgroup_name	species_id	species_name	subspecies_id	subspecies_name	varietas_id	varietas_name	forma_id	forma_name
+888268	Dichanthelium oligosanthes	species	2759	Eukaryota	33090	Viridiplantae					35493	Streptophyta	131221	Streptophytina			3398	Magnoliopsida	1437197	Petrosaviidae					38820	Poales									4479	Poaceae	147369	Panicoideae	147428	Paniceae	1648011	Dichantheliinae	161620	Dichanthelium							888268	Dichanthelium oligosanthes						
         </pre>
         <dl class='dl-horizontal'>
           <dt><samp>-a</samp> / <samp>--all</samp></dt><dd>Show the full lineage of a taxon</dd>
           <dt><samp>-h</samp> / <samp>--help</samp></dt><dd>Prints help information</dd>
-          <dt><samp>-H</samp> / <samp>--no-header</samp></dt><dd>Do not output the <span class="initialism">CSV</span> header</dd>
+          <dt><samp>-H</samp> / <samp>--no-header</samp></dt><dd>Do not output the <span class="initialism">TSV</span> header</dd>
           <dt><samp>-V</samp> / <samp>--version</samp></dt><dd>Prints version information</dd>
         </dl>
       </div>
