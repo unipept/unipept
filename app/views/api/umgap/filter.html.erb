@@ -23,7 +23,7 @@
         <li><samp>-l LIK</samp> removes the peptides containing the amino acids Leucine, Isoleucine or Lysine.</li>
         </ul>
         <pre>
-<b>$</b> cat input.fa
+<b>$ cat input.fa</b>
 &gt;header1
 AYKKAGVSGHVWQSDGITNCLLRGLTRVKEAVANRDSGNGYINKVYYWTVDKRATTRDALDAGVDGIMTNYPDVITDVLN
 AYK
@@ -33,12 +33,12 @@ GLTR
 VK
 EAVANR
 DSGNGYINK
-<b>$</b> umgap filter &lt; input.fa
+<b>$ umgap filter &lt; input.fa</b>
 &gt;header1
 AGVSGHVWQSDGITNCLLR
 EAVANR
 DSGNGYINK
-<b>$</b> umgap filter -m 0 -c R -l K &lt; input.fa
+<b>$ umgap filter -m 0 -c R -l K &lt; input.fa</b>
 &gt;header1
 AGVSGHVWQSDGITNCLLR
 GLTR

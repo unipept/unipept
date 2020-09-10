@@ -20,10 +20,10 @@
         <p>This output stream is ready to be grouped by K-mer by sorting and then aggregated into a
         searchable index, with the <code>sort</code>, <a href='<%= api_umgap_joinkmers_path %>'><samp>umgap joinkmers</samp></a> and <a href='<%= api_umgap_buildindex_path %>'><samp>umgap buildindex</samp></a> commands.</p>
         <pre>
-<b>$</b> cat input.tsv
+<b>$ cat input.tsv</b>
 654924	MNAKYDTDQGVGRMLFLGTIGLAVVVGGLMAYGYYYDGKTPSSGTSFHTASPSFSSRYRY
 176652	MIKLFCVLAAFISINSACQSSHQQREEFTVATYHSSSICTTYCYSNCVVASQHKGLNVESYTCDKPDPYGRETVCKCTLIKCHDI
-<b>$</b> umgap splitkmers &lt; input.tsv
+<b>$ umgap splitkmers &lt; input.tsv</b>
 MNAKYDTDQ	654924
 NAKYDTDQG	654924
 AKYDTDQGV	654924

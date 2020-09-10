@@ -21,10 +21,10 @@
         identified taxon IDs for each of the 6 translations of a read, the output will most likely come
         from the actual coding frame.</p>
         <pre>
-<b>$</b> cat dna.fa
+<b>$ cat dna.fa</b>
 &gt;header1
 CGCAGAGACGGGTAGAACCTCAGTAATCCGAAAAGCCGGGATCGACCGCCCCTTGCTTGCAGCCGGGCACTACAGGACCC
-<b>$</b> umgap translate -n -a &lt; dna.fa | umgap prot2kmer2lca 9mer.index | tee input.fa
+<b>$ umgap translate -n -a &lt; dna.fa | umgap prot2kmer2lca 9mer.index | tee input.fa</b>
 &gt;header1|1
 9606 9606 2759 9606 9606 9606 9606 9606 9606 9606 8287
 &gt;header1|2
@@ -36,7 +36,7 @@ CGCAGAGACGGGTAGAACCTCAGTAATCCGAAAAGCCGGGATCGACCGCCCCTTGCTTGCAGCCGGGCACTACAGGACCC
 &gt;header1|2R
 &gt;header1|3R
 2951
-<b>$</b> umgap bestof &lt; input.fa
+<b>$ umgap bestof &lt; input.fa</b>
 &gt;header1|1
 9606 9606 2759 9606 9606 9606 9606 9606 9606 9606 8287</pre>
         <p>Taxon IDs are separated by newlines in the actual output, but are separated by spaces in this

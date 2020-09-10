@@ -21,19 +21,19 @@
         <p>The taxonomy to be used is passed as an argument to this command. This is a preprocessed version
         of the <span class="initialism">NCBI</span> taxonomy.</p>
         <pre>
-<b>$</b> cat input.fa
+<b>$ cat input.fa</b>
 &gt;header1
 888268
 186802
 1598
 1883
-<b>$</b> umgap snaptaxon 2020-04-taxons.tsv -r order &lt; ~/input.fa
+<b>$ umgap snaptaxon 2020-04-taxons.tsv -r order &lt; ~/input.fa</b>
 &gt;header1
 38820
 186802
 186826
 85011
-<b>$</b> umgap snaptaxon 2020-04-taxons.tsv -t 1239 2 &lt; ~/input.fa
+<b>$ umgap snaptaxon 2020-04-taxons.tsv -t 1239 2 &lt; ~/input.fa</b>
 &gt;header1
 1
 1239

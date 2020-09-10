@@ -19,10 +19,10 @@
         the <code>umgap buildindex</code> command) passed as argument. The results are printed on <em>standard output</em>
         in <span class="initialism">FASTA</span> format.</p>
         <pre>
-<b>$</b> cat input.fa
+<b>$ cat input.fa</b>
 &gt;header1
 DAIGDVAKAYKKAG*S
-<b>$</b> umgap prot2kmer2lca -k9 uniprot-2020-04-9mer.index &lt; input.fa
+<b>$ umgap prot2kmer2lca -k9 uniprot-2020-04-9mer.index &lt; input.fa</b>
 &gt;header1
 571525
 571525
@@ -32,7 +32,7 @@ DAIGDVAKAYKKAG*S
 6920</pre>
         <p>Add the <samp>-o</samp> option to print out 0 for k-mers not found in the index.</p>
         <pre>
-<b>$</b> umgap prot2kmer2lca -o uniprot-2020-04-9mer.index &lt; input.fa
+<b>$ umgap prot2kmer2lca -o uniprot-2020-04-9mer.index &lt; input.fa</b>
 &gt;header1
 571525
 571525

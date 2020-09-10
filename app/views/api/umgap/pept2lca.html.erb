@@ -17,22 +17,22 @@
         sequences, each on a line. In the following example we match tryptic peptides on their lowest
         common ancestor in the <span class="initialism">NCBI</span> taxonomy.</p>
         <pre>
-<b>$</b> cat input.fa
+<b>$ cat input.fa</b>
 &gt;header1
 AAALTER
 ENFVYLAK
-<b>$</b> umgap pept2lca tryptic-peptides.index &lt; input.fa
+<b>$ umgap pept2lca tryptic-peptides.index &lt; input.fa</b>
 &gt;header1
 2
 3398</pre>
         <p>By default, sequences not found in the index are ignored. Using the <samp>-o</samp> (<samp>--on-on-one</samp>) flag,
         they are mapped to 0, instead.</p>
         <pre>
-<b>$</b> cat input.fa
+<b>$ cat input.fa</b>
 &gt;header1
 NOTATRYPTICPEPTIDE
 ENFVYLAK
-<b>$</b> umgap pept2lca -o tryptic-peptides.index &lt; input.fa
+<b>$ umgap pept2lca -o tryptic-peptides.index &lt; input.fa</b>
 &gt;header1
 0
 3398</pre>
