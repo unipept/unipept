@@ -41,6 +41,7 @@
                     :equate-il.sync="equateIl"
                     :filter-duplicates.sync="filterDuplicates"
                     :missing-cleavage.sync="missingCleavage"
+                    :horizontal="false"
                     class="selected-dataset-settings">
                 </search-settings-form>
                 <div class="text-center">

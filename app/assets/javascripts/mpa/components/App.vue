@@ -88,8 +88,6 @@ export default class App extends Vue {
 </script>
 
 <style>
-    @import "../../../../../node_modules/unipept-web-components/dist/unipept-web-components.css";
-
     .v-list__tile__action .fix-icon-list-position {
         position: relative;
         bottom: 2px;
