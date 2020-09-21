@@ -43,7 +43,7 @@
                     :missing-cleavage.sync="missingCleavage"
                     class="selected-dataset-settings">
                 </search-settings-form>
-                <div class="card-actions">
+                <div class="text-center">
                     <v-btn @click="search()" color="primary">
                         <v-icon left>
                             mdi-magnify

@@ -33,7 +33,7 @@ to date.
             </v-list>
             <v-card-text>
                 <v-divider></v-divider>
-                <div class="card-actions">
+                <div class="text-center">
                     <tooltip message="Compare samples above using a heatmap.">
                         <v-btn
                             :disabled="isInProgress"

@@ -11,8 +11,8 @@ class DatasetsController < HandleOptionsController
     @datasets = Dataset.includes(:dataset_items).all
 
     # Enable SharedArrayBuffer in FireFox
-    response.set_header('Cross-Origin-Opener-Policy', 'same_origin')
-    response.set_header('Cross-Origin-Embedder-Policy', 'require-corp')
+    # response.set_header('Cross-Origin-Opener-Policy', 'same_origin')
+    # response.set_header('Cross-Origin-Embedder-Policy', 'require-corp')
 
     respond_to do |format|
       format.html # index.html.erb
