@@ -8,27 +8,27 @@
         <v-card-text style="display: flex; flex-direction: column; flex-grow: 1; padding: 0;">
             <div style="padding-top: 16px; padding-left: 16px; padding-right: 16px;">
                 <h3>Selected datasets</h3>
-                <span v-if="$store.getters.getAssays.length === 0" :class="{'shaking': shaking, 'selected-placeholder': true}">
+                <span v-if="$store.getters.assays.length === 0" :class="{'shaking': shaking, 'selected-placeholder': true}">
                     Please select one or more datasets from the right hand panel to continue the analysis.
                 </span>
             </div>
             <v-list two-line class="switch-datasets-list" style="flex-grow: 1;">
-                <v-list-item v-for="dataset of $store.getters.getAssays" two-line :key="dataset.id" >
+                <v-list-item v-for="dataset of $store.getters.assays" two-line :key="dataset.id" >
                     <v-list-item-content>
                         <v-list-item-title>
-                            {{ dataset.getName() }}
+                            {{ dataset.assay.getName() }}
                         </v-list-item-title>
                         <v-list-item-subtitle>
-                            {{ dataset.getAmountOfPeptides() }} peptides
+                            {{ dataset.assay.getAmountOfPeptides() }} peptides
                         </v-list-item-subtitle>
                     </v-list-item-content>
 
                     <v-list-item-action>
                         <v-list-item-action-text>
-                            {{ dataset.getDate().toLocaleDateString() }}
+                            {{ dataset.assay.getDate().toLocaleDateString() }}
                         </v-list-item-action-text>
                         <tooltip message="Remove dataset from analysis.">
-                            <v-btn class="fix-icon-list-position" text icon @click="deselectDataset(dataset)">
+                            <v-btn class="fix-icon-list-position" text icon @click="deselectDataset(dataset.assay)">
                                 <v-icon color="grey darken-1">mdi-delete-outline</v-icon>
                             </v-btn>
                         </tooltip>
@@ -66,12 +66,14 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop, Watch } from "vue-property-decorator";
-import SearchSettingsForm from "unipept-web-components/src/components/analysis/SearchSettingsForm.vue";
-import CardTitle from "unipept-web-components/src/components/custom/CardTitle.vue";
-import CardHeader from "unipept-web-components/src/components/custom/CardHeader.vue";
-import Tooltip from "unipept-web-components/src/components/custom/Tooltip.vue";
-import SearchConfiguration from "unipept-web-components/src/business/configuration/SearchConfiguration";
-import ProteomicsAssay from "unipept-web-components/src/business/entities/assay/ProteomicsAssay";
+import {
+    SearchSettingsForm,
+    CardTitle,
+    CardHeader,
+    Tooltip,
+    SearchConfiguration,
+    ProteomicsAssay
+} from "unipept-web-components";
 
 @Component({
     components: { CardHeader, CardTitle, SearchSettingsForm, Tooltip }
@@ -95,14 +97,14 @@ export default class SelectDatasetsCard extends Vue {
     private shaking: boolean = false;
 
     private mounted() {
-        const searchConfig = this.$store.getters.getSearchConfiguration;
+        const searchConfig = this.$store.getters.searchConfiguration;
         this.equateIl = searchConfig.equateIl;
         this.filterDuplicates = searchConfig.filterDuplicates;
         this.missingCleavage = searchConfig.enableMissingCleavageHandling;
     }
 
     public search(): void {
-        if (this.$store.getters.getAssays.length === 0) {
+        if (this.$store.getters.assays.length === 0) {
             this.shaking = true;
             // Disable the shaking effect after 300ms
             setTimeout(() => this.shaking = false, 300);
@@ -112,8 +114,8 @@ export default class SelectDatasetsCard extends Vue {
     }
 
     private reset(): void {
-        for (let dataset of this.$store.getters.getAssays) {
-            this.deselectDataset(dataset);
+        for (let data of this.$store.getters.assays) {
+            this.deselectDataset(data.assay);
         }
     }
 

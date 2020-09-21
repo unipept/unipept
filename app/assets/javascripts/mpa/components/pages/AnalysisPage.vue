@@ -14,8 +14,9 @@
                     v-if="!datasetSelectionInProgress"
                     style="min-height: 100%;"
                     :disabled="inProgress"
-                    :activeAssay="$store.getters.getActiveAssay"
-                    :searchConfiguration="$store.getters.getSearchConfiguration"
+                    :activeAssay="$store.getters.activeAssay"
+                    :searchConfiguration="$store.getters.searchConfiguration"
+                    :communicationSource="communicationSource"
                     v-on:update-search-settings="onUpdateSearchSettings">
                 </experiment-summary-card>
                 <load-datasets-card
@@ -28,17 +29,14 @@
         </v-row>
         <single-dataset-visualizations-card
             id="visualizations-card"
-            :peptide-count-table="countTable"
-            :search-configuration="$store.getters.getSearchConfiguration"
-            :analysisInProgress="$store.getters.getAssays.length > 0"
+            :assay="activeAssay"
             v-on:update-selected-term="onUpdateSelectedTerm"
             v-on:update-selected-taxon-id="onUpdateSelectedTaxonId">
         </single-dataset-visualizations-card>
         <functional-summary-card
             style="margin-top: 12px;"
-            :peptide-count-table="countTable"
-            :search-configuration="$store.getters.getSearchConfiguration"
-            :analysisInProgress="$store.getters.getAssays.length > 0"
+            :assay="activeAssay"
+            :analysisInProgress="$store.getters.assays.length > 0"
             :selected-taxon-id="$store.getters.getSelectedTaxonId">
         </functional-summary-card>
     </div>
@@ -47,16 +45,19 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import {Prop, Watch} from "vue-property-decorator";
-import FunctionalSummaryCard from "unipept-web-components/src/components/analysis/functional/FunctionalSummaryCard.vue";
-import SingleDatasetVisualizationsCard from "unipept-web-components/src/components/visualizations/SingleDatasetVisualizationsCard.vue";
+import { Prop, Watch } from "vue-property-decorator";
+import {
+    FunctionalSummaryCard,
+    ExperimentSummaryCard,
+    ProteomicsAssay,
+    SearchConfiguration,
+    CountTable,
+    Peptide,
+    SingleDatasetVisualizationsCard, CommunicationSource
+} from "unipept-web-components";
+
 import LoadDatasetsCard from "./../dataset/LoadDatasetsCard.vue";
 import SwitchDatasetsCard from "./../dataset/SwitchDatasetsCard.vue";
-import ExperimentSummaryCard from "unipept-web-components/src/components/analysis/statistics/ExperimentSummaryCard.vue";
-import ProteomicsAssay from "unipept-web-components/src/business/entities/assay/ProteomicsAssay";
-import SearchConfiguration from "unipept-web-components/src/business/configuration/SearchConfiguration";
-import { CountTable } from "unipept-web-components/src/business/counts/CountTable";
-import { Peptide } from "unipept-web-components/src/business/ontology/raw/Peptide";
 
 @Component({
     components: {
@@ -65,32 +66,27 @@ import { Peptide } from "unipept-web-components/src/business/ontology/raw/Peptid
         LoadDatasetsCard,
         SwitchDatasetsCard,
         ExperimentSummaryCard
-    },
-    computed: {
-        selectedDatasets: {
-            get() {
-                return this.$store.getters.getAssays;
-            }
-        },
-        countTable: {
-            get(): CountTable<Peptide> {
-                const activeAssay: ProteomicsAssay = this.$store.getters.getActiveAssay;
-                if (activeAssay) {
-                    return this.$store.getters.getProgressStatesMap.find(p => p.assay.getId() === activeAssay.getId()).countTable;
-                } else {
-                    return undefined;
-                }
-            }
-        },
-        inProgress: {
-            get(): boolean {
-                return this.$store.getters.getProgressStatesMap.some(p => p.progress < 1);
-            }
-        }
     }
 })
 export default class AnalysisPage extends Vue {
     private datasetSelectionInProgress: boolean = false;
+
+    get activeAssay(): ProteomicsAssay {
+        return this.$store.getters.activeAssay;
+    }
+
+    get inProgress(): boolean {
+        return this.$store.getters.assays.some(a => a.analysisMetaData.progress < 1);
+    }
+
+    get communicationSource(): CommunicationSource {
+        const activeAssay = this.$store.getters.activeAssay;
+        if (activeAssay) {
+            return this.$store.getters.assayData(activeAssay).communicationSource;
+        } else {
+            return undefined;
+        }
+    }
 
     created() {
         this.reprocessAssays();
@@ -101,7 +97,7 @@ export default class AnalysisPage extends Vue {
     }
 
     private onActivateAssay(assay: ProteomicsAssay) {
-        this.$store.dispatch("setActiveAssay", assay);
+        this.$store.dispatch("activateAssay", assay);
     }
 
     private onCreateAssay(assay: ProteomicsAssay) {
@@ -119,8 +115,9 @@ export default class AnalysisPage extends Vue {
     }
 
     private reprocessAssays() {
-        for (const assay of this.$store.getters.getAssays) {
-            this.$store.dispatch("processAssay", assay);
+        for (const data of this.$store.getters.assays) {
+            data.assay.setSearchConfiguration(this.$store.getters.searchConfiguration);
+            this.$store.dispatch("processAssay", data.assay);
         }
     }
 

@@ -12,10 +12,7 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import NetworkConfiguration from "unipept-web-components/src/business/communication/NetworkConfiguration";
-import SinglePeptideAnalysisCard from "unipept-web-components/src/components/analysis/single/SinglePeptideAnalysisCard.vue";
-import SinglePeptideSummary from "unipept-web-components/src/components/analysis/single/SinglePeptideSummary.vue";
-import { Peptide } from "unipept-web-components/src/business/ontology/raw/Peptide";
+import { NetworkConfiguration, SinglePeptideAnalysisCard, SinglePeptideSummary, Peptide } from "unipept-web-components";
 
 @Component({
     components: {

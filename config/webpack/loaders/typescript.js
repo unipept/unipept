@@ -4,7 +4,7 @@ module.exports = {
     test: /\.tsx?(\.erb)?$/,
     use: [
         {
-            loader: 'ts-loader',
+            loader: "ts-loader",
             options: {
                 appendTsSuffixTo: [/\.vue$/],
                 allowTsInNodeModules: true

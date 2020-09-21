@@ -15,10 +15,12 @@ import HomePage from "./pages/HomePage.vue";
 import AnalysisPage from "./pages/AnalysisPage.vue";
 import {Prop} from "vue-property-decorator";
 import { v4 as uuidv4 } from "uuid";
-import ProteomicsAssay from "unipept-web-components/src/business/entities/assay/ProteomicsAssay";
-import BrowserStorageWriter from "unipept-web-components/src/business/storage/browser/assay/BrowserStorageWriter";
-import BrowserAssayManager from "unipept-web-components/src/business/storage/browser/assay/BrowserAssayManager";
-import NetworkConfiguration from "unipept-web-components/src/business/communication/NetworkConfiguration";
+import {
+    ProteomicsAssay,
+    BrowserStorageWriter,
+    BrowserAssayManager,
+    NetworkConfiguration
+} from "unipept-web-components";
 
 @Component({
     components: {
