@@ -2,10 +2,9 @@ import { GetterTree, MutationTree, ActionTree, ActionContext } from "vuex";
 import {
     ProteomicsAssay,
     SearchConfiguration,
-    PeptideCountTableProcessor,
-    Pept2DataCommunicator,
-    CountTable,
-    Peptide, Ontology, NcbiId, NcbiTaxon
+    Ontology,
+    NcbiId,
+    NcbiTaxon
 } from "unipept-web-components";
 
 /**
@@ -66,6 +65,13 @@ const storageMutations: MutationTree<WebState> = {
     },
     SET_SEARCH_CONFIGURATION(state: WebState, config: SearchConfiguration) {
         state.searchConfiguration = config;
+    },
+    REMOVE_STORED_ASSAY(state: WebState, assay: ProteomicsAssay) {
+        const idx: number = findAssayIndex(assay, state.storedAssays);
+
+        if (idx !== -1) {
+            state.storedAssays.splice(idx, 1);
+        }
     }
 }
 

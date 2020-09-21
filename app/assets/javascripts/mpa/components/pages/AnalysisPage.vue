@@ -30,6 +30,7 @@
         <single-dataset-visualizations-card
             id="visualizations-card"
             :assay="activeAssay"
+            :analysisInProgress="$store.getters.assays.length > 0"
             v-on:update-selected-term="onUpdateSelectedTerm"
             v-on:update-selected-taxon-id="onUpdateSelectedTaxonId">
         </single-dataset-visualizations-card>
@@ -48,16 +49,17 @@ import Component from "vue-class-component";
 import { Prop, Watch } from "vue-property-decorator";
 import {
     FunctionalSummaryCard,
-    ExperimentSummaryCard,
     ProteomicsAssay,
     SearchConfiguration,
     CountTable,
     Peptide,
-    SingleDatasetVisualizationsCard, CommunicationSource
+    SingleDatasetVisualizationsCard,
+    CommunicationSource
 } from "unipept-web-components";
 
 import LoadDatasetsCard from "./../dataset/LoadDatasetsCard.vue";
 import SwitchDatasetsCard from "./../dataset/SwitchDatasetsCard.vue";
+import ExperimentSummaryCard from "./../dataset/ExperimentSummaryCard.vue";
 
 @Component({
     components: {
@@ -86,6 +88,13 @@ export default class AnalysisPage extends Vue {
         } else {
             return undefined;
         }
+    }
+
+    get activeProgress(): number {
+        if (!this.activeAssay) {
+            return 0;
+        }
+        return this.$store.getters.assayData(this.activeAssay)?.analysisMetaData.progress;
     }
 
     created() {

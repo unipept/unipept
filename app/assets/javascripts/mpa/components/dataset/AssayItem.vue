@@ -12,8 +12,14 @@
             <v-list-item-title>
                 {{ assayData.assay.getName() }}
             </v-list-item-title>
-            <v-list-item-subtitle>
+            <v-list-item-subtitle v-if="progress === 1">
                 {{ assayData.assay.getAmountOfPeptides() }} peptides
+            </v-list-item-subtitle>
+            <v-list-item-subtitle v-else-if="progress === 0">
+                Computing estimated time remaining...
+            </v-list-item-subtitle>
+            <v-list-item-subtitle v-else>
+                ~{{ getTimeString(eta) }} remaining...
             </v-list-item-subtitle>
         </v-list-item-content>
 
@@ -32,7 +38,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop, Watch } from "vue-property-decorator";
-import { AssayData, ProteomicsAssay, Tooltip } from "unipept-web-components";
+import { AssayData, ProteomicsAssay, StringUtils, Tooltip } from "unipept-web-components";
 
 @Component({
     components: {
@@ -54,9 +60,11 @@ export default class AssayItem extends Vue {
     private assayData: AssayData;
 
     get progress(): number {
-        console.log(this.assayData.analysisMetaData.progress);
-        console.log(this.assayData.analysisMetaData.progress === 1);
         return this.assayData.analysisMetaData.progress;
+    }
+
+    get eta(): number {
+        return this.assayData.analysisMetaData.eta;
     }
 
     private activateAssay(assay: ProteomicsAssay): void {
@@ -65,6 +73,10 @@ export default class AssayItem extends Vue {
 
     private deselectAssay(assay: ProteomicsAssay): void {
         this.$store.dispatch("removeAssay", assay);
+    }
+
+    private getTimeString(eta: number): string {
+        return StringUtils.secondsToTimeString(eta);
     }
 }
 </script>
