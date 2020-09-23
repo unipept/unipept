@@ -4,10 +4,19 @@
       <span class="initialism">UMGAP</span> documentation
     </h1>
     <p class='lead'>
-      Use the Unipept Metagenomics Analysis Pipeline (<span class='initialism'>UMGAP</span>) to analyse and present your shotgun metagenomics reads using frequency tables and interactive visualizations. 
+      Use the Unipept MetaGenomics Analysis Pipeline to identify and present your shotgun metagenomics reads using taxonomic frequency tables and interactive visualizations. 
     </p>
     <p>
-      The <span class='initialism'>UMGAP</span> is a collection of command line tools, built to fit together in pipelines. Use this documentation to craft a pipeline to analyse your (short) shotgun metagenomics reads, or follow one of our <a href="<%= api_umgap_casestudies_path %>">case studies</a> using a preconfigured pipeline.
+      The <span class='initialism'>UMGAP</span> is a collection of command line tools. With communication via <em>standard input</em> and <em>standard output</em>, and an easy to understand, consistent intermediate format, they are built to fit together in pipelines. Craft your own pipeline to identify (short) shotgun metagenomics reads guided by our <a href="<%= api_umgap_casestudies_path %>">case studies</a>, or use one of the available preconfigured pipelines:
+    </p>
+    <ul>
+      <li><strong><span class='initialism'>UMGAP</span> High Precision:</strong> Optimized for high precision identifications on your metagenomics reads.</li>
+      <li><strong><span class='initialism'>UMGAP</span> Max Precision:</strong> Optimized for highest precision, with a small setback on sensitivity.</li>
+      <li><strong><span class='initialism'>UMGAP</span> Tryptic Precision:</strong> Made for fast analyses on your laptop. Fewer results, but accurate.</li>
+      <li><strong><span class='initialism'>UMGAP</span> High Sensitivity:</strong> Optimized for high sensitivity identifications on metagenomics reads.</li>
+      <li><strong><span class='initialism'>UMGAP</span> Max Sensitivity:</strong> Optimized for highest sensitivity, with a small setback on precision.</li>
+      <li><strong><span class='initialism'>UMGAP</span> Tryptic Sensitivity:</strong> Made for fast analyses on your laptop. Get a quick overview of your data.</li>
+    </ul>
     </p>
     <p>
       Throughout this documentation, the term peptides is used for both tryptic peptides and k-mers.
