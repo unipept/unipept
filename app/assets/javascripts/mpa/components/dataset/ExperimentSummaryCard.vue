@@ -178,8 +178,10 @@ export default class ExperimentSummaryCard extends Vue {
     }
 
     @Watch("activeAssay")
+    @Watch("communicationSource")
+    @Watch("searchConfiguration")
     private async onActiveAssayChanged(): Promise<void> {
-        if (this.activeAssay && this.searchConfiguration) {
+        if (this.activeAssay && this.searchConfiguration && this.communicationSource) {
             this.loading = true;
 
             const peptideProcessor = new PeptideCountTableProcessor();

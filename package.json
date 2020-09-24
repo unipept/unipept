@@ -31,7 +31,7 @@
     "ts-loader": "^8.0.3",
     "typescript": "^4.0.2",
     "unipept-visualizations": "^1.7.3",
-    "unipept-web-components": "^1.2.0-beta.1",
+    "unipept-web-components": "file:unipept-web-components-1.2.0-beta.1.tgz",
     "vue": "^2.6.11",
     "vue-fullscreen": "^2.1.6",
     "vue-loader": "15.9.1",
