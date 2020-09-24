@@ -55,8 +55,7 @@ to date.
                 <div>
                     <heatmap-wizard-multi-sample
                         v-if="!isInProgress"
-                        :assays="this.$store.getters.assays"
-                        :tree="tree">
+                        :assays="this.$store.getters.assays.map(a => a.assay)">
                     </heatmap-wizard-multi-sample>
                     <div v-else style="display: flex; justify-content: center;">
                         <div class="text-xs-center" style="margin-top: 25px;">
@@ -94,7 +93,6 @@ import AssayItem from "./AssayItem.vue"
 export default class SwitchDatasetsCard extends Vue {
     private isAssaySelectionInProgress: boolean = false;
     private dialogOpen: boolean = false;
-    private tree: Tree = null;
 
     get countTable(): CountTable<Peptide> {
         const activeAssay: ProteomicsAssay = this.$store.getters.activeAssay;
@@ -106,7 +104,7 @@ export default class SwitchDatasetsCard extends Vue {
     }
 
     get activeAssay(): ProteomicsAssay {
-        return this.$store.getters.getActiveAssay;
+        return this.$store.getters.activeAssay;
     }
 
     get isInProgress(): boolean {
@@ -114,20 +112,6 @@ export default class SwitchDatasetsCard extends Vue {
     }
 
     mounted() {}
-
-    @Watch("countTable")
-    @Watch("activeAssay")
-    private async onCountTableChanged() {
-        if (this.activeAssay && this.countTable) {
-            const taxaCountProcessor = new LcaCountTableProcessor(this.countTable, this.activeAssay.getSearchConfiguration());
-            const taxaCounts = await taxaCountProcessor.getCountTable();
-
-            const taxaOntologyProcessor = new NcbiOntologyProcessor();
-            const taxaOntology = await taxaOntologyProcessor.getOntology(taxaCounts);
-
-            this.tree = new Tree(taxaCounts, taxaOntology, await taxaCountProcessor.getAnnotationPeptideMapping(), 1);
-        }
-    }
 
     private deselectAssay(dataset: ProteomicsAssay) {
         this.$emit("deselect-assay", dataset);

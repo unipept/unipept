@@ -112,7 +112,7 @@ export default class App extends Vue {
     }
 
     h2 {
-        font-size: 21px;
+        font-size: 21px
     }
 
     h3 {
@@ -126,5 +126,4 @@ export default class App extends Vue {
     .theme--light.v-application {
         background-color: #FAFAFA !important;
     }
-
 </style>
